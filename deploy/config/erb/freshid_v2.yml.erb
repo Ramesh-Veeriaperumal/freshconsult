@@ -1,0 +1,16 @@
+defaults: &defaults
+  region_code: <%= node[:ymls][:freshid_v2][:region_code] %>
+  end_point: <%= node[:ymls][:freshid_v2][:end_point] %>
+  client_id: <%= node[:ymls][:freshid_v2][:client_id] %>
+  client_secret: <%= node[:ymls][:freshid_v2][:client_secret] %>
+  callback_api_secret: <%= node[:ymls][:freshid_v2][:callback_api_secret] %>
+  product_id: <%= node[:ymls][:freshid_v2][:product_id] %>
+  # customer_base_url: <%= node[:ymls][:freshid_v2][:customer_base_url] %>
+  # customer_client_id: <%= node[:ymls][:freshid_v2][:customer_client_id] %>
+  # customer_client_secret: <%= node[:ymls][:freshid_v2][:customer_client_secret] %>
+  product_domain: <%= node[:ymls][:freshid_v2][:product_domain] %>
+  freshid_request_timeout: <%= node[:ymls][:freshid_v2][:freshid_request_timeout] %>
+  mobile_deep_link_protocol: <%= node[:ymls][:freshid_v2][:mobile_deep_link_protocol] %>
+
+<%= node[:opsworks][:environment] %>:
+  <<: *defaults

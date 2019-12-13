@@ -1,7 +1,7 @@
 class Solutions::ArticleDecorator < ApiDecorator
   delegate :title, :description, :desc_un_html, :user_id, :status, :seo_data, :language_id,
            :parent, :parent_id, :draft, :attachments, :cloud_files, :article_ticket, :modified_at,
-           :modified_by, :id, :to_param, :tags, :voters, :thumbs_up, :thumbs_down, :hits, :tickets, :outdated, to: :record
+           :modified_by, :id, :to_param, :tags, :voters, :thumbs_up, :thumbs_down, :hits, :tickets, :outdated, :helpdesk_approval, to: :record
 
   SEARCH_CONTEXTS_WITHOUT_DESCRIPTION = [:agent_insert_solution, :filtered_solution_search].freeze
   SPOTLIGHT_SEARCH_CONTEXT = :agent_spotlight_solution
@@ -72,6 +72,9 @@ class Solutions::ArticleDecorator < ApiDecorator
         ret_hash[:translation_summary] = translation_summary_hash
         ret_hash[:outdated] = outdated
       end
+      if Account.current.article_approval_workflow_enabled?
+        ret_hash[:approval_data] = { approval_status: approval_record(record).try(:approval_status), approver_id: approver_record(record).try(:approver_id), user_id: approval_record(record).try(:user_id) }
+      end
     end
     ret_hash
   end
@@ -130,7 +133,7 @@ class Solutions::ArticleDecorator < ApiDecorator
   end
 
   def visibility_hash
-    return {} unless @user.present?
+    return {} if @user.blank?
     {
       visibility: { @user.id => parent.visible?(@user) || false }
     }
@@ -249,7 +252,7 @@ class Solutions::ArticleDecorator < ApiDecorator
 
     def category_and_folder
       if category_meta.is_default
-        { :source => ::SolutionConstants::KBASE_EMAIL_SOURCE }
+        { source: ::SolutionConstants::KBASE_EMAIL_SOURCE }
       else
         { category_id: @draft.try(:category_meta_id) || category_meta.id,
           folder_id: parent.solution_folder_meta.id }
@@ -288,7 +291,7 @@ class Solutions::ArticleDecorator < ApiDecorator
       @feedback_count ||= tickets.unresolved.reject(&:spam_or_deleted?).count
     end
 
-    def last_modified resp_hash
+    def last_modified(resp_hash)
       {
         last_modifier: resp_hash[:draft_modified_by] || resp_hash[:modified_by],
         last_modified_at: resp_hash[:draft_modified_at] || resp_hash[:modified_at]
@@ -317,5 +320,15 @@ class Solutions::ArticleDecorator < ApiDecorator
           published: parent.safe_send("#{language_key}_published?")
         }
       end
+    end
+
+    def approval_record(article)
+      return @approval if defined?(@approval)
+      @approval = article.helpdesk_approval
+    end
+
+    def approver_record(article)
+      @approver if defined?(@approver)
+      @approver = approval_record(article).try(:approver_mappings).try(:first)
     end
 end

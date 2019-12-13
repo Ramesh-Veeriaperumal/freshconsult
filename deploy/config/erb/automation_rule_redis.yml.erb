@@ -1,0 +1,13 @@
+defaults: &defaults
+ host: <%= node[:ymls][:automation_rule_redis][:host] %>
+ port: <%= node[:ymls][:automation_rule_redis][:port] %>
+ <% if node[:ymls][:automation_rule_redis][:password] %>
+ password: <%= node[:ymls][:automation_rule_redis][:password] %>
+ <% end %>
+ timeout: <%= node[:ymls][:automation_rule_redis][:timeout] %>
+ keepalive: <%= node[:ymls][:automation_rule_redis][:keepalive] %>
+<%= node[:opsworks][:environment] %>:
+  <<: *defaults
+
+slave:
+  <<: *defaults

@@ -26,6 +26,8 @@ module SolutionConstants
   CREATE_ARTICLE_FIELDS = { all: ARTICLE_FIELDS }.freeze
   UPDATE_ARTICLE_FIELDS = { all: ARTICLE_FIELDS | ['outdated'], admin_tasks: ['agent_id'] }.freeze
 
+  SEND_FOR_REVIEW_FIELDS = %w[approver_id].freeze
+
   FILTER_ATTRIBUTES = %w[author status outdated created_at last_modified tags category folder].freeze
   FILTER_FIELDS = %w[portal_id language term page per_page].freeze | FILTER_ATTRIBUTES
   ADVANCED_FILTER_FIELDS = %w[created_at last_modified tags category folder].freeze
@@ -52,7 +54,7 @@ module SolutionConstants
 
   INDEX_PRELOAD_OPTIONS = [{ solution_article_meta: [:solution_folder_meta, :solution_category_meta] }, :article_body, { article_ticket: :ticketable }, :draft, draft: :draft_body].freeze
 
-  FILTER_PRELOAD_OPTIONS = [{ solution_article_meta: [:solution_folder_meta, :solution_category_meta] }, { draft: :draft_body }, :tags].freeze
+  FILTER_PRELOAD_OPTIONS = [{ solution_article_meta: [:solution_folder_meta, :solution_category_meta] }, { draft: :draft_body }, :tags, { helpdesk_approval: :approver_mappings }].freeze
 
   EXPORT_PRELOAD_OPTIONS = [{ solution_article_meta: [:solution_folder_meta, :solution_category_meta] }, { draft: [:draft_body, :user] }, :user, :tags].freeze
 

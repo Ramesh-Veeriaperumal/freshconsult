@@ -2,9 +2,19 @@
   <% if @is_sidekiq_archive_layer %>
   host: <%= node[:ymls][:sidekiq][:archive_host] %>
   port: <%= node[:ymls][:sidekiq][:archive_port] %>
+  <% if node[:ymls][:sidekiq][:archive_password] %>
+  password: <%= node[:ymls][:sidekiq][:archive_password] %>
+  <% end %>
+  <% elsif @is_maintenance_redis_enabled %>
+  host: <%= node[:ymls][:sidekiq][:maintenance_host] %>
+  port: <%= node[:ymls][:sidekiq][:maintenance_port] %>
+  password: <%= node[:ymls][:sidekiq][:maintenance_password] %>
 	<% else %>
   host: <%= node[:ymls][:sidekiq][:host] %>
   port: <%= node[:ymls][:sidekiq][:port] %>
+  <% if node[:ymls][:sidekiq][:password] %>
+  password: <%= node[:ymls][:sidekiq][:password] %>
+  <% end %>
 	<% end %>
   namespace: <%= node[:unique_keys][:sidekiq][:namespace] %>
   keepalive: <%= node[:ymls][:sidekiq][:keepalive] %>

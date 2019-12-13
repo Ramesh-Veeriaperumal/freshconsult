@@ -59,6 +59,7 @@ module Freshcaller::Util
     end
 
     def signup_params
+      suffix = defined?(@retry) ? rand.to_s[2..4] : '' # For retrying with random suffix for signup
       create_new_account_params = {
         signup: {
           user_name: current_user.name,
@@ -66,7 +67,7 @@ module Freshcaller::Util
           user_phone: current_user.phone.presence || current_user.mobile,
           account_name: current_account.name,
           time_zone: current_account.conversion_metric.try(:offset).to_s,
-          account_domain: "#{FreshcallerConfig['domain_prefix']}#{current_account.domain}",
+          account_domain: "#{FreshcallerConfig['domain_prefix']}#{current_account.domain}#{suffix}",
           account_region: ShardMapping.fetch_by_account_id(current_account.id).region,
           currency: current_account.subscription.try(:currency).try(:name),
           api: {

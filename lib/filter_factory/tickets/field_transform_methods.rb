@@ -18,8 +18,7 @@ module FilterFactory::Tickets
 
     DATETIME_FIELDS = [:created_at].freeze
 
-    # TODO : nr_due_by
-    SPECIAL_API_FIELDS = [:updated_since, :due_by, :frDueBy, :any_group_id, :any_agent_id].freeze
+    SPECIAL_API_FIELDS = [:updated_since, :due_by, :frDueBy, :any_group_id, :any_agent_id, :nr_due_by].freeze
 
     # appointment start time(custom datetime) is indexed in ES under fsm_appointment_start_time name.
     ES_SORTABLE_CUSTOM_FIELDS_MAP = [
@@ -148,9 +147,9 @@ module FilterFactory::Tickets
         condition_for_due_by(:frDueBy)
       end
 
-      # def append_nr_due_by_condition
-      #   condition_for_due_by(:nr_due_by)
-      # end
+      def append_nr_due_by_condition
+        condition_for_due_by(:nr_due_by)
+      end
 
       def condition_for_due_by(due_by)
         due_by_condition = args[:conditions].select { |condition| condition['condition'].to_sym == due_by }
@@ -204,11 +203,15 @@ module FilterFactory::Tickets
       def fetch_due_by(condition, due_by_type)
         transformed_conditions = []
         values = condition['value'].to_s.split(',')
+        min_value = minimum_required_due_condition(values.collect(&:to_i))
         values.each do |value|
+          next if min_value.present? && value.to_i > min_value
+          
           cond = due_by_time_range(DUE_BY_MAPPING[value.to_s])
           transformed_conditions << cond.merge(condition: due_by_type.to_s, ff_name: 'default')
         end
         append_status_sla_conditions
+        append_fr_due_conditions if due_by_type == :frDueBy
         [transformed_conditions]
       end
 
@@ -236,6 +239,17 @@ module FilterFactory::Tickets
           { condition: 'helpdesk_ticket_statuses.deleted', operator: 'is', value: false },
           { condition: 'helpdesk_ticket_statuses.stop_sla_timer', operator: 'is', value: false }
         ]
+      end
+
+      def append_fr_due_conditions
+        args[:conditions] += [
+          { condition: 'source', operator: 'is_in', value: TicketConstants::SOURCE_KEYS_BY_TOKEN.except(:outbound_email).values },
+          { condition: 'helpdesk_ticket_states.agent_responded_at', operator: 'is', value: '-1' }
+        ]
+      end
+
+      def minimum_required_due_condition(conditions)
+        (conditions - TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN.slice(:all_due, :due_today, :due_tomo).values).min
       end
 
       def today_condition

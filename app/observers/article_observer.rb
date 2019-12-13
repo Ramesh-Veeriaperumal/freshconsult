@@ -6,7 +6,9 @@ class ArticleObserver < ActiveRecord::Observer
 	def before_save(article)
 		set_un_html_content(article) if article.article_body.changed?
 		article.article_changes
-		create_draft_for_article(article)
+    create_draft_for_article(article)
+    unpublishing = only_status_changed?(article) && !article.published?
+    article.clear_approvals if unpublishing && Account.current.article_approval_workflow_enabled?
 		article.seo_data ||= {}
       # article body change is captured only here
       if content_changed?(article) || article.status_changed? || (article.draft && article.draft.publishing) || article.attachment_added
@@ -14,7 +16,7 @@ class ArticleObserver < ActiveRecord::Observer
         return unless article.account.article_versioning_enabled?
 
         # When i directly unpublish, versions should be marked unlive
-        article.unpublishing = only_status_changed?(article) && !article.published?
+        article.unpublishing = unpublishing
         # When "Published : edit + autosave and Unpublish" draft observer will not be triggered, so sending draft for versioning
         can_version_draft = article.draft && !article.draft.new_record? && article.unpublishing && !article.draft.unpublishing
         can_version_article = article.draft ? (!article.draft.new_record? && (!article.draft.unpublishing || article.draft.publishing)) : true

@@ -6,10 +6,10 @@ module Helpdesk::Utils::ManageCcEmails
   def updated_ticket_cc_emails(new_cc_emails, ticket, note, in_reply_to, 
     to_email, to_emails)
     ticket_cc_hash = ticket.cc_email_hash || Helpdesk::Ticket.default_cc_hash
+    support_emails = ticket.account.support_emails
     begin
       new_cc_emails.delete_if{ |email| (email == ticket.requester.email)}
-      filtered_cc_emails = filter_cc_emails(new_cc_emails, to_email, to_emails, 
-        ticket.account.kbase_email, ticket.account.support_emails )
+      filtered_cc_emails = filter_cc_emails(new_cc_emails, to_email, to_emails, ticket.account.kbase_email, support_emails)
       note_creator = parse_email(note.user.email)[:email]
       return ticket_cc_hash if ticket.included_in_fwd_emails?(note_creator)
 
@@ -32,6 +32,15 @@ module Helpdesk::Utils::ManageCcEmails
             #{in_reply_to.to_s} and note.user_id : #{note.user_id.to_s}"
           return ticket_cc_hash
         end
+      elsif (ticket_cc_hash[:cc_emails] || []).include?(note.user.email) && !note.third_party_response?
+        support_emails = support_emails.map(&:downcase)
+        # Rejecting multiple occurences of same CC email and support email addresses
+        filtered_cc_emails = filtered_cc_emails.reject do |cc|
+          ticket_cc_hash[:reply_cc].include?(cc) || support_emails.include?(cc.downcase)
+        end
+        # if the note is from customer who has been CC'ed and not a reply to notification or automation mail
+        # then concatenate the existing reply CC with new_cc_emails
+        ticket_cc_hash[:reply_cc][ticket_cc_hash[:reply_cc].length, 0] = filtered_cc_emails
       elsif ((ticket.requester_id == note.user_id || note.user.agent?) && !note.third_party_response?)
         # if the note is from requester or agent and not a reply to notification
         # or automation mail then replace the existing reply_cc with new Cc

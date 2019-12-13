@@ -7,6 +7,9 @@ app:
   onedrive:
     client_id: <%= node[:ymls][:integrations][:onedrive_client_id] %>
     client_secret: <%= node[:ymls][:integrations][:onedrive_client_secret] %>
+  office365:
+    <%= node[:opsworks][:environment]%>:
+      originator_id: <%= node[:ymls][:integrations][:office365_originator_id] %> 
   cloud_elements:
     <%= node[:opsworks][:environment]%>:
       server_url: <%= node[:ymls][:integrations][:cloud_elements_server_url] %>

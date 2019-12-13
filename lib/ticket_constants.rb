@@ -114,10 +114,9 @@ module TicketConstants
   TICKET_ASSOCIATION_FILTER_NAMES_BY_KEY = Hash[*TICKET_ASSOCIATION_FILTER.map { |i| [i[2].join(','), i[1]] }.flatten]
   TICKET_ASSOCIATION_FILTER_KEYS_BY_TOKEN = Hash[*TICKET_ASSOCIATION_FILTER.map { |i| [i[0], i[2].join(',')] }.flatten]
 
-  # TODO: nr_due_by
-  DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :frDueBy, :status, :priority,
+  DEFAULT_COLUMNS_ORDER = [:responder_id, :group_id, :created_at, :due_by, :frDueBy, :nr_due_by, :status, :priority,
     :ticket_type, :source, "helpdesk_tags.name", :owner_id,
-    :requester_id, :sl_skill_id, "helpdesk_schema_less_tickets.product_id", :association_type ]
+    :requester_id, :sl_skill_id, "helpdesk_schema_less_tickets.product_id", :association_type]
 
   ARCHIVE_DEFAULT_COLUMNS_ORDER = [ :responder_id, :group_id, :created_at, :due_by, :status, :priority,
     :ticket_type, :source, "helpdesk_tags.name", "users.customer_id", :owner_id,
@@ -140,7 +139,7 @@ module TicketConstants
     [ :priority,            'priority',         :dropdown],
     [ :due_by,              'due_by',           :due_by],
     [ :frDueBy,             'frDueBy',          :due_by],
-    #[ :nr_due_by,           'nr_due_by',        :due_by],
+    [ :nr_due_by,           'nr_due_by',        :due_by],
     [ "helpdesk_tags.name", "tags",             :tags],
     [ :owner_id,            "customers",        :customer],
     [ :created_at,          "created_at",       :created_at],

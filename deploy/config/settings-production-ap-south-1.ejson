@@ -3,16 +3,29 @@
   "_private_key_enc": "AQICAHiJUoAy/d9yyHd020XY/XbCMsdQPDKyajthOmQhr+/i3wHrsCWthm4U\nQ3CPn0rWs836AAAAojCBnwYJKoZIhvcNAQcGoIGRMIGOAgEAMIGIBgkqhkiG\n9w0BBwEwHgYJYIZIAWUDBAEuMBEEDGSDCv2JpqGMOeYv8wIBEIBbLNV2ptzP\nMZv6xosuM6kki3PxTG28ktU5AW/dty98f3DPcmnAWTmAl9KuOvuC40kCdqFm\nV5jWrHmUlqf9y6KnxGPqCjFag2H975YmzVckaTq9HUpGF0s/eyntBw==",
   "settings": {
     "ymls": {
+      "datacenter_config": {
+      "freshcaller_signup_supported": false,
+      "freshconnect_signup_supported": false,
+      "freshmarketer_signup_supported": false
+      },
+      "rts": {
+        "app_id": "EJ[1:PQjPhtCH/3e30SyAXH8osYeWIjX5+qK98ZwOHqV09xY=:4haSY+XO+eq+n410CWy6XvwlrUjTPFRO:JL/r+04NFxrTuiYqLmWTTmBWibt6untM]",
+        "app_secret": "EJ[1:PQjPhtCH/3e30SyAXH8osYeWIjX5+qK98ZwOHqV09xY=:2n0047/eD492IySEcdCSq1ifm9Xu85gd:FcHmj5Zv6KsinrdL+1F6A9p/Z5G/i88JwXExWD1LoUeRvtGU2NNTp/8nsPy38IO8EMwwN2OU6JPtVEKs]",
+        "_end_point": "https://rts-in.freshworksapi.com",
+        "db_cipher_key": "EJ[1:PQjPhtCH/3e30SyAXH8osYeWIjX5+qK98ZwOHqV09xY=:1pTFZb45Zp63Ff9qFyw0ewOkhSc6CxqK:W4oHwX0UtyAkgEiB0YzEL8+T+mFbowQVTVd5qrW9wnIiuR8CmcWCqAPIzd5pFWMedLp3DediDfRh8i/O]",
+        "_jwt_default_expiry": "100",
+        "channel_cipher_key": "EJ[1:mbNtkFlVyYada5sSyukiQZatGrIv+QjtxEm/1AeQFl8=:qN+nrNNKt+gylOpALnsIeQm8tovTlS8a:uOiNMKJoeE/3AXO/X5ZBdWFedJRn5U4RJmm1AroVi0C0ugJGxrpYK8ngM6xPDB/nzYS3aW6biRvo5Wp95dGYUJlCVtZaY/ts3hoD9WAsyDY=]"
+      },
       "announcements": {
-        "shared_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:0fAofelEZ5sUT5YEEMBwM3OmWFpss19v:DQ6Fh8w7A9/jY7WN6eqv/bI6p4C9v8GkD1pkYbKLtpF6xkyCqpAaXvgGLfqzXv35]",
+        "shared_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:nU0M0MAJz+FP7MaKYM9Ee5aL3KNHzF/J:crWT5qZsQ3fyZkF70oOek2js+0TWrPgeGC0LpBUqHYItiSGC9WqqSL7iIXpjbfF4]",
         "_account_url": "productupdates.freshdesk.com"
       },
       "bot": {
-        "product_id": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:TAcYRnCTbYmTCK+RlH3xvO46qVpcYtiF:AAY+0AiM9hhuS7OGjCDWf1rgCCJ7P8wj2OxyyI7fefYeMPVZ3rruWVXEPHa4AjLzn2fuiKl1V/c=]",
-        "template_hash": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:TtKwdgCv1dn92bywis3HWxwEUSvdvvxd:Y8RoW+I5vqQvD8jNBcTVt5A3bIECp8mCxGjrrPYh6i1gOs+ojQDg297/hVeV3mFd59hXalaqi14=]",
-        "jwt_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:fWSa7deQXPFlN1jlNb+w9586OCuJj/jW:O7ZCfxL8rSzMzlebGuwmM45xqMrvPBDdytzTpz2DsL41MKZTa+QCOtUo2v8y6E3m]",
-        "jwe_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:3apacN47k9x/A2Bo2X/ZSONNX0iztbln:VqbgJMRmLzQ/8dKsv+sFS0/5kqGeUhrNObqHiqn4mDTk/cmKMJkPGGftxykPM0UH]",
-        "ml_authorization_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:GUMz1xrwd7EuO/GeMKQGutSrKynUOpns:DHwDhG7Unohq9Vh+SP9K+Tx4wVyLcnfKmzGkjpLFlE2izgbmEEcPYvouUmol]",
+        "product_id": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:nQul5nx285K80oDF5U5DCI/eb4KEeLkS:F42iTJjS6G7XyDV6e7j/G7f4vLtMaHi2fyrcrk9nuUAFFlYo6u33SGwRoQ9uZPGwn6xvzvbobcA=]",
+        "template_hash": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:NhTmA6WptmSrqeqpKR2+phZ7Qvu8lZZ/:nEYj29EqjOdtCL/QqVWlGeovOVf2Q6KZ6tAkMakFAUWz8FS2Z8MbLwZfppbCxg/OxPA0IGxuWto=]",
+        "jwt_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:AP1IfaXwK/PNT3R7Z+ieSXV5OEooBLbI:U2szxOhN2c19doaXxKP00NH7DXttBLjaxWwc97fjJPGU1zfLSrdkwWjqSuXBiFAO]",
+        "jwe_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:ulS46FVj5S40/k7O5ncsIeIr5xzT9Zr7:OmdCIg7Oqj+IrJMcd+bglZD9CkhOJ3rLGbg0fZyAOvNj+TmjeTXiVwaxDEJQqDCD]",
+        "ml_authorization_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:0jROD4D80EDsmG8EMLvWWARc74QKNcDt:CTBtBGQnTD5CnoItNzR0r5kUAb4dN5bIqtbqm+uK6LALIduYRZjzRxHc+ZsK]",
         "_widget_configuration_url": "https://admin.freshbots.ai/rest/api/v1/widget-config/default",
         "_create_bot_url": "https://admin.freshbots.ai/rest/api/v1/bots",
         "_update_bot_url": "https://admin.freshbots.ai/rest/api/v1/bots/%{botHash}",
@@ -31,16 +44,21 @@
         "_chat_history_url": "https://api.freshbots.ai/api/v1/customer/custHash/chat/history"
       },
       "akismet": {
-        "key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:fqJmDEq1YH5ZRJhsFI9r9UighuY9PbOd:V2/p7mM4z9EzfVXBcCM0WwAA1hYJBgkxRZSw9w==]"
+        "key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:dHy2H3MnZ14PygE3C7MXFpDwJJiYKpC1:slY5b8GMNVV+8SpfZAUDn2z922d1GWoGIo4CYw==]"
       },
       "heap_analytics": {
-        "app_id": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:AP2SPlDL+akB0R8E9YNU8pgdjAPzBrzP:ocW2UNFKc3g0lm1fSgaksu1EV+aq9yVi5oY=]"
+        "app_id": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:HbO4y0LlaFkgPvK0jLAVuGg/R6BOapcY:1BOWIS9mMTaj6GxUzTpHvrOrIg0b7CgQGDI=]"
       },
       "braintree": {
-        "client_encrypt_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:4RL0T2yrebs+0Gw62g1L/YPtCVqG9dG0:KyWg08qhycAtUOg4kDTa+b4b+nakhw06yDi+C0SNTim8HQzciu/zHPCswH1OzFdEaOttvA4uJlws1kfkawQd2FcukvEejgApe3MtWc10epz85EZ3cB0BvN1e4p7YzHeUhOlQCG3Z+MyPC/XKo4lg8XVCunuEBSD4noyqO4BwwT9K2e5nq+49SHeUTcAKQ06RTuqfKAMxTbh5uZtqu7H7Bj9HGvcRPeCqqbB1y5NbeY1vtAMcqhHjFQ0ROou5p+Ihsx/xNSldix5KIylyOtOn23ej03bL344eKX9mjGf7z3ob+5lclN+erhAfk0Rf+h4Zj6EOmYllJqB9RKEaSoDaTgG1dK+uHzWN47BwrbwAzu7rih32Jg+VVNF3NqwphOTFkCgUA/LGzBYo8SZNw5HXPuanpTkJeTIloM7yMKvIG01ESGdJzi9blqe6wSg+t+YaB2R8MnxoXPmTNlVisluGyMqMDQtQnuT7Jn1ePwZygvalzw7QNXqiYQ==]"
+        "client_encrypt_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:hq0CMBY9iqClJdlZlNCpIZSOI2VCFEWC:tF+rcUQvweFT7IyQKaXkQuV6yn82nbwiv00UzfItUja7YpLPoWdn0dhoFbDALwel6d/Iownl04chqsdDZVqDWRzptkvuLCf8pS1Pza4mUym/AHrhPMQl+j+Huxc+TwXcEBc9X2pHkbU9z7cjWtdLWe3P2CqL/yS0+clJzKSc5DYGWvDjmnQmdZW+M5g2Xv8skQW8KlpDwNfT1uChVlI7ZyqYWgD8bidyLbm0YrrWFfvC0EZ8JaCmovXIdR0WZQR/EFk4vQnRgQ1fJeH/ZqUHEDvoIC8JhYWdD0SdgFxAP7Dkyd53+bmL/uEV8C/h0BLoLQnjqj6+8DvD3eYm9vOibIEMcpjhAE+m9AmuaT9zDzOk95HyLUfHtClGGfnHrfSVbtRyWADjUcIOEpMefvYf+27IF381ZNq9GP7iHBxZZ6YGNyPRdnIdj+COfvtm1/49u9HwNzE7BTSujB7Nadl0nwChD9TF9tRhYKwjwfV9pmAFR1pxwUv84A==]"
+      },
+      "cron_webhook": {
+        "_domain": "cronwebhookindia.freshdesk.com",
+        "_sub_domain": "cronwebhookindia",
+        "auth_key": "EJ[1:h9A6UpOwi8ungeOiBE55MfbBknVwoI5uFRZf/PA3+i0=:vV+Dq+MnMJCKv6nrWqLaEOwjwn/z/FUc:vfMNHsEqAlC1mPi+IEbG4pCOHA2xw6fKG6KUofi4+v7jZAiQjhKQbAPl0BU64lJj]"
       },
       "internal_tools": {
-        "_domain": "supreme.freshdesk.com"
+        "_domain": "supremeone.runwayci.com"
       },
       "asset_sync": {
         "_fog_directory": "ind-helpkit-app-static-assets",
@@ -54,25 +72,25 @@
         "_bucket_name": "ind-goaudit-logs"
       },
       "recaptcha": {
-        "site_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:2DgiN6bq0PGObl2BSq0nuf8RbbGcit0J:O9JeQAryEikifi1sImhEJGNparb4Y5N8yGXLQjjZcN92k8tGh1WNhVwwbmFeUo98H1X3+fmeJ+A=]",
-        "secret_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:3OvalKYracTOzrJtMN1t86Wix0cQTWWk:YIxacmm9fc//hm2sLQ0xWOsmoYDAx+wZaq1qfYhNzYenLRgabEiSEVGTlLW3tuJHIFZaoKZnsx4=]"
+        "site_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:3VRrLgxj6wCL+2ofT4r+R2WVgET46ErS:LNx2maOJ979BZQ9BWFVm8YVZ5kgGux33aBndGMx1FgtC2Et0Tf7DRpm1PomXp/NEw7Z+GIR0zy0=]",
+        "secret_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:bz37xkDnEUKPX+5dTEeM7xrNLbzUHbOE:AYjy7L+YxWbjIimmkVdGxu3I7nxMm3nxqdNuxytlEY9b53euxzm/pJuiNF0NryHlMwhGvk+fVP0=]"
       },
       "ner": {
-        "secret_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:FF1RIDo3B9ppIQjzDNcSgu0UxKb63kQa:vhkFWBFCBGFWpvHfFQ19m3gUetF9afxFWKOJGyua1iLrSyQIcHWSos7Y/IfPFE9hpBU5YgMZkjg2Tgo3VofRkOTRWDP7QJy34LKz0YQQ0t4=]",
-        "iv": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:YIDlAZRqLV+IatSIXlf/s2Sy0O8DF9Vx:BuGZMScanK3Abj3ZkaN+sjkaWg/FjaMtU62JHENhAAoLL+DcVfe9ZmWCuolahVQA/67AHYamcx1jO3QgbciNjBQFwX2j37h+UYBEJWsgfGI=]",
+        "secret_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:GYnV1BzAXCKIHekel2xxjISYhUZCTkhv:Z4CXyc6Ysb92llPjzclXR+nLV2UO/+kkXh4w4n1l2wtpztn65ZQ9ioMK7ONfRf3ybG83+d6o/xXzluiRmZNHB5XoahuD8PgAh4HbFVjgYA0=]",
+        "iv": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:HiD1wd5sZIy6BMJoi60QLLL77uj+Osqh:S/DJi3MDCmQNXOr+Ck6KVgIPga1qVlTEzcLj0ekEiY3FqoWj+ka2kIuCiXAiRGbDis0GJ2qGLrorkr7PlE6iktJ4mKkkDXHYAd8xEjkaZaI=]",
         "_username": "freshdesk",
         "_datetime": "http://ner.freshworksapi.com/datetime"
       },
       "fdadmin_api": {
-        "secret_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:/JGTOCuv78aiUWDil/wiuG01kka21A4o:QozrCxfu4m42WaxM/5JSM3eGd0lFqOQLGVJnSRc8d3Zm26vuff2wu67vur2Vk4Yb]",
-        "authorization_password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:bWI1aVHAgqAkwnz4HE4OBXdOnFl22TkM:Cbsd0zuDSCZ4LFDHQFuXcZr+sFvCD8rVr8IjDKyFElfL8ac=]",
+        "secret_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:KXl9nuyx7RqWRbTHviWAiCw468ZFogbb:CGhr1Ol5G8kX/x268B50QefSai8gjSfbVMstChQ6iA3XtEVgDodw/D2h4+YCKQTy]",
+        "authorization_password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:6QiafHEhs1vk0Pe/pwjIVDpIUDpg3Zz4:rH0TBlT/+i48tKY8jKEeSvn2ymccVQR2/ImiIfowu/uVdew=]",
         "_authorization_username": "freshdesk",
         "_host": "https://freshopsadmin.freshpo.com"
       },
       "freshcaller": {
-        "jwt_signing_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:4ceUt21kuGBP35Asxj5TVMXGLqmeWlYu:V9KscRtPiGZx46RJJOiqfdWtf+m1qA==]",
+        "jwt_signing_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:5kSLujs29vuwP14y5ppPixI02TpSi/hs:/PRbdSWQoMKRn2rrAPGS79nr/rPq+Q==]",
         "jwt_verification_keys": [
-          "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:W0Rigr2q38butd1SxKSPG3xHk9T8Cg2+:AYJBOsmQFgHILjhYtQDH3XDJTR0eWg==]"
+          "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:ImtFFWcJ/Fjiw5NLQVnz/aaZt2K8dZwO:H4camtHMykWn4o8f0C1mcPpSNMkXEA==]"
         ],
         "jwt_token_expiry": 10,
         "_signup_full_domain": "https://signup.freshcaller-test.com",
@@ -82,27 +100,28 @@
         "_region": "ap-south-1"
       },
       "zendesk": {
-        "app_id": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:wv8H5SRdstVBSNPNIynhQDtpcjymIwmR:VPygBC+5ZtFIfoBxGrjxGWM4Cg==]",
-        "falcon_app_id": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:Z5BIJsFzZbU+Wu4Ms9C33klEz8p3CAFT:uN8twTcMaxz1Zd9HHI+EArWwuJQ=]"
+        "app_id": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:tCfRnIZQM9iHiGUkcl3hLTPja+PGthVk:On157bSUHH5Gc2yWa/XIKDqXgg==]",
+        "falcon_app_id": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:Szx1t4//qE9uLRW2dcKtT5tcv1W9RU+C:627/vOQjbSOFiVk0sVKkHXpO3Bc=]"
       },
       "collab": {
-        "secret_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:jE8F8BWqm1vQoW/95PF+7qNOFm6/cUmf:v8AA4HSGvN9LkG3MDTbbXUFfVvTqr/knhm9OTcGdDRKrefnq96Lx4xDZ23kJZQru4A01qIecE5pgASielqWOxKmtrFjfjtcsdt+JOg7yhHZOARsPlKZPgjgPrcKPJIvd+qB0nS3mqRs=]",
-        "_collab_url": "https://api-au.fdcollab.com/",
-        "_rts_url": "https://aps-pubsub.rtschannel.com/",
-        "_freshconnect_url": "https://api-au.freshconnect.io",
+        "secret_key": "EJ[1:Tslnjx7PMEENeo1Zvt7yUPRvnxbH+b3zp4WQuBi71hA=:KQ6VTwMqD4QNQUapbPEoCM01dFgGfgbt:8naFkJS+167QjOVIqIIByrkK/+yziRZP3tNdFoCDQbtLpVBnH8DmNzzxqnhCxznlKWzBKg/sXDGCVsyiwrzYK1Dib+9fn9GFUkY6yvpbHJjPkaifgc3T0BOyRTfRuZNHDmVmKMNq0zU=]",
+        "_collab_url": "https://api-in.fdcollab.com",
+        "_rts_url": "https://rts-in.freshworksapi.com",
+        "_freshconnect_url": "https://api-in.freshconnect.io",
         "_product_name": "freshdesk",
-        "_freshconnect_endpoint": "https://api-au.freshconnect.io/product_account"
+        "_freshconnect_endpoint": "https://api-in.freshconnect.io/product_account"
       },
       "inline_manual": {
-        "access_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:pAlZ8qse993yV80AbjsLRtW+0LEB29kE:qcVXwjVaK1MBp3vxRY0DPrpfGIKFFYiu8rtC6WUEfLA0txeqEJgyIcqMS9Wqpf2z]"
+        "access_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:PCxnfBD+yQuKVj5QymAKWnTKt1rd6ndG:NVniD5Tq7dCNBGE8F7PHy4f5SkzIbPTiRt9ofuq0hdLeqqrK8xju0kMm1Ml4BZqQ]"
       },
-      "autopilot": {
-        "access_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:fE94Ch1FpAbyOIjevkwYP2B9ZdMh469k:kXbp0vrEyZWIQ3JM6+yX1qwWhsGfty0GIVInMMMEmsqVHfxdSyf4sWywrSIfUsp1]",
-        "ui_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:NXl027NCAvQxMRHXSFOvTSQJQNlfe/+Q:HtGTtFgh+9VF5jkSX8A8uuvn+ImFARsyUbym44pAMGa29QZ6q56uyi87RBGdDA9IFlcW52E/xF37C0LNzOShJ74/FvKYJA8zrV2TXbwTNgY=]"
+      "freshmarketer_automation": {
+        "_contact_url": "https://freshworks.freshmarketer.com/mas/api/v1/contacts",
+        "_list_id": "1271",
+        "access_key": "EJ[1:Jt6EUWhBs5cC9UoEuhQ7iH9tU+InTamQp/m/IYSzGE8=:tt+nNB4nSosQLIG+CvVCJFtVbwDm1/OO:3dbgsz7I80EI/qmHZZd7fIHOuaUrz43ex2uNQLh4NEtuPXACI36q7fofrVTEEQPUaCd0qIMz1Jo=]"
       },
       "freshpipe": {
-        "secret_key1": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:fAh/B1y3Zqnv+N18o3wACrpEW39/KSet:iSlhhuPdr2+UKdRVoUBjiYww+G1V6xI+MZ5MN5j8j3Z9IVu6wsBBR9EQXa/4SUi2OUwMMVrdxNo=]",
-        "secret_key2": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:Qan1Cz7WZjv9dmiuOsH+8NEr65O3nuUH:4TqXJVDUSgi91EgkXVBtZaHDeDBgw6V3WG6xSzDjR8AA4B7tKh/sYu6IvBysUT8o2sGiZnqgTBQ=]"
+        "secret_key1": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:i6m48ycG75d0e+DzpYVvynsxqyPRjZj8:bsEGYI6bXZskR7Hy6lQscopCNuJKw70hTufjkGig8qzm4THKSdoZnAzm46z+nOxwd4cD7AmFWhs=]",
+        "secret_key2": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:ne0ASOgKk5eRn5tR9ceC93QxEDNzg8/z:T+jCeMpCETsu4Y64RGnx9NR/SiaWR/JOGgUA86HbAf0AcmM1+neGd28T5KWWx3ZOTcX09aLtNgw=]"
       },
       "pod_dns": {
         "domains": {
@@ -111,12 +130,12 @@
           "_podapsoutheast2": "podapsoutheast2route.freshdesk.com",
           "_podapsouth1": "podapsouth1route.freshdesk.com"
         },
-        "hosted_zone": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:VxwVJ/jJIJUADBGILa+rA3raTRrZGTCq:O5WiJXME9QQqYvLh5PzUgQJZC7xT8LQQ4PtkavQt]"
+        "hosted_zone": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:QAjUMal42lAoOKAT29ZhPkQ8Uig8+waY:OLdd/nYjvKofyYa5llLFhtkaTsIIIM+b8WBZzOjc]"
       },
       "fd_email_service": {
-        "key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:wKcM6CRwEmoOAM4WpajlGYqb6/awlxpa:ch2+20dVECQWGzX8fotY1s8Z0aLQB64jFcXdS7iDpmpFW0Q3ei5NybSGeo4/dD8H]",
-        "incoming_email_api_key1": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:wsuwllsXQuanW2WmUUZMS0XCalk/alH3:Ayv6qAaPpK+cQbLKPLzAx5n9REmB72MKhtycRIxcQoY3MQjbMwVgWbM6kmshkQ==]",
-        "incoming_email_api_key2": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=://gzAiIKG6/cXK2iQ4RMHepHebeg9m3E:MfSxl9RxPC7mgCaEWZpLqQLC+BgUOK0h7Sltqqmho/bdCYs0mwZrIIA8juuhPQ==]",
+        "key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:sOmwZP8/NghQIc9aCcGfmLDotRaL29kV:vamH2ylh1oTy6+57qLYIb4sXeJ787TBaFsF2J9BhCqAIoM/PNbwCstLT++5siTSN]",
+        "incoming_email_api_key1": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:lhoqINTtM+OKdzkgsD9EbzjqXWK4YMRD:vEs0X8by2b49rhbidy1Zz57xR1gaL1Ema5L+qe4UjyrbAvdgRxUeF/hxWvrh9A==]",
+        "incoming_email_api_key2": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:YVdemXXPGyF6JrvcD0bzMWec3Pjs44NJ:wkLzXxJiLx8K5wnhcLUeTnh8mRvNZLNL5g370cotzR5Tuv+fn+HXaqXAJqwxEg==]",
         "_host": "https://ind-emailservice.freshdesk.com",
         "_timeout": "60",
         "_url": "api/v1/email/send",
@@ -124,19 +143,27 @@
         "_sender_config_url": "api/v1/account/senderconfig",
         "_ip_pool_category": "35",
         "_antivirus_url": "/api/v1/antivirus/scan",
+        "_account_destroy_url": "/api/v1/account/delete",
+        "_spam_account_unblock_url": "api/v1/account_blacklist/remove",
         "_campaign_url": "api/v1/campaign/send",
-        "_imap_application_id": 1
+        "_imap_application_id": 1,
+        "_get_domains_url": "api/v1/whitelabel/domains/all/",
+        "_configure_domain_url": "api/v1/whitelabel/configure",
+        "_verify_domain_url": "api/v1/whitelabel/domains/verify",
+        "_remove_domain_url": "api/v1/whitelabel/domains"
       },
       "product_feedback": {
-        "api_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:1QGNle62vCViNvuvHkI8suDySuH7O0Us:1GbTrQE06eliwqcXayC1Qitj2pxKWZQMMTzVlBXG6ic4u+2B]"
+        "api_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:BCwEQ3OU5wYIi7BbO6itwd9A3W6ajGl3:M2FF0TmMBz+R2jwiWCFZ6cTZd+RkhgalBQvlXMuQMYIw6pgL]",
+        "_contacts_path": "api/v2/contacts",
+        "_tickets_path": "api/v2/tickets"
       },
       "email": {
-        "incoming_password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:aR9NpEfNuzFUNB0cQ7qVi+37QIwhLdJW:Eei1cYEvrW/aSgv+4n9t0wdQA2nyaxUFX+2FVQ==]",
-        "outgoing_password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:RC1XTO4ntmtat4u0DqE7vpOGBYKAOOJR:pHqd5eMruXV/PXuVYhd/ys72lD9QsB/JxrLEBmo2Dw==]",
-        "domain_validation_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:SlrczCtgjPE9hZlHkpy0zvvIq9rg05ZM:czYauFNsQehwcjgn0q5b79OwXrDKOheQrXWjpFxo9Re5E95NCKRITD+yEKS9onr+]",
+        "incoming_password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:/CHOtqmrevwi17sN3WyXaMpkhXjF3My2:hCOsuik/WsDZJX08KYA0l5pT7ucUhwTJMODRkw==]",
+        "outgoing_password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:MoLQii5yKMSccmnWz++zg5PI+L/zWRtt:THiKt+rKNiq/fVgfVJ3oY1Y7m8FdMy4FD316FbcFRA==]",
+        "domain_validation_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:cfhnBlCh7aCTyB4FlXPi+1TjeqelHYIL:EVBsGlp78+x/6ULkCemHuUzWuXfJVZGGChQrGY2Gly1dV+tw3SrJqLjLbgmfTxQH]",
         "categories": {
           "category-1": {
-            "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:SmktDHb6YaN+cM+vvnwjvwLtjqkyU/2M:QdMLDa3hLAMdC4U57zU0fEHRYbxm5paKhq1t4DUiow==]",
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:vQ50F5UtZiruv72g6l7nOAmx9/qfTEa+:7FPgLi9uDnMDqsS9yRGgAV33IIreazFfiPbA+aTqEw==]",
             "_address": "smtpoutmum.freshdesk.com",
             "_port": 587,
             "_domain": "freshdesk.com",
@@ -144,7 +171,7 @@
             "_user_name": "freshdesk_user"
           },
           "category-2": {
-            "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:umnKpqt9PWt/1qxDGOoROVziAKqd+KI7:5PAjqMpRQKe5rDpq/HRijOPbx27WoT+vMapSdUE2MA==]",
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:+KO4E2lsoW/hLjhSIm5g00487IKdQX8F:BUKYaMGhDElwCD/rLRRUozy6FLVnoJCrIO3PSOlh7w==]",
             "_address": "smtpoutmum.freshdesk.com",
             "_port": 587,
             "_domain": "freshdesk.com",
@@ -152,7 +179,7 @@
             "_user_name": "freshdesk_user"
           },
           "category-3": {
-            "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:eDIKANcnCzzpgIS6p2F1Ni9enbWR8j0E:n6V9eXCmTPhylOjG9efpAD7NZXIG13oMFhkcehYXzw==]",
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:lB92O33hkghX7kmnSgrWDCVIWU2huZjZ:yaiGf5og70XN++vKHrnm+rfMnc+1LJqXjKlJQDKDGQ==]",
             "_address": "smtpoutmum.freshdesk.com",
             "_port": 587,
             "_domain": "freshdesk.com",
@@ -160,7 +187,7 @@
             "_user_name": "freshdesk_user"
           },
           "category-4": {
-            "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:KSysndV8kF9Cb16mN/LfXpxfr+77RXfA:FYKbluX5VEDgOSQUSvdb5Y9+VehPVQHDw2dj2w6KVQ==]",
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:+b6YEMNmH+mRgB95VpVV/oif2700OZN9:KuG9gkkP6qRr0AVEnKKF/B9lLZo7SgDoJT/4/wvf2g==]",
             "_address": "smtpoutmum.freshdesk.com",
             "_port": 587,
             "_domain": "freshdesk.com",
@@ -168,7 +195,7 @@
             "_user_name": "freshdesk_user"
           },
           "category-5": {
-            "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:T2zwkwBWDLaN+veLVh+jYLzcSPrQke92:eczhdB4g+FzfAffGYYWQ/I3oh5CxofFC66/l1IxILA==]",
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:PEjBk76BsKl7wEpPysWVHRg/cW0K0X/t:iqRBHFjF3a7O9aWb1c5ZW99/BUXkjHqkTBIZ0twMpQ==]",
             "_address": "smtpoutmum.freshdesk.com",
             "_port": 587,
             "_domain": "freshdesk.com",
@@ -176,7 +203,7 @@
             "_user_name": "freshdesk_user"
           },
           "category-9": {
-            "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:IKiN7Ym5L6J61VDRpYk/h+5LkTPICqBh:JlmHgCcC9sym0JkC2s/OGWRCwN3ntGMWy6PvLlzOfA==]",
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:zfw/nG1oMLLfSVd6c7YtOfFFo0CWEeKu:HJq+KIiyteHT4x8LKKdjkoMutmZcg4p3+YEDAWomCQ==]",
             "_address": "smtpoutmum.freshdesk.com",
             "_port": 587,
             "_domain": "freshdesk.com",
@@ -184,7 +211,7 @@
             "_user_name": "freshdesk_user"
           },
           "category-11": {
-            "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:bNzHh5+9PfdiXBv3j1+TYDiyv2UxDkpr:USsXL4PPf150FYpLRwbVG29Qck+ImfzAnPkkfQaACQ==]",
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:QAQ2BVTMElBeD8XkSciMhOYXPomVptfq:l4/1yVTpru4RzitgGwrwNVDjEk+cWqjsohQx3+TXSA==]",
             "_address": "smtpoutmum.freshdesk.com",
             "_port": 587,
             "_domain": "freshdesk.com",
@@ -192,7 +219,7 @@
             "_user_name": "freshdesk_user"
           },
           "category-12": {
-            "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:isPnIR7i2k8yH5K9i8gsa2aYvLO3OKQd:ezVR+n1aXvuJlu4iAKutuLqAuGv2RzCmYTLqtxDx4g==]",
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:L+AM3JrMHWH+/dq5N7hieAlD21T2eWLp:JS+oAMImPHd2SnTyRq94GspQvjOH1Gd4LvLrX/T49A==]",
             "_address": "smtpoutmum.freshdesk.com",
             "_port": 587,
             "_domain": "freshdesk.com",
@@ -200,7 +227,7 @@
             "_user_name": "freshdesk_user"
           },
           "category-13": {
-            "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:39+6QnWf5FslyiUBNmg/6YDQd6w8BhwO:Begd4/ONYuExbN+nN07qjq69of5VdAItBFzm6AzP9g==]",
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:jMIeyO/vd0xJqgirq2BFd0yatjdz8bsi:pTp1x7tiZd/RX0BiABn1kduK4SvVPUvQT/Pe9jo6Ww==]",
             "_address": "smtpoutmum.freshdesk.com",
             "_port": 587,
             "_domain": "freshdesk.com",
@@ -208,7 +235,7 @@
             "_user_name": "freshdesk_user"
           },
           "category-14": {
-            "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:IaWBlKUoA9nDn+zkZcr9hF8dsaNGGzCb:L7AUBLC/sAhq7jEljpHiPsF4TMe58RTyKyWD3QyyTw==]",
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:0FG0ezx0y1sVU7AEyGRe6AsUEegRkxp/:PGXn6nybhAteLH0miH42dgBIhwL8Tnrmi/wwEXWjnw==]",
             "_address": "smtpoutmum.freshdesk.com",
             "_port": 587,
             "_domain": "freshdesk.com",
@@ -216,7 +243,7 @@
             "_user_name": "freshdesk_user"
           },
           "category-15": {
-            "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:eaTVF0FJxi5Wt+6WjVR40MS8tD/vRarZ:/qjaRdJKF0W8d5zQ8vSsRo+ctQvUlzy7kv04B+MP4Q==]",
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:Kps0alURONhikZ+wJUFfnazp+/YjONNa:IFv8rOfB6GDcZEpWP9eHsNd+CMwSyUS1+JiEXgyjxA==]",
             "_address": "smtpoutmum.freshdesk.com",
             "_port": 587,
             "_domain": "freshdesk.com",
@@ -224,7 +251,7 @@
             "_user_name": "freshdesk_user"
           },
           "category-19": {
-            "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:kwNUsZHl/SZuVcIPbXt2d70sD5JRVGkL:Q08r7WhUCOYmGeWhGcWFe+VCizc/Eu1Ec4zITf+xQA==]",
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:ppau6AnKwdv3z+Qfny9WSYS2zBqOyi6g:drZsSgr0zDaCU46ctyrVvVNfevoQ9jJbB7kw4L3vJw==]",
             "_address": "smtpoutmum.freshdesk.com",
             "_port": 587,
             "_domain": "freshdesk.com",
@@ -232,7 +259,7 @@
             "_user_name": "freshdesk_user"
           },
           "category-20": {
-            "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:xE6yjgtIBr6cbFvvdBaRFK/lJoMhv83F:qiOKbOLlSSvOs4eZvf/4kwjUHMcMy4Gji83suRDrWg==]",
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:MHeQSrF2ufEEJ9sapQFptVYx4CZlJrv/:TtyIp8U6IG2g8Msq3A3VXpZUFUrZZlxmPKvXdKwVLg==]",
             "_address": "smtpoutmum.freshdesk.com",
             "_port": 587,
             "_domain": "freshdesk.com",
@@ -240,7 +267,7 @@
             "_user_name": "freshdesk_user"
           },
           "category-21": {
-            "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:rf7yzuEW750xymV44eJ9GG5DhPJm8ClI:iKV0j3/Js1WSN/WajapeVyrfrzFhq56fzpPQgOo0/w==]",
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:BRB0vk8jcgSsWsDfu3yK2ZZbXlQC5I4C:GhWaHYtrfSiOaqg/phcPujtDUjyw9ZWvvEsOMbJDwA==]",
             "_address": "smtpoutmum.freshdesk.com",
             "_port": 587,
             "_domain": "freshdesk.com",
@@ -248,7 +275,7 @@
             "_user_name": "freshdesk_user"
           },
           "category-30": {
-            "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:SMPvalBXk5D5ZiBxDCPIJp3Gbmp6ZoZd:A/bpBs215jmKS7176PwrvbIe9CcaGywNBTXGyDN0fQ==]",
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:5jV2b7Qw1C7h9K7mjI1EMUQ85qC5Hbjx:G0A5czPZm7bQke7P0JrruJpGNPPhP88LIadJDoUNUQ==]",
             "_address": "smtpoutmum.freshdesk.com",
             "_port": 587,
             "_domain": "freshdesk.com",
@@ -256,7 +283,7 @@
             "_user_name": "freshdesk_user"
           },
           "category-31": {
-            "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:fWoMg/IHDSMmhhbje1GVwzUxrbrdYT4s:qpoGixiTZjwmBR2T4RDYTWm2SENTKN6k6fuXS5QWAA==]",
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:qDqXjPIIlea+vTXKMvdW6fpZ38/Wm5hW:iczi0p9kno8xtpCjTy8BCTENamn5LaQ7zrcJOyVsKA==]",
             "_address": "smtpoutmum.freshdesk.com",
             "_port": 587,
             "_domain": "freshdesk.com",
@@ -264,7 +291,7 @@
             "_user_name": "freshdesk_user"
           },
           "category-32": {
-            "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:5XdcgD4QWfeZEWC6Ys3PBgv0qrvuVvsq:iPlaSutCVdCD9lJUZch2+i/WEpO1ggk7rbNtEXvv8w==]",
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:Sss7EVP75WWEnFHP4IaBsWCsEAFiFAgZ:VlzbiZ1LnPmWN4lJn1vaMCUjWoR8x63/eu9aB1GBgQ==]",
             "_address": "smtpoutmum.freshdesk.com",
             "_port": 587,
             "_domain": "freshdesk.com",
@@ -272,7 +299,7 @@
             "_user_name": "freshdesk_user"
           },
           "category-33": {
-            "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:6gjjgWZ5lAD8cG3EZrEMbXTcfoWt8BZA:Ir0UY/BuvXXIWBAa1SgjrUqLhoxlNDm3WFkJJDteZQ==]",
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:RqZv5SdCK611leWIQk/c+Z2fmxgDx5O3:qiPdK5a3WeWGQthFgb6jQAJYlW/e3s37ZaRY6+BpAg==]",
             "_address": "smtpoutmum.freshdesk.com",
             "_port": 587,
             "_domain": "freshdesk.com",
@@ -280,7 +307,7 @@
             "_user_name": "freshdesk_user"
           },
           "category-34": {
-            "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:5sncHA2XdYgeIaltkpWiBhAmCmMrbEyr:o8ucswC8zfUGK1SNF1a0CjvlkhIQ2m8Z1Hn5CVgqzQ==]",
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:kT2koRdDoBQbf4GlgAnU/imVkvmHWNuV:DVcTXJPRKwqAYx3XEQcGgJWrTbhXoJVeq1HP+ufntw==]",
             "_address": "smtpoutmum.freshdesk.com",
             "_port": 587,
             "_domain": "freshdesk.com",
@@ -288,7 +315,7 @@
             "_user_name": "freshdesk_user"
           },
           "category-35": {
-            "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:qeKOhqaxWaW9R31errr40cuP893NlKN2:27aAdRii4vwIvsW236ILuDnjF2+PZ4lPKCOv0hTAcQ==]",
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:seklGNzK26AWNbhBlYoAed19sJiI4bRW:ARfpaj94vtZkUHCVeRtb8aDSizud+lV/655ML5wJmA==]",
             "_address": "smtpoutmum.freshdesk.com",
             "_port": 587,
             "_domain": "freshdesk.com",
@@ -296,7 +323,7 @@
             "_user_name": "freshdesk_user"
           },
           "category-fd_email_service": {
-            "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:U8XGStsCyXKnI8z6RMp7+vpAvtGBCnlQ:EANOouUFuKYv4I7LTlg/eg2OBnBaRBtrQ66lpvTFwA==]",
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:k4fmawlNc6+twNDlkBNuClhKSjF3jbvT:kCwmWKHA7XujNG8tzJJNpkrFQDUrPCmK/shWbNAzwg==]",
             "_address": "smtpoutmum.freshdesk.com",
             "_port": 587,
             "_domain": "freshdesk.com",
@@ -321,10 +348,10 @@
         }
       },
       "livechat": {
-        "secret_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:2FW5xMB+X2nc4cf3XsJ3XLHWkpBNkLwm:NEmWFcmJnkbs8uXqDuAGdqY4pEKTWxI6LkA+Jm7TLKE3D37Z6qiG8+kOxZNusIDygaZy2KNqIzs99NWOYi8U4vMVTvQp9NWiSuiSvb74yy+HKcllkG9fTHtz8zUuNjKaHJyd8S3CcmnQfsP30riVpOYVS1yJhQplC4n9/HOvcO5P7PVDNEGVB+VH51kjIuSz]",
-        "app_id": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:JZ2bSEJ3llw8Px9nTo4CT3C41RFnv262:Gg6wT/HmlQkBoHl/jfuJ9ZgV/GXV3QzW+FouFyz8f7ukF9+l8e7OU0JhNYbDPk2M5VK3S9PuQV25p9gWALzN5FdfSEqLgzXvUrCAT79lDg==]",
-        "support_site_id": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:aFKWxidkaggxYZ1ESTxJ13HqBzEE0xE/:akQATOxEf3o3QqoN4YnarB5Ipb0iX6zERFpyOOKFbj+qZFydjQcTY+rtJkYXLZH2]",
-        "support_widget_id": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:lGaxn4Yyj1xm0I0uycPbuPsDwV+RJ18F:2R6G1KDsSBCe6o7HO4hXIISKsCqf5n7nqSeZvX8TF5EtkD96cod6YIsU3v0WTVTiIg9E6w==]",
+        "secret_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:BKALGfMVzh7htuVnt1vObrIhSwctlamG:3NqBH37riMazjVkR5CxeTUSnK+iyKKW9yDxsZ/GQ+1CdjB21mR7Z7kWjEfONB9SW3n+aaHnDFnfulv14Wquheffo5wWnQRi4LVmJcSoC7LrrxHjX4BBoxGQHNU1M05ORCZm/BifNk/8rMcVWjeRis2lBwDJTxU/Dkt7tXQxOSiWWIXRjzzkE++DRDjfWTQ54]",
+        "app_id": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:F6f/BqREcniKKZoiZZVruMWr7hsIy7aU:shGvgojvF/AgXyvnF8k+lvADdgl8+LCAMkErxGO2Zl9O8oe4OEgjHpUOkOkHFAawMKl8I39lfes+bnm8TxjRUujlIZ/f5tDbV+1vlnRXbA==]",
+        "support_site_id": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:cb7Hgg3vyhKLsEd4JBwMBJXFWaLLyU7n:gzOZje21YTEkGA3Wrx3RpSDA670Q5X0gX4hQXEMJCk4p3/KHRi+6eHAIc/mGqxPn]",
+        "support_widget_id": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:kFWQmsKFZATy/wWPyt6tvP7x1dhp5Xxp:LvqxRr4tCmL91cIhg8paePEwhAgFMalW/nx92xCEB2oB2gkepwPnLKVWHcTDg6P6tiJLMQ==]",
         "_comm_url": "chat-au.freshdesk.com",
         "_http_only": 0,
         "_socket_io_server": "https://cobrowsing-au.freshdesk.com",
@@ -346,9 +373,9 @@
         }
       },
       "node_js": {
-        "rest_secret_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:CVEw25WSXXLGcyxvBpmzm1UTbmCyDR9I:ZZ7OSkwWXJvVcSn98RMBKwLNJwjYf1gsQrufYruHTjEH9zKAnPFy+YSvyIPcQBgPaSNT+oF/C6vDHsAXY/FeKLjJjT2qYYu8fxAODjbVJMY=]",
-        "auto_refresh_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:MsOolr27+X86cDPW9UWqOE07Ljcjq/3G:ULJF9S7udpfYGekdOKH80n+u1Kow5Urlul5PvO6AKp3UJaXFup7gJkq0aY2vBsrWdJdCIL9SM9pHfrWZSe3bJxPvv99pUtr72nBitRppwnc=]",
-        "secret_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:gSAwwdJCmAgQzEH1MfaJt7pYSlBAUwau:1LorGuVl1FPBWEEy9bgWahya3taXXMxOrSXAtggeJXpCFa+fj4SU+oAyI72qkpVCIjE6P12CnYFNgDR7y3fcKtDI95xcUG34CRnUph9vHk8=]",
+        "rest_secret_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:5copewV2cuB755m5rgMhOtxrrQeQopTs:sv8VkGSmHPbRk/aK5EhVWApHkpqfjJ8pqd7xHt68Q3J6Y3RaXPnv4Hj07YzCpJYUPmqCNHTcHh7tz6yyHW109kJctHuESDe/FpGhiv03Ets=]",
+        "auto_refresh_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:09er6liYqBNt9WEF32oNY0snLAlYSsuP:AgG9iNlZGdREECXSsjOuZ6EKexuBjSCU58l2amiyQpFjmnUNlIGrsBc21BsdvpyaVn6f8K416ENsNnGOmBgg0tJEIvpDyl6Dq0zi9G22r8c=]",
+        "secret_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:RZjTLCs+ntmchS6gyGguPcNsGeulafzk:npJrubC5g9mSqrF7YCX6Y6RlxMfyuZ+WI+VQJY7pbW4CD5f+D23++dJpz8FdY4IIy0+CL9XE2O6lb8aycNb8LpDwGHUmNFezZvMvpjYidf0=]",
         "_agentcollision_host": "agentcollision-podapsouth1 .freshdesk.com/realtime",
         "_agentcollision_server": "agentcollision-podapsouth1 .freshdesk.com/",
         "_autorefresh_host": "autorefresh-podapsouth1.freshdesk.com/realtime",
@@ -359,12 +386,12 @@
         "_socket_autorefresh_host_new": "autorefresh-podapsouth1.freshdesk.com"
       },
       "freshfone": {
-        "secret_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:EIcsk6i4RhygrPJPA9dH3+EpCd+GPZlr:UXhQEF7cFGYYcokXh5zB1tUDCzyzeefKaiZYvkYpoVdBb9P50quDbMy8/AUCVWdSWRKEMW1jKyAjG716+bh+1nlpIr+ZsK7WfYmUszGq8V0=]",
-        "twilio_account_sid": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:SQQiUnu+n7T4zBs3lBviRLXaxymkIVtE:xsg1BTACj4A8BzWCo5lLjsf/Bwuhr5HkRdi7fYSzm2HQhwuTygXqo8NU3GjSXzi75GE=]",
-        "auth_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:ndOajRvk2pB2/dL2GQPzGMtizo2lXu51:/CM9mXpgk9SoCVByGDEOre4qiKnAWhiBbIRYELsSxOVOdjEgZpkcAUOpF2dIvIIh]",
-        "jwt_signing_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:lrgtJA1Ic6bglkaLk9hjBMSpLaIEoABm:ZECQjuS9P+3iW1ujXwk6Q26qvXGJCyUotqi7AaYkgXoHLi2Ed2VKdq5Gyi7W8/b5IwkR7a8ST1NFxUc=]",
+        "secret_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:EtHotihQvQYaqxGm63Xk+4MrEhE1Up5I:ki9WLpybJNCT3Fg7i6jyUWe00YwPUvYdDOJP7dYDsa+VRBm8EsjvAhsG9juUa5mH7feUMJ4Zt7BluoBUH09EdaW2zxDF+TUfdYnSxrxGrtE=]",
+        "twilio_account_sid": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:2vY0tA3kYFAFI8FPjmd9qa+3nfNGPCmw:dvIVQe9d688GxLl866usJQx1jEl8oc54ZWk9nF9nY4Hq9QVFiVmigk27vRhV7oDKpzI=]",
+        "auth_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:8ExzzXbss6/V0HxV7xaZCCUAAe7bFfcU:JNlA7Lx1CAvm9iXy86k2CIxx2XudYa8Ozo69Fyzdw7IASqiXh9VcHGjg2fiJ40zk]",
+        "jwt_signing_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:IiFTn0ICBwSGPGLXcK3dBLVtp6aPPcbS:a++e2KyTVl0N7+xiHL1iiJxVRpoC6JiwWzam1Tku0YvaXW4pjA8BWxnZNxBlk+SWNhQuD+mVFRXb61Q=]",
         "jwt_verification_keys": [
-          "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:5Sf5crmKQs1e5WvYGrYyBKgkozpzLfU5:PLyFK1ajY242a55vjxIsL5Ztnp+qRmAE238shRAosjmngYMaF+JF/bdeDqX/kLZPxMRSIz+uape5VX4=]"
+          "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:df2Ux2Oy/8bCbivO/f+UGeQIiiJ+mJgG:dkWk4Jw7p7hkXAXK2bZvVXSopEHL10ai94+XGEsl9tsdUSwgqGRlahaQnPQq4jNUm9zNkRVbQOONUHg=]"
         ],
         "jwt_token_expiry": 10,
         "_node_url": "https://aus-fone.freshdesk.com",
@@ -397,8 +424,8 @@
         "_port": "80"
       },
       "redshift": {
-        "write_user_pwd": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:CA0YZVgdHRhITmgKLNTF25ILNqXKLKOP:W+CcHorDyKZNP73/WtbHgg5LOWisf507]",
-        "read_user_pwd": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:/rr0gzM3gp5fDmHLQ7rx28j5YXZtk01f:ihA8Vs7YLxpZEUc0A80g4qNM6faOAfwx]",
+        "write_user_pwd": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:IafXvUv/C+gVj1yKuQAM6xZGeOzwhfCi:+fmj9ykpDVA/uBYx4UK1uIIp3AI6DCjL]",
+        "read_user_pwd": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:0l33vJja9ZvpPfk+mw+mFSsOHpBHoDeL:YnJ29zZsoI6dpBl0J8/n9BylN0nZv5R5]",
         "_env_name": "ind-freshdesk",
         "_host": "",
         "_dbname": "production",
@@ -406,30 +433,30 @@
         "_read_user": "read_only_user"
       },
       "facebook": {
-        "app_id": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:y9ffyDO2+19Rw8GUll3nDwB2SD1VbPFf:j2mT4jIKYyZ/Doy8mFzZu+oojmydCOf0wmdfEQzVog==]",
-        "secret_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:49EtovGefLE6MeGO1zkAlD3C/cjQ4GmM:GQkoKwiP02SJVf1Bnn2p6Y0IOEp7wUumhPDERvtOSWy++8EkTVeUGx5+xkuEeyLI]",
-        "page_tab_app_id": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:p5F4z+lS7T+v2PsHDHglLQDPtFEJfegJ:P48DdPKZU6vCfBtfY1+j8FtSHYDawuGOG7/D4wrDSg==]",
-        "page_tab_app_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:uHVR6jCnlWou+XTc+vYs6xWjz5C3yBEH:QQSp+kK/EX76XPcY7Qoc58eIe6nSCBU9VW0shInf3Jrx9vYYcw5gv7hnwCc+VIw0]",
-        "app_id_fallback": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:N6EvSMGw73IZtPfefTPVOYBmK3SlKp/X:VLLSe+TLr7EOynYukBxVS/zc7Hh5]",
-        "secret_key_fallback": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:vOYZ1SuWcVUSpTAFwCKigMVqXQp2uoDR:ikxlzU/FrbgXd5Iz8KU2VNqJ5SDT]",
-        "page_tab_app_id_fallback": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:p3PP+HHg8SI2IH91Wg71K3QRAcR3BIXo:JJE8vMuiA7qSpsA1KpHx5LG8I30V]",
-        "page_tab_app_secret_fallback": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:lqeO4UUasXl26hI6ii14eCDRF5xhXmnE:Rd6dd0g6ZCtkkEsDlrac/Fb7/TbK]",
-        "app_id_euc": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:uMAa3S5PP0ZeLA+0aJYZPKV/PMGhtpdo:PA6AE788l7JhODgZdwpaKagitodyZWLhug==]",
-        "secret_key_euc": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:BhbeH79n3TbMithgGjRIk49IFJDyvTCB:Utx09nD/f6ZUPyJPghyBMz+1U9RWhp15Ow==]",
-        "page_tab_app_id_euc": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:iKfOj77OlQ0Jf5FvCEYXTxXc8AV1/rJB:gzm8IBuYr3zhNpcFX5UK5mMyeSvZ5VezHQ==]",
-        "page_tab_app_secret_euc": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:AJn3/Qg3MEWOExN6aKx+nfAEkjsQlwpQ:/5u///V7KxP2kwKZoc+hq42m5w9lPf641g==]",
-        "app_id_eu": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:qT1TbZ8XywTrQok0uik3NRFoZY9oT6pD:DgcIud/9wGajaYFISrTf8PDHeeOl9Dm+]",
-        "secret_key_eu": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:eBmcC0liSsJih2RGJpZsNcJBiB7SLBkU:jpxchXtO5LaFPJNYN6rDbUnajT5FK46k]",
-        "page_tab_app_id_eu": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:5wMNCoVSa8DbHMEbtMJCHKW8N0BDF/ki:r0zPjmjq3+I2sgnHs0LolOzvK3LMCmsa]",
-        "page_tab_app_secret_eu": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:KXsTk7Nj9BLXNEhqC+PpoUwYbpuglS06:vHTVRBVsMwpfKISDSZq7lNHX6Z6z1ZA9]",
+        "app_id": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:BOLXVyqu+TSNoc2rZkkXPQ4naQJ2nzET:UXKt5N80wKOGZED47wmQYWHRIGLmiNvekF2aCK3+Qw==]",
+        "secret_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:/Un1bY9SJKdu7B9uLme/Hn9RgJwKy7O2:zafk7APbA5X2hHkJcaudg4KdcC5pagt8kI1FLgzn2Mvt+IyqcyWGVgHqXU3hAmm1]",
+        "page_tab_app_id": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:ZtuLcvz8ozDtdaSDgTY0IhMPRYOj2oCF:SD9FmSBdn9XUtGJgQmNDzjx+4G/9mDNLyDhlrnjlfg==]",
+        "page_tab_app_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:TGZ8LU9BzQVaJUvu4PEzD1JrOI6TSn4n:e9NQJIOs70IgTJJ83iiXLpCvZXNNce5Z3foN3/PdZgj9SUYXJLrGUhrXIEK+DAqE]",
+        "app_id_fallback": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:9KD8D+6Ot2pO/Z2xonly1qSzodL4ChDT:krX7ELo5WBx495UukK4Mdtlhopa/]",
+        "secret_key_fallback": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:SZEC8SiAFbMI1WaBApnjJQytgF7zD3vR:H63NNyT+3B1JZobxQvqh6SSPBblZ]",
+        "page_tab_app_id_fallback": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:av7Sh3RtrOCt+l7ZAh1WuuK3Lbj/r567:7mVfT5D0KKXxsza8135+UqauvhIt]",
+        "page_tab_app_secret_fallback": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:LQN2TLI0ouDXL2oFKrjdBp6bCMaxmrGk:S2tXAONfGQGVBur7oJyOfNPgRsbN]",
+        "app_id_euc": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:N2BZtwrDsmBdKzmkuxmrx31BnT8s1nqn:qazZTLa9YjJIl1pnUrZzpyHolWa2ubMv6g==]",
+        "secret_key_euc": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:7gDrIH2Et4U3ZGtotNVFaVF8BdZp4syv:yjN5PSTr4JMWfl0BVXKX8cqe4oZNMiH/xQ==]",
+        "page_tab_app_id_euc": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:TCUULeVjibt9w58m6AAgrK8FSfjE0PSo:QpQLGF+7MMWyMEeQBfIKKDNE547EAB8cMg==]",
+        "page_tab_app_secret_euc": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:sSVxvEBvu7a538qFJ769AmKBBKkfXTSR:uTzlQFKKz3MkoV+uPF66jveUXVKaa7wtQQ==]",
+        "app_id_eu": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:zjLRO2vvw6VcRdbsEN0OGB4igGSN7ruC:t8y4oGZBnE+6eKiea2o8GgLW3j+Z+fCB]",
+        "secret_key_eu": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:w7ilWlBaAzTXWAcsPcxwjC8D216MZxFV:bRn/tXjfo0xqfRLBVcz1yZx/EJv9Fypv]",
+        "page_tab_app_id_eu": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:I84Dk1wTPX7AZwXCKsD3hYEtzYJHqYTz:dJ/8ZuVVAiVaRUEveFq8m+JGj32z3ac1]",
+        "page_tab_app_secret_eu": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:wBNHRenqet+FWcLqXNYvDbFNDPrbRFnS:1xr7nLC75Vp1jkEM00Z4m/isMAJ9SDeu]",
         "_callback_url": "https://podapsouth1login.freshdesk.com/social/facebook"
       },
       "ehawk_api": {
-        "api_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:NO5fP7K/g6lpGpSrfUNAGMuUtDzBbGha:44R0RySDzNR4AJlLUARVf/1jXIytYKr4xQLvkJeqXJl1Q4eWpNoG2Vs3cbepUtEC]"
+        "api_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:HwQ3Mzz+sgotKkh8AOL4M2odnxpb+h9j:XGhHeZXVndlYKnmaoL0b6juBTfptJp8gHh3hfzMWgfjd4RbQLhJQ4xCvnBIxZ7RO]"
       },
       "iris": {
-        "shared_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:KpUqVab+N4fZPwUT7dgHqfwAsH9SXJ2B:JT52pymPQ5W+AM//nrKvPuKY7S69GKLRaw==]",
-        "service_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:G8KNOkdajx24P6VHGLtoW5vpaZtHciMv:xx80T7uPqSVHp4mqcr1tr5W3+OKbyApm+TJ7KX6G6TpO+GslI6t/6y9cdYdMEN6xaQ3zZiuAZXnH4hJ8]",
+        "shared_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:oZQ54DcOOxboXNE0HWdbKaDTQb6Rxr4B:OPAPQUqnYZ0a5qEchb9aqJAxVDLJaubO7A==]",
+        "service_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:3Qo5wN/2f8+5rrYGl6yVY4oDLP2mMUeJ:5NF0yr0WyPqeASrohjCuVvc4VrsX3Kw8u8gyp6kosQbP+N5AieNWrmUHsbSa7HuW0z0XzrdEGY1x93/G]",
         "_service_name": "freshdesk",
         "_socketiourl": "https://dzvv3qu02a8s8.cloudfront.net/socket.io-1.0.js",
         "_rtsURL": "https://in-pubsub.freshworksapi.com",
@@ -439,14 +466,14 @@
         "_collector_host": "https://iris-ap-bom.freshworksapi.com"
       },
       "sendgrid_webhook": {
-        "api_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:IAqdYJBA5wEGYHM+cFpw6fooleKW7q5l:FkAwtqZrciA7514IPdmgsakztcDgSXR1k8OBtYoWSdzgT7Zz2Zj7sKpW+ee8mIDDP2xAev7sdJidCqRumbVGBrkDd8fInyYcj8qCWgdAaL/R2SknwA==]",
-        "global_verification_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:E1rWIuutJAyz3/uOfaKPr5ppbcYtUcE6:eihJKERnxspPT2pW01fbYAUOou6KaGEIzJihya2ofIcv8xL0fST1u1Ym]",
-        "dkim_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:jUhlLUNfrj7DbVZe2PLVACDuVGWbDtXt:Wyg64rfnwfowHkRD3hqXRg73Rhv5s53GBuzapdyDr7j4vtCbQJPhIzGf7I+jCAkz/DnPfCHLPZLmFOQ+TQj+P8+eWmRkm7Y2QN9x0fStuSPjLCQcIg==]",
+        "api_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:fcooozrymgNPxtAsqTKBhvcsoJ8TD4e0:jUMweZxXSzK7Jq3pKEjf9t1aekKkiWt11NS3II46LEwqlMQvTd1Hg19i3EbRMvNnzQhi3WBTX4afdjFzU++ECma2evu5OPewyO2inE0aM051wfYazA==]",
+        "global_verification_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:h21cu02zkpI2qIyGOVBf4KRuS4SLTr1f:VZ1Ghiks9PoS56TpLVUIIAkPDDbgFz8THSJAybg90tmMAyPt92lZ4zy0]",
+        "dkim_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:FKphftb9w3WfFkGERSTUPt18NLjBlXN9:7SMsz007xeXtIK0BgWnRJIf+EbCDeqG89ulnwxjCMIhswWPZR8mY1970m6B3EnEs0nurKgrK0xYfX8QzoOcPDNL+ZqtfZy/m4IlvGTrOq7odL7EYeQ==]",
         "dkim": {
           "key": {
-            "user1": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:XlXjy2V+h5Hz60yU8n3BqdoFaSsCdCqB:QAo1G1nSgg66nrWc8WRiIXdiAN9A/j6/zXRdR/+DNWX930ElG2Y/iTacesqFvyphMbO1EaEIqomHwZhoFC+hoN7ygjomS8rO51MammnXJFsQX17Now==]",
-            "user2": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:GuVZcanQwu2SWJKMTkgYciqOdMXcG1ar:WcTfE9LxuWMeL005mbqofyNdpAT81mpunlVLvwceREIZ1zx1Pe4L1FqjHgu61D3sysxbx6QMWU/jQjw9tTkjRXWBNWF9QFC8Z9kzf9qMlb9r/PPOlg==]",
-            "parent": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:EMY74UYUYUYXaI2yKCFvQouENaUvaVhY:uu+/e8tIn5SgobKwl/ja1tRrVIKOmgkaLNggpPF6fTm2NJoQflCj8zyd6EBPnXpu3hted1tBwxUuj/2JZUsXeNnVQGCOR5rlTl+Oc4diFBZdoVBN9A==]",
+            "user1": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:O/DpdU2y0IIZOvBRzHBMkiJBGBNNWsWa:qdEPbiOt9QHGolexnzObxiJGP1n8Us31v7bXCjJlmmKcAA5nPZG9UWO6H/P3S3WhY132DHDQ2VrrmD5T3jNnUHFrAfQGgbgHSSW0rUW3RtkuI+yTSg==]",
+            "user2": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:7CWjHlQPlkNZ+4XGWAA4XEuVw1zTSScT:CIsylRSsTHtv4XWmBR21Sq0lpyaTiTMs+rc5ju9iFAKlVNAybM5MOpPX+RPW5leQHDbecAwU0SRCmEYAT7VAFX+UmqxAjaI1VRNidiZDkPewXGUyQQ==]",
+            "parent": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:xBudN7mxps7smTm4PwOAZTognPE8G2w9:YvbDDfGRjCZDcyUNtcxXWn7rNiuVp6qrgyN0yEmwXv1vbEUJ4aZNJRo5OBO2W+qwekTXKLAQlm+JQEz5xGSLEUdbLOrUrQc9TdhhV4SwJo+rwnDUWQ==]",
             "sub_users": {
               "_fddkim_user": "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",
               "_other_user": "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"
@@ -505,25 +532,25 @@
         "_keepalive": 0
       },
       "mailgun": {
-        "api_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:jXynMlr/seu4Mu8L8/ouwEurCjhefp05:VJDw5dvPaXtZoXJ8hEbVfUHEWfPiBnKgryPj9wAK4SZgTgXd+pqWgbK0ZJdlOwgpbDyaEw==]"
+        "api_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:zu9x9OdQrv7VfuAiZo5KszHRfkEXVmlh:aixMv/UUvkX8A4+FV6sAYbZxbI88csSMYvgDbEirB51YqpjuDcrLqiAgsoibjCsvF3Hkww==]"
       },
       "mailbox": {
-        "secret_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:SUZuTOFtC6lxladLFj7+J1Pfrw28lLMF:cRhMf7AO0gGKUYXQqC6Ad/lcf84eD2REjeTvuz4kH8ObpEbANhSCHa8uTINI]"
+        "secret_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:uQcDmiWk7D1GY8uh+yrqHCaaYVikyK27:a9v1w9zu1bq43AWBCqMHgvKkELl6lFPJ0KEWag/2OFZukKLSxMZOZniBUk6p]"
       },
       "ebay": {
-        "app_id": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:xN2PrKvJWT+mmHOJvwdvQHkrMGHf2Y/Q:FjXUxvCUjtIBNVgDEN2sZjWYcUl1hQB0UmgzSb72UVzrD2qHf+vS0vL9shVOxPR/fr+/7Q==]",
-        "dev_id": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:f2Z/GxaSmUSRLjoYCUPNShZrV7F12ey0:GAKfHi/gA2gSaIS5ixKt/xdBD9BXbDt+oXumude+Y2SkDa+FHyPUIPNq/j0+Y35Pp6n0bw==]",
-        "cert_id": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:3TZb4hh9ISFUQvzOkLzbbBfnRDxAvDVA:lgw3PMKx+EHG+fv+T8+O3dj0q8cvJBOvDpXd+sfQMSzagP8kfhmtwcywKse+vbf/lgBh5Q==]",
-        "ru_name": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:GjTl1nGciuvzPuG6URn5IfTp09t6DppY:L76SakvwLzTlRyuPTQJHIC/K8wYVXbt2PSLPkkGgLeNchxxyp5yLphHyDPb4tpWhkA==]"
+        "app_id": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:jju6HC0SSHkFjCHLO2/GWE3mPx1GP/Q3:5QXL66pBqD6qQ6FwDoMQUe8Jp1tRltEEc8vObZM4UsH4enHXJPRg8zXdxI+QSN2lZqH/+g==]",
+        "dev_id": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:lkVbq7Np3lQcpu0L1aPH2GmTR36WkJdQ:v4mZc0Je3ByzYbkTalJmHd+Ja6ZXEQZLPpSnn+UbnRUHsdRYLpF7Zog5qDR60VgmlZJovQ==]",
+        "cert_id": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:KQwYRsjuXiBhit1uB4MGAH6Qa1+Q2w2t:hejc3H5B0kzuJMzdje30jVGOBcqKDtF1QU1K08TSbYxCzxvjkxOYG2WdtYBxpnBz0CW9BQ==]",
+        "ru_name": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:Ey7TSxz9LJaUoZxOkEOPKL3vYG98FO1g:0D29Wu+FjzU8qYzsjfLZcZR89sFJkMnfVGs8Ue/psDHN56nm+Vtwcv3GnoYSSp31AA==]"
       },
       "node_framework": {
-        "key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:J8ujd4kqm8rXn1XSvAA0uhfFoT7NTC+z:BqKBKK7vYXrWPO7Rem1dojvDg4059jcDR5vJrVhM5yO64Tw=]",
-        "iv": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:xbdVzOVH9r4ONWnnRDwn/2MCGgJsS2tV:KTxTHax3mdtlA35lfh5TMYnJO2FOnGiT636L1RS58Pw=]",
+        "key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:CJ2iTtGXvvLls+61xYAWfYqnmJEmldPI:4iGVZJ29WYVWqoysN40EiFHsudIahOAZQcABX6T3ZgHZg9g=]",
+        "iv": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:YuGGedpWqb4WeLXjC0QixZTSmaX2stI0:XoFzEWbI6y8YHgGGVYk8nbGTjG6zeYoWSZtlFoBcyps=]",
         "_socket_host": "ind-node-socket-framework.freshdesk.com"
       },
       "rabbitmq": {
-        "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:9TS11CHezOiO4vhVfqQHnnygFsdneroa:aFatckKUFbgFvT+JvYFHS3eMfyfvs0n194JfnBUXKQ==]",
-        "secret_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:BA/6ql3+dIOu8lBJYbm1PYGTk/1hX9Ql:y3PejZ8yO8LBnW4vuX6jLxZiZDhi8E0LmkU9PzyINw++NKOMtpTlfoJeTH0rmUWg]",
+        "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:iF0o+Uazn9ilgwz8XYRmp+9lxykW8N99:qU+OowMrIGzYcgdKoYmo/lytcz4tcN/n1rcwJjBr2Q==]",
+        "secret_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:7qXxpipLQUAh+LtTx3e/rMHzoCTWW/6Z:BgO9r24PajYlIgtNNla2I/lg0s20/D7pR41hySEgq4IPnjIfzb4ZAHW+n7s67ZWH]",
         "_host": "rabbitmq.internal.podapsoutheast2.freshdesk.com",
         "_username": "Freshdesk"
       },
@@ -533,8 +560,8 @@
         "_bg_req_timeout": "180"
       },
       "mobile_push": {
-        "secret_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:Tzzdd0YcOgscQzMjNDaBRkstniqTlcMx:QxaH0J84DSmmHeeu+Qi5AKkNYOweHW6E+TYBZjAD731iNB8MhkG1NT5/9FJhSPHbPoL3HP+EEgzYKAZFAGna37mm5AWV6CNjwFogHL758ET81aQNWP+MuOYdbP6xxNHpkJ0WGJYWRlksA8ZYnte3TYl6NLDeJH7xy+B4VfBA3tu9zShxjw3tZMMJWmnlAAHV]",
-        "mobile_token_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:BSKj3wyrR8FEKSG8tG9ERhA4A8XK50c7:L9g5/B7/WdG+gUF7D9g9gxZqHE7eWUWYCWrAkpIrW1KrSYz9l2gZ+nlklKmp/tVVg3YJ44lKxKxKoyZ93z5JUQggrRidgzM9i/0H7CKERGe+XejaQnXN2cRjuK3fJ7AL2bCpAQ8V7cky8Wz9o6BO71DZy+6unKLKumAq51p5qovrJXzm+ygas+yHObfeT/EN]",
+        "secret_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:Q3vBBJLCwJAM5qPHkKXyC5k+PXiEnh65:2ivL5y4MEGztDZdAK1Ppj82kVS9EPBRZG6OksSleGr7L6hSG8mxy6mLPy8Y8K4RruVsbWwNFF12ud2cATD3uyKxDkedjJSUiIOj1D2Q5zx1z5WM6IKxHaWMbTNQzz7WBAgO0q5DfUaUM/FedVLtJ4BX3ImU4b5X58JImO1YM+Iksl2AzHMZDQE158yU9H7aE]",
+        "mobile_token_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:9sfnedqmrdSno3JPqioDGiY7F30uiMZZ:LzcdV5tp5yNbr4z9yEQ0sRh89WGK1kwOEY0b4jVUVTzg1fqSjhRqxcmfcSudOF2b3HsrRMmpDb858Oq8Xqi78BG0+cmdYrDj2gWN9VtGmnmNyT/9FfDIDDr8SW9U0QaE9vQRn9Myq56QSkJz9Brd6+GQR7DDACAaeTWD1qaxm/xCVxi/K6tji+KZiG/uVQKZ]",
         "_notifications_url": "https://aus-mobilepush.freshdesk.com"
       },
       "pods": {
@@ -561,10 +588,33 @@
         "_contact_note_body": "ind-contact-notebody",
         "_company_note_body": "ind-company-notebody",
         "_baikal_bucket": "ind-baikal-data-production",
-        "_help_widget_bucket": "help-widget-production"
+        "_help_widget_bucket": "ind-help-widget-production",
+        "_article_versioning_bucket": "ind-article-versioning-production"
       },
       "shoryuken": {
         "queue_config": {
+        },
+        "falcon": {
+          "reminder_todo": {
+            "_sqs_queue": "fd_scheduler_reminder_todo_queue_production",
+            "_priority": 1
+          },
+          "social_gnip_tweets": {
+            "_sqs_queue": "social_gnip_2_0_tweet_production",
+            "_priority": 1
+          },
+          "count_etl_queue": {
+            "_sqs_queue": "count_etl_queue_production",
+            "_priority": 1
+          },
+          "analytics_etl_queue": {
+            "_priority": 1,
+            "_sqs_queue": "analytics_etl_queue_production"
+          },
+          "downgrade_policy_reminder": {
+            "_sqs_queue": "fd_scheduler_downgrade_policy_reminder_queue_production",
+            "_priority": 1
+          },
           "search_etlqueue": {
             "_sqs_queue": "search-etlqueue-production",
             "_priority": 1
@@ -580,6 +630,38 @@
           "social_fb_feed": {
             "_sqs_queue": "social_fb_feed_production",
             "_priority": 1
+          },
+          "scheduled_export_payload": {
+            "_sqs_queue": "scheduled_export_payload_enricher_queue_production",
+            "_priority": 1
+          },
+          "scheduled_ticket_export": {
+            "_sqs_queue": "scheduled_ticket_export_complete_production",
+            "_priority": 1
+          },
+          "channel_framework_services": {
+            "_sqs_queue": "channel_framework_helpkit",
+            "_priority": 1
+          },
+          "bot_feedback_queue": {
+            "_sqs_queue": "bot_feedback_production",
+            "_priority": "1"
+          },
+          "fd_scheduler_export_cleanup_queue": {
+            "_priority": 1,
+            "_sqs_queue": "fd_scheduler_export_cleanup_queue_production"
+          },
+          "spam_trash_delete_queue": {
+            "_priority": 1,
+            "_sqs_queue": "spam_trash_delete_queue_production"
+          },
+          "spam_trash_delete_free_acc_queue": {
+            "_priority": 1,
+            "_sqs_queue": "spam_trash_delete_free_acc_queue_production"
+          },
+          "spam_trash_delete_paid_acc_queue": {
+            "_priority": 1,
+            "_sqs_queue": "spam_trash_delete_paid_acc_queue_production"
           },
           "free_email": {
             "_sqs_queue": "free_customer_email_queue_production",
@@ -601,52 +683,32 @@
             "_sqs_queue": "trial_customer_email_queue_production",
             "_priority": 1
           },
-          "scheduled_export_payload": {
-            "_sqs_queue": "scheduled_export_payload_enricher_queue_production",
-            "_priority": 1
-          },
-          "scheduled_ticket_export": {
-            "_sqs_queue": "scheduled_ticket_export_complete_production",
-            "_priority": 1
-          },
           "facebook_migration": {
             "_sqs_queue": "facebook_migration_queue_production",
             "_priority": 1
           },
-          "channel_framework_services": {
-            "_sqs_queue": "channel_framework_helpkit",
-            "_priority": 1
-          },
-          "bot_feedback_queue": {
-            "_sqs_queue": "bot_feedback_production",
-            "_priority": "1"
-          },
           "custom_mailbox_status": {
             "_sqs_queue": "custom_mailbox_notification",
             "_priority": 1
-          },
-          "fd_scheduler_export_cleanup_queue": {
-            "_priority": 1,
-            "_sqs_queue": "fd_scheduler_export_cleanup_queue_production"
           }
         },
-        "falcon": {
-          "reminder_todo": {
-            "_sqs_queue": "fd_scheduler_reminder_todo_queue_production",
+        "maintenance": {
+          "search_etlqueue_maintenance": {
+            "_sqs_queue": "search-etlqueue-production_maintenance",
             "_priority": 1
           },
-          "social_gnip_tweets": {
-            "_sqs_queue": "social_gnip_2_0_tweet_production",
+          "count_etl_queue_maintenance": {
+            "_sqs_queue": "count_etl_queue_production_maintenance",
             "_priority": 1
           },
-          "count_etl_queue": {
-            "_sqs_queue": "count_etl_queue_production",
+          "analytics_etl_queue_maintenance": {
+            "_sqs_queue": "analytics_etl_queue_production_maintenance",
             "_priority": 1
           }
         }
       },
       "newrelic": {
-        "license_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:TZum0mdVYyAwnTy/grETpt2AtXtSNAAg:7BP0cW2if+7oiI0zdYUZQDlc/KgYqsce7h2yGmnepYN8ZqNO+I21uVbMglgFoLViWKmsY/x6uzE=]",
+        "license_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:MqN7DgKGVgUlbFWS4EVDAdQfvWgA5hor:Ur5FGxoOvsMJFDo4+RykI+H9j8kn0ZdX/tGgOnOoGxnitzXIuZROm5itL1XZqJ+ov2ZQJNQ+390=]",
         "_product_name": "freshdesk",
         "_nrAdminKey": "06c5220945d03286507b656d0d3fa222",
         "_capture_params": true,
@@ -654,36 +716,36 @@
         "_distributed_tracing_enabled": "true"
       },
       "sandbox": {
-        "public_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:pEHXbV1PBUqXaKUVHATnh1SsVPpjuf1O:BKsNy4O3u6DUamYZjqBRUr4wIdhOqcbJ/2HdbsxUoAX+sA==]",
-        "private_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:dhbU4KFmWqDz0P4+5bSAkOdRNpqrKEwV:wHaGTYh9rg1truG+sswwGJG5QYOTuFALuRNasd0M]",
-        "ssh_id": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:OC1ypZsq7edTLbqlWgIu5GJKAT0jtLWZ:WGPw5DNmkidYpA+Bl2yol+ydrF/IlSHTNLZ6BVUfTSSBsFLc]",
+        "public_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:uho9RwbdZiZ1BLdGKoW9phpht++uhDc+:8xgi0K2u36gSIJIEHoLYfqgl5GmsCf+pDNqg7HXaKeBgWA==]",
+        "private_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:OotP4TrCv7G9/kkTeUl1XizZR6XBtdIx:P10i2gmapeWTrCmWigDJgrPdayeB6d9+q26N0DXM]",
+        "ssh_id": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:t5e5OpZNffOoi9HZ/XNzbCzQ/RV/MFBH:nnx1pf5nbDHCFgp9HM5NemNpX/Qjw/ASyX60N7Z+1V3x2zXz]",
         "_bucket": "ind-codecommit-sandbox",
         "_path": "keys",
         "_repo_url": "ssh://git-codecommit.ap-south-1.amazonaws.com/v1/repos/ind_sandbox_production",
         "_sandbox_assets": "https://assets.freshdesk.com/sandbox_static_assets"
       },
       "twitter": {
-        "consumer_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:KICuuFqVm056NkpPXxDWjuAFLKNDwALV:WAzQd72QgCqhhIFcoQ2mM9230L6Wg/w6RywiHQpWNlN336uJ]",
-        "consumer_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:VZ1lP/wO+09zbiu4Ajqh8GmCN6tFw+s9:UYKorpH0DVO8/5wd3xxHCQv/COtV1p4hZz+TWgvPdMRmbMvu/qnLUIZlXQ+tjZTWglAWAWPq2asj]",
-        "consumer_token_fallback": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:J/iU1Bb6fpD0ul4nAsE9lckgw967bAfc:Mx3ONxZ9mHKYWfbEEy4S1oqD1ad3]",
-        "consumer_secret_fallback": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:0VkkdumG6QUQQN5EK+vbtKXb7BPFcak7:aRcw+0vtu7x6skyDyTZII6V1vUd7]",
-        "central_secret_label": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:/C9iDhlyC4KNCZ85jpsfy/FARaNewJC1:SMBy4HH5wChap3KcAlfWkCV7udRI9Sg=]",
-        "central_secret_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:LRDEwmAPopCBRbM7wK/+aqYzimLsrUPc:l2gZxEnNkObT6JIhy8/O4OJc2QQQ8YMhi8jUMkO7AnLNBlsWalH6FgM1P2MQYSuP]",
-        "central_secret_iv": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:O+cLPRp9XNy6yN/xvCaRyAbgBmvKjeTx:DtFApkL9o1d9OOLLgyGho13poPNqdZkS78Aeja/3smo=]"
+        "consumer_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:BjN7r2H4gqEwMPjb4PoT4BUJipEBFVq6:rx+Qr8QSsObuB692ewyN4lZfpwm5w9V3mIouI/NeR4rVfKEO]",
+        "consumer_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:tol1JT+M8mpZDeo5KuDyBRSOV118/qGK:Xhs9t0RiceuJ2g/b4ToLfTyN0EkO/RZE4L/3my+Vp7vh5qHWHuloJ4wRzgo6LrocAd9KOUjSlbj8]",
+        "consumer_token_fallback": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:qIS2kA3p6UkLQj2Dckn6jP/twN7xJfmX:XFHGk+sF9NBhlcfEp7IKqIgyTXF3]",
+        "consumer_secret_fallback": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:Hg3R7AKOVOVuOrgdD1O/JCGFezWMa3u7:FXiHHKSc51i444cTwplSvrtnL0gp]",
+        "central_secret_label": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:x0F50J0vaY8s3paB6mzwtE6ali0lgS/4:RGR0E3+BUVW5hyqdnhsT78yJkLPlWco=]",
+        "central_secret_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:iHu04Ja646UUGpgTyNt1sGpczQg833H1:oYEhXJcgzdsN2PaDhL0OKshYz1Gule/XrInNqUuHgFzusavRRFwHrBBLEr5AXkpz]",
+        "central_secret_iv": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:OPAytaZqvkWGiuRReJtTwVO1FSAVnTOm:K7GDC0qCO9aZdm32TfWlbCyhmcDd24hZ9s73i5H0Vuk=]"
       },
       "seoshop": {
-        "api_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:ZWKz28ykqYE60rGK6aw4/YtjhVD9++7D:jGZcGe6eqWFGFRBBdByjvGj3nj3StOS+IB2TR7/rgnSKYxI7B+1616YqS/ucc2MP]",
-        "api_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:OjgM9iO1MPiLTxjLOWFTXaY2Gxoh+NzR:6j1JJ4igYkiDQ2oPxwNNtl/0dONTfq/FKqPSiJoyiealnk2sCEcoJLT12gD0j5hI]"
+        "api_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:wgN8h9LCkzKabHQgLEL5lGMPZaaqr796:/BxFaQvxMqLtxbtOBp0K8VsySuE+uICYogsgzvezf+VlpdyPyKJ/iCcwyDGYpj/3]",
+        "api_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:fcXmWoNV7UsDVoRPKFeLw0pGEy0r7etl:HtT8+4a39JX90BE+kwpxwMyeyNCJ/5Kce4By2wr4i8iRVASJmqdzVzsMJttxZxog]"
       },
       "hootsuite": {
-        "api_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:BmG+yEqcm/1C5vrtws5ZNnjuZNkA10q8:TG+qxR8/OgvC+qu8esJmdQSleXUZ/uQvqi4Z2liaOGEKo5tzCeVtPLenchnkgxz+Iwni]",
-        "shared_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:E12ZKn9xQ+tsCruc+PS5wCYksL7u1RoF:cPrONFcQOIuJ/xgXwGB4Qd385BmhVjD7Nt37JbgymSE9O3qKdX5dHblcorcmwNzY]"
+        "api_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:gSuH43iHMCusY/SyYYPWszPhWoFw7WeX:+XPYGDnAAImDzKxIIqbWfXS848A+Le/B0JJUjG3q4qKzPFreQlWyB2rnufPx5q0od0Ea]",
+        "shared_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:QeJL3Gh/a7F7/XJtnjDIcHZQwGGMsSl8:NeewZSZ+gwWlG6Cuiqek3yidzV2ljvz7ugHpB8pTl7sv+3BdhVudomL7EOjVuBf2]"
       },
       "lambda_exchange_keys": {
         "_region": "ap-south-1"
       },
       "gnip": {
-        "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:/GEBwUU+4fWjJBKL68xn+drDcUR3dZuF:qFb3VMsSVjPAc2PnoiFWpjoofgEGDkoX+hzNfQ==]",
+        "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:djarYmz8v2p8AANK3rgfIqaK/TwoHXA/:GMXs2DPN9mkWNK0IgN12S9lRYj6eLWUbHoyaNA==]",
         "_user_name": "social@freshdesk.com",
         "_rules_url": "https://gnip-api.twitter.com/rules/powertrack/accounts/Freshdesk/publishers/twitter/prod4.json",
         "_replay_rules_url": "https://gnip-api.twitter.com/rules/powertrack-replay/accounts/Freshdesk/publishers/twitter/prod2.json",
@@ -691,53 +753,53 @@
         "_replay_stream_url": "https://gnip-stream.gnip.com/replay/powertrack/accounts/Freshdesk/publishers/twitter/prod2.json"
       },
       "google_api": {
-        "oauth2_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:xPTWZgwgJhAEzY9az5yT/JlgoqUJJFVY:E2rDV8GHJmt/HRG5xCr0eA==]",
-        "oauth2_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:I2XYJDbIlLAcIK79p/12pB6jMMzqZBet:cTWwD8Y08QA+9RcEN9/OSQ==]",
-        "access_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:8jy/+ynYAS16feMOp/EIZH7a60AtSlT3:++UxZ2pDLS9QQlLff2ctnA==]",
-        "refresh_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:qB86wRYb/CjG1UzLd6GRVEXVdF6Tao+h:d6zOKmn03sU6O6cOKcXtuQ==]"
+        "oauth2_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:5okk86+sz9WHxv56GcbSBPjsrlg/H/WI:A1OHWy1P5RFA2QmWaaB+Pg==]",
+        "oauth2_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:mhV8Q85nFjyuZWZjWMKISnJiJMtfSOII:DP7pFzSSWQf7KYYJ4gjQ4w==]",
+        "access_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:xsi9dTiQD+h6miBVWwgXwN5Cozo7h/k1:WqBjwk8pfTxEHro6BfCrkQ==]",
+        "refresh_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:orsdbRFb+vzmQ80GJIYx2XA/vIwkvEhI:qpKiluHsRbpfXry5rTM+yA==]"
       },
       "oauth_config": {
-        "surveymonkey_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:MeCuVBmtdcPw3JGaSniKGy4m5LxfEfKN:al4UllBab11vgM7IG2v381nCROUoKukjiEZ684oFM5ztxlh2jhs=]",
-        "surveymonkey_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:eIoQIS2Tw/k29qg6qCrbDH6BpfPfARks:lSletBOmF58NC8OnnqCxGrJJBssUzm9JWLjgf5NZN6hGWq8aZETfEVEOlmSDtTlkbT2YoJiz]",
-        "surveymonkey_api_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:KL7Xu9+sZAFnx8/2jz5JfqrGBEynif6c:mMDu+GAgW03gY+ofyHlNZECvpm81dzjNOvsyfQLnpAkDEH9BH5ZlBQ==]",
-        "box_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:NV54shNc1EB1w74dT2XEsP1217Rhc3BU:zZ9CP7rhJdehlYNhDAVEJmhDwCa5b+UkCktOnVEcw7RFu7vnwdhckz1eLmXbxMbo]",
-        "box_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:w+rcaBeOTTFrdUQxWSKXaH9G3XsP/Tc+:4thkMvR3O9ytpy7T+VP7NNVDU89LWVzVkAqDyHULsAzK0KaAKkqd30tVARt+rr3Z]",
-        "mailchimp_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:Z5lo3/2NGdFOzibVQ5q/Iaa8O3iHIIOe:j5FfPy9MX2Lf0DxqNvVCaoRBghHe6u9V1Km57g==]",
-        "mailchimp_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:eHnW2JLNhyr5OqR6i1qMH28rO/7DMPFi:TxptpXxrlIVpkr0u8sHhP+Ki5pa+wPh4wQUAbbRH/jRD3JhqTreZeYkGsbUd6TD65DgmMtsECavn4kCBXV9bIuT9]",
-        "github_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:c+hb6qb/hZPZ7y5z7WI9/2SKTMqpSD+x:FWa4zdW65lPTshgNGYfvEmK+ZxRpzs5it+djKB1dhA+q7UE/]",
-        "github_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:p1BMHYFi+c4E5HUTNM6qTkxnc6tc6tbo:0e9pagxpO6POFQv4BQ1v/dthYzto+ThcdC0PAVCaoDlcWQvL6lc6Kxy4b5MXSjHDLsrMB7RM30g=]",
-        "infusionsoft_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:DMitfhiOEajFSDIfd5kCOOUt8JKgLuzM:c6cK+nm92QzVrBiDiY60LwQh1Oi2b0rjm5jZFz/maImQRfTAArEp1A==]",
-        "infusionsoft_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:Zz+nHmpABOmzQEe0GwkEydlsFVttQpU9:sSZD+LzfLrHHJFjSR9mUpwyJobr/FpU+wa8=]",
-        "google_gadget_oauth2_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:h2hSMNlR0TjLZc9ZQaXyQeEvTxsEHHoY:MPznqwNUGVhB09+25IpD3Cx8aP5OWqJsXa/TvHyprpnxzOv+HerhYVqzcbC2YPvUQG7tUL4rS0jmb3JDo3jqSeVRjqoofshuWLzS6L+fI+mD89AOwu2ebg==]",
-        "google_gadget_oauth2_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:+Z76oKydKzThquhxxHqWHhOpTBgoUM1G:UPf11hs+xnCjXO6LhWVhQibuoTbhQInKKkwTu0AQ4McRw9YQaA+upA==]",
-        "slack_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:vdUJHs8FVsb0QeU31Gxh6h5+3a9oA1QT:DrRDMY69Ms+uPlAnK4+Iq+z53885X6oQj6gy7bcGzjWXlBwhnMaJ]",
-        "slack_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:xrYYZg0LBtUPvFx/XqHDfSJjWyYqc9+e:YidgdfgMrqRAU3XzlobPyfKRhTO4H+AAFx5OZCjhl5lXTQ1R/CFWaJr5DpM79zEr]",
-        "slack_slash_cmd_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:Y0k53L53EZ8MkzRx19va0SQoeQYkP5VS:R4nWGLUaiLNh3/5DzU/fPWo6jLMozAP3sBdCH0oxYwzvmKaYxacTLQ==]",
-        "shopify_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:BWArfpzQ3lcHcIxbh9eA7g5sKFe0165Z:H+bn4JiPdxXPF8pWqtYjXxTnG4zvxUjQRkKZ+fx86RUYAznJlqbmT1xrgFII5o85]",
-        "shopify_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:K5s5RijYEkxK0zll2hingr+qpAN554TB:GizwC96UMfJGRRsSGDmlEZiXm3o9Q30QlAv1p/KWRCUPkF01j2H0AFDK3l7IvOfI]",
-        "nimble_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:jXCvOjwNmO2xgHVprqT1lTirBOgAf3Oq:sgzfnUAox23eHZNzau9g0RHGeFsiXwbbWazA28ryZkS3LXRm1U2g/BfbpQMZFVDn]",
-        "nimble_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:iz3vji0z4h+aWyA0q0i85tAE6DQOpPyG:fPAnLAYcviQhp+o52iBKhyDF1GgUPK5OvVHWU9fmP4E=]",
-        "constantcontact_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:QnyH+PzXaIl3LY78jtOyBYJInr3z+zIv:MaCVsx0KAcVT8J7Jo+kt5Uu4YcZMJMwuRYdwwbjRdNuiT2y0OYqddrftcOszOnqYbQDJnw==]",
-        "constantcontact_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:7hXFof6KsM0Bv9/m2RnvdzdjxJvv0izw:V4zqr+mjylYjsHZJr72EiaYqPDeUB6rbEe1QYiqrfVkU0oT7ve71Ywx99uaDYB6x]",
-        "google_oauth2_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:ZhghqWgC3UsUD1Rt0P0pobHkVf+91S6V:U1nplahwmAQinodPBAmqU7h9kvIIvwjLSRx74V1dkaYxs9ovt9o7BZobMqksBun9hZcDHi5OvA==]",
-        "google_oauth2_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:zjziziZSdPZj16JNl0nXaDlBA9YMFDCs:uDjVA4PN8+Y/VTEacr25Bon53w8V+3tylFxtNt2rWQlZuntjdAsKCg==]",
-        "google_oauth2_apikey": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:wYWJmd1/EjZZnW5+XxyYTgQthNAgJmKm:YKyKk3FNDeg+nG+y1bj7+iM6ITzdCQKNpm7bdEsX7U4sI37ginY1aRkeakR3QbDWtnj9nQkP1Q==]",
-        "google_oauth2_client_id_ios": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:fa9IZZNadi6sAZo+g5Pfmg1oJqXoicH6:GeGaIadyCtK9RVrKA1LGMSlE627UU8IJUalvFvq5mC1HnkIuHtQMbYVpC1UYuHpE0a2p+8iC4Ciab7qG0HVq2Slpjrq2NyaL4AnIhqNgcQkGQqjVSA8OvQ==]",
-        "quickbooks_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:7Mv4z4KvwZ6KVmyCAu9WtU9RGxi7oLEd:skwU7rPzKy4l+dhLX8ONFVxut8WhdQyayiY6q2fK8XW/COxjWPptl9atZgeWwA==]",
-        "quickbooks_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:oQYN7lH9AWyJW2k8XCWoHytvNK08QklX:TH94cJekVlC6kQmYVjZNlRcwlDjOVdG6Ltuo2St7/7bH1JUjvBL/9y8GWX8dKPcZH0q+hODXRAI=]",
-        "salesforce_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:PgR1YgntbRfVl9K1fjAQn1pX+uRE9FMV:dbzoZ+SsgKce7If3z5tTl5WR4cW4QkHO8Gky91FtmS97IDf9jr+e1w9u5X0z01d0GcsgER+tbCKSwalvb67whmNqBzaObb8syye30meyGbAeS2+x352kf0sa4aghZX3MiIxlYOM=]",
-        "salesforce_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:YgSVVo/nNVVgn1b61mNWCfqlcKJEzh/m:coBslH4UUzLYoQr2buXy+5ySiq8yOwDyppRKu1smwiP1shg=]",
-        "google_contacts_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:9XkYmFNlspTeQ2JanognzITJcXfiBRy9:6Q6ZeyELG0s6ZoMrd7lmUByR/Hqe6C8wgARae+Ag/QfECaOqYzff8cVPdePneZH1tRuTvA7nxt8KxOHefFVl7b94Daoyu0ILzbMHjZTqelM4AL7qA25vgg==]",
-        "google_contacts_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:eWNVI8byhMXu6gzmp9Sk/2zzeO0n/7/U:mLgFxTLLsU9/PynnTDzSFfFDoAtMBuUQwd9LW3g5N5cnpegUn8euEw==]",
-        "outlook_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:5ci1WG/6wm4hHorPdKVYtMc0vrkxJVEu:7ZV5+HX9HH4Ayi9CJB1pdfIh6ILunGUOunRTHaj3liZp80YuwgP57OJSI3gqEdUP+B7zYg==]",
-        "outlook_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:he7o3l3GFMmkjwFCQfUmUhqB35bv7BGI:5zGCGlso1QEDM8YvJEvsnOPwRgxAn08rmx5UlvdUEfXLdPh6Iveo]",
-        "salesforce_v2_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:SbsZUuK5wNr9rxy5HJpS0iCPIx4edHBN:3jFwhmb3FWiIdUPFdTW8sYoVojTdJsQWYcCRGkmbCzP/B+i+8esIPjgvo6MdhtxhatVU57i1dq+Cuf1dBirp+rJhIg3YZ1Z8yDYY20uetVbZi9F4GlfX1eS4XIfJ50I2cf+cMps=]",
-        "salesforce_v2_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:CozKZvM217fROb9edzzih4F6riELDacK:Hq45u4v/XHeAGQhr55BsgL9jkX1uZB1HRj2D+eQh3RaSvgA=]",
-        "microsoft_teams_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:FTkGO6fHJE2jbInAJCNAXJIILrA6NSuA:AwYkMXqlUqCKErR+aNyEP0vfoZcezFwcohYkK5trLiZxBpNldNSm5XRWj2YFFvG8CI/KGQ==]",
-        "microsoft_teams_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:gRB4DV4iR0Gmtx6DlAmuLbNi46jK5bjl:0QtOtn5ikMblKm723BLAUEAA+vJS2uT47Q2PqgngQ11lL9ArbfRY]",
-        "google_hangout_chat_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:z9KeLnWd31VHWU/zSVGw1XAn000tVvaW:L5LNFjyAt/B0gGzCukgjc/IM6hpZX3z9tHITyQVeY6wDHNtYmMvSqxUpZlXbE3M2nMrvsveQMQ==]",
-        "google_hangout_chat_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:vb7XXavp/P1RVJWd1mcNISaYgzLNzKJd:sYc2LkbdZaKevnEX0ySsEQ+Nl/YoMTQ2JbwijClvhhq32g2XNPgocA==]",
-        "google_oauth2_client_id_iosv4_classic": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:H8vzF+3fz0l16au/DQ/lT5nKJF0vwnzi:kUmemcE/NQzI4tqjfhyDRgw6hU4XO9WZmlTlsWCZz4Fxuc+Y2xlqwbOhSzk63yn3PGbmQ01g7/veVqE+CmOjYCgRJDBuiCo2V+SyBUh6FVqgzMBi1xGecA==]"
+        "surveymonkey_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:KcNxQVzLPt9krIuERZ9FFrT0LP17MfZS:DOfiPMF+JWJMJt0rTRYjij0x5P8MGYs4J4ZHA6GxB72FWScHN8I=]",
+        "surveymonkey_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:PlwYuzKwa6QflqOx7evjaoYrTKUbXv0k:HPH1ynYn69fo1KUyPv9WQeqvPmyYKEOOttN3vmo9x4z0z3a5OocgJT032Y/8lnZzytG9b7ah]",
+        "surveymonkey_api_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:Jg72FbT0T1qgjqiIasrc7Noaq6FxaN73:EsTOaelr+X0/meMl+Yy53iDXxqjEX/MimaEkK02I6HjS99JXSdm+nw==]",
+        "box_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:UeRsPK61jzDhJ1rq7Yona4Ex1riA2NUu:1f5Ba2o+BxMYDpl1AFiTvrmB6rrzZvCYGVehYZzDy894lwVmJpk+r7k/GPgSvRIN]",
+        "box_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:19taG+rCMkIJuiei2dpsX5rZB09so8yE:Jg9qq354jsg+pQgmsJhoGpacs/P0tlfXstjue4ElZ0nMne7InzInfOFgvCZ38a9o]",
+        "mailchimp_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:u2gb6eLuy7BH5w1bcHYu6bZ6i524wmVh:4ZNnoDulJSeiniGWxHLnDHvIcM1fXfB9/3PgAg==]",
+        "mailchimp_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:qAOdh4PjODnIvD7CENBv2dtUppRs/w49:uTmPBIjkaL1GavgLzVYQ8IoinF7DXEcZ3QrdIYalLEnftL1dDdk0X2QsFk3GwkTQHm4aNZeZoHHk2L3w0nj8OMke]",
+        "github_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:XemNqdbt/9+L+uGsBrmm1pTqVCcFRTCY:lSa0G9FW1OWRTCaJBiSppVD+GwYGJkLfwJRZ8cM//MoxJSAe]",
+        "github_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:l/bvvHdcdHBS/LUjrJ+UiYCXA055sqNQ:QG1OlEfR9sIAKUqIvcloWpqC6iVyexPSGYSqg2H0g/ZiOKsNk9GJOLGCkzBrwrTl8iQHswoFaAk=]",
+        "infusionsoft_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:akH55G8VZosD4vCpHL1YxZBNqNkKgYr7:wf6Ktxm/gBudWF5mJgW0vXp6EwROV5ts21fYPTzBDFekhwzKq904Bw==]",
+        "infusionsoft_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:HX9lesx6Wze0zp0Kau2wW3b5iBNBXzQL:ehmHw1qD6G/yts3wkARIAwplxfbIiq2XmIY=]",
+        "google_gadget_oauth2_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:I5HXn/hwEvv/5am6Sv4SkujZZap2TCqf:wRdoEcwVs6mV4Frl7Zcq3jfjsNFHfZEHE/E54Sx367ZrckCXHvWurhbcTrQpbBk0i+JkDpqFI1TrJ3fFrrT+efNH2X5xQvIrpmckppThHdPbBOCUXlWbPQ==]",
+        "google_gadget_oauth2_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:vZF78ok5YsFpHPCXgQkLKL37OdI4m+de:FeoKGzqGYobUgxnEbGvWeiEmdiK5UC1gqPm67j/i7A5jTsgMmSn8Rg==]",
+        "slack_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:2ur3KO03GqiD451IXeDX/cB+NpDE0He5:2KYQ/7glMf5Nbx26nQoOkNWc6CTGBrE6oAXii4afg9zIZXLksLXy]",
+        "slack_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:m/twAet1sDqon4Wcns3TBQrRmLW7kgxr:/wKKJifKDXXrFBVrwYlsoRck6izeVhQ9nCHK4StWcuda1Ts3LSTWXP9TjERRVRxw]",
+        "slack_slash_cmd_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:+62M2SHuLNltSNevSmOps+wwyZM4Xi9t:Vw1x3x20Dxn1JFnlLxkFlOWh/6xy96TyMcfO90Bl5r2fpP1pb9cCmA==]",
+        "shopify_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:+xaRb6IID8G74KywVJidz3unZEWW5T84:5WOCzgMpseG36mrdPi3OermTmpKP2YA67dTkH7j1nbaNkYVyodxAJvVM+DtsxBYP]",
+        "shopify_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:oXN0wGUp3eqaKZJx5f8nuXd4JttYo0sj:xcBGcoZmyP8T2A2TbefoeXvSEHgtN/1caR2P0SFPOGALjDcJ3ZvDfvDxwuyz0o91]",
+        "nimble_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:IxLYNsMd3l7ZRbFWmgjBTrBWzAXU2w53:MmYf/uI/WKfXPw/621KDjcJJjwRdI8bGg7DKuWtwUSKaSN7GZcyIs+6MrUW0IG7h]",
+        "nimble_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:Fib0AORSUepM3SMLTPIzFglPrjviaSIx:r6F616YADGYH3Pbo81jJm9cAIZPNKi9qjzgvqN8RedE=]",
+        "constantcontact_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:QF3PHUYc25NqwqmdSyNBNyr0+qQ8j3Gp:jyX/1he5HYfpR4PT1Brb1gX4L5aLesnmzEYPz5SLTctg9+/KGDOlwWXaKPydKzIk2WHDAg==]",
+        "constantcontact_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:Vx7v5Wj/4+R+ufpMp1UCb/iNbtGkSatt:sFOsw3aJT/+LII3+nVtX8GXwzaUr1/ic1k+BcIpMpIkIvewG0VT4Lu+IN1xd91jL]",
+        "google_oauth2_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:n/wxqv6Yl26fc+Plxle7WKdp4XGgv8Wf:/nUCKUNYH0qZj/3ab2nJMThBnqWls8PgjRpgnLAmu0zMQRCqml9LAJOPtk2xUYxJEiuKIQqXqA==]",
+        "google_oauth2_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:KcSk0g8XjBFUJR5i7jGn1t3ROWqSmKNY:KrgXdKgLy58dB+/M0zMKZcdpR8VEJyCnpRL+AWtIwry4AcETg1nReg==]",
+        "google_oauth2_apikey": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:vFu/4xOH5gChA7AeufA2ehj3VqZbk8oX:nBWTiAhDuI+NO265JZG631cfTrT9sNO+/sr52KCbJlf3YWnJSfCeSHX/KUKXnYdWm9zlvfINbQ==]",
+        "google_oauth2_client_id_ios": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:ub4LzSFcKGgi4RYjtPpeS8ABsiQ/M1iy:ugKyvFn5gsLyof410i14IfDomaMVEbvSPGkbTpZh7LQy7jy/DOJAHNxAlWqIeNgNN4kX9oqm/i9xtouLJFTecXODk6Hn8PYmd7Hlt4+qTxxsA1QBdw7z1Q==]",
+        "quickbooks_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:E0OwXpFd1ifcT+4zBtAiNVP079H88D5d:k+2oNYDnWULS6CUQSmXEs7Sos10Ri2wyncc6eHCQIhGa1wiRDRkmLeqHRVMwFA==]",
+        "quickbooks_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:9Lp+j8U+pNm7iSFUtz8EeltLdWv/LT4l:2x++BeSUgVxd+LkI9xpS8L+cj+nnuo2Lgx3khvUEsXi8j9Zo0sAPuZbPKuv5V+5KvYGofRI3qfQ=]",
+        "salesforce_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:b0lUhAy+WeMSrvVS8ssbmApxNU20EN5q:1uW45Z1Mxv/iZQ3zI4yNwVXRQvHNrYFLqRyDGwOUlVA8OBsrkN+siTdF5bUiSWSb+U4pzNrbM6zxeFdWl5exFA0HSO73gDOKoTDvIULSiu9rUoLuPL3bMcFehjk47ptxnUrf6vM=]",
+        "salesforce_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:v2NQBDmJR5qi1zj/GAdov+7I4Tv+q9En:janGn1BPfkXK7vC8+pT24LF9mtkeUCgrYY8wZsiBuhT8O8E=]",
+        "google_contacts_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:9iKKQ0ZnOujDoH07n6JVqpINpwEmdhfD:+W5TJyOdYIAypBticFqrR9+BZhw/pZhB10hqMi4GbHYnnspSSAaeee8c+BtJyYLx3ZTteq6Bi4o4/owHTUN4YhbOfLzto6XZT0eP+cCpG29RH+Wa6nuI9A==]",
+        "google_contacts_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:vKi+Fh5/IiBBog96FsaJcslxPtLoL2gZ:ZT0o58ybQ6lR5UbtAFwMatXzihrEvz7vixBl3I+SeIFJ8Iigww86eA==]",
+        "outlook_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:86tScoDDjpdqZX5sFfK6UHqCDfpMr1Cu:5k6JEoYudafK4WNLomgQ6RtF0HLEMU/kbG2KDDmxldKmrskdUU9mvZcAx2DZV+Ok/Ki0jg==]",
+        "outlook_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:JDSR9VOQrnpB8sHyFsQNfUQF+fsgDvCe:XlAj8MZfQX9Tb4XKl4gdQPASx3xOiCWKvvHnnxTGLL6/tgaM60yD]",
+        "salesforce_v2_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:0ZD837W8JxuNBWsnnmuLiAZtQaxKO1J6:9LXm3BJVd56gH24XFo4p9GtKptTZOOEXAzAy7Aq3qtviEDZgGvsP+xxllKxW75TDUCYUB+qs/8uDWzgDseBu/vq98BlXAvi27cpkHYrcIoA81voCa5o5D3KVX7RlWjJY//39M+s=]",
+        "salesforce_v2_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:B3kFVrUwYOkcq+/N6klVl+yxiS2UHiXF:CRuH2DxZ9gtGuqICYEwiiNrf1Lss7jcyJ9suRvQ38vRkte8=]",
+        "microsoft_teams_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:FY05Wi5c8eAGJI4D56D3Sq93J7pS4igg:0VVhkqeAWSKzaqyM1GCAVLtJWuWocvlrOFtyRAbTFZVYMkU6Q3Xm3iSjqfRPdAeGHhsFpQ==]",
+        "microsoft_teams_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:H4EROBYyWk3XIzuXa3F9yZ3VDrSzzd57:yWXjegcwAOoQN9TCwtMj7AZq9X9J4o15ZKnqyOqDZNgGqUL83uis]",
+        "google_hangout_chat_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:P09xGfXg+yhfOqeW7hc6VgZYmmkZ66Jv:q+JT1rmT8B6Q/PU3BMKrLvqNJSnLZNRFzwcCQbuSeaJKq/MC0TxWeExLbAjr/WrCAlk+hd02FA==]",
+        "google_hangout_chat_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:8h5iyMY9JFjurNJcCzhr3kj/vgDJ7/gg:NzIIt/tGX/ZNM3APd8ouNeq7nTKsU3ambU9U1Lp+H5oQhVPhhLXakA==]",
+        "google_oauth2_client_id_iosv4_classic": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:oBh6cQVRi4GAZ1+ru4iVPPsB9ROO+JPm:OhdONrJp1RZxN+003K4z0ENLPnqk+OzvTkE76CozbSaxveOWgENZUbJhdk939bOXqW1GsfC6zKi1z4obv1T021koEzzQEbHpktAyNKqQTifMr+TpkrN5qQ==]"
       },
       "spam_watcher": {
         "_email": "dev-ops@freshdesk.com,helpdesk@noc-alerts.freshservice.com"
@@ -760,19 +822,19 @@
         }
       },
       "config": {
-        "crm_api_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:gSpt8Cn4J/+QHPBZybKAX9esFff7nU0o:Z1thu6+v96qL8zzCqlxseeWUQ2hPH/+LHc1kHoyg/pdbglsklqfd+z1J8OTQneCj]",
-        "salesforce_consumer_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:mnWjw3Uve/vV7XuraOU0p74c4VHykc6n:zruT7AsF8k+rZVHS/ymAjWM6HHW3f32fWENsr2tInUN+s0aHgJ1H9eCIx4SIb6JHkdpmcB8u9JkD3TeFGPakQSiSy9w1CvA30foyU8NV0ryoWa/aJSCbcSvgP/5oH1LnNcORMDgIow==]",
-        "salesforce_consumer_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:H/zZeNHMrc6YtkcG4Rnca4nAZUIljZRv:HrJYOM/6BMEiio8FTNA47MxNviukAbDQksgJckpn+rfbpzw=]",
-        "salesforce_access_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:p8fHKXBEzFoEF1cHUkqDIs78VRQ26a12:178QkBS2DKWMptMiWJqD49Bslt4HNPszQ2v1S9kAEeo2VGjPsHOZLRzkKXkNlnGyzsW5+ee4LB03Tff5PRLpfF9BjsZNX+RE902n0PQXMX/z7MJn/kl2rp6keo7E4UZVdA==]",
-        "salesforce_access_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:BOZHcdoEmkYaK4yrx1dQG+sORtJR5xRV:bJu/QJy2pNs7dwc7RSnBp2NIbOqIdtK51DWcckQQUoQZQCA=]",
-        "natero_api_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:/rNO3wCaL+0ju75ZA92g7/Ti2woEGW10:9+TWfziRm87vhDfoUz/wq+DWB/zCnZotG5Al9pevP16lGqkAHhuJZLHdFBUUGwSa]",
-        "freshsales_auth_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:fmZGfem+rniIIm8D2W/u433/rtpTLAzH:ITfJBvP2EL68gvsm3cESZamnSLeBsYe7RfHupSmlBJ+/IsNas0E=]",
-        "bugsnag_api_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:XOVtaY5Ci1Myy+h7C48MtXUHfFm8GG+n:NnRyI3THmre8iQ5qu0xXQxCOTOnYMpQP+ZXgmakMjyajySfUPwyTsEGLRbP2wrGC]",
-        "marketo_access_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:YSPrss/tQhGl2S2+lKMRWgvH0urIB7U8:rulHFxije5FaRBbk+xGdGNXsVY+Vj9MKQ2l3MwZUdPQrzj50WJKCjLPqq/LQujtpuA==]",
-        "marketo_secret_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:OcoSWK9wsniIkJUiCb+gDWHvjIymDaaA:JzxdIznRQF4imrh5Vf2Q1u2G6q4hD9hFE1wmsWuygJQRM7pQcHrnbJ+pY2PpRPOHvKvc3UKPW+bWFlxZ]",
-        "marketo_api_subdomain": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:m/+qCICm/BTCxfLWAOOEPcZW1zdcX+0j:wn6DT3+ZXU6hI/NmdIKQ57ui4DxtR6ENMjrQ]",
-        "reseller_portal_password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:Rd00k2MiSJxrKBi88LNzEGiHuG0mw32A:nEOEtb6xLGTSHCP8ZpKw03O8+pi+4V8=]",
-        "reseller_portal_shared_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:wcl5FwKibxHblfvsGcHDyHvrYqXSVMYq:rBS2l7TScu0yFYxwQMip5LOAJzjjU4VEiJBsU8OK4LaVw3lcWqkRKwYThL72]",
+        "crm_api_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:k3a4kQDFSQ7rNoxobnchs/tA7HOBpWBF:ulcnlVI7zGojTL43ua+Q8izdlNFjSHVAIc/9Qxhe/RDC9siZlWC4HVPQam25R8a2]",
+        "salesforce_consumer_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:R0WskTZ6m+VRDGgDCwOScwY2bA4OgIcS:6VYvNoHFsqVE8wR/rXqmDyCuio1+SxQW+qWow1TY9iDL/gA5HAUx5zswzFzCEvZ8GymREavfDXYjYcWtZlof79Q74sHiWZJE7yyAMmQH/hI1LewRMFWOU+sDYDoHcoehvYbpBPS6SQ==]",
+        "salesforce_consumer_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:BSOe2hcOv+nwpQ5pzv/YDZdd/e0z2Gqt:WpxQxa1dzoFR56+KqPW3iInDwwWUC7DtgfEQz5YZAOPqpAw=]",
+        "salesforce_access_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:JkFbG3SeDS068aNulMBjvWy5JtLAAMSh:RBVrf+z1SkcjaGDvnBsZzLZR9G1pVfwACNq4+T7QtsFxQeBEmTiTkXvvbWP/iSRg7+pYGhttU3ggjJlEhHPZS70wUxT5f6skBHo4F4BxtVOVDZuN2mwurDyVDzYdNboR6g==]",
+        "salesforce_access_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:aH2C4BVLQJhLT0/rcjRygRY5vMzi0zoI:UnNp/eNTwtvNIxQ3z5h4mnSYP3ALWFyypw44ieR5Kn6pYfE=]",
+        "natero_api_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:lCAASAfBYxHWnbbF7zyLw3gGtuA6Gk6Q:dMIBgtmFGOcTUEOHl8LWQXWqWiGDyEGWHptxk62Uxe4q7YKqPrPXJrRra96kMevi]",
+        "freshsales_auth_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:QkVj/q8vdjg0aOaCHf2uZpETTlUxI2Sm:e3H4zmSVqb4M/XgM7L+qQkp8H473xEVrxV2ruGKTG8bpK1f5KLo=]",
+        "bugsnag_api_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:iQ+06mRpsQINHjQ/lnxjLZtip1/tPnO2:hzFGUkZ0NDMpw2zW88lvxHLFEyfkdAhQmFxyv3T4qmZRzzuXYJ++3f/oKNoOsg/X]",
+        "marketo_access_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:7vKG5gvdil7BSrWJr0O9X3qi2K2hF5fr:C4BF0CinVjBHN/nWQ6HRgPENrpRrPoyUcyruEzhlJMTtZxuphsc+bIvwgRCnpH7zNw==]",
+        "marketo_secret_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:aHcrdTrWgph8S46BQlqPmKVCJvQY2V2S:cab/ExuBA1APTLzP7Hn0pvM+2lpwf3Dglq2cH6JJ4gyS/CTy+12juHbJZ7gqZHDOXOrS8ZQ0+McoYoyr]",
+        "marketo_api_subdomain": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:DOEquwnhEVAsh5mQTl3G6wdPX8O4DawA:H9SsIS4PxlM/tFaD8NawkeyF0wl4Vc/9x9TN]",
+        "reseller_portal_password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:eAKx1khdhj3kqiwAQeA1rvM9RjlktF8J:PgAX388noO1RDlo7PvD/PgRyqx10IFY=]",
+        "reseller_portal_shared_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:0LqEb6YT0mLCQthLnY1hvb782gQuaHjT:LrhfonBf2Fn+sxjPSBPIYwMhhaTwbdN9TveMGH0mTZH2W8psQrapG4JMuJHl]",
         "attachment": {
           "_poduseast1": "attachment.freshdesk.com",
           "_podeuwest1": "euattachment.freshdesk.com",
@@ -781,14 +843,26 @@
           "_podapsouth1": "indattachment.freshdesk.com"
         },
         "freshchat": {
-          "token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:s/3iP45+RMNmB0oTVx9TyufE2anxayHL:6eyExRtXWctEWDy450A7j22KhAt9s8AdBoF+vCpcjzKvHy0OYVaDdiTVQXzwNhkBXJUNsQ==]",
-          "app_id": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:R6y+oAq0/Sy67Rm9Zjz4W34jNq0Vr6Mu:63olRJIx+cBRKkM6DlNoyyqDIXdHOvml5++8b4CClcERhAkHav+uSMkgAowyb+0r0qZDFQ==]"
+          "token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:Yfl0KgOlb+fB0KVQPLGimYrIxm/jB8sP:olF80D20wK3tFEJneKEE5wjdMspLa18UGviMWegqzJP30GifEQWHszL3SRNEZeWvO+8FuA==]",
+          "app_id": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:f86mFJxT3OcgdEMVUbVHZntjEb3H5l/1:KosiL7g6Nn3E5DpRVcPQY2kH87rX0PCFd5LzcgpvIIdKDbnRDQVoi9gO8nZv8INJ3q0oUg==]"
         },
         "freshworksOmnibar": {
           "_environment": "production",
           "_product": "freshdesk",
           "_region": "in"
         },
+        "freshworksOmnibarV2": {
+          "environment": "EJ[1:DwsSiX3lVjF9cQXNjd8s3/Ze/WO+HhecnU6vZbI+3hU=:ITQlTMHmIc1RXRXW1SzhPf8xhnkaHesO:OcEaqzRyqHHYrlLMLSCwFg==]",
+          "product": "EJ[1:DwsSiX3lVjF9cQXNjd8s3/Ze/WO+HhecnU6vZbI+3hU=:7I/R2iAcEwXkn4427ByVPzeV8ztls9DF:1QPYcwBwscD5evMk5AjttQ==]",
+          "region": "EJ[1:DwsSiX3lVjF9cQXNjd8s3/Ze/WO+HhecnU6vZbI+3hU=:3W8+DEn4sgIyLKUbDnM+x08PkLiWosdX:+WuYkGg9aD2weTAnVajj3A==]",
+          "clientid": "EJ[1:DwsSiX3lVjF9cQXNjd8s3/Ze/WO+HhecnU6vZbI+3hU=:Eb/tml0O54KaxxLiW68GcZgWh349AE+N:Z413XiLvwLwBhsc3RCz4uA==]"
+        },
+        "freshworksOmnibarAssets": {
+          "_script_asset_url": "https://accounts.freshworks.com/omnibar/omnibar-stable.js",
+          "_style_asset_url": "https://accounts.freshworks.com/omnibar/omnibar-stable.css"
+        },
+        "_support_ticket_rate_limit": 20,
+        "_support_ticket_rate_limit_period": 300,
         "_latest_shard": "ind_shard_1",
         "_base_domain": "freshdesk.com",
         "_demo_site": "demo.freshdesk.com",
@@ -822,7 +896,7 @@
         "_default_email_queue": "default_email_queue_production",
         "_search_etl_queue": "search-etlqueue-production",
         "_auto_refresh_realtime_queue": "auto_refresh_production",
-        "_custom_mailbox_realtime_queue": "custom_mailbox_production",
+        "_custom_mailbox_realtime_queue": "https://sqs.ap-south-1.amazonaws.com/659569884990/imap-conf-data-mum",
         "_forums_moderation_queue": "forum_moderation_production",
         "_helpdesk_reports_export_queue": "helpdesk_reports_export_production",
         "_reports_etl_msg_queue": "reports_etl_msgs_production",
@@ -854,30 +928,105 @@
         "_fd_scheduler_reminder_todo_queue": "fd_scheduler_reminder_todo_queue_production",
         "_bot_feedback_queue": "bot_feedback_production",
         "_custom_mailbox_status": "custom_mailbox_notification",
-        "_fd_scheduler_export_cleanup_queue": "fd_scheduler_export_cleanup_queue_production"
+        "_fd_scheduler_export_cleanup_queue": "fd_scheduler_export_cleanup_queue_production",
+        "_analytics_etl_queue": "analytics_etl_queue_production",
+        "_spam_trash_delete_queue": "spam_trash_delete_queue_production",
+        "_spam_trash_delete_free_acc_queue": "spam_trash_delete_free_acc_queue_production",
+        "_spam_trash_delete_paid_acc_queue": "spam_trash_delete_paid_acc_queue_production",
+        "_fd_scheduler_downgrade_policy_reminder_queue": "fd_scheduler_downgrade_policy_reminder_queue_production",
+        "_search_etlqueue_maintenance": "search-etlqueue-production_maintenance",
+        "_count_etl_queue_maintenance": "count_etl_queue_production_maintenance",
+        "_analytics_etl_queue_maintenance": "analytics_etl_queue_production_maintenance"
+      },
+      "archive_sqs_queues": {
+        "_search_etl_queue": "search-etlqueue-archive-production",
+        "_count_etl_queue": "count_etl_queue_archive_production",
+        "_analytics_etl_queue": "analytics_etl_queue_archive_production"
       },
       "freshid": {
-        "client_id": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:qigmfs+HpGAFsatUhZ/WdJLlxwMW3EUu:SrYxrA1OxOKFsW1Awu3YxSbtXu7PoleUTqpuYo9AciD2Rz/NL8zCdzceDWB8m0CG49skGA==]",
-        "client_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:a+h0nmcBj+XIiVRjxT3jpMK6yRyLeJ/K:SOIqxeQytxw0EkjUklU/Nh7x4WaF6RjVPRxDQGSAqocK+zpVfGQkyixdCi6cUU6D]",
-        "callback_api_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:NX/uL/4O7udKUg+nEibv1JGbzKjFH2qb:LQVX+2kb/AhGtwx5yv08bhn1sKEUB9LD98tsisiBWGP606Odcrx09BOrSRO8SWaiuigkrljZhJFoEpKYgu+ZKIZVHom9jZY+tJ7QTEkQpps=]",
-        "customer_client_id": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:hz+IjxylouerppSpEX74Kq3GQ3C05KxE:j8eOyk5/k9pIiqn2vGZSxqIo1BtREp271xXJFIHsBEHepT80d50iJ1HcUaMWDxgzwRJBzg==]",
-        "customer_client_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:RnNwMne5zXzfN8uQf0spHuUuK1GKarHs:McL0LGy1dWPvotnoy7NRQNOcKU69d0sD3o7QtAUTMgkYxz1hK61aY5F/NT6+W6iM]",
+        "client_id": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:n0gDtbyus0Io6RNelbe8qUBI12Gad1Kb:HGXSzPdq6j1AjOBzn/UfBWm9qo/8nPxGYEtlP3FhvfVGyn41zk+VmCWiiU9tyqpq0hIsog==]",
+        "client_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:+RRobjUB40PmIJs3MDl3DRiXct/4pqCH:pgIPpGVnY/WkepbhP+2ODNvg2j/irw+/pnW11Nb2j8lRgVPCcxUteKJrfg9koDg2]",
+        "callback_api_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:2/OSn6mjxBo+oacyNaI2ckr/eH/S1Sv9:rpM1/xzUF9A3UWgB15k9QK7+uLeuIqs6dAqoJECbrYH1kqgkSuZyRSzWZplmjFvu/5LkTbmHR8GmexPI5J1voUWUWXn5NhyVLD2gL7DziN0=]",
+        "customer_client_id": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:OyA0TGvY56x360oM0Bx93NTt39Dq4hYq:bL1irFrdJxGRP2McKx3NDyisuxre+MW3b2hh5Hoivk1lXTcE2HCiyg6+4jJgHXDlWCv2hw==]",
+        "customer_client_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:3JzN8XUi+/hpsTJar54Ckll48jP1fdio:t/lG0V6b1Y7Io+LTMh/viF45mSTDpk3fk9LWrvDQrSIEzSqCCddwuYJk2FABJm4J]",
         "_base_url": "https://in.api.freshworks.com",
         "_ui_url": "https://in.accounts.freshworks.com",
         "_product": "freshdesk",
         "_central_url": "https://podapsouth1login.freshdesk.com/freshid/event_callback",
         "_customer_base_url": "https://sso-in.api.freshworks.com"
       },
+      "freshid_v2": {
+        "region_code": "EJ[1:sbifib06S0yp/eL6CCUaARxUqdiAruGpaE2Ng6B/VHw=:swNqgoJilqMofH8tsgwG8/LFnfqJQHb+:nUDp/yxiAB1icX1Iawd9+Dvs]",
+        "_end_point": "accounts-in.freshworks.com",
+        "client_id": "EJ[1:sbifib06S0yp/eL6CCUaARxUqdiAruGpaE2Ng6B/VHw=:w/qYt/1ypVUa8fd4wmxRzNUsowhtJM1Q:3Td2GI+IiTrSO6qBych9vuJcgr88W7K4NYHwkELMYINS3A==]",
+        "client_secret": "EJ[1:sbifib06S0yp/eL6CCUaARxUqdiAruGpaE2Ng6B/VHw=:6N7XSdg9lZzNp0Py41gRacRxF8VqUqT5:PswDAON/p1aqHcOjz9YYbSP7zCTwqddfPbw+nJ/pt7F7BGRHjHPwUNWMsOhZcm/k]",
+        "callback_api_secret": "EJ[1:sbifib06S0yp/eL6CCUaARxUqdiAruGpaE2Ng6B/VHw=:fba2Il4AMln99g2WOUNHXnN5lWpOGWld:FBkyhNmUiLnekgd6PPciYtHFIrBAdk7ls0G3YqcqDjSJ4Rz6PePEOQyUMjjQSJALMLjk0uKMyGKMZpxuzh/5MKxuhFuZZWabZXnbsNCNYlE=]",
+        "_product_id": "112141555574243337",
+        "_product_domain": "freshdesk.com",
+        "_freshid_request_timeout": 1,
+        "_mobile_deep_link_protocol": "com.freshworks.freshdesk"
+      },
       "database": {
+        "secret_key": "EJ[1:ZhK4desvpPVz44DaqwWoeUXWOe0Nab8tZG3qZBhcOQ0=:tVu3cWAMlLfJIFx7r4yP+q0LaoUCH/aT:rybkMzSs+TKXX/AfCFS0gDfk0I5hPuHPrVFlSLqE]",
+        "credentials": {
+          "_username": "dbuser",
+          "password": "EJ[1:nexvuJzYDVFjhAStMIoklU7FBA48UwLiBXe0oApJumY=:h6d+myA7PGjXq++hRZmfQN1NY/1ysKuQ:22snhO8iacQI4w17ukbzlOBAFc9fOQgZfPE=]"
+        },
+        "user_groups": {
+          "helpkit_app": {
+            "global": {
+              "_username": "helpkit_front",
+              "password": "EJ[1:nexvuJzYDVFjhAStMIoklU7FBA48UwLiBXe0oApJumY=:PO2ra5eNrk+sGWChiSjq+fddfsfYYTJZ:UY2pjHmj5WQeol9YWG6sJxui49nC9I21/Do=]"
+            },
+            "default": {
+              "_username": "helpkit_front",
+              "password": "EJ[1:nexvuJzYDVFjhAStMIoklU7FBA48UwLiBXe0oApJumY=:ve/XQEAkm/OJtWbw57IFP4lLTU04RMpJ:VD11qHo4vWtAsA9HjG/aAS7AjCIOef1IkjM=]"
+            },
+            "shards": {}
+          },
+          "falcon_app": {
+            "global": {
+              "_username": "falcon_front",
+              "password": "EJ[1:nexvuJzYDVFjhAStMIoklU7FBA48UwLiBXe0oApJumY=:JlA5ZM5qSEaZxWhzq8qaTY5fTyTG1XFi:hlvOwnoNI0kErw4Wsuu1846YuupNNsr81zs=]"
+            },
+            "default": {
+              "_username": "falcon_front",
+              "password": "EJ[1:nexvuJzYDVFjhAStMIoklU7FBA48UwLiBXe0oApJumY=:5pFh2QQzhUjVhS7wrrGSr3yI5DajfO+k:RIyGErvWiZyHVkayg/yOxg89lPJyX5isVxE=]"
+            },
+            "shards": {}
+          },
+          "helpkit_bg": {
+            "global": {
+              "_username": "helpkit_back",
+              "password": "EJ[1:nexvuJzYDVFjhAStMIoklU7FBA48UwLiBXe0oApJumY=:0RMbEAx8EVJz2kI/mseQtbwmrNNzh08k:yeeS/ZkGSJetwUUK9KG/LjKAcdeROJdcpXM=]"
+            },
+            "default": {
+              "_username": "helpkit_back",
+              "password": "EJ[1:nexvuJzYDVFjhAStMIoklU7FBA48UwLiBXe0oApJumY=:ly6ukEiO5Q6v7ZJUm2xyKKTGPlsqmi3P:EOZHcEGpfY24sJe1Bx5oKqaewH9Do6jqmho=]"
+            },
+            "shards": {}
+          },
+          "falcon_bg": {
+            "global": {
+              "_username": "falcon_back",
+              "password": "EJ[1:XMop8+Wpa3Wc8QmFzXoJAv9dkrfYdnGy3GIs+4ZuJ2Q=:/eUc2XJxmfc+YscXCQzvnlyzI87xu6uE:wFljE5L3Nm0q5+jM2bbK0Ta2BypTgsuRWzg=]"
+            },
+            "default": {
+              "_username": "falcon_back",
+              "password": "EJ[1:nexvuJzYDVFjhAStMIoklU7FBA48UwLiBXe0oApJumY=:5GW+Th60OAHnoYo9bkYrXtmudgSVGLwr:l8C1UMrZdoB2lyjmBF934e1yKesRY2PUA9w=]"
+            },
+            "shards": {}
+          }
+        },
         "global": {
-          "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:LVz2j6ocwYj15i6P2W59bblToiM4c4ZL:qDr1LBD0FIxZ9rrahhfDPwev0oQ2yT08LBI=]",
+          "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:UnD8LA3Xv7Wnqr+9AmxQS9POlVSwBUx8:kztu2cktbOA7ljN8/QyzvOfFNS0M5I/Dv9U=]",
           "_database": "helpkit_global",
           "_username": "dbuser",
           "_host": "shard1.internal.podapsouth1.freshdesk.com"
         },
         "shards": {
           "ind_shard_1": {
-            "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:rBRO3JDUUaI0lWo5nR1XLqMfFGHil+8w:fjQrTF9W6IbNnFO4AQDv7EjGLWmoGKT6qJI=]",
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:CAE7Hn8vooEZmLkD3fR08KjbMeJCBzBU:neM5al8AZzfYPoN7EhQ0BmvoF5lxUt39zew=]",
             "_database": "helpkit_shard_1",
             "_username": "dbuser",
             "_host": "shard1.internal.podapsouth1.freshdesk.com",
@@ -885,7 +1034,7 @@
             "_slave2_host": "shard1slave2.internal.podapsouth1.freshdesk.com"
           },
           "shard_27_1": {
-            "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:ugkaOeqAyMue0+EcoJ6R4QeV91VajyAE:G0YYUNwJ/vBDDnvyCIaPfXgeQBKJX3Apee8=]",
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:pzBJL0/BwdHmClvuueFN54c6nIUBje6e:8e+sZ3lZBLeHYaHHoyYqRmY3r/dwAKRMYjE=]",
             "_database": "helpkit_shard23_4",
             "_username": "dbuser",
             "_host": "shard27.internal.podapsouth1.freshdesk.com",
@@ -893,7 +1042,7 @@
             "_slave2_host": "shard27slave2.internal.podapsouth1.freshdesk.com"
           },
           "sandbox_shard_ind": {
-            "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:VEOw5JU7ECnUtg1HYy2ASnRPhTBwPYji:K4ch9ar3eFhqzQUnYo0wPRhLeiX49hGwW/w=]",
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:v8YjvEF5MNSA4klTDjR06uuhJlLALq7T:QrzpSlvzxoJZ4RG9HqwwIw3ScclIxEgmTSU=]",
             "_database": "sandbox_ind",
             "_username": "dbuser",
             "_host": "sandbox.internal.podapsouth1.freshdesk.com",
@@ -926,7 +1075,7 @@
       },
       "elastic_search": {
         "search_v2": {
-          "service_auth_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:lgmb365m1Ni/7C8FNXHVuOOlcDcsQnQB:73MwKI+P7V/XdKjFsj4E9Wk/Odb75BYByZFVuUxyET+uJlKz1boKb9W8vm9qFmsG]",
+          "service_auth_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:IsEc/TPo9Su75xiftKl4rVZ6E+hok705:MHBQVP9mSlz8tDLWEj5WlKmEE8eZdVg5+8Z+TtMyJJAShLpaNjonoCkhjxC30f8o]",
           "_host_name": "search.internal.podapsouth1.freshdesk.com",
           "_product_name": "freshdesk",
           "_search_service": "internal-search-service-2049861688.ap-south-1.elb.amazonaws.com"
@@ -963,8 +1112,8 @@
         "_scheduled_poll_interval": 1
       },
       "ml_app": {
-        "auth_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:gwwFxge+Hlz2W4wkVRgre+GXp+Bo4nWO:8H+iSWqTJCy5T0GUpkspEtHlxzrlx0jmBlcR+4FwokFSKJj0EPHlZDWIfdhm]",
-        "kissmetrics": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:eMPabkCBDfpvC3g4R5YFZmWhXqVYGFw6:5WtTfnYmyBoKRLkUawK51UXyGqZYNKFmMrh9nVy9g4CA71YARN/H5elQXPOIE2pS0ir0WpCru3A=]",
+        "auth_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:Si3BsTPINiUTR6S5a40YAuyS0S6IWRDP:VfFZ7e+g2ie1Uca3fglUHE7/3oU7+oM4rulD2Sk3ouDoxUKGZ8EIXRL6raaF]",
+        "kissmetrics": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:VZJkPoIM8DPNBa/LVzPAMa61xpoqhE9L:DZNuS3TfPaOGThrPLRfpOtU3vFx/srQSEBVXW6ABLytqqX6zOBGgid/sVty2ExUFF5YjfwiZuNI=]",
         "_host": "https://freshiq.freshdesk.com",
         "_url": "api/v1/suggest/tickets",
         "_sentiment_host": "http://sentimentelb-866010645.us-east-1.elb.amazonaws.com",
@@ -972,15 +1121,15 @@
         "_feedback_url": "api/v1/feedback/"
       },
       "marketplace": {
-        "api_auth_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:o/btDzLKkxHyo61BT/PtYrY5tpI98CXX:qP/TOADYEFSMCD7xhXhQB41liV05jM/r79F915sppFilGHgsoG3xCQFWrcLzmwiJFwJZ/fJG4DyGGd+s+jyXGQ==]",
-        "dev_oauth_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:eehHuuXY+rF/gwkqJKdrq5WTedunNKLf:1scVOX2QWivo0QUQm38qEZg0RcJno235RZtkFnpqWuIAKWYVLqAukzGmvH0Tig7JN5Szj01tMLFMhQxWHteGFgX02UJRwLokzHjzR0uUJp0=]",
-        "dev_oauth_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:aDTBA5FCU4P6S4i5p8iDtI38HePGPNLT:QnzJUNrfeUq5V3a2aedfUpd7JdOveAeH5t4M/3zyujDDqHS+NTvsPrAdKXWq2kBta2zYhMjzzZsklBL8q+bIWHzoAzZPSXVKAZ2vlLOBsuE=]",
-        "admin_oauth_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:pL4Xj1BnygaI1rW3pw3Nrou2+6w1FJEB:C12coRplo/8oWG7CS7MPT0yfeIQtp78A/Jlq9kvH2RY/jGSVSJw3ltDYWM7zGZ3dOVfwe4chnVxUv/tsvxVhAtTT0vSXchiCVNElcuibfFw=]",
-        "admin_oauth_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:qj2LkPvVG6v9Lg8kzondb39J5tCnYHQC:VSyQ+Vc6KH4GhifkXMD0gVFRvsFIMyc6M1EfLFSTvDzMDWPr4DKGn5o3pxAbtDMq7sxeiIOGRYVp66cStVSC7/RhC9lip+TMepifnW4CY68=]",
-        "data_pipe_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:jhLyuE9UioA7V/kz53hYQa16vvdL10P2:LvQtwV78uLwWQJkabDIr3qWPwRUYdIiPUbf4THJ1K2a1Dj+d7ePn5T9MvdAfL+a3]",
-        "jwt_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:OCpVOWF5o+0dg2cmtBNN6Yid8ZyqviHw:J23YSpIbifcvo00Lgnmx3JEaByMNCAW1V4omaZurJfpkwcCjdU4xCqoajOz3S9XH]",
-        "gallery_oauth_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:hjWFRUSXOEEy8BQ66xGMN4DktQ0dnnAv:IvdSmj+MEcKWMwEQz13C9dHtgnWxysC1EY/RzIMoGsqy4M7KHt79oOOxRanhkkc9droVTRiNt/TLfkz5p47I94jSU3bKSACuf0+yl6Ettmk=]",
-        "gallery_oauth_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:EYcQEgGznliueRlImI3RvCHNBz3vRgpK:20hJYc/+8L8MFmwwXP/StjTIcoEMViWezAiQOQjpvSxQQ4VL3Fa3Hr0h4mpHMa6RlEkIreP5/E35sFBh2MLOhiS2hkVBdw74xddtkMTttUM=]",
+        "api_auth_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:Lg/me82lsU3j62aOlw/cWS/phJc7l9pr:aASy3U4ObvV+fiY3fvNdVe+F3h9ZKjmvPDA+tm7Oc7te65oMbi5gAqSS5PXCyCjt735pidYaDdVqMwO6v/+dPA==]",
+        "dev_oauth_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:Yc6sLT1se3D9AeTbgn7IUEhve1zA3Tgm:X04DWONCFJkctNS5GByYEK4yKF5Q9Sefyi8y2jeWbJ5w2vjCnyuDcUyGarqJSriZUbpbuIw2roh+YVIbBNYw7iDJQu1KuO3+rjBPO6qqJnM=]",
+        "dev_oauth_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:zp4iQN+4IdGa6NksLIiQOVfPQOZXng0k:c3opCi8J9kNgeuzkLWWhYpYt2z9rXsXPQrLU5+KwSkMhiI+pbs5CufZjtk5/3uh+v9e+IaMcvHqmN3WZeyPMdtG3yY0K3V+FnJWZMzvA9ZA=]",
+        "admin_oauth_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:rYcayE8kkdhpyExozCkxnFktvbrnzmbc:xg/zG56Q1bRWd4Rjl5j7sqI8b21FGWuJdhFMsBiiRou78VE1Z1Ll+ZIP3H4Por2vMpuTl0CzvB7MMWCl+9DprHLsZASZ0esRIe1c0HmmkSg=]",
+        "admin_oauth_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:wbQpYBl6G/89BKUPfwu2pmtWLako7DP2:QVLgsJVg9UyF8d3BhfCD9DeBcbtaJvspprYC3+amFIiQLCvDjtA6xioF9Z3QdrF/zaOdR9nxwiXDu9jvtXjSFlCSUW3iDhLJKSJzopRHsJE=]",
+        "data_pipe_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:2733N6UNpGo0MfF/GwWlH5mOQKcjJAha:hm8d0C8ITt8mLNwRHsmdHQFSqL4wadX5l6LeOqwB+unG/47/fZZe3KHRxAtQgjyl]",
+        "jwt_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:MiV78jYf6/nhi5NAEaOA+Lfcp8BjPR5/:mH17IIeloRp5KNMJYmk8a98ApHkrESwl45ezY8w1cwrAnYcM0tAkY0/RbQKojNj+]",
+        "gallery_oauth_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:3WFNPVaL6A8N+RWFbqntGfAXoYzRSpJi:kNRYiABGd4UNbu5/xzao7+7Tw8Pvuu2Suu6HZna9/FFLaDl3w3E/bsGbaxu2ea9PQq7RF5d8nt1gLM8MKZmj9uXiAsWmMFMl9Poy03COiZ8=]",
+        "gallery_oauth_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:+1VtP1oNZDGjUwCY+f9IfARsVDMlwCmA:h5VI3yzsv4br4skgAmauOIFrfWjem6roQq+QSzQNSWF3XMT/pDn379xIVNRKe5ZAdH5/Zl0oO9jcs3gmk1EnM8Ma++TKbFcQwps9S5Gd8Yo=]",
         "_dev_portal_url": "https://www.freshdev.io",
         "_admin_url": "https://sudo.freshdev.io",
         "_api_url": "https://gapi.freshdev.io",
@@ -993,25 +1142,28 @@
         "_custom_app_invalid_time": 300,
         "_tenant_id": "1",
         "_awol_region": "ind",
-        "_gallery_url": "https://app-gallery-ind.freshdesk.com"
+        "_gallery_url": "https://app-gallery-ind.freshdesk.com",
+        "mkp_cipher_key": "EJ[1:548+WzFl1UA8OrLcI99mpCbk+rgPCdrushq5AlAsPkU=:Och8PeJNeALt3xCqJnnFZAu02DL+fGp+:E5Bx9uM5FkLv3pfR9LDtQGRs92oEFNUQ3H8ASrTX4HAzk+vD8o50BqgWXPS2dizE]",
+        "mkp_cipher_iv": "EJ[1:548+WzFl1UA8OrLcI99mpCbk+rgPCdrushq5AlAsPkU=:FPdhJTsDrfX3ccTRJo1EE54Gp3ID3nh7:HGIfT7yxqFJ5dKJg1baJGy3Sxz1/XIIc35uvwHG1Nf0=]"
       },
       "integrations": {
-        "icontact_app_id": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:HaRT18fUokmjq+Jzhwb7V2tGjnBb0+iW:EPjiwytBgSqQOgEbry0hkePfKU0bYJSt3jc4+c/23LQQjjsvXbjtIGSC52AUWS4p]",
-        "xero_consumer_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:juGCDUoT59IIURvf8CdjlEjA5A0kKAmL:N5lMDqPjTAg1xeBQs++roMEMZMluO2RJk5tu9SRq9vuQEC89epamDhilaqPl1g==]",
-        "xero_consumer_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:WSqH+7w1sPj1wdLHBwqc8Guf0IV8fSOC:EAJxyQxjMUHKhmr1rNJeO24d+z/xCgmFkOzB7M0JKhqT/2waRCnUwC7m1lSBFw==]",
-        "onedrive_client_id": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:JTEn3b2WlQrfMZt5pJBnqee1OWLvg8t1:i6d5ajcNW5EefDRZDBTPdI2opdlP5GJhg5f2qLIBBzY=]",
-        "onedrive_client_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:zFVyE7VeV07z3vT249tQk3FnzaR/Wfo3:tO8+X96G1r2ET2Y9jHsbXKpv+a+k8N/kZ3oSfDL4uN/XZyI03kb7xYO0mfRuWG2K]",
-        "google_business_calendar": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:elxJRdw8ZSkLiISqfD/WJwguRtkLcfvK:Ky8LuVVhAZWETovJdi8hE8kGUG+BqPs730Jz3ySuz1JdZziOxxDWzm2D6vLv4rnUowRP+EBV7w==]",
-        "cloud_elements_auth_header": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:xnOGTg15KvyRkda2VXuYtWJjSG92fk7R:x+gTd+DkQNJT1W725+zOS3+BN70M4XF4G2onW1IWJZzNOJdvh0HG/aUi/FRvJ7eVG4FnEJnSYLZfTNrnHf708uyzhxkwSilM4PSpTLZKEfO0MA6Xgc8DvelSxJZ9XU6MC8KGS4WG488gDe2focFC]",
+        "icontact_app_id": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:0mKVGpQzbD+tDmS39rvkFrlbcJoHHy1z:g4sM1ELXl+fvIDBo80fEmoqKeEogkRrmg8eFTRoVgOEcvaztXDvrs5TJ9GY9ZmqY]",
+        "xero_consumer_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:gNYUhNrQdodBpoeby5MDxgUHZT8HMQNW:4m/kMgQlt3cypCBhBD+WDpHVBzUnuqCJ8JsTk5oS9Bi3jIfVIKYNvDV4JzOu1g==]",
+        "xero_consumer_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:R/fTVJxul2EcMAuvKR04cHZHO+PER0ay:hVaXzgGaB8zNLmn8gf9W0FchDmH7EXlDjtDX1fueWkjc1gkWY1MmcO/Xd2NDMg==]",
+        "onedrive_client_id": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:ALi8a5QvM14qU085zd0COTD2aRDLARis:Xp1yoC1LghlZ0acM0s4jZm2mAC2p+eSKR4xdjWh2y6k=]",
+        "onedrive_client_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:15NTjf46atOnidq8IixgfB8MunQZg7EU:fow87ByOSZYGLdarH9qBYFm84eQ9b3ELTCxFM7aQcDX3qEsLajE8Qi1DqkA9ZZhM]",
+        "google_business_calendar": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:HPmNc1pUMxKjO7b/RE57uu3UltNUILGY:jBt/TT177V1H9n2/f+q1pcG7kdGZwDWJgfHbxwy/rt4kKrwn5NLdeGt8GFBrGVnhyAGLDZXlKg==]",
+        "cloud_elements_auth_header": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:0kkdMZ9gUU396YhEKLkKw1qyo89hIuXV:zcZ4m+vHxIKNqWmR9eWih4bbc1czQ2NpCqp5+T8Fy8st3xVDyQ67M20QlzTiN1aoUHBlpnQ0ypMXa+MRQnX9PygpB3DCe2kCeuLXoQujnDr/PM4AKUV1N+j3C2mAQ9ICo477fd7433Mj0wcOy1f1]",
         "_cloud_elements_server_url": "https://api.cloud-elements.co.uk",
         "_crm_template_id_salesforcev2": "310",
         "_crm_template_id_dynamicv2": "312",
         "_fd_template_id_salesforcev2": "309",
         "_fd_template_id_dynamicv2": "311",
-        "_outgoing_proxy_ip": "10.3.2.77"
+        "_outgoing_proxy_ip": "10.3.2.77",
+        "office365_originator_id": "EJ[1:JenLY5vhu661rn3eGPCdVlWtN2QRQMHGFulTkPC0iiE=:s6d/pXzQOMZIYUpKuSd1STNzpyKUzI+X:AFoD0D3rjUIiGSmzTgmESOXmJ3N6pgTOxroJmiGyLQPHXnvlXaBhJbzIlXlj3pAXzCR3Og==]"
       },
       "smart_filter": {
-        "auth_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:xhcXFzHQLpUPLBN3yvJvcHWw2NIu0GJf:L7HA/sEsr04HIIk9TZmWTq8R/y9AGr584HA1Ar3jne2TsAjXhefwenA+e6HXsz5hBKbISq+3HHjQW8BXhKuziIr9jDGOhrKsGhKX6AqP6tb/GR7QjyDxQmWCPhB3z2iYFMjLBgPscQNCRMeB6aIhCEs8cSMn87Mzw9UyYVI+F9bCUINN851hZxhvbrm+XdCpis7hoSuJ+mqbOwE+vZMMHK7qyMLzBDxoyRLYuz0JB5TPQyHRgpWEQl3nkp25GhdUB0UROsOn9UQAjgT/9tTNiMvB9RtOZ3znFALQlLzLwIPSPCYPYHYhjM8JMkIWCaP/uj4HqVAZOxbXPdhqR4MsmdzMZ2KzD5gUWSJcj0dDZSJq2sw3YA==]",
+        "auth_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:uAwSUNgagj01x21DpDpg5NAFV3zBXRu1:9X4gxZzYDMgN5QebXvy2pbo4UXcmIij2TrvSPKoPL72VKqxly5xZoaN0S2Obb42oL9EKhVDcv4K9cksHuu/Mzr7J+bpXtQVx2DZ0YQ25oqTzXaXY5JV36rahQMTp/ygUyGHJCxBqzUAQeKHqTBIlWUjakBpQhBOetk6t7GUTjBmjMuLM6DOUsGf+7R2FLo1xDf7CXVC/8tm3/xUHTXikru4vypQFG5jHOwMaRzHWvB72WdYhLM+3Db/rfA45EYQiUrdZ3ShIE8IlX1ZMB8E6/McLPoqXXR509KRdZ8iLfYXECEgRV4cQtSFuSa2IfjDVA8lcd+tvdAts7jrjmdR9HlR9skSRjUehtZE8Bf/Yp4v1tDGEJQ==]",
         "_api_endpoint": "https://ncind.freshworksapi.com",
         "_init_url": "/init",
         "_query_url": "/query",
@@ -1019,7 +1171,7 @@
         "_max_tries": 4
       },
       "kafka": {
-        "service": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:UY+Qcxlu0Gu1BJvR2fyNmwPkLjiMU3j/:X26dHzU3Oj8A/86Fsy5qkUj7kirgyZnPY7Ozqp28DwE0F60QJfoyYz6fDIzgE/0s5bZv2rb3iKTZ7RFg]",
+        "service": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:Mc/RbnaFlJQ893j9fsRVOY/62sualOog:HDlysb2lmtkG4nAdLnsHcAM4fMo7kR5IHsUp6lvxs483j+hWYqTD6NeqEDvzXXwpAaw5wTNHTCQ9v3pS]",
         "_endpoint": "https://central-mumbai.freshworksapi.com",
         "_path": "/collector",
         "_method": "post",
@@ -1032,16 +1184,21 @@
         "_pod": "production"
       },
       "central": {
-        "service_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:OrmAJYqzE0gX9H2Wc9U9RAeE1EmPeesN:uRkesZO3wg17ItPFBvmV+PSaiOKw8+x8xa6w++Dgbnv0P3cYa7l7Cq9rg+abQLPY1+6EwIfCSutT9y+C79gTn/KrTvXduTADeyrF/A6RlkPnn3COsOOWoy0hj+nh+O+R]",
+        "service_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:zMpeY26YAa7LLdWvaUGI0ulH+zAVH/zW:pxndocfWx2DnQYPp1rHvvv4j4N0KZjwyPZaaadAygrid6klIu7DjA7eeE5LPBL7rLtWe7oZNWPzheM/Lhs6d1CMLhOXZd9puhX/8qoVmbBzhEgGOUDwPd0b/LBAeOz2n]",
         "central_secret": {
           "twitter": {
-            "key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:IXpzDtCusKaZMlrPTMUPOvwOMzPXi6QK:Pu+s2nNMrI1C53yBSipAC8SzUVeIWgDxTYfQi5DKWMR8CdihpMEdBSRfFDkhmw/h]",
-            "iv": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:Ur4Lxbtn7y0D27KZxjviwHQqUG9ayT0z:ehy7UEIbssw39MxrmecZqIWN4Zd3ZsFE+DOsXEbaS+g=]",
+            "key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:gY2lNNNywWWFlp8/azIIOzYIOcCIxLAB:WzBqNGIKjD4C/yfoEtTOrS+rZLZcQbz5u4Po+Lsj8Qx9sPOb8vPLn6IZqgKPXRjI]",
+            "iv": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:Uxh1z23nVziRCn9df6ou5rh9QWYXQc2q:lui6b2cqL77BKN4oTsP562UW14zUfv3E6YbFiCRa7JE=]",
             "_label": "twitter"
           },
+          "facebook": {
+            "key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:gY2lNNNywWWFlp8/azIIOzYIOcCIxLAB:WzBqNGIKjD4C/yfoEtTOrS+rZLZcQbz5u4Po+Lsj8Qx9sPOb8vPLn6IZqgKPXRjI]",
+            "iv": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:Uxh1z23nVziRCn9df6ou5rh9QWYXQc2q:lui6b2cqL77BKN4oTsP562UW14zUfv3E6YbFiCRa7JE=]",
+            "_label": "facebook"
+          },
           "installed_application": {
-            "key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:swtRYf++u8rJ8HFCRSSyYv7XUBJzichA:wrCGEm0K28dCi3UEjN00b/1xmwHiUV5oaSJaygTQtkRZgmx29Af6WsWJZHctE/J0+HLfp1hlLamKdU5YvBf8ZAupZaLViQ==]",
-            "iv": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:Jz1R0K9hbuibSDQnW2G+8EVAFCD7DdxX:o+hlONY4wPnd7DzrJItC/YMXLlxlMgi7KmuXH+GhjAFW5jNvD881bLj9S6BW1ShR]",
+            "key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:YXVfSLyeUH9TMJG43b3nDXH+hx+9GJAA:4DYusZzjOsyQf0pUdHdqhauiQO+S6m1QZAdi9e+qKnUzlUFi0lqvO32xh8JakmYeqdzaYjdFuBcR5Jw0vYepa2Bma0Xj5g==]",
+            "iv": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:DtiDB3sP9KhB2hN0MWKcI6y0COXXzUK5:RXALHT/VOO6+8W+cDLyq5lwv/2TIs9Hn2QlzyzBUj6MZIf726kS1UkOryQQ93mIw]",
             "_label": "key1"
           }
         },
@@ -1049,23 +1206,23 @@
       },
       "channel_api_keys": {
         "zapier": {
-          "jwt_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:n3QvSlKqUa7BqzIsPX67tE89flixyhh0:a6G5xttd57hNFDXx1qmJe6qPjwAbkJnOIVSVfcSv7AUOqMH79FctmtMAyWi27kG3]",
-          "secret_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:19fAnTZtMZLKKPxDxta5C4sW1viEqxu4:bW8KSA1jsyNJTHJ9HRuXVLDJFHeB+o0GBoHWsCC9nXcCHasIOmd6z3rpTY1Rb2Mn]",
-          "iv": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:EDfxnMV2UScHhBPqr/fMSWIjKmcGsp6U:IEy++UlD/EM6+s7/qDqZ+kaAnrODP7KpA7iG3Yg4VYU=]",
+          "jwt_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:IqEbuTLOx/AdP37/nmN0ALnvDBu6NmqJ:xHPUyXMsl9kKtHnMY+LzhATmvAJKxQhnM0qKeJ/s6TDvU8SAYoaAFWQ4M6CNRBAS]",
+          "secret_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:sXRUYl1JOJq34nFSHf3LaYurGCmxFfWh:RQ3gzmenTI3Yh41QYMe2PCpd/XkPXN1DjIaxGZUKfyYY9OHLWmIshvCMcLxR+5Ua]",
+          "iv": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:la/FGKeGSkEs5sJPO8jA2J4Aq8EldhKE:ERfRCrFFLNi4wL8NHr3E5+0VURBabCg4WmVmZS4hP6M=]",
           "_auth_type": "jwt"
         },
         "frankbot": {
-          "secret_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:oIR6s07aspvpdcvab3iN87Lx2FHoFxei:yqfNnq9iZN++1pZLV4grcFBoGe3FQXl3WbLqyj1fRqfF2I4nWJQDAT9cASBXzs+D]",
-          "jwt_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:nj7JucqeaEaxWUv3L4pX8DkIBdXIv4/v:6SWd7hr4tOqkTTviHTQXNWHihInxiLkvF4a59Dken9hYPQBrtifJVX6okYJURtYm]",
+          "secret_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:18dVaPhr7DNQmh+4i06IyxCn45Q2ohz2:Y9zfzgn6830WEw1qSpo0E5dDyFfa7cUjRdAuBL8fci9W1wk7SW55J09RGo/x/mfq]",
+          "jwt_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:PWgPRf4jqACxEdRA2lD9q2TUKCDq7r0o:l+E7i0igt96QnWI1TCg884UAmoWNm8yE5rTsaLcSeQoEz+A6KoEXHXmZYwGqHnDG]",
           "_auth_type": "jwe",
           "_jwt_default_expiry": "30"
         },
         "twitter": {
-          "jwt_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:4jGT4qLkDZFqElFRwe4216xolat+lDFD:ZWXda92cFKw4+nXgdlcmOHHd6WVXF90r7Cd4TPu2lgH0eVZfHev5pPrCESYSiFI/]",
+          "jwt_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:6Oq8fJmMWP08cWr0cfBe6QjMrxdn+Twn:QG73ZmfxmHAz/ojv63ERhNS1+Tw4HuuzBL2VtJJNbPXY3iekp//urjJW1ZFyEKtI]",
           "_auth_type": "jwt"
         },
         "proactive": {
-          "jwt_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:GwZSGi1HQykB9aAFbeQXFoZfhSESFHrN:ipcP4x/8v9haimhMrA1dR4REX/8B3CqFX0upBpSpt+sIl+HDHsLDWA4rXtaHScaoO+bPEhj3D4themx6nlBnY6iSCfkHMxTsoCMxJnmbViPvSfi6RT3t+AeSpHWq7u00V1fjQWI5VK4t25cdAb/qID+wF4AjCXF4MUtcXE1nNr4NRuK/bMP9QpalefAhhscq]",
+          "jwt_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:y6X2MAKTqJKApTLE4TLdYAmNZFO67oKp:8V6mrrU9wTA1X1GskVMfCGhVrm6iRW/DZNIHgMaIQrtLQiTN753LtAXQ45xKL/ow1ZRrBxFdguPqK7lCLHgG+V3/eIPIFOocKFI/9QEK81rkt3FURNN3fzDoQrslQ3di+1qdtxqMS52Lxzwpy7foUmvZ6MR+WgB8qtqThkNyyNBIZNnI3m2Qt/CZ9/+a60qb]",
           "_auth_type": "jwt"
         },
         "ocr_channel": {
@@ -1075,23 +1232,57 @@
           "_auth_type": "jwt",
           "_jwt_default_expiry": "30"
         },
+        "freddy": {
+          "_auth_type": "jwt",
+          "jwt_secret": [
+            "EJ[1:bn701ci1lpLfJ/juODR/wnZ8NlvKygp2r0SNthXj6iY=:XYYmGdjQbe4AS58iA01DjLzd3T7SEn3d:zfsKS0xFEVz4EVcFyCeAs2TSXZ+zicgtcMV08YygnUA7qHhscLdTulpNm161]"
+          ],
+          "_jwt_default_expiry": "30"
+        },
+        "freshchat": {
+          "_auth_type": "jwt",
+          "jwt_secret": [
+            "EJ[1:K95+r52Iqp5F8XkHCz0836H3oGY0czHXlhj7AgFDuVo=:zYwZeez+EFIIJW8+jvU9BcwZe2zLXhtk:aXMEtHXFX74G7pgZxp1wLZUbMRMEnXY6AcelZtOZiz70DcnQcD3aeAMk85gR]", "EJ[1:K95+r52Iqp5F8XkHCz0836H3oGY0czHXlhj7AgFDuVo=:zLGMTvD8f8QsNAMwVkVKTNO98P+LY5HW:FQanrHz4rZyqvjycs5l1MBcT4Hd5Vj8EpzOMKdgd/GNPco7wbZLbIcyWNE0Jr4huKQhy6kUWs8o=]"
+          ],
+          "_jwt_default_expiry": "30"
+        },
         "freshmover": {
-          "jwt_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:59CerhzIs5ssUxzVUw3bMkpfxYo9hf56:i6VkgQnyWq+AcAWKVJAJPR9N+Riptn3cbaf+hOEcQXckhMmy75InPbNYYfwfe9mU]",
+          "jwt_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:t52d9/useaFMQNmh7lwFdtDsMnmXCfQ6:d2jJA3LJ3YeEmAU6ig/puQa26AKtPnLgNNwFX+MzW38ja9wAw0nA9adFZ7x3PcCL]",
           "_auth_type": "jwt"
+        },
+        "freshconnect": {
+          "_auth_type": "jwt",
+          "jwt_secret": "EJ[1:w/KFmu8cp1xyqfbv6h+96U7w6ywhrxx2EVBySGinaik=:wqyFPr0+rXl+CQgmYCONs81XNH5W2dXu:653dGapwktIVqlS1OHjzXYp11xo1+vrAYvJK6ADuL5voG8tFKy74njEHM2e8ISzReyVFQ6Eo8GFSJVhA08PcBliT5JJ5a6aGSLAKWZYeChVp2oq3D536CnOmiLc5V4zTcNrN6uQ2Xcs=]",
+          "_jwt_default_expiry": "30"
+        },
+        "sherlock": {
+          "_auth_type": "jwt",
+          "jwt_secret": "EJ[1:tUU/gfTLSEkWC3PcahAjZfrQuWj0iPhEeEYKBziqREM=:P2pNqP6Tl824LnfAkM3TNYBBdB4c/vec:vUAyOKZm/Xb15ZyvtfqKp9obXAlFI+QmEcCjJ+neF94Z36p+RZ8uy2+sKBK7]"
+        },
+        "facebook": {
+          "_auth_type": "jwt",
+          "jwt_secret": "EJ[1:MwCFdHxlJVvU5w85rNFakkaxDE271NvAsQnoG8KwdHI=:2+SvdGOFBMV4Bbr8ihauiwS2YifGjm5v:v8oNP00rqc8ELc0x8g4s4ZQjvWjNc0sfXLQYauyEcEHoQH6/PfZk2S6pAJNfaCpM]"
         }
       },
       "scheduler_client_keys": {
-        "token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:DlUYoxEbc8JISb9STciHDsl29N7VluVY:/O0gS+Yzk/Iqzr70A+lSABIT5Kg0OiPhYThFvgH4nRJYIPR/+K0yts8knwvHIQ5t]",
+        "token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:xfOPjGGZ5hPeJtgkcYCJoSZfZj/REKnl:/kyxM15KtoBKazug+EEPgpkR2mPiJK8KvjAFJywLawYey/HDJZuz9DJjX6efv7gf]",
         "_end_point": "http://scheduler.freshworksapi.com/schedules",
         "_todo_group_name": "helpkit_todo_reminder",
-        "_export_group_name": "helpkit_export_cleanup"
+        "_export_group_name": "helpkit_export_cleanup",
+        "_ticket_delete_group_name": "helpkit_ticket_delete",
+        "_downgrade_policy_group_name": "helpkit_downgrade_policy_reminder"
       },
       "freshchat": {
-        "_agent_widget_host_url": "https://web.freshchat.com",
-        "_visitor_widget_host_url": "https://wchat.freshchat.com"
+        "_agent_widget_host_url": "https://web.in.freshchat.com",
+        "_visitor_widget_host_url": "https://wchat.in.freshchat.com",
+        "_api_host_url": "https://api.in.freshchat.com",
+        "signup": {
+          "_host": "https://internal-api.freshchat.com/internal/system42/",
+          "secret": "EJ[1:D6STShzcnhp16dqB3DPYqMoYJyLPwwtKg2EJqHnipm0=:iV1wi8jKjCrm9oKyp7+ptW2OtDqQUq3G:oW6VnRR/hbM5sW8j/v+cj7BNvYr3CYBbR5V2VNLpw0usOh2+nlQUxVwOL51exJG/n86BY33CbSkoBBg=]"
+        }
       },
       "formserv": {
-        "api_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:V7zu4DSRmaNhRXClOfMSWaNGxTU/Du+4:yILwnKE8EaIkCURScbXZg0+I6JKODk514RkBR79IhYfdWH9rQ0neb/EopNi9Ne7q]",
+        "api_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:LZmIYFSfpkl0WNH1R4RVHHVw5RXglkSg:5edFInq4GXq9Bcc5lQH/2UXvifD6AnNdVMK+8cH/ocFWfSxwkFvNlsM4p315vR6E]",
         "_formserv_url": "https://formserv-mumbai.freshworksapi.com/api/v1/forms",
         "_product_name": "freshdesk",
         "_keep_connection_alive": true,
@@ -1101,64 +1292,126 @@
       },
       "app_integration": {
         "freshconnect": {
-          "token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:ZlteZYUh5wWOx6Tvc4IUgi4MsnvSyxjB:VbvrtLOoJ/2JCx4xobgOa6/Uoz5hwdcjq/DIhnJ9lmFMtvIp5LzD17AUJSVMdIUVCgYlPzTN5q4NnKdoD3JK83Ku1mMNnj0AuI2prVQ05E2vbDl/CVPirKUj0PGPEViSpaRKGKZtxic=]"
+          "token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:fDQSUdgQ+VrUgdT0qrhZjyG2au45g11J:SdIPB0o4pPGPDEdmVPaJ8ax/j1N5m9ZHXemO68d7BNnkhjmnBSOMp00syFEg60tb25haJ20L1hyqWshXgEAFVtUXnwKJiLktrEwdnzGDq6YKZUAFIdnFF55P9eZ6faBmC7GOVFiBqRo=]"
         }
       },
       "freshmarketer": {
-        "access_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:qTskk66DhuTA/vOxvJ0mWmbVBx5bkYbC:BZhlAtsCXc5CKVPn9HHKGklgL8wth+w7glCjKDqIgboTF/7uhCsLJtZTX/bOxyreSMjeX9qjtYbyyIPHAUKUppCm]",
+        "access_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:RGZ7hlabNblU8fMAsrFP8ggddZ2L/7Jb:bgjFV5HjfmF1C0Gv2UkIJVJmBP4Wxlf4/ZekPz4JcUEN1OgmaeRcjnf3HDwxGvYUa7RUFS+39YrDfwCbyt24xGEl]",
         "_api_endpoint": "http://app.freshmarketer.com/ab/api/v1"
       },
       "hypertrail": {
         "audit_log": {
-          "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:LX9XjgYiRPG1rtcXFG4F6ICSFWyoA/+i:wII5KYyTMF2YMhVQMn7tfJQ=]",
+          "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:Ojt8wmhzUIgRzIfTsd+3/K+N1QFf9HPD:D27O9agd1d6byaWmq3xXS8c=]",
           "_api_endpoint": "https://hypertrail-bom.freshworksapi.com/api/v1/audit/account/%{account_id}",
           "_username": "bbcaf5cbe27924384d871bb09be94994b4ca2479"
         },
         "timeline": {
-          "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:LRhTjf4pnvP0+Kktp4eJGTQ6SvdPosD0:nxw+xKbt7SD5JHNEdHB3sQ4=]",
+          "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:z5s97G6cPmXwJOAseDTwIpcGqHdAiA+j:Lqj/i9Z6+6h4t5F/4EhlSeg=]",
           "_api_endpoint": "https://hypertrail-bom.freshworksapi.com/api/v2/activities/account/%{account_id}",
           "_username": "bbcaf5cbe27924384d871bb09be94994b4ca2479"
         },
         "audit_log_filtered_export": {
-          "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:nGQrQNLhBBZ1pdixDy8+b+kWLWeTVuXP:7+r8y40sR0Qt03WRd2DdG6I=]",
+          "password": "EJ[1:s59Q1oxRFO0kVIPCeGLdXha3M8wMSBr3USgZ6EybTTY=:6XNpJ8mZ0MIo09zDI68fTvzbGB8M8u3Q:8JiyRjKxGMa13fJBCjyPWr4=]",
           "_api_endpoint": "https://hypertrail-bom.freshworksapi.com/api/v1/export/filtered/account/%{account_id}/audit",
           "_username": "bbcaf5cbe27924384d871bb09be94994b4ca2479"
         },
+        "audit_log_archived_export":{
+          "password": "EJ[1:s59Q1oxRFO0kVIPCeGLdXha3M8wMSBr3USgZ6EybTTY=:UusoNE7eislLjfWSGVGhbyejW0/bBWZ1:sgeUusDU8WQhF/OFrs0WxyY=]",
+          "_api_endpoint": "https://hypertrail-bom.freshworksapi.com/api/v1/export/archived/account/%{account_id}/audit",
+          "_username": "bbcaf5cbe27924384d871bb09be94994b4ca2479"
+        },
         "audit_log_file_export": {
-          "password": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:U+ednQmlsDtAghgsAlhmcq6ypgRU+qpO:4lXO+4zvi6yqvzlmwneDoNE=]",
+          "password": "EJ[1:s59Q1oxRFO0kVIPCeGLdXha3M8wMSBr3USgZ6EybTTY=:Pn5/YWVHVCGmyddQ41AmEjKcSPekqEIV:49vEHI1XOEYSTQ/nHIYGSiw=]",
           "_api_endpoint": "https://hypertrail-bom.freshworksapi.com/api/v1/export/account/%{account_id}/%{job_id}",
           "_username": "bbcaf5cbe27924384d871bb09be94994b4ca2479"
         }
       },
       "proactive_service": {
-        "signing_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:1qJkCfbFB2//AyNsIuY1o8+Mq4nFRthN:87Ht7NrEUv7EJOWaf9Pst+zoPuYgTha4HceOKuza8qEM66TzOt6FWXmM6BOYELLrEyAQlfYXWAJ3T0xeOsmspy6jMli1DEUF9ARbJDFZbbP8j7qsa1N/knugLStHlVBQPtGiODHcx2CRnCUGY3AhO9ZasLHUnKtmbHHw5ywU8krKNWDLhEvuHneBE2QLPp/T]",
-        "email_cipher_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:AiqDUkCJp7r6f/dI4VQeoVTRKl/+fJN7:gpnpSG9qJN9YmadftsC7lH4liU/e4b93GhoVC0k9d3uJI2g5ntcnhWs7eO+kr1HzRoZLI4Q=]",
+        "signing_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:VtWmcmaBN355nb/J6i4Px+a7SHqP8U1c:fh7LBHkn/F1KjABpRqwHcnrdUFjOqplp7w4eRxwiefZFXYmhEzPANrhTtGL/Y14nFjJjD87miRKGaQXdpvPn7nmtZh2YGATaOQfi9QtueUVBaUM5mWPrFOEyqYJ5gqUUdiRhK0sOv/luRQ+T3qq67yck/4/05V2AbTk1zatCBD3cQM8+Y+IZQVWIis2rzVgS]",
+        "email_cipher_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:DIV2ZMzUHNGAnhGy60FRcyzhNB2EaZEK:TfbP2FLmm7huHH3DIouD+HxUZ2l3l3Bi5qLZAGoldGTaBlp/3F1BXZiKiFw6RzxaPnQaJE8=]",
         "_jwt_default_expiry": "30",
-        "_service_url": "proactiveservice-ind-internal.freshdesk.com"
+        "_service_url": "proactiveservice.internal.podapsouth1.freshdesk.com"
+      },
+      "facebook_gateway": {
+        "jwt_secret": "EJ[1:7Ldju1zzjW5LmKpWqbBV5Oj+qflKN6lPswKIDRqbnEg=:9pnewIXwrEAmutcBtv6Uczrt97Tj/bY6:ciszN5x/xJcDvCgCgYr391Lhc2t2iRK48+2sxi9XCts=]",
+        "_jwt_default_expiry": "3000",
+        "_service_url": "https://us-east.channel-framework.freshdesk.com",
+        "_route": "gateway/facebook/pages",
+        "_request_owner": "helpkit",
+        "_max_page_limit": 10
       },
       "growthscore_app": {
-        "app_id": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:jbpfqx3w1yPnbML91Hg8H2t5MXvvJFax:RnOvQw4Ix8pdGJkedcUnus1BFNd6/WGG0LpAM9sSydwUx3y2iO7OZLAdQiFjK6BD]"
+        "app_id": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:hVhL66tsWleGz5IPMnC3yEPxc1ubFukx:GUPThGBWh9izhFr6elM9VuoGd6wsEABl4aOQXs31evnbPpVjJkz/xmBEm/QIZZDX]"
       },
       "email_bot_ml_feedback": {
-        "service_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:HsbOkhcuktq3rh2VMyFvz0Lp4M2ok311:mEecE34aPpgBPddrpb6CHkvOpNDJ1eSrfqq0YVbZrEQY7ASsx8G13Q==]",
+        "service_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:wkTVJegywp9ctyOyHZgIBn/UGaJnSelz:lWqgiytgWyBFqE2g0kycpXLXtd9RrKaGNQm9byo7iryhmL4b/QHvAw==]",
         "_api_endpoint": "https://central.freshworksapi.com/collector"
       },
       "ocr_config": {
-        "jwt_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:Slaxb4W25hyfrmOr0M5BJYNBXpVpXio8:3A92qbCyKvnt8PYgaqS2sQ==]",
-        "admin_jwt_secret": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:0wfUqFpOYQaehSIRORmASjkmiMu6oBcl:tSew2JpFCqTHOW6tYMwFag==]",
+        "jwt_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:IpmmemVDORXOsu0QTmBFtdhz2tfzywU+:u4NHYXDQCseM6OlUsDCHdA==]",
+        "admin_jwt_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:4XDTapxi+EcfwtLZHgbVW4qS9hF3Sa1u:oCQLhLysudNfOsk8VyTt2g==]",
         "_api_endpoint": "",
         "_auth_type": "jwt",
         "_jwt_default_expiry": "30"
       },
       "datadog": {
-        "license_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:rd6RGsjaCoBBqlVGSD6G7+kPEmGR67Vn:ofNBw4CV67xd3ZCXaUb0rb8VeHj/DTK4U5ba1zurrl0m9THgo+grRB33/MTuW7Oq]",
-        "_enable": true
+        "license_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:2r5I+9ycADNwDWT8QzWb4nCnDU7wTZHn:1YayhZ+Ht1azKh53CoKzQt40nq5Vbg6Spi/LO1aP71aTCFsmR8wQ5h3v6UrPWKe7]",
+        "_enable": false
       },
       "freshvisuals": {
-        "secret_key": "EJ[1:m3r0nTLVL+3mqyfI4fyPbC2PKt1D/xMREY/jDwM/DHE=:qh6S9cWtDW6oqLEly0491HDN3V/ba0yd:oUSu72H4kDrK9izeKFv7NX6f3poTvzt8iC7bP+H0U/0KsHCqHNI6T2euYccx4PhbruxY+/cIg5BCPnkf]",
+        "secret_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:4OjYactZzh7oHhWGyV39YN/jTGJu6bra:YY4LQ0IX0nFcU/ceer7Oo2DRyApAjVZtxjss3QrFV/lH7JQVI8I3iDp/AWez20FCbpOi4n0m2I25G9Zn]",
         "_app_name": "freshdesk",
         "_end_point": "https://freshdesk-ind.freshreports.com",
-        "_session_expiration": 36000
+        "_session_expiration": 36000,
+        "_session_expiration_for_pricing_api": 30,
+        "_timeout_for_pricing_api": 10,
+        "_early_expiration": 60
+      },
+      "automation_rule_redis": {
+        "_host": "redis-18271.internal.c1809.ap-south-1-1.ec2.cloud.rlrcp.com",
+        "_keepalive": 10,
+        "_port": 18271,
+        "_timeout": 5
+      },
+      "fluffy": {
+        "_host": "fluffy-ind.internal.podapsouth1.freshdesk.com",
+        "username": "EJ[1:tDKwfKNHKA9EXjL5GVGaVclHa7jGZVl65IO5xH2/jjI=:ZQ8SBH8DztnjHOP2dTPONGez3dHLr609:mwRL+kDnfOomMwEUBdvhq6FYmL14pKoLCA==]",
+        "password": "EJ[1:pBC6FAdJLnAaLXaD+xXWaT/s5ytMeGwSi9JurlIyiiI=:DfWQx51rlCL+zoctn8aOZuJOaj6ds2gS:ON0YPz8EVXgwlT+3onThKuY+C7ysaf0iC6VzoDfef7gev/qh/TR9I/Qmj5tgsurJqwum+w==]"
+      },
+      "freddy_skills_config": {
+        "detect_thank_you_note": {
+          "_url": "https://thankyou-api-in.ap-south-1-prod.freddyproject.com/serv/",
+          "_timeout": 1,
+          "_confidence_threshold": 80
+        },
+        "ticket_properties_suggester": {
+          "_url": "https://autodispatch-361773157.freshworksapi.com/",
+          "_timeout": 15,
+          "_expiry_in_days": 365
+        },
+        "system42": {
+          "_host": "https://system42-serv.prod.freddyproject.com",
+          "_onboard_url": "https://system42-serv.prod.freddyproject.com/api/v1/fd_private/sync_bots",
+          "secret": "EJ[1:UZRJRaJT/g5orUrLfnX/9w7Mks3i2iMPn1dm6LgH6QY=:XePpdPMCHb/HSVBabr2g03EvRZ22Xe7N:9mvIXxZyGr2/Tok3DhX/zZRP/Y7SuYt9Zwl0NlYtno37XbNhxxFil7NzV0xUT3SQ]",
+          "_timeout": 5,
+          "_internal": "hRQi54GyDjyfe(78%#AWda%r2kGkK#Cs"
+        },
+        "flowserv": {
+          "_host": "https://api.freshbots.ai/rest/api/v2/",
+          "secret": "EJ[1:lUqBYZNnkzSIxCyKhdujD6WeSGaXqhA3VJ+Yk5h+7gs=:u/huhI7C44FKw9b1M4uAZkQWbQkdGp1O:/xOrJpjvWyf631KWikQ282Jj1z1ZHYcknotTiw==]",
+          "_timeout": 5,
+          "_service": "bot-admin",
+          "_product_id": "d54280f098e0949725aedc84b09035cca3d2752f"
+        },
+        "agent_articles_suggest": {
+          "_url": "https://faqsuggester.prod.freddyproject.com/api/v1/afr/smart_reply",
+          "secret": "EJ[1:F/stKH30EiUwSbfRAaY3OpP3gChjRqF3k2qQenJQuXs=:YwAr1lBzWevAai91wrPnXQoGjJjnY0AH:wZopUot3ij1DG1j9vuY/BoTrDNBbyzgT+kBlMDms75sDPWlLcvNb48S9y4yZ]"
+        }
+      },
+      "shift_config": {
+        "_shift_service_host": "http://localhost:8080/",
+        "jwt_secret": "EJ[1:gVBbNHqWzrh/oJh7TSKzL9yZNp6swPd8uXTtzZrEgy0=:RiSHgbQrGWPKhnMwzFsVk9T07P92zF98:griKbUG/ftXlCJLCp+HKjGUXFClstH8+PA==]",
+        "_time_out": 10
       }
     },
     "unique_keys": {
@@ -1175,7 +1428,7 @@
         "_region": "ap-south-1"
       },
       "new_relic": {
-        "license_key": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:BONkauentHBkJmdbYTL0QOMk35rEpGWz:pLXfplFvug2w6nz0z/J08A==]",
+        "license_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:cc4erNtvG8LjvnEV/XDJmNY2/cfFLvVO:nqMRh9IAfUe7GNUyATpuDg==]",
         "_application_id": ""
       },
       "freshcaller": {
@@ -1183,10 +1436,10 @@
         "_widget_loader_url": "https://s3.amazonaws.com/freshcaller-widget-loader/fc-widget.js"
       },
       "inline_manual": {
-        "token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:UTU53ieKH7LeSWZiWcHNhFjm6IsVw5c/:ZPWK46akG3iByATHw9bsR39WpXA9gPPh4f2cv//zN75WaPsiN2zJ7g1ESfFILjEc]"
+        "token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:4nFJlOVuwo2iHAbIZlwea/uH9z79h5Id:Dozr2LVHgEAgLoDmD5GT7zRswrkxYr6hN502B+lrbKbm/1+gKLGWa71PEFvAXsfH]"
       },
       "sentry": {
-        "auth_token": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:OFvBrwVFqWZN75I6D0Q9I7u7pV0h0KCQ:qJSO/h/61AMVmEjc1UmVxO0z6zqsfHyh61GHUPe0qt/sJC7cZvy20T95k06zkmzuGGd5SGFgJqSfMejpjjWA0kJ52Uv+TuwM2xxb4+C/Qbw=]",
+        "auth_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:RSIwNvMD2MFHA4uOE4Wg0LPHfGfkw07Y:u0eF7jnSzxTTAbx07/cipG9Dy5CT4Fc7Jfv4zZlMTrEQLAVxCkm/zZH3fjdY2wql8bSbPKNqdVNFLgr7I27YSKSPhBivLQ3eRgtohjLoVjU=]",
         "_enabled": true,
         "_org": "freshworks",
         "_product": "falcon-ui-production",
@@ -1207,8 +1460,9 @@
       "_heap_project_id": "",
       "_fingerprint_prepend": "https://indfassetsblue.freshdesk.com/production/",
       "_integrations_url": "https://podapsouth1login.freshdesk.com",
-      "_widget_domain": "https://freshwidget.freshworks.com",
-      "_color": ""
+      "_widget_domain": "https://ind-widget.freshworks.com/widgets",
+      "_color": "",
+      "_data_center": "ap-south"
     },
     "aws_config": {
     },
@@ -1231,7 +1485,8 @@
           "_fc-bg-sidekiq-maintainence": 3,
           "_fc-bg-sidekiq-realtime": 6,
           "_fc-bg-sidekiq-hard-delete": 3,
-          "_fc-bg-sidekiq": 8
+          "_fc-bg-sidekiq": 8,
+          "_fc-bg-shoryuken-analytics": 20
         }
       }
     },
@@ -1245,7 +1500,7 @@
       "_account_id": "202227476021"
     },
     "xero": {
-      "_bucket": "ind-freshops-admin",
+      "_bucket": "freshops-admin",
       "_path": "certificates/xero"
     },
     "common_certs": {
@@ -1259,16 +1514,25 @@
     "newrelic": {
       "_enabled": true
     },
+    "docker": {
+      "utils": {
+        "_revision": "FD19.03.9.3"
+      },
+      "_enable": true,
+      "_infra_config_gen_dryrun": false,
+      "_infra_config_gen": false
+    },
     "stack_config": {
-      "app_id": "EJ[1:BFllJa4ZaxDx1ABH0gndz3afmcW39XM8Vf1UkADX3xs=:7CcOc/Un8FhXR3VXtkrlKan6OeeDdSd+:1Wo77fnYlalS0yNvuXq/7A==]",
+      "app_id": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:7uB13jyPaKmGMFNyltdrRObyH4JL2j9S:36FLMJbpzYdxti7WxogU9A==]",
       "_stack_id": ""
     },
     "shoryuken": {
       "_hostname": "shoryuken-sidekiq-"
-    },
-    "_docker": null
+    }
   },
   "layer_settings": {
+    "fc-app-db-migration": {
+    },
     "fc-bg-sidekiq-community": {
     },
     "fc-bg-sidekiq-mailbox-jobs": {
@@ -1345,6 +1609,10 @@
     },
     "fc-app": {
     },
+    "fc-app-merge": {
+    },
+    "fc-app-misc": {
+    },
     "fc-bg-sidekiq-dedicated-589783": {
     },
     "fc-bg-sidekiq-exports": {
@@ -1362,6 +1630,8 @@
     "fc-app-reports": {
     },
     "fc-bg-shoryuken": {
+    },
+    "fc-bg-shoryuken-analytics": {
     },
     "hk-app-freshfone-twilio": {
     },
@@ -1399,7 +1669,11 @@
     },
     "fc-app-buffer": {
     },
+    "fc-app-merge": {
+    },
     "fc-app-api-channel": {
+    },
+    "fc-bg-sidekiq-cron": {
     }
   }
 }

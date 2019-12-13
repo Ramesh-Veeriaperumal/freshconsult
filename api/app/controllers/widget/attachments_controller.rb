@@ -4,8 +4,9 @@ module Widget
     include HelperConcern
     include AttachmentsValidationConcern
 
-    skip_before_filter :check_privilege
-    before_filter :fetch_portal
+    before_filter :validate_params
+    before_filter :sanitize_params
+    before_filter :build_object
 
     decorate_views
 
@@ -17,7 +18,6 @@ module Widget
     private
 
       def sanitize_params
-        validate_widget
         params[cname][:attachable_type] = AttachmentConstants::ATTACHABLE_TYPES['widget_draft']
         params[cname][:attachable_id] = @widget_id
         params[cname][:description] = @client_id
@@ -26,11 +26,12 @@ module Widget
       end
 
       def validate_params
-        check_feature
-        return if @error.present?
-
         cname_params.permit(*AttachmentConstants::WIDGET_ATTACHMENT_FIELDS)
         super
+      end
+
+      def auth_token_required?
+        current_account.help_widget_login_enabled? && @help_widget.contact_form_require_login?
       end
   end
 end

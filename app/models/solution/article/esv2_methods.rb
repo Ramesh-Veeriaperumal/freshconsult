@@ -4,13 +4,22 @@ class Solution::Article < ActiveRecord::Base
     as_json({
         root: false,
         tailored_json: true,
-        only: [ :title, :desc_un_html, :user_id, :status, :created_at, 
-                :updated_at, :thumbs_up, :thumbs_down, :account_id, :modified_at, 
-                :hits, :language_id, :modified_by 
+        only: [ :title, :desc_un_html, :user_id, :status, :created_at,
+                :updated_at, :thumbs_up, :thumbs_down, :account_id, :modified_at,
+                :hits, :language_id, :modified_by, :outdated
               ],
         methods: [ :tag_names, :tag_ids ]
       }).merge(meta_referenced_attributes)
+        .merge(es_draft_attributes)
         .merge(attachments: es_v2_attachments).to_json
+  end
+
+  def es_draft_attributes
+    draft.present? ? draft_attr_hash(Solution::Constants::DRAFT_STATUSES_ES[:draft_present], draft.modified_by, draft.modified_at) : draft_attr_hash(Solution::Constants::DRAFT_STATUSES_ES[:draft_not_present], nil, nil)
+  end
+
+  def draft_attr_hash(status, modified_by, modified_at)
+    { draft_status: status, draft_modified_by: modified_by, draft_modified_at: modified_at }
   end
 
   def tag_names
@@ -25,7 +34,7 @@ class Solution::Article < ActiveRecord::Base
     attachments.pluck(:content_file_name)
   end
 
-  # _Note_: If these attributes will be delegated in future, 
+  # _Note_: If these attributes will be delegated in future,
   # no need to do this way
   #
   def meta_referenced_attributes
@@ -42,14 +51,14 @@ class Solution::Article < ActiveRecord::Base
   ##########################
   ### V1 Cluster methods ###
   ##########################
-  
+
   # _Note_: Will be deprecated and remove in near future
   #
   def to_indexed_json
     article_json = as_json(
             :root => "solution/article",
             :tailored_json => true,
-            :only => [ :title, :desc_un_html, :user_id, :status, 
+            :only => [ :title, :desc_un_html, :user_id, :status,
                   :language_id, :account_id, :created_at, :updated_at ],
             :include => { :tags => { :only => [:name] },
                           :attachments => { :only => [:content_file_name] }
@@ -58,7 +67,7 @@ class Solution::Article < ActiveRecord::Base
     article_json["solution/article"].merge!(meta_attributes)
     article_json.to_json
   end
-  
+
   # Need to verify if it can be handled differently in v2
   #
   def related(current_portal, size = 10)
@@ -123,7 +132,7 @@ class Solution::Article < ActiveRecord::Base
       current_page: Search::Utils::DEFAULT_PAGE,
       offset:       0,
       types:        ['article'],
-      es_params:    ({ 
+      es_params:    ({
         account_id: Account.current.id,
         request_id: Thread.current[:message_uuid].try(:first) #=> Msg ID is casted as array.
       }).merge(searchparams)

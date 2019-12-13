@@ -42,7 +42,7 @@ module Widget
 
         def scoper
           current_account.solution_article_meta
-                         .for_help_widget(@help_widget, User.current)
+                         .for_help_widget(@help_widget, current_user)
                          .published
         end
 
@@ -69,10 +69,6 @@ module Widget
 
         def agent?
           current_user && current_user.agent?
-        end
-
-        def current_user
-          @current_user = User.current
         end
     end
   end

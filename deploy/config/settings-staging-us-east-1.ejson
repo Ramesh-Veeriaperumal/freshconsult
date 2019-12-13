@@ -2,7 +2,28 @@
   "_public_key": "54db20dc08bde605e0e394e3ceeaa2c02ac1da71120db0feeb48224611914b70",
   "_private_key_enc": "AQICAHgnjcXRs8lLFD8FSN31Uybz2IJIo+nImh7fuiRQtLIBuAGtNmKnBq0l\nvm2InOGX9Ag5AAAAojCBnwYJKoZIhvcNAQcGoIGRMIGOAgEAMIGIBgkqhkiG\n9w0BBwEwHgYJYIZIAWUDBAEuMBEEDJiQ0L7f7yaXYCK5KwIBEIBbPeyn7loh\nYQ7NNoXJDAYGKah1mGGF87azq6tTM0MnQBjUt8d9MMqV50dzNs692ETovviW\niRIMKdhMLIzkGvkzB5SfxsIaV/xtI7LzPBPJSMBxuzdcjA6/f22GWg==",
   "settings": {
+    "proxysql": {
+      "enabled": false
+    },
     "ymls": {
+      "datacenter_config": {
+      "freshcaller_signup_supported": true,
+      "freshconnect_signup_supported": true,
+      "freshmarketer_signup_supported": true
+      },
+      "rts": {
+        "app_id": "EJ[1:d3nHRUgyTHtAsy4JSrdQWGE53NSCRb7T70nmsSHlUEU=:VZiuD4N8IzwmpN+jqmBiRzCm/AXgw+IJ:GB/DsLzP69O+xPutjwslmhlyP9fcMb9j]",
+        "app_secret": "EJ[1:W2+DpaT8ChztnksVbTXAsWNFsiRnKBhKzq4yt8CAelA=:BZ/HS8wuA4Rk6Qz+s0qr/wkUeZvwH8Mg:R+9mtCTGqD/SKFXqk+OKPECGOkhZJzTVFypr1Y5wnadG/nf29RQN51IaAxN/m7SKn00ZYpm1g054Vu+V]",
+        "_end_point": "https://rts-staging.freshworksapi.com",
+        "db_cipher_key": "EJ[1:W2+DpaT8ChztnksVbTXAsWNFsiRnKBhKzq4yt8CAelA=:sbRcsa2Lg1FlSU6ZJWHYANZk0Cl+U3FV:yhUIE5saoHlnot7ZtX8U0OzqeXFOnMQqxedXvZgEi2B4/79lu1Xsio+c4afunobd2pHK6VZB+vSsg8i6]",
+        "_jwt_default_expiry": "100",
+        "channel_cipher_key": "EJ[1:bPyLDoNV/6e0ZU3cnFz7eRIogZVR8VwWgbIUIlQdElc=:XPaiN5mvEr3tkQ/rndwwNmTXwuGNMeXv:UWDULE7Eh1f3ky5J8/hHgOyEWd909mesJMq7uaOcK1NXfYmz7VB7CmP5M7L6m4DytjTALaIj+heqDCOhaXRY4WBIzPDa9d8bWMzAWjL7MSE=]"
+      },
+      "cron_webhook": {
+        "_domain": "helpkitworkflowauto170.freshpo.com",
+        "_sub_domain": "helpkitworkflowauto170",
+        "auth_key": "EJ[1:2F8j5OOk11MscvvYKhjxoe1utknKRcNg0mTtDAD/SEg=:qGu/U539cpMriAl8kz3mij4NwudtV4sJ:mJwNMpTdDmRnJZ/7SbCCHPPFLRM+2muHpikPSPs8fp7Wjy8c]"
+      },
       "akismet": {
         "key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:7ZIA2JnbTQP+1t/2poLFy5QzPFFESx2V:0FbZqiLtOpipCWOVbz+hG98r/vyQAcIWa5UFGQ==]"
       },
@@ -24,14 +45,19 @@
           "_shard_7": 505408
         }
       },
+      "archive_queue": {
+        "_archive_account_tickets": "archive_account_tickets",
+        "_archive_ticket": "archive_ticket"
+      },
       "asset_sync": {
         "_asset_host": "assets",
         "_fog_directory": "rails3-app-static-assets",
         "_region": "us-east-1"
       },
-      "autopilot": {
-        "access_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:E/j/6UNGZucNYuT6FnrqBeIYX8GPR6D8:u1tonx5A69jPlEQvaR1Lw9eb5c/6xxmnNY1cvlQ4f3w5Vv1qTRrqcDMBLJemaAKb]",
-        "ui_token": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:GB4MiiUWi6zv6OhmXQFbuK9BnyggOFT/:w9ZU+w3DaqwgRcxdLxPeAxv8a0zWoPULgZP662ooPvBVmKlGl+w0Y2wWYHSih9YQj/HUt7TOZjPvvCCY8WX1jYFhg6FAefAylQlfzM9Jizs=]"
+      "freshmarketer_automation": {
+        "_contact_url": "https://freshworks.freshmarketer.com/mas/api/v1/contacts",
+        "_list_id": "1271",
+        "access_key": "EJ[1:EqYuStUyFsb5uujc33io0DxCKcJBnKu+Z/Hbp6JrcxI=:vfkNWsG62sy0BqfDSRa93oYZ2VBZlYOX:i6/bmAVcUAzdyP3YtGdIxIAr/g0FCXfXUUJI7k8JnvnpGTQuVneNCD39ldLybVCRHh6oBjto1NE=]"
       },
       "bot": {
         "product_id": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:j33eXkxXoOLXeOjhVA7sLOLxJw68HqxR:nK/tYnMwF7JkDdtnjf+O2mFxlATxeFl1jiacKBZbnmJutZfwV8tV8Gt9UgHHj3QnGhAGCwKvx9E=]",
@@ -62,6 +88,11 @@
             "key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:0Ooag8jqn44wbttMqJj3rBaCwyoQOz6Z:aYXMFiRxhCu219U/YZtGYrhPR4Sv+DJB80R1rWZF5ZBq6KQGuXtmEgg2b3ODXJbc]",
             "iv": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:h380gRIx3fV+M2faT3gZ2dapKbgaz+3l:rrmJEJB2uu7zO4+15o42+CBHAhBTFwnLuDjXcfNCbaM=]",
             "_label": "twitter"
+          },
+          "facebook": {
+            "key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:0Ooag8jqn44wbttMqJj3rBaCwyoQOz6Z:aYXMFiRxhCu219U/YZtGYrhPR4Sv+DJB80R1rWZF5ZBq6KQGuXtmEgg2b3ODXJbc]",
+            "iv": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:h380gRIx3fV+M2faT3gZ2dapKbgaz+3l:rrmJEJB2uu7zO4+15o42+CBHAhBTFwnLuDjXcfNCbaM=]",
+            "_label": "facebook"
           },
           "installed_application": {
             "key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:JT9cpFMyTkAN2KucrcFCVKu5uMX/5vkO:JiZiTQITZr6mRpK72oq2lTop67OSBQ4azNvUJgC/2AW45bcsevuMLVaTIXAEZJ/k]",
@@ -99,9 +130,36 @@
           "_auth_type": "jwt",
           "_jwt_default_expiry": "30"
         },
+        "freddy": {
+          "_auth_type": "jwt",
+          "jwt_secret": [
+            "EJ[1:E5RER8b/2BzkmNOdJZSKRAiudmvMwaropMRSZNGLqVA=:4Yc7HnZDWPMm5/2TaAVvHHDJ7YY/uRrn:kmYPoQpi408XTAi1oqAYZW06WvY/4b7gCBegFegyuW0GThMnf82EPxspM8AvbbnN]"
+          ],
+          "_jwt_default_expiry": "30"
+        },
+        "freshchat": {
+          "_auth_type": "jwt",
+          "jwt_secret": [
+            "EJ[1:uQKyllfL5ZbHhpdrdAYSnKyYfk/LgHgYPXQcuVPz5XM=:2gPxyOYToRJ3JcfvtbYcWFu138/JV7qB:N0s26EYOf1+yP5thaIwaCaZiW4HuR+pGPkBbjwa9Cyi9OBBg9wmNQ/hrmjBy/ipK]"
+          ],
+          "_jwt_default_expiry": "30"
+        },
         "freshmover": {
           "jwt_secret": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:Qb6I7k7+gN0m03qHyygM2LYNacps/2t+:k/SEp8KbFSa/i8k3x2E7lZhiCVEyMZgSyCtjgy0XK9ZBbuokP14Dc6+9Wu8EdAIS]",
           "_auth_type": "jwt"
+        },
+        "freshconnect": {
+          "_auth_type": "jwt",
+          "jwt_secret": "EJ[1:qPbogTnmCAWuWyD+c3cta1bRisAJKwX7NVV7Gh/0hBo=:vIjF986gHpj41a67v39GcqZCoELss52l:Vl1i/JK1Y6SUKduplq8YLOfzVFl6d1QCsAgfwW0fRHpZAKab+EQlCPBwe7sws4F6Evl1aBioZB1x9xkGSiLWG9zTuEwnaepsG8Aa1UYGyb25yw/30ncm3LYP73NHUkhsZDy5NBSzykc=]",
+          "_jwt_default_expiry": "30"
+        },
+        "sherlock": {
+          "_auth_type": "jwt",
+          "jwt_secret": "EJ[1:mzjya8Kq0DDIXjihXQ19swNtGguMi5k5/2D9ktez4xE=:w2r3BrRPUZyUytYLhEQmHWep7cezjHjQ:zfKvzERiD878FwLgTeeiWBBPiA9o7k6VXwQYB0loBZ2qwyWBq8OriT+UoPufu9s=]"
+        },
+        "facebook": {
+          "_auth_type": "jwt",
+          "jwt_secret": "EJ[1:j8fn6zdtMwq5KLpN6FLJ44/iHZTXPt63fWbL5pvHIg0=:YHs9HBCsIZ/Kjj3wzxDUrWUxSOSQ/OB7:b1bZfa9DEwiLjfr0/nwPeXdFFgl6AqiImNl9xCmhbEXFMOED8ODOcSjzKFB4h8X8]"
         }
       },
       "channel_framework": {
@@ -146,6 +204,18 @@
           "_product": "freshdesk-staging",
           "_region": "us"
         },
+        "freshworksOmnibarV2": {
+          "_environment": "staging",
+          "_product": "freshdesk",
+          "_region": "STAGING",
+          "_clientid": "38562334847549459"
+        },
+        "freshworksOmnibarAssets": {
+          "_script_asset_url": "https://accounts.freshworks.com/omnibar/omnibar-beta.js",
+          "_style_asset_url": "https://accounts.freshworks.com/omnibar/omnibar-beta.css"
+        },
+        "support_ticket_rate_limit": 20,
+        "support_ticket_rate_limit_period": 300,
         "marketo_access_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:OJfhAGRRRb9KOxt020kCLD3S1w1pcVvw:68y5tV0FlN60HJZZdSQJuHCOmgo3k7fDAostxvmy8UTapNb7QM0t96SnvWyrPH3Z8g==]",
         "marketo_api_subdomain": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:jePmKDw5tDHVd1sYopnasLfT2ODhJYJN:BQGGWAFFvKBE83e6EW+Mz4PaIdqPMN/87Lxj]",
         "marketo_secret_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:kIwrdQrFT8LbBKLds8aVT+aIMtI/GW2i:IfngX5/TkmVAJmiD8/dxJqmbqO5g0h8QHpcIhwpNhdKHNkrGOtG0IZl7nR+dKfpnv4vzJdVGKJa04nKw]",
@@ -185,6 +255,57 @@
         ]
       },
       "database": {
+        "secret_key": "EJ[1:QvyGdkLQCwLMt1ZBTy3U5BDzcMZbBlWJmBgplNoDIgs=:GMGOR4qTNPHHKzrL0vJWwkqU8JhQRXhB:Z40cND5qLGfIiXk2PBR3wPwEUrDUSgYyyP+OwgWm]",
+        "credentials": {
+          "_username": "freshhelp",
+          "password": "EJ[1:eBjPEPHdqNlQsn0wWkVmp8i8zp95dBuy4uddtW+v0nI=:nLXV5l/fxPBHX2r0uWoyrrrZfbQcHQDU:09zrl2654e0HgboLodv3Z66vx0xlD69g]"
+        },
+        "user_groups": {
+          "helpkit_app": {
+              "global": {
+                  "_username": "freshhelp",
+                  "password": "EJ[1:eBjPEPHdqNlQsn0wWkVmp8i8zp95dBuy4uddtW+v0nI=:PHDfFOa4aJQjGLR3jx2Mz8uCOOKa6OZX:bnN9PWs6UE3OktcTQh2r2K4GPos/n2dS]"
+              },
+              "default": {
+                  "_username": "freshhelp",
+                  "password": "EJ[1:eBjPEPHdqNlQsn0wWkVmp8i8zp95dBuy4uddtW+v0nI=:47KyB0gON3Lg5b3m/jp1xDzetixLwzF4:Z9sXbKPy9U+If3PtUEy4IF9cqIpttj7C]"
+              },
+              "shards": {}
+          },
+          "falcon_app": {
+            "global": {
+                "_username": "freshhelp",
+                "password": "EJ[1:eBjPEPHdqNlQsn0wWkVmp8i8zp95dBuy4uddtW+v0nI=:ptQdZnR8WQPkRXfb9hxZyf6rey7P+Fuq:ibsnVUm+S3K1t32XZxyDyeD+/zRqPBqn]"
+            },
+            "default": {
+                "_username": "freshhelp",
+                "password": "EJ[1:eBjPEPHdqNlQsn0wWkVmp8i8zp95dBuy4uddtW+v0nI=:e+j5nanBxuQdJkm7Y25YOkQbmh0zJEJv:5nWBdkmyje6FESMB8njd9O4bmVz3EqmN]"
+            },
+            "shards": {}
+          },
+          "helpkit_bg": {
+            "global": {
+                "_username": "freshhelp",
+                "password": "EJ[1:eBjPEPHdqNlQsn0wWkVmp8i8zp95dBuy4uddtW+v0nI=:XtMyNPGbfc7NK/sWwZFDHquyNPw+j42t:v5ReFdy4vDs6Eq+jrt4aZO3nqgJJPi/k]"
+            },
+            "default": {
+                "_username": "freshhelp",
+                "password": "EJ[1:eBjPEPHdqNlQsn0wWkVmp8i8zp95dBuy4uddtW+v0nI=:/fRHkWesJcyIYd1ooepaqO4iAORUMEMp:v4WprQBTrsw6fh//Pl8E9+qVElDIpkY1]"
+            },
+            "shards": {}
+          },
+          "falcon_bg": {
+            "global": {
+                "_username": "freshhelp",
+                "password": "EJ[1:eBjPEPHdqNlQsn0wWkVmp8i8zp95dBuy4uddtW+v0nI=:6BqEmCGvxn1NYJvxmWQLkKrkq8d04hG8:ufECMCoplsk+m05PIMede9qaP2LKAN+z]"
+            },
+            "default": {
+                "_username": "freshhelp",
+                "password": "EJ[1:eBjPEPHdqNlQsn0wWkVmp8i8zp95dBuy4uddtW+v0nI=:Q5cfTPS4FaWh/rhKF/RmTQ6sIt8+/qC9:P3Z24xcL4UhDFI4i23L0/MyDXDjOwfmk]"
+            },
+            "shards": {}
+          }
+        },
         "global": {
           "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:W+2BQtIDFRpdLNKhiIDKrpW6l/6ZPv81:e5zNNZy8zztRx23elF+DyGdc6wMYHzhW]",
           "_database": "staging",
@@ -314,6 +435,12 @@
               "_port": "3306",
               "_username": "freshhelp"
             },
+            "slave_proxy": {
+              "password": "EJ[1:iS7ZhZe4R5cnxUCz1IHj1y0f3EROaxCbe2WgjCYzMEQ=:46g6k8eoU4BaeMqvNrEFQVJ4m7tFXUYB:pFzlDoChN0xJ3wBeNOLWnnUAgG5PA9HN]",
+              "_host": "127.0.0.1",
+              "_port": "6033",
+              "_username": "prem"
+            },
             "slave2": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:E9pXMyVX3tR9iqBuZANfAJKi5RH7ouxf:QGlecWgtO5xH0Fq5krqvhG9Q1G2EWnRX]",
               "_host": "usrds1slave2.internal-freshpo.com",
@@ -330,60 +457,78 @@
             "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:DZBfHUYjrDNxGs0KVXERWCHA1mi65bXS:mTJNLosFKBTlSqCECiGQus4tlDFaDRb2]",
             "slave1": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:YtMc/3AThHu/VhcHU6d57AosD1M4kASf:oKcYWSqtpZypxGKRv3ZnEPwzNsuy7LS3]",
-              "_host": "fdstage-shard7-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
+              "_host": "usrds7slave1.internal-freshpo.com",
               "_port": "3306",
               "_username": "freshhelp"
             },
+            "slave_proxy": {
+              "password": "EJ[1:iS7ZhZe4R5cnxUCz1IHj1y0f3EROaxCbe2WgjCYzMEQ=:LJOrlSgCot2R3xod8nNVVek3ovTSHfdA:WfIOi99+zgc+h52mYV5EPFyYjGShTACW]",
+              "_host": "127.0.0.1",
+              "_port": "6033",
+              "_username": "prem"
+            },
             "slave2": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:fMehqJkTUFKi2Z8iRdzRNJL2S6D30AGJ:HIe1tkg4aNwkRPYKw8mmw2NDNbPXp38Y]",
-              "_host": "fdstage-shard7-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
+              "_host": "usrds7slave2.internal-freshpo.com",
               "_port": "3306",
               "_username": "freshhelp"
             },
             "_database": "sandbox_staging_shard2",
-            "_host": "fdstage-shard7-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
-            "_slave1_host": "fdstage-shard7-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
-            "_slave2_host": "fdstage-shard7-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
+            "_host": "usrds7.internal-freshpo.com",
+            "_slave1_host": "usrds7slave1.internal-freshpo.com",
+            "_slave2_host": "usrds7slave2.internal-freshpo.com",
             "_username": "freshhelp"
           },
           "sandbox_shard_6": {
             "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:eXynvGFckEKZC4I3s1dkh/infpbF+cK+:Yj/91aXxCqUEx3F6pyso1185AsHXtgr6]",
             "slave1": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:OHQ9nsuvLBdAMy/1t8zTYhZH/n5r8T89:FrNOU8WMI+vjP3fpdJli2hMHU+1Bij65]",
-              "_host": "fdstagingread1-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
+              "_host": "usrds1.internal-freshpo.com",
               "_port": "3306",
               "_username": "freshhelp"
             },
+            "slave_proxy": {
+              "password": "EJ[1:iS7ZhZe4R5cnxUCz1IHj1y0f3EROaxCbe2WgjCYzMEQ=:JyMQoPg/xwRJwRTL1ulLoJOglCp+TzGq:TLWRoWKngsR72mJp065EOyeMq8AuukPk]",
+              "_host": "127.0.0.1",
+              "_port": "6033",
+              "_username": "prem"
+            },
             "slave2": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:VZU9oFzEYANz0mePwEx9ytOB4jQ8nIQX:Z8stiwhVWJE6lwa3uCB1xDAxv0hYCWMQ]",
-              "_host": "fdstagingread1-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
+              "_host": "usrds1.internal-freshpo.com",
               "_port": "3306",
               "_username": "freshhelp"
             },
             "_database": "sandbox_staging_shard6",
-            "_host": "fdstagingread1-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
-            "_slave1_host": "fdstagingread1-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
-            "_slave2_host": "fdstagingread1-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
+            "_host": "usrds1.internal-freshpo.com",
+            "_slave1_host": "usrds1slave1.internal-freshpo.com",
+            "_slave2_host": "usrds1slave2.internal-freshpo.com",
             "_username": "freshhelp"
           },
           "sandbox_shard_7": {
             "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:PQY6xP6yBqlAFXlpmcz9z724omxsEEKA:pYIfZ4ZbqX8S9VneQ1rvOcUEhU39K2e4]",
             "slave1": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:XW8hDFqdzTEAw9WpuCtOOGEHgD38r0Zp:DLLudNzCx/EO5ZSVNNvsAPuoJFlUww6f]",
-              "_host": "fdstage-shard7-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
+              "_host": "usrds7slave1.internal-freshpo.com",
               "_port": "3306",
               "_username": "freshhelp"
             },
+            "slave_proxy": {
+              "password": "EJ[1:iS7ZhZe4R5cnxUCz1IHj1y0f3EROaxCbe2WgjCYzMEQ=:542zS0N5KBKBfHKmWg/gNtEjyx5sch4T:5edhPA4tvAk9wX6/zedbNsB2cGAR7jql]",
+              "_host": "127.0.0.1",
+              "_port": "6033",
+              "_username": "prem"
+            },
             "slave2": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:35wbVw6Gb3QmyGLqPbzlQcupxgDdJidQ:NdtbTLpBjP4g557lbd/XkMibp23C83J/]",
-              "_host": "fdstage-shard7-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
+              "_host": "usrds7slave2.internal-freshpo.com",
               "_port": "3306",
               "_username": "freshhelp"
             },
             "_database": "sandbox_staging_shard7",
-            "_host": "fdstage-shard7-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
-            "_slave1_host": "fdstage-shard7-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
-            "_slave2_host": "fdstage-shard7-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
+            "_host": "usrds7.internal-freshpo.com",
+            "_slave1_host": "usrds7slave1.internal-freshpo.com",
+            "_slave2_host": "usrds7slave2.internal-freshpo.com",
             "_username": "freshhelp"
           },
           "shard_1": {
@@ -393,6 +538,12 @@
               "_host": "usrds1slave1.internal-freshpo.com",
               "_port": "3306",
               "_username": "freshhelp"
+            },
+            "slave_proxy": {
+              "password": "EJ[1:iS7ZhZe4R5cnxUCz1IHj1y0f3EROaxCbe2WgjCYzMEQ=:Idqhm1fjmwzh5huZsK+7wkCPgvNsJ10V:waeu/1KYRgQo/RLjTtwNQyZ8PtP2ZFp3]",
+              "_host": "127.0.0.1",
+              "_port": "6033",
+              "_username": "prem"
             },
             "slave2": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:ChcllrjYq9wiFdg/Xip9K0mzfX2i6xRj:lfvpTL6LwQLiNxDFiOQ5EC8g0E0+dQcp]",
@@ -410,80 +561,130 @@
             "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:++2pSVPrtVwuJB2ZtKEaNVVDDTAIcttC:T9SY8iEIMjZMPWRvQdJIcz+YqG1YPt4m]",
             "slave1": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:elmZc4uaOcm3i0aPBWt6wB5hKJbSGuyT:tQg9sDX8xgnlQlcEr+okI3OYf/ssQB9q]",
-              "_host": "fdstage-shard7-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
+              "_host": "usrds7slave1.internal-freshpo.com",
               "_port": "3306",
               "_username": "freshhelp"
             },
+            "slave_proxy": {
+              "password": "EJ[1:iS7ZhZe4R5cnxUCz1IHj1y0f3EROaxCbe2WgjCYzMEQ=:FpQ3vGCMGBTfQ+iwg91eyius43WmCzB+:LCmsa6x34hSzTFU24xdmwv8i9s0wqH5/]",
+              "_host": "127.0.0.1",
+              "_port": "6033",
+              "_username": "prem"
+            },
             "slave2": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:EwGPSre+vgWf0qXtH+kp3k9yMBQ4XMjC:sZJ/s06uXHlrjzjJxUQg6+Km9uOeo2qD]",
-              "_host": "fdstage-shard7-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
+              "_host": "usrds7slave2.internal-freshpo.com",
               "_port": "3306",
               "_username": "freshhelp"
             },
             "_database": "staging_shard2",
-            "_host": "fdstage-shard7-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
-            "_slave1_host": "fdstage-shard7-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
-            "_slave2_host": "fdstage-shard7-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
+            "_host": "usrds7.internal-freshpo.com",
+            "_slave1_host": "usrds7slave1.internal-freshpo.com",
+            "_slave2_host": "usrds7slave2.internal-freshpo.com",
             "_username": "freshhelp"
           },
           "shard_6": {
             "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:8XntULzjGMtHp6P2AefX+RO9eDaZxtru:jdSUqglvsm8g7ODvwXhw22bwB53kTx2e]",
             "slave1": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:qsgsCIR0a+Sr3YEy/PEWg/jTePWKkeKm:jh9m/wxuaMUBH/CaUapvEUdo/Mw+nEGk]",
-              "_host": "fdstagingread1-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
+              "_host": "usrds1.internal-freshpo.com",
               "_port": "3306",
               "_username": "freshhelp"
             },
+            "slave_proxy": {
+              "password": "EJ[1:iS7ZhZe4R5cnxUCz1IHj1y0f3EROaxCbe2WgjCYzMEQ=:dcW52ehjFjtayLqzGtDxHf/C6S7K1ka4:0w1ChK6RuuNwvOP0ljmvWfGsdPnMc3/K]",
+              "_host": "127.0.0.1",
+              "_port": "6033",
+              "_username": "prem"
+            },
             "slave2": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:v35wmJ6xUNcP8UGOO2LBYo8m/pMWA/Yc:vAKpkH/v2rbGQTNiJFyQJ9keP6a5pXC3]",
-              "_host": "fdstagingread1-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
+              "_host": "usrds1.internal-freshpo.com",
               "_port": "3306",
               "_username": "freshhelp"
             },
             "_database": "staging_shard6",
-            "_host": "fdstagingread1-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
-            "_slave1_host": "fdstagingread1-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
-            "_slave2_host": "fdstagingread1-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
+            "_host": "usrds1.internal-freshpo.com",
+            "_slave1_host": "usrds1slave1.internal-freshpo.com",
+            "_slave2_host": "usrds1slave2.internal-freshpo.com",
             "_username": "freshhelp"
           },
           "shard_7": {
             "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:5RScK29IZfMnTfJHFGAZ0HG+07bYZnKl:gB1Fs1Zf+ZdRuSGvALXSRR7jUloU3aln]",
             "slave1": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:5jJeIuFcW+6JwsA7A8HgMNAimEqCRD99:uQwKG+XiTovPT4AXn0Bhr5GALukhzwBZ]",
-              "_host": "fdstage-shard7-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
+              "_host": "usrds7slave1.internal-freshpo.com",
               "_port": "3306",
               "_username": "freshhelp"
             },
+            "slave_proxy": {
+              "password": "EJ[1:iS7ZhZe4R5cnxUCz1IHj1y0f3EROaxCbe2WgjCYzMEQ=:FV0uzxzmDeF/FUF3wDqZUQlQEGJtI/l9:CmVSHqKr6bzg64YIs2I22Zgj9fC9YST7]",
+              "_host": "127.0.0.1",
+              "_port": "6033",
+              "_username": "prem"
+            },
             "slave2": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:qnfeoqPZ2UF0ygnDMqiacnJ+A2IQaPqo:9GT7XalZ7kU47aE4peVQnGGws/9lkI4a]",
-              "_host": "fdstage-shard7-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
+              "_host": "usrds7slave2.internal-freshpo.com",
               "_port": "3306",
               "_username": "freshhelp"
             },
             "_database": "staging",
-            "_host": "fdstage-shard7-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
-            "_slave1_host": "fdstage-shard7-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
-            "_slave2_host": "fdstage-shard7-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
+            "_host": "usrds7.internal-freshpo.com",
+            "_slave1_host": "usrds7slave1.internal-freshpo.com",
+            "_slave2_host": "usrds7slave2.internal-freshpo.com",
             "_username": "freshhelp"
           },
           "shard_8": {
             "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:VHgbvPqiU9C3OQRl7PVeXLfnQHYYSe0D:pnyxhChrdouHzzKvEozC8bkZaTeDAUW+]",
             "slave1": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:2Smx6xxCwpk+NMjOXEbghx6ADPMNt07b:uXf4pEasdYL9bVFyWS4FadckpW1I9eeo]",
-              "_host": "fdstagingread1-vpc-slave2.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
+              "_host": "usrds1slave2.internal-freshpo.com",
               "_port": "3306",
               "_username": "freshhelp"
             },
+            "slave_proxy": {
+              "password": "EJ[1:iS7ZhZe4R5cnxUCz1IHj1y0f3EROaxCbe2WgjCYzMEQ=:v/ZzhlJ0325yBcoXBav0OLbdMkoWO35S:C6gR284oYjVkxpdFL2ZO8JY1CBqNH57G]",
+              "_host": "127.0.0.1",
+              "_port": "6033",
+              "_username": "prem"
+            },
             "slave2": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:xyBzSW8DJ7AqmUmsHjazcwiftIuB0sTX:LLiaPeLNL0HBvm1A9JFo8S1zg/XX6hku]",
-              "_host": "fdstagingread1-vpc-slave2.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
+              "_host": "usrds1slave2.internal-freshpo.com",
               "_port": "3306",
               "_username": "freshhelp"
             },
             "_database": "helpkit_staging",
-            "_host": "fdstagingread1-vpc.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
-            "_slave1_host": "fdstagingread1-vpc-slave2.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
-            "_slave2_host": "fdstagingread1-vpc-slave2.cwcfhlpilw8g.us-east-1.rds.amazonaws.com",
+            "_host": "usrds1.internal-freshpo.com",
+            "_slave1_host": "usrds1slave2.internal-freshpo.com",
+            "_slave2_host": "usrds1slave2.internal-freshpo.com",
+            "_username": "freshhelp"
+          },
+          "shard_2date": {
+            "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:3e+0WycEZpW1dYuRI/tT/qJGXaLbdV7N:7vptgTlVBylwd20wiLXegdj0kFToAcUl]",
+            "slave1": {
+              "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:3bv0zyx+bbEPd8a1t+DM6h67NILKdF28:HG0TMuva+CqIgWE6F9UQQhImFTRi0CeA]",
+              "_host": "usrds1slave1.internal-freshpo.com",
+              "_port": "3306",
+              "_username": "freshhelp"
+            },
+            "slave_proxy": {
+              "password": "EJ[1:iS7ZhZe4R5cnxUCz1IHj1y0f3EROaxCbe2WgjCYzMEQ=:QbP8hZPky1Lqg0fIDgNw8ej+FiRGPtAJ:4KIcg+mHW+PtE6xiP+jRLLMN/c3dAlqQ]",
+              "_host": "127.0.0.1",
+              "_port": "6033",
+              "_username": "prem"
+            },
+            "slave2": {
+              "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:ChcllrjYq9wiFdg/Xip9K0mzfX2i6xRj:lfvpTL6LwQLiNxDFiOQ5EC8g0E0+dQcp]",
+              "_host": "usrds1slave2.internal-freshpo.com",
+              "_port": "3306",
+              "_username": "freshhelp"
+            },
+            "_database": "staging_uptodate",
+            "_host": "usrds1.internal-freshpo.com",
+            "_slave1_host": "usrds1slave1.internal-freshpo.com",
+            "_slave2_host": "usrds1slave2.internal-freshpo.com",
             "_username": "freshhelp"
           }
         }
@@ -722,7 +923,7 @@
       "fd_email_service": {
         "incoming_email_api_key1": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:aYnusorKhSEyZWxSKaCpd8AWS1XanKSZ:isvkdBlseuqfJOID4BNMbNDrFztR0cQ8v0r0MAGOy4yM7aPEEHmlpqyEVKn06A==]",
         "incoming_email_api_key2": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:ZGIU8WWPTlALTtLIAEcqtpwKhxC4zHFg:CpzUm4mj3vHC7aputcLcNAqQRq59FeGGhSLhuwMHEyUGCIEnoutghoNz5ysCYg==]",
-        "key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:kRgoDwqsqZh0FuaxTpji6k3clCAnIOyX:gOfMILC33zeUKCy2Os0RRZiLzxMuxVKcW6mTRoSB6JKB8wZu2i8enJ0pqLc=]",
+        "key": "EJ[1:f1oT0bfi00L/obgxxvqIKwruKc0lfa5OdH1VJ6vjR2U=:vRvkLzmts2dOR7xg9tiXFS3KMEd10yz5:yuTxfotCxBoUrlWaTKhRoQEH3tjRLRRg3zBt0lMB/8ErbQZKjEysY6Y0XkZE]",
         "_account_validate_url": "api/v1/account/validate/",
         "_host": "http://mailservice.freshpo.com",
         "_ip_pool_category": "35",
@@ -730,8 +931,14 @@
         "_timeout": "30",
         "_url": "api/v1/email/send",
         "_antivirus_url": "/api/v1/antivirus/scan",
+        "_account_destroy_url": "/api/v1/account/delete",
+        "_spam_account_unblock_url": "api/v1/account_blacklist/remove",
         "_campaign_url": "api/v1/campaign/send",
-        "_imap_application_id": 1
+        "_imap_application_id": 1,
+        "_get_domains_url": "api/v1/whitelabel/domains/all/",
+        "_configure_domain_url": "api/v1/whitelabel/configure",
+        "_verify_domain_url": "api/v1/whitelabel/domains/verify",
+        "_remove_domain_url": "api/v1/whitelabel/domains"
       },
       "fdadmin_api": {
         "authorization_password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:HBaaizw+pAM8R76aOdB0fK+SwYsW29aK:oKJcHRFNBy/cnVEoPUR6oSdYG/VGIwv54qBXTsrpRXO3Uxc=]",
@@ -761,8 +968,13 @@
         "_signup_full_domain": "https://fcstaginguseast-test1.freshfonehello.com"
       },
       "freshchat": {
-        "_agent_widget_host_url": "https://web.freshchat.com",
-        "_visitor_widget_host_url": "https://wchat.freshchat.com"
+        "_agent_widget_host_url": "https://mr-yellow.freshpori.com",
+        "_visitor_widget_host_url": "https://webchat-mryellow.freshpori.com",
+        "_api_host_url": "https://mr-yellow.freshpori.com",
+        "signup": {
+          "_host": "https://mr-orange.freshpori.com/internal/system42/",
+          "secret": "EJ[1:agdMwKSxBnJe0E8/KT3Q3SafRIycf9BaGM6N1vsqm2I=:V2ecreMuQQxwaA8He/WBkppM8wXRJ75a:67QI2c/fbH8t/5U+1IkaJdRZRoQJ8dh3QIIvSelW1WexH0enqp35HJkP2PBo21FXD8JFqGQJ0W7oq2qOUNxk4uplZ42twVIyoF23EXQz3lsRBLw=]"
+        }
       },
       "freshconnect": {
         "app_integration": {
@@ -779,8 +991,7 @@
         "secret_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:tkOONvNOqKUYsUq311wON/XWwqeRSRPO:fBaveXTMGa7AiRVD/6sOZNX5nxMtCyRx0MXwC9CR61J9WExQe54yX33mh0PEHWIcMoTKEXZ+rCyxVpE9djVtOYhRm7vKx87gQ187hMtKwaU=]",
         "twilio_account_sid": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:c6La0hT47q7UqYvuFWiqcIGq27wa8eIO:TiX6/H+ZwdF1oVWCLumzIoJ3JeIq9VS6vTvUG5XnfGnRxA3N+Zv/ejW3cwpgfRWomxA=]",
         "_billing_error_email": [
-          "sunil@freshdesk.com",
-          "sathappan@freshdesk.com"
+          "freshcaller-staging@freshcallerassistant.freshdesk.com"
         ],
         "_node_url": "https://fone.freshpo.com"
       },
@@ -792,6 +1003,17 @@
         "_central_url": "https://login.freshpo.com/freshid/event_callback",
         "_product": "freshdesk-staging",
         "_ui_url": "https://staging-ui.fid.freshworksapi.com"
+      },
+      "freshid_v2": {
+        "_region_code": "STAGING",
+        "_end_point": "accounts.freshworks360.io",
+        "client_id": "EJ[1:wYQHGYFSDk/EB120yPsoiluidjv64SZyw/1SyEIc31M=:jTLsW5LECHC1VxJatyj85N85YO8iZxIN:r7xKJp39zzmIOyR7ezvNMMLCYFwl8XkOAHF/d1A8WM4Y]",
+        "client_secret": "EJ[1:wYQHGYFSDk/EB120yPsoiluidjv64SZyw/1SyEIc31M=:6pYVNXx/pROMaPFSY8vqYS5I4kp8yEh0:4vwZJRJ8GbrOLagL+Qe3BbRVJBzMQhi+QHysuOtkAosih5G0yd294UlxsYgYG7Zv]",
+        "callback_api_secret": "EJ[1:5ltHgb92D42CPfCS8oNZTikuYr9FiW60e2ZK6VBYXUY=:opWFv/PG5wRm3L9JCtlsBcVVT39JzpZF:Vy2osMuFalu/FVoCTKSD/w==]",
+        "_product_id": "38561582711734278",
+        "_product_domain": "freshpo.com",
+        "freshid_request_timeout": 10,
+        "_mobile_deep_link_protocol": "com.freshworks.freshdesk.staging"
       },
       "freshops": {
         "subdomains": {
@@ -845,7 +1067,8 @@
         "_crm_template_id_salesforcev2": "6738",
         "_fd_template_id_dynamicv2": "6704",
         "_fd_template_id_salesforcev2": "6737",
-        "_outgoing_proxy_ip": "squidproxy.internal-freshpo.com"
+        "_outgoing_proxy_ip": "squidproxy.internal-freshpo.com",
+        "office365_originator_id": "EJ[1:0DRvCS50AkPPmoUe+kZDet9YmIwLtMo4/CJIoUzUJS0=:+oZqNSjaYaL9C1EaGKNMYBVm64/sedxx:KQUxfyqR4nsw9tEJWA4ZGljgHllhtzKeRy91iw9ckt7kds64NbEMF9HxLYPjV3CqThmkUA==]"
       },
       "internal_tools": {
         "_domain": "supremeone.freshpo.com"
@@ -869,17 +1092,19 @@
         "_timeout": "2"
       },
       "lambda_exchange_keys": {
-        "_region": "us-east-1"
+        "access_key_id": "EJ[1:0+zY2CDV3YCJNog+WPT2TVsoX83AeKLOKvvaGzltvDY=:DnCL8EG2ol2FIhjiFPdOaZRy/CDIeYhC:PeJOcI6BA014gd6xOKpEAc6eh6su5LMhVz04AnFKBhhEUtGq]",
+        "_region": "us-east-1",
+        "secret_access_key": "EJ[1:0+zY2CDV3YCJNog+WPT2TVsoX83AeKLOKvvaGzltvDY=:1cim1GtT1xQucaDnavWRm8C6bnXE5Ed2:9sZBIV8yopDqCCXoKA4c1xPG/dqB9xVsrEUC4ol4IoPMth8aFZSKxmlTI2Ut7w4HXW8yuSLo8aA=]"
       },
       "livechat": {
-        "app_id": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:tpNJ2I2UelBpZxZP0vOK3TKxmNaj6zcY:98IhlP/mDb1Y7he+Wom8JqhtO9akngY0vly3LLtWViF5jQbSOpzzGodPxuc0]",
-        "secret_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:WKPm3vbinLq+5vu7d6wI0B5K8J93KKIU:4j3JWpEmAdCWTi/1JPPUno+GS+MArSyWjIsPOOT9sziW4QIcNAG32VC9bCz5myyYtm2SrFtb721UheFC0ZM3ScvxG/+MsodFqNFzZBtUMHVBb2OXECA1LnMNYXraZKT300KkmBcrtZZGUbrbItnPo/0mKhN0f5JhY6hlu34TQEirND6Ted9i4HlTlomUP3QR]",
-        "support_site_id": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:ujQfddkvW2v4rvzwAUZIZTc/4QxXX7V7:779LWp+mLaw5FMv1lLsTP46XaUrKz8SHqw99M1UMK+AuVJYGdekL7SwfKe0HyfM/]",
-        "support_widget_id": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:JRCNxOGczWZSk6cwEw+ZtSrOGjwh5p4t:2vp2fqpV+nz3PsdBo68HuZCwAe0jYBLoPHoJlD5E6Guh3/9SRYPW0LGFeDLoTV0sz36Anw==]",
+        "app_id": "EJ[1:e5hxEmzaHTMk9hV6yEZiZ17FU4XS6uooAn2ZHuf6Cxg=:MP3/Jo/atHLrOG7fub6TpHfM5kE1fVyg:/StKq/EPvLozWuq9UjKIpHzz4ZwBEleJ4xNJrSdgYVb8u2UjtcaIam1jsO1p]",
+        "secret_key": "EJ[1:e5hxEmzaHTMk9hV6yEZiZ17FU4XS6uooAn2ZHuf6Cxg=:Ex3P+rzg/hHIl3DvHzR4SLwVWHNcV4ph:gOr9tyK05duRVcYdtfccXJIcrFqzTPrUuz0uZxVAatwx8mexVgq66gxp/z71RsY6g1VURGy3SmotAceB8Jr/vWyKqsFfu7Zez3JOTubgSDaddV/Vf5gPzMwECA4dNRqgSWPyRxQHfYkUNLF2V6VEuEYGt/43fL+1A6GFqjRlhAlmRpeHIfJs/AbYsl6L5Lom]",
+        "support_site_id": "EJ[1:e5hxEmzaHTMk9hV6yEZiZ17FU4XS6uooAn2ZHuf6Cxg=:OpU96IlXA/lJpLxfnwD9b7qXnyhXCfP2:JX6unkQwigvlHTjKp1Y8aEZbcKjWvjNCdyOTi5SWjnsE/KBSaoM56IKi+Pk9L6dv]",
+        "support_widget_id": "EJ[1:e5hxEmzaHTMk9hV6yEZiZ17FU4XS6uooAn2ZHuf6Cxg=:tdlIg7eZ0+rbYX2mw9lYdF73Yqe4ipyG:MeydgsNEf7G3d/6iU4aJaOFKwFB6LFw445Lcw0dzNiZVSgJFGO1rhrinJsj5ThOtV9FDiQ==]",
         "_asset_css_url": "http://assets1.chat.freshpo.com",
         "_asset_js_url": "http://assets.chat.freshpo.com",
         "_cloudfront_url": "https://dop9av6nvryqq.cloudfront.net",
-        "_comm_url": "chat.freshpo.com",
+        "_comm_url": "lcstaging.fcstaging.io",
         "_http_only": "0",
         "_socket_io_server": "https://cobrowsing.freshdesk.com",
         "_support_url": "sep16test.freshpo.com"
@@ -921,7 +1146,10 @@
         "_s3_assets": "freshapps-staging1-pub/app-assets",
         "_tenant_id": "1",
         "_awol_region": "staging",
-        "_gallery_url": "https://app-gallery-staging.freshcloud.io"
+        "_gallery_url": "https://app-gallery-staging.freshcloud.io",
+        "_sudodev_acc_number": 1010003187,
+        "mkp_cipher_key": "EJ[1:x7RVj35IhCXKmpnkngx7ZVfKx8qdoHICU9iTtclCgAY=:QgJWb7LyWYsL0UltGHmAp8LTIX/wTnGi:EFiQeaDfFExJpJLnHrMdVPvuF2gwEJ8eFNgwgg+g9+7V079IzcG4iHypjeXfXlI0]",
+        "mkp_cipher_iv": "EJ[1:x7RVj35IhCXKmpnkngx7ZVfKx8qdoHICU9iTtclCgAY=:nu9AW2qdr8iLmYUb+NuT2nTdZkvTA/Qp:rknA7+Nl2Vo5ZtaDLfEfdpA6aVwsqAlrxwtTig96FeM=]"
       },
       "ml_app": {
         "auth_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:D5PcVAg2kymstT651j05qmaNwar/t1Mj:ZnvOf98t5sMMqs77Pjjec6S2pzzCMDN5ZfzBO4vWPFtcacxD9Q4zFtN8Pf4F]",
@@ -946,7 +1174,7 @@
       "newrelic": {
         "license_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:aff0bArmLdGr/ONu8djpW1mLzefReCgX:nkym71hrsNPNwtv7rriW/0yfSHAPW3UHd7QabFkJV+TNlloK0Ik6teHW]",
         "_capture_params": true,
-        "_product_name": "freshdesk",
+        "_product_name": "freshdesk-staging",
         "_record_sql": "obfuscated",
         "_distributed_tracing_enabled": "true"
       },
@@ -1006,10 +1234,9 @@
         "slack_secret": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:9tujHWzauEnuOvPyNxzdONExgitLjatM:CUC0vUp9OR0AYzs1Ff1oUbz+5FpQggrABP7uZow3UNjgJzV0gsrZx/byPHzxPdwR]",
         "slack_slash_cmd_token": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:TNt+NLjLSPekl04laqUfjcGXejm9D451:+nBCclaJ7Ak+/sxnEyZzdPI/H2DOnjNXLGddfegFrpajpmgTMcJoSA==]",
         "slack_token": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:x3pDauWVbgcguCdQ8HvGMUkwaqin6fk4:mHOH9uXl0ZF7dWou373BMExN7Bz1V6q8bRLDEMxRuPLU785KNwMU]",
-        "surveymonkey_api_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:UTzZFzHYYDptsKvpJbTMYM9XcoPnfegq:QBcMxNsvluUPmPw+xcIxIkeQL4TeeFRiLcmBokJJ/+rGBGImhORz8Q==]",
-        "surveymonkey_secret": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:YnkOaNodBmcrm3mQlev2e/MiWEjJZaql:JA1hDMigS5EBf4DlDlpv8zcJeuYiiWFQJFmlYZhTPfNd0ShSNZUy9b6E+hV27EVHi436vPUIGA==]",
-        "surveymonkey_token": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:Tqq8WSQtYKJ5fFZquD4Wjo/D52wkC8ue:pZ9SzDMrVibW3VTgTyWwWhYzgXoQ7fRQDV0LlZ3MCS7ytyP0gYU=]",
-        "google_oauth2_client_id_iosv4_classic": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:mxp+UFqciRbosKvEWpj1bCtelHWcllnw:kSWCOnarGJ1sqXL6TuVDpSsRPcEv/7xEjhLGhawegUR0VHTtrUMP4xKxT/+0otzBBoBcx+JKU3eWFIGdmg3b9A4Yyhvka1JCEfmXoD+Gx3LFK4Dc6rjSFQ==]"
+        "surveymonkey_api_key": "EJ[1:0+zY2CDV3YCJNog+WPT2TVsoX83AeKLOKvvaGzltvDY=:LpL2Uz0Tb/jWeD3eDs01y5mNnoW5G7bL:h4wqyl7gN2I9x3Q6dqZpy6SqQ28H4RR7OSSjRonrSTzBpl2MgvHeWg==]",
+        "surveymonkey_secret": "EJ[1:d4VKwTT1vqha+EmtTn4bARTBSJ6VjUG3oH0De5V+SRQ=:DCW+aTDlT4Fy0rhqHK+KbCE4idJ252t7:/0dfqm6UZ4jPiOdujwHW17NLWjeHOqUarQiF23gE4rtiXonMoQhRU4tG9QL4hYEsp9zqwcfkPw==]",
+        "surveymonkey_token": "EJ[1:d4VKwTT1vqha+EmtTn4bARTBSJ6VjUG3oH0De5V+SRQ=:+k4YRN9MI6dgvQHfHdjDYXVpPjqzlQjy:3sqvsUYtwgvoHnS4jQ4eZg8x+OSKTqwcKC4g9KQTQbUvOV2INAQ=]"
       },
       "pod_dns": {
         "domains": {
@@ -1026,7 +1253,8 @@
       },
       "product_feedback": {
         "api_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:rh2sdoL8eYF7moW996RmoBGHZSV785s3:ifapFuIvat/qKQrdTAq83OqmxVyzGcm6JxJSmQrp9NZ4dMU=]",
-        "_feedback_account": "https://feedback1.freshpo.com"
+        "_contacts_path": "api/v2/contacts",
+        "_tickets_path": "api/v2/tickets"
       },
       "rabbitmq": {
         "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:WYp1T5k91qGM/cDKp7t0B/OeVp4pKL/j:OgKDLyurasrpZ5pmzSBcv0KeBT+qwCoV0A==]",
@@ -1039,16 +1267,16 @@
         "site_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:RiiA6RXA6BX6c0FYQzJ653bywUrEP2Kj:nnYtRc/bKYglpWmK6COnxXGpWy+/4b7tZJdjTlQBE/nmuWItxb2ifIBoX1Jay+/15iQeYLC6bXQ=]"
       },
       "redis": {
-        "_host": "staging.redis-internal.poduseast.freshpo.com",
+        "_host": "redis-10719.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
         "_keepalive": 10,
         "_namespace": "resque-blue",
-        "_port": 16520,
+        "_port": 10719,
         "_timeout": 5
       },
       "redis_display_id": {
-        "_host": "staging.redis-internal.poduseast.freshpo.com",
+        "_host": "redis-10719.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
         "_keepalive": 10,
-        "_port": 16520,
+        "_port": 10719,
         "_timeout": 5
       },
       "redis_mobile": {
@@ -1058,27 +1286,33 @@
         "_timeout": 5
       },
       "redis_rate_limit": {
-        "_host": "staging.redis-internal.poduseast.freshpo.com",
+        "_host": "redis-10719.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
         "_keepalive": 10,
-        "_port": 16520,
+        "_port": 10719,
         "_timeout": 5
       },
       "redis_round_robin": {
-        "_host": "staging.redis-internal.poduseast.freshpo.com",
+        "_host": "redis-10719.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
         "_keepalive": 10,
-        "_port": 16520,
+        "_port": 10719,
+        "_timeout": 5
+      },
+      "automation_rule_redis": {
+        "_host": "redis-10719.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_keepalive": 10,
+        "_port": 10719,
         "_timeout": 5
       },
       "redis_routes": {
-        "_host": "staging.redis-internal.poduseast.freshpo.com",
+        "_host": "redis-10719.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
         "_keepalive": 10,
-        "_port": 16520,
+        "_port": 10719,
         "_timeout": 5
       },
       "redis_session": {
-        "_host": "staging.redis-internal.poduseast.freshpo.com",
+        "_host": "redis-10719.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
         "_keepalive": 10,
-        "_port": 16520,
+        "_port": 10719,
         "_timeout": 5
       },
       "redshift": {
@@ -1112,12 +1346,13 @@
         "_reports_bucket": "reports_archive_data_staging",
         "_ticket_body": "ticketbody-staging",
         "_baikal_bucket": "baikal-data-staging",
-        "_help_widget_bucket": "help-widget-staging"
+        "_help_widget_bucket": "help-widget-staging",
+        "_article_versioning_bucket": "article-versioning-staging"
       },
       "sandbox": {
         "private_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:xKuB8sOvOtWs64pNkYOQ9T+kbQYqfgn5:TVjQFDkTX/BN2qUf/gEAYgKbui+5lH1rsYqakrOj]",
         "public_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:C5MAghO0lMQ/wTg3tMQ0Cwo1ITBJTA9W:FxJAyvIpC0I4IFVmrA0ie1+zaN93CjwxGmIqXL/11FqlXw==]",
-        "ssh_id": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:hxk/ZYTs4BoiHvHnYp92ghU1JBe0z7r/:n4M2B/p8g+Uq1eRW7RDtL5mmO90HrjNosTb8CjdnV2ldCTFX]",
+        "ssh_id": "EJ[1:IMtdb8YMf3/jQeQw19V67GuYuV+oPNAAj6Kr6YJQuBQ=:V1fObFUa5I5UVMqSb3+Q74YoO1+jUWIb:x6kV9pP9Xov2jXKTZ3IYxP/CT5oqeCQFCwPBUP0DWlGzania]",
         "_bucket": "sandbox-codecommit",
         "_path": "keys",
         "_repo_url": "ssh://git-codecommit.us-east-1.amazonaws.com/v1/repos/sandbox_staging",
@@ -1127,7 +1362,9 @@
         "token": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:11WK5HjTcq6A3CPR7t1GP20kSp9Bed1X:S+0eTuFVgZTWX0H1eyZ9HYS9FY6GZqqLf3lbDcSsdlfQjANU8xOFzDGf7cMrDa4d]",
         "_end_point": "http://scheduler-staging.freshworksapi.com/schedules",
         "_todo_group_name": "helpkit_todo_reminder",
-        "_export_group_name": "helpkit_export_cleanup"
+        "_downgrade_policy_group_name": "helpkit_downgrade_policy_reminder",
+        "_export_group_name": "helpkit_export_cleanup",
+        "_ticket_delete_group_name": "helpkit_ticket_delete"
       },
       "sds": {
         "_service_url": "https://sds-staging-elb-89416071.us-east-1.elb.amazonaws.com",
@@ -1162,29 +1399,31 @@
         "falcon": {
           "reminder_todo": {
             "_priority": 1,
-            "_sqs_queue": "fd_scheduler_reminder_todo_queue_staging"
+            "_sqs_queue": "main_staging_reminder_todo_queue"
           },
           "social_gnip_tweets": {
             "_priority": 1,
-            "_sqs_queue": "social_gnip_2_0_tweet_staging_main"
+            "_sqs_queue": "main_staging_social_gnip_tweets_queue"
           },
           "count_etl_queue": {
             "_priority": 1,
             "_sqs_queue": "count_etl_queue-stagingvpc-staging"
-          }
-        },
-        "queue_config": {
-          "active_email": {
+          },
+          "analytics_etl_queue": {
             "_priority": 1,
-            "_sqs_queue": "active_customer_email_queue_stagingnew"
+            "_sqs_queue": "analytics_etl_queue-stagingvpc-staging"
+          },
+          "downgrade_policy_reminder": {
+            "_sqs_queue": "fd_scheduler_downgrade_policy_reminder_queue_staging",
+            "_priority": 1
           },
           "bot_feedback_queue": {
             "_priority": "1",
-            "_sqs_queue": "bot_feedback_staging"
+            "_sqs_queue": "main_staging_bot_feedback_queue"
           },
           "channel_framework_services": {
             "_priority": 1,
-            "_sqs_queue": "fd_cf_helpkit_staging_main"
+            "_sqs_queue": "main_staging_channel_framework_services"
           },
           "cluster1_archive": {
             "_priority": 1,
@@ -1193,26 +1432,6 @@
           "cluster_etlqueue": {
             "_priority": 1,
             "_sqs_queue": "cluster1-etlqueue-stagingvpc-staging"
-          },
-          "custom_mailbox_status": {
-            "_priority": 1,
-            "_sqs_queue": "custom_mailbox_staging_product_notification"
-          },
-          "default_email": {
-            "_priority": 1,
-            "_sqs_queue": "default_email_queue_stagingnew"
-          },
-          "email_failure_reference": {
-            "_priority": 1,
-            "_sqs_queue": "fd_email_failure_reference_staging_vpc"
-          },
-          "failed_emails": {
-            "_priority": 1,
-            "_sqs_queue": "failed_emails_queue_stagingnew"
-          },
-          "free_email": {
-            "_priority": 1,
-            "_sqs_queue": "free_customer_email_queue_stagingnew"
           },
           "scheduled_export_payload": {
             "_priority": 1,
@@ -1224,29 +1443,95 @@
           },
           "search_etlqueue": {
             "_priority": 1,
-            "_sqs_queue": "search-etlqueue-stagingvpc-staging"
+            "_sqs_queue": "search-etlqueue-stagingvpc-staging_new"
           },
           "social_fb_feed": {
             "_priority": 1,
-            "_sqs_queue": "social_fb_feed_staging_v1_main"
-          },
-          "trial_email": {
-            "_priority": 1,
-            "_sqs_queue": "trial_customer_email_queue_stagingnew"
+            "_sqs_queue": "main_staging_social_fb_feed"
           },
           "fd_scheduler_export_cleanup_queue": {
             "_priority": 1,
-            "_sqs_queue": "fd_scheduler_export_cleanup_queue_staging"
+            "_sqs_queue": "main_staging_fd_scheduler_export_cleanup_queue"
+          },
+          "spam_trash_delete_free_acc_queue": {
+            "_priority": 1,
+            "_sqs_queue": "spam_trash_delete_free_acc_queue_staging"
+          },
+          "spam_trash_delete_paid_acc_queue": {
+            "_priority": 1,
+            "_sqs_queue": "spam_trash_delete_paid_acc_queue_staging"
+          },
+          "active_email": {
+            "_priority": 1,
+            "_sqs_queue": "main_staging_active_email_queue"
+          },
+          "custom_mailbox_status": {
+            "_priority": 1,
+            "_sqs_queue": "main_staging_custom_mailbox_status"
+          },
+          "default_email": {
+            "_priority": 1,
+            "_sqs_queue": "main_staging_default_email"
+          },
+          "email_failure_reference": {
+            "_priority": 1,
+            "_sqs_queue": "main_staging_email_failure_reference"
+          },
+          "failed_emails": {
+            "_priority": 1,
+            "_sqs_queue": "main_staging_failed_emails"
+          },
+          "free_email": {
+            "_priority": 1,
+            "_sqs_queue": "main_staging_free_email"
+          },
+          "trial_email": {
+            "_priority": 1,
+            "_sqs_queue": "main_staging_trial_email"
+          }
+        },
+        "queue_config": {
+        },
+        "archive": {
+          "search_etl_queue": {
+              "_sqs_queue": "search-etlqueue-archive-staging",
+              "_priority": 1
+          },
+          "count_etl_queue": {
+              "_priority": 1,
+              "_sqs_queue": "count_etl_queue_archive_staging"
+          },
+          "analytics_etl_queue": {
+              "_priority": 1,
+              "_sqs_queue": "analytics_etl_queue_archive_staging"
+          }
+        },
+        "maintenance": {
+          "search_etlqueue_maintenance": {
+            "_sqs_queue": "search-etlqueue-stagingvpc-staging_new_maintenance",
+            "_priority": 1
+          },
+          "count_etl_queue_maintenance": {
+            "_sqs_queue": "count_etl_queue-stagingvpc-staging_maintenance",
+            "_priority": 1
+          },
+          "analytics_etl_queue_maintenance": {
+            "_sqs_queue": "analytics_etl_queue-stagingvpc-staging_maintenance",
+            "_priority": 1
           }
         }
       },
       "sidekiq": {
-        "_host": "staging.redis-internal.poduseast.freshpo.com",
+        "_host": "redis-18362.internal.c4859.us-east-1-mz.ec2.cloud.rlrcp.com",
         "_keepalive": 10,
         "_namespace": "sidekiq-blue",
-        "_port": "16520",
+        "_port": "18362",
+        "password": "EJ[1:SFBAntw51muTS027JWb9ynVGGjwvgzl/L94mHm+UG3c=:DKtKtN78yQkFMBpnZ2zFyf3K1GBKOcAz:jPrMNezDnRoU9pSTEUJBbFXvoxdhrCNIzMyeffg1Jujl+zGIJD6rTDKW1zdIuJcc]",
         "_timeout": 5,
-        "_scheduled_poll_interval": 1
+        "_scheduled_poll_interval": 1,
+        "_archive_host": "redis-18362.internal.c4859.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_archive_port": "18362",
+        "archive_password": "EJ[1:SFBAntw51muTS027JWb9ynVGGjwvgzl/L94mHm+UG3c=:DKtKtN78yQkFMBpnZ2zFyf3K1GBKOcAz:jPrMNezDnRoU9pSTEUJBbFXvoxdhrCNIzMyeffg1Jujl+zGIJD6rTDKW1zdIuJcc]"
       },
       "smart_filter": {
         "auth_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:AIXGL/Wtd7bZ4Z1xJWYL7lIoUck0BgTW:+4WyNeAu7G3aXhqrCM1tBok8XpsBETbRpaCFcPgo7sS7CpSIYUUswP6lZ2gpbvTbVhExulTQ5hM0HDReaO1B5YW8VzHmuzULfIACCIb3t8v+Iuzw6yhQCwdVOEDkVfYNagW5JKivSLhhrTAUpl7jBLOl8uUHHfdftjyfgt4TT53xolBtvnEG1jhi3fiZ2xA5AOv9YW45ITIJcfYUnJC4ZHV2y0bLaU2KYMWvE62Rb2F5PixydZ+txwGjUVbap4LAfErqqGn13LYa9YpxRwl6RGdE2YG+1s0QukARlc6chIwWJ8GdrW4A5oG88Uj35irjEAYj5y10Ee9H9MxkERJbJx6cQN+l5c+fSpfL6O15wXxWErvQtg==]",
@@ -1259,7 +1544,7 @@
         "_email": "sengottaian.nallasamy@freshworks.com"
       },
       "sqs_queues": {
-        "_active_customer_email_queue": "active_customer_email_queue_stagingnew",
+        "_active_customer_email_queue": "main_staging_active_email_queue",
         "_activity_export_queue": "fd_activities_export_staging",
         "_activity_queue": "fd_activities_staging",
         "_agent_collision_alb_queue": "agent_collision_alb_staging",
@@ -1267,27 +1552,27 @@
         "_auto_refresh_alb_queue": "auto_refresh_alb_staging",
         "_auto_refresh_queue": "auto_refresh_new_staging",
         "_auto_refresh_realtime_queue": "auto_refresh_staging",
-        "_bot_feedback_queue": "bot_feedback_staging",
-        "_channel_framework_services": "fd_cf_helpkit_staging_main",
+        "_bot_feedback_queue": "main_staging_bot_feedback_queue",
+        "_channel_framework_services": "main_staging_channel_framework_services",
         "_collab_agent_update_queue": "collab_agent_update_staging",
         "_collab_ticket_update_queue": "collab_ticket_update_staging",
         "_count_etl_queue": "count_etl_queue-stagingvpc-staging",
         "_cti_call_queue": "cti_call_staging",
         "_cti_screen_pop": "cti_screen_pop_staging",
-        "_custom_mailbox_realtime_queue": "custom_mailbox_staging",
-        "_custom_mailbox_status": "custom_mailbox_staging_product_notification",
-        "_default_email_queue": "default_email_queue_stagingnew",
-        "_email_dead_letter_queue": "failed_emails_queue_stagingnew",
+        "_custom_mailbox_realtime_queue": "https://sqs.us-east-1.amazonaws.com/206535303787/imap-conf-data-sqs",
+        "_custom_mailbox_status": "main_staging_custom_mailbox_status",
+        "_default_email_queue": "main_staging_default_email",
+        "_email_dead_letter_queue": "main_staging_failed_emails",
         "_email_events_queue": "fd_email_spam",
-        "_facebook_realtime_queue": "social_fb_feed_staging_v1_main",
-        "_fb_message_realtime_queue": "social_fb_messenger_staging_v1",
-        "_fd_email_failure_reference": "fd_email_failure_reference_staging_vpc",
-        "_fd_scheduler_reminder_todo_queue": "fd_scheduler_reminder_todo_queue_staging",
+        "_facebook_realtime_queue": "main_staging_social_fb_feed",
+        "_fb_message_realtime_queue": "main_staging_social_fb_messenger",
+        "_fd_email_failure_reference": "main_staging_email_failure_reference",
+        "_fd_scheduler_reminder_todo_queue": "main_staging_reminder_todo_queue",
         "_forums_moderation_queue": "forum_moderation_staging_reg",
-        "_free_customer_email_queue": "free_customer_email_queue_stagingnew",
+        "_free_customer_email_queue": "main_staging_free_email",
         "_freshfone_call_notifier_queue": "freshfone_call_notifier_staging",
         "_freshfone_call_tracker": "freshfone_call_tracker_staging",
-        "_helpdesk_reports_export_queue": "helpdesk_reports_export_staging",
+        "_helpdesk_reports_export_queue": "main_staging_helpdesk_reports_export",
         "_iris_etl_msg_queue": "iris_etl_msgs_staging",
         "_marketplace_app_queue": "marketplace_app_staging",
         "_reports_etl_msg_queue": "reports_etl_msgs_staging",
@@ -1298,13 +1583,25 @@
         "_scheduled_ticket_export_config": "scheduled_ticket_export_config_stagingnew",
         "_scheduled_ticket_export_queue": "scheduled_ticket_export_queue_stagingnew",
         "_scheduled_user_export_queue": "scheduled_user_export_queue_stagingnew",
-        "_search_etl_queue": "search-etlqueue-stagingvpc-staging",
+        "_search_etl_queue": "search-etlqueue-stagingvpc-staging_new",
+        "_spam_trash_delete_free_acc_queue": "spam_trash_delete_free_acc_queue_staging",
+        "_spam_trash_delete_paid_acc_queue": "spam_trash_delete_paid_acc_queue_staging",
         "_sidekiq_fallback_queue": "sidekiq_fallback_queue_staging",
-        "_social_fb_messenger": "social_fb_messenger_staging_v1",
+        "_social_fb_messenger": "main_staging_social_fb_messenger",
         "_sqs_es_index_queue": "sqs_es_index_queue_staging",
-        "_trial_customer_email_queue": "trial_customer_email_queue_stagingnew",
-        "_twitter_realtime_queue": "social_gnip_2_0_tweet_staging_main",
-        "_fd_scheduler_export_cleanup_queue": "fd_scheduler_export_cleanup_queue_staging"
+        "_trial_customer_email_queue": "main_staging_trial_email",
+        "_twitter_realtime_queue": "main_staging_social_gnip_tweets_queue",
+        "_fd_scheduler_export_cleanup_queue": "main_staging_fd_scheduler_export_cleanup_queue",
+        "_analytics_etl_queue": "analytics_etl_queue-stagingvpc-staging",
+        "_fd_scheduler_downgrade_policy_reminder_queue": "fd_scheduler_downgrade_policy_reminder_queue_staging",
+        "_search_etlqueue_maintenance": "search-etlqueue-stagingvpc-staging_new_maintenance",
+        "_count_etl_queue_maintenance": "count_etl_queue-stagingvpc-staging_maintenance",
+        "_analytics_etl_queue_maintenance": "analytics_etl_queue-stagingvpc-staging_maintenance"
+      },
+      "archive_sqs_queues": {
+        "_search_etl_queue": "search-etlqueue-archive-staging",
+        "_count_etl_queue": "count_etl_queue_archive_staging",
+        "_analytics_etl_queue": "analytics_etl_queue_archive_staging"
       },
       "statsd": {
         "_host": "stats.freshpo.com"
@@ -1315,9 +1612,9 @@
         "_port": "80"
       },
       "twitter": {
-        "consumer_secret": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:5SdqYq7ucO+yZlrhhMxMkNUgigiyhoRO:5KBVC40EhMszmvIqtXCEiIrW+fL2TDV0Q+wVrJlzZ/cd6YEjV49plFebcf7fMBrrllryIk3YfWRbW8DgxOyKxEiT]",
+        "consumer_secret": "EJ[1:8exvi2D7SfEJxmn+Br7CeoKsCDfXy1gOfUh5hGbLsSw=:1GEjNUdnyGNCmC2AHo5M3oZ15HG5ej8o:HgTyKLuiPrWqhpbgJ5kwCJBPcItExu8LwguJQrvkQ7s+S6VP9XVzLR3/l/lDJ+Ih5UO4eCZ+XuBuO5IrGBHlYu5u]",
         "consumer_secret_fallback": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:iWqLWcg+o+Ywv4iensDeFYqQbrxL4YJQ:H+NE5RZGypO2UBTq5nZHeESXceKv]",
-        "consumer_token": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:sDymkCWdiUJYxCiJlSwhtjO5dQo+8nDN:U9jVFOQrlbgneYMVJmAygkdjo1BP4O9bXJ8DSSYifx+0YJainsDa4gk=]",
+        "consumer_token": "EJ[1:8exvi2D7SfEJxmn+Br7CeoKsCDfXy1gOfUh5hGbLsSw=:zPT6g9md88tYWVpHUWDgNbqYOPJvcJEZ:5jnsshyZ1gWlsTwHC+NMs8+zX2/03s8+aTFA2+AEQIAakUnn9Wdi/AY=]",
         "consumer_token_fallback": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:ILTgAppR7KQF2RmgwDbmc0cV7sMMwEnI:WZM8uCSAaLnyUFhRwdBMLzjcJnTe]",
         "central_secret_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:o+NWC0OgTmSfVkZUqlqORIJLbNmdrzK/:jnO4Iyv43oOy4lb9iMtdXllswCntVXVWiFJntJqnYqTvhSeSQFA2oNP1FXzu6zXI]",
         "central_secret_iv": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:phgXgpG3yUaHYrVBMgmEhGt6DtEZk2eh:QgKDxZXnAa1klPHN3LhZ8DybctSesz6TYvQNnxsLZJU=]",
@@ -1343,14 +1640,19 @@
           "_username": "freshdesk"
         },
         "audit_log_filtered_export": {
-          "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:xEGW+3ULCMiezkaFIr0wxmJ3rYx7Ck5P:0XS1VRJhITj9QWiqBh5YuYC0j0TGmQQG2z6dEu+jmYvffUia]",
+          "password": "EJ[1:yEBuIgZEOZxL2Cq+LSkza6HWtpWuyI3sjJKFACdlEHA=:+ssahAb7Ifo2dTp7vcg2gyGWwMyMg5Os:a7Lf4kwtRpP2NuXXztPQgAGt0Y9CAxe+Wg==]",
           "_api_endpoint": "https://hypertrail-staging.freshworksapi.com/api/v1/export/filtered/account/%{account_id}/audit",
-          "_username": "freshdesk-central-qa"
+          "_username": "freshdesk"
+        },
+        "audit_log_archived_export":{
+          "password": "EJ[1:yEBuIgZEOZxL2Cq+LSkza6HWtpWuyI3sjJKFACdlEHA=:g7w628045tpUIS3Zt2ZAyGknL2uc3NXK:mT+0uCdLWUMmCro6lNbB4+kC6dJFXpxGlw==]",
+          "_api_endpoint": "https://hypertrail-staging.freshworksapi.com/api/v1/export/archived/account/%{account_id}/audit",
+          "_username": "freshdesk"
         },
         "audit_log_file_export": {
-          "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:EjC6DyVvd6b16lcUhmY+QSQ6l/kIxnLI:xItkmerh9RUikA81POJsupKZuaJswWMz3Eec8RzkpuKL0TJK]",
+          "password": "EJ[1:yEBuIgZEOZxL2Cq+LSkza6HWtpWuyI3sjJKFACdlEHA=:eSFPXfYnfu/lOjiibDhOZK3It8v6Ehq7:2EircIkFO7YAxsB+/9TIVWXnAoMFnrVr0Q==]",
           "_api_endpoint": "https://hypertrail-staging.freshworksapi.com/api/v1/export/account/%{account_id}/%{job_id}",
-          "_username": "freshdesk-central-qa"
+          "_username": "freshdesk"
         }
       },
       "proactive_service": {
@@ -1358,6 +1660,14 @@
         "email_cipher_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:CpDe4oHjDRvMO04t8vMVfU+4lWsJWAX6:xNqZZjAs+wsjwU/fT4wrAnbHNRFVYxSOTq8WopFxGVW6XJxeqvLc0kQbrE6jH/RgvzKfJq0=]",
         "_jwt_default_expiry": "30",
         "_service_url": "http://proactiveservice-staging.freshpo.com"
+      },
+      "facebook_gateway": {
+        "jwt_secret": "EJ[1:K/jkGI/XjF4uqZDoiT1gZvTwWc1FaytEaYCv1xQDMF8=:hRnN8kDtD1WmFkx5+RPnQzfWZBiwppcA:8exCR5Y0hsX0VQ6Zn1nKTkuVAhf+olbMiAhNhLtGOIU=]",
+        "_jwt_default_expiry": "30",
+        "_service_url": "https://channel-framework-staging.freshpo.com",
+        "_route": "gateway/facebook/pages",
+        "_request_owner": "helpkit",
+        "_max_page_limit": 10
       },
       "growthscore_app": {
         "app_id": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:cUvlWh9MEz9ftVXd4rSkmZr9feAHAF6X:U7+nIFcj9J76k2FUoBvEGtnjhA56LEhcw3QpBuHzDfQ6uU/ZyuGx7Qy6WEk5O60h]"
@@ -1375,13 +1685,55 @@
       },
       "datadog": {
         "license_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:JsU3V4SBURAtMbZwkfe4SE0B7Ua1cegl:GoWwZzxhN7TntRImqO4OU96PB6MbC1/Rvs2NOwYzW7QzqdbV2WxESTFmMNYRFNwu]",
-        "_enable": "true"
+        "_enable": false
       },
       "freshvisuals": {
         "secret_key": "EJ[1:YF3lQpG5+Z00j00ovHPs50zBBAjVCAxiywoFajt+Hl4=:mCucgefYZk/I0zJkrspSM9jCA3XJnsqj:gwSSj5XJs/wDmhIW6TaccnMTVqSKeglglsZ43w3Kuzq1Jw+Okn6S/rrEtY/U2faucRmsrN/In258Jjdw]",
         "_app_name": "freshdesk-staging",
         "_end_point": "https://staging.freshreports.com",
-        "_session_expiration": 36000
+        "_session_expiration": 36000,
+        "_session_expiration_for_pricing_api": 30,
+        "_timeout_for_pricing_api": 10
+      },
+      "fluffy": {
+        "_host": "http://fluffy-swagger-1242661574.us-east-1.elb.amazonaws.com",
+        "username": "EJ[1:KPLwfD8Y0BIZH6YQcEzQDNBn8/EQoDQ4PmS4r5J76zk=:qrgtap1okUwcx0qIs/bPJ5t1x/mkm0Oe:9NvC+DrZtADYb8l0Pe8j5orfiVJYIYAiNg==]",
+        "password": "EJ[1:KPLwfD8Y0BIZH6YQcEzQDNBn8/EQoDQ4PmS4r5J76zk=:G0hLjfcT/xDslPM+IvgoZHOPC4qbuw9S:32COF4bZOIdTS+LeAL3pj0TROw/wYUK1qQ==]"
+      },
+      "freddy_skills_config": {
+        "detect_thank_you_note": {
+          "_url": "https://thankyou.freddyproject.com/serve/",
+          "_timeout": 1,
+          "_confidence_threshold": 80
+        },
+        "ticket_properties_suggester": {
+          "_url": "https://autodispatch-1642351674.freshpo.com/",
+          "_timeout": 15,
+          "_expiry_in_days": 365
+        },
+        "system42": {
+          "_host": "https://system42-serv.staging.freddyproject.com",
+          "_onboard_url": "https://system42-serv.staging.freddyproject.com/api/v1/fd_private/sync_bots",
+          "secret": "EJ[1:E5RER8b/2BzkmNOdJZSKRAiudmvMwaropMRSZNGLqVA=:3860AzxDiK1eNqXZAY0x5ZB/2H6LM2Cs:coKU/+XM555zSaE82CpjXxzOQCT9c1HUI9LRi8+tjVAXG0rN2senvvDl7jD+DvVYZNR7vA==]",
+          "_timeout": 5,
+          "internal": "EJ[1:1OhYe10U7UQ+qbVTM7NY+Kw4yxJMOYeVssA/ajFLF1Y=:LeXn19PQLPmZGFUHGDaiEpUmJmrUtyrG:DgELdqz050wfvR0GxdPIFyjatiUstTZKArB8WD2hXZfEXJwmKlvpaKUddE8+O95FUrQuYg==]"
+        },
+        "flowserv": {
+          "_host": "https://api.intfreshbots.com/rest/api/v2/",
+          "secret": "EJ[1:E5RER8b/2BzkmNOdJZSKRAiudmvMwaropMRSZNGLqVA=:P0hCnRHD7zbcsLAVFus+kBZ3nYDC6qGM:b90JhTgULRwJUlILchPZ2XGDqPZK58V+kxFRrQ==]",
+          "_timeout": 10,
+          "_service": "bot-admin",
+          "product_id": "EJ[1:7wlQ68l/cvBoRuGW5Fm+M2TdpuWqkkGAg3IExx/pQDQ=:juxVng/iGWsGhg1ImOycB6F9IsXp0Zwx:2Ps3MG9aNoxjI0y1P/y5ujO0F1Ws2s1HRq++GIN/mIqagNt+rghA8bq9NhrBlC4S80WY1bCgoF0=]"
+        },
+        "agent_articles_suggest": {
+          "_url": "https://system42-serv.staging.freddyproject.com/api/v1/afr/smart_reply",
+          "secret": "EJ[1:Gu1wmqd+hs6mzZ0Gl8zLlBmQrUKozXx42rdWS2GruGs=:bLI0ACKZhhve2VLtI5bxRvI7ivnRQMa8:Hu73oA+mxQY3wLPvjEiQNnpMjsWhYLmz/L7Vb2UTNl4ba9V+0k80/vzriUmc]"
+        }
+      },
+      "shift_config": {
+        "_shift_service_host": "https://shift.freshpo.com/",
+        "jwt_secret": "EJ[1:aincBz1BNgVhiUnbgvHfGonYVKmvdgV6sxvwksiEk04=:NB6rMiYQLmyM4+wFMCOb4nbIXE1+Lrc1:quJ6EEHr8AxhqHgkLuX4lZPUw65VOrZAAg==]",
+        "_time_out": 10
       }
     },
     "unique_keys": {
@@ -1421,9 +1773,12 @@
       "_heap_project_id": "298895843",
       "_integrations_url": "https://login.freshpo.com",
       "_revision": "prestaging",
-      "_widget_domain": "https://freshwidget.freshpo.com"
+      "_widget_domain": "https://freshwidget.freshpo.com",
+      "_data_center": "us-east"
     },
     "aws_config": {
+      "access_key_id": "EJ[1:0+zY2CDV3YCJNog+WPT2TVsoX83AeKLOKvvaGzltvDY=:kMSaqjp76A163AkLZTe1+cWKx9F1f6A1:xuCayGW5XiIzPtlp81zFQ8cj9Sw=]",
+      "secret_access_key": "EJ[1:0+zY2CDV3YCJNog+WPT2TVsoX83AeKLOKvvaGzltvDY=:srZaSI/vt/lZrD0gg7+QLOPlcKUIuixu:Ln93ULifdF3VHhYFHLawqxq12AI=]"
     },
     "opsworks_access_keys": {
       "_region": "us-east-1",
@@ -1432,18 +1787,19 @@
     "config_gen": {
       "pool_size": {
         "default": {
-          "_sidekiq": 5,
+          "_sidekiq": 8,
           "_shoryuken": 10,
           "_app": 1,
-          "_others": 4
+          "_others": 8
         },
         "dedicated": {
           "_fc-bg-sidekiq-archive": 3,
-          "_fc-bg-sidekiq-occasional": 3,
-          "_fc-bg-sidekiq-central-realtime": 3,
-          "_fc-bg-sidekiq-maintainence": 3,
-          "_fc-bg-sidekiq-realtime": 6,
-          "_fc-bg-sidekiq-hard-delete": 3
+          "_fc-bg-sidekiq-occasional": 8,
+          "_fc-bg-sidekiq-central-realtime": 8,
+          "_fc-bg-sidekiq-realtime": 10,
+          "_fc-bg-shoryuken-analytics": 20,
+          "_hk-bg-shoryuken-search": 15,
+          "_hk-bg-shoryuken-email-cluster": 4
         }
       }
     },
@@ -1503,6 +1859,8 @@
     }
   },
   "layer_settings": {
+   "fc-app-db-migration": {
+    },
     "hk-app-suggest": {
     },
     "hk-app-freshfone-twilio": {
@@ -1565,6 +1923,12 @@
     },
     "hk-app-premium": {
     },
+    "fc-app-premium": {
+    },
+    "hk-app-support-premium": {
+    },
+    "hk-app-solution-premium": {
+    },
     "hk-app-pipeline": {
     },
     "fc-app-api-public": {
@@ -1591,6 +1955,8 @@
     },
     "fc-bg-sidekiq-trial": {
     },
+    "fc-bg-shoryuken-analytics": {
+    },
     "hk-app-free": {
     },
     "hk-app-support": {
@@ -1606,6 +1972,10 @@
     "fc-app-api-public-premium": {
     },
     "fc-app": {
+    },
+    "fc-app-merge": {
+    },
+    "fc-app-misc": {
     },
     "fc-bg-sidekiq-bulk-scheduled": {
     },
@@ -1643,6 +2013,8 @@
     "fc-bg-resque-freshfone": {
     },
     "fc-bg-sidekiq-freshfone": {
+    },
+    "fc-app-merge": {
     }
   }
 }

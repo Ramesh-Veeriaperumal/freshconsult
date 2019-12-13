@@ -45,11 +45,15 @@ module WidgetConcern
 
   def user_visibility
     vis_arr = [Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]]
-    if User.current
+    if current_user
       vis_arr << Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users]
-      vis_arr << Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:agents] if User.current.agent?
-      vis_arr << Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users] if User.current.agent? || User.current.has_company?
+      vis_arr << Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:agents] if current_user.agent?
+      vis_arr << Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users] if current_user.agent? || current_user.has_company?
     end
     vis_arr
+  end
+
+  def current_user
+    @current_user ||= User.current
   end
 end

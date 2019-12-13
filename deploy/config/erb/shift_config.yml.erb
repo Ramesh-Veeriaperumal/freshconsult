@@ -1,0 +1,4 @@
+<%= node[:opsworks][:environment]%>:
+  shift_service_host: <%= node[:ymls][:shift_config][:shift_service_host] %>
+  jwt_secret: <%= node[:ymls][:shift_config][:jwt_secret] %>
+  time_out: <%= node[:ymls][:shift_config][:time_out] %>

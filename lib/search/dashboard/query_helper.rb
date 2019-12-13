@@ -24,6 +24,8 @@ module Search::Dashboard::QueryHelper
   DOUBLE_QUOTE = '#&$!DouQuo'.freeze
   BACK_SLASH = '#&$!BacSla'.freeze
 
+  DUE_BY_FIELDS = [:due_by, :fr_due_by, :nr_due_by].freeze
+
   # WF Filter conditions is convert into FQL Format for search service
   def transform_fields(wf_conditions)
     conditions = []
@@ -199,7 +201,7 @@ module Search::Dashboard::QueryHelper
     "updated_at:>'#{Time.zone.parse(value).utc.iso8601}'"
   end
 
-  ['due_by','fr_due_by'].each do |field_name|
+  DUE_BY_FIELDS.each do |field_name|
     define_method "transform_#{field_name}" do |field_name, values|
       transform_due_by_fields(field_name, values)
     end
@@ -208,7 +210,10 @@ module Search::Dashboard::QueryHelper
   # due by fields
   def transform_due_by_fields(field_name, values)
     queries = []
+    min_value = minimum_required_due_condition(values.collect(&:to_i))
     values.each do |value|
+      next if min_value.present? && value.to_i > min_value
+
       case value.to_i
       # Overdue
       when TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:all_due]
@@ -236,7 +241,15 @@ module Search::Dashboard::QueryHelper
         queries << "(#{field_name}:>'#{Time.zone.now.utc.iso8601}' AND #{field_name}:<'#{30.minutes.from_now.utc.iso8601}')"
       end
     end
-    add_or_condition(queries) + " AND status_stop_sla_timer:false AND status_deleted:false"
+    add_or_condition(queries) + ' AND status_stop_sla_timer:false AND status_deleted:false' + (field_name == 'fr_due_by' ? fr_due_conditions : '')
+  end
+
+  def fr_due_conditions
+    " AND (#{transform_filter('source', TicketConstants::SOURCE_KEYS_BY_TOKEN.except(:outbound_email).values)}) AND agent_responded_at:null"
+  end
+
+  def minimum_required_due_condition(conditions)
+    (conditions - TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN.slice(:all_due, :due_today, :due_tomo).values).min
   end
 
   def add_or_condition(queries)

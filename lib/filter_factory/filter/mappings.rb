@@ -11,7 +11,8 @@ module FilterFactory::Filter
       'helpdesk_ticket_statuses.deleted'          =>  'status_deleted',
       'helpdesk_ticket_statuses.stop_sla_timer'   =>  'status_stop_sla_timer',
       'helpdesk_tickets.display_id'               =>  'display_id',
-      'frDueBy'                                   =>  'fr_due_by'
+      'frDueBy'                                   =>  'fr_due_by',
+      'helpdesk_ticket_states.agent_responded_at' =>  'agent_responded_at'
     }.freeze
 
     TICKET_STATES_JOIN_CONDITION = 'left join `helpdesk_ticket_states` on `helpdesk_tickets`.`account_id` = `helpdesk_ticket_states`.`account_id` and'\

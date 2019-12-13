@@ -5965,6 +5965,7 @@ en:
     api_rate_limit_garden: "API rate limit - 200rpm"
     api_rate_limit_estate: "API rate limit - 400rpm"
     api_rate_limit_forest:  "API rate limit - 700rpm"
+    api_rate_limit_extendable: "Extendable API rate limit"
     custom_roles: "Custom roles"
     custom_ssl: "Custom SSL"
     enterprise_reports: "Enterprise reporting"

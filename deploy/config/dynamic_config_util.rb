@@ -8,6 +8,7 @@ require 'fileutils'
 folder = File.expand_path('.',__dir__)
 $:.unshift(folder) unless $:.include?(folder)
 require 'sidekiq_config.rb'
+require 'resque_config.rb'
 require 'shoryuken_config.rb'
 require 'opsworks_mock.rb'
 
@@ -28,8 +29,7 @@ module HelpkitDynamicConfig
 Examples:
 
         # To generate YML config files from the ERB template
-        ./deploy/config/dynamic_config_util.rb generate_config --region us-east-1 --environment staging --layer hk-app --hostname hk-app-1 --file ./deploy/config/settings-staging-us-east-1.ejson --outdir /path/to/config  --indir ./deploy/config/erb/ --kms --stackname fd-staging-green
-
+        ./deploy/config/dynamic_config_util.rb generate_config --region us-east-1 --environment staging --layer hk-app --hostname hk-app-1 --file ./deploy/config/settings-staging-us-east-1.ejson --outdir /tmp/config  --indir ./deploy/config/erb --kms --stackname fd-staging-green --infra_secrets staging_secret --private_ip 172.16.1.1 --override_ejson ./deploy/override/app-override-settings.ejson --override_json ./deploy/override/app-override-settings.json
         # To encrypt the ejson file
         ./deploy/config/dynamic_config_util.rb encrypt --file ./deploy/config/settings-staging-us-east-1.ejson
 
@@ -60,7 +60,9 @@ HEREDOC
         opts.on('-i', '--indir=ERBDIR', 'ERB directory location') { |v| @options[:indir] = v }
         opts.on('-k', '--kms', 'Use KMS to decrypt the ejson') { |v| @options[:kms] = true }
         opts.on('-n', '--stackname=STACKNAME', 'OpsWorks Stack name') { |v| @options[:stackname] = v }
+        opts.on('-p', '--private-ip=ip', 'Host private IP') { |v| @options[:private_ip] = v }
         opts.on('-j', '--override_json=OVERRIDE_JSON', 'Override Input Settings') { |v| @options[:override_json] = v }
+        opts.on('-x', '--override_ejson=OVERRIDE_EJSON', 'Override Input Settings EJSON') { |v| @options[:override_ejson] = v }
         opts.on('-s', '--infra_secrets=INFRA_SECRETS', 'Infra Secrets Name') { |v| @options[:infra_secrets] = v }
       end,
       'decrypt' => OptionParser.new do |opts|
@@ -95,6 +97,7 @@ HEREDOC
         opts.banner = "Usage: generate_ejson_from_opsworks [options]\n"
         opts.on('-f', '--file=SETTINGS.EJSON', 'Settings ejson file to write to') { |v| @options[:file] = v }
         opts.on('-r', '--region=REGION', 'AWS Region') { |v| @options[:region] = v }
+        opts.on('-r', '--api_endpoint=API_ENDPOINT', 'API Endpoint') { |v| @options[:api_endpoint] = v }
         opts.on('-s', '--stackid=STACKID', 'OpsWorks Stack ID') { |v| @options[:stackid] = v }
         opts.on('-k', '--kms=KMS_KEY_ID', 'KMS key id to use for encrypting private key, which will be stored within the ejson') { |v| @options[:kms] = v }
         opts.on('-s', '--infra_secrets=INFRA_SECRETS', 'Infra Secrets Name') { |v| @options[:infra_secrets] = v }
@@ -145,6 +148,19 @@ HEREDOC
     return (key.include?("access_key_id") || key.include?("secret_access_key"))
   end
 
+  def self.set_stack_meta
+    begin 
+      stack_meta = JSON.parse(`opsworks-agent-cli get_json`)
+      @options[:stackid] = stack_meta["opsworks"]["stack"]["id"] unless @options[:stackid]
+      @options[:stackname] = stack_meta["opsworks"]["stack"]["name"] unless @options[:stackname]
+      @options[:layer] = stack_meta["opsworks"]["instance"]["layers"].sort.first unless @options[:layer]
+    rescue Exception => e
+      @options[:stackname] = nil
+      @options[:layer] = nil
+      @options[:stackid] = nil
+      STDERR.puts "Unable to get opsworks meta: #{e.inspect} \nSet stackname: #{@options[:stackname]} and layer: #{@options[:layer]} and id: #{@options[:stackid]}"
+    end
+  end
 
   def self.decrypt()
     require 'ejson_wrapper'
@@ -165,7 +181,7 @@ HEREDOC
     end
 
     STDERR.puts "Using settings file: #{@options[:file]}"
-    
+
     if !File.file?(@options[:file]) then
       STDERR.puts "ERROR: File #{@options[:file]} doesn't exit, please check"
       exit 1
@@ -181,6 +197,18 @@ HEREDOC
 
     s = EJSONWrapper.decrypt(@options[:file], region: @options[:region],
                              use_kms: @options.key?(:kms), key_dir: @options[:private_key_dir])
+
+    if @options.key?(:override_ejson)
+      if !File.file?(@options[:override_ejson])
+        STDERR.puts "Override EJSON file not present. Exiting."
+        exit 1
+      else
+        o = EJSONWrapper.decrypt(@options[:override_ejson], region: @options[:region],
+                             use_kms: @options.key?(:kms), key_dir: @options[:private_key_dir])
+        s = s.dup.deep_merge!(o)
+      end
+    end
+
     ejson_prepare(s, false)
 
     s = s.deep_symbolize_keys()
@@ -197,8 +225,8 @@ HEREDOC
       end
 
       if !s[:layer_settings].key?(@options[:layer].to_sym) then
-        STDERR.puts "ERROR: in #{@options[:file]} file, in \"layer_settings\", \"#{@options[:layer].to_sym}\" is missing"
-        exit 1
+        STDERR.puts "WARNING: in #{@options[:file]} file, in \"layer_settings\", \"#{@options[:layer].to_sym}\" is missing"
+        s[:layer_settings][@options[:layer].to_sym] ||= {}
       end
 
       # settings-*.json contains "settings" and "layer_settings"
@@ -209,18 +237,32 @@ HEREDOC
     end
 
     # Add/Fix up keys
-    color = @options[:stackname].split("-")[-1]
-    if !(color.eql?("blue") or color.eql?("green"))
-      STDERR.puts "Incorrect color name: #{color} (computed from stackname: #{@options[:stackname]})"
-      exit 1
+    if ENV["HELPKIT_TEST_SETUP_ENABLE"] == "1"
+      # We need to use the full name for redis namespace, we want the shell
+      # to be self-container w.r.t jobs created/consumed
+      @settings[:unique_keys][:sidekiq][:namespace] = "sidekiq-#{@options[:stackname]}"
+      @settings[:unique_keys][:redis][:namespace] = "resque-#{@options[:stackname]}"
+      STDERR.puts "Using sidekiq namespace: #{@settings[:unique_keys][:sidekiq][:namespace]}"
+      STDERR.puts "Using resque namespace: #{@settings[:unique_keys][:redis][:namespace]}"
+    else
+      if @options[:stackname].split("-").size != 4
+        STDERR.puts "Stack Name is not in proper convention! It might cause sidekiq namespace mismatches"
+      end
+
+      color = @options[:stackname].split("-")[-1]
+      if !(color.eql?("blue") or color.eql?("green"))
+        STDERR.puts "Incorrect color name: #{color} (computed from stackname: #{@options[:stackname]})"
+        exit 1
+      end
+      shell = @options[:stackname].split("-")[-2]
+      @settings[:unique_keys][:sidekiq][:namespace] = "sidekiq-#{shell}-#{color}"
+      @settings[:unique_keys][:redis][:namespace] = "resque-#{shell}-#{color}"
     end
-    @settings[:unique_keys][:sidekiq][:namespace] = "sidekiq-#{color}"
-    @settings[:unique_keys][:redis][:namespace] = "resque-#{color}"
 
     if @options.key?(:infra_secrets)
       require 'aws-sdk-secretsmanager'
       client = Aws::SecretsManager::Client.new(region: @options[:region])
-      begin 
+      begin
         infra_secrets = JSON.parse(client.get_secret_value({secret_id: @options[:infra_secrets]}).secret_string)
         infra_secrets = infra_secrets.deep_symbolize_keys()
         @settings.deep_merge!(infra_secrets)
@@ -234,7 +276,7 @@ HEREDOC
       if !File.file?(@options[:override_json])
         STDERR.puts "Override JSON file not present. Exiting."
         exit 1
-      else 
+      else
         begin
           override_settings = JSON.parse(File.open(@options[:override_json]).read)
           override_settings = override_settings.deep_symbolize_keys()
@@ -356,6 +398,11 @@ HEREDOC
       exit 1
     end
 
+    if !@options[:private_ip] then
+      STDERR.puts "ERROR: Required option --private_ip is missing"
+      exit 1
+    end
+
     decrypt()
 
     # We will mock the opsworks node object. We want to ease the transition
@@ -363,21 +410,37 @@ HEREDOC
     node = Node.new(@options, @settings)
     opsworks = OpsWorks.new(node, @options)
 
+    STDERR.puts "CPU Count: #{node[:cpu][:total]}"
+
     @is_app_layer = opsworks.app_layer?()
     @is_fc_api_layer = opsworks.fc_api_layer?()
     @is_fc_app_layer = opsworks.fc_app_layer?()
     @is_pipeline_layer = opsworks.pipeline_layer?()
     @is_support_layer = opsworks.support_layer?()
     @is_fc_api_public_layer = opsworks.fc_api_public_layer?()
+    @is_fc_api_channel_layer = opsworks.fc_api_channel_layer?()
     @is_freshid_layer = opsworks.freshid_layer?()
     @is_resque_layer = opsworks.resque_layer?()
     @is_sidekiq_layer = opsworks.sidekiq_layer?()
     @is_sidekiq_archive_layer = opsworks.sidekiq_archive_layer?()
+    @is_maintenance_redis_enabled = opsworks.maintenance_redis_enabled?()
     @is_shoryuken_layer = opsworks.shoryuken_layer?()
     @is_fc_shoryuken_layer = opsworks.fc_shoryuken_layer?()
     @is_reports_layer = opsworks.reports_layer?()
+    @is_migration_layer = opsworks.migration_layer?()
+
+    @is_hk_layer = opsworks.hk_layer?()
+    @is_fc_layer = opsworks.fc_layer?()
+    
+    @is_app_layer = opsworks.app_layer?()
+    @is_bg_layer = opsworks.bg_layer?()
+
 
     @pool_size = opsworks.get_pool_size()
+
+    if ENV["HELPKIT_TEST_SETUP_ENABLE"] == "1"
+      rename_sqs_queues_for_test_setup(node)
+    end
 
     d = File.join("#{@options[:indir]}", "*.erb")
     STDERR.puts "Using input directory: #{d}"
@@ -396,6 +459,20 @@ HEREDOC
     # sql.yaml.erb expects sqs_queues keys to be string, not symbols
     node[:ymls][:sqs_queues].deep_stringify_keys!
 
+
+    STDERR.puts("Merging credentials from secrets manager")
+    require 'aws-sdk-secretsmanager'
+    client = Aws::SecretsManager::Client.new(region: @options[:region])
+    begin
+      secret_name =  node[:ymls][:database][:secret_key]
+      secrets_manager_data = JSON.parse(client.get_secret_value({secret_id: secret_name}).secret_string)
+      STDOUT.puts "Secret #{secret_name} is found so reusing it."
+      secrets_manager_data = secrets_manager_data.deep_symbolize_keys()
+      node.deep_merge!(secrets_manager_data)
+    rescue Aws::SecretsManager::Errors::ResourceNotFoundException => e
+      STDOUT.puts "Secret #{secret_name} not found so creating it."
+    end
+
     files.each {|filename|
       STDERR.puts "Processing #{filename}"
       if node[:yml_search].include?(File.basename(filename)) then
@@ -409,11 +486,23 @@ HEREDOC
         FileUtils.mkdir_p(dirname)
       end
 
-      if filename.include?("newrelic.yml.erb")
+      skip_file_list = [
+        "newrelic.yml.erb",
+        "sidekiq.monitrc.erb",
+        "shoryuken.monitrc.erb",
+        "resque.monitrc.erb",
+        "resque-scheduler.monitrc.erb",
+      ]
+
+      if skip_file_list.any?{ |skip_file| filename.include?(skip_file) }
         next
       elsif filename.include?("sidekiq_client.yml.erb")
         if @is_sidekiq_layer then
-          SidekiqConfig::setup(node, opsworks, @options, filename)
+          SidekiqConfig::setup(node, opsworks, @options, filename, File.join(@options[:indir], "sidekiq.monitrc.erb"))
+        end
+      elsif filename.include?("resque.conf.erb")
+        if @is_resque_layer then
+          ResqueConfig::setup(node, opsworks, @options, @options[:indir])
         end
       elsif filename.include?("sandbox.yml.erb")
         @public_key = File.join("/data/helpkit/shared/config/sandbox", node[:ymls][:sandbox][:public_key])
@@ -435,7 +524,7 @@ HEREDOC
         FileUtils.chown("deploy", "nginx", out)
         File.chmod(0600, out)
       elsif filename.include?("shoryuken.yml.erb")
-        ShoryukenConfig::setup(node, opsworks, @options, filename)
+        ShoryukenConfig::setup(node, opsworks, @options, filename, File.join(@options[:indir], "shoryuken.monitrc.erb"))
       else
         File.open(out, 'w') do |f|
           f.write(Erubis::Eruby.new(File.read(filename)).result(binding))
@@ -539,8 +628,8 @@ HEREDOC
     File.chmod(0755, cert_dir)
 
     require 'aws-sdk-s3'
-    s3 = Aws::S3::Client.new(:region => node[:opsworks_access_keys][:region])
-
+    # passing region explicitly. As Xero & Common certs do not have any delta across S3 buckets, using from a single bucket.
+    s3 = Aws::S3::Client.new(:region => "us-east-1")
     node[:xero][:cert_names].each do |cert_name|
       STDERR.puts("Downloading file from bucket: #{node[:xero][:bucket]} and key: #{node[:xero][:path]} and file is #{cert_name}")
       outfile = File.join(cert_dir, cert_name)
@@ -577,43 +666,31 @@ HEREDOC
     ssl_enabled = (!node[:newrelic][:ssl].nil?) ? node[:newreilc][:ssl] : false
     STDERR.puts("Newrelic enabled in current instance: (#{node[:opsworks][:instance][:hostname]}) : : : #{agent_enabled}")
     suffix = {
-      "hk-bg-utility" => "-raketasks",
-      "fc-bg-sidekiq" => "-sidekiq",
-      "fc-bg-resque" => "-raketasks",
-      "hk-app" => "-application",
-      "hk-app-reports" => "-reports",
-      "hk-app-solution" => "-solution",
-      "hk-app-search" => "-search",
-      "hk-app-support" => "-support",
-      "hk-app-support-theme" => "-support-theme",
-      "hk-app-email" => "-email",
-      "hk-app-http-request" => "-integrations",
-      "hk-app-ecommerce" => "-ecommerce",
-      "hk-app-freshfone" => "-freshfone",
-      "fc-app-api" => "-api",
-      "hk-app-freshops" => "-freshops",
-      "hk-app-archive" => "-archive",
-      "hk-app-free" => "-free",
-      "hk-app-trial" => "-trial",
-      "hk-app-mobihelp" => "-mobihelp",
-      "hk-app-suggest" => "-suggest",
       "fc-app" => "-falcon",
       "fc-app-api-public" => "-api",
-      "fc-app-api-public-premium" => "-premium-api",
+      "fc-app-merge" => "-merge",
+      "fc-app-misc" => "-misc",
+      "fc-app-archive" => "-archive",
+      "fc-app-reports" => "-reports",
+      "fc-app-api-channel" => "-channel",
+      "fc-app-mobihelp" => "-mobihelp",
+      "fc-app-freshid" => "-freshid",
+      "fc-app-freshops" => "-freshops",
+      "fc-app-email" => "-email",
+      "fc-app-search" => "-search",
+      "fc-app-support" => "-support",
+      "fc-app-support-theme" => "-support-theme",
+      "fc-app-solution" => "-solution",
+      "fc-app-freshfone" => "-freshfone",
+      "fc-app-api-contacts" => "-api-contacts",
+      "fc-app-suggest" => "-suggest",
+      "fc-app-http-request" => "-integrations",
+      "fc-app-attachment" => "-attachment",
+      "fc-bg-sidekiq" => "-sidekiq",
+      "fc-bg-resque" => "-raketasks",
+      "fc-bg-utility" => "-raketasks",
       "fc-bg-shoryuken" => "-shoryuken",
-      "hk-bg-shoryuken" => "-shoryuken",
-      "hk-app-attachment" => "-attachment",
-      "hk-app-freshfone-twilio" => "-freshfone",
-      "hk-app-pipeline" => "-pipeline",
-      "fc-app-buffer" => "-buffer",
-      "hk-app-freshid" => "-freshid",
-      "fc-app-api-premium" => "-premium-api",
-      "hk-app-premium" => "-premium-app",
-      "fc-app-archive" => "-falcon-archive",
-      "fc-app-api-sling" => "-premium-api",
-      "hk-app-pipeline-sling" => "-pipeline",
-      "fc-app-phonepe" => "-falcon",
-      "hk-app-api-contacts" => "-application"
+      "hk-app-pipeline" => "-pipeline"
     }
 
     shell = opsworks.get_shell()
@@ -622,8 +699,12 @@ HEREDOC
     suffix_name = suffix[node[:opsworks][:instance][:layers].first]
 
     # This specific change is for making email background jobs report to email layer
-    if node[:opsworks][:instance][:hostname].include?("shoryuken-sidekiq-email-cluster")
+    if node[:opsworks][:instance][:hostname].include?("shoryuken-sidekiq-email-cluster") || node[:opsworks][:instance][:hostname].include?("shoryuken-email-cluster")
       suffix_name = "-email"
+    end
+
+    if @settings[:req_shadowing] && @settings[:req_shadowing][:enabled]
+      suffix_name += "-shadow"
     end
 
     global_collector = node[:ymls][:pods][:current_pod] + "-" + "#{node[:ymls][:newrelic][:product_name]} ;"
@@ -643,10 +724,82 @@ HEREDOC
       @agent_enabled = "#{agent_enabled}"
       @color_code = color_code
       @ssl_enabled = ssl_enabled
+      @distributed_tracing_enabled = node[:ymls][:newrelic][:distributed_tracing_enabled]
 
       f.write(Erubis::Eruby.new(File.read(nr_in)).result(binding))
     end
   end
+
+  def self.rename_sqs_queues_for_test_setup(node)
+    STDERR.puts "SQS: Renaming SQS queues for test setup"
+
+    queues_keys_to_rename = [
+      :active_customer_email_queue,
+      :bot_feedback_queue,
+      :channel_framework_services,
+      :count_etl_queue,
+      :custom_mailbox_realtime_queue,
+      :custom_mailbox_status,
+      :default_email_queue,
+      :email_dead_letter_queue,
+      :email_events_queue,
+      :facebook_realtime_queue,
+      :fb_message_realtime_queue,
+      :fd_email_failure_reference,
+      :fd_scheduler_reminder_todo_queue,
+      :forums_moderation_queue,
+      :free_customer_email_queue,
+      :helpdesk_reports_export_queue,
+      :reports_service_export_queue,
+      :scheduled_export_payload_enricher_queue,
+      :scheduled_ticket_export_complete,
+      :search_etl_queue,
+      :sidekiq_fallback_queue,
+      :social_fb_messenger,
+      :sqs_es_index_queue,
+      :trial_customer_email_queue,
+      :twitter_realtime_queue,
+      :fd_scheduler_export_cleanup_queue,
+      :fd_scheduler_downgrade_policy_reminder_queue,
+    ]
+
+    sqs_shoryken = {
+      "active_customer_email_queue": "active_email",
+      "default_email_queue": "default_email",
+      "email_dead_letter_queue": "failed_emails",
+      "facebook_realtime_queue": "social_fb_feed",
+      "fd_email_failure_reference": "email_failure_reference",
+      "fd_scheduler_reminder_todo_queue": "reminder_todo",
+      "free_customer_email_queue": "free_email",
+      "scheduled_export_payload_enricher_queue": "scheduled_export_payload",
+      "scheduled_ticket_export_complete": "scheduled_ticket_export",
+      "search_etl_queue": "search_etlqueue",
+      "trial_customer_email_queue": "trial_email",
+      "twitter_realtime_queue": "social_gnip_tweets",
+      "fd_scheduler_downgrade_policy_reminder_queue": "downgrade_policy_reminder"
+    }
+
+    queue_prefix = ENV["HELPKIT_TEST_SETUP_SQS_QUEUE_PREFIX"]
+    if !queue_prefix or queue_prefix == ""
+      STDERR.puts "Error: HELPKIT_TEST_SETUP_SQS_QUEUE_PREFIX env variable is not set"
+      exit 1
+    end
+
+    node[:ymls][:sqs_queues].keys.each do |k|
+      next unless queues_keys_to_rename.include?(k)
+      sufix = sqs_shoryken.keys.include?(k) ? sqs_shoryken[k].to_s : k.to_s
+      new_name = prefixing(sufix)
+      STDERR.puts("\tFor key '#{k}', renaming '#{node[:ymls][:sqs_queues][k]}' to '#{new_name}'")
+      node[:ymls][:sqs_queues][k] = new_name
+    end
+
+    STDERR.puts "\n\tQueues after rename: #{node[:ymls][:sqs_queues].inspect}"
+  end
+
+  def self.prefixing(sufix)
+    "#{ENV["HELPKIT_TEST_SETUP_SQS_QUEUE_PREFIX"]}_#{sufix}"
+  end
+
 
   def self.prepare_json_to_ejson()
     if !@options.key?(:file) then
@@ -662,6 +815,8 @@ HEREDOC
 
   def self.generate_ejson_from_opsworks()
     require 'ejson_wrapper'
+
+    set_stack_meta
 
     if !@options.key?(:file) then
       STDERR.puts "file not provided. Please see --help"
@@ -703,7 +858,14 @@ HEREDOC
     end
 
     require 'aws-sdk-opsworks'
-    client = Aws::OpsWorks::Client.new({:region => @options[:region]})
+
+    if @options.key?(:api_endpoint)
+      region = @options[:api_endpoint]
+    else
+      region = @options[:region]
+    end
+
+    client = Aws::OpsWorks::Client.new({:region => region})
 
     # Get stack settings
     resp = client.describe_stacks({:stack_ids => [@options[:stackid]]})
@@ -748,20 +910,24 @@ HEREDOC
     }
     settings["layer_settings"] = layer_settings
 
-    # delete the keys in settings variable 
+    # delete the keys in settings variable
     infra_settings, settings["settings"] = split_infra_secrets(settings["settings"])
     # store sensitive values in infra secrets
 
     if @options.key?(:infra_secrets)
       require 'aws-sdk-secretsmanager'
       client = Aws::SecretsManager::Client.new(region: @options[:region])
-      begin 
+      begin
+        secrets_manager_data = JSON.parse(client.get_secret_value({secret_id: @options[:infra_secrets]}).secret_string)
+        STDOUT.puts "Secret #{@options[:infra_secrets]} is found so reusing it."
+        secrets_manager_data = secrets_manager_data.deep_symbolize_keys()
+        infra_settings.deep_merge!(secrets_manager_data)
+      rescue Aws::SecretsManager::Errors::ResourceNotFoundException => e
+        STDOUT.puts "Secret #{@options[:infra_secrets]} not found so creating it."
         response = client.create_secret({
-          name: @options[:infra_secrets], 
-          secret_string: infra_settings.to_json , 
+          name: @options[:infra_secrets],
+          secret_string: infra_settings.to_json
         })
-      rescue Exception => e
-        STDERR.puts "Infra Secret exists/exception in in SecretsManager. #{e.inspect}"
       end
     end
 
@@ -797,8 +963,8 @@ HEREDOC
   def self.recursive_hash_store(key_array, value)
     element = key_array.slice!(0)
     if element
-      return {element => recursive_hash_store(key_array, value)} 
-    else 
+      return {element => recursive_hash_store(key_array, value)}
+    else
       return value
     end
   end
@@ -821,9 +987,11 @@ HEREDOC
           if add_prefix then
             myObj["_" + key] = myObj.delete(key)
           else
-            key_d = key.to_s.dup()
-            key_d.slice!("_")
-            myObj[key_d] = myObj.delete(key)
+            if key.to_s.start_with?("_")
+              key_d = key.to_s.dup()
+              key_d.slice!("_")
+              myObj[key_d] = myObj.delete(key)
+            end
           end
         end
       }
@@ -921,11 +1089,11 @@ class Object
     return self.reduce({}) do |memo, (k, v)|
       memo.tap { |m| m[k.to_sym] = v.deep_symbolize_keys }
     end if self.is_a? Hash
-    
-    return self.reduce([]) do |memo, v| 
+
+    return self.reduce([]) do |memo, v|
       memo << v.deep_symbolize_keys; memo
     end if self.is_a? Array
-    
+
     self
   end
 

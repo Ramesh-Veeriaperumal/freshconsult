@@ -403,6 +403,20 @@ module SolutionsTestHelper
     }
   end
 
+  def approval_data_validation_error_pattern(field, code)
+    {
+      description: 'Validation failed',
+      errors: [
+        {
+          field: 'approval_data',
+          nested_field: "approval_data.#{field}",
+          message: :string,
+          code: code.to_s
+        }
+      ]
+    }
+  end
+
   def votes_pattern(article)
     {
       helpful: vote_info(article, :thumbs_up),

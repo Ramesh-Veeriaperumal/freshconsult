@@ -796,6 +796,8 @@ article_update:
   $ref: ./request/solutions/article_update.yaml
 article_export:
   $ref: ./request/solutions/article_export.yaml
+send_for_review:
+  $ref: ./request/approvals/send_for_review.yaml
 category_response:
   $ref: ./response/solutions/category_response.yaml
 folder_input:

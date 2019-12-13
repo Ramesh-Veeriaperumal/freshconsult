@@ -10,4 +10,7 @@ pod_paths:
 
 access_key_id: <%= node[:ymls][:pods][:access_key_id] %>
 secret_access_key: <%= node[:ymls][:pods][:secret_access_key] %>
+<% if @settings[:req_shadowing].present? && @settings[:req_shadowing][:ssl_ca_path].present? %>
+ssl_ca_bundle: <%= @settings[:req_shadowing][:ssl_ca_path] %>
+<% end %>
 region: "us-east-1"

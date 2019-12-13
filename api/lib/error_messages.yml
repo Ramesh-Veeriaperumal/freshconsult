@@ -148,6 +148,10 @@ api_error_messages:
   invalid_company_id: "There is no record matching the id %{company_id}"
   status_is_not_valid: "The status value to be updated for the article is not valid"
   outdated_property_is_not_valid: "Outdated property is not valid"
+  no_publish_article_privilege: "The user is not authorized to publish articles"
+  no_create_and_edit_article_privilege: "The user is not authorized to send items for review"
+  invalid_user_id: "The user id is not invalid"
+  article_not_in_draft_state: "The article should be in draft state in order to send it for review"
   facebook_user_blocked: "Facebook 230 exception"
   twitter_write_access_blocked: "Cannot write, Twitter write permission has been revoked"
   ebay_reply_limit_exceeded: "Exceeded maximum message limit of 2000 letters"
@@ -361,6 +365,8 @@ api_error_messages:
   content_changed: "Content has been changed elsewhere"
   cannot_create_new_tag: "cannot_create_new_tag: %{tags}"
   cannot_mark_primary_as_uptodate: "Cannot mark primary article as uptodate"
+  approval_data_not_allowed: :"Approval data not allowed"
+  approval_data_invalid:  "Approval data is invalid"
   invalid_ebay_ticket_source: "Invalid ticket source"
   webhook_auth_header_error: "Both username and api_key should not be present"
 
@@ -452,7 +458,7 @@ api_error_messages:
   action_value: 'value must be create/delete/update'
   invalid_filter_set_content: 'valid entities are %{entities}'
   export_format: 'value for format should be %{export_format}'
-  
+
   #Skills
   duplicate_skill_name: "A skill already exists with name - '%{name}'"
 
@@ -470,7 +476,7 @@ api_error_messages:
   fc_unprocessable_entity: "Freshcaller unprocessable entity"
   fc_password_incorrect: "Freshcaller account password is incorrect"
   fc_access_restricted: "The given email id is not allowed to link"
-
+  fc_spam_email: "The given email is a spam email"
   incorrect_section_mapping: "Section with id %{section_id} does not exist"
   invalid_section_mapping: "Ticket field can not reside inside sections belonging to two separate ticket fields"
   missing_ticket_field_params: "Mandatory parameters missing: (%{params})"

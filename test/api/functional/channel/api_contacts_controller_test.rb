@@ -275,7 +275,8 @@ module Channel
     end
 
     def test_get_a_fb_contact_by_facebook_id
-      fb_user = create_fb_user({name: Faker::Lorem.characters(10), id: rand(100).to_s})
+      fb_user = create_fb_user(name: Faker::Lorem.characters(10), id: rand(100).to_s)
+      User.reset_current_user
       set_jwt_auth_header('facebook')
       get :index, controller_params(version: 'channel', facebook_id: fb_user.fb_profile_id)
 
@@ -283,6 +284,16 @@ module Channel
       pattern = users.map { |user| index_contact_pattern(user) }
       match_json(pattern.ordered!)
       assert_response 200
+    end
+
+    def test_index_with_invalid_source_in_jwt
+      fb_user = create_fb_user(name: Faker::Lorem.characters(10), id: rand(100).to_s)
+      payload = { enc_payload: { account_id: @account.id, timestamp: Time.now.iso8601 } }
+      @request.env['X-Channel-Auth'] = JWT.encode payload, CHANNEL_API_CONFIG[:facebook][:jwt_secret], 'HS256',
+                                                  source: Faker::Lorem.characters(5)
+      @controller.instance_variable_set('@current_user', nil)
+      get :index, controller_params(version: 'channel', facebook_id: fb_user.fb_profile_id)
+      assert_response 401
     end
 
     def test_list_contacts_for_freshmover

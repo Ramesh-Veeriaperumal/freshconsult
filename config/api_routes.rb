@@ -39,7 +39,7 @@ Helpkit::Application.routes.draw do
       put '/custom_translations', to: 'custom_translations#upload'
       get '/custom_translations', to: 'custom_translations#download'
 
-      resource :freshcaller_account, controller: 'freshcaller_account', only: [:show, :destroy] do
+      resource :freshcaller_account, controller: 'freshcaller_account', only: [:show, :create, :destroy] do
         collection do
           post :link
         end
@@ -429,6 +429,8 @@ Helpkit::Application.routes.draw do
             put :reorder
             post '(/:language)', to: :create, constraints: { language: Regexp.union(Language.all_codes) }
             put '(/:language)', to: :update, constraints: { language: Regexp.union(Language.all_codes) }
+            post '(:language)/send_for_review', to: :send_for_review, constraints: { language: Regexp.union(Language.all_codes) }
+            post '(:language)/approve', to: :approve, constraints: { language: Regexp.union(Language.all_codes) }
           end
 
           resource :versions, controller: 'ember/solutions/article_versions' do

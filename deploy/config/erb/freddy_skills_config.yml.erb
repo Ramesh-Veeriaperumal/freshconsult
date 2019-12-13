@@ -1,0 +1,28 @@
+<%= node[:opsworks][:environment] %>:
+  detect_thank_you_note:
+    url: <%= node[:ymls][:freddy_skills_config][:detect_thank_you_note][:url]%>
+    timeout: <%= node[:ymls][:freddy_skills_config][:detect_thank_you_note][:timeout]%>
+    confidence_threshold: <%= node[:ymls][:freddy_skills_config][:detect_thank_you_note][:confidence_threshold]%>
+
+  ticket_properties_suggester:
+    url: <%= node[:ymls][:freddy_skills_config][:ticket_properties_suggester][:url]%>
+    timeout: <%= node[:ymls][:freddy_skills_config][:ticket_properties_suggester][:timeout]%>
+    expiry_in_days: <%= node[:ymls][:freddy_skills_config][:ticket_properties_suggester][:expiry_in_days]%>
+  
+  system42:
+    host: <%= node[:ymls][:freddy_skills_config][:system42][:host] %>
+    onboard_url: <%= node[:ymls][:freddy_skills_config][:system42][:onboard_url] %>
+    secret: <%= node[:ymls][:freddy_skills_config][:system42][:secret] %>
+    timeout: <%= node[:ymls][:freddy_skills_config][:system42][:timeout] %>
+    internal: <%= node[:ymls][:freddy_skills_config][:system42][:internal] %>
+  
+  flowserv:
+    host: <%= node[:ymls][:freddy_skills_config][:flowserv][:host] %>
+    secret: <%= node[:ymls][:freddy_skills_config][:flowserv][:secret] %>
+    timeout: <%= node[:ymls][:freddy_skills_config][:flowserv][:timeout] %>
+    service: <%= node[:ymls][:freddy_skills_config][:flowserv][:service] %>
+    product_id: <%= node[:ymls][:freddy_skills_config][:flowserv][:product_id] %>
+
+  agent_articles_suggest:
+    url: <%= node[:ymls][:freddy_skills_config][:agent_articles_suggest][:url] %>
+    secret: <%= node[:ymls][:freddy_skills_config][:agent_articles_suggest][:secret] %>

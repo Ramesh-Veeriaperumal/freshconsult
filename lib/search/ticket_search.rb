@@ -14,7 +14,8 @@ module Search::TicketSearch
       #default fields
 
       column_order.each do |name|
-        next if name == :frDueBy && (!defined?(params) || params[:version].to_s != 'private')
+        next if [:frDueBy, :nr_due_by].include?(name) && (!defined?(params) || params[:version].to_s != 'private')
+        
         cont = columns_keys_by_token[name]
         defs.insert(i,{ get_op_list(cont).to_sym => cont  , 
                         :condition => name , 
@@ -172,9 +173,10 @@ module Search::TicketSearch
       return products_list.concat(products.collect { |au| [au.id, CGI.escapeHTML(au.name)] })
     end
 
-    # TODO: nr_due_by
-    if [:due_by, :frDueBy].include?(criteria_key) && Account.current.sla_management_enabled?
-      return (defined?(params) && params[:version].to_s == 'private') ? TicketConstants.due_by_list : TicketConstants.due_by_list.slice(*TicketConstants::OLD_DUE_BY_TYPES)
+    if [:due_by, :frDueBy, :nr_due_by].include?(criteria_key) && Account.current.sla_management_enabled?
+      if criteria_key != :nr_due_by || Account.current.next_response_sla_enabled?
+        return (defined?(params) && params[:version].to_s == 'private') ? TicketConstants.due_by_list : TicketConstants.due_by_list.slice(*TicketConstants::OLD_DUE_BY_TYPES)
+      end
     end
 
     if criteria_key == "helpdesk_tags.name"

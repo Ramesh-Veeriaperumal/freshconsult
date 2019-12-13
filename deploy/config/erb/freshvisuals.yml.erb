@@ -2,4 +2,7 @@
   secret_key: <%= node[:ymls][:freshvisuals][:secret_key] %>
   app_name: <%= node[:ymls][:freshvisuals][:app_name] %>
   end_point: <%= node[:ymls][:freshvisuals][:end_point] %>
+  early_expiration: <%= node[:ymls][:freshvisuals][:early_expiration] %>
   session_expiration: <%= node[:ymls][:freshvisuals][:session_expiration] %>
+  session_expiration_for_pricing_api: <%= node[:ymls][:freshvisuals][:session_expiration_for_pricing_api] %>
+  timeout_for_pricing_api: <%= node[:ymls][:freshvisuals][:timeout_for_pricing_api] %>

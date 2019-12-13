@@ -98,18 +98,20 @@ module Widget
       User.any_instance.stubs(:agent?).returns(false)
       secret_key = SecureRandom.hex
       @account.stubs(:help_widget_secret).returns(secret_key)
-      # auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', timestamp: timestamp }, secret_key)
       user = add_new_user(@account)
       auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
       @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
-      # email, description
-      params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
+      email = Faker::Internet.email
+      subject = SecureRandom.uuid
+      params = { email: email, subject: subject, description: Faker::Lorem.paragraph }
       post :create, construct_params({ version: 'widget' }, params)
-      t = Helpdesk::Ticket.last
+      ticket = @account.tickets.where(subject: subject).first
       result = parse_response(@response.body)
       assert_response 201
       assert_equal User.current.id, user.id
-      match_json(id: t.display_id)
+      assert_equal ticket.from_email, user.email
+      assert_not_equal ticket.from_email, email
+      match_json(id: ticket.display_id)
     ensure
       @account.unstub(:help_widget_login)
       @account.unstub(:help_widget_secret)
@@ -400,5 +402,72 @@ module Widget
       assert_response 400
       match_json(validation_error_pattern(bad_request_error_pattern(:test_custom_text_2_not_editable, 'Unexpected/invalid field in request', code: 'invalid_field')))
     end
+
+    def test_create_with_login_required_with_user
+      user = stub_login_required
+      # email, description
+      subject = SecureRandom.uuid
+      params = { email: user.email, subject: subject, description: Faker::Lorem.paragraph }
+      post :create, construct_params({ version: 'widget' }, params)
+      ticket = @account.tickets.where(subject: subject).first
+      assert_response 201
+      assert_equal User.current.id, user.id
+      assert_equal ticket.from_email, user.email
+      match_json(id: ticket.display_id)
+    ensure
+      unstub_login_required
+    end
+
+    def test_create_with_login_required_with_secondary_email
+      user = stub_login_required
+      email = Faker::Internet.email
+      user.user_emails.build(email: email)
+      user.save_without_session_maintenance
+      user.reload
+      # email, description
+      subject = SecureRandom.uuid
+      params = { email: email, subject: subject, description: Faker::Lorem.paragraph }
+      post :create, construct_params({ version: 'widget' }, params)
+      ticket = @account.tickets.where(subject: subject).first
+      assert_response 201
+      assert_equal User.current.id, user.id
+      assert_not_equal ticket.from_email, user.email
+      assert_equal ticket.from_email, email
+      assert_equal ticket.requester_id, user.id
+      match_json(id: ticket.display_id)
+    ensure
+      unstub_login_required
+    end
+
+    def test_create_with_login_required_without_auth
+      HelpWidget.any_instance.stubs(:contact_form_require_login?).returns(true)
+      @account.launch :help_widget_login
+      params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
+      post :create, construct_params({ version: 'widget' }, params)
+      assert_response 400
+      match_json(request_error_pattern(:x_widget_auth_required, 'x_widget_auth_required'))
+    ensure
+      unstub_login_required
+    end
+
+    private
+
+      def stub_login_required
+        HelpWidget.any_instance.stubs(:contact_form_require_login?).returns(true)
+        @account.launch :help_widget_login
+        timestamp = Time.zone.now.utc.iso8601
+        secret_key = SecureRandom.hex
+        @account.stubs(:help_widget_secret).returns(secret_key)
+        user = add_new_user(@account)
+        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
+        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        user
+      end
+
+      def unstub_login_required
+        HelpWidget.any_instance.unstub(:contact_form_require_login?)
+        @account.rollback(:help_widget_login)
+        @account.unstub(:help_widget_secret)
+      end
   end
 end

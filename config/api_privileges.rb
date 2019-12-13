@@ -175,7 +175,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/ticket_field", only: [:create, :update, :destroy, :show, :index]
     resource :"admin/section", only: [:create, :update, :destroy, :show, :index]
     resource :"admin/security_key", only: [:regenerate_widget_key]
-    resource :"admin/freshcaller_account", only: [:show, :link, :enable, :disable, :destroy]
+    resource :"admin/freshcaller_account", only: [:show, :create, :link, :enable, :disable, :destroy]
     resource :"admin/api_skill", only: [:index, :create, :show, :update, :destroy]
     resource :"admin/shift", only: [:index, :show, :create, :update, :destroy]
   end
@@ -233,21 +233,23 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   create_and_edit_article do
-    resource :'ember/solutions/article', only: %i[create update]
-    resource :'ember/solutions/draft', only: %i[autosave update delete_attachment]
+    resource :'ember/solutions/article', only: %i[create update send_for_review]
+    resource :'ember/solutions/draft', only: %i[autosave update delete_attachment destroy]
+  end
+
+  approve_article do
+    resource :'ember/solutions/article', only: %i[approve]
   end
 
   publish_solution do
     #---start-This resource mapping is here to handle delta phase backward compatablility.
-    resource :'ember/solutions/article', only: %i[bulk_update reorder create update]
-    resource :'ember/solutions/draft', only: %i[autosave update delete_attachment]
+    resource :'ember/solutions/article', only: %i[bulk_update reorder]
     resource :'ember/solutions/article_version', only: %i[restore]
     #---end-
   end
 
   delete_solution do
     resource :'ember/solutions/article', only: %i[destroy reset_ratings]
-    resource :'ember/solutions/draft', only: %i[destroy]
   end
 
   view_reports do

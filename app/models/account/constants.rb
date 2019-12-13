@@ -299,7 +299,7 @@ class Account < ActiveRecord::Base
       archive_tickets_api: false, redis_picklist_id: true, bot_agent_response: false, fluffy: false,
       scheduling_fsm_dashboard: false, fb_ad_post_permission: false, customer_signature: true,
       nested_field_revamp: true, service_worker: false, kbase_mint: true, freshvisual_configs: false,
-      freshid_org_v2: false, hide_agent_login: false, office365_adaptive_card: false,
+      freshid_org_v2: false, hide_agent_login: false, office365_adaptive_card: false, helpdesk_tickets_by_product: false, article_es_search_by_filter: false,
       text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
       recalculate_daypass: false, prevent_wc_ticket_create: true, allow_wildcard_ticket_create: false,
       attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false,
@@ -309,7 +309,7 @@ class Account < ActiveRecord::Base
       facebook_post_outgoing_attachment: true, outgoing_tweets_to_tms: false, incoming_mentions_in_tms: false, default_unassigned_service_tasks_filter: false,
       prevent_lang_detect_for_spam: false, jira_onpremise_reporter: false, support_ticket_rate_limit: false, sidekiq_logs_to_central: false, portal_central_publish: false, encode_emoji_in_solutions: false,
       forums_agent_portal: false, mailbox_google_oauth: false, send_and_set: false, migrate_euc_pages_to_us: false, agent_collision_revamp: false, topic_editor_with_html: false, focus_mode: false,
-      remove_image_attachment_meta_data: false, ticket_field_revamp: false, new_timeline_view: false
+      remove_image_attachment_meta_data: false, ticket_field_revamp: false, new_timeline_view: false, email_mailbox: true
     }, :merge
   )
 

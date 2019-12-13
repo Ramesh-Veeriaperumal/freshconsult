@@ -1,0 +1,24 @@
+post:
+  tags: [Solution Article]
+  summary: Send an article for review
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      required: true
+    - $ref: '#/parameters/language'
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/send_for_review'
+  responses:
+    204:
+      description: No content
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

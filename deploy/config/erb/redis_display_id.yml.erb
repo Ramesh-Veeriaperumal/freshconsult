@@ -1,6 +1,9 @@
 defaults: &defaults
  host: <%= node[:ymls][:redis_display_id][:host] %>
  port: <%= node[:ymls][:redis_display_id][:port] %>
+ <% if node[:ymls][:redis_display_id][:password] %>
+ password: <%= node[:ymls][:redis_display_id][:password] %>
+ <% end %>
  timeout: <%= node[:ymls][:redis_display_id][:timeout] %>
  keepalive: <%= node[:ymls][:redis_display_id][:keepalive] %>
 <%= node[:opsworks][:environment] %>:

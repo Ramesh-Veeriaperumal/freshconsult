@@ -1,0 +1,19 @@
+post:
+  tags: [Solution Article]
+  summary: Approve article which is in review
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      required: true
+    - $ref: '#/parameters/language'
+  responses:
+    204:
+      description: No content
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

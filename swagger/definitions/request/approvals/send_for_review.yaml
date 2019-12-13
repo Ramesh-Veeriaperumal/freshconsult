@@ -1,0 +1,5 @@
+type: object
+properties:
+  approver_id:
+    type: integer
+    description: The id of the user to whom approval is sent.

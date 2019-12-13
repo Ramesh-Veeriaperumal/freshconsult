@@ -2,12 +2,12 @@
 class Helpdesk::Ticket < ActiveRecord::Base
   include CustomAttributes
   include FlexifieldConstants
-  # TODO: nr_due_by
+
   DEFAULT_FIELDS = [
       :subject, :description, :requester_id, :to_emails, :cc_email, :priority,
       :status, :ticket_type, :responder_id, :group_id, :source, :due_by,
       :frDueBy, :spam, :deleted, :product_id, :status_stop_sla_timer, :status_deleted,
-      :tags, :internal_group_id, :internal_agent_id, :association_type
+      :tags, :internal_group_id, :internal_agent_id, :association_type, :nr_due_by
     ]
 
   # Trigger push to ES only if ES fields updated

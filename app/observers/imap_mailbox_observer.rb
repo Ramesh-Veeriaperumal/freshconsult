@@ -15,6 +15,7 @@ class ImapMailboxObserver < ActiveRecord::Observer
     set_imap_timeout mailbox
     encrypt_password mailbox
     encrypt_refresh_token mailbox
+    clear_error_field(mailbox)
   end
   
   def after_commit(mailbox)
@@ -72,5 +73,9 @@ class ImapMailboxObserver < ActiveRecord::Observer
 
     def set_imap_timeout mailbox
       mailbox.timeout = 60 * MailboxConstants::TIMEOUT_OPTIONS[mailbox.selected_server_profile.to_sym]
+    end
+
+    def clear_error_field(mailbox)
+      mailbox.error_type = 0 if Account.current.email_mailbox_enabled?
     end
 end

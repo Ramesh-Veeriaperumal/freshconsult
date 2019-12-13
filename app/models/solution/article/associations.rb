@@ -64,4 +64,10 @@ class Solution::Article < ActiveRecord::Base
   has_one :live_version, 
     class_name: 'Solution::ArticleVersion',
     conditions: { live: true }
+
+  has_one :helpdesk_approval,
+           class_name: 'Helpdesk::Approval',
+           dependent: :destroy,
+           as: :approvable,
+           inverse_of: :approvable
 end

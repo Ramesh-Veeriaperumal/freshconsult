@@ -1,0 +1,42 @@
+--- 
+freshmarketer:
+  <%= node[:opsworks][:environment]%>:
+    contact_url: <%= node[:ymls][:freshmarketer_automation][:contact_url] %>
+    access_key: <%= node[:ymls][:freshmarketer_automation][:access_key] %>
+    list_id: <%= node[:ymls][:freshmarketer_automation][:list_id] %>
+    default_fields_mapping:
+      LastName: "last_name"
+      FirstName: "first_name"
+      Email: "email"
+      Phone: "phone"
+      MailingCountry: "country"
+      MailingCity: "city"
+      MailingState State: "state"
+      MailingPostalCode: "zipcode"
+      Company: "company"
+      Twitter: "twitter"
+      Linkedin: "linkedin"
+      _NewEmail: "new_email"
+    custom_fields_mapping:
+      Title: "cf_title"
+      Industry: "cf_industry"
+      NumberOfEmployees: "cf_numberofemployees"
+      integer--Account--ID: "cf_fdeskaccountid"
+      string--Account--URL: "cf_fdeskaccounturl"
+      boolean--Activated: "cf_fdeskactivated"
+      string--Other--Referrer: "cf_fdeskotherreferrer"
+      string--Signup--Referrer: "cf_fdesksignupreferrer"
+      string--Last--Referrer: "cf_fdesklastreferrer"
+      string--Plan: "cf_fdeskplan"
+      float--Monthly--Revenue: "cf_fdeskmrr"
+      integer--Agent--Count: "cf_fdeskagentcount"
+      string--Customer--Status: "cf_fdeskcustomerstatus"
+      integer--Renewal--Period: "cf_fdeskrenewalperiod"
+      boolean--Beacon--Opt--In: "cf_fdeskbeaconoptin"
+      string--Upsell--Account--URL: "cf_fdeskupsellurl"
+      string--Upsell--Account--ID: "cf_fdeskupsellaccountid"
+      boolean--Upsell--Status: "cf_fdeskupsellstatus"
+      string--Upsell--Plan: "cf_fdeskupsellplan"
+      string--Associated--Accounts: "cf_fdeskassociatedaccounts"
+      date--Signup--Date: "cf_fdesksignupdate"
+      date--Renewal--Date: "cf_fdeskrenewaldate"

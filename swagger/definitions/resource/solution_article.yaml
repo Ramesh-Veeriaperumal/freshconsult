@@ -121,3 +121,15 @@ allOf:
         type: array
         items: 
           type: string      
+      approval_data:
+        type: object
+        properties:
+          approval_status:
+            type: integer
+            format: int64
+          approver_id:
+            type: integer
+            format: int64
+          user_id:
+            type: integer
+            format: int64
