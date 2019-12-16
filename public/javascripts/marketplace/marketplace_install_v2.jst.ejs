@@ -44,7 +44,9 @@
       <!-- V2 Configs Form -->
       <div class="configs-form">
         <% if (configs_page) { %>
-          <%= configs_page %>
+          <div class = 'app-container'>
+            <!-- Iframe will get added here -->
+          </div>
         <% } else if (configs_url) { %>
           <div class = 'app-container <%=installation_type%>'>
             <!-- Iframe will get added here -->
@@ -63,7 +65,7 @@
          -->
         <button class="col-md-6 btn btn-primary <%= install_btn['install_button'] %>" data-url="<%= install_btn['url'] %>" data-method="<%= install_btn['method'] %>" data-page="<%= install_btn['page']%>" data-platform-version="<%= platform_version %>"> <%= install_btn['text'] %></button>
         <button class="cancel_btn btn btn-default" style="margin-left: 10px;" data-url="<%= back_url %>"><%= translate.get('cancel') %></button>
-        
+
       </div>
     </div>
   </div>
