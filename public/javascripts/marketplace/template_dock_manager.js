@@ -105,7 +105,7 @@ var TemplateDockManager = Class.create({
                     .on("click.tmpl_events", ".cancel_btn" , this.cancelInstall.bindAsEventListener(this))
                     .on("click.tmpl_events", ".install-btn" , this.installApp.bindAsEventListener(this))
                     .on("click.tmpl_events", ".install-form-btn, .update" , this.updateApp.bindAsEventListener(this))
-                    .on("click.tmpl_events", ".oauth-iparams-btn" , this.getOauthIparams.bindAsEventListener(this))
+                    .on("click.tmpl_events", ".oauth-iparams-btn" , this.updateApp.bindAsEventListener(this))
                     .on("click.tmpl_events", ".install-oauth-btn", this.installOAuthApp.bindAsEventListener(this))
                     .on("click.tmpl_events", ".install-iframe-settings, .update-iframe-settings" , this.updateIframeApp.bindAsEventListener(this))
                     .on("click.tmpl_events", ".nativeapp" , this.installNativeApp.bindAsEventListener(this))
@@ -300,26 +300,6 @@ var TemplateDockManager = Class.create({
     });
   },
 
-  getOauthIparams: function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    var that = this;
-    var el = jQuery(e.currentTarget);
-    jQuery.ajax({
-      url: jQuery(el).attr("data-url"),
-      type: "GET",
-      beforeSend: function(){
-        that.showLoader();
-      },
-      success: function(extension) {
-        jQuery(that.extensionsWrapper).empty().append(JST["marketplace/marketplace_install_v2"](extension));
-      },
-      error: function(jqXHR, exception) {
-        that.showErrorMsg(that.customMessages.no_connection);
-      }
-    })
-  },
-
   manageShowMore: function(){
     var showChar = 600,  // How many characters are shown by default
         ellipsis = "...",
@@ -364,11 +344,25 @@ var TemplateDockManager = Class.create({
 
     var url = jQuery('.install-oauth-btn').attr('data-url');
     if (jQuery(el).attr("data-page") == "oauth_iparams") {
-      if (!validate()) {
+      this.getIparams().then(function(params) {
+        url += "?oauth_iparams=" + JSON.stringify(params.configs);
+        that.submitOauth(url);
+      }, function(e) {
+        if (e.hasOwnProperty('isValid') || !e.isValid) {
           return that.displayError(that.customMessages.validation_failed);
         }
-      url += "?oauth_iparams=" + JSON.stringify(postConfigs());
+        if (e.hasOwnProperty('method')) {
+          return that.displayError(that.customMessages.error_calling_method + e.method + ' - ' + (e.error.message || JSON.stringify(e)));
+        }
+        return that.handleInstallFailure();
+      });
+    } else {
+      this.submitOauth(url);
     }
+  },
+
+  submitOauth: function(url) {
+    var that = this;
     jQuery.ajax({
       url: url,
       type: "GET",
@@ -403,8 +397,8 @@ var TemplateDockManager = Class.create({
     // validation succeeds - return installation parameters.
     var configs = {};
     var configsObj = jQuery("#install-form").serialize().split('&')
-              .map(function(e) { var x = e.split("="); if(x[0] != 'authenticity_token' && x[0] != "" && x[0]!= null) { 
-                configs[x[0]] = decodeURIComponent(x[1]); 
+              .map(function(e) { var x = e.split("="); if(x[0] != 'authenticity_token' && x[0] != "" && x[0]!= null) {
+                configs[x[0]] = decodeURIComponent(x[1]);
               }});
     return RSVP.Promise.resolve({configs: configs,
                             authenticity_token: jQuery("#install-form input[name='authenticity_token']").val()});
@@ -768,13 +762,14 @@ var TemplateDockManager = Class.create({
         else {
           jQuery(that.extensionsWrapper).empty()
                                         .append(JST["marketplace/marketplace_install_base"](install_extension));
-          if (install_extension.configs_url) {
+
+          if (install_extension.configs_page || install_extension.configs_url) {
             var app = {
               'id': that.extensionId,
               'versionId': that.versionId,
               'locations': {
                 'custom_iparam': {
-                  'url': install_extension.configs_url,
+                  'url': install_extension.configs_page || install_extension.configs_url,
                 }
               },
               'features': install_extension.features,
@@ -785,9 +780,6 @@ var TemplateDockManager = Class.create({
             jQuery('.button-container').addClass('button-container-v2');
             that.setFormHeight();
             jQuery(appContainer).html(that.appInstance.element); // Embed Configs IFrame
-          }
-          if ( install_extension.configs_page && install_extension.configs != null ){
-            that.whenAvailable('getConfigs', install_extension.configs);
           }
 
           that.appName = install_extension.display_name;
@@ -825,18 +817,6 @@ var TemplateDockManager = Class.create({
       }
     });
 
-  },
-
-  whenAvailable: function(methodName, configs) {
-    var interval = 10;
-    window.setTimeout(function(){
-      if(window[methodName]) {
-        getConfigs(configs)
-      }
-      else {
-        window.setTimeout(arguments.callee, interval);
-      }
-    }, interval);
   },
 
   updateIframeApp: function(e){

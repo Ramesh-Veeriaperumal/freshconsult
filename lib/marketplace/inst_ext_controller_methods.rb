@@ -14,7 +14,7 @@ module Marketplace::InstExtControllerMethods
     IFRAME_ACCOUNT_PERMIT_PARAMS.each do |key, value|
       if iframe_settings["params"].include?(key)
         iframe_params[IFRAME_PERMIT_PARAMS[:account][value]] = current_account.safe_send(value)
-      end 
+      end
     end
     iframe_params.merge!(iframe_default_params)
   end
@@ -50,7 +50,7 @@ module Marketplace::InstExtControllerMethods
   end
 
   def oauth_iparams_page
-    @configs_page = open(@extension['oauth_iparams_url']).read
+    @configs_page = @extension['oauth_iparams_url']
   end
 
   def extension_has_config?
