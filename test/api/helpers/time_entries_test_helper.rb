@@ -13,7 +13,7 @@ module TimeEntriesTestHelper
       agent_id: expected_output[:agent_id] || time_entry.user_id,
       billable: (expected_output[:billable] || time_entry.billable).to_s.to_bool,
       timer_running: (expected_output[:timer_running] || time_entry.timer_running).to_s.to_bool,
-      time_spent: expected_output[:time_spent] || TimeEntryDecorator.format_time_spent(time_entry.time_spent),
+      time_spent: expected_output[:time_spent] || format_time_spent(time_entry.time_spent),
       executed_at: expected_output[:executed_at] || time_entry.executed_at.utc.iso8601,
       start_time: expected_output[:start_time] || time_entry.start_time.utc.iso8601,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
@@ -72,5 +72,14 @@ module TimeEntriesTestHelper
     {
       time_entry: { executed_at: 2.days.ago.iso8601, billable: false, note: Faker::Lorem.paragraph }
     }.to_json
+  end
+
+  def format_time_spent(time_spent)
+    if time_spent.is_a? Numeric
+      # converts seconds to hh:mm format say 120 seconds to 00:02
+      hours, minutes = time_spent.divmod(60).first.divmod(60)
+      #  formatting 9 to be displayed as 09
+      format('%02d:%02d', hours, minutes)
+    end
   end
 end

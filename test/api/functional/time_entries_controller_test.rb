@@ -159,11 +159,14 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_index_with_eager_loaded_association
     Helpdesk::TimeSheet.update_all(billable: true)
     create_time_entry(billable: false)
+    @controller.stubs(:decorate_objects).returns([])
+    @controller.stubs(:render).returns(true)
     get :index, controller_params(billable: 'false')
     assert_response 200
-    response = parse_response @response.body
-    assert_equal 1, response.size
     assert controller.instance_variable_get(:@items).all? { |x| x.association(:workable).loaded? }
+  ensure
+    @controller.unstub(:decorate_objects)
+    @controller.unstub(:render)
   end
 
   def test_index_with_invalid_privileges
