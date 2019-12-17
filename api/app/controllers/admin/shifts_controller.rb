@@ -26,7 +26,8 @@ module Admin
             @items = response_body['data']
             response.api_meta = response_body['meta']
           else
-            @item = response_body
+            @item = response_body['data']
+            response.api_meta = response_body['meta']
             response.status = proxy_response[:code]
           end
         elsif response_body['errors'].present?
