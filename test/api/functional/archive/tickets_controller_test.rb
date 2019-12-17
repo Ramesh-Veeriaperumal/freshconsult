@@ -53,11 +53,13 @@ class Archive::TicketsControllerTest < ActionController::TestCase
       archive_ticket = @account.archive_tickets.find_by_ticket_id( @archive_ticket.id)
       return if archive_ticket.blank?
 
+      @account.features.send(:archive_tickets).create unless @account.archive_tickets_enabled?
+
       get :show, controller_params(id: archive_ticket.display_id, include: 'stats')
-      assert_response 200
       response = parse_response @response.body
+      assert_response 200, response
       file_field = response['custom_fields'].key? 'test_signature_file'
-      assert_equal file_field, false
+      assert_equal true, file_field
     end
   ensure
     custom_field.destroy
