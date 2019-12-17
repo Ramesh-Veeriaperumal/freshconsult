@@ -1,7 +1,7 @@
 @count_hash = {
   all_categories: @categories.count,
   all_articles: @articles.count,
-  all_drafts: @drafts.count,
+  all_drafts: @drafts.count - @approvals.count,
   my_drafts: @my_drafts.count,
   published_articles: @published_articles.count,
   all_feedback: @all_feedback.count,

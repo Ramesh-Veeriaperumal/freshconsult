@@ -1,5 +1,5 @@
 class SolutionArticleFilterValidation < FilterValidation
-  attr_accessor :user_id, :language, :portal_id, :author, :status, :created_at, :last_modified,
+  attr_accessor :user_id, :language, :portal_id, :author, :status, :approver, :created_at, :last_modified,
                 :category, :folder, :tags, :term, :outdated, :article_fields
 
   validates :user_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }
@@ -8,10 +8,13 @@ class SolutionArticleFilterValidation < FilterValidation
                                            ignore_string: :allow_string_param }
   validates :portal_id, required: true, data_type: { rules: String, allow_nil: false }, if: :filter_actions
   validates :term, data_type: { rules: String }, on: :filter
+
+  validates :status, custom_inclusion: { in: Solution::ArticleFilterScoper::STATUS_FILTER_BY_KEY.keys, ignore_string: :allow_string_param }, if: :filter_actions
+  validates :approver, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }, if: :filter_actions
+  validate  :approver_without_status?, if: :filter_actions
   validates :author, custom_numericality: { only_integer: true, greater_than: -2, ignore_string: :allow_string_param }, if: :filter_export_actions
   validate  :not_zero_author?, if: :filter_export_actions
 
-  validates :status, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }, if: :filter_actions
   validates :outdated, data_type: { rules: 'Boolean' }
   validates :created_at, :last_modified, data_type: { rules: Hash },
                                          hash: { validatable_fields_hash: proc { |x| x.date_fields_validation } }, if: :filter_export_actions
@@ -61,6 +64,14 @@ class SolutionArticleFilterValidation < FilterValidation
       field_name: { data_type: { rules: String, required: true }, custom_inclusion: { in: SolutionConstants::ARTICLE_EXPORT_HEADER_MASTER_LIST } },
       column_name: { data_type: { rules: String, required: true } }
     }
+  end
+
+  def approver_without_status?
+    status = @request_params[:status].to_i
+    if ![Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:approved], Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:in_review]].include?(status) && @request_params[:approver].present?
+      errors.add(:message, 'to select approver status should be in_review or approved')
+      return false
+    end
   end
 
   def numeric?(check)

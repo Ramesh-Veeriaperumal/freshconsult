@@ -1,12 +1,42 @@
 module Solution::ArticleFilterScoper
   extend ActiveSupport::Concern
+  # [ TOKEN, STRING, STATUS_VALUE, TABLE_VALUE]
+  STATUS_FILTER = [
+    [:draft,     'solutions.status.draft',        1, 1],
+    [:published, 'solutions.status.published',    2, 2],
+    [:outdated, 'solutions.status.outdated',      3, 0], # only used in article versions.
+    [:in_review, 'solutions.status.in_review',    4, 1],
+    [:approved, 'solutions.status.approved',      5, 2]
+  ].freeze
 
+  STATUS_FILTER_BY_KEY = Hash[*STATUS_FILTER.map { |i| [i[2], i[1]] }.flatten]
+  STATUS_FILTER_BY_TOKEN = Hash[*STATUS_FILTER.map { |i| [i[0], i[2]] }.flatten]
+  STATUS_VALUE_IN_TABLE_BY_KEY = Hash[*STATUS_FILTER.map { |i| [i[2], i[3]] }.flatten]
   included do
-    scope :by_status, lambda { |status|
+    scope :by_status, lambda { |status, approver|
       status = status.to_i
       # published article can have draft. thus draft filter is handled by join type
-      if status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+      if status == STATUS_FILTER_BY_TOKEN[:draft] && Account.current.article_approval_workflow_enabled?
+        join_condition = format(%(LEFT JOIN helpdesk_approvals ON solution_drafts.article_id = helpdesk_approvals.approvable_id AND helpdesk_approvals.account_id = %{account_id}), account_id: Account.current.id)
+        condition = format(%(helpdesk_approvals.id is NULL))
+        {
+          joins: join_condition,
+          conditions: [condition]
+        }
+      elsif status == STATUS_FILTER_BY_TOKEN[:published]
         where(status: status.to_i)
+      elsif status == STATUS_FILTER_BY_TOKEN[:in_review] || status == STATUS_FILTER_BY_TOKEN[:approved]
+        approval_status = STATUS_VALUE_IN_TABLE_BY_KEY[status]
+        join_condition = format(%(INNER JOIN helpdesk_approvals ON solution_articles.id = helpdesk_approvals.approvable_id AND approvable_type = 'Solution::Article' AND helpdesk_approvals.account_id = %{account_id}), account_id: Account.current.id)
+        condition = format(%(helpdesk_approvals.approval_status = %{approval_status}), approval_status: approval_status)
+        if approver.present?
+          join_condition += format(%( INNER JOIN helpdesk_approver_mappings ON helpdesk_approver_mappings.approval_id = helpdesk_approvals.id AND helpdesk_approver_mappings.account_id = %{account_id}), account_id: Account.current.id)
+          condition += format(%( AND helpdesk_approver_mappings.approver_id= %{approver}), approver: approver.to_i)
+        end
+        {
+          joins: join_condition,
+          conditions: [condition]
+        }
       end
     }
 

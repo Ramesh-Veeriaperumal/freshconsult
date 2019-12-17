@@ -347,8 +347,7 @@ module Ember
         end
 
         def modify_and_cleanup_status_param(params_hash = params)
-          return true unless params_hash[:status] == OUTDATED
-
+          return true unless params_hash[:status].to_i == Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:outdated]
           params_hash[:outdated] = true
           params_hash.delete(:status)
         end

@@ -28,7 +28,7 @@ module SolutionConstants
 
   SEND_FOR_REVIEW_FIELDS = %w[approver_id].freeze
 
-  FILTER_ATTRIBUTES = %w[author status outdated created_at last_modified tags category folder].freeze
+  FILTER_ATTRIBUTES = %w[author status approver outdated created_at last_modified tags category folder].freeze
   FILTER_FIELDS = %w[portal_id language term page per_page].freeze | FILTER_ATTRIBUTES
   ADVANCED_FILTER_FIELDS = %w[created_at last_modified tags category folder].freeze
 

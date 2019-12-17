@@ -2,7 +2,7 @@ module Solution::ArticleFilters
   extend ActiveSupport::Concern
 
   included do
-    has_scope :by_status
+    has_scope :by_status, type: :hash, using: [:status, :approver]
     has_scope :by_category, type: :array
     has_scope :by_folder, type: :array
     has_scope :by_created_at, type: :hash, using: [:start, :end]
@@ -33,11 +33,14 @@ module Solution::ArticleFilters
       end
 
       def reconstruct_params
+        status = params[:status]
+        approver = params[:approver]
         author        = params[:author]
         last_modified = params[:last_modified]
         reorg_params
         @reorg_params[:by_last_modified][:only_draft] = is_draft? if last_modified
         @reorg_params[:by_author] = { author: author, only_draft: is_draft? } if author
+        @reorg_params[:by_status] = { status: status, approver: approver } if status
         @reorg_params
       end
 

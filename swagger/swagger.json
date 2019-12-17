@@ -13735,6 +13735,12 @@
             "description": "Filter by status"
           },
           {
+            "name": "approver",
+            "in": "query",
+            "type": "string",
+            "description": "Filter by approver if status is selected as inreview or approved"
+          },
+          {
             "name": "term",
             "in": "query",
             "type": "string",
@@ -17769,9 +17775,9 @@
               ],
               "description": "If access_type is both, then include both incoming and outgoing."
             },
-            "reference_key": {
-              "type": "string",
-              "desciption": "The redis reference key which is used to update mailbox with the cached oauth values."
+            "reference_key": {  
+              "type": "string", 
+              "desciption": "The redis reference key which is used to update mailbox with the cached oauth values." 
             },
             "incoming": {
               "type": "object",

@@ -50,7 +50,6 @@ module SolutionsApprovalsTestHelper
     article.reload
   end
 
-
   def construct_approval_record(article, user)
     review_params = {}
     review_params[:approval_status] = Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review]
