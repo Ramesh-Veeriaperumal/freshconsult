@@ -103,6 +103,7 @@ class ApiApplicationController < MetalApiController
   SLAVE_ACTIONS = %w(index).freeze
 
   NAMESPACED_CONTROLLER_REGEX = /pipe\/|channel\/v2\/|channel\/|bot\//
+  BEARER_REGEX = /Bearer (.*)/.freeze
   RESPONSE_CACHE_TIMEOUT = 30.days.to_i
 
   def response_cache
@@ -560,7 +561,7 @@ class ApiApplicationController < MetalApiController
       if CustomRequestStore.read(:private_api_request) || (get_request? && !request.authorization)
         session_auth
       elsif CustomRequestStore.read(:channel_api_request)
-        api_key_auth
+        request.path.include?('update_multiple') ? channel_v2_jwt_auth : api_key_auth
       else
         if current_account.launched?(:api_jwt_auth) && request.env['HTTP_AUTHORIZATION'] && request.env['HTTP_AUTHORIZATION'][/^Token (.*)/]
           ApiAuthLogger.log "FRESHID API version=V2, auth_type=JWT_TOKEN, a=#{current_account.id}"
@@ -603,6 +604,18 @@ class ApiApplicationController < MetalApiController
       authenticate_with_http_basic do |username, password|
         @current_user = AuthHelper.get_token_user(username)
       end
+    end
+
+    def channel_v2_jwt_auth
+      auth = request.headers['Authorization']
+      auth = auth.match(BEARER_REGEX) unless auth.nil?
+      auth = auth[1].strip if !auth.nil? && auth.length > 1
+      begin
+        JWT.decode auth, CHANNEL_V2_API_CONFIG['jwt_secret']
+      rescue Exception => e
+        render_request_error :invalid_credentials, Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized]
+      end
+      @current_user = Account.current.account_managers.first
     end
 
     def email_given?(username)

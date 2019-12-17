@@ -1,6 +1,7 @@
 class AgentValidation < ApiValidation
   attr_accessor :name, :phone, :mobile, :email, :time_zone, :language, :occasional, :signature, :ticket_scope,
-                :role_ids, :group_ids, :job_title, :id, :avatar_id, :search_settings, :agent_type, :focus_mode, :shortcuts_enabled, :skill_ids
+                :role_ids, :group_ids, :job_title, :id, :avatar_id, :search_settings, :agent_type, :focus_mode,
+                :shortcuts_enabled, :skill_ids, :ticket_assignment
 
   CHECK_PARAMS_SET_FIELDS = %w[time_zone language occasional role_ids ticket_scope search_settings].freeze
 
@@ -9,7 +10,7 @@ class AgentValidation < ApiValidation
   validates :name, data_type: { rules: String, required: true }, if: -> { !Account.current.freshid_integration_enabled? }, on: :create
   validates :job_title, :phone, :mobile, data_type: { rules: String, allow_nil: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :agent_type, custom_inclusion: { in: AgentConstants::AGENT_TYPES, detect_type: true }, on: :create
-  validates :email, data_type: { rules: String, required: true }, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :'valid email address' }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
+  validates :email, data_type: { rules: String, required: true }, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, accepted: :'valid email address' }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }, unless: :bulk_update?
   validates :language, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field,  message_options: { attribute: 'language', feature: :multi_language } }, unless: :multi_language_enabled?
   validates :time_zone, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field, message_options: { attribute: 'time_zone', feature: :multi_timezone } }, unless: :multi_timezone_enabled?
   validates :role_ids, :ticket_scope, custom_absence: { message: :agent_roles_and_scope_error, code: :inaccessible_field }, if: -> { id && User.current.id == id }
@@ -30,6 +31,9 @@ class AgentValidation < ApiValidation
   validate :focus_mode_enabled?, unless: -> { focus_mode.nil? }
   validates :search_settings, data_type: { rules: Hash }, presence: true, hash: { validatable_fields_hash: proc { |x| x.search_settings_format } }, if: -> { @search_settings }
   validate :check_ticket_search_settings, if: -> { @search_settings.present? }
+
+  validates :id, data_type: { rules: Integer, required: true }, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false, ignore_string: :allow_string_param }, if: -> { bulk_update? }
+  validates :ticket_assignment, data_type: { rules: Hash }, presence: true, hash: { validatable_fields_hash: proc { |x| x.ticket_assignment_format } }, if: -> { bulk_update? }
 
   validates :avatar_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }, if: -> { private_api? }
   validates :skill_ids, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0 } }
@@ -57,6 +61,10 @@ class AgentValidation < ApiValidation
         }
       }
     }
+  end
+
+  def ticket_assignment_format
+    { available: { data_type: { rules: 'Boolean' } } }
   end
 
   def ticket_search_settings_format
@@ -116,6 +124,10 @@ class AgentValidation < ApiValidation
 
   def bulk_create?
     [:create_multiple].include?(validation_context)
+  end
+
+  def bulk_update?
+    [:update_multiple].include?(validation_context)
   end
 
   def archive_tickets_enabled?

@@ -1,0 +1,13 @@
+defaults: &defaults
+  jwt_secret: freshdesk
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults

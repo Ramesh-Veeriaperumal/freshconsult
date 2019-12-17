@@ -162,6 +162,9 @@
           "jwt_secret": "EJ[1:j8fn6zdtMwq5KLpN6FLJ44/iHZTXPt63fWbL5pvHIg0=:YHs9HBCsIZ/Kjj3wzxDUrWUxSOSQ/OB7:b1bZfa9DEwiLjfr0/nwPeXdFFgl6AqiImNl9xCmhbEXFMOED8ODOcSjzKFB4h8X8]"
         }
       },
+      "channel_v2_api": {
+        "jwt_secret": "EJ[1:IH3Hp4u2Sr8+SHEyEQvZ8Nu5OAHtew5s0WH31gd8NRk=:BHtP4zHoOl3/euw1bQv5m853137ivqFG:QbvCJk7VzWw2TB+ZpAPxomqSaLGfyQ4zWZ4sOKAvnOdPE5lgwG06t3JnhbCtIedV]"
+      },
       "channel_framework": {
         "_dedup_interval": "1440",
         "_hop_interval": "5",

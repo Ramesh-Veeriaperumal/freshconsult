@@ -1991,6 +1991,9 @@
         "_method": "post",
         "_timeout": "2"
       },
+      "channel_v2_api": {
+        "jwt_secret": "EJ[1:7SVIwVw6V1dF4qvXKNhnZQLs/YmHxSVYGa1OhhpYh2Y=:e0gm1ojPRd3zFfb5sa1Ut7+XbExHYAC3:yJsgvB3+V0lhRWVIBbTZebguuodiB3z4b141N61lkeMYnMQFnF5bnqDyRfZsiC1Y]"
+      },
       "channel_framework": {
         "_dedup_interval": "1440",
         "_hop_interval": "5",

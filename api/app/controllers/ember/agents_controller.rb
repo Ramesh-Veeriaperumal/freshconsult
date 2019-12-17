@@ -67,13 +67,6 @@ module Ember
         end
       end
 
-      def validate_agent_params
-        params[cname][:agents].each do |agent_params|
-          return false unless validate_request(nil, agent_params, nil)
-        end
-        true
-      end
-
       def build_objects
         @items = []
         agent_role_id = current_account.roles.agent.first.id

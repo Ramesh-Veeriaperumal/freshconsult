@@ -2,6 +2,7 @@ class ApiAgentsController < ApiApplicationController
   include HelperConcern
   include ContactsCompaniesConcern
   include Export::Util
+  include BulkApiJobsHelper
 
   skip_before_filter :check_privilege, only: :revert_identity
   before_filter :check_gdpr_pending?, only: :complete_gdpr_acceptance
@@ -65,6 +66,15 @@ class ApiAgentsController < ApiApplicationController
     render_custom_errors
   end
 
+  def update_multiple
+    @errors = []
+    return unless validate_agent_params
+
+    initiate_bulk_job(AgentConstants::BULK_API_JOBS_CLASS, params[cname][:agents], request.uuid)
+    @job_id = request.uuid
+    @job_link = "#{Account.current.full_url}/api/v2/jobs/#{@job_id}"
+  end
+
   def destroy
     @item.user.make_customer
     head 204
@@ -108,6 +118,13 @@ class ApiAgentsController < ApiApplicationController
     head 400 unless current_account.undo_send_enabled?
     api_current_user.toggle_undo_send(false) if api_current_user.enabled_undo_send?
     head :no_content
+  end
+
+  def validate_agent_params
+    params[cname][:agents].each do |agent_params|
+      return false unless validate_request(nil, agent_params, nil)
+    end
+    true
   end
 
   private

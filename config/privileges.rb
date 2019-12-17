@@ -541,7 +541,7 @@ Authority::Authorization::PrivilegeList.build do
 
     # Used by V2 API
     resource :"api_contact", :only => [:make_agent]
-    resource :"api_agent", :only => [:show, :index, :update, :destroy, :create, :export, :export_s3_url]
+    resource :"api_agent", :only => [:show, :index, :update, :destroy, :create, :export, :export_s3_url, :update_multiple]
   end
 
   manage_availability do

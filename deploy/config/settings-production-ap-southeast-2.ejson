@@ -1176,6 +1176,9 @@
         "_method": "post",
         "_timeout": "2"
       },
+      "channel_v2_api": {
+        "jwt_secret": "EJ[1:3AmKa9KSacK+SnvWLicUG8iRIAoPFGhXz7HOTxMo+FM=:YqMUfuTDB8HXj1YD6EeQv/hZiwNHtZnd:reG8gWawDWLSvMkMKvegLBkngeQi/9GJNrvptjo0QE1c7+Sp4da4ribOVQXPf2gX]"
+      },
       "channel_framework": {
         "_dedup_interval": "1440",
         "_hop_interval": "5",

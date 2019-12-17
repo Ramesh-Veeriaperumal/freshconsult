@@ -1,5 +1,5 @@
 module AgentConstants
-  LOAD_OBJECT_EXCEPT = %i[create_multiple complete_gdpr_acceptance enable_undo_send disable_undo_send].freeze
+  LOAD_OBJECT_EXCEPT = %i[create_multiple complete_gdpr_acceptance enable_undo_send disable_undo_send update_multiple].freeze
   STATES = %w[occasional fulltime].freeze
   INDEX_FIELDS = %w[state email phone mobile only type privilege group_id].freeze
   UPDATE_ARRAY_FIELDS = %w[group_ids role_ids].freeze
@@ -8,6 +8,7 @@ module AgentConstants
   CREATE_FIELDS = %w[name email phone mobile time_zone job_title language signature ticket_scope occasional agent_type].freeze | UPDATE_ARRAY_FIELDS | [ticket_assignment: [:available]].freeze
   SKILLS_FIELDS = %w[skill_ids].freeze
   CREATE_MULTIPLE_FIELDS = UPDATE_FIELDS
+  UPDATE_MULTIPLE_FIELDS = ['id', ticket_assignment: [:available]].freeze
   TICKET_SCOPES = Agent::PERMISSION_TOKENS_BY_KEY.keys
   FIELD_AGENT_SCOPES = Agent::PERMISSIONS_TOKEN_FOR_FIELD_AGENT.keys
   AGENT_TYPES = Agent::PERMISSION_KEYS_FOR_AGENT_TYPES.keys
@@ -49,4 +50,5 @@ module AgentConstants
     'skills' =>       { 'Skills' => 'skills_name' }
   }.freeze
   EXPORT_TYPE = 'agent'.freeze
+  BULK_API_JOBS_CLASS = 'Agent'.freeze
 end.freeze
