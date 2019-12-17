@@ -1450,7 +1450,14 @@
       "_fingerprint_prepend": "https://apfassetsblue.freshdesk.com/production/",
       "_integrations_url": "https://podapsoutheast2login.freshdesk.com",
       "_widget_domain": "https://aus-widget.freshworks.com/widgets",
-      "_data_center": "ap-south-east"
+      "_data_center": "ap-south-east",
+      "_sentry_dsn": "https://932f384a375f45db84667227e44ccaf1@sentry.io/1189802",
+      "_announcement_account_url": "productupdates.freshdesk.com",
+      "_anonymous_signup_redirect_url": "https://freshdesk.com/trial/thank-you",
+      "_freshconnectAssets": {
+        "_script_asset_url": "https://assets1.freshconnect.io/freshconnect-sidebar/freshconnect-sidebar.js",
+        "_base_url": "https://api.freshconnect.io"
+      }
     },
     "aws_config": {
     },

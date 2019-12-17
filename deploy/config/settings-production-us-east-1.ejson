@@ -2303,7 +2303,14 @@
           ]
         }
       ],
-      "_data_center": "us-east"
+      "_data_center": "us-east",
+      "_freshconnectAssets": {
+        "_script_asset_url": "https://assets1.freshconnect.io/freshconnect-sidebar/freshconnect-sidebar.js",
+        "_base_url": "https://api.freshconnect.io"
+      },
+      "_sentry_dsn": "https://932f384a375f45db84667227e44ccaf1@sentry.io/1189802",
+      "_announcement_account_url": "productupdates.freshdesk.com",
+      "_anonymous_signup_redirect_url": "https://freshdesk.com/trial/thank-you"
     },
     "aws_config": {
     },

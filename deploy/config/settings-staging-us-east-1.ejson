@@ -1774,7 +1774,13 @@
       "_integrations_url": "https://login.freshpo.com",
       "_revision": "prestaging",
       "_widget_domain": "https://freshwidget.freshpo.com",
-      "_data_center": "us-east"
+      "_data_center": "us-east",
+      "_sentry_dsn": "https://1392f72b3f5748ecb7fe9ddf22bbfd75@sentry.io/1189798",
+      "_announcement_account_url": "updateproduct.freshpo.com",
+      "_freshconnectAssets": {
+        "_script_asset_url": "https://assets1.fconstage.io/freshconnect-sidebar/freshconnect-sidebar.js",
+        "_base_url": "https://api.fconstage.io"
+      }
     },
     "aws_config": {
       "access_key_id": "EJ[1:0+zY2CDV3YCJNog+WPT2TVsoX83AeKLOKvvaGzltvDY=:kMSaqjp76A163AkLZTe1+cWKx9F1f6A1:xuCayGW5XiIzPtlp81zFQ8cj9Sw=]",
