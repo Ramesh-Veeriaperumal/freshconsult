@@ -27691,6 +27691,14 @@
         "not_translated": {
           "type": "number",
           "description": "Available only for secondary languages."
+        },
+        "in_review_articles": {
+          "type": "number",
+          "description": "Available only if article_approval_workflow feature enabled."
+        },
+        "approved_articles": {
+          "type": "number",
+          "description": "Available only if article_approval_workflow feature enabled."
         }
       }
     },

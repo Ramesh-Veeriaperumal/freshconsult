@@ -32,6 +32,7 @@ module Ember
           @outdated_articles = @articles.select { |article| article.outdated == true }.size
           @not_translated_articles = @article_meta.size - @articles.size
         end
+        @articles_with_approval_status = fetch_articles_by_approval_status if current_account.article_approval_workflow_enabled?
         response.api_root_key = :quick_views
       end
 
@@ -64,6 +65,10 @@ module Ember
 
           article_ids = get_article_ids(@articles)
           current_account.solution_drafts.select([:id, :user_id]).where(article_id: article_ids)
+        end
+
+        def fetch_articles_by_approval_status
+          current_account.helpdesk_approvals.where(approvable_id: get_article_ids(@articles), approvable_type: 'Solution::Article').group(:approval_status).count
         end
 
         def get_article_ids(articles)

@@ -328,6 +328,10 @@ module SolutionsTestHelper
       result[:outdated] = @articles.select { |article| article.outdated == true }.size
       result[:not_translated] = @article_meta.size - @articles.size
     end
+    if Account.current.article_approval_workflow_enabled?
+      result[:in_review_articles] = Account.current.helpdesk_approvals.where(approvable_id: get_article_ids(@articles), approvable_type: 'Solution::Article', approval_status: Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review]).count
+      result[:approved_articles] = Account.current.helpdesk_approvals.where(approvable_id: get_article_ids(@articles), approvable_type: 'Solution::Article', approval_status: Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]).count
+    end
     result
   end
 
