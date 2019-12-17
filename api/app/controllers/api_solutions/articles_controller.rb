@@ -41,7 +41,7 @@ module ApiSolutions
         assign_draft_attributes(@article_params)
         set_session
         @draft.publish!
-      elsif @article_params[language_scoper] && @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] && !article_properties? && !unpublish?
+      elsif @article_params[language_scoper] && @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] && !article_properties? && !only_unpublish?
         @draft ||= @item.build_draft_from_article
         set_session
         @draft.unlock # So that the lock in period for 'editing' status is reset
@@ -55,7 +55,10 @@ module ApiSolutions
         # Session needs to be set so that update happens
         # Session also is needed for dummy publish cases
       end
-      remove_lang_scoper_params if !unpublish? && article_properties?
+
+      @item.clear_approvals if @item.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] && current_account.article_approval_workflow_enabled? && article_properties?
+
+      remove_lang_scoper_params if !only_unpublish? && article_properties?
       create_or_update_article
     end
 
@@ -66,7 +69,7 @@ module ApiSolutions
           load_folder_articles
           if private_api?
             # removing description, attachments, tags for article list api in two pane to improve performance
-            @exclude = [:description, :attachments, :tags]
+            @exclude = [:description, :attachments, :tags, :translation_summary]
             response.api_root_key = :articles
             response.api_meta = { count: @items_count, next_page: @more_items }
           end
@@ -107,7 +110,7 @@ module ApiSolutions
 
       def validate_publish_solution_privilege
         # If user does not have publish priviledge then user can only save article
-        if !publish_privilege? && changing_published_properties?
+        if !publish_privilege? && !publishing_approved_article? && changing_published_properties?
           error_info_hash = { details: 'dont have permission to perfom on published article' }
           render_request_error_with_info(:published_article_privilege_error, 403, error_info_hash, error_info_hash)
         end
@@ -117,12 +120,17 @@ module ApiSolutions
         api_current_user.privilege?(:publish_solution)
       end
 
+      def publishing_approved_article?
+        return false unless current_account.article_approval_workflow_enabled?
+        (update? && api_current_user.privilege?(:publish_approved_solution) && only_publish? && @item.helpdesk_approval.try(:approved?))
+      end
+
       # If agent dont have publish_solution privilege, he should not be able to perform update
       # 1. if article publish || unpublish activity
       # 2. if article is published and if any of the article property update
       # i.e folder_id, agent_id, seo_data, tags
       def changing_published_properties?
-        publish_action? || unpublish? || (@item.try(:status) == Solution::Article::STATUS_KEYS_BY_TOKEN[:published] && article_properties?)
+        publish_action? || only_unpublish? || (@item.try(:status) == Solution::Article::STATUS_KEYS_BY_TOKEN[:published] && article_properties?)
       end
 
       def set_session
@@ -154,8 +162,12 @@ module ApiSolutions
         (SolutionConstants::ARTICLE_PROPERTY_FIELDS.any? { |key| @article_params[language_scoper].key?(key) || @article_params.key?(key) }) && @article_params[language_scoper].except(:status, :session, *SolutionConstants::ARTICLE_PROPERTY_FIELDS).keys.empty?
       end
 
-      def unpublish?
+      def only_unpublish?
         !article_properties? && @article_params[language_scoper].keys.length == 1 && @article_params[language_scoper][:status] == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
+      end
+
+      def only_publish?
+        !article_properties? && @article_params[language_scoper].keys.length == 1 && @article_params[language_scoper][:status] == Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
       end
 
       def publish_action?

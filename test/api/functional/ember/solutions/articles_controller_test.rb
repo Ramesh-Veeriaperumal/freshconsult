@@ -2845,6 +2845,58 @@ module Ember
         Account.any_instance.unstub(:article_approval_workflow_enabled?)
       end
 
+      def test_approve_with_invalid_langauge
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(false)
+        sample_article = get_article_with_draft
+        approver = add_test_agent
+        add_privilege(User.current, :approve_article)
+        User.current.reload
+        post :approve, controller_params(version: 'private', id: sample_article.parent_id, language: 'demo')
+        assert_response 404
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_approve_article
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        approver = add_test_agent
+        add_privilege(User.current, :approve_article)
+        User.current.reload
+        sample_article = get_in_review_article
+        post :approve, controller_params(version: 'private', id: sample_article.parent_id)
+        assert_response 204
+        assert sample_article.helpdesk_approval.approval_status == Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]
+        assert sample_article.helpdesk_approval.approved?
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_approve_article_with_language_code
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        approver = add_test_agent
+        add_privilege(User.current, :approve_article)
+        User.current.reload
+        sample_article = get_in_review_article(Account.current.language_object)
+        post :approve, controller_params(version: 'private', id: sample_article.parent_id, language: Account.current.language_object.code)
+        assert_response 204
+        assert sample_article.helpdesk_approval.approval_status == Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]
+        assert sample_article.helpdesk_approval.approved?
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_approve_article_without_approval_record
+        article = create_article(article_params)
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        approver = add_test_agent
+        add_privilege(User.current, :approve_article)
+        User.current.reload
+        post :approve, controller_params(version: 'private', id: article.id, language: Account.current.language_object.code)
+        assert_response 404
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
       def test_create_article_review_record_with_invalid_user
         Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
         sample_article = get_article_with_draft
@@ -2867,6 +2919,22 @@ module Ember
         User.current.reload
         post :approve, controller_params(version: 'private', id: sample_article.parent_id, language: 'demo')
         assert_response 404
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_update_draft_article_folder_with_approval_record
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        sample_article = get_in_review_article
+        lang_hash = { lang_codes: all_account_languages }
+        category = create_category({ portal_id: Account.current.main_portal.id }.merge(lang_hash))
+        new_folder_id = create_folder({ visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category.id }.merge(lang_hash)).id
+        params_hash = { status: 1, folder_id: new_folder_id }
+        put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+        assert_response 200
+        sample_article.reload
+        match_json(private_api_solution_article_pattern(sample_article))
+        assert_no_approval sample_article
       ensure
         Account.any_instance.unstub(:article_approval_workflow_enabled?)
       end
@@ -3021,6 +3089,32 @@ module Ember
         end
       end
 
+      def test_update_publish_reviewd_article_with_publish_approved_solution
+        without_publish_solution_privilege do
+          User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(true)
+          sample_article = get_approved_article
+          params_hash = { status: 2 }
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id, agent_id: @agent.id }, params_hash)
+          assert_response 200
+          sample_article.reload
+          match_json(private_api_solution_article_pattern(sample_article))
+          assert sample_article.published?
+          assert !sample_article.draft_present?
+        end
+      end
+
+      def test_update_publish_reviewd_article_without_publish_approved_solution
+        without_publish_solution_privilege do
+          User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(false)
+          sample_article = get_approved_article
+          params_hash = { status: 2 }
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id, agent_id: @agent.id }, params_hash)
+          assert_response 403
+          error_info_hash = { details: 'dont have permission to perfom on published article' }
+          match_json(request_error_pattern_with_info(:published_article_privilege_error, error_info_hash, error_info_hash))
+        end
+      end
+
       private
 
         def version
@@ -3036,7 +3130,7 @@ module Ember
         end
 
         def article_pattern_index(article)
-          private_api_solution_article_pattern(article, exclude_description: true, exclude_attachments: true, exclude_tags: true, request_language: true)
+          private_api_solution_article_pattern(article, exclude_description: true, exclude_attachments: true, exclude_tags: true, request_language: true, exclude_translation_summary: true)
         end
 
         def get_portal_articles(portal_id, language_ids)

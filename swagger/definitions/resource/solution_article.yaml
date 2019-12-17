@@ -75,6 +75,10 @@ allOf:
               published:
                 type: boolean
                 description: Is article is published?
+              approval_status:
+                type: integer
+                format: int64
+                description: 1 - denotes article is in review, 2 - denotes article is approved
           fr:
             type: object
             description: French translation info
@@ -91,6 +95,10 @@ allOf:
               published:
                 type: boolean
                 description: Is article is published?
+              approval_status:
+                type: integer
+                format: int64
+                description: 1 - denotes article is in review, 2 - denotes article is approved
       cloud_files:
         type: array
         items:
@@ -120,7 +128,7 @@ allOf:
       tags:
         type: array
         items: 
-          type: string      
+          type: string
       approval_data:
         type: object
         properties:

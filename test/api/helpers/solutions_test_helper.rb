@@ -1,4 +1,8 @@
+require Rails.root.join('test', 'api', 'helpers', 'solutions_approvals_test_helper.rb')
+
 module SolutionsTestHelper
+  include SolutionsApprovalsTestHelper
+
   def solution_category_pattern(expected_output = {}, _ignore_extra_keys = true, category)
     result = {
       id: expected_output[:id] || category.parent.id,
@@ -131,6 +135,7 @@ module SolutionsTestHelper
   end
 
   def private_api_solution_article_pattern(article, expected_output = {}, ignore_extra_keys = true, user = nil)
+    article.reload
     draft = expected_output[:exclude_draft] ? nil : article.draft
     ret_hash = if draft
                  solution_article_draft_pattern(expected_output, ignore_extra_keys, article, draft)
@@ -156,7 +161,12 @@ module SolutionsTestHelper
       ret_hash[:last_modifier] = ret_hash[:draft_modified_by] || ret_hash[:modified_by]
       ret_hash[:last_modified_at] = ret_hash[:draft_modified_at] || ret_hash[:modified_at]
     end
-    ret_hash[:translation_summary] = translation_summary_pattern(article.parent) if @account.multilingual?
+    ret_hash[:translation_summary] = translation_summary_pattern(article.parent) if @account.multilingual? && expected_output[:action] != :filter && !expected_output[:exclude_translation_summary]
+
+    if Account.current.article_approval_workflow_enabled?
+      ret_hash[:approval_data] = { approval_status: approval_record(article.parent).try(:approval_status), approver_id: approver_record(article.parent).try(:approver_id), user_id: approval_record(article.parent).try(:user_id) }
+    end
+
     ret_hash
   end
 
@@ -429,23 +439,15 @@ module SolutionsTestHelper
   end
 
   def translation_summary_pattern(article_meta)
-    article_meta.reload
     result = {}
-    @account.all_language_objects.each do |language|
-      # TODO : fix this
-      # language_key = language.to_key
-      # result[language.code] = {
-      #   available: article_meta.safe_send("#{language_key}_available?"),
-      #   draft_present: article_meta.safe_send("#{language_key}_draft_present?"),
-      #   outdated: article_meta.safe_send("#{language_key}_outdated?"),
-      #   published: article_meta.safe_send("#{language_key}_published?")
-      # }
-      result[language.code] = {
-        available: Object,
-        draft_present: Object,
-        outdated: Object,
-        published: Object
-      }
+    article_meta.solution_articles.preload(:draft, :helpdesk_approval).each do |article|
+      info = { available: true, draft_present: article.draft_present?, outdated: article.outdated, published: article.published? }
+      info[:approval_status] = article.helpdesk_approval.try(:approval_status) if Account.current.article_approval_workflow_enabled?
+      result[article.language_code] = info
+    end
+
+    Account.current.all_language_objects.each do |language|
+      result[language.code] = { available: false, draft_present: false, outdated: false, published: false, approval_status: nil } unless result.key?(language.code)
     end
     result
   end

@@ -2,7 +2,7 @@ module SolutionsApprovalsTestHelper
   include SolutionsArticlesTestHelper
 
   def approver_record(article)
-    @approver_record = approval_record(article).approver_mappings.first
+    @approver_record = approval_record(article).try(:approver_mappings).try(:first)
   end
 
   def approval_record(article)

@@ -69,7 +69,7 @@ class Solutions::ArticleDecorator < ApiDecorator
       ret_hash.merge!(draft_private_hash) if @draft.present?
       ret_hash.merge!(last_modified(ret_hash)) if @is_list_page
       if Account.current.multilingual?
-        ret_hash[:translation_summary] = translation_summary_hash
+        ret_hash[:translation_summary] = translation_summary_hash if !@is_list_page && !exclude?(:translation_summary)
         ret_hash[:outdated] = outdated
       end
       if Account.current.article_approval_workflow_enabled?
@@ -170,8 +170,15 @@ class Solutions::ArticleDecorator < ApiDecorator
 
   def translation_summary_hash
     result = {}
+
+    parent.solution_articles.preload(:draft, :helpdesk_approval).each do |article|
+      info = { available: true, draft_present: article.draft_present?, outdated: article.outdated, published: article.published? }
+      info[:approval_status] = article.helpdesk_approval.try(:approval_status) if Account.current.article_approval_workflow_enabled?
+      result[article.language_code] = info
+    end
+
     Account.current.all_language_objects.each do |language|
-      result[language.code] = translation_info(language)
+      result[language.code] = { available: false, draft_present: false, outdated: false, published: false, approval_status: nil } unless result.key?(language.code)
     end
     result
   end
@@ -302,33 +309,15 @@ class Solutions::ArticleDecorator < ApiDecorator
       status == Solution::Constants::STATUS_KEYS_BY_TOKEN[:published]
     end
 
-    def translation_info(language)
-      language_key = language.to_key
-      # binarize sync happens on another object reference rather than record.parent, thus the value won't be updated here for current language article.
-      if language.id == language_id
-        {
-          available: true,
-          draft_present: @draft.present?,
-          outdated: outdated,
-          published: published?
-        }
-      else
-        {
-          available: parent.safe_send("#{language_key}_available?"),
-          draft_present: parent.safe_send("#{language_key}_draft_present?"),
-          outdated: parent.safe_send("#{language_key}_outdated?"),
-          published: parent.safe_send("#{language_key}_published?")
-        }
-      end
-    end
-
     def approval_record(article)
       return @approval if defined?(@approval)
+
       @approval = article.helpdesk_approval
     end
 
     def approver_record(article)
       @approver if defined?(@approver)
+
       @approver = approval_record(article).try(:approver_mappings).try(:first)
     end
 end
