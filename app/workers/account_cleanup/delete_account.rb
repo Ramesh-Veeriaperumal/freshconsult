@@ -9,9 +9,12 @@ class AccountCleanup::DeleteAccount < BaseWorker
   include Utils::Freno
 
   def perform(args)
+    args.symbolize_keys!
     account = Account.current
     return if account.active?
+    Rails.logger.debug "Params => args[:continue_account_destroy_from]: #{args[:continue_account_destroy_from]}"
     @continue_account_destroy_from = args[:continue_account_destroy_from] || 0
+    Rails.logger.debug "@continue_account_destroy_from: #{@continue_account_destroy_from}"
     account.delete_account_cancellation_requested_time_key if account.launched?(:downgrade_policy)
     ::Admin::Sandbox::DeleteWorker.new.perform(event: SANDBOX_DELETE_EVENTS[:deactivate]) if account.production_with_sandbox?
     deleted_customer = DeletedCustomers.find_by_account_id(account.id)
@@ -132,7 +135,7 @@ class AccountCleanup::DeleteAccount < BaseWorker
 
    def rerun_after(lag, account_id)
      shard_name = ActiveRecord::Base.current_shard_selection.shard.to_s
-     Rails.logger.debug("Warning: Freno: AccountCleanup::DeleteAccount: replication lag: #{lag} secs :: shard :: #{shard_name} :: account :: #{account_id}")
+     Rails.logger.debug("Warning: Freno: AccountCleanup::DeleteAccount: @continue_account_destroy_from: #{@continue_account_destroy_from}, replication lag: #{lag} secs :: shard :: #{shard_name} :: account :: #{account_id}")
      AccountCleanup::DeleteAccount.perform_in(lag.seconds.from_now, {:account_id => account_id,
        :continue_account_destroy_from => @continue_account_destroy_from})
    end

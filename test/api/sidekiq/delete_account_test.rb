@@ -27,7 +27,9 @@ class DeleteAccountTest < ActionView::TestCase
     account = Account.current
     account.subscription.state = 'suspended'
     account.save!
-    args = { account_id: account_id }
+    args = {}
+    args['account_id'] = account_id
+    args['continue_account_destroy_from'] = 1
     Sidekiq::Testing.inline! do
       AccountCleanup::DeleteAccount.new.perform(args)
     end
