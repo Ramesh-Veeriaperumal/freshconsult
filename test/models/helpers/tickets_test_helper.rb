@@ -172,6 +172,9 @@ module TicketsTestHelper
       sla_policy_id: ticket.sla_policy_id,
       is_escalated: ticket.isescalated,
       fr_escalated: ticket.fr_escalated,
+      resolution_escalation_level: ticket.escalation_level,
+      response_reminded: ticket.sla_response_reminded,
+      resolution_reminded: ticket.sla_resolution_reminded,
       resolved_at: ticket.resolved_at.try(:utc).try(:iso8601),
       time_to_resolution_in_bhrs: ticket.resolution_time_by_bhrs,
       time_to_resolution_in_chrs: ticket.resolution_time_by_chrs,
@@ -239,6 +242,7 @@ module TicketsTestHelper
     if Account.current.next_response_sla_enabled?
       ret_hash[:nr_due_by] = ticket.nr_due_by.try(:utc).try(:iso8601)
       ret_hash[:nr_escalated] = ticket.nr_escalated
+      ret_hash[:next_response_reminded] = ticket.nr_reminded
     end
     ret_hash
   end

@@ -430,4 +430,117 @@ class TicketTest < ActiveSupport::TestCase
   ensure
     Account.any_instance.unstub(:next_response_sla_enabled?)
   end
+
+  def test_central_publish_fr_reminded
+    t = create_ticket(ticket_params_hash.merge(responder_id: @agent.id))
+    t.sla_policy.update_attributes(escalations: {reminder_response: {"1": {time: -1800, agents_id: [-1]}}}.with_indifferent_access)
+    t.reload
+    t.sla_response_reminded = true
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    t.save
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    job = CentralPublishWorker::ActiveTicketWorker.jobs.last
+    assert_equal 'ticket_update', job['args'][0]
+    assert_equal([false, true], job['args'][1]['model_changes']['response_reminded'])
+    assert_equal({'reminder_response' => [@agent.id]}, job['args'][1]['misc_changes']['notify_agents'])
+  end
+
+  def test_central_publish_resolution_reminded
+    t = create_ticket(ticket_params_hash.merge(responder_id: @agent.id))
+    t.sla_policy.update_attributes(escalations: {reminder_resolution: {"1": {time: -1800, agents_id: [-1]}}}.with_indifferent_access)
+    t.reload
+    t.sla_resolution_reminded = true
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    t.save
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    job = CentralPublishWorker::ActiveTicketWorker.jobs.last
+    assert_equal 'ticket_update', job['args'][0]
+    assert_equal([false, true], job['args'][1]['model_changes']['resolution_reminded'])
+    assert_equal({'reminder_resolution' => [@agent.id]}, job['args'][1]['misc_changes']['notify_agents'])
+  end
+
+  def test_central_publish_nr_reminded
+    Account.any_instance.stubs(:next_response_sla_enabled?).returns(true)
+    t = create_ticket(ticket_params_hash.merge(responder_id: @agent.id))
+    t.sla_policy.update_attributes(escalations: {reminder_next_response: {"1": {time: -1800, agents_id: [-1]}}}.with_indifferent_access)
+    t.reload
+    t.nr_reminded = true
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    t.save
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    job = CentralPublishWorker::ActiveTicketWorker.jobs.last
+    assert_equal 'ticket_update', job['args'][0]
+    assert_equal([false, true], job['args'][1]['model_changes']['next_response_reminded'])
+    assert_equal({'reminder_next_response' => [@agent.id]}, job['args'][1]['misc_changes']['notify_agents'])
+  ensure
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_central_publish_fr_escalated
+    t = create_ticket(ticket_params_hash.merge(responder_id: @agent.id))
+    t.sla_policy.update_attributes(escalations: {response: {"1": {time: 0, agents_id: [-1]}}}.with_indifferent_access)
+    t.reload
+    t.fr_escalated = true
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    t.save
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    job = CentralPublishWorker::ActiveTicketWorker.jobs.last
+    assert_equal 'ticket_update', job['args'][0]
+    assert_equal([false, true], job['args'][1]['model_changes']['fr_escalated'])
+    assert_equal({'response' => [@agent.id]}, job['args'][1]['misc_changes']['notify_agents'])
+  end
+
+  def test_central_publish_resolution_escalated
+    t = create_ticket(ticket_params_hash.merge(responder_id: @agent.id))
+    t.sla_policy.update_attributes(escalations: {resolution: {"1": {time: 0, agents_id: [-1]}}}.with_indifferent_access)
+    t.reload
+    t.escalation_level = 1
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    t.save
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    job = CentralPublishWorker::ActiveTicketWorker.jobs.last
+    assert_equal 'ticket_update', job['args'][0]
+    assert_equal([nil, 1], job['args'][1]['model_changes']['resolution_escalation_level'])
+    assert_equal({'resolution' => [@agent.id]}, job['args'][1]['misc_changes']['notify_agents'])
+    t.reload
+    t.escalation_level = 4
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    t.save
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    job = CentralPublishWorker::ActiveTicketWorker.jobs.last
+    assert_equal 'ticket_update', job['args'][0]
+    assert_equal([1, 4], job['args'][1]['model_changes']['resolution_escalation_level'])
+    assert_equal({'resolution' => []}, job['args'][1]['misc_changes']['notify_agents'])
+  end
+
+  def test_central_publish_nr_escalated
+    Account.any_instance.stubs(:next_response_sla_enabled?).returns(true)
+    t = create_ticket(ticket_params_hash.merge(responder_id: @agent.id))
+    t.sla_policy.update_attributes(escalations: {next_response: {"1": {time: 0, agents_id: [-1]}}}.with_indifferent_access)
+    t.reload
+    t.nr_escalated = true
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    t.save
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    job = CentralPublishWorker::ActiveTicketWorker.jobs.last
+    assert_equal 'ticket_update', job['args'][0]
+    assert_equal([false, true], job['args'][1]['model_changes']['nr_escalated'])
+    assert_equal({'next_response' => [@agent.id]}, job['args'][1]['misc_changes']['notify_agents'])
+  ensure
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
 end

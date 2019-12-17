@@ -141,7 +141,9 @@ module RabbitMq::Constants
     "internal_agent_first_assign_in_bhrs", "last_resolved_at"
   ]
 
-  IRIS_TICKET_KEYS = REPORTS_TICKET_KEYS
+  SLA_KEYS = ['fr_due_by', 'nr_due_by', 'sla_response_reminded', 'sla_resolution_reminded', 'nr_reminded', 'escalation_level', 'fr_escalated', 'nr_escalated'].freeze
+
+  IRIS_TICKET_KEYS = REPORTS_TICKET_KEYS + SLA_KEYS
   IRIS_ARCHIVE_TICKET_KEYS = REPORTS_TICKET_KEYS
   
   REPORTS_ARCHIVE_TICKET_KEYS = REPORTS_TICKET_KEYS

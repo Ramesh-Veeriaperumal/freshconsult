@@ -57,21 +57,32 @@ class Helpdesk::Ticket < ActiveRecord::Base
       "subject"           => subject,
       "requester_name"    => requester.name,
       "due_by"            => due_by.to_i,
+      "fr_due_by"         => frDueBy.to_i,
       "is_escalated"      => isescalated,
-      "fr_escalated"      => fr_escalated,      
+      "fr_escalated"      => fr_escalated,  
       "created_at"        => created_at.to_i,
       "outbound_email"    => outbound_email?,
       "archive"           => archive || false,
       "actor_type"        => User.current.nil? ? nil : (User.current.agent? ? ACTOR_TYPE[:agent] : ACTOR_TYPE[:contact]), 
       "actor_id"          => User.current.nil? ? nil : User.current.id,
-      "association_type" =>   association_type
+      "association_type"      =>   association_type,
+      "escalation_level"      => escalation_level 
     }
+    
+    @rmq_ticket_basic_properties.merge!({
+      'nr_due_by' => nr_due_by.try(:utc).try(:iso8601), 
+      'nr_reminded' => nr_reminded,
+      'nr_escalated' => nr_escalated
+    }) if Account.current.next_response_sla_enabled?
+    @rmq_ticket_basic_properties
   end
   
   def ticket_schemaless_hash 
     @rmq_ticket_schemaless_hash ||= {
-      "sla_policy_id"     => schema_less_ticket.sla_policy_id,
-      "product_id"        => schema_less_ticket.product_id,
+      "sla_policy_id"         => schema_less_ticket.sla_policy_id,
+      "product_id"            => schema_less_ticket.product_id,
+      "sla_response_reminded"     => schema_less_ticket.sla_response_reminded,
+      "sla_resolution_reminded"   => schema_less_ticket.sla_resolution_reminded
     }.merge(schema_less_ticket.reports_hash)
   end
 

@@ -17,6 +17,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
   SPLIT_TICKET_ACTIVITY = 'ticket_split_target'.freeze
   MERGE_TICKET_ACTIVITY = 'ticket_merge_source'.freeze
   ROUND_ROBIN_ACTIVITY = 'round_robin'.freeze
+  SLA_FIELDS = [:boolean_tc04, :boolean_tc05, :nr_reminded, :int_tc02, :fr_escalated, :nr_escalated].freeze
+
+  SLA_ATTRIBUTES = [
+    [:resolution,    :int_tc02, :boolean_tc05],
+    [:response,      :fr_escalated, :boolean_tc04],
+    [:next_response, :nr_escalated, :nr_reminded]
+  ].freeze
+
+  SLA_ESCALATION_ATTRIBUTES = Hash[*SLA_ATTRIBUTES.map { |i| [i[0], i[1]] }.flatten]
+  SLA_REMINDER_ATTRIBUTES = Hash[*SLA_ATTRIBUTES.map { |i| [i[0], i[2]] }.flatten]
+
   acts_as_api
 
   api_accessible :central_publish do |t|
@@ -40,6 +51,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     t.add :isescalated, as: :is_escalated
     t.add :fr_escalated
     t.add :nr_escalated, :if => proc { Account.current.next_response_sla_enabled? }
+    t.add :escalation_level, as: :resolution_escalation_level
+    t.add :sla_response_reminded, as: :response_reminded
+    t.add :sla_resolution_reminded, as: :resolution_reminded
+    t.add :nr_reminded, as: :next_response_reminded, :if => proc { Account.current.next_response_sla_enabled? }
     t.add :resolution_time_by_bhrs, as: :time_to_resolution_in_bhrs
     t.add :resolution_time_by_chrs, as: :time_to_resolution_in_chrs
     t.add :inbound_count
@@ -243,7 +258,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def column_attribute_mapping
     Helpdesk::SchemaLessTicket::COLUMN_TO_ATTRIBUTE_MAPPING.merge({
       sl_skill_id: :skill_id,
-      owner_id: :company_id
+      owner_id: :company_id,
+      boolean_tc04: :response_reminded,
+      boolean_tc05: :resolution_reminded,
+      nr_reminded: :next_response_reminded,
+      isescalated: :is_escalated,
+      int_tc02: :resolution_escalation_level
     })
   end
 
@@ -318,7 +338,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def misc_changes_for_central
-    (self.misc_changes || {}).except(*TAG_KEYS, *WATCHER_KEYS, :misc_changes)
+    changes = (self.misc_changes || {}).except(*TAG_KEYS, *WATCHER_KEYS, :misc_changes)
+    changes.merge(notify_agents: agents_to_notify_sla) if sla_notification_params.present?
   end
 
   def transformed_model_changes
@@ -439,5 +460,35 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def central_publish_worker_class
     "CentralPublishWorker::#{Account.current.subscription.state.titleize}TicketWorker"
+  end
+
+  def sla_notification_params
+    ((@model_changes || {}).keys & SLA_FIELDS).select { |key| @model_changes[key][1] }
+  end
+
+  def agents_to_notify_sla
+    agents = {}
+    sla_notification_params.each do |field|
+      escalation_key = SLA_ESCALATION_ATTRIBUTES.key(field)
+      reminder_key = SLA_REMINDER_ATTRIBUTES.key(field)
+      if escalation_key && sla_policy.escalation_enabled?(self)
+        level = escalation_key == :resolution ? escalation_level.to_s : '1'
+        agents[escalation_key] = sanitize_agent_ids(sla_policy.escalations[escalation_key.to_s].try(:[], level.to_s).try(:[], :agents_id) || [])
+      elsif reminder_key
+        reminder_key = "reminder_#{reminder_key}".to_sym
+        agents[reminder_key] = sanitize_agent_ids(sla_policy.escalations[reminder_key.to_s].try(:[], '1').try(:[], :agents_id) || [])
+      end
+    end
+    agents
+  end
+
+  def sanitize_agent_ids(agent_ids)
+    assigned_agent_id = Helpdesk::SlaPolicy.custom_users_id_by_type[:assigned_agent]
+    if agent_ids.include?(assigned_agent_id)
+      agent_ids.delete(assigned_agent_id)
+      agent_ids << responder_id if responder_id
+      agent_ids << internal_agent_id if internal_agent_id && Account.current.shared_ownership_enabled?
+    end
+    agent_ids.uniq
   end
 end
