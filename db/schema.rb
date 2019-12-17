@@ -2898,6 +2898,7 @@ ActiveRecord::Schema.define(version: 20191021120954) do
 
   add_index "integrated_resources", ["account_id","installed_application_id","local_integratable_id","local_integratable_type"], :name => "index_on_account_and_inst_app_and_local_int_id_and_type"
   add_index "integrated_resources", ["account_id","installed_application_id","remote_integratable_id","remote_integratable_type"], :name => "index_on_account_and_inst_app_and_remote_int_id_and_type"
+  add_index 'integrated_resources', ['account_id', 'local_integratable_id', 'local_integratable_type'], name: 'index_on_account_id_and_local_integratable_id_and_type'
 
   create_table "integrations_user_credentials", :force => true do |t|
     t.integer  "installed_application_id", :limit => 8
@@ -4663,7 +4664,7 @@ ActiveRecord::Schema.define(version: 20191021120954) do
     t.timestamps
   end
   add_index :company_filters, [:account_id], name: 'index_company_filter_on_account'
- 
+
   create_table :failed_central_feeds, :force => true do |t|
     t.integer :account_id, limit: 8, null: false
     t.integer :model_id, limit: 8, null: false
@@ -5109,7 +5110,7 @@ ActiveRecord::Schema.define(version: 20191021120954) do
     t.boolean  'ff_boolean29'
     t.boolean  'ff_boolean30'
   end
-  
+
   add_index 'ticket_field_data', ['account_id', 'flexifield_set_id'],
             name: 'unique_index_flexifields_on_account_id_and_flexifield_set_id', unique: true
   add_index 'ticket_field_data', ['flexifield_def_id'], name: 'index_flexifields_on_flexifield_def_id'
