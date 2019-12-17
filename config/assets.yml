@@ -197,6 +197,7 @@ javascripts:
     - public/javascripts/app/dashboard.js
     - public/javascripts/app/product_notifications.js
     - public/javascripts/app/admin_font_settings.js
+    - public/javascripts/app/admin/fb_streams/edit_ticket_rules_new.js
     - public/javascripts/app/merge.js
 
   livechat_collision:

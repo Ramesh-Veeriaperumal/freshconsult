@@ -1,0 +1,55 @@
+<div class="form-horizontal">
+  <%= hidden_field_tag "social_ticket_rule[][ticket_rule_id]", ticket_rule.id %>
+  <div class="row-fluid">
+    <div class='form_data span11 mlt'>
+      <div class="control-group fb-form-tkt-rules">
+        <input id="social_ticket_rule__rule_type" name="social_ticket_rule[][rule_type]" type="hidden"
+          value="<%= ticket_rule.filter_data[:rule_type] %>">
+        <div class="mt20">
+          <div class="rule-settings">
+            <div class="optimal-rules-container pl20">
+              <%= hidden_field_tag "default_keywords", "#{Facebook::Constants::DEFAULT_KEYWORDS.join(',')}"%>
+              <div class="checkbox">
+                <label><%= check_box_tag 'social_ticket_rule[][import_visitor_posts]', true, ticket_rule.import_visitor_posts? %>&nbsp;
+                  <span id="import_visitor_posts_text">
+                    <%= t(".convert_visitor_post_to_ticket") %>
+                  </span>
+                </label>
+                <label id="import_visitor_posts_helptext" class="muted">&nbsp; <%= t(".visitor_posts_helptext") %></label>
+              </div>
+              <div class="checkbox">
+                <label><%= check_box_tag 'social_ticket_rule[][import_company_comments]', true, ticket_rule.import_company_comments? %>&nbsp;<%= t(".convert_page_post_to_ticket") %></label>
+              </div>
+              <div class="keyword_wrapper form-group clearfix pl20">
+                <label id="same_ticket_threading_container">
+                  <input type="radio" id="same_ticket_threading" name="threading" class="threading">
+                  &nbsp;<%= t(".fb_thread_same_ticket") %>
+                </label>
+                <label id="new_ticket_threading_container">
+                  <input type="radio" id="new_ticket_threading" name="threading" class="threading">
+                  &nbsp;<%= t(".fb_thread_new_ticket") %>
+                </label>
+                <div class="keyword_container">
+                  <label>
+                    <!-- dummy checkbox for UX revamp -->
+                    <input type="checkbox" id="toggle_keywords">
+                    &nbsp;<%= t(".convert_comment_toggle_helptext") %>
+                  </label>
+                  <%= text_field_tag "social_ticket_rule[][includes]",
+                    ticket_rule.include_keys,
+                    :class => 'text social_ticket_rule_includes form-control span12' %>
+                </div>
+              </div>
+              <div class="control-group mt10">
+                <label class="mt10 pl5">
+                  <%= t('.assign_to_gp')%>
+                  <%= select_tag "social_ticket_rule[][group_id]", options_for_select(current_account.groups.collect{ |c| [c.name, c.id]}.insert(0, '...'), ticket_rule.group_id), {:class => "select2-container span4 ml10"} %>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
