@@ -3455,6 +3455,7 @@ en:
       outbound_limit_per_day_exceeded: You can send a maximum of 5 outbound emails a day per account during the trial period
       outbound_limit_per_day_30_days_free_exceeded: You can send a maximum of %{limit} outbound emails a day per account
       outbound_limit_per_day_free_exceeded: You can send a maximum of %{limit} outbound emails a day per account
+      invalid_email: Email is invalid
       insufficient_privilege:
         admin: You don't have sufficient privilege to change this. Please login as Administrator..!!
       login_not_needed: You must be logged out to access this page
