@@ -3040,7 +3040,7 @@ module Ember
 
       def test_update_draft_article_folder_with_approval_record
         Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
-        sample_article = get_in_review_article
+        sample_article = get_unpublished_approved_article
         lang_hash = { lang_codes: all_account_languages }
         category = create_category({ portal_id: Account.current.main_portal.id }.merge(lang_hash))
         new_folder_id = create_folder({ visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category.id }.merge(lang_hash)).id
@@ -3204,30 +3204,36 @@ module Ember
         end
       end
 
-      def test_update_publish_reviewd_article_with_publish_approved_solution
+      def test_update_publish_reviewed_article_with_publish_approved_solution
         without_publish_solution_privilege do
+          Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
           User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(true)
-          sample_article = get_approved_article
+          sample_article = get_unpublished_approved_article
           params_hash = { status: 2 }
-          put :update, construct_params({ version: 'private', id: sample_article.parent_id, agent_id: @agent.id }, params_hash)
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
           assert_response 200
           sample_article.reload
           match_json(private_api_solution_article_pattern(sample_article))
           assert sample_article.published?
           assert !sample_article.draft_present?
         end
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
       end
 
       def test_update_publish_reviewd_article_without_publish_approved_solution
         without_publish_solution_privilege do
+          Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
           User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(false)
-          sample_article = get_approved_article
+          sample_article = get_unpublished_approved_article
           params_hash = { status: 2 }
           put :update, construct_params({ version: 'private', id: sample_article.parent_id, agent_id: @agent.id }, params_hash)
           assert_response 403
           error_info_hash = { details: 'dont have permission to perfom on published article' }
           match_json(request_error_pattern_with_info(:published_article_privilege_error, error_info_hash, error_info_hash))
         end
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
       end
 
       private

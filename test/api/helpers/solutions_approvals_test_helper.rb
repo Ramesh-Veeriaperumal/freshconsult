@@ -26,27 +26,35 @@ module SolutionsApprovalsTestHelper
 
   def get_in_review_article(language = Account.current.language_object, user = User.current, approver = User.current)
     article = get_article_with_draft(language)
-    if article.helpdesk_approval
-      article.helpdesk_approval.destroy
-      article.reload
-    end
+    clear_approvals(article)
     approval = construct_approval_record(article, user)
     construct_approver_mapping(approval, approver)
-    approval.save
+    approval.save!
     article.reload
   end
 
   def get_approved_article(language = Account.current.language_object, user = User.current, approver = User.current)
     article = get_article_with_draft(language)
-    if article.helpdesk_approval
-      article.helpdesk_approval.destroy
-      article.reload
-    end
+    clear_approvals(article)
     approval = construct_approval_record(article, user)
     approval.approval_status = Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]
     approval_mapping = construct_approver_mapping(approval, approver)
     approval_mapping.approval_status = Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]
-    approval.save
+    approval.save!
+    article.reload
+  end
+
+  def get_unpublished_approved_article(language = Account.current.language_object, user = User.current, approver = User.current)
+    article = get_article_with_draft(language)
+    article.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
+    article.save!
+    clear_approvals(article)
+    article.reload
+    approval = construct_approval_record(article, user)
+    approval.approval_status = Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]
+    approval_mapping = construct_approver_mapping(approval, approver)
+    approval_mapping.approval_status = Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]
+    approval.save!
     article.reload
   end
 
@@ -62,5 +70,12 @@ module SolutionsApprovalsTestHelper
     review_params[:approval_status] = Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review]
     review_params[:approver_id] = approver.id
     helpdesk_approval.approver_mappings.build(review_params)
+  end
+
+  def clear_approvals(article)
+    if article.helpdesk_approval
+      article.helpdesk_approval.destroy
+      article.reload
+    end
   end
 end

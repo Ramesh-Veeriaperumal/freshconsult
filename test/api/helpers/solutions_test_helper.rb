@@ -317,8 +317,10 @@ module SolutionsTestHelper
   def quick_views_pattern(portal_id = nil, language_id = Account.current.language_object.id)
     @categories = fetch_categories(portal_id, language_id)
     @articles = fetch_articles(language_id)
-    @drafts =  fetch_drafts
+    @drafts = fetch_drafts
+    @approvals = fetch_approvals
     @my_drafts = @drafts.empty? ? [] : @drafts.where(user_id: User.current.id)
+    @my_drafts = fetch_my_drafts if Account.current.article_approval_workflow_enabled?
     @published_articles = fetch_published_articles
     @all_feedback = Account.current.article_tickets.select(:id).where(article_id: get_article_ids(@articles), ticketable_type: 'Helpdesk::Ticket').reject { |article_ticket| article_ticket.ticketable.spam_or_deleted? }
     @my_feedback = Account.current.article_tickets.select(:id).where(article_id: get_article_ids(@articles.select { |article| article.user_id == User.current.id }), ticketable_type: 'Helpdesk::Ticket').reject { |article_ticket| article_ticket.ticketable.spam_or_deleted? }
@@ -327,7 +329,7 @@ module SolutionsTestHelper
     result = {
       all_categories: @categories.count,
       all_articles: @articles.count,
-      all_drafts: @drafts.count,
+      all_drafts: @drafts.count - @approvals.count,
       my_drafts: @my_drafts.count,
       published_articles: @published_articles.count,
       all_feedback: @all_feedback.count,
@@ -372,6 +374,19 @@ module SolutionsTestHelper
     return [] if @articles.empty?
     article_ids = get_article_ids(@articles)
     Account.current.solution_drafts.select([:id, :user_id]).where(article_id: article_ids)
+  end
+
+  def fetch_approvals
+    return [] if @articles.empty?
+
+    article_ids = get_article_ids(@articles)
+    Account.current.helpdesk_approvals.select([:id, :user_id]).where(approvable_id: article_ids)
+  end
+
+  def fetch_my_drafts
+    return [] if @my_drafts.empty?
+
+     @my_drafts.joins('LEFT JOIN helpdesk_approvals ON solution_drafts.article_id = helpdesk_approvals.approvable_id').where('helpdesk_approvals.id is NULL')
   end
 
   def get_article_ids(articles)
