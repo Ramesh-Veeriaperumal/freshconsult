@@ -25,7 +25,6 @@ class Account < ActiveRecord::Base
   after_update :update_livechat_url_time_zone, :if => :livechat_enabled?
   after_update :update_activity_export, :if => :ticket_activity_export_enabled?
   after_update :update_advanced_ticketing_applications, :if => :disable_old_ui_feature_changed?
-  after_update :update_freshvisual_configs, :if => :call_freshvisuals_api?
   after_update :set_disable_old_ui_changed_now, :if => :disable_old_ui_changed?
   after_update :update_round_robin_type, if: :lbrr_by_omniroute_feature_changed?
 
@@ -66,6 +65,8 @@ class Account < ActiveRecord::Base
   after_commit :remove_organisation_account_mapping, on: :destroy, if: :freshid_org_v2_enabled?
   after_commit :update_help_widgets, on: :update, if: [:help_widget_enabled?, :branding_feature_toggled?]
   after_commit :create_rts_account, on: :create
+
+  after_commit :update_freshvisual_configs, on: :update, if: :call_freshvisuals_api?
 
   after_rollback :destroy_freshid_account_on_rollback, on: :create, if: -> { freshid_integration_signup_allowed? && !domain_already_exists? }
   after_rollback :signup_completed, on: :create
@@ -638,19 +639,6 @@ class Account < ActiveRecord::Base
       @all_changes[:plan_features].present? && bitmap_feature_changed?(Fdadmin::FeatureMethods::BITMAP_FEATURES_WITH_VALUES[:field_service_management])
     end
 
-    def call_freshvisuals_api?
-      freshvisual_configs_enabled? && analytics_features_changed?
-    end
-
-    def analytics_features_changed?
-      reports_features = HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST
-      changes[:plan_features].present? && reports_features.any? { |f| safe_send("#{f}_feature_changed?") }
-    end
-
-    def update_freshvisual_configs
-      Reports::FreshvisualConfigs.perform_async
-    end
-
     # Checks if a bitmap feature has been added or removed
     # old_feature ^ new_feature - Will give the list of all features that have been modified in update call
     # (old_feature ^ new_feature) & (2**feature_val) - Will return zero if the given feature has not been modified
@@ -672,7 +660,7 @@ class Account < ActiveRecord::Base
 
     def analytics_features_changed?
       reports_features = HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST
-      changes[:plan_features].present? && reports_features.any? { |f| safe_send("#{f}_feature_changed?") }
+      previous_changes[:plan_features].present? && reports_features.any? { |f| safe_send("#{f}_feature_toggled?") }
     end
 
     def update_freshvisual_configs

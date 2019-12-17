@@ -1,5 +1,7 @@
 require_relative '../../unit_test_helper'
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
+require 'sidekiq/testing'
+Sidekiq::Testing.fake!
 
 class Reports::PricingApiTest < ActiveSupport::TestCase
   include AccountTestHelper
@@ -98,6 +100,16 @@ class Reports::PricingApiTest < ActiveSupport::TestCase
       self.safe_send(:create_tenant)
     end
     assert_equal mock.verify, true
+  end
+
+  def test_worker_enqueue_on_feature_addition
+    Account.current.stubs(:freshvisual_configs_enabled?).returns(true)
+    Reports::FreshvisualConfigs.jobs.clear
+    @account.add_feature :analytics_report_save
+    assert_equal Reports::FreshvisualConfigs.jobs.size, 1
+  ensure
+    @account.revoke_feature :analytics_report_save
+    Account.current.unstub(:freshvisual_configs_enabled?)
   end
 
   private
