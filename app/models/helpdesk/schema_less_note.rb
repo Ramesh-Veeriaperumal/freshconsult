@@ -89,6 +89,14 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
     note_properties[:on_state_time] = value
   end
 
+  def response_violated
+    note_properties[:response_violated] if note_properties.is_a?(Hash)
+  end
+
+  def response_violated=(value)
+    note_properties[:response_violated] = value
+  end
+
   def cc_emails
     emails = read_attribute(:cc_emails)
     if (emails.is_a? Array) || (emails.is_a? String)

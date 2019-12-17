@@ -285,18 +285,20 @@ module Search::Dashboard::QueryHelper
                               [nil, nil]
                             else
                               start, finish = value.split(' - ')
-                              [Time.zone.parse(start), Time.zone.parse(finish)]
-                            end
+                              [Time.zone.parse(start.to_s), Time.zone.parse(finish.to_s)]
+                           end
     to_es_condition(field_name, start_time.try(:utc).try(:iso8601), end_time.try(:utc).try(:iso8601))
   end
 
   def to_es_condition(field_name, start_time, end_time)
-    if start_time.nil? && end_time.nil?
-      "#{field_name}:null"
-    elsif start_time.nil?
+    if start_time && end_time
+      "#{field_name}:>'#{start_time}' AND #{field_name}:<'#{end_time}'"
+    elsif start_time
+      "#{field_name}:>'#{start_time}'"
+    elsif end_time
       "#{field_name}:<'#{end_time}'"
     else
-      "#{field_name}:>'#{start_time}' AND #{field_name}:<'#{end_time}'"
+      "#{field_name}:null"
     end
   end
 

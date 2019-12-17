@@ -101,8 +101,9 @@ class QueryHash
       if format == :system
         query['value'].is_a?(Hash) ? format_date_time(query) : query['value']
       else
-        return query['value'] unless query['value'].include?('-')
-        from, to = query['value'].split('-')
+        return query['value'] unless query['value'].include?(' - ')
+
+        from, to = query['value'].split(' - ')
         {
           'from' => format_time(from),
           'to' => format_time(to)

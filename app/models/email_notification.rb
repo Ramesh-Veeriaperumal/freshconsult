@@ -47,7 +47,7 @@ class EmailNotification < ActiveRecord::Base
   NEW_TICKET_CC                 = 19
   PUBLIC_NOTE_CC                = 20
   NOTIFY_COMMENT                = 21
-  SYSTEM_NOTIFY_NOTE_CC           = 26
+  AUTOMATED_PRIVATE_NOTES       = 26
 
   DEFAULT_REPLY_TEMPLATE  = 15
   RESPONSE_SLA_REMINDER   = 22
@@ -110,7 +110,7 @@ class EmailNotification < ActiveRecord::Base
     [:default_forward_template,       DEFAULT_FORWARD_TEMPLATE,       VISIBILITY[:FORWARD_TEMPLATE]   ],
     [:additional_email_verification,  ADDITIONAL_EMAIL_VERIFICATION,  VISIBILITY[:REQUESTER_ONLY]     ],
     [:notify_comment,                 NOTIFY_COMMENT,                 VISIBILITY[:AGENT_ONLY]         ],
-    [:system_notify_note_cc,          SYSTEM_NOTIFY_NOTE_CC,          VISIBILITY[:AGENT_ONLY]         ],
+    [:automated_private_notes,        AUTOMATED_PRIVATE_NOTES,        VISIBILITY[:AGENT_ONLY]         ],
     [:new_ticket_cc,                  NEW_TICKET_CC,                  VISIBILITY[:CC_NOTIFICATION]    ],
     [:public_note_cc,                 PUBLIC_NOTE_CC,                 VISIBILITY[:CC_NOTIFICATION]    ],
     [:bot_response_template,          BOT_RESPONSE_TEMPLATE,          VISIBILITY[:REQUESTER_ONLY]     ],
@@ -119,7 +119,7 @@ class EmailNotification < ActiveRecord::Base
   ]
 
   # List of notfications to agents which cannot be turned off
-  AGENT_MANDATORY_LIST = [ :user_activation_email, :password_reset_email, :notify_comment, :agent_invitation_email,:system_notify_note_cc]
+  AGENT_MANDATORY_LIST = [:user_activation_email, :password_reset_email, :notify_comment, :agent_invitation_email, :automated_private_notes].freeze
   # List of notfications to requester which cannot be turned off
   REQUESTER_MANDATORY_LIST = [ :password_reset_email ]
   # List of notifications not visible under admin's
@@ -131,7 +131,7 @@ class EmailNotification < ActiveRecord::Base
   AGENT_MANDATORY_KEYS = AGENT_MANDATORY_LIST.map{ |i| TOKEN_BY_KEY.key(i)}
   REQUESTER_MANDATORY_KEYS = REQUESTER_MANDATORY_LIST.map{ |i| TOKEN_BY_KEY.key(i)}
 
-  BCC_DISABLED_NOTIFICATIONS = [NOTIFY_COMMENT, PUBLIC_NOTE_CC, NEW_TICKET_CC, SYSTEM_NOTIFY_NOTE_CC]
+  BCC_DISABLED_NOTIFICATIONS = [NOTIFY_COMMENT, PUBLIC_NOTE_CC, NEW_TICKET_CC, AUTOMATED_PRIVATE_NOTES].freeze
 
   CUSTOM_CATEGORY_ID_ENABLED_NOTIFICATIONS = [NEW_TICKET, NEW_TICKET_CC, USER_ACTIVATION, EMAIL_TO_REQUESTOR]
 

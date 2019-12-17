@@ -48,21 +48,9 @@ get:
     - name: created_at
       in: query
       type: string
-      description: >
-        properties:
-        { start:
-            type: string,
-          end: 
-            type: string }
     - name: last_modified
       in: query
       type: string
-      description: >
-        properties:
-        { start:
-            type: string,
-          end: 
-            type: string }
 
   responses:
     200:

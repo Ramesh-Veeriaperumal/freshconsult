@@ -19,7 +19,7 @@ class Account < ActiveRecord::Base
     :sso_login_expiry_limitation, :undo_send, :old_link_back_url_validation, :stop_contacts_count_query,
     :denormalized_select_for_update, :trial_subscription, :installed_app_publish, :es_tickets,
     :twitter_dm_outgoing_attachment, :twitter_mention_outgoing_attachment,
-    :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017, :year_in_review_2018,
+    :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
     :onboarding_inlinemanual, :skip_portal_cname_chk,
     :product_central_publish, :help_widget, :redis_picklist_id,
     :bot_email_channel, :bot_email_central_publish, :description_by_default,
@@ -47,7 +47,7 @@ class Account < ActiveRecord::Base
     :freshcaller_admin_new_ui, :facebook_post_outgoing_attachment, :outgoing_tweets_to_tms, :incoming_mentions_in_tms, :help_widget_login, :occlusion_rendering_ticket_fields,
     :prevent_lang_detect_for_spam, :default_unassigned_service_tasks_filter, :jira_onpremise_reporter, :support_ticket_rate_limit, :sidekiq_logs_to_central, :portal_central_publish, :global_navbar, :encode_emoji_in_solutions,
     :forums_agent_portal, :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product, :send_and_set, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html, :focus_mode,
-    :remove_image_attachment_meta_data, :new_timeline_view
+    :remove_image_attachment_meta_data, :new_timeline_view, :automated_private_notes_notification
   ].freeze
 
   DB_FEATURES = [
@@ -217,7 +217,9 @@ class Account < ActiveRecord::Base
   end
 
   def count_es_enabled?
-    (launched?(:es_count_reads) || launched?(:list_page_new_cluster)) && features?(:countv2_reads)
+    launched?(:count_service_es_reads) ||
+      ((launched?(:es_count_reads) || launched?(:list_page_new_cluster)) &&
+        features?(:countv2_reads))
   end
 
   def count_es_api_enabled?

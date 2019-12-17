@@ -69,6 +69,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_update :update_ticket_states
 
+  after_update :update_sla_model_changes, :if => Proc.new { self.changes.present? }
+
   after_commit :create_initial_activity, on: :create
   after_commit :trigger_dispatcher, on: :create, :unless => :skip_dispatcher_with_advanced_automations?
 
@@ -730,6 +732,15 @@ private
     end
     @model_changes.merge!({ tags: [] }) if self.tags_updated #=> Hack for when only tags are updated to trigger ES publish
     @model_changes.symbolize_keys!
+  end
+
+  def update_sla_model_changes
+    @model_changes.merge!(self.changes.to_hash.slice(*TICKET_SLA_ATTRIBUTES)).symbolize_keys!
+    SLA_DATETIME_ATTRIBUTES.each do |attr|
+      next unless @model_changes.key?(attr.to_sym)
+      @model_changes[attr.to_sym].map!{|t| t.to_time.utc.iso8601 unless t.nil? }
+    end
+
   end
 
   def load_ticket_status

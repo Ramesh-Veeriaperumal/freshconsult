@@ -5,7 +5,7 @@ module RabbitMq::Subscribers::Tickets::Reports
   PROPERTIES_TO_CONSIDER = [ :requester_id, :responder_id, :group_id, 
                              :priority, :ticket_type, :source,
                              :status, :product_id, :owner_id,
-                             :isescalated, :fr_escalated, :spam, :deleted,
+                             :isescalated, :fr_escalated, :nr_escalated, :spam, :deleted,
                              :long_tc01, :long_tc02, :internal_group_id, :internal_agent_id,
                              :association_type
                            ]

@@ -951,8 +951,8 @@
         "_analytics_etl_queue": "analytics_etl_queue_archive_production"
       },
       "freshid": {
-        "client_id": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:ZQPmNIia5LTn4S4MyJy+cKY9DErnhq81:VARepzyoCn0jMolTkKYoA1NzlK2bzIthnTsLkOhpA5rsTCQVjR9X6OM0s+5Yqo7zr4QHsg==]",
-        "client_secret": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:ljqq7M0FjZTx21Tg4HK7FKJCufhgapP1:Wqb7R5jH0VrGkouuRNZu24tNjyR8ZHqgWdRNvGB72/c4SForQs7cpFq3ruDGS5Zk]",
+        "client_id": "EJ[1:8MU/tI0786GrnjK/nBSkLos9y3Tvn5c4O3jjlVYmwTM=:tH+X+Mrznz9PA4S5DEYVp/jMsYuiwjNo:KW026p723oUXAWpr//VEafSp5yauUTKtCeyfBhXRxk2XhRZ2mCMEPfsZYXiXD48urTztJw==]",
+        "client_secret": "EJ[1:8MU/tI0786GrnjK/nBSkLos9y3Tvn5c4O3jjlVYmwTM=:tV/osSEFQgq+uzmCSBv2rkEj5DSUzl3w:SvYBUxv121sd+EePdsHV9vE20LsrHIoLQFdSTrHAwgFUDUgaNbyk44ORwfFWtHraCdzM]",
         "callback_api_secret": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:QZCAZum+oIG3h8cwSntPhPLi5xnjyyJJ:QfmUXmxfeNhGJkM9OEovP+NcN/eU2AzKx3u6Zr7CV7AYLLmsUCeBVcjsWz14xpnHDe4hUrdk03ANOtrvkVNrNZY4oDmGlQFl+8sFeXppaH8=]",
         "customer_client_id": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:FVCGS+RHyQ7izNeR30AsjjdtR4z7/HHA:9+bR1NSna2tvbxfmDbcb1RNBiaQKh9LQGbhtn8Jkb/T7YJnUU/52C9xHm7bgmc7Nm8x9Vg==]",
         "customer_client_secret": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:bIke/ui0pKmzeulNYptDk18B2r7f5U++:imO9mtFqZ21q5riRPAdvaUai6UjfF7km5p8XgKHNbjnetjj2kedGDVk1qfX5KZWa]",

@@ -48,7 +48,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def self.open_pending_condition
-    { 'condition' => 'status', 'operator' => 'is_in', 'value' => [OPEN, PENDING] }
+    { 'condition' => 'status', 'operator' => 'is_in', 'value' => "#{OPEN}, #{PENDING}" }
   end
 
   def unassigned_service_tasks_filter

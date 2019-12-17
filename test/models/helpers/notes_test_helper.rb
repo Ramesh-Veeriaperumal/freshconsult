@@ -63,6 +63,7 @@ module NotesTestHelper
       kind: note.kind
     }
     ret_hash["feedback_id"] = note.survey_result_assoc.id if note.feedback?
+    ret_hash[:response_violated] = note.response_violated if Account.current.next_response_sla_enabled?
     # ASSOCIATION_REFS_BASED_ON_TYPE.each do |ref|
     #   ret_hash["#{ref}_id".to_sym] = note.safe_send(ref).id if note.safe_send(ref)
     # end 

@@ -8,6 +8,7 @@ class Helpdesk::Note < ActiveRecord::Base
   before_create :update_observer_events
   before_create :create_broadcast_message, :if => :broadcast_note?
   before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
+  before_save :update_response_violation, on: :create, if: :update_sla_violation?
   before_save :update_note_changes
   before_save :validate_schema_less_note
 
@@ -109,6 +110,11 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   protected
+
+    def update_response_violation
+      schema_less_note.response_violated = (notable.nr_due_by < (created_at || Time.zone.now))
+      schema_less_note
+    end
 
     def validate_schema_less_note
       return unless human_note_for_ticket?
@@ -499,4 +505,8 @@ class Helpdesk::Note < ActiveRecord::Base
       Helpdesk::TicketNotifier.send_later(:deliver_forward, notable, self) unless only_kbase?
       create_fwd_note_activity(self.to_emails) if create_activity
     end   
+
+    def update_sla_violation?
+      Account.current.next_response_sla_enabled? && notable.nr_due_by.present? && !private? && notable.agent_performed?(user)
+    end
 end

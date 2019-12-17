@@ -19,6 +19,9 @@ module Ember
       before_filter :modify_and_cleanup_language_param, only: [:article_content]
       before_filter :validate_language, only: [:filter, :export, :bulk_update, :untranslated_articles, :article_content, :index, :send_for_review, :approve]
       before_filter :modify_and_cleanup_status_param, only: [:filter]
+      around_filter :use_time_zone, only: [:filter, :export, :untranslated_articles]
+      before_filter :transform_date_field_param, only: [:filter]
+      before_filter :transform_date_field_cname_param, only: [:export]
       before_filter :modify_and_cleanup_status_cname_param, only: [:export]
       before_filter :check_filter_feature, only: [:filter]
       before_filter :check_export_feature, only: [:export]
@@ -33,13 +36,13 @@ module Ember
       before_filter :check_approval_feature, only: [:send_for_review, :approve]
       before_filter :validate_approval_params, only: [:send_for_review]
       before_filter :approval_delegator_validation, only: [:send_for_review]
-      around_filter :use_time_zone, only: [:filter, :export, :untranslated_articles]
       before_filter :load_helpdesk_approval_record, only: [:approve]
 
       decorate_views(decorate_object: [:article_content, :votes])
 
       MAX_IDS_COUNT = 10
       OUTDATED = 'outdated'.freeze
+      DATEOPTIONS = %w[today yesterday this_week 7days this_month 30days 60days 180days].freeze
 
       def index
         @user = User.find_by_id(params[:user_id]) if params[:user_id].present?
@@ -348,6 +351,21 @@ module Ember
 
           params_hash[:outdated] = true
           params_hash.delete(:status)
+        end
+
+        def transform_date_field_cname_param
+          transform_date_field_param(cname_params)
+        end
+
+        def transform_date_field_param(params_hash = params)
+          modify_date_field_param(:created_at, params_hash) if params_hash[:created_at].present?
+          modify_date_field_param(:last_modified, params_hash) if params_hash[:last_modified].present?
+        end
+
+        def modify_date_field_param(date_field_param, params_hash)
+          return unless DATEOPTIONS.include? params_hash[date_field_param]
+
+          params_hash[date_field_param] = get_date_range(params_hash[date_field_param])
         end
 
         # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.

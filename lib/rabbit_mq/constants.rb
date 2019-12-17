@@ -128,7 +128,7 @@ module RabbitMq::Constants
   
   REPORTS_TICKET_KEYS = ["display_id", "id", "account_id", "agent_id", "group_id", 
     "product_id", "company_id", "status", "priority", "source", "requester_id", "ticket_type", 
-    "visible", "sla_policy_id", "association_type", "is_escalated", "fr_escalated", "resolved_at", 
+    "visible", "sla_policy_id", "association_type", "is_escalated", "fr_escalated", "nr_escalated", "resolved_at", 
     "time_to_resolution_in_bhrs", "time_to_resolution_in_chrs", "inbound_count",
     "first_response_by_bhrs", "first_assign_by_bhrs", "created_at", "archive", "actor_type", "actor_id",
     "internal_agent_id", "internal_group_id", 
@@ -153,7 +153,7 @@ module RabbitMq::Constants
   CTI_CALL_KEYS = ["id", "call_sid", "options", "account_id", "responder_id", "requester_id"]
   
   MARKETPLACE_APP_TICKET_KEYS = ["id", "display_id", "subject", "account_id", "user_id", "responder_id", "group_id", "status",
-    "priority", "ticket_type", "source", "requester_id", "due_by", "created_at", "is_escalated", "fr_escalated", "company_id", "tag_names",
+    "priority", "ticket_type", "source", "requester_id", "due_by", "created_at", "is_escalated", "fr_escalated", "nr_escalated", "company_id", "tag_names",
     "product_id", "updated_at"]
 
   COLLABORATION_USER_KEYS = ["id", "account_id", "name", "job_title", "email", "mobile", "phone", "created_at", "deleted", "helpdesk_agent", "is_admin"]

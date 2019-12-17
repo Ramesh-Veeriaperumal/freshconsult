@@ -11,10 +11,12 @@
 		<div class="row-fluid">
 			<div class="span6	">
 				<ul class="breadcrumb">
-				  <li>
+				  <% unless (current_account.disable_old_reports_enabled?) %>
+				   <li>
 				    <%= link_to t('helpdesk_reports.ticket_schedule.all_reports'), reports_url %>
 				    <span class="divider">/</span>
-				  </li>
+				   </li>
+				   <% end %>
 				  <li>
 				  	<%= link_to t('helpdesk_reports.ticket_schedule.schedule_export'), reports_scheduled_exports_path() %>
 				  </li>

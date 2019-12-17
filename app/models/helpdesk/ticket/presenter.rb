@@ -39,6 +39,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     t.add :associates_rdb
     t.add :isescalated, as: :is_escalated
     t.add :fr_escalated
+    t.add :nr_escalated, :if => proc { Account.current.next_response_sla_enabled? }
     t.add :resolution_time_by_bhrs, as: :time_to_resolution_in_bhrs
     t.add :resolution_time_by_chrs, as: :time_to_resolution_in_chrs
     t.add :inbound_count
@@ -56,6 +57,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     t.add :spam
     t.add :trained
     t.add proc { |x| x.utc_format(x.frDueBy) }, as: :fr_due_by
+    t.add proc { |x| x.utc_format(x.nr_due_by) }, as: :nr_due_by, :if => proc { Account.current.next_response_sla_enabled? }
     t.add :to_emails
     t.add :email_config_id
     t.add :deleted

@@ -270,4 +270,20 @@ class NoteTest < ActiveSupport::TestCase
     assert_equal({ 'response_time_in_seconds' => [nil, schema_less_note.response_time_in_seconds],
                    'response_time_by_bhrs' => [nil, schema_less_note.response_time_by_bhrs] }, job['args'][1]['model_changes'])
   end
+
+  def test_note_central_payload_with_response_violation
+    Account.any_instance.stubs(:next_response_sla_enabled?).returns(true)
+    t = create_ticket
+    t.nr_due_by = Time.zone.now
+    t.save
+    CentralPublishWorker::ActiveNoteWorker.jobs.clear
+    note = create_note(source: 2, ticket_id: t.id, user_id: @agent.id, private: false, body: Faker::Lorem.paragraph)
+    payload = note.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_note_pattern(note))
+    assert_equal 1, CentralPublishWorker::ActiveNoteWorker.jobs.size
+    job = CentralPublishWorker::ActiveNoteWorker.jobs.last
+    assert_equal 'note_create', job['args'][0]
+  ensure
+    Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
 end

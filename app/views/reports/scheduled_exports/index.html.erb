@@ -4,8 +4,8 @@
 <% content_for :helpcard do %>
   <%= render :partial => "helpnote" %>
 <% end %>
-
-<% if check_for_auto_ticket_export_feature? %>
+<% unless (current_account.disable_old_reports_enabled?) %>
+ <% if check_for_auto_ticket_export_feature? %>
   <div class="list-page schedule-list-wrapper">
     <div class="list-page-header">
       <%= render :partial => "breadcrumb", :locals => { :index => true, :is_show => false, :title => ''} %>
@@ -65,8 +65,8 @@
       <% end %>
     </div>
   </div>
+ <% end %>
 <% end %>
-
 <% unless @scheduled_activity_export.nil? %>
   <div class="list-page schedule-list-wrapper ticket-activity-list-wrapper">
     <div class="list-page-header">
@@ -108,7 +108,8 @@
     </div>
   </div>
 <% end %>
-<div class="modal hide fade" id="index-delete-modal" aria-hidden="true" role="dialog">
+<% unless (current_account.disable_old_reports_enabled?) %>
+ <div class="modal hide fade" id="index-delete-modal" aria-hidden="true" role="dialog">
   <div class="modal-header">
     <button class="close" data-dismiss="modal"></button>
     <h3><%= t('helpdesk_reports.ticket_schedule.index.delete_title') %></h3>
@@ -120,4 +121,5 @@
     <%= link_to(t('helpdesk_reports.ticket_schedule.index.cancel'), '' ,:class => "btn",:data => { :dismiss => 'modal' } )%>
     <%= link_to(t('helpdesk_reports.ticket_schedule.index.confirm'), '' ,:class => "btn btn-primary index-delete-confirm",:method => 'delete' )%>
   </div>
-</div>
+ </div>
+<% end %>

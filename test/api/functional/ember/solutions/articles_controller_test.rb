@@ -1483,6 +1483,192 @@ module Ember
         match_json([pattern])
       end
 
+      def test_article_filters_with_created_at_option_today
+        author_id = @account.agents.first.id
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id)
+        article = article_meta.solution_articles.first
+        tag = Faker::Lorem.characters(7)
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '2',
+                                         author: author_id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
+                                         created_at: 'today', tags: [tag] }, false)
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, action: :filter)
+        match_json([pattern])
+      end
+
+      def test_article_filters_with_created_at_option_30days
+        author_id = @account.agents.first.id
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id)
+        article = article_meta.solution_articles.first
+        tag = Faker::Lorem.characters(7)
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '2',
+                                         author: author_id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
+                                         created_at: '30days', tags: [tag] }, false)
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, action: :filter)
+        match_json([pattern])
+      end
+
+      def test_article_filters_with_created_at_option_this_week
+        author_id = @account.agents.first.id
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id)
+        article = article_meta.solution_articles.first
+        tag = Faker::Lorem.characters(7)
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '2',
+                                         author: author_id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
+                                         created_at: 'this_week', tags: [tag] }, false)
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, action: :filter)
+        match_json([pattern])
+      end
+
+      def test_article_filters_with_created_at_option_7days
+        author_id = @account.agents.first.id
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id)
+        article = article_meta.solution_articles.first
+        tag = Faker::Lorem.characters(7)
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '2',
+                                         author: author_id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
+                                         created_at: '7days', tags: [tag] }, false)
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, action: :filter)
+        match_json([pattern])
+      end
+
+      def test_article_filters_with_created_at_option_this_month
+        author_id = @account.agents.first.id
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id)
+        article = article_meta.solution_articles.first
+        tag = Faker::Lorem.characters(7)
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '2',
+                                         author: author_id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
+                                         created_at: 'this_month', tags: [tag] }, false)
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, action: :filter)
+        match_json([pattern])
+      end
+
+      def test_article_filters_with_lastmodified_at_option_this_month
+        author_id = @account.agents.first.id
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id)
+        article = article_meta.solution_articles.first
+        tag = Faker::Lorem.characters(7)
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '2',
+                                         author: author_id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
+                                         last_modified: 'this_month', tags: [tag] }, false)
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, action: :filter)
+        match_json([pattern])
+      end
+
+      def test_article_filters_with_created_at_option_60days
+        author_id = @account.agents.first.id
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id)
+        article = article_meta.solution_articles.first
+        tag = Faker::Lorem.characters(7)
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '2',
+                                         author: author_id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
+                                         created_at: '60days', tags: [tag] }, false)
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, action: :filter)
+        match_json([pattern])
+      end
+
+      def test_article_filters_with_created_at_option_180days
+        author_id = @account.agents.first.id
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id)
+        article = article_meta.solution_articles.first
+        tag = Faker::Lorem.characters(7)
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '2',
+                                         author: author_id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
+                                         created_at: '180days', tags: [tag] }, false)
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, action: :filter)
+        match_json([pattern])
+      end
+
+      def test_article_filters_with_last_modified_option
+        author_id = @account.agents.first.id
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id)
+        article = article_meta.solution_articles.first
+        tag = Faker::Lorem.characters(7)
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '2',
+                                         author: author_id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
+                                         last_modified: '30days', tags: [tag] }, false)
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, action: :filter)
+        match_json([pattern])
+      end
+
+      def test_article_filters_with_createdat_and_lastmodified
+        author_id = @account.agents.first.id
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id)
+        article = article_meta.solution_articles.first
+        tag = Faker::Lorem.characters(7)
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '2',
+                                         author: author_id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
+                                         created_at: '30days', last_modified: '60days', tags: [tag] }, false)
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, action: :filter)
+        match_json([pattern])
+      end
+
+      def test_article_filters_with_createdat_invalid
+        author_id = @account.agents.first.id
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id)
+        article = article_meta.solution_articles.first
+        tag = Faker::Lorem.characters(7)
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '2',
+                                         author: author_id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
+                                         created_at: 'invalid', last_modified: '60days', tags: [tag] }, false)
+        assert_response 400
+      end
+
+      def test_article_filters_with_lastmodified_invalid
+        author_id = @account.agents.first.id
+        article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id)
+        article = article_meta.solution_articles.first
+        tag = Faker::Lorem.characters(7)
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '2',
+                                         author: author_id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
+                                         last_modified: 'invalid', tags: [tag] }, false)
+        assert_response 400
+      end
+
       def test_article_filters_with_no_results
         author_id = @account.agents.first.id
         article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id)
@@ -1752,6 +1938,13 @@ module Ember
 
       def test_export_articles_with_filters
         export_params = { portal_id: @portal_id.to_s, author: 1, status: 1, category: ['2'], folder: ['4'], tags: ['Tag1'], article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 204
+        assert_equal(' ', response.body)
+      end
+
+      def test_export_articles_with_created_at_option_filters
+        export_params = { portal_id: @portal_id.to_s, author: 1, status: 1, category: ['2'], folder: ['4'], tags: ['Tag1'], created_at: 'this_week', article_fields: [{ field_name: 'title', column_name: 'Title' }] }
         post :export, construct_params({ version: 'private' }, export_params)
         assert_response 204
         assert_equal(' ', response.body)

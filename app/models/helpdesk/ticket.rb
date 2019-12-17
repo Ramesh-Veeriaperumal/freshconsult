@@ -43,6 +43,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   TICKET_BLACKLISTED_ATTRIBUTES = ['override_exchange_model'].freeze
 
+  SLA_DATETIME_ATTRIBUTES = ['due_by', 'frDueBy', 'nr_due_by'].freeze
+
+  TICKET_SLA_ATTRIBUTES = SLA_DATETIME_ATTRIBUTES | ['isescalated', 'fr_escalated', 'nr_escalated', 'escalation_level']
+
   OBSERVER_ATTR = []
   self.table_name =  "helpdesk_tickets"
 

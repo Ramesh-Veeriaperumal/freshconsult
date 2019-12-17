@@ -345,6 +345,62 @@ module Ember
       Account.current.rollback(:count_service_es_reads)
     end
 
+    def test_widget_data_preview_for_scorecard_with_appointment_start_and_end_time
+      Account.current.launch(:count_service_es_reads)
+      filter_hash = { data_hash: [{ 'condition' => 'flexifields.ff_date01', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_start_time', 'value' => ' - 2019-12-12T23:59:59+00:00' },
+                                  { 'condition' => 'flexifields.ff_date02', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_end_time', 'value' => '2019-12-22T23:59:59+00:00 - ' }] }
+      ticket_filter = create_filter(nil, filter_hash)
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { ticket_filter.id.to_s => { 'total' => 14 } } }))
+      get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: ticket_filter.id)
+      assert_response 200
+      match_json('count' => 14)
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
+
+    def test_widget_data_preview_for_scorecard_with_appointment_start_time
+      Account.current.launch(:count_service_es_reads)
+      filter_hash = { data_hash: [{ 'condition' => 'flexifields.ff_date01', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_start_time', 'value' => ' - 2019-12-12T23:59:59+00:00' },
+                                  { 'condition' => 'flexifields.ff_date02', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_end_time', 'value' => ' ' }] }
+      ticket_filter = create_filter(nil, filter_hash)
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { ticket_filter.id.to_s => { 'total' => 14 } } }))
+      get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: ticket_filter.id)
+      assert_response 200
+      match_json('count' => 14)
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
+
+    def test_widget_data_preview_for_scorecard_with_appointment_end_time
+      Account.current.launch(:count_service_es_reads)
+      filter_hash = { data_hash: [{ 'condition' => 'flexifields.ff_date01', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_start_time', 'value' => ' ' },
+                                  { 'condition' => 'flexifields.ff_date02', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_end_time', 'value' => '2019-12-22T23:59:59+00:00 - ' }] }
+      ticket_filter = create_filter(nil, filter_hash)
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { ticket_filter.id.to_s => { 'total' => 14 } } }))
+      get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: ticket_filter.id)
+      assert_response 200
+      match_json('count' => 14)
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
+
+    def test_widget_data_preview_for_scorecard_with_out_appointment_start_and_end_time
+      Account.current.launch(:count_service_es_reads)
+      filter_hash = { data_hash: [{ 'condition' => 'flexifields.ff_date01', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_start_time', 'value' => ' ' },
+                                  { 'condition' => 'flexifields.ff_date02', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_end_time', 'value' => ' ' }] }
+      ticket_filter = create_filter(nil, filter_hash)
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { ticket_filter.id.to_s => { 'total' => 14 } } }))
+      get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: ticket_filter.id)
+      assert_response 200
+      match_json('count' => 14)
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
+
     def test_widget_data_preview_for_scorecard_with_today_filter
       Account.current.launch(:count_service_es_reads)
       none_hash = { data_hash: [{ 'condition' => 'flexifields.ff_date01', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_start_time', 'value' => 'today' }] }
