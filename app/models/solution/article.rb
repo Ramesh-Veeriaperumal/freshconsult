@@ -40,6 +40,7 @@ class Solution::Article < ActiveRecord::Base
   
   attr_accessor :highlight_title, :highlight_desc_un_html, :tags_changed, :prev_tags, :latest_tags, :session, :unpublishing, :false_delete_attachment_trigger, :attachment_added, :version_through
   alias_attribute :body, :article_body
+  alias_attribute :suggested, :int_01
   attr_accessible :title, :description, :user_id, :status, :import_id, :seo_data, :outdated
 
   validates_presence_of :title, :description, :user_id , :account_id
@@ -263,6 +264,10 @@ class Solution::Article < ActiveRecord::Base
       solution_article_meta.safe_send("#{method}=", (solution_article_meta.safe_send("#{method}") + value))
       super(value) 
     end
+  end
+
+  def suggested!
+    self.class.increment_counter('int_01', self.id)
   end
 
   def reset_ratings

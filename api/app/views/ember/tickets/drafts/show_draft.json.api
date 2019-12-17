@@ -6,6 +6,7 @@ response_hash = {
   from_email: @item.from_email,
   attachments: @attachments.map { |att| AttachmentDecorator.new(att).to_hash },
   inline_attachment_ids: @item.inline_attachment_ids,
+  articles_suggested: @item.articles_suggested,
   saved_at: @item.saved_at
 } if @item
 
