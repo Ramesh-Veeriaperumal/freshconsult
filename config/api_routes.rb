@@ -865,6 +865,8 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resource :rts, controller: 'ember/rts', only: [:show]
+
     get '/plans', to: 'admin/subscriptions#plans'
 
     get '/yearin_review', to: 'ember/year_in_review#index'

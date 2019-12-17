@@ -51,6 +51,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/year_in_review", only: %i[index clear]
     resource :"ember/custom_dashboard", only: %i[widgets_data show index bar_chart_data]
     resource :"settings/helpdesk", only: [:index]
+    resource :'ember/rt', only: [:show]
   end
 
   manage_account do
