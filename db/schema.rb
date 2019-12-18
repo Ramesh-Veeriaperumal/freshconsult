@@ -3407,6 +3407,7 @@ ActiveRecord::Schema.define(version: 20191021120954) do
     t.boolean  "override_bhrs",                   :default => false
     t.integer  "account_id",         :limit => 8
     t.boolean  "escalation_enabled",              :default => true
+    t.text     "sla_target_time"
   end
 
   add_index "sla_details", ["account_id", "sla_policy_id"], :name => "index_account_id_and_sla_policy_id_on_sla_details"
