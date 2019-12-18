@@ -545,28 +545,4 @@ module SolutionHelper
 		end
 	end
 
-    def update_suggested(articles_suggested)
-      return if articles_suggested.blank?
-
-      articles_hash = modify_articles_suggested_hash(articles_suggested)
-      articles_hash.each do |article_id, language_ids|
-        articles_data = Account.current.solution_articles.where(parent_id: article_id, language_id: language_ids)
-        articles_data.each(&:suggested!) if articles_data
-      end
-    end
-
-    private
-
-      def modify_articles_suggested_hash(articles_suggested)
-        articles_hash = {}
-        articles_suggested.each do |article|
-          language_id = Language.find_by_code(article[:language]).id
-          article_id = article[:article_id]
-
-          articles_hash[article_id] = articles_hash.key?(article_id) ? articles_hash[article_id] : []
-          articles_hash[article_id].push(language_id) unless articles_hash[article_id].include?(language_id)
-        end
-
-        articles_hash
-      end
 end

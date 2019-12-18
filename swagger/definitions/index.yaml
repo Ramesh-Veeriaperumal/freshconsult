@@ -267,8 +267,6 @@ solution_folder:
   $ref: ./resource/solution_folder.yaml
 untranslated_articles:
   $ref: ./resource/untranslated_articles.yaml
-articles_suggested:
-  $ref: ./request/solutions/articles_suggested.yaml
 extension_generic:
   $ref: ./resource/extension/generic.yaml
 extended_contact:

@@ -3,7 +3,7 @@ class TicketDraft
   include Redis::RedisKeys
   include Redis::TicketsRedis
 
-  FIELDS = [:body, :quoted_text, :cc_emails, :bcc_emails, :from_email, :attachment_ids, :inline_attachment_ids, :saved_at, :articles_suggested].freeze
+  FIELDS = [:body, :quoted_text, :cc_emails, :bcc_emails, :from_email, :attachment_ids, :inline_attachment_ids, :saved_at].freeze
 
   REDIS_MAX_ATTEMPTS = 3
 
@@ -66,7 +66,6 @@ class TicketDraft
         @from_email = draft_hash['draft_from']
         @attachment_ids = (draft_hash['draft_attachment_ids'] || "").split(';')
         @inline_attachment_ids = (draft_hash['draft_inline_attachment_ids'] || "").split(',')
-        @articles_suggested = JSON.parse(draft_hash['draft_articles_suggested'] || '')
         @saved_at = Time.at(draft_hash['saved_at'].to_i).utc.iso8601 if draft_hash['saved_at']
       end
     end
@@ -80,7 +79,6 @@ class TicketDraft
         'draft_from' => @from_email || '',
         'draft_attachment_ids' => (@attachment_ids || []).join(';'),
         'draft_inline_attachment_ids' => (@inline_attachment_ids || []).join(','),
-        'draft_articles_suggested' => (@articles_suggested || []).to_json,
         'saved_at' => Time.now.to_i
       }
     end

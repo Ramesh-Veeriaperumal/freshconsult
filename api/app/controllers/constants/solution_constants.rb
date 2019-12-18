@@ -32,7 +32,7 @@ module SolutionConstants
   FILTER_FIELDS = %w[portal_id language term page per_page].freeze | FILTER_ATTRIBUTES
   ADVANCED_FILTER_FIELDS = %w[created_at last_modified tags category folder].freeze
 
-  ARTICLE_EXPORT_HEADER_MASTER_LIST = %w[id title live status author_name author_id created_at tags modified_at recent_author_name language_code url hits thumbs_up thumbs_down feedback_count seo_title seo_description folder_id folder_name category_id category_name suggested].freeze
+  ARTICLE_EXPORT_HEADER_MASTER_LIST = %w[id title live status author_name author_id created_at tags modified_at recent_author_name language_code url hits thumbs_up thumbs_down feedback_count seo_title seo_description folder_id folder_name category_id category_name].freeze
   EXPORT_FIELDS = (%w[portal_id language article_fields] | FILTER_ATTRIBUTES).freeze
 
   IGNORE_PARAMS = %w[folder_id attachments_list cloud_file_attachments].freeze
@@ -58,14 +58,13 @@ module SolutionConstants
 
   EXPORT_PRELOAD_OPTIONS = [{ solution_article_meta: [:solution_folder_meta, :solution_category_meta] }, { draft: [:draft_body, :user] }, :user, :tags].freeze
 
-  LOAD_OBJECT_EXCEPT = [:category_folders, :folder_articles, :article_content, :filter, :untranslated_articles, :suggested].freeze
+  LOAD_OBJECT_EXCEPT = [:category_folders, :folder_articles, :article_content, :filter, :untranslated_articles].freeze
 
   INDEX_FIELDS = %w[language prefer_published].freeze
 
   RECENT_ARTICLES_FIELDS = %w[ids user_id language].freeze
   ARTICLE_CONTENT_FIELDS = %w[language].freeze
   REORDER_FIELDS = %w[position portal_id].freeze
-  SUGGESTED_FIELDS = %w[articles_suggested].freeze
 
   KBASE_EMAIL_SOURCE = 'kbase_email'.freeze
   UNTRANSLATED_ARTICLES_FIELDS = %w[portal_id language category folder status page per_page].freeze
