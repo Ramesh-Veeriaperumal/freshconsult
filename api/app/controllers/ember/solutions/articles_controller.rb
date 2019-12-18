@@ -11,7 +11,6 @@ module Ember
       include CloudFilesHelper
       include SanitizeSerializeValues
       include SolutionApprovalConcern
-      include SolutionHelper
 
       SLAVE_ACTIONS = %w[index folder_articles filter untranslated_articles].freeze
 
@@ -37,8 +36,6 @@ module Ember
       before_filter :check_approval_feature, only: [:send_for_review, :approve]
       before_filter :validate_approval_params, only: [:send_for_review]
       before_filter :approval_delegator_validation, only: [:send_for_review]
-      before_filter :validate_suggested_params, only: [:suggested]
-      around_filter :use_time_zone, only: [:filter, :export, :untranslated_articles]
       before_filter :load_helpdesk_approval_record, only: [:approve]
 
       decorate_views(decorate_object: [:article_content, :votes])
@@ -145,11 +142,6 @@ module Ember
         @helpdesk_approver_mapping.approve! ? head(204) : render_errors(@helpdesk_approver_mapping.errors)
       end
 
-      def suggested
-        update_suggested(cname_params[:articles_suggested])
-        head 204
-      end
-
       private
 
         def construct_header_fields(header_fields)
@@ -218,12 +210,6 @@ module Ember
         def validate_export_filter_params
           @constants_klass  = 'SolutionConstants'.freeze
           @validation_klass = 'SolutionArticleFilterValidation'.freeze
-          return unless validate_body_params
-        end
-
-        def validate_suggested_params
-          @constants_klass  = 'SolutionConstants'.freeze
-          @validation_klass = 'ApiSolutions::ArticlesSuggestedValidation'.freeze
           return unless validate_body_params
         end
 

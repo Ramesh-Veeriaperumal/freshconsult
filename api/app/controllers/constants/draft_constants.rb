@@ -1,6 +1,6 @@
 module DraftConstants
   # ControllerConstants
-  SAVE_DRAFT_ARRAY_FIELDS = %w(cc_emails bcc_emails attachment_ids inline_attachment_ids articles_suggested).freeze
+  SAVE_DRAFT_ARRAY_FIELDS = %w(cc_emails bcc_emails attachment_ids inline_attachment_ids).freeze
   SAVE_DRAFT_FIELDS = %w(body quoted_text from_email).freeze | SAVE_DRAFT_ARRAY_FIELDS
   EMAIL_FIELDS = [:cc_emails, :bcc_emails, :from_email].freeze
 

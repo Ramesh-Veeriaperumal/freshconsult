@@ -35,8 +35,7 @@ module SolutionsHelper
         :art_type => params[:art_type],
         :status => params[:status] || 2,
         :user_id => params[:user_id] || @agent.id,
-        :attachments => params[:attachments],
-        :suggested => params[:suggested] || 0
+        :attachments => params[:attachments]
       }).merge(lang_codes: params[:lang_codes]))
     current_user_present = User.current.present?
     Account.current.users.find(params[:user_id] || @agent.id).make_current unless current_user_present
