@@ -9,7 +9,7 @@ module MailboxValidator
 
   private
 
-    MAIL_VALIDATION_TIMEOUT = 20
+    MAIL_VALIDATION_TIMEOUT = 10
 
     def verify_mailbox_details
       imap_verify = if params[:email_config][:imap_mailbox_attributes][:_destroy].to_bool
@@ -159,17 +159,15 @@ module MailboxValidator
       verified        = false
       msg             = ''
       begin
-        smtp              = Net::SMTP.new(args[:server_name], args[:port])
-        smtp.open_timeout = MAIL_VALIDATION_TIMEOUT
-        smtp.read_timeout = MAIL_VALIDATION_TIMEOUT
-        if args[:port].to_i == 465
-          smtp.enable_ssl
-        elsif args[:port].to_i == 587
-          smtp.enable_starttls
+        Timeout.timeout(MAIL_VALIDATION_TIMEOUT, Net::OpenTimeout) do
+          smtp = Net::SMTP.new(args[:server_name], args[:port])
+          if args[:port].to_i == 465
+            smtp.enable_ssl
+          elsif args[:port].to_i == 587
+            smtp.enable_starttls
+          end
+          smtp.start(args[:server_name], args[:user_name], args[:password], args[:authentication]) {}
         end
-        smtp.start(args[:server_name], args[:user_name], args[:password], args[:authentication]) do |smtp|
-        end
-        # flash[:notice] = I18n.t('mailbox.authetication_success')
         verified = true
       rescue Timeout::Error => error
         msg = I18n.t('mailbox.smtp_timed_out')
