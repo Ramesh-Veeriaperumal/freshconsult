@@ -3,6 +3,7 @@ class Company < ActiveRecord::Base
   # Trigger push to ES only if ES fields updated
   #
   def esv2_fields_updated?
+    @model_changes = map_company_custom_field_name_to_column_name
     (@model_changes.keys & esv2_columns).any?
   end
 
@@ -101,6 +102,20 @@ class Company < ActiveRecord::Base
   #
   def search_fields_updated?
     (@model_changes.keys & es_columns).any?
+  end
+
+  def map_company_custom_field_name_to_column_name
+    changes = @model_changes
+    company_custom_field_column_name_mapping = account.company_form.company_fields_from_cache.each_with_object({}) do |entry, hash|
+      hash[entry.name] = entry.column_name
+    end
+    company_custom_field_column_name_mapping.keys.each do |key|
+      if changes.key?(key)
+        changes[company_custom_field_column_name_mapping[key]] = changes[key]
+        changes.delete(key)
+      end
+    end
+    changes.symbolize_keys!
   end
   
   # _Note_: Will be deprecated and remove in near future

@@ -509,6 +509,19 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     assert_response 204
   end
 
+  def test_update_company_with_custom_fields
+    choices = [{ value: 'Choice 1', position: 1 }, { value: 'Choice 2', position: 2 }]
+    cf_params = company_params(type: 'dropdown', field_type: 'custom_dropdown', label: 'Company Dropdown', name: 'cf_company_dropdown', custom_field_choices_attributes: choices)
+    company_field = create_company_field(cf_params)
+    @account.features.es_v2_writes.create
+    company = create_company
+    put :update, construct_params({ version: 'private', id: company.id }, custom_fields: { company_dropdown: choices.last[:value] })
+    assert_response 200
+  ensure
+    company_field.destroy
+    @account.features.es_v2_writes.destroy
+  end
+
   def test_create_with_invalid_email_and_custom_field
     field = { type: 'text', field_type: 'custom_text', label: 'note'}
     params = company_params(field)
