@@ -248,7 +248,11 @@ Sidekiq.configure_server do |config|
       "Roles::UpdateAgentsRoles",
       'AuditLogExport'
     ]
-
+    chain.add Server::SidekiqSober, :redis_connection => $redis_others, 
+      :priority => ['account_id', 'shard_name'], 
+      :required_classes => [
+        'Archive::AccountTicketsWorker'
+    ]
     chain.add Middleware::Sidekiq::Server::Throttler, :required_classes => ["WebhookV1Worker"]
   end
   config.client_middleware do |chain|
