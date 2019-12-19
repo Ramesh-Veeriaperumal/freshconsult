@@ -39,7 +39,7 @@ Helpkit::Application.routes.draw do
       put '/custom_translations', to: 'custom_translations#upload'
       get '/custom_translations', to: 'custom_translations#download'
 
-      resource :freshcaller_account, controller: 'freshcaller_account', only: [:show, :create, :destroy] do
+      resource :freshcaller_account, controller: 'freshcaller_account', only: [:show, :create, :update, :destroy] do
         collection do
           post :link
         end

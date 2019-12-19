@@ -298,7 +298,7 @@ defaults: &defaults
     - [send_domain_changed_mail]
     - [unlink_tickets]
     - [primary_language_change]
-    - [twitter_reply]   
+    - [twitter_reply]
     - [default_data_population]
     - [freshops_service]
     - [ticket_field_central_publish]
@@ -383,6 +383,7 @@ defaults: &defaults
     - [search_analytics_account_reindex]
     - [search_analytics_tickets_reindex]
     - [image_meta_data_delete]
+    - [freshcaller_update_agents]
 
 development:
   <<: *defaults

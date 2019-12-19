@@ -122,7 +122,8 @@ Sidekiq.configure_client do |config|
       'Tickets::UndoSendWorker',
       'Freshid::V2::ProcessEvents',
       "Roles::UpdateAgentsRoles",
-      'AuditLogExport'
+      'AuditLogExport',
+      'Freshcaller::UpdateAgentsWorker'
     ]
   end
 end
@@ -246,7 +247,8 @@ Sidekiq.configure_server do |config|
       "Admin::Sandbox::MergeWorker",
       'Tickets::UndoSendWorker',
       "Roles::UpdateAgentsRoles",
-      'AuditLogExport'
+      'AuditLogExport',
+      'Freshcaller::UpdateAgentsWorker'
     ]
     chain.add Server::SidekiqSober, :redis_connection => $redis_others, 
       :priority => ['account_id', 'shard_name'], 
@@ -346,7 +348,8 @@ Sidekiq.configure_server do |config|
       "Admin::Sandbox::MergeWorker",
       'Tickets::UndoSendWorker',
       "Roles::UpdateAgentsRoles",
-      'AuditLogExport'
+      'AuditLogExport',
+      'Freshcaller::UpdateAgentsWorker'
     ]
   end
 end

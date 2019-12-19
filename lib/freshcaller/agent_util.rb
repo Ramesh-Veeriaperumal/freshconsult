@@ -1,6 +1,7 @@
 module Freshcaller
   module AgentUtil
     include Freshcaller::JwtAuthentication
+    include Freshcaller::Endpoints
 
     FRESHCALLER_ROLE_PRIVILEGES = {
       :account_admin => :manage_account,
@@ -22,25 +23,50 @@ module Freshcaller
       if agent.freshcaller_enabled
         add_response = add_agent_to_freshcaller(agent)
         parsed_response = add_response.parsed_response
-        if fc_agent_created?(add_response) && agent.freshcaller_agent.blank?
+        if fc_agent_created?(add_response)
           return create_freshcaller_agent(agent, parsed_response)
         elsif fc_agent_limit?(parsed_response)
           return agent.errors[:base] << :freshcaller_agent_limit
         elsif fc_agent_already_present?(agent, parsed_response)
           return agent.errors[:base] << :freshcaller_agent_present
+        elsif fc_error?(add_response)
+          return :unable_to_perform
         end
       end
       agent.freshcaller_agent.update_attributes!(fc_enabled: agent.freshcaller_enabled || false)
     end
 
-    def freshcaller_params(agent)
-      {'data'=>{'attributes'=>{'name'=>"#{agent.user.name}"}, 'relationships'=>{'user_emails'=>{'data'=>[{'type'=>'user_emails', 'attributes'=>{'email'=>"#{agent.user.email}", 'primary_email'=>true}}]}, 'roles'=>{'data'=>[{'name'=>deduct_freshcaller_role(agent), 'type'=>'roles'}]}}, 'role'=>deduct_freshcaller_role(agent), 'type'=>'users'}}
+    def add_agent_params(agent)
+      {
+        data: {
+          attributes: {
+            name: agent.user.name
+          },
+          relationships: {
+            user_emails: {
+              data: [{
+                type: 'user_emails',
+                attributes: {
+                  email: agent.user.email,
+                  primary_email: true
+                }
+              }]
+            },
+            roles: {
+              data: [{
+                name: deduct_freshcaller_role(agent),
+                type: 'roles'
+              }]
+            }
+          },
+          role: deduct_freshcaller_role(agent),
+          type: 'users'
+        }
+      }
     end
 
     def add_agent_to_freshcaller(agent)
-      protocol = Rails.env.development? ? 'http://' : 'https://'
-      path = "#{protocol}#{::Account.current.freshcaller_account.domain}/users"
-      freshcaller_request(freshcaller_params(agent), path, :post, email: ::User.current.email)
+      freshcaller_request(add_agent_params(agent), freshcaller_add_agent_url, :post, email: ::User.current.email)
     end
 
     def deduct_freshcaller_role(agent)
@@ -50,8 +76,13 @@ module Freshcaller
       deducted_role || :agent
     end
 
+    def fc_error?(response)
+      response['error_code'].present?
+    end
+
     def fc_agent_limit?(result)
       return unless result.key?('errors')
+
       result['errors'].any? do |kv|
         kv['detail'].include?('Please purchase extra to add new agents')
       end
@@ -59,7 +90,9 @@ module Freshcaller
 
     def fc_agent_already_present?(agent, result)
       return if agent.freshcaller_agent.try(:fc_user_id).present?
+
       return unless result.key?('errors')
+
       result['errors'].any? do |kv|
         kv['detail'].include?('has already been taken')
       end
@@ -70,10 +103,14 @@ module Freshcaller
     end
 
     def create_freshcaller_agent(agent, result)
-      agent.create_freshcaller_agent(
-        fc_enabled: true,
-        fc_user_id: result.try(:[], 'data').try(:[], 'id')
-      )
+      if agent.freshcaller_agent.present?
+        agent.freshcaller_agent.update_attributes(fc_enabled: true, fc_user_id: result.try(:[], 'data').try(:[], 'id'))
+      else
+        agent.create_freshcaller_agent(
+          fc_enabled: true,
+          fc_user_id: result.try(:[], 'data').try(:[], 'id')
+        )
+      end
     end
   end
 end

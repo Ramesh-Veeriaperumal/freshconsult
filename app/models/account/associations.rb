@@ -294,6 +294,7 @@ class Account < ActiveRecord::Base
   #Freshfone
   has_one  :freshfone_account, :class_name => 'Freshfone::Account', :dependent => :destroy
   has_one  :freshcaller_account, :class_name => 'Freshcaller::Account', :dependent => :destroy
+  has_many :freshcaller_agents, class_name: 'Freshcaller::Agent'
   has_many :freshfone_numbers, :conditions =>{:deleted => false}, :class_name => "Freshfone::Number"
   has_many :all_freshfone_numbers, :class_name => 'Freshfone::Number', :dependent => :delete_all
   has_many :ivrs, :class_name => 'Freshfone::Ivr'

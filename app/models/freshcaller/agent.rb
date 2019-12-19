@@ -4,6 +4,7 @@ module Freshcaller
     self.primary_key = :id
 
     belongs_to_account
-    belongs_to :agent
+    belongs_to :agent, class_name: '::Agent'
+    has_one :user, through: :agent
   end
 end
