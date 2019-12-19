@@ -13584,6 +13584,60 @@ Yes, we can accomodate vegan meals. Regarding Labadee though, we can't customize
 Thanks,<br>
 Rebecca<br>
 Saul's support"
+      fsm_base_tickets:
+        - subject: "Solar Panel Maintenance"
+          description: "The wall battery is not charging enough during the day and I am running out of power at night. Is there a problem with the battery or is it a problem with the solar panel?
+                       For context, I have the Sonne 420 (SM289918) which I bought back in October 2013. The Model number is 12009. Will this service be covered by warranty? I remember the sales rep saying there was a 10-year warranty on the panels. "
+          replies:
+            - "Hey Bob, <br><br>
+              I'm sorry to hear you've been having reliability issues with the power source after sundown. We're dispatching one of our field technicians to take a look at the installation on Monday. From what I see, it could be a problem with: <br>
+              1. The Battery <br>
+              2. The Solar Panel itself <br>
+              3. Connection between the two <br>
+              4. Drain due to a poor device connection somewhere in the circuit. <br>
+              Our field technician will diagnose and let you know what steps we take to solve this as soon as possible."
+          service_tasks:
+            - subject: "Battery Health Diagnosis"
+              description: "Customer is having issues with battery power at night. Check battery health levels as well as solar panel connectivity for issues. Run a solar panel efficiency test just in case. <br>
+                           Possible Battery issue. <br>
+                           Product Details: <br>
+                           Sonne 420 (SM289918) <br>
+                           Model #12009 <br>
+                           Date of Purchase: 12th October 2013 <br>
+                           Battery Warranty: Expired <br>
+                           Panel Warranty: Upto 11th October 2023 "
+
+        - subject: "WiFi disconnected"
+          description: "My wifi has been down for two days now and there has been no response from your team on Twitter. Fix this soon or I'll move to a different ISP. I'm paying 120 dollars a month to be a priority service customer with Fiber connection as well. The router is a Black one from a couple of years back when I originally got the connection and only one of the lights on the router blinks now."
+          replies:
+            - "Hey Emily, <br><br>
+               We apologize for not having responded sooner. One of our senior field techs will be meeting you tomorrow at 3 in the evening to get you back online as soon as possible. <br><br>
+               Thank you for your patience. "
+          service_tasks:
+            - subject: "Router issues"
+              description: "Customer has had no internet connectivity for two days. Contact test shows other apartments in her building are online and functioning but her router is unreachable. Could be a cable problem between the distribution box and her router. <br><br>
+                           Product Details:<br>
+                           Router: Black 9, model #78221<br>
+                           Connection: Fiber - 200m cable<br>
+                           Waiting for 2 days. High priority issue. "
+
+        - subject: "Problem with the washing machine"
+          description: "A few minutes into the washing cycle, my washing machine makes a loud whirring noise and comes to a grinding halt. This has happened a few times. Oddly enough, I've noticed this happening in the evenings. The whirring noise rarely occurs in the morning. Can there be a reason for it? Please send someone to check as soon as you can."
+          replies:
+            - "Hi Johnny, <br><br>
+              Sounds like a drum issue to me, I would have to send a technician to your house to check it out. Could you pls confirm if ​this is your address: 7, Clinton St, Brooklyn Heights <br><br>
+              Our records show that you live in a block of apartments. Can you tell me which floor your apartment is on? We'd like to know if a water pressure test needs to be conducted as well and if that's the case, I'll have to inform the field technician to bring the right equipment to your place to solve that issue. <br><br>
+              Also, please let us know a few timeslots tomorrow when our technician can come visit. <br><br>        ​
+              Thanks."
+          service_tasks:
+            - subject: "Washing machine maintenance / drum replacement"
+              description: "A few minutes into the washing cycle, the washing machine makes a loud whirring noise and comes to a grinding halt. This has happened a few times.<br><br>
+                           Possible drum issue.<br><br>
+                           Product details:<br>
+                           Mogra 360 (MG101121)<br>
+                           Model #23412<br>
+                           Warranty upto June 2020"
+
   help_widget:
     name: "Welcome to %{name} Support"
     message: "Welcome to Support"

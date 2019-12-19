@@ -35,7 +35,7 @@ class Fixtures::DefaultForumTopics
 
       topic[:replies].each do | reply | 
         increment_created_at
-        post_user = create_user(reply[:email], reply[:name])
+        post_user = create_user(reply[:email], reply[:name], reply)
         create_post(current_topic, post_user, forum_content[topic[:data]][:replies][reply[:data]])
       end
     end
@@ -45,13 +45,15 @@ class Fixtures::DefaultForumTopics
     @account ||= Account.current
   end
 
-  def create_user(user_email,user_name)
+  def create_user(user_email, user_name, options = {})
     user = account.users.find_by_email(user_email)
     return user if user.present?
 
     user = account.users.create(
       email: user_email,
-      name: user_name
+      name: user_name,
+      phone: options[:phone],
+      address: options[:address]
       )
   end
 
