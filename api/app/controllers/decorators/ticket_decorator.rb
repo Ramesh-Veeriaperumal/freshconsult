@@ -386,6 +386,7 @@ class TicketDecorator < ApiDecorator
       group_id: group_id
     }
     ret_hash.merge!(whitelisted_properties_for_activities)
+    ret_hash[:requester] = requester_info
     ret_hash
   end
 

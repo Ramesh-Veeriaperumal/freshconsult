@@ -419,6 +419,7 @@ module UsersTestHelper
       source: obj.source,
       created_at: obj.created_at.try(:utc).try(:iso8601)
     }
+    ret_hash[:requester] = TicketDecorator.new(obj, sideload_options: ['requester']).requester_info
     ret_hash.merge!(whitelisted_properties_for_activities(obj))
     ret_hash
   end
