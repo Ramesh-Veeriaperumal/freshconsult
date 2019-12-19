@@ -73,9 +73,9 @@ module ChannelIntegrations::Commands::Services
 
         user_id = is_ticket ? payload[:data][:requester_id] : payload[:data][:user_id]
         set_current_user(user_id)
-        facebook_page_present?(payload[:context][:facebook_page_id])
+        page_id = fetch_page_id(payload[:context][:facebook_page_id])
         payload[:data].merge!(get_source_hash(payload[:owner], is_ticket))
-        payload[:data][:fb_post_attributes] = build_fb_post_attributes(payload, is_ticket)
+        payload[:data][:fb_post_attributes] = build_fb_post_attributes(payload, page_id, is_ticket)
         payload
       end
 
@@ -108,8 +108,11 @@ module ChannelIntegrations::Commands::Services
         user.make_current
       end
 
-      def facebook_page_present?(page_id)
-        raise 'Facebook Page Not found' if current_account.facebook_pages.find_by_page_id(page_id).blank?
+      def fetch_page_id(page_id)
+        facebook_page = current_account.facebook_pages.find_by_page_id(page_id)
+        raise 'Facebook Page Not found' if facebook_page.nil?
+
+        facebook_page.id
       end
 
       def get_source_hash(owner, is_ticket)
@@ -120,8 +123,7 @@ module ChannelIntegrations::Commands::Services
                   end }
       end
 
-      def build_fb_post_attributes(payload, is_ticket=true)
-        context = payload[:context]
+      def build_fb_post_attributes(payload, page_id, is_ticket = true)
         fb_post_types = ::Facebook::Constants::POST_TYPE_CODE
         if is_ticket
           post_type = fb_post_types[:comment]
@@ -132,13 +134,13 @@ module ChannelIntegrations::Commands::Services
         end
 
         {
-            :post_id          => context[:post_id],
-            :facebook_page_id => context[:facebook_page_id],
-            :parent_id        => parent_id,
-            :post_attributes  => {
-                :can_comment => true,
-                :post_type   => post_type
-            }
+          post_id: payload[:context][:post_id],
+          facebook_page_id: page_id,
+          parent_id: parent_id,
+          post_attributes: {
+            can_comment: true,
+            post_type: post_type
+          }
         }
       end
 
