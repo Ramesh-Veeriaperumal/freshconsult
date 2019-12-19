@@ -125,7 +125,7 @@ module Marketplace::HelperMethods
 
   def addon_added_to_subscription?
     subscription_mkp_addons = Billing::Subscription.new.retrieve_subscription(Account.current.id).subscription.addons
-    subscription_mkp_addons.present? ? subscription_mkp_addons.map { |addon| addon.id }.include?(@extension['addon']['id']) : false
+    subscription_mkp_addons.present? ? subscription_mkp_addons.map(&:id).include?(addon_details['addon_id']) : false
   end
     
 end
