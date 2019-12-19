@@ -10,11 +10,21 @@ class ConversationDecorator < ApiDecorator
   def initialize(record, options)
     super(record)
     @ticket = options[:ticket]
+    @ticket_decorator = options[:ticket_decorator]
+    @send_and_set = options[:send_and_set]
     @sideload_options = options[:sideload_options] || []
   end
 
   def public_json
     construct_json.merge(source_additional_info: source_additional_info)
+  end
+
+  def send_and_set
+    @send_and_set
+  end
+
+  def ticket_hash
+    @ticket_decorator.to_show_hash
   end
 
   def conversation_json

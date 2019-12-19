@@ -328,22 +328,8 @@ class TicketsController < ApiApplicationController
       reset_nested_fields_params if params[cname][:custom_field] && update?
     end
 
-    def prepare_tags
-      tags = sanitize_tags(params[cname][:tags]) if create? || params[cname].key?(:tags)
-      params[cname][:tags] = construct_tags(tags) if tags
-    end
-
     def constants_class
       ApiTicketConstants.to_s.freeze
-    end
-
-    def validation_class
-      service_task = Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE
-      if params[cname][:type] == service_task || (@item && @item.ticket_type == service_task)
-        FsmTicketValidation
-      else
-        TicketValidation
-      end
     end
 
     def remove_unrelated_fields?
@@ -401,43 +387,6 @@ class TicketsController < ApiApplicationController
       end
     end
 
-    def validate_params
-      # We are obtaining the mapping in order to swap the field names while rendering(both successful and erroneous requests), instead of formatting the fields again.
-      @ticket_fields = ticket_fields_scoper
-      @name_mapping = TicketsValidationHelper.name_mapping(@ticket_fields) # -> {:text_1 => :text}
-      # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
-      custom_fields = @name_mapping.empty? ? [nil] : @name_mapping.values
-      field = "#{constants_class}::#{original_action_name.upcase}_FIELDS".constantize | ['custom_fields' => custom_fields]
-      params[cname].permit(*field)
-      set_default_values
-      params_hash = params[cname].merge(statuses: Helpdesk::TicketStatus.status_objects_from_cache(current_account), ticket_fields: @ticket_fields)
-      additional_params = get_additional_params
-      ticket = validation_class.new(params_hash, @item, string_request_params?, additional_params)
-      render_custom_errors(ticket, true) unless ticket.valid?(original_action_name.to_sym)
-    end
-
-    def ticket_fields_scoper
-      Account.current.ticket_fields_from_cache
-    end
-
-    def get_additional_params
-      # placeholder function to pass additional params into ticket validation
-      { version: params[:version] }
-    end
-
-    def set_default_values
-      if create? && public_api? && api_current_user.tickets_api_relaxation?
-        Rails.logger.info "skip_mandatory_checks is enabled for #{Account.current.id}"
-        params[cname][:status] = ApiTicketConstants::OPEN unless params[cname][:status]
-        params[cname][:priority] = ApiTicketConstants::PRIORITIES[0] unless params[cname][:priority]
-      end
-      if compose_email?
-        params[cname][:status] = ApiTicketConstants::CLOSED unless params[cname].key?(:status)
-        params[cname][:source] = TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]
-      end
-      ParamsHelper.modify_custom_fields(params[cname][:custom_fields], @name_mapping.invert) # Using map instead of invert does not show any perf improvement.
-    end
-
     def assign_protected
       @item.build_schema_less_ticket unless @item.schema_less_ticket
       @item.account = current_account
@@ -485,17 +434,8 @@ class TicketsController < ApiApplicationController
       }
     end
 
-    def assign_ticket_status
-      @item[:status] = @status if defined?(@status)
-      @item[:status] ||= OPEN
-    end
-
     def restore?
       @restore ||= current_action?('restore')
-    end
-
-    def compose_email?
-      @compose_email ||= params.key?('_action') ? params['_action'] == 'compose_email' : action_name.to_s == 'compose_email'
     end
 
     def original_action_name

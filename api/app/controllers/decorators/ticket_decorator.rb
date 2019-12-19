@@ -247,7 +247,7 @@ class TicketDecorator < ApiDecorator
     cloud_files.map { |cf| CloudFileDecorator.new(cf).to_hash }
   end
 
-  def archive_hash
+  def archive_ticket_hash
     return nil unless private_api? && Account.current.features_included?(:archive_tickets) && record.archive_child
     archive_ticket = record.archive_ticket
     {
@@ -346,6 +346,27 @@ class TicketDecorator < ApiDecorator
     result.merge!(predict_ticket_fields_hash) if ticket_properties_suggester_enabled?
     result.merge!(next_response_hash) if Account.current.next_response_sla_enabled?
     result
+  end
+
+  def to_show_hash
+    response_hash = to_hash
+    response_hash[:description] = ticket_body.description_html
+    response_hash[:description_text] = ticket_body.description
+
+    [:requester, :stats, :conversations, :deleted, :freshfone_call, :fb_post, :tweet, :ticket_topic, :ebay, :email_spam_data, :sender_email, :meta].each do |attribute|
+      value = safe_send(attribute)
+      response_hash[attribute] = value if value
+    end
+
+    [:attachments, :cloud_files, :company, :sla_policy, :archive_ticket].each do |attribute|
+      value = safe_send("#{attribute}_hash")
+      response_hash[attribute] = value if value
+    end
+
+    # response_hash[:meta] = meta
+    response_hash[:collaboration] = collaboration_hash if include_collab?
+    response_hash[:meta][:secret_id] = generate_secret_id if Account.current.agent_collision_revamp_enabled?
+    response_hash
   end
 
   def to_search_hash
@@ -494,6 +515,10 @@ class TicketDecorator < ApiDecorator
       meta_info['time'] = Time.parse(meta_info['time']).utc.iso8601
     end
     meta_info
+  end
+
+  def include_collab?
+    Account.current.collaboration_enabled? || (Account.current.freshconnect_enabled? && Account.current.freshid_integration_enabled? && (@item.app_current? || User.current.freshid_authorization))
   end
 
   def freshfone_enabled?
