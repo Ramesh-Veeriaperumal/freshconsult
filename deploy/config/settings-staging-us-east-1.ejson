@@ -941,7 +941,8 @@
         "_get_domains_url": "api/v1/whitelabel/domains/all/",
         "_configure_domain_url": "api/v1/whitelabel/configure",
         "_verify_domain_url": "api/v1/whitelabel/domains/verify",
-        "_remove_domain_url": "api/v1/whitelabel/domains"
+        "_remove_domain_url": "api/v1/whitelabel/domains",
+        "_lang_detect_path": "api/v1/detect/lang"
       },
       "fdadmin_api": {
         "authorization_password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:HBaaizw+pAM8R76aOdB0fK+SwYsW29aK:oKJcHRFNBy/cnVEoPUR6oSdYG/VGIwv54qBXTsrpRXO3Uxc=]",

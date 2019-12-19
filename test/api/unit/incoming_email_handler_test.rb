@@ -779,7 +779,7 @@ module Helpdesk
         assert_equal account.language, user.language
         ensure
           account.rollback(:prevent_lang_detect_for_spam)
-      end 
+      end
       
       def test_lang_detect_for_non_spam
         account = Account.current
@@ -792,7 +792,7 @@ module Helpdesk
         Helpdesk::DetectUserLanguage.stubs(:language_detect).returns(['fr', 1200]) 
         Helpdesk::DetectUserLanguage.set_user_language!(user, text)
         assert_equal 'fr', user.language
-      end  
+      end
 
       def test_incoming_email_check_support_emails_from
         id = Faker::Lorem.characters(50)

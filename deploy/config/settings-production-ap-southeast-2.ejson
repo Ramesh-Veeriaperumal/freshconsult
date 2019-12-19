@@ -132,9 +132,11 @@
       },
       "fd_email_service": {
         "key": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:Q9JYmDtbWK0nrNafUG9fqiSBGc1+T2z4:j9KXTTHEDyq0rqIxYVHtFnTlBLch8inuy3NuhMFO/wbGCllg9LRBlOCG3J60gTj2]",
+        "lang_key": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:Q9JYmDtbWK0nrNafUG9fqiSBGc1+T2z4:j9KXTTHEDyq0rqIxYVHtFnTlBLch8inuy3NuhMFO/wbGCllg9LRBlOCG3J60gTj2]",
         "incoming_email_api_key1": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:pMM8crVRs8EPRuzgymcLG7zu2uKZH9V2:al9fEblmRIMELTlwhJ4FyQrbJc2u62a99EUHGMc4yE14IF4wfBHDPoQk15o1xw==]",
         "incoming_email_api_key2": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:skyBOALVoXN+5l+mVhd+vzVG/f0/ucpr:ou9F/uGVrYmDFAXm77tpc/Eo38sTRT1h6AU0THCGsPCbiAP1riyGJW1fm85+1w==]",
         "_host": "https://mailservice.freshdesk.com",
+        "_lang_host": "https://mailservice.freshdesk.com",
         "_timeout": "60",
         "_url": "api/v1/email/send",
         "_account_validate_url": "api/v1/account/validate/",
@@ -148,7 +150,8 @@
         "_get_domains_url": "api/v1/whitelabel/domains/all/",
         "_configure_domain_url": "api/v1/whitelabel/configure",
         "_verify_domain_url": "api/v1/whitelabel/domains/verify",
-        "_remove_domain_url": "api/v1/whitelabel/domains"
+        "_remove_domain_url": "api/v1/whitelabel/domains",
+        "_lang_detect_path": "api/v1/detect/lang"
       },
       "product_feedback": {
         "api_key": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:ozXZlIiw5YrHDZ6aUPXmvFhMF2B0shv2:g0lCZ6B0t7o5gMGwVWbbyqufAmyP6AfeISHU+99khZnAPB2p]",
