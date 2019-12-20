@@ -167,7 +167,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
             end
             text_part
           end
-          if (user.blank? && !account.restricted_helpdesk?)
+          if (user.blank? && (account.sane_restricted_helpdesk_enabled? || !account.restricted_helpdesk?))
             email_processing_log "Email Processing Failed: Blank User!", to_email[:email]
             return processed_email_data(PROCESSED_EMAIL_STATUS[:blank_user], account.id)
           end

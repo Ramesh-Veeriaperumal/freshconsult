@@ -1153,6 +1153,25 @@ module Helpdesk
                                                           email: 'support@localhost.freshpo.com')
         assert_equal success_response[:processed_status], 'success'
       end
+
+      def test_email_perform_to_throw_exception_with_sane_restricted_helpdesk
+        params = default_params(Faker::Lorem.characters(50), 'Test Subject')
+        ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
+        Helpdesk::Email::SpamDetector.any_instance.stubs(:check_spam).returns(spam: nil)
+        account = Account.current
+        account.revoke_feature :domain_restricted_access
+        account.add_feature :restricted_helpdesk
+        account.launch :allow_wildcard_ticket_create
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
+        failed_response = incoming_email_handler.perform(domain: 'localhost.freshpo.com',
+                                                         email: Faker::Internet.email)
+        assert_equal failed_response[:processed_status], 'No User'
+      ensure
+        account.rollback :allow_wildcard_ticket_create
+        account.revoke_feature :restricted_helpdesk
+        Helpdesk::Email::SpamDetector.any_instance.unstub :check_spam
+        ShardMapping.unstub :fetch_by_domain
+      end
     end
   end
 end
