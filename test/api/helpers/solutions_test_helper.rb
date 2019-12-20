@@ -1,4 +1,8 @@
+require Rails.root.join('test', 'api', 'helpers', 'solutions_approvals_test_helper.rb')
+
 module SolutionsTestHelper
+  include SolutionsApprovalsTestHelper
+
   def solution_category_pattern(expected_output = {}, _ignore_extra_keys = true, category)
     result = {
       id: expected_output[:id] || category.parent.id,
@@ -131,6 +135,7 @@ module SolutionsTestHelper
   end
 
   def private_api_solution_article_pattern(article, expected_output = {}, ignore_extra_keys = true, user = nil)
+    article.reload
     draft = expected_output[:exclude_draft] ? nil : article.draft
     ret_hash = if draft
                  solution_article_draft_pattern(expected_output, ignore_extra_keys, article, draft)
@@ -156,7 +161,12 @@ module SolutionsTestHelper
       ret_hash[:last_modifier] = ret_hash[:draft_modified_by] || ret_hash[:modified_by]
       ret_hash[:last_modified_at] = ret_hash[:draft_modified_at] || ret_hash[:modified_at]
     end
-    ret_hash[:translation_summary] = translation_summary_pattern(article.parent) if @account.multilingual?
+    ret_hash[:translation_summary] = translation_summary_pattern(article.parent) if @account.multilingual? && expected_output[:action] != :filter && !expected_output[:exclude_translation_summary]
+
+    if Account.current.article_approval_workflow_enabled?
+      ret_hash[:approval_data] = { approval_status: approval_record(article.parent).try(:approval_status), approver_id: approver_record(article.parent).try(:approver_id), user_id: approval_record(article.parent).try(:user_id) }
+    end
+
     ret_hash
   end
 
@@ -305,8 +315,10 @@ module SolutionsTestHelper
   def quick_views_pattern(portal_id = nil, language_id = Account.current.language_object.id)
     @categories = fetch_categories(portal_id, language_id)
     @articles = fetch_articles(language_id)
-    @drafts =  fetch_drafts
+    @drafts = fetch_drafts
+    @approvals = fetch_approvals
     @my_drafts = @drafts.empty? ? [] : @drafts.where(user_id: User.current.id)
+    @my_drafts = fetch_my_drafts if Account.current.article_approval_workflow_enabled?
     @published_articles = fetch_published_articles
     @all_feedback = Account.current.article_tickets.select(:id).where(article_id: get_article_ids(@articles), ticketable_type: 'Helpdesk::Ticket').reject { |article_ticket| article_ticket.ticketable.spam_or_deleted? }
     @my_feedback = Account.current.article_tickets.select(:id).where(article_id: get_article_ids(@articles.select { |article| article.user_id == User.current.id }), ticketable_type: 'Helpdesk::Ticket').reject { |article_ticket| article_ticket.ticketable.spam_or_deleted? }
@@ -315,7 +327,7 @@ module SolutionsTestHelper
     result = {
       all_categories: @categories.count,
       all_articles: @articles.count,
-      all_drafts: @drafts.count,
+      all_drafts: @drafts.count - @approvals.count,
       my_drafts: @my_drafts.count,
       published_articles: @published_articles.count,
       all_feedback: @all_feedback.count,
@@ -327,6 +339,10 @@ module SolutionsTestHelper
     if language_id != Language.for_current_account.id
       result[:outdated] = @articles.select { |article| article.outdated == true }.size
       result[:not_translated] = @article_meta.size - @articles.size
+    end
+    if Account.current.article_approval_workflow_enabled?
+      result[:in_review_articles] = Account.current.helpdesk_approvals.where(approvable_id: get_article_ids(@articles), approvable_type: 'Solution::Article', approval_status: Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review]).count
+      result[:approved_articles] = Account.current.helpdesk_approvals.where(approvable_id: get_article_ids(@articles), approvable_type: 'Solution::Article', approval_status: Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]).count
     end
     result
   end
@@ -356,6 +372,19 @@ module SolutionsTestHelper
     return [] if @articles.empty?
     article_ids = get_article_ids(@articles)
     Account.current.solution_drafts.select([:id, :user_id]).where(article_id: article_ids)
+  end
+
+  def fetch_approvals
+    return [] if @articles.empty?
+
+    article_ids = get_article_ids(@articles)
+    Account.current.helpdesk_approvals.select([:id, :user_id]).where(approvable_id: article_ids)
+  end
+
+  def fetch_my_drafts
+    return [] if @my_drafts.empty?
+
+     @my_drafts.joins('LEFT JOIN helpdesk_approvals ON solution_drafts.article_id = helpdesk_approvals.approvable_id').where('helpdesk_approvals.id is NULL')
   end
 
   def get_article_ids(articles)
@@ -425,23 +454,15 @@ module SolutionsTestHelper
   end
 
   def translation_summary_pattern(article_meta)
-    article_meta.reload
     result = {}
-    @account.all_language_objects.each do |language|
-      # TODO : fix this
-      # language_key = language.to_key
-      # result[language.code] = {
-      #   available: article_meta.safe_send("#{language_key}_available?"),
-      #   draft_present: article_meta.safe_send("#{language_key}_draft_present?"),
-      #   outdated: article_meta.safe_send("#{language_key}_outdated?"),
-      #   published: article_meta.safe_send("#{language_key}_published?")
-      # }
-      result[language.code] = {
-        available: Object,
-        draft_present: Object,
-        outdated: Object,
-        published: Object
-      }
+    article_meta.solution_articles.preload(:draft, :helpdesk_approval).each do |article|
+      info = { available: true, draft_present: article.draft_present?, outdated: article.outdated, published: article.published? }
+      info[:approval_status] = article.helpdesk_approval.try(:approval_status) if Account.current.article_approval_workflow_enabled?
+      result[article.language_code] = info
+    end
+
+    Account.current.all_language_objects.each do |language|
+      result[language.code] = { available: false, draft_present: false, outdated: false, published: false, approval_status: nil } unless result.key?(language.code)
     end
     result
   end

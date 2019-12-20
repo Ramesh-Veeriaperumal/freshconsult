@@ -19,7 +19,7 @@ module Admin::Sla::Reminder
       }.inject ({}) do |sp_hash, sp|sp_hash[sp.id] = sp; sp_hash end
 
       # Response Reminder
-      if (!response_reminder_rules.empty? && account.email_notifications.response_sla_reminder.first.agent_notification?)
+      if response_reminder_rules.present?
         response_reminder_start_time = curr_time
         reminder_response_tickets = escalate_reminder(response_reminder_rules, "response")
         response_reminder_time_taken = curr_time - response_reminder_start_time
@@ -27,7 +27,7 @@ module Admin::Sla::Reminder
       end
 
       #Resolution Reminder
-      if (!resolution_reminder_rules.empty? && account.email_notifications.resolution_sla_reminder.first.agent_notification?)
+      if resolution_reminder_rules.present?
         reminder_tickets_start_time = curr_time
         reminder_resolution_tickets = escalate_reminder(resolution_reminder_rules, "resolution")
         reminder_ticket_time_taken = curr_time - reminder_tickets_start_time
@@ -41,7 +41,7 @@ module Admin::Sla::Reminder
           e.escalations[:reminder_next_response].nil? 
         }.inject ({}) do |sp_hash, sp|sp_hash[sp.id] = sp; sp_hash end
 
-        if (nr_reminder_rules.present? && account.email_notifications.next_response_sla_reminder.first.agent_notification?)
+        if nr_reminder_rules.present?
           nr_reminder_tickets_start_time = curr_time
           nr_reminder_resolution_tickets = escalate_reminder(nr_reminder_rules, 'next_response')
           nr_reminder_time_taken = curr_time - nr_reminder_tickets_start_time

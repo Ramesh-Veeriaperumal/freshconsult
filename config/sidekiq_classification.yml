@@ -44,6 +44,9 @@
     - gateway_facebook_page
     - kbase_article_versions_worker
     - rts_account_create
+  
+  :bulk_api:
+    - bulk_api_jobs
 
   :central_realtime:
     - central_publish

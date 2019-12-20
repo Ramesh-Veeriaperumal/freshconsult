@@ -207,6 +207,18 @@ module Ember
         match_json(quick_views_pattern(portal.id, language.id))
       end
 
+      def test_quick_views_with_article_approval_workflow_enabled
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        solution_test_setup
+        create_article(article_params)
+        portal = Account.current.main_portal
+        get :quick_views, controller_params(version: 'private', portal_id: portal.id, language: @account.language)
+        assert_response 200
+        match_json(quick_views_pattern(portal.id, Language.find_by_code(@account.language).id))
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
       private
 
         def article_params(options = {})

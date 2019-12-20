@@ -7,8 +7,7 @@ module RabbitMq::Subscribers::Tickets::Iris
                              :status, :product_id, :owner_id,
                              :isescalated, :fr_escalated, :spam, :deleted,
                              :long_tc01, :long_tc02, :internal_group_id, :internal_agent_id,
-                             :association_type, :due_by
-                           ]
+                             :association_type, :due_by ] + SLA_KEYS.map(&:to_sym)
 
   def mq_iris_ticket_properties(action)
     to_rmq_json(iris_keys, action)
@@ -22,10 +21,10 @@ module RabbitMq::Subscribers::Tickets::Iris
     { 
       :model_changes => @model_changes ? iris_valid_changes : {} ,
       :action_in_bhrs => action_in_bhrs_flag
-    }
+    }.merge(sla_notification_params.present? ? { additional_info: { notify_agents: agents_to_notify_sla } } : {})
   end
 
-  def mq_iris_valid(action, model) 
+  def mq_iris_valid(action, model)
     valid = (iris_valid_model?(model) && !archive && (create_action?(action) || iris_non_archive_destroy?(action) || iris_valid_changes.any?))
     Rails.logger.debug "#{Account.current.id} --- #{model} --- #{valid}"
     valid
@@ -44,8 +43,12 @@ module RabbitMq::Subscribers::Tickets::Iris
   end
   
   def iris_valid_changes
-    changes = @model_changes.select{|k,v| PROPERTIES_TO_CONSIDER.include?(k) }
-    changes
+    changes = @model_changes.dup
+    @model_changes.each_pair do |k, v|
+      column = Helpdesk::SchemaLessTicket::COLUMN_TO_ATTRIBUTE_MAPPING[k]
+      changes[column] = changes.delete(k) if column.present? && SLA_KEYS.include?(column.to_s)
+    end
+    changes.select { |k, v| PROPERTIES_TO_CONSIDER.include?(k) }
   end
 
   def iris_valid_model?(model)
@@ -58,5 +61,4 @@ module RabbitMq::Subscribers::Tickets::Iris
       action_occured_in_bhrs?(Time.zone.now, group)
     end
   end
-
 end

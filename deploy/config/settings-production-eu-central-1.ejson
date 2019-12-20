@@ -1241,6 +1241,9 @@
         "_method": "post",
         "_timeout": "2"
       },
+      "channel_v2_api": {
+        "jwt_secret": "EJ[1:iav2NCibk4ZMxr1UAVRvLlknhLyHONM7YewWQ0XrJXg=:delhZPZMpSTZpAqq4erAcaaA6fA40Dp7:VrwWS4dXUBhqVPg3dxKHrg3epxGtZR1O6UXB7qkd/I5KY1rBziMSB/5f2oEKu5FB]"
+      },
       "channel_framework": {
         "_dedup_interval": "1440",
         "_hop_interval": "5",
@@ -1437,10 +1440,6 @@
         "_port": 18379,
         "_timeout": 5
       },
-      "falcon_ui": {
-        "_widget_domain": "https://euc-widget.freshworks.com",
-        "_data_center": "eu-central"
-      },
       "fluffy": {
         "_host": "fluffy-euc.internal.podeucentral1.freshdesk.com",
         "username": "EJ[1:XtNjD7f+/Eaks0L0dhqM4fajqte5a1OBfP78KuLnfFM=:92mwKHf3rlR5lgiEiuApzHaC8qbtzRhg:/dbTSk1mrTuBeWRmfNnQ0X7/CCuoMGSBjQ==]",
@@ -1531,7 +1530,15 @@
       "_site_announcement": "",
       "_integrations_url": "https://eucentral1login.freshdesk.com",
       "_widget_domain": "https://euc-widget.freshworks.com/widgets",
-      "_color": "blue"
+      "_color": "blue",
+      "_data_center": "eu-central",
+      "_sentry_dsn": "https://932f384a375f45db84667227e44ccaf1@sentry.io/1189802",
+      "_announcement_account_url": "productupdates.freshdesk.com",
+      "_anonymous_signup_redirect_url": "https://freshdesk.com/trial/thank-you",
+      "_freshconnectAssets": {
+        "_script_asset_url": "https://assets1.freshconnect.io/freshconnect-sidebar/freshconnect-sidebar.js",
+        "_base_url": "https://api.freshconnect.io"
+      }
     },
     "aws_config": {
     },

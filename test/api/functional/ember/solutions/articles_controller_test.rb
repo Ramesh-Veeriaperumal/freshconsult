@@ -1474,7 +1474,7 @@ module Ember
         tag = Faker::Lorem.characters(7)
         create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
                                  allow_skip: true)
-        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '2',
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:published],
                                          author: author_id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
                                          created_at: { start: '20190101', end: '21190101' }, last_modified: { start: '20190101', end: '21190101' }, tags: [tag] }, false)
         article.reload
@@ -1673,7 +1673,7 @@ module Ember
         author_id = @account.agents.first.id
         article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id)
         article = article_meta.solution_articles.first
-        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '2',
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:published],
                                          author: author_id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
                                          created_at: { start: '20190101', end: '21190101' }, last_modified: { start: '20190101', end: '21190101' }, tags: ['sample'] }, false)
         article.reload
@@ -1690,7 +1690,7 @@ module Ember
         tag = Faker::Lorem.characters(7)
         create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
                                  allow_skip: true)
-        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '1',
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:draft],
                                          author: new_user.id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
                                          created_at: { start: '20190101', end: '21190101' }, last_modified: { start: '20190101', end: '21190101' }, tags: [tag] }, false)
         article.reload
@@ -1708,13 +1708,62 @@ module Ember
         tag = Faker::Lorem.characters(7)
         create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
                                  allow_skip: true)
-        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '2',
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:published],
                                          author: new_user.id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
                                          created_at: { start: '20190101', end: '21190101' }, last_modified: { start: '20190101', end: '21190101' }, tags: [tag] }, false)
         article.reload
         assert_response 200
         pattern = private_api_solution_article_pattern(article, action: :filter)
         match_json([pattern])
+      end
+
+      def test_article_filter_status_draft_should_not_return_inreview_draft
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        article = get_in_review_article
+        tag = 'filterstatusinreview' + Random.rand(99_999_999).to_s
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:draft], tags: [tag] }, false)
+        article.reload
+        assert_response 200
+        match_json([])
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_article_filter_status_draft_should_not_return_approved_draft
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        article = get_approved_article
+        tag = 'filterstatusapproved' + Random.rand(99_999_999).to_s
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:draft], tags: [tag] }, false)
+        article.reload
+        assert_response 200
+        match_json([])
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_article_filter_with_status_inreview
+        user = add_new_user(@account, active: true)
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        approver = add_test_agent
+        add_privilege(approver, :approve_article)
+        User.current.reload
+        remove_privilege(User.current, :publish_solution)
+        article = get_in_review_article(Account.current.language_object, user, approver)
+        tag = 'filterstatusinreview' + Random.rand(99_999_999).to_s
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:in_review], tags: [tag] }, false)
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, action: :filter)
+        match_json([pattern])
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+        add_privilege(User.current, :publish_solution)
       end
 
       def test_article_filters_unpublished_with_diff_user_draft
@@ -1733,6 +1782,72 @@ module Ember
         assert_response 200
         pattern = private_api_solution_article_pattern(article, action: :filter)
         match_json([pattern])
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+        add_privilege(User.current, :publish_solution)
+      end
+
+      def test_article_filter_with_status_approved
+        user = add_new_user(@account, active: true)
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        approver = add_test_agent
+        add_privilege(approver, :approve_article)
+        User.current.reload
+        remove_privilege(User.current, :publish_solution)
+        article = get_approved_article(Account.current.language_object, user, approver)
+        tag = 'filterstatusapproved' + Random.rand(99_999_999).to_s
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:approved], tags: [tag] }, false)
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, action: :filter)
+        match_json([pattern])
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+        add_privilege(User.current, :publish_solution)
+      end
+
+      def test_article_filter_with_status_inreview_and_approver
+        user = add_new_user(@account, active: true)
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        approver = add_test_agent
+        add_privilege(approver, :approve_article)
+        User.current.reload
+        remove_privilege(User.current, :publish_solution)
+        article = get_in_review_article(Account.current.language_object, user, approver)
+        tag = 'filterinreviewapprover' + Random.rand(99_999_999).to_s
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:in_review], approver: approver.id, tags: [tag] }, false)
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, action: :filter)
+        match_json([pattern])
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+        add_privilege(User.current, :publish_solution)
+      end
+
+      def test_article_filter_with_status_approved_and_approver
+        user = add_new_user(@account, active: true)
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        approver = add_test_agent
+        add_privilege(approver, :approve_article)
+        User.current.reload
+        remove_privilege(User.current, :publish_solution)
+        article = get_approved_article(Account.current.language_object, user, approver)
+        tag = 'filterapprovedapprover' + Random.rand(99_999_999).to_s
+        create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
+                                 allow_skip: true)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:approved], approver: approver.id, tags: [tag] }, false)
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, action: :filter)
+        match_json([pattern])
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+        add_privilege(User.current, :publish_solution)
       end
 
       def test_article_filters_unpublished_diff_user
@@ -1742,7 +1857,7 @@ module Ember
         tag = Faker::Lorem.characters(7)
         create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
                                  allow_skip: true)
-        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '1',
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:draft],
                                          author: author_id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
                                          created_at: { start: '20190101', end: '21190101' }, last_modified: { start: '20190101', end: '21190101' }, tags: [tag] }, false)
         article.reload
@@ -1763,7 +1878,7 @@ module Ember
         tag = Faker::Lorem.characters(7)
         create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag,
                                  allow_skip: true)
-        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '1',
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:draft],
                                          author: new_user.id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
                                          created_at: { start: '20190101', end: '21190101' }, last_modified: { start: '20190101', end: '21190101' }, tags: [tag] }, false)
         article.reload
@@ -1779,7 +1894,7 @@ module Ember
         new_user = add_test_agent
         article.modified_by = new_user.id
         article.save
-        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '2',
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:published],
                                          author: new_user.id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s], last_modified: { start: '20190101', end: '21190101' } }, false)
         article.reload
         assert_response 200
@@ -1831,7 +1946,7 @@ module Ember
         article_meta = create_article(folder_meta_id: default_folder.id, status: '1')
         article = article_meta.solution_articles.first
         create_draft(article: article, keep_previous_author: true)
-        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '1',
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:draft],
                                          category: [default_category.id.to_s] }, false)
         article.reload
         assert_response 200
@@ -1906,7 +2021,7 @@ module Ember
           article_meta = create_article(folder_meta_id: @@folder_meta.id)
           articles = article_meta.solution_articles
         end
-        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: '2' }, false)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, status: Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:published] }, false)
         assert_response 200
         pattern = articles.map { |article| private_api_solution_article_pattern(article, action: :filter) }
         match_json(pattern)
@@ -1951,7 +2066,7 @@ module Ember
       end
 
       def test_export_articles_with_outdated_status
-        export_params = { portal_id: @portal_id.to_s, status: 'outdated', article_fields: [{ field_name: 'title', column_name: 'Title' }] }
+        export_params = { portal_id: @portal_id.to_s, status: Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:outdated], article_fields: [{ field_name: 'title', column_name: 'Title' }] }
         expected_params = { filter_params: { 'portal_id' => @portal_id.to_s, 'article_fields' => [{ 'field_name' => 'title', 'column_name' => 'Title' }], 'outdated' => true }, lang_id: Account.current.language_object.id, lang_code: Account.current.language, current_user_id: User.current.id, export_fields: { 'title' => 'Title' }, portal_url: Account.current.portals.where(id: @portal_id.to_s).first.portal_url.presence || Account.current.host }
         Export::Article.expects(:enqueue).with(expected_params).once
         post :export, construct_params({ version: 'private' }, export_params)
@@ -2031,7 +2146,7 @@ module Ember
         export_params = { portal_id: @portal_id.to_s, status: 'invalid', article_fields: [{ field_name: 'title', column_name: 'Title' }] }
         post :export, construct_params({ version: 'private' }, export_params)
         assert_response 400
-        expected = { description: 'Validation failed', errors: [{ field: 'status', message: 'Value set is of type String.It should be a/an Positive Integer', code: 'datatype_mismatch' }] }
+        expected = { description: 'Validation failed', errors: [{ field: 'status', message: "It should be one of these values: '1,2,3,4,5'", code: 'invalid_value' }] }
         assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
       end
 
@@ -2126,7 +2241,7 @@ module Ember
         tag = Faker::Lorem.characters(7)
         create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag, allow_skip: true)
         Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
-        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, language: language, status: '2',
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, language: language, status: Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:published],
                                          author: author_id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
                                          created_at: { start: '20190101', end: '21190101' }, last_modified: { start: '20190101', end: '21190101' }, tags: [tag] }, false)
         article.reload
@@ -2183,7 +2298,7 @@ module Ember
           articles = [article_meta.safe_send("#{language}_article")]
         end
         Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
-        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, language: language, status: '2' }, false)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, language: language, status: Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:published] }, false)
         assert_response 200
         pattern = articles.map { |article| private_api_solution_article_pattern(article, { action: :filter }, true, nil) }
         match_json(pattern)
@@ -2198,7 +2313,7 @@ module Ember
         article.outdated = true
         article.save
         Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
-        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, language: language, status: 'outdated' }, false)
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, language: language, status: Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:outdated] }, false)
         assert_response 200
         pattern = [private_api_solution_article_pattern(article, { action: :filter }, true, nil)]
         match_json(pattern)
@@ -2680,8 +2795,8 @@ module Ember
         assert_equal approval_record.approval_status, Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review]
         assert_equal approval_record.approvable_id, sample_article.id
         assert_equal approval_record.approvable_type, 'Solution::Article'
-        assert_equal approval_record.user_id,  User.current.id
-        assert_equal approval_record.account_id,  Account.current.id
+        assert_equal approval_record.user_id, User.current.id
+        assert_equal approval_record.account_id, Account.current.id
         assert_equal approver_mapping.approver_id, approver.id
         assert_equal approver_mapping.approval_status, Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review]
         assert_equal approver_mapping.account_id, Account.current.id
@@ -2717,7 +2832,7 @@ module Ember
       ensure
         Account.any_instance.unstub(:article_approval_workflow_enabled?)
         add_privilege(User.current, :publish_solution)
-      end 
+      end
 
       def test_create_article_review_record_for_published_article
         Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
@@ -2730,7 +2845,7 @@ module Ember
         assert_response 400
       ensure
         Account.any_instance.unstub(:article_approval_workflow_enabled?)
-        add_privilege(User.current, :publish_solution)  
+        add_privilege(User.current, :publish_solution)
       end
 
       def test_create_article_review_record_without_feature
@@ -2772,7 +2887,7 @@ module Ember
         approver = add_test_agent
         add_privilege(approver, :approve_article)
         non_supported_language = get_valid_not_supported_language
-        post :send_for_review, construct_params({version: 'private', id: sample_article.id, language: non_supported_language}, approver_id: approver.id)
+        post :send_for_review, construct_params({ version: 'private', id: sample_article.id, language: non_supported_language }, approver_id: approver.id)
         match_json(request_error_pattern(:language_not_allowed, code: non_supported_language, list: (@account.supported_languages + [@account.language]).sort.join(', ')))
         assert_response 404
       ensure
@@ -2784,7 +2899,7 @@ module Ember
         sample_article = get_article_with_draft
         approver = add_test_agent
         add_privilege(approver, :approve_article)
-        post :send_for_review, construct_params({version: 'private', id: sample_article.id, language: 'demo'}, approver_id: approver.id)
+        post :send_for_review, construct_params({ version: 'private', id: sample_article.id, language: 'demo' }, approver_id: approver.id)
         assert_response 404
       ensure
         Account.any_instance.unstub(:article_approval_workflow_enabled?)
@@ -2845,6 +2960,58 @@ module Ember
         Account.any_instance.unstub(:article_approval_workflow_enabled?)
       end
 
+      def test_approve_with_invalid_langauge
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(false)
+        sample_article = get_article_with_draft
+        approver = add_test_agent
+        add_privilege(User.current, :approve_article)
+        User.current.reload
+        post :approve, controller_params(version: 'private', id: sample_article.parent_id, language: 'demo')
+        assert_response 404
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_approve_article
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        approver = add_test_agent
+        add_privilege(User.current, :approve_article)
+        User.current.reload
+        sample_article = get_in_review_article
+        post :approve, controller_params(version: 'private', id: sample_article.parent_id)
+        assert_response 204
+        assert sample_article.helpdesk_approval.approval_status == Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]
+        assert sample_article.helpdesk_approval.approved?
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_approve_article_with_language_code
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        approver = add_test_agent
+        add_privilege(User.current, :approve_article)
+        User.current.reload
+        sample_article = get_in_review_article(Account.current.language_object)
+        post :approve, controller_params(version: 'private', id: sample_article.parent_id, language: Account.current.language_object.code)
+        assert_response 204
+        assert sample_article.helpdesk_approval.approval_status == Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]
+        assert sample_article.helpdesk_approval.approved?
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_approve_article_without_approval_record
+        article = create_article(article_params)
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        approver = add_test_agent
+        add_privilege(User.current, :approve_article)
+        User.current.reload
+        post :approve, controller_params(version: 'private', id: article.id, language: Account.current.language_object.code)
+        assert_response 404
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
       def test_create_article_review_record_with_invalid_user
         Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
         sample_article = get_article_with_draft
@@ -2867,6 +3034,22 @@ module Ember
         User.current.reload
         post :approve, controller_params(version: 'private', id: sample_article.parent_id, language: 'demo')
         assert_response 404
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_update_draft_article_folder_with_approval_record
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        sample_article = get_unpublished_approved_article
+        lang_hash = { lang_codes: all_account_languages }
+        category = create_category({ portal_id: Account.current.main_portal.id }.merge(lang_hash))
+        new_folder_id = create_folder({ visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category.id }.merge(lang_hash)).id
+        params_hash = { status: 1, folder_id: new_folder_id }
+        put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+        assert_response 200
+        sample_article.reload
+        match_json(private_api_solution_article_pattern(sample_article))
+        assert_no_approval sample_article
       ensure
         Account.any_instance.unstub(:article_approval_workflow_enabled?)
       end
@@ -3021,6 +3204,38 @@ module Ember
         end
       end
 
+      def test_update_publish_reviewed_article_with_publish_approved_solution
+        without_publish_solution_privilege do
+          Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+          User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(true)
+          sample_article = get_unpublished_approved_article
+          params_hash = { status: 2 }
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+          assert_response 200
+          sample_article.reload
+          match_json(private_api_solution_article_pattern(sample_article))
+          assert sample_article.published?
+          assert !sample_article.draft_present?
+        end
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_update_publish_reviewd_article_without_publish_approved_solution
+        without_publish_solution_privilege do
+          Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+          User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(false)
+          sample_article = get_unpublished_approved_article
+          params_hash = { status: 2 }
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id, agent_id: @agent.id }, params_hash)
+          assert_response 403
+          error_info_hash = { details: 'dont have permission to perfom on published article' }
+          match_json(request_error_pattern_with_info(:published_article_privilege_error, error_info_hash, error_info_hash))
+        end
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
       private
 
         def version
@@ -3036,7 +3251,7 @@ module Ember
         end
 
         def article_pattern_index(article)
-          private_api_solution_article_pattern(article, exclude_description: true, exclude_attachments: true, exclude_tags: true, request_language: true)
+          private_api_solution_article_pattern(article, exclude_description: true, exclude_attachments: true, exclude_tags: true, request_language: true, exclude_translation_summary: true)
         end
 
         def get_portal_articles(portal_id, language_ids)
@@ -3565,7 +3780,7 @@ module Ember
         should_create_version(sample_article) do
           put :update, construct_params({ version: 'private', id: sample_article.parent_id }, status: 2, cloud_file_attachments: cloud_file_params, session: nil)
           assert_response 200
-          latest_version = get_latest_version(sample_article)          
+          latest_version = get_latest_version(sample_article)
           match_json(private_api_solution_article_pattern(sample_article))
           assert_equal sample_article.cloud_files.count, 1
           assert_equal latest_version[:meta][:cloud_files].length, 1

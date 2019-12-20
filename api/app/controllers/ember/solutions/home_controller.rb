@@ -22,7 +22,9 @@ module Ember
         @categories = fetch_categories(params[:portal_id])
         @articles = fetch_articles
         @drafts =  fetch_drafts
+        @approvals = fetch_approvals
         @my_drafts = @drafts.empty? ? [] : @drafts.where(user_id: current_user.id)
+        @my_drafts =  fetch_my_drafts if Account.current.article_approval_workflow_enabled?
         @published_articles = fetch_published_articles
         @all_feedback = current_account.article_tickets.where(article_id: get_article_ids(@articles), ticketable_type: 'Helpdesk::Ticket').preload(:ticketable).reject { |article_ticket| article_ticket.ticketable.spam_or_deleted? }
         @my_feedback = current_account.article_tickets.where(article_id: get_article_ids(@articles.select { |article| article.user_id == current_user.id }), ticketable_type: 'Helpdesk::Ticket').preload(:ticketable).reject { |article| article.ticketable.spam_or_deleted? }
@@ -32,6 +34,7 @@ module Ember
           @outdated_articles = @articles.select { |article| article.outdated == true }.size
           @not_translated_articles = @article_meta.size - @articles.size
         end
+        @articles_with_approval_status = fetch_articles_by_approval_status if current_account.article_approval_workflow_enabled?
         response.api_root_key = :quick_views
       end
 
@@ -64,6 +67,21 @@ module Ember
 
           article_ids = get_article_ids(@articles)
           current_account.solution_drafts.select([:id, :user_id]).where(article_id: article_ids)
+        end
+
+        def fetch_approvals
+          return [] if @articles.empty?
+          article_ids = get_article_ids(@articles)
+          current_account.helpdesk_approvals.select([:id, :user_id]).where(approvable_id: article_ids)
+        end
+
+        def fetch_my_drafts
+           return [] if @my_drafts.empty?
+           @my_drafts.joins("LEFT JOIN helpdesk_approvals ON solution_drafts.article_id = helpdesk_approvals.approvable_id").where("helpdesk_approvals.id is NULL")
+        end
+
+        def fetch_articles_by_approval_status
+          current_account.helpdesk_approvals.where(approvable_id: get_article_ids(@articles), approvable_type: 'Solution::Article').group(:approval_status).count
         end
 
         def get_article_ids(articles)

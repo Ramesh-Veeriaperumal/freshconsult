@@ -30,3 +30,4 @@
 //= require app/admin/skills/agentskills_index.js
 //= require app/admin/skills/templates/add_skill.jst.ejs
 //= require app/admin/dkim_configurations
+//= require app/admin/fb_streams/edit_ticket_rules_new.js

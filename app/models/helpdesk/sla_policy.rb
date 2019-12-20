@@ -211,6 +211,10 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
     super options.merge(:root => 'helpdesk_sla_policy')
   end
 
+  def escalation_enabled?(ticket)
+    sla_details.find_by_priority(ticket.priority).escalation_enabled?
+  end
+
   private
 
     # def is_the_condition_valid? ticket, reminder_time
@@ -234,10 +238,6 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
                         :operator => "in", :evaluate_on => evaluate_on.to_s} , Account.current))
       end if conditions
       to_return
-    end
-
-    def escalation_enabled?(ticket)
-      sla_details.find_by_priority(ticket.priority).escalation_enabled?
     end
 
     def escalate_to_agents(ticket, escalation, type, due_by)

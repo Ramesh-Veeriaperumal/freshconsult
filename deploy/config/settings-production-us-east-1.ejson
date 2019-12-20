@@ -1381,9 +1381,9 @@
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:EzZW2Z3ZVEFypBTyEtT4xktjCl+uYKH2:h32c743ozg7wUgjJWvcetSVkTBnDeWfo9zA=]",
             "_database": "helpkit_shard29_1",
             "_username": "dbuser",
-            "_host": "shard29.internal.poduseast1.freshdesk.com",
-            "_slave2_host": "shard29slave2.internal.poduseast1.freshdesk.com",
-            "_slave1_host": "shard29slave1.internal.poduseast1.freshdesk.com"
+            "_host": "shard29-1.internal.poduseast1.freshdesk.com",
+            "_slave2_host": "shard29-1slave2.internal.poduseast1.freshdesk.com",
+            "_slave1_host": "shard29-1slave1.internal.poduseast1.freshdesk.com"
           },
           "shard_29_2": {
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:kot5ojs/N6yuQ2LpOrRGATT6Ra3DjMev:tAJZ50wmUHMAOmhEPCPqfp4YGZdLRVW86HM=]",
@@ -1991,6 +1991,9 @@
         "_method": "post",
         "_timeout": "2"
       },
+      "channel_v2_api": {
+        "jwt_secret": "EJ[1:7SVIwVw6V1dF4qvXKNhnZQLs/YmHxSVYGa1OhhpYh2Y=:e0gm1ojPRd3zFfb5sa1Ut7+XbExHYAC3:yJsgvB3+V0lhRWVIBbTZebguuodiB3z4b141N61lkeMYnMQFnF5bnqDyRfZsiC1Y]"
+      },
       "channel_framework": {
         "_dedup_interval": "1440",
         "_hop_interval": "5",
@@ -2303,7 +2306,14 @@
           ]
         }
       ],
-      "_data_center": "us-east"
+      "_data_center": "us-east",
+      "_freshconnectAssets": {
+        "_script_asset_url": "https://assets1.freshconnect.io/freshconnect-sidebar/freshconnect-sidebar.js",
+        "_base_url": "https://api.freshconnect.io"
+      },
+      "_sentry_dsn": "https://932f384a375f45db84667227e44ccaf1@sentry.io/1189802",
+      "_announcement_account_url": "productupdates.freshdesk.com",
+      "_anonymous_signup_redirect_url": "https://freshdesk.com/trial/thank-you"
     },
     "aws_config": {
     },

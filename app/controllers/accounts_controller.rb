@@ -507,6 +507,10 @@ class AccountsController < ApplicationController
 
   private
 
+    def render_signup_error(errors)
+      render json: { success: false, errors: errors }, status: :unprocessable_entity
+    end
+
     def params_contain_url
       contains = [:user_first_name, :user_last_name, :user_email, :user_phone, :account_name, :account_domain].any? do |key| 
         value = params[:signup][key].to_s
@@ -673,12 +677,15 @@ class AccountsController < ApplicationController
     end
 
     def validate_signup_email
+      render_signup_error([t('flash.general.invalid_email')]) && return if params['user'].blank? || params['user']['email'].blank?
       params['user']['email'].downcase!
       @domain_generator = DomainGenerator.new(params['user']['email'])
       unless @domain_generator.valid?
-        render json: { success: false, errors: @domain_generator.errors[:email] },
-          status: :unprocessable_entity
+        render_signup_error(@domain_generator.errors[:email])
       end
+    rescue StandardError => e
+      Rails.logger.error "Error occoured while validating signup email #{e.inspect}"
+      render_signup_error([t('flash.general.invalid_email')])
     end
 
     def anonymous_signup_enabled?

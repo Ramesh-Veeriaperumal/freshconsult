@@ -1,5 +1,9 @@
 class TimeEntriesController < ApiApplicationController
   include TicketConcern
+  decorate_views(
+    decorate_object: [:create, :update, :toggle_timer],
+    decorate_objects: [:index, :ticket_time_entries]
+  )
 
   COLLECTION_RESPONSE_FOR = ['ticket_time_entries'].freeze
   SLAVE_ACTIONS = %w(index ticket_time_entries).freeze

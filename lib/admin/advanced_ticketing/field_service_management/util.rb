@@ -290,6 +290,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         destroy_field_tech_role
         destroy_field_agent
         destroy_field_group
+        destroy_customer_signature if Account.current.customer_signature_enabled?
         Rails.logger.info "Completed disabling FSM feature for Account - #{Account.current.id}"
       rescue StandardError => e
         log_operation_failure('Disable', e)
@@ -320,6 +321,10 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       def destroy_field_group
         Group.destroy_groups(Account.current, GroupType.group_type_id(FIELD_GROUP_NAME))
         GroupType.destroy_group_type(Account.current, FIELD_GROUP_NAME)
+      end
+
+      def destroy_customer_signature
+        Account.current.ticket_fields.where(name: FSM_SIGNATURE_TICKET_FIELD[0][:name] + "_#{Account.current.id}").destroy_all
       end
 
       def expire_cache

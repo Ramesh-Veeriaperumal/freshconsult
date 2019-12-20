@@ -51,6 +51,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/year_in_review", only: %i[index clear]
     resource :"ember/custom_dashboard", only: %i[widgets_data show index bar_chart_data]
     resource :"settings/helpdesk", only: [:index]
+    resource :'ember/rt', only: [:show]
   end
 
   manage_account do
@@ -125,6 +126,7 @@ Authority::Authorization::PrivilegeList.build do
   manage_users do
     resource :"ember/contact", only: %i[make_agent assume_identity]
     resource :"ember/agent", only: %i[show create_multiple assume_identity]
+    resource :"bulk_api_job", only: %i[show]
   end
 
   delete_topic do

@@ -1177,6 +1177,9 @@
         "_method": "post",
         "_timeout": "2"
       },
+      "channel_v2_api": {
+        "jwt_secret": "EJ[1:ty9NT0p8rGw8k+9NzrRr/PtVh7FkliZKeu9Yx/vcfX4=:JyRlr4pwm8gcVuPmVPB/abotA0CaI/9Y:hUTiM3OGl99tNxP8tmPClby6wKqLNECYR0w6wLuKS97chds3ZAdmIc8B5h7HefU3]"
+      },
       "channel_framework": {
         "_dedup_interval": "1440",
         "_hop_interval": "5",
@@ -1462,7 +1465,14 @@
       "_integrations_url": "https://podapsouth1login.freshdesk.com",
       "_widget_domain": "https://ind-widget.freshworks.com/widgets",
       "_color": "",
-      "_data_center": "ap-south"
+      "_data_center": "ap-south",
+      "_sentry_dsn": "https://932f384a375f45db84667227e44ccaf1@sentry.io/1189802",
+      "_announcement_account_url": "productupdates.freshdesk.com",
+      "_anonymous_signup_redirect_url": "https://freshdesk.com/trial/thank-you",
+      "_freshconnectAssets": {
+        "_script_asset_url": "https://assets1.freshconnect.io/freshconnect-sidebar/freshconnect-sidebar.js",
+        "_base_url": "https://api.freshconnect.io"
+      }
     },
     "aws_config": {
     },

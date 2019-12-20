@@ -836,4 +836,37 @@ class AccountsControllerTest < ActionController::TestCase
     AdminEmail::AssociatedAccounts.unstub(:find)
     Account.any_instance.unstub(:admin_email)
   end
+
+  def test_new_signup_without_email
+    stub_signup_calls
+    account_name = Faker::Lorem.word
+    domain_name = Faker::Lorem.word
+    Account.stubs(:current).returns(Account.first)
+    get :new_signup_free, callback: '', user: { name: Faker::Name.name, time_zone: 'Chennai', language: 'en' }, account: { account_name: account_name, account_domain: domain_name, locale: I18n.default_locale, time_zone: 'Chennai', user_name: 'Support', user_password: 'test1234', user_password_confirmation: 'test1234', user_helpdesk_agent: true, new_plan_test: true }, format: 'json'
+    parsed_response = parse_response(response.body)
+    refute parsed_response['success']
+    assert_equal parsed_response['errors'].first, 'Email is invalid'
+    assert_response 422
+  ensure
+    unstub_signup_calls
+    Account.unstub(:current)
+  end
+
+  def test_new_signup_erroring_on_signup_email_validation
+    stub_signup_calls
+    account_name = Faker::Lorem.word
+    domain_name = Faker::Lorem.word
+    user_email = Faker::Internet.email
+    Account.stubs(:current).returns(Account.first)
+    DomainGenerator.any_instance.stubs(:valid?).raises(StandardError)
+    get :new_signup_free, callback: '', user: { name: Faker::Name.name, email: user_email, time_zone: 'Chennai', language: 'en' }, account: { account_name: account_name, account_domain: domain_name, locale: I18n.default_locale, time_zone: 'Chennai', user_name: 'Support', user_password: 'test1234', user_password_confirmation: 'test1234', user_helpdesk_agent: true, new_plan_test: true }, format: 'json'
+    parsed_response = parse_response(response.body)
+    refute parsed_response['success']
+    assert_equal parsed_response['errors'].first, 'Email is invalid'
+    assert_response 422
+  ensure
+    unstub_signup_calls
+    DomainGenerator.any_instance.unstub(:valid?)
+    Account.unstub(:current)
+  end
 end

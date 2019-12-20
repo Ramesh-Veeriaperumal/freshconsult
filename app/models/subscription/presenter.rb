@@ -23,6 +23,7 @@ class Subscription < ActiveRecord::Base
     s.add proc { |s| s.day_pass_amount.to_i }, as: :day_pass_amount
     s.add :subscription_currency_id
     s.add proc { |ap| ap.subscription_plan.display_name }, as: :account_plan
+    s.add proc { |ap| ap.subscription_plan.name }, as: :plan_name
     DATETIME_FIELDS.each do |key|
       s.add proc { |d| d.utc_format(d.safe_send(key)) }, as: key
     end

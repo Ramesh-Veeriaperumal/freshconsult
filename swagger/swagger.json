@@ -13735,6 +13735,12 @@
             "description": "Filter by status"
           },
           {
+            "name": "approver",
+            "in": "query",
+            "type": "string",
+            "description": "Filter by approver if status is selected as inreview or approved"
+          },
+          {
             "name": "term",
             "in": "query",
             "type": "string",
@@ -17769,9 +17775,9 @@
               ],
               "description": "If access_type is both, then include both incoming and outgoing."
             },
-            "reference_key": {
-              "type": "string",
-              "desciption": "The redis reference key which is used to update mailbox with the cached oauth values."
+            "reference_key": {  
+              "type": "string", 
+              "desciption": "The redis reference key which is used to update mailbox with the cached oauth values." 
             },
             "incoming": {
               "type": "object",
@@ -19367,6 +19373,11 @@
                     "published": {
                       "type": "boolean",
                       "description": "Is article is published?"
+                    },
+                    "approval_status": {
+                      "type": "integer",
+                      "format": "int64",
+                      "description": "1 - denotes article is in review, 2 - denotes article is approved"
                     }
                   }
                 },
@@ -19389,6 +19400,11 @@
                     "published": {
                       "type": "boolean",
                       "description": "Is article is published?"
+                    },
+                    "approval_status": {
+                      "type": "integer",
+                      "format": "int64",
+                      "description": "1 - denotes article is in review, 2 - denotes article is approved"
                     }
                   }
                 }
@@ -27691,6 +27707,14 @@
         "not_translated": {
           "type": "number",
           "description": "Available only for secondary languages."
+        },
+        "in_review_articles": {
+          "type": "number",
+          "description": "Available only if article_approval_workflow feature enabled."
+        },
+        "approved_articles": {
+          "type": "number",
+          "description": "Available only if article_approval_workflow feature enabled."
         }
       }
     },

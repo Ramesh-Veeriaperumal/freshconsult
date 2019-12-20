@@ -959,6 +959,15 @@ input[type='checkbox']
 
     }
 
+    &:disabled {
+      background: #acb6be;
+      border-color: #acb6be;
+
+      &:before {
+        border-color: #fff;
+      }
+    }
+
 }
 
 .portal-section .checkbox [type="checkbox"] {

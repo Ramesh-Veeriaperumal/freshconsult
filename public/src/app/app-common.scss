@@ -4366,6 +4366,7 @@ $adm-bdr:#F0F0F0;
 		overflow: hidden;
 		#capture-dm{
 			font-weight: bold;
+			padding: 1px 0 0;
 		}
 		.twt-stream-change{
 			position: absolute;
@@ -4458,7 +4459,6 @@ $adm-bdr:#F0F0F0;
 .fb-form-tkt-rules{
   label{
     cursor: pointer;
-    &>span {font-weight: 600;}
   }
 }
 // Admin Social styles end

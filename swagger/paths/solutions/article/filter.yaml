@@ -19,6 +19,10 @@ get:
       in: query
       type: string
       description: Filter by status
+    - name: approver
+      in: query
+      type: string
+      description: Filter by approver if status is selected as inreview or approved
     - name: term
       in: query
       type: string

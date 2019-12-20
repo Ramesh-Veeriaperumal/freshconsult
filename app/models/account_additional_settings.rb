@@ -227,7 +227,11 @@ class AccountAdditionalSettings < ActiveRecord::Base
     secret_keys[:help_widget]
   end
 
-  def fetch_rts_account_secret
+  def rts_account_id
+    additional_settings[:rts_account_id]
+  end
+
+  def rts_account_secret
     EncryptorDecryptor.new(RTSConfig['db_cipher_key']).decrypt(secret_keys[:rts_account_secret]) if secret_keys[:rts_account_secret].present?
   end
 

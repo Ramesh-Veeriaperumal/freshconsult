@@ -11,7 +11,7 @@ class Account < ActiveRecord::Base
                           logs projects itil marketing store channel reseller resellers online
                           contact admin #{AppConfig['admin_subdomain']} girish shan vijay parsu kiran shihab
                           productdemo resources static static0 static1 static2 static3 static4 static5
-                          static6 static7 static8 static9 static10 dev apps freshapps fone
+                          static6 static7 static8 static9 static10 dev apps freshapps fone shift
                           elb elb1 elb2 elb3 elb4 elb5 elb6 elb7 elb8 elb9 elb10 agent-hermes
                           attachment euattachment eucattachment ausattachment indattachment cobrowsing) + FreshopsSubdomains + PartnerSubdomains
 
@@ -309,7 +309,7 @@ class Account < ActiveRecord::Base
       facebook_post_outgoing_attachment: true, outgoing_tweets_to_tms: false, incoming_mentions_in_tms: false, default_unassigned_service_tasks_filter: false,
       prevent_lang_detect_for_spam: false, jira_onpremise_reporter: false, support_ticket_rate_limit: false, sidekiq_logs_to_central: false, portal_central_publish: false, encode_emoji_in_solutions: false,
       forums_agent_portal: false, mailbox_google_oauth: false, send_and_set: false, migrate_euc_pages_to_us: false, agent_collision_revamp: false, topic_editor_with_html: false, focus_mode: false,
-      remove_image_attachment_meta_data: false, ticket_field_revamp: false, new_timeline_view: false, email_mailbox: true
+      remove_image_attachment_meta_data: false, ticket_field_revamp: false, new_timeline_view: false, email_mailbox: true, facebook_admin_ui_revamp: false
     }, :merge
   )
 

@@ -34,7 +34,7 @@ class Account < ActiveRecord::Base
     :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :bypass_signup_captcha,
     :contact_field_central_publish, :company_field_central_publish, :contact_company_split, :mentions_to_tms,
     :simple_outreach, :disable_simple_outreach, :supervisor_text_field, :disable_mint_analytics,
-    :freshid_org_v2, :hide_agent_login, :office365_adaptive_card,
+    :freshid_org_v2, :hide_agent_login, :office365_adaptive_card, :facebook_admin_ui_revamp,
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
     :recalculate_daypass, :fb_page_api_improvement, :attachment_redirect_expiry,
     :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,

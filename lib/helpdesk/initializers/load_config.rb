@@ -22,6 +22,8 @@ BraintreeConfig = YAML.load_file(File.join(Rails.root, 'config', 'braintree.yml'
 
 CHANNEL_API_CONFIG  = YAML.load_file(File.join(Rails.root, 'config', 'channel_api_keys.yml'))[Rails.env].with_indifferent_access
 
+CHANNEL_V2_API_CONFIG = YAML.load_file(File.join(Rails.root, 'config', 'channel_v2_api.yml'))[Rails.env]
+
 OCR_CONFIG = YAML.load_file(File.join(Rails.root, 'config', 'ocr_config.yml'))[Rails.env].with_indifferent_access
 
 RateLimitConfig = YAML.load_file(File.join(Rails.root, 'config', 'rate_limit.yml'))[Rails.env]
