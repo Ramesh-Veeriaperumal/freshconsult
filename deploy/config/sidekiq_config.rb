@@ -84,6 +84,7 @@ class SidekiqConfigUsEast
   CENTRAL_REALTIME_SIDEKIQ = "sidekiq-central-realtime-"
   ARCHIVE_SIDEKIQ          = "sidekiq-archive-"
   MAILBOXJOB_SIDEKIQ       = "sidekiq-mailbox-jobs-"
+  BULK_API_SIDEKIQ         = "sidekiq-bulk-api-"
 
   # FALCON_OCCASIONAL        = "sidekiq-fc-occasional"
   GAMIFICATION_SIDEKIQ     = "sidekiq-gamification-"
@@ -231,6 +232,7 @@ class SidekiqConfigUsEast
     paid_account_jobs        = ["active_account_jobs","premium_account_jobs","trial_account_jobs"]
     premium_account_jobs     = ["premium_account_jobs","active_account_jobs","trial_account_jobs"]
     mail_box_jobs            = ["mailbox_jobs"]
+    bulk_api                 = ["bulk_api_jobs"]
     dkim                     = ["dkim_verifier","dkim_general"]
     manual_publish           = ["manual_publish","rabbitmq_publish","merge_contacts","account_info_to_dynamo","data_export","broadcast_note","link_tickets","reset_associations"]
     remaining                = ["manual_publish","facebook_comments","es_v2_queue","email_delivery"]
@@ -238,7 +240,7 @@ class SidekiqConfigUsEast
     freshcaller              = ["freshcaller_migration_worker", "freshcaller_account_delete", 'freshcaller_update_agents']
     cron_jobs                = ['cron_contacts_sync', 'cron_google_contacts_sync', 'cron_resque_watcher_check_load', 'cron_scheduler_sla', 'cron_scheduler_sla_reminder', 'cron_scheduler_supervisor', 'cron_forum_moderation_create_tables', 'cron_forum_moderation_drop_tables', 'cron_facebook_dm', 'cron_spam_digest_mailer', 'cron_twitter_custom_stream', 'cron_populate_spam_watcher_limits', 'cron_billing_info_update', 'cron_requeue_central_publish', 'cron_rollback_trail_subscriptions_data', 'cron_sidekiq_dead_set_mailer', 'cron_redis_maintenance', 'cron_ebay_daily_api_report_intimate', 'cron_reports_build_no_activity', 'cron_scheduled_task', 'cron_sitemap_generate', 'cron_traffic_switch_fetch_accounts', 'cron_long_running_queries_check', 'cron_gnip_stream_maintenance', 'cron_gnip_stream_replay','cron_social_create_dynamodb_tables', 'cron_social_delete_dynamodb_tables', 'cron_social_increase_dynamodb_capacity', 'cron_social_reduce_dynamodb_capacity', 'cron_sqs_monitor', 'cron_account_spam_cleanup', 'cron_attachment_user_draft_cleanup', 'cron_delayedjobs_watcher', 'cron_failed_helpkit_feeds', 'cron_log_cloud_elements_sync', 'cron_freshfone', 'cron_meta_data_check', 'cron_enable_omniroute_for_new_accounts']
     roles                    = ["update_agents_roles"]
-    all_set                  = [dispatcher,observer,ticket_states,paid_account_jobs,premium_account_jobs,trial_account_jobs,free_account_jobs,default,rabbitmq,contacts_merge,supervisor,free_supervisor,trial_supervisor,premium_supervisor,facebook,facebook_comments,twitter,paid_sla,free_sla,trial_sla,premium_sla,reports_one,reports_two,reset,search_one,search_two,freshfone_one,freshfone_two,solution,ebay,merge_tickets,gamification,password_expiry,github,bulk_scenario,select_all_tickets,select_all_batcher,premium_sla_reminder,sla_reminder,trial_sla_reminders,free_sla_reminders,webhook_worker,webhook_throttler,bulk_ticket,language,integrations,api_webhook_rule,plan_change,contact_import,riak_s3_ticket,riak_s3_note,reports_three,delete_spam_tickets,ticket_export,long_running_ticket_export ,premium_ticket_export,suspended_accounts_deletion,round_robin,round_robin_sbr,mail_box_jobs,dkim,manual_publish, cron_jobs, roles]
+    all_set                  = [dispatcher,observer,ticket_states,paid_account_jobs,premium_account_jobs,trial_account_jobs,free_account_jobs,default,rabbitmq,contacts_merge,supervisor,free_supervisor,trial_supervisor,premium_supervisor,facebook,facebook_comments,twitter,paid_sla,free_sla,trial_sla,premium_sla,reports_one,reports_two,reset,search_one,search_two,freshfone_one,freshfone_two,solution,ebay,merge_tickets,gamification,password_expiry,github,bulk_scenario,select_all_tickets,select_all_batcher,premium_sla_reminder,sla_reminder,trial_sla_reminders,free_sla_reminders,webhook_worker,webhook_throttler,bulk_ticket,language,integrations,api_webhook_rule,plan_change,contact_import,riak_s3_ticket,riak_s3_note,reports_three,delete_spam_tickets,ticket_export,long_running_ticket_export ,premium_ticket_export,suspended_accounts_deletion,round_robin,round_robin_sbr,mail_box_jobs,bulk_api,dkim,manual_publish, cron_jobs, roles]
 
     dedicated_realtime = ["realtime"]
     dedicated_bulk = ["bulk_scheduled", "exports", "occasional"]
@@ -246,7 +248,7 @@ class SidekiqConfigUsEast
     dedicated_occasional = ["scheduled", "occasional"]
     dedicated_central = ["central_realtime","external", "realtime"]
     dedicated_scheduled = ["scheduled", "maintainence"]
-    dedicated_common = ["realtime", "scheduled", "occasional" ,"email", "mailbox_jobs", "maintainence", "external", "trial", "spam", "exports", "bulk_scheduled", "central_realtime"]
+    dedicated_common = ["realtime", "scheduled", "occasional" ,"email", "mailbox_jobs", "bulk_api", "maintainence", "external", "trial", "spam", "exports", "bulk_scheduled", "central_realtime"]
 
 
 
@@ -273,6 +275,7 @@ class SidekiqConfigUsEast
     central_realtime         = ["central_realtime"]
     archive                  = ["archive"]
     mailbox_jobs             = ["mailbox_jobs"]
+    bulk_api                 = ["bulk_api"]
     # falcon_occasional        = ["falcon_occasional"]
     gamification             = ["gamification"]
     community                = ["community"]
@@ -310,7 +313,7 @@ class SidekiqConfigUsEast
   "delete_spam_tickets", "tickets_export_queue", "long_running_ticket_export", "premium_ticket_export", 
   "suspended_accounts_deletion", "round_robin_capping", "assign_tickets_to_agents", "sbrr_assignment", "sbrr_user_toggle", 
   "sbrr_group_toggle", "sbrr_config_agent_group", "sbrr_config_user_skill", "trial_account_jobs", "free_account_jobs", 
-  "active_account_jobs", "premium_account_jobs", "mailbox_jobs", "dkim_verifier", "dkim_general","sbrr_config_skill", 
+  "active_account_jobs", "premium_account_jobs", "mailbox_jobs", "bulk_api_jobs", "dkim_verifier", "dkim_general","sbrr_config_skill", 
   "skill_import","forum_content_spam_checker", "scheduled_ticket_export_config","scheduled_ticket_export", 
   "account_creation_fixtures","email_delivery","collaboration_publish","activity_export","send_and_set_observer",
   "realtime","scheduled","occasional","maintainence","external","free","email","trial","spam", "product_feedback",
@@ -360,6 +363,7 @@ class SidekiqConfigUsEast
     _DELAYEDJOB_POOL          = [[trial_account_jobs,2],[free_account_jobs,2],[premium_account_jobs,2]]
     _PAIDJOB_POOL             = [[paid_account_jobs,6]]
     _MAILBOX_POOL             = [[mail_box_jobs,4],[dkim,1]]
+    _BULK_API_POOL            = [[bulk_api, 6]]
     _ROUND_ROBIN_POOL         = [[round_robin,3],[round_robin_sbr,3]]
     _MANUAL_PUBLISH_POOL      = [[manual_publish,3],[rabbitmq,3]]
     _ALL_POOL                 = [[all,6]]
@@ -387,6 +391,7 @@ class SidekiqConfigUsEast
     _CENTRAL_REALTIME_POOL    = [[central_realtime, 6]]
     _ARCHIVE_POOL             = [[archive, 6]]
     _MAILBOXJOB_POOL          = [[mailbox_jobs, 6]]
+    _BULK_API_POOL            = [[bulk_api, 6]]
     _GAMIFICATION_POOL        = [[gamification, 6]]
     _COMMUNITY_POOL           = [[community, 6]]
     _SUBSCRIPTION_POOL        = [[subscriptions, 6]]
@@ -447,6 +452,8 @@ class SidekiqConfigUsEast
       _PAIDJOB_POOL
     when utility_name.include?(MAILBOXJOB_SIDEKIQ)
       _MAILBOX_POOL
+    when utility_name.include?(BULK_API_SIDEKIQ)
+      _BULK_API_POOL
     when utility_name.include?(ROUND_ROBIN_SIDEKIQ)
       _ROUND_ROBIN_POOL
     when utility_name.include?(MANUAL_PUBLISH_SIDEKIQ)
@@ -543,6 +550,7 @@ class SidekiqConfigStandard
   SPAM_SIDEKIQ             = "sidekiq-spam-"
   ARCHIVE_SIDEKIQ          = "sidekiq-archive-"
   MAILBOXJOBS_SIDEKIQ      = "sidekiq-mailbox-jobs-"
+  BULK_API_SIDEKIQ         = "sidekiq-bulk-api-"
   EXPORT_SIDEKIQ           = "sidekiq-exports-"
   CRON_SIDEKIQ             = 'sidekiq-cron-'
   DATAEXPORT_SIDEKIQ       = "sidekiq-dataexport-"
@@ -612,7 +620,7 @@ all_sidekiq_jobs =  cron_jobs + [
       "delete_spam_tickets", "tickets_export_queue", "long_running_ticket_export", "premium_ticket_export", "suspended_accounts_deletion",
       "round_robin_capping", "assign_tickets_to_agents", "sbrr_assignment", "sbrr_user_toggle", "sbrr_group_toggle", "sbrr_config_agent_group",
       "sbrr_config_user_skill", "trial_account_jobs", "free_account_jobs", "active_account_jobs", "premium_account_jobs", "mailbox_jobs",
-      "dkim_verifier", "dkim_general", "sbrr_config_skill","forum_content_spam_checker","scheduled_ticket_export_config",
+      "dkim_verifier", "dkim_general", "sbrr_config_skill","forum_content_spam_checker","scheduled_ticket_export_config", "bulk_api_jobs",
       "scheduled_ticket_export","skill_import","mixpanel_queue","account_creation_fixtures","email_delivery","collaboration_publish",
       "activity_export","send_and_set_observer","realtime","scheduled","occasional","maintainence","external","free","email","trial","spam",
       "product_feedback","block_account","signup_restricted_domain_validation","freshcaller_migration_worker","send_activation_reminder_mail",
@@ -661,6 +669,7 @@ all_sidekiq_jobs =  cron_jobs + [
     bulk_scheduled           = ["bulk_scheduled"]
     central_realtime         = ["central_realtime"]
     mailbox_jobs             = ["mailbox_jobs"]
+    bulk_api                 = ["bulk_api"]
     gamification             = ["gamification"]
     community                = ["community"]
     subscriptions            = ["subscriptions"]
@@ -686,6 +695,7 @@ all_sidekiq_jobs =  cron_jobs + [
     _SPAM_POOL                = [[spam,6]]
     _ARCHIVE_POOL             = [[archive,6]]
     _MAILBOX_POOL             = [[mailbox,6]]
+    _BULK_API_POOL            = [[bulk_api, 6]]
     _EXPORT_POOL              = [[export, 6]]
     _MISC_POOL                = [[misc_sidekiq,6]]
     _CRON_POOL                = [[cron_webhook, 6]]
@@ -726,6 +736,8 @@ all_sidekiq_jobs =  cron_jobs + [
       _ARCHIVE_POOL
     when utility_name.include?(MAILBOXJOBS_SIDEKIQ)
       _MAILBOX_POOL
+    when utility_name.include?(BULK_API_SIDEKIQ)
+      _BULK_API_POOL
     when utility_name.include?(EXPORT_SIDEKIQ)
       _EXPORT_POOL
     when utility_name.include?(MISC_SIDEKIQ)

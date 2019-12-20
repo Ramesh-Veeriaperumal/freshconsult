@@ -7,7 +7,7 @@ module BulkApiJobs
       def process_payload(account, payload, partial)
         payload.each_with_index do |agent, index|
           agent_id = agent['id'] = agent['id'].to_i
-          record = account.agents.find_by_id(agent_id)
+          record = account.agents.find_by_user_id(agent_id)
           unless record.present?
             agent['success'] = false
             agent['errors'] = 'invalid_id'
