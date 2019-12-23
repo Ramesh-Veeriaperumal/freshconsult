@@ -264,4 +264,5 @@ module Redis::Keys::Others
   MIGRATE_EUC_FB_PAGES = 'MIGRATE_EUC_FB_PAGES:%{account_id}'.freeze
 
   TICKET_FIELD_UPDATE_ERROR = 'TICKET_FIELD_UPDATE_ERROR:%{account_id}:%{ticket_field_id}'.freeze
+  ACTIVE_RECORD_LOG = 'ACTIVE_RECORD_LOG'.freeze
 end
