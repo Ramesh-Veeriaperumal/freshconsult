@@ -656,7 +656,6 @@ class ApiApplicationController < MetalApiController
 
     def allowed_to_access? # this method is redefined because of api_current_user
       return false unless ABILITIES.key?(resource)
-
       ABILITIES[resource].each do |privilege|
         if [:all, action].include? privilege.action
           return true if api_current_user.privilege?(privilege.name) ||

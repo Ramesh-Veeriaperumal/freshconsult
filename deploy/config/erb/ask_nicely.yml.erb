@@ -1,0 +1,4 @@
+<% if node[:ymls][:asknicely_app].present? %>
+<%= node[:opsworks][:environment]%>:
+  hash_token: <%= node[:ymls][:asknicely_app][:hash_token] %>
+<% end %>

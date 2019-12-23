@@ -70,7 +70,7 @@ UnsupportedFeaturesList = YAML.load_file(Rails.root.join('config', 'features', '
 
 ProactiveServiceConfig = YAML.load_file(Rails.root.join('config', 'proactive_service.yml'))[Rails.env]
 
-GrowthScoreConfig = YAML.load_file(File.join(Rails.root, 'config', 'growthscore_app.yml'))[Rails.env]
+AskNicelyConfig = YAML.load_file(Rails.root.join('config', 'ask_nicely.yml'))[Rails.env]
 
 FrenoConfig = YAML.load_file(File.join(Rails.root, 'config', 'freno.yml'))[Rails.env]
 

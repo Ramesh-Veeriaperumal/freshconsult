@@ -1,4 +1,0 @@
-<% if node[:ymls][:growthscore_app].present? %>
-<%= node[:opsworks][:environment]%>:
-  app_id: <%= node[:ymls][:growthscore_app][:app_id] %>
-<% end %>

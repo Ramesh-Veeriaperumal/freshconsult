@@ -44,6 +44,12 @@ module Ember
         JWT.encode(jwt_payload, MarketplaceConfig::JWT_SECRET, 'HS256')
       end
 
+      def generate_ask_nicely_hash
+        {
+          asknicely_user_email_hash: OpenSSL::HMAC.hexdigest('sha256', AskNicelyConfig['hash_token'], current_user.email)
+        }
+      end
+
       def construct_api_meta
         api_meta = {
           csrf_token: safe_send(:form_authenticity_token),
@@ -57,7 +63,9 @@ module Ember
           api_meta[:freshid_profile_url] = freshid_profile_url
         end
 
-        api_meta.merge(generate_livechat_token)
+        api_meta.merge!(generate_livechat_token)
+        api_meta.merge!(generate_ask_nicely_hash) if current_user.privilege?(:admin_tasks) || current_user.privilege?(:manage_account)
+        api_meta
       end
   end
 end
