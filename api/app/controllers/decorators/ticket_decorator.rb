@@ -36,7 +36,7 @@ class TicketDecorator < ApiDecorator
     custom_fields_hash = {}
     custom_field_via_mapping.each do |k, v|
       next if @custom_fields_mapping[k] == Helpdesk::TicketField::CUSTOM_FILE && !private_api?
-      
+
       custom_fields_hash[@name_mapping[k]] = if v.respond_to?(:utc)
                                                if @custom_fields_mapping[k] == Helpdesk::TicketField::CUSTOM_DATE_TIME
                                                  format_date(v, true)
@@ -194,10 +194,10 @@ class TicketDecorator < ApiDecorator
     if @sideload_options.include?('conversations')
       preload_options = [:schema_less_note, :note_old_body, :attachments]
       preload_options = public_preload_options(preload_options) unless private_api?
-      
+
       ticket_conversations = record.notes.
                              conversations(preload_options, :created_at, ConversationConstants::MAX_INCLUDE)
-      decorator_method = private_api? ? 'construct_json' : 'public_json'                       
+      decorator_method = private_api? ? 'construct_json' : 'public_json'
       ticket_conversations.map { |conversation| ConversationDecorator.new(conversation, ticket: record).safe_send(decorator_method) }
     end
   end
@@ -481,10 +481,10 @@ class TicketDecorator < ApiDecorator
   end
 
   def predict_ticket_fields_hash
-    hash = { predict_ticket_fields: false }    
+    hash = { predict_ticket_fields: false }
     ticket_properties_suggester_hash = schema_less_ticket.try(:ticket_properties_suggester_hash)
     suggested_fields = ticket_properties_suggester_hash[:suggested_fields] if ticket_properties_suggester_hash.present?
-    return hash if suggested_fields.blank?    
+    return hash if suggested_fields.blank?
     return hash if suggested_fields.all? { |k,v| v[:updated] }
 
     expiry_time = ticket_properties_suggester_hash[:expiry_time]
@@ -518,7 +518,7 @@ class TicketDecorator < ApiDecorator
   end
 
   def include_collab?
-    Account.current.collaboration_enabled? || (Account.current.freshconnect_enabled? && Account.current.freshid_integration_enabled? && (@item.app_current? || User.current.freshid_authorization))
+    Account.current.collaboration_enabled? || (Account.current.freshconnect_enabled? && Account.current.freshid_integration_enabled? && (app_current? || User.current.freshid_authorization))
   end
 
   def freshfone_enabled?
