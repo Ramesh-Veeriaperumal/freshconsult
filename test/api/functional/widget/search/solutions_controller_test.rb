@@ -29,6 +29,11 @@ module Widget
         @article = create_article_for_widget
       end
 
+      def teardown
+        @widget.destroy
+        super
+      end
+
       def set_widget
         @widget = create_widget
         @widget.settings[:components][:solution_articles] = true
@@ -90,7 +95,7 @@ module Widget
         @account.launch :help_widget_login
         secret_key = SecureRandom.hex
         @account.stubs(:help_widget_secret).returns(secret_key)
-        user = @account.users.first
+        user = add_new_user(@account)
         timestamp = Time.zone.now.utc.iso8601
         auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
         @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
@@ -103,6 +108,8 @@ module Widget
         assert_nil Language.current
         @account.rollback :help_widget_login
         @account.unstub(:help_widget_secret)
+      ensure
+        user.destroy
       end
 
       def test_results_with_login_company_user
@@ -279,7 +286,7 @@ module Widget
         @account.launch :help_widget_login
         secret_key = SecureRandom.hex
         @account.stubs(:help_widget_secret).returns(secret_key)
-        user = @account.users.first
+        user = add_new_user(@account)
         timestamp = Time.zone.now.utc.iso8601
         auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
         @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
@@ -292,6 +299,8 @@ module Widget
         assert_nil Language.current
         @account.rollback :help_widget_login
         @account.unstub(:help_widget_secret)
+      ensure
+        user.destroy
       end
 
       def test_results_with_login_company_user_get

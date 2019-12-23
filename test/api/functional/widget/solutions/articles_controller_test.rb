@@ -16,7 +16,6 @@ module Widget
       def setup
         super
         before_all
-        set_widget
       end
 
       def before_all
@@ -43,13 +42,14 @@ module Widget
       end
 
       def teardown
+        @widget.destroy
         super
         controller.class.any_instance.unstub(:api_current_user)
         User.unstub(:current)
       end
 
       def set_widget
-        @widget = HelpWidget.active.first || create_widget
+        @widget = create_widget
         @widget.settings[:components][:solution_articles] = true
         @widget.save
         @request.env['HTTP_X_WIDGET_ID'] = @widget.id
