@@ -6,6 +6,7 @@ common: &common
   export_group_name: helpkit_export_cleanup
   ticket_delete_group_name: helpkit_ticket_delete
   downgrade_policy_group_name: helpkit_downgrade_policy_reminder
+  account_cleanup_group_name: helpkit_suspended_account_cleanup
 development:
   <<: *common
 staging:

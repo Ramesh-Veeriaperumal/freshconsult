@@ -1366,6 +1366,7 @@
         "token": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:11WK5HjTcq6A3CPR7t1GP20kSp9Bed1X:S+0eTuFVgZTWX0H1eyZ9HYS9FY6GZqqLf3lbDcSsdlfQjANU8xOFzDGf7cMrDa4d]",
         "_end_point": "http://scheduler-staging.freshworksapi.com/schedules",
         "_todo_group_name": "helpkit_todo_reminder",
+        "_account_cleanup_group_name": "helpkit_suspended_account_cleanup",
         "_downgrade_policy_group_name": "helpkit_downgrade_policy_reminder",
         "_export_group_name": "helpkit_export_cleanup",
         "_ticket_delete_group_name": "helpkit_ticket_delete"
@@ -1419,6 +1420,10 @@
           },
           "downgrade_policy_reminder": {
             "_sqs_queue": "fd_scheduler_downgrade_policy_reminder_queue_staging",
+            "_priority": 1
+          },
+          "suspended_account_cleanup": {
+            "_sqs_queue": "suspended_account_cleanup_queue_staging",
             "_priority": 1
           },
           "bot_feedback_queue": {
@@ -1598,6 +1603,7 @@
         "_fd_scheduler_export_cleanup_queue": "main_staging_fd_scheduler_export_cleanup_queue",
         "_analytics_etl_queue": "analytics_etl_queue-stagingvpc-staging",
         "_fd_scheduler_downgrade_policy_reminder_queue": "fd_scheduler_downgrade_policy_reminder_queue_staging",
+        "_suspended_account_cleanup_queue": "suspended_account_cleanup_queue_staging",
         "_search_etlqueue_maintenance": "search-etlqueue-stagingvpc-staging_new_maintenance",
         "_count_etl_queue_maintenance": "count_etl_queue-stagingvpc-staging_maintenance",
         "_analytics_etl_queue_maintenance": "analytics_etl_queue-stagingvpc-staging_maintenance"

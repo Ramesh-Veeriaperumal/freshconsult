@@ -776,7 +776,8 @@ HEREDOC
       "search_etl_queue": "search_etlqueue",
       "trial_customer_email_queue": "trial_email",
       "twitter_realtime_queue": "social_gnip_tweets",
-      "fd_scheduler_downgrade_policy_reminder_queue": "downgrade_policy_reminder"
+      'fd_scheduler_downgrade_policy_reminder_queue': 'downgrade_policy_reminder',
+      'suspended_account_cleanup_queue': 'suspended_account_cleanup'
     }
 
     queue_prefix = ENV["HELPKIT_TEST_SETUP_SQS_QUEUE_PREFIX"]
