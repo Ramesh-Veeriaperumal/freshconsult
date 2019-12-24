@@ -42,6 +42,7 @@ class Social::FacebookPage < ActiveRecord::Base
     if def_stream.frozen? || def_stream.nil?
       build_stream(page_name, FB_STREAM_TYPE[:default])
       build_stream(page_name, FB_STREAM_TYPE[:dm])
+      build_stream(page_name, FB_STREAM_TYPE[:ad_post]) if Account.current.fb_ad_post_stream_publish_enabled?
     else
       error_params = {
         :facebook_page => id,

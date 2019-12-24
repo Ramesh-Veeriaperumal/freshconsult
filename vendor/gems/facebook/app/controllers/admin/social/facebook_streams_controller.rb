@@ -30,6 +30,8 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
     #params[:social_facebook_page] will be empty when there are no products and DM is not enabled
     page_updated = params[:social_facebook_page] ? @facebook_page.update_attributes(page_params) : true
     if page_updated
+      update_ad_rule(params[:ad_posts]) if Account.current.fb_ad_posts_enabled? && params[:ad_posts]
+
       #Update accessible
       @facebook_stream.update_attributes({:accessible_attributes => stream_accessible_params(@facebook_stream)})
       
@@ -38,7 +40,7 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
       
       #Update Ticket Rules Specific to the default stream
       update_ticket_rules if params[:social_ticket_rule]
-      
+
       flash[:notice] = t('admin.social.flash.stream_updated', :stream_name => @facebook_stream.name)
       redirect_to :action => 'index'
     else
@@ -163,6 +165,38 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
     else
       dm_stream.ticket_rules.first.try(:destroy)
     end
+  end
+
+  def update_ad_rule(ad_post_args)
+    ad_stream = @facebook_page.ad_post_stream
+    if ad_post_args[:import_ad_posts]
+      begin
+        ad_stream = ad_stream.facebook_ticket_rules.present? ? update_ad_ticket_rules(ad_post_args, ad_stream) : build_ad_ticket_rule(ad_post_args, ad_stream)
+      rescue StandardError => error
+        ::Rails.logger.error("Error while trying to update ticket rules for ad posts, #{error.message}, #{ad_post_args.inspect}, #{ad_stream.id}")
+        raise error
+      end
+    else
+      ad_stream.facebook_ticket_rules.first.try(:destroy)
+    end
+    ad_stream.save!
+  end
+
+  def update_ad_ticket_rules(ad_post_args, ad_stream)
+    ad_stream.facebook_ticket_rules.first.attributes = { action_data: {
+      group_id: ad_post_args[:group_id],
+      prooduct_id: ad_post_args[:product_id]
+    } }
+    ad_stream
+  end
+
+  def build_ad_ticket_rule(ad_post_args, ad_stream)
+    ad_stream.facebook_ticket_rules.build(filter_data: { rule_type: RULE_TYPE[:ad_post] },
+                                          action_data: { group_id: ad_post_args[:group_id], product_id: ad_post_args[:product_id] })
+    ad_stream
+  rescue StandardError => error
+    ::Rails.logger.error("Error while trying to build ticket rules for ad posts, #{error.message}, #{ad_post_args.inspect}, #{ad_stream.id}")
+    raise error
   end
 
   def build_dm_ticket_rules(dm_stream)

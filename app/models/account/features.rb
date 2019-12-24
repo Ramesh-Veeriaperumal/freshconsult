@@ -47,7 +47,8 @@ class Account < ActiveRecord::Base
     :freshcaller_admin_new_ui, :facebook_post_outgoing_attachment, :outgoing_tweets_to_tms, :incoming_mentions_in_tms, :help_widget_login, :occlusion_rendering_ticket_fields,
     :prevent_lang_detect_for_spam, :default_unassigned_service_tasks_filter, :jira_onpremise_reporter, :support_ticket_rate_limit, :sidekiq_logs_to_central, :portal_central_publish, :global_navbar, :encode_emoji_in_solutions,
     :forums_agent_portal, :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product, :send_and_set, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html, :focus_mode,
-    :remove_image_attachment_meta_data, :new_timeline_view, :automated_private_notes_notification, :detect_lang_from_email_service, :sane_restricted_helpdesk, :hiding_confidential_logs
+    :remove_image_attachment_meta_data, :new_timeline_view, :automated_private_notes_notification, :detect_lang_from_email_service,
+    :sane_restricted_helpdesk, :hiding_confidential_logs, :fb_ad_post_stream_publish
   ].freeze
 
   DB_FEATURES = [
@@ -82,7 +83,8 @@ class Account < ActiveRecord::Base
     :ticket_properties_suggester, :ticket_properties_suggester_eligible,
     :hide_first_response_due, :agent_articles_suggest, :email_articles_suggest, :customer_journey, :botflow,
     :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters, :supervisor_custom_status, :lbrr_by_omniroute,
-    :secure_attachments, :article_versioning, :article_export, :article_approval_workflow, :next_response_sla, :advanced_automations
+    :secure_attachments, :article_versioning, :article_export, :article_approval_workflow, :next_response_sla, :advanced_automations,
+    :fb_ad_posts
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 

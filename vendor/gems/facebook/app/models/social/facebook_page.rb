@@ -84,6 +84,10 @@ class Social::FacebookPage < ActiveRecord::Base
   def dm_stream
     self.facebook_streams.detect{|s| s.data[:kind] == FB_STREAM_TYPE[:dm]}
   end
+
+  def ad_post_stream
+    facebook_streams.detect{ |s| s.data[:kind] == FB_STREAM_TYPE[:ad_post] }
+  end
   
   def log_api_hits
     increment_api_hit_count_to_redis(self.page_id)
