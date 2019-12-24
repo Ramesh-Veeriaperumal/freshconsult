@@ -414,23 +414,6 @@ class TicketTest < ActiveSupport::TestCase
     Account.any_instance.unstub(:shared_ownership_enabled?)
   end
 
-  def test_central_publish_nr_due_by_update
-    Account.any_instance.stubs(:next_response_sla_enabled?).returns(true)
-    t = create_ticket(ticket_params_hash)
-    time_now = Time.zone.now
-    t.nr_due_by = Time.zone.now
-    CentralPublishWorker::ActiveTicketWorker.jobs.clear
-    t.save
-    payload = t.central_publish_payload.to_json
-    payload.must_match_json_expression(cp_ticket_pattern(t))
-    assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
-    job = CentralPublishWorker::ActiveTicketWorker.jobs.last
-    assert_equal 'ticket_update', job['args'][0]
-    assert_equal([nil, time_now.utc.iso8601], job['args'][1]['model_changes']['nr_due_by'])
-  ensure
-    Account.any_instance.unstub(:next_response_sla_enabled?)
-  end
-
   def test_central_publish_fr_reminded
     t = create_ticket(ticket_params_hash.merge(responder_id: @agent.id))
     t.sla_policy.update_attributes(escalations: {reminder_response: {"1": {time: -1800, agents_id: [-1]}}}.with_indifferent_access)
