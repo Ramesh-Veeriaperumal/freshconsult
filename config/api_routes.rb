@@ -1037,7 +1037,6 @@ Helpkit::Application.routes.draw do
         resources :solutions, controller: 'solutions' do
           collection do
             get :results, path: ''
-            post :results, path: ''
           end
         end
       end
