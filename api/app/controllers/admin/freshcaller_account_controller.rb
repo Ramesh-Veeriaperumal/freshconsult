@@ -7,6 +7,7 @@ class Admin::FreshcallerAccountController < ApiApplicationController
   skip_before_filter :build_object, only: [:create]
   before_filter :check_feature
   before_filter :validate_linking, only: [:create, :link]
+  before_filter :load_agents, only: [:show]
   before_filter :validate_params, only: [:link, :update]
   before_filter :sanitize_params, only: [:update]
 
@@ -20,6 +21,7 @@ class Admin::FreshcallerAccountController < ApiApplicationController
     signup_account
     return render_client_error if client_error?
 
+    load_agents
     render :show
   end
 
@@ -28,6 +30,7 @@ class Admin::FreshcallerAccountController < ApiApplicationController
     return render_client_error if client_error?
 
     link_freshcaller(freshcaller_response) if linked?
+    load_agents
     render :show
   end
 
@@ -90,8 +93,16 @@ class Admin::FreshcallerAccountController < ApiApplicationController
       current_account.freshcaller_account
     end
 
+    def agent_scoper
+      current_account.freshcaller_agents.where(fc_enabled: true).preload(:user)
+    end
+
     def load_object
       @item = scoper
+    end
+
+    def load_agents
+      @agents = agent_scoper || []
     end
 
     def validate_params
