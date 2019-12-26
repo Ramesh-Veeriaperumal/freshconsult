@@ -192,6 +192,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   def definition
      @definition ||= begin
       defs = {}
+      filter_attribute_hash = Hash[Array.wrap(query_hash).collect { |c| [(c['condition'] || c[:condition]).to_sym, true] }]
+      ticket_list_performance_enabled = Account.current.launched?(:ticket_list_performance)
       #default fields
       TicketConstants::DEFAULT_COLUMNS_KEYS_BY_TOKEN.each do |name,cont|
         defs[name.to_sym] = { get_op_list(cont).to_sym => cont  , :name => name, :container => cont,     
@@ -220,29 +222,41 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
      #      end
 
     # Custom date time field
-     fsm_date_time_fields = TicketFilterConstants::FSM_DATE_TIME_FIELDS.collect { |x| x + "_#{Account.current.id}" }
-     Account.current.custom_date_time_fields_from_cache.select { |x| fsm_date_time_fields.include?(x.name) }.each do |col|
-      defs[get_id_from_field(col).to_sym] = {
-        get_op_from_field(col).to_sym => get_container_from_field(col),
-        name: col.label,
-        container: get_container_from_field(col),
-        operator: get_op_from_field(col),
-        options: get_custom_choices(col)
-      }
-     end
+      if (ticket_list_performance_enabled && filter_attribute_hash.keys.find { |x| x.to_s.include?('flexifields') }) || !ticket_list_performance_enabled
+        fsm_date_time_fields = TicketFilterConstants::FSM_DATE_TIME_FIELDS.collect { |x| x + "_#{Account.current.id}" }
+        Account.current.custom_date_time_fields_from_cache.select { |x| fsm_date_time_fields.include?(x.name) }.each do |col|
+          defs[get_id_from_field(col).to_sym] = {
+            get_op_from_field(col).to_sym => get_container_from_field(col),
+            name: col.label,
+            container: get_container_from_field(col),
+            operator: get_op_from_field(col),
+            options: get_custom_choices(col)
+          }
+        end
 
       #Custom fields
 
-      Account.current.custom_dropdown_fields_from_cache.each do |col|
-        defs[fetch_field_key(col).to_sym] = build_field_hash(col)
-      end
-      nested_fields = Account.current.nested_fields_from_cache
-      ActiveRecord::Associations::Preloader.new(nested_fields, %i[level1_picklist_values nested_fields_with_flexifield_def_entries]).run
+        Account.current.custom_dropdown_fields_from_cache.each do |col|
+          key = fetch_field_key(col).to_sym
+          if ticket_list_performance_enabled
+            next unless filter_attribute_hash.key?(key)
+          end
 
-      nested_fields.each do |col|
-        defs[fetch_field_key(col).to_sym] = build_field_hash(col)
-        col.nested_fields_with_flexifield_def_entries.each do |nested_col|
-          defs[fetch_field_key(nested_col).to_sym] = {get_op_list('dropdown').to_sym => 'dropdown' ,:name => nested_col.label , :container => 'dropdown', :operator => get_op_list('dropdown'), :options => [] }
+          defs[key] = build_field_hash(col)
+        end
+
+        nested_fields = Account.current.nested_fields_from_cache
+        ActiveRecord::Associations::Preloader.new(nested_fields, %i[level1_picklist_values nested_fields_with_flexifield_def_entries]).run
+        nested_fields.each do |col|
+          key = fetch_field_key(col).to_sym
+          if ticket_list_performance_enabled
+            next unless filter_attribute_hash.key?(key)
+          end
+
+          defs[key] = build_field_hash(col)
+          col.nested_fields_with_flexifield_def_entries.each do |nested_col|
+            defs[fetch_field_key(nested_col).to_sym] = { get_op_list('dropdown').to_sym => 'dropdown', :name => nested_col.label, :container => 'dropdown', :operator => get_op_list('dropdown'), :options => [] }
+          end
         end
       end
       
