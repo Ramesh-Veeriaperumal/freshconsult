@@ -1356,9 +1356,6 @@
         "_request_owner": "helpkit",
         "_max_page_limit": 10
       },
-      "growthscore_app": {
-        "app_id": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:ozeZtMQ9V4vjNnlRFv6kebmqO0RAvKj2:mfoNrnD+l3qcSC1UIQ/fFyqi5VHSjjtQxKZUtaQ738AcFmdgl07ECVrr+u9VOpvk]"
-      },
       "email_bot_ml_feedback": {
         "service_token": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:2fX9vHMjZTxr+Fgrp+9uIGBizGpOO+V0:eBUhpYX5Mz7g2SKsn7FThIoKA+oLTXnlpeDAJQer50eg8vlb6eJdyw==]",
         "_api_endpoint": "https://central.freshworksapi.com/collector"

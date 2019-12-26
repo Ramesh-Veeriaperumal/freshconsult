@@ -97,7 +97,7 @@ run "ln -nfs #{shared_path}/config/hyper_trail.yml #{node[:rel_path]}/config/hyp
 run "ln -nfs #{shared_path}/config/proactive_service.yml #{node[:rel_path]}/config/proactive_service.yml"
 run "ln -nfs #{shared_path}/config/ocr_config.yml #{node[:rel_path]}/config/ocr_config.yml"
 run "ln -nfs #{shared_path}/config/email_bot_ml_feedback_config.yml #{node[:rel_path]}/config/email_bot_ml_feedback_config.yml"
-run "ln -nfs #{shared_path}/config/growthscore_app.yml #{node[:rel_path]}/config/growthscore_app.yml"
+run "ln -nfs #{shared_path}/config/ask_nicely.yml #{node[:rel_path]}/config/ask_nicely.yml"
 run "ln -nfs #{shared_path}/config/datadog.yml #{node[:rel_path]}/config/datadog.yml"
 run "ln -nfs #{shared_path}/config/freshvisuals.yml #{node[:rel_path]}/config/helpdesk_reports/freshvisuals.yml"
 run "ln -nfs #{shared_path}/config/freno.yml #{node[:rel_path]}/config/freno.yml"

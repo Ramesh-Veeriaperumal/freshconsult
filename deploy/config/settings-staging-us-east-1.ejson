@@ -1684,9 +1684,6 @@
         "_request_owner": "helpkit",
         "_max_page_limit": 10
       },
-      "growthscore_app": {
-        "app_id": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:cUvlWh9MEz9ftVXd4rSkmZr9feAHAF6X:U7+nIFcj9J76k2FUoBvEGtnjhA56LEhcw3QpBuHzDfQ6uU/ZyuGx7Qy6WEk5O60h]"
-      },
       "email_bot_ml_feedback": {
         "service_token": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:r0NrH6i52Cz62065pPiuKbkS0qWEN9GE:7L25vpK0aFbH/mrP8xC+9HdD2NEty4s4]",
         "_api_endpoint": "https://central-staging.freshworksapi.com/collector"
