@@ -242,9 +242,6 @@ group :production, :test, :staging do
   gem "tire", :git => "git@github.com:freshdesk/retire.git"
 end
 
-group :staging do
-  gem 'byebug'
-end
 gem "recaptcha", "4.4.1", require: "recaptcha/rails"
 
 gem "marginalia", "1.6.0"
