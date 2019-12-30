@@ -4,9 +4,9 @@
   "settings": {
     "ymls": {
       "datacenter_config": {
-      "freshcaller_signup_supported": true,
-      "freshconnect_signup_supported": true,
-      "freshmarketer_signup_supported": false
+        "freshcaller_signup_supported": true,
+        "freshconnect_signup_supported": true,
+        "freshmarketer_signup_supported": false
       },
       "asknicely_app": {
         "hash_token": "EJ[1:kX7DpQSm+yTzxUl4GE7Jmfx1uFL9a3zfIcduxB+XK0w=:KCQPNnVNS2T+VeWoEkjz13LXJqXeQMj1:KkSsM3p7oKsqaSf/XZcZV/wyBitRcteJ1Dz3csQd1eXqgAcKUE5srbAsLAMXPRLWvejsG2QAIFIkU5y195piq70fWk3GkFG9EQpS2PWsSleLy9mIybSjlTfg3L7QEixSQmwx3O4G6COgpYpqcgHLIBGsVaMyixglyPB5T4+q8c5Ehkmw5LxsH+QkXGQQZigD]",
@@ -719,16 +719,16 @@
         },
         "archive": {
           "search_etl_queue": {
-              "_sqs_queue": "search-etlqueue-archive-production",
-              "_priority": 1
+            "_sqs_queue": "search-etlqueue-archive-production",
+            "_priority": 1
           },
           "count_etl_queue": {
-              "_priority": 1,
-              "_sqs_queue": "count_etl_queue_archive_production"
+            "_priority": 1,
+            "_sqs_queue": "count_etl_queue_archive_production"
           },
           "analytics_etl_queue": {
-              "_priority": 1,
-              "_sqs_queue": "analytics_etl_queue_archive_production"
+            "_priority": 1,
+            "_sqs_queue": "analytics_etl_queue_archive_production"
           }
         },
         "maintenance": {
@@ -1018,7 +1018,8 @@
               "_username": "helpkit_front",
               "password": "EJ[1:/oO9ikCeU9C6MyeCy5clOteXIV2lZCQ7jGo1kL4QgWQ=:gn3uIKLYlcILK54MrqPntg237xEmSKLD:/hDp22r9HuDUB5qdFgBYOsVpWXcw1L8biCg=]"
             },
-            "shards": {}
+            "shards": {
+            }
           },
           "falcon_app": {
             "global": {
@@ -1029,7 +1030,8 @@
               "_username": "falcon_front",
               "password": "EJ[1:/oO9ikCeU9C6MyeCy5clOteXIV2lZCQ7jGo1kL4QgWQ=:vK1aLNUWvEkU5I+2/lo7j12yRqb1xlLz:Ez7ySatXBxe3p5iwunoq9gGwhilTA+bK470=]"
             },
-            "shards": {}
+            "shards": {
+            }
           },
           "helpkit_bg": {
             "global": {
@@ -1040,7 +1042,8 @@
               "_username": "helpkit_back",
               "password": "EJ[1:/oO9ikCeU9C6MyeCy5clOteXIV2lZCQ7jGo1kL4QgWQ=:L6b0uNQ2kMjiguH8fA+qCkiL6U4+o3m0:wEVUaXthyanQ9flrNplKXA10X+pcGaBCPbU=]"
             },
-            "shards": {}
+            "shards": {
+            }
           },
           "falcon_bg": {
             "global": {
@@ -1051,7 +1054,8 @@
               "_username": "falcon_back",
               "password": "EJ[1:/oO9ikCeU9C6MyeCy5clOteXIV2lZCQ7jGo1kL4QgWQ=:pZ4HmYkHIU6L98kIV1YjX+Qj726ep+nN:ZH62Kf8yP2OSHnwszGTHLkF5NxKGwyHIMoQ=]"
             },
-            "shards": {}
+            "shards": {
+            }
           }
         },
         "global": {
@@ -1085,14 +1089,14 @@
             "_slave1_host": "eu-shard2slave1.internal.podeucentral1.freshdesk.com",
             "_slave2_host": "eu-shard2slave2.internal.podeucentral1.freshdesk.com"
           },
-         "eu_shard_3": {
+          "eu_shard_3": {
             "password": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:bFdLRlOtQn8ns7KAJjwE+24etegS8zFx:Ub6gIWXyRvwnCcHEOgAxYIBP5DcrhbcM6BA=]",
             "_database": "helpkit",
             "_username": "dbuser",
             "_host": "eu-shard3.internal.podeucentral1.freshdesk.com",
             "_slave1_host": "eu-shard3slave1.internal.podeucentral1.freshdesk.com",
             "_slave2_host": "eu-shard3slave2.internal.podeucentral1.freshdesk.com"
-            },
+          },
           "sandbox_shard_euc": {
             "password": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:6E6nNs2s2uodCOwR967owlO67beXeWR0:ue+4GCnOO0jzSrh2hsGoe00Ru+TtDIfGAt0=]",
             "_database": "sandbox_euc",
@@ -1109,14 +1113,54 @@
             "_slave1_host": "bireports-euc.cvmbmps7jxqe.eu-central-1.rds.amazonaws.com",
             "_slave2_host": "bireports-euc.cvmbmps7jxqe.eu-central-1.rds.amazonaws.com"
           },
-           "euc_shard_2": {
+          "euc_shard_2": {
             "password": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:bFdLRlOtQn8ns7KAJjwE+24etegS8zFx:Ub6gIWXyRvwnCcHEOgAxYIBP5DcrhbcM6BA=]",
             "_database": "helpkit_euc_shard_2_1",
             "_username": "dbuser",
             "_host": "euc-shard2.internal.podeucentral1.freshdesk.com",
             "_slave1_host": "euc-shard2slave1.internal.podeucentral1.freshdesk.com",
             "_slave2_host": "euc-shard2slave2.internal.podeucentral1.freshdesk.com"
-          }
+          },
+          "euc_shard_3": {
+            "_database": "helpkit_euc_shard_3_1",
+            "_host": "euc-shard3.internal.podeucentral1.freshdesk.com",
+            "password": "EJ[1:nE8EqHkclwZvcg7dTiFDP44WBD9FRRxcm+27mKeUDWg=:upNj+83RsdJohiUREKDnLVyn3imwI8Vp:onRGBli+pADT6QJaU1WNYe2KDJ6xaFxHRdM=]",
+            "slave1": {
+              "_host": "euc-shard3slave1.internal.podeucentral1.freshdesk.com",
+              "password": "EJ[1:nE8EqHkclwZvcg7dTiFDP44WBD9FRRxcm+27mKeUDWg=:r+A2vZV8z88AXZaG+lIJ3ix6zQ14Mrgt:0f9Hn0x+NfDC7XKxGQc3HyPnU6s71Sa3jw8=]",
+              "_port": 3306,
+              "_username": "dbuser"
+            },
+            "_slave1_host": "euc-shard3slave1.internal.podeucentral1.freshdesk.com",
+            "slave2": {
+              "_host": "euc-shard3slave2.internal.podeucentral1.freshdesk.com",
+              "password": "EJ[1:nE8EqHkclwZvcg7dTiFDP44WBD9FRRxcm+27mKeUDWg=:E5fc4Go9zWrEEQuju3ngHuktODqinTM+:U3NDGILjiwLMsYTOLS5ieTO5RgTAHc4tOGY=]",
+              "_port": 3306,
+              "_username": "dbuser"
+            },
+            "_slave2_host": "euc-shard3slave2.internal.podeucentral1.freshdesk.com",
+            "_username": "dbuser"
+          },
+          "euc_shard_4": {
+            "_database": "helpkit_trainline",
+            "_host": "euc-shard4.internal.podeucentral1.freshdesk.com",
+            "password": "EJ[1:nE8EqHkclwZvcg7dTiFDP44WBD9FRRxcm+27mKeUDWg=:upNj+83RsdJohiUREKDnLVyn3imwI8Vp:onRGBli+pADT6QJaU1WNYe2KDJ6xaFxHRdM=]",
+            "slave1": {
+              "_host": "euc-shard4slave1.internal.podeucentral1.freshdesk.com",
+              "password": "EJ[1:nE8EqHkclwZvcg7dTiFDP44WBD9FRRxcm+27mKeUDWg=:r+A2vZV8z88AXZaG+lIJ3ix6zQ14Mrgt:0f9Hn0x+NfDC7XKxGQc3HyPnU6s71Sa3jw8=]",
+              "_port": 3306,
+              "_username": "dbuser"
+            },
+            "_slave1_host": "euc-shard4slave1.internal.podeucentral1.freshdesk.com",
+            "slave2": {
+              "_host": "euc-shard4slave2.internal.podeucentral1.freshdesk.com",
+              "password": "EJ[1:nE8EqHkclwZvcg7dTiFDP44WBD9FRRxcm+27mKeUDWg=:E5fc4Go9zWrEEQuju3ngHuktODqinTM+:U3NDGILjiwLMsYTOLS5ieTO5RgTAHc4tOGY=]",
+              "_port": 3306,
+              "_username": "dbuser"
+            },
+            "_slave2_host": "euc-shard4slave2.internal.podeucentral1.freshdesk.com",
+            "_username": "dbuser"
+          },
         },
         "semian": {
           "global": {
@@ -1396,7 +1440,7 @@
           "_api_endpoint": "https://hypertrail-euc.freshworksapi.com/api/v1/export/filtered/account/%{account_id}/audit",
           "_username": "78e17fc4bf45bb235fd9e537a04c15a32bd35f1f"
         },
-         "audit_log_archived_export":{
+        "audit_log_archived_export": {
           "password": "EJ[1:VFJDyb4pryrtT9F+eraebwtIkQ2djbNLOQ9oF+rcR1A=:L3AzFz0j3FnBUb34jKF1AIMKeC+WAmuX:q+WL1p0T+Oat/J83waCF2L8=]",
           "_api_endpoint": "https://hypertrail-euc.freshworksapi.com/api/v1/export/archived/account/%{account_id}/audit",
           "_username": "78e17fc4bf45bb235fd9e537a04c15a32bd35f1f"
@@ -1622,6 +1666,16 @@
   },
   "layer_settings": {
     "fc-app-db-migration": {
+      "ymls": {
+        "database": {
+          "shards": {
+            "euc_shard_3": {
+              "_username": "migration",
+              "password": "EJ[1:nE8EqHkclwZvcg7dTiFDP44WBD9FRRxcm+27mKeUDWg=:HvBtQENVCMBZvy+9Qg76xCQapPCTDLPH:dclZ7Y4F2yGpDzjBecFpkvEUe5fxF3uexQg=]"
+            }
+          }
+        }
+      }
     },
     "hk-app-support": {
     },
@@ -1778,8 +1832,6 @@
     "fc-bg-resque-freshfone": {
     },
     "fc-bg-sidekiq-freshfone": {
-    },
-    "fc-app-merge": {
     },
     "fc-bg-sidekiq-search": {
     },
