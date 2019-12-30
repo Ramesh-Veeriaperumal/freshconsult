@@ -12,7 +12,8 @@ module HelpWidgetsTestHelper
                                     name: options[:name] || Faker::Name.name,
                                     account_id: @account.id,
                                     product_id: product_id,
-                                    settings: options[:settings] || settings_hash(options))
+                                    settings: options[:settings] || settings_hash(options),
+                                    active: 1)
     test_widget.save
     test_widget
   end

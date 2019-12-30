@@ -146,7 +146,7 @@ class TicketDelegator < BaseDelegator
       if requester.blocked?
         errors[:requester_id] << :user_blocked
       elsif requester.email.present?
-        @ticket.email = requester.email
+        @ticket.email = requester.emails.include?(email) ? email : requester.email
       end
     end
   end

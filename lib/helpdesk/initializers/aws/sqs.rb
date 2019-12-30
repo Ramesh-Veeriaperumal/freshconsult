@@ -52,7 +52,7 @@ end unless Rails.env.development?
   :scheduled_ticket_export_queue, :scheduled_user_export_queue, :scheduled_company_export_queue,
   :scheduled_export_payload_enricher_queue, :fd_scheduler_reminder_todo_queue, :bot_feedback_queue,
   :fd_scheduler_export_cleanup_queue, :spam_trash_delete_free_acc_queue, :spam_trash_delete_paid_acc_queue,
-  :fd_scheduler_downgrade_policy_reminder_queue,
+  :fd_scheduler_downgrade_policy_reminder_queue, :suspended_account_cleanup_queue,
   :search_etl_queue_maintenance, :count_etl_queue_maintenance, :analytics_etl_queue_maintenance
 ]
 

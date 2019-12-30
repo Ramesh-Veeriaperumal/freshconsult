@@ -555,6 +555,17 @@ module Ember
       assert_response 400
     end
 
+    def test_create_with_requester_having_two_emails
+      sample_requester = add_user_with_multiple_emails(@account, 2)
+      sample_requester_email = sample_requester.emails[1]
+      params_hash = ticket_params_hash.merge!(email: sample_requester_email, requester_id: sample_requester.id)
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 201
+      response_body = JSON.parse(response.body)
+      assert_equal response_body['sender_email'], sample_requester_email
+      assert_equal response_body['requester_id'], sample_requester.id
+    end
+
     def test_create_with_invalid_attachment_ids
       attachment_ids = []
       attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
@@ -2155,6 +2166,24 @@ module Ember
       assert_equal 4, ticket.priority
       assert_equal tags.count, ticket.tags.count
       assert_equal update_group.id, ticket.group_id
+    end
+
+    def test_update_properties_with_requester_having_two_emails
+      sample_requester = add_user_with_multiple_emails(@account, 2)
+      sample_requester_email = sample_requester.emails[1]
+      description = Faker::Lorem.paragraph
+      subject = Faker::Lorem.words(10).join(' ')
+      params_hash = {
+        subject: subject,
+        description: description,
+        email: sample_requester_email,
+        requester_id: sample_requester.id
+      }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 200
+      response_body = JSON.parse(response.body)
+      assert_equal response_body['sender_email'], sample_requester_email
+      assert_equal response_body['requester_id'], sample_requester.id
     end
 
     def test_update_properties_with_subject_description

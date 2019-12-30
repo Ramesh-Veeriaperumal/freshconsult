@@ -143,4 +143,21 @@ class Account < ActiveRecord::Base
     end
     to_email
   end
+
+  def trigger_suspended_account_cleanup
+    payload =
+      {
+        job_id: "#{Account.current.id}_suspended_account_cleanup",
+        group: ::SchedulerClientKeys['account_cleanup_group_name'],
+        scheduled_time: 6.months.from_now.utc,
+        data: {
+          account_id: Account.current.id,
+          enqueued_at: Time.now.to_i
+        },
+        sqs: {
+          url: SQS_V2_QUEUE_URLS[SQS[:suspended_account_cleanup_queue]]
+        }
+      }
+    ::Scheduler::PostMessage.perform_async(payload: payload)
+  end
 end

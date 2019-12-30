@@ -179,7 +179,11 @@ class Billing::BillingController < ApplicationController
     def subscription_cancelled(content)
       @account.subscription.update_attributes(:state => SUSPENDED)
       remove_others_redis_key(card_expiry_key)
-      @account.perform_paid_account_cancellation_actions if cancellation_requested?
+      if cancellation_requested?
+        @account.perform_paid_account_cancellation_actions
+      else
+        @account.trigger_suspended_account_cleanup
+      end
     end
 
     def subscription_reactivated(content)

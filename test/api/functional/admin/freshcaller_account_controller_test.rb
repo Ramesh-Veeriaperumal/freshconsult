@@ -29,6 +29,12 @@ module Admin
       Account.current.revoke_feature :freshcaller
     end
 
+    def freshcaller_account_show_response
+      fc_account = Account.current.freshcaller_account.as_api_response(:api)
+      fc_account[:agents] = Account.current.freshcaller_agents.where(fc_enabled: true).map { |agent| agent.as_api_response(:api) }
+      fc_account
+    end
+
     def wrap_cname(params)
       { freshcaller_account: params }
     end
@@ -62,7 +68,7 @@ module Admin
       freshcaller_account = Account.current.freshcaller_account
       get :show, controller_params(version: 'private')
       assert_response 200
-      match_json(freshcaller_account.as_api_response(:api))
+      match_json(freshcaller_account_show_response)
     end
 
     def test_show_with_freshcaller_account_disabled_state
@@ -73,7 +79,19 @@ module Admin
       freshcaller_account.reload
       get :show, controller_params(version: 'private')
       assert_response 200
-      match_json(freshcaller_account.as_api_response(:api))
+      match_json(freshcaller_account_show_response)
+    end
+
+    def test_show_with_freshcaller_agents
+      create_freshcaller_account unless Account.current.freshcaller_account
+      freshcaller_account = Account.current.freshcaller_account
+      create_freshcaller_enabled_agent
+      get :show, controller_params(version: 'private')
+      assert_response 200
+      match_json(freshcaller_account_show_response)
+    ensure
+      delete_freshcaller_account
+      delete_freshcaller_agent unless @agent.agent.freshcaller_agent.nil?
     end
 
     def test_show_with_feature_and_no_freshcaller_account_associated
@@ -183,7 +201,7 @@ module Admin
       post :link, construct_params({ version: 'private' }.merge(params_hash), params_hash)
       assert_response 200
       Account.current.reload
-      match_json(Account.current.freshcaller_account.as_api_response(:api))
+      match_json(freshcaller_account_show_response)
     ensure
       delete_freshcaller_account
       remove_stubs
@@ -286,7 +304,7 @@ module Admin
       stub_create_success
       post :create, controller_params(version: 'private')
       assert_response 200
-      match_json(Account.current.freshcaller_account.as_api_response(:api))
+      match_json(freshcaller_account_show_response)
       assert ::Freshcaller::Agent.find_by_fc_user_id(1234).present?
       assert Account.current.freshcaller_account.present?
       assert Account.current.freshcaller_account.domain, 'test.freshcaller.com'
