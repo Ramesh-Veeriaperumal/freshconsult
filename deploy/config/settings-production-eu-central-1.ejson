@@ -1160,7 +1160,7 @@
             },
             "_slave2_host": "euc-shard4slave2.internal.podeucentral1.freshdesk.com",
             "_username": "dbuser"
-          },
+          }
         },
         "semian": {
           "global": {
