@@ -83,7 +83,7 @@ class ArticleVersionsMigrationWorkerTest < ActionView::TestCase
   def test_add_acticle_version_with_exception
     Sidekiq::Testing.inline! do
       Solution::ArticleVersionsMigrationWorker.any_instance.stubs(:safe_send).with('add_versions').raises(StandardError)
-      NewRelic::Agent.expects(:notice_error).once
+      NewRelic::Agent.expects(:notice_error).at_least_once
       Solution::ArticleVersionsMigrationWorker.perform_async(account_id: @account.id, action: 'add')
     end
   ensure
