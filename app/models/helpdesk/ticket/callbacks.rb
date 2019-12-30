@@ -736,11 +736,6 @@ private
 
   def update_sla_model_changes
     @model_changes.merge!(self.changes.to_hash.slice(*TICKET_SLA_ATTRIBUTES)).symbolize_keys!
-    SLA_DATETIME_ATTRIBUTES.each do |attr|
-      next unless @model_changes.key?(attr.to_sym)
-      @model_changes[attr.to_sym].map!{|t| t.to_time.utc.iso8601 unless t.nil? }
-    end
-
   end
 
   def load_ticket_status

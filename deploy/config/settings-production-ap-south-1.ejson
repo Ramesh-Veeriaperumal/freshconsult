@@ -8,6 +8,11 @@
       "freshconnect_signup_supported": false,
       "freshmarketer_signup_supported": false
       },
+      "asknicely_app": {
+        "hash_token": "EJ[1:kG6Xoi805Ra2xlLL1VEEZwneax7Qvuikxs0bzs571iI=:1BQdS1twC6uRmCITVqBtFLsMBm1kpJU9:wDcEZyXG3e7wpz0S9tH3GJ5nC+1unXENxPyNzQBOkLDg6e+Vy2tBhmg2RzLiFSndRDw9PrmA8wzR5gcgNPPvsBN/c1f/tg8LtEYSkR2dd0SoHmKfD+9JhmCq8/GgTQhbLIMDvPI2gEoKROEIaV+AQndngCmqnWaNKc7mEBH3GreknAGiKfSUDpN6pxHQEikZ]",
+        "_domain_key": "freshworks",
+        "_template_name": "Freshworks-NPS"
+      },
       "rts": {
         "app_id": "EJ[1:PQjPhtCH/3e30SyAXH8osYeWIjX5+qK98ZwOHqV09xY=:4haSY+XO+eq+n410CWy6XvwlrUjTPFRO:JL/r+04NFxrTuiYqLmWTTmBWibt6untM]",
         "app_secret": "EJ[1:PQjPhtCH/3e30SyAXH8osYeWIjX5+qK98ZwOHqV09xY=:2n0047/eD492IySEcdCSq1ifm9Xu85gd:FcHmj5Zv6KsinrdL+1F6A9p/Z5G/i88JwXExWD1LoUeRvtGU2NNTp/8nsPy38IO8EMwwN2OU6JPtVEKs]",
@@ -618,6 +623,10 @@
             "_sqs_queue": "fd_scheduler_downgrade_policy_reminder_queue_production",
             "_priority": 1
           },
+          "suspended_account_cleanup": {
+            "_sqs_queue": "suspended_account_cleanup_queue_production",
+            "_priority": 1
+          },
           "search_etlqueue": {
             "_sqs_queue": "search-etlqueue-production",
             "_priority": 1
@@ -937,6 +946,7 @@
         "_spam_trash_delete_free_acc_queue": "spam_trash_delete_free_acc_queue_production",
         "_spam_trash_delete_paid_acc_queue": "spam_trash_delete_paid_acc_queue_production",
         "_fd_scheduler_downgrade_policy_reminder_queue": "fd_scheduler_downgrade_policy_reminder_queue_production",
+        "_suspended_account_cleanup_queue": "suspended_account_cleanup_queue_production",
         "_search_etlqueue_maintenance": "search-etlqueue-production_maintenance",
         "_count_etl_queue_maintenance": "count_etl_queue_production_maintenance",
         "_analytics_etl_queue_maintenance": "analytics_etl_queue_production_maintenance"
@@ -1276,7 +1286,8 @@
         "_todo_group_name": "helpkit_todo_reminder",
         "_export_group_name": "helpkit_export_cleanup",
         "_ticket_delete_group_name": "helpkit_ticket_delete",
-        "_downgrade_policy_group_name": "helpkit_downgrade_policy_reminder"
+        "_downgrade_policy_group_name": "helpkit_downgrade_policy_reminder",
+        "_account_cleanup_group_name": "helpkit_suspended_account_cleanup"
       },
       "freshchat": {
         "_agent_widget_host_url": "https://web.in.freshchat.com",
@@ -1298,7 +1309,7 @@
       },
       "app_integration": {
         "freshconnect": {
-          "token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:fDQSUdgQ+VrUgdT0qrhZjyG2au45g11J:SdIPB0o4pPGPDEdmVPaJ8ax/j1N5m9ZHXemO68d7BNnkhjmnBSOMp00syFEg60tb25haJ20L1hyqWshXgEAFVtUXnwKJiLktrEwdnzGDq6YKZUAFIdnFF55P9eZ6faBmC7GOVFiBqRo=]"
+          "token": "EJ[1:ARgvNnIU1whoq5lYP6vJQUqLONdbcgkttYiEVPOUHyg=:kP4Tcfe2rZ6f6Z7eRuusNODhkz2cCxoL:iww7Wd65/vVjd2PhUtSPzFozgyHbrSxl1IHMkwGQGaxq3I0bTfhUAvO+pTXBck6j2m0FLN4MXfRhl2wNnuJVmiujrH4P1BRFE6Dz7iEDxYF46rOZXnJv5d8TkXtTTuxnxFpHbGyu/x0=]"
         }
       },
       "freshmarketer": {
@@ -1345,9 +1356,6 @@
         "_route": "gateway/facebook/pages",
         "_request_owner": "helpkit",
         "_max_page_limit": 10
-      },
-      "growthscore_app": {
-        "app_id": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:hVhL66tsWleGz5IPMnC3yEPxc1ubFukx:GUPThGBWh9izhFr6elM9VuoGd6wsEABl4aOQXs31evnbPpVjJkz/xmBEm/QIZZDX]"
       },
       "email_bot_ml_feedback": {
         "service_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:wkTVJegywp9ctyOyHZgIBn/UGaJnSelz:lWqgiytgWyBFqE2g0kycpXLXtd9RrKaGNQm9byo7iryhmL4b/QHvAw==]",

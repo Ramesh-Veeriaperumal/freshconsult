@@ -49,6 +49,7 @@ development:
   search_etl_queue_maintenance: search_etl_queue_dev_maintenance
   count_etl_queue_maintenance: count_etl_queue_dev_maintenance
   analytics_etl_queue_maintenance: analytics_etl_queue_dev_maintenance
+  suspended_account_cleanup_queue: suspended_account_cleanup_queue_dev
 staging:
   twitter_realtime_queue: social_gnip_2_0_tweet_staging
   facebook_realtime_queue: social_fb_feed_staging
@@ -182,3 +183,4 @@ test:
   search_etl_queue_maintenance: search_etl_queue_test_maintenance
   count_etl_queue_maintenance: count_etl_queue_test_maintenance
   analytics_etl_queue_maintenance: analytics_etl_queue_test_maintenance
+  suspended_account_cleanup_queue: suspended_account_cleanup_queue_test

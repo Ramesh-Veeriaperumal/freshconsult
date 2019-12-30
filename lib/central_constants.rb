@@ -23,6 +23,7 @@ module CentralConstants
     'Social::TwitterStream' => '0.1',
     'Integrations::InstalledApplication' => '0.1',
     'Social::FacebookPage' => '0.3',
+    'Social::FacebookStream' => '0.1',
     'Product' => '0.1',    
     'Helpdesk::TicketField' => '1.1',
     'AgentGroup' => '0.1',

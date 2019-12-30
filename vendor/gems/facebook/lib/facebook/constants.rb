@@ -20,7 +20,8 @@ module Facebook
     # Stream and Ticket Rule type
     FB_STREAM_TYPE = {
       default: 'Wall',
-      dm: 'DM'
+      dm: 'DM',
+      ad_post: 'Ad_post'
     }.freeze
 
     POST_TYPE_CODE = {
@@ -35,7 +36,8 @@ module Facebook
       strict: 1,
       optimal: 2,
       broad: 3,
-      dm: 4
+      dm: 4,
+      ad_post: 5
     }.freeze
 
     FETCH_FIELDS = {

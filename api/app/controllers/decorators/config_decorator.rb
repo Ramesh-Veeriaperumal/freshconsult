@@ -9,7 +9,6 @@ class ConfigDecorator < ApiDecorator
     ret_hash[:email] = email_mailbox_config
     ret_hash[:zendesk_app_id] = zendesk_app_id
     ret_hash[:warnings] = warn_items
-    ret_hash[:growthscore_app_id] = GrowthScoreConfig['app_id']  if User.current.privilege?(:admin_tasks) || User.current.privilege?(:manage_account)
     ret_hash.merge!(update_billing_info)
     ret_hash
   end

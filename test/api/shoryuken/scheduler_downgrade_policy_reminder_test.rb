@@ -1,7 +1,7 @@
 require_relative '../unit_test_helper'
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 require Rails.root.join('test', 'models', 'helpers', 'subscription_test_helper.rb')
-class SchedulerPollerTodosReminderTest < ActionView::TestCase
+class SchedulerDowngradePolicyReminderTest < ActionView::TestCase
   include AccountTestHelper
   include SubscriptionTestHelper
   def teardown
@@ -19,6 +19,5 @@ class SchedulerPollerTodosReminderTest < ActionView::TestCase
     assert_nothing_raised do
       response = Ryuken::SchedulerDowngradePolicyReminder.new.perform(nil, args)
     end
-    #assert_equal response, true
   end
 end

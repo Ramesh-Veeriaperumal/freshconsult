@@ -37,6 +37,6 @@ class Agent < ActiveRecord::Base
   has_many :tickets, :class_name => 'Helpdesk::Ticket', :foreign_key =>'responder_id', 
           :primary_key => "user_id"
 
-has_one :freshcaller_agent, :class_name => 'Freshcaller::Agent'
+  has_one :freshcaller_agent, class_name: 'Freshcaller::Agent', dependent: :destroy
 
 end

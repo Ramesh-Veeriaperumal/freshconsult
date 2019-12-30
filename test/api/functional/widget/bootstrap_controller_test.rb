@@ -3,6 +3,7 @@ module Widget
   class BootstrapControllerTest < ActionController::TestCase
     include HelpWidgetsTestHelper
     include AgentsTestHelper
+    include UsersHelper
 
     def setup
       super
@@ -27,7 +28,6 @@ module Widget
 
     def test_widget_bootstrap_with_new_user
       timestamp = Time.now.utc.iso8601
-      User.any_instance.stubs(:agent?).returns(false)
       auth_token = JWT.encode({ name: 'Padmashri',
                                 email: 'praaji.longbottom@freshworks.com',
                                 timestamp: timestamp }, @secret_key)
@@ -43,13 +43,12 @@ module Widget
       assert_equal User.current.id, user.id
       assert user.active
     ensure
-      User.any_instance.unstub(:agent?)
+      user.destroy
     end
 
     def test_widget_bootstrap_with_existing_user
-      user = @account.users.first
+      user = add_new_user(@account)
       timestamp = Time.now.utc.iso8601
-      User.any_instance.stubs(:agent?).returns(false)
       auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, @secret_key)
       @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
       get :index, construct_params(version: 'widget')
@@ -64,13 +63,12 @@ module Widget
       user.reload
       assert user.active
     ensure
-      User.any_instance.unstub(:agent?)
+      user.destroy
     end
 
     def test_widget_bootstrap_with_existing_user_name_changed
-      user = @account.users.first
+      user = add_new_user(@account)
       user_name = user.name
-      User.any_instance.stubs(:agent?).returns(false)
       timestamp = Time.now.utc.iso8601
       auth_token = JWT.encode({ name: 'JohnMichy Steapo Kan',
                                 email: user.email,
@@ -90,12 +88,11 @@ module Widget
       refute_equal User.current.name, user_name
       assert user.active
     ensure
-      User.any_instance.unstub(:agent?)
+      user.destroy
     end
 
     def test_widget_bootstrap_with_existing_user_provided_secondary_email
-      user = @account.users.first
-      User.any_instance.stubs(:agent?).returns(false)
+      user = add_new_user(@account)
       user_email = user.user_emails.new
       user_email.email = 'oppo@samsung.com'
       user_email.save
@@ -114,14 +111,13 @@ module Widget
       user.reload
       assert user.active
     ensure
-      User.any_instance.unstub(:agent?)
+      user.destroy
     end
 
     def test_widget_bootstrap_with_non_active_user
       user = @account.users.new(name: 'Oppo', email: 'oppo@gmail.com')
       user.active = false
       user.save
-      User.any_instance.stubs(:agent?).returns(false)
       timestamp = Time.now.utc.iso8601
       auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, @secret_key)
       @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
@@ -136,13 +132,10 @@ module Widget
       assert_equal User.current.id, user.id
       user.reload
       assert user.active
-    ensure
-      User.any_instance.unstub(:agent?)
     end
 
     def test_widget_bootstrap_with_negative_zone_time_stamp
-      user = @account.users.first
-      User.any_instance.stubs(:agent?).returns(false)
+      user = add_new_user(@account)
       zone = ActiveSupport::TimeZone[-7].name
       timestamp = Time.now.in_time_zone(zone).utc.iso8601
       auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, @secret_key)
@@ -158,12 +151,11 @@ module Widget
       assert_equal User.current.id, user.id
       assert user.active
     ensure
-      User.any_instance.unstub(:agent?)
+      user.destroy
     end
 
     def test_widget_bootstrap_with_additional_user_params
       timestamp = Time.now.utc.iso8601
-      User.any_instance.stubs(:agent?).returns(false)
       auth_token = JWT.encode({ name: 'PariStepen',
                                 email: 'paristepen.harry@freshworks.com',
                                 phone: '9880990122',
@@ -180,13 +172,10 @@ module Widget
       assert_equal User.current.id, user.id
       assert_nil @account.users.find(id).phone
       assert user.active
-    ensure
-      User.any_instance.unstub(:agent?)
     end
 
     def test_widget_bootstrap_with_restricted_helpdesk
       @account.launch(:restricted_helpdesk)
-      User.any_instance.stubs(:agent?).returns(false)
       @account.features.restricted_helpdesk.create
       @account.helpdesk_permissible_domains.create(domain: 'restrictedhelpdesk.com')
       timestamp = Time.now.utc.iso8601
@@ -205,7 +194,6 @@ module Widget
       assert_equal User.current.id, user.id
       assert user.active
     ensure
-      User.any_instance.unstub(:agent?)
       @account.features.restricted_helpdesk.destroy
       @account.rollback(:restricted_helpdesk)
     end
@@ -234,9 +222,8 @@ module Widget
     end
 
     def test_widget_boostrap_with_user_blocked
-      user = @account.users.first
+      user = add_new_user(@account)
       User.any_instance.stubs(:blocked?).returns(true)
-      User.any_instance.stubs(:agent?).returns(false)
       auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: Time.now.utc.iso8601 }, @secret_key)
       @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
       get :index, construct_params(version: 'widget')
@@ -244,13 +231,12 @@ module Widget
       match_json(request_error_pattern('invalid_user', id: user.id, name: user.name))
     ensure
       User.any_instance.unstub(:blocked?)
-      User.any_instance.unstub(:agent?)
+      user.destroy
     end
 
     def test_widget_boostrap_with_user_deleted
-      user = @account.users.first
+      user = add_new_user(@account)
       User.any_instance.stubs(:deleted?).returns(true)
-      User.any_instance.stubs(:agent?).returns(false)
       auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: Time.now.utc.iso8601 }, @secret_key)
       @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
       get :index, construct_params(version: 'widget')
@@ -258,13 +244,12 @@ module Widget
       match_json(request_error_pattern('invalid_user', id: user.id, name: user.name))
     ensure
       User.any_instance.unstub(:deleted?)
-      User.any_instance.unstub(:agent?)
+      user.destroy
     end
 
     def test_widget_boostrap_with_spam_user
-      user = @account.users.first
+      user = add_new_user(@account)
       User.any_instance.stubs(:spam?).returns(true)
-      User.any_instance.stubs(:agent?).returns(false)
       auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: Time.now.utc.iso8601 }, @secret_key)
       @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
       get :index, construct_params(version: 'widget')
@@ -272,14 +257,13 @@ module Widget
       match_json(request_error_pattern('invalid_user', id: user.id, name: user.name))
     ensure
       User.any_instance.unstub(:spam?)
-      User.any_instance.unstub(:agent?)
+      user.destroy
     end
 
     def test_widget_boostrap_with_user_blocked_user_name_changed
-      user = @account.users.first
+      user = add_new_user(@account)
       name = user.name
       User.any_instance.stubs(:blocked?).returns(true)
-      User.any_instance.stubs(:agent?).returns(false)
       auth_token = JWT.encode({ name: "#{name} RANA", email: user.email, timestamp: Time.now.utc.iso8601 }, @secret_key)
       @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
       get :index, construct_params(version: 'widget')
@@ -289,7 +273,7 @@ module Widget
       assert_equal user.name, name
     ensure
       User.any_instance.unstub(:blocked?)
-      User.any_instance.unstub(:agent?)
+      user.destroy
     end
 
     def test_widget_bootstrap_without_timestamp

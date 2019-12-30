@@ -205,7 +205,12 @@ HEREDOC
       else
         o = EJSONWrapper.decrypt(@options[:override_ejson], region: @options[:region],
                              use_kms: @options.key?(:kms), key_dir: @options[:private_key_dir])
-        s = s.dup.deep_merge!(o)
+        s = s.deep_merge(o)
+        if ENV['SQUAD'] == '1' && o[:settings] && o[:settings][:ymls] && o[:settings][:ymls][:database]
+          ejson_prepare(o, false)
+          o = o.deep_symbolize_keys
+          @database_config = o[:settings][:ymls][:database]
+        end
       end
     end
 
@@ -472,6 +477,8 @@ HEREDOC
     rescue Aws::SecretsManager::Errors::ResourceNotFoundException => e
       STDOUT.puts "Secret #{secret_name} not found so creating it."
     end
+
+    node[:ymls][:database] = @database_config if @database_config
 
     files.each {|filename|
       STDERR.puts "Processing #{filename}"
@@ -776,7 +783,8 @@ HEREDOC
       "search_etl_queue": "search_etlqueue",
       "trial_customer_email_queue": "trial_email",
       "twitter_realtime_queue": "social_gnip_tweets",
-      "fd_scheduler_downgrade_policy_reminder_queue": "downgrade_policy_reminder"
+      'fd_scheduler_downgrade_policy_reminder_queue': 'downgrade_policy_reminder',
+      'suspended_account_cleanup_queue': 'suspended_account_cleanup'
     }
 
     queue_prefix = ENV["HELPKIT_TEST_SETUP_SQS_QUEUE_PREFIX"]

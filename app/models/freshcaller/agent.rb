@@ -6,5 +6,6 @@ module Freshcaller
     belongs_to_account
     belongs_to :agent, class_name: '::Agent'
     has_one :user, through: :agent
+    concerned_with :presenter
   end
 end

@@ -377,6 +377,7 @@
       :lbrr_by_omniroute: 372
       :secure_attachments: 373
       :next_response_sla: 374
+      :fb_ad_posts: 375
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -480,3 +481,4 @@
   :fluffy_higher_plan2: false
   :fluffy_higher_plan3: false
   :fluffy_higher_plan4: false
+  :fb_ad_posts: false

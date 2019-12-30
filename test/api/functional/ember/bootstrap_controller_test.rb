@@ -24,6 +24,13 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     match_json(agent_info_pattern(@agent.agent))
   end
 
+  def test_me_for_ask_nicely_with_admin_privilege
+    get :me, controller_params(version: 'private')
+    assert_response 200
+    email_hash = OpenSSL::HMAC.hexdigest('sha256', AskNicelyConfig['hash_token'], @agent.email)
+    assert_equal response.api_meta[:asknicely_user_email_hash], email_hash
+  end
+
   def test_account
     get :account, controller_params(version: 'private')
     assert_response 200
@@ -38,7 +45,6 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     parsed_response = parse_response response.body
     assert_response 200
     assert_nil parsed_response['account']['subscription']['mrr']
-    assert_nil parsed_response['config']['growthscore_app_id']
   ensure
     User.any_instance.unstub(:privilege?)
   end

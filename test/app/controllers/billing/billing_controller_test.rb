@@ -240,8 +240,19 @@ class Billing::BillingControllerTest < ActionController::TestCase
   def test_subscription_cancelled_event
     stub_subscription_settings
     user = add_new_user(@account)
+    Billing::BillingController.any_instance.stubs(:cancellation_requested?).returns(true)
     post :trigger, event_type: 'subscription_cancelled', content: normal_event_content, format: 'json'
     assert_response 200
+  ensure
+    Billing::BillingController.any_instance.unstub(:cancellation_requested?)
+    unstub_subscription_settings
+  end
+
+  def test_account_cancellation_enqueued_after_subscription_cancelled
+    stub_subscription_settings
+    user = add_new_user(@account)
+    post :trigger, event_type: 'subscription_cancelled', content: normal_event_content, format: 'json'
+    assert_equal 1, ::Scheduler::PostMessage.jobs.size
   ensure
     unstub_subscription_settings
   end
