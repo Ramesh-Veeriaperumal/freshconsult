@@ -3,6 +3,11 @@ class Users::DetectLanguage < BaseWorker
   include Redis::OthersRedis
   include Cache::LocalCache
 
+  FD_EMAIL_SERVICE = YAML.load_file(Rails.root.join('config', 'fd_email_service.yml'))[Rails.env]
+  EMAIL_SERVICE_AUTHORISATION_KEY = FD_EMAIL_SERVICE['lang_key']
+  EMAIL_SERVICE_HOST = FD_EMAIL_SERVICE['lang_host']
+  LANGUAGE_DETECT_URL = FD_EMAIL_SERVICE['lang_detect_path']
+
   sidekiq_options queue: :detect_user_language,
                   retry: 0,
                   failures: :exhausted
@@ -13,10 +18,12 @@ class Users::DetectLanguage < BaseWorker
     account = Account.current
     @user   = account.all_users.find(args[:user_id])
     @text   = args[:text]
-
     if account.compact_lang_detection_enabled?
       detect_lang_from_cld
+    elsif account.detect_lang_from_email_service_enabled?
+      set_lang_via_email_service
     else
+      @text.squish.split.first(15).join(' ')
       detect_lang_from_google
     end
   rescue => e
@@ -48,6 +55,31 @@ class Users::DetectLanguage < BaseWorker
       else
         Helpdesk::DetectUserLanguage.set_user_language!(@user, @text)
       end
+    end
+
+    def detect_lang_from_email_service
+      response = RestClient::Request.execute(
+        method: :post,
+        url: "#{EMAIL_SERVICE_HOST}/#{LANGUAGE_DETECT_URL}",
+        payload: { text: @text }.to_json,
+        headers: {
+          'Content-Type' => 'application/json',
+          'Authorization' => EMAIL_SERVICE_AUTHORISATION_KEY
+        }
+      )
+      response_body = JSON.parse(response.body)
+      if response.code == 200 && response_body['Status'] == 'Success'
+        language = response_body['data']['detections'].flatten.last['language']
+        Rails.logger.info "Detected language from email_service language: #{language} - text: #{@text} -Account_id: #{Account.current.id}"
+      end
+      language
+    end
+
+    def set_lang_via_email_service
+      @user.language = @user.account.language
+      language = detect_lang_from_email_service
+      @user.language = (I18n.available_locales_with_name.map { |lang, sym| sym.to_s }.include? language) ? language : @user.account.language
+      @user.save!
     end
 
     def text_available_from_cache?

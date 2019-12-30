@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191021120954) do
+ActiveRecord::Schema.define(version: 20191211085748) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -226,7 +226,7 @@ ActiveRecord::Schema.define(version: 20191021120954) do
     t.string   "label"
     t.boolean  "default",                    :default => false
     t.integer  "account_id",    :limit => 8,                    :null => false
-    t.integer  "deleted",                    :default => 0
+    t.boolean  'deleted', default: false
     t.datetime "created_at",                                    :null => false
     t.datetime "updated_at",                                    :null => false
   end
@@ -3407,6 +3407,7 @@ ActiveRecord::Schema.define(version: 20191021120954) do
     t.boolean  "override_bhrs",                   :default => false
     t.integer  "account_id",         :limit => 8
     t.boolean  "escalation_enabled",              :default => true
+    t.text     "sla_target_time"
   end
 
   add_index "sla_details", ["account_id", "sla_policy_id"], :name => "index_account_id_and_sla_policy_id_on_sla_details"

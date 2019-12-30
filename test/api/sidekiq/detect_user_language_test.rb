@@ -5,6 +5,9 @@ require 'minitest'
 Sidekiq::Testing.fake!
 ['contact_segments_test_helper.rb'].each { |file| require Rails.root.join("test/lib/helpers/#{file}") }
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
+FD_EMAIL_SERVICE = YAML.load_file(Rails.root.join('config', 'fd_email_service.yml'))[Rails.env]
+EMAIL_SERVICE_AUTHORISATION_KEY = FD_EMAIL_SERVICE['lang_key']
+LANGUAGE_DETECT_URL = FD_EMAIL_SERVICE['lang_detect_path']
 class DetectUserLanguageTest < ActionView::TestCase
   include ContactSegmentsTestHelper
   include AccountTestHelper
@@ -94,6 +97,29 @@ class DetectUserLanguageTest < ActionView::TestCase
     @user.reload
     assert_equal @user.language, "en"
     @account.rollback(:compact_lang_detection)
+  end
+
+  def test_lang_detect_from_email_service_for_success_response
+    @account.launch(:detect_lang_from_email_service)
+    User.any_instance.stubs(:detect_language?).returns(true)
+    Users::DetectLanguage.any_instance.stubs(:detect_lang_from_email_service).returns('ar')
+    @account.rollback(:compact_lang_detection)
+    Users::DetectLanguage.new.perform(user_id: @user.id, text: 'test string - sample 2')
+    @user.reload
+    assert_equal 'ar', @user.language, 'language detection proper response from email service'
+  ensure
+    @account.rollback(:detect_lang_from_email_service)
+  end
+
+  def test_lang_detect_from_email_service_for_failure_response
+    @account.launch(:detect_lang_from_email_service)
+    User.any_instance.stubs(:detect_language?).returns(true)
+    Users::DetectLanguage.any_instance.stubs(:detect_lang_from_email_service).returns(@account.language)
+    Users::DetectLanguage.new.perform(user_id: @user.id, text: 'test string - sample 2')
+    @user.reload
+    assert_equal @user.account.language, @user.language, 'language detection improper response from email service'
+  ensure
+    account.rollback(:detect_lang_from_email_service)
   end
 
   #keeps failing randomly when its straightforward. Will fix it later. commenting for now. 

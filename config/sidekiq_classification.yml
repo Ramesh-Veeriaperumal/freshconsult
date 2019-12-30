@@ -131,6 +131,7 @@
     - custom_translations_upload_queue
     - custom_translations_update_survey_status
     - kbase_article_versions_migration_worker
+    - freshcaller_update_agents
 
   :maintainence:
     - select_all_tickets

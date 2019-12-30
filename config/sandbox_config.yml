@@ -19,12 +19,14 @@ MODEL_DEPENDENCIES:
   - - - User
     - string_uc04
   BusinessCalendar: []
+  GroupType: []
   Group:
   - - - User
     - escalate_to
   - - - BusinessCalendar
     - business_calendar_id
   Admin::Skill: []
+  AgentType: []
   Agent:
   - - - User
     - user_id

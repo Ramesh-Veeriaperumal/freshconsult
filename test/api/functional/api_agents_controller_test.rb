@@ -1145,4 +1145,139 @@ class ApiAgentsControllerTest < ActionController::TestCase
   ensure
     Account.any_instance.unstub(:focus_mode_enabled?)
   end
+
+  def test_update_multiple_without_id
+    payload = { "agents" => [
+                {
+                  "ticket_assignment" => {
+                    "available" => true
+                  }
+                }
+              ]}
+    put :update_multiple, construct_params(payload)
+    result = parse_response(@response.body)
+    assert_response 400
+    assert_equal result, { "description" => "Validation failed",
+                           "errors" => [
+                              { "field"=>"id",
+                                "message"=>"It should be a/an Integer",
+                                "code"=>"missing_field"
+                              }
+                            ]
+                          }
+  end
+
+  def test_update_multiple_without_ticket_assignment
+    payload = { "agents" => [
+                {
+                  "id" => Account.current.account_managers.first.id
+                }
+              ]}
+    put :update_multiple, construct_params(payload)
+    result = parse_response(@response.body)
+    assert_response 400
+    assert_equal result, { "description" => "Validation failed",
+                           "errors" => [
+                              { "field" => "ticket_assignment",
+                                "message" => "can't be blank",
+                                "code" => "invalid_value"
+                              }
+                            ]
+                          }
+  end
+
+  def test_update_multiple_without_available
+    payload = { "agents" => [
+                {
+                  "id" => Account.current.account_managers.first.id,
+                  "ticket_assignment" => {}
+                }
+              ]}
+    put :update_multiple, construct_params(payload)
+    result = parse_response(@response.body)
+    assert_response 400
+    assert_equal result, { "description" => "Validation failed",
+                           "errors" => [
+                              { "field"=>"ticket_assignment",
+                                "message"=>"can't be blank",
+                                "code"=>"invalid_value"
+                              }
+                            ]
+                          }
+  end
+
+  def test_update_multiple_invalid_key_in_ticket_assignment
+    payload = { "agents" => [
+                {
+                  "id" => Account.current.account_managers.first.id,
+                  "ticket_assignment" => { "test" => "test" }
+                }
+              ]}
+    put :update_multiple, construct_params(payload)
+    result = parse_response(@response.body)
+    assert_response 400
+    assert_equal result, { "description" => "Validation failed",
+                           "errors" => [
+                              { "field"=>"test",
+                                "message"=>"Unexpected/invalid field in request",
+                                "code"=>"invalid_field"
+                              }
+                            ]
+                          }
+  end
+
+  def test_update_multiple_invalid_value_in_available
+    payload = { "agents" => [
+                {
+                  "id" => Account.current.account_managers.first.id,
+                  "ticket_assignment" => { "available" => "test" }
+                }
+              ]}
+    put :update_multiple, construct_params(payload)
+    result = parse_response(@response.body)
+    assert_response 400
+    assert_equal result, { "description" => "Validation failed",
+                           "errors" => [
+                              { "field"=>"ticket_assignment",
+                                "nested_field"=>"ticket_assignment.available",
+                                "message"=>"It should be a/an Boolean",
+                                "code"=>"datatype_mismatch"
+                              }
+                            ]
+                          }
+  end
+
+  def test_update_multiple_with_valid_payload
+    payload = { "agents" => [
+                {
+                  "id" => Account.current.account_managers.first.id,
+                  "ticket_assignment" => { "available" => true }
+                }
+              ]}
+    put :update_multiple, construct_params(payload)
+    result = parse_response(@response.body)
+    assert_response 200
+    assert_equal result, {"job_id"=>nil, "href"=>"https://localhost.freshpo.com/api/v2/jobs/"}
+  end
+
+  # def test_update_multiple_with_50_agents
+  #   agent_array = []
+  #   agent_role_id = Role.find_by_name('Agent').id
+  #   50.times do 
+  #     agent_array << { 
+  #       "id" => add_test_agent(@account, role: agent_role_id).id,
+  #       "ticket_assignment" => { "available" => true }
+  #     }
+  #   end
+  #   payload = { "agents" => agent_array }
+  #   Sidekiq::Testing.inline! do
+  #     put :update_multiple, construct_params(payload)
+  #   end
+  #   result = parse_response(@response.body)
+  #   assert_response 200
+  #   assert_equal result, {"job_id"=>nil, "href"=>"https://localhost.freshpo.com/api/v2/jobs/"}
+  #   payload['agents'].each do |agent|
+  #     assert_equal Account.current.agents.find_by_user_id(agent['id']).available, true
+  #   end
+  # end
 end

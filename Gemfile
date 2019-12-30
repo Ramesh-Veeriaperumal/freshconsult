@@ -115,6 +115,7 @@ gem 'sidekiq', "4.2.10"
 source "https://690a8c5e:5d9334f0@gems.contribsys.com/" do
   gem 'sidekiq-pro', '3.7.1'
 end
+gem 'sidekiq_sober', :git => "git@github.com:freshdesk/sidekiq_sober.git", :tag => "v1.0.0"
 gem 'shoryuken', '2.0.4'
 
 gem "soap4r-ruby1.9", "~> 2.0.5"

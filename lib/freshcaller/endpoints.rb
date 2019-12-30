@@ -43,6 +43,10 @@ module Freshcaller
       "#{freshcaller_url}#{DISABLE_INTEGRATION}"
     end
 
+    def freshcaller_add_agent_url
+      "#{freshcaller_url}/users"
+    end
+
     def protocol
       Rails.env.development? ? 'http://' : 'https://'
     end

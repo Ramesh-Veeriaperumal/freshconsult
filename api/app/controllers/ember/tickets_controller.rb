@@ -9,6 +9,7 @@ module Ember
     include Redis::OthersRedis
     include Helpdesk::Activities::ActivityMethods
     include ExportHelper
+    include TicketUpdateHelper
 
     decorate_views(decorate_object: [:update_properties, :execute_scenario], decorate_objects: [:index, :search])
 
@@ -60,14 +61,7 @@ module Ember
 
     def update
       assign_protected
-      delegator_hash = { ticket_fields: @ticket_fields, custom_fields: cname_params[:custom_field],
-                         attachment_ids: @attachment_ids, shared_attachments: shared_attachments,
-                         company_id: cname_params[:company_id] }
-      delegator_hash[:tracker_ticket_id] = cname_params[:tracker_ticket_id] if link_or_unlink?
-      assign_attributes_for_update
-      return unless validate_delegator(@item, delegator_hash)
-      modify_ticket_associations if link_or_unlink?
-      @item.attachments = @item.attachments + @delegator.draft_attachments if @delegator.draft_attachments
+      return unless validate_and_assign
       if @item.update_ticket_attributes(cname_params)
         render 'ember/tickets/show'
       else
@@ -279,11 +273,6 @@ module Ember
 
         # Default source is set to phone. Instead of portal as set in the model.
         @item.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone] if @item.source === 0
-      end
-
-      def assign_attributes_for_update
-        @item.assign_attributes(validatable_delegator_attributes)
-        @item.assign_description_html(cname_params[:ticket_body_attributes]) if cname_params[:ticket_body_attributes]
       end
 
       def load_objects

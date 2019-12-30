@@ -68,3 +68,5 @@ allOf:
         properties:
           ner_data: 
             $ref: '#/definitions/ner_api_data'
+      ticket:
+        $ref: ./definitions/resource/ticket.yaml

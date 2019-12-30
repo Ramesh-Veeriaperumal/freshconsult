@@ -6,8 +6,9 @@ class Admin::FreshcallerAccountController < ApiApplicationController
 
   skip_before_filter :build_object, only: [:create]
   before_filter :check_feature
-  before_filter :validate_params, only: [:link]
   before_filter :validate_linking, only: [:create, :link]
+  before_filter :validate_params, only: [:link, :update]
+  before_filter :sanitize_params, only: [:update]
 
   attr_accessor :freshcaller_response
 
@@ -54,6 +55,17 @@ class Admin::FreshcallerAccountController < ApiApplicationController
     end
   end
 
+  def update
+    delegator = Admin::FreshcallerAccountDelegator.new(scoper)
+    if delegator.valid?
+      Freshcaller::UpdateAgentsWorker.perform_async(agent_user_ids: cname_params[:agent_ids]) if cname_params[:agent_ids]
+
+      head 204
+    else
+      render_custom_errors(delegator, true)
+    end
+  end
+
   def destroy
     delegator = Admin::FreshcallerAccountDelegator.new(@item)
     if delegator.valid?
@@ -84,6 +96,10 @@ class Admin::FreshcallerAccountController < ApiApplicationController
 
     def validate_params
       validate_body_params
+    end
+
+    def sanitize_params
+      prepare_array_fields Admin::FreshcallerAccountConstants::UPDATE_ARRAY_FIELDS
     end
 
     def validate_linking

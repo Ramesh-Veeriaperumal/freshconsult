@@ -1,6 +1,8 @@
 module TicketConcern
   extend ActiveSupport::Concern
 
+  include Helpdesk::TagMethods
+
   def verify_ticket_permission(user = api_current_user, ticket = @item)
     return true if app_current?
     # Should not allow to update/show/restore/add(or)edit(or)delete(or)show conversations or time_entries to a ticket if ticket is deleted forever or user doesn't have permission
@@ -118,6 +120,10 @@ module TicketConcern
       true
     end
 
+    def validate_params
+      validate_ticket_params
+    end
+
     def sanitize_ticket_params
       process_ticket_params
       modify_ticket_params
@@ -128,33 +134,42 @@ module TicketConcern
     def process_ticket_params
       prepare_array_fields(ApiTicketConstants::ARRAY_FIELDS - ['tags']) # Tags not included as it requires more manipulation.
       # Set manual due by to override sla worker triggerd updates.
-      cname_params[:manual_dueby] = true if cname_params[:due_by] || cname_params[:fr_due_by]
+      ticket_update_params[:manual_dueby] = true if ticket_update_params[:due_by] || ticket_update_params[:fr_due_by]
       process_custom_fields
       prepare_tags # Sanitizing is required to avoid duplicate records, we are sanitizing here instead of validating in model to avoid extra query.
       process_requester_params
       process_email_params
-      sanitize_cloud_files(cname_params[:cloud_files])
+      sanitize_cloud_files(ticket_update_params[:cloud_files])
+    end
+
+    def prepare_tags
+      tags = sanitize_tags(ticket_update_params[:tags]) if create? || ticket_update_params.key?(:tags)
+      ticket_update_params[:tags] = construct_tags(tags) if tags
     end
 
     def modify_ticket_params
-      cname_params[:attachments] = cname_params[:attachments].map { |att| { resource: att } } if cname_params[:attachments]
-      cname_params[:ticket_body_attributes] = { description_html: cname_params[:description] } if cname_params[:description]
-      cname_params[:assoc_parent_tkt_id] = cname_params[:parent_id] if cname_params[:parent_id]
+      ticket_update_params[:attachments] = ticket_update_params[:attachments].map { |att| { resource: att } } if ticket_update_params[:attachments]
+      ticket_update_params[:ticket_body_attributes] = { description_html: ticket_update_params[:description] } if ticket_update_params[:description]
+      ticket_update_params[:assoc_parent_tkt_id] = ticket_update_params[:parent_id] if ticket_update_params[:parent_id]
+    end
+
+    def ticket_update_params
+      @ticket_params || cname_params
     end
 
     def process_email_params
       # Assign cc_emails serialized hash & collect it in instance variables as it can't be built properly from params
-      cc_emails =  cname_params[:cc_emails]
+      cc_emails =  ticket_update_params[:cc_emails]
       # Using .dup as otherwise its stored in reference format(&id0001 & *id001).
       @cc_emails = { cc_emails: cc_emails.dup, fwd_emails: [], reply_cc: cc_emails.dup, tkt_cc: cc_emails.dup } unless cc_emails.nil?
     end
 
     def remove_ticket_params
       params_to_be_deleted = ApiTicketConstants::PARAMS_TO_REMOVE.dup
-      [:due_by, :fr_due_by].each { |key| params_to_be_deleted << key if cname_params[key].nil? }
-      ParamsHelper.clean_params(params_to_be_deleted, cname_params)
-      ParamsHelper.assign_and_clean_params(ApiTicketConstants::PARAMS_MAPPINGS, cname_params)
-      ParamsHelper.save_and_remove_params(self, ApiTicketConstants::PARAMS_TO_SAVE_AND_REMOVE, cname_params)
+      [:due_by, :fr_due_by].each { |key| params_to_be_deleted << key if ticket_update_params[key].nil? }
+      ParamsHelper.clean_params(params_to_be_deleted, ticket_update_params)
+      ParamsHelper.assign_and_clean_params(ApiTicketConstants::PARAMS_MAPPINGS, ticket_update_params)
+      ParamsHelper.save_and_remove_params(self, ApiTicketConstants::PARAMS_TO_SAVE_AND_REMOVE, ticket_update_params)
     end
 
     def process_saved_params
@@ -164,20 +179,80 @@ module TicketConcern
     end
 
     def process_custom_fields
-      if cname_params[:custom_fields]
+      if ticket_update_params[:custom_fields]
         checkbox_names = TicketsValidationHelper.custom_checkbox_names(@ticket_fields)
-        ParamsHelper.assign_checkbox_value(cname_params[:custom_fields], checkbox_names)
+        ParamsHelper.assign_checkbox_value(ticket_update_params[:custom_fields], checkbox_names)
       end
     end
 
     def process_requester_params
       # During update set requester_id to nil if it is not a part of params and if any of the contact detail is given in the params
-      if update_action? && !cname_params.key?(:requester_id) && (cname_params.keys & %w(email phone twitter_id facebook_id)).present?
-        cname_params[:requester_id] = nil
+      if update_action? && !ticket_update_params.key?(:requester_id) && (ticket_update_params.keys & %w(email phone twitter_id facebook_id)).present?
+        ticket_update_params[:requester_id] = nil
       end
     end
 
     def update_action?
       [:update, :update_properties, :bulk_update].include?(action_name.to_sym)
+    end
+
+    def validate_ticket_params
+      # We are obtaining the mapping in order to swap the field names while rendering(both successful and erroneous requests), instead of formatting the fields again.
+      @ticket_fields = ticket_fields_scoper
+      @name_mapping = TicketsValidationHelper.name_mapping(@ticket_fields) # -> {:text_1 => :text}
+      # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
+      custom_fields = @name_mapping.empty? ? [nil] : @name_mapping.values
+      field = "ApiTicketConstants::#{original_action_name.upcase}_FIELDS".constantize | ['custom_fields' => custom_fields]
+      ticket_update_params.permit(*field)
+      set_default_values
+      params_hash = ticket_update_params.merge(statuses: Helpdesk::TicketStatus.status_objects_from_cache(current_account), ticket_fields: @ticket_fields)
+      additional_params = get_additional_params
+      tkt = ticket_validation_class.new(params_hash, ticket, string_request_params?, additional_params)
+      render_custom_errors(tkt, true) unless tkt.valid?(original_action_name.to_sym)
+    end
+
+    def ticket_fields_scoper
+      Account.current.ticket_fields_from_cache
+    end
+
+    def get_additional_params
+      # placeholder function to pass additional params into ticket validation
+      { version: params[:version] }
+    end
+
+    def set_default_values
+      if create? && public_api? && api_current_user.tickets_api_relaxation?
+        Rails.logger.info "skip_mandatory_checks is enabled for #{Account.current.id}"
+        ticket_update_params[:status] = ApiTicketConstants::OPEN unless ticket_update_params[:status]
+        ticket_update_params[:priority] = ApiTicketConstants::PRIORITIES[0] unless ticket_update_params[:priority]
+      end
+
+      if compose_email?
+        ticket_update_params[:status] = ApiTicketConstants::CLOSED unless ticket_update_params.key?(:status)
+        ticket_update_params[:source] = TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]
+      end
+      ParamsHelper.modify_custom_fields(ticket_update_params[:custom_fields], @name_mapping.invert) # Using map instead of invert does not show any perf improvement.
+    end
+
+    def ticket_validation_class
+      service_task = Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE
+      if ticket_update_params[:type] == service_task || (ticket && ticket.ticket_type == service_task)
+        FsmTicketValidation
+      else
+        TicketValidation
+      end
+    end
+
+    def ticket
+      @ticket || @item
+    end
+
+    def compose_email?
+      @compose_email ||= params.key?('_action') ? params['_action'] == 'compose_email' : action_name.to_s == 'compose_email'
+    end
+
+    def assign_ticket_status
+      ticket[:status] = @status if defined?(@status)
+      ticket[:status] ||= OPEN
     end
 end

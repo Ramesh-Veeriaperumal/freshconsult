@@ -36,7 +36,7 @@ class TicketDecorator < ApiDecorator
     custom_fields_hash = {}
     custom_field_via_mapping.each do |k, v|
       next if @custom_fields_mapping[k] == Helpdesk::TicketField::CUSTOM_FILE && !private_api?
-      
+
       custom_fields_hash[@name_mapping[k]] = if v.respond_to?(:utc)
                                                if @custom_fields_mapping[k] == Helpdesk::TicketField::CUSTOM_DATE_TIME
                                                  format_date(v, true)
@@ -194,10 +194,10 @@ class TicketDecorator < ApiDecorator
     if @sideload_options.include?('conversations')
       preload_options = [:schema_less_note, :note_old_body, :attachments]
       preload_options = public_preload_options(preload_options) unless private_api?
-      
+
       ticket_conversations = record.notes.
                              conversations(preload_options, :created_at, ConversationConstants::MAX_INCLUDE)
-      decorator_method = private_api? ? 'construct_json' : 'public_json'                       
+      decorator_method = private_api? ? 'construct_json' : 'public_json'
       ticket_conversations.map { |conversation| ConversationDecorator.new(conversation, ticket: record).safe_send(decorator_method) }
     end
   end
@@ -247,7 +247,7 @@ class TicketDecorator < ApiDecorator
     cloud_files.map { |cf| CloudFileDecorator.new(cf).to_hash }
   end
 
-  def archive_hash
+  def archive_ticket_hash
     return nil unless private_api? && Account.current.features_included?(:archive_tickets) && record.archive_child
     archive_ticket = record.archive_ticket
     {
@@ -348,6 +348,27 @@ class TicketDecorator < ApiDecorator
     result
   end
 
+  def to_show_hash
+    response_hash = to_hash
+    response_hash[:description] = ticket_body.description_html
+    response_hash[:description_text] = ticket_body.description
+
+    [:requester, :stats, :conversations, :deleted, :freshfone_call, :fb_post, :tweet, :ticket_topic, :ebay, :email_spam_data, :sender_email, :meta].each do |attribute|
+      value = safe_send(attribute)
+      response_hash[attribute] = value if value
+    end
+
+    [:attachments, :cloud_files, :company, :sla_policy, :archive_ticket].each do |attribute|
+      value = safe_send("#{attribute}_hash")
+      response_hash[attribute] = value if value
+    end
+
+    # response_hash[:meta] = meta
+    response_hash[:collaboration] = collaboration_hash if include_collab?
+    response_hash[:meta][:secret_id] = generate_secret_id if Account.current.agent_collision_revamp_enabled?
+    response_hash
+  end
+
   def to_search_hash
     ret_hash = {
       id: display_id,
@@ -386,6 +407,7 @@ class TicketDecorator < ApiDecorator
       group_id: group_id
     }
     ret_hash.merge!(whitelisted_properties_for_activities)
+    ret_hash[:requester] = requester_info
     ret_hash
   end
 
@@ -459,10 +481,10 @@ class TicketDecorator < ApiDecorator
   end
 
   def predict_ticket_fields_hash
-    hash = { predict_ticket_fields: false }    
+    hash = { predict_ticket_fields: false }
     ticket_properties_suggester_hash = schema_less_ticket.try(:ticket_properties_suggester_hash)
     suggested_fields = ticket_properties_suggester_hash[:suggested_fields] if ticket_properties_suggester_hash.present?
-    return hash if suggested_fields.blank?    
+    return hash if suggested_fields.blank?
     return hash if suggested_fields.all? { |k,v| v[:updated] }
 
     expiry_time = ticket_properties_suggester_hash[:expiry_time]
@@ -493,6 +515,10 @@ class TicketDecorator < ApiDecorator
       meta_info['time'] = Time.parse(meta_info['time']).utc.iso8601
     end
     meta_info
+  end
+
+  def include_collab?
+    Account.current.collaboration_enabled? || (Account.current.freshconnect_enabled? && Account.current.freshid_integration_enabled? && (app_current? || User.current.freshid_authorization))
   end
 
   def freshfone_enabled?

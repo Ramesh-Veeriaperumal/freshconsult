@@ -12,6 +12,7 @@ aws:
 :logfile: <%= @logfile%>
 :pidfile: <%= @pidfile %>
 :timeout: 30
+:delay: 0.1
 :queues:
   <% @queues.to_a.each do |q| %>
     - [<%= q.join(', ') %>]

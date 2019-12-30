@@ -40,6 +40,10 @@ module Freshcaller::TestHelper
     'https://test.freshcaller.com/link_account'
   end
 
+  def add_agent_url
+    'https://localhost.test.domain/users'
+  end
+
   def signup_url
     "#{FreshcallerConfig['signup_domain']}/accounts"
   end
@@ -166,6 +170,39 @@ module Freshcaller::TestHelper
     @req = stub_request(:post, signup_url).to_return(body: response_hash.to_json,
                                                      status: 400,
                                                      headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stub_create_users
+    response_hash = {
+      data: {
+        id: 111
+      }
+    }
+    @req = stub_request(:post, add_agent_url).to_return(body: response_hash.to_json,
+                                                        status: 200,
+                                                        headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stub_create_users_already_present_error
+    response_hash = {
+      errors: [{
+        detail: 'Agent has already been taken'
+      }]
+    }
+    @req = stub_request(:post, add_agent_url).to_return(body: response_hash.to_json,
+                                                        status: 400,
+                                                        headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stub_create_users_agent_limit_error
+    response_hash = {
+      errors: [{
+        detail: 'Please purchase extra to add new agents'
+      }]
+    }
+    @req = stub_request(:post, add_agent_url).to_return(body: response_hash.to_json,
+                                                        status: 400,
+                                                        headers: { 'Content-Type' => 'application/json' })
   end
 
   def remove_stubs

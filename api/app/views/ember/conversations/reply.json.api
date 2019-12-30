@@ -1,1 +1,3 @@
-JSON.generate(@item.to_hash)
+response = @item.to_hash
+response[:ticket] = @item.ticket_hash if @item.send_and_set
+JSON.generate(response)

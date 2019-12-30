@@ -355,6 +355,14 @@ GIT
     rule_engine (0.0.1)
 
 GIT
+  remote: git@github.com:freshdesk/sidekiq_sober.git
+  revision: 7af845b1de453d636aed6cf8af3e3f9cca1d32f9
+  tag: v1.0.0
+  specs:
+    sidekiq_sober (1.0.0)
+      sidekiq (>= 3.5)
+
+GIT
   remote: git@github.com:freshdesk/xeroizer.git
   revision: db93979351dc8047d6aeeeab63d697f8c4517f7b
   specs:
@@ -1717,6 +1725,7 @@ DEPENDENCIES
   shoryuken (= 2.0.4)
   sidekiq (= 4.2.10)
   sidekiq-pro (= 3.7.1)!
+  sidekiq_sober!
   simplecov (~> 0.16.1)
   simplecov-csv
   simplecov-rcov

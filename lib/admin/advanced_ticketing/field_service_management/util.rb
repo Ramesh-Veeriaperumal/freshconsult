@@ -29,6 +29,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         create_fsm_dashboard
         create_field_service_manager_role
         expire_cache
+        generate_fsm_seed_data
         Rails.logger.info "Completed adding FSM artifacts for Account - #{Account.current.id}"
       rescue StandardError => e
         log_operation_failure('Enable', e)
@@ -371,6 +372,13 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
       def fsm_custom_field_to_reserve
         Account.current.customer_signature_enabled? ? (FSM_DEFAULT_TICKET_FIELDS + FSM_SIGNATURE_TICKET_FIELD) : FSM_DEFAULT_TICKET_FIELDS
+      end
+
+      def generate_fsm_seed_data
+        return unless @fsm_signup_flow
+
+        ENV['FIXTURE_PATH'] = 'db/fixtures/fsm'
+        SeedFu::PopulateSeed.populate
       end
   end
 end

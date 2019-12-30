@@ -17,12 +17,16 @@ default_forum:
       - data: 0
         email: bob.tree@freshdesk.com
         name: Bob Tree
+        address: 7, Stone Hill, W 240 St, NY
+        phone: (829)-570-1297
       - data: 1
         email: aroundtheworld80@freshdesk.com
         name: Phileas Fogg
       - data: 2
         email: johnny.appleseed@freshdesk.com
         name: Johnny Appleseed
+        address: 140, Sinclair St, Brooklyn Heights
+        phone: (123)-412-834
   - category: Feature requests
     data: 2
     email: lewis.clarke@freshdesk.com
@@ -60,6 +64,8 @@ default_forum:
       - data: 1
         email: emily.dean@freshdesk.com
         name: Emily Dean
+        address: 25, Sispal Street, Upper east side, Manhattan
+        phone: (257)-715-491
   - category: Sales and offers
     data: 5
     email: joe.mathew@freshdesk.com
@@ -317,3 +323,88 @@ default_ticket:
       group: Marketing
       replies:
           - content: 0
+  fsm_base_tickets:
+    - status: Open
+      priority: medium
+      source: email
+      type: Problem
+      group: Account managers
+      requester:
+        info:
+          name: Bob Tree
+          email: bob.tree@freshdesk.com
+      replies:
+        - content: 0
+      service_task:
+        - status: Open
+          priority: high
+          type: Service Task
+          group: Manhattan technicians
+          contact:
+            name: Bob Tree
+            phone_number: (829)-570-1297
+            service_location: 7, Stone Hill, W 240 St, NY
+          appointment_start_time:
+            day: 3
+            hour: 14
+            minute: 00
+          appointment_end_time:
+            day: 3
+            hour: 15
+            minute: 00
+    - status: Open
+      priority: high
+      source: email
+      type: Incident
+      group: Escalations
+      requester:
+        info:
+          name: Emily Dean
+          email: emily.dean@freshdesk.com
+      replies:
+        - content: 0
+      service_task:
+        - status: Open
+          priority: high
+          type: Service Task
+          group: Manhattan technicians
+          contact:
+            name: Emily Dean
+            phone_number: (257)-715-491
+            service_location: 25, Sispal Street, Upper east side, Manhattan
+          appointment_start_time:
+            day: 2
+            hour: 10
+            minute: 00
+          appointment_end_time:
+            day: 2
+            hour: 11
+            minute: 30
+    - status: Open
+      priority: high
+      source: email
+      type: Problem
+      group: Account managers
+      requester:
+        info:
+          name: Johnny Appleseed
+          email: johnny.appleseed@freshdesk.com
+      replies:
+        - content: 0
+      service_task:
+        - status: Open
+          priority: high
+          type: Service Task
+          group: Brooklyn Technicians
+          contact:
+            name: Johnny Appleseed
+            phone_number: (123)-412-834
+            service_location: 140, Sinclair St, Brooklyn Heights
+          appointment_start_time:
+            day: 3
+            hour: 11
+            minute: 00
+          appointment_end_time:
+            day: 3
+            hour: 13
+            minute: 00

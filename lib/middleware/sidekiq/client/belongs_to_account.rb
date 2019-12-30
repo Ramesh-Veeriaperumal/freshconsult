@@ -22,6 +22,7 @@ module Middleware
                 raise ::AccountMismatch
               end
               msg['account_id'] ||= ::Account.current.id
+              msg['shard_name'] ||= ShardMapping.fetch_by_account_id(::Account.current.id).try(:shard_name)
             end
           end
           yield

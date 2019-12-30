@@ -84,6 +84,7 @@ class SidekiqConfigUsEast
   CENTRAL_REALTIME_SIDEKIQ = "sidekiq-central-realtime-"
   ARCHIVE_SIDEKIQ          = "sidekiq-archive-"
   MAILBOXJOB_SIDEKIQ       = "sidekiq-mailbox-jobs-"
+  BULK_API_SIDEKIQ         = "sidekiq-bulk-api-"
 
   # FALCON_OCCASIONAL        = "sidekiq-fc-occasional"
   GAMIFICATION_SIDEKIQ     = "sidekiq-gamification-"
@@ -231,14 +232,15 @@ class SidekiqConfigUsEast
     paid_account_jobs        = ["active_account_jobs","premium_account_jobs","trial_account_jobs"]
     premium_account_jobs     = ["premium_account_jobs","active_account_jobs","trial_account_jobs"]
     mail_box_jobs            = ["mailbox_jobs"]
+    bulk_api                 = ["bulk_api_jobs"]
     dkim                     = ["dkim_verifier","dkim_general"]
     manual_publish           = ["manual_publish","rabbitmq_publish","merge_contacts","account_info_to_dynamo","data_export","broadcast_note","link_tickets","reset_associations"]
     remaining                = ["manual_publish","facebook_comments","es_v2_queue","email_delivery"]
     moved_queues             = ["rabbitmq_publish", "trial_twitter", "freshfone_notifications", "premium_account_jobs", "sendgrid_domain_updates", "contacts_sync_paid", "flush_portal_solution_cache", "twitter_replay_worker", "es_alias_queue", "update_sentiment", "integrations", "trial_account_jobs", "contacts_sync", "new_es_index", "clear_moderation_records", "bulk_ticket_actions", "bulk_child_tkt_creation", "account_info_to_dynamo", "chargebee_invoice", "update_ticket_states", "twitter", "es_index_queue", "sbrr_config_agent_group", "sbrr_assignment", "scheduled_reports_cleanup", "active_dispatcher", "solution_binarize_sync", "trial_dispatcher", "sla_on_status_change", "update_tickets_company", "account_creation_fixtures", "activation_worker", "twitter_gnip_worker", "github", "free_dispatcher", "fb_split_tickets", "password_expiry", "ebay_worker", "free_account_jobs", "premium_ticket_export", "helpdesk_ticket_body_queue", "activity_export", "custom_twitter", "scheduled_ticket_export_config", "livechat_worker", "premium_dispatcher", "round_robin_capping", "facebook_delta", "data_enrichment", "plan_change_workerv2", "tag_uses_destroy", "merge_tickets", "upload_avatar_worker", "scheduled_reports", "reset_gamification_score", "spam_data_migration", "helpdesk_update_ticket_body_queue", "contact_export", "modify_ticket_status", "update_notes_sentiment", "ebay_message_worker", "broadcast_note", "kbase_content_spam_checker", "update_ticket_filter", "clear_sitemap", "helpdesk_update_note_body_queue", "contact_import", "report_export_queue", "select_all_tickets", "freshfone_trial_worker", "premium_facebook", "link_tickets", "clear_tickets", "collaboration_publish", "update_user_language", "code_console_execution", "trial_sla_reminders", "cloud_elements_logger_email", "product_feedback", "export_agents", "tickets_export_queue", "dev_notification_worker", "generate_sitemap", "natero_worker", "solution_language_change", "detect_user_language", "reports_no_activity", "cloud_elements_delete", "parallel_report_exports", "contacts_sync_trial", "sbrr_group_toggle", "update_users_company_id", "send_signup_activation_mail", "dispatcher", "update_tickets_company_id", "facebook", "webhook_v1_worker", "dkim_verifier", "s3_retry_worker", "ticket_observer", "company_import", "select_all_batcher", "trial_sla", "freshfone_node", "salesforce_integrated_resource_migrate", "plan_change", "reopen_tickets", "long_running_ticket_export", "premium_sla_reminders", "free_sla_reminders", "ebay_user_worker", "free_sla", "delayed_jobs", "assign_tickets_to_agents", "dkim_general", "free_supervisor", "notify_broadcast_message", "supervisor", "pod_route_update", "merge_tickets_attachments", "api_webhook_rule", "deactivate_monitorship", "merge_contacts", "agent_destroy_cleanup", "sandbox_sync", "reset_internal_group", "suspended_accounts_deletion", "trial_supervisor", "data_export", "premium_supervisor", "bulk_scenario", "reset_associations", "helpdesk_note_body_queue", "sbrr_config_skill", "esv2_count_index", "sla_reminders", "reset_internal_agent", "empty_moderation_trash", "populate_account_setup", "marketplace_apps", "premium_twitter", "chargebee_add_subscription", "trial_facebook", "reset_group", "bulk_ticket_reply", "remove_secondary_companies", "send_and_set_observer", "cti", "premium_sla", "sbrr_config_user_skill", "sbrr_user_toggle", "installed_app_business_rule", "learn_spam_message", "skill_import", "scheduled_ticket_export", "active_account_jobs", "contacts_sync_free", "email_notification_spam_queue", "update_all_callbacks", "delete_account", "count_es_queue", "templates_cleanup", "forum_content_spam_checker", "partners_event_queue", "sla", "delete_spam_tickets", "reset_responder"]
-    freshcaller              = ["freshcaller_migration_worker", "freshcaller_account_delete"]
+    freshcaller              = ["freshcaller_migration_worker", "freshcaller_account_delete", 'freshcaller_update_agents']
     cron_jobs                = ['cron_contacts_sync', 'cron_google_contacts_sync', 'cron_resque_watcher_check_load', 'cron_scheduler_sla', 'cron_scheduler_sla_reminder', 'cron_scheduler_supervisor', 'cron_forum_moderation_create_tables', 'cron_forum_moderation_drop_tables', 'cron_facebook_dm', 'cron_spam_digest_mailer', 'cron_twitter_custom_stream', 'cron_populate_spam_watcher_limits', 'cron_billing_info_update', 'cron_requeue_central_publish', 'cron_rollback_trail_subscriptions_data', 'cron_sidekiq_dead_set_mailer', 'cron_redis_maintenance', 'cron_ebay_daily_api_report_intimate', 'cron_reports_build_no_activity', 'cron_scheduled_task', 'cron_sitemap_generate', 'cron_traffic_switch_fetch_accounts', 'cron_long_running_queries_check', 'cron_gnip_stream_maintenance', 'cron_gnip_stream_replay','cron_social_create_dynamodb_tables', 'cron_social_delete_dynamodb_tables', 'cron_social_increase_dynamodb_capacity', 'cron_social_reduce_dynamodb_capacity', 'cron_sqs_monitor', 'cron_account_spam_cleanup', 'cron_attachment_user_draft_cleanup', 'cron_delayedjobs_watcher', 'cron_failed_helpkit_feeds', 'cron_log_cloud_elements_sync', 'cron_freshfone', 'cron_meta_data_check', 'cron_enable_omniroute_for_new_accounts']
     roles                    = ["update_agents_roles"]
-    all_set                  = [dispatcher,observer,ticket_states,paid_account_jobs,premium_account_jobs,trial_account_jobs,free_account_jobs,default,rabbitmq,contacts_merge,supervisor,free_supervisor,trial_supervisor,premium_supervisor,facebook,facebook_comments,twitter,paid_sla,free_sla,trial_sla,premium_sla,reports_one,reports_two,reset,search_one,search_two,freshfone_one,freshfone_two,solution,ebay,merge_tickets,gamification,password_expiry,github,bulk_scenario,select_all_tickets,select_all_batcher,premium_sla_reminder,sla_reminder,trial_sla_reminders,free_sla_reminders,webhook_worker,webhook_throttler,bulk_ticket,language,integrations,api_webhook_rule,plan_change,contact_import,riak_s3_ticket,riak_s3_note,reports_three,delete_spam_tickets,ticket_export,long_running_ticket_export ,premium_ticket_export,suspended_accounts_deletion,round_robin,round_robin_sbr,mail_box_jobs,dkim,manual_publish, cron_jobs, roles]
+    all_set                  = [dispatcher,observer,ticket_states,paid_account_jobs,premium_account_jobs,trial_account_jobs,free_account_jobs,default,rabbitmq,contacts_merge,supervisor,free_supervisor,trial_supervisor,premium_supervisor,facebook,facebook_comments,twitter,paid_sla,free_sla,trial_sla,premium_sla,reports_one,reports_two,reset,search_one,search_two,freshfone_one,freshfone_two,solution,ebay,merge_tickets,gamification,password_expiry,github,bulk_scenario,select_all_tickets,select_all_batcher,premium_sla_reminder,sla_reminder,trial_sla_reminders,free_sla_reminders,webhook_worker,webhook_throttler,bulk_ticket,language,integrations,api_webhook_rule,plan_change,contact_import,riak_s3_ticket,riak_s3_note,reports_three,delete_spam_tickets,ticket_export,long_running_ticket_export ,premium_ticket_export,suspended_accounts_deletion,round_robin,round_robin_sbr,mail_box_jobs,bulk_api,dkim,manual_publish, cron_jobs, roles]
 
     dedicated_realtime = ["realtime"]
     dedicated_bulk = ["bulk_scheduled", "exports", "occasional"]
@@ -246,7 +248,7 @@ class SidekiqConfigUsEast
     dedicated_occasional = ["scheduled", "occasional"]
     dedicated_central = ["central_realtime","external", "realtime"]
     dedicated_scheduled = ["scheduled", "maintainence"]
-    dedicated_common = ["realtime", "scheduled", "occasional" ,"email", "mailbox_jobs", "maintainence", "external", "trial", "spam", "exports", "bulk_scheduled", "central_realtime"]
+    dedicated_common = ["realtime", "scheduled", "occasional" ,"email", "mailbox_jobs", "bulk_api", "maintainence", "external", "trial", "spam", "exports", "bulk_scheduled", "central_realtime"]
 
 
 
@@ -273,6 +275,7 @@ class SidekiqConfigUsEast
     central_realtime         = ["central_realtime"]
     archive                  = ["archive"]
     mailbox_jobs             = ["mailbox_jobs"]
+    bulk_api                 = ["bulk_api"]
     # falcon_occasional        = ["falcon_occasional"]
     gamification             = ["gamification"]
     community                = ["community"]
@@ -310,7 +313,7 @@ class SidekiqConfigUsEast
   "delete_spam_tickets", "tickets_export_queue", "long_running_ticket_export", "premium_ticket_export", 
   "suspended_accounts_deletion", "round_robin_capping", "assign_tickets_to_agents", "sbrr_assignment", "sbrr_user_toggle", 
   "sbrr_group_toggle", "sbrr_config_agent_group", "sbrr_config_user_skill", "trial_account_jobs", "free_account_jobs", 
-  "active_account_jobs", "premium_account_jobs", "mailbox_jobs", "dkim_verifier", "dkim_general","sbrr_config_skill", 
+  "active_account_jobs", "premium_account_jobs", "mailbox_jobs", "bulk_api_jobs", "dkim_verifier", "dkim_general","sbrr_config_skill", 
   "skill_import","forum_content_spam_checker", "scheduled_ticket_export_config","scheduled_ticket_export", 
   "account_creation_fixtures","email_delivery","collaboration_publish","activity_export","send_and_set_observer",
   "realtime","scheduled","occasional","maintainence","external","free","email","trial","spam", "product_feedback",
@@ -330,7 +333,7 @@ class SidekiqConfigUsEast
   "widget_upload_config", "bot_email_reply", "bot_email_ml_feedback", 'migration', 'company_central_publish', "ticket_field_central_publish",
   "scheduler_post_message", "scheduler_cancel_message", "delete_archive_ticket", "freshcaller_account_delete", "remove_encrypted_fields", "cancel_account", 'ocr_agent_sync', 'ocr_task_sync',
   'custom_translations_upload_queue', 'audit_log_export', "http_request", "simple_outreach_import", "surveys_central_publish", "freshvisual_configs", "anonymous_account_cleanup",
-  'contact_field_central_publish', 'company_field_central_publish', 'freshid_retry_worker', "model_destroy", "freshcaller_account_central_publish", "freshchat_account_central_publish", "email_service_account_details_destroy",
+  'contact_field_central_publish', 'company_field_central_publish', 'freshid_retry_worker', "model_destroy", "freshcaller_account_central_publish", "freshchat_account_central_publish", "email_service_account_details_destroy", 'freshcaller_update_agents',
   "sandbox_cleanup", "thank_you_note", "update_sandbox_subscription", 'gateway_facebook_page', "archive_account_tickets_channel_queue", "archive_tickets_channel_queue", "ticket_properties_suggester", "update_agents_roles", "custom_translations_update_survey_status", 'kbase_article_versions_worker', 'kbase_article_versions_migration_worker',
   'kbase_article_versions_reset_rating', 'articles_export_queue', 'rts_account_create', 'image_meta_data_delete'
 ]
@@ -360,6 +363,7 @@ class SidekiqConfigUsEast
     _DELAYEDJOB_POOL          = [[trial_account_jobs,2],[free_account_jobs,2],[premium_account_jobs,2]]
     _PAIDJOB_POOL             = [[paid_account_jobs,6]]
     _MAILBOX_POOL             = [[mail_box_jobs,4],[dkim,1]]
+    _BULK_API_POOL            = [[bulk_api, 6]]
     _ROUND_ROBIN_POOL         = [[round_robin,3],[round_robin_sbr,3]]
     _MANUAL_PUBLISH_POOL      = [[manual_publish,3],[rabbitmq,3]]
     _ALL_POOL                 = [[all,6]]
@@ -387,6 +391,7 @@ class SidekiqConfigUsEast
     _CENTRAL_REALTIME_POOL    = [[central_realtime, 6]]
     _ARCHIVE_POOL             = [[archive, 6]]
     _MAILBOXJOB_POOL          = [[mailbox_jobs, 6]]
+    _BULK_API_POOL            = [[bulk_api, 6]]
     _GAMIFICATION_POOL        = [[gamification, 6]]
     _COMMUNITY_POOL           = [[community, 6]]
     _SUBSCRIPTION_POOL        = [[subscriptions, 6]]
@@ -447,6 +452,8 @@ class SidekiqConfigUsEast
       _PAIDJOB_POOL
     when utility_name.include?(MAILBOXJOB_SIDEKIQ)
       _MAILBOX_POOL
+    when utility_name.include?(BULK_API_SIDEKIQ)
+      _BULK_API_POOL
     when utility_name.include?(ROUND_ROBIN_SIDEKIQ)
       _ROUND_ROBIN_POOL
     when utility_name.include?(MANUAL_PUBLISH_SIDEKIQ)
@@ -543,6 +550,7 @@ class SidekiqConfigStandard
   SPAM_SIDEKIQ             = "sidekiq-spam-"
   ARCHIVE_SIDEKIQ          = "sidekiq-archive-"
   MAILBOXJOBS_SIDEKIQ      = "sidekiq-mailbox-jobs-"
+  BULK_API_SIDEKIQ         = "sidekiq-bulk-api-"
   EXPORT_SIDEKIQ           = "sidekiq-exports-"
   CRON_SIDEKIQ             = 'sidekiq-cron-'
   DATAEXPORT_SIDEKIQ       = "sidekiq-dataexport-"
@@ -612,7 +620,7 @@ all_sidekiq_jobs =  cron_jobs + [
       "delete_spam_tickets", "tickets_export_queue", "long_running_ticket_export", "premium_ticket_export", "suspended_accounts_deletion",
       "round_robin_capping", "assign_tickets_to_agents", "sbrr_assignment", "sbrr_user_toggle", "sbrr_group_toggle", "sbrr_config_agent_group",
       "sbrr_config_user_skill", "trial_account_jobs", "free_account_jobs", "active_account_jobs", "premium_account_jobs", "mailbox_jobs",
-      "dkim_verifier", "dkim_general", "sbrr_config_skill","forum_content_spam_checker","scheduled_ticket_export_config",
+      "dkim_verifier", "dkim_general", "sbrr_config_skill","forum_content_spam_checker","scheduled_ticket_export_config", "bulk_api_jobs",
       "scheduled_ticket_export","skill_import","mixpanel_queue","account_creation_fixtures","email_delivery","collaboration_publish",
       "activity_export","send_and_set_observer","realtime","scheduled","occasional","maintainence","external","free","email","trial","spam",
       "product_feedback","block_account","signup_restricted_domain_validation","freshcaller_migration_worker","send_activation_reminder_mail",
@@ -629,7 +637,7 @@ all_sidekiq_jobs =  cron_jobs + [
       "deactivate_filter_widgets","update_time_zone","sandbox_diff", "sandbox_merge", "run_rake_task","check_bot_training","update_segment_filter",
       "register_freshconnect", "undo_send", "unlink_tickets", "primary_language_change", "send_domain_changed_mail", "default_data_population", 'freshops_service', 'twitter_reply',
       "widget_upload_config", "bot_email_reply", "bot_email_ml_feedback", 'migration',
-      "company_central_publish", "ticket_field_central_publish", "scheduler_post_message", "scheduler_cancel_message", "delete_archive_ticket","freshcaller_account_delete", "remove_encrypted_fields", "cancel_account", 'ocr_agent_sync', 'ocr_task_sync',
+      "company_central_publish", "ticket_field_central_publish", "scheduler_post_message", "scheduler_cancel_message", "delete_archive_ticket","freshcaller_account_delete", 'freshcaller_update_agents', "remove_encrypted_fields", "cancel_account", 'ocr_agent_sync', 'ocr_task_sync',
       'custom_translations_upload_queue', 'audit_log_export', "http_request", "simple_outreach_import", "surveys_central_publish", "freshvisual_configs", "anonymous_account_cleanup",
       'contact_field_central_publish', 'company_field_central_publish', 'freshid_v2_events', 'freshid_account_details_update_v2', 'freshid_v2_agents_migration', 'freshid_retry_worker',
       "model_destroy", "freshcaller_account_central_publish", "freshchat_account_central_publish", "sandbox_cleanup" , "thank_you_note", "update_sandbox_subscription", 'gateway_facebook_page',
@@ -661,6 +669,7 @@ all_sidekiq_jobs =  cron_jobs + [
     bulk_scheduled           = ["bulk_scheduled"]
     central_realtime         = ["central_realtime"]
     mailbox_jobs             = ["mailbox_jobs"]
+    bulk_api                 = ["bulk_api"]
     gamification             = ["gamification"]
     community                = ["community"]
     subscriptions            = ["subscriptions"]
@@ -686,6 +695,7 @@ all_sidekiq_jobs =  cron_jobs + [
     _SPAM_POOL                = [[spam,6]]
     _ARCHIVE_POOL             = [[archive,6]]
     _MAILBOX_POOL             = [[mailbox,6]]
+    _BULK_API_POOL            = [[bulk_api, 6]]
     _EXPORT_POOL              = [[export, 6]]
     _MISC_POOL                = [[misc_sidekiq,6]]
     _CRON_POOL                = [[cron_webhook, 6]]
@@ -726,6 +736,8 @@ all_sidekiq_jobs =  cron_jobs + [
       _ARCHIVE_POOL
     when utility_name.include?(MAILBOXJOBS_SIDEKIQ)
       _MAILBOX_POOL
+    when utility_name.include?(BULK_API_SIDEKIQ)
+      _BULK_API_POOL
     when utility_name.include?(EXPORT_SIDEKIQ)
       _EXPORT_POOL
     when utility_name.include?(MISC_SIDEKIQ)

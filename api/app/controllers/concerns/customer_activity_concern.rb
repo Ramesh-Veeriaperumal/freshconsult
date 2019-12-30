@@ -33,7 +33,7 @@ module CustomerActivityConcern
 
     def ticket_preload_options
       if @type == 'tickets'
-        [:tags, :ticket_states, :ticket_old_body]
+        [:tags, :ticket_states, :ticket_old_body, :requester]
       else
         [:responder]
       end
@@ -93,7 +93,7 @@ module CustomerActivityConcern
       activities.map do |act|
         case act.class.name
         when 'Helpdesk::Ticket', 'Helpdesk::ArchiveTicket'
-          TicketDecorator.new(act, {}).to_activity_hash
+          TicketDecorator.new(act, sideload_options: ['requester']).to_activity_hash
         when 'Post'
           Discussions::CommentDecorator.new(act, {}).to_activity_hash
         end

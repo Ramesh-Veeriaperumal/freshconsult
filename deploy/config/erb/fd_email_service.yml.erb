@@ -1,6 +1,8 @@
 <%= node[:opsworks][:environment] %>:
   key: <%= node[:ymls][:fd_email_service][:key] %>
+  lang_key: <%= node[:ymls][:fd_email_service][:lang_key] %>
   host: <%= node[:ymls][:fd_email_service][:host] %>
+  lang_host: <%= node[:ymls][:fd_email_service][:lang_host] %>
   timeout: <%= node[:ymls][:fd_email_service][:timeout] %>
   email_send_urlpath: <%= node[:ymls][:fd_email_service][:url] %>
   email_campaign_urlpath: <%= node[:ymls][:fd_email_service][:campaign_url] %>
@@ -12,6 +14,7 @@
   remove_domain: <%= node[:ymls][:fd_email_service][:remove_domain_url] %>
   antivirus_urlpath: <%= node[:ymls][:fd_email_service][:antivirus_url] %>
   account_destroy_urlpath: <%= node[:ymls][:fd_email_service][:account_destroy_url] %>
+  lang_detect_path: <%= node[:ymls][:fd_email_service] [:lang_detect_path] %>
   ip_pool_category: <%= node[:ymls][:fd_email_service][:ip_pool_category] %>
   incoming_email_api_key1: <%= node[:ymls][:fd_email_service][:incoming_email_api_key1] %>
   incoming_email_api_key2: <%= node[:ymls][:fd_email_service][:incoming_email_api_key2] %>

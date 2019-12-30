@@ -1,7 +1,9 @@
 defaults: &defaults
   imap_application_id: 1
   key: "33E15283B3FE1D1FD22B1619DA9C"
+  lang_key: "33E15283B3FE1D1FD22B1619DA9C"
   host: "http://mailservice.freshpo.com"
+  lang_host: "http://mailservice.freshpo.com"
   timeout: 30
   email_send_urlpath: "api/v1/email/send"
   email_campaign_urlpath: "api/v1/campaign/send"
@@ -16,6 +18,7 @@ defaults: &defaults
   incoming_email_api_key2: "e7d6Gee5HkF6VjD7kIhpu7QmNkDeC6"
   antivirus_urlpath: "/api/v1/antivirus/scan"
   account_destroy_urlpath: "/api/v1/account/delete"
+  lang_detect_path: "api/v1/detect/lang"
   ip_pool_names :
     - freshworks_email_high
     - freshworks_email_low
@@ -31,4 +34,3 @@ staging:
 
 production:
   <<: *defaults
-  

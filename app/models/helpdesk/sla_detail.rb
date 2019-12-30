@@ -2,8 +2,12 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
   self.table_name =  "sla_details" 
   self.primary_key = :id
   
+  serialize :sla_target_time, HashWithIndifferentAccess
+  attr_accessor :skip_iso_format_conversion
+
   belongs_to_account
   belongs_to :sla_policy, :class_name => "Helpdesk::SlaPolicy"
+  before_validation :populate_sla_target_time, unless: :skip_iso_format_conversion
   before_create :set_account_id
 
   before_save :check_sla_time
@@ -76,15 +80,32 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
   PRIORITY_OPTIONS = PRIORITIES.map { |i| [i[1], i[2]] }
   PRIORITY_NAMES_BY_KEY = Hash[*PRIORITIES.map { |i| [i[2], i[0]] }.flatten]
   PRIORITY_KEYS_BY_TOKEN = Hash[*PRIORITIES.map { |i| [i[0], i[2]] }.flatten]
+  SLA_OPTIONS_BY_TOKEN = Hash[*SLA_OPTIONS.map { |i| [i[0], i[2]] }.flatten]
 
   SLA_TIME = [
     [ :business, false ], 
     [ :calendar, true ],        
   ]
 
+  SLA_TIME_PERIODS = [
+    [:period,      'P'],
+    [:days,        'D'],
+    [:time,        'T'], 
+    [:hours,       'H'],
+    [:minutes,     'M']
+  ]
+
+  SLA_TARGETS = [
+    ['first_response_time', 'response_time'],
+    ['every_response_time', 'next_response_time'],
+    ['resolution_due_time', 'resolution_time']
+  ]
+
+  SLA_TARGETS_COLUMN_MAPPINGS = Hash[*SLA_TARGETS.map { |i| [i[0], i[1]] }.flatten]
   # SLA_TIME_OPTIONS = SLA_TIME.map { |i| [i[1], i[2]] }
   SLA_TIME_BY_KEY = Hash[*SLA_TIME.map { |i| [i[1], i[0]] }.flatten]
   SLA_TIME_BY_TOKEN = Hash[*SLA_TIME.map { |i| [i[0], i[1]] }.flatten]
+  SLA_TIME_PERIOD_SUFFIX = Hash[*SLA_TIME_PERIODS.map { |i| [i[0], i[1]] }.flatten]
 
   default_scope :order => "priority DESC"
 
@@ -131,6 +152,48 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
 
   def self.premium_time_options
     @premiumtime ||= PREMIUM_TIME_OPTIONS.map { |i| [I18n.t("premium_sla_times.#{i[0]}"), i[1]] }
+  end
+
+  SLA_TARGETS_COLUMN_MAPPINGS.keys.each do |sla|
+    define_method "#{sla}" do
+      sla_target_time[sla.to_sym]
+    end
+    define_method "#{sla}=" do |value|
+      sla_target_time[sla.to_sym] = value
+    end
+  end
+  
+  # Adding this temporary method to populate the new serialized column --> 'sla_target_time'
+  # This method converts response_time, resolution_time, next_response_time which are in seconds to ISO 8601 format
+  
+  def populate_sla_target_time
+    SLA_TARGETS_COLUMN_MAPPINGS.each do |new_column, old_column|
+      target_time = self[old_column.to_sym]
+      self.sla_target_time[new_column.to_sym] = target_time.nil? ? nil : convert_to_iso_format(target_time)
+    end
+  end
+
+  def convert_to_iso_format(seconds)
+    formatted_time = ''
+    SLA_TIME_PERIOD_SUFFIX.each do |time, suffix|
+      break if seconds < 60
+      unless SLA_OPTIONS_BY_TOKEN.key?(time)
+        formatted_time += suffix
+        next
+      end
+      time_in_seconds = SLA_OPTIONS_BY_TOKEN[time]
+      seconds, remainder_seconds = seconds.divmod(time_in_seconds)
+      if remainder_seconds == 1
+        seconds *= time_in_seconds
+        next
+      elsif remainder_seconds == 0
+        formatted_time.concat(seconds.to_s).concat(suffix)
+        seconds = remainder_seconds
+      else
+        seconds = (seconds * time_in_seconds) + remainder_seconds
+      end
+    end
+    formatted_time
   end
 
   private

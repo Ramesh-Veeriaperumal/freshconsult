@@ -337,5 +337,156 @@ module Admin
     ensure
       remove_stubs
     end
+
+    def test_update_agents_without_freshcaller_account
+      params_hash = { agent_ids: [] }
+      put :update, construct_params({ version: 'private' }.merge(params_hash), params_hash)
+      match_json([bad_request_error_pattern('freshcaller_account', :fc_account_absent)])
+      assert_response 400
+    end
+
+    def test_update_agents_wrong_params
+      create_freshcaller_account unless Account.current.freshcaller_account
+      params_hash = { test: 'hello' }
+      put :update, construct_params({ version: 'private' }.merge(params_hash), params_hash)
+      match_json([bad_request_error_pattern('test', :invalid_field)])
+      assert_response 400
+    ensure
+      delete_freshcaller_account
+    end
+
+    def test_update_agents_with_wrong_agent_ids_type
+      create_freshcaller_account unless Account.current.freshcaller_account
+      params_hash = { agent_ids: 'test' }
+      put :update, construct_params({ version: 'private' }.merge(params_hash), params_hash)
+      match_json([bad_request_error_pattern('agent_ids', :datatype_mismatch, prepend_msg: :input_received, expected_data_type: Array, given_data_type: String)])
+      assert_response 400
+    ensure
+      delete_freshcaller_account
+    end
+
+    def test_update_agents_to_add_new_agents
+      create_freshcaller_account unless Account.current.freshcaller_account
+      stub_create_users
+      agent1 = add_test_agent(@account).agent
+      agent2 = add_test_agent(@account).agent
+      params_hash = { agent_ids: [agent1.user.id, agent2.user.id] }
+      Sidekiq::Testing.inline! do
+        put :update, construct_params({ version: 'private' }.merge(params_hash), params_hash)
+      end
+      agent1.reload
+      agent2.reload
+      assert agent1.freshcaller_agent.present?
+      assert_equal agent1.freshcaller_agent.fc_user_id, 111
+      assert agent1.freshcaller_agent.fc_enabled
+      assert agent2.freshcaller_agent.present?
+      assert_equal agent2.freshcaller_agent.fc_user_id, 111
+      assert agent2.freshcaller_agent.fc_enabled
+      assert_response 204
+    ensure
+      delete_freshcaller_account
+      delete_freshcaller_agent unless @agent.agent.freshcaller_agent.nil?
+      remove_stubs
+    end
+
+    def test_update_agents_to_remove_new_agents
+      create_freshcaller_account unless Account.current.freshcaller_account
+      stub_create_users
+      agent1 = add_test_agent(@account).agent
+      agent1.create_freshcaller_agent(
+        fc_enabled: true,
+        fc_user_id: 1234
+      )
+      agent2 = add_test_agent(@account).agent
+      agent2.create_freshcaller_agent(
+        fc_enabled: true,
+        fc_user_id: 5678
+      )
+      params_hash = { agent_ids: [] }
+      Sidekiq::Testing.inline! do
+        put :update, construct_params({ version: 'private' }.merge(params_hash), params_hash)
+      end
+      agent1.reload
+      agent2.reload
+      assert agent1.freshcaller_agent.present?
+      assert_equal agent1.freshcaller_agent.fc_user_id, 1234
+      refute agent1.freshcaller_agent.fc_enabled
+      assert agent2.freshcaller_agent.present?
+      assert_equal agent2.freshcaller_agent.fc_user_id, 5678
+      refute agent2.freshcaller_agent.fc_enabled
+      assert_response 204
+    ensure
+      delete_freshcaller_account
+      delete_freshcaller_agent unless @agent.agent.freshcaller_agent.nil?
+      remove_stubs
+    end
+
+    def test_update_agents_to_add_and_remove_new_agents
+      create_freshcaller_account unless Account.current.freshcaller_account
+      stub_create_users
+      agent1 = add_test_agent(@account).agent
+      agent2 = add_test_agent(@account).agent
+      agent2.create_freshcaller_agent(
+        fc_enabled: true,
+        fc_user_id: 5678
+      )
+      params_hash = { agent_ids: [agent1.user.id] }
+      Sidekiq::Testing.inline! do
+        put :update, construct_params({ version: 'private' }.merge(params_hash), params_hash)
+      end
+      agent1.reload
+      agent2.reload
+      assert agent1.freshcaller_agent.present?
+      assert_equal agent1.freshcaller_agent.fc_user_id, 111
+      assert agent1.freshcaller_agent.fc_enabled
+      assert agent2.freshcaller_agent.present?
+      assert_equal agent2.freshcaller_agent.fc_user_id, 5678
+      refute agent2.freshcaller_agent.fc_enabled
+      assert_response 204
+    ensure
+      delete_freshcaller_account
+      delete_freshcaller_agent unless @agent.agent.freshcaller_agent.nil?
+      remove_stubs
+    end
+
+    def test_update_agents_existing_freshcaller_agent
+      create_freshcaller_account unless Account.current.freshcaller_account
+      stub_create_users_already_present_error
+      agent1 = add_test_agent(@account).agent
+      agent1.create_freshcaller_agent(
+        fc_enabled: false,
+        fc_user_id: 5678
+      )
+      params_hash = { agent_ids: [agent1.user.id] }
+      Sidekiq::Testing.inline! do
+        put :update, construct_params({ version: 'private' }.merge(params_hash), params_hash)
+      end
+      agent1.reload
+      assert agent1.freshcaller_agent.present?
+      assert_equal agent1.freshcaller_agent.fc_user_id, 5678
+      assert agent1.freshcaller_agent.fc_enabled
+      assert_response 204
+    ensure
+      delete_freshcaller_account
+      delete_freshcaller_agent unless @agent.agent.freshcaller_agent.nil?
+      remove_stubs
+    end
+
+    def test_update_agents_limit_exceeded
+      create_freshcaller_account unless Account.current.freshcaller_account
+      stub_create_users_agent_limit_error
+      agent1 = add_test_agent(@account).agent
+      params_hash = { agent_ids: [agent1.user.id] }
+      Sidekiq::Testing.inline! do
+        put :update, construct_params({ version: 'private' }.merge(params_hash), params_hash)
+      end
+      agent1.reload
+      refute agent1.freshcaller_agent.present?
+      assert_response 204
+    ensure
+      delete_freshcaller_account
+      delete_freshcaller_agent unless @agent.agent.freshcaller_agent.nil?
+      remove_stubs
+    end
   end
 end

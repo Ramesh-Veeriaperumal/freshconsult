@@ -14,6 +14,7 @@ module Ember
     include DeleteSpamConcern
     include Redis::UndoSendRedis
     include Ecommerce::Ebay::ReplyHelper
+    include TicketUpdateHelper
 
     decorate_views(
       decorate_objects: [:ticket_conversations],
@@ -24,6 +25,7 @@ module Ember
     before_filter :link_tickets_enabled?, only: [:broadcast]
     before_filter :validate_attachments_permission, only: [:create, :update]
     before_filter :check_enabled_undo_send, only: [:undo_send]
+    before_filter :check_for_ticket_param, only: [:reply]
 
     SINGULAR_RESPONSE_FOR = %w[reply create update tweet facebook_reply broadcast ecommerce_reply].freeze
     SLAVE_ACTIONS = %w(ticket_conversations).freeze
@@ -54,10 +56,13 @@ module Ember
       return unless validate_params
       sanitize_and_build
       return unless validate_delegator(@item, delegator_hash)
-      if current_user.enabled_undo_send?
-        save_note_and_respond_later
-      else
-        save_note_and_respond
+
+      if @ticket_params.nil? || update_ticket_attributes
+        if current_user.enabled_undo_send? && @ticket.schedule_observer.blank?
+          save_note_and_respond_later
+        else
+          save_note_and_respond
+        end
       end
     end
 
@@ -214,9 +219,25 @@ module Ember
         @broadcast ||= current_action?('broadcast')
       end
 
+      def ticket_decorator_options
+        options = {}
+        options[:name_mapping] = @name_mapping || get_name_mapping
+        options[:custom_fields_mapping] = Account.current.ticket_fields_name_type_mapping_cache
+        options
+      end
+
+      def get_name_mapping
+        # will be called only for index and show.
+        # We want to avoid memcache call to get custom_field keys and hence following below approach.
+        mapping = Account.current.ticket_field_def.ff_alias_column_mapping
+        mapping.each_with_object({}) { |(ff_alias, column), hash| hash[ff_alias] = TicketDecorator.display_name(ff_alias) } if @ticket
+      end
+
       def decorator_options
         options = {}
         options[:sideload_options] = sideload_options
+        options[:send_and_set] = true if @ticket.schedule_observer == true
+        options[:ticket_decorator] = TicketDecorator.new(@ticket, ticket_decorator_options)
         super(options)
       end
 
@@ -250,15 +271,60 @@ module Ember
         render_response(is_success)
       end
 
+      # if the conversation params has ticket options (send_and_set_as), invoke the send_and_set_worker
+
+      def check_for_ticket_param
+        if cname_params.key?(:ticket)
+          @ticket.schedule_observer = true
+          @ticket_params = cname_params[:ticket]
+          cname_params.delete(:ticket)
+        end
+      end
+
+      def update_ticket_attributes
+        validate_ticket_params
+        sanitize_ticket_params
+        assign_ticket_status
+        @ticket_fields = Account.current.ticket_fields_from_cache
+        return false unless validate_and_assign
+
+        @ticket.update_ticket_attributes(@ticket_params)
+        @ticket.reload
+        true
+      end
+
+      def original_action_name
+        'update' if @ticket.schedule_observer
+      end
+
       def save_note_and_respond
         is_success = save_note
         # publish solution is being set in kbase_email_included based on privilege and email params
         if is_success
+          enqueue_send_set_observer if @ticket.schedule_observer
           create_solution_article if @publish_solution
           @ticket.draft.clear if reply?
         end
         @ticket.add_forum_post(@item) if @post_to_forum_topic
         render_response(is_success)
+      end
+
+      def enqueue_send_set_observer
+        note_params = { id: @item.id,
+                        model_changes: @item.changes_for_observer,
+                        freshdesk_webhook: @item.freshdesk_webhook?,
+                        current_user_id: @item.user_id,
+                        send_and_set: true }
+        args = {
+          ticket_changes: @ticket.observer_args,
+          note_changes: note_params
+        }
+        if @ticket.schedule_observer
+          job_id = ::Tickets::SendAndSetWorker.perform_async(args)
+          Va::Logger::Automation.set_thread_variables(current_account.id, @item.notable_id, @item.user_id)
+          Va::Logger::Automation.log("Triggering SendAndSetWorker, job_id=#{job_id}, info=#{args.inspect}", true)
+          Va::Logger::Automation.unset_thread_variables
+        end
       end
 
       def sanitize_and_build

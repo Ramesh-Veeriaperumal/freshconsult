@@ -50,6 +50,8 @@ class AccountsControllerTest < ActionController::TestCase
 
   def test_fsm_enabled_on_signup
     stub_signup_calls
+    Account.any_instance.stubs(:ticket_field_revamp_enabled?).returns(false)
+    Account.any_instance.stubs(:id_for_choices_write_enabled?).returns(false)
     Signup.any_instance.unstub(:save)
     account_name = Faker::Lorem.word
     domain_name = Faker::Lorem.word
@@ -71,13 +73,21 @@ class AccountsControllerTest < ActionController::TestCase
     account = Account.find(resp['account_id'])
     assert_equal true, account.field_service_management_toggle_enabled?
     assert_equal true, account.field_service_management_enabled?
+    service_group_type = GroupType.group_type_id(GroupConstants::FIELD_GROUP_NAME)
+    service_group_count_after_fsm = account.groups.where('group_type' => service_group_type).count
+    service_ticket_count_after_fsm = account.tickets.where("ticket_type = 'Service Task'").count
+    assert_equal 3, service_group_count_after_fsm
+    assert_equal 3, service_ticket_count_after_fsm
   ensure
     unstub_signup_calls
+    Account.any_instance.unstub(:ticket_field_revamp_enabled?)
+    Account.any_instance.unstub(:id_for_choices_write_enabled?)
     @controller.unstub(:get_all_members_in_a_redis_set)
   end
 
   def test_fsm_not_enabled_on_signup
     stub_signup_calls
+    Account.any_instance.stubs(:ticket_field_revamp_enabled?).returns(false)
     Signup.any_instance.unstub(:save)
     account_name = Faker::Lorem.word
     domain_name = Faker::Lorem.word
@@ -98,6 +108,11 @@ class AccountsControllerTest < ActionController::TestCase
     assert_not_nil resp['account_id'], resp
     account = Account.find(resp['account_id'])
     assert_equal false, account.field_service_management_enabled?
+    service_group_type = GroupType.group_type_id(GroupConstants::FIELD_GROUP_NAME)
+    service_group_count_after_fsm = account.groups.where('group_type' => service_group_type).count
+    service_ticket_count_after_fsm = account.tickets.where("ticket_type = 'Service Task'").count
+    assert_equal 0, service_group_count_after_fsm
+    assert_equal 0, service_ticket_count_after_fsm
   ensure
     unstub_signup_calls
     @controller.unstub(:get_all_members_in_a_redis_set)

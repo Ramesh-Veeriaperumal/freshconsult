@@ -264,6 +264,30 @@ module Ember
       match_json(private_note_pattern({}, latest_note))
     end
 
+    def test_reply_with_ticket_params
+      ::Tickets::SendAndSetWorker.clear
+      params_hash = reply_note_params_hash.merge('ticket': { 'priority': 3, 'status': 3, 'source': 5, 'type': 'Problem' })
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      assert ::Tickets::SendAndSetWorker.jobs.size == 1
+      assert JSON.parse(response.body)['ticket'].present?
+      assert JSON.parse(response.body)['ticket']['priority'] == 3
+      assert JSON.parse(response.body)['ticket']['status'] == 3
+      assert JSON.parse(response.body)['ticket']['source'] == 5
+      assert JSON.parse(response.body)['ticket']['type'] == 'Problem'
+    end
+
+    def test_reply_without_ticket_params
+      ::Tickets::SendAndSetWorker.clear
+      params_hash = reply_note_params_hash
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      assert ::Tickets::SendAndSetWorker.jobs.size.zero?
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+    end
+
     def test_reply_with_undo_send
       @account.add_feature(:undo_send)
       user = other_user
@@ -276,6 +300,29 @@ module Ember
       end
       assert_response 201
       user.preferences[:agent_preferences][:undo_send] = false
+      @account.revoke_feature(:undo_send)
+      User.any_instance.unstub(:enabled_undo_send?)
+    end
+
+    def test_reply_with_ticket_attribtutes_and_undo_send
+      ::Tickets::SendAndSetWorker.clear
+      @account.add_feature(:undo_send)
+      user = other_user
+      User.any_instance.stubs(:enabled_undo_send?).returns(true)
+      user.preferences[:agent_preferences][:undo_send] = true
+      params_hash = reply_note_params_hash.merge('ticket': { 'priority': 3, 'status': 3, 'source': 5, 'type': 'Problem' })
+      params_hash[:user_id] = user.id
+      # Sidekiq::Testing.inline! do
+        post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      # end
+      assert_response 201
+      assert_equal ::Tickets::SendAndSetWorker.jobs.size, 1
+      user.preferences[:agent_preferences][:undo_send] = false
+      assert JSON.parse(response.body)['ticket'].present?
+      assert JSON.parse(response.body)['ticket']['priority'] == 3
+      assert JSON.parse(response.body)['ticket']['status'] == 3
+      assert JSON.parse(response.body)['ticket']['source'] == 5
+      assert JSON.parse(response.body)['ticket']['type'] == 'Problem'
       @account.revoke_feature(:undo_send)
       User.any_instance.unstub(:enabled_undo_send?)
     end

@@ -33,4 +33,6 @@ allOf:
         type: array
         items:
           type: integer
-  
+      ticket:
+        $ref: ./definitions/request/tickets/update_properties.yaml
+        

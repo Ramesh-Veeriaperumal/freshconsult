@@ -223,8 +223,19 @@ class Email::MailboxValidation < ApiValidation
     def invalid_reference?
       cached_oauth_hash = gmail_redis_obj.fetch_hash
       oauth_email = cached_oauth_hash[OAUTH_EMAIL]
-      (incoming && incoming[:user_name] && incoming[:user_name] != oauth_email ||
-        outgoing && outgoing[:user_name] && outgoing[:user_name] != oauth_email)
+      invalid_incoming_reference?(oauth_email) || invalid_outgoing_reference?(oauth_email)
+    end
+
+    def invalid_incoming_reference?(oauth_email)
+      return if incoming_marked_for_destruction?
+
+      incoming[:user_name] != oauth_email if incoming && incoming[:user_name]
+    end
+
+    def invalid_outgoing_reference?(oauth_email)
+      return if outgoing_marked_for_destruction?
+
+      outgoing[:user_name] != oauth_email if outgoing && outgoing[:user_name]
     end
 
     def incoming_password_presence

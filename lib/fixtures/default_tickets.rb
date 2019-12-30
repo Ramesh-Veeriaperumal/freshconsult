@@ -19,6 +19,11 @@ class Fixtures::DefaultTickets
     default_ticket_data.each_with_index do | data ,i |
       create_ticket(data,i)
       create_reply(data,i) if data["replies"]
+      if data['service_task']
+        data['service_task'].each_with_index do |service_task_data, index|
+          create_service_task(service_task_data, index, i)
+        end
+      end
       create_survey if data["survey"]
     end
   end
@@ -50,6 +55,47 @@ class Fixtures::DefaultTickets
     @ticket
   end
 
+  def create_service_task(ticket_data, index, parent_index)
+    created_time = created_at
+    requester = account.agents.first.user.make_current
+    apt_start_time = create_appointment_start_time(created_time, ticket_data)
+    apt_end_time = create_appointment_end_time(created_time, ticket_data)
+    service_task = account.tickets.create(
+      association_type: TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:child],
+      assoc_parent_tkt_id: @ticket.display_id,
+      email: requester.email,
+      subject: tickets_content[parent_index]['service_tasks'][index]['subject'],
+      status: account.ticket_statuses.find_by_name(ticket_data['status'].to_sym).status_id,
+      priority: TicketConstants::PRIORITY_KEYS_BY_TOKEN[ticket_data['priority'].to_sym],
+      group: ticket_group(ticket_data['group'], GroupType.group_type_id(GroupConstants::FIELD_GROUP_NAME)),
+      ticket_type: ticket_type(ticket_data['type']),
+      disable_observer_rule: true,
+      ticket_body_attributes: {
+        description: description(tickets_content[parent_index]['service_tasks'][index]['description']),
+        description_html: tickets_content[parent_index]['service_tasks'][index]['description']
+      },
+      custom_field: {
+        "cf_fsm_contact_name_#{account.id}" => ticket_data['contact']['name'],
+        "cf_fsm_phone_number_#{account.id}" => ticket_data['contact']['phone_number'],
+        "cf_fsm_service_location_#{account.id}" => ticket_data['contact']['service_location'],
+        "cf_fsm_appointment_start_time_#{account.id}" => apt_start_time,
+        "cf_fsm_appointment_end_time_#{account.id}" => apt_end_time
+      },
+      disable_activities: true,
+      created_at: created_time
+    )
+    User.reset_current_user
+    service_task
+  end
+
+  def create_appointment_start_time(created_time, ticket_data)
+    (created_time + ticket_data['appointment_start_time']['day'].days).change(hour: ticket_data['appointment_start_time']['hour'], min: ticket_data['appointment_start_time']['minute'])
+  end
+
+  def create_appointment_end_time(created_time, ticket_data)
+    (created_time + ticket_data['appointment_end_time']['day'].days).change(hour: ticket_data['appointment_end_time']['hour'], min: ticket_data['appointment_end_time']['minute'])
+  end
+
     def description(desc_html)
       Helpdesk::HTMLSanitizer.html_to_plain_text(desc_html)
     end
@@ -68,13 +114,13 @@ class Fixtures::DefaultTickets
       picklist_values.create(:value => type_value).value
     end
 
-    def ticket_group(group_name)
+  def ticket_group(group_name, group_type_name = GroupConstants::SUPPORT_GROUP_NAME)
       return nil if group_name.nil?
       groups = account.groups
       group = groups.find_by_name(group_name)
       return group if group
-      groups.create(:name => group_name, :description => group_name)
-    end
+      groups.create(name: group_name, description: group_name, group_type: GroupType.group_type_id(group_type_name))
+  end
 
     def account
       @account ||= Account.current

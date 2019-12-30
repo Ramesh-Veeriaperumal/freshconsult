@@ -69,32 +69,32 @@ end
 module ActiveRecord
   module ConnectionAdapters
     class AbstractMysqlAdapter
-        def begin_db_transaction
-          execute "BEGIN"
-        rescue Exception
-          log_exception_skip("BEGIN")
-          # Transactions aren't supported
-        end
+      def begin_db_transaction
+        execute 'BEGIN'
+      rescue StandardError => e
+        log_exception_skip('BEGIN')
+        raise e if ENV['RAISE_TRANSACTION_ERROR'] == 'true'
+      end
 
-        def commit_db_transaction #:nodoc:
-          execute "COMMIT"
-        rescue Exception
-          log_exception_skip("COMMIT")
-          # Transactions aren't supported
-        end
+      def commit_db_transaction #:nodoc:
+        execute 'COMMIT'
+      rescue StandardError => e
+        log_exception_skip('COMMIT')
+        raise e if ENV['RAISE_TRANSACTION_ERROR'] == 'true'
+      end
 
-        def rollback_db_transaction #:nodoc:
-          execute "ROLLBACK"
-        rescue Exception
-          log_exception_skip("ROLLBACK")
-          # Transactions aren't supported
-        end
+      def rollback_db_transaction #:nodoc:
+        execute 'ROLLBACK'
+      rescue StandardError => e
+        log_exception_skip('ROLLBACK')
+        raise e if ENV['RAISE_TRANSACTION_ERROR'] == 'true'
+      end
 
-        def log_exception_skip(action)
-          if defined?(Rails.logger.info)
-            Rails.logger.info("AR TRANSACTION ERROR SKIPPED :: #{action} :: #{Thread.current[:message_uuid].inspect}")
-          end
+      def log_exception_skip(action)
+        if defined?(Rails.logger.info)
+          Rails.logger.info("AR TRANSACTION ERROR SKIPPED :: #{action} :: #{Thread.current[:message_uuid].inspect}")
         end
+      end
     end
   end
 end
