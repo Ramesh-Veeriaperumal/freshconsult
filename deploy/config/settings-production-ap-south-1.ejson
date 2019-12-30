@@ -1243,7 +1243,7 @@
         },
         "ocr_channel": {
           "jwt_secret": [
-
+            "EJ[1:ayxMh9ANf+BNvb58fZ2B2/IU2fK3VO5jYtrV0DvOh3I=:AWSua1xnDRU2PYabwX8yJblbxVJnNE+w:ecm9o/06lpo2NpNOzwRGr8WyNvBPMrgK0ECONmxIsBt+ipLWfCE3UXPCN/zOYpAF]"
           ],
           "_auth_type": "jwt",
           "_jwt_default_expiry": "30"
@@ -1362,9 +1362,9 @@
         "_api_endpoint": "https://central.freshworksapi.com/collector"
       },
       "ocr_config": {
-        "jwt_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:IpmmemVDORXOsu0QTmBFtdhz2tfzywU+:u4NHYXDQCseM6OlUsDCHdA==]",
-        "admin_jwt_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:4XDTapxi+EcfwtLZHgbVW4qS9hF3Sa1u:oCQLhLysudNfOsk8VyTt2g==]",
-        "_api_endpoint": "",
+        "jwt_secret": "EJ[1:ayxMh9ANf+BNvb58fZ2B2/IU2fK3VO5jYtrV0DvOh3I=:JZnTgzQLLDgcCSmfhSO7vtx6l+2Heyh3:+4BcBtSJnRiEGD6Is/1XF/C9/3RlGVAeDyvRR78nOzgNW9erghrBkYpLo2h0Q4Lp]",
+        "admin_jwt_secret": "EJ[1:ayxMh9ANf+BNvb58fZ2B2/IU2fK3VO5jYtrV0DvOh3I=:9UcAaXab2Al7uz0sve4U5fpS8FFY7aNt:wHXGpglyTgfyK054zLOVE1VFWWS0c6JEKF0qXKWNQb0ngxgUIXXYeT4Fpzbqc2dT]",
+        "_api_endpoint": "https://ap-south-1.ocr.freshdesk.com/api/v1/",
         "_auth_type": "jwt",
         "_jwt_default_expiry": "30"
       },
