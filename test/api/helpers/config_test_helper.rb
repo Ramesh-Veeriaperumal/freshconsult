@@ -3,12 +3,13 @@ module ConfigTestHelper
   include Redis::RedisKeys
   include Redis::OthersRedis
 
-  def config_pattern 
+  def config_pattern(dkim_config_required)
     config_hash = Hash.new
     config_hash[:social] = social_config_pattern
     config_hash[:zendesk_app_id] = zendesk_app_id
     config_hash[:email] = email_mailbox_config_pattern
     config_hash[:warnings] = warn_list_pattern
+    config_hash[:dkim_configuration] = dkim_configuration_pattern(dkim_config_required)
     config_hash.merge!(update_billing_info)
     config_hash
   end
@@ -59,5 +60,19 @@ module ConfigTestHelper
 
   def zendesk_app_id
     ZendeskAppConfig::FALCON_APP_ID if redis_key_exists?(ZENDESK_IMPORT_APP_KEY)
+  end
+
+  def dkim_configuration_pattern(dkim_config_required_flag)
+    dkim_config = {
+      dkim_configuration_required: false
+    }
+    return dkim_config unless dkim_config_required_flag
+
+    if dkim_configuration_required?
+      dkim_config[:dkim_configuration_required] = true
+      dkim_config[:dkim_configuration_link] = DKIM_LINK
+      dkim_config[:dkim_support_link] = DKIM_SUPPORT_LINK
+    end
+    dkim_config
   end
 end
