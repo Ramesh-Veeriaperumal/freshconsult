@@ -26,7 +26,6 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   
   def update
     #Update Page Attributes - Product/DM Thread Time
-    
     #params[:social_facebook_page] will be empty when there are no products and DM is not enabled
     page_updated = params[:social_facebook_page] ? @facebook_page.update_attributes(page_params) : true
     if page_updated
@@ -168,8 +167,9 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   end
 
   def update_ad_rule(ad_post_args)
+    ad_post_args = ad_post_args.symbolize_keys
     ad_stream = @facebook_page.ad_post_stream
-    if ad_post_args[:import_ad_posts]
+    if ad_post_args[:import_ad_posts].to_bool
       begin
         ad_stream = ad_stream.facebook_ticket_rules.present? ? update_ad_ticket_rules(ad_post_args, ad_stream) : build_ad_ticket_rule(ad_post_args, ad_stream)
       rescue StandardError => error
@@ -184,15 +184,18 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
 
   def update_ad_ticket_rules(ad_post_args, ad_stream)
     ad_stream.facebook_ticket_rules.first.attributes = { action_data: {
-      group_id: ad_post_args[:group_id],
-      prooduct_id: ad_post_args[:product_id]
+      group_id:   (ad_post_args[:group_id].to_i if ad_post_args[:group_id].present?),
+      product_id: (params[:social_facebook_page][:product_id].to_i if params[:social_facebook_page][:product_id].present?)
     } }
     ad_stream
   end
 
   def build_ad_ticket_rule(ad_post_args, ad_stream)
     ad_stream.facebook_ticket_rules.build(filter_data: { rule_type: RULE_TYPE[:ad_post] },
-                                          action_data: { group_id: ad_post_args[:group_id], product_id: ad_post_args[:product_id] })
+                                          action_data: {
+                                            group_id:   (ad_post_args[:group_id].to_i if ad_post_args[:group_id].present?),
+                                            product_id: (params[:social_facebook_page][:product_id].to_i if params[:social_facebook_page][:product_id].present?)
+                                          })
     ad_stream
   rescue StandardError => error
     ::Rails.logger.error("Error while trying to build ticket rules for ad posts, #{error.message}, #{ad_post_args.inspect}, #{ad_stream.id}")

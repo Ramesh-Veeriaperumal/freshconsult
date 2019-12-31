@@ -7,7 +7,7 @@
     <label class="inline adm-radio" id="capture-dm">&nbsp;<%= t('.header')%></label>
 </div>
 <div class='adm-social sts adm-bg c-tkt dm-options <%= "hide" if !facebook_page.import_dms %>'>     
-  <div id="dm-option" class="clearfix">
+  <div id="dm-option" class="clearfix pl10">
     <div class="control-group row-fluid clearfix">
       <label for="dm-intervals" class="control-label span3"><%= t('.threading_interval')%></label> 
       <div class="controls span7">
@@ -32,13 +32,7 @@
 <% if Account.current.facebook_admin_ui_revamp_enabled? %>
 <script type="text/javascript">
   (function ($) {
-    var $secondary_toggle_switch = $('#social_facebook_page_import_dms');
-    // $(document).ready(function () {
-    //   if (!$secondary_toggle_switch.prop('checked')) {
-    //     $('.dm-options').hide();
-    //   }
-    // });
-    $secondary_toggle_switch.on('change', function () {
+    $('#social_facebook_page_import_dms').on('change', function () {
       if (this.checked) {
         $('.dm-options').fadeIn("slow", "linear").css('display', 'block');
       } else {
