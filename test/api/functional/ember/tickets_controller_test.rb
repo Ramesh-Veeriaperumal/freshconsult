@@ -5407,5 +5407,45 @@ module Ember
       assert_response 200
       assert_nil JSON.parse(response.body)['group_id']
     end
+
+    def test_every_response_status_with_note
+      @account.stubs(:next_response_sla_enabled?).returns(true)
+      t = create_ticket
+      # when agent responded on time
+      t.nr_due_by = Time.zone.now.utc + 30.minutes
+      t.save
+      assert_equal t.nr_violated?, nil
+      assert_equal t.every_response_status, ''
+      note1 = create_note(source: 2, ticket_id: t.id, user_id: @agent.id, private: false, body: Faker::Lorem.paragraph)
+      t.reload
+      assert_equal t.nr_violated?, false
+      assert_equal t.every_response_status, 'Within SLA'
+      # when agent has responded after the expected time
+      t.nr_due_by = Time.zone.now.utc
+      t.save
+      note2 = create_note(source: 2, ticket_id: t.id, user_id: @agent.id, private: false, body: Faker::Lorem.paragraph)
+      t.reload
+      assert_equal t.nr_violated?, true
+      assert_equal t.every_response_status, 'SLA Violated'
+    ensure
+      t.destroy
+      @account.unstub(:next_response_sla_enabled?)
+    end
+
+    def test_every_response_status_without_note
+      @account.stubs(:next_response_sla_enabled?).returns(true)
+      t = create_ticket
+      t.nr_due_by = Time.zone.now.utc
+      t.save
+      # when agent has not responded on time
+      t.nr_escalated = true
+      t.save
+      t.reload
+      assert_equal t.nr_violated?, nil
+      assert_equal t.every_response_status, 'SLA Violated'
+    ensure
+      t.destroy
+      @account.unstub(:next_response_sla_enabled?)
+    end
   end
 end
