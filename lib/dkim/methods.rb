@@ -190,4 +190,14 @@ module Dkim::Methods
   def configured_domains_from_email_service
     Dkim::EmailServiceHttp.new(current_account.id).get_domains
   end
+
+  def remove_domain_from_redis(domain)
+    remove_member_from_redis_set(
+      format(
+        MIGRATE_MANUALLY_CONFIGURED_DOMAINS,
+        account_id: current_account.id
+      ),
+      domain
+    )
+  end
 end
