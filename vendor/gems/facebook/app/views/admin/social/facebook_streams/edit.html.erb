@@ -14,7 +14,7 @@
   <h3 class="lead"><%= t('.edit_stream')%></h3><hr />
   
   <%= render :partial => 'page_form', :locals => { :facebook_page => @facebook_page } %>
-  <% primary_toggle_state = @ticket_rules.first.filter_data[:rule_type] == 1 ? false : true %> 
+  <% primary_toggle_state = @ticket_rules.first.filter_data[:rule_type] != 1 %>
   <div class="adm-social sts">
    <h4 class="adm-title"><%= t('admin.social.ticket_rules.title') %></h3>
     <div class="rules-wrapper">
@@ -28,9 +28,9 @@
 
         <label class="label-bold">&nbsp;<%= tkt_rule_des %></label>
       </div>
-      <div id = "ticket_rules" class="<%= 'hide' if !primary_toggle_state %> adm-social sts adm-bg-color">
+      <div id = "ticket_rules" class="<%= 'hide' if !primary_toggle_state && Account.current.facebook_admin_ui_revamp_enabled? %> adm-social sts adm-bg-color">
         <% if Account.current.facebook_admin_ui_revamp_enabled? %>
-          <%= render :partial => 'ticket_rules_new', :locals => { :ticket_rule => @ticket_rules.first } %>
+          <%= render :partial => 'ticket_rules_new', :locals => { :ticket_rule => @ticket_rules.first, :facebook_page => @facebook_page } %>
         <% else %>
           <%= render :partial => 'ticket_rules', :locals => { :ticket_rule => @ticket_rules.first } %>
         <% end %>
