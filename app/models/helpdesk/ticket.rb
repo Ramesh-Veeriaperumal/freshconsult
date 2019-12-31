@@ -34,7 +34,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                             "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email",
                             "parent_ticket", "reports_hash","sla_response_reminded","sla_resolution_reminded", "dirty_attributes",
                             "sentiment", "spam_score", "dynamodb_range_key", "failure_count", "subsidiary_tkts_count",
-                            "last_customer_note_id", "nr_updated_at", "nr_escalation_level"]
+                            "last_customer_note_id", "nr_updated_at", "nr_escalation_level", "nr_violated"]
 
   TICKET_STATE_ATTRIBUTES = ["opened_at", "pending_since", "resolved_at", "closed_at", "first_assigned_at", "assigned_at",
                              "first_response_time", "requester_responded_at", "agent_responded_at", "group_escalated",
@@ -1182,6 +1182,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def first_response_status
     #Hack: for outbound emails, first response status needs to be blank.
     (outbound_email? or first_response_time.nil?) ? "" : ((first_response_time < frDueBy) ? t('export_data.in_sla') : t('export_data.out_of_sla'))
+  end
+
+  def every_response_status
+    (nr_escalated || nr_violated?) ? t('export_data.out_of_sla') : (nr_violated.nil? ? '' : t('export_data.in_sla'))
   end
 
   def requester_fb_profile_id
