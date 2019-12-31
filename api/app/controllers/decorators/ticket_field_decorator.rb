@@ -315,7 +315,7 @@ class TicketFieldDecorator < ApiDecorator
     def translated_label
       choice = level.to_i > 1 ? "label_#{level}" : 'label'
       label = translation_record.translations[choice] if translation_record.present?
-      label || i18n_label
+      CGI.unescapeHTML(label || i18n_label)
     end
 
     def current_supported_language
@@ -340,13 +340,13 @@ class TicketFieldDecorator < ApiDecorator
     def translated_choice(picklist_value)
       choices = translation_record.present? && translation_record.translations['choices']
       choice = choices["choice_#{picklist_value.picklist_id}"] if choices
-      choice || picklist_value.value
+      CGI.unescapeHTML(choice || picklist_value.value)
     end
 
     def translated_status(status_id, value)
       choices = translation_record.present? && translation_record.translations['choices']
       choice = choices["choice_#{status_id}"] if choices
-      choice || value
+      CGI.unescapeHTML(choice || value)
     end
 
     def section_field_hash(section)
