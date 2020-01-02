@@ -42,10 +42,12 @@ module Widget
       end
 
       def teardown
-        @widget.destroy
+        @article.destroy
+        @help_widget_category.destroy
         super
         controller.class.any_instance.unstub(:api_current_user)
         User.unstub(:current)
+        unset_login_support
       end
 
       def set_widget
@@ -99,10 +101,10 @@ module Widget
       end
 
       def set_category
-        help_widget_category = HelpWidgetSolutionCategory.new
-        help_widget_category.help_widget = @widget
-        help_widget_category.solution_category_meta = @category
-        help_widget_category.save
+        @help_widget_category = HelpWidgetSolutionCategory.new
+        @help_widget_category.help_widget = @widget
+        @help_widget_category.solution_category_meta = @category
+        @help_widget_category.save
       end
 
       def solution_category_meta_ids(user = nil)
@@ -129,8 +131,6 @@ module Widget
         ar_article = @account.solution_articles.where(parent_id: @article.parent_id, language_id: Language.find_by_code('en').id).first
         match_json(widget_article_show_pattern(ar_article))
         solution_folder_meta = @article.parent.solution_folder_meta
-        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
-        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         result = parse_response(@response.body)
         assert_equal result['title'], 'en Test'
@@ -148,8 +148,6 @@ module Widget
         ar_article = @account.solution_articles.where(parent_id: @article.parent_id, language_id: Language.find_by_code('en').id).first
         match_json(widget_article_show_pattern(ar_article))
         solution_folder_meta = @article.parent.solution_folder_meta
-        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
-        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         result = parse_response(@response.body)
         assert_equal result['title'], 'en Test'
@@ -159,25 +157,30 @@ module Widget
         @account.rollback :help_widget_login
       end
 
-      def test_show_article_with_x_widget_auth_user_present
-        User.unstub(:current)
+      def test_show_article_with_user_login_expired
         @account.launch :help_widget_login
-        @account.stubs(:multilingual?).returns(false)
-        timestamp = Time.zone.now.utc.iso8601
-        User.any_instance.stubs(:agent?).returns(false)
         secret_key = SecureRandom.hex
         @account.stubs(:help_widget_secret).returns(secret_key)
-        user = add_new_user(@account)
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
+        auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', exp: (Time.now.utc - 4.hours).to_i }, secret_key + 'opo')
         @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        @account.stubs(:multilingual?).returns(false)
+        get :show, controller_params(id: @article.parent_id)
+        assert_response 401
+        match_json('description' => 'Validation failed',
+                   'errors' => [bad_request_error_pattern('token', 'Signature has expired', code: 'unauthorized')])
+      end
+
+      def test_show_article_with_x_widget_auth_user_present
+        User.unstub(:current)
+        @account.stubs(:multilingual?).returns(false)
+        user = add_new_user(@account)
+        set_user_login_headers(name: user.name, email: user.email)
         get :show, controller_params(id: @article.parent_id)
         assert_response 200
         match_json(widget_article_show_pattern(@article))
         ar_article = @account.solution_articles.where(parent_id: @article.parent_id, language_id: Language.find_by_code('en').id).first
         match_json(widget_article_show_pattern(ar_article))
         solution_folder_meta = @article.parent.solution_folder_meta
-        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
-        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         result = parse_response(@response.body)
         assert_equal result['title'], 'en Test'
@@ -185,38 +188,25 @@ module Widget
         assert_equal User.current.id, user.id
       ensure
         @account.unstub(:multilingual?)
-        @account.rollback :help_widget_login
-        @account.unstub(:help_widget_secret)
-        User.any_instance.unstub(:agent?)
         User.stubs(:current).returns(nil)
+        user.destroy
       end
 
       def test_show_article_with_x_widget_auth_user_absent
-        @account.launch :help_widget_login
         @account.stubs(:multilingual?).returns(false)
-        timestamp = Time.zone.now.utc.iso8601
-        User.any_instance.stubs(:agent?).returns(false)
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
-        auth_token = JWT.encode({ name: 'Padmashri', email: 'pdfgdfftom@freshworks.com', timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        set_user_login_headers(name: 'Padmashri', email: 'pdfgdfftom@freshworks.com')
         get :show, controller_params(id: @article.parent_id)
         assert_response 404
       ensure
         @account.unstub(:multilingual?)
-        @account.rollback :help_widget_login
-        @account.unstub(:help_widget_secret)
-        User.any_instance.unstub(:agent?)
       end
 
       def test_show_article_with_wrong_x_widget_auth
         @account.launch :help_widget_login
         @account.stubs(:multilingual?).returns(false)
-        timestamp = Time.zone.now.utc.iso8601
-        User.any_instance.stubs(:agent?).returns(false)
         secret_key = SecureRandom.hex
         @account.stubs(:help_widget_secret).returns(secret_key)
-        auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', timestamp: timestamp }, secret_key + 'oyo')
+        auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', exp: (Time.now.utc + 15.minutes).to_i }, 'oyo')
         @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
         get :show, controller_params(id: @article.parent_id)
         assert_response 401
@@ -224,79 +214,66 @@ module Widget
         @account.unstub(:multilingual?)
         @account.rollback :help_widget_login
         @account.unstub(:help_widget_secret)
-        User.any_instance.unstub(:agent?)
       end
 
       def test_show_article_without_user_login
         @account.stubs(:multilingual?).returns(false)
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
-        get :show, controller_params(id: @article.parent_id)
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
+        get :show, controller_params(id: solution_article.parent_id)
         assert_response 404
       ensure
         @account.unstub(:multilingual?)
+        solution_article.destroy
       end
 
       def test_show_article_with_company_user_visibility
         @account.stubs(:multilingual?).returns(false)
         User.unstub(:current)
-        @account.launch :help_widget_login
-        timestamp = Time.zone.now.utc.iso8601
-        User.any_instance.stubs(:agent?).returns(false)
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
         company = create_company
         user = add_new_user(@account, customer_id: company.id)
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], user)
-        put :show, controller_params(id: @article.parent_id)
+        set_user_login_headers(name: user.name, email: user.email)
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], user)
+        put :show, controller_params(id: solution_article.parent_id)
         assert_response 200
       ensure
         @account.unstub(:multilingual?)
         User.stubs(:current).returns(nil)
-        User.unstub(:agent?)
-        @account.unstub(:help_widget_secret)
-        @account.rollback :help_widget_login
+        user.destroy
+        solution_article.destroy
       end
 
       def test_show_article_with_invalid_company_user_visibility
         @account.stubs(:multilingual?).returns(false)
         User.unstub(:current)
-        @account.launch :help_widget_login
-        timestamp = Time.zone.now.utc.iso8601
-        User.any_instance.stubs(:agent?).returns(false)
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
         company = create_company
         company_user = add_new_user(@account, customer_id: company.id)
         user = add_new_user(@account)
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], company_user)
-        put :show, controller_params(id: @article.parent_id)
+        set_user_login_headers(name: user.name, email: user.email)
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], company_user)
+        put :show, controller_params(id: solution_article.parent_id)
         assert_response 404
       ensure
         @account.unstub(:multilingual?)
         User.stubs(:current).returns(nil)
-        User.unstub(:agent?)
-        @account.unstub(:help_widget_secret)
-        @account.rollback :help_widget_login
+        user.destroy
+        solution_article.destroy
       end
 
       def test_show_article_with_primary_language
-        create_widget(language: 'es')
-        @article = create_articles
-        get :show, controller_params(id: @article.parent_id)
+        widget = create_widget(language: 'es')
+        solution_article = create_articles
+        get :show, controller_params(id: solution_article.parent_id)
         assert_response 200
-        ar_article = @account.solution_articles.where(parent_id: @article.parent_id, language_id: Language.find_by_code('en').id).first
+        ar_article = @account.solution_articles.where(parent_id: solution_article.parent_id, language_id: Language.find_by_code('en').id).first
         match_json(widget_article_show_pattern(ar_article))
-        solution_folder_meta = @article.parent.solution_folder_meta
-        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
-        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
+        solution_folder_meta = solution_article.parent.solution_folder_meta
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         result = parse_response(@response.body)
         assert_equal result['title'], 'en Test'
         assert_nil Language.current
+      ensure
+        widget.destroy
+        solution_article.destroy
       end
 
       def test_show_article_with_language
@@ -305,8 +282,6 @@ module Widget
         ar_article = @account.solution_articles.where(parent_id: @article.parent_id, language_id: Language.find_by_code('es').id).first
         match_json(widget_article_show_pattern(ar_article))
         solution_folder_meta = @article.parent.solution_folder_meta
-        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
-        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         result = parse_response(@response.body)
         assert_equal result['title'], 'es Test'
@@ -319,8 +294,6 @@ module Widget
         ar_article = @account.solution_articles.where(parent_id: @article.parent_id, language_id: Language.find_by_code('en').id).first
         match_json(widget_article_show_pattern(ar_article))
         solution_folder_meta = @article.parent.solution_folder_meta
-        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
-        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         result = parse_response(@response.body)
         assert_equal result['title'], 'en Test'
@@ -340,11 +313,12 @@ module Widget
         get :show, controller_params(id: att_article.parent_id)
         assert_response 200
         solution_folder_meta = @article.parent.solution_folder_meta
-        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
-        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         match_json(widget_article_show_pattern(att_article))
         assert_nil Language.current
+      ensure
+        attachments.destroy
+        att_article.destroy
       end
 
       def test_show_article_without_widget_id
@@ -376,8 +350,6 @@ module Widget
         put :hit, controller_params(id: @article.parent_id)
         assert_response 204
         solution_folder_meta = @article.parent.solution_folder_meta
-        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
-        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         @article.reload
         assert_equal @article.hits, 1
@@ -386,14 +358,25 @@ module Widget
         @account.unstub(:multilingual?)
       end
 
+      def test_hit_article_with_user_login_expired
+        @account.launch :help_widget_login
+        secret_key = SecureRandom.hex
+        @account.stubs(:help_widget_secret).returns(secret_key)
+        auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', exp: (Time.now.utc - 4.hours).to_i }, secret_key + 'opo')
+        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        @account.stubs(:multilingual?).returns(false)
+        put :hit, controller_params(id: @article.parent_id)
+        assert_response 401
+        match_json('description' => 'Validation failed',
+                   'errors' => [bad_request_error_pattern('token', 'Signature has expired', code: 'unauthorized')])
+      end
+
       def test_hit_article_with_wrong_x_widget_auth
         @account.launch :help_widget_login
         @account.stubs(:multilingual?).returns(false)
-        timestamp = Time.zone.now.utc.iso8601
-        User.any_instance.stubs(:agent?).returns(false)
         secret_key = SecureRandom.hex
         @account.stubs(:help_widget_secret).returns(secret_key)
-        auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', timestamp: timestamp }, secret_key + 'oyo')
+        auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', exp: (Time.now.utc + 1.hour).to_i }, secret_key + 'oyo')
         @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
         get :hit, controller_params(id: @article.parent_id)
         assert_response 401
@@ -413,157 +396,123 @@ module Widget
       end
 
       def test_hit_article_without_user_visibility
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
-        put :hit, controller_params(id: @article.parent_id)
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
+        put :hit, controller_params(id: solution_article.parent_id)
         assert_response 404
+      ensure
+        solution_article.destroy
       end
 
       def test_hit_article_with_user_visibility
         @account.stubs(:multilingual?).returns(false)
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
         User.unstub(:current)
-        @account.launch :help_widget_login
         @account.stubs(:multilingual?).returns(false)
-        timestamp = Time.zone.now.utc.iso8601
-        User.any_instance.stubs(:agent?).returns(false)
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
         user = add_new_user(@account)
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
-        put :hit, controller_params(id: @article.parent_id)
+        set_user_login_headers(name: user.name, email: user.email)
+        put :hit, controller_params(id: solution_article.parent_id)
         assert_response 204
-        solution_folder_meta = @article.parent.solution_folder_meta
-        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
-        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
+        solution_folder_meta = solution_article.parent.solution_folder_meta
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users]
-        @article.reload
-        assert_equal @article.hits, 1
+        solution_article.reload
+        assert_equal solution_article.hits, 1
         assert_nil Language.current
         assert_equal User.current.id, user.id
       ensure
         @account.unstub(:multilingual?)
         User.stubs(:current).returns(nil)
-        @account.unstub(:help_widget_secret)
-        @account.rollback :help_widget_login
+        user.destroy
+        solution_article.destroy
       end
 
       def test_hit_article_with_company_user_visibility
         @account.stubs(:multilingual?).returns(false)
         User.unstub(:current)
-        @account.launch :help_widget_login
-        timestamp = Time.zone.now.utc.iso8601
-        User.any_instance.stubs(:agent?).returns(false)
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
         company = create_company
         user = add_new_user(@account, customer_id: company.id)
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], user)
-        put :hit, controller_params(id: @article.parent_id)
+        set_user_login_headers(name: user.name, email: user.email)
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], user)
+        put :hit, controller_params(id: solution_article.parent_id)
         assert_response 204
-        @article.reload
-        assert_equal @article.hits, 1
+        solution_article.reload
+        assert_equal solution_article.hits, 1
         assert_nil Language.current
         assert_equal User.current.id, user.id
       ensure
         @account.unstub(:multilingual?)
         User.stubs(:current).returns(nil)
-        User.unstub(:agent?)
-        @account.unstub(:help_widget_secret)
-        @account.rollback :help_widget_login
+        user.destroy
+        company.destroy
+        solution_article.destroy
       end
 
       def test_hit_article_with_invalid_company_user_visibility
         @account.stubs(:multilingual?).returns(false)
         User.unstub(:current)
-        @account.launch :help_widget_login
-        timestamp = Time.zone.now.utc.iso8601
-        User.any_instance.stubs(:agent?).returns(false)
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
         company = create_company
         company_user = add_new_user(@account, customer_id: company.id)
         user = add_new_user(@account)
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], company_user)
-        put :hit, controller_params(id: @article.parent_id)
+        set_user_login_headers(name: user.name, email: user.email)
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], company_user)
+        put :hit, controller_params(id: solution_article.parent_id)
         assert_response 404
       ensure
         @account.unstub(:multilingual?)
         User.stubs(:current).returns(nil)
-        User.unstub(:agent?)
-        @account.unstub(:help_widget_secret)
-        @account.rollback :help_widget_login
+        user.destroy
+        company_user.destroy
+        company.destroy
+        solution_article.destroy
       end
 
       def test_hit_article_by_agent
         @account.stubs(:multilingual?).returns(false)
         User.unstub(:current)
-        @account.launch :help_widget_login
         @account.stubs(:solutions_agent_metrics_enabled?).returns(false)
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
         user = add_agent(@account, role: Role.find_by_name('Agent').id)
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
-        timestamp = Time.zone.now.utc.iso8601
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
-        put :hit, controller_params(id: @article.parent_id)
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
+        set_user_login_headers(name: user.name, email: user.email)
+        put :hit, controller_params(id: solution_article.parent_id)
         assert_response 204
-        solution_folder_meta = @article.parent.solution_folder_meta
-        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
-        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
+        solution_folder_meta = solution_article.parent.solution_folder_meta
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users]
-        @article.reload
-        assert_equal @article.hits, 0
+        solution_article.reload
+        assert_equal solution_article.hits, 0
         assert_nil Language.current
       ensure
         @account.unstub(:multilingual?)
         @account.unstub(:solutions_agent_metrics_enabled?)
         User.stubs(:current).returns(nil)
-        @account.unstub(:help_widget_secret)
-        @account.rollback :help_widget_login
+        user.destroy
+        solution_article.destroy
       end
 
       def test_hit_article_by_agent_with_solutions_agent_metrics_enabled
         @account.stubs(:multilingual?).returns(false)
         User.unstub(:current)
-        @account.launch :help_widget_login
         @account.stubs(:solutions_agent_metrics_enabled?).returns(true)
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
-        user = add_agent(@account, role: Role.find_by_name('Agent').id)
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
-        timestamp = Time.zone.now.utc.iso8601
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
         user = add_new_user(@account)
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
-        put :hit, controller_params(id: @article.parent_id)
+        set_user_login_headers(name: user.name, email: user.email)
+        put :hit, controller_params(id: solution_article.parent_id)
         assert_response 204
-        solution_folder_meta = @article.parent.solution_folder_meta
-        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
-        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
+        solution_folder_meta = solution_article.parent.solution_folder_meta
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users]
-        @article.reload
-        assert_equal @article.hits, 1
+        solution_article.reload
+        assert_equal solution_article.hits, 1
         assert_nil Language.current
       ensure
         @account.unstub(:multilingual?)
         @account.unstub(:solutions_agent_metrics_enabled?)
         User.stubs(:current).returns(nil)
-        @account.unstub(:help_widget_secret)
-        @account.rollback :help_widget_login
+        user.destroy
+        solution_article.destroy
       end
 
       def test_hit_article_multilingual_enabled
         put :hit, controller_params(id: @article.parent_id)
         assert_response 204
         solution_folder_meta = @article.parent.solution_folder_meta
-        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
-        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         @article.reload
         assert_equal @article.hits, 1
@@ -576,8 +525,6 @@ module Widget
         put :thumbs_up, controller_params(id: @article.parent_id)
         assert_response 204
         solution_folder_meta = @article.parent.solution_folder_meta
-        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
-        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         @article.reload
         assert_equal @article.thumbs_up, old_count + 1
@@ -586,208 +533,185 @@ module Widget
         @account.unstub(:multilingual?)
       end
 
-      def test_thumbs_up_article_with_wrong_x_widget_token
-        @account.stubs(:multilingual?).returns(false)
-        old_count = @article.thumbs_up
-        User.unstub(:current)
+      def test_thumbs_up_articlet_with_user_login_expired
         @account.launch :help_widget_login
-        User.any_instance.stubs(:agent?).returns(false)
         secret_key = SecureRandom.hex
         @account.stubs(:help_widget_secret).returns(secret_key)
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
-        user = add_new_user(@account)
-        timestamp = Time.zone.now.utc.iso8601
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key + 'ds')
+        auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', exp: (Time.now.utc - 4.hours).to_i }, secret_key + 'opo')
         @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        @account.stubs(:multilingual?).returns(false)
         put :thumbs_up, controller_params(id: @article.parent_id)
+        assert_response 401
+        match_json('description' => 'Validation failed',
+                   'errors' => [bad_request_error_pattern('token', 'Signature has expired', code: 'unauthorized')])
+      end
+
+      def test_thumbs_up_article_with_wrong_x_widget_token
+        @account.stubs(:multilingual?).returns(false)
+        User.unstub(:current)
+        @account.launch :help_widget_login
+        secret_key = SecureRandom.hex
+        @account.stubs(:help_widget_secret).returns(secret_key)
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
+        user = add_new_user(@account)
+        auth_token = JWT.encode({ name: user.name, email: user.email, exp: (Time.now.utc + 1.hour).to_i }, secret_key + 'ds')
+        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        put :thumbs_up, controller_params(id: solution_article.parent_id)
         assert_response 401
       ensure
         @account.unstub(:multilingual?)
         User.stubs(:current).returns(nil)
-        User.unstub(:agent?)
         @account.unstub(:help_widget_secret)
         @account.rollback :help_widget_login
+        user.destroy
+        solution_article.destroy
       end
 
       def test_thumbs_up_article_with_user
         @account.stubs(:multilingual?).returns(false)
         User.unstub(:current)
-        @account.launch :help_widget_login
-        User.any_instance.stubs(:agent?).returns(false)
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
         user = add_new_user(@account)
-        timestamp = Time.zone.now.utc.iso8601
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
-        old_count = @article.thumbs_up
-        put :thumbs_up, controller_params(id: @article.parent_id)
+        set_user_login_headers(name: user.name, email: user.email)
+        old_count = solution_article.thumbs_up
+        put :thumbs_up, controller_params(id: solution_article.parent_id)
         assert_response 204
-        @article.reload
-        article_vote = @account.votes.where(voteable_id: @article.id, user_id: user.id).first
+        solution_article.reload
+        article_vote = @account.votes.where(voteable_id: solution_article.id, user_id: user.id).first
         assert_present article_vote
         assert_equal article_vote.vote, 1
-        assert_equal @article.thumbs_up, old_count + 1
+        assert_equal solution_article.thumbs_up, old_count + 1
         assert_nil Language.current
       ensure
         @account.unstub(:multilingual?)
         User.stubs(:current).returns(nil)
-        User.unstub(:agent?)
-        @account.unstub(:help_widget_secret)
-        @account.rollback :help_widget_login
+        user.destroy
+        solution_article.destroy
       end
 
       def test_thumbs_up_article_with_user_being_agent
         @account.stubs(:multilingual?).returns(false)
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
         User.unstub(:current)
-        @account.launch :help_widget_login
-        timestamp = Time.zone.now.utc.iso8601
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
         user = add_agent(@account, role: Role.find_by_name('Agent').id)
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        set_user_login_headers(name: user.name, email: user.email)
         old_count = @article.thumbs_up
-        put :thumbs_up, controller_params(id: @article.parent_id)
+        put :thumbs_up, controller_params(id: solution_article.parent_id)
         assert_response 204
-        @article.reload
-        article_vote = @account.votes.where(voteable_id: @article.id, user_id: user.id).first
+        solution_article.reload
+        article_vote = @account.votes.where(voteable_id: solution_article.id, user_id: user.id).first
         assert_nil article_vote
-        assert_equal @article.thumbs_up, old_count
+        assert_equal solution_article.thumbs_up, old_count
         assert_nil Language.current
       ensure
         @account.unstub(:multilingual?)
         User.stubs(:current).returns(nil)
-        User.unstub(:agent?)
-        @account.unstub(:help_widget_secret)
-        @account.rollback :help_widget_login
+        user.destroy
+        solution_article.destroy
       end
 
       def test_thumbs_up_article_with_solutions_agent_metrics_enabled
         @account.stubs(:multilingual?).returns(false)
         User.unstub(:current)
-        @account.launch :help_widget_login
         @account.stubs(:solutions_agent_metrics_enabled?).returns(true)
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
         agent = add_agent(@account, role: Role.find_by_name('Agent').id)
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
-        timestamp = Time.zone.now.utc.iso8601
-        auth_token = JWT.encode({ name: agent.name, email: agent.email, timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
-        old_count = @article.thumbs_up
-        put :thumbs_up, controller_params(id: @article.parent_id)
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
+        set_user_login_headers(name: agent.name, email: agent.email)
+        old_count = solution_article.thumbs_up
+        put :thumbs_up, controller_params(id: solution_article.parent_id)
         assert_response 204
-        @article.reload
-        article_vote = @account.votes.where(voteable_id: @article.id, user_id: agent.id).first
+        solution_article.reload
+        article_vote = @account.votes.where(voteable_id: solution_article.id, user_id: agent.id).first
         assert_present article_vote
         assert_equal article_vote.vote, 1
-        assert_equal @article.thumbs_up, old_count + 1
+        assert_equal solution_article.thumbs_up, old_count + 1
         assert_nil Language.current
       ensure
         @account.unstub(:multilingual?)
         @account.unstub(:solutions_agent_metrics_enabled?)
         User.unstub(:current)
-        @account.rollback :help_widget_login
+        agent.destroy
+        solution_article.destroy
       end
 
       def test_thumbs_up_article_with_same_user_many_times
         @account.stubs(:multilingual?).returns(false)
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
         User.unstub(:current)
-        @account.launch :help_widget_login
-        timestamp = Time.zone.now.utc.iso8601
-        User.any_instance.stubs(:agent?).returns(false)
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
         user = add_new_user(@account)
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
-        article_vote = @article.votes.build(vote: 1, user_id: user.id)
-        @article.thumbs_up!
+        set_user_login_headers(name: user.name, email: user.email)
+        article_vote = solution_article.votes.build(vote: 1, user_id: user.id)
+        solution_article.thumbs_up!
         article_vote.save
-        @article.reload
-        old_thumbs_up_count = @article.thumbs_up
+        solution_article.reload
+        old_thumbs_up_count = solution_article.thumbs_up
         old_count = article_vote.vote
-        put :thumbs_up, controller_params(id: @article.parent_id)
+        put :thumbs_up, controller_params(id: solution_article.parent_id)
         assert_response 204
-        @article.reload
-        article_vote = @account.votes.where(voteable_id: @article.id, user_id: user.id).first
-        assert_equal @article.thumbs_up, old_thumbs_up_count
+        solution_article.reload
+        article_vote = @account.votes.where(voteable_id: solution_article.id, user_id: user.id).first
+        assert_equal solution_article.thumbs_up, old_thumbs_up_count
         assert_present article_vote
         assert_equal article_vote.vote, old_count
         assert_nil Language.current
       ensure
         @account.unstub(:multilingual?)
         User.stubs(:current).returns(nil)
-        User.unstub(:agent?)
-        @account.unstub(:help_widget_secret)
-        @account.rollback :help_widget_login
+        user.destroy
+        solution_article.destroy
       end
 
       def test_thumbs_up_article_with_logged_in_user_visibility
         @account.stubs(:multilingual?).returns(false)
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
-        put :thumbs_up, controller_params(id: @article.parent_id)
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
+        put :thumbs_up, controller_params(id: solution_article.parent_id)
         assert_response 404
       ensure
         @account.unstub(:multilingual?)
+        solution_article.destroy
       end
 
       def test_thumbs_up_article_with_company_user_visibility
         @account.stubs(:multilingual?).returns(false)
         User.unstub(:current)
-        @account.launch :help_widget_login
-        timestamp = Time.zone.now.utc.iso8601
-        User.any_instance.stubs(:agent?).returns(false)
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
         company = create_company
         user = add_new_user(@account, customer_id: company.id)
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], user)
-        old_count = @article.thumbs_up
-        put :thumbs_up, controller_params(id: @article.parent_id)
+        set_user_login_headers(name: user.name, email: user.email)
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], user)
+        old_count = solution_article.thumbs_up
+        put :thumbs_up, controller_params(id: solution_article.parent_id)
         assert_response 204
-        @article.reload
-        article_vote = @account.votes.where(voteable_id: @article.id, user_id: user.id).first
+        solution_article.reload
+        article_vote = @account.votes.where(voteable_id: solution_article.id, user_id: user.id).first
         assert_present article_vote
         assert_equal article_vote.vote, 1
-        assert_equal @article.thumbs_up, old_count + 1
+        assert_equal solution_article.thumbs_up, old_count + 1
         assert_nil Language.current
       ensure
         @account.unstub(:multilingual?)
         User.stubs(:current).returns(nil)
-        User.unstub(:agent?)
-        @account.unstub(:help_widget_secret)
-        @account.rollback :help_widget_login
+        user.destroy
+        company.destroy
+        solution_article.destroy
       end
 
       def test_thumbs_up_article_with_invalid_company_user_visibility
         @account.stubs(:multilingual?).returns(false)
         User.unstub(:current)
-        @account.launch :help_widget_login
-        timestamp = Time.zone.now.utc.iso8601
-        User.any_instance.stubs(:agent?).returns(false)
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
         company = create_company
         company_user = add_new_user(@account, customer_id: company.id)
         user = add_new_user(@account)
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], company_user)
-        put :thumbs_up, controller_params(id: @article.parent_id)
+        set_user_login_headers(name: user.name, email: user.email)
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], company_user)
+        put :thumbs_up, controller_params(id: solution_article.parent_id)
         assert_response 404
       ensure
         @account.unstub(:multilingual?)
         User.stubs(:current).returns(nil)
-        User.unstub(:agent?)
-        @account.unstub(:help_widget_secret)
-        @account.rollback :help_widget_login
+        user.destroy
+        company_user.destroy
+        company.destroy
+        solution_article.destroy
       end
 
       def test_thumbs_up_article_multilingual_enabled
@@ -795,8 +719,6 @@ module Widget
         put :thumbs_up, controller_params(id: @article.parent_id)
         assert_response 204
         solution_folder_meta = @article.parent.solution_folder_meta
-        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
-        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         @article.reload
         assert_equal @article.thumbs_up, old_count + 1
@@ -809,8 +731,6 @@ module Widget
         put :thumbs_down, controller_params(id: @article.parent_id)
         assert_response 204
         solution_folder_meta = @article.parent.solution_folder_meta
-        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
-        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         @article.reload
         assert_equal @article.thumbs_down, old_count + 1
@@ -819,169 +739,149 @@ module Widget
         @account.unstub(:multilingual?)
       end
 
-      def test_thumbs_down_article_with_wrong_x_widget_token
-        @account.stubs(:multilingual?).returns(false)
-        old_count = @article.thumbs_up
-        User.unstub(:current)
+      def test_create_attachment_with_user_login_expired
         @account.launch :help_widget_login
-        User.any_instance.stubs(:agent?).returns(false)
         secret_key = SecureRandom.hex
         @account.stubs(:help_widget_secret).returns(secret_key)
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
-        user = add_new_user(@account)
-        timestamp = Time.zone.now.utc.iso8601
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key + 'ds')
+        auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', exp: (Time.now.utc - 4.hours).to_i }, secret_key + 'opo')
         @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        @account.stubs(:multilingual?).returns(false)
         put :thumbs_down, controller_params(id: @article.parent_id)
+        assert_response 401
+        match_json('description' => 'Validation failed',
+                   'errors' => [bad_request_error_pattern('token', 'Signature has expired', code: 'unauthorized')])
+      end
+
+      def test_thumbs_down_article_with_wrong_x_widget_token
+        @account.stubs(:multilingual?).returns(false)
+        User.unstub(:current)
+        @account.launch :help_widget_login
+        secret_key = SecureRandom.hex
+        @account.stubs(:help_widget_secret).returns(secret_key)
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
+        user = add_new_user(@account)
+        auth_token = JWT.encode({ name: user.name, email: user.email, exp: (Time.now.utc + 1.hour).to_i }, secret_key + 'ds')
+        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        put :thumbs_down, controller_params(id: solution_article.parent_id)
         assert_response 401
       ensure
         @account.unstub(:multilingual?)
         User.stubs(:current).returns(nil)
-        User.unstub(:agent?)
         @account.unstub(:help_widget_secret)
         @account.rollback :help_widget_login
+        user.destroy
+        solution_article.destroy
       end
 
       def test_thumbs_down_article_with_user
         @account.stubs(:multilingual?).returns(false)
         User.unstub(:current)
-        @account.launch :help_widget_login
-        User.any_instance.stubs(:agent?).returns(false)
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
         user = add_new_user(@account)
-        timestamp = Time.zone.now.utc.iso8601
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
-        old_count = @article.thumbs_down
-        put :thumbs_down, controller_params(id: @article.parent_id)
+        set_user_login_headers(name: user.name, email: user.email)
+        old_count = solution_article.thumbs_down
+        put :thumbs_down, controller_params(id: solution_article.parent_id)
         assert_response 204
-        @article.reload
-        article_vote = @account.votes.where(voteable_id: @article.id, user_id: user.id).first
+        solution_article.reload
+        article_vote = @account.votes.where(voteable_id: solution_article.id, user_id: user.id).first
         assert_present article_vote
         assert_equal article_vote.vote, 0
-        assert_equal @article.thumbs_down, old_count + 1
+        assert_equal solution_article.thumbs_down, old_count + 1
         assert_nil Language.current
       ensure
         @account.unstub(:multilingual?)
         User.stubs(:current).returns(nil)
-        User.unstub(:agent?)
-        @account.unstub(:help_widget_secret)
-        @account.rollback :help_widget_login
+        user.destroy
+        solution_article.destroy
       end
 
       def test_thumbs_down_article_with_user_being_agent
         @account.stubs(:multilingual?).returns(false)
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
         User.unstub(:current)
-        @account.launch :help_widget_login
-        timestamp = Time.zone.now.utc.iso8601
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
         user = add_agent(@account, role: Role.find_by_name('Agent').id)
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
-        old_count = @article.thumbs_down
-        put :thumbs_down, controller_params(id: @article.parent_id)
+        set_user_login_headers(name: user.name, email: user.email)
+        old_count = solution_article.thumbs_down
+        put :thumbs_down, controller_params(id: solution_article.parent_id)
         assert_response 204
-        @article.reload
-        article_vote = @account.votes.where(voteable_id: @article.id, user_id: user.id).first
+        solution_article.reload
+        article_vote = @account.votes.where(voteable_id: solution_article.id, user_id: user.id).first
         assert_nil article_vote
-        assert_equal @article.thumbs_down, old_count
+        assert_equal solution_article.thumbs_down, old_count
         assert_nil Language.current
       ensure
         @account.unstub(:multilingual?)
         User.stubs(:current).returns(nil)
-        User.unstub(:agent?)
-        @account.unstub(:help_widget_secret)
-        @account.rollback :help_widget_login
+        user.destroy
+        solution_article.destroy
       end
 
       def test_thumbs_down_article_with_solutions_agent_metrics_enabled
         @account.stubs(:multilingual?).returns(false)
         User.unstub(:current)
-        @account.launch :help_widget_login
         @account.stubs(:solutions_agent_metrics_enabled?).returns(true)
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
         user = add_agent(@account, role: Role.find_by_name('Agent').id)
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
-        timestamp = Time.zone.now.utc.iso8601
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
-        old_count = @article.thumbs_down
-        put :thumbs_down, controller_params(id: @article.parent_id)
+        set_user_login_headers(name: user.name, email: user.email)
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
+        old_count = solution_article.thumbs_down
+        put :thumbs_down, controller_params(id: solution_article.parent_id)
         assert_response 204
-        @article.reload
-        article_vote = @account.votes.where(voteable_id: @article.id, user_id: user.id).first
+        solution_article.reload
+        article_vote = @account.votes.where(voteable_id: solution_article.id, user_id: user.id).first
         assert_present article_vote
         assert_equal article_vote.vote, 0
-        assert_equal @article.thumbs_down, old_count + 1
+        assert_equal solution_article.thumbs_down, old_count + 1
         assert_nil Language.current
       ensure
         @account.unstub(:multilingual?)
         @account.unstub(:solutions_agent_metrics_enabled?)
         User.unstub(:current)
-        @account.rollback :help_widget_login
+        solution_article.destroy
       end
 
       def test_thumbs_down_article_with_same_user_many_times
         @account.stubs(:multilingual?).returns(false)
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
         User.unstub(:current)
-        @account.launch :help_widget_login
-        timestamp = Time.zone.now.utc.iso8601
-        User.any_instance.stubs(:agent?).returns(false)
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
         user = add_new_user(@account)
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
-        vote_record = @article.votes.build(vote: 0, user_id: user.id)
-        @article.thumbs_down!
+        set_user_login_headers(name: user.name, email: user.email)
+        vote_record = solution_article.votes.build(vote: 0, user_id: user.id)
+        solution_article.thumbs_down!
         vote_record.save
-        @article.reload
+        solution_article.reload
         old_count = vote_record.vote
-        old_thumbs_down = @article.thumbs_down
-        put :thumbs_down, controller_params(id: @article.parent_id)
+        old_thumbs_down = solution_article.thumbs_down
+        put :thumbs_down, controller_params(id: solution_article.parent_id)
         assert_response 204
-        @article.reload
-        article_vote = @account.votes.where(voteable_id: @article.id, user_id: user.id).first
-        assert_equal @article.thumbs_down, old_thumbs_down
+        solution_article.reload
+        article_vote = @account.votes.where(voteable_id: solution_article.id, user_id: user.id).first
+        assert_equal solution_article.thumbs_down, old_thumbs_down
         assert_present article_vote
         assert_equal article_vote.vote, old_count
         assert_nil Language.current
       ensure
         @account.unstub(:multilingual?)
         User.stubs(:current).returns(nil)
-        User.unstub(:agent?)
-        @account.unstub(:help_widget_secret)
-        @account.rollback :help_widget_login
+        user.destroy
+        solution_article.destroy
       end
 
       def test_thumbs_down_article_with_logged_in_user_visibility
         @account.stubs(:multilingual?).returns(false)
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
-        put :thumbs_down, controller_params(id: @article.parent_id)
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
+        put :thumbs_down, controller_params(id: solution_article.parent_id)
         assert_response 404
       ensure
         @account.unstub(:multilingual?)
+        solution_article.destroy
       end
 
       def test_thumbs_down_article_with_company_user_visibility
         @account.stubs(:multilingual?).returns(false)
         User.unstub(:current)
-        @account.launch :help_widget_login
-        timestamp = Time.zone.now.utc.iso8601
-        User.any_instance.stubs(:agent?).returns(false)
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
         company = create_company
         user = add_new_user(@account, customer_id: company.id)
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], user)
+        set_user_login_headers(name: user.name, email: user.email)
         old_count = @article.thumbs_down
         put :thumbs_down, controller_params(id: @article.parent_id)
         assert_response 204
@@ -992,33 +892,27 @@ module Widget
       ensure
         @account.unstub(:multilingual?)
         User.stubs(:current).returns(nil)
-        User.unstub(:agent?)
-        @account.unstub(:help_widget_secret)
-        @account.rollback :help_widget_login
+        user.destroy
+        company.destroy
       end
 
       def test_thumbs_down_article_with_invalid_company_user_visibility
         @account.stubs(:multilingual?).returns(false)
         User.unstub(:current)
-        @account.launch :help_widget_login
-        timestamp = Time.zone.now.utc.iso8601
-        User.any_instance.stubs(:agent?).returns(false)
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
         company = create_company
         company_user = add_new_user(@account, customer_id: company.id)
         user = add_new_user(@account)
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], company_user)
-        put :thumbs_down, controller_params(id: @article.parent_id)
+        set_user_login_headers(name: user.name, email: user.email)
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], company_user)
+        put :thumbs_down, controller_params(id: solution_article.parent_id)
         assert_response 404
       ensure
         @account.unstub(:multilingual?)
         User.stubs(:current).returns(nil)
-        User.unstub(:agent?)
-        @account.unstub(:help_widget_secret)
-        @account.rollback :help_widget_login
+        company_user.destroy
+        user.destroy
+        company.destroy
+        solution_article.destroy
       end
 
       def test_thumbs_down_article_multilingual_enabled
@@ -1027,8 +921,6 @@ module Widget
         put :thumbs_down, controller_params(id: @article.parent_id)
         assert_response 204
         solution_folder_meta = @article.parent.solution_folder_meta
-        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
-        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         @article.reload
         assert_equal @article.thumbs_down, old_count + 1
@@ -1040,8 +932,6 @@ module Widget
         get :suggested_articles, controller_params
         assert_response 200
         solution_folder_meta = @article.parent.solution_folder_meta
-        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
-        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         match_json(get_suggested_articles)
         assert_nil Language.current
@@ -1055,8 +945,6 @@ module Widget
         match_json(get_suggested_articles(lang_code: 'es'))
         result = parse_response(@response.body)
         solution_folder_meta = @article.parent.solution_folder_meta
-        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
-        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         assert_equal result.first['title'], 'es Test'
         assert_nil Language.current
@@ -1064,79 +952,68 @@ module Widget
 
       def test_suggested_articles_with_login
         User.unstub(:current)
-        @account.launch :help_widget_login
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
         user = add_new_user(@account)
         @widget.help_widget_solution_categories.destroy_all
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
-        timestamp = Time.zone.now.utc.iso8601
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
+        set_user_login_headers(name: user.name, email: user.email)
         get :suggested_articles, controller_params(language: 'es')
         assert_response 200
         match_json(get_suggested_articles(lang_code: 'es', user: user))
         result = parse_response(@response.body)
         result = parse_response(@response.body)
-        logged_user_response = result.find { |x| x['id'] == @article.parent_id }
+        logged_user_response = result.find { |x| x['id'] == solution_article.parent_id }
         assert_not_nil logged_user_response
         assert_equal User.current.id, user.id
       ensure
-        @account.rollback :help_widget_login
-        @account.unstub(:help_widget_secret)
         User.stubs(:current).returns(nil)
+        user.destroy
+        solution_article.destroy
       end
 
       def test_suggested_articles_with_company_user_login
         User.unstub(:current)
-        @account.launch :help_widget_login
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
         customer = create_company
         user = add_new_user(@account, customer_id: customer.id)
+        set_user_login_headers(name: user.name, email: user.email)
         @widget.help_widget_solution_categories.destroy_all
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], user)
-        timestamp = Time.zone.now.utc.iso8601
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], user)
         get :suggested_articles, controller_params(language: 'es')
         assert_response 200
         match_json(get_suggested_articles(lang_code: 'es', user: user))
         result = parse_response(@response.body)
-        company_response = result.find { |x| x['id'] == @article.parent_id }
+        company_response = result.find { |x| x['id'] == solution_article.parent_id }
         assert_not_nil company_response
         assert_equal User.current.id, user.id
       ensure
-        @account.rollback :help_widget_login
-        @account.unstub(:help_widget_secret)
+        user.destroy
+        customer.destroy
         User.stubs(:current).returns(nil)
+        solution_article.destroy
       end
 
       def test_suggested_articles_with_invalid_company_user_login
         User.unstub(:current)
-        @account.launch :help_widget_login
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
         customer = create_company
         user = add_new_user(@account, customer_id: customer.id)
         @widget.help_widget_solution_categories.destroy_all
-        @article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], user)
+        solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], user)
         customer1 = create_company
         user1 = add_new_user(@account, customer_id: customer1.id)
-        timestamp = Time.zone.now.utc.iso8601
-        auth_token = JWT.encode({ name: user1.name, email: user1.email, timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+        set_user_login_headers(name: user1.name, email: user1.email)
         get :suggested_articles, controller_params(language: 'es')
         assert_response 200
         match_json(get_suggested_articles(lang_code: 'es', user: user1))
         result = parse_response(@response.body)
-        company_response = result.find { |x| x['id'] == @article.parent_id }
+        company_response = result.find { |x| x['id'] == solution_article.parent_id }
         assert_nil company_response
         assert_equal User.current.id, user1.id
       ensure
-        @account.rollback :help_widget_login
-        @account.unstub(:help_widget_secret)
         User.stubs(:current).returns(nil)
+        user.destroy
+        user1.destroy
+        customer1.destroy
+        customer.destroy
+        solution_article.destroy
       end
 
       def test_suggested_articles_with_solution_disabled
@@ -1145,8 +1022,6 @@ module Widget
         get :suggested_articles, controller_params
         assert_response 200
         solution_folder_meta = @article.parent.solution_folder_meta
-        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
-        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         match_json(get_suggested_articles)
         assert_nil Language.current
@@ -1174,8 +1049,6 @@ module Widget
         get :show, controller_params(id: @article.parent_id)
         assert_response 200
         solution_folder_meta = @article.parent.solution_folder_meta
-        solution_category_meta_id = solution_folder_meta.solution_category_meta_id
-        help_widget_category_meta_ids = @widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         match_json(widget_article_show_pattern(@article))
         assert_nil Language.current
