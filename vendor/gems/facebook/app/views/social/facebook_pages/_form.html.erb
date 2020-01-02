@@ -51,8 +51,6 @@
     	    <%= collection_select(:social_facebook_page, :product_id, current_account.products, :id, :name, { :include_blank => '...', :selected => facebook_page.product_id })%>
     	  </div>	 
       <% end %>
-      <!-- add page tab -->
-      <%= render :partial => 'configure_page_tab' if current_account.features?(:facebook_page_tab) %>
     </div>
   </li>
 </ul>

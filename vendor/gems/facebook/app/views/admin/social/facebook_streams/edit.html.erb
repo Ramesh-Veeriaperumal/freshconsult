@@ -43,11 +43,6 @@
         <%= render :partial => 'convert_dm',  :locals => { :facebook_page => @facebook_page } %>
       </div>
     <% end %>
-    
-    <% if current_account.features?(:facebook_page_tab) %>
-      <%= render :partial => 'page_tab'%>
-    <% end %>
-    
   </div>
 
 <% end %>

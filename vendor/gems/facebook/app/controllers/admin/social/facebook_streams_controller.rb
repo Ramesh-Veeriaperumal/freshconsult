@@ -9,10 +9,7 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   before_filter :social_revamp_enabled?
   before_filter :fb_client,         :only => [:index, :edit]
   before_filter :set_session_state, :only => [:index]
-  before_filter :add_page_tab,      :only => [:edit], :if => :facebook_page_tab?
   before_filter :load_item,         :only => [:edit, :update]
-  before_filter :load_page_tab,     :only => [:edit]
-  before_filter :handle_tab,        :only => :update, :if => [:tab_edited?, :facebook_page_tab?]
 
   def index
     @facebook_pages    = enabled_facebook_pages
@@ -50,25 +47,6 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   
   private
   
-  def  add_page_tab
-    if params[:tabs_added]
-      begin
-        @fb_client_tab.page_tab_add(params[:tabs_added])
-      rescue Exception => e
-        flash[:error] = t('facebook.not_authorized')
-      end
-    end
-  end
-  
-  def handle_tab
-    fb_page_tab.execute("add") if params[:add_tab]
-    flash[:error] = t('facebook_tab.no_contact') unless fb_page_tab.execute("update",params[:custom_name])
-  end
-  
-  def tab_edited?
-    params[:custom_name]
-  end
-  
   def authdone
     @associated_fb_pages = @fb_client.auth(params[:code])
   rescue Exception => e
@@ -84,7 +62,6 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
     else
       @fb_client = make_fb_client(redirect_url, admin_social_facebook_streams_url)
     end
-    @fb_client_tab = Facebook::Oauth::FbClient.new(fb_call_back_url(params[:action]), true)
   end
 
   def enabled_facebook_pages
@@ -101,15 +78,6 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
       end
     end
     page_hash
-  end
-  
-  def load_page_tab
-    @page_tab     = fb_page_tab.execute("get") if @facebook_page.page_token_tab
-    @page_tab_url = @fb_client_tab.authorize_url(session[:state], true)
-  end
-  
-  def fb_page_tab
-    Facebook::PageTab::Configure.new(@facebook_page, "page_tab")
   end
   
   def scoper
@@ -225,10 +193,6 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   
   def fb_call_back_url(action = "index") 
     url_for(:host => current_account.full_domain, :action => action)
-  end
-  
-  def facebook_page_tab?
-    current_account.features?(:facebook_page_tab)
   end
   
   def social_revamp_enabled?
