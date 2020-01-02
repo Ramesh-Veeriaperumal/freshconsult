@@ -15,7 +15,8 @@ class DraftObserver < ActiveRecord::Observer
   private
 
     def versioning_after_save(item)
-      return if !item.account.article_versioning_enabled? || item.false_delete_attachment_trigger
+      return if !item.account.article_versioning_enabled? || item.false_delete_attachment_trigger || item.skip_version_creation
+
       item.article.flush_hits! if item.unpublishing # Flush article and version votes on article unpublish
       item.cancelling ? version_discard_or_destroy(item) : version_create_or_update(item)
     end

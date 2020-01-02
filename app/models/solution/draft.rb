@@ -28,7 +28,7 @@ class Solution::Draft < ActiveRecord::Base
   after_create :add_activity_new
 
   attr_accessible :title, :meta, :description
-  attr_accessor :discarding, :publishing, :keep_previous_author, :session, :cancelling, :unpublishing, :false_delete_attachment_trigger, :restored_version
+  attr_accessor :discarding, :publishing, :keep_previous_author, :session, :cancelling, :unpublishing, :false_delete_attachment_trigger, :restored_version, :skip_version_creation
 
   alias_attribute :modified_by, :user_id
   alias_attribute :body, :draft_body
@@ -103,6 +103,17 @@ class Solution::Draft < ActiveRecord::Base
 
   def unlock
     self.status = STATUS_KEYS_BY_TOKEN[:work_in_progress]
+  end
+
+  def unlock!(skip_versioning = false)
+    unlock
+    if skip_versioning
+      self.skip_version_creation = true
+      self.save
+      self.skip_version_creation = false
+    else
+      self.save
+    end
   end
 
   def populate_defaults
