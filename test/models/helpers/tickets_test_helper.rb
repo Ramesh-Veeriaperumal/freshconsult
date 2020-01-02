@@ -293,6 +293,7 @@ module TicketsTestHelper
       responder: (ticket.responder ? Hash : nil),
       group: (ticket.group ? Hash : nil),
       attachments: Array,
+      product: (ticket.product ? Hash : nil),
       skill: (ticket.skill ? Hash : nil)
     }
     return assoc_ticket_pattern.merge({ internal_agent: (ticket.internal_agent ? Hash : nil), internal_group: (ticket.internal_group ? Hash : nil) }) if Account.current.shared_ownership_enabled?

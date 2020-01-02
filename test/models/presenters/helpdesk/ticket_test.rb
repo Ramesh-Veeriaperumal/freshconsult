@@ -11,6 +11,7 @@ class TicketTest < ActiveSupport::TestCase
   include ModelsGroupsTestHelper
   include NoteHelper
   include SocialTicketsCreationHelper
+  include ProductTestHelper
   include SharedOwnershipTestHelper
 
   CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
@@ -365,6 +366,17 @@ class TicketTest < ActiveSupport::TestCase
                    'first_response_by_bhrs' => [nil, ticket_state.first_resp_time_by_bhrs] }, ticket_state_job['args'][1]['model_changes'])
     assert_equal({ 'first_response_id' => [nil, schema_less_ticket.reports_hash['first_response_id']],
                    'first_response_agent_id' => [nil, schema_less_ticket.reports_hash['first_response_agent_id']] }, schema_less_ticket_job['args'][1]['model_changes'])
+  end
+
+  def test_central_publish_payload_product_update_with_value
+    product = create_product(@account)
+    t = create_ticket
+    t.reload
+    t.update_attributes(product_id: product.id)
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    assoc_payload = t.associations_to_publish.to_json
+    assoc_payload.must_match_json_expression(cp_assoc_ticket_pattern(t))
   end
 
   def test_central_publish_payload_with_skill
