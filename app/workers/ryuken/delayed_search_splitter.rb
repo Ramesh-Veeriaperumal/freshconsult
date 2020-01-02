@@ -1,7 +1,7 @@
 class Ryuken::DelayedSearchSplitter < Ryuken::SearchSplitter
   include Shoryuken::Worker
 
-  shoryuken_options queue: ::SQS[:search_etl_queue_maintenance],
+  shoryuken_options queue: ::SQS[:search_etlqueue_maintenance],
                     body_parser: :json
 
   def perform(sqs_msg, args)
