@@ -320,6 +320,9 @@ class Account < ActiveRecord::Base
     get_display_id_redis_key(key).to_i
   end
 
+  def max_ticket_display_id_from_db
+    tickets.maximum('display_id')
+  end
 
   def account_managers
     technicians.select do |user|

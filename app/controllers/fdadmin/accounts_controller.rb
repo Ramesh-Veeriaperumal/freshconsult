@@ -4,6 +4,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   include Fdadmin::FeatureMethods
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include Redis::DisplayIdRedis
   include EmailHelper
   include SandboxConstants
 
@@ -916,7 +917,44 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     result
   end
 
+  def reset_ticket_display_id
+    begin
+      account = Account.find_by_id(params[:account_id]).make_current
+      result = { account_id: account.id, account_name: account.name }
+
+      if account.features?(:redis_display_id) && validate_reset_id
+          account.ticket_display_id = params[:reset_id].to_i
+          result[:status] = account.save ? 'success' : 'error'
+          if params[:reset_id].to_i < 0
+            key = format(TICKET_DISPLAY_ID, account_id: account.id)
+            set_display_id_redis_key(key, params[:reset_id].to_i)
+          end
+      else
+        result[:status] = 'error'
+      end
+    rescue StandardError => e
+      result[:status] = 'error'
+      Rails.logger.error("Error in resetting ticket display id for account_id: #{params[:account_id]} :: Exception: #{e.message}")
+    ensure
+      Account.reset_current_account
+    end
+
+    respond_to do |format|
+      format.json do
+        render json: result
+      end
+    end
+  end
+
   private
+
+    def validate_reset_id
+      account_max_display_id = Account.current.max_ticket_display_id_from_db
+      if params[:reset_id].to_i > account_max_display_id.to_i || account_max_display_id.to_i.zero?
+        return true
+      end
+      false
+    end
 
     def validate_extend_higher_plan_trial
       days_count = params[:days_count].to_i
