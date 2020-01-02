@@ -29,4 +29,33 @@ module Email::Mailbox::Utils
     gmail_oauth_redis_obj.populate_hash(members_hash, expiry)
     gmail_oauth_redis_obj.redis_key
   end
+
+  def update_mailbox_error_type
+    return if oauth_delivery_method?
+
+    from_email = self.from.try(:[], 0)
+    error_type = SMTP_AUTHENTICATION_ERROR_CODE
+    if from_email.present?
+      email_config = email_mailbox(from_email)
+      email_config.smtp_mailbox.tap do |smtp_mailbox|
+        if smtp_mailbox.error_type != error_type
+          smtp_mailbox.error_type = error_type
+          smtp_mailbox.save
+          Rails.logger.info("custom mailbox status : updating the error_type for account : #{Account.current.id}, mailbox_id : #{smtp_mailbox.id}, value : #{error_type}")
+        else
+          Rails.logger.info("custom mailbox status : Same error type as before for account : #{Account.current.id}, mailbox_id : #{smtp_mailbox.id}, value : #{error_type}")
+        end
+      end
+    end
+  rescue StandardError => e
+    Rails.logger.info "Exception in update_mailbox_error_type account: #{Account.current.id} - error #{e.message}"
+  end
+
+  def oauth_delivery_method?
+    self.delivery_method.settings[:authentication] == OAUTH
+  end
+
+  def email_mailbox(from_email)
+    Account.current.email_configs.find_by_reply_email(from_email)
+  end
 end
