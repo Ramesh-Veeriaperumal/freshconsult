@@ -35,7 +35,7 @@ aws:
   - <%= SQS[:spam_trash_delete_free_acc_queue] %>
   - <%= SQS[:spam_trash_delete_paid_acc_queue] %>
   - <%= SQS[:fd_scheduler_downgrade_policy_reminder_queue] %>
-  - <%= SQS[:search_etl_queue_maintenance] %>
+  - <%= SQS[:search_etlqueue_maintenance] %>
   - <%= SQS[:count_etl_queue_maintenance] %>
   - <%= SQS[:analytics_etl_queue_maintenance] %>
   - <%= SQS[:suspended_account_cleanup_queue] %>
