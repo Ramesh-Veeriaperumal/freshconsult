@@ -340,7 +340,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def misc_changes_for_central
     changes = (self.misc_changes || {}).except(*TAG_KEYS, *WATCHER_KEYS, :misc_changes)
-    changes.merge(notify_agents: agents_to_notify_sla) if sla_notification_params.present?
+    changes.merge!(notify_agents: agents_to_notify_sla) if sla_notification_params.present?
+    changes
   end
 
   def transformed_model_changes

@@ -35,7 +35,7 @@ class SlaReminderEscalationWorkerTest < ActionView::TestCase
                         }}
     ticket, sla_policy = create_test_ticket_with_sla(user, group, escalation_action)
     ticket.update_attributes(frDueBy: Time.zone.now - 1.hour)
-    set_others_redis_key(SLA_TICKETS_LIMIT, 1)
+    set_others_redis_key(SLA_TICKETS_LIMIT, 5)
     Admin::Sla::Reminder::Base.new.perform
     ticket.reload
     fr_reminder = @account.email_notifications.response_sla_reminder.first
@@ -56,7 +56,7 @@ class SlaReminderEscalationWorkerTest < ActionView::TestCase
                         }}
     ticket, sla_policy = create_test_ticket_with_sla(user, group, escalation_action)
     ticket.update_attributes(due_by: Time.zone.now - 1.hour)
-    set_others_redis_key(SLA_TICKETS_LIMIT, 1)
+    set_others_redis_key(SLA_TICKETS_LIMIT, 5)
     Admin::Sla::Reminder::Base.new.perform
     ticket.reload
     resolution_reminder = @account.email_notifications.resolution_sla_reminder.first
@@ -78,7 +78,7 @@ class SlaReminderEscalationWorkerTest < ActionView::TestCase
                         }}
     ticket, sla_policy = create_test_ticket_with_sla(user, group, escalation_action)
     ticket.update_attributes(nr_due_by: Time.zone.now - 1.hour)
-    set_others_redis_key(SLA_TICKETS_LIMIT, 1)
+    set_others_redis_key(SLA_TICKETS_LIMIT, 5)
     Admin::Sla::Reminder::Base.new.perform
     ticket.reload
     nr_reminder = @account.email_notifications.next_response_sla_reminder.first
@@ -171,6 +171,6 @@ class SlaReminderEscalationWorkerTest < ActionView::TestCase
                                 'ticket' => ticket, 'helpdesk_name' => ticket.account.helpdesk_name)
     assert_equal mail_message.subject, exp_subject
     assert mail_message.part.first.body.decoded.include?('Ticket Details:')
-    assert_equal ticket.safe_send(check_field), true    
+    assert_equal true, ticket.safe_send(check_field)
   end
 end

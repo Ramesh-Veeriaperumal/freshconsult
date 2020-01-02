@@ -39,7 +39,7 @@ module Ember
       Account.current.launch(:skip_posting_to_fb)
       # Deleting ticket fields starting with number (which is not allowed in our product)
       Account.current.ticket_fields.custom_fields.each do |tf|
-      tf.destroy if (tf.name =~ /^[0-9]/).try(:zero?)
+        tf.destroy if (tf.name =~ /^[0-9]/).try(:zero?)
       end
     end
 

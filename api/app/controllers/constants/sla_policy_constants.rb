@@ -40,27 +40,27 @@ module SlaPolicyConstants
   
   VALIDATION_CLASS = 'ApiSlaPolicyValidation'.freeze
   
-  ALLOWED_HASH_FIELD = [
+  ALLOWED_ESCALATION_DETAIL_FIELDS = [
                           { 'escalation_time' => [nil] }, 'escalation_time',
                           { 'agent_ids' => [nil] }, 'agent_ids'
                         ].freeze
 
-  ALLOWED_HASH_SLA_TARGET_PRIORITY = [ 
-                          {'respond_within' => [nil]}, 'respond_within',
-                          {'next_respond_within' => [nil]}, 'next_respond_within',
-                          {'resolve_within' => [nil]}, 'resolve_within',
-                          {'business_hours' => [nil]}, 'business_hours',
-                          {'escalation_enabled' => [nil]}, 'escalation_enabled'
-                        ].freeze
+  ALLOWED_SLA_TARGET_FIELDS = [
+    { 'respond_within' => [nil] }, 'respond_within',
+    { 'next_respond_within' => [nil] }, 'next_respond_within',
+    { 'resolve_within' => [nil] }, 'resolve_within',
+    { 'business_hours' => [nil] }, 'business_hours',
+    { 'escalation_enabled' => [nil] }, 'escalation_enabled'
+  ].freeze
 
-  ALLOWED_HASH_SLA_TARGET_FIELD =  [
-                                      { 'priority_1' => ALLOWED_HASH_SLA_TARGET_PRIORITY }, 'priority_1',
-                                      { 'priority_2' => ALLOWED_HASH_SLA_TARGET_PRIORITY }, 'priority_2',
-                                      { 'priority_3' => ALLOWED_HASH_SLA_TARGET_PRIORITY }, 'priority_3',
-                                      { 'priority_4' => ALLOWED_HASH_SLA_TARGET_PRIORITY }, 'priority_4'
-                                    ].freeze
+  ALLOWED_SLA_TARGET_PRIORITY_FIELDS = [
+    { 'priority_1' => ALLOWED_SLA_TARGET_FIELDS }, 'priority_1',
+    { 'priority_2' => ALLOWED_SLA_TARGET_FIELDS }, 'priority_2',
+    { 'priority_3' => ALLOWED_SLA_TARGET_FIELDS }, 'priority_3',
+    { 'priority_4' => ALLOWED_SLA_TARGET_FIELDS }, 'priority_4'
+  ].freeze
 
-  ALLOWED_HASH_CONDITION_FIELDS = [ { 'company_ids' => [nil] }, 'company_ids', 
+  ALLOWED_CONDITION_FIELDS = [{ 'company_ids' => [nil] }, 'company_ids',
                           {'group_ids' => [nil]}, 'group_ids',
                           {'product_ids' => [nil]}, 'product_ids',
                           {'ticket_types' => [nil]}, 'ticket_types',
@@ -69,30 +69,30 @@ module SlaPolicyConstants
                           {'company_segments' => [nil]}, 'company_segments'
                         ].freeze
 
-  ALLOWED_HASH_ESCALATIONS_RESOLUTION_FIELD =  [
-                                      { 'level_1' => ALLOWED_HASH_FIELD }, 'level_1',
-                                      { 'level_2' => ALLOWED_HASH_FIELD }, 'level_2',
-                                      { 'level_3' => ALLOWED_HASH_FIELD }, 'level_3',
-                                      { 'level_4' => ALLOWED_HASH_FIELD }, 'level_4'
-                                    ]            
+  ALLOWED_RESOLUTION_ESCALATION_FIELDS = [
+    { 'level_1' => ALLOWED_ESCALATION_DETAIL_FIELDS }, 'level_1',
+    { 'level_2' => ALLOWED_ESCALATION_DETAIL_FIELDS }, 'level_2',
+    { 'level_3' => ALLOWED_ESCALATION_DETAIL_FIELDS }, 'level_3',
+    { 'level_4' => ALLOWED_ESCALATION_DETAIL_FIELDS }, 'level_4'
+  ].freeze
 
   ESCALATION_TYPES_EXCEPT_RESOLUTION = %w(reminder_response reminder_next_response reminder_resolution response next_response).freeze
   ESCALATION_TYPES = (ESCALATION_TYPES_EXCEPT_RESOLUTION + ['resolution']).freeze
 
-  ALLOWED_HASH_ESCALATIONS_FIELD = [
-                                    { 'reminder_response' => ALLOWED_HASH_FIELD }, 'reminder_response',
-                                    { 'reminder_next_response' => ALLOWED_HASH_FIELD }, 'reminder_next_response',
-                                    { 'reminder_resolution' => ALLOWED_HASH_FIELD }, 'reminder_resolution',
-                                    { 'response' => ALLOWED_HASH_FIELD }, 'response',
-                                    { 'next_response' => ALLOWED_HASH_FIELD }, 'next_response',
-                                    { 'resolution' => ALLOWED_HASH_ESCALATIONS_RESOLUTION_FIELD }, 'resolution'
-                                  ].freeze                      
+  ALLOWED_ESCALATION_FIELDS = [
+    { 'reminder_response' => ALLOWED_ESCALATION_DETAIL_FIELDS }, 'reminder_response',
+    { 'reminder_next_response' => ALLOWED_ESCALATION_DETAIL_FIELDS }, 'reminder_next_response',
+    { 'reminder_resolution' => ALLOWED_ESCALATION_DETAIL_FIELDS }, 'reminder_resolution',
+    { 'response' => ALLOWED_ESCALATION_DETAIL_FIELDS }, 'response',
+    { 'next_response' => ALLOWED_ESCALATION_DETAIL_FIELDS }, 'next_response',
+    { 'resolution' => ALLOWED_RESOLUTION_ESCALATION_FIELDS }, 'resolution'
+  ].freeze
 
   UPDATE_FIELDS = %w(name description active).freeze | 
-                  ['sla_target'] | ['sla_target' => ALLOWED_HASH_SLA_TARGET_FIELD] | 
-                  ['applicable_to'] | ['applicable_to' => ALLOWED_HASH_CONDITION_FIELDS] | 
-                  ['escalation'] | ['escalation' => ALLOWED_HASH_ESCALATIONS_FIELD]
-              
+                  ['sla_target'] | ['sla_target' => ALLOWED_SLA_TARGET_PRIORITY_FIELDS] |
+                  ['applicable_to'] | ['applicable_to' => ALLOWED_CONDITION_FIELDS] |
+                  ['escalation'] | ['escalation' => ALLOWED_ESCALATION_FIELDS]
+
   CREATE_FIELDS = UPDATE_FIELDS
 
 end

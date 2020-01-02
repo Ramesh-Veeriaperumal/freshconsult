@@ -4,6 +4,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
 
   def setup
     super
+    CustomRequestStore.store[:private_api_request] = false
     @sla_policy = nil
     @agent_1 = nil
     @agent_2 = nil
@@ -286,6 +287,18 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
                                 }) 
     assert_response 200
     match_json(sla_policy_pattern(@sla_policy.reload))
+  end
+
+  def test_update_new_format_sla_target_sla_policy
+    @sla_policy = create_complete_sla_policy
+    put :update, construct_params({ id: @sla_policy.id }, sla_target: {
+      'priority_4': { first_response_time: 'PT1H', resolution_due_time: 'PT1H', business_hours: false, escalation_enabled: true },
+      'priority_3': { first_response_time: 'PT30M', resolution_due_time: 'PT30M', business_hours: true, escalation_enabled: true },
+      'priority_2': { first_response_time: 'PT20M', resolution_due_time: 'PT20M', business_hours: false, escalation_enabled: true },
+      'priority_1': { first_response_time: 'PT15M', resolution_due_time: 'PT15M', business_hours: false, escalation_enabled: true }
+    })
+    assert_response 400
+    match_json([bad_request_error_pattern('first_response_time', :invalid_field), bad_request_error_pattern('resolution_due_time', :invalid_field)])
   end
 
   def test_update_sla_target_with_missing_priority_2
