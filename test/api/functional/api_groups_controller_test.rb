@@ -5,7 +5,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   include UsersHelper
   include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
   include GroupConstants
-  
+
   def wrap_cname(params)
     { api_group: params }
   end
