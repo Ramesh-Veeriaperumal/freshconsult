@@ -100,6 +100,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     t.add :group, template: :central_publish
     t.add :attachments, template: :central_publish
     t.add :skill, template: :skill_as_association, :if => proc { Account.current.skill_based_round_robin_enabled? }
+    t.add :product, template: :product_as_association
     t.add :internal_group, template: :internal_group_central_publish_associations, if: proc { Account.current.shared_ownership_enabled? }
     t.add :internal_agent, template: :internal_agent_central_publish_associations, if: proc { Account.current.shared_ownership_enabled? }
   end
