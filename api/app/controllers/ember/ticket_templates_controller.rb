@@ -2,7 +2,6 @@ module Ember
   class TicketTemplatesController < ApiApplicationController
     include TicketTemplateConstants
     include HelperConcern
-    include Helpdesk::Accessible::ElasticSearchMethods
     include Helpdesk::AccessibleElements
     include ParentChildHelper
 

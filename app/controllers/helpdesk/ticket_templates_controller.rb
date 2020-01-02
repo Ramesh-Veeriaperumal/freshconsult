@@ -13,7 +13,6 @@ class Helpdesk::TicketTemplatesController < ApplicationController
   include Helpdesk::TicketTemplatesHelper
   include HelpdeskControllerMethods
   include SharedPersonalMethods
-  include Helpdesk::Accessible::ElasticSearchMethods
 
   before_filter :initialize_parent,                   :only => [:edit, :edit_child, :update, :clone, :destroy,
                                                                 :unlink_parent]
@@ -64,16 +63,7 @@ class Helpdesk::TicketTemplatesController < ApplicationController
   end
 
   def search_children
-    srch_result = accessible_from_esv2("Helpdesk::TicketTemplate",
-      {:load => Helpdesk::TicketTemplate::INCLUDE_ASSOCIATIONS_BY_CLASS, :size => 300}, default_visiblity,
-      "raw_name", nil, nil, params[:child_ids], [Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:child]])
-    srch_result = if srch_result.nil?
-      fetch_child_templates
-    else
-      srch_result.compact!
-      result_hash(srch_result)
-    end
-    render :json => { :all_children => srch_result }
+    render :json => { :all_children => fetch_child_templates }
   end
 
   def unlink_parent
