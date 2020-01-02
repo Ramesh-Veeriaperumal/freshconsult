@@ -3204,6 +3204,35 @@ module Ember
         end
       end
 
+      def test_save_on_draft_without_dirty_changes_should_unlock_draft
+        sample_article = get_article_with_draft
+        params_hash = { status: 1, unlock: true }
+        put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+        assert_response 200
+        add_test_agent.make_current
+        assert_equal sample_article.reload.draft.locked?, false
+      end
+
+      def test_save_on_article_without_dirty_changes_should_unlock_draft
+        sample_article = get_article_without_draft
+        params_hash = { status: 1, unlock: true }
+        put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+        assert_response 200
+        add_test_agent.make_current
+        assert_equal sample_article.reload.draft.locked?, false
+      end
+
+      def test_save_on_new_draft_without_dirty_changes_should_unlock_draft
+        meta_article = create_article(article_params(lang_codes: all_account_languages, status: 1))
+        article = meta_article.primary_article
+        draft = create_draft(article: article)
+        params_hash = { status: 1, unlock: true }
+        put :update, construct_params({ version: 'private', id: article.parent_id }, params_hash)
+        assert_response 200
+        add_test_agent.make_current
+        assert_equal article.reload.draft.locked?, false
+      end
+
       def test_update_publish_reviewed_article_with_publish_approved_solution
         without_publish_solution_privilege do
           Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
@@ -3348,7 +3377,7 @@ module Ember
         should_not_create_version(sample_article) do
           stub_version_session(session) do
             stub_version_content do
-              params_hash = { status: 1, session: session }
+              params_hash = { status: 1, unlock: true, session: session }
               put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
               assert_response 200
               latest_version = get_latest_version(sample_article)
@@ -3362,8 +3391,8 @@ module Ember
       def test_draft_save
         sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 1)).primary_article
         assert sample_article.status == 1
-        should_not_create_version(sample_article) do
-          params_hash = { status: 1, session: nil }
+        should_create_version(sample_article) do
+          params_hash = { status: 1, unlock: true, session: nil }
           put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
           assert_response 200
           latest_version = get_latest_version(sample_article)
@@ -3393,7 +3422,7 @@ module Ember
         should_not_create_version(sample_article) do
           stub_version_session(session) do
             stub_version_content do
-              params_hash = { status: 1, session: session }
+              params_hash = { status: 1, unlock: true, session: session }
               put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
               assert_response 200
               latest_version = get_latest_version(sample_article)
@@ -3436,7 +3465,7 @@ module Ember
         draft_version = create_draft_version_for_article(sample_article)
         assert !sample_article.draft.nil?
         should_create_version(sample_article) do
-          params_hash = { status: 1, session: nil }
+          params_hash = { status: 1, unlock: true, session: nil }
           put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
           assert_response 200
           latest_version = get_latest_version(sample_article)
