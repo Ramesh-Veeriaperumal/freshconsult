@@ -61,7 +61,7 @@ class SidekiqConfigUsEast
   MANUAL_PUBLISH_SIDEKIQ   = "sidekiq-manual-publish-"
   ALL_SIDEKIQ              = "sidekiq-all-1"
   COMMON_SIDEKIQ           = "sidekiq-common-"
-  BULKSCHEDULED_SIDEKIQ    = "sidekiq-bulk-scheduled-"
+  BULKSCHEDULED_SIDEKIQ    = ["sidekiq-bulk-scheduled-", "sidekiq-bulkscheduled"]
   CENTRAL_REALTIME_SIDEKIQ = "sidekiq-central-realtime-"
 
   #staging falcon common sidekiq
@@ -466,7 +466,7 @@ class SidekiqConfigUsEast
       _CENTRAL_REALTIME_POOL
     when utility_name.include?(REALTIME_SIDEKIQ)
       _REALTIME_POOL
-    when utility_name.include?(BULKSCHEDULED_SIDEKIQ)
+    when BULKSCHEDULED_SIDEKIQ.any? { |pool_name| utility_name.include?(pool_name) }
       _BULK_SCHEDULED_POOL
     when utility_name.include?(SCHEDULED_SIDEKIQ)
       _SCHEDULED_POOL
