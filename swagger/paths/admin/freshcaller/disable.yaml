@@ -1,0 +1,11 @@
+post:
+  tags: [Freshcaller Account]
+  summary: Disable
+  description: Disables the linked freshcaller account
+  responses:
+    204:
+      description: Success gives the details of the freshcaller account
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
