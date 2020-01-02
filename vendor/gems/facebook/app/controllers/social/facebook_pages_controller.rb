@@ -8,11 +8,7 @@ class Social::FacebookPagesController < Admin::AdminController
   before_filter :social_revamp_enabled?
   before_filter :set_session_state ,  :only => [:index, :edit, :update_page_token]
   before_filter :fb_client,           :only => [:index, :edit, :update_page_token]
-  before_filter :fb_client_page_tab , :only => [:index, :update_page_token]
-  before_filter :add_page_tab,        :only => [:edit, :update_page_token], :if => :facebook_page_tab?
   before_filter :load_item,           :only => [:edit, :update, :destroy]
-  before_filter :load_tab,            :only => [:edit, :destroy], :if => :facebook_page_tab?
-  before_filter :handle_tab,          :only => :update,           :if => [:tab_edited?, :facebook_page_tab?]
 
   #This is for the callback function for facebook realtime app
   def index
@@ -63,7 +59,6 @@ class Social::FacebookPagesController < Admin::AdminController
   end
 
   def destroy
-    fb_page_tab.execute("remove") if @fb_tab
     @item.destroy
     flash[:notice] = t('facebook.deleted', :facebook_page => @item.page_name)
     redirect_to :action => :index
@@ -82,31 +77,16 @@ class Social::FacebookPagesController < Admin::AdminController
 
   def enabled_facebook_pages
     page_hash      = {}
-    page_token_tab = true
     scoper.each do |facebook_page|
       if page_hash[facebook_page.profile_id.to_s]
         page_hash[facebook_page.profile_id.to_s]["facebook_pages"] << facebook_page
-        page_hash[facebook_page.profile_id.to_s]["tab"] ||= facebook_page.existing_page_tab_user?
       else
         page_hash[facebook_page.profile_id.to_s] = {
           "facebook_pages"  => [facebook_page],
-          "feature"         => facebook_page_tab?,
-          "tab"             => facebook_page.existing_page_tab_user?
         }
       end
     end
     page_hash
-  end
-
-  # Duplicate method
-  def  add_page_tab
-    if params[:tabs_added]
-      begin
-        @fb_client_tab.page_tab_add(params[:tabs_added])
-      rescue Exception => e
-        flash[:error] = t('facebook.not_authorized')
-      end
-    end
   end
 
   def scoper
@@ -115,36 +95,10 @@ class Social::FacebookPagesController < Admin::AdminController
 
   def fb_client
     @fb_client     = Facebook::Oauth::FbClient.new(fb_call_back_url)
-    @fb_client_tab = Facebook::Oauth::FbClient.new(fb_call_back_url(params[:action]), true)
-  end
-
-  def fb_client_page_tab
-    @fb_client_page_tab = Facebook::Oauth::FbClient.new("page_tab",fb_call_back_url("update_page_token"))
   end
 
   def load_item
     @item = current_account.facebook_pages.find(params[:id])
-  end
-
-  def load_tab
-    @fb_tab = fb_page_tab.execute("get") unless @item.page_token_tab.blank?
-  end
-
-  def handle_tab
-    fb_page_tab.execute("add") if params[:add_tab]
-    flash[:error] = t('facebook_tab.no_contact') unless fb_page_tab.execute("update",params[:custom_name])
-  end
-
-  def fb_page_tab
-    Facebook::PageTab::Configure.new(@item,"page_tab")
-  end
-
-  def tab_edited?
-    params[:custom_name]
-  end
-
-  def facebook_page_tab?
-    current_account.features?(:facebook_page_tab)
   end
 
   def fb_call_back_url(action="index") 

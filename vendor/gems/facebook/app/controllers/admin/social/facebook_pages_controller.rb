@@ -14,8 +14,6 @@ class Admin::Social::FacebookPagesController < Admin::AdminController
 
   def destroy
     redirect_to admin_social_facebook_streams_url unless @facebook_page
-    
-    remove_page_tab if @facebook_page.page_token_tab
     @facebook_page.destroy 
     flash[:notice] = t('facebook.deleted', :facebook_page => @facebook_page.page_name)
     redirect_to admin_social_facebook_streams_url
@@ -51,10 +49,4 @@ class Admin::Social::FacebookPagesController < Admin::AdminController
   def scoper
     current_account.facebook_pages
   end
-  
-  def remove_page_tab
-    fb_page_tab = Facebook::PageTab::Configure.new(@facebook_page, "page_tab")
-    fb_page_tab.execute("remove") if fb_page_tab.execute("get") 
-  end
-  
 end

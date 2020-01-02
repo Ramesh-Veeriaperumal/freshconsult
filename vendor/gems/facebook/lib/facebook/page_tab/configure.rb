@@ -49,25 +49,6 @@ module Facebook
 
       private
 
-      #Add a page tab to your Facebook Account
-      def add
-        @graph.put_connections("me", "tabs",{
-                                 :access_token => @page_token,
-                                 :app_id => @app_id
-        })
-      end
-
-      #Remove a page from your Facebook Account
-      #Remove a page tab from realtime app doesn't work this is bug in facebook
-      #https://developers.facebook.com/bugs/503381706394259
-      #This works for visble page tab though
-
-      def remove
-        @graph.delete_connections("me", "tabs/app_#{@app_id}",{
-                                    :access_token => @page_token
-        })
-      end
-      
       #Subscribe for realtime updates from the app
 
       def subscribe_realtime
@@ -87,20 +68,6 @@ module Facebook
                                  :custom_name => options[0]
         })
       end
-
-      # list all available page tabs on a page
-      # right now facebook allows only one page tab per app
-      # realtime and page tab cannot be in the same app
-      # realtime app by default retruns []
-      # if an app return [] that means page token is valid
-      # if an app retruns [{}] that means a page tab is already added
-      def get
-        page_tab = @graph.get_connections("me", "tabs/#{@app_id}",{
-                                            :access_token => @page_token
-        })
-        page_tab.blank? ? [] : page_tab.first
-      end
-
     end
   end
 end
