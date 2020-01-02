@@ -787,5 +787,26 @@ module ApiSearch
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket, [:description, :description_text]) }
       match_json(results: pattern, total: tickets.size)
     end
+
+    def test_tickets_with_nr_due_by
+      Account.any_instance.stubs(:next_response_sla_enabled?).returns(true)
+      ticket = create_search_ticket(ticket_params_hash)
+      d1 = (Date.today - 1).to_date.iso8601
+      d2 = (Date.today + 1).to_date.iso8601
+      ticket.nr_due_by = Date.today.to_date.iso8601
+      ticket.save
+      tickets = @account.tickets.select { |x| x.nr_due_by != nil && x.nr_due_by.to_date.iso8601 >= d1 && x.nr_due_by.to_date.iso8601 <= d2 }
+      stub_public_search_response(tickets) do
+        get :index, controller_params(query: '"nr_due_by :> \'' + d1 + '\' AND nr_due_by :< \'' + d2 + '\'"')
+      end
+      assert_response 200
+      response_body = JSON.parse(response.body)
+      fetched_ticket = response_body['results'].first
+      assert fetched_ticket.key?('nr_due_by')
+      assert_equal fetched_ticket['nr_escalated'], false
+    ensure
+      ticket.destroy
+      Account.any_instance.unstub(:next_response_sla_enabled?)
+    end
   end
 end

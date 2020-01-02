@@ -1,5 +1,5 @@
 results = @items.map do |item|
-  {
+  response_hash = {
     cc_emails: item.cc_email.try(:[], :cc_emails),
     fwd_emails: item.cc_email.try(:[], :fwd_emails),
     reply_cc_emails: item.cc_email.try(:[], :reply_cc),
@@ -31,6 +31,8 @@ results = @items.map do |item|
     associated_tickets_count: item.subsidiary_tkts_count,
     tags: item.tag_names
   }
+  render partial: 'shared/nr_params', locals: { response_hash: response_hash, item: item }
+  response_hash
 end
 
 JSON.generate(results: results,

@@ -59,7 +59,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :fr_escalated, :nr_escalated, :email_config_id, :frDueBy, :nr_due_by, :priority, :ticket_type, :product_id,
       :parent_ticket_id, :sl_product_id, :sl_sla_policy_id, :sl_merge_parent_ticket, :sl_skill_id, :st_survey_rating, 
       :sl_escalation_level, :sl_manual_dueby, :internal_group_id, :internal_agent_id, :association_type, :associates_rdb,
-      :sla_state, :nr_due_by
+      :sla_state
     ]
   end
 
