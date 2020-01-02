@@ -151,6 +151,7 @@
       - :analytics_ticket_volume_trend
       - :analytics_tickets_resource
       - :help_widget
+      - :freshreports_analytics 
     :inherits: []
     :exclude: []
   :blossom_jan_19:
