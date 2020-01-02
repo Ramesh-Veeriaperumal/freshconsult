@@ -4102,6 +4102,28 @@ module Ember
       Account.current.add_feature(:collaboration)
     end
 
+    def test_ticket_with_collab
+      Account.any_instance.stubs(:collaboration_enabled?).returns(true)
+      ticket = create_ticket
+      get :show, controller_params(version: 'private', id: ticket.display_id)
+      assert_response 200
+      assert JSON.parse(response.body)['collaboration'].present?
+      Account.any_instance.unstub(:collaboration_enabled?)
+    end
+
+    def test_ticket_with_freshconnect_freshid
+      Account.any_instance.stubs(:freshconnect_enabled?).returns(true)
+      Account.any_instance.stubs(:freshid_integration_enabled?).returns(true)
+      User.any_instance.stubs(:freshid_authorization).returns(true)
+      @ticket = create_ticket
+      get :show, controller_params(version: 'private', id: @ticket.display_id)
+      assert_response 200
+      assert JSON.parse(response.body)['collaboration'].present?
+      Account.any_instance.unstub(:freshconnect_enabled?)
+      Account.any_instance.unstub(:freshid_integration_enabled?)
+      User.any_instance.unstub(:freshid_authorization)
+    end
+
     def test_show_collab_hash_without_logged_in_user
       user = User.current
       current_header = request.env['HTTP_AUTHORIZATION']
