@@ -117,4 +117,8 @@ class Social::FacebookPage < ActiveRecord::Base
     get_multiple_others_redis_keys(everyone_key(feature_name), page_key(feature_name)).any? { |value| value.to_s == "true" }
   end
 
+  def set_reauth_required
+    self.reauth_required = 1
+    self.save!
+  end
 end

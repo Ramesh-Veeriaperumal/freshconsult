@@ -15,6 +15,7 @@ class Social::TicketRule < ActiveRecord::Base
   serialize :filter_data, Hash
   serialize :action_data, Hash
 
+  after_commit :set_fb_page_reauth_required_if_ad_post_enabled, on: :create, if: -> { account.fb_ad_posts_enabled? }
   attr_accessible :filter_data, :action_data, :position, :rule_type
   acts_as_list :scope => :stream
 
@@ -75,6 +76,10 @@ class Social::TicketRule < ActiveRecord::Base
 
   def type
     stream.data.try(:[], :kind)
+  end
+
+  def set_fb_page_reauth_required_if_ad_post_enabled
+    stream.facebook_page.set_reauth_required if filter_data[:rule_type] == RULE_TYPE[:ad_post]
   end
   private
     def check_includes(social_feed)
