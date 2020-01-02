@@ -18,7 +18,7 @@ module SubscriptionsHelper
        "role_dashboard", "enterprise_reports", "custom_dashboard", "fsm_option"],
     "forest jan 17" => [ "everything_in_estate", "ip_whitelisting", "skill_based_assignment", "custom_mailbox", "advanced_phone_integration", "fsm_option" ],
 
-    "sprout jan 19" => [ "email_ticketing", "ticket_dispatch_automation" ,"knowledge_base", "basic_social", "freshcaller", "omni_channel_option"],
+    "sprout jan 19" => ["email_ticketing", "ticket_dispatch_automation", "knowledge_base", "basic_social", "freshcaller", "ticket_trends", "omni_channel_option"],
     "blossom jan 19" => [ "everything_in_sprout", "multiple_mailboxes", "app_gallery", "time_event_automation", "custom_domain", "helpdesk_report", "custom_ticket_fields_and_views", "agent_collision", "api_rate_limit_blossom", "omni_channel_option"],
     "garden jan 19" => [ "everything_in_blossom", "satisfaction_survey", "timesheets", "sla_reminders", "agent_performance_report", "ticket_templates", "m_k_base", "customer_journey",  "api_rate_limit_garden"],
     "estate jan 19" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "auto_ticket_assignment", "enterprise_reports", "custom_dashboard", "custom_surveys", "custom_translations", "api_rate_limit_estate", "api_rate_limit_extendable", "fsm_option"],

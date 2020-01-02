@@ -2,6 +2,7 @@ class ReportsController < ApplicationController
 
   include ReadsToSlave
 
+  before_filter :disabled_old_reports?
   before_filter :check_old_reports_visibility, :only => [:old, :show]
   before_filter :report_list,:set_selected_tab, :only => [ :index, :show, :old ]
   track_account_setup :index
@@ -75,4 +76,7 @@ class ReportsController < ApplicationController
     redirect_to reports_path unless current_account.old_reports_enabled?
   end
 
+  def disabled_old_reports?
+    render_404 if current_account.disable_old_reports_enabled?
+  end
 end
