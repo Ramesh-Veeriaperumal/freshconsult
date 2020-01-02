@@ -983,7 +983,7 @@
         "callback_api_secret": "EJ[1:uM6u4kQlR04Ol0fIvDPXihJiJsuMnInoMu6+gJ1a4nU=:zBDLgEA0ayIxXkkIRA+8Fe1OVXAAnYDu:50KezmpsfPQeVoSSVCdJH3e3FoREPZNoi2gmiQMiT/4DHDrpaGdTolesNBw3IlE+ndgULyzgf1DQ9ldachVmnJaaOkDJqs8PQXd0H60t8mI=]",
         "_product_id": "112438380997492748",
         "_product_domain": "freshdesk.com",
-        "_freshid_request_timeout": 1,
+        "_freshid_request_timeout": 10,
         "_mobile_deep_link_protocol": "com.freshworks.freshdesk"
       },
       "database": {
