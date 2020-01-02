@@ -180,6 +180,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/freshcaller_account", only: [:show, :create, :link, :update, :enable, :disable, :destroy]
     resource :"admin/api_skill", only: [:index, :create, :show, :update, :destroy]
     resource :"admin/shift", only: [:index, :show, :create, :update, :destroy]
+    resource :"ember/sla_policy", only: [:index, :show, :create, :update, :destroy]
   end
 
   edit_ticket_properties do

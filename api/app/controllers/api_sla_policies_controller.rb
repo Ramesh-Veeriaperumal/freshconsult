@@ -1,4 +1,6 @@
 class ApiSlaPoliciesController < ApiApplicationController
+  decorate_views(decorate_objects: [:index], decorate_object: [:create, :update])
+
   def index
     super
     response.api_meta = { count: @items_count, active_rules: scoper.active.count }
@@ -20,7 +22,7 @@ class ApiSlaPoliciesController < ApiApplicationController
     if sla_policy_delegator.invalid?
       render_errors(sla_policy_delegator.errors, sla_policy_delegator.error_options)
     elsif @item.save
-      render_201_with_location(location_url: 'sla_policies_url',item_id: @item.id)
+      render_201_with_location(location_url: 'sla_policies_url')
     else
       render_errors(@item.errors)
     end
@@ -56,10 +58,13 @@ class ApiSlaPoliciesController < ApiApplicationController
     end
 
     def validate_params
-      allowed_fields = "#{constants_class}::#{action_name.upcase}_FIELDS".constantize
-      params[cname].permit(*allowed_fields)
+      params[cname].permit(*(allowed_param_fields))
       sla_policy = ApiSlaPolicyValidation.new(params[cname], @item)
       render_errors sla_policy.errors, sla_policy.error_options unless sla_policy.valid?(action_name.to_sym)
+    end
+
+    def allowed_param_fields
+      "#{constants_class}::#{action_name.upcase}_FIELDS".constantize
     end
 
     def scoper

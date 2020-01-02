@@ -1,5 +1,5 @@
 class ApiSlaPolicyValidation < ApiValidation
-  attr_accessor :applicable_to, :company_ids, :name, :description, :active, :product_ids, :group_ids, :ticket_types, :sources, :contact_segments, :company_segments,
+  attr_accessor :applicable_to, :company_ids, :name, :description, :active, :is_default, :product_ids, :group_ids, :ticket_types, :sources, :contact_segments, :company_segments,
                 :sla_target, :priority_1, :priority_2, :priority_3, :priority_4,
                 :escalation, :reminder_response, :reminder_next_response, :reminder_resolution, :response, :next_response, :resolution, :level_1, :level_2, :level_3, :level_4
 
@@ -19,7 +19,9 @@ class ApiSlaPolicyValidation < ApiValidation
 
   validates :applicable_to, data_type: { rules: Hash }, allow_nil: false
   validates :company_ids, data_type: { rules: Array },
-                          array: { custom_numericality: { only_integer: true, greater_than: 0 } }, if: -> { applicable_to.present? }                   
+                          array: { custom_numericality: { only_integer: true, greater_than: 0 } }, if: -> { applicable_to.present? && !private_api? }                   
+  validates :company_ids, data_type: { rules: Array },
+                          array: { data_type: { rules: String, allow_nil: false } }, if: -> { applicable_to.present? && private_api? }
   validates :group_ids, data_type: { rules: Array },
                           array: { custom_numericality: { only_integer: true, greater_than: 0 } }, if: -> { applicable_to.present? }                   
   validates :product_ids, data_type: { rules: Array},
@@ -67,7 +69,7 @@ class ApiSlaPolicyValidation < ApiValidation
 
   def validate_sla_target
     self.sla_target.each do |level|
-      sla_validator = ApiSlaDetailsValidation.new(level.second, nil)
+      sla_validator = private_api? && Account.current.sla_policy_revamp_enabled? ? Ember::SlaDetailsValidation.new(level.second, nil) : ApiSlaDetailsValidation.new(level.second, nil)
       marge_error(sla_validator, "sla_target[#{level.first}]") if sla_validator.invalid?
     end
   end

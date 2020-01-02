@@ -1,21 +1,53 @@
 module SlaPoliciesHelper
 
-	def create_sla_policy(new_agent)
-		customer = FactoryGirl.build(:customer, :name => Faker::Name.name)
-        customer.save
-		sla_policy = FactoryGirl.build(:sla_policies, :name => Faker::Lorem.words, :description => Faker::Lorem.paragraph, :active => true, :account_id => @account.id, 
-			:datatype => {:ticket_type => "Problem"},:conditions =>{ "group_id" =>["1"], "company_id" =>["#{customer.id}"]},
-			:escalations =>{"response"=>{"1"=>{:time =>"1800", :agents_id =>["#{@agent.id}"]}}, 
-			                "resolution"=>{"1"=>{:time=>"3600", :agents_id=>["#{new_agent.id}"]}}
-			                })
-    sla_policy.escalations.merge({"next_response"=>{"1"=>{:time =>"1800", :agents_id =>["#{@agent.id}"]}}}) if @account.next_response_sla_enabled?
-		sla_policy.save(validate: false)
-    details = {"4"=>{:level=>"urgent"},"3"=>{:level=>"high"}, "2"=>{:level=>"medium"}, "1"=>{:level=>"low"}}
-    details.each_pair do |k,v|
-			sla_details = FactoryGirl.build(:sla_details, :name=>"SLA for #{v[:level]} priority", :priority=>"#{k}", :response_time=>"900", :resolution_time=>"900", 
-				 	                     :account_id => @account.id, :override_bhrs=>"false", :escalation_enabled=>"1", :sla_policy_id => sla_policy.id)
-      sla_details.next_response_time = "900" if @account.next_response_sla_enabled?
-			sla_details.save(validate: false)
+  SLA_DETAILS = {
+    "4" => { :level=>"urgent" },
+    "3" => { :level=>"high" },
+    "2" => { :level=>"medium" },
+    "1" => { :level=>"low" }
+  }
+
+  def create_sla_policy(new_agent)
+    customer = FactoryGirl.build(:customer, :name => Faker::Name.name)
+    customer.save
+    sla_policy = FactoryGirl.build(:sla_policies,
+      :name => Faker::Lorem.words,
+      :description => Faker::Lorem.paragraph,
+      :active => true, :account_id => @account.id,
+      :datatype => { :ticket_type => "Problem" },
+      :conditions => {
+        "group_id" => ["1"],
+        "company_id" => ["#{customer.id}"]
+      },
+      :escalations => { 
+        "response" => { "1" => { :time =>"1800", :agents_id => ["#{@agent.id}"] } },
+        "resolution" => { "1" => { :time => "3600", :agents_id => ["#{new_agent.id}"] } }
+      }
+    )
+    sla_policy.escalations.merge({
+      "next_response" => { "1" => { :time =>"1800", :agents_id => ["#{@agent.id}"] } } 
+    }) if @account.next_response_sla_enabled?
+    sla_policy.save(validate: false)
+
+    sla_target_hash = {}
+    if @account.sla_policy_revamp_enabled?
+      sla_target_time = ActiveSupport::HashWithIndifferentAccess.new({ first_response_time: "PT15M", resolution_due_time: "PT15M" })
+      sla_target_time[:every_response_time] = "PT15M" if @account.next_response_sla_enabled?
+      sla_target_hash = { sla_target_time: sla_target_time }
+    end
+    sla_target_hash.merge!({ response_time: "900", resolution_time: "900" })
+    sla_target_hash[:next_response_time] = "900" if @account.next_response_sla_enabled?
+
+    SLA_DETAILS.each_pair do |k,v|
+      sla_details = FactoryGirl.build(:sla_details, {
+        :name=>"SLA for #{v[:level]} priority",
+        :priority=>"#{k}",
+        :account_id => @account.id,
+        :override_bhrs=>"false",
+        :escalation_enabled=>"1",
+        :sla_policy_id => sla_policy.id
+      }.merge!(sla_target_hash))
+      sla_details.save(validate: false)
 		end
     sla_policy
 	end

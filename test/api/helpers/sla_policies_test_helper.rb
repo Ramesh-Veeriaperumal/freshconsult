@@ -9,12 +9,13 @@ module SlaPoliciesTestHelper
 
   # Patterns
   def sla_policy_pattern(expected_output = {}, sla_policy)
+    sla_policy_decorator = SlaPolicyDecorator.new(sla_policy)
     conditions_hash = {}
-    conditions_hash = SlaPolicyDecorator::pluralize_conditions(sla_policy.conditions)
+    conditions_hash = sla_policy_decorator.pluralize_conditions
     sla_target_hash= {}
-    sla_target_hash = SlaPolicyDecorator::pluralize_sla_target(sla_policy.sla_details)
+    sla_target_hash = sla_policy_decorator.pluralize_sla_target
     escalation_hash= {}
-    escalation_hash = SlaPolicyDecorator::pluralize_escalations(sla_policy.escalations)
+    escalation_hash = sla_policy_decorator.pluralize_escalations
     
     {
       id: Fixnum,
@@ -67,17 +68,19 @@ module SlaPoliciesTestHelper
     sla_policy
   end
 
-  def create_sla_params_hash_with_company
+  def create_sla_params_hash_with_company(private_api_request = false)
     company = create_company
-    sla_targets = create_sla_target
-    {name: Faker::Lorem.word,applicable_to:{company_ids: [company.id]},sla_target: sla_targets}
+    sla_targets = private_api_request ? create_sla_target_new_format : create_sla_target
+    company_ids = private_api_request ? [company.name] : [company.id]
+    {name: Faker::Lorem.word,applicable_to:{company_ids: company_ids},sla_target: sla_targets}
   end
 
-  def create_sla_params_hash_with_company_and_product
+  def create_sla_params_hash_with_company_and_product(private_api_request = false)
     company = create_company
     product = create_product
-    sla_targets = create_sla_target
-    {name: Faker::Lorem.word,applicable_to:{company_ids: [company.id],product_ids:[product.id]},sla_target: sla_targets}
+    sla_targets = private_api_request ? create_sla_target_new_format : create_sla_target
+    company_ids = private_api_request ? [company.name] : [company.id]
+    {name: Faker::Lorem.word,applicable_to:{company_ids: company_ids,product_ids:[product.id]},sla_target: sla_targets}
 
   end
 
@@ -87,6 +90,15 @@ module SlaPoliciesTestHelper
       priority_3: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true},
       priority_2: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true},
       priority_1: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true}
+    }
+  end
+
+  def create_sla_target_new_format
+    {
+      priority_4: { first_response_time: "PT1H", resolution_due_time: "PT15M", business_hours: false, escalation_enabled: true },
+      priority_3: { first_response_time: "PT1H", resolution_due_time: "PT15M", business_hours: false, escalation_enabled: true },
+      priority_2: { first_response_time: "PT1H", resolution_due_time: "PT15M", business_hours: false, escalation_enabled: true },
+      priority_1: { first_response_time: "PT1H", resolution_due_time: "PT15M", business_hours: false, escalation_enabled: true }
     }
   end
 
