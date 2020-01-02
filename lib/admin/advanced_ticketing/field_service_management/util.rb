@@ -20,16 +20,16 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         @fsm_signup_flow = enable_options[:fsm_signup_flow].presence || false
         create_field_tech_role
         update_field_agent_limit_for_active_account
+        create_field_agent_type
+        create_field_group_type
+        create_field_service_manager_role
         create_service_task_field_type
         fsm_fields_to_be_created = fetch_fsm_fields_to_be_created
         reserve_fsm_custom_fields(fsm_fields_to_be_created)
         create_section(fsm_fields_to_be_created)
-        create_field_agent_type
-        create_field_group_type
         create_fsm_dashboard
-        create_field_service_manager_role
-        expire_cache
         generate_fsm_seed_data
+        expire_cache
         Rails.logger.info "Completed adding FSM artifacts for Account - #{Account.current.id}"
       rescue StandardError => e
         log_operation_failure('Enable', e)
@@ -291,7 +291,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         destroy_field_tech_role
         destroy_field_agent
         destroy_field_group
-        destroy_customer_signature if Account.current.customer_signature_enabled?
+        destroy_customer_signature
         Rails.logger.info "Completed disabling FSM feature for Account - #{Account.current.id}"
       rescue StandardError => e
         log_operation_failure('Disable', e)
@@ -325,7 +325,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
 
       def destroy_customer_signature
-        Account.current.ticket_fields.where(name: FSM_SIGNATURE_TICKET_FIELD[0][:name] + "_#{Account.current.id}").destroy_all
+        Account.current.ticket_fields.where(name: CUSTOMER_SIGNATURE + "_#{Account.current.id}").destroy_all
       end
 
       def expire_cache
@@ -371,7 +371,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
 
       def fsm_custom_field_to_reserve
-        Account.current.customer_signature_enabled? ? (FSM_DEFAULT_TICKET_FIELDS + FSM_SIGNATURE_TICKET_FIELD) : FSM_DEFAULT_TICKET_FIELDS
+        FSM_DEFAULT_TICKET_FIELDS
       end
 
       def generate_fsm_seed_data
