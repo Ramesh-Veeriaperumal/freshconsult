@@ -3,6 +3,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     include ::Dashboard::Custom::CustomDashboardConstants
     include ApiTicketConstants
 
+    CUSTOMER_SIGNATURE = 'cf_fsm_customer_signature'.freeze
     FSM_DEFAULT_TICKET_FIELDS = [
       {
         label: 'Contact',
@@ -46,16 +47,13 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         label_in_portal: 'Appointment end time',
         name: 'cf_fsm_appointment_end_time',
         flexifield_alias: 'fsm_appointment_end_time'
-      }
-    ].freeze
-
-    FSM_SIGNATURE_TICKET_FIELD = [
+      },
       {
         label: "Customer's signature",
         type: 'file',
         field_type: 'custom_file',
         label_in_portal: "Customer's signature",
-        name: 'cf_fsm_customer_signature',
+        name: CUSTOMER_SIGNATURE,
         required: false,
         flexifield_alias: 'fsm_customer_signature'
       }
