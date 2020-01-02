@@ -31,8 +31,10 @@ module Widget
     end
 
     def teardown
+      @widget.destroy
       super
       controller.class.any_instance.unstub(:api_current_user)
+      unset_login_support
     end
 
     def wrap_cname(params = {})
@@ -74,7 +76,6 @@ module Widget
       params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
       post :create, construct_params({ version: 'widget' }, params)
       t = Helpdesk::Ticket.last
-      result = parse_response(@response.body)
       assert_response 201
       match_json(id: t.display_id)
     end
@@ -85,69 +86,67 @@ module Widget
       params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
       post :create, construct_params({ version: 'widget' }, params)
       t = Helpdesk::Ticket.last
-      result = parse_response(@response.body)
       assert_response 201
       match_json(id: t.display_id)
     ensure
-      @account.unstub :help_widget_login
+      unset_login_support
     end
 
     def test_create_with_required_fields_with_x_widget_auth_user_present
       @account.launch :help_widget_login
-      timestamp = Time.zone.now.utc.iso8601
-      User.any_instance.stubs(:agent?).returns(false)
-      secret_key = SecureRandom.hex
-      @account.stubs(:help_widget_secret).returns(secret_key)
       user = add_new_user(@account)
-      auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
-      @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+      set_user_login_headers(name: user.name, email: user.email)
       email = Faker::Internet.email
       subject = SecureRandom.uuid
       params = { email: email, subject: subject, description: Faker::Lorem.paragraph }
       post :create, construct_params({ version: 'widget' }, params)
       ticket = @account.tickets.where(subject: subject).first
-      result = parse_response(@response.body)
       assert_response 201
       assert_equal User.current.id, user.id
       assert_equal ticket.from_email, user.email
       assert_not_equal ticket.from_email, email
       match_json(id: ticket.display_id)
     ensure
-      @account.unstub(:help_widget_login)
-      @account.unstub(:help_widget_secret)
-      User.any_instance.unstub(:agent?)
+      unset_login_support
+      user.destroy
     end
 
     def test_create_with_required_fields_with_x_widget_auth_user_absent
       @account.launch :help_widget_login
-      timestamp = Time.zone.now.utc.iso8601
-      User.any_instance.stubs(:agent?).returns(false)
-      secret_key = SecureRandom.hex
-      @account.stubs(:help_widget_secret).returns(secret_key)
-      auth_token = JWT.encode({ name: 'Padmashri', email: 'praajiopdsdlongbottom@freshworks.com', timestamp: timestamp }, secret_key)
-      @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+      set_user_login_headers(name: 'Padmashri', email: 'praajiopdsdlongbottom@freshworks.com')
       # email, description
       params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
       post :create, construct_params({ version: 'widget' }, params)
       assert_response 404
     ensure
-      @account.unstub(:help_widget_login)
-      @account.unstub(:help_widget_secret)
-      User.any_instance.unstub(:agent?)
+      unset_login_support
     end
 
     def test_create_with_required_fields_with_wrong_x_widget_auth
       @account.launch :help_widget_login
-      timestamp = Time.zone.now.utc.iso8601
-      User.any_instance.stubs(:agent?).returns(false)
-      secret_key = SecureRandom.hex
-      @account.stubs(:help_widget_secret).returns(secret_key)
-      auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', timestamp: timestamp }, secret_key + 'opo')
+      auth_token = JWT.encode({ name: 'Padmashri',
+                                email: 'praaji.longbottom@freshworks.com',
+                                exp: (Time.now.utc + 30.minutes).to_i }, 'wrong')
       @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
       # email, description
       params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
       post :create, construct_params({ version: 'widget' }, params)
       assert_response 401
+    end
+
+    def test_create_attachment_with_user_login_expired
+      @account.launch :help_widget_login
+      secret_key = SecureRandom.hex
+      @account.stubs(:help_widget_secret).returns(secret_key)
+      auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', exp: (Time.now.utc - 4.hours).to_i }, secret_key + 'opo')
+      @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+      settings = settings_hash(form_type: 2)
+      @request.env['HTTP_X_WIDGET_ID'] = create_widget(settings: settings).id
+      params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph, status: 2, subject: Faker::Lorem.words(10).join(' '), responder_id: @agent.id, custom_fields: { test_custom_text_1_editable: 'test' } }
+      post :create, construct_params({ version: 'widget' }, params)
+      assert_response 401
+      match_json('description' => 'Validation failed',
+                 'errors' => [bad_request_error_pattern('token', 'Signature has expired', code: 'unauthorized')])
     end
 
     def test_create_without_help_widget_launch
@@ -173,7 +172,6 @@ module Widget
       params[:attachment_ids] = attachment_ids
       post :create, construct_params({ version: 'widget' }, params)
       t = Helpdesk::Ticket.last
-      result = parse_response(@response.body)
       assert_response 201
       match_json(id: t.display_id)
       assert t.attachments.size == 1
@@ -203,8 +201,6 @@ module Widget
       params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
       params[:attachment_ids] = [100]
       post :create, construct_params({ version: 'widget' }, params)
-      t = Helpdesk::Ticket.last
-      result = parse_response(@response.body)
       assert_response 400
       match_json(validation_error_pattern(bad_request_error_pattern(:attachment_ids, "There are no records matching the ids: '100'", code: 'invalid_value')))
     end
@@ -344,7 +340,7 @@ module Widget
       assert_equal meta_info['user_agent'], 'Freshdesk_Native'
       assert_equal meta_info['referrer'], 'http://ateam.freshdesk.com'
     end
-    
+
     def test_create_with_whitelisted_domain_with_restricted_helpdesk_enabled
       @account.launch(:restricted_helpdesk)
       @account.features.restricted_helpdesk.create
@@ -404,7 +400,9 @@ module Widget
     end
 
     def test_create_with_login_required_with_user
-      user = stub_login_required
+      HelpWidget.any_instance.stubs(:contact_form_require_login?).returns(true)
+      user = add_new_user(@account)
+      set_user_login_headers(name: user.name, email: user.email)
       # email, description
       subject = SecureRandom.uuid
       params = { email: user.email, subject: subject, description: Faker::Lorem.paragraph }
@@ -415,11 +413,15 @@ module Widget
       assert_equal ticket.from_email, user.email
       match_json(id: ticket.display_id)
     ensure
-      unstub_login_required
+      HelpWidget.any_instance.unstub(:contact_form_require_login?)
+      unset_login_support
+      user.destroy
     end
 
     def test_create_with_login_required_with_secondary_email
-      user = stub_login_required
+      HelpWidget.any_instance.stubs(:contact_form_require_login?).returns(true)
+      user = add_new_user(@account)
+      set_user_login_headers(name: user.name, email: user.email)
       email = Faker::Internet.email
       user.user_emails.build(email: email)
       user.save_without_session_maintenance
@@ -436,7 +438,9 @@ module Widget
       assert_equal ticket.requester_id, user.id
       match_json(id: ticket.display_id)
     ensure
-      unstub_login_required
+      HelpWidget.any_instance.unstub(:contact_form_require_login?)
+      unset_login_support
+      user.destroy
     end
 
     def test_create_with_login_required_without_auth
@@ -447,27 +451,8 @@ module Widget
       assert_response 400
       match_json(request_error_pattern(:x_widget_auth_required, 'x_widget_auth_required'))
     ensure
-      unstub_login_required
+      HelpWidget.any_instance.unstub(:contact_form_require_login?)
+      unset_login_support
     end
-
-    private
-
-      def stub_login_required
-        HelpWidget.any_instance.stubs(:contact_form_require_login?).returns(true)
-        @account.launch :help_widget_login
-        timestamp = Time.zone.now.utc.iso8601
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
-        user = add_new_user(@account)
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
-        user
-      end
-
-      def unstub_login_required
-        HelpWidget.any_instance.unstub(:contact_form_require_login?)
-        @account.rollback(:help_widget_login)
-        @account.unstub(:help_widget_secret)
-      end
   end
 end

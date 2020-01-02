@@ -19,8 +19,10 @@ module Widget
     end
 
     def teardown
+      @widget.destroy
       super
       User.unstub(:current)
+      unset_login_support
     end
 
     def wrap_cname(_params)
@@ -50,50 +52,41 @@ module Widget
     end
 
     def test_index_with_correct_x_widget_auth_user_present
-      @account.launch :help_widget_login
-      timestamp = Time.zone.now.utc.iso8601
-      User.any_instance.stubs(:agent?).returns(false)
       user = add_new_user(@account)
-      secret_key = SecureRandom.hex
-      @account.stubs(:help_widget_secret).returns(secret_key)
-      auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
-      @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+      set_user_login_headers(name: user.name, email: user.email)
       get :index, controller_params
       assert_response 200
       assert JSON.parse(response.body).count > 1
     ensure
-      @account.rollback :help_widget_login
-      @account.unstub(:help_widget_secret)
+      user.destroy
     end
 
     def test_index_with_correct_x_widget_auth_user_absent
-      @account.launch :help_widget_login
-      timestamp = Time.zone.now.utc.iso8601
-      User.any_instance.stubs(:agent?).returns(false)
-      secret_key = SecureRandom.hex
-      @account.stubs(:help_widget_secret).returns(secret_key)
-      auth_token = JWT.encode({ name: 'Padmashri', email: 'praajiddslongbottom@freshworks.com', timestamp: timestamp }, secret_key)
-      @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+      set_user_login_headers(name: 'Padmashri', email: 'praajiddslongbottom@freshworks.com')
       get :index, controller_params
       assert_response 404
-    ensure
-      @account.rollback :help_widget_login
-      @account.unstub(:help_widget_secret)
     end
 
     def test_index_with_wrong_x_widget_auth
       @account.launch :help_widget_login
-      timestamp = Time.zone.now.utc.iso8601
-      User.any_instance.stubs(:agent?).returns(false)
       secret_key = SecureRandom.hex
       @account.stubs(:help_widget_secret).returns(secret_key)
-      auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', timestamp: timestamp }, secret_key + 'opo')
+      auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', exp: (Time.now.utc + 1.hour).to_i }, secret_key + 'opo')
       @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
       get :index, controller_params
       assert_response 401
-    ensure
-      @account.rollback :help_widget_login
-      @account.unstub(:help_widget_secret)
+    end
+
+    def test_index_default_field_name_with_user_login_expired
+      @account.launch :help_widget_login
+      secret_key = SecureRandom.hex
+      @account.stubs(:help_widget_secret).returns(secret_key)
+      auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', exp: (Time.now.utc - 4.hours).to_i }, secret_key + 'opo')
+      @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
+      get :index, controller_params
+      assert_response 401
+      match_json('description' => 'Validation failed',
+                 'errors' => [bad_request_error_pattern('token', 'Signature has expired', code: 'unauthorized')])
     end
 
     def test_index_default_field_name
@@ -229,6 +222,8 @@ module Widget
     end
 
     def test_index_with_url_language
+      user = add_new_user(@account)
+      set_user_login_headers(name: user.name, email: user.email)
       stub_params_for_user_login
       status_field = Account.current.ticket_fields.find_by_field_type(:default_status)
       status_field.editable_in_portal = true
@@ -242,6 +237,7 @@ module Widget
       assert_equal ct_es['label'], response_field['label']
       assert_not_equal status_field.label, response_field['label']
     ensure
+      user.destroy
       unstub_params_for_user_login
     end
 
@@ -272,21 +268,13 @@ module Widget
         Account.any_instance.stubs(:custom_translations_enabled?).returns(true)
         Account.any_instance.stubs(:all_languages).returns(['es', 'en', 'fr'])
         @account.stubs(:valid_portal_language?).returns(true)
-        @account.launch :help_widget_login
-        timestamp = Time.zone.now.utc.iso8601
-        user = add_new_user(@account)
-        secret_key = SecureRandom.hex
-        @account.stubs(:help_widget_secret).returns(secret_key)
-        auth_token = JWT.encode({ name: user.name, email: user.email, timestamp: timestamp }, secret_key)
-        @request.env['HTTP_X_WIDGET_AUTH'] = auth_token
       end
 
       def unstub_params_for_user_login
         Account.any_instance.unstub(:custom_translations_enabled?)
-        @account.unstub(:help_widget_secret)
         Account.any_instance.unstub(:all_languages)
         @account.unstub(:valid_portal_language?)
-        @account.features.enable_multilingual.destroy
+        unset_login_support
       end
   end
 end

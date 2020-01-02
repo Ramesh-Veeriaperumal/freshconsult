@@ -270,6 +270,7 @@ api_error_messages:
   source_update_not_permitted: "Source of tickets of sources %{sources} can not be updated."
   #help widget validation error messages
   field_validation_for_widget: "It should not be blank as this is a mandatory field for help widget ticket"
+  expiry_invalid: "Expiry should be within %{max_time} hours"
 
   invalid_privilege_list: "You are not authorized to modify these privileges: '%{list}'"
   no_matching_privilege: "No matching privileges found for: '%{list}'"

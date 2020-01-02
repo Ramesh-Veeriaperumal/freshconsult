@@ -2,7 +2,7 @@ class JwtPayloadValidation < ApiValidation
   attr_accessor :payload, :expiry
 
   validates :payload, data_type: { rules: Hash }, hash: { validatable_fields_hash: proc { |x| x.help_widget_payload_format } }, required: true, on: :help_widget
-  validate :validate_timestamp, if: -> { errors.blank? }, on: :help_widget
+  validate :validate_exp, if: -> { errors.blank? }, on: :help_widget
 
   def initialize(request_params, expiry)
     super(request_params)
@@ -36,11 +36,15 @@ class JwtPayloadValidation < ApiValidation
           maximum: ApiConstants::MAX_LENGTH_STRING
         }
       },
-      timestamp: {
+      exp: {
         data_type: {
-          rules: String,
+          rules: Integer,
           required: true,
           message: :missing_or_blank
+        },
+        custom_numericality: {
+          only_integer: true,
+          greater_than: 0
         }
       }
     }
@@ -48,17 +52,10 @@ class JwtPayloadValidation < ApiValidation
 
   private
 
-    def validate_timestamp
-      return errors[:timestamp] << 'invalid_timestamp' unless DateTimeValidator.new(attributes: 'timestamp').validate_date_time(payload[:timestamp])
-
-      timestamp = payload[:timestamp].to_datetime
-      return errors[:timestamp] << 'timestamp must be in UTC' unless timestamp.utc?
-
-      expire_at = payload[:timestamp].to_datetime.utc + expiry
-      # checks if timestamp is not greater than current time and current time is lesser than expiry time
-      if timestamp.utc > Time.now.utc || (Time.now.utc - expire_at) > 0
-        errors[:timestamp] << 'invalid_timestamp'
-        error_options[:timestamp] = { code: :unauthorized, message: 'timestamp expired or exceeded_current_time' }
+    def validate_exp
+      if Time.at(payload[:exp]).utc > Time.now.utc + expiry
+        errors[:exp] << :expiry_invalid
+        error_options[:exp] = { max_time: Time.at(expiry).utc.hour }
       end
     end
 end
