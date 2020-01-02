@@ -15,7 +15,7 @@ class Account < ActiveRecord::Base
   before_update :toggle_private_inline_feature, if: :secure_attachments_feature_changed?
   before_destroy :backup_changes, :make_shard_mapping_inactive
 
-  after_create :make_current, :populate_features, :change_shard_status
+  after_create :make_current, :change_shard_status, :populate_features
   after_update :change_dashboard_limit, :if => :field_service_management_enabled_changed?
   after_update :change_shard_mapping, :update_default_business_hours_time_zone,
                :update_google_domain, :update_route_info, :update_users_time_zone
