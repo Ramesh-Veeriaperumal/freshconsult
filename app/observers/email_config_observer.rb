@@ -15,7 +15,11 @@ class EmailConfigObserver < ActiveRecord::Observer
 
   def after_commit(email_config)
     unless email_config.safe_send(:transaction_include_action?,:destroy)
-      deliver_email_activation email_config
+      if Account.current.mailbox_forward_setup_enabled?
+        deliver_email_activation email_config if email_config.imap_mailbox.present? || email_config.smtp_mailbox.present?
+      else
+        deliver_email_activation email_config
+      end
     end
   end
 
