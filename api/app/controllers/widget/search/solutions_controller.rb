@@ -11,6 +11,7 @@ module Widget
       def results
         @search_context = :portal_spotlight_solution
         @items = solution_category_meta_ids.blank? ? [] : esv2_query_results(esv2_portal_models)
+        log_search_report if current_account.help_widget_log_enabled?
       end
 
       private
@@ -42,6 +43,10 @@ module Widget
           @solution_category_meta_ids ||= begin
             @help_widget.help_widget_solution_categories.pluck(:solution_category_meta_id)
           end
+        end
+
+        def log_search_report
+          Rails.logger.info "Widget search log : #{current_account.id} : #{@widget_id} : #{params[:term]} : #{@items.collect { |x| x[:id] }.join(',')}"
         end
     end
   end
