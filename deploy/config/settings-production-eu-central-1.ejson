@@ -1531,7 +1531,7 @@
         }
       },
       "shift_config": {
-        "_shift_service_host": "http://localhost:8080/",
+        "_shift_service_host": "https://shift-eu.freshdesk.com/",
         "jwt_secret": "EJ[1:US3rjJU9kkZhV+3jh5jgsBl1YWS5zjI3B8nm0jhQCB0=:q1/lwf6QSoXsvwjZfOvsyhITcpnF++CV:7URIiNxnyKOwyT2RjGQjzFCS9QRBRrvFMQ==]",
         "_time_out": 10
       }
