@@ -78,6 +78,7 @@ class Middleware::ApplicationLogger
       payload[:url] = request.url
       payload[:server_ip] = @@server_ip || request.env['SERVER_ADDR'] || env['SERVER_ADDR']
       payload[:uuid] = message_uuid(request)
+      payload[:widget_id] = request.env['HTTP_X_WIDGET_ID'] || env['HTTP_X_WIDGET_ID']
       set_controller_keys(payload, request) if controller_log_info.present?
       payload
     end
