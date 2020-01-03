@@ -1423,7 +1423,7 @@
         }
       },
       "shift_config": {
-        "_shift_service_host": "http://localhost:8080/",
+        "_shift_service_host": "https://shift-ind.freshdesk.com/",
         "jwt_secret": "EJ[1:gVBbNHqWzrh/oJh7TSKzL9yZNp6swPd8uXTtzZrEgy0=:RiSHgbQrGWPKhnMwzFsVk9T07P92zF98:griKbUG/ftXlCJLCp+HKjGUXFClstH8+PA==]",
         "_time_out": 10
       }
