@@ -299,4 +299,61 @@ class Ember::SlaPoliciesControllerTest < ActionController::TestCase
     assert_response 400
     match_json(request_error_pattern('cannot_update_default_sla'))
   end
+
+# ************************************************** Test reorder positon
+  def test_correct_position_while_adding_sla_policy
+    sla_policy_ids = []
+    3.times do
+      sla_policy_temp = quick_create_sla_policy
+      sla_policy_ids << sla_policy_temp.id
+    end
+    sla_policies_count = @account.sla_policies.count
+    sla_policy = quick_create_sla_policy
+    sla_policy_ids << sla_policy.id
+    assert_equal sla_policy.position, sla_policies_count + 1
+  ensure
+    delete_sla_policies(sla_policy_ids)
+  end
+
+  def test_update_position
+    sla_policy_ids = []
+    3.times do
+      sla_policy_temp = quick_create_sla_policy
+      sla_policy_ids << sla_policy_temp.id
+    end
+    sla_policy = quick_create_sla_policy
+    sla_policy_ids << sla_policy.id
+    updated_position = sla_policy.position - 2
+    position_reorder = @account.sla_policies_reorder.pluck(:position)
+    put :update, construct_params(id: sla_policy.id, version: 'private', applicable_to: { sources: [1] }, position: updated_position)
+    assert_response 200
+    sla_policy.reload
+    assert_equal sla_policy.position, position_reorder[updated_position - 1]
+  ensure
+    delete_sla_policies(sla_policy_ids)
+  end
+
+  def test_visual_position
+    sla_policy_1 = quick_create_sla_policy
+    sla_policy_2 = quick_create_sla_policy
+    sla_policy_ids = [sla_policy_1.id, sla_policy_2.id]
+    sla_policy_1.active = false
+    sla_policy_1.save
+    get :index, controller_params(version: 'private')
+    assert_response 200
+    resp_body = JSON.parse(response.body)
+    pattern = []
+    Account.current.sla_policies_reorder.each do |sp|
+      pattern << sla_policy_pattern(sp)
+    end
+    match_json(pattern.ordered!)
+  ensure
+    delete_sla_policies(sla_policy_ids)
+  end
+
+  def delete_sla_policies(sla_policy_ids)
+    @account.sla_policies.where(id: sla_policy_ids).each do |sla_policy|
+      sla_policy.destroy
+    end
+  end
 end

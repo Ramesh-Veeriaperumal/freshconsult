@@ -86,9 +86,17 @@ class SlaPolicyDecorator < ApiDecorator
       applicable_to: pluralize_conditions,
       escalation: pluralize_escalations,
       is_default: record.is_default,
-      position: record.position,
+      position: visual_position,
       created_at: record.created_at.try(:utc),
       updated_at: record.updated_at.try(:utc)
     }
+  end
+
+  def visual_position
+    private_api? && current_account.sla_policy_revamp_enabled? ? sla_rules_position.index(record.position) + 1 : record.position    
+  end
+
+  def sla_rules_position
+    @sla_rules_position ||= current_account.sla_policies_reorder.pluck(:position)
   end
 end

@@ -1,5 +1,8 @@
 module Ember::SlaPolicyConstants
   include ::SlaPolicyConstants
+
+  SLA_POLICY_PARAMS = [:name, :description, :active, :position].freeze
+  
   ALLOWED_SLA_TARGET_FIELDS = [
     { 'first_response_time' => [nil] }, 'first_response_time',
     { 'every_response_time' => [nil] }, 'every_response_time',
@@ -18,10 +21,10 @@ module Ember::SlaPolicyConstants
   DEFAULT_POLICY_UNEDITABLE_FIELDS = %w[active position] | ['applicable_to'] |
                                     ['applicable_to' => ALLOWED_CONDITION_FIELDS]
 
-  UPDATE_FIELDS = %w(name description active).freeze |
+  UPDATE_FIELDS = %w(name description active position).freeze |
                   ['sla_target'] | ['sla_target' => ALLOWED_SLA_TARGET_PRIORITY_FIELDS] |
                   ['applicable_to'] | ['applicable_to' => ALLOWED_CONDITION_FIELDS] |
                   ['escalation'] | ['escalation' => ALLOWED_ESCALATION_FIELDS]
 
-  CREATE_FIELDS = UPDATE_FIELDS
+  CREATE_FIELDS = UPDATE_FIELDS - ['position']
 end

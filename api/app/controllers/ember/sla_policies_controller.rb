@@ -1,8 +1,14 @@
 module Ember
   class SlaPoliciesController < ApiSlaPoliciesController
     decorate_views(decorate_object: [:show])
+    before_filter :fetch_rule_position, only: [:update], if: :position_changed? # re-order
 
     private
+
+      def scoper
+        return current_account.sla_policies_reorder if Account.current.sla_policy_revamp_enabled?
+        super
+      end
 
       def after_load_object
         super unless ['show', 'update'].include?(action_name)
@@ -40,6 +46,15 @@ module Ember
         else
           sla_detail.skip_iso_format_conversion = true
         end
+      end
+
+      def position_changed?
+        params[cname].key?(:position)
+      end
+
+      def fetch_rule_position
+        rules_position = current_account.sla_policies_reorder.pluck(:position)
+        params[cname][:position] = rules_position[params[cname][:position] - 1]
       end
   end
 end
