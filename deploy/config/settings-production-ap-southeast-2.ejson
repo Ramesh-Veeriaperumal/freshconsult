@@ -1267,7 +1267,7 @@
         },
         "freshconnect": {
           "_auth_type": "jwt",
-          "jwt_secret": "EJ[1:EsYOmmmEAl7DuwbEDn5VclYLvVIEzxhD9HV9jUzHyEE=:arOYRg32LIM0h8OeWkt88x8iGCzheH/R:Z/rsIIlqxub6dl09ULZ7U5jGRZ5MUN2NebMBCF5QVCg8CAUshGmiOEYHCAIZKtios63uB/fqIT6GgWyB1rSDRNoEjU/qrEgGxXQI/dTq3ZvtkT1CO51lRiizlI0tGBuNNGWVSIynyJw=]",
+          "jwt_secret": "EJ[1:18E+pgqz9uIlbqhHw/SBHIEluFoa7T5tK9PoP98mCkE=:GCJ3FHo6naHQbb6O+eXjuZAEm7k9Hh2z:9bbtiRtb4mvYhH4Po4TqlllgyTFDHthZmGESy/5Hcfo2+h7y+LOqY4Y423/SK43nf+2P4BM+gltAfqYIkWVQcMNvBVmc2uXh2bfa4RKnNHRKPpuqyuG6o1wsJFp721oGcOTJb55o5Ps=]",
           "_jwt_default_expiry": "30"
         },
         "sherlock": {
