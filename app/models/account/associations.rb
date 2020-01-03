@@ -116,7 +116,8 @@ class Account < ActiveRecord::Base
                                                                   :users=> { :deleted => false } }
   has_many :all_contacts , :class_name => 'User', :conditions => { :helpdesk_agent => false }
   has_many :all_agents, :class_name => 'Agent', :through =>:all_users  , :source =>:agent
-  has_many :sla_policies , :class_name => 'Helpdesk::SlaPolicy'
+  has_many :sla_policies , :class_name => 'Helpdesk::SlaPolicy', order: 'is_default, position'
+  has_many :sla_policies_reorder, class_name: 'Helpdesk::SlaPolicy', order: 'active DESC, is_default, position'
   has_one  :default_sla ,  :class_name => 'Helpdesk::SlaPolicy' , :conditions => { :is_default => true }
   has_many :google_contacts, :class_name => 'GoogleContact'
   has_many :mobihelp_devices, :class_name => 'Mobihelp::Device'

@@ -23,7 +23,7 @@ module SlaPoliciesTestHelper
       description: sla_policy.description,
       active: sla_policy.active,
       is_default: sla_policy.is_default,
-      position: sla_policy.position,
+      position: sla_policy_decorator.visual_position,
       sla_target: expected_output[:sla_target] || sla_target_hash,
       applicable_to: expected_output[:applicable_to] || conditions_hash,
       escalation: expected_output[:escalation] || escalation_hash,

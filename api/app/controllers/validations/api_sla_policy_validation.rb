@@ -1,13 +1,16 @@
 class ApiSlaPolicyValidation < ApiValidation
   attr_accessor :applicable_to, :company_ids, :name, :description, :active, :is_default, :product_ids, :group_ids, :ticket_types, :sources, :contact_segments, :company_segments,
                 :sla_target, :priority_1, :priority_2, :priority_3, :priority_4,
-                :escalation, :reminder_response, :reminder_next_response, :reminder_resolution, :response, :next_response, :resolution, :level_1, :level_2, :level_3, :level_4
+                :escalation, :reminder_response, :reminder_next_response, :reminder_resolution, :response, :next_response, :resolution, :level_1, :level_2, :level_3, :level_4,
+                :position
 
   validates :name,:applicable_to,:sla_target, required: true, on: :create
   validates :name, data_type: { rules: String, allow_nil: false},custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
 
   validates :description, data_type: { rules: String, allow_nil: true }
   validates :active, data_type: { rules: 'Boolean'}
+
+  validates :position, data_type: { rules: Integer }, on: :update
 
   validates :sla_target, data_type: { rules: Hash }
   validates :priority_1, data_type: { rules: Hash, required: true }, allow_nil: false, if: -> { sla_target.present? }

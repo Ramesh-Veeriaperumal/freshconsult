@@ -1490,8 +1490,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     assert_response 201
     response = parse_response @response.body
     assert_equal 11, response.size
-    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
-    Helpdesk::SlaPolicy.first.delete
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
+    Helpdesk::SlaPolicy.last.delete
   end
 
   def test_create_sla_policy_product_and_comapany
@@ -1500,8 +1500,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     assert_response 201
     response = parse_response @response.body
     assert_equal 11, response.size
-    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
-    Helpdesk::SlaPolicy.first.delete
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
+    Helpdesk::SlaPolicy.last.delete
     
   end
 
@@ -1531,8 +1531,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     post :create, construct_params(params_hash)
     assert_response 201
     response = parse_response @response.body
-    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
-    Helpdesk::SlaPolicy.first.delete
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
+    Helpdesk::SlaPolicy.last.delete
   end
 
   def test_create_with_invalid_group_ids
@@ -1558,8 +1558,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     post :create, construct_params(params_hash)
     response = parse_response @response.body
     assert_response 201
-    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
-    Helpdesk::SlaPolicy.first.delete
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
+    Helpdesk::SlaPolicy.last.delete
   end
 
 
@@ -1589,8 +1589,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     post :create, construct_params(params_hash)
     assert_response 201
     response = parse_response @response.body
-    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
-    Helpdesk::SlaPolicy.first.delete
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
+    Helpdesk::SlaPolicy.last.delete
   end
 
   def test_create_with_invalid_source
@@ -1613,8 +1613,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     post :create, construct_params(params_hash)
     assert_response 201
     response = parse_response @response.body
-    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
-    Helpdesk::SlaPolicy.first.delete
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
+    Helpdesk::SlaPolicy.last.delete
   end
 
 
@@ -1640,8 +1640,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
       post :create, construct_params(params_hash)
       assert_response 201
       response = parse_response @response.body
-      match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
-      Helpdesk::SlaPolicy.first.delete
+      match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
+      Helpdesk::SlaPolicy.last.delete
     end
 
     def test_create_with_invalid_contact_segment_ids
@@ -1666,8 +1666,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
       post :create, construct_params(params_hash)
       assert_response 201
       response = parse_response @response.body
-      match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
-      Helpdesk::SlaPolicy.first.delete
+      match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
+      Helpdesk::SlaPolicy.last.delete
     end
 
     def test_create_with_invalid_company_segment_ids
@@ -1767,8 +1767,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     post :create, construct_params(params_hash)
     assert_response 201
     sla_policy = parse_response @response.body
-    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
-    Helpdesk::SlaPolicy.first.delete
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
+    Helpdesk::SlaPolicy.last.delete
   end
 
   def test_create_lessthen_900_respond_within_sla_policy
@@ -1828,8 +1828,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     post :create, construct_params(params_hash)
     assert_response 201
     sla_policy = parse_response @response.body
-    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
-    Helpdesk::SlaPolicy.first.delete
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
+    Helpdesk::SlaPolicy.last.delete
     Account.any_instance.unstub(:next_response_sla_enabled?)
   end
 
@@ -1894,8 +1894,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     assert_response 201
     sla_policy = parse_response @response.body
     assert_equal sla_policy.size,11
-    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
-    Helpdesk::SlaPolicy.first.delete
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
+    Helpdesk::SlaPolicy.last.delete
   end
 
   def test_create_escalation_with_response_only
@@ -1906,8 +1906,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     assert_response 201
     sla_policy = parse_response @response.body
     assert_equal sla_policy.size,11
-    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
-    Helpdesk::SlaPolicy.first.delete
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
+    Helpdesk::SlaPolicy.last.delete
   end
 
   def test_create_escalation_with_reminder_response_only
@@ -1918,8 +1918,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     assert_response 201
     sla_policy = parse_response @response.body
     assert_equal sla_policy.size,11
-    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
-    Helpdesk::SlaPolicy.first.delete
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
+    Helpdesk::SlaPolicy.last.delete
   end
 
   def test_create_escalation_with_reminder_resolution_only
@@ -1930,8 +1930,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     assert_response 201
     sla_policy = parse_response @response.body
     assert_equal sla_policy.size,11
-    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
-    Helpdesk::SlaPolicy.first.delete
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
+    Helpdesk::SlaPolicy.last.delete
   end
 
   def test_create_escalation_without_reminder_response_escalation_time_sla_policy
@@ -2265,8 +2265,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     sla_policy = parse_response @response.body
     assert_response 201
     assert_equal sla_policy.size,11
-    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
-    Helpdesk::SlaPolicy.first.delete
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
+    Helpdesk::SlaPolicy.last.delete
   end
 
   def test_create_escalation_with_5_resolution_sla_policy
@@ -2309,8 +2309,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     assert_response 201
     sla_policy = parse_response @response.body
     assert_equal sla_policy.size,11
-    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
-    Helpdesk::SlaPolicy.first.delete
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
+    Helpdesk::SlaPolicy.last.delete
   end
 
   def test_create_escalation_next_response_without_feature
@@ -2356,8 +2356,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     assert_response 201
     sla_policy = parse_response @response.body
     assert_equal sla_policy.size, 11
-    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
-    Helpdesk::SlaPolicy.first.delete
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
+    Helpdesk::SlaPolicy.last.delete
     Account.any_instance.unstub(:next_response_sla_enabled?)
   end
 
@@ -2370,8 +2370,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     assert_response 201
     sla_policy = parse_response @response.body
     assert_equal sla_policy.size, 11
-    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
-    Helpdesk::SlaPolicy.first.delete
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
+    Helpdesk::SlaPolicy.last.delete
     Account.any_instance.unstub(:next_response_sla_enabled?)
   end
 
@@ -2384,8 +2384,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     assert_response 201
     sla_policy = parse_response @response.body
     assert_equal sla_policy.size, 11
-    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
-    Helpdesk::SlaPolicy.first.delete
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
+    Helpdesk::SlaPolicy.last.delete
     Account.any_instance.unstub(:next_response_sla_enabled?)
   end
 
@@ -2398,8 +2398,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     assert_response 201
     sla_policy = parse_response @response.body
     assert_equal sla_policy.size, 11
-    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
-    Helpdesk::SlaPolicy.first.delete
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
+    Helpdesk::SlaPolicy.last.delete
     Account.any_instance.unstub(:next_response_sla_enabled?)
   end
 
@@ -2412,8 +2412,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     assert_response 201
     sla_policy = parse_response @response.body
     assert_equal sla_policy.size, 11
-    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
-    Helpdesk::SlaPolicy.first.delete
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
+    Helpdesk::SlaPolicy.last.delete
     Account.any_instance.unstub(:next_response_sla_enabled?)
   end
 
@@ -2654,8 +2654,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     params_hash = params_hash.merge({description: "This sla is related to unit test"})
     post :create, construct_params(params_hash)
     assert_response 201
-    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
-    Helpdesk::SlaPolicy.first.delete
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
+    Helpdesk::SlaPolicy.last.delete
   end
 
   def test_create_with_invalid_description_sla_policy

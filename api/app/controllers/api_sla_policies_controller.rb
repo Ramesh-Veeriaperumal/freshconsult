@@ -34,7 +34,7 @@ class ApiSlaPoliciesController < ApiApplicationController
     end
 
     def assign_protected
-      SlaPolicyConstants::SLA_POLICY_PARAMS.each do |field|
+      "#{constants_class}::SLA_POLICY_PARAMS".constantize.each do |field|
         @item[field] = params[cname][field] if params[cname].has_key?(field)
       end
       @item.conditions = ActiveSupport::HashWithIndifferentAccess.new unless action_name == 'update' && !params[cname].has_key?(:applicable_to)
@@ -116,4 +116,5 @@ class ApiSlaPoliciesController < ApiApplicationController
       sla_detail[:escalation_enabled] = sla_target[:escalation_enabled] 
       @item.sla_details.build(sla_detail) if action_name.eql?("create")
     end
+
 end
