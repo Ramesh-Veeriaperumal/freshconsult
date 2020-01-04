@@ -26,8 +26,6 @@ class Account < ActiveRecord::Base
   include Cache::Memcache::Admin::CustomData
   include Account::SidekiqControl::RouteDrop
 
-  delegate :add_launchgroups, :remove_launchgroups, to: :account_additional_settings
-  
   has_many_attachments
 
   serialize :sso_options, Hash
@@ -113,16 +111,6 @@ class Account < ActiveRecord::Base
         feature_list << ns if features?(ns)
       end
       feature_list
-    end
-  end
-
-  def launchgroups
-    Sharding.select_shard_of(self.id) do
-      [
-        plan_name.to_s, 
-        ActiveRecord::Base.current_shard_selection.shard.to_s,
-        subscription.state.to_s
-      ] | Array(account_additional_settings.try(:launchgroups))
     end
   end
 
@@ -1050,11 +1038,6 @@ class Account < ActiveRecord::Base
     end
 
   private
-
-    def handle_launchparty_exception(e)
-      NewRelic::Agent.notice_error(e)
-      return false
-    end
 
     def update_features(features)
       if features.present?
