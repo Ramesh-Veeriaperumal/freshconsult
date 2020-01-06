@@ -80,6 +80,7 @@ fields:
         custom_url: text
 
         freddy_suggestion: freddy_type
+        agent_availability: text
 
     event:
         default: default
