@@ -142,4 +142,12 @@ module Redis::OthersRedis
   def get_multiple_others_redis_keys(*keys)
     newrelic_begin_rescue { $redis_others.perform_redis_op('mget', *keys) }
   end
+
+  def watch_others_redis(key)
+    newrelic_begin_rescue { $redis_others.perform_redis_op('watch', key) }
+  end
+
+  def exec_others_redis
+    newrelic_begin_rescue { $redis_others.perform_redis_op('exec') }
+  end
 end

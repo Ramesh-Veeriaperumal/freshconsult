@@ -13,6 +13,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
   validates_length_of :email_cmds_delimeter, :minimum => 3, :message => I18n.t('email_command_delimeter_length_error_msg')
   after_update :handle_email_notification_outdate, :if => :had_supported_languages?
   after_initialize :set_default_rlimit
+  before_create :set_onboarding_version
   after_commit :clear_cache
   after_commit :update_help_widget_languages, if: -> { Account.current.help_widget_enabled? && @portal_languages_changed }
   serialize :additional_settings, Hash
