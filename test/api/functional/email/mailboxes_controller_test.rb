@@ -574,7 +574,7 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     mailbox2.active = true
     mailbox2.imap_mailbox.error_type = 541
     mailbox2.save!
-    mailbox4.smtp_mailbox.error_type = 554
+    mailbox4.smtp_mailbox.error_type = 535
     mailbox4.save!
     Email::MailboxFilterValidation.any_instance.stubs(:private_api?).returns(true)
     get :index, controller_params(order_by: 'failure_code')
