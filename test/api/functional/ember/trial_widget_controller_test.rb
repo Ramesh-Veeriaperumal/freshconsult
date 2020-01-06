@@ -62,8 +62,8 @@ class Ember::TrialWidgetControllerTest < ActionController::TestCase
     assert_equal response_tasks.include?('name' => 'agent_productivity_video', 'isComplete' => true), true
     assert_equal response_tasks.include?('name' => 'canned_response_tour', 'isComplete' => true), true
     assert_equal response_tasks.include?('name' => 'explore_productivity_features', 'isComplete' => true), true
-    assert_equal response_tasks.include?('name' => 'report_video', 'isComplete' => true), true
-    assert_equal response_tasks.include?('name' => 'report_tour', 'isComplete' => true), true
+    assert_equal response_tasks.include?('name' => 'analytics_video', 'isComplete' => true), true
+    assert_equal response_tasks.include?('name' => 'analytics_tour', 'isComplete' => true), true
     assert_equal response_tasks.include?('name' => 'explore_performance_feature', 'isComplete' => true), true
     assert_equal response_tasks.include?('name' => 'app_video', 'isComplete' => true), true
     assert_equal response_tasks.include?('name' => 'app_integration', 'isComplete' => true), true
