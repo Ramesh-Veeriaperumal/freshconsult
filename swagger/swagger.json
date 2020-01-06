@@ -28328,14 +28328,26 @@
             },
             "status": {
               "type": "integer",
-              "description": "status:\n   * `published` - 2\n",
               "enum": [
                 2
-              ]
+              ],
+              "description": "Status value to be updated for article\n  * `published` - 2\n"
             },
             "outdated": {
               "type": "boolean",
               "description": "Status of the translation of the article"
+            },
+            "approval_status": {
+              "type": "integer",
+              "enum": [
+                1,
+                2
+              ],
+              "description": "Approval status value to be updated for the article\n  * `in_review` - 1\n  * `approved` - 2\n"
+            },
+            "approver_id": {
+              "type": "integer",
+              "description": "User id of the agent to whom the articles were sent for approval"
             },
             "tags": {
               "type": "array",

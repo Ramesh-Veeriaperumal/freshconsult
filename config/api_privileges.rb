@@ -236,17 +236,17 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   create_and_edit_article do
-    resource :'ember/solutions/article', only: %i[create update send_for_review]
+    resource :'ember/solutions/article', only: %i[create update send_for_review bulk_update]
     resource :'ember/solutions/draft', only: %i[autosave update delete_attachment destroy]
   end
 
   approve_article do
-    resource :'ember/solutions/article', only: %i[approve]
+    resource :'ember/solutions/article', only: %i[approve bulk_update]
   end
 
   publish_solution do
     #---start-This resource mapping is here to handle delta phase backward compatablility.
-    resource :'ember/solutions/article', only: %i[bulk_update reorder]
+    resource :'ember/solutions/article', only: %i[reorder]
     resource :'ember/solutions/article_version', only: %i[restore]
     #---end-
   end

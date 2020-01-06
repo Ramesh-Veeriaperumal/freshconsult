@@ -1,10 +1,15 @@
 module ApiSolutions
   class ArticleBulkUpdateDelegator < BaseDelegator
-    attr_accessor :agent_id, :tags, :portal_id, :folder_id
+    include SolutionApprovalConcern
+
+    attr_accessor :agent_id, :tags, :portal_id, :folder_id, :approval_status, :approver_id, :status
 
     validate :agent_exists?, if: -> { @agent_id }
     validate :create_tag_permission, if: -> { @tags }
     validate :folder_exists?, if: -> { @folder_id }
+    validate :validate_publish_permission, if: -> { @status }
+    validate :validate_approval_permission, if: -> { @approval_status && article_approval_workflow_enabled? }
+    validate :validate_create_and_edit_permission, if: -> { @approval_status == Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review] && article_approval_workflow_enabled? }
 
     def initialize(options)
       options.each do |key, value|
@@ -34,6 +39,34 @@ module ApiSolutions
       end
     end
 
+    def validate_approval_permission
+      if @approver_id
+        unless approve_permission?(@approver_id)
+          (error_options[:properties] ||= {}).merge!(nested_field: :approve_privilege, code: :no_approve_article_privilege)
+          errors[:properties] = :no_approve_article_privilege
+        end
+      else
+        unless approve_permission?(User.current)
+          (error_options[:properties] ||= {}).merge!(nested_field: :approve_privilege, code: :no_approve_article_privilege)
+          errors[:properties] = :no_approve_article_privilege
+        end
+      end
+    end
+
+    def validate_create_and_edit_permission
+      unless User.current.privilege?(:create_and_edit_article)
+        (error_options[:properties] ||= {}).merge!(nested_field: :create_and_edit_article, code: :no_create_and_edit_article_privilege)
+        errors[:properties] = :no_create_and_edit_article_privilege
+      end
+    end
+
+    def validate_publish_permission
+      unless User.current.privilege?(:publish_solution) || (article_approval_workflow_enabled? && User.current.privilege?(:publish_approved_solution))
+        (error_options[:properties] ||= {}).merge!(nested_field: :publish_solution, code: :no_publish_article_privilege)
+        errors[:properties] = :no_publish_article_privilege
+      end
+    end
+
     def create_tag_permission
       unless User.current.privilege?(:create_tags)
         new_tags = @tags - Account.current.tags.where(name: @tags).map(&:name)
@@ -43,5 +76,11 @@ module ApiSolutions
         end
       end
     end
+
+    private
+
+      def article_approval_workflow_enabled?
+        Account.current.article_approval_workflow_enabled?
+      end
   end
 end
