@@ -1,12 +1,14 @@
 module ApiDiscussions
   class ApiCommentsController < ApiApplicationController
+    decorate_views(decorate_object: [:create, :update], decorate_objects: [:topic_comments])
+
     before_filter :topic_exists?, only: [:topic_comments]
 
     SLAVE_ACTIONS = %w(index topic_comments).freeze
 
     def topic_comments
       return if validate_filter_params
-      @comments = paginate_items(@item.posts)
+      @items = paginate_items(@item.posts)
       render '/api_discussions/api_comments/comment_list'
     end
 
