@@ -24,6 +24,13 @@ class ArticleBulkUpdateValidation < ApiValidation
     }
   end
 
+  def validate_approval_status
+    if properties[:approval_status] != Solution::Constants::STATUS_KEYS_BY_TOKEN[:draft] && properties[:approval_status] != Solution::Constants::STATUS_KEYS_BY_TOKEN[:published] 
+      (error_options[:properties] ||= {}).merge!(nested_field: :approval_status, code: :approval_status_is_not_valid)
+      errors[:properties] = :approval_status_is_not_valid
+    end
+  end
+
   def validate_status
     if properties[:status] != Solution::Constants::STATUS_KEYS_BY_TOKEN[:published]
       (error_options[:properties] ||= {}).merge!(nested_field: :status, code: :status_is_not_valid)

@@ -28355,6 +28355,10 @@
               "items": {
                 "type": "string"
               }
+            },
+            "approval_status": {
+              "type": "integer",
+              "description": "Approve list of articles"
             }
           }
         }

@@ -28,6 +28,7 @@ module SolutionBulkActionConcern
       update_tags(article)
       update_author(article)
       update_outdated(article)
+      raise 'Approval updation failed!' unless update_article_approval(article)
       raise 'Review request failed!' unless update_send_for_review(article)
       raise 'Status updation failed!' if !update_status(article)
       article_meta.save!
@@ -37,6 +38,17 @@ module SolutionBulkActionConcern
   rescue Exception => e # rubocop:disable RescueException
     Rails.logger.debug "Error while updating article using bulk action::: #{e.message}, Account:: [#{article_meta.account_id},#{article_meta.id}]"
     return false
+  end
+
+  def update_article_approval(article)
+    if cname_params[:properties][:approval_status].present? && cname_params[:properties][:approval_status].to_i == Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]
+      unless article.helpdesk_approval.nil?
+        helpdesk_approval_record = article.helpdesk_approval
+        helpdesk_approver_mapping = get_or_build_approver_mapping(helpdesk_approval_record, User.current.id)
+        helpdesk_approver_mapping.approve!
+      end
+    end
+    true
   end
 
   def update_tags(article)
@@ -91,7 +103,7 @@ module SolutionBulkActionConcern
   def update_visibility(folder_meta)
     visibility = cname_params[:properties][:visibility]
     if visibility
-      folder_meta.add_companies(valid_companies, !(cname_params[:properties][:add_to_existing] == false)) if visibility == Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:company_users]
+      folder_meta.add_companies(valid_companies, cname_params[:properties][:add_to_existing] != false) if visibility == Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:company_users]
       folder_meta.visibility = cname_params[:properties][:visibility]
     end
   end
