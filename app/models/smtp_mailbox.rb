@@ -8,4 +8,6 @@ class SmtpMailbox < ActiveRecord::Base
   belongs_to_account
 
   attr_protected :account_id
+
+  scope :errors, conditions: ['error_type > ?', 0]
 end
