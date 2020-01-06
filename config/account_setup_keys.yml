@@ -29,8 +29,8 @@
   agent_productivity_video: 23
   canned_response_tour: 24
   explore_productivity_features: 25
-  report_video: 26
-  report_tour: 27
+  analytics_video: 26
+  analytics_tour: 27
   explore_performance_feature: 28
   app_video: 29
   app_integration: 30
@@ -96,8 +96,8 @@
   - agent_productivity_video
   - canned_response_tour
   - explore_productivity_features
-  - report_video
-  - report_tour
+  - analytics_video
+  - analytics_tour
   - explore_performance_feature
   - app_video
   - app_integration
