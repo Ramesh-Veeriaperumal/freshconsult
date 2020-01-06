@@ -4860,6 +4860,15 @@
             ]
           },
           {
+            "name": "include",
+            "in": "query",
+            "type": "string",
+            "enum": [
+              "user_info"
+            ],
+            "description": "get additional user information for agents with restricted user access."
+          },
+          {
             "name": "privilege",
             "in": "query",
             "type": "string",
