@@ -1,6 +1,9 @@
 module ApiDiscussions
   class TopicsController < ApiApplicationController
     include DiscussionMonitorConcern
+
+    decorate_views(decorate_objects: [:forum_topics, :followed_by, :participated_by])
+
     SLAVE_ACTIONS = %w(index forum_topics).freeze
     decorate_views(decorate_objects: [:followed_by, :participated_by, :forum_topics])
 
