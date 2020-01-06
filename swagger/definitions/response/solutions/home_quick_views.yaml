@@ -8,7 +8,7 @@ properties:
     type: number
   my_drafts:
     type: number
-  published_articles:
+  published:
     type: number
   all_feedback:
     type: number
@@ -33,10 +33,9 @@ properties:
   not_translated:
     type: number
     description: Available only for secondary languages.
-  in_review_articles:
+  in_review:
     type: number
     description: Available only if article_approval_workflow feature enabled.
-  approved_articles:
+  approved:
     type: number
     description: Available only if article_approval_workflow feature enabled.
-

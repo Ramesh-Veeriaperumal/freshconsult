@@ -3,7 +3,7 @@
   all_articles: @articles.count,
   all_drafts: @drafts.count - @approvals.count,
   my_drafts: @my_drafts.count,
-  published_articles: @published_articles.count,
+  published: @published_articles.count,
   all_feedback: @all_feedback.count,
   my_feedback: @my_feedback.count,
   unassociated_categories_count: @orphan_categories.count
@@ -20,8 +20,8 @@ if @secondary_language
   @count_hash[:not_translated] = @not_translated_articles
 end
 @count_hash.merge!(
-  in_review_articles: @articles_with_approval_status[Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review]] || 0,
-  approved_articles: @articles_with_approval_status[Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]] || 0
+  in_review: @articles_with_approval_status[Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review]] || 0,
+  approved: @articles_with_approval_status[Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]] || 0
 ) if Account.current.article_approval_workflow_enabled?
 
 JSON.generate(@count_hash)
