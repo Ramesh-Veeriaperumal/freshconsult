@@ -37,6 +37,15 @@ class Fdadmin::AccountToolsController < Fdadmin::DevopsMainController
     end
   end
 
+  def fetch_latest_shard
+    result = ShardMapping.latest_shard
+    respond_to do |format|
+      format.json do
+        render json: result
+      end
+    end
+  end
+
   def operations_on_shard 
     if FreshopsToolsWorkerMethods::SHARD_OPS.has_value?(params["method_name"])
       params["shards_name"].each do |shard_name|
