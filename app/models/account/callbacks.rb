@@ -151,6 +151,11 @@ class Account < ActiveRecord::Base
         add_feature(:detect_thank_you_note_eligible)
       end
     end
+    #next response sla feature based on redis. Remove once its stable
+    if redis_key_exists?(ENABLE_NEXT_RESPONSE_SLA) 
+      add_feature(:next_response_sla)
+      launch(:sla_policy_revamp)
+    end
   end
 
   def update_activity_export
