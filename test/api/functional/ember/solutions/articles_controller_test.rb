@@ -868,6 +868,48 @@ module Ember
         User.any_instance.unstub(:privilege?)
       end
 
+      def test_bulk_update_approval_without_approve_article_privilege
+        with_publish_solution_privilege do
+          folder = @account.solution_folder_meta.where(is_default: false).first
+          populate_articles(folder)
+          articles = folder.solution_article_meta.pluck(:id)
+          User.any_instance.stubs(:privilege?).with(:approve_article).returns(false)
+          agent_id = add_test_agent.id
+          put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { approval_status:  Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved] })
+          assert_response 400
+        end
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_approval_with_approve_article_privilege
+        with_publish_solution_privilege do
+          folder = @account.solution_folder_meta.where(is_default: false).first
+          populate_articles(folder)
+          articles = folder.solution_article_meta.pluck(:id)
+          User.any_instance.stubs(:privilege?).with(:approve_article).returns(true)
+          agent_id = add_test_agent.id
+          put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { approval_status:  Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved] })
+          assert_response 204
+        end
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_approval_with_invalid_approval_status
+        with_publish_solution_privilege do
+          folder = @account.solution_folder_meta.where(is_default: false).first
+          populate_articles(folder)
+          articles = folder.solution_article_meta.pluck(:id)
+          User.any_instance.stubs(:privilege?).with(:approve_article).returns(true)
+          agent_id = add_test_agent.id
+          put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { approval_status: 0 })
+          assert_response 400
+        end
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
       def test_bulk_update_tags_without_feature
         Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(false)
         article = @account.solution_articles.where(language_id: 6).last

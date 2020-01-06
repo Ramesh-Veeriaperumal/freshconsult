@@ -38,4 +38,7 @@ properties:
         description: Array of tags to be mapped to the articles
         items:
           type: string
+      approval_status:
+        type: integer
+        description: Approve list of articles
 
