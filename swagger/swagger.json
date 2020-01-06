@@ -15345,6 +15345,9 @@
                     },
                     "show_on_boarding": {
                       "type": "boolean"
+                    },
+                    "onboarding_version": {
+                      "type": "string"
                     }
                   }
                 },

@@ -83,3 +83,5 @@ CentralConfig = YAML.load(File.read("#{Rails.root}/config/central.yml"))[Rails.e
 ShiftConfig = YAML.load(File.read("#{Rails.root}/config/shift_config.yml"))[Rails.env]
 
 RTSConfig = YAML.load_file(Rails.root.join('config', 'rts.yml'))[Rails.env]
+
+GrowthHackConfig = YAML.load_file(File.join(Rails.root, 'config', 'growth_hack.yml')).with_indifferent_access

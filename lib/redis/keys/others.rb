@@ -6,6 +6,7 @@ module Redis::Keys::Others
   MIGRATED_EMAIL_TICKET_ID                = "MIGRATED_EMAIL_TICKET_ID:%{account_id}:%{email_config_id}:%{message_id}".freeze
   ADMIN_ROUND_ROBIN_FILTER                = "ADMIN_ROUND_ROBIN_FILTER:%{account_id}:%{user_id}".freeze
   ACCOUNT_ONBOARDING_PENDING              = "ACCOUNT_ONBOARDING_PENDING:%{account_id}".freeze
+  ACCOUNT_ONBOARDING_VERSION              = "ACCOUNT_ONBOARDING_VERSION".freeze
   TAG_BASED_ARTICLE_SEARCH                = "TAG_BASED_ARTICLE_SEARCH".freeze
   WEBHOOK_THROTTLER                       = "WEBHOOK_THROTTLER:%{account_id}".freeze
   WEBHOOK_THROTTLER_LIMIT_EXCEEDED        = "WEBHOOK_THROTTLER_LIMIT_EXCEEDED:%{account_id}".freeze
