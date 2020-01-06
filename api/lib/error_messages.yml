@@ -255,6 +255,9 @@ api_error_messages:
 
   duplicate_not_allowed: "Duplicate %{name},%{name} Must be unique, '%{list}' "
   Multiple_of_60: "Must Be multiple of 60"
+  invalid_duration_format: "Must be in the valid ISO 8601 duration format - P[n]DT[n]H[n]M"
+  must_be_less_than_1_year: "Must be less than 1 year"
+  must_be_more_than_15_minutes: "Must be more than 15 minutes"
 
   fsm_only_on_mint_ui: "Old UI must be disabled for the field service management to work."
   fsm_custom_fields_not_available: "Required custom fields are not available to be reserved."
@@ -270,6 +273,7 @@ api_error_messages:
   source_update_not_permitted: "Source of tickets of sources %{sources} can not be updated."
   #help widget validation error messages
   field_validation_for_widget: "It should not be blank as this is a mandatory field for help widget ticket"
+  expiry_invalid: "Expiry should be within %{max_time} hours"
 
   invalid_privilege_list: "You are not authorized to modify these privileges: '%{list}'"
   no_matching_privilege: "No matching privileges found for: '%{list}'"

@@ -892,4 +892,10 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     Email::MailboxesController.any_instance.unstub(:private_api?)
     $redis_others.perform_redis_op('del', redis_key)
   end
+
+  def test_successful_send_verification_email
+    email_config = create_email_config(active: false)
+    post :send_verification, construct_params(id: email_config.id)
+    assert_response 204
+  end
 end

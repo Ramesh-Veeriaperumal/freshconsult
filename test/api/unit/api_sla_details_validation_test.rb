@@ -21,7 +21,7 @@ class ApiSlaDetailsValidationTest < ActionView::TestCase
     Account.any_instance.unstub(:next_response_sla_enabled?)
   end
 
-  # ******************************************************************************** respond_within
+  # ******************************************** respond_within
   def test_respond_within_nil
     Account.stubs(:current).returns(Account.first)
     Account.any_instance.stubs(:next_response_sla_enabled?).returns(false)
@@ -84,7 +84,7 @@ class ApiSlaDetailsValidationTest < ActionView::TestCase
     Account.any_instance.unstub(:next_response_sla_enabled?)
   end
 
-  # ******************************************************************************** next_respond_within
+  # ******************************************** next_respond_within
   def test_next_respond_within_below_900
     Account.stubs(:current).returns(Account.first)
     Account.any_instance.stubs(:next_response_sla_enabled?).returns(true)
@@ -132,7 +132,7 @@ class ApiSlaDetailsValidationTest < ActionView::TestCase
     Account.any_instance.unstub(:next_response_sla_enabled?)
   end
 
-  # ******************************************************************************** resolve_within
+  # ******************************************** resolve_within
 
   def test_resolve_within_nil
     Account.stubs(:current).returns(Account.first)
@@ -195,7 +195,7 @@ class ApiSlaDetailsValidationTest < ActionView::TestCase
     Account.unstub(:current)
     Account.any_instance.unstub(:next_response_sla_enabled?)
   end
-  # ******************************************************************************** Business hour and Escalation enabled
+  # ******************************************** Business hour and Escalation enabled
   
   def test_business_hours_nil
     Account.stubs(:current).returns(Account.first)

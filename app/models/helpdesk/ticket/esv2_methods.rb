@@ -49,7 +49,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                   :requester_id, :responder_id, :status, :source, :spam, :deleted,
                   :created_at, :updated_at, :account_id, :display_id, :group_id, :due_by,
                   :internal_group_id, :internal_agent_id, :association_type,
-                  :frDueBy, :priority, :ticket_type, :subject, :description
+                  :frDueBy, :priority, :ticket_type, :subject, :description, :nr_due_by
                 ]
     }, false).merge(custom_attr)
       .merge(attachments: es_v2_attachments)

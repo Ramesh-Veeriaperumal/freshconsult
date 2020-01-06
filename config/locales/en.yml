@@ -1177,12 +1177,16 @@ en:
           configure_tab_auth: "<a href='%{page_tab_url}'> Create your Facebook page tab</a>"
         ticket_rules_new:
           assign_to_gp: "Assign to group"
+          ad_posts_label: "Ad posts"
+          page_posts_label: "Page posts"
+          convert_ad_post_helptext: "You would be prompted to re-authorize the Facebook account after the changes are saved"
+          convert_ad_post_to_ticket: "Convert comments on ad posts created by the page into tickets"
           convert_visitor_post_to_ticket: "Convert posts added by visitors into tickets"
           convert_page_post_to_ticket: "Convert posts added by the page into tickets"
           convert_comment_toggle_helptext: "Only convert comments which have the following keywords"
           fb_thread_same_ticket: "Thread comments on each post to a single ticket"
           fb_thread_new_ticket: "Create a new ticket for every comment on the post"
-          visitor_posts_helptext: "This option cannot be turned off when comments on each page post are threaded to the same ticket."
+          visitor_posts_helptext: "This option cannot be turned off when comments on each page post are threaded to the same ticket"
         ticket_rules:
           do_not_convert: "Do not convert anything"
           do_not_convert_help: "No post will be converted as a ticket."
@@ -5357,6 +5361,10 @@ en:
     reminder_label: Set SLA reminders
     reminder_response_text: Set reminder rule when a ticket <b>response time </b> approaches
     reminder_resolution_text: Set reminder rule when a ticket <b>resolution time </b> approaches
+    error:
+      invalid_sla_target_time_format: Must be in the valid ISO 8601 duration format - P[n]DT[n]H[n]M
+      target_time_greater_than_1_year: Must be less than 1 year
+      target_time_less_than_15_minutes: Must be more than 15 minutes
   left: Left
   subscription:
     error:
@@ -5977,7 +5985,7 @@ en:
     api_rate_limit_extendable: "Extendable API rate limit"
     custom_roles: "Custom roles"
     custom_ssl: "Custom SSL"
-    enterprise_reports: "Enterprise reporting"
+    enterprise_reports: "Custom reporting"
     portal_customization: "Portal customization"
     everything_in_estate: "Everything in Estate"
     custom_mailbox: "Custom mail servers"
@@ -5998,7 +6006,7 @@ en:
     dynamic_email_alert: "Dynamic email notifications"
     linked_tickets: "Linked tickets"
     parent_child: "Parent-child ticketing"
-    agent_performance_report: "Agent performance report"
+    agent_performance_report: "Agent and group performance report"
     scheduled_reports: "Scheduled reports"
     custom_apps: "Custom apps"
     timesheets: "Time tracking"
@@ -6094,6 +6102,7 @@ en:
     multiple_mailboxes_desc: "Multiple mailbox"
     custom_translations: "Multilingual Ticket Forms"
     customer_journey: "Customer journey"
+    ticket_trends: "Ticket volume trend report"
   zendesk_account: "Zendesk Account Details"
   zendesk_import_files: "Select what to import?"
   file_url: Full XML Export URL
@@ -8149,6 +8158,7 @@ en:
       customer_interactions: "Customer interactions"
       resolution_status: "Resolution Status"
       first_response_status: "First Response Status"
+      every_response_status: "Every Response Status"
       internal_agent: Internal Agent
       internal_group: Internal Group
       tags: "Tags"

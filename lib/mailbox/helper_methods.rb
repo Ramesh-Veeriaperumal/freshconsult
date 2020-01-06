@@ -47,7 +47,7 @@ module Mailbox::HelperMethods
     end
 
     def nullify_error_type_on_reauth(mailbox)
-      if mailbox.changed.include?('password') && mailbox.changed.include?('refresh_token') && mailbox.error_type.present?
+      if mailbox.changed.include?('password') && mailbox.error_type.present?
         mailbox.error_type = nil
       end
     end

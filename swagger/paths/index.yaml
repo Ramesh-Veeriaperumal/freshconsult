@@ -745,5 +745,11 @@
   $ref: ./skills/crud.yaml
 
 #Freshcaller
-/admin/freshcaller:
-  $ref: ./admin/freshcaller/show.yaml
+/admin/freshcaller_account:
+  $ref: ./admin/freshcaller/crud.yaml
+/admin/freshcaller_account/link:
+  $ref: ./admin/freshcaller/link.yaml
+/admin/freshcaller_account/enable:
+  $ref: ./admin/freshcaller/enable.yaml
+/admin/freshcaller_account/disable:
+  $ref: ./admin/freshcaller/disable.yaml

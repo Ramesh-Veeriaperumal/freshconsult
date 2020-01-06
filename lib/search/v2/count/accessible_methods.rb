@@ -4,7 +4,6 @@ module Search
 	
       class AccessibleMethods
         include Search::Filters::QueryHelper
-        include Helpdesk::Accessible::ElasticSearchMethods
         include HelperMethods
 
         attr_accessor :model_class, :options, :visibility

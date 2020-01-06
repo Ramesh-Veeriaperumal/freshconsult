@@ -21,14 +21,6 @@ class SAAS::SubscriptionEventActions
                            :tam_default_fields, :smart_filter, :contact_company_notes, :unique_contact_identifier, :custom_dashboard, 
                            :personal_canned_response, :round_robin, :field_service_management, :multi_language, :article_versioning].freeze
 
-  DASHBOARD_PLANS = [SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],
-                     SubscriptionPlan::SUBSCRIPTION_PLANS[:forest],
-                     SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17],
-                     SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_17],
-                     SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_19],
-                     SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_omni_jan_19],
-                     SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_19]].freeze
-
   DROP  = "drop"
   ADD   = "add"
   DEFAULT_DAY_PASS_LIMIT = 3
@@ -59,7 +51,6 @@ class SAAS::SubscriptionEventActions
       reset_plan_features
       remove_chat_feature
       add_new_plan_features
-      handle_custom_dasboard_launch
       handle_collab_feature
       disable_chat_routing unless account.has_feature?(:chat_routing)
       handle_daypass if recalculate_daypass_enabled?
@@ -226,22 +217,6 @@ class SAAS::SubscriptionEventActions
     def plan_changed?
       (new_plan.subscription_plan_id != old_plan.subscription_plan_id) &&
         ::PLANS[:subscription_plans][new_plan.subscription_plan.canon_name.to_sym].present?
-    end
-
-    def handle_custom_dasboard_launch
-      is_dashboard_plan = dashboard_plan?
-        if is_dashboard_plan
-          CountES::IndexOperations::EnableCountES.perform_async({ :account_id => account.id })
-        else
-          [:admin_dashboard, :agent_dashboard, :supervisor_dashboard].each do |f|
-            account.features.countv2_reads.destroy
-            account.rollback(f)
-          end
-        end
-    end
-
-    def dashboard_plan?
-      DASHBOARD_PLANS.include?(new_plan.subscription_plan.name)
     end
 
     def handle_collab_feature

@@ -33,8 +33,4 @@ Rails.application.routes.draw do
   end
   
   filter :facebook
-
-  namespace :support do
-    match '/facebook_tab/redirect/:app_id' => 'facebook_tabs#redirect', :as => :facebook_tab_home, :app_id => nil
-  end
 end

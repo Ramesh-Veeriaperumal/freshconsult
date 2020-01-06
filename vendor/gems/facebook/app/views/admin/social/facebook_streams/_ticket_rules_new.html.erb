@@ -6,8 +6,9 @@
         <input id="social_ticket_rule__rule_type" name="social_ticket_rule[][rule_type]" type="hidden"
           value="<%= ticket_rule.filter_data[:rule_type] %>">
         <div class="mt20">
+          <div class="bold-text mb15 ml10"><%= t(".page_posts_label") %></div>
           <div class="rule-settings">
-            <div class="optimal-rules-container pl20">
+            <div class="optimal-rules-container pl10">
               <%= hidden_field_tag "default_keywords", "#{Facebook::Constants::DEFAULT_KEYWORDS.join(',')}"%>
               <div class="checkbox">
                 <label><%= check_box_tag 'social_ticket_rule[][import_visitor_posts]', true, ticket_rule.import_visitor_posts? %>&nbsp;
@@ -48,8 +49,40 @@
               </div>
             </div>
           </div>
+          <% if Account.current.fb_ad_posts_enabled? %>
+          <% is_ad_post_enabled = facebook_page.ad_post_stream.rules.present? ? true : false %>
+          <% ad_post_group_id = facebook_page.ad_post_stream.rules.present? ? facebook_page.ad_post_stream.rules.first[:action][:group_id] : 0 %>
+
+            <div class="mb15 bold-text"><%= t(".ad_posts_label") %></div>
+            <label>
+              <%= hidden_field_tag 'ad_posts[import_ad_posts]]', "false" %>
+              <%= check_box_tag 'ad_posts[import_ad_posts]', "true", is_ad_post_enabled %>
+              <span id="import_visitor_posts_text">
+                &nbsp;<%= t(".convert_ad_post_to_ticket") %>
+              </span>
+            </label>
+
+            <label id="import_visitor_posts_helptext" class="muted ml20">
+              <%= t(".convert_ad_post_helptext") %>
+            </label>
+
+            <div class="control-group mt10">
+              <label class="mt10 pl5">
+                <%= t('.assign_to_gp')%>
+                <%= select_tag "ad_posts[group_id]", options_for_select(current_account.groups.collect{ |c| [c.name, c.id]}.insert(0, '...'), ad_post_group_id), {:class => "select2-container span4 ml10"} %>
+              </label>
+            </div>
+
+          <% end %>
         </div>
       </div>
     </div>
   </div>
 </div>
+<script type="text/javascript">
+  (function ($) {
+    $(window).on('load', function() {
+      App.Admin.fbAdminConfig.init();
+    });
+  })(jQuery);
+</script>

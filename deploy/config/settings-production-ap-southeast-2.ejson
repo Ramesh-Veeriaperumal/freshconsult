@@ -983,7 +983,7 @@
         "callback_api_secret": "EJ[1:uM6u4kQlR04Ol0fIvDPXihJiJsuMnInoMu6+gJ1a4nU=:zBDLgEA0ayIxXkkIRA+8Fe1OVXAAnYDu:50KezmpsfPQeVoSSVCdJH3e3FoREPZNoi2gmiQMiT/4DHDrpaGdTolesNBw3IlE+ndgULyzgf1DQ9ldachVmnJaaOkDJqs8PQXd0H60t8mI=]",
         "_product_id": "112438380997492748",
         "_product_domain": "freshdesk.com",
-        "_freshid_request_timeout": 1,
+        "_freshid_request_timeout": 10,
         "_mobile_deep_link_protocol": "com.freshworks.freshdesk"
       },
       "database": {
@@ -1242,7 +1242,7 @@
         },
         "ocr_channel": {
           "jwt_secret": [
-
+            "EJ[1:OsQ+ws/3ZrOfjZfxHmFVJAfLftRLKFLDRGW70Z9NTBk=:VVldh4giGLjjfU/NBUshEhsR3Kw+AE0Q:/WmckJBBV9GD/ykP9w1VLJmvKV0FYOX26nallJGLDkNa3CygYMYtIw63iIN/nFg/]"
           ],
           "_auth_type": "jwt",
           "_jwt_default_expiry": "30"
@@ -1267,7 +1267,7 @@
         },
         "freshconnect": {
           "_auth_type": "jwt",
-          "jwt_secret": "EJ[1:EsYOmmmEAl7DuwbEDn5VclYLvVIEzxhD9HV9jUzHyEE=:arOYRg32LIM0h8OeWkt88x8iGCzheH/R:Z/rsIIlqxub6dl09ULZ7U5jGRZ5MUN2NebMBCF5QVCg8CAUshGmiOEYHCAIZKtios63uB/fqIT6GgWyB1rSDRNoEjU/qrEgGxXQI/dTq3ZvtkT1CO51lRiizlI0tGBuNNGWVSIynyJw=]",
+          "jwt_secret": "EJ[1:18E+pgqz9uIlbqhHw/SBHIEluFoa7T5tK9PoP98mCkE=:GCJ3FHo6naHQbb6O+eXjuZAEm7k9Hh2z:9bbtiRtb4mvYhH4Po4TqlllgyTFDHthZmGESy/5Hcfo2+h7y+LOqY4Y423/SK43nf+2P4BM+gltAfqYIkWVQcMNvBVmc2uXh2bfa4RKnNHRKPpuqyuG6o1wsJFp721oGcOTJb55o5Ps=]",
           "_jwt_default_expiry": "30"
         },
         "sherlock": {
@@ -1361,9 +1361,9 @@
         "_api_endpoint": "https://central.freshworksapi.com/collector"
       },
       "ocr_config": {
-        "jwt_secret": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:zyr3H8jroFkZmspKtnqY7WG63y9ZdWWv:S2coj3T+6C2ADDdSui4TzA==]",
-        "admin_jwt_secret": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:5Upmj0uU2dHloTXnBAAVd3JsWbJnUmr1:HAoijYDgY9vPQcocurE2ug==]",
-        "_api_endpoint": "",
+        "jwt_secret": "EJ[1:OsQ+ws/3ZrOfjZfxHmFVJAfLftRLKFLDRGW70Z9NTBk=:nY4W3WWs7kNckcUbbI56QHl83/e6BrpO:dEFpgZkNfBBZUOKhBYgACGZmQ/Su4Ahg2CUCI03TwfM47mPfRfM1AQbB0rDO3E8q]",
+        "admin_jwt_secret": "EJ[1:OsQ+ws/3ZrOfjZfxHmFVJAfLftRLKFLDRGW70Z9NTBk=:zvP1AbpS1J7NtsM4Zd37/AtOo7+ihVyQ:FWHRVuwQ866PpMLS4EpFEI9VvRIXpjYBZTZNRdx8aTNRTXtZ1UeEdqWjiLIJM9Xs]",
+        "_api_endpoint": "https://ap-southeast-2.ocr.freshdesk.com/api/v1/",
         "_auth_type": "jwt",
         "_jwt_default_expiry": "30"
       },

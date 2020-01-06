@@ -102,7 +102,6 @@ module Ember
           begin
             old_ticket_filter_count = Account.current.ticket_filters.count
             Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
-            Account.any_instance.stubs(:customer_signature_enabled?).returns(true)
             fields_count_before_installation = Account.current.ticket_fields.size
             total_fsm_fields_count = fsm_custom_field_to_reserve.size
             Account.current.subscription.update_attributes(additional_info: { field_agent_limit: 10 })
@@ -134,31 +133,6 @@ module Ember
           ensure
             destroy_fsm_fields_and_section
             Account.any_instance.unstub(:disable_old_ui_enabled?)
-            Account.any_instance.unstub(:customer_signature_enabled?)
-            destroy_fsm_dashboard_and_filters
-          end
-        end
-      end
-
-      def test_create_fsm_without_customer_signature_feature
-        enable_fsm do
-          begin
-            Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
-            Account.any_instance.stubs(:customer_signature_enabled?).returns(false)
-            fields_count_before_installation = Account.current.ticket_fields.size
-            total_fsm_fields_count = fsm_custom_field_to_reserve.size
-            Account.current.subscription.update_attributes(additional_info: { field_agent_limit: 10 })
-            Sidekiq::Testing.inline! do
-              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
-            end
-            assert_response 204
-            assert Account.current.field_service_management_enabled?
-            fields_count_after_installation = Account.current.ticket_fields.size
-            assert fields_count_after_installation == (total_fsm_fields_count + fields_count_before_installation)
-            assert_nil Account.current.ticket_fields.find { |x| x.name == "cf_fsm_customer_signature_#{Account.current.id}" }
-          ensure
-            Account.any_instance.unstub(:disable_old_ui_enabled?)
-            Account.any_instance.unstub(:customer_signature_enabled?)
             destroy_fsm_dashboard_and_filters
           end
         end
@@ -183,7 +157,6 @@ module Ember
         enable_fsm do
           begin
             Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
-            Account.any_instance.stubs(:customer_signature_enabled?).returns(true)
             Sidekiq::Testing.inline! do
               post :create, construct_params({ version: 'private' }, name: 'field_service_management')
               assert_response 204
@@ -196,11 +169,10 @@ module Ember
               assert_equal true, Account.current.picklist_values.find_by_value(SERVICE_TASK_TYPE).present?
               assert_equal true, Account.current.sections.find_by_label(SERVICE_TASK_SECTION).present?
               assert fields_count_after_destroy == fields_count_after_installation - 1
-              assert_blank Account.current.ticket_fields.where(name: FSM_SIGNATURE_TICKET_FIELD[0][:name] + "_#{Account.current.id}")
+              assert_blank Account.current.ticket_fields.where(name: CUSTOMER_SIGNATURE + "_#{Account.current.id}")
             end
           ensure
             Account.any_instance.unstub(:disable_old_ui_enabled?)
-            Account.any_instance.unstub(:customer_signature_enabled?)
           end
         end
       end
@@ -209,7 +181,6 @@ module Ember
         enable_fsm do
           begin
             Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
-            Account.any_instance.stubs(:customer_signature_enabled?).returns(true)
             Account.current.revoke_feature(:field_service_management)
             Sidekiq::Testing.inline! do
               post :create, construct_params({ version: 'private' }, name: 'field_service_management')
@@ -228,7 +199,6 @@ module Ember
             end
           ensure
             Account.any_instance.unstub(:disable_old_ui_enabled?)
-            Account.any_instance.unstub(:customer_signature_enabled?)
           end
         end
       end
@@ -236,7 +206,6 @@ module Ember
       def test_destroy_fsm_with_lp_and_privilege
         enable_fsm do
           begin
-            Account.any_instance.stubs(:customer_signature_enabled?).returns(true)
             Sidekiq::Testing.inline! do
               post :create, construct_params({ version: 'private' }, name: 'field_service_management')
               assert_response 204
@@ -260,7 +229,6 @@ module Ember
           ensure
             User.any_instance.unstub(:privilege?)
             User.unstub(:current)
-            Account.any_instance.unstub(:customer_signature_enabled?)
             Billing::Subscription.any_instance.unstub(:update_subscription)
           end
         end

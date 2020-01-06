@@ -11,6 +11,18 @@ class ApiSlaPolicyValidationTest < ActionView::TestCase
     Account.any_instance.unstub(:segments_enabled?)
   end
   
+  def test_value_valid_private
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:segments_enabled?).returns(false)
+    CustomRequestStore.store[:private_api_request] = true
+    sla = ApiSlaPolicyValidation.new({ applicable_to: { company_ids: ["Test 1", "Test 2"] } }, nil)
+    assert sla.valid?
+  ensure
+    CustomRequestStore.store[:private_api_request] = false
+    Account.unstub(:current)
+    Account.any_instance.unstub(:segments_enabled?)
+  end
+  
   def test_name_nil
     Account.stubs(:current).returns(Account.first)
     Account.any_instance.stubs(:segments_enabled?).returns(false)
@@ -188,11 +200,26 @@ class ApiSlaPolicyValidationTest < ActionView::TestCase
   def test_company_ids_array_has_invalid_data_type
     Account.stubs(:current).returns(Account.first)
     Account.any_instance.stubs(:segments_enabled?).returns(false)
+    CustomRequestStore.store[:private_api_request] = false
     sla = ApiSlaPolicyValidation.new({ applicable_to: { company_ids: ['123'] } }, nil)
     refute sla.valid?
     errors = sla.errors.full_messages
     assert errors.include?('Company ids array_datatype_mismatch')
   ensure
+    Account.unstub(:current)
+    Account.any_instance.unstub(:segments_enabled?)
+  end
+
+  def test_company_ids_array_has_invalid_data_type_private
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:segments_enabled?).returns(false)
+    CustomRequestStore.store[:private_api_request] = true
+    sla = ApiSlaPolicyValidation.new({ applicable_to: { company_ids: [123] } }, nil)
+    refute sla.valid?
+    errors = sla.errors.full_messages
+    assert errors.include?('Company ids array_datatype_mismatch')
+  ensure
+    CustomRequestStore.store[:private_api_request] = false
     Account.unstub(:current)
     Account.any_instance.unstub(:segments_enabled?)
   end

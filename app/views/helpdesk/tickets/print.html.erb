@@ -89,8 +89,17 @@
   <h3><%= t("comments") %></h3>  
   <div>
     <% @ticket_notes.each do |note| %>
+      <% user = note.user %>
       <div>
-        <%= t("by") %><strong><%= h(note.user.display_name) %></strong> <%= t("on") %>
+        <%= t("by") %>
+        <strong>
+          <% if user.nil? %>
+            <%= h(note.account.name) %>
+          <% else %>
+            <%= h(user.display_name) %>
+          <% end %>
+        </strong>
+        <%= t("on") %>
         <strong><%= formated_date(note.created_at)  %></strong> as 
         <strong>
         <% if note.private_note? && !note.broadcast_note? %>	 

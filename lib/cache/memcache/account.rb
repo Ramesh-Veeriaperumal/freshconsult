@@ -885,9 +885,9 @@ module Cache::Memcache::Account
 
     def sources
       if Account.current.compose_email_enabled?
-        ApiTicketConstants::SOURCES | [TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]]
+        TicketConstants::SOURCE_KEYS_BY_TOKEN.values | [TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]]
       else
-        ApiTicketConstants::SOURCES
+        TicketConstants::SOURCE_KEYS_BY_TOKEN.values
       end
     end
 

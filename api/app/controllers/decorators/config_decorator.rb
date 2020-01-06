@@ -10,6 +10,7 @@ class ConfigDecorator < ApiDecorator
     ret_hash[:zendesk_app_id] = zendesk_app_id
     ret_hash[:warnings] = warn_items
     ret_hash.merge!(update_billing_info)
+    ret_hash[:dkim_configuration] = dkim_configuration
     ret_hash
   end
 
@@ -67,5 +68,17 @@ class ConfigDecorator < ApiDecorator
 
   def zendesk_app_id
     ZendeskAppConfig::FALCON_APP_ID if redis_key_exists?(ZENDESK_IMPORT_APP_KEY)
+  end
+
+  def dkim_configuration
+    dkim_config = {
+      dkim_configuration_required: false
+    }
+    if dkim_configuration_required?
+      dkim_config[:dkim_configuration_required] = true
+      dkim_config[:dkim_configuration_link] = DKIM_LINK
+      dkim_config[:dkim_support_link] = DKIM_SUPPORT_LINK
+    end
+    dkim_config
   end
 end

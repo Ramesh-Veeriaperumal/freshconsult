@@ -5,6 +5,9 @@ module Concerns::ApplicationViewConcern
 
   INVOICE_GRACE_PERIOD = 15.days
 
+  DKIM_LINK = '/a/admin/email_configs/dkim'.freeze
+  DKIM_SUPPORT_LINK = 'https://support.freshdesk.com/support/solutions/articles/228151-how-do-i-enable-dkim-for-my-email-domain-'.freeze
+
   def formated_date(date_time, options={})
     default_options = {
       :format => :short_day_with_time,
@@ -113,5 +116,14 @@ module Concerns::ApplicationViewConcern
 
   def allow_billing_info_update?
     User.current.privilege?(:manage_account) && Account.current.launched?(:update_billing_info)
+  end
+
+  def dkim_configuration_required?
+    redis_key_exists?(
+      format(
+        MIGRATE_MANUALLY_CONFIGURED_DOMAINS,
+        account_id: current_account.id
+      )
+    )
   end
 end

@@ -28,7 +28,7 @@ class Solution::Draft < ActiveRecord::Base
   after_create :add_activity_new
 
   attr_accessible :title, :meta, :description
-  attr_accessor :discarding, :publishing, :keep_previous_author, :session, :cancelling, :unpublishing, :false_delete_attachment_trigger, :restored_version
+  attr_accessor :discarding, :publishing, :keep_previous_author, :session, :cancelling, :unpublishing, :false_delete_attachment_trigger, :restored_version, :skip_version_creation
 
   alias_attribute :modified_by, :user_id
   alias_attribute :body, :draft_body
@@ -105,6 +105,17 @@ class Solution::Draft < ActiveRecord::Base
     self.status = STATUS_KEYS_BY_TOKEN[:work_in_progress]
   end
 
+  def unlock!(skip_versioning = false)
+    unlock
+    if skip_versioning
+      self.skip_version_creation = true
+      self.save
+      self.skip_version_creation = false
+    else
+      self.save
+    end
+  end
+
   def populate_defaults
     self.status ||= STATUS_KEYS_BY_TOKEN[:work_in_progress]
     self.user_id = User.current && !keep_previous_author ? User.current.id : (user_id || article.user_id)
@@ -171,7 +182,8 @@ class Solution::Draft < ActiveRecord::Base
   end
 
   def self.my_drafts(portal_id, language_id)
-    where(user_id: User.current.id).joins(:article, category_meta: :portal_solution_categories).where('portal_solution_categories.portal_id = ? AND solution_articles.language_id = ?', portal_id, language_id)
+    my_drafts_scoper = where(user_id: User.current.id).joins(:article, category_meta: :portal_solution_categories).where('portal_solution_categories.portal_id = ? AND solution_articles.language_id = ?', portal_id, language_id)
+    Account.current.article_approval_workflow_enabled? ? my_drafts_scoper.joins("LEFT JOIN helpdesk_approvals ON solution_drafts.article_id = helpdesk_approvals.approvable_id AND helpdesk_approvals.account_id = #{Account.current.id} AND approvable_type = 'Solution::Article'").where('helpdesk_approvals.id is NULL') : my_drafts_scoper
   end
 
   private

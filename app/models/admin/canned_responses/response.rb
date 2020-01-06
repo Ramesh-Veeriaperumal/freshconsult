@@ -5,7 +5,6 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
   
   include Mobile::Actions::CannedResponse
   include Search::ElasticSearchIndex
-  include Helpdesk::Accessible::ElasticSearchMethods
 
   belongs_to_account
 

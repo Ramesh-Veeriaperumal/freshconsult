@@ -27,7 +27,7 @@
         </tr>
     </thead>
     <tbody>
-      <% if current_account.launched?(:dkim_email_service) %>
+      <% if current_account.dkim_email_service_enabled? %>
         <% if @dkim_records[domain_category.email_domain.to_sym].present? %>
           <% @dkim_records[domain_category.email_domain.to_sym].each do |record| %>
             <tr >  

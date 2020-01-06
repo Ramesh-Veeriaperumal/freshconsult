@@ -17,17 +17,29 @@ class SlaPolicyDelegator < BaseDelegator
   end
 
   def validate_applicable_to
-    errors[:applicable_to] = :blank if conditions.empty?
+    errors[:applicable_to] = :blank if conditions.empty? && !is_default
   end
 
   def validate_conditions
-    conditions.each do |field, val|
-      condition_hash = SLA_CONDITION[field.to_sym]
-      list_ids = Account.current.safe_send(condition_hash[:method])
-      list_ids = list_ids.map(&condition_hash[:attribute].to_sym) if condition_hash[:attribute].present?
-      invalid_ids = val - list_ids
-      add_errors("#{field.pluralize}","invalid_list",invalid_ids) if invalid_ids.present?
-    end
+    return unless errors[:applicable_to].blank?
+    @params[:applicable_to].each do |field, val|
+      list_values = invalid_values = []
+      if field.eql?('company_ids')
+        if private_api? # temporary hack for UI to handle company names instead of IDs
+          valid_list = Account.current.companies.where('name IN (?)', val)
+          list_values = valid_list.map(&:name)
+          conditions[field.singularize.to_sym] = valid_list.map(&:id)
+        else
+          list_values = Account.current.companies.where('id IN (?)', val).pluck('id')
+        end
+      else
+        condition_hash = SlaPolicyConstants::SLA_CONDITION[field.singularize.to_sym]
+        list_values = Account.current.safe_send(condition_hash[:method])
+        list_values = list_values.map(&condition_hash[:attribute].to_sym) if condition_hash[:attribute].present?
+      end
+      invalid_values = val - list_values
+      add_errors("#{field.pluralize}","invalid_list", invalid_values) if invalid_values.present?
+   end
   end
 
   def validate_escalation_level_params(level,err_key)

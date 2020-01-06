@@ -10,6 +10,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :account_id
   
   before_save :standardize_and_validate
+  after_update :reorder_policies, if: -> { account.sla_policy_revamp_enabled? && position_changed? }
 
   def standardize_and_validate
     standardize_escalations(self.escalations) if escalations_changed?
@@ -32,8 +33,6 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
 
   scope :active, :conditions => {:active => true }
   scope :inactive, :conditions => {:active => false }
-
-  default_scope order: 'is_default, position'
 
   attr_accessor :datatype
 
@@ -211,6 +210,16 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
     super options.merge(:root => 'helpdesk_sla_policy')
   end
 
+  def reorder_policies
+    old_position = position_change[0]
+    new_position = position_change[1]
+    reorder_from_higher_pos = old_position > new_position
+    reorder_by = reorder_from_higher_pos ? '+' : '-'
+    position_upper_index = reorder_from_higher_pos ? old_position : new_position
+    position_lower_index = reorder_from_higher_pos ? new_position : old_position
+    account.sla_policies.where("position >= #{position_lower_index} and position <= #{position_upper_index} and id != #{id}").update_all("position = position #{reorder_by} 1")
+  end
+
   def escalation_enabled?(ticket)
     sla_details.find_by_priority(ticket.priority).escalation_enabled?
   end
@@ -316,6 +325,11 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
       if ticket.safe_send(params[:level]) == params[:max_levels] && !ticket.safe_send(params[:escalated_field])
         ticket.update_attributes({params[:escalated_field] => true})
       end
+    end
+
+    # overriding the default method 'bottom_position_in_list' of gem 'acts_as_list'
+    def bottom_position_in_list
+      account.sla_policies.count
     end
 
 end

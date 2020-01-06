@@ -15,11 +15,11 @@ module SolutionConstants
 
   ARTICLE_SEO_DATA_FIELDS = %w[meta_title meta_description meta_keywords].freeze
   ARTICLE_LANGUAGE_FIELDS = %w[title description status
-                               seo_data attachments attachments_list cloud_file_attachments tags outdated].map(&:to_sym).freeze
+                               seo_data attachments attachments_list cloud_file_attachments tags outdated unlock].map(&:to_sym).freeze
 
   ARTICLE_ARRAY_FIELDS = %w[tags attachments attachments_list cloud_file_attachments].freeze
   ARTICLE_FIELDS = (%w[category_name folder_name description
-                      title status seo_data type folder_id session] | ARTICLE_ARRAY_FIELDS |
+                       title status seo_data type folder_id session unlock] | ARTICLE_ARRAY_FIELDS |
                    ['seo_data' => ARTICLE_SEO_DATA_FIELDS]).freeze
   ARTICLE_PROPERTY_FIELDS = %w[tags seo_data user_id folder_id type outdated].freeze
 
@@ -35,7 +35,7 @@ module SolutionConstants
   ARTICLE_EXPORT_HEADER_MASTER_LIST = %w[id title live status author_name author_id created_at tags modified_at recent_author_name language_code url hits thumbs_up thumbs_down feedback_count seo_title seo_description folder_id folder_name category_id category_name].freeze
   EXPORT_FIELDS = (%w[portal_id language article_fields] | FILTER_ATTRIBUTES).freeze
 
-  IGNORE_PARAMS = %w[folder_id attachments_list cloud_file_attachments].freeze
+  IGNORE_PARAMS = %w[folder_id attachments_list cloud_file_attachments unlock].freeze
 
   ARTICLE_ATTRIBUTES_TO_BE_STRIPPED = %w[title category_name folder_name].freeze
 

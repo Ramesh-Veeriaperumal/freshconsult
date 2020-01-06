@@ -2,6 +2,7 @@ class JWTAuthentication
   attr_accessor :token, :secret_key, :expire_at, :source, :payload, :errors, :error_options
 
   DEFAULT_EXPIRY = 1.hour
+  DEFAULT_LEEWAY = 0
   EXPIRE_AT_FORMAT = '%Y-%m-%dT%H:%M:%SZ'.freeze
 
   def initialize(source: '', token: '', secret_key: '')
@@ -26,10 +27,10 @@ class JWTAuthentication
   private
 
     def parse_payload
-      self.payload = JWT.decode(token, secret_key).first.symbolize_keys
-    rescue JWE::DecodeError, JWE::NotImplementedError, JWE::BadCEK, JWE::InvalidData, JWT::ImmatureSignature, JWT::ExpiredSignature, JWT::DecodeError => exception
+      self.payload = JWT.decode(token, secret_key, true, 'leeway' => leeway).first.symbolize_keys
+    rescue JWE::DecodeError, JWE::NotImplementedError, JWE::BadCEK, JWE::InvalidData, JWT::ImmatureSignature, JWT::DecodeError, JWT::InvalidIatError, JWT::ExpiredSignature => exception
       Rails.logger.error(exception)
-      assign_errors(key: 'token', message: 'decoding failed', error_options: { code: :unauthorized })
+      assign_errors(key: 'token', message: exception.message, error_options: { code: :unauthorized })
     end
 
     def expiry
@@ -39,8 +40,13 @@ class JWTAuthentication
       end
     end
 
+    def leeway
+      key = "#{source}_leeway".upcase
+      "JWTConstants::#{key}".constantize || DEFAULT_LEEWAY
+    end
+
     def set_expiry
-      @expire_at = (payload[:timestamp].to_datetime.utc + expiry).strftime(EXPIRE_AT_FORMAT)
+      @expire_at = Time.at(payload[:exp]).utc.to_datetime.strftime(EXPIRE_AT_FORMAT)
     end
 
     def assign_errors(custom_errors: nil, error_options: nil, key: nil, message: nil)

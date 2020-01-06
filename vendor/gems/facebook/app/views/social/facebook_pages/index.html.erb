@@ -25,11 +25,6 @@ if(jQuery('#got_pages').length){
           <!-- <div>
             <%=t('facebook.realtime',:realtime_url => @fb_client.authorize_url(session[:state])).html_safe%>
           </div> -->
-          <% if pages["tab"] && pages["feature"] %>
-            <div class="alert">
-              <%= t('facebook_tab.page_tab_auth',:page_tab_url => @fb_client_page_tab.authorize_url(session[:state])).html_safe %>
-            </div>
-          <%end%>
         <br/>
         <div class="list-page-body"> 
           <table class="table table-striped">

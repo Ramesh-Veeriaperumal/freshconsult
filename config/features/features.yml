@@ -51,7 +51,7 @@
       :round_robin: 46
       :custom_ssl: 47
       :custom_roles: 48
-      :facebook_page_tab: 49
+      :g10_dummy: 49
       :chat_routing: 50
       :dynamic_sections: 51
       :helpdesk_restriction_toggle: 52
@@ -449,7 +449,7 @@
   :freshfone_gv_forward: false
   :chat: false
   :freshreports_analytics: false
-  :disable_old_reports: false
+  :disable_old_reports: true
   :tokenize_emoji: false
   :report_field_regenerate: false
   :reports_regenerate_data: false

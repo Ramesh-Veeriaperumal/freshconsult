@@ -755,6 +755,7 @@ Helpkit::Application.routes.draw do
     resources :ticket_filters, controller: 'ember/ticket_filters', only: [:index, :show, :create, :update, :destroy]
     resources :contact_fields, controller: 'ember/contact_fields', only: :index
     resources :company_fields, controller: 'ember/company_fields', only: :index
+    resources :sla_policies, controller: 'ember/sla_policies', only: [:index, :show, :update, :create, :destroy]
     resources :ticket_templates, controller: 'ember/ticket_templates', only: [:show, :index]
 
     resources :twitter_handles, controller: 'ember/twitter_handles', only: [:index] do

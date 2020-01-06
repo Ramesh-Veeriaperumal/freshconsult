@@ -3,16 +3,26 @@
 require 'mail'
 Mail::Message.class_eval do
   include Email::Mailbox::GmailOauthHelper
+  include Email::Mailbox::Utils
+  include Email::Mailbox::Constants
 
     def deliver
       inform_interceptors
       response = ""
-      if delivery_handler
-        response = delivery_handler.deliver_mail(self) { do_delivery }
-      else
-        response = do_delivery
+      begin
+        if delivery_handler
+          response = delivery_handler.deliver_mail(self) { do_delivery }
+        else
+          response = do_delivery
+        end
+      rescue Net::SMTPAuthenticationError => e
+        Rails.logger.info "Net::SMTPAuthenticationError while sending email - #{e.message}"
+        update_mailbox_error_type
+      rescue StandardError => e
+        Rails.logger.info "SMTP error while sending email #{e.message}"
       end
-      retry_mail if response.nil? && oauth_retry?
+
+      retry_mail if response.blank? && oauth_retry?
       Rails.logger.info "Email successfully relayed to SMTP mail server. Response from mail server: #{response.string}" if response.present? && response.class == Net::SMTP::Response
       inform_observers
       self
@@ -42,7 +52,7 @@ Mail::Message.class_eval do
     end
 
       def oauth_retry?
-        self.delivery_method.settings[:authentication] == Email::Mailbox::Constants::OAUTH && !failed_mailbox?(self.from)
+        self.delivery_method.settings[:authentication] == Email::Mailbox::Constants::OAUTH && !failed_mailbox?(self.from.try(:[], 0))
       end
 
       def retry_mail

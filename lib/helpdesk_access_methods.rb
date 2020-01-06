@@ -1,5 +1,4 @@
 module HelpdeskAccessMethods
-	include Helpdesk::Accessible::ElasticSearchMethods
 	def accessible_elements(items,filter_query_hash)
     Sharding.run_on_slave do
 			items.find(:all, filter_query_hash).uniq

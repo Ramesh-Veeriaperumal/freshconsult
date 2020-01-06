@@ -4,9 +4,8 @@ class Admin::AccountAdditionalSettingsControllerTest < ActionController::TestCas
     @agent.stubs(:privilege?).returns(true)
     post :enable_skip_mandatory, version: 'private', format: 'json'
     assert_response 204
+    @account.account_additional_settings.reload
     assert_equal true, @account.account_additional_settings.additional_settings[:skip_mandatory_checks]
-    @account.account_additional_settings.additional_settings[:skip_mandatory_checks] = true
-    @account.account_additional_settings.save
     post :disable_skip_mandatory, version: 'private', format: 'json'
     assert_response 204
     @account.account_additional_settings.reload

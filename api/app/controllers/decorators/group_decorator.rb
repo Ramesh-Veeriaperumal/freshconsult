@@ -33,7 +33,7 @@ class GroupDecorator < ApiDecorator
       group_type: @group_type_mapping[record.group_type],
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc)
-    }.merge(record.round_robin_enabled? ? { auto_ticket_assign: auto_ticket_assign } : {})
+    }.merge(round_robin_enabled? ? { auto_ticket_assign: auto_ticket_assign } : {})
   end
 
   def to_restricted_hash
@@ -66,8 +66,12 @@ class GroupDecorator < ApiDecorator
     record.agent_groups.map(&:user_id).uniq
   end
 
+  def agent_user_ids
+    record.agent_groups.loaded? ? agent_ids_from_loaded_record : agent_ids_from_db
+  end
+
   def agent_ids
-    (@agent_mapping_ids || (@agent_groups_ids && @agent_groups_ids[record.id]) || record.agent_groups.pluck(:user_id) || []).compact.uniq
+    (@agent_mapping_ids || (@agent_groups_ids && @agent_groups_ids[record.id]) || agent_user_ids || []).compact.uniq
   end
 
   def business_hour_id
