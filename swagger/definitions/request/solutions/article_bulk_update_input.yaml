@@ -16,14 +16,23 @@ properties:
         description: Author id of the articles
       status:
         type: integer
-        description: Status value to be updated for article
         enum: [2]
         description: >
-          status:
-             * `published` - 2
+          Status value to be updated for article
+            * `published` - 2
       outdated:
         type: boolean
         description: Status of the translation of the article
+      approval_status:
+        type: integer
+        enum: [1,2]
+        description:  >
+          Approval status value to be updated for the article
+            * `in_review` - 1
+            * `approved` - 2
+      approver_id:
+        type: integer
+        description: User id of the agent to whom the articles were sent for approval
       tags:
         type: array
         description: Array of tags to be mapped to the articles

@@ -2,6 +2,7 @@ module SolutionBulkActionConcern
   extend ActiveSupport::Concern
 
   include SolutionConcern
+  include SolutionApprovalConcern
 
   # article methods
   def validate_bulk_update_article_params
@@ -9,7 +10,7 @@ module SolutionBulkActionConcern
     @validation_klass = 'ArticleBulkUpdateValidation'.freeze
     return unless validate_body_params
 
-    options = { folder_id: cname_params[:properties][:folder_id], tags: cname_params[:properties][:tags], agent_id: cname_params[:properties][:agent_id], portal_id: params[:portal_id] }
+    options = { folder_id: cname_params[:properties][:folder_id], tags: cname_params[:properties][:tags], agent_id: cname_params[:properties][:agent_id], portal_id: params[:portal_id], approval_status: cname_params[:properties][:approval_status], approver_id: cname_params[:properties][:approver_id], status: cname_params[:properties][:status] }
     @delegator = ApiSolutions::ArticleBulkUpdateDelegator.new(options)
     return true if @delegator.valid?(action_name.to_sym)
 
@@ -27,6 +28,7 @@ module SolutionBulkActionConcern
       update_tags(article)
       update_author(article)
       update_outdated(article)
+      raise 'Review request failed!' unless update_send_for_review(article)
       raise 'Status updation failed!' if !update_status(article)
       article_meta.save!
       article.save! # Dummy save to trigger publishable callbacks
@@ -96,16 +98,29 @@ module SolutionBulkActionConcern
 
   def update_status(article)
     if cname_params[:properties][:status] == Solution::Constants::STATUS_KEYS_BY_TOKEN[:published]
-      if !article.draft.present? || article.draft.locked? || article.solution_folder_meta.is_default?
-        return false
-      else
-         article.draft.publish! if article.draft.present?
+      return false if article.draft.blank? || article.draft.locked? || article.solution_folder_meta.is_default?
+
+      # validate_publish_approved_solution_permission
+      if Account.current.article_approval_workflow_enabled? && User.current.privilege?(:publish_approved_solution) && !User.current.privilege?(:publish_solution)
+        return false if article.helpdesk_approval.nil? || article.helpdesk_approval.approval_status != Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]
       end
+      article.draft.publish! if article.draft.present?
     end
-    return true
+    true
   end
 
   def update_outdated(article)
     article.outdated = cname_params[:properties][:outdated] if cname_params[:properties].key?(:outdated)
+  end
+
+  def update_send_for_review(article)
+    if cname_params[:properties].key?(:approval_status) && cname_params[:properties].key?(:approver_id)
+      return false if article.draft.blank? || article.draft.locked? || article.solution_folder_meta.is_default?
+
+      helpdesk_approval = get_or_build_approval_record(article)
+      get_or_build_approver_mapping(helpdesk_approval, cname_params[:properties][:approver_id])
+      helpdesk_approval.save!
+    end
+    true
   end
 end
