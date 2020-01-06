@@ -1,6 +1,7 @@
 class Admin::DkimConfigurationsController < Admin::AdminController
 
   include Dkim::Methods
+  include Admin::DkimConfigurationsHelper
 
   before_filter :access_denied,              :unless => :require_feature_and_privilege
   before_filter :load_dkim_configured_count, :only => [:index, :create]
@@ -11,7 +12,7 @@ class Admin::DkimConfigurationsController < Admin::AdminController
   MAX_CAP = 6.hours
 
   def index
-    if current_account.launched?(:dkim_email_service)
+    if current_account.dkim_email_service_enabled?
       response = configured_domains_from_email_service
       if es_response_success?(response[:status])
         @dkim_records = construct_dkim_hash(JSON.parse(response[:text])['result'])
@@ -26,7 +27,7 @@ class Admin::DkimConfigurationsController < Admin::AdminController
 
   def create
     if @domain_category
-      if current_account.launched?(:dkim_email_service)
+      if current_account.dkim_email_service_enabled?
         @dkim_records = Dkim::ConfigureDkimRecord.new(@domain_category).configure_domain_with_email_service
         if @dkim_records.nil?
           flash[:notice] = t('email_configs.dkim.config_fail')
@@ -51,7 +52,7 @@ class Admin::DkimConfigurationsController < Admin::AdminController
   end
 
   def verify_email_domain
-    if current_account.launched?(:dkim_email_service)
+    if current_account.dkim_email_service_enabled?
       @dkim_records = Dkim::ValidateDkimRecord.new(@domain_category).validate_with_email_service if @domain_category.present?
       flash[:notice] = t('email_configs.dkim.verify_fail') if @dkim_records.nil?
     else
@@ -111,6 +112,8 @@ class Admin::DkimConfigurationsController < Admin::AdminController
     end
 
     def check_advanced_feature
+      return if manually_configured_domain?(@domain_category)
+
       return if current_account.advanced_dkim_enabled? and current_account.subscription.state != "trial"
 
       return if @dkim_count < OutgoingEmailDomainCategory::MAX_DKIM_ALLOWED and (current_account.basic_dkim_enabled? or current_account.dkim_enabled?)

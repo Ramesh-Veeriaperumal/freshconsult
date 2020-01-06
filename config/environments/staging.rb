@@ -51,7 +51,7 @@ Helpkit::Application.configure do
   # config.assets.precompile += %w( search.js )
 
   # Disable delivery errors, bad email addresses will be ignored
-  # config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = true
 
   # Enable threaded mode
   # config.threadsafe!
@@ -92,4 +92,3 @@ Helpkit::Application.configure do
   end
 
 end
-Byebug.start_server 'localhost', ENV.fetch('BYEBUG_SERVER_PORT', 1048).to_i if ENV['HELPKIT_TEST_SETUP_ENABLE'] == '1'

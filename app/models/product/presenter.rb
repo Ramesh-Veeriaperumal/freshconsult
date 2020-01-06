@@ -24,6 +24,14 @@ class Product < ActiveRecord::Base
     t.add :email_configs, template: :central_publish
   end
 
+  # if anyone want to add product as association in other models please use this template instead whole central publish
+  api_accessible :product_as_association do |g|
+    g.add :id
+    g.add :name
+    g.add :account_id
+    g.add proc { |x| x.portal.id unless x.portal.nil? }, as: :portal_id
+  end
+
   def self.central_publish_enabled?
     Account.current.product_central_publish_enabled?
   end

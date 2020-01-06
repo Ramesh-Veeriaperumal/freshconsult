@@ -497,4 +497,15 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     Rails.env.unstub(:production?)
     Account.current.rollback(:disable_supress_logs)
   end
+
+  def test_account_with_manual_dkim_configuration_banner
+    ConfigDecorator.any_instance.stubs(:dkim_configuration_required?).returns(true)
+    Ember::BootstrapControllerTest.any_instance.stubs(:dkim_configuration_required?).returns(true)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal, true))
+  ensure
+    ConfigDecorator.any_instance.unstub(:dkim_configuration_required?)
+    Ember::BootstrapControllerTest.any_instance.unstub(:dkim_configuration_required?)
+  end
 end

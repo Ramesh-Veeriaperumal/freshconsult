@@ -326,6 +326,15 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     additional_info[:nr_escalation_level] = value
   end
 
+  def nr_violated
+    additional_info[:nr_violated]
+  end
+
+  # will be set to true if a single response by agent is violated
+  def nr_violated=(value)
+    additional_info[:nr_violated] = value
+  end
+
   def override_exchange_model(_action)
     changes = attribute_changes('text_tc02')
     ticket.model_changes = changes if changes.present?

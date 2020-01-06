@@ -9,10 +9,7 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   before_filter :social_revamp_enabled?
   before_filter :fb_client,         :only => [:index, :edit]
   before_filter :set_session_state, :only => [:index]
-  before_filter :add_page_tab,      :only => [:edit], :if => :facebook_page_tab?
   before_filter :load_item,         :only => [:edit, :update]
-  before_filter :load_page_tab,     :only => [:edit]
-  before_filter :handle_tab,        :only => :update, :if => [:tab_edited?, :facebook_page_tab?]
 
   def index
     @facebook_pages    = enabled_facebook_pages
@@ -26,7 +23,6 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   
   def update
     #Update Page Attributes - Product/DM Thread Time
-    
     #params[:social_facebook_page] will be empty when there are no products and DM is not enabled
     page_updated = params[:social_facebook_page] ? @facebook_page.update_attributes(page_params) : true
     if page_updated
@@ -51,25 +47,6 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   
   private
   
-  def  add_page_tab
-    if params[:tabs_added]
-      begin
-        @fb_client_tab.page_tab_add(params[:tabs_added])
-      rescue Exception => e
-        flash[:error] = t('facebook.not_authorized')
-      end
-    end
-  end
-  
-  def handle_tab
-    fb_page_tab.execute("add") if params[:add_tab]
-    flash[:error] = t('facebook_tab.no_contact') unless fb_page_tab.execute("update",params[:custom_name])
-  end
-  
-  def tab_edited?
-    params[:custom_name]
-  end
-  
   def authdone
     @associated_fb_pages = @fb_client.auth(params[:code])
   rescue Exception => e
@@ -85,7 +62,6 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
     else
       @fb_client = make_fb_client(redirect_url, admin_social_facebook_streams_url)
     end
-    @fb_client_tab = Facebook::Oauth::FbClient.new(fb_call_back_url(params[:action]), true)
   end
 
   def enabled_facebook_pages
@@ -102,15 +78,6 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
       end
     end
     page_hash
-  end
-  
-  def load_page_tab
-    @page_tab     = fb_page_tab.execute("get") if @facebook_page.page_token_tab
-    @page_tab_url = @fb_client_tab.authorize_url(session[:state], true)
-  end
-  
-  def fb_page_tab
-    Facebook::PageTab::Configure.new(@facebook_page, "page_tab")
   end
   
   def scoper
@@ -168,8 +135,9 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   end
 
   def update_ad_rule(ad_post_args)
+    ad_post_args = ad_post_args.symbolize_keys
     ad_stream = @facebook_page.ad_post_stream
-    if ad_post_args[:import_ad_posts]
+    if ad_post_args[:import_ad_posts].to_bool
       begin
         ad_stream = ad_stream.facebook_ticket_rules.present? ? update_ad_ticket_rules(ad_post_args, ad_stream) : build_ad_ticket_rule(ad_post_args, ad_stream)
       rescue StandardError => error
@@ -184,15 +152,18 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
 
   def update_ad_ticket_rules(ad_post_args, ad_stream)
     ad_stream.facebook_ticket_rules.first.attributes = { action_data: {
-      group_id: ad_post_args[:group_id],
-      prooduct_id: ad_post_args[:product_id]
+      group_id:   (ad_post_args[:group_id].to_i if ad_post_args[:group_id].present?),
+      product_id: (params[:social_facebook_page][:product_id].to_i if params[:social_facebook_page][:product_id].present?)
     } }
     ad_stream
   end
 
   def build_ad_ticket_rule(ad_post_args, ad_stream)
     ad_stream.facebook_ticket_rules.build(filter_data: { rule_type: RULE_TYPE[:ad_post] },
-                                          action_data: { group_id: ad_post_args[:group_id], product_id: ad_post_args[:product_id] })
+                                          action_data: {
+                                            group_id:   (ad_post_args[:group_id].to_i if ad_post_args[:group_id].present?),
+                                            product_id: (params[:social_facebook_page][:product_id].to_i if params[:social_facebook_page][:product_id].present?)
+                                          })
     ad_stream
   rescue StandardError => error
     ::Rails.logger.error("Error while trying to build ticket rules for ad posts, #{error.message}, #{ad_post_args.inspect}, #{ad_stream.id}")
@@ -222,10 +193,6 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   
   def fb_call_back_url(action = "index") 
     url_for(:host => current_account.full_domain, :action => action)
-  end
-  
-  def facebook_page_tab?
-    current_account.features?(:facebook_page_tab)
   end
   
   def social_revamp_enabled?

@@ -1,6 +1,13 @@
 require Rails.root.join('spec', 'support', 'products_helper.rb')
 module HelpWidgetsTestHelper
   include ProductsHelper
+
+  EXP_CONSTANTS = {
+    none: 1,
+    lesser: 2,
+    greater: 3
+  }.freeze
+
   def create_widget(options = {})
     if options[:product_id]
       product_id = options[:product_id]
@@ -24,6 +31,22 @@ module HelpWidgetsTestHelper
     help_widget.help_widget_solution_categories.build(solution_category_meta_id: category.id)
     help_widget.save
     category
+  end
+
+  def set_user_login_headers(name: 'Sagara', email: 'sagara@desert.com', exp: (Time.now.utc + 2.hours), additional_payload: {}, additional_operations: { remove_key: nil })
+    @account.launch :help_widget_login unless Account.current.help_widget_login_enabled?
+    secret_key = SecureRandom.hex
+    @account.stubs(:help_widget_secret).returns(secret_key)
+    remove_key = additional_operations[:remove_key]
+    exp = exp.to_i if exp.instance_of?(Time)
+    payload = { name: name, email: email, exp: exp }.merge!(additional_payload).reject { |key| key == remove_key }
+    @request.env['HTTP_X_WIDGET_AUTH'] = JWT.encode(payload, secret_key)
+    exp
+  end
+
+  def unset_login_support
+    @account.rollback(:help_widget_login) if Account.current.help_widget_login_enabled?
+    @account.unstub(:help_widget_secret)
   end
 
   def settings_hash(options = {})
@@ -80,7 +103,7 @@ module HelpWidgetsTestHelper
   end
 
   def widget_hash(widget)
-    widget_hash = {
+    {
       name: widget.name,
       product_id:  widget.product_id,
       settings: widget.settings,
@@ -90,7 +113,7 @@ module HelpWidgetsTestHelper
   end
 
   def widget_bootstrap_pattern(user, expire_at, email = nil)
-    user_hash = {
+    {
       user: {
         id: user.id,
         name: user.name,
@@ -118,7 +141,7 @@ module HelpWidgetsTestHelper
   end
 
   def widget_pattern(widget)
-    widget_hash = {
+    {
       id: widget.id,
       product_id: widget.product_id,
       name: widget.name,

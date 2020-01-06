@@ -1,0 +1,57 @@
+get:
+  tags: [Freshcaller Account]
+  summary: Show
+  description: Return account details if a freshcaller account is linked
+  responses:
+    200:
+      description: Success gives the details of the freshcaller account
+      schema:
+        $ref: '#/definitions/freshcaller'
+    204:
+      description: Success returns no content when not linked with freshcaller
+
+post:
+  tags: [Freshcaller Account]
+  summary: Signup
+  description: Return account details if a freshcaller account is created
+  responses:
+    200:
+      description: Success gives the details of the freshcaller account
+      schema:
+        $ref: '#/definitions/freshcaller'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+
+put:
+  tags: [Freshcaller Account]
+  summary: Update Agents
+  description: Creates or removes freshcaller agents based on the given agent_ids
+  parameters:
+    - name: data
+      in: body
+      schema:
+        $ref: '#/definitions/freshcaller_account_update'
+  responses:
+    204:
+      description: Success returns no content when not linked with freshcaller
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+
+delete:
+  tags: [Freshcaller Account]
+  summary: Disconnect
+  description: Deletes the freshcaller account and the integration
+  responses:
+    204:
+      description: Success gives the details of the freshcaller account
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+

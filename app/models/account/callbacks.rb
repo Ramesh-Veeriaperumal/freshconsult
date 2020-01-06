@@ -15,7 +15,7 @@ class Account < ActiveRecord::Base
   before_update :toggle_private_inline_feature, if: :secure_attachments_feature_changed?
   before_destroy :backup_changes, :make_shard_mapping_inactive
 
-  after_create :make_current, :populate_features, :change_shard_status
+  after_create :make_current, :change_shard_status, :populate_features
   after_update :change_dashboard_limit, :if => :field_service_management_enabled_changed?
   after_update :change_shard_mapping, :update_default_business_hours_time_zone,
                :update_google_domain, :update_route_info, :update_users_time_zone
@@ -46,7 +46,7 @@ class Account < ActiveRecord::Base
 
   after_commit :enable_fresh_connect, on: :create, unless: :is_anonymous_account
   after_commit :enable_searchv2, :enable_count_es, :set_falcon_preferences, on: :create
-  after_commit :disable_searchv2, :disable_count_es, on: :destroy
+  after_commit :disable_searchv2, on: :destroy
   after_commit :update_sendgrid, on: :create
   after_commit :remove_email_restrictions, on: :update , :if => :account_verification_changed?
 
@@ -576,18 +576,10 @@ class Account < ActiveRecord::Base
     def enable_count_es
       self.launch(:count_service_es_writes) if redis_key_exists?(SEARCH_SERVICE_COUNT_ES_WRITES_ENABLED)
       self.launch(:count_service_es_reads) if redis_key_exists?(SEARCH_SERVICE_COUNT_ES_READS_ENABLED)
-      CountES::IndexOperations::EnableCountES.perform_async({ :account_id => self.id }) 
     end
 
     def disable_searchv2
       SearchV2::Manager::DisableSearch.perform_async(account_id: self.id)
-    end
-
-    def disable_count_es
-     [:admin_dashboard, :agent_dashboard, :supervisor_dashboard].each do |f|
-        self.rollback(f)
-      end
-      #CountES::IndexOperations::DisableCountES.perform_async({ :account_id => self.id, :shard_name => ActiveRecord::Base.current_shard_selection.shard }) unless dashboard_new_alias?
     end
 
     def update_sendgrid

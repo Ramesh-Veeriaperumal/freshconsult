@@ -15,8 +15,7 @@ class CannedResponsesController < ApiApplicationController
   MAX_IDS_COUNT = 10
 
   def folder_responses
-    @items = accessible_from_esv2('Admin::CannedResponses::Response', { size: 300 }, default_visiblity, 'raw_title', @folder.id)
-    @items = fetch_ca_responses_from_db(@folder.id) if @items.nil?
+    @items = fetch_ca_responses_from_db(@folder.id)
     # pagination is handled here because load_objects is overridden here for the index action
     @items_count = @items.count
     @items = paginate_items(@items)

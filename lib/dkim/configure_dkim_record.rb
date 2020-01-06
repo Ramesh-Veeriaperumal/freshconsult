@@ -1,6 +1,8 @@
 class Dkim::ConfigureDkimRecord
 
   include Dkim::Methods
+  include Redis::OthersRedis
+  include Redis::Keys::Others
 
   attr_accessor :domain_category, :dkim_result, :current_account
 
@@ -24,10 +26,17 @@ class Dkim::ConfigureDkimRecord
     response = Dkim::EmailServiceHttp.new(current_account.id, domain_category.email_domain).configure_domain
     if es_response_success?(response[:status])
       dkim_records = construct_dkim_hash([JSON.parse(response[:text])])
-      update_domain_category
+      update_domain_category_from_email_service
+      remove_domain_from_redis(domain_category.email_domain) if ismember?(
+        format(
+          MIGRATE_MANUALLY_CONFIGURED_DOMAINS,
+          account_id: current_account.id
+        ),
+        domain_category.email_domain
+      ) && domain_category.category == 5
       dkim_records
     end
-  end 
+  end
 
   private
     def add_whitelabel_to_domain
@@ -86,8 +95,14 @@ class Dkim::ConfigureDkimRecord
       end
     end
 
+    # will be removed once migrated to email service
     def update_domain_category
       domain_category.category = nil
+      domain_category.status = OutgoingEmailDomainCategory::STATUS['unverified']
+      domain_category.save!
+    end
+
+    def update_domain_category_from_email_service
       domain_category.status = OutgoingEmailDomainCategory::STATUS['unverified']
       domain_category.save!
     end

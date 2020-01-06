@@ -113,6 +113,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def update_response_violation
       schema_less_note.response_violated = (notable.nr_due_by < (created_at || Time.zone.now))
+      notable.nr_violated = schema_less_note.response_violated unless notable.nr_violated?
       schema_less_note
     end
 
@@ -507,6 +508,6 @@ class Helpdesk::Note < ActiveRecord::Base
     end   
 
     def update_sla_violation?
-      Account.current.next_response_sla_enabled? && notable.nr_due_by.present? && !private? && notable.agent_performed?(user)
+      Account.current.next_response_sla_enabled? && notable.nr_due_by.present? && !private? && notable.agent_performed?(user) && !notable.outbound_email?
     end
 end

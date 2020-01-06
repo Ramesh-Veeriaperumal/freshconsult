@@ -3,11 +3,14 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
   self.primary_key = :id
   
   serialize :sla_target_time, HashWithIndifferentAccess
+  # Temporary - skip_iso_format_conversion for updates from private API
   attr_accessor :skip_iso_format_conversion
 
   belongs_to_account
   belongs_to :sla_policy, :class_name => "Helpdesk::SlaPolicy"
+
   before_validation :populate_sla_target_time, unless: :skip_iso_format_conversion
+  validate :valid_sla_target_time?, if: :sla_policy_revamp_enabled?
   before_create :set_account_id
 
   before_save :check_sla_time
@@ -103,26 +106,37 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
 
   SLA_TARGETS_COLUMN_MAPPINGS = Hash[*SLA_TARGETS.map { |i| [i[0], i[1]] }.flatten]
   # SLA_TIME_OPTIONS = SLA_TIME.map { |i| [i[1], i[2]] }
+  SLA_TARGETS = [
+    ['first_response_time', 'response_time'],
+    ['every_response_time', 'next_response_time'],
+    ['resolution_due_time', 'resolution_time']
+  ].freeze
+  SLA_TARGETS_COLUMN_MAPPINGS = Hash[*SLA_TARGETS.map { |i| [i[0], i[1]] }.flatten]
   SLA_TIME_BY_KEY = Hash[*SLA_TIME.map { |i| [i[1], i[0]] }.flatten]
   SLA_TIME_BY_TOKEN = Hash[*SLA_TIME.map { |i| [i[0], i[1]] }.flatten]
   SLA_TIME_PERIOD_SUFFIX = Hash[*SLA_TIME_PERIODS.map { |i| [i[0], i[1]] }.flatten]
 
+  SLA_TARGET_TIME_REGEX = /^P(?=.)(?<day>\d+D)?(T(?=\d+[HM])(?<hour>\d+H)?(?<minute>\d+M)?)?$/.freeze
+
   default_scope :order => "priority DESC"
 
   def calculate_due_by(created_time, time_zone_now, total_time_worked, calendar)
-    Rails.logger.debug "SLA :::: Account id #{self.account_id} :: Calculating due by :: created_time :: #{created_time} resolution_time :: #{resolution_time} total_time_worked :: #{total_time_worked} calendar :: #{calendar.id} - #{calendar.name} override_bhrs :: #{override_bhrs}"
-    calculate_due(created_time, time_zone_now, resolution_time, total_time_worked, calendar)
+    target_time = sla_policy_revamp_enabled? ? sla_target_time[:resolution_due_time] : resolution_time
+    Rails.logger.debug "SLA :::: Account id #{account_id} :: Calculating due by :: created_time :: #{created_time} resolution_time :: #{target_time} total_time_worked :: #{total_time_worked} calendar :: #{calendar.id} - #{calendar.name} override_bhrs :: #{override_bhrs}"
+    calculate_due(created_time, time_zone_now, target_time, total_time_worked, calendar)
   end
 
   def calculate_frDue_by(created_time, time_zone_now, total_time_worked, calendar)
-    Rails.logger.debug "SLA :::: Account id #{self.account_id} :: Calculating fr due by :: created_time :: #{created_time} response_time :: #{response_time.seconds} total_time_worked :: #{total_time_worked} calendar :: #{calendar.id} - #{calendar.name} override_bhrs :: #{override_bhrs}"
-    calculate_due(created_time, time_zone_now, response_time.seconds, total_time_worked, calendar)
+    target_time = sla_policy_revamp_enabled? ? sla_target_time[:first_response_time] : response_time.seconds
+    Rails.logger.debug "SLA :::: Account id #{account_id} :: Calculating fr due by :: created_time :: #{created_time} response_time :: #{target_time} total_time_worked :: #{total_time_worked} calendar :: #{calendar.id} - #{calendar.name} override_bhrs :: #{override_bhrs}"
+    calculate_due(created_time, time_zone_now, target_time, total_time_worked, calendar)
   end
 
   def calculate_nr_dueBy(created_time, time_zone_now, total_time_worked, calendar)
-    unless next_response_time.nil?
-      Rails.logger.debug "SLA :::: Account id #{self.account_id} :: Calculating nr due by :: created_time :: #{created_time} next response_time :: #{next_response_time.seconds} total_time_worked :: #{total_time_worked} calendar :: #{calendar.id} - #{calendar.name} override_bhrs :: #{override_bhrs}"
-      calculate_due(created_time, time_zone_now, next_response_time.seconds, total_time_worked, calendar)
+    target_time = sla_policy_revamp_enabled? ? sla_target_time[:every_response_time].presence : next_response_time.try(:seconds)
+    unless target_time.nil?
+      Rails.logger.debug "SLA :::: Account id #{account_id} :: Calculating nr due by :: created_time :: #{created_time} next response_time :: #{target_time} total_time_worked :: #{total_time_worked} calendar :: #{calendar.id} - #{calendar.name} override_bhrs :: #{override_bhrs}"
+      calculate_due(created_time, time_zone_now, target_time, total_time_worked, calendar)
     end
   end
 
@@ -196,6 +210,19 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
     formatted_time
   end
 
+  def target_time_in_seconds(formatted_time)
+    duration_match_data = formatted_time.match(SLA_TARGET_TIME_REGEX)
+    return nil if duration_match_data.nil?
+
+    duration_names = duration_match_data.names # [day, hour, minute]
+    duration_values = duration_match_data.captures
+    total_time = 0
+    duration_names.each_with_index do |d_name, index|
+      total_time += duration_values[index].chop.to_i.safe_send(d_name).seconds if duration_values[index].present?
+    end
+    total_time
+  end
+
   private
 
     def business_time(sla_time, from_time, calendar)
@@ -206,12 +233,29 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
         business_days.business_calendar_config = calendar
         business_days.after(from_time)
       else
-        business_minute = sla_time.div(60).business_minute
-        business_minute.business_calendar_config = calendar
-        business_minute.after(from_time)
+        business_minutes = convert_to_business_minutes(sla_time, calendar)
+        business_minutes.after(from_time)
       end
     end
     
+    def business_time_for_new_format(formatted_time, from_time, calendar)
+      duration_match_data = formatted_time.match(SLA_TARGET_TIME_REGEX)
+      return nil if duration_match_data.nil?
+
+      due_time = from_time
+      remaining_time = formatted_time.dup
+      days_duration = duration_match_data[:day] # eg: '1D', '5D'
+      if days_duration.present?
+        remaining_time.slice!(days_duration)
+        business_days = days_duration.chop.to_i.business_days
+        due_time = business_days.after(due_time)
+      end
+      return due_time if remaining_time == 'P' # return if only days were set eg: 'P30D'
+      remaining_seconds = target_time_in_seconds(remaining_time)
+      business_minutes = convert_to_business_minutes(remaining_seconds, calendar)
+      business_minutes.after(due_time)
+    end
+
     def set_account_id
       self.account_id = sla_policy.account_id
     end
@@ -226,7 +270,34 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
       end
     end
 
-    def calculate_due(created_time, time_zone_now, resolution_time_in_seconds, total_time_worked, calendar)
+    # Method to be used for converting new format to seconds - temporary
+    # def populate_sla_time_seconds
+    #   SLA_TARGETS_COLUMN_MAPPINGS.each do |new_column, old_column|
+    #     self[old_column.to_sym] = sla_target_time[new_column.to_sym].blank? ? nil : target_time_in_seconds(sla_target_time[new_column.to_sym])
+    #   end
+    # end
+
+    def valid_sla_target_time?
+      SLA_TARGETS_COLUMN_MAPPINGS.each do |new_column, old_column|
+        target_time = self[old_column.to_sym]
+        if target_time.nil?
+          # allow nil if next response time is not set
+          next if old_column == 'next_response_time' && sla_target_time[new_column].blank?
+
+          errors.add(:base, I18n.t('sla_policy.error.invalid_sla_target_time_format'))
+        elsif target_time > 1.year
+          errors.add(:base, I18n.t('sla_policy.error.target_time_greater_than_1_year'))
+        elsif target_time < 15.minutes
+          errors.add(:base, I18n.t('sla_policy.error.target_time_less_than_15_minutes'))
+        end
+      end
+    end
+
+    def calculate_due(created_time, time_zone_now, target_time, total_time_worked, calendar)
+      if sla_policy_revamp_enabled?
+        return calculate_due_for_new_format(created_time, time_zone_now, target_time, total_time_worked, calendar)
+      end
+      resolution_time_in_seconds = target_time
       if override_bhrs
        total_time_worked > resolution_time_in_seconds ? (created_time + resolution_time_in_seconds) : (time_zone_now + (resolution_time_in_seconds - total_time_worked))
       else
@@ -236,9 +307,29 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
         else
           due_date = business_time(resolution_time_in_seconds, time_zone_now, calendar)
           if total_time_worked > 60 # 1 minute
-            business_minute = total_time_worked.div(60).business_minute
-            business_minute.business_calendar_config = calendar
-            due_date = business_minute.before(due_date)
+            due_date = convert_to_business_minutes(total_time_worked, calendar).before(due_date)
+          end
+          due_date
+        end
+      end
+    end
+
+    # Temporary method - will be cleaned up after deprecating existing SLA API
+    def calculate_due_for_new_format(created_time, time_zone_now, target_time, total_time_worked, calendar)
+      if override_bhrs
+        target_time_in_seconds = target_time_in_seconds(target_time)
+        return nil if target_time_in_seconds.nil?
+
+        total_time_worked > target_time_in_seconds ? (created_time + target_time_in_seconds) : (time_zone_now + (target_time_in_seconds - total_time_worked))
+      else
+        business_seconds = convert_new_format_to_business_seconds(target_time, time_zone_now)
+        if total_time_worked > business_seconds
+          business_time_for_new_format(target_time, created_time, calendar)
+        else
+          due_date = business_time_for_new_format(target_time, time_zone_now, calendar)
+          # advance due time by the total_time_worked
+          if due_date && total_time_worked > 60
+            due_date = convert_to_business_minutes(total_time_worked, calendar).before(due_date)
           end
           due_date
         end
@@ -255,5 +346,31 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
       end
       resolution_time_in_seconds
     end
-    
+
+    # Temporary method - will be cleaned up after deprecating existing SLA API
+    def convert_new_format_to_business_seconds(formatted_time, current_time)
+      duration_match_data = formatted_time.match(SLA_TARGET_TIME_REGEX)
+      return 0 if duration_match_data.nil?
+
+      days_in_business_seconds = 0
+      remaining_time = formatted_time.dup
+      days_duration = duration_match_data[:day] # eg: '1D', '5D'
+      if days_duration.present?
+        remaining_time.slice!(days_duration)
+        business_days = days_duration.chop.to_i.business_days # no. of biz days
+        days_in_business_seconds += current_time.business_time_until(business_days.after(current_time)).ceil
+      end
+      return days_in_business_seconds if remaining_time == 'P' # return if only days were set eg: 'P30D'
+      days_in_business_seconds + target_time_in_seconds(remaining_time)
+    end
+
+    def convert_to_business_minutes(time_in_seconds, calendar)
+      business_minutes = time_in_seconds.div(60).business_minute
+      business_minutes.business_calendar_config = calendar
+      business_minutes
+    end
+
+    def sla_policy_revamp_enabled?
+      account.sla_policy_revamp_enabled?
+    end
 end

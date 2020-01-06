@@ -50,7 +50,9 @@ module ApiSolutions
         render_custom_errors(@draft, true) unless @draft.save
         remove_lang_scoper_params
       else
+        # draft should be unlocked during unpublish
         set_session
+        @draft.unlock!(true) if only_unpublish? && @draft
         # When "Published : edit + autosave and Unpublish" draft observer will not be triggered, so sending draft for versioning
         # Session needs to be set so that update happens
         # Session also is needed for dummy publish cases
@@ -159,7 +161,7 @@ module ApiSolutions
 
       def article_properties?
         # Only article properties are changed.
-        (SolutionConstants::ARTICLE_PROPERTY_FIELDS.any? { |key| @article_params[language_scoper].key?(key) || @article_params.key?(key) }) && @article_params[language_scoper].except(:status, :session, *SolutionConstants::ARTICLE_PROPERTY_FIELDS).keys.empty?
+        (SolutionConstants::ARTICLE_PROPERTY_FIELDS.any? { |key| @article_params[language_scoper].key?(key) || @article_params.key?(key) }) && @article_params[language_scoper].except(:status, :session, :unlock, *SolutionConstants::ARTICLE_PROPERTY_FIELDS).keys.empty?
       end
 
       def only_unpublish?

@@ -10,8 +10,7 @@ class CannedResponseFoldersController < ApiApplicationController
   before_filter :validate_folder_id, only: [:update]
 
   def index
-    @results = ca_folders_from_esv2('Admin::CannedResponses::Response', { size: 300 }, default_visiblity)
-    @items = @results.nil? ? fetch_ca_folders_from_db : process_search_results
+    @items = fetch_ca_folders_from_db
   end
 
   def show
@@ -33,22 +32,6 @@ class CannedResponseFoldersController < ApiApplicationController
       current_account.canned_response_folders
     end
 
-    def process_search_results
-      return [] if es_folders_and_counts.blank?
-      current_account.canned_response_folders.where(id: es_folders_and_counts.keys).each do |folder|
-        folder.visible_responses_count = es_folders_and_counts[folder.id]
-      end
-    end
-
-    def es_folders_and_counts
-      @es_folders_counts ||= begin
-        @results['aggregations']['ca_folders']['buckets'].each_with_object({}) do |folder, hash|
-          hash[folder['key']] = folder['doc_count']
-        end
-      end
-    end
-
-    # When ES is down or when it throws exception - fallback to DB
     def fetch_ca_folders_from_db
       folders = fetch_ca_responses_from_db.map(&:folder)
       folders.uniq.sort_by { |f| [f.folder_type, f.name] }.each do |f|
@@ -64,8 +47,7 @@ class CannedResponseFoldersController < ApiApplicationController
     end
 
     def fetch_ca_responses(folder_id = nil)
-      @ca_responses = (accessible_from_esv2('Admin::CannedResponses::Response', { size: 300 }, default_visiblity, 'raw_title', folder_id) || []).sort_by { |cr| [cr.title.downcase] }
-      @ca_responses = fetch_ca_responses_from_db(folder_id) if @ca_responses.empty?
+      @ca_responses = fetch_ca_responses_from_db(folder_id)
     end
 
     def validation_class

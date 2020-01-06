@@ -1,0 +1,8 @@
+type: object
+required:
+  - agent_ids
+properties:
+  agent_ids:
+    type: array
+    items:
+      type: integer

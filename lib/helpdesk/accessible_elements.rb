@@ -27,27 +27,12 @@ module Helpdesk::AccessibleElements
   def accessible_records ops = {}, size = 700, sort = "raw_name"
     sort = nil if ops[:id_data]
     db_limit = size
-    enclose = {:load => ops[:model_hash][:name].constantize::INCLUDE_ASSOCIATIONS_BY_CLASS, :size => size}
-    visible_elmts = visible_records(ops, enclose, sort, db_limit)
+    visible_elmts = visible_records(ops, db_limit)
     visible_elmts = sort_records(visible_elmts, ops[:model_hash][:model], ops[:id_data]) if visible_elmts.present?
     visible_elmts
   end
 
-    def visible_records(ops, enclose, sort, db_limit)
-      if current_account.sandbox?
-        return fetch_from_db ops, db_limit
-      elsif read_from_countv2?(ops)
-        elements = accessible_from_esv2(ops[:model_hash][:name], enclose, default_visiblity, sort, nil,
-                                        ops[:id_data], ops[:excluded_ids], ops[:assn_types])
-      else
-        elements = accessible_from_es(ops[:model_hash][:name].constantize, enclose, default_visiblity, sort, nil,
-                                      ops[:id_data], ops[:excluded_ids], ops[:assn_types])
-      end
-      elements = fetch_from_db ops, db_limit if elements.nil?
-      elements
-    end
-
-    def fetch_from_db(ops, db_limit)
+    def visible_records(ops, db_limit)
       accessible_elements(current_account.safe_send(ops[:model_hash][:asstn]),
                           query_hash(ops[:model_hash][:model], ops[:model_hash][:table], ops[:query], @include_options || [], db_limit))
     end
@@ -81,25 +66,5 @@ module Helpdesk::AccessibleElements
 
   def search_query?
     params.present? && params[:search_string].present?
-  end
-
-  def read_from_countv2?(ops)
-    model_class_name = ops[:model_hash][:name]
-    (model_class_name == "Helpdesk::TicketTemplate") ||
-    (redis_key_exists?(COUNT_ESV2_READ_ENABLED) && ["ScenarioAutomation", "Admin::CannedResponses::Response"].include?(model_class_name))
-  end
-
-  def fetch_from_es(model_name, enclose, visibility, sort = nil, folder_id = nil, id_data = nil, excluded_ids = nil)
-    v2_read_enabled = redis_key_exists?(COUNT_ESV2_READ_ENABLED)
-    if v2_read_enabled
-      method_name = "accessible_from_esv2"
-    else
-      method_name = "accessible_from_es"
-      model_name = model_name.constantize
-    end
-    results = safe_send(method_name, model_name, enclose, visibility, sort, folder_id, id_data, excluded_ids)
-    return results if (!v2_read_enabled || results.blank? || sort.blank?)
-    sort_element = Search::V2::Count::AccessibleMethods::MULTI_MATCH_STRING_SEARCH[model_name].first
-    results.sort! { |a,b| a.try(sort_element).to_s.downcase <=> b.try(sort_element).to_s.downcase }
   end
 end

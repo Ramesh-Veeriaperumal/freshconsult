@@ -13,20 +13,20 @@ module BootstrapTestHelper
     }
   }.freeze
 
-  def index_pattern(agent, account, portal)
+  def index_pattern(agent, account, portal, dkim_config_required = false)
     {
       agent: agent_info_pattern(agent),
       account: account_info_pattern(account),
       portal: portal_pattern(portal),
-      config: config_pattern
+      config: config_pattern(dkim_config_required)
     }
   end
 
-  def account_pattern(account, portal)
+  def account_pattern(account, portal, dkim_config_required = false)
     {
       account: account_info_pattern_simple(account),
       portal: portal_pattern(portal),
-      config: config_pattern
+      config: config_pattern(dkim_config_required)
     }
   end
 

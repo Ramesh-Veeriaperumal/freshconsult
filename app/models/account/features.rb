@@ -5,7 +5,7 @@ class Account < ActiveRecord::Base
     :customer_sentiment_ui, :dkim, :dkim_email_service, :scheduled_ticket_export,
     :ticket_contact_export, :email_failures, :disable_emails,
     :falcon_portal_theme, :freshid, :freshchat_integration, :allow_huge_ccs,
-    :facebook_page_redirect, :announcements_tab, :customer_signature,
+    :facebook_page_redirect, :announcements_tab,
     :ticket_central_publish, :company_central_publish, :solutions_central_publish,
     :launch_smart_filter, :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3,
@@ -47,8 +47,8 @@ class Account < ActiveRecord::Base
     :freshcaller_admin_new_ui, :facebook_post_outgoing_attachment, :outgoing_tweets_to_tms, :incoming_mentions_in_tms, :help_widget_login, :occlusion_rendering_ticket_fields,
     :prevent_lang_detect_for_spam, :default_unassigned_service_tasks_filter, :jira_onpremise_reporter, :support_ticket_rate_limit, :sidekiq_logs_to_central, :portal_central_publish, :global_navbar, :encode_emoji_in_solutions,
     :forums_agent_portal, :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product, :send_and_set, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html, :focus_mode,
-    :remove_image_attachment_meta_data, :new_timeline_view, :automated_private_notes_notification, :detect_lang_from_email_service,
-    :sane_restricted_helpdesk, :hiding_confidential_logs, :fb_ad_post_stream_publish
+    :mailbox_forward_setup, :remove_image_attachment_meta_data, :new_timeline_view, :automated_private_notes_notification, :detect_lang_from_email_service,
+    :sane_restricted_helpdesk, :hiding_confidential_logs, :fb_ad_post_stream_publish, :ticket_list_performance, :sla_policy_revamp
   ].freeze
 
   DB_FEATURES = [

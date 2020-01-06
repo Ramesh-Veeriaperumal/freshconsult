@@ -12386,6 +12386,26 @@
         }
       }
     },
+    "/admin/security_keys/widget/regenerate": {
+      "post": {
+        "tags": [
+          "Admin Security"
+        ],
+        "summary": "Regenerate Widget SSO key",
+        "description": "Regenerates the widget SSO key",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/security_regenerate_widget_sso"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/audit_log/export": {
       "post": {
         "summary": "Audit log export",
@@ -14858,12 +14878,12 @@
         }
       }
     },
-    "/admin/freshcaller": {
+    "/admin/freshcaller_account": {
       "get": {
         "tags": [
-          "Freshcaller"
+          "Freshcaller Account"
         ],
-        "summary": "Freshcaller account show",
+        "summary": "Show",
         "description": "Return account details if a freshcaller account is linked",
         "responses": {
           "200": {
@@ -14874,6 +14894,150 @@
           },
           "204": {
             "description": "Success returns no content when not linked with freshcaller"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Freshcaller Account"
+        ],
+        "summary": "Signup",
+        "description": "Return account details if a freshcaller account is created",
+        "responses": {
+          "200": {
+            "description": "Success gives the details of the freshcaller account",
+            "schema": {
+              "$ref": "#/definitions/freshcaller"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Freshcaller Account"
+        ],
+        "summary": "Update Agents",
+        "description": "Creates or removes freshcaller agents based on the given agent_ids",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/freshcaller_account_update"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success returns no content when not linked with freshcaller"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Freshcaller Account"
+        ],
+        "summary": "Disconnect",
+        "description": "Deletes the freshcaller account and the integration",
+        "responses": {
+          "204": {
+            "description": "Success gives the details of the freshcaller account"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/freshcaller_account/link": {
+      "post": {
+        "tags": [
+          "Freshcaller Account"
+        ],
+        "summary": "Link an account",
+        "description": "Return account details if a freshcaller account is linked",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/freshcaller_account_link"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success gives the details of the freshcaller account",
+            "schema": {
+              "$ref": "#/definitions/freshcaller"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/admin/freshcaller_account/enable": {
+      "put": {
+        "tags": [
+          "Freshcaller Account"
+        ],
+        "summary": "Enable",
+        "description": "Enables the linked freshcaller account",
+        "responses": {
+          "204": {
+            "description": "Success gives the details of the freshcaller account"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/freshcaller_account/disable": {
+      "post": {
+        "tags": [
+          "Freshcaller Account"
+        ],
+        "summary": "Disable",
+        "description": "Disables the linked freshcaller account",
+        "responses": {
+          "204": {
+            "description": "Success gives the details of the freshcaller account"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
           }
         }
       }
@@ -17777,10 +17941,6 @@
                 "both"
               ],
               "description": "If access_type is both, then include both incoming and outgoing."
-            },
-            "reference_key": {  
-              "type": "string", 
-              "desciption": "The redis reference key which is used to update mailbox with the cached oauth values." 
             },
             "incoming": {
               "type": "object",
@@ -28560,6 +28720,68 @@
           "type": "boolean"
         },
         "domain": {
+          "type": "string"
+        },
+        "agents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "freshcaller_account_link": {
+      "type": "object",
+      "required": [
+        "url",
+        "email",
+        "password"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Freshcaller account url eg. test.freshcaller.com"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Admin email of the freshcaller account"
+        },
+        "password": {
+          "type": "string",
+          "description": "Password of the freshcaller account"
+        }
+      }
+    },
+    "freshcaller_account_update": {
+      "type": "object",
+      "required": [
+        "agent_ids"
+      ],
+      "properties": {
+        "agent_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "security_regenerate_widget_sso": {
+      "type": "object",
+      "properties": {
+        "key": {
           "type": "string"
         }
       }

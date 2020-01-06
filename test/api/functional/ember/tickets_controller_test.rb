@@ -4102,6 +4102,28 @@ module Ember
       Account.current.add_feature(:collaboration)
     end
 
+    def test_ticket_with_collab
+      Account.any_instance.stubs(:collaboration_enabled?).returns(true)
+      ticket = create_ticket
+      get :show, controller_params(version: 'private', id: ticket.display_id)
+      assert_response 200
+      assert JSON.parse(response.body)['collaboration'].present?
+      Account.any_instance.unstub(:collaboration_enabled?)
+    end
+
+    def test_ticket_with_freshconnect_freshid
+      Account.any_instance.stubs(:freshconnect_enabled?).returns(true)
+      Account.any_instance.stubs(:freshid_integration_enabled?).returns(true)
+      User.any_instance.stubs(:freshid_authorization).returns(true)
+      @ticket = create_ticket
+      get :show, controller_params(version: 'private', id: @ticket.display_id)
+      assert_response 200
+      assert JSON.parse(response.body)['collaboration'].present?
+      Account.any_instance.unstub(:freshconnect_enabled?)
+      Account.any_instance.unstub(:freshid_integration_enabled?)
+      User.any_instance.unstub(:freshid_authorization)
+    end
+
     def test_show_collab_hash_without_logged_in_user
       user = User.current
       current_header = request.env['HTTP_AUTHORIZATION']
@@ -5406,6 +5428,46 @@ module Ember
       put :update, construct_params({ version: 'private', id: ticket.display_id }, { group_id: nil })
       assert_response 200
       assert_nil JSON.parse(response.body)['group_id']
+    end
+
+    def test_every_response_status_with_note
+      @account.stubs(:next_response_sla_enabled?).returns(true)
+      t = create_ticket
+      # when agent responded on time
+      t.nr_due_by = Time.zone.now.utc + 30.minutes
+      t.save
+      assert_equal t.nr_violated?, nil
+      assert_equal t.every_response_status, ''
+      note1 = create_note(source: 2, ticket_id: t.id, user_id: @agent.id, private: false, body: Faker::Lorem.paragraph)
+      t.reload
+      assert_equal t.nr_violated?, false
+      assert_equal t.every_response_status, 'Within SLA'
+      # when agent has responded after the expected time
+      t.nr_due_by = Time.zone.now.utc
+      t.save
+      note2 = create_note(source: 2, ticket_id: t.id, user_id: @agent.id, private: false, body: Faker::Lorem.paragraph)
+      t.reload
+      assert_equal t.nr_violated?, true
+      assert_equal t.every_response_status, 'SLA Violated'
+    ensure
+      t.destroy
+      @account.unstub(:next_response_sla_enabled?)
+    end
+
+    def test_every_response_status_without_note
+      @account.stubs(:next_response_sla_enabled?).returns(true)
+      t = create_ticket
+      t.nr_due_by = Time.zone.now.utc
+      t.save
+      # when agent has not responded on time
+      t.nr_escalated = true
+      t.save
+      t.reload
+      assert_equal t.nr_violated?, nil
+      assert_equal t.every_response_status, 'SLA Violated'
+    ensure
+      t.destroy
+      @account.unstub(:next_response_sla_enabled?)
     end
   end
 end

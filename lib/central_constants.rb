@@ -4,7 +4,7 @@ module CentralConstants
   # In case of any breaking changes, bump the majore version, update from 0.0 to 1.0
   MODEL_PAYLOAD_VERSION = {
     'Account' => '1.2',
-    'Helpdesk::Ticket' => '2.10',
+    'Helpdesk::Ticket' => '2.11',
     'Helpdesk::Note' => '0.6',
     'Solution::Category' => '0.1',
     'Solution::Folder' => '0.1',
@@ -24,7 +24,7 @@ module CentralConstants
     'Integrations::InstalledApplication' => '0.1',
     'Social::FacebookPage' => '0.3',
     'Social::FacebookStream' => '0.1',
-    'Product' => '0.1',    
+    'Product' => '0.1',
     'Helpdesk::TicketField' => '1.1',
     'AgentGroup' => '0.1',
     'Helpdesk::Tag' => '0.1',

@@ -1,0 +1,16 @@
+type: object
+required:
+  - url
+  - email
+  - password
+properties:
+  url:
+    type: string
+    description: Freshcaller account url eg. test.freshcaller.com
+  email:
+    type: string
+    format: email
+    description: Admin email of the freshcaller account
+  password:
+    type: string
+    description: Password of the freshcaller account

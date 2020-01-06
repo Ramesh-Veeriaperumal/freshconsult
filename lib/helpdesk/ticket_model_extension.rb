@@ -34,7 +34,8 @@ module Helpdesk::TicketModelExtension
     [ "export_data.fields.first_response_status", "first_response_status",   false,  :ticket_states   , 27    , "sla_management_enabled?"],
     [ "export_data.fields.association_type",      "association_type_name",   false,  nil              , 31    , "link_tkts_or_parent_child_enabled?"],
     [ "export_data.fields.internal_agent",        "internal_agent_name",     false,  :internal_agent  , 32    , "shared_ownership_enabled?"],
-    [ "export_data.fields.internal_group",        "internal_group_name",     false,  :internal_group  , 33    , "shared_ownership_enabled?"]
+    [ "export_data.fields.internal_group",        "internal_group_name",     false,  :internal_group  , 33    , "shared_ownership_enabled?"],
+    [ "export_data.fields.every_response_status", "every_response_status",   false,  nil              , 34    , "next_response_sla_enabled?"]
   ]
 
   ARCHIVE_TICKETS_FIELDS_TO_IGNORE = ["association_type_name", "internal_agent_name", "internal_group_name"]

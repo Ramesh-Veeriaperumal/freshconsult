@@ -9,7 +9,6 @@ module Ember
     include AttachmentsTestHelper
     include GroupHelper
     include CannedResponsesHelper
-    include ApiTicketsTestHelper
     include SocialTestHelper
     include SocialTicketsCreationHelper
     include TwitterHelper
@@ -33,12 +32,15 @@ module Ember
       Account.current.features.es_v2_writes.destroy
       Account.find(Account.current.id).make_current
       Social::CustomTwitterWorker.stubs(:perform_async).returns(true)
-
       @twitter_handle = get_twitter_handle
       @default_stream = @twitter_handle.default_stream
       Account.current.launch(:facebook_dm_outgoing_attachment)
       Account.current.launch(:facebook_post_outgoing_attachment)
       Account.current.launch(:skip_posting_to_fb)
+      # Deleting ticket fields starting with number (which is not allowed in our product)
+      Account.current.ticket_fields.custom_fields.each do |tf|
+        tf.destroy if (tf.name =~ /^[0-9]/).try(:zero?)
+      end
     end
 
     def teardown
@@ -266,7 +268,7 @@ module Ember
 
     def test_reply_with_ticket_params
       ::Tickets::SendAndSetWorker.clear
-      params_hash = reply_note_params_hash.merge('ticket': { 'priority': 3, 'status': 3, 'source': 5, 'type': 'Problem' })
+      params_hash = reply_note_params_hash.merge('ticket' => { 'priority' => 3, 'status' => 3, 'source' => 5, 'type' => 'Problem' })
       post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
       assert ::Tickets::SendAndSetWorker.jobs.size == 1
@@ -275,6 +277,7 @@ module Ember
       assert JSON.parse(response.body)['ticket']['status'] == 3
       assert JSON.parse(response.body)['ticket']['source'] == 5
       assert JSON.parse(response.body)['ticket']['type'] == 'Problem'
+      ticket.destroy
     end
 
     def test_reply_without_ticket_params
@@ -310,7 +313,7 @@ module Ember
       user = other_user
       User.any_instance.stubs(:enabled_undo_send?).returns(true)
       user.preferences[:agent_preferences][:undo_send] = true
-      params_hash = reply_note_params_hash.merge('ticket': { 'priority': 3, 'status': 3, 'source': 5, 'type': 'Problem' })
+      params_hash = reply_note_params_hash.merge('ticket' => { 'priority' => 3, 'status' => 3, 'source' => 5, 'type' => 'Problem' })
       params_hash[:user_id] = user.id
       # Sidekiq::Testing.inline! do
         post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)

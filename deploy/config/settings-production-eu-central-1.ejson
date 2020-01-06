@@ -999,7 +999,7 @@
         "callback_api_secret": "EJ[1:ZrW78eue4hO2FkUxJ55oKoEa/jqgHAf58QHjiv5Cuz0=:2KB1lfGy9h0cmFaOc7rEUObow4Jg3e4h:hjggCUtQ31/1GCt/oZuj91fojxyi97dOPhvwOrV/KqrYw8S03BkuWmZqZ96X46xFzm3111j1cPgsgXhC6ZQE2JytY4qz0TQfnM2r2NfE14U=]",
         "_product_id": "78366095013625857",
         "_product_domain": "freshdesk.com",
-        "_freshid_request_timeout": 1,
+        "_freshid_request_timeout": 10,
         "_mobile_deep_link_protocol": "com.freshworks.freshdesk"
       },
       "database": {

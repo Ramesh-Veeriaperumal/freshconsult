@@ -6,9 +6,9 @@ class Admin::FreshcallerAccountController < ApiApplicationController
 
   skip_before_filter :build_object, only: [:create]
   before_filter :check_feature
-  before_filter :validate_linking, only: [:create, :link]
   before_filter :load_agents, only: [:show]
   before_filter :validate_params, only: [:link, :update]
+  before_filter :validate_linking, only: [:create, :link]
   before_filter :sanitize_params, only: [:update]
 
   attr_accessor :freshcaller_response

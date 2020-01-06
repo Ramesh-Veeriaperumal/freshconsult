@@ -3069,6 +3069,7 @@ Helpkit::Application.routes.draw do
           put :enable_min_level_fluffy
           put :disable_min_level_fluffy
           get :min_level_fluffy_info
+          post :reset_ticket_display_id
         end
       end
 

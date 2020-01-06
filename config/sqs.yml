@@ -46,7 +46,7 @@ development:
   custom_mailbox_status: custom_mailbox_status_dev
   fd_scheduler_export_cleanup_queue: fd_scheduler_export_cleanup_queue_dev
   fd_scheduler_downgrade_policy_reminder_queue: fd_scheduler_downgrade_policy_reminder_queue_dev
-  search_etl_queue_maintenance: search_etl_queue_dev_maintenance
+  search_etlqueue_maintenance: search_etl_queue_dev_maintenance
   count_etl_queue_maintenance: count_etl_queue_dev_maintenance
   analytics_etl_queue_maintenance: analytics_etl_queue_dev_maintenance
   suspended_account_cleanup_queue: suspended_account_cleanup_queue_dev
@@ -91,7 +91,7 @@ staging:
   scheduled_user_export_queue: scheduled_user_export_queue_staging
   scheduled_company_export_queue: scheduled_company_export_queue_staging
   bot_feedback_queue: bot_feedback_staging
-  search_etl_queue_maintenance: search_etl_queue_staging_maintenance
+  search_etlqueue_maintenance: search_etl_queue_staging_maintenance
   count_etl_queue_maintenance: count_etl_queue_staging_maintenance
   analytics_etl_queue_maintenance: analytics_etl_queue_staging_maintenance
 
@@ -135,7 +135,7 @@ production:
   scheduled_user_export_queue: scheduled_user_export_queue_production
   scheduled_company_export_queue: scheduled_company_export_queue_production
   bot_feedback_queue: bot_feedback_production
-  search_etl_queue_maintenance: search_etl_queue_production_maintenance
+  search_etlqueue_maintenance: search_etl_queue_production_maintenance
   count_etl_queue_maintenance: count_etl_queue_production_maintenance
   analytics_etl_queue_maintenance: analytics_etl_queue_production_maintenance
 
@@ -180,7 +180,7 @@ test:
   bot_feedback_queue: bot_feedback_test
   fd_scheduler_export_cleanup_queue: fd_scheduler_export_cleanup_queue_test
   fd_scheduler_downgrade_policy_reminder_queue: fd_scheduler_downgrade_policy_reminder_queue_test
-  search_etl_queue_maintenance: search_etl_queue_test_maintenance
+  search_etlqueue_maintenance: search_etl_queue_test_maintenance
   count_etl_queue_maintenance: count_etl_queue_test_maintenance
   analytics_etl_queue_maintenance: analytics_etl_queue_test_maintenance
   suspended_account_cleanup_queue: suspended_account_cleanup_queue_test
