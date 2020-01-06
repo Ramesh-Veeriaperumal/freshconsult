@@ -203,7 +203,7 @@ class ApiContactsController < ApiApplicationController
       field = ContactConstants::CONTACT_FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*field)
       ParamsHelper.modify_custom_fields(params[cname][:custom_fields], @name_mapping.invert)
-      contact = ContactValidation.new(params[cname], @item, string_request_params?)
+      contact = ContactValidation.new(params[cname], @item, string_request_params?, params[:enforce_mandatory])
       render_custom_errors(contact, true) unless contact.valid?(action_name.to_sym)
     end
 

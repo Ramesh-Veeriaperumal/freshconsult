@@ -9,9 +9,9 @@ class Ember::ContactValidation < ContactValidation
     hash: -> { other_companies_format }
   }
 
-  def initialize(request_params, item, allow_string_param = false)
+  def initialize(request_params, item, allow_string_param = false, enforce_mandatory = 'true')
     self.skip_hash_params_set_for_parameters = ['company']
-    super(request_params, item, allow_string_param)
+    super(request_params, item, allow_string_param, enforce_mandatory)
     company_hash_validation = {
       company_name: {
         data_type: { rules: Hash },
