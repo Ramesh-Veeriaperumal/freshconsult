@@ -23,7 +23,7 @@
 			  								:cntid => 'cnt-reply',
 		  									:note => [@ticket, Helpdesk::Note.new(:private => false)],
 		  									:conv_id => nil
-		  								}) if !(@ticket.twitter? or @ticket.facebook? or @ticket.mobihelp? or @ticket.ecommerce?) and @item.from_email.present? %>
+		  								}) if !(@ticket.twitter? or @ticket.facebook? or @ticket.ecommerce?) and @item.from_email.present? %>
   				<%= render(	:partial => '/helpdesk/tickets/show/tweet_form',
   							:locals => {
   										:id => 'send-tweet',
@@ -36,12 +36,6 @@
   										:cntid => 'cnt-reply',
   										:note => [@ticket, Helpdesk::Note.new(:private => true)]
   									}) if @ticket.facebook? %>
-  				<%= render(	:partial => '/helpdesk/tickets/show/mobihelp_reply_form',
-  							:locals => {
-  										:id => 'send-mobihelp-chat',
-  										:cntid => 'cnt-reply',
-  										:note => [@ticket, Helpdesk::Note.new(:private => true)]
-  									}) if @ticket.mobihelp?%>
   				<%= render(	:partial => '/helpdesk/tickets/show/ecommerce_reply_form',
   							:locals => {
   										:id => 'send-ecommerce-post',
