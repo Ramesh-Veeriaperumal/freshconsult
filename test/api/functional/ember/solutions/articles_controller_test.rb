@@ -3316,6 +3316,7 @@ module Ember
       include SolutionBuilderHelper
       include InstalledApplicationsTestHelper
       include AttachmentsTestHelper
+      include PrivilegesHelper
       tests Ember::Solutions::ArticlesController
 
       def setup
@@ -3817,6 +3818,25 @@ module Ember
             assert !file[:id].nil?
           end
         end
+      end
+
+      def test_draft_autosave_send_for_review
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 1)).primary_article
+        draft_version = create_draft_version_for_article(sample_article)
+        assert sample_article.status == 1
+        approver = add_test_agent
+        session = 'lorem-ipsum'
+        add_privilege(approver, :approve_article)
+        should_not_create_version(sample_article) do
+          post :send_for_review, construct_params({ version: 'private', id: sample_article.parent_id }, approver_id: approver.id)
+          assert_response 204
+          latest_version = get_latest_version(sample_article)
+          assert_equal latest_version.id, draft_version.id
+          assert_version_draft(latest_version)
+        end
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
       end
 
       private
