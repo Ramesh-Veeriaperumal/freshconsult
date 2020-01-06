@@ -3088,6 +3088,7 @@ Helpkit::Application.routes.draw do
           get :blacklisted_domains
           put :add_blacklisted_domain
           put :remove_blacklisted_domain
+          get :fetch_latest_shard
         end
       end
 
