@@ -85,14 +85,11 @@ module Ember
 
     def test_search_with_valid_folder_id
       ca_resp = create_response(
-          title: 'Test Canned Response search',
-          content_html: Faker::Lorem.paragraph,
-          visibility: ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]
-        )
-      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: stub_response(ca_resp).to_json, status: 200) 
-      $redis_others.perform_redis_op("set", "COUNT_ESV2_WRITE_ENABLED", true)
-      $redis_others.perform_redis_op("set", "COUNT_ESV2_READ_ENABLED", true) 
-      get :search, controller_params(version: 'private', ticket_id: @@sample_ticket.display_id, folder_id: @ca_folder_personal.id, search_string: 'test')
+        title: Faker::Lorem.characters(19),
+        content_html: Faker::Lorem.paragraph,
+        visibility: ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]
+      )
+      get :search, controller_params(version: 'private', ticket_id: @@sample_ticket.display_id, folder_id: ca_resp.folder_id, search_string: ca_resp.title)
       assert_response 200
       pattern = []
       pattern << ca_response_search_pattern(ca_resp.id)
