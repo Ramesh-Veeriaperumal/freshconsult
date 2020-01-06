@@ -204,7 +204,7 @@ module Admin::ConditionValidationHelper
     result = []
     condition_sets.map do |condition_set|
       cond = { field_name: condition_set[:field_name], operator: condition_set[:operator] }
-      %i[value nested_fields].each { |key| cond[key] = condition_set[key] if condition_set.key? key }
+      %i[value nested_fields related_conditions].each { |key| cond[key] = condition_set[key] if condition_set.key? key }
       result << cond if (condition_set[:resource_type].try(:to_sym) || :ticket) == resource_type
     end
     result

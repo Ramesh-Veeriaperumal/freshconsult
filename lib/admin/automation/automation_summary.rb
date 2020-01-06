@@ -136,6 +136,7 @@ module Admin::Automation::AutomationSummary
       end
       array << generate_case_sensitive(data[:case_sensitive]) if data[:case_sensitive].present?
       array << generate_associated_fields(data[:associated_fields]) if data[:associated_fields].present?
+      array << data[:related_conditions].each.map { |cond| generate_agent_shift_fields(cond) } if data[:related_conditions].present?
       sentence = array.join(' ')
       I18n.t('admin.automation_summary.condition', field_name: sentence)
     end
@@ -299,6 +300,14 @@ module Admin::Automation::AutomationSummary
       text_related_ticket_count = add_html_tag(I18n.t('admin.automation_summary.related_ticket_count'), 1)
       operator = I18n.t("admin.automation_summary.#{associated_fields[:operator]}")
       "#{text_and.downcase} #{text_related_ticket_count} #{operator} #{value}"
+    end
+
+    def generate_agent_shift_fields(agent_shifts)
+      text_and = I18n.t('admin.automation_summary.condition_all')
+      availability = I18n.t('admin.automation_summary.agent_availability')
+      operator = I18n.t("admin.automation_summary.#{agent_shifts[:operator]}")
+      value = add_html_tag(agent_shifts[:value], 2)
+      "#{text_and} #{availability} #{operator} #{value}"
     end
 
     def generate_operator(t_value)

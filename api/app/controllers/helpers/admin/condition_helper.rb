@@ -13,6 +13,7 @@ module Admin::ConditionHelper
   def validate_condition_value(expected, actual)
     case_sensitive_validation(expected, actual) if actual.key?(:case_sensitive)
     associated_fields_validation(expected, actual) if actual.key?(:associated_fields)
+    related_conditions_validation(expected, actual) if actual.key?(:related_conditions)
     expecting_value, expected_data_type = validate_condition_operator(expected, actual)
     if expecting_value
       if actual.key?(:value)
@@ -83,6 +84,34 @@ module Admin::ConditionHelper
     invalid_data_type("#{expected[:name]}[associated_fields][value]", 
                       Integer, 
                       :invalid) if associated_fields.key?(:value) && !associated_fields[:value].is_a?(Integer)
+  end
+
+  def related_conditions_validation(expected, actual)
+    return unexpected_parameter('related_conditions') if RELATED_CONDITION_FIELDS[actual[:field_name].try(:to_sym)].nil?
+
+    expected_related_condition = RELATED_CONDITION_FIELDS[actual[:field_name].try(:to_sym)]
+    actual[:related_conditions].each do |related_condition|
+      Admin::AutomationConstants::PERMITTED_ASSOCIATED_FIELDS.each do |key|
+        expected_keys = if key == :field_name
+                          unexpected_parameter(related_condition[key]) && break unless related_condition_field_validation(related_condition[key].to_sym)
+                          expected_related_condition.keys.map(&:to_s)
+                        else
+                          expected_related_condition[related_condition[:field_name].to_sym][key]
+                        end
+        field_name = :"#{expected[:name]}][:related_conditions][:#{key}]"
+        not_included_error(field_name, expected_keys) unless expected_keys.include?(related_condition[key])
+      end
+    end
+  end
+
+  def related_condition_field_validation(field_name)
+    case field_name
+    when :agent_availability
+      return false if supervisor_rule? || !current_account.features?(:round_robin)
+    else
+      return false
+    end
+    true
   end
 
   def valid_condition_data_type?(expected, value, expected_data_type)

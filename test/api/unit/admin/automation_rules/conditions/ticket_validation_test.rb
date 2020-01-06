@@ -49,6 +49,26 @@ module Admin::AutomationRules::Conditions
       end
     end
 
+    def test_valid_agent_shift_fields
+      Account.stubs(:current).returns(Account.first)
+      params = rule_params(agent_shift_field_condition_params('available'))
+      cf_fields = { custom_ticket_event: custom_event_ticket_field, custom_ticket_action: custom_action_ticket_field,
+                    custom_ticket_condition: custom_condition_ticket_field, custom_contact_condition: custom_condition_contact,
+                    custom_company_condition: custom_condition_company }
+      validation = automation_validation_class.new(params, cf_fields, nil, false)
+      assert validation.invalid?
+    end
+
+    def test_invalid_agent_shift_fields
+      Account.stubs(:current).returns(Account.first)
+      params = rule_params(agent_shift_field_condition_params('is_not_available'))
+      cf_fields = { custom_ticket_event: custom_event_ticket_field, custom_ticket_action: custom_action_ticket_field,
+                    custom_ticket_condition: custom_condition_ticket_field, custom_contact_condition: custom_condition_contact,
+                    custom_company_condition: custom_condition_company }
+      validation = automation_validation_class.new(params, cf_fields, nil, false)
+      assert validation.invalid?
+    end
+
     private
 
       def automation_validation_class

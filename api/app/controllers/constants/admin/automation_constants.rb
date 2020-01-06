@@ -70,7 +70,7 @@ module Admin::AutomationConstants
 
   HASH_SUMMARY_CLASS = { 1 => 'Key', 2 => 'Value', 3 => 'Operator', 4 => 'Evaluate_on' }.freeze
 
-  DEFAULT_ANY_NONE = { '' => 'NONE', '--' => 'ANY', '##' => 'ANY_WITHOUT_NONE' }.freeze
+  DEFAULT_ANY_NONE = { '' => 'NONE', '--' => 'ANY', '##' => 'ANY_WITHOUT_NONE', -1 => 'ANY' }.freeze
 
   PRIORITY_MAP = { '--' => 'Any', '1' => 'Low', '2' => 'Medium', '3' => 'High', '4' => 'Urgent' }.freeze
 
@@ -118,7 +118,7 @@ module Admin::AutomationConstants
   CONDITON_SET_NESTED_FIELDS = %i[nested_fields nested_rules].freeze
 
   CONDITION_SET_COMMON_FIELDS = %i[evaluate_on operator value rule_type case_sensitive business_hours_id 
-                                   custom_status_id associated_fields].freeze + CONDITON_SET_NESTED_FIELDS
+                                   custom_status_id associated_fields related_conditions].freeze + CONDITON_SET_NESTED_FIELDS
 
   ACTION_COMMON_FIELDS = %i[value email_to email_subject email_body request_type
                             url need_authentication username password api_key
@@ -159,7 +159,7 @@ module Admin::AutomationConstants
 
   PERMITTED_CONDITION_SET_VALUES = (PERMITTED_DEFAULT_CONDITION_SET_VALUES + %i[case_sensitive rule_type nested_fields 
                                                                                 business_hours_id associated_fields
-                                                                                associated_ticket_count]).freeze
+                                                                                associated_ticket_count related_conditions]).freeze
 
   PERMITTED_EVENTS_PARAMS = %i[field_name from to value rule_type from_nested_field to_nested_field].freeze
 
@@ -315,7 +315,7 @@ module Admin::AutomationConstants
   SUPERVISOR_IGNORE_CONDITION_PARAMS = %i[contact company].freeze
 
   CONDITION_SET_REQUEST_VALUES = (CONDITION_SET_PROPERTIES + %i[nested_fields case_sensitive business_hours_id 
-                                                                custom_status_id associated_fields]).freeze
+                                                                custom_status_id associated_fields related_conditions]).freeze
 
   MARKETPLACE_INTEGRATION_PARAMS = %i[push_to slack_text office365_text].freeze
 
@@ -333,7 +333,7 @@ module Admin::AutomationConstants
                                 mail_del_failed_requester mail_del_failed_others add_a_cc add_comment delete_ticket
                                 mark_as_spam skip_notification due_by from_email to_email ticket_cc last_interaction
                                 inbound_count outbound_count description forward_ticket ticlet_cc response_due resolution_due
-                                association_type associated_ticket_count next_response_due] + (TIME_BASED_FILTERS - %i[hours_since_waiting_on_custom_status]) +
+                                association_type associated_ticket_count next_response_due agent_availability] + (TIME_BASED_FILTERS - %i[hours_since_waiting_on_custom_status]) +
                                 SUPERVISOR_CONDITION_TICKET_FIELDS).uniq.freeze
 
   DEFAULT_FIELDS = (DEFAULT_FIELDS_DELEGATORS + DELEGATOR_IGNORE_FIELDS).freeze

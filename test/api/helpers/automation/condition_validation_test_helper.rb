@@ -76,6 +76,16 @@ module Automation::ConditionValidationTestHelper
                                                                  value: value }] }
   end
 
+  def agent_shift_field_condition_params(availability)
+    { name: 'condition set 1', match_type: 'any', properties: [{ resource_type: 'ticket',
+                                                                 field_name: 'responder_id', operator: 'in',
+                                                                 value: Account.current.agents.pluck(:id),
+                                                                 related_conditions: [
+                                                                     field_name: 'agent_availability',
+                                                                     operator: 'is', value: availability ] }]
+    }
+  end
+
   def construct_customer_params(field_type, customer)
     if customer == :company
       field = fetch_company_field_by_type(field_type)
