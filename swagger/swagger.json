@@ -2965,6 +2965,9 @@
             "$ref": "#/parameters/id"
           },
           {
+            "$ref": "#/parameters/enforce_mandatory"
+          },
+          {
             "name": "data",
             "in": "body",
             "required": true,
@@ -28858,6 +28861,14 @@
       "type": "string",
       "description": "Specifies language code of the article (Multilingual feature must be enabled for the account to provide a value.if value is not given, primary language will be considered)",
       "required": true
+    },
+    "enforce_mandatory": {
+      "name": "enforce_mandatory",
+      "in": "query",
+      "type": "string",
+      "description": "Decides whether to perform mandatory validation or not",
+      "required": false,
+      "default": true
     }
   }
 }

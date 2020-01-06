@@ -35,6 +35,7 @@ put:
   description: Update a contact
   parameters:
     - $ref: '#/parameters/id'
+    - $ref: '#/parameters/enforce_mandatory'
     - name: data
       in: body
       required: true

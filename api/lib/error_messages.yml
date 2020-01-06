@@ -499,3 +499,4 @@ api_error_messages:
   portal_and_cc_param_error: "portal_cc and portal_cc_to is available only for requester field"
   field_type_error: "You are trying to update field type. It cannot be updated"
   level_choices_deletion_error: "Can not delete all choices inside '%{level}'"
+  enforce_mandatory_value_error: "It should be either 'true' or 'false'"

@@ -40,7 +40,12 @@ module Ember
     end
 
     def wrap_cname(params)
-      { contact: params }
+      query_params = params[:query_params]
+      cparams = params.clone
+      cparams.delete(:query_params)
+      return query_params.merge(contact: cparams) if query_params
+
+      { contact: cparams }
     end
 
     def contact_params_hash
@@ -696,12 +701,447 @@ module Ember
       @account.reload
     end
 
+    # Skip mandatory custom field validation on update
+    def test_update_contact_without_required_custom_fields_with_enforce_mandatory_as_false
+      cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
+      @account.reload
+      created_contact = post :quick_create, construct_params(
+        { version: 'private' },
+        name: Faker::Lorem.characters(15),
+        email: Faker::Internet.email,
+        company_name: Faker::Lorem.characters(15)
+      )
+      created_contact_id = JSON.parse(created_contact.body)['id']
+      updated_contact = put :update, construct_params(
+        { version: 'private', id: created_contact_id },
+        address: 'testing',
+        query_params: { enforce_mandatory: 'false' }
+      )
+
+      result = JSON.parse(updated_contact.body)
+      assert_response 200, result
+      assert_equal result['address'], 'testing'
+    ensure
+      cf.delete
+    end
+
+    def test_update_contact_without_required_custom_fields_with_enforce_mandatory_as_true
+      cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
+      @account.reload
+      created_contact = post :quick_create, construct_params(
+        { version: 'private' },
+        name: Faker::Lorem.characters(15),
+        email: Faker::Internet.email,
+        company_name: Faker::Lorem.characters(15)
+      )
+      created_contact_id = JSON.parse(created_contact.body)['id']
+      updated_contact = put :update, construct_params(
+        { version: 'private', id: created_contact_id },
+        address: 'testing',
+        query_params: { enforce_mandatory: 'true' }
+      )
+
+      result = JSON.parse(updated_contact.body)
+      assert_response 400, result
+      match_json(
+        [{
+          field: 'custom_fields.code',
+          code: :missing_field,
+          message: 'It should be a/an String'
+        }]
+      )
+    ensure
+      cf.delete
+    end
+
+    def test_update_contact_without_required_custom_fields_default_enforce_mandatory_true
+      cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
+      @account.reload
+      created_contact = post :quick_create, construct_params(
+        { version: 'private' },
+        name: Faker::Lorem.characters(15),
+        email: Faker::Internet.email,
+        company_name: Faker::Lorem.characters(15)
+      )
+      created_contact_id = JSON.parse(created_contact.body)['id']
+      updated_contact = put :update, construct_params(
+        { version: 'private', id: created_contact_id },
+        address: 'testing'
+      )
+
+      result = JSON.parse(updated_contact.body)
+      assert_response 400, result
+      match_json(
+        [{
+          field: 'custom_fields.code',
+          code: :missing_field,
+          message: 'It should be a/an String'
+        }]
+      )
+    ensure
+      cf.delete
+    end
+
+    def test_update_contact_with_enforce_mandatory_true_existing_custom_field_empty_new_empty
+      cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
+      @account.reload
+      created_contact = post :quick_create, construct_params(
+        { version: 'private' },
+        name: Faker::Lorem.characters(15),
+        email: Faker::Internet.email,
+        company_name: Faker::Lorem.characters(15)
+      )
+      created_contact_id = JSON.parse(created_contact.body)['id']
+      updated_contact = put :update, construct_params(
+        { version: 'private', id: created_contact_id },
+        address: 'testing',
+        custom_fields: { code: '' },
+        query_params: { enforce_mandatory: 'true' }
+      )
+
+      result = JSON.parse(updated_contact.body)
+      assert_response 400, result
+      match_json(
+        [{
+          field: 'custom_fields.code',
+          code: :invalid_value,
+          message: 'It should not be blank as this is a mandatory field'
+        }]
+      )
+    ensure
+      cf.delete
+    end
+
+    def test_update_contact_with_enforce_mandatory_true_existing_custom_field_empty_new_not_empty
+      cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
+      @account.reload
+      created_contact = post :quick_create, construct_params(
+        { version: 'private' },
+        name: Faker::Lorem.characters(15),
+        email: Faker::Internet.email,
+        company_name: Faker::Lorem.characters(15)
+      )
+      created_contact_id = JSON.parse(created_contact.body)['id']
+      updated_contact = put :update, construct_params(
+        { version: 'private', id: created_contact_id },
+        address: 'testing',
+        custom_fields: { code: 'testing' },
+        query_params: { enforce_mandatory: 'true' }
+      )
+
+      result = JSON.parse(updated_contact.body)
+      assert_response 200, result
+      assert_equal result['address'], 'testing'
+    ensure
+      cf.delete
+    end
+
+    def test_update_contact_with_enforce_mandatory_true_existing_custom_field_not_empty_new_empty
+      cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
+      @account.reload
+      created_contact = post :create, construct_params(
+        { version: 'private' },
+        name: Faker::Lorem.characters(15),
+        email: Faker::Internet.email,
+        custom_fields: { code: 'existing' }
+      )
+      created_contact_id = JSON.parse(created_contact.body)['id']
+      updated_contact = put :update, construct_params(
+        { version: 'private', id: created_contact_id },
+        address: 'testing',
+        custom_fields: { code: '' },
+        query_params: { enforce_mandatory: 'true' }
+      )
+
+      result = JSON.parse(updated_contact.body)
+      assert_response 400, result
+      match_json(
+        [{
+          field: 'custom_fields.code',
+          code: :invalid_value,
+          message: 'It should not be blank as this is a mandatory field'
+        }]
+      )
+    ensure
+      cf.delete
+    end
+
+    def test_update_contact_with_enforce_mandatory_true_existing_custom_field_not_empty_new_not_empty
+      cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
+      @account.reload
+      created_contact = post :create, construct_params(
+        { version: 'private' },
+        name: Faker::Lorem.characters(15),
+        email: Faker::Internet.email,
+        custom_fields: { code: 'existing' }
+      )
+      created_contact_id = JSON.parse(created_contact.body)['id']
+      updated_contact = put :update, construct_params(
+        { version: 'private', id: created_contact_id },
+        address: 'testing',
+        custom_fields: { code: 'testing' },
+        query_params: { enforce_mandatory: 'true' }
+      )
+
+      result = JSON.parse(updated_contact.body)
+      assert_response 200, result
+      assert_equal result['address'], 'testing'
+    ensure
+      cf.delete
+    end
+
+    def test_update_contact_with_enforce_mandatory_false_existing_custom_field_empty_new_empty
+      cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
+      @account.reload
+      created_contact = post :quick_create, construct_params(
+        { version: 'private' },
+        name: Faker::Lorem.characters(15),
+        email: Faker::Internet.email,
+        company_name: Faker::Lorem.characters(15)
+      )
+      created_contact_id = JSON.parse(created_contact.body)['id']
+      updated_contact = put :update, construct_params(
+        { version: 'private', id: created_contact_id },
+        address: 'testing',
+        custom_fields: { code: '' },
+        query_params: { enforce_mandatory: 'false' }
+      )
+
+      result = JSON.parse(updated_contact.body)
+      assert_response 400, result
+      match_json(
+        [{
+          field: 'custom_fields.code',
+          code: :invalid_value,
+          message: 'It should not be blank as this is a mandatory field'
+        }]
+      )
+    ensure
+      cf.delete
+    end
+
+    def test_update_contact_with_enforce_mandatory_false_existing_custom_field_empty_new_not_empty
+      cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
+      @account.reload
+      created_contact = post :quick_create, construct_params(
+        { version: 'private' },
+        name: Faker::Lorem.characters(15),
+        email: Faker::Internet.email,
+        company_name: Faker::Lorem.characters(15)
+      )
+      created_contact_id = JSON.parse(created_contact.body)['id']
+      updated_contact = put :update, construct_params(
+        { version: 'private', id: created_contact_id },
+        address: 'testing',
+        custom_fields: { code: 'testing' },
+        query_params: { enforce_mandatory: 'false' }
+      )
+
+      result = JSON.parse(updated_contact.body)
+      assert_response 200, result
+      assert_equal result['address'], 'testing'
+    ensure
+      cf.delete
+    end
+
+    def test_update_contact_with_enforce_mandatory_false_existing_custom_field_not_empty_new_empty
+      cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
+      @account.reload
+      created_contact = post :create, construct_params(
+        { version: 'private' },
+        name: Faker::Lorem.characters(15),
+        email: Faker::Internet.email,
+        custom_fields: { code: 'existing' }
+      )
+      created_contact_id = JSON.parse(created_contact.body)['id']
+      updated_contact = put :update, construct_params(
+        { version: 'private', id: created_contact_id },
+        address: 'testing',
+        custom_fields: { code: '' },
+        query_params: { enforce_mandatory: 'false' }
+      )
+
+      result = JSON.parse(updated_contact.body)
+      assert_response 400, result
+      match_json(
+        [{
+          field: 'custom_fields.code',
+          code: :invalid_value,
+          message: 'It should not be blank as this is a mandatory field'
+        }]
+      )
+    ensure
+      cf.delete
+    end
+
+    def test_update_contact_with_enforce_mandatory_false_existing_custom_field_not_empty_new_not_empty
+      cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
+      @account.reload
+      created_contact = post :create, construct_params(
+        { version: 'private' },
+        name: Faker::Lorem.characters(15),
+        email: Faker::Internet.email,
+        custom_fields: { code: 'existing' }
+      )
+      created_contact_id = JSON.parse(created_contact.body)['id']
+      updated_contact = put :update, construct_params(
+        { version: 'private', id: created_contact_id },
+        address: 'testing',
+        custom_fields: { code: 'testing' },
+        query_params: { enforce_mandatory: 'false' }
+      )
+
+      result = JSON.parse(updated_contact.body)
+      assert_response 200, result
+      assert_equal result['address'], 'testing'
+    ensure
+      cf.delete
+    end
+
+    def test_create_contact_with_enforce_mandatory_true_not_passing_custom_field
+      cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
+      @account.reload
+      created_contact = post :create, construct_params(
+        { version: 'private' },
+        name: Faker::Lorem.characters(15),
+        email: Faker::Internet.email,
+        query_params: { enforce_mandatory: 'true' }
+      )
+
+      result = JSON.parse(created_contact.body)
+      assert_response 400, result
+      match_json(
+        [{
+          field: 'custom_fields.code',
+          code: :missing_field,
+          message: 'It should be a/an String'
+        }]
+      )
+    ensure
+      cf.delete
+    end
+
+    def test_create_contact_with_enforce_mandatory_true_custom_field_empty
+      cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
+      @account.reload
+      created_contact = post :create, construct_params(
+        { version: 'private' },
+        name: Faker::Lorem.characters(15),
+        email: Faker::Internet.email,
+        custom_fields: { code: '' },
+        query_params: { enforce_mandatory: 'true' }
+      )
+
+      result = JSON.parse(created_contact.body)
+      assert_response 400, result
+      match_json(
+        [{
+          field: 'custom_fields.code',
+          code: :invalid_value,
+          message: 'It should not be blank as this is a mandatory field'
+        }]
+      )
+    ensure
+      cf.delete
+    end
+
+    def test_create_contact_with_enforce_mandatory_true_passing_custom_field
+      cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
+      @account.reload
+      created_contact = post :create, construct_params(
+        { version: 'private' },
+        name: Faker::Lorem.characters(15),
+        email: Faker::Internet.email,
+        custom_fields: { code: 'test' },
+        query_params: { enforce_mandatory: 'true' }
+      )
+
+      result = JSON.parse(created_contact.body)
+      assert_response 201, result
+    ensure
+      cf.delete
+    end
+
+    def test_create_contact_with_enforce_mandatory_false_not_passing_custom_field
+      cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
+      @account.reload
+      created_contact = post :create, construct_params(
+        { version: 'private' },
+        name: Faker::Lorem.characters(15),
+        email: Faker::Internet.email,
+        query_params: { enforce_mandatory: 'false' }
+      )
+
+      result = JSON.parse(created_contact.body)
+      assert_response 201, result
+    ensure
+      cf.delete
+    end
+
+    def test_create_contact_with_enforce_mandatory_false_custom_field_empty
+      cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
+      @account.reload
+      created_contact = post :create, construct_params(
+        { version: 'private' },
+        name: Faker::Lorem.characters(15),
+        email: Faker::Internet.email,
+        custom_fields: { code: '' },
+        query_params: { enforce_mandatory: 'false' }
+      )
+
+      result = JSON.parse(created_contact.body)
+      assert_response 201, result
+    ensure
+      cf.delete
+    end
+
+    def test_create_contact_with_enforce_mandatory_false_passing_custom_field
+      cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
+      @account.reload
+      created_contact = post :create, construct_params(
+        { version: 'private' },
+        name: Faker::Lorem.characters(15),
+        email: Faker::Internet.email,
+        custom_fields: { code: 'test' },
+        query_params: { enforce_mandatory: 'false' }
+      )
+
+      result = JSON.parse(created_contact.body)
+      assert_response 201, result
+    ensure
+      cf.delete
+    end
+
     def test_quick_create_contact_with_company_name
       post :quick_create, construct_params({version: 'private'},  name: Faker::Lorem.characters(15),
                                           email: Faker::Internet.email,
                                           company_name: Faker::Lorem.characters(10))
       assert_response 201
       match_json(private_api_contact_pattern(User.last))
+    end
+
+    def test_create_contact_with_enforce_mandatory_as_garbage_value
+      cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
+      @account.reload
+      created_contact = post :create, construct_params(
+        { version: 'private' },
+        name: Faker::Lorem.characters(15),
+        email: Faker::Internet.email,
+        custom_fields: { code: 'test' },
+        query_params: { enforce_mandatory: 'test' }
+      )
+
+      result = JSON.parse(created_contact.body)
+      assert_response 400, result
+      match_json(
+        [{
+          field: 'enforce_mandatory',
+          code: :invalid_value,
+          message: "It should be either 'true' or 'false'"
+        }]
+      )
+    ensure
+      cf.delete
     end
 
     def test_quick_create_length_invalid_company_name
@@ -725,7 +1165,7 @@ module Ember
       assert_response 201
       match_json(private_api_contact_pattern(User.last))
       ensure
-        cf.update_attribute(:required_for_agent, false)
+        cf.delete
     end
 
     def test_quick_create_with_all_default_fields_required_valid
