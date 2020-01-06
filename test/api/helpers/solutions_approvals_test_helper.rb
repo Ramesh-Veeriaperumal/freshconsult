@@ -1,3 +1,5 @@
+require_relative Rails.root.join('test', 'api', 'helpers', 'solutions_articles_test_helper.rb')
+
 module SolutionsApprovalsTestHelper
   include SolutionsArticlesTestHelper
 
