@@ -21123,6 +21123,32 @@
                           "type": "integer"
                         }
                       }
+                    },
+                    "related_conditions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field_name": {
+                            "type": "string",
+                            "enum": [
+                              "agent_availability"
+                            ]
+                          },
+                          "operator": {
+                            "type": "string",
+                            "enum": [
+                              "is"
+                            ]
+                          },
+                          "value": {
+                            "type": "string",
+                            "enum": [
+                              "unavailable"
+                            ]
+                          }
+                        }
+                      }
                     }
                   }
                 }

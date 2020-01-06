@@ -345,6 +345,7 @@ api_error_messages:
   duplicate_condition_set_name: "Duplicate condition set name - %{name}"
   cannot_be_blank: "'%{name}' can't be blank"
   missing_or_blank: "Field is missing/blank"
+  any_value_error: 'No other values allowed when any is present'
 
   ticket_association_type_not_allowed: "'ticket_association_type' is not allowed in actions without being present in conditions"
   expecting_parent_association_type: "'ticket_association_type' should be 1 when parent ticket is selected in conditions"

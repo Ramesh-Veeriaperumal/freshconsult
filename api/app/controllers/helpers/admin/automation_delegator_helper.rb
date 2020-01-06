@@ -156,6 +156,7 @@ module Admin::AutomationDelegatorHelper
     elsif TIME_AND_STATUS_BASED_FILTER.include?(name.to_s)
       validate_time_status(name.to_sym, data)
     else
+      any_value_error(name) if RESPONDER_ID == name && output.include?(ANY_NONE[:ANY]) && output.count > 1
       validate_field_values(name, output, default_fields[name.to_sym] + [*ANY_NONE[:NONE]])
     end
   end
@@ -231,7 +232,7 @@ module Admin::AutomationDelegatorHelper
         product_id: product_ids,
         group_id: group_ids,
         add_watcher: all_agents,
-        responder_id: all_agents,
+        responder_id: all_agents + [ANY_NONE[:ANY]],
         internal_agent_id: all_agents,
         internal_group_id: group_ids,
         ticket_type: ticket_types,
@@ -361,6 +362,11 @@ module Admin::AutomationDelegatorHelper
   def duplicate_rule_name_error(name)
     errors[:name] << :duplicate_name_in_automations
     (error_options[:name] ||= {}).merge!(name: name)
+  end
+
+  def any_value_error(field_name)
+    errors[field_name.to_sym] << :any_value_error
+    (error_options[field_name.to_sym] ||= {})
   end
 
   def custom_ticket_fields
