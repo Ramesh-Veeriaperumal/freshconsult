@@ -55,7 +55,7 @@ class Ember::ConfigsControllerTest < ActionController::TestCase
   def test_invalid_config_response
     get :show, controller_params(version: 'private', id: 'abc')
     assert_response 400
-    match_json([bad_request_error_pattern("id", :"It should be one of these values: 'freshvisuals'")])
+    match_json([bad_request_error_pattern('id', :not_included, list: 'freshvisuals,freshsales')])
   end
 
   def test_config_response_with_feature_disabled
@@ -70,5 +70,97 @@ class Ember::ConfigsControllerTest < ActionController::TestCase
     get :show, controller_params(version: 'private', id: 'freshvisuals')
     assert_response 403
     match_json(request_error_pattern(:access_denied))
+  end
+
+  def test_fetch_config_with_freshsales
+    Ember::ConfigsController.any_instance.stubs(:current_account).returns(Account.first)
+    Account.any_instance.stubs(:organisation).returns(Organisation.new)
+    Account.any_instance.stubs(:organisation_accounts).returns(dummy_freshid_org_accounts_response_with_freshsales)
+    Organisation.any_instance.stubs(:domain).returns('arjunpn.freshworks.com')
+    get :show, controller_params(version: 'private', id: 'freshsales')
+    assert_response 200
+    payload = JSON.parse(response.body)
+    assert_equal payload['url'], 'test.freshsales.io'
+  ensure
+    Ember::ConfigsController.any_instance.unstub(:current_account)
+    Account.any_instance.unstub(:organisation)
+    Account.any_instance.unstub(:organisation_accounts)
+    Organisation.any_instance.unstub(:domain)
+  end
+
+  def test_fetch_config_without_freshsales
+    Ember::ConfigsController.any_instance.stubs(:current_account).returns(Account.first)
+    Account.any_instance.stubs(:organisation).returns(Organisation.new)
+    Account.any_instance.stubs(:organisation_accounts).returns(dummy_freshid_org_accounts_response_without_freshsales)
+    Organisation.any_instance.stubs(:domain).returns('arjunpn.freshworks.com')
+    get :show, controller_params(version: 'private', id: 'freshsales')
+    assert_response 200
+    payload = JSON.parse(response.body)
+    assert_nil payload['url']
+  ensure
+    Ember::ConfigsController.any_instance.unstub(:current_account)
+    Account.any_instance.unstub(:organisation)
+    Account.any_instance.unstub(:organisation_accounts)
+    Organisation.any_instance.unstub(:domain)
+  end
+
+  def test_invalid_freshsales_config
+    Ember::ConfigsController.any_instance.stubs(:current_account).returns(Account.first)
+    Account.any_instance.stubs(:organisation_accounts).returns(nil)
+    Account.any_instance.stubs(:organisation_from_cache).returns(Organisation.new)
+    Organisation.any_instance.stubs(:alternate_domain).returns('arjunpn.freshworks.com')
+    get :show, controller_params(version: 'private', id: 'freshsales')
+    assert_response 404
+  ensure
+    Ember::ConfigsController.any_instance.unstub(:current_account)
+    Account.any_instance.unstub(:organisation_accounts)
+    Account.any_instance.unstub(:organisation_from_cache)
+    Organisation.any_instance.unstub(:alternate_domain)
+  end
+
+  def dummy_freshid_org_accounts_response_with_freshsales
+    {
+      'accounts': [
+        {
+          'id': '1',
+          'organisation_id': 'test001',
+          'product_id': '41441393816600581',
+          'domain': 'test.freshdesk.com'
+        },
+        {
+          'id': '2',
+          'organisation_id': 'test001',
+          'product_id': '66069886861266193',
+          'domain': 'test.freshsales.io'
+        }
+      ],
+      'total_size': '100',
+      'page_number': 0,
+      'page_size': 0,
+      'has_more': true
+    }
+  end
+
+  def dummy_freshid_org_accounts_response_without_freshsales
+    {
+      'accounts': [
+        {
+          'id': '1',
+          'organisation_id': 'test001',
+          'product_id': '41441393816600581',
+          'domain': 'test.freshdesk.com'
+        },
+        {
+          'id': '2',
+          'organisation_id': 'test001',
+          'product_id': '119321760701761820',
+          'domain': 'test.freshmarketer.io'
+        }
+      ],
+      'total_size': '100',
+      'page_number': 0,
+      'page_size': 0,
+      'has_more': true
+    }
   end
 end

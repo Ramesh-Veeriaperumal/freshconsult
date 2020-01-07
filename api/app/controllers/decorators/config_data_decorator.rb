@@ -4,4 +4,10 @@ class ConfigDataDecorator < ApiDecorator
       url: record[:config]
     }
   end
+
+  def freshsales
+    {
+      url: record[:config]
+    }
+  end
 end
