@@ -46,6 +46,8 @@ defaults: &defaults
     shard_34: 2100000000000
     shard_35: 50000000000
     shard_36_1: 60000000000
+    shard_37: 61000000000
+    shard_37_2: 62000000000
     shard_source: 1
     sandbox_shard_us: 11000000000000
 
@@ -56,6 +58,8 @@ defaults: &defaults
     eu_shard_3:  75000000000
     euc_shard_1: 15000000000
     euc_shard_2: 76000000000
+    euc_shard_3: 77000000000
+    euc_shard_4: 78000000000
     shard_source: 1
     sandbox_shard_euc: 50000000000000
   podapsoutheast2:
