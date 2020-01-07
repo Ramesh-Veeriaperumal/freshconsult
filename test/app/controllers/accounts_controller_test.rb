@@ -18,6 +18,7 @@ class AccountsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:deliver_admin_activation).returns(true)
     User.any_instance.stubs(:perishable_token).returns(Faker::Number.number(5))
     User.any_instance.stubs(:reset_perishable_token!).returns(true)
+    AccountAdditionalSettings.any_instance.stubs(:enable_freshdesk_freshsales_bundle).returns(true)
   end
 
   def unstub_signup_calls
@@ -29,6 +30,7 @@ class AccountsControllerTest < ActionController::TestCase
     User.any_instance.unstub(:deliver_admin_activation)
     User.any_instance.unstub(:perishable_token)
     User.any_instance.unstub(:reset_perishable_token!)
+    AccountAdditionalSettings.any_instance.unstub(:enable_freshdesk_freshsales_bundle)
   end
 
   def current_account
@@ -775,6 +777,27 @@ class AccountsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:anonymous_account?)
     remove_others_redis_key(anonymous_signup_key)
     account.destroy if account.present?
+  end
+
+  def test_new_signup_with_freshdesk_brand_website_referrer
+    Account.any_instance.stubs(:add_to_billing).returns(true)
+    Account.any_instance.stubs(:enable_fresh_connect).returns(true)
+    Account.any_instance.stubs(:launched?).returns(true)
+    account_name = Faker::Lorem.word
+    domain_name = Faker::Lorem.word
+    user_email = Faker::Internet.email
+    referrer = 'https://freshdesk.com/pricing'
+    url = 'https://freshdesk.com/signup'
+    @request.env['CONTENT_TYPE'] = 'application/json'
+    @request.env['HTTP_ACCEPT'] = 'application/json'
+    response = get :new_signup_free, callback: '', user: { name: Faker::Name.name, email: user_email, time_zone: 'Chennai', language: 'en' }, account: { account_name: account_name, locale: I18n.default_locale, time_zone: 'Chennai', user_name: 'Support', user_password: 'test1234', user_password_confirmation: 'test1234', user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }, session_json: { current_session: { referrer: referrer, url: url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } }, device: {}, location: { countryName: 'India', countryCode: 'IND', cityName: 'Chennai', ipAddress: '127.0.0.1' }, locale: { lang: 'en' }, browser: {}, time: {} }.to_json, creditcard: { first_name: Faker::Name.first_name, last_name: Faker::Name.last_name }, address: { address1: Faker::Lorem.word, address2: Faker::Lorem.word, city: Faker::Lorem.word, state: Faker::Lorem.word, zip: Faker::Number.number(6), country: 'India', first_name: Faker::Name.first_name, last_name: Faker::Name.last_name, phone: Faker::Number.number(10) }
+    assert_response 200
+    account = Account.last
+    assert_equal account.account_additional_settings.additional_settings[:freshdesk_freshsales_bundle], true
+  ensure
+    Account.any_instance.unstub(:add_to_billing)
+    Account.any_instance.unstub(:enable_fresh_connect)
+    Account.any_instance.unstub(:launched?)
   end
 
   def test_anonymous_signup_without_redis_enabled

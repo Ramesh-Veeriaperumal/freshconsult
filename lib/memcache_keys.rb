@@ -310,6 +310,8 @@ module MemcacheKeys
 
   ACCOUNT_FLEXIFIELD_ENTRY_COLUMNS = 'v1/ACCOUNT_FLEXIFIELD_ENTRY_COLUMNS:%{account_id}'
 
+  FRESHWORK_PRODUCTS = 'FRESHWORK_PRODUCTS'.freeze
+
   def fetch_from_cache(key, &block)
     @cached_values = {} unless @cached_values
     return @cached_values[key] if @cached_values.include? key

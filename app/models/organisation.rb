@@ -1,5 +1,7 @@
 class Organisation < ActiveRecord::Base
   self.primary_key = :id
+  include Cache::Memcache::Organisation
+  FRESHSALES = 'freshsales'.freeze
 
   not_sharded
   concerned_with :presenter
@@ -47,6 +49,26 @@ class Organisation < ActiveRecord::Base
       key = format(ORGANISATION_BY_ACCOUNT_ID, account_id: account_id)
       MemcacheKeys.delete_from_cache key
     end
+  end
+
+  def organisation_freshsales_account_url
+    freshsales_url = nil
+    organisation_domain = alternate_domain || domain
+    if organisation_domain
+      freshid_accounts = Account.current.organisation_accounts(organisation_domain)
+      products = product_details_from_cache(organisation_domain)
+      Rails.logger.info "Response from Freshid, Product: #{products.inspect}"
+      if products.present? && freshid_accounts.present?
+        freshid_accounts[:accounts].each do |freshid_account|
+          product_name = products['productList'].find { |product| product['id'] == freshid_account[:product_id] }['name']
+          if product_name == FRESHSALES
+            freshsales_url = freshid_account[:domain]
+            break
+          end
+        end
+      end
+    end
+    freshsales_url
   end
 
   private

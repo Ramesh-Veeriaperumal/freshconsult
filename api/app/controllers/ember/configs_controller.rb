@@ -16,6 +16,13 @@ module Ember
         FreshVisualsConfig['end_point'] + '?auth=' + payload + '&appName=' + FreshVisualsConfig['app_name']
       end
 
+      def fetch_freshsales_config
+        current_account.organisation.organisation_freshsales_account_url
+      rescue StandardError => e
+        Rails.logger.error "Exception in getting freshsales accounts from freshid. message:: #{e.message} backtrace:: #{e.backtrace.join("\n")}"
+        render_base_error(:not_found, 404)
+      end
+
       def fetch_config_data
         {
           id: params[:id],
@@ -44,7 +51,7 @@ module Ember
       end
 
       def check_feature
-        return if feature.present? && Account.current.safe_send("#{feature}_enabled?")
+        return if feature.blank? || Account.current.safe_send("#{feature}_enabled?")
 
         render_request_error(:require_feature, 403, feature: feature.titleize)
       end
