@@ -44,8 +44,8 @@ module Admin::AutomationRules
 
     def validate_conditions
       conditions.each do |condition_set|
-        condition_set = condition_set.symbolize_keys
-        grouped_condition_set = group_by_resource_type(condition_set[:properties]).symbolize_keys
+        condition_set.symbolize_keys
+        grouped_condition_set = group_by_resource_type(condition_set[:properties])
         RESOURCE_TYPES.each do |resource_type|
           evaluate_on_condition(resource_type, grouped_condition_set[resource_type]) if grouped_condition_set.key? resource_type
         end
