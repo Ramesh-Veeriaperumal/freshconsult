@@ -94,11 +94,24 @@ window.App = window.App || {};
       $(document).on('click','#sprout-downgrade-submit', function(e){ $this.sproutDowngradeCompareModal(e) })
       $(document).on('click','#downgrade-sprout-btn', function(e){ $this.sproutDowngradeFormSubmit(e) })
       $(document).on('click'+$this.namespace(),  '.cancel-request', function(ev){ $this.performCancelRequest(ev, this) })
+      $(document).on('click', '#try-freshsales', function(ev){ $this.tryFreshsalesEvent(ev) })
     },
     editingSubscription: function() {
       this.editBilling = true;
     },
-
+    tryFreshsalesEvent: function() {
+      var openOmnibarEvent = new CustomEvent('showPromotionForProduct', {
+        detail: {
+          productName: 'freshsales',
+          invite: false
+        }
+      });
+      this.triggerOmnibarEvent(openOmnibarEvent);
+    },
+    triggerOmnibarEvent: function(event) {
+      var eventTarget = window.parent.document.querySelector('[data-omnibar-event-target]');
+      eventTarget.dispatchEvent(event);
+    },    
     performCancelRequest: function(ev, tag) {
       $('#cancellation-wrapper').addClass('sloading inner-form-hide');
       $('#pending-cancellation-request-modal').modal("hide");
