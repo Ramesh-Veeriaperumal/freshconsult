@@ -91,6 +91,16 @@ module Widget
         assert_nil Language.current
       end
 
+      def test_search_results_log
+        @account.launch :help_widget_log
+        stub_private_search_response([@article]) do
+          post :results, construct_params(version: 'widget', term: @article.title)
+        end
+        assert_response 200
+      ensure
+        @account.rollback :help_widget_log
+      end
+
       def test_results_with_login
         user = add_new_user(@account)
         set_user_login_headers(name: user.name, email: user.email)

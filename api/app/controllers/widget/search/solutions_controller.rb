@@ -46,7 +46,7 @@ module Widget
         end
 
         def log_search_report
-          Rails.logger.info "Widget search log : #{current_account.id} : #{@widget_id} : #{params[:term]} : #{@items.collect { |x| x[:id] }.join(',')}"
+          Rails.logger.info "Widget search log : #{current_account.id} : #{@widget_id} : #{Language.current.code} : #{params[:term]} : #{@items.collect { |x| x[:parent_id] }.join(',')}"
         end
     end
   end
