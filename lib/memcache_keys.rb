@@ -286,8 +286,6 @@ module MemcacheKeys
 
   ACCOUNT_AGENT_GROUPS_ONLY_IDS = 'v1/AGENTS_GROUPS_IDS_ONLY:%{account_id}'.freeze
 
-  ACCOUNT_AGENTS_DETAILS_PLUCK = 'v1/ACCOUNT_AGENTS_DETAILS_PLUCK:%{account_id}'.freeze
-
   CUSTOM_NESTED_FIELD_CHOICES = 'v1/CUSTOM_NESTED_FIELD_CHOICES:%{account_id}'.freeze
 
   SURVEY_QUESTIONS_MAP_KEY = 'v1/SURVEY_QUESTIONS_MAP:%{account_id}:%{survey_id}'.freeze
