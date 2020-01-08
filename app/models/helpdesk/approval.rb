@@ -5,6 +5,7 @@ class Helpdesk::Approval < ActiveRecord::Base
   belongs_to_account
 
   belongs_to :approvable, polymorphic: true
+  belongs_to :requester, class_name: 'User', foreign_key: 'user_id'
 
   has_many :approver_mappings, class_name: 'Helpdesk::ApproverMapping', inverse_of: :approval, dependent: :destroy, autosave: true
 

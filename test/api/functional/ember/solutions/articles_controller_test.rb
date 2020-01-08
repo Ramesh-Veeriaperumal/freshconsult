@@ -2861,6 +2861,19 @@ module Ember
         add_privilege(User.current, :publish_solution)
       end
 
+      def test_send_for_review_sends_notification
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        sample_article = get_article_with_draft
+        approver = add_test_agent
+        add_privilege(approver, :approve_article)
+        User.current.reload
+        Solution::ApprovalNotificationWorker.expects(:perform_async).once
+        post :send_for_review, construct_params({ version: 'private', id: sample_article.parent_id }, approver_id: approver.id)
+        assert_response 204
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
       def test_create_article_review_record_without_create_article_permission
         Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
         sample_article = get_article_with_draft
@@ -3037,6 +3050,19 @@ module Ember
         assert_response 204
         assert sample_article.helpdesk_approval.approval_status == Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]
         assert sample_article.helpdesk_approval.approved?
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_approve_article_triggers_notification
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        approver = add_test_agent
+        add_privilege(User.current, :approve_article)
+        User.current.reload
+        sample_article = get_in_review_article
+        Solution::ApprovalNotificationWorker.expects(:perform_async).once
+        post :approve, controller_params(version: 'private', id: sample_article.parent_id)
+        assert_response 204
       ensure
         Account.any_instance.unstub(:article_approval_workflow_enabled?)
       end
