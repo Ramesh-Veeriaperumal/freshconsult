@@ -505,4 +505,74 @@ class AccountTest < ActionView::TestCase
     assert_equal response.status, 200
   end
 
+  def test_freshsales_account_info_with_application
+    CRM::FreshsalesUtility.any_instance.stubs(:request_account_info).returns(stub_freshsales_response)
+    Account.any_instance.stubs(:account_activated_within_last_week?).returns(true)
+    Account.any_instance.stubs(:installed_applications).returns(stub_installed_application)
+    Integrations::InstalledApplication.any_instance.stubs(:with_name).returns([stub_installed_application])
+    CRM::FreshsalesUtility.any_instance.stubs(:get_entity_id).returns(1)
+    Account.current.account_additional_settings.additional_settings[:freshdesk_freshsales_bundle] = true
+    response = Account.current.fetch_fd_fs_banner_details
+    assert_equal response[:state], 'trial'
+    assert_equal response[:url], 'https://test-001.freshsales.io/subscription'
+  ensure
+    CRM::FreshsalesUtility.any_instance.unstub(:request_account_info)
+    Account.any_instance.unstub(:created_at)
+    Account.any_instance.unstub(:installed_applications)
+    Integrations::InstalledApplication.any_instance.unstub(:with_name)
+    CRM::FreshsalesUtility.any_instance.unstub(:get_entity_id)
+    Account.current.account_additional_settings.additional_settings[:freshdesk_freshsales_bundle] = nil
+  end
+
+  def test_freshsales_account_info_without_application
+    CRM::FreshsalesUtility.any_instance.stubs(:request_account_info).returns(stub_freshsales_response)
+    Account.any_instance.stubs(:account_activated_within_last_week?).returns(true)
+    CRM::FreshsalesUtility.any_instance.stubs(:get_entity_id).returns(1)
+    Account.current.account_additional_settings.additional_settings[:freshdesk_freshsales_bundle] = true
+    response = Account.current.fetch_fd_fs_banner_details
+    assert_equal response[:state], 'new'
+  ensure
+    CRM::FreshsalesUtility.any_instance.unstub(:request_account_info)
+    Account.any_instance.unstub(:created_at)
+    CRM::FreshsalesUtility.any_instance.unstub(:get_entity_id)
+    Account.current.account_additional_settings.additional_settings[:freshdesk_freshsales_bundle] = nil
+  end
+
+  def test_freshsales_account_info_without_application_with_freshsales
+    CRM::FreshsalesUtility.any_instance.stubs(:request_account_info).returns(stub_freshsales_response)
+    Account.any_instance.stubs(:account_activated_within_last_week?).returns(true)
+    Account.any_instance.stubs(:freshsales_account_from_freshid).returns('test.freshsales.io')
+    CRM::FreshsalesUtility.any_instance.stubs(:get_entity_id).returns(1)
+    Account.current.account_additional_settings.additional_settings[:freshdesk_freshsales_bundle] = true
+    response = Account.current.fetch_fd_fs_banner_details
+    assert_equal response[:state], 'integrate'
+  ensure
+    CRM::FreshsalesUtility.any_instance.unstub(:request_account_info)
+    Account.any_instance.unstub(:created_at)
+    Account.any_instance.unstub(:freshsales_account_from_freshid)
+    CRM::FreshsalesUtility.any_instance.unstub(:get_entity_id)
+    Account.current.account_additional_settings.additional_settings[:freshdesk_freshsales_bundle] = nil
+  end
+
+  def test_freshsales_account_info_old_account
+    CRM::FreshsalesUtility.any_instance.stubs(:request_account_info).returns(stub_freshsales_response)
+    Account.any_instance.stubs(:account_activated_within_last_week?).returns(false)
+    CRM::FreshsalesUtility.any_instance.stubs(:get_entity_id).returns(1)
+    response = Account.current.fetch_fd_fs_banner_details
+    assert_nil response
+  ensure
+    CRM::FreshsalesUtility.any_instance.unstub(:request_account_info)
+    Account.any_instance.unstub(:created_at)
+    CRM::FreshsalesUtility.any_instance.unstub(:get_entity_id)
+  end
+
+  def stub_freshsales_response
+    [200, { 'accounts': [{ 'id': 1, 'subscription_state': 'trial', 'full_domain': 'test-001.freshsales.io' }] }]
+  end
+
+  def stub_installed_application
+    installed_app = Integrations::InstalledApplication.new
+    installed_app.set_configs(domain: 'test.freshsales.io', auth_token: 'abcd1234')
+    installed_app
+  end
 end

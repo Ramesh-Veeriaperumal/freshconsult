@@ -12,12 +12,14 @@ class SubscriptionsControllerTest < ActionController::TestCase
   def setup
     Subscription.any_instance.stubs(:chk_change_field_agents).returns(nil)
     Subscription.any_instance.stubs(:chk_change_agents).returns(nil)
+    Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(false)
     super
   end
 
   def teardown
     Subscription.any_instance.unstub(:chk_change_field_agents)
     Subscription.any_instance.unstub(:chk_change_agents)
+    Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
   end
 
   def wrap_cname(params)

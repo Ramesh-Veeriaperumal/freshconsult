@@ -552,7 +552,18 @@
 					.prop("disabled", true);
 			}
 		},
+		tryFreshsales: function(){
+			var openOmnibarEvent = new CustomEvent('showPromotionForProduct', {
+				detail: {
+					productName: 'freshsales'
+				}
 
+ 			});
+			var eventTarget = window.parent.document.querySelector('[data-omnibar-event-target]');
+			eventTarget.dispatchEvent(openOmnibarEvent);
+
+
+		},
 		toggleRegexValidation: function(checkbox) {
 			if(checkbox.checked) {
 				$(checkbox).parents('fieldset').next().show();
@@ -757,6 +768,9 @@
 
 			$(document).on("change.custom-fields", this.dialogDOMMap['validate_using_regex'].selector, function(e){
 				self.toggleRegexValidation(e.target);
+			});	
+			$(document).on("click",'.try-freshsales' , function(e){
+				self.tryFreshsales();
 			});
 
 			$(document).on("keyup.custom-fields", this.dialogDOMMap['label'].selector, function(e){

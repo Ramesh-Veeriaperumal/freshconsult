@@ -96,6 +96,7 @@ module AccountConstants
   ANONYMOUS_ACCOUNT_NAME = 'Example'.freeze
 
   WIDGET_COUNT_FOR_PLAN = { sprout: 1, non_sprout: 5 }.freeze
+  FRESHSALES_SUBSCRIPTION_URL = 'https://%{domain}/subscription'.freeze
 
   def attachment_limit
     @attachment_limit ||= Account.current.outgoing_attachment_limit_25_enabled? ? 25 : ATTACHMENT_LIMIT

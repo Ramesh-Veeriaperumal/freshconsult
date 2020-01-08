@@ -160,4 +160,55 @@ class Account < ActiveRecord::Base
       }
     ::Scheduler::PostMessage.perform_async(payload: payload)
   end
+
+  def account_activated_within_last_week?
+    redis_key_exists?(account_activated_within_last_week_key)
+  end
+
+  def account_activated_within_last_week_key
+    format(ACCOUNT_ACTIVATED_WITHIN_LAST_WEEK, account_id: id)
+  end
+
+  def first_time_account_purchased
+    set_others_redis_key(account_activated_within_last_week_key, true, 7.days.seconds)
+  end
+
+  def fetch_freshsales_account_info(freshsales_app)
+    domain = freshsales_app.configs[:inputs]['domain']
+    auth_token = freshsales_app.configs[:inputs]['auth_token']
+    freshsales_utility = CRM::FreshsalesUtility.new(
+      account: self,
+      subscription: subscription.attributes.symbolize_keys,
+      cmrr: subscription.cmrr
+    )
+    freshsales_utility.request_account_info(domain, auth_token)
+  end
+
+  def freshsales_account_from_freshid
+    organisation.organisation_freshsales_account_url if organisation
+  rescue StandardError => e
+    Rails.logger.debug "Error in getting freshsales account info from freshid. Exception: #{e}, backtrace: #{e.backtrace.join("\n")}"
+    nil
+  end
+
+  def fetch_fd_fs_banner_details
+    fs_account_info = { state: '', url: '' }
+    return unless account_additional_settings.additional_settings[:freshdesk_freshsales_bundle]
+
+    freshsales_app = installed_applications.with_name(Integrations::Application::APP_NAMES[:freshsales]).first
+    if freshsales_app
+      status, response = fetch_freshsales_account_info(freshsales_app)
+      if status == 200
+        freshsales_domain = response[:accounts].try(:[], 0).try(:[], :full_domain)
+        fs_account_info[:url] = format(FRESHSALES_SUBSCRIPTION_URL, domain: freshsales_domain) if freshsales_domain.present?
+        fs_account_info[:state] = response[:accounts].try(:[], 0).try(:[], :subscription_state)
+      end
+    else
+      fs_account_info[:state] = freshsales_account_from_freshid.present? ? 'integrate' : 'new'
+    end
+    fs_account_info
+  rescue StandardError => e
+    Rails.logger.debug "Error in getting freshsales account info for fd-fs banner. Exception: #{e}, backtrace: #{e.backtrace.join("\n")}"
+    nil
+  end
 end

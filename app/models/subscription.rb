@@ -99,6 +99,7 @@ class Subscription < ActiveRecord::Base
   before_update :cache_old_model, :cache_old_addons
   after_update :add_to_crm, unless: [:anonymous_account?, :disable_freshsales_api_integration?]
   after_update :update_reseller_subscription, unless: :anonymous_account?
+  after_update :set_redis_for_first_time_account_activation, if: :freshdesk_freshsales_bundle_enabled?
   after_commit :update_crm, on: :update, unless: :anonymous_account?
   after_commit :update_fb_subscription, :add_free_freshfone_credit, :dkim_category_change, :update_ticket_activity_export, on: :update
   after_commit :clear_account_susbcription_cache
@@ -834,6 +835,16 @@ class Subscription < ActiveRecord::Base
     def prorate?(applicable_coupon)
       !(present_subscription.active? && (total_amount(addons, applicable_coupon) < present_subscription.amount) &&
         NO_PRORATION_PERIOD_CYCLES.include?(present_subscription.renewal_period))
+    end
+
+    def set_redis_for_first_time_account_activation
+      if @old_subscription.trial? && active? && subscription_payments.count.zero?
+        account.first_time_account_purchased
+      end
+    end
+
+    def freshdesk_freshsales_bundle_enabled?
+      account.account_additional_settings.additional_settings[:freshdesk_freshsales_bundle]
     end
 
     #CRM
