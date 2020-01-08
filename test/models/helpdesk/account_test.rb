@@ -38,4 +38,5 @@ class AccountTest < ActiveSupport::TestCase
   ensure
     @account.revoke_feature(:private_inline)
   end
+
 end
