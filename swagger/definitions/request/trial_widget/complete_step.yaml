@@ -1,6 +1,6 @@
 
 type: object
 properties:
-  step:
-    type: string
+  steps:
+    type: array
     description: step to be completed

@@ -3,22 +3,22 @@ require_relative '../unit_test_helper'
 class TrialWidgetValidationTest < ActionView::TestCase
 
   def test_step_not_included_in_the_account_setup_list
-    trial_widget_validator = TrialWidgetValidation.new({ step: Faker::Name.name.downcase }, nil)
+    trial_widget_validator = TrialWidgetValidation.new({ steps: [Faker::Name.name.downcase] }, nil)
     refute trial_widget_validator.valid?(:complete_step)
     errors = trial_widget_validator.errors.full_messages
-    assert errors.include?('Step is not included in the list')
+    assert errors.include?('Steps not_included')
   end
 
   def test_step_not_string
-    trial_widget_validator = TrialWidgetValidation.new({ step: Faker::Number.number(10).to_i }, nil)
+    trial_widget_validator = TrialWidgetValidation.new({ steps: Faker::Number.number(10).to_i }, nil)
     refute trial_widget_validator.valid?(:complete_step)
     errors = trial_widget_validator.errors.full_messages
-    assert errors.include?('Step datatype_mismatch')
+    assert errors.include?('Steps datatype_mismatch')
   end
 
   def test_valid_step
     n_steps = Account::SETUP_KEYS.count
-    trial_widget_validator = TrialWidgetValidation.new({ step: Account::SETUP_KEYS[Random.rand(n_steps)] }, nil)
+    trial_widget_validator = TrialWidgetValidation.new({ steps: [Account::SETUP_KEYS[Random.rand(n_steps)]] }, nil)
     assert trial_widget_validator.valid?(:complete_step)
   end
 
@@ -27,15 +27,15 @@ class TrialWidgetValidationTest < ActionView::TestCase
     trial_widget_validator = TrialWidgetValidation.new({ goals: Account::SETUP_KEYS[Random.rand(n_steps)] }, nil)
     refute trial_widget_validator.valid?(:complete_step)
     errors = trial_widget_validator.errors.full_messages
-    assert errors.include?('Goals is invalid')
+    assert errors.include?('Goals datatype_mismatch')
   end
 
   def test_goal_not_string
     n_steps = Account::SETUP_KEYS.count
-    trial_widget_validator = TrialWidgetValidation.new({ goals: [Account::SETUP_KEYS[Random.rand(n_steps)], Faker::Number.number(10)] }, nil)
+    trial_widget_validator = TrialWidgetValidation.new({ goals: [Account::SETUP_KEYS[Random.rand(n_steps)], Faker::Number.number(10).to_i] }, nil)
     refute trial_widget_validator.valid?(:complete_step)
     errors = trial_widget_validator.errors.full_messages
-    assert errors.include?('Goals is invalid')
+    assert errors.include?('Goals not_included')
   end
 
   def test_goal_not_included_in_the_onboarding_goals
@@ -44,7 +44,7 @@ class TrialWidgetValidationTest < ActionView::TestCase
     trial_widget_validator = TrialWidgetValidation.new({ goals: [Account::SETUP_KEYS[Random.rand(n_steps)], Account::ONBOARDING_V2_GOALS[Random.rand(n_goals)]] }, nil)
     refute trial_widget_validator.valid?(:complete_step)
     errors = trial_widget_validator.errors.full_messages
-    assert errors.include?('Goals is invalid')
+    assert errors.include?('Goals not_included')
   end
 
   def test_valid_goal

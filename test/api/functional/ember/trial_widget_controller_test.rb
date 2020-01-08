@@ -83,7 +83,7 @@ class Ember::TrialWidgetControllerTest < ActionController::TestCase
 
   def test_complete_step_with_wrong_step_name
     step = Faker::Name.name.downcase
-    post :complete_step, construct_params(step: step, version: 'private')
+    post :complete_step, construct_params(steps: [step], version: 'private')
     assert_response 400
   end
 
@@ -91,13 +91,49 @@ class Ember::TrialWidgetControllerTest < ActionController::TestCase
     count = 0
     n_steps = Account::SETUP_KEYS.count
     step = Account::SETUP_KEYS[Random.rand(n_steps)]
-    post :complete_step, construct_params(step: step, version: 'private')
+    post :complete_step, construct_params(steps: [step], version: 'private')
     assert_response 204
   end
 
   def test_complete_support_channel_step_completes_admin_onboarding
-    post :complete_step, construct_params(step: 'support_channel', version: 'private')
+    post :complete_step, construct_params(steps: ['support_channel'], version: 'private')
     assert_response 204
     refute Account.current.account_onboarding_pending?
+  end
+
+  def test_complete_step_onboarding_goals_to_freshmarketer
+    current_user = @account.users.current
+    stub_request(:put, ThirdCrm::FRESHMARKETER_CONFIG['events_url'])
+      .with(
+        body: "{\"custom_field\":{\"cf_fdeskgoalticket\":\"true\"},\"email\":\"#{current_user.email}\",\"last_name\":\"#{current_user.name}\"}",
+        headers: {
+          'Accept' => '*/*; q=0.5, application/xml',
+          'Accept-Encoding' => 'gzip, deflate',
+          'Content-Length' => '99',
+          'Content-Type' => 'application/json',
+          'Fm-Token' => 'i141ie6mbs865gne8g9h66u0ocr6v5mi0g9o3gla',
+          'User-Agent' => 'Ruby'
+        }
+      ).to_return(status: 200, body: '', headers: {})
+    post :complete_step, construct_params(steps: ['tickets_intro', 'organiseand_keep_track'], version: 'private')
+    assert_response 204
+  end
+
+  def test_onboarding_goals_payload_to_freshmarketer
+    current_user = @account.users.current
+    stub_request(:put, ThirdCrm::FRESHMARKETER_CONFIG['contact_url'])
+      .with(
+        body: "{\"custom_field\":{\"cf_fdeskgoalautomation\":\"true\"},\"email\":\"#{current_user.email}\",\"last_name\":\"#{current_user.name}\"}",
+        headers: {
+          'Accept' => '*/*; q=0.5, application/xml',
+          'Accept-Encoding' => 'gzip, deflate',
+          'Content-Length' => '103',
+          'Content-Type' => 'application/json',
+          'Fm-Token' => 'i141ie6mbs865gne8g9h66u0ocr6v5mi0g9o3gla',
+          'User-Agent' => 'Ruby'
+        }
+      ).to_return(status: 200, body: '', headers: {})
+    post :complete_step, construct_params(goals: ['automate_repetitive_tasks'], version: 'private')
+    assert_response 204
   end
 end

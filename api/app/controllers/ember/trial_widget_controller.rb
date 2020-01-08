@@ -23,11 +23,7 @@ class Ember::TrialWidgetController < ApiApplicationController
   end
 
   def complete_step
-    step_name = params[cname][:step]
-    if step_name.present? && current_account.respond_to?("#{step_name}_setup?") && !current_account.send("#{step_name}_setup?")
-      current_account.try("mark_#{step_name}_setup_and_save")
-      complete_admin_onboarding if step_name == TrialWidgetConstants::SUPPORT_CHANNEL_STEP
-    end
+    mark_step_names(params[cname][:steps])
     current_account.account_additional_settings.update_onboarding_goals(params[cname][:goals]) if params[cname][:goals].present?
     head 204
   rescue StandardError
@@ -49,5 +45,14 @@ class Ember::TrialWidgetController < ApiApplicationController
 
     def support_email_dependent_info
       { email_service_provider: current_account.account_configuration.company_info[:email_service_provider] }
+    end
+
+    def mark_step_names(step_names)
+      step_names.each do |step_name|
+        if step_name.present? && current_account.respond_to?("#{step_name}_setup?") && !current_account.safe_send("#{step_name}_setup?")
+          current_account.try("mark_#{step_name}_setup_and_save")
+          complete_admin_onboarding if step_name == TrialWidgetConstants::SUPPORT_CHANNEL_STEP
+        end
+      end
     end
 end
