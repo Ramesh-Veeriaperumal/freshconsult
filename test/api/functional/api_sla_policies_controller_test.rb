@@ -9,6 +9,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     @agent_1 = nil
     @agent_2 = nil
     @group = nil
+    @account.stubs(:segments_enabled?).returns(true)
+    @account.stubs(:sla_management_enabled?).returns(true)
   end
 
   after(:all) do
@@ -19,6 +21,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     @agent_1.delete if !@agent_1.nil?
     @agent_2.delete if !@agent_2.nil?
     @group.delete if !@group.nil?
+    @account.unstub(:segments_enabled?)
+    @account.unstub(:sla_management_enabled?)
   end
 
   def wrap_cname(params)
@@ -245,6 +249,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     # ********************************************************* Company Segments Validation
 
       def test_update_company_segments_sla_policies
+ 
         @sla_policy = quick_create_sla_policy
         company_segment = create_company_segment
         put :update, construct_params({ id: @sla_policy.id }, applicable_to: { company_segments: [company_segment.id] })
@@ -253,6 +258,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
       end
 
       def test_update_remove_company_segments_sla_policy
+ 
         @sla_policy = quick_create_sla_policy
         put :update, construct_params({ id: @sla_policy.id }, applicable_to: { company_segments: [], group_ids: [1] })
         assert_response 200
@@ -261,6 +267,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
       end
 
       def test_update_with_invalid_company_segments
+ 
         @sla_policy = quick_create_sla_policy
         put :update, construct_params({ id: @sla_policy.id }, applicable_to: { company_segments: [10000, 1000001] })
         assert_response 400
@@ -268,6 +275,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
       end
 
       def test_update_with_invalid_company_segments_data_type
+ 
         @sla_policy = quick_create_sla_policy
         put :update, construct_params({ id: @sla_policy.id }, applicable_to: { company_segments: '1,2' })
         assert_response 400
@@ -1652,6 +1660,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     end
 
     def test_create_with_invalid_contact_segment_ids_data_type
+
       contact_segment = create_contact_segment
       post :create, construct_params({ name: Faker::Lorem.word, applicable_to: { contact_segments: '1,2' }, sla_target: create_sla_target })
       assert_response 400
@@ -2702,6 +2711,17 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     put :update, construct_params({ id: default_sla_id }, applicable_to: { company_ids: [company.id] })
     assert_response 400
     match_json(request_error_pattern('cannot_update_default_sla'))
+  end
+
+  def test_escalation_without_sla_mgt_feature
+    @account.stubs(:sla_management_enabled?).returns(false)
+    get_agents
+    params_hash = { name: Faker::Lorem.word, applicable_to: { sources: [2] }, sla_target: create_sla_target }
+    params_hash.merge!({ escalation: { response: { escalation_time: 14400, agent_ids: [@agent_1.user_id] } } })
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('escalation', :require_feature_for_attribute, code: :inaccessible_field, feature: :sla_management, attribute: 'escalation')])
+    @account.unstub(:sla_management_enabled?)
   end
 
   def get_agents
