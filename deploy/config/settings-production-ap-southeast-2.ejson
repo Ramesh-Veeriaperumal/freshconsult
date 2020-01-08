@@ -136,8 +136,8 @@
         "hosted_zone": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:3W9xOn2kA2kzeMtC+wuwP6tXAgkLm4Ev:mF/gKjm2xZ/CV05+6tufwL2AuJR4qoz0wrtuz8jr]"
       },
       "fd_email_service": {
-        "key": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:Q9JYmDtbWK0nrNafUG9fqiSBGc1+T2z4:j9KXTTHEDyq0rqIxYVHtFnTlBLch8inuy3NuhMFO/wbGCllg9LRBlOCG3J60gTj2]",
-        "lang_key": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:Q9JYmDtbWK0nrNafUG9fqiSBGc1+T2z4:j9KXTTHEDyq0rqIxYVHtFnTlBLch8inuy3NuhMFO/wbGCllg9LRBlOCG3J60gTj2]",
+        "key": "EJ[1:1u0wGtCVLBpkEjyIhYgxn3TPAIR1m8pSbNA48w1s63k=:QmXOzq/MBdv2fEXGY3If6CYLPl4ya6wF:MwVbu2GZu/vSOB4Z1c2TvU5MwdpXkMcP6DjoVZ16iMWSIkUBXRTdaXXHhEy3]",
+        "lang_key": "EJ[1:1u0wGtCVLBpkEjyIhYgxn3TPAIR1m8pSbNA48w1s63k=:tGjeOeMfwUTqCRe2j2sk+XeAm0XhNu6m:UIIETxo6UUtu6F++0Y0eH37ckqHT0gd37jq8pLO16OSWQyUGdQqONtGCeNG4]",
         "incoming_email_api_key1": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:pMM8crVRs8EPRuzgymcLG7zu2uKZH9V2:al9fEblmRIMELTlwhJ4FyQrbJc2u62a99EUHGMc4yE14IF4wfBHDPoQk15o1xw==]",
         "incoming_email_api_key2": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:skyBOALVoXN+5l+mVhd+vzVG/f0/ucpr:ou9F/uGVrYmDFAXm77tpc/Eo38sTRT1h6AU0THCGsPCbiAP1riyGJW1fm85+1w==]",
         "_host": "https://mailservice.freshdesk.com",
