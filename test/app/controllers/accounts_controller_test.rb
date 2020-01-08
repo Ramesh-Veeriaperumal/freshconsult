@@ -884,4 +884,113 @@ class AccountsControllerTest < ActionController::TestCase
     DomainGenerator.any_instance.unstub(:valid?)
     Account.unstub(:current)
   end
+
+  def test_set_onboarding_version_first_50_percent
+    stub_signup_calls
+    Signup.any_instance.unstub(:save)
+    AccountAdditionalSettings.any_instance.stubs(:get_onboarding_version).returns('personalised_onboarding')
+    account_name = Faker::Lorem.word
+    domain_name = Faker::Lorem.word
+    user_email = 'nofsmonsignup@gleason.name'
+    landing_url = 'https://freshdesk.com/lp/free-helpdesk-india?u&device=c'
+    user_name = Faker::Name.name
+    url = 'https://freshdesk.com/signup'
+    session = { current_session: { referrer: landing_url, url: url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
+                device: {}, location: { countryName: 'India', countryCode: 'IND', cityName: 'Chennai', ipAddress: '127.0.0.1' },
+                locale: { lang: 'en' }, browser: {}, time: {}, mSegment: 'good' }.to_json
+    account_info = { account_name: account_name, account_domain: domain_name, locale: I18n.default_locale, time_zone: 'Chennai',
+                     user_name: user_name, user_password: 'test1234', user_password_confirmation: 'test1234',
+                     user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }
+    user_info = { name: user_name, email: user_email, time_zone: 'Chennai', language: 'en' }
+    get :new_signup_free, callback: '', user: user_info, account: account_info, session_json: session, format: 'json'
+    resp = JSON.parse(response.body)
+    assert_response 200, resp
+    account = Account.find(resp['account_id'])
+    assert account.account_additional_settings.additional_settings[:onboarding_ab_testing]
+    assert_equal account.account_additional_settings.additional_settings[:onboarding_version], 'personalised_onboarding'
+  ensure
+    unstub_signup_calls
+    AccountAdditionalSettings.any_instance.unstub(:get_onboarding_version)
+  end
+
+  def test_set_onboarding_version_second_50_percent
+    stub_signup_calls
+    Signup.any_instance.unstub(:save)
+    AccountAdditionalSettings.any_instance.stubs(:get_onboarding_version).returns('default_onboarding')
+    account_name = Faker::Lorem.word
+    domain_name = Faker::Lorem.word
+    user_email = 'nofsmonsignup@gleason.name'
+    landing_url = 'https://freshdesk.com/lp/free-helpdesk-india?u&device=c'
+    user_name = Faker::Name.name
+    url = 'https://freshdesk.com/signup'
+    session = { current_session: { referrer: landing_url, url: url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
+                device: {}, location: { countryName: 'India', countryCode: 'IND', cityName: 'Chennai', ipAddress: '127.0.0.1' },
+                locale: { lang: 'en' }, browser: {}, time: {}, mSegment: 'good' }.to_json
+    account_info = { account_name: account_name, account_domain: domain_name, locale: I18n.default_locale, time_zone: 'Chennai',
+                     user_name: user_name, user_password: 'test1234', user_password_confirmation: 'test1234',
+                     user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }
+    user_info = { name: user_name, email: user_email, time_zone: 'Chennai', language: 'en' }
+    get :new_signup_free, callback: '', user: user_info, account: account_info, session_json: session, format: 'json'
+    resp = JSON.parse(response.body)
+    assert_response 200, resp
+    account = Account.find(resp['account_id'])
+    assert account.account_additional_settings.additional_settings[:onboarding_ab_testing]
+    assert_equal account.account_additional_settings.additional_settings[:onboarding_version], 'default_onboarding'
+  ensure
+    unstub_signup_calls
+    AccountAdditionalSettings.any_instance.unstub(:get_onboarding_version)
+  end
+
+  def test_set_onboarding_version_when_referer_url_is_not_signup
+    stub_signup_calls
+    Signup.any_instance.unstub(:save)
+    AccountAdditionalSettings.any_instance.stubs(:get_onboarding_version).returns('default_onboarding')
+    account_name = Faker::Lorem.word
+    domain_name = Faker::Lorem.word
+    user_email = 'nofsmonsignup@gleason.name'
+    landing_url = 'https://google.com'
+    user_name = Faker::Name.name
+    url = 'https://freshdesk.com/lp/free-helpdesk-india?u&device=c'
+    session = { current_session: { referrer: landing_url, url: url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
+                device: {}, location: { countryName: 'India', countryCode: 'IND', cityName: 'Chennai', ipAddress: '127.0.0.1' },
+                locale: { lang: 'en' }, browser: {}, time: {}, mSegment: 'good' }.to_json
+    account_info = { account_name: account_name, account_domain: domain_name, locale: I18n.default_locale, time_zone: 'Chennai',
+                     user_name: user_name, user_password: 'test1234', user_password_confirmation: 'test1234',
+                     user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }
+    user_info = { name: user_name, email: user_email, time_zone: 'Chennai', language: 'en' }
+    get :new_signup_free, callback: '', user: user_info, account: account_info, session_json: session, format: 'json'
+    resp = JSON.parse(response.body)
+    assert_response 200, resp
+    account = Account.find(resp['account_id'])
+    assert account.account_additional_settings.additional_settings[:onboarding_ab_testing]
+    assert_equal account.account_additional_settings.additional_settings[:onboarding_version], 'default_onboarding'
+  ensure
+    unstub_signup_calls
+    AccountAdditionalSettings.any_instance.unstub(:get_onboarding_version)
+  end
+
+  def test_set_onboarding_version_when_no_session_json_is_present
+    stub_signup_calls
+    Signup.any_instance.unstub(:save)
+    AccountAdditionalSettings.any_instance.stubs(:get_onboarding_version).returns('default_onboarding')
+    account_name = Faker::Lorem.word
+    domain_name = Faker::Lorem.word
+    user_email = 'nofsmonsignup@gleason.name'
+    landing_url = 'https://google.com'
+    user_name = Faker::Name.name
+    url = 'https://freshdesk.com/lp/free-helpdesk-india?u&device=c'
+    account_info = { account_name: account_name, account_domain: domain_name, locale: I18n.default_locale, time_zone: 'Chennai',
+                     user_name: user_name, user_password: 'test1234', user_password_confirmation: 'test1234',
+                     user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }
+    user_info = { name: user_name, email: user_email, time_zone: 'Chennai', language: 'en' }
+    get :new_signup_free, callback: '', user: user_info, account: account_info, session_json: nil, format: 'json'
+    resp = JSON.parse(response.body)
+    assert_response 200, resp
+    account = Account.find(resp['account_id'])
+    refute account.account_additional_settings.additional_settings[:onboarding_ab_testing]
+    assert_equal account.account_additional_settings.additional_settings[:onboarding_version], 'default_onboarding'
+  ensure
+    unstub_signup_calls
+    AccountAdditionalSettings.any_instance.unstub(:get_onboarding_version)
+  end
 end

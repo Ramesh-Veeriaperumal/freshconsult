@@ -72,12 +72,13 @@ module Ember
         def fetch_approvals
           return [] if @articles.empty?
           article_ids = get_article_ids(@articles)
-          current_account.helpdesk_approvals.select([:id, :user_id]).where(approvable_id: article_ids)
+          current_account.helpdesk_approvals.select([:id, :user_id]).where(approvable_id: article_ids, approvable_type: 'Solution::Article')
         end
 
         def fetch_my_drafts
            return [] if @my_drafts.empty?
-           @my_drafts.joins("LEFT JOIN helpdesk_approvals ON solution_drafts.article_id = helpdesk_approvals.approvable_id").where("helpdesk_approvals.id is NULL")
+           join_condition = format(%(LEFT JOIN helpdesk_approvals ON solution_drafts.article_id = helpdesk_approvals.approvable_id AND helpdesk_approvals.account_id = %{account_id}), account_id: Account.current.id)
+           @my_drafts.joins(join_condition).where("helpdesk_approvals.id is NULL")
         end
 
         def fetch_articles_by_approval_status

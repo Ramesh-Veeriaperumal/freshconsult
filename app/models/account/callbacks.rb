@@ -151,6 +151,11 @@ class Account < ActiveRecord::Base
         add_feature(:detect_thank_you_note_eligible)
       end
     end
+    #next response sla feature based on redis. Remove once its stable
+    if redis_key_exists?(ENABLE_NEXT_RESPONSE_SLA) 
+      add_feature(:next_response_sla)
+      launch(:sla_policy_revamp)
+    end
   end
 
   def update_activity_export
@@ -380,9 +385,7 @@ class Account < ActiveRecord::Base
         self.id = domain_mapping.account_id
         populate_google_domain(domain_mapping.shard) if google_account?
       else
-        shard = self.sandbox? ? ActiveRecord::Base.current_shard_selection.shard.to_s : ShardMapping.latest_shard
-        shard_mapping = ShardMapping.new({:shard_name => shard, :status => ShardMapping::STATUS_CODE[:not_found],
-                                               :pod_info => PodConfig['CURRENT_POD']})
+        shard_mapping = ShardMapping.new(shard_name: ShardMapping.current_shard_selection.shard.nil? ? ShardMapping.latest_shard : ShardMapping.current_shard_selection.shard.to_s, status: ShardMapping::STATUS_CODE[:not_found], pod_info: PodConfig['CURRENT_POD'])
         shard_mapping.domains.build({:domain => full_domain})  
         populate_google_domain(shard_mapping) if google_account? #remove this when the new google marketplace is stable.
         shard_mapping.save!                            

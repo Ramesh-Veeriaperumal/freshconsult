@@ -143,8 +143,10 @@ module VaRulesTesthelper
       elsif field_name == :time_zone
         'American Samoa'
       elsif field_name == :language
-        'en'
-      elsif [:name, :domains].include?(field_name)
+        'ar'
+      elsif field_name == :name
+        Account.current.companies.pluck(:name).first
+      elsif [:domains].include?(field_name)
         Faker::Lorem.characters(10)
       else
         1

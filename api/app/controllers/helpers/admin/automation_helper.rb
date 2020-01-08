@@ -40,9 +40,11 @@ module Admin::AutomationHelper
         CONDITION_RESOURCE_TYPES.each do |key|
           condition.permit(*CONDITION_SET_REQUEST_VALUES) if condition.is_a?(Hash)
           condition = convert_tag_fields(condition) if condition[:field_name] == TAG_NAMES && key == :ticket
+          condition[:value] = condition[:value].map { |val| val == ANY_NONE[:ANY] ? -1 : val } if condition[:field_name] == RESPONDER_ID && key == :ticket
           condition[:field_name] = 'ticlet_cc' if condition[:field_name] == 'ticket_cc' && key == :ticket
           condition[:field_name] = condition[:field_name].to_s + '_' + condition[:custom_status_id].to_s if condition[:field_name].to_s == TIME_AND_STATUS_BASED_FILTER[0] && key == :ticket
           condition[:nested_fields].permit(*LEVELS).values.each { |value| value.permit(*PERMITTED_DEFAULT_CONDITION_SET_VALUES) } if condition.key?(:nested_fields)
+          condition[:related_conditions].each { |related_condition| related_condition.permit(*PERMITTED_DEFAULT_CONDITION_SET_VALUES) } if condition.key?(:related_conditions)
           add_case_sensitive_key(condition) if condition.present?
         end
       end
@@ -252,6 +254,7 @@ module Admin::AutomationHelper
       value = construct_nested_fields_data(value) if
             nested_field_names.present? && nested_field_names.include?(key)
       value = construct_asssociated_fields_data(value) if key == :associated_fields && value.present?
+      value = value.each.map { |agent_shift| construct_asssociated_fields_data agent_shift } if key == :related_conditions && value.present?
       if is_event && value.present? && 
          TRANSFORMABLE_EVENT_FIELDS.include?(original_key.to_sym) && 
          !value.is_a?(Array) &&

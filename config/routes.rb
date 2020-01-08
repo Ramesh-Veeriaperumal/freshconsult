@@ -1467,9 +1467,6 @@ Helpkit::Application.routes.draw do
     end
 
     resources :mailboxes
-    namespace :mobihelp do
-      resources :apps
-    end
 
     namespace :ecommerce do
       resources :accounts
@@ -2090,7 +2087,6 @@ Helpkit::Application.routes.draw do
           post :twitter
           post :reply_to_forward
           post :facebook
-          post :mobihelp
           get :traffic_cop
           get :full_text
           post :ecommerce
@@ -2141,8 +2137,6 @@ Helpkit::Application.routes.draw do
           put :toggle_timer
         end
       end
-
-      resources :mobihelp_info, :only => :index
     end
 
     match 'leaderboard/group_agents/:id', :controller => 'leaderboard', :action => 'group_agents', :as => 'leaderboard_group_users'
@@ -2810,15 +2804,6 @@ Helpkit::Application.routes.draw do
     match '/custom_surveys/:survey_code/:rating/hit' => 'custom_surveys#hit' ,:as => :customer_custom_survey_hit
     match '/custom_surveys/:ticket_id/:rating'  => 'custom_surveys#new_via_portal', :as => :portal_custom_survey
 
-    namespace :mobihelp do
-      resources :tickets do
-        member do
-          post :notes
-          post :close
-        end
-      end
-    end
-
     match '/user_credentials/refresh_access_token/:app_name',
       :controller => 'integrations/user_credentials', :action => 'refresh_access_token', :as => :refresh_token
     match '/integrations/user_credentials/oauth_install/:app_name',
@@ -2880,44 +2865,6 @@ Helpkit::Application.routes.draw do
         get :numbers
         get :can_accept_incoming_calls
         get :is_ringing
-      end
-    end
-  end
-
-  namespace :mobihelp do
-    resources :devices do
-      collection do
-        post :register
-        get :app_config
-        post :register_user
-      end
-    end
-
-    resources :solutions do
-      collection do
-        get :articles
-      end
-    end
-
-    namespace :multilingual do
-      resources :articles do
-        member do
-          put :thumbs_up
-          put :thumbs_down
-        end
-      end
-
-      resources :solutions do
-        collection do
-          get :articles
-        end
-      end
-    end
-
-    resources :articles do
-      member do
-        put :thumbs_up
-        put :thumbs_down
       end
     end
   end
@@ -3088,6 +3035,7 @@ Helpkit::Application.routes.draw do
           get :blacklisted_domains
           put :add_blacklisted_domain
           put :remove_blacklisted_domain
+          get :fetch_latest_shard
         end
       end
 

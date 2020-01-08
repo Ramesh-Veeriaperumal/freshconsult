@@ -1,6 +1,6 @@
 module TestClassMethods
   @@last_gc_run = Time.now
-  RESERVED_IVARS = %w(@loaded_fixtures @test_passed @fixture_cache @method_name @_assertion_wrapped @_result @__name__ @account).map(&:to_sym)
+  RESERVED_IVARS = %w(@loaded_fixtures @test_passed @fixture_cache @method_name @_assertion_wrapped @_result @__name__ @account @fixture_connections).map(&:to_sym)
   @@reserved_ivars = RESERVED_IVARS
   DEFERRED_GC_THRESHOLD = (ENV['DEFER_GC'] || 1.0).to_f
 

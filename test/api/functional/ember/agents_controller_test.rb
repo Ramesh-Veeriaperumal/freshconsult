@@ -206,6 +206,78 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     Ember::AgentsController.any_instance.unstub(:available_chat_agents)
   end
 
+  def test_agent_index_with_filter_field_agent_with_out_user_info
+    enable_adv_ticketing([:field_service_management]) do
+      begin
+        perform_fsm_operations
+        field_tech_role = @account.roles.create(name: 'Field technician', default_role: true)
+        field_agent = add_test_agent(@account, role: Role.find_by_name('Field technician').id, agent_type: Account.current.agent_types.find_by_name(Agent::FIELD_AGENT).agent_type_id)
+        field_agent2 = add_test_agent(@account, role: Role.find_by_name('Field technician').id, agent_type: Account.current.agent_types.find_by_name(Agent::FIELD_AGENT).agent_type_id)
+        role = Role.find_by_name(FIELD_SERVICE_MANAGER_ROLE_NAME)
+        agent = add_test_agent(@account, role: role.id)
+        currentuser = User.current
+        login_as(agent)
+        get :index, controller_params(version: 'private', type: 'field_agent')
+        assert_response 200
+        pattern = @account.agents.where(agent_type: @account.agent_types.find_by_name(Agent::FIELD_AGENT).agent_type_id).map { |user| private_api_restriced_agent_hash(user) }
+        match_json(pattern)
+      ensure
+        role.try(:destroy)
+        agent.try(:destroy)
+        field_agent.try(:destroy)
+        field_agent2.try(:destroy)
+        login_as(currentuser)
+      end
+    end
+  end
+
+  def test_agent_index_with_filter_field_agent_with_user_info
+    enable_adv_ticketing([:field_service_management]) do
+      begin
+        perform_fsm_operations
+        field_tech_role = @account.roles.create(name: 'Field technician', default_role: true)
+        field_agent = add_test_agent(@account, role: Role.find_by_name('Field technician').id, agent_type: Account.current.agent_types.find_by_name(Agent::FIELD_AGENT).agent_type_id)
+        field_agent2 = add_test_agent(@account, role: Role.find_by_name('Field technician').id, agent_type: Account.current.agent_types.find_by_name(Agent::FIELD_AGENT).agent_type_id)
+        role = Role.find_by_name(FIELD_SERVICE_MANAGER_ROLE_NAME)
+        agent = add_test_agent(@account, role: role.id)
+        currentuser = User.current
+        login_as(agent)
+        get :index, controller_params(version: 'private', type: 'field_agent', include: 'user_info')
+        assert_response 200
+        pattern = @account.agents.where(agent_type: Account.current.agent_types.find_by_name(Agent::FIELD_AGENT).agent_type_id).map { |user| private_api_restriced_agent_hash(user).merge!(contact_pattern(user)) }
+        match_json(pattern)
+      ensure
+        role.try(:destroy)
+        agent.try(:destroy)
+        field_agent.try(:destroy)
+        field_agent2.try(:destroy)
+        login_as(currentuser)
+      end
+    end
+  end
+
+  def test_agent_index_with_include_filter_wrong_params
+    enable_adv_ticketing([:field_service_management]) do
+      begin
+        perform_fsm_operations
+        field_tech_role = @account.roles.create(name: 'Field technician', default_role: true)
+        field_agent = add_test_agent(@account, role: Role.find_by_name('Field technician').id, agent_type: Account.current.agent_types.find_by_name(Agent::FIELD_AGENT).agent_type_id)
+        role = Role.find_by_name(FIELD_SERVICE_MANAGER_ROLE_NAME)
+        agent = add_test_agent(@account, role: role.id)
+        currentuser = User.current
+        login_as(agent)
+        get :index, controller_params(version: 'private', type: 'field_agent', include: 'dummy')
+        assert_response 400
+        match_json([bad_request_error_pattern('include', :not_included, list: 'user_info')])
+      ensure
+        role.try(:destroy)
+        agent.try(:destroy)
+        field_agent.try(:destroy)
+        login_as(currentuser)
+      end
+    end
+  end
+
   def test_update_with_availability
     user = get_or_create_agent
     add_privilege(User.current,:manage_availability)

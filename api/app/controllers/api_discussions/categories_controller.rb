@@ -1,5 +1,7 @@
 module ApiDiscussions
   class CategoriesController < ApiApplicationController
+    decorate_views
+
     private
 
       def feature_name

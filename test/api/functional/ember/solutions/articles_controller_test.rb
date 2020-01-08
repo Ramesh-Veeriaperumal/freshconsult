@@ -868,6 +868,48 @@ module Ember
         User.any_instance.unstub(:privilege?)
       end
 
+      def test_bulk_update_approval_without_approve_article_privilege
+        with_publish_solution_privilege do
+          folder = @account.solution_folder_meta.where(is_default: false).first
+          populate_articles(folder)
+          articles = folder.solution_article_meta.pluck(:id)
+          User.any_instance.stubs(:privilege?).with(:approve_article).returns(false)
+          agent_id = add_test_agent.id
+          put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { approval_status:  Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved] })
+          assert_response 400
+        end
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_approval_with_approve_article_privilege
+        with_publish_solution_privilege do
+          folder = @account.solution_folder_meta.where(is_default: false).first
+          populate_articles(folder)
+          articles = folder.solution_article_meta.pluck(:id)
+          User.any_instance.stubs(:privilege?).with(:approve_article).returns(true)
+          agent_id = add_test_agent.id
+          put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { approval_status:  Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved] })
+          assert_response 204
+        end
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_approval_with_invalid_approval_status
+        with_publish_solution_privilege do
+          folder = @account.solution_folder_meta.where(is_default: false).first
+          populate_articles(folder)
+          articles = folder.solution_article_meta.pluck(:id)
+          User.any_instance.stubs(:privilege?).with(:approve_article).returns(true)
+          agent_id = add_test_agent.id
+          put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { approval_status: 0 })
+          assert_response 400
+        end
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
       def test_bulk_update_tags_without_feature
         Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(false)
         article = @account.solution_articles.where(language_id: 6).last
@@ -946,7 +988,7 @@ module Ember
         User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
         put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { agent_id: agent_id })
-        assert_response 403
+        assert_response 400
       ensure
         User.any_instance.unstub(:privilege?)
       end
@@ -2449,6 +2491,7 @@ module Ember
       end
 
       def test_bulk_update_publish
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
         draft = @account.solution_drafts.last
         put :bulk_update, construct_params({ version: 'private' }, ids: [draft.article.parent_id], properties: { status: 2 })
@@ -2457,16 +2500,18 @@ module Ember
       end
 
       def test_bulk_update_publish_without_publish_privilege
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
         draft = @account.solution_drafts.last
         put :bulk_update, construct_params({ version: 'private' }, ids: [draft.article.parent_id], properties: { status: 2 })
-        assert_response 403
+        assert_response 400
       ensure
         User.any_instance.unstub(:privilege?)
       end
 
       def test_bulk_update_publish_without_multilingual_feature
         Account.any_instance.stubs(:multilingual?).returns(false)
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
         article_title1 = Faker::Lorem.characters(10)
         article_meta1 = create_article(article_params(title: article_title1, status: 1))
@@ -2489,6 +2534,7 @@ module Ember
 
       def test_bulk_update_publish_with_multilingual_feature
         Account.any_instance.stubs(:multilingual?).returns(true)
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
         languages = @account.supported_languages + ['primary']
         language  = @account.supported_languages.first
@@ -2507,7 +2553,7 @@ module Ember
 
       def test_bulk_update_publish_for_unsupported_language
         Account.any_instance.stubs(:multilingual?).returns(true)
-        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
         languages = @account.supported_languages + ['primary']
         unsupported_languages = Language.all.map(&:code).reject { |language| languages.include?(language) }
         language = unsupported_languages.first
@@ -2520,6 +2566,7 @@ module Ember
       end
 
       def test_bulk_update_publish_with_invalid_status
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
         draft = @account.solution_drafts.last
         put :bulk_update, construct_params({ version: 'private' }, ids: [draft.article.parent_id], properties: { status: 1 })
@@ -2529,6 +2576,7 @@ module Ember
       end
 
       def test_bulk_update_publish_for_article_with_no_draft
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
         article_title = Faker::Lorem.characters(10)
         article_meta = create_article(article_params(title: article_title, status: 1))
@@ -2543,6 +2591,7 @@ module Ember
       end
 
       def test_bulk_update_publish_for_article_with_draft_locked
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
         article_title = Faker::Lorem.characters(10)
         article_meta = create_article(article_params(title: article_title, status: 1))
@@ -2562,7 +2611,7 @@ module Ember
 
       def test_bulk_update_mark_as_upto_date
         Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(true)
-        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
         languages = @account.supported_languages + ['primary']
         language = @account.supported_languages.first
         article_meta = create_article(article_params(lang_codes: languages))
@@ -2594,7 +2643,8 @@ module Ember
 
       def test_bulk_update_mark_as_upto_date_without_privilege
         Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(true)
-        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(false)
+        User.any_instance.stubs(:privilege?).with(:approve_article).returns(false)
         languages = @account.supported_languages + ['primary']
         language = @account.supported_languages.first
         article_meta = create_article(article_params(lang_codes: languages))
@@ -2610,7 +2660,7 @@ module Ember
 
       def test_bulk_update_mark_as_upto_date_with_wrong_parameters
         Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(true)
-        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
         languages = @account.supported_languages + ['primary']
         language = @account.supported_languages.first
         article_meta = create_article(article_params(lang_codes: languages))
@@ -2626,7 +2676,7 @@ module Ember
 
       def test_bulk_update_mark_as_upto_date_already_upto_date_articles
         Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(true)
-        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
         languages = @account.supported_languages + ['primary']
         language = @account.supported_languages.first
         article_meta = create_article(article_params(lang_codes: languages))
@@ -3265,6 +3315,146 @@ module Ember
         Account.any_instance.unstub(:article_approval_workflow_enabled?)
       end
 
+      def test_bulk_update_send_for_review_without_bulk_feature
+        Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(false)
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        draft = @account.solution_drafts.last
+        approver = add_test_agent
+        add_privilege(approver, :approve_article)
+        put :bulk_update, construct_params({ version: 'private' }, ids: [draft.article.parent_id], properties: { approval_status: 1, approver_id: approver.id })
+        assert_response 403
+        match_json(validation_error_pattern(bad_request_error_pattern('properties[:approval_status]', :require_feature, feature: :adv_article_bulk_actions, code: :access_denied)))
+      ensure
+        Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_bulk_update_send_for_review_without_approval_workflow
+        Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(true)
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(false)
+        draft = @account.solution_drafts.last
+        approver = add_test_agent
+        add_privilege(approver, :approve_article)
+        put :bulk_update, construct_params({ version: 'private' }, ids: [draft.article.parent_id], properties: { approval_status: 1, approver_id: approver.id })
+        assert_response 403
+        match_json(validation_error_pattern(bad_request_error_pattern('properties', :require_feature, feature: :article_approval_workflow, code: :access_denied)))
+      ensure
+        Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_bulk_update_send_for_review_with_invalid_status
+        Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(true)
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        draft = @account.solution_drafts.last
+        approver = add_test_agent
+        add_privilege(approver, :approve_article)
+        put :bulk_update, construct_params({ version: 'private' }, ids: [draft.article.parent_id], properties: { approval_status: 999, approver_id: approver.id })
+        assert_response 400
+        match_json(validation_error_pattern(bad_request_error_pattern_with_nested_field('properties', 'approval_data', :approval_data_invalid, code: :approval_data_invalid)))
+      ensure
+        Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_bulk_update_send_for_review_with_invalid_approver_id
+        Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(true)
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        draft = @account.solution_drafts.last
+        put :bulk_update, construct_params({ version: 'private' }, ids: [draft.article.parent_id], properties: { approval_status: 1, approver_id: 'test' })
+        assert_response 400
+        match_json(validation_error_pattern(bad_request_error_pattern_with_nested_field('properties', 'approver_id', :datatype_mismatch, expected_data_type: 'Integer', given_data_type: 'String', code: :datatype_mismatch)))
+      ensure
+        Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_bulk_update_send_for_review_without_create_or_edit_privilege
+        Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(true)
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        remove_privilege(User.current, :create_and_edit_article)
+        User.current.reload
+        draft = @account.solution_drafts.last
+        approver = add_test_agent
+        add_privilege(approver, :approve_article)
+        put :bulk_update, construct_params({ version: 'private' }, ids: [draft.article.parent_id], properties: { approval_status: 1, approver_id: approver.id })
+        assert_response 400
+        match_json(validation_error_pattern(bad_request_error_pattern_with_nested_field('properties', 'create_and_edit_article', :no_create_and_edit_article_privilege, code: :no_create_and_edit_article_privilege)))
+      ensure
+        Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+        add_privilege(User.current, :create_and_edit_article)
+      end
+
+      def test_bulk_update_send_for_review_without_approval_privilege
+        Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(true)
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        draft = @account.solution_drafts.last
+        approver = add_test_agent
+        remove_privilege(approver, :approve_article)
+        put :bulk_update, construct_params({ version: 'private' }, ids: [draft.article.parent_id], properties: { approval_status: 1, approver_id: approver.id })
+        assert_response 400
+        match_json(validation_error_pattern(bad_request_error_pattern_with_nested_field('properties', 'approve_privilege', :no_approve_article_privilege, code: :no_approve_article_privilege)))
+      ensure
+        Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_bulk_update_send_for_review_for_article_without_draft
+        Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(true)
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        article = get_article_without_draft
+        approver = add_test_agent
+        add_privilege(approver, :approve_article)
+        put :bulk_update, construct_params({ version: 'private' }, ids: [article.parent_id], properties: { approval_status: 1, approver_id: approver.id })
+        assert_response 202
+        expected = { succeeded: [], failed: [{ id: article.parent_id, errors: [] }] }
+        assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+      ensure
+        Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_bulk_update_send_for_review_for_locked_draft
+        Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(true)
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        Solution::Draft.any_instance.stubs(:locked?).returns(true)
+        draft = @account.solution_drafts.last
+        approver = add_test_agent
+        add_privilege(approver, :approve_article)
+        put :bulk_update, construct_params({ version: 'private' }, ids: [draft.article.parent_id], properties: { approval_status: 1, approver_id: approver.id })
+        assert_response 202
+        expected = { succeeded: [], failed: [{ id: draft.article.parent_id, errors: [] }] }
+        assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+      ensure
+        Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+        Solution::Draft.any_instance.unstub(:locked?)
+      end
+
+      def test_bulk_update_send_for_review
+        Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(true)
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        add_privilege(User.current, :create_and_edit_article)
+        User.current.reload
+        sample_article = @account.solution_articles.where(language_id: 6).first
+        create_draft(article: sample_article)
+        draft = sample_article.draft
+        approver = add_test_agent
+        add_privilege(approver, :approve_article)
+        put :bulk_update, construct_params({ version: 'private' }, ids: [draft.article.parent_id], properties: { approval_status: 1, approver_id: approver.id })
+        assert_response 204
+        approval_record = approval_record(draft.article)
+        approver_mapping = approver_record(draft.article)
+        assert approval_record
+        assert approver_mapping
+        assert_equal approval_record.approval_status, Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review]
+        assert_equal approver_mapping.approver_id, approver.id
+      ensure
+        Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
       private
 
         def version
@@ -3316,6 +3506,7 @@ module Ember
       include SolutionBuilderHelper
       include InstalledApplicationsTestHelper
       include AttachmentsTestHelper
+      include PrivilegesHelper
       tests Ember::Solutions::ArticlesController
 
       def setup
@@ -3817,6 +4008,25 @@ module Ember
             assert !file[:id].nil?
           end
         end
+      end
+
+      def test_draft_autosave_send_for_review
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 1)).primary_article
+        draft_version = create_draft_version_for_article(sample_article)
+        assert sample_article.status == 1
+        approver = add_test_agent
+        session = 'lorem-ipsum'
+        add_privilege(approver, :approve_article)
+        should_not_create_version(sample_article) do
+          post :send_for_review, construct_params({ version: 'private', id: sample_article.parent_id }, approver_id: approver.id)
+          assert_response 204
+          latest_version = get_latest_version(sample_article)
+          assert_equal latest_version.id, draft_version.id
+          assert_version_draft(latest_version)
+        end
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
       end
 
       private

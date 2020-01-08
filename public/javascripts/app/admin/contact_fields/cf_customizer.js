@@ -48,7 +48,7 @@
 			},
 			disabledByDefault: [],
 			customFieldType: '', 
-			maxNoOfChoices: '100',
+			maxNoOfChoices: '300',
 			disabledCustomerDataTemplate: {
 				'required_for_agent': false,
 				'visible_in_portal': false,

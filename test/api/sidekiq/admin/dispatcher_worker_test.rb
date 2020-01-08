@@ -74,6 +74,74 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
     end
   end
 
+  def test_dispatcher_condition_responder_id_is_any
+    Rails.logger.debug "start test_dispatcher_condition_responder_id_is_any"
+    Account.current.launch :automation_revamp
+    Account.current.add_feature :shared_ownership
+    initialize_internal_agent_with_default_internal_group
+    rule = Account.current.va_rules.first
+    rule.condition_data = { all: [ 
+      { evaluate_on: "ticket", 
+        name: "responder_id", 
+        operator: "is", 
+        value: -1}]
+    }
+    group = Account.current.groups.first || create_group(Account.current)
+    rule.action_data = ["priority"].map do |action|
+      generate_action_data(action, false)
+    end
+
+    rule.save
+    ticket_value =  generate_value(:object_id, "responder_id", false)
+    ticket_params = generate_ticket_params("responder_id", ticket_value)
+    ticket = Sidekiq::Testing.inline! { create_ticket(ticket_params.symbolize_keys) }
+    ticket = ticket.reload
+    rule.action_data.each do |action|
+      verify_action_data(action, ticket, false)
+    end
+    Rails.logger.debug "end test_dispatcher_condition_responder_id_is_any"
+  end
+  
+  
+  def test_dispatcher_condition_responder_is_unavailable
+    Rails.logger.debug "start test_dispatcher_condition_responder_id_is_any"
+    Account.current.launch :automation_revamp
+    Account.current.add_feature :shared_ownership
+    initialize_internal_agent_with_default_internal_group
+    rule = Account.current.va_rules.first
+    rule.condition_data = { all: [ 
+      { evaluate_on: "ticket", 
+        name: "responder_id", 
+        operator: "is", 
+        value: -1,
+        relater_conditions: {
+          name: "availability_status",
+          operator: "is",
+          value: "unavailable"
+        }
+      }
+      ]
+    }
+    group = Account.current.groups.first || create_group(Account.current)
+    rule.action_data = ["priority"].map do |action|
+      generate_action_data(action, false)
+    end
+
+    rule.save
+    ticket_value =  generate_value(:object_id, "responder_id", false)
+    ticket_params = generate_ticket_params("responder_id", ticket_value)
+    agent = Account.current.agents.find_by_user_id(ticket_params[:responder_id])
+    agent.available = false
+    agent.save
+    
+    ticket = Sidekiq::Testing.inline! { create_ticket(ticket_params.symbolize_keys) }
+    ticket = ticket.reload
+    rule.action_data.each do |action|
+      verify_action_data(action, ticket, false)
+    end
+    Rails.logger.debug "end test_dispatcher_condition_responder_id_is_any"
+  end
+
   def verify_action_data(action, ticket, not_operator)
     case true
     when ['priority', 'ticket_type', 'status', 'responder_id', 'product_id', 'group_id'].include?(action[:name])

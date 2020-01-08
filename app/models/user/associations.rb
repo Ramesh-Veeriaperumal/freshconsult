@@ -125,7 +125,7 @@ class User < ActiveRecord::Base
   #accepts_nested_attributes_for :agent
   accepts_nested_attributes_for :google_contacts  # Added to save the company while importing user from google contacts.
 
-  delegate :available?, :toggle_availability?, :to => :agent, :allow_nil => true
+  delegate :available?, :toggle_availability?, :agent_availability, :to => :agent, :allow_nil => true
 
   # SavageBeast associations moved here
   has_many :moderatorships, :dependent => :destroy

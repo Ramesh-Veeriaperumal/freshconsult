@@ -72,6 +72,8 @@ properties:
                 type: boolean
               show_on_boarding:
                 type: boolean
+              onboarding_version:
+                type: string
           ssl_enabled:
             type: boolean
           verified:

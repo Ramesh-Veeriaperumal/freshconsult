@@ -1,8 +1,6 @@
 module Admin::EmailConfig::Smtp
   ERROR_MAP = {
-    530 => 'authentication_error',
-    550 => 'relay_limit_exceeded',
-    554 => 'transaction_failed'
+    535 => 'authentication_error'
   }.freeze
 
   class ErrorMapper

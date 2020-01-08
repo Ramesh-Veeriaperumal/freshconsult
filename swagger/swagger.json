@@ -2965,6 +2965,9 @@
             "$ref": "#/parameters/id"
           },
           {
+            "$ref": "#/parameters/enforce_mandatory"
+          },
+          {
             "name": "data",
             "in": "body",
             "required": true,
@@ -4858,6 +4861,15 @@
               "available_count",
               "with_privilege"
             ]
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "type": "string",
+            "enum": [
+              "user_info"
+            ],
+            "description": "get additional user information for agents with restricted user access."
           },
           {
             "name": "privilege",
@@ -15345,6 +15357,9 @@
                     },
                     "show_on_boarding": {
                       "type": "boolean"
+                    },
+                    "onboarding_version": {
+                      "type": "string"
                     }
                   }
                 },
@@ -21109,6 +21124,32 @@
                         },
                         "value": {
                           "type": "integer"
+                        }
+                      }
+                    },
+                    "related_conditions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "field_name": {
+                            "type": "string",
+                            "enum": [
+                              "agent_availability"
+                            ]
+                          },
+                          "operator": {
+                            "type": "string",
+                            "enum": [
+                              "is"
+                            ]
+                          },
+                          "value": {
+                            "type": "string",
+                            "enum": [
+                              "unavailable"
+                            ]
+                          }
                         }
                       }
                     }
@@ -27837,7 +27878,7 @@
         "my_drafts": {
           "type": "number"
         },
-        "published_articles": {
+        "published": {
           "type": "number"
         },
         "all_feedback": {
@@ -27874,11 +27915,11 @@
           "type": "number",
           "description": "Available only for secondary languages."
         },
-        "in_review_articles": {
+        "in_review": {
           "type": "number",
           "description": "Available only if article_approval_workflow feature enabled."
         },
-        "approved_articles": {
+        "approved": {
           "type": "number",
           "description": "Available only if article_approval_workflow feature enabled."
         }
@@ -28290,14 +28331,26 @@
             },
             "status": {
               "type": "integer",
-              "description": "status:\n   * `published` - 2\n",
               "enum": [
                 2
-              ]
+              ],
+              "description": "Status value to be updated for article\n  * `published` - 2\n"
             },
             "outdated": {
               "type": "boolean",
               "description": "Status of the translation of the article"
+            },
+            "approval_status": {
+              "type": "integer",
+              "enum": [
+                1,
+                2
+              ],
+              "description": "Approval status value to be updated for the article\n  * `in_review` - 1\n  * `approved` - 2\n"
+            },
+            "approver_id": {
+              "type": "integer",
+              "description": "User id of the agent to whom the articles were sent for approval"
             },
             "tags": {
               "type": "array",
@@ -28305,6 +28358,10 @@
               "items": {
                 "type": "string"
               }
+            },
+            "approval_status": {
+              "type": "integer",
+              "description": "Approve list of articles"
             }
           }
         }
@@ -28804,6 +28861,14 @@
       "type": "string",
       "description": "Specifies language code of the article (Multilingual feature must be enabled for the account to provide a value.if value is not given, primary language will be considered)",
       "required": true
+    },
+    "enforce_mandatory": {
+      "name": "enforce_mandatory",
+      "in": "query",
+      "type": "string",
+      "description": "Decides whether to perform mandatory validation or not",
+      "required": false,
+      "default": true
     }
   }
 }

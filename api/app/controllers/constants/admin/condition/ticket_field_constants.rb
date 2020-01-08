@@ -20,7 +20,7 @@ module Admin::Condition::TicketFieldConstants
       invalid_rule_types: [] }.freeze,
     { name: :group_id, field_type: :object_id, data_type: :Integer,
       invalid_rule_types: [] }.freeze,
-    { name: :responder_id, field_type: :object_id, data_type: :Integer,
+    { name: :responder_id, field_type: :object_id, data_type: :Integer, allow_any_type: true,
       invalid_rule_types: [] }.freeze,
     { name: :internal_group_id, field_type: :object_id, data_type: :Integer,
       invalid_rule_types: [3] }.freeze,
@@ -98,6 +98,10 @@ module Admin::Condition::TicketFieldConstants
                       invalid_rule_types: [] }.freeze, # data type should be number and should be changed after frontend validation
     custom_date: { field_type: :date, data_type: :String, custom_field: true,
                    invalid_rule_types: [] }.freeze
+  }.freeze
+
+  RELATED_CONDITION_FIELDS = {
+      responder_id: { agent_availability: { operator: %w[is].freeze, value: %w[unavailable].freeze }.freeze }.freeze
   }.freeze
 
   CONDITION_NONE_FIELDS = %i[ticket_type product_id group_id responder_id internal_group_id
