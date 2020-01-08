@@ -302,10 +302,10 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/optar.git
-  revision: 74e53fad049153f58a0d859b53af40c5f7752a16
-  tag: v1.1.3
+  revision: 06eeff3ecb6141495944f48fcdee0bda17c16bfc
+  tag: v1.1.4
   specs:
-    optar (1.1.3)
+    optar (1.1.4)
       activerecord (>= 3.2)
       mysql2 (>= 0.3)
 
