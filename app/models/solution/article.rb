@@ -342,6 +342,20 @@ class Solution::Article < ActiveRecord::Base
     helpdesk_approval.try(:destroy)
   end
 
+  def agent_portal_url(relative_url = false)
+    main_portal = Account.current.main_portal
+    portal = Account.current.portal_solution_categories.find_by_solution_category_meta_id(solution_folder_meta.solution_category_meta_id).try(:portal) || main_portal
+    relative_link = "/a/solutions/articles/#{parent_id}"
+
+    query_params = {}
+    query_params[:lang] = language_code if Account.current.multilingual?
+    query_params[:portalId] = portal.id if Account.current.features?(:multi_product) && Account.current.portals.size > 1
+
+    relative_link += "?#{Rack::Utils.build_query(query_params)}" unless query_params.empty?
+
+    relative_url ? relative_link : "#{main_portal.url_protocol}://#{main_portal.host}#{relative_link}"
+  end
+
   private
 
     def queue_quest_job
