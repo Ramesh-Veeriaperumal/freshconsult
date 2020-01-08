@@ -17,13 +17,14 @@ class Users::DetectLanguage < BaseWorker
     return unless args[:user_id].present? && args[:text].present?
     account = Account.current
     @user   = account.all_users.find(args[:user_id])
-    @text   = args[:text]
+    @big_text = args[:text]
+    @text = @big_text[0..20]
+    @text = @text.squish.split.first(15).join(' ')
     if account.compact_lang_detection_enabled?
       detect_lang_from_cld
     elsif account.detect_lang_from_email_service_enabled?
       set_lang_via_email_service
     else
-      @text.squish.split.first(15).join(' ')
       detect_lang_from_google
     end
   rescue => e
@@ -44,7 +45,7 @@ class Users::DetectLanguage < BaseWorker
         @user.save!
       else
         Rails.logger.debug "unable to get via cld text:: #{@text}, account_id:: #{Account.current.id}"
-        detect_lang_from_google
+        set_lang_via_email_service
       end
     end
 
@@ -61,7 +62,7 @@ class Users::DetectLanguage < BaseWorker
       response = RestClient::Request.execute(
         method: :post,
         url: "#{EMAIL_SERVICE_HOST}/#{LANGUAGE_DETECT_URL}",
-        payload: { text: @text }.to_json,
+        payload: { text: @big_text }.to_json,
         headers: {
           'Content-Type' => 'application/json',
           'Authorization' => EMAIL_SERVICE_AUTHORISATION_KEY
@@ -76,9 +77,14 @@ class Users::DetectLanguage < BaseWorker
     end
 
     def set_lang_via_email_service
-      @user.language = @user.account.language
-      language = detect_lang_from_email_service
-      @user.language = (I18n.available_locales_with_name.map { |lang, sym| sym.to_s }.include? language) ? language : @user.account.language
+      if text_available_from_cache?
+        assign_user_language
+      else
+        @user.language = @user.account.language
+        language = detect_lang_from_email_service
+        cache_user_language(@text, language)
+        @user.language = (I18n.available_locales_with_name.map { |lang, sym| sym.to_s }.include? language) ? language : @user.account.language
+      end
       @user.save!
     end
 
@@ -104,5 +110,10 @@ class Users::DetectLanguage < BaseWorker
     def lang_exists_in_redis?(lang_code)
       lang_hash = fetch_lcached_hash(CLD_FD_LANGUAGE_MAPPING, 7.days)
       @language = lang_hash.present? ? lang_hash[lang_code] : nil
+    end
+
+    def cache_user_language(text, language)
+      key = format(DETECT_USER_LANGUAGE, text: text)
+      set_others_redis_key(key, language)
     end
 end
