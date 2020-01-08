@@ -190,87 +190,27 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def definition
-     @definition ||= begin
+    @definition ||= begin
       defs = {}
       filter_attribute_hash = Hash[Array.wrap(query_hash).collect { |c| [(c['condition'] || c[:condition]).to_sym, true] }]
       ticket_list_performance_enabled = Account.current.launched?(:ticket_list_performance)
-      #default fields
-      TicketConstants::DEFAULT_COLUMNS_KEYS_BY_TOKEN.each do |name,cont|
-        defs[name.to_sym] = { get_op_list(cont).to_sym => cont  , :name => name, :container => cont,     
-        :operator => get_op_list(cont), :options => get_default_choices(name.to_sym) }
-      end
+      # default fields
+      default_columns_defs(defs, filter_attribute_hash, ticket_list_performance_enabled)
+      # Shared agent columns
+      shared_agent_columns_defs(defs, filter_attribute_hash, ticket_list_performance_enabled)
+      # Shared group columns
+      shared_group_columns_defs(defs, filter_attribute_hash, ticket_list_performance_enabled)
 
-      #Shared columns
-      TicketConstants::SHARED_AGENT_COLUMNS_KEYS_BY_TOKEN.each do |name,cont|
-        defs[name.to_sym] = { get_op_list(cont).to_sym => cont  , :name => name, :container => cont,     
-        :operator => get_op_list(cont), :options => get_default_choices(:responder_id) }
-      end
-      TicketConstants::SHARED_GROUP_COLUMNS_KEYS_BY_TOKEN.each do |name,cont|
-        defs[name.to_sym] = { get_op_list(cont).to_sym => cont  , :name => name, :container => cont,     
-        :operator => get_op_list(cont), :options => get_default_choices(:group_id) }
-      end
-
-# Custom date field
-#      Account.current.custom_date_fields_from_cache.each do |col|
-#        defs[get_id_from_field(col).to_sym] = {
-#          get_op_from_field(col).to_sym => get_container_from_field(col),
-#          name: col.label,
-#          container: get_container_from_field(col),
-#          operator: get_op_from_field(col),
-#          options: get_custom_choices(col)
-#         }
-     #      end
-
-    # Custom date time field
+      # Custom date time field
       if (ticket_list_performance_enabled && filter_attribute_hash.keys.find { |x| x.to_s.include?('flexifields') }) || !ticket_list_performance_enabled
-        fsm_date_time_fields = TicketFilterConstants::FSM_DATE_TIME_FIELDS.collect { |x| x + "_#{Account.current.id}" }
-        Account.current.custom_date_time_fields_from_cache.select { |x| fsm_date_time_fields.include?(x.name) }.each do |col|
-          defs[get_id_from_field(col).to_sym] = {
-            get_op_from_field(col).to_sym => get_container_from_field(col),
-            name: col.label,
-            container: get_container_from_field(col),
-            operator: get_op_from_field(col),
-            options: get_custom_choices(col)
-          }
-        end
-
-      #Custom fields
-
-        Account.current.custom_dropdown_fields_from_cache.each do |col|
-          key = fetch_field_key(col).to_sym
-          if ticket_list_performance_enabled
-            next unless filter_attribute_hash.key?(key)
-          end
-
-          defs[key] = build_field_hash(col)
-        end
-
-        nested_fields = Account.current.nested_fields_from_cache
-        ActiveRecord::Associations::Preloader.new(nested_fields, %i[level1_picklist_values nested_fields_with_flexifield_def_entries]).run
-        nested_fields.each do |col|
-          key = fetch_field_key(col).to_sym
-          if ticket_list_performance_enabled
-            next unless filter_attribute_hash.key?(key)
-          end
-
-          defs[key] = build_field_hash(col)
-          col.nested_fields_with_flexifield_def_entries.each do |nested_col|
-            defs[fetch_field_key(nested_col).to_sym] = { get_op_list('dropdown').to_sym => 'dropdown', :name => nested_col.label, :container => 'dropdown', :operator => get_op_list('dropdown'), :options => [] }
-          end
-        end
+        fsm_columns_defs(defs)
+        # Custom dropdown fields
+        custom_dropdown_defs(defs, filter_attribute_hash, ticket_list_performance_enabled)
+        # Custom nested fields
+        nested_fields_defs(defs, filter_attribute_hash, ticket_list_performance_enabled)
       end
-      
-      ##### Some hack for default values
-      defs["helpdesk_subscriptions.user_id".to_sym] = ({:operator => :is_in,:is_in => :dropdown, :options => [], :name => "helpdesk_subscriptions.user_id", :container => :dropdown})
-      defs["article_tickets.article_id".to_sym] = ({:operator => :is_in, :is_in => :dropdown, :options => [], :name => "article_tickets.article_id", :container => :dropdown})
-      defs["solution_articles.user_id".to_sym] = ({:operator => :is,:is => :numeric, :options => [], :name => "solution_articles.user_id", :container => :numeric})
-      defs[:"helpdesk_tickets.display_id"] = ({:operator => :is_in, :is_in => :dropdown, :options => [], :name => "helpdesk_tickets.display_id", :container => :dropdown})
-      defs[:spam] = ({:operator => :is,:is => :boolean, :options => [], :name => :spam, :container => :boolean})
-      defs[:deleted] = ({:operator => :is,:is => :boolean, :options => [], :name => :deleted, :container => :boolean})
-      defs[:"helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.trashed_column}"] = ({:operator => :is,:is => :boolean, :options => [], :name => :trashed, :container => :boolean})
-      defs[:requester_id] = ({:operator => :is_in,:is_in => :dropdown, :options => [], :name => :requester_id, :container => :dropdown})  # Added for email based custom view, which will be used in integrations.
-      defs[:"helpdesk_tickets.id"] = ({:operator => :is_in,:is_in => :dropdown, :options => [], :name => "helpdesk_tickets.id", :container => :dropdown})
-      defs[:"helpdesk_ticket_states.resolved_at"] = ({:operator => :is_greater_than,:is_in => :resolved_at, :options => [], :name => "helpdesk_ticket_states.resolved_at", :container => :resolved_at})
+      # misc defs
+      misc_defs(defs, filter_attribute_hash, ticket_list_performance_enabled)
       defs
     end
   end
@@ -726,6 +666,120 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   private
+
+    def default_columns_defs(defs, filter_attribute_hash, ticket_list_performance_enabled)
+      TicketConstants::DEFAULT_COLUMNS_KEYS_BY_TOKEN.each do |name, cont|
+        name = name.to_sym
+        if ticket_list_performance_enabled
+          next unless filter_attribute_hash.key?(name)
+        end
+
+        op_list = get_op_list(cont)
+        defs[name] = {
+          op_list.to_sym => cont,
+          :name => name,
+          :container => cont,
+          :operator => op_list,
+          :options => get_default_choices(name)
+        }
+      end
+      defs
+    end
+
+    def shared_agent_columns_defs(defs, filter_attribute_hash, ticket_list_performance_enabled)
+      TicketConstants::SHARED_AGENT_COLUMNS_KEYS_BY_TOKEN.each do |name, cont|
+        name = name.to_sym
+        if ticket_list_performance_enabled
+          next unless filter_attribute_hash.key?(name)
+        end
+
+        op_list = get_op_list(cont)
+        defs[name] = {
+          op_list.to_sym => cont,
+          :name => name,
+          :container => cont,
+          :operator => op_list,
+          :options => get_default_choices(:responder_id)
+        }
+      end
+      defs
+    end
+
+    def shared_group_columns_defs(defs, filter_attribute_hash, ticket_list_performance_enabled)
+      TicketConstants::SHARED_GROUP_COLUMNS_KEYS_BY_TOKEN.each do |name, cont|
+        name = name.to_sym
+        if ticket_list_performance_enabled
+          next unless filter_attribute_hash.key?(name)
+        end
+
+        op_list = get_op_list(cont)
+        defs[name] = {
+          op_list.to_sym => cont,
+          :name => name,
+          :container => cont,
+          :operator => op_list,
+          :options => get_default_choices(:group_id)
+        }
+      end
+      defs
+    end
+
+    def fsm_columns_defs(defs)
+      fsm_date_time_fields = TicketFilterConstants::FSM_DATE_TIME_FIELDS.collect { |x| x + "_#{Account.current.id}" }
+      Account.current.custom_date_time_fields_from_cache.select { |x| fsm_date_time_fields.include?(x.name) }.each do |col|
+        defs[get_id_from_field(col).to_sym] = {
+          get_op_from_field(col).to_sym => get_container_from_field(col),
+          name: col.label,
+          container: get_container_from_field(col),
+          operator: get_op_from_field(col),
+          options: get_custom_choices(col)
+        }
+      end
+      defs
+    end
+
+    def custom_dropdown_defs(defs, filter_attribute_hash, ticket_list_performance_enabled)
+      Account.current.custom_dropdown_fields_from_cache.each do |col|
+        key = fetch_field_key(col).to_sym
+        if ticket_list_performance_enabled
+          next unless filter_attribute_hash.key?(key)
+        end
+
+        defs[key] = build_field_hash(col)
+      end
+      defs
+    end
+
+    def nested_fields_defs(defs, filter_attribute_hash, ticket_list_performance_enabled)
+      nested_fields = Account.current.nested_fields_from_cache
+      ActiveRecord::Associations::Preloader.new(nested_fields, %i[level1_picklist_values nested_fields_with_flexifield_def_entries]).run
+      nested_fields.each do |col|
+        key = fetch_field_key(col).to_sym
+        if ticket_list_performance_enabled
+          next unless filter_attribute_hash.key?(key)
+        end
+
+        defs[key] = build_field_hash(col)
+        col.nested_fields_with_flexifield_def_entries.each do |nested_col|
+          defs[fetch_field_key(nested_col).to_sym] = { get_op_list('dropdown').to_sym => 'dropdown', :name => nested_col.label, :container => 'dropdown', :operator => get_op_list('dropdown'), :options => [] }
+        end
+      end
+      defs
+    end
+
+    def misc_defs(defs, filter_attribute_hash, ticket_list_performance_enabled)
+      defs[:'helpdesk_subscriptions.user_id'] = { operator: :is_in, is_in: :dropdown, options: [], name: 'helpdesk_subscriptions.user_id', container: :dropdown } if (ticket_list_performance_enabled && filter_attribute_hash.key?(:'helpdesk_subscriptions.user_id')) || !ticket_list_performance_enabled
+      defs[:'article_tickets.article_id'] = { operator: :is_in, is_in: :dropdown, options: [], name: 'article_tickets.article_id', container: :dropdown } if (ticket_list_performance_enabled && filter_attribute_hash.key?(:'article_tickets.article_id')) || !ticket_list_performance_enabled
+      defs[:'solution_articles.user_id'] = { operator: :is, is: :numeric, options: [], name: 'solution_articles.user_id', container: :numeric } if (ticket_list_performance_enabled && filter_attribute_hash.key?(:'solution_articles.user_id')) || !ticket_list_performance_enabled
+      defs[:'helpdesk_tickets.display_id'] = { operator: :is_in, is_in: :dropdown, options: [], name: 'helpdesk_tickets.display_id', container: :dropdown } if (ticket_list_performance_enabled && filter_attribute_hash.key?(:'helpdesk_tickets.display_id')) || !ticket_list_performance_enabled
+      defs[:spam] = { operator: :is, is: :boolean, options: [], name: :spam, container: :boolean } if (ticket_list_performance_enabled && filter_attribute_hash.key?(:spam)) || !ticket_list_performance_enabled
+      defs[:deleted] = { operator: :is, is: :boolean, options: [], name: :deleted, container: :boolean } if (ticket_list_performance_enabled && filter_attribute_hash.key?(:deleted)) || !ticket_list_performance_enabled
+      defs[:"helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.trashed_column}"] = { operator: :is, is: :boolean, options: [], name: :trashed, container: :boolean } if (ticket_list_performance_enabled && filter_attribute_hash.key?(:"helpdesk_schema_less_tickets.#{Helpdesk::SchemaLessTicket.trashed_column}")) || !ticket_list_performance_enabled
+      defs[:requester_id] = { operator: :is_in, is_in: :dropdown, options: [], name: :requester_id, container: :dropdown } if (ticket_list_performance_enabled && filter_attribute_hash.key?(:requester_id)) || !ticket_list_performance_enabled # Added for email based custom view, which will be used in integrations.
+      defs[:'helpdesk_tickets.id'] = { operator: :is_in, is_in: :dropdown, options: [], name: 'helpdesk_tickets.id', container: :dropdown } if (ticket_list_performance_enabled && filter_attribute_hash.key?(:'helpdesk_tickets.id')) || !ticket_list_performance_enabled
+      defs[:'helpdesk_ticket_states.resolved_at'] = { operator: :is_greater_than, is_in: :resolved_at, options: [], name: 'helpdesk_ticket_states.resolved_at', container: :resolved_at } if (ticket_list_performance_enabled && filter_attribute_hash.key?(:'helpdesk_ticket_states.resolved_at')) || !ticket_list_performance_enabled
+      defs
+    end
 
   def join_schema_less? all_conditions
     SCHEMA_LESS_COLUMNS.any?{|col| all_conditions[0].include?(col)}
