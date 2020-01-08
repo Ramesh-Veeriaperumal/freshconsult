@@ -140,7 +140,7 @@ module Ember
       end
 
       def decorator_options
-        super({ agent_groups: Account.current.agent_groups_from_cache })
+        super({ agent_groups: Account.current.agent_groups_from_cache, include: params[:include] })
       end
 
       def sanitize_params
@@ -153,11 +153,11 @@ module Ember
       end
 
       def scoper
-        load_from_cache ? current_account.agents_details_from_cache : current_account.agents.preload(preload_options)
+        load_from_cache? ? current_account.agents_details_from_cache : current_account.agents.preload(preload_options)
       end
 
-      def load_from_cache
-        index? && !User.current.privilege?(:manage_users) && !agent_availability_details?
+      def load_from_cache?
+        index? && !User.current.privilege?(:manage_users) && !agent_availability_details? && @agent_filter.conditions.empty?
       end
 
       def achievements?

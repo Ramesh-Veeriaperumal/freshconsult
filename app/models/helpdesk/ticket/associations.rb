@@ -136,6 +136,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_one :bot_response, class_name: 'Bot::Response', dependent: :destroy
 
   has_many :canned_form_handles, :class_name => 'Admin::CannedFormHandle', :dependent => :destroy
+  delegate :agent_availability, :to => :responder, :allow_nil => true
 
   private
 

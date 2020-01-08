@@ -42,8 +42,6 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
 
   after_commit :clear_ticket_types_cache
 
-  acts_as_list scope: [:pickable_id, :pickable_type]
-
   concerned_with :presenter
   # TODO: Need to change this once migration done
   scope :section_picklist_join, lambda { |conditions = nil|

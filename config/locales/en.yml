@@ -3031,6 +3031,7 @@ en:
       tracker_ticket: 'On the tracker ticket'
       same_ticket: 'On the same ticket'
       related_ticket_count: 'Related ticket count on tracker'
+      agent_availability: 'Agent status'
     custom_translation:
       status_translated: Translated
       status_untranslated: Untranslated

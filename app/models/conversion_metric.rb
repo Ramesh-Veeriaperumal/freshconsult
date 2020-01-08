@@ -304,4 +304,16 @@ class ConversionMetric < ActiveRecord::Base
   def lead_source_choice
     try(:[], :session_json).try(:[], :current_session).try(:[], 'lead_source_choice')
   end
+
+  def referrer
+    try(:[], :session_json).try(:[], :current_session).try(:[], 'referrer')
+  end
+
+  def current_session_url
+    try(:[], :session_json).try(:[], :current_session).try(:[], 'url')
+  end
+
+  def msegments
+    try(:[], :session_json).try(:[], :mSegment)
+  end
 end

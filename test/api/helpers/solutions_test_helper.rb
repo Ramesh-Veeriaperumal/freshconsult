@@ -329,7 +329,7 @@ module SolutionsTestHelper
       all_articles: @articles.count,
       all_drafts: @drafts.count - @approvals.count,
       my_drafts: @my_drafts.count,
-      published_articles: @published_articles.count,
+      published: @published_articles.count,
       all_feedback: @all_feedback.count,
       my_feedback: @my_feedback.count,
       unassociated_categories: @orphan_categories,
@@ -341,8 +341,8 @@ module SolutionsTestHelper
       result[:not_translated] = @article_meta.size - @articles.size
     end
     if Account.current.article_approval_workflow_enabled?
-      result[:in_review_articles] = Account.current.helpdesk_approvals.where(approvable_id: get_article_ids(@articles), approvable_type: 'Solution::Article', approval_status: Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review]).count
-      result[:approved_articles] = Account.current.helpdesk_approvals.where(approvable_id: get_article_ids(@articles), approvable_type: 'Solution::Article', approval_status: Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]).count
+      result[:in_review] = Account.current.helpdesk_approvals.where(approvable_id: get_article_ids(@articles), approvable_type: 'Solution::Article', approval_status: Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review]).count
+      result[:approved] = Account.current.helpdesk_approvals.where(approvable_id: get_article_ids(@articles), approvable_type: 'Solution::Article', approval_status: Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]).count
     end
     result
   end

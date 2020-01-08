@@ -74,7 +74,6 @@ module Ember
       end
     end
 
-
     def bulk_send_invite
       bulk_action do
         @items_failed = []
@@ -299,7 +298,7 @@ module Ember
         field = Ember::ContactConstants::CONTACT_FIELDS | ['custom_fields' => custom_fields]
         params[cname].permit(*field)
         ParamsHelper.modify_custom_fields(params[cname][:custom_fields], @name_mapping.invert)
-        contact = Ember::ContactValidation.new(params[cname], @item, string_request_params?)
+        contact = Ember::ContactValidation.new(params[cname], @item, string_request_params?, params[:enforce_mandatory])
         render_custom_errors(contact, true) unless contact.valid?(action_name.to_sym)
       end
       

@@ -310,6 +310,10 @@ class Agent < ActiveRecord::Base
   def support_agent?
     agent_type == Admin::AdvancedTicketing::FieldServiceManagement::Constant::SUPPORT_AGENT_TYPE
   end
+  
+  def agent_availability
+    Agent::UN_AVAILABLE unless available
+  end
 
   protected
     # adding the agent role ids through virtual attr agent_role_ids.

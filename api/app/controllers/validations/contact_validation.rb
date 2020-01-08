@@ -24,7 +24,7 @@ class ContactValidation < ApiValidation
                 :email, :fb_profile_id, :job_title, :language, :mobile,
                 :name, :other_emails, :other_companies, :phone, :tags,
                 :time_zone, :twitter_id, :address, :description, :password, :unique_external_id,
-                :import_id
+                :import_id, :enforce_mandatory
 
   alias_attribute :company_id, :company_name
   alias_attribute :customer_id, :company_name
@@ -47,7 +47,7 @@ class ContactValidation < ApiValidation
   validates :active, data_type: { rules: 'Boolean',  ignore_string: :allow_string_param },  if: -> { @active_set }
 
   validates :active, custom_inclusion: { in: ['true', true], message: :cannot_deactivate }, if: -> { @active_set && import_id.blank? }
-
+  validate  :validate_enforce_mandatory, if: -> { enforce_mandatory.present? }, only: [:create, :update]
   validate :contact_detail_missing, if: :email_mandatory?, on: :create
 
   # Explicitly added since the users created (via web) using fb_profile_id will not have other contact info
@@ -110,7 +110,7 @@ class ContactValidation < ApiValidation
   }
 
   validates :custom_fields, data_type: { rules: Hash }, unless: -> { validation_context == :quick_create }
-  
+
   validates :custom_fields, custom_field: { custom_fields: {
     validatable_custom_fields: proc { |x| x.valid_custom_fields },
     required_attribute: :required_for_agent,
@@ -133,8 +133,9 @@ class ContactValidation < ApiValidation
   validates :password, data_type: { rules: String, required: true }, on: :update_password
   validate  :check_url_present, if: -> { name.present? }, only: [:create, :update]
 
-  def initialize(request_params, item, allow_string_param = false)
+  def initialize(request_params, item, allow_string_param = false, enforce_mandatory = 'true')
     super(request_params, item, allow_string_param)
+    @enforce_mandatory = enforce_mandatory || 'true'
     @current_email = item.email if item
     @max_other_companies_count = user_companies_limit - 1
     fill_custom_fields(request_params, item.custom_field) if item && item.custom_field.present?
@@ -299,5 +300,12 @@ class ContactValidation < ApiValidation
 
     def requester_update?
       [:requester_update].include?(validation_context)
+    end
+
+    def validate_enforce_mandatory
+      unless ['true', 'false'].include? @enforce_mandatory
+        errors.add(:enforce_mandatory, ErrorConstants::ERROR_MESSAGES[:enforce_mandatory_value_error])
+      end
+      @enforce_mandatory = @enforce_mandatory != 'false'
     end
 end

@@ -149,6 +149,7 @@ api_error_messages:
   status_is_not_valid: "The status value to be updated for the article is not valid"
   outdated_property_is_not_valid: "Outdated property is not valid"
   no_publish_article_privilege: "The user is not authorized to publish articles"
+  no_approve_article_privilege: "The user is not authorized to approve articles"
   no_create_and_edit_article_privilege: "The user is not authorized to send items for review"
   invalid_user_id: "The user id is not invalid"
   article_not_in_draft_state: "The article should be in draft state in order to send it for review"
@@ -345,6 +346,7 @@ api_error_messages:
   duplicate_condition_set_name: "Duplicate condition set name - %{name}"
   cannot_be_blank: "'%{name}' can't be blank"
   missing_or_blank: "Field is missing/blank"
+  any_value_error: 'No other values allowed when any is present'
 
   ticket_association_type_not_allowed: "'ticket_association_type' is not allowed in actions without being present in conditions"
   expecting_parent_association_type: "'ticket_association_type' should be 1 when parent ticket is selected in conditions"
@@ -497,3 +499,4 @@ api_error_messages:
   portal_and_cc_param_error: "portal_cc and portal_cc_to is available only for requester field"
   field_type_error: "You are trying to update field type. It cannot be updated"
   level_choices_deletion_error: "Can not delete all choices inside '%{level}'"
+  enforce_mandatory_value_error: "It should be either 'true' or 'false'"

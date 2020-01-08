@@ -1,9 +1,11 @@
 module AccountAdditionalSettings::AdditionalSettings
 
   include AccountConstants
+  include Onboarding::OnboardingRedisMethods
 
   DEFAULT_RLIMIT = {'helpdesk_tickets' => {'enable' => false},'helpdesk_notes' => {'enable' => false},
     'solution_articles' => {'enable' => false}}
+  ONBOARDING_VERSION_MAXIMUM_RETRY = 5
   
   def email_template_settings
     (self.additional_settings.is_a?(Hash) and self.additional_settings[:email_template]) ? 
@@ -38,5 +40,33 @@ module AccountAdditionalSettings::AdditionalSettings
     additional_settings[:anonymous_account] = true
     update(additional_settings: additional_settings)
     AccountCleanup::AnonymousAccountCleanup.perform_in(2.days, account_id: account_id)
+  end
+
+  def set_onboarding_version
+    metric = Account.current.conversion_metric
+    member = metric.msegments if metric.present?
+    self.additional_settings ||= {}
+    if Account.current.launched?(:goal_based_onboarding) && member.present? && metric.language == 'en' && ((metric.current_session_url == GrowthHackConfig[:freshdesk_signup] &&
+       metrics_has_any_personalised_onboarding_keys?(metric.referrer)) ||
+       metrics_has_any_personalised_onboarding_keys?(metric.current_session_url))
+      self.additional_settings[:onboarding_ab_testing] = true
+      self.additional_settings[:onboarding_version] = get_onboarding_version(member)
+    else
+      self.additional_settings[:onboarding_version] = GrowthHackConfig[:onboarding_types].first
+    end
+  end
+
+  def metrics_has_any_personalised_onboarding_keys?(url)
+    GrowthHackConfig[:personalised_onboarding_keywords].any? { |keywords| url.include?(keywords) } && url.exclude?(GrowthHackConfig[:competitor_keyword])
+  end
+
+  def get_onboarding_version(member)
+    onboarding_types = GrowthHackConfig[:onboarding_types]
+    ONBOARDING_VERSION_MAXIMUM_RETRY.times do
+      watch_onboarding_version_redis
+      result = hincrby_using_multi(ACCOUNT_ONBOARDING_VERSION, member, (account_onboarding_version(member).to_i.zero? ? 1 : -1))
+      return onboarding_types[result.first] if result.is_a?(Array) && result[0].present?
+    end
+    onboarding_types.first
   end
 end

@@ -21,4 +21,18 @@ class Discussions::CommentDecorator < ApiDecorator
       name: forum.name
     }
   end
+
+  def to_full_hash
+    res = to_activity_hash.except(:activity_type, :title, :comment, :forum)
+    res.merge(
+      user_id: user_id,
+      forum_id: forum_id,
+      answer: answer,
+      published: published,
+      spam: spam,
+      trash: trash,
+      body: body_html,
+      body_text: body
+    )
+  end
 end

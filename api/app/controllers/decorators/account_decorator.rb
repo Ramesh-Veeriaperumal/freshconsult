@@ -88,7 +88,8 @@ class AccountDecorator < ApiDecorator
         show_on_boarding: record.account_onboarding_pending?,
         announcement_bucket: acct_additional_settings.additional_settings[:announcement_bucket].to_s,
         freshmarketer_linked: acct_additional_settings.freshmarketer_linked?,
-        freshcaller_linked: record.freshcaller_account.present? && record.freshcaller_account.enabled?
+        freshcaller_linked: record.freshcaller_account.present? && record.freshcaller_account.enabled?,
+        onboarding_version: acct_additional_settings.additional_settings[:onboarding_version]
       }
     end
 

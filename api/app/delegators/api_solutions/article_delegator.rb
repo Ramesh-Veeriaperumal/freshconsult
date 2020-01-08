@@ -117,7 +117,7 @@ module ApiSolutions
     def validate_approval_permission
       approver = Account.current.users.find_by_id(@approver_id)
       if approver
-        errors[:publish_permission] << :no_publish_article_privilege unless approver.privilege?(:approve_article)
+        errors[:approve_permission] << :no_approve_article_privilege unless approver.privilege?(:approve_article)
       else
         errors[:invalid_user_id] << :invalid_user_id
       end

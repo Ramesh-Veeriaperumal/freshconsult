@@ -194,7 +194,7 @@ class ApiAgentsController < ApiApplicationController
           # Preloading user as 'includes' introduces an additional outer join to users table while inner join with user already exists
           agents_filter(scoper).preload(:user).order(:name)
         else
-          scoper
+          agents_filter(scoper)
         end
       )
     end

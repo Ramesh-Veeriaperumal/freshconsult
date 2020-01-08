@@ -1,6 +1,9 @@
 module ApiDiscussions
   class ForumsController < ApiApplicationController
     include DiscussionMonitorConcern
+
+    decorate_views(decorate_objects: [:category_forums])
+
     SLAVE_ACTIONS = %w(index category_forums).freeze
     before_filter :category_exists?, only: [:category_forums]
     COLLECTION_RESPONSE_FOR = ['category_forums'].freeze
@@ -12,7 +15,7 @@ module ApiDiscussions
 
     def category_forums
       return if validate_filter_params
-      @forums = paginate_items(@item.forums)
+      @items = paginate_items(@item.forums)
       render '/api_discussions/forums/forum_list' # Need to revisit this based on eager loading associations in show
     end
 

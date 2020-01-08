@@ -3,6 +3,7 @@ class AgentDecorator < ApiDecorator
 
   def initialize(record, options)
     super(record)
+    @user_info = options[:include]
     @group_mapping_ids = options[:group_mapping_ids]
     @is_assumed_user = options[:is_assumed_user]
   end
@@ -52,7 +53,7 @@ class AgentDecorator < ApiDecorator
       type.agent_type_id == user_object.agent.agent_type
     }.name : Agent::SUPPORT_AGENT
 
-    {
+    restricted_hash = {
       id: user_obj.id,
       contact: {
         name: user_obj.name,
@@ -61,6 +62,8 @@ class AgentDecorator < ApiDecorator
       group_ids: group_ids,
       type: type
     }
+    restricted_hash[:contact].merge!(ContactDecorator.new(record.user, {}).to_hash) if @user_info
+    restricted_hash
   end
 
   def socket_authentication_hash

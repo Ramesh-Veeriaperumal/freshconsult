@@ -37,11 +37,6 @@ module ApiDiscussions
       put :update, construct_params({ id: comment.id }, body: 'test reply 2', answer: true)
       assert_response 200
 
-      comment.update_column(:user_id, 999)
-      put :update, construct_params({ id: comment.id }, body: 'test reply 2', answer: true)
-      match_json([bad_request_error_pattern('body', :inaccessible_field)])
-      assert_response 400
-
       put :update, construct_params({ id: comment.id }, answer: true)
       assert_response 200
 
@@ -71,6 +66,21 @@ module ApiDiscussions
       User.any_instance.unstub(:customer?)
       @controller.unstub(:privilege?)
       @controller.unstub(:api_current_user)
+    end
+
+    def test_privilege_for_update_with_user_id
+      comment = quick_create_post
+      comment.update_column(:user_id, @agent.id)
+      User.any_instance.stubs(:privilege?).with(:edit_topic).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_forums).returns(true)
+
+      comment.update_column(:user_id, 999)
+      put :update, construct_params({ id: comment.id }, body: 'test reply 2', answer: true)
+      match_json([bad_request_error_pattern('body', :inaccessible_field)])
+      assert_response 400
+    ensure
+      User.any_instance.unstub(:privilege?)
+      @controller.unstub(:privilege?)
     end
 
     def test_update

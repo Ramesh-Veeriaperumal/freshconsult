@@ -29,35 +29,37 @@
   agent_productivity_video: 23
   canned_response_tour: 24
   explore_productivity_features: 25
-  report_video: 26
-  report_tour: 27
+  analytics_video: 26
+  analytics_tour: 27
   explore_performance_feature: 28
   app_video: 29
   app_integration: 30
   explore_extend_capability_features: 31
   tickets_intro: 32
   support_efficiently: 33
-  tickets_details_tour: 34
+  integration_tour: 34
   bench_mark_customer: 35
-  set_up_sla: 36
+  custom_apps: 36
   awesome_ticket_features: 37
   omni_support: 38
   explore_channels: 39
   automate_redundancy: 40
-  automation_first: 41
+  csat_tour: 41
   never_lose_ticket_track: 42
-  reminder_escalation: 43
+  analytics_tour: 43
   intelligent_automation: 44
   self_service: 45
-  write_faq: 46
-  answer_bot: 47
-  strengthen_self_service: 48
-  analytics_overview: 49
-  customer_satisfaction_level: 50
-  curated_reports: 51
-  marketplace: 52
-  integration: 53
-  explore_apps: 54
+  answer_bot: 46
+  strengthen_self_service: 47
+  analytics_overview: 48
+  curated_reports: 49
+  marketplace: 50
+  setup_support_email_video: 51
+  ticketdetail_tour: 52
+  sla_tour: 53
+  automation_tour: 54
+  slareminder_tour: 55
+  faq_tour: 56
 
 :onboarding_v2_goals:
   - organiseand_keep_track
@@ -94,32 +96,34 @@
   - agent_productivity_video
   - canned_response_tour
   - explore_productivity_features
-  - report_video
-  - report_tour
+  - analytics_video
+  - analytics_tour
   - explore_performance_feature
   - app_video
   - app_integration
   - explore_extend_capability_features
   - tickets_intro
   - support_efficiently
-  - tickets_details_tour
   - bench_mark_customer
-  - set_up_sla
   - awesome_ticket_features
   - omni_support
   - explore_channels
   - automate_redundancy
-  - automation_first
   - never_lose_ticket_track
-  - reminder_escalation
   - intelligent_automation
   - self_service
-  - write_faq
   - answer_bot
   - strengthen_self_service
   - analytics_overview
-  - customer_satisfaction_level
   - curated_reports
   - marketplace
-  - integration
-  - explore_apps
+  - setup_support_email_video
+  - ticketdetail_tour
+  - sla_tour
+  - automation_tour
+  - slareminder_tour
+  - faq_tour
+  - csat_tour
+  - analytics_tour
+  - integration_tour
+  - custom_apps
