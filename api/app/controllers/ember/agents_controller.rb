@@ -153,7 +153,7 @@ module Ember
       end
 
       def scoper
-        load_from_cache? ? current_account.agents_details_from_cache : current_account.agents.preload(preload_options)
+        load_from_cache? ? current_account.agents_details_ar_from_cache : current_account.agents.preload(preload_options)
       end
 
       def load_from_cache?

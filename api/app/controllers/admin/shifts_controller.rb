@@ -41,7 +41,7 @@ module Admin
         if params[cname].blank?
           render_errors([[:payload, :invalid_json]])
         else
-          shift_validation = shift_validation_class.new(params[cname], Account.current.agents_details_pluck_from_cache.map(&:first))
+          shift_validation = shift_validation_class.new(params[cname], Account.current.agents_details_from_cache.map(&:id))
           if shift_validation.invalid?(params[:action].to_sym)
             render_errors(shift_validation.errors, shift_validation.error_options)
           else

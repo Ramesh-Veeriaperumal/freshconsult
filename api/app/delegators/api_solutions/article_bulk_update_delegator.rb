@@ -25,7 +25,7 @@ module ApiSolutions
         return false
       end
 
-      unless Account.current.agents_details_from_cache.detect { |x| x.id == @agent_id && x.privilege?(:publish_solution) }
+      unless Account.current.agents_details_ar_from_cache.detect { |x| x.id == @agent_id && x.privilege?(:publish_solution) }
         (error_options[:properties] ||= {}).merge!(nested_field: :agent_id, code: :invalid_agent_id)
         errors[:properties] = :invalid_agent_id
         return false

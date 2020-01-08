@@ -175,14 +175,18 @@ module Cache::Memcache::Account
     end
   end
 
+  def agents_details_ar_from_cache
+    key = agents_details_memcache_key
+    fetch_from_cache(key) { users.where(helpdesk_agent: true).select('id,name,email,privileges').all }
+  end
+
+  def agents_details_optar_cache
+    key = agents_details_optar_key
+    fetch_from_cache(key) { users.technicians_basics }
+  end
+
   def agents_details_from_cache
-    if optar_cache_enabled?
-      key = agents_details_optar_key
-      fetch_from_cache(key) { users.technicians_basics }
-    else
-      key = agents_details_memcache_key
-      fetch_from_cache(key) { users.where(helpdesk_agent: true).select('id,name,email,privileges').all }
-    end
+    optar_cache_enabled? ? agents_details_optar_cache : agents_details_ar_from_cache
   end
 
   def groups_from_cache
