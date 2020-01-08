@@ -430,6 +430,21 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     assert_response 200
   end
 
+  def test_shopfiy_fetch_orders_from_phone
+    order_json = fetch_order.to_json
+    installed_app = get_installed_app('shopify')
+    installed_app.configs[:inputs]['disable_shopify_actions'] = false
+    installed_app.save
+    order_mock = get_response_mock(order_json, 200)
+    IntegrationServices::Services::Shopify::ShopifyCustomerResource.any_instance.stubs(:http_get).returns(order_mock)
+    IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.stubs(:http_get).returns(order_mock)
+    param = construct_params(version: 'private', id: installed_app.id, event: 'fetch_orders', payload: { email: nil, phone: '9999999999' })
+    post :fetch, param
+    IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.unstub
+    IntegrationServices::Services::Shopify::ShopifyCustomerResource.any_instance.unstub
+    assert_response 200
+  end
+
   def test_shopify_cancel_order_errors_on_shopify_action_disabled
     installed_app = get_installed_app('shopify')
     installed_app.configs[:inputs]['disable_shopify_actions'] = true
