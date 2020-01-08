@@ -4,6 +4,8 @@ class ApiSlaPolicyValidation < ApiValidation
                 :escalation, :reminder_response, :reminder_next_response, :reminder_resolution, :response, :next_response, :resolution, :level_1, :level_2, :level_3, :level_4,
                 :position
 
+  CHECK_PARAMS_SET_FIELDS = %w(applicable_to escalation).freeze
+
   validates :name,:applicable_to,:sla_target, required: true, on: :create
   validates :name, data_type: { rules: String, allow_nil: false},custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
 
@@ -42,8 +44,12 @@ class ApiSlaPolicyValidation < ApiValidation
                           array: { custom_numericality: { only_integer: true, greater_than: 0 } }, if: -> { errors[:contact_segments].blank? && applicable_to.present? }
   validates :company_segments, data_type: { rules: Array },
                           array: { custom_numericality: { only_integer: true, greater_than: 0 } }, if: -> { errors[:company_segments].blank? && applicable_to.present? }
-  
 
+  validates :escalation, custom_absence: {
+    message: :require_feature_for_attribute,
+    code: :inaccessible_field,
+    message_options: { attribute: 'escalation', feature: :sla_management } 
+  }, unless: -> { Account.current.sla_management_enabled? }
   validates :escalation, data_type: { rules: Hash }
 
   validates :reminder_response, data_type: { rules: Hash }, allow_nil: true, if: -> { escalation.present? }

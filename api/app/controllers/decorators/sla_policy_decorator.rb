@@ -27,7 +27,7 @@ class SlaPolicyDecorator < ApiDecorator
   def pluralize_escalations
     record.escalations.inject({}) do |return_hash, (key, val)|
       if SlaPolicyConstants::ESCALATION_TYPES_EXCEPT_RESOLUTION.include?(key)
-        return_hash[key] = response_hash(val['1'])
+        return_hash[key] = response_hash(val['1']) unless ['reminder_next_response', 'next_response'].include?(key) && !Account.current.next_response_sla_enabled?
       else
         return_hash[key] = resolution_hash(val)
       end
@@ -77,19 +77,20 @@ class SlaPolicyDecorator < ApiDecorator
   end
 
   def to_hash
-    {
+    response_hash = {
       id: record.id,
       name: record.name,
       description: record.description,
       active: record.active,
       sla_target: pluralize_sla_target,
       applicable_to: pluralize_conditions,
-      escalation: pluralize_escalations,
       is_default: record.is_default,
       position: visual_position,
       created_at: record.created_at.try(:utc),
       updated_at: record.updated_at.try(:utc)
     }
+    response_hash[:escalation] = pluralize_escalations if Account.current.sla_management_enabled?
+    response_hash
   end
 
   def visual_position
