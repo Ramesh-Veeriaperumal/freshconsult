@@ -7126,15 +7126,15 @@
     "/trial_widget/complete_step": {
       "post": {
         "summary": "Complete Step",
-        "description": "Mark a trial widget step as complete",
+        "description": "Mark a trial widget steps as complete",
         "tags": [
           "trial widget"
         ],
         "parameters": [
           {
             "in": "body",
-            "name": "step",
-            "description": "step to be marked complete",
+            "name": "steps",
+            "description": "steps to be marked complete",
             "schema": {
               "$ref": "#/definitions/trial_widget_complete_step"
             }
@@ -17723,8 +17723,8 @@
     "trial_widget_complete_step": {
       "type": "object",
       "properties": {
-        "step": {
-          "type": "string",
+        "steps": {
+          "type": "array",
           "description": "step to be completed"
         }
       }

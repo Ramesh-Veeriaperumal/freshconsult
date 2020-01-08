@@ -214,8 +214,10 @@ class AccountAdditionalSettings < ActiveRecord::Base
   end
 
   def update_onboarding_goals(goals)
+    current_user = User.current
     additional_settings[:onboarding_goals] = goals
     save!
+    Subscriptions::UpdateLeadToFreshmarketer.perform_async(event: ThirdCRM::EVENTS[:onboarding_goals], email: current_user.email, name: current_user.name)
   end
 
   def enable_freshdesk_freshsales_bundle

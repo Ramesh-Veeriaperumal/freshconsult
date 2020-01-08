@@ -2,6 +2,7 @@
 freshmarketer:
   common: &common
     contact_url: "https://freshworks.freshmarketer.com/mas/api/v1/contacts"
+    events_url: "https://freshworks.freshmarketer.com/mas/api/v1/events"
     default_fields_mapping:
       LastName: "last_name"
       FirstName: "first_name"
@@ -15,6 +16,7 @@ freshmarketer:
       Twitter: "twitter"
       Linkedin: "linkedin"
       _NewEmail: "new_email"
+      GoalName: "goal-name"
     custom_fields_mapping:
       Title: "cf_title"
       Industry: "cf_industry"
@@ -38,6 +40,12 @@ freshmarketer:
       string--Associated--Accounts: "cf_fdeskassociatedaccounts"
       date--Signup--Date: "cf_fdesksignupdate"
       date--Renewal--Date: "cf_fdeskrenewaldate"
+      boolean--Goal--Reports: "cf_fdeskgoalreports"
+      boolean--Goal--Ticket: "cf_fdeskgoalticket"
+      boolean--Goal--Automation: "cf_fdeskgoalautomation"
+      boolean--Goal--Channel: "cf_fdeskgoalchannel"
+      boolean--Goal--Self--Service: "cf_fdeskgoalselfservice"
+      boolean--Goal--Integration: "cf_fdeskgoalintegration"
   staging: 
     <<: *common
     access_key: "i141ie6mbs865gne8g9h66u0ocr6v5mi0g9o3gla"
