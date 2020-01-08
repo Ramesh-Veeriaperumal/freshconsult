@@ -207,10 +207,12 @@ class ContactValidationTest < ActionView::TestCase
       phone: Faker::Lorem.characters(10)
     }
     item = nil
-    contact = ContactValidation.new(controller_params, item)
-    assert contact.valid?
-    assert contact.valid?(:update)
-    assert contact.errors.full_messages.empty?
+    contact_create = ContactValidation.new(controller_params, item)
+    assert contact_create.valid?
+    assert contact_create.errors.full_messages.empty?
+    contact_update = ContactValidation.new(controller_params, item)
+    assert contact_update.valid?(:update)
+    assert contact_update.errors.full_messages.empty?
   end
 
   def test_name_invalid_create
