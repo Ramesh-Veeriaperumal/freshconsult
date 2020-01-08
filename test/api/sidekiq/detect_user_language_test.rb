@@ -104,7 +104,7 @@ class DetectUserLanguageTest < ActionView::TestCase
     User.any_instance.stubs(:detect_language?).returns(true)
     Users::DetectLanguage.any_instance.stubs(:detect_lang_from_email_service).returns('ar')
     @account.rollback(:compact_lang_detection)
-    Users::DetectLanguage.new.perform(user_id: @user.id, text: 'test string - sample 2')
+    Users::DetectLanguage.new.perform(user_id: @user.id, text: 'القائمة وفيما يخص التطبيقات الحاسوبية')
     @user.reload
     assert_equal 'ar', @user.language, 'language detection proper response from email service'
   ensure
