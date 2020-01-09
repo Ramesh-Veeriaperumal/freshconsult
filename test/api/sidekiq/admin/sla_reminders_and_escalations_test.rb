@@ -35,7 +35,7 @@ class SlaReminderEscalationWorkerTest < ActionView::TestCase
                         }}
     ticket, sla_policy = create_test_ticket_with_sla(user, group, escalation_action)
     ticket.update_attributes(frDueBy: Time.zone.now - 1.hour)
-    set_others_redis_key(SLA_TICKETS_LIMIT, 5)
+    Admin::Sla::Reminder::Base.any_instance.stubs(:tickets_limit_check).returns(false)
     Admin::Sla::Reminder::Base.new.perform
     ticket.reload
     fr_reminder = @account.email_notifications.response_sla_reminder.first
@@ -45,7 +45,7 @@ class SlaReminderEscalationWorkerTest < ActionView::TestCase
     sla_policy.destroy
     group.destroy
     user.destroy
-    remove_others_redis_key SLA_TICKETS_LIMIT
+    Admin::Sla::Reminder::Base.any_instance.unstub(:tickets_limit_check)
   end
 
   def test_resolution_reminder
@@ -56,7 +56,7 @@ class SlaReminderEscalationWorkerTest < ActionView::TestCase
                         }}
     ticket, sla_policy = create_test_ticket_with_sla(user, group, escalation_action)
     ticket.update_attributes(due_by: Time.zone.now - 1.hour)
-    set_others_redis_key(SLA_TICKETS_LIMIT, 5)
+    Admin::Sla::Reminder::Base.any_instance.stubs(:tickets_limit_check).returns(false)
     Admin::Sla::Reminder::Base.new.perform
     ticket.reload
     resolution_reminder = @account.email_notifications.resolution_sla_reminder.first
@@ -66,7 +66,7 @@ class SlaReminderEscalationWorkerTest < ActionView::TestCase
     sla_policy.destroy
     group.destroy
     user.destroy
-    remove_others_redis_key SLA_TICKETS_LIMIT
+    Admin::Sla::Reminder::Base.any_instance.unstub(:tickets_limit_check)
   end
 
   def test_next_response_reminder
@@ -78,7 +78,7 @@ class SlaReminderEscalationWorkerTest < ActionView::TestCase
                         }}
     ticket, sla_policy = create_test_ticket_with_sla(user, group, escalation_action)
     ticket.update_attributes(nr_due_by: Time.zone.now - 1.hour)
-    set_others_redis_key(SLA_TICKETS_LIMIT, 5)
+    Admin::Sla::Reminder::Base.any_instance.stubs(:tickets_limit_check).returns(false)
     Admin::Sla::Reminder::Base.new.perform
     ticket.reload
     nr_reminder = @account.email_notifications.next_response_sla_reminder.first
@@ -89,7 +89,7 @@ class SlaReminderEscalationWorkerTest < ActionView::TestCase
     sla_policy.destroy
     group.destroy
     user.destroy
-    remove_others_redis_key SLA_TICKETS_LIMIT
+    Admin::Sla::Reminder::Base.any_instance.unstub(:tickets_limit_check)
   end
 
   def test_response_escalation
