@@ -1,0 +1,9 @@
+module FieldServiceManagementTestHelper
+  def enable_field_agents_can_manage_appointments_option
+    Account.current.account_additional_settings.save_field_service_management_settings(field_agents_can_manage_appointments: true) unless Account.current.field_agents_can_manage_appointments?
+  end
+
+  def disable_field_agents_can_manage_appointments_option
+    Account.current.account_additional_settings.save_field_service_management_settings(field_agents_can_manage_appointments: false) if Account.current.field_agents_can_manage_appointments?
+  end
+end

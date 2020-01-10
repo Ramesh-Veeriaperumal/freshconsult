@@ -1,0 +1,39 @@
+put:
+  tags: [Field Service Management Settings]
+  summary: Save field service management additional settings
+  description: Enable and disable field service management settings
+  parameters:
+    - name: settings
+      in: body
+      schema:
+        $ref: '#/definitions/fsm_save_settings_input'
+  responses:
+    201:
+      description: Success
+      schema:
+        type: object
+        properties:
+          field_agents_can_manage_appointments:
+            type: boolean
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+
+get:
+  tags: [Field Service Management Settings]
+  summary: Get field service management settings
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          field_agents_can_manage_appointments:
+            type: boolean
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+
+

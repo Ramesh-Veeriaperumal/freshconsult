@@ -179,6 +179,9 @@ email_mailbox_input:
   
 email_notification_bcc_input:
   $ref: ./request/notifications/email/bcc.yaml
+
+fsm_save_settings_input:
+  $ref: './request/field_service_management/save_settings.yaml'
     
 # RESOURCE
 conversation_template:

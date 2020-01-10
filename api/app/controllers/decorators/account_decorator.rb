@@ -1,5 +1,7 @@
 class AccountDecorator < ApiDecorator
   include Social::Util
+  include FieldServiceManagementHelper
+
   def to_hash
     simple_hash.merge(agents_groups_hash)
   end
@@ -80,7 +82,7 @@ class AccountDecorator < ApiDecorator
 
     def settings_hash
       acct_additional_settings = record.account_additional_settings
-      {
+      settings_hash = {
         personalized_email_replies: record.features.personalized_email_replies?,
         compose_email_enabled: record.compose_email_enabled?,
         restricted_compose_email_enabled: record.restricted_compose_enabled?,
@@ -92,6 +94,8 @@ class AccountDecorator < ApiDecorator
         onboarding_version: acct_additional_settings.additional_settings[:onboarding_version],
 	freshdesk_freshsales_bundle: record.account_additional_settings.additional_settings[:freshdesk_freshsales_bundle] || false
       }
+      settings_hash[:field_service_management] = fetch_fsm_settings(acct_additional_settings) if record.field_service_management_enabled? && record.field_agents_can_manage_appointments_setting_enabled?
+      settings_hash
     end
 
     def social_options_hash

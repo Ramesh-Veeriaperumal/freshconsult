@@ -72,6 +72,13 @@ properties:
                 type: boolean
               show_on_boarding:
                 type: boolean
+              field_service_management_settings:
+                type: object
+                description: Available only if Field Service Management feature is enabled
+                properties:
+                  field_agents_can_manage_appointments:
+                    type: boolean
+                    description: Available only if value is false
               onboarding_version:
                 type: string
           ssl_enabled:

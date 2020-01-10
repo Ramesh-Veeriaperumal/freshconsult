@@ -369,6 +369,11 @@ Helpkit::Application.routes.draw do
 
     resources :skills, controller: 'admin/api_skills', only: [:index, :show, :create, :update, :destroy]
     resources :shifts, controller: 'admin/shifts', only: [:index, :show, :create, :update, :destroy]
+
+    scope 'field-service' do
+      put :settings, to: 'field_service_management#update_settings'
+      get :settings, to: 'field_service_management#show_settings'
+    end
   end
 
   ember_routes = proc do
