@@ -45,11 +45,7 @@ class Users::DetectLanguage < BaseWorker
         @user.save!
       else
         Rails.logger.debug "unable to get via cld text:: #{@text}, account_id:: #{Account.current.id}"
-        if account.detect_lang_from_email_service_enabled?
-          set_lang_via_email_service
-        else
-          detect_lang_from_google
-        end
+        set_lang_via_email_service
       end
     end
 
