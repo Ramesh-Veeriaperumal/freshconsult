@@ -76,6 +76,8 @@ module ArchiveTicketTestHelper
     params_hash = archive_ticket_params_hash(params)
     ticket = create_ticket(params_hash)
     build_conversations(ticket, params) if params[:create_conversations]
+    new_ticket_from_freshcaller_call(ticket) if params[:create_freshcaller_call]
+    new_ticket_from_call(ticket) if params[:create_freshfone_call]
     ticket.updated_at = params[:updated_at] if params[:updated_at].present?
     ticket.save
 
