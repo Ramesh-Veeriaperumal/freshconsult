@@ -131,6 +131,10 @@ module AccountTestHelper
   end
 
   def central_publish_account_post(account)
+    portal_languages = []
+    if account.account_additional_settings.present? && account.account_additional_settings.portal_languages.present?
+      portal_languages = account.account_additional_settings.portal_languages
+    end
     {
       id: account.id,
       name: account.name,
@@ -148,7 +152,8 @@ module AccountTestHelper
       premium: account.premium,
       freshid_account_id: account.freshid_account_id,
       fs_cookie: account.fs_cookie,
-      account_configuration: account.account_configuration.account_configuration_for_central
+      account_configuration: account.account_configuration.account_configuration_for_central,
+      portal_languages: portal_languages
     }
   end
 
