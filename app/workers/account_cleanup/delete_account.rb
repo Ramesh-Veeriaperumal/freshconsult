@@ -113,7 +113,14 @@ class AccountCleanup::DeleteAccount < BaseWorker
          key = redis_key % {:account_id => account.id, :article_id => article.id }
          remove_others_redis_key(key)
        end
-     end
+      end
+
+      ACCOUNT_ARTICLE_VERSION_KEYS.each do |redis_key|
+        account.solution_article_versions.find_each do |version|
+          key = redis_key % { account_id: account.id, article_id: version.article_id, version_id: version.id }
+          remove_others_redis_key(key)
+        end
+      end
 
       #account article meta
       ACCOUNT_ARTICLE_META_KEYS.each do |redis_key|
