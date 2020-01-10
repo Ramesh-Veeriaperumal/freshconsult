@@ -79,10 +79,6 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         notify_fsm_dev(msg, msg_param)
       end
 
-      def feature_fsm?
-        cname_params[:name].to_sym == FSM_FEATURE
-      end
-
       def create_service_task_field_type
         return if Account.current.ticket_types_from_cache.map(&:value).include?(SERVICE_TASK_TYPE)
 

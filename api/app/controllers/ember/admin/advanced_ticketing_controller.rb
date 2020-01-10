@@ -2,9 +2,6 @@ module Ember
   module Admin
     class AdvancedTicketingController < ApiApplicationController
       before_filter :validate_destroy, only: :destroy
-      # We are resetting limit here so that when admin enables FSM from advanced ticketing,
-      # FSM fields are reserved. But they can not add any field agents until they pay in Billing page
-      before_filter :reset_field_agent_limit, only: :create, if: -> { feature_fsm? }
       before_filter :check_privilege_for_fsm_disable, only: :destroy, if: -> { fsm? }
 
       include HelperConcern
