@@ -60,7 +60,7 @@ class Mobile::SettingsController < ApplicationController
               full_domain = response['account_id']['full_domain']
               google_signin_enabled = response['account_id']['google_signin_enabled']
               facebook_signin_enabled = response['account_id']['facebook_signin_enabled']
-              org_login_url = response['account_id']['org_login_url'] if response['account_id']['freshid_org_v2_enabled'] == 'true'
+              org_login_url = response['account_id']['org_login_url']
             end
           end
           result_code = MOBILE_API_RESULT_SUCCESS  #Success
