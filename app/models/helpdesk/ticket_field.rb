@@ -12,7 +12,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   include Cache::Memcache::Admin::TicketField
   include Admin::TicketFieldConstants
 
-  clear_memcache [TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_WITHOUT_PRODUCT]
+  clear_memcache [TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_WITHOUT_PRODUCT, ACCOUNT_EVENT_FIELDS, ACCOUNT_FLEXIFIELDS]
 
   concerned_with :presenter
 
