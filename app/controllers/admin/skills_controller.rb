@@ -137,8 +137,9 @@ class Admin::SkillsController < Admin::AdminController
     end
 
     def check_max_skills_limit
-      if current_account.skills.count >= Admin::Skill::MAX_NO_OF_SKILLS_PER_ACCOUNT
-        flash[:notice] = I18n.t('activerecord.errors.messages.max_skills_per_account', :max_limit => Admin::Skill::MAX_NO_OF_SKILLS_PER_ACCOUNT)
+      max_skills_per_account = current_account.max_skills_per_account
+      if current_account.skills.count >= max_skills_per_account
+        flash[:notice] = I18n.t('activerecord.errors.messages.max_skills_per_account', :max_limit => max_skills_per_account)
         redirect_to admin_skills_path
       end
     end
