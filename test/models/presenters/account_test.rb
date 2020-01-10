@@ -21,7 +21,7 @@ class AccountTest < ActiveSupport::TestCase
   end
 
   def test_add_bitmap_feature
-    setup
+    Account.stubs(:current).returns(Account.first || create_test_account)
     @account.revoke_feature(:skill_based_round_robin)
     CentralPublishWorker::AccountWorker.jobs.clear
     @account.add_feature(:skill_based_round_robin)
@@ -32,11 +32,12 @@ class AccountTest < ActiveSupport::TestCase
     assert_equal 'account_update', job['args'][0]
     assert_equal({ 'added' => ["skill_based_round_robin"], 'removed' => [] }, job['args'][1]['model_changes']['features'])
   ensure
-     @account.revoke_feature(:skill_based_round_robin)
+    @account.revoke_feature(:skill_based_round_robin)
+    Account.unstub(:current)
   end
   
   def test_remove_bitmap_feature
-    setup
+    Account.stubs(:current).returns(Account.first || create_test_account)
     @account.add_feature(:skill_based_round_robin)
     CentralPublishWorker::AccountWorker.jobs.clear
     @account.revoke_feature(:skill_based_round_robin)
@@ -46,6 +47,8 @@ class AccountTest < ActiveSupport::TestCase
     job = CentralPublishWorker::AccountWorker.jobs.last
     assert_equal 'account_update', job['args'][0]
     assert_equal({ 'added' => [], 'removed' => ["skill_based_round_robin"] }, job['args'][1]['model_changes']['features'])
+  ensure
+    Account.unstub(:current)
   end
 
   def test_account_publish_for_suspended_account?
@@ -67,7 +70,8 @@ class AccountTest < ActiveSupport::TestCase
   end
 
   def test_account_publish_for_account_configuration_change
-    setup
+    Account.stubs(:current).returns(Account.first || create_test_account)
+    @account.reload
     CentralPublishWorker::AccountWorker.jobs.clear
     current_account_configuration = @account.account_configuration.account_configuration_for_central.stringify_keys
     expected_model_change = { 'account_configuration' => [current_account_configuration.clone, current_account_configuration.clone] }
@@ -85,7 +89,6 @@ class AccountTest < ActiveSupport::TestCase
     company_info = @account.account_configuration.company_info.clone
     new_company_info = company_info.clone
     new_company_info[:location] = { streetName: 'SP Infocity', city: 'Chennai', state: 'Tamil Nadu', postalCode: 600042, country: 'India' }
-
     @account.account_configuration.update_attributes!({ contact_info: new_contact_info, company_info: new_company_info })
     assert_equal 1, CentralPublishWorker::AccountWorker.jobs.size
     payload = @account.central_publish_payload.to_json
@@ -95,5 +98,24 @@ class AccountTest < ActiveSupport::TestCase
     assert_equal(expected_model_change, job['args'][1]['model_changes'])
   ensure
     @account.account_configuration.update_attributes!({ contact_info: contact_info, company_info: company_info })
+    Account.unstub(:current)
+  end
+
+  def test_account_publish_for_account_additional_settings_portal_languages
+    Account.stubs(:current).returns(Account.first || create_test_account)
+    @account.reload
+    CentralPublishWorker::AccountWorker.jobs.clear
+    account_additional_settings = @account.account_additional_settings
+    expected_model_change = { 'portal_languages' => [account_additional_settings.portal_languages, ['en']] }
+    account_additional_settings.portal_language_setter(['en'])
+    account_additional_settings.save!
+    assert_equal 1, CentralPublishWorker::AccountWorker.jobs.size
+    payload = @account.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_account_post(@account))
+    job = CentralPublishWorker::AccountWorker.jobs.last
+    assert_equal 'account_update', job['args'][0]
+    assert_equal(expected_model_change, job['args'][1]['model_changes'])
+  ensure
+    Account.unstub(:current)
   end
 end

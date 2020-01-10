@@ -14,6 +14,7 @@ class Portal < ActiveRecord::Base
   attr_protected  :account_id
   attr_accessor :language_list
 
+  publishable on: [:create, :update, :destroy]
   xss_sanitize  :only => [:name,:language], :plain_sanitizer => [:name,:language]
   validates_uniqueness_of :portal_url, :allow_blank => true, :allow_nil => true, :if => :portal_url_changed?
   validates_format_of :portal_url, :with => %r"^(?!.*\.#{Helpdesk::HOST[Rails.env.to_sym]}$)[/\w\.-]+$",
@@ -88,7 +89,6 @@ class Portal < ActiveRecord::Base
   belongs_to :product
 
   concerned_with :solution_associations, :presenter
-  publishable on: [:create, :update, :destroy]
 
   APP_CACHE_VERSION = "FD79"
 
