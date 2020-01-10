@@ -34,7 +34,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   validate :requester_company_id_validation, :if => :company_id_changed?
 
-  validate :check_appointment_time_range, if: -> { errors.blank? && Account.current.field_service_management_enabled? && self.ticket_type == Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE }
+  validate :field_agent_can_manage_appointments?, on: :update, if: -> { errors.blank? && valid_service_task? && Account.current.field_agents_can_manage_appointments_setting_enabled? }
+  validate :check_appointment_time_range, if: -> { errors.blank? && valid_service_task? }
 
   def due_by_validation
     self.errors.add(:base,t('helpdesk.tickets.show.due_date.earlier_date_and_time')) if due_by_changed? and (due_by < created_at_date)
@@ -42,6 +43,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def frDueBy_validation
     self.errors.add(:base,t('helpdesk.tickets.show.due_date.earlier_date_and_time')) if frDueBy < created_at_date
+  end
+
+  def valid_service_task?
+    Account.current.field_service_management_enabled? && service_task?
   end
 
   def created_at_date #To handle API call having frDueBy and due_by without created_at
@@ -128,17 +133,29 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def check_appointment_time_range
-    start_time = FSM_APPOINTMENT_START_TIME + "_#{Account.current.id}"
-    end_time = FSM_APPOINTMENT_END_TIME + "_#{Account.current.id}"
+    start_time = generate_flexifield_alias_name(FSM_APPOINTMENT_START_TIME)
+    end_time = generate_flexifield_alias_name(FSM_APPOINTMENT_END_TIME)
     unless self.custom_field[start_time].nil? || self.custom_field[end_time].nil?
       if self.custom_field[end_time] < self.custom_field[start_time]
-        start_time_ff = custom_field_name_mapping.key(start_time) 
-        end_time_ff = custom_field_name_mapping.key(end_time)
+        end_time_ff = get_flexifield_mapping_entry(end_time)
         if self.flexifield.changes.key?(end_time_ff)
           self.errors.add(:"custom_fields.#{FSM_APPOINTMENT_END_TIME}", 'invalid_date_time_range')
         else
           self.errors.add(:"custom_fields.#{FSM_APPOINTMENT_START_TIME}", 'invalid_date_time_range')
         end
+      end
+    end
+  end
+
+  def field_agent_can_manage_appointments?
+    if User.current && User.current.agent && User.current.agent.field_agent?
+      unless Account.current.field_agents_can_manage_appointments?
+        start_time = generate_flexifield_alias_name(FSM_APPOINTMENT_START_TIME)
+        end_time = generate_flexifield_alias_name(FSM_APPOINTMENT_END_TIME)
+        start_time_ff = get_flexifield_mapping_entry(start_time)
+        end_time_ff = get_flexifield_mapping_entry(end_time)
+        errors.add(:"custom_fields.#{FSM_APPOINTMENT_START_TIME}", 'access_denied') if flexifield.changes.key?(start_time_ff)
+        errors.add(:"custom_fields.#{FSM_APPOINTMENT_END_TIME}", 'access_denied') if flexifield.changes.key?(end_time_ff)
       end
     end
   end
@@ -159,5 +176,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def support_bot_configured?
       self.account.support_bot_configured?
+    end
+
+    def generate_flexifield_alias_name(field_name)
+      field_name + "_#{Account.current.id}".freeze
+    end
+
+    def get_flexifield_mapping_entry(key)
+      custom_field_name_mapping.key(key)
     end
 end

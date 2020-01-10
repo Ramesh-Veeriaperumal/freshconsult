@@ -114,5 +114,8 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       SERVICE_TASKS_RESOLUTION_TREND_WIDGET_NAME => ::Dashboard::Custom::TicketTrendCard::METRICS_MAPPING.key('RESOLVED_TICKETS'),
       SERVICE_TASKS_AVG_RESOLUTION_WIDGET_NAME => ::Dashboard::Custom::TimeTrendCard::METRICS_MAPPING.key('AVG_RESOLUTION_TIME')
     }.freeze
+
+    FSM_SETTINGS_DEFAULT_VALUES = { field_agents_can_manage_appointments: true }.freeze
+    UPDATE_SETTINGS_FIELDS = FSM_SETTINGS_DEFAULT_VALUES.keys.freeze
   end
 end

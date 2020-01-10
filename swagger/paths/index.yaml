@@ -753,3 +753,8 @@
   $ref: ./admin/freshcaller/enable.yaml
 /admin/freshcaller_account/disable:
   $ref: ./admin/freshcaller/disable.yaml
+
+#field_service_management
+/field-service/settings:
+  $ref: ./field_service_management/save_settings.yaml
+

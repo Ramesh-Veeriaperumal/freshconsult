@@ -193,6 +193,13 @@ class Account < ActiveRecord::Base
     account_additional_settings.additional_settings.blank? ? false : account_additional_settings.additional_settings[:skip_mandatory_checks] == true
   end
 
+  def field_agents_can_manage_appointments?
+    fsm_settings = account_additional_settings.additional_settings[:field_service_management]
+    return true if fsm_settings.blank?
+
+    fsm_settings[:field_agents_can_manage_appointments] != false
+  end
+
   def fields_with_in_operators
     custom_dropdown = "custom_dropdown"
     default_in_op_fields = Hash.new

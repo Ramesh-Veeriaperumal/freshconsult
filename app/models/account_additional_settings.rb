@@ -28,6 +28,21 @@ class AccountAdditionalSettings < ActiveRecord::Base
     save!
   end
 
+  def save_field_service_management_settings(params)
+    fsm_settings_default_value_hash = Admin::AdvancedTicketing::FieldServiceManagement::Constant::FSM_SETTINGS_DEFAULT_VALUES
+    fsm_additional_settings = additional_settings[:field_service_management]
+    params.each do |key, value|
+      if fsm_settings_default_value_hash[key.to_sym] == value
+        fsm_additional_settings.delete(key.to_sym) if fsm_additional_settings.present?
+      else
+        fsm_additional_settings ||= {}
+        fsm_additional_settings[key.to_sym] = value
+      end
+    end
+    additional_settings[:field_service_management] = fsm_additional_settings
+    save!
+  end
+
   def enable_skip_mandatory
     toggle_skip_mandatory_option(true) unless additional_settings[:skip_mandatory_checks]
   end
