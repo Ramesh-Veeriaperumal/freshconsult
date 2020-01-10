@@ -2,6 +2,7 @@ class Va::Action
   
   include Va::Action::Restrictions
   include Va::Webhook::Trigger
+  include Va::Observer::Constants
   include ParserUtil
   include Concerns::ApplicationViewConcern
   include Concerns::TicketsViewConcern
@@ -225,7 +226,10 @@ class Va::Action
   end
 
   def send_email_to_requester(act_on)
-    return if act_on.spam?
+    # We can set rules to send email on trigger event 'marked_spam'. To support that we need to bypass
+    # this if condition.
+    return if act_on.spam? && !(TICKET_MARKED_SPAM[:ticket_action].to_s == triggered_event[:ticket_action])
+
     if act_on.requester_has_email? && !(act_on.ecommerce? || act_on.requester.ebay_user?)
       act_on.account.make_current
       if self.va_rule.automation_rule?
@@ -242,7 +246,8 @@ class Va::Action
   end
   
   def send_email_to_group(act_on)
-    return if act_on.spam?
+    return if act_on.spam? && !(TICKET_MARKED_SPAM[:ticket_action].to_s == triggered_event[:ticket_action])
+
     group = get_group(act_on)
     if group && !group.agent_emails.empty?
       send_internal_email(act_on, group.agent_emails)
@@ -251,7 +256,10 @@ class Va::Action
   end
 
   def send_email_to_agent(act_on)
-    return if act_on.spam? || (act_hash[:email_to].to_i == EVENT_PERFORMER && doer.nil?)
+    # We can set rules to send email on trigger event 'marked_spam'. To support that we need to bypass
+    # this if condition.
+    return if (act_on.spam? && !(TICKET_MARKED_SPAM[:ticket_action].to_s == triggered_event[:ticket_action])) || (act_hash[:email_to].to_i == EVENT_PERFORMER && doer.nil?)
+
     agent = get_agent(act_on)
     if agent
       send_internal_email(act_on, agent.email)
