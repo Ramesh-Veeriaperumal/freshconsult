@@ -2,7 +2,7 @@ module RuleEngine
   module Handlers
     class Rules::FreddyType < RuleHandler
       include Redis::AutomationRuleRedis
-      def matches(evaluate_on)
+      def matches(evaluate_on, evaluate_on_type = nil)
         safe_send(condition.operator + '_' + value, evaluate_on)
       end
 
