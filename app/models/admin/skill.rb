@@ -11,7 +11,6 @@ class Admin::Skill < ActiveRecord::Base
   concerned_with :presenter
 
   NOT_OPERATORS = ['is_not', 'does_not_contain', 'not_selected', 'not_in']
-  MAX_NO_OF_SKILLS_PER_ACCOUNT = 180
   VERSION_MEMBER_KEY = 'TICKET_FIELD_LIST'.freeze
 
   serialize :filter_data
@@ -134,8 +133,9 @@ class Admin::Skill < ActiveRecord::Base
     end
 
     def no_of_skills_per_account
-      if account.skills.count >= MAX_NO_OF_SKILLS_PER_ACCOUNT
-        errors.add(:base, :max_skills_per_account, :max_limit => MAX_NO_OF_SKILLS_PER_ACCOUNT) 
+      max_skill_limit = account.max_skills_per_account
+      if account.skills.count >= max_skill_limit
+        errors.add(:base, :max_skills_per_account, :max_limit => max_skill_limit) 
       end
     end
 

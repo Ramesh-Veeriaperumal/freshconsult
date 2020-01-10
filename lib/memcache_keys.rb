@@ -166,7 +166,7 @@ module MemcacheKeys
 
   POD_SHARD_ACCOUNT_MAPPING = "v3/POD_SHARD_ACCOUNT_MAPPING:%{pod_info}:%{shard_name}"
 
-  ACCOUNT_ADDITIONAL_SETTINGS = 'v4/ACCOUNT_ADDITIONAL_SETTINGS:%{account_id}'.freeze
+  ACCOUNT_ADDITIONAL_SETTINGS = 'v5/ACCOUNT_ADDITIONAL_SETTINGS:%{account_id}'.freeze
 
   INSTALLED_FRESHPLUGS = "v3/FA:%{page}:PLUGS:%{account_id}:%{platform_version}"
 

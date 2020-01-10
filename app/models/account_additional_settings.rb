@@ -105,6 +105,10 @@ class AccountAdditionalSettings < ActiveRecord::Base
     additional_settings[:max_template_limit] unless additional_settings.blank?
   end
 
+  def max_skills_per_account
+    additional_settings.present? ? (additional_settings[:max_skills_limit] || DEFAULT_SKILL_LIMIT) : DEFAULT_SKILL_LIMIT
+  end
+
   def freshmarketer_linked?
     freshmarketer_hash.present? && freshmarketer_hash[:acc_id].present?
   end
