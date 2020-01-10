@@ -16,7 +16,6 @@ module ChannelIntegrations
       return unless is_valid_request?(payload_type, payload) && args[:account_id]
       Sharding.select_shard_of(args[:account_id]) do
         Account.find(args[:account_id]).make_current
-        return unless valid_twitter_update?(payload)
 
         log_params(payload)
         reply_payload = @cmds.process(payload)

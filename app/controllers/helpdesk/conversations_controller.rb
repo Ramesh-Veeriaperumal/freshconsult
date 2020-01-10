@@ -121,7 +121,7 @@ class Helpdesk::ConversationsController < ApplicationController
     end
     if error_message.blank?
       stream = fetch_stream(reply_handle, twt_type)
-      if dm_note?(twt_type) || outgoing_tweets_in_tms?(stream)
+      unless stream.custom_stream?
         stream_id = stream.id
         tweet_id = random_tweet_id
         @item.build_tweet(tweet_id: tweet_id,
@@ -130,9 +130,7 @@ class Helpdesk::ConversationsController < ApplicationController
       end
       if @item.save_note
         args = { ticket_id: @parent.id, note_id: @item.id, tweet_type: twt_type, twitter_handle_id: twitter_handle_id }
-        if stream.custom_stream? || (!current_account.outgoing_tweets_to_tms_enabled? && mention_note?(twt_type))
-          Social::TwitterReplyWorker.perform_async(args)
-        end
+        Social::TwitterReplyWorker.perform_async(args) if stream.custom_stream?
         flash.now[:notice] = t(:'flash.tickets.reply.success')
         process_and_redirect
       else
@@ -472,17 +470,5 @@ class Helpdesk::ConversationsController < ApplicationController
         else
           reply_handle.default_stream
         end
-      end
-
-      def outgoing_tweets_in_tms?(stream)
-        current_account.outgoing_tweets_to_tms_enabled? && stream.default_stream?
-      end
-
-      def dm_note?(tweet_type)
-        tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:dm]
-      end
-
-      def mention_note?(tweet_type)
-        tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention]
       end
 end
