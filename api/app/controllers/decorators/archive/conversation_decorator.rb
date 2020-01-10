@@ -14,9 +14,27 @@ module Archive
         created_at: created_at.try(:utc),
         updated_at: updated_at.try(:utc),
         attachments: attachments.map { |att| AttachmentDecorator.new(att).to_hash },
-        cloud_files: cloud_files_hash,
-      }.merge!(archive_old_data)
-  end
+        cloud_files: cloud_files_hash
+      }
+    end
+
+    def freshfone_call_proxy
+      freshfone_call
+    rescue StandardError => e
+      Rails.logger.error("ArchiveConversation :: Freshfone :: Error :: #{e.message} :: #{e.backtrace}")
+      {}
+    end
+
+    def freshcaller_call_proxy
+      freshcaller_call
+    rescue StandardError => e
+      Rails.logger.error("ArchiveConversation :: Freshcaller :: Error :: #{e.message} :: #{e.backtrace}")
+      {}
+    end
+
+    def to_hash
+      [construct_json, freshfone_call_proxy, freshcaller_call_proxy, archive_old_data].inject(&:merge)
+    end
 
     private
 
