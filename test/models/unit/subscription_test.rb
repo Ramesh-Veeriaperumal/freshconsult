@@ -11,6 +11,7 @@ class SubscriptionTest < ActiveSupport::TestCase
     agent = @account.agents.first.user
     User.stubs(:current).returns(agent)
     Subscription.any_instance.stubs(:state).returns('active')
+    Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(false)
     subscription = @account.subscription
     @account.set_account_onboarding_pending
     assert_equal @account.onboarding_pending?, true
@@ -20,6 +21,7 @@ class SubscriptionTest < ActiveSupport::TestCase
   ensure
     Subscription.any_instance.unstub(:state)
     User.unstub(:current)
+    Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
     @account.destroy
   end
 
@@ -28,6 +30,7 @@ class SubscriptionTest < ActiveSupport::TestCase
     update_currency
     agent = @account.agents.first.user
     User.stubs(:current).returns(agent)
+    Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(false)
     subscription = @account.subscription
     @account.set_account_onboarding_pending
     assert_equal @account.onboarding_pending?, true
@@ -37,6 +40,7 @@ class SubscriptionTest < ActiveSupport::TestCase
     assert_equal @account.onboarding_pending?, false
   ensure
     User.unstub(:current)
+    Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
     @account.destroy
   end
 
@@ -45,6 +49,7 @@ class SubscriptionTest < ActiveSupport::TestCase
     update_currency
     agent = @account.agents.first.user
     User.stubs(:current).returns(agent)
+    Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(false)
     ProductFeedbackWorker.expects(:perform_async).once
     subscription = @account.subscription
     subscription.plan = SubscriptionPlan.current.find_by_name 'Garden Omni Jan 19'
@@ -52,6 +57,7 @@ class SubscriptionTest < ActiveSupport::TestCase
     subscription.save
   ensure
     User.unstub(:current)
+    Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
     @account.destroy
   end
 
@@ -60,6 +66,7 @@ class SubscriptionTest < ActiveSupport::TestCase
     update_currency
     agent = @account.agents.first.user
     User.stubs(:current).returns(agent)
+    Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(false)
     ProductFeedbackWorker.expects(:perform_async).never
     subscription = @account.subscription
     subscription.plan = SubscriptionPlan.current.find_by_name 'Garden Jan 19'
@@ -67,6 +74,7 @@ class SubscriptionTest < ActiveSupport::TestCase
     subscription.save
   ensure
     User.unstub(:current)
+    Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
     @account.destroy
   end
 

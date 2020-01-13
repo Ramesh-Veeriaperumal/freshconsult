@@ -1,5 +1,9 @@
 <%= javascript_include_tag :'cdn/plans_and_billing' %>
 
+<% fd_fs_banner = @subscription.account.fetch_fd_fs_banner_details %>
+<% if fd_fs_banner.present? && ['trial', 'integrate', 'new'].include?(fd_fs_banner[:state]) && @subscription.account.account_activated_within_last_week? %>
+  <%= render :partial => "/subscriptions/freshdesk_freshsales_bundle", :locals => { :account_state => fd_fs_banner[:state], :account_subscription_url => fd_fs_banner[:url] } %>
+<% end %>
 <h3 class="lead"><%= @page_title = t("admin.home.index.billing") %></h3>
 
 <%= render :partial => "/subscriptions/state/#{@subscription.state}", 

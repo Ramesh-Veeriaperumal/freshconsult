@@ -51,7 +51,7 @@ gem 'charlock_holmes', "0.7.3"
 gem "tnef", "1.0.2"
 gem "central-publisher", git: 'git@github.com:freshdesk/central-publisher.git', tag: 'v2.0.11'
 
-gem 'optar', git: 'git@github.com:freshdesk/optar.git', tag: 'v1.1.3'
+gem 'optar', git: 'git@github.com:freshdesk/optar.git', tag: 'v1.1.4'
 
 group :development, :test do
   gem 'active_record_query_trace'

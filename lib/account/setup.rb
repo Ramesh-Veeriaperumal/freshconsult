@@ -15,6 +15,8 @@ module Account::Setup
 
   ONBOARDING_V2_KEYS = ACCOUNT_SETUP_FEATURES_LIST[:onboarding_v2_keys]
 
+  ONBOARDING_V2_GOALS = ACCOUNT_SETUP_FEATURES_LIST[:onboarding_goals].keys
+
   SETUP_KEYS = INDEPENDENT_SETUP_KEYS.merge(CONDITION_BASED_SETUP_KEYS).merge(NON_CHECKLIST_KEYS).merge(ONBOARDING_V2_KEYS).sort_by { |key, value| value }.to_h.keys
 
   SETUP_KEYS_DISPLAY_ORDER = ACCOUNT_SETUP_FEATURES_LIST[:setup_keys_display_order]
@@ -32,7 +34,7 @@ module Account::Setup
 
   included do |base|
     base.include Binarize
-    base.binarize :setup, flags: SETUP_KEYS, not_a_model_column: true
+    base.binarize :setup, flags: SETUP_KEYS + ONBOARDING_V2_GOALS, not_a_model_column: true
   end
 
   def setup_key
@@ -119,4 +121,18 @@ module Account::Setup
     end
   end
 
+  ONBOARDING_V2_GOALS.each do |setup_goal|
+    define_method "mark_#{setup_goal}_setup_and_save" do
+      self.safe_send("mark_#{setup_goal}_setup")
+      AddEventToFreshmarketer.perform_async(event: ThirdCRM::FRESHMARKETER_EVENTS[:goal_completed], goal_name: TrialWidgetConstants::GOALS_AND_STEPS[setup_goal.to_sym][:goal_alias_name])
+      save_setup
+    end
+  end
+
+  ONBOARDING_V2_GOALS.each do |setup_goal|
+    define_method "unmark_#{setup_goal}_setup_and_save" do
+      self.safe_send("unmark_#{setup_goal}_setup")
+      save_setup
+    end
+  end
 end

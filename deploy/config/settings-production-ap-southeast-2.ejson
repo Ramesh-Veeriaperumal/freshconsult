@@ -119,6 +119,7 @@
       },
       "freshmarketer_automation": {
         "_contact_url": "https://freshworks.freshmarketer.com/mas/api/v1/contacts",
+        "_events_url": "https://freshworks.freshmarketer.com/mas/api/v1/events",
         "_list_id": "1271",
         "access_key": "EJ[1:oK7NDYYR4oC5tPU7NyiIgKavdHm77Wh2l8zGoJnGFXg=:VcjIzou/V+py5cKw3K3MuiqMy7CQBerd:LW8SVPGD7sRxgFUXvClMXH97bBHt23o/JJGHxPJQEuiwfRYiBcjO9AIn76lhIViaWG59hhrfaPc=]"
       },

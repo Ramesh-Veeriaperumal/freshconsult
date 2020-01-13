@@ -47,7 +47,7 @@ class Account < ActiveRecord::Base
 
   has_many :helpdesk_approver_mappings,
            class_name: 'Helpdesk::ApproverMapping',
-           inverse_of: :accounts
+           inverse_of: :account
 
   # Alias
 

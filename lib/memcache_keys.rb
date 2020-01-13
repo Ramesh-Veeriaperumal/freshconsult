@@ -286,8 +286,6 @@ module MemcacheKeys
 
   ACCOUNT_AGENT_GROUPS_ONLY_IDS = 'v1/AGENTS_GROUPS_IDS_ONLY:%{account_id}'.freeze
 
-  ACCOUNT_AGENTS_DETAILS_PLUCK = 'v1/ACCOUNT_AGENTS_DETAILS_PLUCK:%{account_id}'.freeze
-
   CUSTOM_NESTED_FIELD_CHOICES = 'v1/CUSTOM_NESTED_FIELD_CHOICES:%{account_id}'.freeze
 
   SURVEY_QUESTIONS_MAP_KEY = 'v1/SURVEY_QUESTIONS_MAP:%{account_id}:%{survey_id}'.freeze
@@ -309,6 +307,8 @@ module MemcacheKeys
   NESTED_TICKET_FIELDS_KEY = 'v1/NESTED_TICKET_FIELDS_KEY:%{account_id}:%{ticket_field_id}'
 
   ACCOUNT_FLEXIFIELD_ENTRY_COLUMNS = 'v1/ACCOUNT_FLEXIFIELD_ENTRY_COLUMNS:%{account_id}'
+
+  FRESHWORK_PRODUCTS = 'FRESHWORK_PRODUCTS'.freeze
 
   def fetch_from_cache(key, &block)
     @cached_values = {} unless @cached_values

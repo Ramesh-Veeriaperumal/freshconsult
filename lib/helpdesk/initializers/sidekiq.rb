@@ -122,6 +122,7 @@ Sidekiq.configure_client do |config|
       'Freshid::V2::ProcessEvents',
       "Roles::UpdateAgentsRoles",
       'AuditLogExport',
+      "Solution::ApprovalNotificationWorker",
       'Freshcaller::UpdateAgentsWorker'
     ]
   end
@@ -246,6 +247,7 @@ Sidekiq.configure_server do |config|
       'Tickets::UndoSendWorker',
       "Roles::UpdateAgentsRoles",
       'AuditLogExport',
+      'Solution::ApprovalNotificationWorker',
       'Freshcaller::UpdateAgentsWorker'
     ]
     chain.add Server::SidekiqSober, :redis_connection => $redis_others, 
@@ -346,6 +348,7 @@ Sidekiq.configure_server do |config|
       'Tickets::UndoSendWorker',
       "Roles::UpdateAgentsRoles",
       'AuditLogExport',
+      'Solution::ApprovalNotificationWorker',
       'Freshcaller::UpdateAgentsWorker'
     ]
   end

@@ -2,8 +2,13 @@ class ThirdCRM
   EVENTS = {
     subscription: 'subscription',
     trial_subscription: 'trial_subscription',
-    beacon_report: 'beacon_report'
+    beacon_report: 'beacon_report',
+    onboarding_goals: 'onboarding_goals'
   }
+
+  FRESHMARKETER_EVENTS = {
+    goal_completed: 'fdesk trial goal completed'
+  }.freeze
   PRODUCT_NAME = "Freshdesk"
 
   ADD_LEAD_WAIT_TIME = 5
@@ -65,6 +70,14 @@ class ThirdCRM
     update_lead(contact_data)
   end
 
+  def publish_event(account, args)
+    event_data =
+      {
+        'GoalName': args[:goal_name]
+      }
+    add_event(event_data, account, args)
+  end
+
   def update_lead_info(admin_email)
     associated_account_ids = associated_accounts(admin_email)
     remaining_account_ids = ((associated_account_ids.present? ? associated_account_ids.split(',') : []) - ["#{Account.current.id}"]).join(',')
@@ -119,6 +132,19 @@ class ThirdCRM
       }
     end
 
+    def onboarding_goals_info(account, args)
+      onboarding_goals = account.account_additional_settings.additional_settings[:onboarding_goals]
+      onboaring_goals_info = {}
+      onboarding_goals.each do |a|
+        onboaring_goals_info[TrialWidgetConstants::GOALS_AND_STEPS[a.to_sym][:custom_name]] = true
+      end
+      {
+        custom: onboaring_goals_info,
+        Email: args[:email],
+        LastName: args[:name]
+      }
+    end
+
     def add_lead_to_crm(lead_record)
       # AP trigger endpoint does 2 things
       # 1. upserts contact
@@ -134,6 +160,10 @@ class ThirdCRM
 
     def update_lead(lead_record)
       make_fm_api(REQUEST_TYPES[:put], ThirdCrm::FRESHMARKETER_CONFIG['contact_url'], lead_record)
+    end
+
+    def add_event(event_record, account, args)
+      make_fm_api(REQUEST_TYPES[:post], ThirdCrm::FRESHMARKETER_CONFIG['events_url'] + "?email=#{account.admin_email}&event_name=#{args[:event]}", event_record)
     end
 
     def user_info(account, associated_account_id_list)

@@ -1379,6 +1379,29 @@ input[type=text].input-agent-count{
 		}
 	}
 
+.primary_bundle_text {
+	font-size: 24px;
+    font-weight: bold;
+    letter-spacing: -0.3px;
+    line-height: 29px;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.secondary_bundle_text {
+	font-size: 16px;
+    letter-spacing: -0.2px;
+    line-height: 19px;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.fd-fd-bundle-logo {
+	height: 43px; 
+	width: 230px;
+	margin-bottom: 22px;
+}
+
 
 // --------------------------------------------------------------------------------------------
 //								 	downgrade request change end

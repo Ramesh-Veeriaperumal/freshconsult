@@ -13,7 +13,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
   validates_length_of :email_cmds_delimeter, :minimum => 3, :message => I18n.t('email_command_delimeter_length_error_msg')
   after_update :handle_email_notification_outdate, :if => :had_supported_languages?
   after_initialize :set_default_rlimit
-  before_create :set_onboarding_version
+  before_create :set_onboarding_version, :enable_freshdesk_freshsales_bundle
   after_commit :clear_cache
   after_commit :update_help_widget_languages, if: -> { Account.current.help_widget_enabled? && @portal_languages_changed }
   serialize :additional_settings, Hash
@@ -214,8 +214,19 @@ class AccountAdditionalSettings < ActiveRecord::Base
   end
 
   def update_onboarding_goals(goals)
+    current_user = User.current
     additional_settings[:onboarding_goals] = goals
     save!
+    Subscriptions::UpdateLeadToFreshmarketer.perform_async(event: ThirdCRM::EVENTS[:onboarding_goals], email: current_user.email, name: current_user.name)
+  end
+
+  def enable_freshdesk_freshsales_bundle
+    metric = Account.current.conversion_metric
+    freshdesk_brand_websites = GrowthHackConfig[:freshdesk_brand_websites]
+    if Account.current.launched?(:freshdesk_freshsales_bundle) && metric.present? && metric.language == 'en' && ((metric.current_session_url == GrowthHackConfig[:freshdesk_signup] && freshdesk_brand_websites.include?(metric.referrer) || metric.referrer.blank?) || freshdesk_brand_websites.include?(metric.current_session_url))
+      self.additional_settings ||= {}
+      self.additional_settings[:freshdesk_freshsales_bundle] = true
+    end
   end
 
   def regenerate_help_widget_secret

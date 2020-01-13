@@ -70,6 +70,14 @@ en:
     subscription_cancel_request_success: Subscription change request has been cancelled.
     subscription_cancel_request_failure: An error occurred while cancelling subscription change request.
     cancel_request_failure: Error occurred while cancelling request. Please try after sometime.       
+  freshdesk_freshsales_bundle:
+    try_freshsales: Try Freshsales CRM
+    buy_freshsales: Buy Freshsales CRM
+    integrate_freshsales: Integrate Freshsales
+    invite_teammates: Invite Teammates
+    discount_text_1: Pay 40% less for better support + sales
+    discount_text_2: Get 40% off on Freshsales CRM if you buy in the next 21 days
+    discount_text_3: What's better than a seamless interaction between support and sales? Getting a CRM at 40% off.
   common_js_translations:
     new: new
     remove_quoted_text: "Remove quoted text"
@@ -5615,6 +5623,13 @@ en:
       supporting_edit: "Edit %{name} translation"
     unassociated_category: "Unassociated Category"
     unassociated_category_info: "This category will not be visible to your users<br />as it is not associated with any portal"
+    notifications:
+      article_approved_title: "Article Approved - %{article_title}"
+      article_approved_body_html: "Hey %{requester_name},<br><br>%{approver_name} has approved your article:<br><a href= '%{article_url}' target = '_blank'>%{article_title}</a>"
+      article_approved_body_txt: "Hey %{requester_name},\n\n%{approver_name} has approved your article:\n %{article_title} - %{article_url}"
+      article_in_review_title: "Review Request - Article: %{article_title}"
+      article_in_review_body_html: "Hey %{approver_name},<br><br>%{requester_name} has requested you to review the article: <br> <a href= '%{article_url}' target = '_blank'>%{article_title}</a>"
+      article_in_review_body_txt: "Hey %{approver_name},\n\n%{requester_name} has requested you to review the  article: \n %{article_title} - %{article_url}" 
     sidebar:
       orphan: "Orphan Categories"
       unassociated: "Unassociated Categories"

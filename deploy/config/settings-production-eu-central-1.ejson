@@ -126,6 +126,7 @@
       },
       "freshmarketer_automation": {
         "_contact_url": "https://freshworks.freshmarketer.com/mas/api/v1/contacts",
+        "_events_url": "https://freshworks.freshmarketer.com/mas/api/v1/events",
         "_list_id": "1271",
         "access_key": "EJ[1:FMjtDSYH3k94vfA0Ed3QzqRvIKBFu18YTvhl+OhJxmg=:Wcgyx7N3a+IJQ+Oc4uqLjHMfFWjj6jo/:sN+Y2tZNEYxYHehpGadoD71HdZQNytfsZfcNTP3M131PUrfIYY4kiEyDnV3Azo+oneCx3guNZeI=]"
       },
@@ -900,7 +901,7 @@
         },
         "support_ticket_rate_limit": 20,
         "support_ticket_rate_limit_period": 300,
-        "_latest_shard": "euc_shard_2",
+        "_latest_shard": "euc_shard_3",
         "_base_domain": "freshdesk.com",
         "_demo_site": "demo.freshdesk.com",
         "_sub_bcc_email": "team@freshdesk.com",

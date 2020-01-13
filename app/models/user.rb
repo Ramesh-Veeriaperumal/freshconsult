@@ -51,7 +51,7 @@ class User < ActiveRecord::Base
 
   swindle :technicians_basics,
           scope: :technicians,
-          attrs: %i[id name email privileges]
+          attrs: %i[id name email]
 
   # Using text_uc01 column as the preferences hash for storing user based settings
   serialize :text_uc01, Hash

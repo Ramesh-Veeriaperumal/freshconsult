@@ -4,9 +4,9 @@
   "settings": {
     "ymls": {
       "datacenter_config": {
-      "freshcaller_signup_supported": true,
-      "freshconnect_signup_supported": true,
-      "freshmarketer_signup_supported": true
+        "freshcaller_signup_supported": true,
+        "freshconnect_signup_supported": true,
+        "freshmarketer_signup_supported": true
       },
       "asknicely_app": {
         "hash_token": "EJ[1:j+S7pznlYUroXhLjSohfWbcGO2lgZ4DeBUePM55SEAQ=:rMIMMauhySvS0euyUt58vHv2ya6V0mHq:cb+vvtzkvXKZYDkop86QORvXfD+FKjdurRqoZRoBv9pcun3HzxXaZWh1Ytl1McoqeibuKK0KvBW0x1m7AztcmCifwdG0gcyx7anmszltrG+OjYXTIAbuUIwv8WY9w+0b2z8yLpyT7cpObXppha5ddtQzIyJZTr2j6lKFy9gxh0DbHYVNIXnb+tPfmz3XH/gw]",
@@ -126,6 +126,7 @@
       },
       "freshmarketer_automation": {
         "_contact_url": "https://freshworks.freshmarketer.com/mas/api/v1/contacts",
+        "_events_url": "https://freshworks.freshmarketer.com/mas/api/v1/events",
         "_list_id": "1271",
         "access_key": "EJ[1:EFER106RdWODKwf/ZIzduY3wZ1+B+dydSh3/izZbHi0=:dQuASg5nDtZwAP4p40XLC7w8bAfMgDKl:ivyqKfRkEozF8GFt6aHBuR2urxLumJ1bYu9kBdnCflT5ttVvz7bxD3BcW2sZR/Mzz6S1+0KmDKQ=]"
       },
@@ -159,7 +160,6 @@
         "_spam_account_unblock_url": "api/v1/account_blacklist/remove",
         "_campaign_url": "api/v1/campaign/send",
         "_imap_application_id": 1,
-        "_account_destroy_url": "/api/v1/account/delete",
         "_spam_account_unblock_urlpath": "api/v1/account_blacklist/remove",
         "_get_domains_url": "api/v1/whitelabel/domains/all/",
         "_configure_domain_url": "api/v1/whitelabel/configure",
@@ -765,16 +765,16 @@
         },
         "archive": {
           "search_etl_queue": {
-              "_sqs_queue": "search-etlqueue-archive-production",
-              "_priority": 1
+            "_sqs_queue": "search-etlqueue-archive-production",
+            "_priority": 1
           },
           "count_etl_queue": {
-              "_priority": 1,
-              "_sqs_queue": "count_etl_queue_archive_production"
+            "_priority": 1,
+            "_sqs_queue": "count_etl_queue_archive_production"
           },
           "analytics_etl_queue": {
-              "_priority": 1,
-              "_sqs_queue": "analytics_etl_queue_archive_production"
+            "_priority": 1,
+            "_sqs_queue": "analytics_etl_queue_archive_production"
           }
         },
         "maintenance": {
@@ -1059,7 +1059,8 @@
               "_username": "helpkit_front",
               "password": "EJ[1:2/+VGuOgbPGwbtS6XChPsYo333CmR8hVJou86Btsm34=:Kh53KIuROBRNhVtohgcZ1AxBk9zvtBcl:EeqldzSotPXgHiGDkIWXU1w4Ki7ThXPWMLY=]"
             },
-            "shards": {}
+            "shards": {
+            }
           },
           "falcon_app": {
             "global": {
@@ -1070,7 +1071,8 @@
               "_username": "falcon_front",
               "password": "EJ[1:2/+VGuOgbPGwbtS6XChPsYo333CmR8hVJou86Btsm34=:xn8lPqAWGpI6CfSzLw9xOhHWrh3gkXMD:6137U0vPhcV7CRxNpe11U2UPnr/PM4W6vU4=]"
             },
-            "shards": {}
+            "shards": {
+            }
           },
           "helpkit_bg": {
             "global": {
@@ -1081,7 +1083,8 @@
               "_username": "helpkit_back",
               "password": "EJ[1:2/+VGuOgbPGwbtS6XChPsYo333CmR8hVJou86Btsm34=:MoL1Zbl2MKLQDfyMn3Z1OOCmbsHKP7D/:AwjkSzH2HRjRrZho5rbUM/fcdYBQnGhDxi4=]"
             },
-            "shards": {}
+            "shards": {
+            }
           },
           "falcon_bg": {
             "global": {
@@ -1092,7 +1095,8 @@
               "_username": "falcon_back",
               "password": "EJ[1:2/+VGuOgbPGwbtS6XChPsYo333CmR8hVJou86Btsm34=:Qt6l1u2nRgDNPx7GHpxcNXauQyxJJxQD:BlxNVdJbWDSrhqVs2S7I95eaWq37RB1vVaQ=]"
             },
-            "shards": {}
+            "shards": {
+            }
           }
         },
         "global": {
@@ -1499,44 +1503,84 @@
             "_username": "dbuser"
           },
           "shard_34": {
-              "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:B+Cg+HMTVBmA6Rbiu6CiK4H91gbd3vCT:FrhXLvEkShXuEnyNSElCQNC1Gs3R/xIdBw==]",
-              "slave1": {
-                "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:5j/xdFC+fUezAFTlvbC+kbZdDMsz53ME:baoYPRbp3dlkFgUc3M4zMle1o2ixBqvIAA==]",
-                "_host": "shard34slave1.internal.poduseast1.freshdesk.com",
-                "_port": "3306",
-                "_username": "dbuser"
-              },
-              "slave2": {
-                "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:7W6tW3A3RYePXeYCV2n78RT+uEjurzC5:YjPHlhnZcM4wVRrlm9uWtQQ9FgVaDdHb6g==]",
-                "_host": "shard34slave2.internal.poduseast1.freshdesk.com",
-                "_port": "3306",
-                "_username": "dbuser"
-              },
-              "_database": "helpkit_dish",
-              "_host": "shard34.internal.poduseast1.freshdesk.com",
-              "_slave1_host": "shard34slave1.internal.poduseast1.freshdesk.com",
-              "_slave2_host": "shard34slave2.internal.poduseast1.freshdesk.com",
+            "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:B+Cg+HMTVBmA6Rbiu6CiK4H91gbd3vCT:FrhXLvEkShXuEnyNSElCQNC1Gs3R/xIdBw==]",
+            "slave1": {
+              "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:5j/xdFC+fUezAFTlvbC+kbZdDMsz53ME:baoYPRbp3dlkFgUc3M4zMle1o2ixBqvIAA==]",
+              "_host": "shard34slave1.internal.poduseast1.freshdesk.com",
+              "_port": "3306",
               "_username": "dbuser"
-           },
+            },
+            "slave2": {
+              "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:7W6tW3A3RYePXeYCV2n78RT+uEjurzC5:YjPHlhnZcM4wVRrlm9uWtQQ9FgVaDdHb6g==]",
+              "_host": "shard34slave2.internal.poduseast1.freshdesk.com",
+              "_port": "3306",
+              "_username": "dbuser"
+            },
+            "_database": "helpkit_dish",
+            "_host": "shard34.internal.poduseast1.freshdesk.com",
+            "_slave1_host": "shard34slave1.internal.poduseast1.freshdesk.com",
+            "_slave2_host": "shard34slave2.internal.poduseast1.freshdesk.com",
+            "_username": "dbuser"
+          },
           "shard_35": {
-             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:B+Cg+HMTVBmA6Rbiu6CiK4H91gbd3vCT:FrhXLvEkShXuEnyNSElCQNC1Gs3R/xIdBw==]",
-             "slave1": {
-               "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:5j/xdFC+fUezAFTlvbC+kbZdDMsz53ME:baoYPRbp3dlkFgUc3M4zMle1o2ixBqvIAA==]",
-               "_host": "shard35slave1.internal.poduseast1.freshdesk.com",
-               "_port": "3306",
-               "_username": "dbuser"
-             },
-             "slave2": {
-               "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:7W6tW3A3RYePXeYCV2n78RT+uEjurzC5:YjPHlhnZcM4wVRrlm9uWtQQ9FgVaDdHb6g==]",
-               "_host": "shard35slave2.internal.poduseast1.freshdesk.com",
-               "_port": "3306",
-               "_username": "dbuser"
-             },
-             "_database": "helpkit_support",
-             "_host": "shard35.internal.poduseast1.freshdesk.com",
-             "_slave1_host": "shard35slave1.internal.poduseast1.freshdesk.com",
-             "_slave2_host": "shard35slave2.internal.poduseast1.freshdesk.com",
-             "_username": "dbuser"
+            "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:B+Cg+HMTVBmA6Rbiu6CiK4H91gbd3vCT:FrhXLvEkShXuEnyNSElCQNC1Gs3R/xIdBw==]",
+            "slave1": {
+              "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:5j/xdFC+fUezAFTlvbC+kbZdDMsz53ME:baoYPRbp3dlkFgUc3M4zMle1o2ixBqvIAA==]",
+              "_host": "shard35slave1.internal.poduseast1.freshdesk.com",
+              "_port": "3306",
+              "_username": "dbuser"
+            },
+            "slave2": {
+              "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:7W6tW3A3RYePXeYCV2n78RT+uEjurzC5:YjPHlhnZcM4wVRrlm9uWtQQ9FgVaDdHb6g==]",
+              "_host": "shard35slave2.internal.poduseast1.freshdesk.com",
+              "_port": "3306",
+              "_username": "dbuser"
+            },
+            "_database": "helpkit_support",
+            "_host": "shard35.internal.poduseast1.freshdesk.com",
+            "_slave1_host": "shard35slave1.internal.poduseast1.freshdesk.com",
+            "_slave2_host": "shard35slave2.internal.poduseast1.freshdesk.com",
+            "_username": "dbuser"
+          },
+          "shard_37": {
+            "_database": "helpkit_shard37_1",
+            "_host": "shard37.internal.poduseast1.freshdesk.com",
+            "password": "EJ[1:ByWKFZCqMExeawDRUmyb+dlUALyLWxv2Zaw0UfcAogA=:ElhP88cf3byWNielOFoBl6p6Lk2JXfMf:/Wm+jtfGX/ZkkZFSTcwoQvapLbAUse5mRlA=]",
+            "slave1": {
+              "_host": "shard37slave1.internal.poduseast1.freshdesk.com",
+              "password": "EJ[1:ByWKFZCqMExeawDRUmyb+dlUALyLWxv2Zaw0UfcAogA=:AVhSdPNAmIuLkvaUf62uNhcn31uLUqz+:rTr1HXVK5vk/fYZTuAJ0JqjwciJecG9GyuE=]",
+              "_port": 3306,
+              "_username": "dbuser"
+            },
+            "_slave1_host": "shard37slave1.internal.poduseast1.freshdesk.com",
+            "slave2": {
+              "_host": "shard37slave2.internal.poduseast1.freshdesk.com",
+              "password": "EJ[1:ByWKFZCqMExeawDRUmyb+dlUALyLWxv2Zaw0UfcAogA=:tm84jDTGTkSMgAM66zTEgid1EJMdCke7:VjH2PBBE4w3cKjC6LpDhujSkXLFHmdh3yL0=]",
+              "_port": 3306,
+              "_username": "dbuser"
+            },
+            "_slave2_host": "shard37slave2.internal.poduseast1.freshdesk.com",
+            "_username": "dbuser"
+          },
+          "shard_37_2": {
+            "_database": "helpkit_shard37_2",
+            "_host": "shard37.internal.poduseast1.freshdesk.com",
+            "password": "EJ[1:ByWKFZCqMExeawDRUmyb+dlUALyLWxv2Zaw0UfcAogA=:ElhP88cf3byWNielOFoBl6p6Lk2JXfMf:/Wm+jtfGX/ZkkZFSTcwoQvapLbAUse5mRlA=]",
+            "slave1": {
+              "_host": "shard37slave1.internal.poduseast1.freshdesk.com",
+              "password": "EJ[1:ByWKFZCqMExeawDRUmyb+dlUALyLWxv2Zaw0UfcAogA=:AVhSdPNAmIuLkvaUf62uNhcn31uLUqz+:rTr1HXVK5vk/fYZTuAJ0JqjwciJecG9GyuE=]",
+              "_port": 3306,
+              "_username": "dbuser"
+            },
+            "_slave1_host": "shard37slave1.internal.poduseast1.freshdesk.com",
+            "slave2": {
+              "_host": "shard37slave2.internal.poduseast1.freshdesk.com",
+              "password": "EJ[1:ByWKFZCqMExeawDRUmyb+dlUALyLWxv2Zaw0UfcAogA=:tm84jDTGTkSMgAM66zTEgid1EJMdCke7:VjH2PBBE4w3cKjC6LpDhujSkXLFHmdh3yL0=]",
+              "_port": 3306,
+              "_username": "dbuser"
+            },
+            "_slave2_host": "shard37slave2.internal.poduseast1.freshdesk.com",
+            "_username": "dbuser"
           }
         },
         "semian": {
@@ -2146,7 +2190,7 @@
           "_api_endpoint": "https://hypertrail-us.freshworksapi.com/api/v1/export/filtered/account/%{account_id}/audit",
           "_username": "ab0440c12e8871ab9bfb81fc71f66f1b44e3ef6e"
         },
-         "audit_log_archived_export":{
+        "audit_log_archived_export": {
           "password": "EJ[1:FUqo+cGUNWpwIF3OYApcgzh18+oX+aEdiTlNKgjRgmg=:OLJEsEZD4bUlfyJz0MJN1pQpcX4ymrMc:p/UE/mk5kb+G61zAooQtphE=]",
           "_api_endpoint": "https://hypertrail-us.freshworksapi.com/api/v1/export/archived/account/%{account_id}/audit",
           "_username": "ab0440c12e8871ab9bfb81fc71f66f1b44e3ef6e"
@@ -2399,40 +2443,40 @@
   },
   "layer_settings": {
     "fc-app-db-migration": {
+      "ymls": {
+        "database": {
+          "shards": {
+            "shard_37": {
+              "_username": "migration",
+              "password": "EJ[1:ByWKFZCqMExeawDRUmyb+dlUALyLWxv2Zaw0UfcAogA=:v/QFyaEh/MtxDYZIcgaT6IY2Tp5SRENc:5CI3YmJ8HzYan7hN0lBhYUiVhE2HD6AupA8=]"
+            }
+          }
+        }
+      }
     },
     "fc-bg-sidekiq-realtime": {
-
     },
     "hk-app-http-request": {
-
     },
     "hk-app-archive": {
-
     },
     "fc-bg-sidekiq-exports": {
-
     },
     "hk-bg-shoryuken": {
     },
     "hk-app-trial": {
-
     },
     "hk-app-pipeline-sling": {
-
     },
     "fc-bg-sidekiq-dedicated-589783": {
-
     },
     "fc-bg-sidekiq-subscription": {
     },
     "fc-bg-sidekiq-trial": {
-
     },
     "fc-bg-sidekiq-external": {
-
     },
     "hk-app-support": {
-
     },
     "hk-app-pipeline": {
       "docker": {
@@ -2440,41 +2484,30 @@
       }
     },
     "fc-bg-sidekiq-maintainence": {
-
     },
     "hk-app-freshfone": {
-
     },
     "fc-app-buffer": {
-
     },
     "hk-app-search": {
-
     },
     "hk-app-mobihelp": {
-
     },
     "hk-app-freshops": {
-
     },
     "hk-app-ecommerce": {
-
     },
     "fc-bg-sidekiq-mailbox-jobs": {
-
     },
     "hk-app-reports": {
-
     },
     "hk-app-buffer": {
-
     },
     "fc-bg-sidekiq-dedicated-892785": {
     },
     "fc-app-api-public-buffer": {
     },
     "fc-bg-sidekiq-occasional": {
-
     },
     "hk-app-free": {
       "docker": {
@@ -2486,43 +2519,32 @@
     "fc-bg-sidekiq-dedicated-887984": {
     },
     "fc-app-api-sling": {
-
     },
     "fc-app": {
-
     },
     "fc-app-misc": {
-
     },
     "hk-app-support-theme": {
-
     },
     "fc-bg-sidekiq-central-realtime": {
-
     },
     "hk-app-freshid": {
-
     },
     "fc-bg-resque": {
     },
     "hk-app-suggest": {
-
     },
     "fc-bg-sidekiq-community": {
     },
     "fc-bg-sidekiq-spam": {
-
     },
     "hk-app-attachment": {
-
     },
     "fc-bg-sidekiq-email": {
-
     },
     "hk-app-api-contacts": {
     },
     "fc-bg-sidekiq-bulk-scheduled": {
-
     },
     "fc-bg-shoryuken": {
       "le": {
@@ -2541,7 +2563,6 @@
       }
     },
     "hk-app": {
-
     },
     "fc-bg-sidekiq-misc": {
     },
@@ -2556,16 +2577,12 @@
       }
     },
     "fc-bg-sidekiq-scheduled": {
-
     },
     "fc-bg-sidekiq": {
-
     },
     "fc-bg-sidekiq-free": {
-
     },
     "hk-app-premium": {
-
     },
     "fc-app-premium": {
     },
@@ -2574,13 +2591,10 @@
     "hk-app-solution-premium": {
     },
     "hk-app-email": {
-
     },
     "hk-app-solution": {
-
     },
     "hk-app-dashboard": {
-
     },
     "fc-bg-sidekiq-gamification": {
     },
@@ -2603,15 +2617,12 @@
     "fc-app-reports": {
     },
     "fc-app-archive": {
-
     },
     "fc-app-api-public-premium": {
-
     },
     "hk-bg-utility": {
     },
     "fc-bg-sidekiq-archive": {
-
     },
     "fc-bg-sidekiq-hard-delete": {
     },
@@ -2663,32 +2674,21 @@
     },
     "fc-bg-resque-freshfone": {
     },
-    "fc-app-misc": {
-
-    },
     "fc-bg-shoryuken-analytics": {
     },
     "fc-app-merge": {
     },
     "hk-app-web-p5": {
-
     },
     "hk-app-web-p4": {
-
     },
     "hk-app-web-p3": {
-
     },
     "hk-app-web-p2": {
-
     },
     "hk-app-web-p1": {
-
     },
     "hk-app-web-p0": {
-
-    },
-    "fc-app-merge": {
     },
     "fc-bg-sidekiq-cron": {
     }

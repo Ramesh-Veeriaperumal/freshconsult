@@ -111,7 +111,7 @@ module Admin::SkillHelper
     end
 
     def agent_user_ids
-      @agent_user_ids ||= current_account.agents_details_pluck_from_cache.map(&:first)
+      @agent_user_ids ||= current_account.agents_details_from_cache.map(&:id)
     end
 
     def custom_ticket_field_names(*field_types)

@@ -250,6 +250,7 @@ class Account < ActiveRecord::Base
   def anonymous_account?
     account_additional_settings.additional_settings[:anonymous_account] if account_additional_settings.try(:additional_settings).present?
   end
+
   class << self # class methods
 
     def reset_current_account

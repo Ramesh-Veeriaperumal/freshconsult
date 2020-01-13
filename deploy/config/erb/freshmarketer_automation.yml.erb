@@ -2,6 +2,7 @@
 freshmarketer:
   <%= node[:opsworks][:environment]%>:
     contact_url: <%= node[:ymls][:freshmarketer_automation][:contact_url] %>
+    events_url: <%= node[:ymls][:freshmarketer_automation][:events_url] %>
     access_key: <%= node[:ymls][:freshmarketer_automation][:access_key] %>
     list_id: <%= node[:ymls][:freshmarketer_automation][:list_id] %>
     default_fields_mapping:
@@ -17,6 +18,7 @@ freshmarketer:
       Twitter: "twitter"
       Linkedin: "linkedin"
       _NewEmail: "new_email"
+      GoalName: "goal-name"
     custom_fields_mapping:
       Title: "cf_title"
       Industry: "cf_industry"
@@ -40,3 +42,9 @@ freshmarketer:
       string--Associated--Accounts: "cf_fdeskassociatedaccounts"
       date--Signup--Date: "cf_fdesksignupdate"
       date--Renewal--Date: "cf_fdeskrenewaldate"
+      boolean--Goal--Reports: "cf_fdeskgoalreports"
+      boolean--Goal--Ticket: "cf_fdeskgoalticket"
+      boolean--Goal--Automation: "cf_fdeskgoalautomation"
+      boolean--Goal--Channel: "cf_fdeskgoalchannel"
+      boolean--Goal--Self--Service: "cf_fdeskgoalselfservice"
+      boolean--Goal--Integration: "cf_fdeskgoalintegration"

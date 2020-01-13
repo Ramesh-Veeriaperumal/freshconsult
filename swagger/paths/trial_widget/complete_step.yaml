@@ -1,11 +1,11 @@
   post:
     summary: Complete Step
-    description: Mark a trial widget step as complete
+    description: Mark a trial widget steps as complete
     tags: [trial widget]
     parameters:
       - in: body
-        name: step
-        description: step to be marked complete
+        name: steps
+        description: steps to be marked complete
         schema:
           $ref: '#/definitions/trial_widget_complete_step'
 

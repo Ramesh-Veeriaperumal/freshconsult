@@ -267,7 +267,7 @@ class CollabNotificationWorker
   end
 
   def agents_from_cache
-    @agents_from_cache ||= @current_account.agents_details_from_cache
+    @agents_from_cache ||= @current_account.agents_details_ar_from_cache
   end
 
   def agents_for_groups(group_ids)

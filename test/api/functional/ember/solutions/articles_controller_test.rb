@@ -869,45 +869,50 @@ module Ember
       end
 
       def test_bulk_update_approval_without_approve_article_privilege
-        with_publish_solution_privilege do
-          folder = @account.solution_folder_meta.where(is_default: false).first
-          populate_articles(folder)
-          articles = folder.solution_article_meta.pluck(:id)
-          User.any_instance.stubs(:privilege?).with(:approve_article).returns(false)
-          agent_id = add_test_agent.id
-          put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { approval_status:  Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved] })
-          assert_response 400
-        end
+        Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(true)
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        folder = @account.solution_folder_meta.where(is_default: false).first
+        populate_articles(folder)
+        articles = folder.solution_article_meta.pluck(:id)
+        User.current.reload
+        remove_privilege(User.current, :approve_article)
+        put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { approval_status: Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved] })
+        assert_response 400
       ensure
-        User.any_instance.unstub(:privilege?)
+        Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
       end
 
       def test_bulk_update_approval_with_approve_article_privilege
-        with_publish_solution_privilege do
-          folder = @account.solution_folder_meta.where(is_default: false).first
-          populate_articles(folder)
-          articles = folder.solution_article_meta.pluck(:id)
-          User.any_instance.stubs(:privilege?).with(:approve_article).returns(true)
-          agent_id = add_test_agent.id
-          put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { approval_status:  Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved] })
-          assert_response 204
-        end
+        Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(true)
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        folder = @account.solution_folder_meta.where(is_default: false).first
+        populate_articles(folder)
+        articles = folder.solution_article_meta.pluck(:id)
+        User.current.reload
+        add_privilege(User.current, :approve_article)
+        put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { approval_status: Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved] })
+        assert_response 204
       ensure
-        User.any_instance.unstub(:privilege?)
+        Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+        remove_privilege(User.current, :approve_article)
       end
 
       def test_bulk_update_approval_with_invalid_approval_status
-        with_publish_solution_privilege do
-          folder = @account.solution_folder_meta.where(is_default: false).first
-          populate_articles(folder)
-          articles = folder.solution_article_meta.pluck(:id)
-          User.any_instance.stubs(:privilege?).with(:approve_article).returns(true)
-          agent_id = add_test_agent.id
-          put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { approval_status: 0 })
-          assert_response 400
-        end
+        Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(true)
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        folder = @account.solution_folder_meta.where(is_default: false).first
+        populate_articles(folder)
+        articles = folder.solution_article_meta.pluck(:id)
+        User.current.reload
+        add_privilege(User.current, :approve_article)
+        put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { approval_status: 0 })
+        assert_response 400
       ensure
-        User.any_instance.unstub(:privilege?)
+        Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+        remove_privilege(User.current, :approve_article)
       end
 
       def test_bulk_update_tags_without_feature
@@ -2856,6 +2861,19 @@ module Ember
         add_privilege(User.current, :publish_solution)
       end
 
+      def test_send_for_review_sends_notification
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        sample_article = get_article_with_draft
+        approver = add_test_agent
+        add_privilege(approver, :approve_article)
+        User.current.reload
+        Solution::ApprovalNotificationWorker.expects(:perform_async).once
+        post :send_for_review, construct_params({ version: 'private', id: sample_article.parent_id }, approver_id: approver.id)
+        assert_response 204
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
       def test_create_article_review_record_without_create_article_permission
         Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
         sample_article = get_article_with_draft
@@ -3032,6 +3050,19 @@ module Ember
         assert_response 204
         assert sample_article.helpdesk_approval.approval_status == Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]
         assert sample_article.helpdesk_approval.approved?
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_approve_article_triggers_notification
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        approver = add_test_agent
+        add_privilege(User.current, :approve_article)
+        User.current.reload
+        sample_article = get_in_review_article
+        Solution::ApprovalNotificationWorker.expects(:perform_async).once
+        post :approve, controller_params(version: 'private', id: sample_article.parent_id)
+        assert_response 204
       ensure
         Account.any_instance.unstub(:article_approval_workflow_enabled?)
       end
@@ -3372,8 +3403,9 @@ module Ember
       def test_bulk_update_send_for_review_without_create_or_edit_privilege
         Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(true)
         Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
-        remove_privilege(User.current, :create_and_edit_article)
         User.current.reload
+        remove_privilege(User.current, :create_and_edit_article)
+        add_privilege(User.current, :approve_article)
         draft = @account.solution_drafts.last
         approver = add_test_agent
         add_privilege(approver, :approve_article)
@@ -3384,6 +3416,7 @@ module Ember
         Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
         Account.any_instance.unstub(:article_approval_workflow_enabled?)
         add_privilege(User.current, :create_and_edit_article)
+        remove_privilege(User.current, :approve_article)
       end
 
       def test_bulk_update_send_for_review_without_approval_privilege

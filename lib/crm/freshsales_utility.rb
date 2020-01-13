@@ -48,6 +48,11 @@ class CRM::FreshsalesUtility
     @deal_product_id = get_entity_id('deal_products', :name, PRODUCT_NAME)
   end
 
+  def request_account_info(domain, auth_token)
+    config = { rest_url: '/sessions.json?include=account', method: 'get', domain: domain, auth_token: auth_token }
+    request_freshsales(config)
+  end
+
   def push_signup_data(data)
     @source_and_campaign_info = get_lead_source_and_campaign_id
 
@@ -576,13 +581,13 @@ class CRM::FreshsalesUtility
     def request_freshsales(options)
       proxy = HttpRequestProxy.new
       params = {
-        domain: AppConfig['freshsales'][Rails.env]['portal_url'],
+        domain: options[:domain] || AppConfig['freshsales'][Rails.env]['portal_url'],
         content_type: 'application/json',
         encode_url: false,
         rest_url: options[:rest_url], body: options[:body].to_json || {}
       }
 
-      authentication_token = AppConfig['freshsales'][Rails.env]['authentication_token']
+      authentication_token = options[:auth_token] || AppConfig['freshsales'][Rails.env]['authentication_token']
       request_params = {
         auth_header: "Token token=#{authentication_token}",
         method: options[:method]

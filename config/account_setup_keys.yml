@@ -60,6 +60,13 @@
   automation_tour: 54
   slareminder_tour: 55
   faq_tour: 56
+:onboarding_goals:
+  organiseand_keep_track: 57
+  unify_support_channels: 58
+  automate_repetitive_tasks: 59
+  offer_self_service: 60
+  track_agents_performance: 61
+  integrate_with_apps: 62
 
 :onboarding_v2_goals:
   - organiseand_keep_track

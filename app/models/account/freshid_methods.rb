@@ -4,6 +4,10 @@ class Account < ActiveRecord::Base
     organisation_from_cache.try(:domain)
   end
 
+  def organisation_accounts(org_domain, page_number = 1, page_size = nil)
+    Freshid::V2::Models::Account.organisation_accounts(page_number, page_size, org_domain)
+  end
+
   def launch_freshid_with_omnibar(freshid_org_v2_signup = nil)
     unless self.freshid_integration_enabled?
       freshid_org_v2_signup = self.freshid_v2_signup_allowed? if freshid_org_v2_signup.nil?
