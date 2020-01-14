@@ -599,4 +599,12 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
     Account.current.reload
   end
 
+  def test_observer_rule_with_null_value_in_condition
+    observer_rule = Account.current.all_observer_rules.first
+    delete_value_from_condition(observer_rule) if observer_rule.present?
+    get :index, controller_params(rule_type: VAConfig::RULES[:observer])
+    assert_response 200
+  ensure
+    Account.current.reload
+  end
 end

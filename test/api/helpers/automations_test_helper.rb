@@ -278,6 +278,13 @@ module AutomationTestHelper
     match_custom_json(parsed_response, va_rule_request.merge!(default_rule_pattern(rule, false)))
   end
 
+  def delete_value_from_condition(rule)
+    condition_data = rule.condition_data
+    condition_data[:conditions].first[1].each.map { |cond| cond[:value] = nil }
+    rule.condition_data = condition_data
+    rule.save!
+  end
+
   def nested?(conditions)
     conditions.first && (conditions.first.key?(:all) || conditions.first.key?(:any))
   end
