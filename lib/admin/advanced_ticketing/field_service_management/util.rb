@@ -131,7 +131,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
           position: options[:position],
           name: "#{options[:name]}_#{Account.current.id}",
           label_in_portal: options[:label_in_portal],
-          field_options: { "section" => true },
+          field_options: { 'section' => true, 'fsm' => true },
           description: '',
           active: true,
           required: options[:required] || false,
@@ -152,10 +152,13 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
         # Build Section picklist_mappings
         service_task_section = Account.current.sections.find_by_label(SERVICE_TASK_SECTION)
-        unless service_task_section.present?
-          service_task_section = Account.current.sections.build
+        ticket_type_field =  Account.current.ticket_fields_from_cache.find { |tf| tf.name == 'ticket_type' }
+        if service_task_section.blank?
+          service_task_section = ticket_type_field.sections.build
           service_task_section.label = SERVICE_TASK_SECTION
-          service_task_section.section_picklist_mappings.build(picklist_value_id: picklist_id)
+          service_task_section.ticket_field_id = ticket_type_field.id
+          service_task_section.options = { 'fsm' => true }
+          service_task_section.section_picklist_mappings.build(picklist_value_id: picklist_id, picklist_id: service_task_picklist.picklist_id)
         end
 
         # Build Section fields
@@ -163,15 +166,15 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         if service_task_section.section_fields.blank?
           fields_to_be_created = fsm_custom_field_to_reserve
           fields_to_be_created.each do |field|
-            field_data = Account.current.ticket_fields.find_by_name(field[:name]+ "_#{Account.current.id}")
-            next if field_data.field_options["section"] 
-            
-            field_data.field_options = { "section" => true }
+            field_data = Account.current.ticket_fields.find_by_name(field[:name] + "_#{Account.current.id}")
+            next if field_data.field_options['section'] && field_data.field_options['fsm']
+
+            field_data.field_options[:section] = true
+            field_data.field_options[:fsm] = true
             field_data.save!
           end
-          ticket_type_field = Account.current.ticket_fields.find_by_name('ticket_type')
-          if !ticket_type_field.field_options["section_present"]
-            ticket_type_field.field_options = { "section_present" => true}
+          unless ticket_type_field.field_options['section_present']
+            ticket_type_field.field_options = { 'section_present' => true }
             ticket_type_field.save!
           end
         end
@@ -180,10 +183,13 @@ module Admin::AdvancedTicketing::FieldServiceManagement
           section_fields << { parent_ticket_field_id: parent_ticket_field_id, ticket_field_id: field.id, position: index + 1 }
         end
         section_data = service_task_section
+        section_data.ticket_field_id = ticket_type_field.id
+        section_data.options[:fsm] = true
         section_fields.each do |section_field|
           section_data.section_fields.build(section_field)
         end
         section_data.save!
+        ticket_type_field.save!
       end
 
       def create_field_group_type
