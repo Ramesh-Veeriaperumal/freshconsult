@@ -66,6 +66,21 @@ module ChannelIntegrations::Commands::Services
 #{e.message}")
     end
 
+    def receive_reauth_facebook_page(payload)
+      validate_reauth_request(payload)
+      facebook_page_id = payload[:context][:facebook_page_id]
+      facebook_page = Account.current.facebook_pages.find_by_page_id(facebook_page_id)
+      raise "Reauth Failed! Can't find facebook page with ID #{facebook_page_id}! Account ID: #{Account.current.id}" unless facebook_page
+
+      facebook_page.set_reauth_required if payload[:data][:reauth_required] && !facebook_page.reauth_required
+      Rails.logger.info("Facebook::ReauthFacebookPage, account_id: #{Account.current.id}, facebook_page_id: #{facebook_page_id}, reauth_state: #{payload[:data][:reauth_required]}")
+      { reauth_state: facebook_page.reauth_required }
+    rescue StandardError => e
+      Rails.logger.error("Something went wrong in Facebook::ReauthFacebookPage, account_id: #{Account.current.id}, facebook_page_id: #{payload[:context][:facebook_page_id]}, error: #{e.message}")
+
+      error_message("Error in Re-Authorizing Facebook Page! Account ID: #{Account.current.id}, facebook_page_id: #{payload[:context][:facebook_page_id]}, error: #{e.message}")
+    end
+
     private
 
       def validate_and_build_command_payload(payload, is_ticket = true)
@@ -77,6 +92,11 @@ module ChannelIntegrations::Commands::Services
         payload[:data].merge!(get_source_hash(payload[:owner], is_ticket))
         payload[:data][:fb_post_attributes] = build_fb_post_attributes(payload, page_id, is_ticket)
         payload
+      end
+
+      def validate_reauth_request(payload)
+        raise 'Invalid Request :: No Reauth Required State' if payload[:data][:reauth_required].blank?
+        raise 'Invalid Request :: No Facebook Page ID' if payload[:context][:facebook_page_id].blank?
       end
 
       def error_message(message)

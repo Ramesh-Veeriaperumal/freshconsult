@@ -118,7 +118,7 @@ class Social::FacebookPage < ActiveRecord::Base
   end
 
   def set_reauth_required
-    self.reauth_required = 1
+    self.reauth_required = true
     self.save!
   end
 end
