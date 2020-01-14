@@ -11,6 +11,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   include Helpdesk::Ticketfields::Constants
   include Cache::Memcache::Admin::TicketField
   include Admin::TicketFieldConstants
+  include Concerns::ActsAsListPositionUpdate
 
   clear_memcache [TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_WITHOUT_PRODUCT, ACCOUNT_EVENT_FIELDS, ACCOUNT_FLEXIFIELDS]
 
@@ -101,8 +102,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
                                   :order => "level"
 
   has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :order => "position"
+  has_many :ticket_statuses_with_groups, class_name: 'Helpdesk::TicketStatus', dependent: :destroy,
+                                         include: { status_groups: :group }, order: 'position', autosave: true
 
-  has_many :section_fields, :dependent => :destroy
+  has_many :section_fields, :dependent => :destroy, autosave: true
   has_many :dynamic_section_fields, :class_name => 'Helpdesk::SectionField',
                                     :foreign_key => :parent_ticket_field_id
 
@@ -134,9 +137,12 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   after_initialize :initialize_default_values, if: -> { Account.current.ticket_field_revamp_enabled? }
 
-  before_update :reorder_relative_position, if: -> { position_changed? }
   # xss_terminate
   acts_as_list :scope => 'account_id = #{account_id} AND parent_id is null'
+
+  # need to override position update/below method to avoid updating position for nested level
+  before_destroy :decrement_positions_on_lower_items, if: -> { parent_id.nil? }
+  before_create  :add_to_list_bottom, if: -> { parent_id.nil? }
 
   after_commit :clear_cache
   after_commit :clear_new_ticket_field_cache
@@ -147,27 +153,29 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   def initialize_default_values
     self.field_options ||= {}
+    self.field_options = self.field_options.with_indifferent_access
     self.field_type ||= ''
   end
 
-  def reorder_relative_position
-    if Account.current.ticket_field_revamp_enabled?
-      # calling it manually to avoid deadlock/failure
-      # logic behind this - decrement all the
-      old_position = changes[:position][0]
-      new_position = changes[:position][1]
+  def frontend_position
+    return position if section_field?
 
-      # moving all the ticket_field upwards by 1 relative to current field old position
-      acts_as_list_class.update_all('position = (position - 1)', "#{scope_condition} AND position > #{old_position}")
-      update_column(:position, nil) # making it null to avoid including in below update
-      increment_positions_on_lower_items(new_position) # moving all the ticket field downward by 1 relative to new position
-      update_column(:position, new_position) # update to new position
-    end
+    account_ticket_field_position_mapping_from_cache[:db_to_ui][id]
+  end
+
+  def frontend_to_db_position(ui_position)
+    return 1 if ui_position.blank?
+
+    account_ticket_field_position_mapping_from_cache[:ui_to_db][ui_position]
+  end
+
+  def condition_valid?
+    Account.current.ticket_field_revamp_enabled?
   end
 
   def picklist_values_with_sublevels
     list_choices = picklist_values_from_cache
-    picklist_id_to_choice_map = list_choices.group_by { |choice| choice.pickable_id }
+    picklist_id_to_choice_map = list_choices.group_by(&:pickable_id)
     list_choices.each do |choice|
       choice.sub_level_choices ||= []
       choice.sub_level_choices.push(*(picklist_id_to_choice_map[choice.id] || []))
@@ -202,6 +210,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
       choice.sub_level_choices.push(*(picklist_id_to_choice_map[choice.id] || []))
     end
     picklist_id_to_choice_map[ticket_field.id] || []
+  end
+
+  def update_in_progress?
+    field_options[:update_in_progress]
   end
 
   def separate_choices_by_level
@@ -350,6 +362,18 @@ class Helpdesk::TicketField < ActiveRecord::Base
       !(!default? && !current_account.custom_ticket_fields_enabled?) &&
       !(company_field? && !current_account.multiple_user_companies_enabled?) &&
       !(product_field? && current_account.products_from_cache.empty?) && (parent_id.nil?) && true
+  end
+
+  def sort_by_position_excluding_section_field(ticket_field)
+    if field_options[:section] && ticket_field.field_options[:section]
+      position.to_i - position.to_i
+    elsif self.field_options[:section]
+      1
+    elsif ticket_field.field_options[:section]
+      -1
+    else
+      position.to_i - ticket_field.position.to_i
+    end
   end
 
   def company_field?
@@ -897,7 +921,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
           { label: source[0], value: source[1] }
         end
       when 'default_status'
-        Account.current.ticket_status_values_from_cache.map(&:new_response_hash)
+        ticket_field_statuses_from_cache.reject(&:deleted).map(&:new_response_hash)
       else
         []
     end

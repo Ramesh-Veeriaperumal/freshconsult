@@ -265,8 +265,6 @@ module Redis::Keys::Others
   # Holds the pages to be migrated to the us app
   MIGRATE_EUC_FB_PAGES = 'MIGRATE_EUC_FB_PAGES:%{account_id}'.freeze
 
-  TICKET_FIELD_UPDATE_ERROR = 'TICKET_FIELD_UPDATE_ERROR:%{account_id}:%{ticket_field_id}'.freeze
-  
   # Holds the manually configured domains for accounts
   MIGRATE_MANUALLY_CONFIGURED_DOMAINS = 'MIGRATE_MANUALLY_CONFIGURED_DOMAINS:%{account_id}'.freeze
 

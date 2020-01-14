@@ -1,88 +1,132 @@
 module Admin::DefaultFieldHelper
   include Admin::TicketFieldConstants
+  include Admin::TicketFields::CommonHelper
   include UtilityHelper
 
-  def validate_status_choices_params(_record, choices)
-    status_choices = status_choices_by_id
-    choices.each do |each_choice|
-      data_type_for_status_choice(each_choice)
-      next if each_choice[:id].blank? || errors.present?
-
-      absent_in_db_error(:choices, :status_choices, :id) if status_choices[each_choice[:id]].blank?
-      missing_param_for_choices(each_choice) if create_action?
-    end
-    validate_db_uniqueness_for_status_choices(record, choices)
+  def validate_status_choices(status_field, choices)
+    status_params_validation(choices)
+    db_status_choice_id_validation(status_field, choices) if errors.blank?
+    position_validation_for_status_choice(record, choices) if errors.blank?
+    validate_db_uniqueness_for_status_choices(status_field, choices) if errors.blank?
+    default_status_choices_validation(status_field, choices) if errors.blank?
+    archive_deleted_key_validation(choices) if errors.blank?
   end
 
-  def data_type_for_status_choice(choice)
-    choice.each_pair do |key, value|
-      expected_type = CHOICES_EXPECTED_TYPE[(key.to_sym rescue key)]
-      unexpected_value_for_attribute(:"choices[#{key}]", key) if expected_type.blank? || ALLOWED_STATUS_CHOICES.exclude?(key)
-      if expected_type.present?
-        parent_expected_type, children_expected_type = expected_type
-        invalid_data_type(:"choices[#{key}]", expected_type, :invalid) unless valid_type?(value, parent_expected_type)
-        invalid_data_type(:"choices[#{key}][:each]", children_expected_type, :invalid) if value.is_a?(Array) && value.any? { |x| !valid_type?(x, children_expected_type) }
+  private
+
+    def archive_deleted_key_validation(choices)
+      choices.each do |each_choice|
+        if each_choice.key?(:id)
+          errors[:choices] << :archive_deleted_error if each_choice.key?(:archived) && each_choice.key?(:deleted)
+        elsif each_choice.key?(:archived) || each_choice.key?(:deleted)
+          errors[each_choice.key?(:archived) ? :archived : :deleted] << :invalid_field
+        end
       end
-      validate_status_groups(value) if key == :group_ids
     end
-  end
 
-  def validate_status_groups(value)
-    unless current_account.shared_ownership_enabled?
-      missing_feature_error(:shared_ownership, :group_ids)
+    def default_choice_invalid_params(db_choice, param_choice)
+      invalid_params = param_choice.keys.map(&:to_sym) - DEFAULT_STATUS_CHOICES_PARAMS_ALLOWED - [:id]
+      if db_choice.status_id == Helpdesk::Ticketfields::TicketStatus::PENDING && invalid_params.length > 1
+        invalid_params -= PENDING_STATUS_CHOICE_ALLOWED_PARAMS
+        unexpected_value_for_attribute(db_choice.name.to_s.intern, invalid_params.join(', '))
+      elsif invalid_params.present? && db_choice.status_id != 3
+        unexpected_value_for_attribute(db_choice.name.to_s.intern, invalid_params.join(', '))
+      end
     end
-    account_group_ids = current_account.groups_from_cache.map(&:id)
-    invalid_group_ids = value & account_group_ids
-    not_included_error(:group_ids, invalid_group_ids) if invalid_group_ids.present?
-  end
 
-  def missing_param_for_choices(choice)
-    missing_params = MANDATORY_CHOICE_PARAM_FOR_STATUS_CREATE.select do |expected_key|
-      choice[expected_key].blank?
+    def default_status_choices_validation(status_field, choices)
+      choices.each do |each_choice|
+        next if DEFAULT_STATUS_CHOICE_IDS.exclude?(each_choice[:id])
+
+        db_choice = status_choices_by_id(status_field)[each_choice[:id]].first
+        default_choice_invalid_params(db_choice, each_choice)
+      end
     end
-    missing_param_error(:choices, missing_params.join(', ')) if missing_params.present?
-  end
 
-  def validate_db_uniqueness_for_status_choices(record, choices)
-    return if errors.present?
+    def data_type_for_status_choice(choice)
+      choice.each_pair do |key, value|
+        key = key.to_s.intern
+        return unexpected_value_for_attribute(:"choices[#{key}]", key) if ALLOWED_STATUS_CHOICES.exclude?(key)
 
-    position_validation_for_status_choice(record, choices)
-    all_status_choices = choices.each_with_object([]) do |each_choice, mapping|
-      status_data = status_choices_by_id[each_choice[:id]] || record.ticket_statuses.new
-      each_choice = each_choice.dup
-      status_data.assign_attributes(build_params(STATUS_CHOICES_PARAMS, each_choice))
-      mapping << status_data
+        valid_data_type?(name, key, value, CHOICES_EXPECTED_TYPE[key])
+      end
     end
-    ignored_ids = all_status_choices.map(&:id).compact.sort
-    remaining_choices = status_choices_by_id.reject { |key| ignored_ids.bsearch { |id| key <=> id }.present? }
-    all_status_choices.push(*remaining_choices.values.flatten)
-    name_validation_for_status_choice(record, all_status_choices)
-    record.ticket_statuses = [] # clear it so that it does not save multiple times
-  end
 
-  def position_validation_for_status_choice(record, choices)
-    status_choices = current_account.ticket_status_values_from_cache.map(&:position)
-    max_pos = status_choices.last
-    min_pos = status_choices.first
-    min_pos = 1 if min_pos > 1
-    choices.each do |each_choice|
-      pos = each_choice[:position]
-      choice_position_error(record, :choices, max_pos) if pos.blank? || (pos < min_pos || pos > max_pos)
+    def missing_param_for_choices(choice)
+      missing_params = MANDATORY_CHOICE_PARAM_FOR_STATUS_CREATE.select do |expected_key|
+        choice[expected_key].blank?
+      end
+      missing_param_error(:choices, missing_params.join(', ')) if missing_params.present?
     end
-  end
 
-  def name_validation_for_status_choice(record, choices)
-    values = choices.map(&:name)
-    duplication_choice_error(record, extract_duplicate_values_in_array(values), :choices) if values.uniq.count != values.count
-  end
+    def status_params_validation(choices)
+      choices.each do |each_choice|
+        next if errors.present?
 
-  def status_choices_by_id
-    @status_choices_by_id ||= current_account.ticket_status_values_from_cache.group_by(&:status_id)
-  end
-
-  def build_params(constant, param)
-    constant.each_with_object({}) do |m, n|
-      n[m[0]] = param[m[1]] unless param[m[1]].nil?
+        data_type_for_status_choice(each_choice)
+        missing_param_for_choices(each_choice) unless each_choice.key?(:id)
+      end
     end
-  end
+
+    def validate_status_groups(value)
+      unless current_account.shared_ownership_enabled?
+        missing_feature_error(:shared_ownership, :group_ids)
+      end
+      account_group_ids = current_account.groups_from_cache.map(&:id)
+      invalid_group_ids = value - account_group_ids
+      not_included_error(:group_ids, invalid_group_ids.join(', ')) if invalid_group_ids.present?
+    end
+
+    def db_status_choice_id_validation(status_field, choices)
+      status_choices = status_choices_by_id(status_field)
+      choices.each do |each_choice|
+        next if !each_choice.key?(:id) || errors.present?
+
+        absent_in_db_error(:choices, :status_choices, "id `#{each_choice[:id]}`") if status_choices[each_choice[:id]].blank?
+        validate_status_groups(each_choice[:group_ids]) if each_choice.key?(:group_ids).present?
+      end
+    end
+
+    def separate_old_and_new_choices(record, choices)
+      old_choices = {}
+      new_choices = []
+      choices.each do |each_choice|
+        status_data = (status_choices_by_id(record)[each_choice[:id]] || [])[0]
+        if status_data.present?
+          old_choices[status_data[:status_id]] = each_choice[:value] || status_data[:name]
+        else
+          new_choices << each_choice[:value]
+        end
+      end
+      [old_choices, new_choices]
+    end
+
+    def validate_db_uniqueness_for_status_choices(record, choices)
+      old_choices, new_choices = separate_old_and_new_choices(record, choices)
+      ignored_ids = old_choices.keys.compact.sort
+      remaining_choices = status_choices_by_id(record).reject { |key| ignored_ids.bsearch { |id| key <=> id }.present? }
+      all_status_choices = remaining_choices.values.flatten.map(&:name).compact
+      all_status_choices.push(*new_choices).push(*old_choices.values.flatten)
+      name_validation_for_status_choice(record, all_status_choices)
+    end
+
+    def position_validation_for_status_choice(record, choices)
+      new_choices_count = choices.count { |each_choice| !each_choice.key?(:id) }
+      max_allowed_position = status_choices_by_id(record).values.flatten.max_by(&:position).position + new_choices_count
+      choices.each do |each_choice|
+        pos = each_choice[:position] || 1
+        choice_position_error(record, :choices, max_allowed_position) if pos < 1 || pos > max_allowed_position
+      end
+    end
+
+    def name_validation_for_status_choice(record, values)
+      duplication_choice_error(record, extract_duplicate_values_in_array(values), :choices) if values.uniq.count != values.count
+    end
+
+    def status_choices_by_id(ticket_field)
+      @status_choices_by_id ||= begin
+        field_status = ticket_field.ticket_field_statuses_from_cache.map { |x| x.status_id; x }
+        field_status.group_by(&:status_id)
+      end
+    end
 end

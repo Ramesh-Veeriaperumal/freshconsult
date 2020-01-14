@@ -385,6 +385,7 @@ defaults: &defaults
     - [image_meta_data_delete]
     - [kbase_approval_notification_worker]
     - [freshcaller_update_agents]
+    - [ticket_field_job]
 
 development:
   <<: *defaults

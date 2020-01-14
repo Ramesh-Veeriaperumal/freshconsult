@@ -3,14 +3,15 @@ module Admin
     include Admin::TicketFieldHelper
     include Admin::TicketFieldConstants
 
-    CHECK_PARAMS_SET_FIELDS = %i[portal_cc_to portal_cc label choices dependent_fields type].freeze
+    CHECK_PARAMS_SET_FIELDS = %i[portal_cc_to portal_cc label choices dependent_fields type
+                                 section_mappings].freeze
 
     attr_accessor(*PERMITTED_PARAMS)
     attr_accessor :request_params, :tf, :include_rel, :include_rel_key, :portal_cc_to_set
 
     # requester field options validation
     validates :portal_cc, custom_inclusion: { in: [true, false] }, if: -> { tf.requester_field? && instance_variable_defined?(:@portal_cc) }, on: :update
-    validates :portal_cc_to, data_type: { required: true, rules: String }, if: -> { tf.requester_field? && portal_cc.present? }, on: :update
+    validates :portal_cc_to, data_type: { required: true, rules: String }, if: -> { tf.requester_field? && portal_cc.present? && !valid_portalcc_values? }, on: :update
     validates :portal_cc_to, custom_inclusion: { in: PORTAL_CC_TO_VALUES }, if: -> { tf.requester_field? && instance_variable_defined?(:@portal_cc_to) }, on: :update
     validates :portal_cc_to, custom_absence: { message: :invalid_field }, if: lambda {
       tf.requester_field? && instance_variable_defined?(:@portal_cc_to) &&
@@ -20,7 +21,7 @@ module Admin
     validates :portal_cc, :portal_cc_to, custom_absence: { message: :portal_and_cc_param_error }, if: -> { create_or_update? && !tf.requester_field? && portal_param? }
 
     # label validation
-    validates :label, :label_for_customers, :type, :position, presence: true, on: :create
+    validates :label, :label_for_customers, :type, presence: true, on: :create
     validates :label, data_type: { rules: String, required: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING },
                       if: -> { create_or_update? && instance_variable_defined?(:@label) && !tf.default? }
     validates :label_for_customers, data_type: { rules: String, required: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING },
@@ -36,10 +37,14 @@ module Admin
     validates :displayed_to_customers, custom_inclusion: { in: [true] }, if: -> { customers_can_edit.present? && create_or_update? }
 
     # ticket field position validation
-    validates :position, data_type: { rules: Integer }, numericality: { greater_than: 0 }, if: -> { instance_variable_defined?(:@position) }
+    validates :position, data_type: { rules: Integer }, numericality: { greater_than: 0 },
+                         if: -> { instance_variable_defined?(:@position) && !instance_variable_defined?(:@section_mappings) }
+    validate :ticket_field_position_validation, if: -> { instance_variable_defined?(:@position) }
 
     # choices validation
     validates :choices, presence: true, if: -> { choices_required_for_type? }, on: :create
+    validates :choices, custom_absence: { message: :sprout_plan_choices_error },
+                        if: -> { instance_variable_defined?(:@choices) && !Account.current.custom_ticket_fields_enabled? }
     validates :choices, data_type: { rules: Array }, if: lambda {
       create_or_update? && (choices_required_for_type? || status_field?) && instance_variable_defined?(:@choices)
     }
@@ -57,17 +62,27 @@ module Admin
 
     validate :nested_level_param_validation, if: -> { create_or_update? && nested_field? && dependent_fields.present? }
 
+    # section mapping validation
+    validates :section_mappings, data_type: { rules: Array, allow_blank: false },
+                                 if: -> { instance_variable_defined?(:@section_mappings) && create_or_update? }
+    validate :section_mappings_params_validation, if: -> { section_mappings.present? && create_or_update? }
+
     validate :validate_params
 
     validate :multi_product_feature?, if: -> { not_index? && tf.present? && tf.product_field? }
+    validate :multi_dynamic_section?, if: -> { create_or_update? && instance_variable_defined?(:@section_mappings) }
+    validate :multi_dynamic_section?, if: -> { create_or_update? && instance_variable_defined?(:@section_mappings) }
     validate :multi_company_feature?, if: -> { not_index? && tf.present? && tf.company_field? }
     validate :default_field_check, if: -> { tf.default? }, on: :destroy # need to handle for fsm too
     validate :custom_ticket_fields_feature?, if: -> { tf.present? && !tf.default? }
     validate :hipaa_encrypted_field?, if: -> { tf.present? && (tf.encrypted_field? || encrypted_field?) }
     validate :ticket_field_has_section?, on: :destroy
-    validate :can_delete_nested_field?, if: -> { tf.nested_field? }, on: :destroy
+    validate :can_delete_nested_field?, if: -> { update_or_destroy? && tf.nested_field? }
     validate :validate_include, if: -> { include_rel_key.present? && show_or_index? }
+    validate :ticket_field_job_progress_error, if: -> { update_or_destroy? && tf.update_in_progress?.present? }
     validates :type, custom_absence: { message: :field_type_error }, if: -> { instance_variable_defined?(:@type) }, on: :update
+    validates :section_mappings, custom_absence: { message: :default_field_section_mapping_error },
+                                 if: -> { instance_variable_defined?(:@section_mappings) && tf.present? && tf.default? }, on: :update
 
     def initialize(request_params, item, options)
       self.request_params = request_params
@@ -86,7 +101,6 @@ module Admin
         return if errors.present?
 
         validate_type if instance_variable_defined?(:@type)
-        validate_section_mappings if section_mappings.present?
       end
 
       def validate_type
@@ -95,11 +109,6 @@ module Admin
           invalid_data_type(:type, valid_ticket_field_type.join(', '), type)
           return
         end
-      end
-
-      def validate_section_mappings
-        section_mapping_validation = Admin::TicketFields::SectionMappingsValidation.new(request_params, tf)
-        merge_to_parent_errors(section_mapping_validation) if section_mapping_validation.invalid?
       end
 
       def validate_include
@@ -118,6 +127,10 @@ module Admin
       def portal_param?
         instance_variable_defined?(:@portal_cc) ||
           instance_variable_defined?(:@portal_cc_to)
+      end
+
+      def valid_portalcc_values?
+        tf.present? && PORTAL_CC_TO_VALUES.include?(tf.field_options['portalcc_to'])
       end
   end
 end

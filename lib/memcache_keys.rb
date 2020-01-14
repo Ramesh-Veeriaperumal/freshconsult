@@ -310,6 +310,10 @@ module MemcacheKeys
 
   FRESHWORK_PRODUCTS = 'FRESHWORK_PRODUCTS'.freeze
 
+  TICKET_FIELD_STATUSES = 'v1/TICKET_FIELD_STATUSES:%{account_id}:%{ticket_field_id}'.freeze
+
+  ACCOUNT_TICKET_FIELD_POSITION_MAPPING = 'v1/ACCOUNT_TICKET_FIELD_POSITION_MAPPING:%{account_id}'.freeze
+
   def fetch_from_cache(key, &block)
     @cached_values = {} unless @cached_values
     return @cached_values[key] if @cached_values.include? key

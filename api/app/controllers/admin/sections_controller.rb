@@ -5,9 +5,11 @@ class Admin::SectionsController < ApiApplicationController
   before_filter :validate_section, except: [:index, :show]
 
   def destroy
-    @item.destroy
-    clear_on_empty_section # delete section_present if ticket_field section is empty
-    head 204
+    ActiveRecord::Base.transaction do
+      @item.destroy
+      clear_on_empty_section # delete section_present if ticket_field section is empty
+      head 204
+    end
   end
 
   private
@@ -34,7 +36,7 @@ class Admin::SectionsController < ApiApplicationController
 
     def load_object
       @item = current_account.sections.find_by_id(params[:id])
-      log_and_render_404 unless @item
+      log_and_render_404 && return unless @item
       @tf = current_account.ticket_fields_only.find_by_id(params[:ticket_field_id])
       @correct_value_mapping = @item.present? && @tf.present? && (@item.ticket_field_id == @tf.id)
     end

@@ -109,8 +109,8 @@ module Helpdesk::Ticketfields::Constants
       dropdown:       [%w(text dropdown), DROPDOWN_FIELDS, DROPDOWN_FIELD_COUNT],
       number:         ['number', NUMBER_FIELDS, NUMBER_FIELD_COUNT],
       checkbox:       ['checkbox', CHECKBOX_FIELDS, CHECKBOX_FIELD_COUNT],
-      date:           ['date',  DATE_FIELDS, DATE_FIELD_COUNT],
-      date_time:      ['date', DATE_FIELDS, DATE_FIELD_COUNT],
+      date:           [%w(date date_time),  DATE_FIELDS, DATE_FIELD_COUNT],
+      date_time:      [%w(date date_time), DATE_FIELDS, DATE_FIELD_COUNT],
       paragraph:      ['paragraph', SERIALIZED_MLT_FIELDS, SERIALIZED_MULTILINE_FIELD_COUNT],
       decimal:        ['decimal', DECIMAL_FIELDS, DECIMAL_FIELD_COUNT],
       encrypted_text: ['encrypted_text', SERIALIZED_ESLT_FIELDS, SERIALIZED_ENCRYPTED_FIELD_COUNT],
@@ -123,8 +123,8 @@ module Helpdesk::Ticketfields::Constants
       dropdown:       ['dropdown', TICKET_FIELD_DATA_DROPDOWN_FIELDS, TICKET_FIELD_DATA_DROPDOWN_COUNT],
       number:         ['number', TICKET_FIELD_DATA_NUMBER_FIELDS, TICKET_FIELD_DATA_NUMBER_COUNT],
       checkbox:       ['checkbox', TICKET_FIELD_DATA_CHECKBOX_FIELDS, TICKET_FIELD_DATA_CHECKBOX_COUNT],
-      date:           ['date', TICKET_FIELD_DATA_DATE_FIELDS, TICKET_FIELD_DATA_DATE_FIELD_COUNT],
-      date_time:      ['date', TICKET_FIELD_DATA_DATE_FIELDS, TICKET_FIELD_DATA_DATE_FIELD_COUNT],
+      date:           [%w(date date_time), TICKET_FIELD_DATA_DATE_FIELDS, TICKET_FIELD_DATA_DATE_FIELD_COUNT],
+      date_time:      [%w(date date_time), TICKET_FIELD_DATA_DATE_FIELDS, TICKET_FIELD_DATA_DATE_FIELD_COUNT],
       paragraph:      ['paragraph', SERIALIZED_MLT_FIELDS, SERIALIZED_MULTILINE_FIELD_COUNT],
       decimal:        ['decimal', DECIMAL_FIELDS, DECIMAL_FIELD_COUNT],
       encrypted_text: ['encrypted_text', SERIALIZED_ESLT_FIELDS, SERIALIZED_ENCRYPTED_FIELD_COUNT],
@@ -140,5 +140,5 @@ module Helpdesk::Ticketfields::Constants
   PLUCKED_COLUMN_FOR_CHOICES = %i[id pickable_id pickable_type position value picklist_id].freeze
   PICKLIST_CHOICE_BATCH_SIZE = 300
 
-  VALID_FIELD_TYPE = %w[text paragrpah dropdown checkbox number date date_time decimal nested_field encrypted_text].freeze
+  VALID_FIELD_TYPE = %w[text paragraph dropdown checkbox number date date_time decimal nested_field encrypted_text].freeze
 end

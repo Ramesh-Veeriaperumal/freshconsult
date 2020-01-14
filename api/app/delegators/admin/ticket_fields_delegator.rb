@@ -4,9 +4,10 @@ class Admin::TicketFieldsDelegator < BaseDelegator
   attr_accessor(*PERMITTED_PARAMS)
   attr_accessor :request_params, :record, :tf, :column_name
 
-  validate :validate_section_mappings, on: :create, if: -> { section_mappings.present? }
+  validate :validate_section_mappings, if: -> { section_mappings.present? && create_or_update? }
   validate :nested_level_db_validation, if: -> { dependent_fields.present? && record.nested_field? }, on: :update
   validate :validate_field_choices, if: -> { choices.present? && create_or_update? && (choices_required_for_type? || status_field?)}
+  validate :destroy_third_level_choices, if: -> { choices.blank? && dependent_fields.present? && choices_required_for_type? }, on: :update
 
   def initialize(record, request_params = {})
     @request_params = request_params
@@ -19,28 +20,28 @@ class Admin::TicketFieldsDelegator < BaseDelegator
   end
 
   def validate_field_choices
-    if record.default?
-      validate_status_choices_params(record, request_params[:choices])
+    if record.safe_send(:status_field?)
+      validate_status_choices(record, request_params[:choices])
     else
       validate_custom_choices(record, request_params[:choices])
     end
   end
 
+  def destroy_third_level_choices
+    return if errors.present?
+
+    destroy_3rd_level = dependent_fields.find do |nested_field|
+      nested_field[:level] == DEPENDENT_FIELD_LEVELS[1] && nested_field[:deleted].present?
+    end.present?
+    return if destroy_3rd_level.blank?
+
+    choices = tf.picklist_values_with_sublevels
+    skip_ticket_field_assignment(choices)
+    destroy_choices_on_nested_level_deletion(tf, choices)
+    tf.parent_level_choices = choices
+  end
+
   private
-
-    def validate_section_mappings
-      section_ids = section_mappings.map { |mapping| mapping[:section_id] }
-      valid_sections = current_account.sections.where(id: section_ids)
-      valid_section_ids = valid_sections.map(&:id)
-      section_mappings.each do |mapping|
-        invalid_section_mapping_error(:section_mapping, mapping[:section_id], :incorrect_section_mapping) unless mapping[:section_id].in?(valid_section_ids)
-      end
-      validate_parent_section_mappings(valid_sections)
-    end
-
-    def validate_parent_section_mappings(valid_sections)
-      invalid_section_mapping_error(:parent_section_mapping) if valid_sections.map(&:parent_ticket_field_id).uniq.length > 1
-    end
 
     def current_account
       @account ||= Account.current

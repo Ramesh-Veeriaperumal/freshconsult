@@ -6,11 +6,30 @@ module Cache::Memcache::Admin::TicketField
 
   TICKET_FIELD_KEYS = %i[custom_picklist_choice_mapping_key section_picklist_values_mapping_key ticket_field_section_key
                          dynamic_section_field_key ticket_field_nested_level_key ticket_field_choices_key
-                         nested_ticket_fields_key account_flexifield_entry_columns].freeze
+                         nested_ticket_fields_key account_flexifield_entry_columns ticket_field_statuses_key
+                         account_ticket_field_position_mapping_key].freeze
 
   def clear_new_ticket_field_cache
     TICKET_FIELD_KEYS.each do |key|
+      Rails.logger.info "---- Delete key---- #{safe_send(key)}----" # later, we can remove if needed
       MemcacheKeys.delete_from_cache(safe_send(key))
+    end
+    clear_cache_instance_variables
+  end
+
+  def clear_cache_instance_variables
+    @cached_values = {}
+    current_account.instance_variable_set('@cached_values', {})
+  end
+
+  def ticket_field_statuses_from_cache
+    key = ticket_field_statuses_key
+    fetch_from_cache(key) do
+      ticket_field_statuses = []
+      ticket_statuses_with_groups.find_in_batches(batch_size: 300) do |statuses|
+        ticket_field_statuses.push(*statuses)
+      end
+      ticket_field_statuses
     end
   end
 
@@ -53,7 +72,7 @@ module Cache::Memcache::Admin::TicketField
         level1.each do |choice|
           choice[columns.size] = level2_map[choice[0]] || []
         end
-        level1.sort! { |x, y| x[3] <=> y[3] } # sort by position
+        level1.sort! { |x, y| x[3].to_i <=> y[3].to_i } # sort by position
         construct_choices_map.push(*level1)
       end
       construct_choices_map
@@ -104,11 +123,21 @@ module Cache::Memcache::Admin::TicketField
   def account_sections_from_cache
     key = ticket_field_section_key
     current_account.fetch_from_cache(key) do
-      sec = current_account.sections.all_sections
+      sec = current_account.sections
       sec.each_with_object({}) do |section, mapping|
-        mapping[section.parent_ticket_field_id] ||= []
-        mapping[section.parent_ticket_field_id] << section
+        mapping[section.ticket_field_id] ||= []
+        mapping[section.ticket_field_id] << section
       end
+    end
+  end
+
+  def account_ticket_field_position_mapping_from_cache
+    key = account_ticket_field_position_mapping_key
+    current_account.fetch_from_cache(key) do
+      ticket_fields = current_account.ticket_fields_only.reload.select(&:condition_based_field)
+      ticket_fields.sort!(&:sort_by_position_excluding_section_field)
+      { db_to_ui: ticket_field_db_to_ui_positions(ticket_fields),
+        ui_to_db: ticket_field_ui_to_db_positions(ticket_fields) }
     end
   end
 
@@ -158,7 +187,41 @@ module Cache::Memcache::Admin::TicketField
       end
     end
 
+    def ticket_field_db_to_ui_positions(ticket_fields)
+      pos = 1
+      db_to_ui_pos = ticket_fields.each_with_object({}) do |field, mapping|
+        next if field.field_options[:section].present?
+
+        mapping[field.id] = pos
+        pos += 1
+      end
+      db_to_ui_pos[-1] = pos
+      db_to_ui_pos
+    end
+
+    def ticket_field_ui_to_db_positions(ticket_fields)
+      pos = 1
+      last_db_position = 0
+      ui_to_db_pos = ticket_fields.each_with_object({}) do |field, mapping|
+        next if field.field_options[:section].present?
+
+        mapping[pos] = field.position
+        pos += 1
+        last_db_position = field.position
+      end
+      ui_to_db_pos[-1] = last_db_position + 1
+      ui_to_db_pos
+    end
+
   private
+
+    def account_ticket_field_position_mapping_key
+      format(ACCOUNT_TICKET_FIELD_POSITION_MAPPING, account_id: Account.current.id)
+    end
+
+    def ticket_field_statuses_key
+      format(TICKET_FIELD_STATUSES, account_id: Account.current.id, ticket_field_id: id)
+    end
 
     def account_flexifield_entry_columns
       format(ACCOUNT_FLEXIFIELD_ENTRY_COLUMNS, account_id: Account.current.id)

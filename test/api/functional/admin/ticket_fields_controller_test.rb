@@ -1,6 +1,7 @@
 require_relative '../../test_helper.rb'
 require Rails.root.join('test/api/helpers/ticket_fields_test_helper')
 require Rails.root.join('test/api/helpers/admin/ticket_field_helper')
+require Rails.root.join('test/api/helpers/admin/associated_model_test_cases')
 require Rails.root.join('test/api/helpers/test_case_methods')
 
 require 'faker'
@@ -9,6 +10,7 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
   include TestCaseMethods
   include TicketFieldsTestHelper
   include Admin::TicketFieldHelper
+  include Admin::AssociatedModelTestCases
 
   PICKLIST_TYPE_FIELDS = [:nested_field, :dropdown].freeze
   DENORMALIZED_FIELDS = [:text, :paragraph, :encrypted_text].freeze
@@ -25,6 +27,8 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
 
   def clean_db
     @account.ticket_fields.where(default: 0).destroy_all
+    @account.ticket_fields.update_all(field_options: {})
+    @account.sections.destroy_all
   end
 
   def test_deletion_of_decimal_field
@@ -106,7 +110,7 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
 
   def test_deletion_of_nested_field
     launch_ticket_field_revamp do
-      names = Faker::Lorem.words(3).map { |x| "nested_#{x}" }
+      names = Faker::Lorem.words(3).map {|x| "nested_#{x}"}
       tf = create_dependent_custom_field(names, 2, rand(0..1) == 1)
       delete :destroy, construct_params(id: tf.id)
       assert_response 204
@@ -246,7 +250,7 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
 
   def test_show_dependent_field
     launch_ticket_field_revamp do
-      names = Faker::Lorem.words(3).map { |x| "nested_#{x}" }
+      names = Faker::Lorem.words(3).map {|x| "nested_#{x}"}
       tf = create_dependent_custom_field(names, 2, rand(0..1) == 1)
       get :show, construct_params(id: tf.id)
       assert_response 200
@@ -313,73 +317,72 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
     end
   end
 
-  Helpdesk::Ticketfields::Constants::FIELD_COLUMN_MAPPING.except(*[:encrypted_text].concat(PICKLIST_TYPE_FIELDS)).each do |field_type, details|
+  Helpdesk::Ticketfields::Constants::FIELD_COLUMN_MAPPING.except(*[:encrypted_text, :file].concat(PICKLIST_TYPE_FIELDS)).each do |field_type, details|
     define_method("test_success_#{field_type}_field_creation") do
-      params = ticket_field_common_params({type: "custom_#{field_type}"})
+      params = ticket_field_common_params(type: "custom_#{field_type}")
       launch_ticket_field_revamp do
         post :create, construct_params({}, params)
-        ticket_field = @account.ticket_fields_with_nested_fields.find(json_response(response)[:id])
         assert_response 201
-        match_json(ticket_field_response_pattern(params, ticket_field))
+        ticket_field = @account.ticket_fields_with_nested_fields.find(json_response(response)[:id])
+        match_json(custom_field_response(ticket_field))
       end
     end
   end
 
   def test_success_encrypted_text_field_creation
-    params = ticket_field_common_params({type: 'encrypted_text'})
-    @account.add_feature :custom_encrypted_fields
+    params = ticket_field_common_params(type: 'encrypted_text')
     launch_ticket_field_revamp do
-      post :create, construct_params({}, params)
-      ticket_field = @account.ticket_fields_with_nested_fields.find(json_response(response)[:id])
-      assert_response 201
-      match_json(ticket_field_response_pattern(params, ticket_field))
+      stubs_hippa_and_custom_encrypted_field do
+        post :create, construct_params({}, params)
+        ticket_field = @account.ticket_fields_with_nested_fields.find(json_response(response)[:id])
+        assert_response 201
+        match_json(custom_field_response(ticket_field))
+      end
     end
     @account.revoke_feature :custom_encrypted_fields
   end
 
   def test_encrypted_text_field_creation_without_feature
-    params = ticket_field_common_params({type: 'encrypted_text'})
-    @account.revoke_feature :custom_encrypted_fields
+    params = ticket_field_common_params(type: 'encrypted_text')
     launch_ticket_field_revamp do
       post :create, construct_params({}, params)
       assert_response 403
     end
-    @account.add_feature :custom_encrypted_fields
   end
 
   def test_create_with_invalid_type
-    params = ticket_field_common_params({type: 'invalid_type'})
+    params = ticket_field_common_params(type: 'invalid_type')
     launch_ticket_field_revamp do
       post :create, construct_params({}, params)
       assert_response 400
-      assert_match("invalid_value", response.body)
+      assert_match('invalid_value', response.body)
     end
   end
 
   def test_create_with_invalid_position
-    params = ticket_field_common_params({position: '51'})
+    params = ticket_field_common_params(position: '51')
     launch_ticket_field_revamp do
       post :create, construct_params({}, params)
       assert_response 400
-      assert_match("datatype_mismatch", response.body)
+      assert_match('datatype_mismatch', response.body)
     end
   end
 
   def test_create_with_invalid_labels
-    params = ticket_field_common_params({ label: 1, label_for_customers: 1 })
+    params = ticket_field_common_params(label: 1, label_for_customers: 1)
     launch_ticket_field_revamp do
       post :create, construct_params({}, params)
       assert_response 400
-      assert_match("datatype_mismatch", response.body)
+      assert_match('datatype_mismatch', response.body)
     end
   end
 
   def test_create_with_labels_missing
-    params = { position: 1, type: 'custom_text' }
+    params = {position: 1, type: 'custom_text'}
     launch_ticket_field_revamp do
       post :create, construct_params({}, params)
       assert_response 400
-      assert_match("invalid_value", response.body)
+      assert_match('invalid_value', response.body)
     end
   end
 
@@ -403,107 +406,38 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
   #   end
   # end
 
-  def test_success_create_with_section_mapping
-    launch_ticket_field_revamp do
-      params = ticket_field_common_params
-      params[:section_mappings] = [section_mapping_params({ section_id: create_section_fields.first })]
-      post :create, construct_params({}, params)
-      ticket_field = @account.ticket_fields_with_nested_fields.find(json_response(response)[:id])
-      assert_response 201
-      match_json(ticket_field_response_pattern(params, ticket_field).merge(section_field_response_pattern(params, ticket_field)))
+  Helpdesk::Ticketfields::Constants::FIELD_COLUMN_MAPPING.except(*[:encrypted_text, :file, :text, :date_time].concat(PICKLIST_TYPE_FIELDS)).each do |field_type, details|
+    define_method("test_create_custom_#{field_type}_field_limit_exceeded") do
+      launch_ticket_field_revamp do
+        method_name = field_type.in?(DENORMALIZED_FIELDS) ? 'create_custom_field_dn' : 'create_custom_field'
+        details[2].times do |i|
+          safe_send(method_name, "custom_#{field_type}_#{i}", field_type.to_s, format('%02d', i + 1))
+        end
+        field_type = "custom_#{field_type}"
+        params = ticket_field_common_params(type: field_type)
+        post :create, construct_params({}, params)
+        assert_response 400
+        assert_match('You have exceeded the maximum limit for this type of field', response.body)
+      end
     end
   end
 
-  def test_create_with_redundant_section_mapping
+  def test_create_encrypted_field_limit_exceeded
+    field_type = :encrypted_text
+    limit = Helpdesk::Ticketfields::Constants::FIELD_COLUMN_MAPPING[field_type][2]
+    @account.launch :custom_encrypted_fields
     launch_ticket_field_revamp do
-      section_id = create_section_fields.first
-      params = ticket_field_common_params
-      params[:section_mappings] = []
-      2.times { params[:section_mappings] << section_mapping_params({ section_id: section_id }) }
+      limit.times do |i|
+        create_custom_field_dn("custom_#{field_type}_#{i}", field_type.to_s, format('%02d', i + 1))
+      end
+      params = ticket_field_common_params(type: field_type.to_s)
       post :create, construct_params({}, params)
-      assert_response 400
-      assert_match("redundant_section_mapping", response.body)
+      assert_response 403
+      stubs_hippa_and_custom_encrypted_field do
+        post :create, construct_params({}, params)
+        assert_match('You have exceeded the maximum limit for this type of field.', response.body)
+      end
     end
+    @account.rollback :custom_encrypted_fields
   end
-
-  def test_create_with_section_mapping_invalid_section_id
-    launch_ticket_field_revamp do
-      section_id = Faker::Number.number(3).to_i
-      params = ticket_field_common_params
-      params[:section_mappings] = [section_mapping_params({ section_id: section_id })]
-      post :create, construct_params({}, params)
-      assert_response 400
-      assert_match("Section with id #{section_id} does not exist", response.body)
-    end
-  end
-
-  def test_create_with_section_mapping_missing_section_id
-    launch_ticket_field_revamp do
-      params = ticket_field_common_params
-      params[:section_mappings] = [{ position: 50 }]
-      post :create, construct_params({}, params)
-      assert_response 400
-      assert_match("Mandatory parameters missing: (section_id)", response.body)
-    end
-  end
-
-  def test_create_with_section_mapping_missing_position
-    launch_ticket_field_revamp do
-      params = ticket_field_common_params
-      params[:section_mappings] = [{ section_id: 50 }]
-      post :create, construct_params({}, params)
-      assert_response 400
-      assert_match("Mandatory parameters missing: (position)", response.body)
-    end
-  end
-
-  def test_create_with_section_mapping_separate_parent_fields
-    launch_ticket_field_revamp do
-      params = ticket_field_common_params
-      params[:section_mappings] = []
-      choices_1 = [ { title: 'custom_field_section_1', value_mapping: ["Choice A"], ticket_fields: %w(test_custom_number test_custom_date) }]
-      custom_field_1 = create_custom_field_dropdown('test_custom_dropdown_1', choices_1.first[:value_mapping])
-      parent_1_section_id = create_section_fields(custom_field_1.id, choices_1).first
-      params[:section_mappings] << section_mapping_params({ section_id: parent_1_section_id })
-      choices_2 = [ { title: 'custom_field_section_2', value_mapping: ["Choice 1"], ticket_fields: %w(test_custom_number test_custom_date) }]
-      custom_field_2 = create_custom_field_dropdown('test_custom_dropdown_2', choices_2.first[:value_mapping])
-      parent_2_section_id = create_section_fields(custom_field_2.id, choices_2).first
-      params[:section_mappings] << section_mapping_params({ section_id: parent_2_section_id })
-      post :create, construct_params({}, params)
-      assert_response 400
-      assert_match("Ticket field can not reside inside sections belonging to two separate ticket fields", response.body)
-    end
-  end
-
-  # Helpdesk::Ticketfields::Constants::FIELD_COLUMN_MAPPING.except(*[:encrypted_text, :file].concat(PICKLIST_TYPE_FIELDS)).each do |field_type, details|
-  #   define_method("test_create_custom_#{field_type}_field_limit_exceeded") do
-  #     launch_ticket_field_revamp do
-  #       method_name = field_type.in?(DENORMALIZED_FIELDS) ? "create_custom_field_dn" : "create_custom_field"
-  #       details[2].times do |i|
-  #         safe_send(method_name, "custom_#{field_type}_#{i}", field_type.to_s, "%02d" % [i+1])
-  #       end
-  #       field_type = "custom_#{field_type}"
-  #       params = ticket_field_common_params({ type: field_type })
-  #       post :create, construct_params({}, params)
-  #       assert_response 400
-  #       assert_match("fields of type #{field_type} and you've reached its limit.", response.body)
-  #     end
-  #   end
-  # end
-
-  # def test_create_encrypted_field_limit_exceeded
-  #   field_type = :encrypted_text
-  #   limit = Helpdesk::Ticketfields::Constants::FIELD_COLUMN_MAPPING[field_type][2]
-  #   @account.launch :custom_encrypted_fields
-  #   launch_ticket_field_revamp do
-  #     limit.times do |i|
-  #       create_custom_field_dn("custom_#{field_type}_#{i}", field_type.to_s, "%02d" % [i+1])
-  #     end
-  #     params = ticket_field_common_params({ type: field_type.to_s })
-  #     post :create, construct_params({}, params)
-  #     assert_response 400
-  #     assert_match("fields of type #{field_type} and you've reached its limit.", response.body)
-  #   end
-  #   @account.rollback :custom_encrypted_fields
-  # end
 end

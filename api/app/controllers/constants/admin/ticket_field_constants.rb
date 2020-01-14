@@ -11,7 +11,7 @@ module Admin::TicketFieldConstants
   PORTAL_CC_TO_VALUES = %w[all company].freeze
   ALLOWED_HASH_BASIC_CHOICE_FIELDS = %w[id value archived deleted position parent_choice_id choices].freeze
 
-  ALLOWED_STATUS_CHOICES = %w[id label_for_customers value stop_sla_timer deleted group_ids position].freeze
+  ALLOWED_STATUS_CHOICES = %i[id label_for_customers value stop_sla_timer archived deleted group_ids position].freeze
 
   ALLOWED_HASH_CHOICES_LEVEL_2 = ALLOWED_HASH_BASIC_CHOICE_FIELDS - %w[choices] |
                                  [choices: ALLOWED_HASH_BASIC_CHOICE_FIELDS]
@@ -19,15 +19,17 @@ module Admin::TicketFieldConstants
   ALLOWED_HASH_CHOICES = ALLOWED_HASH_BASIC_CHOICE_FIELDS + ALLOWED_STATUS_CHOICES |
                          [choices: ALLOWED_HASH_CHOICES_LEVEL_2]
 
-  ALLOWED_HASH_SECTION_MAPPINGS = %w[section_id position].freeze
+  ALLOWED_HASH_SECTION_MAPPINGS = %i[section_id position deleted].freeze
 
   DEPENDENT_FIELD_PARAMS_WITH_TYPE = {
     label: String,
     label_for_customers: String,
-    level: String,
+    level: Integer,
     id: Integer,
-    ticket_field_id: Integer
+    deleted: 'bool'
   }.freeze
+
+  ALLOWED_DEPENDENT_FIELD_PARAMS = %i[label label_for_customers level id deleted].freeze
 
   CHOICES_EXPECTED_TYPE = {
     id: Integer,
@@ -42,14 +44,22 @@ module Admin::TicketFieldConstants
     group_ids: [Array, Integer]
   }.freeze
 
+  SECTION_MAPPING_EXPECTED_TYPE = {
+    section_id: Integer,
+    position: Integer,
+    deleted: 'bool'
+  }.freeze
+
   MANDATORY_CHOICE_PARAM_FOR_PICKLIST_CREATE = %i[value position].freeze
-  MANDATORY_CHOICE_PARAM_FOR_STATUS_CREATE = %i[label_for_customers value position].freeze
+  MANDATORY_CHOICE_PARAM_FOR_STATUS_CREATE = %i[value position].freeze
+
+  MANDATORY_PARAM_FOR_SECTION_MAPPING = %i[section_id].freeze
 
   DEPENDENT_FIELD_MANDATORY_PARAMS = %i[label label_for_customers level].freeze
 
-  UPDATE_DEPENDENT_FIELD_PARAMS = %i[id].freeze
+  UPDATE_DEPENDENT_FIELD_PARAMS = %i[id level].freeze
 
-  ALLOWED_HASH_DEPENDENT_FIELDS = (DEPENDENT_FIELD_MANDATORY_PARAMS + UPDATE_DEPENDENT_FIELD_PARAMS).freeze
+  ALLOWED_HASH_DEPENDENT_FIELDS = (DEPENDENT_FIELD_MANDATORY_PARAMS + UPDATE_DEPENDENT_FIELD_PARAMS + [:deleted]).uniq.freeze
 
   ALLOWED_HASH_BASE_FIELDS = %i[label label_for_customers required_for_closure required_for_agents required_for_customers
                                 customers_can_edit displayed_to_customers position type section_mappings dependent_fields
@@ -140,7 +150,7 @@ module Admin::TicketFieldConstants
     name: :name,
     label: :i18n_label,
     label_for_customers: :label_in_portal,
-    position: :position,
+    position: :frontend_position,
     type: :field_type,
     default: :default,
     customers_can_edit: :editable_in_portal,
@@ -148,6 +158,7 @@ module Admin::TicketFieldConstants
     required_for_agents: :required,
     required_for_customers: :required_in_portal,
     displayed_to_customers: :visible_in_portal,
+    field_update_in_progress: :update_in_progress?,
     created_at: :created_at,
     updated_at: :updated_at
   }.freeze
@@ -213,4 +224,12 @@ module Admin::TicketFieldConstants
 
   PICKLIST_COLUMN_TO_SELECT = %i[value position].freeze
   CHOICE_LIMIT_BEFORE_GOING_BACKGROUND = 100
+
+  DEFAULT_STATUS_CHOICE_IDS = [2, 3, 4, 5].freeze
+
+  DEFAULT_STATUS_CHOICES_PARAMS_ALLOWED = %i[label_for_customers position].freeze
+
+  PENDING_STATUS_CHOICE_ALLOWED_PARAMS = %i[stop_sla_timer].freeze
+
+  DEPENDENT_FIELD_LEVELS = [2, 3].freeze
 end
