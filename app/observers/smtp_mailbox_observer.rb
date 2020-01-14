@@ -2,6 +2,8 @@ class SmtpMailboxObserver < ActiveRecord::Observer
 
   include Mailbox::HelperMethods
   include Cache::Memcache::EmailConfig
+  include Email::Mailbox::Constants
+  include Email::Mailbox::GmailOauthHelper
 
   def before_create mailbox
     set_account(mailbox)
@@ -19,7 +21,7 @@ class SmtpMailboxObserver < ActiveRecord::Observer
     if mailbox.safe_send(:transaction_include_action?, :create)
       set_valid_access_token_key(mailbox.account_id, mailbox.id)
     elsif mailbox.safe_send(:transaction_include_action?, :update)
-      set_valid_access_token_key(mailbox.account_id, mailbox.id) if changed_credentials?(mailbox)
+      set_valid_access_token_key(mailbox.account_id, mailbox.id) if changed_credentials?(mailbox) && mailbox.authentication == OAUTH
       clear_cache(mailbox)
     elsif mailbox.safe_send(:transaction_include_action?, :destroy)
       delete_valid_access_token_key(mailbox.account_id, mailbox.id)
