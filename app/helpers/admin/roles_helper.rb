@@ -114,15 +114,6 @@ module Admin::RolesHelper
                     end
                   end }] },
 
-         # *************************** Outreaches *******************************
-
-         { dom_type: "label", id: "outreaches", not_display: !current_account.proactive_outreach_enabled?,
-           children:
-
-              [{ dom_type: "check_box", id: "manage_proactive_outreaches", not_display: !current_account.proactive_outreach_enabled? }]
-
-         },
-
          # *************************** Field Service *******************************
 
          { dom_type: 'label', id: 'fieldservice', not_display: !current_account.field_service_management_enabled?,
@@ -168,7 +159,8 @@ module Admin::RolesHelper
                     { :dom_type => "check_box", :id => "manage_ticket_list_views" },
                     { :dom_type => "check_box", :id => "manage_ticket_templates" },
                     { :dom_type => "check_box", :id => "manage_bots", not_display: !current_account.support_bot_enabled? },
-                    { dom_type: 'check_box', id: 'manage_requester_notifications', not_display: !has_requester_feature? }
+                    { dom_type: 'check_box', id: 'manage_requester_notifications', not_display: !has_requester_feature? },
+                    { dom_type: 'check_box', id: 'manage_proactive_outreaches', not_display: !current_account.proactive_outreach_enabled? }
                     ]
                },
 
@@ -188,7 +180,8 @@ module Admin::RolesHelper
                     { :dom_type => "hidden_field", :id => "manage_ticket_templates" },
                     { :dom_type => "hidden_field", :id => "manage_bots", not_display: !current_account.support_bot_enabled? },
                     { :dom_type => "hidden_field", :id => "manage_tags" },
-                    { :dom_type => "check_box",    :id => "manage_account" }]
+                    { dom_type: 'hidden_field', id: 'manage_proactive_outreaches', not_display: !current_account.proactive_outreach_enabled? },
+                    { dom_type: 'check_box', id: 'manage_account' }]
 
                }]
          },

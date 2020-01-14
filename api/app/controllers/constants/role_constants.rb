@@ -7,10 +7,12 @@ module RoleConstants
     'Account Administrator' => ['manage_availability', 'view_admin']
   }.freeze
   PRIVILEGE_DEPENDENCY_MAP = {
-    view_admin: [:manage_users, :manage_availability, :manage_skills, :manage_tags, 
-     :manage_canned_responses, :manage_dispatch_rules, :manage_supervisor_rules,
-     :manage_scenario_automation_rules, :manage_email_settings, :manage_ticket_templates,
-     :manage_bots, :manage_account, :manage_requester_notifications ],
+    view_admin: [
+      :manage_users, :manage_availability, :manage_skills, :manage_tags,
+      :manage_canned_responses, :manage_dispatch_rules, :manage_supervisor_rules,
+      :manage_scenario_automation_rules, :manage_email_settings, :manage_ticket_templates,
+      :manage_bots, :manage_account, :manage_requester_notifications, :manage_proactive_outreaches
+    ],
     view_reports: [:export_reports, :manage_dashboard],
     view_contacts: [:manage_contacts, :manage_companies, :manage_segments, :delete_contact, :delete_company, :export_customers],
     view_forums: [:manage_forums, :create_topic, :delete_topic],
