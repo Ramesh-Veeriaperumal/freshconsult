@@ -54,7 +54,7 @@ module Admin::TicketFieldHelper
 
     def run_validation(options = {})
       validator_klass = validation_class.new(params, @item, options)
-      delegator_klass = delegation_class.new(@item, params)
+      delegator_klass = delegation_class.new(@item, params, options)
       errors = nil
       error_options = {}
       if validator_klass.invalid?(params[:action].to_sym)
@@ -63,8 +63,6 @@ module Admin::TicketFieldHelper
       elsif delegator_klass.invalid?(params[:action].to_sym)
         errors = delegator_klass.errors
         error_options = delegator_klass.error_options
-      elsif cname_params && params[:action] == 'create'
-        cname_params[:column_name] = delegator_klass.column_name
       end
       render_errors(errors, error_options) if errors.present?
     end

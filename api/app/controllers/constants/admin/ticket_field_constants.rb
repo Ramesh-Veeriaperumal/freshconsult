@@ -145,6 +145,13 @@ module Admin::TicketFieldConstants
     flexifield_def_id:  :ticket_form_id
   }.freeze
 
+  SECTION_PARAMS = %i[label choice_ids].freeze
+
+  SECTION_PICKLIST_MAPPING_PARAMS = {
+    picklist_value_id: :id,
+    picklist_id: :picklist_id
+  }.freeze
+
   TICKET_FIELDS_RESPONSE_HASH = {
     id: :id,
     name: :name,

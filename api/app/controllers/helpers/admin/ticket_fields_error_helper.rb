@@ -117,6 +117,13 @@ module Admin::TicketFieldsErrorHelper
     error_options.merge!(error_message)
   end
 
+  def choice_id_taken_error(name, choice_id, message: :choice_id_taken)
+    errors[name] << message
+    error_message = {}
+    error_message[name] = { id: choice_id }
+    error_options.merge!(error_message)
+  end
+
   def ticket_field_job_progress_error
     errors[:ticket_field_update] << :field_update_job_running_error
   end

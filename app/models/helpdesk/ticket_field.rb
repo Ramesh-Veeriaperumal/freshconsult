@@ -105,6 +105,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   has_many :ticket_statuses_with_groups, class_name: 'Helpdesk::TicketStatus', dependent: :destroy,
                                          include: { status_groups: :group }, order: 'position', autosave: true
 
+  has_many :sections, :class_name => 'Helpdesk::Section', :foreign_key => "ticket_field_id", :autosave => true, :dependent => :destroy
   has_many :section_fields, :dependent => :destroy, autosave: true
   has_many :dynamic_section_fields, :class_name => 'Helpdesk::SectionField',
                                     :foreign_key => :parent_ticket_field_id

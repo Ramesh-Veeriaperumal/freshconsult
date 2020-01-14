@@ -83,7 +83,7 @@ module Cache::Memcache::Admin::TicketField
     return [] unless has_sections?
     key = section_picklist_values_mapping_key
     current_account.fetch_from_cache(key) do
-      section = current_account.sections.all_sections
+      section = current_account.sections.reload.all_sections
       # map section to ticket field
       section_to_tf = section.each_with_object({}) do |sec, mapping|
         mapping[sec.id] ||= sec.ticket_field_id

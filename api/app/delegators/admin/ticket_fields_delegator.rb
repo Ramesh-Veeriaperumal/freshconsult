@@ -9,7 +9,7 @@ class Admin::TicketFieldsDelegator < BaseDelegator
   validate :validate_field_choices, if: -> { choices.present? && create_or_update? && (choices_required_for_type? || status_field?)}
   validate :destroy_third_level_choices, if: -> { choices.blank? && dependent_fields.present? && choices_required_for_type? }, on: :update
 
-  def initialize(record, request_params = {})
+  def initialize(record, request_params, _options)
     @request_params = request_params
     @tf = @record = record
 

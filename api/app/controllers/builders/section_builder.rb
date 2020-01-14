@@ -2,7 +2,25 @@ module SectionBuilder
   include Admin::TicketFieldConstants
   include Admin::TicketFields::CommonHelper
 
+  def build_section
+    @item.label = cname_params[:label].strip if cname_params[:label].present?
+    build_section_picklist_mapping(@item, @ticket_field, cname_params[:choice_ids]) if cname_params[:choice_ids].present?
+  end
+
   private
+
+    def build_section_picklist_mapping(section, ticket_field, choice_ids)
+      choice_ids.sort!
+      ticket_field_picklists = ticket_field.picklist_values_from_cache.group_by(&:picklist_id)
+
+      existing_picklist_mapping_ids = ticket_field.section_picklist_mappings.select { |mapping| mapping.section_id == @item.id }.map(&:picklist_id)
+      extra_mappings = section.section_picklist_mappings.select { |mapping| !choice_ids.bsearch { |id| mapping.picklist_id <=> id } }
+      (choice_ids - existing_picklist_mapping_ids).each do |picklist_id|
+        mapping = extra_mappings.pop || section.section_picklist_mappings.build
+        mapping.assign_attributes(build_params(SECTION_PICKLIST_MAPPING_PARAMS, ticket_field_picklists[picklist_id].first))
+      end
+      extra_mappings.map(&:mark_for_destruction)
+    end
 
     def modify_existing_section_field(section_field, data)
       return if delete_data(section_field, data)

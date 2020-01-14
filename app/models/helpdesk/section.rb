@@ -16,6 +16,7 @@ class Helpdesk::Section < ActiveRecord::Base
   belongs_to_account
 
   swindle :all_sections, attrs: %i[id label ticket_field_id]
+  belongs_to :ticket_field, :class_name => "Helpdesk::TicketField"
   has_many :section_fields, :dependent => :destroy, :order => 'position'
   has_many :section_picklist_mappings, :class_name => 'Helpdesk::SectionPicklistValueMapping', 
                                        :dependent => :destroy
@@ -27,7 +28,14 @@ class Helpdesk::Section < ActiveRecord::Base
   accepts_nested_attributes_for :section_picklist_mappings, :allow_destroy => true
   accepts_nested_attributes_for :section_fields, :allow_destroy => true
 
+  after_initialize :intialize_options
+
   after_commit :clear_cache
+
+  def intialize_options
+    self.options ||= {}
+    self.options = self.options.with_indifferent_access
+  end
 
   def parent_ticket_field_id
     # TODO: remove the second part of the code once migration goes live and working

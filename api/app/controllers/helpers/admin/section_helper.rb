@@ -17,6 +17,22 @@ module Admin::SectionHelper
 
   private
 
+    def duplicate_section_label?(ticket_field, section_data)
+      ticket_field.field_sections.any? { |section| section.label == section_data[:label] }
+    end
+
+    def picklist_id_not_exists?(ticket_field, choice_ids)
+      picklist_ids = ticket_field.picklist_values_from_cache.map(&:picklist_id)
+      invalid_ids = choice_ids - picklist_ids
+      absent_in_db_error(:choice_ids, :choice, "choice_ids #{invalid_ids.join(', ')}") if invalid_ids.present?
+    end
+
+    def picklist_id_taken?(ticket_field, section, choice_ids)
+      existing_mappings = ticket_field.section_picklist_mappings.reject { |mapping| mapping.section_id == section.id }.map(&:picklist_id)
+      duplicate_mappings = choice_ids & existing_mappings
+      choice_id_taken_error(:choice_ids, duplicate_mappings.join(', ')) if duplicate_mappings.present?
+    end
+
     def validate_deleting_non_mapped_fields(ticket_field, section_mappings)
       section_field_ids = ticket_field.section_mappings.map(&:section_id).sort
       section_mappings.each_with_index do |mapping, index|
@@ -120,21 +136,20 @@ module Admin::SectionHelper
     end
 
     def clear_on_empty_section
-      unless section_inside_ticket_field?(@tf)
-        @tf.field_options.delete 'section_present'
-        @tf.save
-      end
+      @ticket_field.field_options.delete('section_present') unless section_inside_ticket_field?(@ticket_field)
     end
 
-    def construct_sections(ticket_field)
+    def construct_sections(ticket_field, section = nil)
       section_response = []
       section_choice_map = choices_for_sections(ticket_field)
       tf_inside_section = ticket_field_for_sections(ticket_field)
-      ticket_field.field_sections.each do |sec|
+      sections = section.present? ? Array(section) : ticket_field.field_sections.sort_by { |each_section| -1 * each_section[:id] }
+      sections.each do |sec|
         next unless section_choice_map.key?(sec.id)
         res_hash = section_response_hash(sec, ticket_field)
         res_hash[:choice_ids] = section_choice_map[sec.id] || []
         res_hash[:ticket_field_ids] = tf_inside_section[sec.id] || []
+        res_hash[:is_fsm] = sec.options[:fsm] if sec.options[:fsm]
         section_response << res_hash
       end
       section_response

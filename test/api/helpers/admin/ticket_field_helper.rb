@@ -127,15 +127,17 @@ module Admin::TicketFieldHelper
     sec_map.present? ? { section_mappings: sec_map } : {}
   end
 
-  def sections(tf)
-    sec = Account.current.sections.where(ticket_field_id: tf.id).map do |sec|
-      {
-        id: sec.id,
-        label: sec.label,
-        parent_ticket_field_id: tf.id,
-        choice_ids: Account.current.section_picklist_value_mappings.where(section_id: sec.id).pluck(:picklist_id),
-        ticket_field_ids: Account.current.section_fields.where(section_id: sec.id).pluck(:ticket_field_id)
+  def sections(ticket_field)
+    sec = Account.current.sections.where(ticket_field_id: ticket_field.id).map do |sec|
+      res = {
+          id: sec.id,
+          label: sec.label,
+          parent_ticket_field_id: ticket_field.id,
+          choice_ids: Account.current.section_picklist_value_mappings.where(section_id: sec.id).pluck(:picklist_id),
+          ticket_field_ids: Account.current.section_fields.where(section_id: sec.id).pluck(:ticket_field_id)
       }
+      res.merge(fsm: sec.options[:fsm]) if sec.options[:fsm]
+      res
     end
     sec.present? ? { sections: sec } : {}
   end
