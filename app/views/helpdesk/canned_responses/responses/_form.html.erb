@@ -3,7 +3,8 @@
 <%= javascript_tag do %>
 
 jQuery(document).ready(function(){
-	invokeRedactor('ca-content', 'cnt-reply');
+  	invokeRedactor('ca-content', 'cnt-reply');
+	
   if ('<%=@ca_response.helpdesk_accessible.access_type%>' == '<%=Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups]%>'){
 		jQuery('#accessible_group').show();	
 		jQuery('#admin_canned_response_visibility_group_id').removeAttr('disabled');
@@ -67,7 +68,7 @@ function toggleGroup(access_id)
 		</label>
 		<%= f.text_field :title, :class => "text required insert-placeholder-target", "minlength" => "3" %>
 	</li>
-	<li>
+	<li class="ca_content_wrapper">
 		<label for="ca-content">
 			<%= t('message') %><span class="required_star">*</span>
 			<a class='l_placeholder btn btn-mini btn-flat pull-right' href='javascript:void(0)'><%= t('canned_folders.insert_placeholder') %>&raquo;</a>
