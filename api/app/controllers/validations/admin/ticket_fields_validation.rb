@@ -2,9 +2,11 @@ module Admin
   class TicketFieldsValidation < ApiValidation
     include Admin::TicketFieldHelper
     include Admin::TicketFieldConstants
+    include Admin::TicketFieldFsmHelper
 
-    CHECK_PARAMS_SET_FIELDS = %i[portal_cc_to portal_cc label choices dependent_fields type
-                                 section_mappings].freeze
+    CHECK_PARAMS_SET_FIELDS = %i[portal_cc_to portal_cc label choices dependent_fields type required_for_agents
+                                 section_mappings label_for_customers position required_for_closure
+                                 required_for_customers customers_can_edit displayed_to_customers].freeze
 
     attr_accessor(*PERMITTED_PARAMS)
     attr_accessor :request_params, :tf, :include_rel, :include_rel_key, :portal_cc_to_set
@@ -21,6 +23,7 @@ module Admin
     validates :portal_cc, :portal_cc_to, custom_absence: { message: :portal_and_cc_param_error }, if: -> { create_or_update? && !tf.requester_field? && portal_param? }
 
     # label validation
+    validates :label, :label_for_customers, :type, :position, custom_absence: { message: :fsm_field_not_editable }, if: -> { tf.fsm? }, on: :update
     validates :label, :label_for_customers, :type, presence: true, on: :create
     validates :label, data_type: { rules: String, required: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING },
                       if: -> { create_or_update? && instance_variable_defined?(:@label) && !tf.default? }
@@ -35,6 +38,9 @@ module Admin
     validates :displayed_to_customers, :customers_can_edit, custom_inclusion: { in: [true] },
                                                             if: -> { required_for_customers.present? && create_or_update? }
     validates :displayed_to_customers, custom_inclusion: { in: [true] }, if: -> { customers_can_edit.present? && create_or_update? }
+    validates :required_for_closure, :required_for_agents, :required_for_customers, :customers_can_edit,
+              :displayed_to_customers, custom_absence: { message: :fsm_field_not_editable },
+                                       if: -> { tf.fsm? }, on: :update
 
     # ticket field position validation
     validates :position, data_type: { rules: Integer }, numericality: { greater_than: 0 },
@@ -73,6 +79,7 @@ module Admin
     validate :multi_dynamic_section?, if: -> { create_or_update? && instance_variable_defined?(:@section_mappings) }
     validate :multi_dynamic_section?, if: -> { create_or_update? && instance_variable_defined?(:@section_mappings) }
     validate :multi_company_feature?, if: -> { not_index? && tf.present? && tf.company_field? }
+    validate :fsm_enabled_error, if: -> { tf.fsm? }, on: :destroy
     validate :default_field_check, if: -> { tf.default? }, on: :destroy # need to handle for fsm too
     validate :custom_ticket_fields_feature?, if: -> { tf.present? && !tf.default? }
     validate :hipaa_encrypted_field?, if: -> { tf.present? && (tf.encrypted_field? || encrypted_field?) }
@@ -83,6 +90,7 @@ module Admin
     validates :type, custom_absence: { message: :field_type_error }, if: -> { instance_variable_defined?(:@type) }, on: :update
     validates :section_mappings, custom_absence: { message: :default_field_section_mapping_error },
                                  if: -> { instance_variable_defined?(:@section_mappings) && tf.present? && tf.default? }, on: :update
+    validate :validate_fsm_params, if: -> { update_action? && tf.fsm? }
 
     def initialize(request_params, item, options)
       self.request_params = request_params
@@ -104,7 +112,7 @@ module Admin
       end
 
       def validate_type
-        valid_ticket_field_type = FIELD_TYPE_TO_COL_TYPE_MAPPING.stringify_keys.keys
+        valid_ticket_field_type = FIELD_TYPE_TO_COL_TYPE_MAPPING.stringify_keys.keys - SKIP_FSM_FIELD_TYPES
         unless type.in?(valid_ticket_field_type)
           invalid_data_type(:type, valid_ticket_field_type.join(', '), type)
           return

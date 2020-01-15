@@ -317,7 +317,7 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
     end
   end
 
-  Helpdesk::Ticketfields::Constants::FIELD_COLUMN_MAPPING.except(*[:encrypted_text, :file].concat(PICKLIST_TYPE_FIELDS)).each do |field_type, details|
+  Helpdesk::Ticketfields::Constants::FIELD_COLUMN_MAPPING.except(*[:encrypted_text, :file, :date_time].concat(PICKLIST_TYPE_FIELDS)).each do |field_type, details|
     define_method("test_success_#{field_type}_field_creation") do
       params = ticket_field_common_params(type: "custom_#{field_type}")
       launch_ticket_field_revamp do
@@ -425,7 +425,6 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
   def test_create_encrypted_field_limit_exceeded
     field_type = :encrypted_text
     limit = Helpdesk::Ticketfields::Constants::FIELD_COLUMN_MAPPING[field_type][2]
-    @account.launch :custom_encrypted_fields
     launch_ticket_field_revamp do
       limit.times do |i|
         create_custom_field_dn("custom_#{field_type}_#{i}", field_type.to_s, format('%02d', i + 1))
@@ -438,6 +437,5 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
         assert_match('You have exceeded the maximum limit for this type of field.', response.body)
       end
     end
-    @account.rollback :custom_encrypted_fields
   end
 end

@@ -127,4 +127,10 @@ module Admin::TicketFieldsErrorHelper
   def ticket_field_job_progress_error
     errors[:ticket_field_update] << :field_update_job_running_error
   end
+
+  def fsm_enabled_error
+    if current_account.field_service_management_enabled?
+      errors[:field_service_management] << :fsm_enabled
+    end
+  end
 end

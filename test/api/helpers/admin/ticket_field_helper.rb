@@ -1,7 +1,10 @@
 require File.join(Rails.root, 'test/api/helpers/admin/section_helper')
+require File.join(Rails.root, 'test/api/helpers/admin/fsm_fields_helper')
 
 module Admin::TicketFieldHelper
   include Admin::SectionHelper
+  include Admin::FsmFieldsHelper
+
   DROPDOWN_CHOICES_TICKET_TYPE = %w[Question Problem Incident].freeze
 
   def launch_ticket_field_revamp
@@ -130,11 +133,11 @@ module Admin::TicketFieldHelper
   def sections(ticket_field)
     sec = Account.current.sections.where(ticket_field_id: ticket_field.id).map do |sec|
       res = {
-          id: sec.id,
-          label: sec.label,
-          parent_ticket_field_id: ticket_field.id,
-          choice_ids: Account.current.section_picklist_value_mappings.where(section_id: sec.id).pluck(:picklist_id),
-          ticket_field_ids: Account.current.section_fields.where(section_id: sec.id).pluck(:ticket_field_id)
+        id: sec.id,
+        label: sec.label,
+        parent_ticket_field_id: ticket_field.id,
+        choice_ids: Account.current.section_picklist_value_mappings.where(section_id: sec.id).pluck(:picklist_id),
+        ticket_field_ids: Account.current.section_fields.where(section_id: sec.id).pluck(:ticket_field_id)
       }
       res.merge(fsm: sec.options[:fsm]) if sec.options[:fsm]
       res

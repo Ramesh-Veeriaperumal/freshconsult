@@ -3,4 +3,5 @@ Dir[File.join(Rails.root, 'test/api/helpers/admin/ticket_fields/*.rb')].each do 
 end
 module Admin::AssociatedModelTestCases
   include Admin::TicketFields::SectionMappingTestCases
+  include Admin::TicketFields::FsmFieldsUpdateDeleteTestCases
 end

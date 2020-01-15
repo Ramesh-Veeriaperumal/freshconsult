@@ -1,12 +1,16 @@
 module Admin
   class SectionsDelegator < BaseDelegator
     include Admin::TicketFieldHelper
+    include Admin::TicketFieldFsmHelper
 
     attr_accessor :record, :ticket_field, :section_data
 
     validate :empty_section_fields?, if: -> { record.present? }, on: :destroy
     validate :sections_limit, on: :create
-    validate :validate_fsm_section, if: -> { update_or_destroy? }
+    validate :validate_fsm_section, if: lambda {
+      (delete_action? && record.options[:fsm].present? && fsm_enabled_error) ||
+      (update_action? && record.options[:fsm].present?)
+    }
     validate :validate_section_label, if: -> { create_or_update? && section_data[:label].present? }
     validate :validate_section_choice_ids, if: -> { create_or_update? && section_data[:choice_ids].present? }
 
@@ -25,10 +29,6 @@ module Admin
 
       def empty_section_fields?
         errors[:existing_section_fields] << :non_empty_section_fields if record.section_fields.exists?
-      end
-
-      def validate_fsm_section
-        errors[:section] << :fsm_section_modification if record.options[:fsm].present?
       end
 
       def validate_section_label

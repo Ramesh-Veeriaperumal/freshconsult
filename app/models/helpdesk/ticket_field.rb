@@ -933,6 +933,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
     default_choices_fields.include?(field_type)
   end
 
+  def fsm?
+    field_options['fsm']
+  end
+
   protected
 
     def group_agents(ticket, internal_group = false)

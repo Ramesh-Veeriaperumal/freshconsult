@@ -26576,6 +26576,9 @@
             },
             "portal_cc_to": {
               "type": "string"
+            },
+            "is_fsm": {
+              "type": "boolean"
             }
           }
         },
@@ -26759,6 +26762,9 @@
             },
             "portal_cc_to": {
               "type": "string"
+            },
+            "is_fsm": {
+              "type": "boolean"
             }
           }
         },

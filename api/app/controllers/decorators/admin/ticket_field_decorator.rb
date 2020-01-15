@@ -24,6 +24,7 @@ class Admin::TicketFieldDecorator < ApiDecorator
     response[:choices] = record.new_formatted_choices if record.choices? && !list
     section_mapping_response(record, response) if record.section_field?
     dependent_fields_response(record, response) if record.nested_field?
+    response[:is_fsm] = true if record.field_options[:fsm].present?
     response
   end
 

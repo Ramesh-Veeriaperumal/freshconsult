@@ -94,6 +94,10 @@ module Admin::TicketFieldHelper
     def update_action?
       validation_context == :update
     end
+    
+    def delete_action?
+      validation_context == :delete
+    end
 
     def show_or_index?
       validation_context == :show || validation_context == :index

@@ -239,4 +239,8 @@ module Admin::TicketFieldConstants
   PENDING_STATUS_CHOICE_ALLOWED_PARAMS = %i[stop_sla_timer].freeze
 
   DEPENDENT_FIELD_LEVELS = [2, 3].freeze
+
+  SKIP_FSM_FIELD_TYPES = %w[custom_file, custom_date_time].freeze
+
+  SERVICE_TASK_SECTION = 'Service task section'.freeze
 end
