@@ -247,10 +247,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
         # Updating count to service tasks count after removing normal child tickets.
         update_associates_count(self)
+        self.misc_changes = { association_parent_unlink_all: ids_to_remove }
       else
+        self.misc_changes = { association_parent_unlink_all: self.associates }
         nullify_assoc_type
         remove_all_associates
       end
+      self.manual_publish(nil, [:update, { misc_changes: self.misc_changes.dup }]) if self.misc_changes.present?
     end
 
     def reset_child

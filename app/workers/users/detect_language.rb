@@ -23,7 +23,7 @@ class Users::DetectLanguage < BaseWorker
     elsif account.detect_lang_from_email_service_enabled?
       set_lang_via_email_service
     else
-      @text.squish.split.first(15).join(' ')
+      @text = @text.squish.split.first(15).join(' ')
       detect_lang_from_google
     end
   rescue => e

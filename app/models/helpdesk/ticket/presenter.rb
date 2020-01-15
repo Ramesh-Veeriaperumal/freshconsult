@@ -194,7 +194,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def central_custom_fields_hash
     pv_transformer = Helpdesk::Ticketfields::PicklistValueTransformer::StringToId.new(self)
     arr = []
-    custom_ticket_fields.each do |field|
+    custom_flexifield_def_entries.each do |flexifield_def_entry|
+      field = flexifield_def_entry.ticket_field
+      next if field.blank?
+
       begin
         field_value = safe_send(field.name)
         custom_field = {
@@ -228,6 +231,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     else
       value
     end
+  end
+
+  def custom_flexifield_def_entries
+    @custom_flexifield_def_entries ||= account.flexifields_with_ticket_fields_from_cache
   end
 
   def custom_ticket_fields

@@ -1084,7 +1084,6 @@ module Ember
     end
 
     def test_twitter_reply_to_tweet_ticket
-      Account.current.stubs(:outgoing_tweets_to_tms_enabled?).returns(false)
       Sidekiq::Testing.inline! do
         with_twitter_update_stubbed do
           ticket = create_twitter_ticket
@@ -1099,43 +1098,15 @@ module Ember
           latest_note = Helpdesk::Note.last
           match_json(private_note_pattern(params_hash, latest_note))
           tweet = latest_note.tweet
-          assert_equal tweet.tweet_id, @twit.id
+          assert_equal tweet.tweet_id < 0, true, 'Tweet id should be less than zero'
           assert_equal tweet.tweet_type, params_hash[:tweet_type]
           assert_equal tweet.stream_id, @twitter_handle.default_stream.id
           ticket.destroy
         end
       end
-    ensure
-      Account.current.unstub(:outgoing_tweets_to_tms_enabled?)
     end
 
     def test_twitter_reply_to_tweet_note
-      Account.current.stubs(:outgoing_tweets_to_tms_enabled?).returns(false)
-      Sidekiq::Testing.inline! do
-        with_twitter_update_stubbed do
-          ticket = create_twitter_ticket
-          @account = Account.current
-          params_hash = {
-            body: Faker::Lorem.sentence[0..130],
-            tweet_type: 'mention',
-            twitter_handle_id: @twitter_handle.id
-          }
-          post :tweet, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
-          assert_response 201
-          latest_note = Helpdesk::Note.last
-          match_json(private_note_pattern(params_hash, latest_note))
-          tweet = latest_note.tweet
-          assert_equal tweet.tweet_id, @twit.id
-          assert_equal tweet.tweet_type, params_hash[:tweet_type]
-          ticket.destroy
-        end
-      end
-    ensure
-      Account.current.unstub(:outgoing_tweets_to_tms_enabled?)
-    end
-
-    def test_twitter_reply_to_tweet_ticket_via_tms
-      Account.current.launch(:outgoing_tweets_to_tms)
       Sidekiq::Testing.inline! do
         with_twitter_update_stubbed do
           ticket = create_twitter_ticket
@@ -1156,38 +1127,9 @@ module Ember
           ticket.destroy
         end
       end
-    ensure
-      Account.current.rollback(:outgoing_tweets_to_tms)
-    end
-
-    def test_twitter_reply_to_tweet_note_via_tms
-      Account.current.launch(:outgoing_tweets_to_tms)
-      Sidekiq::Testing.inline! do
-        with_twitter_update_stubbed do
-          ticket = create_twitter_ticket
-          @account = Account.current
-          params_hash = {
-            body: Faker::Lorem.sentence[0..130],
-            tweet_type: 'mention',
-            twitter_handle_id: @twitter_handle.id
-          }
-          post :tweet, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
-          assert_response 201
-          latest_note = Helpdesk::Note.last
-          match_json(private_note_pattern(params_hash, latest_note))
-          tweet = latest_note.tweet
-          assert_equal tweet.tweet_id < 0, true, 'Tweet id should be less than zero'
-          assert_equal tweet.tweet_type, params_hash[:tweet_type]
-          assert_equal tweet.stream_id, @twitter_handle.default_stream.id
-          ticket.destroy
-        end
-      end
-    ensure
-      Account.current.rollback(:outgoing_tweets_to_tms)
     end
 
     def test_twitter_reply_to_tweet_ticket_with_attachments
-      Account.current.stubs(:outgoing_tweets_to_tms_enabled?).returns(false)
       attachment_ids = []
       file = fixture_file_upload('files/image4kb.png', 'image/png')
       attachment_ids << create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
@@ -1209,7 +1151,7 @@ module Ember
           match_json(private_note_pattern(params_hash, latest_note))
           file_name = "tempfile-#{@account.id}-#{@twitter_handle.id}-#{latest_note.attachments[0].id}"
           tweet = latest_note.tweet
-          assert_equal tweet.tweet_id, @twit.id
+          assert_equal tweet.tweet_id < 0, true, 'Tweet id should be less than zero'
           assert_equal tweet.tweet_type, params_hash[:tweet_type]
           assert_equal File.exists?(file_name), false
         end
@@ -1217,7 +1159,6 @@ module Ember
       ticket.destroy
     ensure
       @account.rollback(:twitter_mention_outgoing_attachment)
-      Account.current.unstub(:outgoing_tweets_to_tms_enabled?)
     end
 
     def test_twitter_reply_to_tweet_ticket_more_than_280_limit
@@ -1273,7 +1214,6 @@ module Ember
     end
 
     def test_twitter_mention_reply_to_dm_ticket_in_tms
-      Account.current.launch(:outgoing_tweets_to_tms)
       Sidekiq::Testing.inline! do
         with_twitter_update_stubbed do
           ticket = create_twitter_ticket({tweet_type: 'dm'})
@@ -1293,8 +1233,6 @@ module Ember
           ticket.destroy
         end
       end
-    ensure
-        Account.current.rollback(:outgoing_tweets_to_tms)
     end
 
     def test_ticket_conversations

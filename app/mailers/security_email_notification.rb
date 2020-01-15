@@ -4,14 +4,14 @@ class SecurityEmailNotification < ActionMailer::Base
 
   AUTO_REPLY_EMAIL_HEADERS = {
     "Reply-to" => "",
-    "Auto-Submitted" => "auto-generated", 
+    "Auto-Submitted" => "auto-generated",
     "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
   }.freeze
 
   # DEPRECATED Can be removed in an upcoming release
   def agent_alert_mail(model, subject, changed_attributes)
     begin
-      # sending this email via account's primary email config so that if the customer wants this emails 
+      # sending this email via account's primary email config so that if the customer wants this emails
       # to be sent via custom mail server, simply switching the primary email config will do
       email_config = Account.current.primary_email_config
       configure_email_config email_config
@@ -24,7 +24,7 @@ class SecurityEmailNotification < ActionMailer::Base
                             account_name: model.account.name),
         :sent_on => Time.now,
         "Reply-to" => "",
-        "Auto-Submitted" => "auto-generated", 
+        "Auto-Submitted" => "auto-generated",
         "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
       }
 
@@ -49,19 +49,19 @@ class SecurityEmailNotification < ActionMailer::Base
 
   def agent_update_alert(model, changed_attributes)
     begin
-      # sending this email via account's primary email config so that if the customer wants this emails 
+      # sending this email via account's primary email config so that if the customer wants this emails
       # to be sent via custom mail server, simply switching the primary email config will do
       email_config = Account.current.primary_email_config
       configure_email_config email_config
       Time.zone = model.time_zone
 
       headers = construct_headers({
-        to: model.email, 
+        to: model.email,
         from: Account.current.default_friendly_email,
         subject: I18n.t('mailer_notifier_subject.agent_details_updated',
                             changed_attributes: changed_attributes.to_sentence,
                             account_name: model.account.name),
-        sent_on: Time.now 
+        sent_on: Time.now
       }, Account.current.id, "Agent Alert Email")
       headers.merge!({"X-FD-Email-Category" => email_config.category}) if email_config.category.present?
       @changes = changed_attributes
@@ -125,11 +125,11 @@ class SecurityEmailNotification < ActionMailer::Base
       Time.zone = model.time_zone
 
       headers = construct_headers({
-        to: to, 
+        to: to,
         from: Account.current.default_friendly_email,
         subject: I18n.t('mailer_notifier_subject.agent_email_changed',
                       portal_name: model.account.helpdesk_name),
-        sent_on: Time.now 
+        sent_on: Time.now
       }, Account.current.id, "Agent Email Change")
       headers.merge!({"X-FD-Email-Category" => email_config.category}) if email_config.category.present?
       @changes = changed_attributes
@@ -185,5 +185,5 @@ class SecurityEmailNotification < ActionMailer::Base
   # TODO-RAILS3 Can be removed oncewe fully migrate to rails3
   # Keep this include at end
   include MailerDeliverAlias
-    
+
 end

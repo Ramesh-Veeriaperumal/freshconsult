@@ -927,7 +927,7 @@ module ApiTicketsTestHelper
   end
 
   def new_freshcaller_call
-    create_test_freshcaller_account unless account.freshcaller_account.present?
+    create_test_freshcaller_account if @account.freshcaller_account.blank?
     @call = create_freshcaller_call
   end
 
@@ -943,9 +943,9 @@ module ApiTicketsTestHelper
     @call.build_recording_audio(content: @data).save
   end
 
-  def new_ticket_from_call
+  def new_ticket_from_call(ticket = nil)
     new_fone_call
-    @ticket = create_ticket
+    @ticket = ticket || create_ticket
     associate_call_to_item(@ticket)
 
     new_fone_call
@@ -954,10 +954,10 @@ module ApiTicketsTestHelper
     @ticket
   end
 
-  def new_ticket_from_freshcaller_call
+  def new_ticket_from_freshcaller_call(ticket = nil)
     new_freshcaller_call
-    @ticket = create_ticket
-    associate_call_to_item(note)
+    @ticket = ticket || create_ticket
+    associate_call_to_item(@ticket)
 
     new_freshcaller_call
     note = create_normal_reply_for(@ticket)

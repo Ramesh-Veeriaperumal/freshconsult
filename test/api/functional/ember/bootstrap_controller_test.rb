@@ -19,6 +19,15 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     match_json(index_pattern(@agent.agent, Account.current, Account.current.portals.first))
   end
 
+  def test_index_with_field_agents_manage_appointments_setting_launch_party_enabled
+    Account.current.launch(:field_agents_can_manage_appointments_setting)
+    get :index, controller_params(version: 'private')
+    assert_response 200
+    match_json(index_pattern(@agent.agent, Account.current, Account.current.portals.first))
+  ensure
+    Account.current.rollback(:field_agents_can_manage_appointments_setting)
+  end
+
   def test_me
     get :me, controller_params(version: 'private')
     assert_response 200
@@ -454,6 +463,20 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
   ensure
     Subscription.unstub(:field_agent_limit)
     Account.unstub(:field_service_management_enabled?)
+  end
+
+  def test_account_with_field_service_management_enabled_and_field_agents_manage_appointments_setting_launch_party_enabled
+    Account.current.launch(:field_agents_can_manage_appointments_setting)
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    Subscription.any_instance.stubs(:field_agent_limit).returns(5)
+    get :account, controller_params(version: 'private')
+    parsed_response = parse_response response.body
+    assert_response 200
+    assert_equal parsed_response['account']['subscription']['field_agent_limit'], 5
+  ensure
+    Subscription.unstub(:field_agent_limit)
+    Account.unstub(:field_service_management_enabled?)
+    Account.current.rollback(:field_agents_can_manage_appointments_setting)
   end
 
   def test_account_with_field_service_management_not_enabled

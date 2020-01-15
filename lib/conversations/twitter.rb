@@ -31,13 +31,9 @@ module Conversations::Twitter
         unless latest_tweet.stream_id.blank?
           stream = current_account.twitter_streams.find_by_id(latest_tweet.stream_id)
           stream_id = "#{current_account.id}_#{latest_tweet.stream_id}"
-          if stream && stream.default_stream?
-            update_dynamo_for_tweet(twt, status_id, stream_id, note)
-          elsif stream && stream.custom_stream?
-            dynamo_helper = Social::Dynamo::Twitter.new
-            reply_params = agent_reply_params(twt, status_id, note)
-            dynamo_helper.update_custom_streams_reply(reply_params, stream_id, note)
-          end
+          dynamo_helper = Social::Dynamo::Twitter.new
+          reply_params = agent_reply_params(twt, status_id, note)
+          dynamo_helper.update_custom_streams_reply(reply_params, stream_id, note)
         end
 
         process_tweet note, twt, reply_handle_id, :mention

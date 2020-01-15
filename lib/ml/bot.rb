@@ -7,12 +7,13 @@ module Ml
             method: :post,
             url: BOT_CONFIG[:ml_onboarding_url],
             payload: ml_request_body(bot),
+            timeout: 5,
             headers: {
               'Content-Type' => 'application/json',
               'Authorization' => BOT_CONFIG[:ml_authorization_key]
             }
           )
-        rescue RestClient::RequestFailed, RestClient::ResourceNotFound => e
+        rescue RestClient::RequestFailed, RestClient::ResourceNotFound, RestClient::RequestTimeout => e
           return e.response
         end
         JSON.parse(response)['result']['success']

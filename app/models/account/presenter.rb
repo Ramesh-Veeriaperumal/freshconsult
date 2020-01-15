@@ -17,6 +17,7 @@ class Account < ActiveRecord::Base
     s.add :reputation
     s.add :account_type_hash, as: :account_type
     s.add :premium
+    s.add :set_portal_languages, as: :portal_languages
     s.add proc { |x| x.features_list }, as: :features
     s.add proc { |x| x.utc_format(x.created_at) }, as: :created_at
     s.add proc { |x| x.utc_format(x.updated_at) }, as: :updated_at
@@ -68,6 +69,13 @@ class Account < ActiveRecord::Base
       id: account_type, 
       name: ACCOUNT_TYPES.key(account_type)
     }
+  end
+
+  def set_portal_languages
+    if self.account_additional_settings.present? && self.account_additional_settings.portal_languages.present?
+      return self.account_additional_settings.portal_languages
+    end
+    []
   end
 
   def self.disallow_payload?(payload_type)

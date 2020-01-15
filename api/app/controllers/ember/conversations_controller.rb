@@ -542,14 +542,14 @@ module Ember
         reply_handle = current_account.twitter_handles.find_by_id(@twitter_handle_id)
         stream = fetch_stream(reply_handle, @tweet_type)
         tweet_id = random_tweet_id
-        if dm_note? || outgoing_tweets_in_tms?(stream)
+        unless stream.custom_stream?
           stream_id = stream.id
           @item.build_tweet(tweet_id: tweet_id,
                             tweet_type: @tweet_type,
                             twitter_handle_id: @twitter_handle_id, stream_id: stream_id)
         end
         if @item.save_note
-          if stream.custom_stream? || (!current_account.outgoing_tweets_to_tms_enabled? && mention_note?)
+          if stream.custom_stream?
             Social::TwitterReplyWorker.perform_async(ticket_id: @ticket.id, note_id: @item.id,
                                                      tweet_type: @tweet_type,
                                                      twitter_handle_id: @twitter_handle_id)
@@ -688,18 +688,6 @@ module Ember
         else
           reply_handle.default_stream
         end
-      end
-
-      def outgoing_tweets_in_tms?(stream)
-        current_account.outgoing_tweets_to_tms_enabled? && stream.default_stream?
-      end
-
-      def dm_note?
-        @tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:dm]
-      end
-
-      def mention_note?
-        @tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention]
       end
 
       wrap_parameters(*wrap_params)

@@ -3,4 +3,6 @@ type: object
 properties:
   steps:
     type: array
+    items:
+      type: string
     description: step to be completed

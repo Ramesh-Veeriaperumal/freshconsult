@@ -544,7 +544,7 @@ class Subscription < ActiveRecord::Base
     begin
       if addons.any? { |addon| addon.name == addon_name }
         new_addons = addons.reject { |addon| addon.name == addon_name }
-        Billing::Subscription.new.update_subscription(self, prorate_on_addons_removal?, new_addons)
+        Billing::Subscription.new.update_subscription(self, prorate_on_addons_removal?, new_addons) unless Subscription::Addon::FSM_ADDON == addon_name && field_agent_limit.to_i.zero?
         self.addons = new_addons
         save
       end

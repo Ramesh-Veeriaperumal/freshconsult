@@ -383,38 +383,20 @@ class Social::TwitterController < Social::BaseController
         :account_id => current_account.id,
         :user_id    => current_user.id
       )
-      if current_account.outgoing_tweets_to_tms_enabled?
-        reply_handle = current_account.twitter_handles.find_by_id(params[:twitter_handle])
-        stream = reply_handle.default_stream
-        tweet_id = random_tweet_id
-        stream_id = stream.id
-        note.build_tweet(tweet_id: tweet_id,
-          tweet_type: Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention],
-          twitter_handle_id: params[:twitter_handle], stream_id: stream_id)
-        if note.save_note
-          reply_hash = construct_twitter_reply_hash(note, reply_handle)
-          @interactions[:current] << recent_agent_reply(reply_hash, note)
-          MOBILE_TWITTER_RESPONSE_CODES[:reply_success]
-        else
-          flash.now[:notice] = t(:'flash.tickets.reply.failure')
-          MOBILE_TWITTER_RESPONSE_CODES[:reply_failure]
-        end
+      reply_handle = current_account.twitter_handles.find_by_id(params[:twitter_handle])
+      stream = reply_handle.default_stream
+      tweet_id = random_tweet_id
+      stream_id = stream.id
+      note.build_tweet(tweet_id: tweet_id,
+                       tweet_type: Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention],
+                       twitter_handle_id: params[:twitter_handle], stream_id: stream_id)
+      if note.save_note
+        reply_hash = construct_twitter_reply_hash(note, reply_handle)
+        @interactions[:current] << recent_agent_reply(reply_hash, note)
+        MOBILE_TWITTER_RESPONSE_CODES[:reply_success]
       else
-        saved = note.save_note
-        if saved
-          twitter_handle_id = params[:twitter_handle_id]
-          error_message, reply_twt = send_tweet_as_mention(twitter_handle_id, ticket, note, tweet_body)
-          if error_message.blank?
-            @interactions[:current] << recent_agent_reply(reply_twt.attrs, note) if reply_twt
-            MOBILE_TWITTER_RESPONSE_CODES[:reply_success]
-          else
-            flash.now[:notice] = error_message
-            MOBILE_TWITTER_RESPONSE_CODES[:not_authorized]
-          end
-        else
-          flash.now[:notice] = t(:'flash.tickets.reply.failure')
-          MOBILE_TWITTER_RESPONSE_CODES[:reply_failure]
-        end
+        flash.now[:notice] = t(:'flash.tickets.reply.failure')
+        MOBILE_TWITTER_RESPONSE_CODES[:reply_failure]
       end
     else
       flash.now[:notice] = error_message

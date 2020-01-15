@@ -195,7 +195,8 @@ module Admin::AutomationHelper
         value = level.try(:[], :value) || parent_value || "" # in case of only two value in nested field
         name = is_event ? nested_field.column_name : nested_field.name
         data << { name: name, value: value }
-        parent_value = _any_none(parent_value)
+        # For 'level3' nested_filed the parent value should be the value of 'level2' nested_field.
+        parent_value = _any_none(value)
       end
       data
     end

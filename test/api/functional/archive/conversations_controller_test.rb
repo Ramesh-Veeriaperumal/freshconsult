@@ -17,14 +17,7 @@ class Archive::ConversationsControllerTest < ActionController::TestCase
     ArchiveNoteConfig[current_shard] = 0
     @account.make_current
     @account.enable_ticket_archiving(ARCHIVE_DAYS)
-    @account.features.send(:archive_tickets).create
-    create_archive_ticket_with_assoc(
-      created_at: TICKET_UPDATED_DATE,
-      updated_at: TICKET_UPDATED_DATE,
-      create_conversations: true, 
-      create_association: true,
-      create_note_association: true
-    )
+    create_archive_ticket
   end
 
   def teardown
@@ -37,7 +30,6 @@ class Archive::ConversationsControllerTest < ActionController::TestCase
       payload = note_pattern({}, note)
       archive_note_payload(note, payload)
     end
-
     get :ticket_conversations, controller_params(id: archive_ticket.display_id)
     assert_response 200
     match_json(note_json)
@@ -86,7 +78,45 @@ class Archive::ConversationsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:enabled_features_list)
   end
 
+  def test_archive_ticket_conversations_with_freshcaller_call
+    Account.any_instance.stubs(:freshcaller_enabled?).returns(true)
+    archive_ticket = create_archive_ticket({ freshcaller_call: true })
+    get :ticket_conversations, controller_params(id: archive_ticket.display_id)
+    archive_ticket.archive_notes.reload
+    assert_response 200
+    conversations = JSON.parse(response.body)
+    assert (conversations.any? { |note| note.key?('freshcaller_call') })
+  ensure
+    Account.any_instance.unstub(:freshcaller_enabled?)
+  end
+
+  def test_archive_ticket_conversations_with_fone_call
+    Account.any_instance.stubs(:freshfone_enabled?).returns(true)
+    archive_ticket = create_archive_ticket({ freshfone_call: true })
+    get :ticket_conversations, controller_params(id: archive_ticket.display_id)
+    archive_ticket.archive_notes.reload
+    assert_response 200
+    conversations = JSON.parse(response.body)
+    assert (conversations.any? { |note| note.key?('freshfone_call') })
+  ensure
+    Account.any_instance.unstub(:freshfone_enabled?)
+  end
+
   private
+
+    def create_archive_ticket(options = {})
+      @account.features.send(:archive_tickets).create
+      create_archive_ticket_with_assoc(
+        created_at: TICKET_UPDATED_DATE,
+        updated_at: TICKET_UPDATED_DATE,
+        create_conversations: true,
+        create_association: true,
+        create_note_association: true,
+        create_freshfone_call: options[:freshfone_call] || false,
+        create_freshcaller_call: options[:freshcaller_call] || false
+      )
+      @account.archive_tickets.last
+    end
 
     def archive_note_payload(note, payload)
       payload.merge!({

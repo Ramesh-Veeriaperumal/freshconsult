@@ -104,7 +104,6 @@ module Ember
             Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
             fields_count_before_installation = Account.current.ticket_fields.size
             total_fsm_fields_count = fsm_custom_field_to_reserve.size
-            Account.current.subscription.update_attributes(additional_info: { field_agent_limit: 10 })
             Sidekiq::Testing.inline! do
               post :create, construct_params({ version: 'private' }, name: 'field_service_management')
             end
@@ -117,7 +116,6 @@ module Ember
             widgets = dashboard.first.widgets
             assert_equal widgets.count, FSM_WIDGETS_COUNT
             assert Account.current.ticket_filters.count == old_ticket_filter_count + FSM_TICKET_FILTER_COUNT
-            assert Account.current.subscription.additional_info[:field_agent_limit].present? == false
             pick_list_id = Account.current.ticket_types_from_cache.find { |x| x.value == SERVICE_TASK_TYPE }.id
             widget = widgets.find { |element| element.name == I18n.t('fsm_dashboard.widgets.' + SERVICE_TASKS_INCOMING_TREND_WIDGET_NAME) }
             assert_equal widget[:config_data][:ticket_type], pick_list_id
@@ -551,6 +549,7 @@ module Ember
       def test_fsm_disable_failure
         Subscription.any_instance.stubs(:addons).returns([Subscription::Addon.new])
         Subscription::Addon.any_instance.stubs(:name).returns(Subscription::Addon::FSM_ADDON)
+        Subscription.any_instance.stubs(:field_agent_limit).returns(1)
         Billing::Subscription.any_instance.stubs(:update_subscription).raises(RuntimeError)
         Ember::Admin::AdvancedTicketingControllerTest.any_instance.expects(:notify_fsm_dev).once
         cleanup_fsm
@@ -558,6 +557,7 @@ module Ember
         Billing::Subscription.any_instance.unstub(:update_subscription)
         Subscription::Addon.any_instance.unstub(:name)
         Subscription.any_instance.unstub(:addons)
+        Subscription.any_instance.unstub(:field_agent_limit)
       end
 
       def test_fsm_artifacts_with_8_date_fields

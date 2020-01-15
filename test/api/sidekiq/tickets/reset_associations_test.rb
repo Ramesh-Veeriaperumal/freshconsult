@@ -30,13 +30,20 @@ class ResetAssociationsTest < ActionView::TestCase
 
   def test_reset_associations_for_parent_ticket
     enable_adv_ticketing([:parent_child_tickets]) do
+      Account.current.launch(:ticket_central_publish)
       create_parent_child_tickets
+      associates = @parent_ticket.associates
+      "CentralPublishWorker::#{Account.current.subscription.state.titleize}TicketWorker".constantize.jobs.clear
       Tickets::ResetAssociations.new.perform(ticket_ids: [@parent_ticket.display_id])
+      job = "CentralPublishWorker::#{Account.current.subscription.state.titleize}TicketWorker".constantize.jobs.last
       @parent_ticket.reload
       @child_ticket.reload
       assert_equal @parent_ticket.association_type, nil
       assert_equal @child_ticket.association_type, nil
+      assert_equal job['args'][1]['misc_changes'], 'association_parent_unlink_all' => associates
     end
+  ensure
+    Account.current.rollback(:ticket_central_publish)
   end
 
   def test_reset_associations_for_child_ticket

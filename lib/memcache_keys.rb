@@ -71,9 +71,9 @@ module MemcacheKeys
 
   ACCOUNT_NESTED_FIELDS = "v4/ACCOUNT_NESTED_FIELDS:%{account_id}"
 
-  ACCOUNT_EVENT_FIELDS = "v2/ACCOUNT_EVENT_FIELDS:%{account_id}"
+  ACCOUNT_EVENT_FIELDS = "v3/ACCOUNT_EVENT_FIELDS:%{account_id}".freeze
 
-  ACCOUNT_FLEXIFIELDS = "v2/ACCOUNT_FLEXIFIELDS:%{account_id}"
+  ACCOUNT_FLEXIFIELDS = "v3/ACCOUNT_FLEXIFIELDS:%{account_id}".freeze
 
   ACCOUNT_TICKET_FIELDS = "v3/ACCOUNT_TICKET_FIELDS:%{account_id}"
 
@@ -166,7 +166,7 @@ module MemcacheKeys
 
   POD_SHARD_ACCOUNT_MAPPING = "v3/POD_SHARD_ACCOUNT_MAPPING:%{pod_info}:%{shard_name}"
 
-  ACCOUNT_ADDITIONAL_SETTINGS = 'v4/ACCOUNT_ADDITIONAL_SETTINGS:%{account_id}'.freeze
+  ACCOUNT_ADDITIONAL_SETTINGS = 'v5/ACCOUNT_ADDITIONAL_SETTINGS:%{account_id}'.freeze
 
   INSTALLED_FRESHPLUGS = "v3/FA:%{page}:PLUGS:%{account_id}:%{platform_version}"
 

@@ -15,7 +15,7 @@ class Helpdesk::Note < ActiveRecord::Base
   before_destroy :save_deleted_note_info
 
   after_create :update_content_ids, :update_parent, :add_activity
- 
+
   after_commit :fire_create_event, on: :create
   # Doing update note count before pushing to ticket_states queue
   # So that note count will be reflected if the rmq publish happens via ticket states queue
@@ -110,7 +110,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   protected
-
+  
     def update_response_violation
       schema_less_note.response_violated = (notable.nr_due_by < (created_at || Time.zone.now))
       notable.nr_violated = schema_less_note.response_violated unless notable.nr_violated?
@@ -206,8 +206,9 @@ class Helpdesk::Note < ActiveRecord::Base
                                                                              ignore_emails: ignore_emails}) unless notable.spam?
         end
 
+        # Fix for FD-36412: When agent's email_id is present in to_list of the 'Add Note' section, agent is getting 2 emails, one for being added to the list and the other for being the agent for that ticket. To avoid that duplicate emails issue, we added this 'unless' condition here.
         # Jira notes notifier was sending emails for portal added notes with no notifying emails. Added a to emails check to prevent that.
-        integrations_private_note_notifications unless replied_by_customer? || to_emails.blank?
+        integrations_private_note_notifications unless replied_by_customer? || to_emails.include?(notable.agent.email)
 
       else
         #notify the agents only for notes
@@ -505,7 +506,7 @@ class Helpdesk::Note < ActiveRecord::Base
       return if import_note
       Helpdesk::TicketNotifier.send_later(:deliver_forward, notable, self) unless only_kbase?
       create_fwd_note_activity(self.to_emails) if create_activity
-    end   
+    end
 
     def update_sla_violation?
       Account.current.next_response_sla_enabled? && notable.nr_due_by.present? && !private? && notable.agent_performed?(user) && !notable.outbound_email?

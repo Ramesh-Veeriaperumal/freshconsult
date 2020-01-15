@@ -21,9 +21,25 @@ class AccountAdditionalSettings < ActiveRecord::Base
   validate :validate_bcc_emails
   validate :validate_supported_languages
   validate :validate_portal_languages, :if => :multilingual?
+  after_commit :publish_account_central_payload, on: :update
 
   def toggle_skip_mandatory_option(boolean_value)
     additional_settings[:skip_mandatory_checks] = boolean_value
+    save!
+  end
+
+  def save_field_service_management_settings(params)
+    fsm_settings_default_value_hash = Admin::AdvancedTicketing::FieldServiceManagement::Constant::FSM_SETTINGS_DEFAULT_VALUES
+    fsm_additional_settings = additional_settings[:field_service_management]
+    params.each do |key, value|
+      if fsm_settings_default_value_hash[key.to_sym] == value
+        fsm_additional_settings.delete(key.to_sym) if fsm_additional_settings.present?
+      else
+        fsm_additional_settings ||= {}
+        fsm_additional_settings[key.to_sym] = value
+      end
+    end
+    additional_settings[:field_service_management] = fsm_additional_settings
     save!
   end
 
@@ -52,6 +68,10 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def had_supported_languages?
     !supported_languages_was.nil?
+  end
+
+  def portal_languages
+    additional_settings[:portal_languages]
   end
 
   def notes_order=(val)
@@ -103,6 +123,10 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def max_template_limit
     additional_settings[:max_template_limit] unless additional_settings.blank?
+  end
+
+  def max_skills_per_account
+    additional_settings.present? ? (additional_settings[:max_skills_limit] || DEFAULT_SKILL_LIMIT) : DEFAULT_SKILL_LIMIT
   end
 
   def freshmarketer_linked?
@@ -258,6 +282,20 @@ class AccountAdditionalSettings < ActiveRecord::Base
     @portal_languages_changed = false
   end
 
+  def publish_account_central_payload
+    model_changes = construct_model_changes
+    if model_changes.present?
+      account.model_changes = construct_model_changes
+      account.manual_publish_to_central(nil, :update, nil, false)
+    end
+  end
+
+  def construct_model_changes
+    changes = {}
+    changes[:portal_languages] = [@portal_languages_was, portal_languages] if @portal_languages_changed
+    changes
+  end
+
   def clear_cache
     self.account.clear_account_additional_settings_from_cache
     self.account.clear_api_limit_cache
@@ -265,6 +303,10 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def set_default_rlimit
     self.resource_rlimit_conf = self.resource_rlimit_conf.presence || DEFAULT_RLIMIT
+  end
+
+  def load_state
+    @portal_languages_was = portal_languages
   end
 
   def validate_supported_languages

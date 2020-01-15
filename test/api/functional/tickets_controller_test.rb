@@ -23,6 +23,7 @@ class TicketsControllerTest < ActionController::TestCase
   include ::Admin::AdvancedTicketing::FieldServiceManagement::Constant
   include PrivilegesHelper
   include ApiTicketsTestHelper
+  include FieldServiceManagementTestHelper
   CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
 
   VALIDATABLE_CUSTOM_FIELDS =  %w(number checkbox decimal text paragraph date)
@@ -6062,6 +6063,176 @@ class TicketsControllerTest < ActionController::TestCase
       login_as(ticket_restricted_agent)
       put :update, construct_params({ id: ticket.display_id, tracker_id: nil, status: 5 }, false)
       assert_response 403
+    end
+  end
+
+  def test_field_agent_update_appointments_with_field_agents_manage_appointments_setting_enabled_with_launch_party_enabled
+    enable_adv_ticketing([:field_service_management]) do
+      begin
+        perform_fsm_operations
+        Account.stubs(:current).returns(Account.first)
+        Account.current.launch(:field_agents_can_manage_appointments_setting)
+        current_user = User.current
+        enable_field_agents_can_manage_appointments_option
+        Account.current.reload
+        time = Time.zone.now
+        field_agent = create_field_agent
+        fsm_ticket = create_service_task_ticket(fsm_contact_name: 'User', fsm_service_location: 'Location', fsm_phone_number: '9912345678',
+                                                fsm_appointment_start_time: time.utc.iso8601, fsm_appointment_end_time: (time + 1.hour).utc.iso8601, responder_id: field_agent.id)
+        params = { custom_fields: { cf_fsm_appointment_start_time: (time - 1.hour).utc.iso8601 } }
+        login_as(field_agent)
+        put :update, construct_params({ id: fsm_ticket.display_id }, params)
+        assert_response 200
+      ensure
+        log_out
+        current_user.make_current
+        cleanup_fsm
+        Account.current.rollback(:field_agents_can_manage_appointments_setting)
+        Account.unstub(:current)
+      end
+    end
+  end
+
+  def test_field_agent_update_appointments_with_field_agents_manage_appointments_setting_disabled_with_launch_party_enabled
+    enable_adv_ticketing([:field_service_management]) do
+      begin
+        perform_fsm_operations
+        Account.stubs(:current).returns(Account.first)
+        Account.current.launch(:field_agents_can_manage_appointments_setting)
+        current_user = User.current
+        disable_field_agents_can_manage_appointments_option
+        Account.current.reload
+        time = Time.zone.now
+        field_agent = create_field_agent
+        fsm_ticket = create_service_task_ticket(fsm_contact_name: 'User', fsm_service_location: 'Location', fsm_phone_number: '9912345678',
+                                                fsm_appointment_start_time: time.utc.iso8601, fsm_appointment_end_time: (time + 1.hour).utc.iso8601, responder_id: field_agent.id)
+        params = { custom_fields: { cf_fsm_appointment_start_time: (time - 1.hour).utc.iso8601 } }
+        login_as(field_agent)
+        put :update, construct_params({ id: fsm_ticket.display_id }, params)
+        match_json(
+            { "description" => "Validation failed",
+              "errors"=>
+                  [{ "field" => "custom_fields.cf_fsm_appointment_start_time",
+                     "message" => "You are not authorized to perform this action.",
+                     "code" => "access_denied" }] })
+        assert_response 403
+      ensure
+        log_out
+        current_user.make_current
+        cleanup_fsm
+        Account.current.rollback(:field_agents_can_manage_appointments_setting)
+        enable_field_agents_can_manage_appointments_option
+        Account.unstub(:current)
+      end
+    end
+  end
+
+  def test_support_agent_update_appointments_with_field_agents_manage_appointments_setting_disabled_with_launch_party_enabled
+    enable_adv_ticketing([:field_service_management]) do
+      begin
+        perform_fsm_operations
+        Account.stubs(:current).returns(Account.first)
+        Account.current.launch(:field_agents_can_manage_appointments_setting)
+        disable_field_agents_can_manage_appointments_option
+        Account.current.reload
+        time = Time.zone.now
+        current_user = User.current
+        support_agent = add_test_agent(Account.current, role: Role.find_by_name('Agent').id)
+        support_agent.make_current
+        field_agent = create_field_agent
+        fsm_ticket = create_service_task_ticket(fsm_contact_name: 'User', fsm_service_location: 'Location', fsm_phone_number: '9912345678',
+                                                fsm_appointment_start_time: time.utc.iso8601, fsm_appointment_end_time: (time + 1.hour).utc.iso8601, responder_id: field_agent.id)
+        params = { custom_fields: { cf_fsm_appointment_start_time: (time - 1.hour).utc.iso8601 } }
+        put :update, construct_params({ id: fsm_ticket.display_id }, params)
+        assert_response 200
+      ensure
+        log_out
+        support_agent.try(:destroy)
+        current_user.make_current
+        cleanup_fsm
+        Account.current.rollback(:field_agents_can_manage_appointments_setting)
+        enable_field_agents_can_manage_appointments_option
+        Account.unstub(:current)
+      end
+    end
+  end
+
+  def test_field_agent_update_appointments_with_field_agents_manage_appointments_setting_enabled_with_launch_party_disabled
+    enable_adv_ticketing([:field_service_management]) do
+      begin
+        perform_fsm_operations
+        Account.stubs(:current).returns(Account.first)
+        current_user = User.current
+        enable_field_agents_can_manage_appointments_option
+        Account.current.reload
+        time = Time.zone.now
+        field_agent = create_field_agent
+        fsm_ticket = create_service_task_ticket(fsm_contact_name: 'User', fsm_service_location: 'Location', fsm_phone_number: '9912345678',
+                                                fsm_appointment_start_time: time.utc.iso8601, fsm_appointment_end_time: (time + 1.hour).utc.iso8601, responder_id: field_agent.id)
+        params = { custom_fields: { cf_fsm_appointment_start_time: (time - 1.hour).utc.iso8601 } }
+        login_as(field_agent)
+        put :update, construct_params({ id: fsm_ticket.display_id }, params)
+        assert_response 200
+      ensure
+        log_out
+        current_user.make_current
+        cleanup_fsm
+        Account.unstub(:current)
+      end
+    end
+  end
+
+  def test_field_agent_update_appointments_with_field_agents_manage_appointments_setting_disabled_with_launch_party_disabled
+    enable_adv_ticketing([:field_service_management]) do
+      begin
+        perform_fsm_operations
+        Account.stubs(:current).returns(Account.first)
+        current_user = User.current
+        disable_field_agents_can_manage_appointments_option
+        Account.current.reload
+        time = Time.zone.now
+        field_agent = create_field_agent
+        fsm_ticket = create_service_task_ticket(fsm_contact_name: 'User', fsm_service_location: 'Location', fsm_phone_number: '9912345678',
+                                                fsm_appointment_start_time: time.utc.iso8601, fsm_appointment_end_time: (time + 1.hour).utc.iso8601, responder_id: field_agent.id)
+        params = { custom_fields: { cf_fsm_appointment_start_time: (time - 1.hour).utc.iso8601 } }
+        login_as(field_agent)
+        put :update, construct_params({ id: fsm_ticket.display_id }, params)
+        assert_response 200
+      ensure
+        log_out
+        current_user.make_current
+        cleanup_fsm
+        enable_field_agents_can_manage_appointments_option
+        Account.unstub(:current)
+      end
+    end
+  end
+
+  def test_support_agent_update_appointments_with_field_agents_manage_appointments_setting_disabled_with_launch_party_disabled
+    enable_adv_ticketing([:field_service_management]) do
+      begin
+        perform_fsm_operations
+        Account.stubs(:current).returns(Account.first)
+        disable_field_agents_can_manage_appointments_option
+        Account.current.reload
+        time = Time.zone.now
+        current_user = User.current
+        support_agent = add_test_agent(Account.current, role: Role.find_by_name('Agent').id)
+        support_agent.make_current
+        field_agent = create_field_agent
+        fsm_ticket = create_service_task_ticket(fsm_contact_name: 'User', fsm_service_location: 'Location', fsm_phone_number: '9912345678',
+                                                fsm_appointment_start_time: time.utc.iso8601, fsm_appointment_end_time: (time + 1.hour).utc.iso8601, responder_id: field_agent.id)
+        params = { custom_fields: { cf_fsm_appointment_start_time: (time - 1.hour).utc.iso8601 } }
+        put :update, construct_params({ id: fsm_ticket.display_id }, params)
+        assert_response 200
+      ensure
+        log_out
+        support_agent.try(:destroy)
+        current_user.make_current
+        cleanup_fsm
+        enable_field_agents_can_manage_appointments_option
+        Account.unstub(:current)
+      end
     end
   end
 end
