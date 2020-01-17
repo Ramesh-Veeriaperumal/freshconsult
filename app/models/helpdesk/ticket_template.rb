@@ -1,6 +1,5 @@
 class Helpdesk::TicketTemplate < ActiveRecord::Base
 
-  include Search::ElasticSearchIndex
   include Cache::Memcache::Helpdesk::TicketTemplate
   include SanitizeSerializeValues
 
