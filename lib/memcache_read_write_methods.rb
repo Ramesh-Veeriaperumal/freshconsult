@@ -1,5 +1,7 @@
 module MemcacheReadWriteMethods
 
+  MAX_VERSION = 10
+
   def newrelic_begin_rescue(&block)
     begin
       block.call
@@ -38,8 +40,24 @@ module MemcacheReadWriteMethods
     newrelic_begin_rescue { memcache_client.set(key, value, expiry, raw) }
   end
 
+  def delete_adjacent_keys(key)
+    (1..MAX_VERSION).each do |version_num|
+      version = "v#{version_num}/"
+      next unless key.starts_with?(version)
+
+      ((version_num - 2)..version_num).each do |delete_version_num|
+        delete_version = delete_version_num < 1 ? '' : "v#{delete_version_num}/"
+        old_key = delete_version + key[2, key.length]
+        memcache_client.delete old_key
+      end
+    end
+  end
+
   def delete_from_cache(key)
-    newrelic_begin_rescue { memcache_client.delete(key) }
+    newrelic_begin_rescue do
+      delete_adjacent_keys(key)
+      memcache_client.delete(key)
+    end
   end
 
   def delete_multiple_from_cache(keys)

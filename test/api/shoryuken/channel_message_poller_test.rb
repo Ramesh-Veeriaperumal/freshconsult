@@ -289,6 +289,52 @@ class ChannelMessagePollerTest < ActionView::TestCase
     Faraday::Connection.any_instance.unstub(:post)
   end
 
+  def test_receive_reauth_facebook_page
+    fb_page = create_facebook_page
+    Faraday::Connection.any_instance.stubs(:post).returns(Faraday::Response.new(status: 202))
+    sqs_body = get_fb_reauth_required_command(fb_page.page_id, true, true)
+    push_to_channel(sqs_body)
+    @account.reload
+    fb_page.reload
+    assert_equal true, fb_page.reauth_required
+  end
+
+  def test_receive_reauth_facebook_page_no_page
+    assert_nothing_raised do
+      fb_page = create_facebook_page
+      Faraday::Connection.any_instance.stubs(:post).returns(Faraday::Response.new(status: 202))
+      sqs_body = get_fb_reauth_required_command(fb_page.page_id, true, false)
+      push_to_channel(sqs_body)
+      @account.reload
+      fb_page.reload
+      assert_equal false, fb_page.reauth_required
+    end
+  end
+
+  def test_receive_reauth_facebook_page_no_data
+    assert_nothing_raised do
+      fb_page = create_facebook_page
+      Faraday::Connection.any_instance.stubs(:post).returns(Faraday::Response.new(status: 202))
+      sqs_body = get_fb_reauth_required_command(fb_page.page_id, false, true)
+      push_to_channel(sqs_body)
+      @account.reload
+      fb_page.reload
+      assert_equal false, fb_page.reauth_required
+    end
+  end
+
+  def test_receive_reauth_facebook_page_invalid_page
+    assert_nothing_raised do
+      fb_page = create_facebook_page
+      Faraday::Connection.any_instance.stubs(:post).returns(Faraday::Response.new(status: 202))
+      sqs_body = get_fb_reauth_required_command(0, true, true)
+      push_to_channel(sqs_body)
+      @account.reload
+      fb_page.reload
+      assert_equal false, fb_page.reauth_required
+    end
+  end
+
   private
 
     def twitter_create_ticket_command(tweet_type)
@@ -464,5 +510,38 @@ class ChannelMessagePollerTest < ActionView::TestCase
           "schema_version": 1
         }
       }
+    end
+
+    def get_fb_reauth_required_command(page_id, data_required, context_required)
+      {
+        "msg_id": Faker::Lorem.characters(10),
+        "payload_type": 'helpkit_command',
+        "account_id": '1',
+        "payload": {
+          "owner": 'facebook',
+          "client": 'helpkit',
+          "account_id": @account.id,
+          "domain": @account.full_domain,
+          "pod": 'development',
+          "context": get_reauth_context(context_required, page_id),
+          "data": get_reauth_data(data_required),
+          "meta": {
+            "fallbackToReplyQueue": false,
+            "timeout": 300_00,
+            "waitForReply": false
+          },
+          "command_name": 'reauth_facebook_page',
+          "command_id": Faker::Lorem.characters(10),
+          "schema_version": 1
+        }
+      }
+    end
+
+    def get_reauth_context(context, page_id)
+      context ? { "facebook_page_id": page_id } : {}
+    end
+
+    def get_reauth_data(data)
+      data ? { "reauth_required": true } : {}
     end
 end

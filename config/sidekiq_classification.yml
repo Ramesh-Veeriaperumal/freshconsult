@@ -45,7 +45,7 @@
     - kbase_article_versions_worker
     - rts_account_create
     - kbase_approval_notification_worker
-  
+
   :bulk_api:
     - bulk_api_jobs
 
@@ -133,6 +133,7 @@
     - custom_translations_update_survey_status
     - kbase_article_versions_migration_worker
     - freshcaller_update_agents
+    - ticket_field_job
 
   :maintainence:
     - select_all_tickets

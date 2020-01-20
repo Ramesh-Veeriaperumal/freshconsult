@@ -1,6 +1,7 @@
 class Helpdesk::SectionField < ActiveRecord::Base
 
   include Helpdesk::Ticketfields::Publisher
+  include Concerns::ActsAsListPositionUpdate
 
   clear_memcache [ACCOUNT_SECTION_FIELD_PARENT_FIELD_MAPPING, ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING, TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_WITHOUT_PRODUCT, ACCOUNT_SECTION_FIELDS]
 
@@ -22,6 +23,9 @@ class Helpdesk::SectionField < ActiveRecord::Base
 
   ticket_field_publishable
 
-  acts_as_list :scope => 'account_id = #{account_id}'
-  
+  acts_as_list scope: [:account_id, :section_id]
+
+  def condition_valid?
+    Account.current.ticket_field_revamp_enabled?
+  end
 end

@@ -9,9 +9,17 @@ module Admin::TicketFieldHelper
 
   private
 
+    def ticket_field_position_validation
+      return if errors.present?
+
+      db_position = tf.frontend_to_db_position(position)
+      max_position = tf.account_ticket_field_position_mapping_from_cache[:db_to_ui][-1]
+      ticket_field_position_error(tf, max_position) if db_position.blank? && position > max_position
+    end
+
     def move_to_background_job?
       choice_count = 0
-      (@choices || []).each do |level1|
+      (cname_params[:choices] || []).each do |level1|
         next unless level1.is_a?(Hash)
         level2_choices = level1[:choices] || []
         level2_choices.each do |level2|
@@ -46,7 +54,7 @@ module Admin::TicketFieldHelper
 
     def run_validation(options = {})
       validator_klass = validation_class.new(params, @item, options)
-      delegator_klass = delegation_class.new(@item, params)
+      delegator_klass = delegation_class.new(@item, params, options)
       errors = nil
       error_options = {}
       if validator_klass.invalid?(params[:action].to_sym)
@@ -55,8 +63,6 @@ module Admin::TicketFieldHelper
       elsif delegator_klass.invalid?(params[:action].to_sym)
         errors = delegator_klass.errors
         error_options = delegator_klass.error_options
-      elsif cname_params && params[:action] == 'create'
-        cname_params[:column_name] = delegator_klass.column_name
       end
       render_errors(errors, error_options) if errors.present?
     end
@@ -87,6 +93,10 @@ module Admin::TicketFieldHelper
 
     def update_action?
       validation_context == :update
+    end
+    
+    def delete_action?
+      validation_context == :delete
     end
 
     def show_or_index?
@@ -186,11 +196,5 @@ module Admin::TicketFieldHelper
 
     def current_account
       @account ||= Account.current
-    end
-
-    def data_type_validation(field, key, type, parent)
-      if field.present? && field.is_a?(Hash) && field.key?(key) && field[key].is_a?(type)
-        invalid_data_type(parent.to_s + key.to_s, type, :invalid)
-      end
     end
 end

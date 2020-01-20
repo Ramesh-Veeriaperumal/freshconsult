@@ -124,8 +124,10 @@ module Sync::Constants
   SKIP_SYMBOLIZE_KEYS = {
     'Helpdesk::TicketTemplate' => ['template_data'],
     'PasswordPolicy' => ['configs'],
-    'Helpdesk::TicketField' => ['field_options']
-  }
+    'Helpdesk::TicketField' => ['field_options'],
+    'Helpdesk::SlaDetail' => ['sla_target_time'],
+    'Helpdesk::Section' => ['options']
+  }.freeze
 
   UNIQUE_MODEL_DATA = {
     'all_va_rules' => ['VaRule', ['name', 'rule_type']],

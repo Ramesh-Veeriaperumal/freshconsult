@@ -1,13 +1,25 @@
+require File.join(Rails.root, 'test/api/helpers/admin/section_helper')
+require File.join(Rails.root, 'test/api/helpers/admin/fsm_fields_helper')
+
 module Admin::TicketFieldHelper
+  include Admin::SectionHelper
+  include Admin::FsmFieldsHelper
+
   DROPDOWN_CHOICES_TICKET_TYPE = %w[Question Problem Incident].freeze
 
   def launch_ticket_field_revamp
     @account.launch :ticket_field_revamp
     yield
-  rescue StandardError => e
-    p e
   ensure
     @account.rollback :ticket_field_revamp
+  end
+
+  def stubs_hippa_and_custom_encrypted_field
+    Account.current.stubs(:hipaa_enabled?).returns(true)
+    Account.current.stubs(:custom_encrypted_fields_enabled?).returns(true)
+    yield
+    Account.current.unstub(:hipaa_enabled?)
+    Account.current.unstub(:custom_encrypted_fields_enabled?)
   end
 
   def default_field_deletion_error_message?(tf)
@@ -29,7 +41,7 @@ module Admin::TicketFieldHelper
       name: TicketDecorator.display_name(tf.name),
       label: tf.label,
       label_for_customers: tf.label_in_portal,
-      position: tf.position,
+      position: tf.frontend_position,
       type: tf.field_type,
       default: tf.default,
       customers_can_edit: tf.editable_in_portal,
@@ -40,10 +52,10 @@ module Admin::TicketFieldHelper
       created_at: tf.created_at.utc.iso8601,
       updated_at: tf.updated_at.utc.iso8601
     }.merge(build_choices(tf))
-      .merge(section_mappings(tf))
-      .merge(dependent_fields(tf))
-      .merge(sections(tf))
-    response_hash.merge!(has_section: true) if tf.has_sections?
+                    .merge(section_mappings(tf))
+                    .merge(dependent_fields(tf))
+                    .merge(sections(tf))
+    response_hash[:has_section] = true if tf.has_sections?
     response_hash
   end
 
@@ -83,7 +95,7 @@ module Admin::TicketFieldHelper
       end
       choices << choice
     end
-    choices.present? ? {choices: choices } : {}
+    choices.present? ? { choices: choices } : {}
   end
 
   def hash_choice(picklist, parent_choice_id)
@@ -111,22 +123,24 @@ module Admin::TicketFieldHelper
   def section_mappings(tf)
     sec_map = Account.current.section_fields.where(ticket_field_id: tf.id).map do |sf|
       {
-          section_id: sf.section_id,
-          position: sf.position
+        section_id: sf.section_id,
+        position: sf.position
       }
     end
-    sec_map.present? ? { section_mappings: sec_map } :  {}
+    sec_map.present? ? { section_mappings: sec_map } : {}
   end
 
-  def sections(tf)
-    sec = Account.current.sections.where(ticket_field_id: tf.id).map do |sec|
-      {
-          id: sec.id,
-          label: sec.label,
-          parent_ticket_field_id: tf.id,
-          choice_ids: Account.current.section_picklist_value_mappings.where(section_id: sec.id).pluck(:picklist_id),
-          ticket_field_ids: Account.current.section_fields.where(section_id: sec.id).pluck(:ticket_field_id)
+  def sections(ticket_field)
+    sec = Account.current.sections.where(ticket_field_id: ticket_field.id).map do |sec|
+      res = {
+        id: sec.id,
+        label: sec.label,
+        parent_ticket_field_id: ticket_field.id,
+        choice_ids: Account.current.section_picklist_value_mappings.where(section_id: sec.id).pluck(:picklist_id),
+        ticket_field_ids: Account.current.section_fields.where(section_id: sec.id).pluck(:ticket_field_id)
       }
+      res.merge(fsm: sec.options[:fsm]) if sec.options[:fsm]
+      res
     end
     sec.present? ? { sections: sec } : {}
   end
@@ -134,17 +148,17 @@ module Admin::TicketFieldHelper
   def dependent_fields(tf)
     nested_levels = tf.child_levels.map do |child|
       {
-          id: child.id,
-          name: TicketDecorator.display_name(child.name),
-          label: child.label,
-          label_for_customers: child.label_in_portal,
-          level: child.level,
-          ticket_field_id: tf.id,
-          created_at: child.created_at.utc.iso8601,
-          updated_at: child.updated_at.utc.iso8601
+        id: child.id,
+        name: TicketDecorator.display_name(child.name),
+        label: child.label,
+        label_for_customers: child.label_in_portal,
+        level: child.level,
+        ticket_field_id: tf.id,
+        created_at: child.created_at.utc.iso8601,
+        updated_at: child.updated_at.utc.iso8601
       }
     end
-    nested_levels.present? ? { dependent_fields: nested_levels }: {}
+    nested_levels.present? ? { dependent_fields: nested_levels } : {}
   end
 
   def create_ticket_fields_of_all_types
@@ -171,58 +185,31 @@ module Admin::TicketFieldHelper
 
   def ticket_field_common_params(args = {})
     params_hash = {
-        label: args[:label] || Faker::Lorem.characters(10),
-        label_for_customers: args[:label_for_customers] || Faker::Lorem.characters(10),
-        position: args[:position] || Faker::Number.number(2).to_i,
-        type: args[:type] || 'custom_text'
+      label: args[:label] || Faker::Lorem.characters(10),
+      label_for_customers: args[:label_for_customers] || Faker::Lorem.characters(10),
+      position: args[:position] || 1,
+      type: args[:type] || 'custom_text'
     }
     params_hash.merge(args.except(*params_hash.keys))
   end
 
   def ticket_field_portal_params(args = {})
     params_hash = {
-        required_for_closure: args[:required_for_closure] || false,
-        required_for_agents: args[:required_for_agents] || false,
-        required_for_customers: args[:required_for_customers] || false,
-        customers_can_edit: args[:customers_can_edit] || false,
-        displayed_to_customers: args[:displayed_to_customers] || false,
+      required_for_closure: args[:required_for_closure] || false,
+      required_for_agents: args[:required_for_agents] || false,
+      required_for_customers: args[:required_for_customers] || false,
+      customers_can_edit: args[:customers_can_edit] || false,
+      displayed_to_customers: args[:displayed_to_customers] || false
     }
     params_hash.merge(args.except(*params_hash.keys))
   end
 
   def section_mapping_params(args = {})
     params_hash = {
-        section_id: args[:section_id] || Faker::Number.number(2).to_i,
-        position: args[:position] || Faker::Number.number(2).to_i,
+      section_id: args[:section_id] || Faker::Number.number(2).to_i,
+      position: args[:position] || Faker::Number.number(2).to_i
     }
     params_hash.merge(args.except(*params_hash.keys))
-  end
-
-  def ticket_field_response_pattern(expected_output, ticket_field)
-    {
-        id: expected_output[:id] || ticket_field.id,
-        label: expected_output[:label] || ticket_field.label,
-        label_for_customers: expected_output[:label_for_customers] || ticket_field.label_in_portal,
-        position: ticket_field.position,
-        created_at: ticket_field.utc_format(expected_output[:created_at] || ticket_field.created_at),
-        updated_at: ticket_field.utc_format(expected_output[:updated_at] || ticket_field.updated_at),
-        name: TicketDecorator.display_name(ticket_field.name),
-        type: expected_output[:type] || ticket_field.field_type,
-        required_for_agents: expected_output[:required_for_agents] || ticket_field.required,
-        required_for_customers: expected_output[:required_for_customers] || ticket_field.required_in_portal,
-        displayed_to_customers: expected_output[:displayed_to_customers] || ticket_field.visible_in_portal,
-        customers_can_edit: expected_output[:customers_can_edit] || ticket_field.editable_in_portal,
-        required_for_closure: expected_output[:required_for_closure] || ticket_field.required_for_closure,
-        default: expected_output[:default] || ticket_field.default
-    }.stringify_keys
-  end
-
-  def section_field_response_pattern(expected_output, ticket_field)
-    section_mappings = []
-    ticket_field.section_fields.each do |sf|
-      section_mappings << { section_id: sf.section_id, position: sf.position }
-    end
-    { section_mappings: section_mappings }
   end
 
   def json_response(response)

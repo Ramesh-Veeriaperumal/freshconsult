@@ -640,6 +640,12 @@ li.nested_field{
 	}
 }
 
+.ca_content_wrapper {
+	.redactor_editor {
+		min-height: 320px;
+	}
+}
+
 .heading{
 	font-size: 18px;
 	font-weight: 300;

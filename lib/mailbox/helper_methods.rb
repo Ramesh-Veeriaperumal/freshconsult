@@ -1,5 +1,4 @@
 module Mailbox::HelperMethods
-  include Email::Mailbox::GmailOauthHelper
 
   PUBLIC_KEY = OpenSSL::PKey::RSA.new(File.read('config/cert/public.pem'))
 
@@ -52,15 +51,7 @@ module Mailbox::HelperMethods
       end
     end
 
-    def set_access_token_key(mailbox)
-      set_valid_access_token_key(mailbox.account_id, mailbox.id)
-    end
-
     def changed_credentials?(mailbox)
       mailbox.previous_changes.key?(:password)
-    end
-
-    def delete_access_token_key(mailbox)
-      delete_valid_access_token_key(mailbox.account_id, mailbox.id)
     end
 end

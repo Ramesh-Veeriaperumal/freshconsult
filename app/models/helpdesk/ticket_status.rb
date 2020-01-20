@@ -26,7 +26,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   has_many :archived_tickets, :class_name => 'Helpdesk::ArchiveTicket', :foreign_key => "status", :primary_key => "status_id",
       :conditions => proc  { "archive_tickets.account_id = #{safe_send(:account_id)}" }
 
-  has_many :status_groups, :foreign_key => :status_id, :dependent => :destroy, :inverse_of => :status
+  has_many :status_groups, :foreign_key => :status_id, :dependent => :destroy, :inverse_of => :status, autosave: true
   accepts_nested_attributes_for :status_groups, :allow_destroy => true
 
   before_save :construct_model_changes
@@ -327,15 +327,18 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   end
 
   def new_response_hash
-    {
+    response = {
       id: status_id,
       label_for_customers: Helpdesk::TicketStatus.translate_status_name(self, 'customer_display_name'),
       value: Helpdesk::TicketStatus.translate_status_name(self, 'name'),
       stop_sla_timer: stop_sla_timer,
       default: is_default,
+      position: position,
       deleted: deleted,
-      group_ids: status_groups_from_cache.map(&:group_id)
+      group_ids: status_groups.map(&:group_id)
     }
+    response.delete(:group_ids) if is_default.present?
+    response
   end
 
   private

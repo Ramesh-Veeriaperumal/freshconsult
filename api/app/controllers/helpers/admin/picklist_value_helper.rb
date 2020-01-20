@@ -1,5 +1,6 @@
 module Admin::PicklistValueHelper
   include Admin::TicketFieldConstants
+  include Admin::TicketFields::CommonHelper
   include UtilityHelper
 
   def validate_custom_choices(ticket_field, choices)
@@ -9,16 +10,57 @@ module Admin::PicklistValueHelper
 
     choices = deep_symbolize_keys(choices: choices)
     db_choices = build_custom_choices(ticket_field, choices[:choices])
-    choices_position_validation(ticket_field, db_choices)
+    # choices_position_validation(ticket_field, db_choices) # please ignore the position of choices due to issue in performance, will take that later on
     duplicate_choice_validation(ticket_field, db_choices)
-    deleted_choices_validation(ticket_field, db_choices)
+    level_wise_choice_validation(ticket_field, db_choices)
   end
 
   private
 
+    def check_choices_level(choices, max_level)
+      levels = [0] * 5
+      choices.each do |level1_choice|
+        levels[1] += 1 unless level1_choice.marked_for_destruction?
+        level1_choice.sub_level_choices.each do |level2_choice|
+          levels[2] += 1 unless level2_choice.marked_for_destruction?
+          level2_choice.sub_level_choices.each do |level3_choice|
+            levels[3] += 1 unless level3_choice.marked_for_destruction?
+          end
+        end
+      end
+      level_choices_delete_error(:choices, max_level + 1, message: :choices_depth_error) if levels[max_level + 1].to_i > 0
+      level_choices_delete_error(:choices, max_level, message: :choices_based_level_error) if levels[max_level].to_i.zero?
+    end
+
+    def level_wise_choice_validation(ticket_field, choices)
+      max_level = (ticket_field.dependent_fields.max_by(&:level) || {})[:level] || 1
+      (dependent_fields || []).each do |nested_level|
+        if nested_level[:deleted].present?
+          max_level = nested_level[:level] - 1
+          break
+        end
+        max_level = [nested_level[:level], max_level].max
+      end
+      check_choices_level(choices, max_level)
+    end
+
     def skip_ticket_field_assignment(choices)
       choices.each do |each_choice|
         each_choice.skip_ticket_field_id_assignment = true
+      end
+    end
+
+    def destroy_choices_on_nested_level_deletion(ticket_field, db_choices)
+      destroy_3rd_level = ticket_field.dependent_fields.count == 1
+      if instance_variable_defined?(:@dependent_fields) && dependent_fields.present?
+        destroy_3rd_level = dependent_fields.find { |nested_field| nested_field[:level] == DEPENDENT_FIELD_LEVELS[1] && nested_field[:deleted].present? }.present?
+      end
+      if destroy_3rd_level
+        db_choices.each do |level1_choice|
+          level1_choice.sub_level_choices.each do |level2|
+            level2.sub_level_choices.each(&:mark_for_destruction)
+          end
+        end
       end
     end
 
@@ -27,6 +69,7 @@ module Admin::PicklistValueHelper
       new_choices = construct_request_choices(ticket_field, choices)
       db_choices = merge_picklist_choices(old_choices, new_choices)
       skip_ticket_field_assignment(db_choices) unless ticket_field.new_record?
+      destroy_choices_on_nested_level_deletion(ticket_field, db_choices)
       ticket_field.parent_level_choices = db_choices
     end
 
@@ -101,13 +144,13 @@ module Admin::PicklistValueHelper
 
     def data_type_for_picklist_validation(choice, level)
       choice.each_pair do |key, value|
-        expected_type = CHOICES_EXPECTED_TYPE[(key.to_sym rescue key)]
+        expected_type = CHOICES_EXPECTED_TYPE[(begin
+                                                 key.to_sym
+                                               rescue StandardError
+                                                 key
+                                               end)]
         unexpected_value_for_attribute(:"choices[level_#{level}][#{key}]", key) if expected_type.blank? || ALLOWED_HASH_BASIC_CHOICE_FIELDS.exclude?(key)
-        if expected_type.present?
-          parent_expected_type, children_expected_type = expected_type
-          invalid_data_type(:"choices[#{key}]", expected_type, :invalid) unless valid_type?(value, parent_expected_type)
-          invalid_data_type(:"choices[#{key}][:each]", children_expected_type, :invalid) if value.is_a?(Array) && value.any? { |x| !valid_type?(x, children_expected_type) }
-        end
+        valid_data_type?("choices[level_#{level}]".intern, key, value, expected_type)
         errors["choices[level_#{level}][#{key}]".intern] << :invalid_field if key == :choices && !nested_field?
         errors["choices[level_#{level}][#{key}]".intern] << :invalid_field if key == :choices && (nested_field? && level == 3)
       end
@@ -143,19 +186,6 @@ module Admin::PicklistValueHelper
         choice[expected_key].blank?
       end
       missing_param_error("level_#{level_num}[choices]".intern, missing_params.join(', ')) if missing_params.present?
-    end
-
-    def deleted_choices_validation(ticket_field, choices)
-      level1 = 0
-      choices.each do |level1_choice|
-        level1 += 1 if level1_choice.marked_for_destruction?
-        level2 = 0
-        level1_choice.sub_level_choices.each do |level2_choice|
-          level2 += 1 if level2_choice.marked_for_destruction?
-        end
-        level_choices_delete_error(level1_choice[:value].intern, level1_choice[:value].intern) if level2 > 0 && level2 == level1_choice.sub_level_choices.length
-      end
-      level_choices_delete_error(ticket_field[:label].intern, ticket_field[:label].intern) if level1 > 0 && level1 == choices.length
     end
 
     def construct_request_choices(ticket_field, choices)

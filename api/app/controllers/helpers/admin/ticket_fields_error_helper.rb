@@ -37,6 +37,13 @@ module Admin::TicketFieldsErrorHelper
     error_options.merge!(error_message)
   end
 
+  def blank_value_for_attribute(name, value, message = :cannot_be_blank)
+    errors[name] << message
+    error_message = {}
+    error_message[name] = { name: value }
+    error_options.merge!(error_message)
+  end
+
   def limit_exceeded_error(type, limit, message = :ticket_field_exceeded_limit)
     errors[type] << message
     error_message = {}
@@ -60,6 +67,14 @@ module Admin::TicketFieldsErrorHelper
 
   def choice_position_error(tf, choice_level, to)
     name = "#{tf.label}[#{choice_level}]".intern
+    errors[name] << :invalid_position_for_choices
+    error_message = {}
+    error_message[name] = { range: to }
+    error_options.merge!(error_message)
+  end
+
+  def ticket_field_position_error(tf, to)
+    name = "#{tf.label}[:position]".intern
     errors[name] << :invalid_position_for_choices
     error_message = {}
     error_message[name] = { range: to }
@@ -100,5 +115,22 @@ module Admin::TicketFieldsErrorHelper
     error_message = {}
     error_message[name] = { level: level }
     error_options.merge!(error_message)
+  end
+
+  def choice_id_taken_error(name, choice_id, message: :choice_id_taken)
+    errors[name] << message
+    error_message = {}
+    error_message[name] = { id: choice_id }
+    error_options.merge!(error_message)
+  end
+
+  def ticket_field_job_progress_error
+    errors[:ticket_field_update] << :field_update_job_running_error
+  end
+
+  def fsm_enabled_error
+    if current_account.field_service_management_enabled?
+      errors[:field_service_management] << :fsm_enabled
+    end
   end
 end

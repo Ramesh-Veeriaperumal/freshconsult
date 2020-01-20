@@ -5,7 +5,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   validates_numericality_of :source, :status, :only_integer => true
   validates_numericality_of :requester_id, :responder_id, :only_integer => true, :allow_nil => true
   validates_inclusion_of :source, :in => 1..SOURCES.size
-  validates_exclusion_of :source, in: [SOURCE_KEYS_BY_TOKEN[:bot]], unless: :support_bot_configured?, message: I18n.t('not_supported')
+  validates_exclusion_of :source, in: [SOURCE_KEYS_BY_TOKEN[:bot]], on: :create, unless: :support_bot_configured?, message: I18n.t('not_supported')
   validates_inclusion_of :priority, :in => PRIORITY_TOKEN_BY_KEY.keys, :message=>"should be a valid priority" #for api
   validates_uniqueness_of :display_id, :scope => :account_id
   validate :due_by_validation, :if => :due_by

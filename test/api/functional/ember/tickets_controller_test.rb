@@ -758,6 +758,17 @@ module Ember
       Account.reset_current_account
     end
 
+    def test_update_without_support_bot
+      @account.add_feature(:support_bot)
+      t = create_ticket
+      t.source = 12
+      t.save!
+      @account.revoke_feature(:support_bot)
+      update_params = { status: Helpdesk::Ticketfields::TicketStatus::CLOSED }
+      put :update, construct_params({ id: t.display_id, version: 'private' }, update_params)
+      assert_response 200
+    end
+
     def test_update_ticket_file_field_with_draft_attachment
       flexifield_def = FlexifieldDef.find_by_account_id_and_module(@account.id, 'Ticket')
       file_field1_col_name = flexifield_def.first_available_column('file')

@@ -3,12 +3,12 @@ module UtilityHelper
   def deep_symbolize_keys(changes)
     symbolize = lambda do |value|
       case value
-        when Hash
-          deep_symbolize_keys(value)
-        when Array
-          value.map { |value| symbolize.call(value) }
-        else
-          value
+      when Hash
+        deep_symbolize_keys(value)
+      when Array
+        value.map { |each_value| symbolize.call(each_value) }
+      else
+        value
       end
     end
     changes.each_with_object({}) do |(key, value), result|
@@ -25,14 +25,25 @@ module UtilityHelper
     dup_values.keys
   end
 
-  def valid_type?(value, type)
+  def match_type?(value, type)
     case value
-      when type
-        true
-      when TrueClass, FalseClass
-        type == 'bool'
-      else
-        false
+    when type
+      true
+    when TrueClass, FalseClass
+      type == 'bool'
+    else
+      false
+    end
+  end
+
+  def match_children?(value, value_type, key_type = Symbol)
+    case value
+    when Array
+      value.none? { |data| !match_type?(data, value_type) }
+    when Hash
+      value.none? { |key, val| !match_type?(key, key_type) || !match_type?(val, value_type) }
+    else
+      false
     end
   end
 end

@@ -12,24 +12,21 @@ class Admin::TicketFieldsController < ApiApplicationController
 
   def create
     # Rails.logger.info "\n\n CNAME PARAMS #{params.inspect}\n\n"
-    # Rails.logger.info "\n\n CREATE \n #{@item.inspect}, \n\n #{@item.child_levels.inspect}\n\n #{@item.nested_ticket_fields.inspect}\n\n"
+    # Rails.logger.info "\n\n CREATE \n #{@item.inspect}, \n\n#{@item.flexifield_def_entry.inspect}\n\n \n\n #{@item.child_levels.inspect}\n\n #{@item.nested_ticket_fields.inspect}\n\n"
     if move_to_background_job?
-      create_without_relationship
-      Admin::TicketFieldWorker.perform_async(account_id: Account.current.id, ticket_field: @item)
+      create_without_adding_choices
     elsif !@item.save!
       render_custom_errors
     else
-      @decorated_item = @item && Admin::TicketFieldDecorator.new(@item, include: params[:include])
       render_201_with_location
     end
   end
 
   def update
     # Rails.logger.info "\n\n UPDATE PARAMS #{params.inspect}\n\n"
-    # Rails.logger.info "\n\n UPDATE \n #{@item.inspect}, \n\n #{@item.child_levels.inspect}\n\n #{@item.nested_ticket_fields.inspect}\n\n"
+    # Rails.logger.info "\n\n UPDATE \n #{@item.inspect}, \n\n#{@item.flexifield_def_entry.inspect}\n\n \n\n #{@item.child_levels.inspect}\n\n #{@item.nested_ticket_fields.inspect}\n\n"
     if move_to_background_job?
-      update_without_relationship
-      Admin::TicketFieldWorker.perform_async(account_id: Account.current.id, ticket_field: @item)
+      update_without_modifying_choices
     else
       ActiveRecord::Base.transaction do
         save_picklist_choices
@@ -37,7 +34,6 @@ class Admin::TicketFieldsController < ApiApplicationController
           render_custom_errors
         end
       end
-      @decorated_item = @item && Admin::TicketFieldDecorator.new(@item, include: params[:include])
     end
   end
 
@@ -75,14 +71,12 @@ class Admin::TicketFieldsController < ApiApplicationController
 
     def load_object
       @item = current_account.ticket_fields_with_nested_fields.find_by_id(params[:id])
-      @decorated_item = @item && Admin::TicketFieldDecorator.new(@item, include: params[:include])
-      log_and_render_404 if @item.blank? || @item.parent_id.present?
+      log_and_render_404 if @item.blank?
     end
 
     def load_objects(items = scoper)
       # This method has been overridden to avoid pagination.
       @items = items
-      @decorated_items = items.map { |item| Admin::TicketFieldDecorator.new(item, include: params[:include]) }
     end
 
     def launch_party_name
@@ -103,7 +97,7 @@ class Admin::TicketFieldsController < ApiApplicationController
 
     def scoper
       if index_or_show?
-        current_account.ticket_fields_from_cache.select(&:condition_based_field)
+        current_account.ticket_fields_from_cache.sort(&:sort_by_position_excluding_section_field).select(&:condition_based_field)
       else
         current_account.ticket_fields_with_nested_fields
       end
@@ -111,5 +105,13 @@ class Admin::TicketFieldsController < ApiApplicationController
 
     def index_or_show?
       index? || show?
+    end
+
+    def include_options
+      { include: params[:include] }
+    end
+
+    def decorator_options(options = include_options)
+      super
     end
 end

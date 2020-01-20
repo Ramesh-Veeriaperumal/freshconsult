@@ -1,30 +1,47 @@
 class Admin::TicketFieldWorker < BaseWorker
-  include Redis::RedisKeys
-  include Redis::OthersRedis
-  include Admin::TicketFieldHelper
+  include TicketFieldBuilder
 
-  sidekiq_options :queue => :ticket_field_job, :retry => 0, :failures => :exhausted
+  sidekiq_options queue: :ticket_field_job, retry: 0, failures: :exhausted
+
+  attr_accessor :validation_context, :action, :requester_params, :item, :tf
 
   def perform(args)
     args.symbolize_keys!
     account_id = args[:account_id]
     Account.find(account_id).make_current
-    tf = args[:ticket_field]
-    action = args[:action]
+    @item = @tf = Account.current.ticket_fields_with_nested_fields.find(args[:ticket_field_id])
+    self.validation_context = self.action = args[:action]
+    self.requester_params = deep_symbolize_keys(args[:requester_params] || {})
     begin
-      tf.field_options[:update_in_progress] = true
-      tf.save!
+      build_custom_choices(tf, cname_params[:choices])
+      if create?
+        tf.save!
+      else
+        ActiveRecord::Base.transaction do
+          tf.field_options[:update_in_progress] = false
+          save_picklist_choices
+          tf.save!
+        end
+      end
+    rescue StandardError => e
+      # save it in case of failure.
+      tf.reload
       tf.field_options[:update_in_progress] = false
-    rescue => e
-      set_others_redis_key(ticket_field_error_key(tf), e.inspect)
-      Rails.logger.info "Ticket field update FAILED => #{e.inspect}"
-      NewRelic::Agent.notice_error(exception, args: { account_id: Account.id, ticket_field_id: tf.id})
-      action == :create ? tf.destroy : tf.reload
+      tf.save!
+      Rails.logger.info "Choices update FAILED => #{e.inspect}"
+      NewRelic::Agent.notice_error(e, args: { account_id: account_id, ticket_field_id: args[:ticket_field_id] })
     end
   end
 
-  def ticket_field_error_key(tf)
-    format(TICKET_FIELD_UPDATE_ERROR, account_id: Account.current.id, ticket_field_id: tf.id)
+  def create?
+    action.to_s.to_sym == :create
   end
 
+  def update?
+    action.to_s.to_sym == 'update'
+  end
+
+  def cname_params
+    requester_params
+  end
 end
