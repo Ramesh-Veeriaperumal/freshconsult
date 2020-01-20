@@ -42,7 +42,7 @@ class HelpWidget < ActiveRecord::Base
   end
 
   def contact_form_require_login?
-    settings[:contact_form][:require_login]
+    contact_form_enabled? && settings[:contact_form][:require_login]
   end
 
   def build_help_widget_solution_categories(category_meta_ids)
