@@ -1334,9 +1334,9 @@
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:m2YaShQ/npq8S8WfbRZ9fe3N5sSWGzuJ:AH2NKvVASvb7Vn3dDA/+yfIZi6IaG3DjZHo=]",
             "_database": "helpkit_shard24_3",
             "_username": "dbuser",
-            "_host": "shard24.internal.poduseast1.freshdesk.com",
-            "_slave2_host": "shard24slave2.internal.poduseast1.freshdesk.com",
-            "_slave1_host": "shard24slave1.internal.poduseast1.freshdesk.com"
+            "_host": "shard24-3.internal.poduseast1.freshdesk.com",
+            "_slave2_host": "shard24-3slave2.internal.poduseast1.freshdesk.com",
+            "_slave1_host": "shard24-3slave1.internal.poduseast1.freshdesk.com"
           },
           "shard_24_4": {
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:7+Q0TT8NOoDfLeD7QqGPHugPP7artoF1:12PE14P5rzaVRxa8sacZlQ+MEA1SxgshlVk=]",
@@ -1350,9 +1350,9 @@
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:5mIjsbIKgmhJiYNV3YfRwIlCUcUtODsM:4/NsUYaxE93ZX2EfTnGSlz+C6FtVsJY0T3o=]",
             "_database": "helpkit_shard24_5",
             "_username": "dbuser",
-            "_host": "shard24.internal.poduseast1.freshdesk.com",
-            "_slave2_host": "shard24slave2.internal.poduseast1.freshdesk.com",
-            "_slave1_host": "shard24slave1.internal.poduseast1.freshdesk.com"
+            "_host": "shard24-5.internal.poduseast1.freshdesk.com",
+            "_slave2_host": "shard24-5slave2.internal.poduseast1.freshdesk.com",
+            "_slave1_host": "shard24-5slave1.internal.poduseast1.freshdesk.com"
           },
           "shard_25_1": {
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:6i6x/DwmrbqYkYvyW+8A97tsBysD1dcO:+s1VazBRALHXPgk5SGwtLLb7btxRSKpFd7s=]",
