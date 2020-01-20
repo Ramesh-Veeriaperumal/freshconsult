@@ -97,7 +97,6 @@ module AccountConstants
 
   WIDGET_COUNT_FOR_PLAN = { sprout: 1, non_sprout: 5 }.freeze
   FRESHSALES_SUBSCRIPTION_URL = 'https://%{domain}/subscription'.freeze
-
   DEFAULT_SKILL_LIMIT = 180
 
   def attachment_limit

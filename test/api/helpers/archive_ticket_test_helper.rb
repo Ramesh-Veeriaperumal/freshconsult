@@ -1,4 +1,6 @@
 [ 'group_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+require 'webmock/minitest'
+
 module ArchiveTicketTestHelper
   include GroupHelper
   ARCHIVE_BODY = JSON.parse(File.read("#{Rails.root}/test/api/fixtures/archive_ticket_body.json"))['archive_ticket_association']
@@ -55,9 +57,10 @@ module ArchiveTicketTestHelper
   end
 
   def convert_ticket_to_archive(ticket)
-    Sidekiq::Testing.inline! do
-      Archive::TicketWorker.perform_async(account_id: @account.id, ticket_id: ticket.id)
-    end
+    freno_stub = stub_request(:get, 'http://freno.freshpo.com/check/ArchiveWorker/mysql/shard_1')
+                 .to_return(status: 404, body: '', headers: {})
+    Archive::TicketWorker.new.perform(account_id: @account.id, ticket_id: ticket.id)
+    remove_request_stub(freno_stub)
   end
 
   def stub_archive_assoc_for_show(association, _options = {})
