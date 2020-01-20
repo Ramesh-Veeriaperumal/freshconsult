@@ -17,13 +17,13 @@ class Users::DetectLanguage < BaseWorker
     return unless args[:user_id].present? && args[:text].present?
     account = Account.current
     @user   = account.all_users.find(args[:user_id])
-    @text   = args[:text]
+    @big_text = args[:text]
+    @text = @big_text[0..20].squish.split.first(15).join(' ')
     if account.compact_lang_detection_enabled?
       detect_lang_from_cld
     elsif account.detect_lang_from_email_service_enabled?
       set_lang_via_email_service
     else
-      @text = @text.squish.split.first(15).join(' ')
       detect_lang_from_google
     end
   rescue => e
@@ -44,7 +44,11 @@ class Users::DetectLanguage < BaseWorker
         @user.save!
       else
         Rails.logger.debug "unable to get via cld text:: #{@text}, account_id:: #{Account.current.id}"
-        detect_lang_from_google
+        if Account.current.detect_lang_from_email_service_enabled?
+          set_lang_via_email_service
+        else
+          detect_lang_from_google
+        end
       end
     end
 
@@ -61,7 +65,7 @@ class Users::DetectLanguage < BaseWorker
       response = RestClient::Request.execute(
         method: :post,
         url: "#{EMAIL_SERVICE_HOST}/#{LANGUAGE_DETECT_URL}",
-        payload: { text: @text }.to_json,
+        payload: { text: @big_text }.to_json,
         headers: {
           'Content-Type' => 'application/json',
           'Authorization' => EMAIL_SERVICE_AUTHORISATION_KEY
@@ -76,9 +80,14 @@ class Users::DetectLanguage < BaseWorker
     end
 
     def set_lang_via_email_service
-      @user.language = @user.account.language
-      language = detect_lang_from_email_service
-      @user.language = (I18n.available_locales_with_name.map { |lang, sym| sym.to_s }.include? language) ? language : @user.account.language
+      if text_available_from_cache?
+        assign_user_language
+      else
+        @user.language = @user.account.language
+        language = detect_lang_from_email_service
+        Helpdesk::DetectUserLanguage.cache_user_laguage(@text, language)
+        @user.language = I18n.available_locales_with_name.map { |lang, sym| sym.to_s }.include?(language) ? language : @user.account.language
+      end
       @user.save!
     end
 
