@@ -48,6 +48,8 @@ class User < ActiveRecord::Base
     u.add :parent_id
     u.add :unique_external_id
     u.add :import_id
+    u.add proc { |x| x.tags.collect { |tag| { id: tag.id, name: tag.name } } }, as: :tags
+    u.add proc { |x| x.user_emails.where(primary_role: false).pluck(:email) }, as: :other_emails
     u.add proc { |x| x.custom_field_hash('contact') }, as: :custom_fields, unless: proc { |t| t.helpdesk_agent? }
     DATETIME_FIELDS.each do |key|
       u.add proc { |x| x.utc_format(x.send(key)) }, as: key
@@ -97,7 +99,8 @@ class User < ActiveRecord::Base
     payload_type = central_payload_type
     return {} if CONTACT_CREATE_DESTROY.include?(payload_type) || payload_type == AGENT_UPDATE
 
-    changes = @model_changes.clone
+    changes = (@model_changes || {}).clone
+    changes = changes.merge({tags: tag_update_model_changes}) if self.tags_updated
     flexifield_changes = changes.select { |k, v| k.to_s.starts_with?(*FLEXIFIELD_PREFIXES) }
     return changes if flexifield_changes.blank?
 

@@ -6,6 +6,7 @@ class UserEmail < ActiveRecord::Base
   include Rails.application.routes.url_helpers
   include AccountConstants
 
+  PRESENTER_FIELDS_MAPPING = { 'email': 'other_emails' }.freeze
 
   API_OPTIONS = {
     :only => [:id, :email, :verified, :primary_role]
@@ -22,13 +23,13 @@ class UserEmail < ActiveRecord::Base
   before_validation :downcase_email
   
   before_save :restrict_domain, :if => :email_changed?
+  before_save :construct_model_changes
   
   # Make the verified as false if the email is changed
   before_update :change_email_status, :if => [:email_changed?]
   # Set new perishable token for activation after email is changed
   before_update :set_token, :if => [:email_changed?]
   before_update :save_model_changes
-
   before_create :set_token, :set_verified
   # after_commit :send_activation_on_create, on: :create
 
@@ -39,13 +40,14 @@ class UserEmail < ActiveRecord::Base
   after_commit :verify_account, on: :create, if: :freshid_integration_enabled_account?
 
   before_destroy :drop_authorization
-  
+  before_destroy :save_changes_before_destroy
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher 
 
   scope :primary, :conditions => {:primary_role => true}, :limit => 1
 
+  publishable on: [:create, :update, :destroy], exchange_model: :user, exchange_action: :update
 
   def self.find_email_using_perishable_token(token, age=1.weeks)
     return if token.blank?
@@ -93,6 +95,30 @@ class UserEmail < ActiveRecord::Base
 
   def esv2_fields_updated?
     email_updated?
+  end
+
+  def save_changes_before_destroy
+    changes = {}
+    PRESENTER_FIELDS_MAPPING.keys.each do |key|
+      changes[PRESENTER_FIELDS_MAPPING[key.to_sym].to_sym] = { added: [], removed: [self[key]]} if PRESENTER_FIELDS_MAPPING[key.to_sym]
+    end
+    @model_changes = changes
+  end
+
+  def construct_model_changes
+    changes = self.changes.slice(*PRESENTER_FIELDS_MAPPING.keys)
+    changes.keys.each do |key|
+      email_change = changes.delete key
+      if PRESENTER_FIELDS_MAPPING[key.to_sym]
+        changes[PRESENTER_FIELDS_MAPPING[key.to_sym]] = { added: [email_change[1]], removed: [] }
+        changes[PRESENTER_FIELDS_MAPPING[key.to_sym]][:removed] << email_change[0] if transaction_include_action?(:update)
+      end
+    end
+    @model_changes = changes
+  end
+
+  def override_exchange_model(_action)
+    user.model_changes = @model_changes
   end
 
   protected

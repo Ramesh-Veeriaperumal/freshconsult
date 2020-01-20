@@ -131,6 +131,8 @@ module ModelsUsersTestHelper
       last_login_at: user.last_login_at.try(:utc).try(:iso8601), 
       current_login_at: user.current_login_at.try(:utc).try(:iso8601), 
       last_seen_at: user.last_seen_at.try(:utc).try(:iso8601), 
+      tags: user.tags.collect { |tag| { id: tag.id, name: tag.name } },
+      other_emails: user.user_emails.where(primary_role: false).pluck(:email),
       blocked_at: user.blocked_at.try(:utc).try(:iso8601), 
       deleted_at: user.deleted_at.try(:utc).try(:iso8601), 
       created_at: user.created_at.try(:utc).try(:iso8601), 
