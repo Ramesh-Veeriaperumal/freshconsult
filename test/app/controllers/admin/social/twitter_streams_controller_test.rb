@@ -26,6 +26,15 @@ class Admin::Social::TwitterStreamsControllerTest < ActionController::TestCase
     twitter_stream
   end
 
+  def create_new_custom_stream(twitter_handle)
+    twitter_stream = FactoryGirl.build(:seed_twitter_stream)
+    twitter_stream.account_id = @account.id
+    twitter_stream.social_id = twitter_handle.id
+    twitter_stream.save!
+    twitter_stream.populate_accessible(Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all])
+    twitter_stream
+  end
+
   def create_new_handle
     twitter_handle = FactoryGirl.build(:seed_twitter_handle)
     twitter_handle.account_id = @account.id
@@ -66,6 +75,18 @@ class Admin::Social::TwitterStreamsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:twitter_smart_filter_enabled?)
   end
 
+  def test_update_keyword_rules_without_smart_filter
+    Account.any_instance.stubs(:twitter_smart_filter_enabled?).returns(true)
+    params = controller_params(construct_stream_update_params(@stream), false)
+    params[:keyword_rules] = '1'
+    params[:smart_filter_enabled] = '0'
+    put :update, params
+    assert_response 302
+    assert_equal 1, @stream.rules.count
+  ensure
+    Account.any_instance.unstub(:twitter_smart_filter_enabled?)
+  end
+
   def test_update_stream_when_rules_deleted
     @handle.smart_filter_enabled = false
     @handle.save
@@ -77,20 +98,16 @@ class Admin::Social::TwitterStreamsControllerTest < ActionController::TestCase
   end
 
   def test_update_stream_with_keyword_rules_central_publish
-    @account.launch(:mentions_to_tms)
     @handle.smart_filter_enabled = false
     @handle.save
     params = controller_params(construct_stream_update_params(@stream), false)
     post :update, params
     assert_response 302
     assert_equal 1, @stream.rules.count
-  ensure
-    @account.rollback(:mentions_to_tms)
   end
 
   def test_update_stream_with_mention_rules_central_publish
     Account.any_instance.stubs(:twitter_smart_filter_enabled?).returns(true)
-    @account.launch(:mentions_to_tms)
     params = controller_params(construct_stream_update_params(@stream), false)
     params[:smart_filter_enabled] = '1'
     post :update, params
@@ -98,12 +115,10 @@ class Admin::Social::TwitterStreamsControllerTest < ActionController::TestCase
     assert_equal 2, @stream.rules.count
   ensure
     Account.any_instance.unstub(:twitter_smart_filter_enabled?)
-    @account.rollback(:mentions_to_tms)
   end
 
   def test_update_stream_with_smart_filter_rule_central_publish
     Account.any_instance.stubs(:twitter_smart_filter_enabled?).returns(true)
-    @account.launch(:mentions_to_tms)
     params = controller_params(construct_stream_update_params(@stream), false)
     params[:keyword_rules] = '0'
     params[:smart_filter_enabled] = '1'
@@ -113,11 +128,9 @@ class Admin::Social::TwitterStreamsControllerTest < ActionController::TestCase
     assert_equal 1, @stream.rules.count
   ensure
     Account.any_instance.unstub(:twitter_smart_filter_enabled?)
-    @account.rollback(:mentions_to_tms)
   end
 
   def test_update_stream_when_rules_deleted_central_publish
-    @account.launch(:mentions_to_tms)
     @handle.smart_filter_enabled = false
     @handle.save
     params = controller_params(construct_stream_update_params(@stream), false)
@@ -125,7 +138,28 @@ class Admin::Social::TwitterStreamsControllerTest < ActionController::TestCase
     put :update, params
     assert_response 302
     assert_equal 0, @stream.rules.count
+  end
+
+  def test_create_keyword_stream_rule
+    Account.any_instance.stubs(:twitter_smart_filter_enabled?).returns(false)
+    params = controller_params(construct_stream_update_params(@stream), false)
+    params[:keyword_rules] = '0'
+    params[:smart_filter_enabled] = '1'
+    params[:social_ticket_rule] = [{ ticket_rule_id: '', deleted: 'false', includes: 'test,testing', group_id: '' }]
+    put :update, params
+    assert_response 302
+    assert_equal 1, @stream.rules.count
   ensure
-    @account.rollback(:mentions_to_tms)
+    Account.any_instance.unstub(:twitter_smart_filter_enabled?)
+  end
+
+  def test_create_custom_stream_rule
+    @stream = create_new_custom_stream(@handle)
+    params = controller_params(construct_stream_update_params(@stream), false)
+    params[:keyword_rules] = '0'
+    params[:smart_filter_enabled] = '1'
+    put :update, params
+    assert_response 302
+    assert_equal 1, @stream.ticket_rules.count
   end
 end

@@ -16,13 +16,10 @@ class TwitterMentionsTest < ActiveSupport::TestCase
   end
 
   def test_source_additional_info_twitter_handle_destroy_note_update
-    @account.launch(:mentions_to_tms)
     handle = create_twitter_handle
     stream = create_mention_stream(handle.id)
     rule = create_smart_filter_rule(stream)
     payload = stream.central_publish_payload.to_json
     payload.must_match_json_expression(mention_stream_publish_pattern(stream))
-  ensure
-    @account.rollback(:mentions_to_tms)
   end
 end
