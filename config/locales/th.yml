@@ -2498,7 +2498,7 @@ th:
         facebook-setting: เฟชบุ๊ค
         security: ระบบรักษาความปลอดภัย
         email_commands_setting: อีเมล์สั่งงาน
-        billing: แผนและการชำระเงิน
+        billing: แพ็คเกจและการเรียกเก็บเงิน
         phone-channel: โทรศัพท์
         tags: ป้ายกำกับ
         mobihelp: MobiHelp
@@ -6628,7 +6628,7 @@ th:
   lead: นำ
   comments: ความคิดเห็น
   forum_confirm_msg1: คุณแน่ใจหรือว่าต้องการลบหมวดหมู่นี้
-  plans_billing: แผนและการชำระเงิน
+  plans_billing: แพ็คเกจและการเรียกเก็บเงิน
   portal_customizer_open_forums: ทุกคนสามารถดูห้องสนทนา
   portal_customizer_option_forums: ผู้ใช้สามารถดูห้องสนทนาได้โดยไม่ต้องเข้าสู่ระบบ
   business_hours:

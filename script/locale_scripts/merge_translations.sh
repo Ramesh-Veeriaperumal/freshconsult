@@ -43,7 +43,8 @@ move_dir $new_dir/ru $new_dir/ru-RU
 
 for lang in `ls $1`
 do 
-   cp $new_dir/$lang/en.yml new.yaml 
+   filename=`ls $1/$lang`
+   cp $new_dir/$lang/$filename new.yaml
    echo "$source_dir/${lang}.yml"
    cp $source_dir/${lang}.yml old.yaml 
    yaml-merge old.yaml new.yaml | sed -e 's/\\_/ /g' > "${source_dir}/${lang}.yml"
