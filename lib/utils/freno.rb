@@ -31,6 +31,9 @@ module Utils
         elsif response.code == 500
           Rails.logger.error("Warning: Freno API returned 500 for shard: #{shard_name}")
           return freno_failure_delay
+        elsif response.code == 503
+          Rails.logger.error("Warning: Freno API returned 503 for shard: #{shard_name}")
+          return freno_failure_delay
         else
           Rails.logger.error("Warning: Freno API response code: #{response.code} for shard: #{shard_name}")
           NewRelic::Agent.notice_error("Freno API Error :: API response: #{response.code} for shard: #{shard_name}")
@@ -66,7 +69,7 @@ module Utils
     def freno_failure_delay
       Rails.cache.fetch(FRENO_FAILURE_DELAY_KEY, expires_in: 30.seconds) do
         redis_value = get_others_redis_key(FRENO_FAILURE_DELAY_KEY)
-        redis_value || BACKOFF_DELAY
+        (redis_value || BACKOFF_DELAY).to_i
       end
     end
 
