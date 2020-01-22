@@ -115,7 +115,6 @@ et:
     creditcard: Please enter a valid credit card number.
     equalTo: Please enter the same value again.
     two_decimal_place_warning: Value cannot have more than 2 decimal digits
-    integration_no_match: vastavaid andmeid ei leitud...
   confirm_delete_message: 'Kas oled kindel, et soovid kustutada isiku %{human_name}?'
   any: Igaüks
   or: või
@@ -244,7 +243,7 @@ et:
   mobihelp: MobiHelp
   logmein_source: LogMeIn Rescue
   working: Töötab
-  attach: Manusta
+  attach: Attach
   attachment: Manus
   attachments: Manused
   attachment_delete: Sa oled seda manust lõplikult kustutamas. Kas soovid jätkata?
@@ -252,7 +251,7 @@ et:
   attach_file_local: Manusta fail oma arvutist
   attach_file: Manusta fail
   dropbox_attach_label: 'Manusta siit:'
-  dropbox_attach_from_text: Manusta <b>Dropboxist</b>
+  dropbox_attach_from_text: Attach from <b>Dropbox</b>
   dropbox_choose_file: Vali fail
   dropbox_choose_file_from: Choose file from Dropbox
   dropbox_plaintext: Dropboxi manused
@@ -324,18 +323,14 @@ et:
     first_name: Eesnimi
     company_name: Ettevõte
     job_title: Ametikoha nimetus
-    user_exist_in_freshid: >-
-      Olemasolev Freshworksi kasutaja! Administraatorid ei saa agendi profiili
-      teavet muuta.
-    edit_profile_in_freshid: Agendid saavad muuta nende profiili teavet oma Freshworksi profiililt.
   custom_fields:
-    insert_field: Lohista ja kukuta väli
+    insert_field: Drag & Drop Field
     drag_drop_field_intro: >-
-      Uue kohandatud välja lisamiseks lohista ja kukuta mis tahes välja liik
-      allpool olevasse ankeeti „%{name}“
+      Drag and drop any field type into the "%{name}" form below to add a new
+      custom field
     number: Number
     text: Tekstirida
-    paragraph: Mitmerealine tekst
+    paragraph: Multi Line Text
     checkbox: Märkeruut
     dropdown: Rippmenüü
     dropdown_blank: Rippmenüü
@@ -346,10 +341,6 @@ et:
     email: E-post
     delete: Kustuta
     nested_field: Sõltuv väli
-    default_field_error: Vaikimisi välju pole võimalik jaotisesse kukutada
-    empty_section_info: Kukuta väljad siia
-    drag_and_drop_field: Lohista ja kukuta väli
-    decimal: Komakoht
   ticket_fields:
     fields:
       source: Allikas
@@ -366,9 +357,6 @@ et:
       tags: Sildid
       company: Ettevõte
       skill: Oskus
-      internal_group: Ettevõttesisene rühm
-      skill_required: Vajalik oskus
-      internal_agent: Ettevõttesisene agent
     saving_ticket: Taotluse kirjete salvestamine...
     untitled: Pealkirjata
     first_choice: Esimene valik
@@ -436,55 +424,12 @@ et:
       cc_company_contacts: Koopia saab saata ainult ettevõtte kasutajatele
       cc_any_email: Koopia saab saata mis tahes e-posti aadressile
       level: Tase
-      nested_3rd_level: 3. taseme üksuste jaoks on vaja silti
-      section_type_change: >-
-        Liigi väljas tehtud viimaste muudatuste nägemiseks salvesta
-        tugiteenusepileti ankeet.
-      nested_unique_names: Agendi silt peab olema sama kui teisel tahel tasandil
-      nested_field_helptext_preview: >-
-        See on näidisrippmenüü valikute eelvaade. Iga rippmenüü väärtuste
-        muutmiseks klõpsa „Redigeeri“.
-      dropdown_choice_disabled: Vaikimisi valikut ei saa kustutada
-      drop_down_items_edit: Rippmenüü valikud – redigeeri
-      default_field_delete_disabled: Vaikimisi välju ei saa kustutada
-      field_has_section: Väljal on jaotis
-      nested_field_helptext: >-
-        Kasuta allpool olevat tekstiala, et oma rippmenüüsse elemente lisada või
-        neid redigeerida. Elementide taandamiseks vajuta tabeldusklahvi üks või
-        kaks korda. Me konverdime need joonduse põhjal rippmenüü elementideks.
-        <a target='_blank'
-        href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>Loe
-        lähemalt</a> 
-      nested_tree_validation: Sul peab olema vähemalt üks kategooria ja alamkategooria
     section:
       continue_btn: Jätka
       delete_btn: Kustuta
       ok_btn: OK
       confirm_btn: Kinnita
       oops_btn: Ups!
-      delete_from_section: 'Kas oled kindel, et soovid selle välja sellest jaotisest kustutada?'
-      new_section: Uus jaotis
-      delete_section: 'Kas oled kindel, et soovid selle jaotise kustutada?'
-      section_delete_btn: Kustuta jaotis
-      move_field_remove_section: Liiguta väli sihtjaotisesse
-      sectino_label: Jaotise pealkiri
-      field_remove_all_section: Välja liigutamine väljapoole eemaldab välja kõigist jaotistest
-      section_type_is: 'Näita jaotist, kui liik on'
-      field_available: See väli on sihtjaotises juba olemas.
-      confirm_text: Kinnita...
-      remove_type: Jaotis on selle tüübiga seotud
-      delete_permanent: Kustuta väli kõigist jaotistest
-      add_section: Lisa jaotis
-      would_you_like_to: Kas sooviksid
-      section_name_unique: Jaotise nimi on juba kasutusel
-      move_keep_copy: Kopeeri väli sihtjaotisesse
-      section_prop: Jaotise omadused
-      section_has_fields: Jaotisel on väljad
-      delete_field_section: Kustuta väli sellest jaotisest
-    customer_label_missing: Kliendi silt ei tohi olla tühi
-    confirm_deletion: >-
-      Hoiatus! Kaotad jäädavalt kõigist vanadest tugiteenusepiletitest selle
-      väljaga seotud andmed. Kas soovid kindlasti selle välja kustutada?
   folder:
     edit: Redigeeri kausta
     info1: 'Kas oled kindel, et soovid selle kausta kustutada?'
@@ -510,7 +455,7 @@ et:
   select_plan: Vali plaan
   change_plan_title: 'Kas oled kindel, et tahad plaani muuta?'
   downgrade_plan_title: Sure you want to Downgrade?
-  activate_free_plan: Aktiveeri tasuta pakett
+  activate_free_plan: Activate Free Plan
   create: Loo
   feedbackwidget_custom_image_info: 'Kui sa kasutad kohandatud pilti, eiratakse värvi ja teksti.'
   account_admin_updated: Kontoülem on uuendatud!
@@ -543,8 +488,6 @@ et:
         cancel: Tühista
         load_questions: Vaata rohkem
         comments: Kommentaarid
-        title_v2: Rahuloluhinnang
-        rating_sub_title_v2: Sinu hinnang kui
     login:
       form:
         email: E-post
@@ -573,7 +516,6 @@ et:
       comments: Kommentaar
       send_feedback: Saada tagasisidet
       related_files: Seotud failid
-      was_this_article_useful: Kas see artikkel oli kasulik?
     surveys:
       thanks_for_feedback: Me oleme su tagasiside kätte saanud. Suur tänu!
       feedback_already_done: Sa oled selle vastuse kohta juba tagasisidet andnud.
@@ -591,10 +533,6 @@ et:
         thanks: Suur tänu meie hindamise eest!
         send: Saada tagasisidet
         unhappy_info: 'Me lubame, et oleme järgmisel korral eriti hoolikad.'
-        happy_info: >-
-          Meil oli rõõm sind teenindada. Meil on hea meel kuulda, et olid meie
-          teenusega rahul.
-        neutral_information: 'Soovime, et oleksid rõõmsam.'
       index:
         thanks_info: Thanks for taking time to rate our support experience.
         thanks: Thank you very much for rating us!
@@ -610,8 +548,6 @@ et:
       form_submit: Esita
       hey: Hei
       thank_you_text: Aitäh!
-      okay: OK
-      move_to_form_field: või vajuta klahvi Enter
   gamification:
     levels:
       beginner: Algaja
@@ -721,9 +657,6 @@ et:
       ticket_list: Taotluste loetelu
       ticket_view: Taotluse üksikasjad
       my_topics: Minu teemad
-      agent_login: Agendi sisselogimisleht
-      archive_ticket_view: Arhiveeritud tugiteenusepileti üksikasjad
-      archive_ticket_list: Arhiveeritud tugiteenusepiletite loend
   portal_meta:
     titles:
       portal_home: Tugi
@@ -749,7 +682,7 @@ et:
       my_topics: Minu teemad
   admin:
     help_image_alt:
-      helpdesk_arcarde: Kasutajatoe arkaad
+      helpdesk_arcarde: Helpdesk Arcade
       import_csv_file_pattern: Import CSV file pattern
     social:
       helpcard:
@@ -815,25 +748,6 @@ et:
           vastab, viiakse ellu. Näiteks saad sa säutsud, kus mainitakse "üle
           minemist" ja sinu konkurentide nime, piletiteks konvertida ja need oma
           tugimeeskonna juhile suunata.
-        handle_smart_filter_title: Asjaomaste säutsude automaatne muutmine tugiteenusepiletiteks
-        handle_smart_filter_info: >-
-          Sotsiaalsed signaalid põhinevad masinõppe algoritmil (süsteemil, mis
-          on võimeline tagasiside põhjal õppima ja end aja jooksul parandama).
-          Selle funktsiooniga hakatakse tugiteenusepiletiteks muutma vaid
-          asjakohaseid säutse, mis sinu tähelepanu vajavad. <br>Saad anda
-          süsteemile tagasisidet selliselt, et see kohanduks sinu
-          ettevõttega.<br><br>1. Juhul kui säuts muudetakse tugiteenusepiletiks;
-          märgi tugiteenusepilet rämpspostiks, et õpetada süsteemi sarnaseid
-          säutse mitte tugiteenusepiletiteks muutma.<br><br>Juhul kui säutsu ei
-          muudetud tugiteenusepiletiks; kui klõpsad sotsiaalmeedia vahekaardis
-          nupul 'Muuda tugiteenusepiletiks', õpetab see süsteemile sarnaseid
-          säutse tugiteenusepiletiks muutma.<br><br>Saad valida, kas kasutada
-          sotsiaalseid signaale omaette või kombinatsiooni märksõnapõhistest
-          filtritest ja sotsiaalsetest signaalidest, kui sul on konkreetsed
-          ettevõtte märksõnad. <br>Kui kasutad filtripõhiste märksõnade ja
-          sotsiaalsete signaalide kombinatsiooni, eelistatakse märksõnapõhiseid
-          filtreid sotsiaalsetele signaalidele. Pane tähele, et sotsiaalsed
-          signaalid toetavad hetkel ainult inglise keelt.
       flash:
         stream_updated: 'Twitteri voog %{stream_name} on uuendatud'
         stream_deleted: 'Twitteri voog %{stream_name} on kustutatud'
@@ -900,13 +814,6 @@ et:
         brief_desc: >-
           Säutsud muudetakse taotlusteks automaatselt esimese sobiva reegli
           põhjal.
-      smart_filter:
-        convert_tweet: Hakka säutsusid tugiteenusepiletiteks muutma
-        convert_all: Muuda asjakohased @mainimised tugiteenusepiletiteks
-        enabled_header: Sotsiaalsed signaalid lubatud
-        disabled_header: Luba sotsiaalsed signaalid
-        convert_with_filters: Muuda säutsud tugiteenusepiletiteks filtreid kasutades
-        convert_dm: Hakka otsesõnumeid tugiteenusepiletiteks muutma
     company_fields:
       fields:
         name: Täisnimi
@@ -958,7 +865,7 @@ et:
         delete_field: Kustuta väli
         field_label_agents: Väljamärgend lahendajatele
         field_label_customer: Väljamärgend klientidele
-        add_new_choice: Lisa kirje
+        add_new_choice: Add Item
         customer_mandatory: Nõutav vormi esitamisel
         customer_edit_signup: Kliendid näevad seda registreerudes
         customer_edit: Klient saab redigeerida
@@ -967,7 +874,7 @@ et:
         agent_mandatory_submission: Nõutav vormi esitamisel
         customer_info1: Väli ei või olla taotluse võrgus esitamisel täitamata
         for_agents: Lahendajatele
-        dropdown_choices: Rippmenüü valikud
+        dropdown_choices: Dropdown Items
         label_in_portal: Label in Portal
         customer_visible: Kliendivaade
         description: Kirjeldus
@@ -978,12 +885,12 @@ et:
         display_cc_field: Kuva koopiaväli
         cc_company_contacts: Koopia saab saata ainult ettevõtte kasutajatele
         cc_any_email: Koopia saab saata mis tahes e-posti aadressile
-        regexp: Regulaaravaldis
-        validate_regexp: Kinnita regulaaravaldist kasutades
+        regexp: Regular Expression
+        validate_regexp: Validate using Regular Expression
         regexp_example_html: >-
-          Näiteks et sobitada kokku sõne, mis sisaldab ainult tähti ja numbreid:
-          <b> /^[a-zA-Z0-9]*$/ </b>. Et sobitada kokku sõne, mis algab sõnaga
-          „fresh“ <b> %{regex} </b>.
+          For example, To match a string that contains only alphabets & numbers:
+          <b> /^[a-zA-Z0-9]*$/ </b>. To match a string that starts with word
+          "fresh" <b> %{regex} </b>.
         max_choices: Maximum items reached
     contact_fields:
       fields:
@@ -1000,7 +907,6 @@ et:
         twitter_id: Twitter
         time_zone: Ajatsoon
         language: Keel
-        multiple_company: Seo üks kontakt mitme ettevõttega
       untitled: Pealkirjata
       first_choice: Esimene valik
       second_choice: Teine valik
@@ -1037,7 +943,7 @@ et:
         delete_field: Kustuta väli
         field_label_agents: Väljamärgend lahendajatele
         field_label_customer: Väljamärgend klientidele
-        add_new_choice: Lisa kirje
+        add_new_choice: Add Item
         customer_mandatory: Nõutav vormi esitamisel
         customer_edit_signup: Kliendid näevad seda registreerudes
         customer_edit: Klient saab redigeerida
@@ -1046,7 +952,7 @@ et:
         agent_mandatory_submission: Nõutav vormi esitamisel
         customer_info1: Väli ei või olla taotluse võrgus esitamisel täitamata
         for_agents: Lahendajatele
-        dropdown_choices: Rippmenüü valikud
+        dropdown_choices: Dropdown Items
         label_in_portal: Label in Portal
         customer_visible: Kliendivaade
         description: Description
@@ -1057,29 +963,13 @@ et:
         display_cc_field: Display CC Field
         cc_company_contacts: Can CC only company contacts
         cc_any_email: Can CC any email address
-        regexp: Regulaaravaldis
-        validate_regexp: Kinnita regulaaravaldist kasutades
+        regexp: Regular Expression
+        validate_regexp: Validate using Regular Expression
         regexp_example_html: >-
-          Näiteks et sobitada kokku sõne, mis sisaldab ainult tähti ja numbreid:
-          <b> /^[a-zA-Z0-9]*$/ </b>. Et sobitada kokku sõne, mis algab sõnaga
-          „fresh“ <b> %{regex} </b>.
-        max_choices: Maksimaalne kirjete arv saavutatud
-        multiple_company_message_enable: Kontakte saab siduda mitme ettevõttega.
-        multiple_company_message: Kontakte saab siduda ainult ühe ettevõttega.
-        field_label_agents_level2: 2. tasandi silt agentide jaoks
-        field_label_customer_level2: 2. tasandi silt klientide jaoks
-        mapped_internal_groups: Kaardistatud ettevõttesisesed rühmad
-      multiple_company_dialog_on: >-
-        Kontaktid (edasimüüjad või partnerid) saavad tugiteenusepileti
-        esitamisel valida vähemalt ühe endaga seotud ettevõtte.
-      multiple_company_dialog_warning: >-
-        Selle välja lülitamisega kustutatakse jäädavalt kõigi kontaktide juurest
-        kõik teisesed ettevõtted. See ei mõjuta varasemaid tugiteenusepileteid,
-        kuid uutele tugiteenusepiletitele lisatakse ainult esmane ettevõte.
-      multiple_company_dialog_help_text: >-
-        Kui see on sisse lülitatud, saavad kontaktid (edasimüüjad või partnerid)
-        tugiteenusepileti esitamisel valida vähemalt ühe endaga seotud
-        ettevõtte.
+          For example, To match a string that contains only alphabets & numbers:
+          <b> /^[a-zA-Z0-9]*$/ </b>. To match a string that starts with word
+          "fresh" <b> %{regex} </b>.
+        max_choices: Maximum items reached
     portal:
       index:
         portal_customizer_title: Customer Portal Configuration
@@ -1125,109 +1015,6 @@ et:
         twitter: Twitter
         facebook: Facebook
         everyone: Kõik
-        moderate_none_help: >-
-          Võimalda see funktsioon, kui oled kindel, et sinu kogukond ei meelita
-          ligi rämpspostitajaid.
-        last_published_version: viimasele avaldatud versioonile
-        signup_login: Kasutaja registreerumine ja sisselogimine
-        submit_ticket: Kes saab portaalis esitada uue tugiteenusepileti
-        reset_for: See lähtestab muudatused
-        forum_captcha: 'Sisse logitud kasutajad peaksid sisestama robotilõksu, et teemat luua'
-        notify_agents: 'Saada modereerimise ja rämpsposti teavitus kasutajale:'
-        view_forums: Kes saab foorumeid vaadata
-        moderate_links_help: >-
-          Võimalda see funktsioon üksikasjalikuma rämpspostikaitse jaoks.
-          Süsteem kontrollib kõiki teemasid ja vastuseid, mis sisaldavad
-          kolmandate poolte linke ja muud rämpspostitegevust.
-        logged_in: Sisselogitud kasutajad
-        moderate_all: Modereeri kõiki teemasid ja vastuseid
-        user_permissions: Kasuta portaali jaoks lubasid
-        moderate_links: 'Modereeri kõiki teemasid ja vastuseid, mis sisaldavad väliseid linke'
-        captcha: Rämpsposti vältimiseks luba robotilõks
-        moderate_none: Ära modereeri
-        view_settings: Kuva seaded
-        public_ticket_urls_option: 'Kõik, kellel on avalik tugiteenusepileti URL'
-        restricted_login_signup: Registreerumine ja sisselogimine on piiratud konkreetsete domeenidega
-        allow_signup: Luba klientidel kliendiportaalist registreeruda
-        public_ticket_urls_label: Kes saab portaalis tugiteenusepileteid vaadata
-        will_reset_all: See lähtestab KÕIK portaali kohandused vaikesätetele.
-        portal_was_published: Portaal avaldati
-        moderation: Modereeri foorumeid
-        view_solutions: Kes saab lahendusi vaadata
-        auto_suggest_solutions_help: See kehtib ka tagasiside vidinas olevale otsingu funktsioonile.
-        auto_suggest_solutions: Soovita automaatselt lahendusi uue tugiteenusepileti loomisel
-        reset_portal_changes: Lähtesta portaali muudatused
-        allow_signin: 'Luba kasutajatel sisse logida, kasutades...'
-        public_ticket_urls_help: >-
-          Kasutajad saavad vaadata tugiteenusepileteid ilma avalikke
-          tugiteenusepileti URLe kasutamata. Need saab sisestada e-kirja
-          teavitustesse ja klientidele saadetavatesse tugiteenusepileti
-          vastustesse kohatäiteid kasutades.
-        moderate_all_help: >-
-          Võimalda see funktsioon, kui soovid olla range iga postituse osas, mis
-          sinu kogukonnas luuakse.
-      helpnote:
-        portal_info: Oleme sinu jaoks paar kohandatud portaali välja valinud.
-        info3: >-
-          Lisaks saad oma klienditoe välimust ja ilmet muuta logo ja leheikooni
-          lisamisega, anda klienditoele nime ning kohandada oma portaali värve.
-        exit_fullscreen: Välju täisekraanilt
-        editor_shortcuts: Toimetaja otseteed
-        preview_changes: Muudatuste eelvaade
-        info1: >-
-          Kui soovid, et su kliendid ja klienditoe agendid pääseksid sinu
-          tugiportaalile ligi su oma domeeni kaudu, saad suunata oma klienditoe
-          URLi <b>sinufirma.freshdesk.com</b> enda domeenile nagu
-          <b>tugi.sinufirma.ee</b>
-        can_override_existing_styles: >-
-          Saad kasutada oma CSSi, et oma kliendiportaali olemasolevaid stiile
-          üle kirjutada. Näiteks saad esitada oma stiilimääratlused portaali
-          päise vahekaartide, lõikude ja põhiosa jaoks.
-        preview_your_changes: 'Pea meeles vaadata muudatuste eelvaadet, enne kui need avaldad.'
-        enter_your_css: >-
-          Sisesta tugiportaali kohandatud stiilide rakendamiseks tekstialasse
-          oma CSS. Kui su CSSiga esineb probleeme, võib stiliseeritud element
-          minna tagasi vastavale vaikimisi stiilile, seega pea meeles kuvada
-          muudatuste eelvaadet enne, kui need portaalis avaldad.
-        info4: >-
-          Kui soovid seadistada kasutajalubasid ja muuta foorumi modereerimise
-          seadeid, klõpsa vahekaardil 'Seaded'. Seadeid ei saa konfigureerida
-          iga portaali jaoks eraldi ning need on kõigis loodud portaalides
-          ühised.
-        layout_of_portal: >-
-          Tugiportaali paigutus koosneb (a) päisest, (b) jalusest ja (c) lehe
-          paigutusest. Saad kasutada oma HTMLi ning lisada, eemaldada või
-          täielikult muuta iga portaali lehe sisu ning lisada oma JavaScripti
-          interaktsioone. Pea meeles vaadata oma teema eelvaadet enne, kui selle
-          klientide jaoks avaldad.
-        editor_in_fullscreen: Täisekraanil toimetaja
-        level_customizations: Lehe tasandi kohandused
-        advanced_rebranding: Täpsem ümbernimetamine ja kohandamine
-        title: Portaalide seadistamine
-        basic_coloring_changes: >-
-          Lisaks portaalis tehtud põhilistele värvimuutustele saad ka lehe
-          valitud aspektide välimust ja ilmet muuta, et need paremini sinu
-          brändiga sobituksid.
-        check_out: >-
-          Oma klienditoe portaali teema väljatöötamise kohta lisateabe saamiseks
-          vaata <b><a
-          href='https://support.freshdesk.com/support/solutions/71599'
-          target='_blank'>FreshThemes'i juhendit </a></b>.
-        portal_freshdesk_title: Otsid ideid?
-        info2: >-
-          Saad valida ka konkreetsete lahenduse ja foorumi kategooriate kuvamise
-          peaportaalis ja teistes portaalides
-        custom_stylesheets: Kohandatud laaditabelite kasutamine
-        portal_freshdesk_link: Viska pilk peale
-        customize_the_layout: >-
-          Sul on võimalik kõigi oma Freshdeski portaali lehtede paigutust
-          kohandada. Muuda paigutust Freshdeski portaali kohatäidete ja Liquidi
-          malliloomise raamistiku abil.
-        stylize_color_and_font: >-
-          Saad muuta peaaegu iga oma tugiportaali elemendi stiili, värvust ja
-          vormingut, lisada logo ja kohandada oma lemmikuikooni. Vali elemendile
-          vastavalt värvirattalt värvus või sisesta tekstikasti värvi
-          kuueteistkümnendkood.
     mobihelp:
       app_review:
         request_sent: Rakenduse ülevaatamise nõue on saadetud
@@ -1270,14 +1057,14 @@ et:
           platform: Platvorm
           configurations: SDK seadistused
           solution_categories: Lahenduste kategooriad
-          solution_categories_info: Sinu valitud lahenduse kategooriaid kuvatakse rakenduse toes
+          solution_categories_info: The solution categories you select will be shown in the App Support
           app_store_id: App Store'i ID
           app_store_id_info: >-
             Kasutajad suunatakse App Store'i ID abil arvustuste vaatamiseks App
             Store'i
           app_store_id_v12_info: >-
-            Vajalik Mobihelp SDK versioonidele < 1.2. Versiooni >= 1.2 puhul loe
-            integreerimise juhendit.
+            Required for Mobihelp SDK versions < 1.2. For version >= 1.2 refer
+            Integration guide.
           should_be_unique: peaks olema kordumatu
           select_a_platform: Vali platvorm
           select_a_solution_category: Vali lahenduse kategooria
@@ -1287,13 +1074,12 @@ et:
           app_secret: Rakenduse saladus
           integration_details: Integratsiooni üksikasjad
           saving: Salvestamine...
-          initialization_code: Ettevalmistamise kood
         index:
           title: MobiHelpi rakendused
           new_app: Uus rakendus
           no_app:
             title: Tere tulemast MobiHelpi!
-            sdk_and_guide: Mobihelp SDK ja integreerimise juhend
+            sdk_and_guide: Mobihelp SDK and Integration guide
         new:
           title: Uus MobiHelpi rakendus
         edit:
@@ -1500,30 +1286,6 @@ et:
         update: uuendus
         activate_survey: Luba
         preview_survey: Eelvaade
-        default_survey: Vaikimisi uuring
-        remove_msg: >-
-          Selle jaotise eemaldamisega lähevad kaotsi kõik lisaküsimustele tehtud
-          muudatused. Kas soovid jätkata?
-        new_survey: Uus uuring
-        survey_feedback: Tagasiside esitamine...
-        deleting_survey: Uuringu kustutamine
-        feedback_survey_begin: Uuringu saatmine sinu e-posti aadressile
-        feedback_survey_end: Uuring on sinu e-posti aadressile saadetud
-        survey_help_msg_v3: >-
-          Rahulolu hinnangu valimisel kuvatakse tänulehte, et veel tagasisidet
-          koguda
-        saving_survey: Uuringu salvestamine
-        confirm_text: Kinnita...
-        portal_msg: Ümbersuunamine tugiteenusepileti lehele
-        delete_msg: 'Kas oled kindel, et soovid selle uuringu kustutada?'
-        activate_msg: >-
-          Selle uuringu aktiveerimine desaktiveerib <b id='active_survey_name'>
-          Vaikimisi uuringu </b><br> Kas tahad kindlasti aktiveerida?
-        disabling_survey: Uuringu desaktiveerimine
-        editing_survey: Uuringu muutmine
-        enabling_survey: Uuringu aktiveerimine
-        custom_title_v2: Kliendirahulolu uuringud
-        active_delete_tooltip: Aktiivset uuringut ei saa kustutada
       satisfaction_settings:
         enable_label: Rahulolu-uuringud
         link_text_label: Rahulolu-uuringu lingi tekst
@@ -1537,105 +1299,19 @@ et:
         enter_happy_text: Sisesta õnnelik tekst
         enter_neutral_text: Sisesta neutraalne tekst
         enter_unhappy_text: Sisesta õnnetu tekst
-        link_text_input_label: Kuidas hindaksid oma üldist rahulolu agendi pakutud lahendusega?
-        enable_label_v2: Kliendirahulolu uuring
       new_layout:
         title: Uuringu nimi
         loading: Laadimine...
         survey: Uuring
-        bad_to_good: Halvast heaks
-        rating_order: Hinnete järjestus &nbsp;
-        good_to_bad: Heast halvaks
-        default_survey: Vaikimisi uuring
-        title_error_text: Uuringu nimi on juba kasutusel
       thanks_contents:
         title_text_v2: Kliendi rahulolu-uuringu tänamissõnum
-        solution_article_link_text: >-
-          Sinu portaali paigutust rakendatakse sellele lehele. <a
-          target='_blank'
-          href='https://support.freshdesk.com/solution/articles/217757-customizing-your-thank-you-page'>Kuidas
-          seda muuta?</a>
-        label_text_v2: Täiendavad uuringu küsimused
-        message_text: Täname sind väärtusliku tagasiside eest.
-        empty_text: Küsimuse väärtus ei tohi olla tühi.
-        question_error_text: Küsimus on juba sisestatud.
       new_questions_layout:
         questions: Küsimused
-        title_text_v2: Lisaküsimused
-        add_question: Lisa küsimus
       new_rating:
         error_text: See väli on nõutud
-        survey_question: Uuringuküsimus
-        scale_text: Oled valinud
-        scale: punktiskaala
-        content_text_v2: >-
-          Selle küsimuse abil saad hinnata üldist rahulolu agendi pakutud
-          lahendusega. See kuvatakse kliendile saadetava e-kirja allservas sinu
-          allkirja all.
-        point_scale_v2: Punktiskaala
       new_thanks:
         thanks_message_feedback_v2: Tagasiside tänamissõnum
         additional_comments_feedback_v2: Lisakommentaari välja lisamine
-        default_question_text: Kas oled meie klienditoe kogemusega rahul?
-        thanks_feedback: Täname sind väärtusliku tagasiside eest.
-        thanks_label_v2: Sõnumit kuvatakse pärast lisaküsimustele tagasiside andmist.
-        thanks_feedback_v2: Täname. Sinu tagasiside on esitatud.
-        additional_comments_feedback_statement: Täiendav tagasiside
-        survey_feedback_v2: Tänamise leht
-        thanks_help_text: >-
-          Tänamise lehel kuvatakse täiendavad uuringuküsimused, kui klient
-          rahulolu küsitluse lõpetanud. Küsimused võivad puudutada toodet,
-          ettevõtet või agenti.
-        comments_feedback: Lisa üksikasju kliendikogemuse kohta.
-      helptext_v2: >-
-        <p><b>Miks kasutada rahulolu uuringuid?</b> <br>
-
-        Rahulolu uuringutega saad oma vastuse e-kirjadele lisada lingi ning
-        klientidelt otse tagasisidet koguda ja nende rahulolu kohta küsida.
-        <br><br> <b>Rahulolu uuringu koostamine:</b><br> järgnevate sammude abil
-        saad vastuse e-kirjades oleva lingi kaudu klientidelt tagasisidet
-        koguda:<br> 1. Lülita kliendirahulolu uuring sisse<br> 2. Täpsusta
-        uuringu küsimust. Vaikimisi tekst on järgnev: &ldquo;Kuidas hindaksid
-        oma üldist rahulolu agendi pakutud lahendusega?&rdquo;<br> <br> <b>Vali,
-        millistele e-kirjadele rahuolu uuringu link lisatakse:</b><br> saad
-        valida, kas rahulolu uuringu link saadetakse klientidele iga e-kirjaga
-        või ainult viimase e-kirjaga pärast tugiteenusepileti lahendamist.
-        Klientide vastust näed jaotises <b>Aruanded > Kliendirahulolu
-        aruanne</b> <br><br> Rahulolu uuringute kohta leiad lisateavet <a
-        target= ‘_blank’
-        href='https://support.freshdesk.com/solution/articles/215322'>sellest
-        lahendusartiklist</a>. </p>
-      choice_contents:
-        extremly_dissatisfied: Äärmiselt rahuololematu
-        mostly_dissatisfied: Peamiselt rahulolematu
-        slightly_dissatisfied: Natuke rahulolematu
-        mostly_satisfied: Peamiselt rahul
-        slightly_satisfied: Natuke rahul
-        extremely_satisfied: Äärmiselt rahul
-        neutral_v2: Ei rahul ega rahulolematu
-      custom_helptext_v2: >-
-        <p><b>Rahulolu uuringu aktiveerimine</b> <br>
-
-        Sul on võimalik lisada agentide tugiteenusepileti vastustesse rahulolu
-        uuringu, et saada teada, kui rahul kliendid toe/ettevõtte/tootega on.
-        Saad valida, kas uuringuid saadetakse kõigi e-kirjadega või ainult siis,
-        kui probleem on 'suletud' või 'lahendatud'. Klientide vastust näed
-        jaotises <b>Aruanded > Kliendirahulolu aruanne </b> <br><br> <b>Rahulolu
-        uuring</b><br> Saad esitada ühe kliendirahulolu uuringu küsimuse ja
-        lisaküsimusi. Kliendirahulolu uuringut kuvatakse e-kirjas ja kui klient
-        uuringu variandi valib, suunatakse ta lisaküsimuste lehele. Vaatleja
-        reeglid ja mängustamise punktid põhinevad üksnes kliendirahulolu
-        uuringul.<br> <br> <b>Punktiskaalad</b><br> Sul on võimalik valida
-        kliendirahulolu uuringu ja lisaküsimuste jaoks erinevaid
-        punktiskaalasid. Nendeks võib olla <br> 2-punktine (nt jah, ei)<br>
-        3-punktine (nt nõustun, ei tea, ei nõustu)<br> 5-punktine (nt alati kuni
-        mitte kunagi)<br> 7-punktine (nt väga halb kuni erakordne)<br><br>
-
-        Kui klient on uuringule vastanud, siis skaalad lukustatakse ja neid pole
-        võimalik muuta.<br><br> Rahulolu uuringute kohta saad lisateavet <a
-        target= ‘_blank’
-        href='https://support.freshdesk.com/solution/articles/215321'>sellest
-        lahendusartiklist</a>. </p>
     getting_started:
       send_mail_content:
         test_info_1: 'Sulle tundub, et kõik sujub? Saada proovikiri.'
@@ -1769,9 +1445,6 @@ et:
         agent_email_partial: Osaliselt edukas
         agent_email_sending: Kutsete saatmine...
         agent_email_required: Kutse saatmiseks on vajalik e-posti ID.
-        bulk_invite_blocked: >-
-          Saad sellelt lehelt lisada kuni 25 agenti. Hiljem saad lisada
-          rohkemaid administraatori jaotisest.
     day_passes:
       helpnote:
         title: Päevapääse
@@ -1805,14 +1478,6 @@ et:
         agent: Lahendaja
         date: Kuupäev
         filtered_by: 'Filtreerimisalus:'
-        no_result: Valitud variantidele pole tulemusi.
-        change_agent: Muuda agenti
-        usage_history: Kasutuse ajalugu
-        available_passes: Saadaval päevapääsmed
-        auto_recharge_notice: 'Praegune automaatne taaslaadimise kogus on '
-        buy_passes: Osta päevapääsmeid
-        auto_renewal_disabled_notice: Päevapääsmete automaatne uuendamine välja lülitatud.
-        auto_renewal_enabled_notice: Päevapääsmete automaatne uuendamine sisse lülitatud.
     widget_config:
       index:
         feedbackwidget_embedded_tab: Manusvidin
@@ -1864,14 +1529,6 @@ et:
         feedbackwidget_form_height: Vormi kõrgus
         feedbackwidget_button_text_placeholder: Tugi
         feedbackwidget_form_height_message: 'Kui sa näed oma vidinas kerimisribasid, kohanda vidina kõrgust.'
-        feedbackwidget_mobile_view: Luba mobiilivaade
-        feedbackwidget_submit_title_maxlength: Maksimaalselt 16 tähemärki
-        feedbackwidget_title_maxlength: Maksimaalselt 30 tähemärki
-        feedbackwidget_users_can: Ankeedi valikud
-        feedbackwidget_height_placeholder: '500'
-        feedbackwidget_offset_placeholder: '235'
-        feedbackwidget_form_submit_title: Ankeedi esitamise nupp
-        feedbackwidget_use_captcha: Võimalda robotilõks
       embedded_widget:
         feedbackwidget_embedded_code: Manusvidina kood
         feedbackwidget_attach_a_file: Manusta fail
@@ -1885,12 +1542,6 @@ et:
         feedbackwidget_use_https: Kasuta HTTPSi
         feedbackwidget_form_height: Vormi kõrgus
         feedbackwidget_form_height_message: 'Kui sa näed oma vidinas kerimisribasid, kohanda vidina kõrgust.'
-        feedbackwidget_submit_title_maxlength: Maksimaalselt 16 tähemärki
-        feedbackwidget_title_maxlength: Maksimaalselt 16 tähemärki
-        feedbackwidget_users_can: Ankeedi valikud
-        feedbackwidget_height_placeholder: '500'
-        feedbackwidget_form_submit_title: Ankeedi esitamise nupp
-        feedbackwidget_use_captcha: Võimalda robotilõks
     supervisor_rules:
       info_help: >-
         Vii <b>iga taotluse</b> puhul, mida on uuendatud 30 päeva jooksul, ellu
@@ -1920,16 +1571,12 @@ et:
           Järelevaataja reegleid töödeldakse järjestikku, seega on reeglite
           järjestus oluline. Reegel võib tuua kaasa teatud toiminguid, mis
           käivitavad järgmiste reeglite elluviimise.
-        tour_v2: Aita mul luua järelevaataja reeglit
       new:
         title: Järelevaataja - uus reegel
       edit:
         title: Järelevaataja - reegli redigeerimine
       clone_rule:
         title: Järelevaataja - klooni reegel
-      new_info_help: >-
-        Käivita kõik sobivad reeglid <b>iga tugiteenusepileti</b> puhul, mida on
-        uuendatud 30 päeva jooksul.
     observer_rules:
       info_help: >-
         Vaatleja reeglid võimaldavad sul mis tahes pileti sündmuse korral
@@ -1963,12 +1610,6 @@ et:
           Vaatleja abil saad sa välju kujundada, olekut muuta või isegi teatud
           tingimuste täitmise korral teateid välja saata.
         help_info_4: Loe lähemalt vaatleja kasutamise kohta
-        tour_v2: Aita mul luua vaatleja reeglit
-        new_help_info_2b: >-
-          Täpsustab, millised kasutaja muudatused peaksid reegli käivitama. Saad
-          valida agendi, taotleja ja süsteemi vahel. Taotlejaks on ka isikud
-          väljaspool klienditoe meeskonda, kes on tugiteenusepileti ahelasse
-          kaasatud.
       new:
         title: Vaatleja - uus reegel
       edit:
@@ -1996,29 +1637,12 @@ et:
         checked: on märgitud
         unchecked: on märkimata
         deselected: Valik on tühistatud
-        internal_group_actions: >-
-          Kehtib ainult juhul, kui valitud rühma on reegli käivitamise ajal
-          kirjeldatud tugiteenusepileti olekus kui ettevõttesisest rühma.
-        internal_agent_actions: >-
-          Kehtib ainult juhul, kui valitud agent on reegli käivitamise ajal
-          määratud ettevõttesisesse rühma.
       anyone: Igaüks
       system: Süsteem
-      info_help_1: >-
-        Observeri reeglid võimaldavad sul vallandada konkreetseid toiminguid iga
-        tugiteenusepiletis toimunud sündmuse jaoks.
-      default_rule_desc: >-
-        Teavita meeskonna juhti, kui klient annab tugiteenusepiletile
-        rahulolematu hinnangu
-      new_anyone: Agent või taotleja
-      new_performed_by: 'Kui toiming, mida tegi...'
-      new_events: sisaldab <b>ükskõik millist</b> järgmistest sündmustest
-      default_rule_name: 'Teavita meeskonna juhti, kui klient on rahulolematu'
     va_rules:
       index:
         human_name: Dispetšeri reegel
       remember_to_save: Ära unusta seda pärast uuendamist salvestada.
-      disabled: Sisse lülitamiseks aktiveeri oma konto.
     webhook:
       jira_hook_title: JIRA küsimuse loomine
       jira_hook_description: >-
@@ -2067,9 +1691,6 @@ et:
         checked: märgitud
         unchecked: märkimata
         deselected: valik on tühistatud
-        add_custom_headers: Lisa kohandatud päiseid
-        remove_custom_headers: Eemalda kohandatud päiseid
-        custom_headers_tip: Sisesta iga rea kohta üks kohandatud päise väärtus.
     automations:
       index:
         human_name: Stsenaarium
@@ -2181,26 +1802,11 @@ et:
         select_admin: Vali administraator
         notifications: Teade saadetakse
         agent_create_or_delete: Lahendaja on Lisatud või Kustutatud
-        whitelisted_ip_modified: IP-aadresside lubamist muudetakse
+        whitelisted_ip_modified: IP Whitelisting is modified
         saml_cert_fingerprint_info_sha256: >-
           Sinu SAMLi pakkuja antud SAML-sertifikaadi sõrmejälg (SHA256). Seda
           kasutatakse krüpteerimiseks / valideerimiseks.
         for_agents: Lahendajatele
-        password_policy_info3: >-
-          Paroolipõhimõtetes tehtud muudatused hakkavad kehtima 8 tunni jooksul.
-          Selle aja jooksul palutakse sinu agentidel uuendada oma parooli. Kui
-          nad ei tee seda, logitakse nad tugiportaalist välja ning nad peavad
-          parooli muutma järgmisel korral sisse logides.
-        password_policy_info4: >-
-          Pane tähele, et kui oled kontol paroolipõhimõtted lubanud (ükskõik,
-          kas vaikimisi või täpsemad), ei ole neid võimalik enam keelata.
-        enable_oauth2_sso: OAuth 2.0
-        for_contacts: Kontaktide jaoks
-        enable_oauth2_info: >-
-          Tööstuse standardne OAuth-protokoll võimaldab delegeerida agendi ja
-          kliendi autentimise teenuseosutajale, mis nende kasutajakontosid
-          majutab.
-        password_policy: Paroolipõhimõtted
       helpnote:
         title: Turvasätted
         info1: >-
@@ -2226,15 +1832,6 @@ et:
           juurdepääsu piirata ka klientide või ainult oma lahendajate puhul. <a
           href="https://support.freshdesk.com/support/solutions/articles/195168">
           Loe lähemalt.</a>
-        info4: >-
-          <b>Paroolipõhimõtted</b><br>Saad klientidele ja agentidele seada
-          erinevaid paroolipõhimõtteid. Täpsemate seadete abil saad luua
-          kohandatud paroolipõhimõtteid nagu parooli aegumise aeg ja minimaalne
-          parooli pikkus. Tehtavad muudatused kehtivad nii uutele kui
-          olemasolevatele agentidele ja klientidele. Loe paroolipõhimõtete kohta
-          lähemalt <a
-          href="https://support.freshdesk.com/support/solutions/articles/213865-password-policy"
-          target="_top">siit</a>.
       password_security:
         advanced: Edasijõudnud
         never: Mitte iial
@@ -2243,16 +1840,6 @@ et:
         password: parool
         have_mixed_case: Sisaldab erinevaid tähemärke
         default: Kasuta vaikesätet
-        passwords: paroolid
-        session_expiry: Kasutaja seanss aegub
-        password_expiry: Parool aegub
-        cannot_be_same_as_last: 'Ei saa olla sama, mis viimane'
-        have_special_character: Peab sisaldama erimärki
-        cannot_contain_user_name: Ei tohi sisaldada kasutajanime
-        minimum_of: Minimaalselt
-        atleast_an_alphabet_and_number: Peab sisaldama tähte ja numbrit
-      password_policy_popover:
-        password_should: Sinu parool
     products:
       helpnote:
         tour: Aita mul mitut toodet hõlmavat kliendituge pakkuda
@@ -2267,10 +1854,6 @@ et:
           Kui sa otsustad igale tootele eraldi tootemargi portaali seadistada,
           saad iga tootemargi kohta ka eraldi teadmistebaasi artiklid ja
           foorumid luua.
-        heading3: Mitme toote tugi
-        content3: >-
-          Saad nende toodete jaoks portaale konfigureerida, klõpsates
-          administraatori vahelehel ja seejärel nupul 'Portaalid'
       new:
         title: Uus toode
         saving: Salvestamine...
@@ -2289,9 +1872,9 @@ et:
           ei näidata ühtki muud lahendust, kui nad sellel tooteportaalil
           lahenduste vahekaarti vaatavad.
         forum_categories_info: >-
-          Saad selle tootega siduda mitu foorumi kategooriat. Klientidele ei
-          näidata ühtki muud foorumit, kui nad selles tooteportaalis foorumite
-          vahekaarti vaatavad.
+          You can associate multiple forum categories to this product. All other
+          forums will not be shown to the customers, when viewing the forums tab
+          in this product portal.
         portal_settings: Portaali sätted
         portal_name_info: Nimi kuvatakse sinu tooteportaali päises oleva logo kõrval.
         portal_url: Portaali URL
@@ -2313,14 +1896,6 @@ et:
         logo_and_favicon: Logo ja lemmikuikoon
         settings: Sätted
         customer_portal: Kliendiportaal
-        default_portal_language: Vaikimisi portaali keel
-        edit_branding: Muuda brändimist
-        categories_visible: Portaali kategooriad
-        show_author_name: Näita autori nimesid
-        agent_portal: Agendi portaal
-        enable_multilingual: Seadista mitmekeelne tugi
-        enable_personalized_articles: 'Kui see on lubatud, kuvatakse lahendusartiklites autorite nimesid'
-        edit_portal: Muuda portaali
       edit:
         title: Redigeeri toodet
         updating: Uuendamine...
@@ -2344,7 +1919,6 @@ et:
         email_not_verified: Kinnitamata
         view_portal: Vaata portaali
         delete: 'Kas oled kindel, et soovid selle toote kustutada?'
-        portal_disabled: Portaal on keelatud
       index:
         enable_portal: Luba tooted
         title: Tooted
@@ -2354,9 +1928,6 @@ et:
       primary_email_required: Sul peab olema vähemalt üks peamine e-posti aadress
       assign_product: Määra toode
       product_label_msg: Toode
-      footer:
-        edit_portal: Salvesta ja muuda portaali
-        enable_portal: Salvesta ja luba portaal
     twitters:
       index:
         new: Lisa Twitteri konto
@@ -2375,7 +1946,6 @@ et:
         capture_dm: Konverdi otsesõnumid taotlusteks
         screen_name: Ekraaninimi
         default_group: Vaikimisi grupp
-      stream_content: See voog sisaldab kõiki sinu @ mainimisi
     roles:
       title: Lahendaja rollid
       new: Uus roll
@@ -2473,8 +2043,6 @@ et:
       saving_label: Salvestamine...
       manage_label: Halda
       add_label: Lisa
-      default_role_with_name: '%{role_name} (vaikimisi roll)'
-      no_agent_label: Pole agente
     home:
       index:
         group: Grupid
@@ -2522,9 +2090,6 @@ et:
         tags: Sildid
         mobihelp: MobiHelp
         customer-portal: Kliendiportaal
-        invalid_address: Vale aadress
-        search_admin: Otsi administraatori seadeid
-        invoice: Arved
       keywords:
         forum_moderation: Foorumi modereerimine
         configure_support_email: Seadista klienditoe e-posti aadress
@@ -2634,155 +2199,24 @@ et:
         skill_create: Loo
         manage_label: Halda
         add_label: Lisa
-        no_skill_info_1: Ühtegi oskust pole loodud.
-        nav_skill_list_text: Oskuste loend
-        nav_agent_skill_text: Agentide oskus
-        new: Uus oskus
-        no_skill_info_2: Võta ühendust oma klienditoe administraatoriga.
-        confirm_delete_message_v2: >-
-          Oskuse kustutamisega eemaldatakse oskus kõigi agentide juurest. Selle
-          oskusega määramata tugiteenusepiletid märgistatakse uue oskusega. Kas
-          tahad kindlasti jätkata?
-        info_help: >-
-          Loo tugiteenusepileti probleemide jaoks oskusi ja seosta neid
-          agentidega, kes nendega toime tulevad. Tugiteenusepiletile
-          rakendatakse esimest vastavat oskust.
-        agent_skills: Agentide oskused
-        not_in_any_groups_info: >-
-          Saad hallata agentide oskusi vaid siis, kui kuulud rühma. Võta
-          ühendust oma klienditoe administraatoriga.
-        no_agents_info: Sellesse rühma pole lisatud ühtegi agenti!
-        no_groups_present_info: >-
-          Saad muuta tugiteenusepileti määramise seadeid ainult siis, kui kuulud
-          rühma.<br>Võta ühendust oma klienditoe administraatoriga.
-        new_skill_info: Sa pole veel ühtegi oskust loonud!
-        no_agent_label: Pole agente
-      rule_form:
-        info1: 'näide: VIP-klientidega tegelemine'
-        info3: Seo see oskus sobivate tugiteenusepiletitega
-        match_any: <b>ÜKSKÕIK MILLINE</b> järgnevatest
-        match_all: <b>KÕIK</b> järgnevad
-        new: Oskuse nimi
-        info2: >-
-          näide: „Määra VIP-klientide tugiteenusepiletid agentidele Mari, Jüri
-          või Anu“
-      import_csv: Impordi agendi oskusi
-      helpcard:
-        title2: Oskuste loomine
-        learn_more_skill_based_info: Loe lähemalt oskuspõhise määramise kohta
-        info2: >-
-          Iga oskus tuleks määrata agentide kogumikule ja siduda teatud
-          tingimustele vastavate tugiteenusepiletitega.<br><br>Saad määrata
-          oskusi agentidele nende ekspertteadmiste või võimete põhjal. Näiteks
-          kui toetad mitut keelt, saad luua oskuse nimega 'Sorav hispaania keel'
-          agentidele, kes oskavad tegeleda hispaaniakeelsete
-          tugiteenusepiletitega. Oskuste sidumiseks tugiteenusepiletitega saad
-          kasutada tugiteenusepileti omadustel nagu liik, allikas või toode või
-          kliendi omadustel nagu taotleja nimi, e-posti aadress või ettevõte
-          põhinevaid tingimusi. Seega seotakse hispaaniakeelsed
-          tugiteenusepiletid oskusega 'Sorav hispaania keel'.<br><br>Kui
-          tugiteenusepiletiga seotud oskus vastab agendi oskusele, määratakse
-          tugiteenusepilet sellele agendile.
-        title1: Mis on oskused?
-        title3: Oskusest tugiteenusepileti kaardistamiseni
-        info3: >-
-          Oskuse reegleid kasutatakse tuvastamiseks, milline oskus tuleks
-          tugiteenusepileti või kliendi omadustele tuginedes siduda
-          tugiteenusepiletiga. Iga rühmale määratud tugiteenusepileti puhul
-          käivitatakse esimene vastav oskuse reegel oskuste loendist.
-          Administraatorid saavad oskuste loendi järjekorda muuta selliselt, et
-          kõige olulisemad reeglid oleksid esimesed.
-        info1: >-
-          Oskuste abil saad hõlpsalt tugiteenusepileteid õigete agentidega kokku
-          viia. Saad siduda konkreetseid oskusi iga agendiga ning luua reegleid
-          veendumaks, et neile määratakse ainult nendele oskustele vastavaid
-          tugiteenusepileteid.
-      new:
-        new: Uus oskus
-      import:
-        download_xls_title: >-
-          Laadi alla praegune agentide ja nende oskuste loend (kui on olemas)
-          CSV-failina
-        note_info_3: >-
-          Pane tähele, et ühe agendiga saab siduda maksimaalselt 35 oskust ja
-          ühe konto kohta on võimalik luua 180 oskust
-        add_skills_title: >-
-          Lisa agentidele oskusi kahanevas järjekorras kõige eelistatumast
-          alates ja laadige fail üles
-        important_note: Oluline märkus
-        note_info_1: 'Kui leiame uue oskuse nime, loome oskuse ja määrame selle agentidele'
-        note_info_2: >-
-          Kui leiame testsuguste oskustega olemasoleva agendi, eemaldame temalt
-          praegused oskused ja määrame talle failis olevad uued oskused
-        download_xls_btn: Laadi alla .CSV-fail
-        upload_file: Laadi üles .CSV-fail
-      edit:
-        edit: Muuda oskust
     user_skills:
       index:
         more: rohkem
         any: Kõik
         groups: Grupp
-        turn_on: Lülita sisse
-        add_skills: Lisa oskusi
-        admin_info_help: Lisa agentidele oskusi kahanevas järjekorras alates eelistatuimast
-        manage_skills: Halda oskusi
-        supervisor_info_help: Korrasta agentide oskusi kahanevas järjekorras alates eelistatuimast
-        sbrr_disabled_admin: Oskuspõhist määramist pole selles rühmas sisse lülitatud
-      no_skills: Oskused puuduvad
     ecommerce:
       new:
         account_name: Konto nimi
         title: Uus konto
         assign_product: Määra tootele
         assign_group: Määra grupile
-        site_helptext: 'vali eBay leht, kus sa oma tooteid müüd'
-        select_product: Vali toode
-        save_account: Salvesta konto
-        select_group: Vali rühm
-        select_ebay_site: Vali eBay leht
-        ebay_site: eBay leht
       index:
         new_account: Uus konto
-        title: Veebikaubanduse kontod
-        renew: Uuenda pääset
       index_title: E-äri
-      helpnote:
-        no_account: Lisa uus konto
-        integrate_ecommerce: Suuna oma veebikaubanduse sõnumid Freshdeski
-        content1:
-          info1: Veebikaubanduse konto integreerimine
-          info2: >-
-            Freshdeskiga saad klienditoest hallata eBay kontole saabuvaid
-            klientide päringuid. Pärast seadistamist muudetakse kõik eBayst
-            pärit klientide päringud automaatselt tugiteenusepiletiteks. Saad
-            neile ka otse Freshdeskist vastata. 
-      ebay: eBay
-      edit:
-        expiry_date: Pääsme aegumine
-        title: Muuda kontot
     hotline:
       content3:
         note_title: 'Märkus:'
-        note_info: >-
-          Jätkame olemasolevatel klientidel Mobihelpi toetamisega, kuid ei
-          arenda seda enam aktiivselt. Soovitame sul niipea kui võimalik
-          Hotline'ile üle minna. Kui kasutad praegu Mobihelpi, võta erihinna
-          saamiseks ühendust aadressil support@hotline.io.
       list_title: MobiHelpi rakendused
-      get_started: Alusta Hotline'iga juba täna
-      content2:
-        list_title: 'Hotline''iga saad:'
-        list1: rakendusesisese vestluse kiirteavitustega
-        list4: omaintegratsiooni Freshdeskiga
-        list2: mobiilirakenduste KKK
-        list3: kiire kaasamisliidese agentide jaoks
-        list5: kampaaniatööriistad ja rikassõnumite saatmise
-      heading1: Mobihelpi kasutajatele tutvustatakse Hotline'i
-      content1:
-        info1: >-
-          Hotline on Freshdeski uus mobiilse toe ja kaasamise platvorm. See
-          ladus uus toode pakub kõike, mida Mobihelp ja enamgi.
   ends_with: 'Lõpp:'
   last_name: Perekonnanimi
   forum:
@@ -2818,11 +2252,6 @@ et:
       agents: Lahendajad
       all: Kõik
       select_company: Vali ettevõtted
-    max_description_length_allowed: Maksimaalselt 250 tähemärki
-    convert_to_ticket: Teemade automaatne muutmine tugiteenusepiletiteks
-    convert_to_ticket_info: >-
-      Kõik selles foorumis loodud teemad muudetakse automaatselt
-      tugiteenusepiletiks.
   password_reset_email: Parooli lähtestamise kiri
   default_reply_template: Lahendaja vastuse mall
   additional_email_verification: E-posti aadressi täiendav verifitseerimine
@@ -3551,19 +2980,6 @@ et:
         tugiportaalile sinu oma domeeni kaudu. Sa saad oma
         sinuettevõte.freshdesk.com URLi suunata oma domeenile nagu näiteks
         tugi.minuettevõte.com.
-      setup: Klienditoe seadistamine
-      info5: >-
-        Saad piirata teatud domeenidesse lisatud kontaktidega ligipääsu oma
-        klienditoele. Teised ei saa registreeruda, sisse logida ega
-        tugiteenusepileteid esitada. Loe selle kohta lisateavet
-      info8: Toote jaoks portaali seadistamiseks kasuta suvandit 'Muuda portaali'.
-      info7: >-
-        Kui sul on pakett Garden või kõrgem, saad suvandi 'Keeled' all
-        seadistada mitmekeelse klienditoe.
-      info6: siit.
-      info3: >-
-        Siin saab muuta kõiki sinu klienditoe põhiseadeid nagu keelt, ajavööndit
-        ja värviskeeme.
     cancel:
       cancel_account: Tühista oma Freshdeski konto
       info_text: >-
@@ -3663,82 +3079,14 @@ et:
     edit_domain:
       email_error: Ettevõtte nimes peaks olema vähemalt kolm tähemärki.
       url_error1: 'Domeen <strong>%{domain_name}</strong> ei ole saadaval.'
-      email_label: Sinu Freshdeski e-kiri (saad seda oma klientidega jagada)
-      title2: Alustamiseks kinnita oma konto üksikasjad.
-      url_label: Sinu Freshdeski URL (pääsed kontole ligi siit)
-      email_info_text: Saad seda muuta või enda oma hiljem lisada.
-      getting_started: Alustamine
-      submit_button_text: Vii mind minu kontole
-      account_url_defaulted: >-
-        Aktiivsusetuse tõttu määrasime su kontole vaikimisi automaatselt
-        genereeritud URLi. Suuname sind kohe su töölauale...
     new:
       full_name: Täisnimi
       company: Ettevõte
       confirmation: Kinnitamine
       create_an_account: Loo konto
-      card_charge: 'Sinu kaardilt võetakse maha '
-      site_url: Lehe URL
-      enter_payment_info: Sisesta oma makseandmed
-      enter_name_subdomain: ' Sisesta oma ettevõtte nimi ja alamdomeen, mida soovid oma lehe jaoks kasutada.'
-      errors_encountered: 'Seoses sinu konto andmetega esinenud vead:'
-      administrator_account: Sisesta administraatori konto teave
-      discount_code: Sooduskood
     signup_google:
       sign_up: Registreeru!
       privacy_policy: privaatsuspoliitika
-      existing_url: Sinu praegune Freshdeski URL
-      existing_account: Olemasolev Freshdeski konto
-      link_existing_account: Link sinu praeguse Freshdeski konto juurde.
-      sample_url: 'nt aadressi ''http://apple.freshdesk.com'' jaoks sisesta märksõna ''apple'''
-      terms_of_service: kasutustingimused
-      create_account: Loo uus Freshdeski konto.
-    multilingual_support:
-      helpcard:
-        portal_languages:
-          title: <b>Nähtav/peidetud portaalis</b><br />
-          info1: >-
-            Kui su teadmistebaasi artiklid on tõlgitud teistesse keeltesse ja
-            oled valmis neid avaldama, saad klientidele keele nähtavaks muuta,
-            klõpsates ümberlülitit (portaalis peidetud/portaalis nähtav)<br
-            /><br />
-        supported_languages:
-          title: <b>Toetatud keeled</b><br/>
-          info2: '<i>Kui toetatud keeli lisad, ei saa sa oma esmast keelt muuta.</i>'
-          info1: >-
-            Sellesse loendisse keelte lisamine võimaldab sul tõlkida
-            teadmistebaasi artikleid ja e-posti teavitusi vastavatesse
-            keeltesse, et klientidele tuge pakkuda.<br /><br />
-        info1: >-
-          Paku sujuvat tugikogemust oma rahvusvahelistele klientidele maailma
-          eri paigust.
-        title: Räägi oma kliendi keeles
-      add_languages: Lisa keeled
-      warning_msg: >-
-        Märkus: esmane keel on sinu vaikimisi kasutatoe keel. Pärast toetatud
-        keelte lisamist ei saa seda muuta.
-      manage_languages: Halda keeli
-      add_more_languages_msg: >-
-        Lisa muid keeli, milles sa siin kliendituge pakud. Seejärel saad iga
-        toetatava keele puhul eraldi e-posti teavituse malle ja teadmistebaasi
-        artikleid tõlkida.
-    signup_google_error:
-      allow_access_message: >-
-        Pead jätkamiseks klõpsama nupul <strong>Luba ligipääs</strong>, kuna
-        Freshdesk kasutab sisselogimise IDna sinu e-posti aadressi.
-      go_back: 'Klõpsa siia, et Google''i rakenduste turule tagasi minna'
-    associate_google:
-      login_button: Logi sisse ja vii registreerumine lõpuni
-      login_message: >-
-        Google Appsi sisselogimise Freshdeski kontoga sidumiseks logi sisse
-        konto administraatori sisselogimisandmetega.
-    thank_you:
-      account_created_login: >-
-        Täname sind konto loomise eest! Nüüd saad oma kontole sisse logida
-        aadressilt
-      account_created: Konto on loodud
-      launch_support: Twitteri ja Facebooki toe käivitamine
-    canceled_account: 'Meil on kahju, et lahkud, kuid sinu konto on tühistatud.'
   success_msg: Konto sätted on edukalt uuendatud!
   failure_msg: Konto sätete uuendamine ebaõnnestus!
   account_configuration:
@@ -3882,14 +3230,14 @@ et:
       Deleting this category will delete all %{folders} folders and %{articles}
       articles in it.
     product_portal_visibility: Nähtav -
-    select_solution_category: Vali tooteportaal...
+    select_solution_category: Select a product portal...
     solution_categories_portal_info: >-
       This category will be visible in the main product portal along with the
       above selected product portals.
     manage_categories: Halda
   forum_category:
     product_portal_visibility: Nähtav -
-    select_product: Vali tooteportaal...
+    select_product: Select a product portal...
     forum_categories_portal_info: >-
       This category will be visible in the main product portal along with the
       above selected product portals.
@@ -3953,7 +3301,6 @@ et:
         iga sissetuleva taotluse puhul ellu esimese sobiva reegli ja peatub
         siis. Sa saad reeglite järjestuse ümber korraldada, et kõige olulisemad
         reeglid oleksid esimesel kohal.
-      tour_v2: Aita mul luua Dispatch’ri reegel
     reorder: Telli uuesti
     add_new_action: Lisa uus toiming
     dispatch_rules: Dispetšer - reeglid
@@ -3964,11 +3311,6 @@ et:
     skip_notifications: Jäta vahele teated uute taotluste kohta
     skip_notification_yes: Jah
     skip_notification_no: Ei
-    info_help: Käivita iga sissetuleva tugiteenusepileti puhul esimene sobilik reegel
-    default_rule_desc: >-
-      Kõik tellimusega seotud tugiteenusepiletid määratakse arvelduse
-      meeskonnale
-    default_rule_name: Kõik tellimusega seotud tugiteenusepiletid lähevad arveldusele
   header_logo: Päise logo
   feedback:
     title: Kas see vastus oli kasulik?
@@ -3989,7 +3331,6 @@ et:
       agents: Lahendajad
       all: Kõik
       select_company: Valitud ettevõtted
-      help_text: 'Vali kasutajate loend, kellel sellele kaustale ligipääs on'
     types:
       permanent: Püsiv
       workaround: Muudetav
@@ -3997,11 +3338,6 @@ et:
       placeholder: Otsi kõikide lahenduste seast
     search:
       placeholder: 'Otsi nime %{name}'
-    company:
-      add_existing: Lisa olemasolevale
-      replace_existing: Asenda olemasolev
-    drafts:
-      empty: Siin ei ole mustandeid.
   auto_suggest_solutions:
     info: >-
       <b>Tead mis? Meil võib juba olla vastus su küsimusele.</b><br/>Vaata, kas
@@ -4208,9 +3544,6 @@ et:
         vote_info_include_1: Sul on see küsimus
         vote_info_include_2: 'Sul ja %{vote} inimesel on see küsimus'
         voted_users_widget_title: 'Inimesed, kellel see küsimus on'
-      announce:
-        voted_users_widget_title: 'Inimesed, kellele see teadaanne meeldib'
-        vote_info_include_1: Sulle meeldib see teadaanne.
     post:
       posted_on: '%{user_name} kuupäeval %{post_date}'
       edit_comment: Redigeeri kommentaari
@@ -4319,43 +3652,6 @@ et:
     maximum: Suurim
     enable: Luba
     confirm: Kinnita
-    auto_assignment_description: >-
-      Sellesse rühma saabuvad tugiteenusepiletid määratakse automaatselt
-      vabadele agentidele sinu valitud määramismeetodi põhjal
-    info8: >-
-      Uus: luba järelevaatajatel hallata automaatset tugiteenusepiletite
-      määramist ja agendi kättesaadavust rühmades, kuhu nad kuuluvad -
-    sbrr_plan_text: <span class="muted"> Saadaval paketis </span> <b> Forest </b>
-    please_confirm: Kinnita...
-    info8_readmore: Loe lähemalt
-    alert_content: >-
-      Sind suunatakse ümber oskuste lehele. Kõik selles rühmas tehtud muudatused
-      salvestatakse automaatselt, kui otsustad jätkata.
-    round_robin_skill_based_tooltip: >-
-      Kui sama oskusega on kaks agenti, määratakse tugiteenusepiletid sellele
-      agendile, kellel on käsil vähem tugiteenusepileteid.
-    alert_content_2: Kas soovid jätkata?
-    escalation_rule: Eskaleerimise reegel
-    rr_v2_confimation_message: Seda toimingut ei saa tagasi võtta. Kas soovid kindlasti jätkata?
-    round_robin_skill_based: Oskuspõhine tugiteenusepiletite määramine
-    toggle_availability_message: >-
-      Administraatorid ja järelevaatajad saavad agendi kättesaadavust töölaualt
-      muuta
-    only_round_robin_description: >-
-      Sellesse rühma saabuvad tugiteenusepiletid määratakse automaatselt
-      vabadele agentidele <strong>karussellimeetodi</strong> põhjal
-    per_agent: agendi kohta
-    round_robin_defalut: Karussellimeetodil tugiteenusepileti määramine
-    round_robin_capping: Tasakaalustatud koormusega tugiteenusepiletite määramine
-    no_group_info: Sa pole ühtegi rühma loonud.
-    round_robin_skill_based_info: 'Määra tugiteenusepilet agendile, kes sellega kõige paremini toime tuleb'
-    round_robin_default_info: Määra agentidele tugiteenusepileteid korda-mööda
-    send_escalation_to: '...seejärel saada eskaleerimise e-kiri aadressile:'
-    round_robin_capping_info: 'Piira tugiteenusepiletite arvu, millega agent korraga tegeleda võib'
-    sbrr_trial_text: >-
-      Kas teadsid, et saad määrata tugiteenusepileteid oma agentide oskuste
-      põhiselt? <a href="https://support.freshdesk.com/solution/articles/222692"
-      target="_blank">Loe täpsemalt</a>
   four: 4 tundi
   oneweek: 1 nädal
   twoweek: 2 nädalat
@@ -4448,41 +3744,6 @@ et:
       info7: 'Pane tähele, et sa ei saa oma rolle muuta ega ennast kustutada.'
       info8: Loe lähemalt Lahendajate rollide kohta
       title3: Grupi juurdepääs
-      title4: Ulatused ja rollid
-      info9: >-
-        Sinu klienditoe täiskohaga agendid on need, kes iga päev klienditoes
-        aega kirja panevad.
-      info14: >-
-        Saad näha, milliseid tugiteenusepileteid sinu agendid näevad, kui muudad
-        nende tugiteenusepiletite ulatust. Lisaks peaksid rolli valimisega
-        täpsustama, milliseid toiminguid agent sinu klienditoes teha saab.
-      info11: >-
-        Saad määrata agendid kindlatesse rühmadesse nagu Müük ja Tootehaldus.
-        Agentide jaotamine rühmadesse võimaldab hõlpsalt tugiteenusepileteid
-        määrata, konkreetseid valmisvastuseid luua, töövooge hallata ja rühma
-        tasandil aruandeid koostada. Pane tähele, et üks agent võib kuuluda
-        mitmesse rühma.
-      info12: >-
-        Freshdeski agent on ükskõik kes, kes vajab ligipääsu klienditoe
-        tugiteenusepiletitele, töötab nendega ja lahendab neid. Loendis on
-        toodud kõik hetkel sinu klienditoesse kuuluvad agendid. Liiguta nool
-        agendi kohale üksikasjade muutmiseks või klõpsa nupul 'Uus agent', et
-        uut agenti lisada. Lisatavad agendid saavad e-kirja kinnituslingiga, et
-        oma kontot aktiveerida, ning pärast seda pääsevad nad
-        tugiteenusepiletitele ligi ja saavad neile vastata.
-      info15: 'Pane tähele, et sa ei saa oma rolle muuta ega ennast agendina kustutada.'
-      info10: >-
-        Osalise tööajaga agendid on need, kes peavad sisse logima vaid aeg-ajalt
-        nagu sinu müügi- ja turundusjuht, et tegeleda konkreetsete
-        kliendipäringutega. Nende agentide jaoks ei ole vaja terveks kuuks
-        täiendavat agendi kohta soetada.
-      info13: >-
-        Saad valida, kas agendid pääsevad klienditoe portaalile ligi täisajaga
-        või logivad sisse vaid aeg-ajalt. Osalise tööajaga agendid kasutavad iga
-        klienditoe portaali sisselogimise päeva eest ära ühe päevapääsme.
-        Päevapääsmeid saab osta komplektina administraatori vahekaardist. Pane
-        tähele, et sult võetakse raha vaid selle hulga täisajaga agentide eest,
-        kelle pakettide ja arvelduse jaotisesse lisad.
     make_admin: Tee sellest lahendajast ülem
     view_user: Vaata kasutajat
     use_email: Kasuta seda e-posti aadressi
@@ -4521,31 +3782,6 @@ et:
     last_logged: Viimane sisselogimine
     no_recent_activity: Hiljutisi tegevusi pole
     skill: Oskused
-    member: 'Liige järgnevas:'
-    search_placeholder: Otsi kõiki agente
-    remove_role: Eemalda roll
-    remove_group: Eemalda rühm
-    convert_to_contact: Muuda kontaktiks
-    reset_scores: Lähtesta märgid ja punktid
-    add_skills: Lisa oskusi
-    reset_score_alert_you: >-
-      Kaotad oma oma märgid ja sinu punktid lähtestatakse arvule %{points}. Kas
-      tahad kindlasti jätkata?
-    invalid_export_params: Agendi andmete eksportimisel ilmus viga. Proovi uuesti.
-    invalid_placeholder: Sisestati kehtetud kohatäitjad
-    reset_score_alert_them: >-
-      %{name} kaotab oma oma märgid ja tema punktid lähtestatakse arvule
-      %{points}. Kas tahad kindlasti jätkata?
-    groups_description: Seo selle agendiga üks või rohkem rühma.
-    export_title: Ekspordi agendid CSVsse
-    convert_agent_confirmation: >-
-      Hoiatus – agendi muutmisel kontaktiks eemaldatakse jäädavalt kogu agendi
-      teave. Kas soovid kindlasti jätkata?
-    export_successfull: Sinu agentide andmed saadetakse peagi sinu e-posti aadressile!
-    manage_skills: Halda oskusi
-    reset_score_title: Lähtesta märgid ja punktid
-    last_seen_at: 'Viimati nähtud:'
-    assign_group: Seo rühmi
   account_admin: Kontoülem
   right: Parem
   footer:
@@ -4840,13 +4076,6 @@ et:
     refund: Hüvitatud
     download: Laadi alla
     date: Kuupäev
-    sub_total: Vahesumma
-    unit_price: Ühiku hind
-    quantity: Kogus
-    no_invoice: Arved puuduvad
-    line_items: Rea kirjed
-    invoice_title: 'Kõigi Internetis tehtud kontomaksete arvete loend '
-    transaction_details: Maksete ja tagasimaksete üksikasjad
   activate: Aktiveeri
   feedbackwidget_button_text: Märgend
   amount_billed_per_month: 'You will be billed <b>%{amount} %{period}</b>.'
@@ -4900,21 +4129,21 @@ et:
       Anna meile oma e-posti aadress ja juhised parooli lähtestamiseks
       saadetakse sulle e-kirjaga.
     signup: Registreeru
-    login_or_signup: '%{login} või %{signup} konto jaoks'
+    login_or_signup: '%{login} or %{signup} for an account'
     to_post_comment: ' et postitada kommentaar'
     to_submit_ticket: ' et esitada uus pilet'
     login_to_submit_ticket: '<a href=%{login_url}>Logi sisse</a> et esitada uus taotlus'
     login_signup_to_submit_ticket: >-
       <a href=%{login_url}>Logi sisse</a> või <a
       href=%{signup_url}>registreeru</a> et esitada uus taotlus
-    login_to_post_topic: '<a href='''' class=''solution_c''>Logi sisse</a>, et teemat postitada'
-    login_to_post_comment: '<a href='''' class=''solution_c''>Logi sisse</a>, et kommentaari postitada'
+    login_to_post_topic: <a href='' class='solution_c'>Login</a> to post a topic
+    login_to_post_comment: <a href='' class='solution_c'>Login</a> to post a comment
     login_signup_to_post_topic: >-
-      <a href=%{topic_reply_url}>Logi sisse</a> või <a
-      href=%{signup_url}>Registreeru</a>, et teemat postitada
+      <a href=%{topic_reply_url}>Login</a> or <a href=%{signup_url}>Signup</a>
+      to post a topic
     login_signup_to_post_comment: >-
-      <a href=%{topic_reply_url}>Logi sisse</a> või <a
-      href=%{signup_url}>Registreeru</a>, et kommentaari postitada
+      <a href=%{topic_reply_url}>Login</a> or <a href=%{signup_url}>Signup</a>
+      to post a comment
     to_post_topic: ' et teema postitada'
     preview:
       view_on_helpdesk: Vaata kasutajatoe keskkonnas
@@ -4947,9 +4176,6 @@ et:
       modified_on: 'Muudetud:'
       related_articles: Seotud artiklid
       created_by: 'Loodud:'
-      activation_warning: >-
-        Näib, et sinu konto on kinnitamata. Aktiveeri see artikli avaldamiseks
-        (seniks saad oma mustandid salvestada).
     folder:
       filler_text: 'Otsi siit artikleid kausta "%{folder_name}" kohta'
     topic:
@@ -4980,7 +4206,7 @@ et:
       in_forum: 'Foorumis %{forum_name}'
       merge: 'Liidetud teemaga:'
       locked: Teema on lukus
-      sticky: Kleebituks märgitud teema
+      sticky: Topic is marked as sticky
       merge_continue: 'Sa saad jätkata vestlust siin:'
       merge_note:
         one: 'Teema on liidetud selle teemaga:'
@@ -4988,14 +4214,8 @@ et:
       sort_heading: 'Sortimisalus:'
       sort_order:
         popularity: Populaarne
-        date: Vanimad esimesena
-        recency: Uusimad esimesena
       sort_by_most_recent: Kõige viimane
       sort_by_default: Kasuta vaikesätet
-      activation_warning: >-
-        Näib, et sinu kontot ei ole veel kinnitatud. Aktiveeri see foorumi teema
-        postitamiseks.
-      sort_by_most_popular: Kõige populaarsem
     topic_vote:
       you:
         one: Sul
@@ -5026,14 +4246,6 @@ et:
       howto_users_voted_title: 'Inimesed, kellel see küsimus on'
       votes: stemmer
       announce_unlike_button: ei meeldi!
-      announce:
-        one: meeldib see
-        other: meeldib see
-      upvote: hääleta üles
-      upvoted: üles hääletatud
-      user_upvote_list_title: Üles hääletanud inimesed
-      announce_button: Kas see meeldib sulle?
-      announce_users_voted_title: 'Inimesed, kellele see meeldib'
     tickets:
       merged_topic_note: Liidetud pealkirja ei konverdita taotlusele
       export: Ekspordi taotlused
@@ -5057,26 +4269,6 @@ et:
     vote_label:
       one: 1 stemme
       other: stemmer
-    agent_login_info: Kas oled agent?
-    customer_login_info: Kas oled klient?
-    agent_signin: Logi siin sisse
-    helpdesk_login_portal: 'Tere tulemast tagasi, agent'
-    user_signup_portal: 'Registreeru, et saada oma '
-    topic_not_found: 'Näib, et see teema on kustutatud'
-    post_not_found: 'Näib, et see postitus on kustutatud'
-    vote:
-      more:
-        one: '1 veel '
-        other: '%{count} veel '
-      people:
-        one: '1 inimesele '
-        other: '%{count} inimesele '
-    post_vote:
-      upvoted: Hääletasid üles
-      upvote: Hääleta üles
-      like:
-        one: meeldib see
-        other: meeldib see
   feedbackwidget_form_heading: Vormi pealkiri
   feedbackwidget_form_title: Vidina vormi pealkiri
   cancel_and_back: Tühista ja mine tagasi
@@ -5186,8 +4378,6 @@ et:
       created_by: 'Looja:'
       feedback: Tagasiside
       analytics: Analüütika
-      unsaved_content: Sul on sellel lehel salvestamata sisu.
-      leave_page_que: Kas soovid sellelt lehelt lahkuda?
     add_category: Uus kategooria
     solution_title: Pealkiri
     kb: Teadmistebaas
@@ -5210,7 +4400,7 @@ et:
     import_warning_info: >-
       If we encounter an already existing %{type} %{field} during import, then
       the other details of the %{type} will be updated.
-    import_csv: 'Impordi %{type} CSVst'
+    import_csv: 'Import %{type} from CSV'
     sample_data: Sample data
     contact_import_data_info: >-
       Please ensure that your CSV file is in UTF-8 format and the first row has
@@ -5248,8 +4438,6 @@ et:
       reset_warning: >-
         Kui API võti on lähtestatud, ei toimi enam ükski vana võtit kasutav
         rakendus. Kas oled kindel, et soovid jätkata?
-    freshid_profile_info: Sind suunatakse ümber sinu Freshworkis konto lehele
-    freshid_profile_link: Muuda oma profiiliandmeid või parooli
   add_to_do: Lisa ülesanne
   subject_or_description: Teema või kirjeldus
   premium_details: >-
@@ -5381,7 +4569,6 @@ et:
       home: Avaleht
       company_tickets: Ettevõtte taotlused
       social: Sotsiaalvõrk
-    goto_agent_portal: Agendi portaal
   agent_adds_comment: Lahendaja lisab taotlusele kommentaari
   portal_customizer_anon_tickets: Igaüks saab taotlust esitada
   portal_customizer_option_tickets: Kasutajad saavad taotluse esitada ilma sisse logimata
@@ -5389,13 +4576,14 @@ et:
   tag:
     title: Sildid
   email_notifications:
-    default_font: 'Vaikimisi vorming: '
+    default_font: 'Default Font : '
     customize_email: Kohanda e-posti
     edit_reply_template: Redigeeri malli
     default_reply_template_title: Lahendaja vastuse mall
     default_reply_template_info: >-
-      KÕIGI agentide tugiteenuse vastuse redigeerijale lisatakse automaatselt
-      vastamismall. Kursori asend mallil otsustab, kuhu agent trükkima hakkab.
+      Reply template will be automatically included in the ticket reply editor
+      for ALL agents. The cursor position in this template will decide where
+      your agent will start typing.
     modify_requester_template: Muuda nõudja e-kirja malli
     requestor_notification: Nõudja teade
     requestor_notifications: Nõudja teated
@@ -5615,78 +4803,18 @@ et:
           teistesse keeltesse võivad olla aegunud.
       agent_template_25:
         topic: Lahendaja kutse e-kiri
-        info1: "Agendi kutse e-kiri saadetakse, kui sinu klienditoesse lisatakse olemasolev Freshworkski agent (agent on juba mõne muu Freshworksi toote – Freshchat, Freshcaller, Freshsales, Freshservice, Freshmarketer – mõnes muus Freshdeski kontos aktiivne). <br/><br/>Kasutaja aktiveerimise e-kiri saadetakse uuele Freshworksi agendile. Agendi kutse e-kiri saadetakse agendile, kes on juba aktiivne Freshworksi agent."
-      agent_template_23:
-        topic: Lahendamise aja SLA meeldetuletus
-        info1: >-
-          See teade saadetakse agendile iga kord, kui tugiteenusepileti
-          lahendamise tähtaeg läheneb. See e-kiri võib sisaldada
-          tugiteenusepileti URLi, mis hõlbustab agendil tugiteenusepileti
-          vaatamist.<br/><br/>Kui oled kasutajatoes seadistanud mitu toetatavat
-          keelt, saad selle teate igas keeles eraldi luua. Ikoon <i
-          class="common-icon-outdated"></i> viitab sellele, et teatud tõlked
-          teistesse keeltesse võivad olla aegunud.
-      cc_notification_20:
-        topic: Avaliku märkuse salakoopia
-        info1: >-
-          Kui agendile või taotlejale lisatakse avalik märkus, saadetakse see
-          kiri salakoopia adressaadile, et teda viimasest kommentaarist
-          teavitada. See e-kiri peaks sisaldama viimast kommenteerijat
-          {{comment.commenter.name}} ja viimast kommentaari {{comment.body}}.
-      agent_template_22:
-        info1: >-
-          See teade saadetakse agendile iga kord, kui tugiteenusepileti esimese
-          vastuse tähtaeg läheneb. See e-kiri võib sisaldada tugiteenusepileti
-          URLi ja tugiteenusepileti tähtaega.<br/><br/>Kui oled kasutajatoes
-          seadistanud mitu toetatavat keelt, saad selle teate igas keeles eraldi
-          luua. Ikoon <i class="common-icon-outdated"></i> viitab sellele, et
-          teatud tõlked teistesse keeltesse võivad olla aegunud.
-        topic: Esimese vastuse SLA meeldetuletus
-      forward_template_24:
-        topic: Agendi edastamismall
-        info1: >-
-          Edastusmalli abil saad kohandada ja ankeedile eelsisestada
-          vaikeandmeid, mida soovid agendi taotluste edastamistele lisada.
-          Agendi edastusmallid võimaldavad sul automaatselt lisada dünaamilist
-          sisu nagu taotleja nimi, taotluse URL ja agendi allkiri. <br/><br/>Kui
-          sa oled kasutajatoes seadistanud mitu toetatavat keelt, saad selle
-          teate igas keeles eraldi luua. Ikoon <i
-          class="common-icon-outdated"></i> viitab sellele, et teatud tõlked
-          teistesse keeltesse võivad olla aegunud.
-      agent_template_21:
-        info1: >-
-          See teavitus saadetakse agentidele, keda on mainitud jaotises 'teavita
-          agente', kui agent lisab tugiteenusepiletile märkuse. See e-kiri võib
-          sisaldada tugiteenusepileti URLi {{ticket.url}}, et agentidel oleks
-          lihtsam tugiteenusepiletit kontrollida.
-        topic: Tugiteenusepiletile lisati märkus
-      cc_notification_19:
-        topic: Uue tugiteenusepileti salakoopia
-        info1: >-
-          See teavitus saadetakse salakoopia adressaatidele, kui taotleja lisas
-          klienditoele tugiteenusepileti esitamisel salakoopia alla e-posti
-          aadresse. E-kiri peaks sisaldama taotleja nime
-          {{ticket.requester.name}} ja tugiteenusepileti kirjeldust
-          {{ticket.description}}.
     insert_placeholder: Sisesta kohatäited
     modify_agent_template: Muuda Lahendaja e-kirja malli
     event: Sündmus
     agent_notification: Lahendaja teade
     agent_notifications: Lahendaja teated
     subject: Teema
-    account_not_activated: >-
-      Näib, et sinu kontot ei ole veel kinnitatud. Aktiveeri see e-posti
-      teavituste saamiseks.
-    cc_notifications: Salakoopa teavitused
-    default_forward_template_info: >-
-      KÕIGI agentide edastatud sõnumi redigeerijale lisatakse automaatselt
-      edastamismall.
   errors_in_plan_change: 'Seoses sinu muudatusega esinenud vead:'
   formatting_help: Vormindust puudutav abi
   step1: Samm 1
   next_charge_date: Järgmine uuendus
   last_renewed_on: Viimati uuendatud
-  update_and_log_in: Uuenda ja logi sisse
+  update_and_log_in: Update & Log in
   activate_and_log_in: Activate & Log in
   password: Parool
   enter_payment: Mine edasi maksma
@@ -5845,38 +4973,7 @@ et:
       cname: CNAME
       verify: Kontrolli
       remove: Eemalda
-      new_dkim: Sa pole veel kohandatud domeeniga klienditoe e-posti aadressi loonud!
-      help_note: >-
-        DKIMi abil saad oma klienditoe e-kirjade allkirja panna oma e-posti
-        domeeninime(d). Selle abil saad arendada oma brändi identiteeti kõigis
-        kliendiga toimuvates suhtlusviisides.
-      verification_sent: Kinnitus saadetud
-      configuring: Seadistamine...
-      data_help: DNSi kirjele määratav väärtus
-      name: DKIM
-      host_value_help: Hosti nimi TXT-kirje jaoks
-      title: DKIMi seaded
-      help: DKIMi seadete konfigureerimine
-      data: Andmed
-      description: >-
-        Uuenda oma Interneti teenuseosutaja veebilehel järgmisi DNSi seadeid.
-        Kui oled iga domeeni jaoks kõik seaded kopeerinud, klõpsa seadete
-        aktiivsuse kinnitamiseks nuppu 'Kinnita'
-      host_value: Hosti väärtus
-      dkim_remove_message: 'Kas oled kindel, et soovid eemaldada DKIMi seadistuse järgneva jaoks:'
     plain_unverified: Kinnitamata -
-    enable_compose_info: >-
-      Kui jah, saavad agendid saata e-kirju uutele või olemasolevatele
-      klientidele, mis muudetakse väljuvateks tugiteenusepiletiteks.
-    enable_compose: Luba agentidel klientidega vestlust alustada?
-    personalized_email_replies_title: >-
-      Kasuta agendi nimesid tugiteenusepileti vastustes ja väljuvates
-      e-kirjades?
-    disable_agent_forward: Kasuta edastatavate e-kirjade puhul taotlejana algsaatjat
-    disable_agent_forward_info: >-
-      Kui agent edastab oma postkastist e-kirja klienditoele, luuakse
-      tugiteenusepilet algsaatja nime all. Kui see on keelatud, on taotlejaks
-      agent.
   step2: Samm 2
   import_users_contacts: Kasutajad &rarr; kasutajad
   linkback_info: 'Sa saad valida tagasilingi sinu veebilehele, kui klient päise logol klõpsab.'
@@ -6193,11 +5290,6 @@ et:
     search_text: Otsi artikleid
     action: Toiming
     thanks_v1: Täname sind tagasiside eest!
-    search_close_text: Sulge otsing
-    link_tracker:
-      notifier_body: 'Sõnumi sisu: '
-    compose:
-      to_address_placeholder: Sisesta kliendi aadress
   recent_activity: Hiljutine tegevus
   recent_activities: Hiljutised tegevused
   forgot_password: Unustasid parooli?
@@ -6369,12 +5461,6 @@ et:
     last_published: 'Portaal avaldati viimati %{last_published} tagasi'
     forums_toggle:
       title: Foorumid
-      forums_disabled: Selle konto jaoks on foorumid keelatud.
-      enable_forums: luba foorumid oma kontol
-      go_back_message: Mine tagasi oma kasutajatoe juurde
-      helpnote: >-
-        Selle keelamisega lülitad kõigi kasutajate jaoks foorumid kõigis oma
-        tooteportaalides välja
     gdpr_to: '- '
     gdpr_terms_link: tingimustega
     gdpr_admin: Ülem.
@@ -6384,43 +5470,6 @@ et:
     gdpr_agent: Lahendaja
     anyone: Igaüks
     gdpr_acknowledgement: 'ja kinnitad, et oled lugenud meie'
-    sort_conversations:
-      label: Sorteeri vestluseid
-      helpnote: Selles järjekorras kuvatakse tugiteenusepiletites sõnumeid.
-      latest_top: Nüüd näed uusimat vestlust kõige esimesena.
-      oldest_top: Nüüd näed vanimat vestlust kõige esimesena.
-      option1: Näita uusimat esimesena
-      option2: Näita vanimat esimesena
-    gdpr_terms: Klõpsates Nõustu nõustud meie
-    twitter_disabled: >-
-      Turvalisuse huvides keelatakse klientidel ja agentidel sisse logida
-      Twitteri kaudu.
-    includes_contacts_company_domain: (sealhulgas olemasolevad kontaktid ja ettevõtte domeenid)
-    hidden_on_portal: Peidetud portaalis
-    branding_toggle:
-      helpnote: >-
-        Selle välja lülitamisega eemaldad Freshdeski brändi märgised oma agendi-
-        ja kliendiportaalidest
-      disable_branding: Eemalda Freshdeski brändi märgised
-      title: Freshdeski brändi märgised
-    supported_portal_languages: Kasutajatele kuvatavad keeled
-    portal_languages: 'Portaalis kuvatavad keeled (%{count})'
-    supported_languages: 'Toetatud keeled (%{count})'
-    languages: Keeled
-    permission:
-      users_from_any_domain: Ükskõik millise domeeni kasutajad
-      who_can_create: >-
-        Kes saavad sisse logida (või) registreeruda (või) tugiteenusepileteid
-        luua?
-      helpdesk_restrictions: Klienditoe piirangud
-      users_from_selected_domains: Lubatud domeenide kasutajad
-    time_zone_updation: >-
-      Kõigi agentide ja kontaktide ajavööndi uuendatakse. Proovi mõne aja pärast
-      uuesti.
-    gdpr_admin_details: on muutnud sinu kasutajaõigusi kohast
-    search_domain: Otsi domeeni
-    helpdesk_name_plain: Kasutajatoe nimi
-    visible_in_portal: Nähtav portaalis
   lead: Vihje
   comments: Kommentaarid
   forum_confirm_msg1: 'Kas oled kindel, et soovid selle kategooria kustutada?'
@@ -6482,7 +5531,7 @@ et:
   your_trial_account: Sinu proovikonto
   reply_comment: Lisa kommentaar
   create_password: Create a Password
-  retype_password: Sisesta parool uuesti
+  retype_password: Retype Password
   feedbackwidget_defaulttitle: Abi ja tugi
   two: 2 tundi
   set_status_as: Seadista olekuks
@@ -6549,9 +5598,6 @@ et:
           või 1,5 ehk 1 tund ja 30 minutit). Automaatse taimeri käivitamiseks
           jäta see väli tühjaks.
       ticket_priority: Taotluse prioriteet
-      no_entry: Aja kirjed puuduvad
-      archive_tickets_column_error: Arhiveeritud tugiteenusepiletid jäetakse kõrvale
-      max_columns: Ei saa lisada rohkem kui 10 veergu
     tags:
       index:
         title: Halda silte
@@ -6649,9 +5695,6 @@ et:
       update: Uuenda
       ok: OK
       hide_cc: Lisa „Salakoopia“
-      do_not_link: Ära lingi
-      view_in_detail: Vaata üksikasju
-      announcement_hide: Peida see sõnum
     dashboard:
       round_robin:
         all_agents: Kõik lahendajad
@@ -6792,10 +5835,6 @@ et:
           earlier_date_and_time: >-
             Palun esita kuupäev ja kellaaeg, mis on hilisemad kui taotluse
             loomise kuupäev ja kellaaeg
-        max_tag_length_msg: Silt ei tohi olla pikem kui 32 tähemärki
-        archived_ticket: >-
-          See tugiteenusepilet on seotud selle arhiveeritud tugiteenusepiletiga
-          –
       view_ticket:
         meta: meta
         linked_ticket: See taotlus on foorumiga seotud
@@ -6850,11 +5889,6 @@ et:
         article_feedback: Artikli tagasiside
         archived: Arhiiv
         my_article_feedback: Minu artiklite tagasiside
-        unresolved: Kõik lahendamata tugiteenusepiletid
-        invalid_requester: Vale taotleja
-        archive_view: Arhiivi vaade
-        ongoing_collab: Minu aktiivsed arutlused
-        raised_by_me: Tugiteenusepiletid I Taotletud
       note:
         posted_on: '%{user_name} kuupäeval %{note_date}'
         created_on:
@@ -6984,8 +6018,6 @@ et:
         title: Canned responses
     ca_response:
       delete_confirm: Are you sure you want to delete this canned response?
-    attachment:
-      drop_files_here: Kukuta failid siia
   import_ticket_group: Taotlused
   tickets_filter:
     title: Filtreeri taotlusi
@@ -7012,7 +6044,6 @@ et:
       asc: Ülenev
       desc: Alanev
       agent_responded_at: Lahendaja vastus
-      recently_active: Hiljuti aktiivne
     company: Ettevõte
   click_to_change_sort_order: Klõpsa sortimisjärjestuse muutmiseks
   user_sessions:
@@ -7041,12 +6072,6 @@ et:
     actions_empty: Toimingute väljad ei tohi tühjad olla
     invalid_domain:
       freshdesk: Freshdesk
-      may_be_this_is_still_fresh: ' Võib-olla on see veel liiga uus!  '
-      claim_it_now: Saad selle endale registreerida hinnaga
-      we_couldnt_find: ' Me ei leidnud '
-      there_is_no_helpdesk_here: Siin ei ole kasutajatuge!
-    error_page:
-      back_to_home: tagasi avalehele
   export_data:
     in_sla: SLA raames
     out_of_sla: SLA-d on rikutud
@@ -7084,7 +6109,6 @@ et:
         The %{field} export you had requested is complete. You can download the
         file from <a href=%{url}>here</a>. If the link does not work, copy and
         paste the URL below in your browser's address bar:
-      note: Link aegub 15 päeva pärast.
     ticket_export:
       info: Sinu taotluse andmed saadetakse sulle peagi e-kirjaga!
       subject: >-
@@ -7094,7 +6118,6 @@ et:
         Küsitud taotlus on eksporditud. Sa saad faili alla laadida <a
         href=%{url}>siit</a>. Kui link ei tööta, kopeeri alltoodud URL ja kleebi
         see oma brauseri aadressiribale:
-      note: Link aegub 15 päeva pärast.
     fields:
       ticket_id: Taotluse ID
       subject: Subject
@@ -7157,9 +6180,6 @@ et:
         We currently allow only %{limit} concurrent exports. Kindly try again
         after some time. Apologies for the inconveniences caused.
     view_all_tickets: Ekspordi CSV-na
-    data_backup_failure:
-      body: Andmete eksport nurjus. Kas käivitaksid ekspordi uuesti?
-    check_uncheck_title: Märgista/tühjenda kõik
   sla:
     minutes: minutit
     hours: tundi
@@ -8328,7 +7348,6 @@ et:
         add_note_text: Kõne märkused
         recent_tickets: Hiljutised taotlused
         create: Loo
-        do_not_link: Ära lingi
     hootsuite:
       reply_btn: Vasta
       send: Saada tagasisidet
@@ -8437,7 +7456,6 @@ et:
         show_all_results: Näita kõiki tulemusi
         no_results: 'Tulemusi ei leitud - '
         problems_with_fields: 'Järgmiste väljadega oli probleeme:'
-        prohibited_error: 1 tõrge ei lasknud tugiteenusepiletit salvestada
   reorder: Telli uuesti
   reports:
     no_data: 'Puuduvad andmed, mida kuvada!'
@@ -8491,8 +7509,8 @@ et:
       total_duration: Kogukestus
       agent_calls_count: Kõned
       total_unanswered_calls: Vastamata kõned
-      num_of_transfered: Teisalduste arv
-      unanswered_transfers: Vastuseta teisaldused
+      num_of_transfered: No of Transfers
+      unanswered_transfers: Unanswered Transfers
       answered_percentage: Vastuste %
       generate_summary: Loo
       filter_close: Sulge
@@ -8501,7 +7519,6 @@ et:
       no_agent: '-Lahendajat pole määratud-'
       business_hours: Tööaeg
       filter_option_all_calls: Kõik kõned
-      no_external: Välistele numbritele tehtud teisaldusi ei kaasata
     time_sheets:
       billable: Tasulised tunnid
       non_billable: Tasuta tunnid
@@ -8509,7 +7526,6 @@ et:
       billable_vs_non_billable: Tasulised vs tasuta
       filter_by_title: 'Filtreerimisalus:'
       time_period: Ajavahemik
-      pick_columns: Vali veerud
     summary_report:
       back_to_reports: Tagasi aruannete juurde
       show_report: Näita aruannet
@@ -8565,10 +7581,6 @@ et:
       speed_champion: Kõige kiirem
       customer_champion: Klientide lemmik
       valuable_player: Kõige väärtuslikum mängija
-      agent_highest_points: Kõige suurema üldise punktisummaga agendid
-      agents_fastest_resolve: 'Agendid, kes lahendavad tugiteenusepileteid kiiremini'
-      sample_name: Juhan Tamm
-      agents_cs_highest: Kõige suurema kliendirahulolu küsitluse punktisummaga agendid
     survey_reports:
       index:
         agent_list_loading: Lahendajate nimekirja hankimine
@@ -8618,15 +7630,6 @@ et:
         answered: Vastatud
         rating: Hinne
         loading_msg: Aruannete genereerimine...
-        view_report_by: 'Vaata:'
-        response_to: Vasta isikule
-        fetching_responses: Vastuste hankimine
-        question: K
-        loading_responses: Vastuste laadimine
-        preparing_chart_for: Koostatakse diagrammi järgneva jaoks
-        no_remarks: Vastuseid pole saadaval
-        all_responses: Kõik vastused
-        deleted_list: KUSTUTATUD KÜSITLUSED
     livechat:
       report_title: Live Chat Summary
       filter_by_title: 'Filtreerimisalus:'
@@ -8646,14 +7649,14 @@ et:
       generate_summary: Loo
       filter_close: Sulge
       total_chats: Kokku
-      num_of_chats: Vestluste arv
+      num_of_chats: No of Chats
       answered_chats: Vastatud
       missed_chats: Vastamata
-      num_of_transfer: Teisaldused
+      num_of_transfer: Transfers
       avg_handle_time: Keskmine käsitlusaeg
-      avg_time_queue: Aeg järjekorras
+      avg_time_queue: Time in Queue
       total_duration: Total Duration
-      agent_chat_summary: Agendi vestluste kokkuvõte
+      agent_chat_summary: Agent Chat Summary
       agent: Lahendaja
       deleted: Deleted
     discard_changes: Loobu muudatustest
@@ -8716,35 +7719,9 @@ et:
         tuvastamiseks. Sõltuvate väljadega saad pileteid hierarhiliselt
         kategooriateks, alamkategooriateks ja mõjutatavateks elementideks
         jagada.
-      info4_v3: >-
-        Kui sul on Estate'i või kõrgema astme pakett, saad kuvada dünaamiliste
-        väljadega jaotisi vastavalt rippmenüüst valitud variandile. Saad lisada
-        igale jaotisele tugiteenusepileti välju ja siduda iga jaotise rippmenüü
-        valikutega. Kui sul on näiteks veebipood, saad panna jaotise algusesse
-        välja nimega 'Põhjus', kui klienti valib variandi 'Asendus'. Nii saad
-        parema arusaama, miks klient asendustoodet soovib. Saad luua
-        maksimaalselt kaks dünaamilist jaotist ja kasutada neid kahes kohandatud
-        rippmenüüs. Kui oled seostanud jaotise juba väljaga 'liik', saad
-        tugiteenusepileti ankeedile lisada veel ainult ühe jaotise.
-      info_1: >-
-        Tugiteenusepileti ankeediga saad kliendilt vajaminevaid andmeid koguda,
-        kui ta tugiteenusepileti esitab. Tugiteenusepileti ankeeti on võimalik
-        kohandada, et see sisaldaks sinu ettevõtte jaoks vajalikke
-        tugiteenusepileti välju, ning lasta oma klientidel ja agentidel
-        sisestada vajamineva teabe sinu soovitud vormingus. Näiteks on veebipoe
-        puhul tugiteenusepileti ankeedile kliendi tellimuse ID lisamine
-        tugiteenusepiletit lahendava agendi jaoks väga kasulik.
-      title3: Dünaamilised väljad
-      info4_v2: >-
-        Kui sul on Estate'i või kõrgema astme pakett, saad kuvada dünaamilisi
-        välju vastavalt liigi väljas valitud variandile. Saad luua eraldi
-        jaotise iga liigi välja variandi jaoks. Seejärel saad igasse jaotisesse
-        rohkem tugiteenusepileti välju lisada. Näiteks kui veebipoes on liigiks
-        valitud 'Asendus', saab kuvada välja nimega 'Põhjus', et koguda teavet
-        selle kohta, miks klient toodet asendada soovib.
   contact_field:
     helpcard:
-      title2: Kontakti väljade kohandamine
+      title2: Customizing your contact fields
       info2: >-
         The contact form in Freshdesk lets you capture important data from your
         customers so that you can support them better. You can help your team
@@ -8753,10 +7730,9 @@ et:
         information with custom fields for pricing plan, department etc. and
         prioritize tickets accordingly in your helpdesk.
       info3: >-
-        Nagu ka tugiteenusepileti väljade puhul, saad lisada klientide
-        registreerumisankeedile uusi välju ja muuta need kohustuslikuks. Lisaks
-        saad muuta väljad privaatseks selliselt, et need on nähtavad vaid sinu
-        agentidele.
+        Just like your ticket fields, you can add new fields to the customer
+        sign up form and make them mandatory. You can also have private fields
+        that are visible just to your agents.
   company_field:
     helpcard:
       title1: Customizing your company fields
@@ -9086,15 +8062,6 @@ et:
         topic_view: 'Märkus: eelvaate kuvamiseks peab sul olema vähemalt üks foorumiteema.'
         topic_list: 'Märkus: eelvaate kuvamiseks peab sul olema vähemalt üks foorumiteema.'
         ticket_view: 'Märkus: eelvaate kuvamiseks peab sul olema vähemalt üks taotlus.'
-        archive_ticket_list: >-
-          Märkus: arhiveeritud tugiteenusepiletitele ligi pääsemiseks ja nende
-          kuvamiseks kasuta 'arhiivi' kohatäiteid nagu {% snippet
-          archive_ticket_filters %}.
-        archive_ticket_view: >-
-          Märkus: tugiteenusepileti taotlejad ei saa arhiveeritud
-          tugiteenusepiletile vastata ega selle omadusi muuta. Tugiteenusepileti
-          omaduste muutmise kohatäitjad nagu {% snippet ticket_reply %} ei
-          tööta.
     cosmetic:
       subheader_background_color: Taustavärv
       subheader_tab_color: Vahekaartide värvid
@@ -9113,23 +8080,6 @@ et:
         mittereageeriv kujundus.
     apply_mint: Kinnita
     classic: Klassikaline
-    mint: Mint
-    mint_preview: Uue välimuse eelvaade
-    mint_info_portal_setting: Sinu kliendiportaalil on nüüd uus värske välimus.
-    confirm: >-
-      Kas oled kindel, et tahad uut välimust rakendada? Kõik sinu CSSi
-      kohandused lähevad kaotsi. 
-
-
-      Näpunäide: tee oma praegustest CSSi kohandustest koopia ja lisa need
-      pärast uue välimuse rakendamist.
-    mint_info_portal_settings: Sinu kliendiportaalidel on nüüd uus värske välimus.
-    mint_info_portals: >-
-      Sinu kliendiportaalidel on nüüd uus värske välimus. Eelvaate nägemiseks
-      klõpsa all olevatel linkidel.
-    mint_info_portal: >-
-      Sinu kliendiportaalil on nüüd uus värske välimus. Eelvaate nägemiseks
-      klõpsa all oleval lingil.
   any_time: Igal ajal
   five_minutes: 5 minuti jooksul
   fifteen_minutes: 15 minuti jooksul
@@ -9446,8 +8396,6 @@ et:
       followup_text: väärtuses Freshfone'i krediiti
       followup: väärtuses Freshfone'i krediiti
       purchase_credits: Osta kõneaega
-      purchase_text: Osta kõneaega
-      no_credit_card_text: Sisesta makseandmed kõneaja ostmiseks
     dialpad:
       not_valid_number: Palun sisesta kehtiv number
       could_be_invalid_number: Number võib olla ebakorrektne
@@ -9624,7 +8572,7 @@ et:
       toll_free: Tollivaba
       number:
         simultaneous: Kõikide lahendajate kõned
-        round_robin: Helista esimesena tegevusetule agendile
+        round_robin: Call idle agent first
       number_settings:
         title: Kõnekeskuse haldamine Freshfone'i abil
         info: >-
@@ -9691,48 +8639,14 @@ et:
         anytime: 24/7 igal ajal
         name: Nimi
         name_placeholder: Sisesta oma numbrile sõbralik nimi
-        hunt_type: Kõne suunamine
-        routing_message: Kui võrgus on saadaval mitu agenti...
-        recording_privacy: Nähtavuse talletamine
+        hunt_type: Call Routing
+        routing_message: When multiple agents are available online...
+        recording_privacy: Recording Visibility
         recording_privacy_public: Nähtav klientidele ja lahendajatele
         recording_privacy_private: Nähtav ainult lahendajatele
         name_maxlength: Name cannot have more than 255 Characters
         number_accessible: Ligipääsetav kasutajale
         attachment_help_text: Võtab vastu kuni 5 MB suuruseid helifaile
-        queue_position_preference: Loe järjekorranumber ette
-        queue_wait_message: Järjekorra ootesõnum
-        queue_position_enable: SEES
-        wait_music: Ootemuusika
-        hold_music: Ooteaja muusika
-        title_text: Kõnekeskuse juhtimine
-        queue_position_disable: VÄLJAS
-        queue_position_message_placeholder: 'Oled hetkel järjekorras. Sinu järjekorranumber on {{queue.position}}'
-        info_content: >-
-          <b>Telefonikõnede määramine agentidele ja rühmadele</b></br>Saad
-          seadistada interaktiivse häälvastuse süsteemi ja suunata kõnesid
-          erinevatele oma meeskonna rühmadele või agentidele. Näiteks võid
-          suunata oma klientide kõned oma klienditoe meeskonnale, kui nad
-          vajutavad 1, või müügimeeskonna liikmetele, kui nad vajutavad
-          2.<br/>Lisaks saad kohandada klientidele esitatavat sõnumit,
-          lindistades oma häält, laadides üles faili või kasutades kõnesünteesi
-          funktsiooni.<br><br><b>Numbri kohandamine</b><br>Ühtlasi saad
-          konfigureerida iga telefoninumbri eraldi ja määrata igaühele oma
-          kohandused. Nende seas on põhiseaded nagu maksimaalne inimeste arv
-          järjekorras ja maksimaalne klientide ooteaeg. Kummagi saavutades
-          esitatakse automaatselt klientidele sõnum, et klienditugi pole
-          saadaval.<br/>Kui lubad kõnede lindistamise, lindistatakse kõiki
-          klienditoe kõnesid ja need manustatakse tugiteenusepiletite juurde
-          ning lindistus on kas klientidele avalikult saadaval või seda hoitakse
-          privaatsena. Lisaks saad piirata telefonikanali saadavust tööaja
-          väliselt. Näiteks saad saad seadistada kaks tugiliini, millest ühel
-          võetakse kõnesid vastu ainult töötundidel ja teine on suure
-          prioriteetsusega abiliin, mis on saadaval igal ajal.<br/><br/><a
-          href='http://support.freshdesk.com/support/solutions/articles/169198'
-          target='_blank'>Loe lähemalt numbri kohandamise kohta</a>
-        queue_position_message_alert: >-
-          Järjekorrapositsiooni ette lugemiseks kasuta kohatäitjat
-          {{queue.position}}<br/> Nt: Oled hetkel järjekorras. Sinu
-          järjekorranumber on {{queue.position}}
       numbers:
         title: Paku kliendituge Freshfone'i kaudu
         info: >-
@@ -9759,14 +8673,14 @@ et:
         buy: Osta number
         buy_button_text: Osta
         purchase_loading_text: Ostmine...
-        buy_loading_text: Ostmine...
+        buy_loading_text: Buying...
         purchase_alert_text: >-
-          Selle telefoninumbri eest võetakse raha <strong><span
-          class='number-rate'></span>kord kuus</strong>.
+          This phone number will be charged <strong><span
+          class='number-rate'></span> monthly</strong>.
         not_available: Tulemusi ei ole. Palun proovi mõnda muud otsingusõna.
         address_certification_text: >-
-          Telefoninumbri ostmiseks pead esitama oma ettevõtte või isikliku
-          aadressi riigis <span class='certification-country'></span>.
+          To buy a phone number, You are required to provide your company or
+          personal address within <span class='certification-country'></span>.
         purchase_confirm: Kas oled kindel?
         delete_alert: >-
           Kord juba kustutatud numbrit ei saa enam uuesti osta. Kas oled kindel,
@@ -9801,88 +8715,8 @@ et:
             parajasti kasutajatoe keskkonda sisse logitud lahendajatele. Lisaks
             saavad su lahendajad kõnesid vastu võtta brauseris või lasta need
             automaatselt lauatelefonile suunata.
-          info_text: >-
-            Selleks, et hakata telefonikanalit kasutama, pead kõigepealt ostma
-            sissetulevate kõnede numbri, mille oma klientidele edastada. Saad
-            osta numbri ükskõik millisest <a
-            href='https://support.freshdesk.com/support/solutions/articles/169322'
-            target='_blank'>riigist, mis on siin loetletud</a>. Kui kliendid
-            helistavad sulle USAst, Ühendkuningriigist või Kanadast, saad neile
-            pakkuda ka tasuta numbrit.<br/><br/>Saad osta erinevate riikide
-            jaoks mitu numbrit ja seadistada Freshdeskis tasuta tugiliinid ilma
-            kolmanda poole teenust kasutamata. Sult võetakse klienditoesse
-            sissetulevate, sellest väljuvate ja edastatavate kõnede eest
-            standardtasu. Vaata <a
-            href='http://freshdesk.com/multichannel-support/phone-support/call-rates'
-            target='_blank'>kõnehindu siit</a>.<br/><br/>Kui oled oma
-            klienditoele telefoninumbri ostnud, jaotatakse kõik sissetulevad
-            kõned klienditoesse sisselogitud agentide vahel ära. Lisaks saavad
-            agendid valida, kas vastavad kõnedele veebilehitsejast või lasevad
-            need automaatselt oma lauatelefonile edastada.
-          title_text: Kõnekeskuse seadistamine
         caller_id:
           manage_caller_id: 'Halda helistaja ID-d '
-          no_number_added: Ühtegi helistaja IDd pole lisatud
-          call_id_mask: Peida see number
-          add_new: Lisa uus
-        sidebar_content_v2: >-
-          Telefonikanali kasutamisega saad oma veebilehitseja, mobiiltelefoni
-          või Freshdeski mobiilirakenduse telefonikanali kaudu helistada ja
-          kõnesid vastu võtta. See on tihedalt seotud Freshdeski
-          tugiteenusepiletite süsteemiga. Nii saad telefonikõnedel silma peal
-          hoida, lindistades need ja muutes need vajadusel
-          tugiteenusepiletiteks. <br/><br/><b>Telefoni
-          seadistamine</b></br>Telefoni kasutamisega alustamiseks pead selle
-          kõigepealt lubama ja klienditoe numbri ostma. Saad osta kohalikke
-          numbreid <a
-          href='https://support.freshdesk.com/support/solutions/articles/169322'
-          target='_blank'>siin loetletud riikide jaoks</a> ja teha või võtta
-          vastu kõnesid üle kogu maailma. Kui kliendid helistavad sulle USAs,
-          Ühendkuningriigis või Kanadas, saad ka osta tollimaksuta klienditoe
-          numbreid. <br/><br/><b>Paku täielikku telefonituge</b><br/>Meie
-          telefonikanaliga saad<br/><ul><li>hakata tegema ja vastu võtma kõnesid
-          oma veebilehitsejat või mobiiltelefone kasutades</li><li>luua
-          häälsõnumeid, kõnesid suunata või edastada kõnesid agendile ükskõik
-          kus</li><li>jälgida kõnesid, vajadusel sekkuda, pooleliolevatele
-          kõnedele rohkem agente lisada jpm*</li></ul><br/><p>*Kontol
-          lisafunktsioonide aktiveerimiseks võta ühendust aadressil <a
-          href='mailto:support@freshdesk.com'>support@freshdesk.com</a>. Nende
-          funktsioonide seas on kõnede jälgimine, kõnesse sekkumine,
-          konverentskõned, numbri peitmine ja kõne eluaja mõõdikud.</p><br/>
-        sidebar_title: Telefonikanal
-        buy_phone_numbers: Osta telefoninumbreid
-        tour_link: Aita mul telefonikanalit seadistada
-        failure_purchase: >-
-          Telefoninumbri ostmine nurjus. Veendu, et aadress on õige kohalik
-          aadress riigis <span class='certification-country'></span>.
-        sidebar_content: >-
-          Telefonikanalit kasutades saad oma veebilehitseja, mobiiltelefoni või
-          Freshdeski mobiilirakenduste telefonikanali kaudu kõnesid teha ja
-          vastu võtta. See on tihedalt seotud Freshdeski tugiteenusepiletite
-          loomise süsteemiga. Seega saad kõnedel lindistamise abil silma peal
-          hoida ja kõned vajadusel tugiteenusepiletiks muuta. <br/><br/>
-          <b>Telefoni seadistamine</b></br> Telefoni kasutama hakkamiseks pead
-          selle kõigepealt sisse lülitama ja klienditoe numbri ostma. Saad osta
-          kohalikke numbreid <a
-          href='https://support.freshdesk.com/support/solutions/articles/169322'
-          target='_blank'>siin loetletud riikidest</a> ja helistada või võtta
-          kõnesid vastu kõikjalt maailmas. Kui kliendi helistavad sulle USAst,
-          Ühendkuningriigist või Kanadast, saad ka osta tasuta klienditoe
-          numbreid. <br/><br/><b>Paku täielikku telefonituge</b><br/>Meie
-          telefonikanaliga saad<br/><ul><li>hakata veebilehitsejat või
-          mobiiltelefoni kasutades kõnesid tegema või vastu võtma</li><li>luua
-          häälsõnumeid, edastada kõnesid või suunata kõnesid ükskõik millisele
-          agendile ükskõik kus</li><li>kõnesid jälgida, vajadusel vahele
-          sekkuda, lisada pooleliolevatele kõnedele rohkem agente ja palju
-          muud*</li></ul><br/><p>*Võta ühendust aadressil <a
-          href='mailto:support@freshdesk.com'>support@freshdesk.com</a>, et oma
-          kontol lisafunktsioonid sisse lülitada. Nende seas on kõnede
-          jälgimine, kõnesse sekkumine, konverentsikõned, numbri peitmine ja
-          kõne eluea mõõdikud.</p><br/><p><a
-          href='http://freshdesk.com/multichannel-support/phone-support'
-          target='_blank'>Rohkem teavet telefoni võimaluste ja funktsioonide
-          kohta</a><p>
-        buy_phone_credits: Osta kõneaega
       invalid_attachment: 'Manus "%{name}" ei ole kehtiv helifail/see on suurem kui 5 MB'
       ivr:
         simple_message_title: Lihtsõnum
@@ -9950,46 +8784,7 @@ et:
         learn_more: Loe lähemalt
         trial_or: VÕI
         title_text: Telefon
-        success: Võtame sinuga kahe tööpäeva jooksul ühendust.
-        recording_info: Lindista kõiki kõnesid ja muuda need tugiteenusepiletiteks
-        button_text: Taotle aktiveerimist
-        compare_trial_and_full: Võrdle täis- ja tasuta prooviversiooni
-        activation_disclaimer: Saad kõiki funktsioone piiramata aja jooksul kasutada
-        ivr_info: >-
-          Jälgi kõnesid, tee konverentsikõnesid, suuna kõnesid interaktiivset
-          häältuvastust kasutades jpm
-        trial_button_text: Võta kasutusele tasuta prooviversioon
-        trial_version_disclaimer: Nüüd saad piiratud funktsioone 15 päeva jooksul tasuta kasutada
-        number_info: Osta enam kui 40 riigi kohalikke ja tasuta telefoninumbreid
-        video_title: 'Vaata videot ja saa teada, mida telefonikanaliga on võimalik teha'
-        heading_text: Toeta oma kliente telefonikanalit kasutades
       freshfone_numbers_title: Telefon
-      purchase_numbers_text: >-
-        Osta kohalik või tasuta number ja paku telefoni teel üle maailma
-        klientidele tuge
-      purchase_credit_text: >-
-        Osta numbrite ostmiseks krediiti, helista ja võta kõnesid vastu
-        telefonikanalit kasutades.
-      suspended_alert: >-
-        <b>Oluline:</b> telefonikanali välja lülitamine ei tähenda, et sa ei pea
-        oma numbrite eest igakuist tasu maksma. Tasu vältimiseks kustuta ostetud
-        numbrid.
-      trial:
-        request_activation_msg: >-
-          Telefoni prooviperioodi ajal saad valida ainult ühe numbri piiratud
-          riikide seast.<br> Täisversiooni aktiveerimisel saad aga osta mitmeid
-          numbreid 41 riigist
-        activate_btn_text: Taotle aktiveerimist
-        numbers:
-          search:
-            after_activation_request: >-
-              Oled esitanud telefonikanali aktiveerimise taotluse <br> Võtame
-              sinuga kahe tööpäeva jooksul ühendust.
-            buy_confirmation: 'Kas oled kindel, et soovid selle numbri valida?'
-            can_use_after_activation: >-
-              Saad jätkata selle numbri kasutamist, kui telefonikanali
-              aktiveerid.
-        requested_activation: Saime kätte sinu aktiveerimistaotluse<br>Seda töödeldakse
   livechat:
     feature_request:
       title: Tere tulemast Live Chatti!
@@ -10429,7 +9224,6 @@ et:
       forward: Edasta
       add_note: Lisa märkus
       scenario: Stsenaariumid
-      jump_to_views: Hüppa vaadete juurde
     ticket_list:
       title: Taotluste loetelu
       move_cursor: Hüppa kursoriga eelmisele/järgmisele taotlusele
@@ -10583,10 +9377,11 @@ et:
       add_note: Lisa märkus
       mark_as_spam: Märgi rämpspostiks
       confirm_spam: >-
-        Teema märkimine rämpspostiks liigutab teema rämpsposti kausta ja
-        kustutab kõik selle vastused. Kas tahad kindlasti teemat rämpspostiks
-        märkida?
-      merge_topic: Liida teema
+        Marking the topic as spam will move the topic to spam and delete all of
+        its replies.
+
+        Are you sure you want to mark the topic as spam ?
+      merge_topic: Merge Topic
       close_topic: Lukusta teema
       reopen_topic: Taasava teema
       edit_topic: Redigeeri teemat
@@ -10628,7 +9423,6 @@ et:
           howto:
             one: '%{count} isikul on see küsimus'
             other: '%{count} inimesel on see küsimus'
-        no_votes: Hääli pole
       answer: Vastus
     forums:
       helpnote:
@@ -10697,7 +9491,7 @@ et:
         goto_post: Goto-postitus
       invalid_topic:
         went_wrong: Midagi läks valesti
-        try_later: Postituse heakskiitmine nurjus. Proovi hiljem uuesti.
+        try_later: Unable to approve the post. Please try again later.
       spam_folder: Rämpsposti kaust
       flash:
         empty_folder: >-
@@ -10717,7 +9511,9 @@ et:
         no_forum_spam: 'Me vannume, et see ei ole rämpspost!'
         moderation_solution: Loe lähemalt foorumi modereerimise kohta
         unpublished_posts: Avaldamata vastused
-        deletion_alert: Vanemad kui 30-päevased teemad/vastused kustutatakse siit automaatselt
+        deletion_alert: >-
+          Topics/replies more than 30 days old will be automatically deleted
+          from here
       spam_actions:
         approve: Kiida heaks
         approve_tooltip: Kiida heaks ja avalda
@@ -10746,9 +9542,9 @@ et:
       add: Lisa
       visibility_info: 'Showing topics visible to <b>%{visibility}</b> '
       warning: >-
-        Pärast liitmist ei saa teemasid enam lahutada. Liidetud teemade jälgijad
-        ja hääled lisatakse peamisele teemale.
-      merge_notification: See teema on juba lukustatud või liidetud. Värskenda lehte.
+        Topics once merged cannot be unmerged. Followers and votes from the
+        merged topics will be added to the primary topic.
+      merge_notification: This topic is already locked or merged. Please refresh the page.
       merge_error_for_locked: >-
         This topic is locked for editing as it has been merged into <a
         href='%{topic_link}'>%{title}</a>.
@@ -10760,10 +9556,7 @@ et:
       merge_topic_list_status_created_at: >-
         in %{forum} (%{category})<br />by %{username}, <span
         class='emphasize'>%{time_ago} ago</span>
-      title_placeholder: Otsi liidetavaid teemasid
-    general:
-      unsaved_content: Sul on sellel lehel salvestamata sisu.
-      leave_page_que: Kas soovid sellelt lehelt lahkuda?
+      title_placeholder: Search topics to merge
   link_with_marketplace: Seo Google Marketplace'iga
   google_signup:
     associate_google:
@@ -10821,8 +9614,8 @@ et:
     Important: You are currently downgrading from %{plan_from} plan to
     %{plan_to} plan
   discounted_sum: After Discount
-  selecting_plan: Valimine...
-  proceed_billing_info: 'Jah, jätka arveldusega'
+  selecting_plan: Selecting...
+  proceed_billing_info: 'Yes, Proceed to Billing'
   buy_plan: Buy this Plan
   agent_seats: '%{no_of_agents} Agent seats'
   subscribed_billing: '%{billing_cycle} billing'
@@ -10859,10 +9652,6 @@ et:
     description: Kirjeldus
     delete_action:
       success: Integratsioon on edukalt keelatud.
-      error: >-
-        <span>Rakenduse kustutamisel ilmnes viga.</span> Proovi uuesti. Kui viga
-        püsib, <a href=https://support.freshdesk.com>võta ühendust
-        klienditoega.</a>
     view_all: Vaata kõiki
     view_more: Kuva rohkem
     api_error: Me ei saanud su nõuet töödelda. Palun proovi natukese aja pärast uuesti.
@@ -10886,95 +9675,6 @@ et:
     no_custom_apps_note: Loo kohandatud rakendusi ja avalda need veebiarendaja portaalis.
     field_blank: Palun täida nõutavad väljad.
     no_mktp_apps: Rakendusi pole paigaldatud
-    custom_app_info: >-
-      Kas teadsid, et nüüd on parem viis rakenduste kirjutamiseks ja haldamiseks
-      ning nende jagamiseks kogu Freshdeski kogukonnaga?
-    share_app: Jaga seda rakendust
-    needs_developer_text: Vajalik arendaja konto
-    no_connection: >-
-      Marketplace ei ole hetkel saadaval. Proovi hiljem uuesti. Kui probleem
-      püsib, võta meiega ühendust.
-    app_description: >-
-      Rakenduste abil saad luua integratsioone teiste rakendustega, et oma
-      Freshdeski kogemust veelgi paremaks muuta. Lisaks saad nende abil oma
-      Freshdeski portaali kohandada ja isikupärastada.
-    custom_app_policy: >-
-      „Kohandatud rakendus“ on konkreetsele Freshdeski kliendile arendatud
-      rakendus, mis ei sisaldu rakenduste galeriis. Kohandatud rakendusi võib
-      arendada Freshdesk või mõni muu arendaja, kes võib olla, aga ei pea olema
-      Freshdeskis arendajana registreeritud. Pane tähele, et kohandatud rakendus
-      esitatakse „sellisena, nagu see on“, ilma seadusega lubatud määras mis
-      tahes garantiideta. Freshdesk loobub sõnaselgelt mis tahes tingimustest,
-      esindatusest, garantiidest ja muudest tingimustest, olgu need sõnaselged
-      või kaudsed, sealhulgas, kuid mitte ainult, mis tahes kaudsed garantiid
-      seoses turustatavuse, pealkirja, konkreetseks eesmärgiks sobivuse ja
-      mitterikkumisega. Kohandatud rakenduse paigaldamisega mõistad ja
-      tunnistad, et Freshdesk ei anna garantiid, et kohandatud rakendus töötab
-      katkestusteta, on ajakohane, turvaline, tõrgeteta ning vaba viirustest või
-      muust pahavarast. Freshdesk ei vastuta sinu ega sinu kaudu mis tahes isiku
-      ees kohandatud rakenduse kasutamisest tulenevate otseste, kaudsete,
-      juhuslike, eriliste, karistatavate või kaasnevate kahjustuste eest.
-    installation: Paigaldamine
-    terms_of_use_link: 'http://freshdesk.com/terms#marketplace'
-    developed_by: 'Avaldaja: '
-    all_apps: Kõik rakendused
-    app_gallery: Marketplace
-    reauthorize_oauth_app: >-
-      Kui su rakendus ei tööta, proovi rakendusele uuesti volitust anda, et
-      pääseda ligi kolmanda isiku rakenduste teabele.
-    tooltip:
-      suspended: Pole saadaval
-    app_installation_agreement: 'Selle rakenduse paigaldamisega nõustud meie '
-    no_mktp_apps_note_2: Valiku sirvimiseks klõpsa 'Hangi rohkem rakendusi'.
-    screenshots: Kuvatõmmised
-    no_configs: Selle rakenduse jaoks pole konfiguratsioone vaja.
-    backend_log: Ilma serverita logid
-    third_party_apps_policy: >-
-      See rakendus kuulub kolmandale isikule ja mitte ettevõttele Freshworks
-      Inc. ning see isik arendab, käitab ja hooldab seda rakendust. Rakenduse
-      alla laadimise, integreerimise ja/või kasutamisega mõistad, et sulle
-      kehtivad arendaja tingimused ja privaatsuspõhimõtted, sealhulgas seoses
-      andmete töötlemisega. Tingimuste ja privaatsuspõhimõtete kohta lisateabe
-      saamiseks võta ühendust arendajaga või külasta arendaja lehte.
-    error_calling_method: 'Järgneva meetodi laadimisel esines viga: '
-    no_search_results: Me ei leidnud otsitavat. Proovi mõne teise märksõnaga uuesti.
-    no_custom_apps_installed: Kohandatud rakendusi pole paigaldatud
-    paid_app: MAKSTUD
-    popular_apps: Populaarsed rakendused
-    installed_mkp_apps_unavailable: >-
-      Paigaldatud rakenduste loend ei ole hetkel saadaval. Proovi hiljem uuesti.
-      Kui probleem püsib, võta meiega ühendust.
-    write_a_custom_app: Kirjuta kohandatud rakendus
-    confirm_uninstall_message: 'Kas oled kindel, et soovid eemaldada isiku %{human_name}?'
-    instructions: Juhised
-    latest_apps: Viimased rakendused
-    get_more_apps: Hangi veel rakendusi
-    policy_on_custom_apps: Kohandatud rakenduste põhimõtted
-    no_custom_apps_note_2: >-
-      Rakenduste sirvimiseks ja paigaldamiseks klõpsa 'Hangi kohandatud
-      rakendusi'.
-    version: VERSIOON
-    reauthorize_header: Anna rakendusele uus volitus
-    install_action:
-      app_setup_error: Paigaldamise ajal esines viga.
-    custom_app_gallery: Kohandatud rakenduste galerii
-    apps_unavailable: >-
-      Teatud rakenduste esitamine nurjus. Proovi hiljem uuesti. Kui probleem
-      püsib, võta meiega ühendust.
-    policy_on_tp_apps: Kolmanda isiku rakenduste põhimõtted
-    developer_shortcuts: Arendaja otseteed
-    installing: Paigaldamine
-    no_apps: Ükski rakendus pole saadaval
-    terms_of_use: Kasutustingimused
-    helpnote_custom_apps_html: >-
-      Kas sa ei leidnud endale sobivat rakendust? Meie kohandatud rakendustega
-      (varasem nimi Freshplugs) saad lisada ükskõik millise kolmanda poole
-      lahenduse, vanema süsteemi või andmebaasi kontekstilist teavet. Kohandatud
-      rakendusi saab kasutada ka klienditoes visuaalsete muudatuste tegemiseks
-      ja tööviljakuse suurendamiseks. Klõpsa lisateabe saamiseks <a
-      href='https://support.freshdesk.com/support/solutions/articles/121846'
-      target='_blank'>siia</a>!
-    almost_done: Peaaegu valmis!
   freshcaller:
     admin:
       link_account_request_content:
@@ -10984,57 +9684,10 @@ et:
         password: Parool
         link_errors:
           validation_error: See väli on nõutud
-          pod_error: >-
-            Näib, et sinu kaks kontot asuvad erinevates andmekeskustes. Loo uus
-            Freshcalleri konto, mida oma Freshdeski kontoga siduda.
-          access_error: >-
-            Kontode sidumiseks pead olema administraator nii Freshcalleris kui
-            Freshdeskis.
-          api_error: >-
-            Seda Freshcalleri kontot pole olemas. Esita kehtiv URL või loo uus
-            Freshcalleri konto.
-          authentication_error: Sisestatud e-posti aadress või parool on vale.
-        freshcaller_domain: .freshcaller.com
-        connect_existing_account: Ühenda olemasolev konto
-        account_url: Freshcalleri konto URL
-        processing: Freshcalleri konto sidumine
-        settings_text: >-
-          Sisesta Freshcalleri konto üksikasjad, et seda oma Freshdeski kontoga
-          siduda
       sidebar_title: Telefon
       title_text: Telefon
       feature_request_content:
         create_new_account: Loo uus konto
-        processing: Freshcalleri konto loomine
-      no_access_text: Sul puudub Freshcallerile ligipääs
-      freshcaller_signup_text: >-
-        Freshdesk pakub integreeritud telefonikanalit Freshcalleri kaudu.
-        Võimalda telefonikanal, luues uue Freshcalleri konto 14-päevase tasuta
-        prooviperioodiga.
-      freshcaller_enable_subtext: Saad võimaldada ligipääsu oma agendi seadete lehelt.
-      manage_settings_text: Halda Freshcalleris seadeid
-      sidebar_content: >-
-        Freshdeski telefonikanal põhineb Freshcalleril. Saad Freshdeskist otse
-        kõnesid teha ja vastu võtta, kõnesid lindistada ja häälsõnumeid
-        tugiteenusepiletiteks muuta.<br/><br/> <b> Kõnekeskuse seadistamine </b>
-        <br/>Saad oma Freshcalleri administraatori kontole kõnekrediiti osta.
-        Kõnekrediidiga saad osta telefoninumbreid <a
-        href='https://support.freshcaller.com/support/solutions/articles/229257'
-        target='_blank'>enam kui 40 riigist</a>. Saad osta USA,
-        Ühendkuningriigi, Kanada ja Austraalia tollivabasid numbreid. Sa ei pea
-        ostma ühtegi seadet ega paigaldama tarkvara. Kõik, mida vajad, on
-        veebilehitseja ja toimiv Internetiühendus. <br/> <br/> <b>Kõnekeskuse
-        võimalused </b> <br/> Saad vastata kõnedele veebilehitsejast, suunata
-        kõnesid oma mobiilile või edastada kõnesid agentidele, kasutada kõnede
-        vastu võtmiseks interaktiivset häältuvastust, kõnesid jälgida, vajadusel
-        vahele astuda, seadistada töötundide reegleid ja palju muud.<br/> <br/>
-        <a
-        href='https://www.freshworks.com/freshcaller-cloud-pbx/call-center-features/'
-        target='_blank'>Rohkem teavet</a> Freshcalleri – Freshdeski
-        integreeritud telefonilahenduse kohta.
-      freshcaller_subtext: >-
-        Osta numbreid, seadista kõnede järjekordi, interaktiivset häältuvastust
-        jpm
   multifile_attachments:
     label: Manusta faile
     remove: Eemalda
@@ -11104,8 +9757,6 @@ et:
     no_data_to_display_msg: 'Puuduvad andmed, mida kuvada.'
     insights:
       customize_link: Kohanda
-      customize: Kohanda ülevaateid
-      tooltip: Rohkem teavet ülevaadete kohta
     this_week: Sel nädalal
     agent_summary:
       title: Agendi sooritus
@@ -11127,15 +9778,6 @@ et:
     at: '-'
     customer_satisfaction:
       title: Kliendi rahulolu aruanne
-    customer_report:
-      title: Parimate klientide analüüs
-    phone_summary:
-      title: Telefoni kokkuvõte
-    export_tickets_error_msg: >-
-      Oled saavutanud maksimaalse korraga toimuvate eksportide taotluste arvu.
-      Proovi mõne aja pärast uuesti.
-    deprecated_header: See aruanne ei ole pärast 30. märtsi 2016 enam saadaval
-    previous_week: Eelmine nädal
   admin_onboarding:
     modal:
       channels_frame:
@@ -11174,66 +9816,27 @@ et:
   mailer_notifier:
     hi: 'Tere,'
     thanks: Tänan
-    security_notification:
-      update_agent_billing_plain: >-
-        Selleks, et muudatus arvelduses kajastuks, uuenda arvelduse lehel agendi
-        teavet.
-      update_agent_billing: >-
-        Selleks, et muudatus arvelduses kajastuks, <a
-        href="%{billing_url}">uuenda</a> arvelduse lehel agendi teavet.
-      unauthorized_change_contact: >-
-        Kui muudatus tehti ilma sinu loata, võta kohe ühendust oma konto
-        administraatoriga.
-      configure_change: >-
-        Selle teavituse seadeid saad muuta jaotises Administraator ->
-        Turvalisus.
-      trusted_ip_disabled: Sinu kontol on IP aadresside lubamine keelatud.
-      unauthorized_change_info: 'Kui muudatus tehti ilma sinu loata, saada meile vastus.'
-      configure_change_html: >-
-        Selle teavituse seadete muutmiseks <a href="%{security_url}"> klõpsa
-        siia</a> või mine oma konto jaotisesse Administraator -> Turvalisus
-    freshdesk_customer_support: Freshdeski klienditugi
   copied_link: Kopeeritud
   enter_a_value: Sisesta väärtus
   custom_mailbox_admin_email_notifications:
     regards: 'Tervitades,'
-    welcome_message: Hea administraator
   activations:
     activate_freshdesk_account: Ava oma konto
-    helpnote3: Kinnita oma andmed ja määra kontole parool
-    helpnote1: Räägi meile endast ja aita meil sinu kogemust isikupärastada.
-    admin_consent: >-
-      Klõpsates nupul 'Aktiveeri ja logi sisse' nõustud meie <a target="_blank"
-      href="https://www.freshworks.com/terms/">tingimustega</a> ja kinnitad, et
-      oled lugenud meie <a target="_blank"
-      href="https://www.freshworks.com/privacy/">privaatsuspõhimõtteid</a>.
   cloud_log_mailer:
     logger_email:
       regards: 'Tervitades,'
       account: 'Konto: '
       reason: Põhjus
-      freshdesk_support: Freshdeski tugi.
-      execution_id: Käivitamise ID
   portals_key: Portaalid
   classic_label: Klassikaline
   helpcard:
     title: Ainulaadne väline ID
-    info: >-
-      Impordi oma klientide ainulaadseid IDsid ja tuvasta hõlpsalt nende
-      vestluseid Freshdeskis. <br><a
-      href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id"
-      target="_blank">Aita mul välist IDd seadistada</a>
   admin_upgrade:
     enable_mint_title: Luba lahendajatel proovida uuemat ja kiiremat Minti
     enable_mint_error: >-
       Mint on juba lubatud kõikidele lahendajatele. Uusimate seadete nägemiseks
       värskenda.
     enable_mint_success: Juhhuu! Mint on nüüd saadaval kõikidele lahendajatele.
-    enable_mint_all: Luba Mint agentidele
-    enable_mint_info: Agendid saavad igal ajal vana Freshdeski uuesti kasutusele võtta
-    enable_mint_success_info: >-
-      Vana Freshdeski täielikult keelamiseks külasta Mintis administraatori
-      vahekaarti
   plain_off: Väljas
   customize_domain:
     email:
@@ -11260,92 +9863,3 @@ et:
       Märkasime, et jäid hätta. Räägi meile, mida teha üritasid, ja meie
       klienditugi võtab sinuga niipea kui võimalik ühendust.
     success_message: Aitäh. Võtame ühendust!
-  undo_toggle: Ennista saatmine
-  view_invoices: 'Vaata arveid: '
-  requesting: Taotlemine...
-  mint: vaheta paketile Mint.
-  send_test_email: Saada proovikiri
-  custom_mailbox_error_type:
-    unkown_error: >-
-      E-kirjade hankimine kohandatud e-posti serverist nurjus. Võta ühendust
-      aadressil support@freshdesk.com
-    ssl_errror: SSLi viga.
-    server_response_invalid: Serveri vastus on serveriga ühenduse loomisel vales vormingus.
-    unable_to_connect: Kausta ühendamine postkastiga ebaõnnestus.
-    tcp_connection: TCP ühenduse loomine nurjus.
-    tcp_refused: E-posti server keeldus TCP ühendusest.
-    mailbox_idle: Postkast ei toeta IDLE-võimekust.
-    unable_fetch_status: Kausta oleku hankimine nurjus.
-    io_error: I/O ühenduse viga.
-    mailbox_suspended: E-posti server peatatud
-    server_no_resp: E-posti server saatis serveriga ühendamise ajal vastuse NO.
-    bye_response: E-posti server saatis serveriga ühendamise ajal vastuse BYE.
-    invalid_login: Valed sisselogimisandmed.
-    folder_unavailable: Kaust ei ole postkastis saadaval.
-    tcp_socket: E-posti serveri TCP pesa loomine nurjus.
-    email_bad_request: E-posti server saatis serveriga ühendamise ajal vastuse BAD.
-  choose_plan_trial_v2: >-
-    Sinu konto desaktiveeritakse prooviperioodi lõppedes. Kui soovid Freshdeski
-    edasi kasutada, vali üks järgnevatest pakettidest.<br />
-  anonymous:
-    requests:
-      new:
-        request_support: Taotle kliendituge
-  imap_error: E-posti server pole ligipääsetav
-  select_values: Vali vähemalt üks väärtus
-  requester_widget:
-    helpcard:
-      info: >-
-        Vali väljad, mida soovid, et kuvataks tugiteenusepileti lehel taotleja
-        teabe jaotises koos taotleja vidinaga. Siis saab su meeskond värskendada
-        taotleja andmeid otse tugiteenusepileti lehelt ja kliendiandmetel
-        tugiteenusepileti lahendamisel silma peal hoida.<a
-        href="https://support.freshdesk.com/support/solutions/articles/37586-driving-additional-context-with-requestor-info"
-        target="_blank">Rohkem teavet</a>
-      title: Taotleja vidina kohandamine
-  downgrade_plan_v2: >-
-    Märkus: kui valid madalama astme paketi, võid mõnedest funktsioonidest ilma
-    jääda!
-  onedrive_attach_from_text: Manusta <b>OneDrive'ist (ei soovitata)</b>
-  undo_toggle_tip: 'Värskenda lehte, et seaded kehtima hakkaksid.'
-  bot_training_completed:
-    email:
-      info3: Alustame kasutajatoe pakkumisega!
-      signature: Freshdeski robot
-      info2: >-
-        Manustatud koodi lisamisega oma veebilehele saad kuvada mind ükskõik
-        millisel oma lehel.
-      widget_code_plain_text: 'Siin on roboti manustatud kood:'
-      info1: >-
-        Sinu sõbralik kasutajatoe robot siin! Tahtsin sulle öelda, et olen end
-        koolitanud, õppides ära kõik tugiartiklid, mida soovisid, et läbi
-        vaataksin. Nüüd saan aidata su klientidel leida vastuseid järgmistes
-        kategooriates:
-      widget_code: Hangi manustatud kood
-  undo_toggle_error: 'Vabandust, midagi läks valesti!'
-  downgrade_contact_us: >-
-    Vaata meie <a target="_blank"
-    href="https://freshdesk.com/helpdesk-features">täielikku funktsioonide
-    võrdlust</a>. <br />Kas sa pole endiselt kindel? <a href =
-    "mailto:support@freshdesk.com" >Saame sul aidata otsustada!</a>
-  enter_values: Sisesta vähemalt üks väärtus
-  free_plan: Tasuta pakett
-  preview_message_info: See eelvaade kasutab sõnumi koostamiseks kohatäitjate jaoks näidissisu
-  undo_toggle_success: 'Värskenda, et seaded kehtima hakkaksid.'
-  profiles:
-    freshid_edit:
-      profile_details: Profiili üksikasjad
-  suspended_account_info: Sinu konto on peatatud ja kliendiportaalile pole võimalik ligi pääseda.
-  activate_and_log_in_long: Aktiveeri ja logi sisse
-  posts:
-    edit:
-      edit_post: Muuda postitust
-  uncheck_remember_tooltip: 'Kui logid sisse jagatud seadmest, saad sellelt variandilt valiku eemaldada'
-  customize_requester_widget: Taotleja vidina kohandamine
-  change_equal_plan_title: 'Kas oled kindel, et tahad minna üle uuele paketile %{to_plan}?'
-  reset_arcade: Lähtesta arkaad
-  free_plan_agents_v2: Piiramatu arv agente
-  segment_notice: >-
-    Klientide kategoriseerimiseks prioriteetsuse, tellimuse ja muude omaduste
-    alusel,
-  falcon_languages_alert: 'Töötame selle kallal, et Mintis ka teisi keeli toetada.'

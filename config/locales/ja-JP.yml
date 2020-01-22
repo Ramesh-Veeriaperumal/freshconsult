@@ -147,7 +147,6 @@ ja-JP:
     creditcard: 有効なクレジットカード番号を入力してください。
     equalTo: 同じ値を再度入力してください。
     two_decimal_place_warning: Value cannot have more than 2 decimal digits
-    integration_no_match: 一致するデータがありません...
   confirm_delete_message: '%{human_name}を削除してよろしいですか？'
   reload: 更新
   any: 任意
@@ -363,8 +362,6 @@ ja-JP:
     first_name: 名
     company_name: 会社名
     job_title: 役職
-    user_exist_in_freshid: 既存Freshworksユーザーです！管理者はエージェント情報を編集できません。
-    edit_profile_in_freshid: エージェントはFreshworksプロフィールより自身のプロフィール情報を編集できます。
   custom_fields:
     insert_field: ドラッグ＆ドロップ フィールド
     drag_drop_field_intro: '下の「%{name}」フォームにフィールド タイプをドラッグ＆ドロップして、新しいフィールドを追加します。'
@@ -403,7 +400,6 @@ ja-JP:
       internal_group: 内部グループ
       internal_agent: 内部エージェント
       skill: スキル
-      skill_required: スキルは必須項目です
     saving_ticket: チケットフィールドを保存中・・・
     untitled: 無題
     properties: プロパティ
@@ -483,7 +479,6 @@ ja-JP:
       nested_tree_validation: 少なくとも1つのカテゴリーとサブカテゴリーが必要です。
       nested_unique_names: エージェントラベルは他の2つのレベルと同じであってはいけません
       nested_3rd_level: 3番目のレベルアイテムに必須のラベル
-      field_has_section: フィールドにセクションがあります
     section:
       remove_type: セクションはこのタイプに関連付けられています
       new_section: 新規セクション
@@ -630,7 +625,6 @@ ja-JP:
       okay: OK
       hey: こんにちは！
       thank_you_text: ありがとうございます
-      move_to_form_field: またはエンターキーを押してください
   gamification:
     levels:
       beginner: ビギナー
@@ -733,7 +727,6 @@ ja-JP:
       archive_ticket_list: アーカイブされたチケット一覧
       archive_ticket_view: アーカイブされたチケット詳細
       my_topics: マイトピック
-      agent_login: エージェントログインページ
   portal_meta:
     titles:
       portal_home: サポート
@@ -795,10 +788,6 @@ ja-JP:
           Facebookブランドページを好きなだけヘルプデスクに追加することができます。複数製品をサポートしている場合は、1つのページを特定の製品に関連付けることもできます。各ページには独自の設定を行うことが可能です。特定のエージェントグループに割り当てることで、各ページから届くチケットを合理化することができます。
         fb_stream_info2: >-
           Facebookメッセンジャー経由のメッセージは、自動的にチケットとして取り込まれます。スレッド間隔を設定することで、ひとつの問題に関する顧客からの複数のメッセージを、1つのチケットに確実にスレッド化することができます。この時間間隔の決定には、お客様の業界標準となる平均解決時間を利用できます。
-        handle_smart_filter_title: 関係するツイートをチケットへ自動変換
-        handle_smart_filter_info: >-
-          ソーシャルシグナルは機械学習アルゴリズム(時間の経過とともにフィードバックによって学習し改善することができるシステム)で機能しています。この機能は、ユーザーの注意を必要とする関連ツイートのみを自動的にチケットに変換します。<br>あなたのビジネスに合うようシステムにフィードバックを提供することも可能です。<br><br>１、ツイートがチケットに変換された場合；チケットにスパムのマークを付けることで類似したツイートをチケットに変換しないようにシステムを教育する。<br><br>２、ツイートがチケットに変換されなかった場合；「ソーシャル」
-          タブで「チケットに変換」をクリックすると、類似のツイートをチケットに変換するようシステムへ指示する。<br><br>特定のビジネス・キーワードがある場合、ソーシャルシグナルのみを使用するか、キーワードベースのフィルターとソーシャルシグナルを組み合わせて使用するかを選択できます。<br>キーワードベースのフィルタとソーシャルシグナルの組み合わせを使用する場合、キーワードベースのフィルタがソーシャルシグナルよりも優先されます。現時点でソーシャルシグナルは、英語のみご利用頂けます。
       flash:
         stream_updated: '%{stream_name}の設定が更新されました'
         stream_deleted: 'Twitterストリーム（%{stream_name}）が削除されました'
@@ -911,13 +900,6 @@ ja-JP:
           select_all: すべて選択
           associate_page: ヘルプデスクと関連付けたいFacebookページを選択します。
           associate_pages: ヘルプデスクと関連付けたいFacebookページを選択します。
-      smart_filter:
-        convert_tweet: ツイートをチケットに変換する
-        convert_all: 関連する@メンションをチケットへ変換
-        enabled_header: ソーシャルシグナルを有効化しました
-        disabled_header: ソーシャルシグナルを有効化
-        convert_with_filters: フィルタを使用してツイートをチケットへ変換
-        convert_dm: ダイレクトメッセージをチケットへ変換する
     company_fields:
       fields:
         name: 氏名
@@ -1011,7 +993,6 @@ ja-JP:
         twitter_id: Twitter
         time_zone: タイムゾーン
         language: 言語
-        multiple_company: 複数の会社と１件の連絡先を関連付ける
       untitled: 無題
       first_choice: 第一選択
       second_choice: 第二選択
@@ -1077,12 +1058,6 @@ ja-JP:
           を使用します。「fresh」という単語で始まる文字列と一致させるには<b>%{regex} </b> を使用します。
         max_choices: アイテムの最大数に達しました
         mapped_internal_groups: マッピングされた内部グループ
-        multiple_company_message_enable: 連絡先を複数の会社と関連付けることはできません。
-        multiple_company_message: 連絡先は１社とだけ関連付けられます。
-      multiple_company_dialog_on: 連絡先(再販業者またはパートナー)はチケット提出時、自分に関連する会社を１社選択できます。
-      multiple_company_dialog_warning: >-
-        これをオフにすると、すべての連絡先からすべてのセカンダリ会社が完全に削除されます。古いチケットは影響を受けませんが、新しいチケットはプライマリ企業に対してのみ発行できます。
-      multiple_company_dialog_help_text: オンにすると、連絡先(再販業者またはパートナー)はチケット提出時、自分に関連する会社を１社選択できます。
     portal:
       delete_confirm:
         title: このポータルを削除すると次を取り除きます
@@ -1130,9 +1105,6 @@ ja-JP:
         moderate_none: モデレートしない
         moderate_none_help: コミュニティがスパマーを引きつけないという確信がある場合はこの機能を有効にしてください。
         reset_portal_changes: ポータルの変更をリセットする
-        reset_for: これにより次の編集内容をリセットします：
-        will_reset_all: 本操作を行うと全ポータルのカスタマイズを既定の状態へリセットします。
-        portal_was_published: ポータルを公開しました
       helpnote:
         title: ポータルの設定
         tour: ポータルを設定するためのヘルプが必要です
@@ -1150,27 +1122,6 @@ ja-JP:
         level_customizations: ページごとのカスタマイズ
         advanced_rebranding: 高度なリブランディング＆カスタマイズ
         custom_stylesheets: カスタムスタイルシートの使用
-        portal_info: お勧めのカスタムポータルを数件選択しました。
-        can_override_existing_styles: >-
-          固有CSSで顧客ポータル内の既存スタイルを上書きできます。たとえば、ポータルのヘッダータブ、段落、および本文に独自のスタイル定義を指定できます。
-        preview_your_changes: 公開前に必ず変更のプレビューを行って下さい。
-        enter_your_css: >-
-          テキスト領域にCSSを入力して、カスタムスタイルをサポートポータルに適用します。CSSに破損や問題がある場合、スタイル設定されたエレメントは対応する既定スタイルにフォールバックする可能性があるため、変更をポータルへ公開する前に必ずプレビューしてください。
-        layout_of_portal: >-
-          サポートポータルのレイアウトは、 (a) ヘッダーb) フッター (c)
-          ページレイアウトで構成されています。独自のHTMLを使用することで、ポータル内の各ページのコンテンツを追加・削除・完全に変更し、独自のJavaScriptのインタラクションを追加できます。顧客に公開する前に、テーマをプレビューすることを忘れないでください。
-        basic_coloring_changes: ポータルに加えた基本的な色の変更の他に、ブランドに合わせてページの一部の外観をカスタマイズすることもできます。
-        check_out: >-
-          固有のサポートポータルテーマ構築に関しては<b><a
-          href='https://support.freshdesk.com/support/solutions/71599'
-          target='_blank'>Freshテーマガイド</a></b>をご参照ください。
-        portal_freshdesk_title: いい考えをお探しですか？
-        portal_freshdesk_link: こちらをご覧ください
-        customize_the_layout: >-
-          Freshdeskポータル各ページのレイアウトはカスタマイズ可能です。FreshdeskポータルプレースホルダーとLiquid
-          templating frameworkを使用してレイアウトを設計する必要があります。
-        stylize_color_and_font: >-
-          サポートポータル内のほぼすべてのエレメントのスタイル設定、カラー設定、フォント設定、ロゴの設定、ファビコンのカスタマイズが可能です。エレメントに対応するカラーホイールから色を選択するか、テキストボックスに16進カラーコードを直接入力します。
     hotline:
       heading1: MobiHelpユーザーのためにHotline登場
       content1:
@@ -1230,7 +1181,6 @@ ja-JP:
           app_secret: アプリシークレット
           integration_details: 統合の詳細
           saving: 保存中...
-          initialization_code: 初期化コード
         index:
           title: MobiHelpアプリ
           new_app: 新規アプリ
@@ -1316,7 +1266,6 @@ ja-JP:
         expiry_date: トークンの有効期限
       form:
         name: アカウント名
-      ebay: eBay
     portal_settings:
       flash:
         portal_published_success: ポータル変更が正常にパブリッシュされました。
@@ -1500,7 +1449,6 @@ ja-JP:
           このアンケートに対する回答はすでに回収されているため、ポイントスケールと質問番号を変更することはできません。ただし、質問と回答選択肢を書き換えることは可能です。
         bad_to_good: 悪い→良い
         good_to_bad: 良い→悪い
-        rating_order: 評価順 &nbsp;
       new_rating:
         content_text: >-
           この質問は、エージェントによって提供される回答の全体的な満足度を評価するのに役立ちます。顧客に送付した電子メールの下部にある署名の下に表示されます。この質問についての回答を収集すると、スケールを変更することはできません。
@@ -1757,14 +1705,6 @@ ja-JP:
         all: すべて
         date: 日付
         filtered_by: 次のアイテムでフィルタ：
-        no_result: 選択したオプションにおける結果が見つかりませんでした
-        change_agent: エージェントを変更
-        usage_history: 使用履歴
-        available_passes: 利用可能なデイパス
-        auto_recharge_notice: '現在の自動再チャージ金額 '
-        buy_passes: デイパスを購入
-        auto_renewal_disabled_notice: デイパスの自動更新を無効にしました。
-        auto_renewal_enabled_notice: デイパスの自動更新を有効にしました。
     widget_config:
       errors:
         invalid_requester: 無効なリクエスター
@@ -1778,8 +1718,8 @@ ja-JP:
         feedbackwidget_text_button: テキストボタン
         feedbackwidget_image_button: 画像ボタン
         feedbackwidget_button_text_placeholder: サポート
-        feedbackwidget_height_placeholder: '500'
-        feedbackwidget_offset_placeholder: '235'
+        feedbackwidget_height_placeholder: 500
+        feedbackwidget_offset_placeholder: 235
         feedbackwidget_button_customization: ボタンのカスタマイズ
         feedbackwidget_form_customization: フォームのカスタマイズ
         feedbackwidget_embedded_code: 埋め込みウィジェットコード
@@ -1804,8 +1744,8 @@ ja-JP:
         feedbackwidget_text_button: テキストボタン
         feedbackwidget_image_button: 画像ボタン
         feedbackwidget_button_text_placeholder: サポート
-        feedbackwidget_height_placeholder: '500'
-        feedbackwidget_offset_placeholder: '235'
+        feedbackwidget_height_placeholder: 500
+        feedbackwidget_offset_placeholder: 235
         feedbackwidget_button_customization: ボタンのカスタマイズ
         feedbackwidget_form_customization: フォームのカスタマイズ
         feedbackwidget_popup_code: ポップアップウィジェットコード
@@ -1827,11 +1767,8 @@ ja-JP:
         feedbackwidget_use_captcha: CAPTCHAを有効にする
         feedbackwidget_submit_title: フィードバックを送信
         feedbackwidget_offset: 'オフセット:'
-        feedbackwidget_submit_title_maxlength: 最大16文字
-        feedbackwidget_title_maxlength: 最大30文字
-        feedbackwidget_form_submit_title: フォーム送信ボタン
       embedded_widget:
-        feedbackwidget_height_placeholder: '500'
+        feedbackwidget_height_placeholder: 500
         feedbackwidget_form_customization: フォームのカスタマイズ
         feedbackwidget_embedded_code: 埋め込みウィジェットコード
         feedbackwidget_widget_code: ウィジェットコード
@@ -1848,9 +1785,6 @@ ja-JP:
         feedbackwidget_use_https: HTTPSを使用する
         feedbackwidget_use_captcha: CAPTCHAを有効にする
         feedbackwidget_submit_title: フィードバックを送信
-        feedbackwidget_submit_title_maxlength: 最大16文字
-        feedbackwidget_title_maxlength: 最大16文字
-        feedbackwidget_form_submit_title: フォーム送信ボタン
     supervisor_rules:
       new_info_help: 30日以内に更新された<b>各チケット</b>に対して、一致するすべてのルールを実行します。
       index:
@@ -1925,14 +1859,9 @@ ja-JP:
         checked: はチェックされています
         unchecked: はチェックされていません
         deselected: 選択解除されました
-        internal_group_actions: ルール実行時に選択したグループが内部グループとしてチケットステータスにマッピングされている場合にのみ適用。
-        internal_agent_actions: ルール実行時に選択したエージェントが内部グループにマッピングされている場合にのみ適用。
       new_performed_by: 次の人物がアクションを行った場合：
       anyone: 全員
       system: システム
-      new_anyone: エージェントまたは依頼者
-      new_events: 次のうち<b>任意</b>のイベントを含む：
-      default_rule_name: 顧客が満足していない場合に通知
     va_rules:
       webhook:
         custom_headers_limit_error: '%{limit}を超えるカスタムヘッダーを設定できます'
@@ -1944,7 +1873,6 @@ ja-JP:
         object_id_array_in: いずれかを含む：
         object_id_array_and: すべてを含む：
         object_id_array_not_in: 一切含まない：
-      disabled: オンにするにはアカウントを有効化して下さい。
     webhook:
       jira_hook_title: JIRAイシュー作成
       jira_hook_description: ウェブフックを利用して、チケットがFreshdeskに提起されたとき、JIRAアカウント内に自動的にイシューを作成することができます。
@@ -2070,8 +1998,6 @@ ja-JP:
           パスワードポリシーの変更は8時間有効です。エージェントはこの時間内にパスワードを更新する必要があります。変更しない場合は、サポートポータルからログアウトされ、次回のログイン時にパスワードを変更する必要があります。
         password_policy_info4: アカウントのパスワードポリシー(既定または詳細)を有効にすると、無効にすることができません。
         saml_cert_fingerprint_info_sha256: SAMLプロバイダから与えられるSAML認証の指紋(SHA256) です。これは暗号化/認証のために使用されます
-        enable_oauth2_sso: OAuth 2.0
-        enable_oauth2_info: 業界標準のOAuthプロトコルを使用することで、ユーザーアカウントをホストするサービスにエージェントと顧客の認証を委任できます。
       helpnote:
         title: セキュリティ設定
         info1: >-
@@ -2114,7 +2040,6 @@ ja-JP:
         atleast_an_alphabet_and_number: 1文字以上の英字と1文字以上の数字を使用する
         have_mixed_case: 大文字と小文字を使用する
         have_special_character: 1文字以上の特殊文字を使用する
-        password_should: パスワード要件：
     products:
       helpnote:
         tour: 複数プロダクトをサポートするためのヘルプが必要です
@@ -2167,9 +2092,6 @@ ja-JP:
         product_label: '製品: %{product_name}'
         enable_multilingual: 多言語サポートをセットアップ
         agent_portal: エージェントポータル
-        edit_branding: ブランディングの編集
-        show_author_name: 作者名を表示
-        enable_personalized_articles: 有効にすると、ソリューション記事に作者名が表示されます
       edit:
         title: プロダクトを編集する
         updating: 更新中・・・
@@ -2225,7 +2147,6 @@ ja-JP:
         capture_dm: ダイレクトメッセージをチケットに変換する
         screen_name: スクリーン名
         default_group: デフォルトグループ
-      stream_content: このストリームにはあなたの＠メンションすべてが含まれます
     roles:
       title: エージェントの役割
       agent_label: エージェント
@@ -2315,7 +2236,6 @@ ja-JP:
         manage_ticket_templates: チケットテンプレートを管理
         admin_tasks: スーパーアドミンコントロール能力使用で何でも可能
         manage_account: アカウント管理を含める
-      default_role_with_name: '%{role_name} (既定の役割)'
     home:
       index:
         group: グループ
@@ -2362,7 +2282,7 @@ ja-JP:
         facebook-setting: Facebook
         security: セキュリティ
         email_commands_setting: メールコマンド
-        billing: プラン＆請求
+        billing: プラン＆ご利用明細
         invoice: インボイス
         phone-channel: 電話
         tags: タグ
@@ -2370,7 +2290,6 @@ ja-JP:
         customer-portal: カスタマーポータル
         portals: ポータル
         search_admin: 管理者設定を検索する
-        invalid_address: 無効なアドレス
       keywords:
         forum_moderation: フォーラムモデレーション
         configure_support_email: サポートメールをコンフィギュア
@@ -2488,64 +2407,11 @@ ja-JP:
         manage_label: 管理
         add_label: 追加
         no_agent_label: エージェントなし
-        no_skill_info_1: 作成されたスキルがありません。
-        nav_skill_list_text: スキル一覧
-        nav_agent_skill_text: エージェントのスキル
-        new: 新しいスキル
-        no_skill_info_2: ヘルプデスク管理者にお問い合わせください。
-        confirm_delete_message_v2: >-
-          スキルを削除すると全てのエージェンからそのスキルが削除されます。このスキルを含む未割当のチケットは新しいスキルへマッピングされます。このまま続行してよろしいですか？
-        info_help: チケットの問題に対してスキルを作成し、それを処理できるエージェントに関連付けます。最初に一致したスキルがチケットに適用されます。
-        agent_skills: エージェントのスキル
-        not_in_any_groups_info: グループに所属している場合のみエージェントのスキルを管理できます。ヘルプデスク管理者まで連絡してください。
-        no_agents_info: このグループへ追加されたエージェントはいません！
-        no_groups_present_info: グループに所属している場合のみチケット割り当て設定を変更できます。<br>ヘルプデスク管理者に連絡してください。
-        new_skill_info: スキルがまだ作成されていません！
-      rule_form:
-        info1: 例：VIP顧客対応
-        info3: 一致するチケットに子のチケットを関連付ける
-        match_any: 以下の<b>いずれか</b>
-        match_all: 以下の<b>全て</b>
-        new: スキル名
-        info2: 例：「VIP顧客からのチケットをエージェントのスーザン、ボブ、ゾーイに割り当てる」
-      import_csv: エージェントのスキルをインポート
-      helpcard:
-        title2: スキルを作成中
-        learn_more_skill_based_info: スキルベースの割り当てについて更に詳しく
-        info2: >-
-          各スキルは、特定のエージェントへ割り当てられ、特定の条件に一致するチケットにマッピングされます。<br><br>専門知識や能力に基づいて、エージェントへスキル割り当てるが可能です。たとえば、複数の言語をサポートしている場合、スペイン語のチケットを処理するエージェント用に「流暢なスペイン語
-          」というスキルを作成できます。スキルをチケットにマッピングするには、タイプ・ソース・製品などのチケットプロパティ、または依頼者の名前・メールアドレス・会社などの顧客プロパティに基づく条件を使用します。したがって、スペイン語がリクエスト言語であるチケットは、スキル
-          「流暢なスペイン語」
-          にマッピングできます。<br><br>チケットにマッピングされたスキルがエージェントのスキルと一致する場合、チケットはそのエージェントへ割り当てられます。
-        title1: スキルについて
-        title3: スキルからチケットのマッピング
-        info3: >-
-          スキルのルールは、チケットまたは顧客のプロパティに基づいて、チケットに関連付ける必要があるスキルを識別するために使用されます。グループに割り当てられたチケットへ、スキル一覧の最初に一致したスキルのルールが実行されます。管理者は、最も重要なルールを最上位に置くようにスキル一覧を並べ替えることができます。
-        info1: >-
-          スキルにより、チケットと適切なエージェントを簡単にマッチングできます。エージェントごとに独自のスキルを関連付け、それらのスキルに一致するチケットのみが割り当てられるようにルールを作成できます。
-      new:
-        new: 新しいスキル
-      import:
-        download_xls_title: CSVファイルとして既存のエージェントとスキル一覧をダウンロード
-        note_info_3: １人のエージェントに関連付けることができるスキルは最大35件、アカウントごとに作成できるスキルは最大180件であることに注意してください。
-        important_note: 重要事項
-        note_info_1: 新しいスキル名が見つかった場合、スキルを作成してエージェントにマッピングします。
-        note_info_2: >-
-          異なるスキルセットを持つ既存のエージェントに遭遇した場合、既存スキルセットの関連付けを解除し、ファイル内に存在する新しいスキルセットをマッピングします。
-        download_xls_btn: CSVファイルをダウンロード
-        upload_file: CSVファイルをアップロード
-      edit:
-        edit: スキルを編集
     user_skills:
       index:
         more: その他
         groups: グループ
         any: すべて
-        turn_on: オンにする
-        add_skills: スキルを追加
-        manage_skills: スキルを管理
-        sbrr_disabled_admin: このグループではスキルベースの割り当てがオンになっていません
-      no_skills: スキルなし
   ends_with: で終わる
   last_name: 名字
   forum:
@@ -3495,44 +3361,14 @@ ja-JP:
       email_error: 会社名は3文字以上で入力してください
       getting_started: はじめに
       url_error1: 'ドメイン<strong>%{domain_name}</strong>はご利用いただけません。'
-      email_label: あなたのFreshdeskメールアドレス(これは顧客と共有して頂けます)
-      title2: 開始するにはアカウント詳細を確定して下さい。
-      url_label: あなたのFreshdesk　URL(ここからアカウントへアクセスできます)
-      email_info_text: これは変更または後で任意のものを追加して頂けます。
-      submit_button_text: 自分のアカウントへ移動
-      account_url_defaulted: 一定期間操作がなかったため、自動生成されたURLを既定としてお客さまのアカウントへ設定しました。ダッシュボードへ移動しています…
     new:
       full_name: 氏名
       company: 会社名
       confirmation: 確認
       create_an_account: アカウントを作成
-      card_charge: 'クレジットカード請求 '
-      site_url: サイトURL
-      enter_payment_info: 支払い情報を入力
-      enter_name_subdomain: ' お客様のビジネス名と、サイトで利用したいサブドメインを入力してください。'
-      errors_encountered: アカウント情報に関して発生したエラー：
-      administrator_account: 管理者アカウントの情報を入力
-      discount_code: 割引コード
     signup_google:
       sign_up: サインアップ!
       privacy_policy: プライバシーポリシー
-      existing_url: あなたの既存Freshdesk URL
-      existing_account: 既存のFreshdeskアカウント
-      link_existing_account: 既存のFreshdeskアカウントをリンクする。
-      sample_url: '例：「http://apple.freshdesk.com」の場合「apple」と入力'
-      terms_of_service: 利用規約
-      create_account: 新規Freshdeskアカウントを作成する。
-    signup_google_error:
-      allow_access_message: >-
-        Freshdeskはお客様のメールアドレスをログインIDとして使用するため、続行するには<strong>アクセス権限許可</strong>をクリックする必要があります。
-      go_back: Google appマーケットプレイスへ戻るにはここをクリックして下さい
-    associate_google:
-      login_button: ログイン＆登録を完了
-      login_message: Google AppログインをFreshdeskアカウントに関連付けるには、アカウント管理者の認証情報でログインします。
-    thank_you:
-      account_created: アカウントを作成しました
-      launch_support: TwitterとFacebookサポートを実行中
-    canceled_account: お別れを残念に思います。アカウントをキャンセルしました。
   success_msg: アカウント設定が正常に更新されました！
   failure_msg: アカウント設定の更新に失敗しました！
   account_configuration:
@@ -3800,8 +3636,6 @@ ja-JP:
     skip_notifications: 新しいチケットのメールによるお知らせをスキップする
     skip_notification_yes: はい
     skip_notification_no: いいえ
-    default_rule_desc: サブスクリプションに関する全チケットは請求チームへ割り当てられます
-    default_rule_name: サブスクリプションに関する全チケットは請求へ送られます
   header_logo: ヘッダーロゴ
   feedback:
     title: この回答は役に立ちましたか？
@@ -4173,21 +4007,6 @@ ja-JP:
     round_robin_defalut: ラウンドロビンチケット割り当て
     round_robin_capping: ロードバランスチケット割り当て
     no_group_info: グループをまだ作成していません。
-    sbrr_plan_text: <b>Forestプラン</b>で<span class="muted">利用可能</span>
-    alert_content: スキルページへ移動中です。このまま続行すると、本グループへ加えた変更は自動で保存されます。
-    round_robin_skill_based_tooltip: 同じスキルを持つエージェントが２人いる場合、より少ない数のチケットを処理中のエージェントへチケットを割り当てます。
-    alert_content_2: このまま続けて宜しいですか？
-    round_robin_skill_based: スキルベースのチケット割り当て
-    only_round_robin_description: >-
-      このグループに割り当てられたチケットは<strong>ラウンドロビン方式</strong>によって自動的にグループ内の利用可能なエージェントに割り当てられます
-    per_agent: エージェントあたり
-    round_robin_skill_based_info: チケットを最も適切に処理できるエージェントに割り当てる
-    round_robin_default_info: 循環方式でエージェントにチケットを割り当てる
-    round_robin_capping_info: エージェントが同時に処理できるチケットの数を制限する
-    sbrr_trial_text: >-
-      エージェントのスキルに応じてチケットを割り当てられることをご存じでしたか？<a
-      href="https://support.freshdesk.com/solution/articles/222692"
-      target="_blank">詳しくはこちら</a>
   four: 4時間
   oneweek: １週間
   twoweek: 2週間
@@ -4319,10 +4138,6 @@ ja-JP:
     more: その他
     insert_placeholder: プレースホルダを挿入
     skill: スキル
-    search_placeholder: エージェントを検索
-    add_skills: スキルを追加
-    invalid_placeholder: 無効なプレースホルダーが挿入されています
-    manage_skills: スキルを管理
   account_admin: アカウント管理
   right: 正しい
   footer:
@@ -4708,7 +4523,6 @@ ja-JP:
       modified_on: 変更日
       related_articles: 関連したアーティクル
       created_by: '作成者:'
-      activation_warning: アカウントが未認証なようです。記事を公開するには、アカウントを有効化してください(下書きは保存できます)。
     folder:
       filler_text: '%{folder_name}についてのアーティクルが現れるのを待ってこのスペースをウォッチする'
     topic:
@@ -4750,7 +4564,6 @@ ja-JP:
       sort_by_most_recent: 最新
       sort_by_most_popular: 最も人気が高い
       sort_by_default: 既定
-      activation_warning: アカウントが未認証なようです。フォーラムトピックを投稿するにはアカウントを有効にして下さい。
     vote:
       you:
         one: 'あなた '
@@ -4817,8 +4630,6 @@ ja-JP:
     agent_login_details: 詳細を下に入力してください
     vote_label:
       other: stemmer
-    customer_login_info: お客様はこちら
-    helpdesk_login_portal: エージェントはこちら
   feedbackwidget_form_heading: ヘディングから
   feedbackwidget_form_title: ウィジェットフォーム題名
   cancel_and_back: キャンセルして戻る
@@ -5209,8 +5020,6 @@ ja-JP:
       title: APIキー
       reset: APIキーをリセットする
       reset_warning: APIキーをリセットすると、リセット前のキーを使用したアプリケーションが全て機能しなくなります。リセットを実行しますか？
-    freshid_profile_info: お客様のFreshdeskアカウントページへ移動します
-    freshid_profile_link: ご自身のプロフィールまたはパスワードを変更
   add_to_do: やることリストに追加
   subject_or_description: 主題または詳細
   premium_details: 「Pro」プランの内容すべて、および複数プロダクトサポート、複数時間帯サポート、コミュニティ、メール＆電話サポート
@@ -5296,7 +5105,6 @@ ja-JP:
     bot: ボット
     skill_based_assignment: スキルベースの割り当て
     freshchat: Freshchat統合
-    custom_dashboard: チームダッシュボードの管理
   zendesk_account: Zendeskアカウント詳細
   zendesk_import_files: 何をインポートするか選択？
   file_url: フルXMLエクスポートURL
@@ -5343,7 +5151,6 @@ ja-JP:
     info3: >-
       <a href="https://support.freshdesk.com/support/solutions/folders/246519"
       target="_blank" >Freshdeskでのライブチャットの使用について詳細を見る</a>
-    info4: ライブチャット設定ヘルプ
   low: 低い
   agents: エージェント
   header:
@@ -5558,21 +5365,12 @@ ja-JP:
           class="common-icon-outdated"></i>アイコンは通知のその他の言語での翻訳は古くなっている可能性があることを示します。
       agent_template_25:
         topic: エージェント招待メール
-        info1: >-
-          既存のFreshworksエージェント(Freshdeskにおける別アカウントやFreshworks製品であるFreshchat・Freshchaller・Freshsales・Freshservice・Freshmarketerを既に利用しているエージェント)をヘルプデスクに追加すると、エージェント招待メールが送信されます。<br/><br/>新規Freshworksエージェントに対しては、ユーザアクティベーションメールが送信されます。エージェント招待メールが送られるのは既にFreshworksを利用しているエージェントにのみ送信されます。
-      forward_template_24:
-        topic: エージェント転送テンプレート
-        info1: >-
-          エージェントのチケット転送に追加したい既定情報は、転送テンプレートを使用してカスタマイズしたり、事前入力を行うことが可能です。エージェント転送テンプレートを使用すると、依頼者名・チケットURL・エージェントの署名などのダイナミックコンテンツを自動で追加することができます。<br/><br/>ヘルプデスクでサポート言語を複数設定した場合、各言語に特化した通知を作成することができます。<i
-          class="common-icon-outdated"></i>アイコンはその他言語で通知の訳文を更新する必要がある可能性を示します。
     insert_placeholder: イベントプレースホルダー
     modify_agent_template: エージェントメールテンプレートを変更する
     event: イベント
     agent_notification: エージェントお知らせ
     agent_notifications: エージェント通知
     subject: サブジェクト
-    account_not_activated: アカウントが未認証なようです。メール通知を有効にするにはアカウントを有効にして下さい。
-    default_forward_template_info: 転送テンプレートは、すべてのエージェントの転送メッセージエディタへ自動的に含まれます。
   errors_in_plan_change: 変更に伴って発生したエラー：
   formatting_help: フォーマットに関するヘルプ
   step1: ステップ１
@@ -5731,18 +5529,6 @@ ja-JP:
       verify: 検証
       host_value_help: TXTレコードのホスト名
       data: データ
-      new_dkim: またカスタムドメインでサポートメールを作成していません！
-      help_note: >-
-        DKIMを使用すると、ヘルプデスクからのメールにメールのドメイン名を使ってデジタル署名が可能となります。顧客とのあらゆるコミュニケーションにおいて、ブランドアイデンティティを構築しましょう。
-      verification_sent: 認証を送信しました
-      configuring: 構成中…
-      name: DKIM
-      title: DKIM設定
-      help: DKIM設定の構成方法
-      description: >-
-        ご利用のインターネットサービスプロバイダー公式サイトで次のDNS設定を更新して下さい。角度名における全ての設定をコピーしたら、設定が有効であることを承認するため認証ボタンをクリックして下さい
-      host_value: ホスト値
-      dkim_remove_message: 次のDKIM構成を削除してよろしいですか？：
     plain_unverified: 未認証 -
   step2: ステップ２
   import_users_contacts: ユーザー &rarr; 連絡先
@@ -6124,9 +5910,6 @@ ja-JP:
     cannot_preview_attachment: プレビューは利用できません。
     search_text: アーティクルを検索する
     thanks_v1: フィードバックありがとうございます
-    search_close_text: 検索を閉じる
-    link_tracker:
-      notifier_body: メッセージの内容：
   archive_ticket:
     title: アーカイブされたチケット
     no_reply_msg: このチケットはアーカイブされました。
@@ -6305,32 +6088,15 @@ ja-JP:
     gdpr_agent: エージェント
     forums_toggle:
       title: フォーラム
-      forums_disabled: このアカウントでフォーラムを無効にしました。
-      enable_forums: アカウントでフォーラムを有効化
-      go_back_message: ヘルプデスクへ戻る
-      helpnote: これを無効にすると、全ユーザー向けの全製品ポータルにおけるフォーラムが無効になります
     gdpr_to: まで
     gdpr_terms_link: 利用条件
     gdpr_admin: 管理者.
     gdpr_policy: プライバシーポリシー.
     gdpr_acknowledgement: よく読み、理解しました
-    sort_conversations:
-      label: 会話を並べ替える
-      helpnote: チケット上でメッセージがこの順番で表示されます。
-      latest_top: 最新の会話が一番上に表示されます。
-      oldest_top: 最も古い会話が一番上に表示されます。
-      option1: 新しい順に表示
-      option2: 古い順に表示
-    gdpr_terms: 「承認」をクリックすることで以下へ同意したとみなします：
-    branding_toggle:
-      helpnote: これをオフにするとエージェント及び顧客ポータルのフッターからFreshdeskのマークが取り除かれます
-      disable_branding: Freshdeskのマークを取り除く
-      title: Freshdeskのマーク
-    time_zone_updation: このタイムゾーンを全てのエージェントと連絡先へ適用しています。暫くしてからお試しください。
   lead: リード
   comments: コメント
   forum_confirm_msg1: 本当にこのカテゴリーを削除しますか？
-  plans_billing: プラン＆請求
+  plans_billing: プラン＆ご利用明細
   portal_customizer_open_forums: 誰でもフォーラムを見ることができます
   portal_customizer_option_forums: ユーザーはログインせずにフォーラムを見ることができます
   business_hours:
@@ -6447,9 +6213,6 @@ ja-JP:
         hours_format_tip: >-
           時時：分分または小数点を使用して時間を入力してください（例：1時間30分の場合は1:30または1.5）。自動タイマーを開始するにはこれを空白のままにしてください。
       ticket_priority: チケットプライオリティ
-      no_entry: タイムエントリーがありません
-      archive_tickets_column_error: アーカイブ済みチケットは除外されます
-      max_columns: 10列以上は追加できません
     tags:
       index:
         title: タグ管理
@@ -6551,7 +6314,6 @@ ja-JP:
       do_not_link: リンクしない
       view_in_detail: 詳細を表示する
       ok: OK
-      announcement_hide: このメッセージを表示しない
     realtime_dashboard:
       view_all: すべて表示
       ticket: チケット
@@ -6822,7 +6584,6 @@ ja-JP:
         invalid_requester: 無効なリクエスター
         shared_by_me: 自分が共有したチケット
         shared_with_me: 自分と共有されているチケット
-        ongoing_collab: アクティブなハドル
       note:
         posted_on: '%{note_date}の%{user_name}'
         created_on:
@@ -6953,8 +6714,6 @@ ja-JP:
         title: 定型応答文
     ca_response:
       delete_confirm: この定型応答文を削除してよろしいですか？
-    attachment:
-      drop_files_here: ここにファイルをドロップ
   import_ticket_group: チケット
   click_to_change_sort_order: クリックして注文の変更・並び替えをする
   user_sessions:
@@ -6983,11 +6742,6 @@ ja-JP:
     actions_empty: アクションを空欄にすることはできません
     invalid_domain:
       freshdesk: Freshdesk
-      may_be_this_is_still_fresh: ' 準備が完了していない可能性があります  '
-      we_couldnt_find: ' 見つかりませんでした '
-      there_is_no_helpdesk_here: ヘルプデスクがありません！
-    error_page:
-      back_to_home: ホームへ戻る
   export_data:
     in_sla: SLA内
     out_of_sla: SLAが違反されました
@@ -7030,14 +6784,12 @@ ja-JP:
       body: >-
         あなたがリクエストした%{field}のエクスポートが完了しました。ファイルは<a
         href=%{url}>こちら</a>からダウンロードできます。リンクが機能していない場合、次のURLをコピーしブラウザのアドレスバーに貼り付けてください:
-      note: 本リンクの有効期間は15日間です。
     ticket_export:
       info: チケットデータは間もなくあなたのメールアドレスに送信されます！
       subject: '%{domain}の%{start_date}から%{end_date}までのチケット（%{filter}）のエクスポート'
       body: >-
         あなたがリクエストしたチケットエクスポートが完了しました。ファイルは<a
         href=%{url}>こちら</a>からダウンロードできます。リンクが機能していない場合、次のURLをコピーしブラウザのアドレスバーに貼り付けてください：
-      note: 本リンクの有効期間は15日間です。
     agents:
       fields:
         name: 名前
@@ -7101,8 +6853,6 @@ ja-JP:
       range_limit_message: '%{range}月に作成された通話記録のみエクスポートできます。フィルタをそのように変更してください。ご不便をおかけします。'
       repeated_request: 通話記録は既にエクスポートされています。ダウンロードのリンクが記載されたメールを確認してください。
       export_limit_breached: '現在のところ、同時にエクスポートできるのは%{limit}件のみです。しばらくしてから再度エクスポートしてください。ご不便をおかけします。'
-    data_backup_failure:
-      body: データのエクスポートに失敗しました。再度エクスポートをお試しください。
   sla:
     minutes: 分
     hours: 時間
@@ -7171,15 +6921,9 @@ ja-JP:
         tickets: チケット
         post: ' 投稿 '
         interactions: インタラクション
-        follow_as: 次でフォロー：
       index:
         all: すべて
-        click_activity: ストリームをクリックしてアクティビティを表示
-        no_activity_available: 利用できるアクティビティはありません
-        retweets: リツイート
-        search_twitter: 'Twitterで最新情報を検索 '
       search_btn: 検索
-      no_conversation: 会話がありません
     welcome:
       title: ソーシャルサポート
       turn_off: ソーシャルをオフにする
@@ -7421,7 +7165,6 @@ ja-JP:
       error: アプリ削除中のエラー。
     install_action:
       success: アプリは正常にインストールされました。
-      app_setup_error: インストール中にエラーが発生しました。
     update_action:
       success: アプリは正常に更新されました。
     help_and_support: ヘルプとサポート
@@ -7459,17 +7202,6 @@ ja-JP:
     policy_on_tp_apps: 外部アプリの方針
     latest: 最新
     no_custom_apps_note: カスタムアプリを作成し、開発者ポータルで公開する。
-    custom_app_policy: >-
-      「カスタムアプリ」とはFreshdeskのお客様向けに特別に開発されたアプリで、アプリギャラリーへは掲載されていません。カスタムアプリはFreshdeskで開発者として登録されているかどうかに関わらず、Freshdeskまたは他の開発者によって開発されることがあります。カスタムアプリは適用法で許可されている最大限の範囲で、いかなる種類の保証もなく「現状のまま」で提供されることにご注意ください。Freshdeskは明示または黙示を問わず、商品適格性・名称・特定の目的への適合性・非侵害に関する黙示的な保証を含む、あらゆる条件・表明・保証・その他の条件を明示的に否認します。あなたはカスタムアプリケーションをインストールすることにより、Freshdeskはカスタムアプリの中断がなく、タイムリーに、安全かつ、不具合またはウイルスその他の悪意のあるソフトウェアから解放されることを保証するものではないことを理解し、認めるものとします。
-
-      Freshdeskは、あなた、またはあなたがカスタムアプリを使用したことによる直接的・間接的・付随的・特別・懲罰的または間接的な損害を主張する、あなたまたはあなたを通した主張者に対して責任を負いません。
-    reauthorize_oauth_app: アプリが機能しない場合、外部アプリからの情報アクセス権限を許可するようアプリを再認証して下さい。
-    backend_log: サーバーレスログ
-    reauthorize_header: アプリの再認証
-    helpnote_custom_apps_html: >-
-      要件に合ったアプリをお探しですか？カスタムアプリケーション(以前のFreshplugs)で、外部ソリューション・レガシー・システム・データベースからコンテキストに沿った情報を取り込みましょう。これらのカスタムアプリケーションでは、ヘルプデスクの外観を変更し、生産性を向上させることも可能です。<a
-      href='https://support.freshdesk.com/support/solutions/articles/121846'
-      target='_blank'>ここ</a>をクリックして詳細をご確認下さい！
   integrations:
     native_integrations: ネイティブインテグレーション
     freshplugs_title: FreshPlug
@@ -7606,7 +7338,7 @@ ja-JP:
         アカウントのプロフィール設定から取得できます。正常にインストールされると、チケットを提起したカスタマーの注文情報をFreshdesk
         のチケット詳細ビューで見ることができます。</p>
       form:
-        shop_name: ストア名/ ID
+        shop_name: ショップ名/ ID
         shop_name_info: >-
           例えば、あなたのSEOshop のURL
           が<strong>https://my_shop_name.webshopapp.com</strong>の場合、<strong>my_shop_name</strong>を入力します。
@@ -7974,7 +7706,7 @@ ja-JP:
         google_analytics_settings_info: ウェブフックの使用法＞
         google_analytics_settings: ウェブフックの使用法＞
         tracking_id: 〜のためのトラッキングID
-        tracking_id_example: 例：UA-123456-1
+        tracking_id_example: 'Eg: UA-123456-1'
         copy_settings: 上記のトラッキングIDを全てのポータルで使用できます
     sugarcrm:
       label: SugarCRM
@@ -8108,39 +7840,25 @@ ja-JP:
       label: Shopify
       desc: チケット解決中にFreshdeskでカスタマーの最近のオーダーやオーダー詳細を表示
       helptext: >-
-        <h4>Shopify統合</h4><br/><p>カスタマーの最近のオーダーをFreshdeskで表示するためにストア名をコンフィギュアしましょう。Freshdeskを認可するためにあなたはShopifyストアへ誘導されます。認可されれば、チケット詳細ページと連絡先詳細ページでカスタマーの最近のオーダーやオーダー詳細を見ることができます。ウィジェットからワンクリックで素早くShopifyの詳細にアクセスできます。</p>
+        <h4>Shopify統合</h4><br/><p>カスタマーの最近のオーダーをFreshdeskで表示するためにショップ名をコンフィギュアしましょう。Freshdeskを認可するためにあなたはShopifyショップへ誘導されます。認可されれば、チケット詳細ページと連絡先詳細ページでカスタマーの最近のオーダーやオーダー詳細を見ることができます。ウィジェットからワンクリックで素早くShopifyの詳細にアクセスできます。</p>
       form:
-        shop_name: ストア名
+        shop_name: ショップ名
         shop_name_info: >-
           例えば、あなたのShopify
           URLが<strong>https://my_shop_name.shopify.com</strong>の場合、<strong>my_shop_name</strong>と入力します。
         shop_name_info_mint: >-
           例えば、あなたのShopify
           URLが<strong>https://my_shop_name.shopify.com</strong>の場合、<strong>my_shop_name</strong>と入力します。
-        shop_name_mint: ストアURL
+        shop_name_mint: ショップ名
       edit:
         disconnect: 接続解除
-        sidebar: >-
-          <p>複数のShopifyストアを接続してFreshdesk内で顧客の注文の詳細を確認しましょう。Freshdesk内から返金や注文のキャンセルも可能です。<br
-          /><br />旧型Freshdeskをお使いの場合、最初に接続したストアからの注文にのみアクセス可能となります。Freshdesk
-          Mintでは、チケット対応の際に、全ストアからの注文詳細を確認可能です</p><p><a
-          href="https://support.freshdesk.com/support/solutions/articles/195382-the-shopify-app"
-          target="_blank">詳細はこちら</a></p>。
-        label: Shopify - 接続済みストア
-        sidebar_label: Freshdesk向けShopify
-        confirm_remove_store: このストアを接続解除してよろしいですか？
-        connect: 別のストアを接続
-        desc: Shopifyのストアを接続して、注文の表示や返金処理をFreshdeskから簡単に実行しましょう
-        helpkit_cannot_edit: >-
-          既存のストアを接続する場合、マーケットプレイスからShopifyアプリをアンインストールしてから再度インストールして下さい。複数のストアを管理したい場合、Mint体験へ切り替えて下さい。
-      title_mint: お客様のShopifyストアへ接続
     magento:
       label: Magento
       desc: チケット解決中にFreshdeskでカスタマーの最近のオーダーやオーダー詳細を表示
       helptext: >-
         <h4>Magneto統合</h4><br/><p>カスタマーの最近のオーダーをFreshdeskで表示するためにショップ名をコンフィギュアしましょう。Freshdeskを認可するためにあなたはMagnetoショップへ誘導されます。認可されれば、チケット詳細ページと連絡先詳細ページでカスタマーの最近のオーダーやオーダー詳細を見ることができます。ウィジェットからワンクリックで素早くMagnetoの詳細にアクセスできます。</p>
       form:
-        shop_name: ストア名
+        shop_name: ショップ名
         product: プロダクト
         shop_url: ショップURL
         shop_url_info: '例: <strong>https://my_shop_name.com</strong>'
@@ -8148,9 +7866,9 @@ ja-JP:
         admin_url_info: '例えば、<strong>https://my_shop_name.com/admin</strong>。'
         consumer_key: コンシューマキー
         consumer_secret: コンシューマシークレット
-        add_shop: +ストアの追加
-        remove_shop: このストアを削除
-        invalid_shop_url: 入力されたストアURLが無効です。
+        add_shop: +ショップの追加
+        remove_shop: このショップの削除
+        invalid_shop_url: 入力されたショップURLは無効です。
         invalid_admin_url: 入力された管理者URLは無効です。
     slack:
       label: Slack
@@ -8221,10 +7939,6 @@ ja-JP:
       status_msg: 'チケットステータスの変更先: '
       chat: 'チャットの相手: '
       default_chat: 'チャットの内容: '
-      update_notice: >-
-        現在のSlack統合へ更新が適用されました。<a
-        href='https://support.freshdesk.com/support/solutions/articles/206103'
-        target='_blank'>ソリューション記事</a>を参照して、変更内容に関するステップ詳細をご確認下さい
     highrise:
       label: Highrise
       helptext: >-
@@ -8398,11 +8112,6 @@ ja-JP:
       denied_scope: >-
         このアプリへのアクセスを拒否しました。[はい]を選択すると、このアプリへのアクセスを付与します。このウィンドウを閉じて、[OneDriveからファイルを選択]をもう一度クリックしてください。
       error: OneDriveファイルを開くときに問題が発生しました。もう一度やり直してください。
-      deprecated_title: OneDriveアプリは非推奨です
-      deprecated_message: >-
-        OneDriveはFreshdeskのClassic版ではご利用頂けません。継続して利用するには<a
-        href='https://support.freshdesk.com/support/solutions/articles/229464'
-        target='_blank'>Mint体験</a>へ切り替え、新しいアプリをインストールして下さい。
     pivotal_tracker:
       label: Pivotal Tracker
       desc: Pivotal Trackerでストーリーを作成し、それをFreshdesk内で追跡しましょう
@@ -8542,15 +8251,6 @@ ja-JP:
         password: パスワード
         dynamics_v2_info: ウェブフックの使用法＞
         opportunity_settings: エージェントはチケットからオポチュニティを作成／リンクまたはリンク解除できます
-        freshdesk_to_crm: FreshdeskからDynamiczへ
-        dynamics_v2_settings: Dynamicsの設定
-        crm_to_freshdesk: DynamicsからFreshdeskへ
-        site_url: サイトURL
-      desc: 連絡先とアカウント情報をDynamics CRMとFreshdesk間で同期できます。
-      helptext: >-
-        <h4>Dynamics Plus</h4><p><br/>Dynamics同期構成設定に関する手順やガイドラインは<a
-        href='https://support.freshdesk.com/solution/articles/224667-the-dynamics-crm-v2-app'
-        target='_blank'>Dynamics Plusアプリ</a>記事を参照して下さい。</p>
     applications:
       crm:
         mapping:
@@ -8558,12 +8258,6 @@ ja-JP:
           company: 会社名
           contact_fields: ' 連絡先フィールド '
           account_fields: ' アカウントフィールド '
-          freshdesk_contact_fields: ' Freshdesk連絡先フィールド '
-          freshdesk_company_fields: ' Freshdesk会社フィールド '
-          sync: ' 同期 '
-      contacts_sync:
-        outlook_contact_sync: ' Outlookの連絡先同期 '
-        resolve_the_errors: 続行する前フォームのエラーを解決して下さい！
     screen_pop:
       widget:
         cancel: キャンセル
@@ -8613,24 +8307,10 @@ ja-JP:
         url: インラインフレームURL
       title: CTI設定
       iframe_toggle: ソフトフォンインラインフレームを有効化する
-      desc: Freshdeskreshserviceで通話エクスペリエンスを統一
-      helptext: >-
-        <p>Freshdesk
-        CTIフレームワークを使用して、電話システムとオンラインヘルプデスクを統合します。シンプルなドキュメント機能とわかりやすいAPIで、手軽なオンラインヘルプデスクと電話システムの連携が簡単となります。</p><p>ヘルプデスクによるアダプタの設定が完了すると、サポートエージェントは、電話の受発信・顧客の詳細情報へアクセス・電話中のメモを取り・コンテキストの維持を実行できるようになり、素晴らしい顧客サポートを提供できるようになります。</p><p><a
-        href='
-        https://support.freshdesk.com/solution/articles/221418-computer-telephony-integration-framework'>詳しくはこちら</a>
     salesforce_v2:
       form:
         salesforce_v2_settings_info: ウェブフックの使用法＞
         salesforce_v2_settings: Salesforce設定
-        crm_to_freshdesk: SalesforceからFreshdeskへ
-        ticket_sync: Salesforceへチケットを同期
-        freshdesk_to_crm: FreshdeskからSalesforceへ
-      helptext: >-
-        <h4>Salesforce Plus</h4><p><br/>Salesforce同期構成設定に関する手順やガイドラインは<a
-        href='https://support.freshdesk.com/solution/articles/224042-the-salesforce-app-for-v2'
-        target='_blank'>Salesforce Plusアプリ</a>記事を参照して下さい。</p>
-      desc: 連絡先とアカウント情報をSalesforce CRMとFreshdesk間で同期できます。
     outlook_contacts:
       form:
         mail_box_detail: 〜と同期
@@ -8638,14 +8318,6 @@ ja-JP:
         sync_tag: 同期設定
         submit: インポート＆アクティブにする
         overwrite_existing_user: 既存のFreshdesk連絡先に上書きする
-        sync_tag_info: >-
-          複数のOutlookアカウントにわたって同じ同期タグを使用すると、全てのアカウントをFershdesk連絡先と共有するようにできます。もしOutlookと同期したい連絡先がない場合は、空欄にしてください。
-        import_group: インポートするフォルダを選択(任意)
-        title: Outlook連絡先同期設定
-        account_not_configured: >-
-          <br/>Outlookアカウント設定がまだされていません。「新規アカウント同期」をクリックし、新しいアカウントとOutlookを構成してください。<br/><br/>
-        sync_group_info: >-
-          新しい連絡先グループ<strong>%{group_name}</strong>が、連絡先を同期するためにOutlookアカウント内に作成されます。
       edit_form:
         account: アカウント
         edit_account: 編集
@@ -8655,13 +8327,6 @@ ja-JP:
         delete_account: 削除
         last_sync_time: 最後の同期時間
         syncing_in_progress: 同期中
-      desc: OutlookとFreshdeskの連絡先を定期的に同期する。
-      sync_settings:
-        outlook_fields: Outlookフィールド
-        freshdesk_fields: Freshdeskフィールド
-      helptext: >-
-        {<h4>Outlook連絡先同期設定ヘルプ</h4><p><br/>まず<b>「新規アカウント同期」</b>をクリックして、同期したい新規Outlookアカウントを追加してください。許可を求められたら、FreshdeskがOutlook連絡先を使用できるよう許可してください（Outlookユーザー名＆パスワードを入力）。<br/>{<br/>同期を停止したい場合、アカウントを削除します。<br/><br/><b>注：</b>
-        同期を開始する前に、Outlook連絡先のバックアップを取得することが推奨されています。
     cloud_elements:
       form:
         lead: リードフィールド
@@ -8672,66 +8337,16 @@ ja-JP:
         opportunity_settings: エージェントはチケットからオポチュニティを作成／リンクまたはリンク解除できます
         hourly: 毎時
         contact: 連絡先フィールド
-        field_visibility: フィールド可視性
-        sync_info: 連絡先と会社を同期
-        source_of_truth: データのマスターソース
-        sync_frequency: 同期頻度
-        order: 注文フィールド
-        two_way: 双方向同期
-        contract: 契約フィールド
-        sync_settings: 同期設定
-      mail:
-        no_data_found: データが見つかりません
-        no_event: 本日のイベントはありません
     google_drive:
       form:
         developer_key: Google開発者コンソールから取得したAPIキー。
         client_id: あなたのドメイン用OAuthクライアントID
-      desc: Google Driveからデータ/ファイルを添付して共有します
-      helptext: >-
-        <h4>Googleドライブ統合ヘルプ</h4><br/><p>Googleドライブ統合を使用すると、エージェントとユーザーが自分のGoogle
-        Driveフォルダからファイルを参照し、Freshdeskでチケットを送信または返信する際にファイルを共有できます。ファイルへの直接リンクがチケット内で共有されるため、添付ファイルやメールのサイズ制限が不要となります。</p><p>統合を設定する前に、<a
-        target='_blank'href='https://console.developers.google.com/'><b>Google
-        Developersページ</b></a>に移動してください。</p><p>１．<b>APIとサービス(API&Services)</b>セクションで、<b>プロジェクト作成(Create
-        Your Project)</b>を選択します。</p><p>２．</b>APIとサービス有効化(Enable APIs and
-        Services)</b>より、<b>Google Drive APIおよびGoogle Picker
-        API</b>を有効にします。</p><p>３．<b>認証情報(Credentials)セクション</b>で、OAuthクライアントIDとAPIキーを作成し、OAuthクライアントIDを生成する際に、Authorized
-        Javascript originセクションへFreshdesk
-        URLを入力してください。</p><p>４．<p>最後に、クライアントIDとAPIキーをコピーしてこのページに貼り付け、変更を保存します。これでGoogle
-        Drive Chooserの利用が開始できます。新規チケットフォームよりご確認下さい。</p>
     microsoft_teams:
       auth_btn: 認証
-      teams_connect_desc: これはあなたのFreshdeskアカウントをMicrosoft Teamsと接続します。
-      teams_prof_label: Microsoft Teamsへ接続
-      desc: Freshdeskチケットとメモのアップデート更新に関する通知を受け取る。
-      reauth_btn: 再認証
     slack_v3:
       slack_prof_label: Slackに接続する
       slack_connect_desc: SlackからSkackチケットを作成するために自身のアカウントを構成する
       slack_auth_btn: Slack認証
-      slack_reauth_btn: Slack再認証
-    ticket_summary:
-      desc: チケット対応の際、顧客が直面している問題の概要を作成し共有しましょう。
-    shared_ownership:
-      desc: 専門チームのアシストが必要なチケットのエージェント可視性を向上させ、エージェント間でのチケット共有を可能にします。
-    link_ticket:
-      desc: 関係するチケットを一緒に管理及びトラッキングし、更新の提供における迅速・一貫性・効率を実現します。
-    parent_child:
-      desc: >-
-        親子チケットでは、アクションアイテムを複数のチームで同時に個別処理できる子チケットに分割することで、サポートエージェントが迅速かつ効率的に問題を解決するのに役立ちます。
-    onedrive_mint:
-      form:
-        application_id: あなたのFreshdeskアカウントにおけるOneDriveアプリケーションID
-      desc: OneDriveからデータ/ファイルを添付して共有します
-    google_hangout_chat:
-      desc: Freshdeskチケットとメモのアップデート更新に関する通知を受け取る。
-    office365:
-      desc: >-
-        Freshdesk用Office
-        365アプリでOutlook上で優先度・変更・エージェント割り当て・ステータス変更等を含むチケットアクションを実行できます
-      helptext: <h4>Office 365</h4>
-    fullcontact:
-      desc: 新規連絡先と古い連絡先詳細に対して必要に応じた連絡先データ強化を自動化
   widgets:
     contact_widget:
       description: カプセルに連絡先を追加するには、連絡先またはオプションを表示してください
@@ -8745,7 +8360,6 @@ ja-JP:
         show_all_results: すべての結果を表示
         no_results: '次の項目の結果はありません: '
         problems_with_fields: 次の項目で問題が発生しました：
-        prohibited_error: １件のエラーが原因でチケットの保存に失敗しました
   reorder: 再注文する
   reports:
     no_data: 表示するデータがありません！
@@ -8822,7 +8436,6 @@ ja-JP:
       billable_vs_non_billable: 請求可能vs請求不可能
       filter_by_title: 次の項目でフィルタ：
       time_period: 期間
-      pick_columns: 列を選択
     summary_report:
       back_to_reports: レポートへ戻る
       show_report: レポートを表示する
@@ -8830,7 +8443,7 @@ ja-JP:
       on_time_resolution: 時間通りの<br>解消
       on_time_resolution_percent: OTR %
       fcr_count: 初回コンタクトでの<br>解消
-      fcr_percent: 初回解決率
+      fcr_percent: FCR %
       avg_1st_response_time: 平均初回<br>応答時間
       avg_response_time: 平均応答<br>時間
       avg_resolution_time: 平均ソリューション<br>時間
@@ -8873,13 +8486,9 @@ ja-JP:
     scoreboard_reports:
       champions_title: チャンピオン
       sharpshooter_title: シャープシューター
-      speed_champion: スピードチャンピオン
-      customer_champion: 顧客チャンピオン
+      speed_champion: Speed Champion
+      customer_champion: Customer Champion
       valuable_player: MVP
-      agent_highest_points: 総得点が最も高いエージェント
-      agents_fastest_resolve: チケットを速く解決するエージェント
-      sample_name: ブルース・バナー
-      agents_cs_highest: 最も高い顧客満足アンケートポイントのエージェント
     survey_reports:
       main:
         all: すべて
@@ -8891,7 +8500,7 @@ ja-JP:
         responses: 回答
         response_to: 次への回答
         rating: 評価
-        question: 質問
+        question: Q
         positive: 肯定的
         neutral: 中立
         negative: 否定的
@@ -9371,17 +8980,6 @@ ja-JP:
       css_responsive_help: >-
         これは、デフォルトテーマをモバイルフレンドリーにし、携帯やタブレット向けに最適化します。すべてのデバイスに通じて一貫性のあるレスポンシブでないテーマを使用したい場合は、この設定をオフにすることもできます。
     apply_mint: 適用
-    mint: Mint
-    mint_preview: 新しい外観のプレビュー
-    mint_info_portal_setting: お客様の顧客ポータルへ新しい外観を適用しました。
-    classic: クラシック
-    confirm: |-
-      新しい外観を適用しますか？全てのカスタムCSSが失われます。 
-
-      ヒント：現在お持ちのカスタムCSSのコピーを作成し、新しい外観を適用したあとに追加できます。
-    mint_info_portal_settings: お客様の顧客ポータルへ新しい外観を適用しました。
-    mint_info_portals: お客様の顧客ポータルへ新しい外観を適用しました。下記リンクをクリックしてプレビューして下さい。
-    mint_info_portal: お客様の顧客ポータルへ新しい外観を適用しました。下記リンクをクリックしてプレビューして下さい。
   any_time: いつでも
   five_minutes: 5分以内
   fifteen_minutes: 15分以内
@@ -9786,10 +9384,6 @@ ja-JP:
       load_analysis:
         title: ロード分析
       unresolved_tickets: 未解決のチケット
-      busiest_day_received_tickets: 最もチケットを受信したのは
-      total_unresolved_tickets: 未解決チケット総数
-      busiest_day_resolved_tickets: 最もチケットを解決したのは
-      average_unresolved_tickets: 平均未解決チケット数
     glance:
       index_title: ヘルプデスク<br/>全体像
       title: ヘルプデスク全体像
@@ -9855,8 +9449,6 @@ ja-JP:
         confirm: 確定
         delete_title: スケジュールを削除する
         delete_text: このスケジュールを削除してよろしいですか？
-        ticket_properties_title: チケットのプロパティをエクスポート
-        ticket_properties_note: アカウントで作成可能な事前設定を使い切りました。
       new:
         ticket_fields_title: チケットフィールド
         email: メール
@@ -9864,75 +9456,30 @@ ja-JP:
         description: 説明
         helpnote:
           api_info1: APIには最後のエクスポート内容へのリンクが含まれます。
-          api_info2: 定期的に選択したチケット・連絡先・会社フィールドを含むエクスポートが生成されます。
         contact_fields_title: 連絡先フィールド
         one_time_export_label: このスケジュールが始まる月の初めからチケットの内容をエクスポートする。
         company_fields_title: 会社フィールド
         frequency: スケジュール
-        fields_to_export: エクスポートするフィールドを選択
-        delivery: 次を経由して受信：
-        max_field: (最大150フィールド)
-        filter: フィルタを選択
-        title: 事前設定の名称<span class='required_star'>*</span>
-        api: API
       schedule_export: エクスポートをスケジュール
       schedule: スケジュール
       all_reports: すべての報告
       new_schedule: 新しいスケジュール
-      helpnote:
-        help_info_2: >-
-          アカウント管理者がカスタムメトリクスを構築するには、チケットに対して実行されたすべてのアクティビティの一覧が必要となります。これをオンにすると、前日に各チケットで発生したすべてのイベントを含むJSONファイルにアクセスできるようになります(自動化によって実行されるイベントを含む)。アカウントに対して作成できるスケジュールは、1日に1件までです。<a
-          href='https://support.freshdesk.com/support/solutions/articles/226460-export-ticket-activities/'target='_blank'>詳細はこちら。</a>
-        help_info_1: >-
-          Freshdeskから、チケットプロパティおよび関連する連絡先と会社のフィールドを事前設定してエクスポートできます。エクスポートされたデータは、カスタムレポートの作成に使用可能です。たとえば、初回応答時間・解決時間・割り当てエージェントを含むチケットのエクスポートを毎週取得し、サポートチームの応答性を確認できます。事前設定は１つのアカウントに対して最大５件まで作成可能です。チケットプロパティをエクスポートする事前設定の作成方法については、<a
-          href='https://support.freshdesk.com/support/solutions/articles/226461-export-ticket-properties/'target='_blank'>こちらの詳細</a>を参照してください。
-        help_title_2: チケットアクティビティをエクスポート
-        help_title_1: チケットのプロパティをエクスポート
-      no_schedule: 事前設定が作成されていません
-      schedule_show_message: 作成した事前設定は編集することができません。
     timespent_export:
       button_export: エクスポート
       export_csv: CSVエクスポート
-      dialog_sub_header: データからエクスポートできる列の最大数は25列です
-      dialog_header: レポートのエクスポート
-      ticket_title: Ticketwise情報
-      ticket_dropdown: 次に費やした時間を含む：
-      ticket_info: チケット毎に費やした時間(ステータス毎に分割)
     ticket_activity:
       learn_more: 詳細を見る
       helpnote:
         api_info1: APIには最後のエクスポート内容へのリンクが含まれます。
-        api_info2: エクスポートは前日に実行された全てのチケットに関する更新の記録を含みます、
       edit: スケジュール編集
-      title: チケットアクティビティをエクスポート
     change: 変更
     insights:
       customize_link: カスタマイズ
-      customize: カスタムインサイト
-      tooltip: インサイトに関する詳細
-      todays_insights: 本日のインサイト
-      customize_helptext: >-
-        インサイトまたは外れ値は、ヘルプデスクでの注目に値するアクティビティを示します。しきい値は、特定のメトリックに対する変更がどれだけ外れ値の原因となるかを示します。
-      customize_helptext2: しきい値を設定し、各メトリックにフィルターを選択してインサイトをカスタマイズして下さい。
     year_in_review:
       title: 今年のまとめ
     show: 表示：
     filtered_by: 次のアイテムでフィルタ：
     at: で
-    average_time: ' 平均時間'
-    jump_to_a_saved_report: 保存済みレポートへ移動
-    timespent:
-      title: チケットのライフサイクル
-    qna:
-      schedule_an_export: エクスポートをスケジュール
-      export_question: カスタムレポートを構築しますか？
-      view_full_report: データを活用しましょう
-      recently_asked_questions: 最近の質問
-    resolved_tickets_split_by: 解決済みチケットに費やした合計時間を次で分割：
-    view_old_report: 古いレポートを表示
-    in_each_group: 各グループ内
-    total_time: ' 合計時間'
-    view_classic_report: クラシックレポートを表示
   adv_reports:
     deprecated_message: （クラシック報告表示リンクは2016年3月18日金曜日から利用できなくなります）
     deprecated_header: この報告は2016年3月18日金曜日から利用できなくなります
@@ -10080,9 +9627,6 @@ ja-JP:
         customer_fcr: このカスタマーにより提起されたチケットで、初回応答で解決されたチケットの割合
         agent_fcr: このエージェントに割り当てられたチケットで、初回応答で解決したチケットの割合
         group_fcr: このグループに割り当てられたチケットで、初回応答で解決したチケットの割合
-    jump_to_saved: 保存済みレポートへ移動
-    agent_comparison_report: エージェント比較レポート
-    group_comparison_report: グループ比較レポート
   date_invalid: 無効な日付
   cti:
     create:
@@ -10597,13 +10141,6 @@ ja-JP:
               申し訳ございません。番号が無効のようです。再試行してください。問題が解決しない場合は<a
               href='mailto:support@freshdesk.com'>support@freshdesk.com</a>までお問い合わせください
             already_verified: お客様のアカウントですでに電話番号が確認されています！
-        sidebar_content_v2: >-
-          電話チャネルでは、ブラウザ・携帯電話・Freshdeskのモバイルアプリの電話チャネルを使って電話の受発信が可能です。またこれは、Freshdeskのチケットシステムと緊密に統合されています。電話を録音し、必要に応じてチケットに変換するだけで、電話の記録を行うことができます。<br/><br/><b>電話機能の設定</b></br>電話機能jを使用するには、まず電話機能を有効にしてサポート番号を購入する必要があります。ここに記載されている<a
-          href='https://support.freshdesk.com/support/solutions/articles/169322'target='_blank'>国一覧</a>から市内番号を購入し、世界のどこからでも電話を受発信しましょう。顧客が米国・英国・カナダから電話をかけてくる場合、フリーダイヤルのサポート番号(英国ではfreephoneと呼ばれる)も購入できます。<br/><br/><b>完全な電話サポートを提供</b><br/>電話チャネルをご利用いただくと、<br/><ul><li>ウェブブラウザまたは携帯電話を使用して電話の受発信が可能となります</li><li>いつでもどこでもボイスメールの作成・通話の転送・任意のエージェントへ転送を実行しましょう。</li><li>通話モニタリング・必要に応じた通話への割り込み・通話中の他エージェント追加も可能です。*</li></ul><br/><p>*<a
-          href='mailto:support@freshdesk.com'>support@freshdesk.com</a>より、アカウントの高度な機能を有効にしてください。これには、通話モニタリング・通話割り込み・電話会議・通話マスキング・通話ライフタイムコールメトリクスが含まれます。</p><br/>
-        buy_phone_numbers: 電話番号を購入
-        tour_link: 電話チャネル設定ヘルプ
-        buy_phone_credits: 電話クレジットの購入
       invalid_attachment: '添付ファイル「%{name}」は有効なオーディオファイルではありません/容量が5MBを超えています'
       ivr:
         simple_message_title: シンプルメッセージ
@@ -11309,28 +10846,6 @@ ja-JP:
       title_text: Freshchat
       portal_url: 'ポータルURLリンク:'
       app_id: アプリID
-      widget_token_placeholder: 例：d0bb2ebf-2746-481a-ll64-0bdfb91cb2de
-      sign_up_btn: 今すぐ登録
-      copy_from_freshchat: Freshchatからコピー
-      enable_chat_in_portal: サポートポータルでチャットを有効化
-      sidebar_content:
-        para2:
-          header: Freshdeskでメッセンジャーを活用してサポートとメッセージのワークフローを統一：
-          point2: 顧客のプロフィール・ナビゲーションパス・以前のチケット詳細を活用することで顧客理解を深め、コンテキストに沿った返信を行いましょう。
-          point1: 会話をグループまたはチームメンバーへ割り当て
-          point3: 会話を解決し、新規チケットへ変換または既存チケットへ追加します。
-        para1: >-
-          FreshchatのFreshdesk統合チャットチャネルでは、ウェブサイト・モバイル・サポートポータル・アプリ内の顧客との会話エンゲージメント貢献します。また、訪問者やユーザーに積極的なメッセージを送信し、購入・登録・製品に関するフィードバック共有を促すことも可能です。
-      enable_chat: Freshchatを自分のFreshdeskアカウントとリンク付け
-      sign_up_text: ウェブサイト・ポータル・モバイルアプリで顧客とチャットを開始しましょう。
-      enable_chat_in_portal_info: サポートポータル上から顧客が手軽にチャットを行えるようにします。
-      app_id_placeholder: 例：09901344-2b17-4d55-b412-2fd41811a83f
-      did_you_know_info: >-
-        Freshchatの会話をチケットへ変換するには、この<a href='%{url}'
-        target='_blank'>ページ</a>へ移動し、以下の詳細一覧をコピー＆ペーストします。不明点等がある場合、<a
-        href='%{article_url}' target='_blank'>この記事</a>をご参照ください。
-      did_you_know: Freshchatの会話をチケットへ変換
-      widget_token: ウィジェットトークン
   facebook_tab:
     remove_tab: ページタブを除去
     tab_not_removed: タブを除去できませんでした
@@ -11410,7 +10925,6 @@ ja-JP:
       forward: 転送
       add_note: メモを追加
       scenario: シナリオ
-      jump_to_views: ビューへ移動
     ticket_list:
       title: チケット一覧
       move_cursor: 次/前のチケットにカーソルをジャンプ
@@ -11746,7 +11260,7 @@ ja-JP:
   selecting_plan: 選択しています...
   proceed_billing_info: はい、支払いへ進みます
   buy_plan: このプランを購入
-  classic_label: クラシック
+  classic_label: Classic
   agent_seats: 'エージェントシート数: %{no_of_agents}'
   free_plan: 無料プラン
   view_invoices: '請求書を表示: '
@@ -11838,34 +11352,16 @@ ja-JP:
         cancel: キャンセル
         link_errors:
           validation_error: このフィールドは必須です。
-          pod_error: >-
-            ２件のアカウントがそれぞれ異なるデータセンターに存在するようです。新しくFreshcallerアカウントを作成し、Freshdeskアカウントをリンクして下さい。
-          access_error: アカウントをリンクするにはFreshcallerとFreshdeskアカウントの両方で管理者である必要があります。
-          api_error: このFreshcallerアカウントは存在しません。有効なURLを提供するか、新しくFreshcallerアカウントを作成して下さい。
-          authentication_error: 提供されたメールアドレスまたはパスワードが無効です。
         email: メール
         continue: 続行
         password: パスワード
         connect_existing_account: 既存のアカウントで接続する
         account_url: FreshcallerアカウントURL
-        freshcaller_domain: .freshcaller.com
-        processing: Freshcallerアカウントをリンクしています
-        settings_text: FreshdeskアカウントにリンクするFreshcallerアカウント詳細を入力してください
       sidebar_title: 電話番号
       title_text: 電話番号
       feature_request_content:
         create_new_account: 新規アカウントを作成
-        processing: Freshcallerアカウントを作成しています
       freshcaller_subtext: 番号の購入・順番待ち通話の設定・IVR(自動音声応答) 等
-      no_access_text: Freshcallerへのアクセス権限がありません
-      freshcaller_signup_text: >-
-        FreshdeskはFreshcallerを通して統合通話チャネルを提供します。14日間の無料トライアルで新規Freshcallerアカウントを作成し、通話チャネルを有効にして下さい。
-      freshcaller_enable_subtext: エージェントの設定ページよりアクセス権限を有効にできます。
-      manage_settings_text: Freshcallerの設定を管理する
-      sidebar_content: >-
-        Freshdeskの電話チャネルはFreshcallerによるものです。Freshdeskから直接電話を受発信し、すべての通話を録音、通話やボイスメールをチケットに変換することができます。<br/><br/><b>コールセンター設定</b><br/>電話クレジットはFreshcaller管理アカウントから購入できます。電話クレジットを利用して、<a
-        href='https://support.freshcaller.com/support/solutions/articles/229257'target='_blank'>40カ国以上</a>から電話番号を購入可能です。フリーダイヤルは米国・英国・カナダ・オーストラリアものを購入できます。ハードウェアの購入やソフトウェアのインストールは必要はありません。必要なのは、ウェブブラウザとインターネット接続だけです。<br/><br/><b>コールセンター機能</b><br/>ブラウザでの通話応答・モバイル機器への通話転送・任意のエージェントへの通話転送・IVRを使用した通話受信・通話モニタリング・必要に応じた割り込み機能・営業時間ルールの設定等を活用しましょう。<br/><br/>Freshdeskの統合電話ソリューションであるFreshcallerの<a
-        href='https://www.freshworks.com/freshcaller-cloud-pbx/call-center-features/'target='_blank'>詳細</a>を確認ください。
   multifile_attachments:
     remove: 削除する
     label: ファイルを添付する
@@ -11880,26 +11376,14 @@ ja-JP:
         phone_channel: 電話番号
         title: 顧客とどうやってやりとりしますか？
         forward_link: チームを招待
-        message: >-
-          Freshdeskではメール以外にも、電話・チャット・ソーシャル他で顧客のサポートを実行できます。お試しになりたいチャネルをクリックして、お客様のアカウントで有効化して下さい。
-        message2: ご心配なく、後から追加または削除が可能です。
-        default_channel: 既定で追加済み
       agents_frame:
         send_invite: 招待状を送る
         emails_invalid: 少なくとも１つのメールアドレスが無効です。
         emails_placeholder: 'bruce@just.ly, diana@just.ly, clark@just.ly'
-        message: チームの仲間をお客様のアカウントへ追加して、一緒にFreshdeskを活用しましょう
-        forward_link: 概要を視聴
-        title: 一緒に作業をするのは誰ですか？
       overview_frame:
         forward_link: では始めましょう
-        title: Freshdeskを使ってみる
-        message: 利用を開始する前に、お客様のヘルプデスクに関する概要を2分間の動画でご確認下さい。
       welcome_frame:
         title: Freshdeskへようこそ
-        forward_link: サポートチャネルを選択
-        message2: トライアル期間では、Freshdeskによる顧客との手軽なやり取りを実感して頂けます。まずは基本から学びましょう。
-        message: 私はFreshdesk代表のGirishです。弊社製品へのご登録ありがとうございます。お困りの場合はいつでもチームへご連絡下さい。
     account_verification_message:
       helpnote_or: 又は
       modal_send_button: アクティベーションを送信
@@ -11908,15 +11392,6 @@ ja-JP:
       modal_invalid_email_error: 有効なメールアドレスを入力してください。
       resend_message: アクティベーションを再送
       change_email: メールアドレスを変更
-      modal_sending_button: アクティベーションを送信中
-      helpnote1: ご確認頂けていませんか？
-      modal_user_exists_error: メールアドレスが既にエージェントと関連付けられています。
-      modal_helpnote1: アクティベーション用のリンクをお送りしますので、以下へ正しいメールアドレスを入力してください。
-      non_admin_message: お客様のアカウントはまだアクティブではありません。アカウント管理者までお問い合わせください.
-    falcon_invite:
-      maybe_later: あとで
-      try_new_look: 試してみる
-      greetings: Freshdesk Mintのご紹介
   user_notifications:
     preferences: プリファレンス
     notification_preferences: 通知設定
@@ -11924,26 +11399,10 @@ ja-JP:
     mute: ミュート
     mark_all_as_read: すべて既読にする
     header: 通知
-    muted: ミュート済み
-    toggle_web_notifications: トグルウェブ通知
-    enable_desktop_notifications: デスクトップ通知を有効化
-    notify_when: 次の際に通知：
-    desktop_notifications_enabled_flash: デスクトップ通知が有効になりました！
-    desktop_notifications_disabled: デスクトップ通知を無効にしました
-    toggle_mobile_notifications: トグルモバイル通知
   in: 公開：
   mailer_notifier:
     hi: こんにちは、
     thanks: よろしくお願いいたします。
-    security_notification:
-      update_agent_billing_plain: 請求に変更内容を反映するには、請求ページのエージェント情報を更新して下さい。
-      update_agent_billing: '請求に変更内容を反映するには、請求ページのエージェント情報を<a href="%{billing_url}">更新</a>して下さい。'
-      unauthorized_change_contact: この変更に対する許可を与えていない場合、直ちにアカウント管理者へご連絡ください。
-      configure_change: 本通知は、管理者→セキュリティより構成して頂けます。
-      trusted_ip_disabled: IPホワイトリスト登録は、あなたのアカウントで無効となっています。
-      unauthorized_change_info: この変更に対する許可を与えていない場合、私達まで返信して下さい。
-      configure_change_html: '本通知設定は<a href="%{security_url}">ここをクリック</a>または、アカウントの管理者→セキュリティからご利用頂けます'
-    freshdesk_customer_support: Freshdesk顧客サポート
   copied_link: コピー完了
   custom_mailbox_admin_email_notifications:
     regards: 敬具
@@ -11968,32 +11427,16 @@ ja-JP:
   imap_error: 電子メールサーバーにアクセスできません
   activations:
     activate_freshdesk_account: アカウントをアクティベート
-    helpnote3: アカウント詳細をご確認の上、パスワードを設定して下さい
-    helpnote1: パーソナライズ化した経験をお届けするため、お客様に関してもう少し詳しく教えてください。
-    admin_consent: >-
-      「有効化してログイン」をクリックすることで、弊社<a target="_blank"
-      href="https://www.freshworks.com/terms/">利用規約</a>に同意し<a target="_blank"
-      href="https://www.freshworks.com/privacy/">プライバシー方針</a>を読んだことを認めます。
   cloud_log_mailer:
     logger_email:
       regards: 敬具、
       account: 'アカウント: '
       reason: 理由
-      freshdesk_support: Freshdeskサポート
-      execution_id: 実行ID
   helpcard:
     title: 一意の外部ID
-    info: >-
-      顧客の固有IDをインポートしてFreshdesk内で手軽に会話を識別しましょう。<br><a
-      href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id"
-      target="_blank">外部IDの設定ヘルプ</a>
   admin_upgrade:
     enable_mint_title: エージェントが新しいMintを試すことを許可する
     enable_mint_error: 既にすべてのエージェントに対してMintが有効になっています。更新して最新設定をご確認ください。
-    enable_mint_all: エージェントに対してMintを有効化
-    enable_mint_info: エージェントはいつでも旧型Freshdeskに戻すことができます
-    enable_mint_success_info: 旧型Freshdeskを完全に無効化するには、Mintの管理者タブへ移動して下さい
-    enable_mint_success: Mintがすべてのエージェントに対して有効になりました。
   customize_domain:
     email:
       cheers: 'それでは,'
@@ -12012,63 +11455,3 @@ ja-JP:
     welcome_message: お手伝いさせて下さい。
     predictive_message: お困りのようですね。必要なことを教えてください、サポートチームよりすぐにご連絡致します。
     success_message: ありがとうございます。間もなくご連絡致します！
-    name: '%{name}サポートへようこそ'
-    message: サポートへようこそ
-    untitled_widget: '無名のウィジェット %{count}件'
-    invalid_components: '%{key}のある無効なコンポーネントハッシュ'
-    freshmarketer_sign_up_error: 申し訳ありません、Freshmarketerと統合する際は不満トラッキングがオンである必要があります
-    invalid_settings: '%{key}のある無効な設定ハッシュ'
-    invalid_domain: 申し訳ありません、有効なドメインを入力してください。
-    domain_list_empty: 予測型サポートのトラッキングを実行するには、URLを指定して下さい。
-  undo_toggle: 送信取り消し
-  requesting: リクエスト中...
-  mint: Mintへ移行
-  send_test_email: テストメールを送信
-  anonymous:
-    requests:
-      new:
-        request_support: サポートをリクエスト
-  requester_widget:
-    helpcard:
-      info: >-
-        依頼者ウィジェットでチケットページの依頼者情報
-        セクションに表示するフィールドを選択します。これにより、チームはチケットページから依頼者の詳細を直接更新し、チケットを解決しながら顧客の詳細をトラッキングできます。<a
-        href="https://support.freshdesk.com/support/solutions/articles/37586-driving-additional-context-with-requestor-info"
-        target="_blank">詳細はこちら</a>
-      title: 依頼者ウィジェットのカスタマイズ
-  undo_toggle_tip: この設定を有効にするには、ページを更新してください。
-  bot_training_completed:
-    email:
-      info3: サポートを開始しましょう！
-      signature: Freshdeskのボット
-      info2: 埋め込みコードをウェブサイトへ追加して頂くだけでお好きなページへ表示して頂けます。
-      widget_code_plain_text: ボット用の埋め込みコードはこちら：
-      info1: >-
-        これはサポートボットによるお知らせです！皆さんが私に説明してほしい全てのサポート記事を学習し、トレーニングを完了しました。これにより、顧客に対してが次のカテゴリの質問に回答できるようになりました。
-      widget_code: 埋め込みコードを取得
-  undo_toggle_error: 申し訳ありません、問題が発生しました！
-  preview_message_info: 本プレビューではプレースホルダーにサンプルコンテンツを使用してメッセージを生成します
-  undo_toggle_success: この設定を有効にするには、更新してください。
-  suspended_account_info: お客様のアカウントは停止されており、顧客ポータルへはアクセスできません。
-  activate_and_log_in_long: 有効化とログイン
-  posts:
-    edit:
-      edit_post: 投稿を編集
-  uncheck_remember_tooltip: 共有デバイスからログインしている場合、このオプションからチェックを外すことができます
-  customize_requester_widget: 依頼者ウィジェットのカスタマイズ
-  segment_notice: 優先度・サブスクリプション・その他属性で顧客をセグメント化するには、
-  falcon_languages_alert: Mint体験で他の言語をご利用頂けるよう作業中です。
-  suspended_account_admin_info: お客様のアカウントは停止されており、ポータルへアクセスできません。アカウント管理者へ連絡して下さい。
-  sandbox:
-    sandbox_notification_for_agents: 新しく追加されたエージェントまたはエージェントのプロフィールへ適用された更新内容はお客様のFreshdeskアカウントと同期されません。
-    sandbox_notification_for_ticketfields: >-
-      チケットフィールドの追加・編集・削除は、ここから変更を加えずとも<a href="/a/admin/sandbox"
-      class="group_item_link" target="_top">サンドボックス</a>を利用できることをご存じでしたか？
-    sandbox_notification_for_rules: >-
-      自動化のテストは、ここから変更を加えずとも<a href="/a/admin/sandbox" class="group_item_link"
-      target="_top">サンドボックス</a>を利用できることをご存じでしたか？
-  copy_link: リンクをコピー
-  no_images_uploaded_yet: 画像がまだアップロードされていません。
-  billing_selected_plan: プランを選択：
-  click_here: '<a href=''javascript: switchToOld()''>ここをクリック</a>して、旧型Freshdeskで別の言語を試す'
-  pts_plain: ' ポイント'

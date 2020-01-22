@@ -137,7 +137,6 @@ sl:
     creditcard: Please enter a valid credit card number.
     equalTo: Please enter the same value again.
     two_decimal_place_warning: Value cannot have more than 2 decimal digits
-    integration_no_match: ni ujemajočih podatkov …
   confirm_delete_message: 'Resnično żelite izbrisati %{human_name}?'
   any: Kateri koli
   or: ali
@@ -176,7 +175,7 @@ sl:
     select_contacts: 'Izberi kontakte od %{contact_name}'
   captcha_verify_message: 'Captcha verifikacija ni uspela, poizkusi ponovno!'
   your_email: Vaša e-pošta
-  your_feedback: Vaše povratne informacije
+  your_feedback: Your feedback
   please_wait: Prosimo počakajte..
   filter_options:
     status: Status
@@ -258,7 +257,7 @@ sl:
   mobihelp: MobiHelp
   logmein_source: LogMeIn Rescue
   working: Dela
-  attach: Pripnite
+  attach: Attach
   attachment: Priponka
   attachments: Priponke
   attachment_delete: Priponka bo izbrisana. Nadaljujem?
@@ -266,7 +265,7 @@ sl:
   attach_file_local: Izberi priponko iz vašega računalnika
   attach_file: Pripni datoteko
   dropbox_attach_label: Izberi priponko
-  dropbox_attach_from_text: Pripnite iz <b>Dropboxa</b>
+  dropbox_attach_from_text: Attach from <b>Dropbox</b>
   dropbox_choose_file: Izberi datoteko
   dropbox_choose_file_from: Choose file from Dropbox
   dropbox_plaintext: Dropbox priponka
@@ -319,12 +318,12 @@ sl:
     email: Epoštni naslov
     emails: Emails
     choose_another_photo: Izberite drugo fotografijo
-    add_photo: Dodajte fotografijo
+    add_photo: Add Photo
     change_photo: Zamenjaj fotografijo
     remove_photo: Izbriši fotografijo
     remove_profile_image: 'Slika iz profila uspešno odstranjena '
     remove_profile_image_confirm: Resnično želite izbrisati fotografijo?
-    ie9_file_change_msg: '%{filename} Shranite za posodobitev profilne slike'
+    ie9_file_change_msg: '%{filename} Save to update profile image'
     errors:
       required_field: cannot be blank
       custom_text: is not valid
@@ -338,32 +337,24 @@ sl:
     first_name: Ime
     company_name: Podjetje
     job_title: Naziv delovnega mesta
-    user_exist_in_freshid: >-
-      Obstoječi uporabnik Freshworks! Skrbniki ne morejo urejati podatkov o
-      agentovem profilu.
-    edit_profile_in_freshid: Agenti lahko urejajo svoje podatke o profilu v svojem profilu Freshworks.
   custom_fields:
-    insert_field: Povlecite in spustite polje
+    insert_field: Drag & Drop Field
     drag_drop_field_intro: >-
-      Povlecite in spustite poljubno vrsto polja v obrazec »%{name}« spodaj za
-      dodajanje novega polja po meri
+      Drag and drop any field type into the "%{name}" form below to add a new
+      custom field
     number: Številka
     text: Tekst ena vrstica
-    paragraph: Večvrstično besedilo
+    paragraph: Multi Line Text
     checkbox: Potrditveno polje
     dropdown: Spustni meni
     dropdown_blank: Spustni meni
     phone_number: Telefonska številka
     url: URL
     date: Datum
-    regex: Regularni izraz
+    regex: Regex
     email: Epoštni naslov
     delete: Izbriši
     nested_field: Odvisno polje
-    default_field_error: Privzetih polj ni mogoče spustiti v razdelek
-    empty_section_info: Polja spustite tukaj
-    drag_and_drop_field: Povlecite in spustite polje
-    decimal: Decimalno število
   ticket_fields:
     fields:
       source: Vir
@@ -452,7 +443,6 @@ sl:
       ok_btn: V redu
       confirm_btn: Potrdi
       continue_btn: Nadaljuj
-      confirm_text: 'Prosimo, potrdite …'
   folder:
     edit: Uredi mapo
     info1: Ali ste prepričani da želite izbrisati to mapo?
@@ -481,7 +471,7 @@ sl:
   select_plan: Izberite naročnino
   change_plan_title: Sure you want to change plan?
   downgrade_plan_title: Sure you want to Downgrade?
-  activate_free_plan: Aktivirajte brezplačni plan
+  activate_free_plan: Activate Free Plan
   create: Ustvari
   feedbackwidget_custom_image_info: Če uporabljate sliko bo barva in tekst ignoriran.
   account_admin_updated: Administrator je bil spremenjen
@@ -513,9 +503,6 @@ sl:
         submit: Pošlji
         cancel: Prekliči
         comments: Komentarji
-        load_questions: Oglejte si več
-        title_v2: Ocena o zadovoljstvu
-        rating_sub_title_v2: Vaša ocena je
     login:
       form:
         email: Epošta
@@ -544,7 +531,6 @@ sl:
       comments: Komentarji
       send_feedback: Pošlji povratno info
       related_files: Povezane datoteke
-      was_this_article_useful: Ali vam je bil ta članek v pomoč?
     surveys:
       thanks_for_feedback: Prejeli smo vaše informacija. Hvala za trud.
       feedback_already_done: Na ta poziv ste se že odzvali
@@ -565,7 +551,6 @@ sl:
           storitvijo
         send: Pošlji povratno informacijo
         unhappy_info: 'Bodite prepričani, da se bomo naslednjič še bolj potrudili.'
-        neutral_information: 'Želimo si, da bi bili nekoliko bolj zadovoljni.'
       index:
         thanks_info: Thanks for taking time to rate our support experience.
         thanks: Thank you very much for rating us!
@@ -581,8 +566,6 @@ sl:
       form_submit: Pošlji
       hey: Hej
       thank_you_text: Hvala
-      okay: V redu
-      move_to_form_field: ali pritisnite tipko enter
   gamification:
     levels:
       beginner: Začetnik
@@ -713,90 +696,69 @@ sl:
       my_topics: My Topics
   admin:
     help_image_alt:
-      helpdesk_arcarde: Služba za pomoč uporabnikom za Arkado
+      helpdesk_arcarde: Helpdesk Arcade
       import_csv_file_pattern: Import CSV file pattern
     social:
       helpcard:
-        title1: Dodajanje računov družbenih omrežij
+        title1: Adding social accounts
         info1: >-
-          Dodajte račune Twitter v svojo službo za pomoč uporabnikom in jih
-          upravljajte skupaj z zahtevki podpore. Dohodne tvite (@omembe) in
-          neposredna sporočila lahko pretvorite v zahtevke in jih samodejno
-          dodelite določeni skupini/ekipi. Kliknite na račun za določanje pravil
-          zahtevka za pretvorbo tvitov v zahtevke.
+          Add Twitter accounts to your helpdesk and manage them along with your
+          support tickets. You can convert your incoming tweets (@mentions) and
+          direct messages into tickets and assign them automatically to specific
+          groups. Click on an account to define ticket rules for converting
+          tweets to tickets.
         info2: >-
-          Pretoki družbenih omrežij so ključne besede, ki jim je mogoče slediti
-          v računu Freshdesk, poleg drugih računov, ki ste jih dodali. Omogoča
-          vam sledenje tvitov s povpraševanji v povezavi s podporo, ki niti ne
-          omenijo vaše blagovne znamke/podjetja. Če ste novo podjetje, ali pa
-          imate ekipo za podporo, ki je tudi vaša tržna ekipa, lahko ustvarite
-          pretok za spremljanje poslovnega prostora in konkurence. Kliknite gumb
-          <b>»Nov pretok«</b> za dodajanje pretoka za družbeno omrežje, ki ga
-          lahko prilagodite po želji. Primer: ustvarite lahko pretok z imenom
-          »Podpora« in mu dodate okrajšave svojega podjetja/blagovne znamke ter
-          pogosto napačno črkovanje podjetja/blagovne znamke. Vsi ti tviti bodo
-          vidni v zavihku z družbenimi omrežji, na katera lahko odgovarjate s
-          katerim koli integriranim računom Twitter.
-        title2: 'Sprotna podpora, ki uporablja pretoke družbenih omrežij'
-        handle_title1: Združevanje z računom Twitter
+          Social streams are a set of keywords you can monitor from your
+          Freshdesk account, other than the accounts you have added. It lets you
+          track support questions coming in through tweets that do not even
+          mention your brand. If you are just starting out or have a support
+          team that doubles up as your marketing team, you can even create a
+          stream to monitor your business space and competitors. Click on the
+          <b>New Stream</b> button to add a social stream, and customize it for
+          your specific needs. For example, you can create a stream called
+          "Support" and add your brand acronym and commonly used brand
+          misspellings. All these tweets can be seen in your Social tab and you
+          can reply to them using any of your integrated twitter accounts.
+        title2: Proactive support using social streams
+        handle_title1: Integrating a Twitter account
         handle_info1: >-
-          Če podpirate več izdelkov, lahko z vsakim povežete različne račune
-          družbenih omrežij. Za vsak račun lahko nastavite njegovo vidnost.
-          Primer: omembe v tvitih @vaš_izdelek_slovenija so lahko vidni samo
-          slovenski ekipi agentov za podporo. Pretok za ta račun bo vseboval vse
-          vaše @omembe in bo prikazan v zavihku z družbenimi omrežji. Neposredna
-          sporočila bodo pretvorjena v zahtevke, ki jih lahko dodelite določeni
-          ekipi agentov. Nastavite lahko interval za povezave sporočil z
-          zahtevki, da lahko več neposrednih sporočil iste osebe v danem času
-          združite v en zahtevek.
-        handle_title2: Samodejna pretvorba določenih tvitov v zahtevke
+          If you support multiple products, you can link a different social
+          account to each product. You can manage the visibility of each
+          account. For example, you can make the tweets mentioning
+          @yourproduct_france  visible only to your France support agent group.
+          The stream for this account will contain all your @mentions and will
+          be shown in your social tab. Your DMs will be converted to tickets,
+          and you can assign them to a specific agent group. You can set up a
+          ticket threading interval so that multiple DMs from the same person
+          within that time interval can be merged into one ticket.
+        handle_title2: Converting specific tweets to tickets automatically
         handle_info2: >-
-          S pomočjo pravil za zahtevke lahko samodejno pretvorite tvite z
-          določenimi ključnimi besedami v zahtevke. Primer: vsak tvit, ki omenja
-          vaš vzdevek s ključnimi besedami »ne deluje« ali »napaka« je mogoče
-          pretvoriti v zahtevke in jih dodeliti ekipi za odpravljanje napak. Za
-          tvite, ki vsebujejo ključni besedi »sistemska napaka« lahko ustvarite
-          drugo pravilo in jih dodelite ekipi razvijalcev. Izvršeno bo prvo
-          ujemajoče pravilo. Te zahtevke lahko prav tako povežete z določenimi
-          izdelki.
-        stream_title1: Definiranje pretokov družbenih omrežij
+          You can convert tweets with certain keywords into tickets
+          automatically using Ticket Rules. For example, every tweet mentioning
+          your twitter handle with the words “not working” or “bug” could be
+          converted into tickets and assigned to the “Bug report” group. And you
+          can create another rule for tweets containing the words “system down”
+          and assign them to your “Dev ops” group. The first rule satisfied will
+          be executed. You can also link these tickets to specific products.
+        stream_title1: Defining social streams
         stream_info1: >-
-          Ustvarite lahko več pretokov za iskanje različnih ključnih besed na
-          Twitterju. Vnesite glavne ključne besede, ki jih želite iskati, glede
-          na svoje podjetje/posel ter izključite določene ključne besede,
-          heštege in vzdevke za bolj podrobno iskanje. Primer: mogoče ne želite
-          videti tvitov vaših tržnikov in vodij v pretoku po meri, ki ste ga
-          ustvarili za spremljanje povpraševanj v podpori, ki jih vidite z
-          omembami podjetja in blagovne znamke. Vsak pretok je mogoče narediti
-          viden eni ali več skupinam agentov. Za vsak pretok lahko prav tako
-          izberete privzeti vzdevek.
-        stream_title2: Samodejna pretvorba določenih tvitov v zahtevke
+          You can create multiple streams to search for different sets of
+          keywords on Twitter. Enter the main keywords you want to look for,
+          based on your business and even exclude certain keywords, hashtags and
+          handles to narrow your search. For example, you may not want to see
+          tweets by your marketers or executives in the custom stream you
+          created to monitor support queries coming in through your brand and
+          brand acronyms.Each stream can be made visible to one or many agent
+          groups. You can also pick the default reply handle for each stream.
+        stream_title2: Converting specific tweets to tickets automatically
         stream_info2: >-
-          Dohodne tvite prek pretokov družbenih omrežij je mogoče dodatno
-          filtrirati z ustreznimi ključnimi besedami in jih samodejno pretvoriti
-          v zahtevke. Dodeljeni so lahko ekipam ali izdelkom. Nastavite lahko
-          več kot eno pravilo in prvo ujemajoče pravilo tvita bo tako izvršeno.
-          Primer: v zahtevke lahko pretvorite tvite, ki omenijo ključni besedi
-          »menjava ponudnika« in ime konkurence, ter jih posredujte ekipi za
-          podporo strank.
-        handle_smart_filter_title: Samodejna pretvorba ustreznih tvitov v zahtevke
-        handle_smart_filter_info: >-
-          Signale družbenih omrežij poganja algoritem strojnega učenja (tj.
-          sistem, ki je zmogljiv učenja, ki se izboljšuje s časom na podlagi
-          povratnih informacij). Ta funkcija bo samodejno pretvorila samo
-          ustrezne tvite, ki zahtevajo vašo pozornost v zahtevkih. <br>Sistemu
-          lahko pošljete povratne informacije, ki se prilagodi vašemu
-          poslovanju.<br><br>1. V primeru, ko tvit ni pretvorjen v zahtevek: če
-          zahtevek označite kot vsiljeno vsebino, boste sistem naučili, da
-          podobne tvite ne pretvori v zahtevke.<br><br>2. V primeru, ko tvit ni
-          bil pretvorjen v zahtevek: v zavihku družbenih omrežij lahko kliknete
-          »Pretvori v zahtevek«, kar bo sistem naučilo, da podobne tvite
-          pretvori v zahtevke.<br><br>Izberete lahko zgolj uporabo signalov
-          družbenih omrežij ali kombinacijo ključnih besed (v primeru posebnih
-          poslovnih besed), ki temelji na filtrih in signalih. <br>Ko
-          uporabljate kombinacijo slednjih, imajo filtri ključnih besed prednost
-          pred signali družbenih omrežij. Pomnite, da signali trenutno podpirajo
-          samo angleški jezik.
+          The tweets coming in through these social streams can be filtered
+          further using certain keywords and converted to tickets automatically.
+          They can even be assigned to groups and products. You can set up more
+          than one rule and the first rule that the tweet satisfies will get
+          executed. For example, you can convert tweets mentioning “switching
+          to” with your competitors names into tickets and escalate them to your
+          support team head.
       flash:
         stream_updated: 'Twitter stream %{stream_name} has been updated'
         stream_deleted: 'Twitter stream %{stream_name} has been deleted'
@@ -810,66 +772,59 @@ sl:
         cancel: Prekliči
         update: Uredi
         index:
-          title: Pretoki družbenih omrežij
+          title: Social Streams
           new_account: Nov račun
-          new_stream: Nov pretok
+          new_stream: New Stream
         twitter_streams:
           reauthorize: Ponovno avtoriziraj
           edit: Uredi
-        stream_delete_alert: 'Ali ste prepričani, da želite izbrisati ta Twitterjev pretok?'
+        stream_delete_alert: Are you sure you want to delete this twitter stream?
         last_stream_delete_alert: >-
-          Ali ste prepričani, da želite izbrisati ta Twitterjev pretok? Če
-          nimate povezanih privzetih pretokov, si ne boste mogli ogledati svojih
-          pretokov po meri.
+          Are you sure you want to delete this twitter stream? You'll not be
+          able to view your custom streams when you have no default streams
+          associated.
       twitter_streams:
-        define_stream: Določite družbeni pretok
+        define_stream: Define Social Stream
         stream_brief: >-
-          Pretok lahko vsebuje katero koli ključno besedo, povezano s podporo
-          ali znamko, ki ji želite slediti in nanjo odgovarjati
-        stream_name: Ime pretoka
-        preview_stream: Predogled pretoka
-        includes: 'Ustvarite pretok, ki vsebuje te ključne besede '
-        exclude_title: Filtriraj ključne besede in vzdevke …
-        exclude_keywords: Filtriraj te ključne besede
-        exclude_handles: In tvite teh vzdevkov
-        reply_handle: Privzeti vzdevek za odgovor
-        include_helptext: 'primer: @appleofficial, »apple mac«, #pametnitelefoni, @android'
-        exclude_helptext: 'primer: sadež, #dieta, čudovito'
-        handles_helptext: 'primer: @ivo_jan, @nejcnovak'
+          A stream can contain any brand or support related keyword that you
+          want to track and respond to
+        stream_name: Stream Name
+        preview_stream: Preview Stream
+        includes: 'Create a stream which contains these keywords '
+        exclude_title: Filter out keywords and handles...
+        exclude_keywords: Filter out these keywords
+        exclude_handles: And tweets from these handles
+        reply_handle: Default Reply Handle
+        include_helptext: 'example: @appleofficial, "apple mac", #smartphones, @android'
+        exclude_helptext: 'example: fruit, #diet, awesome'
+        handles_helptext: 'example: @tim_cook, @ericschmidt'
         new:
-          title: Nov pretok
+          title: New Stream
           create: Ustvari
         edit:
-          title: Urejanje pretoka
-          link_to_product: Povezava do izdelka
+          title: Edit Stream
+          link_to_product: Link to Product
           visible_to: 'Vidno za:'
       ticket_rules:
-        title: Ustvarite pravila zahtevka
-        header: Pretvorite tvite zgornjih pretokov v zahtevke
-        header_ext: in dodeli izdelek
+        title: Create Ticket Rules
+        header: Convert tweets from above stream to tickets
+        header_ext: and assign product
         add: Add new ticket rule
-        includes: 'Pretvori v zahtevek, ko pretok vsebuje te ključne besede'
+        includes: Convert to ticket when stream contains these keywords
         assign_to_gp: Dodeli skupini
         assign_to_product: Assign to Product
         mention_tickets: '@Mentions to tickets'
         mention_to_tickets: Convert mentions to tickets
         mention_do_not_convert: Do not convert
-        dm_tickets: Vsa neposredna sporočila pretvori v zahtevke
-        dm_threading_interval: Nastavite interval povezave s sporočili zahtevka
+        dm_tickets: Convert all Direct Messages to tickets
+        dm_threading_interval: Set Ticket Threading Interval
         dm_info: >-
-          Več sporočil iste osebe v tem časovnem intervalu bo združenih v en
-          zahtevek
-        include_helptext: 'primer: podpora, »sistemska okvara«, @insideapple'
+          Multiple messages with same person within this time interval will be
+          merged into one ticket
+        include_helptext: 'example: support, "System down", @insideapple'
         brief_desc: >-
           Tweets will get converted to tickets automatically based on first
           matching rule
-      smart_filter:
-        convert_tweet: Začnite pretvarjati tvite v zahtevke
-        convert_all: Pretvorite ustrezne omembe @ v zahtevke
-        enabled_header: Signali družbenih omrežij so omogočeni
-        disabled_header: Omogoči signale družbenih omrežij
-        convert_with_filters: Pretvorite tvite v zahtevke z uporabo filtrov
-        convert_dm: Začnite pretvarjati neposredna sporočila v zahtevke
     company_fields:
       fields:
         name: Full Name
@@ -921,7 +876,7 @@ sl:
         delete_field: Izbriši polje
         field_label_agents: Oznaka polja za agente
         field_label_customer: Oznaka polja za kupce
-        add_new_choice: Dodaj element
+        add_new_choice: Add Item
         customer_mandatory: Zahtevano pri pošiljanju forme
         customer_edit_signup: 'Stranka lahko to vidi, ko se prijavi'
         customer_edit: Kupec lahko ureja
@@ -930,7 +885,7 @@ sl:
         agent_mandatory_submission: Zahtevano pri pošiljanju forme
         customer_info1: Field cannot be blank when submitting the ticket online.
         for_agents: Za Agente
-        dropdown_choices: Elementi spustnega menija
+        dropdown_choices: Dropdown Items
         label_in_portal: Label in Portal
         customer_visible: Prikaži stranki
         description: Opis
@@ -941,12 +896,12 @@ sl:
         display_cc_field: Prikaži CC polje
         cc_company_contacts: Lahko doda v CC zgolj kontakte podjetja
         cc_any_email: Lahko doda katerokoli e-pošto v CC
-        regexp: Pravilno izražanje
-        validate_regexp: Preverjanje z uporabo Pravilnega izražanja
+        regexp: Regular Expression
+        validate_regexp: Validate using Regular Expression
         regexp_example_html: >-
-          Primer: za ujemanje niza, ki vsebuje samo črke abecede in številke:
-          <b> /^[a-zA-Z0-9]*$/ </b>. Za ujemanje niza, ki se začne z besedo
-          »fresh« <b>%{regex}</b>.
+          For example, To match a string that contains only alphabets & numbers:
+          <b> /^[a-zA-Z0-9]*$/ </b>. To match a string that starts with word
+          "fresh" <b> %{regex} </b>.
         max_choices: Maximum items reached
     contact_fields:
       fields:
@@ -963,7 +918,6 @@ sl:
         twitter_id: Twitter
         time_zone: Time Zone
         language: Language
-        multiple_company: Povežite en stik z več podjetij
       untitled: Untitled
       first_choice: First Choice
       second_choice: Second Choice
@@ -1000,7 +954,7 @@ sl:
         delete_field: Izbriši polje
         field_label_agents: Oznaka polja za agente
         field_label_customer: Oznaka polja za kupce
-        add_new_choice: Dodaj element
+        add_new_choice: Add Item
         customer_mandatory: Zahtevano pri pošiljanju forme
         customer_edit_signup: 'Stranka lahko to vidi, ko se prijavi'
         customer_edit: Kupec lahko ureja
@@ -1009,7 +963,7 @@ sl:
         agent_mandatory_submission: Zahtevano pri pošiljanju forme
         customer_info1: Field cannot be blank when submitting the ticket online.
         for_agents: Za Agente
-        dropdown_choices: Elementi spustnega menija
+        dropdown_choices: Dropdown Items
         label_in_portal: Label in Portal
         customer_visible: Prikaži stranki
         description: Description
@@ -1020,28 +974,13 @@ sl:
         display_cc_field: Display CC Field
         cc_company_contacts: Can CC only company contacts
         cc_any_email: Can CC any email address
-        regexp: Pravilno izražanje
-        validate_regexp: Preverjanje z uporabo Pravilnega izražanja
+        regexp: Regular Expression
+        validate_regexp: Validate using Regular Expression
         regexp_example_html: >-
-          Primer: za ujemanje niza, ki vsebuje samo črke abecede in številke:
-          <b> /^[a-zA-Z0-9]*$/ </b>. Za ujemanje niza, ki se začne z besedo
-          »fresh« <b>%{regex}</b>.
-        max_choices: Doseženih je bilo največje št. elementov
-        multiple_company_message_enable: Stiki so lahko povezani z več podjetji.
-        multiple_company_message: Stiki so lahko povezani samo z enim podjetjem.
-        field_label_agents_level2: Oznaka ravni 2 za agente
-        field_label_customer_level2: Oznaka ravni 2 za stranke
-        mapped_internal_groups: Povezane notranje skupine
-      multiple_company_dialog_on: >-
-        Stiki (prodajalci in partnerji) bodo lahko pri pošiljanju zahtevka
-        izbrali eno podjetje, povezano z njimi.
-      multiple_company_dialog_warning: >-
-        Izklop bo trajno izbrisal vsa sekundarna podjetja iz vseh stikov. Medtem
-        ko to ne bo vplivalo na stare zahtevke, bo nove zahtevke mogoče
-        ustvariti samo za primarno podjetje.
-      multiple_company_dialog_help_text: >-
-        Če je vklopljeno, bodo lahko stiki (prodajalci in partnerji) pri
-        pošiljanju zahtevka izbrali eno podjetje, povezano z njimi.
+          For example, To match a string that contains only alphabets & numbers:
+          <b> /^[a-zA-Z0-9]*$/ </b>. To match a string that starts with word
+          "fresh" <b> %{regex} </b>.
+        max_choices: Maximum items reached
     portal:
       index:
         portal_customizer_title: Customer Portal Configuration
@@ -1086,139 +1025,29 @@ sl:
         important: Pomembno
         facebook: Facebook
         everyone: Vsi
-        moderate_none_help: >-
-          Omogočite to funkcijo, če ste prepričani, da vaša skupnost ne
-          privablja pošiljateljev nezaželene vsebine.
-        last_published_version: za zadnjo objavljeno različico
-        signup_login: Registracija in prijava uporabnika
-        submit_ticket: Kdo lahko na portalu odda nov zahtevek
-        reset_for: To bo poenostavilo spremembe za
-        forum_captcha: >-
-          Prijavljeni uporabniki morajo za ustvarjanje teme vedno vpisati
-          CAPTCHO
-        notify_agents: 'Pošlji obvestila o moderiranju in nezaželeni vsebini na:'
-        view_forums: Kdo lahko vidi forume
-        moderate_links_help: >-
-          Omogočite to funkcijo za napredno zaščito pred nezaželeno vsebino.
-          Sistem bo preverjal vse teme in odgovore za povezave tretjih oseb in
-          druge nezaželene dejavnosti.
-        logged_in: Prijavljeni uporabniki
-        moderate_all: Moderirajte vse teme in odgovore
-        user_permissions: Uporabniška dovoljenja za portal
-        moderate_links: 'Moderirajte vse teme in odgovore, ki vsebujejo zunanje povezave'
-        captcha: Omogočite CAPTCHO za preprečevanje nezaželene vsebine
-        moderate_none: Ne moderiraj
-        view_settings: Ogled nastavitev
-        public_ticket_urls_option: Kdor koli z javno URL-povezavo zahtevka
-        restricted_login_signup: Registracija in prijava sta bili omejeni na določene domene
-        allow_signup: Uporabnikom dovolite registracijo na portalu za stranke
-        public_ticket_urls_label: Kdo lahko vidi zahtevke na portalu
-        will_reset_all: To bo ponastavilo VSE prilagoditve portala na privzeto stanje.
-        portal_was_published: Portal je bil objavljen
-        moderation: Moderiranje forumov
-        view_solutions: Kdo lahko vidi rešitve
-        auto_suggest_solutions_help: >-
-          To velja tudi za funkcijo za iskanje v pripomočku za povratne
-          informacije.
-        auto_suggest_solutions: Samodejno predlagaj rešitve med ustvarjanjem novega zahtevka
-        reset_portal_changes: Ponastavitev sprememb portala
-        allow_signin: "Uporabnikom dovolite prijavo s/z …"
-        public_ticket_urls_help: >-
-          Uporabniki lahko vidijo zahtevke, ne da bi se prijavili prek javnih
-          URL-povezav zahtevka. Vstaviti jih je mogoče v e-poštna obvestila in
-          odzive zahtevka, ki so poslani strankam prek označbe mest.
-        moderate_all_help: >-
-          Omogočite to funkcij, če želite biti striktni pri vsaki objavi, ki je
-          ustvarjena v vaši skupnosti.
-      helpnote:
-        portal_info: Samo za vas smo izbrali nekaj portalov po meri.
-        info3: >-
-          Službo za pomoč uporabnikom lahko oblikujete po lastnih željah z
-          nalaganjem logotipa in favicone po meri, poimenovanjem službe in
-          izbiro barv portala.
-        exit_fullscreen: Izhod iz celotnega zaslona
-        editor_shortcuts: Urejevalnik bližnjic
-        preview_changes: Predogled sprememb
-        info1: >-
-          Če želite, da stranke in agenti dostopajo do portala za podporo na
-          svoji lastni domeni, lahko svojo URL-povezavo za podporo
-          <b>vašepodjetje.freshdesk.com</b> povežete z domeno, kot je
-          <b>podpora.vašepodjetje.com</b>
-        can_override_existing_styles: >-
-          Uporabite lahko CSS po meri in prepišete obstoječe sloge v svojem
-          portalu za stranke. Primer: navedete lahko svoje lastne definicije
-          sloga za zavihke glave, odstavke in telo portala.
-        preview_your_changes: Pred objavo si oglejte spremembe s pomočjo predogleda.
-        enter_your_css: >-
-          Vnesite CSS v polje za besedilo, če želite uporabiti svoje sloge po
-          meri za portal za pomoč strankam. Če ima vaša datoteka CSS težave s
-          kodo, bo slog portala prikazan pod privzetimi slogovnimi nastavitvami,
-          zato pred javno objavo portala ne pozabite uporabiti možnosti za
-          predogled.
-        info4: >-
-          Za nastavitve uporabniških dovoljenj in moderacijo foruma kliknite
-          zavihek »Nastavitve«. Nastavitev ni mogoče nastaviti za vsak portal,
-          ampak bodo veljale za vse portale, ki ste jih ustvarili.
-        layout_of_portal: >-
-          Postavitev portala za pomoč strankam je sestavljena iz (a) Glave
-          strani, (b) Noge strani, (c) Postavitve strani. Uporabite lahko svoj
-          lastni HTML za dodajanje, odstranjevanje ali popolno preurejanje
-          vsebine vsake posamezne strani portala za stranke, ki mu lahko lahko
-          dodate interakcije jezika JavaScript. Pred javno objavo portala ne
-          pozabite uporabiti možnosti za predogled.
-        editor_in_fullscreen: Urejevalnik v celotnem zaslonu
-        level_customizations: Prilagoditve posameznih strani
-        advanced_rebranding: Napredno predrugačenje blagovne znamke in prilagajanje
-        title: Nastavitve portalov
-        basic_coloring_changes: >-
-          Poleg osnovnih sprememb barv, ki ste jih naredili na svojem portalu,
-          lahko prilagodite videz in obliko mnogih drugih vidikov strani za
-          nadaljnje prilagoditve blagovne znamke.
-        check_out: >-
-          Preberite <b><a
-          href='https://support.freshdesk.com/support/solutions/71599'
-          target='_blank'>vodnik FreshThemes</a></b>, da boste izvedeli več o
-          oblikovanju svoje teme portala za pomoč strankam.
-        portal_freshdesk_title: Ali iščete ideje?
-        info2: >-
-          Prav tako lahko izberete posamezne rešitve in kategorije forumov, ki
-          bodo objavljene na glavnem portalu in drugih portalih.
-        custom_stylesheets: Uporaba datotek s slogi po meri
-        portal_freshdesk_link: Ogled
-        customize_the_layout: >-
-          Za portal Freshdesk lahko po meri oblikujete postavitev posamezne
-          strani. Postavitev boste lahko oblikovali s pomočjo Freshdeskovih
-          označb mest portala in ogrodja za predloge Liquid.
-        stylize_color_and_font: >-
-          Za svoj portal za podporo lahko izbirate različne oblike, barve in
-          nastavite pisave za skoraj vsak posamezni element portala. Nastavite
-          logotip ali po želji prilagodite svojo ikono poleg naslova spletne
-          strani (favicon). Barvo lahko izberete iz barvnega kroga za določen
-          element portala ali neposredno vnesite šestmestno kodo barve.
     mobihelp:
       app_review:
         request_sent: App Review Request Sent
-      human_name: Aplikacija Mobihelp
+      human_name: Mobihelp App
       apps:
         helpnote:
-          heading1: Kaj je aplikacija MobiHelp?
+          heading1: What is Mobihelp?
           content1:
             info1: >-
-              MobiHelp je Freshdeskov komplet za razvoj prog. opreme (SDK), ki
-              omogoča preprostejše nudenje podpore v aplikaciji za vaše mobilne
-              stranke.
+              Mobihelp is Freshdesk’s mobile SDK which makes it easier for you
+              to provide in-app support to your mobile customers.
             info2: >-
-              Ko integrirate aplikacijo MobiHelp, bodo uporabniki videli poseben
-              razdelek za podporo v vaši aplikaciji. To bo vključevalo vašo bazo
-              znanja in obrazec za zahtevek, da bodo lahko z vami stopili v stik
-              v primeru pomoči.
+              Once you integrate MobiHelp, your users will be able to see a
+              dedicated support section within your app. This will include your
+              knowledge base, and a ticket form so that they can get in touch
+              with you if they need help.
             info3: >-
-              MobiHelp je mogoče popolnoma prilagoditi. Spremenite lahko vse –
-              od polj v obrazcu za povratne informacije do notranjega videza
-              aplikacije. Podatki, kot so ime naprave, operacijski sistem in
-              različica aplikacije se zbirajo samodejno brez uporabnikovega
-              posredovanja. Prav tako lahko omogočite polja s podatki po meri in
-              zbirate dnevnike z zrušitvami sistema in sledenja poti.
+              MobiHelp is completely configurable. You can select everything -
+              from the fields in your feedback form to the way it looks inside
+              your app. Information like device name, operating system and app
+              version are collected automatically without any effort of the
+              user. You can also enable custom data fields and collect crash
+              logs and breadcrumb trails.
             info4: >-
               You can create an unlimited number of applications to be used with
               MobiHelp and tie them to your Freshdesk account. Once you do, you
@@ -1232,37 +1061,36 @@ sl:
             download_android_sdk: Download Android SDK
             download_ios_sdk: Coming Soon
         form:
-          app_name: Ime aplikacije
+          app_name: Application Name
           description: Application Description
           platform: Platform
-          configurations: Konfiguracije SDK
-          solution_categories: Kategorije rešitve
-          solution_categories_info: Izbrane kategorije rešitve bodo prikazane v podpori za aplikacijo
-          app_store_id: ID trgovine Apple
+          configurations: SDK Configurations
+          solution_categories: Solution Categories
+          solution_categories_info: The solution categories you select will be shown in the App Support
+          app_store_id: App Store ID
           app_store_id_info: App Store ID will be used to redirect users to App Store for Reviews
           app_store_id_v12_info: >-
-            Zahtevano za različice Mobihelp SDK < 1.2. Za različice >= 1.2 si
-            oglejte Vodnik za integracijo.
+            Required for Mobihelp SDK versions < 1.2. For version >= 1.2 refer
+            Integration guide.
           should_be_unique: should be unique
           select_a_platform: Select a platform
-          select_a_solution_category: Izberite kategorijo rešitve
-          enable_push_notification: Omogoči potisna obvestila
-          gcm_api_key: Ključ GCM API
-          app_key: Ključ aplikacije
-          app_secret: Skrivnost aplikacije
-          integration_details: Podrobnosti integracije
+          select_a_solution_category: Select a Solution Category
+          enable_push_notification: Enable Push Notification
+          gcm_api_key: GCM API Key
+          app_key: App Key
+          app_secret: App Secret
+          integration_details: Integration Details
           saving: Shranjujem...
-          initialization_code: Koda za inicializacijo
         index:
-          title: Aplikacije Mobihelp
+          title: Mobihelp Apps
           new_app: New App
           no_app:
             title: Welcome to Mobihelp
-            sdk_and_guide: Komplet za razvoj prog. opreme Mobihelp in Vodnik za integracijo
+            sdk_and_guide: Mobihelp SDK and Integration guide
         new:
-          title: Nova aplikacija MobiHelp
+          title: New Mobihelp App
         edit:
-          title: Urejanje aplikacije MobiHelp
+          title: Edit Mobihelp App
         show:
           title: Show Mobihelp App
           view_all: View All
@@ -1454,31 +1282,6 @@ sl:
         edit: Uredi
         activate_survey: Aktiviraj
         preview_survey: Predogled
-        default_survey: Privzeti vprašalnik
-        remove_msg: >-
-          Z odstranitvijo tega razdelka boste izgubili vse spremembe, ki so bile
-          narejene za dodatna vprašanja. Ali želite nadaljevati?
-        new_survey: Nov vprašalnik
-        survey_feedback: Pošiljanje povratnih informacij …
-        deleting_survey: Brisanje vprašalnika
-        feedback_survey_begin: Pošiljanje vprašalnika na vaš e-poštni ID
-        feedback_survey_end: Vprašalnik je bil poslan na vaš e-poštni ID
-        survey_help_msg_v3: >-
-          Ko je izbrana ocena o zadovoljstvu, bo prikazana zahvalna stran za
-          pridobivanje več povratnih informacij
-        saving_survey: Shranjevanje vprašalnika
-        confirm_text: 'Prosimo, potrdite …'
-        portal_msg: Preusmerjanje na stran z zahtevkom
-        delete_msg: 'Ali ste prepričani, da želite izbrisati ta vprašalnik?'
-        activate_msg: >-
-          Aktiviranje tega vprašalnika bo aktiviralo <b
-          id='active_survey_name'>privzeti vprašalnik</b> <br> Ali ste
-          prepričani, da želite aktivirati?
-        disabling_survey: Onemogočanje vprašalnika
-        editing_survey: Urejanje vprašalnika
-        enabling_survey: Omogočanje vprašalnika
-        custom_title_v2: Vprašalniki o zadovoljstvu strank
-        active_delete_tooltip: Aktivnega vprašalnika ni mogoče izbrisati
       satisfaction_settings:
         enable_label: Vprašalniki zadovoljstva
         link_text_label: Povezava do vprašalnika o zadovoljstvu
@@ -1496,109 +1299,19 @@ sl:
         enter_happy_text: Vnesite vesel tekst
         enter_neutral_text: Vnesite nevtralen tekst
         enter_unhappy_text: Vnesite nezadovoljen tekst
-        link_text_input_label: Kako ste bili zadovoljni s pomočjo agenta?
-        enable_label_v2: Vprašalnik o zadovoljstvu strank
       new_layout:
         title: Ime ankete
         loading: Nalaganje ...
         survey: Anketa
-        bad_to_good: »Slabo« do »Dobro«
-        rating_order: Razvrstitev ocen &nbsp;
-        good_to_bad: »Dobro« do »Slabo«
-        default_survey: Privzeti vprašalnik
-        title_error_text: Ime vprašalnika že obstaja
       thanks_contents:
         title_text_v2: Zahvalno sporočilo za anketo o zadovoljstvu strank
-        solution_article_link_text: >-
-          Za to stran bo uporabljena postavitev vašega portala. <a
-          target='_blank'
-          href='https://support.freshdesk.com/solution/articles/217757-customizing-your-thank-you-page'>Kako
-          jo spremeniti?</a>
-        label_text_v2: Dodatna vprašanja vprašalnika
-        message_text: Hvala za dragocene povratne informacije.
-        empty_text: Vrednost za vprašanje ne sme biti prazna.
-        question_error_text: Vprašanje je že bilo vneseno.
       new_questions_layout:
         questions: Vprašanja
-        title_text_v2: Dodatna vprašanja
-        add_question: Dodaj vprašanje
       new_rating:
         error_text: To polje je obvezno
-        survey_question: Anketno vprašanje
-        scale_text: Izbrali ste
-        scale: lestvica točk
-        content_text_v2: >-
-          To vprašanje pomaga oceniti celotno zadovoljstvo z odzivom agenta.
-          Prikazano je pod vašim podpisom na dnu e-sporočila, ki ste ga poslali
-          stranki.
-        point_scale_v2: Lestvica točk
       new_thanks:
         thanks_message_feedback_v2: Zahvalno sporočilo za dodatne povratne informacije
         additional_comments_feedback_v2: Vključi polje za dodatne komentarje
-        default_question_text: Ali ste zadovoljni z našo uporabniško izkušnjo?
-        thanks_feedback: Hvala za dragocene povratne informacije.
-        thanks_label_v2: >-
-          Sporočilo bo prikazano po oddaji povratnih informacij na dodatna
-          vprašanja.
-        thanks_feedback_v2: Hvala. Povratne informacije so bile poslane.
-        additional_comments_feedback_statement: Dodatne povratne informacije
-        survey_feedback_v2: Zahvalna stran
-        thanks_help_text: >-
-          Dodatna vprašanja so zastavljena na zahvalni strani, ko stranka
-          izpolni vprašalnik o zadovoljstvu strank. Vprašanja se lahko nanašajo
-          na izdelek/podjetje/agenta.
-        comments_feedback: Dodajte več podrobnosti o uporabniški izkušnji.
-      helptext_v2: >-
-        <p><b>Zakaj omogočiti vprašalnike o zadovoljstvu strank?</b><br>
-
-        Vprašalniki o zadovoljstvu strank vam omogočajo dodati povezave do vaših
-        odzivne e-pošte in neposredno zbirati povratne informacije in
-        zadovoljstvo strank. <br><br> <b>Ustvarjanje svojega vprašalnika o
-        zadovoljstvu strank</b><br> Naslednji koraki vam omogočajo zbiranje
-        povratnih informacij od svojih strank prek povezave v odzivnih
-        e-sporočilih:<br> 1. Vklopite vprašalnik o zadovoljstvu strank<br> 2.
-        Izberite vprašanje. Privzeto vprašanje je: &ldquo;Kako ste bili
-        zadovoljni s pomočjo agenta?&rdquo;<br><br> <b> Izberite, katera e-pošta
-        vsebuje povezavo do vprašalnika o zadovoljstvu strank:</b><br> Izberete
-        lahko, ali je povezava do vprašalnika poslana z vsakim e-sporočilom, ali
-        pa stranka prejme povezavo do vprašalnika z zadnjim e-sporočilom, ko je
-        zahtevek uspešno razrešen. Odgovor strank je mogoče videti v <b>Poročila
-        > Poročilo zadovoljstva kupcev </b> <br><br> Več o vprašalnikih o
-        zadovoljstvu strank si lahko preberete v <a target= ‘_blank’
-        href='https://support.freshdesk.com/solution/articles/215322'>tem
-        članku</a>.</p>
-      choice_contents:
-        extremly_dissatisfied: Izjemno nezadovoljen
-        mostly_dissatisfied: Precej nezadovoljen
-        slightly_dissatisfied: Nekoliko nezadovoljen
-        mostly_satisfied: Precej zadovoljen
-        slightly_satisfied: Kar zadovoljen
-        extremely_satisfied: Izjemno zadovoljen
-        neutral_v2: Nisem zadovoljen niti nezadovoljen
-      custom_helptext_v2: >-
-        <p><b>Kako omogočiti vprašalnik o zadovoljstvu strank</b><br>
-
-        Vprašalnik lahko dodate v agentove odgovore v zahtevku, da izveste, kako
-        zadovoljne so stranke s/z podporo/podjetjem/izdelkom. Vprašalnik lahko
-        pošljete z vsakim e-sporočilom ali zgolj v poslednjem sporočilu, ko je
-        zahtevek uspešno zaprt/razrešen. Odgovore strank je mogoče prebrati v
-        <b>Poročila > Poročilo zadovoljstva kupcev </b> <br><br> <b>Vprašalnik o
-        zadovoljstvu strank</b><br> Strankam lahko postavite eno ali več
-        dodatnih vprašanj. Vprašalnik o zadovoljstvu strank je prikazan v
-        e-sporočilu. Ko stranka izbere možnost vprašalnika, bo ta preusmerjena
-        na stran z dodatnimi vprašanji. Pravila opazovalca in igrifikacijske
-        točke bodo temeljila samo na vprašalniku o zadovoljstvu stranke.
-        <br><br> <b>Lestvica točk</b><br> Za vprašalnike o zadovoljstvu strank
-        in dodatna vprašanja lahko izberete različne lestvice točkovanja.
-        Možnosti: <br>2 točki (npr. Da, Ne)<br> 3 točke (npr. Se strinjam, Sem
-        neopredeljen, Se ne strinjam)<br> 5 točk (npr. Vedno do Nikoli)<br> 7
-        točk (npr. Zelo slabo do Zelo dobro)<br><br>
-
-        Ko stranka izpolni vprašalnik, bo lestvica zaklenjena in je ne bo mogoče
-        več urejati.<br><br> Več o vprašalnikih o zadovoljstvu strank lahko
-        preberete v <a target= ‘_blank’
-        href='https://support.freshdesk.com/solution/articles/215321'>tem
-        članku</a>.</p>
     getting_started:
       send_mail_content:
         test_info_1: Vse izgleda ok do tukaj?  Pošljite testno epošto
@@ -1724,9 +1437,6 @@ sl:
         agent_email_partial: Delno uspešno
         agent_email_sending: Pošiljanje vabil
         agent_email_required: ID e-pošte zahetvan za pošiljanje povabil.
-        bulk_invite_blocked: >-
-          Na tej strani lahko dodate do največ 25 agentov. Več jih lahko kasneje
-          dodate v razdelku skrbnika.
     day_passes:
       helpnote:
         title: Dnevna licenca
@@ -1760,14 +1470,6 @@ sl:
         agent: Zastopnik
         date: Datum
         filtered_by: 'Filtrirano po:'
-        no_result: Za izbrane možnosti ni bilo najdenih rezultatov.
-        change_agent: Sprememba agenta
-        usage_history: Zgodovina uporabe
-        available_passes: Razpoložljive dnevne licence
-        auto_recharge_notice: 'Trenutna vrednost za samodejni nakup je nastavljena na '
-        buy_passes: Kupite dnevne licence
-        auto_renewal_disabled_notice: Samodejna obnovitev dnevnih licenc je onemogočena.
-        auto_renewal_enabled_notice: Samodejna obnovitev dnevnih licenc je omogočena.
     widget_config:
       index:
         feedbackwidget_embedded_tab: Vstavljen modul
@@ -1775,9 +1477,9 @@ sl:
       popup_embedded_widget:
         feedbackwidget_popup: pojavno okno
         feedbackwidget_embedded: vstavljeno
-        feedbackwidget_button_type: Vrsta gumba
-        feedbackwidget_text_button: Besedilo gumba
-        feedbackwidget_image_button: Slika gumba
+        feedbackwidget_button_type: Button type
+        feedbackwidget_text_button: Text button
+        feedbackwidget_image_button: Image button
         feedbackwidget_button_text_placeholder: Podpora
         feedbackwidget_height_placeholder: '500'
         feedbackwidget_offset_placeholder: '235'
@@ -1798,7 +1500,7 @@ sl:
         feedbackwidget_screenshot: Naredite sliko ekrana
         feedbackwidget_search_area: Išči po člankih
         feedbackwidget_use_https: Uporabi https
-        feedbackwidget_mobile_view: Mobilni pogled
+        feedbackwidget_mobile_view: Mobile View
       popup_widget:
         feedbackwidget_attach_a_file: Pripni datoteko
         feedbackwidget_submit_title: Pošlji povratno info
@@ -1815,18 +1517,6 @@ sl:
         feedbackwidget_form_height: Višina forme
         feedbackwidget_button_text_placeholder: Podpora
         feedbackwidget_form_height_message: 'Če vidite drsnik v modulu, prilagodite višino modula'
-        feedbackwidget_button_type: Vrsta gumba
-        feedbackwidget_mobile_view: Omogoči mobilni pogled
-        feedbackwidget_submit_title_maxlength: Največ 16 znakov
-        feedbackwidget_title_maxlength: Največ 30 znakov
-        feedbackwidget_image_button: Slika gumba
-        feedbackwidget_users_can: Možnosti obrazca
-        feedbackwidget_height_placeholder: '500'
-        feedbackwidget_px: px
-        feedbackwidget_offset_placeholder: '235'
-        feedbackwidget_form_submit_title: Gumb za oddajo obrazca
-        feedbackwidget_use_captcha: Omogoči CAPTCHO
-        feedbackwidget_text_button: Besedilo gumba
       embedded_widget:
         feedbackwidget_embedded_code: Vstavljena koda modula
         feedbackwidget_attach_a_file: Pripni datoteko
@@ -1839,13 +1529,6 @@ sl:
         feedbackwidget_use_https: Uporabi https
         feedbackwidget_form_height: Višina forme
         feedbackwidget_form_height_message: 'Če vidite drsnik v modulu, prilagodite višino modula'
-        feedbackwidget_submit_title_maxlength: Največ 16 znakov
-        feedbackwidget_title_maxlength: Največ 16 znakov
-        feedbackwidget_users_can: Možnosti obrazca
-        feedbackwidget_height_placeholder: '500'
-        feedbackwidget_px: px
-        feedbackwidget_form_submit_title: Gumb za oddajo obrazca
-        feedbackwidget_use_captcha: Omogoči CAPTCHO
     supervisor_rules:
       info_help: >-
         Za <b>vsak zahtevek</b> osvežen v zadnjih 30 dneh, Izvedi ujemajoča
@@ -1872,16 +1555,12 @@ sl:
         help_info_4: >-
           Pravila Nadzornika se procesirajo zaporedno zato je njihovo zaporedje
           pomembno. Določeno pravilo lahko proži aktivnost drugega pravila.
-        tour_v2: Pomagajte mi ustvariti pravilo nadzornika
       new:
         title: Nadzornik - novo pravilo
       edit:
         title: Nadzornik - urejanje pravila
       clone_rule:
-        title: Nadzornik – Kloniranje pravila
-      new_info_help: >-
-        Za <b>vsak zahtevek</b>, posodobljen v 30 dneh, izvrši vsa ujemajoča
-        pravila.
+        title: Supervisor - Clone Rule
     observer_rules:
       info_help: >-
         Za vsak dogodek izveden na Zahtevku.vam pravila Observerja omogočajo
@@ -1913,18 +1592,12 @@ sl:
           Observer vam lahko služi za urejanje polj, spremembo statusa ali celo
           pošiljanje alarmov, ko so doseženi določeni pogoji.
         help_info_4: Več o uporabi opazovalca
-        tour_v2: Pomoč pri izdelavi pravila za opazovalca
-        new_help_info_2b: >-
-          Določi, katere uporabnikove spremembe bi morale sprožiti pravilo.
-          Izbirate lahko med agentom, zahtevnikom in sistemom. Zahtevnik prav
-          tako vključuje nekoga zunaj vaše ekipe za podporo, vendar je ta oseba
-          na tekočem z zahtevkom.
       new:
         title: Opazovalec - novo pravilo
       edit:
         title: Opazovalec - popravi pravilo
       clone_rule:
-        title: Observer – Kloniraj pravilo
+        title: Observer - Clone Rule
       add_new_event: Dodaj nov dogodek
       events: Ko <b> se katerokoli </b> od teh dogodkov zgodi
       conditions: Nobenega zahtevka s temi lastnostmi
@@ -1946,29 +1619,12 @@ sl:
         checked: Je izbrano
         unchecked: Izbor odstranjen
         deselected: Izbor odstranjen
-        internal_group_actions: >-
-          To velja samo, če je izbrana skupina povezana s stanjem zahtevka kot
-          notranja skupina v času izvršitve pravila.
-        internal_agent_actions: >-
-          To velja samo, če je izbrani agent povezan z notranjo skupino v času
-          izvršitve pravila.
       anyone: Kdorkoli
       system: Sistem
-      info_help_1: >-
-        Pravila funkcije Observer vam omogočajo, da se za vsak dogodek,
-        opravljen v zahtevku, sprožijo določena dejanja.
-      default_rule_desc: >-
-        Ko stranka za zahtevek odda slabo oceno z zadovoljstvom, obvesti vodjo
-        skupine
-      new_anyone: Agent ali zahtevnik
-      new_performed_by: Ko dejanje izvaja …
-      new_events: vključuje <b>katerega koli</b> od teh dogodkov
-      default_rule_name: 'Obvesti vodjo ekipe, ko je stranka nezadovoljna'
     va_rules:
       index:
         human_name: Pravilo Dispatch’rja
       remember_to_save: 'After updating, please remember to save it.'
-      disabled: Za vklop aktivirajte svoj račun.
     webhook:
       jira_hook_title: Izdelava JIRA Issue
       jira_hook_description: >-
@@ -1979,7 +1635,7 @@ sl:
       hipchat_hook_description: >-
         V HipChat Room lahko pošljete sporočilo vsakič ko zahtevnik pošlje
         odgovor na Zahtevek v Freshdesku.
-      hipchat_hook_alt: Zahteva za pingiranje načina GET za HipChat
+      hipchat_hook_alt: Hipchat Pinging GET Request
     shared:
       filter_jsinit:
         change_password: Spremeni geslo
@@ -2015,9 +1671,6 @@ sl:
         checked: Izbrano
         unchecked: Ni izbrano
         deselected: ni izbrano
-        add_custom_headers: Dodajte glave po meri
-        remove_custom_headers: Odstranite glave po meri
-        custom_headers_tip: Vnesite en par vrednosti glave po meri za vsako vrstico.
     automations:
       index:
         human_name: Scenarij
@@ -2047,7 +1700,7 @@ sl:
           strežnika (kot npr MS Active Directory) za avtentikacijo agentov in
           kupcev in s tem dostopa do Freshdeska brez ponovne prijave.
         enable_sso: Omogoči enotno prijavo
-        enable_simple_sso: Preprosta enotna prijava (SSO)
+        enable_simple_sso: Simple SSO
         remote_logout_url: Oddaljena odjava URL
         remote_authentication: Oddaljena avtentikacija
         enable_SSL: Omogoči SSL
@@ -2058,34 +1711,32 @@ sl:
         multiple_product_ssl_warning: SSL ne bo deloval kadar je nastavljenih več produktov
         enabled: Omogočeno
         disabled: Onemogočeno
-        enable_saml: Enotna prijava s standardom SAML
+        enable_saml: SAML SSO
         enable_saml_info: >-
-          SAML je standard XML, ki se uporablja za komunikacijo identitet med
-          dvema spletnima aplikacijama. Uporabite ga lahko, da večjim skupinam
-          omogočite dostop do portala za podporo z enojno prijavo.
-        saml_login_url: Povezava za prijavo SAML
+          SAML is an XML standard used for communicating identities between two
+          web applications. You can use it to let large teams access your
+          support portal easily using Single Sign On.
+        saml_login_url: SAML Login URL
         saml_login_url_info: >-
-          Freshdesk bo preusmeril uporabnike na ta URL-naslov za prijavo. To
-          lahko pridobite s ponudnikom identitete SAML.
+          Freshdesk will redirect users to this URL to login. You can get this
+          from your SAML Identity Provider.
         saml_logout_url: URL odjave
         saml_logout_url_info: >-
-          Opcijski URL-naslov za odjavo, na katerega bodo preusmerjeni
-          uporabniki, ko se odjavijo iz storitve Freshdesk.
-        saml_cert_fingerprint: Prstni odtis varnostnega certifikata
+          Optional logout URL to which users will be sent to when they logout of
+          freshdesk.
+        saml_cert_fingerprint: Security Certificate Fingerprint
         saml_cert_fingerprint_info: >-
-          Prstni odtis (SHA1) certifikata SAML, ki vam ga je priskrbel vaš
-          ponudnik standarda SAML. Uporablja se za šifriranje/preverjanje
-          (veljavnosti)
+          Fingerprint (SHA1)  of the SAML certificate provided by your SAML
+          Provider. This will be used for encryption / validation
         click_to_enable: Klikni za omogočanje SSL
         click_to_disable: Klikni za onemogočanje SSL
         security_title: Varnost
         request_custom_ssl: Żelite uporabljati poseben SSL za vaš portal podpore?
         ssl_info_new: >-
-          Za nastavitev protokola SSL po meri morate nastaviti svojo domeno z
-          edinstvenim zapisom DNS, ki ga dobite v storitvi Freshdesk. <br />
-          Vnesite URL-naslov službe za pomoč uporabnikom in spodaj oddajte svojo
-          zahtevo. Certificiranje običajno traja 15–20 delovnih dni. <br /> <br
-          />
+          To set up Custom SSL, you need to configure your domain with a unique
+          DNS record provided by Freshdesk. <br /> Please enter your Helpdesk
+          URL and submit your request below.  The certification typically takes
+          15-20 days. <br /> <br />
         helpdesk_url: URL podpore
         submit_request: Oddaj zahtevo
         thanks_message: >-
@@ -2118,33 +1769,13 @@ sl:
         valid_ip_address: 'Vnesite pravilen IP naslov '
         invalid_ip_range: Napačen IP nabor
         current_ip_not_in_range: Vaš trenuten IP ni v seznamu IP Naslovov
-        admin_notifications: Obvestila skrbnika
-        send_notifications: Pošlji obvestila na
-        select_admin: Izberite skrbnika
-        notifications: 'Obvestilo bo poslano, ko'
-        agent_create_or_delete: Agent je dodan ali izbrisan
-        whitelisted_ip_modified: Dodeljevanje varnih IP-naslovov je spremenjeno
+        admin_notifications: Admin Notifications
+        send_notifications: Send notifications to
+        select_admin: Select an Administrator
+        notifications: Notification will be sent when
+        agent_create_or_delete: Agent is Added or Deleted
+        whitelisted_ip_modified: IP Whitelisting is modified
         for_agents: Za Agente
-        saml_cert_fingerprint_info_sha256: >-
-          Prstni odtis (SHA256) certifikata SAML, ki vam ga je priskrbel vaš
-          ponudnik standarda SAML. Uporablja se za šifriranje/preverjanje
-          (veljavnosti)
-        password_policy_info3: >-
-          Spremembe, ki jih naredite glede pravilnika za gesla, bodo stopile v
-          veljavo v 8 urah. Vaši agenti bodo v tem času pozvani k posodobitvi
-          svojih gesel. Če tega ne storijo, bodo odjavljeni s portala za podporo
-          uporabnikom in bodo morali svoje geslo posodobiti pri naslednji
-          prijavi.
-        password_policy_info4: >-
-          Opomba: ko omogočite pravilnik za gesla za svoj račun (bodisi privzeto
-          ali napredno), ga ne boste več mogli onemogočiti.
-        enable_oauth2_sso: OAuth 2.0
-        for_contacts: Za stike
-        enable_oauth2_info: >-
-          Industrijski standardni protokol OAuth vam omogoča dodeliti
-          preverjanje pristnosti za agenta in stranko za storitev, ki gosti
-          njuna uporabniška računa.
-        password_policy: Pravilnik za gesla
       helpnote:
         title: Nastavitva varnosti
         info1: >-
@@ -2170,14 +1801,6 @@ sl:
           only for your agents. <a
           href="https://support.freshdesk.com/support/solutions/articles/195168">
           Learn more.</a>
-        info4: >-
-          <b>Pravilnik za gesla</b><br>Nastavite lahko različne pravilnike za
-          gesla za agente in stranke. Napredne nastavitve vam omogočajo
-          nastaviti pravilnike za gesla po meri, kot sta čas poteka in najkrajša
-          dolžina gesla. Spremembe, ki jih boste naredili, bodo obveljale za vse
-          nove in obstoječe agente in stranke. Več o tem <a
-          href="https://support.freshdesk.com/support/solutions/articles/213865-password-policy"
-          target="_top">tukaj</a>.
       password_security:
         advanced: Napreden
         never: Nikoli
@@ -2186,16 +1809,6 @@ sl:
         password: geslo
         have_mixed_case: Vsebuje velike in male črke
         default: Privzeto
-        passwords: gesla
-        session_expiry: Seja uporabnika poteče čez/v
-        password_expiry: Geslo poteče čez/v
-        cannot_be_same_as_last: Ne sme biti enako kot prejšnje
-        have_special_character: Vsebuje poseben znak
-        cannot_contain_user_name: Ne sme vsebovati uporabniškega imena
-        minimum_of: Najmanj
-        atleast_an_alphabet_and_number: Vsebuje črke abecede in številke
-      password_policy_popover:
-        password_should: Vaše geslo naj
     products:
       helpnote:
         tour: Pomoč pri podpori več produktov
@@ -2208,10 +1821,6 @@ sl:
         content2: >-
           Če se odločite za ločen portal za vsak produkt boste lahko objavili na
           vsakem portalu ločen forum in baza znanja
-        heading3: Podpira več izdelkov
-        content3: >-
-          Portale za te izdelke lahko nastavite s klikom na zavihek »Admin«
-          (Skrbnik) in nato »Portals« (Portali)
       new:
         title: Nov produkt
         saving: Shranjujem..
@@ -2226,18 +1835,18 @@ sl:
           pomaga pri nastavitvah.
         select_solution_category: Izberi kategorijo rešitve..
         solution_categories_info: >-
-          S tem izdelkom lahko povežete več kategorij rešitev. Vse druge rešitve
-          ne bodo prikazane strankam med ogledom zavihka rešitev na tem portalu
-          z izdelki.
+          You can associate multiple solution categories to this product. All
+          other solutions will not be shown to the customers, when viewing the
+          solutions tab in this product portal.
         forum_categories_info: >-
-          S tem izdelkom lahko povežete več kategorij foruma. Vsi drugi forumi
-          ne bodo prikazane strankam med ogledom zavihka s forumom na tem
-          portalu z izdelki.
+          You can associate multiple forum categories to this product. All other
+          forums will not be shown to the customers, when viewing the forums tab
+          in this product portal.
         portal_settings: Nastavitve portala
         portal_name_info: Ime bo prikazano na portalu produkta poleg logotipa v glavi
         portal_url: URL portala
-        solution_categories: Kategorije rešitve
-        forum_categories: Kategorije foruma
+        solution_categories: Solution Categories
+        forum_categories: Forum Categories
         portal_name: Ime portala
         portal_language: Jezik portala
         portal_language_info: 'To bo privzet jezik, ko kupci obiščejo vaš portal'
@@ -2252,14 +1861,6 @@ sl:
         logo_and_favicon: Logo & favicon
         settings: Nastavitve
         customer_portal: Portal za kupce
-        default_portal_language: Privzet jezik portala
-        edit_branding: Urejanje blagovne znamke/znamčenja
-        categories_visible: Kategorije portala
-        show_author_name: Prikaži imena avtorjev
-        agent_portal: Portal za agente
-        enable_multilingual: Nastavitev večjezične podpore
-        enable_personalized_articles: 'Če je omogočeno, bodo imena avtorjev prikazana v člankih z rešitvami'
-        edit_portal: Urejanje portala
       edit:
         title: Spremeni produkt
         updating: Osvežujem ..
@@ -2283,7 +1884,6 @@ sl:
         email_not_verified: Nepotrjeno
         view_portal: Oglej si portal
         delete: Resnično želite izbrisati ta produkte?
-        portal_disabled: Portal je onemogočen
       index:
         enable_portal: Dodajte produkte
         title: Produkti
@@ -2293,9 +1893,6 @@ sl:
       primary_email_required: Vnešen mora biti vsaj en primaren e-poštno naslov
       assign_product: Dodeli produkt
       product_label_msg: Produkt
-      footer:
-        edit_portal: Shranite in uredite portal
-        enable_portal: Shranite in omogočite portal
     twitters:
       index:
         new: Dodaj Twitter račun
@@ -2314,7 +1911,6 @@ sl:
         capture_dm: Pretvori direktna sporočila v zahtevke
         screen_name: Zaslonsko ime
         default_group: Privzeta skupina
-      stream_content: Ta pretok bo vseboval vse vaše omembe @
     roles:
       title: Vloge agenta
       new: Nova vloga
@@ -2410,9 +2006,6 @@ sl:
       add_agent_label: Dodaj agenta
       saving_label: Shranjujem...
       add_label: Dodaj
-      default_role_with_name: '%{role_name} (privzeta vloga)'
-      manage_label: Upravljanje
-      no_agent_label: Ni agenta
     home:
       index:
         group: Skupine
@@ -2460,9 +2053,6 @@ sl:
         tags: Tags
         mobihelp: Mobihelp
         customer-portal: Portal za kupce
-        invalid_address: Neveljavni naslov
-        search_admin: Iskanje skrbniških nastavitev
-        invoice: Računi
       keywords:
         forum_moderation: Forum Moderation
         configure_support_email: Configure support email
@@ -2571,160 +2161,22 @@ sl:
         add_agents: Dodaj agente
         skill_create: Ustvari
         add_label: Dodaj
-        no_skill_info_1: Ustvarjena ni bila nobena veščina.
-        nav_skill_list_text: Seznam veščin
-        nav_agent_skill_text: Veščina agentov
-        new: Nova veščina
-        no_skill_info_2: Stopite v stik s skrbnikom vaše službe za pomoč uporabnikom.
-        confirm_delete_message_v2: >-
-          Izbris veščine bo to odstranil za vse agente. Nedodeljeni zahtevki s
-          to veščino bodo povezani z novo veščino. Ali resnično želite
-          nadaljevati?
-        info_help: >-
-          Ustvarite veščine za težave zahtevkov in jih poveži z agenti, ki se
-          jim lahko posvetijo. Za zahtevek bo uporabljena prva ujemajoča
-          veščina.
-        agent_skills: Agentove veščine
-        not_in_any_groups_info: >-
-          Agentove veščine lahko spreminjate samo, če ste del skupine. Stopite v
-          stik s skrbnikom svoje službe za pomoč uporabnikom.
-        no_agents_info: V to skupino ni bilo dodanih nobenih agentov!
-        manage_label: Upravljanje
-        no_groups_present_info: >-
-          Nastavitve za dodeljevanje zahtevkov lahko spremenite samo, če ste del
-          skupine.<br>Stopite v stik s skrbnikom svoje službe za pomoč
-          uporabnikom.
-        new_skill_info: Zaenkrat še niste ustvarili nobenih veščin!
-        no_agent_label: Ni agenta
-      rule_form:
-        info1: 'primer: Ravnanje z VIP strankami'
-        info3: To veščino povežite z ujemajočimi zahtevki
-        match_any: <b>KATERO KOLI</b> od spodnjih
-        match_all: <b>VSA</b> spodnja
-        new: Ime veščine
-        info2: 'primer: »Dodeli zahtevke VIP strank agentom Nejcu, Tini in Katji«'
-      import_csv: Uvozi agentove veščine
-      helpcard:
-        title2: Ustvarjanje veščin
-        learn_more_skill_based_info: Več o dodelitvah na podlagi veščin
-        info2: >-
-          Vsako veščino je treba dodeliti naboru agentov in jih povezati z
-          zahtevki, ki se ujemajo z določenimi pogoji.<br><br>Agentom lahko
-          dodelite veščine glede na njihove izkušnje in zmožnosti. Primer: če
-          podpirate več jezikov, lahko imate veščino z opisom »Tekoče znanje
-          španščine« za agente, ki obravnavajo zahtevke v španščini. Za
-          povezovanje veščin z zahtevki lahko uporabite pogoje, ki temeljijo na
-          lastnostih zahtevka, kot so vrsta, vir, izdelek ali na lastnostih
-          zahtevnika, kot so njegovo ime, e-naslov, podjetje. Zato so lahko
-          zahtevki v španščini povezani z veščino »Tekoče znanje
-          španščine«.<br><br>Če se veščina, ki je povezana z zahtevkom, ujema z
-          agentovo veščino, bo zahtevek dodan temu agentu.
-        title1: Razumevanje veščin
-        title3: Povezovanje veščine in zahtevka
-        info3: >-
-          Pravila za veščine se uporabljajo za prepoznavanje ustreznih veščin,
-          ki so povezane z zahtevkom, glede na lastnosti zahtevka in stranke. Za
-          vsak dodeljen zahtevek v skupini bo izvedeno prvo ujemajoče pravilo s
-          seznama veščin. Skrbniki lahko prerazporedijo seznam veščin tako, da
-          so najpomembnejša pravila vedno na vrhu.
-        info1: >-
-          Veščine vam omogoča preprosto ujemanje zahtevkov s primernimi agenti.
-          Veščine lahko jasno dodelite za vsakega agenta posebej in ustvarite
-          pravila, s čimer se prepričate, da so zahtevki povezani z ustreznimi
-          veščinami.
-      new:
-        new: Nova veščina
-      import:
-        download_xls_title: >-
-          Prenesite trenutni seznam agentom in njihovih veščin (če obstajajo) v
-          obliki datoteke CSV
-        note_info_3: >-
-          Pomnite, da je lahko z agentom povezanih največ 35 veščin, za račun pa
-          je lahko ustvarjenih največ 180 veščin
-        add_skills_title: Agentom dodajte veščine v padajočem vrstnem redu in naložite datoteko
-        important_note: Pomembna opomba
-        note_info_1: >-
-          Če naletimo na novo ime veščine, bomo ustvarili veščino in jo povezali
-          z agenti
-        note_info_2: >-
-          Če naletimo na obstoječega agenta z drugačnim naborom veščin, bomo
-          prekinili povezavo z obstoječim naborom veščin in ga povezali z novimi
-          veščinami iz datoteke
-        download_xls_btn: Prenos datoteke CSV
-        upload_file: Nalaganje datoteke CSV
-      edit:
-        edit: Uredite veščino
     user_skills:
       index:
         more: več
         any: Poljubno
         groups: Skupina
-        turn_on: Vklop
-        add_skills: Dodaj veščino
-        admin_info_help: >-
-          Agentom dodajte veščine v padajočem vrstnem redu glede na njihove
-          želje
-        manage_skills: Upravljanje veščin
-        supervisor_info_help: >-
-          Razporedite veščine agentov v padajočem vrstnem redu glede na njihove
-          želje
-        sbrr_disabled_admin: Dodelitev na podlagi veščin ni bila vklopljena za to skupino
-      no_skills: Ni veščin
     ecommerce:
       new:
         account_name: Ime uporabniškega računa
         title: Nov račun
         assign_group: Dodeli skupini
-        site_helptext: 'izberite stran eBay, kjer prodajate svoje izdelke'
-        select_product: Izberite izdelek
-        save_account: Shrani račun
-        select_group: Izberite skupino
-        select_ebay_site: Izberite stran eBay
-        assign_product: Dodelite izdelku
-        ebay_site: Stran eBay
       index:
         new_account: Nov račun
-        title: Računi za spletno trgovino
-        renew: Obnovi žeton
       index_title: E-trgovina
-      helpnote:
-        no_account: Dodaj nov račun
-        integrate_ecommerce: Prenesite svoja sporočila za spletno poslovanje v storitev Freshdesk
-        content1:
-          info1: Integrirajte račun za spletno poslovanje
-          info2: >-
-            Freshdesk vam omogoča upravljanje poizvedb strank, ki prispejo v vaš
-            račun eBay znotraj vaše službe za pomoč uporabnikom. Po namestitvi
-            bodo vse poizvedbe strank na eBayu samodejno pretvorjene v zahtevke.
-            Na njih lahko odgovorite tudi neposredno v storitvi Freshdesk. 
-      ebay: eBay
-      edit:
-        expiry_date: Potek žetona
-        title: Urejanje računa
     hotline:
       content3:
         note_title: 'Zapisek:'
-        note_info: >-
-          Še naprej bomo podpirali aplikacijo Mobihelp za obstoječe stranke,
-          vendar je ne bomo več aktivno razvijali. Priporočamo vam, da čim prej
-          migrirate na platformo Hotline. Če ste obstoječa stranka Mobihelp,
-          stopite v stik s podporo na support@hotline.io za posebne cenovne
-          ponudbe.
-      get_started: Začnite že danes uporabljati platformo Hotline
-      content2:
-        list_title: 'S platformo Hotline prejmete:'
-        list1: Klepet v aplikaciji s potisnimi obvestili
-        list4: Pripravljena integracija s Freshdeskom
-        list2: Pogosto zastavljena vprašanja za mobilne aplikacije
-        list3: Hitri vmesnik za stik za agente
-        list5: Orodja za kampanje in obogateno pošiljanje sporočil
-      heading1: Srečanje uporabnikov aplikacije Mobihelp in platforme Hotline
-      list_title: Aplikacije Mobihelp
-      content1:
-        info1: >-
-          Hotline je nova Freshdeskova platforma za mobilno podporo in
-          ustvarjanje stikov. Izdelek vam ponuja vse, kar je imela aplikacija
-          Mobihelp, in še več novih dodatnih funkcij.
   ends_with: Zaključi z
   last_name: Priimek
   forum:
@@ -2756,7 +2208,7 @@ sl:
     forum_deleted: The forum has been deleted.
     type: Tip foruma
     visible_to: 'Vidno za:'
-    category: Kategorija foruma
+    category: Forum Category
     spam: 'Spam (%{count})'
     visibility:
       anyone: Kdorkoli
@@ -2764,11 +2216,6 @@ sl:
       agents: Agenti
       all: Vsi
       select_company: Izberi podjetja
-    max_description_length_allowed: Največ 250 znakov
-    convert_to_ticket: Samodejna pretvorba tem v zahtevke
-    convert_to_ticket_info: >-
-      Vse nove teme, ustvarjene na tem forumu, bodo samodejno pretvorjene in
-      ustvarjene kot zahtevek.
   password_reset_email: e-pošta za reset gesla
   default_reply_template: Predloga odgovora Agenta
   additional_email_verification: Additional Email Verification
@@ -3160,7 +2607,7 @@ sl:
     Vse v &amp;quot;Basic&amp;quot; Plan plus, Scenariji za avtomatizacijo, SLA
     Pogodbe kupcev, Delovni čas, Forumi, Skupnost &amp;amp; Email Podpora.
   open: Odprto
-  zendesk_url: URL-povezava Zendesk
+  zendesk_url: Zendesk URL
   special_beta_offer: Posebna ponudba za Beta uporabnike
   click_to_select_filter: Kliknite za izbor filtra
   click_to_select_event: Izberi dogodek
@@ -3430,9 +2877,8 @@ sl:
   credit_card_info: Informacij o kreditni kartici
   zendesk_backup_info: Izberi Zendesk varnostno kopijo
   backup_error_msg: >-
-    Datoteka presega določeno omejitev 50 MB. <a href='#'
-    id='import_request'>Stopite v stik</a> z uporabniško podporo za nadaljevanje
-    postopka uvoza.
+    The file exceeds the prescribed limit of 50MB, please <a href='#'
+    id='import_request'>contact support</a> to proceed with the import.
   your_email_address: Vaš e-poštno naslov
   username: Uporabniško ime
   reply: Odgovori
@@ -3467,21 +2913,6 @@ sl:
         Verjetno želite, da bi vaši kupci in agenti dostopali do portala za
         podporo preko vaše lastne domene. Lahko usmerite url vaše podpore na
         yourcompany.freshdesk.com na vašo domeno kot npr. support.mycompany.com.
-      setup: Nastavitve službe za pomoč uporabnikom
-      info5: >-
-        Za stike, ki jih dodate, in določene domene lahko omejite dostop do
-        službe za podporo uporabnikom. Drugi se ne bodo mogli registrirati,
-        prijaviti ali oddajati zahtevkov. Več o tem si lahko preberete
-      info8: >-
-        Za nastavitve portala za vaš izdelek uporabite možnost »Urejanje
-        portala«.
-      info7: >-
-        Če imate plan Garden ali višji, boste lahko v razdelku z jeziki
-        nastaviti večjezično podporo.
-      info6: tukaj.
-      info3: >-
-        Vse osnovne nastavitve službe za pomoč uporabnikom je mogoče urejati
-        tukaj – jezik, časovni pas in barvne sheme.
     cancel:
       cancel_account: Prekliči Freshdesk račun
       info_text: >-
@@ -3580,20 +3011,8 @@ sl:
       company: Podjetje
       confirmation: Potrditev
       create_an_account: Ustvarjanje računa
-      enter_payment_info: Vnesite podatke o plačilu
-      enter_name_subdomain: ' Vnesite ime podjetja in poddomeno, ki jo želite uporabiti za svojo stran.'
-      errors_encountered: 'Napake, povezane s podatki o računu:'
-      administrator_account: Vnesite podatke za račun skrbnika
-      discount_code: Koda za popust
     signup_google:
       privacy_policy: pravilnik o zasebnosti.
-    signup_google_error:
-      allow_access_message: >-
-        Za nadaljevanje morate klikniti <strong>»Dovoli dostop«</strong>, ker bo
-        za ID prijave Freshdesk uporabil vaš e-naslov.
-      go_back: 'Kliknite tukaj, da se vrnete v trgovino z aplikacijami Google'
-    associate_google:
-      login_button: Prijavite se in dokončajte registracijo
   success_msg: Spremembe uspešno shranjene
   failure_msg: Napaka pri shranjevanju sprememb
   account_configuration:
@@ -3606,7 +3025,7 @@ sl:
     edit_title: Uredi
     show:
       mark_this_idea_as: Označi idejo kot
-      mark_this_problem_as: Označi ta problem kot
+      mark_this_problem_as: Mark this problem as
     last_reply: 'Zadnji odgovor pred %{post_time} od %{user_link}'
     posted_at: 'Objavljeno pred %{post_time}'
     delete_confirm:
@@ -3735,15 +3154,14 @@ sl:
     delete_confirm: >-
       Deleting this category will delete all %{folders} folders and %{articles}
       articles in it.
-    product_portal_visibility: Vidno v
-    select_solution_category: Izberite portal izdelka …
+    product_portal_visibility: Visible in
+    select_solution_category: Select a product portal...
     solution_categories_portal_info: >-
       This category will be visible in the main product portal along with the
       above selected product portals.
-    manage_categories: Upravljanje
   forum_category:
-    product_portal_visibility: Vidno v
-    select_product: Izberite portal izdelka …
+    product_portal_visibility: Visible in
+    select_product: Select a product portal...
     forum_categories_portal_info: >-
       This category will be visible in the main product portal along with the
       above selected product portals.
@@ -3772,7 +3190,7 @@ sl:
   dispatch:
     conditions: Pogoji
     actions: Aktivnosti
-    clone: Dispatch’r – Pravilo kloniranja
+    clone: Dispatch’r - Clone Rule
     new: Dispatch'r - Novo pravilo
     cascade_text: Za vsak prejet Zahtevek izvedi
     cascade: vsa ujemajoča pravila
@@ -3804,7 +3222,6 @@ sl:
         Ne pozabite, vrstni red pravil Dispatch’r-ja je pomemben. Za vsak prejet
         zahtevek bo Dispatch’r izpolnil prvo pripadajoče pravilo in se ustavil.
         Pravila lahko uredite tako da so najpomembnejša na vrhu.
-      tour_v2: Pomoč pri izdelavi pravila za Dispatch’r
     reorder: Preuredi
     add_new_action: Dodaj novo nalogo
     dispatch_rules: ' Dispatch''r - Pravila'
@@ -3815,11 +3232,6 @@ sl:
     skip_notifications: Prekoči obvestila pri novem Zahtevku
     skip_notification_yes: Da
     skip_notification_no: Ne
-    info_help: Za vsak dohodni zahtevek izvrši prvo ujemajoče pravilo
-    default_rule_desc: >-
-      Vsi zahtevki v povezavi z naročninami bodo dodeljeni skupini za
-      obračunavanje
-    default_rule_name: Vsi zahtevki v povezavi z naročninami za obračunavanje
   header_logo: Logo v glavi
   feedback:
     title: Je bil odgovor v pomoč?
@@ -3840,7 +3252,6 @@ sl:
       agents: Agenti
       all: Vsi
       select_company: Izberi podjetja
-      help_text: 'Izberite seznam uporabnikov, ki bodo imeli dostop do te mape'
     types:
       permanent: Stalno
       workaround: Drugačna rešitev
@@ -3848,11 +3259,6 @@ sl:
       placeholder: Išči vse rešitve
     search:
       placeholder: 'Išči %{name}'
-    company:
-      add_existing: Dodaj k obstoječemu
-      replace_existing: Nadomestite obstoječega
-    drafts:
-      empty: Tukaj ni osnutkov.
   auto_suggest_solutions:
     info: >-
       <b> Verjetno že imamo odgovor na vaše vprašanje. </b> <br/> Preverite ali
@@ -3969,9 +3375,9 @@ sl:
     spam_info:
       spam: Reply was marked as spam
       waiting: Reply waiting for your approval
-    spam_action: Odobrite in objavite
+    spam_action: Approve and Publish
     replied_time: ' replied, %{time_in_words} ago'
-    visible_in: Vidno v
+    visible_in: Visible in
     requester: Zahtevnik
   activerecord:
     errors:
@@ -4074,9 +3480,6 @@ sl:
           Vi in <a id='users-voted' href='#' title='See who have this'> %{vote}
           oseb </a> ima to vprašanje
         voted_users_widget_title: 'Osebe, ki imajo to vprašanje'
-      announce:
-        voted_users_widget_title: 'Ljudje, ki jim je všeč ta objava'
-        vote_info_include_1: Ta objava vam je všeč.
     post:
       posted_on: '%{user_name} na %{post_date}'
       edit_comment: Uredi komentar
@@ -4091,8 +3494,8 @@ sl:
       answer: Odgovor
     best_answer:
       answer_confirm: >-
-        Videti je, da na to temo že obstaja odgovor. Potrdite, preden
-        nadaljujete
+        Looks like this topic has got an answer already. Please confirm before
+        you proceed
   half: 30 Minut
   premium_sla_times:
     five_minutes: 5 minut
@@ -4113,11 +3516,11 @@ sl:
     post: Forums & Solutions
   zendesk_import_status:
     extracting: >-
-      <b>Korak (1/2) Prenos datoteke z varnostno kopijo Zendesk.</b><br/>To
-      lahko traja nekaj minut, odvisno od količine podatkov. Prosimo, počakajte.
+      <b>Step (1/2) Downloading your Zendesk backup file.</b><br/>This might
+      take a few minutes depending on the size of your data. Please wait.
     info: >-
-      <b>Korak (2/2) Uvoz v teku. Prosimo, počakajte.</b><br/>Ko bo uvoz
-      zaključen, boste od nas prejeli e-sporočilo.
+      <b>Step (2/2) Import in progress. Please wait.</b><br/>You will receive an
+      email from us once the import is complete.
     progress: Import in Progress
     not_started: ''
     completed: Import Complete
@@ -4184,44 +3587,6 @@ sl:
     maximum: Največ
     enable: Omogoči
     confirm: Potrdi
-    auto_assignment_description: >-
-      Dohodni zahtevki za to skupino bodo samodejno dodeljeni razpoložljivim
-      agentom glede na izbran način dodelitve
-    info8: >-
-      Novo: svojim nadzornikom dovolite upravljati samodejno dodelovanje
-      zahtevkov in razpoložljivost agentov za njihove skupine –
-    sbrr_plan_text: <span class="muted">Na voljo za</span> <b>plan Forest</b>
-    please_confirm: 'Prosimo, potrdite …'
-    info8_readmore: Več o tem
-    alert_content: >-
-      Preusmerjeni boste na stran z veščinami. Vse spremembe, ki ste jih
-      naredili za to skupino, bodo samodejno shranjene, če ste se odločili
-      nadaljevati.
-    round_robin_skill_based_tooltip: >-
-      Če obstajata dva agenta z enakimi veščinami, bodo zahtevki dodeljeni
-      agentu, ki trenutno obdeluje manj zahtevkov.
-    alert_content_2: Ali želite nadaljevati?
-    escalation_rule: Pravilo za eskalacijo
-    rr_v2_confimation_message: Dejanja ni mogoče razveljaviti. Ali resnično želite nadaljevati?
-    round_robin_skill_based: Dodelitev zahtevkov glede na spretnosti
-    toggle_availability_message: >-
-      Skrbniki in nadzorniki lahko na nadzorni plošči prepišejo agentovo
-      razpoložljivost
-    only_round_robin_description: >-
-      Dohodni zahtevki za to skupino bodo samodejno dodeljeni razpoložljivim
-      agentom glede na način algoritma <strong>Round Robin</strong>
-    per_agent: na agenta
-    round_robin_defalut: Način dodelovanja zahtevkov Round Robin
-    round_robin_capping: Dodeljevanje zahtevkov z uravnoteženo obremenitvijo
-    no_group_info: Niste ustvarili nobenih skupin.
-    round_robin_skill_based_info: 'Dodeli zahtevke agentom, ki jih lahko najbolje obravnavajo'
-    round_robin_default_info: Dodelitev zahtevkov agentom v krožnem zaporedju
-    send_escalation_to: '… potem pošlji eskalacijsko e-pošto na:'
-    round_robin_capping_info: 'Omejite št. zahtevkov, ki jih lahko agent obravnava hkrati'
-    sbrr_trial_text: >-
-      Ali ste vedeli, da lahko dodelite zahtevke glede na sposobnosti vaših
-      agentov? <a href="https://support.freshdesk.com/solution/articles/222692"
-      target="_blank">Več o tem</a>
   four: 4 ure
   oneweek: 1 Teden
   twoweek: 2 tedna
@@ -4239,17 +3604,15 @@ sl:
   agent:
     full_time_agent: Reden agent
     occasional_agent: Občasen agent
-    deleted_agent_info: >-
-      Opomba: vsa sporočila od izbrisanih agentov bodo označena kot NEZAŽELENA
-      VSEBINA.
+    deleted_agent_info: 'Note: All communication from the deleted agents will be marked as SPAM.'
     new: Nov Agent
     edit: Uredi Agenta
     showing: 'Prikaz:'
     type: Tip agenta
-    delete_agent: Izbriši agenta
+    delete_agent: Delete Agent
     delete_agent_confirmation: >-
-      Izbrisan agent bo na voljo kot stik. To bo iz službe za pomoč uporabnikom
-      odstranilo vse podatke o agentu. Ali resnično želite nadaljevati?
+      The deleted agent will be available as a contact. This will remove all
+      agent information from the helpdesk. Are you sure you want to proceed?
     agent_restored: Agnet je spet aktiven
     status:
       active: Aktivno
@@ -4316,42 +3679,6 @@ sl:
         sebe.
       info8: Več o vlogah agentov
       title3: Agent (Skupinski dostop)
-      title4: Obsegi in vloge
-      info9: >-
-        Stalni agenti so tisti, ki se bodo v službo za pomoč uporabnikom
-        prijavili vsak dan.
-      info14: >-
-        S spreminjanjem obsega zahtevka lahko izbirate, katere zahtevke lahko
-        vidi agent. Prav tako lahko z izborom vlog določite, katera dejanja naj
-        ta agent izvaja v službi za pomoč uporabnikom.
-      info11: >-
-        Agente lahko razporedite v ustrezne skupine, kot sta »Prodaja« in
-        »Upravljanje izdelkov«. To, da jih razporedite v oddelke, vam omogoča
-        preprosto dodeljevanje zahtevkov, ustvarjanje specifičnih pripravljenih
-        odgovorov, upravljanje potekov dela in ustvarjanje poročil na skupinski
-        ravni. Upoštevajte tudi, da je lahko isti agent član več skupin.
-      info12: >-
-        Agent v storitvi Freshdesk je vsak, ki potrebuje dostop do zahtevkov, na
-        njih dela in jih razrešuje. Seznam prikazuje vse agente, ki so trenutno
-        na voljo v vaši službi za pomoč uporabnikom. Za urejanje podrobnosti
-        kliknite agenta, ali pa za njegovo dodajanje kliknite »Nov agent«.
-        Dodani agenti bodo prejeli e-sporočilo za potrditev/aktivacijo računa
-        ter dostop za urejanje zahtevkov.
-      info15: >-
-        Pomnite, da svojih vlog ne boste mogli urejati, niti se izbrisati kot
-        agent.
-      info10: >-
-        Občasni agenti so tisti, ki se v službo za pomoč uporabnikom prijavo le
-        občasno – npr. prodaja ali vodja trženja, ki poskrbi za določena
-        povpraševanja strank. Za te agente morate mesečno kupiti dodatna prosta
-        mesta.
-      info13: >-
-        Izberete lahko, ali bodo imeli agenti polni ali občasni dostop do vašega
-        portala za pomoč strankam. Občasni agenti uporabljajo enodnevne licence
-        za vsak dan, ko se prijavijo v portal za podporo uporabnikom. Mogoč je
-        nakup večjega števila dnevnih licenc v zavihku skrbnika. Pomnite, da vam
-        bomo zaračunali zgolj število stalnih agentov, dodanih v plane in v
-        razdelek za obračun.
     make_admin: Določi Agenta kot admin-a
     view_user: Pregled uporabnika
     use_email: Uporabi to e-pošto
@@ -4363,7 +3690,7 @@ sl:
     roles: Vloge
     roles_description: Določi dodatne vloge agentu
     ticket_scope: Obseg zahtevka
-    admin: Skrbnik
+    admin: Administrator
     supervisor: Nadzornik
     global: Agent (Globalen dostop)
     group: Agent (Skupinski dostop)
@@ -4387,39 +3714,11 @@ sl:
     export: Izvozi
     no_recent_activity: Nobene nedavne dejavnosti
     skill: Veščine
-    member: 'Član:'
-    search_placeholder: Išči vse agente
-    ago: '%{time} nazaj.'
-    remove_role: Odstrani vlogo
-    remove_group: Odstrani skupino
-    convert_to_contact: Pretvori v stik
-    reset_scores: Ponastavitev značk in točk
-    add_skills: Dodaj veščino
-    reset_score_alert_you: >-
-      Izgubili boste svoje značke, točke pa bodo ponastavljene na %{points}. Ali
-      želite nadaljevati?
-    invalid_export_params: >-
-      Pri izvažanju podatkov o agentih je prišlo do napake. Prosimo, poskusite
-      znova.
-    invalid_placeholder: Vnesene so bile neveljavne označbe mest
-    reset_score_alert_them: >-
-      %{name} bo izgubil/a vse svoje značke, točke pa bodo ponastavljene na
-      %{points}. Ali želite nadaljevati?
-    groups_description: S tem agentom povežite eno ali več skupin.
-    export_title: Izvozite agente v datoteko CSV
-    convert_agent_confirmation: >-
-      Pozor – pretvorba agenta v stik bo trajno odstranila vse podatke o agentu.
-      Ali resnično želite nadaljevati?
-    export_successfull: Podatki o agentih vam bodo v kratkem poslani po e-pošti!
-    manage_skills: Upravljanje veščin
-    reset_score_title: Ponastavitev značk in točk
-    last_seen_at: Nazadnje na voljo
-    assign_group: Poveži skupine
   account_admin: Aministrator up. računa
   right: Desno
   footer:
     helpdesk_software: Program za podporo
-    by_freshdesk: od Freshdeska
+    by_freshdesk: by Freshdesk
     submit_feedback: Submit Feedback
     browse_community: Browse Community
   tkt_unattended_in_grp: Zahtevek neobdelan v skupini
@@ -4464,9 +3763,7 @@ sl:
   import_data: Datum uvoza
   contacts:
     confirm_delete: 'Ali ste prepričani, da želite izbrisati uporabnika?'
-    deleted_user_info: >-
-      Opomba: vsa sporočila od izbrisanih uporabnikov bodo označena kot
-      NEZAŽELENA VSEBINA.
+    deleted_user_info: 'Note: All communication from the deleted users will be marked as SPAM.'
     delete_confirmation: >-
       When you delete a contact, future communication from the contact will be
       marked as SPAM. Are you sure you want to proceed?
@@ -4518,7 +3815,7 @@ sl:
     post_created: >-
       <span class='muted'>%{time} ago in </span><a
       href='%{forum_url}'>%{forum_name}</a>
-    new_topic: Nova tema
+    new_topic: New Topic
     reply: Odgovori
     info_example: example - LA Lakers fan etc.
     form_placeholder:
@@ -4671,25 +3968,22 @@ sl:
     info2: >-
       Zmanjšanje paketa bo povzročilo izgubo podatkov in nastavitev
       funkcionalnosti za funkcionalnosti, ki so na voljo v višjem paketu.
-    currency-note: 'Vsa vaša nadaljnja plačila bodo v denarni valuti '
-    free_plan_currency_note: >-
-      Ko nadgradite ali dodate agente, bo vaše plačilo izvedeno v denarni
-      valuti 
+    currency-note: 'All your future payments will be in '
+    free_plan_currency_note: 'When you upgrade or add agents, your payment will be in '
     type: Tip
     invoice: Račun
     refund: Kupnian vrnjena
     download: Prenos
     status: Stanje
     date: Datum
-    sub_total: Skupaj
-    unit_price: Cena enote
   activate: Aktiviraj
   feedbackwidget_button_text: Oznaka
   amount_billed_per_month: 'You will be billed <b>%{amount} %{period}</b>.'
   amount_billed_annually: 'You will be billed <b>%{amount} annually</b>.'
   currency_note: >-
-    <a href='/subscription'>Kliknite tukaj</a> za spremembo valute. <br>Pomnite,
-    da valute ni mogoče več spremeniti, ko vnesete podatke o kartici.
+    <a href='/subscription'>Click here</a> to change your currency. <br> Please
+    note that you cannot change the currency once you enter the card
+    information.
   import_zendesk_summary: Povzetek uvoza iz zendeska
   user_activation_email: Aktivacijska e-pošta uporabnika
   incident: Incident
@@ -4995,10 +4289,6 @@ sl:
       created_by: 'Ustvaril(-a):'
       feedback: Povratne informacije
       analytics: Analitika
-      mark_as_uptodate:
-        text_1: Ta prevod označi kot posodobljen
-      unsaved_content: Na tej strani imate neshranjeno vsebino.
-      leave_page_que: Ali želite zapustiti to stran?
   import_updated: Spremenjeno
   feedbackwidget_intro: Spodaj uredite vaš freshdesk modul in preglejte spremembe v realnem času
   chatwidget_intro: Spodaj lahko prilagodite in opazujete spremembe vašega Live Chat modula
@@ -5011,7 +4301,7 @@ sl:
     import_warning_info: >-
       If we encounter an already existing %{type} %{field} during import, then
       the other details of the %{type} will be updated.
-    import_csv: 'Uvozi vrsto %{type} iz datoteke CSV'
+    import_csv: 'Import %{type} from CSV'
     sample_data: Sample data
     contact_import_data_info: >-
       Please ensure that your CSV file is in UTF-8 format and the first row has
@@ -5049,8 +4339,6 @@ sl:
       reset_warning: >-
         Ko resetirate API ključ bodo vse aplikacije, ki uporabljajo star ključ
         prenehale delovati. Ste prepričani da želite nadaljevati?
-    freshid_profile_info: Preusmerjeni boste na stran z vašim računom Freshworks
-    freshid_profile_link: Spremenite podatke o profilu ali geslo
   add_to_do: Dodaj nalogo
   subject_or_description: Zadeva ali opis
   premium_details: >-
@@ -5177,7 +4465,6 @@ sl:
       home: Domov
       company_tickets: Zahtevki podjetja
       social: Socialno
-    goto_agent_portal: Portal za agente
   agent_adds_comment: Agent je dodal komentar k zahtevku
   portal_customizer_anon_tickets: Zahtevek lahko odda kdorkoli
   portal_customizer_option_tickets: Uporabniki lahko pošljejo zahtevek brez prijave
@@ -5185,7 +4472,7 @@ sl:
   tag:
     title: Oznake
   email_notifications:
-    default_font: 'Privzeta pisava: '
+    default_font: 'Default Font : '
     customize_email: Uredi e-poštp
     edit_reply_template: Uredi predlogo
     default_reply_template_title: Predloga odgovora Agenta
@@ -5194,39 +4481,37 @@ sl:
       odgovarjali na zahtevek
     modify_requester_template: Uredi predlogo e-pošte prijavitelja
     requestor_notification: Obvestilo prijavitelja
-    requestor_notifications: Obvestila zahtevnika
+    requestor_notifications: Requester Notifications
     notification_template: Reply Templates
     title: E-poštna obvestila
-    singular_title: Obvestilo
-    index_outdated: Nekateri prevodi so zastareli
-    show_default: Prikaži izvirno vsebino
-    hide_default: Skrij izvirno vsebino
-    last_saved: Nazadnje shranjeno
-    mark_outdated: Označi vse prevode za zastarele
-    mark_uptodate: Ta prevod označi kot posodobljen
-    reset_last_saved: Ponastavi v nazadnje shranjeno vsebino
+    singular_title: Notification
+    index_outdated: Some translations are outdated
+    show_default: Show original content
+    hide_default: Hide original content
+    last_saved: Last saved
+    mark_outdated: Mark all translations as outdated
+    mark_uptodate: Mark this translation as up-to-date
+    reset_last_saved: Reset to last saved content
     notify_agents: Obvesti zastopnike
     edit: Uredi
     add: Dodaj
     no_agents: Dodaj agente
-    disabled_toggle: Tega obvestila ni mogoče izklopiti.
-    translation_outdated: Ta prevod je zastarel.
-    translation_uptodate: Ta prevod je posodobljen.
+    disabled_toggle: You cannot turn off this notification.
+    translation_outdated: This translation is outdated.
+    translation_uptodate: This translation is up-to-date.
     unsaved_confirm: >-
-      Videti je, da ste v naglici, da nadaljujete na naslednje obvestilo,
-      pozabili shraniti prejšnje. Če vam res ni všeč, kar ste napisali, lahko
-      nadaljujete in izgubili boste vse spremembe, vendar vam svetujemo, da se
-      vrnete in jih takoj shranite.
-    unsaved_title: Pozor! Spremembe niso shranjene
-    proceed_anyway: Nadaljujte vseeno
-    take_back: Pojdi nazaj
+      In your hurry to move on to the next notification, it looks like you
+      forgot to save the previous one. If you really hated what you wrote you
+      can Proceed and lose all changes, but we recommend you go back and save
+      them right away.
+    unsaved_title: Warning! You haven't saved changes
+    proceed_anyway: Proceed anyway
+    take_back: Take me back
     agent_select: >-
-      Prosimo, izberite agente, ki jih želite obvestiti, ko je v vaši službi za
-      podporo uporabnikom ustvarjen nov zahtevek.
+      Please select the agents you want to notify when a new ticket is created
+      in your helpdesk.
     agent_select_title: Obvesti zastopnike
-    reset_confirm: >-
-      Če ponastavite, bodo izgubljene vse spremembe. Ali še vedno želite
-      nadaljevati?
+    reset_confirm: All changes will be lost when you reset. Do you still want to continue?
     helpcard:
       info2: >-
         Obvestila lahko izklopite in izdelate pravilo v Dispatch’r-ju ali
@@ -5237,103 +4522,107 @@ sl:
       agent_template_10:
         topic: Aktivacijska e-pošta uporabnika
         info1: >-
-          E-sporočilo za aktivacijo uporabnika je poslano, ko je službo za pomoč
-          uporabnikom dodan nov agent. E-pošta za aktivacijo mora za agente
-          vsebovati »URL-povezavo za aktivacijo agenta« {{activation_url}}, da
-          ti ustvarijo svoje geslo in dokončajo postopek registracije.
-          <br/><br/>Če služba za pomoč uporabnikom nudi večjezično podporo,
-          lahko ustvarite e-pošto za aktivacijo za vsak jezik posebej. Ikona <i
-          class="common-icon-outdated"></i> prikazuje, da so prevodi obvestil v
-          drugih jezikih morda zastareli.
+          The User Activation Email is sent when a new agent is added in your
+          helpdesk. The activation email must necessarily contain the “Agent
+          Activation URL” {{activation_url}} for agents to create their password
+          and complete the signup process.<br /><br />If you’ve setup multiple
+          supported languages in your helpdesk, you can create an activation
+          email specific to each language. The <i
+          class="common-icon-outdated"></i> icon indicates that the notification
+          translations in other languages may be outdated.
       agent_template_1:
         topic: Ustvarjen nov zahtevek
         info1: >-
-          E-pošta z dopisom »Ustvarjen je nov zahtevek« bo poslana agentom
-          vedno, ko je v službi za pomoč uporabnikom ustvarjen nov zahtevek.
-          Izberete lahko, kateri agent bo prejemal ta obvestila. E-pošta lahko
-          vsebuje URL-povezavo zahtevka, ki agentu poenostavi preverjanje
-          zahtevka. <br/><br/>Če služba za pomoč uporabnikom nudi večjezično
-          podporo, lahko to obvestilo prilagodite za vsak jezik posebej. Ikona
-          <i class="common-icon-outdated"></i> prikazuje, da so prevodi obvestil
-          v drugih jezikih morda zastareli.
+          The New Ticket Created email will be sent out to your agents whenever
+          a new ticket is created in your help desk. You can pick which agent
+          should be receiving this notification. This email could contain the
+          ticket URL making it easier for the agent to check the ticket.<br
+          /><br />If you’ve setup multiple supported languages in your helpdesk,
+          you can create this notification specific to each language. The <i
+          class="common-icon-outdated"></i> icon indicates that the notification
+          translations in other languages may be outdated.
       agent_template_14:
         topic: e-pošta za reset gesla
         info1: >-
-          Če agenti v službi za pomoč uporabnikom oddajo zahtevo za novo geslo,
-          jim bo poslana e-pošta za ponastavitev gesla. Naslov URL za označbo
-          mesta {{password_reset_url}} je obvezen za zagotovitev dinamično
-          ustvarjene povezave za ponastavitev gesla po e-pošti.<br/><br/>Če ste
-          nastavili večjezično podporo v svoji službi za pomoč strankam, lahko
-          to obvestilo prilagodite za vsak jezik posebej. Ikona <i
-          class="common-icon-outdated"></i> sporoča, da so prevodi za obvestila
-          v drugih tujih jezikih morda zastareli.
+          Password Reset Email will be sent out to your agents when they request
+          a new password at your helpdesk. The {{password_reset_url}}
+          placeholder is required to provide the dynamically generated password
+          reset link in the email.<br/><br/>If you’ve setup multiple supported
+          languages in your helpdesk, you can create this notification specific
+          to each language. The <i class="common-icon-outdated"></i> icon
+          indicates that the notification translations in other languages may be
+          outdated.
       agent_template_2:
-        topic: 'Zahtevek, ki je dodeljen skupini'
+        topic: Ticket Assigned to a Group
         info1: >-
-          To obvestilo bo poslano vsem agentom v skupini vedno, ko je tej
-          dodeljen zahtevek. E-pošta naj bi vsebovala URL-povezavo
-          {{ticket.url}}, ki agentu poenostavi preverjanje zahtevka. <br /><br
-          />Če služba za pomoč uporabnikom nudi večjezično podporo, lahko to
-          obvestilo prilagodite za vsak jezik posebej. Ikona <i
-          class="common-icon-outdated"></i> prikazuje, da so prevodi obvestil v
-          drugih jezikih morda zastareli. 
+          This notification goes out to all the agents in a group whenever a
+          ticket gets assigned to that group. This email should contain the
+          ticket URL {{ticket.url}} making it easier for the agents to check the
+          ticket. <br /><br />If you’ve setup multiple supported languages in
+          your helpdesk, you can create this notification specific to each
+          language. The <i class="common-icon-outdated"></i> icon indicates that
+          the notification translations in other languages may be outdated. 
       agent_template_3:
-        topic: 'Zahtevek, dodeljen agentu'
+        topic: Ticket Assigned to an Agent
         info1: >-
-          To obvestilo bo poslano posameznim agentom, ko jim bo dodeljen
-          zahtevek. E-pošta lahko vsebuje URL-povezavo zahtevka, ki agentu
-          poenostavi preverjanje zahtevka. <br/><br/>Če služba za pomoč
-          uporabnikom nudi večjezično podporo, lahko to obvestilo prilagodite za
-          vsak jezik posebej. Ikona <i class="common-icon-outdated"></i>
-          prikazuje, da so prevodi obvestil v drugih jezikih morda zastareli. 
+          This notification will be sent out to individual agents when a ticket
+          has been assigned to them. This email could contain the ticket URL
+          making it easier for the agent to check the ticket.<br/><br/>If you’ve
+          setup multiple supported languages in your helpdesk, you can create
+          this notification specific to each language. The <i
+          class="common-icon-outdated"></i> icon indicates that the notification
+          translations in other languages may be outdated. 
       agent_template_11:
-        topic: Nerešen zahtevek v skupini
+        topic: Ticket Unattended in a Group
         info1: >-
-          To obvestilo je poslano agentu, ko zahtevek, dodeljen skupini, ni bil
-          pravočasno razrešen glede na določen čas v nastavitvah skupine.
-          E-obvestilo lahko vsebuje čas, ki je pretekel od dodelitve zahtevka
-          skupini.<br/><br/>Če služba za pomoč uporabnikom nudi večjezično
-          podporo, lahko to obvestilo prilagodite za vsak jezik posebej. Ikona
-          <i class="common-icon-outdated"></i> prikazuje, da so prevodi obvestil
-          v drugih jezikih morda zastareli.
+          This notification is sent out when a ticket assigned to a group has
+          not been attended within the time specified in the Group settings.
+          This email notification can contain the time lapsed since the ticket
+          got assigned to the group.<br/><br/>If you’ve setup multiple supported
+          languages in your helpdesk, you can create this notification specific
+          to each language. The <i class="common-icon-outdated"></i> icon
+          indicates that the notification translations in other languages may be
+          outdated.
       agent_template_6:
         topic: Requestor Replies to the Ticket
         info1: >-
-          Ko stranka odgovori na zahtevek, na katerega je odgovorila v
-          preteklosti, bo odgovorni agent o tem prejel to e-obvestilo. E-pošta
-          lahko vsebuje URL-povezavo zahtevka, ki agentu poenostavi preverjanje
-          zahtevka. <br/><br/>Če služba za pomoč uporabnikom nudi večjezično
-          podporo, lahko to obvestilo prilagodite za vsak jezik posebej. Ikona
-          <i class="common-icon-outdated"></i> prikazuje, da so prevodi obvestil
-          v drugih jezikih morda zastareli.
+          When a customer replies to the ticket he raised previously, the agent
+          handling the ticket will receive this email notification. This email
+          could contain the ticket URL making it easier for the agent to check
+          the ticket.<br/><br/>If you’ve setup multiple supported languages in
+          your helpdesk, you can create this notification specific to each
+          language. The <i class="common-icon-outdated"></i> icon indicates that
+          the notification translations in other languages may be outdated.
       agent_template_12:
         topic: Prvi odziv kršitve SLA
         info1: >-
-          To obvestilo je poslano agentu, ko se ta ni odzval na zahtevek v času
-          prvega odziva, določen za zahtevek. E-pošta lahko vsebuje URL-povezavo
-          zahtevka in čas zapadlosti. <br/><br/>Če služba za pomoč uporabnikom
-          nudi večjezično podporo, lahko to obvestilo prilagodite za vsak jezik
-          posebej. Ikona <i class="common-icon-outdated"></i> prikazuje, da so
-          prevodi obvestil v drugih jezikih morda zastareli.
+          This notification is sent out to an agent when he has not responded to
+          the ticket within the first response due time of the ticket. This
+          email could contain the ticket URL and the due by time of the
+          ticket.<br/><br/>If you’ve setup multiple supported languages in your
+          helpdesk, you can create this notification specific to each language.
+          The <i class="common-icon-outdated"></i> icon indicates that the
+          notification translations in other languages may be outdated.
       agent_template_13:
         topic: SLA kršitev časa reševanja
         info1: >-
-          To obvestilo je poslano agentu, ko zahtevek, namenjen njemu, ni bil
-          pravočasno razrešen. E-pošta lahko vsebuje URL-povezavo zahtevka, ki
-          agentu poenostavi preverjanje zahtevka. <br/><br/>Če služba za pomoč
-          uporabnikom nudi večjezično podporo, lahko to obvestilo prilagodite za
-          vsak jezik posebej. Ikona <i class="common-icon-outdated"></i>
-          prikazuje, da so prevodi obvestil v drugih jezikih morda zastareli.
+          This notification is sent out to agent when the ticket assigned to
+          them has not been resolved within the due by time. This email could
+          contain the ticket URL making it easier for the agent to check the
+          ticket.<br/><br/>If you’ve setup multiple supported languages in your
+          helpdesk, you can create this notification specific to each language.
+          The <i class="common-icon-outdated"></i> icon indicates that the
+          notification translations in other languages may be outdated.
       requester_template_10:
         topic: Aktivacijska e-pošta uporabnika
         info1: >-
-          Ko zahtevek ustvari novi uporabnik, lahko v službi za pomoč
-          uporabnikom zanj ustvarite račun in pošljete e-sporočilo za aktivacijo
-          računa. To e-sporočilo za stranko naj bi vsebovalo URL-povezavo za
-          aktivacijo računa.<br/><br/>Če ste nastavili večjezično podporo v
-          svoji službi za pomoč strankam, lahko to obvestilo prilagodite za vsak
-          jezik posebej. Ikona <i class="common-icon-outdated"></i> sporoča, da
-          so prevodi za obvestila v drugih tujih jezikih morda zastareli.
+          When a new user creates a ticket you can create a customer account in
+          your helpdesk for them and send out an activation email. This
+          notification should contain the activation URL for your
+          customers.<br/><br/>If you’ve setup multiple supported languages in
+          your helpdesk, you can create this notification specific to each
+          language. The <i class="common-icon-outdated"></i> icon indicates that
+          the notification translations in other languages may be outdated.
       requester_template_14:
         topic: e-pošta za reset gesla
         info1: >-
@@ -5356,7 +4645,7 @@ sl:
           class="common-icon-outdated"></i> icon indicates that the notification
           translations in other languages may be outdated.
       requester_template_4:
-        topic: Agent zahtevku doda komentar
+        topic: Agent Adds Comment to the Ticket
         info1: >-
           This email is sent to a requestor whenever an agent adds a comment to
           the ticket he raised. This email should ideally contain the ticket id
@@ -5391,7 +4680,7 @@ sl:
           The <i class="common-icon-outdated"></i> icon indicates that the
           notification translations in other languages may be outdated.
       requester_template_17:
-        topic: Dodan je bil nov e-poštni ID
+        topic: A new Email id has been added
         info1: >-
           This email is sent to the requestors asking them to verify a newly
           added email id to their contact.
@@ -5408,83 +4697,18 @@ sl:
           may be outdated.
       agent_template_25:
         topic: E-poštno sporočilo za povabilo zastopnika
-        info1: >-
-          E-poštno sporočilo za povabilo agenta je poslano, ko je obstoječi
-          Freshworksov agent dodan v vašo službo za pomoč uporabnikom (agent je
-          že aktiven v katerem koli drugem Freshdeskovem računu ali drugemu
-          izdelku Freshworks – Freshchat, Freshcaller, Freshsales, Freshservice,
-          Freshmarketer).<br/><br/> »E-poštno sporočilo za povabilo agenta« je
-          poslano tistemu agentu, ki je že aktiven Freshworksov agent.
-      agent_template_23:
-        topic: Opomnik o času razrešitve SLA
-        info1: >-
-          To obvestilo je poslano agentu, ko se čas razrešitve približuje koncu.
-          E-pošta lahko vsebuje URL-povezavo zahtevka, ki agentu poenostavi
-          preverjanje zahtevka. <br/><br/>Če služba za pomoč uporabnikom nudi
-          večjezično podporo, lahko to obvestilo prilagodite za vsak jezik
-          posebej. Ikona <i class="common-icon-outdated"></i> prikazuje, da so
-          prevodi obvestil v drugih jezikih morda zastareli.
-      cc_notification_20:
-        topic: Kp za javno opombo
-        info1: >-
-          Ko agent ali zahtevnik dodata javno opombo, bo z obvestilom o zadnjem
-          komentarju poslano to e-sporočilo vsem osebam v polju »Kp«. E-pošta
-          naj bi idealno vsebovala zadnjega komentatorja
-          {{comment.commenter.name}} in zadnji komentar {{comment.body}}.
-      agent_template_22:
-        info1: >-
-          To obvestilo je poslano agentu, ko se čas prvega odziva na zahtevek
-          približuje koncu. E-pošta lahko vsebuje URL-povezavo zahtevka in čas
-          zapadlosti. <br/><br/>Če služba za pomoč uporabnikom nudi večjezično
-          podporo, lahko to obvestilo prilagodite za vsak jezik posebej. Ikona
-          <i class="common-icon-outdated"></i> prikazuje, da so prevodi obvestil
-          v drugih jezikih morda zastareli.
-        topic: Opomnik o prvem odzivu SLA
-      forward_template_24:
-        topic: Predloga za odgovor agenta
-        info1: >-
-          Z uporabo predloge za odgovor lahko prilagodite in predhodno izpolnite
-          privzete informacije, ki jih želite dodati k agentovim odgovorom na
-          zahtevke. Predloge za odgovore/posredovanje agenta vam omogočajo
-          samodejno dodajanje dinamične vsebine, kot so ime zahtevnika,
-          URL-naslov zahtevnika in agentove podpise.<br/><br/>Če ste nastavili
-          večjezično podporo v svoji službi za pomoč strankam, lahko to
-          obvestilo prilagodite za vsak jezik posebej. Ikona <i
-          class="common-icon-outdated"></i> sporoča, da so prevodi za obvestila
-          v drugih tujih jezikih morda zastareli.
-      agent_template_21:
-        info1: >-
-          To obvestilo bo poslano agentom, ki so bili omenjeni v »obvesti
-          agente«, ko je zahtevku dodana opomba s strani agenta. Ta e-pošta
-          lahko vsebuje URL-povezavo zahtevka ({{ticket.url}}), ki agentu
-          poenostavi preverjanje zahtevka.
-        topic: Opomba dodana k zahtevku
-      cc_notification_19:
-        topic: Nov Kp zahtevka
-        info1: >-
-          To obvestilo bo poslano osebam dodanim v »Kp«, če je zahtevnik dodal
-          e-naslove pri pošiljanju zahtevka službi za pomoč uporabnikom. E-pošta
-          naj bi idealno vsebovala zahtevnikovo ime {{ticket.requester.name}} in
-          opis zahtevka {{ticket.description}}.
     insert_placeholder: Vstavite vnosna mesta
     modify_agent_template: Uredi predlogo e-pošte Agenta
     event: Dogodek
-    agent_notification: Obvestilo za agenta
-    agent_notifications: Obvestila za agente
+    agent_notification: Obvestilo agenta
+    agent_notifications: Agent Notifications
     subject: Zadeva
-    account_not_activated: >-
-      Videti je, da vaš račun še ni bil preverjen. Aktivirajte ga zdaj, da
-      omogočite obveščanje po e-pošti.
-    cc_notifications: Obvestila Kp
-    default_forward_template_info: >-
-      Predloga za posredovanje bo samodejno vključena v urejevalniku za
-      posredovana sporočila za VSE agente.
   errors_in_plan_change: Napaka pri urejanju
   formatting_help: Urejanje pomoči
   step1: Korak 1
   next_charge_date: 'Naslednje plačilo bo bremenjeno dne:'
   last_renewed_on: Nazadnje obnovljen na
-  update_and_log_in: Posodobitev in prijava
+  update_and_log_in: Update & Log in
   activate_and_log_in: Activate & Log in
   password: Geslo
   enter_payment: Vnesite podatke o plačilu..
@@ -5699,7 +4923,7 @@ sl:
     next: Naslednji zahtevek
     previous: Prejšnji zahtevek
     expand: Razširi
-    view_ticket: Ogled zahtevka
+    view_ticket: View Ticket
     insert: Vstavi
     switch_view:
       new_view: Preiskusi <strong>Nov pogled zahtevka</strong>
@@ -5955,11 +5179,6 @@ sl:
     search_text: Išči po člankih
     action: Dejanje
     thanks_v1: Hvala za informacije
-    search_close_text: Zapri iskanje
-    link_tracker:
-      notifier_body: 'Vsebina sporočila: '
-    compose:
-      to_address_placeholder: Vnesite e-naslov stranke
   recent_activity: Pretekla aktivnost
   recent_activities: Pretekle aktivnosti
   forgot_password: Pozabljeno geslo
@@ -6259,10 +5478,7 @@ sl:
         hours_format_tip: >-
           Enter time in HH:MM or decimals (like 1:30 or 1.5 for an hour and 30
           minutes). Leave this blank to start the auto-timer.
-      ticket_priority: Prednost zahtevkov
-      no_entry: Ni vnosov časov
-      archive_tickets_column_error: Arhivirani zahtevki bodo izključeni
-      max_columns: Ni mogoče dodati več kot 10 stolpcev
+      ticket_priority: Ticket Priority
     tags:
       index:
         title: Oznake
@@ -6363,9 +5579,6 @@ sl:
       update: Uredi
       ok: V redu
       hide_cc: Skrij Kp
-      do_not_link: Ne poveži
-      view_in_detail: Ogled podrobnosti
-      announcement_hide: Skrij to sporočilo
     dashboard:
       round_robin:
         all_agents: All agents
@@ -6504,8 +5717,6 @@ sl:
           earlier_date_and_time: >-
             Prosimo vpišite datum & čas ki je novejši kot datum kreiranja
             zahtevka
-        max_tag_length_msg: Oznaka ne sme biti daljša od 32 znakov
-        archived_ticket: Zahtevek je povezan z arhiviranim zahtevkom –
       view_ticket:
         meta: meta
         linked_ticket: Ta zahtevek je povezan s forumom
@@ -6558,11 +5769,6 @@ sl:
         article_feedback: Povratne informacije za članek
         archived: Arhiv
         my_article_feedback: Povratne informacije za moje članke
-        unresolved: Vsi nerazrešeni zahtevki
-        invalid_requester: Neveljaven zahtevnik
-        archive_view: Ogled arhiva
-        ongoing_collab: Moji aktivni posveti
-        raised_by_me: Moji zahtevani zahtevki
       note:
         posted_on: '%{user_name} na %{note_date}'
         created_on:
@@ -6605,9 +5811,9 @@ sl:
           exceed: >-
             Ops! Vaša priponka je večja kot 15 MB. Prosimo pripnite manjšo
             datoteko
-          not_added: (Ni dodano)
-          not_added_greater: (> 15 MB – ni dodano)
-          exceed_limit: Presega največjo velikost priponke
+          not_added: (Not Added)
+          not_added_greater: (> 15 mb Not Added)
+          exceed_limit: Exceeds attachments size
     merge:
       merge:
         merge_into: Združi z?
@@ -6698,8 +5904,6 @@ sl:
         title: Canned responses
     ca_response:
       delete_confirm: Are you sure you want to delete this canned response?
-    attachment:
-      drop_files_here: Odložite datoteke tukaj
   import_ticket_group: Zahtevki
   tickets_filter:
     title: Filter zahtevkov
@@ -6754,12 +5958,6 @@ sl:
     actions_empty: Aktivnosti ne morejo biti prazne
     invalid_domain:
       freshdesk: Freshdesk
-      may_be_this_is_still_fresh: ' Mogoče je še vedno na voljo! '
-      claim_it_now: Prevzamete jo lahko zdaj na
-      we_couldnt_find: ' Ni nam uspelo najti '
-      there_is_no_helpdesk_here: Tukaj ni službe za pomoč uporabnikom!
-    error_page:
-      back_to_home: nazaj domov
   export_data:
     in_sla: Within SLA
     out_of_sla: SLA Violated
@@ -6789,15 +5987,14 @@ sl:
     from: Od
     to: Za
     data_backup:
-      body: Izvoz podatkov je pripravljen na prenos.
+      body: Your data export is ready for download.
     no_tickets_mail:
-      body: 'Videti je, da za določeno časovno obdobje ni najdenih zahtevkov.'
+      body: Seems like there are no tickets in the provided date range.
     customer_export:
       body: >-
         The %{field} export you had requested is complete. You can download the
         file from <a href=%{url}>here</a>. If the link does not work, copy and
         paste the URL below in your browser's address bar:
-      note: Ta povezava bo potekla v 15 dneh.
     ticket_export:
       info: Your Ticket data will be sent to your email shortly!
       subject: >-
@@ -6807,7 +6004,6 @@ sl:
         The ticket export you had requested is complete. You can download the
         file from <a href=%{url}>here</a>. If the link does not work, copy and
         paste the URL below in your browser's address bar:
-      note: Ta povezava bo potekla v 15 dneh.
     fields:
       ticket_id: Ticket Id
       subject: Subject
@@ -6870,9 +6066,6 @@ sl:
         We currently allow only %{limit} concurrent exports. Kindly try again
         after some time. Apologies for the inconveniences caused.
     view_all_tickets: Izvozi kot CSV
-    data_backup_failure:
-      body: Neuspešno izvažanje podatkov. Ali želite poskusiti znova?
-    check_uncheck_title: Označi/ne označi vse
   sla:
     minutes: Mins
     hours: Hrs
@@ -6886,7 +6079,7 @@ sl:
       recent_searches: Your Recent Searches
       recent_tickets: Recent Tickets
       social_accounts: Social Accounts
-      custom_streams: Pretoki družbenih omrežij
+      custom_streams: Social Streams
       post_tweet: Post a tweet
       compose: Compose
       no_results: No recent posts in this stream.
@@ -7947,12 +7140,6 @@ sl:
       admin_credentials:
         login: Prijava
         email_address: E-poštni naslov
-        link_your_helpdesk: Povežite svojo službo za podporo uporabnikom
-        login_your_helpdesk: Prijava v službo za podporo uporabnikom
-        login_with_admin: >-
-          Za povezovanje prijave z Googlom in računom Freshdesk morate biti
-          skrbnik računa
-        your_helpdesk: Vaša služba za podporo uporabnikom
       associate_account:
         user_name: Ime
         helpdesk_url: URL podpore
@@ -7961,18 +7148,6 @@ sl:
         company_name: Naziv podjetja
         phone_no: Telefonska številka
         create_my_account: Ustvarite račun
-        existing_user: Obstoječi račun
-        your_freshdesk_url: Vaša URL-povezava službe za pomoč uporabnikom
-        terms_and_policy: >-
-          S klikom »Ustvarite račun« se strinjate s<a
-          href='http://freshdesk.com/terms' target='_blank'>pogoji in pravili
-          storitve</a> in <a href='http://freshdesk.com/privacy'
-          target='_blank'>pravilnikom o zasebnosti</a>
-        new_account: Nov račun
-        domain_info: >-
-          primer: če je vaša služba za pomoč uporabnikom
-          »http://apple.freshdesk.com«, potem vnesite »apple«
-        helpdesk_name: Ime službe za pomoč uporabnikom
     screen_pop:
       widget:
         cancel: Prekliči
@@ -7982,7 +7157,6 @@ sl:
         add_note_text: Zapiski o klicu
         recent_tickets: Najnovejši Zahtevki
         create: Ustvari
-        do_not_link: Ne poveži
     hootsuite:
       send: Pošlji povratno informacijo
       filter:
@@ -8098,9 +7272,8 @@ sl:
         feedback_widgets_knowledge_base: 'Baza znanja '
         feedback_widgets_help_articles: ali brskaj po člankih pomoči
         show_all_results: Pokaži vse rezultate
-        no_results: 'Ni rezultatov za '
+        no_results: 'No results for '
         problems_with_fields: Prosimo preglejte vnose v sledečih poljih
-        prohibited_error: 1 napaka je onemogočila shranjevanje tega zahtevka
   reorder: Preuredi
   reports:
     no_data: Ni podatkov za prikaz
@@ -8129,50 +7302,48 @@ sl:
       options:
         incoming: Dohodni
         outgoing: Odhodni
-        all_groups: Vse skupine
+        all_groups: All Groups
         unassigned: Nedodeljeno
       range_exceed: Range cannot exceed 90 days
       filter_by_title: Filtrirano po
       time_period: Časovno obdobje
       report_title: Freshfone Summary
-      summary_title: 'Povzetek klepeta z agentom '
+      summary_title: 'Agent Call Summary '
       agent: Agent
       group: Skupina
       call_type: Vrsta klica
       filter_report: Filtiraj poročilo po
       select_agent: Select Agent
       select_group: Select Group
-      select_call_type: Izberite vrsto klepeta
+      select_call_type: Select Call Type
       select_number: Select a Number
       all_numbers: Vse številke
       all_call_types: All
       number: Številka
-      avg_handle_time: Povprečni čas obravnave
-      num_of_calls: Število klicev
+      avg_handle_time: Avg Handle Time
+      num_of_calls: No of Calls
       total_answered: Answered Calls
-      total_voice_mail: Glasovna pošta
+      total_voice_mail: Voice Mails
       total_duration: Total Duration
       agent_calls_count: Calls
-      total_unanswered_calls: Neodgovorjeni klici
-      num_of_transfered: Št. prenosov
-      unanswered_transfers: Neodgovorjeni prenosi
+      total_unanswered_calls: Unanswered Calls
+      num_of_transfered: No of Transfers
+      unanswered_transfers: Unanswered Transfers
       answered_percentage: Answer %
       generate_summary: Izdelaj
       filter_close: Zapri
       unanswered_count: Neodgovorjeno
       includes_transfer: Includes transferred calls
-      no_agent: '- Ni agenta -'
+      no_agent: '- No Agent -'
       business_hours: Delovni čas
       filter_option_all_calls: Vsi klici
-      no_external: 'Prenosi, narejeni na zunanje številke, niso vključeni'
     time_sheets:
-      billable: Obračunane ure
-      non_billable: Neobračunane ure
-      total_time: Zabeleženih ur
-      billable_vs_non_billable: Obračunano/Neobračunano
+      billable: Billable Hours
+      non_billable: Non-Billable Hours
+      total_time: Hours Tracked
+      billable_vs_non_billable: Billable vs Non-billable
       filter_by_title: Filtrirano po
       time_period: Časovno obdobje
-      pick_columns: Izberite stolpce
     summary_report:
       back_to_reports: Nazaj na poročila
       show_report: Odpri poročilo
@@ -8183,7 +7354,7 @@ sl:
       fcr_percent: ROK %
       avg_1st_response_time: Povpr. odzivni čas
       avg_response_time: Povprečen odzivni <br> čas
-      avg_resolution_time: Povprečen čas <br>reševanja
+      avg_resolution_time: Average Resolution <br> Time
       helptext: >-
         Statistike izračunane v poročilu so odvisne od št. rešenih zahtevkov.
         <br /> Zahtevki rešeni znotraj pogojev SLAs so združeni kot  &quot;
@@ -8214,9 +7385,9 @@ sl:
         select_agent: Izberi agenta
         select_group: Izberi skupino
         select_billable: Izberi obračunljivo/ ni obračunljivo
-        select_priority: Izberite prednost
-        select_product: Izberite izdelek
-        select_type: Izberite vrsto
+        select_priority: Select Priority
+        select_product: Select Product
+        select_type: Select Type
         view_between: Izpiši poročilo med
         from: Od
         to: Za
@@ -8228,10 +7399,6 @@ sl:
       speed_champion: Prvak v hitrosti
       customer_champion: Prvak Uporabnikov
       valuable_player: Najbolj vreden
-      agent_highest_points: Agenti z najvišjimi skupnimi točkami
-      agents_fastest_resolve: 'Agenti, ki hitreje razrešijo zahtevke'
-      sample_name: Ivo Jan
-      agents_cs_highest: Agenti z najvišjimi točkami zadovoljstva strank
     survey_reports:
       index:
         agent_list_loading: Pridobivam seznam agentov
@@ -8280,16 +7447,6 @@ sl:
         overview: Pregled
         answered: Odgovorjeno
         rating: Ocena
-        view_report_by: Ogled po
-        response_to: Odziv na
-        fetching_responses: Pridobivanje odzivov
-        question: V
-        loading_responses: Nalaganje odzivov
-        preparing_chart_for: Priprava grafikona za
-        no_remarks: Na voljo ni odzivov
-        all_responses: Vsi odzivi
-        deleted_list: IZBRISANI VPRAŠALNIKI
-        loading_msg: Ustvarjanje poročil …
     livechat:
       report_title: Live Chat Summary
       filter_by_title: Filtrirano po
@@ -8299,9 +7456,9 @@ sl:
       chat_type: Vrsta klepeta
       summary: Summary
       filter_report: Filtiraj poročilo po
-      select_widget: Izberite pripomoček
+      select_widget: Select Widget
       select_group: Select Group
-      select_chat_type: Izberite vrsto klepeta
+      select_chat_type: Select Chat Type
       all: All
       chat_type_visitor: Visitor Initiated
       chat_type_agent: Agent Initiated
@@ -8309,14 +7466,14 @@ sl:
       generate_summary: Izdelaj
       filter_close: Zapri
       total_chats: Skupaj
-      num_of_chats: Št. klepetov
+      num_of_chats: No of Chats
       answered_chats: Odgovorjeno
       missed_chats: Zgrešeni
-      num_of_transfer: Prenosov
-      avg_handle_time: Povprečni čas obravnave
-      avg_time_queue: Čas v vrsti
+      num_of_transfer: Transfers
+      avg_handle_time: Avg Handle Time
+      avg_time_queue: Time in Queue
       total_duration: Total Duration
-      agent_chat_summary: Povzetek klepeta z agentom
+      agent_chat_summary: Agent Chat Summary
       agent: Agent
       deleted: Deleted
     discard_changes: Zavrzi spremembe
@@ -8374,36 +7531,9 @@ sl:
         identifikacijo največjih problemov, ki pestijo vašo podporo. Z odvisnimi
         polji lahko zahtevke organizirate hierarhično v kategorije,
         podkategorije.
-      info4_v3: >-
-        Če imate plan Estate ali več, lahko uporabite dinamična polja, ki se
-        prikažejo na podlagi izbrane možnosti v vrsti polja. Vsakemu razdelku
-        lahko dodate polja zahtevka in ga povežete z možnostmi v polju s
-        spustnim menijem. Primer: v primeru spletne trgovine lahko imate možnost
-        odprtja razdelka s poljem »Razlog«, ko stranka izbere možnost
-        »Zamenjava«. Tako lahko bolje razumete, zakaj vaša stranka želi
-        zamenjavo. Ustvarite lahko največ dva dinamična razdelka in jih
-        uporabljate v dveh spustnih menijih po meri. Če ste razdelek že povezali
-        s poljem »vrste«, boste lahko obrazcu za zahtevek dodali samo še en
-        razdelek.
-      info_1: >-
-        Obrazec za zahtevek pomaga pri zajemanju podatkov, ki jih želite
-        pridobiti od svoje stranke, ko ta odda zahtevek. Svoj obrazec za
-        zahtevek lahko prilagodite, da vključuje ustrezna polja zahtevka za
-        svoje podjetje ter omogočite strankam in agentom izpolnjevanje podatkov
-        v želeni obliki. Primer: v podjetju z elektronskim poslovanjem je agentu
-        lahko v veliko pomoč pridobitev ID-ja naročila stranke v obliki obrazca
-        za zahtevek.
-      title3: Dinamična polja
-      info4_v2: >-
-        Če imate plan Estate ali več, lahko uporabite dinamična polja, ki se
-        prikažejo na podlagi izbrane možnosti v vrsti polja. Za vsako možnost v
-        vrsti polja lahko ustvarite drugačen razdelek. Vsakemu razdelku lahko
-        dodate več polj zahtevka. Primer: v scenariju elektronskega poslovanja –
-        ko je vrsta izbrana kot »Zamenjava«, se lahko odpre razdelek s poljem
-        »Razlog«, ki bo zbral razlog, zakaj stranka potrebuje zamenjavo izdelka.
   contact_field:
     helpcard:
-      title2: Prilagajanje polj za stik
+      title2: Customizing your contact fields
       info2: >-
         The contact form in Freshdesk lets you capture important data from your
         customers so that you can support them better. You can help your team
@@ -8412,9 +7542,9 @@ sl:
         information with custom fields for pricing plan, department etc. and
         prioritize tickets accordingly in your helpdesk.
       info3: >-
-        Tako kot polja za zahtevke lahko dodate tudi nova polja obrazcu za
-        registracijo stranke in jih naredite obvezne. Prav tako lahko imate
-        zasebna polja, ki bodo vidna samo agentom.
+        Just like your ticket fields, you can add new fields to the customer
+        sign up form and make them mandatory. You can also have private fields
+        that are visible just to your agents.
   company_field:
     helpcard:
       title1: Customizing your company fields
@@ -8695,7 +7825,7 @@ sl:
     please_wait: Prosimo počakajte..
     add_another: Add Another
     merged_with: 'This contact has been merged with : '
-    email_remove: 'Ali ste prepričani, da želite odstraniti to e-pošto?'
+    email_remove: Are you sure you want to remove this Email?
     default_email: Default Email
     additional_email: Additional Email Verification
   portalcss:
@@ -8872,7 +8002,7 @@ sl:
       select_group_msg: Izberi skupino
       no_customers_msg: Nimate nobenega kupca
       no_groups_msg: Nimate nobene skupine
-      loading_msg: Ustvarjanje poročil …
+      loading_msg: Generating Reports ...
     load:
       recived_resolved_backlog: Prejeti zahtevki vs Rešeni vs Nerešeni
       time_of_arrival: Čas prispetja
@@ -9308,7 +8438,7 @@ sl:
         change: Spremeni
         group: 'Play message and call agents in '
         call_hunting_group: Group
-        all_groups: Vse skupine
+        all_groups: All Groups
         business_hours: Delovni čas
         anytime: 24/7 Anytime
         name: Ime
@@ -9357,7 +8487,7 @@ sl:
         delete_alert: >-
           A number once deleted cannot be purchased again. Are you sure you want
           to delete the number?
-        manage: Upravljanje
+        manage: Manage
         cannot_purchase: Unable to purchase number for your Freshfone account
         insuffcient_credits: >-
           Your Freshfone credit is too low to purchase a new number. Please
@@ -9870,7 +9000,7 @@ sl:
   shortcuts:
     title: Bližnjice
     goto_tab:
-      title: Pojdi v zavihek
+      title: Goto Tab
       dashboard: Osnovna navigacija
       tickets: Zahtevki
       social: Socialno
@@ -9880,68 +9010,66 @@ sl:
       reports: Reports
       admin: Admin
     ticket_detail_list_common:
-      title: Običajne bližnjice za seznam zahtevkov in ogled
-      prev_next: Pomikajte se med stranmi za ogled seznamov zahtevkov
+      title: Common shortcuts for ticket list and view
+      prev_next: Navigate between ticket list view pages
       delete_ticket: Izbriši zahtevek
-      pickup: Prevzemite zahtevek
-      spam: Zahtevek označi kot nezaželeno vsebino
+      pickup: Pickup ticket
+      spam: Mark ticket as spam
       close: >-
-        Zapri zahtevek (<span class='shortcut-key'>ALT <span>+</span> ~</span>
-        za preskok obvestila)
+        Close ticket ( <span class='shortcut-key'>Alt <span>+</span> ~</span> to
+        skip notification )
       search: Iskanje
       reply: Odgovori
       forward: Posreduj
       add_note: Dodaj zapisek
       scenario: Scenariji
-      jump_to_views: Skok na oglede
     ticket_list:
-      title: Seznam zahtevkov
-      move_cursor: Premakni kazalec na naslednji/prejšnji zahtevek
-      hovercard: Pokaži lebdeči zahtevek
-      view: Ogled aktivnega zahtevka
+      title: Ticket List
+      move_cursor: Jump cursor to next / previous ticket
+      hovercard: Show ticket hovercard
+      view: View the active ticket
       mark: >-
-        Izberite zahtevek, (<span
-        class='shortcut-key'>%{modifier_key}<span>+</span> × </span> za celotno
-        izbiro)
+        Select a ticket, ( <span class='shortcut-key'>%{modifier_key}
+        <span>+</span> x </span>to select all )
     ticket_view:
-      title: Ogled zahtevka
-      save: Shrani / Pošlji
+      title: Ticket View
+      save: Save / Send
       watch: >-
-        ogled zahtevka, (<span class='shortcut-key'>%{modifier_key}
-        <span>+</span> w </span> za dodajanje novega opazovalca)
-      expand: Razširite pogovore
-      toggle_activity: Preklop dejavnosti
-      add_time: Zahtevku dodajte čas
-      openDialog: Odpri dialog
+        watch ticket, ( <span class='shortcut-key'>%{modifier_key}
+        <span>+</span> w </span>to add another watcher )
+      expand: Expand conversations
+      toggle_activity: Toggle Activity
+      add_time: Add time on ticket
+      openDialog: Open dialog
       scenario: Scenarios
   mailbox:
-    mail_server: 'E-poštni strežnik:'
-    use_default: Privzeto (Freshdesk)
-    use_your_own: Uporabite svoj e-poštni strežnik
-    email_system: 'E-poštni sistem:'
+    mail_server: 'Mail Server:'
+    use_default: Default (Freshdesk)
+    use_your_own: Use your own mail server
+    email_system: 'Email System:'
     incoming_mail_settings: Nastavitve dohodne pošte
-    incoming_mail_server: 'Dohodni e-poštni strežnik:'
-    imap_server_name: Ime strežnika IMAP
+    incoming_mail_server: 'Incoming Mail server:'
+    imap_server_name: IMAP Server Name
     imap_port: Vrata
     use_ssl: Uporabi SSL
     use_ssl_tls: Uporabi SSL/TLS
     use_outbound_mailbox: Add a mailbox for only outbound mails
-    imap_server_info: Ime strežnika IMAP za pridobivanje e-pošte
-    smtp_server_info: Ime strežnika IMAP za pošiljanje e-pošte
-    delete_from_server: Ali želite po pridobivanju izbrisati e-pošto iz strežnika?
+    imap_server_info: IMAP server name to fetch the emails
+    smtp_server_info: SMTP server name to send emails
+    delete_from_server: Delete emails from server after fetching?
     domain: 'Domena:'
-    authentication: 'Preverjanje pristnosti:'
+    authentication: 'Authentication:'
     user_name: Ime uporabnika
     password: Geslo
     change_password: Change Password
-    outgoing_mail_settings: Nastavitve odhodne pošte
-    outgoing_mail_server: 'Odhodni e-poštni strežnik:'
-    smtp_server_name: Ime strežnika SMTP
-    domain_name: Ime domene
+    outgoing_mail_settings: Outgoing Mail Settings
+    outgoing_mail_server: 'Outgoing Mail Server:'
+    smtp_server_name: SMTP Server Name
+    domain_name: Domain Name
     smtp_port: Vrata
-    use_mail_server_for: 'Uporabite e-poštni strežnik za:'
-    incoming_and_outgoing: Dohodni in odhodni
-    outgoing_only: Samo odhodni
+    use_mail_server_for: 'Use mail server for:'
+    incoming_and_outgoing: Incoming and Outgoing
+    outgoing_only: Outgoing only
     idle_not_supported: Specified IMAP mail server is not supported. Please use a different one
     imap_connection_error: >-
       Could not connect to the imap server. Please verify server name, port and
@@ -9963,9 +9091,9 @@ sl:
     smtp_error: 'Error while verifying the mailbox smtp details - %{error}'
     verifying_mailbox_input: Preverjanje ...
     smtp_alert_gmail: >-
-      Gmail omejuje število dnevnih poslanih e-sporočil. <a target="_blank"
-      href="https://support.google.com/a/answer/166852?hl=en">Več o tem
-      tukaj.</a>
+      Gmail limits the number of emails sent per day. <a target="_blank"
+      href="https://support.google.com/a/answer/166852?hl=en">Click here</a> to
+      learn more.
     smtp_alert_aol: >-
       AOL allows no more than 100 recipients per message or 500 recipients per
       connection.
@@ -9973,67 +9101,68 @@ sl:
       Generally the number of outgoing emails per day have a specific limit.
       Please contact your email provider for more info.
   discussions:
-    all_categories: Vse kategorije
+    all_categories: All Categories
     folders: Folders
-    views_categories: Ogledi in kategorije
+    views_categories: Views and Categories
     tour: Help me setup my forums
     show_more: Pokaži več
     helpnote:
-      title: Organizacija vaše skupnosti
+      title: Organizing your community
       para1: >-
-        Kategorije so po hierarhiji najvišje, ki vam omogočajo široko
-        razvrščanje skupnosti in usmerjanje razprav na različne vrste občinstva.
+        Categories are top level hierarchies that let you broadly classify your
+        community and target your discussions to different types of audiences.
       para2: >-
-        Primer: ko imate za podjetje/blagovno znamko en portal za podporo, lahko
-        ustvarite več skupin za izdelke ali skupine. Tako boste lahko usmerili
-        vse ustrezne pogovore v vse svoje oddelke na najvišji ravni in kot
-        skrbnik vse upravljali z enega mesta. 
+        For example, when you have a single support portal for your brand, you
+        can create multiple categories for products or teams. This will help you
+        drive relevant conversations to all of your top-level sections and as an
+        administrator, you will still get to manage everything from one place. 
       para3: >-
-        Če imate za račun Freshdesk nastavljenih več portalov z izdelki, lahko
-        eno od kategorij povežete s tem izdelkom. Ko to storite, bodo lahko
-        uporabniki na svojem glavnem portalu in na portalu z izdelki videli to
-        kategorijo, njene forume in teme. 
-      para4: Izvedite več o številnih izdelkih v Freshdesku.
+        If you have multiple product portals configured in your Freshdesk
+        account, you can choose to have one of your categories linked to that
+        product. Once you do, users will be able to see that category, its
+        forums and all its topics both on your main portal as well as on the
+        product portal. 
+      para4: Learn more about multiple products in Freshdesk.
     shared:
       topic:
         tags:
-          new_topic: Nova tema
+          new_topic: New Topic
           reply: Odgovori
         actions:
-          new_topic: je ustvaril/a temo
-          reply: je odgovoril/a na temo
+          new_topic: created a topic
+          reply: replied to topic
       post:
         approve: Approve
-        approve_tooltip: Odobrite in objavite
-        ban_tooltip: Označi uporabnika in vse njegove objave kot nezaželeno vsebino
+        approve_tooltip: Approve and Publish
+        ban_tooltip: Mark user and all his posts as Spam
         spam: Spam
     index:
-      all_topics: Vsa dejavnost
-      your_topics: Vaša dejavnost v temah
-      your_topics_desc: 'Prikazuje dejavnost v temah, ki jim sledite'
+      all_topics: All Activity
+      your_topics: Your Topics Activity
+      your_topics_desc: Shows activity on topics that you follow
       tour: What’s new?
     reorder_list:
-      visible: 'Vidno samo:'
+      visible: Visible only to
     topics:
       helpnote:
-        title: Vodenje razprav s temami
+        title: Driving discussions with topics
         para1: >-
-          Uporabnikom skupnosti lahko dovolite odpirati nove teme in tako
-          omogočite medsebojno komunikacijo o izdelku ali poslu.
+          You can let your users start new topics in your community and talk to
+          each other about your product on business.
         para2: >-
-          Glede na vrsto foruma lahko vaše teme vsebujejo vse, vključno z
-          idejami, vprašanji ali težavami. Odprejo jih lahko tako agentje kot
-          stranke. Glede na razprave boste lahko dobili oceno o tem, koliko
-          ljudi pestijo podobne težave, kdo je pripravljen prisostvovati v
-          testiranjih novih funkcij in kateri predeli vašega izdelka so težje
-          razumljivi.
+          Based on the type of your forum, your topics can be anything including
+          ideas, questions or problems and they can be started by both agents
+          and customers. Based on your discussions, you’ll be able to get an
+          idea of how many people are facing the same kind of issue, who is
+          eager to beta test your new features or what part of your product is
+          hard to understand.
         para3: >-
-          Agenti vaše ekipe lahko prav tako ustvarijo objave, s katerimi
-          sporočajo o novih izidih in kampanjah.
+          Additionally, agents in your team can create announcements to get the
+          word out about a new release or campaign.
         para4: >-
-          Teme foruma je prav tako mogoče označiti kot »popularne«, ko jih
-          želite bolje prikazati občinstvu, ter jih zakleniti pred nadaljnjim
-          objavljanjem s strani uporabnikov.
+          Forum topics can also be marked as a sticky when you want them to be
+          featured prominently, and they can be locked to prevent more users
+          from adding replies.
       replied: je odgovoril
       spam: Spam
       waiting_for_approval: Unpublished
@@ -10047,26 +9176,27 @@ sl:
       add_note: Add note
       mark_as_spam: Označi kot Spam
       confirm_spam: >-
-        Označba teme z nezaželeno vsebino bo prestavilo temo v predel z
-        nezaželeno vsebino in izbrisalo vse njene odgovore. Ali ste prepričani,
-        da želite označiti to temo kot nezaželeno?
-      merge_topic: Združi temo
-      close_topic: Zakleni temo
-      reopen_topic: Ponovno odpiranje teme
+        Marking the topic as spam will move the topic to spam and delete all of
+        its replies.
+
+        Are you sure you want to mark the topic as spam ?
+      merge_topic: Merge Topic
+      close_topic: Lock Topic
+      reopen_topic: Reopen Topic
       edit_topic: Uredi temo
-      delete_topic: Izbriši temo
-      approve: Odobrite in objavite
-      convert_to_ticket: Pretvori temo v zahtevek
+      delete_topic: Delete Topic
+      approve: Approve and Publish
+      convert_to_ticket: Convert Topic to Ticket
       linked_ticket: Linked Ticket
-      best_answer: Označeno kot najboljši odgovor
+      best_answer: Marked as best answer
       widgets:
         ticket:
-          title: Povezan zahtevek
+          title: Linked Ticket
           agent: Zastopnik
       post:
         delete_confirm: Izbriši komentar? Ste prepričani?
-        created_topic: je ustvaril/a temo
-        replied_to: je odgovoril/a na temo
+        created_topic: created a topic
+        replied_to: replied to topic
         replied: je odgovoril
       title_meta:
         replies:
@@ -10106,58 +9236,56 @@ sl:
             two: '%{count} people have this Question'
             few: '%{count} people have this Question'
             other: '%{count} people have this Question'
-        no_votes: Ni glasov
       answer: Odgovor
     forums:
       helpnote:
-        title: Uporaba forumov za boljšo učinkovitost
+        title: Using forums to set the tone
         para1: >-
-          Forumi vam omogočajo ustvariti določene razdelke v skupnosti za
-          obravnavo različnih vrst razprav s svojimi uporabniki.
+          Forums let you create specific sections in your community to address
+          different types of discussions with your users.
         para2: >-
-          Na Freshdesku lahko ustvarite štiri vrste forumov: objave, ideje,
-          vprašanja in težave. Vsaka od teh vrst predstavlja zbirko tem, ki
-          spadajo pod enotno zadevo.
+          Freshdesk lets you create four types of forums: announcements, ideas,
+          questions and problems. Each of these types represent a collection of
+          topics falling under the same umbrella.
         para3: >-
-          Primer: forum &ldquo;Nove funkcije&rdquo; lahko uporabniki uporabljajo
-          za nove ideje in njihovo glasovanje. Forum &ldquo;Poročila o
-          napakah&rdquo; vsebuje težave in uporabnike, ki opisujejo le-te. Več o
-          tem lahko preberete <a
+          For example, an idea forum called &ldquo;Feature Requests&rdquo; can
+          have users suggesting new ideas and voting on them, and a problem
+          forum called &ldquo;Bug Reports&rdquo; can have issues and people
+          indicating that they are are facing the problem. You can learn more
+          about forum types <a
           href='https://support.freshdesk.com/support/articles/37607'
-          target='_blank'>tukaj</a>.
+          target='_blank'>here</a>.
         para4: >-
-          Novi forumi bodo pod privzeto na voljo vsem vašim strankam. Dostop
-          lahko po želji omejite na agente, prijavljene uporabnike ali določeno
-          skupino uporabnikov.
+          By default, new forums will be accessible to all of your customers.
+          But if you want to, you can choose to restrict it to just agents,
+          logged in users, or a particular company of users.
     moderation:
       page_title: Forum Moderation
       after_ban:
-        marked: Označeno kot nezaželena vsebina
-        restore_contact: Obnovi stik
-        contact_deleted: 'Stik je bil izbrisan, da bi se izognili dodatni nezaželeni vsebini –'
-        cleared_rest: >-
-          Vse starejše objave tega uporabnika so bile označene kot nezaželena
-          vsebina
+        marked: Marked as Spam
+        restore_contact: Restore contact
+        contact_deleted: To avoid further Spam the contact was deleted -
+        cleared_rest: All older posts by this user have also been marked as Spam
       after_approve:
-        published: Objava je bila objavljena
-        goto_post: Pojdi do objave
+        published: Post has been published
+        goto_post: Goto Post
         go_to_post: Go to Post
       spam_folder: Spam Folder
       flash:
         empty_folder: All the posts in your spam folder have been removed.
       index:
         title: Nezaželena pošta
-        waiting: Čakanje na odobritev
-        waiting_desc: Predogled in objava
-        empty_folder: Prazna mapa
-        no_waiting_for_approval: Vse teme in odzivi so bili pregledani.
-        no_unpublished_spam: Tukaj ni nezaželene vsebine. Prisežemo!
-        moderation_solution: Več o moderiranju foruma
+        waiting: Waiting for Approval
+        waiting_desc: Review and publish
+        empty_folder: Empty Folder
+        no_waiting_for_approval: All topics and replies have been reviewed.
+        no_unpublished_spam: There's no spam here. We swear!
+        moderation_solution: Learn more about Forum Moderation
       spam:
-        approve: Odobrite in objavite
+        approve: Approve and Publish
         new_topic:
-          title: Nova tema
-          posted: je objavil/a novo temo
+          title: New Topic
+          posted: posted a new topic
         reply:
           title: Odgovori
           posted: je odgovoril
@@ -10167,18 +9295,16 @@ sl:
       more: ' more'
       less: ' less'
       after_ban:
-        marked: Označeno kot nezaželena vsebina
-        restore_contact: Obnovi stik
-        contact_deleted: 'Stik je bil izbrisan, da bi se izognili dodatni nezaželeni vsebini –'
-        cleared_rest: >-
-          Vse starejše objave tega uporabnika so bile označene kot nezaželena
-          vsebina
+        marked: Marked as Spam
+        restore_contact: Restore contact
+        contact_deleted: To avoid further Spam the contact was deleted -
+        cleared_rest: All older posts by this user have also been marked as Spam
       after_approve:
-        published: Objava je bila objavljena
-        goto_post: Pojdi do objave
+        published: Post has been published
+        goto_post: Goto Post
       invalid_topic:
         went_wrong: Prišlo je do napake
-        try_later: Objave ni bilo mogoče odobriti. Poskusite kasneje.
+        try_later: Unable to approve the post. Please try again later.
       spam_folder: Spam Folder
       flash:
         empty_folder: >-
@@ -10191,47 +9317,49 @@ sl:
         title: Nezaželena pošta
         spam: Spam
         unpublished: Čakanje na odobritev
-        waiting: Čakanje na odobritev
-        waiting_desc: Predogled in objava
-        empty_folder: Prazna mapa
-        no_forum_unpublished: Vse teme in odzivi so bili pregledani.
-        no_forum_spam: Tukaj ni nezaželene vsebine. Prisežemo!
-        moderation_solution: Več o moderiranju foruma
-        unpublished_posts: Neobjavljeni odzivi
-        deletion_alert: 'Teme/odzivi, ki so starejši od 30 dni, bodo samodejno izbrisani'
+        waiting: Waiting for Approval
+        waiting_desc: Review and publish
+        empty_folder: Empty Folder
+        no_forum_unpublished: All topics and replies have been reviewed.
+        no_forum_spam: There's no spam here. We swear!
+        moderation_solution: Learn more about Forum Moderation
+        unpublished_posts: Unpublished replies
+        deletion_alert: >-
+          Topics/replies more than 30 days old will be automatically deleted
+          from here
       spam_actions:
         approve: Approve
-        approve_tooltip: Odobrite in objavite
-        ban_tooltip: Označi uporabnika in vse njegove objave kot nezaželeno vsebino
+        approve_tooltip: Approve and Publish
+        ban_tooltip: Mark user and all his posts as Spam
         ban_confirm: >-
-          Ali ste prepričani, da želite izbrisati uporabnika in označiti vse
-          njegove objave kot nezaželeno vsebino?
+          Are you sure you want to delete the user and mark all his/her posts as
+          Spam?
         spam: Spam
       spam:
-        approve: Odobrite in objavite
+        approve: Approve and Publish
         new_topic:
-          title: Nova tema
-          posted: je objavil/a novo temo
+          title: New Topic
+          posted: posted a new topic
         reply:
           title: Odgovori
           posted: je odgovoril
     topic_merge:
-      merge_title: Združi teme
+      merge_title: Merge Topics
       continue: Nadaljuj
       cancel: Prekliči
       please_wait: Prosimo počakajte..
       mark_primary: Označi kot primaren
-      remove: Odstrani to temo
-      detailed_note: Razlog za združitev
-      confirm_and_merge: Potrdite in združite
-      add_note: Razlog za združitev
+      remove: Remove this topic
+      detailed_note: Reason for Merge
+      confirm_and_merge: Confirm and Merge
+      add_note: Reason for Merge
       note_saved: Note saved
       add: Dodaj
       visibility_info: 'Showing topics visible to <b>%{visibility}</b> '
       warning: >-
-        Združene teme ni mogoče razveljaviti. Sledilci in glasovi združenih tem
-        bodo dodani v glavno/primarno temo.
-      merge_notification: 'Ta tema je že zaklenjena in združena. Prosimo, osvežite stran.'
+        Topics once merged cannot be unmerged. Followers and votes from the
+        merged topics will be added to the primary topic.
+      merge_notification: This topic is already locked or merged. Please refresh the page.
       merge_error_for_locked: >-
         This topic is locked for editing as it has been merged into <a
         href='%{topic_link}'>%{title}</a>.
@@ -10249,49 +9377,45 @@ sl:
       merge_topic_list_status_created_at: >-
         in %{forum} (%{category})<br />by %{username}, <span
         class='emphasize'>%{time_ago} ago</span>
-      title_placeholder: Iskanje tem za združevanje
-    general:
-      unsaved_content: Na tej strani imate neshranjeno vsebino.
-      leave_page_que: Ali želite zapustiti to stran?
-  link_with_marketplace: Poveži z Googlovo trgovino
+      title_placeholder: Search topics to merge
+  link_with_marketplace: Link with Google Marketplace
   google_signup:
     associate_google:
-      link_your_helpdesk: Povežite svojo službo za podporo uporabnikom
-      login_your_helpdesk: Prijava v službo za podporo uporabnikom
+      link_your_helpdesk: Link your helpdesk
+      login_your_helpdesk: Login to your helpdesk
       email_address: E-poštni naslov
-      your_helpdesk: Vaša služba za podporo uporabnikom
+      your_helpdesk: Your helpdesk
       login: Prijava
       login_with_admin: >-
-        Za povezovanje prijave z Googlom in računom Freshdesk morate biti
-        skrbnik računa
+        You need to be an Account administrator to link your freshdesk account
+        with Google login
     signup_google:
-      new_account: Nov račun
-      existing_user: Obstoječi račun
+      new_account: New account
+      existing_user: Existing account
       company_name: Naziv podjetja
       helpdesk_url: URL podpore
-      your_freshdesk_url: Vaša URL-povezava službe za pomoč uporabnikom
-      domain_info: >-
-        primer: če je vaša služba za pomoč uporabnikom
-        »http://apple.freshdesk.com«, potem vnesite »apple«
+      your_freshdesk_url: Your Helpdesk URL
+      domain_info: 'ex. if your helpdesk is ''http://apple.freshdesk.com'' then enter ''apple'''
       phone_no: Telefonska številka
       create_my_account: Ustvarite račun
       terms_and_policy: >-
-        S klikom »Ustvarite račun« se strinjate s<a
-        href='http://freshdesk.com/terms' target='_blank'>pogoji in pravili
-        storitve</a> in <a href='http://freshdesk.com/privacy'
-        target='_blank'>pravilnikom o zasebnosti</a>
-      helpdesk_name: Ime službe za pomoč uporabnikom
+        By clicking 'Create your Account', you agree to our <a
+        href='http://freshdesk.com/terms' target='_blank'>terms of service</a>
+        and <a href='http://freshdesk.com/privacy' target='_blank'>privacy
+        policy</a>
+      helpdesk_name: Helpdesk name
       freshdesk_dot_com: .freshdesk.com
       submit: Pošlji
     signup_google_error:
       error_message: >-
-        <center><p class='big-text aligncenter'>Žal nam je! Nimate dovoljenja za
-        dostop do te strani.<br> Stopite v stik s skrbnikom računa ali
-        </p></center><center><a href='http://freshdesk.com/signup'>se
-        registrirajte na domači strani Freshdesk</a></center>
+        <center><p class='big-text aligncenter'>Sorry! You do not have enough
+        permission to access this page.<br> Please contact your Account
+        administrator or </p></center><center><a
+        href='http://freshdesk.com/signup'>Signup from Freshdesk Home page
+        </a></center>
     thank_you:
-      refresh_your_account: Dobro! Osvežimo vašo službo za pomoč uporabnikom.
-      creating_your_account: Ustvarjanje računa …
+      refresh_your_account: All right! Let’s refresh your helpdesk.
+      creating_your_account: Creating your account now...
   notification:
     whats_new_in_freshdesk: ' What''s new in Freshdesk '
     see_all: See All
@@ -10308,8 +9432,8 @@ sl:
     Important: You are currently downgrading from %{plan_from} plan to
     %{plan_to} plan
   discounted_sum: After Discount
-  selecting_plan: Izbiranje …
-  proceed_billing_info: 'Da, nadaljuj na obračunavanje'
+  selecting_plan: Selecting...
+  proceed_billing_info: 'Yes, Proceed to Billing'
   buy_plan: Buy this Plan
   agent_seats: '%{no_of_agents} Agent seats'
   subscribed_billing: '%{billing_cycle} billing'
@@ -10346,10 +9470,6 @@ sl:
     description: Opis
     delete_action:
       success: Prekinitev integracije uspešna
-      error: >-
-        <span>Napaka pri brisanju aplikacije.</span>Poskusite znova. Če se
-        napaka pojavlja, stopite v stik z <a
-        href=https://support.freshdesk.com>uporabniško podporo</a>.
     view_all: Poglej vse
     view_more: Prikaži več
     help_and_support: Pomoč in podpora
@@ -10374,97 +9494,6 @@ sl:
     no_custom_apps_note: Ustvarite aplikacije po meri in jih objavite na portalu za razvijalce.
     field_blank: Izpolnite obvezna polja.
     no_mktp_apps: Ni nameščenih aplikacij
-    custom_app_info: >-
-      Ali ste vedeli, da zdaj obstaja boljši način, kako napisati, upravljati in
-      deliti svoje aplikacije v skupnosti Freshdesk?
-    share_app: Delite to aplikacijo
-    needs_developer_text: Potreben je račun razvijalca
-    no_connection: >-
-      Trgovina trenutno ni na voljo. Prosimo, poskusite znova kasneje. Stopite z
-      nami v stik, če se težava ponavlja.
-    app_description: >-
-      Aplikacije vam omogočajo združevanje z drugimi aplikacijami, da bi bila
-      vaša izkušnja v storitvi Freshdesk še boljša. Prav tako vam omogočajo
-      prilagoditev portala Freshdesk po želji.
-    custom_app_policy: >-
-      »Aplikacija po meri« je aplikacija, ki je razvita posebej za stranko
-      Freshdesk in ni objavljena v Galeriji aplikacij. Aplikacije po meri lahko
-      razvije Freshdesk ali kateri koli drug razvijalec, ki je lahko (ali pa ni)
-      registriran kot Freshdeskov razvijalec. Pomnite, da je aplikacija po meri
-      na voljo na osnovi »TAKŠNO, KOT JE«, brez kakršnih koli garancij v
-      največji možni meri, ki jih dovoljuje veljavna zakonodaja. Freshdesk
-      izrecno zavrača kakršne koli pogoje, zastopanja, garancije ali druge
-      pogoje, izrecne ali implicitne, vključno z (vendar brez omejitve) vsakimi
-      morebitnimi garancijami za prodajo, lastninsko pravico, ustreznostjo za
-      posamezne določene namene in nekršitvami. Z namestitvijo aplikacije po
-      meri razumete in potrjujete, da Freshdesk ne zagotavlja/garantira, da bo
-      aplikacija po meri delovala nemoteno, časovno ustrezno, varno, brez napak
-      ali brez virusov/zlonamerne programske opreme. Freshdesk ni odgovoren za
-      vas ali katero koli drugo osebo, ki preko vas zahteva pravno povračilo za
-      kakršno koli neposredno, posredno, naključno, posebno, kazensko ali
-      posledično škodo, ki je nastala zaradi uporabe aplikacij po meri.
-    installation: Namestitev
-    terms_of_use_link: 'http://freshdesk.com/terms#marketplace'
-    developed_by: 'Objavljeno od:'
-    all_apps: Vse aplikacije
-    api_error: Vaše zahteve nam ni uspelo obdelati. Poskusite znova kasneje.
-    app_gallery: Trgovina
-    reauthorize_oauth_app: >-
-      Če je vaša aplikacija prenehala delovati, poskusite ponovno pooblastiti
-      aplikacijo za dostop do informacij aplikacij tretjih oseb.
-    tooltip:
-      suspended: Ni na voljo
-    app_installation_agreement: 'Z namestitvijo te aplikacije se strinjate, da boste upoštevali naše '
-    no_mktp_apps_note_2: Za brskanje aplikacij kliknite »Naložite več aplikacij«.
-    screenshots: Posnetki zaslona
-    no_configs: Ta aplikacija ne potrebuje konfiguracij.
-    backend_log: Dnevniki brez strežnika
-    third_party_apps_policy: >-
-      Aplikacijo ima v lasti ter jo razvija, upravlja in vzdržuje tretja oseba
-      in ne podjetje Freshworks Inc. S prenosom, združitvijo in/ali uporabo te
-      aplikacije razumete, da vas zavezujejo pogoji in pravilniki o zasebnosti
-      njenega razvijalca, vključno z obdelovanjem vaših podatkov. Za več
-      podrobnosti o pogojih in pravilnikih o zasebnosti stopite v stik z
-      razvijalcem ali obiščite njegovo spletno mesto.
-    error_calling_method: 'Napaka pri klicu načina: '
-    no_search_results: >-
-      Ni nam uspelo poiskati, kar ste iskali. Zakaj ne poskusite znova z drugo
-      ključno besedo?
-    no_custom_apps_installed: Ni naloženih aplikacij po meri
-    paid_app: PLAČANO
-    popular_apps: Priljubljene aplikacije
-    installed_mkp_apps_unavailable: >-
-      Seznama nameščenih aplikacij trenutno ni na voljo. Prosimo, poskusite
-      znova kasneje. Stopite z nami v stik, če se težava ponavlja.
-    write_a_custom_app: Napišite/ustvarite aplikacijo po meri
-    confirm_uninstall_message: 'Ali ste prepričani, da želite odstraniti %{human_name}?'
-    instructions: Navodila
-    latest_apps: Najnovejše aplikacije
-    get_more_apps: Naložite več aplikacij
-    policy_on_custom_apps: Pravilnik o aplikacijah po meri
-    no_custom_apps_note_2: Za brskanje in namestitev kliknite »Naložite aplikacije po meri«.
-    version: RAZLIČICA
-    reauthorize_header: Ponovno pooblastilo aplikacije
-    install_action:
-      app_setup_error: Med namestitvijo je prišlo do napake.
-    custom_app_gallery: Galerija aplikacij po meri
-    apps_unavailable: >-
-      Določenih aplikacij ni bilo mogoče prikazati. Prosimo, poskusite znova
-      kasneje. Stopite z nami v stik, če se težava ponavlja.
-    policy_on_tp_apps: Pravilnik o aplikacijah tretjih naprav/oseb
-    developer_shortcuts: Bližnjice razvijalca
-    installing: Namestitev
-    no_apps: Aplikacij ni na voljo
-    terms_of_use: Pogoji uporabe
-    helpnote_custom_apps_html: >-
-      Ali ne najdete nobene uporabne aplikacije? Z našimi Aplikacijami po meri
-      (prej FreshPlugs) lahko vnesete kontekstne informacije iz katere koli
-      rešitve tretjih oseb/naprav, starejšega sistema ali podatkovne baze. Te
-      aplikacije po meri je mogoče uporabiti za vizualne spremembe službe za
-      pomoč uporabnikom in povečanje produktivnosti. Kliknite <a
-      href='https://support.freshdesk.com/support/solutions/articles/121846'
-      target='_blank'>tukaj</a> in izvedite več!
-    almost_done: Skoraj ste gotovi!
   freshcaller:
     admin:
       link_account_request_content:
@@ -10472,62 +9501,12 @@ sl:
         email: Epoštni naslov
         link_errors:
           validation_error: To polje je obvezno
-          pod_error: >-
-            Videti je, da sta vaša računa v dveh različnih podatkovnih
-            središčih. Ustvarite nov račun Freshcaller za povezovanje s svojim
-            računom Freshdesk.
-          access_error: >-
-            Za povezovanje svojih računov morate biti skrbnik tako storitve
-            Freshcaller kot storitve Freshdesk.
-          api_error: >-
-            Ta račun Freshcaller ne obstaja. Vnesite veljavno URL-povezavo ali
-            ustvarite nov račun Freshcaller.
-          authentication_error: Neveljaven e-naslov ali geslo.
         continue: Nadaljuj
         password: Geslo
-        freshcaller_domain: .freshcaller.com
-        connect_existing_account: Povežite z obstoječim računom
-        account_url: URL-povezava za račun Freshcaller
-        processing: Povezovanje računa Freshcaller
-        settings_text: >-
-          Vnesite podrobnosti računa Freshcaller za povezovanje z računom
-          Freshdesk
       sidebar_title: Telefon
       title_text: Telefon
       feature_request_content:
         create_new_account: Ustvarjanje novega računa
-        processing: Ustvarjanje računa Freshcaller
-      no_access_text: Nimate dostopa do storitve Freshcaller
-      freshcaller_signup_text: >-
-        Freshdesk zagotavlja integriran telefonski kanal prek storitve
-        Freshcaller. Omogočite svoj telefonski kanal, tako da ustvarite nov
-        račun Freshcaller s 14-dnevnim brezplačnim preizkusnim obdobjem.
-      freshcaller_enable_subtext: Dostop lahko omogočite na strani za nastavitve agenta.
-      manage_settings_text: Upravljanje nastavitev v storitvi Freshcaller
-      sidebar_content: >-
-        Freshdeskov telefonski kanal zagotavlja storitev Freshcaller. Kličete
-        (ali prejemate klice) lahko neposredno v storitvi Freshdesk, jih snemate
-        ter pretvorite v glasovno pošto.<br/><br/> <b>Namestitev klicnega
-        centra</b> <br/>Kupite lahko telefonsko dobroimetje v svojem skrbniškem
-        računu Freshcaller. Prav tako lahko z dobroimetjem kupite telefonske
-        številke za <a
-        href='https://support.freshcaller.com/support/solutions/articles/229257'
-        target='_blank'>več kot 40 različnih držav</a>. V ZDA, Združenem
-        kraljestvu, Kanadi in Avstraliji so za nakup na voljo brezplačne
-        stacionarne telefonske številke. Ni vam treba kupiti/namestiti nobene
-        dodatne strojne ali programske opreme. Potrebujete zgolj spletni
-        brskalnik in ustrezno internetno povezavo. <br/><br/> <b>Zmožnosti
-        klicnega centra</b> <br/> Na klice se lahko odzovete v svojem spletnem
-        brskalniku, jih preusmerite na svoj mobilni telefon ali na želenega
-        agenta. Za prejemanje klicev lahko prav tako uporabljate interaktivne
-        govorne odzivnike (IVR), klice spremljate, se jim pridružite, nastavite
-        čas poslovanja in še več.<br/> <br/> <a
-        href='https://www.freshworks.com/freshcaller-cloud-pbx/call-center-features/'
-        target='_blank'>Več o storitvi Freshcaller</a> – integrirana telefonska
-        rešitev za storitev Freshdesk.
-      freshcaller_subtext: >-
-        Nakup tel. številk, nastavitev čakajočih klicev, interaktivnih govornih
-        odzivnikov (IVR-jev) itd.
   multifile_attachments:
     label: Dodaj priponke
     remove: Odstrani
@@ -10654,71 +9633,26 @@ sl:
   mailer_notifier:
     hi: 'Živijo,'
     thanks: 'Hvala,'
-    security_notification:
-      update_agent_billing_plain: >-
-        Da bodo spremembe vidne pri obračunu, posodobite podatke o agentu na
-        strani za obračunavanje.
-      update_agent_billing: >-
-        Da bodo spremembe vidne pri obračunu, <a
-        href="%{billing_url}">posodobite</a> podatke o agentu na strani za
-        obračunavanje.
-      unauthorized_change_contact: >-
-        Če je bila ta sprememba narejena brez vaše odobritve, nemudoma stopite v
-        stik s svojim skrbnikom računa.
-      configure_change: >-
-        Nastavitve obvestil lahko spremenite v Admin (Skrbnik) -> Security
-        (Varnost).
-      trusted_ip_disabled: >-
-        Dodajanje IP-naslovov na seznam dovoljenih IP-naslovov je onemogočeno za
-        vaš račun.
-      unauthorized_change_info: >-
-        Če je bila ta sprememba narejena brez vaše odobritve, nam pošljite
-        sporočilo.
-      configure_change_html: >-
-        Nastavitve obvestil lahko spremenite <a href="%{security_url}">tukaj</a>
-        ali v svojem računu pod Admin (Skrbnik) -> Security (Varnost).
-    freshdesk_customer_support: Uporabniška podpora Freshdesk
   copied_link: Kopirano
   enter_a_value: Vnesite vrednost
   custom_mailbox_admin_email_notifications:
     regards: vezano
-    welcome_message: Spoštovani skrbnik
   activations:
     activate_freshdesk_account: Aktivirajte račun
-    helpnote3: Potrdite svoje podatke in nastavite geslo za svoj račun
-    helpnote1: Povejte nam več o sebi in nam pomagajte poosebiti svojo izkušnjo.
-    admin_consent: >-
-      S klikom na »Aktivacija in prijava« se strinjate in ste prebrali naše <a
-      target="_blank" href="https://www.freshworks.com/terms/">Pogoje
-      uporabe</a> in <a target="_blank"
-      href="https://www.freshworks.com/privacy/">Pravilnik o zasebnosti</a>.
   cloud_log_mailer:
     logger_email:
       regards: 'vezano,'
       account: 'Račun: '
       reason: Razlog
-      freshdesk_support: Freshdeskova podpora.
-      execution_id: ID izvršitve
   portals_key: Portali
   classic_label: Klasično
   helpcard:
     title: Edinstven zunanji ID
-    info: >-
-      Uvozite edinstvene ID-je svojih strank in v Freshdesku preprosto in hitro
-      prepoznajte njihove pogovore. <br><a
-      href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id"
-      target="_blank">Pomagajte mi nastaviti zunanji ID</a>
   admin_upgrade:
     enable_mint_title: Omogočite zastopnikom preskus novega in hitrejšega Minta
     enable_mint_error: >-
       Mint je že omogočen za vse zastopnike. Osvežite, da boste videli
       najnovejše nastavitve.
-    enable_mint_all: Omogočite Mint za agente
-    enable_mint_info: Agenti lahko kadar koli preklopijo nazaj na starejšo različico Freshdeska
-    enable_mint_success_info: >-
-      Če želite popolnoma onemogočiti starejšo različico Freshdeska, pojdite v
-      zavihek skrbnika Mint
-    enable_mint_success: Čudovito! Mint je bil uspešno omogočen za vse agente.
   plain_off: Izklopljeno
   customize_domain:
     email:
@@ -10746,81 +9680,3 @@ sl:
       Opazili smo, da ste obtičali. Povejte nam, kaj ste skušali doseči, in naša
       ekipa za podporo se bo potrudila čim hitreje stopiti v stik z vami.
     success_message: Hvala. Stopili bomo v stik z vami!
-  undo_toggle: Prekliči pošiljanje
-  view_invoices: 'Ogled računov: '
-  requesting: Zahteva v obdelavi …
-  mint: preklopi v Mint.
-  send_test_email: Pošlji preizkusno e-sporočilo
-  custom_mailbox_error_type:
-    unkown_error: >-
-      Pridobivanje e-sporočil iz e-poštnega strežnika po meri ni bilo mogoče.
-      Prosimo, stopite v stik s podporo na support@freshdesk.com
-    ssl_errror: Napaka SSL.
-    server_response_invalid: Odziv strežnika med povezovanjem s strežnikom je v neveljavni obliki.
-    unable_to_connect: Povezava z mapo v nabiralniku ni mogoča.
-    tcp_connection: Ni mogoče ustvariti povezave s protokolom TCP.
-    tcp_refused: E-poštni strežnik je zavrnil povezavo s protokolom TCP.
-    mailbox_idle: Nabiralnik ne podpira zmožnosti »IDLE«.
-    unable_fetch_status: Neuspešno pridobivanje stanja mape.
-    io_error: Napaka pri povezavi V/I.
-    mailbox_suspended: E-poštni strežnik je suspendiran
-    server_no_resp: E-poštni strežnik je med povezovanjem s strežnikom poslal odziv »NO«.
-    bye_response: E-poštni strežnik je med povezovanjem s strežnikom poslal odziv »BYE«.
-    invalid_login: Neveljavne poverilnice za prijavo.
-    folder_unavailable: Mape ni na voljo v nabiralniku.
-    tcp_socket: Ustvarjanje vtičnice za protokol TCP za e-poštni strežnik ni bilo mogoče.
-    email_bad_request: E-poštni strežnik je med povezovanjem s strežnikom poslal odziv »BAD«.
-  choose_plan_trial_v2: >-
-    Po zaključku preizkusnega obdobja bo vaš račun onemogočen. Če želite še
-    naprej uporabljati Freshdesk, izberite enega od spodnjih planov.<br />
-  anonymous:
-    requests:
-      new:
-        request_support: Prošnja za podporo
-  imap_error: Do e-poštnega strežnika ni mogoče dostopati
-  select_values: Izberite eno ali več vrednosti
-  requester_widget:
-    helpcard:
-      info: >-
-        Izberite polja, ki jih želite prikazati pod informacijami zahtevnika na
-        strani z zahtevkom s pripomočkom za zahtevnika. Tako lahko vaša ekipa
-        posodobi podatke o zahtevniku neposredno na strani z zahtevkom in sledi
-        podatkom o strankah, medtem ko razrešuje njihove težave. <a
-        href="https://support.freshdesk.com/support/solutions/articles/37586-driving-additional-context-with-requestor-info"
-        target="_blank">Več o tem</a>
-      title: Prilagoditev pripomočka za zahtevnika
-  downgrade_plan_v2: 'Pomnite: če naredite prehod na nižji plan, lahko izgubite določene funkcije!'
-  onedrive_attach_from_text: Pripni iz <b>OneDriva (zastarelo)</b>
-  undo_toggle_tip: 'Osvežite stran, da bodo vidne shranjene spremembe.'
-  bot_training_completed:
-    email:
-      info3: Začnite nuditi podporo!
-      signature: Freshdeskov robot
-      info2: >-
-        Lahko me prikažete na kateri koli strani, tako da preprosto dodate
-        vdelano kodo v želena spletna mesta.
-      widget_code_plain_text: 'Tukaj je koda za vdelavo za robota:'
-      info1: >-
-        Javlja se vam prijazen robot! Želim vam sporočiti, da so me naučili
-        zapomniti si vse članke za podporo, ki jih želite prebrati. Zato lahko
-        zdaj vašim strankam pomagam iskati odgovore na poljubna vprašanja
-        naslednjih kategorij:
-      widget_code: Pridobite kodo za vdelavo
-  undo_toggle_error: 'Žal, nekaj je šlo narobe!'
-  downgrade_contact_us: >-
-    Oglejte si našo <a target="_blank"
-    href="https://freshdesk.com/helpdesk-features">celotno primerjavo
-    funkcij</a>. <br />Ali še vedno niste prepričani? <a href =
-    "mailto:support@freshdesk.com" >Pišite nam, da vam pomagamo pri
-    odločitvi!</a>
-  enter_values: Vnesite eno ali več vrednosti
-  free_plan: Brezplačni plan
-  preview_message_info: >-
-    Ta predogled uporablja vzorčno vsebino za označbe mest za generiranje
-    sporočila
-  undo_toggle_success: Za spremembe osvežite stran.
-  profiles:
-    freshid_edit:
-      profile_details: Podrobnosti profila
-  suspended_account_info: 'Vaš račun je bil suspendiran, zato nimate dostopa do portala za stranke.'
-  activate_and_log_in_long: Aktivacija in prijava

@@ -2446,7 +2446,7 @@ zh-TW:
         facebook-setting: Facebook
         security: 安全性
         email_commands_setting: 電子郵件發送命令
-        billing: 方案和帳單
+        billing: 方案與帳單
         invoice: 發票
         phone-channel: 電話號碼
         tags: 標籤
@@ -6726,7 +6726,7 @@ zh-TW:
   lead: 潛在客戶
   comments: 留言
   forum_confirm_msg1: 你確定要刪除這個類別？
-  plans_billing: 方案和帳單
+  plans_billing: 方案與帳單
   portal_customizer_open_forums: 任何人都可以查看論壇
   portal_customizer_option_forums: 用戶可以不用登入即可查看論壇
   business_hours:
@@ -10046,7 +10046,7 @@ zh-TW:
   reported_by: '報告依據 '
   password_confirmation: 密碼確認：
   search_results: 搜尋結果
-  plans_and_pricing: 方案和帳單
+  plans_and_pricing: 方案＆價格
   number_of_attachments: 附加檔案
   activation_link: '啟動連結已經發送到%{email}'
   activation_link_no_email: 成功註冊
