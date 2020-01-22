@@ -45,14 +45,15 @@ class DetectUserLanguageTest < ActionView::TestCase
   end
 
   def test_language_detect_from_cache
-    text = Faker::Lorem.sentence(7)
+    big_text = Faker::Lorem.sentence(7)
+    text = big_text[0..20].squish.split.first(15).join(' ')
     key  = "DETECT_USER_LANGUAGE:#{text}"
     set_others_redis_key(key, 'ro', 600)
     response = Struct.new(:body)
     mock_response = response.new(sample_google_lang_response('de').to_json)
     Google::APIClient.any_instance.stubs(:execute).returns(mock_response)
     User.any_instance.stubs(:detect_language?).returns(true)
-    Users::DetectLanguage.new.perform(user_id: @user.id, text: text)
+    Users::DetectLanguage.new.perform(user_id: @user.id, text: big_text)
     @user.reload
     assert_equal 'ro', @user.language
     assert_not_equal 'de', @user.language, 'language detection not from cache'
@@ -104,7 +105,7 @@ class DetectUserLanguageTest < ActionView::TestCase
     User.any_instance.stubs(:detect_language?).returns(true)
     Users::DetectLanguage.any_instance.stubs(:detect_lang_from_email_service).returns('ar')
     @account.rollback(:compact_lang_detection)
-    Users::DetectLanguage.new.perform(user_id: @user.id, text: 'test string - sample 2')
+    Users::DetectLanguage.new.perform(user_id: @user.id, text: 'القائمة وفيما يخص التطبيقات')
     @user.reload
     assert_equal 'ar', @user.language, 'language detection proper response from email service'
   ensure

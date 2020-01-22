@@ -77,16 +77,7 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
       update_ticket_rules
       return 
     end
-    return construct_rule_params if Account.current.mentions_to_tms_enabled?
-
-    if dont_convert_tweets_to_ticket?
-      @twitter_stream.ticket_rules.delete_all
-    elsif rules_without_keywords?
-      smart_filter_feature_enabled? ? update_smart_filter_rule_without_keywords : update_ticket_rules      
-    else
-      update_ticket_rules   
-      update_smart_filter_rule_with_keywords if smart_filter_feature_enabled?
-    end
+    construct_rule_params
   end
 
   def construct_rule_params
@@ -143,11 +134,9 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
   
   def update_twitter_handle
     twitter_handle_params = construct_handle_params
-    if @twitter_handle.update_attributes(twitter_handle_params)
-      @twitter_stream.update_attributes(accessible_attributes: stream_accessible_params(@twitter_stream)) unless Account.current.mentions_to_tms_enabled?
-    else
+    unless @twitter_handle.update_attributes(twitter_handle_params)
       @ticket_error_flash = t('admin.social.flash.stream_save_error')
-     end
+    end
   end
   
   def update_twitter_stream
@@ -231,29 +220,22 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
       }
       rule_params[:action_data].merge!({:convert_all => true}) if rule[:convert_all]
       if rule[:ticket_rule_id].empty?
-        if publish_mention_rules?
+        if !@twitter_stream.custom_stream?
           keyword_filter_rules << construct_mention_rules(rule_params, rule, 'create')
-          next
+        else
+          ticket_rule = @twitter_stream.ticket_rules.new(rule_params)
+          ticket_rule.save
         end
-        ticket_rule = @twitter_stream.ticket_rules.new(rule_params)
-        ticket_rule.save
+      elsif !@twitter_stream.custom_stream?
+        keyword_filter_rules << construct_mention_rules(rule_params, rule, 'update')
       else
-        if publish_mention_rules?
-          keyword_filter_rules << construct_mention_rules(rule_params, rule, 'update')
-          next
-        end
         @twitter_stream.ticket_rules.find_by_id(rule[:ticket_rule_id]).update_attributes(rule_params)
       end
     end
-    return keyword_filter_rules, deleted_rules if publish_mention_rules?
+    return keyword_filter_rules, deleted_rules unless @twitter_stream.custom_stream?
 
     delete_rules(deleted_rules.compact)
   end
-
-  def publish_mention_rules?
-    Account.current.mentions_to_tms_enabled? && !@twitter_stream.custom_stream?
-  end
-
 
   def update_smart_filter_rule_with_keywords
     if params[:smart_filter_enabled] == SMART_FILTER_ON
@@ -262,18 +244,12 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
       update_smart_filter_rule(smart_rule) 
     else
       sf_rule = @twitter_stream.smart_filter_rule
-      return nil, sf_rule if Account.current.mentions_to_tms_enabled?
-      
-      delete_rules([sf_rule])
+      [nil, sf_rule]
     end    
   end
 
   def update_smart_filter_rule_without_keywords
-    if Account.current.mentions_to_tms_enabled?
-      @deleted_rules = @twitter_stream.keyword_rules.map(&:id)
-    else
-      @twitter_stream.delete_keyword_rules
-    end
+    @deleted_rules = @twitter_stream.keyword_rules.map(&:id)
     smart_rule = params[:smart_filter_rule_without_keywords]
     smart_rule.merge!(:with_keywords => 0)
     update_smart_filter_rule(smart_rule)
@@ -282,14 +258,11 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
   def update_smart_filter_rule(rule)
     smart_rule_params = @twitter_stream.build_smart_rule(rule)
     if rule[:ticket_rule_id].blank?
-      return construct_mention_rules(smart_rule_params, rule, 'create') if Account.current.mentions_to_tms_enabled?
+      return construct_mention_rules(smart_rule_params, rule, 'create')
 
-      ticket_rule = @twitter_stream.ticket_rules.new(smart_rule_params)
-      ticket_rule.save
     else
-      return construct_mention_rules(smart_rule_params, rule, 'update'), @deleted_rules if Account.current.mentions_to_tms_enabled?
+      return construct_mention_rules(smart_rule_params, rule, 'update'), @deleted_rules
 
-      @twitter_stream.smart_filter_rule.update_attributes(smart_rule_params)
     end  
   end
 

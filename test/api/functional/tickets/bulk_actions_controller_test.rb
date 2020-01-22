@@ -1,4 +1,5 @@
 require_relative '../../test_helper'
+require 'webmock/minitest'
 
 class Tickets::BulkActionsControllerTest < ActionController::TestCase
   include ApiTicketsTestHelper
@@ -66,9 +67,13 @@ class Tickets::BulkActionsControllerTest < ActionController::TestCase
       ticket.update_attribute(:status , Helpdesk::Ticketfields::TicketStatus::CLOSED)
       sleep 1 #sleep introduced so that ticket.updated_at will be less that archive_days.days.ago
       params = {archive_days: 0, ids:[ticket.display_id]}
+      freno_stub = stub_request(:get, 'http://freno.freshpo.com/check/ArchiveWorker/mysql/shard_1')
+                   .to_return(status: 404, body: '', headers: {})
+      ManualPublishWorker.stubs(:perform_async).returns('job_id')
       Sidekiq::Testing.inline! do
         post :bulk_archive, construct_params(params)
       end
+      remove_request_stub(freno_stub)
       assert_response 204
       assert @account.archive_tickets.find_by_ticket_id(ticket.id).present?
     end
@@ -99,9 +104,13 @@ class Tickets::BulkActionsControllerTest < ActionController::TestCase
       ticket.update_attribute(:status , Helpdesk::Ticketfields::TicketStatus::CLOSED)
       sleep 1 #sleep introduced so that ticket.updated_at will be less that archive_days.days.ago
       params = {archive_days: 0}
+      freno_stub = stub_request(:get, 'http://freno.freshpo.com/check/ArchiveWorker/mysql/shard_1')
+                   .to_return(status: 404, body: '', headers: {})
+      ManualPublishWorker.stubs(:perform_async).returns('job_id')
       Sidekiq::Testing.inline! do
         post :bulk_archive, construct_params(params)
       end
+      remove_request_stub(freno_stub)
       assert_response 204
       assert @account.archive_tickets.find_by_ticket_id(ticket.id).present?
     end

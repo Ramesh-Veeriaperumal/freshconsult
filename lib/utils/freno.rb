@@ -5,7 +5,7 @@ module Utils
   module Freno
     include Redis::OthersRedis
 
-    FRENO_CHECK_SHARD_API = '/check/appname/mysql/'.freeze
+    FRENO_CHECK_SHARD_API = '/check/%{appname}/mysql/'.freeze
     FRENO_FAILURE_DELAY_KEY = 'FRENO_FAILURE_DELAY'.freeze
     BACKOFF_DELAY = 10
 
@@ -30,6 +30,9 @@ module Utils
           return -1
         elsif response.code == 500
           Rails.logger.error("Warning: Freno API returned 500 for shard: #{shard_name}")
+          return freno_failure_delay
+        elsif response.code == 503
+          Rails.logger.error("Warning: Freno API returned 503 for shard: #{shard_name}")
           return freno_failure_delay
         else
           Rails.logger.error("Warning: Freno API response code: #{response.code} for shard: #{shard_name}")
@@ -66,14 +69,13 @@ module Utils
     def freno_failure_delay
       Rails.cache.fetch(FRENO_FAILURE_DELAY_KEY, expires_in: 30.seconds) do
         redis_value = get_others_redis_key(FRENO_FAILURE_DELAY_KEY)
-        redis_value || BACKOFF_DELAY
+        (redis_value || BACKOFF_DELAY).to_i
       end
     end
 
     # form the check API endpoint URL
     def freno_api_url(app_name, shard)
-      check_shard_api_endpoint = FRENO_CHECK_SHARD_API
-      check_shard_api_endpoint.gsub! 'appname', app_name
+      check_shard_api_endpoint = format(FRENO_CHECK_SHARD_API, appname: app_name)
       FrenoConfig['freno_base_url'] + check_shard_api_endpoint + shard
     end
 

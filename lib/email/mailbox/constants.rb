@@ -20,6 +20,8 @@ module Email::Mailbox::Constants
   SMTP = 'smtp'.freeze
   IMAP_MAILBOX = 'imap_mailbox'.freeze
   SMTP_MAILBOX = 'smtp_mailbox'.freeze
+  OAUTH_SUCCESS = 'success'.freeze
+  OAUTH_FAILED = 'failed'.freeze
 
   GMAIL_OAUTH_URL = "/auth/gmail?origin=id%3D{{account_id}}%26r_key%3D{{r_key}}"
   # Expiry is set to 57 minutes Google currently has an expiry limit of 60 minutes

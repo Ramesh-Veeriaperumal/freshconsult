@@ -80,6 +80,33 @@ module Widget
       match_json(id: t.display_id)
     end
 
+    def test_create_predictive_ticket_with_required_login
+      @widget.settings[:contact_form][:require_login] = true
+      @widget.settings[:components][:contact_form] = false
+      @widget.settings[:components][:predictive_support] = true
+      @widget.save
+      subject = SecureRandom.uuid
+      params = { email: Faker::Internet.email, subject: subject, description: Faker::Lorem.paragraph, predictive: true }
+      post :create, construct_params({ version: 'widget' }, params)
+      ticket = @account.tickets.where(subject: subject).first
+      assert_response 201
+      match_json(id: ticket.display_id)
+    end
+
+    def test_create_predictive_ticket_without_login
+      @account.launch :help_widget_login
+      @widget.settings[:contact_form][:require_login] = true
+      @widget.settings[:components][:contact_form] = true
+      @widget.settings[:components][:predictive_support] = true
+      @widget.save
+      subject = SecureRandom.uuid
+      params = { email: Faker::Internet.email, subject: subject, description: Faker::Lorem.paragraph, predictive: true }
+      post :create, construct_params({ version: 'widget' }, params)
+      assert_response 400
+    ensure
+      unset_login_support
+    end
+
     def test_create_with_required_fields_help_widget_login
       @account.launch :help_widget_login
       # email, description
@@ -406,6 +433,27 @@ module Widget
       # email, description
       subject = SecureRandom.uuid
       params = { email: user.email, subject: subject, description: Faker::Lorem.paragraph }
+      post :create, construct_params({ version: 'widget' }, params)
+      ticket = @account.tickets.where(subject: subject).first
+      assert_response 201
+      assert_equal User.current.id, user.id
+      assert_equal ticket.from_email, user.email
+      match_json(id: ticket.display_id)
+    ensure
+      HelpWidget.any_instance.unstub(:contact_form_require_login?)
+      unset_login_support
+      user.destroy
+    end
+
+    def test_create_with_login_required_with_predictive
+      HelpWidget.any_instance.stubs(:contact_form_require_login?).returns(true)
+      @widget.settings[:components][:predictive_support] = true
+      @widget.save
+      user = add_new_user(@account)
+      set_user_login_headers(name: user.name, email: user.email)
+      # email, description
+      subject = SecureRandom.uuid
+      params = { email: user.email, subject: subject, description: Faker::Lorem.paragraph, predictive: true }
       post :create, construct_params({ version: 'widget' }, params)
       ticket = @account.tickets.where(subject: subject).first
       assert_response 201

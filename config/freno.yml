@@ -1,5 +1,5 @@
 defaults: &defaults
-  freno_base_url: "http://freno.freshdesk.internal"
+  freno_base_url: "http://freno.freshpo.com"
 
 development:
   <<: *defaults
@@ -8,8 +8,7 @@ test:
   <<: *defaults
 
 staging:
-  <<: *defaults
+  freno_base_url: "http://freno.freshdesk.internal"
 
 production:
-  <<: *defaults
-
+  freno_base_url: "http://freno.freshdesk.internal"

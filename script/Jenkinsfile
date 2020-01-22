@@ -62,7 +62,20 @@ def encryption_check() {
                      done
          }
 
-         validate_ejson'''
+         function validate_test_file() {
+                  FILE=deploy/config/test
+                  if test -f "\$FILE"; then
+                        if [[ -z \$(grep '[^[:space:]]' \$FILE) ]] ; then
+                            echo "Empty file"
+                        else
+                            echo "\$FILE not Empty file please pull from falcon-prestaging"
+                            exit 1
+                        fi
+                  fi
+         }
+
+         validate_ejson
+         validate_test_file'''
 
    }
  
