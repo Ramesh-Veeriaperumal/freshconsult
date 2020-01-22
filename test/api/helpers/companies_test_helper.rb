@@ -218,7 +218,6 @@ module CompaniesTestHelper
       source: obj.source,
       created_at: obj.created_at.try(:utc)
     }
-    ret_hash[:requester] = TicketDecorator.new(obj, sideload_options: ['requester']).requester_info
     ret_hash.merge!(whitelisted_properties_for_activities(obj))
     ret_hash
   end
