@@ -758,3 +758,5 @@
 /field-service/settings:
   $ref: ./field_service_management/save_settings.yaml
 
+/admin/agent_levels:
+  $ref: ./admin/scoreboard_levels/index.yaml

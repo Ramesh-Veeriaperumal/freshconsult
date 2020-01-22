@@ -106,6 +106,7 @@ class AccountDataCleanupTest < ActionView::TestCase
   end
 
   def test_account_cleanup_add_data
+    Marketplace::MarketPlaceObject.any_instance.stubs(:get_api).returns(nil)
     @account = create_new_account("#{Faker::Lorem.word}#{rand(10000)}", Faker::Internet.email)
     # Twitter handle
     get_twitter_handle
@@ -124,6 +125,7 @@ class AccountDataCleanupTest < ActionView::TestCase
 
     SAAS::AccountDataCleanup.new(@account, ['smart_filter', 'shared_ownership', 'link_tickets', 'parent_child_tickets_toggle', 'parent_child_tickets', 'multiple_companies_toggle', 'tam_default_fields', 'unique_contact_identifier', 'custom_dashboard', 'disable_old_ui', 'link_tickets_toggle', 'article_versioning'], 'add').perform_cleanup
   ensure
+    Marketplace::MarketPlaceObject.any_instance.unstub(:get_api)
     Account.current.destroy if !Account.current.nil? && Account.current.id != 1 && !Account.current.id.nil?
   end
 

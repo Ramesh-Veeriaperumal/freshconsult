@@ -267,7 +267,12 @@ class UserTest < ActiveSupport::TestCase
 
   def test_user_has_valid_freshid_password
     user = add_new_user(@account)
+    Freshid::Login.any_instance.stubs(:authenticate_user).returns(true)
+    Freshid::Login.any_instance.stubs(:valid_credentials?).returns(true)
     assert_equal user.valid_freshid_password?(Faker::Name.name), true
+  ensure
+    Freshid::Login.any_instance.unstub(:authenticate_user)
+    Freshid::Login.any_instance.unstub(:valid_credentials?)
   end
 
   def test_user_signup
