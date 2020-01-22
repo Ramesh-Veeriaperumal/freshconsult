@@ -26,8 +26,6 @@ module Admin::AutomationDelegatorHelper
       validate_checkbox(ticket, evaluate_on) if evaluate_on != :condition
     when :date
       validate_date_field(ticket[:value])
-    else
-      validate_other_custom_field(ticket[:field_name], ticket[:value], CUSTOM_FIELD_TYPE_HASH[dom_type.to_sym])
     end
   end
 
