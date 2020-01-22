@@ -16,40 +16,40 @@ def self.ticket_fields_data
       
     { :name => "subject", :label => "Subject", :description => "Ticket subject",
       :required => true, :visible_in_portal => true, :editable_in_portal => true, 
-      :required_in_portal => true },
+      :required_in_portal => true, field_options: {} },
        
     { :name => "ticket_type", :label => "Type", :description => "Ticket type",
-      :required => false, 
+      :required => false, field_options: {},
       :picklist_values => [{ :value => "Question"},
                            { :value => "Incident"},
                            { :value => "Problem"},
                            { :value => "Feature Request"}]
     },
       
-    { :name => "source", :label => "Source", :description => "Ticket source" },
+    { :name => "source", :label => "Source", :description => "Ticket source", field_options: {} },
       
     { :name => "status", :label => "Status", :description => "Ticket status",
-      :required => true, :visible_in_portal => true },
+      :required => true, :visible_in_portal => true, field_options: {} },
       
     { :name => "priority", :label => "Priority", :description => "Ticket priority",
-      :required => true },
+      :required => true, field_options: {} },
       
-    { :name => "group", :label => "Group", :description => "Ticket group" },
+    { :name => "group", :label => "Group", :description => "Ticket group", field_options: {} },
       
     { :name => "agent", :label => "Assigned to", :description => "Agent",
-      :visible_in_portal => true },
+      :visible_in_portal => true, field_options: {} },
 
     { :name => "product", :label => "Product", 
       :description => "Select the product, the ticket belongs to.",
-      :visible_in_portal => true, :editable_in_portal => true },
+      :visible_in_portal => true, :editable_in_portal => true, field_options: {} },
       
     { :name => "description", :label => "Description", :description => "Ticket description",
       :required => true, :visible_in_portal => true, :editable_in_portal => true, 
-      :required_in_portal => true },
+      :required_in_portal => true, field_options: {} },
 
     { :name => "company", :label => "Company", :description => "Ticket Company",
       :required => true, :visible_in_portal => true, :editable_in_portal => true,
-      :required_in_portal => true }
+      :required_in_portal => true, field_options: {} }
   ]
 end
 
