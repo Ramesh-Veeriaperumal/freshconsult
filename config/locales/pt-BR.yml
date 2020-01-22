@@ -289,7 +289,7 @@ pt-BR:
   no_twitter_handle: Configure pelo menos uma conta do Twitter
   reset_my_password: Redefinir minha senha
   assign: Atribuir
-  signup: registrar
+  signup: <b>Registrar</b>
   signup_title: 'Cadastre-se no %{current_portal}'
   signup_up_with_us: Cadastre-se conosco
   signup_help_information: >-
@@ -486,14 +486,14 @@ pt-BR:
     fields:
       source: Fonte
       subject: Assunto
-      requester: Solicitante
+      requester: Pesquisar um solicitante
       status: Status
       group: Grupo
-      agent: Analista
+      agent: Agente
       skill: Habilidade
       skill_required: Habilidade necessária
       internal_group: Grupo interno
-      internal_agent: Analista interno
+      internal_agent: Agente interno
       priority: Prioridade
       description: Descrição
       product: Produto
@@ -567,7 +567,7 @@ pt-BR:
         Esta é a visualização dos itens de exemplo da lista suspensa. Clique em
         "Editar" para alterar os valores de cada lista suspensa.
       delete_field: Excluir campo
-      field_label_agents: Rótulo do campo para analistas
+      field_label_agents: Rótulo do campo para agentes
       field_label_customer: Nome do campo para clientes
       add_new_choice: Adicionar nova opção
       customer_mandatory: Obrigatório para enviar o formulário
@@ -592,7 +592,7 @@ pt-BR:
       default_field_delete_disabled: Os campos padrão não podem ser excluídos
       dropdown_choice_disabled: A seleção padrão não pode ser excluída
       nested_tree_validation: É necessário ter pelo menos uma categoria e uma subcategoria
-      nested_unique_names: O rótulo Analista não pode ser o mesmo nos outros dois níveis
+      nested_unique_names: O rótulo Agente não pode ser o mesmo nos outros dois níveis
       nested_3rd_level: Rótulo necessário para os itens do terceiro nível
       field_has_section: O campo tem a seção
     section:
@@ -638,8 +638,8 @@ pt-BR:
   yes_password_reset: Sim
   no_password_reset: Não
   last: último
-  agent_emailnotverified: O e-mail não foi verificado por esse analista!
-  agent_assigned_info: Nenhum ticket aberto ou pendente para este analista
+  agent_emailnotverified: O e-mail não foi verificado por esse agente!
+  agent_assigned_info: Nenhum ticket aberto ou pendente para este agente
   basic_details: >-
     Gestão de respostas de e-mails, regras do Distribuidor, política de SLA
     padrão, base de dados de conhecimento, portal de autoatendimento, mapeamento
@@ -716,7 +716,7 @@ pt-BR:
       survey_form:
         survey_title: Reserve um minuto para avaliar nosso suporte
         feedback_title: >-
-          Além disso suas palavras e críticas podem nos ajudar a melhorar nosso
+          Além disso, suas palavras e críticas podem nos ajudar a melhorar nosso
           atendimento no futuro
         rated_on: 'Você nos avaliou com esta nota em %{rated_on}'
         change_of_mind: Mudou de ideia?
@@ -781,18 +781,18 @@ pt-BR:
       you: 'Você '
       congrats: 'Parabéns, %{name}!'
       not_enough_points: Você ainda não tem pontos suficientes.
-      mvp_trophie_label: Analista mais valioso
+      mvp_trophie_label: Agente mais valioso
       back_to_dashboard: Voltar para o painel
       agents_in: Analistas em
-      mvp_trophie_info: O analista com o maior número de pontos este mês.
+      mvp_trophie_info: O agente com o maior número de pontos este mês
       sharpshooter_trophie_label: Sharpshooter
       sharpshooter_trophie_info: >-
         O analista com o maior número de pontos por resolução na primeira
         chamada este mês.
       speed_trophie_label: Speed Racer
-      speed_trophie_info: O analista com o máximo de pontos pela resolução mais rápida deste mês.
+      speed_trophie_info: O agente com o máximo de pontos pela resolução mais rápida deste mês
       love_trophie_label: Campeão de elogios dos clientes
-      love_trophie_info: O analista com o máximo de pontos de satisfação do cliente este mês.
+      love_trophie_info: O agente com o máximo de pontos de satisfação do cliente este mês
       all_agents: Todos os analistas
       showing: Mostrando
       agents_from_group: Analista do grupo
@@ -812,7 +812,7 @@ pt-BR:
       love_trophie_label_group: Campeões de elogios dos clientes
       love_trophie_info_group: Grupo com o maior número de pontos em Satisfação do cliente este mês
   quests:
-    delete: Tem certeza que deseja excluir esta meta?
+    delete: Tem certeza que deseja excluir esta missão?
     survey_disabled_event: >-
       As pesquisas estão desabilitadas. Os eventos associados à pesquisa podem
       não funcionar conforme esperado.
@@ -827,7 +827,7 @@ pt-BR:
     customer_votes: Número de votos
     solution_likes: Número de positivos
     'true': 'True'
-    ticket_mand: Informe o número de tickets solucionados.
+    ticket_mand: Informe o número de tickets resolvidos.
     solution_mand: Informe o número de soluções.
     forum_mand: Informe o número de fóruns.
     badge_mand: Selecione um distintivo.
@@ -915,34 +915,34 @@ pt-BR:
         cancel_label: Cancelar
         add_label: Adicionar
         manage_label: Gerenciar
-        no_agent_label: Nenhum analista
-        agent_label: Analista
+        no_agent_label: Nenhum agente
+        agent_label: Agente
         agents_label: Analistas
         description: Descrição
         info_help: >-
-          Crie habilidades para as emissões de ticket e as associe aos analistas
+          Crie habilidades para as emissões de ticket e as associe aos agentes
           mais adequados. A primeira habilidade correspondente será aplicada ao
           ticket.
         nav_skill_list_text: Lista de habilidades
         nav_agent_skill_text: Habilidade dos analistas
         confirm_delete_message: Tem certeza de que deseja excluir esta habilidade?
         confirm_delete_message_v2: >-
-          Se você excluir uma habilidade, ela será removida de todos os
-          analistas. Os tickets referentes a essa habilidade que ainda não foram
-          atribuídos serão mapeados para uma nova habilidade. Tem certeza de que
-          deseja continuar?
+          Se você excluir uma habilidade, ela será removida de todos os agentes.
+          Os tickets referentes a essa habilidade que ainda não foram atribuídos
+          serão mapeados para uma nova habilidade. Tem certeza de que deseja
+          continuar?
         skill_create: Criar
-        add_agents: Adicionar analistas
+        add_agents: Adicionar agentes
         skills: Habilidades
-        agent_skills: Habilidades dos analistas
+        agent_skills: Habilidades dos agentes
         agents: Analistas
         edit: Editar habilidade
         create_new: Criar nova
         new_skill_info: Você ainda não criou uma habilidade.
-        no_agents_info: Nenhum analista foi adicionado a este grupo.
+        no_agents_info: Nenhum agente foi adicionado a este grupo!
         not_in_any_groups_info: >-
-          Você só pode gerenciar as habilidades dos analistas se fizer parte de
-          um grupo. Entre em contato com o administrador do seu helpdesk.
+          Você só pode gerenciar as habilidades dos agentes se fizer parte de um
+          grupo. Entre em contato com o administrador do seu helpdesk.
         no_groups_present_info: >-
           Você só pode modificar as configurações de atribuição de ticket se
           fizer parte de um grupo.<br>Entre em contato com o administrador do
@@ -951,7 +951,7 @@ pt-BR:
         no_skill_info_1: Nenhuma habilidade foi criada.
         no_skill_info_2: Entre em contato com o administrador do seu helpdesk.
         new: Nova habilidade
-      import_csv: Importar habilidades dos analistas
+      import_csv: Importar habilidades dos agentes
       new:
         new: Nova habilidade
       edit:
@@ -960,8 +960,8 @@ pt-BR:
         new: Nome da habilidade
         info1: 'exemplo: Atender clientes VIP'
         info2: >-
-          exemple: "Atribuir tickets de clientes VIP aos analistas Susana,
-          Roberto ou Clara"
+          exemplo: "Atribuir tickets de clientes VIP aos agentes Susana, Roberto
+          ou Clara"
         info3: Associar esta habilidade aos tickets correspondentes
         match_all: <b>TODAS</b> as listadas abaixo
         match_any: <b>QUALQUER UMA</b> das listadas abaixo
@@ -969,24 +969,24 @@ pt-BR:
         title1: Entendendo as habilidades
         title2: Criando habilidades
         info1: >-
-          As habilidades facilitam a atribuição de tickets aos analistas mais
-          adequados. Você pode associar habilidades diferentes a cada analista e
+          As habilidades facilitam a atribuição de tickets aos agentes mais
+          adequados. Você pode associar habilidades diferentes a cada agente e
           criar regras para garantir que apenas os tickets com as habilidades
-          correspondentes sejam atribuídos a esses analistas.
+          correspondentes sejam atribuídos a esses agentes.
         info2: >-
-          Cada habilidade deve ser atribuída a vários analistas e mapeada para
-          os tickets com determinadas condições.<br><br>Você pode atribuir
-          habilidades aos analistas com base em seus conhecimentos ou
+          Cada habilidade deve ser atribuída a vários agentes e mapeada para os
+          tickets com determinadas condições.<br><br>Você pode atribuir
+          habilidades aos agentes com base em seus conhecimentos ou
           experiências. Por exemplo, se você oferece suporte em vários idiomas,
-          crie uma habilidade chamada "Fluente em espanhol" para os analistas
-          que receberão tickets em espanhol. Para mapear habilidades para os
+          crie uma habilidade chamada "Fluente em espanhol" para os agentes que
+          receberão tickets em espanhol. Para mapear habilidades para os
           tickets, você pode usar condições com base nas propriedades do ticket
           (como tipo, origem e produto) ou nas propriedades do cliente (como
           nome, e-mail e empresa do solicitante). Assim, os tickets com o idioma
           do solicitante definido como Espanhol podem ser mapeados para a
           habilidade "Fluente em espanhol".<br><br>Se a habilidade mapeada para
-          um ticket corresponder à habilidade de um analista, o ticket será
-          atribuído a esse analista.
+          um ticket corresponder à habilidade de um agente, o ticket será
+          atribuído a esse agente.
         learn_more_skill_based_info: Saiba mais sobre a atribuição por habilidade
         title3: Habilidade para mapeamento de ticket
         info3: >-
@@ -998,12 +998,12 @@ pt-BR:
           para organizar as regras de acordo com sua importância.
       import:
         download_xls_title: >-
-          Baixar a lista atual de analistas e suas habilidades (se houver) como
-          um arquivo CSV
+          Baixar a lista atual de agentes e suas habilidades (se houver) como um
+          arquivo CSV
         download_xls_btn: Baixar arquivo CSV
         add_skills_title: >-
-          Adicionar habilidade aos analistas em ordem decrescente de preferência
-          e carregar o arquivo
+          Adicionar habilidade aos agentes em ordem decrescente de preferência e
+          carregar o arquivo
         upload_file: Carregar arquivo CSV
         important_note: Observação importante
         note_info_1: >-
@@ -1014,8 +1014,8 @@ pt-BR:
           desassociaremos esse conjunto de habilidades e mapearemos o novo
           conjunto de habilidades presente no arquivo.
         note_info_3: >-
-          Observe que até 35 habilidades podem ser associadas a um analista e
-          180 habilidades podem ser criadas para cada conta.
+          Observe que até 35 habilidades podem ser associadas a um agente e 180
+          habilidades podem ser criadas para cada conta
     user_skills:
       update:
         update_success: As habilidades foram atualizadas com sucesso para os analistas.
@@ -1032,10 +1032,10 @@ pt-BR:
         add_skills: Adicionar habilidades
         create_skills: Criar habilidades
         admin_info_help: >-
-          Adicionar habilidades aos analistas na ordem decrescente de suas
+          Adicionar habilidades aos agentes na ordem decrescente de suas
           preferências
         supervisor_info_help: >-
-          Organizar habilidades dos analistas na ordem decrescente de suas
+          Organizar habilidades dos agentes na ordem decrescente de suas
           preferências
       no_skills: Nenhuma habilidade
     help_image_alt:
@@ -1363,7 +1363,7 @@ pt-BR:
           Esta é a "Visualização" dos itens da lista suspensa de exemplo.
           Utilize a área de texto livre no "Modo de edição" para editar os itens
         delete_field: Excluir campo
-        field_label_agents: Rótulo do campo para analistas
+        field_label_agents: Rótulo do campo para agentes
         field_label_agents_level2: Rótulo do nível 2 para analistas
         field_label_customer: Nome do campo para clientes
         field_label_customer_level2: Rótulo do nível 2 para clientes
@@ -1459,9 +1459,9 @@ pt-BR:
           Utilize a área de texto livre no "Modo de edição" para editar os itens
         delete_field: Excluir campo
         delete_section: Excluir seção
-        field_label_agents: Rótulo do campo para analistas
+        field_label_agents: Rótulo do campo para agentes
         field_label_customer: Nome do campo para clientes
-        field_label_agents_level2: Rótulo do nível 2 para analistas
+        field_label_agents_level2: Rótulo do nível 2 para agentes
         field_label_customer_level2: Rótulo do nível 2 para clientes
         add_new_choice: Adicionar item
         customer_mandatory: Obrigatório para enviar o formulário
@@ -1562,8 +1562,8 @@ pt-BR:
         title: Como configurar seus portais
         tour: Ajude-me a configurar meu portal
         info1: >-
-          Se quiser que seus clientes e analistas de suporte acessem seu portal
-          de suporte diretamente no seu domínio, aponte a URL de suporte
+          Se quiser que seus clientes e agentes de suporte acessem seu portal de
+          suporte diretamente no seu domínio, aponte a URL de suporte
           <b>suaempresa.freshdesk.com​</b> para o seu domínio, como
           <b>suporte.suaempresa.com</b>
         info2: >-
@@ -1571,8 +1571,8 @@ pt-BR:
           para exibir no portal principal e em outros portais.​
         info3: >-
           Se preferir, renove a aparência de seu helpdesk utilizando seu
-          logotipo e favicon, nomeando seu help desk e personalizando as cores
-          de seu portal.
+          logotipo e favicon, nomeando seu helpdesk e personalizando as cores de
+          seu portal.
         info4: >-
           Para definir permissões de usuários e adaptar as configurações de
           moderação do fórum, clique na guia Configurações. As configurações não
@@ -1627,7 +1627,7 @@ pt-BR:
           elemento ou digitar diretamente o código de cor hexadecimal na caixa
           de texto.
     hotline:
-      heading1: Usuários do Mobihelp conhecem hotline
+      heading1: Usuários do Mobihelp conhecem o hotline
       content1:
         info1: >-
           Hotline é a nova plataforma de suporte à dispositivos móveis e
@@ -1637,7 +1637,7 @@ pt-BR:
         list_title: 'Com Hotline você tem:'
         list1: Chat no aplicativo com central de notificações
         list2: FAQs para aplicativos mobile
-        list3: Interface de fácil adaptação para analistas
+        list3: Interface de fácil adaptação para agentes
         list4: Integração nativa com Freshdesk
         list5: Ferramenta de campanha e mensagens ricas
       content3:
@@ -1707,7 +1707,7 @@ pt-BR:
           should_be_unique: deve ser exclusivo
           select_a_platform: Selecionar uma plataforma
           select_a_solution_category: Selecionar uma categoria de solução
-          enable_push_notification: Habilitar notificação de envio
+          enable_push_notification: Habilitar notificação push
           gcm_api_key: Chave da API de GCM
           app_key: Chave do aplicativo
           app_secret: Código secreto do aplicativo
@@ -1818,8 +1818,8 @@ pt-BR:
         bg_color: Corpo
         footer_color: Rodapé
         help_center_color: Central de Ajuda
-        btn_primary_background: Botão principal de ação
-        btn_background: Botão secundário de ação
+        btn_primary_background: Botão de ação principal
+        btn_background: Botão de ação secundária
         tab_color: Fundo
         tab_hover_color: Guia ativa
         baseFont: Fonte básica
@@ -1834,15 +1834,15 @@ pt-BR:
         title: Meta
         sideinfo1: Informação 1
         sideinfo2: Informação 2
-        quest_title: Metas
+        quest_title: Missões
         new_quest: Nova meta
         quest_description: >-
-          As metas são os objetivos específicos do negócio que você define para
-          desafiar seus analistas a atingir!
+          As missão são os objetivos específicos do negócio que você define para
+          desafiar seus agentes a atingir!
       quest_form:
-        edit: Editar meta
-        quest_type: Tipo de meta
-        quest_objectives: Objetivos da meta
+        edit: Editar missão
+        quest_type: Tipo de missão
+        quest_objectives: Objetivos da missão
         no_condition: Nenhuma condição presente
         reward: Recompensa
         completion: >-
@@ -1851,9 +1851,9 @@ pt-BR:
         badge: Distintivo
         bonus_points: Pontos de bônus
         final: ...e finalmente
-        quest_name: Atribua um nome para sua meta
-        brief: Resumo da meta
-        save: Salvar uma meta
+        quest_name: Atribua um nome para sua missão
+        brief: Resumo da missão
+        save: Salvar uma missão
         pick_badge: Selecione um distintivo
         change: Alterar
         ticket: Resolvendo <br /> <strong>tickets</strong>
@@ -1862,7 +1862,7 @@ pt-BR:
     gamification:
       new_quest: Nova meta
       fresh_arcade: O que é o Freshdesk Arcade?
-      quests: Metas
+      quests: Missões
       points: Pontos
       successfully_updated: As configurações de gamification foram atualizadas com sucesso.
       error_updated: Erro ao atualizar configurações de gamification.
@@ -1874,37 +1874,37 @@ pt-BR:
       help_text:
         why_game: Pontos e níveis
         why_game_info1: >-
-          Os pontos são atribuídos aos analistas com base na rapidez com que
+          Os pontos são atribuídos aos agentes com base na rapidez com que
           resolvem os tickets atribuídos a eles. Há também os pontos de bônus
-          para resolução na primeira chamada e clientes satisfeitos. Os
-          analistas também perdem pontos pela demora na resolução de tickets e
-          para clientes insatisfeitos.
+          para resolução na primeira chamada e clientes satisfeitos. Os agentes
+          também perdem pontos pela demora na resolução de tickets e para
+          clientes insatisfeitos.
         why_game_info2: >-
-          Um analista pode atingir níveis mais altos se continuar recebendo mais
-          e mais pontos. O total de pontos a ser alcançado será definido pelo
+          Um agente pode atingir níveis mais altos se continuar recebendo mais e
+          mais pontos. O total de pontos a ser alcançado será definido pelo
           administrador.
-        trophies_info1: O analista receberá 4 troféus com base em critérios diferentes.
-        quest: Metas
+        trophies_info1: O agente receberá 4 troféus com base em critérios diferentes.
+        quest: Missões
         quest_info1: >-
-          As metas representam os objetivos de desempenho definidos para os
-          analistas, que al atingi-las recebem medalhas de honra.
+          As missões representam os objetivos de desempenho definidos para os
+          agentes, que ao atingi-las recebem medalhas de honra.
         quest_info2: >-
-          Todas as metas são ativas por padrão. Você pode optar por desativar as
-          que não quiser. Para adicionar mais metas ou criar metas específicas,
-          clique em "Nova meta". Você pode pode criar metas novas com as
-          condições que desejar.
+          Todas as missões são ativas por padrão. Você pode optar por desativar
+          as que não quiser. Para adicionar mais missões ou criar missões
+          específicas, clique em "Nova missão". Você pode pode criar missões
+          novas com as condições que desejar.
         quest_form_info1: >-
-          Escolha o tipo de meta a ser definida para os analistas. Ela pode ser
+          Escolha o tipo de meta a ser definida para os agentes. Ela pode ser
           uma destas três: <br /> a) solucionar tickets,<br /> b) publicar
           soluções e<br /> c) contribuir em fóruns.
         quest_form_info2: >-
-          Depois de fazer isso, escolha os critérios da meta (o que o analista
+          Depois de fazer isso, escolha os critérios da meta (o que o agente
           precisa fazer) e adicione as condições, que depois de cumpridas
-          garantirão um distintivo ao analista.
+          garantirão um distintivo ao agente
         quest_form_info3: >-
-          Escolha os pontos que o analista ganha e o distintivo que ele
-          receberá. Por fim, atribua um nome à sua meta e forneça um pequeno
-          resumo sobre ela.
+          Escolha os pontos que o agente ganha e o distintivo que ele receberá.
+          Por fim, atribua um nome à sua meta e forneça um pequeno resumo sobre
+          ela.
         quest_form_info4: Clique em "Salvar meta" para salvar suas configurações.
         creating_survey: 'Criando sua pesquisa de satisfação:'
         creating_survey_help: >-
@@ -1923,24 +1923,23 @@ pt-BR:
         start_over: Redefinir
         info1: >-
           Agora, todo ticket de suporte recebido é uma oportunidade para os
-          analistas pontuarem. E o melhor: você recebe pontos de bônus para a
-          sua equipe de suporte com base no que é mais importante para você.
-          Como enviar respostas com muita rapidez, resolver o problema na
-          primeira chamada e receber ótimas avaliações de satisfação de
-          clientes.
+          agentes pontuarem. E o melhor: você recebe pontos de bônus para a sua
+          equipe de suporte com base no que é mais importante para você. Como
+          enviar respostas com muita rapidez, resolver o problema na primeira
+          chamada e receber ótimas avaliações de satisfação de clientes.
         info2: >-
           Acompanhe o progresso de suas equipes de suporte pelo ranking
           diretamente no painel e premie os maiores pontuadores com os troféus
           especiais Speed Racer, Sharp Shooter, Campeão de elogios dos clientes,
-          e o melhor de todos, o Analista mais valioso do mês.
+          e o melhor de todos, o Agente mais valioso do mês.
         video: Confira o vídeo
         learn_arcade: Aprenda mais sobre o jogo
         enable_arcade: Habilitar jogo do Freshdesk
       gamification_settings:
         award_points: Pontos
-        agent_resolves_ticket: 'Quando o analista  <br /> soluciona um ticket:'
+        agent_resolves_ticket: 'Quando o agente <br /> soluciona um ticket:'
         bonus_points_for: 'Pontos de bônus por: '
-        enable_label: Gamification para analistas
+        enable_label: Gamificação para agentes
         title_points_configuration: Configuração de pontos
         title_ticket_points: Pontos de ticket
         fast_resolution: Rápido <span>(< 1 hr)</span>
@@ -1950,11 +1949,11 @@ pt-BR:
         firstcall_resolution: Resolução na primeira chamada
         happy_customer: Cliente satisfeito
         unhappy_customer: Cliente insatisfeito
-        title_levels: Níveis de analistas
-        info_levels: Defina os pontos a serem somados por um analista para atingir um nível
+        title_levels: Níveis de agentes
+        info_levels: Defina os pontos a serem somados por um agente para atingir um nível
         title_trophies: Troféus
         new_quest: Nova meta
-        quest_title: Metas
+        quest_title: Missões
     surveys:
       survey_not_found: 'A pesquisa que você está tentando acessar, não está disponível.'
       successfully_created: >-
@@ -1995,21 +1994,22 @@ pt-BR:
         As pesquisas de satisfação permitem que você adicione um link aos seus
         e-mails de resposta e obtenha diretamente o feedback e a satisfação do
         cliente. <br><br> <b>Como criar sua pesquisa de satisfação:</b><br> As
-        seguintes etapas permitem que você obtenha feedbacks de seus clientes
-        por meio de um link em seus e-mails de resposta:<br> 1. Habilitar a
-        Pesquisas de satisfação<br> 2. Especificar o texto do link de
-        satisfação. O texto padrão é “Dê a sua opinião sobre a sua experiência
-        com o suporte”.<br> <br> <b>Escolha os e-mails que terão o link para a
+        seguintes etapas permitem que você obtenha feedback de seus clientes por
+        meio de um link em seus e-mails de resposta:<br> 1. Habilitar a Pesquisa
+        de satisfação do cliente<br> 2. Especificar a pergunta. O texto padrão é
+        &ldquo;“Qual é o seu nível de satisfação com a resolução fornecida pelo
+        agente?&rdquo;<br> <br> <b>Escolha os e-mails que terão o link para a
         pesquisa de satisfação:</b><br> Você pode escolher se os links de
         pesquisa de satisfação serão enviados aos clientes em cada e-mail ou
-        apenas no último e-mail, quando o ticket for resolvido. <br><br> Você
-        pode saber mais sobre pesquisas de satisfação em nossa página de
-        soluções. </p>
+        apenas no último e-mail, quando o ticket for resolvido. A resposta do
+        cliente pode ser vista em<b>Relatórios > Relatório de satisfação do
+        cliente</b> <br><br> Saiba mais sobre nossas pesquisas de satisfação em
+        nossa página de soluções. </p>
       helptext_v2: >-
         <p><b>Por que ativar a pesquisa de satisfação?</b><br>
 
         A pesquisa de satisfação deixa você inserir um link para as suas
-        respostas de emails, e coletar diretamente o feedback e a satisfação do
+        respostas de e-mails, e coletar diretamente o feedback e a satisfação do
         seu cliente.<br><br><b>Criando sua pesquisa de satisfação:</b><br>As
         etapas seguintes possibilita você coletar o feedback do seu cliente por
         um link no e-mails de resposta:<br>1.Ative a pesquisa de
@@ -2019,7 +2019,7 @@ pt-BR:
         selecionar que a pesquisa de satisfação é enviada para o cliente em
         todos as respostas, ou apenas na ultima resposta quando o ticket é
         marcado como resolvido. As respostas dos clientes pedem ser vistas
-        em<br>Relatórios > Satisfaction Report</b> <br><br>Você pode aprender
+        em<br>Relatórios >Relatório de satisfação do cliente</b> <br><br>Saiba
         mais sobre a pesquisa de satisfação <a target= ‘_blank’
         href='https://support.freshdesk.com/solution/articles/215322'>neste
         artigo</a>. </p>
@@ -2027,22 +2027,23 @@ pt-BR:
       custom_helptext_v2: >-
         <p><b>Como habilitar pesquisas de satisfação</b> <br>
 
-        Você pode adicionar uma pesquisa de satisfação às respostas do analista
-        no ticket para obter feedback dos clientes sobre o suporte, a empresa
-        e/ou o produto. Envie as pesquisas em todos os e-mails ou apenas quando
-        um ticket for fechado ou resolvido. Acesse <b>Relatórios > Relatório de
+        Você pode adicionar uma pesquisa de satisfação às respostas do agente no
+        ticket para obter feedback dos clientes sobre o suporte, a empresa e/ou
+        o produto. Envie as pesquisas em todos os e-mails ou apenas quando um
+        ticket for fechado ou resolvido. Acesse <b>Relatórios > Relatório de
         satisfação do cliente</b> para ver as respostas dos clientes.<br><br>
         <b>Pesquisa de satisfação</b><br> Você pode fazer uma pergunta sobre a
         satisfação do cliente e outras perguntas sobre a pesquisa. A pesquisa de
         satisfação do cliente aparece no e-mail e, quando os clientes escolherem
         uma opção de pesquisa, eles serão direcionados para a página da pesquisa
-        de acompanhamento. As regras do observador e os pontos de gamification
-        se basearão apenas na avaliação da pesquisa de satisfação do
-        cliente.<br> <br><br> <b>Escala de pontos</b><br> É possível escolher
-        entre as diferentes escalas de pontos para as pesquisas de
-        acompanhamento e do analista. As respostas podem ter <br> 2 opções (Sim
-        e Não)<br> 3 opções (Concordo, Não sei e Discordo)<br> 5 opções (de
-        Sempre a Nunca)<br> 7 opções (de Muito ruim a Excepcional).<br><br>
+        de acompanhamento. As regras do observador e os pontos de gamificação se
+        basearão apenas na avaliação da pesquisa de satisfação do cliente.<br>
+        <br><br> <b>Escala de pontos</b><br> É possível escolher entre as
+        diferentes escalas de pontos para as pesquisas de acompanhamento e do
+        agente. As respostas podem ter <br> 2 opções (p. ex.Sim e Não)<br> 3
+        opções (p. ex. Concordo, Não sei e Discordo)<br> 5 opções (p. ex. de
+        Sempre a Nunca)<br> 7 opções (p. ex. de Muito ruim a
+        Excepcional).<br><br>
 
         Depois que um cliente responder à pesquisa, as escalas serão bloqueadas
         e não poderão mais ser editadas.<br><br> Você pode aprender mais sobre
@@ -2076,7 +2077,7 @@ pt-BR:
           depois que essa pergunta for respondida.
         content_text_v2: >-
           Esta pergunta ajuda a avaliar a satisfação geral de acordo com a
-          resposta fornecida pelo analista. Ela aparece abaixo da assinatura, no
+          resposta fornecida pelo agente. Ela aparece abaixo da assinatura, no
           final do e-mail enviado ao cliente. A escala não poderá ser alterada
           depois que essa pergunta for respondida.
         survey_question: Pergunta da pesquisa
@@ -2092,11 +2093,11 @@ pt-BR:
         thanks_feedback: Obrigado por seu valioso feedback.
         thanks_feedback_v2: Obrigado. Seu feedback foi enviado.
         additional_comments_feedback: Coletar outros feedbacks
-        additional_comments_feedback_v2: Incluir caixa de comentários adicional
-        additional_comments_feedback_statement: Informação adicional
+        additional_comments_feedback_v2: Incluir caixa de comentários adicionais
+        additional_comments_feedback_statement: Feedback adicional
         comments_feedback: Adicione mais detalhes sobre a experiência do cliente.
         thanks_message_feedback: Mensagem de agradecimento pela pesquisa de feedback
-        thanks_message_feedback_v2: Mensagem de agradecimento pelas perguntas adicionais
+        thanks_message_feedback_v2: Mensagem de agradecimento pelo feedback adicional
         default_question_text: Você ficou satisfeito com o atendimento do suporte?
         thanks_label: A mensagem será exibida após o envio da pesquisa de feedback
         thanks_label_v2: >-
@@ -2112,9 +2113,9 @@ pt-BR:
           depois que o cliente concluir a pesquisa de satisfação. Essas
           perguntas podem ser sobre um produto, a empresa e/ou o analista.
         thanks_help_text: >-
-          Perguntas adicionais aparecem na página "Muito Obrigado", após o
+          Perguntas adicionais aparecem na página de agradecimento após o
           cliente responder a pesquisa de satisfação. As questões podem ser
-          sobre produto/empresa/analista.
+          sobre produto/empresa/agente.
       new_questions_layout:
         title_text: Selecione a escala de pontos para suas perguntas
         title_text_v2: Perguntas adicionais
@@ -2154,8 +2155,8 @@ pt-BR:
           Quando uma avaliação de satisfação é selecionada, a página de
           agradecimento é exibida.
         survey_help_msg_v3: >-
-          Quando o nível de satisfação for informado, uma pagina de Muito
-          Obrigado é exibida para coletar mais informações.
+          Quando o nível de satisfação for informado, uma pagina de
+          agradecimento é exibida para coletar mais informações
         'on': ATIVADO
         'off': DESATIVADO
         'true': true
@@ -2164,10 +2165,10 @@ pt-BR:
         delete: Excluir
         activate_survey: Ativar
         activate_msg: >-
-          Ativando esta pesquisa irá desativar <b id='active_survey_name'>
+          Ativar esta pesquisa irá desativar <b id='active_survey_name'>
           Pesquisa Padrão </b><br> Você quer realmente ativar?
         remove_msg: >-
-          Removendo essa seção irá resultar na perca de qualquer mudanças feitas
+          Remover essa seção irá resultar na perda de qualquer alterações feitas
           em questões adicionais. Deseja continuar?
       choice_contents:
         strongly_disagree: Discordo totalmente
@@ -2205,7 +2206,7 @@ pt-BR:
         link_text_label: Texto do link para a pesquisa de satisfação
         link_text_input_label: >-
           Como você avaliaria sua satisfação geral com a solução fornecida pelo
-          analista?
+          agente?
         link_text_input: Dê a sua opinião sobre a sua experiência com o suporte
         link_text_info: >-
           Este texto aparece abaixo da sua assinatura no final do e-mail enviado
@@ -2214,9 +2215,9 @@ pt-BR:
         send_while_option2: E-mails enviados após o ticket estar "Resolvido".
         send_while_option3: E-mails enviados após o ticket estar "Fechado".
         send_while_option4: >-
-          Permitir que analistas adicionem links de pesquisa a e-mails
+          Permitir que agentes adicionem links de pesquisa a e-mails
           específicos.
-        send_while_title: Quais e-mails têm o link da pesquisa de satisfação.
+        send_while_title: Quais e-mails têm o link da pesquisa de satisfação?
         send_while_title_v2: Qual e-mail deverá ter o link da pesquisa de satisfação?
         enter_happy_text: Insira um texto de satisfação
         enter_neutral_text: Insira um texto neutro
@@ -2340,7 +2341,7 @@ pt-BR:
         email_send_problem: Erro ao enviar o e-mail.
         sending_test_mail_progress: 'Enviando e-mail de teste, aguarde...'
         agent_invite_multi_info: 'Utilize vírgula ( , ) para adicionar vários e-mails.'
-        agent_limit_reached: Você excedeu seu limite de analistas.
+        agent_limit_reached: Você excedeu seu limite de agentes.
         rebrand_header_invalid: O código da cor do cabeçalho é inválido.
         rebrand_tab_invalid: O código da cor da guia é inválido.
         rebrand_bg_invalid: O código da cor de fundo é inválido.
@@ -2359,11 +2360,10 @@ pt-BR:
       helpnote:
         title: Acesso de um dia
         info: >-
-          Um acesso de um dia é usado para cada dia que um analista
-          ocasionalmente acessa seu helpdesk. Você pode adquirir acessos de um
-          dia em múltiplos de 5 por vez, e também pode configurara o Freshdesk
-          para renovar automaticamente seus acessos de um dia quando eles
-          terminarem.
+          Um acesso de um dia é usado para cada dia que um agente ocasionalmente
+          acessa seu helpdesk. Você pode adquirir acessos de um dia em múltiplos
+          de 5 por vez, e também pode configurar o Freshdesk para renovar
+          automaticamente seus acessos de um dia quando eles terminarem.
       index:
         no_credit_card: Nenhum cartão de crédito registrado.
         payment_info: >-
@@ -2390,7 +2390,7 @@ pt-BR:
         buy_passes: Comprar acessos de um dia
         time_period: 'Período:'
         filtered_by: 'Filtrado por:'
-        agent: Analista
+        agent: Agente
         days_filter: 'Últimos %{days} dias'
         wait: Aguarde...
         usage_history: Histórico de uso
@@ -2469,7 +2469,7 @@ pt-BR:
         feedbackwidget_mobile_view: Habilitar exibição para dispositivo móvel
         feedbackwidget_use_captcha: Habilitar CAPTCHA
         feedbackwidget_submit_title: Enviar Feedback
-        feedbackwidget_form_submit_title: Botão do Formulário
+        feedbackwidget_form_submit_title: Botão Enviar formulário
         feedbackwidget_title_maxlength: Máximo 30 caracteres
         feedbackwidget_submit_title_maxlength: Máximo 16 caracteres
         feedbackwidget_offset: 'Deslocamento:'
@@ -2493,7 +2493,7 @@ pt-BR:
         feedbackwidget_use_https: Usar https
         feedbackwidget_use_captcha: Habilitar CAPTCHA
         feedbackwidget_submit_title: Enviar Feedback
-        feedbackwidget_form_submit_title: Botão do Formulário
+        feedbackwidget_form_submit_title: Botão Enviar formulário
         feedbackwidget_title_maxlength: Máximo 16 caracteres
         feedbackwidget_submit_title_maxlength: Máximo 16 caracteres
     supervisor_rules:
@@ -2547,9 +2547,9 @@ pt-BR:
         tour_v2: Me ajude criar uma regra do observador
         help_title: Observador
         help_info_1: >-
-          O Observador permite que você execute ações específicas em seu serviço
+          O Observador permite que você execute ações específicas em sua central
           de suporte assim que um determinado evento ocorrer. Por exemplo, você
-          poderia criar uma regra do Observador para avisarseu chefe quando um
+          poderia criar uma regra do Observador para avisar seu chefe quando um
           cliente atribuir uma nota desfavorável na avaliação de satisfação em
           um ticket.
         help_title_2a: Eventos
@@ -2564,16 +2564,16 @@ pt-BR:
           ticket) ou ambos.
         new_help_info_2b: >-
           especificam quais alterações de um determinado usuário devem acionar a
-          regra. Você pode escolher entre o analista, o solicitante, o analista
-          ou o solicitante, e o sistema. A opção do solicitante também pode
-          incluir alguém de fora de sua equipe de suporte, mas que está no grupo
-          do ticket.
+          regra. Você pode escolher entre o agente, o solicitante, o agente ou o
+          solicitante, e o sistema. A opção do solicitante também pode incluir
+          alguém de fora de sua equipe de suporte, mas que está no grupo do
+          ticket.
         help_title_2c: Condições do ticket
         help_info_2c: >-
           Você também pode filtrar a regra que será aplicada a somente alguns
           tickets.
         help_title_2d: Ações
-        help_info_2d: Especificam o que você deseja que a regra faça.
+        help_info_2d: Isto especifica o que você quer que a regra faça.
         help_info_3: >-
           Você pode usar o Observador para modificar campos, mudar status ou
           enviar alertas de notificação assim que determinadas condições forem
@@ -2592,17 +2592,17 @@ pt-BR:
       actions: execute estas ações
       new_performed_by: Quando uma ação for executada por...
       new_events: envolve <b>qualquer um</b> destes eventos
-      new_anyone: Analista ou solicitante
+      new_anyone: Agente ou solicitante
       customer_performed: Solicitante
       agent_performed: Analista
-      agent: Analista
+      agent: Agente
       customer: Solicitante
       anyone: Qualquer pessoa
       system: Sistema
       present: Qualquer pessoa
-      assigned_agent: Analista atribuído
+      assigned_agent: Agente atribuído
       assigned_group: Grupo atribuído
-      event_performer: Analista executando o evento
+      event_performer: Agente executando o evento
       filter_jsinit:
         insert_placeholder: Inserir espaço reservado
         subject: Assunto
@@ -2617,8 +2617,8 @@ pt-BR:
           Aplicável somente se o grupo selecionado estiver mapeado para o status
           do ticket como um grupo interno no momento da execução da regra.
         internal_agent_actions: >-
-          Aplicável somente se o analista selecionado estiver mapeado para o
-          grupo interno no momento da execução da regra.
+          Aplicável somente se o agente selecionado estiver mapeado para o grupo
+          interno no momento da execução da regra.
       default_rule_desc: >-
         Quando um cliente der uma nota de satisfação negativa em um ticket,
         notifique o líder da equipe
@@ -2674,7 +2674,7 @@ pt-BR:
         api_key?: Tenho uma chave de API?
         user_pass?: Tenho um nome de usuário e senha?
         add_custom_headers: Adicionar Cabeçalho Personalizado
-        remove_custom_headers: Remover Cabeçalho Personalizado
+        remove_custom_headers: Remover Cabeçalhos Personalizados
         username: Nome de usuário
         api_key: Chave da API
         password: Senha
@@ -2714,7 +2714,7 @@ pt-BR:
         enable_sso_info: >-
           O Logon único permite que você use seu próprio aplicativo ou um
           servidor centralizado (como o Microsoft Active Directory) para
-          autenticar analistas e clientes, para que eles possam acessar o
+          autenticar agentes e clientes, para que eles possam acessar o
           Freshdesk sem precisar digitar outro nome de usuário e senha.
         enable_sso: Logon único (SSO)
         enable_simple_sso: SSO simples
@@ -2796,14 +2796,14 @@ pt-BR:
         send_notifications: Enviar notificações para
         select_admin: Selecionar um administrador
         notifications: A notificação será enviada quando
-        agent_create_or_delete: Analista adicionado ou excluído
+        agent_create_or_delete: Agente adicionado ou excluído
         whitelisted_ip_modified: A lista de permissão de IPs foi modificada
         password_policy: Política de senha
         for_agents: Para analistas
         for_contacts: Para contatos
         password_policy_info3: >-
           As alterações que você fez na política de senha serão aplicadas nas
-          próximas 8 horas. Seus analistas serão solicitados a atualizar suas
+          próximas 8 horas. Seus agentes serão solicitados a atualizar suas
           senhas nesse período. Caso não façam isso, eles serão desconectados do
           portal de suporte e precisarão alterar suas senhas da próxima vez que
           fizerem login.
@@ -2823,13 +2823,14 @@ pt-BR:
           próprios aplicativos da Web, você pode permitir que eles façam login
           em seu portal de suporte com essas credenciais usando o Logon único.
           Saiba mais sobre Logon único <a
-          href="https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk">aqui</a>.
+          href="https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk"
+          target="_top"> aqui</a>.
         info2: >-
           <b>Habilitando a segurança SSL</b><br>Se você não estiver usando um
           domínio personalizado para seu portal de suporte, o Freshdesk oferece
           um certificado SSL curinga para as contas no domínio freshdesk.com.
           <b>A opção SSL para domínios personalizados está disponível apenas no
-          plano Estado. </b>Você pode <a
+          plano Blossom. </b>Você pode <a
           href="https://support.freshdesk.com/support/tickets/new">solicitar um
           certificado SSL personalizado para sua URL de suporte intuitiva
           aqui</a>.
@@ -2839,16 +2840,17 @@ pt-BR:
           empresa ou organização. Você pode adicionar um número ilimitado de
           intervalos de IP com acesso e definir se deseja controlar o acesso do
           clientes também ou apenas dos seu agentes. <a
-          href="https://support.freshdesk.com/support/solutions/articles/195168">
-          Saiba mais.</a>
+          href="https://support.freshdesk.com/support/solutions/articles/195168"
+          target="_top"> Saiba mais.</a>
         info4: >-
           <b>Política de senha</b><br>Você pode definir políticas de senha
-          diferentes para analistas e clientes. As configurações avançadas
+          diferentes para agentes e clientes. As configurações avançadas
           permitem configurar políticas de senha personalizadas, como um tamanho
           mínimo para a senha e a hora que ela vai expirar. Suas alterações
-          serão aplicadas aos clientes e analistas novos e existentes. Saiba
-          mais sobre a política de senha <a
-          href="https://support.freshdesk.com/support/solutions/articles/213865-password-policy">aqui</a>.
+          serão aplicadas aos clientes e agentes novos e existentes. Saiba mais
+          sobre a política de senha <a
+          href="https://support.freshdesk.com/support/solutions/articles/213865-password-policy"
+          target="_top"> aqui</a>.
       password_security:
         default: Padrão
         advanced: Avançada
@@ -3006,11 +3008,11 @@ pt-BR:
         default_group: Grupo padrão
       stream_content: Este stream conterá todas as suas menções @
     roles:
-      title: Funções do analista
-      agent_label: Analista
+      title: Funções do agente
+      agent_label: Agente
       agents_label: Analistas
-      no_agent_label: Nenhum analista
-      add_agent_label: Adicionar Analista
+      no_agent_label: Nenhum agente
+      add_agent_label: Adicionar agente
       add_label: Adicionar
       no_label: 'No'
       done_label: Concluído
@@ -3042,9 +3044,9 @@ pt-BR:
         title1: Entendendo as funções
         info1: >-
           As funções permitem que você crie e edite as permissões de acesso dos
-          analistas. Você pode criar novas funções, especificar quais ações os
-          analistas com essas funções podem executar em seu helpdesk e atribuir
-          funções aos analistas.
+          agentes. Você pode criar novas funções, especificar quais ações os
+          agentes com essas funções podem executar em seu helpdesk e atribuir
+          funções aos agentes.
         info2: >-
           Por exemplo, você pode criar uma função para seus Coordenadores de
           suporte, permitindo que eles atualizem os campos, atribuam tickets, e
@@ -3052,8 +3054,8 @@ pt-BR:
           clientes.
         info3: >-
           Após criar e salvar uma nova função, você poderá atribuí-la aos
-          analistas quando criar e editar seus perfis, clicando no ícone dos
-          analistas na guia "Admin".
+          agentes quando criar e editar seus perfis, clicando no ícone dos
+          agentes na guia "Admin".
         title2: Privilégios de administrador
         info4: >-
           Você pode determinar se quer que um analista tenha acesso às
@@ -3160,7 +3162,7 @@ pt-BR:
         facebook-setting: Facebook
         security: Segurança
         email_commands_setting: Comandos no e-mail
-        billing: Planos e pagamentos
+        billing: Planos e faturamento
         invoice: Faturas
         phone-channel: Telefone
         tags: Tags
@@ -3552,8 +3554,8 @@ pt-BR:
         carregá-lo.
       info7: >-
         Não foi possível iniciar a importação %{type} para csv, porque o formato
-        do arquivo que você enviou estava incorreto. Re-envie o arquivo depois
-        de reformatá-lo de acordo com as instruções descritas neste artigo de
+        do arquivo que você enviou estava incorreto. Reenvie o arquivo depois de
+        reformatá-lo de acordo com as instruções descritas neste artigo de
         solução <a href = '%{solution_link}'></a>.
       info8: >-
         No anexo, você encontrará os analistas para os quais a atualização de
@@ -4545,16 +4547,16 @@ pt-BR:
         Após esse procedimento, você não terá mais acesso aos seus dados,
         portanto, certifique-se de que realmente deseja fazer isso.
       trial_warning_message: >-
-        Uma vez cancelada sua conta, seus clientes e analistas não terão acesso
-        ao seu portal de suporte. Tenha certeza de que é isso que você realmente
+        Uma vez cancelada sua conta, seus clientes e agentes não terão acesso ao
+        seu portal de suporte. Tenha certeza de que é isso que você realmente
         deseja fazer.
       feedback:
         budget: Eu não tenho mais orçamento
         budget_followup: >-
           Você pode fazer o downgrade para um plano inferior do Freshdesk sem
           afetar seus tickets existentes. Na verdade, se o orçamento está
-          realmente apertado, você poderia mudar para o plano Broto com 3
-          analistas gratuitos para sempre.<a
+          realmente apertado, você poderia mudar para o plano Sprout com 3
+          agentes gratuitos para sempre.<a
           href="http://www.freshdesk.com/free-support-software"> Saiba mais
           sobre o plano gratuito</a>
         budget_extra: >-
@@ -4631,9 +4633,9 @@ pt-BR:
       title: Suporte a Vários Idiomas
       add_languages: Adicionar idiomas
       add_more_languages_msg: >-
-        Adicione outros idiomas que você presta suporte aqui. Dessa maneira você
-        pode traduzir notificações por e-mail e artigos da base de conhecimento
-        para cada idioma suportado de maneira separada.
+        Adicione outros idiomas em que você presta suporte aqui. Dessa maneira
+        você pode traduzir modelos de notificações por e-mail e artigos da base
+        de conhecimento para cada idioma suportado de maneira separada.
       warning_msg: >-
         Nota: Idioma principal é o idioma padrão do helpdesk. Não pode ser
         modificado uma vez que os idiomas suportados são adicionados.
@@ -4649,7 +4651,7 @@ pt-BR:
         supported_languages:
           title: <b>Idiomas Suportados</b><br/>
           info1: >-
-            Adicionando idiomas nessa lista te possibilitará traduzir artigos da
+            Adicionar idiomas nessa lista te possibilitará traduzir artigos da
             base de conhecimento e notificações por e-mail nos respectivos
             idiomas para prestar suporte ao cliente.<br /><br />
           info2: >-
@@ -5203,17 +5205,17 @@ pt-BR:
   dispatch:
     conditions: Condições
     actions: Ações
-    clone: Dispatch’r - Clonar regra
-    new: Distribuidor - Nova regra
+    clone: Dispatch'r - Clonar regra
+    new: Dispatch'r - Nova regra
     cascade_text: 'Para cada ticket recebido, execute'
-    info_help: 'Para cada ticket recebido, execute a primeira regra e correspondência.'
+    info_help: 'Para cada ticket recebido, execute a primeira regra correspondente'
     cascade: todas as regras correspondentes
     no_cascade: primeira regra correspondente
     add_new_choice: Adicionar nova opção
     add_watcher: Adicionar inspetor
     act_to_perform: Executar estas ações
-    edit: Distribuidor - Editar regra
-    title: Distribuidor
+    edit: Dispatch'r - Editar regra
+    title: Dispatch'r
     copy_of: Cópia de
     inactive_rules: Regras inativas
     info1: Tickets relacionados a assinaturas
@@ -5228,24 +5230,24 @@ pt-BR:
     info3: Quando um ticket atender a estas condições
     helpcard:
       tour: Ajude-me a criar uma nova regra do Distribuidor
-      tour_v2: Me ajude a criar uma regra do Distribuidor
+      tour_v2: Me ajude a criar uma regra do Dispatch'r
       info1: >-
-        O Distribuidor permite que você traga suas regras de negócios para seu
+        O Dispatch'r permite que você traga suas regras de negócios para seu
         fluxo de suporte, executando um conjunto de ações predefinidas nos
-        tickets recém-criados. Por exemplo, você poderia usar o Distribuidor
-        para automaticamente categorizar, priorizar e atribuir todos os tickets
-        recebidos para o analista certo da sua equipe, com base nas condições
-        que você especificar.
+        tickets recém-criados. Por exemplo, você poderia usar o Dispatch'r para
+        automaticamente categorizar, priorizar e atribuir todos os tickets
+        recebidos para o agente certo da sua equipe, com base nas condições que
+        você especificar.
       info2: >-
-        Lembre-se de que a ordem das regras no Distribuidor é importante. Para
-        cada ticket recebido, o Distribuidor executa a primeira regra
+        Lembre-se de que a ordem das regras no Dispatch'r é importante. Para
+        cada ticket recebido, o Dispatch'r executa a primeira regra
         correspondente e para. Você pode reorganizar a lista de regras para
         colocar as mais importantes primeiro.
     reorder: Reordenar
     add_new_action: Adicionar nova ação
-    dispatch_rules: Distribuidor - Regras
-    match_all: Combinar todas
-    match_any: Combinar qualquer
+    dispatch_rules: Dispatch'r - Regras
+    match_all: Combinar <b>TODAS</b> abaixo
+    match_any: Combinar <b>qualquer</b> dos seguintes
     add_condition: Adicionar nova condição
     delete: Tem certeza de que deseja excluir esta regra?
     skip_notifications: Pular notificações por e-mail de novo ticket
@@ -5361,10 +5363,10 @@ pt-BR:
     post_comment: Publicar
     msg1: Não são permitidos comentários neste tópico
     sticky: Tópico fixo
-    mark_as_sticky: Marcar como tópico de destaque
+    mark_as_sticky: Marcar como tópico fixo
     sticky_info: >-
       Os tópicos de destaque ficam na parte superior da página do fórum para
-      maior visibilidadea
+      maior visibilidade
     locked: Bloquear tópico e impedir que usuários postem respostas.
     answered: Respondido
     view_on_portal: Exibir no portal
@@ -5622,14 +5624,14 @@ pt-BR:
     description: Descrição do grupo
     edit: Editar grupo
     title: Grupos
-    business_calendar: Horário de atendimento
+    business_calendar: Horário comercial
     ticket_assignment: Atribuição automática de ticket
     auto_assignment_description: >-
       O tickets enviados para este grupo serão automaticamente atribuídos aos
-      analistas disponíveis de acordo com o método de atribuição selecionado
+      agentes disponíveis de acordo com o método de atribuição selecionado
     only_round_robin_description: >-
       Os tickets enviados para este grupo serão atribuídos automaticamente aos
-      analistas disponíveis com base no <strong>método de Rodízio</strong>
+      agentes disponíveis com base no <strong>método de Round-Robin</strong>
     escalation_rule: Regra de Escalonamento
     send_escalation_to: '....envie email de escalonamento para :'
     info1: Analistas
@@ -5638,16 +5640,15 @@ pt-BR:
     info4: se um ticket permanecer não atribuído por mais de
     info5: >-
       Tem certeza de que deseja excluir este grupo? Excluir um grupo não exclui
-      seus analistas.
+      seus agentes.
     info6: >-
       Enviar e-mail para o analista quando um novo ticket for atribuído a este
       grupo
     info7: 'se o ticket permanecer não atribuído por mais de '
     info8: >-
       Novo: permite que seus supervisores gerenciem a atribuição automática de
-      tickets e a disponibilidade dos analistas nos grupos a que eles pertencem
-      -
-    info8_readmore: Lear mais
+      tickets e a disponibilidade dos agentes nos grupos a que eles pertencem -
+    info8_readmore: Leia mais
     enable: Ativar
     enable_success_message: >-
       A habilidade de atribuição de ticket foi ativada para seu supervisor com
@@ -5661,39 +5662,38 @@ pt-BR:
     rr_v2_confimation_message: Essa ação não pode ser desfeita. Tem certeza que deseja continuar?
     tour: Ajude-me a criar um novo grupo de analistas
     helptext: >-
-      Você pode organizar seus analistas em grupos específicos, como "Suporte" e
+      Você pode organizar seus agentes em grupos específicos, como "Suporte" e
       "Vendas". Isso facilita a atribuição de tickets, a criação de respostas
       predefinidas específicas, o gerenciamento de fluxos de trabalho e a
-      geração de relatórios do grupo. Observe que o mesmo analista pode ser
-      membro de vários grupos.
+      geração de relatórios do grupo. Observe que o mesmo agente pode ser membro
+      de vários grupos.
     automatic_assignment: >-
       <b>Para cada grupo</b><br/>Depois de criar seus grupos, você poderá
-      definir regras no Distribuidor para encaminhar tickets automaticamente
-      para cada grupo. <a
+      definir regras no Dispatch'r para encaminhar tickets automaticamente para
+      cada grupo. <a
       href="https://support.freshdesk.com/support/solutions/articles/77157"
-      target="_blank">Saiba mais</a><br/><br/><b>Para os analistas de cada
-      grupo</b><br/>Também é possivel atribuir tickets automaticamente para os
-      analistas de um grupo usando estas três opções:<br>1. Rodízio - atribui
-      tickets para os analistas em uma determinada ordem<br>2. Carga balanceada
-      - define um limite de tickets para cada analista<br>3. Por habilidade -
-      atribui tickets aos analistas com base em seus conhecimentos <br/> <a
+      target="_blank">Saiba mais</a><br/><br/><b>Para os agentes de cada
+      grupo</b><br/>Também é possível atribuir tickets automaticamente para os
+      agentes de um grupo usando estas três opções:<br>1. Round robin - atribui
+      tickets para os agentes em uma determinada ordem<br>2. Carga balanceada -
+      define um limite de tickets para cada agente<br>3. Por habilidade -
+      atribui tickets aos agentes com base em seus conhecimentos <br/> <a
       href="https://support.freshdesk.com/support/solutions/articles/196581"
       target="_blank">Leia mais</a>
     automatic_assignment_header: Atribuição automática de tickets
-    working_hours_header: Horário de atendimento
+    working_hours_header: Horário comercial
     working_hours: >-
-      Você pode definir horários de atendimento diferentes para cada um desses
-      grupos de acordo com as horas de trabalho dos analistas. Por exemplo,
-      agrupe os analistas por turno e atribua horários de atendimento diferentes
-      a cada grupo, ou crie um grupo para cada local onde seus analistas
-      trabalham.
+      Você pode associar horários de atendimento diferentes para cada um desses
+      grupos de acordo com as horas de trabalho dos agentes. Por exemplo, agrupe
+      os agentes por turno e atribua horários de atendimento diferentes a cada
+      grupo, ou crie um grupo para cada local onde seus agentes trabalham.
     select_agents: Selecionar analistas
-    select_an_agent: Selecionar analista
-    select_business_calendar: Selecionar horas de trabalho
+    select_an_agent: Selecionar agente
+    select_business_calendar: Selecionar horário comercial
     learn_more: Saiba mais
     settings_saved: Sua configuração foi salva com sucesso.
     toggle_availability_for_rr: >-
-      Permitir que analistas alterem suas disponibilidades para a atribuição
+      Permitir que agentes alterem suas disponibilidades para a atribuição
       automática de tickets
     toggle_availability_enabled: >-
       Os analistas poderão mudar de forma manual a disponibilidade deles para
@@ -5704,23 +5704,23 @@ pt-BR:
       supervisores podem mudar a disponibilidade do analista pelo painel, se
       necessário.
     toggle_availability_message: >-
-      Administradores e supervisores podem substituir a habilidade de um
-      analista no painel
+      Administradores e supervisores podem substituir a habilidade de um agente
+      no painel
     toggle_availability_note: >-
       Nota: Analistas pertencentes a vários grupos poderão mudar suas
       disponibilidades apenas se eles tiverem permissões para controlar suas
       permissões em todos os grupos que eles pertencem.
     round_robin_capping: Atribuição de ticket com carga balanceada
-    round_robin_capping_info: Limite o número de tickets que um analista pode resolver simultaneamente
+    round_robin_capping_info: Limite o número de tickets que um agente pode resolver simultaneamente
     round_robin_skill_based: Atribuição de ticket por habilidade
-    round_robin_skill_based_info: Atribua um ticket para os analistas mais adequados
+    round_robin_skill_based_info: Atribua um ticket para os agentes mais adequados
     round_robin_skill_based_tooltip: >-
-      Quando houver dois analistas com a mesma habilidade, os tickets serão
+      Quando houver dois agentes com a mesma habilidade, os tickets serão
       atribuídos àquele com o menor número de tickets.
     manage_skills: Gerenciar habilidades
     create_skills: Criar habilidades
-    round_robin_defalut: Atribuição de ticket por rodízio
-    round_robin_default_info: Atribua tickets aos analistas em uma ordem determinada
+    round_robin_defalut: Atribuição de ticket pelo método Round-Robin
+    round_robin_default_info: Atribua tickets aos agentes em uma ordem determinada
     disable_round_robin_info1: Permitir que analistas ativem/desativem a atribuição automática de tickets
     disable_round_robin_info2: >-
       Se essa opção estiver desabilitada, os analistas terão sempre o status
@@ -5738,11 +5738,10 @@ pt-BR:
       Esse grupo não foi encontrado. Ele pode ter sido excluído ou a URL foi
       digitada errada.
     maximum: Máximo
-    per_agent: por analista
+    per_agent: por agente
     sbrr_trial_text: >-
       Você sabia que pode atribuir tickets com base nas habilidades dos seus
-      analistas? <a
-      href="https://support.freshdesk.com/solution/articles/222692"
+      agentes? <a href="https://support.freshdesk.com/solution/articles/222692"
       target="_blank">Saiba mais</a>
     sbrr_plan_text: <span class="muted"> Disponível no </span> <b> plano Forest </b>
     assigntime:
@@ -5774,30 +5773,26 @@ pt-BR:
   close: Fechar
   reset_arcade: Reiniciar jogo
   agent:
-    full_time_agent: Analista em tempo integral
-    occasional_agent: Analista ocasional
+    full_time_agent: Agente em tempo integral
+    occasional_agent: Agente ocasional
     export: Exportar
-    export_successfull: Os dados dos seus analistas serão enviados para o seu e-mail em breve!
-    invalid_export_params: >-
-      Ocorreu um erro durante a exportação dos dados do analista. Tente
-      novamente.
-    deleted_agent_info: >-
-      Obs.: Todas as comunicações de analistas excluídos serão marcadas como
-      SPAM.
-    new: Novo analista
-    edit: Editar analista
+    export_successfull: Os dados dos seus agentes serão enviados para o seu e-mail em breve!
+    invalid_export_params: Ocorreu um erro durante a exportação dos dados do agente. Tente novamente.
+    deleted_agent_info: 'Obs.: Todas as comunicações de agentes excluídos serão marcadas como SPAM.'
+    new: Novo agente
+    edit: Editar agente
     invalid_placeholder: Espaços reservados inválidos inseridos
     showing: 'Mostrando:'
-    type: Tipo de analista
-    delete_agent: Excluir analista
+    type: Tipo de agente
+    delete_agent: Excluir agente
     delete_agent_confirmation: >-
-      O analista excluído continuará disponível como um contato. Isso removerá
-      do helpdesk todas as informações do analista. Tem certeza de que deseja
+      O agente excluído continuará disponível como um contato. Isso removerá do
+      helpdesk todas as informações do agente. Tem certeza de que deseja
       continuar?
     convert_agent_confirmation: >-
-      Aviso! Converter um analista em um contato removerá permanentemente todas
-      as informações do analista. Tem certeza de que deseja continuar?
-    agent_restored: O analista foi restaurado
+      Aviso! Converter um agente em um contato removerá permanentemente todas as
+      informações do agente. Tem certeza de que deseja continuar?
+    agent_restored: O agente foi restaurado
     convert_to_contact: Converter para contato
     reset_score_title: Redefinir distintivos e pontos
     reset_scores: Redefinir distintivos e pontos
@@ -5811,22 +5806,22 @@ pt-BR:
       active: Ativo
       deleted: Excluído
     active:
-      no_agents: Você não adicionou nenhum analista
+      no_agents: Você não adicionou nenhum agente
     deleted:
-      agent_deleted: O analista foi excluído
-      no_agents: Você não excluiu nenhum analista
+      agent_deleted: O agente foi excluído
+      no_agents: Você não excluiu nenhum agente
     trial: Em versão de avaliação
     account_suspended: conta suspensa
     buy: Comprar mais
-    available_seats: '%{count} analistas disponíveis'
-    available_seats_without_count: Analistas disponíveis
-    no_seats: Nenhum analista disponível
-    export_title: Exportar analistas para CSV
+    available_seats: '%{count} agentes disponíveis'
+    available_seats_without_count: Agentes disponíveis
+    no_seats: Nenhum agente disponível
+    export_title: Exportar agentes para CSV
     last_logged_in: 'Último login %{time} atrás'
     last_logged: Último login em
     ago: '%{time} atrás.'
     days_ago: '%{days} atrás'
-    last_seen_at: Visto pela última vez
+    last_seen_at: Visto pela última vez em
     last_active_at: Ativo pela última vez em
     no_recent_activity: Nenhuma atividade recente
     never_logged_in: Nunca fez login
@@ -5838,9 +5833,9 @@ pt-BR:
     assign_group: Associar grupos
     cannot_edit_roles: 'Você poderá visualizar suas funções e o escopo, mas não poderá editá-los.'
     assign: Atribuir
-    role: Função do analista
+    role: Função do agente
     title: Analistas
-    info1: Este analista já foi excluído
+    info1: Este agente já foi excluído
     info2: O e-mail já está sendo usado
     info4: Converter para um contato
     contact_exists: 'Já existe um solicitante com o e-mail ''%{existing_email}'', %{use_email}'
@@ -5856,49 +5851,49 @@ pt-BR:
         Os analista que você adicionar receberão um e-mail com um link de
         confirmação para ativar suas contas. Depois disso, eles poderão receber
         tickets e respondê-los.
-      title1: Analistas em tempo integral x Analistas ocasionais
+      title1: Agentes em tempo integral x Agentes ocasionais
       info5: Saiba mais sobre os acessos de um dia
-      info8: Saiba mais sobre as funções do analista
+      info8: Saiba mais sobre as funções do agente
       info9: >-
-        Analistas em tempo integral são as pessoas da sua equipe de suporte que
+        Os agentes em tempo integral são as pessoas da sua equipe de suporte que
         acessam seu helpdesk todos os dias.
       info10: >-
-        Analistas ocasionais são aqueles que acessam o helpdesk de tempos em
+        Agentes ocasionais são aqueles que acessam o helpdesk de tempos em
         tempos, como seus gerentes de vendas e marketing, para tratar de
         consultas específicas de clientes. Você não precisa adquirir uma licença
-        de analista para o mês inteiro para analistas como esses.
+        de agente para o mês inteiro para agentes como esses.
       title3: Grupos
       info11: >-
-        Você pode organizar analistas em grupos específicos, como Vendas e
-        Gerenciamento de produtos. Dividir os analistas facilita a atribuição de
+        Você pode organizar agentes em grupos específicos, como Vendas e
+        Gerenciamento de produtos. Dividir os agentes facilita a atribuição de
         tickets, a criação de respostas predefinidas, o gerenciamento do fluxo
         de trabalho e a geração de relatórios de um mesmo setor. Observe que um
-        mesmo analista pode pertencer a vários grupos.
+        mesmo agente pode pertencer a vários grupos.
       info12: >-
-        Um analista do Freshdesk é alguém que precisa ter acesso a, trabalhar em
-        e resolver seus tickets de suporte. A lista mostra todos os analistas
+        Um agente do Freshdesk é alguém que precisa ter acesso a, trabalhar em e
+        resolver seus tickets de suporte. A lista mostra todos os agentes
         atualmente em seu helpdesk. Posicione o ponteiro do mouse sobre o nome
-        de um analista para editar seus dados, ou clique em Novo analista para
-        adicionar um novo analista. Os analistas adicionados receberão um e-mail
-        com um link de confirmação para ativar suas contas, o que permitirá a
-        eles ter acesso e responder aos tickets.
+        de um agente para editar seus dados, ou clique em Novo agente para
+        adicionar um novo agente. Os agentes adicionados receberão um e-mail com
+        um link de confirmação para ativar suas contas, o que permitirá a eles
+        ter acesso e responder aos tickets.
       info13: >-
-        Você pode escolher se seus analistas acessarão seu portal de suporte em
-        tempo integral ou ocasionalmente. Os analistas ocasionais usarão um
-        Acesso de um dia para cada dia que precisarem acessar seu portal. Você
-        pode comprar vários Acessos de um dia na guia Administrador. Observe que
-        você será cobrado apenas pelo número de analistas em tempo integral que
-        adicionar à seção Planejamentos e faturamento.
+        Você pode escolher se seus agentes acessarão seu portal de suporte em
+        tempo integral ou ocasionalmente. Os agentes ocasionais usarão um Acesso
+        de um dia para cada dia que precisarem acessar seu portal. Você pode
+        comprar vários Acessos de um dia na guia Administrador. Observe que você
+        será cobrado apenas pelo número de agente em tempo integral que
+        adicionar à seção Planos e faturamento.
       title4: Escopos e funções
       info14: >-
-        Você pode escolher quais tickets seus analistas podem visualizar
+        Você pode escolher quais tickets seus agentes podem visualizar
         modificando o escopo do ticket deles. Também é possível especificar as
-        ações que cada analista pode executar no seu helpdesk escolhendo uma
+        ações que cada agente pode executar no seu helpdesk escolhendo uma
         função.
       info15: >-
         Observe que você não pode modificar suas próprias funções nem se excluir
-        como um analista.
-    make_admin: Tornar este analista um administrador
+        como um agente.
+    make_admin: Tornar este agente um administrador
     view_user: Visualizar usuário
     use_email: Usar este e-mail
     restore: Restaurar
@@ -5909,7 +5904,7 @@ pt-BR:
     roles: Funções
     remove_role: Remover função
     roles_description: Associe uma ou mais funções a este analista.
-    groups_description: Associe um ou mais grupos a este analista.
+    groups_description: Associe um ou mais grupos a este agente.
     remove_group: Remover grupo
     ticket_scope: Escopo do ticket
     admin: Administrador
@@ -5926,7 +5921,7 @@ pt-BR:
       Pode visualizar os tickets em seu(s) Grupo(s) e os tickets atribuídos a
       ele
     individual_info: Só pode visualizar os tickets atribuídos a ele
-    occasional_description: Este analista acessará o portal de suporte
+    occasional_description: Este agente acessará o portal de suporte
     full_time: Tempo integral
     occasional: Ocasional
     day_pass_expired: >-
@@ -5948,7 +5943,7 @@ pt-BR:
   account_admin: Administrador da conta
   right: Direita
   footer:
-    helpdesk_software: Software de helpdesk automatizado
+    helpdesk_software: Software de helpdesk
     helpdesk_software_link: >-
       https://freshdesk.com/br/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink
     by_freshdesk: do Freshdesk
@@ -6310,9 +6305,9 @@ pt-BR:
       configuração de dados para recursos que somente estão disponíveis no plano
       superior.
     currency-note: 'Todos os seus futuros pagamentos estarão em '
-    free_plan_currency_note: 'Ao atualizar ou adicionar analistas, seu pagamento será em '
-    invoice_title: 'Lista de invoices de todos os pagamentos feitos online '
-    no_invoice: Nenhum invoice presente
+    free_plan_currency_note: 'Ao atualizar ou adicionar agentes, seu pagamento será em '
+    invoice_title: 'Lista de faturas de todos os pagamentos feitos online '
+    no_invoice: Nenhuma fatura presente
     sub_total: Subtotal
     quantity: Quantidade
     unit_price: Preço unitário
@@ -6723,7 +6718,7 @@ pt-BR:
       something_wrong: Algo deu errado!
     categories:
       enter_version_name: 'Digite o nome da Categoria em %{language_name}'
-      visibility_help_text: Selecione os portais que esta categoria deve estar visível
+      visibility_help_text: Selecione os portais em que esta categoria deve estar visível
     folders:
       view_all: Exibir todas as pastas...
       choose_folder: Escolher pasta
@@ -6927,13 +6922,13 @@ pt-BR:
       Um artigo <b>publicado</b> estará visível no portal de autoatendimento e
       também será exibido exibido nos resultados de pesquisa. 
     info17: >-
-      O <b>rascunho</b> dos arquivos ficam visíveis somente aos analistas e
-      serão exibidos apenas nos resultados de pesquisa dos analistas.
+      O <b>rascunho</b> dos arquivos ficam visíveis somente aos agentes e serão
+      exibidos apenas nos resultados de pesquisa dos agentes.
     info18: >-
       Um artigo publicado pode ser editado e salvo como um rascunho da versão
       publicada no portal e ainda ter uma outra versão de rascunho para os
-      analistas editarem. Isso é útil porque permite que você atualize os
-      arquivos sem precisar removê-los do seu portal.
+      agentes editarem. Isso é útil porque permite que você atualize os arquivos
+      sem precisar removê-los do seu portal.
     info19: 'Os tipos de arquivo são: <b>permanente</b> ou <b>provisório</b>.'
     info20: >-
       É possível anexar <b>tags</b> aos seus artigos, o que é útil para
@@ -6952,18 +6947,17 @@ pt-BR:
     info28: >-
       Uma base de conhecimento funciona como um enciclopédia para seus clientes
       onde eles podem encontrar respostas para suas questões instantaneamente.
-      Isso pode ajudar na diminuição de perguntas em comum, e uma forma de seu
+      Isso pode ajudar na diminuição de perguntas em comum, e é uma forma de seu
       cliente ajudar a si mesmo.
     info29: >-
       A base de conhecimento da Freshdesk tem 3 níveis de hierarquia:
       <b>Categoria --> Pasta --> Artigo </b>
     info30: >-
-      Se você utiliza vários produtos, as categorias que você cria pode estar
-      visível em seus respectivos portais
+      Se você utiliza vários produtos, as categorias que você cria podem estar
+      visíveis em seus respectivos portais.
     info31: >-
       Você pode escolher deixar suas pastas visíveis para diferentes grupos de
-      pessoas (<b>Todos, Usuários logados, Analistas & Empresas
-      selecionadas</b>).
+      pessoas (<b>Todos, Usuários logados, Agentes & Empresas selecionadas</b>).
     kb: Base de Conhecimento
     tour_v2: Me ajude configurar minha base de conhecimento
     kbase_email_msg: >-
@@ -7051,9 +7045,9 @@ pt-BR:
   answered: Respondido
   errors_in_payment_info: 'Erros encontrados em suas informações de pagamento:'
   attach_files: Anexar arquivos
-  plan_amount: por analista/mês
-  free_plan_agents_v2: Número ilimitado de analistas
-  free_plan_agents: 'para %{free_agents} analistas'
+  plan_amount: por agente/mês
+  free_plan_agents_v2: Número ilimitado de agentes
+  free_plan_agents: 'para %{free_agents} agentes'
   current_plan_details: '%{plan_name}'
   free_plan_details: 'Plano %{plan_name} com %{agent_limit} analistas'
   add_more_free: 'Adicionar mais de %{free_agents} analistas?'
@@ -7104,7 +7098,7 @@ pt-BR:
     multiple_timezones: Vários fusos horários
     css_customization: Personalização de CSS
     everything_in_garden: Tudo no plano Garden
-    agent_collision: Colisão de analistas
+    agent_collision: Colisão de agentes
     custom_roles: Funções personalizadas
     custom_ssl: SSL personalizado
     enterprise_reports: Relatórios corporativos
@@ -7143,10 +7137,10 @@ pt-BR:
     custom_mailbox_desc: Servidores de e-mail personalizados
     advanced_phone_desc: Recursos de telefone avançados
     multiple_products_desc: Portais/base de dados de conhecimento de vários produtos
-    multiple_sla_business_desc: 'Vários fusos horários, SLAs e horários de trabalho'
+    multiple_sla_business_desc: 'Vários fusos horários, SLAs e horários comerciais'
     forums_desc: Discussões do fórum da comunidade
     portal_customization_desc: Personalizações do portal do cliente
-    custom_roles_desc: Funções de analista personalizadas
+    custom_roles_desc: Funções de agente personalizadas
     custom_ssl_desc: Certificados SSL personalizados
     enterprise_reports_desc: Relatórios empresariais
     time_event_automation_desc: >-
@@ -7274,7 +7268,7 @@ pt-BR:
     upgrade: Upgrade
   agent_adds_comment: Analista adiciona comentário ao ticket
   notify_comment: Anotação adicionada ao ticket
-  add_cc: Adiciona Cc
+  add_cc: Adicionar Cc
   portal_customizer_anon_tickets: Qualquer pessoa pode enviar um ticket
   portal_customizer_option_tickets: Os usuários podem enviar um ticket sem fazer login.
   feedbackwidget_help_para2: >-
@@ -7297,14 +7291,14 @@ pt-BR:
     default_reply_template_title: Modelos de resposta de analista
     default_reply_template_info: >-
       O modelo de resposta será incluído automaticamente no editor de resposta
-      de ticket para TODOS os analistas. A posição do cursor neste modelo indica
-      onde o analista deve começar a digitar.
+      de ticket para TODOS os agentes. A posição do cursor neste modelo indica
+      onde o agente deve começar a digitar.
     default_forward_template_title: Modelo de encaminhamento de analista
     default_forward_template_info: >-
       O modelo de encaminhamento será incluído automaticamente no editor de
-      encaminhamento de mensagem para TODOS os analistas.
+      encaminhamento de mensagem para TODOS os agentes.
     modify_requester_template: Modificar o modelo de e-mail do solicitante
-    requestor_notification: Notificação de registro
+    requestor_notification: Notificação do solicitante
     requestor_notifications: Notificações do solicitante
     notification_template: Modelos
     cc_notifications: Notificações para os destinatários no campo Cc
@@ -7323,7 +7317,7 @@ pt-BR:
     notify_agents: Notificar analistas
     edit: Editar
     add: Adicionar
-    no_agents: Adicionar analistas
+    no_agents: Adicionar agentes
     disabled_toggle: Você não pode desativar esta notificação.
     translation_outdated: Esta tradução está desatualizada.
     translation_uptodate: Esta tradução está atualizada.
@@ -7336,8 +7330,8 @@ pt-BR:
     proceed_anyway: Continuar mesmo assim
     take_back: Quero voltar
     agent_select: >-
-      Selecione os analistas que você deseja notificar quando um novo ticket for
-      criado em seu helpdesk.
+      Por favor, selecione os agentes que você deseja notificar quando um novo
+      ticket for criado em seu helpdesk.
     agent_select_title: Notificar analistas
     reset_confirm: >-
       Todas as alterações serão perdidas se você escolher redefinir. Deseja
@@ -7350,23 +7344,22 @@ pt-BR:
         Clique aqui </a>para saber mais
       info3: >-
         Você pode configurar o Freshdesk para enviar notificações automáticas
-        por e-mail aos analistas e ao solicitante, quando eventos específicos
+        por e-mail aos agentes e ao solicitante, quando eventos específicos
         ocorrerem. Essas notificações podem ser personalizadas e incluir
         conteúdo dinâmico por meio de espaços reservados. Por exemplo, você pode
-        avisar seus clientes quando analistas adicionarem comentários ou
-        anotações públicas aos tickets deles enviando um e-mail personalizado
-        que inclui um link para o ticket.<br/><br/>Se seu plano oferecer suporte
-        a vários idiomas, você poderá adicionar idiomas e personalizar os
-        modelos para cada idioma. O ícone <i class="common-icon-outdated"></i>
-        indica que as traduções da notificação em outros idiomas podem estar
-        desatualizadas.
+        avisar seus clientes quando agentes adicionarem comentários ou anotações
+        públicas aos tickets deles enviando um e-mail personalizado que inclui
+        um link para o ticket.<br/><br/>Se seu plano oferecer suporte a vários
+        idiomas, você poderá adicionar idiomas e personalizar os modelos para
+        cada idioma. O ícone <i class="common-icon-outdated"></i> indica que as
+        traduções da notificação em outros idiomas podem estar desatualizadas.
       agent_template_10:
         topic: E-mail de ativação do usuário
         info1: >-
-          O e-mail de ativação do usuário é enviado quando um novo analista é
+          O e-mail de ativação do usuário é enviado quando um novo agente é
           adicionado ao seu helpdesk. O e-mail de ativação deve conter
-          obrigatoriamente a “URL de ativação do analista” {{activation_url}}
-          para que os agentes criem suas senhas e concluam o processo de
+          obrigatoriamente a “URL de ativação do agente” {{activation_url}} para
+          que os agentes criem suas senhas e concluam o processo de
           cadastramento.<br /><br />Se tiver configurado vários idiomas para o
           suporte em seu helpdesk, você poderá criar um e-mail de ativação
           específico para cada idioma. O ícone <i
@@ -7375,10 +7368,10 @@ pt-BR:
       agent_template_1:
         topic: Novo ticket criado
         info1: >-
-          O email Novo ticket criado será enviado para nossos analistas sempre
+          O e-mail Novo ticket criado será enviado para nossos agentes sempre
           que um novo ticket for criado em seu helpdesk. Você pode escolher
-          quais analistas devem receber essa notificação. O e-mail deve conter a
-          URL do ticket para facilitar o acesso do analista ao ticket.<br /><br
+          quais agentes devem receber essa notificação. O e-mail deve conter a
+          URL do ticket para facilitar o acesso do agente ao ticket.<br /><br
           />Caso tenha configurado o suporte para vários idiomas em seu
           helpdesk, você pode criar essa notificação em todos os idiomas
           oferecidos. O ícone <i class="common-icon-outdated"></i> indica que as
@@ -7386,7 +7379,7 @@ pt-BR:
       agent_template_14:
         topic: E-mail de redefinição de senha
         info1: >-
-          O e-mail Redefinição de senha será enviado para seus analistas quando
+          O e-mail Redefinição de senha será enviado para seus agentes quando
           eles solicitarem uma nova senha em seu helpdesk. É necessário inserir
           o espaço reservado {{password_reset_url}} para fornecer o link de
           redefinição de senha gerada dinamicamente no e-mail.<br/><br/>Se tiver
@@ -7397,20 +7390,20 @@ pt-BR:
       agent_template_2:
         topic: Ticket atribuído a um grupo
         info1: >-
-          Essa notificação é enviada para todos os analistas de um grupo sempre
+          Essa notificação é enviada para todos os agentes de um grupo sempre
           que um ticket for atribuído para esse grupo. Esse e-mail deve conter a
-          URL do ticket {{ticket.url}} para que os analistas possam verificar o
+          URL do ticket {{ticket.url}} para que os agentes possam verificar o
           ticket facilmente. <br /><br />Se tiver configurado vários idiomas
           para o suporte em seu helpdesk, você poderá criar uma notificação
           dessa específica para cada idioma. O ícone <i
           class="common-icon-outdated"></i> indica que as traduções da
           notificação em outros idiomas podem estar desatualizadas. 
       agent_template_3:
-        topic: Ticket atribuído a um analista
+        topic: Ticket atribuído a um agente
         info1: >-
-          Esta notificação será enviada individualmente para os analistas quando
+          Esta notificação será enviada individualmente para os agentes quando
           um ticket tiver sido atribuído a eles. O e-mail deve conter a URL do
-          ticket para facilitar o acesso do analista ao ticket.<br/><br/>Caso
+          ticket para facilitar o acesso do agente ao ticket.<br/><br/>Caso
           tenha configurado o suporte para vários idiomas em seu helpdesk, você
           pode criar essa notificação em todos os idiomas oferecidos. O ícone <i
           class="common-icon-outdated"></i> indica que as traduções da
@@ -7429,31 +7422,30 @@ pt-BR:
       agent_template_6:
         topic: Solicitante responde ao ticket
         info1: >-
-          Quando um cliente responde ao ticket que criou anteriormente, o
-          analista responsável pelo ticket receberá essa notificação por e-mail.
-          O e-mail deve conter a URL do ticket para facilitar o acesso do
-          analista ao ticket.<br/><br/>Caso tenha configurado o suporte para
-          vários idiomas em seu helpdesk, você pode criar essa notificação em
-          todos os idiomas oferecidos. O ícone <i
-          class="common-icon-outdated"></i> indica que as traduções da
-          notificação em outros idiomas podem estar desatualizadas.
+          Quando um cliente responde ao ticket que criou anteriormente, o agente
+          responsável pelo ticket receberá essa notificação por e-mail. O e-mail
+          deve conter a URL do ticket para facilitar o acesso do agente ao
+          ticket.<br/><br/>Caso tenha configurado o suporte para vários idiomas
+          em seu helpdesk, você pode criar essa notificação em todos os idiomas
+          oferecidos. O ícone <i class="common-icon-outdated"></i> indica que as
+          traduções da notificação em outros idiomas podem estar desatualizadas.
       agent_template_12:
         topic: Primeira resposta à violação de SLA
         info1: >-
-          Esta notificação é enviada para um analista se ele não tiver
-          respondido ao ticket no prazo para a primeira resposta definido para o
-          ticket. O e-mail deve conter a URL do ticket para facilitar o acesso
-          do analista ao ticket.<br/><br/>Caso tenha configurado o suporte para
-          vários idiomas em seu helpdesk, você pode criar essa notificação em
-          todos os idiomas oferecidos. O ícone <i
-          class="common-icon-outdated"></i> indica que as traduções da
-          notificação em outros idiomas podem estar desatualizadas.
+          Esta notificação é enviada para um agente se ele não tiver respondido
+          ao ticket no prazo para a primeira resposta definido para o ticket. O
+          e-mail deve conter a URL do ticket para facilitar o acesso do agente
+          ao ticket.<br/><br/>Caso tenha configurado o suporte para vários
+          idiomas em seu helpdesk, você pode criar essa notificação em todos os
+          idiomas oferecidos. O ícone <i class="common-icon-outdated"></i>
+          indica que as traduções da notificação em outros idiomas podem estar
+          desatualizadas.
       agent_template_13:
         topic: Tempo de resolução da violação de SLA
         info1: >-
-          Esta notificação é enviada para o analista se o ticket atribuído a ele
+          Esta notificação é enviada para o agente se o ticket atribuído a ele
           não tiver sido resolvido no prazo determinado. O e-mail deve conter a
-          URL do ticket para facilitar o acesso do analista ao
+          URL do ticket para facilitar o acesso do agente ao
           ticket.<br/><br/>Caso tenha configurado o suporte para vários idiomas
           em seu helpdesk, você pode criar essa notificação em todos os idiomas
           oferecidos. O ícone <i class="common-icon-outdated"></i> indica que as
@@ -7461,14 +7453,14 @@ pt-BR:
       agent_template_21:
         topic: Anotação adicionada ao ticket
         info1: >-
-          Esta notificação será enviada para os analistas mencionados em
-          “notificar analistas” quando um analista adicionar uma anotação ao
-          ticket. Este e-mail pode conter a URL do ticket {{ticket.url}} para
-          que os analistas o encontrem com mais facilidade.
+          Esta notificação será enviada para os agentes mencionados em
+          “notificar agentes” quando um agente adicionar uma anotação ao ticket.
+          Este e-mail pode conter a Url do ticket {{ticket.url}} para que os
+          agentes o encontrem com mais facilidade.
       agent_template_22:
         topic: Lembrete da primeira resposta de SLA
         info1: >-
-          Esta notificação é enviada para um analista quando o tempo para a
+          Esta notificação é enviada para um agente quando o tempo para a
           primeira resposta de um ticket estiver próximo da violação. Este
           e-mail pode conter a URL e a data de vencimento do ticket.<br/><br/>Se
           tiver configurado vários idiomas em seu helpdesk, você pode criar essa
@@ -7478,11 +7470,11 @@ pt-BR:
       agent_template_23:
         topic: Lembrete do tempo de resolução de SLA
         info1: >-
-          Esta notificação é enviada para um analista quando o tempo para a
+          Esta notificação é enviada para um agente quando o tempo para a
           resolução de um ticket estiver próximo da violação. Este e-mail pode
-          conter a URL e a data de vencimento do ticket.<br/><br/>Se tiver
-          configurado vários idiomas em seu helpdesk, você pode criar essa
-          notificação para cada idioma. O ícone <i
+          conter a URL para tornar mais fácil para o agente verificar o
+          ticket.<br/><br/>Se tiver configurado vários idiomas em seu helpdesk,
+          você pode criar essa notificação para cada idioma. O ícone <i
           class="common-icon-outdated"></i> indica que as traduções da
           notificação podem estar desatualizadas.
       cc_notification_19:
@@ -7496,10 +7488,10 @@ pt-BR:
       cc_notification_20:
         topic: Cc da anotação pública
         info1: >-
-          Quando uma anotação pública é adicionada por um analista ou
-          solicitante, este e-mail é enviado para os destinatários no campo Cc
-          para informá-los sobre o comentário mais recente. Este e-mail deve
-          conter o nome da pessoa que adicionou o comentário mais recente
+          Quando uma anotação pública é adicionada por um agente ou solicitante,
+          este e-mail é enviado para os destinatários no campo Cc para
+          informá-los sobre o comentário mais recente. Este e-mail deve conter o
+          nome da pessoa que adicionou o comentário mais recente
           {{comment.commenter.name}} e seu conteúdo {{comment.body}}.
       requester_template_10:
         topic: E-mail de ativação do usuário
@@ -7534,21 +7526,21 @@ pt-BR:
           class="common-icon-outdated"></i> indica que as traduções da
           notificação em outros idiomas podem estar desatualizadas.
       requester_template_4:
-        topic: Analista adiciona comentário ao ticket
+        topic: Agente adiciona comentário ao ticket
         info1: >-
-          Esse e-mail é enviado ao solicitante sempre que um analista adicionar
-          um comentário ao ticket que ele criou. Esse e-mail deve conter o ID do
+          Esse e-mail é enviado ao solicitante sempre que um agente adicionar um
+          comentário ao ticket que ele criou. Esse e-mail deve conter o ID do
           ticket e um link com a URL pública para o ticket. Para adicionar o
-          comentário do analista ao e-mail, inclua estes espaços
-          reservados:<br/> {{comment.commenter.name}} - o nome do analista que
-          escreveu o comentário<br/>{{comment.body}} - o conteúdo do novo
-          comentário adicionado ao ticket.<br/><br/>Se tiver configurado o
-          suporte para vários idiomas em seu helpdesk, você poderá criar essa
-          notificação para cada idioma. O ícone <i
-          class="common-icon-outdated"></i> indica que as traduções da
-          notificação em outros idiomas podem estar desatualizadas.
+          comentário do agente ao e-mail, inclua estes espaços reservados:<br/>
+          {{comment.commenter.name}} - o nome do agente que escreveu o
+          comentário<br/>{{comment.body}} - o conteúdo do novo comentário
+          adicionado ao ticket.<br/><br/>Se tiver configurado o suporte para
+          vários idiomas em seu helpdesk, você poderá criar essa notificação
+          para cada idioma. O ícone <i class="common-icon-outdated"></i> indica
+          que as traduções da notificação em outros idiomas podem estar
+          desatualizadas.
       requester_template_7:
-        topic: Analista resolve o ticket
+        topic: Agente resolve o ticket
         info1: >-
           Esse e-mail é enviado aos solicitantes para notificá-los de que seus
           tickets foram resolvidos. Esse e-mail deve conter o ID do ticket e um
@@ -7559,7 +7551,7 @@ pt-BR:
           class="common-icon-outdated"></i> indica que as traduções da
           notificação em outros idiomas podem estar desatualizadas.
       requester_template_8:
-        topic: Analista fecha o ticket
+        topic: Agente fecha o ticket
         info1: >-
           Esse e-mail é enviado aos solicitantes para notificá-los de que seus
           tickets foram resolvidos e fechados. Esse e-mail deve conter o ID do
@@ -7575,27 +7567,27 @@ pt-BR:
           Este e-mail foi enviado aos solicitantes para pedir que eles
           verifiquem um ID de e-mail recém-adicionado aos seus contatos.
       reply_template_15:
-        topic: Modelo de resposta do analista
+        topic: Modelo de resposta do agente
         info1: >-
           Você pode personalizar e pré-preencher as informações padrão que
-          deseja incluir nas respostas dos analistas aos tickets usando o Modelo
-          de resposta. Os Modelos de resposta do analista permitem adicionar
+          deseja incluir nas respostas dos agentes aos tickets usando o Modelo
+          de resposta. Os Modelos de resposta do agente permitem adicionar
           conteúdo dinâmico, como o nome do solicitante, URLs de tickets e
-          assinaturas de analistas, automaticamente. <br/><br/>Se tiver
+          assinaturas de agentes, automaticamente. <br/><br/>Se tiver
           configurado o suporte para vários idiomas em seu helpdesk, você poderá
           criar essa notificação para cada idioma. O ícone <i
           class="common-icon-outdated"></i> indica que as traduções da
           notificação em outros idiomas podem estar desatualizadas.
       forward_template_24:
-        topic: Modelo de encaminhamento de analista
+        topic: Modelo de encaminhamento de agente
         info1: >-
           Você pode personalizar e pré-preencher as informações padrão que
-          deseja incluir nos encaminhamentos de tickets dos analistas usando o
-          Modelo de resposta. Os Modelos de encaminhamento do analista permitem
+          deseja incluir nos encaminhamentos de tickets dos agentes usando o
+          Modelo de resposta. Os Modelos de encaminhamento do agente permitem
           adicionar conteúdo dinâmico, como o nome do solicitante, URLs de
-          tickets e assinaturas de analistas, automaticamente. <br/><br/>Se
-          tiver configurado o suporte para vários idiomas em seu helpdesk, você
-          poderá criar essa notificação para cada idioma. O ícone <i
+          tickets e assinaturas de agentes, automaticamente. <br/><br/>Se tiver
+          configurado o suporte para vários idiomas em seu helpdesk, você poderá
+          criar essa notificação para cada idioma. O ícone <i
           class="common-icon-outdated"></i> indica que as traduções da
           notificação em outros idiomas podem estar desatualizadas.
       agent_template_25:
@@ -7612,12 +7604,12 @@ pt-BR:
     insert_placeholder: Inserir espaços reservados
     modify_agent_template: Modificar o modelo de e-mail do analista
     event: Evento
-    agent_notification: Notificação de analista
-    agent_notifications: Notificações do analista
+    agent_notification: Notificação de agente
+    agent_notifications: Notificações do agente
     subject: Assunto
   errors_in_plan_change: 'Erros encontrados em sua alteração:'
   formatting_help: Formatando a Ajuda
-  step1: 1º Passo
+  step1: Etapa 1
   next_charge_date: Próxima renovação
   last_renewed_on: Renovado pela última vez em
   update_and_log_in: Atualizar e fazer login
@@ -7750,7 +7742,7 @@ pt-BR:
       info21: >-
         Você pode adicionar um número ilimitado caixas de e-mail de entrada e
         saída (como vendas@suaempresa.com, info@suaempresa.com, etc.) no seu
-        helpdesk. também é possível configurar o Freshdesk para atribuir
+        helpdesk. Também é possível configurar o Freshdesk para atribuir
         automaticamente os e-mails de cada caixa de e-mail de um grupo
         específico.
     primary_supp_email: E-mail principal de suporte
@@ -7792,7 +7784,7 @@ pt-BR:
     name_info_msg: Nome do e-mail que será usado nas respostas dos tickets
     Personalized_email_replies_yes: Sim
     Personalized_email_replies_no: Não
-    personalized_email_replies_title: Usar nomes de analistas em respostas de ticket e e-mails de saída?
+    personalized_email_replies_title: Usar nomes de agentes em respostas de ticket e e-mails de saída?
     personalized_email_replies_info: >-
       Se a resposta for sim, os analistas poderão escolher seus próprios nomes
       como o nome do remetente nas respostas de ticket e nos e-mails de saída. O
@@ -7808,14 +7800,14 @@ pt-BR:
       endereço de e-mail que estiver no campo "De".
     disable_agent_forward: 'Para os e-mails encaminhados, use o remetente original como o solicitante'
     disable_agent_forward_info: >-
-      Quando um analista encaminhar um e-mail de sua caixa de entrada para o
+      Quando um agente encaminhar um e-mail de sua caixa de entrada para o
       helpdesk, crie o ticket com o remetente original. Se esse recurso não
-      estiver habilitado, o solicitante será o analista.
+      estiver habilitado, o solicitante será o agente.
     primary_email_delete_alert: Não é possível excluir o e-mail principal
     using_custom_mailbox: Usando um servidor de e-mail personalizado
-    enable_compose: Permitir que os analistas iniciem uma conversa com clientes?
+    enable_compose: Permitir que os agentes iniciem uma conversa com clientes?
     enable_compose_info: >-
-      Se a resposta for sim, os analistas poderão enviar e-mails de saída para
+      Se a resposta for sim, os agentes poderão enviar e-mails de saída para
       clientes novos ou existentes que serão convertidos em tickets de saída.
     dkim:
       name: DKIM
@@ -8060,7 +8052,7 @@ pt-BR:
     myself: Eu mesmo
     spam_btn_title: Marcar como spam
     assigned_to: Atribuído para
-    assigned_agent: Analista
+    assigned_agent: Agente
     action: Ação
     edit: Editar ticket
     ham_btn_title: Não é spam
@@ -8675,7 +8667,7 @@ pt-BR:
   tkt_assigned_to_group: Ticket atribuído ao grupo
   import_tickets: Tickets
   twelve: 12 horas
-  agent_info_title: Informações do analista
+  agent_info_title: Informações do agente
   level_label: Nível
   next_level_info: '+%{points} para se tornar %{name}'
   no_level_achieved_label: Nenhum nível atingido ainda.
@@ -8717,7 +8709,7 @@ pt-BR:
       go_back_message: Volte para o seu helpdesk
       helpnote: >-
         Desativar esta opção removerá a identidade visual da marca do Freshdesk
-        do rodapé dos portais dos seus analistas e clientes
+        do rodapé dos portais dos seus agentes e clientes
     page_colors:
       title: Cores do helpdesk
       background: Fundo
@@ -8764,7 +8756,7 @@ pt-BR:
     logo_and_colors: Logotipo e cores
     logo_and_favicon: Logotipo e ícone de favorito
     change_logo: Alterar logotipo
-    change_favicon: Alterar ícone de favorito
+    change_favicon: Alterar favicon
     use_default: Usar o padrão
     last_published: 'Última publicação do portal feita há %{last_published}'
     visible_in_portal: Visível no portal
@@ -8775,8 +8767,8 @@ pt-BR:
     company_domain: Domínios de empresa
     domains_allowed: Somente os clientes desses domínios poderão se inscrever e fazer login.
     twitter_disabled: >-
-      O login pelo Twitter será desabilitado para clientes e analistas por
-      motivos de segurança.
+      O login pelo Twitter será desabilitado para clientes e agentes por motivos
+      de segurança.
     important: Importante
     includes_contacts_company_domain: (inclui os contatos existentes e os domínios de empresa)
     permission:
@@ -8789,7 +8781,7 @@ pt-BR:
     gdpr_terms_link: Termos
     gdpr_admin: Admin.
     gdpr_policy: Política de privacidade.
-    gdpr_agent: Analista
+    gdpr_agent: Agente
     time_zone_updation: >-
       O fuso horário está sendo atualizado para todos os analistas e contatos.
       Por favor, tente depois de algum tempo.
@@ -8806,15 +8798,15 @@ pt-BR:
   lead: Cliente potencial
   comments: Comentários
   forum_confirm_msg1: Tem certeza de que deseja excluir esta categoria?
-  plans_billing: Planos e pagamentos
+  plans_billing: Planos e faturamento
   portal_customizer_open_forums: Qualquer pessoa pode visualizar os fóruns
   portal_customizer_option_forums: Os usuários podem visualizar os fóruns sem fazer login.
   business_hours:
     name: Nome
     name_eg: 'Ex.: Horas de trabalho de Chicago'
-    description_eg: 'Ex.: Este horário de trabalho pertence ao fuso horário de Chicago'
+    description_eg: 'Ex.: Este horário comercial pertence ao fuso horário de Chicago'
     description: Descrição
-    new: Novo horário de trabalho
+    new: Novo horário comercial
     to: para
     time_zone: Fuso horário
     change_time_zone: >-
@@ -8824,19 +8816,19 @@ pt-BR:
     valid_time: Insira uma hora válida
     holiday_name: Nome do feriado
     holiday_calendar: Feriados
-    title: Horário de atendimento
+    title: Horário comercial
     info1: >-
-      O horário de trabalho permite que você tenha mais controle sobre os SLAs
-      em seu helpdesk e o vencimento dos tickets. Por exemplo, se seu helpdesk
+      O horário comercial permite que você tenha mais controle sobre os SLAs em
+      seu helpdesk e o vencimento dos tickets. Por exemplo, se seu helpdesk
       funciona das 9h às 18h, de segunda a sexta-feira, e um cliente envia um
-      ticket às 19h de uma terça-feira, os cronômetros de "Vence em" só serão
-      iniciados às 9h de quarta-feira.
+      ticket às 19h de uma terça-feira, os cronômetros de "Vencimento em" só
+      serão iniciados às 9h de quarta-feira
     info2: >-
-      Os feriados têm a mesma dinâmica do horário de trabalho. Se seu helpdesk
+      Os feriados têm a mesma dinâmica do horário comercial. Se seu helpdesk
       funciona das 9h às 18h, de segunda a sexta, e um cliente enviar um ticket
       de prioridade às 20h de sexta com um tempo de resolução de 24 horas, a
       data de vencimento do ticket será às 9h de terça-feira (não às 20h de
-      sábado).
+      sábado)
     multiple_info: >-
       Também é possível criar vários horários de trabalho e feriados e
       aplicá-los a grupos específicos. Se você tiver uma equipe de suporte
@@ -8856,7 +8848,7 @@ pt-BR:
     holiday_list: Lista de feriados do ano
     info5: Os feriados serão ignorados quando for calculado o SLA para um ticket
     holidays: Feriados
-    multiple: Vários horários de trabalho
+    multiple: Vários horários comerciais
     helpdesk_hours: Horário de atendimento do helpdesk
     select_time_zone: Selecione um fuso horário
   import_org_companies: Organizações → Empresas
@@ -8871,8 +8863,8 @@ pt-BR:
   set_status_as: Definir status como
   trigger_webhook: Acionar webhook
   selected: Selecionado
-  connect_ticket: Link para o ticket
-  edit_agent: Editar analista
+  connect_ticket: Vincular ao ticket
+  edit_agent: Editar agente
   high: Alta
   scenario_label: Rótulo do cenário
   email: E-mail
@@ -8914,14 +8906,14 @@ pt-BR:
       customer: Cliente
       executed_at: Data
       hours: Horas
-      agent: Analista
+      agent: Agente
       note: Anotações
       billalblenonbillable: Faturável/não faturável
       date: Data
       createdAt: Criado às
       requester_name: Nome do solicitante
       billable_entry: Marcar como um registro faturável
-      billing_type: Tipo de pagamento
+      billing_type: Tipo de faturamento
       billable: Faturável
       non_billable: Não faturável
       product: Produto
@@ -8929,7 +8921,7 @@ pt-BR:
       group_by: Agrupar por
       priority: Prioridade
       status: Status
-      no_entry: Nenhum registro de horas
+      no_entry: Nenhuma entrada de horas
       deleted_customer: Cliente excluído
       max_columns: Não é possível adicionar mais de 10 colunas
       archive_tickets_column_error: Os tickets arquivados serão excluídos
@@ -9254,10 +9246,10 @@ pt-BR:
       overlay_time: '%{time_in_words} atrás, '
       friendly_status:
         customer_responded: O cliente respondeu
-        overdue: Vencido
+        overdue: Em atraso
         new: Novo
         elapsed: Resposta atrasada
-        resolved: Solucionado
+        resolved: Resolvido
         customer_responded_overdue: O cliente respondeu
       tabular_view:
         title: Título
@@ -9412,7 +9404,7 @@ pt-BR:
         overdue: Tickets vencidos
         due_today: Tickets vencendo hoje
         resolved: Tickets resolvidos
-        unresolved: Todos Não Resolvidos
+        unresolved: Todos tickets não resolvidos
         my_overdue: Meus tickets vencidos
         tags: Tags por ticket
         my_due_today: Meus tickets vencendo hoje
@@ -9429,7 +9421,7 @@ pt-BR:
         tickets_by: Tickets por
         tickets_twitter: Tickets via Twitter
         open_or_pending: Abertos ou pendentes
-        resolved_or_closed: Solucionados ou fechados
+        resolved_or_closed: Resolvidos ou fechados
         no_tickets: Você não tem tickets no modo de exibição atual
         article_feedback: Feedback do artigo
         my_article_feedback: Feedback dos meus artigos
@@ -9623,7 +9615,7 @@ pt-BR:
     edit_tooltip: Editar
     delete_tooltip: Excluir
     sort_fields:
-      due_by: Vence em
+      due_by: Vencimento em
       date_created: Data de criação
       last_modified: Última modificação
       created_at: Data de criação
@@ -9935,12 +9927,12 @@ pt-BR:
       get_started: Primeiros passos
       customer_tweets: 'Tweets do cliente:'
       replied_tweets: 'Tweets de clientes respondidos pela marca: '
-      helptext_title1: Por que oferece suporte a clientes por meio de canais de redes sociais?
+      helptext_title1: Por que oferecer suporte a clientes por meio de canais de redes sociais?
       helptext1: >-
         Seus clientes provavelmente gastam boa parte de seu tempo em redes
-        sociais. E eles já estão falando de negócios por lá. Na verdade, 32% dos
-        clientes de redes sociais esperam uma resposta para suas perguntas no
-        prazo de 30 minutos.
+        sociais. E eles já estão falando da sua empresa por lá. Na verdade, 32%
+        dos clientes de redes sociais esperam uma resposta para suas perguntas
+        no prazo de 30 minutos.
       helptext2: >-
         Se você deixa um cliente de rede social satisfeito com uma resposta
         rápida e eficaz, a probabilidade de ele recomendar você para os amigos
@@ -10248,9 +10240,8 @@ pt-BR:
       O Marketplace está indisponível no momento. Tente mais tarde. Entre em
       contato conosco se o problema persistir.
     apps_unavailable: >-
-      Não foi possível processar alguns aplicativos personalizados. Por favor,
-      tente novamente mais tarde. Por favor contacte-nos se o problema
-      persistir.
+      Não foi possível processar alguns aplicativos. Por favor, tente novamente
+      mais tarde. Por favor contacte-nos se o problema persistir.
     installed_mkp_apps_unavailable: >-
       A lista de aplicativos instalados está indisponível no momento. Por favor,
       tente novamente mais tarde. Por favor contacte-nos se o problema
@@ -10393,7 +10384,7 @@ pt-BR:
       show_the_widget_in_contact_view_page: Mostrar o widget na página de visualização de contatos.
       custom_app_preview: Visualizar aplicativo personalizado
       preview_helptext: Este aplicativo personalizado aparecerá na barra lateral
-      ticket_detail_page: Página de detalhe do ticket
+      ticket_detail_page: Página de detalhes do ticket
       contact_detail_page: Página detalhes de contato
       custom_app_used_in: Aplicativo personalizado exibido em
       new_ticket_page: Nova página de ticket
@@ -10434,8 +10425,8 @@ pt-BR:
         recent_tickets: Tickets recentes
         add_note_text: Anotações da chamada
         edit_note_text: Editar anotação
-        agent_phone_updated: Detalhes do telefone do analista atualizados
-        agent_phone_details: Detalhes do telefone do analista
+        agent_phone_updated: Detalhes do telefone do agente atualizados
+        agent_phone_details: Detalhes do telefone do agente
         ticket_reference_id: ID de referência da chamada
         link_to_ticket: Associar a este ticket
         link_to_new_ticket: Associar ao novo ticket
@@ -10594,16 +10585,15 @@ pt-BR:
         api_key: Chave de API
         api_key_info: >-
           Para obter sua chave de API exclusiva, faça o login em sua conta CRM
-          Capsule e navegue até <br /> <b>“Usuário -&gt; Minhas
-          preferências”</b>. (Você encontra isso no canto superior direito da
-          página).<br /> Clique em <b>“Token de autenticação de API”</b> para
-          obter a chave de API exclusiva.<br /> Copie a chave e cole-a no campo
-          de texto acima.
+          Capsule e navegue até <br /> <b>“Usuário -> Minhas preferências”</b>.
+          (Você encontra isso no canto superior direito da página).<br /> Clique
+          em <b>“Token de autenticação de API”</b> para obter a chave de API
+          exclusiva.<br /> Copie a chave e cole-a no campo de texto acima.
         widget_title: Título do widget
     freshbooks:
       label: Freshbooks
       desc: >-
-        Exibir detalhes de clientes, faturas e adicionar entradas ao banco de
+        Exibir detalhes de clientes, faturas e adicionar entradas à planilha de
         horas em sua conta do FreshBooks
       helptext: >-
         <h4>Ajuda com a integração do FreshBooks</h4><p><br/>Para integrar o
@@ -10612,11 +10602,11 @@ pt-BR:
         FreshBooks, clique na guia <b>Pessoas</b> e selecione a subguia
         <b>Funcionários e fornecedores</b>. Clique em <b>Editar</b> na guia
         Administrador. Lá você encontrará o token de autenticação e a URL da
-        API.<br/><br/>Escolha se você deseja que os analistas adicionem entradas
-        ao banco de horas para o FreshBooks. Você também pode alterar a
-        descrição padrão adicionada para cada entrada do banco de
-        horas.<br/><br/>Escolha se deseja que os analistas vejam as faturas do
-        FreshBooks. Se necessário, você pode impedir que os analistas vejam os
+        API.<br/><br/>Escolha se você deseja que os agentes adicionem entradas à
+        planilha de horas para o FreshBooks. Você também pode alterar a
+        descrição padrão adicionada para cada entrada da planilha de
+        horas.<br/><br/>Escolha se deseja que os agentes vejam as faturas do
+        FreshBooks. Se necessário, você pode impedir que os agentes vejam os
         detalhes comerciais de uma fatura, como “Valor faturado”, “Valor devido”
         e “Custo por unidade”.<br/><br/>Depois que a integração estiver
         habilitada, os detalhes de contato do FreshBooks serão exibidos na
@@ -10634,9 +10624,9 @@ pt-BR:
         api_key: Token de autenticação
         api_key_info: ''
         widget_title: Título do widget
-        invoices: Analistas podem visualizar faturas
+        invoices: Os agentes podem visualizar faturas
         invoice_option: 'Mostrar detalhes comerciais, como custo, valor e total'
-        timeactivity: Permitir que analistas adicionem entradas de tempo no FreshBooks
+        timeactivity: Permitir que agentes adicionem entradas de tempo no FreshBooks
     seoshop:
       label: SEOshop
       desc: >-
@@ -10669,7 +10659,7 @@ pt-BR:
         de: Alemão
         en: Inglês
         fr: Francês
-        el: Greco
+        el: Grego
         it: Italiano
         nor: Norueguês
         nl: Holandês
@@ -10742,8 +10732,8 @@ pt-BR:
       helptext: >-
         <h4>Integração do ilos videos com o Freshdesk</h4><p><br/>Cole a chave
         da API de administração da sua conta do ilos videos. Essa conta
-        armazenará todos os vídeos criados por analistas ou clientes por meio
-        desta integração.</br>Analistas e clientes terão acesso ao botão de
+        armazenará todos os vídeos criados por agentes ou clientes por meio
+        desta integração.</br>Agentes e clientes terão acesso ao botão de
         gravação do ilos videos nas páginas de tickets, fóruns ou artigos de
         solução.</p>
       form:
@@ -10804,7 +10794,7 @@ pt-BR:
       helptext: >-
         <h4>Ajuda com a integração do Harvest</h4><p><br/>Para integrar o
         Harvest ao Freshdesk, digite o <b>nome do seu domínio</b> e clique em
-        Habilitar.<br/><br/>Clique em um ticket e vá para a guia <b>Banco de
+        Habilitar.<br/><br/>Clique em um ticket e vá para a guia <b>Planilha de
         horas</b>. Em seguida, você pode digitar seu nome de usuário e
         <b>senha</b> do Harvest para <b>fazer</b> login. Agora, você pode
         adicionar o registro do seu controle de horas ao Harvest.<br/><br/>Obs.:
@@ -10929,7 +10919,7 @@ pt-BR:
           Você pode exibir a conta configurada do Google, sua configuração e seu
           status de sincronização aqui.
         account_not_configured: >-
-          <br/>As configurações da conta do Google ainda não estão definidas‎.
+          <br/>As configurações da conta do Google ainda não estão definidas.
           Clique em '%{action}' para configurar uma nova conta do
           Google.<br/><br/>
       update_action:
@@ -10994,7 +10984,7 @@ pt-BR:
       info4: Quando o status de um problema for atualizado no JIRA
       info5: Quando um comentário for adicionado no JIRA
       none: Não fazer nada.
-      add_private_note_in_fd: Adicionar uma anotação privada no Freshdesk e notificar o analista.
+      add_private_note_in_fd: Adicionar uma anotação privada no Freshdesk e notificar o agente.
       add_public_note_in_fd: Adicionar uma anotação pública no Freshdesk.
       update_status_in_fd: Atualizar status no Freshdesk.
       send_reply_in_fd: Notificar o cliente por e-mail
@@ -11016,7 +11006,7 @@ pt-BR:
         remove: Remover
       form:
         infusionsoft_settings_info: ''
-        infusionsoft_settings: Configurações Infusionsoft
+        infusionsoft_settings: Configurações de Infusionsoft
         select: Selecionar uma opção
         contact: Campos de contato
         account: Campos da Conta
@@ -11038,9 +11028,7 @@ pt-BR:
         lead: Campos do Lead
         account: Campos da Conta
         opportunity: Campos de oportunidade
-        opportunity_settings: >-
-          Os analistas podem criar/vincular ou desvincular oportunidades do
-          ticket
+        opportunity_settings: Os agentes podem criar/vincular ou desvincular oportunidades do ticket
     salesforce_v2:
       label: Salesforce Plus
       desc: >-
@@ -11079,9 +11067,7 @@ pt-BR:
         account: Campos da Conta
         lead: Campos do Lead
         opportunity: Campos de oportunidade
-        opportunity_settings: >-
-          Os analistas podem criar/vincular ou desvincular oportunidades do
-          ticket
+        opportunity_settings: Os agentes podem criar/vincular ou desvincular oportunidades do ticket
         contract: Campos de contrato
         order: Campos de Pedido
         source_of_truth: Origem dos dados
@@ -11120,9 +11106,7 @@ pt-BR:
         site_url: URL do site
         crm_to_freshdesk: Do Dynamics para o Freshdesk
         freshdesk_to_crm: Do Freshdesk para o Dynamics
-        opportunity_settings: >-
-          Os analistas podem criar/vincular ou desvincular oportunidades do
-          ticket
+        opportunity_settings: Os agentes podem criar/vincular ou desvincular oportunidades do ticket
     nimble:
       label: Nimble
       desc: Você pode exibir as informações do contato do CRM Nimble no Freshdesk.
@@ -11132,12 +11116,12 @@ pt-BR:
       helptext: >-
         <h4>Ajuda com a integração do GitHub</h4><p><br/>Selecione todos os
         repositórios do GitHub em Organização que serão usados para rastrear os
-        problemas criados pelos analistas do Freshdesk. Essa ação só pode ser
+        problemas criados pelos agentes do Freshdesk. Essa ação só pode ser
         executada com a conta de um <b>proprietário da
         organização</b>.<br/><br/>Se necessário, marque a opção para fazer a
         correspondência entre o rótulo do problema no GitHub e o tipo de ticket
         do Freshdesk sempre que um novo problema for criado no
-        GitHub.<br/><br/>Se necessário, marque a opção que permite ao analista
+        GitHub.<br/><br/>Se necessário, marque a opção que permite ao agente
         selecionar o marco ao criar um problema no GitHub.<br/><br/>Você pode
         definir o status desejado para o ticket do Freshdesk sempre que o
         problema correspondente no GitHub for fechado. Essa configuração é
@@ -11156,7 +11140,7 @@ pt-BR:
       sync_updates: Atualizações de sincronização
       none: Não fazer nada
       open: Abertos
-      resolved: Solucionado
+      resolved: Resolvido
       closed: Fechados
       add_comment_in_github: Adicionar um comentário ao problema no GitHub
       add_private_note_in_fd: Adicionar uma anotação privada no Freshdesk.
@@ -11164,11 +11148,11 @@ pt-BR:
     quickbooks:
       label: QuickBooks
       desc: >-
-        Visualize dados de clientes, faturas e adicione entradas ao banco de
+        Visualize dados de clientes, faturas e adicione entradas à planilha de
         horas em sua conta do QuickBooks Online.
       connect_text: >-
-        Conectar a QuickBooks permitirá que seus analistas acessem e atualizem
-        os dados com mais facilidade diretamente em seu helpdesk.
+        Conectar a QuickBooks permitirá que seus agentes acessem e atualizem os
+        dados com mais facilidade diretamente em seu helpdesk.
       remote_configurations:
         signup: >-
           <p>Você está sendo redirecionado para a página de criação de conta do
@@ -11190,20 +11174,20 @@ pt-BR:
           Freshdesk.</p>
       helptext: >-
         <h4>Integração com o QuickBooks</h4><p><br/>Selecione se você deseja que
-        os analistas adicionem entradas no banco de horas pelo QuickBooks. Você
+        os agente adicionem entradas na planilha de horas pelo QuickBooks. Você
         também pode alterar a descrição padrão que é adicionada a cada entrada
-        do banco de dados.</p><p>Selecione se você deseja que os analistas
+        da planilha de horas.</p><p>Selecione se você deseja que os agentes
         visualizem as faturas no QuickBooks. Se necessário, você pode restringir
-        o acesso dos analistas aos detalhes comerciais de uma fatura, como
-        "Valor faturado", "Valor devido" e "Custo por unidade".</p><p>Depois que
-        a integração estiver habilitada, os dados do cliente no QuickBooks serão
+        o acesso dos agentes aos detalhes comerciais de uma fatura, como "Valor
+        faturado", "Valor devido" e "Custo por unidade".</p><p>Depois que a
+        integração estiver habilitada, os dados do cliente no QuickBooks serão
         exibidos na página dos tickets e dos contatos se uma correspondência for
         estabelecida com base no 1. Nome da empresa ou 2. E-mail do
-        solicitante.</p><p>De acordo com a correspondência acima, os analistas
+        solicitante.</p><p>De acordo com a correspondência acima, os agentes
         poderão visualizar as cinco faturas mais recentes na página dos
         tickets.</p>
       form:
-        invoices: Analistas podem visualizar faturas
+        invoices: Os agentes podem visualizar faturas
         invoice_option: 'Mostrar detalhes comerciais, como tarifa, valor e total'
         timeactivity: Permitir que os analistas adicionem entradas de tempo no QuickBooks
         quickbooks_note: Texto das anotações
@@ -11267,7 +11251,7 @@ pt-BR:
         informações de Contato, Leads e Contas do SugarCRM nas páginas de
         Tickets e Contatos do Freshdesk. <br /><br/> Selecione a lista de campos
         que precisa ser exibida no widget do SugarCRM. Você pode selecionar no
-        máxima 10 campos.</p><p><strong>Nota:</strong><br/>Nome é o campo padrão
+        máximo 10 campos.</p><p><strong>Nota:</strong><br/>Nome é o campo padrão
         para Contatos, Leads e Contas e não pode ser removido.</p> <br /><br/>
       desc: >-
         Você pode visualizar informações de Contatos, Leads e Contas do SugarCRM
@@ -11285,16 +11269,16 @@ pt-BR:
         contact: Campos de contato
         lead: Campos do Lead
         account: Campos da Conta
-        error: Não foi possível se conectar com SugarCRM. Por favor tente mais tarde.
+        error: Não foi possível se conectar com SugarCRM. Tente mais tarde.
     dynamicscrm:
       label: Dynamics CRM
       helptext: >-
         <h4>Ajuda com a integração do Dynamics CRM</h4><p><br/> Assim que você
-        habilitar essa integração, seus analistas terão acesso às informações de
+        habilitar essa integração, seus agentes terão acesso às informações de
         contatos do Dynamics CRM diretamente na página de tickets e contatos do
-        Freshdesk. <br /><br /> Os analistas poderão ver apenas os campos que
-        você configurou na página de configurações, e a função de pesquisa é
-        baseada no mapeamento do endereço de e-mail.
+        Freshdesk. <br /><br /> Os agentes poderão ver apenas os campos que você
+        configurou na página de configurações, e a função de pesquisa é baseada
+        no mapeamento do endereço de e-mail.
       desc: Você pode exibir as informações do contato do Dynamics CRM no Freshdesk.
       form:
         instance_type: Tipo de instância do Dynamics CRM
@@ -11335,7 +11319,7 @@ pt-BR:
         lead_email_info: >-
           Digite uma ID de e-mail válida associada a um cliente potencial do
           Dynamics CRM (os campos do CRM serão exibidos na próxima etapa, de
-          acordo o cliente potencial associado)
+          acordo o lead associado)
         login_url: >-
           Pode estar localizado no WSDL da organização do cliente.
           https://<HostName>/XRMServices/2011/Organization.svc?wsdl=wsdl0 e
@@ -11356,8 +11340,8 @@ pt-BR:
       desc: Você pode gerenciar eventos para cada ticket com o Google Agenda.
       helptext: >-
         O Google Agenda permite que você acompanhe os eventos associados aos
-        tickets. Os analistas precisam se conectar às suas contas do Google com
-        o Freshdesk para gerenciar os eventos com o Google Agenda.
+        tickets. Os agentes precisam se conectar às suas contas do Google com o
+        Freshdesk para gerenciar os eventos com o Google Agenda.
       form:
         google_calendar_settings_info: ''
         google_calendar_settings: Configurações do Google Agenda
@@ -11369,7 +11353,7 @@ pt-BR:
         Contatos e Tickets. Especifique seu domínio e a chave da API nessa
         página para configurar a integração. <br><br>O Freshdesk obtém as
         informações Nome, Cargo, Nome da empresa, Endereço de contato, Telefone
-        e Celular do Batchbook e as disponibiliza para seus analistas.
+        e Celular do Batchbook e as disponibiliza para seus agentes.
         <br><br>Você pode procurar os contatos do Batchbook, pesquisando o
         endereço de e-mail. Se houver vários contatos com o mesmo endereço,
         todos eles serão exibidos como uma lista.</p><br/> 
@@ -11408,7 +11392,7 @@ pt-BR:
         qual o ticket pertence. Ela pode substituir a pesquisa de satisfação
         padrão de seu helpdesk ou pode ser usada em conjunto com ela.
         </p><p>Depois de associar sua conta do SurveyMonkey, você pode
-        selecionar a pesquisa e o  <a
+        selecionar a pesquisa e o <a
         href='http://help.surveymonkey.com/articles/en_US/kb/How-do-I-send-my-survey-to-respondents-or-get-responses-to-my-survey'
         target='_blank'>coletor</a> desejados, utilizando as caixas de lista
         suspensa, e mapeá-los para diversos grupos de tickets no Freshdesk.
@@ -11416,7 +11400,7 @@ pt-BR:
         incluídos nas respostas. Por exemplo, é possível definir uma
         configuração para que o link seja anexado às pesquisas automaticamente
         quando o ticket for fechado ou solucionado, ou você pode definir essa
-        configuração como manual para que o analista possa escolher o link para
+        configuração como manual para que o agente possa escolher o link para
         cada ticket. </p>
       desc: >-
         Integre o Freshdesk com o SurveyMonkey e deixe que seus analistas
@@ -11489,14 +11473,14 @@ pt-BR:
       label: Sincronização com os contatos do Outlook
       desc: Sincronize periodicamente seus contatos entre o Outlook e o Freshdesk.
       helptext: >-
-        <h4>Ajuda com a sincronização dos contatos do Oulook</h4><p><br/> Clique
-        em <b>Sincronizar nova conta</b> para adicionar uma nova conta do Oulook
-        para sincronização. Quando solicitado, conceda acesso ao Freshdesk para
-        que ele use os contatos do Oulook (digite o nome de usuário e a senha do
-        Oulook, se solicitado). <br/><br/>Você pode excluir uma conta se não
-        quiser sincronizar mais com ela.<br/><br/><b>Obs.:</b> É recomendável
-        que você faça e armazene um backup de seus contatos do Oulook antes de
-        iniciar a sincronização.
+        <h4>Ajuda com a sincronização dos contatos do Outlook</h4><p><br/>
+        Clique em <b>Sincronizar nova conta</b> para adicionar uma nova conta do
+        Outlook para sincronização. Quando solicitado, conceda acesso ao
+        Freshdesk para que ele use os contatos do Outlook (digite o nome de
+        usuário e a senha do Outlook, se solicitado). <br/><br/>Você pode
+        excluir uma conta se não quiser sincronizar mais com
+        ela.<br/><br/><b>Obs.:</b> É recomendável que você faça e armazene um
+        backup de seus contatos do Outlook antes de iniciar a sincronização.
       form:
         title: Configuração da sincronização dos contatos do Oulook
         import_group: Selecione as pastas para importar (opcional)
@@ -11558,7 +11542,7 @@ pt-BR:
         consumer_secret: Segredo do cliente
         add_shop: + Adicionar loja
         remove_shop: Remover esta loja
-        invalid_shop_url: A URL da loja informada é válida.
+        invalid_shop_url: A URL da loja informada é inválida.
         invalid_admin_url: A URL do administrador informada é válida.
     fullcontact:
       label: FullContact
@@ -11627,13 +11611,13 @@ pt-BR:
       helptext: >-
         <h4>Integração Slack</h4><br><p>Selecione a lista de Canais Públicos e
         Grupos Privados que você quer deixar disponível para o Observador e
-        Distribuidor do Freshdesk. Quando configurando suas regras de automação,
-        você pode decidir qual canal puxar mensagem para.</p>
+        Dispatch'r do Freshdesk. Ao configurar suas regras de automação, você
+        pode decidir para qual canal enviar mensagens push.</p>
       form:
         slack_v2_settings: Configurações Slack
         access_public_channel: Permitir acesso para canais públicos
         access_private_channel: Permitir acesso para canais privados
-        allow_dm_agent: Permitir Dm para analista
+        allow_dm_agent: Permitir DM para agente
         allow_slash_command: >-
           Permitir comandos Slash (<a
           href='https://support.freshdesk.com/support/solutions/articles/206103'
@@ -11704,9 +11688,10 @@ pt-BR:
         criado apenas em um grupo de canal direto
       deprecation_notice: >-
         Uma nova integração do Freshdesk com Slack está disponível. Esta versão
-        está obsoleta. Por favor veja este <a
+        está obsoleta. Por favor, veja este <a
         href='https://support.freshdesk.com/support/solutions/articles/206103'
-        target='_blank'>artigo</a> para ver com adquirir a nova implementação.
+        target='_blank'>artigo de solução</a> para ver com adquirir a nova
+        implementação.
       update_notice: >-
         A integração atual com o Slack foi atualizada. Leia este <a
         href='https://support.freshdesk.com/support/solutions/articles/206103'
@@ -11760,12 +11745,11 @@ pt-BR:
         <h4>Ajuda com a integração do Workflow Max</h4><p><br/>Para integrar o
         controle de horas do Workflow Max com o Freshdesk, é necessário obter
         uma chave da conta e uma chave da API com o Suporte do Workflow Max <a
-        href='mailto:support@workflowmax.com'>.</a>
-
-        Digite as chaves nos campos específicos para concluir a integração.
-        <br/><br/>Uma vez integrados, clique em qualquer ticket e vá para a guia
-        Banco de horas. Então, você poderá escolher a equipe, o trabalho e a
-        tarefa para adicionar os registros de horas no Workflow Max.
+        href='mailto:support@workflowmax.com'>.</a> Digite as chaves nos campos
+        específicos para concluir a integração. <br/><br/>Uma vez integrados,
+        clique em qualquer ticket e vá para a guia Planilha de horas. Então,
+        você poderá escolher a equipe, o trabalho e a tarefa para adicionar as
+        entradas de horas no Workflow Max.
       form:
         workflow_max_note: Anotações para adicionar
         workflow_max_note_info: >-
@@ -11844,8 +11828,8 @@ pt-BR:
         <br/>Agora você poderá gerar um código PIN e compartilhar as instruções
         com o solicitante para continuar o suporte no LogMeIn Rescue. <br/><br/>
 
-        <b>Obs.:</b> O e-mail do analista deve corresponder à ID de Logon único
-        do técnico do LogMeIn Rescue. Para definir sua ID de Logon único vá para
+        <b>Obs.:</b> O e-mail do agente deve corresponder à ID de Logon único do
+        técnico do LogMeIn Rescue. Para definir sua ID de Logon único vá para
         Centro de administração --&gt; Nome do técnico -&gt; Organização -&gt;
         ID de Logon único
       note:
@@ -11978,16 +11962,16 @@ pt-BR:
     xero:
       label: Xero
       desc: >-
-        Crie faturas do Xero para as entradas do banco de horas do ticket do
+        Crie faturas do Xero para as entradas da planilha de horas do ticket do
         Freshdesk.
       helptext: >-
-        <h4>Opções de imtegração com o Xero</h4><br><P>Selecione os nomes de
-        conta do Xero abaixo do cabeçalho ‘Receita’ da conta que os analistas
+        <h4>Opções de integração com o Xero</h4><br><P>Selecione os nomes de
+        conta do Xero abaixo do cabeçalho ‘Receita’ da conta que os agentes
         podem acessar enquanto criam faturas. As informações de Vendas estão
         disponíveis por padrão. Se Vendas não existir, o nome da primeira conta
         disponível será definido como padrão.</p><p>Você também pode selecionar
-        os itens de inventário do Xero aos quais os analistas podem associar
-        entradas do banco de dados quando criarem itens da fatura.</p><p>É
+        os itens de inventário do Xero aos quais os agentes podem associar
+        entradas da planilha de horas quando criarem itens da fatura.</p><p>É
         possível selecionar no máximo 20 nomes de conta e 30 itens de
         inventário.</p>
       application:
@@ -12038,10 +12022,10 @@ pt-BR:
     parent_child:
       label: Emissão de tickets pai e filho
       desc: >-
-        A emissão de tickets pai e filho ajuda os analistas a resolver problemas
+        A emissão de tickets pai e filho ajuda os agentes a resolver problemas
         com mais rapidez e eficiência dividindo itens de ação em subtickets, que
         podem ser resolvidos independentemente por várias equipes ao mesmo
-        tempo.</div>
+        tempo.
     link_ticket:
       label: Tickets associados
       desc: >-
@@ -12052,7 +12036,7 @@ pt-BR:
       desc: >-
         Melhore a visibilidade dos tickets que exigem assistência de equipes
         especializadas, permitindo que esses tickets sejam compartilhados entre
-        os analistas.
+        os agentes.
     marketplace_login:
       associate_account:
         email: E-mail
@@ -12107,7 +12091,7 @@ pt-BR:
       auth_error: >-
         Erro: Parece que você não está carregando esta página por meio de um
         fluxo do HootSuite
-      agent_error: Você precisa ser um analista para visualizar os tickets
+      agent_error: Você precisa ser um agente para visualizar os tickets
       no_ticket_msg: Você não tem tickets para esta seleção de filtro
       signup_message: Ainda não é um cliente Freshdesk? Cadastre-se.
       header:
@@ -12124,7 +12108,7 @@ pt-BR:
       search:
         keyword: Palavra-chave
         ticket_id: ID do ticket
-        placeholder_keyword: Encontre ticket com palavras chaves
+        placeholder_keyword: Encontre ticket com palavras-chave
         placeholder_ticket_id: Encontre ticket pela sua ID
       logged_in_message: 'Conectado como %{user_name}'
       domain:
@@ -12168,11 +12152,11 @@ pt-BR:
       label: Freshsales
       helptext: >-
         <h4>Ajuda com a integração do Freshsales</h4><p><br/> Depois que você
-        habilitar esta integração, seus analistas terão acesso às informações de
+        habilitar esta integração, seus agentes terão acesso às informações de
         contato do Freshsales diretamente nas páginas de contatos e tickets do
-        Freshdesk. <br /><br /> Seus analistas poderão visualizar apenas os
-        campos que você definir na página de configurações, e a função de
-        pesquisa terá como base o mapeamento de endereço de e-mail.
+        Freshdesk. <br /><br /> Seus agentes poderão visualizar apenas os campos
+        que você definir na página de configurações, e a função de pesquisa terá
+        como base o mapeamento de endereço de e-mail.
       desc: Você pode visualizar as informações do Freshsales no Freshdesk.
       form:
         freshsales_settings: Configurações do Freshsales
@@ -12188,7 +12172,7 @@ pt-BR:
         lead: Campos do Lead
         account: Campos da Conta
         deal: Campos de negócios
-        deal_settings: Os analistas podem criar/vincular ou desvincular negócios do ticket
+        deal_settings: Os agentes podem criar/vincular ou desvincular negócios do ticket
     ticket_summary:
       desc: >-
         Crie e compartilhe um resumo dos problemas enfrentados pelos clientes
@@ -12289,11 +12273,11 @@ pt-BR:
       filter_by_title: Filtrado por
       time_period: Período
       ff_report_title: Resumo do telefone
-      summary_title: 'Resumo das chamadas do analista '
+      summary_title: 'Resumo das chamadas do agente '
       agent: Agente
       group: Grupo
       call_type: Tipo de chamada
-      business_hours: Horário de atendimento
+      business_hours: Horário comercial
       filter_option_all_calls: Todas as chamadas
       filter_option_within_business_hours: Dentro do horário comercial
       filter_option_outside_business_hours: Fora do horário comercial
@@ -12322,7 +12306,7 @@ pt-BR:
       others: Outros
       external: Números externos
       includes_transfer: Inclui as chamadas transferidas
-      no_agent: '- Nenhum analista -'
+      no_agent: '- Nenhum agente -'
       no_external: Não inclui as transferências feitas para números externos
     time_sheets:
       billable: Horas faturáveis
@@ -12351,7 +12335,7 @@ pt-BR:
         primeira chamada&quot; mostra os tickets que foram resolvidos com a
         primeira resposta.<br /> &quot;Média de tempo para a primeira
         resposta&quot; mostra o tempo decorrido entre a criação do ticket e a
-        primeira resposta de um analista a ele.
+        primeira resposta de um agente a ele.
     date_ranges:
       today: Hoje
       yesterday: Ontem
@@ -12372,7 +12356,7 @@ pt-BR:
       index:
         title: Relatório de banco de horas
         select_customer: Selecionar cliente
-        select_agent: Selecionar analista
+        select_agent: Selecionar agente
         select_group: Selecionar grupo
         select_billable: Selecionar faturável/não faturável
         select_priority: Selecionar prioridade
@@ -12389,7 +12373,7 @@ pt-BR:
       sharpshooter_title: Sharpshooters
       speed_champion: Campeão de velocidade
       customer_champion: Campeão de clientes
-      valuable_player: Analista mais valioso
+      valuable_player: Agente mais valioso
       agent_highest_points: Analistas com mais pontos
       agents_fastest_resolve: Analistas que resolvem tickets mais rapidamente
       sample_name: Bruce Banner
@@ -12400,7 +12384,7 @@ pt-BR:
         time_period: Período
         survey_name: Nome da pesquisa
         group: Grupo
-        agent: Analista
+        agent: Agente
         overview: Visão geral
         responses: Repostas
         response_to: Resposta para
@@ -12425,9 +12409,9 @@ pt-BR:
         view_report_by: Exibir por
         overall_rating: Avaliação
         all_responses: Todas as respostas
-        deleted_list: PESQUISAS DELETADAS
+        deleted_list: PESQUISAS EXCLUÍDAS
       index:
-        agent_list_loading: Buscando lista de analistas
+        agent_list_loading: Buscando lista de agentes
       feedbacks:
         in_response_to: '-- Em resposta a'
       back_to: Voltar para a exibição de lista
@@ -12450,12 +12434,12 @@ pt-BR:
         helptext: >-
           <b>Por que gerar um relatório de satisfação do cliente?</b><p>O
           relatório de satisfação do cliente permite que você tenha uma ideia da
-          qualidade do serviço de seus analistas no suporte ao cliente.<br>O
+          qualidade do serviço de seus agentes no suporte ao cliente.<br>O
           relatório ajuda você a entender o nível de satisfação de seus
           clientes, que é representado por um percentual (satisfeito, neutro e
-          insatisfeito) em relação a cada analista de suporte.<br><br><b>O que
+          insatisfeito) em relação a cada agente de suporte.<br><br><b>O que
           mais você pode fazer?</b><br><p><ol class='ml15'><li>Filtrar os
-          resultados do relatório por analista, grupo ou
+          resultados do relatório por agente, grupo ou
           empresa.</li><li>Visualizar os relatórios de a um determinado
           período.</li></ol></p></p>
     livechat:
@@ -12484,7 +12468,7 @@ pt-BR:
       avg_handle_time: Méd. do tempo de atendimento
       avg_time_queue: Tempo na fila
       total_duration: Duração total
-      agent_chat_summary: Resumo dos chats do analista
+      agent_chat_summary: Resumo dos chats do agente
       agent: Analista
       deleted: Excluído
     scheduled_exports:
@@ -12532,7 +12516,7 @@ pt-BR:
   select: Selecione...
   ticket_update_multiple_button: Atualizar
   ticket_cancel_multiple_button: Cancelar
-  agent_working_on_this_ticket: Analista trabalhando neste ticket
+  agent_working_on_this_ticket: Agente trabalhando neste ticket
   email_commands_update_success: Configurações de comando no e-mail atualizadas com sucesso.
   email_commands_update_failed: Falha ao atualizar as configurações de comando no e-mail.
   email_command_settings_heading: Configurações de comando no e-mail
@@ -12557,7 +12541,7 @@ pt-BR:
         Resolvido.
       info3: >-
         O restante do conteúdo do seu e-mail será adicionado como uma conversa
-        no Freshdesk e enviado ao solicitante.
+        no Freshdesk e enviado ao solicitante via e-mail.
       ticket_type_example: Pergunta
       note: Anotação
   email_command_delimeter_label: Delimitador de Comandos no e-mail
@@ -12586,7 +12570,7 @@ pt-BR:
         ticket para incluir os campos mais adequados para sua empresa e deixar
         que clientes e analistas preencham as informações de que você precisa no
         formato desejado. Por exemplo, para uma empresa de comércio eletrônico,
-        ter a ID do pedido do cliente no ticket ajudaria muito o analista a
+        ter a ID do pedido do cliente no ticket ajudaria muito o agente a
         encontrar a solução para o problema apresentado.
       info2: >-
         Os campos dependentes oferecem uma maneira fácil de criar categorias
@@ -12619,27 +12603,25 @@ pt-BR:
         seção e associar uma seção às opções no campo de lista suspensa. Se
         tiver uma loja de comércio eletrônico, por exemplo, você poderá exibir
         uma seção com o campo Motivo quando seu cliente selecionar a opção
-        Substituição. Dessa forma, você poderá entender melhor porque o cliente
-        gostaria de fazer uma substituição. Você pode criar até duas seções
-        dinâmicas e usá-las em duas listas suspensas personalizadas. Caso já
-        tenha associado uma sessão ao campo Tipo, você poderá adicionar apenas
-        mais uma seção no formulário do ticket.
+        Troca. Dessa forma, você poderá entender melhor porque o cliente
+        gostaria de fazer uma troca. Você pode criar até duas seções dinâmicas e
+        usá-las em duas listas suspensas personalizadas. Caso já tenha associado
+        uma sessão ao campo Tipo, você poderá adicionar apenas mais uma seção no
+        formulário do ticket.
   contact_field:
     helpcard:
       title2: Personalizando seus campos de contato
       info2: >-
-        O formulário de contato do Freshdesk permite capturar dados importantes
-        de seus clientes para que você possa atendê-los melhor. Sua equipe pode
-        obter rapidamente mais informações sobre os clientes incluindo campos
-        personalizados com base no seu tipo de empresa. Por exemplo, você pode
-        coletar informações com campos de clientes sobre planos de pagamento,
-        departamentos, etc., e priorizar os tickets conforme apropriado em seu
-        helpdesk.
+        O formulário de contato do Freshdesk permite obter rapidamente mais
+        informações sobre os clientes incluindo campos personalizados com base
+        no seu tipo de empresa. Por exemplo, você pode coletar informações com
+        campos de clientes sobre planos de pagamento, departamentos, etc. e
+        priorizar tickets.
       info3: >-
         Da mesma forma que você adiciona campos de ticket, é possível adicionar
         novos campos ao formulário de cadastro do cliente e torná-los
         obrigatórios. Você também pode ter campos privados que estarão visíveis
-        apenas para seus analistas.
+        apenas para seus agentes.
   company_field:
     helpcard:
       title1: Personalizando seus campos de empresa
@@ -12728,7 +12710,7 @@ pt-BR:
   swith_agent_msg: Mudar de analista
   agent_loading_msg: Carregando agentes...
   switch_heading: Mudar analista
-  email_notifications_agent_selection_msg: Selecionar analistas para notificar
+  email_notifications_agent_selection_msg: Selecionar agentes para notificar
   on_hold: Em espera
   status_name_validate_uniqueness_msg: ' O nome do status já está sendo utilizado'
   status_cust_disp_name_uniqueness_msg: ' O status do nome de exibição do cliente já está sendo utilizado'
@@ -12774,7 +12756,7 @@ pt-BR:
     Os detalhes da assinatura ou do plano podem ser alterados a qualquer
     momento.
   enter_payment_details_to_add: >-
-    Forneça os detalhes do pagamento para adicionar mais analistas ou fazer
+    Forneça os detalhes do pagamento para adicionar mais agentes ou fazer
     upgrade do seu plano
   enter_payment_details_to_add_v2: Forneça os detalhes do pagamento para fazer upgrade do seu plano
   payment_failed: >-
@@ -13072,7 +13054,7 @@ pt-BR:
   Requester: Pesquisar um solicitante
   Status: Status
   Group: Grupo
-  Agent: Analista
+  Agent: Agente
   Priority: Prioridade
   Description: Descrição
   Product: Produto
@@ -13182,8 +13164,8 @@ pt-BR:
     something_went_wrong_msg: Algo deu errado. Tente novamente.
     disabled_date_range: Desabilitado para este intervalo de datas
     export_tickets_error_msg: >-
-      No momento permitimos apenas uma exportação simultânea. Tente novamente
-      mais tarde. Lamentamos os inconvenientes que isso possa ter causado.
+      Você atingiu o número máximo de solicitações de exportação simultâneas.
+      Tente novamente mais tarde.
     export_tickets_success_msg: Os dados do seu ticket serão enviados para o seu e-mail em breve!
     view_all_tickets: Exibir todos os tickets
     view_all_compliant_tickets: Exibir todos os tickets em conformidade
@@ -13199,7 +13181,7 @@ pt-BR:
       dialog_header: Salvar e agendar relatório
       copy_of: 'Cópia de '
       edit_dialog_header: Editar Relatório
-      delete_dialog_header: Deletar Relatório
+      delete_dialog_header: Excluir Relatório
       dialog_sub_header: Este relatório será visível somente para você
       dialog_schedule_guide: >-
         Depois de salvar um relatório, você pode agendá-lo clicando no ícone de
@@ -13536,9 +13518,9 @@ pt-BR:
       total_unresolved_tickets: Total de tickets não resolvidos
       average_resolved_tickets: Média de tickets resolvidos
       average_unresolved_tickets: Média dos tickets não resolvidos
-      busiest_hour_received_tickets: Mais tickets recebidos por volta de
+      busiest_hour_received_tickets: Maioria de tickets recebidos por volta de
       busiest_hour_resolved_tickets: Mais tickets resolvidos por volta de
-      busiest_day_received_tickets: Mais tickets foram recebidos
+      busiest_day_received_tickets: A maioria dos tickets foram recebidos em
       busiest_day_resolved_tickets: Mais tickets foram resolvidos
       received_tickets: Tickets recebidos
       resolved_tickets: Tickets resolvidos
@@ -13619,7 +13601,7 @@ pt-BR:
       title: Desempenho do grupo
       group: Grupo
     agent_summary:
-      title: Desempenho do analista
+      title: Desempenho do agente
       ticket_assigned: Tickets atribuídos
       ticket_resolved: Tickets resolvidos
       tickets_reopened: Tickets reabertos
@@ -13681,7 +13663,7 @@ pt-BR:
           junto com os campos de contato e empresa associados. Os dados da
           exportação podem ser usados para criar relatórios personalizados. Por
           exemplo, toda semana você recebe uma exportação de tickets que inclui
-          o tempo até a primeira resposta, o tempo de resolução e o analista
+          o tempo até a primeira resposta, o tempo de resolução e o agente
           atribuído ao ticket para avaliar a responsividade da sua equipe. Até
           cinco agendamentos podem ser criados em uma conta. <a
           href='https://support.freshdesk.com/support/solutions/articles/226461-export-ticket-properties/'
@@ -13814,7 +13796,7 @@ pt-BR:
     reports: Relatórios
     helpdesk_at_a_glance: Visão geral do helpdesk
     customer_at_a_glance: Visão geral do cliente
-    agent_at_a_glance: Visão geral do analista
+    agent_at_a_glance: Visão geral do agente
     group_at_a_glance: Visão geral do grupo
     summary: Resumo
     agent_ticket_summary: Resumo dos tickets do analista
@@ -13823,10 +13805,10 @@ pt-BR:
     helpdesk_load_analysis: Análise de carga do helpdesk
     helpdesk_performance_analysis: Análise de desempenho do helpdesk
     comparison: Comparação
-    agent_comparison: Comparação de analistas
+    agent_comparison: Comparação de agentes
     group_comparison: Comparação de grupos
     top_n_analysis: Análise Top-N
-    agent_top_n_analysis: Análise Top-N dos analistas
+    agent_top_n_analysis: Análise Top-N dos agentes
     group_top_n_analysis: Análise Top-N dos grupos
     time_sheet_report: Relatório de banco de horas
     customer_top_n_analysis: Análise Top-N dos clientes
@@ -13863,7 +13845,7 @@ pt-BR:
       num_of_reassigns: Núm. de reatribuições
       sla_percentage: '% do SLA'
       select_customer_msg: Selecionar cliente
-      select_agent_msg: Selecionar analista
+      select_agent_msg: Selecionar agente
       select_group_msg: Selecionar grupo
       no_customers_msg: Você não tem nenhum cliente
       no_groups_msg: Você não tem nenhum grupo
@@ -13883,7 +13865,7 @@ pt-BR:
       tickets_within_SLA: Tickets no prazo do SLA
       tickets_reopened: Tickets reabertos
     comparison_reports:
-      select_agent_msg: Selecionar analista (até 4)
+      select_agent_msg: Selecionar agente (até 4)
       select_metrics_msg: Selecionar métricas
       select_group_msg: Selecionar grupo (até 4)
       ticket_assigned: Tickets atribuídos
@@ -13909,7 +13891,7 @@ pt-BR:
           Número total de tickets recebidos por nosso suporte no período
           selecionado
         customer_recieved_tickets: Número total de tickets recebidos deste cliente no período selecionado
-        agent_recieved_tickets: Número total de tickets recebidos pelo analista no período selecionado
+        agent_recieved_tickets: Número total de tickets recebidos pelo agente no período selecionado
         group_recieved_tickets: Número total de tickets recebidos pelo grupo no período selecionado
         helpdesk_resolved_tickets: >-
           Número total de tickets no helpdesk que foram resolvidos no período
@@ -13917,9 +13899,7 @@ pt-BR:
         customer_resolved_tickets: >-
           Número total de tickets deste cliente que foram resolvidos no período
           selecionado
-        agent_resolved_tickets: >-
-          Número total de tickets resolvidos pelo analista no período
-          selecionado
+        agent_resolved_tickets: Número total de tickets resolvidos pelo agente no período selecionado
         group_resolved_tickets: Número total de tickets resolvidos pelo grupo no período selecionado
         helpdesk_backlog_tickets: >-
           Número total de tickets não resolvidos no helpdesk ao final de cada
@@ -13929,13 +13909,13 @@ pt-BR:
           dia no período selecionado
         agent_backlog_tickets: >-
           Número total de tickets não resolvidos que foram atribuídos a um
-          analista ao final de cada dia no período selecionado
+          agente ao final de cada dia no período selecionado
         group_backlog_tickets: >-
           Número total de tickets não resolvidos que foram atribuídos ao grupo
           ao final de cada dia no período selecionado
         helpdesk_avg_resp_time: O tempo médio que um ticket levou para ser respondido neste helpdesk
         customer_avg_resp_time: O tempo médio para responder a um ticket deste cliente
-        agent_avg_resp_time: O tempo médio que este analista levou para responder a um ticket
+        agent_avg_resp_time: O tempo médio que este agente levou para responder a um ticket
         group_avg_resp_time: O tempo médio que este grupo levou para responder a um ticket
         helpdesk_avg_first_resp_time: >-
           O tempo médio no helpdesk para enviar a primeira resposta para todos
@@ -13944,14 +13924,14 @@ pt-BR:
           O tempo médio para que a primeira resposta seja enviada para o ticket
           de um cliente
         agent_avg_first_resp_time: >-
-          O tempo médio para que estes analistas enviem a primeira resposta para
+          O tempo médio para que estes agentes enviem a primeira resposta para
           um ticket
         group_avg_first_resp_time: >-
           O tempo médio para que este grupo envie a primeira resposta para um
           ticket
         helpdesk_avg_resol_time: O tempo médio no helpdesk para resolver um ticket
         customer_avg_resol_time: O tempo médio para resolver um ticket do cliente
-        agent_avg_resol_time: O tempo médio gasto por este analista para resolver um ticket
+        agent_avg_resol_time: O tempo médio gasto por este agente para resolver um ticket
         group_avg_resol_time: O tempo médio gasto por este grupo para resolver um ticket
         helpdesk_avg_cust_inter: >-
           O número médio de respostas de clientes neste helpdesk ao final de
@@ -13961,21 +13941,21 @@ pt-BR:
           dia
         agent_avg_cust_inter: >-
           O número médio de respostas de clientes aos tickets atribuídos a este
-          analista ao final de cada dia
+          agente ao final de cada dia
         group_avg_cust_inter: >-
           O número médio de respostas de clientes aos tickets atribuídos a este
           grupo ao final de cada dia
         helpdesk_avg_agent_inter: >-
-          O número médio de respostas de analistas aos tickets no helpdesk ao
+          O número médio de respostas de agentes aos tickets no helpdesk ao
           final de cada dia
         customer_avg_agent_inter: >-
-          O número médio de respostas de analistas aos tickets deste cliente ao
+          O número médio de respostas de agentes aos tickets deste cliente ao
           final de cada dia
         agent_avg_agent_inter: >-
-          O número médio de respostas de analistas aos tickets atribuídos a este
-          analista ao final de cada dia
+          O número médio de respostas de agentes aos tickets atribuídos a este
+          agente ao final de cada dia
         group_avg_agent_inter: >-
-          O número médio de respostas de analistas aos tickets atribuídos a este
+          O número médio de respostas de agentes aos tickets atribuídos a este
           grupo ao final de cada dia
         helpdesk_reopens: >-
           O número de vezes que um ticket resolvido ou fechado no helpdesk foi
@@ -13985,22 +13965,22 @@ pt-BR:
           este cliente
         agent_reopens: >-
           O número de vezes que um ticket resolvido ou fechado atribuído a este
-          analista foi reaberto
+          agente foi reaberto
         group_reopens: >-
           O número de vezes que um ticket resolvido ou fechado por este grupo
           foi reaberto
         helpdesk_reassigns: >-
           O número de vezes que um ticket no helpdesk foi reatribuído para outro
-          analista
+          agente
         customer_reassigns: >-
           O número de vezes que um ticket aberto por este cliente e atribuído a
-          um analista foi reatribuído
+          um agente foi reatribuído
         agent_reassigns: >-
           O número de vezes que um ticket atribuído a este analista foi
           reatribuído para outra pessoa
         group_reassigns: >-
-          O número de vezes que um ticket atribuído a um analista neste grupo
-          foi reatribuído para outro analista
+          O número de vezes que um ticket atribuído a um agente neste grupo foi
+          reatribuído para outro agente
         helpdesk_sla: >-
           A porcentagem de tickets resolvidos de acordo com o SLA definido no
           helpdesk
@@ -14008,8 +13988,8 @@ pt-BR:
           A porcentagem de tickets abertos por este cliente que foram resolvidos
           de acordo com o SLA definido
         agent_sla: >-
-          A porcentagem de tickets atribuidos a este analista que foram
-          resolvidos de acordo com o SLA definido
+          A porcentagem de tickets atribuídos a este agente que foram resolvidos
+          de acordo com o SLA definido
         group_sla: >-
           A porcentagem de tickets atribuídos a este grupo que foram resolvidos
           de acordo com o SLA definido
@@ -14020,8 +14000,8 @@ pt-BR:
           A porcentagem de tickets abertos por este cliente que foram resolvidos
           na primeira resposta
         agent_fcr: >-
-          A porcentagem de tickets atribuídos a este analista que foram
-          resolvidos na primeira resposta
+          A porcentagem de tickets atribuídos a este agente que foram resolvidos
+          na primeira resposta
         group_fcr: >-
           A porcentagem de tickets atribuídos a este grupo que foram resolvidos
           na primeira resposta
@@ -14425,8 +14405,8 @@ pt-BR:
       toll_free: Discagem gratuita
       mobile: Local (celular)
       number:
-        simultaneous: Chamar todos os analistas
-        round_robin: Chamar os analistas ociosos primeiro
+        simultaneous: Chamar todos os agentes
+        round_robin: Chamar os agentes ociosos primeiro
       trial:
         request_activation_msg: >-
           Você pode usar apenas um número a partir de um conjunto limitado de
@@ -14495,8 +14475,8 @@ pt-BR:
             direct_dial: Opção de Ligar para Número não disponível no período de avaliação
           search:
             after_activation_request: >-
-              Você pediu pela ativação do canal de telefônico <br> Nós te
-              daremos um retorno em 2 dias úteis.
+              Você pediu pela ativação do canal telefônico <br> Nós te daremos
+              um retorno em 2 dias úteis.
             buy_button: Sim
             can_use_after_activation: >-
               Você pode continuar utilizando este número quando você ativar o
@@ -14572,15 +14552,15 @@ pt-BR:
         group: 'Reproduzir mensagem e chamar agentes em '
         call_hunting_group: Grupo
         all_groups: Todos os grupos
-        business_hours: Horário de atendimento
+        business_hours: Horário comercial
         anytime: 24 horas/7 dias por semana a qualquer momento
         name: Nome
         name_placeholder: Insira um nome amigável para o seu número
         hunt_type: Roteamento de chamada
-        routing_message: Quando vários analistas estiverem on-line...
+        routing_message: Quando vários agentes estiverem on-line...
         recording_privacy: Visibilidade da gravação
-        recording_privacy_public: Visível para clientes e analistas
-        recording_privacy_private: Visível somente para analistas
+        recording_privacy_public: Visível para clientes e agentes
+        recording_privacy_private: Visível somente para agentes
         name_maxlength: O nome não pode ter mais de 255 caracteres
         number_accessible: Acessível por
         wait_music: Música para espera
@@ -14590,7 +14570,7 @@ pt-BR:
         queue_position_message_placeholder: 'Você está na fila. Sua posição na fila é {{queue.position}}'
         queue_position_message_alert: >-
           Para que sua posição na fila seja lida em voz alta, use o espaço
-          reservado {{queue.position}} <br/> Eexmplo: Você está na fila. Sua
+          reservado {{queue.position}} <br/> Exemplo: Você está na fila. Sua
           posição na fila é {{queue.position}}
         queue_position_enable: LIGADO
         queue_position_disable: DESLIGADO
@@ -14598,13 +14578,13 @@ pt-BR:
         sidebar_title: Canal telefônico
         sidebar_content: >-
           Com o canal telefônico, você pode fazer e receber chamadas em seu
-          navegador, celular ou no canal telefônico dos aplicativos para
-          dispositivos móveis do Freshdesk. Ele é integrado ao sistema de
-          tickets do Freshdesk para que você possa monitorar suas chamadas
-          telefônicas gravando-as e convertendo-as em tickets sempre que
-          necessário. <br/><br/> <b>Como configurar o telefone</b></br>Para
-          começar a usar o telefone, primeiro você precisa habilitá-lo e
-          adquirir um número de suporte. Você pode comprar números locais dos <a
+          navegador, celular ou no canal telefônico dos aplicativos para móveis
+          do Freshdesk. Ele é integrado ao sistema de tickets do Freshdesk para
+          que você possa monitorar suas chamadas telefônicas gravando-as e
+          convertendo-as em tickets sempre que necessário. <br/><br/> <b>Como
+          configurar o telefone</b></br>Para começar a usar o telefone, primeiro
+          você precisa habilitá-lo e adquirir um número de suporte. Você pode
+          comprar números locais dos <a
           href='https://support.freshdesk.com/support/solutions/articles/169322'
           target='_blank'>países listados aqui</a> e fazer ou receber chamadas
           de qualquer lugar do mundo. Se seus clientes estiverem nos EUA, no
@@ -14614,8 +14594,8 @@ pt-BR:
           canal telefônico, você pode<br/><ul><li>Começar a fazer e receber
           chamadas usando seu navegador da Web ou telefones
           celulares</li><li>Criar correios de voz, encaminhar ou transferir
-          chamadas para qualquer analista, em qualquer lugar</li><li>Monitorar
-          chamadas, interrompê-las quando necessário, adicionar analistas a
+          chamadas para qualquer agente, em qualquer lugar</li><li>Monitorar
+          chamadas, interrompê-las quando necessário, adicionar agentes a
           chamadas em andamento e muito mais*</li></ul><br/><p>*Envie um e-mail
           para <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>
           para habilitar recursos avançados em sua conta, como monitoramento de
@@ -14685,7 +14665,7 @@ pt-BR:
           country: País
           required_field: Todos os campos são obrigatórios
         setup:
-          title_text: Configurar uma central de chamadas
+          title_text: Configurar uma central de atendimento
           info_text: >-
             Para começar a usar o canal telefônico, primeiro você precisa
             adquirir um número para oferecer aos clientes. Você pode comprar
@@ -14701,10 +14681,10 @@ pt-BR:
             href='http://freshdesk.com/multichannel-support/phone-support/call-rates'
             target='_blank'>tarifas de chamadas aqui</a>.<br/><br/>Depois que
             você adquirir um número de suporte para o seu suporte, todas as
-            chamadas recebidas serão distribuídas entre os analistas conectados
-            ao seu helpdesk. Seus analistas também podem escolher atender às
-            chamadas diretamente no navegador ou encaminhá-las automaticamente
-            para um aparelho telefônico.
+            chamadas recebidas serão distribuídas entre os agentes conectados ao
+            seu helpdesk. Seus agentes também podem escolher atender às chamadas
+            diretamente no navegador ou encaminhá-las automaticamente para um
+            aparelho telefônico.
         caller_id:
           manage_caller_id: 'Gerenciar ID '
           add_another: / Adicionar outro
@@ -14755,7 +14735,7 @@ pt-BR:
           recebidas.
         turn_on: Ativado
         turn_off: Desligado
-        add_new_menu: Menu <b>Adicionar novo</b>
+        add_new_menu: Adicionar novo <b>Menu</b>
         add_new_menu_from_option: Menu Adicionar novo
         add_new_option: Adicionar a opção <b>Pressionamento de teclas</b>
         keypress: Pressionamento de teclas
@@ -14800,7 +14780,7 @@ pt-BR:
           países
         ivr_info: >-
           Monitore chamadas, faça chamadas em conferência, encaminhe chamadas
-          usando IVR e muito mais
+          usando URA e muito mais
         recording_info: Grave e converta todas as suas chamadas em tickets
         learn_more: Saiba mais
         pricing: Veja todas as tarifas de chamadas e os países com suporte
@@ -14818,7 +14798,7 @@ pt-BR:
           Assista ao vídeo para descobrir o que pode fazer com o canal de
           telefone
         trial_version_disclaimer: Você pode utilizar funcionalidades limitadas gratis por 15 dias
-        activation_disclaimer: Você pode utilizar todas as funcionalidades são limitação
+        activation_disclaimer: Você pode utilizar todas as funcionalidades sem limitação
         trial_version_numbers: Selecione apenas números específicos
         trial_version_calls: Recebimento e Realização de chamadas limitadas
         trial_version_number_purchse: Pode comprar apenas 1 número
@@ -14852,7 +14832,7 @@ pt-BR:
     header_title: Cabeçalho
     welcome: Mensagem de boas-vindas
     thank_title: Mensagem de agradecimento
-    wait_title: Mensagem exibida enquanto o cliente aguarda o analista
+    wait_title: Mensagem exibida enquanto o cliente aguarda o agente
     is_typing_header: Quando o analista/visitante <br> começa a digitar
     prechat_title: Formulário pré-chat
     prechat_desc: >-
@@ -14874,8 +14854,8 @@ pt-BR:
     end_chat_confirm_msg_title: Mensagem de confirmação de encerramento de chat
     agent_network_disconnect_msg_title: Mensagem exibida quando o analista é desconectado
     help_text_wait_onhold_msg: >-
-      Esta mensagem será exibida se o visitante estiver aguardando um analista
-      por mais de um minuto
+      Esta mensagem será exibida se o visitante estiver aguardando um agente por
+      mais de um minuto
     showform: Mostrar formulário pré-chat
     proactive_note: >-
       Obs.: O formulário pré-chat não será exibido quando um chat for iniciado
@@ -14891,10 +14871,10 @@ pt-BR:
     show_chat_hours: Mostrar chat
     show_chat_hours_msg: Defina quando sua janela de chat estará visível para seus visitantes.
     chat_hours_msg_note: 'Obs.: A janela do chat ficará oculta fora desse horário.'
-    business_hours: Durante o horário de atendimento
+    business_hours: Durante o horário comercial
     anytime: Sempre (24/7)
     business_calendar: Selecionar horário de atendimento
-    show_widget: Quando os analistas estiverem on-line e aceitando chats
+    show_widget: Quando os agentes estiverem on-line e aceitando chats
     texton: Ativado
     textoff: Desligado
     form_details: Detalhes do formulário
@@ -15100,12 +15080,12 @@ pt-BR:
     maximum_chat_title: Número máximo de chat com visitantes
     maximum_change_label: Editar
     maximum_chat_desc: >-
-      Defina em quantos chats um analista pode estar simultaneamente. Ao atingir
+      Defina em quantos chats um agente pode estar simultaneamente. Ao atingir
       esse limite, ele não receberá mais notificações de chat.
     maximum_chat_error: Você atingiu o limite máximo de chats.
     transfer_limt_exceeded_msg: ' atingiu sua capacidade. Transfira o chat para outro analista.'
     loading_new_archives: Carregando novos arquivos...
-    non_availability_msg_header: Mensagem quando os analistas estiverem ausentes
+    non_availability_msg_header: Mensagem quando os agentes estiverem ausentes
     non_availability_msg_help: >-
       Para adicionar um hiperlink a um texto em sua mensagem que apontará para
       sua URL, escreva-o entre '# #'
@@ -15861,12 +15841,12 @@ pt-BR:
         para2: >-
           Com base no tipo do seu fórum, seus tópicos podem ter qualquer
           conteúdo, desde ideias, perguntas ou problemas, e podem ser iniciados
-          por analistas e clientes. De acordo com suas discussões, você pode ter
+          por agentes e clientes. De acordo com suas discussões, você pode ter
           uma ideia de quantas pessoas estão enfrentando o mesmo tipo de
           problema, quem está ansioso para testar uma versão beta de seus novos
           recursos ou que parte do seu produto é difícil de entender.
         para3: >-
-          Além disso, os analistas da sua equipe podem criar anúncios para
+          Além disso, os agentes da sua equipe podem criar anúncios para
           divulgar uma nova versão ou campanha.
         para4: >-
           Os tópicos do fórum também podem ser marcados como destaque quando
@@ -15904,7 +15884,7 @@ pt-BR:
       widgets:
         ticket:
           title: Ticket vinculado
-          agent: Analista
+          agent: Agente
       post:
         delete_confirm: Excluir este comentário? Tem certeza?
         created_topic: criou um tópico
@@ -15965,7 +15945,7 @@ pt-BR:
         restore_contact: Restaurar contato
         contact_deleted: 'Para evitar mais spam, o contato foi excluído -'
         cleared_rest: >-
-          Todas as postagens mais antigos desse usuário também foram marcadas
+          Todas as postagens mais antigas desse usuário também foram marcadas
           como spam
       after_approve:
         published: A postagem foi publicada
@@ -16000,7 +15980,7 @@ pt-BR:
         restore_contact: Restaurar contato
         contact_deleted: 'Para evitar mais spam, o contato foi excluído -'
         cleared_rest: >-
-          Todas as postagens mais antigos desse usuário também foram marcadas
+          Todas as postagens mais antigas desse usuário também foram marcadas
           como spam
       after_approve:
         published: A postagem foi publicada
@@ -16198,7 +16178,7 @@ pt-BR:
     %{plan_to}
   discounted_sum: Depois do desconto
   selecting_plan: Selecionando...
-  proceed_billing_info: 'Sim, prosseguir com a cobrança'
+  proceed_billing_info: 'Sim, prosseguir com o faturamento'
   buy_plan: Adquirir este plano
   classic_label: Clássico
   agent_seats: '%{no_of_agents} analistas'
@@ -16345,14 +16325,14 @@ pt-BR:
         de ativação.
       helpnote1: Não encontrou?
       helpnote_or: ou
-      resend_message: Re-enviar ativação
+      resend_message: Reenviar ativação
       change_email: alterar seu e-mail
       modal_title: Fez seu cadastro com o endereço de e-mail errado?
       modal_helpnote1: >-
         Digite o endereço de e-mail correto abaixo para receber o link da
         ativação.
       modal_invalid_email_error: Forneça um endereço de e-mail válido.
-      modal_user_exists_error: Este e-mail já está associado a um analista.
+      modal_user_exists_error: Este e-mail já está associado a um agente.
       modal_send_button: Enviar ativação
       modal_sending_button: Enviando ativação
       cancel_button: Cancelar
