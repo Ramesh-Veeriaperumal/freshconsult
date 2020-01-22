@@ -697,6 +697,7 @@ HEREDOC
       "fc-bg-resque" => "-raketasks",
       "fc-bg-utility" => "-raketasks",
       "fc-bg-shoryuken" => "-shoryuken",
+      "fc-app-pipeline" => "-pipeline",
       "hk-app-pipeline" => "-pipeline"
     }
 

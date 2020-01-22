@@ -92,6 +92,9 @@ class Node < Hash
       },
       :shoryuken => {
         :layer =>  "fc-bg-shoryuken"
+      },
+      :pipeline => {
+        :prefix => "fc-app-pipeline"
       }
     }
 
@@ -280,7 +283,7 @@ class OpsWorks
   def pipeline_layer?()
     layers = Array::new()
     layers = @node[:opsworks][:instance][:layers]
-    layers.any? {|layer| layer.include?(@node[:helpkit][:pipeline][:prefix])}
+    layers.any? { |layer| layer.include?(@node[:falcon][:pipeline][:prefix]) || layer.include?(@node[:helpkit][:pipeline][:prefix]) }
   end
 
   def support_layer?()
