@@ -62,13 +62,13 @@ class UserSessionsController < ApplicationController
     relay_state_url = params[:RelayState]
 
     sso_data = {
-      name: saml_response.user_name,
-      email: saml_response.email,
-      phone: saml_response.phone,
-      company: ActionController::Base.helpers.sanitize(CGI.unescapeHTML(saml_response.company)),
-      title: ActionController::Base.helpers.sanitize(CGI.unescapeHTML(saml_response.title)),
-      external_id: saml_response.external_id,
-      custom_fields: saml_response.custom_fields
+      :name => saml_response.user_name,
+      :email => saml_response.email,
+      :phone => saml_response.phone,
+      :company => saml_response.company,
+      :title => saml_response.title,
+      :external_id => saml_response.external_id,
+      :custom_fields => saml_response.custom_fields
     }
 
     valid = saml_response.valid?
