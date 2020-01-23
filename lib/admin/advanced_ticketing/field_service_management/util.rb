@@ -152,7 +152,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
         # Build Section picklist_mappings
         service_task_section = Account.current.sections.find_by_label(SERVICE_TASK_SECTION)
-        ticket_type_field =  Account.current.ticket_fields_from_cache.find { |tf| tf.name == 'ticket_type' }
+        ticket_type_field =  Account.current.ticket_fields_with_nested_fields.find_by_field_type('default_ticket_type')
         if service_task_section.blank?
           service_task_section = ticket_type_field.sections.build
           service_task_section.label = SERVICE_TASK_SECTION
