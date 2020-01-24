@@ -59,9 +59,9 @@ module Admin::Automation::Action::TicketFieldConstants
                    invalid_rule_types: [] }.freeze,
     custom_paragraph: { field_type: :text, data_type: :String,
                         invalid_rule_types: [] }.freeze,
-    custom_number: { field_type: :text, data_type: :String, allow_any_type: false,
+    custom_number: { field_type: :text, data_type: :String, allow_any_type: true,
                      invalid_rule_types: [] }.freeze, # data type should be number and should be changed after frontend validation
-    custom_decimal: { field_type: :text, data_type: :Float, allow_any_type: false,
+    custom_decimal: { field_type: :text, data_type: :Float, allow_any_type: true,
                       invalid_rule_types: [] }.freeze, # data type should be number and should be changed after frontend validation
     custom_date: { field_type: :text, data_type: :String,
                    invalid_rule_types: [] }.freeze
