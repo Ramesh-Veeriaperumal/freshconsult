@@ -10,9 +10,10 @@ if SH_ENABLED
   #     chain.add MyMiddleware
   #   end
   # end
-
+  require 'prometheus_exporter/instrumentation' if ENV['ENABLE_PROMETHEUS'] == '1'
   Shoryuken.configure_server do |config|
     config.server_middleware do |chain|
+      chain.add PrometheusExporter::Instrumentation::Shoryuken if ENV['ENABLE_PROMETHEUS'] == '1'
       chain.add Middleware::Shoryuken::Server::BelongsToAccount, :ignore => [
         "Ryuken::FacebookRealtime",
         "Email::MailFetchWorker",
@@ -21,7 +22,9 @@ if SH_ENABLED
         "Bot::FeedbackPoller",
         'Ryuken::TwitterTweetToTicket'
       ]
-      
+    end
+    config.on :startup do
+      PrometheusExporter::Instrumentation::Process.start type: 'shoryuken' if ENV['ENABLE_PROMETHEUS'] == '1'
     end
   end
 end
