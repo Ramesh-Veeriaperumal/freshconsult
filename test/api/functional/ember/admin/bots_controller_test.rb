@@ -671,6 +671,20 @@ module Ember
           assert_response 204
           assert_equal category_ids, bot.solution_category_metum_ids
         end
+      end      
+
+      def test_map_categories_ml_api_stub
+        enable_bot do
+          bot = create_bot(product: true)
+          category_ids = Array.new(3) do
+            create_category.id
+          end
+          bot.portal.solution_category_metum_ids = category_ids
+          stub_request(:put, %r{^https://system42-serv-dev.staging.freddyproject.com.*?$}).to_return(body: { 'success': true }.to_json, headers: { 'Content-Type' => 'application/json' }, status: 200)
+          put :map_categories, construct_params({ version: 'private', id: bot.id, category_ids: category_ids }, false)
+          assert_response 204
+          assert_equal category_ids, bot.solution_category_metum_ids
+        end
       end
 
       def test_clear_status_redis
