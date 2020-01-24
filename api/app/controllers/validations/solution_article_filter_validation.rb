@@ -61,7 +61,7 @@ class SolutionArticleFilterValidation < FilterValidation
 
   def export_fields_validation
     {
-      field_name: { data_type: { rules: String, required: true }, custom_inclusion: { in: SolutionConstants::ARTICLE_EXPORT_HEADER_MASTER_LIST } },
+      field_name: { data_type: { rules: String, required: true }, custom_inclusion: { in: export_master_header_list } },
       column_name: { data_type: { rules: String, required: true } }
     }
   end
@@ -87,4 +87,14 @@ class SolutionArticleFilterValidation < FilterValidation
     end
     true
   end
+
+  private
+
+    def export_master_header_list
+      if Account.current.suggested_articles_count_enabled?
+        SolutionConstants::EXPORT_HEADER_LIST_WITH_SUGGESTED_FEATURE
+      else
+        SolutionConstants::ARTICLE_EXPORT_HEADER_MASTER_LIST
+      end
+    end
 end

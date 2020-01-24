@@ -13925,6 +13925,38 @@
         }
       }
     },
+    "/solutions/articles/suggested": {
+      "put": {
+        "tags": [
+          "Solution Article"
+        ],
+        "summary": "Update articles suggested",
+        "parameters": [
+          {
+            "name": "articles_used",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/articles_suggested"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/solutions/articles/untranslated_articles/{language}": {
       "get": {
         "tags": [
@@ -19829,6 +19861,26 @@
             },
             "language": {
               "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "articles_suggested": {
+      "type": "object",
+      "properties": {
+        "articles_suggested": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "language": {
+                "type": "string"
+              },
+              "article_id": {
+                "type": "integer",
+                "format": "int64"
+              }
             }
           }
         }

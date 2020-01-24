@@ -431,6 +431,7 @@ Helpkit::Application.routes.draw do
             post :export, path: 'export/(:language)', constraints: { language: Regexp.union(Language.all_codes) }
             put :bulk_update, path: 'bulk_update/(:language)', constraints: { language: Regexp.union(Language.all_codes) }
             get :untranslated_articles, path: 'untranslated_articles/(:language)', constraints: { language: Regexp.union(Language.all_codes) }
+            put :suggested
           end
 
           member do

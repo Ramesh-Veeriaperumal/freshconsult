@@ -56,6 +56,7 @@ module SolutionsTestHelper
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
 
+    resp[:suggested] = (expected_output[:suggested] || article.suggested).to_i if Account.current.suggested_articles_count_enabled?
     resp[:tags] = (expected_tags || article.tags.map(&:name)) unless expected_output[:exclude_tags]
 
     cat_folder = if article.parent.reload.solution_category_meta.is_default
@@ -106,6 +107,7 @@ module SolutionsTestHelper
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
 
+    resp[:suggested] = (expected_output[:suggested] || article.suggested).to_i if Account.current.suggested_articles_count_enabled?
     resp[:tags] = (expected_tags || article.tags.map(&:name)) unless expected_output[:exclude_tags]
 
     cat_folder = if article.parent.reload.solution_category_meta.is_default
