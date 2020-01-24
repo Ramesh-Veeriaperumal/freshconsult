@@ -1217,7 +1217,12 @@
             "key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:YXVfSLyeUH9TMJG43b3nDXH+hx+9GJAA:4DYusZzjOsyQf0pUdHdqhauiQO+S6m1QZAdi9e+qKnUzlUFi0lqvO32xh8JakmYeqdzaYjdFuBcR5Jw0vYepa2Bma0Xj5g==]",
             "iv": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:DtiDB3sP9KhB2hN0MWKcI6y0COXXzUK5:RXALHT/VOO6+8W+cDLyq5lwv/2TIs9Hn2QlzyzBUj6MZIf726kS1UkOryQQ93mIw]",
             "_label": "key1"
-          }
+          },
+          "account_additional_settings": {
+              "key": "EJ[1:pE8DrBqFv0HOxvhDk0jICkD90UIuCTNMMODJ38YR+Vw=:vuv2ThNnuQfLZIwE6pWyuan+ZYb0Jztq:74ifwp2fL5SbfrFQbtc+7C20g/4qiovwsZgluF9RQtIYAH6LxI+GKmIzx07iwmZK]",
+              "iv": "EJ[1:pE8DrBqFv0HOxvhDk0jICkD90UIuCTNMMODJ38YR+Vw=:6MDCVL5B9W4L0fXykNH9hSTciffv1C+l:0sx2/3ThtN3ONTwCBnQzWOmWQkRPx605NYyoE8Rc1qU=]",
+              "_label": "account_additional_settings"
+            }
         },
         "_api_endpoint": "https://central-mumbai.freshworksapi.com/collector"
       },

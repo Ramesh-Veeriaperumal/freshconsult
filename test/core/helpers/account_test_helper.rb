@@ -1,6 +1,7 @@
 module AccountTestHelper
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include CentralLib::Util
 
   def create_test_account(_name = 'test_account', _domain = 'test@freshdesk.local')
     subscription = Subscription.where("state != 'suspended'").first
@@ -154,6 +155,35 @@ module AccountTestHelper
       fs_cookie: account.fs_cookie,
       account_configuration: account.account_configuration.account_configuration_for_central,
       portal_languages: portal_languages
+    }
+  end
+
+  def central_publish_rts_info(account)
+    portal_languages = []
+    portal_languages = account.account_additional_settings.portal_languages if account.account_additional_settings.present? && account.account_additional_settings.portal_languages.present?
+
+    {
+      id: account.id,
+      name: account.name,
+      full_domain: account.full_domain,
+      time_zone: account.time_zone,
+      helpdesk_name: account.helpdesk_name,
+      sso_enabled: account.sso_enabled,
+      sso_options: account.sso_options,
+      ssl_enabled: account.ssl_enabled,
+      reputation: account.reputation,
+      account_type: { id: account.account_type, name: Account::ACCOUNT_TYPES.key(account.account_type) },
+      features: account.features_list,
+      created_at: account.created_at.try(:utc).try(:iso8601),
+      updated_at: account.updated_at.try(:utc).try(:iso8601),
+      premium: account.premium,
+      freshid_account_id: account.freshid_account_id,
+      fs_cookie: account.fs_cookie,
+      account_configuration: account.account_configuration.account_configuration_for_central,
+      portal_languages: portal_languages,
+      rts_account_id: account.account_additional_settings.rts_account_id,
+      rts_account_secret: encrypt_for_central(account.account_additional_settings.rts_account_secret, 'account_additional_settings'),
+      cipher_key: 'account_additional_settings'
     }
   end
 

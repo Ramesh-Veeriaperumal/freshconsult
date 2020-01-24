@@ -120,4 +120,22 @@ class AccountTest < ActiveSupport::TestCase
   ensure
     Account.unstub(:current)
   end
+
+  def test_publish_for_rts_info
+    Account.stubs(:current).returns(Account.first || create_test_account)
+    CentralPublishWorker::AccountWorker.jobs.clear
+    @account.reload
+    Account.current.stubs(:agent_collision_revamp_enabled?).returns(true)
+    acc_additional_settings = @account.account_additional_settings
+    acc_additional_settings.additional_settings[:rts_account_id] = Faker::Lorem.characters(6)
+    acc_additional_settings.secret_keys[:rts_account_secret] = EncryptorDecryptor.new(RTSConfig['db_cipher_key']).encrypt(Faker::Lorem.characters(6))
+    acc_additional_settings.save
+    assert_equal 1, CentralPublishWorker::AccountWorker.jobs.size
+    payload = @account.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_rts_info(@account))
+    job = CentralPublishWorker::AccountWorker.jobs.last
+    assert_equal 'account_update', job['args'][0]
+  ensure
+    @account.rollback(:agent_collision_revamp)
+  end
 end

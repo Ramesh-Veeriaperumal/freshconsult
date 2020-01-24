@@ -1,10 +1,11 @@
 class Account < ActiveRecord::Base
   include RepresentationHelper
+  include CentralLib::Util
 
   ACCOUNT_DESTROY = 'account_destroy'.freeze
 
   acts_as_api
-  
+
   api_accessible :central_publish do |s|
     s.add :id
     s.add :name
@@ -24,6 +25,9 @@ class Account < ActiveRecord::Base
     s.add :freshid_account_id
     s.add proc { |x| x.fs_cookie }, as: :fs_cookie
     s.add proc { |x| x.account_configuration.account_configuration_for_central }, as: :account_configuration
+    s.add proc { |x| x.account_additional_settings.rts_account_id }, as: :rts_account_id, if: proc { Account.current.agent_collision_revamp_enabled? }
+    s.add proc { |x| x.encrypt_for_central(x.account_additional_settings.rts_account_secret, 'account_additional_settings') }, as: :rts_account_secret, if: proc { Account.current.agent_collision_revamp_enabled? }
+    s.add proc { |x| x.encryption_key_name('account_additional_settings') }, as: :cipher_key, if: proc { Account.current.agent_collision_revamp_enabled? }
   end
 
   api_accessible :central_publish_associations do |t|
@@ -33,6 +37,10 @@ class Account < ActiveRecord::Base
   end
 
   def model_changes_for_central(options = {})
+    if @model_changes.present? && @model_changes.key?(:rts_account_secret)
+      @model_changes[:rts_account_secret].map! { |x| EncryptorDecryptor.new(RTSConfig['db_cipher_key']).decrypt(x) if x.present? }
+      @model_changes[:rts_account_secret].map! { |x| encrypt_for_central(x, 'account_additional_settings') if x.present? }
+    end
     return @model_changes if @model_changes.present?
     changes = self.previous_changes
     changes = merge_feature_changes(changes)

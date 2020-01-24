@@ -6,13 +6,14 @@ class AccountAdditionalSettings < ActiveRecord::Base
   include AccountAdditionalSettings::AdditionalSettings
   include AccountConstants
   include SandboxConstants
+  include CentralLib::Util
 
   belongs_to :account
   serialize :supported_languages, Array
   serialize :secret_keys, Hash
   validates_length_of :email_cmds_delimeter, :minimum => 3, :message => I18n.t('email_command_delimeter_length_error_msg')
   after_update :handle_email_notification_outdate, :if => :had_supported_languages?
-  after_initialize :set_default_rlimit
+  after_initialize :set_default_rlimit, :backup_change
   before_create :set_onboarding_version, :enable_freshdesk_freshsales_bundle
   after_commit :clear_cache
   after_commit :update_help_widget_languages, if: -> { Account.current.help_widget_enabled? && @portal_languages_changed }
@@ -21,7 +22,8 @@ class AccountAdditionalSettings < ActiveRecord::Base
   validate :validate_bcc_emails
   validate :validate_supported_languages
   validate :validate_portal_languages, :if => :multilingual?
-  after_commit :publish_account_central_payload, on: :update
+
+  after_commit :publish_account_central_payload, :backup_change
 
   def toggle_skip_mandatory_option(boolean_value)
     additional_settings[:skip_mandatory_checks] = boolean_value
@@ -285,7 +287,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
   def publish_account_central_payload
     model_changes = construct_model_changes
     if model_changes.present?
-      account.model_changes = construct_model_changes
+      account.model_changes = model_changes
       account.manual_publish_to_central(nil, :update, nil, false)
     end
   end
@@ -293,6 +295,12 @@ class AccountAdditionalSettings < ActiveRecord::Base
   def construct_model_changes
     changes = {}
     changes[:portal_languages] = [@portal_languages_was, portal_languages] if @portal_languages_changed
+    if Account.current.agent_collision_revamp_enabled?
+      rts_changes = attribute_changes('additional_settings')
+      rts_changes.merge!(attribute_changes('secret_keys'))
+      rts_changes = rts_changes.slice(:rts_account_id, :rts_account_secret)
+      changes.merge!(rts_changes)
+    end
     changes
   end
 
@@ -331,5 +339,9 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def freshmarketer_hash
     additional_settings[:freshmarketer] || {}
+  end
+
+  def backup_change
+    @old_model = attributes.deep_dup
   end
 end
