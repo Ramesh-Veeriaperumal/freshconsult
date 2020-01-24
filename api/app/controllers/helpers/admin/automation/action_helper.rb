@@ -43,8 +43,8 @@ module Admin::Automation::ActionHelper
   def valid_action_data_type?(expected, value)
     data_type_class = expected[:data_type].to_s.constantize
     is_expected_data_type = value.is_a?(data_type_class)
-    expected[:allow_any_type] || is_expected_data_type || none_value?(value, expected[:field_type] == :nested_field ||
-                      ACTION_NONE_FIELDS.include?(expected[:name])) || data_type_class == Float && value.is_a?(Integer)
+    expected[:allow_any_type] || is_expected_data_type || none_value?(value,
+                                         expected[:field_type] == :nested_field || ACTION_NONE_FIELDS.include?(expected[:name]))
   end
 
   def validate_webhook(expected, actual)
