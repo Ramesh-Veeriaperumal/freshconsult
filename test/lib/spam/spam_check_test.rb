@@ -1,5 +1,6 @@
 require_relative '../../api/unit_test_helper'
 ['account_test_helper.rb'].each { |file| require Rails.root.join("test/core/helpers/#{file}") }
+require 'webmock/minitest'
 
 class SpamCheckTest < ActionView::TestCase
   include AccountTestHelper
@@ -121,6 +122,9 @@ class SpamCheckTest < ActionView::TestCase
 
   def test_spam_content_raises_error
     spam_checker = Spam::SpamCheck.new
+    stub_request(:post, 'http://localhost:8080/get_template_score').to_return(status: 400, body: '', headers: {})
+    stub_request(:post, 'http://localhost:8080/get_content_score').to_return(status: 400, body: '', headers: {})
     spam_value = spam_checker.check_spam_content(Faker::Lorem.word, Faker::Lorem.paragraphs, {})
+    assert_equal spam_value, 0
   end
 end
