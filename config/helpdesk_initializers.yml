@@ -77,6 +77,7 @@ helpdesk:
     - big_brother
     - integrations
     - freshmarketer_config
+    - iam
     - marketplace_config
     - doorkeeper
     - ebay_config

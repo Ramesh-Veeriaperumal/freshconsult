@@ -2179,6 +2179,9 @@
         "access_key": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:nGDzM8idHQuRoHK2yhvQp8AT8AfiYddr:T/9hxO+9a5P7KvriJzvNwWvMurL/F4zHpPc/yP2vCq7B1vuK5lOFXoAQUh3aghaoO7xHIj4GKErpbcuf12HXVLg3]",
         "_api_endpoint": "http://app.freshmarketer.com/ab/api/v1"
       },
+      "iam": {
+        "password": "EJ[1:o0cOHJk2H4OtY4sqed1pXb0iW+2bzpfhWAuqptcJgxM=:i5OVHJvIC2JW1QATfjY3rPHrC7kesPjl:DAGdDgWZKvKMukZl1U275vT8BNGDn2cDWQ0=]"
+      },
       "hypertrail": {
         "audit_log": {
           "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:n5aktkh2TJ/faxnhNfH9IRN4qZtrvc5u:ge1lljfTWwMnhCstivQdbyQ=]",
