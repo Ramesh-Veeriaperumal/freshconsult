@@ -447,11 +447,11 @@ unless Account.current
 	               ticket_templates, round_robin_load_balancing, one_contact_multiple_companies, unique_external_id, sandbox ]
 
 	estate_addons  = [custom_mailbox, whitelisted_ips, call_center_advanced, skill_based_round_robin, field_service_management]
-	garden_addons  = all_addons + [shared_ownership_toggle] - [ multiple_business_hours, custom_domain, custom_slas, custom_surveys, ticket_templates, sandbox ]
+	garden_addons  = all_addons + [shared_ownership_toggle, field_service_management] - [multiple_business_hours, custom_domain, custom_slas, custom_surveys, ticket_templates, sandbox]
 	blossom_addons = all_addons + [link_tickets_toggle, parent_child_tickets_toggle] - [ custom_domain, sandbox ]
 
 	estate_17_addons  = estate_addons + [sandbox]
-	garden_17_addons  = all_addons + [shared_ownership_toggle] - [custom_domain, custom_surveys, ticket_templates, sandbox]
+	garden_17_addons  = all_addons + [shared_ownership_toggle, field_service_management] - [custom_domain, custom_surveys, ticket_templates, sandbox]
 	blossom_17_addons = all_addons + [link_tickets_toggle, parent_child_tickets_toggle] - [custom_domain, one_contact_multiple_companies, sandbox]
 	sprout_17_addons  = [custom_domain, call_center_advanced]
 

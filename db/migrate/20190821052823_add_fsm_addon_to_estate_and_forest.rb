@@ -1,5 +1,5 @@
 class AddFsmAddonToEstateAndForest < ActiveRecord::Migration
-  shard :all
+  shard :none
   
   def up
     execute <<-SQL

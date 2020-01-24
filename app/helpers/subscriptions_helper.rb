@@ -5,7 +5,7 @@ module SubscriptionsHelper
   PLANS_FEATURES = {
     "sprout" => [ "email_ticketing", "feedback_widget" ,"knowledge_base", "automations", "phone_integration", "mobile_apps", "integrations", "freshchat" ],
     "blossom" => [ "everything_in_sprout", "multiple_mailboxes", "custom_domain", "social_support", "satisfaction_survey", "forums", "gamification" ],
-    "garden" => [ "everything_in_blossom", "multiple_languages", "multiple_products", "multiple_timezones", "css_customization" ],
+    "garden" => ["everything_in_blossom", "multiple_languages", "multiple_products", "multiple_timezones", "css_customization", "fsm_option"],
     "estate" => [ "everything_in_garden", "agent_collision", "custom_roles", "custom_ssl", "enterprise_reports", "portal_customization", "fsm_option" ],
     "forest" => [ "everything_in_estate", "custom_mailbox", "ip_restriction", "fsm_option" ],
 
@@ -13,18 +13,18 @@ module SubscriptionsHelper
     "blossom jan 17" => [ "everything_in_sprout", "multiple_mailboxes", "time_event_automation", "sla_reminders", "custom_domain", "satisfaction_survey",
       "helpdesk_report", "custom_ticket_fields_and_views"],
     "garden jan 17" => [ "everything_in_blossom", "m_k_base", "dynamic_email_alert", "forums", "scheduled_reports",
-       "ticket_templates", "custom_surveys"],
-    "estate jan 17" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "agent_collision", "auto_ticket_assignment",
+       "ticket_templates", "custom_surveys", "fsm_option"],
+    "estate jan 17" => ["everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "agent_collision", "auto_ticket_assignment",
        "role_dashboard", "enterprise_reports", "custom_dashboard", "fsm_option"],
     "forest jan 17" => [ "everything_in_estate", "ip_whitelisting", "skill_based_assignment", "custom_mailbox", "advanced_phone_integration", "fsm_option" ],
 
     "sprout jan 19" => ["email_ticketing", "ticket_dispatch_automation", "knowledge_base", "basic_social", "freshcaller", "ticket_trends", "omni_channel_option"],
     "blossom jan 19" => [ "everything_in_sprout", "multiple_mailboxes", "app_gallery", "time_event_automation", "custom_domain", "helpdesk_report", "custom_ticket_fields_and_views", "agent_collision", "api_rate_limit_blossom", "omni_channel_option"],
-    "garden jan 19" => [ "everything_in_blossom", "satisfaction_survey", "timesheets", "sla_reminders", "agent_performance_report", "ticket_templates", "m_k_base", "customer_journey",  "api_rate_limit_garden"],
+    "garden jan 19" => ["everything_in_blossom", "satisfaction_survey", "timesheets", "sla_reminders", "agent_performance_report", "ticket_templates", "m_k_base", "customer_journey",  "api_rate_limit_garden", "fsm_option"],
     "estate jan 19" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "auto_ticket_assignment", "enterprise_reports", "custom_dashboard", "custom_surveys", "custom_translations", "api_rate_limit_estate", "api_rate_limit_extendable", "fsm_option"],
     "forest jan 19" => [ "everything_in_estate", "ip_whitelisting", "skill_based_assignment", "sandbox", "hippa_compliance", "api_rate_limit_forest", "api_rate_limit_extendable", "omni_channel_option", "fsm_option"],
 
-    "garden omni jan 19" => [ "everything_in_blossom", "satisfaction_survey", "timesheets", "sla_reminders", "agent_performance_report", "ticket_templates", "m_k_base", "customer_journey", "api_rate_limit_garden", "omni_channel_option"],
+    "garden omni jan 19" => ["everything_in_blossom", "satisfaction_survey", "timesheets", "sla_reminders", "agent_performance_report", "ticket_templates", "m_k_base", "customer_journey", "api_rate_limit_garden", "omni_channel_option", "fsm_option"],
     "estate omni jan 19" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "auto_ticket_assignment", "enterprise_reports", "custom_dashboard", "custom_surveys", "api_rate_limit_estate", "api_rate_limit_extendable", "omni_channel_option", "fsm_option"]
 
   }
@@ -276,6 +276,10 @@ module SubscriptionsHelper
   end
 
   def fsm_supported_plan?(plan)
+    # Adding temporarily and will be removed once FSM is supported in all Garden plans
+    garden_plan = ['Garden', 'Garden Jan 17', 'Garden Jan 19', 'Garden Omni Jan 19']
+    return false if garden_plan.include?(plan.name) && !current_account.fsm_for_garden_plan_enabled?
+
     features = PLANS_FEATURES["#{plan.name.downcase}"]
     current_account.disable_old_ui_enabled? && (features || []).include?('fsm_option')
   end
@@ -283,7 +287,7 @@ module SubscriptionsHelper
   def previous_plan?(plan)
     SubscriptionPlan.previous_plans.include?(plan)
   end
-  
+
   def new_sprout?(plan_name)
     NEW_SPROUT.include?(plan_name)
   end
