@@ -49,7 +49,7 @@ class Account < ActiveRecord::Base
     :forums_agent_portal, :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product, :send_and_set, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html, :focus_mode,
     :mailbox_forward_setup, :remove_image_attachment_meta_data, :new_timeline_view, :automated_private_notes_notification, :detect_lang_from_email_service,
     :sane_restricted_helpdesk, :hiding_confidential_logs, :fb_ad_post_stream_publish, :ticket_list_performance, :sla_policy_revamp, :help_widget_log, :freshdesk_freshsales_bundle, :help_widget_article_customisation,
-    :field_agents_can_manage_appointments_setting
+    :field_agents_can_manage_appointments_setting, :show_sample_scheduling_dashboard
   ].freeze
 
   DB_FEATURES = [

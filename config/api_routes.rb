@@ -536,6 +536,8 @@ Helpkit::Application.routes.draw do
       collection do
         get :agents_groups, to: 'ember/bootstrap/agents_groups#index'
         get :me, to: 'ember/bootstrap#me'
+        get 'me/preferences', to: 'ember/bootstrap/preferences#show'
+        put 'me/preferences', to: 'ember/bootstrap/preferences#update'
         get :account, to: 'ember/bootstrap#account'
       end
     end

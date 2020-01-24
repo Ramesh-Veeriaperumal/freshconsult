@@ -1,5 +1,7 @@
 /bootstrap/me:
   $ref: ./bootstrap/me.yaml
+/bootstrap/me/preferences:
+  $ref: ./bootstrap/preferences.yaml
 /bootstrap/account:
   $ref: ./bootstrap/account.yaml
 /bootstrap/agents_groups:

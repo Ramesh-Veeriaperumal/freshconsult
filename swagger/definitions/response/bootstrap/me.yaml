@@ -24,43 +24,8 @@ properties:
           autorefresh_user_hash:
             type: string
           preferences:
-            type: object
-            properties:
-              shortcuts_enabled:
-                type: boolean
-              shortcuts_mapping:
-                type: array
-                items:
-                  type: object
-              notification_timestamp:
-                type: string
-                format: date-time
-              show_onBoarding:
-                type: boolean
-              falcon_ui:
-                type: boolean
-              focus_mode:
-                type: boolean
-              freshchat_token:
-                type: string
-              search_settings:
-                type: object
-                properties:
-                  tickets:
-                    type: object
-                    properties:
-                      include_subject:
-                        type: boolean
-                      include_description:
-                        type: boolean
-                      include_other_properties:
-                        type: boolean
-                      include_notes:
-                        type: boolean
-                      include_attachment_names:
-                        type: boolean
-                      archive:
-                        type: boolean
+            allOf:
+              - $ref: '#/definitions/bootstrap_preferences'
   meta:
     type: object
     properties:

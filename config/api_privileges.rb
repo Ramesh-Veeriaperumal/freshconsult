@@ -6,6 +6,7 @@ Authority::Authorization::PrivilegeList.build do
   manage_tickets do
     resource :"ember/bootstrap"
     resource :"ember/bootstrap/agents_group"
+    resource :"ember/bootstrap/preference"
     resource :"ember/tickets/collab", only: [:notify]
     resource :"ember/tickets/delete_spam", only: %i[spam bulk_spam unspam bulk_unspam]
     resource :"ember/tickets/activity"

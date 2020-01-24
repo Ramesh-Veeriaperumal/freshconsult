@@ -1,0 +1,1 @@
+JSON.generate(AgentDecorator.new(current_user.agent, is_assumed_user: session.key?(:assumed_user)).preferences_list)

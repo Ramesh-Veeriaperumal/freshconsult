@@ -25,6 +25,58 @@
         }
       }
     },
+    "/bootstrap/me/preferences": {
+      "get": {
+        "summary": "Get preferences",
+        "tags": [
+          "Bootstrap"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/bootstrap_preferences"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update preferences",
+        "tags": [
+          "Bootstrap"
+        ],
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bootstrap_preferences"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/bootstrap_preferences"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/bootstrap/account": {
       "get": {
         "summary": "Account",
@@ -15189,62 +15241,11 @@
                   "type": "string"
                 },
                 "preferences": {
-                  "type": "object",
-                  "properties": {
-                    "shortcuts_enabled": {
-                      "type": "boolean"
-                    },
-                    "shortcuts_mapping": {
-                      "type": "array",
-                      "items": {
-                        "type": "object"
-                      }
-                    },
-                    "notification_timestamp": {
-                      "type": "string",
-                      "format": "date-time"
-                    },
-                    "show_onBoarding": {
-                      "type": "boolean"
-                    },
-                    "falcon_ui": {
-                      "type": "boolean"
-                    },
-                    "focus_mode": {
-                      "type": "boolean"
-                    },
-                    "freshchat_token": {
-                      "type": "string"
-                    },
-                    "search_settings": {
-                      "type": "object",
-                      "properties": {
-                        "tickets": {
-                          "type": "object",
-                          "properties": {
-                            "include_subject": {
-                              "type": "boolean"
-                            },
-                            "include_description": {
-                              "type": "boolean"
-                            },
-                            "include_other_properties": {
-                              "type": "boolean"
-                            },
-                            "include_notes": {
-                              "type": "boolean"
-                            },
-                            "include_attachment_names": {
-                              "type": "boolean"
-                            },
-                            "archive": {
-                              "type": "boolean"
-                            }
-                          }
-                        }
-                      }
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/bootstrap_preferences"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -15524,6 +15525,72 @@
                   }
                 }
               }
+            }
+          }
+        }
+      }
+    },
+    "bootstrap_preferences": {
+      "type": "object",
+      "properties": {
+        "shortcuts_enabled": {
+          "type": "boolean"
+        },
+        "shortcuts_mapping": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "notification_timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "show_onBoarding": {
+          "type": "boolean"
+        },
+        "falcon_ui": {
+          "type": "boolean"
+        },
+        "focus_mode": {
+          "type": "boolean"
+        },
+        "freshchat_token": {
+          "type": "string"
+        },
+        "search_settings": {
+          "type": "object",
+          "properties": {
+            "tickets": {
+              "type": "object",
+              "properties": {
+                "include_subject": {
+                  "type": "boolean"
+                },
+                "include_description": {
+                  "type": "boolean"
+                },
+                "include_other_properties": {
+                  "type": "boolean"
+                },
+                "include_notes": {
+                  "type": "boolean"
+                },
+                "include_attachment_names": {
+                  "type": "boolean"
+                },
+                "archive": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        },
+        "field_service": {
+          "type": "object",
+          "properties": {
+            "dismissed_sample_scheduling_dashboard": {
+              "type": "boolean"
             }
           }
         }

@@ -7,6 +7,8 @@ bootstrap_me:
   $ref: ./response/bootstrap/me.yaml
 bootstrap_account:
   $ref: ./response/bootstrap/account.yaml
+bootstrap_preferences:
+  $ref: ./resource/bootstrap_preferences.yaml
 
 # ERROR
 bulk_action_error:
