@@ -133,7 +133,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
       code: :invalid_value)])
   end
 
-  def test_update_subscription
+  def test_update_subscription_without_downgrade_policy
     update_currency
     stub_methods
     Subscription.any_instance.stubs(:cost_per_agent).returns(65)
@@ -351,7 +351,6 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     stub_methods
     Subscription.any_instance.stubs(:cost_per_agent).returns(65)
     Subscription.any_instance.stubs(:cost_per_agent).with(12).returns(49)
-    $redis_others.perform_redis_op('set', DOWNGRADE_POLICY_TO_ALL, true)
     params_plan_id = (paid_plans - [@account.subscription.subscription_plan_id]).first
     renewal_period = (SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY.keys - [@account.subscription.renewal_period]).first
     params = { plan_id: params_plan_id, renewal_period: renewal_period, agent_seats: 1, version: 'private' }
@@ -364,7 +363,6 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     match_json(update_response(params, @account.subscription))
   ensure
     unstub_methods
-    $redis_others.perform_redis_op('del', DOWNGRADE_POLICY_TO_ALL)
     Subscription.any_instance.unstub(:cost_per_agent)
   end
 

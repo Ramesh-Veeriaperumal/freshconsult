@@ -71,6 +71,7 @@ class AccountTest < ActiveSupport::TestCase
 
   def test_account_publish_for_account_configuration_change
     Account.stubs(:current).returns(Account.first || create_test_account)
+    AccountConfiguration.any_instance.stubs(:update_billing).returns(true)
     @account.reload
     CentralPublishWorker::AccountWorker.jobs.clear
     current_account_configuration = @account.account_configuration.account_configuration_for_central.stringify_keys
@@ -98,6 +99,7 @@ class AccountTest < ActiveSupport::TestCase
     assert_equal(expected_model_change, job['args'][1]['model_changes'])
   ensure
     @account.account_configuration.update_attributes!({ contact_info: contact_info, company_info: company_info })
+    AccountConfiguration.any_instance.unstub(:update_billing)
     Account.unstub(:current)
   end
 

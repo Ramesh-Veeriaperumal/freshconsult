@@ -15,7 +15,7 @@
 			<li>Agents : <%= @old_subscription[:agent_limit]%> <%= "(#{pluralize(@old_subscription[:free_agents], 'free agent')})" if @old_subscription[:free_agents] > 0 %></li>
 			<li>Monthly Revenue : <b><%=currency_name%> <%= @old_subscription[:amount]/@old_subscription[:renewal_period] %>
 				<%unless currency_name == "USD"%>
-					($ <%=@old_subscription[:usd_equivalent]%>)
+					($ <%= (@old_subscription[:usd_equivalent]/@old_subscription[:renewal_period]).round(1) %>)
 				<%end%>
 			</b></li>
 			<li>Last Invoice Amount : <b><%=currency_name%> <%= @old_subscription[:amount] %>
@@ -40,7 +40,7 @@
 			<li>Agents : <%= @current_subscription[:agent_limit] %> <%= "(#{pluralize(@current_subscription[:free_agents], 'free agent')})" if @current_subscription[:free_agents] > 0 %></li>
 			<li>Monthly Revenue : <b><%=currency_name%> <%= @current_subscription[:amount]/@current_subscription[:renewal_period] %>
 				<% unless currency_name == "USD"%>
-					($ <%=@current_subscription[:usd_equivalent]%>)
+					($ <%= (@current_subscription[:usd_equivalent]/@current_subscription[:renewal_period]).round(1) %>)
 				<%end%></b>
 			</li>
 			<li>New Invoice amount : <b><%=currency_name%> <%= @current_subscription[:amount] %>

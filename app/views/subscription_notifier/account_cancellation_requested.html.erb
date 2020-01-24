@@ -13,7 +13,7 @@
     <li><%= %(Agents: #{@account.subscription.agent_limit}) %> <%= "(#{pluralize(@account.subscription.free_agents, 'free agent')})" if @account.subscription.free_agents > 0 %></li>
     <li>MRR: <b><%=@account.currency_name%> <%= @account.subscription.amount/@account.subscription.renewal_period %>
       <% unless @account.currency_name == "USD"%>
-        ($ <%=@account.subscription.usd_equivalent%>)
+        ($ <%= (@account.subscription.usd_equivalent/@account.subscription.renewal_period).round(1) %>)
       <%end%></b>
     </li>
     <li>Current billing start date (YYYY-MM-DD): <%= @billing_start_date %></li>

@@ -291,6 +291,7 @@ class SubscriptionsController < ApplicationController
       if scoper.downgrade?
         flash[:notice] = t('subscription_request_info_update') if scoper.subscription_request.present?
         scoper.convert_to_free if new_sprout?
+        scoper.total_amount(@addons, coupon_applicable? ? @coupon : nil)
         response = billing_subscription.update_subscription(scoper, false, @addons, coupon, true)
         construct_subscription_request(response.subscription.current_term_end).save!
         return false
