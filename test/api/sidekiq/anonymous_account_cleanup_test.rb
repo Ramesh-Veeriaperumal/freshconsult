@@ -8,7 +8,7 @@ Sidekiq::Testing.fake!
 class AnonymousAccountCleanupTest < ActionView::TestCase
   include AccountTestHelper
   def test_non_anonymous_account_cleanup
-    account = create_new_account(Faker::Lorem.word, Faker::Internet.email) if @account.blank? || @account.anonymous_account?
+    account = create_new_account(Faker::Internet.domain_word, Faker::Internet.email) if @account.blank? || @account.anonymous_account?
     account_id = @account.id
     args = { account_id: account_id }
     ChargeBee::Subscription.any_instance.stubs(:cancel_subscription).returns(true)
@@ -22,7 +22,7 @@ class AnonymousAccountCleanupTest < ActionView::TestCase
   end
 
   def test_anonymous_account_cleanup
-    create_sample_account(Faker::Lorem.word, Faker::Internet.email)
+    create_sample_account(Faker::Internet.domain_word, Faker::Internet.email)
     account_id = @account.id
     @account.reload
     @account.account_additional_settings.mark_account_as_anonymous

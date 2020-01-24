@@ -202,7 +202,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       shared_group_columns_defs(defs, filter_attribute_hash, ticket_list_performance_enabled)
 
       # Custom date time field
-      if (ticket_list_performance_enabled && filter_attribute_hash.keys.find { |x| x.to_s.include?('flexifields') }) || !ticket_list_performance_enabled
+      if (ticket_list_performance_enabled && current_filter_includes_custom_field?(filter_attribute_hash.keys)) || !ticket_list_performance_enabled
         fsm_columns_defs(defs)
         # Custom dropdown fields
         custom_dropdown_defs(defs, filter_attribute_hash, ticket_list_performance_enabled)
@@ -666,6 +666,13 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   private
+
+    def current_filter_includes_custom_field?(filter_keys)
+      filter_keys.find do |key|
+        str_key = key.to_s
+        str_key.include?('flexifields') || str_key.include?('ticket_field_data')
+      end
+    end
 
     def default_columns_defs(defs, filter_attribute_hash, ticket_list_performance_enabled)
       TicketConstants::DEFAULT_COLUMNS_KEYS_BY_TOKEN.each do |name, cont|
