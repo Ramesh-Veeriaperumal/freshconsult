@@ -23,6 +23,9 @@ class PostObserver < ActiveRecord::Observer
   end
 
   def after_commit(post)
+	Rails.logger.debug "before skip_notification"
+	return if post.skip_notification
+	Rails.logger.debug  "after skip_notification"
     monitor_reply(post) if post.safe_send(:transaction_include_action?, :create) && post.published?
   end
 

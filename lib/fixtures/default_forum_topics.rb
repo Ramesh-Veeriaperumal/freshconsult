@@ -62,7 +62,8 @@ class Fixtures::DefaultForumTopics
     topic.posts.create(
       user: user, 
       body_html: simple_format(data),
-      created_at: created_at
+      created_at: created_at,
+      skip_notification: true
     )
   end
 
