@@ -59,8 +59,8 @@ module Helpdesk::Ticketfields::Constants
   TICKET_FIELD_DATA_COUNT = {
     string:  TICKET_FIELD_DATA_DROPDOWN_COUNT,
     text:    TEXT_FIELD_COUNT,
-    number:  NUMBER_FIELD_COUNT,
-    date:    DATE_FIELD_COUNT,
+    number:  TICKET_FIELD_DATA_NUMBER_COUNT,
+    date:    TICKET_FIELD_DATA_DATE_FIELD_COUNT,
     boolean: TICKET_FIELD_DATA_CHECKBOX_COUNT,
     decimal: DECIMAL_FIELD_COUNT
   }.freeze
@@ -69,10 +69,10 @@ module Helpdesk::Ticketfields::Constants
     text:           [['text', 'file'], SERIALIZED_SLT_FIELDS, SERIALIZED_SLT_FIELDS.length],
     nested_field:   [['text', 'dropdown'], TICKET_FIELD_DATA_DROPDOWN_FIELDS, TICKET_FIELD_DATA_DROPDOWN_COUNT],
     dropdown:       [['text', 'dropdown'], TICKET_FIELD_DATA_DROPDOWN_FIELDS, TICKET_FIELD_DATA_DROPDOWN_COUNT],
-    number:         ['number', NUMBER_FIELDS, NUMBER_FIELD_COUNT],
+    number:         ['number', TICKET_FIELD_DATA_NUMBER_FIELDS, TICKET_FIELD_DATA_NUMBER_COUNT],
     checkbox:       ['checkbox', TICKET_FIELD_DATA_CHECKBOX_FIELDS, TICKET_FIELD_DATA_CHECKBOX_COUNT],
-    date:           [['date', 'date_time'], DATE_FIELDS, DATE_FIELD_COUNT],
-    date_time:      [['date', 'date_time'], DATE_FIELDS, DATE_FIELD_COUNT],
+    date:           [['date', 'date_time'], TICKET_FIELD_DATA_DATE_FIELDS, TICKET_FIELD_DATA_DATE_FIELD_COUNT],
+    date_time:      [['date', 'date_time'], TICKET_FIELD_DATA_DATE_FIELDS, TICKET_FIELD_DATA_DATE_FIELD_COUNT],
     paragraph:      ['paragraph', SERIALIZED_MLT_FIELDS, SERIALIZED_MLT_FIELDS.length],
     decimal:        ['decimal', DECIMAL_FIELDS, DECIMAL_FIELD_COUNT],
     encrypted_text: ['encrypted_text', SERIALIZED_ESLT_FIELDS, SERIALIZED_ESLT_FIELDS.length],

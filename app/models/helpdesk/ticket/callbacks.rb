@@ -725,13 +725,19 @@ private
     @model_changes.merge!(flexifield.before_save_changes) unless flexifield.nil?
     if account.ticket_field_limit_increase_enabled? && ticket_field_data.present?
       changes = ticket_field_data.attribute_changes.select do |k,v|
-        TicketFieldData::NEW_DROPDOWN_COLUMN_NAMES_SET.include?(k.to_s) ||
-          TicketFieldData::NEW_CHECKBOX_COLUMN_NAMES_SET.include?(k.to_s)
+        new_ticket_field_limit_set?(k.to_s)
       end
       @model_changes.merge!(changes)
     end
     @model_changes.merge!({ tags: [] }) if self.tags_updated #=> Hack for when only tags are updated to trigger ES publish
     @model_changes.symbolize_keys!
+  end
+
+  def new_ticket_field_limit_set?(key)
+    TicketFieldData::NEW_DROPDOWN_COLUMN_NAMES_SET.include?(key) ||
+      TicketFieldData::NEW_CHECKBOX_COLUMN_NAMES_SET.include?(key) ||
+      TicketFieldData::NEW_DATE_FIELD_COLUMN_NAMES_SET.include?(key) ||
+      TicketFieldData::NEW_NUMBER_FIELD_COLUMN_NAMES_SET.include?(key)
   end
 
   def update_sla_model_changes

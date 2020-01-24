@@ -114,6 +114,10 @@ class FlexifieldDef < ActiveRecord::Base
       check_limit_exceeded_for_text_or_dropdown(used_hash, type) ? fetch_available(result, type) : nil
     elsif type.to_s.to_sym == :checkbox
       check_checkbox_count(used_hash.count) ? fetch_available(used_hash, type) : nil
+    elsif type.to_s.to_sym == :number
+      check_number_field_count(used_hash.count) ? fetch_available(used_hash, type) : nil
+    elsif type.to_s.to_sym == :date
+      check_date_field_count(used_hash.count) ? fetch_available(used_hash, type) : nil
     else
       check_limit_exceeded_for_other_fields(used_hash, type) ? fetch_available(used_hash, type) : nil
     end
@@ -190,6 +194,14 @@ class FlexifieldDef < ActiveRecord::Base
 
   def check_checkbox_count(existing_count)
     existing_count < (account.ticket_field_limit_increase_enabled? ? TICKET_FIELD_DATA_CHECKBOX_COUNT : CHECKBOX_FIELD_COUNT)
+  end
+
+  def check_date_field_count(existing_count)
+    existing_count < (account.ticket_field_limit_increase_enabled? ? TICKET_FIELD_DATA_DATE_FIELD_COUNT : DATE_FIELD_COUNT)
+  end
+
+  def check_number_field_count(existing_count)
+    existing_count < (account.ticket_field_limit_increase_enabled? ? TICKET_FIELD_DATA_NUMBER_COUNT : NUMBER_FIELD_COUNT)
   end
 
   def check_limit_exceeded_for_other_fields(fields, type)

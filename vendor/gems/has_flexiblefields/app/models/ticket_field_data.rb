@@ -12,6 +12,10 @@ class TicketFieldData < ActiveRecord::Base
   NEW_DROPDOWN_COLUMN_NAMES_SET = Set.new(NEW_DROPDOWN_COLUMN_NAMES)
   NEW_CHECKBOX_COLUMN_NAMES = column_names.grep(/ff_boolean.+/)[10..30]
   NEW_CHECKBOX_COLUMN_NAMES_SET = Set.new(NEW_CHECKBOX_COLUMN_NAMES)
+  NEW_DATE_FIELD_COLUMN_NAMES = column_names.grep(/ff_date.+/)[10..30]
+  NEW_DATE_FIELD_COLUMN_NAMES_SET = Set.new(NEW_DATE_FIELD_COLUMN_NAMES)
+  NEW_NUMBER_FIELD_COLUMN_NAMES = column_names.grep(/ff_int.+/)[10..30]
+  NEW_NUMBER_FIELD_COLUMN_NAMES_SET = Set.new(NEW_NUMBER_FIELD_COLUMN_NAMES)
 
   def ff_def
     self[:flexifield_def_id]
