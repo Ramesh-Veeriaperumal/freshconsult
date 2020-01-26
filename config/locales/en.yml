@@ -3380,6 +3380,9 @@ en:
         boolean: You are not allowed to create more than 10 checkbox fields.
         date: You are not allowed to create more than 10 date fields.
         boolean_ticket_field_data: You are not allowed to create more than 30 checkbox fields.
+        number_ticket_field_data: You are not allowed to create more than 30 number fields.
+        date_ticket_field_data: You are not allowed to create more than 30 date fields.
+        dropdown_ticket_field_data: You have exceeded the maximum limit for this type of field.
     cf:
       type:
         contact_fields_controller: Contact Fields
