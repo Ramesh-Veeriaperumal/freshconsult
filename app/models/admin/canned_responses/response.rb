@@ -4,6 +4,7 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
   self.primary_key = :id
   
   include Mobile::Actions::CannedResponse
+  include Search::ElasticSearchIndex
 
   belongs_to_account
 

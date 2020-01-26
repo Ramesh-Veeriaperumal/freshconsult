@@ -1,11 +1,13 @@
 class EsIndexObserver < ActiveRecord::Observer
 
-  observe Helpdesk::Ticket, User, UserEmail, Customer, Solution::Article, Topic, Post, Helpdesk::Tag, Freshfone::Caller
+  observe Helpdesk::Ticket, User, UserEmail, Customer, Solution::Article, Topic, Post, Helpdesk::Tag, Freshfone::Caller,Admin::CannedResponses::Response,ScenarioAutomation, Helpdesk::TicketTemplate
   
-  MODELS = [:"Helpdesk::Ticket",:Company,:"Solution::Article",:Topic, :"Helpdesk::Tag", :"Freshfone::Caller"]
+  COUNT_MODELS = [:"Admin::CannedResponses::Response", :"ScenarioAutomation", :"Helpdesk::TicketTemplate"]
+
+  MODELS = [:"Helpdesk::Ticket",:Company,:"Solution::Article",:Topic, :"Helpdesk::Tag", :"Freshfone::Caller"].concat(COUNT_MODELS)
 
   def after_commit(model)
-    return unless model.account.esv1_enabled?
+    return unless (model.account.esv1_enabled? or COUNT_MODELS.include?(model.class.name.to_sym))
 
     if model.safe_send(:transaction_include_action?, :create)
       commit_on_create(model)
