@@ -191,10 +191,6 @@ module FreshdeskCore::Model
 
                     'freshcaller_accounts',
                     'freshcaller_agents',
-
-                    'survey_questions',
-                    'survey_question_choices',
-                    'survey_result_data',
                     'day_pass_purchases',
                     'ecommerce_accounts',
                     'ebay_questions',
@@ -247,7 +243,7 @@ module FreshdeskCore::Model
     :archive_notes => :note_body
   }
 
-  DELETE_BATCH_COUNT = 50
+  DELETE_BATCH_COUNT = 10
 
   def perform_destroy(account)
     @continue_account_destroy_from ||= 0

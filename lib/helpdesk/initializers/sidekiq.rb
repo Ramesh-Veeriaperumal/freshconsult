@@ -128,6 +128,7 @@ Sidekiq.configure_client do |config|
   end
 end
 
+require 'prometheus_exporter/instrumentation' if ENV['ENABLE_PROMETHEUS'] == '1'
 Sidekiq.configure_server do |config|
   # ActiveRecord::Base.logger = Logger.new(STDOUT)
   # Sidekiq::Logging.logger = ActiveRecord::Base.logger
@@ -151,10 +152,14 @@ Sidekiq.configure_server do |config|
       Rails.logger.error "Sidekiq worker Backtrace: #{ex.backtrace.join(', ')}"
     end
   }
+  config.on :startup do
+    PrometheusExporter::Instrumentation::Process.start type: 'sidekiq' if ENV['ENABLE_PROMETHEUS'] == '1'
+  end
   #https://forums.aws.amazon.com/thread.jspa?messageID=290781#290781
   #Making AWS as thread safe
   AWS.eager_autoload!
   config.server_middleware do |chain|
+    chain.add PrometheusExporter::Instrumentation::Sidekiq if ENV['ENABLE_PROMETHEUS'] == '1'
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
     chain.add Middleware::Sidekiq::Server::UnsetThread
     chain.add Middleware::Sidekiq::Server::RouteORDrop

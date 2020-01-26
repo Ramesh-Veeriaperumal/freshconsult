@@ -137,7 +137,6 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
     self.update_column(:deleted, true)
     self.action_destroy = true
     self.central_publish_action(:destroy)
-    self.remove_es_document
   end
 
   private

@@ -867,3 +867,6 @@ freshcaller_account_update:
 
 security_regenerate_widget_sso:
   $ref: ./response/admin/security_keys/widget/regenerate.yaml
+
+scoreboard_level:
+  $ref: './resource/admin/scoreboard_level.yaml'

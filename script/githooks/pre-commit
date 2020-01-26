@@ -30,7 +30,23 @@ function validate_ejson() {
   (( is_invalid )) && { echo "ERROR: You have secrets not encrypted, run \"ejson encrypt ./deploy/config/*.ejson\" and try again"; exit 1; }
 }
 
+
+function validate_ruby_files() {
+  is_invalid=0
+  for f in $(git diff --name-status --staged | grep -v "^D" | sed -e 's/^[MAR]\s*//g' |  egrep "(.erb|.rb)$")
+  do
+    ruby -c ${f}
+     if [ $? -ne 0 ]; then
+      echo "ERROR: Ruby syntax validation failed : $f"
+      is_invalid=1
+    fi
+  done
+
+  (( is_invalid )) && { echo "ERROR: You have syntax errors in ruby files.Please fix the errors and try again"; exit 1; }
+}
+
 validate_ejson
+validate_ruby_files
 validate_test_file
 #disabling this script 
 exit 0;

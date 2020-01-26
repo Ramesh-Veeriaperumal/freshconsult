@@ -1,0 +1,15 @@
+get:
+  tags: [Scoreboard level]
+  summary: List of scoreboard levels
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          scoreboard_levels:
+            type: array
+            items:
+              $ref: '#/definitions/scoreboard_level'
+    403:
+      description: Access denied

@@ -32,6 +32,7 @@ fi
 
 source_dir=$2/config/locales
 new_dir=$1
+base_lang='en'
 
 move_dir $new_dir/es-ES $new_dir/es
 move_dir $new_dir/ja $new_dir/ja-JP
@@ -43,12 +44,18 @@ move_dir $new_dir/ru $new_dir/ru-RU
 
 for lang in `ls $1`
 do 
-   cp $new_dir/$lang/en.yml new.yaml 
-   echo "$source_dir/${lang}.yml"
-   cp $source_dir/${lang}.yml old.yaml 
-   yaml-merge old.yaml new.yaml | sed -e 's/\\_/ /g' > "${source_dir}/${lang}.yml"
-   #java -jar yaml-merge.jar old.yaml new.yaml "${source_dir}/${lang}.yml"
-   echo "copied over $lang"
+  if [ $lang == $base_lang ]
+  then
+    echo "Skipped base lang $base_lang"
+  else
+    filename=`ls $1/$lang`
+    cp $new_dir/$lang/$filename new.yaml
+    echo "$source_dir/${lang}.yml"
+    cp $source_dir/${lang}.yml old.yaml 
+    yaml-merge old.yaml new.yaml | sed -e 's/\\_/ /g' > "${source_dir}/${lang}.yml"
+    #java -jar yaml-merge.jar old.yaml new.yaml "${source_dir}/${lang}.yml"
+    echo "copied over $lang"
+  fi
 done 
 
 rm old.yaml

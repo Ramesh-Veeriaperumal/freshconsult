@@ -137,6 +137,7 @@ pl:
     creditcard: Wpisz prawidłowy numer karty kredytowej.
     equalTo: Wpisz ponownie taką samą wartość.
     two_decimal_place_warning: Value cannot have more than 2 decimal digits
+    integration_no_match: brak pasujących danych...
   confirm_delete_message: 'Czy na pewno chcesz usunąć %{human_name}?'
   reload: Wczytaj ponownie
   any: Dowolne
@@ -362,6 +363,10 @@ pl:
     first_name: Imię
     company_name: Firma
     job_title: Stanowisko
+    user_exist_in_freshid: >-
+      Obecny użytkownik Freshworks! Administratorzy nie mogą edytować informacji
+      profilowych konsultantów.
+    edit_profile_in_freshid: Konsultanci mogą edytować swoje informacje profilowe we Freshworks.
   custom_fields:
     insert_field: Przeciągnij i upuść pole
     drag_drop_field_intro: >-
@@ -402,6 +407,7 @@ pl:
       internal_agent: Konsultant wewnętrzny
       company: Firma
       skill: Umiejętność
+      skill_required: Wymagana umiejętność
     saving_ticket: Zapisywanie pól zgłoszeń...
     untitled: Bez nazwy
     properties: Właściwości
@@ -495,6 +501,7 @@ pl:
       nested_tree_validation: Wymagana jest co najmniej jedna kategoria i kategoria podrzędna
       nested_unique_names: Etykieta konsultanta nie powinna być taka sama jak dwa pozostałe poziomy
       nested_3rd_level: Etykieta wymagana dla pozycji 3. poziomu
+      field_has_section: Pole ma sekcję
     section:
       remove_type: Sekcja jest powiązana z tym typem
       new_section: Nowa sekcja
@@ -601,6 +608,8 @@ pl:
         loading_feedback: Wczytywanie informacji zwrotnej
         load_questions: Zobacz więcej
         comments: Komentarze
+        title_v2: Raport satysfakcji
+        rating_sub_title_v2: Twoja ocena jako
     login:
       form:
         email: E-mail
@@ -661,6 +670,7 @@ pl:
       okay: OK
       hey: Cześć
       thank_you_text: Dziękujemy
+      move_to_form_field: lub naciśnij enter
   gamification:
     levels:
       beginner: Początkujący
@@ -780,6 +790,7 @@ pl:
       my_topics: Moje tematy
       archive_ticket_view: Szczegóły zarchiwizowanego zgłoszenia
       archive_ticket_list: Lista zarchiwizowanych zgłoszeń
+      agent_login: Strona logowania konsultanta
   portal_meta:
     titles:
       portal_home: Pomoc techniczna
@@ -884,6 +895,26 @@ pl:
           przykład, można przekształcać tweety zawierające frazę „przejść do”
           razem z nazwą firmy konkurencyjnej w zgłoszenia i przekazać je wyżej w
           hierarchii do kierownika zespołu pomocy technicznej.
+        handle_smart_filter_title: Automatyczne konwertowanie tweetów w zgłoszenia
+        handle_smart_filter_info: >-
+          Sygnały społecznościowe wspomagane są algorytmem uczenia maszynowego
+          (systemem zdolnym do uczenia się i rozwijania wraz z upływem czasu).
+          Funkcja ta automatycznie przekształca tylko istotne tweety, które
+          wymagają Twojej uwagi w zgłoszeniach. <br>Możesz dostarczyć systemowi
+          informacji zwrotnej w postaci zaadaptowania do Twojej
+          działalności.<br><br>1. W przypadku tweetów przekształconych w
+          zgłoszenia; Oznacz tweet jako spam, aby nauczyć system, by nie
+          przekształcał podobnych tweetów w zgłoszenia.<br><br>2. W przypadku
+          tweetów nie przekształconych w zgłoszenia; W zakładce
+          społecznościowej, kliknięcie „Przekształć w zgłoszenie” nauczy system,
+          by konwertował podobne tweety w zgłoszenia.<br><br>Możesz wybrać, by
+          wykorzystywać sygnały samodzielnie lub w połączeniu z filtrami
+          bazującymi na słowach kluczowych i sygnałami społecznościowymi po
+          określeniu słów kluczowych dla określonej działalności. <br>Gdy
+          wykorzystujesz połączenie filtrów bazujących na słowach kluczowych i
+          sygnałów społecznościowych, filtry na podstawie słów kluczowych mają
+          pierwszeństwo przed sygnałami społecznościowymi. Pamiętaj, że sygnały
+          społecznościowe w obecnej chwili obsługują tylko język angielski.
       flash:
         stream_updated: 'Strumień serwisu Twitter o nazwie %{stream_name} został zaktualizowany'
         stream_deleted: 'Strumień serwisu Twitter o nazwie %{stream_name} został usunięty'
@@ -971,6 +1002,13 @@ pl:
             scalone w jedno zgłoszenie
         ticket_rules:
           do_not_convert: Nie konwertuj
+      smart_filter:
+        convert_tweet: Rozpocznij przekształcanie Tweetów na zgłoszenia
+        convert_all: Przekształć odpowiednie @wzmianki w zgłoszenia
+        enabled_header: Włączono Sygnały społecznościowe
+        disabled_header: Włącz Sygnały społecznościowe
+        convert_with_filters: Przekształć tweety w zgłoszenia korzystając z filtrów
+        convert_dm: Rozpocznij przekształcanie bezpośrednich wiadomości w zgłoszenia
     company_fields:
       fields:
         name: Imię i nazwisko
@@ -1067,6 +1105,7 @@ pl:
         twitter_id: Twitter
         time_zone: Strefa czasowa
         language: Język
+        multiple_company: Powiąż jeden kontakt z wieloma firmami
       untitled: Bez nazwy
       first_choice: Pierwszy wybór
       second_choice: Drugi wybór
@@ -1135,6 +1174,18 @@ pl:
           do słowa „fresh”: <b>  %{regex} </b>.
         max_choices: Osiągnięto maksymalną liczbę pozycji
         mapped_internal_groups: Zmapowane grupy wewnętrzne
+        multiple_company_message_enable: Kontakty można powiązać z wieloma firmami.
+        multiple_company_message: Kontakty można powiązać tylko z jedną firmą.
+      multiple_company_dialog_on: >-
+        Kontakty (pośrednicy lub partnerzy) będą mogły wybierać jedną z
+        powiązanych z nimi firm podczas przesyłania zgłoszenia.
+      multiple_company_dialog_warning: >-
+        Włączenie tej opcji spowoduje trwałe usunięcie wszystkich dodatkowych
+        firm ze wszystkich kontaktów. Stare zgłoszenia pozostaną niezmienione, a
+        nowe zgłoszenia zostaną utworzone tylko dla głównej firmy.
+      multiple_company_dialog_help_text: >-
+        Po włączeniu tej opcji kontakty (pośrednicy lub partnerzy) będą mogły
+        wybierać jedną z powiązanych z nimi firm podczas przesyłania zgłoszenia.
     portal:
       delete_confirm:
         title: Usunięcie tego portalu spowoduje usunięcie następujących pozycji
@@ -1201,6 +1252,10 @@ pl:
         view_settings: Wyświetl ustawienia
         restricted_login_signup: Rejestracja i logowanie zostały ograniczone do określonych domen
         reset_portal_changes: Zresetuj zmiany na portalu
+        last_published_version: do ostatniej opublikowanej wersji
+        reset_for: Zresetuje to zmiany dla
+        will_reset_all: Zresetuje to WSZYSTKIE zmiany na portalu do domyślnych ustawień.
+        portal_was_published: Portal został opublikowany
       helpnote:
         title: Konfigurowanie portali
         tour: Pomóż mi skonfigurować portal
@@ -1229,6 +1284,45 @@ pl:
         level_customizations: Indywidualne modyfikacje na poziomie strony
         advanced_rebranding: Zaawansowana modyfikacja wyglądu i dostosowanie do własnych potrzeb
         custom_stylesheets: Używanie niestandardowych arkuszy stylów
+        portal_info: >-
+          Starannie wybraliśmy dla Ciebie kilka portali z możliwością
+          dostosowania.
+        can_override_existing_styles: >-
+          Możesz użyć własnych szablonów CSS, aby zastąpić obecne style w
+          portalu klienta. Przykładowo, możesz określić własne definicje stylów
+          dla zakładek nagłówków, akapitów oraz treści swojego portalu.
+        preview_your_changes: 'Pamiętaj, aby włączyć podgląd zmian przed ich opublikowaniem.'
+        enter_your_css: >-
+          Wprowadź styl CSS w polu tekstowym, by zastosować niestandardowe style
+          do swojego portalu obsługi. Jeśli w Twoim CSS występują błędy lub
+          problemy, stylizowany element można cofnąć do domyślnego stylu, więc
+          sprawdź podgląd zmian przed opublikowaniem ich na portalu.
+        layout_of_portal: >-
+          Wygląd portalu obsługi składa się z (a) Nagłówka, (b) Stopki i (c)
+          układu strony. Możesz wykorzystać własny szablon HTML i dodawać,
+          usuwać oraz całkowicie modyfikować treść na całej stronie w swoim
+          portalu, a także dodawać własne interakcje JavaScript. Możesz obejrzeć
+          podgląd swojego motywu przed opublikowaniem go swoim klientom.
+        basic_coloring_changes: >-
+          Poza podstawowymi zmianami kolorystycznymi dokonanymi na portalu,
+          możesz także dostosować wygląd i charakter wybranych aspektów strony,
+          by odpowiadał do wizerunku Twojej marki.
+        check_out: >-
+          Zapoznaj się z <b><a
+          href='https://support.freshdesk.com/support/solutions/71599'
+          target='_blank'>Poradnikiem FreshThemes </a> </b>aby dowiedzieć się
+          więcej o opracowaniu własnego motywu portalu obsługi.
+        portal_freshdesk_title: Szukasz inspiracji?
+        portal_freshdesk_link: Zobacz
+        customize_the_layout: >-
+          Możesz dostosować wygląd każdej strony na swoim portalu Freshdesk.
+          Będziesz musiał dostosować wygląd poprzez znaczniki zastępcze portalu
+          Freshdesk oraz model szablonów Liquid.
+        stylize_color_and_font: >-
+          Możesz zmienić styl, kolor i czcionkę niemal każdego elementu w swoim
+          portalu obsługi, umieścić własne logo i dostosować ikonę ulubionych
+          (favicon). Wystarczy wybrać kolor z palety lub bezpośrednio wpisać
+          heksadecymalny kod koloru w polu tekstowym.
     mobihelp:
       app_review:
         request_sent: Prośba o ocenę aplikacji wysłana
@@ -1292,6 +1386,7 @@ pl:
           app_secret: Dane poufne aplikacji
           integration_details: Dane dodatku
           saving: Zapisywanie...
+          initialization_code: Kod inicjujący
         index:
           title: Aplikacje MobiHelp
           new_app: Nowa aplikacja
@@ -1565,6 +1660,7 @@ pl:
         bad_to_good: Złe do dobrych
         survey: Ankieta
         good_to_bad: Dobre do złych
+        rating_order: Kolejność ocen &nbsp;
       new_rating:
         content_text: >-
           To pytanie ułatwia ocenę ogólnej satysfakcji z odpowiedzi udzielonej
@@ -1606,6 +1702,11 @@ pl:
           uzupełnieniu przez klienta ankiety satysfakcji. Pytania mogą dotyczyć
           produktu/firmy/konsultanta.
         additional_comments_feedback_v2: Uwzględnij dodatkowe pole na komentarz
+        additional_comments_feedback_statement: Dodatkowa informacja zwrotna
+        thanks_help_text: >-
+          Ankieta z dodatkowymi pytaniami otwiera się na stronie z
+          podziękowaniami po uzupełnieniu przez klienta ankiety satysfakcji.
+          Pytania mogą dotyczyć produktu/firmy/konsultanta.
       new_questions_layout:
         title_text: Wybierz skalę punktów dla swojego pytania
         title_text_v2: Wybierz skalę punktową dla swojego pytania
@@ -1648,6 +1749,17 @@ pl:
         preview_survey: Podgląd
         activate_survey: Aktywuj
         custom_title_v2: Ankiety satysfakcji klienta
+        remove_msg: >-
+          Usunięcie tej sekcji spowoduje utratę zmian dokonanych w dodatkowych
+          pytaniach. Czy chcesz kontynuować?
+        survey_help_msg_v3: >-
+          Po wybraniu oceny satysfakcji wyświetlona zostanie strona z
+          podziękowaniem w celu uzyskania większej ilości opinii
+        activate_msg: >-
+          Aktywowanie tej ankiety spowoduje dezaktywację <b
+          id='active_survey_name'> Ankiety domyślnej </b><br>Czy na pewno chcesz
+          ją aktywować?
+        active_delete_tooltip: Nie można usunąć aktywnej ankiety
       choice_contents:
         strongly_disagree: Zdecydowanie się nie zgadzam
         some_what_disagree: Raczej się nie zgadzam
@@ -1656,6 +1768,13 @@ pl:
         agree: Zgadzam się
         some_what_agree: Raczej się zgadzam
         strongly_agree: Zdecydowanie się zgadzam
+        extremly_dissatisfied: Bardzo niezadowolony
+        mostly_dissatisfied: Niezadowolony
+        slightly_dissatisfied: Trochę niezadowolony
+        mostly_satisfied: Zadowolony
+        slightly_satisfied: Lekko zadowolony
+        extremely_satisfied: Bardzo zadowolony
+        neutral_v2: Nautralny
       thanks_contents:
         title_text: Treść podziękowania za przesłanie oceny satysfakcji
         title_text_v2: Treść podziękowania za wypełnienie ankiety satysfakcji klienta.
@@ -1664,6 +1783,11 @@ pl:
         label_text_v2: Ankieta z pytaniami dodatkowymi
         question_error_text: To pytanie zostało już wpisane.
         empty_text: Wartość pytania nie może być pusta.
+        solution_article_link_text: >-
+          Wygląd Twojego portalu zostanie zastosowany na tej stronie. <a
+          target='_blank'
+          href='https://support.freshdesk.com/solution/articles/217757-customizing-your-thank-you-page'>Jak
+          dokonać zmiany?</a>
       satisfaction_settings:
         enable_label: Ocena satysfakcji klienta
         enable_label_v2: Ankieta satysfakcji klienta
@@ -1688,23 +1812,25 @@ pl:
         enter_unhappy_text: Wprowadź tekst wyrażający niezadowolenie
         send_while_title_v2: 'Wybierz wiadomości, które mają zawierać łącze do ankiety satysfakcji'
       helptext_v2: >-
-        <p><b>Why enable satisfaction surveys?</b> <br>
+        <p><b>Dlaczego warto włączyć ankiety satysfakcji?</b> <br>
 
-        Satisfaction Surveys let you add a link to your response emails and
-        directly collect customer feedback and satisfaction. <br><br>
-        <b>Creating your satisfaction survey:</b><br> The following steps let
-        you collect feedback from your customers through a link in your response
-        emails:<br> 1. Turn on the Customer Satisfaction Survey<br> 2. Specify
-        the Survey Question. The default text goes as &ldquo;How would you rate
-        your overall satisfaction for the resolution provided by the
-        agent?&rdquo;<br> <br> <b>Choose which emails have the satisfaction
-        survey link:</b><br> You can choose whether satisfaction survey links
-        are sent to customers in every email, or only in the final email once
-        the ticket is resolved. Customers’ response can be seen in <b>Reports >
-        Customer Satisfaction Report</b> <br><br> You can learn more about
-        satisfaction surveys from <a target= ‘_blank’
-        href='https://support.freshdesk.com/solution/articles/215322'>this
-        solution article</a>. </p>
+        Ankiety satysfakcji umożliwiają dodanie łącza we wiadomości z
+        odpowiedzią do klienta i skierowanie go bezpośrednio do miejsca, gdzie
+        może wyrazić opinię na temat obsługi. <br><br> <b>Tworzenie ankiety
+        satysfakcji:</b><br> Wykonując poniższe kroki, będziesz mógł zebrać
+        opinie od swoich klientów wystawiających ocenę poprzez łącze w e-mailach
+        z odpowiedzią:<br> 1. Zaznacz pole wyboru Ankieta satysfakcji
+        klienta<br> 2. Wprowadź tekst łącza do ankiety satysfakcji. Tekst
+        domyślny brzmi: „Napisz, co sądzisz o jakości naszej pomocy
+        technicznej”.<br> <br> <b>Wybierz wiadomości, które mają zawierać łącze
+        do ankiety satysfakcji:</b><br> Możesz określić, czy łącza do ankiety
+        satysfakcji klienta mają być wysyłane w każdej wiadomości do klienta czy
+        tylko w ostatniej wiadomości po rozwiązaniu problemu w zgłoszeniu.
+        Odpowiedzi klientów można znaleźć w zakładce <b>Raporty > Raport
+        satysfakcji klienta </b> <br><br> Więcej informacji na temat ankiet
+        satysfakcji znajduje się w <a target= ‘_blank’
+        href='https://support.freshdesk.com/solution/articles/215322'>tym
+        artykule z rozwiązaniami</a>.</p>
     getting_started:
       send_mail_content:
         test_info_1: >-
@@ -1836,6 +1962,9 @@ pl:
         agent_email_partial: Operacja powiodła się częściowo.
         agent_email_sending: Trwa wysyłanie zaproszeń...
         agent_email_required: 'Aby wysłać zaproszenie, wymagane jest ID adresu e-mail.'
+        bulk_invite_blocked: >-
+          Możesz dodać do 25 konsultantów z tej strony. Później możesz dodać
+          więcej konsultantów w sekcji administratora.
     day_passes:
       helpnote:
         title: Przepustka dzienna
@@ -1870,6 +1999,14 @@ pl:
         date: Data
         all: Wszystko
         filtered_by: 'Przefiltrowane wg:'
+        no_result: Nie znaleziono wyników dla wybranych opcji.
+        change_agent: Zmień konsultanta
+        usage_history: Historia użycia
+        available_passes: Dostępne przepustki dzienne
+        auto_recharge_notice: 'Obecna ilość automatycznych dostosowań jest ustawiona na '
+        buy_passes: Kup przepustki dzienne
+        auto_renewal_disabled_notice: Wyłączono automatyczne uzupełnianie przepustek dziennych
+        auto_renewal_enabled_notice: Włączono automatyczne uzupełnianie przepustek dziennych
     widget_config:
       index:
         feedbackwidget_embedded_tab: Zagnieżdżony widżet
@@ -1922,6 +2059,11 @@ pl:
         feedbackwidget_embedded_form_code: Kod zagnieżdżonego formularza
         feedbackwidget_form_height: Wysokość formularza
         feedbackwidget_form_height_message: 'Jeśli widzisz paski przewijania w widżecie, wyreguluj jego wysokość.'
+        feedbackwidget_submit_title_maxlength: Maksymalnie 16 znaków
+        feedbackwidget_title_maxlength: Maksymalnie 16 znaków
+        feedbackwidget_height_placeholder: '500'
+        feedbackwidget_px: px
+        feedbackwidget_form_submit_title: Przycisk przesyłania formularza
       popup_widget:
         feedbackwidget_button_type: Typ przycisku
         feedbackwidget_submit_title: Wyślij opinię
@@ -1948,6 +2090,12 @@ pl:
         feedbackwidget_button_text_placeholder: Wsparcie
         feedbackwidget_form_height_message: 'Jeśli widzisz paski przewijania w widżecie, wyreguluj jego wysokość.'
         feedbackwidget_offset: 'Przesunięcie:'
+        feedbackwidget_submit_title_maxlength: Maksymalnie 16 znaków
+        feedbackwidget_title_maxlength: Maksymalnie 30 znaków
+        feedbackwidget_height_placeholder: '500'
+        feedbackwidget_px: px
+        feedbackwidget_offset_placeholder: '235'
+        feedbackwidget_form_submit_title: Przycisk przesyłania formularza
     supervisor_rules:
       info_help: >-
         W przypadku <b>każdego zgłoszenia</b> zaktualizowanego w ciągu 30 dni
@@ -1978,6 +2126,7 @@ pl:
           Reguły funkcji nadzorcy są przetwarzane sekwencyjnie, więc ich
           kolejność ma znaczenie. Jedna reguła może powodować pewne czynności,
           które wyzwalają kolejne reguły.
+        tour_v2: Pomóż mi utworzyć regułę nadzorcy
       new:
         title: Nowa reguła nadzorcy
       edit:
@@ -2027,6 +2176,13 @@ pl:
           lub nawet wysyłać powiadomienia alarmowe natychmiast po spełnieniu
           określonych warunków.
         help_info_4: Więcej informacji na temat korzystania z funkcji obserwatora
+        tour_v2: Pomóż mi utworzyć regułę obserwatora
+        new_help_info_2b: >-
+          Określa, które zmiany wykonane przez użytkownika mają uruchamiać
+          regułę. Możesz wybrać pomiędzy konsultantem, zgłaszającym,
+          konsultantem lub zgłaszającym oraz systemem. Zgłaszający obejmuje
+          także kogoś spoza zespołu obsługi ale znajdującego się wewnątrz
+          zgłoszenia.
       new:
         title: Nowa reguła obserwatora
       edit:
@@ -2054,12 +2210,27 @@ pl:
         checked: jest zaznaczone
         unchecked: jest odznaczone
         deselected: Odznaczono
+        internal_group_actions: >-
+          Ma zastosowanie tylko wtedy, gdy wybrana grupa jest zmapowana ze
+          statusem zgłoszenia jako grupa wewnętrzna w momencie wykonywania
+          reguły.
+        internal_agent_actions: >-
+          Ma zastosowanie tylko wtedy, gdy wybrany konsultant jest zmapowany z
+          grupą wewnętrzną w momencie wykonywania reguły.
       anyone: Dowolna osoba
       system: System
+      default_rule_desc: >-
+        Gdy klient udzieli niezadowolonej oceny satysfakcji w zgłoszeniu,
+        powiadom kierownika zespołu
+      new_anyone: Konsultant lub zgłaszający
+      new_performed_by: Gdy działanie wykonywane przez...
+      new_events: obejmuje <b>dowolne</b> z następujących zdarzeń
+      default_rule_name: 'Powiadom kierownika zespołu, gdy klient jest niezadowolony'
     va_rules:
       index:
         human_name: Reguła dyspozytora
       remember_to_save: Po aktualizacji pamiętaj o zapisaniu.
+      disabled: 'Aby włączyć tę opcję, aktywuj swoje konto.'
     webhook:
       jira_hook_title: Tworzenie problemu JIRA
       jira_hook_description: >-
@@ -2109,6 +2280,9 @@ pl:
         checked: zaznaczone
         unchecked: odznaczone
         deselected: jest odznaczone
+        add_custom_headers: Dodaj nagłówki niestandardowe
+        remove_custom_headers: Usuń nagłówki niestandardowe
+        custom_headers_tip: Podaj jedną parę niestandardowych wartości nagłówka na wiersz.
     automations:
       index:
         human_name: Scenariusz
@@ -2242,6 +2416,10 @@ pl:
         saml_cert_fingerprint_info_sha256: >-
           Odcisk palca (SHA256) certyfikatu SAML dostarczony przez twojego
           dostawcę SAML. Będzie używany do szyfrowania / walidacji
+        enable_oauth2_sso: OAuth 2.0
+        enable_oauth2_info: >-
+          Branżowy standard protokołu OAuth umożliwia delegowanie konsultantów i
+          uwierzytelnianie klientów w usłudze prowadzącej konta użytkowników.
       helpnote:
         title: Ustawienia bezpieczeństwa
         info1: >-
@@ -2285,6 +2463,7 @@ pl:
         password_must: Hasło musi
         have_mixed_case: Zawierać litery małe i wielkie
         cannot_contain_user_name: Być inne niż nazwa użytkownika
+        password_should: Twoje hasło powinno
       password_security:
         passwords: hasła
         session_expiry: Sesja użytkownika wygaśnie za
@@ -2369,6 +2548,13 @@ pl:
         customer_portal: Portal klienta
         categories_visible: Kategorie portalu
         product_label: 'Produkt: %{product_name}'
+        edit_branding: Edytuj branding
+        show_author_name: Wyświetl imiona autorów
+        agent_portal: Portal dla konsultantów
+        enable_multilingual: Skonfiguruj obsługę w wielu językach
+        enable_personalized_articles: >-
+          Gdy ta opcja jest włączona, imiona autorów zostaną wyświetlone przy
+          artykułach z rozwiązaniami
       edit:
         title: Edytuj produkt
         updating: Aktualizowanie...
@@ -2424,6 +2610,7 @@ pl:
         capture_dm: Przekonwertuj bezpośrednie wiadomości na zgłoszenia
         screen_name: Nazwa ekranu
         default_group: Grupa domyślna
+      stream_content: Ten strumień będzie zawierał Twoje wszystkie @ wzmianki
     roles:
       title: Role konsultantów
       new: Nowa rola
@@ -2526,6 +2713,7 @@ pl:
       manage_label: Zarządzaj
       add_label: Dodaj
       no_agent_label: Brak konsultanta
+      default_role_with_name: '%{role_name} (domyślna rola)'
     home:
       index:
         group: Grupy
@@ -2576,6 +2764,8 @@ pl:
         customer-portal: Portal klienta
         portals: Portale
         search_admin: Szukaj ustawień administratora
+        invalid_address: Nieprawidłowy adres
+        invoice: Faktury
       keywords:
         forum_moderation: Moderowanie forum
         configure_support_email: Konfiguruj adres e-mail pomocy technicznej
@@ -2690,11 +2880,112 @@ pl:
         manage_label: Zarządzaj
         add_label: Dodaj
         no_agent_label: Brak konsultanta
+        no_skill_info_1: Nie utworzono umiejętności.
+        nav_skill_list_text: Lista umiejętności
+        nav_agent_skill_text: Umiejętności konsultantów
+        new: Nowa umiejętność
+        no_skill_info_2: Skontaktuj się ze swoim administratorem centrum pomocy.
+        confirm_delete_message_v2: >-
+          Usunięcie umiejętności spowoduje jej usunięcie u wszystkich
+          konsultantów. Nieprzydzielone zgłoszenia z tą umiejętnością zostaną
+          przyporządkowane od nowej umiejętności. Czy na pewno chcesz
+          kontynuować?
+        info_help: >-
+          Utwórz umiejętności dla problemów związanych ze zgłoszeniami i powiąż
+          je z konsultantami, którzy mogą je rozwiązać. Pierwsza pasująca
+          umiejętność zostanie zastosowana do zgłoszenia.
+        agent_skills: Umiejętności konsultantów
+        not_in_any_groups_info: >-
+          Możesz zarządzać umiejętnościami konsultantów tylko wtedy, gdy
+          będziesz członkiem grupy. Skontaktuj się z administratorem swojego
+          centrum pomocy.
+        no_agents_info: Nie dodano konsultantów do tej grupy!
+        no_groups_present_info: >-
+          Możesz modyfikować ustawienia przydzielania zgłoszeń tylko dla grup,
+          do których należysz.<br> Skontaktuj się z administratorem swojego
+          centrum pomocy.
+        new_skill_info: Nie utworzono jeszcze żadnych umiejętności!
+      rule_form:
+        info1: 'przykład: Obsługa klientów VIP'
+        info3: 'Powiąż tę umiejętność ze zgłoszeniami pasującymi z:'
+        match_any: <b>DOWOLNYM</b> z poniższych
+        match_all: <b>WSZYSTKIMI</b> z poniższych
+        new: Nazwa umiejętności
+        info2: >-
+          przykład: „Przydziel zgłoszenia od klientów VIP do konsultantów:
+          Grażyna, Janusz lub Sebastian”
+      import_csv: Zaimportuj umiejętności konsultantów
+      helpcard:
+        title2: Tworzenie umiejętności
+        learn_more_skill_based_info: Dowiedz się więcej o przydzielaniu na podstawie umiejętności
+        info2: >-
+          Każda umiejętność może zostać przydzielona do grupy konsultantów oraz
+          zmapowana ze zgłoszeniami pasującymi do określonych
+          warunków.<br><br>Możesz przydzielać umiejętności do konsultantów na
+          podstawie ich specjalizacji lub umiejętności. Przykładowo, jeśli
+          obsługujesz wiele języków, możesz utworzyć umiejętność „Biegły
+          hiszpański” dla konsultantów, którzy obsługują zgłoszenia w języku
+          hiszpańskim. Aby zmapować umiejętności do zgłoszeń, możesz skorzystać
+          z warunków na podstawie właściwości zgłoszeń, takich jak typ, źródło,
+          produkt lub właściwości klienta typu nazwa zgłaszającego, e-mail,
+          firma itp. Zgłoszenia nadsyłane w języku hiszpańskim można zmapować do
+          umiejętności „Biegły hiszpański”.<br><br>Jeśli umiejętność zmapowana
+          do zgłoszenia pasuje do umiejętności konsultanta, zgłoszenie zostanie
+          do niego przydzielone.
+        title1: Omówienie umiejętności
+        title3: Umiejętność do zmapowania zgłoszeń
+        info3: >-
+          Reguły umiejętności są wykorzystywane do identyfikowania, które
+          umiejętności powinny zostać powiązane ze zgłoszeniem na podstawie
+          właściwości zgłoszenia lub klienta. Dla każdego zgłoszenia
+          przydzielonego do grupy zostanie wykonana pierwsza pasująca reguła z
+          listy umiejętności. Administratorzy mogą zmienić kolejność listy
+          umiejętności, aby najważniejsze reguły były na początku.
+        info1: >-
+          Umiejętności umożliwiają łatwe powiązywanie zgłoszeń z odpowiednimi
+          konsultantami. Możesz powiązać godne uwagi umiejętności z każdym
+          konsultantem i tworzyć reguły, by mieć pewność, że tylko zgłoszenia
+          pasujące do ich umiejętności są do nich przydzielane.
+      new:
+        new: Nowa umiejętność
+      import:
+        download_xls_title: Pobierz obecną listę konsultantów i ich umiejętności jako plik CSV
+        note_info_3: >-
+          Pamiętaj, że maksymalnie 35 umiejętności można powiązać do
+          konsultanta, a dla jednego konta można utworzyć 180 umiejętności.
+        add_skills_title: >-
+          Dodawaj umiejętności do konsultantów w kolejności malejącej i prześlij
+          plik
+        important_note: Ważna notatka
+        note_info_1: >-
+          Jeśli trafisz na nową nazwę umiejętności, stworzymy tę umiejętność i
+          zmapujemy ją do odpowiednich konsultantów
+        note_info_2: >-
+          Jeśli trafimy na obecnego konsultanta z innym zestawem umiejętności,
+          odłączymy obecny zestaw umiejętności i zmapujemy nowy zestaw w obecnym
+          pliku
+        download_xls_btn: Pobierz plik .CSV
+        upload_file: Prześlij plik .CSV
+      edit:
+        edit: Edytuj umiejętność
     user_skills:
       index:
         more: więcej
         any: Dowolne
         groups: Grupa
+        turn_on: Włącz
+        add_skills: Dodaj umiejętności
+        admin_info_help: >-
+          Dodaj umiejętności do konsultantów w kolejności malejącej według ich
+          preferencji
+        manage_skills: Zarządzaj umiejętnościami
+        supervisor_info_help: >-
+          Aranżuj umiejętności konsultantów w kolejności malejącej według ich
+          preferencji
+        sbrr_disabled_admin: >-
+          Przydzielanie na podstawie umiejętności nie zostało włączone dla tej
+          grupy
+      no_skills: Brak umiejętności
     ecommerce:
       helpnote:
         no_account: Dodaj nowe konto
@@ -2743,10 +3034,30 @@ pl:
       inactive: nieaktywne
       active: aktywne
       index_title: Handel elektroniczny
+      ebay: eBay
     hotline:
       content3:
         note_title: 'Notatka:'
+        note_info: >-
+          W dalszym ciągu będziemy obsługiwać Mobihelp dla obecnych klientów,
+          lecz kończymy jego aktywny rozwój. Zachęcamy was do jak najszybszego
+          przejścia na Hotline. Jeśli jesteś aktywnym klientem Mobihelp, napisz
+          na support@hotline.io, aby otrzymać specjalny cennik.
       list_title: Aplikacje MobiHelp
+      get_started: Wypróbuj Hotline już teraz
+      content2:
+        list_title: 'Dzięki Hotline zyskujesz:'
+        list1: Czat w aplikacji z powiadomieniami PUSH
+        list4: Natywna integracja z Freshdesk
+        list2: FAQ dla aplikacji mobilnych
+        list3: Interfejs do szybkiego angażowania dla konsultantów
+        list5: Narzędzia do prowadzenia kampanii z rozbudowanymi wiadomościami
+      heading1: Użytkownicy Mobihelp witają Hotline
+      content1:
+        info1: >-
+          Hotline to nowa mobilna platforma do obsługi i angażowania od
+          Freshdesk. Hotline zapewnia wszystko to, co miało do zaoferowania
+          Mobihelp oraz wiele nowych funkcji w nowym produkcie.
   ends_with: Kończy się na
   last_name: Nazwisko
   forum:
@@ -2799,6 +3110,11 @@ pl:
       description: >-
         Konsultanci dodani jako osoby obserwujące otrzymują powiadomienia e-mail
         o utworzeniu nowego wątku
+    max_description_length_allowed: Maksymalnie 250 znaków
+    convert_to_ticket: Automatycznie przekształć tematy w zgłoszenia
+    convert_to_ticket_info: >-
+      Wszystkie nowe tematy utworzone na tym forum zostaną automatycznie
+      przekształcone i utworzone w formie zgłoszenia.
   password_reset_email: Wiadomość e-mail z resetem hasła
   default_reply_template: Szablon odpowiedzi konsultanta
   additional_email_verification: Dodatkowa weryfikacja adresu e-mail
@@ -3689,6 +4005,12 @@ pl:
         zarejestrować, zalogować lub przesyłać zgłoszeń. Możesz dowiedzieć
         więcej
       info6: tutaj.
+      info8: >-
+        Aby skonfigurować portal dla swojego produktu, skorzystaj z opcji
+        „Edytuj portal”.
+      info7: >-
+        Jeśli korzystasz z abonamenty Garden lub wyższego, wciąż masz możliwość
+        skonfigurowania wielojęzycznej obsługi w zakładce „Języki”.
     cancel:
       cancel_account: Anuluj konto Freshdesk
       info_text: >-
@@ -3800,26 +4122,80 @@ pl:
       sign_up: Zarejestruj się!
       privacy_policy: polityka prywatności
       terms_of_service: regulamin
+      existing_url: Twój istniejący adres URL Freshdesk
+      existing_account: Istniejące konto Freshdesk
+      link_existing_account: Powiąż swoje istniejące konto Freshdesk.
+      sample_url: 'np. dla „http://apple.freshdesk.com” wpisz „apple”'
+      create_account: Utwórz nowe konto Freshdesk.
     new:
       full_name: Imię i nazwisko
       company: Firma
       confirmation: Potwierdzenie
       create_an_account: Utwórz konto
+      card_charge: 'Twoja karta zostanie obciążona '
+      site_url: Adres URL strony
+      enter_payment_info: Wprowadź dane płatności
+      enter_name_subdomain: ' Wprowadź nazwę swojej działalności oraz subdomenę, z której chcesz korzystać na swojej witrynie.'
+      errors_encountered: 'Znaleziono błędy dotyczące informacji na Twoim koncie:'
+      administrator_account: Wprowadź informacje dla konta administratora
+      discount_code: Kod rabatowy
     multilingual_support:
       helpcard:
         supported_languages:
           title: <b>Obsługiwane języki</b><br/>
+          info2: >-
+            <i>Po dodaniu obsługiwanych języków nie będzie można zmienić języka
+            podstawowego.</i>
+          info1: >-
+            Dodanie języków do tej listy umożliwi tłumaczenie artykułów z bazy
+            wiedzy na odpowiednie języki obsługiwanych klientów.<br /><br />
         info1: Zapewnia bezproblemową obsługę klientów ze wszystkich zakątków świata.
         title: Rozmawiaj w języku swojego klienta
+        portal_languages:
+          title: <b>Widoczne/ukryte w portalu</b><br />
+          info1: >-
+            Gdy artykuły z bazy wiedzy zostaną przetłumaczone na inne języki i
+            będą gotowe do uruchomienia, możesz zmieniać ich widoczność dla
+            klientów, klikając odpowiedni przycisk (widoczne/ukryte w
+            portalu)<br /><br />
       add_languages: Dodaj języki
       warning_msg: >-
         Uwaga: Twoim podstawowym językiem jest domyślny język centrum pomocy.
         Nie można go zmienić po dodaniu obsługiwanych języków.
       manage_languages: Zarządzanie językami
+      add_more_languages_msg: >-
+        Dodaj inne języki, w których obsługujesz tutaj klientów. Następnie
+        możesz osobno przetłumaczyć szablony powiadomień e-mail i artykuły do
+        bazy wiedzy dla każdego obsługiwanego języka.
     edit_domain:
       email_error: Nazwa firmy musi mieć przynajmniej 3 znaki.
       getting_started: Wprowadzenie
       url_error1: 'Domena <strong>%{domain_name}</strong> jest niedostępna.'
+      email_label: Twój e-mail we Freshdesk (możesz go udostępnić swoim klientom)
+      title2: 'Potwierdź dane swojego konta, aby rozpocząć.'
+      url_label: Twój adres URL (w tym miejscu możesz przejść do swojego konta)
+      email_info_text: Możesz go zmienić lub później dodać własny.
+      submit_button_text: Przejdź do mojego konta
+      account_url_defaulted: >-
+        Z powodu braku aktywności automatycznie wygenerowaliśmy adres URL dla
+        Twojego konta. Przekierujemy Cię teraz do Twojego pulpitu...
+    signup_google_error:
+      allow_access_message: >-
+        Musisz kliknąć <strong>„Zezwól na dostęp”</strong>, aby kontynuować.
+        Freshdesk wykorzystuje Twój adres e-mail jako identyfikator logowania.
+      go_back: 'Kliknij tutaj, aby wrócić do sklepu z aplikacjami Google'
+    associate_google:
+      login_button: Zaloguj i ukończ rejestrację
+      login_message: >-
+        Zaloguj się danymi administratora konta, aby powiązać login Google Apps
+        ze swoim kontem Freshdesk.
+    thank_you:
+      account_created_login: Dziękujemy za utworzenie konta! Możesz teraz zalogować do konta na
+      account_created: Utworzono konto
+      launch_support: Uruchamianie wsparcia dla Twittera i Facebooka
+    canceled_account: >-
+      Przykro nam, że przestajesz korzystać z naszych usług, ale Twoje konto
+      zostało anulowane.
   success_msg: Ustawienia konta zostały zaktualizowane!
   failure_msg: Nie udało się zaktualizować ustawień konta!
   account_configuration:
@@ -4031,6 +4407,8 @@ pl:
     other_categories: Wyświetl inne kategorie
     other_categories_info: Kategorie niepowiązane z portalem
     manage_categories: Zarządzaj
+    info3: Brak kategorii na tym portalu
+    visible_in_portal: Widoczne w portalu
   forum_category:
     product_portal_visibility: Widoczne w
     select_product: Wybierz portal produktu...
@@ -4098,6 +4476,7 @@ pl:
         przychodzącego zgłoszenia dyspozytor wdroży pierwszą pasującą regułę i
         zatrzyma się. Możesz zmienić kolejność reguł, aby najważniejsze z nich
         znajdowały się na początku.
+      tour_v2: Pomóż mi utworzyć regułę Dispatch'r
     reorder: Uporządkuj
     add_new_action: Dodaj nową czynność
     dispatch_rules: Dyspozytor – Reguły
@@ -4109,6 +4488,10 @@ pl:
     skip_notification_yes: Tak
     skip_notification_no: Nie
     new_scenario: Nowy scenariusz
+    default_rule_desc: >-
+      Wszystkie zgłoszenia związane z subskrypcją zostaną przypisane do działu
+      Płatności
+    default_rule_name: Wszystkie subskrypcje powiązane ze zgłoszeniem trafiają do Płatności
   header_logo: Logo nagłówka
   feedback:
     title: Czy ta odpowiedź była pomocna?
@@ -4130,6 +4513,7 @@ pl:
       agents: Konsultanci
       all: Wszystko
       select_company: Wybierz firmy
+      help_text: 'Wybierz listę użytkowników, którzy otrzymają dostęp do tego folderu'
     types:
       permanent: Trwały
       workaround: Rozwiązanie tymczasowe
@@ -4402,6 +4786,9 @@ pl:
           Ty i <a id='users-voted' href='#' title="Zobacz, kto ma to"> %{vote}
           osób</a> ma to pytanie
         voted_users_widget_title: 'Osoby, które mają to pytanie'
+      announce:
+        voted_users_widget_title: 'Osoby, które lubią to ogłoszenie'
+        vote_info_include_1: Lubisz to ogłoszenie.
     post:
       upvote: Zagłosuj
       voted_up_title: osoby/osób zagłosowało na ten wpis
@@ -4540,6 +4927,39 @@ pl:
     round_robin_capping: Wczytaj zbilansowane przydzielanie zgłoszeń
     no_group_info: Nie utworzono żadnych grup.
     send_escalation_to: 'a następnie wyślij e-maila z eksalacją do:'
+    auto_assignment_description: >-
+      Zgłoszenia przychodzące do tej grupy zostaną automatycznie przydzielone do
+      dostępnych konsultantów w oparciu o wybraną metodę przydzielania
+    info8: >-
+      Nowość: umożliw swoim nadzorcom automatyczne zarządzanie zgłoszeniami i
+      zmieniaj dostępność konsultantów dla grup, do których należą –
+    sbrr_plan_text: <span class="muted"> Dostępne w </span> <b> Abonamencie Forest</b>
+    info8_readmore: Więcej informacji
+    alert_content: >-
+      Przekierujemy Cię do strony z umiejętnościami. Jeśli wybierzesz opcję
+      kontynuowania, wszystkie zmiany wprowadzone w tej grupie zostaną
+      automatycznie zapisane.
+    round_robin_skill_based_tooltip: >-
+      Gdy dostępnych jest dwóch konsultantów z tymi samymi umiejętnościami,
+      zgłoszenia zostaną przydzielone do konsultanta obsługującego mniejszą
+      ilość zgłoszeń.
+    alert_content_2: Czy chcesz kontynuować?
+    escalation_rule: Reguła eskalacji
+    rr_v2_confimation_message: Tego działania nie można cofnąć. Czy na pewno chcesz kontynuować?
+    round_robin_skill_based: Przydzielanie zgłoszeń na podstawie umiejętności
+    only_round_robin_description: >-
+      Zgłoszenia przychodzące do tej grupy zostaną automatycznie przydzielone do
+      dostępnych konsultantów w oparciu o <strong>metodę algorytmu
+      szeregowego</strong>
+    per_agent: na konsultanta
+    round_robin_skill_based_info: 'Przydzielaj zgłoszenia do konsultantów, którzy obsłużą je najlepiej'
+    round_robin_default_info: Przypisuj zgłoszenia do konsultantów w systemie kołowym
+    round_robin_capping_info: 'Ogranicz liczbę zgłoszeń, które konsultant może jednocześnie rozwiązać'
+    sbrr_trial_text: >-
+      Czy wiesz, że możesz przydzielać zgłoszenia na podstawie umiejętności
+      konsultantów? <a
+      href="https://support.freshdesk.com/solution/articles/222692"
+      target="_blank">Learn more</a>
   four: 4 godziny
   oneweek: 1 tydzień
   twoweek: 2 tygodnie
@@ -4740,6 +5160,10 @@ pl:
     assign_group: Przypisz grupy
     skill: Umiejętności
     last_seen_at: Ostatnio widziano o
+    search_placeholder: Wyszukaj wszystkich konsultantów
+    add_skills: Dodaj umiejętności
+    invalid_placeholder: Wstawiono niewłaściwe symbole zastępcze
+    manage_skills: Zarządzaj umiejętnościami
   account_admin: Administrator konta
   right: Prawa
   footer:
@@ -5093,6 +5517,12 @@ pl:
     refund: Zwrócono środki
     download: Pobierz
     quantity: Ilość
+    sub_total: Suma częściowa
+    unit_price: Cena jednostkowa
+    no_invoice: Brak dostępnych faktur
+    line_items: Pozycje
+    invoice_title: 'Lista faktur dla wszystkich płatności dla konta dokonanych przez Internet '
+    transaction_details: Informacje o płatnościach i zwrotach
   activate: Aktywuj
   feedbackwidget_button_text: Etykieta
   amount_billed_per_month: 'Będziesz obciążany kwotą <b>%{amount} %{period}</b>.'
@@ -5192,6 +5622,10 @@ pl:
       modified_on: 'Zmodyfikowano dnia:'
       related_articles: Zobacz również
       created_by: 'Utworzył(-a):'
+      activation_warning: >-
+        Wygląda na to, że Twoje konto nie zostało jeszcze zweryfikowane. Aktywuj
+        konto, aby opublikować artykuł (do tego czasu możesz go zachować jako
+        wersję roboczą).
     folder:
       filler_text: 'Obserwuj tę stronę pod kątem artykułów dotyczących %{folder_name}'
     topic:
@@ -5237,6 +5671,9 @@ pl:
       sort_by_most_recent: Najnowszy
       sort_by_most_popular: Najpopularniejszy
       sort_by_default: Domyślne
+      activation_warning: >-
+        Wygląda na to, że Twoje konto nie zostało jeszcze zweryfikowane. Aktywuj
+        je, aby opublikować temat na forum.
     vote:
       you:
         one: 'Ty '
@@ -5326,6 +5763,8 @@ pl:
       few: stemmer
       many: stemmer
       other: stemmer
+    customer_login_info: Czy jesteś klientem?
+    helpdesk_login_portal: 'Witaj ponownie, konsultancie'
   feedbackwidget_form_heading: Utwórz nagłówek
   feedbackwidget_form_title: Tytuł formularza widżetu
   cancel_and_back: Anuluj i wróć
@@ -5363,6 +5802,18 @@ pl:
         my_articles: Moje artykuły
         all_articles: Wszystkie artykuły
       unassociated: Nieprzypisane kategorie
+      new_translation:
+        info3: >-
+          Aby zwiększyć dostęp do artykułów, możesz dodać <b>meta znaczniki dla
+          danych języków </b>dla przetłumaczonych artykułów.
+        info1: >-
+          Aby szybko przetłumaczyć swoje artykuły, skorzystaj z opcji <b>„Pokaż
+          nadrzędne”</b> w celu wyświetlenia artykułu w jego głównym języku
+          podczas aktywnej pracy nad kolejnym językiem.
+        title: Praca z tłumaczeniem artykułów
+        info2: >-
+          Dodaj treści wraz z <b>załącznikami dla danego języka</b> i obsługuj
+          klientów w zrozumiałym przez nich języku.
     anonymous_votes: 'Anonimowe (%{count})'
     home: Strona główna rozwiązań
     add_category: Nowa kategoria
@@ -5397,8 +5848,15 @@ pl:
       something_wrong: Coś poszło nie tak!
       mark_as_uptodate:
         text_1: Oznacz to tłumaczenie jako aktualne
+        text_2: w przypadku zmiany tego tłumaczenia
       mark_as_outdated:
         text_1: Oznacz inne tłumaczenia jako przestarzałe
+        text_2: w przypadku zmiany tego artykułu
+      update_complete: >-
+        <span class="muted"><i class="ficon-checkmark-round-o
+        fsize-20"></i>Ukończono</span>
+      outdating: <span class="sloading loading-small"></span>Utrata ważności tłumaczeń
+      updating: <span class="sloading loading-small"></span>Aktualizowanie
     folders:
       view_all: Wyświetl wszystkie foldery...
       choose_folder: Wybierz folder
@@ -5408,6 +5866,9 @@ pl:
       folder_form:
         category: Kategoria
         visible_to: Widoczne dla
+        check_translations: >-
+          Upewnij się, że wszystkie kategorie zostały przetłumaczone w
+          wymaganych językach
       visibility:
         no_companies: Nie wybrano prawidłowej firmy.
         success: Prawidłowo zmieniono widoczność.
@@ -5497,6 +5958,20 @@ pl:
           (%{no_of_likes}) i które tego nie lubią (%{no_of_dislikes}?
       prop_updated_error: Nie można zaktualizować właściwości artykułu.
       article_deleted: Artykuł został usunięty.
+      translations: Tłumaczenia
+      show_all_analytics: Zobacz dane analityczne dla innych języków
+      check_translations: >-
+        Upewnij się, że wszystkie kategorie i foldery zostały przetłumaczone w
+        wymaganych językach
+      enter_version_name: 'Wpisz tytuł artykułu w języku: %{language_name}'
+      add_primary_info: >-
+        Nie możesz tworzyć tłumaczeń dla innych języków <br />do czasu aż nie
+        utworzysz artykułu w języku: %{primary_language}
+      missing_translations:
+        title: Dodaj brakujące tłumaczenie
+        permission_denied: >-
+          Ups! Nie masz uprawnień do zarządzania kategoriami/folderami.
+          Skontaktuj się z administratorem, aby dodać tłumaczenie.
     draft:
       name: Wersje robocze
       all_drafts: Wszystkie wersje robocze
@@ -5610,6 +6085,32 @@ pl:
     plain_new: Nowa
     plain_edit: Edytuj
     kb: Baza wiedzy
+    unassociated_category_info: >-
+      Ta kategoria nie będzie widoczna dla użytkowników,<br /> gdyż nie
+      powiązano jej z żadnym portalem
+    tour_v2: Pomóż mi skonfigurować moją bazę wiedzy
+    info30: >-
+      Jeżeli posiadasz wiele produktów, utworzone przez Ciebie kategorie mogą
+      być widoczne w odpowiednich portalach produktów.
+    info29: >-
+      W bazie wiedzy Freshdesk dostępna jest 3-poziomowa hierarchia:
+      <b>Kategoria --> Folder --> Artykuł </b>
+    categories:
+      visibility_help_text: 'Wybierz portale, dla których należy wyświetlić tę kategorię'
+    show_languages: Pokaż języki
+    manage_categories: Zarządzaj kategoriami
+    info28: >-
+      Portal bazy wiedzy służy jako samoobsługowy sklep dla Twoich klientów, w
+      którym mogą natychmiastowo znaleźć odpowiedzi na pytania. Dzięki niemu
+      możesz rozwiązywać częste zapytania bez Twojej ingerencji.
+    show_analytics: Wyświetl analizy
+    show_master: Pokaż nadrzędne
+    change_portal: Zmiana portalu
+    unassociated_category: Niepowiązana kategoria
+    info31: >-
+      Możesz wybrać, czy chcesz zapewnić widoczność folderów dla różnych grup
+      osób (<b>Dla wszystkich, zalogowanych użytkowników, konsultantów i
+      wybranych firm</b>).
   import_updated: Zaktualizowano
   feedbackwidget_intro: >-
     Dostosuj swój widżet Freshdesk umieszczony poniżej i zobacz podgląd w czasie
@@ -5667,6 +6168,8 @@ pl:
       reset_warning: >-
         Po zresetowaniu klucza API wszystkie aplikacje używające starego klucza
         przestaną działać. Czy na pewno chcesz kontynuować?
+    freshid_profile_info: Przekierujemy Cię do Twojej witryny konta Freshworks
+    freshid_profile_link: Zmień dane profilowe lub hasło
   add_to_do: Dodaj do listy zadań
   subject_or_description: Temat lub opis
   premium_details: >-
@@ -5755,6 +6258,9 @@ pl:
     custom_survey_desc: Niestandardowe ankiety zadowolenia klientów
     bot: Bot
     freshchat: Dodatek Freshchat
+    skill_based_assignment_desc: Przydzielanie na podstawie umiejętności
+    custom_dashboard: Zarządzaj pulpitami zespołu
+    skill_based_assignment: Przydzielanie na podstawie umiejętności
   zendesk_account: Szczegóły konta Zendesk
   zendesk_import_files: 'Wybrać, co poprawić?'
   file_url: Adres pełnego eksportu XML
@@ -5812,6 +6318,7 @@ pl:
       <a href="https://support.freshdesk.com/support/solutions/folders/246519"
       target="_blank" >Dowiedz się więcej na temat korzystania z funkcji czatu
       na żywo w systemie Freshdesk</a>
+    info4: Pomóż mi skonfigurować czat na żywo
   low: Niski
   agents: Konsultanci
   header:
@@ -5852,6 +6359,8 @@ pl:
       company_tickets: Zgłoszenia firmy
       social: Społeczne
     upgrade: Uaktualnij
+    goto_customer_portal: Przejdź do portalu dla klienta
+    goto_agent_portal: Portal dla konsultantów
   agent_adds_comment: Konsultant dodaje komentarz do zgłoszenia
   portal_customizer_anon_tickets: Każdy może dodać zgłoszenie
   portal_customizer_option_tickets: Użytkownicy mogą wysyłać zgłoszenia bez konieczności logowania
@@ -6154,6 +6663,27 @@ pl:
         topic: Nowe zgłoszenie DW
       agent_template_25:
         topic: Zaproszenie konsultanta przez e-mail
+        info1: >-
+          E-mail z zaproszeniem konsultanta jest wysyłane gdy obecny konsultant
+          Freshworks (konsultant jest już aktywny w dowolnym z kont Freshdesk
+          lub w dowolnym koncie Freshworks – Freshchat, Freshcaller, Freshsales,
+          Freshservice, Freshmarketer) zostanie dodany do Twojego centrum
+          pomocy.<br/><br/>„E-mail aktywacyjny użytkownika” jest wysyłany do
+          nowego konsultanta Freshworks. „Email zaproszeniem konsultanta” jest
+          wysyłany do konsultanta, który jest już aktywnym konsultantem
+          Freshworks.
+      forward_template_24:
+        topic: Szablon przekazywania konsultantom
+        info1: >-
+          Za pomocą szablonu odpowiedzi można dostosować i wstępnie uzupełnić
+          informacje, które muszą znaleźć się w szablonie przekazania. Szablony
+          przekazywania konsultantów umożliwiają automatyczne wstawienie
+          informacji generowanych dynamicznie takich jak jak nazwisko
+          zgłaszającego, adresy URL do zgłoszeń oraz podpis konsultanta.
+          <br/><br/>Jeżeli centrum pomocy skonfigurowane jest do obsługi wielu
+          języków, takie powiadomienie można przygotować w każdym z nich. ikona
+          <i class="common-icon-outdated"></i> informuje, że tłumaczenia
+          powiadomień mogą być nieaktualne.
     insert_placeholder: Wstaw symbol zastępczy
     modify_agent_template: Zmodyfikuj szablon e-mail konsultanta
     event: Zdarzenie
@@ -6162,6 +6692,12 @@ pl:
     subject: Temat
     cc_notifications: Powiadomienia DW
     page_not_found: Nie można znaleźć szablonu.
+    account_not_activated: >-
+      Wygląda na to, że Twoje konto nie zostało jeszcze zweryfikowane. Aktywuj
+      je, aby włączyć powiadomienia e-mail.
+    default_forward_template_info: >-
+      Szablony przesłania dalej zostanie automatycznie zamieszczony w edytorze
+      przekierowywanych wiadomości dla WSZYSTKICH konsultantów.
   errors_in_plan_change: 'Znaleziono błędy dotyczące twojej zmiany:'
   formatting_help: Pomoc na temat formatowania
   step1: Krok 1
@@ -6367,6 +6903,23 @@ pl:
       verify: Weryfikuj
       host_value_help: Nazwa hosta dla rekordu TXT
       data: Dane
+      new_dkim: Nie utworzono jeszcze e-maila obsługi z niestandardową domeną!
+      help_note: >-
+        DKIM umożliwia cyfrowe podpisywanie e-maili z Twojego centrum pomocy za
+        pomocą Twojej nazwy domeny e-mail. Umożliwia to budowanie wizerunku
+        marki podczas każdego kontaktu z klientami.
+      verification_sent: Wysłano wiadomość weryfikacyjną
+      configuring: Konfigurowanie...
+      name: DKIM
+      title: Ustawienia DKIM
+      help: Jak skonfigurować ustawienia DKIM?
+      description: >-
+        Uzupełnij następujące ustawienia DNS na witrynie swojego dostawcy usług
+        internetowych. Po skopiowaniu wszystkich ustawień dla każdej domeny
+        możesz kliknąć przycisk „Weryfikuj”, aby potwierdzić, czy ustawienia są
+        aktywne
+      host_value: Wartość hosta
+      dkim_remove_message: Czy na pewno chcesz usunąć konfigurację DKIM dla
     personalized_email_replies_info: >-
       W razie wybrania odpowiedzi twierdzącej konsultanci będą mogli wybrać
       swoje imię i nazwisko jako imię i nazwisko nadawcy w odpowiedziach na
@@ -6729,6 +7282,7 @@ pl:
         requester: zgłaszającego
         subject: Temat
       unlink_submit: Potwierdź
+      notifier_body: 'Treść wiadomości: '
     customer_replies: Odpowiedzi klienta
     activity_toggle_v2: Działania
     parent_child:
@@ -6822,6 +7376,7 @@ pl:
           wysyłane do klienta.
         are_you_sure: Czy na pewno chcesz kontynuować?
     thanks_v1: Dziękujemy za opinię
+    search_close_text: Zamknij wyszukiwanie
   recent_activity: Ostatnie działanie
   recent_activities: Ostatnie działania
   forgot_password: Nie pamiętam hasła
@@ -6902,6 +7457,13 @@ pl:
   activate_account: Aktywuj swoje konto
   activations:
     activate_freshdesk_account: Aktywuj swoje konto Freshdesk
+    helpnote3: Potwierdź swoje dane i ustal hasło dla konta
+    helpnote1: 'Opowiedz nam o sobie, abyśmy mogli lepiej spersonalizować Twoją obsługę.'
+    admin_consent: >-
+      Klikając „Aktywuj i Zaloguj się”, wyrażasz zgodę na nasz <a
+      target="_blank" href="https://www.freshworks.com/terms/"> Regulamin</a> i
+      potwierdzasz zapoznanie się z naszą <a target="_blank"
+      href="https://www.freshworks.com/privacy/">Polityką prywatności</a>.
   enter_message: Wprowadź tutaj swoją wiadomość
   not_selected: Nie wybrano
   enter_billing_for_free: Wprowadź dane swojej karty kredytowej przed wybraniem płatnego planu
@@ -7012,6 +7574,12 @@ pl:
     gdpr_agent: Konsultant
     forums_toggle:
       title: Fora
+      forums_disabled: Fora zostały wyłączone dla tego konta.
+      enable_forums: włącz fora na swoim koncie
+      go_back_message: Wróć do swojego centrum pomocy
+      helpnote: >-
+        Wyłączenie tej opcji spowoduje wyłączenie wszystkich for we wszystkich
+        portalach produktów dla wszystkich użytkowników
     gdpr_to: do
     twitter_disabled: >-
       Logowanie przez Twitter będzie wyłączone dla klientów i konsultantów w
@@ -7024,6 +7592,7 @@ pl:
       users_from_any_domain: Użytkownicy z dowolnej domeny
       who_can_create: Kto może zalogować się lub zarejestrować się do tworzenia zgłoszeń?
       users_from_selected_domains: Użytkownicy z domen z białych list
+      helpdesk_restrictions: Ograniczenia centrum pomocy
     anyone: Dowolna osoba
     search_domain: Szukaj domeny
     visible_in_portal: Widoczne w portalu
@@ -7032,6 +7601,28 @@ pl:
     important: Ważne
     gdpr_policy: Politykę prywatności.
     gdpr_acknowledgement: i potwierdzasz przeczytanie naszych
+    sort_conversations:
+      label: Sortuj rozmowy
+      helpnote: >-
+        Jest to kolejność, w których wiadomości będą pojawiać się w
+        zgłoszeniach.
+      latest_top: Zobaczysz teraz najnowszą rozmowę na górze.
+      oldest_top: Zobaczysz teraz najstarszą rozmowę na górze.
+      option1: Pokaż najnowsze na górze
+      option2: Pokaż najstarsze na górze
+    gdpr_terms: 'Klikając przycisk Akceptuję, wyrażasz zgodę na nasz'
+    branding_toggle:
+      helpnote: >-
+        Włączenie tej opcji spowoduje usunięcie oznaczeń Freshdesk w stopce
+        portali dla konsultantów i klientów
+      disable_branding: Usuń oznaczenia Freshdesk
+      title: Oznaczenia Freshdesk
+    supported_portal_languages: Języki widoczne dla użytkowników
+    portal_languages: 'Języki widoczne w portalu (%{count})'
+    time_zone_updation: >-
+      Strefa czasowa jest aktualizowana dla wszystkich konsultantów i kontaktów.
+      Spróbuj ponownie za jakiś czas.
+    gdpr_admin_details: zmienił Twoje uprawnienia użytkownika z
   lead: Potencjalny klient
   comments: Komentarze
   forum_confirm_msg1: Czy na pewno chcesz usunąć tę kategorię?
@@ -7177,6 +7768,9 @@ pl:
       ticket_type: Typ zgłoszenia
       close: Zamknij
       date: Data
+      no_entry: Brak wpisów czasu
+      archive_tickets_column_error: Zgłoszenia archiwalne zostaną wyłączone
+      max_columns: Nie można dodać więcej niż 10 kolumn
     tags:
       index:
         title: Zarządzaj znacznikami
@@ -7291,6 +7885,7 @@ pl:
       search_reqester: Wyszukaj zgłaszającego
       do_not_link: Nie powiązuj
       view_in_detail: Pokaż szczegóły
+      announcement_hide: Ukryj tę wiadomość
     dashboard:
       agent_availability: Dostępność konsultantów
       round_robin:
@@ -7546,6 +8141,7 @@ pl:
         archived: Archiwizuj
         invalid_requester: Nieprawidłowy zgłaszający
         raised_by_me: Zgłoszenia żądane przeze mnie
+        ongoing_collab: Moje aktywne narady
       note:
         posted_on: '%{user_name} dnia %{note_date}'
         created_on:
@@ -7761,6 +8357,8 @@ pl:
         login: Zaloguj
         remember: Zapamiętaj mnie na tym komputerze
         sign_in_using_google: Zarejestruj przez konto Google
+    attachment:
+      drop_files_here: Tutaj upuść pliki
   import_ticket_group: Zgłoszenia
   tickets_filter:
     title: Filtruj zgłoszenia
@@ -7818,6 +8416,12 @@ pl:
     actions_empty: Czynności nie mogą być puste
     invalid_domain:
       freshdesk: Freshdesk
+      may_be_this_is_still_fresh: ' Być może domena nie jest jeszcze gotowa!  '
+      claim_it_now: Możesz odebrać go w
+      we_couldnt_find: ' Nie można znaleźć '
+      there_is_no_helpdesk_here: W tym miejscu nie ma centrum obsługi!
+    error_page:
+      back_to_home: wróć na stronę główną
   export_data:
     in_sla: W ramach SLA
     out_of_sla: Pogwałcenie zasad SLA
@@ -7856,6 +8460,7 @@ pl:
         Uruchomiony przez ciebie eksport %{field} został zakończony. Możesz
         pobrać plik pod tym <a href=%{url}>łączem</a>. Jeżeli łącze nie działa,
         skopiuj poniższy adres URL i wklej go w pasku adresu przeglądarki:
+      note: Ten odnośnik wygaśnie za 15 dni.
     ticket_export:
       info: Twoje dane o zgłoszeniach zostaną wkrótce wysłane na twój adres e-mail!
       subject: >-
@@ -7865,6 +8470,7 @@ pl:
         Żądany eksport zgłoszeń został ukończony. Możesz pobrać plik <a
         href=%{url}>stąd</a>. Jeśli łącze nie działa, skopiuj i wklej podany URL
         do pola adresu w przeglądarce:
+      note: Ten odnośnik wygaśnie za 15 dni.
     fields:
       ticket_id: ID zgłoszenia
       subject: Temat
@@ -7948,6 +8554,10 @@ pl:
         groups: Grupy
     archived_at: Zarchiwizowano
     view_all_tickets: Wyeksportuj jako CSV
+    data_backup_failure:
+      body: >-
+        Nie udało się wyeksportować danych. Czy chcesz ponownie zainicjować
+        eksport?
   sla:
     minutes: Minuty
     hours: Godziny
@@ -8026,9 +8636,15 @@ pl:
         tickets: Zgłoszenia
         interactions: Interakcje
         post: ' Opublikuj '
+        follow_as: Obserwuj jako...
       index:
         all: Wszystko
+        click_activity: 'Kliknij wstęgę, aby zobaczyć aktywność'
+        no_activity_available: Brak dostępnej aktywności
+        retweets: Retweety
+        search_twitter: 'Wyszukaj zmian na Twitterze '
       search_btn: Wyszukaj
+      no_conversation: Brak rozmowy
     welcome:
       title: Pomoc w serwisach społecznościowych
       turn_off: Wyłącz funkcje społecznościowe
@@ -8641,6 +9257,8 @@ pl:
         contact: Pola kontaktów
         lead: Pola potencjalnych klientów
         account: Pola klientów
+        opportunity: Pola możliwości
+        opportunity_settings: Konsultanci mogą tworzyć/powiązywać lub odłączać okazje ze zgłoszenia
     nimble:
       label: Nimble
       desc: >-
@@ -8776,6 +9394,8 @@ pl:
         lead: Pola potencjalnych klientów
         contact: Pola kontaktów
         account: Pola klientów
+        sugarcrm_settings: Ustawienia SugarCRM
+        error: Nie można połączyć z SugarCRM. Spróbuj ponownie za jakiś czas.
     dynamicscrm:
       label: Dynamics CRM
       helptext: >-
@@ -8959,6 +9579,28 @@ pl:
         shop_name_mint: Nazwa sklepu
       edit:
         disconnect: Rozłącz
+        sidebar: >-
+          <p>Połącz wiele różnych sklepów Shopify i wyświetlaj szczegóły
+          zamówień klientów w systemie Freshdesk. Skonfiguruj nazwę swojego
+          sklepu, aby wyświetlać ostatnie zamówienia klienta w systemie
+          Freshdesk.<br /><br />Jeśli korzystasz ze starszej wersji Freshdesk,
+          dostępne będą tylko zamówienia ze sklepu połączonego jako pierwszy. We
+          Freshdesk Mint możesz zobaczyć szczegóły zamówienia z dowolnego sklepu
+          w trakcie rozwiązywania zgłoszeń.</p><p><a
+          href="https://support.freshdesk.com/support/solutions/articles/195382-the-shopify-app"
+          target="_blank">Więcej informacji</a></p>
+        label: Shopify – połączone sklepy
+        sidebar_label: Shopify dla Freshdesk
+        confirm_remove_store: Czy na pewno chcesz odłączyć ten sklep?
+        connect: Połącz inny sklep
+        desc: >-
+          Połącz swój sklep Shopifyi łatwo przeglądaj zamówienia oraz rozpatruj
+          zwroty z poziomu Freshdesk
+        helpkit_cannot_edit: >-
+          Jeśli chcesz rozłączyć swój obecny sklep, odinstaluj i zainstaluj
+          aplikację Shopify z galerii aplikacji. Jeśli chcesz zarządzać wieloma
+          sklepami, skorzystaj z wersji Mint.
+      title_mint: Połącz swój sklep Shopify
     slack:
       label: Slack
       desc: Zawsze aktualne informacje o zgłoszeniach Freshdesk w aplikacji Slack
@@ -8991,6 +9633,17 @@ pl:
       status_msg: 'Status zgłoszenia zmieniony na '
       chat: Rozmowa czat z
       default_chat: Rozmowa czat
+      update_notice: >-
+        Dokonano zmian w obecnej integracji Slack. Zapoznaj się z tym <a
+        href='https://support.freshdesk.com/support/solutions/articles/206103'
+        target='_blank'>artykułem z rozwiązaniem</a>, aby poznać szczegółowe
+        informacje o dokonanych zmianach
+      deprecation_notice: >-
+        Nowa wersja aplikacji Slack dla Freshdesk jest już dostępna. Ta wersja
+        jest już przestarzała. Zapoznaj się z tym<a
+        href='https://support.freshdesk.com/support/solutions/articles/206103'
+        target='_blank'> artykułem z rozwiązaniem</a>, aby poznać szczegółowe
+        kroki migracji do nowszej wersji.
     highrise:
       label: Highrise
       helptext: >-
@@ -9336,6 +9989,19 @@ pl:
       form:
         password: Hasło
         username: Nazwa użytkownika
+        freshdesk_to_crm: Z Freshdesk do Dynamics
+        dynamics_v2_settings: Ustawienia Dynamics
+        crm_to_freshdesk: Z Dynamics do Freshdesk
+        opportunity_settings: Konsultanci mogą tworzyć/powiązywać lub odłączać okazje ze zgłoszenia
+        site_url: Adres URL strony
+      desc: >-
+        Możesz synchronizować informacje kontaktu i konta pomiędzy systemem CRM
+        Dynamics a Freshdesk.
+      helptext: >-
+        <h4>Dynamics Plus</h4><p><br/>Aby znaleźć instrukcje i wytyczne
+        dotyczące konfiguracji synchronizacji Dynamics, przejdź do <a
+        href='https://support.freshdesk.com/solution/articles/224667-the-dynamics-crm-v2-app'
+        target='_blank'></a> artykułu </p>o aplikacji Dynamics Plus App.
     marketplace_login:
       associate_account:
         phone_no: Numer telefonu
@@ -9408,6 +10074,12 @@ pl:
           company: Firma
           contact_fields: ' Pola kontaktów '
           account_fields: ' Pola klientów '
+          freshdesk_contact_fields: ' Pola kontaktowe we Freshdesk '
+          freshdesk_company_fields: 'Pola firmy we Freshdesk '
+          sync: ' Synchronizuj '
+      contacts_sync:
+        outlook_contact_sync: ' Synchronizacja kontaktów z programu Outlook '
+        resolve_the_errors: 'Zanim przejdziesz dalej, rozwiąż błędy w formularzu!'
     screen_pop:
       widget:
         edit_note_text: Edytuj notatkę
@@ -9490,6 +10162,15 @@ pl:
         contact: Pola kontaktów
         select: Wybierz opcję
         account: Pola klientów
+        infusionsoft_settings: Ustawienia Infusionsoft
+      desc: >-
+        Freshdesk umożliwia wyświetlanie informacji kontaktowych z systemu CRM
+        Infusionsoft.
+      helptext: >-
+        <h4>Dodatek Infusionsoft</h4><p><br/>Wybierz listę pól, które należy
+        wyświetlać w widżecie Infusionsoft. Możesz wybrać maksymalnie 10
+        pól.</p><p><strong>Uwaga:</strong><br/>Imię oraz firma to pola domyślne,
+        których nie można usunąć.</p>
     cti_admin:
       ctd:
         api_key: Klucz API
@@ -9513,16 +10194,16 @@ pl:
         delete_msg: Czy na pewno chcesz usunąć ten numer?
         number_in_use: Wykorzystywane numery
       helptext: >-
-        <p>Integrate your telephone system with your online helpdesk using the
-        Freshdesk CTI framework. With our simple documentation and
-        straightforward APIs, hooking up your online helpdesk with a telephone
-        system becomes a walk in the park.</p><p>Once you’re done setting up
-        your adaptor with our helpdesk, your support agents will be able to
-        make/receive calls, access customer details, take notes during calls,
-        and maintain context to provide that jaw-drop awesome customer
-        support.</p><p><a href='
-        https://support.freshdesk.com/solution/articles/221418-computer-telephony-integration-framework'>
-        Learn more </a>
+        <p>Zintegruj swój system telefoniczny z naszą internetową pomocą
+        techniczną Freshservice CTI framework. Wraz z naszą przystępną
+        dokumentacją i prostymi API, powiązanie internetowej pomocy technicznej
+        z systemem telefonicznym jest jak spacer po parku.</p><p>Po ukończeniu
+        konfiguracji centrum pomocy, konsultanci będą mogli wykonywać i odbierać
+        połączenia, sprawdzać dane klientów, wykonywać notatki podczas połączeń
+        i uzyskiwać kontekst, by zapewnić obsługę klienta na jeszcze wyższym
+        poziomie.</p><p><a href='
+        https://support.freshdesk.com/solution/articles/221418-computer-telephony-integration-framework'>Więcej
+        informacji </a>
       save_agent_private_note: Zapisz notatki połączenia jako prywatne
       ctd_toggle: Skonfiguruj wybieranie kliknięciem
       softfone:
@@ -9532,6 +10213,7 @@ pl:
         url: Adres URL dla Iframe
       title: Ustawienia CTI
       iframe_toggle: Włącz telefon programowy Iframe
+      desc: Ujednolić obsługę telefoniczną wraz z Freshdesk
     github_settings:
       none: Żadnych działań
       sync_updates: Aktualizacje synchronizacji
@@ -9570,14 +10252,29 @@ pl:
         shop_url: Adres URL sklepu
         consumer_secret: Znane tylko klientowi
         add_shop: + Dodaj sklep
+        admin_url_info: 'Na przykład: <strong>https://my_shop_name.com/admin</strong>.'
+        invalid_shop_url: Wpisany adres URL sklepu jest nieprawidłowy.
+        admin_url: Adres URL administratora
+        invalid_admin_url: Wpisany adres URL administratora jest nieprawidłowy.
       desc: >-
         Wyświetlaj historię zamówień oraz dane zamówień w systemie Freshdesk w
         czasie udzielania odpowiedzi na zgłoszenia.
     salesforce_v2:
       form:
         salesforce_v2_settings: Ustawienia Salesforce
+        crm_to_freshdesk: Z Salesforce do Freshdesk
+        ticket_sync: Zsynchronizuj zgłoszenia z Salesforce
+        freshdesk_to_crm: Z Freshdesk do Salesforce
       add_fields:
         remove: Usuń
+      helptext: >-
+        <h4>Salesforce Plus</h4><p><br/>Aby znaleźć instrukcje i wytyczne
+        dotyczące konfiguracji synchronizacji Salesforce, przejdź do <a
+        href='https://support.freshdesk.com/solution/articles/224042-the-salesforce-app-for-v2'
+        target='_blank'></a> artykułu </p>o aplikacji Salesforce Plus.
+      desc: >-
+        Możesz synchronizować informacje kontaktu i konta pomiędzy systemem CRM
+        Salesforce a Freshdesk.
     freshsales:
       form:
         auth_token: Token uwierzytelniania
@@ -9587,6 +10284,25 @@ pl:
         deal: Pola transakcji
         domain: Domena konta
         account: Pola klientów
+        error: Zweryfikuj swoje ustawienia i spróbuj ponownie
+        deal_settings: >-
+          Konsultanci mogą tworzyć/powiązywać lub odłączać transakcje ze
+          zgłoszenia
+        freshsales_settings: Ustawienia Freshsales
+        auth_token_info: Wpisz swój token uwierzytelniający
+        domain_info: >-
+          Wpisz adres swojej domeny we Freshsales bez prefiksu https. Np.:
+          przykład.freshsales.io
+      helptext: >-
+        <h4>Pomoc w integracji z Freshsales</h4><p><br/> Po włączeniu tego
+        dodatku konsultanci zyskują dostęp do danych kontaktowych z systemu
+        Freshsales bezpośrednio na stronach zgłoszeń i kontaktów w systemie
+        Freshdesk. <br /><br /> Należy pamiętać, że konsultanci mogą wyświetlać
+        tylko te pola, które zostaną wybrane na stronie ustawień, a funkcja
+        wyszukiwania oparta jest na mapowaniu adresów e-mail.
+      desc: >-
+        System Freshdesk umożliwia wyświetlanie informacji kontaktowych z
+        Freshsales.
     slack_v2:
       action_options:
         public: Publiczna
@@ -9600,6 +10316,21 @@ pl:
           Bot.
       form:
         slash_command_token: Token komendy Slash
+        access_private_channel: Umożliw dostęp do prywatnych kanałów
+        access_public_channel: Umożliw dostęp do publicznych kanałów
+        allow_dm_agent: Umożliw wysyłanie wiadomości prywatnych konsultantom
+        allow_slash_command: >-
+          Zezwól na komendy Slash (<a
+          href='https://support.freshdesk.com/support/solutions/articles/206103'
+          target='_blank'> Przekształć wiadomości prywatne ze Slacka w
+          zgłoszenia we Freshdesk </a>)
+        slack_v2_settings: Ustawienia Slack
+      helptext: >-
+        <h4>Integracja ze Slack</h4><br><p>Wybierz listę publicznych kanałów i
+        prywatnych grup, którą chcesz udostępnić w modułach Dispatch'r i
+        Observer Freshdesk. Konfigurując reguły automatyzacji, możesz określić
+        którym kanałem zostaną przekazane wiadomości.</p>
+      desc: Bądź na bieżąco z Freshdesk w Slacku.
     onedrive:
       chooser_title: Wybierz plik z serwisu OneDrive
       desc: Załącz i udostępnij dane/pliki z serwisu OneDrive.
@@ -9609,6 +10340,13 @@ pl:
       error: >-
         W czasie otwierania plików z serwisu OneDrive wystąpił błąd. Spróbuj
         ponownie.
+      deprecated_title: Przestarzała aplikacja OneDrive
+      deprecated_message: >-
+        OneDrive nie jest już obsługiwane w klasycznej wersji Freshdesk. Przejdź
+        na <a
+        href='https://support.freshdesk.com/support/solutions/articles/229464'
+        target='_blank'>wersje Mint</a> i zainstaluj nową aplikację, by móc
+        dalej korzystać z OneDrive.
     gmail_gadget:
       ticket: Zgłoszenie
     outlook_contacts:
@@ -9628,6 +10366,37 @@ pl:
         sync_tag: Ustawienia synchronizacji
         submit: Importuj i aktualizuj
         mail_box_detail: Synchronizacja z
+        sync_tag_info: >-
+          Użycie tego samego znacznika synchronizacji na kilku kontach Outlook
+          umożliwia współdzielenie kontaktów Freshdesk na wszystkich kontach.
+          Jeśli nie chcesz synchronizować kontaktów z programu Outlook, pozostaw
+          to pule puste.
+        import_group: Wybierz foldery do zaimportowania (opcjonalnie)
+        title: Ustawienia synchronizacji kontaktów z programem Outlook
+        account_not_configured: >-
+          <br/>Nie skonfigurowano jeszcze ustawień konta Outlook. Kliknij
+          „Zsynchronizuj nowe konto”, aby skonfigurować nowe konto z programem
+          Outlook.<br/><br/>
+        sync_group_info: >-
+          Aby umożliwić synchronizację kontaktów, na Twoim koncie Outlook
+          utworzona zostanie nowa grupa kontaktów
+          <strong>%{group_name}</strong>.
+      desc: >-
+        Przeprowadzaj okresową synchronizację kontaktów pomiędzy programem
+        Outlook a Freshdesk.
+      sync_settings:
+        outlook_fields: Pola programu Outlook
+        freshdesk_fields: Pola Freshdesk
+      helptext: >-
+        <h4>Pomoc do ustawień synchronizacji kontaktów Outlook</h4><p><br/>
+        Kliknij opcję <b>Synchronizuj nowe konto</b>, aby dodać nowe konto
+        Outlook do synchronizacji. Po zapytaniu ze strony systemu przyznaj
+        dostęp systemowi Freshdesk, aby móc korzystać z kontaktów Outlook (Podaj
+        swoją nazwę użytkownika Outlook oraz hasło, jeśli system tego
+        zażąda).<br/><br/>Jeśli nie chcesz przeprowadzać kolejnej synchronizacji
+        z tym kontem, możesz je usunąć.<br/><br/><b>Uwaga:</b> Zaleca się
+        wykonanie kopii zapasowej swoich kontaktów Outlook przed rozpoczęciem
+        synchronizacji.
     cloud_elements:
       form:
         lead: Pola potencjalnych klientów
@@ -9636,6 +10405,20 @@ pl:
         account: Pola klientów
         field_mapping: Mapowanie pól
         hourly: Godzinowo
+        field_visibility: Widoczność pola
+        sync_info: Synchronizuj kontakty i firmę...
+        source_of_truth: Główne źródło danych
+        sync_frequency: Częstotliwość synchronizacji
+        order: Pola zamówienia
+        two_way: Dwukierunkowa synchronizacja
+        contract: Pola umowy
+        opportunity: Pola możliwości
+        sync_settings: Synchronizacja ustawień
+        instant: 30 minut jednocześnie
+        opportunity_settings: Konsultanci mogą tworzyć/powiązywać lub odłączać okazje ze zgłoszenia
+      mail:
+        no_data_found: Nie znaleziono danych
+        no_event: Brak zdarzeń na dzisiaj
     custom_apps:
       ticket_detail_page: Strona szczegółów zgłoszenia
       preview_helptext: Ta aplikacja niestandardowa pojawi się na pasku bocznym
@@ -9650,12 +10433,87 @@ pl:
       form:
         developer_key: Klucz API pozyskany z konsoli programistów Google.
         client_id: ID klienta OAuth dla twojej domeny
+      desc: Załącz i udostępnij dane/pliki z Dysku Google.
+      helptext: >-
+        <h4>Pomoc w zakresie dodatku Dysk Google</h4><br/><p>Integracja z
+        Dyskiem Google umożliwia konsultantom i użytkownikom przeglądanie plików
+        z ich folderu na Dysku Google i udostępnianie ich podczas przesyłania
+        zgłoszenia lub odpowiadania na nie we Freshdesk. Bezpośredni link do
+        pliku jest udostępniony w zgłoszeniu, więc nie ma konieczność wstawiania
+        załączników i nie ma ryzyka przekroczenia limitu rozmiaru
+        wiadomości.</p><p>Przed skonfigurowaniem integracji przejdź do <a
+        target='_blank' href='https://console.developers.google.com/'><b>strony
+        Google Developers</b></a>.</p><p>1. Wybierz <b>Utwórz swój projekt</b> w
+        zakładce <b>API i Usługi</b>.</p><p>2. W zakładce <b>Włącz API i
+        Usługi</b>, włącz <b>API Dysku Google i API Google Picker</b>.</p><p>3.
+        W zakładce <b>Dane uwierzytelniające</b> utwórz własny identyfikator
+        klienta OAuth oraz klucz API. Podczas generowania identyfikatora klienta
+        OAuth, wprowadź adres URL Freshdesk w zakładce Autoryzowane źródła
+        Javascript. </p><p>4. <p>Na koniec skopiuj i wklej identyfikator klienta
+        oraz klucz API na tę stronę i zapisz zmiany. Twój moduł Google Drive
+        Choose powinien już być gotowy. Możesz sprawdzić go w formularzu Nowe
+        zgłoszenie.</p>
     microsoft_teams:
       auth_btn: Autoryzuj
+      teams_connect_desc: Umożliwia to połączenie Twojego konta Freshdesk z Microsoft Teams.
+      teams_prof_label: Połącz z Microsoft Teams
+      desc: Otrzymuj powiadomienia dla zgłoszeń Freshdesk i aktualizacji notatek.
+      reauth_btn: Ponownie autoryzuj
     slack_v3:
       slack_prof_label: Połącz ze Slack
       slack_connect_desc: 'Skonfiguruj swoje konto, aby móc wysyłać zgłoszenia ze Slack'
       slack_auth_btn: Autoryzacja Slack
+      slack_reauth_btn: Ponowna autoryzacja Slack
+    ticket_summary:
+      desc: >-
+        W trakcie rozwiązywania zgłoszeń twórz i udostępniaj podsumowania
+        problemów napotkanych przez klientów.
+    shared_ownership:
+      desc: >-
+        Zwiększ wgląd konsultantów w zgłoszenia wymagające pomocy od
+        wyspecjalizowanych zespołów, dzięki możliwości dzielenia się
+        zgłoszeniami pomiędzy konsultantami.
+    link_ticket:
+      desc: >-
+        Zarządzaj i monitoruj powiązane zgłoszenia, aby mieć pewność, że zmiany
+        są dostarczane w szybki, spójny i skuteczny sposób.
+    parent_child:
+      desc: >-
+        Funkcja zgłoszeń nadrzędnych i podrzędnych umożliwia konsultantom
+        szybsze i rozwiązywanie problemów poprzez rozbicie elementów działań na
+        zgłoszenia podrzędne, nad którymi w tym samym czasie mogą pracować
+        różne, niezależne zespoły.
+    onedrive_mint:
+      form:
+        application_id: identyfikator aplikacji OneDrive dla Twojego konta Freshdesk
+      desc: Załącz i udostępnij dane/pliki z OneDrive.
+    google_hangout_chat:
+      desc: Otrzymuj powiadomienia dla zgłoszeń Freshdesk i aktualizacji notatek.
+    office365:
+      desc: >-
+        Aplikacja Office 365 dla Freshdesk umożliwia wykonywanie działań na
+        zgłoszeniu wewnątrz programu Outlook, w tym zmianę priorytetu,
+        przydzielanie konsultantów, zmianę statusu itp.
+      helptext: <h4>Office 365</h4>
+    fullcontact:
+      form:
+        api_key: Klucz API FullContact
+      desc: >-
+        Zautomatyzuj wzbogacanie danych kontaktowych dla nowych kontaktów i
+        aktualizuj dane kontaktowe na żądanie
+      helptext: >-
+        <h4>Ustawienia firm</h4><br/>Dane firmowe pobierane są z FullContact, a
+        następnie aktualizowane we Freshdesk po utworzeniu firmy lub zmiany
+        domeny firmowej w centrum pomocy. Możesz pobrać do 6 pól z FullContact
+        do aktualizowania we Freshdesk.<br/><br/><h4><br/><br/><h4>Ustawienia
+        kontaktów</h4><br/>Dane kontaktów pobierane są z FullContakt, a
+        następnie aktualizowane we Freshdesk po utworzeniu kontaktu w Twoim
+        centrum pomocy. Obecne dane we Freshdesk nie zostaną nadpisane. Możesz
+        wybrać maksymalnie pięć profili społecznościowych.<br/><br/>Aby zapisać
+        dane z FullContact, tworzone jest domyślne mapowanie we Freshdesk. Dla
+        lokalizacji i profili społecznościowych należy utworzyć nowe kolumny
+        niestandardowe. Administrator w razie potrzeby może zmieniać lub usuwać
+        przypisanie elementu danych z FullContact w dowolnym momencie.
   widgets:
     contact_widget:
       description: Wyświetl kontakt lub opcję dodawania kontaktu do aplikacji Capsule
@@ -9670,6 +10528,7 @@ pl:
         no_results: 'Brak wyników dla '
         feedback_widgets_help_articles_v1: lub Poszukaj w artykułach pomocy
         problems_with_fields: 'Pojawiły się problemy w następujących polach:'
+        prohibited_error: 1 błąd uniemożliwił zapisanie tego zgłoszenia
   reorder: Uporządkuj
   reports:
     no_data: Brak danych do wyświetlenia!
@@ -9746,6 +10605,7 @@ pl:
       billable_vs_non_billable: Płatne / niepłatne
       filter_by_title: Filtrowane wg
       time_period: Okres
+      pick_columns: Wybierz kolumny
     summary_report:
       back_to_reports: Powrót do raportów
       show_report: Wyświetl raport
@@ -9803,6 +10663,10 @@ pl:
       speed_champion: Mistrz prędkości
       customer_champion: Mistrz klientów
       valuable_player: Najlepszy zawodnik
+      agent_highest_points: Konsultanci z największą łączną ilością punktów
+      agents_fastest_resolve: 'Konsultanci, którzy szybciej rozwiązują zgłoszenia'
+      sample_name: Bruce Banner
+      agents_cs_highest: Konsultanci z największą ilością punktów w ankietach satysfakcji klienta
     survey_reports:
       main:
         all: Wszystko
@@ -9833,6 +10697,8 @@ pl:
         survey_name: Tytuł
         total_responses_v2: Razem
         loading_msg: Generowanie raportów...
+        loading_responses: Wczytywanie odpowiedzi
+        deleted_list: USUNIĘTE ANKIETY
       index:
         agent_list_loading: Pobieranie listy konsultantów
       feedbacks:
@@ -10411,6 +11277,23 @@ pl:
         urządzeń.
     apply_mint: Zastosuj
     classic: Klasyczna
+    mint: Mint
+    mint_preview: Podgląd nowego wyglądu
+    mint_info_portal_setting: 'Twój portal dla klientów zyskał teraz nowy, odświeżający wygląd.'
+    confirm: >-
+      Czy na pewno chcesz zastosować nowy wygląd? Wszystkie Twoje
+      spersonalizowane arkusze stylów CSS zostaną utracone. 
+
+
+      Wskazówka: Utwórz kopię swoich spersonalizowanych arkuszy CSS i dodaj je
+      po zastosowaniu nowego wyglądu.
+    mint_info_portal_settings: 'Twoje portale dla klientów zyskały teraz nowy, odświeżający wyglą.'
+    mint_info_portals: >-
+      Twoje portale dla klientów zyskały teraz nowy, odświeżający wygląd. Zobacz
+      podgląd, klikając poniższe odnośniki.
+    mint_info_portal: >-
+      Twój portal dla klientów zyskał teraz nowy, odświeżający wygląd. Zobacz
+      podgląd, klikając poniższy odnośnik.
   any_time: Kiedykolwiek
   five_minutes: W ciągu 5 minut
   fifteen_minutes: W ciągu 15 minut
@@ -10511,6 +11394,10 @@ pl:
       unresolved_tickets: Nierozwiązane zgłoszenia
       load_analysis:
         title: Analiza obciążenia
+      busiest_day_received_tickets: Większość zgłoszeń otrzymano w
+      total_unresolved_tickets: Łącznie nierozwiązonych zgłoszeń
+      busiest_day_resolved_tickets: Większość zgłoszeń rozwiązano w
+      average_unresolved_tickets: Średnia liczba nierozwiązanych zgłoszeń
     glance:
       title: Szybki przegląd centrum pomocy
       index_title: Centrum pomocy<br/>Więcej informacji
@@ -10555,6 +11442,16 @@ pl:
         product: Produkt
         group: Grupa
       customize_link: Dostosuj
+      customize: Dostosuj spostrzeżenia
+      tooltip: Dowiedz się więcej o spostrzeżeniach
+      todays_insights: Dzisiejsze spostrzeżenia
+      customize_helptext: >-
+        Spostrzeżenia lub odchylenia wskazują ciekawe aktywności w Twoim centrum
+        pomocy. Wartość progowa wskazuje, jak duże odstępstwo od określonych
+        metryk złoży się na odchylenie.
+      customize_helptext2: >-
+        Dostosuj spostrzeżenia, ustalając wartości progowe i wybierając filtry
+        dla każdej metryki.
     priority: Priorytet
     end_date: Data zakończenia
     saved_report:
@@ -10568,6 +11465,14 @@ pl:
       cancel: Anuluj
       delete_dialog_header: Usuń raport
       edit_dialog_header: Edytuj raport
+      error_title_unavailable: Taki tytuł już istnieje
+      delete_cnfm_message: Czy na pewno chcesz usunąć ten zapisany raport?
+      dialog_sub_header: Ten raport będzie widoczny tylko dla ciebie
+      save_header: Zapisz raport
+      error_missing_title: Wszystkie pola są wymagane
+      read_more: Jak zaplanować raport?
+      title: Tytuł raportu
+      dialog_header: Zapisz i zaplanuj raport
     loading_text: Generowanie raportu...
     hours: Godziny
     today: Dzisiaj
@@ -10575,6 +11480,8 @@ pl:
     export:
       export_report_pdf: Wyeksportuj jako PDF
       export_report_csv: Wyeksportuj jako CSV
+      email_report_csv: E-mail do CSV
+      email_report_pdf: E-mail do PDF
     ticket_schedule:
       new:
         description: Opis
@@ -10587,20 +11494,59 @@ pl:
         select_all: Zaznacz wszystko
         helpnote:
           api_info1: W interfejsie API znajduje się odnośnik do najnowszego eksportu.
+          api_info2: >-
+            Eksport zawierający wybrane pola zgłoszenia, kontaktu i firmy będzie
+            generowany okresowo.
         one_time_export_label: >-
           Eksportuj treść zgłoszenia od początku miesiąca po rozpoczęciu
           harmonogramu
         frequency: Zaplanuj
+        fields_to_export: Wybierz pola do eksportowania
+        delivery: Otrzymaj przez
+        max_field: (do 150 pól)
+        filter: Wybierz filtry
+        title: Nazwa harmonogramu <span class='required_star'>*</span>
+        api: API
       index:
         confirm: Potwierdź
         cancel: Anuluj
         delete_title: Usuń harmonogram
         delete_text: Czy na pewno chcesz usunąć ten harmonogram?
+        ticket_properties_title: Właściwości eksportu zgłoszeń
+        ticket_properties_note: >-
+          Twoje konto wyczerpało całkowitą liczbę harmonogramów, które można
+          utworzyć
       create_new: Utwórz
       schedule_export: Zaplanuj eksport
       schedule: Zaplanuj
       all_reports: Wszystkie raporty
       new_schedule: Nowy Harmonogram
+      helpnote:
+        help_info_2: >-
+          Jako administrator konta możesz chcieć uzyskać listę działać
+          wykonanych na twoich zgłoszeniach, aby stworzyć niestandardowe
+          statystyki. Po włączeniu tej opcji, możesz uzyskać dostęp do pliku
+          JSON ze zdarzeniami, które wystąpiły w każdym zgłoszeniu z
+          poprzedniego dnia (w tym ze zdarzeniami wykonami przez automatyzacje).
+          Możesz utworzyć tylko jeden plan dziennie dla danego konta. <a
+          href='https://support.freshdesk.com/support/solutions/articles/226460-export-ticket-activities/'
+          target='_blank'>Dowiedz się więcej.</a>
+        help_info_1: >-
+          Możesz zaplanować i eksportować właściwości zgłoszeń wraz ze
+          skojarzonymi z nimi polami kontaktów i firm z Freshdesk. Eksportowane
+          dane można następnie wykorzystać do tworzenia niestandardowych
+          raportów. Przykładowo, każdego tygodnia możesz eksportować zgłoszenia
+          obejmujące czas pierwszej odpowiedzi, czas rozwiązania oraz
+          przydzielonych konsultantów, by dowiedzieć się, jak szybko reaguje
+          Twój zespół. Dla jednego konta można utworzyć maksymalnie pięć
+          harmonogramów. <a
+          href='https://support.freshdesk.com/support/solutions/articles/226461-export-ticket-properties/'
+          target='_blank'>Dowiedz się więcej</a> o tworzeniu harmonogramów do
+          eksportowania właściwości zgłoszeń.
+        help_title_2: Eksportuj aktywność w zgłoszeniach
+        help_title_1: Właściwości eksportu zgłoszeń
+      no_schedule: Nie utworzono harmonogramów
+      schedule_show_message: Nie możesz edytować harmonogramu po jego utworzeniu
     chart_title:
       unresolved: Nierozwiązane
       agent_and_customer_response: Liczba odpowiedzi konsultanta i klienta w
@@ -10782,6 +11728,12 @@ pl:
     timespent_export:
       button_export: Eksportuj
       export_csv: Importuj plik CSV
+      dialog_sub_header: Możemy eksportować tylko 25 kolumn danych
+      dialog_header: Eksportuj raporty
+      aggregate_title: Uogólnij informacje
+      ticket_title: Informacje dotyczące zgłoszenia
+      ticket_dropdown: 'Uwzględnij czas spędzony na:'
+      ticket_info: Czas spędzony na zgłoszeniu z podziałem na status
     abbr_qtr:
       - sty–mar
       - kwi–cze
@@ -10834,6 +11786,10 @@ pl:
       resolved_tickets: Rozwiązane zgłoszenia
       unresolved_tickets: Nierozwiązane zgłoszenia
       received_tickets: Zgłoszenia otrzymane
+      schedule_an_export: Zaplanuj eksport
+      export_question: Chcesz tworzyć niestandardowe raporty?
+      view_full_report: Zapoznaj się z danymi
+      recently_asked_questions: OSTATNIO ZADANE PYTANIA
     view_all_compliant_tickets: Wyświetl wszystkie zgodne zgłoszenia
     from: Od
     something_went_wrong_msg: Coś poszło nie tak. Spróbuj ponownie.
@@ -10856,7 +11812,11 @@ pl:
       learn_more: Dowiedz się więcej
       helpnote:
         api_info1: W interfejsie API znajduje się odnośnik do najnowszego eksportu.
+        api_info2: >-
+          Eksport będzie obejmował rejestr wszystkich zmian związanych ze
+          zgłoszeniem z poprzedniego dnia.
       edit: Edytuj harmonogram
+      title: Eksportuj aktywność w zgłoszeniach
     filter_limit_exceeded: 'Możesz wybrać maks. %{count} filtrów'
     export_tickets_success_msg: Twoje dane zgłoszenia zostaną wkrótce wysłane na e-mail.
     compliant_tickets: Zgodne zgłoszenia
@@ -10880,6 +11840,28 @@ pl:
     summary: Podsumowanie
     show: 'Pokaż:'
     filtered_by: 'Przefiltrowane wg:'
+    export_tickets_error_msg: >-
+      Osiągnięto maksymalną liczbę dozwolonych jednocześnie żądań eksportu.
+      Spróbuj ponownie za jakiś czas.
+    deprecated_header: Ten raport nie będzie już więcej dostępny po 30 marca 2016 r.
+    previous_week: Poprzedni tydzień
+    average_time: ' Średni czas'
+    chat_summary:
+      title: Podsumowanie czatu
+    previous_month: Poprzedni miesiąc
+    jump_to_a_saved_report: Przejdź do zapisanego raportu
+    timespent:
+      title: Cykl życia zgłoszenia
+    this_year: Obecny rok
+    timesheet_reports:
+      title: Podsumowanie arkusza czasu pracy
+    satisfaction_survey:
+      title: Ankieta satysfakcji
+    resolved_tickets_split_by: 'Łączny czas spędzony na rozwiązanych zgłoszeniach podzielony według '
+    view_old_report: Zobacz stary raport
+    in_each_group: w każdej grupie
+    total_time: ' Łączny czas'
+    view_classic_report: Zobacz klasyczny raport
   adv_reports:
     at_a_glance: Szybki przegląd
     select_an_option: Wybierz opcję
@@ -11089,6 +12071,9 @@ pl:
           pierwszego kontaktu
     tickets_received: Otrzymane zgłoszenia
     report_export_success: Raporty zostaną niebawem wysłane na Twój adres e-mail.
+    jump_to_saved: Przejdź do zapisanego raportu
+    agent_comparison_report: Raport porównawczy konsultantów
+    group_comparison_report: Raport porównawczy grup
   date_invalid: Nieprawidłowa data
   cti:
     create:
@@ -11565,6 +12550,36 @@ pl:
           delete: Usuń
           manage_caller_id: 'Zarządzaj identyfikatorem dzwoniącego '
           add_new: Dodaj nowy
+          no_number_added: Nie dodano identyfikatora dzwoniącego
+          call_id_mask: Zamaskuj ten numer
+        sidebar_content_v2: >-
+          Kanał telefoniczny umożliwia wykonywanie i odbieranie połączeń
+          telefonicznych w przeglądarce, na telefonie komórkowym lub za pomocą
+          kanału telefonicznego w aplikacjach mobilnych Freshdesk. Jest on
+          ściśle zintegrowany z systemem obsługi zgłoszeń w systemie Freshdesk.
+          Tak więc możliwe jest śledzenie połączeń oraz ich nagrywanie i
+          konwertowanie na zgłoszenia w razie potrzeby. <br/><br/>
+          <b>Konfiguracja telefonu</b></br>Aby rozpocząć korzystanie z telefonu,
+          najpierw trzeba włączyć i zakupić numer pomocy technicznej. Dostępne
+          są lokalne numery z <a
+          href='https://support.freshdesk.com/support/solutions/articles/169322'
+          target='_blank'>podanych tutaj krajów</a>, które umożliwiają
+          wykonywanie i odbieranie połączeń z dowolnego miejsca na świecie.
+          Jeżeli posiadasz klientów w USA, Wielkiej Brytanii lub Kanadzie,
+          możesz również kupić bezpłatne numery pomocy technicznej.
+          <br/><br/><b>Świadczenie pełnej obsługi telefonicznej</b><br/>Dzięki
+          naszym kanałom telefonicznym, możesz<br/><ul><li> Przekierowywać
+          połączenia do dowolnych konsultantów w każdym
+          miejscu</li><li>Monitorować połączenia, przekazywać je w razie
+          potrzeby, dodawać innych konsultantów do trwających rozmów i znacznie
+          więcej*</li></ul><br/><p>*Skontaktuj się z obsługą na <a
+          href='mailto:support@freshdesk.com'>support@freshdesk.com</a>, aby
+          włączyć zaawansowane funkcje na swoim koncie. Obejmuje to
+          monitorowanie połączeń, przekazywanie połączeń, rozmowy konferencyjne,
+          maskowanie połączeń i statystyki rozmów.</p><br/>
+        buy_phone_numbers: Kup numery telefonu
+        tour_link: Pomóż mi skonfigurować kanał telefoniczny
+        buy_phone_credits: Doładuj konto telefoniczne
       invalid_attachment: >-
         Załącznik ’%{name}’ nie zawiera prawidłowego pliku audio / jest większy
         niż 5MB.
@@ -11640,10 +12655,29 @@ pl:
         button_text: Wystąp o telefon
         video_title: Obejrzyj film demonstrujący możliwości kanału telefonicznego
         trial_or: LUB
+        compare_trial_and_full: Porównaj pełną wersję z bezpłatną wersją próbną
+        activation_disclaimer: Możesz używać wszystkich funkcji przez określony czas
+        trial_button_text: Włącz bezpłatną wersję próbną
+        trial_version_disclaimer: Możesz bezpłatnie używać ograniczonych funkcji przez 15 dni
       trial:
         numbers:
           search:
             buy_button: Tak
+            after_activation_request: >-
+              Wystąpiłeś o aktywację kanału telefonicznego <br> Skontaktujemy
+              się z Tobą ponownie w ciągu 2 dni roboczych.
+            buy_confirmation: Czy na pewno chcesz wybrać ten numer?
+            can_use_after_activation: >-
+              Możesz w dalszym ciągu korzystać z tego numeru po aktywowaniu
+              kanału telefonicznego.
+        request_activation_msg: >-
+          Możesz wybrać tylko jeden numer z ograniczonej listy krajów podczas
+          okresu próbnego.<br> Po aktywowaniu pełnej wersji możesz zakupić wiele
+          numerów z 41 krajów.
+        activate_btn_text: Wystąp o aktywację
+        requested_activation: >-
+          Otrzymaliśmy Twoją prośbę o aktywację<br>Jest ona w trakcie
+          przetwarzania
   livechat:
     feature_request:
       title: Witamy w czacie na żywo
@@ -12113,6 +13147,7 @@ pl:
       forward: Przekaż
       add_note: Dodaj notatkę
       scenario: Scenariusze
+      jump_to_views: Przejdź do widoków
     ticket_list:
       title: Lista zgłoszeń
       move_cursor: Przesuń kursor do następnego / poprzedniego zgłoszenia
@@ -12576,6 +13611,29 @@ pl:
     freshdesk_team: Zespół Freshdesk
     hi: 'Witaj,'
     thanks: 'Dziękujemy,'
+    security_notification:
+      update_agent_billing_plain: >-
+        Aby ta zmiana była widoczna w Twojej płatności, uzupełnij dane
+        konsultanta na stronie płatności.
+      update_agent_billing: >-
+        Aby ta zmiana była widoczna w Twojej płatności, <a
+        href="%{billing_url}">uzupełnij</a> dane konsultanta na stronie
+        płatności.
+      unauthorized_change_contact: >-
+        Jeśli ta zmiana została dokonana bez Twojego upoważnienia, natychmiast
+        skontaktuj się z administratorem swojego konta.
+      configure_change: >-
+        Możesz skonfigurować ustawienia powiadomień w zakładce Administrator ->
+        Bezpieczeństwo.
+      trusted_ip_disabled: Biała lista adresów IP została wyłączona dla Twojego konta.
+      unauthorized_change_info: >-
+        Jeśli tej zmiany dokonano bez Twojego upoważnienia, wyślij nam
+        odpowiedź.
+      configure_change_html: >-
+        Możesz skonfigurować te ustawienia powiadomień <a
+        href="%{security_url}">klikając tutaj </a>lub przechodząc do zakładki
+        Administrator -> Bezpieczeństwo na swoim koncie
+    freshdesk_customer_support: Obsługa klienta Freshdesk
   call:
     ticket:
       voicemail_title: 'Wiadomość głosowa od %{customer}'
@@ -12626,6 +13684,7 @@ pl:
     reauthorize: Ponowna autoryzacja
     install_action:
       success: Dodatek został włączony!
+      app_setup_error: Podczas instalacji wystąpił błąd.
     go_to_dev_portal: Przejdź do portalu programowania
     developer_shortcuts: Skróty autora
     ver: 'Wersja:'
@@ -12688,12 +13747,58 @@ pl:
       prywatności możesz uzyskać, kontaktując się z developerem lub przechodząc
       na jego witrynę internetową.
     installing: Instalacja
+    custom_app_info: >-
+      Czy wiesz, że istnieje lepszy sposób na zapisywanie, zarządzanie i
+      udostępnianie aplikacji całej społeczności Freshdesk?
+    app_description: >-
+      Aplikacje umożliwiają przeprowadzenie integracji z innymi aplikacjami,
+      jeszcze bardziej usprawniając korzystanie z Freshdesk. Umożliwiają ci
+      także dostosowanie i personalizację portalu Freshdesk.
+    custom_app_policy: >-
+      „Aplikacja niestandardowa” jest aplikacją opracowaną specjalnie dla
+      klienta Freshdesk i nie znajdującą się w Galerii aplikacji. Aplikacje
+      niestandardowe mogą być tworzone przez Freshdesk lub każdego innego
+      developera, który może, ale nie musi być zarejestrowany jako developer we
+      Freshdesk. Proszę wziąć pod uwagę, że aplikacje niestandardowe są
+      udostępniane „TAK JAK SĄ”, bez żadnych gwarancji lub innych warunków,
+      zarówno wyraźnych, jak i dorozumianych, wliczając w to, ale nie
+      ograniczając się do pośrednich gwarancji, zdolności do handlu, tytułów,
+      przeznaczenia i nienaruszalności. Instalując aplikację niestandardową
+      oznajmiasz, że rozumiesz iż Freshdesk nie odpowiada za to, że aplikacja
+      niestandardowa będzie działała bez przerw, na czas, bezpiecznie, bez
+      błędów i wirusów lub innego, szkodliwego oprogramowania. Freshdesk nie
+      może zostać pociągnięte przez Ciebie lub inną osobę za bezpośrednie,
+      niebezpośrednie, przypadkowe, specjalne, odwetowe lub sekwencyjne szkody
+      podczas użytkowania aplikacji niestandardowej.
+    reauthorize_oauth_app: >-
+      Jeśli aplikacja przestanie działać, spróbuj ponownie przydzielić jej
+      dostęp do informacji firm zewnętrznych.
+    backend_log: Rejestry bezserwerowe
+    reauthorize_header: Autoryzuj ponownie aplikację
+    helpnote_custom_apps_html: >-
+      Nie możesz znaleźć aplikacji, która spełni Twoje wymagania? Dzięki
+      Aplikacjom niestandardowym (wcześniej zwanymi wtyczkami Freshplug), możesz
+      wprowadzić informacje kontekstowe z dowolnego rozwiązania od firm
+      zewnętrznych, starszych systemów lub baz danych. Z tych aplikacji
+      niestandardowych można także korzystać do dokonywania zmian wizualnych w
+      Twoim centrum pomocy i zwiększenia produktywności. Kliknij <a
+      href='https://support.freshdesk.com/support/solutions/articles/121846'
+      target='_blank'>tutaj</a>, aby dowiedzieć się więcej!
   requester_widget:
     company:
       name: Nazwa firmy
+    helpcard:
+      info: >-
+        Wybierz pola, które chcesz wyświetlić w sekcji informacji o zgłaszającym
+        na stronie zgłoszenia poprzez widżet zgłaszającego. W ten sposób Twój
+        zespół może aktualizować dane zgłaszającego bezpośrednio ze strony
+        zgłoszeń i śledź dane klientów w trakcie rozwiązywania zgłoszenia. <a
+        href="https://support.freshdesk.com/support/solutions/articles/37586-driving-additional-context-with-requestor-info"
+        target="_blank">Dowiedz się więcej</a>
+      title: Dostosowywanie widżetu zgłaszającego
   archived_on: Zarchiwizowano dnia
   child: Zgłoszenie podrzędne
-  onedrive_attach_from_text: Załącz z usługi <b>Onedrive</b>
+  onedrive_attach_from_text: Dołącz z<b>OneDrive (przestarzałe)</b>
   before_one: Przed upływem 1 godziny
   placeholder:
     ticket_due_by_time: Data realizacji
@@ -12719,17 +13824,63 @@ pl:
       link_account_request_content:
         link_errors:
           validation_error: To pole jest obowiązkowe
+          pod_error: >-
+            Wygląda na to, że Twoje dwa konta dostępne są w różnych centrach
+            danych. Utwórz nowe konto Freshcaller, aby powiązać je ze swoim
+            kontem Freshdesk.
+          access_error: >-
+            Musisz być administratorem we Freshcaller i Freshdesk, aby powiązać
+            swoje konta.
+          api_error: >-
+            To konto Freshcaller nie istnieje. Podaj poprawny adres URL lub
+            utwórz nowe konto Freshcaller.
+          authentication_error: Podano nieprawidłowy e-mail lub hasło.
         cancel: Anuluj
         email: E-mail
         continue: Kontynuuj
         password: Hasło
         connect_existing_account: Połącz istniejące konto
         account_url: Adres URL konta Freshcaller
+        freshcaller_domain: .freshcaller.com
+        processing: Powiązywanie konta Freshcaller
+        settings_text: >-
+          Podaj dane konta Freshcaller, aby powiązać je z twoim obecnym kontem
+          Freshdesk
       title_text: Numer telefonu
       sidebar_title: Numer telefonu
       feature_request_content:
         create_new_account: Utwórz nowe konto
+        processing: Tworzenie konta Freshcaller
       freshcaller_subtext: 'Kupuj numery, konfiguruj kolejki połączeń, IVR, itp.'
+      no_access_text: Nie masz dostępu do Freshcaller
+      freshcaller_signup_text: >-
+        Freshdesk zapewnia zintegrowany kanał telefoniczny za pośrednictwem
+        Freshcaller. Włącz swój kanał telefoniczny, tworząc nowe konto
+        Freshcaller z bezpłatnym 14-dniowym okresem próbnym.
+      freshcaller_enable_subtext: Możesz włączyć dostęp ze strony ustawień konsultantów.
+      manage_settings_text: Zarządzaj ustawieniami we Freshcaller
+      sidebar_content: >-
+        Kanał telefoniczny Freshdesk obsługiwany jest przez Freshcaller. Możesz
+        wykonywać/odbierać połączenia bezpośrednio z poziomu Freshdesk oraz
+        nagrywać wszystkie połączenia, a także przekształcać połączenia i
+        wiadomości głosowe w zgłoszenia.<br/><br/> <b> Konfiguracja centrum
+        obsługi telefonicznej </b> <br/>Możesz zakupić środki telefoniczne ze
+        swojego konta administratora Freshcaller. Możesz zakupić numery telefonu
+        z <a
+        href='https://support.freshcaller.com/support/solutions/articles/229257'
+        target='_blank'>ponad 40 krajów</a>, wykorzystując środki telefoniczne.
+        Możesz zakupić bezpłatne numery telefonów w Stanach Zjednoczonych,
+        Wielkiej Brytanii, Kanadzie i Australii. Nie musisz kupować sprzętu ani
+        instalować żadnego oprogramowania. Potrzebujesz jedynie przeglądarki
+        internetowej oraz stabilnego połączenia z Internetem. <br/> <br/>
+        <b>Możliwości centrum obsługi telefonicznej </b> <br/> Możesz odbierać
+        połączenia z poziomu przeglądarki, przekierowywać połączenia na telefon
+        komórkowy lub przekazywać je dowolnym konsultantom, korzystać z IVR do
+        odbierania połączeń, monitorować połączenia, rozdzielać je w miarę
+        potrzeby, ustalać reguły godzin pracy i znacznie więcej.<br/> <br/> <a
+        href='https://www.freshworks.com/freshcaller-cloud-pbx/call-center-features/'
+        target='_blank'>Dowiedz się więcej</a> o Freshcaller – zintegrowanym
+        rozwiązaniu telefonicznym dla Freshdesk.
   ml:
     submit: Wyślij
   requester_widget_edit: Edytuj
@@ -12798,6 +13949,11 @@ pl:
         emails_invalid: Co najmniej jeden z twoich adresów e-mail jest nieprawidłowy.
         send_invite: Wyślij zaproszenie
         emails_placeholder: 'bruce@just.ly, diana@just.ly, clark@just.ly'
+        message: >-
+          Dodaj współpracowników do swojego konta i wspólnie poznawajcie
+          Freshdesk
+        forward_link: Zobacz prospekt
+        title: Z kim będziesz pracować?
       channels_frame:
         forums_channel: Fora
         email_channel: E-mail
@@ -12806,10 +13962,28 @@ pl:
         chat_channel: Czat na żywo
         title: Jak rozmawiasz ze swoimi klientami dzisiaj?
         forward_link: Zaproś swój zespół
+        message: >-
+          Poza e-mailem, Freshdesk umożliwia obsługę klientów za pośrednictwem
+          telefonu, czatu, mediów społecznościowych i nie tylko. Kliknij kanały,
+          które chcesz wypróbować, aby włączyć je na swoim koncie.
+        message2: 'Nie martw się, później także możesz je dodać lub usunąć.'
+        default_channel: Dodano domyślnie
       overview_frame:
         forward_link: Zaczynajmy
+        title: Wprowadzenie do Freshdesk
+        message: >-
+          Przed rozpoczęciem pracy zobacz 2-minutowy prospekt wideo z omówieniem
+          Twojego centrum pomocy.
       welcome_frame:
         title: Witaj w systemie Freshdesk
+        forward_link: Wybierz kanały obsługi
+        message2: >-
+          Podczas okresu próbnego przekonasz się, jak łatwo jest korzystać z
+          Freshdesk do komunikowania się z klientami. Zacznijmy od podstaw.
+        message: >-
+          Jestem Grish, dyrektor wykonawczy Freshdesk. Chciałbym Cię osobiście
+          przywitać w naszym produkcie i poinformować Cię, że nasz zespół służy
+          dla Ciebie pomocą.
     account_verification_message:
       modal_invalid_email_error: Wpisz prawidłowy adres e-mail.
       modal_send_button: Wyślij wiadomość aktywacyjną
@@ -12818,6 +13992,19 @@ pl:
       modal_title: Zarejestrowano przy użyciu niewłaściwego adresu e-mail?
       resend_message: Wyślij wiadomość aktywacyjną ponownie
       change_email: zmień swój adres e-mail
+      modal_sending_button: Wysyłanie wiadomości aktywacyjnej
+      helpnote1: Nie możesz jej znaleźć?
+      modal_user_exists_error: E-mail jest już skojarzony z konsultantem.
+      modal_helpnote1: >-
+        Poniżej wpisz prawidłowy adres e-mail, na który zostanie wysłana
+        wiadomość z linkiem aktywacyjnym.
+      non_admin_message: >-
+        Twoje konto nie zostało jeszcze aktywowane, skontaktuj się z
+        administratorem konta.
+    falcon_invite:
+      maybe_later: MOŻE PÓŹNIEJ
+      try_new_look: WYPRÓBUJ
+      greetings: Poznaj Freshdesk Mint
   helpdesk_search:
     priority: Priorytet
     requester: zgłaszającego
@@ -12843,6 +14030,13 @@ pl:
     preferences: Właściwości
     notification_preferences: Preferencje powiadomień
     enable_desktop_notifications_help: Kliknij „Zezwól“ po wyświetleniu monitu
+    muted: Wyciszono
+    toggle_web_notifications: Przełącz powiadomienia w przeglądarce
+    enable_desktop_notifications: Włącz powiadomienia na pulpicie
+    notify_when: 'Powiadamiaj, gdy...'
+    desktop_notifications_enabled_flash: Powiadomienia na pulpicie są włączone!
+    desktop_notifications_disabled: Wyłączono powiadomienia na pulpicie
+    toggle_mobile_notifications: Przełącz powiadomienia na urządzeniu mobilnym
   resolution_reminder_sla: Przypomnienie o SLA dla czasu rozwiązania
   ticket_templates:
     properties: Właściwości
@@ -12881,6 +14075,43 @@ pl:
       admin_apikey: 'Klucz API:'
       title_text: Freshchat
       portal_url: 'URL portalu:'
+      widget_token_placeholder: 'Np.: d0bb2ebf-2746-481a-ll64-0bdfb91cb2de'
+      sign_up_btn: Zarejestruj się już teraz
+      copy_from_freshchat: Skopiuj z Freshchat
+      enable_chat_in_portal: Włącz czat w swoim portalu obsługi
+      sidebar_content:
+        para2:
+          header: >-
+            Korzystaj z komunikatora wewnątrz Freshdesk, by ujednolicić swój
+            przepływ wiadomości:
+          point2: >-
+            Dowiedz się, kim są Twoi klienci – poznaj ich profil, ścieżkę
+            nawigacji i informacje o poprzednich zgłoszeniach, by udzielać im
+            odpowiedzi z zachowaniem kontekstu.
+          point1: Przydzielaj rozmowy do grupy lub członków zespołu
+          point3: >-
+            Rozwiązuj rozmowy i wybieraj pomiędzy przekształcaniem ich w nowe
+            zgłoszenia lub dołączaniem do obecnych zgłoszeń.
+        para1: >-
+          Zintegrowany z Freshdesk czat obsługiwany przez Freshchat umożliwia
+          prowadzenie rozmów z klientami poprzez witrynę, urządzenia mobilne,
+          portal obsługi lub w aplikacji. Możesz także wysyłać proaktywne
+          wiadomości do odwiedzających i użytkowników i motywować ich do
+          dokonywania zakupów, rejestracji lub dzielenia się opinią na temat
+          Twojego produktu.
+      enable_chat: Powiąż Freshchat ze swoim kontem Freshdesk
+      sign_up_text: >-
+        Rozpocznij rozmowę z klientami na ich witrynie, w portalu lub aplikacji
+        mobilnej.
+      enable_chat_in_portal_info: 'Ułatw swoim klientom rozmowę, gdy trafią do Twojego portalu obsługi.'
+      app_id_placeholder: 'Np.: 09901344-2b17-4d55-b412-2fd41811a83f'
+      did_you_know_info: >-
+        Aby przekształcić rozmowy z Freshchat w zgłoszenia, przejdź do tej <a
+        href='%{url}' target='_blank'>strony</a>, skopiuj i wklej informacje
+        wymienione poniżej. Jeśli potrzebujesz pomocy, zapoznaj się z <a
+        href='%{article_url}' target='_blank'>tym artykułem</a>.
+      did_you_know: Przekształć rozmowy na Freshchat w zgłoszenia
+      widget_token: Token widżetu
   more_companies: '%{count} więcej'
   ecommerce_reauth: >-
     Twoje konto Ecommerce jest niedostępne. Wydaje się, że wygasł token
@@ -12915,16 +14146,28 @@ pl:
       regards: 'Pozdrawiamy,'
       account: 'Klient: '
       reason: Powód
+      freshdesk_support: Obsługa Freshdesk.
+      execution_id: Identyfikator realizacji
   undo_toggle_error: 'Przepraszamy, coś poszło nie tak!'
   enter_values: Wprowadź jedną wartość lub więcej
   helpcard:
     title: Unikatowy identyfikator zewnętrzny
+    info: >-
+      Zaimportuj unikalne identyfikatory swoich klientów i łatwo zidentyfikuj
+      ich rozmowy na Freshdesk. <br><a
+      href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id"
+      target="_blank">Pomóż mi skonfigurować zewnętrzny identyfikator</a>
   admin_upgrade:
     enable_mint_title: Pozwól konsultantom wypróbować nowszą i szybszą wersję środowiska Mint
     enable_mint_error: >-
       Środowisko Mint zostało już włączone dla wszystkich konsultantów. Odśwież,
       aby zobaczyć najnowsze ustawienia.
     enable_mint_success: Hura! Środowisko Mint zostało włączone dla wszystkich konsultantów.
+    enable_mint_all: Włącz Mint dla konsultantów
+    enable_mint_info: Konsultanci w dowolnym momencie mogą wrócić do starej wersji Freshdesk
+    enable_mint_success_info: >-
+      Aby całkowicie wyłączyć starą wersje Freshdesk, przejdź do zakładki
+      „Administrator” w Mint
   customize_domain:
     email:
       cheers: 'Pozdrawiamy,'
@@ -12945,3 +14188,79 @@ pl:
       Zauważyliśmy, że nie wiesz co dalej. Powiedz nam, co chcesz zrobić, a nasz
       zespół ds. obsługi wkrótce się z Tobą skontaktuje.
     success_message: Dzięki. Wkrótce się z Tobą skontaktujemy!
+    name: 'Witamy w dziale obsługi %{name}'
+    message: Witamy w dziale obsługi
+    untitled_widget: 'Widżet bez nazwy %{count}'
+    invalid_components: 'Nieprawidłowy hash komponentów z %{key}'
+    freshmarketer_sign_up_error: >-
+      Przepraszamy, ale monitorowanie poziomu niezadowolenia musi być włączone
+      podczas integracji z Freshmarketer
+    invalid_settings: 'Nieprawidłowy hash ustawień z %{key}'
+    invalid_domain: Prosimy podać poprawną domenę.
+    domain_list_empty: Podaj adres URL do monitorowania przez predyktywną obsługę.
+  undo_toggle: Cofnij wysyłanie
+  requesting: Żądanie...
+  mint: przejdź na Mint.
+  send_test_email: Wyślij wiadomość testową
+  anonymous:
+    requests:
+      new:
+        request_support: Żądanie obsługi
+  select_values: Wybierz przynajmniej jedną wartość
+  undo_toggle_tip: 'Odśwież stronę, aby ustawienia weszły w życie.'
+  bot_training_completed:
+    email:
+      info3: Zacznijmy obsługę!
+      signature: Bot Freshdesk
+      info2: >-
+        Możesz sprawić, że będę widoczny na Twojej stronie, dodając fragment
+        kodu do swojej witryny.
+      widget_code_plain_text: 'Oto fragment kodu dla bota:'
+      info1: >-
+        Twój przyjazny bot obsługi jest gotowy do działania! Chcę Cię
+        poinformować, że przeszkolono mnie na podstawie nauki wszystkich
+        artykułów obsługi, które dla mnie wybrałeś. Dzięki temu mogę teraz
+        pomagać Twoim klientom w szukaniu odpowiedzi na pytania z następujących
+        kategorii:
+      widget_code: Znajdź fragment kodu
+  preview_message_info: >-
+    Ten podgląd korzysta z przykładowej treści dla symboli zastępczych do
+    wygenerowania wiadomości
+  undo_toggle_success: 'Odśwież stronę, aby ustawienia weszły w życie.'
+  suspended_account_info: >-
+    Twoje konto zostało zawieszone. Z tego powodu portal klienta będzie
+    niedostępny.
+  posts:
+    edit:
+      edit_post: Edytuj post
+  uncheck_remember_tooltip: 'Możesz odznaczyć tę opcję, jeśli logujesz się ze wspólnego urządzenia'
+  customize_requester_widget: Dostosuj widżet zgłaszającego
+  segment_notice: >-
+    Aby segmentować klientów na podstawie priorytetu, subskrypcji i innych
+    atrybutów,
+  falcon_languages_alert: Pracujemy nad dodaniem obsługi innych języków w Mint.
+  suspended_account_admin_info: >-
+    Twoje hasło zostało zawieszone, więc portal klienta będzie niedostępny.
+    Skontaktuj się z administratorem konta.
+  sandbox:
+    sandbox_notification_for_agents: >-
+      Wszyscy nowo dodani konsultanci lub zmiany dokonane w profilach
+      konsultantów w tym miejscu nie zostaną zsynchronizowane z Twoim kontem
+      Freshdesk.
+    sandbox_notification_for_ticketfields: >-
+      Czy wiesz, że możesz korzystać z <a href="/a/admin/sandbox"
+      class="group_item_link" target="_top">Piaskownicy</a>, aby dodawać,
+      edytować lub usuwać pola zgłoszeń przed dokonaniem zmian bezpośrednio w
+      tym miejscu?
+    sandbox_notification_for_rules: >-
+      Czy wiesz, że możesz korzystać z <a href="/a/admin/sandbox"
+      class="group_item_link" target="_top">Piaskownicy</a>, aby przetestować
+      automatyzacje przed dokonaniem zmian bezpośrednio w tym miejscu?
+  copy_link: Skopiuj link
+  widget_config_tour_text: Pomóż mi zacząć pracę z widżetem opinii
+  no_images_uploaded_yet: Nie przesłano jeszcze obrazów.
+  billing_selected_plan: 'Wybierz abonament: '
+  click_here: >-
+    <a href='javascript: switchToOld()'> Kliknij tutaj,</a> aby wypróbować
+    innych języków w starym Freshdesk
+  pts_plain: ' pkt.'

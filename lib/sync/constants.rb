@@ -126,6 +126,7 @@ module Sync::Constants
     'PasswordPolicy' => ['configs'],
     'Helpdesk::TicketField' => ['field_options'],
     'Helpdesk::SlaDetail' => ['sla_target_time'],
+    'Helpdesk::SlaPolicy' => ['conditions', 'escalations'],
     'Helpdesk::Section' => ['options']
   }.freeze
 

@@ -74,7 +74,7 @@ class Sync::FileToData::PushToSql
         end
       elsif column_values[column].present? && action != :deleted && @transformer.available?(model, column)
         transformed_column_value = @transformer.safe_send("transform_#{model.gsub('::', '').snakecase}_#{column}", column_values[column], @mapping_table)
-        Sync::Logger.log("available transformer, column: #{column}, value: #{column_values[column].inspect}, transformed_column_value: #{transformed_column_value}  model: #{model}")
+        Sync::Logger.log("available transformer, column: #{column}, value: #{column_values[column].inspect}, transformed_column_value: #{transformed_column_value.inspect}  model: #{model}")
         if @transformer.can_map_column?(model, column) || (transformed_column_value != column_values[column] && !serialized_columns.include?(column))
           @mapping_table[model][column] ||= {}
           @mapping_table[model][column][column_values[column]] = transformed_column_value

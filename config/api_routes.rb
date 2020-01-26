@@ -904,6 +904,8 @@ Helpkit::Application.routes.draw do
     get '/admin/freddy_skills', to: 'ember/admin/freddy_skills#index'
     get '/admin/freddy_skills/:name', to: 'ember/admin/freddy_skills#show'
     put '/admin/freddy_skills/:name', to: 'ember/admin/freddy_skills#update'
+
+    get '/admin/agent_levels', to: 'ember/admin/gamification/scoreboard_levels#index'
   end
 
   pipe_routes = proc do
