@@ -217,7 +217,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
     reorder_by = reorder_from_higher_pos ? '+' : '-'
     position_upper_index = reorder_from_higher_pos ? old_position : new_position
     position_lower_index = reorder_from_higher_pos ? new_position : old_position
-    account.sla_policies.where("position >= #{position_lower_index} and position <= #{position_upper_index} and id != #{id}").update_all("position = position #{reorder_by} 1")
+    account.sla_policies.where('position >= ? and position <= ? and id != ?', position_lower_index, position_upper_index, id).update_all("position = position #{reorder_by} 1")
   end
 
   def escalation_enabled?(ticket)
