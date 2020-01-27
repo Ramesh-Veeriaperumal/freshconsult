@@ -159,6 +159,25 @@ module HelpWidgetsTestHelper
     }
   end
 
+  def suggested_article_rules_index_pattern(widget)
+    suggested_article_rules = widget.help_widget_suggested_article_rules
+    rule_list = suggested_article_rules.each_with_object([]) do |rule, list|
+      list << rule_pattern(rule)
+      list
+    end
+    rule_list
+  end
+
+  def rule_pattern(rule)
+    {
+      id: rule.id,
+      conditions: rule.conditions,
+      rule_operator: rule.rule_operator,
+      filter: rule.filter,
+      position: rule.position
+    }
+  end
+
   def validation_error_pattern(value)
     {
       description: 'Validation failed',

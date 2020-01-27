@@ -356,7 +356,9 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :help_widgets, controller: 'help_widgets'
+    resources :help_widgets do
+      resources :suggested_article_rules, controller: 'help_widgets/suggested_article_rules'
+    end
 
     post '/audit_log/export', to: 'audit_logs#export'
     get '/audit_log/export/:id', to: 'audit_logs#export_s3_url'
