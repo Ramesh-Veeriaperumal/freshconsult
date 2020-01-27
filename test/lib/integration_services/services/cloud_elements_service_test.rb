@@ -109,6 +109,7 @@ class CloudElementsServiceTest < ActionView::TestCase
     IntegrationServices::Services::CloudElements::Hub::Crm::ContactResource.any_instance.stubs(:find).returns([{ Name: 'Test name', Id: '1' }.stringify_keys!])
     IntegrationServices::Services::CloudElements::Hub::Crm::AccountResource.any_instance.stubs(:find).returns([{ Id: '1' }.stringify_keys!])
     IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:create).returns({ Id: '1' }.stringify_keys!)
+    IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:update).returns(nil)
     IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:check_fields_synced?).returns(true)
     custom_obj = ::IntegrationServices::Services::SalesforceV2Service.new(app, { type: 'test', data_object: Account.first.tickets.last }, {}).receive_create_custom_object
     assert_equal nil, custom_obj
@@ -119,6 +120,7 @@ class CloudElementsServiceTest < ActionView::TestCase
     IntegrationServices::Services::CloudElements::Hub::Crm::ContactResource.any_instance.stubs(:find).returns([{ Name: 'Test name', Id: '1', AccountId: '1' }.stringify_keys!])
     IntegrationServices::Services::CloudElements::Hub::Crm::AccountResource.any_instance.stubs(:find).returns({ Name: 'test_name' }.stringify_keys!)
     IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:create).returns({ Id: '1' }.stringify_keys!)
+    IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:update).returns(nil)
     IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:check_fields_synced?).returns(true)
     custom_obj = ::IntegrationServices::Services::SalesforceV2Service.new(app, { type: 'test', data_object: Account.first.tickets.last }, {}).receive_create_custom_object
     assert_equal nil, custom_obj
@@ -130,6 +132,7 @@ class CloudElementsServiceTest < ActionView::TestCase
     IntegrationServices::Services::CloudElements::Hub::Crm::ContactResource.any_instance.stubs(:create).returns({ Name: 'Test name', Id: '1' }.stringify_keys!)
     IntegrationServices::Services::CloudElements::Hub::Crm::AccountResource.any_instance.stubs(:find).returns([{ Id: '1' }.stringify_keys!])
     IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:create).returns({ Id: '1' }.stringify_keys!)
+    IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:update).returns(nil)
     IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:check_fields_synced?).returns(true)
     User.any_instance.stubs(:helpdesk_agent).returns(true)
     custom_obj = ::IntegrationServices::Services::SalesforceV2Service.new(app, { type: 'test', data_object: Account.first.tickets.last }, {}).receive_create_custom_object
@@ -184,6 +187,7 @@ class CloudElementsServiceTest < ActionView::TestCase
     IntegrationServices::Services::CloudElements::Hub::Crm::AccountResource.any_instance.stubs(:find).returns([{ Id: '1' }.stringify_keys!])
     IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:find).returns([])
     IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:create).returns({ Id: '1' }.stringify_keys!)
+    IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:update).returns(nil)
     custom_obj = ::IntegrationServices::Services::SalesforceV2Service.new(app, { type: 'test', data_object: Account.first.tickets.last }, {}).receive_update_custom_object
     assert_equal nil, custom_obj
   end
