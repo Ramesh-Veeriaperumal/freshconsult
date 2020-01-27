@@ -4,6 +4,7 @@ class HelpWidget < ActiveRecord::Base
   validates :settings, data_type: { rules: Hash }
   belongs_to_account
   has_many :help_widget_solution_categories, class_name: 'HelpWidgetSolutionCategory', dependent: :destroy, inverse_of: :help_widget
+  has_many :help_widget_suggested_article_rules, class_name: 'HelpWidgetSuggestedArticleRule', dependent: :destroy, inverse_of: :help_widget
 
   accepts_nested_attributes_for :help_widget_solution_categories, allow_destroy: true
 

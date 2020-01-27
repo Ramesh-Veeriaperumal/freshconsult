@@ -1,7 +1,7 @@
 class ScenarioAutomation < VaRule
 
   include Search::ElasticSearchIndex
-  
+
   attr_accessible :name, :description, :action_data, :accessible_attributes
   belongs_to_account
   

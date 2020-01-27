@@ -227,6 +227,8 @@ module FreshdeskCore::Model
                     'user_skills',
                     'admin_sandbox_jobs',
                     'help_widgets',
+                    'help_widget_suggested_article_rules',
+                    'help_widget_solution_categories',
                     'bot_responses',
                     'custom_translations',
                     'ticket_field_data'].freeze
