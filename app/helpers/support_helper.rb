@@ -318,8 +318,8 @@ module SupportHelper
 
   def status_alert ticket
     _text = []
-    _text << %( <b> #{ ticket['status'] } </b> )
-    _text << I18n.t('since_time', :time_words => timediff_in_words(Time.now() - ticket['status_changed_on']))
+    _text << %( <b> #{ticket['status']} | </b> )
+    _text << time_ago(ticket['status_changed_on'])
     _text << %( <a href='#reply-to-ticket' data-proxy-for='#add-note-form'
       data-show-dom='#reply-to-ticket'>#{ t('portal.tickets.reopen_reply') }</a> ) if ticket['closed?']
     content_tag :div, _text.join(" ").html_safe, :class => "alert alert-ticket-status"
