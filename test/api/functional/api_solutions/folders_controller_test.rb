@@ -1,8 +1,11 @@
 require_relative '../../test_helper'
+['solutions_helper.rb', 'solution_builder_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module ApiSolutions
   class FoldersControllerTest < ActionController::TestCase
     include SolutionsTestHelper
     include SolutionFoldersTestHelper
+    include SolutionsHelper
+    include SolutionBuilderHelper
 
     def setup
       super
@@ -326,6 +329,15 @@ module ApiSolutions
       put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('company_ids', :cant_set_company_ids, code: :incompatible_field)])
+    end
+
+    def test_update_folder_with_company_ids_and_no_visibility
+      folder_meta = create_folder(visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users], category_id: @account.solution_categories.last.id)
+      create_customer_folders(folder_meta)
+      company_ids = @account.company_ids
+      params_hash = { company_ids: company_ids }
+      put :update, construct_params({ id: folder_meta.id }, params_hash)
+      assert_response 200
     end
 
     def test_update_unavailable_folder
