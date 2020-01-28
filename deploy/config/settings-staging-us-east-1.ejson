@@ -1651,6 +1651,11 @@
         "access_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:JQRILpKqyit4tx3yWlzNGlXU5DJL+4BI:7cavdBvvcRAHt9kP0oH4um/BO4x80oI=]",
         "_api_endpoint": "http://sr.pre-freshmarketer.io/ab/api/v1"
       },
+      "iam": {
+        "_expiry": 300,
+        "password": "EJ[1:iP8XvLC5wcL1ww9dJA4sB8x38IayHDAroVIuF5vlQnw=:jqKSLiyzUgZ8snwGTaIfRdm7GojYsbQl:6rUTJNpK7NPCpyOANk22oDm0fzOLq2eZLvqq8osnMgak]",
+        "kid": "EJ[1:D1TZ6Mbq3JGyXCLhk/JFI4U6WMkr02dD2CUCKBvjkgQ=:9sTme0eskbJ48fmf2s6NHF50Jj22QId2:Zc5WvhJsGTzH8Psft0D4lrgsw0CFSto=]"
+      },
       "hypertrail": {
         "audit_log": {
           "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:+vC6cYx74ATQhRqlDnwN9t2j1JgdAz2g:1IUZLzhn805f9rkkEW/gSjM=]",
@@ -1846,7 +1851,8 @@
       "_bucket": "poduseast1-configuration-stg",
       "_cert_names": [
         "freshid.pem",
-        "saml.pem"
+        "saml.pem",
+        "iam.pem"
       ],
       "_path": "certificates/common",
       "_supreme": true

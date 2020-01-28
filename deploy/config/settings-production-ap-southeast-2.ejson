@@ -1321,6 +1321,11 @@
         "access_key": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:s39L/xJJqrLFHYO+mwG5lYrVXibkeoML:AsEf7F7l1NvsdBuGpGcOxrklTxugxNR9wXBldIGxaepkYDsnr7r+n2jQtJdmiDtrrx1VN3e8uuUpwkSjyecA94fY]",
         "_api_endpoint": "http://app.freshmarketer.com/ab/api/v1"
       },
+      "iam": {
+        "_expiry": 300,
+        "password": "EJ[1:+uR4W2WA56xIbUyd3GMiDg8nK63zinyOI5vH7YZp5Vw=:r7oFwD/YHtwsoQKOgUtb2321mEkbRpz4:pt/kZcBBsyPcWl7puLnLWx+MHOLjjdPjxqQ=]",
+        "kid": "EJ[1:e1sALPEEctx83CLQmNVBVZI6UyA8q5vCWWhAQI6g03I=:e/BoOlRN3dmWajhpFXHSWwPQeV0iGOej:EHM9f+TN9pbDFlP5JmbYr2e1MOwpW90=]"
+      },
       "hypertrail": {
         "audit_log": {
           "password": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:SMFlCZ6lXykHu7dqbKMquEoHhHjhxiLJ:Zk8i/07Z3LnNzMi1npJ8Uq8=]",
@@ -1520,7 +1525,8 @@
     "common_certs": {
       "_cert_names": [
         "freshid.pem",
-        "saml.pem"
+        "saml.pem",
+        "iam.pem"
       ],
       "_bucket": "freshops-admin",
       "_path": "certificates/common"

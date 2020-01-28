@@ -1,0 +1,4 @@
+<%= node[:opsworks][:environment]%>:
+  expiry: <%= node[:ymls][:iam][:expiry] %>
+  password: <%= node[:ymls][:iam][:password] %>
+  kid: <%= node[:ymls][:iam][:kid] %>

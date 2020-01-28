@@ -1,0 +1,24 @@
+development:
+  expiry: 300
+  password: dummy
+  kid: dummy
+
+test:
+  expiry: 300
+  password: dummy
+  kid: dummy
+
+staging:
+  expiry: 300
+  password: dummy
+  kid: dummy
+
+production:
+  expiry: 300
+  password: dummy
+  kid: dummy
+
+slave:
+  expiry: 300
+  password: dummy
+  kid: dummy
