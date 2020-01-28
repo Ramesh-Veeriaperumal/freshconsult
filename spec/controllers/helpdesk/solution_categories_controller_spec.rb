@@ -163,17 +163,6 @@ describe Solution::CategoriesController do
     response.should redirect_to(solution_category_path(category))
   end
 
-  it "should delete a solution category" do
-    mobihelp_app = create_mobihelp_app
-    mobihelp_app_solution = create_mobihelp_app_solutions({:app_id => mobihelp_app.id, 
-                              :category_id => @test_category_meta.id, :position => 1, 
-                              :account_id => @account.id})
-
-    delete :destroy, :id => @test_category_meta.id
-    @account.solution_categories.find_by_name(@test_category_meta.name).should be_nil
-    response.should redirect_to(solution_categories_path)
-  end
-
   it "should render sidebar" do
     xhr :get, :sidebar
     response.should render_template "/solution/categories/_sidebar"

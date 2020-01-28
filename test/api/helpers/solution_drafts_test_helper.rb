@@ -5,6 +5,7 @@ module SolutionDraftsTestHelper
     @article = article_meta.safe_send("#{language}_article")
     @draft = @article.build_draft_from_article
     @draft.save!
+    @article.reload
   end
 
   def article_without_draft

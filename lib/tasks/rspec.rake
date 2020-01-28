@@ -53,15 +53,6 @@ if Rails.env.test?
     "spec/controllers/mailgun_controller_spec.rb"
   ]
 
-  MobihelpTests = [
-    "spec/controllers/support/mobihelp/tickets_controller_spec.rb",
-    "spec/controllers/mobihelp/devices_controller_spec.rb",
-    "spec/controllers/mobihelp/solutions_controller_spec.rb",
-    "spec/controllers/admin/mobihelp/apps_controller_spec.rb",
-    "spec/models/mobihelp/app_spec.rb",
-    "spec/controllers/mobihelp/articles_controller_spec.rb"
-  ]
-
   IntegrationTests = [
     #"spec/controllers/integrations/gmail_gadgets_controller_spec.rb",
     "spec/controllers/integrations/google_accounts_controller_spec.rb",
@@ -149,8 +140,6 @@ if Rails.env.test?
     "spec/controllers/api/xml/solutions_articles_api_spec.rb",
     "spec/controllers/api/xml/solutions_category_api_spec.rb",
     "spec/controllers/api/xml/solutions_folders_api_spec.rb",
-    "spec/controllers/mobihelp/articles_controller_spec.rb",
-    "spec/controllers/mobihelp/solutions_controller_spec.rb",
     "spec/models/solution/category_spec.rb",
     "spec/models/solution/folder_spec.rb",
     "spec/models/solution/article_spec.rb",
@@ -235,11 +224,11 @@ if Rails.env.test?
   ]
 
   UnitTests = [ APITests, BillingTests, EmailTests,  ForumTests, FunctionalTests,
-                GnipTests, HelpdeskTests,MiddlewareSpecs, MobihelpTests, MobileAppTests, ModelTests,
+                GnipTests, HelpdeskTests, MiddlewareSpecs, MobileAppTests, ModelTests,
                 XssTests, ChatTests, IntegrationTests, TwitterTests, FacebookTests, FreshfoneTests, FreshfoneReportsTests].flatten.uniq
   #FacebookTests, SolutionTests, VaRulesTests
 
-  AllTests  = [UnitTests,ModelTests,EmailTests, MobihelpTests, IntegrationTests, ForumDynamoTests].flatten.uniq
+  AllTests  = [UnitTests, ModelTests, EmailTests, IntegrationTests, ForumDynamoTests].flatten.uniq
 
   # Don't load rspec if running "rake gems:*"
   unless ARGV.any? {|a| a =~ /^gems/}
@@ -484,14 +473,6 @@ if Rails.env.test?
         RSpec::Core::RakeTask.new(:all => "db:test_setup") do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(IntegrationTests)
-        end
-      end
-
-      namespace :mobihelp do
-        desc "Running all mobihelp tests"
-        RSpec::Core::RakeTask.new(:all => "db:test_setup") do |t|
-          t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-          t.pattern = FileList.new(MobihelpTests)
         end
       end
 

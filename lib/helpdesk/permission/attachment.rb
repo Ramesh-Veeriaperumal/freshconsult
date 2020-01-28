@@ -3,7 +3,6 @@ module Helpdesk::Permission
     ATTACHMENTS_PERMISSIONS = [
       ['Helpdesk::Ticket',                 :edit_ticket_properties,  true],
       ['Helpdesk::Note',                   :edit_note,               true],
-      ['Mobihelp::TicketInfo',             :edit_ticket_properties,  true],
       ['Helpdesk::ArchiveTicket' ,         :edit_ticket_properties,  true],
       ['Helpdesk::ArchiveNote',            :edit_note,               true],
       ['Solution::Article',                :publish_solution,        true],
@@ -40,10 +39,6 @@ module Helpdesk::Permission
     def can_view_helpdesk_note?
       return false if ::User.current && ::User.current.customer? && owner_object.private?
       can_view_helpdesk_ticket? owner_object.notable
-    end
-
-    def can_view_mobihelp_ticket_info?
-      can_view_helpdesk_ticket?(owner_object.ticket)
     end
 
     def can_view_solution_article?
@@ -105,8 +100,6 @@ module Helpdesk::Permission
       def user_owned_obj?
         return false unless ::User.current
         case owner_type
-        when 'Mobihelp::TicketInfo'
-          return ::User.current.owns_object?(owner_object.ticket)
         when 'Helpdesk::TicketTemplate'
           return owner_object.visible_to_only_me?
         else            

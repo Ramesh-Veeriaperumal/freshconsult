@@ -86,7 +86,6 @@ class ArchiveTicketTest < ActiveSupport::TestCase
         assert_nil archive_test_ticket.is_fb_message?
         assert_nil archive_test_ticket.is_fb_wall_post?
         assert_nil archive_test_ticket.is_fb_comment?
-        assert_equal archive_test_ticket.mobihelp?, false
         assert_equal archive_test_ticket.chat?, false
         assert_empty archive_test_ticket.all_attachments
         assert_empty archive_test_ticket.conversation(1, 5, [1])

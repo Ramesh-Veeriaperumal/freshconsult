@@ -156,8 +156,8 @@ module FreshdeskCore::Model
 
                     'helpdesk_accesses',
 
-                    'mobihelp_apps',
-                    'mobihelp_devices',
+                    'mobihelp_apps',  
+                    'mobihelp_devices', 
                     'mobihelp_ticket_infos',
                     'oauth_applications',
                     'oauth_access_grants',

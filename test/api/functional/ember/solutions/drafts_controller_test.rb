@@ -591,7 +591,7 @@ module Ember
         delete :delete_attachment, controller_params(version: 'private', article_id: @article.parent_id, attachment_type: 'attachment', attachment_id: attachment_id)
         assert_response 200
         match_json(autosave_pattern(@draft.reload))
-        assert_equal @article.draft.meta[:deleted_attachments][:attachments].size, 1
+        assert_equal @draft.meta[:deleted_attachments][:attachments].size, 1
       end
 
       def test_delete_attachment_of_primary_article_draft
@@ -600,7 +600,7 @@ module Ember
         delete :delete_attachment, controller_params(version: 'private', article_id: @article.parent_id, attachment_type: 'attachment', attachment_id: attachment_id, language: @account.language)
         assert_response 200
         match_json(autosave_pattern(@draft.reload))
-        assert_equal @article.draft.meta[:deleted_attachments][:attachments].size, 1
+        assert_equal @draft.meta[:deleted_attachments][:attachments].size, 1
       end
 
       def test_delete_attachment_of_secondary_article_draft
@@ -610,7 +610,7 @@ module Ember
         delete :delete_attachment, controller_params(version: 'private', article_id: @article.parent_id, attachment_type: 'attachment', attachment_id: attachment_id, language: language)
         assert_response 200
         match_json(autosave_pattern(@draft.reload))
-        assert_equal @article.draft.meta[:deleted_attachments][:attachments].size, 1
+        assert_equal @draft.meta[:deleted_attachments][:attachments].size, 1
       end
 
       def test_delete_attachment_without_multilingual
@@ -638,7 +638,7 @@ module Ember
         delete :delete_attachment, controller_params(version: 'private', article_id: @article.parent_id, attachment_type: 'cloud_file', attachment_id: attachment_id)
         assert_response 200
         match_json(autosave_pattern(@draft.reload))
-        assert_equal @article.draft.meta[:deleted_attachments][:cloud_files].size, 1
+        assert_equal @draft.meta[:deleted_attachments][:cloud_files].size, 1
       end
 
       def test_delete_attachment_with_invalid_attachment

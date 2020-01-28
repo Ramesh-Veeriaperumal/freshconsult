@@ -67,9 +67,6 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	after_commit :update_search_index, on: :update
 	after_find :deserialize_attr
 
-	after_save :set_mobihelp_solution_updated_time, :if => :valid_change?
-	before_destroy :set_mobihelp_solution_updated_time
-
 	# Need to check this code miss, ember solution test cases get failed if validation is present 
 	# validates_inclusion_of :art_type, :in => TYPE_KEYS_BY_TOKEN.values.min..TYPE_KEYS_BY_TOKEN.values.max
 
@@ -164,11 +161,6 @@ class Solution::ArticleMeta < ActiveRecord::Base
 		paginate :per_page => _per_page, :page => _page
 	end
 
-	def set_mobihelp_solution_updated_time
-		self.reload
-		solution_folder_meta.solution_category_meta.update_mh_solutions_category_time
-	end
-
   def folder_category_info
     [solution_folder_meta, solution_category_meta]
   end
@@ -181,12 +173,6 @@ class Solution::ArticleMeta < ActiveRecord::Base
 
 	def set_default_art_type
 		self.art_type ||= Solution::Article::TYPE_KEYS_BY_TOKEN[:permanent]
-	end
-	
-	def valid_change?
-		self.changes.slice(:position).present? || 
-			(primary_article && (primary_article.previous_changes.slice(*[:modified_at, :status]).present? || 
-			primary_article.tags_changed))
 	end
 
 	def clear_cache_after_update

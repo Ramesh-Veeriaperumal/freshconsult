@@ -1176,7 +1176,7 @@ module Ember
         article = create_article(article_params)
         put :update, construct_params(version: 'private', id: article.id, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
         assert_response 200
-        assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.primary_article.status
+        assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.reload.primary_article.status
       end
 
       def test_update_article_unpublish_with_language_without_multilingual_feature
@@ -1199,7 +1199,7 @@ module Ember
         article = create_article(article_params)
         put :update, construct_params(version: 'private', id: article.id, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], language: @account.language)
         assert_response 200
-        assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.primary_article.status
+        assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.reload.primary_article.status
       end
 
       def test_update_article_unpublish_with_supported_language
@@ -1208,7 +1208,7 @@ module Ember
         article = create_article(article_params(lang_codes: languages))
         put :update, construct_params(version: 'private', id: article.id, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], language: language)
         assert_response 200
-        assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.safe_send("#{language}_article").status
+        assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.reload.safe_send("#{language}_article").status
       end
 
       def test_reset_ratings_with_incorrect_credentials

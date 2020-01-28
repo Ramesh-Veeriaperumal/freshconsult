@@ -7,7 +7,7 @@ module Archive
       include Publisher
 
       ASSOCIATIONS_TO_SERIALIZE = {
-        helpdesk_tickets: [:flexifield, :ticket_old_body, :schema_less_ticket, :ticket_states, :mobihelp_ticket_info, :reminders, :subscriptions,
+        helpdesk_tickets: [:flexifield, :ticket_old_body, :schema_less_ticket, :ticket_states, :reminders, :subscriptions,
                            :bot_ticket, :canned_form_handles],
         # helpdesk_notes: [:survey_remark, :note_old_body, :schema_less_note, :external_note]
       }.freeze

@@ -2,8 +2,7 @@ class MixpanelObserver < ActiveRecord::Observer
   extend ::NewRelic::Agent::MethodTracer
   include MixpanelWrapper
 
-  observe Account, Admin::DataImport, Agent, DataExport, EmailConfig, Integrations::InstalledApplication, 
-    Mobihelp::App, Product, Social::TwitterHandle, Subscription, VaRule
+  observe Account, Admin::DataImport, Agent, DataExport, EmailConfig, Integrations::InstalledApplication, Product, Social::TwitterHandle, Subscription, VaRule
 
   MODELS = {
     :subscription => "Subscription",
@@ -18,8 +17,7 @@ class MixpanelObserver < ActiveRecord::Observer
   }
 
   EVENTS = {
-    :count => ["Social::TwitterHandle", "Agent", "EmailConfig", "Product", "VaRule",
-      "Mobihelp::App"]
+    count: ['Social::TwitterHandle', 'Agent', 'EmailConfig', 'Product', 'VaRule']
   }
   
   

@@ -6,7 +6,6 @@
 		<div id="ticket-association" data-remote-url="<%= ticket_association_helpdesk_ticket_path(@ticket)%>" rel="remote"></div>
 	<% end -%>
 	<%= render :partial => "helpdesk/tickets/show/requester" %>
-	<%= render :partial => "helpdesk/tickets/show/app_info" , :locals => {:ticket => @ticket} if @ticket.mobihelp? and @ticket.mobihelp_ticket_info %>
 	<% unless @ticket.deleted or @ticket.spam %>
 		<div class="widget" id='TicketProperties' data-domhelper-name='ticket-properties'>
 			<h3 class="title"><%=t('ticket.properties')%></h3>

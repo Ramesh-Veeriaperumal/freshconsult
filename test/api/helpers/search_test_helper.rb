@@ -130,7 +130,7 @@ module SearchTestHelper
       folder_visibility: article.parent.solution_folder_meta.visibility,
       agent_id: article.user_id,
       path: article.to_param,
-      modified_at: article.modified_at.try(:utc),
+      modified_at: article.modified_at.try(:utc).try(:iso8601),
       modified_by: article.modified_by,
       language_id: article.language_id,
       language: article.language_code
@@ -158,8 +158,8 @@ module SearchTestHelper
     search_article_content_pattern = {
       title: item.title,
       status: item.status,
-      created_at: item.created_at.try(:utc),
-      updated_at: item.updated_at.try(:utc)
+      created_at: item.created_at.try(:utc).try(:iso8601),
+      updated_at: item.updated_at.try(:utc).try(:iso8601)
     }
     search_article_content_pattern.merge!(description_hash(item)) unless context && SEARCH_CONTEXTS_WITHOUT_DESCRIPTION.include?(context)
     search_article_content_pattern
