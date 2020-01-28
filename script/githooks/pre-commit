@@ -33,7 +33,7 @@ function validate_ejson() {
 
 function validate_ruby_files() {
   is_invalid=0
-  for f in $(git diff --name-status --staged | grep -v "^D" | sed -e 's/^[MAR]\s*//g' |  egrep "(.erb|.rb)$")
+  for f in $(git diff --name-status --staged | grep -v "^D" | sed -e 's/^[MAR]\s*//g' |  egrep "(\.rb)$")
   do
     ruby -c ${f}
      if [ $? -ne 0 ]; then

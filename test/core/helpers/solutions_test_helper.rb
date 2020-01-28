@@ -81,7 +81,8 @@ module CoreSolutionsTestHelper
         :art_type => params[:art_type] || Solution::FolderMeta::TYPE_KEYS_BY_TOKEN[:permanent],
         :status => params[:status] || 2,
         :user_id => params[:user_id] || @agent.id,
-        :attachments => params[:attachments]
+        attachments: params[:attachments],
+        suggested: params[:suggested] || 0
       }))
     current_user_present = User.current.present?
     Account.current.users.find(params[:user_id] || @agent.id).make_current unless current_user_present

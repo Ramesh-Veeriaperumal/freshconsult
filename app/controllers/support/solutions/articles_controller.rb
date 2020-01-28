@@ -7,6 +7,8 @@ class Support::Solutions::ArticlesController < SupportController
   include Helpdesk::Permission::Ticket
   before_filter :redirect_to_support, :only => [:show], :if => :facebook?
   before_filter :load_and_check_permission, :except => [:index]
+
+  before_filter :draft_preview_login_filter?, :only => [:show]
   
   before_filter :check_version_availability, :only => [:show]
 
@@ -127,6 +129,7 @@ class Support::Solutions::ArticlesController < SupportController
         return
       end
 
+      render_404 if draft_preview? && !@article.draft.present? #for draft preview of published articles
       render_404 unless draft_preview_agent_filter?
     end
 
@@ -171,11 +174,14 @@ class Support::Solutions::ArticlesController < SupportController
       params[:status] == "preview"
     end
 
-    def draft_preview_agent_filter?
-      if !current_user && params[:different_portal]
+    def draft_preview_login_filter?
+      if !current_user && draft_preview?
         store_location
-        redirect_to support_login_path and return true
+        redirect_to support_login_path
       end
+    end
+
+    def draft_preview_agent_filter?
       return (current_user && current_user.agent? && (@article.draft.present? || 
             !@article.current_article.published?) && privilege?(:view_solutions)) if draft_preview?
       true

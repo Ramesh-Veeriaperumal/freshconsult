@@ -1,5 +1,7 @@
 /bootstrap/me:
   $ref: ./bootstrap/me.yaml
+/bootstrap/me/preferences:
+  $ref: ./bootstrap/preferences.yaml
 /bootstrap/account:
   $ref: ./bootstrap/account.yaml
 /bootstrap/agents_groups:
@@ -698,6 +700,8 @@
   $ref: ./solutions/article/filter.yaml
 /solutions/articles/export:
   $ref: ./solutions/article/export_csv.yaml
+/solutions/articles/suggested:
+  $ref: ./solutions/article/suggested.yaml
 /solutions/articles/untranslated_articles/{language}:
   $ref: ./solutions/article/untranslated_articles.yaml
 

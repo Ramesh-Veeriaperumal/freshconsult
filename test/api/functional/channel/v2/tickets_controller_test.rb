@@ -1152,6 +1152,7 @@ module Channel::V2
     end
 
     def test_index_with_company_side_load
+      TicketDecorator.any_instance.stubs(:private_api?).returns(false)
       tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0)
                               .created_in(Helpdesk::Ticket.created_in_last_month)
                               .order('created_at DESC')
@@ -1165,6 +1166,8 @@ module Channel::V2
         index_ticket_pattern_with_associations(tkt, param_object)
       end
       match_json(pattern)
+    ensure
+      TicketDecorator.any_instance.unstub(:private_api?)
     end
 
     def test_sla_calculation_if_created_at_current_time

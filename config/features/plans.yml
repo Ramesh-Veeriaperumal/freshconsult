@@ -84,6 +84,8 @@
       - :parent_child_tickets_toggle
       - :link_tickets_toggle
       - :help_widget_predictive
+      - :article_versioning
+      - :suggested_articles_count
     :inherits:
       - :blossom_jan_17
     :exclude: []
@@ -118,7 +120,6 @@
       - :audit_log_ui
       - :field_service_management_toggle
       - :segments
-      - :article_versioning
     :inherits:
       - :garden_jan_17
     :exclude: []
@@ -255,6 +256,7 @@
       - :help_widget_predictive
       - :advanced_automations
       - :article_versioning
+      - :suggested_articles_count
     :inherits:
       - :blossom_jan_19
     :exclude: []

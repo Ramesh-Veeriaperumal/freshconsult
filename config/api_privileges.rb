@@ -6,6 +6,7 @@ Authority::Authorization::PrivilegeList.build do
   manage_tickets do
     resource :"ember/bootstrap"
     resource :"ember/bootstrap/agents_group"
+    resource :"ember/bootstrap/preference"
     resource :"ember/tickets/collab", only: [:notify]
     resource :"ember/tickets/delete_spam", only: %i[spam bulk_spam unspam bulk_unspam]
     resource :"ember/tickets/activity"
@@ -214,7 +215,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   view_solutions do
-    resource :'ember/solutions/article', only: %i[index article_content folder_articles show votes filter untranslated_articles]
+    resource :'ember/solutions/article', only: %i[index article_content folder_articles show votes filter untranslated_articles suggested]
     resource :'ember/solutions/category', only: %i[index show]
     resource :'ember/solutions/folder', only: %i[index category_folders show]
     resource :"ember/search/multiquery", only: [:search_results]

@@ -1217,7 +1217,12 @@
             "key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:YXVfSLyeUH9TMJG43b3nDXH+hx+9GJAA:4DYusZzjOsyQf0pUdHdqhauiQO+S6m1QZAdi9e+qKnUzlUFi0lqvO32xh8JakmYeqdzaYjdFuBcR5Jw0vYepa2Bma0Xj5g==]",
             "iv": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:DtiDB3sP9KhB2hN0MWKcI6y0COXXzUK5:RXALHT/VOO6+8W+cDLyq5lwv/2TIs9Hn2QlzyzBUj6MZIf726kS1UkOryQQ93mIw]",
             "_label": "key1"
-          }
+          },
+          "account_additional_settings": {
+              "key": "EJ[1:pE8DrBqFv0HOxvhDk0jICkD90UIuCTNMMODJ38YR+Vw=:vuv2ThNnuQfLZIwE6pWyuan+ZYb0Jztq:74ifwp2fL5SbfrFQbtc+7C20g/4qiovwsZgluF9RQtIYAH6LxI+GKmIzx07iwmZK]",
+              "iv": "EJ[1:pE8DrBqFv0HOxvhDk0jICkD90UIuCTNMMODJ38YR+Vw=:6MDCVL5B9W4L0fXykNH9hSTciffv1C+l:0sx2/3ThtN3ONTwCBnQzWOmWQkRPx605NYyoE8Rc1qU=]",
+              "_label": "account_additional_settings"
+            }
         },
         "_api_endpoint": "https://central-mumbai.freshworksapi.com/collector"
       },
@@ -1405,21 +1410,21 @@
           "_expiry_in_days": 365
         },
         "system42": {
-          "_host": "https://system42-serv.prod.freddyproject.com",
-          "_onboard_url": "https://system42-serv.prod.freddyproject.com/api/v1/fd_private/sync_bots",
-          "secret": "EJ[1:UZRJRaJT/g5orUrLfnX/9w7Mks3i2iMPn1dm6LgH6QY=:XePpdPMCHb/HSVBabr2g03EvRZ22Xe7N:9mvIXxZyGr2/Tok3DhX/zZRP/Y7SuYt9Zwl0NlYtno37XbNhxxFil7NzV0xUT3SQ]",
+          "_host": "https://system42-serv.ap-south-1-prod.freddyproject.com",
+          "_onboard_url": "https://system42-serv.ap-south-1-prod.freddyproject.com/api/v1/fd_private/sync_bots",
+          "secret": "EJ[1:OHQkMFcXOhjCbpY5CS5A2cVoQDDOJthEAqsgT6fpKDA=:kIUu5MWLln0qhT0f0nhf+6CJNyE2hJw0:y93s0ySAE6Xt/ROG9bnE2qSrEqInwewlXACdzHKNW79XkjmbVA/7wnibRh4EVlEFw6rJYJSImW5YXFoepkJmjpXvEg==]",
           "_timeout": 5,
           "_internal": "hRQi54GyDjyfe(78%#AWda%r2kGkK#Cs"
         },
         "flowserv": {
-          "_host": "https://api.freshbots.ai/rest/api/v2/",
+          "_host": "https://api.in-freshbots.ai/rest/api/v2/",
           "secret": "EJ[1:lUqBYZNnkzSIxCyKhdujD6WeSGaXqhA3VJ+Yk5h+7gs=:u/huhI7C44FKw9b1M4uAZkQWbQkdGp1O:/xOrJpjvWyf631KWikQ282Jj1z1ZHYcknotTiw==]",
           "_timeout": 5,
           "_service": "bot-admin",
-          "_product_id": "d54280f098e0949725aedc84b09035cca3d2752f"
+          "product_id": "EJ[1:OHQkMFcXOhjCbpY5CS5A2cVoQDDOJthEAqsgT6fpKDA=:QGH7YNY0jr8hqgRQtOf0XmHPxBqb9W63:mR2d9QVDkk46jwTZeoeVgZj0/wtGwuedjPRSVAQ49jjFOdrPNAFFdatA/zhamcZOQmG93mqmQHk=]"
         },
         "agent_articles_suggest": {
-          "_url": "https://faqsuggester.prod.freddyproject.com/api/v1/afr/smart_reply",
+          "_url": "https://system42-serv.ap-south-1-prod.freddyproject.com/api/v1/afr/smart_reply",
           "secret": "EJ[1:F/stKH30EiUwSbfRAaY3OpP3gChjRqF3k2qQenJQuXs=:YwAr1lBzWevAai91wrPnXQoGjJjnY0AH:wZopUot3ij1DG1j9vuY/BoTrDNBbyzgT+kBlMDms75sDPWlLcvNb48S9y4yZ]"
         }
       },

@@ -77,6 +77,8 @@ class FreshsalesUtilityTest < ActionView::TestCase
   end
 
   def test_update_admin_info
+    CRM::FreshsalesUtility.any_instance.stubs(:fs_create).returns(true)
+    CRM::FreshsalesUtility.any_instance.stubs(:fs_update).returns(true)
     CRM::FreshsalesUtility.any_instance.stubs(:search).returns(deals: [{ deal_product_id: '1' }], contacts: [{ email: 'sample@freshdesk.com' }])
     CRM::FreshsalesUtility.any_instance.stubs(:get_entity_id).returns('1')
     CRM::FreshsalesUtility.new(cmrr: @account.subscription.cmrr, account: @account, subscription: @account.subscription).update_admin_info
@@ -93,9 +95,14 @@ class FreshsalesUtilityTest < ActionView::TestCase
   ensure
     CRM::FreshsalesUtility.any_instance.unstub(:search)
     CRM::FreshsalesUtility.any_instance.unstub(:get_entity_id)
+    CRM::FreshsalesUtility.any_instance.unstub(:fs_create)
+    CRM::FreshsalesUtility.any_instance.unstub(:fs_update)
   end
 
   def test_push_subscription_changes
+    CRM::FreshsalesUtility.any_instance.stubs(:mark_customer_status).returns(true)
+    CRM::FreshsalesUtility.any_instance.stubs(:create_deal_and_close).returns(true)
+    CRM::FreshsalesUtility.any_instance.stubs(:contact_and_owner).returns(contact_id: 100, owner_id: 100)
     CRM::FreshsalesUtility.any_instance.stubs(:get_entity_id).returns('1')
     CRM::FreshsalesUtility.any_instance.stubs(:search).returns(deals: [{ deal_product_id: '1', deal_stage_id: '1', sales_account_id: '1' }], id: '1', sales_accounts: [id: '1'], deal_stages: {})
     CRM::FreshsalesUtility.new(cmrr: @account.subscription.cmrr, account: @account, subscription: @account.subscription).push_subscription_changes('deal', 'amount', 'payments_count', 'state_changed')
@@ -103,9 +110,13 @@ class FreshsalesUtilityTest < ActionView::TestCase
   ensure
     CRM::FreshsalesUtility.any_instance.unstub(:search)
     CRM::FreshsalesUtility.any_instance.unstub(:get_entity_id)
+    CRM::FreshsalesUtility.any_instance.unstub(:create_deal_and_close)
+    CRM::FreshsalesUtility.any_instance.unstub(:contact_and_owner)
+    CRM::FreshsalesUtility.any_instance.unstub(:mark_customer_status)
   end
 
   def test_account_trial_expiry
+    CRM::FreshsalesUtility.any_instance.stubs(:mark_customer_status).returns(true)
     CRM::FreshsalesUtility.any_instance.stubs(:get_entity_id).returns('1')
     CRM::FreshsalesUtility.any_instance.stubs(:search).returns(deals: [{ deal_product_id: '1', deal_stage_id: '1', sales_account_id: '1' }], id: '1', sales_accounts: [id: '1'], deal_stages: {})
     CRM::FreshsalesUtility.new(cmrr: @account.subscription.cmrr, account: @account, subscription: @account.subscription).account_trial_expiry
@@ -115,6 +126,7 @@ class FreshsalesUtilityTest < ActionView::TestCase
   ensure
     CRM::FreshsalesUtility.any_instance.unstub(:get_entity_id)
     CRM::FreshsalesUtility.any_instance.unstub(:search)
+    CRM::FreshsalesUtility.any_instance.unstub(:mark_customer_status)
   end
 
   def test_account_cancellation

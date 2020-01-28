@@ -46,7 +46,7 @@ class ShoryukenConfig
     layers = node[:opsworks][:instance][:layers]
     shoruken_layer = layers.any? {|layer| layer.eql?(node[:falcon][:shoryuken][:layer])}
 
-    common_pool_worker_count = node[:opsworks][:instance][:layers].count > 1 ? 2 : 8
+    common_pool_worker_count = (ENV['SQUAD'] == '1') || (node[:opsworks][:instance][:layers].count > 1) ? 2 : 8
 
     dedicated_execution = false
 

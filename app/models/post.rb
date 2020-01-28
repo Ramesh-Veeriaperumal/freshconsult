@@ -88,7 +88,7 @@ class Post < ActiveRecord::Base
     :spam => false
   }
 
-  attr_accessor :request_params, :portal
+  attr_accessor :request_params, :portal, :skip_notification
   
   def to_xml(options = {})
     options[:except] ||= []

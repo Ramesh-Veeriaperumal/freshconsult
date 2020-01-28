@@ -3,6 +3,9 @@ module Ember
   module Tickets
     class DraftsControllerTest < ActionController::TestCase
       include ApiTicketsTestHelper
+      include CoreSolutionsTestHelper
+      include Redis::RedisKeys
+      include Redis::TicketsRedis
 
       def wrap_cname(params)
         { draft: params }
@@ -134,6 +137,89 @@ module Ember
         get :show_draft, controller_params(unwrapped_params)
         assert_response 200
         match_json({})
+      end
+
+      def test_save_draft_with_insert_solutions
+        article = create_article
+        article_meta_id = article.parent.id
+        language = article.language.code
+
+        article_details = { language: language, article_id: article_meta_id }
+        articles_suggested = [article_details]
+        params_hash = { body: 'Sample text', quoted_text: 'Sample Quoted Text', cc_emails: [], from_email: nil, articles_suggested: articles_suggested }
+
+        ticket = create_ticket
+        unwrapped_params = { version: 'private', id: ticket.display_id }
+
+        post :save_draft, construct_params(unwrapped_params, params_hash)
+        assert_response 204
+
+        draft_key = format(HELPDESK_REPLY_DRAFTS, account_id: Account.current.id, user_id: User.current.id, ticket_id: ticket.display_id)
+        draft_hash = get_tickets_redis_hash_key(draft_key)
+        draft_articles_suggested = JSON.parse(draft_hash['draft_articles_suggested'])[0].with_indifferent_access
+
+        assert_equal article_details[:language], draft_articles_suggested[:language]
+        assert_equal article_details[:article_id], draft_articles_suggested[:article_id]
+      end
+
+      def test_save_draft_with_insert_solutions_invalid_format_langcode
+        article = create_article
+        article_meta_id = article.parent.id
+
+        language = Faker::Lorem.characters(10)
+        articles_suggested = [{ language: language, article_id: article_meta_id }]
+        params_hash = { body: 'Sample text', quoted_text: 'Sample Quoted Text', cc_emails: [], from_email: nil, articles_suggested: articles_suggested }
+
+        ticket = create_ticket
+        unwrapped_params = { version: 'private', id: ticket.display_id }
+
+        post :save_draft, construct_params(unwrapped_params, params_hash)
+        assert_response 400
+      end
+
+      def test_save_draft_with_insert_solutions_negative_article_id
+        article = create_article
+        article_meta_id = article.parent.id
+        language = article.language.code
+
+        articles_suggested = [{ language: language, article_id: -1 }]
+        params_hash = { body: 'Sample text', quoted_text: 'Sample Quoted Text', cc_emails: [], from_email: nil, articles_suggested: articles_suggested }
+
+        ticket = create_ticket
+        unwrapped_params = { version: 'private', id: ticket.display_id }
+
+        post :save_draft, construct_params(unwrapped_params, params_hash)
+        assert_response 400
+      end
+
+      def test_save_draft_with_insert_solutions_text_article_id
+        article = create_article
+        article_meta_id = article.parent.id
+        language = article.language.code
+
+        ticket = create_ticket
+        unwrapped_params = { version: 'private', id: ticket.display_id }
+
+        articles_suggested = [{ language: language, article_id: 'id' }]
+        params_hash = { body: 'Sample text', quoted_text: 'Sample Quoted Text', cc_emails: [], from_email: nil, articles_suggested: articles_suggested }
+
+        post :save_draft, construct_params(unwrapped_params, params_hash)
+        assert_response 400
+      end
+
+      def test_save_draft_with_insert_solutions_article_id_zero
+        article = create_article
+        article_meta_id = article.parent.id
+        language = article.language.code
+
+        ticket = create_ticket
+        unwrapped_params = { version: 'private', id: ticket.display_id }
+
+        articles_suggested = [{ language: language, article_id: 0 }]
+        params_hash = { body: 'Sample text', quoted_text: 'Sample Quoted Text', cc_emails: [], from_email: nil, articles_suggested: articles_suggested }
+
+        post :save_draft, construct_params(unwrapped_params, params_hash)
+        assert_response 400
       end
     end
   end

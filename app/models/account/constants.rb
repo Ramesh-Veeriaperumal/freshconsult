@@ -304,13 +304,14 @@ class Account < ActiveRecord::Base
       recalculate_daypass: false, prevent_wc_ticket_create: true, allow_wildcard_ticket_create: false,
       attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false,
       requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false, supervisor_custom_status: false,
-      sandbox_temporary_offset: false, downgrade_policy: false, skip_posting_to_fb: true,
+      sandbox_temporary_offset: false, downgrade_policy: true, skip_posting_to_fb: true,
       allow_update_agent: false, facebook_dm_outgoing_attachment: true, hide_mailbox_error_from_agents: false,
       facebook_post_outgoing_attachment: true, incoming_mentions_in_tms: false, default_unassigned_service_tasks_filter: false,
       prevent_lang_detect_for_spam: false, jira_onpremise_reporter: false, support_ticket_rate_limit: false, sidekiq_logs_to_central: false, portal_central_publish: false, encode_emoji_in_solutions: false,
       forums_agent_portal: false, mailbox_google_oauth: false, send_and_set: false, migrate_euc_pages_to_us: false, agent_collision_revamp: false, topic_editor_with_html: false, focus_mode: false,
       mailbox_forward_setup: false, remove_image_attachment_meta_data: false, ticket_field_revamp: false, new_timeline_view: false, email_mailbox: true, facebook_admin_ui_revamp: false,
-      detect_lang_from_email_service: false, fb_ad_post_stream_publish: false, sla_policy_revamp: false, freshdesk_freshsales_bundle: false, field_agents_can_manage_appointments_setting: false
+      detect_lang_from_email_service: false, fb_ad_post_stream_publish: false, sla_policy_revamp: false, freshdesk_freshsales_bundle: false, field_agents_can_manage_appointments_setting: false,
+      fsm_for_garden_plan: false
     }, :merge
   )
 
@@ -326,7 +327,6 @@ class Account < ActiveRecord::Base
   CONTACT_DATA = [:first_name, :last_name, :email, :phone].freeze
   FILE_DOWNLOAD_URL_EXPIRY_TIME = 60.to_i.seconds
   CONDITION_BASED_LAUNCHPARTY_FEATURES = {
-    downgrade_policy: lambda { |account| account.redis_key_exists?(Redis::Keys::Others::DOWNGRADE_POLICY) },
     new_timeline_view: lambda { |account| account.redis_key_exists?(Redis::Keys::Others::NEW_TIMELINE_VIEW) }
   }.freeze
 end

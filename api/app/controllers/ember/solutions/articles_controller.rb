@@ -11,6 +11,7 @@ module Ember
       include CloudFilesHelper
       include SanitizeSerializeValues
       include SolutionApprovalConcern
+      include SolutionHelper
 
       SLAVE_ACTIONS = %w[index folder_articles filter untranslated_articles].freeze
 
@@ -36,6 +37,8 @@ module Ember
       before_filter :check_approval_feature, only: [:send_for_review, :approve]
       before_filter :validate_approval_params, only: [:send_for_review]
       before_filter :approval_delegator_validation, only: [:send_for_review]
+      before_filter :check_suggested_feature, only: [:suggested]
+      before_filter :validate_suggested_params, only: [:suggested]
       before_filter :load_helpdesk_approval_record, only: [:approve]
 
       decorate_views(decorate_object: [:article_content, :votes])
@@ -141,6 +144,11 @@ module Ember
         @helpdesk_approver_mapping.approve! ? head(204) : render_errors(@helpdesk_approver_mapping.errors)
       end
 
+      def suggested
+        update_suggested(cname_params[:articles_suggested])
+        head 204
+      end
+
       private
 
         def construct_header_fields(header_fields)
@@ -209,6 +217,12 @@ module Ember
         def validate_export_filter_params
           @constants_klass  = 'SolutionConstants'.freeze
           @validation_klass = 'SolutionArticleFilterValidation'.freeze
+          return unless validate_body_params
+        end
+
+        def validate_suggested_params
+          @constants_klass  = 'SolutionConstants'.freeze
+          @validation_klass = 'ApiSolutions::ArticlesSuggestedValidation'.freeze
           return unless validate_body_params
         end
 
@@ -290,6 +304,10 @@ module Ember
 
         def check_export_feature
           render_request_error(:require_feature, 403, feature: :article_export) unless current_account.article_export_enabled? && (current_account.article_filters_enabled? || (cname_params.keys & SolutionConstants::ADVANCED_FILTER_FIELDS).empty?)
+        end
+
+        def check_suggested_feature
+          render_request_error(:require_feature, 403, feature: :suggested_articles_count) unless current_account.suggested_articles_count_enabled?
         end
 
         def untranslated_articles_preload_options

@@ -5,9 +5,12 @@ class InstalledApplicationTest < ActiveSupport::TestCase
   include InstalledApplicationsTestHelper
 
   def test_central_publish_payload
+    Marketplace::MarketPlaceObject.any_instance.stubs(:get_api).returns(nil)
     installed_app = Account.current.installed_applications.first || create_application('salesforce_v2')
     payload = installed_app.central_publish_payload.to_json
     payload.must_match_json_expression(central_publish_installed_app_pattern(installed_app))
+  ensure
+    Marketplace::MarketPlaceObject.any_instance.unstub(:get_api)
   end
 
 

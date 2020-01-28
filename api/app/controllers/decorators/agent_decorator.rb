@@ -101,6 +101,10 @@ class AgentDecorator < ApiDecorator
     agent_hash.merge!(all_agent_channels_hash)
   end
 
+  def preferences_list
+    record.preferences
+  end
+
   private
 
     def additional_agent_info

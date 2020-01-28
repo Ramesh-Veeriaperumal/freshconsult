@@ -52,4 +52,22 @@ module AgentConstants
   }.freeze
   EXPORT_TYPE = 'agent'.freeze
   BULK_API_JOBS_CLASS = 'Agent'.freeze
+  PREFERENCES_FIELDS = [
+    :shortcuts_enabled,
+    :shortcuts_mapping,
+    :notification_timestamp,
+    :show_onBoarding,
+    :falcon_ui,
+    :undo_send,
+    :focus_mode,
+    { field_service: [:dismissed_sample_scheduling_dashboard] },
+    { search_settings:
+      { tickets: [
+        :include_subject,
+        :include_description,
+        :include_other_properties,
+        :include_notes,
+        :include_attachment_names
+      ] } }
+  ].freeze
 end.freeze

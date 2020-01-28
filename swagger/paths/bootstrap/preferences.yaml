@@ -1,0 +1,30 @@
+get:
+  summary: Get agent preferences
+  tags: [Bootstrap]
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/bootstrap_preferences'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+put:
+  summary: Update agent preferences
+  tags: [Bootstrap]
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/bootstrap_preferences'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/bootstrap_preferences'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

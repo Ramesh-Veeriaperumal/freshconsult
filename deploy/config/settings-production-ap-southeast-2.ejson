@@ -1216,6 +1216,11 @@
             "key": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:unfPXPEtyp/PVgVrHaHZbVapKhaKJoa8:pUo6ppeRQO2SP7kZkmdgc4kXUZrV3hkj7mhkGI+ZK0XA7SE89W6t6ZmmyUnNyFjX5QSfhDK2TDhQ062jV8Vp5cWY7V2i9Q==]",
             "iv": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:C3/SyjxnVPgxAdwrxeXdWGM14yiq4D48:jqAP+DDZXQZ7BrTgWYnb7Yz40NHTsXjIyv82s3ntnT5cItdTCEoOl+jIQM4fGIWm]",
             "_label": "key1"
+          },
+          "account_additional_settings": {
+            "key": "EJ[1:TXRrG59HSJ+m4NNsYNnv31MPIL+SDr9vlQ/FpiPlvFg=:2z58ImgaTPrHuJZhAO9B3lQ+BzvU3SY9:dZg2E0bBAWGqhQuOJXIVFym3KOTreexrXxRi3fiX9jmQCswwU3tyhZPgaWN5Zngk]",
+            "iv":  "EJ[1:TXRrG59HSJ+m4NNsYNnv31MPIL+SDr9vlQ/FpiPlvFg=:NsUdGCtSMPU1VMy6vifQjM83LcPk0M0b:QCpJUVMavQuPODPy/QEKJFX7mkr8Zja97210X5CtA/w=]",
+            "_label": "account_additional_settings"
           }
         },
         "_api_endpoint": "https://central-sydney.freshworksapi.com/collector"

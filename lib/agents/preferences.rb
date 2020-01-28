@@ -68,6 +68,42 @@ module Agents
       update_preferences(search_settings: search_settings.deep_symbolize_keys)
     end
 
+    # Helpers for getting and setting falcon_ui
+    def falcon_ui
+      preferences[:falcon_ui]
+    end
+
+    def falcon_ui=(falcon_ui)
+      update_preferences(falcon_ui: falcon_ui)
+    end
+
+    # Helpers for getting and setting undo_send
+    def undo_send
+      preferences[:undo_send]
+    end
+
+    def undo_send=(undo_send)
+      update_preferences(undo_send: undo_send)
+    end
+
+    # Helpers for getting and setting show_onBoarding
+    def show_onBoarding # rubocop:disable Naming/MethodName
+      preferences[:show_onBoarding]
+    end
+
+    def show_onBoarding=(show_onboarding) # rubocop:disable Naming/MethodName
+      update_preferences(show_onBoarding: show_onboarding)
+    end
+
+    # Helpers for getting and setting Field Service related preferences
+    def field_service
+      preferences[:field_service]
+    end
+
+    def field_service=(field_service)
+      update_preferences(field_service: field_service.deep_symbolize_keys)
+    end
+
     private
 
       def update_preferences(settings = {})

@@ -97,7 +97,6 @@ class SubscriptionsControllerTest < ActionController::TestCase
   def test_same_plan_billing_cycle_downgrade_for_existing_customers
     params = { plan_id: @account.subscription.subscription_plan_id, billing_cycle: SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:monthly] }
     stub_chargebee_requests
-    $redis_others.perform_redis_op('set', DOWNGRADE_POLICY_TO_ALL, true)
     @account.subscription.update_attributes(agent_limit: '1')
     @account.subscription.update_attributes(renewal_period: SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual])
     current_subscription = @account.subscription
@@ -108,7 +107,6 @@ class SubscriptionsControllerTest < ActionController::TestCase
     assert_equal @account.subscription.subscription_request.nil?, true
     assert_response 302
   ensure
-    $redis_others.perform_redis_op('del', DOWNGRADE_POLICY_TO_ALL)
     unstub_chargebee_requests
   end
 

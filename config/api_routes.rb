@@ -431,6 +431,7 @@ Helpkit::Application.routes.draw do
             post :export, path: 'export/(:language)', constraints: { language: Regexp.union(Language.all_codes) }
             put :bulk_update, path: 'bulk_update/(:language)', constraints: { language: Regexp.union(Language.all_codes) }
             get :untranslated_articles, path: 'untranslated_articles/(:language)', constraints: { language: Regexp.union(Language.all_codes) }
+            put :suggested
           end
 
           member do
@@ -536,6 +537,8 @@ Helpkit::Application.routes.draw do
       collection do
         get :agents_groups, to: 'ember/bootstrap/agents_groups#index'
         get :me, to: 'ember/bootstrap#me'
+        get 'me/preferences', to: 'ember/bootstrap/preferences#show'
+        put 'me/preferences', to: 'ember/bootstrap/preferences#update'
         get :account, to: 'ember/bootstrap#account'
       end
     end

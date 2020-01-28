@@ -2074,7 +2074,12 @@
             "key": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:paTkSx43dnZZ9U2E6OZzuJiyZizXL0AT:RpYP/LQb5v7CQheT7zsc9c3YmAjtHc6TYxHc8hmvLCY2eYf/+owj0rFlABwlHbySxSkqlXiL5rEbfLXnn123IQIe/bHQvQ==]",
             "iv": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:1gN4plts/Lr8vvBfvv+1VS2LGUJkSzXC:PPyjp8o3vlGBjadJvQCN6xvaUHf71d2JX+22khhCAMWp2wrdVoKpCgkSisVGKZZ1]",
             "_label": "key1"
-          }
+          },
+          "account_additional_settings": {
+            "key": "EJ[1:/Et/1aFPDPS5BD8vRGqgGkpTmQ+2czx8ovIvntyv5WY=:WpK0DCFp7o+aHJQ8c2rKk2TOk53Pp7xa:AfHiSu/UTAn4h2xQkHohSeoe9i4tEH5X3wM7fPKDOfQiR7rELA02DS/43WgOvCur]",
+            "iv":  "EJ[1:/Et/1aFPDPS5BD8vRGqgGkpTmQ+2czx8ovIvntyv5WY=:IJSChsngMGsqECnt2+zcbOfub4OVcMN3:gRV8QbDpvimoYVdQYd0Suts5kCcSYm94X7/eqDREtDM=]",
+            "_label": "account_additional_settings"
+          }    
         },
         "_api_endpoint": "https://central.freshworksapi.com/collector"
       },

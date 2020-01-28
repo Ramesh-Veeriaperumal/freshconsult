@@ -798,6 +798,7 @@ class Subscription < ActiveRecord::Base
       end
       applicable_coupon = verify_coupon(present_subscription.coupon)
       if subscription_downgrade?
+        total_amount(updated_addons, applicable_coupon)
         response = billing.update_subscription(self, false, updated_addons, applicable_coupon, true)
         construct_subscription_request(updated_addons, response.subscription.current_term_end).save!
       else
@@ -1013,6 +1014,6 @@ class Subscription < ActiveRecord::Base
 
     def launch_downgrade_policy
       renewal_period_change = previous_changes['renewal_period']
-      account.launch(:downgrade_policy) if redis_key_exists?(DOWNGRADE_POLICY_TO_ALL) && renewal_period_change.present? && renewal_period_change[0] != renewal_period_change[1]
+      account.launch(:downgrade_policy) if renewal_period_change.present? && renewal_period_change[0] != renewal_period_change[1]
     end
  end

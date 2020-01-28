@@ -44,6 +44,7 @@ module Ember
         @account.add_feature(:article_filters)
         @account.add_feature(:article_export)
         @account.add_feature(:adv_article_bulk_actions)
+        @account.add_feature(:suggested_articles_count)
 
         @account.reload
         setup_articles
@@ -2221,6 +2222,12 @@ module Ember
         assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
       end
 
+      def test_export_articles_with_suggested_column_with_suggested_feature
+        export_params = { portal_id: @portal_id.to_s, article_fields: [{ field_name: 'suggested', column_name: 'Suggested' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 204
+      end
+
       def test_reorder_without_position
         folder = @account.solution_folder_meta.where(is_default: false).first
         populate_articles(folder)
@@ -4060,6 +4067,133 @@ module Ember
         end
       ensure
         Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_suggested
+        article = create_article(article_params).primary_article
+        article_id = article.id
+        article_meta_id = article.parent.id
+        language = article.language.code
+        suggested = article.suggested
+
+        articles_suggested = [{ language: language, article_id: article_meta_id }]
+        params_hash = { articles_suggested: articles_suggested }
+
+        put :suggested, construct_params({ version: 'private' }, params_hash)
+        assert_response 204
+
+        article = Solution::Article.find_by_id(article_id)
+        assert_equal (suggested + 1), article.suggested
+      end
+
+      def test_suggested_invalid_format_langcode
+        article = create_article(article_params).primary_article
+        article_id = article.id
+        article_meta_id = article.parent.id
+
+        language = Faker::Lorem.characters(10)
+        articles_suggested = [{ language: language, article_id: article_meta_id }]
+        params_hash = { articles_suggested: articles_suggested }
+
+        put :suggested, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+      end
+
+      def test_suggested_negative_article_id
+        article = create_article(article_params).primary_article
+        article_id = article.id
+        article_meta_id = article.parent.id
+        language = article.language.code
+
+        articles_suggested = [{ language: language, article_id: -1 }]
+        params_hash = { articles_suggested: articles_suggested }
+
+        put :suggested, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+      end
+
+      def test_suggested_article_id_zero
+        article = create_article(article_params).primary_article
+        article_id = article.id
+        article_meta_id = article.parent.id
+        language = article.language.code
+
+        articles_suggested = [{ language: language, article_id: 0 }]
+        params_hash = { articles_suggested: articles_suggested }
+
+        put :suggested, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+      end
+
+      def test_suggested_text_article_id
+        article = create_article(article_params).primary_article
+        article_id = article.id
+        article_meta_id = article.parent.id
+        language = article.language.code
+
+        articles_suggested = [{ language: language, article_id: 'id' }]
+        params_hash = { articles_suggested: articles_suggested }
+
+        put :suggested, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+      end
+
+      def test_suggested_invalid_article_language
+        article = create_article(article_params).primary_article
+        article_id = article.id
+        article_meta_id = article.parent.id
+        suggested = article.suggested
+
+        language = article.language.code == 'en' ? 'fr' : 'en'
+        articles_suggested = [{ language: language, article_id: article_meta_id }]
+        params_hash = { articles_suggested: articles_suggested }
+
+        put :suggested, construct_params({ version: 'private' }, params_hash)
+        assert_response 204
+
+        article = Solution::Article.find_by_id(article_id)
+        assert_equal suggested, article.suggested
+      end
+
+      def test_suggested_invalid_article_meta_id
+        article = create_article(article_params).primary_article
+        article_id = article.id
+        article_meta_id = article.parent.id
+        language = article.language.code
+        suggested = article.suggested
+
+        articles_suggested = [{ language: language, article_id: article_meta_id + 1 }]
+        params_hash = { articles_suggested: articles_suggested }
+
+        put :suggested, construct_params({ version: 'private' }, params_hash)
+        assert_response 204
+
+        article = Solution::Article.find_by_id(article_id)
+        assert_equal suggested, article.suggested
+      end
+
+      def test_suggested_without_suggested_feature
+        Account.any_instance.stubs(:suggested_articles_count_enabled?).returns(false)
+        article = create_article(article_params).primary_article
+        article_meta_id = article.parent.id
+        language = article.language.code
+
+        articles_suggested = [{ language: language, article_id: article_meta_id }]
+        params_hash = { articles_suggested: articles_suggested }
+
+        put :suggested, construct_params({ version: 'private' }, params_hash)
+        assert_response 403
+      ensure
+        Account.any_instance.unstub(:suggested_articles_count_enabled?)
+      end
+
+      def test_export_articles_with_suggested_column_without_suggested_feature
+        Account.any_instance.stubs(:suggested_articles_count_enabled?).returns(false)
+        export_params = { portal_id: @portal_id.to_s, article_fields: [{ field_name: 'suggested', column_name: 'Suggested' }] }
+        post :export, construct_params({ version: 'private' }, export_params)
+        assert_response 400
+      ensure
+        Account.any_instance.unstub(:suggested_articles_count_enabled?)
       end
 
       private

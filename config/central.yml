@@ -14,6 +14,11 @@ development:
       label: "facebook"
       key: "bf3c199c2470cb477d907b1e0917c17b"
       iv: "1324659871023654"
+    account_additional_settings:
+      label: "account_additional_settings"
+      key: "9b2fa0af77c85b86923a73e7d9a03073"
+      iv: "dd5b9a333bc05778"
+
 test:
   api_endpoint: https://central-staging.freshworksapi.com/collector
   service_token: dummy
@@ -30,6 +35,11 @@ test:
       label: "facebook"
       key: "bf3c199c2470cb477d907b1e0917c17b"
       iv: "1324659871023654"
+    account_additional_settings:
+      label: "account_additional_settings"
+      key: "9b2fa0af77c85b86923a73e7d9a03073"
+      iv: "dd5b9a333bc05778"
+            
 staging:
   api_endpoint: https://central-staging.freshworksapi.com/collector
   service_token: dummy
@@ -46,6 +56,10 @@ staging:
       label: dummy
       key: dummy
       iv: dummy
+    account_additional_settings:
+      label: dummy
+      key: dummy
+      iv: dummy     
 production:
   api_endpoint: https://central-production.freshworksapi.com/collector
   service_token: dummy
@@ -62,3 +76,7 @@ production:
       label: dummy
       key: dummy
       iv: dummy
+    account_additional_settings:
+      label: dummy
+      key: dummy
+      iv: dummy     

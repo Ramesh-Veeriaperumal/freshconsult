@@ -625,8 +625,6 @@ javascripts:
 
   admin_search:
     - public/javascripts/admin/ui_search.js
-  mobihelp:
-    - public/javascripts/mobihelp.js
 
 
   profile_avatar:

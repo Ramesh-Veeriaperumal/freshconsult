@@ -11,6 +11,7 @@ module Users
         freshchat_token: nil,
         undo_send: false,
         focus_mode: false,
+        field_service: { dismissed_sample_scheduling_dashboard: false },
         search_settings: {
           tickets: {
             include_subject: true,
@@ -38,8 +39,8 @@ module Users
     private
 
       def preferences_with_defaults
-        preferences_with_defaults = DEFAULTS_PREFERENCES.deep_dup
-        preferences_with_defaults = preferences_with_defaults.deep_merge(self.preferences_without_defaults || {})
+        preferences_with_defaults = DEFAULTS_PREFERENCES.deep_dup.with_indifferent_access
+        preferences_with_defaults = preferences_with_defaults.deep_merge(self.preferences_without_defaults.with_indifferent_access || {})
         preferences_with_defaults[:agent_preferences][:search_settings][:tickets].except!(:archive) unless Account.current.archive_tickets_enabled?
 
         preferences_with_defaults

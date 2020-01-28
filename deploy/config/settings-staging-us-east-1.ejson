@@ -104,7 +104,12 @@
             "key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:JT9cpFMyTkAN2KucrcFCVKu5uMX/5vkO:JiZiTQITZr6mRpK72oq2lTop67OSBQ4azNvUJgC/2AW45bcsevuMLVaTIXAEZJ/k]",
             "iv": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:Mc7wYjXoudCwKKpIBPj2Quxrs8vI3R/a:YXdVcR8DRJedQPIAaQy2s82m6wr4aUSEGhOaADN8S8M=]",
             "_label": "key1"
-          }
+          },
+          "account_additional_settings": {
+            "key": "EJ[1:NQDcbfH4hHVo5djcR46P7FkBOO+aKexcrejEIktGPUE=:tVqqidp83lpbqWOHcWxBm7wf68pEgCsa:8nzCJ7DVtbe8WgxXBLLNbMK6NKM/GlacPTGEnxP9vO2SLaiwQ5MXxHVu89ls2rdz]",
+            "iv":  "EJ[1:NQDcbfH4hHVo5djcR46P7FkBOO+aKexcrejEIktGPUE=:fVBbYa8mYNgApmhYeNKkx0qJdDu1GfFB:Ar1tZZMrSNhKmB6mgq09ZdcZ29SWXaIBmwgo1JoL1dc=]",
+            "_label": "account_additional_settings"
+          } 
         },
         "_api_endpoint": "https://central-staging.freshworksapi.com/collector"
       },

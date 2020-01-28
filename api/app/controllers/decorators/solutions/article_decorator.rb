@@ -1,7 +1,7 @@
 class Solutions::ArticleDecorator < ApiDecorator
   delegate :title, :description, :desc_un_html, :user_id, :status, :seo_data, :language_id,
            :parent, :parent_id, :draft, :attachments, :cloud_files, :article_ticket, :modified_at,
-           :modified_by, :id, :to_param, :tags, :voters, :thumbs_up, :thumbs_down, :hits, :tickets, :outdated, :helpdesk_approval, to: :record
+           :modified_by, :id, :to_param, :tags, :voters, :thumbs_up, :thumbs_down, :hits, :tickets, :outdated, :helpdesk_approval, :suggested, to: :record
 
   SEARCH_CONTEXTS_WITHOUT_DESCRIPTION = [:agent_insert_solution, :filtered_solution_search].freeze
   SPOTLIGHT_SEARCH_CONTEXT = :agent_spotlight_solution
@@ -273,6 +273,7 @@ class Solutions::ArticleDecorator < ApiDecorator
         hits: @language_metric ? hits : parent.hits
       }
 
+      metrics[:suggested] = suggested.to_i if current_account.suggested_articles_count_enabled?
       # TODO : we need to optimize feedback count as count query, for now we are excluding it for list page
       metrics[:feedback_count] = feedback_count unless @is_list_page
       metrics

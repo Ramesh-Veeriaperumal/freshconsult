@@ -178,4 +178,11 @@ module SAAS::DropFeatureData
   def handle_custom_translations_drop_data
     Account.current.custom_translations.find_each(&:destroy)
   end
+
+  def handle_suggested_articles_count_drop_data
+    account.solution_articles.where('int_01 > 0').find_each do |article|
+      article.suggested = 0
+      article.save
+    end
+  end
 end

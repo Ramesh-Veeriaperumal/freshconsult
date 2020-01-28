@@ -403,7 +403,10 @@ class Wf::Filter < ActiveRecord::Base
     
     unless valid_operator?(condition_key, operator_key)
       opers = definition[condition_key]
-      return unless opers
+      unless opers
+        Rails.logger.info "Missed Wf::Filter Definition :: #{condition_key}"
+        return
+      end
       operator_key = first_sorted_operator(opers)
     end
     

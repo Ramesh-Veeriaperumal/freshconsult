@@ -15,4 +15,8 @@
       label: <%= node[:ymls][:central][:central_secret][:installed_application][:label] %>
       key: <%= node[:ymls][:central][:central_secret][:installed_application][:key] %>
       iv: <%= node[:ymls][:central][:central_secret][:installed_application][:iv] %>
+    account_additional_settings:
+      label: <%= node[:ymls][:central][:central_secret][:account_additional_settings][:label] %>
+      key: <%= node[:ymls][:central][:central_secret][:account_additional_settings][:key] %>
+      iv: <%= node[:ymls][:central][:central_secret][:account_additional_settings][:iv] %>
 <% end %>

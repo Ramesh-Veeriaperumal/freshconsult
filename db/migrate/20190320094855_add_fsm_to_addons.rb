@@ -1,5 +1,5 @@
 class AddFsmToAddons < ActiveRecord::Migration
-  shard :all
+  shard :none
 
   def up
     addon_types = Subscription::Addon::ADDON_TYPES

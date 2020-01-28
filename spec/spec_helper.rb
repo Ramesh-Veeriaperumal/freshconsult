@@ -118,7 +118,6 @@ Spork.prefork do
     config.include UsersHelper
     config.include SolutionBuilderHelper
     config.include SolutionsHelper
-    config.include MobihelpHelper
     config.include CompanyHelper
     config.include JiraHelper
     config.include APIHelper, :type => :controller

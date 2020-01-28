@@ -49,7 +49,7 @@ class Account < ActiveRecord::Base
     :forums_agent_portal, :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product, :send_and_set, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html, :focus_mode,
     :mailbox_forward_setup, :remove_image_attachment_meta_data, :new_timeline_view, :automated_private_notes_notification, :detect_lang_from_email_service,
     :sane_restricted_helpdesk, :hiding_confidential_logs, :fb_ad_post_stream_publish, :ticket_list_performance, :sla_policy_revamp, :help_widget_log, :freshdesk_freshsales_bundle, :help_widget_article_customisation,
-    :field_agents_can_manage_appointments_setting
+    :field_agents_can_manage_appointments_setting, :fsm_for_garden_plan, :show_sample_scheduling_dashboard
   ].freeze
 
   DB_FEATURES = [
@@ -85,7 +85,7 @@ class Account < ActiveRecord::Base
     :hide_first_response_due, :agent_articles_suggest, :email_articles_suggest, :customer_journey, :botflow,
     :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters, :supervisor_custom_status, :lbrr_by_omniroute,
     :secure_attachments, :article_versioning, :article_export, :article_approval_workflow, :next_response_sla, :advanced_automations,
-    :fb_ad_posts
+    :fb_ad_posts, :suggested_articles_count
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 

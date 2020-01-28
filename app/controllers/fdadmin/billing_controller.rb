@@ -163,7 +163,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
     end
 
     def subscription_renewed(content)
-      @account.launch(:downgrade_policy) if redis_key_exists?(DOWNGRADE_POLICY_TO_ALL)
+      @account.launch(:downgrade_policy)
       @account.subscription.update_attributes(@subscription_data)
       if redis_key_exists?(card_expiry_key)
         value = { 'next_renewal' => @subscription_data[:next_renewal_at] }
