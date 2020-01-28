@@ -370,8 +370,9 @@ module Ember
         folder_meta = get_folder_meta
         title = Faker::Name.name
         seo_title = Faker::Name.name
+        seo_desc = Faker::Lorem.paragraph
         paragraph = Faker::Lorem.paragraph
-        post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 2, seo_data: { meta_title: seo_title, meta_keywords: ['tag3', 'tag4', 'tag4'] })
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 2, seo_data: { meta_title: seo_title, meta_description: seo_desc, meta_keywords: ['tag3', 'tag4', 'tag4'] })
         assert_response 201
         match_json(private_api_solution_article_pattern(Solution::Article.last))
       end

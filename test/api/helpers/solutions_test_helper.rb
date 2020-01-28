@@ -51,7 +51,7 @@ module SolutionsTestHelper
       agent_id: expected_output[:agent_id] || article.user_id,
       type: expected_output[:type] || article.parent.reload.art_type,
       status: expected_output[:status] || article.status,
-      seo_data: expected_output[:seo_data] || article.seo_data,
+      seo_data: expected_output[:seo_data] || seo_data_info(article),
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
@@ -102,7 +102,7 @@ module SolutionsTestHelper
       thumbs_down: expected_output[:thumbs_down] || article.solution_article_meta.thumbs_down,
       hits: expected_output[:hits] || article.solution_article_meta.hits,
       status: expected_output[:status] || article.status,
-      seo_data: expected_output[:seo_data] || article.seo_data,
+      seo_data: expected_output[:seo_data] || seo_data_info(article),
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
@@ -467,6 +467,15 @@ module SolutionsTestHelper
       result[language.code] = { available: false, draft_present: false, outdated: false, published: false, approval_status: nil } unless result.key?(language.code)
     end
     result
+  end
+
+  def seo_data_info(article)
+    seo_values = {
+      meta_title: article.seo_data['meta_title'] || '',
+      meta_description: article.seo_data['meta_description'] || ''
+    }
+    seo_values[:meta_keywords] = article.seo_data['meta_keywords'] if article.seo_data['meta_keywords']
+    seo_values
   end
 
   def vote_info(article, vote_type)

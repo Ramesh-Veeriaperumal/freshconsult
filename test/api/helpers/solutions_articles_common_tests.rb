@@ -154,8 +154,9 @@ module SolutionsArticlesCommonTests
     folder_meta = get_folder_meta
     title = Faker::Name.name
     seo_title = Faker::Name.name
+    seo_desc = Faker::Lorem.paragraph
     paragraph = Faker::Lorem.paragraph
-    post :create, construct_params({ version: version, id: folder_meta.id }, title: title, description: paragraph, status: 1, type: 2, tags: ['tag1', 'tag2', 'tag2'], seo_data: { meta_title: seo_title, meta_keywords: ['tag3', 'tag4', 'tag4'] })
+    post :create, construct_params({ version: version, id: folder_meta.id }, title: title, description: paragraph, status: 1, type: 2, tags: ['tag1', 'tag2', 'tag2'], seo_data: { meta_title: seo_title, meta_description: seo_desc, meta_keywords: ['tag3', 'tag4', 'tag4'] })
     assert_response 201
     result = parse_response(@response.body)
     assert_equal "http://#{@request.host}/api/v2/solutions/articles/#{result['id']}", response.headers['Location']
