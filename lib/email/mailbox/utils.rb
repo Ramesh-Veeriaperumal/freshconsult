@@ -2,6 +2,7 @@ module Email::Mailbox::Utils
   include Redis::RedisKeys
   include Redis::OthersRedis
   include Email::Mailbox::Constants
+  include Email::Mailbox::GmailOauthHelper
   
   def construct_to_email(to_email, account_full_domain)
      email_split  = to_email.split('@')
@@ -31,9 +32,9 @@ module Email::Mailbox::Utils
   end
 
   def update_mailbox_error_type
-    return if oauth_delivery_method?
+    from_email = from.try(:[], 0)
+    refresh_access_token(email_mailbox(from_email).smtp_mailbox) && return if oauth_delivery_method? && from_email.present?
 
-    from_email = self.from.try(:[], 0)
     error_type = SMTP_AUTHENTICATION_ERROR_CODE
     if from_email.present?
       email_config = email_mailbox(from_email)

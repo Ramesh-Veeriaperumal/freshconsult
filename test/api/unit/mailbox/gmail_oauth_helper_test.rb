@@ -75,8 +75,19 @@ class Mailbox::GmailOauthHelperTest < ActiveSupport::TestCase
         )
       )
     )
+    $redis_others.perform_redis_op(
+      'set',
+      format(
+        GMAIL_ACCESS_TOKEN_VALIDITY,
+        account_id: mailbox.account_id,
+        smtp_mailbox_id: mailbox.smtp_mailbox.id
+      ),
+      true,
+      ex: Email::Mailbox::Constants::ACCESS_TOKEN_EXPIRY
+    )
     refresh_access_token(mailbox.smtp_mailbox)
     assert_equal mailbox.smtp_mailbox.error_type, 401
+    assert_equal access_token_expired?(mailbox.account_id, mailbox.smtp_mailbox.id), true
   ensure
     Mailbox::GmailOauthHelperTest.unstub(:get_oauth2_access_token)
     $redis_others.perform_redis_op(

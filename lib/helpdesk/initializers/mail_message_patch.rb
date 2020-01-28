@@ -17,7 +17,7 @@ Mail::Message.class_eval do
         end
       rescue Net::SMTPAuthenticationError => e
         Rails.logger.info "Net::SMTPAuthenticationError while sending email - #{e.message}"
-        update_mailbox_error_type
+        update_mailbox_error_type if e.inspect.include?(Email::Mailbox::Constants::SMTP_AUTH_ERROR_CODE)
       rescue StandardError => e
         Rails.logger.info "SMTP error while sending email #{e.message}"
       end
