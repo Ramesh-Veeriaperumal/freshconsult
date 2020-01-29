@@ -98,7 +98,7 @@ var SurveyRemark = {
                 data[i].customer.createdAt = data[i].created_at;
                 if(data[i].survey_remark){
                     remarks.push({
-                            msg:data[i].survey_remark.feedback.body,
+                            msg: escapeHtml(data[i].survey_remark.feedback.body),
                             rating:data[i].rating,
                             customer:data[i].customer,
                             agent: data[i].agent,
