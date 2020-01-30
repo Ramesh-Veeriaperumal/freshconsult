@@ -955,7 +955,7 @@ module Channel::V2
       assert_equal tkts.count, response.size
       param_object = OpenStruct.new
       pattern = tkts.map do |tkt|
-        index_ticket_pattern_with_associations(tkt, param_object)
+        index_ticket_pattern_with_associations(tkt, param_object, [:description, :description_text])
       end
       match_json(pattern)
     ensure
