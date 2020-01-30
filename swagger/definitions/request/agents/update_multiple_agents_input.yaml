@@ -1,0 +1,40 @@
+type: object
+properties:
+  agents:
+    type: array
+    description: array of agents
+    items:
+      type: object
+      allOf:
+        - properties:
+            id:
+              type: integer
+              example: 10
+        - $ref: '#/definitions/agent_input'
+      example:
+        {
+          id: 10,
+          name: 'Freshdesk Agent',
+          email: 'support_agent@freshworks.com',
+          phone: '+91 44 40404040',
+          mobile: 9090909090,
+          time_zone: 'Eastern Time (US & Canada)',
+          job_title: 'Supervisor',
+          language: 'en',
+          signature: 'test',
+          ticket_scope: 1,
+          occasional: false,
+          ticket_assignment: { available: false },
+          shortcuts_enabled: false,
+          avatar_id: 100,
+          search_settings: {
+            tickets: {
+              include_subject: false,
+              include_description: false,
+              include_other_properties: false,
+              include_notes: false,
+              include_attachment_names: false,
+              archive: false
+            }
+          }
+        }

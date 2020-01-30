@@ -2,47 +2,102 @@ type: object
 properties:
   name:
     type: string
+    example: 'Freshdesk Agent'
   email: 
     type: string
+    example: 'support_agent@freshworks.com'
   phone:
     type: string
+    example: '+91 44 40404040'
   mobile:
-    type: string
+    type: integer
+    example: 9090909090
   time_zone:
     type: string
+    enum: ["American Samoa", "International Date Line West", "Midway Island", "Hawaii", "Alaska", "Pacific Time (US & Canada)", "Tijuana", "Arizona", "Chihuahua", "Mazatlan", "Mountain Time (US & Canada)", "Central America", "Central Time (US & Canada)", "Guadalajara", "Mexico City", "Monterrey", "Saskatchewan", "Bogota", "Eastern Time (US & Canada)", "Indiana (East)", "Lima", "Quito", "Atlantic Time (Canada)", "Caracas", "Georgetown", "La Paz", "Santiago", "Newfoundland", "Brasilia", "Buenos Aires", "Greenland", "Mid-Atlantic", "Azores", "Cape Verde Is.", "Casablanca", "Dublin", "Edinburgh", "Lisbon", "London", "Monrovia", "UTC", "Amsterdam", "Belgrade", "Berlin", "Bern", "Bratislava", "Brussels", "Budapest", "Copenhagen", "Ljubljana", "Madrid", "Paris", "Prague", "Rome", "Sarajevo", "Skopje", "Stockholm", "Vienna", "Warsaw", "West Central Africa", "Zagreb", "Athens", "Bucharest", "Cairo", "Harare", "Helsinki", "Istanbul", "Jerusalem", "Kyiv", "Pretoria", "Riga", "Sofia", "Tallinn", "Vilnius", "Baghdad", "Kuwait", "Minsk", "Moscow", "Nairobi", "Riyadh", "St. Petersburg", "Volgograd", "Tehran", "Abu Dhabi", "Baku", "Muscat", "Tbilisi", "Yerevan", "Kabul", "Ekaterinburg", "Islamabad", "Karachi", "Tashkent", "Chennai", "Kolkata", "Mumbai", "New Delhi", "Sri Jayawardenepura", "Kathmandu", "Almaty", "Astana", "Dhaka", "Urumqi", "Rangoon", "Bangkok", "Hanoi", "Jakarta", "Krasnoyarsk", "Novosibirsk", "Beijing", "Chongqing", "Hong Kong", "Irkutsk", "Kuala Lumpur", "Perth", "Singapore", "Taipei", "Ulaan Bataar", "Osaka", "Sapporo", "Seoul", "Tokyo", "Yakutsk", "Adelaide", "Darwin", "Brisbane", "Canberra", "Guam", "Hobart", "Melbourne", "Port Moresby", "Sydney", "Vladivostok", "Magadan", "New Caledonia", "Solomon Is.", "Auckland", "Fiji", "Kamchatka", "Marshall Is.", "Wellington", "Nuku'alofa", "Samoa", "Tokelau Is."]
+    example: 'Eastern Time (US & Canada)'
   job_title:
     type: string
+    example: 'Supervisor'
   language:
     type: string
+    x-enum: ['en', 'fr', 'de', 'es', 'ja', 'pt-BR', 'zh-CN', 'zh-HK', 'zh-TW', 'ar', 'bg', 'bs', 'ca', 'cs', 'da', 'el', 'es-LA', 'et', 'fi', 'he', 'hr', 'hu', 'id', 'is', 'it', 'ja-JP', 'ko', 'lt', 'lv-LV', 'ms', 'nb-NO', 'nl', 'no', 'pl', 'pt-PT', 'ro', 'ru-RU', 'ru', 'sk', 'sl', 'sr', 'sv-SE', 'th', 'tr', 'uk', 'vi']
+    example: 'en'
   signature:
     type: string
+    example: 'test'
   ticket_scope:
-    type: string
+    type: integer
+    x-enum: [1, 2, 3]
+    example: 1
   occasional:
     type: boolean
+    example: false
   ticket_assignment:
     type: object
     properties:
       available:
         type: boolean
+        example: false
+    example: { available: false }
   shortcuts_enabled:
     type: boolean
-  focus_mode:
-    type: boolean
+    example: false
   avatar_id:
     type: integer
+    example: 100
   search_settings:
     type: object
     properties:
-      include_subject:
-        type: boolean
-      include_description:
-        type: boolean
-      include_other_properties:
-        type: boolean
-      include_notes:
-        type: boolean
-      include_attachment_names:
-        type: boolean
-      archive:
-        type: boolean
+      tickets:
+        type: object
+        properties:
+          include_subject:
+            type: boolean
+            example: false
+          include_description:
+            type: boolean
+            example: false
+          include_other_properties:
+            type: boolean
+            example: false
+          include_notes:
+            type: boolean
+            example: false
+          include_attachment_names:
+            type: boolean
+            example: false
+          archive:
+            type: boolean
+            example: false
+    example:
+      tickets:
+        include_subject: false
+        include_description: false
+        include_other_properties: false
+        include_notes: false
+        include_attachment_names: false
+        archive: false
+example:
+  name: Freshdesk Agent
+  email: support_agent@freshworks.com
+  phone: +91 44 40404040
+  mobile: 9090909090
+  time_zone: Eastern Time (US & Canada)
+  job_title: Supervisor
+  language: en
+  signature: test
+  ticket_scope: 1
+  occasional: false
+  ticket_assignment:
+    available: false
+  shortcuts_enabled: false
+  avatar_id: 100
+  search_settings:
+    tickets:
+      include_subject: false
+      include_description: false
+      include_other_properties: false
+      include_notes: false
+      include_attachment_names: false
+      archive: false

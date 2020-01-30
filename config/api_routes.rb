@@ -150,6 +150,7 @@ Helpkit::Application.routes.draw do
         put :update_multiple
       end
     end
+    resources :out_of_offices, only: [:index, :show, :update, :destroy, :create]
     resources :canned_response_folders, controller: 'canned_response_folders', only: [:index, :show, :create, :update]
     resources :canned_responses, controller: 'canned_responses', only: [:index, :show, :create, :update]
     resources :scenario_automations, controller: 'scenario_automations', only: :index

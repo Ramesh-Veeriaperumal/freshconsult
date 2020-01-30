@@ -53,6 +53,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/custom_dashboard", only: %i[widgets_data show index bar_chart_data]
     resource :"settings/helpdesk", only: [:index]
     resource :'ember/rt', only: [:show]
+
+    resource :"out_of_office", only: %i[index show create update destroy]
   end
 
   manage_account do
