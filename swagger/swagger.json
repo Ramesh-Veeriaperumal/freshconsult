@@ -3649,6 +3649,13 @@
         "parameters": [
           {
             "$ref": "#/parameters/id"
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "type": "string",
+            "description": "If specified, will return activities that happened after the specified value",
+            "required": false
           }
         ],
         "responses": {
@@ -22398,113 +22405,115 @@
       "$ref": "#/definitions/company_activity"
     },
     "timeline_activity": {
-      "title": "data",
       "type": "object",
       "properties": {
-        "data": {
-          "type": "object",
-          "properties": {
-            "post": {
-              "$ref": "#/definitions/contact_post_activity"
-            },
-            "ticket": {
-              "$ref": "#/definitions/contact_ticket_activity"
-            }
-          }
-        }
-      }
-    },
-    "contact_post_activity": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer"
-          },
-          "topic_id": {
-            "description": "Topic id",
-            "type": "integer"
-          },
-          "title": {
-            "description": "Title of the topic",
-            "type": "string"
-          },
-          "comment": {
-            "description": "Topic's post or Reply to a topic",
-            "type": "boolean"
-          },
-          "forum": {
-            "description": "Forum category of the topic/post",
+        "activities": {
+          "type": "array",
+          "items": {
             "type": "object",
             "properties": {
-              "id": {
-                "type": "integer"
+              "activity": {
+                "type": "object",
+                "description": "Information of the activity",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Action being performed"
+                  },
+                  "timestamp": {
+                    "type": "string",
+                    "description": "Timestamp at which the activity is performed",
+                    "format": "date-time"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Brief description of the activity"
+                  },
+                  "link": {
+                    "type": "string",
+                    "description": "External link"
+                  },
+                  "source": {
+                    "type": "object",
+                    "description": "Source of the activity",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "Name of the source app"
+                      },
+                      "id": {
+                        "type": "string",
+                        "description": "ID of the instance in the source app that generated the activity. For instance, shop_id in Shopify"
+                      }
+                    }
+                  },
+                  "actor": {
+                    "type": "object",
+                    "description": "Information of actor performing the activity",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "ID of the actor in the source app performing the activity"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Name of the actor performing the activity"
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "Type of the actor in the source app performing the activity, Ex - agent, contact, shopper, shop_owner"
+                      }
+                    }
+                  },
+                  "object": {
+                    "type": "object",
+                    "description": "Object handled in the activity",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "description": "Type of the object handled in the activity"
+                      },
+                      "id": {
+                        "type": "string",
+                        "description": "ID of the object handled in the activity"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Additional properties on the activity",
+                    "additionalProperties": true
+                  }
+                }
               },
-              "name": {
-                "type": "string"
+              "contact": {
+                "type": "object",
+                "properties": {
+                  "property": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "is_actor": {
+                    "type": "boolean"
+                  }
+                }
               }
             }
           }
-        }
-      }
-    },
-    "contact_ticket_activity": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "description_text": {
-            "description": "Ticket description",
-            "type": "string"
-          },
-          "tags": {
-            "description": "Ticket tags",
-            "type": "array",
-            "items": {
-              "type": "string"
+        },
+        "meta": {
+          "title": "Meta data",
+          "type": "object",
+          "properties": {
+            "next_page": {
+              "type": "string",
+              "description": "Token to fetch the next page of activities"
             }
-          },
-          "responder_id": {
-            "description": "Ticket's responder id",
-            "type": "integer"
-          },
-          "due_by": {
-            "description": "Ticket's due by time",
-            "type": "string",
-            "format": "date-time"
-          },
-          "requester_id": {
-            "description": "Ticket's requester id",
-            "type": "string"
-          },
-          "subject": {
-            "description": "Ticket subject",
-            "type": "string"
-          },
-          "group_id": {
-            "description": "Ticket's group id",
-            "type": "string"
-          },
-          "status": {
-            "description": "Ticket's status",
-            "type": "string"
-          },
-          "fr_due_by": {
-            "description": "Ticket's first response due by",
-            "type": "string"
-          },
-          "stats": {
-            "$ref": "#/definitions/ticket_stats"
-          },
-          "priority": {
-            "description": "Ticket's priority",
-            "type": "integer"
-          },
-          "created_at": {
-            "description": "Ticket's created time",
-            "type": "string",
-            "format": "date-time"
           }
         }
       }

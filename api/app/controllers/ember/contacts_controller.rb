@@ -109,19 +109,18 @@ module Ember
       end
     end
 
-
     def timeline
-      items = HyperTrail::Timeline.new(params.merge!(type: cname).to_h).fetch
-      activities = construct_timeline_activities(items)
-      activities = decorate_activities(activities)
-      @activities = activities.each_with_object({}) do |act, ret|
-        (ret[act.delete(:activity_type).to_sym.downcase] ||= []).push(act)
-        ret
-      end
-      if activities.count >= CompanyConstants::MAX_ACTIVITIES_COUNT
-        response.api_meta = { more_tickets: true }
-      end
-    rescue
+      next_page = params[:after]
+      hypertrail_response = next_page.present? ? timeline_object.fetch_next_page : timeline_object.fetch
+
+      @activities = hypertrail_response.fetch_transformed_response
+      response.api_root_key = :activities
+
+      meta_info = hypertrail_response.fetch_meta_info
+      response.api_meta = { next_page: meta_info[:next_page] } if meta_info.present? && meta_info[:next_page].present?
+    rescue StandardError => e
+      Rails.logger.error "Error occurred while fetching contact timeline #{e.inspect}"
+      NewRelic::Agent.notice_error(e)
       render_request_error(:internal_error, 503)
     end
 
@@ -130,6 +129,10 @@ module Ember
     end
 
     private
+
+      def timeline_object
+        HyperTrail::Timeline.new(params.merge!(type: cname).to_h)
+      end
 
       def scoper
         unless params[:tag].blank?

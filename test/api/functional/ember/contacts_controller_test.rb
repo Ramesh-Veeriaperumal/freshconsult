@@ -1874,7 +1874,7 @@ module Ember
       stub_request(:get, url).to_return(body: result_data[1].to_json, status: 200)
       get :timeline, controller_params(version: 'private', id: sample_user.id)
       assert_response 200
-      match_json({})
+      match_json([])
     end
 
     def test_contact_timeline
@@ -1884,17 +1884,28 @@ module Ember
       stub_request(:get, url).to_return(body: result_data[1].to_json, status: 200)
       get :timeline, controller_params(version: 'private', id: sample_user.id)
       assert_response 200
-      match_json(user_activity_response(result_data[0]))
+      match_json(timeline_activity_response(sample_user, result_data[0]))
     end
 
-    def test_contact_timeline_with_more_than_max_activities
+    def test_contact_timeline_with_next_page
       sample_user = add_new_user(@account)
-      result_data = create_timeline_sample_data(sample_user, 5)
+      result_data = create_timeline_sample_data(sample_user, 5, true)
       url = "#{BASE_URL_CONTACT_TIMELINE}/#{@account.id}/contacttimeline/#{sample_user.id}"
       stub_request(:get, url).to_return(body: result_data[1].to_json, status: 200)
       get :timeline, controller_params(version: 'private', id: sample_user.id)
       assert_response 200
-      match_json(user_activity_response(result_data[0].first(CompanyConstants::MAX_ACTIVITIES_COUNT)))
+      match_json(timeline_activity_response(sample_user, result_data[0]))
+      assert_equal response.api_meta[:next_page], 'start_token=1651334132522601834'
+    end
+
+    def test_contact_timeline_with_next_page_attribute
+      sample_user = add_new_user(@account)
+      result_data = create_timeline_sample_data(sample_user)
+      url = "#{BASE_URL_CONTACT_TIMELINE}/#{@account.id}/contacttimeline/#{sample_user.id}?start_token=1651334132522601834"
+      stub_request(:get, url).to_return(body: result_data[1].to_json, status: 200)
+      get :timeline, controller_params(version: 'private', id: sample_user.id, after: 'start_token=1651334132522601834')
+      assert_response 200
+      match_json(timeline_activity_response(sample_user, result_data[0]))
     end
   end
 end

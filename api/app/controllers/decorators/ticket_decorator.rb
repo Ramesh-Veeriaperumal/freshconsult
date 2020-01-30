@@ -19,6 +19,8 @@ class TicketDecorator < ApiDecorator
     pending_since: [Helpdesk::Ticketfields::TicketStatus::PENDING]
   }.freeze
 
+  TICKET_TYPE = 'ticket'.freeze
+
   def initialize(record, options)
     super(record)
     @name_mapping = options[:name_mapping]
@@ -395,19 +397,13 @@ class TicketDecorator < ApiDecorator
   end
 
   def to_activity_hash
-    ret_hash = {
-      activity_type: 'ticket',
-      id: display_id,
-      responder_id: responder_id,
-      source: source,
-      priority: priority,
-      created_at: created_at.try(:utc),
-      subject: subject,
-      requester_id: requester_id,
-      group_id: group_id
-    }
-    ret_hash.merge!(whitelisted_properties_for_activities)
+    ret_hash = activity_hash
+    ret_hash[:activity_type] = TICKET_TYPE
     ret_hash
+  end
+
+  def to_timeline_hash
+    activity_hash
   end
 
   def whitelisted_properties_for_activities
@@ -418,6 +414,7 @@ class TicketDecorator < ApiDecorator
       ret_hash[:tags] = tag_names
       ret_hash[:fr_due_by] = frDueBy.try(:utc)
       ret_hash[:status] = status
+      ret_hash[:priority] = priority
     end
     ret_hash
   end
@@ -508,6 +505,20 @@ class TicketDecorator < ApiDecorator
   end
 
   private
+
+  def activity_hash
+    ret_hash = {
+      id: display_id,
+      responder_id: responder_id,
+      source: source,
+      created_at: created_at.try(:utc),
+      subject: subject,
+      requester_id: requester_id,
+      group_id: group_id
+    }
+    ret_hash.merge!(whitelisted_properties_for_activities)
+    ret_hash
+  end
 
   def handle_timestamps(meta_info)
     if meta_info.is_a?(Hash) && meta_info.keys.include?('time')

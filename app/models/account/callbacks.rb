@@ -134,7 +134,9 @@ class Account < ActiveRecord::Base
     TEMPORARY_FEATURES.each { |key,value| features.safe_send(key).create  if value}
     ADMIN_CUSTOMER_PORTAL_FEATURES.each { |key,value| features.safe_send(key).create  if value}
     LAUNCHPARTY_FEATURES.select{|k,v| v}.each_key {|feature| self.launch(feature)}
-    CONDITION_BASED_LAUNCHPARTY_FEATURES.each { |feature, lam| self.launch(feature) if lam.call(self) }
+
+    launch_condition_based_features
+
     # Temp for falcon signup
     # Enable customer portal by default
     if falcon_ui_applicable?
@@ -326,6 +328,13 @@ class Account < ActiveRecord::Base
     end
 
   private
+
+    def launch_condition_based_features
+      condition_based_launchparty_features = get_others_redis_hash(CONDITION_BASED_LAUNCHPARTY_FEATURES)
+      if condition_based_launchparty_features.present?
+        condition_based_launchparty_features.each { |key, value| self.launch(key.to_sym) if value.to_bool }
+      end
+    end
 
     def collect_launchparty_actions(changes)
       feature_name = changes[:launch] || changes[:rollback]
