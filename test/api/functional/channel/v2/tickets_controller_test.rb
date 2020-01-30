@@ -1136,6 +1136,7 @@ module Channel::V2
     end
 
     def test_index_with_requester
+      TicketDecorator.any_instance.stubs(:private_api?).returns(false)
       get :index, controller_params(include: 'requester')
       assert_response 200
       response = parse_response @response.body
@@ -1144,11 +1145,13 @@ module Channel::V2
                               .order('created_at DESC')
                               .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
       assert_equal tkts.count, response.size
-      param_object = OpenStruct.new(:requester => true)
+      param_object = OpenStruct.new(requester: true)
       pattern = tkts.map do |tkt|
         index_ticket_pattern_with_associations(tkt, param_object)
       end
       match_json(pattern)
+    ensure
+      TicketDecorator.any_instance.unstub(:private_api?)
     end
 
     def test_index_with_company_side_load

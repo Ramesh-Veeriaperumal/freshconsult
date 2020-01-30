@@ -72,7 +72,6 @@ class Solution::FolderMeta < ActiveRecord::Base
 
 	before_update :clear_customer_folders, :backup_folder_changes
 	after_commit :update_search_index, on: :update, :if => :update_es?
-	after_commit :set_mobihelp_solution_updated_time, :if => :valid_change?
   
   after_commit ->(obj) { obj.safe_send(:clear_cache) }, on: :create
   after_commit ->(obj) { obj.safe_send(:clear_cache) }, on: :destroy
@@ -267,16 +266,6 @@ class Solution::FolderMeta < ActiveRecord::Base
 	
 	def backup_category
 		@category_obj = solution_category_meta
-	end
-	
-	def set_mobihelp_solution_updated_time
-		@category_obj.update_mh_solutions_category_time
-	end
-	
-	def valid_change?
-		return true if transaction_include_action?(:destroy)
-		(previous_changes.except(*(BINARIZE_COLUMNS + [:updated_at])).present? || 
-			(primary_folder && primary_folder.previous_changes.present?))
 	end
 
 	def custom_portal_cache_attributes

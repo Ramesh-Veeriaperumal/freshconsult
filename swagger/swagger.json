@@ -11389,6 +11389,41 @@
         }
       }
     },
+    "/help_widgets/{id}/suggested_article_rules": {
+      "get": {
+        "tags": [
+          "Help Widget"
+        ],
+        "description": "Listing all widgets associated to the account",
+        "summary": "Suggested article rules List",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/help_widget_suggested_article_rules_list_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/widget/attachment": {
       "post": {
         "tags": [
@@ -26635,6 +26670,78 @@
               "type": "integer",
               "description": "1-Show contact options only after customers reads solution article 2-Show contact options upfront, along with solution articles"
             }
+          }
+        }
+      }
+    },
+    "help_widget_suggested_article_rules_list_response": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Id of the suggested article rule"
+          },
+          "conditions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "evalutes_on": {
+                  "type": "string",
+                  "description": "",
+                  "default": "page"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "",
+                  "default": "url"
+                },
+                "operator": {
+                  "type": "string",
+                  "description": "",
+                  "default": 1
+                },
+                "value": {
+                  "type": "string",
+                  "description": ""
+                }
+              }
+            }
+          },
+          "rule_operator": {
+            "type": "integer",
+            "description": ""
+          },
+          "filter": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "integer",
+                "description": "",
+                "default": 1
+              },
+              "value": {
+                "type": "array",
+                "description": "",
+                "maxItems": 4,
+                "minItems": 1,
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "order_by": {
+                "type": "string",
+                "description": "",
+                "default": "hits"
+              }
+            }
+          },
+          "position": {
+            "type": "integer",
+            "description": "",
+            "default": 1
           }
         }
       }

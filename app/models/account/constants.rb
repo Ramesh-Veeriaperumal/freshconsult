@@ -327,6 +327,7 @@ class Account < ActiveRecord::Base
   CONTACT_DATA = [:first_name, :last_name, :email, :phone].freeze
   FILE_DOWNLOAD_URL_EXPIRY_TIME = 60.to_i.seconds
   CONDITION_BASED_LAUNCHPARTY_FEATURES = {
-    new_timeline_view: lambda { |account| account.redis_key_exists?(Redis::Keys::Others::NEW_TIMELINE_VIEW) }
+    new_timeline_view: ->(account) { account.redis_key_exists?(Redis::Keys::Others::NEW_TIMELINE_VIEW) },
+    dkim_email_service: ->(account) { account.redis_key_exists?(Redis::Keys::Others::DKIM_EMAIL_SERVICE) }
   }.freeze
 end

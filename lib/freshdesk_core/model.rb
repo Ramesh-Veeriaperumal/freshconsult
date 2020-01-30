@@ -156,8 +156,8 @@ module FreshdeskCore::Model
 
                     'helpdesk_accesses',
 
-                    'mobihelp_apps',
-                    'mobihelp_devices',
+                    'mobihelp_apps',  
+                    'mobihelp_devices', 
                     'mobihelp_ticket_infos',
                     'oauth_applications',
                     'oauth_access_grants',
@@ -227,6 +227,8 @@ module FreshdeskCore::Model
                     'user_skills',
                     'admin_sandbox_jobs',
                     'help_widgets',
+                    'help_widget_suggested_article_rules',
+                    'help_widget_solution_categories',
                     'bot_responses',
                     'custom_translations',
                     'ticket_field_data'].freeze

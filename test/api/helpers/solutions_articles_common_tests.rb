@@ -154,8 +154,9 @@ module SolutionsArticlesCommonTests
     folder_meta = get_folder_meta
     title = Faker::Name.name
     seo_title = Faker::Name.name
+    seo_desc = Faker::Lorem.paragraph
     paragraph = Faker::Lorem.paragraph
-    post :create, construct_params({ version: version, id: folder_meta.id }, title: title, description: paragraph, status: 1, type: 2, tags: ['tag1', 'tag2', 'tag2'], seo_data: { meta_title: seo_title, meta_keywords: ['tag3', 'tag4', 'tag4'] })
+    post :create, construct_params({ version: version, id: folder_meta.id }, title: title, description: paragraph, status: 1, type: 2, tags: ['tag1', 'tag2', 'tag2'], seo_data: { meta_title: seo_title, meta_description: seo_desc, meta_keywords: ['tag3', 'tag4', 'tag4'] })
     assert_response 201
     result = parse_response(@response.body)
     assert_equal "http://#{@request.host}/api/v2/solutions/articles/#{result['id']}", response.headers['Location']
@@ -800,7 +801,7 @@ module SolutionsArticlesCommonTests
     article = create_article(article_params)
     put :update, construct_params(version: version, id: article.id, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
     assert_response 200
-    assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.primary_article.status
+    assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.reload.primary_article.status
   end
 
   def test_update_article_unpublish_with_language_without_multilingual_feature
@@ -823,7 +824,7 @@ module SolutionsArticlesCommonTests
     article = create_article(article_params)
     put :update, construct_params(version: version, id: article.id, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], language: @account.language)
     assert_response 200
-    assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.primary_article.status
+    assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.reload.primary_article.status
   end
 
   def test_update_article_unpublish_with_supported_language
@@ -832,7 +833,7 @@ module SolutionsArticlesCommonTests
     article = create_article(article_params(lang_codes: languages))
     put :update, construct_params(version: version, id: article.id, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], language: language)
     assert_response 200
-    assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.safe_send("#{language}_article").status
+    assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.reload.safe_send("#{language}_article").status
   end
 
   def test_create_article_without_type

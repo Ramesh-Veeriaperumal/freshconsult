@@ -5,16 +5,12 @@ class Solution::CategoryMeta < ActiveRecord::Base
 
 	BINARIZE_COLUMNS = [:available]
 
-	include Mobihelp::AppSolutionsUtils
 	include Solution::LanguageAssociations
 	include Solution::Constants
 	include Solution::ApiDelegator
 	include Solution::MarshalDumpMethods
 
 	attr_accessible :position, :portal_ids, :portal_solution_categories_attributes
-	
-	after_save :update_mh_solutions_category_time, :if => :valid_change?
-	before_destroy :update_mh_app_time
 
 	belongs_to_account
 
@@ -47,16 +43,6 @@ class Solution::CategoryMeta < ActiveRecord::Base
 		:class_name => "Portal",
     :after_add => :clear_cache,
     :after_remove => :clear_cache
-
-	has_many :mobihelp_app_solutions,
-		:class_name => 'Mobihelp::AppSolution',
-		:foreign_key => :solution_category_meta_id,
-		:dependent => :destroy
-
-	has_many :mobihelp_apps,
-		:through => :mobihelp_app_solutions,
-		:class_name => 'Mobihelp::App',
-		:source => :app
 
 	has_many :solution_folder_meta, 
 		:class_name => "Solution::FolderMeta", 
@@ -105,11 +91,6 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	end
 
 	private
-	
-	def valid_change?
-		changes.except(*(BINARIZE_COLUMNS + [:updated_at])).present? || 
-			(primary_category && primary_category.previous_changes.present?)
-	end
 
 	def clear_cache(args = nil)
 		Account.current.clear_solution_categories_from_cache

@@ -5140,4 +5140,15 @@ ActiveRecord::Schema.define(version: 20191211085748) do
   end
 
   add_index 'help_widget_solution_categories', ['account_id', 'help_widget_id', 'solution_category_meta_id'], name: 'index_help_widget_solution_category_on_account_widget_id_meta_id'
+
+  create_table 'help_widget_suggested_article_rules', force: true do |t|
+    t.integer 'help_widget_id', limit: 8
+    t.integer 'account_id', limit: 8
+    t.text 'conditions'
+    t.text 'filter'
+    t.integer 'rule_operator', limit: 1, default: 1
+    t.integer 'position', limit: 2
+    t.timestamps
+  end
+  add_index 'help_widget_suggested_article_rules', ['account_id', 'help_widget_id'], name: 'index_help_widget_suggested_article_rules_on_account_id_and_w_id'
 end

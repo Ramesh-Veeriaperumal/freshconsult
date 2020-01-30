@@ -34,6 +34,7 @@ class PrimaryLanguageChangeTest < ActionView::TestCase
     assert_equal '200', response.code
     @category.reload
     @folder.reload
+    @article.reload
     assert_equal language.code, @account.language
     assert_equal language.id, @category.primary_category.language_id
     assert_equal language.id, @folder.primary_folder.language_id

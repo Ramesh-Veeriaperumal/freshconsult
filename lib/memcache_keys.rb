@@ -154,14 +154,6 @@ module MemcacheKeys
 
   FRESH_SALES_MANAGER_1_MONTH = "v1/FRESH_SALES_MANAGER_1_MONTH:%{account_id}"
 
-  MOBIHELP_APP = "MOBIHELP_APP:%{account_id}:%{app_key}"
-
-  MOBIHELP_SOLUTION_CATEGORY_IDS = "MOBIHELP_SOLUTION_CATEGORY_IDS:%{account_id}:%{app_key}"
-
-  MOBIHELP_SOLUTIONS = "v1/MOBIHELP_SOLUTIONS:%{account_id}:%{category_id}"
-
-  MOBIHELP_SOLUTION_UPDATED_TIME = "v3/MOBIHELP_SOLUTION_UPDATED_TIME:%{account_id}:%{app_id}"
-
   PRODUCT_NOTIFICATION = "v4/%{language}/PRODUCT_NOTIFICATION"
 
   POD_SHARD_ACCOUNT_MAPPING = "v3/POD_SHARD_ACCOUNT_MAPPING:%{pod_info}:%{shard_name}"
@@ -313,6 +305,8 @@ module MemcacheKeys
   TICKET_FIELD_STATUSES = 'v1/TICKET_FIELD_STATUSES:%{account_id}:%{ticket_field_id}'.freeze
 
   ACCOUNT_TICKET_FIELD_POSITION_MAPPING = 'v1/ACCOUNT_TICKET_FIELD_POSITION_MAPPING:%{account_id}'.freeze
+
+  HELP_WIDGET_SUGGESTED_ARTICLE_RULES = 'v1/HELP_WIDGET_SUGGESTED_ARTICLE_RULES:%{account_id}:%{help_widget_id}'.freeze
 
   def fetch_from_cache(key, &block)
     @cached_values = {} unless @cached_values

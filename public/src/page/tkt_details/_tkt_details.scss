@@ -2326,7 +2326,6 @@ li {
     #HelpdeskReply,
     #HelpdeskTweets,
     #HelpdeskFbComment,
-    #HelpdeskMobihelpChat,
     #HelpdeskEcommerceReply {
         overflow: hidden;
     }
@@ -4180,12 +4179,6 @@ li {
             font-weight: bold;
             color: #8E8E8E;
             border-bottom: 1px solid #B3B3B3;
-        }
-    }
-    .code-view {
-        textarea.mobihelpcode {
-            height: 60px;
-            @include margin-left(-20px);
         }
     }
     /*// SEO shop integration css*/

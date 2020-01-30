@@ -9,7 +9,7 @@ module Fdadmin::FeatureMethods
 
     BLACKLISTED_LP_FEATURES = [:freshid, :freshid_org_v2, :fluffy, :fluffy_min_level].freeze
 
-    BITMAP_FEATURES_TO_IGNORE = [:support_bot].freeze
+    BITMAP_FEATURES_TO_IGNORE = [:support_bot, :limit_mobihelp_results].freeze
 
     private
 

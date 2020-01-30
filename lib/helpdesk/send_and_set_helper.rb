@@ -223,9 +223,7 @@ module Helpdesk::SendAndSetHelper
   end
 
   def flash_message(result)
-    if @note.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['mobihelp_app_review']
-      flash[:notice] = t(:"flash.tickets.notes.send_review_request.#{result}")
-    elsif @note.broadcast_note? and result == "success"
+    if @note.broadcast_note? && result == 'success'
       flash[:notice] = t(:"flash.tickets.notes.broadcast.#{result}", :count => @ticket.related_tickets_count)
     else
       flash[:notice] ||= I18n.t(:"flash.tickets.notes.send_and_set.#{result}")

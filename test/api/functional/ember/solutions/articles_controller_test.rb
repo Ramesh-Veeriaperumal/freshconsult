@@ -370,8 +370,9 @@ module Ember
         folder_meta = get_folder_meta
         title = Faker::Name.name
         seo_title = Faker::Name.name
+        seo_desc = Faker::Lorem.paragraph
         paragraph = Faker::Lorem.paragraph
-        post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 2, seo_data: { meta_title: seo_title, meta_keywords: ['tag3', 'tag4', 'tag4'] })
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 2, seo_data: { meta_title: seo_title, meta_description: seo_desc, meta_keywords: ['tag3', 'tag4', 'tag4'] })
         assert_response 201
         match_json(private_api_solution_article_pattern(Solution::Article.last))
       end
@@ -1175,7 +1176,7 @@ module Ember
         article = create_article(article_params)
         put :update, construct_params(version: 'private', id: article.id, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
         assert_response 200
-        assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.primary_article.status
+        assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.reload.primary_article.status
       end
 
       def test_update_article_unpublish_with_language_without_multilingual_feature
@@ -1198,7 +1199,7 @@ module Ember
         article = create_article(article_params)
         put :update, construct_params(version: 'private', id: article.id, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], language: @account.language)
         assert_response 200
-        assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.primary_article.status
+        assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.reload.primary_article.status
       end
 
       def test_update_article_unpublish_with_supported_language
@@ -1207,7 +1208,7 @@ module Ember
         article = create_article(article_params(lang_codes: languages))
         put :update, construct_params(version: 'private', id: article.id, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], language: language)
         assert_response 200
-        assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.safe_send("#{language}_article").status
+        assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.reload.safe_send("#{language}_article").status
       end
 
       def test_reset_ratings_with_incorrect_credentials

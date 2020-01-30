@@ -55,7 +55,7 @@ class Solutions::ArticleDecorator < ApiDecorator
 
   def to_hash
     ret_hash = article_info
-    ret_hash[:seo_data] = seo_data
+    ret_hash[:seo_data] = seo_data_values
     ret_hash[:tags] = fetch_tags unless exclude?(:tags)
 
     unless @is_list_page || exclude?(:attachments)
@@ -308,6 +308,15 @@ class Solutions::ArticleDecorator < ApiDecorator
 
     def published?
       status == Solution::Constants::STATUS_KEYS_BY_TOKEN[:published]
+    end
+
+    def seo_data_values
+      seo_values = {
+        meta_title: seo_data['meta_title'] || '',
+        meta_description: seo_data['meta_description'] || ''
+      }
+      seo_values[:meta_keywords] = seo_data['meta_keywords'] if seo_data['meta_keywords']
+      seo_values
     end
 
     def approval_record(article)

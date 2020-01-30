@@ -118,10 +118,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   has_one :freshfone_call, :class_name => 'Freshfone::Call', :as => 'notable'
   has_one :freshcaller_call, :class_name => 'Freshcaller::Call', :as => 'notable'
-
-  has_one :mobihelp_ticket_info, :class_name => 'Mobihelp::TicketInfo' , :dependent => :destroy
   
-  accepts_nested_attributes_for :tweet, :fb_post , :mobihelp_ticket_info
+  accepts_nested_attributes_for :tweet, :fb_post
 
   has_one :article_ticket, :as => :ticketable, :dependent => :destroy
   has_one :article, :through => :article_ticket

@@ -120,7 +120,6 @@ class Account < ActiveRecord::Base
   has_many :sla_policies_reorder, class_name: 'Helpdesk::SlaPolicy', order: 'active DESC, is_default, position'
   has_one  :default_sla ,  :class_name => 'Helpdesk::SlaPolicy' , :conditions => { :is_default => true }
   has_many :google_contacts, :class_name => 'GoogleContact'
-  has_many :mobihelp_devices, :class_name => 'Mobihelp::Device'
 
   has_many :skills, :order => "position", :class_name => 'Admin::Skill'
   has_many :sorted_skills, :order => "name", :class_name => 'Admin::Skill'
@@ -323,8 +322,6 @@ class Account < ActiveRecord::Base
   has_one :chat_setting
   has_many :chat_widgets
   has_one  :main_chat_widget, :class_name => 'ChatWidget', :conditions => {:main_widget => true}
-  has_many :mobihelp_apps, :class_name => 'Mobihelp::App'
-  has_many :mobihelp_app_solutions, :class_name => 'Mobihelp::AppSolution'
   has_many :ecommerce_accounts, :class_name => 'Ecommerce::Account', :dependent => :destroy
   has_many :ebay_accounts, :class_name => 'Ecommerce::EbayAccount'
   has_many :ebay_questions, :class_name => "Ecommerce::EbayQuestion", :through => :ebay_accounts

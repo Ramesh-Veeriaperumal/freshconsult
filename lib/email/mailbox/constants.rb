@@ -45,4 +45,6 @@ module Email::Mailbox::Constants
 
   EMAIL_SERVICE_PROVIDER_OTHER = 'other'.freeze
   EMAIL_SERVICE_PROVIDER_GMAIL = 'google'.freeze
+
+  SMTP_AUTH_ERROR_CODE = '535'.freeze
 end

@@ -20,8 +20,6 @@ class Account < ActiveRecord::Base
 
   has_many :solution_folders, :class_name =>'Solution::Folder', :order => "solution_folders.parent_id"
 
-  has_many :mobihelp_app_solutions, :class_name => 'Mobihelp::AppSolution'
-
   has_many :solution_customer_folders, :class_name => "Solution::CustomerFolder"
     
   has_many :solution_article_bodies, :class_name =>'Solution::ArticleBody'

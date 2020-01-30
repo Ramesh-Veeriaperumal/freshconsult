@@ -19,7 +19,6 @@ module MetaHelperMethods
     content << meta_referrer_element(meta['referrer']) if meta['referrer'].present?
     content << meta_ip_address_element(meta['ip_address']) if meta['ip_address'].present? && ticket.chat?
     content << meta_location_element(meta['location']) if meta['location'].present? && ticket.chat?
-    content << meta.body[1..-3].gsub('"',' ').gsub(",","<br /> ") if ticket.mobihelp?
     content << "</div>"
     content_tag(:span, t("helpdesk.tickets.show.meta"), 
           :class => "meta_icon", :rel => 'hover-popover', 

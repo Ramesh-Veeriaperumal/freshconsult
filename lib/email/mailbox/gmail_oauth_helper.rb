@@ -15,7 +15,8 @@ module Email::Mailbox::GmailOauthHelper
     mailbox.save!
   rescue OAuth2::Error => e
     Rails.logger.info "Error refreshing access token : #{e}"
-    update_mailbox_error_type(mailbox, Email::Mailbox::Constants::AUTH_ERROR)
+    update_mailbox_error(mailbox, Email::Mailbox::Constants::AUTH_ERROR)
+    delete_valid_access_token_key(mailbox.account_id, mailbox.id)
   end
 
   def set_valid_access_token_key(account_id, mailbox_id)
@@ -40,7 +41,7 @@ module Email::Mailbox::GmailOauthHelper
     )
   end
 
-  def update_mailbox_error_type(mailbox, error_type = nil)
+  def update_mailbox_error(mailbox, error_type = nil)
     mailbox.error_type = error_type
     mailbox.save!
   end

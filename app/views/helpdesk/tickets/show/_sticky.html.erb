@@ -66,7 +66,7 @@
 				
 				<li class="ticket-btns">
 					<div class="btn-group">
-						<% if privilege?(:reply_ticket)  && (@ticket.twitter? or @ticket.facebook? or @item.from_email.present? or @ticket.mobihelp? or @ticket.allow_ecommerce_reply?) %>
+						<% if privilege?(:reply_ticket)  && (@ticket.twitter? or @ticket.facebook? or @item.from_email.present? or @ticket.allow_ecommerce_reply?) %>
 							<% disabled = is_twitter_blocked? ? "disabled" : "" %>
 							<% disabled = @ticket.source == ticket_source ? disabled : "" %>
 							<a class="btn tooltip btn-collapse <%= disabled %>" title='<%= t('ticket.reply_to') %>' data-placement = "below" 

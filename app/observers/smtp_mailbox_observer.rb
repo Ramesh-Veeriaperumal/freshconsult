@@ -25,6 +25,7 @@ class SmtpMailboxObserver < ActiveRecord::Observer
       clear_cache(mailbox)
     elsif mailbox.safe_send(:transaction_include_action?, :destroy)
       delete_valid_access_token_key(mailbox.account_id, mailbox.id)
+      clear_cache(mailbox)
     end
   end
 end

@@ -204,10 +204,6 @@ class Helpdesk::BulkReplyTickets
       error_message, tweet_body = get_tweet_text(twt_type, ticket, note.body.strip)
       safe_send("send_tweet_as_#{twt_type}", twitter_handle_id, ticket, note, tweet_body) unless error_message
     end
-
-    def mobihelp_reply ticket, note
-      #Do nothing
-    end
     
     def ecommerce_reply ticket,note
       ebay_question = ticket.ebay_question

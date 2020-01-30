@@ -2,28 +2,31 @@ module ProductTestHelper
 
   def create_product(account, options= {})
     product = account.products.first
-    return product if product
+    return product if product && product.portal
 
+    product ||= create_new_product(account, options)
+    create_portal(account, product, options)
+    product.reload
+  end
+
+  def create_new_product(account, options)
     test_email = "#{Faker::Internet.domain_word}#{rand(0..9999)}@#{account.full_domain}"
-    portal_name = Faker::Company.name
-    portal_url = "freshdesk."+portal_name+".com"
-    test_product = FactoryGirl.build(:product, 
-      :name => options[:name] || Faker::Name.name, 
-      :description => Faker::Lorem.paragraph, 
-      :account_id => account.id,
-      :created_at => Time.now.utc,
-      :updated_at => Time.now.utc
-      )
+    test_product = FactoryGirl.build(:product,
+                                     name: options[:name] || Faker::Name.name,
+                                     description: Faker::Lorem.paragraph,
+                                     account_id: account.id,
+                                     created_at: Time.now.utc,
+                                     updated_at: Time.now.utc)
     test_product.save(validate: false)
 
-    test_email_config = FactoryGirl.build(:email_config, 
-      :to_email => test_email, 
-      :reply_email => test_email,
-      :primary_role =>"true", 
-      :name => test_product.name, 
-      :product_id => test_product.id,
-      :account_id => account.id,
-      :active=>"true")
+    test_email_config = FactoryGirl.build(:email_config,
+                                          to_email: test_email,
+                                          reply_email: test_email,
+                                          primary_role: 'true',
+                                          name: test_product.name,
+                                          product_id: test_product.id,
+                                          account_id: account.id,
+                                          active: 'true')
     test_email_config.save(validate: false)
 
     begin
@@ -34,25 +37,28 @@ module ProductTestHelper
       end
     rescue Exception => e
     end
-
-    test_portal = FactoryGirl.build(:portal, 
-      :name=> portal_name || Faker::Name.name, 
-      :portal_url => portal_url, 
-      :language=>"en",
-      :product_id => test_product.id, 
-      :forum_category_ids => (options[:forum_category_ids] || [""]),
-      :solution_category_metum_ids => [""],
-      :account_id => account.id, 
-      :preferences=>{ 
-        :logo_link=>"", 
-        :contact_info=>"", 
-        :header_color=>"#252525",
-        :tab_color=>"#006063", 
-        :bg_color=>"#efefef" 
-      })
-    test_portal.save(validate: false)
-
     test_product
+  end
+
+  def create_portal(account, product, options)
+    portal_name = Faker::Internet.domain_word
+    portal_url = "freshdesk.#{portal_name}.com"
+    test_portal = FactoryGirl.build(:portal,
+                                    name: portal_name || Faker::Name.name,
+                                    portal_url: portal_url,
+                                    language: 'en',
+                                    product_id: product.id,
+                                    forum_category_ids: (options[:forum_category_ids] || ['']),
+                                    solution_category_metum_ids: [''],
+                                    account_id: account.id,
+                                    preferences: {
+                                      logo_link: '',
+                                      contact_info: '',
+                                      header_color: '#252525',
+                                      tab_color: '#006063',
+                                      bg_color: '#efefef'
+                                    })
+    test_portal.save(validate: false)
   end
 
   def central_publish_product_pattern(product, product_push_timestamp)

@@ -1,0 +1,52 @@
+type: array
+items:
+  type: object
+  properties:
+    id:
+      type: integer
+      description: Id of the suggested article rule
+    conditions:
+      type: array
+      items:
+        type: object
+        properties:
+          evalutes_on:
+            type: string
+            description: ''
+            default: 'page'
+          name:
+            type: string
+            description: ''
+            default: 'url'
+          operator:
+            type: string
+            description: ''
+            default: 1
+          value:
+            type: string
+            description: ''
+    rule_operator:
+      type: integer
+      description: ''
+    filter:
+      type: object
+      properties:
+        type:
+          type: integer
+          description: ''
+          default: 1
+        value:
+          type: array
+          description: ''
+          maxItems: 4
+          minItems: 1
+          items:
+            type: integer
+        order_by:
+          type: string
+          description: ''
+          default: 'hits'
+    position:
+      type: integer
+      description: ''
+      default: 1

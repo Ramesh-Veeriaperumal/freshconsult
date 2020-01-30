@@ -356,7 +356,9 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :help_widgets, controller: 'help_widgets'
+    resources :help_widgets do
+      resources :suggested_article_rules, controller: 'help_widgets/suggested_article_rules'
+    end
 
     post '/audit_log/export', to: 'audit_logs#export'
     get '/audit_log/export/:id', to: 'audit_logs#export_s3_url'
@@ -967,6 +969,7 @@ Helpkit::Application.routes.draw do
     end
     post 'tickets/bulk_archive', to: 'channel/v2/tickets/bulk_actions#bulk_archive'
     get '/account', to: 'channel/v2/accounts#show'
+    get '/authenticate', to: 'channel/v2/iam/authentication#show'
     resources :ticket_filters, controller: 'channel/v2/ticket_filters', only: [:index, :show]
     resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show, :index]
     resources :fbms, controller: 'channel/v2/fbms' do

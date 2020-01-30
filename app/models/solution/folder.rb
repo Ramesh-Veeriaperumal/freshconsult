@@ -2,7 +2,6 @@ class Solution::Folder < ActiveRecord::Base
 
   self.primary_key = :id
   include Solution::Constants
-  include Cache::Memcache::Mobihelp::Solution
   include Solution::Activities
 
   concerned_with :associations, :presenter

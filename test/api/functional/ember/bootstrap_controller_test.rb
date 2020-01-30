@@ -551,4 +551,51 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
     Account.current.email_configs.destroy(email_config)
   end
+
+  def test_account_with_custom_outgoing_mailbox_error_on_updation_of_mailbox
+    Account.any_instance.stubs(:features_included?).with('mailbox').returns(true)
+    Account.current.stubs(:imap_error_status_check_enabled?).returns(true)
+    Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
+    Email::MailboxDelegator.any_instance.stubs(:verify_smtp_mailbox).returns(success: true, msg: '')
+    email_config = create_email_config(smtp_mailbox_attributes: { smtp_server_name: 'imap.gmail.com' })
+    email_config.smtp_mailbox.error_type = 535
+    email_config.save!
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    email_config.smtp_mailbox.error_type = nil
+    email_config.save!
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+  ensure
+    Account.current.unstub(:imap_error_status_check_enabled?)
+    Account.any_instance.unstub(:features_included?)
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+    Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
+    Account.current.email_configs.destroy(email_config)
+  end
+
+  def test_account_with_custom_outgoing_mailbox_error_on_deletion_of_mailbox
+    Account.any_instance.stubs(:features_included?).with('mailbox').returns(true)
+    Account.current.stubs(:imap_error_status_check_enabled?).returns(true)
+    Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
+    Email::MailboxDelegator.any_instance.stubs(:verify_smtp_mailbox).returns(success: true, msg: '')
+    email_config = create_email_config(smtp_mailbox_attributes: { smtp_server_name: 'imap.gmail.com' })
+    email_config.smtp_mailbox.error_type = 535
+    email_config.save!
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    Account.current.all_email_configs.find_by_id(email_config.id).smtp_mailbox.destroy
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+  ensure
+    Account.current.unstub(:imap_error_status_check_enabled?)
+    Account.any_instance.unstub(:features_included?)
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+    Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
+    Account.current.email_configs.destroy(email_config)
+  end
 end

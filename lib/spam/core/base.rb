@@ -2,7 +2,7 @@ module Spam::Core
   class Base
 
     ASSOCIATIONS_TO_SERIALIZE = {
-      :helpdesk_tickets => [:flexifield, :ticket_old_body, :schema_less_ticket, :ticket_states, :ticket_topic, :topic, :mobihelp_ticket_info, :article_ticket, :article, :reminders, :subscriptions],
+      helpdesk_tickets: [:flexifield, :ticket_old_body, :schema_less_ticket, :ticket_states, :ticket_topic, :topic, :article_ticket, :article, :reminders, :subscriptions],
       :helpdesk_notes => [:survey_remark, :note_old_body, :schema_less_note, :external_note]
     }
     

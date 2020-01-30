@@ -1,9 +1,11 @@
 class HelpWidget < ActiveRecord::Base
   include MemcacheKeys
+
   validates :name, data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :settings, data_type: { rules: Hash }
   belongs_to_account
   has_many :help_widget_solution_categories, class_name: 'HelpWidgetSolutionCategory', dependent: :destroy, inverse_of: :help_widget
+  has_many :help_widget_suggested_article_rules, class_name: 'HelpWidgetSuggestedArticleRule', dependent: :destroy, inverse_of: :help_widget
 
   accepts_nested_attributes_for :help_widget_solution_categories, allow_destroy: true
 
@@ -68,6 +70,11 @@ class HelpWidget < ActiveRecord::Base
       _destroy: transaction_include_action?(:destroy) || !active
     }
     HelpWidget::UploadConfig.perform_async(args)
+  end
+
+  def help_widget_suggested_article_rules_from_cache
+    key = format(HELP_WIDGET_SUGGESTED_ARTICLE_RULES, account_id: account_id, help_widget_id: id)
+    fetch_from_cache(key) { help_widget_suggested_article_rules }
   end
 
   private

@@ -229,48 +229,15 @@ describe ContactMergeController do
     Sidekiq::Testing.disable!
   end
 
-  it "should merge contact from mobihelp" do
-    Sidekiq::Testing.inline!
-    #create new mobihelp user and merge it with email user
-    user1 = create_mobihelp_user(@account, Faker::Internet.email, "11111-22222-3333333-3123123323")
-    ticket_attributes = get_sample_mobihelp_ticket_attributes("Ticket_controller New test ticket123", "11111-22222-3333333-3123123323", user1)
-    test_ticket = create_mobihelp_ticket(ticket_attributes)
-    user2 = add_user_with_multiple_emails(@account, 2)
-    post :merge, :parent_user => user2.id, :target => [user1.id]
-    test_ticket.reload
-    test_ticket.requester.id.should eql user2.id
-    Sidekiq::Testing.disable!
-  end
-
-  it "should merge with mobihelp primary" do
-    Sidekiq::Testing.inline!
-    #same as previous but merging email with mobihelp
-    user1 = create_mobihelp_user(@account, Faker::Internet.email, "11111-22222-3333333-3123123323")
-    ticket_attributes = get_sample_mobihelp_ticket_attributes("Ticket_controller New test ticket123", "11111-22222-3333333-3123123323", user1)
-    test_ticket = create_mobihelp_ticket(ticket_attributes)
-    user2 = add_user_with_multiple_emails(@account, 2)
-    email1 = user2.email
-    post :merge, :parent_user => user1.id, :target => [user2.id]
-    test_ticket.reload
-    test_ticket.requester.id.should eql user1.id
-    @account.user_emails.user_for_email(email1).id.should eql user1.id
-    user1.reload
-    user1.user_emails.length.should eql 4
-    Sidekiq::Testing.disable!
-  end
-
   it "should do a hybrid merge" do
     Sidekiq::Testing.inline!
-    #merging twitter, facebook, phone, mobihelp, email users
+    #merging twitter, facebook, phone, email users
     user1 = add_new_user(@account)
     user1.phone = "72364823484562931"
     user1.save
     user2 = add_user_with_multiple_emails(@account, 2)
     user2.phone = nil
     user2.save
-    user3 = create_mobihelp_user(@account, Faker::Internet.email, "11111-22222-3333333-3123124323")
-    ticket_attributes = get_sample_mobihelp_ticket_attributes("Ticket_controller New test ticket123", "11111-22222-3333333-3123124323", user3)
-    test_ticket = create_mobihelp_ticket(ticket_attributes)
     @fb_page = create_test_facebook_page(@account)
     @fb_page.update_attributes(:import_visitor_posts => true)
     feed_id = "#{@fb_page.page_id}_#{get_social_id}"
@@ -319,12 +286,10 @@ describe ContactMergeController do
     # tweet.tweetable.destroy
     ticket2 = tweet.tweetable
     user5 = tweet.tweetable.requester
-    post :merge, :parent_user => user2.id, :target => [user1.id, user3.id, user4.id, user5.id]
-    test_ticket.reload
+    post :merge, :parent_user => user2.id, :target => [user1.id, user4.id, user5.id]
     ticket.reload
     ticket2.reload
     @account.reload
-    test_ticket.requester.id.should eql user2.id
     ticket.requester.id.should eql user2.id
     ticket2.requester.id.should eql user2.id
     @account.users.find_by_phone("72364823484562931").id.should eql user2.id
