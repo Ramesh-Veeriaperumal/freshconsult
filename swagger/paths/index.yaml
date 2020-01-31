@@ -579,6 +579,9 @@
 /help_widgets/{id}/suggested_article_rules:
   $ref: ./help_widgets/suggested_article_rules/index.yaml
 
+/help_widgets/{id}/suggested_article_rules/{rule_id}:
+  $ref: ./help_widgets/suggested_article_rules/crud.yaml
+
 /widget/attachment:
   $ref: ./widget/attachment_create.yaml
 /widget/search/solutions:

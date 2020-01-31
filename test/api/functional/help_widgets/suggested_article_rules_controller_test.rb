@@ -78,4 +78,44 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
     match_json('code' => 'invalid_help_widget',
                'message' => 'invalid_help_widget')
   end
+
+  def test_delete_suggested_article_rule
+    conditions = [{ evaluate_on: 'page', name: 'url', operator: 1, value: 'refund' }]
+    filter = { type: 1, value: [1, 3, 4], order_by: 'hits' }
+    help_widget = create_widget_suggested_article_rules(conditions: conditions, filter: filter)
+    delete :destroy, controller_params(version: 'v2', help_widget_id: help_widget.id, id: help_widget.help_widget_suggested_article_rules.last.id)
+    assert_response 204
+  ensure
+    help_widget.destroy
+  end
+
+  def test_delete_suggested_article_rule_not_present
+    conditions = [{ evaluate_on: 'page', name: 'url', operator: 1, value: 'refund' }]
+    filter = { type: 1, value: [1, 3, 4], order_by: 'hits' }
+    help_widget = create_widget_suggested_article_rules(conditions: conditions, filter: filter)
+    delete :destroy, controller_params(version: 'v2', help_widget_id: help_widget.id, id: help_widget.help_widget_suggested_article_rules.last.id + 200)
+    assert_response 404
+  ensure
+    help_widget.destroy
+  end
+
+  def test_delete_suggested_article_rule_with_no_items
+    help_widget = create_widget
+    delete :destroy, controller_params(version: 'v2', help_widget_id: help_widget.id, id: help_widget.help_widget_suggested_article_rules.last.try(:id).to_i + 200)
+    assert_response 404
+  ensure
+    help_widget.destroy
+  end
+
+  def test_delete_suggested_article_rule_without_feature
+    @account.rollback(:help_widget_article_customisation)
+    widget = create_widget(solution_articles: true)
+    get :index, controller_params(version: 'private', help_widget_id: widget.id)
+    assert_response 403
+    match_json('code' => 'require_feature',
+               'message' => 'The help_widget, help_widget_article_customisation feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
+  ensure
+    @account.launch(:help_widget_article_customisation)
+    widget.destroy
+  end
 end

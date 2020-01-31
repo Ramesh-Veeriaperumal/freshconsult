@@ -358,7 +358,7 @@ Helpkit::Application.routes.draw do
     end
 
     resources :help_widgets do
-      resources :suggested_article_rules, controller: 'help_widgets/suggested_article_rules'
+      resources :suggested_article_rules, controller: 'help_widgets/suggested_article_rules', only: [:create, :update, :destroy, :index]
     end
 
     post '/audit_log/export', to: 'audit_logs#export'

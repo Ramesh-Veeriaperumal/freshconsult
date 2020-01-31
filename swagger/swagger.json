@@ -11471,6 +11471,41 @@
         }
       }
     },
+    "/help_widgets/{id}/suggested_article_rules/{rule_id}": {
+      "delete": {
+        "summary": "Suggested article rules delete",
+        "tags": [
+          "Help Widget"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "type": "integer",
+            "format": "int64",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "rule_id",
+            "type": "integer",
+            "format": "int64",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Suggested article rule not found"
+          }
+        }
+      }
+    },
     "/widget/attachment": {
       "post": {
         "tags": [

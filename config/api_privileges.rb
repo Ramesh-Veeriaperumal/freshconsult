@@ -168,7 +168,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/flow"
     resource :'ember/admin/advanced_ticketing', only: [:create, :destroy, :insights]
     resource :help_widget, only: [:index, :create, :show, :update, :destroy]
-    resource :"help_widgets/suggested_article_rule"
+    resource :"help_widgets/suggested_article_rule", only: [:index, :create, :update, :destroy]
     resource :"admin/trial_subscription", only: [:usage_metrics]
     resource :"admin/automation", only: [:index, :create, :show, :update, :destroy]
     resource :"admin/custom_translations/upload", only: [:upload]
