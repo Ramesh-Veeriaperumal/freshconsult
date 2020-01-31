@@ -114,8 +114,9 @@ module BootstrapTestHelper
     pattern[:social_options] = social_options_hash if account.features?(:twitter) || account.basic_twitter_enabled?
     pattern[:dashboard_limits] = account.account_additional_settings.custom_dashboard_limits if account.custom_dashboard_enabled?
     pattern[:freshchat] = freshchat_hash if account.freshchat_enabled?
-    pattern[:account_cancellation_requested] =  account.account_cancellation_requested?
-    pattern[:account_cancellation_requested_time] = Time.at(account.account_cancellation_requested_time.to_i / 1000).utc if account.launched?(:downgrade_policy)
+    cancellation_requested = account.account_cancellation_requested?
+    pattern[:account_cancellation_requested] =  cancellation_requested
+    pattern[:account_cancellation_requested_time] = Time.at(account.account_cancellation_requested_time.to_i / 1000).utc if cancellation_requested && account.launched?(:downgrade_policy)
     pattern[:organisation_domain] = account.organisation_from_cache.try(:alternate_domain) || account.organisation_from_cache.try(:domain)
     pattern[:freshdesk_sso_enabled] = account.freshdesk_sso_enabled?
     pattern.merge!(sandbox_info(account))

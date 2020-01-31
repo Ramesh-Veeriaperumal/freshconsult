@@ -1,11 +1,13 @@
 require_relative '../../test_helper.rb'
 require 'sidekiq/testing'
 require 'webmock/minitest'
+require Rails.root.join('test', 'models', 'helpers', 'subscription_test_helper.rb')
 Sidekiq::Testing.fake!
 
 class Admin::ApiAccountsControllerTest < ActionController::TestCase
   include ApiAccountHelper
   include Redis::OthersRedis
+  include SubscriptionTestHelper
   CHARGEBEE_SUBSCRIPTION_BASE_URL = 'https://freshpo-test.chargebee.com/api/v1/subscriptions'.freeze
   SUPPORT_CONTACTS_RESPONSE = [{ 'active' => true, 'address' => nil, 'company_id' => 854_881,
                                  'description' => nil, 'email' => 'sample@freshdesk.com', 'id' => 28_271_068,
@@ -48,6 +50,8 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
                                                  'created_at' => '2019-01-14T19:38:37Z', 'updated_at' => '2019-05-13T19:20:12Z',
                                                  'unique_external_id' => nil }].freeze
 
+  SECONDS_IN_A_DAY = 24 * 60 * 60
+
   def teardown
     AwsWrapper::S3Object.unstub(:exists?)
   end
@@ -89,6 +93,8 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
   end
 
   def test_account_cancellation_for_paid_accounts
+    chargebee_update = ChargeBee::Result.new(stub_update_params(@account.id))
+    Billing::Subscription.any_instance.stubs(:cancel_subscription).returns(chargebee_update)
     create_subscription_payment(amount: 40)
     reset_account_subscription_state('active')
     put :cancel, construct_params(get_valid_params_for_cancel)
@@ -99,15 +105,19 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
   ensure
     @account.subscription_payments.destroy_all
     @account.delete_account_cancellation_request_job_key
+    Billing::Subscription.any_instance.unstub(:cancel_subscription)
   end
 
   def test_account_cancellation_for_active_accounts
+    chargebee_update = ChargeBee::Result.new(stub_update_params(@account.id))
+    Billing::Subscription.any_instance.stubs(:cancel_subscription).returns(chargebee_update)
     reset_account_subscription_state('active')
     put :cancel, construct_params(get_valid_params_for_cancel)
     assert_response 204
     reset_account_subscription_state('trial')
   ensure
     @account.subscription_payments.destroy_all
+    Billing::Subscription.any_instance.unstub(:cancel_subscription)
   end
 
   def test_account_cancellation_state_validation_fail
@@ -129,19 +139,25 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
 
   def test_account_cancellation_with_downgrade_policy_enabled
     reset_account_subscription_state('active')
+    Billing::Subscription.any_instance.stubs(:remove_scheduled_cancellation).returns(true)
+    @account.kill_scheduled_account_cancellation
     @account.launch(:downgrade_policy)
-    subscription_response = chargebee_subscripiton_reponse
-    subscription_response[:subscription][:status] = 'active'
-    url = "#{CHARGEBEE_SUBSCRIPTION_BASE_URL}/#{@account.id}"
-    stub_request(:get, url).to_return(status: 200, body: subscription_response.to_json, headers: {})
-    ChargeBee::Subscription.stubs(:cancel).returns(true)
+    stub_params = stub_update_params(@account.id)
+    chargebee_update = ChargeBee::Result.new(stub_params)
+    Billing::Subscription.any_instance.stubs(:cancel_subscription).returns(chargebee_update)
+    current_term_end = stub_params[:subscription][:current_term_end]
+    stub_current_time = DateTime.now
+    DateTime.stubs(:now).returns(stub_current_time)
     put :cancel, construct_params(get_valid_params_for_cancel)
+    cancellation_redis_expiry = get_others_redis_expiry(@account.account_cancellation_request_time_key)
     assert_response 204
     assert @account.account_cancellation_requested?
   ensure
     reset_account_subscription_state('trail')
     @account.delete_account_cancellation_requested_time_key
-    ChargeBee::Subscription.unstub(:cancel)
+    DateTime.unstub(:now)
+    Billing::Subscription.any_instance.unstub(:remove_scheduled_cancellation)
+    Billing::Subscription.any_instance.unstub(:cancel_subscription)
     @account.rollback(:downgrade_policy)
   end
 

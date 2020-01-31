@@ -33,8 +33,9 @@ class AccountDecorator < ApiDecorator
     ret_hash[:contact_info] = record.contact_info.presence
     trial_subscription = record.latest_trial_subscription_from_cache
     ret_hash[:trial_subscription] = trial_subscription_hash(trial_subscription) if trial_subscription
-    ret_hash[:account_cancellation_requested] = record.account_cancellation_requested?
-    ret_hash[:account_cancellation_requested_time] = Time.at(record.account_cancellation_requested_time.to_i / 1000).utc if record.launched?(:downgrade_policy)
+    cancellation_requested = record.account_cancellation_requested?
+    ret_hash[:account_cancellation_requested] = cancellation_requested
+    ret_hash[:account_cancellation_requested_time] = Time.at(record.account_cancellation_requested_time.to_i / 1000).utc if cancellation_requested && record.launched?(:downgrade_policy)
     ret_hash[:anonymous_account] = true if record.anonymous_account?
     ret_hash[:organisation_domain] = organisation_domain
     ret_hash[:freshdesk_sso_enabled] = record.freshdesk_sso_enabled?
