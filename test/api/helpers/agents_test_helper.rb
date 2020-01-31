@@ -248,4 +248,7 @@ module AgentsTestHelper
     Freshid::User.new(freshid_user_params)
   end
 
+  def agents_count_key
+    format(Redis::Keys::Others::AGENTS_COUNT_KEY, account_id: Account.current.id.to_s)
+  end
 end

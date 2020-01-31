@@ -19,6 +19,10 @@ module ModelsUsersTestHelper
   end
 
   def add_agent(account, options={})
+    acc_subscription = Account.current.subscription
+    old_subscription_state = acc_subscription.state
+    acc_subscription.state = 'trial'
+    acc_subscription.save
     role_id = @account.roles.find_by_name("Agent").id
     new_agent = FactoryGirl.build(:agent,
                                   :account_id => account.id,
@@ -44,6 +48,9 @@ module ModelsUsersTestHelper
       ag_grp.save!
     end
     new_user.reload
+  ensure
+    acc_subscription.state = old_subscription_state
+    acc_subscription.save
   end
 
   def build_tags(tag_names)

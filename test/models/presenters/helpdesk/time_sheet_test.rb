@@ -28,18 +28,19 @@ class TimeSheetTest < ActiveSupport::TestCase
     CentralPublisher::Worker.jobs.clear
     time_sheet = ticket.time_sheets.new(time_sheet_params_hash)
     time_sheet.save
-    assert_equal 0, CentralPublisher::Worker.jobs.size
+    assert_not_equal 'time_sheet_create', CentralPublisher::Worker.jobs.last['args'][0]
   ensure
     Account.current.launch :time_sheets_central_publish
   end
 
   def test_central_publish_time_sheet_create_and_user_association
+    Account.current.reload
     ticket = create_ticket(ticket_params_hash)
     ticket.reload
     CentralPublisher::Worker.jobs.clear
     time_sheet = ticket.time_sheets.new(time_sheet_params_hash)
     time_sheet.save
-    assert_equal 1, CentralPublisher::Worker.jobs.size
+    assert_equal 'time_sheet_create', CentralPublisher::Worker.jobs.last['args'][0]
     time_sheet.reload
     payload = time_sheet.central_publish_payload.to_json
     payload.must_match_json_expression(cp_time_sheet_model_properties(time_sheet))

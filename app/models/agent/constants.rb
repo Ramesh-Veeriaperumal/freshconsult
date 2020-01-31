@@ -86,4 +86,6 @@ class Agent < ActiveRecord::Base
   ALLOWED_PERMISSION_FOR_FIELD_AGENT = [PERMISSION_KEYS_BY_TOKEN[:assigned_tickets], PERMISSION_KEYS_BY_TOKEN[:group_tickets]].freeze
 
   UN_AVAILABLE = 'unavailable'
+
+  AGENT_LIMIT_KEY_EXPIRY = 300
 end

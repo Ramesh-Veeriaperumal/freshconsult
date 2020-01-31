@@ -16,6 +16,10 @@ module UsersHelper
 
   def add_agent(account, options={})
     role_id = @account.roles.find_by_name("Agent").id
+    acc_subscription = Account.current.subscription
+    old_subscription_state = acc_subscription.state
+    acc_subscription.state = 'trial'
+    acc_subscription.save
     new_agent = FactoryGirl.build(:agent,
                                       :account_id => account.id,
                                       :available => 1,
@@ -45,6 +49,9 @@ module UsersHelper
       ag_grp.save!
     end
     new_user.reload
+  ensure
+    acc_subscription.state = old_subscription_state
+    acc_subscription.save
   end
 
   def add_new_user(account, options={})

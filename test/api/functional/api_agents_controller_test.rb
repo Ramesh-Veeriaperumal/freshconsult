@@ -2,6 +2,7 @@ require_relative '../test_helper'
 ['agents_test_helper.rb', 'attachments_test_helper.rb'].each { |file| require Rails.root.join('test', 'api', 'helpers', file) }
 require_relative '../helpers/admin/skills_test_helper'
 class ApiAgentsControllerTest < ActionController::TestCase
+  include Redis::OthersRedis
   include AgentsTestHelper
   include AttachmentsTestHelper
   include Admin::SkillsTestHelper
@@ -765,6 +766,102 @@ class ApiAgentsControllerTest < ActionController::TestCase
     Account.unstub(:current)
     ApiAgentsController.any_instance.unstub(:fetch_export_details)
     ApiAgentsController.any_instance.unstub(:load_data_export)
+  end
+
+  def test_create_agent_with_race_condition_without_redis_key_limit_greater_than_agent_count
+    key = agents_count_key
+    remove_others_redis_key(key) if redis_key_exists?(key)
+    Account.stubs(:current).returns(Account.first)
+    params_hash = { email: Faker::Internet.email, ticket_scope: 2, role_ids: [Account.current.roles.find_by_name('Agent').id], name: Faker::Name.name, occasional: false }
+    current_agent_count = Account.current.full_time_support_agents.count
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
+    Account.any_instance.stubs(:skill_based_round_robin_enabled?).returns(true)
+    Account.any_instance.stubs(:support_agent_limit_reached?).returns(false)
+    subscription = Account.current.subscription
+    subscription.agent_limit = current_agent_count + 1
+    subscription.state = 'active'
+    subscription.save
+
+    post :create, construct_params(params_hash)
+    assert_response 201
+    assert_equal get_others_redis_key(key).to_i, Account.current.full_time_support_agents.count
+    assert_equal subscription.agent_limit, Account.current.full_time_support_agents.count
+  ensure
+    subscription.agent_limit = nil
+    subscription.state = 'trial'
+    subscription.save
+    remove_others_redis_key(key) if redis_key_exists?(key)
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.any_instance.unstub(:skill_based_round_robin_enabled?)
+    Account.any_instance.unstub(:support_agent_limit_reached?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    Account.unstub(:current)
+  end
+
+  def test_create_agent_with_race_condition_without_redis_key
+    key = agents_count_key
+    remove_others_redis_key(key) if redis_key_exists?(key)
+    Account.stubs(:current).returns(Account.first)
+    params_hash = { email: Faker::Internet.email, ticket_scope: 2, role_ids: [Account.current.roles.find_by_name('Agent').id], name: Faker::Name.name, occasional: false }
+    current_agent_count = Account.current.full_time_support_agents.count
+    error_message = 'You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to purchase additional agents.'
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
+    Account.any_instance.stubs(:skill_based_round_robin_enabled?).returns(true)
+    Account.any_instance.stubs(:support_agent_limit_reached?).returns(false)
+    subscription = Account.current.subscription
+    subscription.agent_limit = current_agent_count
+    subscription.state = 'active'
+    subscription.save
+
+    post :create, construct_params(params_hash)
+    assert_response 400
+    response = parse_response @response.body
+    assert_equal response['errors'][0]['message'], error_message
+    assert_equal get_others_redis_key(key).to_i, Account.current.full_time_support_agents.count
+    assert_equal subscription.agent_limit, Account.current.full_time_support_agents.count
+  ensure
+    subscription.agent_limit = nil
+    subscription.state = 'trial'
+    subscription.save
+    remove_others_redis_key(key) if redis_key_exists?(key)
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.any_instance.unstub(:skill_based_round_robin_enabled?)
+    Account.any_instance.unstub(:support_agent_limit_reached?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    Account.unstub(:current)
+  end
+
+  def test_create_agent_with_race_condition_with_redis_key
+    key = agents_count_key
+    Account.stubs(:current).returns(Account.first)
+    params_hash = { email: Faker::Internet.email, ticket_scope: 2, role_ids: [Account.current.roles.find_by_name('Agent').id], name: Faker::Name.name, occasional: false }
+    current_agent_count = Account.current.full_time_support_agents.count
+    error_message = 'You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to purchase additional agents.'
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
+    Account.any_instance.stubs(:skill_based_round_robin_enabled?).returns(true)
+    Account.any_instance.stubs(:support_agent_limit_reached?).returns(false)
+    set_others_redis_key(key, current_agent_count)
+    subscription = Account.current.subscription
+    subscription.agent_limit = current_agent_count
+    subscription.state = 'active'
+    subscription.save
+
+    post :create, construct_params(params_hash)
+    assert_response 400
+    response = parse_response @response.body
+    assert_equal response['errors'][0]['message'], error_message
+    assert_equal get_others_redis_key(key).to_i, Account.current.full_time_support_agents.count
+    assert_equal subscription.agent_limit, Account.current.full_time_support_agents.count
+  ensure
+    subscription.agent_limit = nil
+    subscription.state = 'trial'
+    subscription.save
+    remove_others_redis_key(key) if redis_key_exists?(key)
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.any_instance.unstub(:skill_based_round_robin_enabled?)
+    Account.any_instance.unstub(:support_agent_limit_reached?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    Account.unstub(:current)
   end
 
   def test_create_agent_without_freshid

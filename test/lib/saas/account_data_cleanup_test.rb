@@ -17,6 +17,7 @@ class AccountDataCleanupTest < ActionView::TestCase
   def test_account_cleanup_drop_data
     # Observer rules
     @account = create_new_account("#{Faker::Lorem.word}#{rand(10000)}", Faker::Internet.email)
+    @account.reload
     va_rule = FactoryGirl.build(:va_rule, name: "created by #{Faker::Name.name}", description: Faker::Lorem.sentence(2), action_data: [{ name: 'priority', value: '3' }], filter_data: { events: [{ name: 'priority', from: '--', to: '--' }], performer: { 'type' => '1' }, conditions: [{ name: 'ticket_type', operator: 'in', value: ['Problem', 'Question'] }] }, account_id: @account.id, rule_type: VAConfig::OBSERVER_RULE)
     va_rule.save(validate: false)
 
