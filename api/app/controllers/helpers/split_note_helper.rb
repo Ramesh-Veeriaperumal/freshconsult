@@ -81,6 +81,7 @@ module SplitNoteHelper
     {
       subject: @item.subject,
       email: @note.user.email,
+      phone: @note.user.available_number,
       priority: @item.priority,
       group_id: @item.group_id,
       email_config_id: @item.email_config_id,

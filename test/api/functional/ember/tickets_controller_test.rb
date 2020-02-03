@@ -2050,6 +2050,7 @@ module Ember
     #     c. shared ownership enabled
     #     d. twitter reply
     #     e. fb reply
+    #     f. phone only contact
     # 5. error in saving ticket
     # 6. verify attachmnets moving
 
@@ -2111,6 +2112,19 @@ module Ember
 
     def test_split_note_with_fb_reply
       ticket, note = create_fb_ticket_and_note
+      put :split_note, construct_params({ version: 'private', id: ticket.display_id, note_id: note.id }, false)
+      assert_response 200
+      verify_split_note_activity(ticket, note)
+    end
+
+    def test_split_note_with_phone_only_contact_reply
+      user = add_new_user_without_email(@account)
+      params_hash = {
+        requester_id: user.id,
+        source: TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone]
+      }
+      ticket = create_ticket(params_hash)
+      note = create_normal_reply_for(ticket)
       put :split_note, construct_params({ version: 'private', id: ticket.display_id, note_id: note.id }, false)
       assert_response 200
       verify_split_note_activity(ticket, note)
