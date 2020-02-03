@@ -8,7 +8,8 @@ class TicketModelTest < ActiveSupport::TestCase
   include EmailHelper
 
   def setup
-    Account.stubs(:current).returns(Account.first || create_test_account)
+    account = Account.first || create_test_account
+    Account.stubs(:current).returns(account)
   end
 
   def teardown
@@ -37,5 +38,26 @@ class TicketModelTest < ActiveSupport::TestCase
     ticket = Account.current.tickets.last
     ticket.update_email_received_at(nil)
     assert_equal false, ticket.schema_less_ticket.header_info.key?(:received_at)
+  end
+
+  def test_should_return_sender_email_if_ticket_requester_has_email
+    @account = Account.current
+    user = add_new_user(Account.current, email: 'test-requester.for_es@freshpo.com')
+    ticket = create_ticket(requester_id: user.id)
+    ticket.email = user.email
+    ticket.update_sender_email
+    assert_equal 'test-requester.for_es@freshpo.com', ticket.sender_email
+  ensure
+    ticket.destroy if ticket.present?
+  end
+
+  def test_should_return_sender_email_nil_if_ticket_requester_has_no_email
+    @account = Account.current
+    user = add_new_user(Account.current, active: true)
+    ticket = create_ticket(requester_id: user.id)
+    ticket.update_sender_email
+    assert_equal nil, ticket.sender_email
+  ensure
+    ticket.destroy if ticket.present?
   end
 end

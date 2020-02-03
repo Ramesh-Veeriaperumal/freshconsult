@@ -856,7 +856,7 @@ private
   end
 
   def assign_sender_email
-    self.sender_email = self.email if self.email && self.email =~ EMAIL_REGEX
+    self.sender_email = email && email =~ EMAIL_REGEX ? email : nil
   end
 
   def assign_email_config_and_product
