@@ -459,11 +459,11 @@ module Helpdesk::TicketsHelper
   end
 
   def agentcollision_alb_socket_host
-    "#{request.protocol}#{NodeConfig["socket_host_new"]}"
+    "https://#{NodeConfig['socket_host_new']}"
   end
 
   def autorefresh_alb_socket_host
-    "#{request.protocol}#{NodeConfig["socket_autorefresh_host_new"]}"
+    "https://#{NodeConfig['socket_autorefresh_host_new']}"
   end
 
   def agent_collision_index_channel
