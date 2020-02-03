@@ -4,6 +4,11 @@ module Ember
       class ScoreboardLevelsController < ApiApplicationController
         decorate_views(decorate_objects: [:index])
 
+        def index
+          response.api_root_key = :agent_levels
+          super
+        end
+
         private
 
           def scoper

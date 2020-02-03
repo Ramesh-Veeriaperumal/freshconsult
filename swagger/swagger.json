@@ -15515,7 +15515,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "scoreboard_levels": {
+                "agent_levels": {
                   "type": "array",
                   "items": {
                     "$ref": "#/definitions/scoreboard_level"
