@@ -128,7 +128,7 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_users do
     resource :"ember/contact", only: %i[make_agent assume_identity]
-    resource :"ember/agent", only: %i[show create_multiple assume_identity]
+    resource :"ember/agent", only: %i[show create_multiple assume_identity search_in_freshworks]
     resource :"bulk_api_job", only: %i[show]
     resource :"ember/admin/gamification/scoreboard_level", only: [:index]
   end

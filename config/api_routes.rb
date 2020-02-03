@@ -789,6 +789,7 @@ Helpkit::Application.routes.draw do
 
     resources :agents, controller: 'ember/agents', only: [:index, :show, :update], id: /\d+/ do
       collection do
+        get :search_in_freshworks
         post :create_multiple
         get :revert_identity
         post :complete_gdpr_acceptance

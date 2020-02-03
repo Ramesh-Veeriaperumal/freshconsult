@@ -5242,6 +5242,43 @@
         }
       }
     },
+    "/agents/search_in_freshworks": {
+      "get": {
+        "tags": [
+          "agent"
+        ],
+        "summary": "Search In Freshworks",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "type": "string",
+            "description": "new email of the user",
+            "required": true
+          }, 
+          {
+            "name": "old_email",
+            "in": "query",
+            "type": "string",
+            "description": "old email of the user"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/search_in_freshworks"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
     "/agents/update_multiple": {
       "patch": {
         "tags": [
@@ -22556,6 +22593,53 @@
           "items": {
             "$ref": "#/definitions/agents_bulk_action_error"
           }
+        }
+      }
+    },
+    "search_in_freshworks": {
+      "title": "data",
+      "type": "object",
+      "description": "Search In Freshworks Response",
+      "properties": {
+        "freshid_user_info": {
+          "$ref": "#/definitions/search_in_freshworks_freshid_response"
+        },
+        "user_info": {
+          "$ref": "#/definitions/search_in_freshworks_user_info_response"
+        }
+      }
+    },
+    "search_in_freshworks_freshid_response": {
+      "title": "data",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "mobile": {
+          "type": "string"
+        },
+        "job_title": {
+          "type": "string"
+        }
+      }
+    },
+    "search_in_freshworks_user_info_response": {
+      "title": "data",
+      "type": "object",
+      "properties": {
+        "marked_for_hard_delete": {
+          "type": "boolean"
+        },
+        "delete": {
+          "type": "boolean"
+        },
+        "user_id": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },

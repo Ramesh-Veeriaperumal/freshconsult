@@ -3,6 +3,7 @@ class ApiAgentsController < ApiApplicationController
   include ContactsCompaniesConcern
   include Export::Util
   include BulkApiJobsHelper
+  include Freshid::CallbackMethods
 
   skip_before_filter :check_privilege, only: :revert_identity
   before_filter :check_gdpr_pending?, only: :complete_gdpr_acceptance
@@ -125,6 +126,12 @@ class ApiAgentsController < ApiApplicationController
       return false unless validate_request(nil, agent_params, nil)
     end
     true
+  end
+
+  def search_in_freshworks
+    freshdesk_user_data = current_account.user_emails.user_for_email(params[:email].to_s)
+    user_hash = fetch_user_data_from_email if current_account.freshid_integration_enabled?
+    @item = construct_search_in_freshworks_payload(user_hash, freshdesk_user_data)
   end
 
   private
@@ -324,5 +331,27 @@ class ApiAgentsController < ApiApplicationController
 
     def load_data_export
       fetch_data_export_item(AgentConstants::EXPORT_TYPE)
+    end
+
+    def freshid_user_details(email)
+      current_account.freshid_org_v2_enabled? ? Freshid::V2::Models::User.find_by_email(email.to_s) : Freshid::User.find_by_email(email.to_s)
+    end
+
+    def fetch_user_data_from_email
+      return fetch_user_info_from_fresh_id if params[:old_email].blank? || params[:email].casecmp(params[:old_email]) != 0
+
+      user = current_account.users.find_by_email(params[:old_email].to_s)
+      user_info_hash(user)[:user] if user.present?
+    end
+
+    def fetch_user_info_from_fresh_id
+      user = freshid_user_details(params[:email])
+      user_hash = user_info_hash(User.new, user.as_json.symbolize_keys)[:user] if user.present?
+      user_hash
+    end
+
+    def construct_search_in_freshworks_payload(user_hash, freshdesk_user_data)
+      user_meta_info = { user_id: freshdesk_user_data.id, marked_for_hard_delete: freshdesk_user_data.marked_for_hard_delete?, deleted: freshdesk_user_data.deleted } if freshdesk_user_data
+      { freshid_user_info: user_hash || {}, user_info: user_meta_info }
     end
 end

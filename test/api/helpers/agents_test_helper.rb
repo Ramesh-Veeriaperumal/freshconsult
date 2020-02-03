@@ -248,6 +248,18 @@ module AgentsTestHelper
     Freshid::User.new(freshid_user_params)
   end
 
+  def private_api_search_in_freshworks_pattern(user, expected_output = {})
+    {
+      freshid_user_info: {
+        name: expected_output[:name] || user.name,
+        phone: expected_output[:phone] || user.phone,
+        mobile: expected_output[:mobile] || user.mobile,
+        job_title: expected_output[:job_title] || user.job_title
+      },
+      user_info: expected_output[:user_info]
+    }
+  end
+
   def agents_count_key
     format(Redis::Keys::Others::AGENTS_COUNT_KEY, account_id: Account.current.id.to_s)
   end

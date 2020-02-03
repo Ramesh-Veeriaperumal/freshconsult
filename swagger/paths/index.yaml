@@ -253,6 +253,8 @@
   $ref: ./agents/enable_undo_send.yaml
 /agents/disable_undo_send:
   $ref: ./agents/disable_undo_send.yaml
+/agents/search_in_freshworks:
+  $ref: ./agents/search_in_freshworks.yaml
 /agents/update_multiple:
   $ref: ./agents/update_multiple.yaml
 
