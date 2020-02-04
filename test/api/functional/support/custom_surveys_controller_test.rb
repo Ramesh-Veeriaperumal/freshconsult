@@ -21,8 +21,7 @@ class Support::CustomSurveysControllerTest < ActionController::TestCase
   end
 
   def test_when_agent_logged_in_for_csat_redirect
-    user = add_test_agent(@account, role: Role.find_by_name('Administrator').id)
-    login_as(user)
+    login_admin
     get :hit, controller_params(survey_code: @survey_handle.id_token)
     assert_response 302
     log_out

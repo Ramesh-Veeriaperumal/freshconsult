@@ -122,6 +122,8 @@ agent_create_input:
   $ref: ./request/agents/agent_create.yaml
 bulk_agent_input:
   $ref: ./request/agents/bulk_agent.yaml
+update_multiple_agents_input:
+  $ref: ./request/agents/update_multiple_agents_input.yaml
 onboarding_update_activation_email_input:
   $ref: ./request/onboarding/update_activation_email.yaml
 onboarding_test_email_forwarding_input:
@@ -427,10 +429,6 @@ company_activities_with_meta:
   $ref: './response/companies/activities_with_meta.yaml'
 timeline_activity:
   $ref: './response/contacts/timeline.yaml'
-contact_post_activity:
-  $ref: './response/contacts/post.yaml'
-contact_ticket_activity:
-  $ref: './response/contacts/ticket.yaml'
 company_search:
   $ref: './response/search/company.yaml'
 automation_search:
@@ -873,6 +871,22 @@ freshcaller_account_update:
 
 security_regenerate_widget_sso:
   $ref: ./response/admin/security_keys/widget/regenerate.yaml
+
+# Bulk
+bulk_response:
+  $ref: ./response/bulk_response.yaml
+
+# Jobs
+job:
+  $ref: ./resource/job.yaml
+
+# Out of office
+out_of_office:
+  $ref: ./resource/out_of_office.yaml
+out_of_office_request:
+  $ref: ./request/out_of_office.yaml
+out_of_office_response:
+  $ref: ./response/out_of_office.yaml
 
 scoreboard_level:
   $ref: './resource/admin/scoreboard_level.yaml'

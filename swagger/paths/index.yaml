@@ -253,6 +253,10 @@
   $ref: ./agents/enable_undo_send.yaml
 /agents/disable_undo_send:
   $ref: ./agents/disable_undo_send.yaml
+/agents/search_in_freshworks:
+  $ref: ./agents/search_in_freshworks.yaml
+/agents/update_multiple:
+  $ref: ./agents/update_multiple.yaml
 
 # Profiles
 /agents/me:
@@ -577,6 +581,9 @@
 /help_widgets/{id}/suggested_article_rules:
   $ref: ./help_widgets/suggested_article_rules/index.yaml
 
+/help_widgets/{id}/suggested_article_rules/{rule_id}:
+  $ref: ./help_widgets/suggested_article_rules/crud.yaml
+
 /widget/attachment:
   $ref: ./widget/attachment_create.yaml
 /widget/search/solutions:
@@ -764,6 +771,16 @@
 #field_service_management
 /field-service/settings:
   $ref: ./field_service_management/save_settings.yaml
+
+# Bulk Scheduled Jobs
+/jobs/{id}:
+  $ref: ./jobs/show.yaml
+
+# Out of office
+/out_of_offices:
+  $ref: ./out_of_offices/list_and_create.yaml
+/out_of_offices/{id}:
+  $ref: ./out_of_offices/read_update_delete.yaml
 
 /admin/agent_levels:
   $ref: ./admin/scoreboard_levels/index.yaml

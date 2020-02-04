@@ -5,18 +5,22 @@ module HelpWidgets
     decorate_views
 
     before_filter :check_feature
+    before_filter :set_current_widget
+    before_filter :load_object, only: [:show, :update, :destroy]
 
     private
 
       def scoper
-        current_widget = current_account.help_widget_from_cache(params[:help_widget_id])
-        return render_request_error(:invalid_help_widget, 400, id: @current_widget) unless current_widget
-
-        current_widget.help_widget_suggested_article_rules_from_cache
+        @current_widget.help_widget_suggested_article_rules_from_cache
       end
 
       def load_objects
         @items = scoper
+      end
+
+      def load_object(items = scoper)
+        @item = items.find { |rule| rule.id == params[:id].to_i } if items
+        log_and_render_404 unless @item
       end
 
       def validate_filter_params
@@ -29,6 +33,11 @@ module HelpWidgets
         return if current_account.help_widget_enabled? && current_account.help_widget_article_customisation_enabled?
 
         render_request_error(:require_feature, 403, feature: 'help_widget, help_widget_article_customisation')
+      end
+
+      def set_current_widget
+        @current_widget = current_account.help_widget_from_cache(params[:help_widget_id])
+        render_request_error(:invalid_help_widget, 400, id: params[:help_widget_id]) unless @current_widget
       end
   end
 end

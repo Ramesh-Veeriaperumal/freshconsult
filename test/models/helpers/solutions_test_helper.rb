@@ -83,8 +83,8 @@ module ModelsSolutionsTestHelper
       category_id: parent.solution_category_meta_id,
       language_id: folder.language_id,
       account_id: folder.account_id,
-      created_at: folder.created_at.try(:utc).try(:iso8601),
-      updated_at: folder.updated_at.try(:utc).try(:iso8601)
+      created_at: [folder.created_at, folder.parent.created_at].max.try(:utc).try(:iso8601),
+      updated_at: [folder.updated_at, folder.parent.updated_at].max.try(:utc).try(:iso8601)
     }
   end
 

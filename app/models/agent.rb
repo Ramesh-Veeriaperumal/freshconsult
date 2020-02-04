@@ -36,6 +36,10 @@ class Agent < ActiveRecord::Base
   after_commit  ->(obj) { obj.update_agent_to_livechat } , on: :update  
   before_save :set_default_type_if_needed, on: [:create, :update]
 
+  before_create :check_if_agent_limit_reached?, if: :full_time_support_agent?
+
+  after_rollback :decrement_agent_count_in_redis, if: :full_time_support_agent?
+
   validates_presence_of :user_id
   validate :validate_signature
   validate :check_agent_type_changed, on: :update
@@ -72,6 +76,52 @@ class Agent < ActiveRecord::Base
 
   def signature_htm
     self.signature_html
+  end
+
+  def full_time_support_agent?
+    support_agent? && !occasional
+  end
+
+  def within_agent_limit?(agent_count)
+    account.subscription.agent_limit && account.subscription.agent_limit >= agent_count
+  end
+
+  def increment_agent_count_in_redis(key)
+    increment_others_redis(key).to_i
+  end
+
+  def push_agent_count_in_redis(key)
+    incremented_agent_count = account.full_time_support_agents.count + 1
+    unless set_others_redis_with_expiry(key, incremented_agent_count, { ex: AGENT_LIMIT_KEY_EXPIRY, nx: true })
+      incremented_agent_count = increment_agent_count_in_redis(key)
+    end
+    incremented_agent_count
+  end
+
+  def get_incremented_agent_count(key)
+    return increment_agent_count_in_redis(key) if redis_key_exists?(key)
+
+    push_agent_count_in_redis(key)
+  end
+
+  def check_if_agent_limit_reached?
+    if account.subscription.state.casecmp('active').zero?
+      key = agents_count_key
+      incremented_agent_count = get_incremented_agent_count(key)
+      @agent_count_incremented = true
+      unless within_agent_limit?(incremented_agent_count)
+        errors.add(:base, I18n.t('maximum_agents_msg'))
+        raise ActiveRecord::RecordInvalid, self
+      end
+    end
+  end
+
+  def agents_count_key
+    format(AGENTS_COUNT_KEY, account_id: account_id.to_s)
+  end
+
+  def decrement_agent_count_in_redis
+    decrement_others_redis(agents_count_key) if @agent_count_incremented
   end
 
   def change_points score

@@ -4,7 +4,6 @@ module Ember
     include AgentAvailabilityHelper
     include AgentContactConcern
     include HelperConcern
-
     decorate_views(decorate_object: [:show, :achievements], decorate_objects: [:index, :create_multiple])
 
     def index

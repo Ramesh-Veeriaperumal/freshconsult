@@ -1,0 +1,20 @@
+get:
+  tags: [job]
+  summary: Show job properties
+  description: Show job properties
+  operationId: showJob
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      required: true  
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/job'
+    404:
+      description: Resource not found
+    403:
+      description: Access denied

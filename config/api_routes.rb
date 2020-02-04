@@ -150,6 +150,7 @@ Helpkit::Application.routes.draw do
         put :update_multiple
       end
     end
+    resources :out_of_offices, only: [:index, :show, :update, :destroy, :create]
     resources :canned_response_folders, controller: 'canned_response_folders', only: [:index, :show, :create, :update]
     resources :canned_responses, controller: 'canned_responses', only: [:index, :show, :create, :update]
     resources :scenario_automations, controller: 'scenario_automations', only: :index
@@ -357,7 +358,7 @@ Helpkit::Application.routes.draw do
     end
 
     resources :help_widgets do
-      resources :suggested_article_rules, controller: 'help_widgets/suggested_article_rules'
+      resources :suggested_article_rules, controller: 'help_widgets/suggested_article_rules', only: [:create, :update, :destroy, :index]
     end
 
     post '/audit_log/export', to: 'audit_logs#export'
@@ -788,6 +789,7 @@ Helpkit::Application.routes.draw do
 
     resources :agents, controller: 'ember/agents', only: [:index, :show, :update], id: /\d+/ do
       collection do
+        get :search_in_freshworks
         post :create_multiple
         get :revert_identity
         post :complete_gdpr_acceptance

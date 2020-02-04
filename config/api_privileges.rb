@@ -53,6 +53,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/custom_dashboard", only: %i[widgets_data show index bar_chart_data]
     resource :"settings/helpdesk", only: [:index]
     resource :'ember/rt', only: [:show]
+
+    resource :"out_of_office", only: %i[index show create update destroy]
   end
 
   manage_account do
@@ -126,7 +128,7 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_users do
     resource :"ember/contact", only: %i[make_agent assume_identity]
-    resource :"ember/agent", only: %i[show create_multiple assume_identity]
+    resource :"ember/agent", only: %i[show create_multiple assume_identity search_in_freshworks]
     resource :"bulk_api_job", only: %i[show]
     resource :"ember/admin/gamification/scoreboard_level", only: [:index]
   end
@@ -166,7 +168,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/flow"
     resource :'ember/admin/advanced_ticketing', only: [:create, :destroy, :insights]
     resource :help_widget, only: [:index, :create, :show, :update, :destroy]
-    resource :"help_widgets/suggested_article_rule"
+    resource :"help_widgets/suggested_article_rule", only: [:index, :create, :update, :destroy]
     resource :"admin/trial_subscription", only: [:usage_metrics]
     resource :"admin/automation", only: [:index, :create, :show, :update, :destroy]
     resource :"admin/custom_translations/upload", only: [:upload]

@@ -1,0 +1,41 @@
+get:
+  tags: [out of offices]
+  summary: List all out of offices taken by agents in the helpdesk
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          out_of_offices:
+            type: array
+            items:
+              $ref: '#/definitions/out_of_office_response'
+          meta:
+            type: object
+            allOf:
+              - $ref: '#/definitions/meta'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+post:
+  tags: [out of offices]
+  description: Create an out of office for an agent
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/out_of_office_request'
+  responses:
+    201:
+      description: Success
+      schema:
+        $ref: '#/definitions/out_of_office_response'
+    404:
+      description: out of office not found
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

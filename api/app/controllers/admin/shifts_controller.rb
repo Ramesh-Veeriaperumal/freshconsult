@@ -18,25 +18,6 @@ module Admin
 
     private
 
-      def shift_service_request
-        proxy_response = perform_shift_request(params, cname_params)
-        response_body = proxy_response[:body]
-        if success? proxy_response[:code]
-          if index_page?
-            @items = response_body['data']
-            response.api_meta = response_body['meta']
-          else
-            @item = response_body['data']
-            response.api_meta = response_body['meta']
-            response.status = proxy_response[:code]
-          end
-        elsif response_body['errors'].present?
-          proxy_errors(response_body, proxy_response[:code])
-        else
-          index_page? ? @items = [] : proxy_errors(response_body, proxy_response[:code])
-        end
-      end
-
       def validate_params
         if params[cname].blank?
           render_errors([[:payload, :invalid_json]])
@@ -45,14 +26,13 @@ module Admin
           if shift_validation.invalid?(params[:action].to_sym)
             render_errors(shift_validation.errors, shift_validation.error_options)
           else
-            check_shift_params
+            check_controller_params
           end
         end
       end
 
-      def proxy_errors(error_body, status)
-        render json: @item = error_body
-        response.status = status
+      def check_controller_params
+        params[cname].permit(*Admin::ShiftConstants::REQUEST_PERMITTED_PARAMS)
       end
 
       def shift_validation_class

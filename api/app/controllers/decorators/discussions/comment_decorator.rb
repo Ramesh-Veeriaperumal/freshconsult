@@ -2,17 +2,16 @@ class Discussions::CommentDecorator < ApiDecorator
   delegate :id, :user_id, :topic_id, :body, :forum_id, :body_html, :topic, :original_post?,
            :account_id, :answer, :published, :spam, :trash, :user_votes, to: :record
 
+  POST_TYPE = 'post'.freeze
+
   def to_activity_hash
-    ret = {
-      activity_type: 'Post'.downcase,
-      id: id,
-      topic_id: topic.id,
-      title: topic.title,
-      created_at: created_at.try(:utc),
-      updated_at: updated_at.try(:utc),
-      comment: !original_post?,
-      forum: forum_hash(topic.forum)
-    }
+    ret_hash = activity_hash
+    ret_hash[:activity_type] = POST_TYPE
+    ret_hash
+  end
+
+  def to_timeline_hash
+    activity_hash
   end
 
   def forum_hash(forum)
@@ -35,4 +34,18 @@ class Discussions::CommentDecorator < ApiDecorator
       body_text: body
     )
   end
+
+  private
+
+    def activity_hash
+      {
+        id: id,
+        topic_id: topic.id,
+        title: topic.title,
+        created_at: created_at.try(:utc),
+        updated_at: updated_at.try(:utc),
+        comment: !original_post?,
+        forum: forum_hash(topic.forum)
+      }
+    end
 end

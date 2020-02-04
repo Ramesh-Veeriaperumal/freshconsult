@@ -4666,7 +4666,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_compose_email_with_invalid_email_config_id
-    params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(custom_fields: {}, email_config_id: 123)
+    params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(custom_fields: {}, email_config_id: Account.current.email_configs.last.id + 200)
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end

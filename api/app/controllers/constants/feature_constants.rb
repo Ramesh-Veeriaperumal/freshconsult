@@ -27,4 +27,5 @@ module FeatureConstants
   ADMIN_FRESHCALLER = %w(freshcaller freshcaller_admin_new_ui).freeze
   TICKET_FIELD_REVAMP = :ticket_field_revamp
   AGENT_SHIFTS = :agent_shifts.freeze
+  OUT_OF_OFFICE = :out_of_office
 end

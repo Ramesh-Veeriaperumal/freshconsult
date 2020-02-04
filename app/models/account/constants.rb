@@ -311,7 +311,7 @@ class Account < ActiveRecord::Base
       forums_agent_portal: false, mailbox_google_oauth: false, send_and_set: false, migrate_euc_pages_to_us: false, agent_collision_revamp: false, topic_editor_with_html: false, focus_mode: false,
       mailbox_forward_setup: false, remove_image_attachment_meta_data: false, ticket_field_revamp: false, new_timeline_view: false, email_mailbox: true, facebook_admin_ui_revamp: false,
       detect_lang_from_email_service: false, fb_ad_post_stream_publish: false, sla_policy_revamp: false, freshdesk_freshsales_bundle: false, field_agents_can_manage_appointments_setting: false,
-      fsm_for_garden_plan: false
+      fsm_for_garden_plan: false, requester_widget_timeline: false
     }, :merge
   )
 
@@ -326,8 +326,4 @@ class Account < ActiveRecord::Base
   PARENT_CHILD_INFRA_FEATURES = [:parent_child_tickets, :field_service_management]
   CONTACT_DATA = [:first_name, :last_name, :email, :phone].freeze
   FILE_DOWNLOAD_URL_EXPIRY_TIME = 60.to_i.seconds
-  CONDITION_BASED_LAUNCHPARTY_FEATURES = {
-    new_timeline_view: ->(account) { account.redis_key_exists?(Redis::Keys::Others::NEW_TIMELINE_VIEW) },
-    dkim_email_service: ->(account) { account.redis_key_exists?(Redis::Keys::Others::DKIM_EMAIL_SERVICE) }
-  }.freeze
 end

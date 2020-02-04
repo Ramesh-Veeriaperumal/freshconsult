@@ -25,7 +25,7 @@ module Cache
 
       def fetch_lcached(operation, key, expiry = 30.mins)
         l_key = lookup_key(key)
-        Rails.cache.fetch(l_key, expires_in: expiry.to_i) do
+        Rails.cache.fetch(l_key, race_condition_ttl: 10.seconds, expires_in: expiry.to_i) do
           Rails.logger.debug("Fetching #{l_key} from redis")
           $redis_others.perform_redis_op(operation, key)
         end

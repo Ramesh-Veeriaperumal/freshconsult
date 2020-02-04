@@ -1,0 +1,46 @@
+get:
+  tags: ['out of offices']
+  summary: Show out of office
+  description: Show an agent's out of office
+  parameters:
+    - $ref: '#/parameters/id'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/out_of_office_response'
+    404:
+      description: Out of office not found
+delete:
+  tags: ['out of offices']
+  summary: Delete out of office of an agent
+  description: Destroys an agent's out of office
+  parameters:
+    - $ref: '#/parameters/id'
+  responses:
+    204:
+      description: Success
+    404:
+      description: Out of office not found
+put:
+  tags: ['out of offices']
+  summary: Update out of office
+  description: Updates an agent's out of office
+  parameters:
+    - $ref: '#/parameters/id'
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/out_of_office_request'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/out_of_office_response'
+    404:
+      description: Out of office not found
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

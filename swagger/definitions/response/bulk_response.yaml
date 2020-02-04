@@ -1,0 +1,13 @@
+type: object
+properties:
+  job_id:
+    type: integer
+    example: 100
+  href:
+    type: string
+    example: 'https://support.freshdesk.com/api/v2/jobs/100'
+example:
+  {
+    job_id: 100,
+    href: 'https://support.freshdesk.com/api/v2/jobs/100'
+  }

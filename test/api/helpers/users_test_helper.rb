@@ -424,7 +424,8 @@ module UsersTestHelper
   end
 
   def whitelisted_properties_for_activities(obj)
-    return { archived: true, priority: obj.priority } if archived?(obj)
+    return { archived: true } if archived?(obj)
+
     {
       description_text: obj.description,
       due_by: obj.due_by.try(:utc).try(:iso8601),

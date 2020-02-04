@@ -14,7 +14,7 @@ module Redis::OthersRedis
     newrelic_begin_rescue do
       value = $redis_others.perform_redis_op('getset', key, value)
       $redis_others.perform_redis_op('expire', key, expires) if expires
-      return value
+      value
     end
   end
 

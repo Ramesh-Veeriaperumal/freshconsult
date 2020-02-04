@@ -943,6 +943,7 @@ module Channel::V2
     end
 
     def test_index_with_stats
+      TicketDecorator.any_instance.stubs(:private_api?).returns(false)
       CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       get :index, controller_params(include: 'stats')
@@ -960,6 +961,7 @@ module Channel::V2
       match_json(pattern)
     ensure
       @channel_v2_api = false
+      TicketDecorator.any_instance.unstub(:private_api?)
       CustomRequestStore.store[:channel_api_request] = false
     end
 
@@ -1031,6 +1033,7 @@ module Channel::V2
     end
 
     def test_index_with_stats_with_count_es_enabled
+      TicketDecorator.any_instance.stubs(:private_api?).returns(false)
       CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
       Account.any_instance.stubs(:count_es_enabled?).returns(true)
@@ -1046,6 +1049,7 @@ module Channel::V2
       p "pattern : #{pattern.inspect}"
       match_json(pattern)
     ensure
+      TicketDecorator.any_instance.unstub(:private_api?)
       Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:api_es_enabled?)
       Account.any_instance.unstub(:dashboard_new_alias?)

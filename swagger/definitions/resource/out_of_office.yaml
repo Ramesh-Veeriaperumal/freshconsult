@@ -1,0 +1,20 @@
+type: object
+properties:
+  start_time:
+      type: string
+      format: date-time
+      example: '2020-01-01T00:00:00Z'
+  end_time:
+    type: string
+    format: date-time
+    example: '2020-01-02T00:00:00Z'
+  agent_id:
+    type: integer
+    example: 10
+
+example:
+  {
+    start_time: '2020-01-01T00:00:00Z',
+    end_time: '2020-01-02T00:00:00Z',
+    agent_id: 10
+  }

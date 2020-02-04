@@ -4,6 +4,7 @@ require_relative '../../core/helpers/controller_test_helper'
 require_relative '../../api/helpers/agents_test_helper'
 
 class AgentsControllerTest < ActionController::TestCase
+  include Redis::OthersRedis
   include CoreUsersTestHelper
   include ControllerTestHelper
   include AgentsTestHelper
@@ -255,6 +256,96 @@ class AgentsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:field_service_management_enabled?)
     Account.current.unstub(:skill_based_round_robin_enabled?)
     field_agent_type.destroy
+    log_out
+  end
+
+  def test_create_with_race_condition_without_redis_key_limit_greater_than_agent_count
+    login_admin
+    key = agents_count_key
+    remove_others_redis_key(key) if redis_key_exists?(key)
+    @user = Account.current.account_managers.first.make_current
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
+    Account.current.stubs(:skill_based_round_robin_enabled?).returns(true)
+    Account.any_instance.stubs(:reached_agent_limit?).returns(false)
+
+    role_id = Account.current.roles.find_by_name('Agent').id
+
+    subscription = Account.current.subscription
+    subscription.agent_limit = Account.current.full_time_support_agents.count + 1
+    subscription.state = 'active'
+    subscription.save
+    post :create, :user => { name: Faker::Name.name, email: Faker::Internet.email, active: 1, role: 1, agent: 1, ticket_permission: 1, language: 'en', role_ids: [role_id.to_s], agent_type: 1 }
+    assert_response 302
+    assert_equal get_others_redis_key(key).to_i, Account.current.full_time_support_agents.count
+    assert_equal subscription.agent_limit, Account.current.full_time_support_agents.count
+  ensure
+    subscription.agent_limit = nil
+    subscription.state = 'trial'
+    subscription.save
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.current.unstub(:skill_based_round_robin_enabled?)
+    Account.any_instance.unstub(:reached_agent_limit?)
+    log_out
+  end
+
+  def test_create_with_race_condition_without_redis_key
+    login_admin
+    key = agents_count_key
+    remove_others_redis_key(key) if redis_key_exists?(key)
+    @user = Account.current.account_managers.first.make_current
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
+    Account.current.stubs(:skill_based_round_robin_enabled?).returns(true)
+    Account.any_instance.stubs(:reached_agent_limit?).returns(false)
+
+    role_id = Account.current.roles.find_by_name('Agent').id
+
+    subscription = Account.current.subscription
+    subscription.agent_limit = Account.current.full_time_support_agents.count
+    subscription.state = 'active'
+    subscription.save
+    post :create, user: { name: Faker::Name.name, email: Faker::Internet.email, active: 1, role: 1, agent: 1, ticket_permission: 1, language: 'en', role_ids: [role_id.to_s], agent_type: 1 }
+    assert_response 200
+    assert_equal get_others_redis_key(key).to_i, Account.current.full_time_support_agents.count
+    assert_equal subscription.agent_limit, Account.current.full_time_support_agents.count
+  ensure
+    subscription.agent_limit = nil
+    subscription.state = 'trial'
+    subscription.save
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.current.unstub(:skill_based_round_robin_enabled?)
+    Account.any_instance.unstub(:reached_agent_limit?)
+    log_out
+  end
+
+  def test_create_with_race_condition_with_redis_key
+    login_admin
+    key = agents_count_key
+    remove_others_redis_key(key) if redis_key_exists?(key)
+    @user = Account.current.account_managers.first.make_current
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
+    Account.current.stubs(:skill_based_round_robin_enabled?).returns(true)
+    Account.any_instance.stubs(:reached_agent_limit?).returns(false)
+
+    role_id = Account.current.roles.find_by_name('Agent').id
+    current_agent_count = Account.current.full_time_support_agents.count
+    set_others_redis_key(key, current_agent_count)
+
+    subscription = Account.current.subscription
+    subscription.agent_limit = current_agent_count
+    subscription.state = 'active'
+    subscription.save
+    post :create, :user => { name: Faker::Name.name, email: Faker::Internet.email, active: 1, role: 1, agent: 1, ticket_permission: 1, language: 'en', role_ids: [role_id.to_s], agent_type: 1 }
+    assert_response 200
+    assert_equal get_others_redis_key(key).to_i, Account.current.full_time_support_agents.count
+    assert_equal subscription.agent_limit, Account.current.full_time_support_agents.count
+  ensure
+    subscription.agent_limit = nil
+    subscription.state = 'trial'
+    subscription.save
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.current.unstub(:skill_based_round_robin_enabled?)
+    Account.any_instance.unstub(:reached_agent_limit?)
+    remove_others_redis_key(key) if redis_key_exists?(key)
     log_out
   end
 

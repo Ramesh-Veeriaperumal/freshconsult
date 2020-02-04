@@ -4,6 +4,8 @@ class Account < ActiveRecord::Base
   include Redis::OthersRedis
   include SubscriptionHelper
   WIN_BACK_PERIOD = 2.freeze
+  SECONDS_IN_A_DAY = 24 * 60 * 60
+  SECONDS_IN_TEN_DAYS = 10 * SECONDS_IN_A_DAY
 
   def customer_details
     {
@@ -86,13 +88,15 @@ class Account < ActiveRecord::Base
     SubscriptionNotifier.send_later(:deliver_account_cancellation_requested, feedback) if Rails.env.production?
     unless account_cancellation_requested?
       if launched?(:downgrade_policy)
-        Billing::Subscription.new.cancel_subscription(self, end_of_term: true)
-        set_others_redis_key(account_cancellation_request_time_key, DateTime.now.strftime('%Q'), nil)
+        result = Billing::Subscription.new.cancel_subscription(self, end_of_term: true)
+        end_date_time = DateTime.parse(Time.at(result.subscription.current_term_end + 12.hours).to_s)
+        expiry_time = ((end_date_time - DateTime.now) * SECONDS_IN_A_DAY).to_i
+        set_others_redis_key(account_cancellation_request_time_key, DateTime.now.strftime('%Q'), expiry_time)
         trigger_downgrade_policy_reminder_scheduler
         subscription_request.destroy if subscription_request.present?
       else
         job_id = AccountCancelWorker.perform_in(WIN_BACK_PERIOD.days.from_now, account_id: id)
-        set_others_redis_key(account_cancellation_request_job_key, job_id, 864_000)
+        set_others_redis_key(account_cancellation_request_job_key, job_id, SECONDS_IN_TEN_DAYS)
         renewal_extend if subscription.renewal_in_two_days?
       end
     end

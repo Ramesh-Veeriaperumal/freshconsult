@@ -4,6 +4,11 @@ get:
   tags: [contact]
   parameters:
     - $ref: '#/parameters/id'
+    - name: after
+      in: query
+      type: string
+      description: If specified, will return activities that happened after the specified value
+      required: false
   responses:
     200:
       description: Success

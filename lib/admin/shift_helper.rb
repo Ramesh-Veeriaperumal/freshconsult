@@ -1,6 +1,30 @@
 module Admin::ShiftHelper
   include Admin::ShiftConstants
 
+  def shift_service_request
+    proxy_response = perform_shift_request(params, cname_params)
+    response_body = proxy_response[:body]
+    if success? proxy_response[:code]
+      if index_page?
+        @items = response_body['data']
+        response.api_meta = response_body['meta']
+      else
+        @item = response_body['data']
+        response.api_meta = response_body['meta']
+        response.status = proxy_response[:code]
+      end
+    elsif response_body['errors'].present?
+      proxy_errors(response_body, proxy_response[:code])
+    else
+      index_page? ? @items = [] : proxy_errors(response_body, proxy_response[:code])
+    end
+  end
+
+  def proxy_errors(error_body, status)
+    render json: @item = error_body
+    response.status = status
+  end
+
   def perform_shift_request(params = nil, cname_params = nil)
     url = base_url + extended_url(action, params['id'])
     options = { headers: headers }
@@ -42,10 +66,6 @@ module Admin::ShiftHelper
 
   def index_page?
     action == :index
-  end
-
-  def check_shift_params
-    params[cname].permit(*REQUEST_PERMITTED_PARAMS)
   end
 
   def base_url

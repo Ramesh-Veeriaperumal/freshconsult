@@ -270,7 +270,7 @@ class Admin::Marketplace::InstalledExtensionsController < Admin::AdminController
         installed_version = version_details(installed_version_id)
         render_error_response and return false if error_status?(installed_version)
 
-        addon_id = installed_version.body['addon_id']
+        addon_id = installed_version.body['addons'].find { |data| data['currency_code'] == current_account.currency_name }['addon_id']
         return { :billing => { :previous_version_addon => addon_id }.merge(
                  paid_app? ? {} : account_params) } if addon_id
       end

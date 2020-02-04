@@ -1,0 +1,31 @@
+type: object
+properties:
+  id:
+    type: integer
+    example: 100
+  status:
+    type: integer
+    enum: [1001, 1002, 2000, 1003, 1004]
+    example: 2000
+  status_text:
+    type: string
+    enum: ['queued', 'in progress', 'success', 'partial', 'failed']
+    example: 'success'
+  data:
+    type: object
+    properties:
+      ids:
+        type: array
+        items:
+          type: integer
+          example: 10
+    example: { ids: [10] }
+example:
+  {
+    id: 100,
+    status: 2000,
+    status_text: 'success',
+    data: {
+      ids: [10]
+    }
+  }

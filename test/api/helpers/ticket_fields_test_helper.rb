@@ -250,6 +250,7 @@ module TicketFieldsTestHelper
   end
 
   def create_dependent_custom_field(labels, id = nil, required_for_closure = false, ff_number = nil)
+    @invalid_fields = []
     flexifield_def_entry = []
     # ffs_07, ffs_08 and ffs_09 are created here
     ticket_field_exists = @account.ticket_fields.find_by_name("#{labels[0].downcase}_#{@account.id}")

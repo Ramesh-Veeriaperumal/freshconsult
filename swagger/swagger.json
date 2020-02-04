@@ -3649,6 +3649,13 @@
         "parameters": [
           {
             "$ref": "#/parameters/id"
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "type": "string",
+            "description": "If specified, will return activities that happened after the specified value",
+            "required": false
           }
         ],
         "responses": {
@@ -5231,6 +5238,83 @@
           },
           "403": {
             "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/agents/search_in_freshworks": {
+      "get": {
+        "tags": [
+          "agent"
+        ],
+        "summary": "Search In Freshworks",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "type": "string",
+            "description": "new email of the user",
+            "required": true
+          }, 
+          {
+            "name": "old_email",
+            "in": "query",
+            "type": "string",
+            "description": "old email of the user"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/search_in_freshworks"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/agents/update_multiple": {
+      "patch": {
+        "tags": [
+          "agent"
+        ],
+        "summary": "Update multiple agents",
+        "description": "Update multiple agents",
+        "operationId": "updateMultipleAgents",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "agents",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/update_multiple_agents_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/bulk_response"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
           }
         }
       }
@@ -11424,6 +11508,41 @@
         }
       }
     },
+    "/help_widgets/{id}/suggested_article_rules/{rule_id}": {
+      "delete": {
+        "summary": "Suggested article rules delete",
+        "tags": [
+          "Help Widget"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "type": "integer",
+            "format": "int64",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "rule_id",
+            "type": "integer",
+            "format": "int64",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Suggested article rule not found"
+          }
+        }
+      }
+    },
     "/widget/attachment": {
       "post": {
         "tags": [
@@ -15173,6 +15292,254 @@
         }
       }
     },
+    "/field-service/settings": {
+      "put": {
+        "tags": [
+          "Field Service Management Settings"
+        ],
+        "summary": "Save field service management additional settings",
+        "description": "Enable and disable field service management settings",
+        "parameters": [
+          {
+            "name": "settings",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/fsm_save_settings_input"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "field_agents_can_manage_appointments": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Field Service Management Settings"
+        ],
+        "summary": "Get field service management settings",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "field_agents_can_manage_appointments": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/jobs/{id}": {
+      "get": {
+        "tags": [
+          "job"
+        ],
+        "summary": "Show job properties",
+        "description": "Show job properties",
+        "operationId": "showJob",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/job"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/out_of_offices": {
+      "get": {
+        "tags": [
+          "out of offices"
+        ],
+        "summary": "List all out of offices taken by agents in the helpdesk",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "out_of_offices": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/out_of_office_response"
+                  }
+                },
+                "meta": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/meta"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "out of offices"
+        ],
+        "description": "Create an out of office for an agent",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/out_of_office_request"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/out_of_office_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "out of office not found"
+          }
+        }
+      }
+    },
+    "/out_of_offices/{id}": {
+      "get": {
+        "tags": [
+          "out of offices"
+        ],
+        "summary": "Show out of office",
+        "description": "Show an agent's out of office",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/out_of_office_response"
+            }
+          },
+          "404": {
+            "description": "Out of office not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "out of offices"
+        ],
+        "summary": "Delete out of office of an agent",
+        "description": "Destroys an agent's out of office",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Out of office not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "out of offices"
+        ],
+        "summary": "Update out of office",
+        "description": "Updates an agent's out of office",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/out_of_office_request"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/out_of_office_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Out of office not found"
+          }
+        }
+      }
+    },
     "/admin/agent_levels": {
       "get": {
         "tags": [
@@ -15185,7 +15552,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "scoreboard_levels": {
+                "agent_levels": {
                   "type": "array",
                   "items": {
                     "$ref": "#/definitions/scoreboard_level"
@@ -15452,6 +15819,16 @@
                     },
                     "show_on_boarding": {
                       "type": "boolean"
+                    },
+                    "field_service_management_settings": {
+                      "type": "object",
+                      "description": "Available only if Field Service Management feature is enabled",
+                      "properties": {
+                        "field_agents_can_manage_appointments": {
+                          "type": "boolean",
+                          "description": "Available only if value is false"
+                        }
+                      }
                     },
                     "onboarding_version": {
                       "type": "string"
@@ -17499,73 +17876,333 @@
       "type": "object",
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "example": "Freshdesk Agent"
         },
         "email": {
-          "type": "string"
+          "type": "string",
+          "example": "support_agent@freshworks.com"
         },
         "phone": {
-          "type": "string"
+          "type": "string",
+          "example": "+91 44 40404040"
         },
         "mobile": {
-          "type": "string"
+          "type": "integer",
+          "example": 9090909090
         },
         "time_zone": {
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "American Samoa",
+            "International Date Line West",
+            "Midway Island",
+            "Hawaii",
+            "Alaska",
+            "Pacific Time (US & Canada)",
+            "Tijuana",
+            "Arizona",
+            "Chihuahua",
+            "Mazatlan",
+            "Mountain Time (US & Canada)",
+            "Central America",
+            "Central Time (US & Canada)",
+            "Guadalajara",
+            "Mexico City",
+            "Monterrey",
+            "Saskatchewan",
+            "Bogota",
+            "Eastern Time (US & Canada)",
+            "Indiana (East)",
+            "Lima",
+            "Quito",
+            "Atlantic Time (Canada)",
+            "Caracas",
+            "Georgetown",
+            "La Paz",
+            "Santiago",
+            "Newfoundland",
+            "Brasilia",
+            "Buenos Aires",
+            "Greenland",
+            "Mid-Atlantic",
+            "Azores",
+            "Cape Verde Is.",
+            "Casablanca",
+            "Dublin",
+            "Edinburgh",
+            "Lisbon",
+            "London",
+            "Monrovia",
+            "UTC",
+            "Amsterdam",
+            "Belgrade",
+            "Berlin",
+            "Bern",
+            "Bratislava",
+            "Brussels",
+            "Budapest",
+            "Copenhagen",
+            "Ljubljana",
+            "Madrid",
+            "Paris",
+            "Prague",
+            "Rome",
+            "Sarajevo",
+            "Skopje",
+            "Stockholm",
+            "Vienna",
+            "Warsaw",
+            "West Central Africa",
+            "Zagreb",
+            "Athens",
+            "Bucharest",
+            "Cairo",
+            "Harare",
+            "Helsinki",
+            "Istanbul",
+            "Jerusalem",
+            "Kyiv",
+            "Pretoria",
+            "Riga",
+            "Sofia",
+            "Tallinn",
+            "Vilnius",
+            "Baghdad",
+            "Kuwait",
+            "Minsk",
+            "Moscow",
+            "Nairobi",
+            "Riyadh",
+            "St. Petersburg",
+            "Volgograd",
+            "Tehran",
+            "Abu Dhabi",
+            "Baku",
+            "Muscat",
+            "Tbilisi",
+            "Yerevan",
+            "Kabul",
+            "Ekaterinburg",
+            "Islamabad",
+            "Karachi",
+            "Tashkent",
+            "Chennai",
+            "Kolkata",
+            "Mumbai",
+            "New Delhi",
+            "Sri Jayawardenepura",
+            "Kathmandu",
+            "Almaty",
+            "Astana",
+            "Dhaka",
+            "Urumqi",
+            "Rangoon",
+            "Bangkok",
+            "Hanoi",
+            "Jakarta",
+            "Krasnoyarsk",
+            "Novosibirsk",
+            "Beijing",
+            "Chongqing",
+            "Hong Kong",
+            "Irkutsk",
+            "Kuala Lumpur",
+            "Perth",
+            "Singapore",
+            "Taipei",
+            "Ulaan Bataar",
+            "Osaka",
+            "Sapporo",
+            "Seoul",
+            "Tokyo",
+            "Yakutsk",
+            "Adelaide",
+            "Darwin",
+            "Brisbane",
+            "Canberra",
+            "Guam",
+            "Hobart",
+            "Melbourne",
+            "Port Moresby",
+            "Sydney",
+            "Vladivostok",
+            "Magadan",
+            "New Caledonia",
+            "Solomon Is.",
+            "Auckland",
+            "Fiji",
+            "Kamchatka",
+            "Marshall Is.",
+            "Wellington",
+            "Nuku'alofa",
+            "Samoa",
+            "Tokelau Is."
+          ],
+          "example": "Eastern Time (US & Canada)"
         },
         "job_title": {
-          "type": "string"
+          "type": "string",
+          "example": "Supervisor"
         },
         "language": {
-          "type": "string"
+          "type": "string",
+          "x-enum": [
+            "en",
+            "fr",
+            "de",
+            "es",
+            "ja",
+            "pt-BR",
+            "zh-CN",
+            "zh-HK",
+            "zh-TW",
+            "ar",
+            "bg",
+            "bs",
+            "ca",
+            "cs",
+            "da",
+            "el",
+            "es-LA",
+            "et",
+            "fi",
+            "he",
+            "hr",
+            "hu",
+            "id",
+            "is",
+            "it",
+            "ja-JP",
+            "ko",
+            "lt",
+            "lv-LV",
+            "ms",
+            "nb-NO",
+            "nl",
+            "no",
+            "pl",
+            "pt-PT",
+            "ro",
+            "ru-RU",
+            "ru",
+            "sk",
+            "sl",
+            "sr",
+            "sv-SE",
+            "th",
+            "tr",
+            "uk",
+            "vi"
+          ],
+          "example": "en"
         },
         "signature": {
-          "type": "string"
+          "type": "string",
+          "example": "test"
         },
         "ticket_scope": {
-          "type": "string"
+          "type": "integer",
+          "x-enum": [
+            1,
+            2,
+            3
+          ],
+          "example": 1
         },
         "occasional": {
-          "type": "boolean"
+          "type": "boolean",
+          "example": false
         },
         "ticket_assignment": {
           "type": "object",
           "properties": {
             "available": {
-              "type": "boolean"
+              "type": "boolean",
+              "example": false
             }
+          },
+          "example": {
+            "available": false
           }
         },
         "shortcuts_enabled": {
-          "type": "boolean"
-        },
-        "focus_mode": {
-          "type": "boolean"
+          "type": "boolean",
+          "example": false
         },
         "avatar_id": {
-          "type": "integer"
+          "type": "integer",
+          "example": 100
         },
         "search_settings": {
           "type": "object",
           "properties": {
-            "include_subject": {
-              "type": "boolean"
-            },
-            "include_description": {
-              "type": "boolean"
-            },
-            "include_other_properties": {
-              "type": "boolean"
-            },
-            "include_notes": {
-              "type": "boolean"
-            },
-            "include_attachment_names": {
-              "type": "boolean"
-            },
-            "archive": {
-              "type": "boolean"
+            "tickets": {
+              "type": "object",
+              "properties": {
+                "include_subject": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "include_description": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "include_other_properties": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "include_notes": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "include_attachment_names": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "archive": {
+                  "type": "boolean",
+                  "example": false
+                }
+              }
             }
+          },
+          "example": {
+            "tickets": {
+              "include_subject": false,
+              "include_description": false,
+              "include_other_properties": false,
+              "include_notes": false,
+              "include_attachment_names": false,
+              "archive": false
+            }
+          }
+        }
+      },
+      "example": {
+        "name": "Freshdesk Agent",
+        "email": "support_agent@freshworks.com",
+        "phone": "+91 44 40404040",
+        "mobile": 9090909090,
+        "time_zone": "Eastern Time (US & Canada)",
+        "job_title": "Supervisor",
+        "language": "en",
+        "signature": "test",
+        "ticket_scope": 1,
+        "occasional": false,
+        "ticket_assignment": {
+          "available": false
+        },
+        "shortcuts_enabled": false,
+        "avatar_id": 100,
+        "search_settings": {
+          "tickets": {
+            "include_subject": false,
+            "include_description": false,
+            "include_other_properties": false,
+            "include_notes": false,
+            "include_attachment_names": false,
+            "archive": false
           }
         }
       }
@@ -17642,6 +18279,59 @@
           "description": "array of agents",
           "items": {
             "$ref": "#/definitions/agent_input"
+          }
+        }
+      }
+    },
+    "update_multiple_agents_input": {
+      "type": "object",
+      "properties": {
+        "agents": {
+          "type": "array",
+          "description": "array of agents",
+          "items": {
+            "type": "object",
+            "allOf": [
+              {
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "example": 10
+                  }
+                }
+              },
+              {
+                "$ref": "#/definitions/agent_input"
+              }
+            ],
+            "example": {
+              "id": 10,
+              "name": "Freshdesk Agent",
+              "email": "support_agent@freshworks.com",
+              "phone": "+91 44 40404040",
+              "mobile": 9090909090,
+              "time_zone": "Eastern Time (US & Canada)",
+              "job_title": "Supervisor",
+              "language": "en",
+              "signature": "test",
+              "ticket_scope": 1,
+              "occasional": false,
+              "ticket_assignment": {
+                "available": false
+              },
+              "shortcuts_enabled": false,
+              "avatar_id": 100,
+              "search_settings": {
+                "tickets": {
+                  "include_subject": false,
+                  "include_description": false,
+                  "include_other_properties": false,
+                  "include_notes": false,
+                  "include_attachment_names": false,
+                  "archive": false
+                }
+              }
+            }
           }
         }
       }
@@ -18199,6 +18889,14 @@
     },
     "email_notification_bcc_input": {
       "$ref": "#/definitions/email_notification_bcc"
+    },
+    "fsm_save_settings_input": {
+      "type": "object",
+      "properties": {
+        "field_agents_can_manage_appointments": {
+          "type": "boolean"
+        }
+      }
     },
     "conversation_template": {
       "type": "object",
@@ -21898,6 +22596,53 @@
         }
       }
     },
+    "search_in_freshworks": {
+      "title": "data",
+      "type": "object",
+      "description": "Search In Freshworks Response",
+      "properties": {
+        "freshid_user_info": {
+          "$ref": "#/definitions/search_in_freshworks_freshid_response"
+        },
+        "user_info": {
+          "$ref": "#/definitions/search_in_freshworks_user_info_response"
+        }
+      }
+    },
+    "search_in_freshworks_freshid_response": {
+      "title": "data",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "mobile": {
+          "type": "string"
+        },
+        "job_title": {
+          "type": "string"
+        }
+      }
+    },
+    "search_in_freshworks_user_info_response": {
+      "title": "data",
+      "type": "object",
+      "properties": {
+        "marked_for_hard_delete": {
+          "type": "boolean"
+        },
+        "delete": {
+          "type": "boolean"
+        },
+        "user_id": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
     "contact_note_response": {
       "type": "object",
       "allOf": [
@@ -22398,113 +23143,115 @@
       "$ref": "#/definitions/company_activity"
     },
     "timeline_activity": {
-      "title": "data",
       "type": "object",
       "properties": {
-        "data": {
-          "type": "object",
-          "properties": {
-            "post": {
-              "$ref": "#/definitions/contact_post_activity"
-            },
-            "ticket": {
-              "$ref": "#/definitions/contact_ticket_activity"
-            }
-          }
-        }
-      }
-    },
-    "contact_post_activity": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer"
-          },
-          "topic_id": {
-            "description": "Topic id",
-            "type": "integer"
-          },
-          "title": {
-            "description": "Title of the topic",
-            "type": "string"
-          },
-          "comment": {
-            "description": "Topic's post or Reply to a topic",
-            "type": "boolean"
-          },
-          "forum": {
-            "description": "Forum category of the topic/post",
+        "activities": {
+          "type": "array",
+          "items": {
             "type": "object",
             "properties": {
-              "id": {
-                "type": "integer"
+              "activity": {
+                "type": "object",
+                "description": "Information of the activity",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Action being performed"
+                  },
+                  "timestamp": {
+                    "type": "string",
+                    "description": "Timestamp at which the activity is performed",
+                    "format": "date-time"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Brief description of the activity"
+                  },
+                  "link": {
+                    "type": "string",
+                    "description": "External link"
+                  },
+                  "source": {
+                    "type": "object",
+                    "description": "Source of the activity",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "Name of the source app"
+                      },
+                      "id": {
+                        "type": "string",
+                        "description": "ID of the instance in the source app that generated the activity. For instance, shop_id in Shopify"
+                      }
+                    }
+                  },
+                  "actor": {
+                    "type": "object",
+                    "description": "Information of actor performing the activity",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "ID of the actor in the source app performing the activity"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Name of the actor performing the activity"
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "Type of the actor in the source app performing the activity, Ex - agent, contact, shopper, shop_owner"
+                      }
+                    }
+                  },
+                  "object": {
+                    "type": "object",
+                    "description": "Object handled in the activity",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "description": "Type of the object handled in the activity"
+                      },
+                      "id": {
+                        "type": "string",
+                        "description": "ID of the object handled in the activity"
+                      }
+                    }
+                  },
+                  "context": {
+                    "type": "object",
+                    "description": "Additional properties on the activity",
+                    "additionalProperties": true
+                  }
+                }
               },
-              "name": {
-                "type": "string"
+              "contact": {
+                "type": "object",
+                "properties": {
+                  "property": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "is_actor": {
+                    "type": "boolean"
+                  }
+                }
               }
             }
           }
-        }
-      }
-    },
-    "contact_ticket_activity": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "description_text": {
-            "description": "Ticket description",
-            "type": "string"
-          },
-          "tags": {
-            "description": "Ticket tags",
-            "type": "array",
-            "items": {
-              "type": "string"
+        },
+        "meta": {
+          "title": "Meta data",
+          "type": "object",
+          "properties": {
+            "next_page": {
+              "type": "string",
+              "description": "Token to fetch the next page of activities"
             }
-          },
-          "responder_id": {
-            "description": "Ticket's responder id",
-            "type": "integer"
-          },
-          "due_by": {
-            "description": "Ticket's due by time",
-            "type": "string",
-            "format": "date-time"
-          },
-          "requester_id": {
-            "description": "Ticket's requester id",
-            "type": "string"
-          },
-          "subject": {
-            "description": "Ticket subject",
-            "type": "string"
-          },
-          "group_id": {
-            "description": "Ticket's group id",
-            "type": "string"
-          },
-          "status": {
-            "description": "Ticket's status",
-            "type": "string"
-          },
-          "fr_due_by": {
-            "description": "Ticket's first response due by",
-            "type": "string"
-          },
-          "stats": {
-            "$ref": "#/definitions/ticket_stats"
-          },
-          "priority": {
-            "description": "Ticket's priority",
-            "type": "integer"
-          },
-          "created_at": {
-            "description": "Ticket's created time",
-            "type": "string",
-            "format": "date-time"
           }
         }
       }
@@ -28604,11 +29351,7 @@
             },
             "approval_status": {
               "type": "integer",
-              "enum": [
-                1,
-                2
-              ],
-              "description": "Approval status value to be updated for the article\n  * `in_review` - 1\n  * `approved` - 2\n"
+              "description": "Approve list of articles"
             },
             "approver_id": {
               "type": "integer",
@@ -28620,10 +29363,6 @@
               "items": {
                 "type": "string"
               }
-            },
-            "approval_status": {
-              "type": "integer",
-              "description": "Approve list of articles"
             }
           }
         }
@@ -29104,6 +29843,121 @@
           "type": "string"
         }
       }
+    },
+    "bulk_response": {
+      "type": "object",
+      "properties": {
+        "job_id": {
+          "type": "integer",
+          "example": 100
+        },
+        "href": {
+          "type": "string",
+          "example": "https://support.freshdesk.com/api/v2/jobs/100"
+        }
+      },
+      "example": {
+        "job_id": 100,
+        "href": "https://support.freshdesk.com/api/v2/jobs/100"
+      }
+    },
+    "job": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "example": 100
+        },
+        "status": {
+          "type": "integer",
+          "enum": [
+            1001,
+            1002,
+            2000,
+            1003,
+            1004
+          ],
+          "example": 2000
+        },
+        "status_text": {
+          "type": "string",
+          "enum": [
+            "queued",
+            "in progress",
+            "success",
+            "partial",
+            "failed"
+          ],
+          "example": "success"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "ids": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "example": 10
+              }
+            }
+          },
+          "example": {
+            "ids": [
+              10
+            ]
+          }
+        }
+      },
+      "example": {
+        "id": 100,
+        "status": 2000,
+        "status_text": "success",
+        "data": {
+          "ids": [
+            10
+          ]
+        }
+      }
+    },
+    "out_of_office": {
+      "type": "object",
+      "properties": {
+        "start_time": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2020-01-01T00:00:00Z"
+        },
+        "end_time": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2020-01-02T00:00:00Z"
+        },
+        "agent_id": {
+          "type": "integer",
+          "example": 10
+        }
+      },
+      "example": {
+        "start_time": "2020-01-01T00:00:00Z",
+        "end_time": "2020-01-02T00:00:00Z",
+        "agent_id": 10
+      }
+    },
+    "out_of_office_request": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/out_of_office"
+        }
+      ]
+    },
+    "out_of_office_response": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/out_of_office"
+        }
+      ]
     },
     "scoreboard_level": {
       "type": "object",

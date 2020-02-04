@@ -720,4 +720,48 @@ class Ember::AgentsControllerTest < ActionController::TestCase
   ensure
     DataTypeValidator.any_instance.unstub(:valid_type?)
   end
+
+  def test_search_in_freshworks
+    add_privilege(User.current, :manage_users)
+    @account.launch(:freshid)
+    new_email = Faker::Internet.email
+    fid_user_params = { first_name: 'FreshId', last_name: 'User', phone: '543210', mobile: '9876543210', email: new_email }
+    existing_freshid_user = freshid_user(fid_user_params)
+    user = add_new_user(@account)
+    old_email = user.email
+
+    Freshid::User.stubs(:find_by_email).returns(nil)
+
+    # If email & old_email are different, but new_email does not present in freshid, returns Nil
+    get :search_in_freshworks, controller_params(version: 'private', email: Faker::Internet.email, old_email: old_email)
+    assert_response 200
+    json_response = JSON.parse(response.body)
+    assert json_response['freshid_user_info'].empty?
+
+    Freshid::User.unstub(:find_by_email)
+
+    Freshid::User.stubs(:find_by_email).returns(existing_freshid_user)
+    expected_response = { name: 'FreshId User', phone: '543210', mobile: '9876543210', job_title: nil, user_info: nil }
+
+    # If email is present & old_email is not present returns freshid info
+    get :search_in_freshworks, controller_params(version: 'private', email: new_email)
+    assert_response 200
+    pattern = private_api_search_in_freshworks_pattern(user, expected_response)
+    match_json(pattern)
+
+    # If old_email & email - both are same, return old_email records
+    get :search_in_freshworks, controller_params(version: 'private', email: old_email, old_email: old_email)
+    assert_response 200
+    pattern = private_api_search_in_freshworks_pattern(user, { user_info: { user_id: user.id, marked_for_hard_delete: false, deleted: false } })
+    match_json(pattern)
+
+    # If old_email & email are different, email is present in freshid, returns freshid user info
+    get :search_in_freshworks, controller_params(version: 'private', email: new_email, old_email: old_email)
+    assert_response 200
+    pattern = private_api_search_in_freshworks_pattern(user, expected_response)
+    match_json(pattern)
+  ensure
+    Freshid::User.unstub(:find_by_email)
+    @account.rollback(:freshid)
+  end
 end

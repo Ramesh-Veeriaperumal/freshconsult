@@ -252,7 +252,7 @@ module Redis::Keys::Others
   SUPPORT_TICKET_LIMIT = "SUPPORT_TICKET_LIMIT:%{account_id}%{user_id}".freeze
 
   MAILBOX_GMAIL_OAUTH = 'GMAIL_OAUTH:%{account_id}:%{user_id}:%{random_number}'.freeze
-  GMAIL_ACCESS_TOKEN_VALIDITY = 'GMAIL_ACCESS_TOKEN:%{account_id}:%{smtp_mailbox_id}'.freeze 
+  GMAIL_ACCESS_TOKEN_VALIDITY = 'GMAIL_ACCESS_TOKEN:%{account_id}:%{smtp_mailbox_id}'.freeze
 
   #Increasing Domains for accounts as per request by the account holder
   INCREASE_DOMAIN_FOR_EMAILS = 'INCREASE_DOMAIN_FOR_EMAILS'.freeze
@@ -268,8 +268,8 @@ module Redis::Keys::Others
 
   ACTIVE_RECORD_LOG = 'ACTIVE_RECORD_LOG'.freeze
 
-  NEW_TIMELINE_VIEW = 'NEW_TIMELINE_VIEW'.freeze
   ACCOUNT_ACTIVATED_WITHIN_LAST_WEEK = 'ACCOUNT_ACTIVATED_WITHIN_LAST_WEEK:%{account_id}'.freeze
+  AGENTS_COUNT_KEY = 'AGENTS_COUNT_KEY:%{account_id}'.freeze
 
-  DKIM_EMAIL_SERVICE = 'DKIM_EMAIL_SERVICE'.freeze
+  CONDITION_BASED_LAUNCHPARTY_FEATURES = 'CONDITION_BASED_LAUNCHPARTY_FEATURES'.freeze
 end

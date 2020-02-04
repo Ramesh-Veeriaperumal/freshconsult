@@ -1,0 +1,20 @@
+get:
+  tags: [agent]
+  summary: Search In Freshworks
+  parameters:
+    - name: email
+      in: query
+      type: string
+      required: true
+    - name: old_email
+      in: query
+      type: string  
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/search_in_freshworks'
+    404:
+      description: Resource not found
+    403:
+      description: Access denied
