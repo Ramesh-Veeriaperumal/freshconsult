@@ -118,6 +118,7 @@ class HttpRequestProxy
           end
           net_http_method = HTTP_METHOD_TO_CLASS_MAPPING[method.to_sym]
           final_url       = encode_url ? URI.encode(remote_url) : remote_url
+          options[:verify_blacklist] = true
           proxy_request   = HTTParty::Request.new(net_http_method, final_url, options)
           proxy_response = proxy_request.perform
           Rails.logger.debug "Response Code: #{proxy_response.code} Headers: #{proxy_response.headers.inspect}"

@@ -55,6 +55,7 @@ helpdesk:
     - resque
     - riak
     - ruby193_monkey_patches
+    - net_http_monkey_patch
     - core_ext/active_record/relation
     - central_publisher/active_record/base
     - secret_token
