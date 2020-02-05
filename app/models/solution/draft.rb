@@ -138,6 +138,7 @@ class Solution::Draft < ActiveRecord::Base
     self.publishing = true if article.published?
     self.article.publish!
     add_activity_publish 
+    self.publishing = false
     self.reload
     self.destroy
   end

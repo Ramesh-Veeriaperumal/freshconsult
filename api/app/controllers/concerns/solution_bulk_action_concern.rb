@@ -32,7 +32,6 @@ module SolutionBulkActionConcern
       raise 'Review request failed!' unless update_send_for_review(article)
       raise 'Status updation failed!' if !update_status(article)
       article_meta.save!
-      article.save! # Dummy save to trigger publishable callbacks
     end
     return true
   rescue Exception => e # rubocop:disable RescueException
