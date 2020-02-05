@@ -1,3 +1,4 @@
+require 'securerandom'
 class Integrations::InstalledApplicationsController < Admin::AdminController
 
   class VersionDetectionError < Exception; end
@@ -164,7 +165,8 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
 
   def set_auth_key
     if @installing_application.name == "jira"
-       @installed_application[:configs][:inputs][:auth_key] = Digest::MD5.hexdigest(params[:configs][:domain]+Time.now.to_s) 
+      auth_key_salt = SecureRandom.hex(10)
+      @installed_application[:configs][:inputs][:auth_key] = Digest::MD5.hexdigest(params[:configs][:domain] + current_account.id.to_s + auth_key_salt + Time.new.to_f.to_s)
     end
   end
   
