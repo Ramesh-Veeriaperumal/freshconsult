@@ -14,4 +14,6 @@ module Fdadmin::ApiConstants
     ActionController::Instrumentation  # need this for active support instrumentation.
   ]
 
+  CARD_PAYMENT = 'card'.freeze
+  OFFLINE_PAYMENT = 'offline'.freeze
 end
