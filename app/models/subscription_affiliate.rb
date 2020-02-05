@@ -18,6 +18,7 @@ class SubscriptionAffiliate < ActiveRecord::Base
 
   before_save :set_discounts
   attr_accessor :affiliate_discount_ids
+  attr_accessible :id, :name, :rate, :token
 
   AFFILIATES = { 
     :shareasale => {
