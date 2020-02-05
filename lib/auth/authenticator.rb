@@ -55,5 +55,25 @@ class Auth::Authenticator
     key_spec = Redis::KeySpec.new(Redis::RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options)
     Redis::KeyValueStore.new(key_spec, config_params.to_json, {:group => :integration, :expire => expire_time || 300}).set_key
   end
+
+  def get_account_secret_key(account_id)
+    secret_token = nil
+    Sharding.select_shard_of(account_id) do
+      account = ::Account.find account_id
+      secret_token = account.provider_login_token
+    end
+    secret_token
+  end
+
+  def get_ecrypted_msg(account_id, domain)
+    secret_key = get_account_secret_key(account_id)
+    JWT.encode(
+      {
+        domain: domain,
+        iat: (Time.now.utc.to_f * 1000).to_i
+      },
+      secret_key
+    )
+  end
 end
 Dir["#{Rails.root}/lib/auth/*.rb"].each { |f| require_dependency(f) }

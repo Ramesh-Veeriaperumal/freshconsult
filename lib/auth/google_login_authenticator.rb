@@ -55,7 +55,9 @@ class Auth::GoogleLoginAuthenticator < Auth::Authenticator
     def construct_state_params env
       env['rack.session']["_csrf_token"] ||= SecureRandom.base64(32)
       csrf_token = Base64.encode64(env['rack.session']["_csrf_token"])
-      "portal_domain%3D#{env['HTTP_HOST']}%26at%3D#{csrf_token}"
+      account_id = ShardMapping.lookup_with_domain(env['HTTP_HOST']).try(:account_id)
+      ecrypted_msg = get_ecrypted_msg(account_id, env['HTTP_HOST'])
+      "portal_domain%3D#{env['HTTP_HOST']}%26identifier%3D#{ecrypted_msg}%26at%3D#{csrf_token}"
     end
 
     def redirect_url(account, domain_arg, random_key, native_mobile_flag)
