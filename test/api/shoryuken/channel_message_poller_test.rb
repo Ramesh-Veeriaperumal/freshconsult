@@ -343,7 +343,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
         "description": Faker::Lorem.characters(100),
         "requester_id": @account.users.last.id,
         "tweet_type": tweet_type,
-        "tweet_id": SecureRandom.hex + Time.now.to_i.to_s
+        "tweet_id": Faker::Number.between(1, 999999999).to_s
       }
       [payload, sample_twitter_create_ticket_command(@account, @handle, @stream, payload)]
     end
