@@ -669,7 +669,7 @@ HEREDOC
     # exit 0
     non_monitoring_instance = ["riak-resque-","akismet-resque-","import-resque-","scheduler"]
     can_monitor_instance = !non_monitoring_instance.any? { |name_prefix| node[:opsworks][:instance][:hostname].include?(name_prefix) }
-    agent_enabled = (node[:newrelic][:enabled] && can_monitor_instance) ?  true : false
+    agent_enabled = node[:newrelic][:enabled] && can_monitor_instance && (ENV['SQUAD'] != '1') ? true : false
     ssl_enabled = (!node[:newrelic][:ssl].nil?) ? node[:newreilc][:ssl] : false
     STDERR.puts("Newrelic enabled in current instance: (#{node[:opsworks][:instance][:hostname]}) : : : #{agent_enabled}")
     suffix = {
@@ -723,6 +723,7 @@ HEREDOC
     nr_out = File.join("#{@options[:outdir]}", "newrelic.yml")
     File.open(nr_out, 'w') do |f|
       @rails_env = node[:opsworks][:environment]
+      @squad = (ENV['SQUAD'] == '1')
       @app_name = "helpkit"
       @suffix = suffix_name.to_s
       @shell = shell

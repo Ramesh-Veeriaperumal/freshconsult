@@ -207,7 +207,7 @@ common: &default_settings
 
 <%=@rails_env%>:
   <<: *default_settings
-  monitor_mode: true
+  monitor_mode: <%= @squad ? false : true %>
   rules:
     ignore_url_regexes: ["health_checkup"]
     capture_memcache_keys: true
