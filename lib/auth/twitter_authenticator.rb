@@ -63,7 +63,7 @@ class Auth::TwitterAuthenticator < Auth::Authenticator
     def construct_state_params env
       query_string = Rack::Utils.parse_query(env['QUERY_STRING'])
       origin = Rack::Utils.parse_query(query_string['origin'])
-      account_id = Rack::Utils.parse_query(query['origin'])['id']
+      account_id = Rack::Utils.parse_query(query_string['origin'])['id']
       ecrypted_msg = get_ecrypted_msg(account_id, env['HTTP_HOST'])
       "portal_type%3D#{origin['portal_type']}%26identifier%3D#{ecrypted_msg}%26portal_domain%3D#{env['HTTP_HOST']}%26at%3D#{origin['token']}"
     end
