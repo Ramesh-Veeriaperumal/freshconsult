@@ -58,7 +58,7 @@ class Support::TicketsController < SupportController
     @page_title = TicketsFilter::CUSTOMER_SELECTOR_NAMES[current_filter.to_sym]
 
     respond_to do |format|
-      format.html { set_portal_page :ticket_list }
+      format.html { render partial: 'ticket_list' }
       format.js
     end
   end

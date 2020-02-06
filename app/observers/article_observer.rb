@@ -46,6 +46,7 @@ class ArticleObserver < ActiveRecord::Observer
     elsif article.version_through == :article
       version_create_or_update(article)
     end
+    article.version_through = nil
   end
 
 	def after_update(article)

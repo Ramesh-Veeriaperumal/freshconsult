@@ -1,5 +1,8 @@
 class OmniauthCallbacksController < ApplicationController
 
+  include Redis::OthersRedis
+  include Redis::RedisKeys
+
   INTEGRATION_URL = URI.parse(AppConfig['integrations_url'][Rails.env]).host
 
   before_filter :set_native_mobile
@@ -8,9 +11,17 @@ class OmniauthCallbacksController < ApplicationController
   skip_before_filter :set_current_account, :redactor_form_builder, :check_account_state, :set_time_zone,
                      :check_day_pass_usage, :set_locale, :only => [:complete, :failure]
 
-  def complete
-    authenticator_class = Auth::Authenticator.get_auth_class(params[:provider])
+  PORTAL_OMINIAUTH_FEATURE_MAPPING = {
+    google_login: :google_signin,
+    twitter: :twitter_signin,
+    facebook: :facebook_signin
+  }.freeze
 
+  VALID_TIME_DIFF = 5 * 60 * 1000 # 5 minutes in millies
+
+  def complete
+    return failure if portal_login? && (!feature_enabled? || invalid_request?)
+    authenticator_class = Auth::Authenticator.get_auth_class(params[:provider])
     authenticator = authenticator_class.new(
       :origin_account => origin_account,
       :current_account => current_account,
@@ -27,6 +38,7 @@ class OmniauthCallbacksController < ApplicationController
     result = authenticator.after_authenticate(params)
     flash[:notice] = result.flash_message if result.flash_message.present?
     render result.render and return if result.render.present?
+
     return failure if result.failed?
     invalid_nmobile if result.invalid_nmobile.present?
     redirect_to result.redirect_url || root_url(:host => origin_account.host)
@@ -138,4 +150,25 @@ class OmniauthCallbacksController < ApplicationController
     cookies["mobile_access_token"] = { :value => 'customer', :http_only => true } 
   end
 
+  def invalid_request?
+    invalid_request = false
+    return invalid_request unless origin_account.enable_secure_login_check_enabled?
+    return invalid_request if @state_params['identifier'].blank?
+
+    identifier_http_host = JWT.decode(@state_params['identifier'][0], origin_account.provider_login_token).first['domain']
+    acc_id_in_token = ShardMapping.lookup_with_domain(identifier_http_host).try(:account_id)
+    iat = JWT.decode(@state_params['identifier'][0], origin_account.provider_login_token).first['iat']
+    invalid_request = (origin_account.id != acc_id_in_token) || ((Time.now.utc.to_f * 1000).to_i - iat.to_i) > VALID_TIME_DIFF
+    invalid_request
+  rescue => e
+    true
+  end
+
+  def feature_enabled?
+    origin_account.has_feature?(PORTAL_OMINIAUTH_FEATURE_MAPPING[params[:provider].to_sym])
+  end
+
+  def portal_login?
+    params[:provider] ? PORTAL_OMINIAUTH_FEATURE_MAPPING.key?(params[:provider].to_sym) : false
+  end
 end

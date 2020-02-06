@@ -41,15 +41,13 @@ class Support::TicketsControllerTest < ActionController::TestCase
     user = add_new_user(Account.current, active: true)
     user.make_current
     login_as(user)
-  	get :filter, :version => :private
-  	assert_response 200
-  	assert response.body.include? "Open or Pending : #{Account.current.portal_name}"
-
-  	# get :filter, :version => :private, :wf_filter => "all" 
-  	# assert_response 200
-  	# assert response.body.include? "All Tickets : #{Account.current.portal_name}"
+    t1 = create_ticket(requester_id: user.id)
+    get :filter, version: :private
+    assert_response 200
+    assert response.body.include? t1.subject
     log_out
     user.destroy
+    t1.destroy
   end
 
 

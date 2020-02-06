@@ -102,6 +102,10 @@ class Integrations::JiraIssueController < ApplicationController
      if(params["issue"] && (old_issue_id || params["issue"]["key"]) && params["auth_key"])
        remote_integratable_id = old_issue_id || params["issue"]["key"]
        auth_key = params["auth_key"]
+       if auth_key.strip.blank?
+         render text: 'Unauthorized Access', status: 401
+         return
+       end
        # TODO:  Costly query.  Needs to revisit and index the integrated_resources table and/or split the quries.
        @installed_app = Integrations::InstalledApplication.with_name(APP_NAMES[:jira]).first(:select=>["installed_applications.*,integrated_resources.local_integratable_id,integrated_resources.local_integratable_type,integrated_resources.remote_integratable_id"],
                                                                                              :joins=>"INNER JOIN integrated_resources ON integrated_resources.installed_application_id=installed_applications.id",

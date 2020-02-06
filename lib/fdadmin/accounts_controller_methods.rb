@@ -1,7 +1,8 @@
 module Fdadmin::AccountsControllerMethods
 
-	include Redis::RedisKeys
-	include Redis::IntegrationsRedis
+  include Redis::RedisKeys
+  include Redis::IntegrationsRedis
+  include Fdadmin::ApiConstants
 
 	def fetch_account_info(account)
 		account_info = {}
@@ -48,20 +49,22 @@ module Fdadmin::AccountsControllerMethods
    response_data
  end
 
-	def fetch_subscription_account_details(account)
-		return {
-			state: account.subscription.state ,
-			plan_name:account.subscription.subscription_plan.name,
-			revenue: account.subscription.cmrr,
-			next_renewal: account.subscription.next_renewal_at,
-			amount: account.subscription.amount,
-			billing_cycle: account.subscription.renewal_period,
-			subscription_plan_id: account.subscription.subscription_plan_id,
-			paid_account: account.subscription.non_new_sprout? && account.subscription_payments.count != 0,
-			agent_seats: account.subscription.agent_limit == Fdadmin::BillingController::DEFAULT_AGENT_LIMIT ? account.full_time_support_agents.count : account.subscription.agent_limit,
-			fsm_agents: account.subscription.field_agent_limit || 0
-		}
-	end
+  def fetch_subscription_account_details(account)
+    {
+      state: account.subscription.state,
+      plan_name: account.subscription.subscription_plan.name,
+      plan_display_name: account.subscription.subscription_plan.display_name,
+      mode: subscription_payment_mode(account),
+      revenue: account.subscription.cmrr,
+      next_renewal: account.subscription.next_renewal_at,
+      amount: account.subscription.amount,
+      billing_cycle: account.subscription.renewal_period,
+      subscription_plan_id: account.subscription.subscription_plan_id,
+      paid_account: account.subscription.non_new_sprout? && account.subscription_payments.count != 0,
+      agent_seats: account.subscription.agent_limit == Fdadmin::BillingController::DEFAULT_AGENT_LIMIT ? account.full_time_support_agents.count : account.subscription.agent_limit,
+      fsm_agents: account.subscription.field_agent_limit || 0
+    }
+  end
 
 	def fetch_email_details(account)
 		mail_array = []
@@ -228,6 +231,14 @@ module Fdadmin::AccountsControllerMethods
   end
 
   def fetch_account_cancellation_requested_time(account)
-  	Time.zone.at(account.account_cancellation_requested_time.to_i / 1000).utc.to_date if account.account_cancellation_requested?
+    Time.zone.at(account.account_cancellation_requested_time.to_i / 1000).utc.to_date if account.account_cancellation_requested?
   end
+
+  private
+
+    def subscription_payment_mode(account)
+      return nil if account.subscription.free?
+
+      account.subscription.card_number.present? ? CARD_PAYMENT : OFFLINE_PAYMENT
+    end
 end

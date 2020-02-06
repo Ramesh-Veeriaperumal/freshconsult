@@ -30,8 +30,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def show
     account_summary = {}
-    account = Account.find_by_id(params[:account_id]).make_current
-    shard_info = ShardMapping.find(params[:account_id])
+    account = fetch_account
+    shard_info = ShardMapping.find(account.id)
     account_summary[:account_info] = fetch_account_info(account)
     account_summary[:reputation] = account.reputation
     account_summary[:passes] = account.day_pass_config.available_passes
@@ -607,8 +607,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def ehawk_spam_details
     spam_details = {}
-    Sharding.admin_select_shard_of(params[:account_id]) do
-      account = Account.find(params[:account_id])
+    Sharding.admin_select_shard_of(fetch_account.id) do
+      account = Account.find(fetch_account.id)
       account.make_current
       spam_details[:account_blacklisted] = spam_blacklisted?(account)
       spam_details[:outgoing_blocked] = outgoing_blocked?(params[:account_id])
@@ -1156,5 +1156,15 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
                      organisation_id: account.organisation_from_cache.try(:organisation_id),
                      organisation_domain: account.organisation_from_cache.try(:domain)) if account.freshid_org_v2_enabled?
       payload.to_json
+    end
+
+    def fetch_account_from_params
+      return Account.find_by_id(params[:account_id]).make_current if params[:account_id].present?
+
+      Account.find_by_full_domain(params[:domain_name]).make_current if params[:domain_name].present?
+    end
+
+    def fetch_account
+      @fetch_account ||= fetch_account_from_params
     end
 end

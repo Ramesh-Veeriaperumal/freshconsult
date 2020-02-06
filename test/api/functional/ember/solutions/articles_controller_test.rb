@@ -4070,6 +4070,41 @@ module Ember
         Account.any_instance.unstub(:article_approval_workflow_enabled?)
       end
 
+      def test_bulk_update_publish_should_not_create_multiple_versions
+        Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(true)
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 1)).primary_article
+        should_create_version(sample_article) do
+          put :bulk_update, construct_params({ version: 'private' }, ids: [sample_article.parent_id], properties: { status: 2 })
+          sample_article.reload
+          assert_response 204
+          assert_equal sample_article.status, 2
+        end
+      ensure
+        Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_publish_should_not_create_multiple_versions_in_secondary_language
+        Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(true)
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        languages = @account.supported_languages + ['primary']
+        language  = @account.supported_languages.first
+        article_meta = create_article(article_params(lang_codes: languages).merge(status: 1))
+        sample_article = article_meta.safe_send("#{language}_article")
+        should_create_version(sample_article) do
+          put :bulk_update, construct_params({ version: 'private', language: language }, ids: [sample_article.parent_id], properties: { status: 2 })
+          sample_article.reload
+          assert_response 204
+          assert_equal sample_article.status, 2
+        end
+      ensure
+        Account.any_instance.unstub(:adv_article_bulk_actions_enabled?)
+        User.any_instance.unstub(:privilege?)
+      end
+
       def test_suggested
         article = create_article(article_params).primary_article
         article_id = article.id

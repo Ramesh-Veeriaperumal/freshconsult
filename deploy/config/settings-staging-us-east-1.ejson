@@ -1721,7 +1721,7 @@
         "_timeout_for_pricing_api": 10
       },
       "fluffy": {
-        "_host": "http://fluffy-swagger-1242661574.us-east-1.elb.amazonaws.com",
+        "_host": "vpce-0b247209ae0145d88-4fa54j71.vpce-svc-0874c1e9512bd57dc.us-east-1.vpce.amazonaws.com",
         "username": "EJ[1:KPLwfD8Y0BIZH6YQcEzQDNBn8/EQoDQ4PmS4r5J76zk=:qrgtap1okUwcx0qIs/bPJ5t1x/mkm0Oe:9NvC+DrZtADYb8l0Pe8j5orfiVJYIYAiNg==]",
         "password": "EJ[1:KPLwfD8Y0BIZH6YQcEzQDNBn8/EQoDQ4PmS4r5J76zk=:G0hLjfcT/xDslPM+IvgoZHOPC4qbuw9S:32COF4bZOIdTS+LeAL3pj0TROw/wYUK1qQ==]"
       },

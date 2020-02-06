@@ -159,6 +159,10 @@ class Account < ActiveRecord::Base
     self.secret_keys[:attachment_secret]
   end
 
+  def provider_login_token
+    self.secret_keys[:provider_login_token]
+  end
+
   def help_widget_secret
     secret_keys[:help_widget]
   end
