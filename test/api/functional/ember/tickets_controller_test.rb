@@ -3590,7 +3590,9 @@ module Ember
       2.times do
         create_ticket
       end
-      initial_count = ticket_data_export(DataExport::EXPORT_TYPE[:ticket]).count
+      initial_data_exports = ticket_data_export(DataExport::EXPORT_TYPE[:ticket])
+      initial_count = initial_data_exports.count
+      initial_data_exports_ids = initial_data_exports.map { |x| x.id }
       params_hash = ticket_export_param.merge(format: 'xls')
       Sidekiq::Testing.inline! do
         post :export_csv, construct_params({ version: 'private' }, params_hash)
@@ -3598,6 +3600,7 @@ module Ember
       current_data_exports = ticket_data_export(DataExport::EXPORT_TYPE[:ticket])
       assert_equal initial_count, current_data_exports.length - 1
       assert_equal current_data_exports.last.status, DataExport::EXPORT_STATUS[:completed]
+      current_data_exports.reject! { |x| initial_data_exports_ids.include?(x.id) }
       assert current_data_exports.last.attachment.content_file_name.ends_with?('.xls')
       @account.rollback(:ticket_contact_export)
     ensure
