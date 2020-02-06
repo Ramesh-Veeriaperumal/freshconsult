@@ -86,7 +86,7 @@ class Account < ActiveRecord::Base
     :hide_first_response_due, :agent_articles_suggest, :email_articles_suggest, :customer_journey, :botflow,
     :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters, :supervisor_custom_status, :lbrr_by_omniroute,
     :secure_attachments, :article_versioning, :article_export, :article_approval_workflow, :next_response_sla, :advanced_automations,
-    :fb_ad_posts, :suggested_articles_count
+    :fb_ad_posts, :suggested_articles_count, :unlimited_multi_product
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -101,8 +101,8 @@ class Account < ActiveRecord::Base
 
   PODS_FOR_BOT = ['poduseast1'].freeze
 
-  PRICING_PLAN_MIGRATION_FEATURES_2019 = [
-    :customer_journey
+  PRICING_PLAN_MIGRATION_FEATURES_2020 = [
+    :unlimited_multi_product
   ].to_set.freeze
 
   LP_FEATURES.each do |item|
@@ -447,24 +447,27 @@ class Account < ActiveRecord::Base
   def launched_db_feature
     DB_TO_LP_MIGRATION_P2_FEATURES_LIST.select { |f| launched?(f) }
   end
-  # Need to cleanup bellow code snippet block with 2019 plan changes release
+  # TODO : Cleanup up after 2020 pricing changes
   # START
   def has_feature?(feature)
-    return super if launched?(:enable_customer_journey)
-    PRICING_PLAN_MIGRATION_FEATURES_2019.include?(feature) ? true : super
+    return super if launched?(:pricing_plan_change_2020)
+
+    PRICING_PLAN_MIGRATION_FEATURES_2020.include?(feature) ? true : super
   end
 
   def features_list
-    return super if launched?(:enable_customer_journey)
-    (super + PRICING_PLAN_MIGRATION_FEATURES_2019.to_a).uniq
+    return super if launched?(:pricing_plan_change_2020)
+
+    (super + PRICING_PLAN_MIGRATION_FEATURES_2020.to_a).uniq
   end
 
   def has_features?(*features)
-    unless launched?(:enable_customer_journey)
-      features.delete_if { |feature| PRICING_PLAN_MIGRATION_FEATURES_2019.include?(feature) }
+    unless launched?(:pricing_plan_change_2020)
+      features.delete_if { |feature| PRICING_PLAN_MIGRATION_FEATURES_2020.include?(feature) }
     end
     super
   end
+  # STOP
 
   def ticket_properties_suggester_enabled?
     ticket_properties_suggester_eligible_enabled? && has_feature?(:ticket_properties_suggester)

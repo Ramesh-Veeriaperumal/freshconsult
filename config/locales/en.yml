@@ -5385,6 +5385,7 @@ en:
       card_update_limit_exceeded: You've exceeded the hourly limit for updating your credit card. Please try again later.
       invalid_currency: The currency you have chosen is invalid.
       invoice_delay: Unable to fetch this invoice right now. Please try again after sometime.
+      multi_product_downgrade: "Your freshdesk account currently has %{product_count} products. You are allowed only 5 on the Estate plan. Please delete some products and try again."
     upgrade:
       message: Upgrade your account to unlock this feature.
       cname: Want to use your own domain here? Please upgrade your account.
@@ -5410,6 +5411,7 @@ en:
     line_items: "Line Items"
     download: "Download"
     transaction_details: "Payments and Refund details"
+  multi_product_limit: "You can create only 5 multi products."
   activate: Activate
   feedbackwidget_button_text: Label
   amount_billed_per_month: You will be billed <b>%{amount} %{period}</b>%{tax_string}

@@ -8,7 +8,7 @@ class PricingPlanChange2019Test < ActionView::TestCase
 
   def test_to_features_list_without_launchparty_feature
     @account.rollback(:enable_customer_journey)
-    features = (Account::PRICING_PLAN_MIGRATION_FEATURES_2019.to_a - @account.features_list)
+    features = (Account::PRICING_PLAN_MIGRATION_FEATURES_2020.to_a - @account.features_list)
     assert features.blank?
   end
 
@@ -22,7 +22,7 @@ class PricingPlanChange2019Test < ActionView::TestCase
 
   def test_has_feature_without_launchparty_feature
     @account.rollback(:enable_customer_journey)
-    Account::PRICING_PLAN_MIGRATION_FEATURES_2019.each do |feature|
+    Account::PRICING_PLAN_MIGRATION_FEATURES_2020.each do |feature|
       assert Account.current.has_feature?(feature)
     end
     @account.revoke_feature(:add_watcher)
@@ -43,15 +43,15 @@ class PricingPlanChange2019Test < ActionView::TestCase
   end
 
   def test_has_features_without_launchparty_feature
-    @account.rollback(:enable_customer_journey)
+    @account.rollback(:pricing_plan_change_2020)
     @account.revoke_feature(:add_watcher)
     @account.revoke_feature(:advanced_facebook)
     refute @account.reload.has_features?(:add_watcher, :advanced_facebook)
     @account.add_feature(:add_watcher)
     refute @account.reload.has_features?(:add_watcher, :advanced_facebook)
     @account.add_feature(:advanced_facebook)
-    @account.revoke_feature(:customer_journey)
-    assert @account.reload.has_features?(:add_watcher, :advanced_facebook, :customer_journey)
+    @account.revoke_feature(:unlimited_multi_product)
+    assert @account.reload.has_features?(:add_watcher, :advanced_facebook, :unlimited_multi_product)
   end
 
   def test_has_features_with_launchparty_feature

@@ -15,7 +15,7 @@ class SAAS::SubscriptionEventActions
                            :dynamic_sections, :custom_survey, :mailbox,
                            :helpdesk_restriction_toggle, :ticket_templates,
                            :round_robin_load_balancing, :multi_timezone, :field_service_management, :custom_translations,
-                           :field_service_management_toggle, :sitemap, :article_versioning, :suggested_articles_count].freeze
+                           :field_service_management_toggle, :sitemap, :article_versioning, :suggested_articles_count, :unlimited_multi_product].freeze
 
   ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle, :multiple_companies_toggle,
                            :tam_default_fields, :smart_filter, :contact_company_notes, :unique_contact_identifier, :custom_dashboard, 

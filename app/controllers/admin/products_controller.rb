@@ -1,5 +1,6 @@
 class Admin::ProductsController < Admin::AdminController
-	include ModelControllerMethods
+  include ModelControllerMethods
+  include AccountConstants
   
   before_filter { |c| c.requires_this_feature :multi_product }
   before_filter :build_object, :only => [:new, :create]
@@ -25,7 +26,12 @@ class Admin::ProductsController < Admin::AdminController
     end
 
     def build_object
-      @obj = @product = current_account.products.build(params[:product])
+      if current_account.unlimited_multi_product_enabled? || current_account.products.count < MULTI_PRODUCT_LIMIT
+        @obj = @product = current_account.products.build(params[:product])
+      else
+        flash[:notice] = t(:multi_product_limit)
+        redirect_to redirect_url
+      end
     end
 
     def create_error
