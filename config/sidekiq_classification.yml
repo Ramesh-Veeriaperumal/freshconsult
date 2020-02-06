@@ -208,6 +208,8 @@
     - kbase_article_versions_reset_rating
     - search_analytics_account_reindex
     - search_analytics_tickets_reindex
+    - search_analytics_account_cleanup
+    - search_analytics_tickets_cleanup
 
   :external:
     - thank_you_note
