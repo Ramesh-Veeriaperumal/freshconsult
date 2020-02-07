@@ -212,10 +212,10 @@ module Ember
       valid_filters = %w(
         spam deleted overdue pending open due_today new
         monitored_by new_and_my_open all_tickets unresolved
-        article_feedback unresolved_article_feedback my_article_feedback unassigned_service_tasks
+        article_feedback unresolved_article_feedback my_article_feedback
         watching on_hold
         raised_by_me shared_by_me shared_with_me
-        unresolved_service_tasks
+        unresolved_service_tasks unassigned_service_tasks overdue_service_tasks service_tasks_due_today service_tasks_starting_today
       )
       match_json([bad_request_error_pattern(:filter, :not_included, list: valid_filters.join(', '))])
       Account.current.unstub(:freshconnect_enabled?)

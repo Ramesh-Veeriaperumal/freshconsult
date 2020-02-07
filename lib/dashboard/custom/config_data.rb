@@ -11,7 +11,7 @@ module Dashboard::Custom
     end
 
     def ticket_filter_id=(updated_value)
-      default_filter_info, custom_filter_info = Helpdesk::Filters::CustomTicketFilter::DEFAULT_FILTERS.keys.include?(updated_value) ? [updated_value, nil] : [nil, updated_value]
+      default_filter_info, custom_filter_info = Helpdesk::Filters::CustomTicketFilter::DEFAULT_FILTERS.key?(updated_value) || ::Admin::AdvancedTicketing::FieldServiceManagement::Constant::FSM_TICKET_FILTERS.include?(updated_value) ? [updated_value, nil] : [nil, updated_value]
       merge_config_data(ticket_filter_id: default_filter_info)
       updated_value = custom_filter_info
       super

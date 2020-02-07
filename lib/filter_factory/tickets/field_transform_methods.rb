@@ -48,7 +48,7 @@ module FilterFactory::Tickets
       end
 
       def handle_order_by_fsm_appointment_start_time
-        if TicketFilterConstants::SORT_BY_APPOINTMENT_TIME_FILTERS.include? args[:filter_name]
+        if ::Admin::AdvancedTicketing::FieldServiceManagement::Constant::FSM_TICKET_FILTERS.include? args[:filter_name]
           sort_options = TicketsFilter.field_agent_sort_options
           args[:order_by] = sort_options[:order_by] unless args[:order_by]
           args[:order_type] = sort_options[:order_type] unless args[:order_type]

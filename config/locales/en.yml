@@ -7880,7 +7880,11 @@ en:
         invalid_requester: Invalid requester
         ongoing_collab: My Active Huddles
         unresolved_service_tasks: Unresolved service tasks
+        service_tasks_due_today: Service tasks due today
         unassigned_service_tasks: Unassigned service tasks
+        overdue_service_tasks: Overdue service tasks
+        service_tasks_starting_today: Service tasks starting today
+
 
       note:
         posted_on: "%{user_name} on %{note_date}"
