@@ -1,6 +1,7 @@
 class AccountDecorator < ApiDecorator
   include Social::Util
   include FieldServiceManagementHelper
+  include AgentsHelper
 
   def to_hash
     simple_hash.merge(agents_groups_hash)
@@ -50,6 +51,14 @@ class AccountDecorator < ApiDecorator
     }
   end
 
+  def agents_limit
+    {
+      support_agent: agents_count_payload(:support_agent),
+      field_agent: record.field_service_management_enabled? ? agents_count_payload(:field_agent) : nil,
+      day_passes_available: available_passes
+    }
+  end
+
   private
 
     def date_format
@@ -93,7 +102,7 @@ class AccountDecorator < ApiDecorator
         freshmarketer_linked: acct_additional_settings.freshmarketer_linked?,
         freshcaller_linked: record.freshcaller_account.present? && record.freshcaller_account.enabled?,
         onboarding_version: acct_additional_settings.additional_settings[:onboarding_version],
-	freshdesk_freshsales_bundle: record.account_additional_settings.additional_settings[:freshdesk_freshsales_bundle] || false
+        freshdesk_freshsales_bundle: record.account_additional_settings.additional_settings[:freshdesk_freshsales_bundle] || false
       }
       settings_hash[:field_service_management] = fetch_fsm_settings(acct_additional_settings) if record.field_service_management_enabled? && record.field_agents_can_manage_appointments_setting_enabled?
       settings_hash
@@ -202,5 +211,13 @@ class AccountDecorator < ApiDecorator
     def organisation_domain
       organisation = record.organisation_from_cache
       organisation.try(:alternate_domain) || organisation.try(:domain)
+    end
+
+    def agents_count_payload(agent_type = :support_agent)
+      {
+        license_available: record.subscription.trial_or_sprout_plan? ? nil : safe_send("available_#{agent_type.to_s.pluralize}"),
+        full_time_agent_count: agent_count(agent_type),
+        occasional_agent_count: agent_type == :support_agent ? agent_count(:occasional) : nil
+      }
     end
 end

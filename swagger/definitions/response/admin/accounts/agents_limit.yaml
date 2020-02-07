@@ -1,0 +1,14 @@
+title: data
+type: object
+description: Return Agent count, available seats and daypasses
+properties: 
+  support_agent: 
+    type: object
+    items:
+      $ref: '#/definitions/agents_limit_payload_body'
+  field_agent: 
+    type: object
+    items:
+      $ref: '#/definitions/agents_limit_payload_body'
+  day_passes_available: 
+    type: integer

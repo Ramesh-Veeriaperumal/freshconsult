@@ -58,7 +58,7 @@ module Admin
       end
 
       def cancelled_account?
-        current_account.launched?(:downgrade_policy) && 
+        current_account.launched?(:downgrade_policy) &&
           current_account.account_cancellation_requested? &&
           !current_account.deletion_scheduled?
       end

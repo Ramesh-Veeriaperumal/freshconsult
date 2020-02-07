@@ -52,6 +52,7 @@ Helpkit::Application.routes.draw do
 
     resources :accounts, path: 'admin/accounts' do
       collection do
+        get :agents_limit, to: 'admin/api_accounts#agents_limit'
         get :languages, to: 'settings/helpdesk#index'
         put :languages, to: 'settings/helpdesk#update'
       end

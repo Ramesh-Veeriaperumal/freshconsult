@@ -644,6 +644,8 @@
   $ref: ./admin/custom_translations/secondary.yaml
 /admin/accounts/languages:
   $ref: ./admin/accounts/languages.yaml
+/admin/accounts/agents_limit:
+  $ref: ./admin/accounts/agents_limit.yaml
 
 #Admin Security
 /admin/security_keys/widget/regenerate:

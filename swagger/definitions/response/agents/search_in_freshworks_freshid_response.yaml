@@ -1,0 +1,11 @@
+title: data
+type: object
+description: Search In Freshworks Freshid Response
+properties: 
+  marked_for_hard_delete: 
+    type: boolean
+  delete: 
+    type: boolean
+  user_id: 
+    type: integer
+    format: int64
