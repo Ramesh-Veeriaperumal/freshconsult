@@ -141,7 +141,7 @@ class EmailController < ApplicationController
   def redirect_email(pod_info)
     # mail is redirected to the correct pod, using Nginx X-Accel-Redirect. There is no redirect sent to Sendgrid.
     # redirect_url should match with the location directive in Nginx Proxy
-    redirect_url = Redis::RoutesRedis.pod_redirection_enabled? ? "@pod_redirect_#{pod_info}" : "/pod_redirect/#{pod_info}"
+    redirect_url = "@pod_redirect_#{pod_info}"
     Rails.logger.info "Redirecting to the correct POD. Redirect URL is #{redirect_url}"
     response.headers["X-Accel-Redirect"] = redirect_url
     response.headers["X-Accel-Buffering"] = "off"

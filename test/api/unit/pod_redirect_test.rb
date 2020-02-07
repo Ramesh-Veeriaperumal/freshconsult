@@ -2,10 +2,6 @@ require_relative '../unit_test_helper'
 
 class PodRedirectTest < ActionView::TestCase
 
-  def setup
-    $redis_routes.perform_redis_op('set', Redis::Keys::Routes::POD_REDIRECTION, true)
-  end
-
   def test_request_redirection
     test_app = ->(env) { [200, { 'HTTP_HOST' => 'testaccount.freshdesk.com' }, ['OK']] }
     pod_name = Faker::Lorem.characters(10)

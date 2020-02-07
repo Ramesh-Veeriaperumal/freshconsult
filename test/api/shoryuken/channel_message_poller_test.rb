@@ -99,7 +99,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
 
   def test_update_social_tweets_for_dm
     note = create_twitter_ticket_and_note
-    fake_tweet_id = Faker::Number.between(1, 999999999).to_s
+    fake_tweet_id = DateTime.now.strftime('%Q')
     payload = { "status_code": 200, "tweet_id": fake_tweet_id, "note_id": note.id }
     command_payload = sample_twitter_reply_acknowledgement(@account, @handle, @stream, payload)
     push_to_channel(command_payload)
@@ -111,7 +111,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
 
   def test_update_social_tweets_for_mention
     note = create_twitter_ticket_and_note('mention')
-    fake_tweet_id = Faker::Number.between(1, 999999999).to_s
+    fake_tweet_id = DateTime.now.strftime('%Q')
     payload = { 'status_code': 200, 'tweet_id': fake_tweet_id, 'note_id': note.id, 'tweet_type': 'mention' }
     command_payload = sample_twitter_reply_acknowledgement(@account, @handle, @stream, payload)
     push_to_channel(command_payload)
