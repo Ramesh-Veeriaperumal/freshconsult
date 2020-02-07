@@ -1,4 +1,6 @@
 class Helpdesk::Ticketfields::PicklistValueTransformer::StringToId < Helpdesk::Ticketfields::PicklistValueTransformer::Base
+  NONE_VALUE = '-1'.freeze
+
   def transform(picklist_value, flexifield_name)
     return if picklist_value.blank?
 
@@ -26,7 +28,7 @@ class Helpdesk::Ticketfields::PicklistValueTransformer::StringToId < Helpdesk::T
 
   def fetch_ids(values_list, ff_alias)
     values_list.collect do |value|
-      transform(value, fetch_col_name(ff_alias))
+      value == NONE_VALUE ? value : transform(value, fetch_col_name(ff_alias))
     end
   end
 
@@ -98,7 +100,7 @@ class Helpdesk::Ticketfields::PicklistValueTransformer::StringToId < Helpdesk::T
 
     def parent_field_value(ticket_field, base_val)
       parent_field = ticket_field.parent_field
-      parent_value = (@ticket.custom_fields_hash.present? && 
+      parent_value = (@ticket.custom_fields_hash.present? &&
                       @ticket.custom_fields_hash[parent_field.name].try(:downcase)) ||
                      (parent_field.try(:name) && @ticket.safe_send(parent_field.name).try(:downcase))
       [parent_field, base_val && base_val[parent_value]]

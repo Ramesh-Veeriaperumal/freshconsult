@@ -1181,7 +1181,7 @@ module ApiTicketsTestHelper
 
   # export methods
   def ticket_data_export(source)
-    @account.data_exports.where(user_id: User.current.id, source: source)
+    @account.data_exports.order(:id).where(user_id: User.current.id, source: source)
   end
 
   def export_ticket_fields
