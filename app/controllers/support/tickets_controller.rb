@@ -7,6 +7,7 @@ class Support::TicketsController < SupportController
   include ExportCsvUtil
   include Helpdesk::Permission::Ticket
 
+  before_filter :validate_params, only: [:create, :update]
   before_filter :check_and_increment_usage, only: [:create]
   
   before_filter :only => [:new, :create] do |c| 
@@ -270,6 +271,16 @@ class Support::TicketsController < SupportController
       if params[:cc_emails]        
         params[:cc_emails], dropped_cc_emails = fetch_permissible_cc(current_user, params[:cc_emails], current_account)
         params[:dropped_cc_emails] = dropped_cc_emails.join(",")
+      end
+    end
+
+    def validate_params
+      ticket_type = params['helpdesk_ticket']['ticket_type']
+      ticket_field_values = TicketsValidationHelper.ticket_type_values
+      if ticket_type && ticket_field_values.exclude?(ticket_type)
+         flash[:error] = t('helpdesk.flash.invalid_ticket_type')
+         set_portal_page :submit_ticket
+         render action: :new
       end
     end
 end

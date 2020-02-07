@@ -5,7 +5,7 @@ class Widgets::FeedbackWidgetsController < SupportController
 
   skip_before_filter :set_language, :redirect_to_locale
   #Because multilingual is NOT applicable to widgets at the moment
-
+  before_filter :validate_params, only: [:create]
   before_filter :build_item, :only => :new
   before_filter :check_and_increment_usage, only: [:create]
   before_filter :set_native_mobile, :only => [:create]
@@ -101,6 +101,14 @@ class Widgets::FeedbackWidgetsController < SupportController
       @widget_form = true
       @ticket_fields = current_portal.customer_editable_ticket_fields
       @ticket_fields_def_pos = ["default_requester", "default_subject", "default_description"]
+    end
+
+    def validate_params
+      ticket_type = params[:helpdesk_ticket][:ticket_type]
+      ticket_field_values = TicketsValidationHelper.ticket_type_values
+      if ticket_type && ticket_field_values.exclude?(ticket_type)
+        render json: { success: false, error: t('helpdesk.flash.invalid_ticket_type') }
+      end
     end
 
     def check_ticket_permission

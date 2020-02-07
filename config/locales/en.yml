@@ -7490,6 +7490,7 @@ en:
       tickets_background: "Please wait while we update the tickets. This might take a few minutes."
       spam: "%{tickets} will be marked as spam shortly%{text}. %{undo}"
       destroy: "%{tickets} will be deleted shortly. %{undo}"
+      invalid_ticket_type: "Invalid ticket type"
 
     shared:
       announcement_hide: "Hide this message"
