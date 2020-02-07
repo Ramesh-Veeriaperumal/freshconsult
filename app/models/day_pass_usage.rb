@@ -8,13 +8,11 @@ class DayPassUsage < ActiveRecord::Base
   belongs_to_account
   belongs_to :user
   
-  scope :on_the_day, lambda { |start_time| 
-    { :conditions => { :granted_on => start_time } }}
+  scope :on_the_day, ->(start_time) { where(granted_on: start_time) }
 
-  scope :latest, lambda { |end_day| 
-    { :conditions => ["granted_on >= ?", start_time - end_day.days]}}
+  scope :latest, ->(end_day) { where('granted_on >= ?', (start_time - end_day.days)) }
 
-  scope :agent_filter, -> user_id { where(user_id: user_id) if user_id.present?}
+  scope :agent_filter, ->(user_id) { where(user_id: user_id) if user_id.present? }
   
   def self.start_time
     Time.zone.now.beginning_of_day

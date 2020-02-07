@@ -6,11 +6,11 @@ class DkimRecord < ActiveRecord::Base
 
   CUSTOM_RECORDS = ['dkim', 'subdomain_spf', 'mail_server']
 
-  scope :filter_records, :conditions => ["sg_type != 'mail_cname'"]
-  scope :custom_records, :conditions => ["sg_type in (?)", CUSTOM_RECORDS]
-  scope :default_records, :conditions => ["sg_type NOT in (?)", CUSTOM_RECORDS]
-  scope :customer_records, :conditions => ["customer_record = true"]
-  scope :non_active_records, :conditions => ["status = false"]
+  scope :filter_records, -> { where("sg_type != 'mail_cname'") }
+  scope :custom_records, -> { where('sg_type in (?)', CUSTOM_RECORDS) }
+  scope :default_records, -> { where('sg_type NOT IN (?)', CUSTOM_RECORDS) }
+  scope :customer_records, -> { where(customer_record: true) }
+  scope :non_active_records, -> { where(status: false) }
   
   def self.filter_customer_records
     customer_records.order("record_type DESC")

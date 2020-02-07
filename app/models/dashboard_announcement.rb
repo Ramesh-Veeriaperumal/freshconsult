@@ -16,7 +16,7 @@ class DashboardAnnouncement < ActiveRecord::Base
   validates :dashboard_id, :user_id, :announcement_text, presence: true
   validates :announcement_text, length: { maximum: MAX_TEXT_LIMIT, allow_nil: false }
 
-  scope :active, conditions: { active: true }
+  scope :active, -> { where(active: true) }
 
   after_commit :clear_dashboard_cache, except: :destroy
 
