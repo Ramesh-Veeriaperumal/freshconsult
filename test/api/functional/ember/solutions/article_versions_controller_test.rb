@@ -90,7 +90,7 @@ module Ember
       end
 
       def test_index_without_multilingual
-        supported_lang = @account.all_language_objects.first
+        supported_lang = Language.find_by_code(@account.supported_languages.last)
         Account.any_instance.stubs(:multilingual?).returns(false)
         article_meta = get_article_with_versions.parent
         get :index, controller_params(version: 'private', article_id: article_meta.id, language: supported_lang.code)
@@ -169,10 +169,10 @@ module Ember
       end
 
       def test_show_without_multilingual
-        supported_lang = @account.all_language_objects.first
+        supported_lang = Language.find_by_code(@account.supported_languages.last)
         article_meta = get_article_with_versions.parent
         AwsWrapper::S3Object.stubs(:read).returns('{"title": "title", "description":"description"}')
-        article_version = article_meta.safe_send("#{supported_lang.to_key}_article").solution_article_versions.latest.first
+        article_version = article_meta.solution_article_versions.latest.first
         Account.any_instance.stubs(:multilingual?).returns(false)
         get :show, controller_params(version: 'private', article_id: article_meta.id, id: article_version.version_no, language: supported_lang.code)
         assert_response 404
@@ -290,9 +290,9 @@ module Ember
         stub_version_session(session) do
           stub_version_content do
             params_hash = { session: session }
-            supported_lang = @account.all_language_objects.first
+            supported_lang = Language.find_by_code(@account.supported_languages.last)
             article_meta = get_article_with_versions.parent
-            article_version = article_meta.safe_send("#{supported_lang.to_key}_article").solution_article_versions.latest.first
+            article_version = article_meta.solution_article_versions.latest.first
             article = article_meta.safe_send('primary_article')
             should_not_create_version(article) do
               Account.any_instance.stubs(:multilingual?).returns(false)

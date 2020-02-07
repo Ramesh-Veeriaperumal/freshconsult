@@ -1,7 +1,8 @@
 class Solutions::ArticleDecorator < ApiDecorator
   delegate :title, :description, :desc_un_html, :user_id, :status, :seo_data, :language_id,
            :parent, :parent_id, :draft, :attachments, :cloud_files, :article_ticket, :modified_at,
-           :modified_by, :id, :to_param, :tags, :voters, :thumbs_up, :thumbs_down, :hits, :tickets, :outdated, :helpdesk_approval, :suggested, to: :record
+           :modified_by, :id, :to_param, :tags, :voters, :thumbs_up, :thumbs_down, :hits, :tickets, :outdated, :helpdesk_approval,
+           :suggested, :user, :solution_folder_meta, :recent_author, to: :record
 
   SEARCH_CONTEXTS_WITHOUT_DESCRIPTION = [:agent_insert_solution, :filtered_solution_search].freeze
   SPOTLIGHT_SEARCH_CONTEXT = :agent_spotlight_solution
@@ -72,15 +73,30 @@ class Solutions::ArticleDecorator < ApiDecorator
         ret_hash[:translation_summary] = translation_summary_hash if !@is_list_page && !exclude?(:translation_summary)
         ret_hash[:outdated] = outdated
       end
-      if Account.current.article_approval_workflow_enabled?
-        ret_hash[:approval_data] = { approval_status: approval_record(record).try(:approval_status), approver_id: approver_record(record).try(:approver_id), user_id: approval_record(record).try(:user_id) }
-      end
+    end
+    if (private_api? || channel_v2_api?) && Account.current.article_approval_workflow_enabled?
+      ret_hash[:approval_data] = { approval_status: approval_record(record).try(:approval_status), approver_id: approver_record(record).try(:approver_id), user_id: approval_record(record).try(:user_id) }
     end
     ret_hash
   end
 
+  def collaboration_hash
+    {
+      convo_token: Collaboration::Article.new.convo_token(record.parent_id, record.language_code)
+    }
+  end
+
   def draft_user_name
     @draft.user.try(:name) if @draft.user && @draft.user.helpdesk_agent
+  end
+
+  def published_details_hash
+    pub_hash = {}
+    if published?
+      pub_hash[:published_by] = record.recent_author && record.recent_author.helpdesk_agent ? record.recent_author.try(:name) : nil
+      pub_hash[:published_at] = modified_at.try(:utc)
+    end
+    pub_hash
   end
 
   def modified_by_name
@@ -117,6 +133,35 @@ class Solutions::ArticleDecorator < ApiDecorator
     export_hash[:folder_name] = folder_name if export_hash[:folder_id].present? && !exclude?(:folder_name)
     export_hash[:category_name] = category_name if export_hash[:folder_id].present? && !exclude?(:category_name)
     export_hash
+  end
+
+  def folder_category_hash
+    fc_hash = {}
+    folder_hash = Solutions::FolderDecorator.new(record.solution_folder_meta, language_code: language_code).enriched_hash
+    fc_hash[:folder] = folder_hash if folder_hash
+    category_hash = Solutions::CategoryDecorator.new(record.solution_folder_meta.solution_category_meta, language_code: language_code).enriched_hash
+    fc_hash[:category] = category_hash if category_hash
+    fc_hash
+  end
+
+  def enriched_hash
+    result = to_hash.merge!(
+      author_id: nil,
+      author_name: nil,
+      language: language_code,
+      draft_present: @draft.present?
+    )
+    result.merge!(published_details_hash)
+    if record.user && record.user.helpdesk_agent
+      result[:author_id] = record.user_id
+      result[:author_name] = author_name
+    end
+    result.merge!(folder_category_hash) if result[:folder_id].present?
+    if Account.current.multilingual?
+      result[:outdated] = outdated
+      result[:language_name] = language_name
+    end
+    result
   end
 
   def to_index_hash
@@ -210,6 +255,10 @@ class Solutions::ArticleDecorator < ApiDecorator
 
     def language_code
       language_object.code
+    end
+
+    def language_name
+      language_object.name
     end
 
     def attachments_hash

@@ -8,5 +8,10 @@ module Channel::V2::ApiSolutions
     def self.decorator_name
       ::Solutions::ArticleDecorator
     end
+
+    def show
+      @enrich_response = true
+      super
+    end
   end
 end

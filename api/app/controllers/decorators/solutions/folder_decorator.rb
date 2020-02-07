@@ -1,6 +1,6 @@
 class Solutions::FolderDecorator < ApiDecorator
   delegate :name, :description, :language_code, :created_at, :updated_at, to: :record
-  delegate :id, :position, :article_order, :solution_article_meta, :visibility, :customer_folders, :solution_category_meta_id, to: :parent
+  delegate :id, :is_default, :position, :article_order, :solution_article_meta, :visibility, :customer_folders, :solution_category_meta_id, to: :parent
 
   def initialize(record, options = {})
     super(record)
@@ -40,6 +40,23 @@ class Solutions::FolderDecorator < ApiDecorator
 
   def company_ids
     customer_folders.map(&:customer_id)
+  end
+
+  def company_names
+    Account.current.companies.where(id: customer_folders.pluck(:customer_id)).pluck(:name)
+  end
+
+  def enriched_hash
+    folder = record.safe_send("#{@lang_code}_available?") ? record.safe_send("#{@lang_code}_folder") : record.primary_folder
+    unless is_default
+      response_hash = {
+        id: id,
+        name: folder.name,
+        visibility: visibility
+      }
+      response_hash[:company_names] = company_names if company_ids_visible?
+      response_hash
+    end
   end
 
   def summary_hash
