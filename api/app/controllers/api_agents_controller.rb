@@ -25,8 +25,8 @@ class ApiAgentsController < ApiApplicationController
 
   def create
     assign_protected
-    return unless validate_delegator(params[cname].slice(:role_ids, :group_ids,
-                                                         :user_attributes, :agent_type, :occasional, :skill_ids), agent_delegator_params)
+    return unless validate_delegator(nil, params[cname].slice(:role_ids, :group_ids,
+                                                         :user_attributes, :agent_type, :occasional, :skill_ids).merge(agent_delegator_params))
 
     @user = current_account.users.new
     params[:user] = params[cname][:user_attributes]
@@ -48,7 +48,7 @@ class ApiAgentsController < ApiApplicationController
 
   def update
     assign_protected
-    return unless validate_delegator(params[cname].slice(:role_ids, :group_ids, :user_attributes), agent_delegator_params)
+    return unless validate_delegator(@item, params[cname].slice(:role_ids, :group_ids, :available, :avatar_id, :user_attributes).merge(agent_delegator_params))
 
     check_and_assign_skills_for_update if Account.current.skill_based_round_robin_enabled?
 

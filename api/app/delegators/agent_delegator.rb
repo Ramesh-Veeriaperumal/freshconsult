@@ -1,15 +1,23 @@
 class AgentDelegator < BaseDelegator
-  attr_accessor :group_ids, :role_ids
+  attr_accessor :group_ids, :role_ids, :available, :user_attributes, :occasional, :agent_type
 
-  validate :validate_group_ids, if: -> { self[:group_ids] }
-  validate :validate_role_ids, :check_role_permission, if: -> { self[:role_ids] }
+  validate :validate_group_ids, unless: -> { @group_ids.nil? }
+  validate :validate_role_ids, :check_role_permission, unless: -> { @role_ids.nil? }
   validate :validate_avatar_extension, if: -> { @avatar_attachment && errors[:attachment_ids].blank? }
-  validate :validate_email_in_freshid, if: -> { self[:user_attributes] && Account.current.freshid_integration_enabled? && @action == 'create' }
-  validate :validate_occasional_with_agent_type, if: -> { self[:occasional] && self[:agent_type] && is_a_field_agent? }
-  validate :validate_field_agent_groups, if: -> { self[:agent_type] && is_a_field_agent? }
-  validate :validate_skill_ids, if: -> { self[:user_attributes] && self[:user_attributes][:skill_ids] }
+  validate :validate_email_in_freshid, if: -> { @user_attributes && Account.current.freshid_integration_enabled? && @action == 'create' }
+  validate :validate_occasional_with_agent_type, if: -> { @occasional && @agent_type && is_a_field_agent? }
+  validate :validate_field_agent_groups, if: -> { @agent_type && is_a_field_agent? }
+  validate :validate_manage_availability, if: -> { !@available.nil? && @item.present? }
+  validate :validate_skill_ids, if: -> { @user_attributes && @user_attributes[:skill_ids] }
 
   def initialize(record, options = {})
+    @group_ids = options[:group_ids]
+    @role_ids = options[:role_ids]
+    @available = options[:available]
+    @user_attributes = options[:user_attributes]
+    @occasional = options[:occasional]
+    @agent_type = options[:agent_type]
+    @item = record
     options[:attachment_ids] = Array.wrap(options[:avatar_id].to_i) if options[:avatar_id]
     super(record, options)
     @avatar_attachment = @draft_attachments.first if @draft_attachments
@@ -17,7 +25,7 @@ class AgentDelegator < BaseDelegator
   end
 
   def validate_role_ids
-    invalid_roles = self[:role_ids].map(&:to_i) - Account.current.roles_from_cache.map(&:id)
+    invalid_roles = @role_ids.map(&:to_i) - Account.current.roles_from_cache.map(&:id)
     if invalid_roles.present?
       errors[:role_ids] << :invalid_list
       (@error_options ||= {}).merge!(role_ids: { list: invalid_roles.join(', ') })
@@ -25,7 +33,7 @@ class AgentDelegator < BaseDelegator
   end
 
   def validate_group_ids
-    invalid_groups = self[:group_ids].map(&:to_i) - Account.current.groups_from_cache.map(&:id)
+    invalid_groups = @group_ids.map(&:to_i) - Account.current.groups_from_cache.map(&:id)
     if invalid_groups.present?
       errors[:group_ids] << :invalid_list
       (@error_options ||= {}).merge!(group_ids: { list: invalid_groups.join(', ') })
@@ -33,16 +41,16 @@ class AgentDelegator < BaseDelegator
   end
 
   def validate_field_agent_groups
-    invalid_groups = self[:group_ids].map(&:to_i) - fetch_valid_field_agent_groups.map(&:id)
+    invalid_groups = @group_ids.map(&:to_i) - fetch_valid_field_agent_groups.map(&:id)
     if invalid_groups.present?
       err_msg = ErrorConstants::ERROR_MESSAGES[:should_not_be_support_group] + ': ' + invalid_groups.join(', ')
-      self.errors.add(:groups_ids, err_msg)
+      errors.add(:groups_ids, err_msg)
     end
   end
 
   def validate_skill_ids
-    invalid_skills = self[:user_attributes][:skill_ids] - Account.current.skills_from_cache.collect(&:id)
-    duplicate_skills_list = self[:user_attributes][:skill_ids].select { |skill| self[:user_attributes][:skill_ids].count(skill) > 1 }.uniq
+    invalid_skills = @user_attributes[:skill_ids] - Account.current.skills_from_cache.collect(&:id)
+    duplicate_skills_list = @user_attributes[:skill_ids].select { |skill| @user_attributes[:skill_ids].count(skill) > 1 }.uniq
     if invalid_skills.present?
       errors[:skill_ids] << :invalid_list
       (@error_options ||= {}).merge!(skill_ids: { list: invalid_skills.join(', ') })
@@ -60,10 +68,24 @@ class AgentDelegator < BaseDelegator
     end
   end
 
+  def validate_manage_availability
+    # if the user is account admin or admin, he can toggle regardless of the group has toggle option
+    # if the user is supervisor, he should belong to a common group as user. For current user, all of his groups should allow configuring the availability.
+    return if User.current.privilege?(:admin_tasks)
+
+    if User.current.privilege?(:manage_availability)
+      errors[:available] << :toggle_availability_not_belongs_to_same_group if (User.current.groups.round_robin_groups.pluck(:id) & @item.groups.pluck(:id)).empty?
+    elsif User.current.id == @item.user_id
+      errors[:available] << :toggle_availability_not_allowed_for_this_user unless @item.toggle_availability?
+    else
+      errors[:available] << :toggle_availability_error
+    end
+  end
+
   def check_role_permission
     return if User.current.privilege?(:manage_account)
 
-    invalid_role_ids = Account.current.roles_from_cache.select { |role| self[:role_ids].include?(role.id) && role.privilege?(:manage_account) }.map(&:id)
+    invalid_role_ids = Account.current.roles_from_cache.select { |role| @role_ids.include?(role.id) && role.privilege?(:manage_account) }.map(&:id)
     if invalid_role_ids.present?
       errors[:role_ids] << :access_denied_record_with_list
       (@error_options ||= {}).merge!(list: invalid_role_ids.join(', '), model: 'Agent', column: 'roles')
@@ -71,21 +93,19 @@ class AgentDelegator < BaseDelegator
   end
 
   def validate_email_in_freshid
-    user_details = freshid_user_details self['user_attributes']['email']
+    user_details = freshid_user_details @user_attributes['email']
     if user_details.present?
-      if !self['user_attributes']['name'].nil? || !self['user_attributes']['mobile'].nil? || !self['user_attributes']['phone'].nil? || !self['user_attributes']['job_title'].nil?
-        self.errors.add(:name, ErrorConstants::ERROR_MESSAGES[:user_details_present_in_freshid]) if self['user_attributes']['name'].present?
-        self.errors.add(:mobile, ErrorConstants::ERROR_MESSAGES[:user_details_present_in_freshid]) if self['user_attributes']['mobile'].present?
-        self.errors.add(:phone, ErrorConstants::ERROR_MESSAGES[:user_details_present_in_freshid]) if self['user_attributes']['phone'].present?
-        self.errors.add(:job_title, ErrorConstants::ERROR_MESSAGES[:user_details_present_in_freshid]) if self['user_attributes']['job_title'].present?
+      if !@user_attributes['name'].nil? || !@user_attributes['mobile'].nil? || !@user_attributes['phone'].nil? || !@user_attributes['job_title'].nil?
+        errors.add(:name, ErrorConstants::ERROR_MESSAGES[:user_details_present_in_freshid]) if @user_attributes['name'].present?
+        errors.add(:mobile, ErrorConstants::ERROR_MESSAGES[:user_details_present_in_freshid]) if @user_attributes['mobile'].present?
+        errors.add(:phone, ErrorConstants::ERROR_MESSAGES[:user_details_present_in_freshid]) if @user_attributes['phone'].present?
+        errors.add(:job_title, ErrorConstants::ERROR_MESSAGES[:user_details_present_in_freshid]) if @user_attributes['job_title'].present?
       end
     end
   end
 
   def validate_occasional_with_agent_type
-    if self[:occasional] == true
-      errors[:occasional] << :occasional_is_not_true_for_field_agent
-    end
+    errors[:occasional] << :occasional_is_not_true_for_field_agent if @occasional == true
   end
 
   private
@@ -95,11 +115,11 @@ class AgentDelegator < BaseDelegator
     end
 
     def is_a_field_agent?
-      Account.current.field_service_management_enabled? && self[:agent_type] == Account.current.agent_types.find_by_name(Agent::FIELD_AGENT).agent_type_id
+      Account.current.field_service_management_enabled? && @agent_type == Account.current.agent_types.find_by_name(Agent::FIELD_AGENT).agent_type_id
     end
 
     def fetch_valid_field_agent_groups
-      agent_type_name = AgentType.agent_type_name(self[:agent_type])
+      agent_type_name = AgentType.agent_type_name(@agent_type)
       group_type_name = Agent::AGENT_GROUP_TYPE_MAPPING[agent_type_name]
       group_type_id = GroupType.group_type_id(group_type_name)
       Account.current.groups_from_cache.select { |group| group.group_type == group_type_id }

@@ -105,7 +105,7 @@ module CoreUsersTestHelper
     user_agent = User.current.agent
     prev_permission = user_agent.ticket_permission
     user_agent.ticket_permission = permission
-    user_agent.save
+    user_agent.save!
     ag_grp = AgentGroup.new(user_id: User.current.id , account_id: @account.id, group_id: @account.groups.first.id)
     ag_grp.save!
     yield
