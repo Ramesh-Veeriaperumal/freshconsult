@@ -832,7 +832,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def build_note_params ticket, from_email, user, from_fwd_recipients, body, body_html, full_text, full_text_html, cc_emails
-      hide_response_from_customer = ticket.account.launched?(:hide_response_from_customer_feature)? (customer_removed_in_reply?(ticket, in_reply_to, parse_to_emails, cc_emails)): false
+      hide_response_from_customer = ticket.account.launched?(:hide_response_from_customer_feature) ? customer_removed_in_reply?(ticket, in_reply_to, parse_to_emails, cc_emails, from_email) : false
       note_params = {
         :private => (from_fwd_recipients or reply_to_private_note?(all_message_ids) or rsvp_to_fwd?(ticket, from_email, user) or hide_response_from_customer),
         :incoming => true,
