@@ -31,5 +31,9 @@ class Social::FacebookStream < Social::Stream
     group_id = (group_id == 0 ? nil : group_id)
     group_id = group_id || (facebook_page.product ? facebook_page.product.primary_email_config.try(:group_id) : nil )
   end
+
+  def delete_rules
+    facebook_ticket_rules.each(&:destroy) if facebook_ticket_rules
+  end
   
 end
