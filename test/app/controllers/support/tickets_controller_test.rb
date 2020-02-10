@@ -161,7 +161,7 @@ class Support::TicketsControllerTest < ActionController::TestCase
     login_as(user)
     put :update, version: :private, helpdesk_ticket: { subject: 'test subject', ticket_type: nil }, id: t1.display_id
     assert_response 302
-    assert flash[:notice], "The ticket has been updated"
+    assert flash[:notice], 'The ticket has been updated'
   ensure
     log_out
     user.destroy
@@ -175,7 +175,7 @@ class Support::TicketsControllerTest < ActionController::TestCase
     login_as(user)
     put :update, version: :private, helpdesk_ticket: { subject: 'test subject', ticket_type: '' }, id: t1.display_id
     assert_response 302
-    assert flash[:notice], "The ticket has been updated"
+    assert flash[:notice], 'The ticket has been updated'
   ensure
     log_out
     user.destroy
