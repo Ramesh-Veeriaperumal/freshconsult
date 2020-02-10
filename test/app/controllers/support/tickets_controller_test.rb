@@ -154,6 +154,34 @@ class Support::TicketsControllerTest < ActionController::TestCase
     t1.destroy
   end
 
+  def test_update_with_svg_ticket_type_nil
+    user = add_new_user(Account.current, active: true)
+    user.make_current
+    t1 = create_ticket(requester_id: user.id)
+    login_as(user)
+    put :update, version: :private, helpdesk_ticket: { subject: 'test subject', ticket_type: nil }, id: t1.display_id
+    assert_response 302
+    assert flash[:notice], "The ticket has been updated"
+  ensure
+    log_out
+    user.destroy
+    t1.destroy
+  end
+
+  def test_update_with_svg_ticket_type_empty
+    user = add_new_user(Account.current, active: true)
+    user.make_current
+    t1 = create_ticket(requester_id: user.id)
+    login_as(user)
+    put :update, version: :private, helpdesk_ticket: { subject: 'test subject', ticket_type: '' }, id: t1.display_id
+    assert_response 302
+    assert flash[:notice], "The ticket has been updated"
+  ensure
+    log_out
+    user.destroy
+    t1.destroy
+  end
+
   def test_show
   	user = add_new_user(Account.current, active: true)
   	user.make_current
@@ -248,6 +276,26 @@ class Support::TicketsControllerTest < ActionController::TestCase
     post :create, version: :private, helpdesk_ticket: { email: user.email, ticket_type: "Question<svg/onload=alert('XSS')>" }, cc_emails: Faker::Internet.email
     assert_response 200
     assert response.message, 'invalid_ticket_type'
+    log_out
+    user.destroy
+  end
+
+  def test_create_with_ticket_type_empty
+    user = add_new_user(Account.current, active: true)
+    user.make_current
+    login_as(user)
+    post :create, version: :private, helpdesk_ticket: { email: user.email, ticket_type: '' }, cc_emails: Faker::Internet.email
+    assert_response 302
+    log_out
+    user.destroy
+  end
+
+  def test_create_with_ticket_type_nil
+    user = add_new_user(Account.current, active: true)
+    user.make_current
+    login_as(user)
+    post :create, version: :private, helpdesk_ticket: { email: user.email, ticket_type: nil }, cc_emails: Faker::Internet.email
+    assert_response 302
     log_out
     user.destroy
   end
