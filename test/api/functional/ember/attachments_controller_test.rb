@@ -163,10 +163,14 @@ class Ember::AttachmentsControllerTest < ActionController::TestCase
     Helpdesk::Attachment.any_instance.stubs(:valid_image?).returns(true)
     post :create, construct_params({version: 'private'}, jpeg_attachment_params_hash)
     assert_response 200
+    thumb_url = JSON.parse(response.body)['thumb_url']
+    AwsWrapper::S3Object.stubs(:url_for).returns(thumb_url)
     latest_attachment = Helpdesk::Attachment.last
     match_json(attachment_pattern(latest_attachment))
+  ensure
     Helpdesk::Attachment.any_instance.unstub(:valid_image?)
     DataTypeValidator.any_instance.unstub(:valid_type?)
+    AwsWrapper::S3Object.unstub(:url_for)
   end
 
   def test_unlink_attachment
@@ -232,12 +236,15 @@ class Ember::AttachmentsControllerTest < ActionController::TestCase
     Helpdesk::Attachment.any_instance.stubs(:valid_image?).returns(true)
     post :create, construct_params({ version: 'private' }, image_with_exif_attachment_params_hash)
     assert_response 200
+    thumb_url = JSON.parse(response.body)['thumb_url']
+    AwsWrapper::S3Object.stubs(:url_for).returns(thumb_url)
     latest_attachment = Helpdesk::Attachment.last
     match_json(attachment_pattern(latest_attachment))
   ensure
     Account.current.rollback(:remove_image_attachment_meta_data)
     Helpdesk::Attachment.any_instance.unstub(:valid_image?)
     DataTypeValidator.any_instance.unstub(:valid_type?)
+    AwsWrapper::S3Object.unstub(:url_for)
   end
 
   def test_image_meta_data_delete_worker
