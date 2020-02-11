@@ -111,7 +111,12 @@
             "_label": "account_additional_settings"
           } 
         },
-        "_api_endpoint": "https://central-staging.freshworksapi.com/collector"
+        "_api_endpoint": "https://central-staging.freshworksapi.com/collector",
+        "envoy_egress": {
+          "_endpoint_address": "0.0.0.0",
+          "_endpoint_port": "8187",
+          "_endpoint_path": "/collector"
+        }
       },
       "channel_api_keys": {
         "frankbot": {
@@ -717,7 +722,13 @@
           "service_auth_token": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:0CamyOzNDcobzWjUYrBMEgEBImVEyA6B:WNjUSOzIVFWufsGu6g80Ivm4ihvS8TM2HTCPMARc2GPTz97DCx9LPAWX59kRotFR]",
           "_host_name": "internal-search-v1-1056343736.us-east-1.elb.amazonaws.com",
           "_product_name": "freshdesk_staging",
-          "_search_service": "search.internal.poduseast.freshpo.com"
+          "_search_service": "search.internal.poduseast.freshpo.com",
+          "envoy_egress": {
+            "_v2_host_address": "0.0.0.0",
+            "_v2_host_port": "8185",
+            "_search_service_address": "0.0.0.0",
+            "_search_service_port": "8186"
+          }
         },
         "_aws": [
           {
@@ -955,7 +966,13 @@
         "_configure_domain_url": "api/v1/whitelabel/configure",
         "_verify_domain_url": "api/v1/whitelabel/domains/verify",
         "_remove_domain_url": "api/v1/whitelabel/domains",
-        "_lang_detect_path": "api/v1/detect/lang"
+        "_lang_detect_path": "api/v1/detect/lang",
+        "envoy_egress": {
+          "_host_address": "0.0.0.0",
+          "_host_port": "8183",
+          "_lang_host_address": "0.0.0.0",
+          "_lang_host_port": "8184"
+        }
       },
       "fdadmin_api": {
         "authorization_password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:HBaaizw+pAM8R76aOdB0fK+SwYsW29aK:oKJcHRFNBy/cnVEoPUR6oSdYG/VGIwv54qBXTsrpRXO3Uxc=]",
@@ -1030,7 +1047,11 @@
         "_product_id": "38561582711734278",
         "_product_domain": "freshpo.com",
         "freshid_request_timeout": 10,
-        "_mobile_deep_link_protocol": "com.freshworks.freshdesk.staging"
+        "_mobile_deep_link_protocol": "com.freshworks.freshdesk.staging",
+        "envoy_egress": {
+          "_address": "0.0.0.0",
+          "_port": "8182"
+        }
       },
       "freshops": {
         "subdomains": {
@@ -1687,7 +1708,11 @@
         "signing_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:Jsa7PJnQpYkxJUq8qPkmeXZ8NG7pNDfd:m3cjDOX+QxP9GPiSsXqlpU2ihqMi/2WfaORurJvjCX/k9hAj14DPwgpGnjnF7f20i5Qivl+wN2NxQKRSj5WuQEOMAjfd1MGZaWLNKiqiKs2SkW46/A4vT8jVR52GwuO7FGj9IXHFQ42u2Wnp9Cj6qB5mQHAAAyw9xzB5JiInakjXT03NhEsfyq2GajU3Kfbl]",
         "email_cipher_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:CpDe4oHjDRvMO04t8vMVfU+4lWsJWAX6:xNqZZjAs+wsjwU/fT4wrAnbHNRFVYxSOTq8WopFxGVW6XJxeqvLc0kQbrE6jH/RgvzKfJq0=]",
         "_jwt_default_expiry": "30",
-        "_service_url": "http://proactiveservice-staging.freshpo.com"
+        "_service_url": "http://proactiveservice-staging.freshpo.com",
+        "envoy_egress": {
+          "_service_address": "0.0.0.0",
+          "_service_port": "8188"
+        }
       },
       "facebook_gateway": {
         "jwt_secret": "EJ[1:K/jkGI/XjF4uqZDoiT1gZvTwWc1FaytEaYCv1xQDMF8=:hRnN8kDtD1WmFkx5+RPnQzfWZBiwppcA:8exCR5Y0hsX0VQ6Zn1nKTkuVAhf+olbMiAhNhLtGOIU=]",

@@ -1,16 +1,17 @@
+<% config = node[:ymls][:freshid_v2] %>
 defaults: &defaults
-  region_code: <%= node[:ymls][:freshid_v2][:region_code] %>
-  end_point: <%= node[:ymls][:freshid_v2][:end_point] %>
-  client_id: <%= node[:ymls][:freshid_v2][:client_id] %>
-  client_secret: <%= node[:ymls][:freshid_v2][:client_secret] %>
-  callback_api_secret: <%= node[:ymls][:freshid_v2][:callback_api_secret] %>
-  product_id: <%= node[:ymls][:freshid_v2][:product_id] %>
-  # customer_base_url: <%= node[:ymls][:freshid_v2][:customer_base_url] %>
-  # customer_client_id: <%= node[:ymls][:freshid_v2][:customer_client_id] %>
-  # customer_client_secret: <%= node[:ymls][:freshid_v2][:customer_client_secret] %>
-  product_domain: <%= node[:ymls][:freshid_v2][:product_domain] %>
-  freshid_request_timeout: <%= node[:ymls][:freshid_v2][:freshid_request_timeout] %>
-  mobile_deep_link_protocol: <%= node[:ymls][:freshid_v2][:mobile_deep_link_protocol] %>
+  region_code: <%= config[:region_code] %>
+  client_id: <%= config[:client_id] %>
+  client_secret: <%= config[:client_secret] %>
+  callback_api_secret: <%= config[:callback_api_secret] %>
+  product_id: <%= config[:product_id] %>
+  # customer_base_url: <%= config[:customer_base_url] %>
+  # customer_client_id: <%= config[:customer_client_id] %>
+  # customer_client_secret: <%= config[:customer_client_secret] %>
+  product_domain: <%= config[:product_domain] %>
+  freshid_request_timeout: <%= config[:freshid_request_timeout] %>
+  mobile_deep_link_protocol: <%= config[:mobile_deep_link_protocol] %>
+  end_point: <%= config[:end_point] %>
 
 <%= node[:opsworks][:environment] %>:
   <<: *defaults

@@ -1,22 +1,28 @@
-<% if node[:ymls][:central] %>
+<% config = node[:ymls][:central] %>
+
+<% if config %>
 <%= node[:opsworks][:environment]%>:
-  api_endpoint: <%= node[:ymls][:central][:api_endpoint] %>
-  service_token: <%= node[:ymls][:central][:service_token] %>
+<% if @envoy_egress_allowed && config[:envoy_egress] %>
+  api_endpoint: <%= config[:envoy_egress][:endpoint_address] %>:<%= config[:envoy_egress][:endpoint_port] %><%= config[:envoy_egress][:endpoint_path] %>
+<% else %>
+  api_endpoint: <%= config[:api_endpoint] %>
+<% end %>
+  service_token: <%= config[:service_token] %>
   central_secret:
     twitter: 
-      label: <%= node[:ymls][:central][:central_secret][:twitter][:label] %>
-      key: <%= node[:ymls][:central][:central_secret][:twitter][:key] %>
-      iv: <%= node[:ymls][:central][:central_secret][:twitter][:iv] %>
+      label: <%= config[:central_secret][:twitter][:label] %>
+      key: <%= config[:central_secret][:twitter][:key] %>
+      iv: <%= config[:central_secret][:twitter][:iv] %>
     facebook: 
-      label: <%= node[:ymls][:central][:central_secret][:facebook][:label] %>
-      key: <%= node[:ymls][:central][:central_secret][:facebook][:key] %>
-      iv: <%= node[:ymls][:central][:central_secret][:facebook][:iv] %>
+      label: <%= config[:central_secret][:facebook][:label] %>
+      key: <%= config[:central_secret][:facebook][:key] %>
+      iv: <%= config[:central_secret][:facebook][:iv] %>
     installed_application: 
-      label: <%= node[:ymls][:central][:central_secret][:installed_application][:label] %>
-      key: <%= node[:ymls][:central][:central_secret][:installed_application][:key] %>
-      iv: <%= node[:ymls][:central][:central_secret][:installed_application][:iv] %>
+      label: <%= config[:central_secret][:installed_application][:label] %>
+      key: <%= config[:central_secret][:installed_application][:key] %>
+      iv: <%= config[:central_secret][:installed_application][:iv] %>
     account_additional_settings:
-      label: <%= node[:ymls][:central][:central_secret][:account_additional_settings][:label] %>
-      key: <%= node[:ymls][:central][:central_secret][:account_additional_settings][:key] %>
-      iv: <%= node[:ymls][:central][:central_secret][:account_additional_settings][:iv] %>
+      label: <%= config[:central_secret][:account_additional_settings][:label] %>
+      key: <%= config[:central_secret][:account_additional_settings][:key] %>
+      iv: <%= config[:central_secret][:account_additional_settings][:iv] %>
 <% end %>

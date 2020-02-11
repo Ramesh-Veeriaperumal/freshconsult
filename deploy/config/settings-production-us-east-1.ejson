@@ -165,7 +165,12 @@
         "_configure_domain_url": "api/v1/whitelabel/configure",
         "_verify_domain_url": "api/v1/whitelabel/domains/verify",
         "_remove_domain_url": "api/v1/whitelabel/domains",
-        "_lang_detect_path": "api/v1/detect/lang"
+        "_lang_detect_path": "api/v1/detect/lang",
+        "envoy_egress": {
+          "_host_address": "0.0.0.0",
+          "_host_port": "8183",
+          "_lang_host_address": "0.0.0.0",
+          "_lang_host_port": "8184"
       },
       "product_feedback": {
         "api_key": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:wLwvFyTvf/39xqoMzKxypJ7caJJ7NePd:BQryuMxBdjBrTGYovifjBaM4yHS6hJdkhMk1WGJwsim9dxkL]",
@@ -1931,7 +1936,12 @@
           "service_auth_token": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:uSmONz57Zn4LfZot7a/S3IP4RRQYj5f8:Y6RD6+tnpmkj/xOC9+X1na0t5EOdt3RhMuAMbPwzA80GkEKIzs2QTUpul19JutaX]",
           "_host_name": "search.internal.poduseast1.freshdesk.com",
           "_product_name": "freshdesk",
-          "_search_service": "search-service.internal.poduseast1.freshdesk.com"
+          "_search_service": "search-service.internal.poduseast1.freshdesk.com",
+          "envoy_egress": {
+            "_v2_host_address": "0.0.0.0",
+            "_v2_host_port": "8185",
+            "_search_service_address": "0.0.0.0",
+            "_search_service_port": "8186"
         },
         "_count": [
           {
@@ -2081,7 +2091,11 @@
             "_label": "account_additional_settings"
           }    
         },
-        "_api_endpoint": "https://central.freshworksapi.com/collector"
+        "_api_endpoint": "https://central.freshworksapi.com/collector",
+        "envoy_egress": {
+          "_endpoint_address": "0.0.0.0",
+          "_endpoint_port": "8187",
+          "_endpoint_path": "/collector"
       },
       "channel_api_keys": {
         "zapier": {
@@ -2215,7 +2229,10 @@
         "signing_key": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:MFWntNStIR7Iaatm9CdwFsLtCk7Ui92F:KMdtFyNAInlZGXRuZjKsXCEqYHsbd3f3Jy9Pi2zTXrVspZzw2y8fShcH25tc3cWr8iItTN4MpkI/cFoxBuWHiFMu07gVNM61NZ6buIImY3U1UPdDqlzy/TK8ow32i+dif94dzyGdmON6bzG5CKrUVh6dVwgBnGeZ5JyxmRJ52aL6W6LbLTfwioonBIQSxUHW]",
         "email_cipher_key": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:57o07Zg7SDtVv2rcrmQ0K7O5sTFTe09F:ta/M5+oLDfoR6+G85eouANgom092Jx40E9G93R5+h7OHRYYkICIy6R87nLjbp2XYMQQC60E=]",
         "_jwt_default_expiry": "30",
-        "_service_url": "proactiveservice-us-internal.freshdesk.com"
+        "_service_url": "proactiveservice-us-internal.freshdesk.com",
+        "envoy_egress": {
+          "_service_address": "0.0.0.0",
+          "_service_port": "8188"
       },
       "facebook_gateway": {
         "jwt_secret": "EJ[1:fSBlu9UF3ctuDy6VlWBjM0ojLfQHA1nDQrSrFL8BFHo=:LVtHQ0eVB9X+YvR/AU7M6u9iKspwwCHw:1NUaZeTZAGWQX5o3lmzgiMEYztWX3VZ4aA2ij1Cns1A=]",
@@ -2264,7 +2281,11 @@
         "_end_point": "accounts-us.freshworks.com",
         "_product_domain": "freshdesk.com",
         "_freshid_request_timeout": 1,
-        "_mobile_deep_link_protocol": "com.freshworks.freshdesk"
+        "_mobile_deep_link_protocol": "com.freshworks.freshdesk",
+        "envoy_egress": {
+          "_address": "0.0.0.0",
+          "_port": "8182"
+        }
       },
       "fluffy": {
         "_host": "fluffy-us.internal.poduseast1.freshdesk.com",
