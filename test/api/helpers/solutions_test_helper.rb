@@ -132,11 +132,47 @@ module SolutionsTestHelper
     resp
   end
 
+  def channel_api_solution_article_pattern(article)
+    ret_hash = private_api_solution_article_pattern(article, expected_output = {}, ignore_extra_keys = true, user = nil, channel_api = true)
+    article = article.reload
+    ret_hash[:author_id] = article.user && article.user.helpdesk_agent ? article.user_id : nil
+    ret_hash[:author_name] = article.user && article.user.helpdesk_agent ? article.user.try(:name) : nil
+    draft = expected_output[:exclude_draft] ? nil : article.draft
+    ret_hash[:draft_present] = draft.present?
+    folder_hash = enriched_folder_pattern(article.solution_folder_meta, article.language_code)
+    category_hash = enriched_category_pattern(article.solution_folder_meta.solution_category_meta, article.language_code)
+    ret_hash[:folder] = folder_hash if folder_hash
+    ret_hash[:category] = category_hash if category_hash
+    ret_hash[:language_id] = article.language_id
+
+    if ret_hash[:status] == Solution::Constants::STATUS_KEYS_BY_TOKEN[:published]
+      ret_hash[:published_by] = article.recent_author && article.recent_author.helpdesk_agent ? article.recent_author.try(:name) : nil
+      ret_hash[:published_at] = article.modified_at.try(:utc)
+    end
+
+    ret_hash
+  end
+
   def solution_article_pattern_index(_expected_output = {}, _ignore_extra_keys = true, article)
     solution_article_pattern(expected_output = {}, ignore_extra_keys = true, article)
   end
 
-  def private_api_solution_article_pattern(article, expected_output = {}, ignore_extra_keys = true, user = nil)
+  def construct_convo_payload(article, time_now)
+    article.reload
+    [{
+      Type: 'article',
+      ConvoId: format('%{article_meta_id}-%{lang_code}', article_meta_id: article.parent_id, lang_code: article.language_code),
+      UserId: User.current.id.to_s,
+      exp: (time_now.to_i + 1_296_000)
+    },
+     { typ: 'JWT', alg: 'HS256' }]
+  end
+
+  def decrypted_convo_token(convo_token)
+    JWT.decode(convo_token, CollabConfig['secret_key'])
+  end
+
+  def private_api_solution_article_pattern(article, expected_output = {}, ignore_extra_keys = true, user = nil, channel_api = false)
     article.reload
     draft = expected_output[:exclude_draft] ? nil : article.draft
     ret_hash = if draft
@@ -144,26 +180,28 @@ module SolutionsTestHelper
                else
                  solution_article_pattern(expected_output, ignore_extra_keys, article)
                end
-    if draft
-      ret_hash[:draft_locked] = draft.locked?
-      ret_hash[:draft_modified_by] = draft.user_id
-      ret_hash[:draft_modified_at] = %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
-      ret_hash[:draft_updated_at] = %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+    unless channel_api
+      if draft
+        ret_hash[:draft_locked] = draft.locked?
+        ret_hash[:draft_modified_by] = draft.user_id
+        ret_hash[:draft_modified_at] = %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+        ret_hash[:draft_updated_at] = %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+      end
+      ret_hash[:folder_visibility] = article.solution_folder_meta.visibility
+      ret_hash[:path] = (expected_output[:path] || article.to_param)
+      ret_hash[:modified_at] = %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+      ret_hash[:modified_by] = article.modified_by
+      ret_hash[:language_id] = article.language_id
+      ret_hash[:visibility] = { user.id => article.parent.visible?(user) || false } if user
+      ret_hash[:translation_summary] = translation_summary_pattern(article.parent) if @account.multilingual? && expected_output[:action] != :filter && !expected_output[:exclude_translation_summary]
     end
     ret_hash[:draft_present] = expected_output[:draft_present] || draft.present?
-    ret_hash[:path] = expected_output[:path] || article.to_param
-    ret_hash[:modified_at] = %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
-    ret_hash[:modified_by] = article.modified_by
     ret_hash[:outdated] = article.outdated if @account.multilingual?
-    ret_hash[:visibility] = { user.id => article.parent.visible?(user) || false } if user
-    ret_hash[:folder_visibility] = article.solution_folder_meta.visibility
-    ret_hash[:language_id] = article.language_id
     ret_hash[:language] = article.language_code
     if expected_output[:action] == :filter
       ret_hash[:last_modifier] = ret_hash[:draft_modified_by] || ret_hash[:modified_by]
       ret_hash[:last_modified_at] = ret_hash[:draft_modified_at] || ret_hash[:modified_at]
     end
-    ret_hash[:translation_summary] = translation_summary_pattern(article.parent) if @account.multilingual? && expected_output[:action] != :filter && !expected_output[:exclude_translation_summary]
 
     if Account.current.article_approval_workflow_enabled?
       ret_hash[:approval_data] = { approval_status: approval_record(article.parent).try(:approval_status), approver_id: approver_record(article.parent).try(:approver_id), user_id: approval_record(article.parent).try(:user_id) }
@@ -386,7 +424,7 @@ module SolutionsTestHelper
   def fetch_my_drafts
     return [] if @my_drafts.empty?
 
-     @my_drafts.joins('LEFT JOIN helpdesk_approvals ON solution_drafts.article_id = helpdesk_approvals.approvable_id').where('helpdesk_approvals.id is NULL')
+    @my_drafts.joins('LEFT JOIN helpdesk_approvals ON solution_drafts.article_id = helpdesk_approvals.approvable_id').where('helpdesk_approvals.id is NULL')
   end
 
   def get_article_ids(articles)
@@ -505,6 +543,30 @@ module SolutionsTestHelper
       name: folder.name,
       language: folder.language_code
     }
+  end
+
+  def enriched_folder_pattern(folder_meta, lang_code)
+    folder = folder_meta.safe_send("#{lang_code}_available?") ? folder_meta.safe_send("#{lang_code}_folder") : folder_meta.primary_folder
+    unless folder_meta.is_default
+      resp_hash = {
+        id: folder.id,
+        name: folder.name,
+        visibility: folder_meta.visibility
+      }
+      resp_hash[:company_names] = company_names if folder.visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users]
+      resp_hash
+    end
+  end
+
+  def enriched_category_pattern(category_meta, lang_code)
+    category = category_meta.safe_send("#{lang_code}_available?") ? category_meta.safe_send("#{lang_code}_category") : category_meta.primary_category
+    unless category_meta.is_default
+      {
+        id: category.id,
+        name: category.name,
+        visible_in_portals: Account.current.portals.where(id: category.parent.portal_solution_categories.pluck(:portal_id)).pluck(:name)
+      }
+    end
   end
 
   def untranslated_category_pattern(category_meta, lang_code)

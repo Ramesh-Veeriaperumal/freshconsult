@@ -1,0 +1,12 @@
+title: data
+type: object
+description: Search In Freshworks User Info Response
+properties: 
+  name: 
+    type: string
+  phone: 
+    type: string
+  mobile: 
+    type: string
+  job_title: 
+    type: string

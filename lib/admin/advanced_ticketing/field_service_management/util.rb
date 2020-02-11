@@ -227,8 +227,8 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         WIDGETS_NAME_TO_TYPE_MAP.each do |widget_name, type|
           if type == WIDGET_MODULE_TOKEN_BY_NAME[SCORE_CARD]
             position = { x: scorecard_x_postion, y: Y_AXIS_POSITION[:scorecard] }
-            if widget_name == SERVICE_TASKS_UNASSIGNED_WIDGET_NAME && Account.current.default_unassigned_service_tasks_filter_enabled?
-              dashboard_object.add_widget(type, position, I18n.t('helpdesk.tickets.views.unassigned_service_tasks'), ticket_filter_id: 'unassigned_service_tasks')
+            if widget_name == SERVICE_TASKS_UNASSIGNED_WIDGET_NAME || ((FSM_TICKET_FILTERS.include? widget_name) && Account.current.fsm_custom_to_default_filter_enabled?)
+              dashboard_object.add_widget(type, position, I18n.t("fsm_dashboard.widgets.#{widget_name}"), ticket_filter_id: widget_name)
             else
               dashboard_object.add_widget(type, position, I18n.t("fsm_dashboard.widgets.#{widget_name}"), options[widget_name])
             end
@@ -260,31 +260,23 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       def get_fsm_filter_conditions
         start_time = Account.current.custom_date_time_fields_from_cache.find { |x| x.name == TicketFilterConstants::FSM_APPOINTMENT_START_TIME + "_#{Account.current.id}" }
         end_time = Account.current.custom_date_time_fields_from_cache.find { |x| x.name == TicketFilterConstants::FSM_APPOINTMENT_END_TIME + "_#{Account.current.id}" }
+        filter_conditions = {}
+        unless Account.current.fsm_custom_to_default_filter_enabled?
+          filter_conditions = { FSM_TICKET_FILTERS[0] => {
+            name: I18n.t('fsm_dashboard.widgets.service_tasks_due_today'),
+            filter: [
+              { 'condition' => "flexifields.#{start_time.column_name}", 'operator' => 'is', 'value' => 'today', 'ff_name' => start_time.name.to_s }
+            ]
+          },
 
-        filter_conditions = {
-                              FSM_TICKET_FILTERS[0] => {
-                                name: I18n.t('fsm_dashboard.widgets.service_tasks_due_today'),
-                                filter: [
-                                  { 'condition' => "flexifields.#{start_time.column_name}", "operator" => 'is', 'value' => 'today', 'ff_name' => "#{start_time.name}" }
-                                ]
-                              },
-
-                              FSM_TICKET_FILTERS[1] => {
-                                name: I18n.t('fsm_dashboard.widgets.unassigned_service_tasks'),
-                                filter: [
-                                  { 'condition' => 'responder_id', 'operator' => 'is_in', 'value' => '-1', 'ff_name' => 'default' }
-                                ]
-                              },
-
-                              FSM_TICKET_FILTERS[2] => {
-                                name: I18n.t('fsm_dashboard.widgets.overdue_service_tasks'),
-                                filter: [
-                                  { 'condition' => "flexifields.#{end_time.column_name}", 'operator' => 'is', 'value' => 'in_the_past', 'ff_name' => "#{end_time.name}" }
-                                ]
-                              }
-                            }
-        filter_conditions.except!(FSM_TICKET_FILTERS[1]) if Account.current.default_unassigned_service_tasks_filter_enabled?
-        all_filter_conditions = filter_conditions.each { |k,v| v[:filter] += COMMON_FILTER_CONDITIONS }
+                                FSM_TICKET_FILTERS[2] => {
+                                  name: I18n.t('fsm_dashboard.widgets.overdue_service_tasks'),
+                                  filter: [
+                                    { 'condition' => "flexifields.#{end_time.column_name}", 'operator' => 'is', 'value' => 'in_the_past', 'ff_name' => end_time.name.to_s }
+                                  ]
+                                } }
+        end
+        filter_conditions.each { |k, v| v[:filter] += COMMON_FILTER_CONDITIONS }
       end
 
       def cleanup_fsm

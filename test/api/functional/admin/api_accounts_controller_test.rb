@@ -8,6 +8,8 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
   include ApiAccountHelper
   include Redis::OthersRedis
   include SubscriptionTestHelper
+  include UsersHelper
+  include PrivilegesHelper
   CHARGEBEE_SUBSCRIPTION_BASE_URL = 'https://freshpo-test.chargebee.com/api/v1/subscriptions'.freeze
   SUPPORT_CONTACTS_RESPONSE = [{ 'active' => true, 'address' => nil, 'company_id' => 854_881,
                                  'description' => nil, 'email' => 'sample@freshdesk.com', 'id' => 28_271_068,
@@ -260,6 +262,33 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     @account.rollback(:downgrade_policy)
     delete :reactivate, controller_params(version: 'private')
     assert_response 404
+  end
+
+  def test_agents_limit
+    add_privilege(User.current, :manage_users)
+    Subscription.any_instance.stubs(:state).returns(Subscription::TRIAL)
+    agent1 = add_test_agent(@account).agent
+    agent1.occasional = false
+    agent1.save!
+    agent2 = add_test_agent(@account).agent
+    agent2.occasional = true
+    agent2.save!
+    Subscription.any_instance.stubs(:agent_limit).returns(3)
+    DayPassConfig.any_instance.stubs(:available_passes).returns(5)
+    @account.revoke_feature(:field_service_management)
+    @account.save!
+    get :agents_limit, controller_params(version: 'private')
+    assert_response 200
+    json_response = JSON.parse(response.body)
+    assert_equal json_response['support_agent']['full_time_agent_count'], 2
+    assert_equal json_response['support_agent']['occasional_agent_count'], 1
+    assert_equal json_response['support_agent']['license_available'], 1
+    assert_equal json_response['day_passes_available'], 5
+    assert_equal json_response['field_agent'], nil
+  ensure
+    Subscription.any_instance.unstub(:agent_limit)
+    DayPassConfig.any_instance.unstub(:available_passes)
+    Subscription.any_instance.unstub(:state)
   end
 
   private

@@ -212,10 +212,10 @@ module Ember
       valid_filters = %w(
         spam deleted overdue pending open due_today new
         monitored_by new_and_my_open all_tickets unresolved
-        article_feedback unresolved_article_feedback my_article_feedback unassigned_service_tasks
+        article_feedback unresolved_article_feedback my_article_feedback
         watching on_hold
         raised_by_me shared_by_me shared_with_me
-        unresolved_service_tasks
+        unresolved_service_tasks unassigned_service_tasks overdue_service_tasks service_tasks_due_today service_tasks_starting_today
       )
       match_json([bad_request_error_pattern(:filter, :not_included, list: valid_filters.join(', '))])
       Account.current.unstub(:freshconnect_enabled?)
@@ -3590,7 +3590,9 @@ module Ember
       2.times do
         create_ticket
       end
-      initial_count = ticket_data_export(DataExport::EXPORT_TYPE[:ticket]).count
+      initial_data_exports = ticket_data_export(DataExport::EXPORT_TYPE[:ticket])
+      initial_count = initial_data_exports.count
+      initial_data_exports_ids = initial_data_exports.map { |x| x.id }
       params_hash = ticket_export_param.merge(format: 'xls')
       Sidekiq::Testing.inline! do
         post :export_csv, construct_params({ version: 'private' }, params_hash)
@@ -3598,6 +3600,7 @@ module Ember
       current_data_exports = ticket_data_export(DataExport::EXPORT_TYPE[:ticket])
       assert_equal initial_count, current_data_exports.length - 1
       assert_equal current_data_exports.last.status, DataExport::EXPORT_STATUS[:completed]
+      current_data_exports.reject! { |x| initial_data_exports_ids.include?(x.id) }
       assert current_data_exports.last.attachment.content_file_name.ends_with?('.xls')
       @account.rollback(:ticket_contact_export)
     ensure

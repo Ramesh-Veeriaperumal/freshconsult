@@ -963,6 +963,55 @@ module Ember
       end
     end
 
+    def test_filter_unassigned_service_tasks
+      setup_field_service_management_feature do
+        filter_name = 'unassigned_service_tasks'
+        get :index, controller_params(version: 'private', filter: filter_name)
+        assert_response 200
+        match_json(private_api_ticket_index_default_filter_pattern(filter_name, 'appointment_start_time', 'asc'))
+        match_default_filter_response_with_es_enabled(filter_name, 'appointment_start_time', 'asc')
+      end
+    end
+
+    def test_filter_overdue_service_tasks
+      Account.current.launch(:fsm_custom_to_default_filter)
+      setup_field_service_management_feature do
+        filter_name = 'overdue_service_tasks'
+        get :index, controller_params(version: 'private', filter: filter_name)
+        assert_response 200
+        match_json(private_api_ticket_index_default_filter_pattern(filter_name, 'appointment_start_time', 'asc'))
+        match_default_filter_response_with_es_enabled(filter_name, 'appointment_start_time', 'asc')
+      end
+    ensure
+      Account.current.rollback(:fsm_custom_to_default_filter)
+    end
+
+    def test_filter_service_tasks_starting_today
+      Account.current.launch(:fsm_custom_to_default_filter)
+      setup_field_service_management_feature do
+        filter_name = 'service_tasks_starting_today'
+        get :index, controller_params(version: 'private', filter: filter_name)
+        assert_response 200
+        match_json(private_api_ticket_index_default_filter_pattern(filter_name, 'appointment_start_time', 'asc'))
+        match_default_filter_response_with_es_enabled(filter_name, 'appointment_start_time', 'asc')
+      end
+    ensure
+      Account.current.rollback(:fsm_custom_to_default_filter)
+    end
+
+    def test_filter_service_tasks_due_today
+      Account.current.launch(:fsm_custom_to_default_filter)
+      setup_field_service_management_feature do
+        filter_name = 'service_tasks_due_today'
+        get :index, controller_params(version: 'private', filter: filter_name)
+        assert_response 200
+        match_json(private_api_ticket_index_default_filter_pattern(filter_name, 'appointment_start_time', 'asc'))
+        match_default_filter_response_with_es_enabled(filter_name, 'appointment_start_time', 'asc')
+      end
+    ensure
+      Account.current.rollback(:fsm_custom_to_default_filter)
+    end
+
     def test_order_by_appointment_start_time_asc
       setup_field_service_management_feature do
         query_hash = { '0' => query_hash_param('ticket_type', 'is_in', ['Service Task']) }

@@ -1,1 +1,8 @@
-JSON.generate(Solutions::ArticleDecorator.new(@item, draft: @item.draft, language_metric: @language_metric, prefer_published: @prefer_published).to_hash)
+resp = Solutions::ArticleDecorator.new(@item, draft: @item.draft, language_metric: @language_metric, prefer_published: @prefer_published)
+if @enrich_response
+  response_hash = resp.enriched_hash
+else
+  response_hash = resp.to_hash
+  response_hash[:collaboration] = @item.collaboration_hash if Account.current.launched?(:solutions_freshconnect) && (Account.current.collaboration_enabled? || (Account.current.freshconnect_enabled? && Account.current.freshid_integration_enabled? && (@item.app_current? || User.current.freshid_authorization)))
+end
+JSON.generate(response_hash)

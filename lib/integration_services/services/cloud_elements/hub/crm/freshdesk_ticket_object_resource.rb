@@ -2,6 +2,7 @@ module IntegrationServices::Services
   module CloudElements::Hub::Crm
     class FreshdeskTicketObjectResource < CloudElements::CloudElementsResource
       FD_TICKET_OBJECT = "freshdesk__Freshdesk_Ticket_Object__c"
+      AUTH_TOKEN_REFRESH_RETRIES_LIMIT = 5
 
       def faraday_builder(b)
         super
@@ -21,8 +22,13 @@ module IntegrationServices::Services
       def check_fields_synced?
         request_url = "#{cloud_elements_api_url}/hubs/crm/#{FD_TICKET_OBJECT}?pageSize=1"
         url  = URI.encode(request_url.strip)
-        response = http_get url
-        response.status == 200
+        AUTH_TOKEN_REFRESH_RETRIES_LIMIT.times do
+          response = http_get url
+          next if response.status == 503
+
+          return response.status == 200
+        end
+        false
       end
 
       def create request_body

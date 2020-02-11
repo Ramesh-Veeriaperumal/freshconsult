@@ -115,7 +115,7 @@ module Ember
             assert dashboard.present?
             widgets = dashboard.first.widgets
             assert_equal widgets.count, FSM_WIDGETS_COUNT
-            assert Account.current.ticket_filters.count == old_ticket_filter_count + FSM_TICKET_FILTER_COUNT
+            assert Account.current.ticket_filters.count == old_ticket_filter_count + FSM_TICKET_FILTER_COUNT - 3
             pick_list_id = Account.current.ticket_types_from_cache.find { |x| x.value == SERVICE_TASK_TYPE }.id
             widget = widgets.find { |element| element.name == I18n.t('fsm_dashboard.widgets.' + SERVICE_TASKS_INCOMING_TREND_WIDGET_NAME) }
             assert_equal widget[:config_data][:ticket_type], pick_list_id
@@ -628,10 +628,9 @@ module Ember
         Account.any_instance.unstub(:denormalized_flexifields_enabled?)
       end
 
-      def test_unassigned_service_task_filter_present_with_fsm_enabled_with_lp
+      def test_unassigned_service_task_filter_present_with_fsm_enabled
         enable_fsm do
           begin
-            Account.current.launch(:default_unassigned_service_tasks_filter)
             Account.current.ticket_filters.where(name: 'Unassigned service tasks').destroy_all
             Account.current.dashboards.destroy_all
             Sidekiq::Testing.inline! do
@@ -643,24 +642,95 @@ module Ember
             assert widget.present?
             assert_nil filter
           ensure
-            Account.current.rollback(:default_unassigned_service_tasks_filter)
+            destroy_fsm_fields_and_section
           end
         end
       end
 
-      def test_unassigned_service_task_filter_present_with_fsm_enabled_without_lp
+      def test_service_tasks_due_today_filter_present_with_fsm_enabled_with_lp
         enable_fsm do
           begin
-            Account.current.ticket_filters.where(name: 'Unassigned service tasks').destroy_all
+            Account.current.launch(:fsm_custom_to_default_filter)
+            Account.current.ticket_filters.where(name: 'Service tasks due today').destroy_all
             Account.current.dashboards.destroy_all
             Sidekiq::Testing.inline! do
               post :create, construct_params({ version: 'private' }, name: 'field_service_management')
             end
             dashboard = Account.current.dashboards.where(name: I18n.t('fsm_dashboard.name'))
-            filter = Account.current.ticket_filters.find_by_name('Unassigned service tasks')
-            widget = dashboard.first.widgets.select { |x| x.config_data[:ticket_filter_id] == 'unassigned_service_tasks' }
+            filter = Account.current.ticket_filters.find_by_name('Service tasks due today')
+            widget = dashboard.first.widgets.select { |x| x.config_data[:ticket_filter_id] == 'service_tasks_due_today' }
+            assert widget.present?
+            assert_nil filter
+          ensure
+            Account.current.rollback(:fsm_custom_to_default_filter)
+            destroy_fsm_fields_and_section
+          end
+        end
+      end
+
+      def test_service_tasks_due_today_present_with_fsm_enabled_without_lp
+        enable_fsm do
+          begin
+            Account.any_instance.stubs(:fsm_custom_to_default_filter_enabled?).returns(false)
+            Account.current.ticket_filters.where(name: 'Service tasks due today').destroy_all
+            Account.current.dashboards.destroy_all
+            Sidekiq::Testing.inline! do
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+            end
+            dashboard = Account.current.dashboards.where(name: I18n.t('fsm_dashboard.name'))
+            filter = Account.current.ticket_filters.find_by_name('Service tasks due today')
+            widget = dashboard.first.widgets.select { |x| x.config_data[:ticket_filter_id] == 'service_tasks_due_today' }
+            custom_widget = dashboard.first.widgets.select { |x| x.name == 'Service tasks due today' && x.ticket_filter_id.present? }
+            assert custom_widget.present?
             assert widget.blank?
             assert_not_nil filter
+          ensure
+            destroy_fsm_fields_and_section
+            Account.any_instance.unstub(:fsm_custom_to_default_filter_enabled?)
+          end
+        end
+      end
+
+      def test_overdue_service_tasks_filter_present_with_fsm_enabled_with_lp
+        enable_fsm do
+          begin
+            Account.current.launch(:fsm_custom_to_default_filter)
+            Account.current.ticket_filters.where(name: 'Overdue service tasks').destroy_all
+            Account.current.dashboards.destroy_all
+            Sidekiq::Testing.inline! do
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+            end
+            dashboard = Account.current.dashboards.where(name: I18n.t('fsm_dashboard.name'))
+            filter = Account.current.ticket_filters.find_by_name('Overdue service tasks')
+            widget = dashboard.first.widgets.select { |x| x.config_data[:ticket_filter_id] == 'overdue_service_tasks' }
+            assert widget.present?
+            assert_nil filter
+          ensure
+            Account.current.rollback(:fsm_custom_to_default_filter)
+            destroy_fsm_fields_and_section
+          end
+        end
+      end
+
+      def test_overdue_service_tasks_filter_present_with_fsm_enabled_without_lp
+        enable_fsm do
+          begin
+            Account.any_instance.stubs(:fsm_custom_to_default_filter_enabled?).returns(false)
+            Account.current.ticket_filters.where(name: 'Overdue service tasks').destroy_all
+            Account.current.dashboards.destroy_all
+            Sidekiq::Testing.inline! do
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+            end
+            dashboard = Account.current.dashboards.where(name: I18n.t('fsm_dashboard.name'))
+            filter = Account.current.ticket_filters.find_by_name('Overdue service tasks')
+            widget = dashboard.first.widgets.select { |x| x.config_data[:ticket_filter_id] == 'overdue_service_tasks' }
+            custom_widget = dashboard.first.widgets.select { |x| x.name == 'Overdue service tasks' && x.ticket_filter_id.present? }
+            assert custom_widget.present?
+            assert widget.blank?
+            assert_not_nil filter
+          ensure
+            destroy_fsm_fields_and_section
+            Account.any_instance.unstub(:fsm_custom_to_default_filter_enabled?)
           end
         end
       end

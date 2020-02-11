@@ -6,7 +6,7 @@ class Middleware::PodRedirect
 
   def call(env)
     env['SHARD'] ||= ShardMapping.lookup_with_domain(env['HTTP_HOST'])
-    if Redis::RoutesRedis.pod_redirection_enabled? && env['SHARD'] && env['SHARD'].pod_info != PodConfig['CURRENT_POD']
+    if env['SHARD'] && env['SHARD'].pod_info != PodConfig['CURRENT_POD']
       Rails.logger.info "Redirecting to the correct POD -> #{env['SHARD'].pod_info}"
       response = Rack::Response.new
       # Nginx version >= 1.10.x will not preserve the original request method for the internal

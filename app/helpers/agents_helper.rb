@@ -211,4 +211,6 @@ module AgentsHelper
   def edit?
     action_name == 'edit'
   end
+
+  alias available_support_agents available_agents
 end

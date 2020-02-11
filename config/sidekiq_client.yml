@@ -386,6 +386,8 @@ defaults: &defaults
     - [kbase_approval_notification_worker]
     - [freshcaller_update_agents]
     - [ticket_field_job]
+    - [search_analytics_account_cleanup]
+    - [search_analytics_tickets_cleanup]
 
 development:
   <<: *defaults

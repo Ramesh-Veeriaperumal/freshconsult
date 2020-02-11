@@ -1,0 +1,1 @@
+JSON.generate(AccountDecorator.new(current_account).agents_limit)

@@ -223,6 +223,7 @@ module Freshquery
     fq_schema 'ticketanalytics', FqTicketAnalyticsHelper.instance, 8192, false do
       attribute :priority, choices: :priorities
       attribute :status, choices: :status_ids
+      attribute :display_id, type: :positive_integer
       attribute :group_id, :internal_group_id,  type: :positive_integer
       attribute :agent_id, transform: :responder_id, type: :positive_integer
       attribute :internal_agent_id, :sl_skill_id, type: :positive_integer

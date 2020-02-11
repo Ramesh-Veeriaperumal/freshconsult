@@ -384,6 +384,9 @@ window.App = window.App || {};
       current_plan = btn.data("plan"),
       plan_cost = btn.data("planCost"),
       has_free_agents = btn.data("freePlan");
+      if(!btn.hasClass('suspended-plan-button')) {
+        jQuery(".suspended-plan-button").show();
+      }
       var billing_template = $("#billing-template");
       $(".toggle-omni-billing").hide();
       $(".toggle-fsm-billing").hide();
@@ -479,7 +482,7 @@ window.App = window.App || {};
           var billing_toggle = $(".omni-billing-edit .toggle-button");
           billing_template.removeClass("sloading inner-form-hide").html(data);
 
-          if($this.subscription_state === 'trial' || (!$this.editBilling && !should_disabled_update) || plan_changed) {
+          if($this.subscription_state === 'trial' || $this.subscription_state === 'suspended' || (!$this.editBilling && !should_disabled_update) || plan_changed) {
             $(".billing-submit").removeAttr("disabled");
           } else {
             $(".billing-submit").attr("disabled", "disabled");

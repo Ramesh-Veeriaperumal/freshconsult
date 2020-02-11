@@ -22,7 +22,7 @@ module Dashboard::Custom::WidgetConfigValidationMethods
 
   def validate_ticket_filter_id(ticket_filter_id)
     if ticket_filter_id.to_i.zero?
-      Helpdesk::Filters::CustomTicketFilter::DEFAULT_FILTERS.keys.include?(ticket_filter_id)
+      Helpdesk::Filters::CustomTicketFilter::DEFAULT_FILTERS.key?(ticket_filter_id) || ::Admin::AdvancedTicketing::FieldServiceManagement::Constant::FSM_TICKET_FILTERS.include?(ticket_filter_id)
     else
       ticket_filter = Account.current.ticket_filters.find_by_id(ticket_filter_id.to_i)
       ticket_filter && !ticket_filter.accessible.only_me?

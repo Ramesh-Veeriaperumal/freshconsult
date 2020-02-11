@@ -1,0 +1,10 @@
+title: data
+type: object
+description: Return Agent type specific payload
+properties: 
+  license_available: 
+    type: integer
+  full_time_agent_count: 
+    type: integer
+  occasional_agent_count: 
+    type: integer

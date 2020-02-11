@@ -47,12 +47,58 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     { 'condition' => 'responder_id', 'operator' => 'is_in', 'value' => -1 }
   end
 
+  def self.fetch_appointment_time
+    appointment_time = {}
+    appointment_time[:start_time] = Account.current.custom_date_time_fields_from_cache.find { |x| x.name == TicketFilterConstants::FSM_APPOINTMENT_START_TIME + "_#{Account.current.id}" }
+    appointment_time[:end_time] = Account.current.custom_date_time_fields_from_cache.find { |x| x.name == TicketFilterConstants::FSM_APPOINTMENT_END_TIME + "_#{Account.current.id}" }
+    appointment_time
+  end
+
+  def self.appointment_time_in_the_past_condition
+    appointment_time = Helpdesk::Filters::CustomTicketFilter.fetch_appointment_time
+    { 'condition' => "flexifields.#{appointment_time[:end_time].column_name}", 'operator' => 'is', 'value' => 'in_the_past', 'ff_name' => appointment_time[:end_time].name.to_s }
+  end
+
+  def self.appointment_time_ends_today_condition
+    appointment_time = Helpdesk::Filters::CustomTicketFilter.fetch_appointment_time
+    { 'condition' => "flexifields.#{appointment_time[:end_time].column_name}", 'operator' => 'is', 'value' => 'today', 'ff_name' => appointment_time[:end_time].name.to_s }
+  end
+
+  def self.appointment_time_starts_today_condition
+    appointment_time = Helpdesk::Filters::CustomTicketFilter.fetch_appointment_time
+    { 'condition' => "flexifields.#{appointment_time[:start_time].column_name}", 'operator' => 'is', 'value' => 'today', 'ff_name' => appointment_time[:start_time].name.to_s }
+  end
+
   def self.open_pending_condition
     { 'condition' => 'status', 'operator' => 'is_in', 'value' => "#{OPEN}, #{PENDING}" }
   end
 
   def unassigned_service_tasks_filter
     [Helpdesk::Filters::CustomTicketFilter.unassigned_condition,
+     Helpdesk::Filters::CustomTicketFilter.open_pending_condition,
+     Helpdesk::Filters::CustomTicketFilter.service_task_type_condition,
+     Helpdesk::Filters::CustomTicketFilter.deleted_condition(false),
+     Helpdesk::Filters::CustomTicketFilter.spam_condition(false)]
+  end
+
+  def service_tasks_starting_today_filter
+    [Helpdesk::Filters::CustomTicketFilter.open_pending_condition,
+     Helpdesk::Filters::CustomTicketFilter.appointment_time_starts_today_condition,
+     Helpdesk::Filters::CustomTicketFilter.service_task_type_condition,
+     Helpdesk::Filters::CustomTicketFilter.deleted_condition(false),
+     Helpdesk::Filters::CustomTicketFilter.spam_condition(false)]
+  end
+
+  def overdue_service_tasks_filter
+    [Helpdesk::Filters::CustomTicketFilter.appointment_time_in_the_past_condition,
+     Helpdesk::Filters::CustomTicketFilter.open_pending_condition,
+     Helpdesk::Filters::CustomTicketFilter.service_task_type_condition,
+     Helpdesk::Filters::CustomTicketFilter.deleted_condition(false),
+     Helpdesk::Filters::CustomTicketFilter.spam_condition(false)]
+  end
+
+  def service_tasks_due_today_filter
+    [Helpdesk::Filters::CustomTicketFilter.appointment_time_ends_today_condition,
      Helpdesk::Filters::CustomTicketFilter.open_pending_condition,
      Helpdesk::Filters::CustomTicketFilter.service_task_type_condition,
      Helpdesk::Filters::CustomTicketFilter.deleted_condition(false),
@@ -70,7 +116,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     [{ "condition" => "helpdesk_tickets.display_id", "operator" => "is_in", "value" => display_ids.join(",")},
       spam_condition(false), deleted_condition(false)]
   end
-  
+
   # This filter function fetches data from collaboration/tickets.rb; that fetches data from collab microservice
   def ongoing_collab_filter
     @collab_tickets ||= Helpdesk::Filters::CustomTicketFilter.collab_filter_condition(Collaboration::Ticket.new.fetch_collab_tickets)
@@ -131,9 +177,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                       "unresolved" => [unresolved_condition, spam_condition(false), deleted_condition(false)],
                       "article_feedback" => [spam_condition(false), deleted_condition(false)],
                       'unresolved_article_feedback' => [unresolved_condition, spam_condition(false), deleted_condition(false)],
-                      'my_article_feedback' => [spam_condition(false), deleted_condition(false)],
-                      'unassigned_service_tasks' => [unassigned_condition, open_pending_condition, service_task_type_condition, deleted_condition(false), spam_condition(false)]
-                   }
+                      'my_article_feedback' => [spam_condition(false), deleted_condition(false)]
+  }
   DEFAULT_FILTERS_FOR_SEARCH = { 
                       "spam" => "spam:true AND deleted:false",
                       "deleted" =>  "deleted:true",
@@ -143,7 +188,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                       "new" => "spam:false AND deleted:false AND agent_id:null AND status:#{OPEN}",
                    }
 
-  DYNAMIC_DEFAULT_FILTERS = ['on_hold', 'raised_by_me', 'ongoing_collab', 'shared_by_me', 'shared_with_me', 'unresolved_service_tasks', 'unassigned_service_tasks'].freeze
+  DYNAMIC_DEFAULT_FILTERS = (['on_hold', 'raised_by_me', 'ongoing_collab', 'shared_by_me', 'shared_with_me'] + Admin::AdvancedTicketing::FieldServiceManagement::Constant::FSM_TICKET_FILTERS).freeze
   USER_COLUMNS = ["responder_id", "helpdesk_subscriptions.user_id", "internal_agent_id"]
   GROUP_COLUMNS = ["group_id", "internal_group_id"]
   SCHEMA_LESS_COLUMNS = [
@@ -267,6 +312,12 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       unresolved_service_tasks_filter
     elsif filter_name == 'unassigned_service_tasks'
       unassigned_service_tasks_filter
+    elsif filter_name == 'overdue_service_tasks'
+      overdue_service_tasks_filter
+    elsif filter_name == 'service_tasks_due_today'
+      service_tasks_due_today_filter
+    elsif filter_name == 'service_tasks_starting_today'
+      service_tasks_starting_today_filter
     else
       DEFAULT_FILTERS.fetch(filter_name, DEFAULT_FILTERS[default_value]).dclone
     end
@@ -287,6 +338,11 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         safe_send("#{filter_name}_filter")
       elsif 'unassigned_service_tasks'.eql? filter_name
         DEFAULT_FILTERS_FOR_SEARCH['spam_deleted'] + " AND responder_id:null AND ( status:2 OR status:3 ) AND type:'#{Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE}'"
+      elsif 'overdue_service_tasks'.eql? filter_name
+        DEFAULT_FILTERS_FOR_SEARCH['spam_deleted'] + " AND fsm_appointment_end_time:<'#{Time.zone.now.ago(1.second).utc.iso8601}'  AND ( status:2 OR status:3 ) AND type:'#{Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE}'"
+      elsif 'service_tasks_due_today'.eql? filter_name
+        DEFAULT_FILTERS_FOR_SEARCH['spam_deleted'] + " AND fsm_appointment_end_time:>'#{Time.zone.now.beginning_of_day.utc.iso8601}' AND fsm_appointment_end_time:<'#{Time.zone.now.end_of_day.utc.iso8601}' AND ( status:2 OR status:3 ) AND type:'#{Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE}'"
+
       else
         DEFAULT_FILTERS_FOR_SEARCH.fetch(filter_name, DEFAULT_FILTERS_FOR_SEARCH[default_value]).dclone
       end
@@ -381,7 +437,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
     if params[:data_hash].blank?
       action_hash = default_filter(params[:filter_name], !!params[:export_fields], ['json', 'xml', 'nmobile'].include?(params[:format]))
-      if TicketFilterConstants::SORT_BY_APPOINTMENT_TIME_FILTERS.include? params[:filter_name]
+      if Admin::AdvancedTicketing::FieldServiceManagement::Constant::FSM_TICKET_FILTERS.include? params[:filter_name]
         sort_options = TicketsFilter.field_agent_sort_options
         @order = sort_options[:order_by] unless params[:wf_order]
         @order_type = sort_options[:order_type] unless params[:wf_order_type]

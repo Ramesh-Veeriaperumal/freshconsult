@@ -311,7 +311,7 @@ module Ember
       end
 
       def es_supported_filter?(filter)
-        TicketFilterConstants::ES_SUPPORTED_FILTERS.include?(filter)
+        ::Admin::AdvancedTicketing::FieldServiceManagement::Constant::FSM_TICKET_FILTERS.include?(filter)
       end
       # def ticket_filterer_params
       #   preloads = params[:include] ? (params[:include].split(',') + conditional_preload_options).compact : conditional_preload_options

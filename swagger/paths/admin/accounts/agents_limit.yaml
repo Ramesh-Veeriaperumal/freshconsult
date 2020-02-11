@@ -1,0 +1,8 @@
+get:
+  tags: [Account Agents Limit]
+  summary: Search In Freshworks 
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/agents_limit'

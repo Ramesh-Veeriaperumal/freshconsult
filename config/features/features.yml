@@ -378,6 +378,7 @@
       :secure_attachments: 373
       :next_response_sla: 374
       :fb_ad_posts: 375
+      :unlimited_multi_product: 376
 :selectable_features:
   :redis_display_id: true
   :branding: true

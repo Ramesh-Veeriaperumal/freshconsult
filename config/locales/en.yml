@@ -5385,6 +5385,7 @@ en:
       card_update_limit_exceeded: You've exceeded the hourly limit for updating your credit card. Please try again later.
       invalid_currency: The currency you have chosen is invalid.
       invoice_delay: Unable to fetch this invoice right now. Please try again after sometime.
+      multi_product_downgrade: "Your freshdesk account currently has %{product_count} products. You are allowed only 5 on the Estate plan. Please delete some products and try again."
     upgrade:
       message: Upgrade your account to unlock this feature.
       cname: Want to use your own domain here? Please upgrade your account.
@@ -5410,6 +5411,7 @@ en:
     line_items: "Line Items"
     download: "Download"
     transaction_details: "Payments and Refund details"
+  multi_product_limit: "You can create only 5 multi products."
   activate: Activate
   feedbackwidget_button_text: Label
   amount_billed_per_month: You will be billed <b>%{amount} %{period}</b>%{tax_string}
@@ -7488,6 +7490,7 @@ en:
       tickets_background: "Please wait while we update the tickets. This might take a few minutes."
       spam: "%{tickets} will be marked as spam shortly%{text}. %{undo}"
       destroy: "%{tickets} will be deleted shortly. %{undo}"
+      invalid_ticket_type: "Invalid ticket type"
 
     shared:
       announcement_hide: "Hide this message"
@@ -7878,7 +7881,11 @@ en:
         invalid_requester: Invalid requester
         ongoing_collab: My Active Huddles
         unresolved_service_tasks: Unresolved service tasks
+        service_tasks_due_today: Service tasks due today
         unassigned_service_tasks: Unassigned service tasks
+        overdue_service_tasks: Overdue service tasks
+        service_tasks_starting_today: Service tasks starting today
+
 
       note:
         posted_on: "%{user_name} on %{note_date}"

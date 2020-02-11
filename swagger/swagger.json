@@ -27,7 +27,7 @@
     },
     "/bootstrap/me/preferences": {
       "get": {
-        "summary": "Get preferences",
+        "summary": "Get agent preferences",
         "tags": [
           "Bootstrap"
         ],
@@ -47,7 +47,7 @@
         }
       },
       "put": {
-        "summary": "Update preferences",
+        "summary": "Update agent preferences",
         "tags": [
           "Bootstrap"
         ],
@@ -5253,14 +5253,12 @@
             "name": "email",
             "in": "query",
             "type": "string",
-            "description": "new email of the user",
             "required": true
-          }, 
+          },
           {
             "name": "old_email",
             "in": "query",
-            "type": "string",
-            "description": "old email of the user"
+            "type": "string"
           }
         ],
         "responses": {
@@ -12599,6 +12597,22 @@
             "description": "Bad Request Error",
             "schema": {
               "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/accounts/agents_limit": {
+      "get": {
+        "tags": [
+          "Account Agents Limit"
+        ],
+        "summary": "Search In Freshworks",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/agents_limit"
             }
           }
         }
@@ -22596,53 +22610,6 @@
         }
       }
     },
-    "search_in_freshworks": {
-      "title": "data",
-      "type": "object",
-      "description": "Search In Freshworks Response",
-      "properties": {
-        "freshid_user_info": {
-          "$ref": "#/definitions/search_in_freshworks_freshid_response"
-        },
-        "user_info": {
-          "$ref": "#/definitions/search_in_freshworks_user_info_response"
-        }
-      }
-    },
-    "search_in_freshworks_freshid_response": {
-      "title": "data",
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "phone": {
-          "type": "string"
-        },
-        "mobile": {
-          "type": "string"
-        },
-        "job_title": {
-          "type": "string"
-        }
-      }
-    },
-    "search_in_freshworks_user_info_response": {
-      "title": "data",
-      "type": "object",
-      "properties": {
-        "marked_for_hard_delete": {
-          "type": "boolean"
-        },
-        "delete": {
-          "type": "boolean"
-        },
-        "user_id": {
-          "type": "integer",
-          "format": "int64"
-        }
-      }
-    },
     "contact_note_response": {
       "type": "object",
       "allOf": [
@@ -29581,6 +29548,44 @@
         }
       }
     },
+    "agents_limit": {
+      "title": "data",
+      "type": "object",
+      "description": "Return Agent count, available seats and daypasses",
+      "properties": {
+        "support_agent": {
+          "type": "object",
+          "items": {
+            "$ref": "#/definitions/agents_limit_payload_body"
+          }
+        },
+        "field_agent": {
+          "type": "object",
+          "items": {
+            "$ref": "#/definitions/agents_limit_payload_body"
+          }
+        },
+        "day_passes_available": {
+          "type": "integer"
+        }
+      }
+    },
+    "agents_limit_payload_body": {
+      "title": "data",
+      "type": "object",
+      "description": "Return Agent type specific payload",
+      "properties": {
+        "license_available": {
+          "type": "integer"
+        },
+        "full_time_agent_count": {
+          "type": "integer"
+        },
+        "occasional_agent_count": {
+          "type": "integer"
+        }
+      }
+    },
     "configs_show": {
       "type": "object",
       "properties": {
@@ -29972,6 +29977,61 @@
         },
         "points": {
           "type": "integer"
+        }
+      }
+    },
+    "search_in_freshworks": {
+      "title": "data",
+      "type": "object",
+      "description": "Search In Freshworks Response",
+      "properties": {
+        "freshid_user_info": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/search_in_freshworks_freshid_response"
+          }
+        },
+        "user_info": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/search_in_freshworks_user_info_response"
+          }
+        }
+      }
+    },
+    "search_in_freshworks_freshid_response": {
+      "title": "data",
+      "type": "object",
+      "description": "Search In Freshworks Freshid Response",
+      "properties": {
+        "marked_for_hard_delete": {
+          "type": "boolean"
+        },
+        "delete": {
+          "type": "boolean"
+        },
+        "user_id": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "search_in_freshworks_user_info_response": {
+      "title": "data",
+      "type": "object",
+      "description": "Search In Freshworks User Info Response",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "mobile": {
+          "type": "string"
+        },
+        "job_title": {
+          "type": "string"
         }
       }
     }

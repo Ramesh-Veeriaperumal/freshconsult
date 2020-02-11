@@ -946,7 +946,7 @@
         },
         "support_ticket_rate_limit": 20,
         "support_ticket_rate_limit_period": 300,
-        "_latest_shard": "shard_36_1",
+        "_latest_shard": "shard_37",
         "_base_domain": "freshdesk.com",
         "_demo_site": "demo.freshdesk.com",
         "_sub_bcc_email": "team@freshdesk.com",
