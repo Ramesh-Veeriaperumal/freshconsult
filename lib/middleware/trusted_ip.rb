@@ -21,8 +21,11 @@ class Middleware::TrustedIp
     execute_request(env) unless api_request?(req_path)
 
     if env['SHARD'].present?
-      raise AccountBlocked if env['SHARD'].blocked?
-      raise DomainNotReady unless env['SHARD'].ok?
+      is_robots_action = ['/robots', '/robots.txt', '/robots.text'].include?(req_path)
+      unless is_robots_action
+        raise AccountBlocked if env['SHARD'].blocked?
+        raise DomainNotReady unless env['SHARD'].ok?
+      end
 
       Sharding.run_on_shard(env['SHARD'].shard_name) do
         account_id = env['SHARD'].account_id
