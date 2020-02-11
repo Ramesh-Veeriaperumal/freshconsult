@@ -277,7 +277,7 @@ class Support::TicketsController < SupportController
     def validate_params
       ticket_type = params['helpdesk_ticket']['ticket_type']
       ticket_field_values = TicketsValidationHelper.ticket_type_values
-      if ticket_type && ticket_field_values.exclude?(ticket_type)
+      if ticket_type.present? && ticket_field_values.exclude?(ticket_type)
          flash[:error] = t('helpdesk.flash.invalid_ticket_type')
          set_portal_page :submit_ticket
          render action: :new
