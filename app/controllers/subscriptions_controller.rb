@@ -283,7 +283,7 @@ class SubscriptionsController < ApplicationController
         flash[:notice] = t("subscription.error.#{error_class}", agent_count: agent_count)
         redirect_to subscription_url
       end
-      if (scoper.trial? || !current_account.launched?(:downgrade_policy)) && scoper.present_subscription.subscription_plan.unlimited_multi_product? && !scoper.subscription_plan.unlimited_multi_product? && scoper.subscription_plan.multi_product? && current_account.products.count > AccountConstants::MULTI_PRODUCT_LIMIT
+      if (scoper.trial? || !current_account.launched?(:downgrade_policy)) && current_account.has_feature?(:unlimited_multi_product) && !scoper.subscription_plan.unlimited_multi_product? && scoper.subscription_plan.multi_product? && current_account.products.count > AccountConstants::MULTI_PRODUCT_LIMIT
         flash[:notice] = t('subscription.error.multi_product_downgrade', product_count: current_account.products.count)
         redirect_to subscription_url
       end
