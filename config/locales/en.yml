@@ -73,6 +73,7 @@ en:
   freshdesk_freshsales_bundle:
     try_freshsales: Try Freshsales CRM
     buy_freshsales: Buy Freshsales CRM
+    invite_sales_team: Invite Sales Team
     integrate_freshsales: Integrate Freshsales
     invite_teammates: Invite Teammates
     discount_text_1: Pay 40% less for better support + sales

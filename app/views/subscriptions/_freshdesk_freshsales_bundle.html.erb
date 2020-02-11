@@ -11,7 +11,8 @@
   <% elsif account_state == 'integrate' %>
     <a class="btn btn-primary" id="integrate-freshsales" href="https://support.freshdesk.com/support/solutions/articles/219923-how-to-integrate-freshsales-with-freshdesk-" target="_blank"><%=t('freshdesk_freshsales_bundle.integrate_freshsales')%></a>
   <% else %>
-    <a class="btn btn-primary" id="try-freshsales"><%=t('freshdesk_freshsales_bundle.try_freshsales')%></a>
+    <a class="btn btn-primary" data-attr = false id="try-freshsales"><%=t('freshdesk_freshsales_bundle.try_freshsales')%></a>
+    <a class="btn btn-seconday" data-attr = true id="try-freshsales"><%=t('freshdesk_freshsales_bundle.invite_sales_team')%></a>
   <% end %>
   <hr>
 </div>

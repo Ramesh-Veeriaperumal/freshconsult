@@ -5,27 +5,7 @@
   <%= render :partial => "helpnote" %>
 <% end %>
 <div class="contact_fields">
-  <% subscription = Account.current.subscription %>
-  <% fd_fs_bundle = subscription.account.fetch_fd_fs_banner_details %>
-    <% if subscription.trial? && fd_fs_bundle.present? && ['integrate', 'new'].include?(fd_fs_bundle[:state]) %>
-        <div class="fdfs-bundle">
-          <div class="pull-left span8 m0">
-            <p class="fdfs-info-title"> <%= t('freshdesk_freshsales_bundle.discount_text_3') %> </p>
-            <% if fd_fs_bundle[:state] =='new' %>
-              <a role="button" class="btn btn-primary try-freshsales" href="#"> 
-                <%= t('freshdesk_freshsales_bundle.try_freshsales') %>
-              </a>
-              <%else%>
-               <a href="https://support.freshdesk.com/support/solutions/articles/219923-how-to-integrate-freshsales-with-freshdesk-" target="_blank" role="button" class="btn btn-primary integrate-freshsales" href="#"> 
-                  <%= t('freshdesk_freshsales_bundle.integrate_freshsales') %>
-                </a>
-            <%end%>
-          </div>
-          <div class="pull-right">
-              <img  class="features__icon" src="/images/misc/contact-fdfs-bundle.svg">
-          </div>
-        </div>
-    <% end %>
+  <%= render :partial => "freshdesk_freshsales_bundle" %>
   <%= render :partial => "/admin/shared/customer_fields_header", :locals => { :field_class => ContactField } %>
   <br/>
   <%= javascript_include_tag :'cdn/contact_fields' %>

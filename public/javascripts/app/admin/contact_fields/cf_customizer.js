@@ -552,10 +552,11 @@
 					.prop("disabled", true);
 			}
 		},
-		tryFreshsales: function(){
+		tryFreshsales: function(isInvite){
 			var openOmnibarEvent = new CustomEvent('showPromotionForProduct', {
 				detail: {
-					productName: 'freshsales'
+					productName: 'freshsales',
+					invite: isInvite
 				}
 
  			});
@@ -770,7 +771,7 @@
 				self.toggleRegexValidation(e.target);
 			});	
 			$(document).on("click",'.try-freshsales' , function(e){
-				self.tryFreshsales();
+				self.tryFreshsales($(this).data('attr'));
 			});
 
 			$(document).on("keyup.custom-fields", this.dialogDOMMap['label'].selector, function(e){

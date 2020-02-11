@@ -94,16 +94,16 @@ window.App = window.App || {};
       $(document).on('click','#sprout-downgrade-submit', function(e){ $this.sproutDowngradeCompareModal(e) })
       $(document).on('click','#downgrade-sprout-btn', function(e){ $this.sproutDowngradeFormSubmit(e) })
       $(document).on('click'+$this.namespace(),  '.cancel-request', function(ev){ $this.performCancelRequest(ev, this) })
-      $(document).on('click', '#try-freshsales', function(ev){ $this.tryFreshsalesEvent(ev) })
+      $(document).on('click', '#try-freshsales', function(ev){ $this.tryFreshsalesEvent($(this).data('attr'))})
     },
     editingSubscription: function() {
       this.editBilling = true;
     },
-    tryFreshsalesEvent: function() {
+    tryFreshsalesEvent: function(isInvite) {
       var openOmnibarEvent = new CustomEvent('showPromotionForProduct', {
         detail: {
           productName: 'freshsales',
-          invite: false
+          invite: isInvite
         }
       });
       this.triggerOmnibarEvent(openOmnibarEvent);
