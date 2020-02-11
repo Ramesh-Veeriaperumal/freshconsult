@@ -264,7 +264,7 @@ module Ember
 
       def test_index_with_language_without_multilingual_feature
         @account.features.enable_multilingual.destroy
-        get :index, controller_params(version: 'private', language: @account.language)
+        get :index, controller_params(version: 'private', language: @account.supported_languages.last)
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
         assert_response 404
       end
@@ -318,7 +318,7 @@ module Ember
 
       def test_category_folders_with_language_without_multilingual_feature
         @account.features.enable_multilingual.destroy
-        get :category_folders, controller_params(version: 'private', id: 0, language: @account.language)
+        get :category_folders, controller_params(version: 'private', id: 0, language: @account.supported_languages.last)
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
         assert_response 404
       end
@@ -385,7 +385,7 @@ module Ember
 
       def test_show_with_language_without_multilingual_feature
         @account.features.enable_multilingual.destroy
-        get :show, controller_params(version: 'private', id: 0, language: @account.language)
+        get :show, controller_params(version: 'private', id: 0, language: @account.supported_languages.last)
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
         assert_response 404
       end
@@ -465,7 +465,7 @@ module Ember
 
       def test_update_with_language_without_multilingual_feature
         @account.features.enable_multilingual.destroy
-        put :update, construct_params(version: 'private', id: 0, language: @account.language)
+        put :update, construct_params(version: 'private', id: 0, language: @account.supported_languages.last)
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
         assert_response 404
       end
@@ -545,7 +545,7 @@ module Ember
       def test_create_with_language_without_multilingual_feature
         folder = create_solution_folder
         Account.any_instance.stubs(:multilingual?).returns(false)
-        post :create, construct_params({ version: 'private', id: folder.id, language: @account.language }, name: Faker::Name.name, description: Faker::Lorem.paragraph)
+        post :create, construct_params({ version: 'private', id: folder.id, language: @account.supported_languages.last }, name: Faker::Name.name, description: Faker::Lorem.paragraph)
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
         assert_response 404
       ensure

@@ -41,7 +41,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
 
   def test_show_with_subscription_request
     subscription_request = @account.subscription.subscription_request
-    subscription_request.destory if subscription_request.present?
+    subscription_request.destroy if subscription_request.present?
     subscription_request_params = {
       agent_limit: 1,
       plan_id: @account.subscription.subscription_plan_id,
@@ -138,6 +138,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     stub_methods
     Subscription.any_instance.stubs(:cost_per_agent).returns(65)
     Subscription.any_instance.stubs(:cost_per_agent).with(12).returns(49)
+    @account.launch :unlimited_multi_product
     @account.rollback :downgrade_policy
     plan_id = (SubscriptionPlan.cached_current_plans.map(&:id) - [@account.subscription.subscription_plan_id]).last
     put :update, construct_params({ version: 'private', plan_id: plan_id, agent_seats: 1 })
@@ -355,7 +356,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     renewal_period = (SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY.keys - [@account.subscription.renewal_period]).first
     params = { plan_id: params_plan_id, renewal_period: renewal_period, agent_seats: 1, version: 'private' }
     current_subscription = @account.subscription
-    current_subscription.subscription_request.destory if current_subscription.subscription_request.present?
+    current_subscription.subscription_request.destroy if current_subscription.subscription_request.present?
     @account.rollback :downgrade_policy
     put :update, construct_params(params)
     assert_response 200

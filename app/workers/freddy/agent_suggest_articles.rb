@@ -66,7 +66,8 @@ module Freddy
           subject: @ticket.subject,
           query: @ticket.ticket_body.description,
           query_html: @ticket.ticket_body.description_html,
-          query_id: @query_id
+          query_id: @query_id,
+          locale: @ticket.portal.language
         }.to_json
       end
 

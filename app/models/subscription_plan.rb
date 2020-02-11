@@ -227,4 +227,12 @@ class SubscriptionPlan < ActiveRecord::Base
   def free_omni_channel_plan?
     FREE_OMNI_PLANS.include? name
   end
+
+  def unlimited_multi_product?
+    PLANS[:subscription_plans][canon_name][:features].include?(:unlimited_multi_product)
+  end
+
+  def multi_product?
+    PLANS[:subscription_plans][canon_name][:features].include?(:multi_product)
+  end
 end

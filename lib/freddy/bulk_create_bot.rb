@@ -70,8 +70,9 @@ module Freddy
             enabled_features: account_system42_features,
             freshchat: construct_freshchat_params,
             supported_languages: @current_account.portal_languages,
-            primary_language: portal.language,
-            user_id: User.current.id
+            primary_language: @current_account.language,
+            user_id: User.current.id,
+            status: 'DISABLE'
           }
         end 
       end

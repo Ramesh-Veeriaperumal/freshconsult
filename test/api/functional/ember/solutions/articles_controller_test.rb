@@ -332,6 +332,49 @@ module Ember
         assert_response 200
       end
 
+      def test_show_published_article_with_freshconnect_enabled
+        Account.any_instance.stubs(:collaboration_enabled?).returns(true)
+        Account.current.launch(:solutions_freshconnect)
+        sample_article = get_article_without_draft
+        sample_article.reload
+        time_now = Time.zone.now
+        Timecop.freeze(time_now) do
+          get :show, controller_params(version: 'private', id: sample_article.parent_id)
+        end
+        resp_json = JSON.parse(response.body)
+        convo_token_dec = decrypted_convo_token(resp_json['collaboration']['convo_token'])
+        convo_token_dec.each(&:symbolize_keys!)
+        assert_equal construct_convo_payload(sample_article, time_now), convo_token_dec
+        resp_json.delete('collaboration')
+        response.body = resp_json.to_json
+        match_json(private_api_solution_article_pattern(sample_article))
+        assert_response 200
+      ensure
+        Account.any_instance.unstub(:collaboration_enabled?)
+        Account.current.rollback(:solutions_freshconnect)
+      end
+
+      def test_show_draft_article_with_freshconnect_enabled
+        Account.any_instance.stubs(:collaboration_enabled?).returns(true)
+        Account.current.launch(:solutions_freshconnect)
+        sample_article = get_article_with_draft
+        time_now = Time.zone.now
+        Timecop.freeze(time_now) do
+          get :show, controller_params(version: 'private', id: sample_article.parent_id)
+        end
+        resp_json = JSON.parse(response.body)
+        convo_token_dec = decrypted_convo_token(resp_json['collaboration']['convo_token'])
+        convo_token_dec.each(&:symbolize_keys!)
+        assert_equal construct_convo_payload(sample_article, time_now), convo_token_dec
+        resp_json.delete('collaboration')
+        response.body = resp_json.to_json
+        match_json(private_api_solution_article_pattern(sample_article))
+        assert_response 200
+      ensure
+        Account.any_instance.unstub(:collaboration_enabled?)
+        Account.current.rollback(:solutions_freshconnect)
+      end
+
       def test_show_unavailalbe_article
         get :show, controller_params(version: 'private', id: 99_999)
         assert_response :missing
@@ -1181,7 +1224,7 @@ module Ember
 
       def test_update_article_unpublish_with_language_without_multilingual_feature
         Account.any_instance.stubs(:multilingual?).returns(false)
-        put :update, construct_params(version: 'private', id: 0, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], language: @account.language)
+        put :update, construct_params(version: 'private', id: 0, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], language: @account.supported_languages.last)
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
         assert_response 404
       ensure
@@ -1268,9 +1311,23 @@ module Ember
         assert_equal 0, article.primary_article.thumbs_down
       end
 
+      def test_reset_ratings_with_language_without_multilingual_feature_with_default_language
+        Account.any_instance.stubs(:multilingual?).returns(false)
+        article = create_article(article_params)
+        article.primary_article.thumbs_up!
+        article.primary_article.thumbs_down!
+        put :reset_ratings, construct_params(version: 'private', id: article.id, language: @account.language)
+        assert_response 204
+        article.reload
+        assert_equal 0, article.primary_article.thumbs_up
+        assert_equal 0, article.primary_article.thumbs_down
+      ensure
+        Account.any_instance.unstub(:multilingual?)
+      end
+
       def test_reset_ratings_with_language_without_multilingual_feature
         Account.any_instance.stubs(:multilingual?).returns(false)
-        put :reset_ratings, construct_params(version: 'private', id: 0, language: @account.language)
+        put :reset_ratings, construct_params(version: 'private', id: 0, language: @account.supported_languages.last)
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
         assert_response 404
       ensure
@@ -1355,9 +1412,22 @@ module Ember
         assert_equal votes_pattern(article.primary_article), response.body
       end
 
+      def test_votes_with_language_without_multilingual_feature_with_default_language
+        Account.any_instance.stubs(:multilingual?).returns(false)
+        article = create_article(article_params)
+        article.primary_article.thumbs_up!
+        article.primary_article.thumbs_down!
+        get :votes, controller_params(version: 'private', id: article.id, language: @account.language)
+        assert_response 200
+        article.reload
+        assert_equal votes_pattern(article.primary_article), response.body
+      ensure
+        Account.any_instance.unstub(:multilingual?)
+      end
+
       def test_votes_with_language_without_multilingual_feature
         Account.any_instance.stubs(:multilingual?).returns(false)
-        get :votes, controller_params(version: 'private', id: 0, language: @account.language)
+        get :votes, controller_params(version: 'private', id: 0, language: @account.supported_languages.last)
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
         assert_response 404
       ensure
@@ -2996,7 +3066,7 @@ module Ember
         Solution::Draft.any_instance.unstub(:locked?)
         add_privilege(User.current, :publish_solution)
       end
-      
+
       def test_approve_without_approve_privilege
         Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
         sample_article = get_article_with_draft

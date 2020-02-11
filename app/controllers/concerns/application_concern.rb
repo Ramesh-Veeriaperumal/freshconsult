@@ -84,7 +84,7 @@ module Concerns::ApplicationConcern
     Rails.logger.error "Request URL: #{request.url}"
     # redirect to the correct POD using Nginx specific redirect headers.
     # redirect_url should match with the location directive in Nginx Proxy
-    redirect_url = Redis::RoutesRedis.pod_redirection_enabled? ? "@pod_redirect_#{shard.pod_info}" : "/pod_redirect/#{shard.pod_info}"
+    redirect_url = "@pod_redirect_#{shard.pod_info}"
     Rails.logger.error "Redirecting to the correct POD. Redirect URL is #{redirect_url}"
     response.headers['X-Accel-Redirect'] = redirect_url
     response.headers['X-Accel-Buffering'] = 'off'

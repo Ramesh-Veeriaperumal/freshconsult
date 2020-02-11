@@ -4,6 +4,7 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
   include SolutionsTestHelper
   include SolutionsArticlesTestHelper
   SUPPORT_BOT = 'frankbot'.freeze
+  FRESHCONNECT_SRC = 'freshconnect'.freeze
 
   def setup
     super
@@ -84,7 +85,7 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
     @draft.account = @account
     @draft.article = @article
     @draft.title = 'Sample'
-    @draft.category_meta = Solution::FolderMeta.first.solution_category_meta
+    @draft.category_meta = @article.solution_folder_meta.solution_category_meta
     @draft.status = 1
     @draft.description = '<b>aaa</b>'
     @draft.save
@@ -132,11 +133,73 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
     { article: params }
   end
 
-  def test_show_article
+  def test_show_article_support_bot_source
     set_jwe_auth_header(SUPPORT_BOT)
     sample_article = get_article
     get :show, controller_params(id: sample_article.parent_id)
     assert_response 200
+  end
+
+  def test_show_published_article_without_draft_freshconnect_source
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    set_jwt_auth_header(FRESHCONNECT_SRC)
+    sample_article = get_article_without_draft
+
+    get :show, controller_params(id: sample_article.parent_id)
+
+    match_json(channel_api_solution_article_pattern(sample_article))
+    assert_response 200
+  ensure
+    CustomRequestStore.unstub(:read)
+  end
+
+  def test_show_article_with_draft_freshconnect_source
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    set_jwt_auth_header(FRESHCONNECT_SRC)
+    sample_article = get_article_with_draft
+
+    get :show, controller_params(id: sample_article.parent_id)
+
+    match_json(channel_api_solution_article_pattern(sample_article))
+    assert_response 200
+  ensure
+    CustomRequestStore.unstub(:read)
+  end
+
+  def test_show_article_with_approval_flow_freshconnect_source
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+    set_jwt_auth_header(FRESHCONNECT_SRC)
+    sample_article = get_article_with_draft
+
+    get :show, controller_params(id: sample_article.parent_id)
+
+    match_json(channel_api_solution_article_pattern(sample_article))
+    assert_response 200
+  ensure
+    CustomRequestStore.unstub(:read)
+    Account.any_instance.unstub(:article_approval_workflow_enabled?)
+  end
+
+  def test_show_article_with_default_folder_category_freshconnect_source
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    set_jwt_auth_header(FRESHCONNECT_SRC)
+    sample_article = get_article_with_draft
+    Solution::FolderMeta.any_instance.stubs(:is_default).returns(true)
+    Solution::CategoryMeta.any_instance.stubs(:is_default).returns(true)
+
+    get :show, controller_params(id: sample_article.parent_id)
+
+    match_json(channel_api_solution_article_pattern(sample_article))
+    assert_response 200
+  ensure
+    CustomRequestStore.unstub(:read)
+    Solution::FolderMeta.any_instance.unstub(:is_default)
+    Solution::CategoryMeta.any_instance.stubs(:is_default)
   end
 
   def test_show_article_only_published
@@ -145,7 +208,7 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
     create_draft(article: sample_article)
     get :show, controller_params(id: sample_article.parent_id, prefer_published: true)
     assert_response 200
-    assert_not_equal '<b>draft body</b>', eval(@response.body)[:description]
+    assert_not_equal '<b>draft body</b>', JSON.parse(response.body)[:description]
   end
 
   def get_article

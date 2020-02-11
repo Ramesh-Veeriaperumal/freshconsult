@@ -8,6 +8,7 @@ class SAAS::AccountDataCleanup
   include SAAS::DropFeatureData
   include SAAS::AddFeatureData
   include Admin::AdvancedTicketing::FieldServiceManagement::Util
+  include AccountConstants
 
   attr_accessor :account, :features_to_process, :action
 
@@ -361,6 +362,16 @@ class SAAS::AccountDataCleanup
         application = Integrations::Application.available_apps(account.id).find_by_name(app_name)
         app = Integrations::InstalledApplication.new({ account: account, skip_callbacks: true, application: application })
         app.save!
+      end
+    end
+  end
+
+  def handle_unlimited_multi_product_drop_data
+    if account.products.count > MULTI_PRODUCT_LIMIT
+      current_products = account.products.sort_by(&:created_at).reverse
+      delete_count = account.products.count - MULTI_PRODUCT_LIMIT
+      current_products[0..delete_count - 1].each do |product|
+        product.destroy
       end
     end
   end

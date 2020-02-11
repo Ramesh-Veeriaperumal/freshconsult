@@ -1,6 +1,6 @@
 class Solutions::CategoryDecorator < ApiDecorator
   delegate :name, :description, :language_code, to: :record
-  delegate :id, :portal_solution_categories, :solution_folder_meta, to: :parent
+  delegate :id, :is_default, :portal_solution_categories, :solution_folder_meta, to: :parent
 
   def initialize(record, options = {})
     super(record)
@@ -34,6 +34,22 @@ class Solutions::CategoryDecorator < ApiDecorator
       portal_solution_categories.map { |portal_solution_category| { portal_id: portal_solution_category.portal_id, position: portal_solution_category.position } }
     else
       portal_solution_categories.map(&:portal_id)
+    end
+  end
+
+  def visible_in_portal_names
+    # portal_solution_categories.map(&:portal).map(&:name)
+    Account.current.portals.where(id: portal_solution_categories.pluck(:portal_id)).pluck(:name)
+  end
+
+  def enriched_hash
+    category = record.safe_send("#{@lang_code}_available?") ? record.safe_send("#{@lang_code}_category") : record.primary_category
+    unless is_default
+      {
+        id: id,
+        name: category.name,
+        visible_in_portals: visible_in_portal_names
+      }
     end
   end
 

@@ -94,8 +94,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       SERVICE_TASKS_OVERDUE_WIDGET_NAME => WIDGET_MODULE_TOKEN_BY_NAME[SCORE_CARD]
     }.freeze
 
-    FSM_TICKET_FILTERS = ['service_tasks_due_today', 'unassigned_service_tasks', 'overdue_service_tasks'].freeze
-
+    FSM_TICKET_FILTERS = ['service_tasks_due_today', 'unassigned_service_tasks', 'overdue_service_tasks', 'unresolved_service_tasks', 'service_tasks_starting_today'].freeze
     FSM_WIDGETS_COUNT = WIDGETS_NAME_TO_TYPE_MAP.size
 
     FSM_TICKET_FILTER_COUNT = FSM_TICKET_FILTERS.size

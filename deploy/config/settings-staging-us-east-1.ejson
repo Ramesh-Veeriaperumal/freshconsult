@@ -1214,7 +1214,7 @@
         "_socket_host_new": "socketv2.freshpo.com"
       },
       "oauth_config": {
-        "box_secret": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:sGdhCN43FX6PQLs5qJEQBuBSN8S2pDTv:vGN5ntHqWnlOUphSgxjN8crQDe7gtXVDKEob6KExV7MkJampgOOypN4qHU3wkgad]",
+        "box_secret": "EJ[1:ztPNyOKeQ03mf8jGVtm1Pq325XcVMoIsUSycZv5XexM=:MFx+E3DLy+kfMskQNHqHWZLRhGwagOPE:Sn4rxW1uH80Yc2hDDKw1TI6iQtLDTm5L1FxVFlDCyH9mTMKuYCIVOWTI0jg1zumU]",
         "box_token": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:soFRG/sjRMUnxo9uwgkGL59nG67W0jFo:CjOub/jQVbpDM6NijxYbF+94h6AwvI5TfKgWT4oXzbCzYXNIZRylG/7uyvr1iXIy]",
         "constantcontact_secret": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:lreduxxkDyAatGMdsBb+1ltl4SK4aGtx:3RVgTC5j6jzDcQj/FyrT6pp4D8A1OFWnZytpYWS+lDvJxpjA9eR7zg==]",
         "constantcontact_token": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:gbqHGEPjV75z4AczfW+zdvXQbftyFoYT:G1hKaay8WSj4G5x9sT8SYwDTvSFaFY6BQApRClrt6rK/yQesdUC55w==]",

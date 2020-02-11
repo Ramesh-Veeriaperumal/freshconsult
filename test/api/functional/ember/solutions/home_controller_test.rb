@@ -96,7 +96,7 @@ module Ember
       def test_summary_with_language_without_multilingual_feature
         Account.any_instance.stubs(:multilingual?).returns(false)
         portal_id = Account.current.main_portal.id
-        get :summary, controller_params(version: 'private', portal_id: portal_id, language: @account.language)
+        get :summary, controller_params(version: 'private', portal_id: portal_id, language: @account.supported_languages.last)
         match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
         assert_response 404
       ensure

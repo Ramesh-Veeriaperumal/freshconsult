@@ -3,7 +3,7 @@ module TicketsFilter
   include Helpdesk::Ticketfields::TicketStatus
   
   DEFAULT_FILTER = "new_and_my_open"
-  DEFAULT_VISIBLE_FILTERS = %w[new_and_my_open ongoing_collab shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by spam deleted unassigned_service_tasks unresolved_service_tasks].freeze
+  DEFAULT_VISIBLE_FILTERS = %w[new_and_my_open ongoing_collab shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by spam deleted unassigned_service_tasks overdue_service_tasks service_tasks_due_today service_tasks_starting_today unresolved_service_tasks].freeze
   DEFAULT_FILTERS_FEATURES = [
     ["shared_by_me",   :shared_ownership, "Shared ownership"],
     ["shared_with_me", :shared_ownership, "Shared ownership"],
@@ -13,6 +13,9 @@ module TicketsFilter
     ["monitored_by",   :add_watcher,      "Add watcher"],
     ["watching",       :add_watcher,      "Add watcher"],
     ['unassigned_service_tasks', :field_service_management, 'Field service management'],
+    ['service_tasks_starting_today', :field_service_management, 'Field service management'],
+    ['service_tasks_due_today', :field_service_management, 'Field service management'],
+    ['overdue_service_tasks', :field_service_management, 'Field service management'],
     ['unresolved_service_tasks', :field_service_management, 'Field service management']
   ].freeze
 
@@ -206,7 +209,9 @@ module TicketsFilter
   end
 
   def self.accessible_filter?(filter, feature_keys = FEATURES_KEYS_BY_FILTER_KEY)
-    return false if filter == 'unassigned_service_tasks' && !Account.current.default_unassigned_service_tasks_filter_enabled?
+    return false if (filter != 'unassigned_service_tasks' && filter != 'unresolved_service_tasks') &&
+                    (::Admin::AdvancedTicketing::FieldServiceManagement::Constant::FSM_TICKET_FILTERS.include? filter) &&
+                    !Account.current.fsm_custom_to_default_filter_enabled?
 
     feature = feature_keys[filter]
     return false if ignore_filter_feature(filter)
@@ -234,7 +239,7 @@ module TicketsFilter
   def self.default_visible_filters(param_filter_id = nil)
     visible_filters = default_accessible_filters(param_filter_id)
     visible_filters.collect do |filter|
-      filter.merge!(field_agent_sort_options) if TicketFilterConstants::SORT_BY_APPOINTMENT_TIME_FILTERS.include? filter[:id]
+      filter.merge!(field_agent_sort_options) if Admin::AdvancedTicketing::FieldServiceManagement::Constant::FSM_TICKET_FILTERS.include? filter[:id]
       CustomFilterConstants::REMOVE_QUERY_HASH.include?(filter[:id]) ? filter :
           filter.merge(query_hash: Helpdesk::Filters::CustomTicketFilter.new.default_filter_query_hash(filter[:id]))
     end

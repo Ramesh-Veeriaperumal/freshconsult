@@ -1300,8 +1300,8 @@
         "_visitor_widget_host_url": "https://wchat.in.freshchat.com",
         "_api_host_url": "https://api.in.freshchat.com",
         "signup": {
-          "_host": "https://internal-api.freshchat.com/internal/system42/",
-          "secret": "EJ[1:D6STShzcnhp16dqB3DPYqMoYJyLPwwtKg2EJqHnipm0=:iV1wi8jKjCrm9oKyp7+ptW2OtDqQUq3G:oW6VnRR/hbM5sW8j/v+cj7BNvYr3CYBbR5V2VNLpw0usOh2+nlQUxVwOL51exJG/n86BY33CbSkoBBg=]"
+          "_host": "https://internal-api.in.freshchat.com/internal/system42/",
+          "secret": "EJ[1:yJc81+OUAC++CjCg4Fa/WTZkHfXDE8GIAM0eZLG2zEI=:mwvdMT1d25xZkNZ+yo5ELfGaZSUnor9w:09P2mwCYwJp59M6DFkBaPjUqQyycs82W/URYT6Pqp8ITvfVXtsSHS737dLrl/nh22g/cDVFuQFyX5QI=]"
         }
       },
       "formserv": {

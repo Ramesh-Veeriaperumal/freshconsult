@@ -833,7 +833,10 @@ article_version_response:
 #Custom translations
 languages:
   $ref: ./response/admin/accounts/languages.yaml
-
+agents_limit:
+  $ref: ./response/admin/accounts/agents_limit.yaml
+agents_limit_payload_body:
+  $ref: ./response/admin/accounts/agents_limit_payload_body.yaml
 # Config Data 
 configs_show:
   $ref: ./response/configs/show.yaml
@@ -890,3 +893,12 @@ out_of_office_response:
 
 scoreboard_level:
   $ref: './resource/admin/scoreboard_level.yaml'
+
+search_in_freshworks:
+  $ref: './response/agents/search_in_freshworks.yaml'
+
+search_in_freshworks_freshid_response:
+  $ref: './response/agents/search_in_freshworks_freshid_response.yaml'
+
+search_in_freshworks_user_info_response:
+  $ref: './response/agents/search_in_freshworks_user_info_response.yaml'

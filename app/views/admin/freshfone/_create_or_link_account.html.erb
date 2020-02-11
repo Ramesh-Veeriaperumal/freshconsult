@@ -8,8 +8,8 @@
     <div class="freshcaller-admin-content">
       <%= t('freshcaller.admin.freshcaller_signup_text').html_safe %>
     </div>
-    <div <%= 'class=signup-linking' if (Account.current.launched?(:enable_datacenter)? FreshcallerConfig['signup_supported'] : true) %>>
-      <% if (Account.current.launched?(:enable_datacenter)? FreshcallerConfig['signup_supported'] : true) %>
+    <div <%= 'class=signup-linking' if FreshcallerConfig['signup_supported'] %>>
+      <% if FreshcallerConfig['signup_supported'] %>
         <div class="freshcaller-signup">
           <%= link_to t("freshcaller.admin.feature_request_content.create_new_account").html_safe, "/admin/freshcaller/signup", :method => 'post', :class => "btn btn-primary btn-large freshcaller_signup_btn" %>
         </div>

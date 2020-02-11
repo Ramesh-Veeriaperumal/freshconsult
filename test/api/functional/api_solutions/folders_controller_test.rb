@@ -61,7 +61,7 @@ module ApiSolutions
     def test_show_folder_with_language_query_param_without_multilingual_feature
       @account.features.enable_multilingual.destroy
       sample_folder = get_folder
-      get :show, controller_params({id: sample_folder.parent_id, language: @account.language })
+      get :show, controller_params(id: sample_folder.parent_id, language: @account.supported_languages.last)
       match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
       assert_response 404
     end

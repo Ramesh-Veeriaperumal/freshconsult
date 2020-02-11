@@ -65,6 +65,22 @@ class SubscriptionsControllerTest < ActionController::TestCase
     unstub_chargebee_requests
   end
 
+  def test_subscription_plan_change_with_limited_multi_product_feature
+    current_plan_id = @account.subscription.subscription_plan_id
+    params_plan_id = SubscriptionPlan.current.map(&:id).second
+    PLANS[:subscription_plans][SubscriptionPlan.current.second.canon_name][:features] << :multi_product
+    stub_chargebee_requests
+    @account.rollback :downgrade_policy
+    @account.add_feature(:unlimited_multi_product)
+    5.times { @account.products.new(name: Faker::Lorem.characters(5)) }
+    @account.save!
+    post :plan, construct_params({}, { plan_id: params_plan_id }.merge!(params_hash.except(:plan_id)))
+    @account.reload
+    assert_equal @account.subscription.subscription_plan_id, params_plan_id
+    assert_equal @account.products.count, AccountConstants::MULTI_PRODUCT_LIMIT
+    assert_response 302
+  end
+
   def test_same_plan_billing_cycle
     current_plan_id = @account.subscription.subscription_plan_id
     stub_chargebee_requests

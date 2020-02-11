@@ -85,7 +85,7 @@ module SolutionsArticlesCommonTests
   def test_show_article_with_language_and_without_multilingual_feature
     Account.any_instance.stubs(:multilingual?).returns(false)
     sample_article = get_article
-    get :show, controller_params(version: version, id: sample_article.parent_id, language: @account.language)
+    get :show, controller_params(version: version, id: sample_article.parent_id, language: @account.supported_languages.last)
     match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
     assert_response 404
   ensure
@@ -806,7 +806,7 @@ module SolutionsArticlesCommonTests
 
   def test_update_article_unpublish_with_language_without_multilingual_feature
     Account.any_instance.stubs(:multilingual?).returns(false)
-    put :update, construct_params(version: version, id: 0, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], language: @account.language)
+    put :update, construct_params(version: version, id: 0, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], language: @account.supported_languages.last)
     match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
     assert_response 404
   ensure

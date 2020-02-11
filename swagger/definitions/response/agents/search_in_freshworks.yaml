@@ -3,10 +3,10 @@ type: object
 description: Search In Freshworks Response
 properties: 
   freshid_user_info: 
-    type: object
+    type: array
     items:
       $ref: '#/definitions/search_in_freshworks_freshid_response'
   user_info: 
-    type: object
+    type: array
     items:
       $ref: '#/definitions/search_in_freshworks_user_info_response'

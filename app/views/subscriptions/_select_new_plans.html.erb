@@ -14,7 +14,7 @@
         <% plans.each do |plan| %>
           <input type="hidden" data-omni-plan-id="<%= plan.name.parameterize.underscore %>" data-plan-amount="<%= fetch_plan_amount(plan) %>" data-plan-id="<%= plan.id %>"/>
           <%
-            next if !subscription.trial? &&
+            next if !(subscription.trial? || subscription.suspended?) &&
               ((subscribed_plan.omni_plan? && subscribed_plan.basic_variant_name == plan.name) ||
               (subscribed_plan.basic_variant? && subscribed_plan.omni_plan_name == plan.name))
             plan_name = plan.name.downcase.split(' ').first
