@@ -6,7 +6,7 @@ class ApiProductsController < ApiApplicationController
     end
 
     def scoper
-      current_account.products_from_cache
+      current_account.products_ar_cache
     end
 
     def load_object

@@ -750,7 +750,7 @@ module TicketFieldsTestHelper
   end
 
   def default_product_choices
-    choices_by_name_id Account.current.products_from_cache
+    choices_by_name_id Account.current.products_ar_cache
   end
 
   def default_ticket_type_choices
