@@ -219,6 +219,27 @@ class ChannelMessagePollerTest < ActionView::TestCase
     Faraday::Connection.any_instance.unstub(:post)
   end
 
+  def test_facebook_receive_create_ticket_with_conflict
+    fb_page = create_facebook_page
+    Faraday::Connection.any_instance.stubs(:post).returns(Faraday::Response.new(status: 202))
+    sqs_body = get_fb_create_ticket_command(fb_page.page_id)
+    @account.reload
+    old_tickets_count = @account.tickets.count
+    push_to_channel(sqs_body)
+    push_to_channel(sqs_body)
+    @account.reload
+    ticket = @account.tickets.last
+    last_fb_post = fb_page.fb_posts.find_by_post_id(sqs_body[:payload][:context][:post_id])
+    new_tickets_count = @account.tickets.count
+
+    assert_equal ticket.id, last_fb_post.postable_id
+    assert_equal old_tickets_count + 1, new_tickets_count
+
+    conflict_result = ChannelIntegrations::Commands::Processor.new.process(sqs_body[:payload])
+    assert_equal conflict_result[:data][:id], last_fb_post.postable.display_id
+    assert_equal conflict_result[:status_code], 409
+  end
+
   def test_facebook_receive_create_note_command
     fb_page = create_facebook_page
     Faraday::Connection.any_instance.stubs(:post).returns(Faraday::Response.new({status: 202}))
@@ -234,6 +255,31 @@ class ChannelMessagePollerTest < ActionView::TestCase
 
     assert_equal note.id, last_fb_post_after_note_added.postable_id
     assert_equal old_notes_count + 1, new_notes_count
+  ensure
+    note.destroy
+    ticket.destroy
+    Faraday::Connection.any_instance.unstub(:post)
+  end
+
+  def test_facebook_receive_create_note_with_conflict
+    fb_page = create_facebook_page
+    Faraday::Connection.any_instance.stubs(:post).returns(Faraday::Response.new(status: 202))
+    ticket = create_ticket_from_fb_post
+    old_notes_count = @account.notes.count
+    note_sqs_body = get_fb_create_note_command(fb_page.page_id, ticket.display_id)
+    push_to_channel(note_sqs_body)
+    push_to_channel(note_sqs_body)
+    @account.reload
+    note = @account.notes.last
+    last_fb_post_after_note_added = fb_page.fb_posts.find_by_post_id (note_sqs_body[:payload][:context][:post_id])
+    new_notes_count = @account.notes.count
+
+    assert_equal note.id, last_fb_post_after_note_added.postable_id
+    assert_equal old_notes_count + 1, new_notes_count
+
+    conflict_result = ChannelIntegrations::Commands::Processor.new.process(note_sqs_body[:payload])
+    assert_equal conflict_result[:data][:id], last_fb_post_after_note_added.postable_id
+    assert_equal conflict_result[:status_code], 409
   ensure
     note.destroy
     ticket.destroy
