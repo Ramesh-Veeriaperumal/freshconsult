@@ -229,10 +229,10 @@ class SubscriptionPlan < ActiveRecord::Base
   end
 
   def unlimited_multi_product?
-    PLANS[:subscription_plans][canon_name][:features].include?(:unlimited_multi_product)
+    PLANS[:subscription_plans][canon_name][:features].include?(:unlimited_multi_product) if PLANS[:subscription_plans][canon_name]
   end
 
   def multi_product?
-    PLANS[:subscription_plans][canon_name][:features].include?(:multi_product)
+    PLANS[:subscription_plans][canon_name][:features].include?(:multi_product) if PLANS[:subscription_plans][canon_name]
   end
 end
