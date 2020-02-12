@@ -2,12 +2,14 @@ module Channel::V2::Iam
   class AuthenticationController < ApiApplicationController
     skip_before_filter :load_object, :check_privilege
 
+    PRIVATE_KEY = OpenSSL::PKey::RSA.new(File.read('config/cert/iam.pem'), ::Iam::IAM_CONFIG['password'])
+
     def show
       fetch_current_user
       return render_request_error(:invalid_credentials, 401) if @current_user.blank?
 
       jwt_token = construct_jwt(@current_user)
-      response.headers['Authorization'] = "Token #{jwt_token}"
+      response.headers['Authorization'] = "Bearer #{jwt_token}"
     end
 
     private
@@ -39,6 +41,7 @@ module Channel::V2::Iam
           user_id: user.id.to_s,
           account_id: Account.current.id.to_s,
           product: 'freshdesk',
+          account_domain: Account.current.full_domain,
           privileges: user.privileges.to_s,
           iat: Time.now.to_i,
           exp: Time.now.to_i + ::Iam::IAM_CONFIG['expiry'].to_i
@@ -46,13 +49,12 @@ module Channel::V2::Iam
         payload[:type] = user.helpdesk_agent? ? 'agent' : 'contact'
         payload[:org_user_id] = user.freshid_authorization.uid if user.helpdesk_agent? && user.freshid_authorization.try(:provider) == 'freshid'
         payload[:org_id] = Account.current.organisation_account_mapping.organisation_id if Account.current.organisation_account_mapping.present?
-        private_key = OpenSSL::PKey::RSA.new(File.read('config/cert/iam.pem'), ::Iam::IAM_CONFIG['password'])
         headers = {
           kid: ::Iam::IAM_CONFIG['kid'],
           typ: 'JWT',
           alg: 'RS256'
         }
-        JWT.encode(payload, private_key, 'RS256', headers)
+        JWT.encode(payload, PRIVATE_KEY, 'RS256', headers)
       end
   end
 end
