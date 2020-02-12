@@ -171,6 +171,7 @@
           "_host_port": "8183",
           "_lang_host_address": "http://127.0.0.1",
           "_lang_host_port": "8184"
+        }
       },
       "product_feedback": {
         "api_key": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:wLwvFyTvf/39xqoMzKxypJ7caJJ7NePd:BQryuMxBdjBrTGYovifjBaM4yHS6hJdkhMk1WGJwsim9dxkL]",
@@ -1942,6 +1943,7 @@
             "_v2_host_port": "8185",
             "_search_service_address": "http://127.0.0.1",
             "_search_service_port": "8186"
+          }
         },
         "_count": [
           {
@@ -2096,6 +2098,7 @@
           "_endpoint_address": "http://127.0.0.1",
           "_endpoint_port": "8187",
           "_endpoint_path": "/collector"
+        }
       },
       "channel_api_keys": {
         "zapier": {
@@ -2233,6 +2236,7 @@
         "envoy_egress": {
           "_service_address": "http://127.0.0.1",
           "_service_port": "8188"
+        }
       },
       "facebook_gateway": {
         "jwt_secret": "EJ[1:fSBlu9UF3ctuDy6VlWBjM0ojLfQHA1nDQrSrFL8BFHo=:LVtHQ0eVB9X+YvR/AU7M6u9iKspwwCHw:1NUaZeTZAGWQX5o3lmzgiMEYztWX3VZ4aA2ij1Cns1A=]",
