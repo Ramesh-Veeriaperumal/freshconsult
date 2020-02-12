@@ -272,7 +272,7 @@ class SubscriptionsController < ApplicationController
 
     #Error Check
     def check_for_subscription_errors
-      if agent_type = (scoper.chk_change_agents || scoper.chk_change_field_agents)
+      if agent_type = (scoper.verify_agent_limit || scoper.chk_change_field_agents)
         Rails.logger.debug "Subscription Error::::::: #{agent_type} Limit exceeded, account id: #{current_account.id}"
 
         agent_count, error_class = if agent_type == Agent::SUPPORT_AGENT

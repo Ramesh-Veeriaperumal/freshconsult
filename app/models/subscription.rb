@@ -401,7 +401,7 @@ class Subscription < ActiveRecord::Base
 
 
   def chk_change_agents
-    if !account.launched?(:downgrade_policy) && (agent_limit && agent_limit < account.full_time_support_agents.count)
+    if agent_limit && agent_limit < account.full_time_support_agents.count
      errors.add(:base,I18n.t("subscription.error.lesser_agents", {:agent_count => account.full_time_support_agents.count}))
      Agent::SUPPORT_AGENT
     end
@@ -412,6 +412,10 @@ class Subscription < ActiveRecord::Base
       errors.add(:base, I18n.t('subscription.error.lesser_field_agents', agent_count: account.field_agents_count))
       Agent::FIELD_AGENT
     end
+  end
+
+  def verify_agent_limit
+    chk_change_agents unless downgrade?
   end
 
   def non_free_agents

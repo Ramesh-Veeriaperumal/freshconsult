@@ -51,6 +51,161 @@ class SubscriptionsControllerTest < ActionController::TestCase
     unstub_chargebee_requests
   end
 
+  def test_handle_agents_when_moving_from_non_paying_plan_without_dp_enabled
+    plan_ids = SubscriptionPlan.current.map(&:id)
+    stub_chargebee_requests
+    current_plan_id = @account.subscription.subscription_plan_id
+    params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
+    params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
+    Subscription.any_instance.unstub(:chk_change_agents)
+    SubscriptionPlan.any_instance.stubs(:amount).returns(0)
+    @account.rollback :downgrade_policy
+    post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :agent_limit)))
+    @account.reload
+    assert_equal @account.subscription.subscription_request.nil?, true
+    assert_equal @account.subscription.subscription_plan_id, current_plan_id
+    assert_response 302
+  ensure
+    unstub_chargebee_requests
+  end
+
+  def test_handle_agents_when_moving_from_non_paying_plan_with_dp_enabled
+    plan_ids = SubscriptionPlan.current.map(&:id)
+    stub_chargebee_requests
+    current_plan_id = @account.subscription.subscription_plan_id
+    params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
+    params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
+    Subscription.any_instance.unstub(:chk_change_agents)
+    SubscriptionPlan.any_instance.stubs(:amount).returns(0)
+    Account.any_instance.stubs(:launched?).returns(true)
+    post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :agent_limit)))
+    @account.reload
+    assert_equal @account.subscription.subscription_request.nil?, true
+    assert_equal @account.subscription.subscription_plan_id, current_plan_id
+    assert_response 302
+  ensure
+    unstub_chargebee_requests
+    Account.any_instance.unstub(:launched?)
+  end
+
+  def test_handle_agents_when_moving_from_paying_plan_with_dp_enabled
+    plan_ids = SubscriptionPlan.current.map(&:id)
+    stub_chargebee_requests
+    current_plan_id = @account.subscription.subscription_plan_id
+    params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
+    params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
+    Subscription.any_instance.unstub(:chk_change_agents)
+    @account.subscription.update_attributes(agent_limit: '1')
+    @account.subscription.update_attributes(free_agents: '3')
+    @account.subscription.subscription_plan.update_attributes(amount: 35.00)
+    Account.any_instance.stubs(:launched?).returns(true)
+    post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :agent_limit)))
+    @account.reload
+    assert_equal @account.subscription.subscription_request.nil?, true
+    assert_equal @account.subscription.subscription_plan_id, current_plan_id
+    assert_response 302
+  ensure
+    unstub_chargebee_requests
+    Account.any_instance.unstub(:launched?)
+  end
+
+  def test_handle_agents_when_moving_from_paying_plan_without_dp_enabled
+    plan_ids = SubscriptionPlan.current.map(&:id)
+    stub_chargebee_requests
+    current_plan_id = @account.subscription.subscription_plan_id
+    params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
+    params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
+    Subscription.any_instance.unstub(:chk_change_agents)
+    SubscriptionPlan.any_instance.stubs(:amount).returns(35.00)
+    @account.rollback :downgrade_policy
+    post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :agent_limit)))
+    @account.reload
+    assert_equal @account.subscription.subscription_request.nil?, true
+    assert_equal @account.subscription.subscription_plan_id, current_plan_id
+    assert_response 302
+  ensure
+    unstub_chargebee_requests
+  end
+
+  def test_handle_agents_when_moving_from_paying_plan_without_dp_enabled_in_trial
+    plan_ids = SubscriptionPlan.current.map(&:id)
+    stub_chargebee_requests
+    current_plan_id = @account.subscription.subscription_plan_id
+    params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
+    params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
+    Subscription.any_instance.unstub(:chk_change_agents)
+    Subscription.any_instance.stubs(:trial?).returns(true)
+    SubscriptionPlan.any_instance.stubs(:amount).returns(35.00)
+    @account.rollback :downgrade_policy
+    post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :agent_limit)))
+    @account.reload
+    assert_equal @account.subscription.subscription_request.nil?, true
+    assert_equal @account.subscription.subscription_plan_id, current_plan_id
+    assert_response 302
+  ensure
+    unstub_chargebee_requests
+  end
+
+  def test_handle_agents_when_moving_from_non_paying_plan_without_dp_enabled_in_trial
+    plan_ids = SubscriptionPlan.current.map(&:id)
+    stub_chargebee_requests
+    current_plan_id = @account.subscription.subscription_plan_id
+    params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
+    params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
+    Subscription.any_instance.unstub(:chk_change_agents)
+    Subscription.any_instance.stubs(:trial?).returns(true)
+    SubscriptionPlan.any_instance.stubs(:amount).returns(0)
+    @account.rollback :downgrade_policy
+    post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :agent_limit)))
+    @account.reload
+    assert_equal @account.subscription.subscription_request.nil?, true
+    assert_equal @account.subscription.subscription_plan_id, current_plan_id
+    assert_response 302
+  ensure
+    unstub_chargebee_requests
+  end
+
+  def test_handle_agents_when_moving_from_paying_plan_with_dp_enabled_in_trial
+    plan_ids = SubscriptionPlan.current.map(&:id)
+    stub_chargebee_requests
+    current_plan_id = @account.subscription.subscription_plan_id
+    params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
+    params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
+    Subscription.any_instance.unstub(:chk_change_agents)
+    Subscription.any_instance.stubs(:active?).returns(false)
+    Subscription.any_instance.stubs(:trial?).returns(true)
+    SubscriptionPlan.any_instance.stubs(:amount).returns(35.00)
+    Account.any_instance.stubs(:launched?).returns(true)
+    post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :agent_limit)))
+    @account.reload
+    assert_equal @account.subscription.subscription_request.nil?, true
+    assert_equal @account.subscription.subscription_plan_id, current_plan_id
+    assert_response 302
+  ensure
+    unstub_chargebee_requests
+    Account.any_instance.unstub(:launched?)
+  end
+
+  def test_handle_agents_when_moving_from_non_paying_plan_with_dp_enabled_in_trial
+    plan_ids = SubscriptionPlan.current.map(&:id)
+    stub_chargebee_requests
+    current_plan_id = @account.subscription.subscription_plan_id
+    params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
+    params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
+    Subscription.any_instance.unstub(:chk_change_agents)
+    Subscription.any_instance.stubs(:trial?).returns(true)
+    SubscriptionPlan.any_instance.stubs(:amount).returns(0)
+   Account.any_instance.stubs(:launched?).returns(true)
+    post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :agent_limit)))
+    @account.reload
+    assert_equal @account.subscription.subscription_request.nil?, true
+    assert_equal @account.subscription.subscription_plan_id, current_plan_id
+    assert_response 302
+  ensure
+    unstub_chargebee_requests
+    Account.any_instance.unstub(:launched?)
+  end
+
   def test_new_subscription_plan_change
     current_plan_id = @account.subscription.subscription_plan_id
     params_plan_id = SubscriptionPlan.current.map(&:id).second
