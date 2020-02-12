@@ -63,8 +63,7 @@ module Widget
         end
 
         def load_articles
-          meta_item_ids = scoper.order('solution_article_meta.hits desc').limit(5).pluck(:id)
-          @items = current_account.solution_articles.where(parent_id: meta_item_ids, language_id: Language.current.id)
+          @items = scoper.order('solution_article_meta.hits desc').limit(5)
         end
 
         def agent?

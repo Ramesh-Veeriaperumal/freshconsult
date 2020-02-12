@@ -59,10 +59,11 @@ module Widget
         @request.env['HTTP_X_CLIENT_ID'] = @client_id
       end
 
-      def article_params(category, status = nil, visibility = Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone])
+      def article_params(category: @category, status: nil, title: 'Test',
+                         visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone])
         {
-          title: 'Test',
-          description: 'Test',
+          title: title,
+          description: title,
           folder_id: create_folder_with_language_reset(visibility: visibility,
                                                        category_id: category.id,
                                                        lang_codes: ['es', 'en'],
@@ -75,7 +76,7 @@ module Widget
       def create_articles(visibility = Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], user = nil)
         @category = create_category_with_language_reset(lang_codes: ['es', 'en'])
         set_category
-        params = article_params(@category, 2, visibility)
+        params = article_params(status: 2, visibility: visibility)
         article_meta = create_article_with_language_reset(params)
         if visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users]
           folder_meta = @account.solution_folder_meta.find(params[:folder_id])
@@ -84,8 +85,23 @@ module Widget
         @account.solution_articles.where(parent_id: article_meta.id, language_id: main_portal_language_id).first
       end
 
+      def create_article_for_suggested_article
+        @category = create_category_with_language_reset(lang_codes: ['es', 'en'])
+        set_category
+        5.times do |value|
+          value += 1
+          params = article_params(status: 2, title: "Hit #{100 * value}")
+          article = create_article_with_language_reset(params).current_article
+          new_article = Solution::ArticleMeta.find_by_id(article.parent_id)
+          new_article.hits = 100 * value
+          article.hits = new_article.hits
+          article.save!
+          new_article.save!
+        end
+      end
+
       def get_article_for_main_portal
-        article_meta = create_article(article_params(create_category))
+        article_meta = create_article(article_params(category: create_category))
         @account.solution_articles.where(parent_id: article_meta.id, language_id: main_portal_language_id).first
       end
 
@@ -94,9 +110,9 @@ module Widget
       end
 
       def get_article_without_publish
-        category = create_category
+        @category = create_category
         set_category
-        article_meta = create_article(article_params(category, 1))
+        article_meta = create_article(article_params(category: @category, status: 1))
         @account.solution_articles.where(parent_id: article_meta.id, language_id: main_portal_language_id).first
       end
 
@@ -107,19 +123,21 @@ module Widget
         @help_widget_category.save
       end
 
-      def solution_category_meta_ids(user = nil)
+      def most_viewed_article(user = nil)
         @account.solution_article_meta
                 .for_help_widget(@widget, user)
-                .published.order(hits: :desc).limit(5).pluck(:id)
+                .published.order('solution_article_meta.hits desc').limit(5)
       end
 
       def get_suggested_articles(lang_code: @account.main_portal.language, user: nil)
         result = []
-        meta_item_ids = solution_category_meta_ids(user)
-        articles = @account.solution_articles.where(parent_id: meta_item_ids, language_id: Language.find_by_code(lang_code).id)
+        current_lang = Language.current
+        Language.find_by_code(lang_code).make_current
+        articles = most_viewed_article(user)
         articles.each do |art|
-          result << widget_article_search_pattern(art)
+          result << widget_article_search_pattern(art.current_article)
         end
+        current_lang.nil? ? Language.reset_current : current_lang.make_current
         result
       end
 
@@ -307,7 +325,7 @@ module Widget
 
       def test_show_article_with_attachments
         attachments = create_attachment
-        att_article = create_article(article_params(@category)).current_article
+        att_article = create_article(article_params).current_article
         att_article.attachments = [attachments]
         att_article.save
         get :show, controller_params(id: att_article.parent_id)
@@ -329,7 +347,7 @@ module Widget
       end
 
       def test_show_article_with_wrong_widget_id
-        @request.env['HTTP_X_WIDGET_ID'] = 10001
+        @request.env['HTTP_X_WIDGET_ID'] = 10_001
         get :show, controller_params(id: @article.parent_id)
         assert_response 400
         assert_nil Language.current
@@ -947,6 +965,17 @@ module Widget
         solution_folder_meta = @article.parent.solution_folder_meta
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         assert_equal result.first['title'], 'es Test'
+        assert_nil Language.current
+      end
+
+      def test_suggested_articles_order
+        create_article_for_suggested_article
+        get :suggested_articles, controller_params(language: 'en')
+        assert_response 200
+        match_json(get_suggested_articles(lang_code: 'en'))
+        result = parse_response(@response.body)
+        assert_equal result.first['title'], 'en Hit 500'
+        assert_equal result.last['title'], 'en Hit 100'
         assert_nil Language.current
       end
 
