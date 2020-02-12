@@ -4,9 +4,5 @@
   signing_key: <%= config[:signing_key] %>
   jwt_default_expiry: <%= config[:jwt_default_expiry] %>
   email_cipher_key: <%= config[:email_cipher_key] %>
-<% if @envoy_egress_allowed && config[:envoy_egress] %>
-  service_url: <%= config[:envoy_egress][:service_address] %>:<%= config[:envoy_egress][:service_port] %>
-<% else %>
   service_url: <%= config[:service_url] %>
-<% end %>
 <% end %>
