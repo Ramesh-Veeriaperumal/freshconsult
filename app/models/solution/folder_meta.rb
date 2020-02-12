@@ -39,8 +39,7 @@ class Solution::FolderMeta < ActiveRecord::Base
 	has_many :solution_article_meta,
 		:order => :"solution_article_meta.position",
 		:class_name => "Solution::ArticleMeta",
-		:foreign_key => :solution_folder_meta_id,
-		:dependent => :destroy
+		:foreign_key => :solution_folder_meta_id
 
 	has_many :solution_articles,
 		:through => :solution_article_meta,
@@ -79,7 +78,7 @@ class Solution::FolderMeta < ActiveRecord::Base
 
 	before_save :backup_category
 	before_destroy :backup_category
-
+	after_destroy :delete_article_meta
 	validate :companies_limit_check
 
 	alias_method :children, :solution_folders
@@ -180,6 +179,11 @@ class Solution::FolderMeta < ActiveRecord::Base
   end
 
 	private
+
+		def delete_article_meta
+	  	Rails.logger.debug "Adding delete article_meta job for folder_meta_id: #{id}"
+	  	DeleteSolutionMetaWorker.perform_async(parent_level_id: id, object_type: 'folder_meta')
+		end
 
 	def clear_cache
 		Account.current.clear_solution_categories_from_cache
