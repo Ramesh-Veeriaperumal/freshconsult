@@ -41,10 +41,6 @@ class Company < ActiveRecord::Base
     changes
   end
 
-  def self.central_publish_launched?
-    Account.current.launched? :company_central_publish
-  end
-
   def relationship_with_account
     'companies'
   end

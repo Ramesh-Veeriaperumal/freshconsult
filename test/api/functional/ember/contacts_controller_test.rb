@@ -27,7 +27,6 @@ module Ember
       return if @@initial_setup_run
 
       @account.add_feature(:multiple_user_companies)
-      @account.launch(:timeline)
       @account.reload
       WebMock.disable_net_connect!
 
@@ -1846,16 +1845,6 @@ module Ember
       User.any_instance.unstub(:privilege?)
       assert_response 403
       match_json(request_error_pattern(:access_denied))
-    end
-
-    def test_contact_timeline_with_features_missing
-      sample_user = add_new_user(@account)
-      @account.rollback(:timeline)
-      get :timeline, controller_params(version: 'private', id: sample_user.id)
-      assert_response 403
-      match_json(request_error_pattern(:require_feature, feature: 'Timeline'))
-    ensure
-      @account.launch(:timeline)
     end
 
     def test_contact_timeline_with_hypertrail_fail

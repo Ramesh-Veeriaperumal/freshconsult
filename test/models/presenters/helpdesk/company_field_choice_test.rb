@@ -6,12 +6,10 @@ class CompanyFieldChoiceTest < ActiveSupport::TestCase
   def setup
     super
     @account = @account.make_current
-    @account.launch(:company_field_central_publish)
     CentralPublishWorker::CompanyFieldWorker.jobs.clear
   end
 
   def teardown
-    @account.rollback(:company_field_central_publish)
     Account.unstub(:current)
   end
 

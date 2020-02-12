@@ -21,12 +21,10 @@ class ContactDeleteForeverWorkerTest < ActionView::TestCase
     create_test_account if Account.first.nil?
     @account = Account.first
     Account.stubs(:current).returns(@account)
-    Account.current.launch(:contact_delete_forever)
     Users::ContactDeleteForeverWorker.clear
   end
 
   def teardown
-    Account.current.rollback(:contact_delete_forever)
     User.reset_current_user
     Account.unstub(:current)
     super

@@ -15,7 +15,6 @@ module FeatureConstants
   CONTACT_COMPANY_NOTES = :contact_company_notes
   CANNED_FORMS = :canned_forms
   SANDBOX = :sandbox
-  TIMELINE = [:timeline].freeze
   BOT_EMAIL_CHANNEL = :bot_email_channel.freeze
   BOT_CHAT_HISTORY = :bot_chat_history.freeze
   AUTOMATION_REVAMP = :automation_revamp.freeze

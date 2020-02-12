@@ -6,12 +6,10 @@ class ContactFieldChoiceTest < ActiveSupport::TestCase
   def setup
     super
     @account = @account.make_current
-    @account.launch(:contact_field_central_publish)
     CentralPublishWorker::ContactFieldWorker.jobs.clear
   end
 
   def teardown
-    @account.rollback(:contact_field_central_publish)
     Account.unstub(:current)
   end
 

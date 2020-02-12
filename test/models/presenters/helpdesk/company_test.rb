@@ -25,7 +25,6 @@ class CompanyTest < ActiveSupport::TestCase
     return if @@before_all_run
     @account.subscription.state = 'active'
     @account.subscription.save
-    @account.launch(:company_central_publish)
     @account.company_form.company_fields_from_cache
     @@before_all_run = true
   end	
@@ -76,8 +75,7 @@ class CompanyTest < ActiveSupport::TestCase
     company_field
   end
 
-  def test_central_publish_with_launch_party_enabled
-    @account.launch(:company_central_publish)
+  def test_central_publish
     CentralPublishWorker::CompanyWorker.jobs.clear
     company = create_company
     assert_equal 1, CentralPublishWorker::CompanyWorker.jobs.size
