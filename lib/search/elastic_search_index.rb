@@ -9,17 +9,20 @@ module Search::ElasticSearchIndex
       include Tire::Model::Search if ES_ENABLED
 
       def update_es_index
-        SearchSidekiq::UpdateSearchIndex.perform_async({ :klass_name => self.class.name, 
-                                                          :id => self.id }) if Account.current.esv1_enabled?
-        add_to_es_count if add_to_count_esv2?
+        # dead code. did not remove as it has lots of references. wil do later.
       end
 
       def remove_es_document
-        SearchSidekiq::RemoveFromIndex::Document.perform_async({ :klass_name => self.class.name, 
-                                                                  :id => self.id }) if Account.current.esv1_enabled?
-
-        remove_from_es_count if add_to_count_esv2?
+        # dead code. did not remove as it has lots of references. wil do later.
       end
+
+      def remove_from_es_count
+        # dead code. did not remove as it has lots of references. wil do later.
+      end
+
+      def add_to_es_count
+        # dead code. did not remove as it has lots of references. wil do later.
+      end      
 
       def search_alias_name
         if self.class == ScenarioAutomation
@@ -27,14 +30,6 @@ module Search::ElasticSearchIndex
         else
           "#{self.class.table_name}_#{self.account_id}"
         end
-      end
-
-      def add_to_count_esv2?
-        !Account.current.sandbox? && ((self.is_a?(Helpdesk::TicketTemplate)) || (es_v2_models? && redis_key_exists?(COUNT_ESV2_WRITE_ENABLED)))
-      end
-
-      def es_v2_models? 
-        ["ScenarioAutomation", "Admin::CannedResponses::Response"].include?(self.class.name)
       end
 
       def es_highlight(item)
@@ -48,20 +43,6 @@ module Search::ElasticSearchIndex
 
       def search_job_key
         Redis::RedisKeys::SEARCH_KEY % { :account_id => self.account_id, :klass_name => self.class.name, :id => self.id }
-      end
-
-      ### Write methods for count cluster ###
-
-      def add_to_es_count
-        SearchSidekiq::CountActions::DocumentAdd.perform_async(esv2_default_args)
-      end
-
-      def remove_from_es_count
-       SearchSidekiq::CountActions::DocumentRemove.perform_async(esv2_default_args)
-      end
-
-      def esv2_default_args
-        { :klass_name => self.class.name, :document_id => self.id, :account_id => Account.current.id, :version => Search::Job.es_version}
       end
     end
   end
