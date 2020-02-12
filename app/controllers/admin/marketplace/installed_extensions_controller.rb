@@ -82,7 +82,8 @@ class Admin::Marketplace::InstalledExtensionsController < Admin::AdminController
   end
 
   def install
-    install_ext = install_extension(install_params(account_configs_values))
+    install_ext = install_extension(install_params(account_configs_values)
+      .merge(offline_subscription? ? {} : paid_app_params))
     flash[:notice] = t('marketplace.install_action.success') if install_ext.status == 200
     render :json => install_ext.body, :status => install_ext.status
   end
@@ -107,7 +108,9 @@ class Admin::Marketplace::InstalledExtensionsController < Admin::AdminController
   def reinstall
     prev_version_addon = previous_version_addon
     return unless prev_version_addon
-    update_ext(install_params(account_configs_values).deep_merge(prev_version_addon))
+    update_ext(install_params(account_configs_values)
+      .merge(paid_app_params)
+      .deep_merge(prev_version_addon))
   end
 
   def uninstall
@@ -171,7 +174,6 @@ class Admin::Marketplace::InstalledExtensionsController < Admin::AdminController
                     :account_full_domain => current_account.full_domain
                   }
                   .merge(params[:installed_version] ? {:installed_version => params[:installed_version]} : {})
-                  .merge(offline_subscription? ? {} : paid_app_params)
     if configs.present? && configs[:oauth_configs].present?
       inst_params[:oauth_configs] = configs[:oauth_configs]
       inst_params[:configs].except!(:oauth_configs)
@@ -266,7 +268,7 @@ class Admin::Marketplace::InstalledExtensionsController < Admin::AdminController
       render_error_response and return false if error_status?(installed_extension)
       installed_version_id = installed_extension.body['version_id']
 
-      if installed_version_id != params[:version_id]
+      if installed_version_id != params[:version_id] && paid_app?
         installed_version = version_details(installed_version_id)
         render_error_response and return false if error_status?(installed_version)
 
