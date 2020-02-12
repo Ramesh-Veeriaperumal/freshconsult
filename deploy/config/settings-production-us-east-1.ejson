@@ -167,9 +167,9 @@
         "_remove_domain_url": "api/v1/whitelabel/domains",
         "_lang_detect_path": "api/v1/detect/lang",
         "envoy_egress": {
-          "_host_address": "0.0.0.0",
+          "_host_address": "http://127.0.0.1",
           "_host_port": "8183",
-          "_lang_host_address": "0.0.0.0",
+          "_lang_host_address": "http://127.0.0.1",
           "_lang_host_port": "8184"
       },
       "product_feedback": {
@@ -1938,9 +1938,9 @@
           "_product_name": "freshdesk",
           "_search_service": "search-service.internal.poduseast1.freshdesk.com",
           "envoy_egress": {
-            "_v2_host_address": "0.0.0.0",
+            "_v2_host_address": "http://127.0.0.1",
             "_v2_host_port": "8185",
-            "_search_service_address": "0.0.0.0",
+            "_search_service_address": "http://127.0.0.1",
             "_search_service_port": "8186"
         },
         "_count": [
@@ -2093,7 +2093,7 @@
         },
         "_api_endpoint": "https://central.freshworksapi.com/collector",
         "envoy_egress": {
-          "_endpoint_address": "0.0.0.0",
+          "_endpoint_address": "http://127.0.0.1",
           "_endpoint_port": "8187",
           "_endpoint_path": "/collector"
       },
@@ -2231,7 +2231,7 @@
         "_jwt_default_expiry": "30",
         "_service_url": "proactiveservice-us-internal.freshdesk.com",
         "envoy_egress": {
-          "_service_address": "0.0.0.0",
+          "_service_address": "http://127.0.0.1",
           "_service_port": "8188"
       },
       "facebook_gateway": {
@@ -2283,7 +2283,7 @@
         "_freshid_request_timeout": 1,
         "_mobile_deep_link_protocol": "com.freshworks.freshdesk",
         "envoy_egress": {
-          "_address": "0.0.0.0",
+          "_address": "http://127.0.0.1",
           "_port": "8182"
         }
       },
