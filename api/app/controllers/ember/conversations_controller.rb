@@ -302,7 +302,7 @@ module Ember
         # publish solution is being set in kbase_email_included based on privilege and email params
         if is_success
           enqueue_send_set_observer if @ticket.schedule_observer
-          create_solution_article if @publish_solution
+          create_solution_article if @create_solution_privilege
           @ticket.draft.clear if reply?
         end
         @ticket.add_forum_post(@item) if @post_to_forum_topic
@@ -405,7 +405,7 @@ module Ember
 
       def save_note_later
         assign_extras
-        @item.save_note_later(@publish_solution, @post_to_forum_topic)
+        @item.save_note_later(@create_solution_privilege, @post_to_forum_topic)
       end
 
       def assign_from_email

@@ -334,7 +334,7 @@ class ConversationsControllerTest < ActionController::TestCase
     article_count = Solution::Article.count
     User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
     User.any_instance.stubs(:privilege?).with(:reply_ticket).returns(true)
-    User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false).at_most_once
+    User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(false).at_most_once
     params_hash = reply_note_params_hash.merge(cc_emails: [@account.kbase_email])
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     User.any_instance.unstub(:privilege?)
@@ -348,7 +348,7 @@ class ConversationsControllerTest < ActionController::TestCase
     article_count = Solution::Article.count
     User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
     User.any_instance.stubs(:privilege?).with(:reply_ticket).returns(true)
-    User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false).at_most_once
+    User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(false).at_most_once
     params_hash = reply_note_params_hash.merge(bcc_emails: [@account.kbase_email])
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     User.any_instance.unstub(:privilege?)

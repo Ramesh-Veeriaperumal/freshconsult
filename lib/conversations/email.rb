@@ -13,7 +13,7 @@ module Conversations::Email
     else        
       Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item, {:include_cc => params[:include_cc] ,
               :send_survey => ((!params[:send_survey].blank? && params[:send_survey].to_i == 1) ? true : false)})
-      flash[:notice] =  (@publish_solution == false) ?
+      flash[:notice] =  (@create_solution_privilege == false) ?
         t(:'flash.tickets.reply.without_kbase') : t(:'flash.tickets.reply.success')
     end
   end
@@ -45,7 +45,7 @@ module Conversations::Email
     if (request_params.slice(*[:to_emails, :cc_emails, :bcc_emails]).values.flatten.include?(kbase_email))
       @item.bcc_emails.delete(kbase_email)
       @item.cc_emails.delete(kbase_email)
-      @publish_solution = privilege?(:publish_solution) 
+      @create_solution_privilege = privilege?(:create_and_edit_article) 
     end
   end
 

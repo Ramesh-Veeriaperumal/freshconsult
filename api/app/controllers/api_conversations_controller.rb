@@ -100,7 +100,7 @@ class ApiConversationsController < ApiApplicationController
       is_success = save_note
       # publish solution is being set in kbase_email_included based on privilege and email params
       if is_success
-        create_solution_article if @publish_solution
+        create_solution_article if @create_solution_privilege
       end
       render_response(is_success)
     end
@@ -112,7 +112,7 @@ class ApiConversationsController < ApiApplicationController
 
     def save_note_later
       assign_extras
-      @item.save_note_later(@publish_solution, false)
+      @item.save_note_later(@create_solution_privilege, false)
     end
 
     def assign_attributes_for_forward
