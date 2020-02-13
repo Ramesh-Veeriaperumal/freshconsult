@@ -51,6 +51,7 @@ module TestCaseMethods
   end
 
   def disable_adv_ticketing(features = [])
+    Account.current.reload
     features.is_a?(Array) ? features.each { |f| Account.current.revoke_feature(f) } : Account.current.revoke_feature(features)
   end
 

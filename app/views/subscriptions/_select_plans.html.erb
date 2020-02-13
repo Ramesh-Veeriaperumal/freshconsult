@@ -3,7 +3,7 @@
   current_plan_name = current_account.subscription.subscription_plan.name.downcase
   current_plan_ranking = SubscriptionsHelper::PLAN_RANKING[current_plan_name] || 0 # default rank as zero
   has_credit_card = current_account.has_credit_card? 
-  select_billing_option = current_account.new_2019_pricing_enabled? ? SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual] : @subscription.renewal_period
+  select_billing_option = SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]
 %>
 <div id="ChangePlan">
   <div class="plans">

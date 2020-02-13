@@ -15,7 +15,7 @@
   <% end %>
 
   <%
-    hidden_billing_cycle_value = current_account.new_2019_pricing_enabled? ? SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual] : 1
+    hidden_billing_cycle_value = SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]
   %>
   <input type="hidden" name="billing_cycle" value="<%= hidden_billing_cycle_value %>" />
   <input type="hidden" name="agent_limit" value="<%= agent_limit %>" />

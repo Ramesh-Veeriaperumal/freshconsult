@@ -929,15 +929,16 @@ class Account < ActiveRecord::Base
     Community::SolutionBinarizeSync.perform_async
   end
 
-  # TODO: Remove force_2019_plan?() after 2019 plan launched
+  # TODO: Remove force_2020_plan?() after 2020 plan launched
   # START
-  def force_2019_plan?
-    !redis_key_exists?(NEW_2019_PRICING_ENABLED) && ismember?(NEW_2019_PRICING_TEST_USERS, admin_email)
+  def force_2020_plan?
+    !redis_key_exists?(NEW_2020_PRICING_ENABLED) && ismember?(NEW_2020_PRICING_TEST_USERS, admin_email)
   end
 
-  def new_2019_pricing_enabled?
-    redis_key_exists?(NEW_2019_PRICING_ENABLED) || ismember?(NEW_2019_PRICING_TEST_USERS, admin_email)
+  def new_2020_pricing_enabled?
+    redis_key_exists?(NEW_2020_PRICING_ENABLED) || ismember?(NEW_2020_PRICING_TEST_USERS, admin_email)
   end
+  # END
 
   def field_agents_count
     return @field_agents_count if @field_agents_count.present?
@@ -945,7 +946,6 @@ class Account < ActiveRecord::Base
 
     @field_agents_count = agents.where(agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT)).count
   end
-  # END
 
   def custom_dropdown_choice_hash
     @custom_dropdown_choice_hash ||= custom_dropdown_fields_from_cache.collect do |x|

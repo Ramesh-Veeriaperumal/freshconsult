@@ -5263,6 +5263,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
     results = parse_response(@response.body)
     assert_not_equal results['requester_id'], t.requester_id
+    @account.reload
     @account.revoke_feature :unique_contact_identifier
   end
 

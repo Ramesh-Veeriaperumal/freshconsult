@@ -48,12 +48,7 @@
                           <%= content_tag(:div, t('free_plan_agents_v2').html_safe, :class => "info-data") %>
                         <% else %>
                           <%= content_tag(:h3, fetch_plan_amount(plan), :class => "plan-cost") %>
-
-                          <% if current_account.new_2019_pricing_enabled? %>
-                            <%= content_tag(:div, t('billed_annually'), :class => "info-data") %>
-                          <% else %>
-                            <%= content_tag(:div, t('plan_amount'), :class => "info-data") %>
-                          <% end %>
+                          <%= content_tag(:div, t('billed_annually'), :class => "info-data") %>
                         <% end %>
                       <% end %>
                       <%= content_tag(:div, (plan_name == "premium") ? t("special_beta_offer") : "&nbsp;".html_safe, :class => "discount-info-text" ) if(@discount && @discount.name.downcase == "beta users special")  %>

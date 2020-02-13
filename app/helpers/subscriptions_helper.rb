@@ -2,32 +2,7 @@ module SubscriptionsHelper
   include Subscription::Currencies::Constants
   include ActionView::Helpers::NumberHelper
 
-  PLANS_FEATURES = {
-    "sprout" => [ "email_ticketing", "feedback_widget" ,"knowledge_base", "automations", "phone_integration", "mobile_apps", "integrations", "freshchat" ],
-    "blossom" => [ "everything_in_sprout", "multiple_mailboxes", "custom_domain", "social_support", "satisfaction_survey", "forums", "gamification" ],
-    "garden" => ["everything_in_blossom", "multiple_languages", "multiple_products", "multiple_timezones", "css_customization", "fsm_option"],
-    "estate" => [ "everything_in_garden", "agent_collision", "custom_roles", "custom_ssl", "enterprise_reports", "portal_customization", "fsm_option" ],
-    "forest" => [ "everything_in_estate", "custom_mailbox", "ip_restriction", "fsm_option" ],
-
-    "sprout jan 17" => [ "email_ticketing", "ticket_dispatch_automation" , "knowledge_base", "app_gallery", "basic_phone", "freshchat" ],
-    "blossom jan 17" => [ "everything_in_sprout", "multiple_mailboxes", "time_event_automation", "sla_reminders", "custom_domain", "satisfaction_survey",
-      "helpdesk_report", "custom_ticket_fields_and_views"],
-    "garden jan 17" => [ "everything_in_blossom", "m_k_base", "dynamic_email_alert", "forums", "scheduled_reports",
-       "ticket_templates", "custom_surveys", "fsm_option"],
-    "estate jan 17" => ["everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "agent_collision", "auto_ticket_assignment",
-       "role_dashboard", "enterprise_reports", "custom_dashboard", "fsm_option"],
-    "forest jan 17" => [ "everything_in_estate", "ip_whitelisting", "skill_based_assignment", "custom_mailbox", "advanced_phone_integration", "fsm_option" ],
-
-    "sprout jan 19" => ["email_ticketing", "ticket_dispatch_automation", "knowledge_base", "basic_social", "freshcaller", "ticket_trends", "omni_channel_option"],
-    "blossom jan 19" => [ "everything_in_sprout", "multiple_mailboxes", "app_gallery", "time_event_automation", "custom_domain", "helpdesk_report", "custom_ticket_fields_and_views", "agent_collision", "api_rate_limit_blossom", "omni_channel_option"],
-    "garden jan 19" => ["everything_in_blossom", "satisfaction_survey", "timesheets", "sla_reminders", "agent_performance_report", "ticket_templates", "m_k_base", "customer_journey",  "api_rate_limit_garden", "fsm_option"],
-    "estate jan 19" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "auto_ticket_assignment", "enterprise_reports", "custom_dashboard", "custom_surveys", "custom_translations", "api_rate_limit_estate", "api_rate_limit_extendable", "fsm_option"],
-    "forest jan 19" => [ "everything_in_estate", "ip_whitelisting", "skill_based_assignment", "sandbox", "hippa_compliance", "api_rate_limit_forest", "api_rate_limit_extendable", "omni_channel_option", "fsm_option"],
-
-    "garden omni jan 19" => ["everything_in_blossom", "satisfaction_survey", "timesheets", "sla_reminders", "agent_performance_report", "ticket_templates", "m_k_base", "customer_journey", "api_rate_limit_garden", "omni_channel_option", "fsm_option"],
-    "estate omni jan 19" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "auto_ticket_assignment", "enterprise_reports", "custom_dashboard", "custom_surveys", "api_rate_limit_estate", "api_rate_limit_extendable", "omni_channel_option", "fsm_option"]
-
-  }
+  PLANS_FEATURES = PlanFeaturesConfig
 
   OMNI_FEATURES = {
     "sproutomni_channel_option" => ["sprout_omni"],
@@ -109,7 +84,17 @@ module SubscriptionsHelper
     "forest jan 19" => 5,
 
     "garden omni jan 19" => 3,
-    "estate omni jan 19" => 4
+    'estate omni jan 19' => 4,
+
+    'sprout jan 20' => 1,
+    'blossom jan 20' => 2,
+    'garden jan 20' => 3,
+    'estate jan 20' => 4,
+    'forest jan 20' => 5,
+
+    'garden omni jan 20' => 3,
+    'estate omni jan 20' => 4,
+    'forest omni jan 20' => 5
   }
 
   EQUAL_PLAN_HASH = {
@@ -125,10 +110,10 @@ module SubscriptionsHelper
     "estate jan 19" => {:type_flag => 2, :features => []},
     "garden omni jan 19" => {:type_flag => 0, :features => ["parent_child_desc"]},
     "estate omni jan 19" => {:type_flag => 2, :features => ["scenario_automations_desc"]},
-    "forest jan 19" => {:type_flag => 2, :features => []}
+    'forest jan 19' => { type_flag: 2, features: [] }
   }
 
-  NEW_SPROUT = [ "Sprout Jan 17", "Sprout Jan 19"].freeze
+  NEW_SPROUT = ['Sprout Jan 17', 'Sprout Jan 19', 'Sprout Jan 20'].freeze
 
   OMNI_PLANS_SERIES = SubscriptionPlan::JAN_2019_PLAN_NAMES.reject { |name| SubscriptionPlan::OMNI_TO_BASIC_PLAN_MAP.key(name) }
   NON_OMNI_PLANS_SERIES = SubscriptionPlan::JAN_2019_PLAN_NAMES.reject { |name| SubscriptionPlan::BASIC_PLAN_TO_OMNI_MAP.key(name) }
@@ -208,7 +193,7 @@ module SubscriptionsHelper
     format_amount(recharge_price, current_account.currency_name)
   end
 
-  def fetch_plan_amount(plan)    
+  def fetch_plan_amount(plan)
     currency = current_account.currency_name
     amount = plan.pricing(currency)
     format_amount(amount, currency)
@@ -217,7 +202,7 @@ module SubscriptionsHelper
   def cost_per_agent(plan_name, period, currency)
     billing_subscription = Billing::Subscription.new
     if period.nil?
-      period = current_account.new_2019_pricing_enabled? ? SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual] : 1
+      period = SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]
     end
     plan_info = billing_subscription.retrieve_plan(plan_name, period)
     amount = (plan_info.plan.price/plan_info.plan.period)/100
@@ -314,10 +299,10 @@ module SubscriptionsHelper
   end
 
   def losing_features(plan_name, account)
-    if account.new_2019_pricing_enabled?
+    if account.new_2020_pricing_enabled?
       PLANS_FEATURES_LOSS_2019["#{plan_name.downcase}"]
     else
-      PLANS_FEATURES_LOSS["#{plan_name.downcase}"]
+      PLANS_FEATURES_LOSS_2019["#{plan_name.downcase}"]
     end
   end
 

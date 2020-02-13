@@ -494,9 +494,9 @@ class AccountTest < ActionView::TestCase
     Account.current.hipaa_encryption_key
     assert_equal response.status, 200
     Account.current.beacon_report
-    Account.current.force_2019_plan?
+    Account.current.force_2020_plan?
     assert_equal response.status, 200
-    Account.current.new_2019_pricing_enabled?
+    Account.current.new_2020_pricing_enabled?
     assert_equal response.status, 200
   end
 

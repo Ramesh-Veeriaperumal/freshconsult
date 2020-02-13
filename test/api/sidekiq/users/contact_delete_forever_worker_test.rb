@@ -114,6 +114,7 @@ class ContactDeleteForeverWorkerTest < ActionView::TestCase
     child_tkt.parent_ticket_id = prt_ticket.display_id
     child_tkt.save
     Users::ContactDeleteForeverWorker.new.perform(args)
+    Account.current.reload
     Account.current.revoke_feature(:parent_child_tickets)
     assert_equal 0, Account.current.tickets.where(requester_id: usr.id).length
     assert_equal 0, ::Users::ContactDeleteForeverWorker.jobs.size
