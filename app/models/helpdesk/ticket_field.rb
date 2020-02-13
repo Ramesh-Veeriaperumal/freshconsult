@@ -153,7 +153,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   publishable
 
   def initialize_default_values
-    self.field_options ||= {}
+    self.field_options = {} if field_options.blank? || !field_options.is_a?(Hash)
     self.field_options = self.field_options.with_indifferent_access
     self.field_type ||= ''
   end
