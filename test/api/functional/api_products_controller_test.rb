@@ -8,7 +8,7 @@ class ApiProductsControllerTest < ActionController::TestCase
   def test_index
     get :index, controller_params
     pattern = []
-    Account.current.products_from_cache.each do |product|
+    Account.current.products_ar_cache.each do |product|
       pattern << product_pattern(product)
     end
     assert_response 200
@@ -54,7 +54,7 @@ class ApiProductsControllerTest < ActionController::TestCase
     3.times do
       create_product
     end
-    per_page =  Account.current.products_from_cache.count - 1
+    per_page =  Account.current.products_ar_cache.count - 1
     get :index, controller_params(per_page: per_page)
     assert_response 200
     assert JSON.parse(response.body).count == per_page

@@ -1,24 +1,30 @@
+<% config = node[:ymls][:fd_email_service] %>
 <%= node[:opsworks][:environment] %>:
-  key: <%= node[:ymls][:fd_email_service][:key] %>
-  lang_key: <%= node[:ymls][:fd_email_service][:lang_key] %>
-  host: <%= node[:ymls][:fd_email_service][:host] %>
-  lang_host: <%= node[:ymls][:fd_email_service][:lang_host] %>
-  timeout: <%= node[:ymls][:fd_email_service][:timeout] %>
-  email_send_urlpath: <%= node[:ymls][:fd_email_service][:url] %>
-  email_campaign_urlpath: <%= node[:ymls][:fd_email_service][:campaign_url] %>
-  account_validate_urlpath: <%= node[:ymls][:fd_email_service][:account_validate_url] %>
-  sender_config_urlpath: <%= node[:ymls][:fd_email_service][:sender_config_url] %>
-  get_domains: <%= node[:ymls][:fd_email_service][:get_domains_url] %>
-  configure_domain: <%= node[:ymls][:fd_email_service][:configure_domain_url] %>
-  verify_domain: <%= node[:ymls][:fd_email_service][:verify_domain_url] %>
-  remove_domain: <%= node[:ymls][:fd_email_service][:remove_domain_url] %>
-  antivirus_urlpath: <%= node[:ymls][:fd_email_service][:antivirus_url] %>
-  account_destroy_urlpath: <%= node[:ymls][:fd_email_service][:account_destroy_url] %>
-  lang_detect_path: <%= node[:ymls][:fd_email_service] [:lang_detect_path] %>
-  ip_pool_category: <%= node[:ymls][:fd_email_service][:ip_pool_category] %>
-  incoming_email_api_key1: <%= node[:ymls][:fd_email_service][:incoming_email_api_key1] %>
-  incoming_email_api_key2: <%= node[:ymls][:fd_email_service][:incoming_email_api_key2] %>
-  imap_application_id: <%= node[:ymls][:fd_email_service][:imap_application_id] %>
+  key: <%= config[:key] %>
+  lang_key: <%= config[:lang_key] %>
+  timeout: <%= config[:timeout] %>
+  email_send_urlpath: <%= config[:url] %>
+  email_campaign_urlpath: <%= config[:campaign_url] %>
+  account_validate_urlpath: <%= config[:account_validate_url] %>
+  sender_config_urlpath: <%= config[:sender_config_url] %>
+  get_domains: <%= config[:get_domains_url] %>
+  configure_domain: <%= config[:configure_domain_url] %>
+  verify_domain: <%= config[:verify_domain_url] %>
+  remove_domain: <%= config[:remove_domain_url] %>
+  antivirus_urlpath: <%= config[:antivirus_url] %>
+  account_destroy_urlpath: <%= config[:account_destroy_url] %>
+  lang_detect_path: <%= config [:lang_detect_path] %>
+  ip_pool_category: <%= config[:ip_pool_category] %>
+  incoming_email_api_key1: <%= config[:incoming_email_api_key1] %>
+  incoming_email_api_key2: <%= config[:incoming_email_api_key2] %>
+  imap_application_id: <%= config[:imap_application_id] %>
+<% if @envoy_egress_allowed && config[:envoy_egress] %>
+  host: <%= config[:envoy_egress][:host_address] %>:<%= config[:envoy_egress][:host_port] %>
+  lang_host: <%= config[:envoy_egress][:lang_host_address] %>:<%= config[:envoy_egress][:lang_host_port] %>
+<% else %>
+  host: <%= config[:host] %>
+  lang_host: <%= config[:lang_host] %>
+<% end %>
   ip_pool_names:
     - freshworks_email_high
     - freshworks_email_low

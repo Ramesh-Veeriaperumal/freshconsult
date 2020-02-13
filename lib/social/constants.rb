@@ -165,6 +165,8 @@ module Social::Constants
   TWEET_ALREADY_EXISTS = "Tweet already converted as a ticket".freeze
   TICKET_ARCHIVED = "Ticket is an archived ticket".freeze
 
+  FACEBOOK_POST_ALREADY_EXISTS = 'Facebook Post already converted to a ticket'.freeze
+
   TWITTER_FEED_TICKET = 'twitter_feed_ticket'.freeze
 
   TWITTER_ERROR_CODES = {

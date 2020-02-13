@@ -44,6 +44,16 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     end
   end
 
+  def get_a_group(group_name, account, toggle_availability)
+    group = FactoryGirl.build(:group, name: group_name)
+    group.group_type = GroupConstants::SUPPORT_GROUP_ID
+    group.account_id = account.id
+    group.ticket_assign_type = 1
+    group.toggle_availability = toggle_availability
+    group.save!
+    group
+  end
+
   def test_multiple_agent_creation_with_valid_emails_and_no_role
     valid_emails = [Faker::Internet.email, Faker::Internet.email]
     invalid_emails = []
@@ -279,12 +289,118 @@ class Ember::AgentsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_availability
-    user = get_or_create_agent
-    add_privilege(User.current,:manage_availability)
+    group = get_a_group("avail_rand#{rand(999_999)}", @account, 1)
+    user = add_test_agent(@account, role: Role.find_by_name('Agent').id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
+    add_privilege(user, :manage_availability)
+    add_privilege(user, :manage_users)
+    remove_privilege(user, :manage_account)
+    Account.current.agent_groups.create(user_id: user.id, group_id: group.id)
+    Account.current.groups.update_all(toggle_availability: true)
+    user.reload
+    User.stubs(:current).returns(user)
+    @controller.stubs(:api_current_user).returns(user)
     params_hash = { ticket_assignment: { available: false } }
     put :update, construct_params({ version: 'private', id: user.id }, params_hash)
     assert_response 200
     match_json(private_api_agent_pattern(user.agent))
+  ensure
+    User.unstub(:current)
+    @controller.unstub(:api_current_user)
+  end
+
+  def test_update_with_availability_invalid_datatype
+    @account = Account.current
+    user = add_test_agent(@account, role: Role.find_by_name('Agent').id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
+    group = get_a_group("avail_rand#{rand(999_999)}", @account, 0)
+    User.stubs(:current).returns(user)
+    @controller.stubs(:api_current_user).returns(user)
+    add_privilege(user, :manage_availability)
+    add_privilege(user, :manage_users)
+    remove_privilege(user, :manage_account)
+    group.agent_groups.build(user_id: user.id)
+    params_hash = { ticket_assignment: { available: [true, false].sample } }
+    put :update, construct_params({ version: 'private', id: user.id }, params_hash)
+    assert_response 400
+    assert response.body.include? "Current user doesn't belong to any of the groups"
+  ensure
+    user.destroy if user.present?
+    group.destroy if group.present?
+    @account = nil
+    User.unstub(:current)
+    @controller.unstub(:api_current_user)
+  end
+
+  def test_update_with_availability_by_supervisor_valid
+    group = get_a_group("avail_rand#{rand(999_999)}", @account, 0)
+    user = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    Account.current.agent_groups.create(user_id: user.id, group_id: group.id)
+    supervisor = add_test_agent(@account, role: Role.find_by_name('Supervisor').id)
+    Account.current.agent_groups.create(user_id: supervisor.id, group_id: group.id)
+    supervisor.reload
+    user.reload
+    add_privilege(supervisor, :manage_users)
+    add_privilege(supervisor, :manage_availability)
+    add_privilege(supervisor, :manage_account)
+    params_hash = { ticket_assignment: { available: false } }
+    User.stubs(:current).returns(supervisor)
+    @controller.stubs(:api_current_user).returns(supervisor)
+    put :update, construct_params({ version: 'private', id: user.id }, params_hash)
+    assert_response 200
+    user.agent.reload
+    match_json(private_api_agent_pattern(user.agent))
+  ensure
+    User.unstub(:current)
+    @controller.unstub(:api_current_user)
+  end
+
+  def test_update_with_availability_by_supervisor_not_in_group
+    group = get_a_group("avail_rand#{rand(999_999)}", @account, 1)
+    user = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    supervisor = add_test_agent(@account, role: Role.find_by_name('Supervisor').id)
+    Account.current.agent_groups.create(user_id: user.id, group_id: group.id)
+    user.reload
+    add_privilege(supervisor, :manage_users)
+    add_privilege(supervisor, :manage_availability)
+    User.stubs(:current).returns(supervisor)
+    @controller.stubs(:api_current_user).returns(supervisor)
+    params_hash = { ticket_assignment: { available: false } }
+    put :update, construct_params({ version: 'private', id: user.id }, params_hash)
+    assert_response 400
+    assert response.body.include? 'belong to any of the groups of the agent'
+  ensure
+    User.unstub(:current)
+    @controller.unstub(:api_current_user)
+  end
+
+  def test_update_with_availability_by_current_user_with_valid_group
+    group = get_a_group("avail_rand#{rand(999_999)}", @account, 1)
+    user = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    Account.current.agent_groups.create(user_id: user.id, group_id: group.id)
+    user.reload
+    params_hash = { ticket_assignment: { available: false } }
+    User.stubs(:current).returns(user)
+    @controller.stubs(:api_current_user).returns(user)
+    put :update, construct_params({ version: 'private', id: user.id }, params_hash)
+    assert_response 200
+    user.reload
+    match_json(private_api_restriced_agent_hash(user.agent))
+  ensure
+    User.unstub(:current)
+    @controller.unstub(:api_current_user)
+  end
+
+  def test_update_with_availability_by_current_user_without_valid_group
+    user = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    user.reload
+    params_hash = { ticket_assignment: { available: false } }
+    User.stubs(:current).returns(user)
+    @controller.stubs(:api_current_user).returns(user)
+    put :update, construct_params({ version: 'private', id: user.id }, params_hash)
+    assert_response 400
+    assert response.body.include? 'Toggle availability not allowed for this user'
+  ensure
+    User.unstub(:current)
+    @controller.unstub(:api_current_user)
   end
 
   def test_update_with_toggle_shortcuts_for_agent
@@ -475,6 +591,8 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     params_hash = { shortcuts_enabled: true }
     put :update, construct_params({ version: 'private', id: user.id }, params_hash)
     assert_response 403
+  ensure
+    add_privilege(User.current, :manage_availability)
   end
 
   def test_update_field_agent_with_correct_scope_and_role
@@ -482,7 +600,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     Agent.any_instance.stubs(:ticket_permission).returns(::Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
     field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
     field_tech_role = @account.roles.create(name: 'Field technician', default_role: true)
-    agent = add_test_agent(@account, { role: Role.find_by_name('Field technician').id, agent_type: field_agent_type.agent_type_id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] })
+    agent = add_test_agent(@account, role: Role.find_by_name('Field technician').id, agent_type: field_agent_type.agent_type_id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
     params = {email: Faker::Internet.email}
     Account.stubs(:current).returns(Account.first)
     put :update, construct_params({ id: agent.id }, params)
@@ -497,16 +615,15 @@ class Ember::AgentsControllerTest < ActionController::TestCase
   end
 
   def test_update_field_agent_with_incorrect_scope_and_role
-    skip('User created but agent is not created. Need to check further') #Check with Srividhya
     Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
     perform_fsm_operations
-    agent = add_test_agent(@account, { role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] })
-    params = { ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets], role_ids: [Role.find_by_name('Administrator').id] }
-    put :update, construct_params({ id: agent.user.id }, params)
+    user = add_test_agent(@account, role: Role.find_by_name('Field technician').id, agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
+    params = { ticket_scope: Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets], role_ids: [Role.find_by_name('Administrator').id] }
+    put :update, construct_params({ id: user.id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('ticket_permission', :field_agent_scope, :code => :invalid_value), bad_request_error_pattern('user.role_ids', I18n.t('activerecord.errors.messages.field_agent_roles', role: 'agent'), :code => :invalid_value)])
+    match_json([bad_request_error_pattern('ticket_permission', :field_agent_scope, :code => :invalid_value), bad_request_error_pattern('user.role_ids', I18n.t('activerecord.errors.messages.field_agent_roles', role: 'field technician'), :code => :invalid_value)])
   ensure
-    agent.destroy if agent.present?
+    user.destroy if user.present?
     cleanup_fsm
     Account.any_instance.unstub(:field_service_management_enabled?)
   end
@@ -515,7 +632,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     Agent.any_instance.stubs(:check_ticket_permission).returns(true)
     field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
     field_tech_role = @account.roles.create(name: 'Field technician', default_role: true)
-    agent = add_test_agent(@account, { role: Role.find_by_name('Field technician').id, agent_type: field_agent_type.agent_type_id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] })
+    agent = add_test_agent(@account, role: Role.find_by_name('Field technician').id, agent_type: field_agent_type.agent_type_id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
     Account.any_instance.stubs(:agent_types_from_cache).returns(agent)
     User.any_instance.stubs(:find).returns(field_agent_type)
     Agent.any_instance.stubs(:find).returns(Account.first.agent_types.first)
@@ -535,27 +652,25 @@ class Ember::AgentsControllerTest < ActionController::TestCase
   end
 
   def test_update_field_agent_from_restricted_to_group_scope
-    skip('User created but agent is not created. Need to check further') #Check with Srividhya
     Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
     perform_fsm_operations
-    agent = add_test_agent(@account, { role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] })
-    params = { ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets]}
-    put :update, construct_params({ id: agent.user.id }, params)
+    user = add_test_agent(@account, role: Role.find_by_name('Field technician').id, agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
+    params = { ticket_scope: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets] }
+    put :update, construct_params({ id: user.id }, params)
     assert_response 200
     assert JSON.parse(response.body)['ticket_scope'] == Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets]
   ensure
-    agent.destroy if agent.present?
+    user.destroy if user.present?
     cleanup_fsm
     Account.any_instance.unstub(:field_service_management_enabled?)
   end
 
   def test_update_field_agent_from_group_scope_to_restricted_scope
-    skip('agent.destroy in the test throws nil exception which shouldn\'t occurs')
     Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
     Agent.any_instance.stubs(:ticket_permission).returns(::Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
     perform_fsm_operations
-    agent = add_test_agent(@account, { role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets] })
-    params = { ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] }
+    agent = add_test_agent(@account, role: Role.find_by_name('Field technician').id, agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+    params = { ticket_scope: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] }
     put :update, construct_params({ id: agent.id }, params)
     puts "response_body ::#{response.body.inspect}, agent_id :: #{agent.inspect}"
     assert_response 200
@@ -680,8 +795,8 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     params_hash = { avatar_id: attachment_id }
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     put :update, construct_params({ version: 'private', id: user.id }, params_hash)
-    assert_equal user.avatar.content_file_name, 'image33kb.jpg'
     assert_response 200
+    assert_equal user.avatar.content_file_name, 'image33kb.jpg'
   ensure
     DataTypeValidator.any_instance.unstub(:valid_type?)
   end

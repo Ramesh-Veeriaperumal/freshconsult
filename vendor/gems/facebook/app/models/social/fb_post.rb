@@ -16,7 +16,7 @@ class Social::FbPost < ActiveRecord::Base
   attr_protected :postable_id
   
   validates_presence_of   :post_id, :account_id
-  validates_uniqueness_of :post_id, :scope => :account_id, :message => "Post already converted as a ticket/ticket"
+  validates_uniqueness_of :post_id, scope: :account_id, message: Social::Constants::FACEBOOK_POST_ALREADY_EXISTS
   
   serialize :post_attributes, Hash
 

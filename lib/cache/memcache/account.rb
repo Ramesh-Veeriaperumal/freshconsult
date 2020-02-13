@@ -240,14 +240,18 @@ module Cache::Memcache::Account
     end
   end
 
+  def products_optar_cache
+    key = format(ACCOUNT_PRODUCTS_OPTAR, account_id: id)
+    MemcacheKeys.fetch(key) { products.basic_info }
+  end
+
+  def products_ar_cache
+    key = format(ACCOUNT_PRODUCTS, account_id: id)
+    MemcacheKeys.fetch(key) { products.order('name') }
+  end
+
   def products_from_cache
-    if optar_cache_enabled?
-      key = format(ACCOUNT_PRODUCTS_OPTAR, account_id: id)
-      MemcacheKeys.fetch(key) { products.basic_info }
-    else
-      key = format(ACCOUNT_PRODUCTS, account_id: id)
-      MemcacheKeys.fetch(key) { products.find(:all, order: 'name') }
-    end
+    optar_cache_enabled? ? products_optar_cache : products_ar_cache
   end
 
   def tags_from_cache

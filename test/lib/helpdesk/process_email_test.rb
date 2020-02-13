@@ -117,7 +117,7 @@ class ProcessEmailTest < ActiveSupport::TestCase
     params = default_params(Faker::Lorem.characters(50), 'Test Subject')
     params[:to] = "test+1223@#{Account.current.full_domain}"
     parsed_to_email = { name: 'test', email: "test+1223@#{Account.current.full_domain}", domain: Account.current.full_domain }
-    incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
+    incoming_email_handler = Helpdesk::ProcessEmail.new(params)
     failed_response = incoming_email_handler.perform(parsed_to_email)
     assert_equal 'Wildcard Email ', failed_response[:processed_status]
   ensure
@@ -129,34 +129,34 @@ class ProcessEmailTest < ActiveSupport::TestCase
 
   def test_success_email_to_the_wild_cards
     ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
-    Helpdesk::Email::IncomingEmailHandler.any_instance.stubs(:add_to_or_create_ticket).returns(true)
+    Helpdesk::ProcessEmail.any_instance.stubs(:add_to_or_create_ticket).returns(true)
     params = default_params(Faker::Lorem.characters(50), 'Test Subject')
     params[:to] = "test+1223@#{Account.current.full_domain}"
     parsed_to_email = { name: 'test', email: "test+1223@#{Account.current.full_domain}", domain: Account.current.full_domain }
-    incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
+    incoming_email_handler = Helpdesk::ProcessEmail.new(params)
     assert_equal incoming_email_handler.perform(parsed_to_email), true
   ensure
     ShardMapping.unstub(:fetch_by_domain)
     Account.any_instance.unstub(:email_configs)
     EmailConfig.any_instance.unstub(:find_by_to_email)
-    Helpdesk::Email::IncomingEmailHandler.any_instance.unstub(:add_to_or_create_ticket)
+    Helpdesk::ProcessEmail.any_instance.unstub(:add_to_or_create_ticket)
   end
 
   def test_success_email_to_the_wild_cards_using_allow_check
     Account.current.launch(:prevent_wc_ticket_create)
     Account.current.launch(:allow_wildcard_ticket_create)
     ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
-    Helpdesk::Email::IncomingEmailHandler.any_instance.stubs(:add_to_or_create_ticket).returns(true)
+    Helpdesk::ProcessEmail.any_instance.stubs(:add_to_or_create_ticket).returns(true)
     params = default_params(Faker::Lorem.characters(50), 'Test Subject')
     params[:to] = "test+1223@#{Account.current.full_domain}"
     parsed_to_email = { name: 'test', email: "test+1223@#{Account.current.full_domain}", domain: Account.current.full_domain }
-    incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
+    incoming_email_handler = Helpdesk::ProcessEmail.new(params)
     assert_equal incoming_email_handler.perform(parsed_to_email), true
   ensure
     ShardMapping.unstub(:fetch_by_domain)
     Account.any_instance.unstub(:email_configs)
     EmailConfig.any_instance.unstub(:find_by_to_email)
-    Helpdesk::Email::IncomingEmailHandler.any_instance.unstub(:add_to_or_create_ticket)
+    Helpdesk::ProcessEmail.any_instance.unstub(:add_to_or_create_ticket)
     Account.current.rollback(:prevent_wc_ticket_create)
     Account.current.rollback(:allow_wildcard_ticket_create)
   end
@@ -167,17 +167,17 @@ class ProcessEmailTest < ActiveSupport::TestCase
     ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
     Account.any_instance.stubs(:email_configs).returns(config)
     EmailConfig.any_instance.stubs(:find_by_to_email).returns(config)
-    Helpdesk::Email::IncomingEmailHandler.any_instance.stubs(:add_to_or_create_ticket).returns(true)
+    Helpdesk::ProcessEmail.any_instance.stubs(:add_to_or_create_ticket).returns(true)
     params = default_params(Faker::Lorem.characters(50), 'Test Subject')
     params[:to] = config.reply_email
     parsed_to_email = { name: 'test', email: config.to_email, domain: Account.current.full_domain }
-    incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
+    incoming_email_handler = Helpdesk::ProcessEmail.new(params)
     assert_equal incoming_email_handler.perform(parsed_to_email), true
   ensure
     ShardMapping.unstub(:fetch_by_domain)
     Account.any_instance.unstub(:email_configs)
     EmailConfig.any_instance.unstub(:find_by_to_email)
-    Helpdesk::Email::IncomingEmailHandler.any_instance.unstub(:add_to_or_create_ticket)
+    Helpdesk::ProcessEmail.any_instance.unstub(:add_to_or_create_ticket)
     Account.current.rollback(:prevent_wc_ticket_create)
   end
 
@@ -255,7 +255,7 @@ class ProcessEmailTest < ActiveSupport::TestCase
     ensure
       Helpdesk::Ticket.any_instance.unstub(:spam_or_deleted?)
       account.rollback(:prevent_lang_detect_for_spam)
-  end 
+  end
       
   def test_lang_detect_for_non_spam
     account = Account.current
@@ -268,5 +268,19 @@ class ProcessEmailTest < ActiveSupport::TestCase
     Helpdesk::DetectUserLanguage.stubs(:language_detect).returns(['fr', 1200]) 
     Helpdesk::DetectUserLanguage.set_user_language!(user, text)
     assert_equal 'fr', user.language
-  end  
+  end
+
+  def test_hide_response_from_customer
+    account = Account.current
+    user = account.users.first
+    account.launch(:hide_response_from_customer_feature)
+    id = Faker::Lorem.characters(50)
+    subject = 'Test Subject'
+    params = default_params(id, subject)
+    process_email = Helpdesk::ProcessEmail.new(params)
+    note_params = process_email.safe_send(:build_note_params, account.tickets.first, { email: 'customfrom@test.com' }, User.first, false, '', '', '', '', [])
+    assert_equal true, note_params[:private]
+  ensure
+    account.rollback(:hide_response_from_customer_feature)
+  end
 end

@@ -54,7 +54,7 @@ class HelpWidgetsController < ApiApplicationController
     def build_object
       super
       @item.name = widget_name if cname_params[:name].blank?
-      product = Account.current.products_from_cache.find { |p| p.id == cname_params[:product_id] }
+      product = Account.current.products_ar_cache.find { |p| p.id == cname_params[:product_id] }
       portal = (product && product.portal) || Account.current.main_portal_from_cache
       @item.settings = assign_default_settings(cname_params[:settings], product, portal)
       assign_help_widget_solution_categories(portal)

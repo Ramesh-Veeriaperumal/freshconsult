@@ -33,7 +33,7 @@ class Email::MailboxDelegator < BaseDelegator
   end
 
   def product_presence
-    product = Account.current.products_from_cache.detect { |x| product_id == x.id }
+    product = Account.current.products_ar_cache.detect { |x| product_id == x.id }
     if product.nil?
       errors[:product_id] << :"can't be blank"
     else

@@ -1,7 +1,8 @@
-<% if node[:ymls][:proactive_service].present? %>
+<% config = node[:ymls][:proactive_service] %>
+<% if config.present? %>
 <%= node[:opsworks][:environment]%>:
-  signing_key: <%= node[:ymls][:proactive_service][:signing_key] %>
-  jwt_default_expiry: <%= node[:ymls][:proactive_service][:jwt_default_expiry] %>
-  service_url: <%= node[:ymls][:proactive_service][:service_url] %>
-  email_cipher_key: <%= node[:ymls][:proactive_service][:email_cipher_key] %>
+  signing_key: <%= config[:signing_key] %>
+  jwt_default_expiry: <%= config[:jwt_default_expiry] %>
+  email_cipher_key: <%= config[:email_cipher_key] %>
+  service_url: <%= config[:service_url] %>
 <% end %>

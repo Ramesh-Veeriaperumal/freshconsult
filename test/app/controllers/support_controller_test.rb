@@ -26,6 +26,14 @@ class SupportControllerTest < ActionController::TestCase
     AwsWrapper::S3Object.unstub(:reads)
   end
 
+  def test_robots_for_blocked_domain
+    ShardMapping.any_instance.stubs(:blocked?).returns(true)
+    get :robots, format: 'txt'
+    assert_response :success
+  ensure
+    ShardMapping.any_instance.unstub(:blocked?)
+  end
+
   private
 
     def stub_sitemap

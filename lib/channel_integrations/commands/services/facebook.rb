@@ -49,6 +49,8 @@ module ChannelIntegrations::Commands::Services
       ticket
     rescue StandardError => e
       Rails.logger.error("Error creating #{context.inspect} ticket :: #{e.message}")
+      return conflict_error(context) if e.message.include? Social::Constants::FACEBOOK_POST_ALREADY_EXISTS
+
       error_message("Error in creating ticket, account_id: #{current_account.id}, context: #{context.inspect}, error:
  #{e.message}")
     end
@@ -62,6 +64,8 @@ module ChannelIntegrations::Commands::Services
     rescue StandardError => e
       Rails.logger.error "Something wrong in Facebook::CreateNote account_id: #{current_account.id}, context: #{context
                                                                                                              .inspect} #{e.message}"
+      return conflict_error(context) if e.message.include? Social::Constants::FACEBOOK_POST_ALREADY_EXISTS
+
       error_message("Error in Creating note, account_id: #{current_account.id}, context: #{context.inspect}, error:
 #{e.message}")
     end
@@ -102,6 +106,15 @@ module ChannelIntegrations::Commands::Services
       def error_message(message)
         error = default_error_format
         error[:data] = { message: message }
+        error
+      end
+
+      def conflict_error(context)
+        existing_post = current_account.facebook_posts.find_by_post_id(context[:post_id])
+        error = default_error_format
+        error[:status_code] = 409
+        error[:data] = { message: "Conflict: Post ID: #{context[:post_id]} already converted.",
+                         id: existing_post.is_ticket? ? existing_post.postable.display_id : existing_post.postable_id }
         error
       end
 

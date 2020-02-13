@@ -96,9 +96,9 @@ module Concerns::ApplicationConcern
 
     if shard.nil?
       raise ShardNotFound
-    elsif shard.blocked?
+    elsif shard.blocked? && !robots_action?
       raise AccountBlocked
-    elsif !shard.ok?
+    elsif !shard.ok? && !robots_action?
       raise DomainNotReady
     else
       Sharding.run_on_shard(shard.shard_name) do
@@ -125,5 +125,10 @@ module Concerns::ApplicationConcern
 
     LoggerConstants::SKIP_LOGS_FOR.key?(nscname.to_sym) &&
       LoggerConstants::SKIP_LOGS_FOR[nscname.to_sym].include?(action_name)
+  end
+
+  def robots_action?
+    action = request.env['PATH_INFO']
+    ['/robots', '/robots.txt', '/robots.text'].include?(action)
   end
 end

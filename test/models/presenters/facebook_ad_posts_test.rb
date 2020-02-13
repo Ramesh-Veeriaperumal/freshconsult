@@ -34,6 +34,14 @@ class FacebookAdPostsTest < ActiveSupport::TestCase
     assert_equal 1, @final_stream.model_changes_for_central['rules'][1][0]['action']['product_id']
   end
 
+  def test_remove_ad_post_rule
+    fb_page = create_fb_page(true)
+    create_ad_post_ticket_rule(fb_page.facebook_streams)
+    assert fb_page.ad_post_stream.facebook_ticket_rules.count != 0
+    fb_page.ad_post_stream.delete_rules
+    assert_equal 0, fb_page.ad_post_stream.facebook_ticket_rules.count
+  end
+
   def create_ad_post_ticket_rule(streams)
     streams.each do |stream|
       @final_stream = stream if stream.ad_stream?
