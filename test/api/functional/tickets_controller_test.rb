@@ -217,6 +217,28 @@ class TicketsControllerTest < ActionController::TestCase
     @account.account_additional_settings.additional_settings.tap { |additional_settings| additional_settings.delete(:skip_mandatory_checks) } unless @@skip_mandatory_checks_enabled
   end
 
+  def match_query_response_with_es_enabled(query_hash_params, order_by = 'created_at', order_type = 'desc')
+    enable_public_api_filter_factory([:public_api_filter_factory, :new_es_api, :count_service_es_reads]) do
+      response_stub = public_api_filter_factory_es_cluster_response_stub(query_hash_params.deep_dup)
+      SearchService::Client.any_instance.stubs(:query).returns(SearchService::Response.new(response_stub))
+      SearchService::Response.any_instance.stubs(:records).returns(JSON.parse(response_stub))
+      get :index, controller_params(query_hash_params.deep_dup)
+      assert_equal JSON.parse(@response.body).count, query_hash_params[:per_page] if query_hash_params[:per_page]
+      match_json(public_api_ticket_index_query_hash_pattern(query_hash_params.deep_dup, order_by, order_type))
+    end
+  end
+
+  def match_order_query_with_es_enabled(order_params, all_tickets = false)
+    enable_public_api_filter_factory([:public_api_filter_factory, :new_es_api, :count_service_es_reads]) do
+      response_stub = public_api_filter_factory_order_response_stub(order_params[:order_by], order_params[:order_type], all_tickets)
+      SearchService::Client.any_instance.stubs(:query).returns(SearchService::Response.new(response_stub))
+      SearchService::Response.any_instance.stubs(:records).returns(JSON.parse(response_stub))
+      get :index, controller_params(order_params)
+      assert_response 200
+      match_json(public_api_ticket_index_pattern(false, false, false, order_params[:order_by], order_params[:order_type], all_tickets))
+    end
+  end
+
   def test_search_with_feature_enabled_and_invalid_params
     @account.launch :es_count_writes
     @account.launch :list_page_new_cluster
@@ -6235,5 +6257,39 @@ class TicketsControllerTest < ActionController::TestCase
         Account.unstub(:current)
       end
     end
+  end
+
+  def test_index_with_requester_with_public_api_filter_factory_enabled
+    user = add_new_user(@account)
+    t = create_ticket(requester_id: user.id)
+    params = { requester_id: user.id }
+    match_query_response_with_es_enabled(params)
+  end
+
+  def test_index_with_order_type_and_order_by_with_public_api_filter_factory_enabled
+    params = { order_by: 'created_at', order_type: 'asc' }
+    match_order_query_with_es_enabled(params)
+  end
+
+  def test_index_with_default_fiter_with_public_api_filter_factory_enabled
+    params = { filter: 'new_and_my_open' }
+    match_query_response_with_es_enabled(params)
+  end
+
+  def test_index_with_include_stats_with_public_api_filter_factory_enabled
+    params = { include: 'stats' }
+    match_query_response_with_es_enabled(params)
+  end
+
+  def test_index_with_include_requester_with_public_api_filter_factory_enabled
+    params = { include: 'requester' }
+    match_query_response_with_es_enabled(params)
+  end
+
+  def test_index_with_per_page_with_public_api_filter_factory_enabled
+    user = add_new_user(@account)
+    5.times { create_ticket(requester_id: user.id) }
+    params = { requester_id: user.id, per_page: 3 }
+    match_query_response_with_es_enabled(params)
   end
 end

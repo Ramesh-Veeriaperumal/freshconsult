@@ -36,6 +36,7 @@ module ApiTicketsTestHelper
   }.freeze
   TAG_NAMES = Faker::Lorem.words(10).freeze
   CUSTOM_FIELDS_VALUES = { 'country' => 'USA', 'state' => 'California', 'city' => 'Burlingame', 'number' => 32_234, 'decimal' => '90.89', 'checkbox' => true, 'text' => Faker::Name.name, 'paragraph' => Faker::Lorem.paragraph, 'dropdown' => CUSTOM_FIELDS_CHOICES[0], 'date' => '2015-09-09' }.freeze
+  DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
 
   # pattern
   def sla_policy_pattern(expected_output = {}, sla_policy)
@@ -627,6 +628,23 @@ module ApiTicketsTestHelper
     }.to_json
   end
 
+  def public_api_filter_factory_order_response_stub(order_by = 'created_at', order_type = 'desc', all_tickets = false)
+    filter_clause = ['spam = ? AND deleted = ?', false, false]
+    unless all_tickets
+      filter_clause[0] << ' AND created_at > ?'
+      filter_clause << Time.zone.now.beginning_of_day.ago(1.month).utc
+    end
+    param_object = OpenStruct.new
+    ticket_ids = Helpdesk::Ticket.where(*filter_clause)
+                                 .order("#{order_by} #{order_type}")
+                                 .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
+                                 .map(&:id)
+    {
+      total: 31,
+      results: ticket_ids.map { |id| { id: id, document: 'ticketanalytics' } }
+    }.to_json
+  end
+
   def private_api_ticket_index_pattern(survey = false, requester = false, company = false, order_by = 'created_at', order_type = 'desc', all_tickets = false, exclude_options = [])
     filter_clause = ['spam = ? AND deleted = ?', false, false]
     excludable_fields = ApiTicketConstants::EXCLUDABLE_FIELDS
@@ -640,6 +658,30 @@ module ApiTicketsTestHelper
     preload_options << :company if company
     pattern_array = Helpdesk::Ticket.where(*filter_clause).order("#{order_by} #{order_type}").limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).preload(preload_options).map do |ticket|
       param_object = OpenStruct.new(requester: requester, stats: true)
+      pattern = index_ticket_pattern_with_associations(ticket, param_object, [:tags])
+      pattern[:requester] = Hash if requester
+      pattern[:company] = Hash if company && ticket.company
+      pattern[:survey_result] = feedback_pattern(ticket.custom_survey_results.last) if survey && ticket.custom_survey_results.present?
+      exclude_options.each do |exclude|
+        pattern.delete(exclude.to_sym) if excludable_fields.include?(exclude)
+      end
+      pattern
+    end
+  end
+
+  def public_api_ticket_index_pattern(survey = false, requester = false, company = false, order_by = 'created_at', order_type = 'desc', all_tickets = false, exclude_options = [])
+    filter_clause = ['spam = ? AND deleted = ?', false, false]
+    excludable_fields = ApiTicketConstants::EXCLUDABLE_FIELDS
+    unless all_tickets
+      filter_clause[0] << ' AND created_at > ?'
+      filter_clause << Time.zone.now.beginning_of_day.ago(1.month).utc
+    end
+
+    preload_options = [:tags, :ticket_states, :ticket_old_body, :schema_less_ticket, :flexifield]
+    preload_options << :requester if requester
+    preload_options << :company if company
+    pattern_array = Helpdesk::Ticket.where(*filter_clause).order("#{order_by} #{order_type}").limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).preload(preload_options).map do |ticket|
+      param_object = OpenStruct.new
       pattern = index_ticket_pattern_with_associations(ticket, param_object, [:tags])
       pattern[:requester] = Hash if requester
       pattern[:company] = Hash if company && ticket.company
@@ -673,6 +715,22 @@ module ApiTicketsTestHelper
     end
   end
 
+  def public_api_ticket_index_query_hash_pattern(query_hash, wf_order = 'created_at', order_type = 'desc')
+    query_hash_params = {}
+    query_hash_params[:wf_model] = 'Helpdesk::Ticket'
+    query_hash_params[:wf_order] = wf_order
+    query_hash_params[:wf_order_type] = order_type
+    query_hash_params[:data_hash] = d_query_hash(query_hash)
+    query_hash_params[:per_page] = query_hash[:per_page] if query_hash[:per_page]
+    stats = query_hash[:include] == 'stats'
+    requester = query_hash[:include] == 'requester'
+    description = query_hash[:include] == 'description'
+    param_object = OpenStruct.new(stats: stats, requester: requester, description: description)
+    pattern_array = private_api_ticket_index_first_page_objects(query_hash_params).map do |ticket|
+      index_ticket_pattern_with_associations(ticket, param_object, [:tags])
+    end
+  end
+
   def private_api_ticket_index_raw_query_pattern(sql_query)
     per_page = ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
     param_object = OpenStruct.new(stats: true)
@@ -683,7 +741,7 @@ module ApiTicketsTestHelper
   end
 
   def private_api_ticket_index_first_page_objects(query_hash_params)
-    per_page = ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
+    per_page = query_hash_params[:per_page] ? query_hash_params[:per_page] : ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
     Account.current.tickets.filter(params: query_hash_params, filter: 'Helpdesk::Filters::CustomTicketFilter').first(per_page)
   end
 
@@ -702,6 +760,37 @@ module ApiTicketsTestHelper
     }.to_json
   end
 
+  def d_query_hash(params)
+    @action_hash = []
+    TicketConstants::LIST_FILTER_MAPPING.each do |key, val| # constructs hash for custom_filters
+      @action_hash.push('condition' => val, 'operator' => 'is_in', 'value' => params[key].to_s) if params[key].present?
+    end
+    predefined_filters_hash(params) # constructs hash for predefined_filters
+    @action_hash
+  end
+
+  def predefined_filters_hash(params)
+    if sanitize_filter_params(params) # sanitize filter name
+      assign_filter_params(params) # assign filter_name param
+      custom_tkt_filter = Helpdesk::Filters::CustomTicketFilter.new
+      @action_hash.push(custom_tkt_filter.default_filter(params[:filter_name])).flatten!
+    end
+  end
+
+  def sanitize_filter_params(params)
+    if TicketFilterConstants::RENAME_FILTER_NAMES.keys.include?(params[:filter])
+      params[:filter] = TicketFilterConstants::RENAME_FILTER_NAMES[params[:filter]]
+    elsif @action_hash.empty?
+      params[:filter] ||= DEFAULT_TICKET_FILTER
+    end
+    params[:filter]
+  end
+
+  def assign_filter_params(params)
+    params_hash = { filter_name: params[:filter] }
+    params.merge!(params_hash)
+  end
+
   def filter_factory_es_cluster_response_stub(query_hash, wf_order = 'created_at', wf_order_type = 'desc')
     query_hash_params = {}
     query_hash_params[:query_hash] = query_hash
@@ -710,6 +799,25 @@ module ApiTicketsTestHelper
     query_hash_params[:wf_order_type] = wf_order_type
     query_hash_params[:data_hash] = QueryHash.new(query_hash_params[:query_hash].values).to_system_format
     param_object = OpenStruct.new(stats: true)
+
+    ticket_ids = private_api_ticket_index_first_page_objects(query_hash_params).map(&:id)
+    {
+      total: 31,
+      results: ticket_ids.map { |id| { id: id, document: 'ticketanalytics' } }
+    }.to_json
+  end
+
+  def public_api_filter_factory_es_cluster_response_stub(query_hash, wf_order = 'created_at', wf_order_type = 'desc')
+    query_hash_params = {}
+    query_hash_params[:wf_model] = 'Helpdesk::Ticket'
+    query_hash_params[:wf_order] = wf_order
+    query_hash_params[:wf_order_type] = wf_order_type
+    query_hash_params[:data_hash] = d_query_hash(query_hash)
+    query_hash_params[:per_page] = query_hash[:per_page] if query_hash[:per_page]
+    stats = query_hash[:include] == 'stats'
+    requester = query_hash[:include] == 'requester'
+    description = query_hash[:include] == 'description'
+    param_object = OpenStruct.new(stats: stats, requester: requester, description: description)
 
     ticket_ids = private_api_ticket_index_first_page_objects(query_hash_params).map(&:id)
     {

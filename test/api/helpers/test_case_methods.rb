@@ -55,6 +55,17 @@ module TestCaseMethods
     features.is_a?(Array) ? features.each { |f| Account.current.revoke_feature(f) } : Account.current.revoke_feature(features)
   end
 
+  def enable_public_api_filter_factory(features = [], &block)
+    features.is_a?(Array) ? features.each { |f| Account.current.launch(f) } : Account.current.launch(features)
+    yield if block_given?
+  ensure
+    disable_public_api_filter_factory(features)
+  end
+
+  def disable_public_api_filter_factory(features = [])
+    features.is_a?(Array) ? features.each { |f| Account.current.rollback(f) } : Account.current.rollback(features)
+  end
+
   def stub_current_account
     Account.stubs(:current).returns(@account)
     yield

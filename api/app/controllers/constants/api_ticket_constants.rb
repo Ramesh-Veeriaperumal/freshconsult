@@ -67,6 +67,7 @@ module ApiTicketConstants
   # all_tickets is not included because it is the default filter applied.
   # monitored_by is renamed as 'watching'
   FILTER = %w(new_and_my_open watching spam deleted).freeze
+  SPAM_DELETED_FILTER = ['spam', 'deleted'].freeze
 
   FIELD_TYPES = Helpdesk::TicketField::FIELD_CLASS.keys.map(&:to_s).freeze
   INDEX_FIELDS = %w(filter company_id requester_id email order_by order_type updated_since include).freeze
