@@ -110,7 +110,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   protected
-  
+
     def update_response_violation
       schema_less_note.response_violated = (notable.nr_due_by < (created_at || Time.zone.now))
       notable.nr_violated = schema_less_note.response_violated unless notable.nr_violated?
@@ -206,9 +206,8 @@ class Helpdesk::Note < ActiveRecord::Base
                                                                              ignore_emails: ignore_emails}) unless notable.spam?
         end
 
-        # Fix for FD-36412: When agent's email_id is present in to_list of the 'Add Note' section, agent is getting 2 emails, one for being added to the list and the other for being the agent for that ticket. To avoid that duplicate emails issue, we added this 'unless' condition here.
         # Jira notes notifier was sending emails for portal added notes with no notifying emails. Added a to emails check to prevent that.
-        integrations_private_note_notifications unless replied_by_customer? || to_emails.include?(notable.agent.email)
+        integrations_private_note_notifications unless replied_by_customer? || to_emails.blank?
 
       else
         #notify the agents only for notes
