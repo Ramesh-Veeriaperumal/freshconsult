@@ -254,4 +254,8 @@ module Cache::Memcache::Admin::TicketField
     def nested_ticket_fields_key
       format(NESTED_TICKET_FIELDS_KEY, account_id: Account.current.id, ticket_field_id: id)
     end
+
+    def section_required_ticket_fields_key(section_id)
+      format(SECTION_REQUIRED_TICKET_FIELDS, account_id: Account.current.id, section_id: section_id)
+    end
 end
