@@ -19,6 +19,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def should_enqueue_sbrr_job?
+    SBRR.log "remap_skill: #{remap_skill.inspect} has_queue_changes?: #{has_queue_changes?.inspect}
+              sbrr_enabled?: #{sbrr_enabled?.inspect}"
     (remap_skill? || has_queue_changes?) && sbrr_enabled?
   end
 
@@ -141,6 +143,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def right_time_to_enqueue_sbrr_job?
+      SBRR.log "sbrr_enabled?: #{Account.current.skill_based_round_robin_enabled?.inspect}
+                disable_obs_rule: #{disable_observer_rule.inspect}
+                obs_not_enqd: #{observer_will_not_be_enqueued?}
+                skip_sbrr: #{skip_sbrr.inspect} obs_doer_id: #{Thread.current[:observer_doer_id].inspect}
+                skip_rr: #{Thread.current[:skip_round_robin].inspect}
+                sbrr_thread: #{Thread.current[:skill_based_round_robin_thread].inspect}
+                sbrr_tkt_deqd: #{sbrr_ticket_dequeued.inspect}
+                sbrr_usr_scr_incr: #{sbrr_user_score_incremented.inspect}"
       Account.current.skill_based_round_robin_enabled? && 
         disable_observer_rule.nil? && observer_will_not_be_enqueued? && !skip_sbrr &&
           Thread.current[:observer_doer_id].nil? &&
