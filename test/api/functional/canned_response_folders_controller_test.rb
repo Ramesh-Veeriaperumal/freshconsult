@@ -20,7 +20,7 @@ class CannedResponseFoldersControllerTest < ActionController::TestCase
     @agent.active = true
     @agent.save!
 
-    @ca_folder_all = create_cr_folder(name: Faker::Name.name)
+    @ca_folder_all = create_cr_folder(name: SecureRandom.uuid)
     @ca_folder_personal = @account.canned_response_folders.personal_folder.first
 
     # responses in visible to all folder
@@ -124,7 +124,7 @@ class CannedResponseFoldersControllerTest < ActionController::TestCase
   end
 
   def test_create
-    name = Faker::App.name
+    name = SecureRandom.uuid
     folder = {
       name: name
     }
@@ -134,7 +134,6 @@ class CannedResponseFoldersControllerTest < ActionController::TestCase
   end
 
   def test_create_duplicate
-    name = Faker::App.name
     folder = {
       name: @ca_folder_all.name
     }
@@ -144,9 +143,8 @@ class CannedResponseFoldersControllerTest < ActionController::TestCase
 
   def test_create_privilage_check
     User.any_instance.stubs(:privilege?).with(:manage_canned_responses).returns(false)
-    name = Faker::App.name
     folder = {
-      name: name
+      name: SecureRandom.uuid
     }
     post :create, construct_params(build_request_param(folder))
     assert_response 403
@@ -206,7 +204,7 @@ class CannedResponseFoldersControllerTest < ActionController::TestCase
   def test_update_privilage_check
     User.any_instance.stubs(:privilege?).with(:manage_canned_responses).returns(false)
     folder = {
-      name: Faker::App.name
+      name: SecureRandom.uuid
     }
     put :update, construct_params(build_request_param(folder)).merge(id: @ca_folder_all.id)
     assert_response 403
@@ -259,9 +257,8 @@ class CannedResponseFoldersControllerTest < ActionController::TestCase
 
   def test_create_cr_folder_in_auditlog
     CentralPublisher::Worker.jobs.clear
-    name = Faker::App.name
     folder = {
-      name: name
+      name: SecureRandom.uuid
     }
     post :create, construct_params(build_request_param(folder))
     job = CentralPublisher::Worker.jobs.last
@@ -272,8 +269,8 @@ class CannedResponseFoldersControllerTest < ActionController::TestCase
   def test_update_cr_folder_changes_in_auditlog
     begin
       CentralPublisher::Worker.jobs.clear
-      old_name = Faker::App.name
-      new_name = Faker::App.name
+      old_name = SecureRandom.uuid
+      new_name = SecureRandom.uuid
       folder = {
         name: new_name
       }
@@ -294,7 +291,7 @@ class CannedResponseFoldersControllerTest < ActionController::TestCase
   def test_delete_cr_folder_in_auditlog
     begin
       CentralPublisher::Worker.jobs.clear
-      ca_folder = create_cr_folder(name: Faker::App.name)
+      ca_folder = create_cr_folder(name: SecureRandom.uuid)
       ca_folder.destroy
       job = CentralPublisher::Worker.jobs.last
       assert_equal 'canned_response_folder_destroy', job['args'].first
