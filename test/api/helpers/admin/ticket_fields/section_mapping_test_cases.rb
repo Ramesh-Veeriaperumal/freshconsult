@@ -96,7 +96,7 @@ module Admin::TicketFields::SectionMappingTestCases
       params[:section_mappings] << section_mapping_params(section_id: parent_2_section_id)
       post :create, construct_params({}, params)
       assert_response 400
-      assert_match('Ticket field can not reside inside sections belonging to two separate ticket fields', response.body)
+      match_json([bad_request_error_pattern(:section_mappings, "Section with id #{parent_2_section_id} does not exist", code: 'invalid_value')])
     end
   end
 end

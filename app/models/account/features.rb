@@ -24,7 +24,7 @@ class Account < ActiveRecord::Base
     :product_central_publish, :help_widget, :redis_picklist_id,
     :bot_email_channel, :bot_email_central_publish, :description_by_default,
     :bot_chat_history, :new_es_api, :filter_factory, :ticket_fields_central_publish,
-    :skip_invoice_due_warning, :automation_revamp,
+    :skip_invoice_due_warning, :automation_revamp, :archive_ticket_fields,
     :scheduled_export_fix, :compact_lang_detection,
     :agent_group_central_publish, :custom_fields_search,
     :update_billing_info, :allow_billing_info_update, :tag_central_publish,

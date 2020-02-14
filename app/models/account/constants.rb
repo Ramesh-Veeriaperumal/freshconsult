@@ -288,7 +288,7 @@ class Account < ActiveRecord::Base
       undo_send: false, twitter_microservice: true, twitter_handle_publisher: true,
       old_link_back_url_validation: false, stop_contacts_count_query: false,
       twitter_dm_outgoing_attachment: false, twitter_mention_outgoing_attachment: false,
-      product_central_publish: false, help_widget: false,
+      product_central_publish: false, help_widget: false, archive_ticket_fields: false,
       bot_email_channel: false, bot_email_central_publish: false,
       sso_login_expiry_limitation: false, csat_email_scan_compatibility: false,
       email_deprecated_style_parsing: false, saml_ecrypted_assertion: false,
