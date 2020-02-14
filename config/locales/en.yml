@@ -2593,6 +2593,8 @@ en:
         manage_proactive_outreaches: Manage proactive outreaches
         fieldservice: Field service
         schedule_fsm_dashboard: Access scheduling dashboard
+        view_field_tech_location: View field technicians' locations
+        access_to_map_view: Access to map view
         reports: Reports
         analytics: Analytics
         view_reports: View reports tab

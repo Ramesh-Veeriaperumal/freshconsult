@@ -323,8 +323,8 @@
       :reports_96: 318
       :reports_97: 319
       :reports_98: 320
-      :reports_99: 321
-      :reports_100: 322
+      :field_service_geolocation: 321
+      :field_service_geolocation_toggle: 322
       :freshreports_analytics: 323
       :disable_old_reports: 324
       :article_filters: 325
