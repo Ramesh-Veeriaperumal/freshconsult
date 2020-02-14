@@ -88,9 +88,7 @@ class Admin::SectionsControllerTest < ActionController::TestCase
       @account.add_features(:dynamic_sections)
       get :index, controller_params(ticket_field_id: 3)
       assert_response 200
-      expected_response = []
-      expected_response << sections(Account.current.ticket_fields.find(3))[:sections].first
-      match_json(expected_response)
+      match_json(sections(Account.current.ticket_fields.find(3))[:sections])
     end
   end
 
