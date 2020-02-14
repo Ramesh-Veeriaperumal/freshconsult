@@ -243,4 +243,23 @@ module HelpWidgetsTestHelper
       domain => predictive_experiment_hash(widget_id, exp_id)
     }
   end
+
+  def suggested_article_rule(params = {})
+    {
+      conditions: [
+        {
+          evaluate_on: params[:evaluate_on] || HelpWidgetSuggestedArticleRule::EVALUATE_ON[:page],
+          name: params[:condition_name] || HelpWidgetSuggestedArticleRule::NAME[:url],
+          operator: params[:condition_operator] || HelpWidgetSuggestedArticleRule::OPERATOR[:contains],
+          value: params[:condition_value] || 'test'
+        }
+      ],
+      rule_operator: params[:rule_operator] || HelpWidgetSuggestedArticleRule::RULE_OPERATOR[:OR],
+      filter: {
+        type: params[:filter_type] || HelpWidgetSuggestedArticleRule::FILTER_TYPE[:article],
+        order_by: params[:order_by] || HelpWidgetSuggestedArticleRule::ORDER_BY[:hits],
+        value: params[:filter_value] || suggested_article_ids
+      }
+    }
+  end
 end

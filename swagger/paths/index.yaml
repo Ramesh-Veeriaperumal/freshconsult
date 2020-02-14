@@ -579,7 +579,7 @@
   $ref: ./help_widgets/update.yaml
 
 /help_widgets/{id}/suggested_article_rules:
-  $ref: ./help_widgets/suggested_article_rules/index.yaml
+  $ref: ./help_widgets/suggested_article_rules/index_and_create.yaml
 
 /help_widgets/{id}/suggested_article_rules/{rule_id}:
   $ref: ./help_widgets/suggested_article_rules/crud.yaml

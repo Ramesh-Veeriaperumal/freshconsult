@@ -1,0 +1,48 @@
+get:
+  tags: [Help Widget]
+  description: Listing all widgets associated to the account
+  summary: Suggested article rules List
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/help_widget_suggested_article_rules_list_response'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+
+post:
+  tags: [Help Widget]
+  description: Create Suggested article rules
+  summary: Create Suggested article rules
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      required: true
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/help_widget_suggested_article_rules'
+  responses:
+    201:
+      description: Success
+      schema:
+        $ref: '#/definitions/help_widget_suggested_article_rules_create_response'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

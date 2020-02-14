@@ -11504,6 +11504,47 @@
             "description": "Access denied"
           }
         }
+      },
+      "post": {
+        "tags": [
+          "Help Widget"
+        ],
+        "description": "Create Suggested article rules",
+        "summary": "Create Suggested article rules",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/help_widget_suggested_article_rules"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/help_widget_suggested_article_rules_create_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
       }
     },
     "/help_widgets/{id}/suggested_article_rules/{rule_id}": {
@@ -27457,6 +27498,162 @@
             "description": "",
             "default": 1
           }
+        }
+      }
+    },
+    "help_widget_suggested_article_rules_create_response": {
+      "type": "object",
+      "properties": {
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "evaluate_on": {
+                "type": "integer",
+                "enum": [
+                  1
+                ],
+                "description": "1. page"
+              },
+              "name": {
+                "type": "integer",
+                "enum": [
+                  1,
+                  2
+                ],
+                "description": "1. url, 2. meta_tags"
+              },
+              "operator": {
+                "type": "integer",
+                "enum": [
+                  1,
+                  2,
+                  3
+                ],
+                "description": "1. contains, 2. exact_matches, 3. ends_width"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "rule_operator": {
+          "type": "integer",
+          "enum": [
+            1,
+            2
+          ],
+          "description": "1. OR, 2. AND"
+        },
+        "filter": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "integer",
+              "enum": [
+                1,
+                2,
+                3
+              ],
+              "description": "1. article_id, 2.tag_name, 3.folder_id"
+            },
+            "value": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "order_by": {
+              "type": "integer",
+              "enum": [
+                1
+              ],
+              "description": "1. hits"
+            }
+          }
+        },
+        "position": {
+          "type": "integer"
+        }
+      }
+    },
+    "help_widget_suggested_article_rules": {
+      "type": "object",
+      "properties": {
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "evaluate_on": {
+                "type": "integer",
+                "enum": [
+                  1
+                ],
+                "description": "1. page"
+              },
+              "name": {
+                "type": "integer",
+                "enum": [
+                  1,
+                  2
+                ],
+                "description": "1. url, 2. meta_tags"
+              },
+              "operator": {
+                "type": "integer",
+                "enum": [
+                  1,
+                  2,
+                  3
+                ],
+                "description": "1. contains, 2. exact_matches, 3. ends_width"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "rule_operator": {
+          "type": "integer",
+          "enum": [
+            1,
+            2
+          ],
+          "description": "1. OR, 2. AND"
+        },
+        "filter": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "integer",
+              "enum": [
+                1,
+                2,
+                3
+              ],
+              "description": "1. article_id, 2.tag_name, 3.folder_id"
+            },
+            "value": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "order_by": {
+              "type": "integer",
+              "enum": [
+                1
+              ],
+              "description": "1. hits"
+            }
+          }
+        },
+        "position": {
+          "type": "integer"
         }
       }
     },

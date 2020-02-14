@@ -1,21 +1,38 @@
 module HelpWidgets
   class SuggestedArticleRulesController < ApiApplicationController
     include HelpWidgets::SuggestedArticleRulesConstants
+    include HelperConcern
 
     decorate_views
 
     before_filter :check_feature
-    before_filter :set_current_widget
+    before_filter :fetch_widget
+    before_filter :check_rule_limit, only: [:create]
     before_filter :load_object, only: [:show, :update, :destroy]
+    before_filter :validate_params, only: [:create, :update]
+    before_filter :sanitize_params, only: [:create]
+    before_filter :build_object, only: [:create]
+
+    def create
+      return unless validate_delegator(@help_widget, cname_params[:filter])
+
+      super
+    end
 
     private
 
       def scoper
-        @current_widget.help_widget_suggested_article_rules_from_cache
+        @help_widget.help_widget_suggested_article_rules_from_cache
       end
 
       def load_objects
         @items = scoper
+      end
+
+      def validate_params
+        cname_params.permit(*CREATE_FIELDS)
+        rules_validation = validation_klass.new(cname_params, @item, string_request_params?)
+        render_custom_errors(rules_validation, true) unless rules_validation.valid?(action_name.to_sym)
       end
 
       def load_object(items = scoper)
@@ -35,9 +52,30 @@ module HelpWidgets
         render_request_error(:require_feature, 403, feature: 'help_widget, help_widget_article_customisation')
       end
 
-      def set_current_widget
-        @current_widget = current_account.help_widget_from_cache(params[:help_widget_id])
-        render_request_error(:invalid_help_widget, 400, id: params[:help_widget_id]) unless @current_widget
+      def constants_class
+        HelpWidgets::SuggestedArticleRulesConstants
+      end
+
+      def sanitize_params
+        default_condition = HelpWidgetSuggestedArticleRule::DEFAULT_CONDITION.dup
+        cname_params[:conditions].each do |condition|
+          default_condition.merge(condition)
+        end
+        cname_params[:rule_operator] ||= HelpWidgetSuggestedArticleRule::RULE_OPERATOR[:OR]
+        cname_params[:filter] = HelpWidgetSuggestedArticleRule::DEFAULT_FILTER.dup.merge(cname_params[:filter])
+      end
+
+      def fetch_widget
+        @help_widget = current_account.help_widget_from_cache(params[:help_widget_id])
+        render_request_error(:invalid_help_widget, 400, id: params[:help_widget_id]) unless @help_widget
+      end
+
+      def check_rule_limit
+        render_request_error(:rule_limit_exceeded, 400, limit: DEFAULT_RULE_LIMIT) if scoper.size >= DEFAULT_RULE_LIMIT
+      end
+
+      def render_201_with_location(template_name: "#{controller_path.gsub(NAMESPACED_CONTROLLER_REGEX, '')}/#{action_name}")
+        render template_name, location_url: safe_send('help_widget_suggested_article_rules_url', @item.id), status: 201
       end
   end
 end
