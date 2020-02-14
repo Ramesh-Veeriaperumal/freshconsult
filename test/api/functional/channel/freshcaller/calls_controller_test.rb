@@ -11,6 +11,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
 
   def teardown
     super
+    @account.reload
     @account.revoke_feature(:freshcaller)
     CustomRequestStore.store[:private_api_request] = @initial_private_api_request
   end

@@ -241,7 +241,6 @@ module FreshdeskCore::Model
                     'deleted_customers',
                     'denormalized_flexifields',
                     'dkim_records',
-                    'ecommerce_users',
                     'freshcaller_calls',
                     'freshchat_accounts',
                     'freshfone_call_metrics',

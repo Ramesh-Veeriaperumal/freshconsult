@@ -4,6 +4,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   serialize :field_options
   attr_writer :choices
 
+  include Cache::FragmentCache::Base
   include Helpdesk::Ticketfields::TicketStatus
   include Cache::Memcache::Helpdesk::TicketField
   include DataVersioning::Model
@@ -147,15 +148,25 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   after_commit :clear_cache
   after_commit :clear_new_ticket_field_cache
+  after_commit :clear_fragment_caches
+  after_commit :clear_all_section_ticket_fields_cache
 
   after_commit :construct_model_changes
 
   publishable
 
   def initialize_default_values
-    self.field_options ||= {}
+    self.field_options = {} if field_options.blank? || !field_options.is_a?(Hash)
     self.field_options = self.field_options.with_indifferent_access
     self.field_type ||= ''
+  end
+
+  def clear_all_section_ticket_fields_cache
+    Account.current.sections.reload.find_each do |section|
+      key = section_required_ticket_fields_key(section.id)
+      Rails.logger.info "---- Delete key---- #{key}----"
+      MemcacheKeys.delete_from_cache key
+    end
   end
 
   def frontend_position

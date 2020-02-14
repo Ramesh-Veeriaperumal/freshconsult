@@ -41,15 +41,17 @@ module MemcacheReadWriteMethods
   end
 
   def delete_adjacent_keys(key)
-    (1..MAX_VERSION).each do |version_num|
-      version = "v#{version_num}/"
-      next unless key.starts_with?(version)
+    key = key.to_s
+    regex = /\Av[0-9]+\//
+    version = key.match(regex).to_s
+    key_name = key[version.length, key.length]
+    return if version.blank? || key_name.blank?
 
-      ((version_num - 2)..version_num).each do |delete_version_num|
-        delete_version = delete_version_num < 1 ? '' : "v#{delete_version_num}/"
-        old_key = delete_version + key[2, key.length]
-        memcache_client.delete old_key
-      end
+    version_num = version[1, version.length - 2].to_i # get the data between v & / so the version number
+    ((version_num - 2)..version_num).each do |delete_version_num|
+      delete_version = delete_version_num < 1 ? '' : "v#{delete_version_num}/"
+      old_key = delete_version + key_name
+      memcache_client.delete old_key
     end
   end
 

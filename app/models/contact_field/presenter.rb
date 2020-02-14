@@ -32,10 +32,6 @@ class ContactField < ActiveRecord::Base
     cf.add :account_id
   end
 
-  def self.central_publish_enabled?
-    Account.current.contact_field_central_publish_enabled?
-  end
-
   def model_changes_for_central
     @model_changes
   end

@@ -360,7 +360,7 @@ class Helpdesk::ConversationsController < ApplicationController
 
       def note_to_kbase
         begin
-          create_article if @publish_solution
+          create_article if @create_solution_privilege
         rescue Exception => e
           NewRelic::Agent.notice_error(e)
         end

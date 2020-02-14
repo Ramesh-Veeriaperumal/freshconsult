@@ -156,8 +156,8 @@ class SubscriptionsController < ApplicationController
 
     def load_objects
       Rails.logger.debug "FSM already enabled for account #{current_account.id} :: #{current_account.field_service_management_enabled?}"
-      # TODO: Remove force_2019_plan?() after 2019 plan launched
-      plans = (current_account.force_2019_plan? ? SubscriptionPlan.plans_2019 : SubscriptionPlan.current)
+      # TODO: Remove force_2020_plan?() after 2020 plan launched
+      plans = (current_account.force_2020_plan? ? SubscriptionPlan.plans_2020 : SubscriptionPlan.current)
       plans << scoper.subscription_plan if scoper.subscription_plan.classic?
       @subscription = scoper
       @addons = scoper.addons.dup
@@ -194,9 +194,9 @@ class SubscriptionsController < ApplicationController
     end
 
     def load_subscription_plan
-      # TODO: Remove force_2019_plan?() after 2019 plan launched
-      if current_account.force_2019_plan?
-        @subscription_plan = SubscriptionPlan.plans_2019.find_by_id(params[:plan_id]) if params[:plan_id].present?
+      # TODO: Remove force_2020_plan?() after 2020 plan launched
+      if current_account.force_2020_plan?
+        @subscription_plan = SubscriptionPlan.plans_2020.find_by_id(params[:plan_id]) if params[:plan_id].present?
       else
         @subscription_plan = SubscriptionPlan.current.find_by_id(params[:plan_id]) if params[:plan_id].present?
       end
@@ -272,7 +272,7 @@ class SubscriptionsController < ApplicationController
 
     #Error Check
     def check_for_subscription_errors
-      if agent_type = (scoper.chk_change_agents || scoper.chk_change_field_agents)
+      if agent_type = (scoper.verify_agent_limit || scoper.chk_change_field_agents)
         Rails.logger.debug "Subscription Error::::::: #{agent_type} Limit exceeded, account id: #{current_account.id}"
 
         agent_count, error_class = if agent_type == Agent::SUPPORT_AGENT

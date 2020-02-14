@@ -47,8 +47,7 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	has_many :solution_folder_meta, 
 		:class_name => "Solution::FolderMeta", 
 		:foreign_key => :solution_category_meta_id, 
-		:order => "`solution_folder_meta`.solution_category_meta_id, `solution_folder_meta`.position",
-		:dependent => :destroy
+		:order => "`solution_folder_meta`.solution_category_meta_id, `solution_folder_meta`.position"
 
 	has_many :public_folder_meta,
 		:conditions => ["`solution_folder_meta`.visibility = ? ",VISIBILITY_KEYS_BY_TOKEN[:anyone]],
@@ -63,6 +62,7 @@ class Solution::CategoryMeta < ActiveRecord::Base
 
 	before_create :set_default_portal
 	before_save :validate_is_default
+	after_destroy :delete_folder_meta
 
   	after_commit ->(obj) { obj.safe_send(:clear_cache) }, on: :create
   	after_commit ->(obj) { obj.safe_send(:clear_cache) }, on: :destroy
@@ -91,6 +91,11 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	end
 
 	private
+	
+		def delete_folder_meta
+	  	Rails.logger.debug "Adding delete category_meta job for category_id #{id}"
+	  	DeleteSolutionMetaWorker.perform_async(parent_level_id: id, object_type: 'category_meta')
+		end
 
 	def clear_cache(args = nil)
 		Account.current.clear_solution_categories_from_cache

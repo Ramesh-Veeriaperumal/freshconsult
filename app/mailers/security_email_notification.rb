@@ -4,7 +4,7 @@ class SecurityEmailNotification < ActionMailer::Base
 
   AUTO_REPLY_EMAIL_HEADERS = {
     "Reply-to" => "",
-    "Auto-Submitted" => "auto-generated",
+    "Auto-Submitted" => 'auto-generated',
     "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
   }.freeze
 
@@ -24,7 +24,7 @@ class SecurityEmailNotification < ActionMailer::Base
                             account_name: model.account.name),
         :sent_on => Time.now,
         "Reply-to" => "",
-        "Auto-Submitted" => "auto-generated",
+        "Auto-Submitted" => 'auto-generated',
         "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
       }
 

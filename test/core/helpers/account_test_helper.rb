@@ -102,6 +102,7 @@ module AccountTestHelper
 
     yield
 
+    @account.reload
     @account.revoke_feature(feature)
     @account.make_current.reload
     MixpanelWrapper.unstub(:send_to_mixpanel)

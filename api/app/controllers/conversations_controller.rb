@@ -37,7 +37,7 @@ class ConversationsController < ApiApplicationController
       end
       is_success = create_note
       # publish solution is being set in kbase_email_included based on privilege and email params
-      create_solution_article if is_success && @publish_solution
+      create_solution_article if is_success && @create_solution_privilege
       render_response(is_success)
     else
       render_custom_errors(conversation_delegator, true)

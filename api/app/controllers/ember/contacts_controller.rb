@@ -204,10 +204,6 @@ module Ember
         super
       end
 
-      def launch_party_name
-        FeatureConstants::TIMELINE if action_name == 'timeline'
-      end
-
       def construct_or_delete_primary_company
         if params[cname][:company].present?
           @company_param = params[cname].delete(:company)

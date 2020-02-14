@@ -118,7 +118,7 @@ module FilterFactory::Filter
           search_terms: decode_values(JSON.dump(fql_response.terms)),
           offset: (page.to_i - 1) * per_page.to_i,
           account_id: Account.current.id,
-          size: per_page.to_i + 1,
+          size: [per_page.to_i + 1, 100].min,
           sort_by: order_by,
           sort_direction: order_type
         }

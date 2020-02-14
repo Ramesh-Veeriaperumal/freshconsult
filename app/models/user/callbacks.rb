@@ -70,11 +70,15 @@ class User < ActiveRecord::Base
   include RabbitMq::Publisher 
 
   def tag_update_central_publish
-    @latest_tags = self.tags.map(&:name)
+    CentralPublish::UpdateTag.perform_async(tag_update_model_changes)
+  end
+
+  def tag_update_model_changes
+    @latest_tags = self.tags.pluck(:name)
     tag_args = {}
-    tag_args[:added_tags] = @latest_tags - (@prev_tags || {})
-    tag_args[:removed_tags] = @prev_tags - @latest_tags
-    CentralPublish::UpdateTag.perform_async(tag_args)
+    tag_args[:added_tags] = @latest_tags - (@prev_tags || [])
+    tag_args[:removed_tags] = (@prev_tags || []) - @latest_tags
+    tag_args
   end
     
   def tags_updated?

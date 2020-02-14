@@ -25,9 +25,9 @@ class SubscriptionPlan < ActiveRecord::Base
 
   scope :get_details_by_name, ->(fields, names) { select(fields).where(name: names) }
 
-  # TODO: Remove force_2019_plan?() after 2019 plan launched
+  # TODO: Remove force_2020_plan?() after 2019 plan launched
   # START
-  scope :plans_2019, conditions: { name: ['Sprout Jan 19', 'Blossom Jan 19', 'Garden Jan 19', 'Estate Jan 19','Garden Omni Jan 19', 'Estate Omni Jan 19', 'Forest Jan 19'] }, :order => 'amount asc'
+  scope :plans_2020, conditions: { name: ['Sprout Jan 20', 'Blossom Jan 20', 'Garden Jan 20', 'Estate Jan 20', 'Garden Omni Jan 20', 'Estate Omni Jan 20', 'Forest Jan 20', 'Forest Omni Jan 20'] }, order: 'amount asc'
   # END
 
   after_commit :clear_cache
@@ -56,7 +56,15 @@ class SubscriptionPlan < ActiveRecord::Base
                          garden_omni_jan_19: 'Garden Omni Jan 19',
                          estate_jan_19: 'Estate Jan 19',
                          estate_omni_jan_19: 'Estate Omni Jan 19',
-                         forest_jan_19: 'Forest Jan 19' }.freeze
+                         forest_jan_19: 'Forest Jan 19',
+                         sprout_jan_20: 'Sprout Jan 20',
+                         blossom_jan_20: 'Blossom Jan 20',
+                         garden_jan_20: 'Garden Jan 20',
+                         garden_omni_jan_20: 'Garden Omni Jan 20',
+                         estate_jan_20: 'Estate Jan 20',
+                         estate_omni_jan_20: 'Estate Omni Jan 20',
+                         forest_jan_20: 'Forest Jan 20',
+                         forest_omni_jan_20: 'Forest Omni Jan 20' }.freeze
    
    BILLING_CYCLE = [[:monthly, 'Monthly', 1],
                    [:quarterly, 'Quarterly', 3],
@@ -98,13 +106,21 @@ class SubscriptionPlan < ActiveRecord::Base
     'Garden Omni Jan 19', 'Estate Omni Jan 19', 'Forest Jan 19'
   ].freeze
 
+  JAN_2020_PLAN_NAMES = [
+    'Sprout Jan 20', 'Blossom Jan 20', 'Garden Jan 20', 'Estate Jan 20',
+    'Garden Omni Jan 20', 'Estate Omni Jan 20', 'Forest Jan 20', 'Forest Omni Jan 20'
+  ].freeze
+
   PLAN_NAMES_BEFORE_2017_AND_NOT_GRAND_PARENT = [
     'Sprout', 'Blossom', 'Garden', 'Estate', 'Forest'
   ].freeze
 
   OMNI_PLANS = [
     ['Estate Omni Jan 19', 'Estate Jan 19'],
-    ['Garden Omni Jan 19', 'Garden Jan 19']
+    ['Garden Omni Jan 19', 'Garden Jan 19'],
+    ['Garden Omni Jan 20', 'Garden Jan 20'],
+    ['Estate Omni Jan 20', 'Estate Jan 20'],
+    ['Forest Omni Jan 20', 'Forest Jan 20']
   ].freeze
 
   OMNI_TO_BASIC_PLAN_MAP = OMNI_PLANS.each_with_object({}) do |plan, hash|
@@ -114,36 +130,6 @@ class SubscriptionPlan < ActiveRecord::Base
   BASIC_PLAN_TO_OMNI_MAP = OMNI_PLANS.each_with_object({}) do |plan, hash|
     hash[plan[1].to_sym] = plan[0]
   end.freeze
-  
-  PLANS_OMNI_COST = {
-    'Garden Omni Jan 19': {
-      EUR: 10.0, INR: 700.0, USD: 10.0, ZAR: 140.0, GBP: 9.0, AUD: 15.0, BRL: 40.0
-    },
-    'Estate Omni Jan 19': {
-      EUR: 20.0, INR: 1500.0, USD: 20.0, ZAR: 285.0, GBP: 15.0, AUD: 25.0, BRL: 75.0
-    },
-    'Forest Jan 19': {
-      EUR: 30.0, INR: 2100.0, USD: 30.0, ZAR: 425.0, GBP: 25.0, AUD: 40.0, BRL: 115.0
-    }
-  }.freeze
-  
-  PLANS_FSM_COST = {
-    'Estate Omni Jan 19': {
-        EUR: 29.0, INR: 1999.0, USD: 29.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0
-    },
-    'Estate Jan 19': {
-        EUR: 29.0, INR: 1999.0, USD: 29.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0
-    },
-    'Forest Jan 19': {
-        EUR: 29.0, INR: 1999.0, USD: 29.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0
-    },
-    'Garden Jan 19': {
-        EUR: 29.0, INR: 1999.0, USD: 29.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0
-    },
-    'Garden Omni Jan 19': {
-        EUR: 29.0, INR: 1999.0, USD: 29.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0
-    }
-  }.freeze
 
   FREE_OMNI_PLANS = ['Forest Jan 19'].freeze
 
@@ -216,12 +202,13 @@ class SubscriptionPlan < ActiveRecord::Base
   end
   
   def omni_channel_cost(in_currency)
-    costs = PLANS_OMNI_COST[name.to_sym]
+    costs = price[:OMNI]
     costs.nil? ? 0 : costs[in_currency.to_sym]
   end
 
   def fsm_cost(in_currency)
-    PLANS_FSM_COST[name.to_sym] && PLANS_FSM_COST[name.to_sym][in_currency.to_sym]
+    costs = price[:FSM]
+    costs.nil? ? 0 : costs[in_currency.to_sym]
   end
 
   def free_omni_channel_plan?

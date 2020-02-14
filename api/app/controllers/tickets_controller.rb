@@ -153,10 +153,39 @@ class TicketsController < ApiApplicationController
     end
 
     def load_objects
-      if current_account.count_es_api_enabled?
+      if use_public_api_filter_factory?
+        items = FilterFactory::TicketFilterer.filter(updated_params, true).preload(conditional_preload_options)
+        @items = paginate_items(items, true)
+      elsif current_account.count_es_api_enabled?
         tickets_from_es
       else
         super tickets_filter.preload(conditional_preload_options)
+      end
+    end
+
+    def use_public_api_filter_factory?
+      return false if params[:filter] && ApiTicketConstants::SPAM_DELETED_FILTER.include?(params[:filter])
+
+      current_account.count_public_api_filter_factory_enabled?
+    end
+
+    def updated_params
+      {
+        data_hash: d_query_hash,
+        per_page: per_page,
+        page: page,
+        order_by: params[:order_by] || ApiTicketConstants::DEFAULT_ORDER_BY,
+        order_type: params[:order_type] || ApiTicketConstants::DEFAULT_ORDER_TYPE,
+        include: params[:include]
+      }.with_indifferent_access
+    end
+
+    def paginate_items(items, ff_load = false)
+      if ff_load
+        add_link_header(page: (page + 1)) if items.length > per_page
+        items[0..(per_page - 1)] # get paginated_collection of length 'per_page'
+      else
+        super(items)
       end
     end
 

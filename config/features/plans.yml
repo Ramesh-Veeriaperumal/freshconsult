@@ -342,3 +342,213 @@
     :inherits:
       - :estate_jan_19
     :exclude: []
+  :sprout_jan_20:
+    :name: Sprout
+    :features:
+      - :basic_twitter
+      - :basic_facebook
+      - :basic_dkim
+      - :freshchat
+      - :freshconnect
+      - :auto_refresh
+      - :ticket_volume_report
+      - :analytics_landing_search
+      - :analytics_landing_navigation
+      - :analytics_report_export
+      - :analytics_report_filter
+      - :analytics_ticket_volume_trend
+      - :analytics_tickets_resource
+      - :help_widget
+      - :freshreports_analytics 
+    :inherits: []
+    :exclude: []
+  :blossom_jan_20:
+    :name: Blossom
+    :features:
+      - :mailbox
+      - :agent_scope
+      - :sla_management_v2
+      - :api_v2
+      - :add_to_response
+      - :public_url_toggle
+      - :social_tab
+      - :scenario_automation
+      - :customize_table_view
+      - :personal_canned_response
+      - :allow_auto_suggest_solutions
+      - :omni_channel
+      - :split_tickets
+      - :collision
+      - :marketplace
+      - :add_watcher
+      - :traffic_cop
+      - :custom_ticket_views
+      - :supervisor
+      - :create_observer
+      - :system_observer_events
+      - :rebranding
+      - :custom_ticket_fields
+      - :custom_company_fields
+      - :custom_contact_fields
+      - :occasional_agent
+      - :gamification
+      - :advanced_twitter
+      - :advanced_facebook
+      - :scoreboard
+      - :custom_domain
+      - :multiple_emails
+      - :advanced_reporting
+      - :requester_widget
+      - :advanced_search
+      - :user_notifications
+      - :quick_reply
+      - :tam_default_fields
+      - :todos_reminder_scheduler
+      - :analytics_report_clone
+      - :analytics_report_presentation_mode
+      - :analytics_report_delete
+      - :analytics_report_save
+      - :analytics_widget_save
+      - :analytics_widget_change_chart
+      - :analytics_widget_delete
+      - :analytics_helpdesk_in_depth_report
+      - :reverse_notes
+      - :article_filters
+      - :auto_article_order
+      - :help_widget_appearance
+      - :article_export
+    :inherits:
+      - :sprout_jan_20
+    :exclude: []
+  :garden_jan_20:
+    :name: Garden
+    :features:
+      - :ticket_templates
+      - :surveys
+      - :default_survey
+      - :timesheets
+      - :performance_report
+      - :custom_password_policy
+      - :sitemap
+      - :contact_company_notes
+      - :assume_identity
+      - :canned_forms
+      - :session_replay
+      - :image_annotation
+      - :custom_apps
+      - :fa_developer
+      - :forums
+      - :multi_language
+      - :css_customization
+      - :dynamic_content
+      - :link_tickets_toggle
+      - :analytics_report_schedule
+      - :analytics_widget_schedule
+      - :analytics_widget_export
+      - :analytics_widget_show_tabular_data
+      - :analytics_widget_edit_tabular_data
+      - :analytics_agent_performance
+      - :analytics_group_performance
+      - :analytics_time_sheet_summary_report
+      - :analytics_linked_tracker_ticket
+      - :analytics_satisfaction_survey_report
+      - :analytics_child_parent_ticket
+      - :analytics_tags_reports
+      - :analytics_timesheet_resource
+      - :analytics_tags_resource
+      - :proactive_outreach
+      - :adv_article_bulk_actions
+      - :customer_journey
+      - :help_widget_predictive
+      - :advanced_automations
+      - :suggested_articles_count
+    :inherits:
+      - :blossom_jan_20
+    :exclude: []
+  :garden_omni_jan_20:
+    :name: Garden Omni Channel
+    :features: []
+    :inherits:
+      - :garden_jan_20
+    :exclude: []
+  :estate_jan_20:
+    :name: Estate
+    :features:
+      - :custom_survey
+      - :smart_filter
+      - :parent_child_tickets_toggle
+      - :multi_product
+      - :multiple_business_hours
+      - :multi_timezone
+      - :customer_slas
+      - :layout_customization
+      - :round_robin
+      - :enterprise_reporting
+      - :custom_ssl
+      - :custom_roles
+      - :chat_routing
+      - :dynamic_sections
+      - :helpdesk_restriction_toggle
+      - :round_robin_load_balancing
+      - :multiple_user_companies
+      - :multiple_companies_toggle
+      - :round_robin_on_update
+      - :shared_ownership_toggle
+      - :advanced_dkim
+      - :multi_dynamic_sections
+      - :auto_ticket_export
+      - :ticket_activity_export
+      - :unique_contact_identifier
+      - :custom_dashboard
+      - :audit_logs_central_publish
+      - :field_service_management_toggle
+      - :segments
+      - :analytics_landing_data_schedules
+      - :analytics_landing_new_report
+      - :analytics_report_search_widget
+      - :analytics_report_add_widgets
+      - :analytics_widget_save_as
+      - :analytics_widget_add_to_reports     
+      - :analytics_widget_filter
+      - :analytics_performance_distribution
+      - :analytics_customer_analysis
+      - :analytics_ticket_lifecycle_report
+      - :analytics_shared_ownership
+      - :analytics_surveys
+      - :analytics_survey_results
+      - :custom_translations
+      - :portal_article_filters
+      - :autofaq
+      - :botflow
+      - :supervisor_custom_status
+      - :omni_channel_routing
+      - :lbrr_by_omniroute
+      - :article_versioning
+      - :sla_management
+    :inherits:
+      - :garden_jan_20
+    :exclude: []
+  :estate_omni_jan_20:
+    :name: Estate Omni Channel
+    :features: []
+    :inherits:
+      - :estate_jan_20
+    :exclude: []
+  :forest_jan_20:
+    :name: Forest
+    :features:
+      - :whitelisted_ips
+      - :skill_based_round_robin
+      - :sandbox
+      - :hipaa
+      - :unlimited_multi_product
+      - :audit_log_ui
+    :inherits:
+      - :estate_jan_20
+    :exclude: []
+  :forest_omni_jan_20:
+    :name: Estate Omni Channel
+    :features: []
+    :inherits:
+      - :forest_jan_20
+    :exclude: []

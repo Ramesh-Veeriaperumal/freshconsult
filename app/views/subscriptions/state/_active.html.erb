@@ -153,11 +153,7 @@
   <%= t('choose_different_plan') %>
   </a>
 </div>
-<% if !current_account.new_2019_pricing_enabled? %>
-  <%= content_tag(:h5, t('downgrade_plan_v2'), :class => "lead-note pb15") %>
-<% end %>
   <div class="choose-plan-drop" style="<%= 'display:none' if @selected_plan.nil? %>">
-  <% if current_account.new_2019_pricing_enabled? %>
   <div class="features">
     <%= render :partial => "/subscriptions/features/toggle-box/ocr_toggle", :locals => { :plan => plan }%>
     <% if current_account.disable_old_ui_enabled? %>
@@ -165,7 +161,6 @@
       <%= render :partial => "/subscriptions/features/toggle-box/fsm_toggle", :locals => { :current_account => current_account }%>
     <% end %>
   </div>
-  <% end %>
     <%= render :partial => "/subscriptions/select_new_plans", :locals => {:plans => @plans, :subscription => @subscription,
       :show_all => false } %>
   </div>

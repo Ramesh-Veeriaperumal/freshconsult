@@ -17,6 +17,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   def teardown
+    CentralPublishWorker::UserWorker.jobs.clear
     Account.unstub(:current)
   end
 
@@ -120,5 +121,45 @@ class UserTest < ActiveSupport::TestCase
     payload.must_match_json_expression(central_publish_user_pattern(user))
   ensure
     User.any_instance.unstub(:fetch_choice_id)
+  end
+
+  def test_central_publish_user_other_emails
+    user = add_new_user(@account)
+    user.user_emails.build(email: Faker::Internet.email, primary_role: false)
+    user.save
+    user.reload
+    payload_json = user.central_publish_payload.to_json
+    payload_json.must_match_json_expression(central_publish_user_pattern(user))
+  end
+
+  def test_central_publish_user_tags
+    new_tag = [Faker::Lorem.characters(10)]
+    user = add_new_user(@account, tags: new_tag)
+    payload_json = user.central_publish_payload.to_json
+    payload_json.must_match_json_expression(central_publish_user_pattern(user))
+  end
+
+  def test_central_publish_model_changes_user_other_emails
+    user = add_new_user(@account)
+    other_email = user.user_emails.build(email: Faker::Internet.email, primary_role: false)
+    payload = other_email.construct_model_changes
+    assert_equal payload[:other_emails][:added], [other_email.email]
+    user.save
+    user.reload
+    other_email.destroy
+    changes = other_email.override_exchange_model(:destroy)
+    assert_equal changes[:other_emails][:removed], [other_email.email]
+  end
+
+  def test_central_publish_model_changes_user_tags
+    new_tags = [Faker::Lorem.characters(10), Faker::Lorem.characters(10)]
+    user = add_new_user(@account, tags: new_tags)
+    assert_equal user.model_changes_for_central[:tags][:added_tags].include?(new_tags[0]), true
+    assert_equal user.model_changes_for_central[:tags][:added_tags].include?(new_tags[1]), true
+    user.save
+    user.save_tags
+    tag = Helpdesk::Tag.where(name: new_tags[0]).first
+    tag.delete
+    assert_equal user.model_changes_for_central[:tags][:removed_tags].first, new_tags[0]
   end
 end

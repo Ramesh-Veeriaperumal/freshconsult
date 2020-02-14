@@ -104,7 +104,7 @@ module Helpdesk::SendAndSetHelper
     if @note.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"] and (params[:helpdesk_note].slice(*[:to_emails, :cc_emails, :bcc_emails]).values.flatten.include?(kbase_email))
       @note.bcc_emails.delete(kbase_email)
       @note.cc_emails.delete(kbase_email)
-      @note.instance_variable_set(:@publish_solution, privilege?(:publish_solution))
+      @note.instance_variable_set(:@create_solution_privilege, privilege?(:publish_solution))
     end
   end
 
@@ -191,7 +191,7 @@ module Helpdesk::SendAndSetHelper
 
   def note_to_kbase
     begin
-      create_article if @note.instance_variable_get(:@publish_solution)
+      create_article if @note.instance_variable_get(:@create_solution_privilege)
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
     end

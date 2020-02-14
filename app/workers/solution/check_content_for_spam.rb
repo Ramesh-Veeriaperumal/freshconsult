@@ -17,7 +17,9 @@ class Solution::CheckContentForSpam < BaseWorker
   private
 
   def check_description_for_spam article_id
-    article = @account.solution_articles.find(article_id)
+    article = @account.solution_articles.find_by_id(article_id)
+    return if article.nil?
+
     spam_content = false
     article_spam_regex = Regexp.new($redis_others.perform_redis_op("get", ARTICLE_SPAM_REGEX), "i")
     article_phone_number_spam_regex = Regexp.new($redis_others.perform_redis_op("get", PHONE_NUMBER_SPAM_REGEX), "i")

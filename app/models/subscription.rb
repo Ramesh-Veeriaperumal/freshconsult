@@ -147,12 +147,14 @@ class Subscription < ActiveRecord::Base
 
   NEW_SPROUT = [
     SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout_jan_17],
-    SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout_jan_19]
+    SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout_jan_19],
+    SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout_jan_20]
   ].freeze
 
   NEW_BLOSSOM = [
     SubscriptionPlan::SUBSCRIPTION_PLANS[:blossom_jan_17],
-    SubscriptionPlan::SUBSCRIPTION_PLANS[:blossom_jan_19]
+    SubscriptionPlan::SUBSCRIPTION_PLANS[:blossom_jan_19],
+    SubscriptionPlan::SUBSCRIPTION_PLANS[:blossom_jan_20]
   ].freeze
 
   def self.customer_count
@@ -315,7 +317,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def classic?
-    return SubscriptionPlan::JAN_2019_PLAN_NAMES.exclude?(subscription_plan.name) if account.force_2019_plan?
+    return SubscriptionPlan::JAN_2020_PLAN_NAMES.exclude?(subscription_plan.name) if account.force_2020_plan?
 
     subscription_plan.classic
   end
@@ -401,7 +403,7 @@ class Subscription < ActiveRecord::Base
 
 
   def chk_change_agents
-    if !account.launched?(:downgrade_policy) && (agent_limit && agent_limit < account.full_time_support_agents.count)
+    if agent_limit && agent_limit < account.full_time_support_agents.count
      errors.add(:base,I18n.t("subscription.error.lesser_agents", {:agent_count => account.full_time_support_agents.count}))
      Agent::SUPPORT_AGENT
     end
@@ -412,6 +414,10 @@ class Subscription < ActiveRecord::Base
       errors.add(:base, I18n.t('subscription.error.lesser_field_agents', agent_count: account.field_agents_count))
       Agent::FIELD_AGENT
     end
+  end
+
+  def verify_agent_limit
+    chk_change_agents unless downgrade?
   end
 
   def non_free_agents

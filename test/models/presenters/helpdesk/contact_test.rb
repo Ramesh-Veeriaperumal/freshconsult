@@ -109,7 +109,9 @@ class ContactTest < ActiveSupport::TestCase
       deleted: contact.deleted,
       user_role: contact.user_role,
       external_id: contact.external_id,
-      preferences: contact.preferences 
+      preferences: contact.preferences,
+      tags: contact.tags.collect { |tag| { id: tag.id, name: tag.name } },
+      other_emails: contact.user_emails.where(primary_role: false).pluck(:email)
     }
     result
   end

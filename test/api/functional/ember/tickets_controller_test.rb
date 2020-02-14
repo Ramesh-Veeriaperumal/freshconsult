@@ -763,6 +763,7 @@ module Ember
       t = create_ticket
       t.source = 12
       t.save!
+      @account.reload
       @account.revoke_feature(:support_bot)
       update_params = { status: Helpdesk::Ticketfields::TicketStatus::CLOSED }
       put :update, construct_params({ id: t.display_id, version: 'private' }, update_params)

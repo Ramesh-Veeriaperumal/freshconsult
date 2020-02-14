@@ -6,12 +6,10 @@ class ContactFieldTest < ActiveSupport::TestCase
   def setup
     super
     @account = @account.make_current
-    @account.launch(:contact_field_central_publish)
     CentralPublishWorker::ContactFieldWorker.jobs.clear
   end
 
   def teardown
-    @account.rollback(:contact_field_central_publish)
     Account.unstub(:current)
   end
 
@@ -20,17 +18,9 @@ class ContactFieldTest < ActiveSupport::TestCase
     create_custom_contact_field(cf_param)
   end
 
-  def test_create_contact_field_for_text_with_launchparty_enabled
+  def test_create_contact_field_for_text
     create_contact_custom_field('text')
     assert_equal 1, CentralPublishWorker::ContactFieldWorker.jobs.size
-  end
-
-  def test_create_contact_field_for_text_with_launchparty_disabled
-    @account.rollback(:contact_field_central_publish)
-    create_contact_custom_field('text')
-    assert_equal 0, CentralPublishWorker::ContactFieldWorker.jobs.size
-  ensure
-    @account.launch(:contact_field_central_publish)
   end
 
   def test_create_contact_field_for_paragraph

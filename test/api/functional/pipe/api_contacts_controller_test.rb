@@ -19,7 +19,6 @@ module Pipe
       @account.add_feature(:multiple_user_companies)
       @account.add_feature(:multi_timezone)
       @account.add_feature(:multi_language)
-      @account.launch(:contact_delete_forever)
       @account.reload
 
       20.times do

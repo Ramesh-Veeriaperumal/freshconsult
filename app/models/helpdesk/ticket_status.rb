@@ -35,6 +35,8 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
 
   after_update :update_tickets_sla_on_status_change_or_delete
 
+  after_update :update_ticket_statuses_on_status_delete, if: -> { deleted_changed? && Account.current.ticket_field_revamp_enabled? }
+
   after_commit :clear_statuses_cache
 
   concerned_with :presenter
@@ -183,6 +185,10 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
     elsif stop_sla_timer_changed?
       SlaOnStatusChange.perform_async({:status_id => self.id, :status_changed => true})
     end
+  end
+
+  def update_ticket_statuses_on_status_delete
+    ModifyTicketStatus.perform_async(status_id: self.status_id, status_name: self.name)
   end
   
   def active?

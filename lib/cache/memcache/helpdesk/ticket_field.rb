@@ -11,24 +11,34 @@ module Cache::Memcache::Helpdesk::TicketField
 
   def clear_cache
     key = ACCOUNT_CUSTOM_DROPDOWN_FIELDS % { account_id: account_id }
+    Rails.logger.info "---- Delete key---- #{key}----"
     MemcacheKeys.delete_from_cache key
     key = ACCOUNT_NESTED_FIELDS % { account_id: account_id }
+    Rails.logger.info "---- Delete key---- #{key}----"
     MemcacheKeys.delete_from_cache key
     key = ACCOUNT_TICKET_FIELDS % { account_id: account_id }
+    Rails.logger.info "---- Delete key---- #{key}----"
     MemcacheKeys.delete_from_cache key
     key = ACCOUNT_NESTED_TICKET_FIELDS % { account_id: account_id }
+    Rails.logger.info "---- Delete key---- #{key}----"
     MemcacheKeys.delete_from_cache key
     key = ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING % { account_id: account_id }
+    Rails.logger.info "---- Delete key---- #{key}----"
     MemcacheKeys.delete_from_cache key
     key = ACCOUNT_SECTION_FIELDS % { account_id: account_id }
+    Rails.logger.info "---- Delete key---- #{key}----"
     MemcacheKeys.delete_from_cache key
     key = format(ACCOUNT_SECTION_FIELD_PARENT_FIELD_MAPPING, account_id: account_id)
+    Rails.logger.info "---- Delete key---- #{key}----"
     MemcacheKeys.delete_from_cache(key)
     key = format(ACCOUNT_REQUIRED_TICKET_FIELDS, account_id: account_id)
+    Rails.logger.info "---- Delete key---- #{key}----"
     MemcacheKeys.delete_from_cache(key) if product_field_set_reqd_false
     key = format(ACCOUNT_SECTION_PARENT_FIELDS, account_id: account_id)
+    Rails.logger.info "---- Delete key---- #{key}----"
     MemcacheKeys.delete_from_cache(key) if product_field_set_reqd_false
     key = ACCOUNT_TICKET_TYPES % { account_id: account_id }
+    Rails.logger.info "---- Delete key---- #{key}----"
     MemcacheKeys.delete_from_cache(key)
 
     MemcacheKeys.delete_from_cache(picklist_values_by_id_key)
