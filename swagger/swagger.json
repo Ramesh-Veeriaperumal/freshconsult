@@ -17367,6 +17367,12 @@
             "description": {
               "type": "string"
             },
+            "twitter_profile_status": {
+              "type": "boolean"
+            },
+            "twitter_followers_count": {
+              "type": "string"
+            },
             "custom_fields": {
               "$ref": "#/definitions/custom_field"
             }
@@ -17551,6 +17557,12 @@
               "type": "string"
             },
             "description": {
+              "type": "string"
+            },
+            "twitter_profile_status": {
+              "type": "boolean"
+            },
+            "twitter_followers_count": {
               "type": "string"
             },
             "custom_fields": {

@@ -49,7 +49,7 @@ class Account < ActiveRecord::Base
     :mailbox_forward_setup, :remove_image_attachment_meta_data, :automated_private_notes_notification, :detect_lang_from_email_service,
     :sane_restricted_helpdesk, :hiding_confidential_logs, :fb_ad_post_stream_publish, :ticket_list_performance, :sla_policy_revamp, :help_widget_log, :freshdesk_freshsales_bundle, :help_widget_article_customisation,
     :field_agents_can_manage_appointments_setting, :fsm_for_garden_plan, :show_sample_scheduling_dashboard, :requester_widget_timeline,
-    :out_of_office, :enable_secure_login_check, :contact_form_enhancement, :public_api_filter_factory
+    :out_of_office, :enable_secure_login_check, :contact_form_enhancement, :public_api_filter_factory, :enable_twitter_requester_fields
   ].freeze
 
   DB_FEATURES = [

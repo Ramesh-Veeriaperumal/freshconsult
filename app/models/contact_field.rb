@@ -40,6 +40,8 @@ class ContactField < ActiveRecord::Base
     :default_description          => { :type => 13, :dom_type => :paragraph, :label => 'user.back_info',
                                   :dom_placeholder => 'contacts.info_example' },
     :default_unique_external_id   => { :type => 14,  :dom_type => :text, :label => 'user.unique_external_id' },
+    default_twitter_profile_status: { type: 15, dom_type: :text, label: 'user.twitter_profile_status' },
+    default_twitter_followers_count: { type: 16, dom_type: :text, label: 'user.twitter_followers_count' }
   }
 
   CUSTOM_FIELDS_SUPPORTED = [ :custom_text, :custom_paragraph, :custom_checkbox, :custom_number,

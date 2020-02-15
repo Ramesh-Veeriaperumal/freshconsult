@@ -174,4 +174,6 @@ class User < ActiveRecord::Base
   has_many :contact_notes, :dependent => :destroy
 
   has_many :announcements, class_name: 'DashboardAnnouncement', dependent: :destroy
+
+  delegate :string_uc07, :booleanuc01, to: :contact_field_data
 end

@@ -1027,6 +1027,10 @@ class Account < ActiveRecord::Base
     redis_key_exists?(DISABLE_FRESHSALES_API_CALLS)
   end
 
+  def twitter_requester_fields_enabled?
+    redis_key_exists?(TWITTER_REQUESTER_FIELDS_ENABLED) && Account.current.launched?(:enable_twitter_requester_fields)
+  end
+
   protected
 
     def external_url_is_valid?(url)
