@@ -2729,4 +2729,12 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     @agent_2 = add_agent_to_account(@account, {name: Faker::Lorem.word ,active: 1, role: 1} ) if @agent_2.nil?
   end
 
+  # Create SLA policy with invalid name
+  def test_create_with_duplicate_name
+    @sla_policy = quick_create_sla_policy
+    params_hash = { name: @sla_policy.name, applicable_to: { sources: [2] }, sla_target: create_sla_target }
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('name', :duplicate_name_in_sla_policy, code: :invalid_value, policy_name: @sla_policy.name)])
+  end
 end

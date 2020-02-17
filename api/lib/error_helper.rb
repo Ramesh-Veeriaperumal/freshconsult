@@ -37,5 +37,22 @@ class ErrorHelper
     def sym_key_lookup(hash, key)
       hash[key] || hash[key.to_s]
     end
+
+    def rename_error_message(fields, item)
+      if item.errors
+        field_msg_to_be_renamed = fields.select { |f| item.errors[f].present? }
+        field_msg_to_be_renamed.each_pair do |field, messages|
+          api_messages = []
+          messages.each_pair do |model_msg, api_msg|
+            if item.errors[field].include?(model_msg)
+              item.errors[field].delete(model_msg)
+              api_messages.push(api_msg.to_sym)
+            end
+          end
+          item.errors[field].concat(api_messages)
+        end
+      end
+    end
+
   end
 end

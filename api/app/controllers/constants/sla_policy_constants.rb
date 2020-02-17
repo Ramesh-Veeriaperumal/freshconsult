@@ -94,5 +94,6 @@ module SlaPolicyConstants
                   ['escalation'] | ['escalation' => ALLOWED_ESCALATION_FIELDS]
 
   CREATE_FIELDS = UPDATE_FIELDS
+  FIELD_ERROR_MAPPINGS = { name: {'has already been taken' => 'duplicate_name_in_sla_policy'} }.freeze
 
 end

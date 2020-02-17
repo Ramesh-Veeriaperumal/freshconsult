@@ -24,7 +24,7 @@ class ApiSlaPoliciesController < ApiApplicationController
     elsif @item.save
       render_201_with_location(location_url: 'sla_policies_url')
     else
-      render_errors(@item.errors)
+      render_custom_errors(@item)
     end
   end
 
@@ -117,4 +117,8 @@ class ApiSlaPoliciesController < ApiApplicationController
       @item.sla_details.build(sla_detail) if action_name.eql?("create")
     end
 
+    def set_custom_errors(item = @item)
+      ErrorHelper.rename_error_message(SlaPolicyConstants::FIELD_ERROR_MAPPINGS, item)
+      @error_options = { policy_name: item.name }
+    end
 end

@@ -549,3 +549,5 @@ api_error_messages:
   level_two_mandatory_error: "Level 2 is mandatory for dependent fields, so can't be deleted"
   choices_depth_error: "Choices should not present for level `%{level}`"
   choices_based_level_error: "There should be at least one choice for level `%{level}`"
+
+  duplicate_name_in_sla_policy: "A policy already exists with name '%{policy_name}'."
