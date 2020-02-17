@@ -405,5 +405,7 @@ module Admin::AutomationConstants
 
   CONDITION_NAME_PREFIX = 'condition_set'.freeze
 
+  ADD_COMMENT = 'add_comment'.freeze
+
   CUSTOMER_FEEDBACK_RATINGS = (CustomSurvey::Survey::CUSTOMER_RATINGS_FACE_VALUE + %w(--)).freeze
 end.freeze
