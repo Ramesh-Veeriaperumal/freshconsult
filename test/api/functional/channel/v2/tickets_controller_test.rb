@@ -1189,20 +1189,25 @@ module Channel::V2
         import_id: 1000
       }
       Account.any_instance.stubs(:shared_ownership_enabled?).returns(false)
-      # this test case fails on monday if it runs before business hour i.e 8 AM
-      unless Time.zone.now.to_date.monday? && Time.zone.now.hour < 8
-        post :create, construct_params({ version: 'private' }, params)
-        assert_response 201
-        t = Helpdesk::Ticket.last
-        match_json(ticket_pattern(params, t))
-        match_json(ticket_pattern({}, t))
-        created_at = Time.parse created_at
-        updated_at = Time.parse updated_at
-        assert (t.created_at - created_at).to_i.zero?
-        assert (t.updated_at - updated_at).to_i.zero?
-        assert t.due_by - t.created_at == 1.day, "Expected due_by => #{t.due_by.inspect} to be 1 day ahead of created time => #{t.created_at.inspect}"
-        assert t.frDueBy - t.created_at == 8.hour, "Expected frDueBy => #{t.frDueBy.inspect} to be 8 hours ahead of created time => #{t.created_at.inspect}"
+      post :create, construct_params({ version: 'private' }, params)
+      # Random test case failure - this "if" block is just to avoid failure on every monday between '00:00' and '08:00'
+      if Time.zone.now.to_date.monday? && response.status != 201 && Time.zone.now.to_time.utc.between?((started_bhr_time - 8.hours), started_bhr_time)
+        pattern = []
+        [:created_at, :updated_at].each { |key| pattern << bad_request_error_pattern(key, :start_time_lt_now) }
+        p "test_sla_calculation_if_created_at_current_time :: pattern :: #{pattern.inspect}"
+        match_json(pattern)
+        return
       end
+      assert_response 201
+      t = Helpdesk::Ticket.last
+      match_json(ticket_pattern(params, t))
+      match_json(ticket_pattern({}, t))
+      created_at = Time.parse created_at
+      updated_at = Time.parse updated_at
+      assert (t.created_at - created_at).to_i.zero?
+      assert (t.updated_at - updated_at).to_i.zero?
+      assert t.due_by - t.created_at == 1.day, "Expected due_by => #{t.due_by.inspect} to be 1 day ahead of created time => #{t.created_at.inspect}"
+      assert t.frDueBy - t.created_at == 8.hour, "Expected frDueBy => #{t.frDueBy.inspect} to be 8 hours ahead of created time => #{t.created_at.inspect}"
     ensure
       BusinessCalendar.any_instance.unstub(:holidays)
       Account.any_instance.unstub(:shared_ownership_enabled?)

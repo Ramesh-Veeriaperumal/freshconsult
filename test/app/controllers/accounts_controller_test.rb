@@ -52,6 +52,8 @@ class AccountsControllerTest < ActionController::TestCase
     set_others_redis_key(TWITTER_REQUESTER_FIELDS_ENABLED, true)
     get :new_signup_free, callback: '', user: { name: Faker::Name.name, email: Faker::Internet.email, time_zone: 'Chennai', language: 'en' }, account: { account_name: Faker::Lorem.word, account_domain: Faker::Lorem.word, locale: I18n.default_locale, time_zone: 'Chennai', user_name: 'Support', user_password: 'test1234', user_password_confirmation: 'test1234', user_email: Faker::Internet.email, user_helpdesk_agent: true, new_plan_test: true }, format: 'json'
     Account.stubs(:current).returns(Account.last)
+    p "test_twitter_requester_fields_created_after_enabled :: response :: #{response.inspect}"
+    p "test_twitter_requester_fields_created_after_enabled :: assert :: #{Account.current.twitter_requester_fields_enabled?} :: #{Account.current.contact_fields.collect(&:name).inspect}"
     assert_response 200
     assert Account.current.twitter_requester_fields_enabled?
     twitter_requester_fields = ['twitter_profile_status', 'twitter_followers_count']
