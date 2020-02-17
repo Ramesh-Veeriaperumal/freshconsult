@@ -98,6 +98,27 @@ class WatcherNotifierTest < ActionMailer::TestCase
     agent.destroy if agent
   end
 
+  def test_translation_for_notify_on_status_change_closed
+    en_subject = I18n.t('mailer_notifier_subject.notify_on_reply')
+    en_body    = I18n.t('helpdesk.tickets.add_watcher.mail.hi')
+    subject_bk = I18n.t('mailer_notifier_subject.notify_on_reply', locale: :fr)
+    body_bk    = I18n.t('helpdesk.tickets.add_watcher.mail.hi', locale: :fr)
+    I18n.backend.store_translations('fr', mailer_notifier_subject: { notify_on_reply: "$0$#{en_subject}" })
+    I18n.backend.store_translations('fr', helpdesk: { tickets: { add_watcher: { mail: { hi: "$0$#{en_body}" } } } })
+    I18n.locale = 'en'
+    agent = add_test_agent(@account)
+    ticket = create_ticket(responder_id: agent.id)
+    subscription = ticket.subscriptions.build(user_id: agent.id)
+    subscription.user.language = 'fr'
+    email = Helpdesk::WatcherNotifier.send_email(:notify_on_status_change, subscription.user, ticket, subscription, 'CLOSED', 'Test_name')
+    assert_equal true, email.body.encoded.include?('ferm')
+    I18n.backend.store_translations('fr', mailer_notifier_subject: { notify_on_reply: subject_bk })
+    I18n.backend.store_translations('fr', helpdesk: { tickets: { add_watcher: { mail: { hi: body_bk } } } })
+  ensure
+    ticket.destroy if ticket
+    agent.destroy if agent
+  end
+
   def test_notify_on_status_change_delayed
     agent = add_test_agent(@account)
     ticket = create_ticket(responder_id: agent.id)

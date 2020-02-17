@@ -69,7 +69,8 @@ class  Helpdesk::WatcherNotifier < ActionMailer::Base
       headers.merge!({"X-FD-Email-Category" => ticket.friendly_reply_email_config.category}) if ticket.friendly_reply_email_config.category.present?
       @ticket = ticket
       @subscription = subscription
-      @status = status 
+      account_status = Account.current.ticket_status_values_from_cache.find { |stat| stat.name === status.capitalize }
+      @status = account_status.present? ? Helpdesk::TicketStatus.translate_status_name(account_status, 'name') : status
       @agent_name = agent_name
       @account = ticket.account
       mail(headers) do |part|
