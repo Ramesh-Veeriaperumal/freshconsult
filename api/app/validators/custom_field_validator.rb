@@ -51,6 +51,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
     end
 
     alias_method :validate_encrypted_text, :validate_custom_text
+    alias_method :validate_secure_text, :validate_custom_text
 
     # validator for file field
     def validate_custom_file(record, field_name)

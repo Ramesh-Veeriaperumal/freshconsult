@@ -1,0 +1,9 @@
+type: object
+properties:
+  data:
+    type: object  
+  meta:
+    type: object
+    properties:
+      vault_token:
+        type: string

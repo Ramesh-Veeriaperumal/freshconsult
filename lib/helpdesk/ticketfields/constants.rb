@@ -16,6 +16,7 @@ module Helpdesk::Ticketfields::Constants
   SERIALIZED_MULTILINE_FIELD_COUNT = 50
   SERIALIZED_ENCRYPTED_FIELD_COUNT = 50
   SERIALIZED_SINGLE_LINE_FIELD_COUNT = 400
+  SERIALIZED_SECURE_FIELD_COUNT = 1
 
   DROPDOWN_FIELDS = (1..DROPDOWN_FIELD_COUNT).collect { |n| "ffs_#{format('%02d', n)}" }.freeze
   NUMBER_FIELDS   = (1..NUMBER_FIELD_COUNT).collect { |n| "ff_int#{format('%02d', n)}" }.freeze
@@ -42,7 +43,8 @@ module Helpdesk::Ticketfields::Constants
     paragraph:     ['paragraph', SERIALIZED_MLT_FIELDS, SERIALIZED_MLT_FIELDS.length],
     decimal:       ['decimal', DECIMAL_FIELDS, DECIMAL_FIELD_COUNT],
     encrypted_text:['encrypted_text', SERIALIZED_ESLT_FIELDS, SERIALIZED_ESLT_FIELDS.length],
-    file:          [['text', 'file'], SERIALIZED_SLT_FIELDS, SERIALIZED_SLT_FIELDS.length]
+    file:          [['text', 'file'], SERIALIZED_SLT_FIELDS, SERIALIZED_SLT_FIELDS.length],
+    secure_text:   ['secure_text', SERIALIZED_SSLT_FIELDS, SERIALIZED_SSLT_FIELDS.length]
   }.freeze
 
   FFS_LIMIT = 80
@@ -76,7 +78,8 @@ module Helpdesk::Ticketfields::Constants
     paragraph:      ['paragraph', SERIALIZED_MLT_FIELDS, SERIALIZED_MLT_FIELDS.length],
     decimal:        ['decimal', DECIMAL_FIELDS, DECIMAL_FIELD_COUNT],
     encrypted_text: ['encrypted_text', SERIALIZED_ESLT_FIELDS, SERIALIZED_ESLT_FIELDS.length],
-    file:           [['text', 'file'], SERIALIZED_SLT_FIELDS, SERIALIZED_SLT_FIELDS.length]
+    file:           [['text', 'file'], SERIALIZED_SLT_FIELDS, SERIALIZED_SLT_FIELDS.length],
+    secure_text:    ['secure_text', SERIALIZED_SSLT_FIELDS, SERIALIZED_SSLT_FIELDS.length]
   }.freeze
 
   MAX_ALLOWED_COUNT_DN = {
@@ -100,7 +103,8 @@ module Helpdesk::Ticketfields::Constants
     date: DATE_FIELD_COUNT,
     checkbox: CHECKBOX_FIELD_COUNT,
     decimal: DECIMAL_FIELD_COUNT,
-    encrypted_text: SERIALIZED_ESLT_FIELDS.length
+    encrypted_text: SERIALIZED_ESLT_FIELDS.length,
+    secure_text: SERIALIZED_SSLT_FIELDS.length
   }.freeze
 
   REVAMPED_FLEXIFIELD_LIMITS = {
@@ -114,7 +118,8 @@ module Helpdesk::Ticketfields::Constants
       paragraph:      ['paragraph', SERIALIZED_MLT_FIELDS, SERIALIZED_MULTILINE_FIELD_COUNT],
       decimal:        ['decimal', DECIMAL_FIELDS, DECIMAL_FIELD_COUNT],
       encrypted_text: ['encrypted_text', SERIALIZED_ESLT_FIELDS, SERIALIZED_ENCRYPTED_FIELD_COUNT],
-      file:           [%w(file text), SERIALIZED_SLT_FIELDS, SERIALIZED_SINGLE_LINE_FIELD_COUNT]
+      file:           [%w(file text), SERIALIZED_SLT_FIELDS, SERIALIZED_SINGLE_LINE_FIELD_COUNT],
+      secure_text:    ['secure_text', SERIALIZED_SSLT_FIELDS, SERIALIZED_SECURE_FIELD_COUNT]
   }.freeze
 
   REVAMPED_TICKET_FIELD_DATA_LIMITS = {
@@ -128,7 +133,8 @@ module Helpdesk::Ticketfields::Constants
       paragraph:      ['paragraph', SERIALIZED_MLT_FIELDS, SERIALIZED_MULTILINE_FIELD_COUNT],
       decimal:        ['decimal', DECIMAL_FIELDS, DECIMAL_FIELD_COUNT],
       encrypted_text: ['encrypted_text', SERIALIZED_ESLT_FIELDS, SERIALIZED_ENCRYPTED_FIELD_COUNT],
-      file:           [%w(file text), SERIALIZED_SLT_FIELDS, SERIALIZED_SINGLE_LINE_FIELD_COUNT]
+      file:           [%w(file text), SERIALIZED_SLT_FIELDS, SERIALIZED_SINGLE_LINE_FIELD_COUNT],
+      secure_text:    ['secure_text', SERIALIZED_SSLT_FIELDS, SERIALIZED_SECURE_FIELD_COUNT]
   }.freeze
 
   MIN_CHOICES_COUNT = 1
@@ -140,5 +146,5 @@ module Helpdesk::Ticketfields::Constants
   PLUCKED_COLUMN_FOR_CHOICES = %i[id pickable_id pickable_type position value picklist_id].freeze
   PICKLIST_CHOICE_BATCH_SIZE = 300
 
-  VALID_FIELD_TYPE = %w[text paragraph dropdown checkbox number date date_time decimal nested_field encrypted_text].freeze
+  VALID_FIELD_TYPE = %w[text paragraph dropdown checkbox number date date_time decimal nested_field encrypted_text secure_text].freeze
 end

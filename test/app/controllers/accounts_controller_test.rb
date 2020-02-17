@@ -55,7 +55,7 @@ class AccountsControllerTest < ActionController::TestCase
     assert_response 200
     assert Account.current.twitter_requester_fields_enabled?
     twitter_requester_fields = ['twitter_profile_status', 'twitter_followers_count']
-    assert Account.current.contact_fields.collect(&:name) & twitter_requester_fields == twitter_requester_fields
+    assert_equal Account.current.contact_fields.collect(&:name) & twitter_requester_fields, twitter_requester_fields
   ensure
     remove_others_redis_key TWITTER_REQUESTER_FIELDS_ENABLED
     Account.unstub(:current)

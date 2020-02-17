@@ -1296,7 +1296,8 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def construct_new_ticket_element(form_builder,object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false, pl_value_id=nil)
-    return "" if field.encrypted_field? && !current_account.falcon_and_encrypted_fields_enabled?
+    return "" if field.secure_field? || (field.encrypted_field? && !current_account.falcon_and_encrypted_fields_enabled?)
+
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required && !object_name.eql?(:template_data)) ?
                       (field.field_type == "default_description" ? 'required_redactor' : 'required') : '' } #{ dom_type }"

@@ -8,13 +8,15 @@ module FlexifieldConstants
   SERIALIZED_MLT_FIELDS_4 = (31..40).collect { |n| "dn_mlt_#{format('%03d', n)}" }.freeze
   SERIALIZED_MLT_FIELDS_5 = (41..50).collect { |n| "dn_mlt_#{format('%03d', n)}" }.freeze
   SERIALIZED_MLT_FIELDS   = (SERIALIZED_MLT_FIELDS_1 + SERIALIZED_MLT_FIELDS_2 + SERIALIZED_MLT_FIELDS_3 + SERIALIZED_MLT_FIELDS_4 + SERIALIZED_MLT_FIELDS_5).freeze
-  SERIALIZED_ESLT_FIELDS  = (1..50).collect { |n| "dn_eslt_#{format('%03d', n)}" }.freeze
+  SERIALIZED_ESLT_FIELDS  = (1..25).collect { |n| "dn_eslt_#{format('%03d', n)}" }.freeze
+  SERIALIZED_SSLT_FIELDS  = (26..26).collect { |n| "dn_eslt_#{format('%03d', n)}" }.freeze
   # SERIALIZED_NUM_FIELDS = (1..3).collect{ |n| "dn_num_#{"%03d" % n}"}
   # SERIALIZED_DEC_FIELDS = (1..3).collect{ |n| "dn_dec_#{"%03d" % n}"}
 
   TEXT_FLEXIFIELD_TYPE = 'text'
   PARAGRAPH_FLEXIFIELD_TYPE = 'paragraph'
   ENCRYPTED_FLEXIFIELD_TYPE = 'encrypted_text'
+  SECURE_FLEXIFIELD_TYPE = 'secure_text'
 
   SERIALIZED_COLUMN_MAPPING = [
     # [field_names,          db_column,  flexifield_type,  write_sanitization_methods, read_sanitization_methods, validation_methods ]
@@ -25,7 +27,8 @@ module FlexifieldConstants
     [SERIALIZED_MLT_FIELDS_3, :mlt_text_19,  PARAGRAPH_FLEXIFIELD_TYPE, [:trim_length_of_mlt], [], []],
     [SERIALIZED_MLT_FIELDS_4, :mlt_text_20,  PARAGRAPH_FLEXIFIELD_TYPE, [:trim_length_of_mlt], [], []],
     [SERIALIZED_MLT_FIELDS_5, :mlt_text_21,  PARAGRAPH_FLEXIFIELD_TYPE, [:trim_length_of_mlt], [], []],
-    [SERIALIZED_ESLT_FIELDS,  :eslt_text_22, ENCRYPTED_FLEXIFIELD_TYPE, [:trim_length_of_slt, :encrypt_field_value], [:decrypt_field_value], []]
+    [SERIALIZED_ESLT_FIELDS,  :eslt_text_22, ENCRYPTED_FLEXIFIELD_TYPE, [:trim_length_of_slt, :encrypt_field_value], [:decrypt_field_value], []],
+    [SERIALIZED_SSLT_FIELDS,  :eslt_text_22, SECURE_FLEXIFIELD_TYPE,    [:trim_length_of_slt], [], []]
     # [SERIALIZED_NUM_FIELDS,   :int_text_13,       "number",         [:convert_to_integer], []],
     # [SERIALIZED_DEC_FIELDS,   :decimal_text_14,   "decimal",        [:convert_to_decimal], []]
   ].freeze

@@ -317,7 +317,7 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
     end
   end
 
-  Helpdesk::Ticketfields::Constants::FIELD_COLUMN_MAPPING.except(*[:encrypted_text, :file, :date_time].concat(PICKLIST_TYPE_FIELDS)).each do |field_type, details|
+  Helpdesk::Ticketfields::Constants::FIELD_COLUMN_MAPPING.except(*[:encrypted_text, :file, :date_time, :secure_text].concat(PICKLIST_TYPE_FIELDS)).each do |field_type, details|
     define_method("test_success_#{field_type}_field_creation") do
       params = ticket_field_common_params(type: "custom_#{field_type}")
       launch_ticket_field_revamp do
@@ -406,7 +406,7 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
   #   end
   # end
 
-  Helpdesk::Ticketfields::Constants::FIELD_COLUMN_MAPPING.except(*[:encrypted_text, :file, :text, :date_time].concat(PICKLIST_TYPE_FIELDS)).each do |field_type, details|
+  Helpdesk::Ticketfields::Constants::FIELD_COLUMN_MAPPING.except(*[:encrypted_text, :file, :text, :date_time, :secure_text].concat(PICKLIST_TYPE_FIELDS)).each do |field_type, details|
     define_method("test_create_custom_#{field_type}_field_limit_exceeded") do
       launch_ticket_field_revamp do
         method_name = field_type.in?(DENORMALIZED_FIELDS) ? 'create_custom_field_dn' : 'create_custom_field'
@@ -437,5 +437,58 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
         assert_match('You have exceeded the maximum limit for this type of field.', response.body)
       end
     end
+  end
+
+  def test_create_secure_text_field
+    params = ticket_field_common_params(type: 'secure_text')
+    @account.launch(:pci_compliance_field)
+    launch_ticket_field_revamp do
+      post :create, construct_params({}, params)
+      assert_response 201
+      ticket_field = @account.ticket_fields.find(json_response(response)[:id])
+      match_json(custom_field_response(ticket_field))
+    end
+  ensure
+    @account.rollback(:pci_compliance_field)
+  end
+
+  def test_create_secure_text_field_without_feature
+    params = ticket_field_common_params(type: 'secure_text')
+    launch_ticket_field_revamp do
+      post :create, construct_params({}, params)
+      assert_response 403
+    end
+  end
+
+  def test_create_secure_text_field_limit_exceeded
+    field_type = :secure_text
+    @account.launch(:pci_compliance_field)
+    limit = Helpdesk::Ticketfields::Constants::FIELD_COLUMN_MAPPING[field_type][2]
+    launch_ticket_field_revamp do
+      limit.times do |i|
+        create_custom_field_dn("custom_#{field_type}_#{i}", field_type.to_s, format('%02d', i + 1))
+      end
+      params = ticket_field_common_params(type: field_type.to_s)
+      post :create, construct_params({}, params)
+      assert_response 400
+      assert_match('You have exceeded the maximum limit for this type of field.', response.body)
+    end
+  ensure
+    @account.rollback(:pci_compliance_field)
+  end
+
+  def test_ticket_field_index_with_secure_text_field
+    @account.launch(:pci_compliance_field)
+    launch_ticket_field_revamp do
+      secure_text_field = create_custom_field_dn('secure_text_1', 'secure_text')
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      response = parse_response @response.body
+      secure_text_field_in_index_call = response.find { |x| x['id'] == secure_text_field.id }
+      assert_not_nil secure_text_field_in_index_call
+      assert_equal secure_text_field_in_index_call['type'], "secure_text"
+    end
+  ensure
+    @account.rollback(:pci_compliance_field)
   end
 end

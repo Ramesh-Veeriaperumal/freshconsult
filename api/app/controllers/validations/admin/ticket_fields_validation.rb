@@ -91,6 +91,7 @@ module Admin
     validates :section_mappings, custom_absence: { message: :default_field_section_mapping_error },
                                  if: -> { instance_variable_defined?(:@section_mappings) && tf.present? && tf.default? }, on: :update
     validate :validate_fsm_params, if: -> { update_action? && tf.fsm? }
+    validate :pci_compliance_enabled?, if: -> { tf.present? && (tf.secure_field? || secure_field?) }
 
     def initialize(request_params, item, options)
       self.request_params = request_params

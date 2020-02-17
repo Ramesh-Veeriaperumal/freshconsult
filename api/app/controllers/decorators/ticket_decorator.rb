@@ -39,6 +39,11 @@ class TicketDecorator < ApiDecorator
     custom_field_via_mapping.each do |k, v|
       next if @custom_fields_mapping[k] == Helpdesk::TicketField::CUSTOM_FILE && !private_api?
 
+      if @custom_fields_mapping[k] == TicketFieldsConstants::SECURE_TEXT
+        custom_fields_hash[TicketDecorator.display_name(k)] = v if private_api?
+        next
+      end
+
       custom_fields_hash[@name_mapping[k]] = if v.respond_to?(:utc)
                                                if @custom_fields_mapping[k] == Helpdesk::TicketField::CUSTOM_DATE_TIME
                                                  format_date(v, true)

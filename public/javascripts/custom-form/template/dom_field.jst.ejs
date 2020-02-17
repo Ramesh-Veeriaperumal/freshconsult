@@ -12,7 +12,7 @@
 		<% if(custom_form_type != 'company' && field_type != 'default_requester' && !visible_in_portal) { %>
 			<span class='ficon-security private-symbol muted'></span>
 		<% } %>
-		<% if(dom_type == 'encrypted_text') { %>
+		<% if(dom_type == 'encrypted_text' || dom_type == 'secure_text') { %>
 			<span class='ficon-encryption-lock private-symbol encrypted'></span>
 		<% } %>
 		<% if (dom_type != 'checkbox') { %>
