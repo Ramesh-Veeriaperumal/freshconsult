@@ -135,11 +135,14 @@ module Ember
       def send_for_review
         helpdesk_approval = get_or_build_approval_record(@item)
         get_or_build_approver_mapping(helpdesk_approval, params[cname][:approver_id])
+        @draft.keep_previous_author = true
         @draft.unlock!(true)
         helpdesk_approval.save ? head(204) : render_errors(helpdesk_approval.errors)
       end
 
       def approve
+        @draft.keep_previous_author = true
+        @draft.unlock!(true)
         @helpdesk_approver_mapping = get_or_build_approver_mapping(@helpdesk_approval_record, User.current.id)
         @helpdesk_approver_mapping.approve! ? head(204) : render_errors(@helpdesk_approver_mapping.errors)
       end

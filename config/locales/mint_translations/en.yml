@@ -150,6 +150,13 @@ en:
       new_reply_plain: "New Reply on topic %{post_topic}"
       reply_notify_html: 'Reply notifications for this topic' 
       reply_notify_plain: 'Turn off reply notifications for this topic'
+    solutions_approval:
+      article_approved_title: "Article Approved - %{article_title}"
+      article_approved_body_html: "Hey %{user_name},<br><br>%{approver_name} has approved your article:<br><a href= '%{article_url}' target = '_blank'>%{article_title}</a>"
+      article_approved_body_txt: "Hey %{user_name},\n\n%{approver_name} has approved your article:\n %{article_title} - %{article_url}"
+      article_in_review_title: "Review Request - Article: %{article_title}"
+      article_in_review_body_html: "Hey %{approver_name},<br><br>%{requester_name} has requested you to review the article: <br> <a href= '%{article_url}' target = '_blank'>%{article_title}</a>"
+      article_in_review_body_txt: "Hey %{approver_name},\n\n%{requester_name} has requested you to review the  article: \n %{article_title} - %{article_url}"
   mailer_notifier_subject:
     notify_new_topic_follower: 'Added as Topic Follower - %{title}'
     notify_new_forum_follower: 'Added as Forum Follower - %{title}'
