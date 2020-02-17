@@ -95,7 +95,7 @@
           element.html(options);
         }
       <% end %>
-      requester_input.val('<%= current_user.email if current_user.present? %>').trigger('focusout');
+      requester_input.val("<%= current_user.email.html_safe if current_user.present? %>").trigger('focusout');
     };
     jQuery(document).ready(function(){
       populateRequestForm();
