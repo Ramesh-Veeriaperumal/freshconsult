@@ -18235,6 +18235,12 @@
           "type": "integer",
           "example": 100
         },
+        "freshcaller_agent": {
+          "type": "boolean"
+        },
+        "agent_level_id": {
+          "type": "integer"
+        },
         "search_settings": {
           "type": "object",
           "properties": {
@@ -18296,6 +18302,8 @@
         },
         "shortcuts_enabled": false,
         "avatar_id": 100,
+        "freshcaller_agent": true,
+        "agent_level_id": 3,
         "search_settings": {
           "tickets": {
             "include_subject": false,
@@ -18368,6 +18376,12 @@
           }
         },
         "avatar_id": {
+          "type": "integer"
+        },
+        "freshcaller_agent": {
+          "type": "boolean"
+        },
+        "agent_level_id": {
           "type": "integer"
         }
       }
@@ -19511,6 +19525,12 @@
         "updated_at": {
           "type": "string",
           "format": "date-time"
+        },
+        "freshcaller_agent": {
+          "type": "boolean"
+        },
+        "agent_level_id": {
+          "type": "integer"
         }
       }
     },

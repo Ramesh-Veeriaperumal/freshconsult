@@ -1,9 +1,10 @@
 class AgentValidation < ApiValidation
+  include Gamification::GamificationUtil
   attr_accessor :name, :phone, :mobile, :email, :time_zone, :language, :occasional, :signature, :ticket_scope,
                 :role_ids, :group_ids, :job_title, :id, :avatar_id, :search_settings, :agent_type, :focus_mode,
-                :shortcuts_enabled, :skill_ids, :ticket_assignment
+                :shortcuts_enabled, :skill_ids, :ticket_assignment, :agent_level_id, :freshcaller_agent
 
-  CHECK_PARAMS_SET_FIELDS = %w[time_zone language occasional role_ids ticket_scope search_settings].freeze
+  CHECK_PARAMS_SET_FIELDS = %w[time_zone language occasional role_ids ticket_scope search_settings agent_level_id freshcaller_agent skill_ids].freeze
 
   validates :name, data_type: { rules: String, required: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }, on: :update
   validates :name, data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }, on: :create
@@ -25,7 +26,7 @@ class AgentValidation < ApiValidation
   validates :role_ids, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0 } }, unless: :bulk_create?
   validates :role_ids, required: true, on: :update
   validate :check_agent_limit, if: -> { (@occasional_set && @previous_occasional && @occasional == false && self.validation_context == :update) || (self.validation_context == :create) }
-  validate :check_field_agent_limit, :check_agent_type_with_role_ids, if: -> { Account.current.field_service_management_enabled? }, on: :create
+  validate :check_field_agent_limit, if: -> { Account.current.field_service_management_enabled? }, on: :create
   validates :shortcuts_enabled, data_type: { rules: 'Boolean' }
   validates :focus_mode, data_type: { rules: 'Boolean' }
   validate :focus_mode_enabled?, unless: -> { focus_mode.nil? }
@@ -34,10 +35,16 @@ class AgentValidation < ApiValidation
 
   validates :id, data_type: { rules: Integer, required: true }, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false, ignore_string: :allow_string_param }, if: -> { bulk_update? }
   validates :ticket_assignment, data_type: { rules: Hash }, presence: true, hash: { validatable_fields_hash: proc { |x| x.ticket_assignment_format } }, if: -> { bulk_update? }
-
+  validate :refute_private_api_avatar_id
   validates :avatar_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }, if: -> { private_api? }
+  validates :skill_ids, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field, message_options: { attribute: 'skill_ids', feature: :skill_based_round_robin } }, unless: -> { Account.current.skill_based_round_robin_enabled? }
   validates :skill_ids, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0 } }
   validate :privilege_check_for_skills, if: -> { Account.current.skill_based_round_robin_enabled? && @skill_ids.present? }
+
+  validates :freshcaller_agent, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field, message_options: { attribute: 'freshcaller_agent', feature: :freshcaller } }, unless: -> { Account.current.freshcaller_enabled? }
+  validates :freshcaller_agent, data_type: { rules: 'Boolean' }
+  validates :agent_level_id, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field, message_options: { attribute: 'agent_level_id', feature: :gamification } }, unless: -> { gamification_feature?(Account.current) }
+  validates :agent_level_id, custom_numericality: { only_integer: true, greater_than: 0 }
 
   def initialize(request_params, item, allow_string_param = false)
     if item
@@ -89,12 +96,6 @@ class AgentValidation < ApiValidation
     end
   end
 
-  def check_agent_type_with_role_ids
-    if is_a_field_agent? && role_ids.present?
-      errors[:role_ids] = :role_assign_not_allowed_for_field_agent
-    end
-  end
-
   def check_field_agent_limit
     if Account.current.reached_field_agent_limit?
       if agent_type == Account.current.agent_types.find_by_name(Agent::FIELD_AGENT).agent_type_id
@@ -136,6 +137,10 @@ class AgentValidation < ApiValidation
 
   def focus_mode_enabled?
     errors[:focus_mode] = :focus_mode_feature_is_not_enabled unless Account.current.focus_mode_enabled?
+  end
+
+  def refute_private_api_avatar_id
+    errors[:avatar_id] = :invalid_field if !private_api? && avatar_id.present?
   end
 
   private

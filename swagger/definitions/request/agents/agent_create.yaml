@@ -26,17 +26,21 @@ properties:
   agent_type:
     type: integer
   group_ids:
-      type: array
-      items:
-        type: integer
+    type: array
+    items:
+      type: integer
   role_ids:
-      type: array
-      items:
-        type: integer
+    type: array
+    items:
+      type: integer
   ticket_assignment:
     type: object
     properties:
       available:
         type: boolean
   avatar_id:
+    type: integer
+  freshcaller_agent:
+    type: boolean
+  agent_level_id:
     type: integer

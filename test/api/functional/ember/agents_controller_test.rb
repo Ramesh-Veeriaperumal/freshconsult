@@ -792,6 +792,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_avatar_id
+    AgentValidation.any_instance.stubs(:private_api?).returns(true)
     user = get_or_create_agent
     file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
     attachment_id = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
@@ -802,6 +803,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     assert_equal user.avatar.content_file_name, 'image33kb.jpg'
   ensure
     DataTypeValidator.any_instance.unstub(:valid_type?)
+    AgentValidation.any_instance.unstub(:private_api?)
   end
 
   def test_update_with_avatar_id_null_removes_avatar_correctly
@@ -816,6 +818,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_invalid_avatar_id
+    AgentValidation.any_instance.stubs(:private_api?).returns(true)
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     user = get_or_create_agent
     invalid_id = Faker::Number.number(3)
@@ -825,9 +828,11 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern(:attachment_ids, :invalid_list, list: invalid_id.to_i.to_s)])
   ensure
     DataTypeValidator.any_instance.unstub(:valid_type?)
+    AgentValidation.any_instance.unstub(:private_api?)
   end
 
   def test_update_with_invalid_avatar_extension
+    AgentValidation.any_instance.stubs(:private_api?).returns(true)
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     user = get_or_create_agent
     attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: user.id).id
@@ -837,6 +842,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern(:avatar_id, :upload_jpg_or_png_file, current_extension: '.txt')])
   ensure
     DataTypeValidator.any_instance.unstub(:valid_type?)
+    AgentValidation.any_instance.unstub(:private_api?)
   end
 
   def test_search_in_freshworks

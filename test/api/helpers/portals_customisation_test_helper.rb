@@ -19,6 +19,7 @@ module PortalsCustomisationTestHelper
       id: Fixnum,
       name: portal.name,
       host: portal.host,
+      language: portal.language,
       default: portal.main_portal?,
       product_id: portal.product_id,
       ssl_enabled: portal.ssl_enabled?,

@@ -16,8 +16,7 @@ module AgentsTestHelper
       time_zone: agent.user.time_zone,
       updated_at: agent.user.updated_at
     }
-
-    {
+    agent_hash = {
       available_since: expected_output[:available_since] || agent.active_since,
       available: expected_output[:available] || agent.available,
       created_at: agent.created_at,
@@ -29,6 +28,11 @@ module AgentsTestHelper
       contact: expected_output[:user] || user,
       type: Account.current.agent_types_from_cache.find { |type| type.agent_type_id == agent.agent_type }.name
     }
+    if Account.current.freshcaller_enabled?
+      agent_hash[:freshcaller_agent] = agent.freshcaller_agent.present? ? agent.freshcaller_agent.try(:fc_enabled) : false
+    end
+    agent_hash[:agent_level_id] = agent.scoreboard_level_id if Account.current.gamification_enabled? && Account.current.gamification_enable_enabled?
+    agent_hash
   end
 
   def private_api_agent_pattern(expected_output = {}, agent)
@@ -179,7 +183,7 @@ module AgentsTestHelper
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
     agent = agent_user.agent
-    {
+    agent_hash = {
       available_since: expected_output[:available_since] || agent.active_since,
       available: expected_output[:available] || agent.available,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
@@ -194,6 +198,11 @@ module AgentsTestHelper
       contact: expected_output[:user] || user,
       type: Account.current.agent_types_from_cache.find { |type| type.agent_type_id == agent.agent_type }.name
     }
+    if Account.current.freshcaller_enabled?
+      agent_hash[:freshcaller_agent] = agent.freshcaller_agent.present? ? agent.freshcaller_agent.try(:fc_enabled) : false
+    end
+    agent_hash[:agent_level_id] = agent.scoreboard_level_id if Account.current.gamification_enabled? && Account.current.gamification_enable_enabled?
+    agent_hash
   end
 
   def v2_agent_payload

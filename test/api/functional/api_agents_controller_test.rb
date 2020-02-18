@@ -1,11 +1,13 @@
 require_relative '../test_helper'
-['agents_test_helper.rb', 'attachments_test_helper.rb'].each { |file| require Rails.root.join('test', 'api', 'helpers', file) }
+['agents_test_helper.rb', 'attachments_test_helper.rb', 'freshcaller_test_helper.rb'].each { |file| require Rails.root.join('test', 'api', 'helpers', file) }
 require_relative '../helpers/admin/skills_test_helper'
 class ApiAgentsControllerTest < ActionController::TestCase
   include Redis::OthersRedis
   include AgentsTestHelper
   include AttachmentsTestHelper
   include Admin::SkillsTestHelper
+  include ::Freshcaller::TestHelper
+  include ::Freshcaller::Endpoints
   def wrap_cname(params)
     { api_agent: params }
   end
@@ -664,10 +666,13 @@ class ApiAgentsControllerTest < ActionController::TestCase
   end
 
   def test_update_fails_with_avatar_id
+    AgentValidation.any_instance.stubs(:private_api?).returns(false)
     agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
-    put :update, construct_params({ id: @agent.id }, avatar_id: Faker::Number.number(10))
+    put :update, construct_params({ id: @agent.id }, avatar_id: Faker::Number.number(10).to_i)
     match_json([bad_request_error_pattern('avatar_id', :invalid_field)])
     assert_response 400
+  ensure
+    AgentValidation.any_instance.unstub(:private_api?)
   end
 
   def test_update_agent_with_unpermitted_fields
@@ -985,7 +990,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     params_hash = { email: Faker::Internet.email, ticket_scope: 2, role_ids: [Account.current.roles.find_by_name('Agent').id], agent_type: 2, name: Faker::Name.name }
     post :create, construct_params(params_hash)
     response = parse_response @response.body
-    assert_equal response['errors'][0]['message'], 'role_assign_not_allowed_for_field_agent'
+    assert_equal response['errors'][0]['message'], 'Field technicians cannot have Roles: 4'
     assert_response 400
   ensure
     Account.any_instance.unstub(:field_service_management_enabled?)
@@ -1069,21 +1074,37 @@ class ApiAgentsControllerTest < ActionController::TestCase
     Account.unstub(:current)
   end
 
-  def test_create_agent_with_incorrect_scope_and_role
+  def test_create_agent_with_incorrect_scope
     Account.stubs(:current).returns(Account.first)
     Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
     Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
     field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
-    params_hash = { role_ids: [Role.find_by_name('Account Administrator').id], agent_type: field_agent_type.agent_type_id, ticket_scope: Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets], email: Faker::Internet.email, name: Faker::Name.name }
+    params_hash = { agent_type: field_agent_type.agent_type_id, ticket_scope: Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets], email: Faker::Internet.email, name: Faker::Name.name }
     Account.stubs(:current).returns(Account.first)
     post :create, construct_params(params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('role_ids', :role_assign_not_allowed_for_field_agent, code: :invalid_value),
-                bad_request_error_pattern('ticket_scope', :"It should be one of these values: '2,3'", code: :invalid_value)])
+    match_json([bad_request_error_pattern('ticket_scope', :"It should be one of these values: '2,3'", code: :invalid_value)])
   ensure
     field_agent_type.destroy if field_agent_type.present?
     Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    Account.unstub(:current)
+  end
+
+  def test_create_agent_with_incorrect_role
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
+    params_hash = { role_ids: [Role.find_by_name('Account Administrator').id], agent_type: field_agent_type.agent_type_id, ticket_scope: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets], email: Faker::Internet.email, name: Faker::Name.name }
+    Account.stubs(:current).returns(Account.first)
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('role_ids', 'Field technicians cannot have Roles: 1', code: :invalid_value)])
+  ensure
+    field_agent_type.destroy if field_agent_type.present?
     Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
     Account.unstub(:current)
   end
 
@@ -1204,6 +1225,29 @@ class ApiAgentsControllerTest < ActionController::TestCase
     User.unstub(:current)
     skill1.destroy
     skill2.destroy
+  end
+
+  def test_create_agent_with_agent_level_id
+    Account.stubs(:current).returns(Account.first)
+    params_hash = { email: Faker::Internet.email, ticket_scope: 2, role_ids: [Account.current.roles.find_by_name('Agent').id], name: Faker::Name.name, agent_level_id: 2 }
+    post :create, construct_params(params_hash)
+    assert_response 201
+    response = parse_response @response.body
+    assert_equal response['agent_level_id'], 2
+  ensure
+    Account.unstub(:current)
+  end
+
+  def test_create_agent_with_agent_level_id_gamification_disabled
+    Account.any_instance.stubs(:gamification_enabled?).returns(false)
+    Account.stubs(:current).returns(Account.first)
+    params_hash = { email: Faker::Internet.email, ticket_scope: 2, role_ids: [Account.current.roles.find_by_name('Agent').id], name: Faker::Name.name, agent_level_id: 2 }
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern(:agent_level_id, :require_feature_for_attribute, code: :inaccessible_field, attribute: 'agent_level_id', feature: :gamification)])
+  ensure
+    Account.any_instance.unstub(:gamification_enabled?)
+    Account.unstub(:current)
   end
 
   def test_update_admin_with_skills
@@ -1389,6 +1433,46 @@ class ApiAgentsControllerTest < ActionController::TestCase
     result = parse_response(@response.body)
     assert_response 200
     assert_equal result, {"job_id"=>nil, "href"=>"https://localhost.freshpo.com/api/v2/jobs/"}
+  end
+
+  def test_update_freshcaller_agent_without_freshcaller
+    Account.any_instance.stubs(:freshcaller_enabled?).returns(false)
+    agent = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id)
+    params = { freshcaller_agent: true }
+    put :update, construct_params({ id: agent.id }, params)
+    match_json([bad_request_error_pattern(:freshcaller_agent, :require_feature_for_attribute, code: :inaccessible_field, attribute: 'freshcaller_agent', feature: :freshcaller)])
+    assert_response 400
+  ensure
+    Account.any_instance.unstub(:freshcaller_enabled?)
+  end
+
+  def test_update_agent_with_agent_level_id
+    agent = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id, agent_level_id: 3)
+    params = { agent_level_id: 4 }
+    put :update, construct_params({ id: agent.id }, params)
+    updated_agent = User.find(agent.id)
+    match_json(agent_pattern_with_additional_details(params, updated_agent))
+    match_json(agent_pattern_with_additional_details({}, updated_agent))
+    assert_response 200
+  end
+
+  def test_update_agent_with_invalid_agent_level_id
+    agent = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id, agent_level_id: 3)
+    params = { agent_level_id: 2 }
+    put :update, construct_params({ id: agent.id }, params)
+    match_json([bad_request_error_pattern('agent_level_id', :"Agent level cannot be lower than current level", code: :invalid_value)])
+    assert_response 400
+  end
+
+  def test_update_agent_level_id_with_gamification_disabled
+    Account.any_instance.stubs(:gamification_enabled?).returns(false)
+    agent = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id)
+    params = { agent_level_id: 2 }
+    put :update, construct_params({ id: agent.id }, params)
+    match_json([bad_request_error_pattern(:agent_level_id, :require_feature_for_attribute, code: :inaccessible_field, attribute: 'agent_level_id', feature: :gamification)])
+    assert_response 400
+  ensure
+    Account.any_instance.unstub(:gamification_enabled?)
   end
 
   # def test_update_multiple_with_50_agents
