@@ -82,7 +82,8 @@ module Admin::TicketFieldConstants
   }.freeze
 
   ENCRYPTED_FIELDS = {
-    encrypted_text: ['encrypted_text', 'dn_eslt_']
+    encrypted_text: ['encrypted_text', 'dn_eslt_'],
+    secure_text: ['secure_text', 'dn_eslt_']
   }.freeze
 
   FIELD_TYPE_TO_COL_TYPE_MAPPING = [*{

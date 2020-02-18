@@ -1,0 +1,6 @@
+response_hash = {
+  meta: {
+    vault_token: @token
+  }
+}
+JSON.generate(response_hash)

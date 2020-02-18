@@ -15,11 +15,13 @@ module Widget
       current_product = @widget.product_id
       @account.launch :help_widget
       @current_portal = current_product ? @account.portals.find_by_product_id(current_product) : current_account.main_portal_from_cache
+      p "TicketFieldsControllerTest :: setup @widget  :: #{@widget.inspect}"
       User.stubs(:current).returns(nil)
     end
 
     def teardown
-      @widget.destroy
+      p "TicketFieldsControllerTest :: teardown @widget  :: #{@widget.inspect}"
+      @widget.destroy if @widget.present?
       super
       User.unstub(:current)
       unset_login_support

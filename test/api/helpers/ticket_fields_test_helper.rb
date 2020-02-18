@@ -21,7 +21,8 @@ module TicketFieldsTestHelper
   DN_COL_PREFIX_MAPPING = {
     text: 'dn_slt_',
     paragraph: 'dn_mlt_',
-    encrypted_text: 'dn_eslt_'
+    encrypted_text: 'dn_eslt_',
+    secure_text: 'dn_eslt_'
   }.freeze
 
   def create_custom_field(name, type, field_num = '05', required = false, required_for_closure = false, editable_in_portal = false)
@@ -76,7 +77,7 @@ module TicketFieldsTestHelper
                                                            name: "#{name.downcase}_#{@account.id}",
                                                            label: name,
                                                            label_in_portal: name,
-                                                           field_type: (type.to_s == 'encrypted_text' ? type : "custom_#{type}"),
+                                                           field_type: (['secure_text', 'encrypted_text'].include?(type.to_s) ? type : "custom_#{type}"),
                                                            description: '',
                                                            required: required,
                                                            required_for_closure: required_for_closure,

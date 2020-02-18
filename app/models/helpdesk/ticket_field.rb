@@ -38,7 +38,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
     custom_decimal: { type: :custom, dom_type: :decimal },
     nested_field: { type: :custom, dom_type: :nested_field },
     encrypted_text: { type: :custom, dom_type: :encrypted_text },
-    custom_file: { type: :custom, dom_type: :file }
+    custom_file: { type: :custom, dom_type: :file },
+    secure_text: { type: :custom, dom_type: :secure_text }
   }.freeze
 
   CUSTOM_DATE_TIME = 'custom_date_time'.freeze
@@ -298,8 +299,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   scope :custom_fields, :conditions => ["flexifield_def_entry_id is not null"]
   scope :custom_dropdown_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'custom_dropdown'"]
-  scope :non_encrypted_ticket_fields, :conditions => ["field_type != 'encrypted_text'"]
-  scope :non_encrypted_custom_fields, conditions: ["flexifield_def_entry_id is not null and field_type != 'encrypted_text'"]
+  scope :non_encrypted_ticket_fields, :conditions => ["field_type != 'encrypted_text' and field_type != 'secure_text'"]
+  scope :non_encrypted_custom_fields, conditions: ["flexifield_def_entry_id is not null and field_type != 'encrypted_text' and field_type != 'secure_text'"]
   scope :customer_visible, :conditions => { :visible_in_portal => true }
   scope :customer_editable, :conditions => { :editable_in_portal => true }
   scope :agent_required_fields, :conditions => { :required => true }
@@ -340,7 +341,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
                   nested_field: { type: :custom,  dom_type: 'nested_field' },
                   encrypted_text: { type: :custom,  dom_type: 'encrypted_text' },
                   custom_date_time: { type: :custom, dom_type: 'date' },
-                  custom_file: { type: :custom, dom_type: 'file' } }.freeze
+                  custom_file: { type: :custom, dom_type: 'file' },
+                  secure_text: { type: :custom,  dom_type: 'secure_text' } }.freeze
 
   CUSTOM_FIELD_TYPES = Helpdesk::TicketField::FIELD_CLASS.select { |field_name, prop| prop[:type] == :custom }.keys.map(&:to_s).freeze
 
@@ -373,7 +375,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
     !(encrypted_field? && !current_account.hipaa_and_encrypted_fields_enabled?) &&
       !(!default? && !current_account.custom_ticket_fields_enabled?) &&
       !(company_field? && !current_account.multiple_user_companies_enabled?) &&
-      !(product_field? && current_account.products_from_cache.empty?) && (parent_id.nil?) && true
+      !(product_field? && current_account.products_from_cache.empty?) && (parent_id.nil?) &&
+      !(secure_field? && !current_account.pci_compliance_field_enabled?) && true
   end
 
   def sort_by_position_excluding_section_field(ticket_field)
@@ -884,6 +887,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   def encrypted_field?
     field_type.to_sym == CUSTOM_FIELD_PROPS[:encrypted_text][:dom_type]
+  end
+
+  def secure_field?
+    field_type.to_sym == CUSTOM_FIELD_PROPS[:secure_text][:dom_type]
   end
 
   def exclude_encrypted_field?

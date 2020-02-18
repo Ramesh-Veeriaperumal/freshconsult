@@ -349,6 +349,40 @@ class AgentsControllerTest < ActionController::TestCase
     log_out
   end
 
+  def test_deleting_and_adding_agent_with_redis_key
+    key = agents_count_key
+    Account.stubs(:current).returns(Account.first)
+    params_hash = { email: Faker::Internet.email, ticket_scope: 2, role_ids: [Account.current.roles.find_by_name('Agent').id], name: Faker::Name.name, occasional: false }
+    agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    current_agent_count = Account.current.full_time_support_agents.count
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
+    Account.any_instance.stubs(:skill_based_round_robin_enabled?).returns(true)
+    Account.any_instance.stubs(:support_agent_limit_reached?).returns(false)
+    set_others_redis_key(key, current_agent_count)
+    subscription = Account.current.subscription
+    subscription.agent_limit = current_agent_count
+    subscription.state = 'active'
+    subscription.save
+
+    delete :destroy, construct_params(id: agent.id)
+    assert_equal get_others_redis_key(key).to_i, Account.current.full_time_support_agents.count
+
+    post :create, construct_params(params_hash)
+    assert_response 302
+    assert_equal get_others_redis_key(key).to_i, Account.current.full_time_support_agents.count
+    assert_equal subscription.agent_limit, Account.current.full_time_support_agents.count
+  ensure
+    subscription.agent_limit = nil
+    subscription.state = 'trial'
+    subscription.save
+    remove_others_redis_key(key) if redis_key_exists?(key)
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.any_instance.unstub(:skill_based_round_robin_enabled?)
+    Account.any_instance.unstub(:support_agent_limit_reached?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    Account.unstub(:current)
+  end
+
   def test_create_multiple_items
     login_admin
     @user = Account.current.account_managers.first.make_current

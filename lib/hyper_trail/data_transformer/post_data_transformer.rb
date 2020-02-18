@@ -1,4 +1,4 @@
-class HyperTrail::ActivityDataTransformer::PostDataTransformer < HyperTrail::ActivityDataTransformer
+class HyperTrail::DataTransformer::PostDataTransformer < HyperTrail::DataTransformer::ActivityDataTransformer
   ACTIVITY_TYPE = 'post'.freeze
 
   def activity_type

@@ -88,7 +88,9 @@ class Admin::SectionsControllerTest < ActionController::TestCase
       @account.add_features(:dynamic_sections)
       get :index, controller_params(ticket_field_id: 3)
       assert_response 200
-      match_json(sections(Account.current.ticket_fields.find(3))[:sections])
+      expected_response = []
+      expected_response << sections(Account.current.ticket_fields.find(3))[:sections].first
+      match_json(expected_response)
     end
   end
 
@@ -163,6 +165,7 @@ class Admin::SectionsControllerTest < ActionController::TestCase
       choice_id = @account.picklist_values.where(ticket_field_id: 3).last.picklist_id
 
       post :create, construct_params({ ticket_field_id: 3 }, label: 'label', choice_ids: [choice_id])
+      p "test_section_create :: #{response.inspect}" if response.status != 201
       assert_response 201
       match_json(sections(@account.ticket_fields.find(@account.sections.last.ticket_field_id))[:sections].find { |s| s[:id] == @account.sections.last.id })
     end
@@ -220,10 +223,12 @@ class Admin::SectionsControllerTest < ActionController::TestCase
       section = @account.sections.first
 
       put :update, construct_params({ ticket_field_id: section.ticket_field_id, id: section.id }, label: 'label')
+      p "test_section_update :: 1 :: #{response.inspect}" if response.status != 200
       assert_response 200
       match_json(sections(@account.ticket_fields.find(section.ticket_field_id))[:sections].find { |s| s[:id] == section.id })
 
       put :update, construct_params({ ticket_field_id: section.ticket_field_id, id: section.id }, choice_ids: [5])
+      p "test_section_update :: 2 :: #{response.inspect}" if response.status != 200
       assert_response 200
       match_json(sections(@account.ticket_fields.find(section.ticket_field_id))[:sections].find { |s| s[:id] == section.id })
     end

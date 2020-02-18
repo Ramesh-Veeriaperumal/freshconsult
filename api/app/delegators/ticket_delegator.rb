@@ -66,6 +66,8 @@ class TicketDelegator < BaseDelegator
 
   validate :source_update_permissible?, if: -> { @source }
 
+  validate :secure_field_update_permissible?, if: -> { (validation_context == :update) && @custom_fields }
+
   def initialize(record, options)
     @version = options[:version]
     @ticket_fields = options[:ticket_fields]
@@ -90,6 +92,7 @@ class TicketDelegator < BaseDelegator
     end
     super(record, options)
     @ticket = record
+    @custom_fields = options[:custom_fields]
   end
 
   def product_presence
@@ -167,6 +170,11 @@ class TicketDelegator < BaseDelegator
         (self.error_options ||= {}).merge!({ child_template_ids: { invalid_ids: "#{invalid_child_template_ids.join(', ')}" } })
       end
     end
+  end
+
+  def secure_field_update_permissible?
+    secure_fields = JWT::SecureFieldMethods.new.secure_fields(@custom_fields).present?
+    errors[:secure_fields] << :bad_request if secure_fields && (!private_api? || (private_api? && !check_pci_feature))
   end
 
   def closure_status?
@@ -302,6 +310,10 @@ class TicketDelegator < BaseDelegator
 
     def bulk_update?
       [:bulk_update].include?(validation_context)
+    end
+
+    def check_pci_feature
+      Account.current.launched?(:pci_compliance_field)
     end
 
     # skip shared attachments

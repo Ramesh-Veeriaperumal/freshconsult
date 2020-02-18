@@ -394,6 +394,7 @@ api_error_messages:
   toggle_availability_not_allowed_for_this_user: "Toggle availability not allowed for this user"
   toggle_availability_not_belongs_to_same_group: "Current user doesn't belong to any of the groups of the agent"
   widget_limit_exceeded: "Your plan support only %{widget_count} widget(s)."
+  rule_limit_exceeded: "You can add maximum of %{limit} rules."
   invalid_object_id: "Invalid id for %{object}"
   missing_param: 'Missing field'
   already_installed: "App is already installed"
@@ -548,3 +549,5 @@ api_error_messages:
   level_two_mandatory_error: "Level 2 is mandatory for dependent fields, so can't be deleted"
   choices_depth_error: "Choices should not present for level `%{level}`"
   choices_based_level_error: "There should be at least one choice for level `%{level}`"
+
+  duplicate_name_in_sla_policy: "A policy already exists with name '%{policy_name}'."

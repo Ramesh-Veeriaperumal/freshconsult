@@ -79,7 +79,7 @@ module Helpdesk::Ticketfields::ControllerMethods
       column_name = available_columns(type).first
       add_to_used_columns(type, column_name)
       label = options[:alias_present] ? field_details[:flexifield_alias] : field_details[:label]
-      is_encrypted = type.to_sym == Helpdesk::TicketField::CUSTOM_FIELD_PROPS[:encrypted_text][:dom_type]
+      is_encrypted = (type.to_sym == Helpdesk::TicketField::CUSTOM_FIELD_PROPS[:encrypted_text][:dom_type] || type.to_sym == Helpdesk::TicketField::CUSTOM_FIELD_PROPS[:secure_text][:dom_type])
       {
         flexifield_def_id:  account.ticket_field_def.id,
         flexifield_name:    column_name,

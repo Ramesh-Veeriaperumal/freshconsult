@@ -19,7 +19,8 @@ class TicketsController < ApiApplicationController
   DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
   DESCRIPTION = :description.to_s.freeze
 
-  before_filter :ticket_permission?, only: [:destroy]
+  before_filter :ticket_permission?, only: [:destroy, :vault_token]
+  before_filter :check_pci_feature, only: [:vault_token]
   before_filter :check_search_feature, :validate_search_params, only: [:search]
   before_filter :validate_associated_tickets, only: [:create]
   before_filter :ignore_unwanted_fields, only: [:create, :update], if: :remove_unrelated_fields?
@@ -62,6 +63,13 @@ class TicketsController < ApiApplicationController
       modify_ticket_associations if link_or_unlink?
       render_errors(@item.errors) unless @item.update_ticket_attributes(params[cname])
     end
+  end
+
+  def vault_token
+    # Generates vault_token
+    jwe = JWT::SecureServiceJWEFactory.new(@item, PciConstants::ACTION[:read])
+    @token = jwe.generate_jwe_payload(@secure_field_methods)
+    response.api_meta = { vault_token: @token } if private_api?
   end
 
   def search
@@ -120,6 +128,11 @@ class TicketsController < ApiApplicationController
           true
         end
       end
+    end
+
+    def check_pci_feature
+      @secure_field_methods = JWT::SecureFieldMethods.new
+      render_request_error :bad_request, 400 unless current_account.launched?(:pci_compliance_field) && @secure_field_methods.secure_fields_from_cache.present?
     end
 
     def feature_name

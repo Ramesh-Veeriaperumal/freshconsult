@@ -553,12 +553,15 @@ class Ember::AgentsControllerTest < ActionController::TestCase
 
   def test_accept_gdpr_with_admin_and_gdpr_pending
     user = add_test_agent(@account, role: Role.find_by_name('Administrator').id)
+    User.stubs(:current).returns(user)
     user.set_gdpr_preference
     login_as(user)
     post :complete_gdpr_acceptance, construct_params(version: 'private')
     user.reload
     assert_equal user.gdpr_pending?,false
     assert_response 204
+  ensure
+    User.unstub(:current)
   end
 
   def test_accept_gdpr_with_agent_access

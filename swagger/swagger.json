@@ -1446,6 +1446,40 @@
         }
       }
     },
+    "/tickets/{id}/vault_token": {
+      "get": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "vault_token",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "description": "Display ID of ticket",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/vault_token"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
     "/tickets/{id}/activities": {
       "get": {
         "tags": [
@@ -11504,6 +11538,47 @@
             "description": "Access denied"
           }
         }
+      },
+      "post": {
+        "tags": [
+          "Help Widget"
+        ],
+        "description": "Create Suggested article rules",
+        "summary": "Create Suggested article rules",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/help_widget_suggested_article_rules"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/help_widget_suggested_article_rules_create_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
       }
     },
     "/help_widgets/{id}/suggested_article_rules/{rule_id}": {
@@ -17326,6 +17401,12 @@
             "description": {
               "type": "string"
             },
+            "twitter_profile_status": {
+              "type": "boolean"
+            },
+            "twitter_followers_count": {
+              "type": "string"
+            },
             "custom_fields": {
               "$ref": "#/definitions/custom_field"
             }
@@ -17510,6 +17591,12 @@
               "type": "string"
             },
             "description": {
+              "type": "string"
+            },
+            "twitter_profile_status": {
+              "type": "boolean"
+            },
+            "twitter_followers_count": {
               "type": "string"
             },
             "custom_fields": {
@@ -21251,74 +21338,83 @@
       }
     },
     "ticket_show": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/extended_ticket"
-        },
-        {
-          "type": "object",
-          "properties": {
-            "freshfone_call": {
-              "$ref": "#/definitions/freshfone_call"
+      "type": "object",
+      "properties": {
+        "ticket": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/extended_ticket"
             },
-            "fb_post": {
-              "allOf": [
-                {
-                  "$ref": "#/definitions/fb_post"
+            {
+              "type": "object",
+              "properties": {
+                "freshfone_call": {
+                  "$ref": "#/definitions/freshfone_call"
                 },
-                {
+                "fb_post": {
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/fb_post"
+                    },
+                    {
+                      "properties": {
+                        "fb_page": {
+                          "$ref": "#/definitions/fb_page"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "tweet": {
+                  "$ref": "#/definitions/tweet_post"
+                },
+                "survey_result": {
+                  "$ref": "#/definitions/survey_result"
+                },
+                "ticket_topic": {
+                  "$ref": "#/definitions/ticket_topic"
+                },
+                "stats": {
+                  "$ref": "#/definitions/ticket_stats"
+                },
+                "email_spam_data": {
+                  "$ref": "#/definitions/email_spam_data"
+                },
+                "collaboration": {
+                  "type": "object",
                   "properties": {
-                    "fb_page": {
-                      "$ref": "#/definitions/fb_page"
+                    "convo_token": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "meta": {
+                  "type": "object",
+                  "properties": {
+                    "user_agent": {
+                      "type": "string"
+                    },
+                    "referrer": {
+                      "type": "string"
+                    },
+                    "created_by": {
+                      "type": "integer"
+                    },
+                    "time": {
+                      "type": "string",
+                      "format": "datetime"
                     }
                   }
                 }
-              ]
-            },
-            "tweet": {
-              "$ref": "#/definitions/tweet_post"
-            },
-            "survey_result": {
-              "$ref": "#/definitions/survey_result"
-            },
-            "ticket_topic": {
-              "$ref": "#/definitions/ticket_topic"
-            },
-            "stats": {
-              "$ref": "#/definitions/ticket_stats"
-            },
-            "email_spam_data": {
-              "$ref": "#/definitions/email_spam_data"
-            },
-            "collaboration": {
-              "type": "object",
-              "properties": {
-                "convo_token": {
-                  "type": "string"
-                }
-              }
-            },
-            "meta": {
-              "type": "object",
-              "properties": {
-                "user_agent": {
-                  "type": "string"
-                },
-                "referrer": {
-                  "type": "string"
-                },
-                "created_by": {
-                  "type": "integer"
-                },
-                "time": {
-                  "type": "string",
-                  "format": "datetime"
-                }
               }
             }
-          }
+          ]
+        },
+        "meta": {
+          "type": "object",
+          "$ref": "#/definitions/meta"
         }
-      ]
+      }
     },
     "archive_ticket_show": {
       "allOf": [
@@ -22372,6 +22468,9 @@
       "properties": {
         "count": {
           "type": "integer"
+        },
+        "vault_token": {
+          "type": "string"
         }
       }
     },
@@ -24367,6 +24466,22 @@
           },
           "duration": {
             "type": "string"
+          }
+        }
+      }
+    },
+    "vault_token": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object"
+        },
+        "meta": {
+          "type": "object",
+          "properties": {
+            "vault_token": {
+              "type": "string"
+            }
           }
         }
       }
@@ -27457,6 +27572,162 @@
             "description": "",
             "default": 1
           }
+        }
+      }
+    },
+    "help_widget_suggested_article_rules_create_response": {
+      "type": "object",
+      "properties": {
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "evaluate_on": {
+                "type": "integer",
+                "enum": [
+                  1
+                ],
+                "description": "1. page"
+              },
+              "name": {
+                "type": "integer",
+                "enum": [
+                  1,
+                  2
+                ],
+                "description": "1. url, 2. meta_tags"
+              },
+              "operator": {
+                "type": "integer",
+                "enum": [
+                  1,
+                  2,
+                  3
+                ],
+                "description": "1. contains, 2. exact_matches, 3. ends_width"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "rule_operator": {
+          "type": "integer",
+          "enum": [
+            1,
+            2
+          ],
+          "description": "1. OR, 2. AND"
+        },
+        "filter": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "integer",
+              "enum": [
+                1,
+                2,
+                3
+              ],
+              "description": "1. article_id, 2.tag_name, 3.folder_id"
+            },
+            "value": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "order_by": {
+              "type": "integer",
+              "enum": [
+                1
+              ],
+              "description": "1. hits"
+            }
+          }
+        },
+        "position": {
+          "type": "integer"
+        }
+      }
+    },
+    "help_widget_suggested_article_rules": {
+      "type": "object",
+      "properties": {
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "evaluate_on": {
+                "type": "integer",
+                "enum": [
+                  1
+                ],
+                "description": "1. page"
+              },
+              "name": {
+                "type": "integer",
+                "enum": [
+                  1,
+                  2
+                ],
+                "description": "1. url, 2. meta_tags"
+              },
+              "operator": {
+                "type": "integer",
+                "enum": [
+                  1,
+                  2,
+                  3
+                ],
+                "description": "1. contains, 2. exact_matches, 3. ends_width"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "rule_operator": {
+          "type": "integer",
+          "enum": [
+            1,
+            2
+          ],
+          "description": "1. OR, 2. AND"
+        },
+        "filter": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "integer",
+              "enum": [
+                1,
+                2,
+                3
+              ],
+              "description": "1. article_id, 2.tag_name, 3.folder_id"
+            },
+            "value": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "order_by": {
+              "type": "integer",
+              "enum": [
+                1
+              ],
+              "description": "1. hits"
+            }
+          }
+        },
+        "position": {
+          "type": "integer"
         }
       }
     },

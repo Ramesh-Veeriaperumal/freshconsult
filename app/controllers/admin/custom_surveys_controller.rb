@@ -7,7 +7,7 @@ class Admin::CustomSurveysController < Admin::AdminController
   before_filter :redirect_to_default_survey,          :if   => :default_survey_feature_enabled?
   around_filter :escape_html_entities_in_json
   before_filter :check_survey_limit,                  :only => [:new,    :create]
-  before_filter :validate_question_limit,       :only => [:create, :update]
+  before_filter :validate_csrf_token, :validate_question_limit, only: [:create, :update]
   before_filter :load_survey,                         :only => [:edit,   :update, :destroy, :activate, :deactivate, :test_survey]
   before_filter :load_survey_statuses, only: [:edit], if: :multilingual_csat_enabled?
   before_filter :survey_translation_data, only: [:new, :edit], if: :multilingual_csat_enabled?
@@ -206,5 +206,16 @@ class Admin::CustomSurveysController < Admin::AdminController
 
     def index_scoper
       @index_scoper || @survey.survey_questions.all
+    end
+
+    def validate_csrf_token
+      csrf_token = request.headers['X-CSRF-Token']
+      if csrf_token.blank? || csrf_token != session['_csrf_token']
+        result_set = { surveys: @surveys.to_json }
+        result_set['redirect_url'] = admin_custom_surveys_path
+        result_set['error_message'] = t('flash.general.access_denied')
+        render :json => result_set
+        flash[:error] = t('flash.general.access_denied')
+      end
     end
 end

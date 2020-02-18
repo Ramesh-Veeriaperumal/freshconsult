@@ -91,6 +91,10 @@ class Flexifield < ActiveRecord::Base
   end
 
   def write_ff_attribute(attribute, value, ff_alias)
+    ff_def_entry = to_ff_def_entry ff_alias
+    if ff_def_entry.flexifield_coltype == TicketFieldsConstants::SECURE_TEXT && value.present?
+      value = Time.now.to_i
+    end
     if new_ticket_field_limit_set?(attribute.to_s)
       flexifield_set.ticket_field_data.set_ff_value(ff_alias, value)
       return

@@ -197,4 +197,15 @@ module Admin::TicketFieldHelper
     def current_account
       @account ||= Account.current
     end
+
+    def secure_field?
+      (type.present? && type.is_a?(String) && type.to_sym == :secure_text)
+    end
+
+    def pci_compliance_enabled?
+      unless current_account.pci_compliance_field_enabled?
+        errors[:pci_compliance_field] << :require_feature
+        error_options[:pci_compliance_field] = { feature: :pci_compliance_field, code: :access_denied }
+      end
+    end
 end

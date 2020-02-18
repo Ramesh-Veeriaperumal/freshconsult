@@ -24,7 +24,7 @@ class Account < ActiveRecord::Base
     :product_central_publish, :help_widget, :redis_picklist_id,
     :bot_email_channel, :bot_email_central_publish, :description_by_default,
     :bot_chat_history, :new_es_api, :filter_factory, :ticket_fields_central_publish,
-    :skip_invoice_due_warning, :automation_revamp,
+    :skip_invoice_due_warning, :automation_revamp, :archive_ticket_fields,
     :scheduled_export_fix, :compact_lang_detection,
     :agent_group_central_publish, :custom_fields_search,
     :update_billing_info, :allow_billing_info_update, :tag_central_publish,
@@ -41,7 +41,7 @@ class Account < ActiveRecord::Base
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr,
     :csat_email_scan_compatibility, :mint_portal_applicable, :twitter_microservice, :quoted_text_parsing_feature, :enable_customer_journey,
     :email_mailbox, :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
-    :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :optar_cache, :fsm_custom_to_default_filter,
+    :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :optar_cache, :fsm_custom_to_default_filter, :launch_fsm_geolocation,
     :ticket_field_revamp, :facebook_dm_outgoing_attachment, :skip_posting_to_fb, :hide_mailbox_error_from_agents, :hide_og_meta_tags,
     :freshcaller_admin_new_ui, :facebook_post_outgoing_attachment, :incoming_mentions_in_tms, :help_widget_login, :disable_occlusion_rendering,
     :prevent_lang_detect_for_spam, :jira_onpremise_reporter, :support_ticket_rate_limit, :sidekiq_logs_to_central, :portal_central_publish, :global_navbar, :encode_emoji_in_solutions,
@@ -49,7 +49,7 @@ class Account < ActiveRecord::Base
     :mailbox_forward_setup, :remove_image_attachment_meta_data, :automated_private_notes_notification, :detect_lang_from_email_service,
     :sane_restricted_helpdesk, :hiding_confidential_logs, :fb_ad_post_stream_publish, :ticket_list_performance, :sla_policy_revamp, :help_widget_log, :freshdesk_freshsales_bundle, :help_widget_article_customisation,
     :field_agents_can_manage_appointments_setting, :fsm_for_garden_plan, :show_sample_scheduling_dashboard, :requester_widget_timeline,
-    :out_of_office, :enable_secure_login_check, :contact_form_enhancement, :public_api_filter_factory
+    :out_of_office, :enable_secure_login_check, :contact_form_enhancement, :public_api_filter_factory, :enable_twitter_requester_fields, :marketplace_gallery, :pci_compliance_field
   ].freeze
 
   DB_FEATURES = [
@@ -78,7 +78,7 @@ class Account < ActiveRecord::Base
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2, :cascade_dispatcher,
-    :personal_canned_response, :marketplace, :reverse_notes,
+    :personal_canned_response, :marketplace, :reverse_notes, :field_service_geolocation, :field_service_geolocation_toggle,
     :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
     :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :autofaq, :proactive_spam_detection,
     :ticket_properties_suggester, :ticket_properties_suggester_eligible,

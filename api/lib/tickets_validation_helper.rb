@@ -5,7 +5,13 @@ class TicketsValidationHelper
     end
 
     def name_mapping(ticket_fields)
-      ticket_fields.reject(&:default).each_with_object({}) { |ticket_field, hash| hash[ticket_field.name] = TicketDecorator.display_name(ticket_field.name) }
+      ticket_fields.reject(&:default).each_with_object({}) do |ticket_field, hash|
+        if ticket_field.field_type != TicketFieldsConstants::SECURE_TEXT
+          hash[ticket_field.name] = TicketDecorator.display_name(ticket_field.name)
+        else
+          hash[ticket_field.name] = '_' + TicketDecorator.display_name(ticket_field.name)
+        end
+      end
     end
 
     def custom_dropdown_fields(delegator)

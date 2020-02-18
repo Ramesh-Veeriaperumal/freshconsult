@@ -16,7 +16,7 @@ class ScenarioAutomation < VaRule
 
   delegate :groups, :users, :visible_to_me?,:visible_to_only_me?, :to => :accessible
 
-  before_validation :validate_name
+  before_validation :validate_name, :validate_add_note_action
   before_save :set_active
 
   scope :shared_scenarios, lambda { |user|
@@ -97,4 +97,17 @@ class ScenarioAutomation < VaRule
     self.active = true
   end
 
+  def validate_add_note_action
+    action_data.each do |action|
+      next unless action['name'] == Admin::AutomationConstants::ADD_COMMENT
+
+      begin
+        Liquid::Template.parse(action['comment'])
+      rescue Exception => e
+        errors.add(:action_add_note, e.to_s)
+        return false
+      end
+    end
+    true
+  end
 end

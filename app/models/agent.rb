@@ -39,6 +39,7 @@ class Agent < ActiveRecord::Base
   before_create :check_if_agent_limit_reached?, if: :full_time_support_agent?
 
   after_rollback :decrement_agent_count_in_redis, if: :full_time_support_agent?
+  after_destroy :decrement_agent_count_in_redis, if: :full_time_support_agent?
 
   validates_presence_of :user_id
   validate :validate_signature
@@ -121,7 +122,7 @@ class Agent < ActiveRecord::Base
   end
 
   def decrement_agent_count_in_redis
-    decrement_others_redis(agents_count_key) if @agent_count_incremented
+    decrement_others_redis(agents_count_key) if @agent_count_incremented || agent_deleted_when_agent_count_key_exists?
   end
 
   def change_points score
@@ -510,5 +511,9 @@ class Agent < ActiveRecord::Base
 
   def allow_ocr_sync?
     account.omni_channel_routing_enabled? && @model_changes.key?(:available) && !ocr_update
+  end
+
+  def agent_deleted_when_agent_count_key_exists?
+    transaction_include_action?(:destroy) && redis_key_exists?(agents_count_key)
   end
 end

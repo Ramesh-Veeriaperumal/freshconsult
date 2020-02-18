@@ -1,4 +1,4 @@
-class HyperTrail::ActivityDataTransformer
+class HyperTrail::DataTransformer::ActivityDataTransformer
   def initialize(activities)
     @activities = activities
   end
@@ -12,7 +12,7 @@ class HyperTrail::ActivityDataTransformer
   end
 
   def construct_transformed_timeline_activities
-    activities = @activities.select { |activity| activity[:activity][:object][:type] == activity_type }
+    activities = @activities.select { |activity| activity[:activity][:object] && activity[:activity][:object][:type] == activity_type }
     activity_object_ids = activities.collect { |activity| activity[:activity][:object][:id] }
     all_activity_objects_from_db = load_objects(activity_object_ids)
     fetched_object_ids = all_activity_objects_from_db.keys

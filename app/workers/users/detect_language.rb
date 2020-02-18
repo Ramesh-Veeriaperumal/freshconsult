@@ -74,7 +74,7 @@ class Users::DetectLanguage < BaseWorker
       response_body = JSON.parse(response.body)
       if response.code == 200 && response_body['Status'] == 'Success'
         language = response_body['data']['detections'].flatten.last['language']
-        Rails.logger.info "Detected language from email_service language: #{language} - text: #{@text} -Account_id: #{Account.current.id}"
+        Rails.logger.info "Detected language from email_service language: #{language} - text: #{@text} -Account_id: #{Account.current.id} - Request_Id: #{response_body['RequestId']}"
       end
       language
     end
@@ -85,6 +85,7 @@ class Users::DetectLanguage < BaseWorker
       else
         @user.language = @user.account.language
         language = detect_lang_from_email_service
+        language = Languages::Constants::LANGUAGE_ALT_CODE[language] || language
         Helpdesk::DetectUserLanguage.cache_user_laguage(@text, language)
         @user.language = I18n.available_locales_with_name.map { |lang, sym| sym.to_s }.include?(language) ? language : @user.account.language
       end

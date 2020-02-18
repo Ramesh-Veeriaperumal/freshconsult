@@ -342,7 +342,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         DEFAULT_FILTERS_FOR_SEARCH['spam_deleted'] + " AND fsm_appointment_end_time:<'#{Time.zone.now.ago(1.second).utc.iso8601}'  AND ( status:2 OR status:3 ) AND type:'#{Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE}'"
       elsif 'service_tasks_due_today'.eql? filter_name
         DEFAULT_FILTERS_FOR_SEARCH['spam_deleted'] + " AND fsm_appointment_end_time:>'#{Time.zone.now.beginning_of_day.utc.iso8601}' AND fsm_appointment_end_time:<'#{Time.zone.now.end_of_day.utc.iso8601}' AND ( status:2 OR status:3 ) AND type:'#{Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE}'"
-
+      elsif 'service_tasks_starting_today'.eql? filter_name
+        DEFAULT_FILTERS_FOR_SEARCH['spam_deleted'] + " AND fsm_appointment_start_time:>'#{Time.zone.now.beginning_of_day.utc.iso8601}' AND fsm_appointment_start_time:<'#{Time.zone.now.end_of_day.utc.iso8601}' AND ( status:2 OR status:3 ) AND type:'#{Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE}'"
       else
         DEFAULT_FILTERS_FOR_SEARCH.fetch(filter_name, DEFAULT_FILTERS_FOR_SEARCH[default_value]).dclone
       end

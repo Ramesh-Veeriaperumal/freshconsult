@@ -70,7 +70,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     FSM_APPOINTMENT_END_TIME = 'cf_fsm_appointment_end_time'.freeze
     SERVICE_TASK_SECTION = 'Service task section'.freeze
     FIELD_SERVICE_MANAGER_ROLE_NAME = 'Field service manager'.freeze
-    FIELD_SERVICE_MANAGER_ROLE_PRIVILEGES = Helpdesk::Roles::AGENT + [:schedule_fsm_dashboard]
+    FIELD_SERVICE_MANAGER_ROLE_PRIVILEGES = Helpdesk::Roles::AGENT + [:schedule_fsm_dashboard, :access_to_map_view]
 
     SCORE_CARD = 'scorecard'.freeze
 

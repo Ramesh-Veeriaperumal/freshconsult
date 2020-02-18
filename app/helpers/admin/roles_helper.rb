@@ -114,11 +114,13 @@ module Admin::RolesHelper
                     end
                   end }] },
 
-         # *************************** Field Service *******************************
-
-         { dom_type: 'label', id: 'fieldservice', not_display: !current_account.field_service_management_enabled?,
-           children:
-            [{ dom_type: 'check_box', id: 'schedule_fsm_dashboard', not_display: !current_account.field_service_management_enabled? }] },
+        # *************************** Field Service *******************************
+        { dom_type: 'label', id: 'fieldservice', not_display: !current_account.field_service_management_enabled?,
+          children:
+          [{ dom_type: 'check_box', id: 'schedule_fsm_dashboard', not_display: !current_account.field_service_management_enabled? },
+           { dom_type: 'check_box', id: 'view_field_tech_location', class: 'nested', not_display: !(current_account.field_service_geolocation_enabled? && current_account.launch_fsm_geolocation_enabled?),
+             children:
+             [{ dom_type: 'check_box', id: 'access_to_map_view', not_display: !(current_account.field_service_geolocation_enabled? && current_account.launch_fsm_geolocation_enabled?) }] }] },
 
          # *************************** Reports **************************
 

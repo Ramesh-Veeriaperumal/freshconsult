@@ -18,7 +18,7 @@
         <%= content_tag(:h3, t("custom_fields.drag_and_drop_field"), :class => "title") %> 
         <ul id="custom-fields" class="custom-fields"> 
           <% Helpdesk::TicketField.custom_fields_to_show.each do |field, details| %>
-            <% next if ( details[:dom_type] == :encrypted_text and !@hipaa_enabled )%>
+            <% next if ((details[:dom_type] == :secure_text ) || (details[:dom_type] == :encrypted_text and !@hipaa_enabled)) %>
             <li class="field tooltip" data-type="<%="#{details[:dom_type]}"%>" 
                 data-field-type="<%="#{field}"%>" data-fresh="true" 
                 data-drag-info="<%=t("custom_fields.#{details[:dom_type]}").html_safe %>"

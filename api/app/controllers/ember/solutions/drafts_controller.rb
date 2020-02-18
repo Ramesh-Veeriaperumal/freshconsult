@@ -114,6 +114,7 @@ module Ember
           @helpdesk_approval.user_id = cname_params[:approval_data][:user_id]
           @helpdesk_approver_mapping = get_or_build_approver_mapping(@helpdesk_approval, cname_params[:approval_data][:approver_id])
           @helpdesk_approver_mapping.approval_status = cname_params[:approval_data][:approval_status]
+          @helpdesk_approver_mapping.skip_notification = true
           @helpdesk_approval.approval_status = cname_params[:approval_data][:approval_status]
           @helpdesk_approval.save!
         end

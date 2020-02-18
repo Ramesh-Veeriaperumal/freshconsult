@@ -20,7 +20,7 @@ class HyperTrail::Response
     return @activities if @activities.blank?
 
     TRANSFORMATION_CLASSES.each do |transformation_class|
-      transformer_class = Object.const_get("HyperTrail::ActivityDataTransformer::#{transformation_class}")
+      transformer_class = Object.const_get("HyperTrail::DataTransformer::#{transformation_class}")
       transformer_object = transformer_class.new(@activities)
       transformer_object.construct_transformed_timeline_activities
     end

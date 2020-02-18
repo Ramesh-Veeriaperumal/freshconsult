@@ -1896,5 +1896,15 @@ module Ember
       assert_response 200
       match_json(timeline_activity_response(sample_user, result_data[0]))
     end
+
+    def test_contact_timeline_with_custom_events
+      sample_user = add_new_user(@account)
+      result_data = create_custom_timeline_sample_data(sample_user)
+      url = "#{BASE_URL_CONTACT_TIMELINE}/#{@account.id}/contacttimeline/#{sample_user.id}"
+      stub_request(:get, url).to_return(body: result_data.to_json, status: 200)
+      get :timeline, controller_params(version: 'private', id: sample_user.id)
+      assert_response 200
+      match_json(custom_timeline_activity_response(result_data))
+    end
   end
 end

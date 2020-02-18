@@ -148,6 +148,19 @@ module Ember
       end
     end
 
+    def match_query_response_count_with_es_enabled(query_hash_params, order_by = 'created_at', order_type = 'desc')
+      enable_es_api_load(query_hash_params) do
+        response_stub = filter_factory_es_cluster_response_stub(query_hash_params, order_by, order_type)
+        SearchService::Client.any_instance.stubs(:query).returns(SearchService::Response.new(response_stub))
+        SearchService::Response.any_instance.stubs(:records).returns(JSON.parse(response_stub))
+        params = { version: 'private', query_hash: query_hash_params, order_by: order_by, order_type: order_type, only: 'count' }
+        get :index, controller_params(params, false)
+        assert_response 200
+        count = @response.api_meta[:count]
+        assert_equal count, 1
+      end
+    end
+
     def match_filter_response_with_es_enabled(ticket_filter)
       enable_es_api_load(ticket_filter) do
         response_stub = filter_factory_filter_es_response_stub(ticket_filter.data)
@@ -1173,6 +1186,20 @@ module Ember
       request.env['HTTP_AUTHORIZATION'] = current_header
       login_as(user)
       user.make_current
+    end
+
+    def test_count_only_with_any_agent
+      current_user = User.current
+      user = add_test_agent(@account, role: Role.find_by_name('Supervisor').id)
+      Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
+      login_as(user)
+      group = create_group(@account, ticket_assign_type: 2)
+      ticket = create_ticket(status: 2, responder_id: user.id)
+      query_hash_params = { '0' => query_hash_param('any_agent_id', 'is_in', [user.id]) }
+      match_query_response_count_with_es_enabled(query_hash_params)
+    ensure
+      login_as(current_user)
+      Account.any_instance.unstub(:shared_ownership)
     end
   end
 end

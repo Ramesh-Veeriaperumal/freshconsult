@@ -33,6 +33,10 @@ properties:
     type: array
     items:
       type: string
+  twitter_profile_status:
+    type: boolean
+  twitter_followers_count:
+    type: string
   custom_fields:
     $ref: '#/definitions/custom_field'
   view_all_tickets:

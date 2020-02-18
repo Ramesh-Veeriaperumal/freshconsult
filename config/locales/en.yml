@@ -532,6 +532,8 @@ en:
     email: Email
     emails: Emails
     unique_external_id: Unique external ID
+    twitter_profile_status: Twitter Profile Status
+    twitter_followers_count: Twitter Followers Count
     choose_another_photo: "Choose another photo"
     add_photo: "Add Photo"
     change_photo: "Change photo"
@@ -2593,6 +2595,8 @@ en:
         manage_proactive_outreaches: Manage proactive outreaches
         fieldservice: Field service
         schedule_fsm_dashboard: Access scheduling dashboard
+        view_field_tech_location: View field technicians' locations
+        access_to_map_view: Access to map view
         reports: Reports
         analytics: Analytics
         view_reports: View reports tab
@@ -5627,14 +5631,7 @@ en:
       supporting_new: "Add %{name} translation"
       supporting_edit: "Edit %{name} translation"
     unassociated_category: "Unassociated Category"
-    unassociated_category_info: "This category will not be visible to your users<br />as it is not associated with any portal"
-    notifications:
-      article_approved_title: "Article Approved - %{article_title}"
-      article_approved_body_html: "Hey %{requester_name},<br><br>%{approver_name} has approved your article:<br><a href= '%{article_url}' target = '_blank'>%{article_title}</a>"
-      article_approved_body_txt: "Hey %{requester_name},\n\n%{approver_name} has approved your article:\n %{article_title} - %{article_url}"
-      article_in_review_title: "Review Request - Article: %{article_title}"
-      article_in_review_body_html: "Hey %{approver_name},<br><br>%{requester_name} has requested you to review the article: <br> <a href= '%{article_url}' target = '_blank'>%{article_title}</a>"
-      article_in_review_body_txt: "Hey %{approver_name},\n\n%{requester_name} has requested you to review the  article: \n %{article_title} - %{article_url}" 
+    unassociated_category_info: "This category will not be visible to your users<br />as it is not associated with any portal" 
     sidebar:
       orphan: "Orphan Categories"
       unassociated: "Unassociated Categories"

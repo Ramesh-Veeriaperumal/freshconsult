@@ -1498,8 +1498,7 @@ Helpkit::Application.routes.draw do
 
     # Marketplace
     namespace :marketplace do
-      # TODO: Enable route when new gallery is completely ready
-      # resources :apps, :only => [:index] 
+      get :apps, only: [:index], controller: 'apps', action: [:index]
 
       resources :extensions, :only => [:index] do
         collection do

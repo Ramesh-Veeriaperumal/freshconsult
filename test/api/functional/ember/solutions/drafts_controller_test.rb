@@ -510,6 +510,7 @@ module Ember
         approver = add_test_agent(@account)
         add_privilege(approver, :approve_article)
         user = add_test_agent(@account)
+        Solution::ApprovalNotificationWorker.expects(:perform_async).times(0)
         put :update, construct_params({ version: 'private', article_id: @article.parent_id, language: language }, update_params.merge(approval_data: { user_id: user.id, approver_id: approver.id, approval_status: Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved] }))
         assert_response 200
         approval_data = JSON.parse(response.body)['approval_data']
@@ -812,35 +813,6 @@ module Ember
       def test_published_draft_autosave
         sample_article = create_article(article_params(lang_codes: all_account_language_keys).merge(status: 2)).primary_article
         create_draft_version_for_article(sample_article)
-        should_create_version(sample_article) do
-          put :autosave, construct_params({ version: 'private', article_id: sample_article.parent_id, language: @account.language }, autosave_params(false).merge(session: 'first-session'))
-          assert_response 200
-          sample_article.reload
-          draft = sample_article.draft
-          match_json(autosave_pattern(draft))
-          assert_equal draft.title, @title
-          assert_equal draft.description, @description
-          latest_version = get_latest_version(sample_article)
-          assert_version_draft(latest_version)
-        end
-      end
-      
-      def test_autosave_cancel
-        sample_article = create_article(article_params(lang_codes: all_account_language_keys).merge(status: 2)).primary_article
-        create_draft_version_for_article(sample_article)
-        @draft = sample_article.draft
-        should_not_create_version(sample_article) do
-          stub_version_session('first-session') do
-            put :update, construct_params({ version: 'private', article_id: sample_article.parent_id, session: 'first-session' }, update_params)
-            assert_response 200
-            match_json(private_api_solution_article_pattern(sample_article.reload))
-          end
-        end
-      end
-
-      def test_published_draft_autosave
-        sample_article = create_article(article_params(lang_codes: all_account_language_keys).merge(status: 2)).primary_article
-        create_draft_version_for_article(sample_article)
         @draft = sample_article.draft
         should_create_version(sample_article) do
           put :autosave, construct_params({ version: 'private', article_id: sample_article.parent_id, language: @account.language }, autosave_params.merge(session: 'first-session'))
@@ -867,7 +839,6 @@ module Ember
           end
         end
       end
-
     end
     # class end
   end

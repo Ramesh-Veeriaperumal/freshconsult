@@ -7,7 +7,7 @@ class HelpWidgetSuggestedArticleRule < ActiveRecord::Base
 
   attr_accessible :help_widget_id, :conditions, :filter, :rule_operator
   acts_as_list scope: :help_widget
-  default_scope order: :position
+  concerned_with :constants
 
   serialize :conditions, Array
   serialize :filter, Hash

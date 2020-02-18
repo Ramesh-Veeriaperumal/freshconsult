@@ -112,6 +112,20 @@ class DetectUserLanguageTest < ActionView::TestCase
     @account.rollback(:detect_lang_from_email_service)
   end
 
+  def test_lang_detect_from_email_service_for_alternate_language_codes
+    @account.launch(:detect_lang_from_email_service)
+    @account.rollback(:compact_lang_detection)
+    User.any_instance.stubs(:detect_language?).returns(true)
+    Users::DetectLanguage.any_instance.stubs(:detect_lang_from_email_service).returns('sv')
+    Users::DetectLanguage.new.perform(user_id: @user.id, text: 'BC eller Barnens första bok för skolan och hemmet')
+    @user.reload
+    assert_equal 'sv-SE', @user.language, 'language detection proper response from email service'
+    Users::DetectLanguage.any_instance.stubs(:detect_lang_from_email_service).returns('no')
+    Users::DetectLanguage.new.perform(user_id: @user.id, text: 'ari drar til Frognerparken')
+    @user.reload
+    assert_equal 'nb-NO', @user.language, 'language detection proper response from email service'
+  end
+
   def test_lang_detect_from_email_service_for_failure_response
     @account.launch(:detect_lang_from_email_service)
     User.any_instance.stubs(:detect_language?).returns(true)

@@ -117,7 +117,7 @@ module Search::Dashboard::QueryHelper
   end
 
   def transform_any_agent_id(field_name, values)
-    "(#{transform_field('agent_id', values)} OR #{transform_field('internal_agent_id', values)})"
+    "(#{transform_field('responder_id', values)} OR #{transform_field('internal_agent_id', values)})"
   end
 
   #For handling status

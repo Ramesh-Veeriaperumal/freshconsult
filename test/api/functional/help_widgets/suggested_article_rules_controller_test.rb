@@ -1,8 +1,12 @@
 require_relative '../../test_helper'
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
+require Rails.root.join('spec', 'support', 'solution_builder_helper.rb')
+require Rails.root.join('spec', 'support', 'solutions_helper.rb')
 
 class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestCase
   include HelpWidgetsTestHelper
+  include SolutionsHelper
+  include SolutionBuilderHelper
 
   def setup
     super
@@ -13,56 +17,87 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
     @account = Account.first.make_current
     @account.stubs(:help_widget_enabled?).returns(true)
     @account.launch(:help_widget_article_customisation)
+    subscription = @account.subscription
+    @old_subscription_state = subscription.state
+    subscription.state = 'active'
+    subscription.save
+    @widget = create_widget(solution_articles: true)
+    create_article_for_widget
   end
 
   def tear_down
+    subscription = @account.subscription
+    subscription.state = @old_subscription_state
+    subscription.save
+    @widget.destroy
     @account.unstub(:help_widget_enabled?)
     @account.rollback(:help_widget_article_customisation)
+    super
   end
 
-  def create_widget_suggested_article_rules(conditions: {}, rule_operator: 1, filter: {}, position: 1)
-    widget = create_widget(solution_articles: true)
-    widget.help_widget_suggested_article_rules.build(conditions: conditions,
-                                                     rule_operator: rule_operator,
-                                                     filter: filter,
-                                                     position: position)
-    widget.save!
-    widget
+  def create_article_for_widget
+    category = create_category
+    @widget.build_help_widget_solution_categories([category.id])
+    @widget.save!
+    folder = create_folder(category_meta_id: category.id)
+    create_article(article_params(folder))
+  end
+
+  def create_widget_suggested_article_rules(params)
+    @widget.help_widget_suggested_article_rules.build(params)
+    @widget.save!
+    @widget
+  end
+
+  def article_params(folder)
+    {
+      title: 'Help Widget',
+      description: 'Suggested Article Rules',
+      status: 2,
+      folder_id: folder.id
+    }
+  end
+
+  def suggested_article_rule_create_params(params = {})
+    {
+      version: 'private',
+      help_widget_id: @widget.id,
+      suggested_article_rule: suggested_article_rule(params)
+    }
+  end
+
+  def suggested_article_ids
+    Account.current.solution_article_meta
+           .for_help_widget(@widget, User.current)
+           .published.limit(5)
+           .pluck(:id)
   end
 
   def test_index_suggested_article_rules
-    conditions = [{ evaluate_on: 'page', name: 'url', operator: 1, value: 'refund' }]
-    filter = { type: 1, value: [1, 3, 4], order_by: 'hits' }
-    help_widget = create_widget_suggested_article_rules(conditions: conditions, filter: filter)
-    get :index, controller_params(version: 'private', help_widget_id: help_widget.id)
+    create_widget_suggested_article_rules(suggested_article_rule)
+    get :index, controller_params(version: 'private', help_widget_id: @widget.id)
     assert_response 200
-    match_json(suggested_article_rules_index_pattern(help_widget))
-  ensure
-    help_widget.destroy
+    match_json(suggested_article_rules_index_pattern(@widget))
   end
 
   def test_index_without_help_widget_article_customisation_feature
     @account.rollback(:help_widget_article_customisation)
-    widget = create_widget(solution_articles: true)
-    get :index, controller_params(version: 'private', help_widget_id: widget.id)
+    get :index, controller_params(version: 'private', help_widget_id: @widget.id)
     assert_response 403
     match_json('code' => 'require_feature',
                'message' => 'The help_widget, help_widget_article_customisation feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
   ensure
     @account.launch(:help_widget_article_customisation)
-    widget.destroy
   end
 
   def test_index_without_help_widget_enabled
     @account.stubs(:help_widget_enabled?).returns(false)
-    widget = create_widget(olution_articles: true)
-    get :index, controller_params(version: 'private', help_widget_id: widget.id)
+    get :index, controller_params(version: 'private', help_widget_id: @widget.id)
     assert_response 403
     match_json('code' => 'require_feature',
                'message' => 'The help_widget, help_widget_article_customisation feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
   ensure
     @account.unstub(:help_widget_enabled?)
-    widget.destroy
   end
 
   def test_index_with_invalid_help_widget_id
@@ -79,43 +114,197 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
                'message' => 'invalid_help_widget')
   end
 
-  def test_delete_suggested_article_rule
-    conditions = [{ evaluate_on: 'page', name: 'url', operator: 1, value: 'refund' }]
-    filter = { type: 1, value: [1, 3, 4], order_by: 'hits' }
-    help_widget = create_widget_suggested_article_rules(conditions: conditions, filter: filter)
-    delete :destroy, controller_params(version: 'v2', help_widget_id: help_widget.id, id: help_widget.help_widget_suggested_article_rules.last.id)
-    assert_response 204
-  ensure
-    help_widget.destroy
+  def test_create_suggested_article_rules
+    post :create, construct_params(suggested_article_rule_create_params)
+    assert_response 201
+    res = JSON.parse(@response.body)
+    rule = HelpWidgetSuggestedArticleRule.find_by_id(res['id'])
+    match_json(rule_pattern(rule))
   end
 
-  def test_delete_suggested_article_rule_not_present
-    conditions = [{ evaluate_on: 'page', name: 'url', operator: 1, value: 'refund' }]
-    filter = { type: 1, value: [1, 3, 4], order_by: 'hits' }
-    help_widget = create_widget_suggested_article_rules(conditions: conditions, filter: filter)
-    delete :destroy, controller_params(version: 'v2', help_widget_id: help_widget.id, id: help_widget.help_widget_suggested_article_rules.last.id + 200)
-    assert_response 404
-  ensure
-    help_widget.destroy
+  def test_create_suggested_article_rules_with_required_fields
+    params = suggested_article_rule_create_params
+    params[:suggested_article_rule][:filter] = params[:suggested_article_rule][:filter].slice(:value)
+    params[:suggested_article_rule][:conditions][0] = params[:suggested_article_rule][:conditions].first.slice(:value)
+    post :create, construct_params(params)
+    assert_response 201
+    res = JSON.parse(@response.body)
+    rule = HelpWidgetSuggestedArticleRule.find_by_id(res['id'])
+    match_json(rule_pattern(rule))
   end
 
-  def test_delete_suggested_article_rule_with_no_items
-    help_widget = create_widget
-    delete :destroy, controller_params(version: 'v2', help_widget_id: help_widget.id, id: help_widget.help_widget_suggested_article_rules.last.try(:id).to_i + 200)
-    assert_response 404
-  ensure
-    help_widget.destroy
+  def test_create_rule_with_invalid_evaluate_on
+    params = suggested_article_rule_create_params(evaluate_on: 20)
+    post :create, construct_params(params)
+    assert_response 400
+    error = bad_request_error_pattern_with_nested_field('conditions', 'evaluate_on', "It should be one of these values: '1'", code: 'invalid_value')
+    match_json(validation_error_pattern(error))
   end
 
-  def test_delete_suggested_article_rule_without_feature
+  def test_create_rule_with_invalid_condition_name
+    params = suggested_article_rule_create_params(condition_name: 20)
+    post :create, construct_params(params)
+    assert_response 400
+    error = bad_request_error_pattern_with_nested_field('conditions', 'name', "It should be one of these values: '1'", code: 'invalid_value')
+    match_json(validation_error_pattern(error))
+  end
+
+  def test_create_rule_with_invalid_operator
+    params = suggested_article_rule_create_params(condition_operator: 20)
+    post :create, construct_params(params)
+    assert_response 400
+    error = bad_request_error_pattern_with_nested_field('conditions', 'operator', "It should be one of these values: '1'", code: 'invalid_value')
+    match_json(validation_error_pattern(error))
+  end
+
+  def test_create_rule_with_invalid_value
+    params = suggested_article_rule_create_params(condition_value: 20)
+    post :create, construct_params(params)
+    assert_response 400
+    error = bad_request_error_pattern_with_nested_field('conditions', 'value', 'It should be a/an String', code: 'datatype_mismatch')
+    match_json(validation_error_pattern(error))
+  end
+
+  def test_create_rule_with_empty_value
+    params = suggested_article_rule_create_params(condition_value: '')
+    post :create, construct_params(params)
+    assert_response 400
+    error = bad_request_error_pattern_with_nested_field('conditions', 'value', 'It should not be blank as this is a mandatory field', code: 'invalid_value')
+    match_json(validation_error_pattern(error))
+  end
+
+  def test_create_rule_with_invalid_rule_operator
+    params = suggested_article_rule_create_params(rule_operator: 20)
+    post :create, construct_params(params)
+    assert_response 400
+    error = bad_request_error_pattern('rule_operator', "It should be one of these values: '1,2'", code: 'invalid_value')
+    match_json(validation_error_pattern(error))
+  end
+
+  def test_create_rule_with_invalid_filter_type
+    params = suggested_article_rule_create_params(filter_type: 20)
+    post :create, construct_params(params)
+    assert_response 400
+    error = bad_request_error_pattern_with_nested_field('filter', 'type', "It should be one of these values: '1,2,3'", code: 'invalid_value')
+    match_json(validation_error_pattern(error))
+  end
+
+  def test_create_rule_with_invalid_order_by
+    params = suggested_article_rule_create_params(order_by: 20)
+    post :create, construct_params(params)
+    assert_response 400
+    error = bad_request_error_pattern_with_nested_field('filter', 'order_by', "It should be one of these values: '1'", code: 'invalid_value')
+    match_json(validation_error_pattern(error))
+  end
+
+  def test_create_rule_with_invalid_filter_value
+    params = suggested_article_rule_create_params(filter_value: 20)
+    post :create, construct_params(params)
+    assert_response 400
+    error = bad_request_error_pattern_with_nested_field('filter', 'value', 'It should be a/an Array', code: 'datatype_mismatch')
+    match_json(validation_error_pattern(error))
+  end
+
+  def test_create_rule_with_empty_array
+    params = suggested_article_rule_create_params(filter_value: [])
+    post :create, construct_params(params)
+    assert_response 400
+    error = bad_request_error_pattern('filter_value', 'Has 0 article, it should have minimum of 1 article and can have maximum of 5 article', code: 'invalid_value')
+    match_json(validation_error_pattern(error))
+  end
+
+  def test_create_rule_with_duplicate_array
+    article_ids = suggested_article_ids
+    params = suggested_article_rule_create_params(filter_value: [article_ids[0], article_ids[0]])
+    post :create, construct_params(params)
+    assert_response 400
+    error = bad_request_error_pattern('filter_value', "Duplicate filter_value,filter_value Must be unique, '#{article_ids[0]},#{article_ids[0]}' ", code: 'invalid_value')
+    match_json(validation_error_pattern(error))
+  end
+
+  def test_create_rule_with_invalid_key_in_filter
+    params = suggested_article_rule_create_params
+    params[:suggested_article_rule][:filter][:test] = 'invalid_key'
+    post :create, construct_params(params)
+    assert_response 400
+    error = bad_request_error_pattern('test', 'Unexpected/invalid field in request', code: 'invalid_field')
+    match_json(validation_error_pattern(error))
+  end
+
+  def test_create_rule_with_invalid_key_in_condition
+    params = suggested_article_rule_create_params
+    params[:suggested_article_rule][:conditions].first[:test] = 'invalid_key'
+    post :create, construct_params(params)
+    assert_response 400
+    error = bad_request_error_pattern('test', 'Unexpected/invalid field in request', code: 'invalid_field')
+    match_json(validation_error_pattern(error))
+  end
+
+  def test_create_rule_with_invalid_key
+    params = suggested_article_rule_create_params
+    params[:suggested_article_rule][:test] = 'invalid_key'
+    post :create, construct_params(params)
+    assert_response 400
+    error = bad_request_error_pattern('test', 'Unexpected/invalid field in request', code: 'invalid_field')
+    match_json(validation_error_pattern(error))
+  end
+
+  def test_create_without_help_widget_article_customisation_feature
     @account.rollback(:help_widget_article_customisation)
-    widget = create_widget(solution_articles: true)
-    get :index, controller_params(version: 'private', help_widget_id: widget.id)
+    post :create, construct_params(suggested_article_rule_create_params)
     assert_response 403
     match_json('code' => 'require_feature',
                'message' => 'The help_widget, help_widget_article_customisation feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
   ensure
     @account.launch(:help_widget_article_customisation)
-    widget.destroy
+  end
+
+  def test_create_without_help_widget_enabled
+    @account.stubs(:help_widget_enabled?).returns(false)
+    post :create, construct_params(suggested_article_rule_create_params)
+    assert_response 403
+    match_json('code' => 'require_feature',
+               'message' => 'The help_widget, help_widget_article_customisation feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
+  ensure
+    @account.unstub(:help_widget_enabled?)
+  end
+
+  def test_create_with_invalid_help_widget_id
+    get :create, controller_params(version: 'private', help_widget_id: 900_090)
+    assert_response 400
+    match_json('code' => 'invalid_help_widget',
+               'message' => 'invalid_help_widget')
+  end
+
+  def test_delete_suggested_article_rule
+    conditions = [{ evaluate_on: 'page', name: 'url', operator: 1, value: 'refund' }]
+    filter = { type: 1, value: [1, 3, 4], order_by: 'hits' }
+    create_widget_suggested_article_rules(conditions: conditions, filter: filter)
+    delete :destroy, controller_params(version: 'v2', help_widget_id: @widget.id, id: @widget.help_widget_suggested_article_rules.last.id)
+    assert_response 204
+  end
+
+  def test_delete_suggested_article_rule_not_present
+    conditions = [{ evaluate_on: 'page', name: 'url', operator: 1, value: 'refund' }]
+    filter = { type: 1, value: [1, 3, 4], order_by: 'hits' }
+    create_widget_suggested_article_rules(conditions: conditions, filter: filter)
+    delete :destroy, controller_params(version: 'v2', help_widget_id: @widget.id, id: @widget.help_widget_suggested_article_rules.last.id + 200)
+    assert_response 404
+  end
+
+  def test_delete_suggested_article_rule_with_no_items
+    delete :destroy, controller_params(version: 'v2', help_widget_id: @widget.id, id: @widget.help_widget_suggested_article_rules.last.try(:id).to_i + 200)
+    assert_response 404
+  end
+
+  def test_delete_suggested_article_rule_without_feature
+    @account.rollback(:help_widget_article_customisation)
+    widget = create_widget(solution_articles: true)
+    get :index, controller_params(version: 'private', help_widget_id: @widget.id)
+    assert_response 403
+    match_json('code' => 'require_feature',
+               'message' => 'The help_widget, help_widget_article_customisation feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
+  ensure
+    @account.launch(:help_widget_article_customisation)
   end
 end

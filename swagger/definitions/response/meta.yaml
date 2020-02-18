@@ -3,3 +3,5 @@ title: meta
 properties:
   count:
     type: integer
+  vault_token:
+    type: string

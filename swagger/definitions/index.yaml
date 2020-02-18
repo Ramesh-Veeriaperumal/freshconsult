@@ -325,9 +325,15 @@ ticket_index:
       - $ref: '#/definitions/ticket_stats'
       - $ref: ./resource/extension/ticket.yaml
 ticket_show:
-  allOf:
-    - $ref: '#/definitions/extended_ticket'
-    - $ref: ./resource/extension/ticket/show.yaml
+  type: object
+  properties: 
+    ticket:
+      allOf:
+        - $ref: '#/definitions/extended_ticket'
+        - $ref: ./resource/extension/ticket/show.yaml
+    meta:
+      type: object
+      $ref: '#/definitions/meta'       
 archive_ticket_show:
   allOf:
     - $ref: '#/definitions/extended_archive_ticket'
@@ -516,6 +522,9 @@ topic_first_post:
 freshmarketer_sessions:
   $ref: './response/tickets/freshmarketer_sessions.yaml'
 
+vault_token:
+  $ref: './response/tickets/vault_token.yaml'
+
 # Audit log
 audit_log_export:
   $ref: './response/audit_log_export.yaml'
@@ -681,6 +690,10 @@ help_widget_update_response:
   $ref: ./response/help_widgets/show.yaml
 help_widget_suggested_article_rules_list_response:
   $ref: ./response/help_widgets/suggested_article_rules/index.yaml
+help_widget_suggested_article_rules_create_response:
+  $ref: ./response/help_widgets/suggested_article_rules/create.yaml
+help_widget_suggested_article_rules:
+  $ref: ./resource/help_widget_suggested_article_rule.yaml
 
 #Groups Private API
 group_request:

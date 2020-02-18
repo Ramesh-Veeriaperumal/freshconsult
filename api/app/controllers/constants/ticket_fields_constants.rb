@@ -21,4 +21,5 @@ module TicketFieldsConstants
   }.freeze
   DEFAULT_VALIDATION_CLASS = TicketFieldValidation
   DELEGATOR_CLASS = TicketFieldDelegator
+  SECURE_TEXT = 'secure_text'.freeze
 end

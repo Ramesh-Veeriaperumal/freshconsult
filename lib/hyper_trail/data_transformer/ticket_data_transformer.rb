@@ -1,4 +1,4 @@
-class HyperTrail::ActivityDataTransformer::TicketDataTransformer < HyperTrail::ActivityDataTransformer
+class HyperTrail::DataTransformer::TicketDataTransformer < HyperTrail::DataTransformer::ActivityDataTransformer
   ACTIVITY_TYPE = 'ticket'.freeze
   TICKET_PRELOAD_OPTIONS = [:tags, :ticket_states, :ticket_old_body, :requester].freeze
 

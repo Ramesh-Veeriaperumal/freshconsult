@@ -1156,7 +1156,8 @@
         "_custom_app_invalid_time": 300,
         "_tenant_id": "1",
         "_awol_region": "ind",
-        "_gallery_url": "https://app-gallery-ind.freshdesk.com",
+        "_gallery_url": "https://appgallery-ind.freshworks.com",
+        "_tenant_name": "freshdesk",
         "mkp_cipher_key": "EJ[1:548+WzFl1UA8OrLcI99mpCbk+rgPCdrushq5AlAsPkU=:Och8PeJNeALt3xCqJnnFZAu02DL+fGp+:E5Bx9uM5FkLv3pfR9LDtQGRs92oEFNUQ3H8ASrTX4HAzk+vD8o50BqgWXPS2dizE]",
         "mkp_cipher_iv": "EJ[1:548+WzFl1UA8OrLcI99mpCbk+rgPCdrushq5AlAsPkU=:FPdhJTsDrfX3ccTRJo1EE54Gp3ID3nh7:HGIfT7yxqFJ5dKJg1baJGy3Sxz1/XIIc35uvwHG1Nf0=]"
       },

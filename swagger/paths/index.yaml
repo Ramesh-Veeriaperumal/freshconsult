@@ -66,6 +66,8 @@
   $ref: ./tickets/suppression_list_alert.yaml
 /tickets/{id}/sessions:
   $ref: ./tickets/freshmarketer_sessions.yaml
+/tickets/{id}/vault_token:
+  $ref: ./tickets/vault_token.yaml
 
 /tickets/{id}/activities:
   $ref: ./tickets/activities.yaml
@@ -579,7 +581,7 @@
   $ref: ./help_widgets/update.yaml
 
 /help_widgets/{id}/suggested_article_rules:
-  $ref: ./help_widgets/suggested_article_rules/index.yaml
+  $ref: ./help_widgets/suggested_article_rules/index_and_create.yaml
 
 /help_widgets/{id}/suggested_article_rules/{rule_id}:
   $ref: ./help_widgets/suggested_article_rules/crud.yaml

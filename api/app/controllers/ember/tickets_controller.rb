@@ -61,8 +61,10 @@ module Ember
 
     def update
       assign_protected
+      custom_fields = params[cname][:custom_field]
       return unless validate_and_assign
       if @item.update_ticket_attributes(cname_params)
+        get_jwe_token(custom_fields) if custom_fields && check_for_secure_fields(custom_fields)
         render 'ember/tickets/show'
       else
         render_errors(@item.errors)
@@ -367,6 +369,17 @@ module Ember
           attachments_array.push(resource: attach.to_io)
         end
         cname_params[:attachments] = attachments_array
+      end
+
+      def check_for_secure_fields(custom_fields)
+        @secure_field_methods = JWT::SecureFieldMethods.new
+        @secure_field_methods.secure_fields(custom_fields).present?
+      end
+
+      def get_jwe_token(custom_fields)
+        # Generates JWE token
+        jwe = JWT::SecureServiceJWEFactory.new(@item, PciConstants::ACTION[:write], custom_fields)
+        (response.api_meta ||= {})[:vault_token] = jwe.generate_jwe_payload(@secure_field_methods)
       end
 
       def parent_template_attachments

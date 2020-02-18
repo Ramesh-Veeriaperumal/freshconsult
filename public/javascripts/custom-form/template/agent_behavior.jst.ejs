@@ -8,10 +8,10 @@
 		<fieldset> 
 			<% isDisabled = ' '
 				 closeTicketDisable = ' ' %>
-			<% if (field_type == 'default_email' || field_type == 'default_twitter_id' || field_type == 'default_company') { 
+			<% if (field_type == 'default_email' || field_type == 'default_twitter_id' || field_type == 'default_company' || field_type == 'secure_text') {
 							 isDisabled = ' disabled' 
 			 } %>
-			 <% if (field_type == 'default_email' || field_type == 'default_twitter_id') { 
+			 <% if (field_type == 'default_email' || field_type == 'default_twitter_id' || field_type == 'secure_text') {
 							 closeTicketDisable = ' disabled' 
 			 } %>
 			<label class="checkbox<%= isDisabled %>">

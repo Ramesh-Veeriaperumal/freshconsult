@@ -5686,5 +5686,97 @@ module Ember
       t.destroy
       @account.unstub(:next_response_sla_enabled?)
     end
+
+    def test_jwe_token_generation_for_get_request
+      current_account_id = Account.current.id
+      acc = Account.find(current_account_id).make_current
+      acc.launch(:pci_compliance_field)
+      ticket = create_ticket
+      create_custom_field_dn('custom_card_no_test', 'secure_text')
+      uuid = SecureRandom.hex
+      request.stubs(:uuid).returns(uuid)
+      params = { id: ticket.display_id, version: 'private' }
+      get :vault_token, controller_params(params)
+      token = response.api_meta[:vault_token]
+      key_string = ApiTicketsTestHelper::PRIVATE_KEY_STRING
+      key = OpenSSL::PKey::RSA.new(key_string)
+      payload = JSON.parse(JWE.decrypt(token, key))
+      assert_equal payload['action'], 1
+      assert_equal payload['otype'], 'ticket'
+      assert_equal payload['oid'], ticket.id
+      assert_equal payload['user_id'], User.current.id
+      assert_equal payload['uuid'].to_s, uuid
+      assert_equal payload['iss'], 'freshdesk/poduseast'
+      assert_equal payload['scope'], ['custom_card_no_test']
+      assert_equal payload['exp'], payload['iat'] + 120
+      assert_equal payload['accid'], current_account_id
+      assert_response 200
+    ensure
+      ticket.destroy
+      request.unstub(:uuid)
+      acc.ticket_fields.find_by_name('custom_card_no_test_1').destroy
+      acc.rollback(:pci_compliance_field)
+    end
+
+    def test_jwe_token_generation_for_put_request_with_prefix
+      current_account_id = Account.current.id
+      acc = Account.find(current_account_id).make_current
+      acc.launch(:pci_compliance_field)
+      create_custom_field_dn('custom_card_no_test', 'secure_text')
+      params = ticket_params_hash
+      ticket = create_ticket(params)
+      uuid = SecureRandom.hex
+      request.stubs(:uuid).returns(uuid)
+      update_params = { custom_fields: { '_custom_card_no_test': 'c0376b8ce26458010ceceb9de2fde759' } }
+      put :update, construct_params({ id: ticket.display_id, version: 'private' }, update_params)
+      token = response.api_meta[:vault_token]
+      key_string = ApiTicketsTestHelper::PRIVATE_KEY_STRING
+      key = OpenSSL::PKey::RSA.new(key_string)
+      payload = JSON.parse(JWE.decrypt(token, key))
+      assert_equal payload['action'], 2
+      assert_equal payload['otype'], 'ticket'
+      assert_equal payload['oid'], ticket.id
+      assert_equal payload['user_id'], User.current.id
+      assert_equal payload['uuid'].to_s, uuid
+      assert_equal payload['iss'], 'freshdesk/poduseast'
+      assert_equal payload['scope'], ['custom_card_no_test']
+      assert_equal payload['exp'], payload['iat'] + 120
+      assert_equal payload['accid'], current_account_id
+      assert_response 200
+    ensure
+      ticket.destroy
+      request.unstub(:uuid)
+      acc.ticket_fields.find_by_name('custom_card_no_test_1').destroy
+      acc.rollback(:pci_compliance_field)
+    end
+
+    def test_jwe_token_generation_for_put_request_without_prefix
+      acc = Account.find(Account.current.id).make_current
+      acc.launch(:pci_compliance_field)
+      create_custom_field_dn('custom_card_no_test', 'secure_text')
+      params = ticket_params_hash
+      ticket = create_ticket(params)
+      update_params = { custom_fields: { 'custom_card_no_test': 'c0376b8ce26458010ceceb9de2fde759' } }
+      put :update, construct_params({ id: ticket.display_id, version: 'private' }, update_params)
+      assert_response 400
+    ensure
+      ticket.destroy
+      acc.ticket_fields.find_by_name('custom_card_no_test_1').destroy
+      acc.rollback(:pci_compliance_field)
+    end
+
+    def test_jwe_token_generation_for_put_request_without_secure_field
+      acc = Account.find(Account.current.id).make_current
+      acc.launch(:pci_compliance_field)
+      params = ticket_params_hash
+      ticket = create_ticket(params)
+      update_params = { custom_fields: { test_custom_text: 'sample text' }}
+      put :update, construct_params({ id: ticket.display_id, version: 'private' }, update_params)
+      assert_equal response.api_meta, nil
+      assert_response 200
+    ensure
+      ticket.destroy
+      acc.rollback(:pci_compliance_field)
+    end
   end
 end

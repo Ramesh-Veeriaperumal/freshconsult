@@ -61,15 +61,16 @@ module ModelsSolutionsTestHelper
   end
 
   def central_publish_category_pattern(category)
+    parent = category.parent
     {
       id: category.parent_id,
       name: category.name,
       description: category.description,
-      portal_ids: category.parent.portal_ids,
+      portal_ids: parent.portal_ids,
       language_id: category.language_id,
       account_id: category.account_id,
-      created_at: category.created_at.try(:utc).try(:iso8601),
-      updated_at: category.updated_at.try(:utc).try(:iso8601)
+      created_at: [category.created_at, parent.created_at].max.try(:utc).try(:iso8601),
+      updated_at: [category.updated_at, parent.updated_at].max.try(:utc).try(:iso8601)
     }
   end
 
@@ -83,8 +84,8 @@ module ModelsSolutionsTestHelper
       category_id: parent.solution_category_meta_id,
       language_id: folder.language_id,
       account_id: folder.account_id,
-      created_at: [folder.created_at, folder.parent.created_at].max.try(:utc).try(:iso8601),
-      updated_at: [folder.updated_at, folder.parent.updated_at].max.try(:utc).try(:iso8601)
+      created_at: [folder.created_at, parent.created_at].max.try(:utc).try(:iso8601),
+      updated_at: [folder.updated_at, parent.updated_at].max.try(:utc).try(:iso8601)
     }
   end
 
@@ -107,8 +108,8 @@ module ModelsSolutionsTestHelper
       seo_data: article.seo_data,
       language_id: article.language_id,
       account_id: article.account_id,
-      created_at: article.created_at.try(:utc).try(:iso8601),
-      updated_at: article.updated_at.try(:utc).try(:iso8601)
+      created_at: [article.created_at, parent.created_at].max.try(:utc).try(:iso8601),
+      updated_at: [article.updated_at, parent.updated_at].max.try(:utc).try(:iso8601)
     }
   end
 
@@ -119,8 +120,8 @@ module ModelsSolutionsTestHelper
       thumbs_up: parent.thumbs_up,
       thumbs_down: parent.thumbs_down,
       account_id: article.account_id,
-      created_at: article.created_at.try(:utc).try(:iso8601),
-      updated_at: article.updated_at.try(:utc).try(:iso8601)
+      created_at: [article.created_at, parent.created_at].max.try(:utc).try(:iso8601),
+      updated_at: [article.updated_at, parent.updated_at].max.try(:utc).try(:iso8601)
     }
   end
 end
