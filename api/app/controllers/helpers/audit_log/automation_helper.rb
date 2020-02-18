@@ -172,6 +172,7 @@ module AuditLog::AutomationHelper
   def condition_changes(changes, action)
     conditions = []
     changes.each do |condition|
+      condition[:value] = sanitize_audit_log_value(condition[:value]) if condition[:value].present?
       conditions << description_properties(condition[:name], 
                                            nil, 
                                            condition.except(:name))

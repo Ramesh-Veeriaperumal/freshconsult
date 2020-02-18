@@ -4,6 +4,9 @@ module AuditLog::AuditLogHelper
 
   private
 
+    def sanitize_audit_log_value(value)
+      value.is_a?(String) ? Helpdesk::HTMLSanitizer.clean(value) : value
+    end
     # options can have the likes of type (ex. :default, :currency), and any other custom value
     def description_properties(*params)
       key, value, options = params
