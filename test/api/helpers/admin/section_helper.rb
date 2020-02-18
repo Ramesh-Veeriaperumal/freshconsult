@@ -12,14 +12,18 @@ module Admin::SectionHelper
     return false if choice_to_be_used.blank?
 
     choices = ticket_field_choices.select { |choice| choice_to_be_used.include?(choice.picklist_id) }
-    Account.current.sections.new.tap do |section|
+    section = ticket_field.sections.new.tap do |section|
       section.ticket_field_id = ticket_field.id
       section.label = "#{ticket_field.label}_section_#{Faker::Lorem.characters(10)}"
       choices.each do |each_choice|
         section.section_picklist_mappings.build(picklist_value_id: each_choice.id, picklist_id: each_choice.picklist_id)
       end
-      section.save!
     end
+    ticket_field.field_options = ticket_field.field_options.with_indifferent_access
+    ticket_field.field_options[:section_present] = true
+    ticket_field.save!
+    Account.current.sections.reload
+    section
   end
 
   def section_position_bad_request_error(ticket_field_label, section_id, max_position)

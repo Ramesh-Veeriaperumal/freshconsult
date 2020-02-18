@@ -14,6 +14,27 @@ module Admin::TicketFieldHelper
     @account.rollback :ticket_field_revamp
   end
 
+  def enable_dynamic_sections_feature
+    @account.add_feature :dynamic_sections
+    yield
+  ensure
+    @account.revoke_feature :dynamic_sections
+  end
+
+  def enable_multi_dynamic_sections_feature
+    @account.add_feature :multi_dynamic_sections
+    yield
+  ensure
+    @account.revoke_feature :multi_dynamic_sections
+  end
+
+  def enable_custom_ticket_fields_feature
+    @account.add_feature :custom_ticket_fields
+    yield
+  ensure
+    @account.revoke_feature :custom_ticket_fields
+  end
+
   def stubs_hippa_and_custom_encrypted_field
     Account.current.stubs(:hipaa_enabled?).returns(true)
     Account.current.stubs(:custom_encrypted_fields_enabled?).returns(true)
@@ -131,7 +152,7 @@ module Admin::TicketFieldHelper
   end
 
   def sections(ticket_field)
-    sec = Account.current.sections.where(ticket_field_id: ticket_field.id).map do |sec|
+    section = Account.current.sections.reload.where(ticket_field_id: ticket_field.id).map do |sec|
       res = {
         id: sec.id,
         label: sec.label,
@@ -142,7 +163,7 @@ module Admin::TicketFieldHelper
       res.merge(fsm: sec.options[:fsm]) if sec.options[:fsm]
       res
     end
-    sec.present? ? { sections: sec } : {}
+    section.present? ? { sections: section } : {}
   end
 
   def dependent_fields(tf)

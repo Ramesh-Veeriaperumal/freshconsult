@@ -142,16 +142,16 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     @account.rollback :downgrade_policy
     plan_id = (SubscriptionPlan.cached_current_plans.map(&:id) - [@account.subscription.subscription_plan_id]).last
     put :update, construct_params({ version: 'private', plan_id: plan_id, agent_seats: 1 })
-    assert_response 200
+    assert_equal 200, response.response_code, "1st #{response.body.inspect}"
     assert_equal JSON.parse(response.body)['plan_id'], plan_id
     plan = @account.subscription.subscription_plan
     assert (::PLANS[:subscription_plans][plan.canon_name.to_sym][:features].dup - @account.features_list).empty?
     put :update, construct_params({ version: 'private', renewal_period: 6 })
-    assert_response 200
+    assert_equal 200, response.response_code, "2nd #{response.body.inspect}"
     # moving to sprout and checking all the validations
     put :update, construct_params({ version: 'private', plan_id: sprout_plan_id, renewal_period: 6 })
     assert_equal @account.subscription_plan.renewal_period, 1
-    assert_response 200
+    assert_equal 200, response.response_code, "3rd #{response.body.inspect}"
   ensure
     unstub_methods
     Subscription.any_instance.unstub(:cost_per_agent)
@@ -339,7 +339,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     @account.subscription.subscription_request.destroy if @account.subscription.subscription_request.present?
     @account.rollback :downgrade_policy
     put :update, construct_params(params)
-    assert_response 200
+    assert_equal 200, response.response_code, "1st #{response.body.inspect}"
     params.delete(:renewal_period)
     match_json(update_response(params, @account.subscription))
   ensure
@@ -359,7 +359,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     current_subscription.subscription_request.destroy if current_subscription.subscription_request.present?
     @account.rollback :downgrade_policy
     put :update, construct_params(params)
-    assert_response 200
+    assert_equal 200, response.response_code, "1st #{response.body.inspect}"
     assert_equal current_subscription.account.launched?(:downgrade_policy), true
     match_json(update_response(params, @account.subscription))
   ensure

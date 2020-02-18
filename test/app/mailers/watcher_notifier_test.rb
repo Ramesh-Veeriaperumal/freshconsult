@@ -111,7 +111,7 @@ class WatcherNotifierTest < ActionMailer::TestCase
     subscription = ticket.subscriptions.build(user_id: agent.id)
     subscription.user.language = 'fr'
     email = Helpdesk::WatcherNotifier.send_email(:notify_on_status_change, subscription.user, ticket, subscription, 'CLOSED', 'Test_name')
-    assert_equal true, email.body.encoded.include?('ferm')
+    assert_equal true, email.text_part.body.decoded.include?('Clôturé'), "expected response #{email.text_part.body.decoded}"
     I18n.backend.store_translations('fr', mailer_notifier_subject: { notify_on_reply: subject_bk })
     I18n.backend.store_translations('fr', helpdesk: { tickets: { add_watcher: { mail: { hi: body_bk } } } })
   ensure

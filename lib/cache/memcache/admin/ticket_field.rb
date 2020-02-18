@@ -123,7 +123,7 @@ module Cache::Memcache::Admin::TicketField
   def account_sections_from_cache
     key = ticket_field_section_key
     current_account.fetch_from_cache(key) do
-      sec = current_account.sections
+      sec = current_account.sections.reload
       sec.each_with_object({}) do |section, mapping|
         mapping[section.ticket_field_id] ||= []
         mapping[section.ticket_field_id] << section
