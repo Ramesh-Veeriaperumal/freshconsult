@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200120063244) do
+ActiveRecord::Schema.define(:version => 20200217132435) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -461,6 +461,20 @@ ActiveRecord::Schema.define(version: 20200120063244) do
   end
 
   add_index "helpdesk_broadcast_messages", ["account_id", "tracker_display_id"], :name => "index_broadcast_messages_on_account_id_tracker_display_id"
+
+  create_table "helpdesk_choices", :force => true do |t|
+    t.string   "name"
+    t.integer  "position"
+    t.integer  "default",           :limit => 1
+    t.integer  "deleted",           :limit => 1, :default => 0
+    t.integer  "account_choice_id", :limit => 3
+    t.integer  "type",              :limit => 2
+    t.integer  "account_id",      :limit => 8
+    t.datetime "created_at",                                    :null => false
+    t.datetime "updated_at",                                    :null => false
+  end
+
+  add_index "helpdesk_choices", ["account_choice_id", "type", "account_id"], :name => "index_choice_on_account_and_choice_id_and_field_type"
 
   create_table "ca_folders", :force => true do |t|
     t.string   "name"
@@ -2296,6 +2310,20 @@ ActiveRecord::Schema.define(version: 20200120063244) do
   add_index "helpdesk_authorizations", ["role_token"], :name => "index_helpdesk_authorizations_on_role_token"
   add_index "helpdesk_authorizations", ["user_id"], :name => "index_helpdesk_authorizations_on_user_id"
 
+  create_table "helpdesk_choices", :force => true do |t|
+    t.string   "name"
+    t.integer  "position"
+    t.integer  "default",           :limit => 1
+    t.integer  "deleted",           :limit => 1, :default => 0
+    t.integer  "account_choice_id", :limit => 3
+    t.integer  "type",              :limit => 2
+    t.integer  "account_id",        :limit => 8
+    t.datetime "created_at",                                    :null => false
+    t.datetime "updated_at",                                    :null => false
+  end
+
+  add_index "helpdesk_choices", ["account_choice_id", "type", "account_id"], :name => "index_choice_on_account_and_choice_id_and_field_type"
+
   create_table "helpdesk_dropboxes", :id => false, :force => true do |t|
     t.integer  "id",             :limit => 8, :null => false
     t.text     "url"
@@ -2310,7 +2338,6 @@ ActiveRecord::Schema.define(version: 20200120063244) do
 
   add_index "helpdesk_dropboxes", ["account_id", "droppable_id", "droppable_type"], :name => "index_helpdesk_dropboxes_on_droppable_id"
   execute "ALTER TABLE helpdesk_dropboxes ADD PRIMARY KEY (id,account_id)"
-
 
   create_table "helpdesk_external_notes", :id => false, :force => true do |t|
     t.integer "id",                       :limit => 8, :null => false
