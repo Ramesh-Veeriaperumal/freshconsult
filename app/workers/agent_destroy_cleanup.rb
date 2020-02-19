@@ -17,6 +17,7 @@ class AgentDestroyCleanup < BaseWorker
       @account = Account.current
       if args[:user_id].present?
         @user = @account.users.find_by_id args[:user_id]
+        destory_support_scores_in_batches
         destroy_agents_personal_items
         delete_user_associated
         delete_user_from_leaderboard
@@ -29,6 +30,12 @@ class AgentDestroyCleanup < BaseWorker
   end
 
   private
+
+    def destory_support_scores_in_batches
+      @account.support_scores.where(user_id: args[:user_id]).find_in_batches(batch_size: 300) do |support_scores_data|
+        @account.support_scores.where(user_id: args[:user_id]).where('id in (?)', support_scores_data.map(&:id)).delete_all
+      end
+    end
 
     def destroy_agents_personal_items # destroy agents personal canned_responses,scn_automations,tkt_templates
       ["canned_responses","scn_automations","ticket_templates"].each do |items|

@@ -52,4 +52,13 @@ class SidekiqAgentDestroyCleanupTest < ActionView::TestCase
   ensure
     AgentDestroyCleanup.any_instance.unstub(:destroy_agents_personal_items)
   end
+
+  def test_agent_support_score_destroyed
+    assert_nothing_raised do
+      AgentDestroyCleanup.any_instance.stubs(:destory_support_scores_in_batches).raises(RuntimeError)
+      AgentDestroyCleanup.new.perform(user_id: @agent.id)
+    end
+  ensure
+    AgentDestroyCleanup.any_instance.unstub(:destory_support_scores_in_batches)
+  end
 end

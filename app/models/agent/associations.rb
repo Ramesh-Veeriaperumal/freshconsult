@@ -31,8 +31,7 @@ class Agent < ActiveRecord::Base
   has_many :achieved_quests, :foreign_key =>'user_id', :primary_key => "user_id",
           :dependent => :delete_all
 
-  has_many :support_scores, :foreign_key =>'user_id', :primary_key => "user_id",
-          :dependent => :delete_all
+  has_many :support_scores, foreign_key: 'user_id', primary_key: 'user_id'
 
   has_many :tickets, :class_name => 'Helpdesk::Ticket', :foreign_key =>'responder_id', 
           :primary_key => "user_id"
