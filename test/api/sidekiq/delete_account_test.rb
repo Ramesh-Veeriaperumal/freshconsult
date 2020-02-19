@@ -10,7 +10,7 @@ class DeleteAccountTest < ActionView::TestCase
   include Mysql::RecordsHelper
 
   def setup
-    account = create_new_account(Faker::Internet.domain_word.to_s, Faker::Internet.email)
+    account = create_test_account(Faker::Internet.domain_word.to_s, Faker::Internet.email)
     Account.stubs(:current).returns(account)
     Account.any_instance.stubs(:manual_publish_to_central).returns(true)
     Social::FacebookPage.any_instance.stubs(:unsubscribe_realtime).returns(true)
@@ -25,7 +25,7 @@ class DeleteAccountTest < ActionView::TestCase
   def test_account_delete
     account_id = Account.current.id
     account = Account.current
-    account.subscription.state = 'suspended'
+    Subscription.any_instance.stubs(:state).returns('suspended')
     account.save!
     args = {}
     args['account_id'] = account_id
@@ -37,6 +37,7 @@ class DeleteAccountTest < ActionView::TestCase
     assert_nil account_after_delete
     assert_all_tables_cleaned_up(account_id)
   ensure
+    Subscription.any_instance.unstub(:state)
     account_after_delete.destroy if account_after_delete
   end
 
