@@ -1009,7 +1009,7 @@
         "_visitor_widget_host_url": "https://webchat-mryellow.freshpori.com",
         "_api_host_url": "https://mr-yellow.freshpori.com",
         "signup": {
-          "_host": "https://mr-orange.freshpori.com/internal/system42/",
+          "_host": "https://mr-yellow.freshpori.com/internal/system42/",
           "secret": "EJ[1:agdMwKSxBnJe0E8/KT3Q3SafRIycf9BaGM6N1vsqm2I=:V2ecreMuQQxwaA8He/WBkppM8wXRJ75a:67QI2c/fbH8t/5U+1IkaJdRZRoQJ8dh3QIIvSelW1WexH0enqp35HJkP2PBo21FXD8JFqGQJ0W7oq2qOUNxk4uplZ42twVIyoF23EXQz3lsRBLw=]"
         }
       },
@@ -1761,7 +1761,7 @@
           "_confidence_threshold": 80
         },
         "ticket_properties_suggester": {
-          "_url": "https://autodispatch-1642351674.freshpo.com/",
+          "_url": "https://autodispatch-freshdesk.freshworksapi.com/",
           "_timeout": 15,
           "_expiry_in_days": 365
         },
