@@ -31,7 +31,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     sprout_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount == 0.0 }.compact.first
     params = { plan_id: sprout_plan_id }
     stub_chargebee_requests
-    @account.rollback :downgrade_policy
+    @account.rollback(:downgrade_policy)
     post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
     assert_equal @account.subscription.subscription_request.nil?, true
     @account.reload
@@ -40,8 +40,9 @@ class SubscriptionsControllerTest < ActionController::TestCase
 
     params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
     params = { plan_id: params_plan_id }
-    @account.subscription.update_attributes(agent_limit: '1')
-    @account.subscription.update_attributes(subscription_plan_id: @account.subscription.subscription_plan_id)
+    current_subscription = @account.subscription
+    current_subscription.agent_limit = 1
+    current_subscription.save!
     post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
     @account.reload
     assert_equal @account.subscription.subscription_request.nil?, true
@@ -59,7 +60,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
     Subscription.any_instance.unstub(:chk_change_agents)
     SubscriptionPlan.any_instance.stubs(:amount).returns(0)
-    @account.rollback :downgrade_policy
+    @account.rollback(:downgrade_policy)
     post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :agent_limit)))
     @account.reload
     assert_equal @account.subscription.subscription_request.nil?, true
@@ -67,6 +68,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     assert_response 302
   ensure
     unstub_chargebee_requests
+    SubscriptionPlan.any_instance.unstub(:amount)
   end
 
   def test_handle_agents_when_moving_from_non_paying_plan_with_dp_enabled
@@ -77,7 +79,9 @@ class SubscriptionsControllerTest < ActionController::TestCase
     params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
     Subscription.any_instance.unstub(:chk_change_agents)
     SubscriptionPlan.any_instance.stubs(:amount).returns(0)
-    Account.any_instance.stubs(:launched?).returns(true)
+    @account.subscription.agent_limit = 1
+    @account.subscription.save!
+    @account.launch(:downgrade_policy)
     post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :agent_limit)))
     @account.reload
     assert_equal @account.subscription.subscription_request.nil?, true
@@ -86,6 +90,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
   ensure
     unstub_chargebee_requests
     Account.any_instance.unstub(:launched?)
+    SubscriptionPlan.any_instance.unstub(:amount)
   end
 
   def test_handle_agents_when_moving_from_paying_plan_with_dp_enabled
@@ -95,10 +100,12 @@ class SubscriptionsControllerTest < ActionController::TestCase
     params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
     params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
     Subscription.any_instance.unstub(:chk_change_agents)
-    @account.subscription.update_attributes(agent_limit: '1')
-    @account.subscription.update_attributes(free_agents: '3')
-    @account.subscription.subscription_plan.update_attributes(amount: 35.00)
-    Account.any_instance.stubs(:launched?).returns(true)
+    SubscriptionPlan.any_instance.stubs(:amount).returns(35.00)
+    current_subscription = @account.subscription
+    current_subscription.agent_limit = 1
+    current_subscription.free_agents = 3
+    current_subscription.save!
+    @account.launch(:downgrade_policy)
     post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :agent_limit)))
     @account.reload
     assert_equal @account.subscription.subscription_request.nil?, true
@@ -106,6 +113,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     assert_response 302
   ensure
     unstub_chargebee_requests
+    SubscriptionPlan.any_instance.unstub(:amount)
     Account.any_instance.unstub(:launched?)
   end
 
@@ -117,6 +125,9 @@ class SubscriptionsControllerTest < ActionController::TestCase
     params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
     Subscription.any_instance.unstub(:chk_change_agents)
     SubscriptionPlan.any_instance.stubs(:amount).returns(35.00)
+    current_subscription = @account.subscription
+    current_subscription.state = 'active'
+    current_subscription.save!
     @account.rollback :downgrade_policy
     post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :agent_limit)))
     @account.reload
@@ -125,6 +136,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     assert_response 302
   ensure
     unstub_chargebee_requests
+    SubscriptionPlan.any_instance.unstub(:amount)
   end
 
   def test_handle_agents_when_moving_from_paying_plan_without_dp_enabled_in_trial
@@ -134,8 +146,10 @@ class SubscriptionsControllerTest < ActionController::TestCase
     params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
     params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
     Subscription.any_instance.unstub(:chk_change_agents)
-    Subscription.any_instance.stubs(:trial?).returns(true)
     SubscriptionPlan.any_instance.stubs(:amount).returns(35.00)
+    current_subscription = @account.subscription
+    current_subscription.state = 'trial'
+    current_subscription.save!
     @account.rollback :downgrade_policy
     post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :agent_limit)))
     @account.reload
@@ -144,6 +158,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     assert_response 302
   ensure
     unstub_chargebee_requests
+    SubscriptionPlan.any_instance.unstub(:amount)
   end
 
   def test_handle_agents_when_moving_from_non_paying_plan_without_dp_enabled_in_trial
@@ -153,9 +168,10 @@ class SubscriptionsControllerTest < ActionController::TestCase
     params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
     params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
     Subscription.any_instance.unstub(:chk_change_agents)
-    Subscription.any_instance.stubs(:trial?).returns(true)
     SubscriptionPlan.any_instance.stubs(:amount).returns(0)
-    @account.rollback :downgrade_policy
+    current_subscription = @account.subscription
+    current_subscription.state = 'trial'
+    current_subscription.save!
     post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :agent_limit)))
     @account.reload
     assert_equal @account.subscription.subscription_request.nil?, true
@@ -163,6 +179,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     assert_response 302
   ensure
     unstub_chargebee_requests
+    SubscriptionPlan.any_instance.unstub(:amount)
   end
 
   def test_handle_agents_when_moving_from_paying_plan_with_dp_enabled_in_trial
@@ -172,10 +189,11 @@ class SubscriptionsControllerTest < ActionController::TestCase
     params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
     params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
     Subscription.any_instance.unstub(:chk_change_agents)
-    Subscription.any_instance.stubs(:active?).returns(false)
-    Subscription.any_instance.stubs(:trial?).returns(true)
     SubscriptionPlan.any_instance.stubs(:amount).returns(35.00)
-    Account.any_instance.stubs(:launched?).returns(true)
+    current_subscription = @account.subscription
+    current_subscription.state = 'trial'
+    current_subscription.save!
+    @account.launch(:downgrade_policy)
     post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :agent_limit)))
     @account.reload
     assert_equal @account.subscription.subscription_request.nil?, true
@@ -183,6 +201,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     assert_response 302
   ensure
     unstub_chargebee_requests
+    SubscriptionPlan.any_instance.unstub(:amount)
     Account.any_instance.unstub(:launched?)
   end
 
@@ -193,9 +212,11 @@ class SubscriptionsControllerTest < ActionController::TestCase
     params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
     params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
     Subscription.any_instance.unstub(:chk_change_agents)
-    Subscription.any_instance.stubs(:trial?).returns(true)
     SubscriptionPlan.any_instance.stubs(:amount).returns(0)
-   Account.any_instance.stubs(:launched?).returns(true)
+    current_subscription = @account.subscription
+    current_subscription.state = 'trial'
+    current_subscription.save!
+    @account.launch(:downgrade_policy)
     post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :agent_limit)))
     @account.reload
     assert_equal @account.subscription.subscription_request.nil?, true
@@ -203,14 +224,96 @@ class SubscriptionsControllerTest < ActionController::TestCase
     assert_response 302
   ensure
     unstub_chargebee_requests
+    SubscriptionPlan.any_instance.unstub(:amount)
     Account.any_instance.unstub(:launched?)
+  end
+
+  def test_handle_field_agents_when_moving_from_trial_with_dp_enabled
+    params = { agent_limit: '1', addons: { field_service_management: { enabled: 'true', value: '1' } } }
+    stub_chargebee_requests
+    Subscription.any_instance.unstub(:chk_change_field_agents)
+    Account.any_instance.stubs(:field_agents_count).returns(2)
+    current_subscription = @account.subscription
+    current_subscription.state = 'trial'
+    current_subscription.agent_limit = 6
+    current_subscription.additional_info[:field_agent_limit] = 3
+    current_subscription.save!
+    post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit)))
+    @account.reload
+    assert_equal @account.subscription.additional_info[:field_agent_limit], 3
+    assert_equal @account.subscription.subscription_request.nil?, true
+    assert_response 302
+  ensure
+    unstub_chargebee_requests
+    Account.any_instance.unstub(:field_agents_count)
+  end
+
+  def test_handle_field_agents_when_moving_from_trial_without_dp_enabled
+    params = { agent_limit: '1', addons: { field_service_management: { enabled: 'true', value: '1' } } }
+    stub_chargebee_requests
+    Subscription.any_instance.unstub(:chk_change_field_agents)
+    Account.any_instance.stubs(:field_agents_count).returns(2)
+    @account.rollback(:downgrade_policy)
+    current_subscription = @account.subscription
+    current_subscription.state = 'trial'
+    current_subscription.agent_limit = 6
+    current_subscription.additional_info[:field_agent_limit] = 3
+    current_subscription.save!
+    post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit)))
+    @account.reload
+    assert_equal @account.subscription.additional_info[:field_agent_limit], 3
+    assert_equal @account.subscription.subscription_request.nil?, true
+    assert_response 302
+  ensure
+    unstub_chargebee_requests
+    Account.any_instance.unstub(:field_agents_count)
+  end
+
+  def test_handle_field_agents_when_moving_from_active_with_dp_enabled
+    params = { agent_limit: '1', addons: { field_service_management: { enabled: 'true', value: '1' } } }
+    stub_chargebee_requests
+    Subscription.any_instance.unstub(:chk_change_field_agents)
+    Account.any_instance.stubs(:field_agents_count).returns(2)
+    current_subscription = @account.subscription
+    current_subscription.agent_limit = 6
+    current_subscription.additional_info[:field_agent_limit] = 3
+    current_subscription.save!
+    post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit)))
+    @account.reload
+    assert_equal @account.subscription.additional_info[:field_agent_limit], 3
+    assert_equal @account.subscription.subscription_request.fsm_field_agents, 1
+    assert_response 302
+  ensure
+    unstub_chargebee_requests
+    Account.any_instance.unstub(:field_agents_count)
+  end
+
+  def test_handle_field_agents_when_moving_from_active_without_dp_enabled
+    params = { agent_limit: '1', addons: { field_service_management: { enabled: 'true', value: '1' } } }
+    stub_chargebee_requests
+    Subscription.any_instance.unstub(:chk_change_field_agents)
+    Account.any_instance.stubs(:field_agents_count).returns(2)
+    @account.rollback(:downgrade_policy)
+    current_subscription = @account.subscription
+    current_subscription.agent_limit = 6
+    current_subscription.additional_info[:field_agent_limit] = 3
+    current_subscription.save!
+    post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit)))
+    @account.reload
+    assert_equal @account.subscription.additional_info[:field_agent_limit], 3
+    assert_equal @account.subscription.subscription_request.nil?, true
+    assert_response 302
+  ensure
+    unstub_chargebee_requests
+    Account.any_instance.unstub(:field_agents_count)
   end
 
   def test_new_subscription_plan_change
     current_plan_id = @account.subscription.subscription_plan_id
     params_plan_id = SubscriptionPlan.current.map(&:id).second
     stub_chargebee_requests
-    @account.subscription.update_attributes(agent_limit: '1')
+    @account.subscription.agent_limit = 1
+    @account.subscription.save!
     post :plan, construct_params({}, { agent_limit: '12', plan_id: params_plan_id }.merge!(params_hash.except(:plan_id, :agent_limit)))
     @account.reload
     assert_equal @account.subscription.subscription_plan_id, params_plan_id
@@ -240,8 +343,10 @@ class SubscriptionsControllerTest < ActionController::TestCase
     current_plan_id = @account.subscription.subscription_plan_id
     stub_chargebee_requests
     params = { agent_limit: '12', plan_id: current_plan_id, billing_cycle: SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual] }
-    @account.subscription.update_attributes(agent_limit: '1')
-    @account.subscription.update_attributes(renewal_period: 1)
+    current_subscription = @account.subscription
+    current_subscription.agent_limit = 1
+    current_subscription.renewal_period = 1
+    current_subscription.save!
     post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit, :plan_id, :billing_cycle)))
     @account.reload
     assert_equal @account.subscription.renewal_period, SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]
@@ -254,8 +359,10 @@ class SubscriptionsControllerTest < ActionController::TestCase
   def test_same_plan_billing_cycle_downgrade
     params = { plan_id: @account.subscription.subscription_plan_id, billing_cycle: SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:monthly] }
     stub_chargebee_requests
-    @account.subscription.update_attributes(agent_limit: '1')
-    @account.subscription.update_attributes(renewal_period: SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual])
+    current_subscription = @account.subscription
+    current_subscription.agent_limit = 1
+    current_subscription.renewal_period = SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]
+    current_subscription.save!
     post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :billing_cycle)))
     @account.reload
     refute @account.subscription.renewal_period == SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:monthly]
@@ -268,9 +375,10 @@ class SubscriptionsControllerTest < ActionController::TestCase
   def test_same_plan_billing_cycle_downgrade_for_existing_customers
     params = { plan_id: @account.subscription.subscription_plan_id, billing_cycle: SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:monthly] }
     stub_chargebee_requests
-    @account.subscription.update_attributes(agent_limit: '1')
-    @account.subscription.update_attributes(renewal_period: SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual])
     current_subscription = @account.subscription
+    current_subscription.agent_limit = 1
+    current_subscription.renewal_period = SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]
+    current_subscription.save!
     current_subscription.account.rollback :downgrade_policy
     post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :billing_cycle)))
     current_subscription.reload
@@ -284,7 +392,8 @@ class SubscriptionsControllerTest < ActionController::TestCase
   def test_same_plan_agent_limit
     params = { plan_id: @account.subscription.subscription_plan_id, agent_limit: '6' }
     stub_chargebee_requests
-    @account.subscription.update_attributes(agent_limit: '1')
+    @account.subscription.agent_limit = 1
+    @account.subscription.save!
     post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit, :plan_id)))
     @account.reload
     assert_equal @account.subscription.agent_limit, 6
@@ -297,7 +406,8 @@ class SubscriptionsControllerTest < ActionController::TestCase
   def test_same_plan_agent_limit_downgrade
     params = { plan_id: @account.subscription.subscription_plan_id, agent_limit: '1' }
     stub_chargebee_requests
-    @account.subscription.update_attributes(agent_limit: '6')
+    @account.subscription.agent_limit = 6
+    @account.subscription.save!
     post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit, :plan_id)))
     @account.reload
     assert_equal @account.subscription.agent_limit, 6
@@ -310,7 +420,8 @@ class SubscriptionsControllerTest < ActionController::TestCase
   def test_same_plan_enable_fsm
     params = { agent_limit: '1', addons: { field_service_management: { enabled: 'true', value: ' ' } } }
     stub_chargebee_requests
-    @account.subscription.update_attributes(agent_limit: '6')
+    @account.subscription.agent_limit = 6
+    @account.subscription.save!
     post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit)))
     @account.reload
     assert_equal @account.subscription.additional_info[:field_agent_limit], nil
@@ -322,7 +433,8 @@ class SubscriptionsControllerTest < ActionController::TestCase
   def test_same_plan_disable_fsm
     params = { agent_limit: '1', addons: { field_service_management: { enabled: 'false' } } }
     stub_chargebee_requests
-    @account.subscription.update_attributes(agent_limit: '6')
+    @account.subscription.agent_limit = 6
+    @account.subscription.save!
     post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit)))
     @account.reload
     assert_equal @account.subscription.subscription_request.fsm_field_agents, nil
@@ -334,7 +446,8 @@ class SubscriptionsControllerTest < ActionController::TestCase
   def test_same_plan_fsm_agent_seats_decrease
     params = { agent_limit: '1', addons: { field_service_management: { enabled: 'true', value: '1' } } }
     stub_chargebee_requests
-    @account.subscription.update_attributes(agent_limit: '6')
+    @account.subscription.agent_limit = 6
+    @account.subscription.save!
     @account.subscription.update_attributes(additional_info: { field_agent_limit: 3 })
     post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit)))
     @account.reload
@@ -530,9 +643,10 @@ class SubscriptionsControllerTest < ActionController::TestCase
       chargebee_plan = ChargeBee::Result.new(stub_chargebee_plan)
       ChargeBee::Plan.stubs(:retrieve).returns(chargebee_plan)
       ChargeBee::Subscription.stubs(:retrieve).returns(chargebee_update)
-      Subscription.any_instance.stubs(:active?).returns(true)
       @controller.stubs(:set_current_account).returns(@account)
       @controller.stubs(:request_host).returns('test1.freshpo.com')
+      @account.subscription.state = 'active'
+      @account.subscription.save!
     end
 
     def unstub_chargebee_requests
