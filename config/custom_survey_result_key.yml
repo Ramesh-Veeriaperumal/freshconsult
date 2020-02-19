@@ -1,0 +1,11 @@
+defaults: &defaults
+  key: dummy
+
+development:
+  <<: *defaults
+slave:
+  <<: *defaults
+test:
+  <<: *defaults
+staging:
+  <<: *defaults

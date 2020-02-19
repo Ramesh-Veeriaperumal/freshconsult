@@ -8,6 +8,9 @@
       "freshconnect_signup_supported": false,
       "freshmarketer_signup_supported": false
       },
+      "custom_survey_result_key": {
+        "key": "EJ[1:XORV1TePAUbwHcLeZ/FtL/6bYsFf2NOHjtIVVy2ueFQ=:KHsU1Z2y4I/mTucertQLuIcHfBUSiZHb:f3tT/Gf0KnC2XgqRa0v0V2G7UE8z5M7j2PKCeNwCQkN8kUDFgtMiLdnyuFReLyTKFyfuN09olhj1GqHSbn5ZQUegLW0U]"
+      },
       "asknicely_app": {
         "hash_token": "EJ[1:7jauTDx2+Gzp5QaCAke1sxrJlzFbIg1guIXPti/YHh8=:tYoLUitzbrpvTjOVwWqbsGlolQqMTvzc:mJlXTBxPjWFLJIluraOmvTZs6LFkZ9ZsGQLNhfSZeGQXeQ5Z5z3oyhh4EaXxOM+jQu/fe9JBRuqqNxEMnRO0eFbF83KcTveMgs0weuMKxMQuN+xd04ZIFpIky/tNaX17gwC5x646Aj0+SkzKaRuBYPq3kVVupfsjhip+3Mnnijssdlo5McMu8/A9beXllFhJ]",
         "_domain_key": "freshworks",

@@ -30,7 +30,7 @@ class Support::CustomSurveysController < SupportController #for Portal Customiza
       format.json do
         @rating = params[:rating]
         @survey_handle.record_survey_result(@rating, params[:source]) unless @survey_handle.preview?
-          render :json => {:submit_url => @survey_handle.feedback_url(@rating)}.to_json
+        render json: { submit_url: encrypt_url(@rating) }.to_json
       end
     end
   end
@@ -57,6 +57,7 @@ class Support::CustomSurveysController < SupportController #for Portal Customiza
   end
 
   def create
+    params[:survey_result] = EncryptionFactory.new.decrypt(params[:survey_result])
     @survey_result.update_result_and_feedback(params)
     language = Language.find_by_code(@survey_result.try(:surveyable).try(:requester_language))
     translation_record = @survey_result.survey.translation_record(language) if language.present?
@@ -128,7 +129,8 @@ class Support::CustomSurveysController < SupportController #for Portal Customiza
     end
     
     def load_survey_result
-      @survey_result = current_account.custom_survey_results.preload(survey: [survey_questions: [:survey, :custom_field_choices_desc]]).find(params[:survey_result])
+      survey_id = EncryptionFactory.new.decrypt(params[:survey_result])
+      @survey_result = current_account.custom_survey_results.preload(survey: [survey_questions: [:survey, :custom_field_choices_desc]]).find_by_id(survey_id)
       send_result_error unless @survey_result
     end
     
@@ -171,5 +173,13 @@ class Support::CustomSurveysController < SupportController #for Portal Customiza
     def archived_ticket_link?
       @survey_handle.surveyable and current_account.features_included?(:archive_tickets) and 
         @survey_handle.surveyable.is_a?(Helpdesk::ArchiveTicket)
+    end
+
+  private
+
+    def encrypt_url(rating)
+      # Blowfish is one of the fastest encryption algorithm, we could utilize the speed to do an on-fly encyrption of the Survey Result ID
+      # Reference: https://www.cse.wustl.edu/~jain/cse567-06/ftp/encryption_perf/
+      @survey_handle.survey_result_id ? Rails.application.routes.url_helpers.support_custom_survey_feedback_path(EncryptionFactory.new.encrypt(@survey_handle.survey_result_id.to_s), rating) : ''
     end
 end
