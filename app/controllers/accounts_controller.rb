@@ -89,6 +89,7 @@ class AccountsController < ApplicationController
 
   def email_signup
     @signup = Signup.new(params[:signup])
+    @signup.account.fs_cookie_signup_param = params[:fs_cookie]
     if @signup.save
       enable_field_service_management if fsm_signup_page?
       finish_signup
@@ -186,6 +187,7 @@ class AccountsController < ApplicationController
 
   def new_signup_free
    @signup = Signup.new(params[:signup])
+   @signup.account.fs_cookie_signup_param = params[:fs_cookie]
    if @signup.save
      enable_field_service_management if fsm_signup_page?
       finish_signup

@@ -12,7 +12,7 @@ class Signup < ActivePresenter::Base
   
   before_validation :create_global_shard
 
-  before_save :set_signup_initiated
+  before_save :set_signup_initiated, :set_fs_cookie
   after_save :make_user_current, :set_i18n_locale, :populate_seed_data
   after_save :create_freshid_org_and_account, if: :freshid_signup_allowed?
   after_save :create_freshid_v2_org_and_account, if: :freshid_v2_signup_allowed?
@@ -229,6 +229,10 @@ class Signup < ActivePresenter::Base
 
     def set_signup_initiated
       account.signup_started
+    end
+
+    def set_fs_cookie
+      account.set_fs_cookie_by_domain
     end
 
     def set_signup_completed
