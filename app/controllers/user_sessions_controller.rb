@@ -62,13 +62,13 @@ class UserSessionsController < ApplicationController
     relay_state_url = params[:RelayState]
 
     sso_data = {
-      :name => saml_response.user_name,
-      :email => saml_response.email,
-      :phone => saml_response.phone,
-      :company => saml_response.company,
-      :title => saml_response.title,
-      :external_id => saml_response.external_id,
-      :custom_fields => saml_response.custom_fields
+      name: saml_response.user_name,
+      email: saml_response.email,
+      phone: saml_response.phone,
+      company: sanitize_and_unescape_html(saml_response.company),
+      title: sanitize_and_unescape_html(saml_response.title),
+      external_id: saml_response.external_id,
+      custom_fields: saml_response.custom_fields
     }
 
     valid = saml_response.valid?
@@ -556,6 +556,10 @@ class UserSessionsController < ApplicationController
         Rails.logger.debug "Skipping deleted account for freshID logout"
         redirect_to params[:redirect_uri]
       end
+    end
+
+    def sanitize_and_unescape_html(param)
+      param.present? ? ActionController::Base.helpers.sanitize(CGI.unescapeHTML(param)) : param
     end
 
     def sso_coexists_logout(sso_redirect_url)
