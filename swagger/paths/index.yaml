@@ -580,10 +580,10 @@
 /help_widgets/update:
   $ref: ./help_widgets/update.yaml
 
-/help_widgets/{id}/suggested_article_rules:
+/help_widgets/{widget_id}/suggested_article_rules:
   $ref: ./help_widgets/suggested_article_rules/index_and_create.yaml
 
-/help_widgets/{id}/suggested_article_rules/{rule_id}:
+/help_widgets/{widget_id}/suggested_article_rules/{id}:
   $ref: ./help_widgets/suggested_article_rules/crud.yaml
 
 /widget/attachment:

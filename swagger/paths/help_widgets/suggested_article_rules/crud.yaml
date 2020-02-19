@@ -1,13 +1,45 @@
+put:
+  tags: [Help Widget]
+  description: Update Suggested article rules
+  summary: Update Suggested article rules
+  parameters:
+    - name: widget_id
+      in: path
+      type: integer
+      format: int64
+      required: true
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      required: true
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/help_widget_suggested_article_rules'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/help_widget_suggested_article_rules_create_response'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+
 delete:
   summary: Suggested article rules delete
   tags: [Help Widget]
   parameters:
-    - name: id
+    - name: widget_id
       type: integer
       format: int64
       in: path
       required: true
-    - name: rule_id
+    - name: id
       type: integer
       format: int64
       in: path

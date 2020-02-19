@@ -10,12 +10,19 @@ module HelpWidgets
     before_filter :check_rule_limit, only: [:create]
     before_filter :load_object, only: [:show, :update, :destroy]
     before_filter :validate_params, only: [:create, :update]
-    before_filter :sanitize_params, only: [:create]
+    before_filter :sanitize_params, only: [:create, :update]
     before_filter :build_object, only: [:create]
 
     def create
       return unless validate_delegator(@help_widget, cname_params[:filter])
 
+      super
+    end
+
+    def update
+      if cname_params.key?('filter')
+        return unless validate_delegator(@help_widget, cname_params[:filter])
+      end
       super
     end
 
@@ -57,12 +64,19 @@ module HelpWidgets
       end
 
       def sanitize_params
-        default_condition = HelpWidgetSuggestedArticleRule::DEFAULT_CONDITION.dup
-        cname_params[:conditions].each do |condition|
-          default_condition.merge(condition)
-        end
+        cname_params[:conditions] = rule_conditions if cname_params[:conditions]
         cname_params[:rule_operator] ||= HelpWidgetSuggestedArticleRule::RULE_OPERATOR[:OR]
-        cname_params[:filter] = HelpWidgetSuggestedArticleRule::DEFAULT_FILTER.dup.merge(cname_params[:filter])
+        cname_params[:filter] = HelpWidgetSuggestedArticleRule::DEFAULT_FILTER.dup.merge(cname_params[:filter]) if cname_params[:filter]
+      end
+
+      def rule_conditions
+        default_condition = HelpWidgetSuggestedArticleRule::DEFAULT_CONDITION.dup
+        conditions = begin
+          cname_params[:conditions].each_with_object([]) do |value, resultant_array|
+            resultant_array << default_condition.merge(value)
+          end
+        end
+        conditions
       end
 
       def fetch_widget
