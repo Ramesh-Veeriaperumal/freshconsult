@@ -102,7 +102,58 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
     Rails.logger.debug "end test_dispatcher_condition_responder_id_is_any"
   end
   
+  def test_dispatcher_condition_subject_or_description_is_any_of_case_sensitive_false
+    Account.current.launch :automation_revamp
+    rule = Account.current.va_rules.first
+    rule.condition_data = { any: [
+      { evaluate_on: "ticket", 
+        name: "subject_or_description", 
+        operator: "is_any_of", 
+        value: ["Test"], 
+        case_sensitive: false}]
+    }
+    
+    rule.action_data = ["priority"].map do |action|
+      generate_action_data(action, true)
+    end
+
+    rule.save
+    ticket_params = generate_ticket_params("subject_or_description", "test sample")
+    ticket = Sidekiq::Testing.inline! { create_ticket(ticket_params.symbolize_keys) }
+    ticket = ticket.reload
+    rule.action_data.each do |action|
+      verify_action_data(action, ticket, false)
+    end
+  ensure
+    Account.current.rollback :automation_revamp
+  end
   
+  def test_dispatcher_condition_subject_or_description_is_any_of_case_sensitive_true
+    Account.current.launch :automation_revamp
+    rule = Account.current.va_rules.first
+    rule.condition_data = { any: [
+      { evaluate_on: "ticket", 
+        name: "subject_or_description", 
+        operator: "is_any_of", 
+        value: ["Test"], 
+        case_sensitive: true}]
+    }
+    
+    rule.action_data = ["priority"].map do |action|
+      generate_action_data(action, true)
+    end
+    rule.save
+    ticket_params = generate_ticket_params("subject_or_description", "test sample")
+    ticket = Sidekiq::Testing.inline! { create_ticket(ticket_params.symbolize_keys) }
+    ticket = ticket.reload
+    rule.action_data = [{name: "priority", value: 2}]
+    rule.action_data.each do |action|
+      verify_action_data(action, ticket, false)
+    end
+  ensure
+    Account.current.rollback :automation_revamp
+  end
+
   def test_dispatcher_condition_responder_is_unavailable
     Rails.logger.debug "start test_dispatcher_condition_responder_id_is_any"
     Account.current.launch :automation_revamp
