@@ -23,7 +23,8 @@ module SBRR
         if _can_assign
           _do_assign, _assigned = do_assign
         end
-        SBRR.log "#{self.class.name} #{{:can_assign => _can_assign, :do_assign => _do_assign, :assigned => _assigned}.inspect}" 
+        SBRR.log "#{self.class.name} #{{ can_assign: _can_assign, do_assign: _do_assign, assigned: _assigned }.inspect}"
+        SBRR.log "can_assign_data: #{can_assign?.inspect}"
         {:can_assign => _can_assign, :do_assign => _do_assign, :assigned => _assigned}
       end
 
