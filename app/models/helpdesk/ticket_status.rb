@@ -181,14 +181,14 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
 
   def update_tickets_sla_on_status_change_or_delete
     if deleted_changed?
-      SlaOnStatusChange.perform_async({:status_id => self.id, :status_changed => false})
+      SlaOnStatusChange.perform_async(status_id: status_id, status_changed: false)
     elsif stop_sla_timer_changed?
-      SlaOnStatusChange.perform_async({:status_id => self.id, :status_changed => true})
+      SlaOnStatusChange.perform_async(status_id: status_id, status_changed: true)
     end
   end
 
   def update_ticket_statuses_on_status_delete
-    ModifyTicketStatus.perform_async(status_id: self.status_id, status_name: self.name)
+    ModifyTicketStatus.perform_async(status_id: status_id, status_name: name)
   end
   
   def active?

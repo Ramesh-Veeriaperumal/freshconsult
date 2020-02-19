@@ -3,9 +3,11 @@ class ModifyTicketStatus < BaseWorker
   sidekiq_options :queue => :modify_ticket_status, :retry => 0, :failures => :exhausted
 
   include Helpdesk::BulkActionMethods
+  include Helpdesk::Ticketfields::TicketStatus
 
   def perform(args)
     begin
+      create_redis_key_on_job_start(args[:status_id])
       args.symbolize_keys!
       new_status_id = Helpdesk::Ticketfields::TicketStatus::OPEN
       ticket_statuses = account.ticket_statuses.where({:status_id => [args[:status_id], new_status_id]})
@@ -25,6 +27,8 @@ class ModifyTicketStatus < BaseWorker
         end
       end
       Rails.logger.info("Status updated as OPEN for deleted ticket status")
+      increment_redis_key_on_job_end(args[:status_id])
+      destroy_ticket_status_on_all_jobs_completion(args[:status_id])
     rescue => e
       Rails.logger.info("Something went wrong in ModifyTicketStatus while updating status")
       NewRelic::Agent.notice_error(e, {:custom_params => {:args => args }})

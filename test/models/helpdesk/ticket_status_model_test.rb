@@ -118,6 +118,52 @@ class TicketStatusModelTest < ActiveSupport::TestCase
     ticket_status.destroy
   end
 
+  def test_status_should_be_deleted_on_all_jobs_completion_tf_revamp_enabled
+    ticket_status = create_ticket_status
+    ticket_status.deleted = true
+    ticket_status.save!
+    Account.current.launch :ticket_field_revamp
+    Sidekiq::Testing.inline! do
+      SlaOnStatusChange.new.perform(status_id: ticket_status.status_id, status_changed: false)
+    end
+    assert Account.current.ticket_statuses.find_by_id(ticket_status.id).present?
+    Sidekiq::Testing.inline! do
+      ModifyTicketStatus.new.perform(status_id: ticket_status.status_id, status_name: ticket_status.name)
+    end
+    assert_equal Account.current.ticket_statuses.find_by_id(ticket_status.id).present?, false
+
+    # Reverse job trigger
+    ticket_status = create_ticket_status
+    ticket_status.deleted = true
+    ticket_status.save!
+    Sidekiq::Testing.inline! do
+      ModifyTicketStatus.new.perform(status_id: ticket_status.status_id, status_name: ticket_status.name)
+    end
+    assert Account.current.ticket_statuses.find_by_id(ticket_status.id).present?
+    Sidekiq::Testing.inline! do
+      SlaOnStatusChange.new.perform(status_id: ticket_status.status_id, status_changed: false)
+    end
+    assert_equal Account.current.ticket_statuses.find_by_id(ticket_status.id).present?, false
+  ensure
+    Account.current.rollback :ticket_field_revamp
+  end
+
+  def test_status_should_not_be_deleted_on_all_jobs_completion_tf_revamp_disabled
+    ticket_status = create_ticket_status
+    ticket_status.deleted = true
+    ticket_status.save!
+    Sidekiq::Testing.inline! do
+      SlaOnStatusChange.new.perform(status_id: ticket_status.status_id, status_changed: false)
+    end
+    assert Account.current.ticket_statuses.find_by_id(ticket_status.id).present?
+    Sidekiq::Testing.inline! do
+      ModifyTicketStatus.new.perform(status_id: ticket_status.status_id, status_name: ticket_status.name)
+    end
+    assert_equal Account.current.ticket_statuses.find_by_id(ticket_status.id).present?, true
+  ensure
+    ticket_status.destroy
+  end
+
   def test_update_ticket_properties_should_update_ticket_sla_time_to_not_nil_if_status_stops_sla_timer
     ticket_status = create_ticket_status
     ticket = create_ticket(status: ticket_status.status_id)

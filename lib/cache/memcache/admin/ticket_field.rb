@@ -6,8 +6,7 @@ module Cache::Memcache::Admin::TicketField
 
   TICKET_FIELD_KEYS = %i[custom_picklist_choice_mapping_key section_picklist_values_mapping_key ticket_field_section_key
                          dynamic_section_field_key ticket_field_nested_level_key ticket_field_choices_key
-                         nested_ticket_fields_key account_flexifield_entry_columns ticket_field_statuses_key
-                         account_ticket_field_position_mapping_key].freeze
+                         nested_ticket_fields_key account_flexifield_entry_columns account_ticket_field_position_mapping_key].freeze
 
   def clear_new_ticket_field_cache
     TICKET_FIELD_KEYS.each do |key|

@@ -274,5 +274,7 @@ module Redis::Keys::Others
 
   CONDITION_BASED_LAUNCHPARTY_FEATURES = 'CONDITION_BASED_LAUNCHPARTY_FEATURES'.freeze
 
+  # Holds the processed job details for ticket status deletion
+  TICKET_STATUS_DELETION_JOBS = 'TICKET_STATUS_DELETION_JOBS:%{account_id}:%{status_id}'.freeze
   TWITTER_REQUESTER_FIELDS_ENABLED = 'TWITTER_REQUESTER_FIELDS_ENABLED'.freeze
 end
