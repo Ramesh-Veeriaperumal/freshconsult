@@ -53,6 +53,17 @@ module Admin::AutoAutomationRules
       end
     end
 
+    def test_valid_custom_decimal_field_number_params
+      Account.stubs(:current).returns(Account.first)
+      @account = Account.current
+      create_ticket_custom_field(:custom_decimal)
+      params = { name: 'delegator test', active: true,
+                 conditions: [{ name: 'condition_set_1', match_type: 'any', properties: [{ resource_type: 'ticket', field_name: 'priority', operator: 'in', value: [1] }] }],
+                 actions: [{ field_name: 'cf_custom_decimal', value: 2 }] }
+      automation_delegator_class.new(params, params, 1)
+      Account.unstub(:current)
+    end
+
     # test valid custom company fields
     CUSTOM_FIELDS_TYPES.each do |field_type|
       define_method "test_valid_custom_field_#{field_type}_company_params" do
