@@ -349,7 +349,7 @@ module Ember
         assert_nil @article.reload.draft
       end
 
-      def test_destory_with_secondary_language
+      def test_destroy_with_secondary_language
         language = @account.supported_languages.first
         article_with_draft(language)
         assert @article.draft.present?
@@ -715,7 +715,7 @@ module Ember
         end
       end
 
-      def test_destory_with_article_versions
+      def test_destroy_with_article_versions
         article = @account.solution_articles.where(language_id: @account.language_object.id).first
         article.draft.publish! if article.draft
         article.reload

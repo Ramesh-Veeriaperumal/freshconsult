@@ -133,6 +133,7 @@
       - :sandbox
       - :hipaa
       - :custom_translations
+      - :article_approval_workflow
     :inherits:
       - :estate_jan_17
     :exclude: []
@@ -339,6 +340,7 @@
       - :sandbox
       - :hipaa
       - :advanced_automations
+      - :article_approval_workflow
     :inherits:
       - :estate_jan_19
     :exclude: []
@@ -543,6 +545,7 @@
       - :hipaa
       - :unlimited_multi_product
       - :audit_log_ui
+      - :article_approval_workflow
     :inherits:
       - :estate_jan_20
     :exclude: []

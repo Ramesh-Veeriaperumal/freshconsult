@@ -3074,7 +3074,7 @@ module Ember
         remove_privilege(User.current, :approve_article)
         User.current.reload
         post :approve, controller_params(version: 'private', id: sample_article.parent_id)
-        assert_response 403
+        assert_response 403, response.body
         match_json(request_error_pattern(:access_denied))
       ensure
         Account.any_instance.unstub(:article_approval_workflow_enabled?)

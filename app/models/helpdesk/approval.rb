@@ -17,6 +17,8 @@ class Helpdesk::Approval < ActiveRecord::Base
     in: [Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review], Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved], Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:rejected]]
   }, presence: true
 
+  scope :solution_approvals, conditions: { approvable_type: 'Solution::Article' }
+
   def in_review?
     approval_status == Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review]
   end

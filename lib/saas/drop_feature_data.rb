@@ -185,4 +185,14 @@ module SAAS::DropFeatureData
       article.save
     end
   end
+
+  def handle_article_approval_workflow_drop_data
+    account.helpdesk_approvals.solution_approvals.find_each do |approval|
+      begin
+        approval.destroy
+      rescue Exception => e # rubocop:disable Lint/RescueException
+        Rails.logger.info "Exception while deleting approval [#{approval.account_id}, #{approval.id}]: #{e.backtrace}"
+      end
+    end
+  end
 end
