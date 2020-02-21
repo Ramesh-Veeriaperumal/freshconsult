@@ -3161,6 +3161,12 @@ Helpkit::Application.routes.draw do
         end
       end
 
+      resources :subscription_plans, only: :none do
+        collection do
+          get :all_plans
+        end
+      end
+
       resources :subscription_announcements, :only => [:create,:index] do
         collection do
           put 'update'

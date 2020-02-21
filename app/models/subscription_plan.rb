@@ -168,7 +168,11 @@ class SubscriptionPlan < ActiveRecord::Base
   def revenues
     @revenues ||= subscriptions.calculate(:sum, :amount, :group => 'subscriptions.state')
   end
-  
+
+  def self.ordered_plans
+    order(:amount).map { |plan| { name: plan.canon_name, variant: plan.display_name } }
+  end
+
   def self.get_free_plan_id
     find(:all, :select => :id , :conditions => {:name => SUBSCRIPTION_PLANS[:free]})
   end
@@ -176,7 +180,7 @@ class SubscriptionPlan < ActiveRecord::Base
   def self.previous_plans
     where(name: OLD_PLANS)
   end
-  
+
   def free_plan?
     name == SUBSCRIPTION_PLANS[:free]
   end
