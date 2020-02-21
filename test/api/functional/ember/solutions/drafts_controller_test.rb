@@ -200,7 +200,7 @@ module Ember
         @article = get_approved_article
         @draft = @article.draft
         put :autosave, construct_params({ version: 'private', article_id: @article.parent_id }, autosave_params)
-        assert_response 200
+        assert_response 200, response.body
         match_json(autosave_pattern(@draft.reload))
         assert_equal @draft.title, @title
         assert_equal @draft.description, @description
