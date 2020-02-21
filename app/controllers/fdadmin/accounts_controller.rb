@@ -15,7 +15,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
                 :migrate_to_freshconnect, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name,
                 :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial, :reactivate_account,
                 :suspend_account, :change_webhook_limit, :change_primary_language, :trigger_action, :clone_account, :enable_fluffy,
-                :change_fluffy_limit, :change_fluffy_min_level_limit, :enable_min_level_fluffy , :disable_min_level_fluffy, :min_level_fluffy_info]
+                :change_fluffy_limit, :change_fluffy_min_level_limit, :enable_min_level_fluffy , :disable_min_level_fluffy, :min_level_fluffy_info,
+                :reset_ticket_display_id]
   before_filter :validate_params, :only => [:change_api_limit, :change_webhook_limit, :change_fluffy_limit, :change_fluffy_min_level_limit]
   before_filter :load_account, :only => [:user_info, :reset_login_count,
     :migrate_to_freshconnect, :extend_higher_plan_trial, :change_trial_plan]
@@ -925,16 +926,14 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       if account.features?(:redis_display_id) && validate_reset_id
           account.ticket_display_id = params[:reset_id].to_i
           result[:status] = account.save ? 'success' : 'error'
-          if params[:reset_id].to_i < 0
-            key = format(TICKET_DISPLAY_ID, account_id: account.id)
-            set_display_id_redis_key(key, params[:reset_id].to_i)
-          end
+          key = format(TICKET_DISPLAY_ID, account_id: account.id)
+          set_display_id_redis_key(key, params[:reset_id].to_i - 1)
       else
         result[:status] = 'error'
       end
     rescue StandardError => e
-      result[:status] = 'error'
       Rails.logger.error("Error in resetting ticket display id for account_id: #{params[:account_id]} :: Exception: #{e.message}")
+      result[:status] = 'error'
     ensure
       Account.reset_current_account
     end

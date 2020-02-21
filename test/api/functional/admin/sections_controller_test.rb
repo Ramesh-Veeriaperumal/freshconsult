@@ -13,6 +13,7 @@ class Admin::SectionsControllerTest < ActionController::TestCase
     super
     clean_db
     create_section_fields
+    Account.current.sections.reload
   end
 
   def teardown
@@ -21,8 +22,12 @@ class Admin::SectionsControllerTest < ActionController::TestCase
   end
 
   def clean_db
-    @account.sections.destroy_all
     @account.ticket_fields.where(default: 0).destroy_all
+    type_field = @account.ticket_fields.find_by_field_type('default_ticket_type')
+    type_field.sections.destroy_all
+    type_field.field_options = type_field.field_options.with_indifferent_access
+    type_field.field_options.delete(:section_present)
+    type_field.save!
   end
 
   DROPDOWN_CHOICES_TICKET_TYPE = %w[Question Problem Incident].freeze
@@ -63,9 +68,8 @@ class Admin::SectionsControllerTest < ActionController::TestCase
     assert_response 403
 
     launch_ticket_field_revamp do
-      @account.revoke_feature :multi_dynamic_sections
-      @account.revoke_feature :dynamic_sections
-
+      enable_dynamic_sections_feature {}
+      enable_multi_dynamic_sections_feature {}
       delete :destroy, construct_params(id: section.id, ticket_field_id: 3)
       assert_response 403
     end
@@ -73,7 +77,6 @@ class Admin::SectionsControllerTest < ActionController::TestCase
 
   def test_section_not_found
     launch_ticket_field_revamp do
-      section = @account.sections.first
       delete :destroy, construct_params(id: -1, ticket_field_id: 3)
       assert_response 404
       get :show, construct_params(id: -1, ticket_field_id: 3)
@@ -85,22 +88,22 @@ class Admin::SectionsControllerTest < ActionController::TestCase
 
   def test_section_index
     launch_ticket_field_revamp do
-      @account.add_features(:dynamic_sections)
-      get :index, controller_params(ticket_field_id: 3)
-      assert_response 200
-      expected_response = []
-      expected_response << sections(Account.current.ticket_fields.find(3))[:sections].first
-      match_json(expected_response)
+      enable_dynamic_sections_feature do
+        get :index, controller_params(ticket_field_id: 3)
+        assert_response 200
+        match_json(sections(Account.current.ticket_fields.find(3))[:sections])
+      end
     end
   end
 
   def test_section_show
     launch_ticket_field_revamp do
-      @account.add_features(:dynamic_sections)
-      section = @account.sections.first
-      get :show, controller_params(ticket_field_id: section.ticket_field_id, id: section.id)
-      assert_response 200
-      match_json(sections(@account.ticket_fields.find(3))[:sections].find { |s| s[:id] == section.id })
+      enable_dynamic_sections_feature do
+        section = @account.sections.first
+        get :show, controller_params(ticket_field_id: section.ticket_field_id, id: section.id)
+        assert_response 200
+        match_json(sections(@account.ticket_fields.find(3))[:sections].find { |s| s[:id] == section.id })
+      end
     end
   end
 
@@ -161,76 +164,76 @@ class Admin::SectionsControllerTest < ActionController::TestCase
 
   def test_section_create
     launch_ticket_field_revamp do
-      @account.add_features(:dynamic_sections)
-      choice_id = @account.picklist_values.where(ticket_field_id: 3).last.picklist_id
+      enable_dynamic_sections_feature do
+        choice_id = @account.picklist_values.where(ticket_field_id: 3).last.picklist_id
 
-      post :create, construct_params({ ticket_field_id: 3 }, label: 'label', choice_ids: [choice_id])
-      p "test_section_create :: #{response.inspect}" if response.status != 201
-      assert_response 201
-      match_json(sections(@account.ticket_fields.find(@account.sections.last.ticket_field_id))[:sections].find { |s| s[:id] == @account.sections.last.id })
+        post :create, construct_params({ ticket_field_id: 3 }, label: 'label', choice_ids: [choice_id])
+        assert_response 201
+        match_json(sections(@account.ticket_fields.find(@account.sections.last.ticket_field_id))[:sections].find { |s| s[:id] == @account.sections.last.id })
+      end
     end
   end
 
   def test_update_section_params_datatype_mismatch
     launch_ticket_field_revamp do
-      @account.add_features(:dynamic_sections)
-      section = @account.sections.first
+      enable_dynamic_sections_feature do
+        section = @account.sections.first
+        put :update, construct_params({ id: section.id, ticket_field_id: 3 }, label: 1)
+        assert_response 400
+        match_json([bad_request_error_pattern(:label, 'Value set is of type Integer.It should be a/an String', code: 'datatype_mismatch')])
 
-      put :update, construct_params({ id: section.id, ticket_field_id: 3 }, label: 1)
-      assert_response 400
-      match_json([bad_request_error_pattern(:label, 'Value set is of type Integer.It should be a/an String', code: 'datatype_mismatch')])
+        put :update, construct_params({ id: section.id, ticket_field_id: 3 }, choice_ids: 'string')
+        assert_response 400
+        match_json([bad_request_error_pattern(:choice_ids, 'Value set is of type String.It should be a/an Array', code: 'datatype_mismatch')])
 
-      put :update, construct_params({ id: section.id, ticket_field_id: 3 }, choice_ids: 'string')
-      assert_response 400
-      match_json([bad_request_error_pattern(:choice_ids, 'Value set is of type String.It should be a/an Array', code: 'datatype_mismatch')])
-
-      put :update, construct_params({ id: section.id, ticket_field_id: 3 }, choice_ids: ['string'])
-      assert_response 400
-      match_json([bad_request_error_pattern(:choice_ids, 'It should contain elements of type Positive Integer only', code: 'datatype_mismatch')])
+        put :update, construct_params({ id: section.id, ticket_field_id: 3 }, choice_ids: ['string'])
+        assert_response 400
+        match_json([bad_request_error_pattern(:choice_ids, 'It should contain elements of type Positive Integer only', code: 'datatype_mismatch')])
+      end
     end
   end
 
   def test_update_section_invalid_params
     launch_ticket_field_revamp do
-      @account.add_features(:dynamic_sections)
-      section = @account.sections.first
+      enable_dynamic_sections_feature do
+        first_section, second_section = @account.sections.reload
 
-      put :update, construct_params({ ticket_field_id: section.ticket_field_id, id: section.id }, label: '')
-      assert_response 400
-      match_json([bad_request_error_pattern(:label, 'It should not be blank as this is a mandatory field', code: 'invalid_value')])
+        put :update, construct_params({ ticket_field_id: first_section.ticket_field_id, id: first_section.id }, label: '')
+        assert_response 400
+        match_json([bad_request_error_pattern(:label, 'It should not be blank as this is a mandatory field', code: 'invalid_value')])
 
-      put :update, construct_params({ ticket_field_id: section.ticket_field_id, id: section.id }, label: @account.sections.last.label)
-      assert_response 400
-      match_json([bad_request_error_pattern(:label, :duplicate_name_in_sections, label: @account.sections.last.label)])
+        put :update, construct_params({ ticket_field_id: first_section.ticket_field_id, id: first_section.id }, label: second_section.label)
+        assert_response 400
+        match_json([bad_request_error_pattern(:label, :duplicate_name_in_sections, label: second_section.label)])
 
-      put :update, construct_params({ ticket_field_id: section.ticket_field_id, id: section.id }, choice_ids: [])
-      assert_response 400
-      match_json([bad_request_error_pattern(:choice_ids, 'It should not be blank as this is a mandatory field', code: 'invalid_value')])
+        put :update, construct_params({ ticket_field_id: first_section.ticket_field_id, id: first_section.id }, choice_ids: [])
+        assert_response 400
+        match_json([bad_request_error_pattern(:choice_ids, 'It should not be blank as this is a mandatory field', code: 'invalid_value')])
 
-      put :update, construct_params({ ticket_field_id: 3, id: section.id }, choice_ids: [100])
-      assert_response 400
-      match_json([bad_request_error_pattern(:choice_ids, :absent_in_db, code: 'invalid_value', resource: :choice, attribute: 'choice_ids 100')])
+        put :update, construct_params({ ticket_field_id: 3, id: first_section.id }, choice_ids: [100])
+        assert_response 400
+        match_json([bad_request_error_pattern(:choice_ids, :absent_in_db, code: 'invalid_value', resource: :choice, attribute: 'choice_ids 100')])
 
-      put :update, construct_params({ ticket_field_id: section.ticket_field_id, id: section.id }, choice_ids: @account.sections.last.section_picklist_mappings.pluck('picklist_id'))
-      assert_response 400
-      match_json([bad_request_error_pattern(:choice_ids, :choice_id_taken, code: 'invalid_value', id: @account.sections.last.section_picklist_mappings.pluck('picklist_id').join(', '))])
+        put :update, construct_params({ ticket_field_id: first_section.ticket_field_id, id: first_section.id }, choice_ids: second_section.section_picklist_mappings.pluck('picklist_id'))
+        assert_response 400
+        match_json([bad_request_error_pattern(:choice_ids, :choice_id_taken, code: 'invalid_value', id: second_section.section_picklist_mappings.pluck('picklist_id').join(', '))])
+      end
     end
   end
 
   def test_section_update
     launch_ticket_field_revamp do
-      @account.add_features(:dynamic_sections)
-      section = @account.sections.first
+      enable_dynamic_sections_feature do
+        section = @account.sections.first
 
-      put :update, construct_params({ ticket_field_id: section.ticket_field_id, id: section.id }, label: 'label')
-      p "test_section_update :: 1 :: #{response.inspect}" if response.status != 200
-      assert_response 200
-      match_json(sections(@account.ticket_fields.find(section.ticket_field_id))[:sections].find { |s| s[:id] == section.id })
+        put :update, construct_params({ ticket_field_id: section.ticket_field_id, id: section.id }, label: 'label')
+        assert_response 200
+        match_json(sections(@account.ticket_fields.find(section.ticket_field_id))[:sections].find { |s| s[:id] == section.id })
 
-      put :update, construct_params({ ticket_field_id: section.ticket_field_id, id: section.id }, choice_ids: [5])
-      p "test_section_update :: 2 :: #{response.inspect}" if response.status != 200
-      assert_response 200
-      match_json(sections(@account.ticket_fields.find(section.ticket_field_id))[:sections].find { |s| s[:id] == section.id })
+        put :update, construct_params({ ticket_field_id: section.ticket_field_id, id: section.id }, choice_ids: [5])
+        assert_response 200
+        match_json(sections(@account.ticket_fields.find(section.ticket_field_id))[:sections].find { |s| s[:id] == section.id })
+      end
     end
   end
 end

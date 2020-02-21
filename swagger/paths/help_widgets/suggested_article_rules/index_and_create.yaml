@@ -3,7 +3,7 @@ get:
   description: Listing all widgets associated to the account
   summary: Suggested article rules List
   parameters:
-    - name: id
+    - name: widget_id
       in: path
       type: integer
       format: int64
@@ -25,7 +25,7 @@ post:
   description: Create Suggested article rules
   summary: Create Suggested article rules
   parameters:
-    - name: id
+    - name: widget_id
       in: path
       type: integer
       format: int64

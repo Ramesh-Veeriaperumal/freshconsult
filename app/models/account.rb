@@ -25,6 +25,8 @@ class Account < ActiveRecord::Base
   include Account::ProxyFeature
   include Cache::Memcache::Admin::CustomData
   include Account::SidekiqControl::RouteDrop
+
+  delegate :add_launchgroups, :remove_launchgroups, to: :account_additional_settings
   
   has_many_attachments
 
@@ -47,7 +49,7 @@ class Account < ActiveRecord::Base
                   :language, :ssl_enabled, :whitelisted_ip_attributes, :account_additional_settings_attributes,
                   :primary_email_config_attributes, :main_portal_attributes, :account_type, :time_zone
 
-  attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate, :model_changes, :disable_old_ui_changed, :is_anonymous_account, :fresh_id_version
+  attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate, :model_changes, :disable_old_ui_changed, :is_anonymous_account, :fresh_id_version, :fs_cookie_signup_param
 
   attr_writer :no_of_ticket_fields_built
 
@@ -113,6 +115,17 @@ class Account < ActiveRecord::Base
       feature_list
     end
   end
+
+  # Need to be fixed - for loop issue with hiding_confidential_logs feature check.
+  # def launchgroups
+  #    Sharding.select_shard_of(self.id) do
+  #      [
+  #        plan_name.to_s, 
+  #        ActiveRecord::Base.current_shard_selection.shard.to_s,
+  #        subscription.state.to_s
+  #      ] | Array(account_additional_settings.try(:launchgroups))
+  #    end
+  #  end
 
   def time_zone
     tz = self.read_attribute(:time_zone)
@@ -709,7 +722,8 @@ class Account < ActiveRecord::Base
   def fs_cookie
       key = ACCOUNT_SIGN_UP_PARAMS % { account_id: id }
       json_response = get_others_redis_key(key)
-      json_response.present? ? JSON.parse(json_response)['fs_cookie'] : nil
+      fs_cookie_by_account = json_response.present? ? JSON.parse(json_response)['fs_cookie'] : nil
+      fs_cookie_by_account || fs_cookie_by_domain
   end
 
   def email_service_provider
@@ -722,6 +736,18 @@ class Account < ActiveRecord::Base
 
   def full_signup?
     "new_signup_free" == self.signup_method.to_s
+  end
+
+  def fs_cookie_by_domain_key
+    format(ACCOUNT_DOMAIN_FS_COOKIE, domain: full_domain)
+  end
+
+  def set_fs_cookie_by_domain
+    set_others_redis_key(fs_cookie_by_domain_key, fs_cookie_signup_param, 60.minutes.seconds)
+  end
+
+  def fs_cookie_by_domain
+    get_others_redis_key(fs_cookie_by_domain_key)
   end
 
   def signup_in_process_key
@@ -1044,6 +1070,11 @@ class Account < ActiveRecord::Base
     rescue Errno::ETIMEDOUT
       false
     end
+
+    def handle_launchparty_exception(e)
+       NewRelic::Agent.notice_error(e)
+       return false
+     end
 
     def generate_secret_token
       Digest::MD5.hexdigest(Helpdesk::SHARED_SECRET + self.full_domain + Time.now.to_f.to_s).downcase

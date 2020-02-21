@@ -25,12 +25,11 @@ class ApiAgentsController < ApiApplicationController
 
   def create
     assign_protected
-    return unless validate_delegator(nil, params[cname].slice(:role_ids, :group_ids,
-                                                         :user_attributes, :agent_type, :occasional, :skill_ids).merge(agent_delegator_params))
+    return unless validate_delegator(nil, params[cname].slice(:role_ids, :group_ids, :user_attributes, :agent_type, :occasional, :skill_ids, :agent_level_id).merge(agent_delegator_params))
 
     @user = current_account.users.new
+    assign_avatar if params[cname][:avatar_id].present? && @delegator.draft_attachments.present?
     params[:user] = params[cname][:user_attributes]
-
     check_and_assign_field_agent_roles if Account.current.field_service_management_enabled?
     check_and_assign_skills_for_create if Account.current.skill_based_round_robin_enabled?
     assign_user_attributes
@@ -48,10 +47,11 @@ class ApiAgentsController < ApiApplicationController
 
   def update
     assign_protected
-    return unless validate_delegator(@item, params[cname].slice(:role_ids, :group_ids, :available, :avatar_id, :user_attributes).merge(agent_delegator_params))
+    return unless validate_delegator(@item, params[cname].slice(:role_ids, :group_ids, :available, :avatar_id, :user_attributes, :agent_level_id).merge(agent_delegator_params))
 
     check_and_assign_skills_for_update if Account.current.skill_based_round_robin_enabled?
-
+    @item.freshcaller_enabled = params[cname][:freshcaller_agent] unless params[cname][:freshcaller_agent].nil?
+    @item.scoreboard_level_id = params[cname][:agent_level_id] if params[cname][:agent_level_id].present?
     params[cname][:user_attributes].each do |k, v|
       @item.user.safe_send("#{k}=", v)
     end
@@ -141,7 +141,10 @@ class ApiAgentsController < ApiApplicationController
     end
 
     def agent_delegator_params
-      { action: action_name }
+      agent_params = {}
+      agent_params[:attachment_ids] = Array.wrap(params[cname][:avatar_id].to_i) if params[cname][:avatar_id].present?
+      agent_params[:action] = action_name
+      agent_params
     end
 
     def after_load_object
@@ -234,8 +237,14 @@ class ApiAgentsController < ApiApplicationController
       @item.ticket_permission = params[:ticket_scope]
       @item.occasional = false if params[cname][:occasional] == false
       @item.agent_type = params[:agent_type] if params[:agent_type].to_s.present?
-      @item.signature_html = params[:signature_html] if params[:signature_html].present?
+      @item.signature_html = params[cname][:signature_html] if params[cname][:signature_html].present?
       @item.build_agent_groups_attributes(group_ids) if group_ids.present?
+      @item.freshcaller_enabled = params[:freshcaller_agent] || false
+      @item.scoreboard_level_id = params[:agent_level_id]
+    end
+
+    def assign_avatar
+      @user.avatar = @delegator.draft_attachments.first
     end
 
     def check_and_assign_field_agent_roles

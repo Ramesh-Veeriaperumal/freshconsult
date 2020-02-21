@@ -288,7 +288,7 @@ module MemcacheKeys
 
   SECTION_PICKLIST_MAPPING_BY_FIELD_ID = 'v1/SECTION_PICKLIST_MAPPING_BY_FIELD_ID:%{account_id}:%{ticket_field_id}'
 
-  TICKET_FIELD_SECTION = 'v1/TICKET_FIELD_SECTION:%{account_id}'
+  TICKET_FIELD_SECTION = 'v2/TICKET_FIELD_SECTION:%{account_id}'.freeze
 
   SECTION_FIELDS_IN_TICKET_FIELD = 'v1/SECTION_FIELDS_IN_TICKET_FIELD:%{account_id}'
 
@@ -302,7 +302,7 @@ module MemcacheKeys
 
   FRESHWORK_PRODUCTS = 'FRESHWORK_PRODUCTS'.freeze
 
-  TICKET_FIELD_STATUSES = 'v1/TICKET_FIELD_STATUSES:%{account_id}:%{ticket_field_id}'.freeze
+  TICKET_FIELD_STATUSES = 'v2/TICKET_FIELD_STATUSES:%{account_id}:%{ticket_field_id}'.freeze
 
   ACCOUNT_TICKET_FIELD_POSITION_MAPPING = 'v1/ACCOUNT_TICKET_FIELD_POSITION_MAPPING:%{account_id}'.freeze
 

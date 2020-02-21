@@ -46,7 +46,7 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   def create_widget_suggested_article_rules(params)
     @widget.help_widget_suggested_article_rules.build(params)
     @widget.save!
-    @widget
+    @widget.help_widget_suggested_article_rules
   end
 
   def article_params(folder)
@@ -58,7 +58,7 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
     }
   end
 
-  def suggested_article_rule_create_params(params = {})
+  def suggested_article_rule_request_params(params = {})
     {
       version: 'private',
       help_widget_id: @widget.id,
@@ -115,7 +115,7 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   end
 
   def test_create_suggested_article_rules
-    post :create, construct_params(suggested_article_rule_create_params)
+    post :create, construct_params(suggested_article_rule_request_params)
     assert_response 201
     res = JSON.parse(@response.body)
     rule = HelpWidgetSuggestedArticleRule.find_by_id(res['id'])
@@ -123,7 +123,7 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   end
 
   def test_create_suggested_article_rules_with_required_fields
-    params = suggested_article_rule_create_params
+    params = suggested_article_rule_request_params
     params[:suggested_article_rule][:filter] = params[:suggested_article_rule][:filter].slice(:value)
     params[:suggested_article_rule][:conditions][0] = params[:suggested_article_rule][:conditions].first.slice(:value)
     post :create, construct_params(params)
@@ -134,7 +134,7 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   end
 
   def test_create_rule_with_invalid_evaluate_on
-    params = suggested_article_rule_create_params(evaluate_on: 20)
+    params = suggested_article_rule_request_params(evaluate_on: 20)
     post :create, construct_params(params)
     assert_response 400
     error = bad_request_error_pattern_with_nested_field('conditions', 'evaluate_on', "It should be one of these values: '1'", code: 'invalid_value')
@@ -142,7 +142,7 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   end
 
   def test_create_rule_with_invalid_condition_name
-    params = suggested_article_rule_create_params(condition_name: 20)
+    params = suggested_article_rule_request_params(condition_name: 20)
     post :create, construct_params(params)
     assert_response 400
     error = bad_request_error_pattern_with_nested_field('conditions', 'name', "It should be one of these values: '1'", code: 'invalid_value')
@@ -150,7 +150,7 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   end
 
   def test_create_rule_with_invalid_operator
-    params = suggested_article_rule_create_params(condition_operator: 20)
+    params = suggested_article_rule_request_params(condition_operator: 20)
     post :create, construct_params(params)
     assert_response 400
     error = bad_request_error_pattern_with_nested_field('conditions', 'operator', "It should be one of these values: '1'", code: 'invalid_value')
@@ -158,7 +158,7 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   end
 
   def test_create_rule_with_invalid_value
-    params = suggested_article_rule_create_params(condition_value: 20)
+    params = suggested_article_rule_request_params(condition_value: 20)
     post :create, construct_params(params)
     assert_response 400
     error = bad_request_error_pattern_with_nested_field('conditions', 'value', 'It should be a/an String', code: 'datatype_mismatch')
@@ -166,7 +166,7 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   end
 
   def test_create_rule_with_empty_value
-    params = suggested_article_rule_create_params(condition_value: '')
+    params = suggested_article_rule_request_params(condition_value: '')
     post :create, construct_params(params)
     assert_response 400
     error = bad_request_error_pattern_with_nested_field('conditions', 'value', 'It should not be blank as this is a mandatory field', code: 'invalid_value')
@@ -174,7 +174,7 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   end
 
   def test_create_rule_with_invalid_rule_operator
-    params = suggested_article_rule_create_params(rule_operator: 20)
+    params = suggested_article_rule_request_params(rule_operator: 20)
     post :create, construct_params(params)
     assert_response 400
     error = bad_request_error_pattern('rule_operator', "It should be one of these values: '1,2'", code: 'invalid_value')
@@ -182,7 +182,7 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   end
 
   def test_create_rule_with_invalid_filter_type
-    params = suggested_article_rule_create_params(filter_type: 20)
+    params = suggested_article_rule_request_params(filter_type: 20)
     post :create, construct_params(params)
     assert_response 400
     error = bad_request_error_pattern_with_nested_field('filter', 'type', "It should be one of these values: '1,2,3'", code: 'invalid_value')
@@ -190,7 +190,7 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   end
 
   def test_create_rule_with_invalid_order_by
-    params = suggested_article_rule_create_params(order_by: 20)
+    params = suggested_article_rule_request_params(order_by: 20)
     post :create, construct_params(params)
     assert_response 400
     error = bad_request_error_pattern_with_nested_field('filter', 'order_by', "It should be one of these values: '1'", code: 'invalid_value')
@@ -198,7 +198,7 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   end
 
   def test_create_rule_with_invalid_filter_value
-    params = suggested_article_rule_create_params(filter_value: 20)
+    params = suggested_article_rule_request_params(filter_value: 20)
     post :create, construct_params(params)
     assert_response 400
     error = bad_request_error_pattern_with_nested_field('filter', 'value', 'It should be a/an Array', code: 'datatype_mismatch')
@@ -206,7 +206,7 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   end
 
   def test_create_rule_with_empty_array
-    params = suggested_article_rule_create_params(filter_value: [])
+    params = suggested_article_rule_request_params(filter_value: [])
     post :create, construct_params(params)
     assert_response 400
     error = bad_request_error_pattern('filter_value', 'Has 0 article, it should have minimum of 1 article and can have maximum of 5 article', code: 'invalid_value')
@@ -215,7 +215,7 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
 
   def test_create_rule_with_duplicate_array
     article_ids = suggested_article_ids
-    params = suggested_article_rule_create_params(filter_value: [article_ids[0], article_ids[0]])
+    params = suggested_article_rule_request_params(filter_value: [article_ids[0], article_ids[0]])
     post :create, construct_params(params)
     assert_response 400
     error = bad_request_error_pattern('filter_value', "Duplicate filter_value,filter_value Must be unique, '#{article_ids[0]},#{article_ids[0]}' ", code: 'invalid_value')
@@ -223,7 +223,7 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   end
 
   def test_create_rule_with_invalid_key_in_filter
-    params = suggested_article_rule_create_params
+    params = suggested_article_rule_request_params
     params[:suggested_article_rule][:filter][:test] = 'invalid_key'
     post :create, construct_params(params)
     assert_response 400
@@ -232,7 +232,7 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   end
 
   def test_create_rule_with_invalid_key_in_condition
-    params = suggested_article_rule_create_params
+    params = suggested_article_rule_request_params
     params[:suggested_article_rule][:conditions].first[:test] = 'invalid_key'
     post :create, construct_params(params)
     assert_response 400
@@ -241,7 +241,7 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   end
 
   def test_create_rule_with_invalid_key
-    params = suggested_article_rule_create_params
+    params = suggested_article_rule_request_params
     params[:suggested_article_rule][:test] = 'invalid_key'
     post :create, construct_params(params)
     assert_response 400
@@ -251,7 +251,7 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
 
   def test_create_without_help_widget_article_customisation_feature
     @account.rollback(:help_widget_article_customisation)
-    post :create, construct_params(suggested_article_rule_create_params)
+    post :create, construct_params(suggested_article_rule_request_params)
     assert_response 403
     match_json('code' => 'require_feature',
                'message' => 'The help_widget, help_widget_article_customisation feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
@@ -261,7 +261,7 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
 
   def test_create_without_help_widget_enabled
     @account.stubs(:help_widget_enabled?).returns(false)
-    post :create, construct_params(suggested_article_rule_create_params)
+    post :create, construct_params(suggested_article_rule_request_params)
     assert_response 403
     match_json('code' => 'require_feature',
                'message' => 'The help_widget, help_widget_article_customisation feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
@@ -269,11 +269,66 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
     @account.unstub(:help_widget_enabled?)
   end
 
-  def test_create_with_invalid_help_widget_id
-    get :create, controller_params(version: 'private', help_widget_id: 900_090)
+  def test_update_suggested_article_rule
+    article_rule = create_widget_suggested_article_rules(suggested_article_rule).first
+    suggested_article_ids.pop
+    put :update, construct_params(suggested_article_rule_request_params(condition_value: 'pogo', filter_value: suggested_article_ids).merge(id: article_rule.id))
+    assert_response 200
+    article_rule.reload
+    match_json(rule_pattern(article_rule))
+    assert_equal article_rule.conditions.first[:value], 'pogo'
+    assert_equal article_rule.filter[:value], suggested_article_ids
+  end
+
+  def test_update_with_article_id_exceeding_max
+    article_rule = create_widget_suggested_article_rules(suggested_article_rule).first
+    put :update, construct_params(suggested_article_rule_request_params(condition_value: 'pogo', filter_value: [1, 2, 3, 4, 5, 6]).merge(id: article_rule.id))
     assert_response 400
-    match_json('code' => 'invalid_help_widget',
-               'message' => 'invalid_help_widget')
+    bad_request_error_pattern('filter_value', 'Has 6 article, it should have minimum of 1 article and can have maximum of 5 article', code: 'invalid_value')
+  end
+
+  def test_update_without_help_widget_enabled
+    @account.stubs(:help_widget_enabled?).returns(false)
+    put :update, construct_params(suggested_article_rule_request_params)
+    assert_response 403
+    match_json('code' => 'require_feature',
+               'message' => 'The help_widget, help_widget_article_customisation feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
+  ensure
+    @account.unstub(:help_widget_enabled?)
+  end
+
+  def test_update_without_condition_and_filter
+    article_rule = create_widget_suggested_article_rules(suggested_article_rule).first
+    put :update, construct_params(suggested_article_rule_request_params.except(:conditions, :filter).merge(id: article_rule.id))
+    assert_response 200
+    article_rule.reload
+    match_json(rule_pattern(article_rule))
+  end
+
+  def test_update_suggested_article_rule_with_single_param
+    article_rule = create_widget_suggested_article_rules(suggested_article_rule).first
+    params = {
+      version: 'private',
+      help_widget_id: @widget.id,
+      suggested_article_rule: {
+        conditions: [{
+          value: 'first'
+        }]
+      }
+    }
+    put :update, construct_params(params.merge(id: article_rule.id))
+    assert_response 200
+    article_rule.reload
+    match_json(rule_pattern(article_rule))
+  end
+
+  def test_update_suggested_article_rule_with_invalid_params
+    article_rule = create_widget_suggested_article_rules(suggested_article_rule).first
+    params = suggested_article_rule_request_params
+    params[:suggested_article_rule][:test] = 'invalid_key'
+    put :update, construct_params(params.merge(id: article_rule.id))
+    assert_response 400
+    bad_request_error_pattern('test', 'Unexpected/invalid field in request', code: 'invalid_field')
   end
 
   def test_delete_suggested_article_rule
@@ -299,7 +354,6 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
 
   def test_delete_suggested_article_rule_without_feature
     @account.rollback(:help_widget_article_customisation)
-    widget = create_widget(solution_articles: true)
     get :index, controller_params(version: 'private', help_widget_id: @widget.id)
     assert_response 403
     match_json('code' => 'require_feature',

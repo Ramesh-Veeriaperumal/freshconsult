@@ -11,6 +11,12 @@ class TicketFieldsControllerTest < ActionController::TestCase
     before_all
     Account.current.rollback(:nested_field_revamp) # nested_field_revamp should only be available for UI based request
     Account.current.rollback(:ticket_field_revamp) # its for emberized ticket field/ test cases are old so affect model variables
+    Account.current.add_feature(:custom_ticket_fields)
+  end
+
+  def teardown
+    Account.current.revoke_feature(:custom_ticket_fields)
+    super
   end
 
   @@before_all_run = false

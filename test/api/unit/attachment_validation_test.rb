@@ -12,10 +12,12 @@ class AttachmentValidationTest < ActionView::TestCase
     account = Account.new
     account.build_subscription
     Account.stubs(:current).returns(account)
+    ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
   end
 
   def teardown
     Account.unstub(:current)
+    ShardMapping.unstub(:fetch_by_domain)
     super
   end
 
@@ -159,6 +161,7 @@ class AttachmentValidationTest < ActionView::TestCase
       Subscription.any_instance.stubs(:subscription_plan_from_cache).returns(SubscriptionPlan.new(:name => "#{plan_name} Jan 17"))
       account = Account.current
       account.subscription.state = "active"
+      account.subscription.subscription_plan = SubscriptionPlan.find_by_name(plan_name)
       account.launch(:outgoing_attachment_limit_25)
       account.instance_variable_set("@attachment_limit", nil)
       assert_equal account.attachment_limit, 25
@@ -173,6 +176,7 @@ class AttachmentValidationTest < ActionView::TestCase
       Subscription.any_instance.stubs(:subscription_plan_from_cache).returns(SubscriptionPlan.new(:name => "#{plan_name} Jan 17"))
       account = Account.current
       account.subscription.state = "active"
+      account.subscription.subscription_plan = SubscriptionPlan.find_by_name(plan_name)
       account.instance_variable_set("@attachment_limit", nil)
       assert_equal account.attachment_limit, 20
       assert_attachment_limit(23, 18)

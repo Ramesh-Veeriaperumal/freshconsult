@@ -18,17 +18,22 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
   def setup
     super
     clean_db
+    Account.current.add_feature(:custom_ticket_fields)
   end
 
   def teardown
+    Account.current.revoke_feature(:custom_ticket_fields)
     clean_db
     super
   end
 
   def clean_db
     @account.ticket_fields.where(default: 0).destroy_all
-    @account.ticket_fields.update_all(field_options: {})
-    @account.sections.destroy_all
+    type_field = @account.ticket_fields.find_by_field_type('default_ticket_type')
+    type_field.sections.destroy_all
+    type_field.field_options = type_field.field_options.with_indifferent_access
+    type_field.field_options.delete(:section_present)
+    type_field.save!
   end
 
   def test_deletion_of_decimal_field
@@ -175,11 +180,10 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
     assert_match 'Ticket Field Revamp', response.body
 
     launch_ticket_field_revamp do
-      @account.revoke_feature :custom_ticket_fields
+      enable_custom_ticket_fields_feature {}
       delete :destroy, construct_params(id: tf.id)
       assert_response 403
       assert_match 'custom_ticket_fields', response.body
-      @account.add_feature :custom_ticket_fields
     end
   end
 
@@ -196,12 +200,10 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
     get :index, controller_params(version: 'private')
     assert_response 403
     assert_match 'Ticket Field Revamp', response.body
-    launch_ticket_field_revamp do
-      @account.rollback :ticket_field_revamp
-      get :index, controller_params(version: 'private')
-      assert_response 403
-      assert_match 'Ticket Field Revamp', response.body
-    end
+    launch_ticket_field_revamp {}
+    get :index, controller_params(version: 'private')
+    assert_response 403
+    assert_match 'Ticket Field Revamp', response.body
   end
 
   def test_show_dropdown_field
@@ -309,11 +311,10 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
     assert_match('Ticket Field Revamp', response.body)
 
     launch_ticket_field_revamp do
-      @account.revoke_feature :custom_ticket_fields
+      enable_custom_ticket_fields_feature {}
       post :create, construct_params({}, ticket_field_common_params)
       assert_response 403
       assert_match('custom_ticket_fields', response.body)
-      @account.add_feature :custom_ticket_fields
     end
   end
 

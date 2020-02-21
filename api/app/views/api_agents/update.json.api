@@ -26,4 +26,9 @@ response_hash = {
     updated_at: user.updated_at.try(:utc)
   }
 }
+if Account.current.freshcaller_enabled?
+  response_hash[:freshcaller_agent] = @item.freshcaller_agent.present? ? @item.freshcaller_agent.try(:fc_enabled) : false
+end
+response_hash[:agent_level_id] = @item.scoreboard_level_id if Account.current.gamification_enabled? && Account.current.gamification_enable_enabled?
+response_hash[:contact][:avatar] = AttachmentDecorator.new(user.avatar).to_hash if user.avatar.present?
 JSON.generate(response_hash)

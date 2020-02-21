@@ -14,8 +14,8 @@ module AuditLog::CompanyHelper
       next unless (ALLOWED_MODEL_CHANGES.include? key) || (custom_fields_in_changes.include? key)
 
       trans_key = custom_fields_in_changes.include?(key) ? key.to_s : translated_key(key, model_name)
-      value[0] = value[0].to_s if check_bool_type(value[0])
-      value[1] = value[1].to_s if check_bool_type(value[1])
+      value[0] = sanitize_audit_log_value(value[0].to_s) if check_bool_type(value[0]) || value[0].is_a?(String)
+      value[1] = sanitize_audit_log_value(value[1].to_s) if check_bool_type(value[1]) || value[1].is_a?(String)
       response.push description_properties(trans_key, value)
     end
     response

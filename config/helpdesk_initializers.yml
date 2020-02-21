@@ -133,3 +133,4 @@ helpdesk:
     - cron_hooks
     - prometheus
     - ruby_thread_config
+    - custom_survey_result_key

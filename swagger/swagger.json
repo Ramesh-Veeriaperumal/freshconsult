@@ -11505,7 +11505,7 @@
         }
       }
     },
-    "/help_widgets/{id}/suggested_article_rules": {
+    "/help_widgets/{widget_id}/suggested_article_rules": {
       "get": {
         "tags": [
           "Help Widget"
@@ -11514,7 +11514,7 @@
         "summary": "Suggested article rules List",
         "parameters": [
           {
-            "name": "id",
+            "name": "widget_id",
             "in": "path",
             "type": "integer",
             "format": "int64",
@@ -11547,7 +11547,7 @@
         "summary": "Create Suggested article rules",
         "parameters": [
           {
-            "name": "id",
+            "name": "widget_id",
             "in": "path",
             "type": "integer",
             "format": "int64",
@@ -11581,7 +11581,55 @@
         }
       }
     },
-    "/help_widgets/{id}/suggested_article_rules/{rule_id}": {
+    "/help_widgets/{widget_id}/suggested_article_rules/{id}": {
+      "put": {
+        "tags": [
+          "Help Widget"
+        ],
+        "description": "Update Suggested article rules",
+        "summary": "Update Suggested article rules",
+        "parameters": [
+          {
+            "name": "widget_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/help_widget_suggested_article_rules"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/help_widget_suggested_article_rules_create_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
       "delete": {
         "summary": "Suggested article rules delete",
         "tags": [
@@ -11589,14 +11637,14 @@
         ],
         "parameters": [
           {
-            "name": "id",
+            "name": "widget_id",
             "type": "integer",
             "format": "int64",
             "in": "path",
             "required": true
           },
           {
-            "name": "rule_id",
+            "name": "id",
             "type": "integer",
             "format": "int64",
             "in": "path",
@@ -18235,6 +18283,12 @@
           "type": "integer",
           "example": 100
         },
+        "freshcaller_agent": {
+          "type": "boolean"
+        },
+        "agent_level_id": {
+          "type": "integer"
+        },
         "search_settings": {
           "type": "object",
           "properties": {
@@ -18296,6 +18350,8 @@
         },
         "shortcuts_enabled": false,
         "avatar_id": 100,
+        "freshcaller_agent": true,
+        "agent_level_id": 3,
         "search_settings": {
           "tickets": {
             "include_subject": false,
@@ -18368,6 +18424,12 @@
           }
         },
         "avatar_id": {
+          "type": "integer"
+        },
+        "freshcaller_agent": {
+          "type": "boolean"
+        },
+        "agent_level_id": {
           "type": "integer"
         }
       }
@@ -19511,6 +19573,12 @@
         "updated_at": {
           "type": "string",
           "format": "date-time"
+        },
+        "freshcaller_agent": {
+          "type": "boolean"
+        },
+        "agent_level_id": {
+          "type": "integer"
         }
       }
     },

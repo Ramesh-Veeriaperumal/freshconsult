@@ -50,24 +50,22 @@ class Account < ActiveRecord::Base
     addons.any? { |addon| FLUFFY_ADDONS.include? addon.name }
   end
 
-  private
+  def create_fluffy_account(limit = nil)
+    limit ||= get_api_limit_from_redis(id, subscription.plan_id)
+    Fluffy::ApiWrapper.create(full_domain, limit, HOUR_GRANULARITY)
+  end
 
-    def create_fluffy_account(limit = nil)
-      limit ||= get_api_limit_from_redis(id, subscription.plan_id)
-      Fluffy::ApiWrapper.create(full_domain, limit, HOUR_GRANULARITY)
-    end
+  def destroy_fluffy_account(domain = full_domain)
+    fluffy_account = Fluffy::ApiWrapper.new(domain)
+    fluffy_account.destroy
+  end
 
-    def destroy_fluffy_account(domain = full_domain)
-      fluffy_account = Fluffy::ApiWrapper.new(domain)
-      fluffy_account.destroy
+  def create_fluffy_account_with_min_throttling(limit = nil, plan_id = nil)
+    if limit.present?
+      Fluffy::ApiWrapper.create(full_domain, limit, MINUTE_GRANULARITY)
+    else
+      plan_limits = get_api_min_limit_from_redis(plan_id || subscription.plan_id)
+      Fluffy::ApiWrapper.create(full_domain, plan_limits[:limit], MINUTE_GRANULARITY, plan_limits[:account_paths])
     end
-
-    def create_fluffy_account_with_min_throttling(limit = nil, plan_id = nil)
-      if limit.present?
-        Fluffy::ApiWrapper.create(full_domain, limit, MINUTE_GRANULARITY)
-      else
-        plan_limits = get_api_min_limit_from_redis(plan_id || subscription.plan_id)
-        Fluffy::ApiWrapper.create(full_domain, plan_limits[:limit], MINUTE_GRANULARITY, plan_limits[:account_paths])
-      end
-    end
+  end
 end

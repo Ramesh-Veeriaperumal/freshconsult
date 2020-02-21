@@ -17,12 +17,13 @@ module UsageMetrics::Features
                    :data_center_location, :advanced_social, :todos_reminder_scheduler,
                    :custom_status, :session_replay, :custom_domain, :requester_widget,
                    :contact_company_notes, :segments, :sandbox, :support_bot,
-                   :ticket_summary, :canned_forms, :allow_auto_suggest_solutions].freeze
+                   :ticket_summary, :canned_forms, :allow_auto_suggest_solutions,
+                   :article_versioning, :article_approval_workflow, :custom_reporting].freeze
   FEATURES_TRUE_BY_DEFAULT = [:default_ticket_view, :private_note,
                               :agent_performance, :ticket_export, :default_dashboard, :default_dispatcher,
                               :forward, :default_business_hours, :group_performance, :default_sla,
                               :helpdesk_in_depth, :timesheet_reports, :scheduling_reports, :customer_analysis, :gamification,
-                              :drill_down_to_tickets, :ticket_volume_trends, :performance_distribution,
+                              :drill_down_to_analytics, :ticket_volume_trends, :performance_distribution,
                               :image_annotation, :dynamic_content].freeze
 
   FEATURES_TRUE_BY_DEFAULT.each do |feature_name|

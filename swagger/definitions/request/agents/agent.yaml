@@ -46,6 +46,10 @@ properties:
   avatar_id:
     type: integer
     example: 100
+  freshcaller_agent:
+    type: boolean
+  agent_level_id:
+    type: integer
   search_settings:
     type: object
     properties:
@@ -93,6 +97,8 @@ example:
     available: false
   shortcuts_enabled: false
   avatar_id: 100
+  freshcaller_agent: true
+  agent_level_id: 3
   search_settings:
     tickets:
       include_subject: false

@@ -14,7 +14,8 @@ class PortalDecorator < ApiDecorator
       preferences: record.preferences,
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc),
-      helpdesk_logo: logo
+      helpdesk_logo: logo,
+      language: record.language
     }
     portal_hash[:discussion_category_ids] = record.portal_forum_categories.pluck(:forum_category_id) if forums_enabled?
     portal_hash[:fav_icon_url] = record.fetch_fav_icon_url if record.fav_icon

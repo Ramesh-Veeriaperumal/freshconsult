@@ -13,7 +13,7 @@ class AgentDecorator < ApiDecorator
   end
 
   def agent_hash
-    {
+    agent_info = {
       available: record.available,
       show_rr_toggle: record.toggle_availability?,
       latest_notes_first: Account.current.latest_notes_first_enabled?(record.user),
@@ -22,7 +22,7 @@ class AgentDecorator < ApiDecorator
       ticket_scope: record.ticket_permission,
       signature: record.signature_html,
       group_ids: group_ids,
-      role_ids:  record.user.user_roles.map(&:role_id),
+      role_ids:  record.user.role_ids,
       skill_ids: record.user.skill_ids,
       available_since: record.active_since.try(:utc),
       contact: ContactDecorator.new(record.user, {}).to_hash,
@@ -31,6 +31,11 @@ class AgentDecorator < ApiDecorator
       gdpr_admin_name: record.user.current_user_gdpr_admin,
       type: Account.current.agent_types_from_cache.find { |type| type.agent_type_id == record.agent_type }.name
     }
+    if Account.current.freshcaller_enabled?
+      agent_info[:freshcaller_agent] = record.freshcaller_agent.present? ? record.freshcaller_agent.try(:fc_enabled) : false
+    end
+    agent_info.merge!(gamification_options)
+    agent_info
   end
 
   def to_privilege_hash
@@ -118,11 +123,9 @@ class AgentDecorator < ApiDecorator
 
     def gamification_options
       return {} unless gamification_feature?(Account.current)
-      {
-        points:               record.points,
-        scoreboard_level_id:  record.scoreboard_level_id,
-        next_level_id:        record.next_level.try(:id)
-      }
+      { points: record.points,
+        agent_level_id: record.scoreboard_level_id,
+        next_level_id: record.next_level.try(:id) }
     end
 
     def user_object

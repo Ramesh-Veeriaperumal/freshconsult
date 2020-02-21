@@ -1,9 +1,14 @@
 module Helpdesk::Ticketfields::TicketStatus
+  include Redis::RedisKeys
+  include Redis::OthersRedis
   
   OPEN = 2 # Open Status
   PENDING = 3 # Pending Status
   RESOLVED = 4 # Resolved Status
   CLOSED = 5 # Closed Status
+
+  # Track the number of jobs to be executed on Ticket status deletion
+  TICKET_STATUS_DELETION_JOBS_COUNT = 2
 
   DEFAULT_STATUSES = {OPEN => "Open", PENDING => "Pending", RESOLVED => "Resolved", CLOSED => "Closed"}
 
@@ -44,6 +49,26 @@ module Helpdesk::Ticketfields::TicketStatus
     end
   end
 
+  def create_redis_key_on_job_start(status_id)
+    # Whichever the job stats first will set this key with value as 0
+    set_others_redis_key_if_not_present(status_deletion_jobs_key(status_id), 0) if Account.current.ticket_field_revamp_enabled?
+  end
+
+  def increment_redis_key_on_job_end(status_id)
+    # Each job will increment the key by 1 on its completion
+    increment_others_redis(status_deletion_jobs_key(status_id)) if Account.current.ticket_field_revamp_enabled?
+  end
+
+  def destroy_ticket_status_on_all_jobs_completion(status_id)
+    # On each job completion we have to check for overall job completion if the completed jobs count
+    # matches the overall jobs count then we have to destroy the ticket status
+    if (get_others_redis_key(status_deletion_jobs_key(status_id)).to_i == TICKET_STATUS_DELETION_JOBS_COUNT) && Account.current.ticket_field_revamp_enabled?
+      ticket_status = Account.current.ticket_statuses.find_by_status_id(status_id)
+      ticket_status.destroy if ticket_status.deleted?
+      remove_others_redis_key(status_deletion_jobs_key(status_id))
+    end
+  end
+
   private
 
     def validate_default_statuses(t_s)
@@ -66,5 +91,9 @@ module Helpdesk::Ticketfields::TicketStatus
 
     def custom_status_name_same_as_deleted_status_name?(status, attr)
       ((status.name).casecmp(attr[:name]) == 0 && status.deleted? && !(DEFAULT_STATUSES.keys.include?(attr[:status_id])))
+    end
+
+    def status_deletion_jobs_key(status_id)
+      format(TICKET_STATUS_DELETION_JOBS, account_id: Account.current.id, status_id: status_id)
     end
 end

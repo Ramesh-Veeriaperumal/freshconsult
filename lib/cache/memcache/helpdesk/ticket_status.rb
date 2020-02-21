@@ -7,6 +7,8 @@ module Cache::Memcache::Helpdesk::TicketStatus
     MemcacheKeys.delete_from_cache(key)
     key = onhold_and_closed_memcache_key(Account.current.id)
     MemcacheKeys.delete_from_cache(key)
+    key = ticket_field_statuses_memcache_key
+    MemcacheKeys.delete_from_cache(key)
   end
 
   def status_names_from_cache(account)
@@ -42,4 +44,7 @@ module Cache::Memcache::Helpdesk::TicketStatus
       ACCOUNT_STATUSES % { :account_id => account_id }
     end
 
+    def ticket_field_statuses_memcache_key
+      format(TICKET_FIELD_STATUSES, account_id: Account.current.id, ticket_field_id: ticket_field_id)
+    end
 end

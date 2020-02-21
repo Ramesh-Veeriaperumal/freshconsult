@@ -1,14 +1,16 @@
 class AgentDelegator < BaseDelegator
-  attr_accessor :group_ids, :role_ids, :available, :user_attributes, :occasional, :agent_type
+  attr_accessor :group_ids, :role_ids, :available, :user_attributes, :occasional, :agent_type, :agent_level_id
 
   validate :validate_group_ids, unless: -> { @group_ids.nil? }
   validate :validate_role_ids, :check_role_permission, unless: -> { @role_ids.nil? }
+  validate :validate_field_agent_role_ids, if: -> { @role_ids && is_a_field_agent? && errors[:role_ids].blank? }
   validate :validate_avatar_extension, if: -> { @avatar_attachment && errors[:attachment_ids].blank? }
   validate :validate_email_in_freshid, if: -> { @user_attributes && Account.current.freshid_integration_enabled? && @action == 'create' }
   validate :validate_occasional_with_agent_type, if: -> { @occasional && @agent_type && is_a_field_agent? }
   validate :validate_field_agent_groups, if: -> { @agent_type && is_a_field_agent? }
   validate :validate_manage_availability, if: -> { !@available.nil? && @item.present? }
   validate :validate_skill_ids, if: -> { @user_attributes && @user_attributes[:skill_ids] }
+  validate :validate_agent_level_id, if: -> { @agent_level_id }
 
   def initialize(record, options = {})
     @group_ids = options[:group_ids]
@@ -17,6 +19,7 @@ class AgentDelegator < BaseDelegator
     @user_attributes = options[:user_attributes]
     @occasional = options[:occasional]
     @agent_type = options[:agent_type]
+    @agent_level_id = options[:agent_level_id]
     @item = record
     options[:attachment_ids] = Array.wrap(options[:avatar_id].to_i) if options[:avatar_id]
     super(record, options)
@@ -29,6 +32,15 @@ class AgentDelegator < BaseDelegator
     if invalid_roles.present?
       errors[:role_ids] << :invalid_list
       (@error_options ||= {}).merge!(role_ids: { list: invalid_roles.join(', ') })
+    end
+  end
+
+  def validate_field_agent_role_ids
+    field_tech_role_id = Account.current.roles_from_cache.find { |role| role.name == Helpdesk::Roles::FIELD_TECHNICIAN_ROLE[:name] }.try(:id)
+    invalid_roles = @role_ids - [field_tech_role_id] unless @role_ids.size == 1 && @role_ids.map(&:to_i).first == field_tech_role_id
+    if invalid_roles.present?
+      err_msg = ErrorConstants::ERROR_MESSAGES[:should_not_have_other_roles] + ': ' + invalid_roles.join(', ')
+      errors.add(:role_ids, err_msg)
     end
   end
 
@@ -108,6 +120,17 @@ class AgentDelegator < BaseDelegator
     errors[:occasional] << :occasional_is_not_true_for_field_agent if @occasional == true
   end
 
+  def validate_agent_level_id
+    if (@action == 'create' || @action == 'update') && scoreboard_levels.find_by_id(@agent_level_id).blank?
+      errors[:agent_level_id] << :invalid_agent_level_id
+    elsif @action == 'update'
+      scoreboard_level_id = Account.current.agents.find_by_user_id(@user_attributes['id']).try(:scoreboard_level_id)
+      scoreboard_level = scoreboard_levels.find_by_id(scoreboard_level_id)
+      allowable_ids = scoreboard_levels.level_up_for scoreboard_level
+      errors[:agent_level_id] << :incorrect_agent_level_id unless allowable_ids.map(&:id).include?(@agent_level_id)
+    end
+  end
+
   private
 
     def freshid_user_details(email)
@@ -123,5 +146,9 @@ class AgentDelegator < BaseDelegator
       group_type_name = Agent::AGENT_GROUP_TYPE_MAPPING[agent_type_name]
       group_type_id = GroupType.group_type_id(group_type_name)
       Account.current.groups_from_cache.select { |group| group.group_type == group_type_id }
+    end
+
+    def scoreboard_levels
+      Account.current.scoreboard_levels
     end
 end

@@ -11,6 +11,9 @@
       "freshconnect_signup_supported": true,
       "freshmarketer_signup_supported": true
       },
+      "custom_survey_result_key": {
+        "key": "EJ[1:jXcJ+bobmJSZFUxpKBY++B4gV1fPGUowmMyAc8FW/0Q=:qyBxWRKWlbCaF+NADLU7weePPOEB4AaR:5EeeA53XbwYxcdV5gR7nc9jebJFzMB2HDbEWkh6i5HQFRIf92nqejM0pucIg0Nrm2PlIfgo/T71TAnyKXsfGjFfs+0Tj]"
+      },
       "asknicely_app": {
         "hash_token": "EJ[1:i5f0QpyxZMd840WWwUiBnUSjyVluR+Mb3JvbcIc9/24=:sqbsBi3TsMvJJVizA3HU8kOFaFHu6Zm4:KwzYTVZjembNQmLT2DZcLlUP+7FrJIw8PdfdqbZa9wRGIUyaxrI05ylYLmSOMfNvZap0BBbfKaoPwRPzw6fwWAaA5ujMxspxAHdQ/tLL9pl9IkCVVLa3rpQTTNdFkfVVoTqFlZ03zXFO8akcbb5+1cvjL6QGspGyVdm9B+eMsIgd1FEFxkUOk+UKZ9wmgawr]",
         "_domain_key": "freshworkstest",
@@ -1006,7 +1009,7 @@
         "_visitor_widget_host_url": "https://webchat-mryellow.freshpori.com",
         "_api_host_url": "https://mr-yellow.freshpori.com",
         "signup": {
-          "_host": "https://mr-orange.freshpori.com/internal/system42/",
+          "_host": "https://mr-yellow.freshpori.com/internal/system42/",
           "secret": "EJ[1:agdMwKSxBnJe0E8/KT3Q3SafRIycf9BaGM6N1vsqm2I=:V2ecreMuQQxwaA8He/WBkppM8wXRJ75a:67QI2c/fbH8t/5U+1IkaJdRZRoQJ8dh3QIIvSelW1WexH0enqp35HJkP2PBo21FXD8JFqGQJ0W7oq2qOUNxk4uplZ42twVIyoF23EXQz3lsRBLw=]"
         }
       },
@@ -1758,7 +1761,7 @@
           "_confidence_threshold": 80
         },
         "ticket_properties_suggester": {
-          "_url": "https://autodispatch-1642351674.freshpo.com/",
+          "_url": "https://autodispatch-freshdesk.freshworksapi.com/",
           "_timeout": 15,
           "_expiry_in_days": 365
         },
