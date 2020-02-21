@@ -10,6 +10,7 @@ class MergeTickets < BaseWorker
     source_tickets = account.tickets.where(:display_id => args[:source_ticket_ids] )
     target_ticket = account.tickets.find(args[:target_ticket_id])
     source_ticket_note_ids = []
+    set_locale
     source_tickets.each do |source_ticket|
       delete_ticket_summary(source_ticket)
       move_source_time_sheets_to_target(source_ticket,args[:target_ticket_id])
@@ -32,6 +33,8 @@ class MergeTickets < BaseWorker
     # notes are added to the target ticket via update_all. This wont trigger callback
     # So sending it manually
     update_target_ticket_notes_to_subscribers(target_ticket, source_ticket_note_ids.flatten, args[:source_ticket_ids])
+  ensure
+    I18n.locale = I18n.default_locale
   end
 
   def delete_ticket_summary(source_ticket)
@@ -138,5 +141,9 @@ class MergeTickets < BaseWorker
                                                       :full_domain => source_ticket.portal.host)}<br/><br/>
       <b>#{I18n.t('Subject')}:</b> #{source_ticket.subject}<br/><br/>
       <b>#{I18n.t('description')}:</b><br/>#{source_ticket.description_html}}
+  end
+
+  def set_locale
+    I18n.locale = User.current.try(:language) || I18n.default_locale
   end
 end
