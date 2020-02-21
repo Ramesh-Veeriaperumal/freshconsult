@@ -16,6 +16,7 @@ module Channel
         custom_fields: params[cname][:custom_field],
         default_company: @company_id
       }
+      delegator_params.merge!(twitter_requester_fields_hash) if Account.current.twitter_requester_fields_enabled?
       contact_delegator = ContactDelegator.new(@item, delegator_params)
       if !contact_delegator.valid?(:channel_contact_create)
         render_custom_errors(contact_delegator, true)
@@ -91,6 +92,13 @@ module Channel
 
       def skip_privilege_check?
         channel_source?(:twitter) || channel_source?(:proactive) || channel_source?(:facebook)
+      end
+
+      def twitter_requester_fields_hash
+        {
+          twitter_profile_status: params[cname][:twitter_profile_status],
+          twitter_followers_count: params[cname][:twitter_followers_count]
+        }
       end
   end
 end

@@ -4,7 +4,7 @@ class ContactDecorator < ApiDecorator
   delegate  :id, :active, :address, :company_name, :deleted, :description,
             :customer_id, :email, :job_title, :language, :mobile,
             :name, :phone, :time_zone, :twitter_id, :fb_profile_id, :external_id,
-            :avatar, :whitelisted, :unique_external_id, :fb_profile_id, :import_id,
+            :avatar, :whitelisted, :unique_external_id, :twitter_requester_fields, :fb_profile_id, :import_id,
             :deleted_at, :blocked, :blocked_at, :whitelisted, :parent_id, :extn,
             :preferences, :password_salt, :user_role, :delta, :privileges,
             :crypted_password, :last_login_at, :current_login_at, :history_column,
@@ -12,7 +12,7 @@ class ContactDecorator < ApiDecorator
             :failed_login_count, :last_seen_at, :posts_count, to: :record
 
   delegate :company_id, :client_manager, to: :default_company, allow_nil: true
-  delegate :multiple_user_companies_enabled?, :unique_contact_identifier_enabled?, to: 'Account.current'
+  delegate :multiple_user_companies_enabled?, :unique_contact_identifier_enabled?, :twitter_requester_fields_enabled?, to: 'Account.current'
 
   FIELD_NAME_MAPPING = {
     'tag_names' => 'tags'
