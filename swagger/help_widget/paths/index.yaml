@@ -1,0 +1,20 @@
+/attachment:
+  $ref: ./attachment_create.yaml
+/search/solutions:
+  $ref: ./search_solutions.yaml
+/suggested_articles:
+  $ref: ./suggested_articles.yaml
+/solutions/article/{id}:
+  $ref: /solution_article_show.yaml
+/solutions/article/{id}/hit:
+  $ref: /solution_article_hit.yaml
+/solutions/article/{id}/thumbs_up:
+  $ref: /solution_article_thumbs_up.yaml
+/solutions/article/{id}/thumbs_down:
+  $ref: /solution_article_thumbs_down.yaml
+/bootstrap:
+  $ref: /bootstrap_index.yaml
+/ticket:
+  $ref: /ticket_create.yaml
+/ticket_fields:
+  $ref: /ticket_fields_list.yaml

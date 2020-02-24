@@ -1,14 +1,14 @@
 post:
-  tags: [Help Widget]
-  summary: Attachment for widget
-  description: Single Attachment for widget
+  tags: [Ticket]
+  description: Create a ticket
   parameters:
-    - in: body
-      name: attachments
+    - name: data
+      in: body
+      required: true
       schema:
-        $ref: '#/definitions/widget_attachment_create'
+        $ref: '#/definitions/ticket_input'
   responses:
-    200:
+    201:
       description: Success
       schema:
         type: object
@@ -19,5 +19,5 @@ post:
       description: Bad Request Error
       schema:
         $ref: '#/definitions/bad_request_error'
-    403:
-      description: Access denied
+    200:
+      description: Success
