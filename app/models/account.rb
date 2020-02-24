@@ -25,8 +25,6 @@ class Account < ActiveRecord::Base
   include Account::ProxyFeature
   include Cache::Memcache::Admin::CustomData
   include Account::SidekiqControl::RouteDrop
-
-  delegate :add_launchgroups, :remove_launchgroups, to: :account_additional_settings
   
   has_many_attachments
 
@@ -115,17 +113,6 @@ class Account < ActiveRecord::Base
       feature_list
     end
   end
-
-  # Need to be fixed - for loop issue with hiding_confidential_logs feature check.
-  # def launchgroups
-  #    Sharding.select_shard_of(self.id) do
-  #      [
-  #        plan_name.to_s, 
-  #        ActiveRecord::Base.current_shard_selection.shard.to_s,
-  #        subscription.state.to_s
-  #      ] | Array(account_additional_settings.try(:launchgroups))
-  #    end
-  #  end
 
   def time_zone
     tz = self.read_attribute(:time_zone)
@@ -1070,11 +1057,6 @@ class Account < ActiveRecord::Base
     rescue Errno::ETIMEDOUT
       false
     end
-
-    def handle_launchparty_exception(e)
-       NewRelic::Agent.notice_error(e)
-       return false
-     end
 
     def generate_secret_token
       Digest::MD5.hexdigest(Helpdesk::SHARED_SECRET + self.full_domain + Time.now.to_f.to_s).downcase
