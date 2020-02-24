@@ -91,18 +91,16 @@
 			</div>
 		<% end %>
 
-		<% if current_account.focus_mode_enabled? %>
-			<hr>
-			<div class="row-fluid focus-mode-option">
-				<div class="span10 align-left focus-mode-toggle-freshid"><%= t("focus_mode_toggle") %></div>
-				<div class="span2 align-right focus-mode-toggle-button-freshid">
-					<input rel="toggle" type="checkbox" id="focus_mode" name="focus_mode_toggle" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" <%if current_user.preferences[:agent_preferences][:focus_mode]%>checked="true"<%end%> />
-				</div>
+		<hr>
+		<div class="row-fluid focus-mode-option">
+			<div class="span10 align-left focus-mode-toggle-freshid"><%= t("focus_mode_toggle") %></div>
+			<div class="span2 align-right focus-mode-toggle-button-freshid">
+				<input rel="toggle" type="checkbox" id="focus_mode" name="focus_mode_toggle" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" <%if current_user.preferences[:agent_preferences][:focus_mode]%>checked="true"<%end%> />
 			</div>
-			<div class="row-fluid">
-				<div class=" span12 align-left focus-mode-tip-freshid"><%= t("focus_mode_toggle_tip") %></div>
-			</div>
-		<% end %>
+		</div>
+		<div class="row-fluid">
+			<div class=" span12 align-left focus-mode-tip-freshid"><%= t("focus_mode_toggle_tip") %></div>
+		</div>
 
 	</div>
 </div>
