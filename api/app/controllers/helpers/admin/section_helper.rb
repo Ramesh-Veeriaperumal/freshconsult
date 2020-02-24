@@ -131,12 +131,15 @@ module Admin::SectionHelper
       end
     end
 
-    def section_inside_ticket_field?(tf)
-      Account.current.sections.where(ticket_field_id: tf.id).exists?
+    def other_section_inside_ticket_field?(ticket_field, section)
+      (ticket_field.field_sections || []).any? { |field_section| field_section.id != section.id }
     end
 
     def clear_on_empty_section
-      @ticket_field.field_options.delete('section_present') unless section_inside_ticket_field?(@ticket_field)
+      unless other_section_inside_ticket_field?(@ticket_field, @item)
+        @ticket_field.field_options = @ticket_field.field_options.with_indifferent_access
+        @ticket_field.field_options.delete(:section_present)
+      end
     end
 
     def construct_sections(ticket_field, section = nil)
