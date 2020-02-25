@@ -107,6 +107,7 @@ module ModelsSolutionsTestHelper
       tags: article.tags,
       seo_data: article.seo_data,
       language_id: article.language_id,
+      language_code: article.language_code,
       account_id: article.account_id,
       created_at: [article.created_at, parent.created_at].max.try(:utc).try(:iso8601),
       updated_at: [article.updated_at, parent.updated_at].max.try(:utc).try(:iso8601)

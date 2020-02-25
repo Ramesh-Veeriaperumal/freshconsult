@@ -8,7 +8,7 @@ module CentralConstants
     'Helpdesk::Note' => '0.6',
     'Solution::Category' => '0.1',
     'Solution::Folder' => '0.1',
-    'Solution::Article' => '0.1',
+    'Solution::Article' => '0.2',
     'Bot::FeedbackMapping' => '0.1',
     'User' => '0.3',
     'Company' => '1.2',
