@@ -96,6 +96,28 @@ module ApiSearch
       match_json [search_solution_article_pattern(article, :filtered_solution_search)]
     end
 
+    def test_results_with_help_widget_based_solutions_context
+      article_meta = create_article(article_params)
+      category_id = article_meta.solution_folder_meta.solution_category_meta.id
+      article = article_meta.primary_article
+      stub_private_search_response([article]) do
+        post :results, construct_params(version: 'private', context: 'help_widget_based_solutions', term: article.title, category_ids: [category_id], limit: 3)
+      end
+      assert_response 200
+      match_json [search_solution_article_pattern(article, :filtered_solution_search)]
+    end
+
+    def test_results_with_help_widget_based_solutions_context_with_drafts
+      article_meta = create_article(article_params.merge!(status: 1))
+      category_id = article_meta.solution_folder_meta.solution_category_meta.id
+      article = article_meta.primary_article
+      stub_private_search_response([]) do
+        post :results, construct_params(version: 'private', context: 'help_widget_based_solutions', term: article.title, category_ids: [category_id], limit: 3)
+      end
+      assert_response 200
+      match_json []
+    end
+
     def test_results_without_solutions_privilege
       User.any_instance.stubs(:privilege?).with(:view_solutions).returns(false)
       post :results, construct_params(version: 'private', context: 'spotlight', term: Faker::Lorem.word, limit: 3)

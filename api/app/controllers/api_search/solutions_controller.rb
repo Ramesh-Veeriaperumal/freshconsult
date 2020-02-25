@@ -18,7 +18,7 @@ module ApiSearch
         @search_context = :agent_spotlight_solution
       elsif params[:context] == 'insert_solutions'
         @search_context = :agent_insert_solution
-      elsif bot_map_context? || portal_based_solutions?
+      elsif bot_map_context? || portal_based_solutions? || help_widget_based_solutions?
         @search_context = :filtered_solution_search
       else
         @search_context = :agent_spotlight_solution
@@ -39,6 +39,10 @@ module ApiSearch
         params[:context] == 'portal_based_solutions'
       end
 
+      def help_widget_based_solutions?
+        params[:context] == 'help_widget_based_solutions'
+      end
+
       def decorator_options
         options = {}
         options[:user] = @user if @user
@@ -51,11 +55,11 @@ module ApiSearch
           es_params[:article_category_id] = @category_id
           es_params[:article_folder_id] = @folder_id
           es_params[:article_category_ids] = @category_ids
-          if bot_map_context?
+          if bot_map_context? || help_widget_based_solutions?
             #To skip draft articles in search
             es_params[:article_status] = Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
-            es_params[:article_visibilities] = Solution::Constants::BOT_VISIBILITIES
           end
+          es_params[:article_visibilities] = Solution::Constants::BOT_VISIBILITIES if bot_map_context?
           es_params[:language_id] = @language_id || Language.for_current_account.id
 
           unless @search_sort.to_s == 'relevance'
