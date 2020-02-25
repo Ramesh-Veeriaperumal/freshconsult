@@ -30,7 +30,7 @@
   canned_response_tour: 24
   explore_productivity_features: 25
   analytics_video: 26
-  analytics_tour: 27
+  canned_analytics_tour: 27
   explore_performance_feature: 28
   app_video: 29
   app_integration: 30
@@ -60,13 +60,15 @@
   automation_tour: 54
   slareminder_tour: 55
   faq_tour: 56
+  overview_fsm_video: 57
+  explore_fsm_features: 58
 :onboarding_goals:
-  organiseand_keep_track: 57
-  unify_support_channels: 58
-  automate_repetitive_tasks: 59
-  offer_self_service: 60
-  track_agents_performance: 61
-  integrate_with_apps: 62
+  organiseand_keep_track: 59
+  unify_support_channels: 60
+  automate_repetitive_tasks: 61
+  offer_self_service: 62
+  track_agents_performance: 63
+  integrate_with_apps: 64
 
 :onboarding_v2_goals:
   - organiseand_keep_track
@@ -104,7 +106,7 @@
   - canned_response_tour
   - explore_productivity_features
   - analytics_video
-  - analytics_tour
+  - canned_analytics_tour
   - explore_performance_feature
   - app_video
   - app_integration
@@ -134,3 +136,5 @@
   - analytics_tour
   - integration_tour
   - custom_apps
+  - overview_fsm_video
+  - explore_fsm_features
