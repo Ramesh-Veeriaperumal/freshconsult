@@ -31,7 +31,7 @@ module Widget
     end
 
     def teardown
-      @widget.destroy
+      @widget.try(:destroy)
       super
       controller.class.any_instance.unstub(:api_current_user)
       unset_login_support

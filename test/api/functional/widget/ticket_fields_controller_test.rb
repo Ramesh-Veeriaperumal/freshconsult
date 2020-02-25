@@ -20,8 +20,7 @@ module Widget
     end
 
     def teardown
-      p "TicketFieldsControllerTest :: teardown @widget  :: #{@widget.inspect}"
-      @widget.destroy if @widget.present?
+      @widget.try(:destroy)
       super
       User.unstub(:current)
       unset_login_support
