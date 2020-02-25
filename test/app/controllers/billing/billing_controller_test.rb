@@ -14,6 +14,10 @@ class Billing::BillingControllerTest < ActionController::TestCase
       customer: {
         id: @account.id,
         auto_collection: 'on'
+      },
+      subscription: {
+        plan_id: Billing::Subscription.helpkit_plan.key(@account.plan_name.to_s).dup,
+        plan_quantity: @account.subscription.agent_limit
       }
     }
   end
@@ -235,6 +239,19 @@ class Billing::BillingControllerTest < ActionController::TestCase
     unstub_subscription_settings
     ChargeBee::Subscription.any_instance.unstub(:status)
     remove_others_redis_key(card_expiry_key)
+  end
+
+  def test_subscription_renewed_event_to_schedule
+    stub_subscription_settings
+    ChargeBee::Subscription.any_instance.stubs(:status).returns('active')
+    user = add_new_user(@account)
+    content = "{\"id\":\"ev_AzyyT8RpoY2XAyS9\",\"occurred_at\":1581076064,\"source\":\"scheduled_job\",\"object\":\"event\",\"api_version\":\"v1\",\"content\":{\"subscription\":{\"id\":\"1171555\",\"plan_id\":\"estate_omni_jan_19_monthly\",\"plan_quantity\":8,\"status\":\"active\",\"trial_start\":1565699778,\"trial_end\":1567853255,\"current_term_start\":1581076055,\"current_term_end\":1583581655,\"created_at\":1563205594,\"started_at\":1563205594,\"activated_at\":1567853255,\"has_scheduled_changes\":false,\"object\":\"subscription\",\"due_invoices_count\":1,\"due_since\":1581076055,\"total_dues\":68000},\"customer\":{\"id\":\"#{@account.id}\",\"first_name\":\"Youma\",\"last_name\":\"Fall\",\"email\":\"fall@paydunya.com\",\"company\":\"PayDunya\",\"auto_collection\":\"on\",\"allow_direct_debit\":false,\"created_at\":1563205594,\"taxability\":\"taxable\",\"object\":\"customer\",\"billing_address\":{\"first_name\":\"Youma\",\"last_name\":\"Dieng Fall\",\"line1\":\"Ouest foire Forum center\",\"city\":\"Dakar\",\"state\":\"Dakar\",\"country\":\"SN\",\"object\":\"billing_address\"},\"card_status\":\"valid\",\"payment_method\":{\"object\":\"payment_method\",\"type\":\"card\",\"reference_id\":\"cus_FlYZ27TcHO5R2T/pm_1FlYroFIIj5rWBMAXOD7A3jg\",\"gateway\":\"stripe\",\"status\":\"valid\"},\"account_credits\":0,\"refundable_credits\":0,\"excess_payments\":0,\"cf_account_domain\":\"paydunya.freshdesk.com\",\"meta_data\":{\"customer_key\":\"fdesk.1171555\"}},\"card\":{\"status\":\"valid\",\"reference_id\":\"cus_FlYZ27TcHO5R2T/pm_1FlYroFIIj5rWBMAXOD7A3jg\",\"gateway\":\"stripe\",\"first_name\":\"Youma\",\"last_name\":\"Dieng Fall\",\"iin\":\"******\",\"last4\":\"2339\",\"card_type\":\"visa\",\"expiry_month\":11,\"expiry_year\":2021,\"billing_addr1\":\"Ouest foire Forum center\",\"billing_city\":\"Dakar\",\"billing_state\":\"Dakar\",\"billing_country\":\"SN\",\"object\":\"card\",\"masked_number\":\"************2339\",\"customer_id\":\"1171555\"},\"invoice\":{\"id\":\"FD978228\",\"sub_total\":6887278,\"start_date\":1578397655,\"customer_id\":\"1171555\",\"subscription_id\":\"1171555\",\"recurring\":true,\"status\":\"payment_due\",\"price_type\":\"tax_exclusive\",\"end_date\":1581076055,\"amount\":68000,\"amount_paid\":0,\"amount_adjusted\":0,\"credits_applied\":0,\"amount_due\":68000,\"dunning_status\":\"in_progress\",\"next_retry\":1581248855,\"object\":\"invoice\",\"first_invoice\":false,\"currency_code\":\"[FILTERED]\",\"tax\":0,\"line_items\":[{\"date_from\":1581076055,\"entity_type\":\"plan\",\"type\":\"charge\",\"date_to\":1583581655,\"unit_amount\":8500,\"quantity\":8,\"amount\":68000,\"is_taxed\":false,\"tax\":0,\"object\":\"line_item\",\"description\":\"[FILTERED]\",\"entity_id\":\"estate_omni_jan_19_monthly\"}],\"linked_transactions\":[{\"txn_id\":\"txn_AzyyT8RpoY1HcyQN\",\"txn_type\":\"payment\",\"applied_amount\":68000,\"applied_at\":1581076064,\"txn_status\":\"failure\",\"txn_date\":1581076060,\"txn_amount\":68000}],\"linked_orders\":null,\"billing_address\":{\"first_name\":\"Youma\",\"last_name\":\"Dieng Fall\",\"company\":\"PayDunya\",\"line1\":\"Ouest foire Forum center\",\"city\":\"Dakar\",\"state\":\"Dakar\",\"country\":\"SN\",\"object\":\"billing_address\"},\"notes\":[{\"note\":\"\"}]}},\"event_type\":\"subscription_renewed\",\"webhook_status\":\"scheduled\",\"webhooks\":[{\"id\":\"wh_56\",\"webhook_status\":\"scheduled\",\"object\":\"webhook\"}],\"digest\":\"94224b4bec4ee74ceae02d9fb0a28bf4\",\"name_prefix\":\"fdadmin_\",\"path_prefix\":null,\"action\":\"trigger\",\"controller\":\"fdadmin/billing\"}"
+    Billing::ChargebeeEventListener.expects(:perform_at).once
+    post :trigger, event_type: 'subscription_renewed', content: JSON.parse(content)['content'], format: 'json'
+    assert_response 200
+  ensure
+    unstub_subscription_settings
+    ChargeBee::Subscription.any_instance.unstub(:status)
   end
 
   def test_subscription_cancelled_event
