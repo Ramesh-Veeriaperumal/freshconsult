@@ -482,12 +482,6 @@ HEREDOC
 
     node[:ymls][:database] = @database_config if @database_config
 
-    # Passing this env variable at shell level from k8s to enable/disable proxysql
-    if ENV['PROXYSQL_SHELL_ENABLE'] && ENV['PROXYSQL_SHELL_ENABLE'] == 'true'
-      node[:proxysql][:enabled] = true
-    else 
-      node[:proxysql][:enabled] = false
-    end
     files.each {|filename|
       STDERR.puts "Processing #{filename}"
       if node[:yml_search].include?(File.basename(filename)) then
