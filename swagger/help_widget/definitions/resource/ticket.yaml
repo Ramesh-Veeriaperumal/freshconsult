@@ -1,0 +1,57 @@
+
+  type: object
+  properties:
+    email_config_id:
+      type: integer
+    group_id:
+      type: integer
+    priority:
+      type: integer
+      enum: [1,2,3,4]
+    requester_id:
+      type: integer
+    responder_id:
+      type: integer
+    source:
+      type: integer
+      enum: [1,2,3,7,8,9,10]
+    status:
+      type: integer
+      enum: [2,3,4,5,6,7]
+    subject:
+      type: string
+    type:
+      type: string
+      enum: ['Question','Incident','Problem','Feature Request']
+    product_id:
+      type: integer
+    due_by:
+      type: string
+      format: date-time
+    fr_due_by:
+      type: string
+      format: date-time
+    description:
+      type: string
+    custom_fields: 
+      type: object
+    tags:
+      type: array
+      items:
+        type: string
+    attachments:
+      type: array
+      items:
+        type: string
+        format: byte
+    parent_template_id:
+      type: integer
+    child_template_ids:
+      type: array
+      items:
+        type: integer
+    inline_attachment_ids:
+      type: array
+      description: Represents the IDs of the attachments corresponding to inline images
+      items:
+        type: integer

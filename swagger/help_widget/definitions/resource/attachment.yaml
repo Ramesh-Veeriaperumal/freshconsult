@@ -1,0 +1,19 @@
+type: object
+allOf:
+  - $ref: '#/definitions/extension_generic'
+  - properties:
+      content_type:
+        type: string
+      size:
+        type: integer
+        format: int64
+      name:
+        type: string
+      attachment_url:
+        type: string
+      inline_url:
+        type: string
+      thumb_url:
+        type: string
+      is_shared:
+        type: boolean

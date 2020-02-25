@@ -580,28 +580,6 @@
 /help_widgets/update:
   $ref: ./help_widgets/update.yaml
 
-/help_widgets/{widget_id}/suggested_article_rules:
-  $ref: ./help_widgets/suggested_article_rules/index_and_create.yaml
-
-/help_widgets/{widget_id}/suggested_article_rules/{id}:
-  $ref: ./help_widgets/suggested_article_rules/crud.yaml
-
-/widget/attachment:
-  $ref: ./widget/attachment_create.yaml
-/widget/search/solutions:
-  $ref: ./widget/search_solutions.yaml
-/widget/suggested_articles:
-  $ref: ./widget/suggested_articles.yaml
-/widget/solutions/article/{id}:
-  $ref: /widget/solution_article_show.yaml
-/widget/solutions/article/{id}/hit:
-  $ref: /widget/solution_article_hit.yaml
-/widget/solutions/article/{id}/thumbs_up:
-  $ref: /widget/solution_article_thumbs_up.yaml
-/widget/solutions/article/{id}/thumbs_down:
-  $ref: /widget/solution_article_thumbs_down.yaml
-/widget/bootstrap:
-  $ref: /widget/bootstrap_index.yaml
 
 # Business Hours
 /business_hours:

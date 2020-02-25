@@ -28,6 +28,10 @@ development:
 
 test:
   <<: *defaults
+  host: "localhost:3000"
+  lang_host: "localhost:3000"
+  key: "testkey123"
+  lang_key: "testkey123"
 
 staging:
   <<: *defaults

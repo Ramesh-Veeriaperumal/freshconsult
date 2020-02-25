@@ -20,6 +20,7 @@ class Solution::Article < ActiveRecord::Base
     a.add :tags
     a.add :seo_data
     a.add :language_id
+    a.add :language_code
     a.add :account_id
     a.add proc { |x| x.utc_format([x.created_at, x.parent.created_at].max) }, as: :created_at
     a.add proc { |x| x.utc_format([x.updated_at, x.parent.updated_at].max) }, as: :updated_at
@@ -28,6 +29,7 @@ class Solution::Article < ActiveRecord::Base
   api_accessible :central_publish_destroy do |a|
     a.add :parent_id, as: :id
     a.add :account_id
+    a.add :language_code
   end
 
   api_accessible :votes do |a|

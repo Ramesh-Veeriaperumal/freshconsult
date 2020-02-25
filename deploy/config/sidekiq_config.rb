@@ -246,9 +246,9 @@ class SidekiqConfigUsEast
     dedicated_bulk = ["bulk_scheduled", "exports", "occasional"]
     dedicated_email = ["email", "mailbox_jobs"]
     dedicated_occasional = ["scheduled", "occasional"]
-    dedicated_central = ["central_realtime","external", "realtime"]
+    dedicated_central = ["central_realtime"]
     dedicated_scheduled = ["scheduled", "maintainence"]
-    dedicated_common = ["realtime", "scheduled", "occasional" ,"email", "mailbox_jobs", "bulk_api", "maintainence", "external", "trial", "spam", "exports", "bulk_scheduled", "central_realtime"]
+    dedicated_common = ["realtime", "scheduled", "occasional", "email", "mailbox_jobs", "bulk_api", "maintainence", "external", "trial", "spam", "exports", "bulk_scheduled"]
 
 
 

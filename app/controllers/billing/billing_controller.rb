@@ -5,8 +5,6 @@ class Billing::BillingController < ApplicationController
   include Billing::Constants
   include Billing::BillingHelper
 
-  DEFAULT_AGENT_LIMIT = 50000
-
   skip_before_filter :check_privilege, :verify_authenticity_token,
                       :set_current_account, :set_time_zone, :set_locale, 
                       :check_account_state, :ensure_proper_protocol, :ensure_proper_sts_header,
@@ -111,44 +109,6 @@ class Billing::BillingController < ApplicationController
       Rails.logger.debug @subscription_data.inspect
     end
 
-    def subscription_info(subscription, customer)
-      {
-        :renewal_period => billing_period(subscription.plan_id),
-        :agent_limit => Subscription::NEW_SPROUT.include?(subscription_plan(subscription.plan_id).name) ? DEFAULT_AGENT_LIMIT : subscription.plan_quantity,
-        :state => subscription_state(subscription, customer),
-        :next_renewal_at => next_billing(subscription)
-      }
-    end
-
-    def billing_period(plan_code)
-      Billing::Subscription.billing_cycle[plan_code]
-    end
-
-    def subscription_state(subscription, customer)
-      status =  subscription.status
-      
-      case
-        when (customer.auto_collection.eql?(OFFLINE) and status.eql?(ACTIVE))
-          ACTIVE
-        when status.eql?(IN_TRIAL)
-          TRIAL
-        when (status.eql?(ACTIVE) and customer.card_status.eql?(NO_CARD))
-          FREE
-        when status.eql?(ACTIVE)
-          ACTIVE
-        when (status.eql?(CANCELLED))
-          SUSPENDED
-      end   
-    end
-
-    def next_billing(subscription)
-      if (renewal_date = subscription.current_term_end)
-        Time.at(renewal_date).to_datetime.utc
-      else
-        Time.at(subscription.trial_end).to_datetime.utc
-      end
-    end
-
     #Events
     def subscription_changed(content)
       plan = subscription_plan(@billing_data.subscription.plan_id)
@@ -168,6 +128,12 @@ class Billing::BillingController < ApplicationController
     end
 
     def subscription_renewed(content)
+      if throttle_subscription_renewal?(content[:subscription][:plan_quantity], content[:subscription][:plan_id],
+                                        content[:subscription][:addons], @account)
+        Rails.logger.info "Throttling subscription_renewed event for the account #{@account.id}"
+        return Billing::ChargebeeEventListener.perform_at(2.minutes.from_now, params.merge(account_id: @account.id))
+        
+      end
       @account.launch(:downgrade_policy)
       @account.subscription.update_attributes(@subscription_data)
       if redis_key_exists?(card_expiry_key)
@@ -241,13 +207,6 @@ class Billing::BillingController < ApplicationController
       invoice =  @account.subscription.subscription_invoices.find_by_chargebee_invoice_id(invoice_hash[:chargebee_invoice_id])
       
       invoice.update_attributes(invoice_hash) if invoice.present?
-    end
-
-    #Plans, addons & features
-    def subscription_plan(plan_code)
-      plan_id = Billing::Subscription.helpkit_plan[plan_code].to_sym
-      plan_name = SubscriptionPlan::SUBSCRIPTION_PLANS[plan_id]
-      SubscriptionPlan.find_by_name(plan_name)
     end
 
     def plan_info(plan)

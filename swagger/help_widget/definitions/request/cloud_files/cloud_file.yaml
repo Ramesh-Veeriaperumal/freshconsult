@@ -1,0 +1,11 @@
+type: object
+properties:
+  filename:
+    type: string
+  url:
+    type: string
+  application_id:
+    type: integer
+    format: int64
+  application_name:
+    type: string

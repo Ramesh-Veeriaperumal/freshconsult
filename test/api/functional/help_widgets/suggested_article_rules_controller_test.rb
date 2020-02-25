@@ -43,12 +43,6 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
     create_article(article_params(folder))
   end
 
-  def create_widget_suggested_article_rules(params)
-    @widget.help_widget_suggested_article_rules.build(params)
-    @widget.save!
-    @widget.help_widget_suggested_article_rules
-  end
-
   def article_params(folder)
     {
       title: 'Help Widget',

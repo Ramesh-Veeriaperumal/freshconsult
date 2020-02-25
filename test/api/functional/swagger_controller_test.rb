@@ -14,4 +14,10 @@ class SwaggerControllerTest < ActionController::TestCase
     assert_response 200
     response.body.include?('Freshdesk Private API documentation')
   end
+
+  def test_respond_help_widget
+    get :respond, controller_params.merge(path: 'help_widget/index.html', format: 'html')
+    assert_response 200
+    response.body.include?('Help Widget Public API documentation')
+  end
 end

@@ -1,6 +1,6 @@
 get:
-  tags: [Help Widget]
-  summary: Bootstrap
+  tags: [Bootstrap]
+  summary: Authenticate
   description: Gives user details as response. If user with the given email is not present, a new user is created.
   parameters:
     - in: header
@@ -23,6 +23,8 @@ get:
               email:
                 type: string
               phone:
+                type: string
+              mobile:
                 type: string
               external_id:
                 type: string

@@ -1,18 +1,26 @@
 class HelpWidgetSuggestedArticleRule < ActiveRecord::Base
+  OPERATOR_SET = [
+    [:contains, 'include?', 1].freeze
+  ].freeze
+
+  NAME_SET = [
+    [:url, 'HTTP_REFERER', 1].freeze
+  ].freeze
+
+  OPERATOR = Hash[*OPERATOR_SET.map { |i| [i[0], i[2]] }.flatten].freeze
+
+  OPERATOR_VALUE_MAPPING = Hash[*OPERATOR_SET.map { |i| [i[2], i[1]] }.flatten].freeze
+
+  NAME = Hash[*NAME_SET.map { |i| [i[0], i[2]] }.flatten].freeze
+
+  NAME_VALUE_MAPPING = Hash[*NAME_SET.map { |i| [i[2], i[1]] }.flatten].freeze
+
   EVALUATE_ON = {
     page: 1
   }.freeze
 
-  NAME = {
-    url: 1
-  }.freeze
-
   ORDER_BY = {
     hits: 1
-  }.freeze
-
-  OPERATOR = {
-    contains: 1
   }.freeze
 
   RULE_OPERATOR = {

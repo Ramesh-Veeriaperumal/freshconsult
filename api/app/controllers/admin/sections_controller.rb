@@ -19,7 +19,7 @@ class Admin::SectionsController < ApiApplicationController
   end
 
   def destroy
-    @item.destroy
+    @item.mark_for_destruction
     clear_on_empty_section # delete section_present if ticket_field section is empty
     @ticket_field.save!
     head 204

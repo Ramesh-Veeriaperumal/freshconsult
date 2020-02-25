@@ -1,0 +1,33 @@
+widget_attachment_create:
+  $ref: ./request/widget_attachment_create.yaml
+
+bad_request_error:
+  $ref: ./error/bad_request.yaml
+request_error:
+  $ref: ./error/request.yaml
+
+attachment:
+  $ref: ./resource/attachment.yaml
+
+ticket_input:
+  $ref: ./request/tickets/ticket.yaml
+
+ticket:
+  $ref: ./resource/ticket.yaml
+
+cloud_file_input:
+  $ref: ./request/cloud_files/cloud_file.yaml
+extension_generic:
+  $ref: ./resource/extension/generic.yaml
+
+ticket_field:
+  $ref: ./resource/ticket_field.yaml
+
+ticket_field_list_response:
+  allOf:
+    - $ref: '#/definitions/ticket_field'
+    - $ref: ./response/admin/ticket_fields/api_ticket_field.yaml
+    - $ref: '#/definitions/extension_generic'
+
+meta:
+  $ref: './response/meta.yaml'

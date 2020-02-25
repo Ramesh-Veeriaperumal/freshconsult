@@ -1,7 +1,7 @@
 put:
-  tags: [Help Widget]
-  summary: Thumbs down for solution article
-  description: Increase thumbs_down count of solution article in widget
+  tags: [Solution Articles]
+  summary: Thumbs up for solution article
+  description: Increase thumbs_up count of solution article in widget
   parameters:
     - name: id
       in: path

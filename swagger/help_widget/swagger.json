@@ -1,0 +1,831 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Help Widget Public API documentation",
+    "version": "1.0.0"
+  },
+  "basePath": "/api/widget",
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/attachment": {
+      "post": {
+        "tags": [
+          "Attachments"
+        ],
+        "summary": "Attachment for widget",
+        "description": "Single Attachment for widget",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "attachments",
+            "schema": {
+              "$ref": "#/definitions/widget_attachment_create"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/search/solutions": {
+      "post": {
+        "tags": [
+          "Solution Articles"
+        ],
+        "summary": "Search solution articles",
+        "description": "Search solution articles for widget",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "article_seacrh",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "term": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "title": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/suggested_articles": {
+      "get": {
+        "tags": [
+          "Solution Articles"
+        ],
+        "summary": "Suggested articles",
+        "description": "Suggested articles for widget",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "title": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/solutions/article/{id}": {
+      "get": {
+        "tags": [
+          "Solution Articles"
+        ],
+        "summary": "Get solution article",
+        "description": "Get solution article for widget",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "attachments": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/attachment"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/solutions/article/{id}/hit": {
+      "put": {
+        "tags": [
+          "Solution Articles"
+        ],
+        "summary": "Hit solution article",
+        "description": "Increase hit count of solution article in widget",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/solutions/article/{id}/thumbs_up": {
+      "put": {
+        "tags": [
+          "Solution Articles"
+        ],
+        "summary": "Thumbs up for solution article",
+        "description": "Increase thumbs_up count of solution article in widget",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/solutions/article/{id}/thumbs_down": {
+      "put": {
+        "tags": [
+          "Solution Articles"
+        ],
+        "summary": "Thumbs down for solution article",
+        "description": "Increase thumbs_down count of solution article in widget",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/bootstrap": {
+      "get": {
+        "tags": [
+          "Bootstrap"
+        ],
+        "summary": "Authenticate",
+        "description": "Gives user details as response. If user with the given email is not present, a new user is created.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Widget-Auth",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string"
+                    },
+                    "mobile": {
+                      "type": "string"
+                    },
+                    "external_id": {
+                      "type": "string"
+                    },
+                    "language": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "meta": {
+                  "type": "object",
+                  "properties": {
+                    "expire_at": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "401": {
+            "description": "Invalid Credentials"
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/ticket": {
+      "post": {
+        "tags": [
+          "Ticket"
+        ],
+        "description": "Create a ticket",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ticket_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "201": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/ticket_fields": {
+      "get": {
+        "tags": [
+          "ticket fields"
+        ],
+        "description": "List all ticket fields",
+        "parameters": [
+          {
+            "name": "include",
+            "in": "query",
+            "type": "string",
+            "description": "Comma-separated, possible values - sections"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ticket_fields": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/ticket_field_list_response"
+                  }
+                },
+                "meta": {
+                  "$ref": "#/definitions/meta"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "widget_attachment_create": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "bad_request_error": {
+      "title": "data",
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/request_error"
+          }
+        }
+      }
+    },
+    "request_error": {
+      "type": "object",
+      "properties": {
+        "field": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        }
+      }
+    },
+    "attachment": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/extension_generic"
+        },
+        {
+          "properties": {
+            "content_type": {
+              "type": "string"
+            },
+            "size": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "name": {
+              "type": "string"
+            },
+            "attachment_url": {
+              "type": "string"
+            },
+            "inline_url": {
+              "type": "string"
+            },
+            "thumb_url": {
+              "type": "string"
+            },
+            "is_shared": {
+              "type": "boolean"
+            }
+          }
+        }
+      ]
+    },
+    "ticket_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ticket"
+        },
+        {
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "facebook_id": {
+              "type": "string"
+            },
+            "phone": {
+              "type": "string"
+            },
+            "twitter_id": {
+              "type": "string"
+            },
+            "attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "parent_id": {
+              "type": "integer"
+            },
+            "tracker_id": {
+              "type": "integer"
+            },
+            "related_ticket_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "cc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cloud_files": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/cloud_file_input"
+              }
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ticket": {
+      "type": "object",
+      "properties": {
+        "email_config_id": {
+          "type": "integer"
+        },
+        "group_id": {
+          "type": "integer"
+        },
+        "priority": {
+          "type": "integer",
+          "enum": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "requester_id": {
+          "type": "integer"
+        },
+        "responder_id": {
+          "type": "integer"
+        },
+        "source": {
+          "type": "integer",
+          "enum": [
+            1,
+            2,
+            3,
+            7,
+            8,
+            9,
+            10
+          ]
+        },
+        "status": {
+          "type": "integer",
+          "enum": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        "subject": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "Question",
+            "Incident",
+            "Problem",
+            "Feature Request"
+          ]
+        },
+        "product_id": {
+          "type": "integer"
+        },
+        "due_by": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "fr_due_by": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "description": {
+          "type": "string"
+        },
+        "custom_fields": {
+          "type": "object"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "parent_template_id": {
+          "type": "integer"
+        },
+        "child_template_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "inline_attachment_ids": {
+          "type": "array",
+          "description": "Represents the IDs of the attachments corresponding to inline images",
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "cloud_file_input": {
+      "type": "object",
+      "properties": {
+        "filename": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "application_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "application_name": {
+          "type": "string"
+        }
+      }
+    },
+    "extension_generic": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ticket_field": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "label_for_customers": {
+          "type": "string"
+        },
+        "position": {
+          "type": "integer"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "custom_text",
+            "custom_paragraph",
+            "custom_checkbox",
+            "custom_number",
+            "custom_dropdown",
+            "custom_date",
+            "custom_decimal",
+            "nested_field",
+            "encrypted_text"
+          ]
+        },
+        "required_for_closure": {
+          "type": "boolean"
+        },
+        "required_for_agents": {
+          "type": "boolean"
+        },
+        "required_for_customers": {
+          "type": "boolean"
+        },
+        "customers_can_edit": {
+          "type": "boolean"
+        },
+        "displayed_to_customers": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "label",
+        "label_for_customers",
+        "type"
+      ]
+    },
+    "ticket_field_list_response": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ticket_field"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "default": {
+              "type": "boolean"
+            },
+            "dependent_fields": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "label_for_customers": {
+                    "type": "string"
+                  },
+                  "level": {
+                    "type": "integer",
+                    "enum": [
+                      2,
+                      3
+                    ]
+                  },
+                  "ticket_field_id": {
+                    "type": "integer"
+                  },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            },
+            "section_mappings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "section_id": {
+                    "type": "integer"
+                  },
+                  "position": {
+                    "type": "integer"
+                  }
+                }
+              }
+            },
+            "has_section": {
+              "type": "boolean"
+            },
+            "portal_cc": {
+              "type": "boolean"
+            },
+            "portal_cc_to": {
+              "type": "string"
+            },
+            "is_fsm": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/extension_generic"
+        }
+      ]
+    },
+    "meta": {
+      "type": "object",
+      "title": "meta",
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "vault_token": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

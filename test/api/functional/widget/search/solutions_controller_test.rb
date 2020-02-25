@@ -39,8 +39,8 @@ module Widget
       end
 
       def tear_down
-        @widget.destroy
-        @article.destroy
+        @widget.try(:destroy)
+        @article.try(:destroy)
         super
         unset_login_support
       end

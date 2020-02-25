@@ -2,20 +2,28 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     unify: {
-      files: ['Gruntfile.js', 'index.yaml', './**/*.yaml', './**/**/*.yaml'],
-      options: {
-        source: 'index.yaml',
-        target: 'swagger.json'
+      all: {
+        options: {
+          source: 'index.yaml',
+          target: 'swagger.json'
+        }
+      },
+      help_widget: {
+        options: {
+          source: 'help_widget/index.yaml',
+          target: 'help_widget/swagger.json'
+        }
       }
     },
     watch: {
-      files: ['<%= unify.files %>'],
+      files: ['Gruntfile.js', 'index.yaml', 'help_widget/index.yaml', './**/*.yaml', './**/**/*.yaml'],
       tasks: ['unify']
     }
   });
-  
-  grunt.registerTask('unify', 'Combine into single Swagger spec file', function () {
+
+  grunt.registerMultiTask('unify', 'Combine into single Swagger spec file', function() {
     var filenames = this.options();
+    var task = this.nameArgs;
     var resolve = require('json-refs').resolveRefs;
     var YAML = require('yaml-js');
     var fs = require('fs');
@@ -32,14 +40,14 @@ module.exports = function(grunt) {
     };
     var done = this.async();
     resolve(root, options).then(function (results) {
-      fs.writeFile(filenames.target, JSON.stringify(results.resolved, null, 2), function(err) { 
+      fs.writeFile(filenames.target, JSON.stringify(results.resolved, null, 2), function(err) {
         if(err) {
             return console.log(err);
         }
-        grunt.log.writeln("Unified Swagger file generated");
-        swaggerParser.validate('swagger.json', function(err, api) {
+        grunt.log.writeln("Unified Swagger file generated for " + task);
+        swaggerParser.validate(filenames.target, function(err, api) {
           if (err) {
-            grunt.log.error('Swagger.json Validation Error:');
+            grunt.log.error(filenames.target + ' Validation Error:');
             grunt.log.error(err.stack);
             done(false);
           }

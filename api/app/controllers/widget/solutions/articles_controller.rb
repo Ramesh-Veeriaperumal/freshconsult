@@ -20,7 +20,6 @@ module Widget
 
       def suggested_articles
         load_articles
-        log_and_render_404 unless @items
       end
 
       def thumbs_up
@@ -63,7 +62,24 @@ module Widget
         end
 
         def load_articles
-          @items = scoper.order('solution_article_meta.hits desc').limit(5)
+          @items = begin
+            if current_account.help_widget_article_customisation_enabled? && matched_rule.present?
+              HelpWidget::RuleBasedArticles.new(matched_rule.filter).fetch_articles(scoper)
+            else
+              default_articles
+            end
+          end
+        end
+
+        def default_articles
+          scoper.order('solution_article_meta.hits desc').limit(5)
+        end
+
+        def matched_rule
+          @matched_rule ||= begin
+            suggested_article_rules = @help_widget.help_widget_suggested_article_rules_from_cache
+            suggested_article_rules.find { |rule| HelpWidget::RuleMatcher.new(rule).matched?(context: { page: request.env }) }
+          end
         end
 
         def agent?

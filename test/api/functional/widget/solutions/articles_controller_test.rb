@@ -42,8 +42,8 @@ module Widget
       end
 
       def teardown
-        @article.destroy
-        @help_widget_category.destroy
+        @article.try(:destroy)
+        @help_widget_category.try(:destroy)
         super
         controller.class.any_instance.unstub(:api_current_user)
         User.unstub(:current)
@@ -123,17 +123,20 @@ module Widget
         @help_widget_category.save
       end
 
-      def most_viewed_article(user = nil)
-        @account.solution_article_meta
-                .for_help_widget(@widget, user)
-                .published.order('solution_article_meta.hits desc').limit(5)
+      def relavant_article(user = nil, ids = nil)
+        relavant_article = @account.solution_article_meta
+                                   .for_help_widget(@widget, user)
+                                   .published
+        ids.present? ? relavant_article.where(id: ids) : relavant_article.order('solution_article_meta.hits desc').limit(5)
       end
 
-      def get_suggested_articles(lang_code: @account.main_portal.language, user: nil)
+      def get_suggested_articles(lang_code: @account.main_portal.language, user: nil, meta_item_ids: nil, order: false)
         result = []
         current_lang = Language.current
         Language.find_by_code(lang_code).make_current
-        articles = most_viewed_article(user)
+        articles = relavant_article(user, meta_item_ids)
+        articles = articles.where(id: meta_item_ids) if meta_item_ids.present?
+        articles.sort_by { |e| meta_item_ids.index(e.id) } if order && meta_item_ids.present?
         articles.each do |art|
           result << widget_article_search_pattern(art.current_article)
         end
@@ -957,6 +960,115 @@ module Widget
         @account.unstub(:multilingual?)
       end
 
+      def test_suggested_articles_with_suggested_article_rules
+        @account.stubs(:help_widget_article_customisation_enabled?).returns(true)
+        @account.stubs(:multilingual?).returns(false)
+        create_articles
+        id = suggested_article_ids.first
+        create_widget_suggested_article_rules(suggested_article_rule(filter_value: [id]))
+        @request.env['HTTP_REFERER'] = 'testrefundmoney'
+        get :suggested_articles, controller_params
+        assert_response 200
+        article_meta_ids = @widget.help_widget_suggested_article_rules.first.filter[:value]
+        match_json(get_suggested_articles(meta_item_ids: article_meta_ids))
+        assert_nil Language.current
+      ensure
+        @account.unstub(:help_widget_article_customisation_enabled?)
+        @account.unstub(:multilingual?)
+      end
+
+      def test_suggested_articles_with_invalid_article_meta
+        @account.stubs(:help_widget_article_customisation_enabled?).returns(true)
+        @account.stubs(:multilingual?).returns(false)
+        article_meta_id = @account.solution_article_meta.last.id + 200
+        create_widget_suggested_article_rules(suggested_article_rule(filter_value: [article_meta_id]))
+        @request.env['HTTP_REFERER'] = 'testrefundmoney'
+        get :suggested_articles, controller_params
+        assert_response 200
+        match_json([])
+      ensure
+        @account.unstub(:help_widget_article_customisation_enabled?)
+        @account.unstub(:multilingual?)
+      end
+
+      def test_suggested_articles_without_category_association
+        @account.stubs(:help_widget_article_customisation_enabled?).returns(true)
+        @account.stubs(:multilingual?).returns(false)
+        @controller.stubs(:rule_based_articles).returns([])
+        create_widget_suggested_article_rules(suggested_article_rule(filter_value: [1, 2]))
+        @request.env['HTTP_REFERER'] = 'testrefundmoney'
+        get :suggested_articles, controller_params
+        assert_response 200
+        match_json([])
+      ensure
+        @controller.unstub(:rule_based_articles)
+        @account.unstub(:help_widget_article_customisation_enabled?)
+        @account.unstub(:multilingual?)
+      end
+
+      def test_suggested_articles_with_no_rule_match
+        @account.stubs(:help_widget_article_customisation_enabled?).returns(true)
+        @account.stubs(:multilingual?).returns(false)
+        id = suggested_article_ids.first
+        create_widget_suggested_article_rules(suggested_article_rule(filter_value: [id]))
+        @request.env['HTTP_REFERER'] = 'nomatch'
+        get :suggested_articles, controller_params
+        assert_response 200
+        solution_folder_meta = @article.parent.solution_folder_meta
+        assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
+        match_json(get_suggested_articles)
+        assert_nil Language.current
+      ensure
+        @account.unstub(:help_widget_article_customisation_enabled?)
+        @account.unstub(:multilingual?)
+      end
+
+      def test_suggested_articles_with_evaluates_on_invalid
+        @account.stubs(:help_widget_article_customisation_enabled?).returns(true)
+        @account.stubs(:multilingual?).returns(false)
+        id = suggested_article_ids.first
+        create_widget_suggested_article_rules(suggested_article_rule(filter_value: [id], evaluate_on: 2))
+        @request.env['HTTP_REFERER'] = 'nomatch'
+        get :suggested_articles, controller_params
+        assert_response 200
+        solution_folder_meta = @article.parent.solution_folder_meta
+        assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
+        match_json(get_suggested_articles)
+        assert_nil Language.current
+      ensure
+        @account.unstub(:help_widget_article_customisation_enabled?)
+        @account.unstub(:multilingual?)
+      end
+
+      def test_suggested_articles_with_filter_value_empty
+        @account.stubs(:help_widget_article_customisation_enabled?).returns(true)
+        @account.stubs(:multilingual?).returns(false)
+        param = suggested_article_rule
+        param[:filter][:value] = []
+        create_widget_suggested_article_rules(param)
+        @request.env['HTTP_REFERER'] = 'test'
+        get :suggested_articles, controller_params
+        assert_response 200
+        match_json([])
+      ensure
+        @account.unstub(:help_widget_article_customisation_enabled?)
+        @account.unstub(:multilingual?)
+      end
+
+      def test_suggested_articles_without_feature
+        @account.stubs(:help_widget_article_customisation_enabled?).returns(false)
+        @account.stubs(:multilingual?).returns(false)
+        get :suggested_articles, controller_params
+        assert_response 200
+        solution_folder_meta = @article.parent.solution_folder_meta
+        assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
+        match_json(get_suggested_articles)
+        assert_nil Language.current
+      ensure
+        @account.unstub(:help_widget_article_customisation_enabled?)
+        @account.unstub(:multilingual?)
+      end
+
       def test_suggested_articles_es
         get :suggested_articles, controller_params(language: 'es')
         assert_response 200
@@ -966,6 +1078,39 @@ module Widget
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         assert_equal result.first['title'], 'es Test'
         assert_nil Language.current
+      end
+
+      def test_suggested_articles_es_with_rules
+        @account.stubs(:help_widget_article_customisation_enabled?).returns(true)
+        id = suggested_article_ids.first
+        create_widget_suggested_article_rules(suggested_article_rule(filter_value: [id]))
+        @request.env['HTTP_REFERER'] = 'testrefundmoney'
+        get :suggested_articles, controller_params(language: 'es')
+        assert_response 200
+        article_meta_ids = @widget.help_widget_suggested_article_rules.first.filter[:value]
+        match_json(get_suggested_articles(lang_code: 'es', meta_item_ids: article_meta_ids))
+        result = parse_response(@response.body)
+        solution_folder_meta = @article.parent.solution_folder_meta
+        assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
+        assert_equal result.first['title'], 'es Test'
+        assert_nil Language.current
+      ensure
+        @account.unstub(:help_widget_article_customisation_enabled?)
+      end
+
+      def test_suggested_articles_order_with_rules
+        @account.stubs(:help_widget_article_customisation_enabled?).returns(true)
+        create_article_for_suggested_article
+        ids = suggested_article_ids.sort { |a, b| b <=> a }
+        create_widget_suggested_article_rules(suggested_article_rule(filter_value: ids))
+        @request.env['HTTP_REFERER'] = 'testrefundmoney'
+        get :suggested_articles, controller_params(language: 'en')
+        assert_response 200
+        article_meta_ids = @widget.help_widget_suggested_article_rules.first.filter[:value]
+        match_json(get_suggested_articles(meta_item_ids: article_meta_ids, order: true))
+        assert_nil Language.current
+      ensure
+        @account.unstub(:help_widget_article_customisation_enabled?)
       end
 
       def test_suggested_articles_order
@@ -1031,11 +1176,7 @@ module Widget
         set_user_login_headers(name: user1.name, email: user1.email)
         get :suggested_articles, controller_params(language: 'es')
         assert_response 200
-        match_json(get_suggested_articles(lang_code: 'es', user: user1))
-        result = parse_response(@response.body)
-        company_response = result.find { |x| x['id'] == solution_article.parent_id }
-        assert_nil company_response
-        assert_equal User.current.id, user1.id
+        match_json([])
       ensure
         User.stubs(:current).returns(nil)
         user.destroy

@@ -1,0 +1,51 @@
+type: object
+properties:
+  id:
+    type: integer
+  name:
+    type: string
+  default:
+    type: boolean
+  dependent_fields:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        label:
+          type: string
+        label_for_customers:
+          type: string
+        level:
+          type: integer
+          enum: [2,3]
+        ticket_field_id:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+  section_mappings:
+    type: array
+    items:
+      type: object
+      properties:
+        section_id:
+          type: integer
+        position:
+          type: integer
+
+  has_section:
+    type: boolean
+  portal_cc:
+    type: boolean
+  portal_cc_to:
+    type: string
+  is_fsm:
+    type: boolean

@@ -7,7 +7,7 @@ incoming:
       ssl: true
       use_login: true
       username: support@freshdesk.com
-      password: opmanager123
+      password: dummypassword
       processed_folder: fdver2m
     development:
       <<: *defaults
@@ -27,11 +27,13 @@ outgoing:
       domain: freshpo.com
       authentication: :plain
       user_name: fdstage
-      password: 45533keFi3c924T
+      password: dummypassword
     development:
       <<: *defaults
     test:
       <<: *defaults
+      address: testenv
+      user_name: fdstagetest
     staging:
       <<: *defaults
 
@@ -42,11 +44,13 @@ category-1:
       domain: freshpo.com
       authentication: :plain
       user_name: fdstage
-      password: 45533keFi3c924T
+      password: dummypassword
     development:
       <<: *defaults
     test:
       <<: *defaults
+      address: testenv
+      user_name: fdstagetest
     staging:
       <<: *defaults
 
@@ -57,11 +61,13 @@ category-2:
       domain: freshpo.com
       authentication: :plain
       user_name: fdstage
-      password: 45533keFi3c924T
+      password: dummypassword
     development:
       <<: *defaults
     test:
       <<: *defaults
+      address: testenv
+      user_name: fdstagetest
     staging:
       <<: *defaults
 
@@ -72,11 +78,13 @@ category-3:
       domain: freshpo.com
       authentication: :plain
       user_name: fdstage
-      password: 45533keFi3c924T
+      password: dummypassword
     development:
       <<: *defaults
     test:
       <<: *defaults
+      address: testenv
+      user_name: fdstagetest
     staging:
       <<: *defaults
 
@@ -87,11 +95,13 @@ category-4:
       domain: freshpo.com
       authentication: :plain
       user_name: fdstage
-      password: 45533keFi3c924T
+      password: dummypassword
     development:
       <<: *defaults
     test:
       <<: *defaults
+      address: testenv
+      user_name: fdstagetest
     staging:
       <<: *defaults
 
@@ -102,11 +112,13 @@ category-5:
       domain: freshpo.com
       authentication: :plain
       user_name: fdstage
-      password: 45533keFi3c924T
+      password: dummypassword
     development:
       <<: *defaults
     test:
       <<: *defaults
+      address: testenv
+      user_name: fdstagetest
     staging:
       <<: *defaults
 
@@ -117,11 +129,13 @@ category-9:
       domain: freshpo.com
       authentication: :plain
       user_name: fdstage
-      password: 45533keFi3c924T
+      password: dummypassword
     development:
       <<: *defaults
     test:
       <<: *defaults
+      address: testenv
+      user_name: fdstagetest
     staging:
       <<: *defaults 
 
@@ -132,11 +146,13 @@ category-11:
       domain: freshpo.com
       authentication: :plain
       user_name: postmaster@trialmg.freshdesk.com
-      password: e60abb3c5ee0060db5ed7ef0020bde7a
+      password: dummypassword
     development:
       <<: *defaults
     test:
       <<: *defaults
+      address: testenv
+      user_name: fdstagetest
     staging:
       <<: *defaults
 
@@ -147,11 +163,13 @@ category-12:
       domain: freshpo.com
       authentication: :plain
       user_name: postmaster@trialmg.freshdesk.com
-      password: e60abb3c5ee0060db5ed7ef0020bde7a
+      password: dummypassword
     development:
       <<: *defaults
     test:
       <<: *defaults
+      address: testenv
+      user_name: fdstagetest
     staging:
       <<: *defaults
 
@@ -162,11 +180,13 @@ category-13:
       domain: freshpo.com
       authentication: :plain
       user_name: postmaster@trialmg.freshdesk.com
-      password: e60abb3c5ee0060db5ed7ef0020bde7a
+      password: dummypassword
     development:
       <<: *defaults
     test:
       <<: *defaults
+      address: testenv
+      user_name: fdstagetest
     staging:
       <<: *defaults
 
@@ -177,11 +197,13 @@ category-14:
       domain: freshpo.com
       authentication: :plain
       user_name: postmaster@trialmg.freshdesk.com
-      password: e60abb3c5ee0060db5ed7ef0020bde7a
+      password: dummypassword
     development:
       <<: *defaults
     test:
       <<: *defaults
+      address: testenv
+      user_name: fdstagetest
     staging:
       <<: *defaults
 
@@ -192,11 +214,13 @@ category-15:
       domain: freshpo.com
       authentication: :plain
       user_name: postmaster@trialmg.freshdesk.com
-      password: e60abb3c5ee0060db5ed7ef0020bde7a
+      password: dummypassword
     development:
       <<: *defaults
     test:
       <<: *defaults
+      address: testenv
+      user_name: fdstagetest
     staging:
       <<: *defaults
 
@@ -207,11 +231,13 @@ category-19:
       domain: freshpo.com
       authentication: :plain
       user_name: postmaster@trialmg.freshdesk.com
-      password: e60abb3c5ee0060db5ed7ef0020bde7a
+      password: dummypassword
     development:
       <<: *defaults
     test:
       <<: *defaults
+      address: testenv
+      user_name: fdstagetest
     staging:
       <<: *defaults
       
@@ -222,11 +248,13 @@ category-20:
       domain: freshpo.com
       authentication: :plain
       user_name: fdstage
-      password: 45533keFi3c924T
+      password: dummypassword
     development:
       <<: *defaults
     test:
       <<: *defaults
+      address: testenv
+      user_name: fdstagetest
     staging:
       <<: *defaults 
 
@@ -237,11 +265,13 @@ category-21:
       domain: freshpo.com
       authentication: :plain
       user_name: fdstage
-      password: 45533keFi3c924T
+      password: dummypassword
     development:
       <<: *defaults
     test:
       <<: *defaults
+      address: testenv
+      user_name: fdstagetest
     staging:
       <<: *defaults 
 
@@ -252,11 +282,13 @@ category-30:
       domain: freshpo.com
       authentication: :plain
       user_name: default-user
-      password: 8n!Y59MQa$jH
+      password: dummypassword
     development:
       <<: *defaults
     test:
       <<: *defaults
+      address: testenv
+      user_name: fdstagetest
     staging:
       <<: *defaults
       
@@ -267,11 +299,13 @@ category-31:
       domain: freshpo.com
       authentication: :plain
       user_name: default-user
-      password: 8n!Y59MQa$jH
+      password: dummypassword
     development:
       <<: *defaults
     test:
       <<: *defaults
+      address: testenv
+      user_name: fdstagetest
     staging:
       <<: *defaults
             
@@ -283,11 +317,13 @@ category-32:
       domain: freshpo.com
       authentication: :plain
       user_name: default-user
-      password: 8n!Y59MQa$jH
+      password: dummypassword
     development:
       <<: *defaults
     test:
       <<: *defaults
+      address: testenv
+      user_name: fdstagetest
     staging:
       <<: *defaults
       
@@ -298,11 +334,13 @@ category-33:
       domain: freshpo.com
       authentication: :plain
       user_name: default-user
-      password: 8n!Y59MQa$jH
+      password: dummypassword
     development:
       <<: *defaults
     test:
       <<: *defaults
+      address: testenv
+      user_name: fdstagetest
     staging:
       <<: *defaults
       
@@ -313,11 +351,13 @@ category-34:
       domain: freshpo.com
       authentication: :plain
       user_name: default-user
-      password: 8n!Y59MQa$jH
+      password: dummypassword
     development:
       <<: *defaults
     test:
       <<: *defaults
+      address: testenv
+      user_name: fdstagetest
     staging:
       <<: *defaults 
 
@@ -328,11 +368,13 @@ category-fd_email_service:
       domain: smtp.freshpo.com
       authentication: :plain
       user_name: freshdesk_user
-      password: ktkom#*pltm2
+      password: dummypassword
     development:
       <<: *defaults
     test:
       <<: *defaults
+      address: testenv
+      user_name: fdstagetest
     staging:
       <<: *defaults 
       

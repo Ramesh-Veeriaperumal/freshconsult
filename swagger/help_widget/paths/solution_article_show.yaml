@@ -1,5 +1,5 @@
 get:
-  tags: [Help Widget]
+  tags: [Solution Articles]
   summary: Get solution article
   description: Get solution article for widget
   parameters:
