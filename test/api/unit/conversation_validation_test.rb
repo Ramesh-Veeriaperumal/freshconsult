@@ -2,6 +2,14 @@ require_relative '../unit_test_helper'
 
 class ConversationValidationTest < ActionView::TestCase
 
+  def setup
+    Account.stubs(:current).returns(Account.first)
+  end
+
+  def teardown
+    Account.unstub(:current)
+  end
+
   def test_numericality
     controller_params = { 'user_id' => 1,  body: Faker::Lorem.paragraph }
     item = nil

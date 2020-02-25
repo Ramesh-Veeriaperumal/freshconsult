@@ -42,6 +42,7 @@ class TicketSummaryValidationTest < ActionView::TestCase
   end
 
   def test_validate_cloud_files
+    Account.stubs(:current).returns(Account.first)
     controller_params = { 'body' => Faker::Lorem.paragraph, 'cloud_files' => Faker::Lorem.word }
     ticket_summary = TicketSummaryValidation.new(controller_params, nil)
     refute ticket_summary.valid?(:update)
@@ -53,6 +54,7 @@ class TicketSummaryValidationTest < ActionView::TestCase
     refute ticket_summary.valid?(:update)
     errors = ticket_summary.errors.full_messages
     assert errors.include?('Cloud files is invalid')
+    Account.unstub(:current)
   end
 
 end
