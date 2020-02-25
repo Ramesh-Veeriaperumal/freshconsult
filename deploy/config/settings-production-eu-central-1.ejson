@@ -1275,7 +1275,8 @@
         "_custom_app_invalid_time": 300,
         "_tenant_id": "1",
         "_awol_region": "euc",
-        "_gallery_url": "https://appgallery-euc.freshworks.com",
+        "_gallery_url": "appgallery-euc.freshworks.com",
+        "_gallery_protocol": "https://",
         "_tenant_name": "freshdesk",
         "mkp_cipher_key": "EJ[1:DkkuAC/syeNx3DK07TCixZswlnq6WxS6DelOwJcxZ0c=:JYBqW23bGJFeg1BfpILuSpa+UcCs7ttk:tbE+tS0IirhJIeZcOoYTI/qkAzgAI/UgLkNhhq2cPFlS0uVXWmssbZ45R2H1VhaL]",
         "mkp_cipher_iv": "EJ[1:DkkuAC/syeNx3DK07TCixZswlnq6WxS6DelOwJcxZ0c=:djp2TvLcFKZtlkwrNf93nORaPmrRbBVW:DErbgUUxJO4Z7cmXet3WIUaQYNB3OBPeAdKM5r0hg78=]"

@@ -29,6 +29,7 @@ class Admin::Marketplace::AppsControllerTest < ActionController::TestCase
     get :index
     assert_response 200
     assert_includes(JSON.parse(response.body)['url'], 'params')
+    assert_includes(JSON.parse(response.body)['url'], 'doorkeeper')
     assert_includes(JSON.parse(response.body)['url'], 'freshID=false')
   ensure
     Account.unstub(:current)
@@ -48,6 +49,7 @@ class Admin::Marketplace::AppsControllerTest < ActionController::TestCase
     assert_includes(JSON.parse(response.body)['url'], 'params')
     assert_includes(JSON.parse(response.body)['url'], @account.domain)
     refute_includes(JSON.parse(response.body)['url'], 'freshID')
+    refute_includes(JSON.parse(response.body)['url'], 'doorkeeper')
   ensure
     Account.unstub(:current)
     Account.any_instance.unstub(:marketplace_gallery_enabled?)
@@ -66,6 +68,7 @@ class Admin::Marketplace::AppsControllerTest < ActionController::TestCase
     assert_includes(JSON.parse(response.body)['url'], 'params')
     assert_includes(JSON.parse(response.body)['url'], @account.domain)
     refute_includes(JSON.parse(response.body)['url'], 'freshID')
+    refute_includes(JSON.parse(response.body)['url'], 'doorkeeper')
   ensure
     Account.unstub(:current)
     Account.any_instance.unstub(:marketplace_gallery_enabled?)

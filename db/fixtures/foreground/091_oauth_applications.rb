@@ -20,7 +20,7 @@ Doorkeeper::Application.seed_many(:name, :account_id,
   { :name          => "#{Marketplace::Constants::GALLERY_NAME}",
     :uid           => "#{MarketplaceConfig::GALLERY_OAUTH_KEY}",
     :secret        => "#{MarketplaceConfig::GALLERY_OAUTH_SECRET}",
-    :redirect_uri  => "#{MarketplaceConfig::GALLERY_URL}/auth/callback",
+    :redirect_uri  => "#{MarketplaceConfig::GALLERY_PROTOCOL}#{MarketplaceConfig::TENANT_NAME}-doorkeeper.#{MarketplaceConfig::GALLERY_URL}/auth/callback",
     :scopes        => '',
     :user_id       => Integrations::Constants::SYSTEM_ACCOUNT_ID,
     :account_id    => Integrations::Constants::SYSTEM_ACCOUNT_ID

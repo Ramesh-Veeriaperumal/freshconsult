@@ -1158,7 +1158,8 @@
         "_custom_app_invalid_time": 300,
         "_tenant_id": "1",
         "_awol_region": "aus",
-        "_gallery_url": "https://appgallery-aus.freshworks.com",
+        "_gallery_url": "appgallery-aus.freshworks.com",
+        "_gallery_protocol": "https://",
         "_tenant_name": "freshdesk",
         "mkp_cipher_key": "EJ[1:XiWhX/AA0NJCL+Zz6mJa700gQxTOrpJA+51cU+vB0i0=:hUlE8lEuTFuu429OOYBm4YvjuTx90HPU:vC5dm4POjDwefauYNVxcM80ig0pwdo8MatihG/cLPtiJlcgM7xYM/kp71SZFah8e]",
         "mkp_cipher_iv": "EJ[1:XiWhX/AA0NJCL+Zz6mJa700gQxTOrpJA+51cU+vB0i0=:GWkMy7f/qe6MMP/S1Oj6irXvj3wLmQ+R:4h+YIya5ZR99nXKfsttpwhcpnAKtvfRt/klRneuhyk8=]"
