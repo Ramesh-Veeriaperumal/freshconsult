@@ -28,27 +28,6 @@ class OutOfOfficesController < ApiApplicationController
       end
     end
 
-    def validate_params
-      if params[cname].blank?
-        render_errors([[:payload, :invalid_json]])
-      else
-        out_of_office_validation = out_of_office_validation_class.new(params[cname])
-        if out_of_office_validation.valid?
-          check_controller_params
-        else
-          render_errors(out_of_office_validation.errors, out_of_office_validation.error_options)
-        end
-      end
-    end
-
-    def check_controller_params
-      params[cname].permit(*REQUEST_PERMITTED_PARAMS)
-    end
-
-    def out_of_office_validation_class
-      'OutOfOfficeValidation'.constantize
-    end
-
     def launch_party_name
       FeatureConstants::OUT_OF_OFFICE
     end
