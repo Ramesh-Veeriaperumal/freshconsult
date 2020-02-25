@@ -19,22 +19,44 @@ module Ember
         return unless validate_query_params
         return unless validate_delegator(nil, portal_id: params[:portal_id])
 
-        @categories = fetch_categories(params[:portal_id])
-        @articles = fetch_articles
-        @drafts =  fetch_drafts
-        @approvals = fetch_approvals
-        @my_drafts = @drafts.empty? ? [] : @drafts.where(user_id: current_user.id)
-        @my_drafts =  fetch_my_drafts if Account.current.article_approval_workflow_enabled?
-        @published_articles = fetch_published_articles
-        @all_feedback = current_account.article_tickets.where(article_id: get_article_ids(@articles), ticketable_type: 'Helpdesk::Ticket').preload(:ticketable).reject { |article_ticket| article_ticket.ticketable.spam_or_deleted? }
-        @my_feedback = current_account.article_tickets.where(article_id: get_article_ids(@articles.select { |article| article.user_id == current_user.id }), ticketable_type: 'Helpdesk::Ticket').preload(:ticketable).reject { |article| article.ticketable.spam_or_deleted? }
-        @orphan_categories = fetch_unassociated_categories(@lang_id)
-        @secondary_language = secondary_language?
-        if @secondary_language
-          @outdated_articles = @articles.select { |article| article.outdated == true }.size
-          @not_translated_articles = @article_meta.size - @articles.size
+        if current_account.launched?(:solutions_quick_view)
+          pl_filter = Solution::PortalLanguageFilter.new(params[:portal_id], @lang_id)
+          @categories_cnt = pl_filter.categories.count
+          @articles_cnt = @categories_cnt > 0 ? pl_filter.articles.count : 0
+          all_drafts_cnt = @articles_cnt > 0 ? pl_filter.drafts.count : 0
+          all_approvals_cnt = all_drafts_cnt > 0 ? pl_filter.approvals.count : 0
+          @drafts_cnt = all_drafts_cnt - all_approvals_cnt
+          @my_drafts_cnt = @drafts_cnt > 0 ? pl_filter.my_drafts.count : 0
+          @published_articles_cnt = @articles_cnt > 0 ? pl_filter.published_articles.count : 0
+          @all_feedback_cnt = pl_filter.all_feedback.count
+          @my_feedback_cnt = pl_filter.my_feedback.count
+          # @orphan_categories_cnt = pl_filter.unassociated_categories.count
+          # Using same logic for unassociated_categories, since it is using the cache and expected to be small in number
+          @orphan_categories = fetch_unassociated_categories(@lang_id)
+          @secondary_language = secondary_language?
+          if @secondary_language
+            @outdated_articles = @articles_cnt > 0 ? pl_filter.outdated_articles.count : 0
+            @not_translated_articles = pl_filter.article_meta.count - @articles_cnt
+          end
+          @articles_with_approval_status = pl_filter.articles_count_by_approval_status if current_account.article_approval_workflow_enabled?
+        else
+          @categories = fetch_categories(params[:portal_id])
+          @articles = fetch_articles
+          @drafts =  fetch_drafts
+          @approvals = fetch_approvals
+          @my_drafts = @drafts.empty? ? [] : @drafts.where(user_id: current_user.id)
+          @my_drafts = fetch_my_drafts if Account.current.article_approval_workflow_enabled?
+          @published_articles = fetch_published_articles
+          @all_feedback = current_account.article_tickets.where(article_id: get_article_ids(@articles), ticketable_type: 'Helpdesk::Ticket').preload(:ticketable).reject { |article_ticket| article_ticket.ticketable.spam_or_deleted? }
+          @my_feedback = current_account.article_tickets.where(article_id: get_article_ids(@articles.select { |article| article.user_id == current_user.id }), ticketable_type: 'Helpdesk::Ticket').preload(:ticketable).reject { |article| article.ticketable.spam_or_deleted? }
+          @orphan_categories = fetch_unassociated_categories(@lang_id)
+          @secondary_language = secondary_language?
+          if @secondary_language
+            @outdated_articles = @articles.select { |article| article.outdated == true }.size
+            @not_translated_articles = @article_meta.size - @articles.size
+          end
+          @articles_with_approval_status = fetch_articles_by_approval_status if current_account.article_approval_workflow_enabled?
         end
-        @articles_with_approval_status = fetch_articles_by_approval_status if current_account.article_approval_workflow_enabled?
         response.api_root_key = :quick_views
       end
 
