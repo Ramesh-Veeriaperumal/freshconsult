@@ -2550,6 +2550,35 @@ module Ember
         assert !article_meta.reload.safe_send("#{language}_article").outdated
       end
 
+      def test_update_mark_as_outdated_shouldnot_clear_approvals
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        article = get_in_review_article
+        params_hash = { outdated: true, status: 1 }
+        put :update, construct_params({ version: 'private', id: article.parent_id, language: article.language_code }, params_hash)
+        assert_response 200
+        assert article.solution_article_meta.reload.children.select { |art| !art.is_primary? && !art.outdated }.empty?
+        assert_in_review(article)
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_update_mark_as_outdated_with_only_create_and_update_article
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
+        User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
+        User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(false)
+        User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+        article = get_in_review_article
+        params_hash = { outdated: true, status: 1 }
+        put :update, construct_params({ version: 'private', id: article.parent_id, language: @account.language }, params_hash)
+        assert_response 200
+        assert article.solution_article_meta.reload.children.select { |art| !art.is_primary? && !art.outdated }.empty?
+        assert_in_review(article)
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+        User.any_instance.unstub(:privilege?)
+      end
+
       def test_update_mark_as_uptodate_for_primary_article
         languages = @account.supported_languages + ['primary']
         language = @account.supported_languages.first
@@ -2580,6 +2609,8 @@ module Ember
         put :bulk_update, construct_params({ version: 'private' }, ids: [draft.article.parent_id], properties: { status: 2 })
         assert_response 204
         assert_equal draft.article.status, 2
+      ensure
+        User.any_instance.unstub(:privilege?)
       end
 
       def test_bulk_update_publish_without_publish_privilege
@@ -3074,7 +3105,7 @@ module Ember
         remove_privilege(User.current, :approve_article)
         User.current.reload
         post :approve, controller_params(version: 'private', id: sample_article.parent_id)
-        assert_response 403
+        assert_response 403, response.body
         match_json(request_error_pattern(:access_denied))
       ensure
         Account.any_instance.unstub(:article_approval_workflow_enabled?)
@@ -3343,7 +3374,7 @@ module Ember
 
       def test_update_draft_article_author_without_publish_solution_privilege
         without_publish_solution_privilege do
-          sample_article = get_article_with_draft
+          sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 1)).primary_article
           params_hash = { title: 'publish without draft title', status: 1, agent_id: @agent.id }
           put :update, construct_params({ version: 'private', id: sample_article.parent_id, agent_id: @agent.id }, params_hash)
           assert_response 200
@@ -3409,7 +3440,7 @@ module Ember
         Account.any_instance.unstub(:article_approval_workflow_enabled?)
       end
 
-      def test_update_publish_reviewd_article_without_publish_approved_solution
+      def test_update_publish_reviewed_article_without_publish_approved_solution
         without_publish_solution_privilege do
           Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
           User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(false)

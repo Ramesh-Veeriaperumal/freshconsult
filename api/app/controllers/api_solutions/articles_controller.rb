@@ -7,6 +7,7 @@ module ApiSolutions
     include CloudFilesHelper
 
     SLAVE_ACTIONS = %w[index folder_articles].freeze
+    STATUS_KEYS_BY_TOKEN = Solution::Article::STATUS_KEYS_BY_TOKEN
 
     decorate_views(decorate_objects: [:folder_articles])
     before_filter :validate_query_parameters, only: [:folder_articles]
@@ -24,43 +25,46 @@ module ApiSolutions
       head 204
     end
 
+    # for create article usecase is simple. create article with all the desired properties, if the status is draft, create draft from aritcle.
     def create
       assign_protected
       return unless delegator_validation
-
       render_201_with_location(item_id: @item.parent_id) if create_or_update_article
     end
 
+    # Article update can modify 3 models at the same time, article_meta, article, draft.
+    # there are common properties between draft and article, such as title and description (check solution constants).
+    # if status is draft, common properties updated to draft, else updated to article.
+    # while publishing all common properties updated via draft if draft exisits. i.e, update draft model with draft properties and publish the draft.
+    # if draft not exisits, update directly on article.
     def update
       return unless delegator_validation
 
       # for an article with unassociated folder, folder needs to be set before publishing the article
       @item.solution_article_meta.update_attributes(solution_folder_meta_id: @article_params[:folder_id]) if @article_params.key?(:folder_id)
-      if @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published] && @draft
+
+      if @status == STATUS_KEYS_BY_TOKEN[:published] && @draft
         # When article is published with content change and without autosave we need to make sure draft has updated content
-        assign_draft_attributes(@article_params)
+        assign_draft_attributes(@article_params[language_scoper])
+        @article_params[language_scoper].delete(:status)
         set_session
         @draft.publish!
-      elsif @article_params[language_scoper] && @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] && !article_properties? && !only_unpublish?
+      elsif !@draft_params.empty? && @status == STATUS_KEYS_BY_TOKEN[:draft]
         @draft ||= @item.build_draft_from_article
         set_session
         @draft.unlock # So that the lock in period for 'editing' status is reset
-        assign_draft_attributes(@article_params)
-        add_attachments if private_api?
+        assign_draft_attributes(@draft_params)
         render_custom_errors(@draft, true) unless @draft.save
-        remove_lang_scoper_params
-      else
-        # draft should be unlocked during unpublish
+      elsif @draft
+        # draft should be unlocked in all update cases
         set_session
-        @draft.unlock!(true) if only_unpublish? && @draft
-        # When "Published : edit + autosave and Unpublish" draft observer will not be triggered, so sending draft for versioning
-        # Session needs to be set so that update happens
-        # Session also is needed for dummy publish cases
+        @draft.unlock!(true) 
       end
+      # we should send status in all the cases, that might not have effect on somecases. thus removing it from article update.
+      skip_status_update_if_possible
 
-      @item.clear_approvals if @item.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] && current_account.article_approval_workflow_enabled? && article_properties?
-
-      remove_lang_scoper_params if !only_unpublish? && article_properties?
+      # clear approvals if there are any changes that's visible to user.
+      @item.clear_approvals if @item.status == STATUS_KEYS_BY_TOKEN[:draft] && current_account.article_approval_workflow_enabled? && publishable_article_properties?
       create_or_update_article
     end
 
@@ -111,10 +115,20 @@ module ApiSolutions
       end
 
       def validate_publish_solution_privilege
-        # If user does not have publish priviledge then user can only save article
-        if !publish_privilege? && !publishing_approved_article? && changing_published_properties?
+        return if publish_privilege?
+        # create : To send stauts as published in create call, user should have publish solution privilege
+        # update : User can publish approved article, or can update non-publishable article properties.
+        if create? ? @status == STATUS_KEYS_BY_TOKEN[:published] : !publishing_approved_article? && changing_published_properties?
           error_info_hash = { details: 'dont have permission to perfom on published article' }
           render_request_error_with_info(:published_article_privilege_error, 403, error_info_hash, error_info_hash)
+        end
+      end
+
+      def skip_status_update_if_possible
+        # for only unpublish and publish action, we can't skip status update
+        unless (article_fields_to_update - [:status]).empty?
+          is_dummy_status = @draft ? (@status == STATUS_KEYS_BY_TOKEN[:draft]) : (@status == STATUS_KEYS_BY_TOKEN[:published])
+          @article_params[language_scoper].delete(:status) if is_dummy_status
         end
       end
 
@@ -124,21 +138,22 @@ module ApiSolutions
 
       def publishing_approved_article?
         return false unless current_account.article_approval_workflow_enabled?
-        (update? && api_current_user.privilege?(:publish_approved_solution) && only_publish? && @item.helpdesk_approval.try(:approved?))
+        (api_current_user.privilege?(:publish_approved_solution) && only_publish? && @item.helpdesk_approval.try(:approved?))
       end
 
-      # If agent dont have publish_solution privilege, he should not be able to perform update
-      # 1. if article publish || unpublish activity
-      # 2. if article is published and if any of the article property update
-      # i.e folder_id, agent_id, seo_data, tags
+      # This returns true if update call making any changes that's visible to user.
+      # ex, changing title, desc, folder, etc
       def changing_published_properties?
-        publish_action? || only_unpublish? || (@item.try(:status) == Solution::Article::STATUS_KEYS_BY_TOKEN[:published] && article_properties?)
+        is_changing = only_status? # only publish or unpublish
+        is_changing ||= @draft && @status == STATUS_KEYS_BY_TOKEN[:published] # publishing the draft.
+        is_changing ||= @item.status == STATUS_KEYS_BY_TOKEN[:published] && publishable_article_properties? # any changes made on article while the article is already in published state
+        is_changing
       end
 
       def set_session
         # For autosave in versioning
-        @item.session = @article_params[:session]
-        @draft.session = @article_params[:session] if @draft
+        @item.session = @session
+        @draft.session = @session if @draft
       end
 
       def load_folder_articles
@@ -155,49 +170,50 @@ module ApiSolutions
         @items = paginate_items(items)
       end
 
-      def remove_lang_scoper_params
-        @article_params[language_scoper].delete_if { |k, v| !SolutionConstants::ARTICLE_PROPERTY_FIELDS.include?(k) } if @article_params[language_scoper].present?
-      end
-
-      def article_properties?
-        # Only article properties are changed.
-        (SolutionConstants::ARTICLE_PROPERTY_FIELDS.any? { |key| @article_params[language_scoper].key?(key) || @article_params.key?(key) }) && @article_params[language_scoper].except(:status, :session, :unlock, *SolutionConstants::ARTICLE_PROPERTY_FIELDS).keys.empty?
-      end
-
-      def only_unpublish?
-        !article_properties? && @article_params[language_scoper].keys.length == 1 && @article_params[language_scoper][:status] == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
+      def publishable_article_properties?
+        # outdated is just a flag in agent portal. that is not visible to customer. thus we can consider it as non-publishable field.
+        !(article_fields_to_update - [:outdated, :status]).empty?
       end
 
       def only_publish?
-        !article_properties? && @article_params[language_scoper].keys.length == 1 && @article_params[language_scoper][:status] == Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+        only_status? && @article_params[language_scoper][:status] == STATUS_KEYS_BY_TOKEN[:published]
       end
 
-      def publish_action?
-        @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+      def only_unpublish?
+        only_status? && @article_params[language_scoper][:status] == STATUS_KEYS_BY_TOKEN[:draft]
+      end
+
+      def only_status?
+        fields = article_fields_to_update
+        fields.length == 1 && fields.include?(:status)
+      end
+
+      # all the properties (aritcle_meta and aritcle) that will be updated in this API call.
+      def article_fields_to_update
+        (@article_params.slice(*SolutionConstants::UPDATEABLE_ARTICLE_META_FIELDS).keys + @article_params[language_scoper].slice(*SolutionConstants::UPDATEABLE_ARTICLE_LANGUAGE_FIELDS).keys).map(&:to_sym)
       end
 
       def construct_article_object
-        parse_attachment_params if private_api?
-        article_builder_params = { solution_article_meta: @article_params, language_id: @lang_id, tags: @tags }
+        parse_attachment_params(@article_params[language_scoper]) if private_api?
+        article_builder_params = { solution_article_meta: @article_params, language_id: @lang_id, tags: @tags, session: @session }
         @meta = Solution::Builder.article(article_builder_params)
         @item = @meta.safe_send(language_scoper)
-        @item.create_draft_from_article if @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] && create?
+        @item.create_draft_from_article if @status == STATUS_KEYS_BY_TOKEN[:draft] && create?
         !(@item.errors.any? || @item.parent.errors.any?)
       end
 
-      def assign_draft_attributes(lang_params)
-        @draft.title = lang_params[language_scoper][:title] if lang_params[language_scoper][:title].present?
-        @draft.description = lang_params[language_scoper][:description] if lang_params[language_scoper][:description].present?
+      def assign_draft_attributes(params_hash)
+        @draft.title = params_hash[:title] if params_hash[:title].present?
+        @draft.description = params_hash[:description] if params_hash[:description].present?
+        params_hash.except!(:title, :description)
+        add_attachments_to_draft if private_api?
       end
 
       def delegator_params
         delegator_params = { language_id: @lang_id, article_meta: @meta, tags: @tags }
-        delegator_params[:folder_name] = params[cname]['folder_name'] if params[cname].key?('folder_name')
-        delegator_params[:category_name] = params[cname]['category_name'] if params[cname].key?('category_name')
-        delegator_params[:user_id] = @article_params[language_scoper][:user_id] if @article_params[language_scoper] && @article_params[language_scoper][:user_id]
-        delegator_params[:outdated] = @article_params[language_scoper][:outdated] if @article_params[language_scoper]
+        delegator_params.merge!(params[cname].slice(:folder_name, :category_name, :user_id, :outdated))
         delegator_params = add_attachment_params(delegator_params) if private_api?
-        delegator_params
+        delegator_params.with_indifferent_access
       end
 
       def before_load_object
@@ -222,13 +238,12 @@ module ApiSolutions
         # Maintaining the same flow for attachments as in articles_controller
         attachable = if @draft
                        @draft
-                     elsif @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+                     elsif @status == STATUS_KEYS_BY_TOKEN[:published]
                        @item
                      end
 
-        article_obj = private_api? ? nil : @item # for private api existing obj should not be validated, only the body params should be validated.
         article = ApiSolutions::ArticleValidation.new(
-          params[cname], article_obj, attachable, @lang_id, string_request_params?
+          params[cname], @item, attachable, @lang_id, string_request_params?
         )
         unless article.valid?(action_name.to_sym)
           render_errors article.errors,
@@ -260,20 +275,22 @@ module ApiSolutions
       end
 
       def sanitize_params
-        language_params_hash = params[cname][language_scoper]
         prepare_array_fields [:tags, :attachments]
+        # re-map API params to model params.
         ParamsHelper.assign_and_clean_params({ type: :art_type, agent_id: :user_id }, params[cname])
-        sanitize_seo_params
-        sanitize_language_params
-        sanitize_attachment_params
+        @session = params[cname][:session]
         params[cname][folder] = params[:id]
+        sanitize_user_id_params
+        sanitize_seo_params
+        sanitize_attachment_params
         @tags = construct_tags(params[cname][:tags]) if params[cname] && params[cname][:tags]
-        # To ensure if both title and description are present in params
-        if language_params_hash && @draft
-          language_params_hash[:title] ||= @draft.title
-          language_params_hash[:description] ||= @draft.description
-        end
-        @article_params = params[cname].except!(*SolutionConstants::ARTICLE_LANGUAGE_FIELDS)
+        @article_params = params[cname].slice(*SolutionConstants::ARTICLE_META_FIELDS)
+        
+        # if it is create call, all properties goes to article model. and draft is created from article.
+        @draft_params = create? || (params[cname][:status].to_i == STATUS_KEYS_BY_TOKEN[:published]) ? {} : params[cname].slice(*SolutionConstants::DRAFT_FIELDS)
+        
+        # remove the params that will be updated to draft and common to article model.
+        @article_params[language_scoper] = params[cname].slice(*(SolutionConstants::ARTICLE_LANGUAGE_FIELDS.map(&:to_sym) - (@draft_params.empty? ? [] : @draft_params.keys.map(&:to_sym) + [:status])))
       end
 
       def sanitize_seo_params
@@ -282,16 +299,13 @@ module ApiSolutions
         end
       end
 
-      def sanitize_language_params
-        language_params = params[cname].slice(*SolutionConstants::ARTICLE_LANGUAGE_FIELDS)
-        language_params[:user_id] = user_id if user_id
-        params[cname][language_scoper] = language_params
+      def sanitize_user_id_params
+        params[cname][:user_id] = user_id if user_id
       end
 
       def sanitize_attachment_params
-        params_hash = params[cname][language_scoper]
-        if params_hash && params_hash[:attachments]
-          params_hash[:attachments] = params_hash[:attachments].map do |att|
+        if params[cname] && params[cname][:attachments]
+          params[cname][:attachments] = params[cname][:attachments].map do |att|
             { resource: att }
           end
         end

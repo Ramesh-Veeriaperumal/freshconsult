@@ -13,11 +13,6 @@ class ProvisionSandboxTest < ActionView::TestCase
   def setup
     ChargeBee::Rest.stubs(:request).returns(stub_data)
     unless @@count_data.present?
-      @production_account = Account.first
-      if @production_account
-        @sandbox_account_id = @production_account.sandbox_job.try(:sandbox_account_id)
-        delete_sandbox_data
-      end
       @@count_data = count_data
       @@production_account = @production_account
     end
@@ -25,6 +20,8 @@ class ProvisionSandboxTest < ActionView::TestCase
   end
 
   def teardown
+    delete_sandbox_data
+    delete_sandbox_references @production_account
     ChargeBee::Rest.unstub(:request)
     Account.unstub(:current)
     super
@@ -64,5 +61,43 @@ class ProvisionSandboxTest < ActionView::TestCase
     define_method "test_create_sandbox_#{table}" do
       assert_equal master_account_data(table), @@count_data[:sandbox_account_data][table].sort
     end
+  end
+
+  def test_domain_update_worker_with_domain_change
+    Sidekiq::Testing.inline! do
+      Sharding.run_on_shard ('shard_1') do
+        @production_account.reload
+        @production_account.make_current
+        previous_full_domain = @production_account.full_domain
+        @production_account.full_domain = 'kryptonians.freshdesk.com'
+        @production_account.save!
+        assert_equal Sidekiq::Queue.new('update_url_in_sandbox').size, 1
+        @production_account.reload
+        Sharding.select_shard_of(@sandbox_account_id) do
+          @sandbox_account = Account.find(@sandbox_account_id)
+          production_url_in_sandbox = @sandbox_account.account_additional_settings.additional_settings[:sandbox][:production_url]
+          assert_equal production_url_in_sandbox, @production_account.full_domain
+        end
+      end
+    end
+  ensure
+    @production_account.full_domain = previous_full_domain
+    Account.reset_current_account
+  end
+
+  def test_domain_update_worker_without_domain_change
+    Sidekiq::Testing.inline! do
+      Sharding.run_on_shard ('shard_1') do
+        @production_account.reload
+        @production_account.make_current
+        previous_name = @production_account.name
+        @production_account.name = 'Kryptonian Account'
+        @production_account.save!
+        assert_equal Sidekiq::Queue.new('update_url_in_sandbox').size, 0
+      end
+    end
+  ensure
+    @production_account.full_domain = previous_full_domain
+    @production_account.name = previous_name
   end
 end

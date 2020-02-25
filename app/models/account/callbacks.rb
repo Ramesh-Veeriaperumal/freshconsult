@@ -15,7 +15,7 @@ class Account < ActiveRecord::Base
   before_update :toggle_private_inline_feature, if: :secure_attachments_feature_changed?
   before_destroy :backup_changes, :make_shard_mapping_inactive
 
-  after_create :make_current, :change_shard_status, :populate_features
+  after_create :make_current, :populate_features, :change_shard_status
   after_update :change_dashboard_limit, :if => :field_service_management_enabled_changed?
   after_update :change_shard_mapping, :update_default_business_hours_time_zone,
                :update_google_domain, :update_route_info, :update_users_time_zone
@@ -31,7 +31,6 @@ class Account < ActiveRecord::Base
   before_validation :sync_name_helpdesk_name
   before_validation :downcase_full_domain, :only => [:create , :update] , :if => :full_domain_changed?
   before_validation :build_new_subscription, on: :create
-  
   after_destroy :remove_global_shard_mapping, :remove_from_master_queries
   after_destroy :destroy_freshid_account, if: :freshid_integration_enabled?
   after_destroy :remove_shard_mapping, :destroy_route_info
@@ -67,6 +66,7 @@ class Account < ActiveRecord::Base
   after_commit :create_rts_account, on: :create
 
   after_commit :update_freshvisual_configs, on: :update, if: :call_freshvisuals_api?
+  after_commit :update_account_domain_in_sandbox, if: -> { account_domain_changed? && sandbox_account_id.present? }
 
   after_rollback :destroy_freshid_account_on_rollback, on: :create, if: -> { freshid_integration_signup_allowed? && !domain_already_exists? }
   after_rollback :signup_completed, on: :create
@@ -248,6 +248,10 @@ class Account < ActiveRecord::Base
 
   def add_or_remove_email_notification_templates
     next_response_sla_enabled? ? add_nr_email_notifications : remove_nr_email_notifications
+  end
+
+  def sandbox_account_id
+    @sandbox_account_id ||= sandbox_job.try(:sandbox_account_id)
   end
 
   protected
@@ -674,6 +678,10 @@ class Account < ActiveRecord::Base
     def domain_already_exists?
       domain_mapping = DomainMapping.find_by_domain(full_domain) if full_domain.present?
       domain_mapping.present? && id != domain_mapping.account_id
+    end
+
+    def update_account_domain_in_sandbox
+      ::Admin::Sandbox::UpdateDomainWorker.perform_async(sandbox_account_id: sandbox_account_id, production_full_domain: full_domain)
     end
 
     def add_nr_email_notifications

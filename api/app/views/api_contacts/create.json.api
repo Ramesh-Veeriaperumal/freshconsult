@@ -48,4 +48,6 @@ end
 channel_v2_attributes = @item.channel_v2_attributes
 response_hash.merge!(channel_v2_attributes) if channel_v2_attributes
 
+response_hash.merge!(@item.twitter_requester_fields) if @item.twitter_requester_fields_enabled?
+
 JSON.generate(response_hash)

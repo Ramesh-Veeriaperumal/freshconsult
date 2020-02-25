@@ -127,20 +127,6 @@ class AccountAdditionalSettings < ActiveRecord::Base
     additional_settings[:max_template_limit] unless additional_settings.blank?
   end
 
-  def launchgroups
-     Array(additional_settings[:launchgroups])
-   end
-
-   def add_launchgroups(launchgroups)
-     self.additional_settings[:launchgroups] = Array(self.additional_settings[:launchgroups]) | Array(launchgroups)
-     self.launchgroups
-   end
-
-   def remove_launchgroups(launchgroups)
-     self.additional_settings[:launchgroups] = self.launchgroups - Array(launchgroups)
-     self.launchgroups
-   end
-
   def max_skills_per_account
     additional_settings.present? ? (additional_settings[:max_skills_limit] || DEFAULT_SKILL_LIMIT) : DEFAULT_SKILL_LIMIT
   end

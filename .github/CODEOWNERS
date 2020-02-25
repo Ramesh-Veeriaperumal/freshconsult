@@ -6,7 +6,7 @@ lib/rabbit_mq/* @sram2020
 swagger/* @thanashyam @venkatesanmurali @abinaya21 @ksashikumar
 
 public/* @rajasegar-c @parsurv @vishnubalajikm
-config/locales/en.yml @akshayasrikanth
+config/locales/en.yml @prakash-chokalingam @rajasegar-c
 api/lib/error_messages.yml @shankar-ganesh @akshayasrikanth
 
 lib/sanitize/config/html_relaxed.rb  @paschalraj

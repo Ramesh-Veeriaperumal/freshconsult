@@ -389,6 +389,7 @@ defaults: &defaults
     - [ticket_field_job]
     - [search_analytics_account_cleanup]
     - [search_analytics_tickets_cleanup]
+    - [update_url_in_sandbox]
 
 development:
   <<: *defaults

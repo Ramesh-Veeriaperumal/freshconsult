@@ -127,7 +127,7 @@ class Solution::Object
 	end
 
 	def set_session object
-		object.session = @params[:session] if @params.key?(:session)
+		object.session = @args[:session] if @args.key?(:session)
 	end
 
 	def build_associations object, lang

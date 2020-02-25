@@ -168,7 +168,30 @@ class User < ActiveRecord::Base
                   :description, :time_zone, :customer_id, :avatar_attributes, :company_id,
                   :company_name, :tag_names, :import_id, :deleted, :fb_profile_id, :language,
                   :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id, :string_uc04,
-                  :contractor, :skill_ids, :user_skills_attributes, :unique_external_id
+                  :contractor, :skill_ids, :user_skills_attributes, :unique_external_id, :twitter_profile_status, :twitter_followers_count
+
+  TWITTER_REQUESTER_FIELDS_MAPPING = {
+    boolean_uc01: :twitter_profile_status,
+    string_uc07: :twitter_followers_count
+  }.freeze
+
+  TWITTER_REQUESTER_FIELDS_MAPPING.keys.each do |key|
+    alias_attribute(TWITTER_REQUESTER_FIELDS_MAPPING[key], key)
+  end
+
+  TWITTER_REQUESTER_FIELDS_MAPPING.keys.each do |attribute|
+    define_method(attribute.to_s) do
+      flexifield.send(attribute)
+    end
+
+    define_method("#{attribute}?") do
+      flexifield.send(attribute)
+    end
+
+    define_method("#{attribute}=") do |value|
+      flexifield.send("#{attribute}=", value)
+    end
+  end
 
   def time_zone
     tz = self.read_attribute(:time_zone)
@@ -1257,6 +1280,15 @@ class User < ActiveRecord::Base
       privilege = privilege == :manage_companies ? :manage_contacts : :delete_contact
     end
     super
+  end
+
+  def twitter_requester_fields
+    return {} unless Account.current.twitter_requester_fields_enabled?
+
+    {
+      'twitter_profile_status'  => twitter_profile_status,
+      'twitter_followers_count' => twitter_followers_count
+    }
   end
 
   private

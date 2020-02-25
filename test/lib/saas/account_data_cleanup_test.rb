@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 ['ticket_helper.rb', 'group_helper.rb', 'social_tickets_creation_helper.rb', 'contact_fields_helper.rb', 'email_configs_helper.rb'].each { |file| require Rails.root.join("spec/support/#{file}") }
-['account_test_helper.rb', 'users_test_helper.rb'].each { |file| require Rails.root.join("test/core/helpers/#{file}") }
-['facebook_test_helper.rb', 'ticket_fields_test_helper.rb'].each { |file| require Rails.root.join("test/api/helpers/#{file}") }
+['solutions_test_helper.rb', 'account_test_helper.rb', 'users_test_helper.rb'].each { |file| require Rails.root.join("test/core/helpers/#{file}") }
+['facebook_test_helper.rb', 'ticket_fields_test_helper.rb', 'solutions_approvals_test_helper.rb'].each { |file| require Rails.root.join("test/api/helpers/#{file}") }
 
 class AccountDataCleanupTest < ActionView::TestCase
   include AccountTestHelper
@@ -13,6 +13,8 @@ class AccountDataCleanupTest < ActionView::TestCase
   include SocialTicketsCreationHelper
   include ContactFieldsHelper
   include EmailConfigsHelper
+  include SolutionsApprovalsTestHelper
+  include CoreSolutionsTestHelper
 
   def test_account_cleanup_drop_data
     # Observer rules
@@ -142,5 +144,48 @@ class AccountDataCleanupTest < ActionView::TestCase
     non_deleted_custom_statuses = @account.ticket_statuses.where(is_default: false).find { |status| status.deleted == false }
     assert ticket_field.updated_at > updated_at # to check if perform_cleanup updates ticket_field
     assert_nil non_deleted_custom_statuses
+  end
+
+  def test_handle_article_approval_workflow_drop_data
+    @account = create_new_account("#{Faker::Lorem.word}#{rand(10_000)}", Faker::Internet.email)
+
+    category = create_category(portal_id: @account.main_portal.id)
+    {
+      title: "Test #{rand(10_000)}",
+      description: "Test #{rand(10_000)}",
+      folder_id: create_folder(visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category.id).id,
+      status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
+    }
+
+    create_article(category)
+
+    get_in_review_article
+    assert @account.helpdesk_approvals.solution_approvals.count != 0
+    SAAS::AccountDataCleanup.new(@account, ['article_approval_workflow'], 'drop').perform_cleanup
+    assert_equal @account.reload.helpdesk_approvals.solution_approvals.count, 0
+  end
+
+  def test_handle_article_approval_workflow_drop_data_with_exception
+    @account = create_new_account("#{Faker::Lorem.word}#{rand(10_000)}", Faker::Internet.email)
+
+    category = create_category(portal_id: @account.main_portal.id)
+    {
+      title: "Test #{rand(10_000)}",
+      description: "Test #{rand(10_000)}",
+      folder_id: create_folder(visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category.id).id,
+      status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
+    }
+
+    create_article(category)
+
+    get_in_review_article
+    assert @account.helpdesk_approvals.solution_approvals.count != 0
+    Helpdesk::Approval.any_instance.stubs(:destroy).raises(StandardError)
+    assert_nothing_raised do
+      SAAS::AccountDataCleanup.new(@account, ['article_approval_workflow'], 'drop').perform_cleanup
+      assert @account.reload.helpdesk_approvals.solution_approvals.count != 0
+    end
+  ensure
+    Helpdesk::Approval.any_instance.unstub(:destroy)
   end
 end

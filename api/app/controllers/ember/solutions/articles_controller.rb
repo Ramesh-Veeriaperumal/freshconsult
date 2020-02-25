@@ -282,19 +282,23 @@ module Ember
         end
 
         def add_attachment_params(builder_params)
-          builder_params[:attachments_list] = params[cname][language_scoper][:attachments_list] if params[cname][language_scoper][:attachments_list]
-          builder_params[:cloud_file_attachments] = params[cname][language_scoper][:cloud_file_attachments] if params[cname][language_scoper][:cloud_file_attachments]
+          attachments_list = @article_params[language_scoper][:attachments_list] || @draft_params[:attachments_list]
+          builder_params[:attachments_list] = attachments_list if attachments_list
+
+          cloud_file_attachments = @article_params[language_scoper][:cloud_file_attachments] || @draft_params[:cloud_file_attachments]
+          builder_params[:cloud_file_attachments] = cloud_file_attachments if cloud_file_attachments
+
           builder_params
         end
 
-        def parse_attachment_params
-          @article_params[language_scoper][:cloud_file_attachments] = @article_params[language_scoper][:cloud_file_attachments].map(&:to_json) if @article_params[language_scoper][:cloud_file_attachments]
-          @article_params[language_scoper][:attachments_list] = @article_params[language_scoper][:attachments_list].join(',') if @article_params[language_scoper][:attachments_list]
+        def parse_attachment_params(builder_params)
+          builder_params[:cloud_file_attachments] = builder_params[:cloud_file_attachments].map(&:to_json) if builder_params[:cloud_file_attachments]
+          builder_params[:attachments_list] = builder_params[:attachments_list].join(',') if builder_params[:attachments_list]
         end
 
-        def add_attachments
-          parse_attachment_params
-          attachment_builder(@draft, nil, (params[cname][language_scoper] || {})[:cloud_file_attachments], (params[cname][language_scoper] || {})[:attachments_list])
+        def add_attachments_to_draft
+          parse_attachment_params(@draft_params)
+          attachment_builder(@draft, nil, (@draft_params || {})[:cloud_file_attachments], (@draft_params || {})[:attachments_list])
         end
 
         def validate_request_params

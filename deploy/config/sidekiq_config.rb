@@ -328,14 +328,14 @@ class SidekiqConfigUsEast
   "subscription_events_queue","restore_spam_tickets","jira_acc_config_updates","report_post_worker","merge_topics",
   "spam_digest_mailer","forum_post_spam_marker","forum_ban_user","nullify_deleted_custom_field_data", "track_customer_in_freshsales", "gamification", "community", "subscription","subscriptions", "freshid_agents_migration",
   "contact_delete_forever","create_sandbox_account","delete_sandbox","sandbox_data_to_file","sandbox_file_to_data",
-  "clone", "inline_image_shredder", "deactivate_product_widgets", "deactivate_filter_widgets", "user_central_publish", "update_time_zone","sandbox_diff", "sandbox_merge","run_rake_task","check_bot_training","update_segment_filter",
+  "clone", "inline_image_shredder", "deactivate_product_widgets", "deactivate_filter_widgets", "user_central_publish", "update_time_zone","sandbox_diff", "sandbox_merge", "run_rake_task","check_bot_training","update_segment_filter",
   "register_freshconnect", "undo_send", "unlink_tickets", "primary_language_change", "send_domain_changed_mail", "default_data_population", 'freshops_service', 'twitter_reply',
   "widget_upload_config", "bot_email_reply", "bot_email_ml_feedback", 'migration', 'company_central_publish', "ticket_field_central_publish",
   "scheduler_post_message", "scheduler_cancel_message", "delete_archive_ticket", "freshcaller_account_delete", "remove_encrypted_fields", "cancel_account", 'ocr_agent_sync', 'ocr_task_sync',
   'custom_translations_upload_queue', 'audit_log_export', "http_request", "simple_outreach_import", "surveys_central_publish", "freshvisual_configs", "anonymous_account_cleanup",
   'contact_field_central_publish', 'company_field_central_publish', 'freshid_retry_worker', "model_destroy", "freshcaller_account_central_publish", "freshchat_account_central_publish", "email_service_account_details_destroy", 'freshcaller_update_agents',
   "sandbox_cleanup", "thank_you_note", "update_sandbox_subscription", 'gateway_facebook_page', "archive_account_tickets_channel_queue", "archive_tickets_channel_queue", "ticket_properties_suggester", "update_agents_roles", "custom_translations_update_survey_status", 'kbase_article_versions_worker', 'kbase_article_versions_migration_worker',
-  'kbase_article_versions_reset_rating', 'articles_export_queue', 'rts_account_create', 'image_meta_data_delete', 'kbase_approval_notification_worker', 'delete_solution_meta_worker', 'ticket_field_job'
+  'kbase_article_versions_reset_rating', 'articles_export_queue', 'rts_account_create', 'image_meta_data_delete', 'kbase_approval_notification_worker', 'delete_solution_meta_worker', 'ticket_field_job', 'update_url_in_sandbox'
 ]
 
     # sidekiq queues in falcon alone
@@ -642,7 +642,7 @@ all_sidekiq_jobs =  cron_jobs + [
       'contact_field_central_publish', 'company_field_central_publish', 'freshid_v2_events', 'freshid_account_details_update_v2', 'freshid_v2_agents_migration', 'freshid_retry_worker',
       "model_destroy", "freshcaller_account_central_publish", "freshchat_account_central_publish", "sandbox_cleanup" , "thank_you_note", "update_sandbox_subscription", 'gateway_facebook_page',
       "archive_account_tickets_channel_queue", "archive_tickets_channel_queue", "ticket_properties_suggester", "update_agents_roles", "custom_translations_update_survey_status", 'kbase_article_versions_worker', 'kbase_article_versions_migration_worker',
-      'kbase_article_versions_reset_rating', 'articles_export_queue', 'rts_account_create', 'kbase_approval_notification_worker', 'delete_solution_meta_worker', 'ticket_field_job'
+      'kbase_article_versions_reset_rating', 'articles_export_queue', 'rts_account_create', 'kbase_approval_notification_worker', 'delete_solution_meta_worker', 'ticket_field_job', 'update_url_in_sandbox'
     ]
 
     #falcon common sidekiq

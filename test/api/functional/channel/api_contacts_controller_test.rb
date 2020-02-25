@@ -244,6 +244,40 @@ module Channel
       match_json(deleted_contact_pattern(User.last))
     end
 
+    def test_create_a_twitter_contact_with_valid_requester_fields
+      CustomRequestStore.store[:channel_api_request] = true
+      set_others_redis_key(TWITTER_REQUESTER_FIELDS_ENABLED, true)
+      Account.current.launch(:enable_twitter_requester_fields)
+      set_jwt_auth_header('twitter')
+      post :create, construct_params({ version: 'channel' }, name: Faker::Lorem.characters(10),
+                                                             twitter_id: Faker::Internet.email,
+                                                             twitter_profile_status: true,
+                                                             twitter_followers_count: '1000')
+      assert_response 201
+      match_json(deleted_contact_pattern(User.last))
+    ensure
+      CustomRequestStore.store[:channel_api_request] = false
+      remove_others_redis_key TWITTER_REQUESTER_FIELDS_ENABLED
+    end
+
+    def test_create_a_twitter_contact_with_invalid_requester_fields
+      CustomRequestStore.store[:channel_api_request] = true
+      set_others_redis_key(TWITTER_REQUESTER_FIELDS_ENABLED, true)
+      set_jwt_auth_header('twitter')
+      post :create, construct_params({ version: 'channel' }, name: Faker::Lorem.characters(10),
+                                                             twitter_id: Faker::Internet.email,
+                                                             twitter_profile_status: 'true',
+                                                             twitter_followers_count: 1000)
+      assert_response 400
+      match_json([bad_request_error_pattern('twitter_profile_status', :datatype_mismatch,
+                                            expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String),
+                  bad_request_error_pattern('twitter_followers_count', :datatype_mismatch,
+                                            expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Integer)])
+    ensure
+      CustomRequestStore.store[:channel_api_request] = false
+      remove_others_redis_key TWITTER_REQUESTER_FIELDS_ENABLED
+    end
+
     def test_create_contact_without_twitter_id
       set_jwt_auth_header('twitter')
       post :create, construct_params({ version: 'channel' }, name: Faker::Lorem.characters(10))

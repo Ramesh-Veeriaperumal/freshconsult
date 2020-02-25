@@ -191,7 +191,7 @@ module ProvisionSandboxTestHelper
     return unless @sandbox_account_id
     update_data_for_delete_sandbox(@sandbox_account_id)
     @production_account.make_current
-    Admin::Sandbox::DeleteWorker.new.perform(event: 'merge')
+    Admin::Sandbox::DeleteWorker.new.perform(event: 'deactivate')
     return unless ShardMapping.find_by_account_id(@sandbox_account_id)
     Sharding.admin_select_shard_of(@sandbox_account_id) do
       MODEL_DEPENDENCIES.keys.map {|table| model_table_mapping[table]}.compact.each do |table|

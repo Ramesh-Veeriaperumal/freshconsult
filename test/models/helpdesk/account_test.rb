@@ -39,33 +39,4 @@ class AccountTest < ActiveSupport::TestCase
     @account.revoke_feature(:private_inline)
   end
 
-  def test_launch_groups_with_additonalsettings_groups_add_remove_set_get
-     Sharding.select_shard_of(@account.id) do
-       @account = create_test_account if @account.nil?
-       @account.make_current
-       @account.account_additional_settings.additional_settings[:launchgroups] = ['group1', 'group2']
-       @account.account_additional_settings.save
-       #assert @account.launchgroups.sort == [@account.plan_name.to_s, ActiveRecord::Base.current_shard_selection.shard.to_s, @account.subscription.state.to_s, "group1", "group2"].sort
-       @account.add_launchgroups('group2')
-       assert @account.account_additional_settings.additional_settings[:launchgroups].sort == ['group1', 'group2'].sort
-       @account.add_launchgroups(['group3', 'group4'])
-       assert @account.account_additional_settings.additional_settings[:launchgroups].sort == ['group1', 'group2', 'group3', 'group4'].sort
-       @account.remove_launchgroups('group4')
-       assert @account.account_additional_settings.additional_settings[:launchgroups].sort == ['group1', 'group2', 'group3'].sort
-       @account.remove_launchgroups(['group2','group3'])
-       assert @account.account_additional_settings.additional_settings[:launchgroups] == ['group1']
-       @account.account_additional_settings.additional_settings = nil
-       @account.account_additional_settings.save
-       @account.remove_launchgroups('group2')
-       @account.add_launchgroups('group2')
-       assert @account.account_additional_settings.additional_settings[:launchgroups] == ['group2']
-     end  
-   end
-
-   def test_handle_exception
-     @account = create_test_account if @account.nil?
-     @account.make_current
-     assert @account.launched?(nil) == false
-   end
-
 end

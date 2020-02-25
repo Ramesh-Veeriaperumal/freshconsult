@@ -45,9 +45,28 @@ function validate_ruby_files() {
   (( is_invalid )) && { echo "ERROR: You have syntax errors in ruby files.Please fix the errors and try again"; exit 1; }
 }
 
+
+function validate_changes_in_restricted_files() {
+  is_invalid=0
+  restricted_files=("config/locales/en.yml") # array of files needs to be restricted
+  
+  for f in $(git diff --name-status --staged | grep -v "^D" | sed -e 's/^[MAR]\s*//g')
+  do
+    if [[ " ${restricted_files[@]} " =~ " ${f} " ]]; then
+     echo "ERROR: modified file  '${f}'"
+     is_invalid=1
+    fi
+  done
+  
+  (( is_invalid )) && { echo "ERROR: You have modified the above restricted file(s)"; exit 1; }
+}
+
+
+validate_changes_in_restricted_files
 validate_ejson
 validate_ruby_files
 validate_test_file
+
 #disabling this script 
 exit 0;
 
