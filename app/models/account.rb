@@ -25,7 +25,7 @@ class Account < ActiveRecord::Base
   include Account::ProxyFeature
   include Cache::Memcache::Admin::CustomData
   include Account::SidekiqControl::RouteDrop
-  
+
   has_many_attachments
 
   serialize :sso_options, Hash
