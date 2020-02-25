@@ -301,8 +301,8 @@ module RabbitMq::Subscribers::Tickets::Activities
       tf = acc_ff_fields.find {|f_field| f_field.safe_send(field) == k.to_s}.ticket_field if ff_fields_name.include?(k.to_sym)
       if tf
         case tf.field_type
-        when "custom_paragraph", "custom_text", "encrypted_text"
-          # for single line/multi line/encrypted text
+        when "custom_paragraph", "custom_text", "encrypted_text", "secure_text"
+          # for single line/multi line/encrypted text/secure text
           value = [nil, DONT_CARE_VALUE]
         when "custom_checkbox" # for check box
           (v[1] == true || v[1] == "1") ? checked << "#{tf.label}" : unchecked << "#{tf.label}"

@@ -32,7 +32,7 @@ module ExportCsvUtil
   end
 
   def export_fields(is_portal = false)
-    flexi_fields = Account.current.ticket_fields.custom_fields(:include => :flexifield_def_entry)
+    flexi_fields = Account.current.ticket_fields.custom_fields.non_secure_fields.includes(:flexifield_def_entry)
     csv_headers = Helpdesk::TicketModelExtension.csv_headers 
     #Product entry
     csv_headers = csv_headers + [ {:label => I18n.t("export_data.fields.product"), :value => "product_name", :selected => false, :type => :field_type} ] if Account.current.multi_product_enabled?
@@ -73,7 +73,7 @@ module ExportCsvUtil
   end
 
   def ticket_export_fields_without_customer
-    flexi_fields = Account.current.ticket_fields.custom_fields(:include => :flexifield_def_entry)
+    flexi_fields = Account.current.ticket_fields.custom_fields.non_secure_fields.includes(:flexifield_def_entry)
     default_csv_headers = Helpdesk::TicketModelExtension.ticket_csv_headers
 
     flexi_fields , additional_flexi_fields, encrypted_fields = split_flexifields(flexi_fields)

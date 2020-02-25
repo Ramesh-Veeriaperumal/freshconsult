@@ -158,7 +158,7 @@ class Portal < ActiveRecord::Base
 
   # include_translation is used for whether we need to preload custom_translations or not
   def customer_editable_ticket_fields(include_translation = false)
-    filter_fields account.ticket_fields_including_nested_fields.customer_editable.preload(preload_translations(include_translation)), ticket_field_conditions
+    filter_fields account.ticket_fields_including_nested_fields.customer_editable.non_secure_fields.preload(preload_translations(include_translation)), ticket_field_conditions
   end
 
   def layout

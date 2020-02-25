@@ -481,13 +481,27 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
   def test_ticket_field_index_with_secure_text_field
     @account.launch(:pci_compliance_field)
     launch_ticket_field_revamp do
-      secure_text_field = create_custom_field_dn('secure_text_1', 'secure_text')
+      name = "secure_text_#{Faker::Lorem.characters(rand(5..10))}"
+      secure_text_field = create_custom_field_dn(name, 'secure_text')
       get :index, controller_params(version: 'private')
       assert_response 200
       response = parse_response @response.body
       secure_text_field_in_index_call = response.find { |x| x['id'] == secure_text_field.id }
       assert_not_nil secure_text_field_in_index_call
       assert_equal secure_text_field_in_index_call['type'], "secure_text"
+    end
+  ensure
+    @account.rollback(:pci_compliance_field)
+  end
+
+  def test_fetch_non_secure_ticket_fields
+    @account.launch(:pci_compliance_field)
+    launch_ticket_field_revamp do
+      name = "secure_text_#{Faker::Lorem.characters(rand(5..10))}"
+      secure_text_field = create_custom_field_dn(name, 'secure_text')
+      @account.reload
+      non_secure_fields = @account.ticket_fields.non_secure_fields
+      assert_equal false, non_secure_fields.include?(secure_text_field)
     end
   ensure
     @account.rollback(:pci_compliance_field)

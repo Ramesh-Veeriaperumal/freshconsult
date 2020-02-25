@@ -315,6 +315,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   scope :default_fields, -> { where(:default => true ) }
   scope :custom_checkbox_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'custom_checkbox'"]
   scope :encrypted_custom_fields, conditions: ["flexifield_def_entry_id is not null and field_type = 'encrypted_text'"]
+  scope :non_secure_fields, -> { where("field_type != 'secure_text'") }
 
 
   # Enumerator constant for mapping the CSS class name to the field type
