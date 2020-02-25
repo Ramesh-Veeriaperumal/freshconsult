@@ -68,4 +68,17 @@ class Export::TicketDump < Export::TicketSchedule
       FileUtils.rm_f(@file_path)
     end
 
+    # overriding format_data def in lib/export/ticket.rb
+    def format_data(val, data)
+      @custom_field_names ||= Account.current.ticket_fields.custom_fields.pluck(:name)
+      @custom_date_time_fields ||= Account.current.custom_date_time_fields_from_cache.map(&:name)
+      if data.present?
+        if DATE_TIME_PARSE.include?(val.to_sym)
+          data = parse_date(data)
+        elsif (@custom_date_time_fields.include?(val) || @custom_field_names.include?(val)) && data.is_a?(Time)
+          data = data.iso8601
+        end
+      end
+      escape_html(strip_equal(data))
+    end
 end
