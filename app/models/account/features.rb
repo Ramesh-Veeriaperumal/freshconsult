@@ -85,7 +85,8 @@ class Account < ActiveRecord::Base
     :hide_first_response_due, :agent_articles_suggest, :email_articles_suggest, :customer_journey, :botflow,
     :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters, :supervisor_custom_status, :lbrr_by_omniroute,
     :secure_attachments, :article_versioning, :article_export, :article_approval_workflow, :next_response_sla, :advanced_automations,
-    :fb_ad_posts, :suggested_articles_count, :unlimited_multi_product, :solutions_freshconnect
+    :fb_ad_posts, :suggested_articles_count, :unlimited_multi_product, :solutions_freshconnect,
+    :help_widget_article_customisation
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -398,6 +399,10 @@ class Account < ActiveRecord::Base
 
   def help_widget_enabled?
     launched?(:help_widget) && has_feature?(:help_widget)
+  end
+
+  def help_widget_article_customisation_enabled?
+    launched?(:help_widget_article_customisation) && has_feature?(:help_widget_article_customisation)
   end
 
   # Checks if a bitmap feature has been added or removed after_update

@@ -7,6 +7,7 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   include HelpWidgetsTestHelper
   include SolutionsHelper
   include SolutionBuilderHelper
+  include AccountTestHelper
 
   def setup
     super
@@ -16,7 +17,7 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   def before_all
     @account = Account.first.make_current
     @account.stubs(:help_widget_enabled?).returns(true)
-    @account.launch(:help_widget_article_customisation)
+    @account.stubs(:help_widget_article_customisation_enabled?).returns(true)
     subscription = @account.subscription
     @old_subscription_state = subscription.state
     subscription.state = 'active'
@@ -31,7 +32,7 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
     subscription.save
     @widget.destroy
     @account.unstub(:help_widget_enabled?)
-    @account.rollback(:help_widget_article_customisation)
+    @account.unstub(:help_widget_article_customisation_enabled?)
     super
   end
 
@@ -75,13 +76,13 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   end
 
   def test_index_without_help_widget_article_customisation_feature
-    @account.rollback(:help_widget_article_customisation)
+    @account.stubs(:help_widget_article_customisation_enabled?).returns(false)
     get :index, controller_params(version: 'private', help_widget_id: @widget.id)
     assert_response 403
     match_json('code' => 'require_feature',
                'message' => 'The help_widget, help_widget_article_customisation feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
   ensure
-    @account.launch(:help_widget_article_customisation)
+    @account.unstub(:help_widget_article_customisation_enabled?)
   end
 
   def test_index_without_help_widget_enabled
@@ -244,13 +245,13 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   end
 
   def test_create_without_help_widget_article_customisation_feature
-    @account.rollback(:help_widget_article_customisation)
+    @account.stubs(:help_widget_article_customisation_enabled?).returns(false)
     post :create, construct_params(suggested_article_rule_request_params)
     assert_response 403
     match_json('code' => 'require_feature',
                'message' => 'The help_widget, help_widget_article_customisation feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
   ensure
-    @account.launch(:help_widget_article_customisation)
+    @account.unstub(:help_widget_article_customisation_enabled?)
   end
 
   def test_create_without_help_widget_enabled
@@ -347,12 +348,32 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   end
 
   def test_delete_suggested_article_rule_without_feature
-    @account.rollback(:help_widget_article_customisation)
+    @account.stubs(:help_widget_article_customisation_enabled?).returns(false)
     get :index, controller_params(version: 'private', help_widget_id: @widget.id)
     assert_response 403
     match_json('code' => 'require_feature',
                'message' => 'The help_widget, help_widget_article_customisation feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
   ensure
-    @account.launch(:help_widget_article_customisation)
+    @account.unstub(:help_widget_article_customisation_enabled?)
+  end
+
+  def test_plan_based_article_customisation_features_estate_17
+    sub_plan = SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17])
+    SubscriptionPlan.stubs(:find_by_name).returns(sub_plan)
+    create_sample_account('estate17helpwidgetcustomisation', 'estate17helpwidgetcustomisation@freshdesk.test')
+    refute @account.has_features?(:help_widget_article_customisation)
+  ensure
+    SubscriptionPlan.unstub(:find_by_name)
+    @account.destroy
+  end
+
+  def test_plan_based_article_customisation_features_estate_19
+    sub_plan = SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_19])
+    SubscriptionPlan.stubs(:find_by_name).returns(sub_plan)
+    create_sample_account('estate19helpwidgetcustomisation', 'estate19helpwidgetcustomisation@freshdesk.test')
+    assert @account.has_features?(:help_widget_article_customisation)
+  ensure
+    SubscriptionPlan.unstub(:find_by_name)
+    @account.destroy
   end
 end
