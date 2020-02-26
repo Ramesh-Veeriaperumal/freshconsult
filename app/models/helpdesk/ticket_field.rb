@@ -19,11 +19,11 @@ class Helpdesk::TicketField < ActiveRecord::Base
   concerned_with :presenter
 
   self.table_name =  "helpdesk_ticket_fields"
-  attr_accessible :name, :label, :label_in_portal, :description, :active,
-    :field_type, :position, :required, :visible_in_portal, :editable_in_portal, :required_in_portal,
-    :required_for_closure, :flexifield_def_entry_id, :field_options, :default,
-    :level, :parent_id, :prefered_ff_col, :import_id, :choices, :picklist_values_attributes,
-    :ticket_statuses_attributes, :ticket_form_id, :column_name, :flexifield_coltype
+  attr_accessible :name, :label, :label_in_portal, :description, :active, :field_type, :position,
+                  :required, :visible_in_portal, :editable_in_portal, :required_in_portal,
+                  :required_for_closure, :flexifield_def_entry_id, :field_options, :default, :deleted,
+                  :level, :parent_id, :prefered_ff_col, :import_id, :choices, :picklist_values_attributes,
+                  :ticket_statuses_attributes, :ticket_form_id, :column_name, :flexifield_coltype
 
   attr_accessor :skip_populate_choices, :error_on_limit_exceeded, :parent_level_choices
 

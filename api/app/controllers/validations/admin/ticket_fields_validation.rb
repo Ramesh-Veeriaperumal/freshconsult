@@ -73,17 +73,24 @@ module Admin
                                  if: -> { instance_variable_defined?(:@section_mappings) && create_or_update? }
     validate :section_mappings_params_validation, if: -> { section_mappings.present? && create_or_update? }
 
+    # Archive ticket fields validation
+    validates :archived, custom_inclusion: { in: [true, false] }, if: -> { instance_variable_defined?(:@archived) }, on: :update
+    validate :archive_combined_with_other_params_validation, if: -> { instance_variable_defined?(:@archived) }, on: :update
+    validate :archive_ticket_fields_feature?, if: -> { instance_variable_defined?(:@archived) }, on: :update
+    validate :restrict_update_on_archived_fields, if: -> { tf.deleted? && !instance_variable_defined?(:@archived) }, on: :update
+    validate :restrict_archive_param_on_tf_creation, if: -> { instance_variable_defined?(:@archived) }, on: :create
+
     validate :validate_params
 
     validate :multi_product_feature?, if: -> { not_index? && tf.present? && tf.product_field? }
     validate :multi_dynamic_section?, if: -> { create_or_update? && instance_variable_defined?(:@section_mappings) }
     validate :multi_dynamic_section?, if: -> { create_or_update? && instance_variable_defined?(:@section_mappings) }
     validate :multi_company_feature?, if: -> { not_index? && tf.present? && tf.company_field? }
-    validate :fsm_enabled_error, if: -> { tf.fsm? }, on: :destroy
-    validate :default_field_check, if: -> { tf.default? }, on: :destroy # need to handle for fsm too
+    validate :fsm_field_check, if: -> { ((update_action? && instance_variable_defined?(:@archived)) || delete_action?) && tf.fsm? }
+    validate :default_field_check, if: -> { ((update_action? && instance_variable_defined?(:@archived)) || delete_action?) && tf.default? } # need to handle for fsm too
     validate :custom_ticket_fields_feature?, if: -> { tf.present? && !tf.default? }
     validate :hipaa_encrypted_field?, if: -> { tf.present? && (tf.encrypted_field? || encrypted_field?) }
-    validate :ticket_field_has_section?, on: :destroy
+    validate :ticket_field_has_section?, if: -> { (update_action? && instance_variable_defined?(:@archived)) || delete_action? }
     validate :can_delete_nested_field?, if: -> { update_or_destroy? && tf.nested_field? }
     validate :validate_include, if: -> { include_rel_key.present? && show_or_index? }
     validate :ticket_field_job_progress_error, if: -> { update_or_destroy? && tf.update_in_progress?.present? }

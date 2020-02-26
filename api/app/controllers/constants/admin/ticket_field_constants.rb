@@ -63,7 +63,7 @@ module Admin::TicketFieldConstants
 
   ALLOWED_HASH_BASE_FIELDS = %i[label label_for_customers required_for_closure required_for_agents required_for_customers
                                 customers_can_edit displayed_to_customers position type section_mappings dependent_fields
-                                choices portal_cc portal_cc_to].freeze
+                                choices portal_cc portal_cc_to archived].freeze
 
   UPDATE_FIELDS = CREATE_FIELDS = ALLOWED_HASH_BASE_FIELDS |
                                   %i[dependent_fields section_mappings choices].freeze |
@@ -111,7 +111,8 @@ module Admin::TicketFieldConstants
     label_in_portal: :label_for_customers,
     position: :position,
     portalcc: :portal_cc,
-    portalcc_to: :portal_cc_to
+    portalcc_to: :portal_cc_to,
+    deleted: :archived
   }.merge(TICKET_FIELD_PORTAL_PARAMS).freeze
 
   NESTED_FIELD_UPDATE_PARAMS = {
@@ -168,7 +169,8 @@ module Admin::TicketFieldConstants
     displayed_to_customers: :visible_in_portal,
     field_update_in_progress: :update_in_progress?,
     created_at: :created_at,
-    updated_at: :updated_at
+    updated_at: :updated_at,
+    archived: :deleted
   }.freeze
 
   DEPENDENT_FIELD_RESPONSE_HASH = {

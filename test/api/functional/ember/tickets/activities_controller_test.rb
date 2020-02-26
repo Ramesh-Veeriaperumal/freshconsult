@@ -31,7 +31,7 @@ module Ember
         @account.ticket_fields.custom_fields.each(&:destroy)
         ticket_fields = []
         custom_field_labels = []
-        ticket_fields << create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
+        ticket_fields << create_dependent_custom_field(%w[test_custom_country test_custom_state test_custom_city], Random.rand(30..40))
         ticket_fields << create_custom_field_dropdown('test_custom_dropdown', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
         choices_custom_field_labels = ticket_fields.map(&:label)
         CUSTOM_FIELDS.each do |custom_field|

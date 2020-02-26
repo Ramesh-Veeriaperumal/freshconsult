@@ -440,8 +440,10 @@ api_error_messages:
   non_empty_section_fields: "Please delete ticket field inside section before deleting section"
   invalid_choice_for_ticket_field: "Invalid choice id(%{id}) for ticket field id(%{ticket_field_id})"
   clear_ticket_field_choices_error: "Can not delete all the choices from the ticket field"
-  delete_default_field_error: "Default field '%{name}' can't be deleted"
-  section_inside_ticket_field_error: "Ticket field '%{name}' has sections, so it can't be deleted"
+  delete_default_field_error: "Default field '%{name}' can't be %{operation}"
+  restrict_other_params_on_archiving: "'archived' parameter can not be combined with any other parameters"
+  restrict_update_on_archived_fields: "'Update' operation can not be performed on archived fields"
+  section_inside_ticket_field_error: "Ticket field '%{name}' has sections, so it can't be %{operation}"
   nested_field_child_delete_error: "Can not delete Level2 and Level3 dependent field, if you want to remove please update the parent field"
 
   #audit_log_export
@@ -507,7 +509,7 @@ api_error_messages:
   portal_and_cc_param_error: "portal_cc and portal_cc_to is available only for requester field"
   field_type_error: "You are trying to update field type. It cannot be updated"
   level_choices_deletion_error: "Can not delete all choices inside '%{level}'"
-  fsm_enabled: "Field service management feature should be disabled, for delete"
+  fsm_enabled: "Field service management feature should be disabled, for %{operation}"
   fsm_section_params_validation: "Field Service management fields cannot be moved to another sections"
   fsm_field_not_editable: "Field service management fields cannot be created/updated"
   enforce_mandatory_value_error: "It should be either 'true' or 'false'"

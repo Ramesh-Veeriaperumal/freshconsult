@@ -72,7 +72,7 @@ class TicketsControllerTest < ActionController::TestCase
     Helpdesk::TicketStatus.find(2).update_column(:stop_sla_timer, false)
     @@ticket_fields = []
     @@custom_field_names = []
-    @@ticket_fields << create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
+    @@ticket_fields << create_dependent_custom_field(%w[test_custom_country test_custom_state test_custom_city], Random.rand(10..20))
     @@ticket_fields << create_custom_field_dropdown('test_custom_dropdown', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
     @@choices_custom_field_names = @@ticket_fields.map(&:name)
     CUSTOM_FIELDS.each do |custom_field|

@@ -256,7 +256,12 @@ module TicketFieldsTestHelper
     # ffs_07, ffs_08 and ffs_09 are created here
     ticket_field_exists = @account.ticket_fields.find_by_name("#{labels[0].downcase}_#{@account.id}")
     return ticket_field_exists if ticket_field_exists
-    ff_name = ff_number.present? ? "ffs_#{ff_number}" : "ffs_0#{id || 7}"
+    if ff_number.present?
+      ff_name = "ffs_#{ff_number}"
+    else
+      id ||= 7
+      ff_name = "ffs_#{id > 9 ? id : '0' + id.to_s}"
+    end
     flexifield_def_entry[0] = Account.current.ticket_field_def.flexifield_def_entries.find_by_flexifield_name(ff_name)
     if flexifield_def_entry[0].blank?
 
@@ -283,7 +288,12 @@ module TicketFieldsTestHelper
     save_var = parent_custom_field.save
 
     (1..2).each do |nested_field_id|
-      ff_name = ff_number.present? ? "ffs_#{ff_number + nested_field_id}" : "ffs_0#{nested_field_id + (id || 7)}"
+      if ff_number.present?
+        ff_name = "ffs_#{ff_number + nested_field_id}"
+      else
+        id ||= 7
+        ff_name = "ffs_#{(nested_field_id + id) > 9 ? (nested_field_id + id) : '0' + (nested_field_id + id).to_s}"
+      end
       flexifield_def_entry[nested_field_id] = FactoryGirl.build(:flexifield_def_entry,
                                                                 flexifield_def_id: @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}").id,
                                                                 flexifield_alias: "#{labels[nested_field_id].downcase}_#{@account.id}",

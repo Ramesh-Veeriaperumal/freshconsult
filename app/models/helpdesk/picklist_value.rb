@@ -94,7 +94,13 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   end
 
   def section_ticket_fields
-    @section_ticket_fields ||= (section.present?) ? section.section_fields.map(&:ticket_field) : []
+    @section_ticket_fields ||= begin
+      if section.present?
+        Account.current.archive_ticket_fields_enabled? ? section.section_fields.map(&:ticket_field).reject(&:deleted?) : section.section_fields.map(&:ticket_field)
+      else
+        []
+      end
+    end
   end
 
   def choices

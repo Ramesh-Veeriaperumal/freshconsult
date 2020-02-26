@@ -124,13 +124,28 @@ module Admin::TicketFieldsErrorHelper
     error_options.merge!(error_message)
   end
 
+  def default_field_archive_or_deletion_error(name, operation, message: :delete_default_field_error)
+    errors[name] << message
+    error_message = {}
+    error_message[name] = { name: name, operation: operation }
+    error_options.merge!(error_message)
+  end
+
+  def section_inside_ticket_field_error(name, operation, message: :section_inside_ticket_field_error)
+    errors[name] << message
+    error_message = {}
+    error_message[name] = { name: name, operation: operation }
+    error_options.merge!(error_message)
+  end
+
   def ticket_field_job_progress_error
     errors[:ticket_field_update] << :field_update_job_running_error
   end
 
-  def fsm_enabled_error
-    if current_account.field_service_management_enabled?
-      errors[:field_service_management] << :fsm_enabled
-    end
+  def fsm_enabled_error(name, operation, message: :fsm_enabled)
+    errors[name] << message
+    error_message = {}
+    error_message[name] = { operation: operation }
+    error_options.merge!(error_message)
   end
 end
