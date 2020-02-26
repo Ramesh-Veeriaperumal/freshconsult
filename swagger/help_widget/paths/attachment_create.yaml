@@ -1,0 +1,23 @@
+post:
+  tags: [Attachments]
+  summary: Attachment for widget
+  description: Single Attachment for widget
+  parameters:
+    - in: body
+      name: attachments
+      schema:
+        $ref: '#/definitions/widget_attachment_create'
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          id:
+            type: integer
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

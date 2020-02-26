@@ -1,0 +1,38 @@
+type: object
+allOf:
+  - $ref: '#/definitions/ticket'
+  - properties:
+      name:
+        type: string
+      email:
+        type: string
+      facebook_id:
+        type: string
+      phone:
+        type: string
+      twitter_id:
+        type: string
+      attachment_ids:
+        type: array
+        items:
+          type: integer
+      parent_id:
+        type: integer
+      tracker_id:
+        type: integer
+      related_ticket_ids:
+        type: array
+        items:
+          type: integer
+      cc_emails:
+        type: array
+        items:
+          type: string
+      cloud_files:
+        type: array
+        items:
+          $ref: '#/definitions/cloud_file_input'
+      inline_attachment_ids:
+        type: array
+        items:
+          type: integer

@@ -56,4 +56,6 @@ module Billing::Constants
   TRUE = "true"
   
   INVOICE_DUE_EXPIRY = 60.days
+
+  DEFAULT_AGENT_LIMIT = 50_000
 end

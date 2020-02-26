@@ -566,6 +566,8 @@ de:
   undo_toggle_tip: 'Bitte aktualisieren Sie die Seite, damit diese Einstellung wirksam wird.'
   undo_toggle_error: 'Entschuldigung, es ist ein Fehler aufgetreten!'
   undo_toggle_success: 'Bitte aktualisieren Sie die Seite, damit diese Einstellung wirksam wird.'
+  focus_mode_toggle: 'Fokus-Modus'
+  focus_mode_toggle_tip: 'Direkt zum nächsten Ticket in der Liste gehen, nachdem ein Ticket geschlossen wurde'
   attach: Anhängen
   attachment: Anhang
   attachments: Anhänge
@@ -3578,6 +3580,23 @@ de:
       helpdesk: Helpdesk
       events: Ereignisse
       survey: Umfrage
+    custom_translation:
+      status_translated: Translated
+      status_untranslated: Nicht übersetzt
+      status_outdated: Outdated
+      status_incomplete: Incomplete
+      translation: Übersetzung
+      primary: Primary
+      download: Download
+      preview: Vorschau
+      edit: Bearbeiten
+      surveys:
+        visible_on_portal: Im Portal sichtbare Sprachen 
+        visible_on_portal_helptext: Diese Sprachen können im Portal gesehen werden
+        show_info: Save the survey to start translating
+        hidden_languages: Verstecke Sprachen
+        hidden_languages_helptext: Diese Sprachen können im Portal nur gesehen werden wenn Sie die Sichtbarkeit in den Admin Einstellungen ändern
+        helptext_content: Können Sie die Sprache Ihrer Wahl nicht finden oder ist sie versteckt? Fügen Sie Sprachen hinzu und ändern Sie die Sichtbarkeit unter Admin - Helpdesk -
   ends_with: Endet mit
   last_name: Nachname
   forum:

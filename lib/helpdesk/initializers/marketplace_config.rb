@@ -34,6 +34,7 @@ module MarketplaceConfig
   MARKETPLACE_CIPHER_KEY = config[:mkp_cipher_key]
   MARKETPLACE_CIPHER_IV = config[:mkp_cipher_iv]
   TENANT_NAME = config[:tenant_name]
+  GALLERY_PROTOCOL = config[:gallery_protocol]
   MKP_CB = FreshRequest::RedisUrlCb.new(
                 max_failures: 5,
                 trip_off_interval: 20,

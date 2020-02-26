@@ -10,7 +10,7 @@ class AddMarketplaceGalleryToOauthApplications < ActiveRecord::Migration
     VALUES
       ('#{Marketplace::Constants::GALLERY_NAME}', '#{MarketplaceConfig::GALLERY_OAUTH_KEY}',
        '#{MarketplaceConfig::GALLERY_OAUTH_SECRET}', 
-       '#{MarketplaceConfig::GALLERY_URL}/auth/callback', '', 
+       '#{MarketplaceConfig::GALLERY_PROTOCOL}#{MarketplaceConfig::TENANT_NAME}-doorkeeper.#{MarketplaceConfig::GALLERY_URL}/auth/callback', '',
        '#{Integrations::Constants::SYSTEM_ACCOUNT_ID}', '#{Integrations::Constants::SYSTEM_ACCOUNT_ID}',
        NOW(), NOW()
       )

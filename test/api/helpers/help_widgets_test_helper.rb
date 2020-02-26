@@ -33,6 +33,12 @@ module HelpWidgetsTestHelper
     category
   end
 
+  def create_widget_suggested_article_rules(params)
+    @widget.help_widget_suggested_article_rules.build(params)
+    @widget.save!
+    @widget.help_widget_suggested_article_rules
+  end
+
   def set_user_login_headers(name: 'Sagara', email: 'sagara@desert.com', exp: (Time.now.utc + 2.hours), additional_payload: {}, additional_operations: { remove_key: nil })
     @account.launch :help_widget_login unless Account.current.help_widget_login_enabled?
     secret_key = SecureRandom.hex
@@ -261,5 +267,12 @@ module HelpWidgetsTestHelper
         value: params[:filter_value] || suggested_article_ids
       }
     }
+  end
+
+  def suggested_article_ids
+    Account.current.solution_article_meta
+           .for_help_widget(@widget, User.current)
+           .published.limit(5)
+           .pluck(:id)
   end
 end

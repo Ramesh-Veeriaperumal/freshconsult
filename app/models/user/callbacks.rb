@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
   before_create :decode_name
   before_create :populate_privileges, :if => :helpdesk_agent?
   before_create :create_freshid_user, if: :freshid_agent_not_signup_in_progress?
-  before_create :update_agent_default_preferences, if: [:agent?, :focus_mode_enabled?]
+  before_create :update_agent_default_preferences, if: :agent?
 
   before_update :populate_privileges, :if => :roles_changed?
   before_update :destroy_user_roles, :delete_freshfone_user, :delete_user_authorizations, :if => :deleted?
@@ -17,7 +17,7 @@ class User < ActiveRecord::Base
   before_update :backup_user_changes, :clear_redis_for_agent
 
   before_update :create_freshid_user, if: :converted_to_agent?
-  before_update :update_agent_default_preferences, if: -> { converted_to_agent? && focus_mode_enabled? && !was_agent? }
+  before_update :update_agent_default_preferences, if: -> { converted_to_agent? && !was_agent? }
   before_update :destroy_freshid_user, if: :converted_to_contact?
   before_update :update_freshid_user, if: [:freshid_enabled_and_agent?, :email_id_changed?]
   before_update :set_gdpr_preference, :if => [:privileges_changed?, :agent_to_admin?]
@@ -126,10 +126,6 @@ class User < ActiveRecord::Base
   def update_agent_default_preferences
     new_pref = { focus_mode: true }
     self.merge_preferences = { agent_preferences: new_pref }
-  end
-
-  def focus_mode_enabled?
-    Account.current.focus_mode_enabled?
   end
 
   def persist_updated_at

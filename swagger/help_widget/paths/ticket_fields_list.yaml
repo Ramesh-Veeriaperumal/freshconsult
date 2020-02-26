@@ -1,0 +1,22 @@
+get:
+  tags: [ticket fields]
+  description: List all ticket fields
+  parameters:
+    - name: include
+      in: query
+      type: string
+      description: Comma-separated, possible values - sections
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          ticket_fields:
+            type: array
+            items:
+              $ref: '#/definitions/ticket_field_list_response'
+          meta:
+            $ref: '#/definitions/meta'
+    403:
+      description: Access denied

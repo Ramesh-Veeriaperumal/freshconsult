@@ -41,7 +41,7 @@ class Fdadmin::AccountToolsController < Fdadmin::DevopsMainController
     result = ShardMapping.latest_shard
     respond_to do |format|
       format.json do
-        render json: result
+        render json: result.to_json
       end
     end
   end

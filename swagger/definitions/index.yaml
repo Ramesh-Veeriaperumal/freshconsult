@@ -799,10 +799,6 @@ admin_sla_action:
 admin_sla_action_common:
   $ref: ./resource/admin/sla_policies/sla_action_common.yaml
 
-#Widget
-widget_attachment_create:
-  $ref: ./request/widget_attachment_create.yaml
-
 # Solutions
 solution_home_summary_response:
   $ref: ./response/solutions/home_summary.yaml

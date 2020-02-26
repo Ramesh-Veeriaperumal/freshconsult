@@ -193,7 +193,6 @@ class UsersController < ApplicationController
   end
 
   def change_focus_mode
-    head 400 unless current_account.focus_mode_enabled?
     value = params[:value].to_bool rescue false
     current_user.agent.focus_mode = value
     current_user.agent.save

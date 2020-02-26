@@ -1,5 +1,6 @@
 class Admin::Marketplace::AppsController < Admin::AdminController
   before_filter :access_denied, unless: :marketplace_feature_enabled?
+  DEFAULT_AUTH = 'doorkeeper'.freeze
 
   def index
     params_to_encrypt = default_mkp_params
@@ -20,7 +21,7 @@ class Admin::Marketplace::AppsController < Admin::AdminController
     end
     iframe_params = encrypt(params_to_encrypt.to_json)
     iframe_url = build_marketplace_url(iframe_params, additional_params)
-    iframe_url = add_tenant_details_to_url(iframe_url) if freshid_enabled?
+    iframe_url = add_tenant_details_to_url(iframe_url)
     render json: { url: iframe_url }
   end
 
@@ -35,9 +36,9 @@ class Admin::Marketplace::AppsController < Admin::AdminController
     end
 
     def add_tenant_details_to_url(iframe_url)
-      protocol, url = iframe_url.split(/(?<=:\/\/)/)
-      tenant_details = "#{MarketplaceConfig::TENANT_NAME}-#{current_account.domain}."
-      "#{protocol}#{tenant_details}#{url}"
+      authorization = freshid_enabled? ? current_account.domain : DEFAULT_AUTH
+      tenant_details = "#{MarketplaceConfig::TENANT_NAME}-#{authorization}."
+      "#{MarketplaceConfig::GALLERY_PROTOCOL}#{tenant_details}#{iframe_url}"
     end
 
     def marketplace_feature_enabled?
