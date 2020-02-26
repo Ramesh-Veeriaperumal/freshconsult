@@ -28,24 +28,19 @@ class ConversationsController < ApiApplicationController
     sanitize_params
     build_object
     kbase_email_included? params[cname] # kbase_email_included? present in Email module
-    conversation_delegator = fb_public_api? ? ConversationDelegator.new(@item, fetch_delegation_hash) : ConversationDelegator.new(@item, notable: @ticket)
+    return perform_social_reply if fb_public_api?
 
+    conversation_delegator = ConversationDelegator.new(@item, notable: @ticket)
     if conversation_delegator.valid?
-      if fb_public_api?
-        @delegator_note = conversation_delegator.parent_note
-        is_success = create_note
+      @item.email_config_id = conversation_delegator.email_config_id
+      if @item.email_config_id
+        @item.from_email = current_account.features?(:personalized_email_replies) ? conversation_delegator.email_config.friendly_email_personalize(current_user.name) : conversation_delegator.email_config.friendly_email
       else
-        @item.email_config_id = conversation_delegator.email_config_id
-        if @item.email_config_id
-          @item.from_email = current_account.features?(:personalized_email_replies) ? conversation_delegator.email_config.friendly_email_personalize(current_user.name) : conversation_delegator.email_config.friendly_email
-        else
-          @item.from_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
-        end
-
-        is_success = create_note
-        # publish solution is being set in kbase_email_included based on privilege and email params
-        create_solution_article if is_success && @create_solution_privilege
+        @item.from_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
       end
+      is_success = create_note
+      # publish solution is being set in kbase_email_included based on privilege and email params
+      create_solution_article if is_success && @create_solution_privilege
       render_response(is_success)
     else
       render_custom_errors(conversation_delegator, true)
@@ -85,6 +80,17 @@ class ConversationsController < ApiApplicationController
 
   private
 
+    def perform_social_reply
+      conversation_delegator = ConversationDelegator.new(@item, fetch_delegation_hash)
+      if conversation_delegator.valid?(action_name.to_sym)
+        @delegator_note = conversation_delegator.parent_note
+        is_success = create_note
+        render_response(is_success)
+      else
+        render_custom_errors(conversation_delegator, true)
+      end
+    end
+
     def decorator_options(options = {})
       options[:ticket] = @ticket
       super(options)
@@ -115,8 +121,13 @@ class ConversationsController < ApiApplicationController
       @item.notable.account = current_account
       build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
       @item.attachments = @item.attachments # assign attachments so that it will not be queried again in model callbacks
-      fb_public_api? ? build_fb_association : (@item.inline_attachments = @item.inline_attachments)
+      @item.inline_attachments = @item.inline_attachments
+      build_social_associations if fb_public_api?
       @item.save_note
+    end
+
+    def build_social_associations
+      build_fb_association if fb_public_api?
     end
 
     def render_response(success)
@@ -175,13 +186,13 @@ class ConversationsController < ApiApplicationController
     end
 
     def fb_public_api?
-      Account.current.launched?(:fb_twitter_public_api) && (@ticket[:source] == TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook])
+      Account.current.launched?(:facebook_public_api) && (@ticket[:source] == TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook]) && reply?
     end
 
     def validate_params
       if fb_public_api?
-        field = ConversationConstants::PUBLIC_API_FIELDS[@ticket[:source]] if ConversationConstants::PUBLIC_API_FIELDS.key?(@ticket[:source])
-        params[cname].permit(*field)
+        fields = ConversationConstants::PUBLIC_API_FIELDS[@ticket[:source]] if ConversationConstants::PUBLIC_API_FIELDS.key?(@ticket[:source])
+        params[cname].permit(*fields)
         @conversation_validation = validation_class.new(fetch_validation_hash, @item, string_request_params?)
       else
         field = "#{constants_class}::#{action_name.upcase}_FIELDS".constantize

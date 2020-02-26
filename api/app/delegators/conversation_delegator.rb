@@ -3,7 +3,7 @@ class ConversationDelegator < ConversationBaseDelegator
 
   validate :validate_agent_emails, if: -> { note? && !reply_to_forward? && to_emails.present? && attr_changed?('to_emails', schema_less_note) }
 
-  validate :validate_from_email, if: -> { !social_ticket? && (email_conversation? || reply_to_forward?) && from_email.present? && attr_changed?('from_email', schema_less_note) }
+  validate :validate_from_email, if: -> { (email_conversation? || (schema_less_note.present? && reply_to_forward?)) && from_email.present? && attr_changed?('from_email', schema_less_note) }
 
   validate :validate_agent_id, if: -> { (fwd_email? && user_id.present? && attr_changed?('user_id')) || (facebook_ticket? && user_id.present?) }
 
@@ -24,11 +24,11 @@ class ConversationDelegator < ConversationBaseDelegator
 
   validate :ticket_summary_presence
 
-  validate :validate_parent_note_id, if: -> { facebook_ticket? && parent_note_id.present? }
 
-  validate :validate_page_state, if: -> { facebook_ticket? }
-
-  validate :validate_attachments, if: -> { facebook_ticket? && @attachments.present? && (msg_type == Facebook::Constants::FB_MSG_TYPES[1]) }
+  # Facebook reply delegation check
+  validate :validate_parent_note_id, if: -> { facebook_ticket? && parent_note_id.present? && reply? }
+  validate :validate_page_state, if: -> { facebook_ticket? && reply? }
+  validate :validate_attachments, if: -> { facebook_ticket? && @attachments.present? && (msg_type == Facebook::Constants::FB_MSG_TYPES[1]) && reply? }
 
   def initialize(record, options = {})
     options[:attachment_ids] = skip_existing_attachments(options) if options[:attachment_ids]
@@ -38,7 +38,7 @@ class ConversationDelegator < ConversationBaseDelegator
     retrieve_cloud_files if @cloud_file_ids
     @conversation = record
     @notable = options[:notable]
-    if Account.current.launched?(:fb_twitter_public_api)
+    if Account.current.launched?(:facebook_public_api)
       @parent_note_id = options[:parent_note_id]
       @fb_page = options[:fb_page]
       @msg_type = options[:msg_type]
@@ -47,12 +47,16 @@ class ConversationDelegator < ConversationBaseDelegator
     end
   end
 
+  def reply?
+    validation_context == :reply
+  end
+
   def facebook_ticket?
-    Account.current.launched?(:fb_twitter_public_api) && ticket_source.present? && (ticket_source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook])
+    Account.current.launched?(:facebook_public_api) && ticket_source.present? && (ticket_source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook])
   end
 
   def social_ticket?
-    Account.current.launched?(:fb_twitter_public_api) && ticket_source.present? && (ticket_source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook])
+    Account.current.launched?(:facebook_public_api) && ticket_source.present? && (ticket_source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook])
   end
 
   def validate_parent_note_id
