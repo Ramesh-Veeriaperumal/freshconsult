@@ -1,11 +1,11 @@
 class ConversationDelegator < ConversationBaseDelegator
-  attr_accessor :email_config_id, :email_config, :cloud_file_attachments
+  attr_accessor :email_config_id, :email_config, :cloud_file_attachments, :parent_note_id, :parent_note, :fb_page, :ticket_source, :msg_type
 
-  validate :validate_agent_emails, if: -> { (note? && !reply_to_forward?) && to_emails.present? && attr_changed?('to_emails', schema_less_note) }
+  validate :validate_agent_emails, if: -> { note? && !reply_to_forward? && to_emails.present? && attr_changed?('to_emails', schema_less_note) }
 
-  validate :validate_from_email, if: -> { (email_conversation? || reply_to_forward?) && from_email.present? && attr_changed?('from_email', schema_less_note) }
+  validate :validate_from_email, if: -> { !social_ticket? && (email_conversation? || reply_to_forward?) && from_email.present? && attr_changed?('from_email', schema_less_note) }
 
-  validate :validate_agent_id, if: -> { fwd_email? && user_id.present? && attr_changed?('user_id') }
+  validate :validate_agent_id, if: -> { (fwd_email? && user_id.present? && attr_changed?('user_id')) || (facebook_ticket? && user_id.present?) }
 
   validate :validate_tracker_id, if: -> { broadcast_note? }
 
@@ -24,6 +24,12 @@ class ConversationDelegator < ConversationBaseDelegator
 
   validate :ticket_summary_presence
 
+  validate :validate_parent_note_id, if: -> { facebook_ticket? && parent_note_id.present? }
+
+  validate :validate_page_state, if: -> { facebook_ticket? }
+
+  validate :validate_attachments, if: -> { facebook_ticket? && @attachments.present? && (msg_type == Facebook::Constants::FB_MSG_TYPES[1]) }
+
   def initialize(record, options = {})
     options[:attachment_ids] = skip_existing_attachments(options) if options[:attachment_ids]
     super(record, options)
@@ -32,6 +38,55 @@ class ConversationDelegator < ConversationBaseDelegator
     retrieve_cloud_files if @cloud_file_ids
     @conversation = record
     @notable = options[:notable]
+    if Account.current.launched?(:fb_twitter_public_api)
+      @parent_note_id = options[:parent_note_id]
+      @fb_page = options[:fb_page]
+      @msg_type = options[:msg_type]
+      @ticket_source = options[:ticket_source]
+      @attachments = options[:attachments]
+    end
+  end
+
+  def facebook_ticket?
+    Account.current.launched?(:fb_twitter_public_api) && ticket_source.present? && (ticket_source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook])
+  end
+
+  def social_ticket?
+    Account.current.launched?(:fb_twitter_public_api) && ticket_source.present? && (ticket_source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook])
+  end
+
+  def validate_parent_note_id
+    @parent_note = @notable.notes.find_by_id(parent_note_id)
+    if @parent_note.present?
+      errors[:parent_note_id] << :unable_to_post_reply unless @parent_note.fb_post.try(:post?) && @parent_note.fb_post.try(:can_comment?)
+    else
+      errors[:parent_note_id] << :"is invalid"
+    end
+  end
+
+  def validate_page_state
+    return errors[:fb_page_id] << :invalid_facebook_id unless fb_page
+
+    if fb_page.reauth_required?
+      errors[:fb_page_id] << :reauthorization_required
+      (error_options[:fb_page_id] ||= {}).merge!(app_name: 'Facebook')
+    end
+  end
+
+  def validate_attachments
+    attachment = @attachments.first
+    if attachment.present?
+      attachment_format = attachment[:resource].content_type
+      attachment_size = attachment_size_in_mb(attachment[:resource].size)
+      unless ApiConstants::FACEBOOK_ATTACHMENT_CONFIG[:post][:fileTypes].include?(attachment_format)
+        errors[:attachments] << :attachment_format_invalid
+        (self.error_options ||= {})[:attachments] = { attachment_formats: ApiConstants::FACEBOOK_ATTACHMENT_CONFIG[:post][:fileTypes].join(', ').to_s }
+      end
+      if ApiConstants::FACEBOOK_ATTACHMENT_CONFIG[:post][:size] < attachment_size
+        errors[:attachments] << :file_size_limit_error
+        (self.error_options ||= {})[:attachments] = { file_size: ApiConstants::FACEBOOK_ATTACHMENT_CONFIG[:post][:size] }
+      end
+    end
   end
 
   def validate_agent_emails
@@ -111,6 +166,11 @@ class ConversationDelegator < ConversationBaseDelegator
   # We need an alias method here, because a custom validator method can be used only for one action
 
   private
+
+    def attachment_size_in_mb(size)
+      ((size.to_f / 1024) / 1024)
+    end
+
     # Replicating the old UI behaviour, surveymonkey link is active if requester is an agent,unlike in-app survey
     def can_send_survey_monkey?(survey_monkey)
       send_while = survey_monkey.configs[:inputs]['send_while']

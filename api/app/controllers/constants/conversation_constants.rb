@@ -33,6 +33,11 @@ module ConversationConstants
     'tweet' => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['twitter'],
     'broadcast' => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
   }.freeze
+
+  PUBLIC_API_FIELDS = {
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook] => %w[body user_id attachments parent_note_id].freeze
+  }.freeze
+
   PIPE_REPLY_FIELDS  = REPLY_FIELDS | %w(created_at updated_at)
   PIPE_CREATE_FIELDS = CREATE_FIELDS | %w(created_at updated_at)
   CATEGORY = {

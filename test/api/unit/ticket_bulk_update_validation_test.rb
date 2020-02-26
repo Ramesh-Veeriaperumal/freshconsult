@@ -47,6 +47,7 @@ class TicketBulkUpdateValidationTest < ActionView::TestCase
 
   def test_reply
     User.stubs(:current).returns(User.first)
+    Account.stubs(:current).returns(Account.first)
     controller_params = { ids: [1, 2, 3], reply: { body: Faker::Lorem.paragraph, from_email: Faker::Lorem.word } }
     ticket_validation = TicketBulkUpdateValidation.new(controller_params)
     refute ticket_validation.valid?
@@ -57,6 +58,7 @@ class TicketBulkUpdateValidationTest < ActionView::TestCase
     ticket_validation = TicketBulkUpdateValidation.new(controller_params)
     assert ticket_validation.valid?
     User.unstub(:current)
+    Account.unstub(:current)
   end
 
   def test_update_properties_without_privilege

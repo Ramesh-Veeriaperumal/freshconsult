@@ -5,6 +5,7 @@ require_relative '../test_helper'
 class ConversationsControllerTest < ActionController::TestCase
   include ConversationsTestHelper
   include AttachmentsTestHelper
+  include SocialTestHelper
   include SocialTicketsCreationHelper
   include TwitterHelper
   include NoteHelper
@@ -578,6 +579,301 @@ class ConversationsControllerTest < ActionController::TestCase
     User.any_instance.unstub(:privilege?)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
+  end
+
+  def test_facebook_reply_post_success
+    @account.launch(:fb_twitter_public_api)
+    ticket = create_ticket_from_fb_post
+    params_hash = { body: Faker::Lorem.paragraph }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 201
+    match_json(v2_reply_note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
+  ensure
+    @account.rollback(:fb_twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_facebook_reply_post_without_params
+    @account.launch(:fb_twitter_public_api)
+    ticket = create_ticket_from_fb_post
+    post :reply, construct_params({ id: ticket.display_id }, {})
+    assert_response 400
+    match_json([bad_request_error_pattern('body', :missing_field, code: :missing_field)])
+  ensure
+    @account.rollback(:fb_twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_facebook_reply_post_with_params_empty
+    @account.launch(:fb_twitter_public_api)
+    ticket = create_ticket_from_fb_post
+    params_hash = { body: '', attachments: [] }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+    response_params = params_hash.except(:attachments)
+    match_json([bad_request_error_pattern('body', :missing_field, code: :missing_field)])
+  ensure
+    @account.rollback(:fb_twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_facebook_reply_post_success_with_user_id_valid
+    @account.launch(:fb_twitter_public_api)
+    ticket = create_ticket_from_fb_post
+    params_hash = { body: Faker::Lorem.paragraph, user_id: @agent.id }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 201
+    match_json(v2_reply_note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
+  ensure
+    @account.rollback(:fb_twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_facebook_reply_post_with_user_id_invalid_privilege
+    @account.launch(:fb_twitter_public_api)
+    ticket = create_ticket_from_fb_post
+    sample_user = other_user
+    params_hash = { body: Faker::Lorem.paragraph, user_id: sample_user.id }
+    controller.class.any_instance.stubs(:is_allowed_to_assume?).returns(false)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    controller.class.any_instance.unstub(:is_allowed_to_assume?)
+    assert_response 403
+    match_json(request_error_pattern('invalid_user', id: sample_user.id, name: sample_user.name))
+  ensure
+    @account.rollback(:fb_twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_facebook_reply_post_with_empty_user_id
+    @account.launch(:fb_twitter_public_api)
+    ticket = create_ticket_from_fb_post
+    params_hash = { body: Faker::Lorem.paragraph, user_id: '' }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('user_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
+  ensure
+    @account.rollback(:fb_twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_facebook_reply_post_with_invalid_parent_note_id
+    @account.launch(:fb_twitter_public_api)
+    ticket = create_ticket_from_fb_post
+    invalid_id = (Helpdesk::Note.last.try(:id) || 0) + 10
+    params_hash = { body: Faker::Lorem.paragraph, parent_note_id: invalid_id }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('parent_note_id', 'is invalid')])
+  ensure
+    @account.rollback(:fb_twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_facebook_reply_post_with_empty_parent_note_id
+    @account.launch(:fb_twitter_public_api)
+    ticket = create_ticket_from_fb_post
+    params_hash = { body: Faker::Lorem.paragraph, parent_note_id: '' }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('parent_note_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
+  ensure
+    @account.rollback(:fb_twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_facebook_reply_post_success_with_parent_note
+    @account.launch(:fb_twitter_public_api)
+    ticket = create_ticket_from_fb_post(true)
+    put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
+    sample_put_comment = { 'id' => put_comment_id }
+    fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
+    Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
+    params_hash = { body: Faker::Lorem.paragraph, parent_note_id: fb_comment_note.id }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    Koala::Facebook::API.any_instance.unstub(:put_comment)
+    assert_response 201
+    match_json(v2_reply_note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
+  ensure
+    @account.rollback(:fb_twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_facebook_reply_post_success_with_attachment_only
+    @account.launch(:fb_twitter_public_api)
+    ticket = create_ticket_from_fb_post
+    file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+    params_hash = { attachments: [file] }
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    assert_response 201
+    response_params = params_hash.except(:attachments)
+    match_json(v2_reply_note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
+    assert Helpdesk::Note.last.attachments.count == 1
+  ensure
+    @account.rollback(:fb_twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_facebook_reply_post_success_with_body_attachment
+    @account.launch(:fb_twitter_public_api)
+    ticket = create_ticket_from_fb_post
+    file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+    params_hash = { body: Faker::Lorem.paragraph, attachments: [file] }
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    assert_response 201
+    response_params = params_hash.except(:attachments)
+    match_json(v2_reply_note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
+    assert Helpdesk::Note.last.attachments.count == 1
+  ensure
+    @account.rollback(:fb_twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_facebook_reply_post_with_more_than_one_attachment
+    @account.launch(:fb_twitter_public_api)
+    ticket = create_ticket_from_fb_post
+    file = fixture_file_upload('files/image6mb.jpg', 'image/jpg')
+    file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+    params_hash = { body: Faker::Lorem.paragraph, attachments: [file, file2] }
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    assert_response 400
+    response_params = params_hash.except(:attachments)
+    match_json([bad_request_error_pattern('attachments', :too_long, current_count: 2, element_type: :characters, max_count: 1)])
+  ensure
+    @account.rollback(:fb_twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_facebook_reply_post_with_invalid_attachment_params_format
+    @account.launch(:fb_twitter_public_api)
+    ticket = create_ticket_from_fb_post
+    params_hash = { body: Faker::Lorem.paragraph, attachments: [1] }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('attachments', :array_datatype_mismatch, expected_data_type: 'valid file format')])
+  ensure
+    @account.rollback(:fb_twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_facebook_reply_post_with_invalid_attachment_size_create
+    @account.launch(:fb_twitter_public_api)
+    ticket = create_ticket_from_fb_post
+    invalid_attachment_limit = @account.attachment_limit + 2
+    Rack::Test::UploadedFile.any_instance.stubs(:size).returns(invalid_attachment_limit.megabytes)
+    file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+    params_hash = { body: Faker::Lorem.paragraph, attachments: [file] }
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    assert_response 400
+    response_params = params_hash.except(:attachments)
+    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{invalid_attachment_limit} MB")])
+  ensure
+    @account.launch(:fb_twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_facebook_reply_with_fb_page_reauth_required_error
+    @account.launch(:fb_twitter_public_api)
+    ticket = create_ticket_from_fb_post(true)
+    fb_page = ticket.fb_post.facebook_page
+    fb_page.reauth_required = true
+    fb_page.save
+    fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
+    put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
+    sample_put_comment = { 'id' => put_comment_id }
+    Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
+    params_hash = { body: Faker::Lorem.paragraph }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    Koala::Facebook::API.any_instance.unstub(:put_comment)
+    assert_response 400
+    match_json([bad_request_error_pattern('fb_page_id', :reauthorization_required, app_name: 'Facebook')])
+  ensure
+    fb_page.reauth_required = false
+    fb_page.save
+    @account.rollback(:fb_twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_facebook_reply_without_fb_page
+    @account.launch(:fb_twitter_public_api)
+    Social::FacebookPage.any_instance.stubs(:gateway_facebook_page_mapping_details).returns(nil)
+    ticket = create_ticket_from_fb_post(true, true)
+    fb_page = ticket.fb_post.facebook_page
+    fb_page.destroy
+    params_hash = { body: Faker::Lorem.paragraph }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('fb_page_id', :invalid_facebook_id)])
+  ensure
+    @account.rollback(:fb_twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_facebook_reply_dm_success
+    @account.launch(:fb_twitter_public_api)
+    ticket = create_ticket_from_fb_direct_message
+    sample_reply_dm = { 'id' => Time.now.utc.to_i + 5 }
+    Koala::Facebook::API.any_instance.stubs(:put_object).returns(sample_reply_dm)
+    params_hash = { body: Faker::Lorem.paragraph }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    Koala::Facebook::API.any_instance.unstub(:put_object)
+    assert_response 201
+    match_json(v2_reply_note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
+  ensure
+    @account.rollback(:fb_twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_facebook_reply_dm_success_with_attachment
+    @account.launch(:fb_twitter_public_api)
+    file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+    params_hash = { attachments: [file] }
+    ticket = create_ticket_from_fb_direct_message
+    sample_reply_dm = { 'id' => Time.now.utc.to_i + 5 }
+    Koala::Facebook::API.any_instance.stubs(:put_object).returns(sample_reply_dm)
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    Koala::Facebook::API.any_instance.unstub(:put_object)
+    assert_response 201
+    response_params = params_hash.except(:attachments)
+    match_json(v2_reply_note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
+  ensure
+    @account.rollback(:fb_twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_facebook_reply_dm_failure_with_body_and_attachment
+    @account.launch(:fb_twitter_public_api)
+    file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+    params_hash = { body: Faker::Lorem.paragraph, attachments: [file] }
+    ticket = create_ticket_from_fb_direct_message
+    sample_reply_dm = { 'id' => Time.now.utc.to_i + 5 }
+    Koala::Facebook::API.any_instance.stubs(:put_object).returns(sample_reply_dm)
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    Koala::Facebook::API.any_instance.unstub(:put_object)
+    assert_response 400
+    response_params = params_hash.except(:attachments)
+    match_json([bad_request_error_pattern('attachments', :can_have_only_one_field, list: 'body, attachments')])
+  ensure
+    @account.rollback(:fb_twitter_public_api)
+    ticket.destroy
   end
 
   def test_update_with_ticket_trashed

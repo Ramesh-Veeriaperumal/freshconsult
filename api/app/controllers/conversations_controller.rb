@@ -2,6 +2,7 @@ class ConversationsController < ApiApplicationController
   include TicketConcern
   include CloudFilesHelper
   include Conversations::Email
+  include Facebook::TicketActions::Util
   decorate_views(decorate_objects: [:ticket_conversations], decorate_object: [:create, :update, :reply])
 
   before_filter :can_send_user?, only: [:create, :reply]
@@ -27,17 +28,24 @@ class ConversationsController < ApiApplicationController
     sanitize_params
     build_object
     kbase_email_included? params[cname] # kbase_email_included? present in Email module
-    conversation_delegator = ConversationDelegator.new(@item, notable: @ticket)
+    conversation_delegator = fb_public_api? ? ConversationDelegator.new(@item, fetch_delegation_hash) : ConversationDelegator.new(@item, notable: @ticket)
+
     if conversation_delegator.valid?
-      @item.email_config_id = conversation_delegator.email_config_id
-      if @item.email_config_id
-        @item.from_email = current_account.features?(:personalized_email_replies) ? conversation_delegator.email_config.friendly_email_personalize(current_user.name) : conversation_delegator.email_config.friendly_email
+      if fb_public_api?
+        @delegator_note = conversation_delegator.parent_note
+        is_success = create_note
       else
-        @item.from_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
+        @item.email_config_id = conversation_delegator.email_config_id
+        if @item.email_config_id
+          @item.from_email = current_account.features?(:personalized_email_replies) ? conversation_delegator.email_config.friendly_email_personalize(current_user.name) : conversation_delegator.email_config.friendly_email
+        else
+          @item.from_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
+        end
+
+        is_success = create_note
+        # publish solution is being set in kbase_email_included based on privilege and email params
+        create_solution_article if is_success && @create_solution_privilege
       end
-      is_success = create_note
-      # publish solution is being set in kbase_email_included based on privilege and email params
-      create_solution_article if is_success && @create_solution_privilege
       render_response(is_success)
     else
       render_custom_errors(conversation_delegator, true)
@@ -107,7 +115,7 @@ class ConversationsController < ApiApplicationController
       @item.notable.account = current_account
       build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
       @item.attachments = @item.attachments # assign attachments so that it will not be queried again in model callbacks
-      @item.inline_attachments = @item.inline_attachments
+      fb_public_api? ? build_fb_association : (@item.inline_attachments = @item.inline_attachments)
       @item.save_note
     end
 
@@ -166,10 +174,20 @@ class ConversationsController < ApiApplicationController
       ConversationValidation
     end
 
+    def fb_public_api?
+      Account.current.launched?(:fb_twitter_public_api) && (@ticket[:source] == TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook])
+    end
+
     def validate_params
-      field = "#{constants_class}::#{action_name.upcase}_FIELDS".constantize
-      params[cname].permit(*field)
-      @conversation_validation = validation_class.new(params[cname], @item, string_request_params?)
+      if fb_public_api?
+        field = ConversationConstants::PUBLIC_API_FIELDS[@ticket[:source]] if ConversationConstants::PUBLIC_API_FIELDS.key?(@ticket[:source])
+        params[cname].permit(*field)
+        @conversation_validation = validation_class.new(fetch_validation_hash, @item, string_request_params?)
+      else
+        field = "#{constants_class}::#{action_name.upcase}_FIELDS".constantize
+        params[cname].permit(*field)
+        @conversation_validation = validation_class.new(params[cname], @item, string_request_params?)
+      end
       valid = @conversation_validation.valid?(action_name.to_sym)
       render_errors @conversation_validation.errors, @conversation_validation.error_options unless valid
       valid
@@ -190,6 +208,7 @@ class ConversationsController < ApiApplicationController
       params[cname][:notable_id] = @ticket.id if @ticket
 
       ParamsHelper.assign_and_clean_params(ConversationConstants::PARAMS_MAPPINGS, params[cname])
+      ParamsHelper.save_and_remove_params(self, [:parent_note_id], params[cname]) if fb_public_api?
       build_note_body_attributes
       params[cname][:attachments] = params[cname][:attachments].map { |att| { resource: att } } if params[cname][:attachments]
     end
@@ -238,13 +257,41 @@ class ConversationsController < ApiApplicationController
     end
 
     def assign_source
-      ConversationConstants::TYPE_FOR_ACTION[action_name]
+      fb_public_api? ? Helpdesk::Note::TICKET_NOTE_SOURCE_MAPPING[@ticket[:source]] : ConversationConstants::TYPE_FOR_ACTION[action_name]
     end
 
     def assign_private
       update? || params[cname][:source] == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
     end
 
-    # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.
+    def fetch_delegation_hash
+      respond_to?("#{Helpdesk::Ticket::SOURCE_NAMES_BY_KEY[@ticket[:source]]}_delegation_hash".to_sym, true) ? safe_send("#{Helpdesk::Ticket::SOURCE_NAMES_BY_KEY[@ticket[:source]]}_delegation_hash") : { notable: @ticket }
+    end
+
+    def facebook_source_delegation_hash
+      {
+        notable: @ticket,
+        parent_note_id: @parent_note_id,
+        attachments: params[cname][:attachments],
+        fb_page: @ticket.fb_post.facebook_page,
+        msg_type: @ticket.fb_post.msg_type,
+        ticket_source: @ticket.source
+      }
+    end
+
+    def facebook_source_validation_hash
+      params[cname].merge(ticket_source: @ticket.source, msg_type: @ticket.fb_post.msg_type)
+    end
+
+    def fetch_validation_hash
+      respond_to?("#{Helpdesk::Ticket::SOURCE_NAMES_BY_KEY[@ticket[:source]]}_validation_hash".to_sym, true) ? safe_send("#{Helpdesk::Ticket::SOURCE_NAMES_BY_KEY[@ticket[:source]]}_validation_hash") : params[cname]
+    end
+
+    def build_fb_association
+      parent_post = @delegator_note || @ticket
+      association_hash = @ticket.is_fb_message? ? construct_dm_hash(@ticket) : construct_post_hash(parent_post)
+      @item.build_fb_post(association_hash)
+    end
+
     wrap_parameters(*wrap_params)
 end

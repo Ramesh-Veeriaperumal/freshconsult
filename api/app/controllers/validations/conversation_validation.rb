@@ -4,11 +4,12 @@ class ConversationValidation < ApiValidation
   attr_accessor :body, :full_text, :private, :user_id, :agent_id, :incoming, :notify_emails,
                 :attachments, :to_emails, :cc_emails, :bcc_emails, :item, :from_email,
                 :include_quoted_text, :include_original_attachments, :cloud_file_ids,
-                :cloud_files, :send_survey, :last_note_id, :include_surveymonkey_link, :inline_attachment_ids
+                :cloud_files, :send_survey, :last_note_id, :include_surveymonkey_link, :inline_attachment_ids, :ticket_source, :msg_type, :parent_note_id
 
-  validates :body, data_type: { rules: String, required: true }, if: -> { !forward? && attachment_ids.blank? && cloud_files.blank? }
+  validates :body, data_type: { rules: String, required: true }, if: -> { !forward? && attachment_ids.blank? && cloud_files.blank? && !social_ticket? }
   validates :body, data_type: { rules: String }, on: :forward
   validates :body, required: true, if: -> { include_quoted_text.to_s == 'false' || full_text.present? }, on: :forward
+  validates :body, data_type: { rules: String }, if: -> { facebook_ticket? }
   validates :full_text, data_type: { rules: String }
 
   validates :user_id, :agent_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }
@@ -23,7 +24,8 @@ class ConversationValidation < ApiValidation
   validates :to_emails, required: true, on: :reply_to_forward
   validates :include_quoted_text, custom_absence: { message: :cannot_be_set }, if: -> { include_quoted_text.to_s == 'true' && full_text.present? }
 
-  validates :attachments, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true } }
+  validates :attachments, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true } }, if: -> { !facebook_ticket? }
+  validates :attachments, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true } }, custom_length: { maximum: 1 }, if: -> { facebook_ticket? }
   validates :attachments, file_size: {
     max: proc { |x| x.attachment_limit },
     base_size: proc { |x| ValidationHelper.attachment_size(x.item) }
@@ -38,6 +40,8 @@ class ConversationValidation < ApiValidation
   validate :validate_full_text_length, if: -> { body.present? && full_text.present? }
 
   validates :inline_attachment_ids, data_type: { rules: Array }
+  validates :parent_note_id, custom_numericality: { only_integer: true, greater_than: -1, allow_nil: true, ignore_string: :allow_string_param }, if: -> { facebook_ticket? }
+  validate :either_body_attachments, if: -> { facebook_ticket? }
 
   def initialize(request_params, item, allow_string_param = false)
     super(request_params, item, allow_string_param)
@@ -65,5 +69,21 @@ class ConversationValidation < ApiValidation
   def validate_full_text_length
     errors[:full_text] << :shorter_full_text if full_text.length < body.length
     errors[:full_text] << :invalid_full_text if full_text.length == body.length && full_text != body
+  end
+
+  def either_body_attachments
+    if body.present? && attachments.present? && msg_type && msg_type == Facebook::Constants::FB_MSG_TYPES[0]
+      errors[:attachments] << :can_have_only_one_field
+      (self.error_options ||= {})[:attachments] = { list: 'body, attachments' }
+    end
+    errors[:body] << :missing_field if body.blank? && attachments.blank?
+  end
+
+  def facebook_ticket?
+    Account.current.launched?(:fb_twitter_public_api) && ticket_source.present? && (ticket_source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook])
+  end
+
+  def social_ticket?
+    Account.current.launched?(:fb_twitter_public_api) && ticket_source.present? && (ticket_source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook])
   end
 end
