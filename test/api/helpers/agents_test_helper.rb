@@ -53,7 +53,8 @@ module AgentsTestHelper
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       gdpr_admin_name: expected_output[:gdpr_admin_name] || agent.user.current_user_gdpr_admin,
-      type: Account.current.agent_types_from_cache.find { |type| type.agent_type_id == agent.agent_type }.name
+      type: Account.current.agent_types_from_cache.find { |type| type.agent_type_id == agent.agent_type }.name,
+      read_only: agent.user.privilege?(:manage_account)
     }
   end
 

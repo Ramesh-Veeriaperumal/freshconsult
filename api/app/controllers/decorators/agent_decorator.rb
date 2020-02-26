@@ -29,7 +29,8 @@ class AgentDecorator < ApiDecorator
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc),
       gdpr_admin_name: record.user.current_user_gdpr_admin,
-      type: Account.current.agent_types_from_cache.find { |type| type.agent_type_id == record.agent_type }.name
+      type: Account.current.agent_types_from_cache.find { |type| type.agent_type_id == record.agent_type }.name,
+      read_only: record.user.privilege?(:manage_account)
     }
     if Account.current.freshcaller_enabled?
       agent_info[:freshcaller_agent] = record.freshcaller_agent.present? ? record.freshcaller_agent.try(:fc_enabled) : false

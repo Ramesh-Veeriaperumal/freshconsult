@@ -888,4 +888,26 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     Freshid::User.unstub(:find_by_email)
     @account.rollback(:freshid)
   end
+
+  def test_read_only_property_of_agent_with_privilege
+    User.any_instance.stubs(:privilege?).with(:manage_account).returns(true)
+    sample_agent = @account.agents.first
+    get :show, construct_params(version: 'private', id: sample_agent.user.id)
+    assert_response 200
+    json_response = JSON.parse(response.body)
+    assert_equal json_response['read_only'], true
+  ensure
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_read_only_property_of_agent_without_privilege
+    User.any_instance.stubs(:privilege?).with(:manage_account).returns(false)
+    sample_agent = @account.agents.first
+    get :show, construct_params(version: 'private', id: sample_agent.user.id)
+    assert_response 200
+    json_response = JSON.parse(response.body)
+    assert_equal json_response['read_only'], false
+  ensure
+    User.any_instance.unstub(:privilege?)
+  end
 end

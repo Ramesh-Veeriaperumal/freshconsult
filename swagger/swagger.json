@@ -19104,6 +19104,9 @@
         },
         "agent_level_id": {
           "type": "integer"
+        },
+        "read_only": {
+          "type": "boolean"
         }
       }
     },
