@@ -1,4 +1,6 @@
 require_relative '../test_helper'
+require 'sidekiq/testing'
+Sidekiq::Testing.fake!
 
 ['social_tickets_creation_helper.rb', 'twitter_helper.rb', 'note_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 
@@ -10,8 +12,24 @@ class ConversationsControllerTest < ActionController::TestCase
   include TwitterHelper
   include NoteHelper
   include ContactSegmentsTestHelper
+  include Redis::UndoSendRedis
+  include Redis::RedisKeys
+  include Redis::OthersRedis
+  include Redis::TicketsRedis
 
   SEND_CC_EMAIL_JOB_STRING = "handler LIKE '%send_cc_email%'".freeze
+
+  def setup
+    super
+    Social::CustomTwitterWorker.stubs(:perform_async).returns(true)
+    @twitter_handle = get_twitter_handle
+    @default_stream = @twitter_handle.default_stream
+  end
+
+  def teardown
+    super
+    Social::CustomTwitterWorker.unstub(:perform_async)
+  end
 
   def wrap_cname(params)
     { conversation: params }
@@ -56,6 +74,14 @@ class ConversationsControllerTest < ActionController::TestCase
   def update_note_params_hash
     body = Faker::Lorem.paragraph
     params_hash = { body: body }
+    params_hash
+  end
+
+  def twitter_dm_reply_params_hash
+    body = Faker::Lorem.characters(rand(1..140))
+    twitter_handle_id = @twitter_handle.twitter_user_id
+    tweet_type = 'dm'
+    params_hash = { body: body, twitter: { tweet_type: tweet_type, twitter_handle_id: twitter_handle_id } }
     params_hash
   end
 
@@ -900,6 +926,195 @@ class ConversationsControllerTest < ActionController::TestCase
     match_json(v2_note_pattern({}, Helpdesk::Note.last))
   ensure
     @account.rollback(:facebook_public_api)
+  end
+
+  def test_tweet_reply_without_params
+    @account.launch(:twitter_public_api)
+    ticket = create_twitter_ticket
+    post :reply, construct_params({ id: ticket.display_id }, {})
+    assert_response 400
+    match_json([bad_request_error_pattern('body', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
+  ensure
+    @account.rollback(:twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_tweet_reply_with_invalid_twitter_params_type
+    @account.launch(:twitter_public_api)
+    ticket = create_twitter_ticket
+    params_hash = {
+      body: Faker::Lorem.sentence[0..130],
+      twitter: 'dm'
+    }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+  ensure
+    @account.rollback(:twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_tweet_reply_with_invalid_twitter_params
+    @account.launch(:twitter_public_api)
+    ticket = create_twitter_ticket
+    params_hash = {
+      body: Faker::Lorem.sentence[0..130],
+      twitter: { tweet_type: 'dm', twitter_handle_id: @twitter_handle.twitter_user_id, tweet_id: 9 }
+    }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+  ensure
+    @account.rollback(:twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_tweet_reply_with_invalid_tweet_type_params
+    @account.launch(:twitter_public_api)
+    ticket = create_twitter_ticket
+    params_hash = {
+      body: Faker::Lorem.sentence[0..130],
+      twitter: { tweet_type: 'post', twitter_handle_id: @twitter_handle.twitter_user_id }
+    }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+  ensure
+    @account.rollback(:twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_tweet_reply_with_invalid_twitter_handle_id_params
+    @account.launch(:twitter_public_api)
+    ticket = create_twitter_ticket
+    params_hash = {
+      body: Faker::Lorem.sentence[0..130],
+      twitter: { twitter_handle_id: 'post' }
+    }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+  ensure
+    @account.rollback(:twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_tweet_reply_with_invalid_body
+    @account.launch(:twitter_public_api)
+    ticket = create_twitter_ticket
+    params_hash = { body: 2 }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('body', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Integer')])
+  ensure
+    @account.rollback(:twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_tweet_reply_with_invalid_body_length
+    @account.launch(:twitter_public_api)
+    ticket = create_twitter_ticket
+    params_hash = {
+      body: Faker::Lorem.characters(1000),
+      twitter: { tweet_type: 'mention' }
+    }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+  ensure
+    @account.rollback(:twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_twitter_reply_to_tweet_ticket
+    Sidekiq::Testing.inline! do
+      with_twitter_update_stubbed do
+        ticket = create_twitter_ticket
+        @account.launch(:twitter_public_api)
+        params_hash = {
+          body: Faker::Lorem.sentence[0..130],
+          twitter: { tweet_type: 'dm', twitter_handle_id: @twitter_handle.twitter_user_id }
+        }
+        post :reply, construct_params({ id: ticket.display_id }, params_hash)
+        assert_response 201
+        latest_note = Helpdesk::Note.last
+        match_json(v2_reply_note_pattern(params_hash, latest_note))
+        match_json(v2_reply_note_pattern({}, latest_note))
+        @account.rollback(:twitter_public_api)
+        ticket.destroy
+      end
+    end
+  end
+
+  def test_twitter_reply_to_tweet_ticket_with_attachments
+    @account.launch(:twitter_public_api)
+    file = fixture_file_upload('files/image4kb.png', 'image/png')
+    ticket = create_twitter_ticket
+    params_hash = {
+      body: Faker::Lorem.sentence[0..130],
+      twitter: { tweet_type: 'mention', twitter_handle_id: @twitter_handle.twitter_user_id },
+      attachments: [file]
+    }
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    Sidekiq::Testing.inline! do
+      with_twitter_update_stubbed do
+        post :reply, construct_params({ id: ticket.display_id }, params_hash)
+        DataTypeValidator.any_instance.unstub(:valid_type?)
+        assert_response 201
+        response_params = params_hash.except(:attachments)
+        match_json(v2_reply_note_pattern(params_hash, Helpdesk::Note.last))
+        match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
+        assert Helpdesk::Note.last.attachments.count == 1
+      end
+    end
+    ticket.destroy
+  ensure
+    @account.rollback(:twitter_public_api)
+  end
+
+  def test_tweet_reply_with_invalid_handle
+    @account.launch(:twitter_public_api)
+    ticket = create_twitter_ticket
+    params_hash = {
+      body: Faker::Lorem.sentence[0..130],
+      twitter: { tweet_type: 'dm', twitter_handle_id: 123 }
+    }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('twitter_handle_id', 'is invalid')])
+  ensure
+    @account.rollback(:twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_tweet_reply_with_requth
+    @account.launch(:twitter_public_api)
+    ticket = create_twitter_ticket
+    Social::TwitterHandle.any_instance.stubs(:reauth_required?).returns(true)
+    params_hash = {
+      body: Faker::Lorem.sentence[0..130],
+      twitter: { tweet_type: 'dm', twitter_handle_id: get_twitter_handle.twitter_user_id }
+    }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('twitter_handle_id', 'requires re-authorization')])
+    Social::TwitterHandle.any_instance.stubs(:reauth_required?).returns(false)
+  ensure
+    @account.rollback(:twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_tweet_reply_with_app_blocked
+    @account.launch(:twitter_public_api)
+    set_others_redis_key(TWITTER_APP_BLOCKED, true, 5)
+    twitter_handle = get_twitter_handle
+    ticket = create_twitter_ticket(twitter_handle: twitter_handle)
+    params_hash = {
+      body: Faker::Lorem.sentence[0..130],
+      twitter: { tweet_type: 'dm', twitter_handle_id: twitter_handle.twitter_user_id }
+    }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+    match_json(validation_error_pattern(bad_request_error_pattern('twitter', :twitter_write_access_blocked)))
+  ensure
+    @account.rollback(:twitter_public_api)
+    ticket.destroy
+    remove_others_redis_key TWITTER_APP_BLOCKED
   end
 
   def test_update_with_ticket_trashed

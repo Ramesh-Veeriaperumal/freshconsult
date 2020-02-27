@@ -5,10 +5,10 @@ class ConversationValidation < ApiValidation
                 :attachments, :to_emails, :cc_emails, :bcc_emails, :item, :from_email,
                 :include_quoted_text, :include_original_attachments, :cloud_file_ids,
                 :cloud_files, :send_survey, :last_note_id, :include_surveymonkey_link, :inline_attachment_ids,
-                :ticket_source, :msg_type, :parent_note_id
+                :ticket_source, :msg_type, :parent_note_id, :twitter
 
-  validates :body, data_type: { rules: String, required: true }, if: -> { !forward? && attachment_ids.blank? && cloud_files.blank? && !social_ticket? }
-  validates :body, data_type: { rules: String, required: true }, if: -> { !forward? && attachment_ids.blank? && cloud_files.blank? && social_ticket? && validation_context != :reply }
+  validates :body, data_type: { rules: String, required: true }, if: -> { !forward? && attachment_ids.blank? && cloud_files.blank? && !facebook_ticket? }
+  validates :body, data_type: { rules: String, required: true }, if: -> { !forward? && attachment_ids.blank? && cloud_files.blank? && facebook_ticket? && validation_context != :reply }
   validates :body, data_type: { rules: String }, on: :forward
   validates :body, required: true, if: -> { include_quoted_text.to_s == 'false' || full_text.present? }, on: :forward
   validates :full_text, data_type: { rules: String }
@@ -47,6 +47,17 @@ class ConversationValidation < ApiValidation
   validates :parent_note_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }, if: -> { facebook_ticket? }, on: :reply
   validate :either_body_attachments, if: -> { facebook_ticket? }, on: :reply
 
+  # Twitter reply validations
+  validates :twitter, data_type: { rules: Hash },
+                      hash: {
+                        tweet_type: {
+                          data_type: { rules: String },
+                          custom_inclusion: { in: ApiConstants::TWITTER_REPLY_TYPES }
+                        },
+                        twitter_handle_id: {
+                          custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }
+                        }
+                      }, if: -> { twitter_ticket? }, on: :reply
 
   def initialize(request_params, item, allow_string_param = false)
     super(request_params, item, allow_string_param)
@@ -88,7 +99,11 @@ class ConversationValidation < ApiValidation
     Account.current.launched?(:facebook_public_api) && ticket_source.present? && (ticket_source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook])
   end
 
+  def twitter_ticket?
+    Account.current.launched?(:twitter_public_api) && ticket_source.present? && (ticket_source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:twitter])
+  end
+
   def social_ticket?
-    Account.current.launched?(:facebook_public_api) && ticket_source.present? && (ticket_source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook])
+    ticket_source.present? && (facebook_ticket? || twitter_ticket?)
   end
 end
