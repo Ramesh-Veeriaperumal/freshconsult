@@ -24,6 +24,9 @@
         "_jwt_default_expiry": "100",
         "channel_cipher_key": "EJ[1:dpHTxajSS1+zXn8v/znpqMr1PV2eMV5ppQhV5MLtXTw=:WpKaBHPbytiO8IZgZvotkeDM8bx7HG50:zRd4bi1cAjYjPCPn21Tkd60woiSGIlUFt7Ush14kWhCwiEvxwtXSRLJxl5+1RIZD3Y0a8YE6g49epxDa+qRcaWfkvyvu6bftIZc80ayTRQ==]"
       },
+      "secure_field": {
+        "_domain": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/data"
+      },
       "announcements": {
         "shared_secret": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:sceumkeAgL4yqlRpeySbS7TGxrVCXSs3:8HeEFgZtfWMiUWnOJsaOi57RBc1T2Gon5grelcS2i0PoEFylwUPbUa124g4f/yGV]",
         "_account_url": "productupdates.freshdesk.com"
@@ -2406,6 +2409,7 @@
         "_script_asset_url": "https://assets1.freshconnect.io/freshconnect-sidebar/freshconnect-sidebar.js",
         "_base_url": "https://api.freshconnect.io"
       },
+      "_vault_service_url": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/data",
       "_sentry_dsn": "https://932f384a375f45db84667227e44ccaf1@sentry.io/1189802",
       "_announcement_account_url": "productupdates.freshdesk.com",
       "_anonymous_signup_redirect_url": "https://freshdesk.com/trial/thank-you"
@@ -2454,7 +2458,8 @@
       "_cert_names": [
         "freshid.pem",
         "saml.pem",
-        "iam.pem"
+        "iam.pem",
+        "jwe_encryption_key.pem"
       ],
       "_bucket": "freshops-admin",
       "_path": "certificates/common"

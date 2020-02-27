@@ -6268,8 +6268,7 @@ class TicketsControllerTest < ActionController::TestCase
     request.stubs(:uuid).returns(uuid)
     get :vault_token, controller_params(id: ticket.display_id)
     token = JSON.parse(response.body)['meta']['vault_token']
-    key_string = ApiTicketsTestHelper::PRIVATE_KEY_STRING
-    key = OpenSSL::PKey::RSA.new(key_string)
+    key = ApiTicketsTestHelper::PRIVATE_KEY_STRING
     payload = JSON.parse(JWE.decrypt(token, key))
     assert_equal payload['action'], 1
     assert_equal payload['otype'], 'ticket'

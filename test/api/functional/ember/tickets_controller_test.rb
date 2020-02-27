@@ -5698,8 +5698,7 @@ module Ember
       params = { id: ticket.display_id, version: 'private' }
       get :vault_token, controller_params(params)
       token = response.api_meta[:vault_token]
-      key_string = ApiTicketsTestHelper::PRIVATE_KEY_STRING
-      key = OpenSSL::PKey::RSA.new(key_string)
+      key = ApiTicketsTestHelper::PRIVATE_KEY_STRING
       payload = JSON.parse(JWE.decrypt(token, key))
       assert_equal payload['action'], 1
       assert_equal payload['otype'], 'ticket'
@@ -5730,8 +5729,7 @@ module Ember
       update_params = { custom_fields: { '_custom_card_no_test': 'c0376b8ce26458010ceceb9de2fde759' } }
       put :update, construct_params({ id: ticket.display_id, version: 'private' }, update_params)
       token = response.api_meta[:vault_token]
-      key_string = ApiTicketsTestHelper::PRIVATE_KEY_STRING
-      key = OpenSSL::PKey::RSA.new(key_string)
+      key = ApiTicketsTestHelper::PRIVATE_KEY_STRING
       payload = JSON.parse(JWE.decrypt(token, key))
       assert_equal payload['action'], 2
       assert_equal payload['otype'], 'ticket'
