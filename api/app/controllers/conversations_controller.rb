@@ -2,6 +2,7 @@ class ConversationsController < ApiApplicationController
   include TicketConcern
   include CloudFilesHelper
   include Conversations::Email
+  include Conversations::Twitter
   include Facebook::TicketActions::Util
   decorate_views(decorate_objects: [:ticket_conversations], decorate_object: [:create, :update, :reply])
 
@@ -28,7 +29,7 @@ class ConversationsController < ApiApplicationController
     sanitize_params
     build_object
     kbase_email_included? params[cname] # kbase_email_included? present in Email module
-    return perform_social_reply if fb_public_api?
+    return perform_social_reply if fb_public_api? || twitter_public_api?
 
     conversation_delegator = ConversationDelegator.new(@item, notable: @ticket)
     if conversation_delegator.valid?
@@ -84,6 +85,10 @@ class ConversationsController < ApiApplicationController
       conversation_delegator = ConversationDelegator.new(@item, fetch_delegation_hash)
       if conversation_delegator.valid?(action_name.to_sym)
         @delegator_note = conversation_delegator.parent_note
+        if twitter_public_api?
+          @delegator_tweet_type = conversation_delegator.tweet_type
+          @delegator_twitter_handle_id = conversation_delegator.twitter_handle.id
+        end
         is_success = create_note
         render_response(is_success)
       else
@@ -123,11 +128,45 @@ class ConversationsController < ApiApplicationController
       @item.attachments = @item.attachments # assign attachments so that it will not be queried again in model callbacks
       @item.inline_attachments = @item.inline_attachments
       build_social_associations if fb_public_api?
+      return build_twitter_association if twitter_public_api?
+
       @item.save_note
     end
 
     def build_social_associations
       build_fb_association if fb_public_api?
+    end
+
+    def build_twitter_association
+      reply_handle = current_account.twitter_handles.find_by_id(@delegator_twitter_handle_id)
+      stream = fetch_stream(reply_handle, @delegator_tweet_type)
+      tweet_id = random_tweet_id
+      unless stream.custom_stream?
+        stream_id = stream.id
+        @item.build_tweet(tweet_id: tweet_id,
+                          tweet_type: @delegator_tweet_type,
+                          twitter_handle_id: @delegator_twitter_handle_id,
+                          stream_id: stream_id)
+      end
+      result = @item.save_note
+      if result && stream.custom_stream?
+        Social::TwitterReplyWorker.perform_async(ticket_id: @ticket.id, note_id: @item.id,
+                                                 tweet_type: @delegator_tweet_type,
+                                                 twitter_handle_id: @delegator_twitter_handle_id)
+      end
+      result
+    end
+
+    def fetch_stream(reply_handle, tweet_type)
+      tweet = @ticket.tweet
+      tweet_stream = tweet.stream if tweet.present?
+      if tweet_stream && tweet_stream.custom_stream?
+        tweet_stream
+      elsif tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:dm]
+        reply_handle.dm_stream
+      else
+        reply_handle.default_stream
+      end
     end
 
     def render_response(success)
@@ -189,8 +228,12 @@ class ConversationsController < ApiApplicationController
       Account.current.launched?(:facebook_public_api) && (@ticket[:source] == TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook]) && reply?
     end
 
+    def twitter_public_api?
+      Account.current.launched?(:twitter_public_api) && (@ticket[:source] == TicketConstants::SOURCE_KEYS_BY_TOKEN[:twitter]) && reply?
+    end
+
     def validate_params
-      if fb_public_api?
+      if fb_public_api? || twitter_public_api?
         fields = ConversationConstants::PUBLIC_API_FIELDS[@ticket[:source]] if ConversationConstants::PUBLIC_API_FIELDS.key?(@ticket[:source])
         params[cname].permit(*fields)
         @conversation_validation = validation_class.new(fetch_validation_hash, @item, string_request_params?)
@@ -219,7 +262,7 @@ class ConversationsController < ApiApplicationController
       params[cname][:notable_id] = @ticket.id if @ticket
 
       ParamsHelper.assign_and_clean_params(ConversationConstants::PARAMS_MAPPINGS, params[cname])
-      ParamsHelper.save_and_remove_params(self, [:parent_note_id], params[cname]) if fb_public_api?
+      ParamsHelper.save_and_remove_params(self, [:parent_note_id, :twitter], params[cname]) if fb_public_api? || twitter_public_api?
       build_note_body_attributes
       params[cname][:attachments] = params[cname][:attachments].map { |att| { resource: att } } if params[cname][:attachments]
     end
@@ -268,7 +311,7 @@ class ConversationsController < ApiApplicationController
     end
 
     def assign_source
-      fb_public_api? ? Helpdesk::Note::TICKET_NOTE_SOURCE_MAPPING[@ticket[:source]] : ConversationConstants::TYPE_FOR_ACTION[action_name]
+      fb_public_api? || twitter_public_api? ? Helpdesk::Note::TICKET_NOTE_SOURCE_MAPPING[@ticket[:source]] : ConversationConstants::TYPE_FOR_ACTION[action_name]
     end
 
     def assign_private
@@ -290,8 +333,28 @@ class ConversationsController < ApiApplicationController
       }
     end
 
+    def twitter_source_delegation_hash
+      {
+        notable: @ticket,
+        body: params[cname][:note_body_attributes][:body_html],
+        tweet_type: @twitter.is_a?(Hash) && @twitter.try(:[], :tweet_type) ? @twitter[:tweet_type] : @ticket.tweet.tweet_type,
+        twitter_handle_id: @twitter.is_a?(Hash) && @twitter.try(:[], :twitter_handle_id) ? @twitter[:twitter_handle_id] : fetch_handle_id,
+        attachments: params[cname][:attachments],
+        ticket_source: @ticket.source
+      }
+    end
+
+    def fetch_handle_id
+      @ticket.tweet.twitter_handle.twitter_user_id if @ticket.tweet.present? && @ticket.tweet.twitter_handle.present? && @ticket.tweet.twitter_handle.twitter_user_id.present?
+    end
+
     def facebook_source_validation_hash
       params[cname].merge(ticket_source: @ticket.source, msg_type: @ticket.fb_post.msg_type)
+    end
+
+    def twitter_source_validation_hash
+      params[cname].merge(twitter: params[cname][:twitter]) unless params[cname][:twitter].nil?
+      params[cname].merge(ticket_source: @ticket.source)
     end
 
     def fetch_validation_hash

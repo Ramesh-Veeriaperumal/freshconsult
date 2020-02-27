@@ -1,11 +1,15 @@
 class ConversationDelegator < ConversationBaseDelegator
-  attr_accessor :email_config_id, :email_config, :cloud_file_attachments, :parent_note_id, :parent_note, :fb_page, :ticket_source, :msg_type
+  include Twitter::TwitterText::Validation
+  include Redis::OthersRedis
+  include Redis::RedisKeys
+
+  attr_accessor :email_config_id, :email_config, :cloud_file_attachments, :parent_note_id, :parent_note, :fb_page, :ticket_source, :msg_type, :twitter_handle_id, :tweet_type, :body, :twitter_handle
 
   validate :validate_agent_emails, if: -> { note? && !reply_to_forward? && to_emails.present? && attr_changed?('to_emails', schema_less_note) }
 
   validate :validate_from_email, if: -> { (email_conversation? || (schema_less_note.present? && reply_to_forward?)) && from_email.present? && attr_changed?('from_email', schema_less_note) }
 
-  validate :validate_agent_id, if: -> { (fwd_email? && user_id.present? && attr_changed?('user_id')) || (facebook_ticket? && user_id.present?) }
+  validate :validate_agent_id, if: -> { (fwd_email? && user_id.present? && attr_changed?('user_id')) || (social_ticket? && user_id.present?) }
 
   validate :validate_tracker_id, if: -> { broadcast_note? }
 
@@ -30,6 +34,9 @@ class ConversationDelegator < ConversationBaseDelegator
   validate :validate_page_state, if: -> { facebook_ticket? && reply? }
   validate :validate_attachments, if: -> { facebook_ticket? && @attachments.present? && (msg_type == Facebook::Constants::FB_MSG_TYPES[1]) && reply? }
 
+  # Twitter reply delegation check
+  validate :valid_body_length_twitter, :validate_twitter_handle, :check_twitter_app_state, :validate_twitter_attachments, if: -> { twitter_ticket? }, on: :reply
+
   def initialize(record, options = {})
     options[:attachment_ids] = skip_existing_attachments(options) if options[:attachment_ids]
     super(record, options)
@@ -38,13 +45,24 @@ class ConversationDelegator < ConversationBaseDelegator
     retrieve_cloud_files if @cloud_file_ids
     @conversation = record
     @notable = options[:notable]
-    if Account.current.launched?(:facebook_public_api)
-      @parent_note_id = options[:parent_note_id]
-      @fb_page = options[:fb_page]
-      @msg_type = options[:msg_type]
-      @ticket_source = options[:ticket_source]
-      @attachments = options[:attachments]
-    end
+    initialize_fb_variables(options) if Account.current.launched?(:facebook_public_api)
+    initialize_twitter_variables(options) if Account.current.launched?(:twitter_public_api)
+  end
+
+  def initialize_fb_variables(options = {})
+    @parent_note_id = options[:parent_note_id]
+    @fb_page = options[:fb_page]
+    @msg_type = options[:msg_type]
+    @ticket_source = options[:ticket_source]
+    @attachments = options[:attachments]
+  end
+
+  def initialize_twitter_variables(options = {})
+    @body = options[:body]
+    @tweet_type = options[:tweet_type]
+    @twitter_handle_id = options[:twitter_handle_id]
+    @ticket_source = options[:ticket_source]
+    @attachments = options[:attachments]
   end
 
   def reply?
@@ -55,8 +73,12 @@ class ConversationDelegator < ConversationBaseDelegator
     Account.current.launched?(:facebook_public_api) && ticket_source.present? && (ticket_source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook])
   end
 
+  def twitter_ticket?
+    Account.current.launched?(:twitter_public_api) && ticket_source.present? && (ticket_source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:twitter])
+  end
+
   def social_ticket?
-    Account.current.launched?(:facebook_public_api) && ticket_source.present? && (ticket_source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook])
+    ticket_source.present? && (facebook_ticket? || twitter_ticket?)
   end
 
   def validate_parent_note_id
@@ -91,6 +113,81 @@ class ConversationDelegator < ConversationBaseDelegator
         (self.error_options ||= {})[:attachments] = { file_size: ApiConstants::FACEBOOK_ATTACHMENT_CONFIG[:post][:size] }
       end
     end
+  end
+
+  def valid_body_length_twitter
+    return false if @body.blank? || errors.present?
+
+    parsed_result = parse_tweet(@body)
+    total_length = parsed_result[:weighted_length]
+    max_length = (@tweet_type || '').to_sym == :dm ? ApiConstants::TWITTER_DM_MAX_LENGTH : ApiConstants::TWEET_MAX_LENGTH
+    if max_length < total_length
+      errors[:body] << :too_long
+      self.error_options.merge!(body: { current_count: total_length, element_type: 'characters', max_count: max_length })
+      return false
+    end
+    true
+  end
+
+  def validate_twitter_handle
+    @twitter_handle = Account.current.twitter_handles.where(twitter_user_id: @twitter_handle_id).first
+    return errors[:twitter_handle_id] << :"is invalid" unless twitter_handle
+
+    errors[:twitter_handle_id] << :"requires re-authorization" if twitter_handle.reauth_required?
+  end
+
+  def check_twitter_app_state
+    errors[:twitter] << :twitter_write_access_blocked if redis_key_exists?(TWITTER_APP_BLOCKED)
+  end
+
+  def validate_twitter_attachments
+    if attachments.present?
+      attachment_config = ApiConstants::TWITTER_ATTACHMENT_CONFIG[@tweet_type.to_sym]
+      attachment_types = []
+      attachment_sizes = []
+
+      attachments.each do |attachment|
+        content_type = attachment[:resource].content_type
+        return unless valid_twitter_attachment_type?(content_type)
+
+        attachment_types << ApiConstants::TWITTER_ALLOWED_ATTACHMENT_TYPES[content_type]
+        attachment_sizes << attachment[:resource].size
+      end
+      return unless unique_twitter_attachments?(attachment_types.uniq) &&
+                    valid_twitter_attachment_limits?(attachment_types, attachment_config) &&
+                    valid_twitter_attachment_sizes?(attachment_sizes, attachment_types, attachment_config)
+    end
+  end
+
+  def valid_twitter_attachment_type?(attachment_format)
+    valid = ApiConstants::TWITTER_ALLOWED_ATTACHMENT_TYPES.key?(attachment_format)
+    errors[:attachments] << :twitter_attachment_file_invalid unless valid
+    valid
+  end
+
+  def unique_twitter_attachments?(unique_attachment_types)
+    valid = unique_attachment_types.length == 1
+    errors[:attachments] << :twitter_attachment_file_unique_type unless valid
+    valid
+  end
+
+  def valid_twitter_attachment_limits?(attachment_types, attachment_config)
+    attachment_type = attachment_types[0]
+    limit = attachment_config[attachment_type.to_sym]['limit'.to_sym]
+    valid = attachment_types.length <= limit
+    errors[:attachments] << :twitter_attachment_file_limit unless valid
+    self.error_options.merge!(attachments: { maxLimit: limit, fileType: attachment_type })
+    valid
+  end
+
+  def valid_twitter_attachment_sizes?(attachment_sizes, attachment_types, attachment_config)
+    attachment_size = ((attachment_sizes.max.to_f / 1024) / 1024)
+    attachment_type = attachment_types[0]
+    size_limit = attachment_config[attachment_type.to_sym]['size'.to_sym]
+    valid = attachment_size <= size_limit
+    errors[:attachments] << :twitter_attachment_single_file_size unless valid
+    self.error_options.merge!(attachments: { fileType: attachment_type.capitalize, maxSize: size_limit })
+    valid
   end
 
   def validate_agent_emails
