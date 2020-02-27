@@ -18,7 +18,7 @@ module Helpdesk::RequesterWidgetHelper
   TWITTER_LINK                      = "https://twitter.com/"
   FIELDS_INFO                       = { :contact => 
                                         { :form             => "contact_form",
-                                          :disabled_fields  => ["email"],
+                                          :disabled_fields  => [],
                                           :loading_icon     => []
                                         }, 
                                         :company => 

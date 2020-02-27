@@ -57,7 +57,7 @@ module Ember
 
       # Yet to figure out the proper error message for invalid fields, till then field name is used as it is now.
       def test_update_requester_with_invalid_field_params
-        params_hash = { contact: { email: Faker::Internet.email, custom_fields: {} }, company: { domain: Faker::Lorem.word, custom_fields: {} } }
+        params_hash = { company: { domain: Faker::Lorem.word, custom_fields: {} } }
         put :update, construct_params({ version: 'private', id: @ticket.display_id }, params_hash)
         assert_response 400
         match_json([bad_request_error_pattern(:domain, :invalid_field)])
@@ -88,6 +88,15 @@ module Ember
         assert_equal params_hash[:contact][:name], @ticket.requester.name
         assert_equal params_hash[:contact][:custom_fields][:position], @ticket.requester.custom_field['cf_position']
         assert_equal params_hash[:company][:custom_fields][:place], @ticket.company.custom_field['cf_place']
+      end
+
+      def test_update_requester_with_email_field
+        @account.reload
+        params_hash = { contact: { name: Faker::Lorem.word, email: Faker::Internet.email, custom_fields: { position: Faker::Lorem.word } }, company: { custom_fields: { place: Faker::Lorem.word } } }
+        put :update, construct_params({ version: 'private', id: @ticket.display_id }, params_hash)
+        assert_response 200
+        @ticket.reload
+        assert_equal params_hash[:contact][:email], @ticket.requester.email
       end
 
       def test_update_requester_with_associated_company_name
