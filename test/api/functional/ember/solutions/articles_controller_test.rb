@@ -2023,7 +2023,7 @@ module Ember
 
       def test_article_filters_invalid_modifier
         get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s,
-                                         author: Faker::Lorem.characters(4) }, false)
+                                         author: Faker::Lorem.characters(12) }, false)
         assert_response 400
       end
 

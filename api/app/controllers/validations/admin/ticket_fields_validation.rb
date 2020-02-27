@@ -50,7 +50,7 @@ module Admin
     # choices validation
     validates :choices, presence: true, if: -> { choices_required_for_type? }, on: :create
     validates :choices, custom_absence: { message: :sprout_plan_choices_error },
-                        if: -> { instance_variable_defined?(:@choices) && !Account.current.custom_ticket_fields_enabled? }
+                        if: -> { instance_variable_defined?(:@choices) && !Account.current.custom_ticket_fields_enabled? && !default_ticket_type? }
     validates :choices, data_type: { rules: Array }, if: lambda {
       create_or_update? && (choices_required_for_type? || status_field?) && instance_variable_defined?(:@choices)
     }
