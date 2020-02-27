@@ -56,6 +56,7 @@ class Social::Twitter::Feed
     unless tweet.blank?
       ticket  = tweet.get_ticket
       user    = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"], self.user[:name])
+      user.make_current if user.present?
       if ticket
         notable  = add_as_note(feed_obj, handle, :mention, ticket, user, action_data)
       else 
@@ -65,6 +66,7 @@ class Social::Twitter::Feed
     else
       if action_data[:convert]
         user    = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"], self.user[:name])
+        user.make_current if user.present?
         notable = add_as_ticket(feed_obj, handle, :mention, action_data, nil, user) 
       end
     end
