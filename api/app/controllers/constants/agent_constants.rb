@@ -1,7 +1,7 @@
 module AgentConstants
   LOAD_OBJECT_EXCEPT = %i[create_multiple complete_gdpr_acceptance enable_undo_send disable_undo_send update_multiple search_in_freshworks].freeze
   STATES = %w[occasional fulltime].freeze
-  INDEX_FIELDS = %w[state email phone mobile only type privilege group_id include].freeze
+  INDEX_FIELDS = %w[state email phone mobile only type privilege group_id include order_type].freeze
   UPDATE_ARRAY_FIELDS = %w[group_ids role_ids].freeze
   TICKET_SEARCH_SETTINGS = [:include_subject, :include_description, :include_other_properties, :include_notes, :include_attachment_names, :archive].freeze
   UPDATE_FIELDS = %w[name email phone mobile time_zone job_title language signature ticket_scope occasional shortcuts_enabled focus_mode agent_level_id freshcaller_agent avatar_id].freeze | UPDATE_ARRAY_FIELDS | [ticket_assignment: [:available]].freeze | [search_settings: [tickets: TICKET_SEARCH_SETTINGS]].freeze
