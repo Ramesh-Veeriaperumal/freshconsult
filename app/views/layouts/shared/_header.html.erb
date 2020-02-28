@@ -95,7 +95,7 @@
 					<div class="link custom">
 						<span><%= t('header.toggle_shortcuts').html_safe %></span>
 						<span class="pull-right">
-							<%= check_box_tag(:toggle_shortcut, 0, shortcuts_enabled?, {:rel => "toggle", :"data-remote-url" => toggle_shortcuts_agent_path(current_user.agent.try(:user)) }) %>
+							<%= check_box_tag(:toggle_shortcut, 0, shortcuts_enabled?, {:rel => "toggle", :"data-remote-url" => toggle_shortcuts_agent_path(current_user.agent) }) %>
 						</span>
 						<span class="shorcuts-info description">
 							<%= t('header.shortcuts_info').html_safe %>
