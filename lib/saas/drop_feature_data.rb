@@ -71,14 +71,25 @@ module SAAS::DropFeatureData
   end
 
   def handle_dynamic_sections_drop_data
-    account.ticket_fields.each do |field|
-      field.rollback_section_in_field_options if field.section_field?
-      if field.section_dropdown? && field.has_sections?
-        field.field_options['section_present'] = false
-        field.save
+    # if account.field_service_management_enabled?
+    #   account.ticket_fields.each do |field|
+    #     field.rollback_section_in_field_options if field.section_field? && !field.fsm_field?
+    #     if field.field_type != 'default_ticket_type' && field.has_sections?
+    #       field.field_options['section_present'] = false
+    #       field.save
+    #     end
+    #   end
+    #   account.sections.where('label NOT IN (?)', Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_SECTION).destroy_all
+    # else
+      account.ticket_fields.each do |field|
+        field.rollback_section_in_field_options if field.section_field?
+        if field.section_dropdown? && field.has_sections?
+          field.field_options['section_present'] = false
+          field.save
+        end
       end
-    end
-    account.sections.destroy_all
+      account.sections.destroy_all
+    # end
   end
 
   def handle_helpdesk_restriction_toggle_drop_data
@@ -126,7 +137,7 @@ module SAAS::DropFeatureData
       Marketplace::Constants::EXTENSION_TYPE.values
     )
     return if installed_apps.blank?
-    
+
     installed_apps.map { |ext| ext['extension_id'] }.each do |extension_id|
       @extension = fetch_extension_details(extension_id)
       if @extension.present?

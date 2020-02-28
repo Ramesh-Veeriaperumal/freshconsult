@@ -187,6 +187,7 @@
   - 'm_k_base'
   - 'customer_journey'
   - 'api_rate_limit_garden'
+  - 'fsm_option'
 :estate jan 20:
   - 'everything_in_garden'
   - 'sla_reminders'
@@ -221,6 +222,7 @@
   - 'customer_journey'
   -  'api_rate_limit_garden'
   - 'omni_channel_option'
+  - 'fsm_option'
 :estate omni jan 20:
   - 'everything_in_garden'
   - 'sla_reminders'

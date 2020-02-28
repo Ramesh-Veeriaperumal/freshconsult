@@ -11,11 +11,11 @@ class SAAS::SubscriptionEventActions
                            :support_bot, :custom_dashboard, :round_robin, :round_robin_load_balancing,
                            :hipaa, :agent_scope, :public_url_toggle, :custom_password_policy,
                            :scenario_automation, :personal_canned_response, :marketplace,
-                           :custom_domain, :css_customization, :custom_roles,
-                           :dynamic_sections, :custom_survey, :mailbox,
+                           :custom_domain, :css_customization, :field_service_management, :field_service_management_toggle,
+                           :custom_roles, :dynamic_sections, :custom_survey, :mailbox,
                            :helpdesk_restriction_toggle, :ticket_templates,
-                           :round_robin_load_balancing, :multi_timezone, :field_service_management, :custom_translations,
-                           :field_service_management_toggle, :sitemap, :article_versioning, :suggested_articles_count, :unlimited_multi_product, :article_approval_workflow].freeze
+                           :round_robin_load_balancing, :multi_timezone, :custom_translations,
+                           :sitemap, :article_versioning, :suggested_articles_count, :unlimited_multi_product, :article_approval_workflow].freeze
 
   ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle, :multiple_companies_toggle,
                            :tam_default_fields, :smart_filter, :contact_company_notes, :unique_contact_identifier, :custom_dashboard, 
@@ -38,7 +38,7 @@ class SAAS::SubscriptionEventActions
   ####################################################################################################################
   def initialize(account, old_plan = nil, add_ons = [], features_to_skip = [])
     @account     = account || Account.current
-    @new_plan    = Account.current.subscription
+    @new_plan    = @account.subscription
     @old_plan    = old_plan
     set_existing_addon_feature(add_ons)
     @skipped_features = features_to_skip
@@ -93,6 +93,7 @@ class SAAS::SubscriptionEventActions
       handle_feature_drop_data
       handle_feature_add_data
       handle_fluffy_feature(to_be_added, to_be_removed)
+      # add_implicit_features_to_new_plan
     end
 
   end
@@ -273,5 +274,12 @@ class SAAS::SubscriptionEventActions
     def change_api_limit
       account.change_fluffy_api_limit if account.fluffy_enabled?
       account.change_fluffy_api_min_limit if account.fluffy_min_level_enabled?
+    end
+
+    def add_implicit_features_to_new_plan
+      if account.field_service_management_toggle_enabled? && account.field_service_management_enabled?
+        account.add_feature(:dynamic_sections) unless account.has_feature?(:dynamic_sections)
+        account.add_feature(:parent_child_infra) unless account.has_feature?(:parent_child_infra)
+      end
     end
 end

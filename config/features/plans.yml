@@ -86,6 +86,7 @@
       - :help_widget_predictive
       - :article_versioning
       - :suggested_articles_count
+#      - :field_service_management_toggle
     :inherits:
       - :blossom_jan_17
     :exclude: []
@@ -260,6 +261,7 @@
       - :advanced_automations
       - :article_versioning
       - :suggested_articles_count
+#      - :field_service_management_toggle
     :inherits:
       - :blossom_jan_19
     :exclude: []
@@ -467,6 +469,7 @@
       - :help_widget_predictive
       - :advanced_automations
       - :suggested_articles_count
+#      - :field_service_management_toggle
     :inherits:
       - :blossom_jan_20
     :exclude: []

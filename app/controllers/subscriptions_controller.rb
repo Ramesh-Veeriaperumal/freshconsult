@@ -431,15 +431,15 @@ class SubscriptionsController < ApplicationController
     def perform_ui_based_addon_operations
       [SAAS::SubscriptionEventActions::ADD, SAAS::SubscriptionEventActions::DROP].each do |action|
         feature_list = if action == SAAS::SubscriptionEventActions::ADD
-                         addon_params.map { |feature, value| feature.to_sym if !Account.current.has_feature?(feature.to_sym) && value['enabled'] == 'true' }.compact
+                         addon_params.map { |feature, value| feature.to_sym if !scoper.account.has_feature?(feature.to_sym) && value['enabled'] == 'true' }.compact
                        else
-                         addon_params.map { |feature, value| feature.to_sym if Account.current.has_feature?(feature.to_sym) && value['enabled'] == 'false' }.compact
+                         addon_params.map { |feature, value| feature.to_sym if scoper.account.has_feature?(feature.to_sym) && value['enabled'] == 'false' }.compact
                        end
 
         next if feature_list.blank?
 
         Rails.logger.debug ":::::: #{action}_data_based_on_params, features to #{action}: #{feature_list.inspect}"
-        action == SAAS::SubscriptionEventActions::ADD ? feature_list.each { |f| Account.current.add_feature(f) } : feature_list.each { |f| Account.current.revoke_feature(f) }
+        action == SAAS::SubscriptionEventActions::ADD ? feature_list.each { |f| scoper.account.add_feature(f) } : feature_list.each { |f| scoper.account.revoke_feature(f) }
         # So, the features get updated in Saas::SubscriptionEventActions calls.
         Account.current.reload
         NewPlanChangeWorker.perform_async(features: feature_list, action: action) unless plan_changed?
