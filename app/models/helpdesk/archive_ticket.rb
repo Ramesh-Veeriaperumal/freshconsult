@@ -81,6 +81,8 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
 
   concerned_with :rabbitmq, :attributes, :s3, :esv2_methods
 
+  belongs_to :ticket_source, class_name: 'Helpdesk::Source', foreign_key: 'source', primary_key: 'account_choice_id', inverse_of: :archive_tickets
+
   SORT_FIELDS = [
     [ :created_at , "tickets_filter.sort_fields.date_created"  ],
     [ :updated_at , "tickets_filter.sort_fields.last_modified" ],

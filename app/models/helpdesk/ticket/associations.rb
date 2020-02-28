@@ -136,6 +136,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_many :canned_form_handles, :class_name => 'Admin::CannedFormHandle', :dependent => :destroy
   delegate :agent_availability, :to => :responder, :allow_nil => true
 
+  belongs_to :ticket_source, class_name: 'Helpdesk::Source', foreign_key: 'source', primary_key: 'account_choice_id', inverse_of: :tickets
+
   private
 
   def set_inline_attachable_type(inline_attachment)
