@@ -154,8 +154,7 @@ class Account < ActiveRecord::Base
       end
     end
     #next response sla feature based on redis. Remove once its stable
-    if redis_key_exists?(ENABLE_NEXT_RESPONSE_SLA) 
-      add_feature(:next_response_sla)
+    if redis_key_exists?(ENABLE_NEXT_RESPONSE_SLA)
       launch(:sla_policy_revamp)
     end
   end

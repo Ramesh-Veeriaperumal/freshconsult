@@ -121,6 +121,7 @@
       - :field_service_management_toggle
       - :segments
       - :unlimited_multi_product
+      - :next_response_sla
     :inherits:
       - :garden_jan_17
     :exclude: []
@@ -324,6 +325,7 @@
       - :advanced_automations
       - :unlimited_multi_product
       - :help_widget_article_customisation
+      - :next_response_sla
     :inherits:
       - :garden_jan_19
     :exclude: []
@@ -529,6 +531,7 @@
       - :article_versioning
       - :sla_management
       - :help_widget_article_customisation
+      - :next_response_sla
     :inherits:
       - :garden_jan_20
     :exclude: []
