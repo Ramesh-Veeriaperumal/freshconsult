@@ -8,7 +8,7 @@ module Admin
     validate :empty_section_fields?, if: -> { record.present? }, on: :destroy
     validate :sections_limit, on: :create
     validate :validate_fsm_section, if: lambda {
-      (delete_action? && record.options[:fsm].present? && fsm_enabled_error) ||
+      (delete_action? && record.options[:fsm].present? && fsm_field_check) ||
       (update_action? && record.options[:fsm].present?)
     }
     validate :validate_section_label, if: -> { create_or_update? && section_data[:label].present? }

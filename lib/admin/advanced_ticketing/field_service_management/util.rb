@@ -27,6 +27,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         fsm_fields_to_be_created = fetch_fsm_fields_to_be_created
         reserve_fsm_custom_fields(fsm_fields_to_be_created)
         create_section(fsm_fields_to_be_created)
+        unarchive_ticket_fields if Account.current.archive_ticket_fields_enabled?
         create_fsm_dashboard
         generate_fsm_seed_data
         expire_cache
@@ -373,6 +374,17 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
         ENV['FIXTURE_PATH'] = 'db/fixtures/fsm'
         SeedFu::PopulateSeed.populate
+      end
+
+      def unarchive_ticket_fields
+        fsm_section = Account.current.sections.preload(:section_fields).find_by_label(SERVICE_TASK_SECTION)
+        if fsm_section.present?
+          archived_ticket_fields = fsm_section.section_fields.map(&:ticket_field).select { |tf| tf.deleted? && tf.fsm? }
+          archived_ticket_fields.each do |archived_tf|
+            archived_tf.deleted = false
+            archived_tf.save!
+          end
+        end
       end
   end
 end

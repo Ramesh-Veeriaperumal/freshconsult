@@ -1,4 +1,6 @@
 require_relative '../test_helper'
+require 'sidekiq/testing'
+Sidekiq::Testing.fake!
 
 ['social_tickets_creation_helper.rb', 'twitter_helper.rb', 'note_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 
@@ -10,8 +12,24 @@ class ConversationsControllerTest < ActionController::TestCase
   include TwitterHelper
   include NoteHelper
   include ContactSegmentsTestHelper
+  include Redis::UndoSendRedis
+  include Redis::RedisKeys
+  include Redis::OthersRedis
+  include Redis::TicketsRedis
 
   SEND_CC_EMAIL_JOB_STRING = "handler LIKE '%send_cc_email%'".freeze
+
+  def setup
+    super
+    Social::CustomTwitterWorker.stubs(:perform_async).returns(true)
+    @twitter_handle = get_twitter_handle
+    @default_stream = @twitter_handle.default_stream
+  end
+
+  def teardown
+    super
+    Social::CustomTwitterWorker.unstub(:perform_async)
+  end
 
   def wrap_cname(params)
     { conversation: params }
@@ -56,6 +74,14 @@ class ConversationsControllerTest < ActionController::TestCase
   def update_note_params_hash
     body = Faker::Lorem.paragraph
     params_hash = { body: body }
+    params_hash
+  end
+
+  def twitter_dm_reply_params_hash
+    body = Faker::Lorem.characters(rand(1..140))
+    twitter_handle_id = @twitter_handle.twitter_user_id
+    tweet_type = 'dm'
+    params_hash = { body: body, twitter: { tweet_type: tweet_type, twitter_handle_id: twitter_handle_id } }
     params_hash
   end
 
@@ -582,7 +608,7 @@ class ConversationsControllerTest < ActionController::TestCase
   end
 
   def test_facebook_reply_post_success
-    @account.launch(:fb_twitter_public_api)
+    @account.launch(:facebook_public_api)
     ticket = create_ticket_from_fb_post
     params_hash = { body: Faker::Lorem.paragraph }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
@@ -590,23 +616,23 @@ class ConversationsControllerTest < ActionController::TestCase
     match_json(v2_reply_note_pattern(params_hash, Helpdesk::Note.last))
     match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
   ensure
-    @account.rollback(:fb_twitter_public_api)
+    @account.rollback(:facebook_public_api)
     ticket.destroy
   end
 
   def test_facebook_reply_post_without_params
-    @account.launch(:fb_twitter_public_api)
+    @account.launch(:facebook_public_api)
     ticket = create_ticket_from_fb_post
     post :reply, construct_params({ id: ticket.display_id }, {})
     assert_response 400
     match_json([bad_request_error_pattern('body', :missing_field, code: :missing_field)])
   ensure
-    @account.rollback(:fb_twitter_public_api)
+    @account.rollback(:facebook_public_api)
     ticket.destroy
   end
 
   def test_facebook_reply_post_with_params_empty
-    @account.launch(:fb_twitter_public_api)
+    @account.launch(:facebook_public_api)
     ticket = create_ticket_from_fb_post
     params_hash = { body: '', attachments: [] }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
@@ -614,12 +640,12 @@ class ConversationsControllerTest < ActionController::TestCase
     response_params = params_hash.except(:attachments)
     match_json([bad_request_error_pattern('body', :missing_field, code: :missing_field)])
   ensure
-    @account.rollback(:fb_twitter_public_api)
+    @account.rollback(:facebook_public_api)
     ticket.destroy
   end
 
   def test_facebook_reply_post_success_with_user_id_valid
-    @account.launch(:fb_twitter_public_api)
+    @account.launch(:facebook_public_api)
     ticket = create_ticket_from_fb_post
     params_hash = { body: Faker::Lorem.paragraph, user_id: @agent.id }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
@@ -627,12 +653,12 @@ class ConversationsControllerTest < ActionController::TestCase
     match_json(v2_reply_note_pattern(params_hash, Helpdesk::Note.last))
     match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
   ensure
-    @account.rollback(:fb_twitter_public_api)
+    @account.rollback(:facebook_public_api)
     ticket.destroy
   end
 
   def test_facebook_reply_post_with_user_id_invalid_privilege
-    @account.launch(:fb_twitter_public_api)
+    @account.launch(:facebook_public_api)
     ticket = create_ticket_from_fb_post
     sample_user = other_user
     params_hash = { body: Faker::Lorem.paragraph, user_id: sample_user.id }
@@ -642,24 +668,24 @@ class ConversationsControllerTest < ActionController::TestCase
     assert_response 403
     match_json(request_error_pattern('invalid_user', id: sample_user.id, name: sample_user.name))
   ensure
-    @account.rollback(:fb_twitter_public_api)
+    @account.rollback(:facebook_public_api)
     ticket.destroy
   end
 
   def test_facebook_reply_post_with_empty_user_id
-    @account.launch(:fb_twitter_public_api)
+    @account.launch(:facebook_public_api)
     ticket = create_ticket_from_fb_post
     params_hash = { body: Faker::Lorem.paragraph, user_id: '' }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('user_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
   ensure
-    @account.rollback(:fb_twitter_public_api)
+    @account.rollback(:facebook_public_api)
     ticket.destroy
   end
 
   def test_facebook_reply_post_with_invalid_parent_note_id
-    @account.launch(:fb_twitter_public_api)
+    @account.launch(:facebook_public_api)
     ticket = create_ticket_from_fb_post
     invalid_id = (Helpdesk::Note.last.try(:id) || 0) + 10
     params_hash = { body: Faker::Lorem.paragraph, parent_note_id: invalid_id }
@@ -667,24 +693,24 @@ class ConversationsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('parent_note_id', 'is invalid')])
   ensure
-    @account.rollback(:fb_twitter_public_api)
+    @account.rollback(:facebook_public_api)
     ticket.destroy
   end
 
   def test_facebook_reply_post_with_empty_parent_note_id
-    @account.launch(:fb_twitter_public_api)
+    @account.launch(:facebook_public_api)
     ticket = create_ticket_from_fb_post
     params_hash = { body: Faker::Lorem.paragraph, parent_note_id: '' }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('parent_note_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: String)])
   ensure
-    @account.rollback(:fb_twitter_public_api)
+    @account.rollback(:facebook_public_api)
     ticket.destroy
   end
 
   def test_facebook_reply_post_success_with_parent_note
-    @account.launch(:fb_twitter_public_api)
+    @account.launch(:facebook_public_api)
     ticket = create_ticket_from_fb_post(true)
     put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
     sample_put_comment = { 'id' => put_comment_id }
@@ -697,12 +723,12 @@ class ConversationsControllerTest < ActionController::TestCase
     match_json(v2_reply_note_pattern(params_hash, Helpdesk::Note.last))
     match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
   ensure
-    @account.rollback(:fb_twitter_public_api)
+    @account.rollback(:facebook_public_api)
     ticket.destroy
   end
 
   def test_facebook_reply_post_success_with_attachment_only
-    @account.launch(:fb_twitter_public_api)
+    @account.launch(:facebook_public_api)
     ticket = create_ticket_from_fb_post
     file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
     params_hash = { attachments: [file] }
@@ -715,12 +741,12 @@ class ConversationsControllerTest < ActionController::TestCase
     match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
     assert Helpdesk::Note.last.attachments.count == 1
   ensure
-    @account.rollback(:fb_twitter_public_api)
+    @account.rollback(:facebook_public_api)
     ticket.destroy
   end
 
   def test_facebook_reply_post_success_with_body_attachment
-    @account.launch(:fb_twitter_public_api)
+    @account.launch(:facebook_public_api)
     ticket = create_ticket_from_fb_post
     file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
     params_hash = { body: Faker::Lorem.paragraph, attachments: [file] }
@@ -733,12 +759,12 @@ class ConversationsControllerTest < ActionController::TestCase
     match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
     assert Helpdesk::Note.last.attachments.count == 1
   ensure
-    @account.rollback(:fb_twitter_public_api)
+    @account.rollback(:facebook_public_api)
     ticket.destroy
   end
 
   def test_facebook_reply_post_with_more_than_one_attachment
-    @account.launch(:fb_twitter_public_api)
+    @account.launch(:facebook_public_api)
     ticket = create_ticket_from_fb_post
     file = fixture_file_upload('files/image6mb.jpg', 'image/jpg')
     file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
@@ -750,24 +776,24 @@ class ConversationsControllerTest < ActionController::TestCase
     response_params = params_hash.except(:attachments)
     match_json([bad_request_error_pattern('attachments', :too_long, current_count: 2, element_type: :characters, max_count: 1)])
   ensure
-    @account.rollback(:fb_twitter_public_api)
+    @account.rollback(:facebook_public_api)
     ticket.destroy
   end
 
   def test_facebook_reply_post_with_invalid_attachment_params_format
-    @account.launch(:fb_twitter_public_api)
+    @account.launch(:facebook_public_api)
     ticket = create_ticket_from_fb_post
     params_hash = { body: Faker::Lorem.paragraph, attachments: [1] }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('attachments', :array_datatype_mismatch, expected_data_type: 'valid file format')])
   ensure
-    @account.rollback(:fb_twitter_public_api)
+    @account.rollback(:facebook_public_api)
     ticket.destroy
   end
 
   def test_facebook_reply_post_with_invalid_attachment_size_create
-    @account.launch(:fb_twitter_public_api)
+    @account.launch(:facebook_public_api)
     ticket = create_ticket_from_fb_post
     invalid_attachment_limit = @account.attachment_limit + 2
     Rack::Test::UploadedFile.any_instance.stubs(:size).returns(invalid_attachment_limit.megabytes)
@@ -780,12 +806,12 @@ class ConversationsControllerTest < ActionController::TestCase
     response_params = params_hash.except(:attachments)
     match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{invalid_attachment_limit} MB")])
   ensure
-    @account.launch(:fb_twitter_public_api)
+    @account.launch(:facebook_public_api)
     ticket.destroy
   end
 
   def test_facebook_reply_with_fb_page_reauth_required_error
-    @account.launch(:fb_twitter_public_api)
+    @account.launch(:facebook_public_api)
     ticket = create_ticket_from_fb_post(true)
     fb_page = ticket.fb_post.facebook_page
     fb_page.reauth_required = true
@@ -802,12 +828,12 @@ class ConversationsControllerTest < ActionController::TestCase
   ensure
     fb_page.reauth_required = false
     fb_page.save
-    @account.rollback(:fb_twitter_public_api)
+    @account.rollback(:facebook_public_api)
     ticket.destroy
   end
 
   def test_facebook_reply_without_fb_page
-    @account.launch(:fb_twitter_public_api)
+    @account.launch(:facebook_public_api)
     Social::FacebookPage.any_instance.stubs(:gateway_facebook_page_mapping_details).returns(nil)
     ticket = create_ticket_from_fb_post(true, true)
     fb_page = ticket.fb_post.facebook_page
@@ -817,12 +843,12 @@ class ConversationsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('fb_page_id', :invalid_facebook_id)])
   ensure
-    @account.rollback(:fb_twitter_public_api)
+    @account.rollback(:facebook_public_api)
     ticket.destroy
   end
 
   def test_facebook_reply_dm_success
-    @account.launch(:fb_twitter_public_api)
+    @account.launch(:facebook_public_api)
     ticket = create_ticket_from_fb_direct_message
     sample_reply_dm = { 'id' => Time.now.utc.to_i + 5 }
     Koala::Facebook::API.any_instance.stubs(:put_object).returns(sample_reply_dm)
@@ -833,12 +859,12 @@ class ConversationsControllerTest < ActionController::TestCase
     match_json(v2_reply_note_pattern(params_hash, Helpdesk::Note.last))
     match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
   ensure
-    @account.rollback(:fb_twitter_public_api)
+    @account.rollback(:facebook_public_api)
     ticket.destroy
   end
 
   def test_facebook_reply_dm_success_with_attachment
-    @account.launch(:fb_twitter_public_api)
+    @account.launch(:facebook_public_api)
     file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
     params_hash = { attachments: [file] }
     ticket = create_ticket_from_fb_direct_message
@@ -853,12 +879,12 @@ class ConversationsControllerTest < ActionController::TestCase
     match_json(v2_reply_note_pattern(params_hash, Helpdesk::Note.last))
     match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
   ensure
-    @account.rollback(:fb_twitter_public_api)
+    @account.rollback(:facebook_public_api)
     ticket.destroy
   end
 
   def test_facebook_reply_dm_failure_with_body_and_attachment
-    @account.launch(:fb_twitter_public_api)
+    @account.launch(:facebook_public_api)
     file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
     params_hash = { body: Faker::Lorem.paragraph, attachments: [file] }
     ticket = create_ticket_from_fb_direct_message
@@ -872,8 +898,223 @@ class ConversationsControllerTest < ActionController::TestCase
     response_params = params_hash.except(:attachments)
     match_json([bad_request_error_pattern('attachments', :can_have_only_one_field, list: 'body, attachments')])
   ensure
-    @account.rollback(:fb_twitter_public_api)
+    @account.rollback(:facebook_public_api)
     ticket.destroy
+  end
+
+  def test_create_public_note_with_fb_api_feature_lauched
+    @account.launch(:facebook_public_api)
+    Social::FacebookPage.any_instance.stubs(:gateway_facebook_page_mapping_details).returns(nil)
+    ticket = create_ticket_from_fb_post(true, true)
+    params_hash = create_note_params_hash.merge(private: false)
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 201
+    match_json(v2_note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(v2_note_pattern({}, Helpdesk::Note.last))
+  ensure
+    @account.rollback(:facebook_public_api)
+  end
+
+  def test_create_private_note_with_fb_api_feature_launched
+    @account.launch(:facebook_public_api)
+    Social::FacebookPage.any_instance.stubs(:gateway_facebook_page_mapping_details).returns(nil)
+    ticket = create_ticket_from_fb_post(true, true)
+    params_hash = create_note_params_hash.merge(private: true)
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 201
+    match_json(v2_note_pattern(params_hash, Helpdesk::Note.last))
+    match_json(v2_note_pattern({}, Helpdesk::Note.last))
+  ensure
+    @account.rollback(:facebook_public_api)
+  end
+
+  def test_tweet_reply_without_params
+    @account.launch(:twitter_public_api)
+    ticket = create_twitter_ticket
+    post :reply, construct_params({ id: ticket.display_id }, {})
+    assert_response 400
+    match_json([bad_request_error_pattern('body', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
+  ensure
+    @account.rollback(:twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_tweet_reply_with_invalid_twitter_params_type
+    @account.launch(:twitter_public_api)
+    ticket = create_twitter_ticket
+    params_hash = {
+      body: Faker::Lorem.sentence[0..130],
+      twitter: 'dm'
+    }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+  ensure
+    @account.rollback(:twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_tweet_reply_with_invalid_twitter_params
+    @account.launch(:twitter_public_api)
+    ticket = create_twitter_ticket
+    params_hash = {
+      body: Faker::Lorem.sentence[0..130],
+      twitter: { tweet_type: 'dm', twitter_handle_id: @twitter_handle.twitter_user_id, tweet_id: 9 }
+    }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+  ensure
+    @account.rollback(:twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_tweet_reply_with_invalid_tweet_type_params
+    @account.launch(:twitter_public_api)
+    ticket = create_twitter_ticket
+    params_hash = {
+      body: Faker::Lorem.sentence[0..130],
+      twitter: { tweet_type: 'post', twitter_handle_id: @twitter_handle.twitter_user_id }
+    }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+  ensure
+    @account.rollback(:twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_tweet_reply_with_invalid_twitter_handle_id_params
+    @account.launch(:twitter_public_api)
+    ticket = create_twitter_ticket
+    params_hash = {
+      body: Faker::Lorem.sentence[0..130],
+      twitter: { twitter_handle_id: 'post' }
+    }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+  ensure
+    @account.rollback(:twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_tweet_reply_with_invalid_body
+    @account.launch(:twitter_public_api)
+    ticket = create_twitter_ticket
+    params_hash = { body: 2 }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('body', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Integer')])
+  ensure
+    @account.rollback(:twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_tweet_reply_with_invalid_body_length
+    @account.launch(:twitter_public_api)
+    ticket = create_twitter_ticket
+    params_hash = {
+      body: Faker::Lorem.characters(1000),
+      twitter: { tweet_type: 'mention' }
+    }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+  ensure
+    @account.rollback(:twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_twitter_reply_to_tweet_ticket
+    Sidekiq::Testing.inline! do
+      with_twitter_update_stubbed do
+        ticket = create_twitter_ticket
+        @account.launch(:twitter_public_api)
+        params_hash = {
+          body: Faker::Lorem.sentence[0..130],
+          twitter: { tweet_type: 'dm', twitter_handle_id: @twitter_handle.twitter_user_id }
+        }
+        post :reply, construct_params({ id: ticket.display_id }, params_hash)
+        assert_response 201
+        latest_note = Helpdesk::Note.last
+        match_json(v2_reply_note_pattern(params_hash, latest_note))
+        match_json(v2_reply_note_pattern({}, latest_note))
+        @account.rollback(:twitter_public_api)
+        ticket.destroy
+      end
+    end
+  end
+
+  def test_twitter_reply_to_tweet_ticket_with_attachments
+    @account.launch(:twitter_public_api)
+    file = fixture_file_upload('files/image4kb.png', 'image/png')
+    ticket = create_twitter_ticket
+    params_hash = {
+      body: Faker::Lorem.sentence[0..130],
+      twitter: { tweet_type: 'mention', twitter_handle_id: @twitter_handle.twitter_user_id },
+      attachments: [file]
+    }
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    Sidekiq::Testing.inline! do
+      with_twitter_update_stubbed do
+        post :reply, construct_params({ id: ticket.display_id }, params_hash)
+        DataTypeValidator.any_instance.unstub(:valid_type?)
+        assert_response 201
+        response_params = params_hash.except(:attachments)
+        match_json(v2_reply_note_pattern(params_hash, Helpdesk::Note.last))
+        match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
+        assert Helpdesk::Note.last.attachments.count == 1
+      end
+    end
+    ticket.destroy
+  ensure
+    @account.rollback(:twitter_public_api)
+  end
+
+  def test_tweet_reply_with_invalid_handle
+    @account.launch(:twitter_public_api)
+    ticket = create_twitter_ticket
+    params_hash = {
+      body: Faker::Lorem.sentence[0..130],
+      twitter: { tweet_type: 'dm', twitter_handle_id: 123 }
+    }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('twitter_handle_id', 'is invalid')])
+  ensure
+    @account.rollback(:twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_tweet_reply_with_requth
+    @account.launch(:twitter_public_api)
+    ticket = create_twitter_ticket
+    Social::TwitterHandle.any_instance.stubs(:reauth_required?).returns(true)
+    params_hash = {
+      body: Faker::Lorem.sentence[0..130],
+      twitter: { tweet_type: 'dm', twitter_handle_id: get_twitter_handle.twitter_user_id }
+    }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('twitter_handle_id', 'requires re-authorization')])
+    Social::TwitterHandle.any_instance.stubs(:reauth_required?).returns(false)
+  ensure
+    @account.rollback(:twitter_public_api)
+    ticket.destroy
+  end
+
+  def test_tweet_reply_with_app_blocked
+    @account.launch(:twitter_public_api)
+    set_others_redis_key(TWITTER_APP_BLOCKED, true, 5)
+    twitter_handle = get_twitter_handle
+    ticket = create_twitter_ticket(twitter_handle: twitter_handle)
+    params_hash = {
+      body: Faker::Lorem.sentence[0..130],
+      twitter: { tweet_type: 'dm', twitter_handle_id: twitter_handle.twitter_user_id }
+    }
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 400
+    match_json(validation_error_pattern(bad_request_error_pattern('twitter', :twitter_write_access_blocked)))
+  ensure
+    @account.rollback(:twitter_public_api)
+    ticket.destroy
+    remove_others_redis_key TWITTER_APP_BLOCKED
   end
 
   def test_update_with_ticket_trashed

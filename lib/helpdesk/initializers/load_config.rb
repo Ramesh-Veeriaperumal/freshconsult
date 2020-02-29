@@ -87,3 +87,5 @@ RTSConfig = YAML.load_file(Rails.root.join('config', 'rts.yml'))[Rails.env]
 GrowthHackConfig = YAML.load_file(File.join(Rails.root, 'config', 'growth_hack.yml')).with_indifferent_access
 
 PlanFeaturesConfig = YAML.load_file(Rails.root.join('config', 'features', 'plan_features.yml')).with_indifferent_access
+
+SecureFieldConfig = YAML.load_file(Rails.root.join('config', 'jwe', 'secure_field.yml'))[Rails.env]

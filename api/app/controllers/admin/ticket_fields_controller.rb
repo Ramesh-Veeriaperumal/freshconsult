@@ -70,7 +70,7 @@ class Admin::TicketFieldsController < ApiApplicationController
     end
 
     def load_object
-      @item = current_account.ticket_fields_with_nested_fields.find_by_id(params[:id])
+      @item = current_account.all_ticket_fields_with_nested_fields.find_by_id(params[:id])
       log_and_render_404 if @item.blank?
     end
 
@@ -97,9 +97,9 @@ class Admin::TicketFieldsController < ApiApplicationController
 
     def scoper
       if index_or_show?
-        current_account.ticket_fields_from_cache.sort(&:sort_by_position_excluding_section_field).select(&:condition_based_field)
+        current_account.all_ticket_fields_with_nested_fields_from_cache.sort(&:sort_by_position_excluding_section_field).select(&:condition_based_field)
       else
-        current_account.ticket_fields_with_nested_fields
+        current_account.all_ticket_fields_with_nested_fields
       end
     end
 

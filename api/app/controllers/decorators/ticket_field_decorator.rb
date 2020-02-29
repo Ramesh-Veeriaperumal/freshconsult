@@ -344,7 +344,8 @@ class TicketFieldDecorator < ApiDecorator
     end
 
     def section_field_hash(section)
-      section.section_fields.map do |sf|
+      section_fields = Account.current.archive_ticket_fields_enabled? ? Account.current.section_fields_without_archived_fields.where(section_id: section.id) : section.section_fields
+      section_fields.map do |sf|
         {
           id: sf.id,
           position: sf.position,

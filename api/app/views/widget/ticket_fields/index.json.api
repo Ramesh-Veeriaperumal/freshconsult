@@ -8,13 +8,14 @@ JSON.generate(@items.map do |ticket_field|
         id: section.id,
         label: section.label,
         section_fields: section.section_fields.map do |sf|
-          if sf.ticket_field.editable_in_portal
+          section_ticket_field = sf.ticket_field
+          next unless section_ticket_field.editable_in_portal && !(section_ticket_field.deleted? && Account.current.archive_ticket_fields_enabled?)
+
             {
               id: sf.id,
               position: sf.position,
               ticket_field_id: sf.ticket_field_id
             } 
-          end
         end.compact,
         picklist_mapping_ids: section.section_picklist_mappings.map(&:picklist_value_id)
       }

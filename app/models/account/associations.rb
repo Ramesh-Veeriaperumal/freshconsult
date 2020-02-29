@@ -185,18 +185,33 @@ class Account < ActiveRecord::Base
   has_many :monitorships
   has_many :votes
 
-  has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', :conditions => {:parent_id => nil},
-    :include => [:picklist_values, :flexifield_def_entry], :order => "helpdesk_ticket_fields.position"
-  has_many :ticket_fields_only, :class_name => 'Helpdesk::TicketField', 
-           :conditions => {:parent_id => nil},
-           :order => 'helpdesk_ticket_fields.position'
-  has_many :ticket_fields_without_choices, :class_name => 'Helpdesk::TicketField', :conditions => {:parent_id => nil},
-    :include => [:flexifield_def_entry], :order => "helpdesk_ticket_fields.position"
+  # This contains ticket fields excluding archived ticket fields
+  has_many :ticket_fields, class_name: 'Helpdesk::TicketField', conditions: { parent_id: nil, deleted: false },
+                           include: [:picklist_values, :flexifield_def_entry], order: 'helpdesk_ticket_fields.position'
 
-  has_many :ticket_fields_including_nested_fields, :class_name => 'Helpdesk::TicketField', :conditions => {:parent_id => nil},
-    :include => [:picklist_values, :flexifield_def_entry, :nested_ticket_fields], :order => "helpdesk_ticket_fields.position"
+  has_many :ticket_fields_only, class_name: 'Helpdesk::TicketField', conditions: { parent_id: nil, deleted: false },
+                                order: 'helpdesk_ticket_fields.position'
 
-  has_many :ticket_fields_with_nested_fields, :class_name => 'Helpdesk::TicketField', :order => "position"
+  has_many :ticket_fields_without_choices, class_name: 'Helpdesk::TicketField', conditions: { parent_id: nil, deleted: false },
+                                           include: [:flexifield_def_entry], order: 'helpdesk_ticket_fields.position'
+
+  has_many :ticket_fields_including_nested_fields, class_name: 'Helpdesk::TicketField', conditions: { parent_id: nil, deleted: false },
+                                                   include: [:picklist_values, :flexifield_def_entry, :nested_ticket_fields],
+                                                   order: 'helpdesk_ticket_fields.position'
+
+  # Ticket fields with nested fields (excluding archived ticket fields)
+  has_many :ticket_fields_with_nested_fields, class_name: 'Helpdesk::TicketField', conditions: { deleted: false },
+                                              order: 'position'
+
+  # Ticket fields with nested fields (including archived ticket fields)
+  has_many :all_ticket_fields_with_nested_fields, class_name: 'Helpdesk::TicketField', order: 'position'
+
+  has_many :ticket_fields_with_archived_fields_only, class_name: 'Helpdesk::TicketField', conditions: { parent_id: nil },
+                                                     order: 'helpdesk_ticket_fields.position'
+
+  # This containes ticket fields including archived ticket fields
+  has_many :ticket_fields_with_archived_fields, class_name: 'Helpdesk::TicketField', conditions: { parent_id: nil },
+                                                include: [:picklist_values, :flexifield_def_entry], order: 'helpdesk_ticket_fields.position'
 
   has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :order => "position"
 
@@ -333,6 +348,8 @@ class Account < ActiveRecord::Base
   has_many :sections, :class_name => 'Helpdesk::Section', :dependent => :destroy
   has_many :section_fields_with_field_values_mapping, :class_name => 'Helpdesk::SectionField',
             :include => [:parent_ticket_field, :section => {:section_picklist_mappings => :picklist_value}]
+  has_many :section_fields_without_archived_fields, :through => :ticket_fields_only, :class_name => 'Helpdesk::SectionField',
+													source: 'section_fields'
   has_many :section_fields, :class_name => 'Helpdesk::SectionField', order: :position, :dependent => :destroy
 
   has_many :subscription_invoices

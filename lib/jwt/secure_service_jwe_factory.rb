@@ -18,7 +18,7 @@ class JWT::SecureServiceJWEFactory
       uuid: Thread.current[:message_uuid],
       user_id: User.current.id
     }
-    key = OpenSSL::PKey::RSA.new(PciConstants::JweConstants::PUBLIC_KEY)
+    key = OpenSSL::PKey::RSA.new(PciConstants::PUBLIC_KEY)
     JWE.encrypt(jwe_payload.to_json, key, enc: 'A256GCM')
   end
 

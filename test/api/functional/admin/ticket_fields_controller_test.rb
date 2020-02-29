@@ -28,7 +28,7 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
   end
 
   def clean_db
-    @account.ticket_fields.where(default: 0).destroy_all
+    @account.ticket_fields_with_archived_fields.where(default: 0).destroy_all
     type_field = @account.ticket_fields.find_by_field_type('default_ticket_type')
     type_field.sections.destroy_all
     type_field.field_options = type_field.field_options.with_indifferent_access
@@ -115,7 +115,7 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
 
   def test_deletion_of_nested_field
     launch_ticket_field_revamp do
-      names = Faker::Lorem.words(3).map {|x| "nested_#{x}"}
+      names = Faker::Lorem.words(3).map { |x| "nested_#{x}" }
       tf = create_dependent_custom_field(names, 2, rand(0..1) == 1)
       delete :destroy, construct_params(id: tf.id)
       assert_response 204
@@ -168,6 +168,32 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
     launch_ticket_field_revamp do
       delete :destroy, construct_params(id: -1)
       assert_response 404
+    end
+  end
+
+  def test_deletion_of_archived_field
+    launch_ticket_field_revamp do
+      name = "dropdown_#{Faker::Lorem.characters(rand(1..5))}"
+      tf = create_custom_field_dropdown(name, Faker::Lorem.words(3))
+      @account.launch :archive_ticket_fields
+      put :update, construct_params({ id: tf.id }, archived: true)
+      delete :destroy, construct_params(id: tf.id)
+      assert_response 204
+      assert @account.all_ticket_fields_with_nested_fields.find_by_id(tf.id).blank?
+      @account.rollback :archive_ticket_fields
+    end
+  end
+
+  def test_deletion_of_nested_archived_field
+    launch_ticket_field_revamp do
+      names = Faker::Lorem.words(3).map { |x| "nf_#{x}" }
+      tf = create_dependent_custom_field(names, 5, rand(0..1) == 1)
+      @account.launch :archive_ticket_fields
+      put :update, construct_params({ id: tf.id }, archived: true)
+      delete :destroy, construct_params(id: tf.id)
+      assert_response 204
+      assert @account.all_ticket_fields_with_nested_fields.find_by_id(tf.id).blank?
+      @account.rollback :archive_ticket_fields
     end
   end
 
@@ -252,7 +278,7 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
 
   def test_show_dependent_field
     launch_ticket_field_revamp do
-      names = Faker::Lorem.words(3).map {|x| "nested_#{x}"}
+      names = Faker::Lorem.words(3).map { |x| "nested_#{x}" }
       tf = create_dependent_custom_field(names, 2, rand(0..1) == 1)
       get :show, construct_params(id: tf.id)
       assert_response 200
@@ -330,6 +356,113 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
     end
   end
 
+  def test_archiving_field_without_feature
+    launch_ticket_field_revamp do
+      name = "text_#{Faker::Lorem.characters(rand(1..5))}"
+      tf = create_custom_field_dn(name, 'text', rand(0..1) == 1)
+      put :update, construct_params({ id: tf.id }, archived: true)
+      assert_response 403
+    end
+  end
+
+  def test_archiving_custom_field
+    launch_ticket_field_revamp do
+      name = "dropdown_#{Faker::Lorem.characters(rand(1..5))}"
+      tf = create_custom_field_dropdown(name, Faker::Lorem.words(3))
+      @account.launch :archive_ticket_fields
+      put :update, construct_params({ id: tf.id }, archived: true)
+      assert @account.all_ticket_fields_with_nested_fields.find(tf.id).present?
+      assert @account.all_ticket_fields_with_nested_fields.find(tf.id).deleted
+      @account.rollback :archive_ticket_fields
+    end
+  end
+
+  def test_archiving_dependent_field
+    launch_ticket_field_revamp do
+      names = Faker::Lorem.words(3).map { |x| "nested_#{x}" }
+      tf = create_dependent_custom_field(names, 9, rand(0..1) == 1)
+      @account.launch :archive_ticket_fields
+      put :update, construct_params({ id: tf.id }, archived: true)
+      assert @account.all_ticket_fields_with_nested_fields.find(tf.id).present?
+      assert @account.all_ticket_fields_with_nested_fields.find(tf.id).deleted
+      @account.rollback :archive_ticket_fields
+    end
+  end
+
+  def test_archiving_default_field
+    launch_ticket_field_revamp do
+      tfs = @account.ticket_fields.where(default: 1)
+      @account.launch :archive_ticket_fields
+      tfs.each do |field|
+        put :update, construct_params({ id: field.id }, archived: true)
+        assert_response 400
+        match_json([bad_request_error_pattern(
+          field.name, "Default field '#{field.name}' can't be archived", code: 'invalid_value'
+        )])
+        assert !@account.all_ticket_fields_with_nested_fields.find_by_id(field.id).deleted
+      end
+      @account.rollback :archive_ticket_fields
+    end
+  end
+
+  def test_archive_param_combined_with_other_params
+    launch_ticket_field_revamp do
+      name = "text_#{Faker::Lorem.characters(rand(1..3))}"
+      tf = create_custom_field_dn(name, 'text', rand(0..1) == 1)
+      @account.launch :archive_ticket_fields
+      put :update, construct_params({ id: tf.id }, archived: true, label: Faker::Lorem.characters(5))
+      assert_response 400
+      match_json([bad_request_error_pattern(
+        tf.name, "'archived' parameter can not be combined with any other parameters", code: 'invalid_value'
+      )])
+      @account.rollback :archive_ticket_fields
+    end
+  end
+
+  def test_allowed_values_on_archive_attribute
+    launch_ticket_field_revamp do
+      name = "text_#{Faker::Lorem.characters(rand(1..3))}"
+      tf = create_custom_field_dn(name, 'text', rand(0..1) == 1)
+      @account.launch :archive_ticket_fields
+      put :update, construct_params({ id: tf.id }, archived: Faker::Lorem.characters(5))
+      assert_response 400
+      match_json([bad_request_error_pattern(
+        :archived, "It should be one of these values: 'true,false'", code: 'invalid_value'
+      )])
+      @account.rollback :archive_ticket_fields
+    end
+  end
+
+  def test_archiving_ticket_field_has_section
+    launch_ticket_field_revamp do
+      name = "dropdown_#{Faker::Lorem.characters(rand(1..5))}"
+      tf = create_custom_field_dropdown_with_sections(name, DROPDOWN_CHOICES_TICKET_TYPE)
+      create_section_fields(tf.id)
+      @account.launch :archive_ticket_fields
+      put :update, construct_params({ id: tf.id }, archived: true)
+      assert_response 400
+      match_json([bad_request_error_pattern(
+        tf.name, "Ticket field '#{tf.name}' has sections, so it can't be archived", code: 'invalid_value'
+      )])
+      @account.rollback :archive_ticket_fields
+    end
+  end
+
+  def test_updating_archived_ticket_field
+    launch_ticket_field_revamp do
+      name = "text_#{Faker::Lorem.characters(rand(1..3))}"
+      tf = create_custom_field_dn(name, 'text', rand(0..1) == 1)
+      @account.launch :archive_ticket_fields
+      put :update, construct_params({ id: tf.id }, archived: true)
+      put :update, construct_params({ id: tf.id }, label: Faker::Lorem.characters(rand(5..10)))
+      assert_response 400
+      match_json([bad_request_error_pattern(
+        tf.name, "'Update' operation can not be performed on archived fields", code: 'invalid_value'
+      )])
+      @account.rollback :archive_ticket_fields
+    end
+  end
+
   def test_success_encrypted_text_field_creation
     params = ticket_field_common_params(type: 'encrypted_text')
     launch_ticket_field_revamp do
@@ -379,7 +512,7 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
   end
 
   def test_create_with_labels_missing
-    params = {position: 1, type: 'custom_text'}
+    params = { position: 1, type: 'custom_text' }
     launch_ticket_field_revamp do
       post :create, construct_params({}, params)
       assert_response 400
@@ -481,13 +614,27 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
   def test_ticket_field_index_with_secure_text_field
     @account.launch(:pci_compliance_field)
     launch_ticket_field_revamp do
-      secure_text_field = create_custom_field_dn('secure_text_1', 'secure_text')
+      name = "secure_text_#{Faker::Lorem.characters(rand(5..10))}"
+      secure_text_field = create_custom_field_dn(name, 'secure_text')
       get :index, controller_params(version: 'private')
       assert_response 200
       response = parse_response @response.body
       secure_text_field_in_index_call = response.find { |x| x['id'] == secure_text_field.id }
       assert_not_nil secure_text_field_in_index_call
       assert_equal secure_text_field_in_index_call['type'], "secure_text"
+    end
+  ensure
+    @account.rollback(:pci_compliance_field)
+  end
+
+  def test_fetch_non_secure_ticket_fields
+    @account.launch(:pci_compliance_field)
+    launch_ticket_field_revamp do
+      name = "secure_text_#{Faker::Lorem.characters(rand(5..10))}"
+      secure_text_field = create_custom_field_dn(name, 'secure_text')
+      @account.reload
+      non_secure_fields = @account.ticket_fields.non_secure_fields
+      assert_equal false, non_secure_fields.include?(secure_text_field)
     end
   ensure
     @account.rollback(:pci_compliance_field)

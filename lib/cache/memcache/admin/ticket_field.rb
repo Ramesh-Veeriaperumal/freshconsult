@@ -6,7 +6,9 @@ module Cache::Memcache::Admin::TicketField
 
   TICKET_FIELD_KEYS = %i[custom_picklist_choice_mapping_key section_picklist_values_mapping_key ticket_field_section_key
                          dynamic_section_field_key ticket_field_nested_level_key ticket_field_choices_key
-                         nested_ticket_fields_key account_flexifield_entry_columns account_ticket_field_position_mapping_key].freeze
+                         nested_ticket_fields_key account_flexifield_entry_columns
+                         account_ticket_field_position_mapping_key ticket_fields_with_archived_fields_key
+                         section_fields_without_archived_fields_key].freeze
 
   def clear_new_ticket_field_cache
     TICKET_FIELD_KEYS.each do |key|
@@ -133,7 +135,7 @@ module Cache::Memcache::Admin::TicketField
   def account_ticket_field_position_mapping_from_cache
     key = account_ticket_field_position_mapping_key
     current_account.fetch_from_cache(key) do
-      ticket_fields = current_account.ticket_fields_only.reload.select(&:condition_based_field)
+      ticket_fields = current_account.ticket_fields_with_archived_fields_only.reload.select(&:condition_based_field)
       ticket_fields.sort!(&:sort_by_position_excluding_section_field)
       { db_to_ui: ticket_field_db_to_ui_positions(ticket_fields),
         ui_to_db: ticket_field_ui_to_db_positions(ticket_fields) }
@@ -252,6 +254,14 @@ module Cache::Memcache::Admin::TicketField
 
     def nested_ticket_fields_key
       format(NESTED_TICKET_FIELDS_KEY, account_id: Account.current.id, ticket_field_id: id)
+    end
+
+    def ticket_fields_with_archived_fields_key
+      format(ACCOUNT_TICKET_FIELDS_WITH_ARCHIVED_FIELDS, account_id: Account.current.id)
+    end
+
+    def section_fields_without_archived_fields_key
+      format(ACCOUNT_SECTION_FIELDS_WITHOUT_ARCHIVED_FIELDS, account_id: Account.current.id)
     end
 
     def section_required_ticket_fields_key(section_id)

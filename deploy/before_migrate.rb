@@ -108,6 +108,7 @@ run "ln -nfs #{shared_path}/config/facebook_gateway.yml #{node[:rel_path]}/confi
 run "ln -nfs #{shared_path}/config/cron_hooks.yml #{node[:rel_path]}/config/cron_hooks.yml"
 run "ln -nfs #{shared_path}/config/shift_config.yml  #{node[:rel_path]}/config/shift_config.yml"
 run "ln -nfs #{shared_path}/config/rts.yml #{node[:rel_path]}/config/rts.yml"
+run "ln -nfs #{shared_path}/config/secure_field.yml #{node[:rel_path]}/config/jwe/secure_field.yml"
 run "ln -nfs #{shared_path}/config/custom_survey_result_key.yml #{node[:rel_path]}/config/custom_survey_result_key.yml"
 
 # supreme-code-console
@@ -125,6 +126,7 @@ run "ln -nfs #{shared_path}/config/search/dynamo_tables.yml #{node[:rel_path]}/c
 run "ln -nfs #{shared_path}/config/cert/freshid.pem #{node[:rel_path]}/config/cert/freshid.pem"
 run "ln -nfs #{shared_path}/config/cert/saml.pem #{node[:rel_path]}/config/cert/saml.pem"
 run "ln -nfs #{shared_path}/config/cert/iam.pem #{node[:rel_path]}/config/cert/iam.pem"
+run "ln -nfs #{shared_path}/config/cert/jwe_encryption_key.pem #{node[:rel_path]}/config/cert/jwe_encryption_key.pem"
 
 # Xero Cert files start
 run "ln -nfs #{shared_path}/config/cert/integrations/xero/entrust-cert.pem #{node[:rel_path]}/config/cert/integrations/xero/entrust-cert.pem"

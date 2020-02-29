@@ -381,6 +381,11 @@ module Cache::Memcache::Account
     end
   end
 
+  def all_ticket_fields_with_nested_fields_from_cache
+    key = format(ACCOUNT_TICKET_FIELDS_WITH_ARCHIVED_FIELDS, account_id: id)
+    fetch_from_cache(key) { all_ticket_fields_with_nested_fields.all }
+  end
+
   def nested_ticket_fields_from_cache
     key = ACCOUNT_NESTED_TICKET_FIELDS % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
@@ -389,9 +394,12 @@ module Cache::Memcache::Account
   end
 
   def section_fields_with_field_values_mapping_cache
-    key = ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING % { account_id: self.id }
-    MemcacheKeys.fetch(key) do
-      section_fields_with_field_values_mapping.all
+    if Account.current.archive_ticket_fields_enabled?
+      key = format(ACCOUNT_SECTION_FIELDS_WITHOUT_ARCHIVED_FIELDS, account_id: id)
+      fetch_from_cache(key) { section_fields_without_archived_fields.all }
+    else
+      key = format(ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING, account_id: id)
+      fetch_from_cache(key) { section_fields_with_field_values_mapping.all }
     end
   end
 
@@ -905,7 +913,7 @@ module Cache::Memcache::Account
     end
 
     def sections_fields_group_by_parent_field_value_mapping
-      section_fields_with_field_values_mapping.group_by do |x|
+      section_fields_with_field_values_mapping_cache.group_by do |x|
         { x.parent_ticket_field.name => x.section.section_picklist_mappings.map { |y| y.picklist_value.value } }
       end
     end

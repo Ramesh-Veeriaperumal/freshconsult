@@ -86,7 +86,7 @@ jQuery('#add_cc_btn').bind("click", function(ev){
 			
 			<div id="ticket_props">
 			   <ul class="cnt">
-				   <% current_portal.ticket_fields.each do |field| %>
+				   <% current_portal.ticket_fields(:non_secure_fields).each do |field| %>
 				     <% if (field.visible_in_view_form? && field.visible_in_portal)%>
 				       <% 
 				          field_value = @ticket.safe_send(field.field_name)
@@ -111,7 +111,7 @@ jQuery('#add_cc_btn').bind("click", function(ev){
 				<div id="ticket_props_form" style="display:none;">
 					<%= form_for @ticket, :url => {:action => "update", :controller => "support/tickets"}, :html => { :id => 'portal_ticket_form' } do |f| %>
 					   <ul class="cnt">
-						   <% current_portal.ticket_fields.each do |field| %>
+						   <% current_portal.ticket_fields(:non_secure_fields).each do |field| %>
 						     <% if (field.visible_in_view_form? && field.editable_in_portal)%>
 						       <% 
 						          field_value = @ticket.safe_send(field.field_name)

@@ -125,6 +125,54 @@ class ApiAgentsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('type', :not_included, list: valid_types.join(','))])
   end
 
+  def test_agent_filter_order_type_asc
+    3.times do
+      add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    end
+    user_order = @account.all_agents.order('users.name asc')
+    get :index, controller_params(order_type: 'asc')
+    response = parse_response @response.body
+    assert_response 200
+    assert user_order.first.name, response.first['contact']['name']
+    assert user_order.last.name, response.last['contact']['name']
+  end
+
+  def test_agent_filter_order_type_desc
+    3.times do
+      add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    end
+    user_order = @account.all_agents.order('users.name desc')
+    get :index, controller_params(order_type: 'desc')
+    response = parse_response @response.body
+    assert_response 200
+    assert user_order.first.name, response.first['contact']['name']
+    assert user_order.last.name, response.last['contact']['name']
+  end
+
+  def test_agent_filter_order_type_asc_inverse
+    3.times do
+      add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    end
+    user_order = @account.all_agents.order('users.name desc')
+    get :index, controller_params(order_type: 'asc')
+    response = parse_response @response.body
+    assert_response 200
+    assert user_order.first.name, response.last['contact']['name']
+    assert user_order.last.name, response.first['contact']['name']
+  end
+
+  def test_agent_filter_order_type_desc_inverse
+    3.times do
+      add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    end
+    user_order = @account.all_agents.order('users.name asc')
+    get :index, controller_params(order_type: 'desc')
+    response = parse_response @response.body
+    assert_response 200
+    assert user_order.first.name, response.last['contact']['name']
+    assert user_order.last.name, response.first['contact']['name']
+  end
+
   def test_show_agent
     sample_agent = @account.all_agents.first
     get :show, construct_params(id: sample_agent.user.id)

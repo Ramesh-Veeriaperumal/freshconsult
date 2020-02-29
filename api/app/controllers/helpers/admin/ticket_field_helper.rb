@@ -68,14 +68,32 @@ module Admin::TicketFieldHelper
     end
 
     def default_field_check
-      errors[:"#{tf[:name]}"] << :delete_default_field_error
-      error_options[:"#{tf[:name]}"] = { name: tf[:name] }
+      default_field_archive_or_deletion_error(tf.name.to_sym, request_params.key?(:archived) ? :archived : :deleted)
+    end
+
+    def fsm_field_check
+      fsm_enabled_error(:field_service_management, request_params.key?(:archived) ? :archive : :delete) if current_account.field_service_management_enabled?
+    end
+
+    def restrict_update_on_archived_fields
+      errors[:"#{tf[:name]}"] << :restrict_update_on_archived_fields
+    end
+
+    def restrict_archive_param_on_tf_creation
+      unexpected_value_for_attribute(:ticket_field_create, :archived)
     end
 
     def ticket_field_has_section?
       if tf.has_sections?
-        errors[:"#{tf[:name]}"] << :section_inside_ticket_field_error
-        error_options[:"#{tf[:name]}"] = { name: tf[:label] || tf[:name] }
+        section_inside_ticket_field_error(tf.name.to_sym, request_params.key?(:archived) ? :archived : :deleted)
+      end
+    end
+
+    def archive_combined_with_other_params_validation
+      if request_params[:ticket_field].size != 1
+        # While archiving a ticket field the payload should contain :archived key
+        # It should not be combined with any other params
+        errors[:"#{tf[:name]}"] << :restrict_other_params_on_archiving
       end
     end
 
@@ -94,9 +112,9 @@ module Admin::TicketFieldHelper
     def update_action?
       validation_context == :update
     end
-    
+
     def delete_action?
-      validation_context == :delete
+      validation_context == :destroy
     end
 
     def show_or_index?
@@ -145,6 +163,10 @@ module Admin::TicketFieldHelper
         error_options.merge!(multiple_user_companies: { feature: :multiple_user_companies,
                                                         code: :access_denied })
       end
+    end
+
+    def archive_ticket_fields_feature?
+      missing_feature_error(:archive_ticket_fields, :archived, :require_feature_for_attribute) unless Account.current.archive_ticket_fields_enabled?
     end
 
     def hipaa_encrypted_field?

@@ -5,6 +5,7 @@
         token: "<%=current_account.freshchat_account.token%>",
         host: "<%= Freshchat::Account::CONFIG[:visitorWidgetHostUrl] %>",
         <%if current_account.autofaq_enabled? && current_portal.freddy_bot.present? && current_portal.freddy_bot.status %>
+          locale: "<%= I18n.locale %>",
           meta: {
             "fw_product": "freshdesk",
             "fw_product_acc_id": "<%= current_account.id %>",

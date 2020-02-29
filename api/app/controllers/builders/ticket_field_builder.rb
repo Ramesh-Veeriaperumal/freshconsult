@@ -28,6 +28,7 @@ module TicketFieldBuilder
 
   def update_ticket_field_attributes
     @item.assign_attributes(assign_ticket_field_params)
+    archive_child_levels if cname_params.key?(:archived)
     @item.flexifield_def_entry = create_flexifield_entry(tf_params) if create?
     associate_child_levels_and_dependent_fields if cname_params[:dependent_fields].present?
     associate_sections(@item) if cname_params[:section_mappings].present?
@@ -71,5 +72,9 @@ module TicketFieldBuilder
       else
         render_custom_errors
       end
+    end
+
+    def archive_child_levels
+      @item.child_levels.map { |child_tf| child_tf.deleted = cname_params['archived'] }
     end
 end

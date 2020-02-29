@@ -323,6 +323,7 @@
       - :lbrr_by_omniroute
       - :advanced_automations
       - :unlimited_multi_product
+      - :help_widget_article_customisation
     :inherits:
       - :garden_jan_19
     :exclude: []
@@ -527,6 +528,7 @@
       - :lbrr_by_omniroute
       - :article_versioning
       - :sla_management
+      - :help_widget_article_customisation
     :inherits:
       - :garden_jan_20
     :exclude: []
