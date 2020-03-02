@@ -389,6 +389,43 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     Billing::Subscription.any_instance.unstub(:retrieve_subscription)
   end
 
+  def test_estimate_feature_loss
+    Account.stubs(:current).returns(Account.first)
+    current_features = Account.current.features_list.push(:sla_management)
+    Account.any_instance.stubs(:features_list).returns(current_features)
+    plan = SubscriptionPlan.cached_current_plans.find { |p| p.display_name = 'Blossom' }
+    get :estimate_feature_loss, controller_params({ version: 'private', plan_id: plan.id }, false)
+    assert_response 200
+    payload = JSON.parse(response.body)
+    assert_includes payload['features'], 'sla_management'
+  ensure
+    Account.unstub(:current)
+    Account.any_instance.unstub(:features_list)
+  end
+
+  def test_estimate_feature_loss_invalid_request
+    Account.stubs(:current).returns(Account.first)
+    current_features = Account.current.features_list.push(:sla_management)
+    Account.any_instance.stubs(:features_list).returns(current_features)
+    plan = SubscriptionPlan.cached_current_plans.find { |p| p.display_name = 'Blossom' }
+    get :estimate_feature_loss, controller_params({ version: 'private', plan_name: plan.id }, false)
+    assert_response 400
+  ensure
+    Account.unstub(:current)
+    Account.any_instance.unstub(:features_list)
+  end
+
+  def test_estimate_feature_loss_invalid_plan
+    account = Account.current
+    result = ChargeBee::Result.new(stub_update_params(account.id))
+    ChargeBee::Subscription.stubs(:update).returns(result)
+    account.subscription.state = 'active'
+    put :estimate_feature_loss, construct_params({ version: 'private', plan_id: Faker::Number.number(3) }, {})
+    assert_response 400
+  ensure
+    ChargeBee::Subscription.unstub(:update)
+  end
+
   private
 
     def sprout_plan_id

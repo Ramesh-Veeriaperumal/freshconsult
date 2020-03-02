@@ -9885,6 +9885,32 @@
         }
       }
     },
+    "/subscription/estimate_feature_loss": {
+      "get": {
+        "tags": [
+          "subscription"
+        ],
+        "description": "Estimate the feature loss when moving to a lower plan",
+        "summary": "Estimate feature loss",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/estimate_feature_loss"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/proactive/rules": {
       "get": {
         "tags": [
@@ -26279,6 +26305,17 @@
         },
         "tax_inclusive": {
           "type": "boolean"
+        }
+      }
+    },
+    "estimate_feature_loss": {
+      "type": "object",
+      "properties": {
+        "features": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

@@ -689,6 +689,12 @@ class Subscription < ActiveRecord::Base
     ((((current_cycle_cost - annual_cycle_cost) / annual_cycle_cost.to_f) * 100) / 5).floor * 5
   end
 
+  def losing_features(to_plan)
+    new_plan = subscription_plans_from_cache.find { |plan| plan.id == to_plan }
+    features_lost = account.features_list - PLANS[:subscription_plans][new_plan.canon_name][:features]
+    features_lost
+  end
+
   protected
 
     def annual_cost_per_agent

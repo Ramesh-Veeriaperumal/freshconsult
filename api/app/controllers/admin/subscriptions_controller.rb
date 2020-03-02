@@ -1,7 +1,7 @@
 class Admin::SubscriptionsController < ApiApplicationController
   include HelperConcern
   decorate_views(decorate_objects: [:plans], decorate_object: [:estimate, :update_payment])
-  before_filter :validate_query_params, only: [:plans, :estimate]
+  before_filter :validate_query_params, only: [:plans, :estimate, :estimate_feature_loss]
   before_filter -> { validate_delegator(nil, cname_params) }, only: [:update]
 
   ADMIN_SUBSCRIPTION_CONSTANTS_CLASS = 'AdminSubscriptionConstants'.freeze
@@ -38,6 +38,12 @@ class Admin::SubscriptionsController < ApiApplicationController
     else
       head 400
     end
+  end
+
+  def estimate_feature_loss
+    plan_id = params[:plan_id].to_i
+    @items = current_account.subscription.losing_features(plan_id)
+    response.api_root_key = :estimate_feature_loss
   end
 
   private

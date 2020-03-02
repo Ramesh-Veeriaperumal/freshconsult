@@ -659,6 +659,8 @@ subscription_update_request:
   $ref: ./request/subscription/update.yaml
 subscription_estimate:
   $ref: ./response/subscription/estimate.yaml
+subscription_estimate_feature_loss:
+  $ref: ./response/subscription/estimate_feature_loss.yaml
 
 #Advanced Ticketing
 advanced_ticketing_create:

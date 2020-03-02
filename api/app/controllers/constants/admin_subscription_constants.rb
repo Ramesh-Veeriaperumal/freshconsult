@@ -4,6 +4,7 @@ module AdminSubscriptionConstants
   PLANS_FIELDS = %w[currency].freeze
   UPDATE_FIELDS = [:plan_id, :renewal_period, :agent_seats, :currency].freeze
   ESTIMATE_FIELDS = %w[agent_seats plan_id renewal_period currency].freeze
+  ESTIMATE_FEATURE_LOSS_FIELDS = ['plan_id'].freeze
   ALLOWED_INCLUDE_PARAMS = %w[update_payment_site].freeze
   VALIDATION_CLASS = 'AdminSubscriptionValidation'.freeze
   DELEGATOR_CLASS = 'AdminSubscriptionDelegator'.freeze
