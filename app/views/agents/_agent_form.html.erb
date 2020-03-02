@@ -11,7 +11,7 @@
 	  <div class="alert">
 	    <%= "#{t('agent.info1')}" %>
       <% if privilege?(:manage_users) %>
-		    <%= link_to(t('agent.restore'), { :action => :restore, :id => @agent.id }, :method => :put ) %>
+		    <%= link_to(t('agent.restore'), { :action => :restore, :id => @agent.user.id }, :method => :put ) %>
       <% end %>
 	  </div>
   <% end %>

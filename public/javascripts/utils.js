@@ -1106,3 +1106,13 @@ function invokeAfterNth (fn, n) {
     }
   }
 }
+
+/**
+ *  @param {Object} requestObject  Expecting object of type  {action : "action-name" , data1 :"" ,... dataN: ""}
+ */
+function invokeEmberIframeMessage(event,requestObject) {
+  event.stopPropagation();
+  window.App = window.App || {};
+  window.App.Channel = window.App.Channel || new MessageChannel();
+  window.App.Channel.port1.postMessage(requestObject)
+}

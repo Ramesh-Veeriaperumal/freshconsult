@@ -30,7 +30,13 @@
                 <% end %>
             </span>
           <% end %>
-          <b><%= link_to t('agent.new'), new_agent_path, :class => "btn btn-primary"  %></b> 
+          <% if current_account.emberize_agent_form_enabled? %>
+            <button data-route="helpdesk.admin.agents.new" class="btn btn-primary agent-ember-routes-btn"> <%=t('agent.new')%> </button>
+          <% else %>
+            <b>
+              <%= link_to t('agent.new'), new_agent_path, :class => "btn btn-primary"  %>
+            </b>
+          <% end %>
          </div>
     	</div>
     </div>
