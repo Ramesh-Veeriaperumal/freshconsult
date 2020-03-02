@@ -36,6 +36,7 @@ module Admin::ShiftHelper
   end
 
   def execute_shift_request(url, options)
+    options[:verify_blacklist] = true
     proxy_response = HTTParty::Request.new(ACTION_METHOD_TO_CLASS_MAPPING[action], url, options).perform
     { code: proxy_response.code, body: proxy_response.parsed_response }
   rescue StandardError => e

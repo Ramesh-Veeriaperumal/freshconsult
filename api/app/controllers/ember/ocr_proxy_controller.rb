@@ -11,6 +11,7 @@ module Ember
         options = Hash.new
         options[:headers] = headers
         options[:body] = params.except(:version, :format, :controller, :action, :ocr_proxy).to_json
+        options[:verify_blacklist] = true
         net_http_method = HTTP_METHOD_TO_CLASS_MAPPING[request_method.downcase.to_sym]
         url = OCR_CONFIG[:api_endpoint] + request.url.split("ocr_proxy/").last
         proxy_request = HTTParty::Request.new(net_http_method, url, options)
