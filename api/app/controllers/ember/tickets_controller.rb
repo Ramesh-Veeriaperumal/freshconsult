@@ -378,7 +378,7 @@ module Ember
 
       def get_jwe_token(custom_fields)
         # Generates JWE token
-        jwe = JWT::SecureServiceJWEFactory.new(@item, PciConstants::ACTION[:write], custom_fields)
+        jwe = JWT::SecureServiceJWEFactory.new(@item, PciConstants::ACTION[:write], PciConstants::PORTAL_TYPE[:agent_portal], custom_fields)
         (response.api_meta ||= {})[:vault_token] = jwe.generate_jwe_payload(@secure_field_methods)
       end
 

@@ -789,8 +789,9 @@ class User < ActiveRecord::Base
   def can_assume?(user)
     # => Not himself
     # => User is not deleted
-    # => And the user does not have any admin privileges (He is an agent)
-    !((user == self) or user.deleted? or user.privilege?(:view_admin))
+    # => the user does not have any admin privileges (He is an agent)
+    # => the user does not have privilege to view secure information
+    !((user == self) || user.deleted? || user.privilege?(:view_admin) || user.privilege?(:view_secure_field))
   end
 
   def api_assumable?

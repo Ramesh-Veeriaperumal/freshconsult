@@ -21,8 +21,9 @@ module RoleConstants
      :merge_or_split_ticket, :edit_ticket_properties, :view_time_entries, :delete_ticket, :export_tickets],
 
     create_topic: [:edit_topic],
-    edit_ticket_properties: [:edit_ticket_skill],
-    view_time_entries: [:edit_time_entries]
+    edit_ticket_properties: [:edit_ticket_skill, :view_secure_field],
+    view_time_entries: [:edit_time_entries],
+    view_secure_field: [:edit_secure_field]
   }.freeze
   BULK_UPDATE_METHOD = 'bulk_update'.freeze
   BULK_VALIDATION_CLASS = 'RoleBulkUpdateValidation'.freeze

@@ -57,10 +57,6 @@ class FlexifieldDef < ActiveRecord::Base
     (flexifield_def_entries || []).find { |f| f.flexifield_alias == ff_alias.to_s }
   end
 
-  def to_ff_def_entry ff_alias
-    (flexifield_def_entries || []).find { |f| f.flexifield_alias == ff_alias.to_s }
-  end
-
   def ff_aliases
     flexifield_def_entries.nil? ? [] : flexifield_def_entries.map(&:flexifield_alias)
   end

@@ -2820,6 +2820,9 @@ en:
       manage_label: Manage
       add_label: Add
       no_agent_label: No Agent
+      privilege:
+        view_secure_field: View secure information
+        edit_secure_field: Add or edit secure data  
     help_image_alt:
       helpdesk_arcarde: Helpdesk Arcade
     mobihelp:

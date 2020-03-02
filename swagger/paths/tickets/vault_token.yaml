@@ -12,6 +12,8 @@ get:
       description: Success
       schema:
         $ref: '#/definitions/vault_token'
+    403:
+      description: Access denied    
     400:
       description: Bad Request Error
       schema:
