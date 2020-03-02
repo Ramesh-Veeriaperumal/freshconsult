@@ -43,4 +43,18 @@ class FbReplyValidationTest < ActionView::TestCase
     refute fb_reply_validation.valid?
     assert fb_reply_validation.errors.full_messages.include?('Attachment ids can_have_only_one_field')
   end
+
+  def test_msg_type
+    FbReplyValidation.any_instance.stubs(:facebook_outgoing_attachment_enabled?).returns(true)
+    controller_params = { body: 'abc', msg_type: Facebook::Constants::FB_MSG_TYPES[0] }
+    fb_reply_validation = FbReplyValidation.new(controller_params, nil)
+    assert fb_reply_validation.valid?
+  end
+
+  def test_invalid_msg_type
+    FbReplyValidation.any_instance.stubs(:facebook_outgoing_attachment_enabled?).returns(true)
+    controller_params = { body: 'abc', msg_type: 'xyz' }
+    fb_reply_validation = FbReplyValidation.new(controller_params, nil)
+    refute fb_reply_validation.valid?
+  end
 end

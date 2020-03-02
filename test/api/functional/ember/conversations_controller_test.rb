@@ -914,7 +914,7 @@ module Ember
       params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id, msg_type: 'posts' }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern('msg_type', :not_included, list: 'dm,post')])
+      match_json([bad_request_error_pattern('msg_type', :not_included, list: 'dm,post,ad_post')])
     end
 
     def test_facebook_reply_dm_with_more_than_one_attachment_ids

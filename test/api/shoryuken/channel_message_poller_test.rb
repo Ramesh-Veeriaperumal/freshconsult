@@ -213,6 +213,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
     new_tickets_count = @account.tickets.count
 
     assert_equal ticket.id, last_fb_post.postable_id
+    assert_equal 'ad_post', last_fb_post.msg_type
     assert_equal old_tickets_count + 1, new_tickets_count
   ensure
     ticket.destroy
@@ -254,6 +255,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
 
 
     assert_equal note.id, last_fb_post_after_note_added.postable_id
+    assert_equal 'ad_post', last_fb_post_after_note_added.msg_type
     assert_equal old_notes_count + 1, new_notes_count
   ensure
     note.destroy

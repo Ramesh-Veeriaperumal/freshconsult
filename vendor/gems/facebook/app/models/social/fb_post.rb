@@ -31,7 +31,7 @@ class Social::FbPost < ActiveRecord::Base
   }
 
   def post?
-    msg_type == 'post'
+    msg_type == 'post' || msg_type == 'ad_post'
   end
 
   def message?
