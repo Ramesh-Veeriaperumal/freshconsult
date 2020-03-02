@@ -6,7 +6,7 @@ var MarketplaceBrowser  = Class.create({
 		this.isMouseInside = false; //flag for checking whether mouse is in app-browser
 		this.viewportHeight = jQuery(window).height();
     this.deletablePlug = {};
-    this.pollRetryLimit = 5;
+    this.pollRetryLimit = settingsLinks.accApiPollRetryLimit;
     this.accApiPollInterval = settingsLinks.accApiPollInterval;
     this.platformVersion = platformVersion;
 

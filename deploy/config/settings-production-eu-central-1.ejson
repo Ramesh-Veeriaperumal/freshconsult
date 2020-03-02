@@ -1276,6 +1276,7 @@
         "_mkp_oauth_url": "https://oauth-euc.freshdesk.com",
         "_data_pipe_url": "https://datapipe-euc.freshdesk.com",
         "_custom_app_invalid_time": 300,
+        "_cache_invalidation_time": 7200,
         "_tenant_id": "1",
         "_awol_region": "euc",
         "_gallery_url": "appgallery-euc.freshworks.com",

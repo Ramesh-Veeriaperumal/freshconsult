@@ -5,6 +5,7 @@ defaults: &defaults
   global_api_read_timeout: 10 
   global_api_conn_timeout: 10 
   account_api_poll_interval: 3000
+  account_api_poll_retry_limit: 30
 
 <%= node[:opsworks][:environment] %>:
   <<: *defaults
@@ -30,7 +31,7 @@ defaults: &defaults
   jwt_secret: <%= node[:ymls][:marketplace][:jwt_secret] %>
   data_pipe_key: <%= node[:ymls][:marketplace][:data_pipe_key] %>
   mkp_oauth_url: <%= node[:ymls][:marketplace][:mkp_oauth_url] %>
-  cache_invalidation_time: 7200
+  cache_invalidation_time: <%= node[:ymls][:marketplace][:cache_invalidation_time] %>
   mkp_oauth_read_timeout: 5
   mkp_oauth_conn_timeout: 5
   integrations_cache_invd_time: 60

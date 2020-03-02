@@ -31,6 +31,7 @@ module MarketplaceConfig
   TENANT_ID = config[:tenant_id]
   FRESH_PARENT = config[:fresh_parent]
   ACCOUNT_API_POLL_INTERVAL = config[:account_api_poll_interval]
+  ACCOUNT_API_POLL_RETRY_LIMIT = config[:account_api_poll_retry_limit]
   MARKETPLACE_CIPHER_KEY = config[:mkp_cipher_key]
   MARKETPLACE_CIPHER_IV = config[:mkp_cipher_iv]
   TENANT_NAME = config[:tenant_name]

@@ -36,7 +36,8 @@
                           validation_failed: "<%= I18n.t('marketplace.validation_failed') %>",
                           error_calling_method: "<%= I18n.t('marketplace.error_calling_method') %>",
                           suspended_plan_info: "<%= I18n.t('suspended_plan_info') %>",
-                          accapi_poll_interval: "<%= MarketplaceConfig::ACCOUNT_API_POLL_INTERVAL %>"
+                          accapi_poll_interval: "<%= MarketplaceConfig::ACCOUNT_API_POLL_INTERVAL %>",
+                          accApiPollRetryLimit: "<%= MarketplaceConfig::ACCOUNT_API_POLL_RETRY_LIMIT %>"
                         }
 
   var platformVersion = '<%= current_account.falcon_ui_enabled?(current_user) ? Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2]

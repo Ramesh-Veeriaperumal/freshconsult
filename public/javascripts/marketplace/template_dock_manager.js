@@ -9,7 +9,7 @@ var TemplateDockManager = Class.create({
     this.extensionId = jQuery('#app-window').attr('data-extension_id');
     this.developedBy;
     this.action;
-    this.pollRetryLimit = 5;
+    this.pollRetryLimit = settingsLinks.accApiPollRetryLimit;
     this.isAppBrowserOpened = false;
     this.accApiPollInterval = customMsgs.accapi_poll_interval;
     this.platformVersion = platformVersion;
