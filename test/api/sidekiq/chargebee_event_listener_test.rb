@@ -14,6 +14,12 @@ class ChargebeeEventListenerTest < ActionView::TestCase
   def setup
     super
     @account = Account.current || create_account_if_not_exists
+    Subscription.any_instance.stubs(:agent_limit).returns(1)
+  end
+
+  def teardown
+    Subscription.any_instance.unstub(:agent_limit)
+    super
   end
 
   def create_account_if_not_exists

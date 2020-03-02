@@ -11,7 +11,7 @@ class RemoveSecondaryCompaniesTest < ActionView::TestCase
   def setup
     Account.stubs(:current).returns(Account.first)
     @account = Account.current
-    @user = @account.users.first
+    @user = @account.contacts.first
     3.times do
       @user.companies.build(name: Faker::Name.name)
     end

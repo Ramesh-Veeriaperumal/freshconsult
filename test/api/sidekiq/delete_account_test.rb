@@ -20,13 +20,13 @@ class DeleteAccountTest < ActionView::TestCase
 
   def teardown
     super
+    Account.unstub(:current)
   end
 
   def test_account_delete
     account_id = Account.current.id
     account = Account.current
     Subscription.any_instance.stubs(:state).returns('suspended')
-    account.save!
     args = {}
     args['account_id'] = account_id
     args['continue_account_destroy_from'] = 1
