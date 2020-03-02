@@ -284,8 +284,11 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
     else
       group_ids = Set.new
       begin
-        Sharding.run_on_slave do 
-          tickets.preload(:ticket_states).visible.joins(:ticket_states).where("helpdesk_ticket_states.sla_timer_stopped_at IS NOT NULL").find_each(batch_size: 300) do |ticket|
+        Sharding.run_on_slave do
+          tickets.preload(:ticket_states).visible.joins(:ticket_states) \
+                 .where('helpdesk_ticket_states.sla_timer_stopped_at IS NOT NULL') \
+                 .where("helpdesk_ticket_states.account_id = #{Account.current.id}") \
+                 .find_each(batch_size: 300) do |ticket|
             update_ticket_due_by(ticket)
             group_ids.add ticket.group_id
             set_sla_toggled_and_enqueue_sbrr(ticket)
