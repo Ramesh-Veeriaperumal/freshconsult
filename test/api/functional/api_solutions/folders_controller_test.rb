@@ -457,5 +457,77 @@ module ApiSolutions
       assert_equal UnicodeSanitizer.remove_4byte_chars('hey 😅 folder name'), result['name']
       assert_equal UnicodeSanitizer.remove_4byte_chars('hey 😅 folder description'), result['description']
     end
+
+    # Activity tests
+    def test_activity_record_for_folder_create
+      activities_count = Helpdesk::Activity.count
+      category_meta = get_category
+      params_hash = { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1 }
+      post :create, construct_params({ id: category_meta.id }, params_hash)
+      assert_response 201
+      activity_record = Helpdesk::Activity.last
+      action_name = activity_record.description.split('.')[2]
+      assert_equal Helpdesk::Activity.count, activities_count + 1
+      assert_equal activity_record.activity_data[:title], params_hash[:name]
+      assert_equal action_name, 'new_folder'
+    end
+
+    def test_activity_record_for_folder_update
+      activities_count = Helpdesk::Activity.count
+      sample_folder = get_folder
+      params_hash = { name: Faker::Name.name }
+      put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
+      assert_response 200
+      activity_record = Helpdesk::Activity.last
+      action_name = activity_record.description.split('.')[2]
+      assert_equal Helpdesk::Activity.count, activities_count + 1
+      assert_equal activity_record.activity_data[:title], params_hash[:name]
+      assert_equal activity_record.notable_type, 'Solution::Folder'
+      assert_equal action_name, 'rename_actions'
+    end
+
+    def test_activity_record_for_folder_update_visibility
+      activities_count = Helpdesk::Activity.count
+      sample_folder = get_folder
+      params_hash = { visibility: 3 }
+      put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
+      assert_response 200
+      activity_record = Helpdesk::Activity.last
+      action_name = activity_record.description.split('.')[2]
+      assert_equal Helpdesk::Activity.count, activities_count + 1
+      assert_equal activity_record.activity_data[:title], sample_folder.name
+      assert_equal activity_record.notable_type, 'Solution::Folder'
+      assert_equal action_name, 'folder_visibility_update'
+      assert_equal activity_record.activity_data[:solutions_properties][1], params_hash[:visibility]
+    end
+
+    def test_activity_record_for_folder_update_category
+      activities_count = Helpdesk::Activity.count
+      sample_folder = get_folder
+      category = @account.solution_categories.last
+      params_hash = { category_id: category.id }
+      put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
+      assert_response 200
+      activity_record = Helpdesk::Activity.last
+      action_name = activity_record.description.split('.')[2]
+      assert_equal Helpdesk::Activity.count, activities_count + 1
+      assert_equal activity_record.activity_data[:title], sample_folder.name
+      assert_equal activity_record.notable_type, 'Solution::Folder'
+      assert_equal action_name, 'folder_category_update'
+      assert_equal activity_record.activity_data[:solutions_properties][1], category.name
+    end
+
+    def test_activity_record_for_folder_delete
+      activities_count = Helpdesk::Activity.count
+      sample_folder = get_folder
+      folder_name = sample_folder.name
+      delete :destroy, construct_params(id: sample_folder.parent_id)
+      assert_response 204
+      activity_record = Helpdesk::Activity.all[activities_count]
+      action_name = activity_record.description.split('.')[2]
+      assert Helpdesk::Activity.count > activities_count
+      assert_equal activity_record.activity_data[:title], folder_name
+      assert_equal action_name, 'delete_folder'
+    end
   end
 end

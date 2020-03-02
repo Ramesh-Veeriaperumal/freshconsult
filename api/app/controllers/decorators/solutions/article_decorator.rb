@@ -375,7 +375,7 @@ class Solutions::ArticleDecorator < ApiDecorator
     end
 
     def approver_record(article)
-      @approver if defined?(@approver)
+      return @approver if defined?(@approver)
 
       @approver = approval_record(article).try(:approver_mappings).try(:first)
     end

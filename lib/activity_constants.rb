@@ -63,6 +63,8 @@ module ActivityConstants
   
   EVENT_MAP = [:sent, :processed, :delivered, :dropped, :deferred, :bounce]
 
+  NOTABLE_TYPES = %w[Helpdesk::Ticket Solution::Category Solution::Folder Solution::Article].freeze
+
   # Summary Tag for UI
   # For new summary tag, the below list should be updated  
   SUMMARY_MAP = {

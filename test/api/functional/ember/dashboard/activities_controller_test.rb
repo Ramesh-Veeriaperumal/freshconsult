@@ -13,6 +13,7 @@ module Ember
       include ForumsTestHelper
       include SolutionsTestHelper
       include SocialTicketsCreationHelper
+      include ActivityConstants
 
       PAGE_LIMIT = 30
       PER_PAGE   = 20
@@ -121,7 +122,7 @@ module Ember
       def test_activities_with_page_params
         requester = add_new_user(@account)
         @agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
-        target_activity = @account.activities.only_tickets.last(PAGE_LIMIT + 1).first
+        target_activity = @account.activities.include_modules(NOTABLE_TYPES).last(PAGE_LIMIT + 1).first
         get :index, controller_params({version: 'private', page: 2})
         assert_response 200
         assert_equal(target_activity.id, JSON.parse(@response.body)[0]['id'])

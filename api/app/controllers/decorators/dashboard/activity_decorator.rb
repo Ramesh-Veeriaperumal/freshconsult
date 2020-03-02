@@ -31,20 +31,23 @@ class Dashboard::ActivityDecorator < ApiDecorator
     ['tickets_ticket_split',                          :ticket_split_source,       :ticket_split_source],
     ['tickets_note_split',                            :ticket_split_target,       :ticket_split_target],
 
+    ['solutions_rename_actions',                      :solutions_rename_actions,  :solutions_update_properties],
     ['solutions_new_solution',                        :new_solution,              nil],
-    ['solutions_new_solution_category',               :new_solution_category,     nil],
-    ['solutions_new_solution_category_translation',   :new_solution_category,     nil],
-    ['solutions_delete_solution_category',            :delete_solution_category,  nil],
-    ['solutions_new_article',                         :new_article,               nil],
-    ['solutions_new_article_translation',             :new_article,               nil],
-    ['solutions_published_article',                   :article,                   :published],
-    ['solutions_published_article_translation',       :article,                   :published],
-    ['solutions_unpublished_article',                 :article,                   :unpublished],
-    ['solutions_unpublished_article_translation',     :article,                   :unpublished],
+    ['solutions_new_solution_category',               :new_solution_category,     :lang_id],
+    ['solutions_new_solution_category_translation',   :new_solution_category,     :lang_id],
+    ['solutions_delete_solution_category',            :delete_solution_category,  :solutions_delete_properties],
+    ['solutions_new_article',                         :new_article,               :lang_id],
+    ['solutions_new_article_translation',             :new_article,               :lang_id],
+    ['solutions_published_article',                   :article,                   :published_translation],
+    ['solutions_published_article_translation',       :article,                   :published_translation],
+    ['solutions_unpublished_article',                 :unpublish_article,         :unpublished_translation],
+    ['solutions_unpublished_article_translation',     :unpublish_article,         :unpublished_translation],
     ['solutions_delete_article',                      :delete_article,            nil],
-    ['solutions_new_folder',                          :new_folder,                nil],
-    ['solutions_new_folder_translation',              :new_folder,                nil],
-    ['solutions_delete_folder',                       :delete_folder,             nil],
+    ['solutions_new_folder',                          :new_folder,                :lang_id],
+    ['solutions_new_folder_translation',              :new_folder,                :lang_id],
+    ['solutions_folder_visibility_update',            :solutions_folder_visibility_update, :solutions_update_properties],
+    ['solutions_folder_category_update',              :solutions_folder_category_update,   :solutions_update_properties],
+    ['solutions_delete_folder',                       :delete_folder,             :solutions_delete_properties],
     ['solutions_new_draft',                           :new_article,               :draft],
     ['solutions_new_draft_translation',               :new_article,               :draft],
     ['solutions_published_draft',                     :article,                   :published_draft],
@@ -104,7 +107,7 @@ class Dashboard::ActivityDecorator < ApiDecorator
       id: id,
       object_id: object_identifier,
       object_type: notable_type,
-      title: record.notable.nil? ? record.activity_data[:title] : h(record.notable),
+      title: record.notable.nil? || (SOLUTION_ACTIVITIES.include?(notable_type) && record.notable.name != record.activity_data[:title]) ? record.activity_data[:title] : h(record.notable),
       performer: performer,
       performed_at: Time.at(created_at.to_i).utc,
       actions: user_actions.reject(&:empty?)
@@ -276,6 +279,25 @@ class Dashboard::ActivityDecorator < ApiDecorator
     draft.merge(published)
   end
 
+  def solutions_update_properties
+    { solution_properties: activity_data[:solutions_properties] }
+  end
+
+  def solutions_delete_properties
+    { solution_properties: activity_data[:solutions_properties] }
+  end
+
+  def lang_id
+    { lang_id: activity_data[:eval_args] && activity_data[:eval_args][:language_name] && activity_data[:eval_args][:language_name][1] }
+  end
+
+  def published_translation
+    published.merge(lang_id)
+  end
+
+  def unpublished_translation
+    unpublished.merge(lang_id)
+  end
   # Topic Methods
 
   def topic_stamp

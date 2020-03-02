@@ -24,14 +24,14 @@ class Solution::Draft < ActiveRecord::Base
 
   before_validation :populate_defaults
   before_save :change_modified_at, :encode_emoji_in_articles
-  before_destroy :discard_notification, :add_activity_delete
-  after_create :add_activity_new
+  before_destroy :discard_notification
 
   attr_accessible :title, :meta, :description
   attr_accessor :discarding, :publishing, :keep_previous_author, :session, :cancelling, :unpublishing, :false_delete_attachment_trigger, :restored_version, :skip_version_creation
 
   alias_attribute :modified_by, :user_id
   alias_attribute :body, :draft_body
+  alias_attribute :name, :title
 
   default_scope :order => "modified_at DESC"
 
@@ -137,7 +137,6 @@ class Solution::Draft < ActiveRecord::Base
     article.modified_by = user_id
     self.publishing = true if article.published?
     self.article.publish!
-    add_activity_publish 
     self.publishing = false
     self.reload
     self.destroy
@@ -170,18 +169,6 @@ class Solution::Draft < ActiveRecord::Base
     (meta[:deleted_attachments] || {})[type] || []
   end
 
-  def add_activity_publish
-    create_activity('published_draft') if publishing.present?
-  end
-
-  def add_activity_delete
-    create_activity('delete_draft') if discarding.present?
-  end
-
-  def add_activity_new
-    create_activity('new_draft') if article.published?
-  end
-
   def self.my_drafts(portal_id, language_id)
     my_drafts_scoper = where(user_id: User.current.id).joins(:article, category_meta: :portal_solution_categories).where('portal_solution_categories.portal_id = ? AND solution_articles.language_id = ?', portal_id, language_id)
     Account.current.article_approval_workflow_enabled? ? my_drafts_scoper.joins("LEFT JOIN helpdesk_approvals ON solution_drafts.article_id = helpdesk_approvals.approvable_id AND helpdesk_approvals.account_id = #{Account.current.id} AND approvable_type = 'Solution::Article'").where('helpdesk_approvals.id is NULL') : my_drafts_scoper
@@ -197,26 +184,5 @@ class Solution::Draft < ActiveRecord::Base
           item.update_attributes(item.object_type => article)
         end
       end
-    end
-
-    def create_activity(type)
-      type << "_translation" if article.translation_activity?
-      path = Rails.application.routes.url_helpers.solution_article_path(article)
-      path << "/#{article.url_locale}" if article.translation_activity?
-      article.activities.create(
-        :description => "activities.solutions.#{type}.long",
-        :short_descr => "activities.solutions.#{type}.short",
-        :account    => account,
-        :user       => User.current,
-        :activity_data  => {
-                    :path => path,
-                    :url_params => {
-                              :id => article_id,
-                              :path_generator => 'solution_article_path'
-                            },
-                    :title => article.to_s,
-                    'eval_args' => (article.translation_activity? ? { 'language_name' => ['language_name', article.language_id] } : nil)
-                  }
-      )
     end
 end
