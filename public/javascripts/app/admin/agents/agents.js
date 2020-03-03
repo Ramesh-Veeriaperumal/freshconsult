@@ -5,15 +5,15 @@ window.App.Channel = window.App.Channel || new MessageChannel();
 
 (function ($) {
 	"use strict";
-	
+
 	App.Agents = {
-		currentModule: '',
+    	currentModule: '',
 		onFirstVisit: function (data) {
 			this.onVisit(data);
 		},
 		onVisit: function (data) {
-			this.initializeSubModules();
-			this.bindHandlers();
+      this.initializeSubModules();
+      this.bindHandlers();
 			if(this.currentModule !== ''){
 				this[this.currentModule].onVisit();
 			}
@@ -21,10 +21,10 @@ window.App.Channel = window.App.Channel || new MessageChannel();
 		initializeSubModules: function() {
 			switch(App.namespace){
 				case "agents/show":
-				this.currentModule = 'Show';
+          				this.currentModule = 'Show';
 				break;
 				case "agents/index":
-				this.currentModule = 'Index';
+          				this.currentModule = 'Index';
 				break;
 			}
 		},
@@ -37,20 +37,13 @@ window.App.Channel = window.App.Channel || new MessageChannel();
 		},
 		bindHandlers: function () {
 			this.startWatchRoutes();
-			this.bindEmberRoutesClickActions();
 		},
 		startWatchRoutes: function () {
 			var isIframe = (window !== window.top);
 			if (isIframe) {
-				// Transfer data through the channel
-				window.App.Channel.port1.postMessage({ action: "update_iframe_url", path: '/admin' + location.pathname });
+        // Transfer data through the channel
+        window.App.Channel.port1.postMessage({ action: "update_iframe_url", path: '/admin' + location.pathname });
 			}
-		},
-		bindEmberRoutesClickActions :  function () {
-			$('.agent-ember-routes-btn').on("click", function(event){
-				var dataAttributes = $(this).data();
-				invokeEmberIframeMessage(event,{action: 'transition_to_route', pageRoute: dataAttributes.route, dynamicSegments: dataAttributes.dynamicSegments, queryParams: dataAttributes.queryParams});
-			})
-		}
+    },
 	};
 }(window.jQuery));
