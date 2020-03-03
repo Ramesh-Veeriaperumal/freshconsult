@@ -883,6 +883,7 @@ Helpkit::Application.routes.draw do
     resource :subscription, controller: 'admin/subscriptions', only: [:show, :update] do
       collection do
         get :estimate
+        get :estimate_feature_loss
         post :update_payment
       end
     end

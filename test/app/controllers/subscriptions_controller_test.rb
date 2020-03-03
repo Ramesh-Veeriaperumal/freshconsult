@@ -8,6 +8,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
   include Redis::OthersRedis
   include Redis::Keys::Others
   include TicketFieldsTestHelper
+  include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
 
   def setup
     Subscription.any_instance.stubs(:chk_change_field_agents).returns(nil)
@@ -615,6 +616,335 @@ class SubscriptionsControllerTest < ActionController::TestCase
     unstub_chargebee_requests
     Account.any_instance.unstub(:denormalized_flexifields_enabled?)
   end
+
+  # def test_fsm_toggle_enabled_for_garden_plan
+  #   stub_chargebee_requests
+  #   garden_plan_id = SubscriptionPlan.select(:id).where(name: 'Garden Omni Jan 19').map(&:id).last
+  #   @account.reload
+  #   params = { plan_id: garden_plan_id }
+  #   @account.rollback :downgrade_policy
+  #   post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
+  #   @account.reload
+  #   assert_equal @account.subscription.subscription_plan_id, garden_plan_id
+  #   assert_equal true, @account.field_service_management_toggle_enabled?
+  #   refute @account.parent_child_infra_enabled?
+  # ensure
+  #   cleanup_fsm
+  #   unstub_chargebee_requests
+  # end
+  #
+  # def test_fsm_enabled_when_downgrade_to_garden_with_fsm_enabled
+  #   stub_chargebee_requests
+  #   SAAS::SubscriptionEventActions.any_instance.stubs(:handle_collab_feature).returns(true)
+  #   Subscription.any_instance.stubs(:add_to_crm).returns(true)
+  #   garden_plan_id = SubscriptionPlan.select(:id).where(name: 'Garden Omni Jan 19').map(&:id).last
+  #   @account.reload
+  #   @account.add_feature(:field_service_management) unless @account.field_service_management_enabled?
+  #   perform_fsm_operations
+  #   params = { plan_id: garden_plan_id }
+  #   @account.rollback :downgrade_policy
+  #   Sidekiq::Testing.inline! do
+  #     post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
+  #   end
+  #   @account.reload
+  #   assert_equal @account.subscription.subscription_plan_id, garden_plan_id
+  #   assert_equal true, @account.field_service_management_enabled?
+  # ensure
+  #   cleanup_fsm
+  #   SAAS::SubscriptionEventActions.any_instance.unstub(:handle_collab_feature)
+  #   Subscription.any_instance.unstub(:add_to_crm)
+  #   unstub_chargebee_requests
+  # end
+  #
+  # def test_dynamic_section_feature_present_when_downgrade_to_garden_with_fsm_enabled
+  #   stub_chargebee_requests
+  #   garden_plan_id = SubscriptionPlan.select(:id).where(name: 'Garden Omni Jan 19').map(&:id).last
+  #   @account.reload
+  #   @account.add_feature(:field_service_management) unless @account.field_service_management_enabled?
+  #   perform_fsm_operations
+  #   params = { plan_id: garden_plan_id }
+  #   @account.rollback :downgrade_policy
+  #   post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
+  #   @account.reload
+  #   assert_equal @account.subscription.subscription_plan_id, garden_plan_id
+  #   assert_equal true, @account.has_feature?(:dynamic_sections)
+  # ensure
+  #   cleanup_fsm
+  #   unstub_chargebee_requests
+  # end
+  #
+  # def test_parent_child_infra_enabled_when_downgrade_to_garden_with_fsm_enabled
+  #   stub_chargebee_requests
+  #   garden_plan_id = SubscriptionPlan.select(:id).where(name: 'Garden Omni Jan 19').map(&:id).last
+  #   @account.reload
+  #   @account.add_feature(:field_service_management) unless @account.field_service_management_enabled?
+  #   perform_fsm_operations
+  #   params = { plan_id: garden_plan_id }
+  #   @account.rollback :downgrade_policy
+  #   post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
+  #   @account.reload
+  #   assert_equal @account.subscription.subscription_plan_id, garden_plan_id
+  #   assert_equal true, @account.parent_child_infra_enabled?
+  # ensure
+  #   cleanup_fsm
+  #   unstub_chargebee_requests
+  # end
+  #
+  # def test_fsm_disabled_when_downgrade_to_garden_with_fsm_disabled
+  #   stub_chargebee_requests
+  #   SAAS::SubscriptionEventActions.any_instance.stubs(:handle_collab_feature).returns(true)
+  #   Subscription.any_instance.stubs(:add_to_crm).returns(true)
+  #   garden_plan_id = SubscriptionPlan.select(:id).where(name: 'Garden Omni Jan 19').map(&:id).last
+  #   @account.reload
+  #   params = { plan_id: garden_plan_id }
+  #   @account.rollback :downgrade_policy
+  #   Sidekiq::Testing.inline! do
+  #     post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
+  #   end
+  #   @account.reload
+  #   assert_equal @account.subscription.subscription_plan_id, garden_plan_id
+  #   refute @account.field_service_management_enabled?
+  # ensure
+  #   SAAS::SubscriptionEventActions.any_instance.unstub(:handle_collab_feature)
+  #   Subscription.any_instance.unstub(:add_to_crm)
+  #   unstub_chargebee_requests
+  # end
+  #
+  # def test_dynamic_sections_removed_when_downgrade_to_garden_with_fsm_disabled
+  #   stub_chargebee_requests
+  #   garden_plan_id = SubscriptionPlan.select(:id).where(name: 'Garden Omni Jan 19').map(&:id).last
+  #   @account.reload
+  #   params = { plan_id: garden_plan_id }
+  #   @account.rollback :downgrade_policy
+  #   post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
+  #   @account.reload
+  #   assert_equal @account.subscription.subscription_plan_id, garden_plan_id
+  #   refute @account.has_feature?(:dynamic_sections)
+  # ensure
+  #   unstub_chargebee_requests
+  # end
+  #
+  # def test_parent_child_infra_removed_when_downgrade_to_garden_with_fsm_disabled
+  #   stub_chargebee_requests
+  #   garden_plan_id = SubscriptionPlan.select(:id).where(name: 'Garden Omni Jan 19').map(&:id).last
+  #   @account.reload
+  #   params = { plan_id: garden_plan_id }
+  #   @account.rollback :downgrade_policy
+  #   post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
+  #   @account.reload
+  #   assert_equal @account.subscription.subscription_plan_id, garden_plan_id
+  #   refute @account.parent_child_infra_enabled?
+  # ensure
+  #   unstub_chargebee_requests
+  # end
+  #
+  # def test_enable_fsm_in_garden_plan_through_advanced_ticketing
+  #   stub_chargebee_requests
+  #   garden_plan_id = SubscriptionPlan.select(:id).where(name: 'Garden Omni Jan 19').map(&:id).last
+  #   params = { plan_id: garden_plan_id }
+  #   @account.rollback :downgrade_policy
+  #   post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
+  #   @account.reload
+  #   assert_equal @account.subscription.subscription_plan_id, garden_plan_id
+  #   enable_adv_ticketing([:field_service_management]) do
+  #     perform_fsm_operations
+  #     assert_equal true, @account.field_service_management_enabled?
+  #     assert_equal true, @account.has_feature?(:dynamic_sections)
+  #   end
+  # ensure
+  #   cleanup_fsm
+  #   unstub_chargebee_requests
+  # end
+  #
+  # def test_enable_fsm_when_downgrade_to_garden_through_ui_fsm_toggle
+  #   stub_chargebee_requests
+  #   garden_plan_id = SubscriptionPlan.select(:id).where(name: 'Garden Omni Jan 19').map(&:id).last
+  #   @account.reload
+  #   params = { plan_id: garden_plan_id, addons: { field_service_management: { enabled: 'true', value: '0' } } }
+  #   @account.rollback :downgrade_policy
+  #   post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
+  #   @account.reload
+  #   assert_equal @account.subscription.subscription_plan_id, garden_plan_id
+  #   assert_equal true, @account.field_service_management_enabled?
+  #   assert_equal true, @account.has_feature?(:dynamic_sections)
+  #   assert_equal true, @account.parent_child_infra_enabled?
+  # ensure
+  #   cleanup_fsm
+  #   unstub_chargebee_requests
+  # end
+  #
+  # def test_disable_fsm_when_downgrade_to_garden_through_ui_fsm_toggle
+  #   stub_chargebee_requests
+  #   @account.reload
+  #   @account.add_feature(:field_service_management) unless @account.field_service_management_enabled?
+  #   perform_fsm_operations
+  #   garden_plan_id = SubscriptionPlan.select(:id).where(name: 'Garden Omni Jan 19').map(&:id).last
+  #   params = { plan_id: garden_plan_id, addons: { field_service_management: { enabled: 'false', value: '0' } } }
+  #   @account.rollback :downgrade_policy
+  #   post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
+  #   @account.reload
+  #   assert_equal @account.subscription.subscription_plan_id, garden_plan_id
+  #   refute @account.field_service_management_enabled?
+  #   refute @account.has_feature?(:dynamic_sections)
+  #   refute @account.parent_child_infra_enabled?
+  # ensure
+  #   cleanup_fsm
+  #   unstub_chargebee_requests
+  # end
+  #
+  # def test_dynamic_sections_data_cleanup_when_downgrade_to_lower_plans_with_fsm_disabled
+  #   stub_chargebee_requests
+  #   SAAS::SubscriptionEventActions.any_instance.stubs(:handle_collab_feature).returns(true)
+  #   Subscription.any_instance.stubs(:add_to_crm).returns(true)
+  #   garden_plan_id = SubscriptionPlan.select(:id).where(name: 'Garden Omni Jan 19').map(&:id).last
+  #   @account.reload
+  #   params = { plan_id: garden_plan_id, addons: { field_service_management: { enabled: 'false', value: '0' } } }
+  #   @account.rollback :downgrade_policy
+  #   Sidekiq::Testing.inline! do
+  #     post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
+  #   end
+  #   @account.reload
+  #   assert_equal @account.subscription.subscription_plan_id, garden_plan_id
+  #   assert_equal 0, @account.sections.count
+  #   assert_equal 0, @account.section_fields.count
+  #   assert_equal 0, ticket_fields.all.select { |field| field.field_options['section'] == true }.count
+  # ensure
+  #   SAAS::SubscriptionEventActions.any_instance.unstub(:handle_collab_feature)
+  #   Subscription.any_instance.unstub(:add_to_crm)
+  #   unstub_chargebee_requests
+  # end
+  #
+  # def test_dynamic_sections_data_cleanup_when_downgrade_to_fsm_supported_lower_plans_with_fsm_enabled
+  #   stub_chargebee_requests
+  #   SAAS::SubscriptionEventActions.any_instance.stubs(:handle_collab_feature).returns(true)
+  #   Subscription.any_instance.stubs(:add_to_crm).returns(true)
+  #   garden_plan_id = SubscriptionPlan.select(:id).where(name: 'Garden Omni Jan 19').map(&:id).last
+  #   @account.reload
+  #   @account.add_feature(:field_service_management) unless @account.field_service_management_enabled?
+  #   perform_fsm_operations
+  #   params = { plan_id: garden_plan_id }
+  #   @account.rollback :downgrade_policy
+  #   Sidekiq::Testing.inline! do
+  #     post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
+  #   end
+  #   @account.reload
+  #   assert_equal @account.subscription.subscription_plan_id, garden_plan_id
+  #   assert_equal true, @account.sections.find_by_label(SERVICE_TASK_SECTION).present?
+  #   refute @account.section_fields.empty?
+  #   assert_equal 0, ticket_fields.all.select { |field| field.field_options['section'] == true && !field.field_options.include?('fsm') }.count
+  #   assert_equal true, ticket_fields.all.select { |field| field.field_options['section'] == true && field.field_options.include?('fsm') }.present?
+  # ensure
+  #   cleanup_fsm
+  #   SAAS::SubscriptionEventActions.any_instance.unstub(:handle_collab_feature)
+  #   Subscription.any_instance.unstub(:add_to_crm)
+  #   unstub_chargebee_requests
+  # end
+  #
+  # def test_field_technician_role_present_when_downgrade_to_garden_with_fsm_enabled
+  #   stub_chargebee_requests
+  #   @account.reload
+  #   @account.add_feature(:field_service_management) unless @account.field_service_management_enabled?
+  #   perform_fsm_operations
+  #   garden_plan_id = SubscriptionPlan.select(:id).where(name: 'Garden Omni Jan 19').map(&:id).last
+  #   params = { plan_id: garden_plan_id }
+  #   @account.rollback :downgrade_policy
+  #   post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
+  #   @account.reload
+  #   assert_equal true, @account.roles.find_by_name(Helpdesk::Roles::FIELD_TECHNICIAN_ROLE[:name]).present?
+  # ensure
+  #   cleanup_fsm
+  #   unstub_chargebee_requests
+  # end
+  #
+  # def test_disable_fsm_when_downgrade_to_sprout_with_fsm_enabled
+  #   stub_chargebee_requests
+  #   SAAS::SubscriptionEventActions.any_instance.stubs(:handle_collab_feature).returns(true)
+  #   SAAS::SubscriptionEventActions.any_instance.stubs(:handle_feature_add_data).returns(true)
+  #   Subscription.any_instance.stubs(:add_to_crm).returns(true)
+  #   plan_ids = SubscriptionPlan.current.map(&:id)
+  #   sprout_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount == 0.0 }.compact.first
+  #   @account.reload
+  #   @account.add_feature(:field_service_management) unless @account.field_service_management_enabled?
+  #   perform_fsm_operations
+  #   params = { plan_id: sprout_plan_id }
+  #   @account.rollback :downgrade_policy
+  #   Sidekiq::Testing.inline! do
+  #     post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
+  #   end
+  #   @account.reload
+  #   assert_equal @account.subscription.subscription_plan_id, sprout_plan_id
+  #   refute @account.field_service_management_enabled?
+  # ensure
+  #   cleanup_fsm
+  #   SAAS::SubscriptionEventActions.any_instance.unstub(:handle_collab_feature)
+  #   SAAS::SubscriptionEventActions.any_instance.unstub(:handle_feature_add_data)
+  #   Subscription.any_instance.unstub(:add_to_crm)
+  #   unstub_chargebee_requests
+  # end
+  #
+  # def test_dynamic_section_feature_removed_when_downgrade_to_sprout_with_fsm_enabled
+  #   stub_chargebee_requests
+  #   plan_ids = SubscriptionPlan.current.map(&:id)
+  #   sprout_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount == 0.0 }.compact.first
+  #   @account.reload
+  #   @account.add_feature(:field_service_management) unless @account.field_service_management_enabled?
+  #   perform_fsm_operations
+  #   params = { plan_id: sprout_plan_id }
+  #   @account.rollback :downgrade_policy
+  #   post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
+  #   @account.reload
+  #   assert_equal @account.subscription.subscription_plan_id, sprout_plan_id
+  #   refute @account.has_feature?(:dynamic_sections)
+  # ensure
+  #   cleanup_fsm
+  #   unstub_chargebee_requests
+  # end
+  #
+  # def test_parent_child_infra_removed_when_downgrade_to_sprout_with_fsm_enabled
+  #   stub_chargebee_requests
+  #   plan_ids = SubscriptionPlan.current.map(&:id)
+  #   sprout_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount == 0.0 }.compact.first
+  #   @account.reload
+  #   @account.add_feature(:field_service_management) unless @account.field_service_management_enabled?
+  #   perform_fsm_operations
+  #   params = { plan_id: sprout_plan_id }
+  #   @account.rollback :downgrade_policy
+  #   post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
+  #   @account.reload
+  #   assert_equal @account.subscription.subscription_plan_id, sprout_plan_id
+  #   refute @account.parent_child_infra_enabled?
+  # ensure
+  #   cleanup_fsm
+  #   unstub_chargebee_requests
+  # end
+  #
+  # def test_sections_data_cleanup_when_downgrade_to_sprout_with_fsm_enabled
+  #   stub_chargebee_requests
+  #   SAAS::SubscriptionEventActions.any_instance.stubs(:handle_collab_feature).returns(true)
+  #   SAAS::SubscriptionEventActions.any_instance.stubs(:handle_feature_add_data).returns(true)
+  #   Subscription.any_instance.stubs(:add_to_crm).returns(true)
+  #   plan_ids = SubscriptionPlan.current.map(&:id)
+  #   sprout_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount == 0.0 }.compact.first
+  #   @account.reload
+  #   @account.add_feature(:field_service_management) unless @account.field_service_management_enabled?
+  #   perform_fsm_operations
+  #   params = { plan_id: sprout_plan_id }
+  #   @account.rollback :downgrade_policy
+  #   Sidekiq::Testing.inline! do
+  #     post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
+  #   end
+  #   @account.reload
+  #   assert_equal @account.subscription.subscription_plan_id, sprout_plan_id
+  #   assert_equal 0, @account.sections.count
+  #   assert_equal 0, @account.section_fields.count
+  #   assert_equal 0, ticket_fields.all.select { |field| field.field_options['section'] == true }.count
+  # ensure
+  #   cleanup_fsm
+  #   SAAS::SubscriptionEventActions.any_instance.unstub(:handle_collab_feature)
+  #   Subscription.any_instance.unstub(:add_to_crm)
+  #   SAAS::SubscriptionEventActions.any_instance.unstub(:handle_feature_add_data)
+  #   unstub_chargebee_requests
+  # end
 
   private
 

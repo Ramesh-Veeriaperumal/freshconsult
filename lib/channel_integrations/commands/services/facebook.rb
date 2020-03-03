@@ -168,6 +168,7 @@ module ChannelIntegrations::Commands::Services
 
         {
           post_id: payload[:context][:post_id],
+          msg_type: payload[:context][:post_type],
           facebook_page_id: page_id,
           parent_id: parent_id,
           post_attributes: {

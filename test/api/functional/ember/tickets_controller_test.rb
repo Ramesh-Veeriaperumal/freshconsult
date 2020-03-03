@@ -5691,6 +5691,7 @@ module Ember
       current_account_id = Account.current.id
       acc = Account.find(current_account_id).make_current
       acc.launch(:pci_compliance_field)
+      add_privilege(User.current, :view_secure_field)
       ticket = create_ticket
       create_custom_field_dn('custom_card_no_test', 'secure_text')
       uuid = SecureRandom.hex
@@ -5709,7 +5710,27 @@ module Ember
       assert_equal payload['scope'], ['custom_card_no_test']
       assert_equal payload['exp'], payload['iat'] + 120
       assert_equal payload['accid'], current_account_id
+      assert_equal payload['portal'], 1
       assert_response 200
+    ensure
+      ticket.destroy
+      request.unstub(:uuid)
+      acc.ticket_fields.find_by_name('custom_card_no_test_1').destroy
+      remove_privilege(User.current, :view_secure_field)
+      acc.rollback(:pci_compliance_field)
+    end
+
+    def test_jwe_token_generation_for_get_request_without_privilege
+      current_account_id = Account.current.id
+      acc = Account.find(current_account_id).make_current
+      acc.launch(:pci_compliance_field)
+      ticket = create_ticket
+      create_custom_field_dn('custom_card_no_test', 'secure_text')
+      uuid = SecureRandom.hex
+      request.stubs(:uuid).returns(uuid)
+      params = { id: ticket.display_id, version: 'private' }
+      get :vault_token, controller_params(params)
+      assert_response 403
     ensure
       ticket.destroy
       request.unstub(:uuid)
@@ -5721,6 +5742,8 @@ module Ember
       current_account_id = Account.current.id
       acc = Account.find(current_account_id).make_current
       acc.launch(:pci_compliance_field)
+      add_privilege(User.current, :view_secure_field)
+      add_privilege(User.current, :edit_secure_field)
       create_custom_field_dn('custom_card_no_test', 'secure_text')
       params = ticket_params_hash
       ticket = create_ticket(params)
@@ -5740,7 +5763,29 @@ module Ember
       assert_equal payload['scope'], ['custom_card_no_test']
       assert_equal payload['exp'], payload['iat'] + 120
       assert_equal payload['accid'], current_account_id
+      assert_equal payload['portal'], 1
       assert_response 200
+    ensure
+      ticket.destroy
+      request.unstub(:uuid)
+      acc.ticket_fields.find_by_name('custom_card_no_test_1').destroy
+      remove_privilege(User.current, :view_secure_field)
+      remove_privilege(User.current, :edit_secure_field)
+      acc.rollback(:pci_compliance_field)
+    end
+
+    def test_jwe_token_generation_for_put_request_without_privilege
+      current_account_id = Account.current.id
+      acc = Account.find(current_account_id).make_current
+      acc.launch(:pci_compliance_field)
+      create_custom_field_dn('custom_card_no_test', 'secure_text')
+      params = ticket_params_hash
+      ticket = create_ticket(params)
+      uuid = SecureRandom.hex
+      request.stubs(:uuid).returns(uuid)
+      update_params = { custom_fields: { '_custom_card_no_test': 'c0376b8ce26458010ceceb9de2fde759' } }
+      put :update, construct_params({ id: ticket.display_id, version: 'private' }, update_params)
+      assert_response 400
     ensure
       ticket.destroy
       request.unstub(:uuid)
@@ -5751,6 +5796,8 @@ module Ember
     def test_jwe_token_generation_for_put_request_without_prefix
       acc = Account.find(Account.current.id).make_current
       acc.launch(:pci_compliance_field)
+      add_privilege(User.current, :view_secure_field)
+      add_privilege(User.current, :edit_secure_field)
       create_custom_field_dn('custom_card_no_test', 'secure_text')
       params = ticket_params_hash
       ticket = create_ticket(params)
@@ -5760,6 +5807,8 @@ module Ember
     ensure
       ticket.destroy
       acc.ticket_fields.find_by_name('custom_card_no_test_1').destroy
+      remove_privilege(User.current, :view_secure_field)
+      remove_privilege(User.current, :edit_secure_field)
       acc.rollback(:pci_compliance_field)
     end
 

@@ -1,8 +1,9 @@
 class JWT::SecureServiceJWEFactory
-  def initialize(ticket, action, custom_fields = {})
+  def initialize(ticket, action, portal_type, custom_fields = {})
     @ticket = ticket
     @custom_fields_in_params = custom_fields
     @action = action
+    @portal_type = portal_type
   end
 
   def generate_jwe_payload(secure_field_methods_object)
@@ -16,7 +17,8 @@ class JWT::SecureServiceJWEFactory
       scope: jwe_payload_scope(@action, secure_field_methods_object),
       action: @action,
       uuid: Thread.current[:message_uuid],
-      user_id: User.current.id
+      user_id: User.current.id,
+      portal: @portal_type
     }
     key = OpenSSL::PKey::RSA.new(PciConstants::PUBLIC_KEY)
     JWE.encrypt(jwe_payload.to_json, key, enc: 'A256GCM')

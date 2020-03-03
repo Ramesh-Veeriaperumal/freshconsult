@@ -435,12 +435,52 @@ module ApiSolutions
     end
 
     def test_emoji_in_category_name_and_description
-      post :create, construct_params({},  name: 'hey 😅 category name', description: 'hey 😅 category description')
+      post :create, construct_params({}, name: 'hey 😅 category name', description: 'hey 😅 category description')
       assert_response 201
       result = parse_response(@response.body)
       assert_equal "http://#{@request.host}/api/v2/solutions/categories/#{result['id']}", response.headers['Location']
       assert_equal UnicodeSanitizer.remove_4byte_chars('hey 😅 category name'), result['name']
       assert_equal UnicodeSanitizer.remove_4byte_chars('hey 😅 category description'), result['description']
+    end
+
+    # Activity tests
+    def test_activity_record_for_category_create
+      activities_count = Helpdesk::Activity.count
+      params_hash = { name: Faker::Name.name, description: Faker::Lorem.paragraph }
+      post :create, construct_params({}, params_hash)
+      assert_response 201
+      activity_record = Helpdesk::Activity.last
+      action_name = activity_record.description.split('.')[2]
+      assert_equal Helpdesk::Activity.count, activities_count + 1
+      assert_equal activity_record.activity_data[:title], params_hash[:name]
+      assert_equal action_name, 'new_solution_category'
+    end
+
+    def test_activity_record_for_category_update
+      activities_count = Helpdesk::Activity.count
+      sample_category = get_category
+      params_hash = { name: Faker::Name.name }
+      put :update, construct_params({ id: sample_category.id }, params_hash)
+      assert_response 200
+      activity_record = Helpdesk::Activity.last
+      action_name = activity_record.description.split('.')[2]
+      assert_equal Helpdesk::Activity.count, activities_count + 1
+      assert_equal activity_record.activity_data[:title], params_hash[:name]
+      assert_equal activity_record.notable_type, 'Solution::Category'
+      assert_equal action_name, 'rename_actions'
+    end
+
+    def test_activity_record_for_category_delete
+      activities_count = Helpdesk::Activity.count
+      sample_category = get_category
+      category_name = sample_category.name
+      delete :destroy, construct_params(id: sample_category.id)
+      assert_response 204
+      activity_record = Helpdesk::Activity.all[activities_count]
+      action_name = activity_record.description.split('.')[2]
+      assert Helpdesk::Activity.count > activities_count
+      assert_equal activity_record.activity_data[:title], category_name
+      assert_equal action_name, 'delete_solution_category'
     end
   end
 end

@@ -47,6 +47,7 @@ module Freshcaller::JwtAuthentication
       options.merge!({:body => params.to_json})
     end
     Rails.logger.info "Freshcaller Request Params :: #{HTTP_METHOD_TO_CLASS_MAPPING[request_type]} #{URI.encode(path)} #{options.inspect}"
+    options[:verify_blacklist] = true
     request = HTTParty::Request.new(HTTP_METHOD_TO_CLASS_MAPPING[request_type], URI.encode(path), options)
     freshcaller_response = request.perform
     Rails.logger.info "Freshcaller Response :: #{freshcaller_response.body} #{freshcaller_response.code} #{freshcaller_response.message} #{freshcaller_response.headers.inspect}"

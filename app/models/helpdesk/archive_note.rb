@@ -27,7 +27,8 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
                                 :conditions => { :attachable_type => "ArchiveNote::Inline" },
                                 :foreign_key => "attachable_id",
                                 :dependent => :destroy
-  
+
+  belongs_to :note_source, class_name: 'Helpdesk::Source', foreign_key: 'source', primary_key: 'account_choice_id', inverse_of: :archive_notes
  
   attr_protected :account_id
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20200217132435) do
+ActiveRecord::Schema.define(:version => 20200221094505) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -2302,10 +2302,10 @@ ActiveRecord::Schema.define(:version => 20200217132435) do
     t.integer  "default",           :limit => 1
     t.integer  "deleted",           :limit => 1, :default => 0
     t.integer  "account_choice_id", :limit => 3
-    t.integer  "type",              :limit => 2
     t.integer  "account_id",        :limit => 8
     t.datetime "created_at",                                    :null => false
     t.datetime "updated_at",                                    :null => false
+    t.string   "type"
   end
 
   add_index "helpdesk_choices", ["account_choice_id", "type", "account_id"], :name => "index_choice_on_account_and_choice_id_and_field_type"

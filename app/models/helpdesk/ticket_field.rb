@@ -746,6 +746,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
     field_options.blank? ? false : field_options.symbolize_keys.fetch(:section, false)
   end
 
+  def fsm_field?
+    field_options.symbolize_keys.fetch(:fsm, false)
+  end
+
   def rollback_section_in_field_options
     self.field_options["section"] = false
     self.save

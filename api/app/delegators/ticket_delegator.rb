@@ -174,7 +174,7 @@ class TicketDelegator < BaseDelegator
 
   def secure_field_update_permissible?
     secure_fields = JWT::SecureFieldMethods.new.secure_fields(@custom_fields).present?
-    errors[:secure_fields] << :bad_request if secure_fields && (!private_api? || (private_api? && !check_pci_feature))
+    errors[:secure_fields] << :bad_request if secure_fields && (!private_api? || (private_api? && !secure_field_accessible?))
   end
 
   def closure_status?
@@ -312,8 +312,8 @@ class TicketDelegator < BaseDelegator
       [:bulk_update].include?(validation_context)
     end
 
-    def check_pci_feature
-      Account.current.launched?(:pci_compliance_field)
+    def secure_field_accessible?
+      Account.current.launched?(:pci_compliance_field) && User.current.privilege?(:edit_secure_field)
     end
 
     # skip shared attachments

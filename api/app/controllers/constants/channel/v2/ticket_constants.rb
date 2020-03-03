@@ -30,6 +30,6 @@ module Channel::V2::TicketConstants
   DATETIME_ATTRIBUTES = %i(opened_at pending_since resolved_at closed_at first_assigned_at
                            assigned_at first_response_time requester_responded_at agent_responded_at
                            status_updated_at sla_timer_stopped_at)
-  FB_MSG_TYPES = ['dm', 'post'] # Dont change the index of the value
+  FB_MSG_TYPES = ['dm', 'post', 'ad_post'].freeze # Dont change the index of the value
   TWITTER_MSG_TYPES = ['dm', 'mention'].freeze
 end

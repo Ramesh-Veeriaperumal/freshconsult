@@ -20,7 +20,7 @@ class TicketsController < ApiApplicationController
   DESCRIPTION = :description.to_s.freeze
 
   before_filter :ticket_permission?, only: [:destroy, :vault_token]
-  before_filter :check_pci_feature, only: [:vault_token]
+  before_filter :secure_field_accessible?, only: [:vault_token]
   before_filter :check_search_feature, :validate_search_params, only: [:search]
   before_filter :validate_associated_tickets, only: [:create]
   before_filter :ignore_unwanted_fields, only: [:create, :update], if: :remove_unrelated_fields?
@@ -67,7 +67,7 @@ class TicketsController < ApiApplicationController
 
   def vault_token
     # Generates vault_token
-    jwe = JWT::SecureServiceJWEFactory.new(@item, PciConstants::ACTION[:read])
+    jwe = JWT::SecureServiceJWEFactory.new(@item, PciConstants::ACTION[:read], PciConstants::PORTAL_TYPE[:agent_portal])
     @token = jwe.generate_jwe_payload(@secure_field_methods)
     response.api_meta = { vault_token: @token } if private_api?
   end
@@ -130,7 +130,7 @@ class TicketsController < ApiApplicationController
       end
     end
 
-    def check_pci_feature
+    def secure_field_accessible?
       @secure_field_methods = JWT::SecureFieldMethods.new
       render_request_error :bad_request, 400 unless current_account.launched?(:pci_compliance_field) && @secure_field_methods.secure_fields_from_cache.present?
     end

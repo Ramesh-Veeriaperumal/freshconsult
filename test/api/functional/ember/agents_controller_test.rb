@@ -739,6 +739,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     group = create_group_with_agents(@account, role: Role.find_by_name('Supervisor').id)
     current_user = User.current
     group.agent_groups.create(user_id: current_user.id)
+    User.any_instance.stubs(:privilege?).with(:manage_account).returns(false)
     User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
     User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
     User.any_instance.stubs(:privilege?).with(:manage_availability).returns(true)
@@ -891,6 +892,8 @@ class Ember::AgentsControllerTest < ActionController::TestCase
 
   def test_read_only_property_of_agent_with_privilege
     User.any_instance.stubs(:privilege?).with(:manage_account).returns(true)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(true)
+    User.any_instance.stubs(:privilege?).with(:view_contacts).returns(true)
     sample_agent = @account.agents.first
     get :show, construct_params(version: 'private', id: sample_agent.user.id)
     assert_response 200
@@ -902,6 +905,8 @@ class Ember::AgentsControllerTest < ActionController::TestCase
 
   def test_read_only_property_of_agent_without_privilege
     User.any_instance.stubs(:privilege?).with(:manage_account).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(true)
+    User.any_instance.stubs(:privilege?).with(:view_contacts).returns(false)
     sample_agent = @account.agents.first
     get :show, construct_params(version: 'private', id: sample_agent.user.id)
     assert_response 200

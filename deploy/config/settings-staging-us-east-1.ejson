@@ -1182,6 +1182,7 @@
         "_api_url": "https://gapi-staging.freshcloud.io",
         "_cdn_static_assets": "d3vpj0gwcyua2v.cloudfront.net/app-assets",
         "_custom_app_invalid_time": 300,
+        "_cache_invalidation_time": 300,
         "_data_pipe_url": "https://datapipe-staging.freshcloud.io",
         "_dev_portal_url": "https://dev-staging.freshcloud.io",
         "_freshapps_js_url": "https://static.freshcloud.io",

@@ -6258,10 +6258,28 @@ class TicketsControllerTest < ActionController::TestCase
     end
   end
 
+  def test_jwe_token_for_get_request_without_privilege
+    current_account_id = Account.current.id
+    acc = Account.find(current_account_id).make_current
+    acc.launch(:pci_compliance_field)
+    ticket = create_ticket
+    create_custom_field_dn('custom_card_no_test', 'secure_text')
+    uuid = SecureRandom.hex
+    request.stubs(:uuid).returns(uuid)
+    get :vault_token, controller_params(id: ticket.display_id)
+    assert_response 403
+  ensure
+    ticket.destroy
+    request.unstub(:uuid)
+    acc.ticket_fields.find_by_name('custom_card_no_test_1').destroy
+    acc.rollback(:pci_compliance_field)
+  end
+
   def test_jwe_token_for_get_request
     current_account_id = Account.current.id
     acc = Account.find(current_account_id).make_current
     acc.launch(:pci_compliance_field)
+    add_privilege(User.current, :view_secure_field)
     ticket = create_ticket
     create_custom_field_dn('custom_card_no_test', 'secure_text')
     uuid = SecureRandom.hex
@@ -6279,17 +6297,21 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal payload['scope'], ['custom_card_no_test']
     assert_equal payload['exp'], payload['iat'] + 120
     assert_equal payload['accid'], current_account_id
+    assert_equal payload['portal'], 1
     assert_response 200
   ensure
     ticket.destroy
     request.unstub(:uuid)
     acc.ticket_fields.find_by_name('custom_card_no_test_1').destroy
+    remove_privilege(User.current, :view_secure_field)
     acc.rollback(:pci_compliance_field)
   end
 
   def test_jwe_token_generation_for_put_request
     acc = Account.find(Account.current.id).make_current
     acc.launch(:pci_compliance_field)
+    add_privilege(User.current, :view_secure_field)
+    add_privilege(User.current, :edit_secure_field)
     create_custom_field_dn('custom_card_no_test', 'secure_text')
     params = ticket_params_hash
     ticket = create_ticket(params)
@@ -6299,6 +6321,8 @@ class TicketsControllerTest < ActionController::TestCase
   ensure
     ticket.destroy
     acc.ticket_fields.find_by_name('custom_card_no_test_1').destroy
+    remove_privilege(User.current, :view_secure_field)
+    remove_privilege(User.current, :edit_secure_field)
     acc.rollback(:pci_compliance_field)
   end
 

@@ -155,7 +155,7 @@ module Facebook
 
     MESSAGE_UPDATED_AT = 'updated_time'.freeze
 
-    FB_MSG_TYPES = ['dm', 'post'].freeze
+    FB_MSG_TYPES = ['dm', 'post', 'ad_post'].freeze
 
     DEFAULT_MESSAGE_LIMIT = 25
 

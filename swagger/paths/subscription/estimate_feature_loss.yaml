@@ -1,0 +1,21 @@
+get:
+  tags: [subscription]
+  description: Estimate the feature loss when moving to a lower plan
+  summary: Estimate feature loss
+  parameters:
+    - name: plan_id
+      in: query
+      type: integer
+      format: int64
+      description: Plan ID to estimate
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/estimate_feature_loss'
+    403:
+      description: Access denied
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

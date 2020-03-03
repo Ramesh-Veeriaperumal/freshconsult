@@ -3597,6 +3597,47 @@ module Ember
         Account.any_instance.unstub(:article_approval_workflow_enabled?)
       end
 
+      # Activity tests
+      def test_activity_record_for_article_create
+        folder_meta = get_folder_meta
+        params_hash = { title: Faker::Lorem.name, description: Faker::Lorem.paragraph, status: 2 }
+        activities_count = Helpdesk::Activity.count
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, params_hash)
+        assert_response 201
+        activity_record = Helpdesk::Activity.last
+        action_name = activity_record.description.split('.')[2]
+        assert_equal Helpdesk::Activity.count, activities_count + 1
+        assert_equal activity_record.activity_data[:title], params_hash[:title]
+        assert_equal action_name, 'new_article'
+      end
+
+      def test_activity_record_for_article_publish
+        sample_article = get_article_with_draft
+        title = sample_article.draft.name
+        params_hash = { status: 2 }
+        activities_count = Helpdesk::Activity.count
+        put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+        assert_response 200
+        activity_record = Helpdesk::Activity.last
+        action_name = activity_record.description.split('.')[2]
+        assert_equal Helpdesk::Activity.count, activities_count + 1
+        assert_equal activity_record.activity_data[:title], title
+        assert_equal action_name, 'published_article'
+      end
+
+      def test_activity_record_for_article_delete
+        activities_count = Helpdesk::Activity.count
+        sample_article = get_article
+        title = sample_article.name
+        delete :destroy, construct_params(version: 'private', id: sample_article.parent_id)
+        assert_response 204
+        activity_record = Helpdesk::Activity.last
+        action_name = activity_record.description.split('.')[2]
+        assert_equal Helpdesk::Activity.count, activities_count + 1
+        assert_equal activity_record.activity_data[:title], title
+        assert_equal action_name, 'delete_article'
+      end
+
       private
 
         def version

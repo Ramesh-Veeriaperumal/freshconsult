@@ -38,6 +38,7 @@ class FreshcallerProxyController < ApplicationController
       options[:headers] = {"Accept" => accept_type, "Content-Type" => content_type, "Authorization" => auth_hash}
       options[:query] = query_params
       options[:timeout] = REQUEST_TIMEOUT
+      options[:verify_blacklist] = true
       begin
         # if !Rails.env.development? && Integrations::PROXY_SERVER["host"].present? #host will not be present for layers other than integration layer.
         #   options[:http_proxyaddr] = Integrations::PROXY_SERVER["host"]

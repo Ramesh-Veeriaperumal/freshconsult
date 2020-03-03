@@ -40,7 +40,7 @@ class TicketDecorator < ApiDecorator
       next if @custom_fields_mapping[k] == Helpdesk::TicketField::CUSTOM_FILE && !private_api?
 
       if @custom_fields_mapping[k] == TicketFieldsConstants::SECURE_TEXT
-        custom_fields_hash[TicketDecorator.display_name(k)] = v if private_api?
+        custom_fields_hash[TicketDecorator.display_name(k)] = v if User.current.privilege?(:view_secure_field) && private_api?
         next
       end
 

@@ -44,7 +44,7 @@ module SubscriptionsHelper
       "sla_reminders_desc", "forums_desc", "agent_performance_report_desc", "satisfaction_survey_desc",
       "scheduled_reports_desc", "custom_surveys_desc", "custom_apps_desc", "timesheets_desc", "chat_faq", "chat_message", "ivr", "masking_recording", "customer_journey_desc"],
     "estate jan 19" => ["multiple_products_desc", "multiple_sla_business_desc", "portal_customization_desc",
-      "custom_ssl_desc", "auto_ticket_assignment_desc", "enterprise_reports_desc", "custom_dashboard_desc", "chatbots", "inapp_chat", "smart_calls", "barging_monitoring", "omni_analytics", "fsm_desc", "custom_translations"],
+                        "custom_ssl_desc", "auto_ticket_assignment_desc", "enterprise_reports_desc", "custom_dashboard_desc", "chatbots", "inapp_chat", "smart_calls", "barging_monitoring", "omni_analytics", "fsm_desc", "custom_translations"],
     "garden omni jan 19" => ["multilingual_kbase_desc", "dynamic_email_alert_desc",
       "sla_reminders_desc", "forums_desc", "agent_performance_report_desc",
       "scheduled_reports_desc", "custom_surveys_desc", "custom_apps_desc", "timesheets_desc", "co_browsing", "customer_journey_desc"],
@@ -262,7 +262,7 @@ module SubscriptionsHelper
 
   def fsm_supported_plan?(plan)
     # Adding temporarily and will be removed once FSM is supported in all Garden plans
-    garden_plan = ['Garden', 'Garden Jan 17', 'Garden Jan 19', 'Garden Omni Jan 19']
+    garden_plan = ['Garden', 'Garden Jan 17', 'Garden Jan 19', 'Garden Omni Jan 19', 'Garden Jan 20', 'Garden Omni Jan 20']
     return false if garden_plan.include?(plan.name) && !current_account.fsm_for_garden_plan_enabled?
 
     features = PLANS_FEATURES["#{plan.name.downcase}"]

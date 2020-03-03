@@ -51,7 +51,7 @@ class Helpdesk::Activity < ActiveRecord::Base
     }
   }
 
-  scope :only_tickets, { :conditions => ["notable_type = ?", "Helpdesk::Ticket"] }
+  scope :include_modules, ->(notable) { where(notable_type: notable) }
 
   scope :limit, lambda { |num| { :limit => num } }
 

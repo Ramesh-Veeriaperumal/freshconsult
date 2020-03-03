@@ -11,7 +11,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/tickets/delete_spam", only: %i[spam bulk_spam unspam bulk_unspam]
     resource :"ember/tickets/activity"
     resource :"ember/canned_response", only: %i[search]
-    resource :"ember/ticket", only: %i[index show create execute_scenario spam latest_note create_child_with_template parse_template fetch_errored_email_details suppression_list_alert ticket_field_suggestions vault_token]
+    resource :"ember/ticket", only: %i[index show create execute_scenario spam latest_note create_child_with_template parse_template fetch_errored_email_details suppression_list_alert ticket_field_suggestions]
     resource :"ember/tickets/bulk_action", only: %i[bulk_execute_scenario bulk_link bulk_unlink]
     resource :"ember/tickets/associate", only: [:link, :unlink, :associated_tickets, :prime_association]
     resource :"ember/ticket_filter", only: [:index, :show, :create, :update, :destroy]
@@ -26,7 +26,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"tickets/bot_response", only: %i[show update]
     resource :"tickets/bulk_action", only: %i[bulk_archive]
     resource :"tickets/subscription"
-    resource :'ticket', only: %i[vault_token]
 
     resource :"ember/agent", only: %i[index me achievements update]
     resource :"ember/group", only: [:index]
@@ -56,6 +55,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :'ember/rt', only: [:show]
 
     resource :"out_of_office", only: %i[index show create update destroy]
+  end
+
+  view_secure_field do
+    resource :'ember/ticket', only: %i[vault_token]
+    resource :ticket, only: %i[vault_token]
   end
 
   manage_account do
@@ -164,7 +168,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/portal", only: [:show, :update]
     resource :audit_log, only: [:filter, :export, :event_name, :export_s3_url]
     resource :'ember/omni_channel', only: [:index]
-    resource :"admin/subscription", only: [:show, :plans, :update, :estimate, :update_payment]
+    resource :"admin/subscription", only: [:show, :plans, :update, :estimate, :update_payment, :estimate_feature_loss]
     resource :"ember/ocr_proxy"
     resource :"ember/freddy"
     resource :"ember/flow"

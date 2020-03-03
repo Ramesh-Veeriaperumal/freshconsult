@@ -1474,6 +1474,9 @@
               "$ref": "#/definitions/bad_request_error"
             }
           },
+          "403": {
+            "description": "Access denied"
+          },
           "404": {
             "description": "Ticket not found"
           }
@@ -9871,6 +9874,32 @@
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/subscription_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/subscription/estimate_feature_loss": {
+      "get": {
+        "tags": [
+          "subscription"
+        ],
+        "description": "Estimate the feature loss when moving to a lower plan",
+        "summary": "Estimate feature loss",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/estimate_feature_loss"
             }
           },
           "400": {
@@ -26279,6 +26308,17 @@
         },
         "tax_inclusive": {
           "type": "boolean"
+        }
+      }
+    },
+    "estimate_feature_loss": {
+      "type": "object",
+      "properties": {
+        "features": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

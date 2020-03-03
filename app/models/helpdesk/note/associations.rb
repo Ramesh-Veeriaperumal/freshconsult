@@ -52,6 +52,8 @@ class Helpdesk::Note < ActiveRecord::Base
   has_one :broadcast_message, :class_name => 'Helpdesk::BroadcastMessage', :foreign_key =>'note_id',
           :dependent => :destroy
 
+  belongs_to :note_source, class_name: 'Helpdesk::Source', foreign_key: 'source', primary_key: 'account_choice_id', inverse_of: :notes
+
   private
 
   def set_inline_attachable_type(inline_attachment)

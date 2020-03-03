@@ -7,5 +7,9 @@ module PciConstants
     read: 1,
     write: 2
   }.freeze
+  PORTAL_TYPE = {
+    agent_portal: 1,
+    support_portal: 2
+  }.freeze
   PUBLIC_KEY = File.read('config/cert/jwe_encryption_key.pem')
 end
