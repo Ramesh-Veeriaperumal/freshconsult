@@ -1067,6 +1067,49 @@ class ConversationsControllerTest < ActionController::TestCase
     @account.rollback(:twitter_public_api)
   end
 
+  def test_twitter_reply_with_invalid_attachments_count
+    @account.launch(:twitter_public_api)
+    file = fixture_file_upload('files/image4kb.png', 'image/png')
+    file1 = fixture_file_upload('files/image4kb.png', 'image/png')
+    file2 = fixture_file_upload('files/image4kb.png', 'image/png')
+    file3 = fixture_file_upload('files/image4kb.png', 'image/png')
+    file4 = fixture_file_upload('files/image4kb.png', 'image/png')
+    ticket = create_twitter_ticket
+    params_hash = {
+      body: Faker::Lorem.sentence[0..130],
+      twitter: { tweet_type: 'mention', twitter_handle_id: @twitter_handle.twitter_user_id },
+      attachments: [file, file1, file2, file3, file4]
+    }
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    assert_response 400
+    match_json([bad_request_error_pattern('attachments', :twitter_attachment_file_limit, code: :invalid_value, maxLimit: 4, fileType: 'image')])
+    ticket.destroy
+  ensure
+    @account.rollback(:twitter_public_api)
+  end
+
+  def test_twitter_reply_with_invalid_attachments_type
+    @account.launch(:twitter_public_api)
+    file = fixture_file_upload('files/image4kb.png', 'image/png')
+    file1 = fixture_file_upload('files/attachment.txt', 'text/plain')
+    ticket = create_twitter_ticket
+    params_hash = {
+      body: Faker::Lorem.sentence[0..130],
+      twitter: { tweet_type: 'mention', twitter_handle_id: @twitter_handle.twitter_user_id },
+      attachments: [file, file1]
+    }
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    assert_response 400
+    match_json([bad_request_error_pattern('attachments', 'twitter_attachment_file_invalid')])
+    ticket.destroy
+  ensure
+    @account.rollback(:twitter_public_api)
+  end
+
   def test_tweet_reply_with_invalid_handle
     @account.launch(:twitter_public_api)
     ticket = create_twitter_ticket

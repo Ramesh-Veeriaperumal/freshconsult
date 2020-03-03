@@ -179,6 +179,7 @@ module ConversationsTestHelper
       ticket_id: expected_output[:ticket_id] || note.notable.display_id,
       to_emails: note.to_emails,
       attachments: Array,
+      source_additional_info: source_additional_info(note),
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
@@ -286,7 +287,7 @@ module ConversationsTestHelper
 
     handle = note.tweet.twitter_handle
     tweet_hash = {
-      id: note.tweet.tweet_id.to_s,
+      id: note.tweet.tweet_id.to_i > 0 ? note.tweet.tweet_id.to_s : nil,
       type: note.tweet.tweet_type,
       support_handle_id: handle.twitter_user_id.to_s,
       support_screen_name: handle.screen_name,
@@ -296,10 +297,23 @@ module ConversationsTestHelper
     tweet_hash
   end
 
+  def facebook_post_hash(note)
+    return {} unless note.present? && note.fb_note? && note.fb_post.present? && note.fb_post.facebook_page.present?
+
+    ret_hash = {
+      id: note.fb_post.post_id.to_i > 0 ? note.fb_post.post_id.to_s : nil,
+      type: note.fb_post.msg_type
+    }
+    ret_hash[:post_type] = Facebook::Constants::CODE_TO_POST_TYPE[note.fb_post.post_attributes[:post_type]] if note.fb_post.post? && note.fb_post.post_type_present?
+    ret_hash
+  end
+
   def source_additional_info(note)
     source_info = {}
     tweet = tweet_info_hash(note)
+    fb_post_hash = facebook_post_hash(note)
     source_info[:twitter] = tweet if tweet.present?
+    source_info[:facebook] = fb_post_hash if fb_post_hash.present?
     source_info.presence
   end
 

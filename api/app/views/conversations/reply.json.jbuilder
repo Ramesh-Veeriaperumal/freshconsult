@@ -16,4 +16,5 @@ json.set! :attachments do
   end
 end
 
+json.set! :source_additional_info, @item.source_additional_info
 json.partial! 'shared/utc_date_format', item: @item

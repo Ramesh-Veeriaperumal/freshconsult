@@ -29,7 +29,7 @@ class BillingInfoUpdateTest < ActionView::TestCase
   def test_billing_info_udpate_without_allow_billing_info_update
     account_id = Account.current.id
     Account.any_instance.stubs(:all_launched_features).returns([])
-    AccountAdditionalSettings.any_instance.stubs(:additional_settings).returns(nil)
+    AccountAdditionalSettings.any_instance.stubs(:additional_settings).returns({})
     CronWebhooks::BillingInfoUpdate.new.perform(task_name: 'billing_info_enable_billing_info_update')
     Account.any_instance.unstub(:all_launched_features)
     AccountAdditionalSettings.any_instance.unstub(:additional_settings)
@@ -40,7 +40,7 @@ class BillingInfoUpdateTest < ActionView::TestCase
   def test_billing_info_udpate_with_allow_billing_info_update
     account_id = Account.current.id
     Account.any_instance.stubs(:all_launched_features).returns([:allow_billing_info_update])
-    AccountAdditionalSettings.any_instance.stubs(:additional_settings).returns(nil)
+    AccountAdditionalSettings.any_instance.stubs(:additional_settings).returns({})
     CronWebhooks::BillingInfoUpdate.new.perform(task_name: 'billing_info_enable_billing_info_update')
     Account.any_instance.unstub(:all_launched_features)
     AccountAdditionalSettings.any_instance.unstub(:additional_settings)
