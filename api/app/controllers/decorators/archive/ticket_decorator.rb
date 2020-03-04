@@ -33,7 +33,7 @@ class Archive::TicketDecorator < TicketDecorator
   end
 
   def basic_hash
-    {
+    res_hash = {
       cc_emails: cc_email.try(:[], :cc_emails),
       fwd_emails: cc_email.try(:[], :fwd_emails),
       reply_cc_emails: cc_email.try(:[], :reply_cc),
@@ -63,6 +63,11 @@ class Archive::TicketDecorator < TicketDecorator
       tags: tag_names,
       archived: true
     }
+    if Account.current.next_response_sla_enabled?
+      res_hash[:nr_due_by] = nr_due_by.try(:to_datetime).try(:utc)
+      res_hash[:nr_escalated] = nr_escalated.present?
+    end
+    res_hash
   end
 
   def attachments_hash
