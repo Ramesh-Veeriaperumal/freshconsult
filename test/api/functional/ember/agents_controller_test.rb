@@ -236,6 +236,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
         agent.try(:destroy)
         field_agent.try(:destroy)
         field_agent2.try(:destroy)
+        cleanup_fsm
         login_as(currentuser)
       end
     end
@@ -261,6 +262,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
         agent.try(:destroy)
         field_agent.try(:destroy)
         field_agent2.try(:destroy)
+        cleanup_fsm
         login_as(currentuser)
       end
     end
@@ -283,6 +285,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
         role.try(:destroy)
         agent.try(:destroy)
         field_agent.try(:destroy)
+        cleanup_fsm
         login_as(currentuser)
       end
     end
