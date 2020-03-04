@@ -561,6 +561,21 @@ class SubscriptionsControllerTest < ActionController::TestCase
     assert_response 404
   end
 
+  def test_enable_fsm_with_ticket_field_limit_increase
+    Account.any_instance.stubs(:ticket_field_limit_increase_enabled?).returns(true)
+    params = { addons: { field_service_management: { enabled: 'true', value: ' ' } } }
+    stub_chargebee_requests
+    @account.subscription.update_attributes(agent_limit: '6')
+    
+    post :plan, construct_params({}, params.merge!(params_hash))
+    @account.reload
+    assert_response 302
+    assert_equal I18n.t('fsm_requirements_not_met'), flash[:notice]
+    assert_equal @account.field_service_management_enabled?, false
+  ensure
+    unstub_chargebee_requests
+  end
+
   def test_fsm_artifacts_with_9_date_fields
     params = { agent_limit: '1', addons: { field_service_management: { enabled: 'true', value: ' ' } } }
     stub_chargebee_requests

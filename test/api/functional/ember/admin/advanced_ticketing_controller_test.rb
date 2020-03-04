@@ -369,26 +369,6 @@ module Ember
         end
       end
 
-      def test_create_fsm_with_ticket_limit_increase
-        enable_fsm do
-          begin
-            destroy_fsm_fields_and_section
-            Account.any_instance.stubs(:ticket_field_limit_increase_enabled?).returns(true)
-            Sidekiq::Testing.inline! do
-              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
-            end
-
-            assert_response 204
-            assert Account.current.field_service_management_enabled?
-            assert Account.current.sections.find_by_label(SERVICE_TASK_SECTION).present?
-            assert Account.current.sections.find_by_label(SERVICE_TASK_SECTION).section_fields.size == fsm_custom_field_to_reserve.size
-          ensure
-            destroy_fsm_fields_and_section
-            Account.any_instance.unstub(:ticket_field_limit_increase_enabled?)
-          end
-        end
-      end
-
       # Feature already enabled validation.
       def test_create_fsm_with_already_enabled
         enable_fsm do
@@ -415,6 +395,17 @@ module Ember
           Account.any_instance.unstub(:field_service_management_toggle_enabled?)
           Account.any_instance.unstub(:disable_old_ui_enabled?)
         end
+      end
+
+      def test_enable_fsm_with_ticket_field_limit_increase_enabled
+        Account.any_instance.stubs(:ticket_field_limit_increase_enabled?).returns(true)
+        enable_fsm do
+          post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+          assert_response 400
+          match_json([bad_request_error_pattern('name', :fsm_not_supported, code: :invalid_value, feature: :field_service_management)])
+        end
+      ensure
+        Account.any_instance.unstub(:ticket_field_limit_increase_enabled?)
       end
 
       def test_destroy_parent_child
