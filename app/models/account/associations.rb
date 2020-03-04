@@ -388,7 +388,7 @@ class Account < ActiveRecord::Base
   has_many :required_ticket_fields, :class_name => 'Helpdesk::TicketField', :conditions => "parent_id IS null AND required_for_closure IS true AND field_options NOT LIKE '%section: true%' AND field_type NOT IN ('default_subject','default_description','default_company')",
     :include => [:nested_ticket_fields, :picklist_values], :order => "helpdesk_ticket_fields.position"
 
-  has_many :section_parent_fields, :class_name => 'Helpdesk::TicketField', :conditions => "parent_id is NULL AND field_type IN ('default_ticket_type' , 'custom_dropdown') AND field_options LIKE '%section_present: true%'", :include => [:nested_ticket_fields, {:picklist_values => :section}], :limit => Helpdesk::TicketField::SECTION_LIMIT
+  has_many :section_parent_fields, class_name: 'Helpdesk::TicketField', conditions: "parent_id is NULL AND field_type IN ('default_ticket_type' , 'custom_dropdown') AND field_options LIKE '%section_present: true%'", include: [:nested_ticket_fields, { picklist_values: :section }], limit: Helpdesk::TicketField::FSM_SECTION_LIMIT
 
   has_many :nested_ticket_fields_with_childs, :class_name => 'Helpdesk::TicketField', :conditions => "parent_id is NULL AND field_type = 'nested_field'", :include => [:child_levels]
 

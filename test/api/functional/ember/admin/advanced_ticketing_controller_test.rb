@@ -668,6 +668,64 @@ module Ember
         end
       end
 
+      def test_service_task_fields_recreated_with_proper_options
+        enable_fsm do
+          begin
+            perform_fsm_operations
+            section = Account.current.sections.find_by_label(SERVICE_TASK_SECTION)
+            section.destroy
+            field = Account.current.ticket_fields.find_by_name("cf_fsm_contact_name_#{Account.current.id}")
+            field.field_options.clear
+            field.save!
+            Account.reset_current_account
+            Account.stubs(:current).returns(Account.first)
+            Sidekiq::Testing.inline! do
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+            end
+            assert_response 204
+            section = Account.current.sections.find_by_label(SERVICE_TASK_SECTION)
+            field = Account.current.ticket_fields.find_by_name("cf_fsm_contact_name_#{Account.current.id}")
+            assert_not_nil section
+            assert_not_nil field
+            assert field.field_options[:section]
+            assert field.field_options[:fsm]
+          ensure
+            destroy_fsm_fields_and_section
+          end
+        end
+      end
+
+      def test_service_task_section_on_fsm_disable_with_section_limit
+        enable_fsm do
+          begin
+            dd_field1 = create_custom_field_dropdown_with_sections('dropdown_1', %w[AA BB])
+            section1 = construct_section('section_custom_dropdown_limit1', dd_field1.id)
+            dd_field2 = create_custom_field_dropdown_with_sections('dropdown_2', %w[XX YY])
+            section2 = construct_section('section_custom_dropdown_limit2', dd_field2.id)
+            assert_equal Helpdesk::TicketField::SECTION_LIMIT, Account.current.sections.count
+            Sidekiq::Testing.inline! do
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+              assert_response 204
+              assert Account.current.field_service_management_enabled?
+              assert_equal Helpdesk::TicketField::FSM_SECTION_LIMIT, Account.current.sections.count
+
+              delete :destroy, controller_params(version: 'private', id: 'field_service_management')
+              Account.reset_current_account
+              Account.stubs(:current).returns(Account.first)
+              assert_equal false, Account.current.field_service_management_enabled?
+              assert_equal Helpdesk::TicketField::FSM_SECTION_LIMIT, Account.current.sections.count
+              assert_equal Helpdesk::TicketField::FSM_SECTION_LIMIT, Account.current.section_parent_fields.count
+            end
+          ensure
+            dd_field1.try(:destroy)
+            section1.try(:destroy)
+            dd_field2.try(:destroy)
+            section2.try(:destroy)
+            destroy_fsm_fields_and_section
+          end
+        end
+      end
+
       def test_service_tasks_due_today_present_with_fsm_enabled_without_lp
         enable_fsm do
           begin

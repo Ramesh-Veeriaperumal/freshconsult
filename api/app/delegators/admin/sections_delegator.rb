@@ -24,7 +24,11 @@ module Admin
     private
 
       def sections_limit
-        errors[:section] << :ticket_field_section_limit if !ticket_field.has_sections? && current_account.sections.group_by(&:ticket_field_id).size == Helpdesk::TicketField::SECTION_LIMIT
+        errors[:section] << :ticket_field_section_limit if !ticket_field.has_sections? && current_account.sections.group_by(&:ticket_field_id).size == account_sections_limit
+      end
+
+      def account_sections_limit
+        current_account.field_service_management_enabled? ? Helpdesk::TicketField::FSM_SECTION_LIMIT : Helpdesk::TicketField::SECTION_LIMIT
       end
 
       def empty_section_fields?

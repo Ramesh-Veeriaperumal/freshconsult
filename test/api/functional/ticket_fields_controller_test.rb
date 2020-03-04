@@ -4,6 +4,7 @@ Sidekiq::Testing.fake!
 class TicketFieldsControllerTest < ActionController::TestCase
 
   include TicketFieldsTestHelper
+  include Admin::AdvancedTicketing::FieldServiceManagement::Util
 
   def setup
     super
@@ -530,6 +531,77 @@ class TicketFieldsControllerTest < ActionController::TestCase
     payload.must_match_json_expression(ticket_field_publish_pattern(new_field))
     # Discarding changes
     pl_value.destroy
+  end
+
+  def test_section_limit_on_update_with_fsm_enabled
+    dd_field1 = create_custom_field_dropdown_with_sections('dropdown_1', %w[AA BB])
+    section1 = construct_section('section_custom_dropdown_limit1', dd_field1.id)
+    dd_field2 = create_custom_field_dropdown_with_sections('dropdown_2', %w[XX YY])
+    section2 = construct_section('section_custom_dropdown_limit2', dd_field2.id)
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    perform_fsm_operations
+    assert_equal Helpdesk::TicketField::FSM_SECTION_LIMIT, @account.sections.count
+    put :update, jsonData: ticket_field_hash(@account.ticket_fields, @account).to_json, jsonSectionData: sections_field_hash(@account.sections).to_json
+    assert_response :redirect
+    assert_equal Helpdesk::TicketField::FSM_SECTION_LIMIT, @account.sections.count
+    assert_equal Helpdesk::TicketField::FSM_SECTION_LIMIT, @account.section_parent_fields.count
+  ensure
+    dd_field1.try(:destroy)
+    section1.try(:destroy)
+    dd_field2.try(:destroy)
+    section2.try(:destroy)
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    cleanup_fsm
+  end
+
+  def test_section_limit_on_update_with_fsm_disabled
+    dd_field1 = create_custom_field_dropdown_with_sections('dropdown_1', %w[AA BB])
+    section1 = construct_section('section_custom_dropdown_limit1', dd_field1.id)
+    dd_field2 = create_custom_field_dropdown_with_sections('dropdown_2', %w[XX YY])
+    section2 = construct_section('section_custom_dropdown_limit2', dd_field2.id)
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    perform_fsm_operations
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
+    assert_equal Helpdesk::TicketField::FSM_SECTION_LIMIT, @account.sections.count
+    put :update, jsonData: ticket_field_hash(@account.ticket_fields, @account).to_json, jsonSectionData: sections_field_hash(@account.sections).to_json
+    assert_response :redirect
+    assert_equal Helpdesk::TicketField::FSM_SECTION_LIMIT, @account.sections.count
+    assert_equal Helpdesk::TicketField::FSM_SECTION_LIMIT, @account.section_parent_fields.count
+  ensure
+    dd_field1.try(:destroy)
+    section1.try(:destroy)
+    dd_field2.try(:destroy)
+    section2.try(:destroy)
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    cleanup_fsm
+  end
+
+  def test_section_limit_on_update
+    type_field = @account.ticket_fields_with_nested_fields.find_by_field_type('default_ticket_type')
+    if type_field.field_options['section_present']
+      type_field.field_options.delete('section_present')
+      type_field.save!
+    end
+    dd_field1 = create_custom_field_dropdown_with_sections('dropdown_1', %w[AA BB])
+    section1 = construct_section('section_custom_dropdown_limit1', dd_field1.id)
+    dd_field2 = create_custom_field_dropdown_with_sections('dropdown_2', %w[XX YY])
+    section2 = construct_section('section_custom_dropdown_limit2', dd_field2.id)
+    dd_field3 = create_custom_field_dropdown_with_sections('dropdown_3', %w[PP QQ])
+    section3 = construct_section('section_custom_dropdown_limit3', dd_field3.id)
+    assert_equal 3, @account.sections.count
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
+    put :update, jsonData: ticket_field_hash(@account.ticket_fields, @account).to_json, jsonSectionData: sections_field_hash(@account.sections).to_json
+    assert_response :redirect
+    assert_equal Helpdesk::TicketField::SECTION_LIMIT, @account.sections.count
+    assert_equal Helpdesk::TicketField::SECTION_LIMIT, @account.section_parent_fields.count
+  ensure
+    dd_field1.try(:destroy)
+    section1.try(:destroy)
+    dd_field2.try(:destroy)
+    section2.try(:destroy)
+    dd_field3.try(:destroy)
+    section3.try(:destroy)
+    Account.any_instance.unstub(:field_service_management_enabled?)
   end
 
   def test_edit_status_field
