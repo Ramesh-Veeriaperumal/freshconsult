@@ -10,8 +10,6 @@ class ApiAgentsController < ApiApplicationController
   before_filter :load_data_export, only: [:export_s3_url]
   before_filter :validate_params_for_export, only: [:export]
   SLAVE_ACTIONS = %w[index achievements].freeze
-  AGENTS_ORDER_TYPE = ['asc', 'desc'].freeze
-  AGENTS_ORDER_BY = ['name'].freeze
 
   def check_edit_privilege
     if current_account.freshid_integration_enabled? && !current_account.allow_update_agent_enabled?
@@ -301,7 +299,7 @@ class ApiAgentsController < ApiApplicationController
                    agents.where(clause[:conditions])
                  end
       end
-      agents.reorder(order_clause)
+      agents
     end
 
     def scoper
@@ -364,17 +362,5 @@ class ApiAgentsController < ApiApplicationController
     def construct_search_in_freshworks_payload(user_hash, freshdesk_user_data)
       user_meta_info = { user_id: freshdesk_user_data.id, marked_for_hard_delete: freshdesk_user_data.marked_for_hard_delete?, deleted: freshdesk_user_data.deleted } if freshdesk_user_data
       { freshid_user_info: user_hash || {}, user_info: user_meta_info }
-    end
-
-    def order_clause
-      field = order_filters_value(:order_by)
-      order_type = order_filters_value(:order_type)
-      "`users`.#{field} #{order_type}"
-    end
-
-    def order_filters_value(filter_key)
-      filter_array = filter_key == :order_by ? AGENTS_ORDER_BY : AGENTS_ORDER_TYPE
-      filter_value = @agent_filter.safe_send(filter_key).to_s.downcase if @agent_filter.conditions.include?(filter_key.to_s)
-      filter_array.include?(filter_value) ? filter_value : filter_array[0]
     end
 end
