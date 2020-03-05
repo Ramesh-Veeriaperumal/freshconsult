@@ -5,7 +5,7 @@ namespace :archive_tickets do
   task archive_closed_tickets: :environment do
     Sharding.run_on_all_slaves do
       current_archive_shard = ActiveRecord::Base.current_shard_selection.shard.to_s + '_archive'
-      account_ids = $redis_tickets.perform_redis_op('lrange', current_archive_shard, 0, -1)
+      account_ids = account_ids_in_shard(current_archive_shard)
       account_ids.each do |account_id|
         account = Account.find(account_id).make_current
         next if account.launched?(:disable_archive)

@@ -351,6 +351,7 @@
     - cron_freshfone
     - cron_meta_data_check
     - cron_enable_omniroute_for_new_accounts
+    - cron_archive_automation
   :gamification:
     - gamification_user_score
     - gamification_ticket_score

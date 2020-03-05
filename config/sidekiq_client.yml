@@ -390,6 +390,7 @@ defaults: &defaults
     - [search_analytics_account_cleanup]
     - [search_analytics_tickets_cleanup]
     - [update_url_in_sandbox]
+    - [cron_archive_automation]
 
 development:
   <<: *defaults

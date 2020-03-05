@@ -1,17 +1,11 @@
-namespace :archive_automation do
-  desc 'This task archives all closed tickets with no activities in the last n days.
-        It also accepts an array of shard_names to run archive specifically in those shards'
-  task :archive_automation_tickets, [:shard] => :environment do |t, args|
+namespace :archive_automation_old do
+  desc 'This task archives all closed tickets with no activities in the last n days'
+  task archive_automation_tickets: :environment do
     include Redis::ArchiveRedis
-    all_shards = Sharding.all_shards
-    if args.shard
-      runnable_shards = all_shards & args.shard.to_a # validate shard names provided as arguement
-    else
-      blacklist_archive_shards = $redis_tickets.perform_redis_op('smembers', 'blacklist_archive_shards')
-      runnable_shards = all_shards - blacklist_archive_shards
-    end
+    shards = archive_automation_shards
+    return if shards.blank?
 
-    runnable_shards.each do |shard_name|
+    shards.each do |shard_name|
       Sharding.run_on_shard(shard_name) do
         current_archive_shard = ActiveRecord::Base.current_shard_selection.shard.to_s + '_archive'
         account_ids = account_ids_in_shard(current_archive_shard)

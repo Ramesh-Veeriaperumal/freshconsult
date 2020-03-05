@@ -263,7 +263,8 @@ Sidekiq.configure_server do |config|
     chain.add Server::SidekiqSober, :redis_connection => $redis_others, 
       :priority => ['account_id', 'shard_name'], 
       :required_classes => [
-        'Archive::AccountTicketsWorker'
+        'Archive::AccountTicketsWorker',
+        'Archive::TicketWorker'
     ]
     chain.add Middleware::Sidekiq::Server::Throttler, :required_classes => ["WebhookV1Worker"]
   end
