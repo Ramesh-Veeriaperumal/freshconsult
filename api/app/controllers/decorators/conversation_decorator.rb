@@ -42,7 +42,8 @@ class ConversationDecorator < ApiDecorator
       updated_at: updated_at.try(:utc),
       attachments: attachments.map { |att| AttachmentDecorator.new(att).to_hash }
     }
-    response_hash[:source_additional_info] = source_additional_info if channel_v2_api? && source_additional_info.present?
+    src_info = source_additional_info
+    response_hash[:source_additional_info] = src_info if src_info.present?
     response_hash
   end
 

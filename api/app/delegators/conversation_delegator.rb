@@ -141,12 +141,12 @@ class ConversationDelegator < ConversationBaseDelegator
   end
 
   def validate_twitter_attachments
-    if attachments.present?
+    if @attachments.present?
       attachment_config = ApiConstants::TWITTER_ATTACHMENT_CONFIG[@tweet_type.to_sym]
       attachment_types = []
       attachment_sizes = []
 
-      attachments.each do |attachment|
+      @attachments.each do |attachment|
         content_type = attachment[:resource].content_type
         return unless valid_twitter_attachment_type?(content_type)
 
