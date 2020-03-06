@@ -37,6 +37,8 @@ class Dkim::ValidateDkimRecord
       dkim_records = construct_dkim_hash([email_service_response], domain_category.email_domain)
       process_verification_response
       dkim_records
+    else
+      Rails.logger.info "EMAIL SERVICE RESPONSE ::::: #{response.inspect}"
     end
   end
 
