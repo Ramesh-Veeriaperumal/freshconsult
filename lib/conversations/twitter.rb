@@ -103,6 +103,30 @@ module Conversations::Twitter
     }
   end
 
+  def mention_note?(tweet_type)
+    tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention]
+  end
+
+  def dm_note?(tweet_type)
+    tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:dm]
+  end
+
+  def custom_twitter_stream_tweet_reply?(stream, tweet_type)
+    stream.custom_stream? && mention_note?(tweet_type)
+  end
+
+  def fetch_stream(reply_handle, ticket, tweet_type)
+    tweet = ticket.tweet
+    tweet_stream = tweet.stream if tweet.present?
+    if tweet_stream && tweet_stream.custom_stream?
+      tweet_stream
+    elsif dm_note?(tweet_type)
+      reply_handle.dm_stream
+    else
+      reply_handle.default_stream
+    end
+  end
+
   protected
 
     def process_tweet note, twt, handle_id, twt_type

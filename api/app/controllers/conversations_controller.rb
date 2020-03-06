@@ -139,9 +139,10 @@ class ConversationsController < ApiApplicationController
 
     def build_twitter_association
       reply_handle = current_account.twitter_handles.find_by_id(@delegator_twitter_handle_id)
-      stream = fetch_stream(reply_handle, @delegator_tweet_type)
+      stream = fetch_stream(reply_handle, @ticket, @delegator_tweet_type)
       tweet_id = random_tweet_id
-      unless stream.custom_stream?
+      custom_twitter_stream_tweet_reply = custom_twitter_stream_tweet_reply?(stream, @delegator_tweet_type)
+      unless custom_twitter_stream_tweet_reply
         stream_id = stream.id
         @item.build_tweet(tweet_id: tweet_id,
                           tweet_type: @delegator_tweet_type,
@@ -149,24 +150,12 @@ class ConversationsController < ApiApplicationController
                           stream_id: stream_id)
       end
       result = @item.save_note
-      if result && stream.custom_stream?
+      if result && custom_twitter_stream_tweet_reply
         Social::TwitterReplyWorker.perform_async(ticket_id: @ticket.id, note_id: @item.id,
                                                  tweet_type: @delegator_tweet_type,
                                                  twitter_handle_id: @delegator_twitter_handle_id)
       end
       result
-    end
-
-    def fetch_stream(reply_handle, tweet_type)
-      tweet = @ticket.tweet
-      tweet_stream = tweet.stream if tweet.present?
-      if tweet_stream && tweet_stream.custom_stream?
-        tweet_stream
-      elsif tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:dm]
-        reply_handle.dm_stream
-      else
-        reply_handle.default_stream
-      end
     end
 
     def render_response(success)

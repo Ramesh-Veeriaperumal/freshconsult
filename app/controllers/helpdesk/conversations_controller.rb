@@ -120,8 +120,9 @@ class Helpdesk::ConversationsController < ApplicationController
       error_message = (I18n.t('social.streams.twitter.handle_auth_error')).to_s
     end
     if error_message.blank?
-      stream = fetch_stream(reply_handle, twt_type)
-      unless stream.custom_stream?
+      stream = fetch_stream(reply_handle, @parent, twt_type)
+      custom_twitter_stream_tweet_reply = custom_twitter_stream_tweet_reply?(stream, twt_type)
+      unless custom_twitter_stream_tweet_reply
         stream_id = stream.id
         tweet_id = random_tweet_id
         @item.build_tweet(tweet_id: tweet_id,
@@ -130,7 +131,7 @@ class Helpdesk::ConversationsController < ApplicationController
       end
       if @item.save_note
         args = { ticket_id: @parent.id, note_id: @item.id, tweet_type: twt_type, twitter_handle_id: twitter_handle_id }
-        Social::TwitterReplyWorker.perform_async(args) if stream.custom_stream?
+        Social::TwitterReplyWorker.perform_async(args) if custom_twitter_stream_tweet_reply
         flash.now[:notice] = t(:'flash.tickets.reply.success')
         process_and_redirect
       else
@@ -455,18 +456,6 @@ class Helpdesk::ConversationsController < ApplicationController
           SpamDetection::LearnTicketWorker.perform_async({ :ticket_id => @parent.id, 
             :type => Helpdesk::Email::Constants::MESSAGE_TYPE_BY_NAME[:ham]})
           Rails.logger.info "Enqueued job to sidekiq to learn ticket"
-        end
-      end
-
-      def fetch_stream(reply_handle, tweet_type)
-        tweet = @parent.tweet
-        tweet_stream = tweet.stream if tweet.present?
-        if tweet_stream && tweet_stream.custom_stream?
-          tweet_stream
-        elsif tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:dm]
-          reply_handle.dm_stream
-        else
-          reply_handle.default_stream
         end
       end
 end
