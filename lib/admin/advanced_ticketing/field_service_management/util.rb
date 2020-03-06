@@ -63,7 +63,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
 
       def create_field_service_manager_role
-        return if Account.current.roles.map(&:name).include?(I18n.t('fsm_scheduling_dashboard.name')) #|| !Account.current.has_feature?(:custom_roles)
+        return if Account.current.roles.map(&:name).include?(I18n.t('fsm_scheduling_dashboard.name')) # || !Account.current.has_feature?(:custom_roles)
 
         role_params = { name: I18n.t('fsm_scheduling_dashboard.name'),
                         description: I18n.t('fsm_scheduling_dashboard.description'),

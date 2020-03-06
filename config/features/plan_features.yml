@@ -15,6 +15,7 @@
   - 'satisfaction_survey'
   - 'forums'
   - 'gamification'
+  - 'fsm_option'
 :garden:
   - 'everything_in_blossom'
   - 'multiple_languages'
@@ -51,6 +52,7 @@
   - 'satisfaction_survey'
   - 'helpdesk_report'
   - 'custom_ticket_fields_and_views'
+  - 'fsm_option'
 :garden jan 17:
   - 'everything_in_blossom'
   - 'm_k_base'
@@ -98,6 +100,7 @@
   - 'agent_collision'
   - 'api_rate_limit_blossom'
   - 'omni_channel_option'
+  - 'fsm_option'
 :garden jan 19:
   - 'everything_in_blossom'
   - 'satisfaction_survey'
@@ -178,6 +181,7 @@
   - 'agent_collision'
   - 'api_rate_limit_blossom'
   - 'omni_channel_option'
+  - 'fsm_option'
 :garden jan 20:
   - 'everything_in_blossom'
   - 'satisfaction_survey'
