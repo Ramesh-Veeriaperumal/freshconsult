@@ -32,6 +32,8 @@ class Helpdesk::Section < ActiveRecord::Base
 
   after_commit :clear_cache
 
+  xss_sanitize only: [:label], plain_sanitizer: [:label], if: -> { Account.current.ticket_field_revamp_enabled? }
+
   def intialize_options
     self.options ||= {}
     self.options = self.options.with_indifferent_access
