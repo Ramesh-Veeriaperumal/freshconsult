@@ -5,7 +5,7 @@ module HelpWidgetConstants
   WHITELISTED_SETTINGS = %w[message button_text components contact_form appearance predictive_support widget_flow].freeze
   WHITELISTED_COMPONENTS = %w[contact_form solution_articles predictive_support].freeze
   WHITELISTED_CONTACT_FORM = %w[form_type form_title form_submit_message form_button_text screenshot attach_file captcha require_login].freeze
-  WHITELISTED_APPEARANCE = %w[position offset_from_bottom offset_from_left offset_from_right color_schema gradient pattern theme_color button_color].freeze
+  WHITELISTED_APPEARANCE = %w[position offset_from_bottom offset_from_left offset_from_right color_schema gradient pattern theme_color theme_text_color button_color button_text_color].freeze
   WHITELISTED_PREDICTIVE_SUPPORT = %w[domain_list welcome_message message success_message].freeze
   FRESHMARKETER_FIELDS = %w[domain email type].freeze
   COMPONENTS = WHITELISTED_COMPONENTS

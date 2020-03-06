@@ -212,6 +212,52 @@ class HelpWidgetsValidationTest < ActionView::TestCase
     assert errors.include?('Settings invalid_format')
   end
 
+  def test_update_text_color
+    request_params = ActionController::Parameters.new ({
+      'id' => 1,
+      'settings' => {
+        'appearance' => {
+          'theme_text_color' => '#000000',
+          'button_text_color' => '#ffffff'
+        }
+      }
+    })
+    helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
+    assert helpwidgetsvalidation.valid?(:update)
+  end
+
+  def test_update_invalid_text_color
+    request_params = ActionController::Parameters.new ({
+      'id' => 1,
+      'settings' => {
+        'appearance' => {
+          'theme_text_color' => '#f0f0f0',
+          'button_text_color' => '#f0f0f0'
+        }
+      }
+    })
+    helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
+    refute helpwidgetsvalidation.valid?(:update)
+    errors = helpwidgetsvalidation.errors.full_messages
+    assert errors.include?('Settings not_included')
+  end
+
+  def test_update_invalid_text_color_format
+    request_params = ActionController::Parameters.new ({
+      'id' => 1,
+      'settings' => {
+        'appearance' => {
+          'theme_text_color' => 'f0f0f0',
+          'button_text_color' => 'f0f0f0'
+        }
+      }
+    })
+    helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
+    refute helpwidgetsvalidation.valid?(:update)
+    errors = helpwidgetsvalidation.errors.full_messages
+    assert errors.include?('Settings invalid_format')
+  end
+
   def test_update_components_with_predictive_support
     request_params = ActionController::Parameters.new ({
       'id' => 1,
