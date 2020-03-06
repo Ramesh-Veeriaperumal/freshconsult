@@ -59,6 +59,118 @@ class CannedResponseFoldersControllerTest < ActionController::TestCase
     match_json(ca_folders_pattern)
   end
 
+  def test_index_for_cr_with_multiple_groups
+    new_agent = add_agent_to_account(@account, name: Faker::Name.name, active: 1, role: 1)
+    login_as(new_agent.user)
+    # create groups
+    groups = create_groups(Account.current, options = { count: 20 })
+    group_ids = groups.map(&:id)
+
+    # assign group to agent
+    groups.each do |group|
+      Account.current.agent_groups.create(user_id: new_agent.user.id, group_id: group.id)
+    end
+
+    folder1 = create_cr_folder(name: 'Test folder 1')
+    folder2 = create_cr_folder(name: 'Test folder 2')
+
+    # assign group to cr
+    params = {
+      response: {
+        title: 'Test',
+        folder_id: folder1.id,
+        helpdesk_accessible_attributes:
+        {
+          accessible_type: 'Admin::CannedResponses::Response',
+          access_type: 2,
+          group_ids: group_ids
+        },
+        content_html: 'Test'
+      }
+    }
+
+    crs = []
+    25.times do |i|
+      params[:response][:title] = "Test CR folder1 #{i}"
+      params[:response][:folder_id] = folder1.id
+      crs << canned_response = Account.current.canned_responses.new(params[:response])
+      canned_response.save!
+      params[:response][:title] = "Test CR folder2 #{i}"
+      params[:response][:folder_id] = folder2.id
+      crs << canned_response = Account.current.canned_responses.new(params[:response])
+      canned_response.save!
+    end
+    get :index, controller_params(version: 'v2')
+    assert_response 200
+    response_body = JSON.parse(response.body)
+
+    assert response_body.map { |res| res['id'] }.include?(folder1.id), 'Folder 1 not present in response'
+    assert response_body.map { |res| res['id'] }.include?(folder2.id), 'Folder 2 not present in response'
+
+    assert_equal folder1.canned_responses.count, response_body.detect { |res| res['id'] == folder1.id }['responses_count']
+    assert_equal folder2.canned_responses.count, response_body.detect { |res| res['id'] == folder2.id }['responses_count']
+  ensure
+    new_agent.destroy
+    crs.map(&:destroy)
+    groups.map(&:destroy)
+    folder1.destroy
+    folder2.destroy
+  end
+
+  def test_index_for_crs_higher_than_limit
+    new_agent = add_agent_to_account(@account, name: Faker::Name.name, active: 1, role: 1)
+    login_as(new_agent.user)
+    # create groups
+    groups = create_groups(Account.current, options = { count: 20 })
+    group_ids = groups.map(&:id)
+
+    # assign group to agent
+    groups.each do |group|
+      Account.current.agent_groups.create(user_id: new_agent.user.id, group_id: group.id)
+    end
+    folders = []
+
+    20.times do |i|
+      folders << create_cr_folder(name: "Test folder #{i}")
+    end
+
+    # assign group to cr
+    params = {
+      response: {
+        title: 'Test',
+        folder_id: 1,
+        helpdesk_accessible_attributes:
+        {
+          accessible_type: 'Admin::CannedResponses::Response',
+          access_type: 2,
+          group_ids: group_ids
+        },
+        content_html: 'Test'
+      }
+    }
+
+    crs = []
+    20.times do |i|
+      20.times do |j|
+        params[:response][:title] = "Test CR folder #{j} #{i}"
+        params[:response][:folder_id] = folders[j].id
+        crs << canned_response = Account.current.canned_responses.new(params[:response])
+        canned_response.save!
+      end
+    end
+    get :index, controller_params(version: 'v2')
+    assert_response 200
+    response_body = JSON.parse(response.body)
+
+    folders_diff = folders.map(&:id) - response_body.map { |res| res['id'] }
+    assert !folders_diff.count.zero?, 'All folders present in response'
+  ensure
+    new_agent.destroy
+    crs.map(&:destroy)
+    groups.map(&:destroy)
+    folders.map(&:destroy)
+  end
+
   def test_show_list_responses
 
     ::Search::V2::Count::AccessibleMethods.any_instance.stubs(:es_request).returns(nil)
