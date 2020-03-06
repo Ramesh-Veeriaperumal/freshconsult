@@ -2,8 +2,8 @@
   <%= render :partial => "helpnote_without_tour" %>
 <% end %>
 
-<%= form_for @agent, :html => { :id => "agent_form", :rel => (current_account.falcon_ui_enabled?(current_user) ? nil : "validate"),
-  :multipart => true, "data-focus-invalid" => false,  "data-ignore" => "", :class => "form-unsaved-changes-trigger" } do |f| %>
+<%= form_for @agent, url: agent_path(@user), html: { id: "agent_form", rel: (current_account.falcon_ui_enabled?(current_user) ? nil : "validate"),
+  multipart: true, "data-focus-invalid" => false,  "data-ignore" => "", class: "form-unsaved-changes-trigger" } do |f| %>
   <%= f.error_messages %>
   <h3 class="lead">
     <%=t('agent.edit')%>
