@@ -941,7 +941,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
         end
       end
       xml.custom_field do
-        self.account.ticket_fields_including_nested_fields.custom_fields.each do |field|
+        self.account.ticket_fields_including_nested_fields.custom_fields.non_secure_fields.each do |field|
           begin
            value = safe_send(field.name)
            xml.tag!(field.name.gsub(/[^0-9A-Za-z_]/, ''), value) unless value.blank?

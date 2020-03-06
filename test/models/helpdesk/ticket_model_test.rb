@@ -8,6 +8,7 @@ class TicketModelTest < ActiveSupport::TestCase
   include UsersHelper
   include TicketsTestHelper
   include EmailHelper
+  include TicketFieldsTestHelper
 
   def setup
     Account.stubs(:current).returns(Account.first || create_test_account)
@@ -55,5 +56,17 @@ class TicketModelTest < ActiveSupport::TestCase
     ticket.safe_send(:update_content_ids)
     assert_not_equal ticket.ticket_body.description_html, "<img src='cid:abc' class='inline-image'> This is content <img src='cid:abc' class='inline-image'> "
     Helpdesk::Ticket.any_instance.unstub(:inline_attachments)
+  end
+
+  def test_ticket_to_xml_with_secure_field
+    @account = Account.first.nil? ? create_test_account : Account.first.make_current
+    create_custom_field_dn('custom_card_no_test', 'secure_text')
+    params = ticket_params_hash
+    t = create_ticket(params)
+    t.update_attributes("custom_card_no_test_#{Account.current.id}": 'secret_info')
+    t.save
+    doc = Nokogiri::XML t.to_xml
+    xml_to_hash = doc.to_hash
+    assert_nil xml_to_hash['helpdesk-ticket']['custom_field']['custom_card_no_test']
   end
 end
