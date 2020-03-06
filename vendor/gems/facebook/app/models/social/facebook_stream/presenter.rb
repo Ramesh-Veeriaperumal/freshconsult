@@ -14,10 +14,6 @@ class Social::FacebookStream < Social::Stream
     t.add :facebook_page, template: :central_publish
   end
 
-  def self.central_publish_enabled?
-    Account.current.fb_ad_post_stream_publish_enabled?
-  end
-
   def relationship_with_account
     'facebook_streams'
   end
