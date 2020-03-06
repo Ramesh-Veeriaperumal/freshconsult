@@ -16,7 +16,7 @@
 						<div class="cust-list-avatar">
 							<%= user_avatar(agent.user)%> <!-- class="img-circle" have to add in img tag for circle-->
 						</div>
-						<p class="text-info"><strong><%= link_to(h(agent.user.display_name), agent_path(agent), :class => "item_info") %> </strong><br/><small class="muted"><%= h agent.user.job_title %></small></p>
+						<p class="text-info"><strong><%= link_to(h(agent.user.display_name), agent_path(agent.user), :class => "item_info") %> </strong><br/><small class="muted"><%= h agent.user.job_title %></small></p>
 					</td>
 					<td>
 						<p class="ellipsis"><%= h(agent.user.email) %><br/><%= h(agent.user.phone) %></p>
@@ -36,12 +36,16 @@
           <% end %>
 					<td>
             <% if(params[:state] == "deleted") %>
-              <%= link_to t('agent.restore'), restore_agent_path(agent), :method => 'put', :class => "btn btn-mini"%>
+              <%= link_to t('agent.restore'), restore_agent_path(agent.user), :method => 'put', :class => "btn btn-mini"%>
             <% else %>
               <% if can_edit?(agent) %>
-                  	<%= link_to t('edit'), edit_agent_path(agent), :class => "btn btn-mini" %>
+			  		<% if current_account.emberize_agent_form_enabled? %>
+                  		<button data-route="helpdesk.admin.agents.edit" data-dynamic-segments="<%= [agent.user.id].to_json %>" class="btn btn-mini agent-ember-routes-btn"> <%=t('edit')%> </button>
+					 <% else %>
+						<%= link_to t('edit'), edit_agent_path(agent.user), :class => "btn btn-mini" %>
+					<% end %>
                   	<% if(current_user != agent.user) %>
-						<%= link_to t('agent.info4'), { :action => :convert_to_contact, :id => agent.id } ,:method => 'put' ,:id => "agent_convert_id_"+agent.id.to_s , :class => "hide"%>
+						<%= link_to t('agent.info4'), { :action => :convert_to_contact, :id => agent.user.id } ,:method => 'put' ,:id => "agent_convert_id_"+agent.id.to_s , :class => "hide"%>
 						 
 				 		<a href="#agent-deletion-confirmation" 
 			 				rel="freshdialog"

@@ -41,7 +41,7 @@
 			<p class="info-text left"><%= t('no_badge_achieved_label') %></p>
 		<% end %>
         <% if privilege?(:manage_users)%>
-			<%= link_to t("reset"), { :action => :reset_score, :id => @agent.id } ,:method => 'put', :id => "agent_score_reset" , :class => "hide" %>
+			<%= link_to t("reset"), { :action => :reset_score, :id => @user.id } ,:method => 'put', :id => "agent_score_reset" , :class => "hide" %>
 			<a href='#agent-gamification-reset'
 				id="scoreboard_start_over"
 				rel="freshdialog"
@@ -65,7 +65,11 @@
       		<div id="reset_password_template" >
       			<%= render :partial=> "reset_password" %>
       		</div>
-          <%= link_to t('edit_agent'), edit_agent_path(@agent) %>
+		   	<% if current_account.emberize_agent_form_enabled? %>
+                <a role="button" data-route="helpdesk.admin.agents.edit" data-dynamic-segments="<%= [@user.id].to_json %>" class="agent-ember-routes-btn disable-container" > <%=t('edit_agent')%> </a>
+			<% else %>
+         		<%= link_to t('edit_agent'), edit_agent_path(@user) %>
+			<% end %>
           <% if(@agent.user != current_user)%>
 						<%= link_to t('agent.info4'), { :action => :convert_to_contact, :id => @agent.user.id } ,:method => 'put', :id => "agent_contact_convert" , :class => "hide" %>
 						<a href="#agent-deletion-confirmation"

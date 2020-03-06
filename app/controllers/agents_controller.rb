@@ -15,8 +15,8 @@ class AgentsController < ApplicationController
   skip_before_filter :check_account_state, :only => :destroy
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:info_for_node]
   
-  before_filter :load_object, :only => [:update, :destroy, :restore, :edit, :reset_password, 
-    :convert_to_contact, :reset_score, :api_key] 
+  before_filter :load_object, only: [:show, :update, :destroy, :restore, :edit,
+    :reset_password, :convert_to_contact, :reset_score, :api_key, :toggle_shortcuts]
   before_filter :sanitize_params, only: [:create, :update]
 
   before_filter :ssl_check, :can_assume_identity, :only => [:api_key] 
@@ -38,7 +38,8 @@ class AgentsController < ApplicationController
   before_filter :access_denied, only: :reset_password, if: :freshid_integration_enabled?
 
   def load_object
-    @agent = scoper.find(params[:id])
+    @user = scoper.find(params[:id])
+    @agent = @user.agent
     @scoreboard_levels = current_account.scoreboard_levels.level_up_for @agent.level
   end
 
@@ -67,13 +68,14 @@ class AgentsController < ApplicationController
   end
     
   def index
+    list_scoper = current_account.all_agents
     unless params[:query].blank?
       #for using query string in api calls
-      @agents = scoper.with_conditions(convert_query_to_conditions(params[:query])) 
+      @agents = list_scoper.with_conditions(convert_query_to_conditions(params[:query]))
     else
       state = params[:state] == Agent::FIELD_AGENT ? 'active' : params[:state]
       type =  fetch_agent_type(params[:state])
-      @agents = scoper.filter(type, state, params[:letter], current_agent_order, current_agent_order_type, params[:page])
+      @agents = list_scoper.filter(type, state, params[:letter], current_agent_order, current_agent_order_type, params[:page])
     end
     respond_to do |format|
       format.html #index.html.erb
@@ -86,16 +88,14 @@ class AgentsController < ApplicationController
   end
 
   def show    
-    @agent = current_account.all_agents.find(params[:id])
     respond_to do |format|
       format.html do
-        @user = @agent.user
         @recent_unresolved_tickets = 
                             current_account.tickets.permissible(current_user).assigned_to(@user).unresolved.visible.newest(5)
       end
       format.xml  { render :xml => @agent.to_xml }
       format.json { render :json => @agent.as_json }
-      format.nmobile { render :json => @agent.user.to_mob_json }
+      format.nmobile { render json: @user.to_mob_json }
     end
   end
 
@@ -115,10 +115,10 @@ class AgentsController < ApplicationController
   def edit  
     #@agent.signature_html ||= @agent.signature_value
     @agent_skills = gon.agent_skills = current_account.skill_based_round_robin_enabled? ? 
-    @user.user_skills.preload(:skill).map { |user_skill|
+    @user.user_skills.preload(:skill).map do |user_skill|
       {:id => user_skill.id, :rank => user_skill.rank, 
         :skill_id => user_skill.skill_id, :name => user_skill.skill.name}
-      } : []
+    end : []
     respond_to do |format|
       format.html # edit.html.erb
       format.xml  { render :xml => @agent }
@@ -142,7 +142,6 @@ class AgentsController < ApplicationController
     
 
   def toggle_shortcuts
-    @agent = scoper.find(params[:id])
     @agent.update_attribute(:shortcuts_enabled, !@agent.shortcuts_enabled?)
     render :json => { :shortcuts_enabled => @agent.shortcuts_enabled? }
   end  
@@ -224,7 +223,6 @@ class AgentsController < ApplicationController
     @agent.occasional = params[:agent][:occasional] || false
     #check_agent_limit
     @agent.scoreboard_level_id = params[:agent][:scoreboard_level_id] if gamification_feature?(current_account)
-    @user = current_account.all_users.find(@agent.user_id)
     @agent.freshcaller_enabled = (params[:freshcaller_agent].try(:to_bool) || false)
     # @user = @agent.user
     # @agent.user.attributes = params[:user]
@@ -285,51 +283,49 @@ class AgentsController < ApplicationController
   end
 
   def convert_to_contact
-      user = @agent.user
-      if user.make_customer
-        #current_account subscription state changing from "active" to "Active" after 
-        #user.make_customer, so using downcase to check active customers
-        if current_account.subscription.state.downcase.eql?("active")
-          flash[:notice] = t(:'flash.agents.to_contact_active', :subscription_link => "/subscription").html_safe
-        else
-          flash[:notice] = t(:'flash.agents.to_contact')
-        end
-        user.toggle_ui_preference if user.is_falcon_pref?
-        redirection_url(user)
+    if @user.make_customer
+      # current_account subscription state changing from "active" to "Active" after
+      # user.make_customer, so using downcase to check active customers
+      if current_account.subscription.state.casecmp("active").zero?
+        flash[:notice] = t(:'flash.agents.to_contact_active', subscription_link: '/subscription').html_safe
       else
-        flash[:notice] = t(:'flash.agents.to_contact_failed')
-        redirect_to :back and return
+        flash[:notice] = t(:'flash.agents.to_contact')
       end
+      @user.toggle_ui_preference if @user.is_falcon_pref?
+      redirection_url(@user)
+    else
+      flash[:notice] = t(:'flash.agents.to_contact_failed')
+      redirect_to :back and return
+    end
   end
   
   def destroy    
-    if @agent.user.update_attributes(:deleted => true)    
-       @agent.user.email_notification_agents.destroy_all
-       @restorable = true
-       flash[:notice] = render_to_string(:partial => '/agents/flash/delete_notice')      
-     else
-       flash[:notice] = t(:'flash.general.destroy.failure', :human_name => 'Agent')
-     end
+    if @user.update_attributes(deleted: true)
+      @user.email_notification_agents.destroy_all
+      @restorable = true
+      flash[:notice] = render_to_string(partial: '/agents/flash/delete_notice')
+    else
+      flash[:notice] = t(:'flash.general.destroy.failure', human_name: 'Agent')
+    end
     redirect_to :back
   end
 
  def restore  # Possible dead code(restore)
-   @agent = current_account.all_agents.find(params[:id])
-   if @agent.user.update_attributes(:deleted => false,
+   if @user.update_attributes(:deleted => false,
        :role_ids => [current_account.roles.find_by_name("Agent").id]
     )   
     flash[:notice] = render_to_string(:partial => '/agents/flash/restore_notice')
    else
-    logger.info "Errors in agent restore :: #{@agent.user.errors.full_messages}" 
-    flash[:notice] = t(:'flash.general.restore.failure', :human_name => 'Agent')
+     logger.info "Errors in agent restore :: #{@user.errors.full_messages}"
+     flash[:notice] = t(:'flash.general.restore.failure', human_name: 'Agent')
    end 
    redirect_to :back  
  end
 
   def reset_password
-    if @agent.user.active?
-      @agent.user.reset_agent_password(current_portal)
-      flash[:notice] = t(:'flash.password_resets.email.reset', :requester => h(@agent.user.email))      
+    if @user.active?
+      @user.reset_agent_password(current_portal)
+      flash[:notice] = t(:'flash.password_resets.email.reset', requester: h(@user.email))
       redirect_to :back
     end
   end
@@ -351,7 +347,7 @@ class AgentsController < ApplicationController
   end
 
   def api_key
-    api_key = {:user_id => @agent.user_id, :api_key => @agent.user.single_access_token}
+    api_key = { user_id: @user.id, api_key: @user.single_access_token }
      respond_to do |format|
           format.html{render_404}
           format.any(:xml, :json) { render request.format.to_sym => api_key }
@@ -378,7 +374,7 @@ class AgentsController < ApplicationController
   def reset_score
     GamificationReset.perform_async({"agent_id" => @agent.id })
     flash[:notice] = I18n.t('gamification.score_reset_successfull')
-    redirect_to agent_path(@agent)
+    redirect_to agent_path(@user)
   end
 
   def export_skill_csv
@@ -391,7 +387,7 @@ class AgentsController < ApplicationController
  protected
  
   def scoper
-     current_account.all_agents
+    current_account.all_technicians
   end
 
   def cname # Possible dead code(cname)
@@ -451,7 +447,7 @@ class AgentsController < ApplicationController
   end
     
   def check_current_user
-    if(current_user == @agent.user)
+    if current_user == @user
       flash[:notice] = t(:'flash.agents.edit.not_allowed')
       redirect_to :back  
     end
@@ -488,7 +484,7 @@ private
   end
 
   def can_assume_identity 
-    unless is_allowed_to_assume?(@agent.user)
+    unless is_allowed_to_assume?(@user)
       error = {:errors => {:message=> t('flash.general.access_denied')} }
         respond_to do |format|
             format.html{render_404}
@@ -542,7 +538,7 @@ private
     if params[:action].eql?('update')
       params[:agent].except!(:user_id, :available, :active_since) # should we expose "available" ?
       params[:user].except!(:helpdesk_agent, :deleted, :active)
-      validate_phone_field_params @agent.user
+      validate_phone_field_params @user
     end
     # remove params[:agent][:occasional] if occasional_agent feature is not enabled
     params[:agent].except!(:occasional) unless current_account.occasional_agent_enabled?
@@ -557,9 +553,7 @@ private
   end
 
   def can_edit_roles_and_permissions # Should be checked after validate_params as params hash is unified in validate_params
-    if(params[:agent][:ticket_permission]  || params[:user][:role_ids]) && (current_user == @agent.user)
-     error_responder(t('agent.cannot_edit_roles'), 'forbidden')
-    end
+    error_responder(t('agent.cannot_edit_roles'), 'forbidden') if (params[:agent][:ticket_permission] || params[:user][:role_ids]) && (current_user == @user)
   end
 
   def check_role_permission
