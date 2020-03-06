@@ -90,20 +90,20 @@ class AgentsControllerTest < ActionController::TestCase
     @user = Account.current.account_managers.first.make_current
     user_agent = add_test_agent(@account)
 
-    get :show, id: user_agent.id
+    get :show, id: user_agent.agent.id
     assert_response 200
 
-    get :show, id: user_agent.id, format: 'json'
+    get :show, id: user_agent.agent.id, format: 'json'
     assert_response 200
     assert JSON.parse(response.body)["agent"]["user"]["name"] == user_agent.name
     assert JSON.parse(response.body)["agent"]["user"]["email"] == user_agent.email
     
-    get :show, id: user_agent.id, format: 'xml'
+    get :show, id: user_agent.agent.id, format: 'xml'
     assert_response 200
     assert response.body.include?(user_agent.name)
     assert response.body.include?(user_agent.email)
 
-    get :show, id: user_agent.id, format: 'nmobile'
+    get :show, id: user_agent.agent.id, format: 'nmobile'
     assert_response 200
     user_agent.destroy
     log_out
@@ -121,7 +121,7 @@ class AgentsControllerTest < ActionController::TestCase
     login_admin
     @user = Account.current.account_managers.first.make_current
     user_agent = add_test_agent(@account)
-    put :edit, id: user_agent.id
+    put :edit, id: user_agent.agent.id
     assert_response 200
     user_agent.destroy
     log_out
@@ -168,7 +168,7 @@ class AgentsControllerTest < ActionController::TestCase
     user_agent = add_test_agent(@account)
 
     # With shortcuts already enabled
-    put :toggle_shortcuts, id: user_agent.id, format: 'json'
+    put :toggle_shortcuts, id: user_agent.agent.id, format: 'json'
     assert_response 200
     assert JSON.parse(response.body)["shortcuts_enabled"] == false
     user_agent.destroy
@@ -177,7 +177,7 @@ class AgentsControllerTest < ActionController::TestCase
     user_agent = add_test_agent(@account)
     agent = Account.current.all_agents.find_by_user_id(user_agent.id)
     agent.update_attribute(:shortcuts_enabled, false)
-    put :toggle_shortcuts, id: user_agent.id, format: 'json'
+    put :toggle_shortcuts, id: user_agent.agent.id, format: 'json'
     assert_response 200
     assert JSON.parse(response.body)["shortcuts_enabled"] == true
     user_agent.destroy
@@ -364,10 +364,10 @@ class AgentsControllerTest < ActionController::TestCase
     subscription.state = 'active'
     subscription.save
 
-    put :convert_to_contact, id: agent.id
+    delete :destroy, construct_params(id: agent.id)
     assert_equal get_others_redis_key(key).to_i, Account.current.full_time_support_agents.count
 
-    post :create, user: params_hash
+    post :create, construct_params(params_hash)
     assert_response 302
     assert_equal get_others_redis_key(key).to_i, Account.current.full_time_support_agents.count
     assert_equal subscription.agent_limit, Account.current.full_time_support_agents.count
@@ -417,11 +417,11 @@ class AgentsControllerTest < ActionController::TestCase
     user = add_test_agent(@account)
     role_id = Account.current.roles.find_by_name("Agent").id
     Account.current.stubs(:skill_based_round_robin_enabled?).returns(true)
-    post :update, id: user.id, user: { role_ids: role_id, group_ids: Account.current.groups.first.id }
+    post :update, id: user.agent.id, user: { role_ids: role_id, group_ids: Account.current.groups.first.id}
     assert_response 200
 
     Agent.any_instance.stubs(:update_attributes).returns(false)
-    post :update, id: user.id
+    post :update, id: user.agent.id
     assert_response 200
     Agent.any_instance.unstub(:update_attributes)
     Account.current.unstub(:skill_based_round_robin_enabled?)
@@ -435,7 +435,7 @@ class AgentsControllerTest < ActionController::TestCase
 
     # Success case
     user_agent = add_test_agent(@account)
-    put :destroy, id: user_agent.id
+    put :destroy, id: user_agent.agent.id
     assert_response 302
     assert flash[:notice].include? "The agent has been deleted"
     user_agent.destroy
@@ -443,7 +443,7 @@ class AgentsControllerTest < ActionController::TestCase
     # Failure case
     User.any_instance.stubs(:update_attributes).returns(false)
     user_agent = add_test_agent(@account)
-    put :destroy, id: user_agent.id
+    put :destroy, id: user_agent.agent.id
     assert_response 302
     assert_equal flash[:notice], "The Agent could not be deleted"
     User.any_instance.unstub(:update_attributes)
@@ -457,7 +457,7 @@ class AgentsControllerTest < ActionController::TestCase
     @user = Account.current.account_managers.first.make_current
     user_agent = add_test_agent(@account)
 
-    put :convert_to_contact, id: user_agent.id
+    put :convert_to_contact, id: user_agent.agent.id
     assert_equal flash[:notice], I18n.t(:'flash.agents.to_contact'), "The agent has been successfully converted to a Contact"
     assert_response 302
     user_agent.destroy
@@ -466,7 +466,7 @@ class AgentsControllerTest < ActionController::TestCase
     acc_subscription.state = "active"
     acc_subscription.save!
     user_agent = add_test_agent(@account)
-    put :convert_to_contact, id: user_agent.id
+    put :convert_to_contact, id: user_agent.agent.id
     assert_equal flash[:notice], I18n.t(:'flash.agents.to_contact_active', :subscription_link => "/subscription"), "Please <a href = '/subscription'>update</a> billing information to reflect this change."
     assert_response 302
 
@@ -476,7 +476,7 @@ class AgentsControllerTest < ActionController::TestCase
 
     User.any_instance.stubs(:make_customer).returns(false)
     user_agent = add_test_agent(@account)
-    put :convert_to_contact, id: user_agent.id
+    put :convert_to_contact, id: user_agent.agent.id
     assert_equal flash[:notice], I18n.t(:'flash.agents.to_contact_failed'), "The agent could not be converted to a Contact"
     assert_response 302
     User.any_instance.unstub
@@ -486,7 +486,7 @@ class AgentsControllerTest < ActionController::TestCase
     user_agent.deleted = 1
     user_agent.save
 
-    put :convert_to_contact, id: user_agent.id
+    put :convert_to_contact, id: user_agent.agent.id
     assert_equal flash[:notice], I18n.t(:'flash.agents.edit.not_allowed'), "You cannot edit this agent"
     assert_response 302
     user_agent.destroy
@@ -506,7 +506,7 @@ class AgentsControllerTest < ActionController::TestCase
     user_agent = add_test_agent(@account)
     user_agent.deleted = 1
     user_agent.save
-    put :restore, id: user_agent.id
+    put :restore, id: user_agent.agent.id
     assert_response 302
 
     subscription = Account.current.subscription
@@ -517,14 +517,14 @@ class AgentsControllerTest < ActionController::TestCase
     user_agent = add_test_agent(@account)
     user_agent.deleted = 1
     user_agent.save
-    put :restore, id: user_agent.id
+    put :restore, id: user_agent.agent.id
     assert_equal flash[:notice], "The agent has been restored  \n"
     assert_response 302
     user_agent.destroy
 
     User.any_instance.stubs(:update_attributes).returns(false)
     user_agent = add_test_agent(@account)
-    put :restore, id: user_agent.id
+    put :restore, id: user_agent.agent.id
     assert_response 302
     assert_equal flash[:notice], "The Agent could not be restored"
     User.any_instance.unstub(:update_attributes)
@@ -537,14 +537,14 @@ class AgentsControllerTest < ActionController::TestCase
     @user = Account.current.account_managers.first.make_current
     user_agent = add_test_agent(@account)
     notify_string = "A reset mail with instructions has been sent to #{user_agent.email}."
-    put :reset_password, id: user_agent.id
+    put :reset_password, id: user_agent.agent.id
     assert_response 302
     assert_equal flash[:notice], notify_string
     user_agent.destroy
 
     User.any_instance.stubs(:can_edit_agent?).returns(false)
     user_agent = add_test_agent(@account)
-    put :reset_password, id: user_agent.id
+    put :reset_password, id: user_agent.agent.id
     assert_response 302
     assert flash[:notice], 'You cannot edit this agent'
     User.any_instance.unstub(:can_edit_agent?)
@@ -556,7 +556,7 @@ class AgentsControllerTest < ActionController::TestCase
 
     user_agent = add_test_agent(@account)
     Account.current.stubs(:freshid_enabled?).returns(:true)
-    put :reset_password, id: user_agent.id
+    put :reset_password, id: user_agent.agent.id
     assert_response 302
     assert flash[:notice], 'You are not allowed to access this page!'
     Account.current.unstub(:freshid_enabled?)
@@ -568,14 +568,14 @@ class AgentsControllerTest < ActionController::TestCase
     login_admin
     @user = Account.current.account_managers.first.make_current
     user_agent = add_test_agent(@account)
-    put :reset_score, id: user_agent.id
+    put :reset_score, id: user_agent.agent.id
     assert_response 302
     assert_equal flash[:notice], "Please wait while we reset the arcade points. This might take a few minutes."
     user_agent.destroy
 
     User.any_instance.stubs(:can_edit_agent?).returns(false)
     user_agent = add_test_agent(@account)
-    put :reset_score, id: user_agent.id
+    put :reset_score, id: user_agent.agent.id
     assert_response 302
     assert flash[:notice], "You cannot edit this agent"
     User.any_instance.unstub(:can_edit_agent?)
@@ -652,7 +652,7 @@ class AgentsControllerTest < ActionController::TestCase
     agent = add_test_agent(@account, {role: agent_role_id})
     login_as(admin)
     acc_admin_role_id = Account.current.roles.account_admin.first.id
-    put :update, id: agent.id, user: { 'name' => Faker::Name.name, 'role_ids' => [acc_admin_role_id] }
+    put :update, id: agent.agent.id, user: { 'name' => Faker::Name.name, 'role_ids' => [acc_admin_role_id] }
     assert flash[:notice], "You are not allowed to perform this action"
   ensure
     agent.destroy
@@ -667,7 +667,7 @@ class AgentsControllerTest < ActionController::TestCase
     role_id = Account.current.roles.find_by_name('Agent').id
     Account.any_instance.stubs(:freshid_integration_enabled?).returns(true)
     Account.any_instance.stubs(:allow_update_agent_enabled?).returns(false)
-    put :update, id: user.id, user: { 'name' => Faker::Name.name }
+    put :update, id: user.agent.id, user: { 'name' => Faker::Name.name }
     assert_response 403
   ensure
     Account.any_instance.unstub(:freshid_integration_enabled?)
@@ -683,7 +683,7 @@ class AgentsControllerTest < ActionController::TestCase
     role_id = Account.current.roles.find_by_name('Agent').id
     Account.any_instance.stubs(:freshid_integration_enabled?).returns(true)
     Account.any_instance.stubs(:allow_update_agent_enabled?).returns(true)
-    put :update, id: user.id, user: { 'name' => Faker::Name.name }
+    put :update, id: user.agent.id, user: { 'name' => Faker::Name.name }
     assert_response 200
   ensure
     Account.any_instance.unstub(:freshid_integration_enabled?)
@@ -700,7 +700,7 @@ class AgentsControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:freshid_enabled?).returns(true)
     @controller.stubs(:freshid_user_details).returns(user)
     User.any_instance.stubs(:email_id_changed?).returns(false)
-    put :update, id: user.id, user: { 'email' => Faker::Internet.email }
+    put :update, id: user.agent.id, user: { 'email' => Faker::Internet.email }
     assert_response 200
   ensure
     Account.any_instance.unstub(:freshid_enabled?)
@@ -717,7 +717,7 @@ class AgentsControllerTest < ActionController::TestCase
     role_id = Account.current.roles.find_by_name('Agent').id
     Account.any_instance.stubs(:freshid_enabled?).returns(true)
     @controller.stubs(:freshid_user_details).returns(user)
-    put :update, id: user.id, user: { 'email' => Faker::Internet.email, 'name' => Faker::Name.name }
+    put :update, id: user.agent.id, user: { 'email' => Faker::Internet.email, 'name' => Faker::Name.name }
     assert_response 403
   ensure
     Account.any_instance.unstub(:freshid_enabled?)
@@ -734,7 +734,7 @@ class AgentsControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:freshid_enabled?).returns(true)
     User.any_instance.stubs(:email_id_changed?).returns(false)
     @controller.stubs(:freshid_user_details).returns(nil)
-    put :update, id: user.id, user: { 'email' => Faker::Internet.email, 'name' => Faker::Name.name }
+    put :update, id: user.agent.id, user: { 'email' => Faker::Internet.email, 'name' => Faker::Name.name }
     assert_response 200
   ensure
     Account.any_instance.unstub(:freshid_enabled?)
