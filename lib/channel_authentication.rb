@@ -9,7 +9,8 @@ module ChannelAuthentication
     freshmover: 'freshmover'.freeze,
     sherlock: 'sherlock'.freeze,
     freshchat: 'freshchat'.freeze,
-    facebook: 'facebook'.freeze
+    facebook: 'facebook'.freeze,
+    freshbots: 'freshbots'.freeze,
   }.freeze
 
   def channel_client_authentication

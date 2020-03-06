@@ -530,6 +530,14 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resource :agent_assist, controller: 'ember/agent_assist', only: [:show, :update] do
+      collection do
+        get :request_demo
+        get :bots
+        put :onboard
+      end
+    end
+
     # trial subscriptions
     resources :trial_subscription, controller: 'admin/trial_subscriptions', only: [:create] do
       collection do
@@ -1025,6 +1033,10 @@ Helpkit::Application.routes.draw do
       resources :contacts, controller: 'channel/freshconnect/contacts', only: [:show]
       resources :groups, controller: 'channel/freshconnect/groups', only: [:index]
       resources :agents_groups, controller: 'channel/freshconnect/agents_groups', only: [:index]
+    end
+
+    scope '/freshbots' do
+      resources :groups, controller: 'channel/freshbots/groups', only: [:index]
     end
 
     scope '/freddy' do

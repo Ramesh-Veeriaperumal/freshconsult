@@ -277,6 +277,17 @@ class AccountAdditionalSettings < ActiveRecord::Base
     secret_keys[:rts_account_secret] = EncryptorDecryptor.new(RTSConfig['db_cipher_key']).encrypt(value)
   end
 
+  def agent_assist_config
+    additional_settings[:agent_assist_config]
+  end
+
+  def update_agent_assist_config!(args)
+    additional_settings[:agent_assist_config] ||= {}
+    additional_settings[:agent_assist_config][:domain] = args[:domain] if args.key?(:domain)
+    additional_settings[:agent_assist_config][:email_sent] = args[:email_sent] if args.key?(:email_sent)
+    save!
+  end
+
   private
 
   def update_help_widget_languages

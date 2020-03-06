@@ -1,0 +1,2 @@
+@agent_assist_config.delete(:domain)
+JSON.generate(@agent_assist_config)
