@@ -180,8 +180,7 @@
                 .insertAfter(jQuery("#"+this.id).parents('.control-group'));
           }
       });
-      jQuery(".dynamic_sections").trigger('change');
-      jQuery('[id^="helpdesk_ticket_custom_field_"]').val("").trigger('change');
+      jQuery('.dynamic_sections, [id^="helpdesk_ticket_custom_field_"]:not(".nested_field")').trigger('change');
 
       jQuery('[id^="helpdesk_ticket_custom_field_"][type*="checkbox"]').val(1).trigger('change');
     });
@@ -263,5 +262,8 @@
       <% end %>
     });
 
+    $(window).on('load', function() {
+      $('[id^="helpdesk_ticket_group_"]').trigger('change');
+    });
   })(jQuery);
 <% end %>
