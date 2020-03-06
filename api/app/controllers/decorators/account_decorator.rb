@@ -104,7 +104,7 @@ class AccountDecorator < ApiDecorator
         onboarding_version: acct_additional_settings.additional_settings[:onboarding_version],
         freshdesk_freshsales_bundle: record.account_additional_settings.additional_settings[:freshdesk_freshsales_bundle] || false
       }
-      settings_hash[:field_service_management] = fetch_fsm_settings(acct_additional_settings) if record.field_service_management_enabled? && record.field_agents_can_manage_appointments_setting_enabled?
+      settings_hash[:field_service] = fetch_fsm_settings(acct_additional_settings) if record.field_service_management_enabled? && record.field_agents_can_manage_appointments_setting_enabled?
       settings_hash
     end
 

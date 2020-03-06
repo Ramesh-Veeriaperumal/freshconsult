@@ -198,7 +198,8 @@ class Account < ActiveRecord::Base
   end
 
   def field_agents_can_manage_appointments?
-    fsm_settings = account_additional_settings.additional_settings[:field_service_management]
+    additional_settings = account_additional_settings.additional_settings
+    fsm_settings = additional_settings[:field_service] || additional_settings[:field_service_management]
     return true if fsm_settings.blank?
 
     fsm_settings[:field_agents_can_manage_appointments] != false
