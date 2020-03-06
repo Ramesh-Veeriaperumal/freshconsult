@@ -179,7 +179,7 @@ module AuditLog::AuditLogHelper
             value_arr.push(description_arr)
           end
         end
-        safe_send("write_#{file_format}_data", value_arr, file_path)
+        safe_send("write_#{file_format}_data", sanitize_data(value_arr), file_path)
         value_arr.clear
       end
     end
@@ -204,6 +204,11 @@ module AuditLog::AuditLogHelper
     def xls_erb(file_name)
       erb_file_path = format(AuditLogConstants::ERB_PATH, file_name: file_name)
       ERB.new(File.read(erb_file_path))
+    end
+
+    def sanitize_data(value_arr)
+      # To avoid formula execution in Excel - Removing any preceding =,+,- in any field
+      value_arr.map { |value| value && value.is_a?(String) ? value.to_s.gsub(/^[@=+-]*/, '') : value }
     end
 
     def format_description_array(description_arr, value)
