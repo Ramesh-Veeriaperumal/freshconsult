@@ -17,6 +17,9 @@ class Helpdesk::Approval < ActiveRecord::Base
     in: [Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review], Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved], Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:rejected]]
   }, presence: true
 
+
+  after_commit :trigger_callback
+
   scope :solution_approvals, conditions: { approvable_type: 'Solution::Article' }
 
   def in_review?
@@ -42,5 +45,18 @@ class Helpdesk::Approval < ActiveRecord::Base
 
   def approver?(user_id)
     approver_mappings.where(approver_id: user_id).present?
+  end
+
+  def trigger_callback
+    action = transaction_include_action?(:create) ? 'create' : transaction_include_action?(:destroy) ? 'destroy' : 'update'
+    begin
+      model_class = self.approvable_type.constantize
+      record = model_class.where(account_id: Account.current.id, id: self.approvable_id).first
+      if record
+        record.safe_send('approval_callback', action, self) if model_class.method_defined?('approval_callback')
+      end
+    rescue StandardError => e
+      Rails.logger.error "Error while triggering callback  #{action} on #{model_class} #{e}"
+    end
   end
 end

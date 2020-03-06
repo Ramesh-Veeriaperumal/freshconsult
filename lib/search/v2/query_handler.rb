@@ -30,7 +30,6 @@ module Search
           template_name = Search::Utils.get_template_id(@search_context, @exact_match, @locale)
           paginate_params = { page: @current_page.to_i, from: @offset }
           request_id = @es_params.delete(:request_id)
-
           @records = SearchService::Client.new(@account_id).query(
             SearchService::Utils.construct_payload(@searchable_types, template_name, @es_params, @locale),
             request_id,

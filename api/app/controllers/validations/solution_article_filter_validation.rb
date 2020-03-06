@@ -9,7 +9,7 @@ class SolutionArticleFilterValidation < FilterValidation
   validates :portal_id, required: true, data_type: { rules: String, allow_nil: false }, if: :filter_actions
   validates :term, data_type: { rules: String }, on: :filter
 
-  validates :status, custom_inclusion: { in: Solution::ArticleFilterScoper::STATUS_FILTER_BY_KEY.keys, ignore_string: :allow_string_param }, if: :filter_actions
+  validates :status, custom_inclusion: { in: proc { |x| x.allowed_statuses }, ignore_string: :allow_string_param }, if: :filter_actions
   validates :approver, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }, if: :filter_actions
   validate  :approver_without_status?, if: :filter_actions
   validates :author, custom_numericality: { only_integer: true, greater_than: -2, ignore_string: :allow_string_param }, if: :filter_export_actions
@@ -40,6 +40,13 @@ class SolutionArticleFilterValidation < FilterValidation
     SolutionConstants::INSERT_SOLUTION_ACTIONS.include?(@request_params[:action])
   end
 
+  def allowed_statuses
+    default_status_keys = [SolutionConstants::STATUS_FILTER_BY_TOKEN[:draft], SolutionConstants::STATUS_FILTER_BY_TOKEN[:published]]
+    default_status_keys.push(SolutionConstants::STATUS_FILTER_BY_TOKEN[:outdated]) if Account.current.multilingual?
+    default_status_keys.push([SolutionConstants::STATUS_FILTER_BY_TOKEN[:in_review], SolutionConstants::STATUS_FILTER_BY_TOKEN[:approved]]) if Account.current.article_approval_workflow_enabled?
+    default_status_keys.flatten
+  end
+
   def date_fields_validation
     {
       start: { data_type: { rules: String, required: true } },
@@ -68,7 +75,7 @@ class SolutionArticleFilterValidation < FilterValidation
 
   def approver_without_status?
     status = @request_params[:status].to_i
-    if ![Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:approved], Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:in_review]].include?(status) && @request_params[:approver].present?
+    if ![SolutionConstants::STATUS_FILTER_BY_TOKEN[:approved], SolutionConstants::STATUS_FILTER_BY_TOKEN[:in_review]].include?(status) && @request_params[:approver].present?
       errors.add(:message, 'to select approver status should be in_review or approved')
       return false
     end
