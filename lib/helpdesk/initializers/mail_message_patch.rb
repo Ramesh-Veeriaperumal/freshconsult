@@ -28,6 +28,21 @@ Mail::Message.class_eval do
       self
     end
 
+  def deliver!
+    inform_interceptors
+    response = ''
+    begin
+      response = delivery_method.deliver!(self)
+    rescue Net::SMTPAuthenticationError => e
+      Rails.logger.info "Net::SMTPAuthenticationError while sending email by deliver! - #{e.message}"
+      update_mailbox_error_type if e.inspect.include?(Email::Mailbox::Constants::SMTP_AUTH_ERROR_CODE)
+    end
+    retry_mail! if response.blank? && oauth_retry?
+    Rails.logger.info "Email successfully relayed to SMTP mail server through deliver!. Response from mail server: #{response.string}" if response.present? && response.class == Net::SMTP::Response
+    inform_observers
+    delivery_method.settings[:return_response] ? response : self
+  end
+
     private
       
 
@@ -57,6 +72,10 @@ Mail::Message.class_eval do
 
       def retry_mail
         self.deliver
+      end
+
+      def retry_mail!
+        self.deliver!
       end
 end
 
