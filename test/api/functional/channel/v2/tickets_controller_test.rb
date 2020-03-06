@@ -705,7 +705,7 @@ module Channel::V2
       tkts << t.reload
       get :index, controller_params(filter: 'deleted')
       pattern = []
-      tkts.each { |tkt| pattern << index_deleted_ticket_pattern(tkt, [:description, :description_text]) }
+      tkts.each { |tkt| pattern << index_deleted_ticket_pattern(tkt) }
       match_json(pattern)
 
       t.update_column(:deleted, false)
@@ -767,7 +767,7 @@ module Channel::V2
       assert_response 200
 
       tkts = Helpdesk::Ticket.where(owner_id: company.id)
-      pattern = tkts.map { |tkt| index_ticket_pattern(tkt, [:description, :description_text]) }
+      pattern = tkts.map { |tkt| index_ticket_pattern(tkt) }
       match_json(pattern)
     ensure
       @channel_v2_api = false
@@ -1012,7 +1012,7 @@ module Channel::V2
       assert_response 200
       param_object = OpenStruct.new
       pattern = []
-      pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
+      pattern.push(index_ticket_pattern_with_associations(t, param_object))
       match_json(pattern)
     ensure
       unstub_requirements_for_stats
@@ -1026,7 +1026,7 @@ module Channel::V2
       assert_response 200
       param_object = OpenStruct.new
       pattern = []
-      pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
+      pattern.push(index_ticket_pattern_with_associations(t, param_object))
       match_json(pattern)
     ensure
       unstub_requirements_for_stats
@@ -1067,7 +1067,7 @@ module Channel::V2
       assert_response 200
       param_object = OpenStruct.new
       pattern = []
-      pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
+      pattern.push(index_ticket_pattern_with_associations(t, param_object))
       match_json(pattern)
     ensure
       unstub_requirements_for_stats
@@ -1082,8 +1082,8 @@ module Channel::V2
       assert_response 200
       param_object = OpenStruct.new
       pattern = []
-      pattern.push(index_ticket_pattern_with_associations(t_2, param_object, [:description, :description_text]))
-      pattern.push(index_ticket_pattern_with_associations(t_1, param_object, [:description, :description_text]))
+      pattern.push(index_ticket_pattern_with_associations(t_2, param_object))
+      pattern.push(index_ticket_pattern_with_associations(t_1, param_object))
       match_json(pattern)
     ensure
       unstub_requirements_for_stats
@@ -1098,8 +1098,8 @@ module Channel::V2
       assert_response 200
       param_object = OpenStruct.new(:stats => true)
       pattern = []
-      pattern.push(index_ticket_pattern_with_associations(t_1, param_object, [:description, :description_text]))
-      pattern.push(index_ticket_pattern_with_associations(t_2, param_object, [:description, :description_text]))
+      pattern.push(index_ticket_pattern_with_associations(t_1, param_object))
+      pattern.push(index_ticket_pattern_with_associations(t_2, param_object))
       match_json(pattern)
     ensure
       unstub_requirements_for_stats
@@ -1113,7 +1113,7 @@ module Channel::V2
       assert_response 200
       param_object = OpenStruct.new(:stats => true)
       pattern = []
-      pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
+      pattern.push(index_ticket_pattern_with_associations(t, param_object))
       match_json(pattern)
     ensure
       unstub_requirements_for_stats
@@ -1133,7 +1133,7 @@ module Channel::V2
       assert_response 200
       param_object = OpenStruct.new(:stats => true)
       pattern = []
-      pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
+      pattern.push(index_ticket_pattern_with_associations(t, param_object))
       match_json(pattern)
     ensure
       unstub_requirements_for_stats
