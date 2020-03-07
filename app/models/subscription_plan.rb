@@ -97,10 +97,6 @@ class SubscriptionPlan < ActiveRecord::Base
     SUBSCRIPTION_PLANS[:sprout_classic] => { }
   }
 
-  JAN_2017_PLAN_NAMES = [
-    'Sprout Jan 17', 'Blossom Jan 17', 'Garden Jan 17', 'Estate Jan 17', 'Forest Jan 17'
-  ].freeze
-
   JAN_2019_PLAN_NAMES = [
     'Sprout Jan 19', 'Blossom Jan 19', 'Garden Jan 19', 'Estate Jan 19',
     'Garden Omni Jan 19', 'Estate Omni Jan 19', 'Forest Jan 19'
@@ -109,10 +105,6 @@ class SubscriptionPlan < ActiveRecord::Base
   JAN_2020_PLAN_NAMES = [
     'Sprout Jan 20', 'Blossom Jan 20', 'Garden Jan 20', 'Estate Jan 20',
     'Garden Omni Jan 20', 'Estate Omni Jan 20', 'Forest Jan 20', 'Forest Omni Jan 20'
-  ].freeze
-
-  PLAN_NAMES_BEFORE_2017_AND_NOT_GRAND_PARENT = [
-    'Sprout', 'Blossom', 'Garden', 'Estate', 'Forest'
   ].freeze
 
   OMNI_PLANS = [

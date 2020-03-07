@@ -12,47 +12,6 @@ module SubscriptionsHelper
     "forestomni_channel_option" => ["co_browsing", "multilingual_chat", "holiday_routing"]
   }
 
-  PLANS_FEATURES_LOSS = {
-    "blossom" => ["time_event_automation_desc", "sla_reminders" , "custom_fields_desc", "multiple_mailbox_desc"],
-    "garden" => ["multiple_sla_business_desc", "forums_desc"],
-    "estate" => ["multiple_products_desc", "portal_customization_desc", "custom_ssl_desc", "enterprise_reports_desc"],
-    "forest" => ["whitelisted_ip_desc", "custom_mailbox_desc", "advanced_phone_desc"],
-
-    "blossom jan 17" => ["time_event_automation_desc", "sla_reminders", "custom_fields_desc", "multiple_mailbox_desc", "adv_social_desc"],
-    "garden jan 17" => ["multilingual_kbase_desc", "live_chat_desc", "forums_desc", "custom_survey_desc", "ticket_templates"],
-    "estate jan 17" => ["multiple_products_desc", "multiple_sla_business_desc", "portal_customization_desc", "custom_ssl_desc", "enterprise_reports_desc", "custom_dashboard"],
-    "forest jan 17" => ["whitelisted_ip_desc", "skill_based_assignment_desc", "custom_mailbox_desc", "advanced_phone_desc"]
-  }
-
-
-  PLANS_FEATURES_LOSS_2019 = {
-    "blossom" => ["time_event_automation_desc", "sla_reminders", "agent_group_pf_report", "agent_scope_desc", "business_hours_desc", "sla_desc", "custom_fields_desc", "multiple_mailbox_desc", "forums_desc", "gamification_desc"],
-    "garden" => ["agent_group_pf_report", "sla_reminders_desc", "multiple_sla_business_desc", "forums_desc", "multiple_languages_desc", "multiple_products_desc", "multiple_timezones_desc"],
-    "estate" => ["multiple_products_desc", "portal_customization_desc", "custom_ssl_desc", "enterprise_reports_desc", "multiple_sla_business_desc"],
-    "forest" => ["whitelisted_ip_desc", "advanced_phone_desc", "ip_restriction"],
-
-    "blossom jan 17" => ["time_event_automation_desc", "sla_reminders", "agent_performance_report_desc", "agent_scope_desc", "business_hours_desc", "custom_fields_desc", "multiple_mailbox_desc", "adv_social_desc", "custom_apps_desc"],
-    "garden jan 17" => ["multilingual_kbase_desc", "live_chat_desc", "forums_desc", "custom_survey_desc", "parent_child_desc"],
-    "estate jan 17" => ["multiple_products_desc", "multiple_sla_business_desc", "portal_customization_desc", "custom_ssl_desc", "enterprise_reports_desc", "custom_dashboard_desc"],
-    "forest jan 17" => ["whitelisted_ip_desc", "skill_based_assignment_desc", "sandbox_desc"],
-
-    "blossom jan 19" => ["multiple_mailboxes_desc", "app_gallery_desc",
-      "time_event_automation_desc", "custom_domain_desc",
-      "helpdesk_report_desc", "custom_ticket_fields_and_views_desc",
-      "agent_collision_desc"],
-    "garden jan 19" => ["multilingual_kbase_desc", "dynamic_email_alert_desc", "ticket_templates_desc",
-      "sla_reminders_desc", "forums_desc", "agent_performance_report_desc", "satisfaction_survey_desc",
-      "scheduled_reports_desc", "custom_surveys_desc", "custom_apps_desc", "timesheets_desc", "chat_faq", "chat_message", "ivr", "masking_recording", "customer_journey_desc"],
-    "estate jan 19" => ["multiple_products_desc", "multiple_sla_business_desc", "portal_customization_desc",
-                        "custom_ssl_desc", "auto_ticket_assignment_desc", "enterprise_reports_desc", "custom_dashboard_desc", "chatbots", "inapp_chat", "smart_calls", "barging_monitoring", "omni_analytics", "fsm_desc", "custom_translations"],
-    "garden omni jan 19" => ["multilingual_kbase_desc", "dynamic_email_alert_desc",
-      "sla_reminders_desc", "forums_desc", "agent_performance_report_desc",
-      "scheduled_reports_desc", "custom_surveys_desc", "custom_apps_desc", "timesheets_desc", "co_browsing", "customer_journey_desc"],
-    "estate omni jan 19" => ["multiple_products_desc", "multiple_sla_business_desc", "portal_customization_desc",
-      "custom_ssl_desc", "auto_ticket_assignment_desc", "enterprise_reports_desc", "custom_dashboard_desc"],   
-    "forest jan 19" => ["skill_based_assignment_desc", "sandbox_desc", "whitelisted_ip_desc", "co_browsing", "multilingual_chat", "omni_routing"]
-  }
-
   PLAN_RANKING = {
     "free" => 0,
     
@@ -97,26 +56,8 @@ module SubscriptionsHelper
     'forest omni jan 20' => 5
   }
 
-  EQUAL_PLAN_HASH = {
-    "sprout jan 17" => {:type_flag => 0, :features => ["time_event_automation_desc", "sla_reminders" , "shared_ticket_views_desc", "custom_fields_desc", "custom_ticket_views_desc", "cname_dkim_desc", "multiple_mailbox_desc"]},
-    "blossom jan 17" => {:type_flag => 0, :features => ["forums_desc"]},
-    "garden jan 17" => {:type_flag => 0, :features => ["multiple_products_desc", "multiple_sla_business_desc"]},
-    "estate jan 17" => {:type_flag => 2, :features => []},
-    "forest jan 17" => {:type_flag => 2, :features => []},
-
-    "sprout jan 19" => {:type_flag => 0, :features => ["scenario_automations_desc", "custom_tabel_view_desc", "sla_desc", "business_hours_desc", "agent_scope_desc", "agent_group_pf_report"]},
-    "blossom jan 19" => {:type_flag => 0, :features => ["sla_reminders_desc", "agent_group_pf_report", "timesheets_desc", "canned_forms_desc", "custom_apps_desc", "customer_360_desc"]},
-    "garden jan 19" => {:type_flag => 0, :features => ["parent_child_desc"]},
-    "estate jan 19" => {:type_flag => 2, :features => []},
-    "garden omni jan 19" => {:type_flag => 0, :features => ["parent_child_desc"]},
-    "estate omni jan 19" => {:type_flag => 2, :features => ["scenario_automations_desc"]},
-    'forest jan 19' => { type_flag: 2, features: [] }
-  }
 
   NEW_SPROUT = ['Sprout Jan 17', 'Sprout Jan 19', 'Sprout Jan 20'].freeze
-
-  OMNI_PLANS_SERIES = SubscriptionPlan::JAN_2019_PLAN_NAMES.reject { |name| SubscriptionPlan::OMNI_TO_BASIC_PLAN_MAP.key(name) }
-  NON_OMNI_PLANS_SERIES = SubscriptionPlan::JAN_2019_PLAN_NAMES.reject { |name| SubscriptionPlan::BASIC_PLAN_TO_OMNI_MAP.key(name) }
 
   def get_payment_string(period,amount)
     amount = format_amount(amount, current_account.currency_name)
@@ -291,27 +232,6 @@ module SubscriptionsHelper
       SubscriptionPlan.previous_plans.pluck(:name)
     else
       SubscriptionPlan.current.pluck(:name)
-    end
-  end
-
-  def get_plan_names(account_subscription_plan)
-    plan_name = account_subscription_plan.name
-    if SubscriptionPlan::PLAN_NAMES_BEFORE_2017_AND_NOT_GRAND_PARENT.include?(plan_name)
-      SubscriptionPlan::PLAN_NAMES_BEFORE_2017_AND_NOT_GRAND_PARENT
-    elsif SubscriptionPlan::JAN_2017_PLAN_NAMES.include?(plan_name)
-      SubscriptionPlan::JAN_2017_PLAN_NAMES
-    elsif SubscriptionPlan::BASIC_PLAN_TO_OMNI_MAP.key(plan_name).present?
-      OMNI_PLANS_SERIES
-    else
-      NON_OMNI_PLANS_SERIES
-    end
-  end
-
-  def losing_features(plan_name, account)
-    if account.new_2020_pricing_enabled?
-      PLANS_FEATURES_LOSS_2019["#{plan_name.downcase}"]
-    else
-      PLANS_FEATURES_LOSS_2019["#{plan_name.downcase}"]
     end
   end
 

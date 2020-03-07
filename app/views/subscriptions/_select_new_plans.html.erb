@@ -202,7 +202,7 @@
                                   :downgrade_msg => t('downgrade_to_sprout_v2', :current_plan => current_account.subscription.subscription_plan.display_name, :new_plan => plan.display_name ).html_safe,
                                   :current_plan_name => current_account.subscription.subscription_plan.display_name.upcase,
                                   :current_plan => current_plan_name,
-                                  :new_plan => plan.name.downcase
+                                  :plan => plan
                                 }
                           %>
                         </div>
@@ -245,7 +245,7 @@
                                   :downgrade_msg => t('downgrade_confirm_v2', :current_plan => current_account.subscription.subscription_plan.display_name, :new_plan => plan.display_name ).html_safe,
                                   :current_plan_name => current_account.subscription.subscription_plan.display_name.upcase,
                                   :current_plan => current_plan_name,
-                                  :new_plan => plan.name.downcase,
+                                  :plan => plan,
                                   :show_omni_warning => show_omni_downgrade
                                 }
                           %>
@@ -264,7 +264,7 @@
                                   :downgrade_msg => t('downgrade_confirm_v2', :current_plan => current_account.subscription.subscription_plan.display_name, :new_plan => plan.display_name ).html_safe,
                                   :current_plan_name => current_account.subscription.subscription_plan.display_name.upcase,
                                   :current_plan => current_plan_name,
-                                  :new_plan => plan.name.downcase,
+                                  :plan => plan,
                                   :show_omni_warning => show_omni_downgrade
                                 }
                           %>
