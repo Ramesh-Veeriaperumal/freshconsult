@@ -20,7 +20,7 @@ class Account < ActiveRecord::Base
   after_update :change_shard_mapping, :update_default_business_hours_time_zone,
                :update_google_domain, :update_route_info, :update_users_time_zone
 
-  after_update :clear_domain_cache, :if => :account_domain_changed?
+  after_update :clear_domain_cache, :update_account_domain_in_chargebee, if: :account_domain_changed?
   after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
   after_update :update_livechat_url_time_zone, :if => :livechat_enabled?
   after_update :update_activity_export, :if => :ticket_activity_export_enabled?
@@ -377,6 +377,10 @@ class Account < ActiveRecord::Base
       else
         Billing::AddSubscriptionToChargebee.perform_async
       end
+    end
+
+    def update_account_domain_in_chargebee
+      subscription.billing.update_customer(id, {})
     end
 
     def build_new_subscription
