@@ -53,6 +53,15 @@ class SubscriptionsControllerTest < ActionController::TestCase
     unstub_chargebee_requests
   end
 
+  def test_subscription_check_slareminder_key_after_signup
+    create_new_account('test1', 'test1@freshdesk.com')
+    update_currency
+    Account.stubs(:current).returns(@account)
+    assert_equal @account.has_feature?(:sla_reminder_automation), true
+  ensure
+    @account.destroy
+  end
+
   def test_handle_agents_when_moving_from_non_paying_plan_without_dp_enabled
     plan_ids = SubscriptionPlan.current.map(&:id)
     stub_chargebee_requests
