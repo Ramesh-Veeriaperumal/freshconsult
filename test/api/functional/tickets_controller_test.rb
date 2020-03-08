@@ -6293,7 +6293,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal payload['oid'], ticket.id
     assert_equal payload['user_id'], User.current.id
     assert_equal payload['uuid'].to_s, uuid
-    assert_equal payload['iss'], 'freshdesk/poduseast'
+    assert_equal payload['iss'], 'fd/poduseast'
     assert_equal payload['scope'], ['custom_card_no_test']
     assert_equal payload['exp'], payload['iat'] + 120
     assert_equal payload['accid'], current_account_id

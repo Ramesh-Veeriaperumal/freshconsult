@@ -9,7 +9,7 @@ class TicketsValidationHelper
         if ticket_field.field_type != TicketFieldsConstants::SECURE_TEXT
           hash[ticket_field.name] = TicketDecorator.display_name(ticket_field.name)
         else
-          hash[ticket_field.name] = '_' + TicketDecorator.display_name(ticket_field.name)
+          hash[ticket_field.name] = PciConstants::PREFIX + TicketDecorator.display_name(ticket_field.name)
         end
       end
     end

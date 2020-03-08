@@ -1,7 +1,9 @@
 module PciConstants
-  ISSUER = 'freshdesk'.freeze
+  ISSUER = 'fd'.freeze
   OBJECT_TYPE = 'ticket'.freeze
   EXPIRY_DURATION = 2.minutes.freeze
+  MAX_TRY = 2
+  PREFIX = '_'.freeze
   ACTION = {
     none: 0,
     read: 1,

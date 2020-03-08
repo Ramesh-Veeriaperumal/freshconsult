@@ -1,3 +1,4 @@
+//= require helpdesk/secure_field.js
 //= require i18n.js
 //= require i18n/translations
 //= require frameworks/plugins/jquery.livequery.js
