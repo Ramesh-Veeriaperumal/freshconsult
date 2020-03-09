@@ -192,6 +192,7 @@
   - 'customer_journey'
   - 'api_rate_limit_garden'
   - 'fsm_option'
+  - 'omni_channel_option_basic'
 :estate jan 20:
   - 'everything_in_garden'
   - 'sla_reminders'
@@ -215,17 +216,6 @@
   - 'hippa_compliance'
   - 'api_rate_limit_forest'
   - 'api_rate_limit_extendable'
-  - 'fsm_option'
-:garden omni jan 20:
-  - 'everything_in_blossom'
-  - 'satisfaction_survey'
-  - 'timesheets'
-  - 'agent_performance_report'
-  - 'ticket_templates'
-  - 'm_k_base'
-  - 'customer_journey'
-  -  'api_rate_limit_garden'
-  - 'omni_channel_option'
   - 'fsm_option'
 :estate omni jan 20:
   - 'everything_in_garden'

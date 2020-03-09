@@ -56,7 +56,7 @@
                     <p class="plan-details plan-feature-list">
                       <% unless SubscriptionsHelper::PLANS_FEATURES["#{plan.name.downcase}"].nil? %>
                         <% SubscriptionsHelper::PLANS_FEATURES["#{plan.name.downcase}"].each do |feature_name| %>
-                          <% if feature_name == "omni_channel_option" %>
+                          <% if feature_name == "omni_channel_option" || feature_name == "omni_channel_option_basic" %>
                             <%= render :partial => "/subscriptions/features/info-box/ocr_info", :locals => { :plan => plan,
                               :feature_name => feature_name }%>
                           <% elsif feature_name == "fsm_option" %>
