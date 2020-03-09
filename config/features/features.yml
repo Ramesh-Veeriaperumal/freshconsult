@@ -380,6 +380,7 @@
       :fb_ad_posts: 375
       :unlimited_multi_product: 376
       :help_widget_article_customisation: 377
+      :pci_compliance_field: 378
 :selectable_features:
   :redis_display_id: true
   :branding: true
