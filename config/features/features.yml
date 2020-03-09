@@ -368,7 +368,7 @@
       :agent_articles_suggest: 363
       :email_articles_suggest: 364
       :botflow: 365
-      :freddy_9: 366
+      :agent_assist: 366
       :freddy_10: 367
       :help_widget: 368
       :help_widget_appearance: 369
@@ -380,7 +380,8 @@
       :fb_ad_posts: 375
       :unlimited_multi_product: 376
       :help_widget_article_customisation: 377
-      :pci_compliance_field: 378
+      :sla_reminder_automation: 378
+      :pci_compliance_field: 379
 :selectable_features:
   :redis_display_id: true
   :branding: true

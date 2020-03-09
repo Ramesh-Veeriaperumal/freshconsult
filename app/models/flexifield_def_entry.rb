@@ -88,13 +88,17 @@ class FlexifieldDefEntry < ActiveRecord::Base
   end
 
   def clear_custom_date_field_cache
+    Rails.logger.info "Clear date field cache for Account - #{account_id}, id - #{id}, colType - #{flexifield_coltype}"
     if self.flexifield_coltype == 'date'
+      Rails.logger.info "Clearing date field cache for Account - #{account_id}"
       Account.current.clear_custom_date_fields_cache
     end
   end
 
   def clear_custom_date_time_field_cache
+    Rails.logger.info "Clear date time field cache for Account - #{account_id}, id - #{id}, colType - #{flexifield_coltype}"
     if self.flexifield_coltype == Helpdesk::TicketField::DATE_TIME_FIELD
+      Rails.logger.info "Clearing date time field cache for Account - #{account_id}"
       Account.current.clear_custom_date_time_fields_cache
     end
   end

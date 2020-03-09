@@ -297,8 +297,7 @@ class Account < ActiveRecord::Base
       agent_group_central_publish: false, custom_fields_search: true,
       update_billing_info: false, allow_billing_info_update: false, tag_central_publish: false,
       archive_tickets_api: false, redis_picklist_id: true, bot_agent_response: false, fluffy: false,
-      scheduling_fsm_dashboard: false, fb_ad_post_permission: false,
-      nested_field_revamp: true, service_worker: false, kbase_mint: true, freshvisual_configs: false,
+      scheduling_fsm_dashboard: false, nested_field_revamp: true, service_worker: false, kbase_mint: true, freshvisual_configs: false,
       freshid_org_v2: false, hide_agent_login: false, office365_adaptive_card: false, helpdesk_tickets_by_product: false, article_es_search_by_filter: false,
       text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
       recalculate_daypass: false, prevent_wc_ticket_create: true, allow_wildcard_ticket_create: false,
@@ -310,9 +309,9 @@ class Account < ActiveRecord::Base
       prevent_lang_detect_for_spam: false, jira_onpremise_reporter: false, support_ticket_rate_limit: false, sidekiq_logs_to_central: false, portal_central_publish: false, encode_emoji_in_solutions: false,
       forums_agent_portal: false, mailbox_google_oauth: false, migrate_euc_pages_to_us: false, agent_collision_revamp: false, topic_editor_with_html: false,
       mailbox_forward_setup: false, remove_image_attachment_meta_data: false, ticket_field_revamp: false, new_timeline_view: false, email_mailbox: true, facebook_admin_ui_revamp: false,
-      detect_lang_from_email_service: false, fb_ad_post_stream_publish: false, sla_policy_revamp: false, freshdesk_freshsales_bundle: false, field_agents_can_manage_appointments_setting: false,
-      fsm_for_garden_plan: false, requester_widget_timeline: false, enable_secure_login_check: false, contact_form_enhancement: false, enable_twitter_requester_fields: true, marketplace_gallery: false,
-      facebook_public_api: false, twitter_public_api: false
+      detect_lang_from_email_service: false, sla_policy_revamp: false, freshdesk_freshsales_bundle: false, field_agents_can_manage_appointments_setting: false,
+      fsm_for_garden_plan: false, fsm_for_blossom_plan: false, requester_widget_timeline: false, enable_secure_login_check: false, contact_form_enhancement: false, enable_twitter_requester_fields: true, marketplace_gallery: false,
+      facebook_public_api: false, twitter_public_api: false, retry_emails: false
     }, :merge
   )
 

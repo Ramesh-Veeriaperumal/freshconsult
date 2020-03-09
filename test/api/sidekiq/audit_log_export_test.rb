@@ -9,7 +9,6 @@ require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 
 class AuditLogExportTest < ActiveSupport::TestCase
   include AccountTestHelper
-
   def setup
     @account = Account.first.present? ? Account.first.make_current : create_test_account
     @account.data_exports.destroy_all

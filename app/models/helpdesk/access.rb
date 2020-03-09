@@ -147,9 +147,10 @@ class Helpdesk::Access < ActiveRecord::Base
   end
 
   scope :all_user_accessible, lambda { |type, user|
-    { :select => "accessible_id, accessible_type, access_type, helpdesk_accesses.account_id",
-      :joins => "#{user_accesses_join(type, user)} #{group_accesses_join(type, user)} #{agent_groups_join}",
-      :conditions => "#{type_conditions(type)} AND (#{user_conditions(user).values.join(' OR ')})"
+    { select: 'accessible_id',
+      joins: "#{user_accesses_join(type, user)} #{group_accesses_join(type, user)} #{agent_groups_join}",
+      conditions: "#{type_conditions(type)} AND (#{user_conditions(user).values.join(' OR ')})",
+      group: 'accessible_id'
     }
   }
 

@@ -28,10 +28,6 @@ class Admin::TrialSubscriptionsController < ApiApplicationController
 
   private
 
-    def launch_party_name
-      TrialSubscription::TRIAL_SUBSCRIPTION_LP_FEATURE
-    end
-
     def constants_class
       :TrialSubscriptionsConstants.to_s.freeze
     end

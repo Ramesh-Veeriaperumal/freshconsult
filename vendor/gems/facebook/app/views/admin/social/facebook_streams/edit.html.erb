@@ -19,9 +19,7 @@
    <h4 class="adm-title"><%= t('admin.social.ticket_rules.title') %></h3>
     <div class="rules-wrapper">
       <div class="head">
-        <% tkt_rule_des = Account.current.fb_ad_post_permission_enabled? ? t('.tke_rule_breif_desc_with_ad_posts') :
-                              t('.tke_rule_breif_desc') %>
-
+        <% tkt_rule_des = t('.tke_rule_breif_desc') %>
         <% if Account.current.facebook_admin_ui_revamp_enabled? %>
           <%= check_box "primary_toggle","switch", { rel: 'toggle', :checked => primary_toggle_state } %>
         <% end %>

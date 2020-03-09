@@ -7,6 +7,7 @@ module Ember
     include GroupHelper
     include TicketTemplateHelper
     include TicketTemplatesTestHelper
+    include AgentHelper
 
     def setup
       super
@@ -55,6 +56,68 @@ module Ember
       match_json(request_error_pattern(:require_feature, feature: 'Ticket Templates'))
       Account.any_instance.unstub(:tkt_templates_enabled?)
       Account.any_instance.unstub(:parent_child_tickets_enabled?)
+    end
+
+    def test_index_with_multiple_groups
+      new_agent = add_agent_to_account(@account, name: Faker::Name.name, active: 1, role: 1)
+      login_as(new_agent.user)
+      # create groups
+      groups = create_groups(Account.current, options = { count: 20 })
+      group_ids = groups.map(&:id)
+
+      # assign group to agent
+      groups.each do |group|
+        Account.current.agent_groups.create(user_id: new_agent.user.id, group_id: group.id)
+      end
+      tts = []
+      25.times do
+        tts << create_tkt_template(name: Faker::Name.name,
+                                   association_type: Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:general],
+                                   account_id: @account.id,
+                                   accessible_attributes: {
+                                     access_type: Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups],
+                                     group_ids: group_ids
+                                   })
+      end
+      get :index, controller_params(version: 'private', type: :prime, filter: :accessible)
+      tt_ids = tts.map(&:id)
+      assert_response 200
+      assert (tts.map(&:id) - JSON.parse(response.body).map { |res| res['id'] }).count.zero?, "Ticket templates count mismatch, Missing templates: #{(tts.map(&:id) - JSON.parse(response.body).map { |res| res['id'] })}"
+    ensure
+      new_agent.destroy
+      groups.map(&:destroy)
+      tts.map(&:destroy)
+    end
+
+    def test_index_with_multiple_groups_higher_than_limit
+      new_agent = add_agent_to_account(@account, name: Faker::Name.name, active: 1, role: 1)
+      login_as(new_agent.user)
+      # create groups
+      groups = create_groups(Account.current, options = { count: 20 })
+      group_ids = groups.map(&:id)
+
+      # assign group to agent
+      groups.each do |group|
+        Account.current.agent_groups.create(user_id: new_agent.user.id, group_id: group.id)
+      end
+      tts = []
+      400.times do
+        tts << create_tkt_template(name: Faker::Name.name,
+                                   association_type: Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:general],
+                                   account_id: @account.id,
+                                   accessible_attributes: {
+                                     access_type: Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups],
+                                     group_ids: group_ids
+                                   })
+      end
+      get :index, controller_params(version: 'private', type: :prime, filter: :accessible)
+      tt_ids = tts.map(&:id)
+      assert_response 200
+      assert !(tts.map(&:id) - JSON.parse(response.body).map { |res| res['id'] }).count.zero?, "Ticket templates count doesn't mismatch"
+    ensure
+      new_agent.destroy
+      groups.map(&:destroy)
+      tts.map(&:destroy)
     end
 
     def test_show_without_parent_child_feature

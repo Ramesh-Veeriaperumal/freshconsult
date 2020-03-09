@@ -9,7 +9,7 @@ module HelpdeskAccessMethods
     {
     	:select => ["*"],
     	:joins 	=> "INNER JOIN (#{Account.current.accesses.all_user_accessible_sql(model, User.current )}) as visible_elements ON
-    							visible_elements.accessible_id = #{table}.id AND visible_elements.account_id = #{table}.account_id",
+    							visible_elements.accessible_id = #{table}.id",
       :conditions => conditions, :include => includes, :limit => size
     }
   end

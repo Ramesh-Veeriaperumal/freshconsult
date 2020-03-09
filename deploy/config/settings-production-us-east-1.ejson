@@ -2166,6 +2166,10 @@
         "facebook": {
           "_auth_type": "jwt",
           "jwt_secret": "EJ[1:B9hXCbomfYJ2asqGMe0HvYl1TJ9lEgqtRiiWgu/nuGk=:Oer3nFz2JZ2pRrDR7AITuOPysQwMgA7c:iRC0as1T2fLs6/nX1Ez0j28JpANxcm4SNIfC+OgTVWRuXgjLPZzBvWu3Rml/iHQw]"
+        },
+        "freshbots": {
+          "_auth_type": "jwt",
+          "jwt_secret": "EJ[1:GubZ0giD/CFZmTrw6pNDYH34XCLk2oGIdGR5Gm6CFUM=:xsHqGHArcEXcOEwrNBN8zD9O1Y9p7Or8:zPKgW7/tXJfjc1IY6l/3l1fdFFxqS7MRdwttcszHIHGUW6+mLVdIIrkziMptpiSDEUJx5g9p4oRx3rI=]"
         }
       },
       "scheduler_client_keys": {
@@ -2332,6 +2336,17 @@
         "agent_articles_suggest": {
           "_url": "https://faqsuggester.prod.freddyproject.com/api/v1/afr/smart_reply",
           "secret": "EJ[1:W5g7a1Oxx0B2JZEoA62q5SwuMFsk7IuhJJMJCGW14zg=:GFdk3TKu6o8kqhV0evn7SmOw9B1zxnXK:XUpcu19JdYZuuIFLqW83QfCqCpBhxLH/x5skhjzqfduHLgZQjd3p3W+xR2jV]"
+        },
+        "agent_assist" :{
+          "_host": "https://admin.freshbots.ai/",
+          "_onboard_url": "https://api.freshbots.ai/rest/api/v1/bots",
+          "client_id": "EJ[1:GubZ0giD/CFZmTrw6pNDYH34XCLk2oGIdGR5Gm6CFUM=:ZhEgJhnvpP7sQPxJqiSM122PDL8xlf15:6gYQYa8QMsLk50zfLh13oBDhQ0Wn3DZuhoeATgH+mHo5LL5SyTgoq8rKesneHAvg7XKBTpXDc54=]",
+          "_product_id": "9193acd017242b1896f97f2272372b3fb29dd8da",
+          "_template_hash": "25e54072a16274aed8f7eeafdd36357f54be179b",
+          "jwt_secret": "EJ[1:GubZ0giD/CFZmTrw6pNDYH34XCLk2oGIdGR5Gm6CFUM=:lpWHwR8QirVl8B8imH6/TmlekP/UxEh0:qDdX3vMgswt48q0g4nQ3CO1owXDD5E7DqbHd/OBSUs4JvU+pOIv5HychM2376qUudDgIH5eQ1w5Oqms=]",
+          "_demo_email": "support@frsshdesk.com",
+          "_timeout": 5,
+          "_onboard_timeout": 5        
         }
       },
       "shift_config": {

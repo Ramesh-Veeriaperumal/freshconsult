@@ -88,7 +88,8 @@ class TicketDecorator < ApiDecorator
   end
 
   def description_hash
-    return false unless private_api? || description_allowed?
+    return false unless description_allowed?
+
     ticket_body = record.ticket_body
     {
       description: ticket_body.description_html,

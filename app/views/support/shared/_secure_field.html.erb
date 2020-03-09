@@ -1,0 +1,10 @@
+<div class="row-fluid">
+	<div id="pci-field" class="pci-field-container">
+    <% if value %>
+		  <input autocomplete="off" disabled class="text span12 secure_field" data-field-name="<%= field_name %>" name="<%= object_name %>[<%= prefix %><%= field_name %>]" type="password" value="<%= value %>" id="<%= field_name %>" />
+    <% else %>
+      <input autocomplete="off" class="text span12 secure_field" data-field-name="<%= field_name %>" name="<%= object_name %>[<%= prefix %><%= field_name %>]" type="text" value="<%= value %>" id="<%= field_name %>" />
+    <% end %>
+    <button type="button" id="pci-overwrite" <%= value.present? ? '' : 'disabled' %> class="ficon-edit fsize-22 pci-edit"></button>
+	</div>
+</div>

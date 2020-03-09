@@ -1,17 +1,7 @@
 module Facebook
   module Oauth
     module Constants
-      PAGE_PERMISSIONS = [
-        "public_profile",
-        "manage_pages",
-        "email",
-        "publish_actions",
-        "publish_pages",
-        "read_page_mailboxes",
-        "pages_messaging"
-      ]
-
-      AD_POST_PERMISSIONS = ['ads_management']
+      PAGE_PERMISSIONS = %w[public_profile manage_pages email publish_actions publish_pages read_page_mailboxes pages_messaging ads_management].freeze
 
       PAGE_TAB_PERMISSIONS = [
         "public_profile",

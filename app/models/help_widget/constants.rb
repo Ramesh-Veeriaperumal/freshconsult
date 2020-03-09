@@ -43,6 +43,11 @@ class HelpWidget < ActiveRecord::Base
     neutral: 2
   }.freeze
 
+  TEXT_COLORS = {
+    white: '#ffffff',
+    black: '#000000'
+  }.freeze
+
   def self.default_settings(product, portal)
     {
       message: product ? I18n.t('help_widget.name', name: product.name) : I18n.t('help_widget.message'),
@@ -70,7 +75,9 @@ class HelpWidget < ActiveRecord::Base
         gradient: GRADIENT_TYPES[:gradient_one],
         pattern: PATTERN_TYPES[:pattern_one],
         theme_color: THEME_COLOR,
-        button_color: portal.try(:preferences).try(:[], :tab_color) || BUTTON_COLOR
+        button_color: portal.try(:preferences).try(:[], :tab_color) || BUTTON_COLOR,
+        theme_text_color: TEXT_COLORS[:white],
+        button_text_color: TEXT_COLORS[:white]
       },
       predictive_support: {
         welcome_message: I18n.t('help_widget.welcome_message'),

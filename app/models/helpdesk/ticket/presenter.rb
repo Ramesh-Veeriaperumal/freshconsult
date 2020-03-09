@@ -1,7 +1,8 @@
 class Helpdesk::Ticket < ActiveRecord::Base
   include RepresentationHelper
   include TicketsNotesHelper
-  FLEXIFIELD_PREFIXES = ['ffs_', 'ff_text', 'ff_int', 'ff_date', 'ff_boolean', 'ff_decimal', 'dn_slt_', 'dn_mlt_'].freeze
+  SECURE_FIELD_PREFIX = Admin::TicketFieldConstants::ENCRYPTED_FIELDS_PREFIX_BY_TYPE[:secure_text].freeze
+  FLEXIFIELD_PREFIXES = (['ffs_', 'ff_text', 'ff_int', 'ff_date', 'ff_boolean', 'ff_decimal', 'dn_slt_', 'dn_mlt_'] | [SECURE_FIELD_PREFIX]).freeze
   REPORT_FIELDS = [:first_assign_by_bhrs, :first_response_id, :first_response_group_id, :first_response_agent_id,
                    :first_assign_agent_id, :first_assign_group_id, :agent_reassigned_count, :group_reassigned_count,
                    :reopened_count, :private_note_count, :public_note_count, :agent_reply_count, :customer_reply_count,
@@ -214,6 +215,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
           end
           custom_field[:choice_id] = picklist_id
         end
+        custom_field[:value] = DONT_CARE_VALUE if field.field_type == TicketFieldsConstants::SECURE_TEXT && custom_field[:value].present?
         arr.push(custom_field)
       rescue Exception => e
         Rails.logger.error("Error while fetching ticket custom field #{field.name} - account #{account.id} - #{e.message} :: #{e.backtrace[0..10].inspect}")
@@ -242,7 +244,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def file_ticket_fields
-    custom_ticket_fields.select { |x| x.field_type == 'custom_file' }
+    custom_ticket_fields.select { |x| x.field_type == 'custom_file' }.map(&:column_name)
   end
 
   def resolution_time_by_chrs
@@ -291,11 +293,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
     flexifield_changes = changes.select { |k, v| k.to_s.starts_with?(*FLEXIFIELD_PREFIXES) }
     return changes if flexifield_changes.blank?
 
-    file_fields = file_ticket_fields.map(&:column_name)
     flexifield_changes.each_pair do |key, val|
-      changes[custom_field_name_mapping[key.to_s]] = file_fields.include?(key.to_s) ? convert_file_field_values(val) : val
+      changes[custom_field_name_mapping[key.to_s]] = convert_value(key, val)
     end
     changes.except(*flexifield_changes.keys)
+  end
+
+  def convert_value(key, val)
+    return convert_file_field_values(val) if file_ticket_fields.include?(key.to_s)
+
+    # Handling seucre field payload
+    return [DONT_CARE_VALUE, DONT_CARE_VALUE] if key.to_s.starts_with?(SECURE_FIELD_PREFIX)
+
+    val
   end
 
   def convert_file_field_values(values)

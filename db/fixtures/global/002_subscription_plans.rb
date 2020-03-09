@@ -164,7 +164,8 @@ def self.plan_price
           'ZAR' => 209.0,
           'GBP' => 11.0,
           'AUD' => 19.0,
-          'BRL' => 39.0
+          'BRL' => 39.0,
+          :FSM => { EUR: 29.0, INR: 1999.0, USD: 39.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0 }
         },
         garden_jan_19: {
           'EUR' => 29.0,
@@ -235,7 +236,8 @@ def self.plan_price
           'ZAR' => 209.0,
           'GBP' => 11.0,
           'AUD' => 19.0,
-          'BRL' => 39.0
+          'BRL' => 39.0,
+          :FSM => { EUR: 29.0, INR: 1999.0, USD: 39.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0 }
         },
         garden_jan_20: {
           'EUR' => 29.0,
@@ -563,11 +565,11 @@ unless Account.current
 
 	estate_addons  = [custom_mailbox, whitelisted_ips, call_center_advanced, skill_based_round_robin, field_service_management]
 	garden_addons  = all_addons + [shared_ownership_toggle, field_service_management] - [multiple_business_hours, custom_domain, custom_slas, custom_surveys, ticket_templates, sandbox]
-	blossom_addons = all_addons + [link_tickets_toggle, parent_child_tickets_toggle] - [ custom_domain, sandbox ]
+  blossom_addons = all_addons + [link_tickets_toggle, parent_child_tickets_toggle, field_service_management] - [custom_domain, sandbox]
 
 	estate_17_addons  = estate_addons + [sandbox]
 	garden_17_addons  = all_addons + [shared_ownership_toggle, field_service_management] - [custom_domain, custom_surveys, ticket_templates, sandbox]
-	blossom_17_addons = all_addons + [link_tickets_toggle, parent_child_tickets_toggle] - [custom_domain, one_contact_multiple_companies, sandbox]
+  blossom_17_addons = all_addons + [link_tickets_toggle, parent_child_tickets_toggle, field_service_management] - [custom_domain, one_contact_multiple_companies, sandbox]
 	sprout_17_addons  = [custom_domain, call_center_advanced]
 
 	estate_jan_19 = estate_17_addons + [fluffy_forest, fluffy_higher_plan1, fluffy_higher_plan2, fluffy_higher_plan3, fluffy_higher_plan4]

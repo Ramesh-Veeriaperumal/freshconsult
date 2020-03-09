@@ -36,6 +36,8 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
 
   before_save :construct_model_changes
 
+  xss_sanitize only: [:value], plain_sanitizer: [:value], if: -> { Account.current.ticket_field_revamp_enabled? }
+
   before_destroy :save_deleted_picklist_info
 
   after_commit :clear_ticket_types_cache

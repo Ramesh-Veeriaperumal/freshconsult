@@ -234,6 +234,42 @@ module ApiSearch
       match_json(results: pattern, total: contacts.size)
     end
 
+    def test_deleted_contacts_returned_for_private_api
+      contact = @account.contacts.first
+      contact_email = contact.email
+      contacts = @account.contacts.select { |x| x.email == contact_email }
+      contact.deleted = true
+      contact.save
+      stub_public_search_response(contacts) do
+        get :index, controller_params({ version: 'private', query: '"email: \'' + contact_email + '\'"' })
+      end
+      assert_response 200
+      response = parse_response @response.body
+      assert response['total'] == 1
+      pattern = contacts.map { |contact| public_search_contact_pattern(contact) }
+      match_json(results: pattern, total: contacts.size)
+    ensure
+      contact.deleted = false
+      contact.save
+    end
+
+    def test_deleted_contacts_not_returned_for_public_api
+      contact = @account.contacts.last
+      contact_email = contact.email
+      contact.deleted = true
+      contact.save
+      contacts = @account.contacts.select { |x| x.email == contact_email }
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"email: \'' + contact_email + '\'"')
+      end
+      assert_response 200
+      response = parse_response @response.body
+      assert response['total'] == 0
+    ensure
+      contact.deleted = false
+      contact.save
+    end
+
     def test_contacts_valid_tag
       contacts = @account.contacts.select { |x| x.tag_names.include?('tag1') || x.tag_names.include?('TAG4') }
       stub_public_search_response(contacts) do

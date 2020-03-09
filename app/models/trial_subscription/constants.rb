@@ -17,5 +17,4 @@ class TrialSubscription < ActiveRecord::Base
     activate: TrialSubscriptionActions::PlanUpgrade,
     cancel: TrialSubscriptionActions::PlanDowngrade
   }.freeze
-  TRIAL_SUBSCRIPTION_LP_FEATURE = :trial_subscription
 end

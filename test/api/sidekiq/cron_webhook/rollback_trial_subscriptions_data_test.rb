@@ -18,7 +18,6 @@ class RollbackTrialSubscriptionsDataTest < ActionView::TestCase
     @account = Account.current
     @user = @account.nil? ? create_test_account : add_new_user(@account)
     @user.make_current
-    Account.current.launch TrialSubscription::TRIAL_SUBSCRIPTION_LP_FEATURE
   end
 
   def get_valid_plan_name

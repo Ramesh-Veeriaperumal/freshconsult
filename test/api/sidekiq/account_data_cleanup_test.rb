@@ -10,6 +10,7 @@ class NewPlanChangeWorkerTest < ActionView::TestCase
   include AccountTestHelper
   include GroupsTestHelper
   include MemcacheKeys
+  include TicketFieldsTestHelper
   def test_round_robin_load_balancing_drop_data
     create_test_account   
     group = @account.groups[0]
@@ -78,5 +79,20 @@ class NewPlanChangeWorkerTest < ActionView::TestCase
       MemcacheKeys.expects(:delete_from_cache).with(format(SITEMAP_KEY, account_id: @account.id, portal_id: @account.main_portal.id)).once
       SAAS::AccountDataCleanup.new(@account, ['sitemap'], 'drop').perform_cleanup
     end
+  end
+
+  def test_ticket_fields_with_archived_fields_drop
+    create_test_account
+    create_dependent_custom_field(%w[test_custom_country test_custom_state test_custom_city])
+    create_custom_field_dropdown('test_custom_dropdown', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
+    # Mark those custom fields as archived
+    @account.ticket_fields.custom_fields.each do |tf|
+      tf.deleted = true
+      tf.save!
+    end
+    SAAS::AccountDataCleanup.new(@account, ['custom_ticket_fields'], 'drop').perform_cleanup
+    assert_equal @account.ticket_fields_with_archived_fields.custom_fields, []
+  ensure
+    @account.ticket_fields_with_archived_fields.custom_fields.each(&:destroy)
   end
 end

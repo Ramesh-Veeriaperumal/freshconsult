@@ -358,6 +358,12 @@ class Solution::Article < ActiveRecord::Base
     relative_url ? relative_link : "#{main_portal.url_protocol}://#{main_portal.host}#{relative_link}"
   end
 
+  # ====Article approval callbacks ======
+  def approval_callback(action, _record)
+    # we are utilizing the update RabbitMq::Publisher line 25.
+    self.publish_update_article_to_rabbitmq unless action === 'destroy'
+  end
+
   private
 
     def queue_quest_job

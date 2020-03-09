@@ -3,12 +3,11 @@ class Account < ActiveRecord::Base
   LP_FEATURES = [
     :select_all, :round_robin_capping, :suggest_tickets, :field_agent_availability,
     :customer_sentiment_ui, :dkim, :dkim_email_service, :scheduled_ticket_export,
-    :ticket_contact_export, :email_failures, :disable_emails,
+    :ticket_contact_export, :email_failures, :disable_emails, :facebook_page_redirect,
     :falcon_portal_theme, :freshid, :freshchat_integration, :allow_huge_ccs,
-    :facebook_page_redirect, :announcements_tab,
-    :ticket_central_publish, :solutions_central_publish,
+    :ticket_central_publish, :company_central_publish, :solutions_central_publish,
     :launch_smart_filter, :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
-    :whitelist_sso_login, :admin_only_mint, :customer_notes_s3,
+    :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :announcements_tab,
     :imap_error_status_check, :va_any_field_without_none, :api_es,
     :encode_emoji, :auto_complete_off, :sandbox_lp, :note_central_publish,
     :dependent_field_validation, :post_central_publish, :encode_emoji_subject,
@@ -17,7 +16,7 @@ class Account < ActiveRecord::Base
     :dashboard_announcement_central_publish, :disable_banners,
     :twitter_handle_publisher, :count_service_es_writes, :count_service_es_reads,
     :sso_login_expiry_limitation, :undo_send, :old_link_back_url_validation, :stop_contacts_count_query,
-    :denormalized_select_for_update, :trial_subscription, :installed_app_publish, :es_tickets,
+    :denormalized_select_for_update, :installed_app_publish, :es_tickets,
     :twitter_dm_outgoing_attachment, :twitter_mention_outgoing_attachment,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
     :onboarding_inlinemanual, :skip_portal_cname_chk,
@@ -28,7 +27,7 @@ class Account < ActiveRecord::Base
     :scheduled_export_fix, :compact_lang_detection,
     :agent_group_central_publish, :custom_fields_search,
     :update_billing_info, :allow_billing_info_update, :tag_central_publish,
-    :native_apps, :archive_tickets_api, :bot_agent_response, :fb_ad_post_permission,
+    :native_apps, :archive_tickets_api, :bot_agent_response,
     :fetch_ticket_from_ref_first, :query_from_singleton, :surveys_central_publish,
     :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp, :service_worker, :kbase_mint,
     :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :bypass_signup_captcha,
@@ -47,10 +46,10 @@ class Account < ActiveRecord::Base
     :prevent_lang_detect_for_spam, :jira_onpremise_reporter, :support_ticket_rate_limit, :sidekiq_logs_to_central, :portal_central_publish, :encode_emoji_in_solutions,
     :forums_agent_portal, :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html,
     :mailbox_forward_setup, :remove_image_attachment_meta_data, :automated_private_notes_notification, :detect_lang_from_email_service,
-    :sane_restricted_helpdesk, :hiding_confidential_logs, :fb_ad_post_stream_publish, :ticket_list_performance, :sla_policy_revamp, :help_widget_log, :freshdesk_freshsales_bundle, :help_widget_article_customisation,
-    :field_agents_can_manage_appointments_setting, :fsm_for_garden_plan, :show_sample_scheduling_dashboard, :requester_widget_timeline,
-    :out_of_office, :enable_secure_login_check, :contact_form_enhancement, :public_api_filter_factory, :enable_twitter_requester_fields, :marketplace_gallery, :solutions_quick_view,
-    :translations_proxy, :translations_cdn, :facebook_public_api, :twitter_public_api, :emberize_agent_form
+    :sane_restricted_helpdesk, :hiding_confidential_logs, :ticket_list_performance, :sla_policy_revamp, :help_widget_log, :freshdesk_freshsales_bundle, :help_widget_article_customisation,
+    :field_agents_can_manage_appointments_setting, :fsm_for_garden_plan, :fsm_for_blossom_plan, :requester_widget_timeline,
+    :out_of_office, :enable_secure_login_check, :contact_form_enhancement, :public_api_filter_factory, :enable_twitter_requester_fields, :marketplace_gallery, :pci_compliance_field, :solutions_quick_view,
+    :translations_proxy, :translations_cdn, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :retry_emails
   ].freeze
 
   DB_FEATURES = [
@@ -87,7 +86,7 @@ class Account < ActiveRecord::Base
     :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters, :supervisor_custom_status, :lbrr_by_omniroute,
     :secure_attachments, :article_versioning, :article_export, :article_approval_workflow, :next_response_sla, :advanced_automations,
     :fb_ad_posts, :suggested_articles_count, :unlimited_multi_product, :solutions_freshconnect,
-    :help_widget_article_customisation, :pci_compliance_field
+    :help_widget_article_customisation, :agent_assist, :sla_reminder_automation, :pci_compliance_field
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -103,7 +102,7 @@ class Account < ActiveRecord::Base
   PODS_FOR_BOT = ['poduseast1'].freeze
 
   PRICING_PLAN_MIGRATION_FEATURES_2020 = [
-    :unlimited_multi_product
+    :unlimited_multi_product, :sla_reminder_automation
   ].to_set.freeze
 
   LP_FEATURES.each do |item|

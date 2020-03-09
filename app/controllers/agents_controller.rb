@@ -115,10 +115,10 @@ class AgentsController < ApplicationController
   def edit  
     #@agent.signature_html ||= @agent.signature_value
     @agent_skills = gon.agent_skills = current_account.skill_based_round_robin_enabled? ? 
-    @user.user_skills.preload(:skill).map { |user_skill|
+    @user.user_skills.preload(:skill).map do |user_skill|
       {:id => user_skill.id, :rank => user_skill.rank, 
         :skill_id => user_skill.skill_id, :name => user_skill.skill.name}
-      } : []
+    end : []
     respond_to do |format|
       format.html # edit.html.erb
       format.xml  { render :xml => @agent }

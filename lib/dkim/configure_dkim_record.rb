@@ -35,6 +35,8 @@ class Dkim::ConfigureDkimRecord
         domain_category.email_domain
       ) && domain_category.category == 5
       dkim_records
+    else
+      Rails.logger.info "EMAIL SERVICE RESPONSE ::::: #{response.inspect}"
     end
   end
 

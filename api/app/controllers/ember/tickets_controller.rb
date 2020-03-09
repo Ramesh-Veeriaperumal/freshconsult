@@ -25,7 +25,12 @@ module Ember
       custom_survey_results: [:survey, :survey_result_data]
     ].freeze
 
-    INDEX_PRELOAD_OPTION_MAPPING = { custom_fields: { flexifield: [:denormalized_flexifield] } }.freeze
+    INDEX_PRELOAD_OPTION_MAPPING = {
+      custom_fields: { flexifield: [:denormalized_flexifield] },
+      description: :ticket_old_body,
+      company: :company
+    }.freeze
+    
     DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
     SINGULAR_RESPONSE_FOR = %w(show create update split_note update_properties execute_scenario).freeze
 
@@ -534,11 +539,13 @@ module Ember
       def conditional_preload_options
         preload_options_list = INDEX_PRELOAD_OPTIONS.dup
         preload_options_list << :ticket_field_data if current_account.join_ticket_field_data_enabled?
-        conditional_preload_options = params['include'].to_s.include?('company') ? preload_options_list.push(:company) : preload_options_list
-        (params[:exclude] || '').split(',').each do |exclude_param|
-          conditional_preload_options.delete(INDEX_PRELOAD_OPTION_MAPPING[exclude_param.to_sym])
+        (params[:include] || '').split(',').each do |include_param|
+          preload_options_list << INDEX_PRELOAD_OPTION_MAPPING[include_param.to_sym] if INDEX_PRELOAD_OPTION_MAPPING.key?(include_param.to_sym)
         end
-        conditional_preload_options
+        (params[:exclude] || '').split(',').each do |exclude_param|
+          preload_options_list.delete(INDEX_PRELOAD_OPTION_MAPPING[exclude_param.to_sym])
+        end
+        preload_options_list
       end
 
       def constants_class

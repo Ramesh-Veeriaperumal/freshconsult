@@ -11,7 +11,6 @@ class Admin::TrialSubscriptionsControllerTest < ActionController::TestCase
 
   def before_all
     TrialSubscription.all.each(&:delete)
-    Account.current.launch TrialSubscription::TRIAL_SUBSCRIPTION_LP_FEATURE
     Account.current.rollback(:downgrade_policy)
     subscription = Account.current.subscription
     if subscription.trial?
@@ -260,13 +259,6 @@ class Admin::TrialSubscriptionsControllerTest < ActionController::TestCase
     assert_response 204
     User.any_instance.stubs(:privilege?).with(:manage_account).returns(false)
     put :cancel, construct_params({})
-    assert_response 403
-  end
-
-  def test_trial_subscription_api_without_lp_feature
-    Account.current.rollback TrialSubscription::TRIAL_SUBSCRIPTION_LP_FEATURE
-    params_hash = { trial_plan: get_valid_plan_name }
-    post :create, construct_params({}, params_hash)
     assert_response 403
   end
 

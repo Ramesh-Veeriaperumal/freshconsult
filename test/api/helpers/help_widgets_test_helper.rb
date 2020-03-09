@@ -96,7 +96,9 @@ module HelpWidgetsTestHelper
       pattern: 1,
       gradient: 1,
       theme_color: '#00a886',
-      button_color: '#12344d'
+      button_color: '#12344d',
+      theme_text_color: '#ffffff',
+      button_text_color: '#ffffff'
     }
   end
 

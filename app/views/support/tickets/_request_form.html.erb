@@ -9,7 +9,7 @@
 
   <% enable_fragment_cache(:support_new_ticket, skip_frag_cache) do %>
     <% current_portal.customer_editable_ticket_fields(true).each do |field|
-        next if field.section_field? || field.exclude_encrypted_field? || field.field_type.eql?('custom_file')
+        next if field.section_field? || field.exclude_encrypted_field? || field.field_type.eql?('custom_file') || field.secure_field?
       %>
       <div class="control-group <%= " hide company_container" if field.field_type == "default_company" %>" >
         <%= ticket_field_container f,:helpdesk_ticket, field,
@@ -180,8 +180,7 @@
                 .insertAfter(jQuery("#"+this.id).parents('.control-group'));
           }
       });
-      jQuery(".dynamic_sections").trigger('change');
-      jQuery('[id^="helpdesk_ticket_custom_field_"]').val("").trigger('change');
+      jQuery('.dynamic_sections, [id^="helpdesk_ticket_custom_field_"]:not(".nested_field")').trigger('change');
 
       jQuery('[id^="helpdesk_ticket_custom_field_"][type*="checkbox"]').val(1).trigger('change');
     });
@@ -263,5 +262,8 @@
       <% end %>
     });
 
+    $(window).on('load', function() {
+      $('[id^="helpdesk_ticket_group_"]').trigger('change');
+    });
   })(jQuery);
 <% end %>

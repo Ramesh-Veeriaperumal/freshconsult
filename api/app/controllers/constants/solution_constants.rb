@@ -83,4 +83,18 @@ module SolutionConstants
   ARTICLES_PRIVATE_CONTROLLER = 'ember/solutions/articles'.freeze
 
   SUMMARY_LIMIT = 3
+
+  # [ TOKEN, STRING, STATUS_VALUE, TABLE_VALUE, ES_VALUE]
+  STATUS_FILTER = [
+    [:draft,     'solutions.status.draft',        1, 1, 4],
+    [:published, 'solutions.status.published',    2, 2, 0],
+    [:outdated, 'solutions.status.outdated',      3, 0, 0], # only used in article versions.
+    [:in_review, 'solutions.status.in_review',    4, 1, 1],
+    [:approved, 'solutions.status.approved',      5, 2, 2]
+  ].freeze
+
+  STATUS_FILTER_BY_KEY = Hash[*STATUS_FILTER.map { |i| [i[2], i[1]] }.flatten]
+  STATUS_FILTER_BY_TOKEN = Hash[*STATUS_FILTER.map { |i| [i[0], i[2]] }.flatten]
+  STATUS_VALUE_IN_TABLE_BY_KEY = Hash[*STATUS_FILTER.map { |i| [i[2], i[3]] }.flatten]
+  STATUS_VALUE_IN_ES_BY_KEY = Hash[*STATUS_FILTER.map { |i| [i[2], i[4]] }.flatten]
 end

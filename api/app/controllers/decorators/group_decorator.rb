@@ -132,6 +132,15 @@ class GroupDecorator < ApiDecorator
     }
   end
 
+  def freshbots_index_hash
+    {
+      id: record.id,
+      name: record.name,
+      description: record.description,
+      group_type: @group_type_mapping[record.group_type]
+    }
+  end
+
   def round_robin_hash
     rr_type = get_round_robin_type
 

@@ -1,4 +1,5 @@
 require_relative '../../test_helper'
+require_relative '../../../test_helper'
 ['ticket_fields_test_helper.rb', 'tickets_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 ['note_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 ['social_tickets_creation_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
@@ -13,6 +14,8 @@ class TicketTest < ActiveSupport::TestCase
   include SocialTicketsCreationHelper
   include ProductTestHelper
   include SharedOwnershipTestHelper
+  include PrivilegesHelper
+  include UsersTestHelper
 
   CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
   DROPDOWN_CHOICES = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon']
@@ -537,5 +540,23 @@ class TicketTest < ActiveSupport::TestCase
     assert_equal({'next_response' => [@agent.id]}, job['args'][1]['misc_changes']['notify_agents'])
   ensure
     Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_central_publish_payload_with_secure_field
+    @account = Account.first.nil? ? create_test_account : Account.first.make_current
+    create_custom_field_dn('custom_card_no_test', 'secure_text')
+    params = ticket_params_hash
+    t = create_ticket(params)
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    t.update_attributes("custom_card_no_test_#{@account.id}": 'changed')
+    t.save
+    custom_fields_payload = t.central_publish_payload[:custom_fields]
+    secure_field_payload = custom_fields_payload.select { |cf| cf[:label] == 'custom_card_no_test' }
+    assert_equal secure_field_payload.first[:value], '*'
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+  ensure
+    t.destroy
+    @account.ticket_fields.find_by_name("custom_card_no_test_#{@account.id}").destroy
   end
 end

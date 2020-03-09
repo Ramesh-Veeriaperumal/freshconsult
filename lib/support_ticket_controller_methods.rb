@@ -109,10 +109,14 @@ module SupportTicketControllerMethods
 
     def editable_ticket_fields
       @visible_fields ||= begin
-        visible_fields      = current_portal.customer_editable_ticket_fields
+        visible_fields      = current_portal.customer_editable_ticket_fields(false, true)
         visible_fields_name = visible_fields.map(&:field_name)
         visible_fields.each do |field|
-          visible_fields_name << field.nested_levels.map{|lvl| lvl[:name]} if field.nested_field?
+          if field[:field_type] == TicketFieldsConstants::SECURE_TEXT
+            visible_fields_name << PciConstants::PREFIX + field[:name]
+          elsif field.nested_field?
+            visible_fields_name << field.nested_levels.map { |lvl| lvl[:name] }
+          end
         end
         visible_fields_name << TicketConstants::SUPPORT_WHITELISTED_ATTRIBUTES
         visible_fields_name.flatten

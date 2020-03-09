@@ -369,6 +369,28 @@ module Ember
     #   match_json(private_api_ticket_index_pattern(false, true))
     # end
 
+    def test_index_with_description_in_include
+      tickets = []
+      3.times do
+        tickets << create_ticket
+      end
+      get :index, controller_params(include: 'description')
+      assert_response 200
+      response = parse_response @response.body
+      tkts = Helpdesk::Ticket.where(deleted: 0, spam: 0)
+                             .created_in(Helpdesk::Ticket.created_in_last_month)
+                             .order('created_at DESC')
+                             .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
+      assert_equal tkts.count, response.size
+      param_object = OpenStruct.new(stats: true)
+      pattern = tkts.map do |tkt|
+        index_ticket_pattern_with_associations(tkt, param_object, [:description, :description_text])
+      end
+      match_json(pattern)
+    ensure
+      tickets.map(&:destroy)
+    end
+
     def test_index_with_requester_nil
       ticket = create_ticket
       ticket.requester.destroy
@@ -3477,11 +3499,15 @@ module Ember
         export_entry.save
         export_ids << export_entry.id
       end
-      params_hash = { ticket_fields: {"display_id": "id" }, contact_fields: {"name":"Requester Name","mobile":"Mobile Phone" },
-                      company_fields:{"name":"Company Name"},
-                      format: 'csv', date_filter: '30',
-                      ticket_state_filter: 'resolved_at', start_date: 6.days.ago.iso8601, end_date: Time.zone.now.iso8601,
-                      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w(2 5) }] }
+      params_hash = { ticket_fields: { 'display_id' => 'id' },
+                      contact_fields: { 'name' => 'Requester Name', 'mobile' => 'Mobile Phone' },
+                      company_fields: { 'name' => 'Company Name' },
+                      format: 'csv',
+                      date_filter: '30',
+                      ticket_state_filter: 'resolved_at',
+                      start_date: 6.days.ago.iso8601,
+                      end_date: Time.zone.now.iso8601,
+                      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w[2 5] }] }
       post :export_csv, construct_params({ version: 'private' }, params_hash)
       assert_response 429
       DataExport.where(:id => export_ids).destroy_all
@@ -3490,12 +3516,15 @@ module Ember
 
     def test_export_csv_without_privilege
       User.any_instance.stubs(:privilege?).with(:export_tickets).returns(false)
-      params_hash = { ticket_fields: {"display_id": "id" }, contact_fields: {"name":"Requester Name","mobile":"Mobile Phone" },
-                      company_fields:{"name":"Company Name"},
-                      format: 'csv', date_filter: '30',
-                      ticket_state_filter: 'resolved_at', start_date: 6.days.ago.iso8601, end_date: Time.zone.now.iso8601,
-                      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w(2 5) }] }
-
+      params_hash = { ticket_fields: { 'display_id' => 'id' },
+                      contact_fields: { 'name' => 'Requester Name', 'mobile' => 'Mobile Phone' },
+                      company_fields: { 'name' => 'Company Name' },
+                      format: 'csv',
+                      date_filter: '30',
+                      ticket_state_filter: 'resolved_at',
+                      start_date: 6.days.ago.iso8601,
+                      end_date: Time.zone.now.iso8601,
+                      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w[2 5] }] }
       post :export_csv, construct_params({ version: 'private' }, params_hash)
       assert_response 403
       User.any_instance.unstub(:privilege?)
@@ -3513,12 +3542,15 @@ module Ember
         export_entry.save
         export_ids << export_entry.id
       end
-      params_hash = { ticket_fields: {"display_id": "id" }, contact_fields: {"name":"Requester Name","mobile":"Mobile Phone" },
-                      company_fields:{"name":"Company Name"},
-                      format: 'csv', date_filter: '30',
-                      ticket_state_filter: 'resolved_at', start_date: 6.days.ago.iso8601, end_date: Time.zone.now.iso8601,
-                      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w(2 5) }] }
-
+      params_hash = { ticket_fields: { 'display_id' => 'id' },
+                      contact_fields: { 'name' => 'Requester Name', 'mobile' => 'Mobile Phone' },
+                      company_fields: { 'name' => 'Company Name' },
+                      format: 'csv',
+                      date_filter: '30',
+                      ticket_state_filter: 'resolved_at',
+                      start_date: 6.days.ago.iso8601,
+                      end_date: Time.zone.now.iso8601,
+                      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w[2 5] }] }
       post :export_csv, construct_params({ version: 'private' }, params_hash)
       assert_response 204
       DataExport.where(:id => export_ids).destroy_all
@@ -3537,11 +3569,15 @@ module Ember
         export_ids << export_entry.id
       end
       agent2 = add_test_agent(@account).make_current
-      params_hash = { ticket_fields: {"display_id": "id" }, contact_fields: {"name":"Requester Name","mobile":"Mobile Phone" },
-                      company_fields:{"name":"Company Name"},
-                      format: 'csv', date_filter: '30',
-                      ticket_state_filter: 'resolved_at', start_date: 6.days.ago.iso8601, end_date: Time.zone.now.iso8601,
-                      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w(2 5) }] }
+      params_hash = { ticket_fields: { 'display_id' => 'id' },
+                      contact_fields: { 'name' => 'Requester Name', 'mobile' => 'Mobile Phone' },
+                      company_fields: { 'name' => 'Company Name' },
+                      format: 'csv',
+                      date_filter: '30',
+                      ticket_state_filter: 'resolved_at',
+                      start_date: 6.days.ago.iso8601,
+                      end_date: Time.zone.now.iso8601,
+                      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w[2 5] }] }
       post :export_csv, construct_params({ version: 'private' }, params_hash)
       assert_response 204
       DataExport.where(:id => export_ids).destroy_all
@@ -5100,6 +5136,25 @@ module Ember
       Account.any_instance.unstub(:dashboard_new_alias?)
     end
 
+    def test_index_with_description_with_count_es_enabled
+      Account.any_instance.stubs(:count_es_enabled?).returns(true)
+      Account.any_instance.stubs(:es_tickets_enabled?).returns(true)
+      Account.any_instance.stubs(:dashboard_new_alias?).returns(true)
+      t = create_ticket
+      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+      get :index, controller_params(include: 'description')
+      assert_response 200
+      param_object = OpenStruct.new(stats: true)
+      pattern = []
+      pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
+      match_json(pattern)
+    ensure
+      t.try(:destroy)
+      Account.any_instance.unstub(:count_es_enabled?)
+      Account.any_instance.unstub(:es_tickets_enabled?)
+      Account.any_instance.unstub(:dashboard_new_alias?)
+    end
+
     def test_index_with_requester_with_count_es_enabled
       Account.any_instance.stubs(:count_es_enabled?).returns(:true)
       Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
@@ -5706,7 +5761,7 @@ module Ember
       assert_equal payload['oid'], ticket.id
       assert_equal payload['user_id'], User.current.id
       assert_equal payload['uuid'].to_s, uuid
-      assert_equal payload['iss'], 'freshdesk/poduseast'
+      assert_equal payload['iss'], 'fd/poduseast'
       assert_equal payload['scope'], ['custom_card_no_test']
       assert_equal payload['exp'], payload['iat'] + 120
       assert_equal payload['accid'], current_account_id
@@ -5749,7 +5804,7 @@ module Ember
       ticket = create_ticket(params)
       uuid = SecureRandom.hex
       request.stubs(:uuid).returns(uuid)
-      update_params = { custom_fields: { '_custom_card_no_test': 'c0376b8ce26458010ceceb9de2fde759' } }
+      update_params = { custom_fields: { '_custom_card_no_test' => 'c0376b8ce26458010ceceb9de2fde759' } }
       put :update, construct_params({ id: ticket.display_id, version: 'private' }, update_params)
       token = response.api_meta[:vault_token]
       key = ApiTicketsTestHelper::PRIVATE_KEY_STRING
@@ -5759,7 +5814,7 @@ module Ember
       assert_equal payload['oid'], ticket.id
       assert_equal payload['user_id'], User.current.id
       assert_equal payload['uuid'].to_s, uuid
-      assert_equal payload['iss'], 'freshdesk/poduseast'
+      assert_equal payload['iss'], 'fd/poduseast'
       assert_equal payload['scope'], ['custom_card_no_test']
       assert_equal payload['exp'], payload['iat'] + 120
       assert_equal payload['accid'], current_account_id
@@ -5801,7 +5856,7 @@ module Ember
       create_custom_field_dn('custom_card_no_test', 'secure_text')
       params = ticket_params_hash
       ticket = create_ticket(params)
-      update_params = { custom_fields: { 'custom_card_no_test': 'c0376b8ce26458010ceceb9de2fde759' } }
+      update_params = { custom_fields: { 'custom_card_no_test' => 'c0376b8ce26458010ceceb9de2fde759' } }
       put :update, construct_params({ id: ticket.display_id, version: 'private' }, update_params)
       assert_response 400
     ensure

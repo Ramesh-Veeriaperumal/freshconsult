@@ -397,6 +397,10 @@ module SupportHelper
       label_tag "#{object_name}_#{field[:name]}",
                 content_tag(:span, "", :class => "ficon-encryption-lock encrypted", :title => t('custom_fields.encrypted_text'), 'data-toggle' => 'tooltip', 'data-placement' => 'top' ) +
                 " #{field[:label_in_portal].html_safe}", :class => element_class, :for => "#{object_name}_email"
+    elsif field.respond_to?(:secure_field?) && field.secure_field?
+      label_tag "#{object_name}_#{field[:name]}",
+                content_tag(:span, '', :class => 'ficon-encryption-lock encrypted', :title => t('custom_fields.encrypted_text'), 'data-toggle' => 'tooltip', 'data-placement' => 'top') +
+                " #{field.label_in_portal.html_safe}", :class => element_class, :for => "#{object_name}_email"
     else
       label_tag "#{object_name}_#{field[:name]}", field.translated_label_in_portal.html_safe, :class => element_class
     end
@@ -424,6 +428,8 @@ module SupportHelper
           text_field(object_name, field_name, { :class => element_class + " span12 ficon-encrypted_text encrypted-text-field", :value => field_value }.merge(html_opts))
         when "paragraph" then
           text_area(object_name, field_name, { :class => element_class + " span12", :value => field_value, :rows => 6 }.merge(html_opts))
+        when 'secure_text' then
+          render(partial: '/support/shared/secure_field', :locals => { :prefix => PciConstants::PREFIX, :object_name => object_name, :field_name => field_name, :html_opts => html_opts, :value => field_value })
         when "dropdown" then
             select(object_name, field_name,
                 field.field_type == "default_status" ? field.visible_status_choices : field.html_unescaped_choices(nil, true),
@@ -664,6 +670,12 @@ module SupportHelper
       :contact_info => h(@portal['contact_info']),
       :current_page_name => @current_page_token,
       :current_tab => @current_tab,
+      vault_service: {
+        url: SecureFieldConfig['domain'],
+        max_try: PciConstants::MAX_TRY,
+        product_name: PciConstants::ISSUER
+      },
+      current_account_id: Account.current.id,
       :preferences => preview? ? escaped_portal_preferences : portal_preferences,
       :image_placeholders => { :spacer => spacer_image_url,
                               :profile_thumb => image_path("misc/profile_blank_thumb.jpg"),
