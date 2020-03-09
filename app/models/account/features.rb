@@ -49,7 +49,7 @@ class Account < ActiveRecord::Base
     :sane_restricted_helpdesk, :hiding_confidential_logs, :ticket_list_performance, :sla_policy_revamp, :help_widget_log, :freshdesk_freshsales_bundle, :help_widget_article_customisation,
     :field_agents_can_manage_appointments_setting, :fsm_for_garden_plan, :fsm_for_blossom_plan, :requester_widget_timeline,
     :out_of_office, :enable_secure_login_check, :contact_form_enhancement, :public_api_filter_factory, :enable_twitter_requester_fields, :marketplace_gallery, :pci_compliance_field, :solutions_quick_view,
-    :translations_proxy, :translations_cdn, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :retry_emails
+    :translations_proxy, :translations_cdn, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :retry_emails, :enable_beamer
   ].freeze
 
   DB_FEATURES = [
