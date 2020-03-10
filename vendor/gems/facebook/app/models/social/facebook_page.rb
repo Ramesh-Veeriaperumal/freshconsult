@@ -121,4 +121,12 @@ class Social::FacebookPage < ActiveRecord::Base
     self.reauth_required = true
     self.save!
   end
+
+  def remove_ad_stream_ticket_rule
+    ad_post_stream.facebook_ticket_rules.first.try(:destroy)
+    Rails.logger.info("Removed ad post stream ticket rule for Facebook Page ID :: #{page_id}")
+  rescue StandardError => error
+    Rails.logger.info("Error removing ad stream ticket rule for Facebook Page ID :: #{page_id}, record ID :: #{id}, stream ID :: #{ad_post_stream.try(:id)} :: error :: #{error.inspect}")
+    NewRelic::Agent.notice_error(error, description: "Error removing ad stream ticket rule for Facebook Page ID :: #{page_id}, record ID :: #{id}, stream ID :: #{ad_post_stream.try(:id)} :: error :: #{error.inspect}")
+  end
 end

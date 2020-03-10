@@ -32,6 +32,17 @@ class FacebookAdPostsTest < ActiveSupport::TestCase
     assert_equal 1, @final_stream.model_changes_for_central['rules'][1][0]['action']['product_id']
   end
 
+  def test_plan_downgrade_feature_removal
+    Account.current.add_feature(:fb_ad_posts)
+    fb_page = create_fb_page(true)
+    create_ad_post_ticket_rule(fb_page.facebook_streams)
+    assert_equal(true, Account.current.has_feature?(:fb_ad_posts))
+    assert_equal(true, @final_stream.facebook_ticket_rules.first.present?)
+    SAAS::AccountDataCleanup.new(Account.current, ['fb_ad_posts']).perform_cleanup
+    assert_equal(false, Account.current.has_feature?(:fb_ad_posts))
+    assert_equal(nil, @final_stream.facebook_ticket_rules.first)
+  end
+
   def test_remove_ad_post_rule
     fb_page = create_fb_page(true)
     create_ad_post_ticket_rule(fb_page.facebook_streams)

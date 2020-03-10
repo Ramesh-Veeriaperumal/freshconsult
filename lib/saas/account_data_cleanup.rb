@@ -423,6 +423,12 @@ class SAAS::AccountDataCleanup
     cleanup_fsm
   end
 
+  def handle_fb_ad_posts_drop_data
+    Rails.logger.info "Removing Facebook Ad Post for account #{account.id}"
+    Account.current.revoke_feature(:fb_ad_posts)
+    cleanup_fb_ad_posts
+  end
+
   alias handle_field_service_management_toggle_drop_data handle_field_service_management_drop_data
 
   private
@@ -461,5 +467,9 @@ class SAAS::AccountDataCleanup
     end
     @conditions[0] = @conditions[0].join(" and ")
     nil
+  end
+
+  def cleanup_fb_ad_posts
+    Account.current.facebook_pages.each(&:remove_ad_stream_ticket_rule)
   end
 end
