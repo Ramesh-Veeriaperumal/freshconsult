@@ -214,11 +214,11 @@ module TicketFieldsTestHelper
   def create_custom_field_dropdown_with_sections(name = 'section_custom_dropdown', choices = ['Choice 1', 'Choice 2', 'Choice 3'], required = false)
     ticket_field_exists = @account.ticket_fields.find_by_name("#{name}_#{@account.id}")
     return ticket_field_exists if ticket_field_exists
-    # ffs_06 is created here
+    field_name = unused_ffs_col
     flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry,
                                              flexifield_def_id: @account.flexi_field_defs.find_by_module('Ticket').id,
                                              flexifield_alias: "#{name.downcase}_#{@account.id}",
-                                             flexifield_name: 'ffs_06',
+                                             flexifield_name: field_name.to_s,
                                              flexifield_order: 7,
                                              flexifield_coltype: 'dropdown',
                                              account_id: @account.id)
@@ -601,6 +601,39 @@ module TicketFieldsTestHelper
         field_options: field.field_options || { section: false },
         has_section: field.has_section? }
     end
+  end
+
+  def sections_field_hash(sections)
+    sections.map do |section|
+      {
+        id: section.id,
+        label: section.label,
+        parent_ticket_field_id: section.parent_ticket_field_id,
+        section_fields: section.section_fields.map do |section_field|
+          {
+            id: section_field.id,
+            position: section_field.position,
+            ticket_field_id: section_field.ticket_field_id,
+            parent_ticket_field_id: section_field.parent_ticket_field_id,
+            is_encrypted: false
+          }
+        end,
+        picklist_ids: section.section_picklist_mappings.map do |picklist_mapping|
+          {
+            picklist_value_id: picklist_mapping.picklist_value_id
+          }
+        end
+      }
+    end
+  end
+
+  def construct_section(name, ticket_field_id)
+    section = Account.current.sections.build
+    section.label = name
+    section.ticket_field_id = ticket_field_id
+    section.options = {}.with_indifferent_access
+    section.save!
+    section
   end
 
   def get_choices(field, account)

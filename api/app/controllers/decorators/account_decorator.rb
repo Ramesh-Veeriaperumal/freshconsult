@@ -17,7 +17,7 @@ class AccountDecorator < ApiDecorator
       date_format: record.account_additional_settings.date_format,
       language: record.language,
       features: record.enabled_features_list,
-      launched: launched_features_list,
+      launched: record.all_launched_features,
       subscription: subscription_hash,
       portal_languages: record.all_portal_language_objects,
       settings: settings_hash,
@@ -104,7 +104,7 @@ class AccountDecorator < ApiDecorator
         onboarding_version: acct_additional_settings.additional_settings[:onboarding_version],
         freshdesk_freshsales_bundle: record.account_additional_settings.additional_settings[:freshdesk_freshsales_bundle] || false
       }
-      settings_hash[:field_service_management] = fetch_fsm_settings(acct_additional_settings) if record.field_service_management_enabled? && record.field_agents_can_manage_appointments_setting_enabled?
+      settings_hash[:field_service] = fetch_fsm_settings(acct_additional_settings) if record.field_service_management_enabled? && record.field_agents_can_manage_appointments_setting_enabled?
       settings_hash
     end
 
@@ -190,14 +190,6 @@ class AccountDecorator < ApiDecorator
         days_left_until_next_trial: trial_subscription.days_left_until_next_trial,
         plan_name: trial_subscription.trial_plan
       }
-    end
-
-    def launched_features_list
-      record.all_launched_features.tap do |lp_features|
-        if record.subscription.trial? || record.suspended?
-          lp_features.delete :trial_subscription
-        end
-      end
     end
 
     def extended_user_companies

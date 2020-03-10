@@ -7,12 +7,10 @@ class FacebookAdPostsTest < ActiveSupport::TestCase
   def setup
     Account.stubs(:current).returns(Account.first || create_test_account)
     Account.current.launch(:facebook_post_outgoing_attachment)
-    Account.current.launch(:fb_ad_post_stream_publish)
   end
 
   def teardown
     Account.current.rollback(:facebook_post_outgoing_attachment)
-    Account.current.rollback(:fb_ad_post_stream_publish)
     Account.unstub(:current)
     super
   end

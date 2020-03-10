@@ -53,8 +53,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/custom_dashboard", only: %i[widgets_data show index bar_chart_data]
     resource :"settings/helpdesk", only: [:index]
     resource :'ember/rt', only: [:show]
-
     resource :"out_of_office", only: %i[index show create update destroy]
+    resource :'ember/agent_assist', only: [:bots]
   end
 
   view_secure_field do
@@ -280,6 +280,7 @@ Authority::Authorization::PrivilegeList.build do
   manage_bots do
     resource :"ember/admin/bot", only: %i[new create show index update map_categories mark_completed_status_seen enable_on_portal email_channel]
     resource :"ember/portal", only: %i[show bot_prerequisites]
+    resource :"ember/agent_assist", only: %i[onboard show request_demo]
   end
 
   view_bots do

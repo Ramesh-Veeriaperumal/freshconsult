@@ -72,7 +72,7 @@ properties:
                 type: boolean
               show_on_boarding:
                 type: boolean
-              field_service_management_settings:
+              field_service:
                 type: object
                 description: Available only if Field Service Management feature is enabled
                 properties:

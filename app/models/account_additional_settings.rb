@@ -32,16 +32,16 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def save_field_service_management_settings(params)
     fsm_settings_default_value_hash = Admin::AdvancedTicketing::FieldServiceManagement::Constant::FSM_SETTINGS_DEFAULT_VALUES
-    fsm_additional_settings = additional_settings[:field_service_management]
+    additional_settings[:field_service] = additional_settings.delete(:field_service_management) if additional_settings[:field_service_management]
+    fsm_additional_settings = additional_settings[:field_service] || {}
     params.each do |key, value|
       if fsm_settings_default_value_hash[key.to_sym] == value
-        fsm_additional_settings.delete(key.to_sym) if fsm_additional_settings.present?
+        fsm_additional_settings.delete(key.to_sym) if fsm_additional_settings
       else
-        fsm_additional_settings ||= {}
         fsm_additional_settings[key.to_sym] = value
       end
     end
-    additional_settings[:field_service_management] = fsm_additional_settings
+    additional_settings[:field_service] = fsm_additional_settings
     save!
   end
 
@@ -275,6 +275,17 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def assign_rts_account_secret(value)
     secret_keys[:rts_account_secret] = EncryptorDecryptor.new(RTSConfig['db_cipher_key']).encrypt(value)
+  end
+
+  def agent_assist_config
+    additional_settings[:agent_assist_config]
+  end
+
+  def update_agent_assist_config!(args)
+    additional_settings[:agent_assist_config] ||= {}
+    additional_settings[:agent_assist_config][:domain] = args[:domain] if args.key?(:domain)
+    additional_settings[:agent_assist_config][:email_sent] = args[:email_sent] if args.key?(:email_sent)
+    save!
   end
 
   private

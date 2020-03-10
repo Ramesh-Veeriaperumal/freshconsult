@@ -10,7 +10,9 @@ module Solution::Constants
   STATUS_NAMES_BY_KEY = Hash[*STATUSES.map { |i| [i[2], i[1]] }.flatten].freeze
   STATUS_KEYS_BY_TOKEN = Hash[*STATUSES.map { |i| [i[0], i[2]] }.flatten].freeze
 
-  DRAFT_STATUSES_ES = { draft_not_present: 0, draft_present: 1 }.freeze
+  # Article approval status will have 1: in_review, 2:approved, 3: rejected
+  # so draft present is 4 w.r.t ES
+  DRAFT_STATUSES_ES = { draft_not_present: 0, draft_present: 4 }.freeze
 
   TYPES = [
     [ :permanent,  "solutions.types.permanent",   1 ],

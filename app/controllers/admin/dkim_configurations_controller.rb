@@ -17,6 +17,7 @@ class Admin::DkimConfigurationsController < Admin::AdminController
       if es_response_success?(response[:status])
         @dkim_records = construct_dkim_hash(JSON.parse(response[:text])['result'])
       else
+        Rails.logger.info "EMAIL SERVICE RESPONSE #{response.inspect}"
         flash[:error] = t('email_configs.dkim.fetch_domain_failed')
       end
       @domain_categories = scoper.active_domains.paginate(page: params[:page], per_page: 10)

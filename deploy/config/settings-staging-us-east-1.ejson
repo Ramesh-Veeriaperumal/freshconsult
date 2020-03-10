@@ -182,6 +182,10 @@
         "facebook": {
           "_auth_type": "jwt",
           "jwt_secret": "EJ[1:j8fn6zdtMwq5KLpN6FLJ44/iHZTXPt63fWbL5pvHIg0=:YHs9HBCsIZ/Kjj3wzxDUrWUxSOSQ/OB7:b1bZfa9DEwiLjfr0/nwPeXdFFgl6AqiImNl9xCmhbEXFMOED8ODOcSjzKFB4h8X8]"
+        },
+        "freshbots": {
+          "_auth_type": "jwt",
+          "jwt_secret": "EJ[1:68QP1ySQm6GM/vddFtrrOPby58jN33DUkNN2BKPx1nY=:sqbeB0D0ChC8cWM6Y3+QUxRpIyv7vYln:kLklkPuV3MCgg42hc1Sel03Cwi03CkHwdQBLvohuPCaBCMKL]"
         }
       },
       "channel_v2_api": {
@@ -1787,6 +1791,17 @@
         "agent_articles_suggest": {
           "_url": "https://system42-serv.staging.freddyproject.com/api/v1/afr/smart_reply",
           "secret": "EJ[1:Gu1wmqd+hs6mzZ0Gl8zLlBmQrUKozXx42rdWS2GruGs=:bLI0ACKZhhve2VLtI5bxRvI7ivnRQMa8:Hu73oA+mxQY3wLPvjEiQNnpMjsWhYLmz/L7Vb2UTNl4ba9V+0k80/vzriUmc]"
+        },
+        "agent_assist" :{
+          "_host": "https://admin.intfreshbots.com/",
+          "_onboard_url": "https://api.intfreshbots.com/rest/api/v1/bots",
+          "client_id": "EJ[1:/YkX76IIhGrziFImuSHmGUtYk5T40VKp67HwQ6aL328=:mpD+M3Bi02H6fvMCalAd+2hUyDIfo1Om:7H57IQbVfxZDb2ikowlXbrPlH8s+mFT/5h9kCY37LBHObN5vEPTZxNPcKP99ER0ADO61vqVbDQA=]",
+          "_product_id": "99e1562292b512ce14a077f246c8cd75dcc6b392",
+          "_template_hash": "965122f2937e823fbec5cc806e45d5a0c0d5a746",
+          "jwt_secret": "EJ[1:PX2adMAz4P255iH709RXxuoCLg6afs/GlRLWDAge0V8=:5xuw3fyG/V7r9msgiZ1BImqIgCphE7qB:w60XyGbEA3IplKbHcaxi20ntw9ifkUCmfsWvXwoxHS32Ja6NY6A04S233+pLKrGPYTARnBfKi/fSsmY=]",
+          "_demo_email": "rahul.gupta@freshworks.com",
+          "_timeout": 5,
+          "_onboard_timeout": 5        
         }
       },
       "shift_config": {

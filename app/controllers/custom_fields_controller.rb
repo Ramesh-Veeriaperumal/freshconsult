@@ -173,7 +173,9 @@ class CustomFieldsController < Admin::AdminController
       del_sections.each do |tf_id|
         parent_field_ids[SECTION_TYPE[0]].delete(tf_id[0]) if curr_sections[tf_id[0]].blank?
       end
-      (parent_field_ids[SECTION_TYPE[0]] | parent_field_ids[SECTION_TYPE[1]])[0..Helpdesk::TicketField::SECTION_LIMIT-1]
+      # one section reserved for FSM.
+      section_limit = current_account.sections.find_by_label(SERVICE_TASK_SECTION).present? ? Helpdesk::TicketField::FSM_SECTION_LIMIT : Helpdesk::TicketField::SECTION_LIMIT
+      (parent_field_ids[SECTION_TYPE[0]] | parent_field_ids[SECTION_TYPE[1]])[0..section_limit - 1]
     end
 
     def valid_section?(parent_field_ids, parent_field_id)
@@ -310,8 +312,10 @@ class CustomFieldsController < Admin::AdminController
       section.destroy unless section.nil?
     end
 
-    def reset_parent_field(field)
-      return unless field.section_fields.blank?
+    def reset_parent_field(field_id)
+      field = current_account.ticket_fields.find(field_id)
+      return if field.nil? || field.section_fields.present?
+
       if field.field_options["section_present"]
         field.field_options["section_present"] = false
         field.save

@@ -19,6 +19,7 @@ class Helpdesk::NestedTicketField < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :account_id
     
   before_create :populate_label
+  xss_sanitize only: [:label, :label_in_portal], plain_sanitizer: [:label, :label_in_portal], if: -> { Account.current.ticket_field_revamp_enabled? }
 
   alias_attribute :i18n_label, :label
 

@@ -15,6 +15,7 @@ module Ember
     include Redis::UndoSendRedis
     include Ecommerce::Ebay::ReplyHelper
     include TicketUpdateHelper
+    include Conversations::Twitter
 
     decorate_views(
       decorate_objects: [:ticket_conversations],
@@ -540,16 +541,17 @@ module Ember
 
       def handle_twitter_conversations
         reply_handle = current_account.twitter_handles.find_by_id(@twitter_handle_id)
-        stream = fetch_stream(reply_handle, @tweet_type)
+        stream = fetch_stream(reply_handle, @ticket, @tweet_type)
         tweet_id = random_tweet_id
-        unless stream.custom_stream?
+        custom_twitter_stream_tweet_reply = custom_twitter_stream_tweet_reply?(stream, @tweet_type)
+        unless custom_twitter_stream_tweet_reply
           stream_id = stream.id
           @item.build_tweet(tweet_id: tweet_id,
                             tweet_type: @tweet_type,
                             twitter_handle_id: @twitter_handle_id, stream_id: stream_id)
         end
         if @item.save_note
-          if stream.custom_stream?
+          if custom_twitter_stream_tweet_reply
             Social::TwitterReplyWorker.perform_async(ticket_id: @ticket.id, note_id: @item.id,
                                                      tweet_type: @tweet_type,
                                                      twitter_handle_id: @twitter_handle_id)
@@ -677,19 +679,6 @@ module Ember
         # we are rendering a note with dummy note id with the maximum integer limit in javascipt
         @item.id = DUMMY_ID_FOR_UNDO_SEND_NOTE - @ticket.display_id
       end
-
-      def fetch_stream(reply_handle, tweet_type)
-        tweet = @ticket.tweet
-        tweet_stream = tweet.stream if tweet.present?
-        if tweet_stream && tweet_stream.custom_stream?
-          tweet_stream
-        elsif tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:dm]
-          reply_handle.dm_stream
-        else
-          reply_handle.default_stream
-        end
-      end
-
       wrap_parameters(*wrap_params)
   end
 end

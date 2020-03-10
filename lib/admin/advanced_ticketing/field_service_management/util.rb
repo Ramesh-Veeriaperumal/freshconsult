@@ -7,7 +7,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     include GroupConstants
 
     def notify_fsm_dev(subject, message)
-      message = {} unless message
+      message ||= {}
       message[:environment] = Rails.env
       topic = SNS['field_service_management']
       DevNotification.publish(topic, subject, message.to_json) unless Rails.env.development? || Rails.env.test?
@@ -63,7 +63,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
 
       def create_field_service_manager_role
-        return if Account.current.roles.map(&:name).include?(I18n.t('fsm_scheduling_dashboard.name')) #|| !Account.current.has_feature?(:custom_roles)
+        return if Account.current.roles.map(&:name).include?(I18n.t('fsm_scheduling_dashboard.name')) # || !Account.current.has_feature?(:custom_roles)
 
         role_params = { name: I18n.t('fsm_scheduling_dashboard.name'),
                         description: I18n.t('fsm_scheduling_dashboard.description'),
@@ -92,7 +92,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         type_field_options = {
           choices: picklist_choices,
           picklist_values_attributes: picklist_choices,
-          field_options: { section_present: true }
+          field_options: { section_present: true }.with_indifferent_access
         }
 
         raise "Couldn't create a new ticket type for service task" unless type_field.update_attributes(type_field_options)
@@ -133,7 +133,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
           position: options[:position],
           name: "#{options[:name]}_#{Account.current.id}",
           label_in_portal: options[:label_in_portal],
-          field_options: { 'section' => true, 'fsm' => true },
+          field_options: { 'section' => true, 'fsm' => true }.with_indifferent_access,
           description: '',
           active: true,
           required: options[:required] || false,
@@ -159,7 +159,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
           service_task_section = ticket_type_field.sections.build
           service_task_section.label = SERVICE_TASK_SECTION
           service_task_section.ticket_field_id = ticket_type_field.id
-          service_task_section.options = { 'fsm' => true }
+          service_task_section.options = { 'fsm' => true }.with_indifferent_access
           service_task_section.section_picklist_mappings.build(picklist_value_id: picklist_id, picklist_id: service_task_picklist.picklist_id)
         end
 
@@ -171,6 +171,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
             field_data = Account.current.ticket_fields.find_by_name(field[:name] + "_#{Account.current.id}")
             next if field_data.field_options['section'] && field_data.field_options['fsm']
 
+            field_data.field_options = field_data.field_options.with_indifferent_access
             field_data.field_options[:section] = true
             field_data.field_options[:fsm] = true
             field_data.save!
@@ -207,7 +208,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
           raise 'Field agent type did not get created' unless agent_type
         end
       end
-      
+
       def create_fsm_dashboard
         options = create_fsm_default_custom_filters
         # return unless Account.current.has_feature?(:custom_dashboard)
@@ -220,7 +221,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       def create_fsm_default_custom_filters
         default_custom_filters_conditions = get_fsm_filter_conditions
         Helpdesk::Filters::CustomTicketFilter.add_default_custom_filters(default_custom_filters_conditions)
-        default_custom_filters_conditions.keys.collect { |key|  [key,{ ticket_filter_id: Account.current.ticket_filters.where( name: I18n.t("fsm_dashboard.widgets.#{key}")).first.id }]}.to_h
+        default_custom_filters_conditions.keys.collect { |key| [key, { ticket_filter_id: Account.current.ticket_filters.where(name: I18n.t("fsm_dashboard.widgets.#{key}")).first.id }] }.to_h
       end
 
       def add_widgets_to_fsm_dashboard(dashboard_object, options)
@@ -295,7 +296,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
 
       def destroy_fsm_dashboard_and_filters
-        fsm_dashboard = Account.current.dashboards.find_by_name(I18n.t("fsm_dashboard.name"))
+        fsm_dashboard = Account.current.dashboards.find_by_name(I18n.t('fsm_dashboard.name'))
         fsm_dashboard.try(:destroy)
         destroy_fsm_ticket_filters
       end

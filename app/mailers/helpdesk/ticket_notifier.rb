@@ -386,10 +386,17 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
         }
       end unless @account.secure_attachments_enabled?
 
-      mail(headers) do |part|
-        part.text{ render "reply.text.plain"}
-        part.html{ render "reply.text.html"}
-      end.deliver
+      if Account.current.launched?(:retry_emails)
+        mail(headers) do |part|
+          part.text { render 'reply.text.plain' }
+          part.html { render 'reply.text.html' }
+        end.deliver!
+      else
+        mail(headers) do |part|
+          part.text { render 'reply.text.plain' }
+          part.html { render 'reply.text.html' }
+        end.deliver
+      end
     ensure
       remove_email_config
     end
@@ -446,10 +453,18 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
           end
         end
       end
-      mail(headers) do |part|
-        part.text{ render "forward.text.plain"}
-        part.html{ render "forward.text.html"}
-      end.deliver
+
+      if Account.current.launched?(:retry_emails)
+        mail(headers) do |part|
+          part.text { render "forward.text.plain"}
+          part.html { render "forward.text.html"}
+        end.deliver!
+      else
+        mail(headers) do |part|
+          part.text { render "forward.text.plain"}
+          part.html { render "forward.text.html"}
+        end.deliver
+      end
     ensure
       remove_email_config
     end
@@ -503,10 +518,17 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
         end
       end
 
-      mail(headers) do |part|
-        part.text{ render "reply_to_forward.text.plain"}
-        part.html{ render "reply_to_forward.text.html"}
-      end.deliver
+      if Account.current.launched?(:retry_emails)
+        mail(headers) do |part|
+          part.text { render 'reply_to_forward.text.plain' }
+          part.html { render 'reply_to_forward.text.html' }
+        end.deliver!
+      else
+        mail(headers) do |part|
+          part.text { render 'reply_to_forward.text.plain' }
+          part.html { render 'reply_to_forward.text.html' }
+        end.deliver
+      end
     ensure
       remove_email_config
     end
@@ -631,11 +653,18 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
           end
         end
       end
-      
-      mail(headers) do |part|
-        part.text{ render "notify_outbound_email.text.plain"}
-        part.html{ render "notify_outbound_email.text.html"}
-      end.deliver
+
+      if Account.current.launched?(:retry_emails)
+        mail(headers) do |part|
+          part.text { render 'notify_outbound_email.text.plain' }
+          part.html { render 'notify_outbound_email.text.html' }
+        end.deliver!
+      else
+        mail(headers) do |part|
+          part.text { render 'notify_outbound_email.text.plain' }
+          part.html { render 'notify_outbound_email.text.html' }
+        end.deliver
+      end
     ensure
       remove_email_config
     end

@@ -1,0 +1,1 @@
+JSON.generate(@items.map(&:freshbots_index_hash))

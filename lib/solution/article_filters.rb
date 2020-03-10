@@ -83,7 +83,7 @@ module Solution::ArticleFilters
       def construct_es_query
         conditions = []
         params_hash = params.to_h.deep_symbolize_keys
-        conditions.push(is_draft? ? format('(-draft_status:%s)', Solution::Article::DRAFT_STATUSES_ES[:draft_not_present]) : format('(status:%{status})', params_hash)) if params[:status]
+        conditions.push(es_status_condition(params_hash)) if params[:status]
         if params[:author]
           author_conditions = format('user_id:%{author} OR draft_modified_by:%{author}', params_hash)
           conditions.push(format('(%s)', is_draft? ? author_conditions : format('%s OR modified_by:%s', author_conditions, params[:author])))
@@ -131,6 +131,17 @@ module Solution::ArticleFilters
 
       def fetch_date_range(from, to)
         { start: from.utc.iso8601, end: to.utc.iso8601 }
+      end
+
+      def es_status_condition(params_hash)
+        case params[:status].to_i
+        when SolutionConstants::STATUS_FILTER_BY_TOKEN[:draft] then
+          return format('(-draft_status:%{status})', status: Solution::Article::DRAFT_STATUSES_ES[:draft_not_present])
+        when SolutionConstants::STATUS_FILTER_BY_TOKEN[:published] then
+          return format('(status:%{status})', params_hash)
+        when SolutionConstants::STATUS_FILTER_BY_TOKEN[:in_review], SolutionConstants::STATUS_FILTER_BY_TOKEN[:approved]
+          return format('(draft_status:%{status})', status: SolutionConstants::STATUS_VALUE_IN_ES_BY_KEY[params_hash[:status].to_i])
+        end
       end
   end
 end

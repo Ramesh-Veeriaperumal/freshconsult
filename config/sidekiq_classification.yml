@@ -255,6 +255,7 @@
     - update_sandbox_subscription
     - ticket_properties_suggester
     - image_meta_data_delete
+    - agent_assist_email
   :free:
     - free_sla
     - free_supervisor
@@ -351,6 +352,7 @@
     - cron_freshfone
     - cron_meta_data_check
     - cron_enable_omniroute_for_new_accounts
+    - cron_archive_automation
   :gamification:
     - gamification_user_score
     - gamification_ticket_score

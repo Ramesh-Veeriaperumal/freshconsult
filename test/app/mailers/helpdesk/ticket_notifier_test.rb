@@ -235,4 +235,78 @@ class TicketNotifierTest < ActionMailer::TestCase
     @account.revoke_feature(:private_inline)
     @account.unstub(:secure_attachments_enabled?)
   end
+
+  def test_email_reply_call_deliver_bang_method
+    Account.current.launch(:retry_emails)
+    agent = add_test_agent(@account)
+    ticket = create_ticket(responder_id: agent.id)
+    note = create_note
+    options = {
+      include_cc: false,
+      send_survey: false,
+      quoted_text: note.quoted_text,
+      include_surveymonkey_link: false
+    }
+    from_email = Faker::Internet.email
+    to_email = Faker::Internet.email
+    note.schema_less_note.to_emails = to_email
+    note.schema_less_note.from_email = from_email
+    note.schema_less_note.save
+    Mail::Message.any_instance.expects(:deliver!).once
+    mail_message = Helpdesk::TicketNotifier.reply(ticket, note, options)
+    assert_equal mail_message.to.first, to_email
+  ensure
+    Account.current.rollback(:retry_emails)
+  end
+
+  def test_email_forward_call_deliver_bang_method
+    Account.current.launch(:retry_emails)
+    agent = add_test_agent(@account)
+    ticket = create_ticket(responder_id: agent.id)
+    note = create_note
+    options = {
+      include_cc: false,
+      send_survey: false,
+      quoted_text: note.quoted_text,
+      include_surveymonkey_link: false
+    }
+    from_email = Faker::Internet.email
+    to_emails = [Faker::Internet.email]
+    note.schema_less_note.to_emails = to_emails
+    note.schema_less_note.from_email = from_email
+    note.schema_less_note.save
+    Mail::Message.any_instance.expects(:deliver!).once
+    mail_message = Helpdesk::TicketNotifier.forward(ticket, note, options)
+    assert_equal mail_message.to.first, to_emails.first
+  ensure
+    Account.current.rollback(:retry_emails)
+  end
+
+  def test_email_reply_to_forward_call_deliver_bang_method
+    Account.current.launch(:retry_emails)
+    agent = add_test_agent(@account)
+    ticket = create_ticket(responder_id: agent.id)
+    note = create_note
+    from_email = Faker::Internet.email
+    to_email = Faker::Internet.email
+    note.schema_less_note.to_emails = to_email
+    note.schema_less_note.from_email = from_email
+    note.schema_less_note.save
+    Mail::Message.any_instance.expects(:deliver!).once
+    mail_message = Helpdesk::TicketNotifier.deliver_reply_to_forward(ticket, note)
+    assert_equal mail_message.to.first, to_email
+  ensure
+    Account.current.rollback(:retry_emails)
+  end
+
+  def test_email_notify_outbound_call_deliver_bang_method
+    Account.current.launch(:retry_emails)
+    agent = add_test_agent(@account)
+    ticket = create_ticket(requester_id: agent.id)
+    Mail::Message.any_instance.expects(:deliver!).once
+    mail_message = Helpdesk::TicketNotifier.notify_outbound_email(ticket)
+    assert_equal mail_message.to.first, agent.email
+  ensure
+    Account.current.rollback(:retry_emails)
+  end
 end

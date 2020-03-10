@@ -18,13 +18,8 @@
   incoming_email_api_key1: <%= config[:incoming_email_api_key1] %>
   incoming_email_api_key2: <%= config[:incoming_email_api_key2] %>
   imap_application_id: <%= config[:imap_application_id] %>
-<% if @envoy_egress_allowed && config[:envoy_egress] %>
-  host: <%= config[:envoy_egress][:host_address] %>:<%= config[:envoy_egress][:host_port] %>
-  lang_host: <%= config[:envoy_egress][:lang_host_address] %>:<%= config[:envoy_egress][:lang_host_port] %>
-<% else %>
   host: <%= config[:host] %>
   lang_host: <%= config[:lang_host] %>
-<% end %>
   ip_pool_names:
     - freshworks_email_high
     - freshworks_email_low

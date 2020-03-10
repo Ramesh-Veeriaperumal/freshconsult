@@ -19,6 +19,8 @@ class ChargebeeEventListenerTest < ActionView::TestCase
 
   def teardown
     Subscription.any_instance.unstub(:agent_limit)
+    @account.subscription.state = 'trial'
+    @account.subscription.save
     super
   end
 

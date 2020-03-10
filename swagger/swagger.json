@@ -153,7 +153,8 @@
               "requester",
               "survey",
               "company",
-              "count"
+              "count",
+              "description"
             ]
           },
           {

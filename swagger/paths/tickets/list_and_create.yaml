@@ -14,7 +14,7 @@ get:
       in: query
       type: string
       description: Comma-separated values
-      enum: ["requester", "survey", "company", "count"]
+      enum: ["requester", "survey", "company", "count", "description"]
     - name: ids
       in: query
       type: string

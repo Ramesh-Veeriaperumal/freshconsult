@@ -52,6 +52,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   DATE_TIME_FIELD = 'date_time'.freeze
 
   SECTION_LIMIT = 2
+  FSM_SECTION_LIMIT = SECTION_LIMIT + 1
   NESTED_FIELD_LIMIT = 2
 
   SECTION_DROPDOWNS = ["default_ticket_type", "custom_dropdown"]
@@ -135,6 +136,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   before_destroy :update_ticket_filter, :save_deleted_field_info
 
   before_save :set_portal_edit
+  before_save :sanitize_params, if: -> { Account.current.ticket_field_revamp_enabled? }
 
   before_update :set_internal_field_values
 
@@ -160,6 +162,11 @@ class Helpdesk::TicketField < ActiveRecord::Base
     self.field_options = {} if field_options.blank? || !field_options.is_a?(Hash)
     self.field_options = self.field_options.with_indifferent_access
     self.field_type ||= ''
+  end
+
+  def sanitize_params
+    self.label = RailsFullSanitizer.sanitize(label) if label_changed?
+    self.label_in_portal = RailsFullSanitizer.sanitize(label_in_portal) if label_in_portal_changed?
   end
 
   def clear_all_section_ticket_fields_cache

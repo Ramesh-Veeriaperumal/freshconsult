@@ -26,3 +26,15 @@
   agent_articles_suggest:
     url: <%= node[:ymls][:freddy_skills_config][:agent_articles_suggest][:url] %>
     secret: <%= node[:ymls][:freddy_skills_config][:agent_articles_suggest][:secret] %>
+  
+  agent_assist:
+    host: <%= node[:ymls][:freddy_skills_config][:agent_assist][:host] %>
+    onboard_url: <%= node[:ymls][:freddy_skills_config][:agent_assist][:onboard_url] %>
+    client_id: <%= node[:ymls][:freddy_skills_config][:agent_assist][:client_id] %>
+    product_id: <%= node[:ymls][:freddy_skills_config][:agent_assist][:product_id] %>
+    template_hash: <%= node[:ymls][:freddy_skills_config][:agent_assist][:template_hash] %>
+    jwt_secret: <%= node[:ymls][:freddy_skills_config][:agent_assist][:jwt_secret] %>
+    demo_email: <%= node[:ymls][:freddy_skills_config][:agent_assist][:demo_email] %>
+    timeout: <%= node[:ymls][:freddy_skills_config][:agent_assist][:timeout] %>    
+    onboard_timeout: <%= node[:ymls][:freddy_skills_config][:agent_assist][:onboard_timeout] %>
+    

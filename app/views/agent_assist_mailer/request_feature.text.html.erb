@@ -1,0 +1,23 @@
+<div>Hello Freshdesk Support,</div><br/>
+<div>
+  <%= %(Admin of #{account.full_domain} placed a request for the demo of 'Agent Assist' feature in freshdesk. ) %>
+</div>
+<div>
+  <ul>
+    <li><%= %(Account Admin Email: #{account.admin_email} ) %></li>
+    <li>Account ID: <%= link_to account.id,freshops_account_url%> </li>
+    <li><%= %(Domain: #{account.full_domain})%></li>
+    <li><%= %(Plan: #{account.subscription.plan_name}) %></li>
+    <li><%= %(Agents: #{account.subscription.agent_limit}) %> <%= "(#{pluralize(account.subscription.free_agents, 'free agent')})" if account.subscription.free_agents > 0 %></li>
+    <li>MRR: <b><%=account.currency_name%> <%= account.subscription.amount/account.subscription.renewal_period %>
+      <% unless account.currency_name == "USD"%>
+        ($ <%=account.subscription.usd_equivalent%>)
+      <%end%></b>
+    </li>
+  </ul>
+</div>
+
+<div>
+   <div>Thanks & Regards,</div>
+   Freshdesk Product Team
+</div>

@@ -84,13 +84,15 @@ class SAAS::AccountDataCleanup
     account.ticket_statuses.where(is_default:false).find_each do |status|
       status.deleted = true
       status.save
-      ModifyTicketStatus.perform_async({ :status_id => status.status_id, :status_name => status.name })
+      # In Ticket field revamp feature this worker will be triggered in after_update callback. So skipping the worker execution here.
+      ModifyTicketStatus.perform_async(status_id: status.status_id, status_name: status.name) unless account.ticket_field_revamp_enabled?
     end
     account.ticket_fields_from_cache.find { |ticket_field| ticket_field.field_type == 'default_status' }.save # Clearing memcache using ticket_field after commit callback. FR-ID: FD-19425
   end
 
   def handle_custom_ticket_fields_drop_data
-    account.ticket_fields.where(default:false).destroy_all
+    # We need to clear all custom fields including archived fields on downgrade.
+    account.ticket_fields_with_archived_fields.where(default: false).destroy_all
     #deleting requester widget cache
     key = REQUESTER_WIDGET_FIELDS % { :account_id => account.id }
     MemcacheKeys.delete_from_cache key

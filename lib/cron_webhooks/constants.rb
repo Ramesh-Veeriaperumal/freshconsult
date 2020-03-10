@@ -12,14 +12,16 @@ module CronWebhooks::Constants
     scheduler_facebook
   ].freeze
   TASKS_REQUIRING_QUEUE_NAME = %w[sqs_monitor].freeze
-  TRIGGER_FIELDS = %w[mode task_name type queue_name].freeze
+  TASKS_REQUIRING_ACCOUNT_ID = %w[archive_automation].freeze
+  TASKS_REQUIRING_SHARD_NAME = %w[archive_automation].freeze
+  TRIGGER_FIELDS = %w[mode task_name type queue_name account_id shard_name].freeze
   CRON_JOB_SEMAPHORE = 'CRON_JOB_SEMAPHORE:%{task}:%{misc}'.freeze
   CONTROLLER = 'web_hooks_controller'.freeze
   CONTROLLER_SEMAPHORE_EXPIRY = 180
 
   MONITORED_QUEUES = %w[twitter_realtime_queue facebook_realtime_queue].freeze
 
-  WORKER_ARGS_KEYS = %w[type task_name mode queue_name].freeze
+  WORKER_ARGS_KEYS = %w[type task_name mode queue_name account_id shard_name].freeze
 
   TASK_MAPPING = {
     google_contacts_sync: {
@@ -233,6 +235,10 @@ module CronWebhooks::Constants
     enable_omniroute_for_new_accounts: {
       class_name: 'CronWebhooks::EnableOmnirouteForNewAccounts',
       semaphore_expiry: 1.hour
+    },
+    archive_automation: {
+      class_name: 'CronWebhooks::ArchiveAutomation',
+      semaphore_expiry: 24.hours
     }
   }.freeze
 

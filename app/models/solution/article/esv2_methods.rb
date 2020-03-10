@@ -19,7 +19,14 @@ class Solution::Article < ActiveRecord::Base
   end
 
   def draft_attr_hash(status, modified_by, modified_at)
-    { draft_status: status, draft_modified_by: modified_by, draft_modified_at: modified_at }
+    { draft_status: draft_status, draft_modified_by: modified_by, draft_modified_at: modified_at }
+  end
+
+  def draft_status
+    status = Solution::Constants::DRAFT_STATUSES_ES[:draft_not_present]
+    status = Solution::Constants::DRAFT_STATUSES_ES[:draft_present] if self.draft_present?
+    status = self.helpdesk_approval.try(:approval_status) if Account.current.article_approval_workflow_enabled? && self.helpdesk_approval.try(:approval_status)
+    status
   end
 
   def tag_names

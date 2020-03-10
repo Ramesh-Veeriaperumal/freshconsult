@@ -7,18 +7,22 @@ window.App.Admin = window.App.Admin || {};
 
     App.Admin.AdminFontSettings = {
     fontname_pairs : {
-      'System'    : "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif",
-      'Helvetica'   : 'Helvetica Neue, Helvetica, Arial, sans-serif',
-      'Sans Serif'  : 'arial, helvetica, sans-serif',
-      'Serif'     : 'times new roman, serif',
-      'Wide'      : 'arial black, sans-serif',
-      'Narrow'    : 'arial narrow, sans-serif',
+      'System' : "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif",
+      'Helvetica' : 'Helvetica Neue, Helvetica, Arial, sans-serif',
+      'Sans Serif' : 'arial, helvetica, sans-serif',
+      'Serif' : 'times new roman, serif',
+      'Wide' : 'arial black, sans-serif',
+      'Narrow' : 'arial narrow, sans-serif',
       'Courier New' : 'courier new, monospace',
-      'Garamond'    : 'garamond, serif',
-      'Georgia'   : 'georgia, serif',
-      'Tahoma'    : 'tahoma, arial, sans-serif',
-      'Trebuchet MS'  : 'trebuchet ms, arial, sans-serif',
-      'Verdana'   : 'verdana, arial, sans-serif'
+      'Garamond' : 'garamond, serif',
+      'Georgia' : 'georgia, serif',
+      'Tahoma' : 'tahoma, arial, sans-serif',
+      'Trebuchet MS' : 'trebuchet ms, arial, sans-serif',
+	  'Verdana' : 'verdana, arial, sans-serif',
+	  'Proxima Nova' : 'Proxima Nova, arial, sans-serif',
+	  'Times New Roman' : 'Times New Roman, serif',
+	  'Calibri' : 'Calibri, arial, sans-serif',
+	  'Arial' : 'arial, sans-serif'
     },
     font_sizes : ['10px', '11px', '12px', '13px', '14px', '15px', '16px', '17px', '18px', '19px', '20px'],
       initialize: function () {
@@ -103,7 +107,7 @@ window.App.Admin = window.App.Admin || {};
         });
       },
       buildFontFamily: function(){
-        var fontnames = ['System', 'Helvetica','Sans Serif','Serif','Wide','Narrow','Courier New','Garamond','Georgia','Tahoma','Trebuchet MS','Verdana']
+        var fontnames = Object.keys(this.fontname_pairs);
 
         var dropdown = $('<div class="redactor_dropdown" id="font-family-dropdown" >');
         var len = fontnames.length;

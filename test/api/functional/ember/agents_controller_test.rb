@@ -18,6 +18,10 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     }
   }.freeze
 
+  def tear_down
+    cleanup_fsm
+  end
+    
   def wrap_cname(params)
     { agent: params }
   end
@@ -236,6 +240,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
         agent.try(:destroy)
         field_agent.try(:destroy)
         field_agent2.try(:destroy)
+        cleanup_fsm
         login_as(currentuser)
       end
     end
@@ -261,6 +266,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
         agent.try(:destroy)
         field_agent.try(:destroy)
         field_agent2.try(:destroy)
+        cleanup_fsm
         login_as(currentuser)
       end
     end
@@ -283,6 +289,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
         role.try(:destroy)
         agent.try(:destroy)
         field_agent.try(:destroy)
+        cleanup_fsm
         login_as(currentuser)
       end
     end
@@ -601,7 +608,8 @@ class Ember::AgentsControllerTest < ActionController::TestCase
   def test_update_field_agent_with_correct_scope_and_role
     Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
     Agent.any_instance.stubs(:ticket_permission).returns(::Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
-    field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
+    field_agent_type = Account.current.agent_types_from_cache.find { |type| type.name == Agent::FIELD_AGENT.to_s }
+    field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT) if field_agent_type.blank?
     field_tech_role = @account.roles.create(name: 'Field technician', default_role: true)
     agent = add_test_agent(@account, role: Role.find_by_name('Field technician').id, agent_type: field_agent_type.agent_type_id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
     params = {email: Faker::Internet.email}
@@ -633,7 +641,8 @@ class Ember::AgentsControllerTest < ActionController::TestCase
 
   def test_update_field_agent_with_multiple_role
     Agent.any_instance.stubs(:check_ticket_permission).returns(true)
-    field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
+    field_agent_type = Account.current.agent_types_from_cache.find { |type| type.name == Agent::FIELD_AGENT.to_s }
+    field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT) if field_agent_type.blank?
     field_tech_role = @account.roles.create(name: 'Field technician', default_role: true)
     agent = add_test_agent(@account, role: Role.find_by_name('Field technician').id, agent_type: field_agent_type.agent_type_id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
     Account.any_instance.stubs(:agent_types_from_cache).returns(agent)

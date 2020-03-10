@@ -27,6 +27,30 @@ class SolutionArticleFilterValidationTest < ActionView::TestCase
     SolutionArticleFilterValidation.any_instance.unstub(:validation_context)
   end
 
+  def test_valid_status_without_multiligual
+    Account.current.stubs(:multilingual?).returns(false)
+    Account.current.stubs(:article_approval_workflow_enabled?).returns(true)
+    SolutionArticleFilterValidation.any_instance.stubs(:validation_context).returns(:filter)
+    solution_article_filter = SolutionArticleFilterValidation.new(status: 0, portal_id: '1', language: 'en')
+    assert !solution_article_filter.valid?, 'It should be in [1,2,4,5]'
+  ensure
+    SolutionArticleFilterValidation.any_instance.unstub(:validation_context)
+    Account.any_instance.unstub(:multilingual?)
+    Account.any_instance.unstub(:article_approval_workflow_enabled?)
+  end
+
+  def test_valid_status_without_article_approval_workflow
+    Account.any_instance.stubs(:multilingual?).returns(true)
+    Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(false)
+    SolutionArticleFilterValidation.any_instance.stubs(:validation_context).returns(:filter)
+    solution_article_filter = SolutionArticleFilterValidation.new(status: 0, portal_id: '1', language: 'en')
+    assert !solution_article_filter.valid?, 'It should be in [1,2,3]'
+  ensure
+    SolutionArticleFilterValidation.any_instance.unstub(:validation_context)
+    Account.any_instance.unstub(:article_approval_workflow_enabled?)
+    Account.any_instance.unstub(:multilingual?)
+  end
+
   def test_invalid_string_status
     SolutionArticleFilterValidation.any_instance.stubs(:validation_context).returns(:filter)
     solution_article_filter = SolutionArticleFilterValidation.new(status: 'a', portal_id: '1', language: 'en')
@@ -36,27 +60,33 @@ class SolutionArticleFilterValidationTest < ActionView::TestCase
   end
 
   def test_valid_status
+    Account.any_instance.stubs(:multilingual?).returns(true)
+    Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
     SolutionArticleFilterValidation.any_instance.stubs(:validation_context).returns(:filter)
     solution_article_filter = SolutionArticleFilterValidation.new(status: 3, portal_id: '1', language: 'en')
     assert solution_article_filter.valid?, 'It should be in [1,2,3,4,5]'
   ensure
     SolutionArticleFilterValidation.any_instance.unstub(:validation_context)
+    Account.any_instance.unstub(:multilingual?)
+    Account.any_instance.unstub(:article_approval_workflow_enabled?)
   end
 
   def test_invalid_approver_id
     SolutionArticleFilterValidation.any_instance.stubs(:validation_context).returns(:filter)
-    solution_article_filter = SolutionArticleFilterValidation.new(approver: 0, status: Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:in_review], portal_id: '1', language: 'en')
+    solution_article_filter = SolutionArticleFilterValidation.new(approver: 0, status: SolutionConstants::STATUS_FILTER_BY_TOKEN[:in_review], portal_id: '1', language: 'en')
     assert !solution_article_filter.valid?, 'It should be a/an Positive Integer'
   ensure
     SolutionArticleFilterValidation.any_instance.unstub(:validation_context)
   end
 
   def test_approver_with_valid_status
+    Account.current.stubs(:article_approval_workflow_enabled?).returns(true)
     SolutionArticleFilterValidation.any_instance.stubs(:validation_context).returns(:filter)
-    solution_article_filter = SolutionArticleFilterValidation.new(approver: 1, status: Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:in_review], portal_id: '1', language: 'en')
+    solution_article_filter = SolutionArticleFilterValidation.new(approver: 1, status: SolutionConstants::STATUS_FILTER_BY_TOKEN[:in_review], portal_id: '1', language: 'en')
     assert solution_article_filter.valid?, 'to select approver status should be in_review or approved'
   ensure
     SolutionArticleFilterValidation.any_instance.unstub(:validation_context)
+    Account.any_instance.unstub(:article_approval_workflow_enabled?)
   end
 
   def test_approver_without_status
@@ -69,7 +99,7 @@ class SolutionArticleFilterValidationTest < ActionView::TestCase
 
   def test_approver_with_status_not_in_approved_or_inreview
     SolutionArticleFilterValidation.any_instance.stubs(:validation_context).returns(:filter)
-    solution_article_filter = SolutionArticleFilterValidation.new(approver: 1, status: Solution::ArticleFilterScoper::STATUS_FILTER_BY_TOKEN[:draft], portal_id: '1', language: 'en')
+    solution_article_filter = SolutionArticleFilterValidation.new(approver: 1, status: SolutionConstants::STATUS_FILTER_BY_TOKEN[:draft], portal_id: '1', language: 'en')
     assert !solution_article_filter.valid?, 'to select approver status should be in_review or approved'
   ensure
     SolutionArticleFilterValidation.any_instance.unstub(:validation_context)
