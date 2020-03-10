@@ -27,7 +27,7 @@ class SubscriptionPlan < ActiveRecord::Base
 
   # TODO: Remove force_2020_plan?() after 2019 plan launched
   # START
-  scope :plans_2020, conditions: { name: ['Sprout Jan 20', 'Blossom Jan 20', 'Garden Jan 20', 'Estate Jan 20', 'Garden Omni Jan 20', 'Estate Omni Jan 20', 'Forest Jan 20', 'Forest Omni Jan 20'] }, order: 'amount asc'
+  scope :plans_2020, conditions: { name: ['Sprout Jan 20', 'Blossom Jan 20', 'Garden Jan 20', 'Estate Jan 20', 'Estate Omni Jan 20', 'Forest Jan 20', 'Forest Omni Jan 20'] }, order: 'amount asc'
   # END
 
   after_commit :clear_cache
@@ -60,7 +60,6 @@ class SubscriptionPlan < ActiveRecord::Base
                          sprout_jan_20: 'Sprout Jan 20',
                          blossom_jan_20: 'Blossom Jan 20',
                          garden_jan_20: 'Garden Jan 20',
-                         garden_omni_jan_20: 'Garden Omni Jan 20',
                          estate_jan_20: 'Estate Jan 20',
                          estate_omni_jan_20: 'Estate Omni Jan 20',
                          forest_jan_20: 'Forest Jan 20',
@@ -104,13 +103,12 @@ class SubscriptionPlan < ActiveRecord::Base
 
   JAN_2020_PLAN_NAMES = [
     'Sprout Jan 20', 'Blossom Jan 20', 'Garden Jan 20', 'Estate Jan 20',
-    'Garden Omni Jan 20', 'Estate Omni Jan 20', 'Forest Jan 20', 'Forest Omni Jan 20'
+    'Estate Omni Jan 20', 'Forest Jan 20', 'Forest Omni Jan 20'
   ].freeze
 
   OMNI_PLANS = [
     ['Estate Omni Jan 19', 'Estate Jan 19'],
     ['Garden Omni Jan 19', 'Garden Jan 19'],
-    ['Garden Omni Jan 20', 'Garden Jan 20'],
     ['Estate Omni Jan 20', 'Estate Jan 20'],
     ['Forest Omni Jan 20', 'Forest Jan 20']
   ].freeze

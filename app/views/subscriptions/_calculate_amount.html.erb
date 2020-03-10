@@ -7,7 +7,7 @@
 	current_subscription_plan = current_subscription.subscription_plan
 	
 	is_plan_downgrade = @subscription.state == 'active' &&
-						((@subscription.subscription_plan_id != current_subscription.subscription_plan_id && @subscription.cost_per_agent < current_subscription.cost_per_agent)|| (current_subscription_plan.omni_plan? &&
+						((@subscription.subscription_plan_id != current_subscription.subscription_plan_id && @subscription.cost_per_agent < current_subscription.cost_per_agent)|| ((current_subscription_plan.omni_plan? || current_subscription_plan.free_omni_channel_plan?) &&
 						@subscription.subscription_plan.basic_variant?))
 	
 %>

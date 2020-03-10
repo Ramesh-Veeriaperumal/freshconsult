@@ -7,6 +7,7 @@ module SubscriptionsHelper
   OMNI_FEATURES = {
     "sproutomni_channel_option" => ["sprout_omni"],
     "blossomomni_channel_option" => ["blossom_omni"],
+    'gardenomni_channel_option_basic' => ['blossom_omni'],
     "gardenomni_channel_option" => ["chat_faq", "chat_message", "ivr", "masking_recording"],
     "estateomni_channel_option" => ["chatbots", "inapp_chat", "smart_calls", "barging_monitoring"],
     "forestomni_channel_option" => ["co_browsing", "multilingual_chat", "holiday_routing"]
@@ -51,7 +52,6 @@ module SubscriptionsHelper
     'estate jan 20' => 4,
     'forest jan 20' => 5,
 
-    'garden omni jan 20' => 3,
     'estate omni jan 20' => 4,
     'forest omni jan 20' => 5
   }
