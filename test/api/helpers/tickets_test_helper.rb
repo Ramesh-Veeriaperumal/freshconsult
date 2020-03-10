@@ -1190,9 +1190,9 @@ module ApiTicketsTestHelper
     end
   end
 
-  def create_article_feedback_ticket
+  def create_article_feedback_ticket(article_id)
     ticket = create_ticket
-    ticket.create_article_ticket(article_id: Account.current.solution_articles.where(language_id: Account.current.language_object.id).first.id)
+    ticket.create_article_ticket(article_id: article_id)
   end
 
   def assert_link_failure(ticket_id, pattern = nil)

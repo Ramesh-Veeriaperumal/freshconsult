@@ -47,4 +47,5 @@ module Email::Mailbox::Constants
   EMAIL_SERVICE_PROVIDER_GMAIL = 'google'.freeze
 
   SMTP_AUTH_ERROR_CODE = '535'.freeze
+  SMTP_TOO_MANY_LOGIN_ATTEMPTS = '454'.freeze
 end

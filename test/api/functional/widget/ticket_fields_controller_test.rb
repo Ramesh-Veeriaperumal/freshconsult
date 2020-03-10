@@ -44,12 +44,9 @@ module Widget
     end
 
     def test_index_without_x_widget_auth
-      @account.launch :help_widget_login
       get :index, controller_params
       assert_response 200
       assert JSON.parse(response.body).count > 1
-    ensure
-      @account.rollback :help_widget_login
     end
 
     def test_index_with_correct_x_widget_auth_user_present
@@ -69,7 +66,6 @@ module Widget
     end
 
     def test_index_with_wrong_x_widget_auth
-      @account.launch :help_widget_login
       secret_key = SecureRandom.hex
       @account.stubs(:help_widget_secret).returns(secret_key)
       auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', exp: (Time.now.utc + 1.hour).to_i }, secret_key + 'opo')
@@ -79,7 +75,6 @@ module Widget
     end
 
     def test_index_default_field_name_with_user_login_expired
-      @account.launch :help_widget_login
       secret_key = SecureRandom.hex
       @account.stubs(:help_widget_secret).returns(secret_key)
       auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', exp: (Time.now.utc - 4.hours).to_i }, secret_key + 'opo')

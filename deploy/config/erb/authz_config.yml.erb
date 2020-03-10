@@ -1,0 +1,4 @@
+<%= node[:opsworks][:environment]%>:
+  host: <%= node[:ymls][:authz_config][:host] %>
+  product_id: <%= node[:ymls][:authz_config][:product_id] %>
+  timeout: <%= node[:ymls][:authz_config][:timeout] %>

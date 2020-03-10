@@ -199,13 +199,13 @@ module Ember
       def test_index_with_valid_ids_and_different_language
         article_ids = []
         article_ids = @account.solution_articles.where(language_id: 8).map(&:parent_id)
-        Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code('es')])
+        Account.any_instance.stubs(:all_language_objects).returns([Language.find_by_code('es')])
         get :index, controller_params(version: 'private', ids: article_ids, language: 'es')
         articles = @account.solution_articles.where(parent_id: article_ids, language_id: 8).first(10)
         assert_response 200
         pattern = articles.map { |article| private_api_solution_article_index_pattern(article, exclude_draft: true) }
         match_json(pattern.ordered!)
-        Account.any_instance.unstub(:all_portal_language_objects)
+        Account.any_instance.unstub(:all_language_objects)
       end
 
       def test_index_with_additional_params
@@ -222,7 +222,7 @@ module Ember
         article_ids = @account.solution_articles.limit(10).collect(&:parent_id)
         get :index, controller_params(version: 'private', ids: article_ids.join(','), language: '1000')
         assert_response 400
-        match_json([bad_request_error_pattern('language', :not_included, list: @account.all_portal_language_objects.map(&:code))])
+        match_json([bad_request_error_pattern('language', :not_included, list: @account.all_language_objects.map(&:code).join(','))])
       end
 
       def test_index_with_valid_ids_and_user_id
@@ -274,12 +274,12 @@ module Ember
       end
 
       def test_article_content_with_different_language
-        Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code('es')])
+        Account.any_instance.stubs(:all_language_objects).returns([Language.find_by_code('es')])
         article = @account.solution_articles.where(language_id: 8).last
         get :article_content, controller_params(version: 'private', id: article.parent_id, language: 'es')
         assert_response 200
         match_json(article_content_pattern(article))
-        Account.any_instance.unstub(:all_portal_language_objects)
+        Account.any_instance.unstub(:all_language_objects)
       end
 
       def test_article_content_without_language_id
@@ -2333,12 +2333,12 @@ module Ember
 
       def test_article_filters_with_secondary_language_nodata
         Account.any_instance.stubs(:supported_languages).returns(['et'])
-        Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code('et')])
+        Account.any_instance.stubs(:all_language_objects).returns([Language.find_by_code('et')])
         get :filter, controller_params(version: 'private', portal_id: @portal_id, language: 'et')
         assert_response 200
         match_json([])
         Account.any_instance.unstub(:supported_languages)
-        Account.any_instance.unstub(:all_portal_language_objects)
+        Account.any_instance.unstub(:all_language_objects)
       end
 
       def test_article_filters_with_secondary_language
@@ -2349,12 +2349,12 @@ module Ember
           article_meta = create_article(article_params(lang_codes: languages))
           articles = [article_meta.safe_send("#{language}_article")]
         end
-        Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
+        Account.any_instance.stubs(:all_language_objects).returns([Language.find_by_code(language)])
         get :filter, controller_params(version: 'private', portal_id: @portal_id, language: language)
         assert_response 200
         pattern = articles.map { |article| private_api_solution_article_pattern(article, { action: :filter }, true, nil) }
         match_json(pattern)
-        Account.any_instance.unstub(:all_portal_language_objects)
+        Account.any_instance.unstub(:all_language_objects)
       end
 
       def test_article_filters_all_attributes_with_secondary_language
@@ -2365,7 +2365,7 @@ module Ember
         article = article_meta.safe_send("#{language}_article")
         tag = Faker::Lorem.characters(7)
         create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag, allow_skip: true)
-        Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
+        Account.any_instance.stubs(:all_language_objects).returns([Language.find_by_code(language)])
         get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, language: language, status: SolutionConstants::STATUS_FILTER_BY_TOKEN[:published],
                                          author: author_id.to_s, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s],
                                          created_at: { start: '20190101', end: '21190101' }, last_modified: { start: '20190101', end: '21190101' }, tags: [tag] }, false)
@@ -2373,7 +2373,7 @@ module Ember
         assert_response 200
         pattern = private_api_solution_article_pattern(article, { action: :filter }, true, nil)
         match_json([pattern])
-        Account.any_instance.unstub(:all_portal_language_objects)
+        Account.any_instance.unstub(:all_language_objects)
       end
 
       def test_article_filters_with_diff_sec_lang
@@ -2381,11 +2381,11 @@ module Ember
         languages = @account.supported_languages + ['primary']
         language = @account.supported_languages.first
         article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id, lang_codes: languages)
-        Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code('ru-RU')])
+        Account.any_instance.stubs(:all_language_objects).returns([Language.find_by_code('ru-RU')])
         get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, language: 'ru-RU', author: author_id.to_s }, false)
         assert_response 200
         match_json([])
-        Account.any_instance.unstub(:all_portal_language_objects)
+        Account.any_instance.unstub(:all_language_objects)
       end
 
       def test_article_filters_by_category_folder_with_sec_lang
@@ -2394,24 +2394,24 @@ module Ember
         author_id = add_test_agent.id
         article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id, lang_codes: languages)
         article = article_meta.safe_send("#{language}_article")
-        Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
+        Account.any_instance.stubs(:all_language_objects).returns([Language.find_by_code(language)])
         get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, language: language, category: [@@category_meta.id.to_s], folder: [@@folder_meta.id.to_s], author: author_id.to_s }, false)
         article.reload
         assert_response 200
         pattern = private_api_solution_article_pattern(article, { action: :filter }, true, nil)
         match_json([pattern])
-        Account.any_instance.unstub(:all_portal_language_objects)
+        Account.any_instance.unstub(:all_language_objects)
       end
 
       def test_article_filters_by_category_folder_mismatched_with_sec_lang
         languages = @account.supported_languages + ['primary']
         language  = @account.supported_languages.first
         article_meta = create_article(folder_meta_id: @@folder_meta.id, lang_codes: languages)
-        Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
+        Account.any_instance.stubs(:all_language_objects).returns([Language.find_by_code(language)])
         get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, language: language, category: ['10101010100000'], folder: [@@folder_meta.id.to_s] }, false)
         assert_response 200
         match_json([])
-        Account.any_instance.unstub(:all_portal_language_objects)
+        Account.any_instance.unstub(:all_language_objects)
       end
 
       def test_article_filters_by_status_with_sec_lang
@@ -2422,12 +2422,12 @@ module Ember
           article_meta = create_article(folder_meta_id: @@folder_meta.id, lang_codes: languages)
           articles = [article_meta.safe_send("#{language}_article")]
         end
-        Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
+        Account.any_instance.stubs(:all_language_objects).returns([Language.find_by_code(language)])
         get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, language: language, status: SolutionConstants::STATUS_FILTER_BY_TOKEN[:published] }, false)
         assert_response 200
         pattern = articles.map { |article| private_api_solution_article_pattern(article, { action: :filter }, true, nil) }
         match_json(pattern)
-        Account.any_instance.unstub(:all_portal_language_objects)
+        Account.any_instance.unstub(:all_language_objects)
       end
 
       def test_article_filters_by_status_outdated_with_sec_lang
@@ -2437,12 +2437,12 @@ module Ember
         article = article_meta.safe_send("#{language}_article")
         article.outdated = true
         article.save
-        Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
+        Account.any_instance.stubs(:all_language_objects).returns([Language.find_by_code(language)])
         get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, language: language, status: SolutionConstants::STATUS_FILTER_BY_TOKEN[:outdated] }, false)
         assert_response 200
         pattern = [private_api_solution_article_pattern(article, { action: :filter }, true, nil)]
         match_json(pattern)
-        Account.any_instance.unstub(:all_portal_language_objects)
+        Account.any_instance.unstub(:all_language_objects)
       end
 
       def test_article_filters_by_author_lastmodified_with_sec_lang
@@ -2451,13 +2451,13 @@ module Ember
         author_id = add_test_agent.id
         article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id, lang_codes: languages)
         article = article_meta.safe_send("#{language}_article")
-        Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
+        Account.any_instance.stubs(:all_language_objects).returns([Language.find_by_code(language)])
         get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, language: language, author: author_id.to_s, last_modified: { start: '20190101', end: '21190101' } }, false)
         article.reload
         assert_response 200
         pattern = private_api_solution_article_pattern(article, { action: :filter }, true, nil)
         match_json([pattern])
-        Account.any_instance.unstub(:all_portal_language_objects)
+        Account.any_instance.unstub(:all_language_objects)
       end
 
       def test_article_filters_by_author_createdat_mismatched_with_sec_lang
@@ -2468,12 +2468,12 @@ module Ember
         articles = article_meta.safe_send("#{language}_article")
         start_date = Time.now + 10.days
         end_date = Time.now + 20.days
-        Account.any_instance.stubs(:all_portal_language_objects).returns([Language.find_by_code(language)])
+        Account.any_instance.stubs(:all_language_objects).returns([Language.find_by_code(language)])
         get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, language: language,
                                          author: author_id.to_s, created_at: { start: start_date.to_s, end: end_date.to_s } }, false)
         assert_response 200
         match_json([])
-        Account.any_instance.unstub(:all_portal_language_objects)
+        Account.any_instance.unstub(:all_language_objects)
       end
 
       def test_untranslated_articles_without_portal_id

@@ -191,6 +191,7 @@ module UsersTestHelper
       :avatar, :tags, :other_emails, :deleted,
       :other_companies, :view_all_tickets, :was_agent, :agent_deleted_forever, :marked_for_hard_delete, :facebook_id, :unique_external_id
     ]
+    keys -= [:unique_external_id] if Account.current.unique_contact_identifier_enabled?
     keys -= [:deleted] if contact.deleted
     contact_pattern(contact).except(*keys)
   end

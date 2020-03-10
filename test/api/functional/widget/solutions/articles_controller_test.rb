@@ -161,7 +161,6 @@ module Widget
       end
 
       def test_show_article_help_widget_login
-        @account.launch :help_widget_login
         @account.stubs(:multilingual?).returns(false)
         get :show, controller_params(id: @article.parent_id)
         assert_response 200
@@ -175,11 +174,9 @@ module Widget
         assert_nil Language.current
       ensure
         @account.unstub(:multilingual?)
-        @account.rollback :help_widget_login
       end
 
       def test_show_article_with_user_login_expired
-        @account.launch :help_widget_login
         secret_key = SecureRandom.hex
         @account.stubs(:help_widget_secret).returns(secret_key)
         auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', exp: (Time.now.utc - 4.hours).to_i }, secret_key + 'opo')
@@ -223,7 +220,6 @@ module Widget
       end
 
       def test_show_article_with_wrong_x_widget_auth
-        @account.launch :help_widget_login
         @account.stubs(:multilingual?).returns(false)
         secret_key = SecureRandom.hex
         @account.stubs(:help_widget_secret).returns(secret_key)
@@ -233,7 +229,6 @@ module Widget
         assert_response 401
       ensure
         @account.unstub(:multilingual?)
-        @account.rollback :help_widget_login
         @account.unstub(:help_widget_secret)
       end
 
@@ -380,7 +375,6 @@ module Widget
       end
 
       def test_hit_article_with_user_login_expired
-        @account.launch :help_widget_login
         secret_key = SecureRandom.hex
         @account.stubs(:help_widget_secret).returns(secret_key)
         auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', exp: (Time.now.utc - 4.hours).to_i }, secret_key + 'opo')
@@ -393,7 +387,6 @@ module Widget
       end
 
       def test_hit_article_with_wrong_x_widget_auth
-        @account.launch :help_widget_login
         @account.stubs(:multilingual?).returns(false)
         secret_key = SecureRandom.hex
         @account.stubs(:help_widget_secret).returns(secret_key)
@@ -403,7 +396,6 @@ module Widget
         assert_response 401
       ensure
         @account.unstub(:multilingual?)
-        @account.rollback :help_widget_login
         @account.unstub(:help_widget_secret)
         User.any_instance.unstub(:agent?)
       end
@@ -555,7 +547,6 @@ module Widget
       end
 
       def test_thumbs_up_articlet_with_user_login_expired
-        @account.launch :help_widget_login
         secret_key = SecureRandom.hex
         @account.stubs(:help_widget_secret).returns(secret_key)
         auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', exp: (Time.now.utc - 4.hours).to_i }, secret_key + 'opo')
@@ -570,7 +561,6 @@ module Widget
       def test_thumbs_up_article_with_wrong_x_widget_token
         @account.stubs(:multilingual?).returns(false)
         User.unstub(:current)
-        @account.launch :help_widget_login
         secret_key = SecureRandom.hex
         @account.stubs(:help_widget_secret).returns(secret_key)
         solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
@@ -583,7 +573,6 @@ module Widget
         @account.unstub(:multilingual?)
         User.stubs(:current).returns(nil)
         @account.unstub(:help_widget_secret)
-        @account.rollback :help_widget_login
         user.destroy
         solution_article.destroy
       end
@@ -761,7 +750,6 @@ module Widget
       end
 
       def test_create_attachment_with_user_login_expired
-        @account.launch :help_widget_login
         secret_key = SecureRandom.hex
         @account.stubs(:help_widget_secret).returns(secret_key)
         auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', exp: (Time.now.utc - 4.hours).to_i }, secret_key + 'opo')
@@ -776,7 +764,6 @@ module Widget
       def test_thumbs_down_article_with_wrong_x_widget_token
         @account.stubs(:multilingual?).returns(false)
         User.unstub(:current)
-        @account.launch :help_widget_login
         secret_key = SecureRandom.hex
         @account.stubs(:help_widget_secret).returns(secret_key)
         solution_article = create_articles(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users])
@@ -789,7 +776,6 @@ module Widget
         @account.unstub(:multilingual?)
         User.stubs(:current).returns(nil)
         @account.unstub(:help_widget_secret)
-        @account.rollback :help_widget_login
         user.destroy
         solution_article.destroy
       end

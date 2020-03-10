@@ -1445,6 +1445,11 @@
         "_shift_service_host": "https://shift-au.freshdesk.com/",
         "jwt_secret": "EJ[1:cXUvpJYqt+7yQ0oSymGNuY0iKDQjGt/JTT9RGsFM7R4=:cjL1LZZgDwW9cUSJR3f2Mhu3eWbMmxPd:bP1pv4pY7RPRGtpxKoLWcz2I8yjxWA0lDA==]",
         "_time_out": 10
+      },
+      "authz_config": {
+        "_host": "https://authz-au.freshdesk.com/",
+        "_product_id": 1,
+        "_timeout": 10
       }
     },
     "unique_keys": {

@@ -129,7 +129,6 @@ module Widget
       end
 
       def test_results_help_widget_login
-        @account.launch :help_widget_login
         stub_private_search_response([@article]) do
           post :results, construct_params(version: 'widget', term: @article.title)
         end
@@ -138,8 +137,6 @@ module Widget
         assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
         assert_equal [widget_article_search_pattern(@article)].to_json, response.body
         assert_nil Language.current
-      ensure
-        @account.rollback :help_widget_login
       end
 
       def test_results_with_x_widget_auth_user_present
@@ -167,7 +164,6 @@ module Widget
       end
 
       def test_results_with_wrong_x_widget_auth
-        @account.launch :help_widget_login
         secret_key = SecureRandom.hex
         @account.stubs(:help_widget_secret).returns(secret_key)
         auth_token = JWT.encode({ name: 'Padmashri', email: 'praajingbottom@freshworks.com', exp: (Time.now.utc + 1.hour).to_i }, secret_key + 'oyo')
@@ -177,12 +173,10 @@ module Widget
         end
         assert_response 401
       ensure
-        @account.rollback :help_widget_login
         @account.unstub(:help_widget_secret)
       end
 
       def test_results_widget_authentication
-        @account.launch :help_widget_login
         stub_private_search_response([@article]) do
           post :results, construct_params(version: 'widget', term: @article.title)
         end
@@ -191,8 +185,6 @@ module Widget
         assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
         assert_equal [widget_article_search_pattern(@article)].to_json, response.body
         assert_nil Language.current
-      ensure
-        @account.rollback :help_widget_login
       end
 
       def test_results_with_invalid_term
@@ -278,7 +270,6 @@ module Widget
       end
 
       def test_results_help_widget_login_get
-        @account.launch :help_widget_login
         stub_private_search_response([@article]) do
           get :results, construct_params(version: 'widget', term: @article.title)
         end
@@ -287,8 +278,6 @@ module Widget
         assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
         assert_equal [widget_article_search_pattern(@article)].to_json, response.body
         assert_nil Language.current
-      ensure
-        @account.rollback :help_widget_login
       end
 
       def test_results_with_x_widget_auth_user_present_get
@@ -316,7 +305,6 @@ module Widget
       end
 
       def test_results_with_wrong_x_widget_auth_get
-        @account.launch :help_widget_login
         secret_key = SecureRandom.hex
         @account.stubs(:help_widget_secret).returns(secret_key)
         auth_token = JWT.encode({ name: 'Padmashri', email: 'praajingbottom@freshworks.com', exp: (Time.now.utc + 1.hour).to_i }, secret_key + 'oyo')
@@ -326,12 +314,10 @@ module Widget
         end
         assert_response 401
       ensure
-        @account.rollback :help_widget_login
         @account.unstub(:help_widget_secret)
       end
 
       def test_results_widget_authentication_with_user_login_expired
-        @account.launch :help_widget_login
         secret_key = SecureRandom.hex
         @account.stubs(:help_widget_secret).returns(secret_key)
         auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', exp: (Time.now.utc - 4.hours).to_i }, secret_key + 'opo')
@@ -345,7 +331,6 @@ module Widget
       end
 
       def test_results_widget_authentication_get
-        @account.launch :help_widget_login
         stub_private_search_response([@article]) do
           get :results, construct_params(version: 'widget', term: @article.title)
         end
@@ -354,8 +339,6 @@ module Widget
         assert_equal solution_folder_meta.visibility, ALL_USER_VISIBILITY
         assert_equal [widget_article_search_pattern(@article)].to_json, response.body
         assert_nil Language.current
-      ensure
-        @account.rollback :help_widget_login
       end
 
       def test_results_with_invalid_term_get

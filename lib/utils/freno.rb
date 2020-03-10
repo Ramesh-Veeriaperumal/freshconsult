@@ -11,7 +11,8 @@ module Utils
 
     def get_replication_lag_for_shard(application_name, shard_name)
       # if shard name or application name is empty, replication lag can't be checked for the shard.
-      return 0 if shard_name.blank? || application_name.blank?
+      # can ignore replication lag for Sandbox
+      return 0 if shard_name.blank? || application_name.blank? || shard_name == SANDBOX_SHARD_CONFIG
 
       freno_url = freno_api_url(application_name, shard_name)
       # check replication lag API and return based on response code.
