@@ -110,6 +110,7 @@ run "ln -nfs #{shared_path}/config/shift_config.yml  #{node[:rel_path]}/config/s
 run "ln -nfs #{shared_path}/config/rts.yml #{node[:rel_path]}/config/rts.yml"
 run "ln -nfs #{shared_path}/config/secure_field.yml #{node[:rel_path]}/config/jwe/secure_field.yml"
 run "ln -nfs #{shared_path}/config/custom_survey_result_key.yml #{node[:rel_path]}/config/custom_survey_result_key.yml"
+run "ln -nfs #{shared_path}/config/authz_config.yml #{node[:rel_path]}/config/authz_config.yml"
 
 # supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"
