@@ -31,7 +31,7 @@ module Widget
       end
 
       def auth_token_required?
-        current_account.help_widget_login_enabled? && @help_widget.contact_form_require_login?
+        @help_widget.contact_form_require_login?
       end
   end
 end

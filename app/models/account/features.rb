@@ -42,7 +42,7 @@ class Account < ActiveRecord::Base
     :email_mailbox, :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
     :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :optar_cache, :fsm_custom_to_default_filter, :launch_fsm_geolocation,
     :ticket_field_revamp, :facebook_dm_outgoing_attachment, :skip_posting_to_fb, :hide_mailbox_error_from_agents, :hide_og_meta_tags,
-    :freshcaller_admin_new_ui, :facebook_post_outgoing_attachment, :incoming_mentions_in_tms, :help_widget_login, :disable_occlusion_rendering,
+    :freshcaller_admin_new_ui, :facebook_post_outgoing_attachment, :incoming_mentions_in_tms, :disable_occlusion_rendering,
     :prevent_lang_detect_for_spam, :jira_onpremise_reporter, :support_ticket_rate_limit, :sidekiq_logs_to_central, :portal_central_publish, :encode_emoji_in_solutions,
     :forums_agent_portal, :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html,
     :mailbox_forward_setup, :remove_image_attachment_meta_data, :automated_private_notes_notification, :detect_lang_from_email_service,

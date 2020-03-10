@@ -5,12 +5,10 @@ class Admin::SecurityKeysControllerTest < ActionController::TestCase
     super
     Account.current.launch(:help_widget)
     Account.current.add_feature(:help_widget)
-    Account.current.launch(:help_widget_login)
   end
 
   def teardown
     super
-    Account.current.rollback(:help_widget_login)
     Account.current.rollback(:help_widget)
     Account.current.remove_feature(:help_widget)
   end

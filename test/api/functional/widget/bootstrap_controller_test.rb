@@ -207,12 +207,9 @@ module Widget
     end
 
     def test_widget_bootstap_without_token
-      @account.launch :help_widget_login
       get :index, construct_params(version: 'widget')
       assert_response 400
       match_json(request_error_pattern('x_widget_auth_required'))
-    ensure
-      @account.rollback :help_widget_login
     end
 
     def test_widget_boostrap_with_user_blocked
@@ -282,7 +279,6 @@ module Widget
     end
 
     def test_widget_bootstrap_with_exp_negative
-      @account.launch :help_widget_login
       secret_key = SecureRandom.hex
       @account.stubs(:help_widget_secret).returns(secret_key)
       auth_token = JWT.encode({ name: 'Padmashri',
@@ -294,12 +290,10 @@ module Widget
       match_json('description' => 'Validation failed',
                  'errors' => [bad_request_error_pattern('token', 'Signature has expired', code: 'unauthorized')])
     ensure
-      @account.rollback :help_widget_login
       @account.unstub(:help_widget_secret)
     end
 
     def test_widget_bootstrap_with_expired_time
-      @account.launch :help_widget_login
       secret_key = SecureRandom.hex
       @account.stubs(:help_widget_secret).returns(secret_key)
       auth_token = JWT.encode({ name: 'Padmashri',
@@ -311,7 +305,6 @@ module Widget
       match_json('description' => 'Validation failed',
                  'errors' => [bad_request_error_pattern('token', 'Signature has expired', code: 'unauthorized')])
     ensure
-      @account.rollback :help_widget_login
       @account.unstub(:help_widget_secret)
     end
 
@@ -355,7 +348,6 @@ module Widget
     end
 
     def test_widget_bootstrap_with_wrong_secret_key_encoding
-      @account.launch :help_widget_login
       secret_key = SecureRandom.hex
       @account.stubs(:help_widget_secret).returns(secret_key)
       exp = (Time.now.utc + 2.hours).to_i
@@ -367,7 +359,6 @@ module Widget
       get :index, construct_params(version: 'widget')
       assert_response 401
     ensure
-      @account.rollback :help_widget_login
       @account.unstub(:help_widget_secret)
     end
 
@@ -420,14 +411,6 @@ module Widget
     ensure
       @account.features.restricted_helpdesk.destroy
       @account.rollback(:restricted_helpdesk)
-    end
-
-    def test_widget_bootstrap_without_help_widget_login_feature
-      set_user_login_headers
-      @account.rollback(:help_widget_login)
-      get :index, construct_params(version: 'widget')
-      assert_response 403
-      match_json(request_error_pattern(:require_feature, feature: 'Help Widget Login'))
     end
 
     def test_widget_bootstrap_without_help_widget_enabled

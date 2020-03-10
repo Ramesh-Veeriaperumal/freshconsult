@@ -7,7 +7,6 @@ module WidgetAuthentication
   attr_accessor :jwt_auth
 
   def widget_token_authentication
-    return true unless Account.current.help_widget_login_enabled?
 
     auth_token = request.env['HTTP_X_WIDGET_AUTH']
 
