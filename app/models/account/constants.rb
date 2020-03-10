@@ -301,7 +301,7 @@ class Account < ActiveRecord::Base
       freshid_org_v2: false, hide_agent_login: false, office365_adaptive_card: false, helpdesk_tickets_by_product: false, article_es_search_by_filter: false,
       text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
       recalculate_daypass: false, prevent_wc_ticket_create: true, allow_wildcard_ticket_create: false,
-      attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false,
+      attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false, fsm_admin_automations: false,
       requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false, supervisor_custom_status: false,
       sandbox_temporary_offset: false, downgrade_policy: true, skip_posting_to_fb: true, launch_fsm_geolocation: false,
       allow_update_agent: false, facebook_dm_outgoing_attachment: true, hide_mailbox_error_from_agents: false,
