@@ -5,6 +5,8 @@ module ApiSearch
 
     CHOICES = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'].freeze
 
+    UNIQUE_EXTERNAL_ID = '123456'.freeze
+
     def setup
       super
       initial_setup
@@ -33,6 +35,7 @@ module ApiSearch
       3.times { Company.create(name: Faker::Name.name, account_id: @account.id) }
       @account.reload
       30.times { create_search_contact(contact_params_hash) }
+      create_search_contact(contact_params_hash_with_unique_external_id)
       @account.contacts.last(5).map { |x| x.update_attributes('cf_sample_date' => nil, 'customer_id' => nil) }
       @@initial_setup_run = true
     end
@@ -63,6 +66,10 @@ module ApiSearch
       params_hash[:mobile] = nil if n == 4
       params_hash[:phone] = nil if n == 2
       params_hash
+    end
+
+    def contact_params_hash_with_unique_external_id
+      contact_params_hash.merge!(unique_external_id: UNIQUE_EXTERNAL_ID)
     end
 
     def test_contacts_active
@@ -509,6 +516,33 @@ module ApiSearch
       get :index, controller_params(query: '"sample_date: \'' + d1 + '\'"')
       assert_response 400
       match_json([bad_request_error_pattern('sample_date', :invalid_field)])
+    end
+
+    def test_contacts_unique_external_id
+      has_unique_contact_identifier = Account.current.unique_contact_identifier_enabled?
+      Account.current.add_feature(:unique_contact_identifier) unless has_unique_contact_identifier
+      contacts = @account.contacts.select { |x| x.unique_external_id == UNIQUE_EXTERNAL_ID }
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"unique_external_id: \'' + UNIQUE_EXTERNAL_ID + '\'"')
+      end
+      assert_response 200
+      pattern = contacts.map { |contact| public_search_contact_pattern(contact) }
+      match_json(results: pattern, total: contacts.size)
+    ensure
+      Account.current.revoke_feature(:unique_contact_identifier) unless has_unique_contact_identifier
+    end
+
+    def test_contacts_unique_external_id_without_unique_contact_identifier_feature
+      has_unique_contact_identifier = Account.current.unique_contact_identifier_enabled?
+      Account.current.revoke_feature(:unique_contact_identifier) if has_unique_contact_identifier
+      contacts = @account.contacts.select { |x| x.unique_external_id == UNIQUE_EXTERNAL_ID }
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"unique_external_id: \'' + UNIQUE_EXTERNAL_ID + '\'"')
+      end
+      assert_response 400
+      match_json([bad_request_error_pattern('unique_external_id', :invalid_field)])
+    ensure
+      Account.current.add_feature(:unique_contact_identifier) if has_unique_contact_identifier
     end
   end
 end

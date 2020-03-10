@@ -53,6 +53,7 @@ module SearchTestHelper
                             created_at: params[:created_at],
                             updated_at: params[:updated_at])
     test_contact.tag_names = params[:tags].join(',') if params[:tags]
+    test_contact.unique_external_id = params[:unique_external_id] if params[:unique_external_id]
     test_contact.save
     test_contact.update_attribute(:active, params[:active])
     test_contact
@@ -195,7 +196,6 @@ module SearchTestHelper
       updated_at: topic.updated_at.try(:utc),
       replied_at: topic.replied_at.try(:utc),
       hits: topic.hits,
-      replied_by: topic.replied_by,
       category_id: category.id,
       category_name: category.name,
       forum_name: topic.forum.name,
