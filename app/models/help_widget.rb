@@ -74,7 +74,7 @@ class HelpWidget < ActiveRecord::Base
 
   def help_widget_suggested_article_rules_from_cache
     key = format(HELP_WIDGET_SUGGESTED_ARTICLE_RULES, account_id: account_id, help_widget_id: id)
-    fetch_from_cache(key) { help_widget_suggested_article_rules }
+    fetch_from_cache(key) { help_widget_suggested_article_rules.select([:id, :conditions]).as_json(root: false) }
   end
 
   private

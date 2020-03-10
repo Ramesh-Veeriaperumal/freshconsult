@@ -1,9 +1,8 @@
 class HelpWidget::RuleMatcher
-  attr_accessor :condition, :filter, :request, :context
+  attr_accessor :condition, :request, :context
 
   def initialize(rule)
-    @condition = rule.conditions.first
-    @filter = rule.filter
+    @condition = rule['conditions'].first.symbolize_keys
   end
 
   def matched?(context: {})
