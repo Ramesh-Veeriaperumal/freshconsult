@@ -33,7 +33,7 @@ class SolutionArticleFilterValidation < FilterValidation
   end
 
   def allowed_languages
-    insert_solution_actions? ? Account.current.all_portal_languages : Account.current.all_languages
+    Account.current.all_languages
   end
 
   def insert_solution_actions?
