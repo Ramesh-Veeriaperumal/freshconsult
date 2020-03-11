@@ -561,6 +561,7 @@
             "_username": "freshhelp"
           },
           "shard_1": {
+            "_proxy_enabled": true,
             "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:3e+0WycEZpW1dYuRI/tT/qJGXaLbdV7N:7vptgTlVBylwd20wiLXegdj0kFToAcUl]",
             "slave1": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:3bv0zyx+bbEPd8a1t+DM6h67NILKdF28:HG0TMuva+CqIgWE6F9UQQhImFTRi0CeA]",
@@ -587,6 +588,7 @@
             "_username": "freshhelp"
           },
           "shard_2": {
+            "_proxy_enabled": true,
             "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:++2pSVPrtVwuJB2ZtKEaNVVDDTAIcttC:T9SY8iEIMjZMPWRvQdJIcz+YqG1YPt4m]",
             "slave1": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:elmZc4uaOcm3i0aPBWt6wB5hKJbSGuyT:tQg9sDX8xgnlQlcEr+okI3OYf/ssQB9q]",
@@ -613,6 +615,7 @@
             "_username": "freshhelp"
           },
           "shard_6": {
+            "_proxy_enabled": true,
             "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:8XntULzjGMtHp6P2AefX+RO9eDaZxtru:jdSUqglvsm8g7ODvwXhw22bwB53kTx2e]",
             "slave1": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:qsgsCIR0a+Sr3YEy/PEWg/jTePWKkeKm:jh9m/wxuaMUBH/CaUapvEUdo/Mw+nEGk]",
@@ -639,6 +642,7 @@
             "_username": "freshhelp"
           },
           "shard_7": {
+            "_proxy_enabled": true,
             "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:5RScK29IZfMnTfJHFGAZ0HG+07bYZnKl:gB1Fs1Zf+ZdRuSGvALXSRR7jUloU3aln]",
             "slave1": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:5jJeIuFcW+6JwsA7A8HgMNAimEqCRD99:uQwKG+XiTovPT4AXn0Bhr5GALukhzwBZ]",
@@ -665,6 +669,7 @@
             "_username": "freshhelp"
           },
           "shard_8": {
+            "_proxy_enabled": true,
             "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:VHgbvPqiU9C3OQRl7PVeXLfnQHYYSe0D:pnyxhChrdouHzzKvEozC8bkZaTeDAUW+]",
             "slave1": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:2Smx6xxCwpk+NMjOXEbghx6ADPMNt07b:uXf4pEasdYL9bVFyWS4FadckpW1I9eeo]",
@@ -691,6 +696,7 @@
             "_username": "freshhelp"
           },
           "shard_2date": {
+            "_proxy_enabled": true,
             "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:3e+0WycEZpW1dYuRI/tT/qJGXaLbdV7N:7vptgTlVBylwd20wiLXegdj0kFToAcUl]",
             "slave1": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:3bv0zyx+bbEPd8a1t+DM6h67NILKdF28:HG0TMuva+CqIgWE6F9UQQhImFTRi0CeA]",
