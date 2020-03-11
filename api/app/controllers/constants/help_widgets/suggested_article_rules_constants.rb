@@ -4,7 +4,7 @@ module HelpWidgets
     CREATE_FIELDS = [{ conditions: [:evaluate_on, :name, :operator, :value] },
                      { filter: [:type, :order_by, :value] },
                      :rule_operator, :position].freeze
-    DEFAULT_RULE_LIMIT = 20
+    DEFAULT_RULE_LIMIT = 100
     ARTICLE_COUNT = {
       min: 1,
       max: 5

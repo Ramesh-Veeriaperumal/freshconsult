@@ -450,9 +450,25 @@ module Ember
     end
 
     def test_index_with_article_feedback_filter
-      create_article_feedback_ticket
-      get :index, controller_params({version: 'private'}, filter: 'article_feedback', portal_id: @account.main_portal.id, language_id: @account.language_object.id)
+      article_meta = create_article
+      article = article_meta.solution_articles[0]
+      create_article_feedback_ticket(article.id)
+
+      get :index, controller_params(version: 'private', filter: 'article_feedback', portal_id: @account.main_portal.id, language_id: article.language_id)
       assert_response 200
+    end
+
+    def test_unresolved_article_feedback_filter
+      article1_meta = create_article
+      article1 = article1_meta.solution_articles[0]
+      create_article_feedback_ticket(article1.id)
+
+      article2 = create_article.solution_articles[0]
+      create_article_feedback_ticket(article2.id)
+
+      get :index, controller_params(version: 'private', filter: 'unresolved_article_feedback', article_id: article1_meta.id, language_id: article1.language_id)
+      assert_response 200
+      assert_equal 1, (parse_response @response.body).size
     end
 
     def test_index_with_ids_of_ticket_created_greater_than_month
@@ -5761,7 +5777,7 @@ module Ember
       assert_equal payload['oid'], ticket.id
       assert_equal payload['user_id'], User.current.id
       assert_equal payload['uuid'].to_s, uuid
-      assert_equal payload['iss'], 'freshdesk/poduseast'
+      assert_equal payload['iss'], 'fd/poduseast'
       assert_equal payload['scope'], ['custom_card_no_test']
       assert_equal payload['exp'], payload['iat'] + 120
       assert_equal payload['accid'], current_account_id
@@ -5814,7 +5830,7 @@ module Ember
       assert_equal payload['oid'], ticket.id
       assert_equal payload['user_id'], User.current.id
       assert_equal payload['uuid'].to_s, uuid
-      assert_equal payload['iss'], 'freshdesk/poduseast'
+      assert_equal payload['iss'], 'fd/poduseast'
       assert_equal payload['scope'], ['custom_card_no_test']
       assert_equal payload['exp'], payload['iat'] + 120
       assert_equal payload['accid'], current_account_id

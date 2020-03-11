@@ -266,10 +266,57 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
     assert_response 200
     widget.reload
-    id = JSON.parse(@response.body)['id']
     match_json(widget_show_pattern(widget))
     assert widget.settings[:appearance][:theme_color] == request_params[:settings][:appearance].fetch('theme_color')
     assert widget.settings[:appearance][:button_color] == request_params[:settings][:appearance].fetch('button_color')
+  end
+
+  def test_update_appearance_text_color
+    widget = create_widget
+    request_params = {
+      settings: {
+        appearance: {
+          'theme_text_color' => '#000000',
+          'button_text_color' => '#000000'
+        }
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 200
+    widget.reload
+    match_json(widget_show_pattern(widget))
+    assert widget.settings[:appearance][:theme_text_color] == request_params[:settings][:appearance].fetch('theme_text_color')
+    assert widget.settings[:appearance][:button_text_color] == request_params[:settings][:appearance].fetch('button_text_color')
+  end
+
+  def test_update_appearance_invalid_text_color
+    widget = create_widget
+    request_params = {
+      settings: {
+        appearance: {
+          'theme_text_color' => '#000f00',
+          'button_text_color' => '#e00000'
+        }
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 400
+    match_json([bad_request_error_pattern_with_nested_field('settings', 'theme_text_color', "It should be one of these values: '#ffffff,#000000'", code: :invalid_value)])
+  end
+
+  def test_update_appearance_invalid_text_color_format
+    widget = create_widget
+    request_params = {
+      settings: {
+        appearance: {
+          'theme_text_color' => '000000',
+          'button_text_color' => '000000'
+        }
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 400
+    match_json([bad_request_error_pattern_with_nested_field('settings', 'theme_text_color', 'It should be in the \'accepted #{attribute}\' format', code: 'invalid_value')])
   end
 
   def test_update_solution_category_ids
@@ -282,7 +329,6 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
     assert_response 200
     widget.reload
-    id = JSON.parse(@response.body)['id']
     match_json(widget_show_pattern(widget))
     assert_equal [new_category.id], JSON.parse(@response.body)['solution_category_ids']
   end
@@ -1360,13 +1406,14 @@ class HelpWidgetsControllerTest < ActionController::TestCase
           pattern: 3,
           gradient: 2,
           theme_color: '#0f45c1',
-          button_color: '#cc30b0'
+          button_color: '#cc30b0',
+          theme_text_color: '#000000',
+          button_text_color: '#ffffff'
         }
       }
     }
     put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
     assert_response 200
-    id = JSON.parse(@response.body)['id']
     widget.reload
 
     match_json(widget_show_pattern(widget))
@@ -1387,7 +1434,8 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     assert widget.settings[:appearance][:pattern] == request_params[:settings][:appearance][:pattern]
     assert widget.settings[:appearance][:gradient] == request_params[:settings][:appearance][:gradient]
     assert widget.settings[:appearance][:theme_color] == request_params[:settings][:appearance][:theme_color]
-    assert widget.settings[:appearance][:button_color] == request_params[:settings][:appearance][:button_color]
+    assert widget.settings[:appearance][:theme_text_color] == request_params[:settings][:appearance][:theme_text_color]
+    assert widget.settings[:appearance][:button_text_color] == request_params[:settings][:appearance][:button_text_color]
     unlink_freshmarketer_account
   end
 
@@ -1532,6 +1580,26 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     assert_response 201
     id = JSON.parse(@response.body)['id']
     match_json(widget_show_pattern(Account.current.help_widgets.find_by_id(id)))
+  end
+
+  def test_create_default
+    product = create_product(portal_url: Faker::Avatar.image)
+    request_params = {
+      product_id: product.id,
+      settings: {
+        components: {
+          contact_form: true
+        }
+      }
+    }
+    post :create, construct_params(version: 'v2', help_widget: request_params)
+    assert_response 201
+    id = JSON.parse(@response.body)['id']
+    widget = Account.current.help_widgets.find_by_id(id)
+    match_json(widget_show_pattern(widget))
+    assert widget.settings[:appearance][:theme_text_color], HelpWidget.default_settings(product, product.portal)[:appearance][:theme_text_color]
+    assert widget.settings[:appearance][:button_text_color], HelpWidget.default_settings(product, product.portal)[:appearance][:button_text_color]
+    widget.destroy
   end
 
   def test_widget_create_with_product_widget_solution_categories

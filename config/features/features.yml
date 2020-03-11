@@ -340,7 +340,7 @@
       :article_export: 335
       :article_approval_workflow: 336
       :suggested_articles_count: 337
-      :solutions_11: 338
+      :article_interlinking: 338
       :solutions_12: 339
       :solutions_13: 340
       :solutions_14: 341
@@ -380,6 +380,7 @@
       :fb_ad_posts: 375
       :unlimited_multi_product: 376
       :help_widget_article_customisation: 377
+      :sla_reminder_automation: 378
 :selectable_features:
   :redis_display_id: true
   :branding: true

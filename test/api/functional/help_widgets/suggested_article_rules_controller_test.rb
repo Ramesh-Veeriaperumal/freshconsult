@@ -114,7 +114,21 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
     assert_response 201
     res = JSON.parse(@response.body)
     rule = HelpWidgetSuggestedArticleRule.find_by_id(res['id'])
+    cached_rules = @widget.help_widget_suggested_article_rules_from_cache
+    assert_equal cached_rules.first['id'], rule.id
+    assert_nil cached_rules.first['filter']
     match_json(rule_pattern(rule))
+  end
+
+  def test_create_suggested_article_rules_limit
+    100.times do |x|
+      create_widget_suggested_article_rules(suggested_article_rule)
+    end
+    post :create, construct_params(suggested_article_rule_request_params)
+    assert_response 400
+    match_json(request_error_pattern(:rule_limit_exceeded, limit: HelpWidgets::SuggestedArticleRulesConstants::DEFAULT_RULE_LIMIT))
+  ensure
+    @widget.help_widget_suggested_article_rules.destroy_all
   end
 
   def test_create_suggested_article_rules_with_required_fields

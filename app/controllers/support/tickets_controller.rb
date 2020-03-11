@@ -31,6 +31,7 @@ class Support::TicketsController < SupportController
   before_filter :set_date_filter, :only => [:export_csv]  
 
   before_filter :check_ticket_permission, :only => [:create]
+  before_filter :check_pci_feature_validation, only: [:update]
   skip_before_filter :set_language,:redirect_to_locale, :only => [:check_email]
 
   def show
@@ -65,12 +66,17 @@ class Support::TicketsController < SupportController
   end
 
   def update
+    custom_fields = params[:helpdesk_ticket][:custom_field]
     if @item.update_ticket_attributes(params[:helpdesk_ticket])
+      token = nil
       respond_to do |format|
-        format.html { 
-          flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
-          redirect_to support_ticket_path(@item)
-        }
+        flash[:notice] = t(:'flash.general.update.success', human_name: cname.humanize.downcase)
+        token = get_jwe_token(custom_fields) if custom_fields && check_pci_feature && check_for_secure_fields(custom_fields)
+        format.json do
+          render json: {
+            success: true
+          }.merge(token.present? ? { token: token } : {})
+        end
       end
     end
   end  
@@ -125,6 +131,35 @@ class Support::TicketsController < SupportController
   end  
 
   protected 
+
+    def check_for_secure_fields(custom_fields)
+      @secure_field_methods = JWT::SecureFieldMethods.new
+      @secure_field_methods.secure_fields(custom_fields).present?
+    end
+
+    def get_jwe_token(custom_fields)
+      # Generates JWE token
+      jwe = JWT::SecureServiceJWEFactory.new(@item, PciConstants::ACTION[:write], PciConstants::PORTAL_TYPE[:support_portal], custom_fields)
+      (response.api_meta ||= {})[:vault_token] = jwe.generate_jwe_payload(@secure_field_methods)
+    end
+
+    def check_pci_feature_validation
+      custom_fields = params[:helpdesk_ticket][:custom_field]
+      return if custom_fields.blank?
+      @visible_ticket_fields = current_portal.ticket_fields(:customer_visible, true).reject { |f| !f.visible_in_view_form? || f.field_type != TicketFieldsConstants::SECURE_TEXT }
+      @visible_ticket_fields.each do |field|
+        # if the value is empty it should assign any random value, if not it should be empty string
+        custom_fields[field.name] = custom_fields.delete(PciConstants::PREFIX + field.name).present? ? DateTime.now.to_i : '' if custom_fields[PciConstants::PREFIX + field.name]
+        if custom_fields[field.name] && !check_pci_feature
+          render_request_error :bad_request, 400
+          flash[:error] = t(:'flash.general.update.failure', human_name: cname.humanize.downcase)
+        end
+      end
+    end
+
+    def check_pci_feature
+      current_account.pci_compliance_field_enabled?
+    end
 
     def cname
       @cname ||= controller_name.singularize

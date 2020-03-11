@@ -620,7 +620,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def omni_plan_dowgrade?
-    present_subscription.subscription_plan.omni_plan? && subscription_plan.basic_variant?
+    (present_subscription.subscription_plan.omni_plan? || present_subscription.subscription_plan.free_omni_channel_plan?) && subscription_plan.basic_variant?
   end
 
   def term_reduction?

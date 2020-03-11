@@ -42,14 +42,14 @@ class Account < ActiveRecord::Base
     :email_mailbox, :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
     :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :optar_cache, :fsm_custom_to_default_filter, :launch_fsm_geolocation,
     :ticket_field_revamp, :facebook_dm_outgoing_attachment, :skip_posting_to_fb, :hide_mailbox_error_from_agents, :hide_og_meta_tags,
-    :freshcaller_admin_new_ui, :facebook_post_outgoing_attachment, :incoming_mentions_in_tms, :help_widget_login, :disable_occlusion_rendering,
+    :freshcaller_admin_new_ui, :facebook_post_outgoing_attachment, :incoming_mentions_in_tms, :disable_occlusion_rendering,
     :prevent_lang_detect_for_spam, :jira_onpremise_reporter, :support_ticket_rate_limit, :sidekiq_logs_to_central, :portal_central_publish, :encode_emoji_in_solutions,
     :forums_agent_portal, :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html,
     :mailbox_forward_setup, :remove_image_attachment_meta_data, :automated_private_notes_notification, :detect_lang_from_email_service,
     :sane_restricted_helpdesk, :hiding_confidential_logs, :ticket_list_performance, :sla_policy_revamp, :help_widget_log, :freshdesk_freshsales_bundle, :help_widget_article_customisation,
     :field_agents_can_manage_appointments_setting, :fsm_for_garden_plan, :fsm_for_blossom_plan, :requester_widget_timeline,
     :out_of_office, :enable_secure_login_check, :contact_form_enhancement, :public_api_filter_factory, :enable_twitter_requester_fields, :marketplace_gallery, :pci_compliance_field, :solutions_quick_view,
-    :translations_proxy, :translations_cdn, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :retry_emails
+    :translations_proxy, :translations_cdn, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :retry_emails, :enable_beamer
   ].freeze
 
   DB_FEATURES = [
@@ -86,7 +86,7 @@ class Account < ActiveRecord::Base
     :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters, :supervisor_custom_status, :lbrr_by_omniroute,
     :secure_attachments, :article_versioning, :article_export, :article_approval_workflow, :next_response_sla, :advanced_automations,
     :fb_ad_posts, :suggested_articles_count, :unlimited_multi_product, :solutions_freshconnect,
-    :help_widget_article_customisation, :agent_assist
+    :help_widget_article_customisation, :agent_assist, :sla_reminder_automation, :article_interlinking
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -102,7 +102,7 @@ class Account < ActiveRecord::Base
   PODS_FOR_BOT = ['poduseast1'].freeze
 
   PRICING_PLAN_MIGRATION_FEATURES_2020 = [
-    :unlimited_multi_product
+    :unlimited_multi_product, :sla_reminder_automation
   ].to_set.freeze
 
   LP_FEATURES.each do |item|

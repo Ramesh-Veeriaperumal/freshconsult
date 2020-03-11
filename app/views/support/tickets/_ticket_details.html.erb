@@ -5,7 +5,7 @@
 	<%= form_for @ticket, :url => { :action => "update", :controller => "support/tickets" }, 
 				:html => { :id => 'portal_ticket_form', :rel => "validate" } do |f| %>	
 		<% @visible_ticket_fields.each do |field| 
-			next if field.section_field? || field.exclude_encrypted_field? || field.field_type.eql?('custom_file') || field.secure_field?
+			next if field.section_field? || field.exclude_encrypted_field? || field.field_type.eql?('custom_file')
 			%>			
 			<div id="ticket-field-<%= field.name %>">				
 				<% if field.visible_in_view_form?				
@@ -14,7 +14,7 @@
 							 edit_field_present = true %>
 						<%= ticket_field_container f,:helpdesk_ticket, field, ticket_field_form_value(field, @ticket) %>
 					<% elsif field.visible_in_portal
-							if @field_value.present? %>
+							if @field_value.present? && !field.secure_field? %>
 							<%= ticket_label :helpdesk_ticket, field %>
 							<div class="lead-small">
 								<%= simple_format(@field_value.to_s) %>
@@ -85,6 +85,20 @@
 		<% end %>
 	<% end %>
 </section>
+
+<style>
+  .pci-field-container {
+    position: relative;
+  }
+  .pci-edit {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 22px;
+    padding: 0px 5px;
+    height: 81%;
+  }
+</style>
 
 <%= javascript_tag do %>
   jQuery(".dynamic_sections")

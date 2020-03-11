@@ -78,7 +78,8 @@ module Widget
         def matched_rule
           @matched_rule ||= begin
             suggested_article_rules = @help_widget.help_widget_suggested_article_rules_from_cache
-            suggested_article_rules.find { |rule| HelpWidget::RuleMatcher.new(rule).matched?(context: { page: request.env }) }
+            rule = suggested_article_rules.find { |r| HelpWidget::RuleMatcher.new(r).matched?(context: { page: request.env }) }
+            @help_widget.help_widget_suggested_article_rules.find_by_id(rule['id']) if rule.present?
           end
         end
 

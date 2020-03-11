@@ -351,7 +351,9 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
       def fetch_fsm_fields_to_be_created
         custom_fields_available = Account.current.flexifield_def_entries.map(&:flexifield_alias)
-        fsm_custom_field_to_reserve.select { |x| !custom_fields_available.include?(x[:name] + "_#{Account.current.id}") }
+        fsm_fields_to_be_created = fsm_custom_field_to_reserve.reject { |x| custom_fields_available.include?(x[:name] + "_#{Account.current.id}") }
+        Rails.logger.info "FSM fields to be created for Account - #{Account.current.id} :: #{fsm_fields_to_be_created.inspect}"
+        fsm_fields_to_be_created
       end
 
       def fsm_appointment_start_time_ff_column_name

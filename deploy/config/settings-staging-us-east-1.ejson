@@ -1808,6 +1808,11 @@
         "_shift_service_host": "https://shift.freshpo.com/",
         "jwt_secret": "EJ[1:aincBz1BNgVhiUnbgvHfGonYVKmvdgV6sxvwksiEk04=:NB6rMiYQLmyM4+wFMCOb4nbIXE1+Lrc1:quJ6EEHr8AxhqHgkLuX4lZPUw65VOrZAAg==]",
         "_time_out": 10
+      },
+      "authz_config": {
+         "_host": "https://authz.freshpo.com/",
+         "_product_id": 1,
+         "_timeout": 10
       }
     },
     "unique_keys": {

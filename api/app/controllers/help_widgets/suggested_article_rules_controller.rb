@@ -29,22 +29,13 @@ module HelpWidgets
     private
 
       def scoper
-        @help_widget.help_widget_suggested_article_rules_from_cache
-      end
-
-      def load_objects
-        @items = scoper
+        @help_widget.help_widget_suggested_article_rules
       end
 
       def validate_params
         cname_params.permit(*CREATE_FIELDS)
         rules_validation = validation_klass.new(cname_params, @item, string_request_params?)
         render_custom_errors(rules_validation, true) unless rules_validation.valid?(action_name.to_sym)
-      end
-
-      def load_object(items = scoper)
-        @item = items.find { |rule| rule.id == params[:id].to_i } if items
-        log_and_render_404 unless @item
       end
 
       def validate_filter_params
@@ -85,7 +76,7 @@ module HelpWidgets
       end
 
       def check_rule_limit
-        render_request_error(:rule_limit_exceeded, 400, limit: DEFAULT_RULE_LIMIT) if scoper.size >= DEFAULT_RULE_LIMIT
+        render_request_error(:rule_limit_exceeded, 400, limit: DEFAULT_RULE_LIMIT) if scoper.count >= DEFAULT_RULE_LIMIT
       end
 
       def render_201_with_location(template_name: "#{controller_path.gsub(NAMESPACED_CONTROLLER_REGEX, '')}/#{action_name}")

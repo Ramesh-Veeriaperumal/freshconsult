@@ -132,8 +132,8 @@ class Support::TicketsControllerTest < ActionController::TestCase
   	t1 = create_ticket(requester_id: user.id)
   	login_as(user)
     # Helpdesk::Ticket.any_instance.stubs(:update_ticket_attributes).returns(true)
-  	put :update, :version => :private, :helpdesk_ticket => { :subject => "test subject" }, id: t1.display_id
-  	assert_response 302
+  	put :update, :version => :private, :helpdesk_ticket => { :subject => "test subject" }, id: t1.display_id, format: 'json'
+  	assert_response 200
     assert flash[:notice], "The ticket has been updated"
     # Helpdesk::Ticket.any_instance.unstub(:update_attribute)
   	log_out
@@ -159,8 +159,8 @@ class Support::TicketsControllerTest < ActionController::TestCase
     user.make_current
     t1 = create_ticket(requester_id: user.id)
     login_as(user)
-    put :update, version: :private, helpdesk_ticket: { subject: 'test subject', ticket_type: nil }, id: t1.display_id
-    assert_response 302
+    put :update, version: :private, helpdesk_ticket: { subject: 'test subject', ticket_type: nil }, id: t1.display_id, format: 'json'
+    assert_response 200
     assert flash[:notice], 'The ticket has been updated'
   ensure
     log_out
@@ -173,8 +173,8 @@ class Support::TicketsControllerTest < ActionController::TestCase
     user.make_current
     t1 = create_ticket(requester_id: user.id)
     login_as(user)
-    put :update, version: :private, helpdesk_ticket: { subject: 'test subject', ticket_type: '' }, id: t1.display_id
-    assert_response 302
+    put :update, version: :private, helpdesk_ticket: { subject: 'test subject', ticket_type: '' }, id: t1.display_id, format: 'json'
+    assert_response 200
     assert flash[:notice], 'The ticket has been updated'
   ensure
     log_out

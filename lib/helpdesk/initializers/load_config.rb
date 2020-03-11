@@ -24,6 +24,10 @@ CHANNEL_API_CONFIG  = YAML.load_file(File.join(Rails.root, 'config', 'channel_ap
 
 CHANNEL_V2_API_CONFIG = YAML.load_file(File.join(Rails.root, 'config', 'channel_v2_api.yml'))[Rails.env]
 
+FEATURE_DESC_MAP = YAML.load_file(Rails.root.join('config', 'feature_description_keys.yml'))[:feature_description_keys]
+
+IMPORTANT_FEATURES = FEATURE_DESC_MAP.keys
+
 OCR_CONFIG = YAML.load_file(File.join(Rails.root, 'config', 'ocr_config.yml'))[Rails.env].with_indifferent_access
 
 RateLimitConfig = YAML.load_file(File.join(Rails.root, 'config', 'rate_limit.yml'))[Rails.env]
@@ -89,3 +93,5 @@ GrowthHackConfig = YAML.load_file(File.join(Rails.root, 'config', 'growth_hack.y
 PlanFeaturesConfig = YAML.load_file(Rails.root.join('config', 'features', 'plan_features.yml')).with_indifferent_access
 
 SecureFieldConfig = YAML.load_file(Rails.root.join('config', 'jwe', 'secure_field.yml'))[Rails.env]
+
+AuthzConfig = YAML.load_file(Rails.root.join('config', 'authz_config.yml'))[Rails.env].with_indifferent_access

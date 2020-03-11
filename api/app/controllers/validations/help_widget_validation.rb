@@ -253,6 +253,18 @@ class HelpWidgetValidation < ApiValidation
           with: ApiConstants::COLOR_CODE_VALIDATOR
         }
       },
+      theme_text_color: {
+        data_type: {
+          rules: String,
+          allow_nil: true
+        },
+        custom_format: {
+          with: ApiConstants::COLOR_CODE_VALIDATOR
+        },
+        custom_inclusion: {
+          in: HelpWidget::TEXT_COLORS.values
+        }
+      },
       button_color: {
         data_type: {
           rules: String,
@@ -263,6 +275,18 @@ class HelpWidgetValidation < ApiValidation
         },
         custom_format: {
           with: ApiConstants::COLOR_CODE_VALIDATOR
+        }
+      },
+      button_text_color: {
+        data_type: {
+          rules: String,
+          allow_nil: true
+        },
+        custom_format: {
+          with: ApiConstants::COLOR_CODE_VALIDATOR
+        },
+        custom_inclusion: {
+          in: HelpWidget::TEXT_COLORS.values
         }
       }
     }

@@ -18,6 +18,7 @@ results = @items.map do |item|
     updated_at: item.updated_at.try(:utc)
   }
   response_hash[:deleted] = true if item.deleted
+  response_hash[:unique_external_id] = item.unique_external_id if item.unique_contact_identifier_enabled?
   response_hash
 end
 

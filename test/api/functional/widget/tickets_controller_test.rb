@@ -108,7 +108,6 @@ module Widget
     end
 
     def test_create_with_required_fields_help_widget_login
-      @account.launch :help_widget_login
       # email, description
       params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
       post :create, construct_params({ version: 'widget' }, params)
@@ -120,7 +119,6 @@ module Widget
     end
 
     def test_create_with_required_fields_with_x_widget_auth_user_present
-      @account.launch :help_widget_login
       user = add_new_user(@account)
       set_user_login_headers(name: user.name, email: user.email)
       email = Faker::Internet.email
@@ -139,7 +137,6 @@ module Widget
     end
 
     def test_create_with_required_fields_with_x_widget_auth_user_absent
-      @account.launch :help_widget_login
       set_user_login_headers(name: 'Padmashri', email: 'praajiopdsdlongbottom@freshworks.com')
       # email, description
       params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
@@ -150,7 +147,6 @@ module Widget
     end
 
     def test_create_with_required_fields_with_wrong_x_widget_auth
-      @account.launch :help_widget_login
       auth_token = JWT.encode({ name: 'Padmashri',
                                 email: 'praaji.longbottom@freshworks.com',
                                 exp: (Time.now.utc + 30.minutes).to_i }, 'wrong')
@@ -162,7 +158,6 @@ module Widget
     end
 
     def test_create_attachment_with_user_login_expired
-      @account.launch :help_widget_login
       secret_key = SecureRandom.hex
       @account.stubs(:help_widget_secret).returns(secret_key)
       auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', exp: (Time.now.utc - 4.hours).to_i }, secret_key + 'opo')
@@ -493,7 +488,6 @@ module Widget
 
     def test_create_with_login_required_without_auth
       HelpWidget.any_instance.stubs(:contact_form_require_login?).returns(true)
-      @account.launch :help_widget_login
       params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
       post :create, construct_params({ version: 'widget' }, params)
       assert_response 400

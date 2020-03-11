@@ -310,7 +310,7 @@ module MemcacheKeys
 
   ACCOUNT_TICKET_FIELD_POSITION_MAPPING = 'v1/ACCOUNT_TICKET_FIELD_POSITION_MAPPING:%{account_id}'.freeze
 
-  HELP_WIDGET_SUGGESTED_ARTICLE_RULES = 'v1/HELP_WIDGET_SUGGESTED_ARTICLE_RULES:%{account_id}:%{help_widget_id}'.freeze
+  HELP_WIDGET_SUGGESTED_ARTICLE_RULES = 'v2/HELP_WIDGET_SUGGESTED_ARTICLE_RULES:%{account_id}:%{help_widget_id}'.freeze
 
   def fetch_from_cache(key, &block)
     @cached_values = {} unless @cached_values

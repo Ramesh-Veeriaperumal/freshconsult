@@ -499,12 +499,12 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def add_article_feedback_conditions(params)
-    if params[:article_id].present? && ['article_feedback', 'unresolved_article_feedback'].include?(self.name)
+    if params[:article_id].present? && article_feedback_filter?
       article_id = params[:language_id].present? ? Account.current.solution_articles.where(parent_id: params[:article_id], language_id: params[:language_id]).first.id : params[:article_id]
       add_condition('article_tickets.article_id', :is, article_id)
     end
     add_condition("article_tickets.article_id", :is_in, Solution::Article.portal_articles(params[:portal_id],params[:language_id]).pluck(:id).join(',')) if params[:portal_id].present? && params[:language_id].present? && self.name == 'article_feedback'
-    add_condition("solution_articles.user_id", :is, User.current.id) if self.name == "my_article_feedback"
+    add_condition("solution_articles.user_id", :is, User.current.id) if my_article_feedback_filter?
   end
 
   def add_tag_filter(params)
@@ -635,8 +635,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     all_joins[0].concat(tags_join) if all_conditions[0].include?("helpdesk_tags.name")
     all_joins[0].concat(statues_join) if all_conditions[0].include?("helpdesk_ticket_statuses")
     all_joins[0].concat(schema_less_join) if join_schema_less?(all_conditions)
-    all_joins[0].concat(article_tickets_join) if ['article_feedback', 'unresolved_article_feedback'].include?(self.name)
-    all_joins[0].concat(articles_join) if self.name == "my_article_feedback"
+    all_joins[0].concat(article_tickets_join) if article_feedback_filter?
+    all_joins[0].concat(articles_join) if my_article_feedback_filter?
     all_joins[0].concat(states_join) if sort_by_response?
     all_joins
   end
@@ -833,8 +833,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
     def misc_defs(defs, filter_attribute_hash, ticket_list_performance_enabled)
       defs[:'helpdesk_subscriptions.user_id'] = { operator: :is_in, is_in: :dropdown, options: [], name: 'helpdesk_subscriptions.user_id', container: :dropdown } if (ticket_list_performance_enabled && filter_attribute_hash.key?(:'helpdesk_subscriptions.user_id')) || !ticket_list_performance_enabled
-      defs[:'article_tickets.article_id'] = { operator: :is_in, is_in: :dropdown, options: [], name: 'article_tickets.article_id', container: :dropdown } if (ticket_list_performance_enabled && filter_attribute_hash.key?(:'article_tickets.article_id')) || !ticket_list_performance_enabled
-      defs[:'solution_articles.user_id'] = { operator: :is, is: :numeric, options: [], name: 'solution_articles.user_id', container: :numeric } if (ticket_list_performance_enabled && filter_attribute_hash.key?(:'solution_articles.user_id')) || !ticket_list_performance_enabled
+      defs[:'article_tickets.article_id'] = { operator: :is_in, is_in: :dropdown, options: [], name: 'article_tickets.article_id', container: :dropdown } if (ticket_list_performance_enabled && article_feedback_filter?) || !ticket_list_performance_enabled
+      defs[:'solution_articles.user_id'] = { operator: :is, is: :numeric, options: [], name: 'solution_articles.user_id', container: :numeric } if (ticket_list_performance_enabled && my_article_feedback_filter?) || !ticket_list_performance_enabled
       defs[:'helpdesk_tickets.display_id'] = { operator: :is_in, is_in: :dropdown, options: [], name: 'helpdesk_tickets.display_id', container: :dropdown } if (ticket_list_performance_enabled && filter_attribute_hash.key?(:'helpdesk_tickets.display_id')) || !ticket_list_performance_enabled
       defs[:spam] = { operator: :is, is: :boolean, options: [], name: :spam, container: :boolean } if (ticket_list_performance_enabled && filter_attribute_hash.key?(:spam)) || !ticket_list_performance_enabled
       defs[:deleted] = { operator: :is, is: :boolean, options: [], name: :deleted, container: :boolean } if (ticket_list_performance_enabled && filter_attribute_hash.key?(:deleted)) || !ticket_list_performance_enabled
@@ -938,6 +938,14 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       ticket_filter.account_id = Account.current.id
       ticket_filter.save!
     end
+  end
+
+  def article_feedback_filter?
+    ['article_feedback', 'unresolved_article_feedback'].include?(name)
+  end
+
+  def my_article_feedback_filter?
+    name == 'my_article_feedback'
   end
 
   class << self

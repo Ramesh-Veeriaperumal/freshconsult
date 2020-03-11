@@ -36,7 +36,6 @@ module Widget
     end
 
     def test_create_attachment_without_x_widget_auth
-      @account.launch :help_widget_login
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
       post :create, construct_params({ version: 'widget' }, attachment_params_hash)
       DataTypeValidator.any_instance.unstub(:valid_type?)
@@ -76,7 +75,6 @@ module Widget
     end
 
     def test_create_attachment_with_wrong_x_widget_auth
-      @account.launch :help_widget_login
       secret_key = SecureRandom.hex
       @account.stubs(:help_widget_secret).returns(secret_key)
       auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', exp: (Time.now.utc + 1.hour).to_i }, secret_key + 'opo')
@@ -85,7 +83,6 @@ module Widget
       post :create, construct_params({ version: 'widget' }, attachment_params_hash)
       assert_response 401
     ensure
-      @account.rollback :help_widget_login
       @account.unstub(:help_widget_secret)
       DataTypeValidator.any_instance.unstub(:valid_type?)
     end
@@ -104,7 +101,6 @@ module Widget
     end
 
     def test_create_attachment_with_user_login_expired
-      @account.launch :help_widget_login
       secret_key = SecureRandom.hex
       @account.stubs(:help_widget_secret).returns(secret_key)
       auth_token = JWT.encode({ name: 'Padmashri', email: 'praaji.longbottom@freshworks.com', exp: (Time.now.utc - 4.hours).to_i }, secret_key + 'opo')
@@ -188,13 +184,11 @@ module Widget
 
     def test_create_with_login_required_without_auth_token
       HelpWidget.any_instance.stubs(:contact_form_require_login?).returns(true)
-      @account.launch :help_widget_login
       post :create, construct_params({ version: 'widget' }, attachment_params_hash)
       assert_response 400
       match_json(request_error_pattern(:x_widget_auth_required, 'x_widget_auth_required'))
     ensure
       HelpWidget.any_instance.unstub(:contact_form_require_login?)
-      @account.rollback(:help_widget_login)
     end
   end
 end

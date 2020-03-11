@@ -69,7 +69,8 @@
       - :canned_forms
       - :help_widget_appearance
       - :article_export
-#      - :field_service_management_toggle
+#     - :field_service_management_toggle
+      - :sla_reminder_automation
     :inherits:
       - :sprout_jan_17
     :exclude: []
@@ -215,7 +216,9 @@
       - :auto_article_order
       - :help_widget_appearance
       - :article_export
-#      - :field_service_management_toggle
+#     - :field_service_management_toggle
+      - :sla_reminder_automation
+      - :article_interlinking
     :inherits:
       - :sprout_jan_19
     :exclude: []
@@ -426,7 +429,8 @@
       - :auto_article_order
       - :help_widget_appearance
       - :article_export
-#      - :field_service_management_toggle
+      - :article_interlinking
+#     - :field_service_management_toggle
     :inherits:
       - :sprout_jan_20
     :exclude: []
@@ -538,6 +542,7 @@
       - :sla_management
       - :help_widget_article_customisation
       - :next_response_sla
+      - :sla_reminder_automation
     :inherits:
       - :garden_jan_20
     :exclude: []

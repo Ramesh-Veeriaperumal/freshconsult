@@ -40,7 +40,6 @@ module HelpWidgetsTestHelper
   end
 
   def set_user_login_headers(name: 'Sagara', email: 'sagara@desert.com', exp: (Time.now.utc + 2.hours), additional_payload: {}, additional_operations: { remove_key: nil })
-    @account.launch :help_widget_login unless Account.current.help_widget_login_enabled?
     secret_key = SecureRandom.hex
     @account.stubs(:help_widget_secret).returns(secret_key)
     remove_key = additional_operations[:remove_key]
@@ -51,7 +50,6 @@ module HelpWidgetsTestHelper
   end
 
   def unset_login_support
-    @account.rollback(:help_widget_login) if Account.current.help_widget_login_enabled?
     @account.unstub(:help_widget_secret)
   end
 
@@ -96,7 +94,9 @@ module HelpWidgetsTestHelper
       pattern: 1,
       gradient: 1,
       theme_color: '#00a886',
-      button_color: '#12344d'
+      button_color: '#12344d',
+      theme_text_color: '#ffffff',
+      button_text_color: '#ffffff'
     }
   end
 

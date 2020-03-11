@@ -86,6 +86,8 @@ module Admin::TicketFieldConstants
     secure_text: ['secure_text', 'dn_eslt_']
   }.freeze
 
+  ENCRYPTED_FIELDS_PREFIX_BY_TYPE = ENCRYPTED_FIELDS.each_with_object({}) { |(k, v), hash| hash[k] = v[1] }
+
   FIELD_TYPE_TO_COL_TYPE_MAPPING = [*{
     custom_text: ['text', 'dn_slt_'],
     custom_paragraph: ['paragraph', 'dn_mlt_'],

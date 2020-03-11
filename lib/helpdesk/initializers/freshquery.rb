@@ -93,8 +93,16 @@ module Freshquery
       ActiveSupport::TimeZone.all.map(&:name).freeze
     end
 
+    def custom_unique_external_id_mappings
+      Account.current.unique_contact_identifier_enabled? ? { 'unique_external_id'=> 'unique_external_id' } : {}
+    end
+
     def custom_string_mappings
-      proc { Account.current.contact_form.custom_contact_fields.map { |x| [CustomFieldDecorator.display_name(x.name), x.column_name] if x.field_type == :custom_text }.compact.to_h }
+      proc {
+        custom_contact_fields = Account.current.contact_form.custom_contact_fields.map { |x| [CustomFieldDecorator.display_name(x.name), x.column_name] if x.field_type == :custom_text }.compact.to_h
+        # to handle condition based fields(ex: unique_external_id) we create a custom mapping for that field and merge it.
+        custom_contact_fields.merge!(custom_unique_external_id_mappings)
+      }
     end
 
     def custom_number_mappings

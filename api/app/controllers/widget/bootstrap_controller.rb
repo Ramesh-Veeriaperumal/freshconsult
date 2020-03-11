@@ -23,10 +23,6 @@ module Widget
         end
       end
 
-      def launch_party_name
-        :help_widget_login
-      end
-
       def auth_token_required?
         true
       end
