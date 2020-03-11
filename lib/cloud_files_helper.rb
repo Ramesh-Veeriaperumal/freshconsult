@@ -1,6 +1,5 @@
 module CloudFilesHelper
   include Helpdesk::MultiFileAttachment::Util
-
   
   def build_cloud_files attachment_json
     attachment = ActiveSupport::JSON.decode attachment_json
@@ -57,20 +56,26 @@ module CloudFilesHelper
     else
       attachments = Account.current.attachments.where(id: attachment_list, attachable_type: "UserDraft").limit(50)
     end
-    existing_size = model.attachments.collect{ |a| a.content_file_size }.sum
-    # attachments.each do |attachment|
-    #   if(attachment["resource"] + existing_size < 15.megabyte)
-    #     attachment.update_attribute(attachable_type: model.class.name, attachable_id: model.id)
-    #     existing_size = existing_size + attachment["resource"]
-    #   else
-    #     break
-    #   end
-    # end
-    selected_attachments = attachments.select{ |x| 
-      existing_size = existing_size + x.content_file_size 
-      existing_size < Account.current.attachment_limit.megabyte
-    }
-    model.attachments = model.attachments + selected_attachments
+
+    if model.is_a?(Solution::Draft) || model.is_a?(Solution::Article)
+      # size validations for solution_draft and solution-article is done in article_delegator. So it is not needed here
+      model.attachments = model.attachments + attachments
+    else
+      existing_size = model.attachments.collect(&:content_file_size).sum
+      # attachments.each do |attachment|
+      #   if(attachment["resource"] + existing_size < 15.megabyte)
+      #     attachment.update_attribute(attachable_type: model.class.name, attachable_id: model.id)
+      #     existing_size = existing_size + attachment["resource"]
+      #   else
+      #     break
+      #   end
+      # end
+      selected_attachments = attachments.select { |x|
+        existing_size += x.content_file_size
+        existing_size < Account.current.attachment_limit.megabyte
+      }
+      model.attachments = model.attachments + selected_attachments
+    end
   end
 
 end

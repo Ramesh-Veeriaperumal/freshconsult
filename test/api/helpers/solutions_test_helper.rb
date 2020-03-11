@@ -486,6 +486,19 @@ module SolutionsTestHelper
     }
   end
 
+  def cumulative_attachment_size_validation_error_pattern(current_size, cumulative_size)
+    {
+      description: 'Validation failed',
+      errors: [
+        {
+          field: 'attachments_list',
+          message: "Total attachment(s) size is #{current_size}MB, it should not exceed #{cumulative_size}MB",
+          code: 'invalid_size'
+        }
+      ]
+    }
+  end
+
   def votes_pattern(article)
     {
       helpful: vote_info(article, :thumbs_up),
