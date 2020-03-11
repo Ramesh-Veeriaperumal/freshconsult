@@ -18694,7 +18694,7 @@
           "type": "boolean"
         },
         "twitter_followers_count": {
-          "type": "string"
+          "type": "number"
         },
         "custom_fields": {
           "$ref": "#/definitions/custom_field"

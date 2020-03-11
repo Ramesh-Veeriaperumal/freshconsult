@@ -12,11 +12,11 @@ module Channel::V2
     include TimestampsValidationConcern
 
     validates :import_id, :login_count, :failed_login_count, :parent_id, :posts_count,
-              :user_role, numericality: { only_integer: true, greater_than_or_equal_to: 0,
-                                          allow_nil: true, ignore_string: :allow_string_param }
+              :user_role, :twitter_followers_count, numericality: { only_integer: true, greater_than_or_equal_to: 0,
+                                                                    allow_nil: true, ignore_string: :allow_string_param }
 
     validates :facebook_id, :external_id, :crypted_password,
-              :password_salt, :current_login_ip, :second_email, :last_login_ip, :privileges, :extn, :twitter_followers_count,
+              :password_salt, :current_login_ip, :second_email, :last_login_ip, :privileges, :extn,
               data_type: { rules: String,
                            allow_nil: true },
               custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }

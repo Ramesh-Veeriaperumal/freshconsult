@@ -110,6 +110,7 @@ api_error_messages:
   only_avatar_or_avatar_id: "Cannot set both avatar and avatar_id"
   only_ticket_type_allowed: "Cannot set reminder for Contact and Company todos"
   other_companies_limit_exceeded: "Has %{max_companies} elements, it can have maximum of %{max_other_companies} elements"
+  not_a_number: "is not a number"
   # TODO-EMBER : Error text to be changed
   included_original_attachments: "Cannot be set. Original attachments included already"
   access_denied_list: "Permission denied for records with ids : '%{denied_ids}'."
