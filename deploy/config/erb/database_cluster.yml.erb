@@ -80,31 +80,17 @@
       slave:
       <% if @is_resque_layer || @is_sidekiq_layer || node[:opsworks][:instance][:hostname].include?("utility") || node[:opsworks][:instance][:hostname].include?("freshops") %>
         <% if node[:opsworks][:environment] == "production" %>
-        <% if node[:proxysql] && node[:proxysql][:enabled] == true && node[:ymls][:database][:shards][shard_name][:proxy_enabled] == true %>
-        host: <%= db_config[:slave_proxy][:host] %>
-        username: <%= db_config[:slave_proxy][:username] %>
-        password: <%= db_config[:slave_proxy][:password] %>
-        port: <%= db_config[:slave_proxy][:port] %>
-        <% else %>
         host: <%= db_config[:slave2_host] %>
-        <% end %>
-        <% else %>
-        <% if node[:proxysql] && node[:proxysql][:enabled] == true && node[:ymls][:database][:shards][shard_name][:proxy_enabled] == true %>
-        host: <%= db_config[:slave_proxy][:host] %>
-        username: <%= db_config[:slave_proxy][:username] %>
-        password: <%= db_config[:slave_proxy][:password] %>
-        port: <%= db_config[:slave_proxy][:port] %>
         <% else %>
         host: <%= db_config[:slave2][:host] %>
         username: <%= db_config[:slave2][:username] %>
         password: <%= db_config[:slave2][:password] %>
         port: <%= db_config[:slave2][:port] %>
         <% end %>
-        <% end %>
       <% else %>
         <% if node[:opsworks][:environment] == "production" %>
-        <% if node[:proxysql] && node[:proxysql][:enabled] == true && node[:ymls][:database][:shards][shard_name][:proxy_enabled] == true %>
-        host: <%= db_config[:slave_proxy][:host] %>
+        <% if ENV['PROXYSQL_SHELL_ENABLE'] == "1" && node[:ymls][:database][:shards][shard_name][:proxy_enabled] == true %>
+        host: <%= ENV["HOST_PRIVATE_IP"] %>
         username: <%= db_config[:slave_proxy][:username] %>
         password: <%= db_config[:slave_proxy][:password] %>
         port: <%= db_config[:slave_proxy][:port] %>
@@ -112,8 +98,8 @@
         host: <%= db_config[:slave1_host] %>
         <% end %>
         <% else %>
-        <% if node[:proxysql] && node[:proxysql][:enabled] == true && node[:ymls][:database][:shards][shard_name][:proxy_enabled] == true %>
-        host: <%= db_config[:slave_proxy][:host] %>
+        <% if ENV['PROXYSQL_SHELL_ENABLE'] == "1" && node[:ymls][:database][:shards][shard_name][:proxy_enabled] == true %>
+        host: <%= ENV["HOST_PRIVATE_IP"] %>
         username: <%= db_config[:slave_proxy][:username] %>
         password: <%= db_config[:slave_proxy][:password] %>
         port: <%= db_config[:slave_proxy][:port] %>

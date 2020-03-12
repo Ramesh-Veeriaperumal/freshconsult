@@ -10,7 +10,7 @@ module IntegrationServices::Services
       end
 
       def find ticket_id
-        query = URI.encode "freshdesk__TicketID__c=#{ticket_id}"
+        query = URI.encode "freshdesk__TicketID__c=#{ticket_id}.0"
         request_url = "#{cloud_elements_api_url}/hubs/crm/#{FD_TICKET_OBJECT}?where=#{query}"
         response = http_get request_url
         Rails.logger.debug "freshdesk__Freshdesk_Ticket_Object__c response: #{JSON.parse response.body}"

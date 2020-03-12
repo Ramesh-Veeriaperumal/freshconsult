@@ -1,10 +1,10 @@
 module Channel::V2::Iam
   class AuthenticationController < ApiApplicationController
-    skip_before_filter :load_object, :check_privilege
+    skip_before_filter :load_object, :check_privilege, :ensure_proper_protocol
 
     PRIVATE_KEY = OpenSSL::PKey::RSA.new(File.read('config/cert/iam.pem'), ::Iam::IAM_CONFIG['password'])
 
-    def show
+    def authenticate
       fetch_current_user
       return render_request_error(:invalid_credentials, 401) if @current_user.blank?
 
