@@ -39,10 +39,13 @@ class ApiRolesControllerTest < ActionController::TestCase
 
   def test_index_without_privilege
     role = Role.first
-    User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false).once
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(false)
+    User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
     get :show, construct_params(id: role.id)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
+  ensure
+    User.any_instance.unstub(:privilege?)
   end
 
   def test_index_with_link_header
