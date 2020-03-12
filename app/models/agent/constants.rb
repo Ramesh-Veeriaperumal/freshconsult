@@ -85,7 +85,9 @@ class Agent < ActiveRecord::Base
   AGENT_GROUP_TYPE_MAPPING = GroupConstants::GROUPS_AGENTS_MAPPING.invert
   ALLOWED_PERMISSION_FOR_FIELD_AGENT = [PERMISSION_KEYS_BY_TOKEN[:assigned_tickets], PERMISSION_KEYS_BY_TOKEN[:group_tickets]].freeze
 
-  UN_AVAILABLE = 'unavailable'
+  UN_AVAILABLE = ['unavailable'].freeze
+
+  OUT_OF_OFFICE = ['out_of_office', 'unavailable'].freeze
 
   AGENT_LIMIT_KEY_EXPIRY = 300
 end

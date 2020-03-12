@@ -61,4 +61,10 @@ module AgentTestHelper
       h.merge(key => user.safe_send(key))
     end
   end
+
+  def out_of_office
+    return unless Account.current.out_of_office_enabled?
+       
+    5
+  end
 end

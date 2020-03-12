@@ -80,7 +80,8 @@ fields:
         custom_url: text
 
         freddy_suggestion: freddy_type
-        agent_availability: text
+        agent_availability: text_array
+        out_of_office_days: numeric
 
     event:
         default: default

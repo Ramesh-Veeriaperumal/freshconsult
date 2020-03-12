@@ -10,6 +10,7 @@ require Rails.root.join('test', 'core', 'helpers', 'users_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'shared_ownership_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'groups_test_helper.rb')
 require Rails.root.join('test', 'api', 'helpers', 'ticket_fields_test_helper.rb')
+require Rails.root.join('test', 'models', 'helpers', 'agent_test_helper.rb')
 
 class Admin::Dispatcher::WorkerTest < ActionView::TestCase
 
@@ -18,6 +19,7 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
   include CoreUsersTestHelper
   include SharedOwnershipTestHelper
   include TicketFieldsTestHelper
+  include AgentTestHelper
 
   CUSTOM_FIELD_TYPES = [:checkbox, :number, :decimal, :nestedlist, :date]
 
@@ -112,11 +114,8 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
         value: ["Test"], 
         case_sensitive: false}]
     }
-    
-    rule.action_data = ["priority"].map do |action|
-      generate_action_data(action, true)
-    end
 
+    rule.action_data = [{ name: 'priority', value: 2 }]
     rule.save
     ticket_params = generate_ticket_params("subject_or_description", "test sample")
     ticket = Sidekiq::Testing.inline! { create_ticket(ticket_params.symbolize_keys) }
@@ -165,7 +164,7 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
         name: "responder_id", 
         operator: "is", 
         value: -1,
-        relater_conditions: {
+        related_conditions: {
           name: "availability_status",
           operator: "is",
           value: "unavailable"
@@ -193,10 +192,127 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
     Rails.logger.debug "end test_dispatcher_condition_responder_id_is_any"
   end
 
-  def verify_action_data(action, ticket, not_operator)
+  def test_dispatcher_condition_any_responder_greater_than_ooo
+    Rails.logger.debug 'start test_dispatcher_condition_any_responder_greater_than_ooo'
+    Account.current.launch :automation_revamp
+    Account.current.launch :out_of_office
+    initialize_internal_agent_with_default_internal_group
+    rule = Account.current.va_rules.first
+    rule.condition_data = ooo_condition_data('greater_than', 1)
+    group = Account.current.groups.first || create_group(Account.current)
+    rule.action_data = ['priority'].map do |action|
+      generate_action_data(action, false)
+    end
+
+    rule.save
+    ticket_value =  generate_value(:object_id, 'responder_id', false)
+    ticket_params = generate_ticket_params('responder_id', ticket_value)
+    agent = Account.current.agents.find_by_user_id(ticket_params[:responder_id])
+    agent.save
+
+    ticket = Sidekiq::Testing.inline! { create_ticket(ticket_params.symbolize_keys) }
+    ticket = ticket.reload
+    rule.action_data.each do |action|
+      verify_action_data(action, ticket, false)
+    end
+    Rails.logger.debug 'start test_dispatcher_condition_any_responder_greater_than_ooo'
+  ensure
+    Account.current.rollback :out_of_office
+    Account.current.rollback :automation_revamp
+    Account.unstub(:current)
+  end
+
+  def test_dispatcher_condition_any_responder_less_than_ooo
+    Rails.logger.debug 'start test_dispatcher_condition_any_responder_less_than_ooo'
+    Account.current.launch :automation_revamp
+    Account.current.launch :out_of_office
+    initialize_internal_agent_with_default_internal_group
+    rule = Account.current.va_rules.first
+    rule.condition_data = ooo_condition_data('less_than', 10)
+    group = Account.current.groups.first || create_group(Account.current)
+    rule.action_data = ['priority'].map do |action|
+      generate_action_data(action, false)
+    end
+
+    rule.save
+    ticket_value =  generate_value(:object_id, 'responder_id', false)
+    ticket_params = generate_ticket_params('responder_id', ticket_value)
+    agent = Account.current.agents.find_by_user_id(ticket_params[:responder_id])
+    agent.save
+
+    ticket = Sidekiq::Testing.inline! { create_ticket(ticket_params.symbolize_keys) }
+    ticket = ticket.reload
+    rule.action_data.each do |action|
+      verify_action_data(action, ticket, false)
+    end
+    Rails.logger.debug 'end test_dispatcher_condition_any_responder_less_than_ooo'
+  ensure
+    Account.current.rollback :out_of_office
+    Account.current.rollback :automation_revamp
+    Account.unstub(:current)
+  end
+
+  def test_dispatcher_condition_any_responder_equals_ooo
+    Rails.logger.debug 'start test_dispatcher_condition_any_responder_equals_ooo'
+    Account.current.launch :automation_revamp
+    Account.current.launch :out_of_office
+    initialize_internal_agent_with_default_internal_group
+    rule = Account.current.va_rules.first
+    rule.condition_data = ooo_condition_data('is', 5)
+    group = Account.current.groups.first || create_group(Account.current)
+    rule.action_data = ['priority'].map do |action|
+      generate_action_data(action, false)
+    end
+
+    rule.save
+    ticket_value =  generate_value(:object_id, 'responder_id', false)
+    ticket_params = generate_ticket_params('responder_id', ticket_value)
+    agent = Account.current.agents.find_by_user_id(ticket_params[:responder_id])
+    agent.save
+
+    ticket = Sidekiq::Testing.inline! { create_ticket(ticket_params.symbolize_keys) }
+    ticket = ticket.reload
+    rule.action_data.each do |action|
+      verify_action_data(action, ticket, false)
+    end
+    Rails.logger.debug 'end test_dispatcher_condition_any_responder_equals_ooo'
+  ensure
+    Account.current.rollback :out_of_office
+    Account.current.rollback :automation_revamp
+    Account.unstub(:current)
+  end
+
+  def test_dispatcher_failed_condition_any_responder_is_ooo
+    Rails.logger.debug 'start test_dispatcher_failed_condition_any_responder_is_ooo'
+    Account.current.launch :automation_revamp
+    rule = Account.current.va_rules.first
+    rule.condition_data = ooo_condition_data('greater_than', 10)
+    rule.action_data = [{ name: 'priority', value: 1 }]
+
+    rule.save
+    ticket_params = generate_ticket_params('subject_or_description', 'test_for_ooo')
+    ticket = Sidekiq::Testing.inline! { create_ticket(ticket_params.symbolize_keys) }
+    ticket = ticket.reload
+    rule.action_data.each do |action|
+      verify_failed_action_data(action, ticket, false)
+    end
+    Rails.logger.debug 'end test_dispatcher_failed_condition_any_responder_is_ooo'
+  ensure
+    Account.current.rollback :automation_revamp
+    Account.unstub(:current)
+  end
+
+  def verify_action_data(action, ticket, _not_operator)
     case true
     when ['priority', 'ticket_type', 'status', 'responder_id', 'product_id', 'group_id'].include?(action[:name])
       assert_equal ticket.safe_send(action[:name]), action[:value]
+    end
+  end
+
+  def verify_failed_action_data(action, ticket, _not_operator)
+    case true
+    when ['priority', 'ticket_type', 'status', 'responder_id', 'product_id', 'group_id'].include?(action[:name])
+      assert_not_equal ticket.safe_send(action[:name]), action[:value]
     end
   end
 
@@ -319,5 +435,24 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
         2.0
       end
     end
+  end
+
+  def ooo_condition_data(op_value, days_value)
+    { all: [
+      { evaluate_on: 'ticket',
+        name: 'responder_id',
+        operator: 'in',
+        value: -1,
+        related_conditions: [{
+          name: 'availability_status',
+          operator: 'is',
+          value: 'out_of_office',
+          related_conditions: [{
+            name: 'out_of_office',
+            operator: op_value,
+            value: days_value
+          }]
+        }] }
+    ] }
   end
 end

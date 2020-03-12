@@ -12,10 +12,7 @@ module Admin::AutomationRules::Conditions
     def test_invalid_ticket_conditions
       Account.stubs(:current).returns(Account.first)
       params = rule_params(condition_params('subjects', :text))
-      cf_fields = { custom_ticket_event: custom_event_ticket_field, custom_ticket_action: custom_action_ticket_field,
-                    custom_ticket_condition: custom_condition_ticket_field, custom_contact_condition: custom_condition_contact,
-                    custom_company_condition: custom_condition_company }
-      validation = automation_validation_class.new(params, cf_fields, nil, false)
+      validation = automation_validation_class.new(params, default_custom_fields, nil, false)
       assert validation.invalid?
     ensure
       Account.unstub(:current)
@@ -28,10 +25,7 @@ module Admin::AutomationRules::Conditions
       define_method "test_valid_#{type}_fields" do
         Account.stubs(:current).returns(Account.first)
         params = construct_default_params(type)
-        cf_fields = { custom_ticket_event: custom_event_ticket_field, custom_ticket_action: custom_action_ticket_field,
-                      custom_ticket_condition: custom_condition_ticket_field, custom_contact_condition: custom_condition_contact,
-                      custom_company_condition: custom_condition_company }
-        validation = automation_validation_class.new(params, cf_fields, nil, false)
+        validation = automation_validation_class.new(params, default_custom_fields, nil, false)
         assert validation.valid?
       end
     end
@@ -41,10 +35,7 @@ module Admin::AutomationRules::Conditions
       define_method "test_invalid_#{invalid[:field_type]}_fields" do
         Account.stubs(:current).returns(Account.first)
         params = rule_params(condition_params(invalid[:name], invalid[:field_type].to_sym, invalid[:value]))
-        cf_fields = { custom_ticket_event: custom_event_ticket_field, custom_ticket_action: custom_action_ticket_field,
-                      custom_ticket_condition: custom_condition_ticket_field, custom_contact_condition: custom_condition_contact,
-                      custom_company_condition: custom_condition_company }
-        validation = automation_validation_class.new(params, cf_fields, nil, false)
+        validation = automation_validation_class.new(params, default_custom_fields, nil, false)
         assert validation.invalid?
       end
     end
@@ -52,27 +43,62 @@ module Admin::AutomationRules::Conditions
     def test_valid_agent_shift_fields
       Account.stubs(:current).returns(Account.first)
       params = rule_params(agent_shift_field_condition_params('available'))
-      cf_fields = { custom_ticket_event: custom_event_ticket_field, custom_ticket_action: custom_action_ticket_field,
-                    custom_ticket_condition: custom_condition_ticket_field, custom_contact_condition: custom_condition_contact,
-                    custom_company_condition: custom_condition_company }
-      validation = automation_validation_class.new(params, cf_fields, nil, false)
+      validation = automation_validation_class.new(params, default_custom_fields, nil, false)
       assert validation.invalid?
     end
 
     def test_invalid_agent_shift_fields
       Account.stubs(:current).returns(Account.first)
       params = rule_params(agent_shift_field_condition_params('is_not_available'))
-      cf_fields = { custom_ticket_event: custom_event_ticket_field, custom_ticket_action: custom_action_ticket_field,
-                    custom_ticket_condition: custom_condition_ticket_field, custom_contact_condition: custom_condition_contact,
-                    custom_company_condition: custom_condition_company }
-      validation = automation_validation_class.new(params, cf_fields, nil, false)
+      validation = automation_validation_class.new(params, default_custom_fields, nil, false)
       assert validation.invalid?
+    end
+
+    def test_valid_ooo_condition
+      Account.stubs(:current).returns(Account.first)
+      Account.current.launch :out_of_office do
+        params = rule_params(agent_ooo_condition_params('out_of_office', 'out_of_office_days', 'greater_than', "5"))
+        validation = automation_validation_class.new(params, default_custom_fields, nil, false)
+        assert validation.valid?
+      end
+    ensure
+      Account.current.rollback :out_of_office
+      Account.unstub(:current)
+    end
+
+    def test_ooo_condition_without_feature
+      Account.stubs(:current).returns(Account.first)
+      params = rule_params(agent_ooo_condition_params('out_of_office', 'out_of_office_days', 'greater_than', "1"))
+      validation = automation_validation_class.new(params, default_custom_fields, nil, false)
+      assert validation.invalid?
+    ensure
+      Account.unstub(:current)
+    end
+
+    def test_invalid_ooo_condition
+      Account.stubs(:current).returns(Account.first)
+      Account.current.launch :out_of_office do
+        params = rule_params(agent_ooo_condition_params('out_office', 'out_of_office_days', 'is', "-1"))
+        validation = automation_validation_class.new(params, default_custom_fields, nil, false)
+        assert validation.invalid?
+      end
+    ensure
+      Account.current.rollback :out_of_office
+      Account.unstub(:current)
     end
 
     private
 
       def automation_validation_class
         'Admin::AutomationValidation'.constantize
+      end
+
+      def default_custom_fields
+        {
+          custom_ticket_event: custom_event_ticket_field, custom_ticket_action: custom_action_ticket_field,
+          custom_ticket_condition: custom_condition_ticket_field, custom_contact_condition: custom_condition_contact,
+          custom_company_condition: custom_condition_company
+        }
       end
   end
 end

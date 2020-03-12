@@ -21765,8 +21765,34 @@
                           "value": {
                             "type": "string",
                             "enum": [
-                              "unavailable"
+                              "unavailable",
+                              "out_of_office"
                             ]
+                          },
+                          "related_conditions": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "field_name": {
+                                  "type": "string",
+                                  "enum": [
+                                    "out_of_office"
+                                  ]
+                                },
+                                "operator": {
+                                  "type": "string",
+                                  "enum": [
+                                    "is",
+                                    "greater_than",
+                                    "less_than"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "integer"
+                                }
+                              }
+                            }
                           }
                         }
                       }

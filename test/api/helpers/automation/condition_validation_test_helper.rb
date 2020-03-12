@@ -70,19 +70,37 @@ module Automation::ConditionValidationTestHelper
   end
 
   def condition_skeleton(resource_type, field_name, operator, value)
-    { name: 'condition set 1', match_type: 'any', properties: [{ resource_type: resource_type.to_s,
+    { name: 'condition_set_1', match_type: 'any', properties: [{ resource_type: resource_type.to_s,
                                                                  field_name: field_name.to_s,
                                                                  operator: operator.to_s,
                                                                  value: value }] }
   end
 
   def agent_shift_field_condition_params(availability)
-    { name: 'condition set 1', match_type: 'any', properties: [{ resource_type: 'ticket',
+    { name: 'condition_set_1', match_type: 'any', properties: [{ resource_type: 'ticket',
                                                                  field_name: 'responder_id', operator: 'in',
                                                                  value: Account.current.agents.pluck(:id),
                                                                  related_conditions: [
-                                                                     field_name: 'agent_availability',
-                                                                     operator: 'is', value: availability ] }]
+                                                                   field_name: 'agent_availability',
+                                                                   operator: 'is', value: availability
+                                                                 ] }] }
+  end
+
+  def agent_ooo_condition_params(availability_value, ooo_field_name, operator, value)
+    {
+      name: 'condition_set_1', match_type: 'any', properties: [{ resource_type: 'ticket',
+                                                                 field_name: 'responder_id', operator: 'in',
+                                                                 value: Account.current.agents.pluck(:id),
+                                                                 related_conditions: [{
+                                                                   field_name: 'agent_availability',
+                                                                   operator: 'is', value: availability_value,
+                                                                   related_conditions: [{
+                                                                     field_name: ooo_field_name,
+                                                                     operator: operator,
+                                                                     value: value
+                                                                   }]
+                                                                 }] }]
+
     }
   end
 

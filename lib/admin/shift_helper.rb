@@ -1,5 +1,6 @@
 module Admin::ShiftHelper
   include Admin::ShiftConstants
+  include OutOfOfficeConstants
 
   def shift_service_request
     proxy_response = perform_shift_request(params, cname_params)
@@ -25,19 +26,22 @@ module Admin::ShiftHelper
     response.status = status
   end
 
-  def perform_shift_request(params = nil, cname_params = nil)
-    url = base_url + extended_url(action, params['id'])
+  def perform_shift_request(params = nil, cname_params = nil, model_query_params = false)
+    extnd_url = model_query_params ? (OUT_OF_OFFICE_INDEX + ACTIVE_QUERY_PARAM) : extended_url(action, params['id'])
+    url = base_url + extnd_url
     options = { headers: headers }
     options[:body] = cname_params.to_json if cname_params.present?
-    page_params = index_page? ? append_page_params(params) : nil
+    if model_query_params.blank?
+      page_params = index_page? ? append_page_params(params) : nil
+    end
     options[:query] = page_params if page_params.present?
     options[:timeout] = TIMEOUT
-    execute_shift_request(url, options)
+    execute_shift_request(url, options, model_query_params)
   end
 
-  def execute_shift_request(url, options)
+  def execute_shift_request(url, options, model_query_params = false)
     options[:verify_blacklist] = true
-    proxy_response = HTTParty::Request.new(ACTION_METHOD_TO_CLASS_MAPPING[action], url, options).perform
+    proxy_response = model_query_params ? HTTParty::Request.new(ACTION_METHOD_TO_CLASS_MAPPING[:index], url, options).perform : HTTParty::Request.new(ACTION_METHOD_TO_CLASS_MAPPING[action], url, options).perform
     { code: proxy_response.code, body: proxy_response.parsed_response }
   rescue StandardError => e
     NewRelic::Agent.notice_error(e, description: 'error while hitting shift service')
