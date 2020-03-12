@@ -1,11 +1,11 @@
 require_relative '../test_helper'
 require 'faker'
-require Rails.root.join('spec', 'support', 'user_helper.rb')
-['contact_fields_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['contact_fields_helper.rb','company_helper.rb', 'user_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 
 class UserTest < ActiveSupport::TestCase
   include UsersHelper
   include ContactFieldsHelper
+  include CompanyHelper
 
   def setup
     super
@@ -161,5 +161,60 @@ class UserTest < ActiveSupport::TestCase
     tag = Helpdesk::Tag.where(name: new_tags[0]).first
     tag.delete
     assert_equal user.model_changes_for_central[:tags][:removed_tags].first, new_tags[0]
+  end
+
+  def test_central_publish_model_changes_user_companies
+    # add default company
+    company = create_company
+    user = add_new_user(@account)
+    default_user_company = Account.current.user_companies.build(user_id: user.id, company_id: company.id, client_manager: false, default: true)
+    CentralPublishWorker::UserWorker.jobs.clear
+    default_user_company.save
+    assert_equal 1, CentralPublishWorker::UserWorker.jobs.size
+    job = CentralPublishWorker::UserWorker.jobs.last
+    payload = user.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_user_pattern(user))
+    assert_equal 'contact_update', job['args'][0]
+    assert_includes job['args'][0], job['args'][1]['event']
+    assert_equal [nil, company.id], job['args'][1]['model_changes']['company_id']
+
+    # add other user_companies
+    company = create_company
+    other_user_company = Account.current.user_companies.build(user_id: user.id, company_id: company.id, client_manager: false, default: false)
+    CentralPublishWorker::UserWorker.jobs.clear
+    other_user_company.save
+    assert_equal 1, CentralPublishWorker::UserWorker.jobs.size
+    job = CentralPublishWorker::UserWorker.jobs.last
+    payload = user.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_user_pattern(user))
+    assert_equal 'contact_update', job['args'][0]
+    assert_includes job['args'][0], job['args'][1]['event']
+    assert_equal [company.id], job['args'][1]['model_changes']['other_company_ids']['added']
+
+    # remove default company
+    CentralPublishWorker::UserWorker.jobs.clear
+    deleted_company_id = default_user_company.id
+    p "deleted_company_id :: #{deleted_company_id} :: #{default_user_company.inspect}"
+    default_user_company.destroy
+    payload = user.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_user_pattern(user))
+
+    assert_equal 3, CentralPublishWorker::UserWorker.jobs.size
+    CentralPublishWorker::UserWorker.jobs.each do |central_job|
+      company_id_changes = central_job['args'][1]['model_changes']['company_id']
+      customer_id_changes = central_job['args'][1]['model_changes']['customer_id']
+      assert_equal 'contact_update', central_job['args'][0]
+      assert_includes job['args'][0], central_job['args'][1]['event']
+      if company_id_changes.present? && company_id_changes[1].nil?
+        assert_equal [default_user_company.company_id, nil], central_job['args'][1]['model_changes']['company_id']
+      elsif company_id_changes.present? && company_id_changes[0].nil? # other company to default company
+        assert_equal [nil, other_user_company.company_id], central_job['args'][1]['model_changes']['company_id']
+        assert_equal [other_user_company.company_id], central_job['args'][1]['model_changes']['other_company_ids']['removed']
+      elsif customer_id_changes.present?
+        assert_equal [nil, other_user_company.company_id], central_job['args'][1]['model_changes']['customer_id']
+      end
+    end
+
+    CentralPublishWorker::UserWorker.jobs.clear
   end
 end

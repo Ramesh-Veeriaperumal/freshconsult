@@ -487,7 +487,8 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
       ChargeBee::Subscription.stubs(:update).returns(result)
       agent = @account.users.where(helpdesk_agent: true).first
       User.stubs(:current).returns(agent)
-      @controller.stubs(:api_current_user).returns(User.current)
+      admin_user = Account.current.technicians.find{ |x| x.privilege?(:admin_tasks) }
+      @controller.stubs(:api_current_user).returns(admin_user)
       User.any_instance.stubs(:privilege?).returns(true)
     end
 

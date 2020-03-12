@@ -48,12 +48,18 @@ class User < ActiveRecord::Base
     u.add :parent_id
     u.add :unique_external_id
     u.add :import_id
+    u.add :company_id
     u.add proc { |x| x.tags.collect { |tag| { id: tag.id, name: tag.name } } }, as: :tags
     u.add proc { |x| x.user_emails.where(primary_role: false).pluck(:email) }, as: :other_emails
+    u.add proc { |x| x.user_companies.where(default: false).pluck(:company_id) }, as: :other_company_ids
     u.add proc { |x| x.custom_field_hash('contact') }, as: :custom_fields, unless: proc { |t| t.helpdesk_agent? }
     DATETIME_FIELDS.each do |key|
       u.add proc { |x| x.utc_format(x.send(key)) }, as: key
     end
+  end
+
+  api_accessible :central_publish_associations do |u|
+    u.add :companies, template: :central_publish
   end
 
   api_accessible :internal_agent_central_publish_associations do |t|

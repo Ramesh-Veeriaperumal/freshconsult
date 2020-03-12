@@ -10,7 +10,7 @@ module CentralConstants
     'Solution::Folder' => '0.1',
     'Solution::Article' => '0.2',
     'Bot::FeedbackMapping' => '0.1',
-    'User' => '0.3',
+    'User' => '0.4',
     'Company' => '1.2',
     'Subscription' => '1.2',
     'Agent' => '2.2',
