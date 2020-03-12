@@ -89,6 +89,10 @@ class ContactDecorator < ApiDecorator
     (app_current? || User.current.privilege?(:view_contacts) || User.current.id == id) ? to_full_hash : to_restricted_hash
   end
 
+  def to_agent_hash
+    app_current? || User.current.privilege?(:manage_users) || User.current.id == id ? to_full_hash : to_restricted_hash
+  end
+
   def other_company_items
     record.user_companies.preload(:company).map do |c|
       company_hash(c) if c.company.present? && !c.default

@@ -169,6 +169,36 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     match_json(pattern.ordered)
   end
 
+  def test_agent_index_with_manage_users_privilege_only
+    3.times do
+      add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    end
+    User.any_instance.stubs(:privilege?).with(:manage_account).returns(false)
+    User.any_instance.stubs(:privilege?).with(:view_contacts).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(true)
+    get :index, controller_params(version: 'private')
+    agents = @account.agents.order('users.name').limit(30)
+    pattern = agents.map { |agent| private_api_agent_pattern(agent) }
+    assert_response 200
+    match_json(pattern.ordered)
+  ensure
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_agent_index_without_manage_users_privilege
+    3.times do
+      add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    end
+    User.any_instance.stubs(:privilege?).with(:view_contacts).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(false)
+    get :index, construct_params(version: 'private')
+    assert_response 403
+  ensure
+    User.any_instance.unstub(:privilege?)
+  end
+
   def test_agent_index_with_only_filter
     create_rr_agent
     agents = @account.agents.order('users.name').limit(30)
@@ -715,6 +745,30 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:privilege?).with(:view_contacts).returns(true)
     User.any_instance.stubs(:privilege?).with(:manage_users).returns(false)
     sample_agent = @account.agents.first
+    get :show, construct_params(version: 'private', id: sample_agent.user.id)
+    assert_response 403
+    match_json(request_error_pattern(:access_denied))
+  ensure
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_show_agent_with_manage_users_privilege_only
+    User.any_instance.stubs(:privilege?).with(:manage_account).returns(false)
+    User.any_instance.stubs(:privilege?).with(:view_contacts).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(true)
+    sample_agent = @account.all_agents.first
+    get :show, construct_params(version: 'private', id: sample_agent.user.id)
+    assert_response 200
+    match_json(private_api_agent_pattern(sample_agent))
+  ensure
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_show_agent_without_manage_users_and_view_contacts_privileges
+    User.any_instance.stubs(:privilege?).with(:manage_account).returns(false)
+    User.any_instance.stubs(:privilege?).with(:view_contacts).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(false)
+    sample_agent = @account.all_agents.first
     get :show, construct_params(version: 'private', id: sample_agent.user.id)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
