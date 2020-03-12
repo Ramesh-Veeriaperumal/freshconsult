@@ -50,7 +50,7 @@
                     <%= hidden_field_tag "social_ticket_rule[][deleted]", false, :class => "ticket_deleted" %>
 
                     <label><%= t("admin.social.ticket_rules.assign_to_gp")%></label>
-                    <%= select_tag "social_ticket_rule[][group_id]", options_for_select(current_account.groups.collect{ |c| [c.name, c.id]}.insert(0, "..."), convert_all_rule.group_id), {:class => "select2 filter_item rule_group span6"} %>
+                    <%= select_tag "social_ticket_rule[][group_id]", options_for_select(current_account.support_agent_groups_from_cache.collect{ |c| [c.name, c.id]}.insert(0, "..."), convert_all_rule.group_id), {:class => "select2 filter_item rule_group span6"} %>
                   </div>  
                 </div>
               <% end %>

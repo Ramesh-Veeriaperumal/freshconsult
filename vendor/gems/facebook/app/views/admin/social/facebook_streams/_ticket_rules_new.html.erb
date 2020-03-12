@@ -44,7 +44,7 @@
               <div class="control-group mt10">
                 <label class="mt10 pl5">
                   <%= t('.assign_to_gp')%>
-                  <%= select_tag "social_ticket_rule[][group_id]", options_for_select(current_account.groups.collect{ |c| [c.name, c.id]}.insert(0, '...'), ticket_rule.group_id), {:class => "select2-container span4 ml10"} %>
+                  <%= select_tag "social_ticket_rule[][group_id]", options_for_select(current_account.support_agent_groups_from_cache.collect{ |c| [c.name, c.id]}.insert(0, '...'), ticket_rule.group_id), {:class => "select2-container span4 ml10"} %>
                 </label>
               </div>
             </div>
@@ -69,7 +69,7 @@
             <div class="control-group mt10">
               <label class="mt10 pl5">
                 <%= t('.assign_to_gp')%>
-                <%= select_tag "ad_posts[group_id]", options_for_select(current_account.groups.collect{ |c| [c.name, c.id]}.insert(0, '...'), ad_post_group_id), {:class => "select2-container span4 ml10"} %>
+                <%= select_tag "ad_posts[group_id]", options_for_select(current_account.support_agent_groups_from_cache.collect{ |c| [c.name, c.id]}.insert(0, '...'), ad_post_group_id), {:class => "select2-container span4 ml10"} %>
               </label>
             </div>
 
