@@ -48,7 +48,7 @@ class Account < ActiveRecord::Base
     :mailbox_forward_setup, :remove_image_attachment_meta_data, :automated_private_notes_notification, :detect_lang_from_email_service,
     :sane_restricted_helpdesk, :hiding_confidential_logs, :ticket_list_performance, :sla_policy_revamp, :help_widget_log, :freshdesk_freshsales_bundle, :help_widget_article_customisation,
     :field_agents_can_manage_appointments_setting, :fsm_for_garden_plan, :fsm_for_blossom_plan, :requester_widget_timeline,
-    :out_of_office, :enable_secure_login_check, :contact_form_enhancement, :public_api_filter_factory, :enable_twitter_requester_fields, :marketplace_gallery, :pci_compliance_field, :solutions_quick_view,
+    :out_of_office, :enable_secure_login_check, :contact_form_enhancement, :public_api_filter_factory, :enable_twitter_requester_fields, :marketplace_gallery, :solutions_quick_view,
     :translations_proxy, :translations_cdn, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :retry_emails, :enable_beamer, :fb_message_echo_support
   ].freeze
 
@@ -86,7 +86,7 @@ class Account < ActiveRecord::Base
     :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters, :supervisor_custom_status, :lbrr_by_omniroute,
     :secure_attachments, :article_versioning, :article_export, :article_approval_workflow, :next_response_sla, :advanced_automations,
     :fb_ad_posts, :suggested_articles_count, :unlimited_multi_product, :solutions_freshconnect,
-    :help_widget_article_customisation, :agent_assist, :sla_reminder_automation, :article_interlinking, :kb_increased_file_limit
+    :help_widget_article_customisation, :agent_assist, :sla_reminder_automation, :article_interlinking, :kb_increased_file_limit, :pci_compliance_field
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 

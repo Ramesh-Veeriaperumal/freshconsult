@@ -5761,7 +5761,7 @@ module Ember
     def test_jwe_token_generation_for_get_request
       current_account_id = Account.current.id
       acc = Account.find(current_account_id).make_current
-      acc.launch(:pci_compliance_field)
+      Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
       add_privilege(User.current, :view_secure_field)
       ticket = create_ticket
       create_custom_field_dn('custom_card_no_test', 'secure_text')
@@ -5788,13 +5788,13 @@ module Ember
       request.unstub(:uuid)
       acc.ticket_fields.find_by_name('custom_card_no_test_1').destroy
       remove_privilege(User.current, :view_secure_field)
-      acc.rollback(:pci_compliance_field)
+      Account.any_instance.unstub(:pci_compliance_field_enabled?)
     end
 
     def test_jwe_token_generation_for_get_request_without_privilege
       current_account_id = Account.current.id
       acc = Account.find(current_account_id).make_current
-      acc.launch(:pci_compliance_field)
+      Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
       ticket = create_ticket
       create_custom_field_dn('custom_card_no_test', 'secure_text')
       uuid = SecureRandom.hex
@@ -5806,13 +5806,13 @@ module Ember
       ticket.destroy
       request.unstub(:uuid)
       acc.ticket_fields.find_by_name('custom_card_no_test_1').destroy
-      acc.rollback(:pci_compliance_field)
+      Account.any_instance.unstub(:pci_compliance_field_enabled?)
     end
 
     def test_jwe_token_generation_for_put_request_with_prefix
       current_account_id = Account.current.id
       acc = Account.find(current_account_id).make_current
-      acc.launch(:pci_compliance_field)
+      Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
       add_privilege(User.current, :view_secure_field)
       add_privilege(User.current, :edit_secure_field)
       create_custom_field_dn('custom_card_no_test', 'secure_text')
@@ -5842,13 +5842,13 @@ module Ember
       acc.ticket_fields.find_by_name('custom_card_no_test_1').destroy
       remove_privilege(User.current, :view_secure_field)
       remove_privilege(User.current, :edit_secure_field)
-      acc.rollback(:pci_compliance_field)
+      Account.any_instance.unstub(:pci_compliance_field_enabled?)
     end
 
     def test_jwe_token_generation_for_put_request_without_privilege
       current_account_id = Account.current.id
       acc = Account.find(current_account_id).make_current
-      acc.launch(:pci_compliance_field)
+      Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
       create_custom_field_dn('custom_card_no_test', 'secure_text')
       params = ticket_params_hash
       ticket = create_ticket(params)
@@ -5861,12 +5861,12 @@ module Ember
       ticket.destroy
       request.unstub(:uuid)
       acc.ticket_fields.find_by_name('custom_card_no_test_1').destroy
-      acc.rollback(:pci_compliance_field)
+      Account.any_instance.unstub(:pci_compliance_field_enabled?)
     end
 
     def test_jwe_token_generation_for_put_request_without_prefix
       acc = Account.find(Account.current.id).make_current
-      acc.launch(:pci_compliance_field)
+      Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
       add_privilege(User.current, :view_secure_field)
       add_privilege(User.current, :edit_secure_field)
       create_custom_field_dn('custom_card_no_test', 'secure_text')
@@ -5880,12 +5880,12 @@ module Ember
       acc.ticket_fields.find_by_name('custom_card_no_test_1').destroy
       remove_privilege(User.current, :view_secure_field)
       remove_privilege(User.current, :edit_secure_field)
-      acc.rollback(:pci_compliance_field)
+      Account.any_instance.unstub(:pci_compliance_field_enabled?)
     end
 
     def test_jwe_token_generation_for_put_request_without_secure_field
       acc = Account.find(Account.current.id).make_current
-      acc.launch(:pci_compliance_field)
+      Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
       params = ticket_params_hash
       ticket = create_ticket(params)
       update_params = { custom_fields: { test_custom_text: 'sample text' }}
@@ -5894,7 +5894,7 @@ module Ember
       assert_response 200
     ensure
       ticket.destroy
-      acc.rollback(:pci_compliance_field)
+      Account.any_instance.unstub(:pci_compliance_field_enabled?)
     end
   end
 end
