@@ -43,7 +43,7 @@ module Facebook
     FETCH_FIELDS = {
       post: ['id', 'type', 'from', 'message', 'description', 'created_time', 'link', 'picture', 'name', 'object_id', 'story', 'likes'],
       comments: ['id', 'from', 'can_comment', 'created_time', 'message', 'parent', 'attachment', 'object'],
-      message: ['id', 'from', 'message', 'created_time', 'attachments.fields(id,image_data,mime_type,name,size,video_data,file_url.fields(mime_type,name,id,size))', 'shares.fields(description,id,link,name)'],
+      message: ['id', 'from', 'to', 'message', 'created_time', 'attachments.fields(id,image_data,mime_type,name,size,video_data,file_url.fields(mime_type,name,id,size))', 'shares.fields(description,id,link,name)'],
       profile_name: ['first_name', 'last_name']
     }.freeze
 
@@ -144,6 +144,8 @@ module Facebook
     MESSAGE_SHARE   = MESSAGE_IMAGE # {}"%{html_content} <a href=\"%{url}\" target=\"_blank\"> %{name} </a>"
 
     LINK_SHARE      = '%{html_content} <p>%{title}</p><a href="%{url}" target="_blank"> %{url} </a>'.freeze
+
+    TEXT_SHARE = '%{html_content} <p><b>%{name} : </b>%{value}</p><br>'.freeze
 
     ACCESS_TOKEN_PATH = 'oauth/access_token'.freeze
 

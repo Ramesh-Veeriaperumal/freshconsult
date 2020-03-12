@@ -311,7 +311,7 @@ class Account < ActiveRecord::Base
       mailbox_forward_setup: false, remove_image_attachment_meta_data: false, ticket_field_revamp: false, new_timeline_view: false, email_mailbox: true, facebook_admin_ui_revamp: false,
       detect_lang_from_email_service: false, sla_policy_revamp: false, freshdesk_freshsales_bundle: false, field_agents_can_manage_appointments_setting: false,
       fsm_for_garden_plan: false, fsm_for_blossom_plan: false, requester_widget_timeline: false, enable_secure_login_check: false, contact_form_enhancement: false, enable_twitter_requester_fields: true, marketplace_gallery: false,
-      facebook_public_api: false, twitter_public_api: false, retry_emails: false
+      facebook_public_api: false, twitter_public_api: false, retry_emails: false, fb_message_echo_support: false
     }, :merge
   )
 

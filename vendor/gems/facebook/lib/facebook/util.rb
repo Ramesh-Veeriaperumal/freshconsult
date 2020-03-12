@@ -181,6 +181,8 @@ module Facebook
               content_url = get_content_url(file, url) if !attachment_present?(inline_attachment) && !stickers_url
               html_content = "#{html_content}<br>" if message[:message].present? && content_url # For new line creation
               html_content = LINK_SHARE % {:html_content => html_content, :title => I18n.t('ticket.share_facebook'), :url => content_url} if content_url
+            elsif share[:name] || share[:description]
+              html_content = share_content(html_content, share)
             end
           end
           html_content = "#{html_content} </p></div>"
@@ -289,6 +291,14 @@ module Facebook
       end
       fb_msg
     end
-    
+
+    def share_content(html_content, share)
+      shared_name = share[:name]
+      shared_description = share[:description]
+      html_content = "#{html_content}<br> #{I18n.t('ticket.share_facebook')}<br>"
+      html_content = format(TEXT_SHARE, html_content: html_content, name: I18n.t('export_data.agents.fields.name'), value: shared_name) if shared_name.present?
+      html_content = format(TEXT_SHARE, html_content: html_content, name: I18n.t('export_data.fields.description'), value: shared_description) if shared_description.present?
+      html_content
+    end
   end
 end

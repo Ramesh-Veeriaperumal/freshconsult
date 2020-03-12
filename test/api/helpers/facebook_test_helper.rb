@@ -1,7 +1,7 @@
 module FacebookTestHelper
   def create_test_facebook_page(account = nil)
     account = create_test_account if account.nil?
-    fb_page = FactoryGirl.build(:facebook_pages, account_id: account.id)
+    fb_page = FactoryGirl.build(:facebook_pages, account_id: account.id, page_name: Faker::Name.name)
     Social::FacebookPage.any_instance.stubs(:check_subscription).returns({:data => []}.to_json)
     fb_page.save
     Social::FacebookPage.any_instance.unstub(:check_subscription)
@@ -101,8 +101,28 @@ module FacebookTestHelper
     }
   end
 
-  def verify_ticket_properties(ticket, message)
-    fb_user_id = message[:from][:id]
+  def sample_echo_message_fb_response(msg_id, user_id, page_id, time)
+    {
+      id: msg_id.to_s,
+      message: Faker::Lorem.words(10).join(' ').to_s,
+      from: {
+        name: Faker::Lorem.words(1).to_s,
+        id: page_id.to_s
+      },
+      to: {
+        data: [
+          {
+            id: user_id.to_s,
+            name: Faker::Name.name
+          }
+        ]
+      },
+      created_time: time.to_s
+    }
+  end
+
+  def verify_ticket_properties(ticket, message, is_echo = false)
+    fb_user_id = is_echo ? message[:to][:data].first[:id] : message[:from][:id]
     dm_created_at = Time.zone.parse(message[:created_time])
     direct_message_content = message[:message]
     assert_equal ticket.description, direct_message_content 
@@ -111,8 +131,8 @@ module FacebookTestHelper
     assert_equal ticket.created_at, dm_created_at
   end
 
-  def verify_note_properties(note, message)
-    fb_user_id = message[:from][:id]
+  def verify_note_properties(note, message, is_echo = false)
+    fb_user_id = is_echo ? message[:to][:data].first[:id] : message[:from][:id]
     dm_created_at = Time.zone.parse(message[:created_time])
     direct_message_content = message[:message]
     assert_equal note.body, direct_message_content 

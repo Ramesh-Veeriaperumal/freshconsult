@@ -8176,3 +8176,5 @@ en:
   proceed_btn: Proceed
   enter: Enter
   billed_annually: per agent/month billed annually
+  facebook:
+    page_message_subject: "%{from_name} has contacted %{to_name}"
