@@ -120,6 +120,15 @@ module Widget
         end
       end
 
+      def build_ticket_body_attributes
+        if params[cname][:description]
+          ticket_body_hash = { ticket_body_attributes: { description: params[cname][:description] } }
+          params[cname].merge!(ticket_body_hash).tap do |t|
+            t.delete(:description) if t[:description]
+          end
+        end
+      end
+
       def auth_token_required?
         @help_widget.contact_form_require_login?
       end

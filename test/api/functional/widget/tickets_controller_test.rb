@@ -75,7 +75,8 @@ module Widget
       # email, description
       params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
       post :create, construct_params({ version: 'widget' }, params)
-      t = Helpdesk::Ticket.last
+      id = JSON.parse(response.body)['id']
+      t = Helpdesk::Ticket.where(display_id: id).first
       assert_response 201
       match_json(id: t.display_id)
     end
@@ -111,7 +112,8 @@ module Widget
       # email, description
       params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
       post :create, construct_params({ version: 'widget' }, params)
-      t = Helpdesk::Ticket.last
+      id = JSON.parse(response.body)['id']
+      t = Helpdesk::Ticket.where(display_id: id).first
       assert_response 201
       match_json(id: t.display_id)
     ensure
@@ -187,13 +189,24 @@ module Widget
       @account.add_feature(:help_widget)
     end
 
+    def test_create_ticket_description_newline
+      params = { email: Faker::Internet.email, description: "Hello, This is Anna\nIm from Chennai" }
+      post :create, construct_params({ version: 'widget' }, params)
+      id = JSON.parse(response.body)['id']
+      t = Helpdesk::Ticket.where(display_id: id).first
+      assert_response 201
+      match_json(id: t.display_id)
+      assert_equal t.ticket_body.description_html, '<div>Hello, This is Anna<br>Im from Chennai</div>'
+    end
+
     def test_create_with_attachment_ids
       attachment_ids = []
       attachment_ids << create_attachment(attachable_type: 'WidgetDraft', attachable_id: @widget.id, description: @client_id).id
       params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
       params[:attachment_ids] = attachment_ids
       post :create, construct_params({ version: 'widget' }, params)
-      t = Helpdesk::Ticket.last
+      id = JSON.parse(response.body)['id']
+      t = Helpdesk::Ticket.where(display_id: id).first
       assert_response 201
       match_json(id: t.display_id)
       assert t.attachments.size == 1
@@ -269,7 +282,8 @@ module Widget
       product_field.save
       params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph, product_id: product.id, status: 2, responder_id: @agent.id, subject: Faker::Name.name }
       post :create, construct_params({ version: 'widget' }, params)
-      t = Helpdesk::Ticket.last
+      id = JSON.parse(response.body)['id']
+      t = Helpdesk::Ticket.where(display_id: id).first
       assert_response 201
       match_json(id: t.display_id)
       assert t.product.id == product.id
@@ -324,7 +338,8 @@ module Widget
       toggle_required_attribute(custom_fields)
       post :create, construct_params({ version: 'widget' }, params_hash)
       toggle_required_attribute(custom_fields)
-      t = @account.tickets.last
+      id = JSON.parse(response.body)['id']
+      t = Helpdesk::Ticket.where(display_id: id).first
       assert_response 201
       match_json(id: t.display_id)
     end
@@ -336,7 +351,8 @@ module Widget
       @request.env['HTTP_REFERER'] = 'http://ateam.freshdesk.com'
       params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
       post :create, construct_params({ version: 'widget' }, params)
-      t = Helpdesk::Ticket.last
+      id = JSON.parse(response.body)['id']
+      t = Helpdesk::Ticket.where(display_id: id).first
       assert_response 201
       match_json(id: t.display_id)
       t = @account.tickets.last
@@ -352,7 +368,8 @@ module Widget
       @request.env['HTTP_X_WIDGET_ID'] = create_widget(settings: settings).id
       params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph, meta: { user_agent: 'Freshdesk_Native', referrer: 'http://ateam.freshdesk.com' } }
       post :create, construct_params({ version: 'widget' }, params)
-      t = Helpdesk::Ticket.last
+      id = JSON.parse(response.body)['id']
+      t = Helpdesk::Ticket.where(display_id: id).first
       assert_response 201
       match_json(id: t.display_id)
       t = @account.tickets.last
@@ -371,7 +388,8 @@ module Widget
       @request.env['HTTP_X_WIDGET_ID'] = create_widget(settings: settings).id
       params = { email: 'testwhitelist@restrictedhelpdesk.com', description: Faker::Lorem.paragraph }
       post :create, construct_params({ version: 'widget' }, params)
-      t = Helpdesk::Ticket.last
+      id = JSON.parse(response.body)['id']
+      t = Helpdesk::Ticket.where(display_id: id).first
       assert_response 201
       match_json(id: t.display_id)
     ensure
@@ -407,7 +425,8 @@ module Widget
       @request.env['HTTP_X_WIDGET_ID'] = create_widget(settings: settings).id
       params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph, status: 2, subject: Faker::Lorem.words(10).join(' '), responder_id: @agent.id, custom_fields: { test_custom_text_1_editable: 'test' } }
       post :create, construct_params({ version: 'widget' }, params)
-      t = Helpdesk::Ticket.last
+      id = JSON.parse(response.body)['id']
+      t = Helpdesk::Ticket.where(display_id: id).first
       assert_response 201
       match_json(id: t.display_id)
     end
