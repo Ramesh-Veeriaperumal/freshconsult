@@ -105,8 +105,6 @@ class AccountDecorator < ApiDecorator
         freshdesk_freshsales_bundle: record.account_additional_settings.additional_settings[:freshdesk_freshsales_bundle] || false
       }
       settings_hash[:field_service] = fetch_fsm_settings(acct_additional_settings) if record.field_service_management_enabled? && record.field_agents_can_manage_appointments_setting_enabled?
-      settings_hash[:kb_cumulative_attachment_limit] = acct_additional_settings.additional_settings[:kb_cumulative_attachment_limit] if acct_additional_settings.additional_settings.key? :kb_cumulative_attachment_limit
-      settings_hash[:kb_individual_attachment_limit] = acct_additional_settings.additional_settings[:kb_individual_attachment_limit] if acct_additional_settings.additional_settings.key? :kb_individual_attachment_limit
       settings_hash
     end
 
