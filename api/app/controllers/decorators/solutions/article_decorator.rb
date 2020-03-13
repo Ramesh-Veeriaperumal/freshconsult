@@ -7,8 +7,6 @@ class Solutions::ArticleDecorator < ApiDecorator
   SEARCH_CONTEXTS_WITHOUT_DESCRIPTION = [:agent_insert_solution, :filtered_solution_search].freeze
   SPOTLIGHT_SEARCH_CONTEXT = :agent_spotlight_solution
 
-  include SolutionHelper
-
   def initialize(record, options = {})
     super(record)
     @user = options[:user]
@@ -264,12 +262,14 @@ class Solutions::ArticleDecorator < ApiDecorator
     end
 
     def attachments_hash
-      normal_attachments = active_attachments(record, @draft)
+      normal_attachments = attachments
+      normal_attachments = remove_deleted_attachments(normal_attachments + @draft.attachments) if @draft
       normal_attachments.map { |a| AttachmentDecorator.new(a).to_hash }
     end
 
     def cloud_files_hash
-      cloud_attachments = active_attachments(record, @draft, :cloud_files)
+      cloud_attachments = cloud_files
+      cloud_attachments = remove_deleted_attachments(cloud_attachments + @draft.cloud_files, :cloud_files) if @draft
       cloud_attachments.map { |a| CloudFileDecorator.new(a).to_hash }
     end
 
@@ -326,6 +326,14 @@ class Solutions::ArticleDecorator < ApiDecorator
       # TODO : we need to optimize feedback count as count query, for now we are excluding it for list page
       metrics[:feedback_count] = feedback_count unless @is_list_page
       metrics
+    end
+
+    def remove_deleted_attachments(attachments, type = :attachments)
+      if @draft.meta.present? && @draft.meta[:deleted_attachments].present? && @draft.meta[:deleted_attachments][type].present?
+        deleted_att_ids = @draft.meta[:deleted_attachments][type]
+        attachments = attachments.reject { |a| deleted_att_ids.include?(a.id) }
+      end
+      attachments
     end
 
     def vote_info(vote_type)
