@@ -49,6 +49,7 @@ post:
   tags: [contact]
   description: Create a contact
   parameters:
+    - $ref: '#/parameters/enforce_mandatory'
     - name: data
       in: body
       required: true

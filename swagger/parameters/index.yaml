@@ -18,6 +18,6 @@ enforce_mandatory:
   name: enforce_mandatory
   in: query
   type: string
-  description: Decides whether to perform mandatory validation or not
+  description: Decides whether to perform mandatory custom field validation or not
   required: false
   default: true

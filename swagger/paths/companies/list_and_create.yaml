@@ -34,6 +34,7 @@ post:
   tags: [company]
   description: Create a company
   parameters:
+    - $ref: '#/parameters/enforce_mandatory'
     - name: data
       in: body
       required: true

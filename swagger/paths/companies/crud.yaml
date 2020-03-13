@@ -19,6 +19,7 @@ put:
   description: Update a company
   parameters:
     - $ref: '#/parameters/id'
+    - $ref: '#/parameters/enforce_mandatory'
     - name: data
       in: body
       required: true
@@ -41,7 +42,6 @@ delete:
       type: integer
       format: int64
       in: path
-      type: integer
       required: true
   responses:
     204:

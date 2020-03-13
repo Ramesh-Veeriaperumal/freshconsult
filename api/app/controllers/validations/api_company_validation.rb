@@ -15,7 +15,7 @@ class ApiCompanyValidation < ApiValidation
   CHECK_PARAMS_SET_FIELDS = %w(custom_fields health_score account_tier industry renewal_date).freeze
 
   attr_accessor :name, :description, :domains, :note, :custom_fields, :custom_field_types,
-                :avatar, :avatar_id, :health_score, :account_tier, :industry, :renewal_date
+                :avatar, :avatar_id, :health_score, :account_tier, :industry, :renewal_date, :enforce_mandatory
 
   validates :description, :domains, :note, :health_score,
             :account_tier, :industry,
@@ -58,6 +58,9 @@ class ApiCompanyValidation < ApiValidation
                                  feature: :tam_default_fields } }, 
                             unless: :tam_default_fields_enabled?
 
+  # Validates enforce_mandatory param that should be either true or false
+  validate  :validate_enforce_mandatory, if: -> { enforce_mandatory.present? }, only: [:create, :update]
+
   # Shouldn't be clubbed as allow nil may have some impact on custom fields validator.
   validates :custom_fields, data_type: { rules: Hash }
   validates :custom_fields, custom_field: { custom_fields: {
@@ -79,8 +82,9 @@ class ApiCompanyValidation < ApiValidation
   } }, if: -> { validation_context == :channel_company_create }
 
 
-  def initialize(request_params, item)
+  def initialize(request_params, item, enforce_mandatory = 'true')
     super(request_params, item)
+    @enforce_mandatory = enforce_mandatory || 'true'
     @domains = item.domains.to_s.split(',') if item && !request_params.key?(:domains)
     fill_tam_fields(item, request_params) if item
     fill_custom_fields(request_params, item.custom_field) if item && item.custom_field.present?
@@ -136,5 +140,12 @@ class ApiCompanyValidation < ApiValidation
 
     def tam_default_fields_enabled?
       Account.current.tam_default_fields_enabled?
+    end
+
+    def validate_enforce_mandatory
+      unless %w[true false].include? @enforce_mandatory
+        errors.add(:enforce_mandatory, ErrorConstants::ERROR_MESSAGES[:enforce_mandatory_value_error])
+      end
+      @enforce_mandatory = @enforce_mandatory != 'false'
     end
 end

@@ -29,7 +29,12 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   end
 
   def wrap_cname(params)
-    { company: params }
+    query_params = params[:query_params]
+    cparams = params.clone
+    cparams.delete(:query_params)
+    return query_params.merge(company: cparams) if query_params
+
+    { company: cparams }
   end
 
   def teardown
@@ -534,5 +539,422 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
       bad_request_error_pattern(custom_field_error_label('note'), :datatype_mismatch, expected_data_type: 'String', given_data_type: 'Integer', prepend_msg: :input_received)
     ])
     assert_response 400
+  end
+
+  # Skip mandatory custom field validation on create company
+  def test_create_company_with_enforce_mandatory_true_not_passing_custom_field
+    cf = create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'cf_company', required_for_agent: 'true'))
+    @account.reload
+    created_company = post :create, construct_params(
+      { version: 'private' },
+      name: Faker::Lorem.characters(15),
+      query_params: { enforce_mandatory: 'true' }
+    )
+    result = JSON.parse(created_company.body)
+    assert_response 400, result
+    match_json(
+      [{
+        field: 'custom_fields.cf_company',
+        code: :missing_field,
+        message: 'It should be a/an String'
+      }]
+    )
+  ensure
+    cf.delete
+  end
+
+  def test_create_company_with_enforce_mandatory_true_custom_field_empty
+    cf = create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'cf_company', required_for_agent: 'true'))
+    @account.reload
+    created_company = post :create, construct_params(
+      { version: 'private' },
+      name: Faker::Lorem.characters(15),
+      custom_fields: { cf_company: '' },
+      query_params: { enforce_mandatory: 'true' }
+    )
+
+    result = JSON.parse(created_company.body)
+    assert_response 400, result
+    match_json(
+      [{
+        field: 'custom_fields.cf_company',
+        code: :invalid_value,
+        message: 'It should not be blank as this is a mandatory field'
+      }]
+    )
+  ensure
+    cf.delete
+  end
+
+  def test_create_company_with_enforce_mandatory_true_passing_custom_field
+    cf = create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'cf_company', required_for_agent: 'true'))
+    @account.reload
+    created_company = post :create, construct_params(
+      { version: 'private' },
+      name: Faker::Lorem.characters(15),
+      custom_fields: { cf_company: 'test' },
+      query_params: { enforce_mandatory: 'true' }
+    )
+
+    result = JSON.parse(created_company.body)
+    assert_response 201, result
+  ensure
+    cf.delete
+  end
+
+  def test_create_company_with_enforce_mandatory_false_not_passing_custom_field
+    cf = create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'cf_company', required_for_agent: 'true'))
+    @account.reload
+    created_company = post :create, construct_params(
+      { version: 'private' },
+      name: Faker::Lorem.characters(15),
+      query_params: { enforce_mandatory: 'false' }
+    )
+
+    result = JSON.parse(created_company.body)
+    assert_response 201, result
+  ensure
+    cf.delete
+  end
+
+  def test_create_company_with_enforce_mandatory_false_custom_field_empty
+    cf = create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'cf_company', required_for_agent: 'true'))
+    @account.reload
+    created_company = post :create, construct_params(
+      { version: 'private' },
+      name: Faker::Lorem.characters(15),
+      custom_fields: { cf_company: '' },
+      query_params: { enforce_mandatory: 'false' }
+    )
+
+    result = JSON.parse(created_company.body)
+    assert_response 201, result
+  ensure
+    cf.delete
+  end
+
+  def test_create_company_with_enforce_mandatory_false_passing_custom_field
+    cf = create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'cf_company', required_for_agent: 'true'))
+    @account.reload
+    created_company = post :create, construct_params(
+      { version: 'private' },
+      name: Faker::Lorem.characters(15),
+      custom_fields: { cf_company: 'test' },
+      query_params: { enforce_mandatory: 'false' }
+    )
+
+    result = JSON.parse(created_company.body)
+    assert_response 201, result
+  ensure
+    cf.delete
+  end
+
+  def test_create_company_with_enforce_mandatory_as_garbage_value
+    cf = create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'cf_company', required_for_agent: 'true'))
+    @account.reload
+    created_company = post :create, construct_params(
+      { version: 'private' },
+      name: Faker::Lorem.characters(15),
+      custom_fields: { cf_company: 'test' },
+      query_params: { enforce_mandatory: 'test' }
+    )
+
+    result = JSON.parse(created_company.body)
+    assert_response 400, result
+    match_json(
+      [{
+        field: 'enforce_mandatory',
+        code: :invalid_value,
+        message: "It should be either 'true' or 'false'"
+      }]
+    )
+  ensure
+    cf.delete
+  end
+
+  # Skip mandatory custom field validation on update company
+  def test_update_company_without_required_custom_fields_with_enforce_mandatory_as_false
+    cf = create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'cf_company', required_for_agent: 'true'))
+    @account.reload
+    created_company = post :create, construct_params(
+      { version: 'private' },
+      name: Faker::Lorem.characters(15),
+      query_params: { enforce_mandatory: 'false' }
+    )
+    created_company_id = JSON.parse(created_company.body)['id']
+    updated_company = put :update, construct_params(
+      { version: 'private', id: created_company_id },
+      description: 'testing',
+      query_params: { enforce_mandatory: 'false' }
+    )
+
+    result = JSON.parse(updated_company.body)
+    assert_response 200, result
+    assert_equal result['description'], 'testing'
+  ensure
+    cf.delete
+  end
+
+  def test_update_company_without_required_custom_fields_with_enforce_mandatory_as_true
+    cf = create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'cf_company', required_for_agent: 'true'))
+    @account.reload
+    created_company = post :create, construct_params(
+      { version: 'private' },
+      name: Faker::Lorem.characters(15),
+      query_params: { enforce_mandatory: 'false' }
+    )
+    created_company_id = JSON.parse(created_company.body)['id']
+    updated_company = put :update, construct_params(
+      { version: 'private', id: created_company_id },
+      description: 'testing',
+      query_params: { enforce_mandatory: 'true' }
+    )
+
+    result = JSON.parse(updated_company.body)
+    assert_response 400, result
+    match_json(
+      [{
+        field: 'custom_fields.cf_company',
+        code: :missing_field,
+        message: 'It should be a/an String'
+      }]
+    )
+  ensure
+    cf.delete
+  end
+
+  def test_update_company_without_required_custom_fields_default_enforce_mandatory_true
+    cf = create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'cf_company', required_for_agent: 'true'))
+    @account.reload
+    created_company = post :create, construct_params(
+      { version: 'private' },
+      name: Faker::Lorem.characters(15),
+      query_params: { enforce_mandatory: 'false' }
+    )
+    created_company_id = JSON.parse(created_company.body)['id']
+    updated_company = put :update, construct_params(
+      { version: 'private', id: created_company_id },
+      description: 'testing'
+    )
+
+    result = JSON.parse(updated_company.body)
+    assert_response 400, result
+    match_json(
+      [{
+        field: 'custom_fields.cf_company',
+        code: :missing_field,
+        message: 'It should be a/an String'
+      }]
+    )
+  ensure
+    cf.delete
+  end
+
+  def test_update_company_with_enforce_mandatory_true_existing_custom_field_empty_new_empty
+    cf = create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'cf_company', required_for_agent: 'true'))
+    @account.reload
+    created_company = post :create, construct_params(
+      { version: 'private' },
+      name: Faker::Lorem.characters(15),
+      query_params: { enforce_mandatory: 'false' }
+    )
+    created_company_id = JSON.parse(created_company.body)['id']
+    updated_company = put :update, construct_params(
+      { version: 'private', id: created_company_id },
+      description: 'testing',
+      custom_fields: { cf_company: '' },
+      query_params: { enforce_mandatory: 'true' }
+    )
+
+    result = JSON.parse(updated_company.body)
+    assert_response 400, result
+    match_json(
+      [{
+        field: 'custom_fields.cf_company',
+        code: :invalid_value,
+        message: 'It should not be blank as this is a mandatory field'
+      }]
+    )
+  ensure
+    cf.delete
+  end
+
+  def test_update_company_with_enforce_mandatory_true_existing_custom_field_empty_new_not_empty
+    cf = create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'cf_company', required_for_agent: 'true'))
+    @account.reload
+    created_company = post :create, construct_params(
+      { version: 'private' },
+      name: Faker::Lorem.characters(15),
+      query_params: { enforce_mandatory: 'false' }
+    )
+    created_company_id = JSON.parse(created_company.body)['id']
+    updated_company = put :update, construct_params(
+      { version: 'private', id: created_company_id },
+      description: 'testing',
+      custom_fields: { cf_company: 'testing' },
+      query_params: { enforce_mandatory: 'true' }
+    )
+
+    result = JSON.parse(updated_company.body)
+    assert_response 200, result
+    assert_equal result['description'], 'testing'
+  ensure
+    cf.delete
+  end
+
+  def test_update_company_with_enforce_mandatory_true_existing_custom_field_not_empty_new_empty
+    cf = create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'cf_company', required_for_agent: 'true'))
+    @account.reload
+    created_company = post :create, construct_params(
+      { version: 'private' },
+      name: Faker::Lorem.characters(15),
+      custom_fields: { cf_company: 'existing' }
+    )
+    created_company_id = JSON.parse(created_company.body)['id']
+    updated_company = put :update, construct_params(
+      { version: 'private', id: created_company_id },
+      description: 'testing',
+      custom_fields: { cf_company: '' },
+      query_params: { enforce_mandatory: 'true' }
+    )
+
+    result = JSON.parse(updated_company.body)
+    assert_response 400, result
+    match_json(
+      [{
+        field: 'custom_fields.cf_company',
+        code: :invalid_value,
+        message: 'It should not be blank as this is a mandatory field'
+      }]
+    )
+  ensure
+    cf.delete
+  end
+
+  def test_update_company_with_enforce_mandatory_true_existing_custom_field_not_empty_new_not_empty
+    cf = create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'cf_company', required_for_agent: 'true'))
+    @account.reload
+    created_company = post :create, construct_params(
+      { version: 'private' },
+      name: Faker::Lorem.characters(15),
+      custom_fields: { cf_company: 'existing' }
+    )
+    created_company_id = JSON.parse(created_company.body)['id']
+    updated_company = put :update, construct_params(
+      { version: 'private', id: created_company_id },
+      description: 'testing',
+      custom_fields: { cf_company: 'testing' },
+      query_params: { enforce_mandatory: 'true' }
+    )
+
+    result = JSON.parse(updated_company.body)
+    assert_response 200, result
+    assert_equal result['description'], 'testing'
+  ensure
+    cf.delete
+  end
+
+  def test_update_company_with_enforce_mandatory_false_existing_custom_field_empty_new_empty
+    cf = create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'cf_company', required_for_agent: 'true'))
+    @account.reload
+    created_company = post :create, construct_params(
+      { version: 'private' },
+      name: Faker::Lorem.characters(15),
+      query_params: { enforce_mandatory: 'false' }
+    )
+    created_company_id = JSON.parse(created_company.body)['id']
+    updated_company = put :update, construct_params(
+      { version: 'private', id: created_company_id },
+      description: 'testing',
+      custom_fields: { cf_company: '' },
+      query_params: { enforce_mandatory: 'false' }
+    )
+
+    result = JSON.parse(updated_company.body)
+    assert_response 400, result
+    match_json(
+      [{
+        field: 'custom_fields.cf_company',
+        code: :invalid_value,
+        message: 'It should not be blank as this is a mandatory field'
+      }]
+    )
+  ensure
+    cf.delete
+  end
+
+  def test_update_company_with_enforce_mandatory_false_existing_custom_field_empty_new_not_empty
+    cf = create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'cf_company', required_for_agent: 'true'))
+    @account.reload
+    created_company = post :create, construct_params(
+      { version: 'private' },
+      name: Faker::Lorem.characters(15),
+      query_params: { enforce_mandatory: 'false' }
+    )
+    created_company_id = JSON.parse(created_company.body)['id']
+    updated_company = put :update, construct_params(
+      { version: 'private', id: created_company_id },
+      description: 'testing',
+      custom_fields: { cf_company: 'testing' },
+      query_params: { enforce_mandatory: 'false' }
+    )
+
+    result = JSON.parse(updated_company.body)
+    assert_response 200, result
+    assert_equal result['description'], 'testing'
+  ensure
+    cf.delete
+  end
+
+  def test_update_company_with_enforce_mandatory_false_existing_custom_field_not_empty_new_empty
+    cf = create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'cf_company', required_for_agent: 'true'))
+    @account.reload
+    created_company = post :create, construct_params(
+      { version: 'private' },
+      name: Faker::Lorem.characters(15),
+      custom_fields: { cf_company: 'existing' }
+    )
+    created_company_id = JSON.parse(created_company.body)['id']
+    updated_company = put :update, construct_params(
+      { version: 'private', id: created_company_id },
+      description: 'testing',
+      custom_fields: { cf_company: '' },
+      query_params: { enforce_mandatory: 'false' }
+    )
+
+    result = JSON.parse(updated_company.body)
+    assert_response 400, result
+    match_json(
+      [{
+        field: 'custom_fields.cf_company',
+        code: :invalid_value,
+        message: 'It should not be blank as this is a mandatory field'
+      }]
+    )
+  ensure
+    cf.delete
+  end
+
+  def test_update_company_with_enforce_mandatory_false_existing_custom_field_not_empty_new_not_empty
+    cf = create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'cf_company', required_for_agent: 'true'))
+    @account.reload
+    created_company = post :create, construct_params(
+      { version: 'private' },
+      name: Faker::Lorem.characters(15),
+      custom_fields: { cf_company: 'existing' }
+    )
+    created_company_id = JSON.parse(created_company.body)['id']
+    updated_company = put :update, construct_params(
+      { version: 'private', id: created_company_id },
+      description: 'testing',
+      custom_fields: { cf_company: 'testing' },
+      query_params: { enforce_mandatory: 'false' }
+    )
+
+    result = JSON.parse(updated_company.body)
+    assert_response 200, result
+    assert_equal result['description'], 'testing'
+  ensure
+    cf.delete
   end
 end
