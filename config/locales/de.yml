@@ -3581,19 +3581,19 @@ de:
       events: Ereignisse
       survey: Umfrage
     custom_translation:
-      status_translated: Translated
+      status_translated: Übersetzt
       status_untranslated: Nicht übersetzt
-      status_outdated: Outdated
-      status_incomplete: Incomplete
+      status_outdated: Veraltet
+      status_incomplete: Unvollständig
       translation: Übersetzung
-      primary: Primary
+      primary: Primär
       download: Download
       preview: Vorschau
       edit: Bearbeiten
       surveys:
         visible_on_portal: Im Portal sichtbare Sprachen 
         visible_on_portal_helptext: Diese Sprachen können im Portal gesehen werden
-        show_info: Save the survey to start translating
+        show_info: Umfrage speichern um die Übersetzung zu starten
         hidden_languages: Verstecke Sprachen
         hidden_languages_helptext: Diese Sprachen können im Portal nur gesehen werden wenn Sie die Sichtbarkeit in den Admin Einstellungen ändern
         helptext_content: Können Sie die Sprache Ihrer Wahl nicht finden oder ist sie versteckt? Fügen Sie Sprachen hinzu und ändern Sie die Sichtbarkeit unter Admin - Helpdesk -
@@ -7083,7 +7083,7 @@ de:
   feedbackwidget_position: Position
   resolution_time_sla: Lösungszeit bei SLA-Verletzung
   replies: Antworten
-  urgent: Eilig
+  urgent: Dringend
   import_groups: Gruppen
   solution:
     'on': am

@@ -11,6 +11,7 @@ class RolesControllerTest < ActionController::TestCase
   def test_show_without_privilege
     role = Role.first
     User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(false)
     get :show, construct_params(id: role.id)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
@@ -18,9 +19,39 @@ class RolesControllerTest < ActionController::TestCase
     User.any_instance.unstub(:privilege?)
   end
 
+  def test_show_roles_agent_with_manage_user_privilege
+    role = Role.first
+    CustomRequestStore.store[:private_api_request] = true
+    agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    User.stubs(:current).returns(agent)
+    User.any_instance.stubs(:privilege?).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(true)
+    get :show, construct_params(id: role.id)
+    assert_response 200
+    match_json(role_pattern(role))
+  ensure
+    User.unstub(:current)
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_show_roles_agent_without_manage_user_privilege
+    role = Role.first
+    CustomRequestStore.store[:private_api_request] = true
+    agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    User.stubs(:current).returns(agent)
+    User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(false)
+    get :show, construct_params(id: role.id)
+    assert_response 403
+  ensure
+    User.unstub(:current)
+    User.any_instance.unstub(:privilege?)
+  end
+
   def test_index_without_privilege
     role = Role.first
     User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(false)
     get :index, controller_params
     assert_response 403
     match_json(request_error_pattern(:access_denied))
@@ -47,6 +78,37 @@ class RolesControllerTest < ActionController::TestCase
     end
     assert_response 200
     match_json(pattern.ordered!)
+  end
+
+  def test_index_roles_agent_with_manage_user_privilege
+    CustomRequestStore.store[:private_api_request] = true
+    agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    User.stubs(:current).returns(agent)
+    User.any_instance.stubs(:privilege?).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(true)
+    get :index, controller_params
+    pattern = []
+    Account.current.roles_from_cache.each do |role|
+      pattern << private_role_pattern(role)
+    end
+    assert_response 200
+    match_json(pattern.ordered!)
+  ensure
+    User.unstub(:current)
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_index_roles_agent_without_manage_user_privilege
+    CustomRequestStore.store[:private_api_request] = true
+    agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    User.stubs(:current).returns(agent)
+    User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(false)
+    get :index, controller_params
+    assert_response 403
+  ensure
+    User.unstub(:current)
+    User.any_instance.unstub(:privilege?)
   end
 
   def test_bulk_update_with_no_params

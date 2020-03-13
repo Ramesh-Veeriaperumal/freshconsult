@@ -6261,7 +6261,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_jwe_token_for_get_request_without_privilege
     current_account_id = Account.current.id
     acc = Account.find(current_account_id).make_current
-    acc.launch(:pci_compliance_field)
+    Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
     ticket = create_ticket
     create_custom_field_dn('custom_card_no_test', 'secure_text')
     uuid = SecureRandom.hex
@@ -6272,13 +6272,13 @@ class TicketsControllerTest < ActionController::TestCase
     ticket.destroy
     request.unstub(:uuid)
     acc.ticket_fields.find_by_name('custom_card_no_test_1').destroy
-    acc.rollback(:pci_compliance_field)
+    Account.any_instance.unstub(:pci_compliance_field_enabled?)
   end
 
   def test_jwe_token_for_get_request
     current_account_id = Account.current.id
     acc = Account.find(current_account_id).make_current
-    acc.launch(:pci_compliance_field)
+    Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
     add_privilege(User.current, :view_secure_field)
     ticket = create_ticket
     create_custom_field_dn('custom_card_no_test', 'secure_text')
@@ -6304,12 +6304,12 @@ class TicketsControllerTest < ActionController::TestCase
     request.unstub(:uuid)
     acc.ticket_fields.find_by_name('custom_card_no_test_1').destroy
     remove_privilege(User.current, :view_secure_field)
-    acc.rollback(:pci_compliance_field)
+    Account.any_instance.unstub(:pci_compliance_field_enabled?)
   end
 
   def test_jwe_token_generation_for_put_request
     acc = Account.find(Account.current.id).make_current
-    acc.launch(:pci_compliance_field)
+    Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
     add_privilege(User.current, :view_secure_field)
     add_privilege(User.current, :edit_secure_field)
     create_custom_field_dn('custom_card_no_test', 'secure_text')
@@ -6323,7 +6323,7 @@ class TicketsControllerTest < ActionController::TestCase
     acc.ticket_fields.find_by_name('custom_card_no_test_1').destroy
     remove_privilege(User.current, :view_secure_field)
     remove_privilege(User.current, :edit_secure_field)
-    acc.rollback(:pci_compliance_field)
+    Account.any_instance.unstub(:pci_compliance_field_enabled?)
   end
 
   def test_index_with_requester_with_public_api_filter_factory_enabled

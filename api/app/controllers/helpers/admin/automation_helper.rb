@@ -44,9 +44,16 @@ module Admin::AutomationHelper
           condition[:field_name] = 'ticlet_cc' if condition[:field_name] == 'ticket_cc' && key == :ticket
           condition[:field_name] = condition[:field_name].to_s + '_' + condition[:custom_status_id].to_s if condition[:field_name].to_s == TIME_AND_STATUS_BASED_FILTER[0] && key == :ticket
           condition[:nested_fields].permit(*LEVELS).values.each { |value| value.permit(*PERMITTED_DEFAULT_CONDITION_SET_VALUES) } if condition.key?(:nested_fields)
-          condition[:related_conditions].each { |related_condition| related_condition.permit(*PERMITTED_DEFAULT_CONDITION_SET_VALUES) } if condition.key?(:related_conditions)
+          check_related_condition(condition[:related_conditions]) if condition.key?(:related_conditions)
           add_case_sensitive_key(condition) if condition.present?
         end
+      end
+    end
+
+    def check_related_condition(related_conditions)
+      related_conditions.each do |related_condition|
+        related_condition.permit(*PERMITTED_RELATED_CONDITION_SET_VALUES)
+        check_related_condition(related_condition[:related_conditions]) if related_condition.key?(:related_conditions)
       end
     end
 
@@ -255,7 +262,7 @@ module Admin::AutomationHelper
       value = construct_nested_fields_data(value) if
             nested_field_names.present? && nested_field_names.include?(key)
       value = construct_asssociated_fields_data(value) if key == :associated_fields && value.present?
-      value = value.each.map { |agent_shift| construct_asssociated_fields_data agent_shift } if key == :related_conditions && value.present?
+      value = construct_related_conditions(value) if key == :related_conditions && value.present?
       if is_event && value.present? && 
          TRANSFORMABLE_EVENT_FIELDS.include?(original_key.to_sym) && 
          !value.is_a?(Array) &&
@@ -336,6 +343,16 @@ module Admin::AutomationHelper
       PERMITTED_ASSOCIATED_FIELDS.inject({}) do |hash, key|
         hash.merge!(construct_data(key.to_sym, associated_fields[key], associated_fields.key?(key), nil, true))
       end
+    end
+
+    def construct_related_conditions(related_conditions)
+      result = []
+      related_conditions.each do |agent_shift|
+        res = construct_asssociated_fields_data(agent_shift)
+        res[:related_conditions] = agent_shift[:related_conditions].each.map { |r| construct_asssociated_fields_data(r) } if agent_shift.key?(:related_conditions)
+        result << res
+      end
+      result
     end
 
     def convert_tag_fields(condition)

@@ -134,7 +134,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_one :bot_response, class_name: 'Bot::Response', dependent: :destroy
 
   has_many :canned_form_handles, :class_name => 'Admin::CannedFormHandle', :dependent => :destroy
-  delegate :agent_availability, :to => :responder, :allow_nil => true
+  delegate :agent_availability, :out_of_office_days, to: :responder, allow_nil: true
 
   belongs_to :ticket_source, class_name: 'Helpdesk::Source', foreign_key: 'source', primary_key: 'account_choice_id', inverse_of: :tickets
 

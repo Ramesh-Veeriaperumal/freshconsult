@@ -65,6 +65,8 @@ module Admin::ConditionConstants
 
   PERMITTED_DEFAULT_CONDITION_SET_VALUES = %i[field_name operator value].freeze
 
+  PERMITTED_RELATED_CONDITION_SET_VALUES = (%i[related_conditions] + PERMITTED_DEFAULT_CONDITION_SET_VALUES).freeze
+
   BUSINESS_HOURS_FIELDS = %i[created_at updated_at].freeze
 
   ANY_NONE_VALUES = ['', '--', '##'].freeze
@@ -78,4 +80,10 @@ module Admin::ConditionConstants
   TICKET_ASSOCIATION_TYPES = [1, 2, 3, 4].freeze
 
   DISPATCHER_CONDITION_TICKET_ASSOCIATION_TYPES = [2, 3].freeze
+
+  NESTED_RELATED_CONDITION_FIELD_NAME = ['out_of_office'].freeze
+
+  GREATER_LESSER = ['greater_than', 'less_than'].freeze
+
+  IS = ['is'].freeze
 end

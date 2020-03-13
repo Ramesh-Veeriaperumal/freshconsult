@@ -25,7 +25,7 @@ module Admin::Social::StreamsHelper
   def fetch_groups
     all_groups = []
     all_groups.push([0, "#{I18n.t('admin.social.streams.visibility.all')}" ])
-    all_groups.concat(Account.current.groups_from_cache.collect { |g| [g.id, CGI.escapeHTML(g.name)]})
+    all_groups.concat(Account.current.support_agent_groups_from_cache.collect { |g| [g.id, CGI.escapeHTML(g.name)] })
   end
   
   def fetch_default_stream(handle)

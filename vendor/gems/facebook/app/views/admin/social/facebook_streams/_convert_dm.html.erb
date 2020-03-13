@@ -22,7 +22,7 @@
           dm_stream = facebook_page.dm_stream
           group_id  = dm_stream.ticket_rules.first.action_data[:group_id] unless dm_stream.ticket_rules.empty?
         %>
-        <%= collection_select(:dm_rule ,:group_assigned, current_account.groups, :id, :name, {:include_blank => '...',
+        <%= collection_select(:dm_rule ,:group_assigned, current_account.support_agent_groups_from_cache, :id, :name, {:include_blank => '...',
             :selected => group_id}, :class => 'select2-container select2 span6') %>
       </div>
     </div>   

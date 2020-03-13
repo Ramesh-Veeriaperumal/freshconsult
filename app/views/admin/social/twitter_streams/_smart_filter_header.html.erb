@@ -20,7 +20,7 @@
         <div class="control-group span6">
           <%= hidden_field_tag "smart_filter_rule_#{filter_val}[ticket_rule_id]",  ticket_rule.id %>
           <label><%= t("admin.social.ticket_rules.assign_to_gp")%></label>
-          <%= select_tag "smart_filter_rule_#{filter_val}[group_id]", options_for_select(current_account.groups.collect{ |c| [c.name, c.id]}.insert(0, "..."),  ticket_rule.group_id), {:class => "select2 filter_item rule_group span12"} %>
+          <%= select_tag "smart_filter_rule_#{filter_val}[group_id]", options_for_select(current_account.support_agent_groups_from_cache.collect{ |c| [c.name, c.id]}.insert(0, "..."),  ticket_rule.group_id), {:class => "select2 filter_item rule_group span12"} %>
         </div>  
         <div class="control-group span6">
         </div>   

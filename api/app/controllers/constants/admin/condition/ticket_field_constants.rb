@@ -101,7 +101,8 @@ module Admin::Condition::TicketFieldConstants
   }.freeze
 
   RELATED_CONDITION_FIELDS = {
-      responder_id: { agent_availability: { operator: %w[is].freeze, value: %w[unavailable].freeze }.freeze }.freeze
+    responder_id: { agent_availability: { operator: %w[is].freeze, value: %w[unavailable out_of_office].freeze }.freeze,
+                    out_of_office_days: { operator: %w[is greater_than less_than].freeze, value: String }.freeze }.freeze
   }.freeze
 
   CONDITION_NONE_FIELDS = %i[ticket_type product_id group_id responder_id internal_group_id

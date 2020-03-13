@@ -37,6 +37,7 @@ module ChannelIntegrations::Commands::Services
       data = payload[:data]
       ticket_id = payload[:data][:ticket_id]
       set_current_user(data[:user_id])
+      update_contact_twitter_fields(data) if allow_twitter_contact_update?(data)
       check_twitter_handle?(context[:twitter_handle_id])
 
       Rails.logger.debug("Twitter::CreateNote, account_id: #{current_account.id}, tweet_id: #{context[:tweet_id]}")
@@ -199,6 +200,23 @@ module ChannelIntegrations::Commands::Services
         raise 'Twitter Handle Not found' if twitter_handle.blank?
 
         twitter_handle
+      end
+
+      def allow_twitter_contact_update?(data)
+        Account.current.twitter_requester_fields_enabled? && twitter_requester_fields_present?(data)
+      end
+
+      def twitter_requester_fields_present?(data)
+        (data.keys & [:twitter_profile_status, :twitter_followers_count]).present?
+      end
+
+      def update_contact_twitter_fields(data)
+        current_user = User.current
+        current_user.twitter_profile_status = data.delete(:twitter_profile_status)
+        current_user.twitter_followers_count = data.delete(:twitter_followers_count)
+        current_user.save!
+      rescue StandardError => e
+        Rails.logger.info "Twitter::CreateNote exception while updating user account_id: #{current_account.id} context: #{context.inspect} #{e.message} #{e.backtrace[0.10]}"
       end
   end
 end

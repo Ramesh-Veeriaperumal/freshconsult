@@ -13,6 +13,7 @@ class Agent < ActiveRecord::Base
   include Redis::OthersRedis
   include DataVersioning::Model
   include RabbitMq::Publisher
+  include Admin::ShiftHelper
 
   VERSION_MEMBER_KEY = 'AGENTS_GROUPS_LIST'.freeze
 
@@ -50,7 +51,7 @@ class Agent < ActiveRecord::Base
 
   attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled, :field_service, :undo_send, :falcon_ui, :shortcuts_mapping,
                   :scoreboard_level_id, :user_attributes, :group_ids, :freshchat_token, :agent_type, :search_settings, :focus_mode, :show_onBoarding, :notification_timestamp
-  attr_accessor :agent_role_ids, :freshcaller_enabled, :user_changes, :group_changes, :ocr_update, :misc_changes
+  attr_accessor :agent_role_ids, :freshcaller_enabled, :user_changes, :group_changes, :ocr_update, :misc_changes, :out_of_office_days
 
   scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
   scope :full_time_support_agents, :conditions => { :occasional => false, :agent_type => SUPPORT_AGENT_TYPE, 'users.deleted' => false}
@@ -58,7 +59,7 @@ class Agent < ActiveRecord::Base
   scope :list , lambda {{ :include => :user , :order => :name }}  
 
   xss_sanitize :only => [:signature_html],  :html_sanitize => [:signature_html]
-  
+
   def self.technician_list account_id  
     agents = User.find(:all, :joins=>:agent, :conditions => {:account_id=>account_id, :deleted =>false} , :order => 'name')  
   end
@@ -363,7 +364,19 @@ class Agent < ActiveRecord::Base
   end
   
   def agent_availability
-    Agent::UN_AVAILABLE unless available
+    unless available
+      out_of_office.is_a?(Integer) ? Agent::OUT_OF_OFFICE : Agent::UN_AVAILABLE
+    end
+  end
+
+  def out_of_office
+    return unless Account.current.out_of_office_enabled?
+
+    user.make_current
+    ooo_response = perform_shift_request(nil, nil, true)
+    return if ooo_response[:body].empty? || ooo_response[:code] != 200
+    
+    @out_of_office_days = (ooo_response[:body][0]['end_time'].to_datetime - ooo_response[:body][0]['start_time'].to_datetime).to_i
   end
 
   protected

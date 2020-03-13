@@ -1722,6 +1722,7 @@ ActiveRecord::Schema.define(:version => 20200228063609) do
     t.boolean  :enabled
     t.datetime "created_at",                          :null => false
     t.datetime "updated_at",                          :null => false
+    t.string   "domain"
   end
 
   add_index 'freshchat_accounts', ['account_id'], name: "index_freshchat_accounts_on_account_id", unique: true

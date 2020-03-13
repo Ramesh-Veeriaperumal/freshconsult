@@ -543,6 +543,7 @@
       - :help_widget_article_customisation
       - :next_response_sla
       - :sla_reminder_automation
+      - :fb_ad_posts
     :inherits:
       - :garden_jan_20
     :exclude: []

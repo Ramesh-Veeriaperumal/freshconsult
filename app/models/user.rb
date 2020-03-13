@@ -172,7 +172,7 @@ class User < ActiveRecord::Base
 
   TWITTER_REQUESTER_FIELDS_MAPPING = {
     boolean_uc01: :twitter_profile_status,
-    string_uc07: :twitter_followers_count
+    long_uc01: :twitter_followers_count
   }.freeze
 
   TWITTER_REQUESTER_FIELDS_MAPPING.keys.each do |key|

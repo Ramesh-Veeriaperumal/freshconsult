@@ -136,7 +136,7 @@ module Admin::Automation::AutomationSummary
       end
       array << generate_case_sensitive(data[:case_sensitive]) if data[:case_sensitive].present?
       array << generate_associated_fields(data[:associated_fields]) if data[:associated_fields].present?
-      array << data[:related_conditions].each.map { |cond| generate_agent_shift_fields(cond) } if data[:related_conditions].present?
+      array << fetch_related_condition_fields(data, []) if data[:related_conditions].present?
       sentence = array.join(' ')
       I18n.t('admin.automation_summary.condition', field_name: sentence)
     end
@@ -302,11 +302,20 @@ module Admin::Automation::AutomationSummary
       "#{text_and.downcase} #{text_related_ticket_count} #{operator} #{value}"
     end
 
-    def generate_agent_shift_fields(agent_shifts)
+    def fetch_related_condition_fields(data, agent_shifts_array)
+      data[:related_conditions].each do |related_condition|
+        agent_shifts_array << generate_related_condition_fields(related_condition)
+        fetch_related_condition_fields(related_condition, agent_shifts_array) if related_condition.key? :related_conditions
+      end
+      agent_shifts_array
+    end
+
+    def generate_related_condition_fields(agent_shifts)
       text_and = I18n.t('admin.automation_summary.condition_all')
-      availability = I18n.t('admin.automation_summary.agent_availability')
+      availability = I18n.t("admin.automation_summary.#{agent_shifts[:name]}")
       operator = I18n.t("admin.automation_summary.#{agent_shifts[:operator]}")
-      value = add_html_tag(agent_shifts[:value], 2)
+      agent_shifts_value = agent_shifts[:value] == "-1" ? I18n.t("admin.automation_summary.any_days") : agent_shifts[:value].humanize
+      value = add_html_tag(agent_shifts_value, 2)
       "#{text_and} #{availability} #{operator} #{value}"
     end
 

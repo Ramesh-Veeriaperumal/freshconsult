@@ -381,11 +381,13 @@
       :unlimited_multi_product: 376
       :help_widget_article_customisation: 377
       :sla_reminder_automation: 378
+      :pci_compliance_field: 379
 :selectable_features:
   :redis_display_id: true
   :branding: true
   :es_v2_writes: true
   :gamification_enable: false
+  :parent_child_infra: false
   :parent_child_tickets: false
   :link_tickets: false
   :shared_ownership: false
@@ -484,4 +486,3 @@
   :fluffy_higher_plan2: false
   :fluffy_higher_plan3: false
   :fluffy_higher_plan4: false
-  :fb_ad_posts: false

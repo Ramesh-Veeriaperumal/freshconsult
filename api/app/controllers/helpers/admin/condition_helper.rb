@@ -87,19 +87,34 @@ module Admin::ConditionHelper
   end
 
   def related_conditions_validation(expected, actual)
-    return unexpected_parameter('related_conditions') if RELATED_CONDITION_FIELDS[actual[:field_name].try(:to_sym)].nil?
+    expected_parameters = RELATED_CONDITION_FIELDS[actual[:field_name].try(:to_sym)].nil? ? RELATED_CONDITION_FIELDS[:responder_id][actual[:field_name].try(:to_sym)] : RELATED_CONDITION_FIELDS[actual[:field_name].try(:to_sym)]
+    return unexpected_parameter('related_conditions') if expected_parameters.nil?
+    expected_related_condition = RELATED_CONDITION_FIELDS[:responder_id]
 
-    expected_related_condition = RELATED_CONDITION_FIELDS[actual[:field_name].try(:to_sym)]
+    invalid_data_type(actual[:related_conditions].inspect, Array, actual.class) && return unless actual[:related_conditions].is_a?(Array)
+
     actual[:related_conditions].each do |related_condition|
       Admin::AutomationConstants::PERMITTED_ASSOCIATED_FIELDS.each do |key|
+        missing_field_error(related_condition[key.to_s], key.to_s) && return unless related_condition.include? key
         expected_keys = if key == :field_name
-                          unexpected_parameter(related_condition[key]) && break unless related_condition_field_validation(related_condition[key].to_sym)
+                          unexpected_parameter(related_condition[key.to_s]) && break unless related_condition_field_validation(related_condition[key].to_sym)
                           expected_related_condition.keys.map(&:to_s)
                         else
                           expected_related_condition[related_condition[:field_name].to_sym][key]
                         end
         field_name = :"#{expected[:name]}][:related_conditions][:#{key}]"
-        not_included_error(field_name, expected_keys) unless expected_keys.include?(related_condition[key])
+        if expected_keys.is_a? Array
+          not_included_error(field_name, expected_keys) unless expected_keys.include?(related_condition[key.to_s])
+        else
+          invalid_data_type('related_conditions[:value]', expected_keys, related_condition[:value].class) unless related_condition[:value].is_a?(expected_keys)
+          unexpected_value_for_attribute(key.to_s, related_condition[key.to_s]) if related_condition[:value] < "0" && (GREATER_LESSER.include? related_condition[:operator])
+          unexpected_value_for_attribute(key.to_s, related_condition[key.to_s]) if related_condition[:value] != "-1" && (IS.include? related_condition[:operator])
+        end
+      end
+      if related_condition.key?(:related_conditions)
+        return not_included_error(related_condition[:value], NESTED_RELATED_CONDITION_FIELD_NAME) unless NESTED_RELATED_CONDITION_FIELD_NAME.include? related_condition[:value]
+        
+        related_conditions_validation(expected, related_condition.to_h.symbolize_keys!)
       end
     end
   end
@@ -108,6 +123,8 @@ module Admin::ConditionHelper
     case field_name
     when :agent_availability
       return false if supervisor_rule? || !current_account.features?(:round_robin)
+    when :out_of_office_days
+      return false if supervisor_rule? || !current_account.out_of_office_enabled?
     else
       return false
     end

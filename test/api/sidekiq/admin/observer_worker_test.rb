@@ -19,10 +19,12 @@ module Admin
         create_test_account if Account.first.nil?
         Account.stubs(:current).returns(Account.first)
         @account = Account.first
+        @account.launch :automation_revamp
       end
 
       def teardown
         Account.unstub(:current)
+        @account.rollback :automation_revamp
         super
       end
 

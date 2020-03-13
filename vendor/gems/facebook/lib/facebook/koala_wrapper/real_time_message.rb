@@ -12,9 +12,11 @@ module Facebook
         @fan_page     = fan_page
         @message_obj  = message
         @rest         = Koala::Facebook::API.new(fan_page.page_token)
-        @message_data = @message_obj["message"]
-        @mid          = @message_data["mid"]
-        @sender_id    = @message_obj["sender"] && @message_obj["sender"]["id"]
+        @message_data = @message_obj['message']
+        @mid          = @message_data['mid']
+        @sender_id    = @message_obj['sender'] && @message_obj['sender']['id']
+        @recipient_id = @message_obj['recipient'] && @message_obj['recipient']['id']
+        @is_echo_message = @message_data['is_echo']
       end
 
       def fetch
@@ -23,12 +25,19 @@ module Facebook
       end
 
       def thread_key
-        "#{@fan_page.page_id.to_s}#{MESSAGE_THREAD_ID_DELIMITER}#{@sender_id}" if @sender_id
+        "#{@fan_page.page_id}#{MESSAGE_THREAD_ID_DELIMITER}#{@sender_id}" if @sender_id
+      end
+
+      def echo_thread_key
+        "#{@fan_page.page_id}#{MESSAGE_THREAD_ID_DELIMITER}#{@recipient_id}" if @recipient_id
       end
 
       def process
+        return if @is_echo_message && !@account.launched?(:fb_message_echo_support)
+
         fetch()
-        create_tickets(@message, thread_key) if thread_key
+        key = @is_echo_message ? echo_thread_key : thread_key
+        create_tickets(@message, key) if key
       end
     end
   end

@@ -626,6 +626,29 @@ class SubscriptionsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:denormalized_flexifields_enabled?)
   end
 
+  def test_enable_fsm_and_upgrade_with_fsm
+    stub_chargebee_requests
+    forest_plan_id = SubscriptionPlan.select(:id).where(name: 'Forest Jan 19').map(&:id).last
+    @account.reload
+    params = { addons: { field_service_management: { enabled: 'true', value: '0' } } }
+    @account.rollback :downgrade_policy
+    post :plan, construct_params({}, params.merge!(params_hash))
+    @account.reload
+    assert_equal true, @account.field_service_management_enabled?
+    assert_equal true, @account.parent_child_infra_enabled?
+
+    params[:plan_id] = forest_plan_id
+    @account.rollback :downgrade_policy
+    post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
+    @account.reload
+    assert_equal true, @account.field_service_management_enabled?
+    assert_equal true, @account.parent_child_infra_enabled?
+    assert_equal @account.subscription.subscription_plan_id, forest_plan_id
+  ensure
+    cleanup_fsm
+    unstub_chargebee_requests
+  end
+
   # def test_fsm_toggle_enabled_for_garden_plan
   #   stub_chargebee_requests
   #   garden_plan_id = SubscriptionPlan.select(:id).where(name: 'Garden Omni Jan 19').map(&:id).last

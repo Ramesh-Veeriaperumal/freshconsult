@@ -25,7 +25,7 @@ class AgentDecorator < ApiDecorator
       role_ids:  record.user.role_ids,
       skill_ids: record.user.skill_ids,
       available_since: record.active_since.try(:utc),
-      contact: ContactDecorator.new(record.user, {}).to_hash,
+      contact: ContactDecorator.new(record.user, {}).to_agent_hash,
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc),
       gdpr_admin_name: record.user.current_user_gdpr_admin,

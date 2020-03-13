@@ -333,7 +333,7 @@ module Admin::AutomationConstants
                                 mail_del_failed_requester mail_del_failed_others add_a_cc add_comment delete_ticket
                                 mark_as_spam skip_notification due_by from_email to_email ticket_cc last_interaction
                                 inbound_count outbound_count description forward_ticket ticlet_cc response_due resolution_due
-                                association_type associated_ticket_count next_response_due agent_availability] + (TIME_BASED_FILTERS - %i[hours_since_waiting_on_custom_status]) +
+                                association_type associated_ticket_count next_response_due agent_availability out_of_office out_of_office_days] + (TIME_BASED_FILTERS - %i[hours_since_waiting_on_custom_status]) +
                                 SUPERVISOR_CONDITION_TICKET_FIELDS).uniq.freeze
 
   DEFAULT_FIELDS = (DEFAULT_FIELDS_DELEGATORS + DELEGATOR_IGNORE_FIELDS).freeze
