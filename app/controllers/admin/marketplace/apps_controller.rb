@@ -10,7 +10,7 @@ class Admin::Marketplace::AppsController < Admin::AdminController
 
     if current_account.freshid_org_v2_enabled?
       Rails.logger.info("FreshId V2 params - #{current_account.organisation_domain}")
-      params_to_encrypt.merge(org: current_account.organisation_domain)
+      params_to_encrypt = params_to_encrypt.merge(org: current_account.organisation_domain)
     elsif current_account.freshid_integration_enabled?
       Rails.logger.info('FreshId V1 - No params needed')
       # Do Nothing
