@@ -1052,7 +1052,10 @@
         "_base_url": "https://staging.fid.freshworksapi.com",
         "_central_url": "https://login.freshpo.com/freshid/event_callback",
         "_product": "freshdesk-staging",
-        "_ui_url": "https://staging-ui.fid.freshworksapi.com"
+        "_ui_url": "https://staging-ui.fid.freshworksapi.com",
+        "v1_migration_api_key": "EJ[1:dKYBoOAEoDUYs01PLU8c1jgzS4MSrHi/HBOcFuVbsAI=:pe2mJ1ZU+kmACpRV/aRRORR7MSze2HNK:pLPyNQ57jbBZzQ1u5bEL4I3dNNiMTrqr1/FruYzC1MARY3y9fhfuQmGDDTwLnPeY/DaZHAc2Fp0=]",
+        "_v1_migration_url": "https://staging-migration.fid.freshworksapi.com/v2/user",
+        "_v1_migration_product": "freshdesk-prestaging"
       },
       "freshid_v2": {
         "_region_code": "STAGING",

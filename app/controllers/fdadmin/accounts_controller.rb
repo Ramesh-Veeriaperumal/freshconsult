@@ -7,6 +7,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   include Redis::DisplayIdRedis
   include EmailHelper
   include SandboxConstants
+  include Freshid::Fdadmin::MigrationHelper
 
   before_filter :check_domain_exists, :only => :change_url , :if => :non_global_pods?
   around_filter :select_slave_shard , :only => [:api_jwt_auth_feature,:sha1_enabled_feature,:select_all_feature,:show, :features,
@@ -60,6 +61,11 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:trial_subscription] = trial_subscription_hash(account.trial_subscriptions.last)
     account_summary[:subscription_request] = fetch_requested_subscription_details(account.subscription.subscription_request)
     account_summary[:account_cancellation_requested_on] = fetch_account_cancellation_requested_time(account)
+    account_summary[:freshid_enabled] = account.freshid_enabled?
+    account_summary[:freshid_org_v2_enabled] = account.freshid_org_v2_enabled?
+    account_summary[:disable_org_v2_in_progress] = account.account_additional_settings.freshid_migration_running?(DISABLE_V2_MIGRATION_INPROGRESS)
+    account_summary[:enable_freshid_v1_in_progress] = account.account_additional_settings.freshid_migration_running?(ENABLE_V1_MIGRATION_INPROGRESS)
+    account_summary[:enable_org_v2_in_progress] = account.account_additional_settings.freshid_migration_running?(ENABLE_V2_MIGRATION_INPROGRESS)
     respond_to do |format|
       format.json do
         render :json => account_summary
@@ -417,32 +423,70 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def enable_freshid
     result = {}
+    allowed_account = get_all_members_in_a_redis_set(FRESHID_MIGRATION_ENABLED_ACCOUNT_FRESHOPS) || []
     Sharding.admin_select_shard_of(params[:account_id]) do
       begin
         account = Account.find(params[:account_id])
         account.make_current
+        enable_inprogress = account.account_additional_settings.freshid_migration_running?(ENABLE_V1_MIGRATION_INPROGRESS)
         result[:account_id] = account.id
-        if account.sso_enabled?
-          Rails.logger.info "SSO has been enabled for this account. So, you can't enable freshid"
-          result[:status] = "notice"
-        elsif account.freshid_integration_enabled?
-          Rails.logger.info "Freshid has already been enabled for this account"
-          result[:status] = "notice"
+        if allowed_account.present? && allowed_account.exclude?(account.id.to_s)
+          Rails.logger.info "A = #{params[:account_id]} is not present in redis List"
+          result[:status] = 'invalid_acc'
+        elsif enable_inprogress
+          Rails.logger.info "Freshid Migration already in progress for A = #{params[:account_id]}"
+          result[:status] = 'inprogress'
+        elsif migration_check_fails?(account)
+          Rails.logger.info "Freshid Migration check failed for A = #{params[:account_id]}"
+          result[:status] = 'notice'
         else
-          account.enable_freshid
-          account.launch(:freshworks_omnibar) # it will be enabled by default in podus.
-          result[:status] = "success"
+          Rails.logger.info "Migrate account to Freshid V1 has been triggered for A = #{params[:account_id]}"
+          account.account_additional_settings.create_freshid_migration(ENABLE_V1_MIGRATION_INPROGRESS)
+          Admin::FdadminFreshidMigrationWorker.perform_async(freshid_silent_migration: true, account_id: account.id, doer_email: params[:doer_email])
+          result[:status] = 'success'
         end
-      rescue Exception => e
-        result[:status] = "error"
-        Rails.logger.info "Exception while enabling freshid from freshops admin : #{e.inspect}"
+      rescue StandardError => e
+        result[:status] = 'error'
+        Rails.logger.info "Exception while enabling freshid from freshops admin for A = #{params[:account_id]} : #{e.inspect}"
       ensure
         Account.reset_current_account
       end
     end
     respond_to do |format|
       format.json do
-        render :json => result
+        render json: result
+      end
+    end
+  end
+
+  def disable_freshid_org_v2
+    result = {}
+    Sharding.admin_select_shard_of(params[:account_id]) do
+      begin
+        account = Account.find(params[:account_id])
+        account.make_current
+        disable_inprogress = account.account_additional_settings.freshid_migration_running?(DISABLE_V2_MIGRATION_INPROGRESS)
+        if disable_inprogress
+          Rails.logger.info "Freshid Org V2 disable is already in progress for a = #{params[:account_id]}"
+          result[:status] = 'inprogress'
+        elsif account.freshid_org_v2_enabled?
+          Rails.logger.info "Freshid Org V2 disabled has been triggered for account a = #{params[:account_id]}"
+          account.account_additional_settings.create_freshid_migration(DISABLE_V2_MIGRATION_INPROGRESS)
+          Admin::FdadminFreshidMigrationWorker.perform_async(freshid_v2_revert_migration: true, account_id: account.id)
+          result[:status] = 'success'
+        else
+          result[:status] = 'notice'
+        end
+      rescue StandardError => e
+        result[:status] = 'error'
+        Rails.logger.info "Exception while disabling freshid org V2 from freshops admin for a = #{params[:account_id]} : #{e.inspect}"
+      ensure
+        Account.reset_current_account
+      end
+    end
+    respond_to do |format|
+      format.json do
+        render json: result
       end
     end
   end

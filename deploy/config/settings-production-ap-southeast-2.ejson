@@ -980,7 +980,10 @@
         "_ui_url": "https://au.accounts.freshworks.com",
         "_product": "freshdesk",
         "_central_url": "https://podapsoutheast2login.freshdesk.com/freshid/event_callback",
-        "_customer_base_url": "https://sso-au.api.freshworks.com"
+        "_customer_base_url": "https://sso-au.api.freshworks.com",
+        "v1_migration_api_key": "EJ[1:XJPlmzr5eP0ElJm1gOh+hZ4rOnjZSbPYLWkoL5PWR3o=:FbiHjoLk/pbUJVi66hbUQ45PbZhht6N6:1oP7p9HITV9y0ZExT4JOSquH/5zRHfFwEOvyNPVLL7EG/79WlV98oM4nCYFc61OPxvNC7bSeqj8=]",
+        "_v1_migration_url": "https://au-migration.api.freshworks.com/v2/user",
+        "_v1_migration_product": "freshdesk"
       },
       "freshid_v2": {
         "region_code": "EJ[1:uM6u4kQlR04Ol0fIvDPXihJiJsuMnInoMu6+gJ1a4nU=:dyn+SlIK79KyEDdiG7EOmAg1XuuuBSex:KmOLA23l1dFYEG9i3ipbX8qL]",

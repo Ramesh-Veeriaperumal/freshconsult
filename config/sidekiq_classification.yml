@@ -255,6 +255,7 @@
     - update_sandbox_subscription
     - ticket_properties_suggester
     - image_meta_data_delete
+    - fdadmin_freshid_migration
     - agent_assist_email
   :free:
     - free_sla

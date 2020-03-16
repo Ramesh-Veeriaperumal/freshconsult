@@ -9,6 +9,8 @@ defaults: &defaults
   customer_base_url: <%= node[:ymls][:freshid][:customer_base_url] %>
   customer_client_id: <%= node[:ymls][:freshid][:customer_client_id] %>
   customer_client_secret: <%= node[:ymls][:freshid][:customer_client_secret] %>
-
+  v1_migration_api_key: <%= node[:ymls][:freshid][:v1_migration_api_key] %>
+  v1_migration_url: <%= node[:ymls][:freshid][:v1_migration_url] %>
+  v1_migration_product: <%= node[:ymls][:freshid][:v1_migration_product] %>
 <%= node[:opsworks][:environment] %>:
   <<: *defaults
