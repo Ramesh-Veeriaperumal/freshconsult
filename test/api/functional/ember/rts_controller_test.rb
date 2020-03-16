@@ -68,7 +68,12 @@ module Ember
         {
           accId: rts_details[:rts_account_id],
           userId: rts_details[:current_user_id],
-          exp: @stub_time.to_i + RTSConfig['jwt_default_expiry']
+          exp: @stub_time.to_i + 10.hours,
+          credentials: [{
+            resource: '*',
+            perms: ['*'],
+            expire: @stub_time.to_i + 10.hours
+          }]
         }
       end
   end
