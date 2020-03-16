@@ -325,6 +325,49 @@ class ApiAgentsControllerTest < ActionController::TestCase
     assert_response 400
   end
 
+  def test_update_agent_with_manage_user_ability
+    current_agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    User.stubs(:current).returns(current_agent)
+    agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    User.any_instance.stubs(:privilege?).with(:manage_availability).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_account).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(true)
+    group_ids = [create_group(@account).id]
+    params = {
+      name: Faker::Name.name,
+      phone: Faker::PhoneNumber.phone_number,
+      mobile: Faker::PhoneNumber.phone_number,
+      email: Faker::Internet.email, time_zone: 'Central Time (US & Canada)',
+      language: 'en',
+      occasional: false,
+      signature: Faker::Lorem.paragraph,
+      ticket_scope: 2,
+      group_ids: group_ids,
+      job_title: Faker::Name.name
+    }
+    put :update, construct_params({ id: agent.id }, params)
+    assert_response 200
+  ensure
+    User.unstub(:current)
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_update_agent_without_manage_user_ability
+    current_agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    User.stubs(:current).returns(current_agent)
+    agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    User.any_instance.stubs(:privilege?).returns(false)
+    role_ids = Role.limit(2).pluck(:id)
+    group_ids = [create_group(@account).id]
+    params = { name: Faker::Name.name, phone: Faker::PhoneNumber.phone_number, mobile: Faker::PhoneNumber.phone_number, email: Faker::Internet.email, time_zone: 'Central Time (US & Canada)', language: 'hu', occasional: false, signature: Faker::Lorem.paragraph, ticket_scope: 2,
+               role_ids: role_ids, group_ids: group_ids, job_title: Faker::Name.name }
+    put :update, construct_params({ id: agent.id }, params)
+    assert_response 403
+  ensure
+    User.unstub(:current)
+    User.any_instance.unstub(:privilege?)
+  end
+
   def test_update_field_agent_with_correct_scope_and_role
     Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
     field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
@@ -702,6 +745,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     agent = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id)
     User.stubs(:current).returns(@agent)
     @agent.stubs(:privilege?).with(:manage_account).returns(true)
+    @agent.stubs(:privilege?).with(:manage_users).returns(true)
     delete :destroy, construct_params(id: agent.id)
     assert_response 204
     assert agent.reload.helpdesk_agent == false
@@ -715,6 +759,32 @@ class ApiAgentsControllerTest < ActionController::TestCase
     delete :destroy, construct_params(id: @agent.id)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
+  end
+
+  def test_destroy_agent_with_manage_user_privilege_only
+    agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    User.stubs(:current).returns(@agent)
+    @agent.stubs(:privilege?).with(:manage_account).returns(false)
+    @agent.stubs(:privilege?).with(:manage_users).returns(true)
+    delete :destroy, construct_params(id: agent.id)
+    assert_response 204
+    assert agent.reload.helpdesk_agent == false
+    assert_nil Agent.find_by_user_id(agent.id)
+  ensure
+    User.unstub(:current)
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_destroy_admin_with_manage_user_privilege_only
+    agent = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id)
+    User.stubs(:current).returns(@agent)
+    @agent.stubs(:privilege?).with(:manage_account).returns(false)
+    @agent.stubs(:privilege?).with(:manage_users).returns(true)
+    delete :destroy, construct_params(id: agent.id)
+    assert_response 403
+  ensure
+    User.unstub(:current)
+    User.any_instance.unstub(:privilege?)
   end
 
   def test_update_fails_with_avatar_id
