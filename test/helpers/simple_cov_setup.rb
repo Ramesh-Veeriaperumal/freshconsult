@@ -127,7 +127,8 @@ module SimpleCovSetup
       add_group 'apphelpers', 'app/helpers'
     end
 
-    SimpleCov.coverage_dir 'tmp/coverage'
+    coverage_directory = ENV.fetch('COVERAGE_DIR', 'tmp/coverage')
+    SimpleCov.coverage_dir coverage_directory
     if !defined?($local_dev_testing) || $local_dev_testing != true
       SimpleCov.command_name "rails_app_#{$$}"
       SimpleCov.merge_timeout 3600 # 1 hour
