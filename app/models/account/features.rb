@@ -6,18 +6,16 @@ class Account < ActiveRecord::Base
     :ticket_contact_export, :email_failures, :disable_emails, :facebook_page_redirect,
     :falcon_portal_theme, :freshid, :freshchat_integration, :allow_huge_ccs,
     :ticket_central_publish, :company_central_publish, :solutions_central_publish,
-    :launch_smart_filter, :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
+    :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :announcements_tab,
     :imap_error_status_check, :va_any_field_without_none, :api_es,
     :encode_emoji, :auto_complete_off, :sandbox_lp, :note_central_publish,
     :dependent_field_validation, :post_central_publish, :encode_emoji_subject,
-    :time_sheets_central_publish, :twitter_common_redirect,
     :euc_migrated_twitter, :new_ticket_recieved_metric, :ner,
     :dashboard_announcement_central_publish, :disable_banners,
-    :twitter_handle_publisher, :count_service_es_writes, :count_service_es_reads,
+    :count_service_es_writes, :count_service_es_reads, :time_sheets_central_publish,
     :sso_login_expiry_limitation, :undo_send, :old_link_back_url_validation, :stop_contacts_count_query,
     :denormalized_select_for_update, :installed_app_publish, :es_tickets,
-    :twitter_dm_outgoing_attachment, :twitter_mention_outgoing_attachment,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
     :onboarding_inlinemanual, :skip_portal_cname_chk,
     :product_central_publish, :help_widget, :redis_picklist_id,
@@ -38,7 +36,7 @@ class Account < ActiveRecord::Base
     :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,
     :prevent_wc_ticket_create, :allow_wildcard_ticket_create, :requester_privilege,
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr, :fsm_admin_automations,
-    :csat_email_scan_compatibility, :mint_portal_applicable, :twitter_microservice, :quoted_text_parsing_feature, :enable_customer_journey,
+    :csat_email_scan_compatibility, :mint_portal_applicable, :quoted_text_parsing_feature, :enable_customer_journey,
     :email_mailbox, :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
     :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :optar_cache, :fsm_custom_to_default_filter, :launch_fsm_geolocation,
     :ticket_field_revamp, :facebook_dm_outgoing_attachment, :skip_posting_to_fb, :hide_mailbox_error_from_agents, :hide_og_meta_tags,
@@ -305,10 +303,6 @@ class Account < ActiveRecord::Base
 
   def advanced_twitter?
     features? :twitter
-  end
-
-  def twitter_smart_filter_enabled?
-    smart_filter_enabled? && launch_smart_filter_enabled?
   end
 
   def twitter_smart_filter_revoked?

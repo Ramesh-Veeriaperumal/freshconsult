@@ -34,7 +34,7 @@ class Social::SmartFilterFeedbackWorker < BaseWorker
   end
 
   def should_give_feedback_to_smart_filter?(type_of_feedback)
-    if @account.twitter_smart_filter_enabled? && @twitter_handle && ticket_created_from_default_stream? 
+    if @account.smart_filter_enabled? && @twitter_handle && ticket_created_from_default_stream? 
       if type_of_feedback == SMART_FILTER_FEEDBACK_TYPE[:spam]
         tweet_predicted_as_ticket_by_smart_filter?
       else

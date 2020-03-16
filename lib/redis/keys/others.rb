@@ -135,7 +135,6 @@ module Redis::Keys::Others
   CUSTOM_BOT_RULES                        = "CUSTOM_BOT_RULES".freeze
   SPAM_FILTERED_NOTIFICATIONS             = "SPAM_FILTERED_NOTIFICATIONS".freeze
   FACEBOOK_PREMIUM_ACCOUNTS               = "FACEBOOK_PREMIUM_ACCOUNTS".freeze
-  TWITTER_PREMIUM_ACCOUNTS                = "TWITTER_PREMIUM_ACCOUNTS".freeze
   TWITTER_SMART_FILTER_REVOKED            = "TWITTER_SMART_FILTER_REVOKED".freeze
   REVOKE_SUPPORT_BOT                      = "REVOKE_SUPPORT_BOT".freeze
   # Contact Delete Forever Key

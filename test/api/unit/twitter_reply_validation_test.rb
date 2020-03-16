@@ -184,7 +184,6 @@ class TwitterReplyValidationTest < ActionView::TestCase
     item = Helpdesk::Ticket.new
 
     get_agent
-    @account.launch(:twitter_dm_outgoing_attachment)
     agent_id = @agent.id
     attachment_ids = []
     file = fixture_file_upload('/files/image4kb.png', 'image/png')
@@ -198,7 +197,6 @@ class TwitterReplyValidationTest < ActionView::TestCase
                                             }, item)
 
     assert validation.valid?
-    @account.rollback(:twitter_dm_outgoing_attachment)
     ticket_instance.unstub(:twitter?)
   end
 
@@ -208,7 +206,6 @@ class TwitterReplyValidationTest < ActionView::TestCase
     item = Helpdesk::Ticket.new
 
     get_agent
-    @account.launch(:twitter_dm_outgoing_attachment)
     agent_id = @agent.id
     attachment_ids = []
     file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
@@ -223,7 +220,6 @@ class TwitterReplyValidationTest < ActionView::TestCase
 
     refute validation.valid?
     assert validation.errors.full_messages.include?('Attachment ids twitter_attachment_file_invalid')
-    @account.rollback(:twitter_dm_outgoing_attachment)
     ticket_instance.unstub(:twitter?)
   end
 
@@ -233,7 +229,6 @@ class TwitterReplyValidationTest < ActionView::TestCase
   #   item = Helpdesk::Ticket.new
 
   #   get_agent
-  #   @account.launch(:twitter_dm_outgoing_attachment)
   #   agent_id = @agent.id
   #   attachment_ids = []
   #   file = fixture_file_upload('/files/giphy.gif', 'image/gif')
@@ -250,7 +245,6 @@ class TwitterReplyValidationTest < ActionView::TestCase
 
   #   refute validation.valid?
   #   assert validation.errors.full_messages.include?('Attachment ids twitter_attachment_file_unique_type')
-  #   @account.rollback(:twitter_dm_outgoing_attachment)
   #   ticket_instance.unstub(:twitter?)
   # end
 
@@ -260,7 +254,6 @@ class TwitterReplyValidationTest < ActionView::TestCase
     item = Helpdesk::Ticket.new
 
     get_agent
-    @account.launch(:twitter_dm_outgoing_attachment)
     agent_id = @agent.id
     attachment_ids = []
     file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
@@ -277,7 +270,6 @@ class TwitterReplyValidationTest < ActionView::TestCase
 
     refute validation.valid?
     assert validation.errors.full_messages.include?('Attachment ids twitter_attachment_file_limit')
-    @account.rollback(:twitter_dm_outgoing_attachment)
     ticket_instance.unstub(:twitter?)
   end
 
@@ -287,7 +279,6 @@ class TwitterReplyValidationTest < ActionView::TestCase
     item = Helpdesk::Ticket.new
 
     get_agent
-    @account.launch(:twitter_dm_outgoing_attachment)
     agent_id = @agent.id
     attachment_ids = []
     file = fixture_file_upload('/files/image6mb.jpg', 'image/jpeg')
@@ -302,7 +293,6 @@ class TwitterReplyValidationTest < ActionView::TestCase
 
     refute validation.valid?
     assert validation.errors.full_messages.include?('Attachment ids twitter_attachment_single_file_size')
-    @account.rollback(:twitter_dm_outgoing_attachment)
     ticket_instance.unstub(:twitter?)
   end
 end

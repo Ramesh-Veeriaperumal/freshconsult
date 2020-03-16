@@ -52,18 +52,18 @@ class Admin::Social::TwitterStreamsControllerTest < ActionController::TestCase
   end
 
   def test_update_stream_with_mention_rules
-    Account.any_instance.stubs(:twitter_smart_filter_enabled?).returns(true)
+    Account.any_instance.stubs(:smart_filter_enabled?).returns(true)
     params = controller_params(construct_stream_update_params(@stream), false)
     params[:smart_filter_enabled] = '1'
     put :update, params
     assert_response 302
     assert_equal 2, @stream.rules.count
   ensure
-    Account.any_instance.unstub(:twitter_smart_filter_enabled?)
+    Account.any_instance.unstub(:smart_filter_enabled?)
   end
 
   def test_update_stream_with_smart_filter_rule
-    Account.any_instance.stubs(:twitter_smart_filter_enabled?).returns(true)
+    Account.any_instance.stubs(:smart_filter_enabled?).returns(true)
     params = controller_params(construct_stream_update_params(@stream), false)
     params[:keyword_rules] = '0'
     params[:smart_filter_enabled] = '1'
@@ -72,11 +72,11 @@ class Admin::Social::TwitterStreamsControllerTest < ActionController::TestCase
     assert_response 302
     assert_equal 1, @stream.rules.count
   ensure
-    Account.any_instance.unstub(:twitter_smart_filter_enabled?)
+    Account.any_instance.unstub(:smart_filter_enabled?)
   end
 
   def test_update_keyword_rules_without_smart_filter
-    Account.any_instance.stubs(:twitter_smart_filter_enabled?).returns(true)
+    Account.any_instance.stubs(:smart_filter_enabled?).returns(true)
     params = controller_params(construct_stream_update_params(@stream), false)
     params[:keyword_rules] = '1'
     params[:smart_filter_enabled] = '0'
@@ -84,7 +84,7 @@ class Admin::Social::TwitterStreamsControllerTest < ActionController::TestCase
     assert_response 302
     assert_equal 1, @stream.rules.count
   ensure
-    Account.any_instance.unstub(:twitter_smart_filter_enabled?)
+    Account.any_instance.unstub(:smart_filter_enabled?)
   end
 
   def test_update_stream_when_rules_deleted
@@ -107,18 +107,18 @@ class Admin::Social::TwitterStreamsControllerTest < ActionController::TestCase
   end
 
   def test_update_stream_with_mention_rules_central_publish
-    Account.any_instance.stubs(:twitter_smart_filter_enabled?).returns(true)
+    Account.any_instance.stubs(:smart_filter_enabled?).returns(true)
     params = controller_params(construct_stream_update_params(@stream), false)
     params[:smart_filter_enabled] = '1'
     post :update, params
     assert_response 302
     assert_equal 2, @stream.rules.count
   ensure
-    Account.any_instance.unstub(:twitter_smart_filter_enabled?)
+    Account.any_instance.unstub(:smart_filter_enabled?)
   end
 
   def test_update_stream_with_smart_filter_rule_central_publish
-    Account.any_instance.stubs(:twitter_smart_filter_enabled?).returns(true)
+    Account.any_instance.stubs(:smart_filter_enabled?).returns(true)
     params = controller_params(construct_stream_update_params(@stream), false)
     params[:keyword_rules] = '0'
     params[:smart_filter_enabled] = '1'
@@ -127,7 +127,7 @@ class Admin::Social::TwitterStreamsControllerTest < ActionController::TestCase
     assert_response 302
     assert_equal 1, @stream.rules.count
   ensure
-    Account.any_instance.unstub(:twitter_smart_filter_enabled?)
+    Account.any_instance.unstub(:smart_filter_enabled?)
   end
 
   def test_update_stream_when_rules_deleted_central_publish
@@ -141,7 +141,7 @@ class Admin::Social::TwitterStreamsControllerTest < ActionController::TestCase
   end
 
   def test_create_keyword_stream_rule
-    Account.any_instance.stubs(:twitter_smart_filter_enabled?).returns(false)
+    Account.any_instance.stubs(:smart_filter_enabled?).returns(false)
     params = controller_params(construct_stream_update_params(@stream), false)
     params[:keyword_rules] = '0'
     params[:smart_filter_enabled] = '1'
@@ -150,7 +150,7 @@ class Admin::Social::TwitterStreamsControllerTest < ActionController::TestCase
     assert_response 302
     assert_equal 1, @stream.rules.count
   ensure
-    Account.any_instance.unstub(:twitter_smart_filter_enabled?)
+    Account.any_instance.unstub(:smart_filter_enabled?)
   end
 
   def test_create_custom_stream_rule

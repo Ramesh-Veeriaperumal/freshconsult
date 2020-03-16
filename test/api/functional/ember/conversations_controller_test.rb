@@ -1012,7 +1012,6 @@ module Ember
       ticket = create_twitter_ticket
       dm_text = Faker::Lorem.paragraphs(5).join[0..500]
       @account = Account.current
-      @account.launch(:twitter_dm_outgoing_attachment)
       reply_id = get_social_id
       dm_reply_params = { id: reply_id, id_str: reply_id.to_s, recipient_id_str: rand.to_s[2..11], text: dm_text, created_at: Time.zone.now.to_s }
       with_twitter_dm_stubbed(Twitter::DirectMessage.new(dm_reply_params)) do
@@ -1135,7 +1134,6 @@ module Ember
       attachment_ids << create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
       ticket = create_twitter_ticket
       @account = Account.current
-      @account.launch(:twitter_mention_outgoing_attachment)
       params_hash = {
             body: Faker::Lorem.sentence[0..130],
             tweet_type: 'mention',
@@ -1157,8 +1155,6 @@ module Ember
         end
       end
       ticket.destroy
-    ensure
-      @account.rollback(:twitter_mention_outgoing_attachment)
     end
 
     def test_twitter_reply_to_tweet_ticket_more_than_280_limit

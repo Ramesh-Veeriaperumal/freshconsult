@@ -34,7 +34,7 @@
               <label class="disable-rules"><%= t('admin.social.smart_filter.convert_all')%></label>
             </div>
             <div class="convert_without_keywords">
-              <% if @twitter_stream.account.twitter_smart_filter_enabled? || @twitter_stream.smart_filter_rule %>
+              <% if @twitter_stream.account.smart_filter_enabled? || @twitter_stream.smart_filter_rule %>
                 <div class="smart-filter-wrapper">
                   <%= render :partial => 'smart_filter_header', :locals => {:twitter_handle => @twitter_handle, :f => f, :keyword_rules => false, :filter_val => "without_keywords", :ticket_rule => @smart_filter_rule } %>
                 </div>
@@ -68,7 +68,7 @@
                   <%= render :partial => 'ticket_rules', :locals => { :ticket_rules => @twitter_stream.keyword_rules } %>
                 </div>
               </div>
-              <% if @twitter_stream.account.twitter_smart_filter_enabled? || @twitter_stream.smart_filter_rule %>
+              <% if @twitter_stream.account.smart_filter_enabled? || @twitter_stream.smart_filter_rule %>
                 <div class="smart-filter-wrapper">
                   <%= render :partial => 'smart_filter_header', :locals => {:twitter_handle => @twitter_handle, :f => f, :keyword_rules => true, :filter_val => "with_keywords", :ticket_rule => @smart_filter_rule } %>
                 </div>                

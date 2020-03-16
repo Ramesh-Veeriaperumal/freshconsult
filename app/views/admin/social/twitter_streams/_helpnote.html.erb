@@ -6,7 +6,7 @@
 <% else %>
   <h5 class="lead"><%=t('admin.social.helpcard.handle_title1').html_safe%></h3> 
   <p><%=t('admin.social.helpcard.handle_info1').html_safe%></p>
-  <% if @twitter_stream.account.twitter_smart_filter_enabled? %>
+  <% if @twitter_stream.account.smart_filter_enabled? %>
     <h5 class="lead"><%=t('admin.social.helpcard.handle_smart_filter_title').html_safe%></h3> 
   	<p><%=t('admin.social.helpcard.handle_smart_filter_info').html_safe%></p>
   <% else %>

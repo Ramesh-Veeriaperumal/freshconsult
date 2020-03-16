@@ -75,29 +75,11 @@ namespace :scheduler do
     }
   }
 
-  TWITTER_TASKS = {
-    "trial" => { 
-      :account_method => "trail_acc_handles", 
-      :class_name     => "Social::TrialTwitterWorker"
-    },
-    "paid" => {
-      :account_method => "paid_acc_handles", 
-      :class_name     => "Social::TwitterWorker"
-    }
-  }
-
   #These production account ids should be moved to redis 
   PREMIUM_ACCOUNT_IDS_FB = {
       "development" => [1],
       "staging"     => [390], 
       "production"  => [79003, 309357, 39190, 19063, 86336, 34388, 126077, 220561, 166928, 254067, 381984, 470840, 558611, 398354, 753108, 767797]
-  }
-
-  #These production account ids should be moved to redis 
-  PREMIUM_ACCOUNT_IDS_TWT = {
-    "development" => [1],
-    "staging"     => [390], 
-    "production"  => [79003, 309357, 39190, 19063, 86336, 34388, 126077, 220561, 166928, 254067, 381984, 558611, 398354, 753108]
   }
 
   def log_file
@@ -199,56 +181,6 @@ namespace :scheduler do
     end
   end
 
-  def enqueue_twitter(task_name)
-    class_constant = TWITTER_TASKS[task_name][:class_name].constantize
-    queue_name = class_constant.get_sidekiq_options['queue']
-    puts "::::Queue Name::: #{queue_name}"
-    if empty_queue?(queue_name)
-      Sharding.run_on_all_slaves do
-        Account.reset_current_account
-        Social::TwitterHandle.current_pod.safe_send(TWITTER_TASKS[task_name][:account_method]).each do |twitter_handle|
-          Account.reset_current_account
-          account = twitter_handle.account
-          next if account.blank? || account.launched?(:twitter_microservice)
-
-          account.make_current
-          next if !twitter_handle.capture_dm_as_ticket || check_if_premium_twitter_account?(account.id)
-
-          class_constant.perform_async(twt_handle_id: twitter_handle.id)
-        end
-      end
-    else
-      puts "Twitter Worker is already running . skipping at #{Time.zone.now}. Type #{task_name}"
-    end
-  end
-
-  def enqueue_premium_twitter(delay = nil)
-    premium_twitter_accounts.each do |account_id|
-      begin
-        Sharding.select_shard_of(account_id) do  
-          account = Account.find(account_id).make_current
-          if account.launched?(:twitter_microservice)
-            Rails.logger.info "Skipping Premium Twitter Worker for account id #{account_id} because of twitter_microservice"
-            Account.reset_current_account
-            next
-          end
-
-          Account.reset_current_account
-
-          Rails.logger.info "Enqueuing Premium Twitter Worker for account id #{account_id}"
-          if delay.nil?
-            Social::PremiumTwitterWorker.perform_async({:account_id => account_id})
-          else
-            Social::PremiumTwitterWorker.perform_in(delay, {:account_id => account_id})
-          end
-
-        end
-      rescue AccountBlocked, ActiveRecord::RecordNotFound, ShardNotFound, DomainNotReady => e
-        Rails.logger.debug "#{e.inspect} -- Enqueue Premium Twitter skipped for #{account_id}"
-      end
-    end
-  end
-
   def enqueue_premium_facebook(delay = nil)
     premium_facebook_accounts.each do |account_id|
       Rails.logger.info "Enqueuing Premium Facebook Worker for account id #{account_id}"
@@ -260,18 +192,9 @@ namespace :scheduler do
     end
   end
 
-  def premium_twitter_accounts
-    account_ids_from_redis = get_all_members_in_a_redis_set(TWITTER_PREMIUM_ACCOUNTS)
-    account_ids_from_redis.count > 0 ? account_ids_from_redis : PREMIUM_ACCOUNT_IDS_TWT["#{Rails.env}"]  
-  end
-
   def premium_facebook_accounts
     account_ids_from_redis =  get_all_members_in_a_redis_set(FACEBOOK_PREMIUM_ACCOUNTS)
     account_ids_from_redis.count > 0 ? account_ids_from_redis : PREMIUM_ACCOUNT_IDS_FB["#{Rails.env}"]  
-  end
-
-  def check_if_premium_twitter_account?(account_id)
-    ismember?(TWITTER_PREMIUM_ACCOUNTS, account_id) || PREMIUM_ACCOUNT_IDS_TWT["#{Rails.env}"].include?(account_id)
   end
 
   def check_if_premium_facebook_account?(account_id)
@@ -315,22 +238,6 @@ namespace :scheduler do
     end
     enqueue_facebook(account_type)
     puts "Running #{account_type} facebook worker completed at #{Time.zone.now}"
-  end
-
-  desc 'Fetch twitter direct messages'
-  task :twitter, [:type] => :environment do |t,args|
-    
-    include Redis::RedisKeys
-    include Redis::OthersRedis
-    account_type = args.type || "paid"
-    puts "Running #{account_type} twitter worker initiated at #{Time.zone.now}"
-    if account_type == "paid"
-      enqueue_premium_twitter
-      enqueue_premium_twitter(2.minutes)
-      #enqueue_premium_twitter(4.minutes)
-    end
-    enqueue_twitter(account_type)
-    puts "Running #{account_type} twitter worker completed at #{Time.zone.now}"
   end
   
   desc "Fetch custom twitter streams"
