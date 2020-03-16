@@ -360,12 +360,15 @@ node("spot_backend") {
         // Running Pronto
         distributed_run("pronto");
 
-        // Running SonarQube Analysis
-        sonarqube_analysis()
-
         // Extracting xml file
         junit testResults: "${REPORT_BASE_DIR}/public/*.xml,${REPORT_BASE_DIR}/private/*.xml"
 
+        try {
+            // Running SonarQube Analysis
+            sonarqube_analysis()
+        } catch (e) {
+            currentBuild.result = 'FAILURE'
+        }
 
         // Pushing logs to s3
         sh  """ #!/bin/bash
