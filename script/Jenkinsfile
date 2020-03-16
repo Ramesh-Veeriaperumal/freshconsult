@@ -197,10 +197,10 @@ def distributed_run(category) {
                 if(category != 'pronto') {
                     // Adding Hard Sleep of 1 minute to handle random rake abort failure
                     if(category == 'public') {
-                        sleep(time: 1, unit: 'MINUTES')
+                        sleep(time: 2, unit: 'MINUTES')
                     }
                     else if(category == 'private'){
-                        sleep(time: 2, unit: 'MINUTES')
+                        sleep(time: 3, unit: 'MINUTES')
                     }
                     echo "Running Setup of $category categorized TestCases"
                     build_setup(category)
@@ -367,7 +367,7 @@ node("spot_backend") {
             // Running SonarQube Analysis
             sonarqube_analysis()
         } catch (e) {
-            currentBuild.result = 'FAILURE'
+            currentBuild.result = 'UNSTABLE'
         }
 
         // Pushing logs to s3
