@@ -202,7 +202,7 @@ class ApiAgentsController < ApiApplicationController
       super(
         if User.current.privilege?(:manage_users)
           # Preloading user as 'includes' introduces an additional outer join to users table while inner join with user already exists
-          agents_filter(scoper).preload(:user).order(:name)
+          agents_filter(scoper).preload(:user)
         else
           agents_filter(scoper)
         end
@@ -299,7 +299,11 @@ class ApiAgentsController < ApiApplicationController
                    agents.where(clause[:conditions])
                  end
       end
-      agents
+      load_from_cache? ? agents : agents.reorder(order_clause)
+    end
+
+    def load_from_cache?
+      false
     end
 
     def scoper
@@ -362,5 +366,17 @@ class ApiAgentsController < ApiApplicationController
     def construct_search_in_freshworks_payload(user_hash, freshdesk_user_data)
       user_meta_info = { user_id: freshdesk_user_data.id, marked_for_hard_delete: freshdesk_user_data.marked_for_hard_delete?, deleted: freshdesk_user_data.deleted } if freshdesk_user_data
       { freshid_user_info: user_hash || {}, user_info: user_meta_info }
+    end
+
+    def order_clause
+      field = order_filters_value(:order_by)
+      order_type = order_filters_value(:order_type)
+      "#{field} #{order_type}"
+    end
+
+    def order_filters_value(filter_key)
+      filter_array = filter_key == :order_by ? AgentConstants::AGENTS_ORDER_BY : AgentConstants::AGENTS_ORDER_TYPE
+      filter_value = @agent_filter.safe_send(filter_key).to_s.downcase if @agent_filter.conditions.include?(filter_key.to_s)
+      filter_array.include?(filter_value) ? filter_value : filter_array[0]
     end
 end

@@ -27,6 +27,19 @@ get:
       in: query
       type: string
       description: group id (Lists agents belongs to the given group id.)
+    - name: order_by
+      in: query
+      type: string
+      enum:
+        - name
+        - created_at
+        - last_active_at
+    - name: order_type
+      in: query
+      type: string
+      enum:
+        - asc
+        - desc
   responses:
     200:
       description: Success

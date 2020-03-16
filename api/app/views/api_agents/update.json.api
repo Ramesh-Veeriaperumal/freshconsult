@@ -10,6 +10,7 @@ response_hash = {
   skill_ids: user.skill_ids,
   created_at: @item.created_at.try(:utc),
   updated_at: @item.updated_at.try(:utc),
+  last_active_at: @item.last_active_at.try(:utc),
   available_since: @item.active_since.try(:utc),
   type: Account.current.agent_types_from_cache.find { |type| type.agent_type_id == @item.agent_type }.name,
   contact: {

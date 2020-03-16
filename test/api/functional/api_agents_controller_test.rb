@@ -125,6 +125,58 @@ class ApiAgentsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('type', :not_included, list: valid_types.join(','))])
   end
 
+  def test_agent_filter_order_by_default_order_type_asc_desc
+    3.times do
+      add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    end
+    user_order = @account.all_agents.order('name asc')
+    get :index, controller_params(order_type: 'asc')
+    check_agents_order(user_order, @response)
+    get :index, controller_params(order_type: 'desc')
+    check_agents_order(user_order.reverse, @response)
+  end
+
+  def test_agent_filter_order_by_name_order_type_asc_desc
+    3.times do
+      add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    end
+    user_order = @account.all_agents.order('name asc')
+    get :index, controller_params(order_by: 'name', order_type: 'asc')
+    check_agents_order(user_order, @response)
+    get :index, controller_params(order_by: 'name', order_type: 'desc')
+    check_agents_order(user_order.reverse, @response)
+  end
+
+  def test_agent_filter_order_by_created_at_order_type_asc_desc
+    emails = [Faker::Internet.email, Faker::Internet.email, Faker::Internet.email]
+    created_at_time = generate_time_at_interval(3, 1)
+    emails.each_with_index do |email, index|
+      options = { role: Role.find_by_name('Agent').id, email: email }
+      add_agent(@account, options)
+      update_user_created_at(email, created_at_time[index])
+    end
+    user_order = @account.all_agents.order('created_at asc')
+    get :index, controller_params(order_by: 'created_at', order_type: 'asc')
+    check_agents_order(user_order.reverse, @response)
+    get :index, controller_params(order_by: 'created_at', order_type: 'desc')
+    check_agents_order(user_order.reverse, @response)
+  end
+
+  def test_agent_filter_order_by_last_active_at_order_type_asc_dsc
+    emails = [Faker::Internet.email, Faker::Internet.email, Faker::Internet.email]
+    created_at_time = generate_time_at_interval(3, 1)
+    emails.each_with_index do |email, index|
+      options = { role: Role.find_by_name('Agent').id, email: email }
+      add_agent(@account, options)
+      update_agent_last_activet_at(email, created_at_time[index])
+    end
+    user_order = @account.all_agents.order('last_active_at asc')
+    get :index, controller_params(order_by: 'last_active_at', order_type: 'asc')
+    check_agents_order(user_order, @response)
+    get :index, controller_params(order_by: 'last_active_at', order_type: 'desc')
+    check_agents_order(user_order.reverse, @response)
+  end
+
   def test_show_agent
     sample_agent = @account.all_agents.first
     get :show, construct_params(id: sample_agent.user.id)
