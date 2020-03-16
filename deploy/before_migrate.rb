@@ -127,6 +127,7 @@ run "ln -nfs #{shared_path}/config/search/dynamo_tables.yml #{node[:rel_path]}/c
 run "ln -nfs #{shared_path}/config/cert/freshid.pem #{node[:rel_path]}/config/cert/freshid.pem"
 run "ln -nfs #{shared_path}/config/cert/saml.pem #{node[:rel_path]}/config/cert/saml.pem"
 run "ln -nfs #{shared_path}/config/cert/iam.pem #{node[:rel_path]}/config/cert/iam.pem"
+run "ln -nfs #{shared_path}/config/cert/iam_public.pem #{node[:rel_path]}/config/cert/iam_public.pem"
 run "ln -nfs #{shared_path}/config/cert/jwe_encryption_key.pem #{node[:rel_path]}/config/cert/jwe_encryption_key.pem"
 
 # Xero Cert files start

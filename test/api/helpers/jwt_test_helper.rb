@@ -22,9 +22,8 @@ module JwtTestHelper
     return generate_jwt_for_jwt_secret_sources(source_name) if JWT_SECRET_SOURCES.include?(source_name)
 
     domain = @account.full_domain.split('.')[0]
-    account_details = {"domain_name": domain,
-                     "timestamp":Time.now.iso8601
-                     }.to_json
+    account_details = { 'domain_name' => domain,
+                        'timestamp' => Time.now.iso8601 }.to_json
     encrypted_payload = Encryptor.encrypt(account_details,
                                          key: CHANNEL_API_CONFIG[source_name]['secret_key'],
                                          iv:CHANNEL_API_CONFIG[source_name]['iv'])
@@ -35,12 +34,12 @@ module JwtTestHelper
   end
 
   def generate_jwt_for_jwt_secret_sources(source_name)
-    payload = { enc_payload: { 'account_id' => @account.id, "timestamp": Time.now.iso8601 } }
+    payload = { enc_payload: { 'account_id' => @account.id, 'timestamp' => Time.now.iso8601 } }
     JWT.encode payload, CHANNEL_API_CONFIG[source_name.to_sym][:jwt_secret], 'HS256', source: source_name
   end
 
   def generate_freddy_jwt(source_name)
-    payload = { enc_payload: { 'source' => source_name, "timestamp": Time.now.iso8601 } }
+    payload = { enc_payload: { 'source' => source_name, 'timestamp' => Time.now.iso8601 } }
     JWT.encode payload, CHANNEL_API_CONFIG[source_name.to_sym][:jwt_secret][0], 'HS256', source: source_name
   end
 
@@ -63,5 +62,22 @@ module JwtTestHelper
                 app_name: app_name }
     single_access_token = APP_INTEGRATION_CONFIG['freshconnect']['token']
     JWT.encode payload, single_access_token, algorithm
+  end
+
+  def generate_iam_jwt_token(user, private_key)
+    payload = { user_id: user.id.to_s,
+                account_id: Account.current.id.to_s,
+                product: 'freshdesk',
+                account_domain: Account.current.full_domain,
+                privileges: user.privileges.to_s,
+                iat: Time.now.to_i,
+                exp: Time.now.to_i + ::Iam::IAM_CONFIG['expiry'].to_i }
+    payload[:type] = user.helpdesk_agent? ? 'agent' : 'contact'
+    payload[:org_user_id] = user.freshid_authorization.uid if user.helpdesk_agent? && user.freshid_authorization.try(:provider) == 'freshid'
+    payload[:org_id] = Account.current.organisation_account_mapping.organisation_id if Account.current.organisation_account_mapping.present?
+    headers = { kid: ::Iam::IAM_CONFIG['kid'],
+                typ: 'JWT',
+                alg: 'RS256' }
+    JWT.encode(payload, private_key, 'RS256', headers)
   end
 end

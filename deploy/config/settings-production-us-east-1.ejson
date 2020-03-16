@@ -2482,6 +2482,7 @@
         "freshid.pem",
         "saml.pem",
         "iam.pem",
+        "iam_public.pem",
         "jwe_encryption_key.pem"
       ],
       "_bucket": "freshops-admin",
