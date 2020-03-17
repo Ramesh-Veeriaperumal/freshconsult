@@ -337,10 +337,10 @@ node("spot_backend") {
         // Creating Reports directories
         sh "mkdir -p ${env.WORKSPACE}/${COVERAGE_BASE_DIR}/public"
         sh "mkdir -p ${env.WORKSPACE}/${COVERAGE_BASE_DIR}/private"
-        sh "mkdir -p ${env.WORKSPACE}/${COVERAGE_BASE_DIR}/sandbox"
+        // sh "mkdir -p ${env.WORKSPACE}/${COVERAGE_BASE_DIR}/sandbox"
         sh "mkdir -p ${env.WORKSPACE}/${REPORT_BASE_DIR}/public"
         sh "mkdir -p ${env.WORKSPACE}/${REPORT_BASE_DIR}/private"
-        sh "mkdir -p ${env.WORKSPACE}/${REPORT_BASE_DIR}/sandbox"
+        // sh "mkdir -p ${env.WORKSPACE}/${REPORT_BASE_DIR}/sandbox"
         sh "mkdir -p ${env.WORKSPACE}/s3/"
 
         // Checking Encryption
@@ -353,8 +353,6 @@ node("spot_backend") {
             distributed_run("public");
         },Private: {
             distributed_run("private");
-        },Sandbox: {
-            distributed_run("sandbox");
         }
 
         // Running Pronto
