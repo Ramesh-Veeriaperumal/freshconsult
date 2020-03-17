@@ -84,6 +84,7 @@ class TicketDecorator < ApiDecorator
     options = { name_mapping: @contact_name_mapping, sideload_options: ['company'] }
     requester_hash = ContactDecorator.new(record.requester, options).requester_hash
     requester_hash[:language] = record.requester.language
+    requester_hash[:address] = record.requester.address
     requester_hash
   end
 

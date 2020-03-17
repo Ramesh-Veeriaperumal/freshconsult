@@ -902,6 +902,23 @@ module ApiTicketsTestHelper
     pattern
   end
 
+  def ticket_requester_pattern(requester)
+    {
+      name: requester.name,
+      job_title: requester.job_title,
+      email: requester.email,
+      phone: requester.phone,
+      mobile: requester.mobile,
+      twitter_id: requester.twitter_id,
+      id: requester.id,
+      has_email: requester.email.present?,
+      active: requester.active,
+      avatar: requester.avatar,
+      language: requester.language,
+      address: requester.address
+    }
+  end
+
   def bg_worker_update_pattern(params)
     custom_fields_hash = {}
     params[:custom_fields].each { |key, val| custom_fields_hash["#{key}_#{@account.id}".to_sym] = val }

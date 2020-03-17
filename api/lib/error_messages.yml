@@ -132,7 +132,6 @@ api_error_messages:
   incorrect_image_dimensions: "Image dimensions are larger than expected"
   invalid_image_file: "Invalid file type(%{current_extension}). Please upload a jpg or png or gif or svg file"
   virus_found_in_file: "Warning: the attachment contains a virus, the file will not be sent."
-  twitter_attachment_support: "Your account does not support attachments for twitter"
   twitter_attachment_invalid: "One or more attachments are invalid"
   twitter_attachment_single_file_size: "%{fileType} size cannot exceed %{maxSize}MB"
   twitter_attachment_file_invalid: "Only Image(s) can be attached for twitter"

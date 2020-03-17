@@ -1053,7 +1053,10 @@
         "_ui_url": "https://accounts.freshworks.com",
         "_product": "freshdesk",
         "_central_url": "https://login.freshdesk.com/freshid/event_callback",
-        "_customer_base_url": "https://sso-us.api.freshworks.com"
+        "_customer_base_url": "https://sso-us.api.freshworks.com",
+        "v1_migration_api_key": "EJ[1:T/8QJel8d1EVkjScQb0+rNB+SJurf/SlpI+nW+cly0o=:/0uhvEqxKzxtbSAxz+Wo+RXBD3bLCChL:pYGk+3HiWxtDzeepH00NTuXV+bbPn9cUTMkFFfwPG/SRdX4uX9iyA43htkrcUxTILY8Z9Y8AUuY=]",
+        "_v1_migration_url": "https://migration.api.freshworks.com/v2/user",
+        "_v1_migration_product": "freshdesk"
       },
       "database": {
         "secret_key": "EJ[1:JMl6p0VN/liDdD2LB5Fy4pmx4mX6Oyf+iaS0kjn24Ss=:f0QinHGr9tnxjAsgvaXSrgwSHmsrH0en:2EaCB2ANBzy0HR02cIUR9piFg1hUma+rA+UYLNYZ]",
@@ -2479,6 +2482,7 @@
         "freshid.pem",
         "saml.pem",
         "iam.pem",
+        "iam_public.pem",
         "jwe_encryption_key.pem"
       ],
       "_bucket": "freshops-admin",

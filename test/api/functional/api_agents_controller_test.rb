@@ -125,6 +125,58 @@ class ApiAgentsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('type', :not_included, list: valid_types.join(','))])
   end
 
+  def test_agent_filter_order_by_default_order_type_asc_desc
+    3.times do
+      add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    end
+    user_order = @account.all_agents.order('name asc')
+    get :index, controller_params(order_type: 'asc')
+    check_agents_order(user_order, @response)
+    get :index, controller_params(order_type: 'desc')
+    check_agents_order(user_order.reverse, @response)
+  end
+
+  def test_agent_filter_order_by_name_order_type_asc_desc
+    3.times do
+      add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    end
+    user_order = @account.all_agents.order('name asc')
+    get :index, controller_params(order_by: 'name', order_type: 'asc')
+    check_agents_order(user_order, @response)
+    get :index, controller_params(order_by: 'name', order_type: 'desc')
+    check_agents_order(user_order.reverse, @response)
+  end
+
+  def test_agent_filter_order_by_created_at_order_type_asc_desc
+    emails = [Faker::Internet.email, Faker::Internet.email, Faker::Internet.email]
+    created_at_time = generate_time_at_interval(3, 1)
+    emails.each_with_index do |email, index|
+      options = { role: Role.find_by_name('Agent').id, email: email }
+      add_agent(@account, options)
+      update_user_created_at(email, created_at_time[index])
+    end
+    user_order = @account.all_agents.order('created_at asc')
+    get :index, controller_params(order_by: 'created_at', order_type: 'asc')
+    check_agents_order(user_order.reverse, @response)
+    get :index, controller_params(order_by: 'created_at', order_type: 'desc')
+    check_agents_order(user_order.reverse, @response)
+  end
+
+  def test_agent_filter_order_by_last_active_at_order_type_asc_dsc
+    emails = [Faker::Internet.email, Faker::Internet.email, Faker::Internet.email]
+    created_at_time = generate_time_at_interval(3, 1)
+    emails.each_with_index do |email, index|
+      options = { role: Role.find_by_name('Agent').id, email: email }
+      add_agent(@account, options)
+      update_agent_last_activet_at(email, created_at_time[index])
+    end
+    user_order = @account.all_agents.order('last_active_at asc')
+    get :index, controller_params(order_by: 'last_active_at', order_type: 'asc')
+    check_agents_order(user_order, @response)
+    get :index, controller_params(order_by: 'last_active_at', order_type: 'desc')
+    check_agents_order(user_order.reverse, @response)
+  end
+
   def test_show_agent
     sample_agent = @account.all_agents.first
     get :show, construct_params(id: sample_agent.user.id)
@@ -271,6 +323,49 @@ class ApiAgentsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern(:role_ids, :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String),
                 bad_request_error_pattern(:group_ids, :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String)])
     assert_response 400
+  end
+
+  def test_update_agent_with_manage_user_ability
+    current_agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    User.stubs(:current).returns(current_agent)
+    agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    User.any_instance.stubs(:privilege?).with(:manage_availability).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_account).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(true)
+    group_ids = [create_group(@account).id]
+    params = {
+      name: Faker::Name.name,
+      phone: Faker::PhoneNumber.phone_number,
+      mobile: Faker::PhoneNumber.phone_number,
+      email: Faker::Internet.email, time_zone: 'Central Time (US & Canada)',
+      language: 'en',
+      occasional: false,
+      signature: Faker::Lorem.paragraph,
+      ticket_scope: 2,
+      group_ids: group_ids,
+      job_title: Faker::Name.name
+    }
+    put :update, construct_params({ id: agent.id }, params)
+    assert_response 200
+  ensure
+    User.unstub(:current)
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_update_agent_without_manage_user_ability
+    current_agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    User.stubs(:current).returns(current_agent)
+    agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    User.any_instance.stubs(:privilege?).returns(false)
+    role_ids = Role.limit(2).pluck(:id)
+    group_ids = [create_group(@account).id]
+    params = { name: Faker::Name.name, phone: Faker::PhoneNumber.phone_number, mobile: Faker::PhoneNumber.phone_number, email: Faker::Internet.email, time_zone: 'Central Time (US & Canada)', language: 'hu', occasional: false, signature: Faker::Lorem.paragraph, ticket_scope: 2,
+               role_ids: role_ids, group_ids: group_ids, job_title: Faker::Name.name }
+    put :update, construct_params({ id: agent.id }, params)
+    assert_response 403
+  ensure
+    User.unstub(:current)
+    User.any_instance.unstub(:privilege?)
   end
 
   def test_update_field_agent_with_correct_scope_and_role
@@ -650,6 +745,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     agent = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id)
     User.stubs(:current).returns(@agent)
     @agent.stubs(:privilege?).with(:manage_account).returns(true)
+    @agent.stubs(:privilege?).with(:manage_users).returns(true)
     delete :destroy, construct_params(id: agent.id)
     assert_response 204
     assert agent.reload.helpdesk_agent == false
@@ -663,6 +759,32 @@ class ApiAgentsControllerTest < ActionController::TestCase
     delete :destroy, construct_params(id: @agent.id)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
+  end
+
+  def test_destroy_agent_with_manage_user_privilege_only
+    agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    User.stubs(:current).returns(@agent)
+    @agent.stubs(:privilege?).with(:manage_account).returns(false)
+    @agent.stubs(:privilege?).with(:manage_users).returns(true)
+    delete :destroy, construct_params(id: agent.id)
+    assert_response 204
+    assert agent.reload.helpdesk_agent == false
+    assert_nil Agent.find_by_user_id(agent.id)
+  ensure
+    User.unstub(:current)
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_destroy_admin_with_manage_user_privilege_only
+    agent = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id)
+    User.stubs(:current).returns(@agent)
+    @agent.stubs(:privilege?).with(:manage_account).returns(false)
+    @agent.stubs(:privilege?).with(:manage_users).returns(true)
+    delete :destroy, construct_params(id: agent.id)
+    assert_response 403
+  ensure
+    User.unstub(:current)
+    User.any_instance.unstub(:privilege?)
   end
 
   def test_update_fails_with_avatar_id

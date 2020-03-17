@@ -65,7 +65,7 @@ class ApiCompaniesController < ApiApplicationController
       fields = CompanyConstants::FIELDS | ['custom_fields' => custom_fields]
       params[cname].permit(*fields)
       ParamsHelper.modify_custom_fields(params[cname][:custom_fields], @name_mapping.invert)
-      company = ApiCompanyValidation.new(params[cname], @item)
+      company = ApiCompanyValidation.new(params[cname], @item, params[:enforce_mandatory])
       render_custom_errors(company, true) unless company.valid?
     end
 

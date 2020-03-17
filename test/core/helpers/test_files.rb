@@ -15,4 +15,4 @@ include ControllerTestHelper
 include CoreUsersTestHelper
 include ActiveSupport::Rescuable
 
-Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new, Minitest::Reporters::JUnitReporter.new('test/reports')]
+Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new, Minitest::Reporters::JUnitReporter.new(ENV.fetch('MINITEST_REPORT_DIR', 'test/reports'))]

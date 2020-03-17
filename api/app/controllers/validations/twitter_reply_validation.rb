@@ -25,33 +25,25 @@ class TwitterReplyValidation < ApiValidation
     errors[:ticket_id] << :not_a_twitter_ticket unless @item.twitter?
   end
 
-  def outgoing_attachment_enabled?
-    (@tweet_type == 'dm' && Account.current.launched?(:twitter_dm_outgoing_attachment)) || (@tweet_type == 'mention' && Account.current.launched?(:twitter_mention_outgoing_attachment))
-  end
-
   def valid_attachments?
-    if outgoing_attachment_enabled?
-      attachment_config = ApiConstants::TWITTER_ATTACHMENT_CONFIG[@tweet_type.to_sym]
-      attachments = Helpdesk::Attachment.find_all_by_id(@attachment_ids) if attachment_config.present?
+    attachment_config = ApiConstants::TWITTER_ATTACHMENT_CONFIG[@tweet_type.to_sym]
+    attachments = Helpdesk::Attachment.find_all_by_id(@attachment_ids) if attachment_config.present?
 
-      if attachments.present? && attachments.length == @attachment_ids.length
-        attachment_types = []
-        attachment_sizes = []
+    if attachments.present? && attachments.length == @attachment_ids.length
+      attachment_types = []
+      attachment_sizes = []
 
-        attachments.each do |attachment|
-          content_type = attachment.content_content_type
-          return unless valid_attachment_type?(content_type)
-          attachment_types << ApiConstants::TWITTER_ALLOWED_ATTACHMENT_TYPES[content_type]
-          attachment_sizes << attachment.content_file_size
-        end
-        return unless unique_attachments?(attachment_types.uniq) &&
-                      valid_attachment_limits?(attachment_types, attachment_config) &&
-                      valid_attachment_sizes?(attachment_sizes, attachment_types, attachment_config)
-      else
-        errors[:attachment_ids] << :twitter_attachment_invalid
+      attachments.each do |attachment|
+        content_type = attachment.content_content_type
+        return unless valid_attachment_type?(content_type)
+        attachment_types << ApiConstants::TWITTER_ALLOWED_ATTACHMENT_TYPES[content_type]
+        attachment_sizes << attachment.content_file_size
       end
+      return unless unique_attachments?(attachment_types.uniq) &&
+                    valid_attachment_limits?(attachment_types, attachment_config) &&
+                    valid_attachment_sizes?(attachment_sizes, attachment_types, attachment_config)
     else
-      errors[:attachment_ids] << :twitter_attachment_support
+      errors[:attachment_ids] << :twitter_attachment_invalid
     end
   end
 

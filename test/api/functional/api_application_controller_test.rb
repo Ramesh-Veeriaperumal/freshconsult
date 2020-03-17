@@ -248,6 +248,7 @@ class ApiApplicationControllerTest < ActionController::TestCase
 
   def test_invalid_iat_in_jwt_token_authentication
     @account.launch(:api_jwt_auth)
+    CustomRequestStore.store[:private_api_request] = false
     token = generate_jwt_token(1, 1, Time.now.to_i, 2*(Time.now.to_i))
     auth = ActionController::HttpAuthentication::Token.encode_credentials(token)
     @controller.request.env['HTTP_AUTHORIZATION'] = auth
@@ -271,4 +272,21 @@ class ApiApplicationControllerTest < ActionController::TestCase
     assert_nil current_user
   end
 
+  def test_jwt_authentication_for_private_api
+    CustomRequestStore.store[:private_api_request] = true
+    private_key = OpenSSL::PKey::RSA.new(File.read('config/cert/iam.pem'), ::Iam::IAM_CONFIG['password'])
+    user = add_test_agent(@account)
+    token = generate_iam_jwt_token(user, private_key)
+    request = ActionDispatch::TestRequest.new
+    request.env['Authorization'] = "Bearer #{token}"
+    @controller.request = request
+    @controller.send(:api_current_user)
+    current_user = @controller.instance_variable_get(:@current_user)
+    assert_not_nil current_user
+    assert_equal current_user.id, user.id
+  ensure
+    CustomRequestStore.store[:private_api_request] = false
+    @controller.instance_variable_set(:@current_user, nil)
+    user.destroy
+  end
 end

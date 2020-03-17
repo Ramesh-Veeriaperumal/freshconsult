@@ -18,7 +18,7 @@ class ApiProfilesControllerTest < ActionController::TestCase
     currentuser = User.current
     get :show, construct_params(version: 'v2', id: 'me')
     assert_response 200
-    match_json(agent_pattern_with_additional_details(currentuser.reload))
+    match_json(profile_agent_pattern_with_additional_details(currentuser.reload))
   end
 
   def test_turn_on_shortcuts

@@ -236,7 +236,8 @@ module SearchTestHelper
       has_email: requester.email.present?,
       active: requester.active,
       avatar: requester.avatar,
-      language: requester.language
+      language: requester.language,
+      address: requester.address
     }
   end
 

@@ -34,7 +34,7 @@ module Social::Gnip::Util
     #Smart filter is enabled for an account and due to some reasons if we disable it temporarily, we will convert all tweets to ticket if convert all tweets to ticket via smart filter is chosen
     #If smart filter with keywords is chosen, we wont apply smart filter and dont convert tweet to ticket
     if stream.should_check_smart_filter?
-      unless Account.current.twitter_smart_filter_enabled? 
+      unless Account.current.smart_filter_enabled? 
         if stream.smart_filter_rule.action_data[:with_keywords].to_i == 0
           hash.merge!({:smart_filter_response => SMART_FILTER_MANUAL_CONVERT_TO_TICKET})
           hash.merge!(convert_to_ticket_details(stream.smart_filter_rule))

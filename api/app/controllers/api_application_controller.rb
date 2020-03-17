@@ -555,9 +555,33 @@ class ApiApplicationController < MetalApiController
       end
     end
 
+    def jwt_auth_request
+      return unless CustomRequestStore.read(:private_api_request)
+      auth_token = request.headers['Authorization']
+      auth_token = auth_token.match(BEARER_REGEX) unless auth_token.nil?
+      auth_token = auth_token[1].strip if !auth_token.nil? && auth_token.length > 1
+
+      jwt_header = auth_token.split('.')[0] if !auth_token.nil? && auth_token.length > 1
+      kid = JSON.parse(Base64.decode64(jwt_header))['kid'] rescue nil if jwt_header
+      
+      if kid == ::Iam::IAM_CONFIG['kid']
+        key = OpenSSL::PKey::RSA.new(File.read('config/cert/iam_public.pem'))
+        begin
+          payload, _headers = JWT.decode auth_token, key, true, { algorithm: 'RS256' }
+          @current_user = Account.current.users.find_by_id(payload['user_id'])
+        rescue Exception => e
+          render_request_error :invalid_credentials, Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized]
+          Rails.logger.error "Exception while authenticating user using JWT token, message: #{e.message}"
+        end
+      end
+    end
+
     def api_current_user
+      @current_user || jwt_auth_request # Authenticating using JWT token from IAM service for private APIs
+      
       return @current_user if defined?(@current_user)
-      # Private API is supposed to work only with session based authentication
+
+      # Private API is supposed to work with session based authentication
       if CustomRequestStore.read(:private_api_request) || (get_request? && !request.authorization)
         session_auth
       elsif CustomRequestStore.read(:channel_api_request)

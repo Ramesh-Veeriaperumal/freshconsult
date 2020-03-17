@@ -277,6 +277,25 @@ class AccountAdditionalSettings < ActiveRecord::Base
     secret_keys[:rts_account_secret] = EncryptorDecryptor.new(RTSConfig['db_cipher_key']).encrypt(value)
   end
 
+  def create_freshid_migration(key)
+    self.additional_settings ||= {}
+    additional_settings[key] = true
+    save
+  end
+
+  def destroy_freshid_migration(key)
+    return if additional_settings.nil?
+
+    additional_settings.delete(key)
+    save
+  end
+
+  def freshid_migration_running?(key)
+    return false if additional_settings.blank?
+
+    additional_settings.fetch(key, false)
+  end
+
   def agent_assist_config
     additional_settings[:agent_assist_config]
   end

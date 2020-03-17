@@ -119,7 +119,7 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
   end
 
   def smart_filter_feature_enabled?
-    Account.current.twitter_smart_filter_enabled?
+    Account.current.smart_filter_enabled?
   end
  
   def destroy

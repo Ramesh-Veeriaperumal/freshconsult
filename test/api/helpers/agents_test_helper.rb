@@ -25,6 +25,7 @@ module AgentsTestHelper
       signature: expected_output[:signature_html] || agent.signature_html,
       ticket_scope: expected_output[:ticket_scope] || agent.ticket_permission,
       updated_at: agent.updated_at,
+      last_active_at: agent.last_active_at,
       contact: expected_output[:user] || user,
       type: Account.current.agent_types_from_cache.find { |type| type.agent_type_id == agent.agent_type }.name
     }
@@ -52,6 +53,7 @@ module AgentsTestHelper
       contact: contact_pattern(expected_output[:user] || agent.user),
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      last_active_at: expected_output[:last_active_at] || agent.last_active_at.try(:utc).try(:iso8601),
       gdpr_admin_name: expected_output[:gdpr_admin_name] || agent.user.current_user_gdpr_admin,
       type: Account.current.agent_types_from_cache.find { |type| type.agent_type_id == agent.agent_type }.name,
       read_only: agent.user.privilege?(:manage_account)
@@ -197,13 +199,18 @@ module AgentsTestHelper
       skill_ids: expected_output[:skill_ids] || agent_user.skill_ids,
       group_ids: expected_output[:group_ids] || agent.group_ids,
       contact: expected_output[:user] || user,
-      type: Account.current.agent_types_from_cache.find { |type| type.agent_type_id == agent.agent_type }.name
+      type: Account.current.agent_types_from_cache.find { |type| type.agent_type_id == agent.agent_type }.name,
+      last_active_at: expected_output[:last_active_at] || agent.last_active_at.try(:utc).try(:iso8601)
     }
     if Account.current.freshcaller_enabled?
       agent_hash[:freshcaller_agent] = agent.freshcaller_agent.present? ? agent.freshcaller_agent.try(:fc_enabled) : false
     end
     agent_hash[:agent_level_id] = agent.scoreboard_level_id if Account.current.gamification_enabled? && Account.current.gamification_enable_enabled?
     agent_hash
+  end
+
+  def profile_agent_pattern_with_additional_details(agent_user, expected_output = {})
+    agent_pattern_with_additional_details(expected_output, agent_user).except(:last_active_at)
   end
 
   def v2_agent_payload
@@ -272,5 +279,36 @@ module AgentsTestHelper
 
   def agents_count_key
     format(Redis::Keys::Others::AGENTS_COUNT_KEY, account_id: Account.current.id.to_s)
+  end
+
+  def update_user_created_at(email, time)
+    user = User.find_by_email(email)
+    user.created_at = time
+    user.save!
+  end
+
+  def update_agent_last_activet_at(email, time)
+    user = User.find_by_email(email)
+    user.agent.last_active_at = time
+    user.agent.save!
+  end
+
+  def generate_time_at_interval(frequency, day_interval)
+    time = []
+    datetime = Time.now.utc
+    frequency.times do
+      datetime += day_interval.day
+      time.push(datetime.to_s(:db))
+    end
+    time
+  end
+
+  def check_agents_order(user_order, response)
+    assert_response 200
+    current_response = parse_response response.body
+    assert user_order.size.to_s, current_response.size.to_s
+    user_order.each_with_index do |element, index|
+      assert element.name, current_response[index]['contact']['name']
+    end
   end
 end

@@ -3105,6 +3105,8 @@ module Ember
       t = create_ticket
       get :show, controller_params(version: 'private', id: t.display_id, include: 'requester')
       assert_response 200
+      response_body = JSON.parse(response.body)
+      assert_equal ticket_requester_pattern(t.requester), response_body['requester'].symbolize_keys
       match_json(ticket_show_pattern(t, nil, true))
     end
 

@@ -15,10 +15,6 @@ class Social::TwitterStream < Social::Stream
     t.add :twitter_handle, template: :central_publish
   end
 
-  def self.central_publish_enabled?
-    Account.current.twitter_handle_publisher_enabled?
-  end
-
   def relationship_with_account
     'twitter_streams'
   end

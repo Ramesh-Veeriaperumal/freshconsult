@@ -33,10 +33,6 @@ class Social::TwitterHandle < ActiveRecord::Base
     :twitter_handles
   end
 
-  def self.central_publish_enabled?
-    Account.current.twitter_handle_publisher_enabled?
-  end
-
   def event_info(event)
     {pod: ChannelFrameworkConfig['pod']}
   end

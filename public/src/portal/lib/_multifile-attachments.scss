@@ -9,7 +9,7 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         width: 120px;
-        z-index: 2;
+        z-index: 1;
     }
     a{
         color: #049cdb !important;
@@ -70,7 +70,7 @@
     right: 0;
     top: -15px;
     width: 120px;
-    z-index: 10;
+    z-index: 1;
 }
 .attachments-wrap .attachment-close::before {
     color: #666;

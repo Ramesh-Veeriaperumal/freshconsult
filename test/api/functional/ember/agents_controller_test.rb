@@ -627,12 +627,14 @@ class Ember::AgentsControllerTest < ActionController::TestCase
 
   def test_update_others_with_toggle_shortcuts_for_agent
     user = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    remove_privilege(User.current, :manage_users)
     remove_privilege(User.current, :manage_availability)
     params_hash = { shortcuts_enabled: true }
     put :update, construct_params({ version: 'private', id: user.id }, params_hash)
     assert_response 403
   ensure
     add_privilege(User.current, :manage_availability)
+    add_privilege(User.current, :manage_users)
   end
 
   def test_update_field_agent_with_correct_scope_and_role

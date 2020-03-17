@@ -307,7 +307,8 @@
     changeMonth: true,
     changeYear: true,
     altField: '#clone_'+idForCloneElement,
-    altFormat: 'yy-mm-dd'
+    altFormat: 'yy-mm-dd',
+    yearRange: '1900:2050'
   });
 
 	if((jQuery('#'+idForCloneElement).data('initial-val'))!="empty")

@@ -996,7 +996,10 @@
         "_ui_url": "https://eu.accounts.freshworks.com",
         "_product": "freshdesk-euc",
         "_central_url": "https://eucentral1login.freshdesk.com/freshid/event_callback",
-        "_customer_base_url": "https://sso-eu.api.freshworks.com"
+        "_customer_base_url": "https://sso-eu.api.freshworks.com",
+        "v1_migration_api_key": "EJ[1:7Z30fuN9FvDGE0p4QkoZufif6rFXCzA3F+zlpicw6zQ=:jqORU5+Js7S6gx1ydL84smGDqVMTAqNC:0CNhct2EBL9ceyRmp1YOB19xIcEx9FqvjSBXAcDD8VJGq4aaeIhUdmwA61ENjDRoiFJWRAk5aJU=]",
+        "_v1_migration_url": "https://eu-migration.api.freshworks.com/v2/user",
+        "_v1_migration_product": "freshdesk"
       },
       "freshid_v2": {
         "_region_code": "EU",
@@ -1679,6 +1682,7 @@
         "freshid.pem",
         "saml.pem",
         "iam.pem",
+        "iam_public.pem",
         "jwe_encryption_key.pem"
       ],
       "_bucket": "freshops-admin",

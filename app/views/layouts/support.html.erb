@@ -29,8 +29,11 @@
 		<%= portal_fonts %>
 
 		<!-- Including default portal based script framework at the top -->
-		<%= javascript_include_tag :'cdn/portal_head' %>
-		
+		<% if current_account.portal_prototype_update_enabled? %>
+			<%= javascript_include_tag :'cdn/portal_head_v2' %>
+		<% else %>
+			<%= javascript_include_tag :'cdn/portal_head' %>
+		<% end %>
 		<!-- Including syntexhighlighter for portal -->
 		<%= javascript_include_tag :'cdn/prism' %>
 
