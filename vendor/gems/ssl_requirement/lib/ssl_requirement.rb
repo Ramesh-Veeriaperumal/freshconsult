@@ -20,15 +20,15 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 module SslRequirement
   extend ActiveSupport::Concern
-  
+
   included do
     class_attribute :ssl_required_actions
     class_attribute :ssl_allowed_actions
-    
+
     before_filter :ensure_proper_protocol
     before_filter :ensure_proper_sts_header
   end
-  
+
   module ClassMethods
     # Specifies that the named actions requires an SSL connection to be performed (which is enforced by ensure_proper_protocol).
     def ssl_required(*actions)
@@ -41,29 +41,29 @@ module SslRequirement
       self.ssl_allowed_actions += actions
     end
   end
-  
+
   protected
     # Returns true if the current action is supposed to run as SSL
     def ssl_required?
       (self.class.ssl_required_actions || []).include?(action_name.to_sym)
     end
-  
+
     def ssl_allowed?
       (self.class.ssl_allowed_actions || []).include?(action_name.to_sym)
     end
-    
+
   private
-  
+
     def ensure_proper_protocol
       return true if Rails.env.test? || Rails.env.development? || ssl_allowed?
 
-      if request.ssl? 
+      if request.ssl?
         if ssl_required? && (cnamed_portal_with_ssl? || host_is_full_domain?) #like billing from ssl enabled portal/full_domain
           return true #Allow
         elsif ssl_required? && cnamed_portal_without_ssl? #like billing from ssl disabled portal
           redirect_to "https://" + current_account.full_domain + request.fullpath #redirect to full_domain with https
           flash.keep
-          return false        
+          return false
         elsif cnamed_portal_without_ssl? # like explicit https access of portal url with ssl disabled
           redirect_to "http://" + request.host + request.fullpath #redirect to same url without https
           flash.keep
@@ -73,7 +73,7 @@ module SslRequirement
         if ssl_required? && (cnamed_portal_without_ssl? || host_is_full_domain?) # like billing from full_domain or "portal_url with SSL disabled" accessed from http
           redirect_to "https://" + current_account.full_domain + request.fullpath #redirect to full_domain https
           flash.keep
-          return false        
+          return false
         elsif (ssl_required? && cnamed_portal_with_ssl?) #like billing acceessed from portal_url with ssl enabled
           redirect_to "https://" + request.host + request.fullpath #redirect to same url with https
           flash.keep
@@ -93,9 +93,9 @@ module SslRequirement
       return true if current_account.nil?
 
       if main_portal_with_ssl? || (current_portal.present? && cnamed_portal_with_ssl?)
-         response.headers["Strict-Transport-Security"] = "max-age=31536000;"
+        response.headers["Strict-Transport-Security"] = 'max-age=31536000; includeSubDomains'
       else
-         response.headers["Strict-Transport-Security"] = "max-age=0;"
+        response.headers["Strict-Transport-Security"] = "max-age=0;"
       end
     end
 
@@ -104,7 +104,7 @@ module SslRequirement
     end
 
     def main_portal_with_ssl?
-      (request.host == current_account.full_domain) && current_account.ssl_enabled? 
+      (request.host == current_account.full_domain) && current_account.ssl_enabled?
     end
 
     def cnamed_portal_with_ssl?
