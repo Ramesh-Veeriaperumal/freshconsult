@@ -2163,6 +2163,43 @@ a.mobile_switchBtn {
 	}
 }
 
+.sso_status{
+	display:inline-block; 
+	padding:3px 6px; 
+	box-sizing: border-box;	
+	height: 25px;	
+	border: 1px solid #B4E5D9;	
+	border-radius: 4px;	
+	background-color: #E0F5F0;
+}
+
+.sso_status_text{
+	color: #007958;
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.sso_banner_container{
+	background-color:#FFFADD;
+	height: 40px; 
+	border-left: 3px solid #fcac2a;
+	margin: 8px 0px;
+}
+
+.sso_banner_icon{
+	margin:8px;
+	float:left; 
+	color:#fcac2a; 
+	font-size: large
+}
+
+.sso_banner_text{
+	font-size:12px;
+	margin-top:8px;
+	float:left;
+	pointer-events: visible;
+}
+
 .thanks_message{
 	font-size: 14px;
 	font-weight: bold;
