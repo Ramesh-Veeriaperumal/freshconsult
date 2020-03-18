@@ -34,9 +34,6 @@ class SubscriptionsController < ApplicationController
   FREE = "free"
 
   ADDON_CHANGES_TO_LISTEN = [Subscription::Addon::FSM_ADDON].freeze
-  ADDON_PARAMS_NAMES_MAP = {
-    "field_service_management": Subscription::Addon::FSM_ADDON
-  }.freeze
 
   def calculate_amount
     scoper.set_billing_params(params[:currency])
@@ -167,10 +164,10 @@ class SubscriptionsController < ApplicationController
 
     def modify_addons_temporarily
       @addon_params = params['addons'] || {}
-      enabled_addon_names_from_params = ADDON_PARAMS_NAMES_MAP.map do |addon_type, addon_name|
+      enabled_addon_names_from_params = SubscriptionConstants::FSM_ADDON_PARAMS_NAMES_MAP.map do |addon_name, addon_type|
         addon_name if addon_enabled?(addon_type)
       end.compact
-      disabled_addon_names_from_params = ADDON_PARAMS_NAMES_MAP.values - enabled_addon_names_from_params
+      disabled_addon_names_from_params = SubscriptionConstants::FSM_ADDON_PARAMS_NAMES_MAP.keys - enabled_addon_names_from_params
       create_new_addons_list(enabled_addon_names_from_params, disabled_addon_names_from_params)
     end
 
@@ -425,7 +422,7 @@ class SubscriptionsController < ApplicationController
     # => It is taken care in the drop_data_based_on_params method if the feature is actually removed.
     # Same case for add add-on as well. So, we need to skip them as well.
     def features_to_skip
-      ADDON_PARAMS_NAMES_MAP.keys
+      SubscriptionConstants::FSM_ADDON_PARAMS_NAMES_MAP.values.uniq.map(&:to_sym)
     end
 
     def perform_ui_based_addon_operations

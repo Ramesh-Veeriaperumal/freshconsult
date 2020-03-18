@@ -30,6 +30,7 @@ class Subscription::Addon < ActiveRecord::Base
   }.freeze
 
   FSM_ADDON = 'Field Service Management'.freeze
+  FSM_ADDON_2020 = 'Field Service Management 20'.freeze
 
   def self.fetch_addon(addon_id)
     find_by_name(addon_id.tr('_', ' ').titleize) 

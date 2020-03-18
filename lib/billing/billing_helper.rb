@@ -70,7 +70,7 @@ module Billing::BillingHelper
 
     def update_field_agent_limit(subscription, billing_subscription)
       result = false
-      fsm_addon = subscription.addons.find { |addon| addon.name == Subscription::Addon::FSM_ADDON }
+      fsm_addon = subscription.addons.find { |addon| SubscriptionConstants::FSM_ADDON_PARAMS_NAMES_MAP.key?(addon.name) }
       if fsm_addon
         new_field_agent_limit = billing_subscription.addons.find { |addon| addon.id == fsm_addon.billing_addon_id.to_s }.quantity
         result = field_agent_quantity_exceeded?(new_field_agent_limit)
