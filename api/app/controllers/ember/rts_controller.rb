@@ -27,17 +27,20 @@ module Ember
         {
           accId: @account_additional_settings.rts_account_id,
           userId: current_user.id.to_s,
-          exp: jwt_expiry,
           credentials: [{
             resource: '*',
             perms: ['*'],
-            expire: Time.now.to_i + 10.hours
+            expire: jwt_expiry
           }]
         }
       end
 
       def jwt_expiry
-        Time.now.to_i + 10.hours
+        (current_time + 10.hours).strftime('%Q')
+      end
+
+      def current_time
+        DateTime.now.utc
       end
 
       def rts_disabled?
