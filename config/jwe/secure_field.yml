@@ -1,5 +1,5 @@
 defaults: &defaults
-  domain: "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/data"
+  domain: "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/"
 
 development:
   <<: *defaults

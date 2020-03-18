@@ -393,6 +393,7 @@ defaults: &defaults
     - [fdadmin_freshid_migration]
     - [agent_assist_email]
     - [cron_archive_automation]
+    - [vault_account_update]
 
 development:
   <<: *defaults

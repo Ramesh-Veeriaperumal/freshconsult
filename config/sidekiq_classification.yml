@@ -257,6 +257,7 @@
     - image_meta_data_delete
     - fdadmin_freshid_migration
     - agent_assist_email
+    - vault_account_update
   :free:
     - free_sla
     - free_supervisor

@@ -29,7 +29,7 @@
         "_account_url": "productupdates.freshdesk.com"
       },
       "secure_field": {
-        "_domain": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/data"
+        "_domain": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/"
       },
       "bot": {
         "product_id": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:nQul5nx285K80oDF5U5DCI/eb4KEeLkS:F42iTJjS6G7XyDV6e7j/G7f4vLtMaHi2fyrcrk9nuUAFFlYo6u33SGwRoQ9uZPGwn6xvzvbobcA=]",
@@ -1527,7 +1527,7 @@
         "_script_asset_url": "https://assets1.freshconnect.io/freshconnect-sidebar/freshconnect-sidebar.js",
         "_base_url": "https://api.freshconnect.io"
       },
-      "_vault_service_url": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/data"
+      "_vault_service_url": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/"
     },
     "aws_config": {
     },

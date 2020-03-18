@@ -3,10 +3,12 @@ class WhitelistedIp < ActiveRecord::Base
 
 	include Cache::Memcache::WhitelistedIp
 
+  concerned_with :presenter
 	belongs_to_account
 	serialize :ip_ranges, Array
 
 	after_commit :clear_whitelisted_ip_cache
+  after_commit :send_data_to_vault_service, if: -> { Account.current.pci_compliance_field_enabled? }
 
 	attr_accessible :applies_only_to_agents, :ip_ranges, :enabled
 
@@ -57,4 +59,7 @@ class WhitelistedIp < ActiveRecord::Base
 		IPAddress.valid_ipv6?(ip["start_ip"]) && IPAddress.valid_ipv6?(ip["end_ip"])
 	end
 
+  def send_data_to_vault_service
+    Vault::AccountWorker.perform_async(action: PciConstants::ACCOUNT_UPDATE)
+  end
 end
