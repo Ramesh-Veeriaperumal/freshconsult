@@ -93,8 +93,10 @@ class Support::SearchV2::SpotlightController < SupportController
 
         if searchable_klasses.include?('Topic')
           es_params[:topic_visibility]          = visibility_opts(Forum::VISIBILITY_KEYS_BY_TOKEN)
-          es_params[:topic_category_id]         = current_portal.portal_forum_categories.map(&:forum_category_id)
+          forum_category_ids                    = current_portal.portal_forum_categories.pluck(:forum_category_id)
+          es_params[:topic_category_id]         = params[:forum_category_ids].nil? ? forum_category_ids : search_forum_categories_with_ids(forum_category_ids)
           es_params[:topic_company_id]          = current_user.company_ids if current_user
+          es_params[:query]                     = search_forums_with_ids(forum_category_ids) if params[:forum_ids]
         end
 
         es_params[:size] = @size
@@ -259,5 +261,20 @@ class Support::SearchV2::SpotlightController < SupportController
       filtered_folders = params[:folder_ids].split(',').map(&:to_i) & portal_folder_meta_ids
       @invalid = true if filtered_folders.empty?
       filtered_folders.presence || portal_folder_meta_ids
+    end
+
+    def search_forums_with_ids(category_ids)
+      forum_ids = Account.current.forums.where(forum_category_id: category_ids).pluck(:id)
+      filter_forum_ids = params[:forum_ids].split(',').map(&:to_i) & forum_ids
+      @invalid = true if filter_forum_ids.empty?
+      filtered_ids = filter_forum_ids.presence || forum_ids
+      filtered_ids.map!(&:to_s)
+      query_condition = filtered_ids.collect{ |x| 'forum_id:' + x }.join(' OR ')
+    end
+
+    def search_forum_categories_with_ids(forum_category_ids)
+      filter_forum_category_ids = params[:forum_category_ids].split(',').map(&:to_i) & forum_category_ids
+      @invalid = true if filter_forum_category_ids.empty?
+      filter_forum_category_ids.presence || forum_category_ids
     end
 end
