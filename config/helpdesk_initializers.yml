@@ -134,3 +134,4 @@ helpdesk:
     - prometheus
     - ruby_thread_config
     - custom_survey_result_key
+    - extend_for_shard_mapping

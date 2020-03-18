@@ -41,7 +41,7 @@ class ShardMapping < ActiveRecord::Base
   if Rails.env.development? or Rails.env.test?
     "shard_1"
   else
-    AppConfig['latest_shard']
+    latest_shard_from_redis || latest_shard_from_config
   end
  end
 
@@ -62,6 +62,26 @@ class ShardMapping < ActiveRecord::Base
     key = MemcacheKeys::SHARD_BY_ACCOUNT_ID % { :account_id => account_id }
     MemcacheKeys.delete_from_cache key
     clear_global_shard_cache(domains) if Fdadmin::APICalls.non_global_pods?
+  end
+
+  def self.latest_shard_from_config
+    latest_shard = AppConfig['latest_shard']
+    latest_shard.is_a?(Array) ? latest_shard.sample : latest_shard
+  end
+
+  def self.latest_shard_from_redis
+    shards = get_all_members_in_a_redis_set(LATEST_SHARDS)
+    shard = shards.sample if shards.present?
+    if shard
+      return shard if valid_shard?(shard)
+
+      NewRelic::Agent.notice_error("LATEST_SHARDS_FROM_REDIS contains invalid shard entry #{shard}")
+      return nil
+    end
+  end
+
+  def self.valid_shard?(shard)
+    Sharding.all_shards.include? shard.to_s
   end
 
 
