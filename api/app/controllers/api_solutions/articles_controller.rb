@@ -233,8 +233,11 @@ module ApiSolutions
       def validate_params
         return false unless validate_create_params
         validate_request_keys
-        @status = params[cname][:status].to_i if params[cname][:status]
-
+        if params[cname][:status]
+          @status = params[cname][:status].to_i
+        elsif (params[cname].key?('title') || params[cname].key?('description'))
+          @status = STATUS_KEYS_BY_TOKEN[:draft]
+        end
         # Maintaining the same flow for attachments as in articles_controller
         attachable = if @draft
                        @draft

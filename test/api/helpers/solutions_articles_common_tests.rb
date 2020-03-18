@@ -11,8 +11,12 @@ module SolutionsArticlesCommonTests
   # Common test cases for public api and private API
   def test_show_article
     sample_article = get_article
-    get :show, controller_params(id: sample_article.parent_id)
-    match_json(article_pattern(sample_article))
+    get :show, controller_params(version: version, id: sample_article.parent_id)
+    if sample_article.draft.nil?
+      match_json(article_pattern(sample_article.solution_article_meta.primary_article))
+    else
+      match_json(article_draft_pattern(sample_article.solution_article_meta.primary_article, sample_article.solution_article_meta.primary_article.draft))
+    end
     assert_response 200
   end
 
@@ -28,8 +32,12 @@ module SolutionsArticlesCommonTests
 
   def test_show_article_with_language_query_param
     sample_article = get_article
-    get :show, controller_params(id: sample_article.parent_id, language: @account.language)
-    match_json(article_pattern(sample_article))
+    get :show, controller_params(version: version, id: sample_article.parent_id, language: sample_article.language_code)
+    if sample_article.draft.nil?
+      match_json(article_pattern(sample_article))
+    else
+      match_json(article_draft_pattern(sample_article, sample_article.draft))
+    end
     assert_response 200
   end
 
@@ -374,6 +382,65 @@ module SolutionsArticlesCommonTests
     assert sample_article.reload.status == 2
     assert sample_article.reload.parent.reload.art_type == 2
     assert sample_article.reload.parent.reload.user_id == @agent.id
+  end
+
+  def test_article_title_description_updated_as_draft_when_no_status_is_passed_in_public_api
+    sample_article = get_article_without_draft
+    article_title = sample_article.title
+    article_description = sample_article.description
+    paragraph = Faker::Lorem.paragraph
+    params_hash = { 'title' => 'new title', 'description' => paragraph, 'type' => 2 }
+    put :update, construct_params({ version: version, id: sample_article.parent_id }, params_hash)
+    assert_response 200
+    draft = sample_article.reload.draft
+    assert_equal sample_article.reload.title, article_title
+    assert_equal sample_article.reload.description, article_description
+    assert_equal draft.title, 'new title'
+    assert_equal draft.description, paragraph
+  end
+
+  def test_no_draft_is_created_when_title_description_and_status_is_not_passed_in_public_api
+    sample_article = get_article_without_draft
+    params_hash = { 'seo_data' => { 'meta_title' => Faker::Name.name, 'meta_description' => Faker::Name.name } }
+    put :update, construct_params({ version: version, id: sample_article.parent_id }, params_hash)
+    assert_response 200
+    draft = sample_article.reload.draft
+    assert draft.nil?
+  end
+
+  def test_article_draft_title_description_updated_when_no_status_is_passed_in_public_api
+    sample_article = get_article_with_draft
+    article_title = sample_article.title
+    article_description = sample_article.description
+    paragraph = Faker::Lorem.paragraph
+    params_hash = { 'title' => 'new title', 'description' => paragraph, 'type' => 2 }
+    put :update, construct_params({ version: version, id: sample_article.parent_id }, params_hash)
+    assert_response 200
+    draft = sample_article.reload.draft
+    assert_equal sample_article.reload.title, article_title
+    assert_equal sample_article.reload.description, article_description
+    assert_equal draft.title, 'new title'
+    assert_equal draft.description, paragraph
+  end
+
+  def test_published_with_draft_article_titile_description_update_when_no_status_is_passed_in_public_api
+    sample_article = get_article_without_draft
+    draft = sample_article.draft
+    assert draft.nil?
+    create_draft(article: sample_article)
+    draft = sample_article.reload.draft
+    assert !draft.nil?
+    article_title = sample_article.reload.title
+    article_description = sample_article.reload.description
+    paragraph = Faker::Lorem.paragraph
+    params_hash = { 'title' => 'new title', 'description' => paragraph, 'type' => 2 }
+    put :update, construct_params({ version: version, id: sample_article.parent_id }, params_hash)
+    assert_response 200
+    draft = sample_article.reload.draft
+    assert_equal sample_article.reload.title, article_title
+    assert_equal sample_article.reload.description, article_description
+    assert_equal draft.title, 'new title'
+    assert_equal draft.description, paragraph
   end
 
   def test_update_draft_with_unavailable_agent_id
