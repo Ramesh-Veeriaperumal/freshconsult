@@ -66,7 +66,7 @@ module CustomDashboardConcern
   end
 
   def load_objects_from_db
-    items = scoper.includes(accessible: [:group_accesses]).find(:all)
+    items = scoper.includes(accessible: [:group_accesses])
     dashboard_list = decorate_dashboard_list(items)
     load_dashboard_index_in_redis(dashboard_list)
     dashboard_list

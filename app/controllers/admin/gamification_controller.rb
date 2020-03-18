@@ -4,7 +4,7 @@ class Admin::GamificationController < Admin::AdminController
 
   def index
     @scoreboard_ratings = current_account.scoreboard_ratings
-    @scoreboard_levels = current_account.scoreboard_levels.find(:all, :order => "points ASC")
+    @scoreboard_levels = current_account.scoreboard_levels.order('points ASC')
     @quests = all_scoper.all
   end
   
