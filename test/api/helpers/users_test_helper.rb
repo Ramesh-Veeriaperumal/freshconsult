@@ -186,9 +186,18 @@ module UsersTestHelper
     contact_pattern(contact).except(*keys)
   end
 
+  def public_search_index_contact_pattern(contact)
+    keys = [
+      :avatar, :tags, :deleted,
+      :other_companies, :view_all_tickets, :was_agent, :agent_deleted_forever, :marked_for_hard_delete
+    ]
+    keys -= [:deleted] if contact.deleted
+    contact_pattern(contact).except(*keys)
+  end
+
   def public_search_contact_pattern(contact)
     keys = [
-      :avatar, :tags, :other_emails, :deleted,
+      :avatar, :tags, :deleted,
       :other_companies, :view_all_tickets, :was_agent, :agent_deleted_forever, :marked_for_hard_delete, :facebook_id, :unique_external_id
     ]
     keys -= [:unique_external_id] if Account.current.unique_contact_identifier_enabled?

@@ -6,6 +6,7 @@ results = @items.map do |item|
     custom_fields: item.custom_fields,
     description: item.description,
     email: item.email,
+    other_emails: item.other_emails,
     id: item.id,
     job_title: item.job_title,
     language: item.language,
