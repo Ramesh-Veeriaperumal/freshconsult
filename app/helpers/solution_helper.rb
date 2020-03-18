@@ -555,6 +555,16 @@ module SolutionHelper
       end
     end
 
+    def cumulative_attachment_limit
+      Account.current.kb_increased_file_limit_enabled? && Account.current.account_additional_settings.additional_settings.key?(:kb_cumulative_attachment_limit) ? Account.current.account_additional_settings.additional_settings[:kb_cumulative_attachment_limit] : Account.current.attachment_limit
+    end
+
+    def valid_attachments(article, draft, type = :attachments)
+      article_attachments = article.safe_send(type)
+      active_attachments = draft.present? ? remove_deleted_attachments(article_attachments + draft.safe_send(type), draft.meta, type) : article_attachments
+      active_attachments
+    end
+
     private
 
       def modify_articles_suggested_hash(articles_suggested)
@@ -568,5 +578,13 @@ module SolutionHelper
         end
 
         articles_hash
+      end
+
+      def remove_deleted_attachments(attachments, draft_meta, type = :attachments)
+        if draft_meta.present? && draft_meta[:deleted_attachments].present? && draft_meta[:deleted_attachments][type].present?
+          deleted_att_ids = draft_meta[:deleted_attachments][type]
+          attachments = attachments.reject { |a| deleted_att_ids.include?(a.id) }
+        end
+        attachments
       end
 end
