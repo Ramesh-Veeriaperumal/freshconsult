@@ -822,6 +822,38 @@ class ApiAgentsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:allow_update_agent_enabled?)
   end
 
+  def test_update_agent_email_with_freshid_email_not_present_in_freshid
+    agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    params = { name: Faker::Name.name, email: Faker::Internet.email }
+    User.any_instance.stubs(:update_freshid_user).returns(true)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(true)
+    Account.any_instance.stubs(:allow_update_agent_enabled?).returns(false)
+    ApiAgentsController.any_instance.stubs(:freshid_user_details).returns('')
+    put :update, construct_params({ id: agent.id }, params)
+    assert_response 200
+  ensure
+    Account.current.agents.find_by_user_id(agent.id).destroy
+    User.any_instance.unstub(:update_freshid_user)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    Account.any_instance.unstub(:allow_update_agent_enabled?)
+    ApiAgentsController.any_instance.unstub(:freshid_user_details)
+  end
+
+  def test_update_agent_email_with_freshid_email_present_in_freshid
+    agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    params = { name: Faker::Name.name, email: Faker::Internet.email }
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(true)
+    Account.any_instance.stubs(:allow_update_agent_enabled?).returns(false)
+    ApiAgentsController.any_instance.stubs(:freshid_user_details).returns(User.first)
+    put :update, construct_params({ id: agent.id }, params)
+    assert_response 400
+  ensure
+    Account.current.agents.find_by_user_id(agent.id).destroy
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    Account.any_instance.unstub(:allow_update_agent_enabled?)
+    ApiAgentsController.any_instance.unstub(:freshid_user_details)
+  end
+
   def test_filter_agent_list_by_group_id
     agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
     group = create_group_with_agents(@account, agent_list: [agent.id])

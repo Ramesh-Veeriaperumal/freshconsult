@@ -13,6 +13,8 @@ class ApiAgentsController < ApiApplicationController
 
   def check_edit_privilege
     if current_account.freshid_integration_enabled? && !current_account.allow_update_agent_enabled?
+      return true if @item.user_changes.key?('email') && freshid_user_details(@item.user.email).blank?
+
       AgentConstants::RESTRICTED_PARAMS.any? do |key|
         if @item.user_changes.key?(key)
           @item.errors[:base] << :cannot_edit_inaccessible_fields
