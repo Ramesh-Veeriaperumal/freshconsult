@@ -209,10 +209,6 @@ module TicketsFilter
   end
 
   def self.accessible_filter?(filter, feature_keys = FEATURES_KEYS_BY_FILTER_KEY)
-    return false if (filter != 'unassigned_service_tasks' && filter != 'unresolved_service_tasks') &&
-                    (::Admin::AdvancedTicketing::FieldServiceManagement::Constant::FSM_TICKET_FILTERS.include? filter) &&
-                    !Account.current.fsm_custom_to_default_filter_enabled?
-
     feature = feature_keys[filter]
     return false if ignore_filter_feature(filter)
     Account.current and (feature.nil? or Account.current.safe_send("#{feature}_enabled?"))

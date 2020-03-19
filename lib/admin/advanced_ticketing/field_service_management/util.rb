@@ -210,32 +210,21 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
 
       def create_fsm_dashboard
-        options = create_fsm_default_custom_filters
         # return unless Account.current.has_feature?(:custom_dashboard)
         dashboard_object = DashboardObjectConcern.new(I18n.t("fsm_dashboard.name"))
-        dashboard_object_with_widget = add_widgets_to_fsm_dashboard(dashboard_object, options)
+        dashboard_object_with_widget = add_widgets_to_fsm_dashboard(dashboard_object)
         fsm_dashboard = Dashboard.new(dashboard_object_with_widget.get_dashboard_payload(:db))
         fsm_dashboard.save!
       end
 
-      def create_fsm_default_custom_filters
-        default_custom_filters_conditions = get_fsm_filter_conditions
-        Helpdesk::Filters::CustomTicketFilter.add_default_custom_filters(default_custom_filters_conditions)
-        default_custom_filters_conditions.keys.collect { |key| [key, { ticket_filter_id: Account.current.ticket_filters.where(name: I18n.t("fsm_dashboard.widgets.#{key}")).first.id }] }.to_h
-      end
-
-      def add_widgets_to_fsm_dashboard(dashboard_object, options)
+      def add_widgets_to_fsm_dashboard(dashboard_object)
         trends_x_position = 0
         scorecard_x_postion = 0
         picklist_id = ticket_type_picklist_id(SERVICE_TASK_TYPE)
         WIDGETS_NAME_TO_TYPE_MAP.each do |widget_name, type|
           if type == WIDGET_MODULE_TOKEN_BY_NAME[SCORE_CARD]
             position = { x: scorecard_x_postion, y: Y_AXIS_POSITION[:scorecard] }
-            if widget_name == SERVICE_TASKS_UNASSIGNED_WIDGET_NAME || ((FSM_TICKET_FILTERS.include? widget_name) && Account.current.fsm_custom_to_default_filter_enabled?)
-              dashboard_object.add_widget(type, position, I18n.t("fsm_dashboard.widgets.#{widget_name}"), ticket_filter_id: widget_name)
-            else
-              dashboard_object.add_widget(type, position, I18n.t("fsm_dashboard.widgets.#{widget_name}"), options[widget_name])
-            end
+            dashboard_object.add_widget(type, position, I18n.t("fsm_dashboard.widgets.#{widget_name}"), ticket_filter_id: widget_name)
             scorecard_x_postion += SCORECARD_DIMENSIONS[:width]
           else
             position = { x: trends_x_position, y: Y_AXIS_POSITION[:trend] }
@@ -261,27 +250,6 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         pick_list.id
       end
 
-      def get_fsm_filter_conditions
-        start_time = Account.current.custom_date_time_fields_from_cache.find { |x| x.name == TicketFilterConstants::FSM_APPOINTMENT_START_TIME + "_#{Account.current.id}" }
-        end_time = Account.current.custom_date_time_fields_from_cache.find { |x| x.name == TicketFilterConstants::FSM_APPOINTMENT_END_TIME + "_#{Account.current.id}" }
-        filter_conditions = {}
-        unless Account.current.fsm_custom_to_default_filter_enabled?
-          filter_conditions = { FSM_TICKET_FILTERS[0] => {
-            name: I18n.t('fsm_dashboard.widgets.service_tasks_due_today'),
-            filter: [
-              { 'condition' => "flexifields.#{start_time.column_name}", 'operator' => 'is', 'value' => 'today', 'ff_name' => start_time.name.to_s }
-            ]
-          },
-
-                                FSM_TICKET_FILTERS[2] => {
-                                  name: I18n.t('fsm_dashboard.widgets.overdue_service_tasks'),
-                                  filter: [
-                                    { 'condition' => "flexifields.#{end_time.column_name}", 'operator' => 'is', 'value' => 'in_the_past', 'ff_name' => end_time.name.to_s }
-                                  ]
-                                } }
-        end
-        filter_conditions.each { |k, v| v[:filter] += COMMON_FILTER_CONDITIONS }
-      end
 
       def cleanup_fsm
         Rails.logger.info "Started disabling FSM feature for Account - #{Account.current.id}"
