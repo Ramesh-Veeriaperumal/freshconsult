@@ -2,6 +2,7 @@ module ApiSolutions
   class ArticleDelegator < BaseDelegator
 
     include SolutionConcern
+    include SolutionHelper
 
     attr_accessor :folder_name, :category_name, :portal_id
 
@@ -14,6 +15,7 @@ module ApiSolutions
     validates :category_name, required: { message: :translation_not_available }, if: -> { create_or_update? && secondary_language? && !category_exists? }
     validate :create_tag_permission, if: -> { !filters? && @tags }
     validate :attachments_exist, if: -> { !filters? && @attachments_list.present? }
+    validate :validate_attachments_size, if: -> { errors[:attachments_list].blank? && @attachments.present? }
     validate :validate_provider, if: -> { !filters? && @cloud_files.present? }
     validate :valid_folder?, if: -> { @folder_id }
     validate :validate_ratings, on: :reset_ratings
@@ -91,12 +93,38 @@ module ApiSolutions
 
     def attachments_exist
       invalid_ids = []
+      @attachments = []
+
       @attachments_list.each do |att|
-        invalid_ids << att unless Account.current.attachments.find_by_attachable_id(User.current.id, conditions: ['id=? AND attachable_type=?', att, AttachmentConstants::ATTACHABLE_TYPES['user_draft']])
+        attachment = Account.current.attachments.find_by_attachable_id(User.current.id, conditions: ['id=? AND attachable_type=?', att, AttachmentConstants::ATTACHABLE_TYPES['user_draft']])
+        if attachment
+          @attachments.push(attachment)
+        else
+          invalid_ids << att
+        end
       end
+
       if invalid_ids.present?
         errors[:attachments_list] << :invalid_attachments
         (self.error_options ||= {}).merge!(attachments_list: { invalid_ids: invalid_ids.join(',') })
+      end
+    end
+
+    def validate_attachments_size
+      new_attachments_size = 0
+      @attachments.each do |att|
+        new_attachments_size += att.content_file_size
+      end
+
+      active_attachments = @item ? valid_attachments(@item, @item.draft) : []
+      existing_attachments_size = active_attachments.collect(&:content_file_size).sum
+      overall_attachment_limit = cumulative_attachment_limit
+
+      model_overall_size = existing_attachments_size + new_attachments_size
+      if model_overall_size > overall_attachment_limit.megabyte
+        errors[:attachments_list] << :invalid_size
+        model_overall_size_mb = (model_overall_size / 1024) / 1024
+        (self.error_options ||= {}).merge!(attachments_list: { current_size: model_overall_size_mb.to_s + 'MB', max_size: overall_attachment_limit.to_s + 'MB' })
       end
     end
 

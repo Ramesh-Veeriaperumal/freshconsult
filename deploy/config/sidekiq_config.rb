@@ -335,7 +335,7 @@ class SidekiqConfigUsEast
   'custom_translations_upload_queue', 'audit_log_export', "http_request", "simple_outreach_import", "surveys_central_publish", "freshvisual_configs", "anonymous_account_cleanup",
   'contact_field_central_publish', 'company_field_central_publish', 'freshid_retry_worker', "model_destroy", "freshcaller_account_central_publish", "freshchat_account_central_publish", "email_service_account_details_destroy", 'freshcaller_update_agents',
   "sandbox_cleanup", "thank_you_note", "update_sandbox_subscription", 'gateway_facebook_page', "archive_account_tickets_channel_queue", "archive_tickets_channel_queue", "ticket_properties_suggester", "update_agents_roles", "custom_translations_update_survey_status", 'kbase_article_versions_worker', 'kbase_article_versions_migration_worker',
-  'kbase_article_versions_reset_rating', 'articles_export_queue', 'rts_account_create', 'image_meta_data_delete', 'kbase_approval_notification_worker', 'delete_solution_meta_worker', 'ticket_field_job', 'update_url_in_sandbox', 'fdadmin_freshid_migration'
+  'kbase_article_versions_reset_rating', 'articles_export_queue', 'rts_account_create', 'image_meta_data_delete', 'kbase_approval_notification_worker', 'delete_solution_meta_worker', 'ticket_field_job', 'update_url_in_sandbox', 'fdadmin_freshid_migration', 'vault_account_update'
 ]
 
     # sidekiq queues in falcon alone
@@ -642,7 +642,7 @@ all_sidekiq_jobs =  cron_jobs + [
       'contact_field_central_publish', 'company_field_central_publish', 'freshid_v2_events', 'freshid_account_details_update_v2', 'freshid_v2_agents_migration', 'freshid_retry_worker',
       "model_destroy", "freshcaller_account_central_publish", "freshchat_account_central_publish", "sandbox_cleanup" , "thank_you_note", "update_sandbox_subscription", 'gateway_facebook_page',
       "archive_account_tickets_channel_queue", "archive_tickets_channel_queue", "ticket_properties_suggester", "update_agents_roles", "custom_translations_update_survey_status", 'kbase_article_versions_worker', 'kbase_article_versions_migration_worker',
-      'kbase_article_versions_reset_rating', 'articles_export_queue', 'rts_account_create', 'kbase_approval_notification_worker', 'delete_solution_meta_worker', 'ticket_field_job', 'update_url_in_sandbox', 'fdadmin_freshid_migration'
+      'kbase_article_versions_reset_rating', 'articles_export_queue', 'rts_account_create', 'kbase_approval_notification_worker', 'delete_solution_meta_worker', 'ticket_field_job', 'update_url_in_sandbox', 'fdadmin_freshid_migration', 'vault_account_update'
     ]
 
     #falcon common sidekiq

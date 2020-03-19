@@ -99,7 +99,7 @@ module ApiSearch
       contacts = @account.contacts.select { |x| x.created_at.utc.to_date.iso8601 <= d1 }
       get :index, controller_params(query: '"created_at :< \'' + d1 + '\'"')
       assert_response 200
-      pattern = contacts.map { |contact| index_contact_pattern(contact) }
+      pattern = contacts.map { |contact| public_search_index_contact_pattern(contact) }
       match_json(results: pattern, total: contacts.size)
     end
 
@@ -109,7 +109,7 @@ module ApiSearch
       contacts = @account.contacts.select { |x| x.created_at.utc.to_date.iso8601 >= d1 && x.created_at.utc.to_date.iso8601 <= d2 }
       get :index, controller_params(query: '"(created_at :> \'' + d1 + '\' AND created_at :< \'' + d2 + '\')"')
       assert_response 200
-      pattern = contacts.map { |contact| index_contact_pattern(contact) }
+      pattern = contacts.map { |contact| public_search_index_contact_pattern(contact) }
       match_json(results: pattern, total: contacts.size)
     end
 
@@ -119,7 +119,7 @@ module ApiSearch
       contacts = @account.contacts.select { |x| (x.created_at.utc.to_date.iso8601 >= d1 && x.created_at.utc.to_date.iso8601 <= d2) && x.customer_id == 2 }
       get :index, controller_params(query: '"(created_at :> \'' + d1 + '\' AND created_at :< \'' + d2 + '\') AND company_id:2 "')
       assert_response 200
-      pattern = contacts.map { |contact| index_contact_pattern(contact) }
+      pattern = contacts.map { |contact| public_search_index_contact_pattern(contact) }
       match_json(results: pattern, total: contacts.size)
     end
 
@@ -148,7 +148,7 @@ module ApiSearch
     #   contacts = @account.contacts.select { |x| x.cf_sample_date && x.cf_sample_date.utc.to_date.iso8601 == d1 }
     #   get :index, controller_params(query: '"sample_date: \'' + d1 + '\'"')
     #   assert_response 200
-    #   pattern = contacts.map { |contact| index_contact_pattern(contact) }
+    #   pattern = contacts.map { |contact| public_search_index_contact_pattern(contact) }
     #   match_json(results: pattern, total: contacts.size)
     # end
 
@@ -158,7 +158,7 @@ module ApiSearch
     #   contacts = @account.contacts.select { |x| x.cf_sample_date && (x.cf_sample_date.utc.to_date.iso8601 >= d1 && x.cf_sample_date.utc.to_date.iso8601 <= d2) }
     #   get :index, controller_params(query: '"(sample_date :> \'' + d1 + '\' AND sample_date :< \'' + d2 + '\')"')
     #   assert_response 200
-    #   pattern = contacts.map { |contact| index_contact_pattern(contact) }
+    #   pattern = contacts.map { |contact| public_search_index_contact_pattern(contact) }
     #   match_json(results: pattern, total: contacts.size)
     # end
 
@@ -166,7 +166,7 @@ module ApiSearch
     #   contacts = @account.contacts.select { |x| x.cf_sample_date.nil? }
     #   get :index, controller_params(query: '"sample_date : null"')
     #   assert_response 200
-    #   pattern = contacts.map { |contact| index_contact_pattern(contact) }
+    #   pattern = contacts.map { |contact| public_search_index_contact_pattern(contact) }
     #   match_json(results: pattern, total: contacts.size)
     # end
 
@@ -275,6 +275,21 @@ module ApiSearch
     ensure
       contact.deleted = false
       contact.save
+    end
+
+    def test_contacts_with_other_emails
+      contact = @account.contacts.last
+      contact_email = contact.email
+      contact.user_emails.build(email: Faker::Internet.email, primary_role: false)
+      contact.save
+      contact.reload
+      contacts = @account.contacts.select { |x| x.email == contact_email }
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"email: \'' + contact_email + '\'"')
+      end
+      assert_response 200
+      pattern = contacts.map { |contact| public_search_contact_pattern(contact) }
+      match_json(results: pattern, total: contacts.size)
     end
 
     def test_contacts_valid_tag

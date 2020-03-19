@@ -15,7 +15,9 @@ module LockVersion::Utility
       else
         Rails.logger.debug "#{self.class.name} #{action} failed. #{inspect}"
         NewRelic::Agent.notice_error(e, description: "#{self.class.name} #{action} failed for AccountId::#{account_id} and TicketId::#{ticket_id}")
-        raise e
+        # commenting out below line due to FD-47748
+        # raise e
+        self
       end
     end
   end

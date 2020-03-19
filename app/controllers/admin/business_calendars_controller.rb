@@ -9,7 +9,7 @@ class Admin::BusinessCalendarsController <  Admin::AdminController
    
   def index
     if current_account.multiple_business_hours_enabled?
-      @business_calendars = current_account.business_calendar.find(:all, :order =>'name')
+      @business_calendars = current_account.business_calendar.order('name')
 
       respond_to do |format|
         format.html # index.html.erb

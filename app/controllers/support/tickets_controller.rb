@@ -139,7 +139,7 @@ class Support::TicketsController < SupportController
 
     def get_jwe_token(custom_fields)
       # Generates JWE token
-      jwe = JWT::SecureServiceJWEFactory.new(@item, PciConstants::ACTION[:write], PciConstants::PORTAL_TYPE[:support_portal], custom_fields)
+      jwe = JWT::SecureServiceJWEFactory.new(PciConstants::ACTION[:write], @item.id, PciConstants::PORTAL_TYPE[:support_portal], PciConstants::OBJECT_TYPE[:ticket], custom_fields)
       (response.api_meta ||= {})[:vault_token] = jwe.generate_jwe_payload(@secure_field_methods)
     end
 

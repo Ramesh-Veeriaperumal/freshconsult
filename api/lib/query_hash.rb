@@ -153,7 +153,7 @@ class QueryHash
     end
 
     def all_ff_fields
-      @all_ff_fields ||= @ff_entries_cached || Account.current.flexifield_def_entries.find(:all, select: [:flexifield_alias, :flexifield_name]).map(&:attributes)
+      @all_ff_fields ||= @ff_entries_cached || Account.current.flexifield_def_entries.select([:flexifield_alias, :flexifield_name]).map(&:attributes)
     end
 
     def ff_alias_name_map

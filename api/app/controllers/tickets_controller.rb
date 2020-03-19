@@ -67,7 +67,7 @@ class TicketsController < ApiApplicationController
 
   def vault_token
     # Generates vault_token
-    jwe = JWT::SecureServiceJWEFactory.new(@item, PciConstants::ACTION[:read], PciConstants::PORTAL_TYPE[:agent_portal])
+    jwe = JWT::SecureServiceJWEFactory.new(PciConstants::ACTION[:read], @item.id, PciConstants::PORTAL_TYPE[:agent_portal], PciConstants::OBJECT_TYPE[:ticket])
     @token = jwe.generate_jwe_payload(@secure_field_methods)
     response.api_meta = { vault_token: @token } if private_api?
   end

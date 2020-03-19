@@ -107,4 +107,28 @@ Fluffy Higher Plan3:
   - :fluffy_higher_plan3 
 Fluffy Higher Plan4:
   - :fluffy_higher_plan4 
+Custom Slas 20:
+  - :customer_slas
+Fluffy Forest 20:
+  - :fluffy_forest
+Fluffy Higher Plan1 20:
+  - :fluffy_higher_plan1
+Fluffy Higher Plan2 20:
+  - :fluffy_higher_plan2 
+Fluffy Higher Plan3 20:
+  - :fluffy_higher_plan3 
+Fluffy Higher Plan4 20:
+  - :fluffy_higher_plan4
+Unique External Id 20:
+  - :unique_contact_identifier
+Whitelisted Ips 20:
+  - :whitelisted_ips
+One Contact Multiple Companies 20:
+  - :multiple_user_companies
+  - :multiple_companies_toggle
+Custom Ssl 20:
+  - :custom_domain
+  - :custom_ssl
+Field Service Management 20:
+  - :field_service_management
   

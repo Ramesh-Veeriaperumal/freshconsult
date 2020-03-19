@@ -10,16 +10,65 @@
 <%= form_for  @account, :url=> admin_security_path(@account) ,  :html => { :method => :put, :id => "sso_form" , :rel => 'validate' } do |f| %>
   <%= generate_breadcrumbs(params, f, :force_admin => true, :submit_text => "save", :redirect_to_admin => true) %>
   <%= f.error_messages %>
+<!-- security sso changes -->
+<% if current_account.freshid_org_v2_enabled? && current_account.launched?(:fw_sso_admin_security)%>
+  <div class="mb12">  <span class="enable_heading"> <%=t(".fw_enable_sso")%> </span>  
+ <div class="sso_status">
+  <span class="sso_status_text">
+  <% if current_account.freshid_sso_enabled? %>
+  <%=t("agent.status.active")%>
+  <% else %>
+  <%=t("header.new_ticket")%>
+  <% end %>
+  </span>
+  </div>
+
+  <div class="info-data p5 mb5"><%=t(".fw_enable_sso_info")%> <br/><%=t("audit_log.company.note")%> : <%=t(".fw_enable_only_org_admin").html_safe%></div>
+
+  <button class="btn btn-primary" id="config_edit_sso" name="config_edit_sso" >
+  <i id="ficon-external-link" class="ficon-external-link"></i>
+  <% if current_account.freshid_sso_enabled? %>
+  <%=t("topics.edit_title")%>
+  <% else %>
+  <%=t("email_configs.dkim.config")%>
+  <% end %>
+  </button>
+  
+
+  </div>
+  <% end %>
+  <!-- security sso changes -->
+
   <ul class="security-form">
     <li class="inline-field">
-      <% if current_account.freshid_org_v2_enabled? && !current_account.sso_enabled? %>
-        <a href="<%= Freshid::V2::UrlGenerator.security_url %>" class="freshid-sso-button" target="_blank"><span class="ficon-open-in-new-window"></span></a>
-        <span class="enable_heading"> <%=t(".enable_sso")%> </span>
-      <% else %>
+      <% if current_account.freshid_org_v2_enabled? && !current_account.sso_enabled?%>
+      <% if !current_account.launched?(:fw_sso_admin_security)%>
+       <a href="<%= Freshid::V2::UrlGenerator.security_url %>" class="freshid-sso-button" target="_blank"><span class="ficon-open-in-new-window"></span></a>
+        <span class="enable_heading"> <%=t(".enable_sso")%></span>
+        <% end %>
+      <% else %> 
       <%= check_box('account', 'sso_enabled', options = { :checked => current_account.sso_enabled?, :disabled => current_account.freshid_migration_in_progress? }, checked_value = "1", unchecked_value = "0") %> <span class="enable_heading"> <%=t(".enable_sso")%> </span>
+      
       <div class="extra_tabbed lead <%= 'disabled' if (current_account.freshid_integration_enabled? && current_account.freshdesk_sso_enabled?)%>" id="sso_enabled_content" style="display:<%= current_account.sso_enabled? ? "block": "none" %>;">
         <%= sso_enable_warning_if_freshid_enabled %>
         <!-- SSO BEGIN -->
+        <!-- security sso changes -->
+        <% if current_account.freshid_org_v2_enabled? && current_account.launched?(:fw_sso_admin_security)%>
+        <div class="sso_banner_container">
+        <span class="sso_banner_icon">
+        <i id="ficon-unverified" class="ficon-unverified"></i>
+        </span>
+       
+      <span class="sso_banner_text"> 
+      <% if current_account.freshid_sso_enabled? %>
+      <%=t(".fw_enabled_sso_alert").html_safe%>
+      <% else %> 
+      <%=t(".fw_old_sso_alert").html_safe%>
+      <% end %> 
+      </span>
+      </div>
+      <% end %> 
+      <!-- security sso changes -->
         <ul>
           <li>
             <% if sso_type == SsoUtil::SSO_TYPES[:freshid_saml].to_sym %>
@@ -338,10 +387,10 @@
     <%= f.submit t('save'), :class => "btn btn-primary" %>
   </div>
 <% end %>
-
+     
 <%= javascript_tag do %>
   (function($){
-
+   $sso_disable_confirmation = true;
     $('.custom_ssl_form, input').keypress(function(event) { return event.keyCode != 13; });
 
     $("#account_sso_enabled, #account_ssl_enabled, #account_whitelisted_ip_attributes_enabled").itoggle({
@@ -350,10 +399,19 @@
       });
 
     $("#account_sso_enabled").bind("change",function(e){
+      $orgV2Enabled = '<%= current_account.freshid_org_v2_enabled? =%>';
+      $fw_sso_admin_security = '<%= current_account.launched?(:fw_sso_admin_security) =%>';
+      if(!e.target.checked && $sso_disable_confirmation && $orgV2Enabled=="true" &&  $fw_sso_admin_security=="true"){
+        e.preventDefault();
+        $("#sso_enabled_content").slideToggle(false);
+        $("#sso-disable-link").click();
+        $("#account_sso_enabled").click();
+    } else {
       $("#sso_enabled_content").slideToggle(this.checked);
       $("#sso_enabled_content").find(":text").not(":disabled").val("");
       $(".password-policy-section").toggleClass("faded");
       $(".password-policy-section").toggleClass("disabled");
+     } 
 
     });
 
@@ -413,6 +471,18 @@
     $("#account_whitelisted_ip_attributes_enabled").bind("change", function(e){
       $('#ip-form').slideToggle(this.checked);
     });
+    
+    $(document).on("click","#sso-disable-dialog-submit",function(){
+      $sso_disable_confirmation = false; 
+      $("#account_sso_enabled").click();
+      $sso_disable_confirmation = true;
+    })
+       
+    $(document).on('click',"#config_edit_sso", function(e){
+      e.preventDefault();
+      window.open('<%= Freshid::V2::UrlGenerator.security_url %>', "_blank");
+    })
+
 
     function validatePasswordPolicy(){
       $('.password-policy-container').each(function(){
@@ -521,7 +591,7 @@
       });
 
     });
-
+    
     $(document).on('click', '#reset-confirm-submit', function(){ 
       $.ajax({
         type: 'POST',
@@ -535,6 +605,20 @@
         }
       });
     });
-
   })(jQuery)
 <% end %>
+
+<a href="#sso-disable-dialog"  
+              id="sso-disable-link"
+			 				rel="freshdialog"
+              role="button"
+			 				title="<%= @account.freshid_org_v2_enabled? ? t('.disable_old_sso') : t('.disable_sso')%>" 
+			 				data-submit-label="<%= t('confirm') %>"
+			 				data-width="400px"
+			 				data-close-on-submit="true"
+			 				data-close-label="<%= t('cancel') %>"			 				
+			 				data-destroy-on-close="true">
+				 		</a> 
+<div id="sso-disable-dialog" class="hide">
+	<p class="margin-bottom"><%= t('.disable_old_sso_confirmation').html_safe%></p>
+</div>

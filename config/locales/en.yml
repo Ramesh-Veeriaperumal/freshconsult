@@ -2292,6 +2292,14 @@ en:
         remote_login_url_info: This is the URL to which Freshdesk will redirect users for authentication when they attempt to access Freshdesk.
         enable_sso_info: Single Sign On allows you to use your own application or a centralized Server (like MS Active Directory) to authenticate agents and customers so that they can access Freshdesk without entering a separate username and password.
         enable_sso: Single Sign On (SSO)
+        fw_enable_sso: Freshworks Single Sign On (SSO)
+        fw_enable_sso_info: This allows you to have a single Freshworks login with enhanced security and privacy features
+        fw_enable_only_org_admin : You can configure Freshworks SSO only if you are an Org Admin. <a href="https://support.freshworks.com/support/solutions/articles/240019-what-s-new-with-freshworks-organization" target="_blank">Learn more</a>
+        fw_enabled_sso_alert: Now that you have configured Freshworks SSO, disable this option using the toggle. <a href="https://support.freshdesk.com/support/solutions/articles/50000001658-single-sign-on-in-freshdesk" target="_blank">Learn more</a>
+        fw_old_sso_alert: You are using the older version of SSO. Configure new Freshworks SSO and disable existing SSO.  <a href="https://support.freshdesk.com/support/solutions/articles/50000001658-single-sign-on-in-freshdesk" target="_blank">Learn more</a>
+        disable_old_sso: Disable old SSO
+        disable_sso: Disable SSO
+        disable_old_sso_confirmation: Are you sure want to disable this ?<br/>This is an irreversible action.
         enable_simple_sso: Simple SSO
         enable_oauth_sso: OAuth2 SSO
         enable_oauth2_sso: OAuth 2.0

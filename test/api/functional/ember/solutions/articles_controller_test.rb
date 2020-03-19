@@ -4376,6 +4376,62 @@ module Ember
         Account.any_instance.unstub(:suggested_articles_count_enabled?)
       end
 
+      def test_kb_increased_file_limit_feature_with_valid_file_size
+        cumulative_attachment_limit = 100
+        Account.any_instance.stubs(:kb_increased_file_limit_enabled?).returns(true)
+        AccountAdditionalSettings.any_instance.stubs(:additional_settings).returns(kb_cumulative_attachment_limit: cumulative_attachment_limit)
+
+        attachment_id = create_file_ticket_field_attachment(attachable_type: 'UserDraft', attachable_id: User.current.id, content_file_size: cumulative_attachment_limit.megabyte).id
+
+        title = Faker::Name.name
+        paragraph = Faker::Lorem.paragraph
+        folder_meta = get_folder_meta
+
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 2, attachments_list: [attachment_id])
+        assert_response 201
+      ensure
+        Account.any_instance.unstub(:kb_increased_file_limit_enabled?)
+        AccountAdditionalSettings.any_instance.unstub(:additional_settings)
+      end
+
+      def test_kb_increased_file_limit_feature_with_invalid_file_size
+        cumulative_attachment_limit = 100
+        file_size = cumulative_attachment_limit + 1
+
+        Account.any_instance.stubs(:kb_increased_file_limit_enabled?).returns(true)
+        AccountAdditionalSettings.any_instance.stubs(:additional_settings).returns(kb_cumulative_attachment_limit: cumulative_attachment_limit)
+
+        attachment_id = create_file_ticket_field_attachment(attachable_type: 'UserDraft', attachable_id: User.current.id, content_file_size: file_size.megabyte).id
+
+        title = Faker::Name.name
+        paragraph = Faker::Lorem.paragraph
+        folder_meta = get_folder_meta
+
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 2, attachments_list: [attachment_id])
+        assert_response 400
+        match_json(cumulative_attachment_size_validation_error_pattern(file_size, cumulative_attachment_limit))
+      ensure
+        Account.any_instance.unstub(:kb_increased_file_limit_enabled?)
+        AccountAdditionalSettings.any_instance.unstub(:additional_settings)
+      end
+
+      def test_kb_increased_file_limit_feature_without_keys_in_additional_settings
+        Account.any_instance.stubs(:kb_increased_file_limit_enabled?).returns(true)
+
+        file_size = 100
+        attachment_id = create_file_ticket_field_attachment(attachable_type: 'UserDraft', attachable_id: User.current.id, content_file_size: file_size.megabyte).id
+
+        title = Faker::Name.name
+        paragraph = Faker::Lorem.paragraph
+        folder_meta = get_folder_meta
+
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 2, attachments_list: [attachment_id])
+        assert_response 400
+        match_json(cumulative_attachment_size_validation_error_pattern(file_size, Account.current.attachment_limit))
+      ensure
+        Account.any_instance.unstub(:kb_increased_file_limit_enabled?)
+      end
+
       private
 
         def article_params(options = {})

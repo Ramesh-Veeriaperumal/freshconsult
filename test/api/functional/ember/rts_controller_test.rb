@@ -6,8 +6,8 @@ module Ember
       @account = Account.first
       @account.make_current
       Account.any_instance.stubs(:agent_collision_revamp_enabled?).returns(true)
-      @stub_time = Time.now.utc
-      Time.stubs(:now).returns(@stub_time)
+      @stub_time = DateTime.now.utc
+      RtsController.any_instance.stubs(:current_time).returns(@stub_time)
       acc_add_settings = @account.account_additional_settings
       acc_add_settings.additional_settings[:rts_account_id] = rts_details[:rts_account_id]
       acc_add_settings.assign_rts_account_secret(rts_details[:rts_secret])
@@ -68,7 +68,11 @@ module Ember
         {
           accId: rts_details[:rts_account_id],
           userId: rts_details[:current_user_id],
-          exp: @stub_time.to_i + RTSConfig['jwt_default_expiry']
+          credentials: [{
+            resource: '*',
+            perms: ['*'],
+            expire: (@stub_time + 10.hours).strftime('%Q')
+          }]
         }
       end
   end

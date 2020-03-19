@@ -25,7 +25,7 @@
         "channel_cipher_key": "EJ[1:MMCVpuMN7YCy8AO1L+UoZvH0kWBd2zoEOTnCNGFWoD0=:kThnxDcPtKH0vP94FiHF4zexOBS73Lw2:/yXSxpIHaXvDgJBphckQz8QJmjsG62wuT1g1ZcOYhCfXNsvK3VydWXhrPidMNbX7vSHYNbH7LwsXBXf1f9+ELSkYd8SApK8f5Za2YbRM/WM=]"
       },
       "secure_field": {
-        "_domain": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/data"
+        "_domain": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/"
       },
       "announcements": {
         "shared_secret": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:UyCCRNJbNiP8GsbA2B7cjP01p3ek6t+4:WufSV9OQrraTUAmCFGOuUSuX66RF4OeVlbzcmEKg3r4AUI+mt/u5YvdiOgg/poBg]",
@@ -1515,7 +1515,7 @@
         "_script_asset_url": "https://assets1.freshconnect.io/freshconnect-sidebar/freshconnect-sidebar.js",
         "_base_url": "https://api.freshconnect.io"
       },
-      "_vault_service_url": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/data"
+      "_vault_service_url": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/"
     },
     "aws_config": {
     },

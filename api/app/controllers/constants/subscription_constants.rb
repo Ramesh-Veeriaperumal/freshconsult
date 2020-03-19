@@ -16,4 +16,8 @@ module SubscriptionConstants
 
   VALIDATION_CLASS = 'SubscriptionValidation'.freeze
   DELEGATOR_CLASS = 'SubscriptionDelegator'.freeze
+  FSM_ADDON_PARAMS_NAMES_MAP = {
+    Subscription::Addon::FSM_ADDON => 'field_service_management',
+    Subscription::Addon::FSM_ADDON_2020 => 'field_service_management'
+  }.freeze
 end.freeze

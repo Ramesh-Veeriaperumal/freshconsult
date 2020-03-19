@@ -197,10 +197,7 @@ def distributed_run(category) {
                 if(category != 'pronto') {
                     // Adding Hard Sleep of 1 minute to handle random rake abort failure
                     if(category == 'public') {
-                        sleep(time: 1, unit: 'MINUTES')
-                    }
-                    else if(category == 'private'){
-                        sleep(time: 2, unit: 'MINUTES')
+                        sleep(time: 10, unit: 'MINUTES')
                     }
                     echo "Running Setup of $category categorized TestCases"
                     build_setup(category)
@@ -303,8 +300,8 @@ def sonarqube_analysis() {
    //Machine label where this jobs needs to run
 node("spot_backend") {
    try {
-      // Adding timout to the jenkinsfile
-      timeout(time: 60, unit: 'MINUTES') {
+      // Adding timout to the node
+      timeout(time: 80, unit: 'MINUTES') {
 
         cleanWs()
 
@@ -337,10 +334,10 @@ node("spot_backend") {
         // Creating Reports directories
         sh "mkdir -p ${env.WORKSPACE}/${COVERAGE_BASE_DIR}/public"
         sh "mkdir -p ${env.WORKSPACE}/${COVERAGE_BASE_DIR}/private"
-        sh "mkdir -p ${env.WORKSPACE}/${COVERAGE_BASE_DIR}/sandbox"
+        // sh "mkdir -p ${env.WORKSPACE}/${COVERAGE_BASE_DIR}/sandbox"
         sh "mkdir -p ${env.WORKSPACE}/${REPORT_BASE_DIR}/public"
         sh "mkdir -p ${env.WORKSPACE}/${REPORT_BASE_DIR}/private"
-        sh "mkdir -p ${env.WORKSPACE}/${REPORT_BASE_DIR}/sandbox"
+        // sh "mkdir -p ${env.WORKSPACE}/${REPORT_BASE_DIR}/sandbox"
         sh "mkdir -p ${env.WORKSPACE}/s3/"
 
         // Checking Encryption
@@ -353,19 +350,23 @@ node("spot_backend") {
             distributed_run("public");
         },Private: {
             distributed_run("private");
-        },Sandbox: {
-            distributed_run("sandbox");
         }
+        // Sandbox: {
+        //   distributed_run("sandbox");
+        // }
 
         // Running Pronto
         distributed_run("pronto");
 
-        // Running SonarQube Analysis
-        sonarqube_analysis()
-
         // Extracting xml file
         junit testResults: "${REPORT_BASE_DIR}/public/*.xml,${REPORT_BASE_DIR}/private/*.xml"
 
+        try {
+            // Running SonarQube Analysis
+            sonarqube_analysis()
+        } catch (e) {
+            currentBuild.result = 'UNSTABLE'
+        }
 
         // Pushing logs to s3
         sh  """ #!/bin/bash
