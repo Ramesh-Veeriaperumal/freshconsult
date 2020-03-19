@@ -538,7 +538,7 @@ module SolutionsTestHelper
   end
 
   def untranslated_article_pattern(article, lang_code)
-    {
+    ret_hash = {
       id: article.parent_id,
       title: (article.draft || article).title,
       status: article.status,
@@ -547,6 +547,11 @@ module SolutionsTestHelper
       category: untranslated_category_pattern(article.solution_folder_meta.solution_category_meta, lang_code),
       folder: untranslated_folder_pattern(article.solution_folder_meta, lang_code)
     }
+
+    if Account.current.article_approval_workflow_enabled?
+      ret_hash[:approval_data] = { approval_status: approval_record(article.parent).try(:approval_status), approver_id: approver_record(article.parent).try(:approver_id), user_id: approval_record(article.parent).try(:user_id) }
+    end
+    ret_hash
   end
 
   def untranslated_folder_pattern(folder_meta, lang_code)

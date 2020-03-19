@@ -318,7 +318,7 @@ module Ember
         end
 
         def untranslated_articles_preload_options
-          [{ solution_folder_meta: [{ solution_category_meta: :primary_category }, :primary_folder] }, :draft]
+          [{ solution_folder_meta: [{ solution_category_meta: :primary_category }, :primary_folder] }, :draft, { helpdesk_approval: :approver_mappings }]
         end
 
         def validate_approval_params
