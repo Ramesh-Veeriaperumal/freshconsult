@@ -3,6 +3,9 @@ module SubscriptionsHelper
   include ActionView::Helpers::NumberHelper
 
   PLANS_FEATURES = PlanFeaturesConfig
+  AGENTS = :agents
+  FIELD_TECHNICIANS = :'field technicians'
+  PRODUCTS = :products
 
   OMNI_FEATURES = {
     "sproutomni_channel_option" => ["sprout_omni"],
@@ -240,5 +243,17 @@ module SubscriptionsHelper
   end
   def show_billing_info
     !@offline_subscription && !@reseller_paid_account
+  end
+
+  def construct_subscription_error_msgs(errors)
+    error_type = errors.map(&:keys).flatten!
+    entities = errors.map(&:values).to_sentence(last_word_connector: I18n.t('subscription.error.word_connector'))
+    second_part = if error_type.include?(AGENTS) || error_type.include?(FIELD_TECHNICIANS)
+                    error_type.include?(PRODUCTS) ? I18n.t('subscription.error.agents_and_product') : I18n.t('subscription.error.only_agents')
+                  elsif error_type.include?(PRODUCTS)
+                    I18n.t('subscription.error.only_product')
+                  end
+    action_sentence = I18n.t('subscription.error.action_sentence', exceeded_agent_and_product_count: error_type.to_sentence(last_word_connector: I18n.t('subscription.error.word_connector')))
+    I18n.t('subscription.error.agents_and_product_limit_exceeded', entities: entities) << second_part << action_sentence
   end
 end

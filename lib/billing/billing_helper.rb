@@ -81,17 +81,6 @@ module Billing::BillingHelper
       result
     end
 
-    def check_subscribed_seats_availability(subscription, billing_subscription)
-      result = agent_quantity_exceeded?(billing_subscription)
-      subscription.agent_limit = @account.full_time_support_agents.count if result
-      result = true if update_field_agent_limit(subscription, billing_subscription)
-      if result
-        updated_addons = subscription.addons
-        Billing::Subscription.new.update_subscription(subscription, false, updated_addons)
-      end
-      subscription.save
-    end
-
     def agent_quantity_exceeded?(billing_subscription)
       billing_subscription.plan_quantity && billing_subscription.plan_quantity < @account.full_time_support_agents.count
     end

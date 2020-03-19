@@ -5,6 +5,7 @@ class SubscriptionsController < ApplicationController
   include Redis::RedisKeys
   include Redis::OthersRedis
   include Admin::AdvancedTicketing::FieldServiceManagement::CustomFieldValidator
+  include SubscriptionsHelper
 
   before_filter :prevent_actions_for_sandbox
   skip_before_filter :check_account_state
@@ -21,7 +22,7 @@ class SubscriptionsController < ApplicationController
   before_filter :build_subscription, :only => [ :calculate_amount, :plan ]
   before_filter :build_free_subscription, :only => :convert_subscription_to_free
   before_filter :build_paying_subscription, :only => :billing
-  before_filter :check_for_subscription_errors, :except => [ :calculate_amount, :show, :calculate_plan_amount ]
+  before_filter :validate_agents, :validate_fsm_agents, :validate_multi_product, :redirect_on_validation_error, except: [:calculate_amount, :show, :calculate_plan_amount]
   after_filter :add_event, :only => [ :plan, :billing, :convert_subscription_to_free ]
 
   restrict_perform :billing
@@ -267,23 +268,24 @@ class SubscriptionsController < ApplicationController
       @address.last_name = @creditcard.last_name
     end
 
-    #Error Check
-    def check_for_subscription_errors
-      if agent_type = (scoper.verify_agent_limit || scoper.verify_agent_field_limit)
-        Rails.logger.debug "Subscription Error::::::: #{agent_type} Limit exceeded, account id: #{current_account.id}"
+    def validate_agents
+      scoper.verify_agent_limit
+    end
 
-        agent_count, error_class = if agent_type == Agent::SUPPORT_AGENT
-          [current_account.full_time_support_agents.count, 'lesser_agents']
-        else
-          [current_account.field_agents_count, 'lesser_field_agents']
-        end
-        flash[:notice] = t("subscription.error.#{error_class}", agent_count: agent_count)
-        redirect_to subscription_url
-      end
-      if (scoper.trial? || !current_account.launched?(:downgrade_policy)) && current_account.has_feature?(:unlimited_multi_product) && !scoper.subscription_plan.unlimited_multi_product? && scoper.subscription_plan.multi_product? && current_account.products.count > AccountConstants::MULTI_PRODUCT_LIMIT
-        flash[:notice] = t('subscription.error.multi_product_downgrade', product_count: current_account.products.count)
-        redirect_to subscription_url
-      end
+    def validate_fsm_agents
+      scoper.verify_agent_field_limit
+    end
+
+    def validate_multi_product
+      scoper.verify_unlimited_multi_product
+    end
+
+    def redirect_on_validation_error
+      errors = current_account.subscription.errors.messages[:base]
+      return if errors.blank?
+
+      flash[:notice] = construct_subscription_error_msgs(errors)
+      redirect_to subscription_url if flash[:notice].present?
     end
 
     #chargebee and model updates

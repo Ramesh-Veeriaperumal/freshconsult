@@ -3933,6 +3933,19 @@ en:
   edit_agent: Edit Agent
   activate_and_log_in_long: Activate and Log in
   subscription:
+    error:
+      field_agents_count: '%{field_agents_count} field technicians'
+      products_count: '%{products_count} products'
+      agents_count: '%{agents_count} agents'
+      agents_and_product: 'You cannot subscribe to a lesser number of agents or have more than 5 products.'
+      only_agents: 'You cannot subscribe to a lesser number of agents.'
+      only_product: 'You are allowed only 5 on the Estate plan.'
+      agents: 'agents'
+      products: 'products'
+      field_agents: 'field technicians'
+      agents_and_product_limit_exceeded: 'Your freshdesk account currently has %{entities}.'
+      action_sentence: 'Please delete some %{exceeded_agent_and_product_count} and try again.'
+      word_connector: ' and '
     total: Total
     currency-note: 'All your future payments will be in '
     free: Free
@@ -8090,19 +8103,16 @@ en:
       irrevocably. If you want to retain your account, send us a reply and we
       will delete your cancellation request.
     current_subscription: 'Your current subscription: '
-    agent_reduction: >-
-      As per request, please maintain %{requested_agents} full-time agents or
-      fewer by %{next_renewal_at} or you will be charged as for
-      %{current_agents} agents, as usual.
-    agent_field_reduction: >-
-      As per request, please maintain %{requested_field_agents} field
-      technicians or fewer by %{next_renewal_at} or you will be charged as for
-      %{current_field_agents} field technicians, as usual.
-    agent_and_agent_field_reduction: >-
-      As per request, please maintain %{requested_agents} full-time agents or
-      fewer and %{requested_field_agents} field technicians or fewer by
-      %{next_renewal_at} or you will be charged as for %{current_agents} agents
-      and %{current_field_agents} field technicians, as usual.
+    requested_agent_msg: '%{requested_agent_limit} full-time agents or fewer'
+    requested_field_agent_msg: '%{requested_fsm_limit} field technicians or fewer'
+    product_msg: '5 products or fewer'
+    current_agent_limit: '%{current_agent_limit} agents'
+    current_fsm_limit: '%{current_fsm_limit} field technicians'
+    current_plan_name: '%{current_plan_name} plan'
+    agents_and_product: >-
+        As per request, please maintain %{requested_agents_and_product_count} 
+        by %{next_renewal_at} or you will be charged as 
+        for %{current_agents_and_plan}, as usual.
     current_plan: 'Plan: %{plan}'
     agents: 'Agents: %{agents}'
     billing_cycle: 'Billing cycle: %{billing_cycle}'
@@ -8110,6 +8120,7 @@ en:
     omni_channel: Omnichannel
     fsm: FSM
     field_technicians: 'Field Technicians: %{field_agents}'
+    word_connector: ' and '
   downgrade:
     upgrade_info: >-
       Once you hit 'Confirm' your existing request will be deleted and your

@@ -122,6 +122,29 @@ class Billing::BillingControllerTest < ActionController::TestCase
     @account.rollback(:downgrade_policy)
   end
 
+  def test_subscription_changed_event_with_more_products
+    stub_subscription_settings
+    old_subscription = @account.subscription
+    current_plan_id = @account.subscription.subscription_plan_id
+    Subscription.any_instance.unstub(:update_attributes)
+    Subscription.any_instance.unstub(:save)
+    @account.launch(:downgrade_policy)
+    @account.add_feature(:unlimited_multi_product)
+    6.times { @account.products.new(name: Faker::Lorem.characters(5)) }
+    @account.save!
+    SubscriptionPlan.any_instance.stubs(:unlimited_multi_product?).returns(false)
+    SubscriptionPlan.any_instance.stubs(:multi_product?).returns(true)
+    new_reminder = get_new_subscription_request(@account, @account.subscription.subscription_plan_id - 1, @account.subscription.renewal_period)
+    post :trigger, event_type: 'subscription_changed', content: normal_event_content, format: 'json'
+    assert_response 200
+    assert_equal @account.reload.subscription.subscription_plan_id, current_plan_id
+  ensure
+    unstub_subscription_settings
+    SubscriptionPlan.any_instance.unstub(:unlimited_multi_product?)
+    SubscriptionPlan.any_instance.unstub(:multi_product?)
+    @account.rollback(:downgrade_policy)
+  end
+
   def setup_fsm_addon_with_field_agent_count(field_agent_count)
     subscription = @account.subscription
     fsm_addon = Subscription::Addon.find_by_name('Field Service Management')

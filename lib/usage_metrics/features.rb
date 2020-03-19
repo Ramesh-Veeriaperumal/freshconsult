@@ -18,7 +18,7 @@ module UsageMetrics::Features
                    :custom_status, :session_replay, :custom_domain, :requester_widget,
                    :contact_company_notes, :segments, :sandbox, :support_bot,
                    :ticket_summary, :canned_forms, :allow_auto_suggest_solutions,
-                   :article_versioning, :article_approval_workflow, :custom_reporting].freeze
+                   :article_versioning, :article_approval_workflow, :custom_reporting, :unlimited_multi_product].freeze
   FEATURES_TRUE_BY_DEFAULT = [:default_ticket_view, :private_note,
                               :agent_performance, :ticket_export, :default_dashboard, :default_dispatcher,
                               :forward, :default_business_hours, :group_performance, :default_sla,

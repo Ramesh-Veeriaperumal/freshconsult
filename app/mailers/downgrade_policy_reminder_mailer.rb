@@ -31,6 +31,7 @@ class DowngradePolicyReminderMailer < ActionMailer::Base
     @email_body = construct_email_body(reminder_type, remaining_days)
     @days_left = remaining_days
     @other_emails = to_emails[:other]
+    @agent_and_product_validation_msg = validate_agent_and_product
     @headers = {
       from: AppConfig['from_email'],
       to: to_emails[:group],
@@ -63,12 +64,12 @@ class DowngradePolicyReminderMailer < ActionMailer::Base
     end
 
     def in_days(reminder_type, remaining_days, section, placeholders = {})
-      in_days_content = (section == :content && @subscription_request.feature_loss?) ? "downgrade_policy_#{section}.#{reminder_type}_in_days_with_feature_loss" : "downgrade_policy_#{section}.#{reminder_type}_in_days"
+      in_days_content = section == :content && @subscription_request.feature_loss? ? "downgrade_policy_#{section}.#{reminder_type}_in_days_with_feature_loss" : "downgrade_policy_#{section}.#{reminder_type}_in_days"
       I18n.t(in_days_content, placeholders.merge!(days: remaining_days))
     end
 
     def in_hours(reminder_type, remaining_days, section, placeholders = {})
-      in_hours_content = (section == :content && @subscription_request.feature_loss?) ? "downgrade_policy_#{section}.#{reminder_type}_in_hours_with_feature_loss" : "downgrade_policy_#{section}.#{reminder_type}_in_hours"
+      in_hours_content = section == :content && @subscription_request.feature_loss? ? "downgrade_policy_#{section}.#{reminder_type}_in_hours_with_feature_loss" : "downgrade_policy_#{section}.#{reminder_type}_in_hours"
       I18n.t(in_hours_content, placeholders.merge!(hours: remaining_days * 24))
     end
 
@@ -84,5 +85,21 @@ class DowngradePolicyReminderMailer < ActionMailer::Base
       plan_name = subscription.subscription_plan.classic? ? subscription_plan.display_name + ' Classic' : subscription_plan.display_name 
       plan_name << '(' + omin_fsm_str.join('+') + ')' if omin_fsm_str.present?
       plan_name
+    end
+
+    def validate_agent_and_product
+      validation_arr = []
+      agent_reduction = @subscription_request.agent_limit < @subscription.agent_limit
+      agent_field_reduction = @subscription.field_agent_limit.present? && @subscription_request.fsm_enabled? && @subscription_request.fsm_field_agents < @subscription.field_agent_limit
+      validation_arr << [I18n.t('downgrade_policy_content.requested_agent_msg', requested_agent_limit: @subscription_request.agent_limit), I18n.t('downgrade_policy_content.current_agent_limit', current_agent_limit: @subscription.agent_limit)] if agent_reduction
+      validation_arr << [I18n.t('downgrade_policy_content.requested_field_agent_msg', requested_fsm_limit: @subscription_request.fsm_field_agents), I18n.t('downgrade_policy_content.current_fsm_limit', current_fsm_limit: @subscription.field_agent_limit)] if agent_field_reduction
+      validation_arr << [I18n.t('downgrade_policy_content.product_msg'), I18n.t('downgrade_policy_content.current_plan_name', current_plan_name: @from_plan_name)] if @subscription_request.product_loss?
+      construct_agent_and_product_message(validation_arr) if validation_arr.present?
+    end
+
+    def construct_agent_and_product_message(validation_arr)
+      I18n.t('downgrade_policy_content.agents_and_product', requested_agents_and_product_count: validation_arr.try(:map) { |err| err[0] }.to_sentence(last_word_connector: I18n.t('downgrade_policy_content.word_connector')),
+                                                            next_renewal_at: @subscription.next_renewal_at.strftime('%-d %b %Y'),
+                                                            current_agents_and_plan: validation_arr.try(:map) { |err| err[1] }.to_sentence(last_word_connector: I18n.t('downgrade_policy_content.word_connector')))
     end
 end

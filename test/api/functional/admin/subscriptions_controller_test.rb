@@ -41,6 +41,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
 
   def test_show_with_subscription_request
     subscription_request = @account.subscription.subscription_request
+    subscription = @account.subscription
     subscription_request.destroy if subscription_request.present?
     subscription_request_params = {
       agent_limit: 1,
@@ -52,7 +53,9 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     Subscription.any_instance.stubs(:cost_per_agent).returns(65)
     Subscription.any_instance.stubs(:cost_per_agent).with(12).returns(49)
     @account.subscription.build_subscription_request(subscription_request_params).save!
-    subscription_request_params.merge!(feature_loss: @account.subscription.subscription_request.feature_loss?)
+    new_subscription_request = @account.subscription_request
+    subscription_request_params[:feature_loss] = new_subscription_request.feature_loss?
+    subscription_request_params[:products_limit_exceeded] = new_subscription_request.product_loss?
     get :show, controller_params(version: 'private')
     assert_response 200
     match_json(subscription_response(@account.subscription, subscription_request_params))
@@ -141,15 +144,15 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     @account.launch :unlimited_multi_product
     @account.rollback :downgrade_policy
     plan_id = (SubscriptionPlan.cached_current_plans.map(&:id) - [@account.subscription.subscription_plan_id]).last
-    put :update, construct_params({ version: 'private', plan_id: plan_id, agent_seats: 1 })
+    put :update, construct_params(version: 'private', plan_id: plan_id, agent_seats: @account.full_time_support_agents.count + 1)
     assert_equal 200, response.response_code, "1st #{response.body.inspect}"
     assert_equal JSON.parse(response.body)['plan_id'], plan_id
     plan = @account.subscription.subscription_plan
     assert (::PLANS[:subscription_plans][plan.canon_name.to_sym][:features].dup - @account.features_list).empty?
-    put :update, construct_params({ version: 'private', renewal_period: 6 })
+    put :update, construct_params(version: 'private', renewal_period: 6)
     assert_equal 200, response.response_code, "2nd #{response.body.inspect}"
     # moving to sprout and checking all the validations
-    put :update, construct_params({ version: 'private', plan_id: sprout_plan_id, renewal_period: 6 })
+    put :update, construct_params(version: 'private', plan_id: sprout_plan_id, renewal_period: 6)
     assert_equal @account.subscription_plan.renewal_period, 1
     assert_equal 200, response.response_code, "3rd #{response.body.inspect}"
   ensure
@@ -354,7 +357,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     Subscription.any_instance.stubs(:cost_per_agent).with(12).returns(49)
     params_plan_id = (paid_plans - [@account.subscription.subscription_plan_id]).first
     renewal_period = (SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY.keys - [@account.subscription.renewal_period]).first
-    params = { plan_id: params_plan_id, renewal_period: renewal_period, agent_seats: 1, version: 'private' }
+    params = { plan_id: params_plan_id, renewal_period: renewal_period, version: 'private' }
     current_subscription = @account.subscription
     current_subscription.subscription_request.destroy if current_subscription.subscription_request.present?
     @account.rollback :downgrade_policy
@@ -424,6 +427,24 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     assert_response 400
   ensure
     ChargeBee::Subscription.unstub(:update)
+  end
+
+  def test_update_with_lesser_agent_seats
+    account = Account.current
+    result = ChargeBee::Result.new(stub_update_params(account.id))
+    ChargeBee::Subscription.stubs(:update).returns(result)
+    Subscription.any_instance.stubs(:active?).returns(true)
+    Subscription.any_instance.stubs(:card_number).returns(true)
+    Subscription.any_instance.stubs(:downgrade?).returns(false)
+    Account.any_instance.stubs(:full_time_support_agents).returns([1, 2, 3, 4, 5])
+    plan = SubscriptionPlan.cached_current_plans.find { |p| p.display_name == 'Blossom' }
+    put :update, construct_params({ version: 'private', plan_id: plan.id, agent_seats: 1 }, {})
+    assert_response 400
+  ensure
+    Subscription.any_instance.unstub(:active?)
+    Subscription.any_instance.unstub(:card_number)
+    ChargeBee::Subscription.unstub(:update)
+    Account.any_instance.unstub(:full_time_support_agents)
   end
 
   private
@@ -651,6 +672,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
         request_hash = {}.tap do |hash|
           hash['plan_name'] = subscription_plan.name
           hash['feature_loss'] = subscription_request_params[:feature_loss]
+          hash['products_limit_exceeded'] = subscription_request_params[:products_limit_exceeded]
           unless subscription_plan.amount.zero?
             hash['agent_seats'] = subscription_request_params[:agent_limit]
             hash['renewal_period'] = subscription_request_params[:renewal_period]
