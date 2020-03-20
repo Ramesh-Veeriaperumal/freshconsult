@@ -5,7 +5,7 @@ module Widget::TicketConstants
     'referrer' => 'HTTP_REFERER',
     'widget_source' => 'HTTP_X_WIDGET_ID'
   }.freeze
-  META_FIELDS = [meta: META_KEY_MAP.keys].freeze
+  META_FIELDS = [meta: [:user_agent, :referrer, :widget_source, :seen_articles]].freeze
   # TICKET FIELDS MOVED OUTSIDE CREATE_FIELDS :
   # (type status priority description responder_id group_id company_id)
   # permitting these fields will be based on whether they are customer editable or not

@@ -99,6 +99,11 @@ module Widget
         constants_class::META_KEY_MAP.keys.each do |meta_key|
           @item.meta_data[meta_key] = (@meta && @meta[meta_key]) || request.env[constants_class::META_KEY_MAP[meta_key]]
         end
+        if @meta.try(:[], :seen_articles).present?
+          # seen_articles value is set as the stringyfy format similar to portal's seen_articles format
+          valid_article_ids = current_account.solution_article_meta.published.where(id: @meta[:seen_articles]).pluck(:id)
+          @item.meta_data[:seen_articles] = ActiveSupport::JSON.encode valid_article_ids.map(&:to_s).to_json if valid_article_ids.present?
+        end
         add_attachments
       end
 

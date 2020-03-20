@@ -1,9 +1,13 @@
 require_relative '../../test_helper'
+['solutions_helper.rb', 'solution_builder_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 
 module Widget
   class TicketsControllerTest < ActionController::TestCase
     include ApiTicketsTestHelper
     include HelpWidgetsTestHelper
+    include SolutionsTestHelper
+    include SolutionsHelper
+    include SolutionBuilderHelper
 
     def setup
       super
@@ -378,6 +382,45 @@ module Widget
       meta_info = YAML.load(meta_info.body)
       assert_equal meta_info['user_agent'], 'Freshdesk_Native'
       assert_equal meta_info['referrer'], 'http://ateam.freshdesk.com'
+    end
+
+    def test_create_with_meta_seen_articles_params
+      subscription = @account.subscription
+      subscription.state = 'active'
+      subscription.save
+      @account.reload
+      article = create_article
+      seen_articles = [article[:id]]
+      params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph, meta: { seen_articles: seen_articles } }
+      post :create, construct_params({ version: 'widget' }, params)
+      assert_response 201
+      ticket_id = JSON.parse(response.body)['id']
+      match_json(id: ticket_id)
+      t = Helpdesk::Ticket.where(display_id: ticket_id).first
+      meta_info = YAML.safe_load(t.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta']).body)
+      assert_equal meta_info['seen_articles'], seen_articles.map(&:to_s).to_json
+    ensure
+      article.destroy
+    end
+
+    def test_create_with_invalid_meta_seen_articles_params
+      subscription = @account.subscription
+      subscription.state = 'active'
+      subscription.save
+      @account.reload
+      article = create_article
+      seen_articles = [article[:id]]
+      invalid_seen_articles = seen_articles + [Faker::Number.number(50).to_i]
+      params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph, meta: { seen_articles: invalid_seen_articles } }
+      post :create, construct_params({ version: 'widget' }, params)
+      assert_response 201
+      ticket_id = JSON.parse(response.body)['id']
+      match_json(id: ticket_id)
+      t = Helpdesk::Ticket.where(display_id: ticket_id).first
+      meta_info = YAML.safe_load(t.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta']).body)
+      assert_equal meta_info['seen_articles'], seen_articles.map(&:to_s).to_json
+    ensure
+      article.destroy
     end
 
     def test_create_with_whitelisted_domain_with_restricted_helpdesk_enabled
