@@ -9,7 +9,7 @@ module HelpWidgetsTestHelper
   }.freeze
 
   def create_widget(options = {})
-    if options[:product_id]
+    if options.key?(:product_id)
       product_id = options[:product_id]
     else
       test_product = create_product(portal_url: Faker::Internet.url, language: options[:language])
