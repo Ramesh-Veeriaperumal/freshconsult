@@ -142,35 +142,28 @@
     content:'';
 }
 
-.ficon-print{
-    background: none;
-    position: relative;
-    margin-top: 2px;
-    margin-left: 20px;
-    &:before{
-        color: $grayLight;
-        font-size: 21px;
-        display: inline-block;
-        @include float(left);
-        @include margin-left(-23px);
-        top: 2px;
-        position: relative;
-    }
-    &:after{
-        content: 'Print';
-        font-size: 13px;
-        float: left;
-        width: 40px;
-        @include margin-right(10px);
-        color: $dark_blue;
-    }
-    &:hover{
-        text-decoration: none;
-        &:after{
-            text-decoration: underline;
-        }
-    }
-}
+.solution-print--icon {
+  @include float(right);
+  margin-top:10px;
+
+   &:hover {
+    text-decoration: none;
+   }
+
+  .text-print {
+      font-size: 13px;
+      margin-right: 10px;
+      color: #3b5998;
+      vertical-align: top;
+  }
+
+  .icon-print {
+    background-image: none;
+    @extend .ficon-print;
+    color: $grayLight;
+    vertical-align: top;
+  }
+ }
 
 .ticket-page .c-ticket-row .status-source{
     background: none;

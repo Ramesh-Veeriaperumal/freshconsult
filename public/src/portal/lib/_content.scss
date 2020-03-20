@@ -385,10 +385,25 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 }
 
 /* Print button in Solutions Page */
-.solution-print-icon {
-	@include float(right);
-	margin-top:10px;
-}
+.solution-print--icon {
+ 	@include float(right);
+ 	margin-top:10px;
+
+	 &:hover {
+	    text-decoration: none;
+	 }
+
+	 .icon-print {
+	 	vertical-align: middle;
+	 }
+
+	.text-print {
+	    font-size: 13px;
+	    margin-right: 10px;
+	    color: #3b5998;
+	    vertical-align: top;
+	}
+ }
 
 /* User voted list in topic details page */
 .user-list{

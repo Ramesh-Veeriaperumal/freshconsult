@@ -77,7 +77,7 @@ a[href^="http://"]:not(.image-enlarge-link), a[href^="https://"]:not(.image-enla
 .article-vote, #vote-feedback-container, .helpdesk_view, #topic-toolbar, #reply-to-post, 
 .start-topic, .lead, .alert-assume-agent, #reply-to-ticket, #add-people, .sidebar, 
 iframe#freshwidget-embedded-form, #feedback-widget-container, #freshwidget-button, 
-.agent_view,.freshwidget-theme, #fc_chat_layout {
+.agent_view,.freshwidget-theme, #fc_chat_layout, .print--remove {
 	display: none !important;
 }
 
