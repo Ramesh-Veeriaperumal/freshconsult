@@ -185,6 +185,7 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
         choice = question.choices.find{ |choice| choice[:face_value] == rating_value }  
         if choice.present?
           rating = {
+            :question_id => question.id,
             :label    => question.label, 
             :choices  => question.choices,
             :key      => choice[:face_value], 
