@@ -134,5 +134,34 @@ module ApiSearch
       assert_equal @response.api_meta[:count], 1
       match_json []
     end
+
+    def test_results_with_valid_language_id
+      article = create_article(article_params).primary_article
+      stub_private_search_response([article]) do
+        post :results, construct_params(version: 'private', context: 'portal_based_solutions', term: article.title, limit: 3, language: 6)
+      end
+      assert_response 200
+      match_json [search_solution_article_pattern(article, :portal_based_solutions)]
+    end
+
+    def test_results_with_invalid_language_id
+      article = create_article(article_params).primary_article
+      stub_private_search_response([article]) do
+        post :results, construct_params(version: 'private', context: 'portal_based_solutions', term: article.title, limit: 3, language: 999)
+      end
+      result = JSON.parse(response.body).first.symbolize_keys!
+      assert_response 200
+      assert_equal result[:language_id], Account.current.language_object.id
+      match_json [search_solution_article_pattern(article, :portal_based_solutions)]
+    end
+
+    def test_results_with_different_language_id
+      # search term will not be available in the given valid language, should return empty result
+      article = create_article(article_params).primary_article
+      post :results, construct_params(version: 'private', context: 'portal_based_solutions', term: article.title, limit: 3, language: 1)
+      result = JSON.parse(response.body)
+      assert_response 200
+      assert result.empty?
+    end
   end
 end
