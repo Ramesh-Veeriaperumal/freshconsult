@@ -177,19 +177,19 @@ class VaRule < ActiveRecord::Base
     when :requester
       contact_field = account.contact_form.custom_contact_fields.detect{ |cnf| cnf.name == condition[:name] }
       field_type = contact_field.present? ? contact_field.field_type.to_sym : :default
-      Rails.logger.info("Automation fetch_field_type: field_type: #{field_type}")
+      # Rails.logger.info("Automation fetch_field_type: field_type: #{field_type}")
       field_type
     when :company
       company_field = account.company_form.custom_company_fields.detect{ |csf| csf.name == condition[:name] }
       field_type = company_field.present? ? company_field.field_type.to_sym : :default
-      Rails.logger.info("Automation fetch_field_type: field_type: #{field_type}")
+      # Rails.logger.info("Automation fetch_field_type: field_type: #{field_type}")
       field_type
     else
       ff = account.flexifields_with_ticket_fields_from_cache.detect{ |ff|
           ff.flexifield_name == condition[:name] || ff.flexifield_alias == condition[:name] }
       ticket_field = ff.present? ? ff.ticket_field : nil
       field_type = ticket_field.present? && ticket_field.parent_id.nil? ? ticket_field.field_type.to_sym : :default
-      Rails.logger.info("Automation fetch_field_type, field_name: #{condition[:name]}, ticket_field present: #{ticket_field.present?}, ticket_field parent_id: #{ticket_field.try(:parent_id)}, field_type: #{field_type}")
+      # Rails.logger.info("Automation fetch_field_type, field_name: #{condition[:name]}, ticket_field present: #{ticket_field.present?}, ticket_field parent_id: #{ticket_field.try(:parent_id)}, field_type: #{field_type}")
       field_type
     end
   end
