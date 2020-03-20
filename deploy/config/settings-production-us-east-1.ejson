@@ -1601,6 +1601,26 @@
             "_slave2_host": "shard37slave2.internal.poduseast1.freshdesk.com",
             "_username": "dbuser"
           },
+          "shard_38_2": {
+            "_database": "helpkit_shard38_2",
+            "_host": "shard38.internal.poduseast1.freshdesk.com",
+            "password": "EJ[1:sXdhl4wTy3DcJEgjLcVLqsJmaQKQ7CEXvRL+G1cjIFg=:o5uCExqCRWuCBnd59mIDreo1CiHh7LT7:GvC4AZcCIdVH4W8ScmFX9tuW8AL76k/Nl18=]",
+            "slave1": {
+              "_host": "shard38slave1.internal.poduseast1.freshdesk.com",
+              "password": "EJ[1:sXdhl4wTy3DcJEgjLcVLqsJmaQKQ7CEXvRL+G1cjIFg=:O/Hac5VlKXb8WuLAKulgxCKTct4K2VLY:vXCRixGtFdWVluQ2ECkxWjAWS7ujahSdwpc=]",
+              "_port": 3306,
+              "_username": "dbuser"
+            },
+            "_slave1_host": "shard38slave1.internal.poduseast1.freshdesk.com",
+            "slave2": {
+              "_host": "shard38slave2.internal.poduseast1.freshdesk.com",
+              "password": "EJ[1:sXdhl4wTy3DcJEgjLcVLqsJmaQKQ7CEXvRL+G1cjIFg=:+pDLgm3ryea5iK1IrhKgzXkNgicVT0hw:Xw9gHNLiy0sQZdHeTZwmPTIhlwrbxTZPKg4=]",
+              "_port": 3306,
+              "_username": "dbuser"
+            },
+            "_slave2_host": "shard38slave2.internal.poduseast1.freshdesk.com",
+            "_username": "dbuser"
+          },
           "shard_38_3": {
             "_database": "helpkit_shard38_3",
             "_host": "shard38.internal.poduseast1.freshdesk.com",
@@ -2543,6 +2563,10 @@
             "shard_37": {
               "_username": "migration",
               "password": "EJ[1:ByWKFZCqMExeawDRUmyb+dlUALyLWxv2Zaw0UfcAogA=:v/QFyaEh/MtxDYZIcgaT6IY2Tp5SRENc:5CI3YmJ8HzYan7hN0lBhYUiVhE2HD6AupA8=]"
+            },
+            "shard_38_2": {
+              "_username": "migration",
+              "password": "EJ[1:sXdhl4wTy3DcJEgjLcVLqsJmaQKQ7CEXvRL+G1cjIFg=:WtRKwa+EnUmzoOmgzLtiwOL4aUhqZPTD:pAE1qoYJh5FrLMSTqUDQMbgOPunjBLKkRtk=]"
             },
             "shard_38_3": {
               "_username": "migration",
