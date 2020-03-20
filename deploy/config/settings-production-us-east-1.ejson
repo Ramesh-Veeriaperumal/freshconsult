@@ -1600,6 +1600,26 @@
             },
             "_slave2_host": "shard37slave2.internal.poduseast1.freshdesk.com",
             "_username": "dbuser"
+          },
+          "shard_38_3": {
+            "_database": "helpkit_shard38_3",
+            "_host": "shard38.internal.poduseast1.freshdesk.com",
+            "password": "EJ[1:jx8zAIGILIDQoiQwLaNYE7o+Mj1voPjXfcUX8iq6GS0=:/0hay1VzxMOGNs9Xlg8vYZC/oDf7WK5r:na593n1PjUaBxueYSpGJx5hiJ/pyasYftMA=]",
+            "slave1": {
+              "_host": "shard38slave1.internal.poduseast1.freshdesk.com",
+              "password": "EJ[1:jx8zAIGILIDQoiQwLaNYE7o+Mj1voPjXfcUX8iq6GS0=:RMAE+Nz1ToygWLAWD7Hx4m0glDo6xIwg:JJVKeeugY8rIr7eQ2CPDwf+CgYzBSiLbB/g=]",
+              "_port": 3306,
+              "_username": "dbuser"
+            },
+            "_slave1_host": "shard38slave1.internal.poduseast1.freshdesk.com",
+            "slave2": {
+              "_host": "shard38slave2.internal.poduseast1.freshdesk.com",
+              "password": "EJ[1:jx8zAIGILIDQoiQwLaNYE7o+Mj1voPjXfcUX8iq6GS0=:Sw6IzMtXrQGooCqynd5+x+6Y8M8nXfdG:AOWgBCif3ms9ZP7BpLQcQNpLb7F+Sam8eJs=]",
+              "_port": 3306,
+              "_username": "dbuser"
+            },
+            "_slave2_host": "shard38slave2.internal.poduseast1.freshdesk.com",
+            "_username": "dbuser"
           }
         },
         "semian": {
@@ -2104,9 +2124,9 @@
           },
           "account_additional_settings": {
             "key": "EJ[1:/Et/1aFPDPS5BD8vRGqgGkpTmQ+2czx8ovIvntyv5WY=:WpK0DCFp7o+aHJQ8c2rKk2TOk53Pp7xa:AfHiSu/UTAn4h2xQkHohSeoe9i4tEH5X3wM7fPKDOfQiR7rELA02DS/43WgOvCur]",
-            "iv":  "EJ[1:/Et/1aFPDPS5BD8vRGqgGkpTmQ+2czx8ovIvntyv5WY=:IJSChsngMGsqECnt2+zcbOfub4OVcMN3:gRV8QbDpvimoYVdQYd0Suts5kCcSYm94X7/eqDREtDM=]",
+            "iv": "EJ[1:/Et/1aFPDPS5BD8vRGqgGkpTmQ+2czx8ovIvntyv5WY=:IJSChsngMGsqECnt2+zcbOfub4OVcMN3:gRV8QbDpvimoYVdQYd0Suts5kCcSYm94X7/eqDREtDM=]",
             "_label": "account_additional_settings"
-          }    
+          }
         },
         "_api_endpoint": "https://central.freshworksapi.com/collector",
         "envoy_egress": {
@@ -2523,6 +2543,10 @@
             "shard_37": {
               "_username": "migration",
               "password": "EJ[1:ByWKFZCqMExeawDRUmyb+dlUALyLWxv2Zaw0UfcAogA=:v/QFyaEh/MtxDYZIcgaT6IY2Tp5SRENc:5CI3YmJ8HzYan7hN0lBhYUiVhE2HD6AupA8=]"
+            },
+            "shard_38_3": {
+              "_username": "migration",
+              "password": "EJ[1:jx8zAIGILIDQoiQwLaNYE7o+Mj1voPjXfcUX8iq6GS0=:yYTeyIkXNz0p+Col79Ogr1jVj47PdlYU:QUu3iwMP7umFVFanKiymd/5YCvHAFEzw0So=]"
             }
           }
         }
