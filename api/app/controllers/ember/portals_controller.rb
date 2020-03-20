@@ -19,12 +19,10 @@ module Ember
       if current_account.subscription.sprout_plan?
           render_request_error :access_denied, 403 
           return false
-      else 
-        if params[cname]['helpdesk_logo'].present?
-          assign_protected
-          update_logo
-        else
-          reset_preference
+      else
+        assign_protected
+        if params[cname].key?(:helpdesk_logo)
+          params[cname]['helpdesk_logo'].present? ? update_logo : remove_logo
         end
       end
 
@@ -76,13 +74,12 @@ module Ember
         render_custom_errors(agent, true) unless portal.valid?
       end
 
-      def reset_preference
-        (@item[:preferences]).merge!(params[cname][:preferences])
+      def remove_logo
         @item.helpdesk_logo.destroy if @item.helpdesk_logo.present?
       end
 
       def assign_protected
-        (@item[:preferences]).merge!(params[cname][:preferences])
+        (@item[:preferences]).deep_merge!(params[cname][:preferences] || {})
       end
 
       def build_helpdesk_logo

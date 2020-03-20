@@ -131,6 +131,29 @@ class Ember::PortalsControllerTest < ActionController::TestCase
     match_json(portal_show_pattern(portal))
   end
 
+  def test_update_logo_without_helpdesk_preferences
+    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
+    portal = create_portal_with_customisation
+    logo = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: Account.current.id)
+    params_hash = portal_hash(portal)
+    params_hash[:preferences].delete(:helpdesk)
+    put :update, construct_params({ version: 'private', id: portal.id }, params_hash.merge(helpdesk_logo: logo.attributes))
+    assert_response 200
+    portal.reload
+    assert portal.helpdesk_logo.id == logo.id
+  end
+
+  def test_update_helpdesk_preferences_without_logo
+    portal = create_portal_with_customisation
+    params_hash = portal_hash(portal)
+    params_hash.delete(:helpdesk_logo)
+    put :update, construct_params({ version: 'private', id: portal.id }, params_hash)
+    assert_response 200
+    portal.reload
+    assert portal.preferences[:helpdesk][:primary_background] == params_hash[:preferences][:helpdesk][:primary_background]
+    assert portal.preferences[:helpdesk][:nav_background] == params_hash[:preferences][:helpdesk][:nav_background]
+  end
+
   def test_bot_prerequisites
     skip('failures and errors 21')
     portal = Account.current.portals.first
