@@ -11,6 +11,8 @@ module ApiSolutions
     validate :agent_exists?, if: -> { @agent_id && errors[:agent_id].blank? }
     validates :folder_name, custom_absence: { message: :translation_available_already }, if: -> { create_or_update? && secondary_language? && folder_exists? }
     validates :category_name, custom_absence: { message: :translation_available_already }, if: -> { create_or_update? && secondary_language? && category_exists? }
+    validates :folder_name, custom_absence: { message: :permission_required_to_edit_category_folder }, if: -> { @folder_name && create_or_update? && !User.current.privilege?(:manage_solutions) }
+    validates :category_name, custom_absence: { message: :permission_required_to_edit_category_folder }, if: -> { @category_name && create_or_update? && !User.current.privilege?(:manage_solutions) }
     validates :folder_name, required: { message: :translation_not_available }, if: -> { create_or_update? && secondary_language? && !folder_exists? }
     validates :category_name, required: { message: :translation_not_available }, if: -> { create_or_update? && secondary_language? && !category_exists? }
     validate :create_tag_permission, if: -> { !filters? && @tags }

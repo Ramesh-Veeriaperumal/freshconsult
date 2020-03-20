@@ -102,6 +102,7 @@ api_error_messages:
   cant_set_for_secondary_language: "Cannot set, unless the action is performed on the resource in primary language"
   too_long_too_short: "Has %{current_count} %{element_type}, it should have minimum of %{min_count} %{element_type} and can have maximum of %{max_count} %{element_type}"
   translation_available_already: "%{resource} translation is available already. %{attribute} attribute is not required"
+  permission_required_to_edit_category_folder: Article update failed as category and folder name is missing. You don’t have permission to update it, please contact your administrator.
   attribute_not_required: "It cannot be set, for articles belonging to primary language."
   translation_not_available: "%{resource} translation is not available. %{attribute} attribute is required."
   language_not_allowed: "Language given in the request URL (%{code}) is not found. Allowed languages are %{list}"

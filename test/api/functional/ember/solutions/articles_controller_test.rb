@@ -306,7 +306,7 @@ module Ember
 
       def test_article_content_with_both_draft_and_article
         draft = @account.solution_drafts.last
-        get :article_content, controller_params(version: 'private', id: draft.article.parent_id, language: 'en')
+        get :article_content, controller_params(version: 'private', id: draft.article.parent_id, language: draft.article.language_code)
         assert_response 200
         match_json(article_content_pattern(draft.article))
       end
