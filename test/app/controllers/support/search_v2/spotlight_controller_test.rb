@@ -22,7 +22,7 @@ class Support::SearchV2::SpotlightControllerTest < ActionController::TestCase
   def test_construct_es_query_with_category_ids_params
     forum_category1 = create_test_category
     forum_category2 = create_test_category
-    @controller.params = { category_ids: "#{forum_category1.id},#{forum_category2.id}" }
+    @controller.params = { forum_category_ids: "#{forum_category1.id},#{forum_category2.id}" }
     query = @controller.safe_send('search_forum_categories_with_ids', [forum_category1.id, forum_category2.id])
     expected_query = [forum_category1.id, forum_category2.id]
     assert_equal expected_query, query
