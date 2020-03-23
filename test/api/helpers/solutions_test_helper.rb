@@ -225,10 +225,30 @@ module SolutionsTestHelper
     }
   end
 
-  def widget_article_show_pattern(article)
+  def widget_portal_link(article, help_widget)
+    widget_product_id = help_widget.try(:product_id)
+
+    portal = begin
+      if widget_product_id
+        Account.current.portals.where(product_id: widget_product_id).first
+      else
+        Account.current.main_portal_from_cache
+      end
+    end
+    return nil unless portal.try(:has_solution_category?, article.parent.solution_category_meta.id)
+
+    url_options = { host: portal.host, protocol: portal.url_protocol }
+    url_options[:url_locale] = article.language.code if Account.current.multilingual?
+    Rails.application.routes.url_helpers.support_solutions_article_url(article, url_options)
+  end
+
+  def widget_article_show_pattern(article, help_widget = nil)
     widget_article_search_pattern(article).merge(
       attachments: widget_attachment_pattern(article.attachments),
-      description: article.description
+      description: article.description,
+      meta: {
+        portal_link: widget_portal_link(article, help_widget)
+      }
     )
   end
 
@@ -538,7 +558,7 @@ module SolutionsTestHelper
   end
 
   def untranslated_article_pattern(article, lang_code)
-    {
+    ret_hash = {
       id: article.parent_id,
       title: (article.draft || article).title,
       status: article.status,
@@ -547,6 +567,11 @@ module SolutionsTestHelper
       category: untranslated_category_pattern(article.solution_folder_meta.solution_category_meta, lang_code),
       folder: untranslated_folder_pattern(article.solution_folder_meta, lang_code)
     }
+
+    if Account.current.article_approval_workflow_enabled?
+      ret_hash[:approval_data] = { approval_status: approval_record(article.parent).try(:approval_status), approver_id: approver_record(article.parent).try(:approver_id), user_id: approval_record(article.parent).try(:user_id) }
+    end
+    ret_hash
   end
 
   def untranslated_folder_pattern(folder_meta, lang_code)

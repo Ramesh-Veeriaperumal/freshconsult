@@ -77,7 +77,7 @@ class Solutions::ArticleDecorator < ApiDecorator
       end
     end
     if (private_api? || channel_v2_api?) && Account.current.article_approval_workflow_enabled?
-      ret_hash[:approval_data] = { approval_status: approval_record(record).try(:approval_status), approver_id: approver_record(record).try(:approver_id), user_id: approval_record(record).try(:user_id) }
+      ret_hash[:approval_data] = approval_hash
     end
     ret_hash
   end
@@ -86,6 +86,10 @@ class Solutions::ArticleDecorator < ApiDecorator
     {
       convo_token: Collaboration::Article.new.convo_token(record.parent_id, record.language_code)
     }
+  end
+
+  def approval_hash
+    { approval_status: approval_record(record).try(:approval_status), approver_id: approver_record(record).try(:approver_id), user_id: approval_record(record).try(:user_id) }
   end
 
   def draft_user_name
@@ -204,7 +208,7 @@ class Solutions::ArticleDecorator < ApiDecorator
   end
 
   def untranslated_filter_hash
-    {
+    ret_hash = {
       id: parent_id,
       title: record_or_draft.title,
       status: record.status,
@@ -213,6 +217,8 @@ class Solutions::ArticleDecorator < ApiDecorator
       category: Solutions::CategoryDecorator.new(record.solution_folder_meta.solution_category_meta, language_code: @lang_code).untranslated_filter_hash,
       folder: Solutions::FolderDecorator.new(record.solution_folder_meta, language_code: @lang_code).untranslated_filter_hash
     }
+    ret_hash[:approval_data] = approval_hash if private_api? && Account.current.article_approval_workflow_enabled?
+    ret_hash
   end
 
   def translation_summary_hash

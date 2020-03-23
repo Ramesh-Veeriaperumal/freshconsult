@@ -373,10 +373,10 @@ class Agent < ActiveRecord::Base
     return unless Account.current.out_of_office_enabled?
 
     user.make_current
-    ooo_response = perform_shift_request(nil, nil, true)
+    ooo_response = perform_shift_request(nil, nil, 'active')
     return if ooo_response[:body].empty? || ooo_response[:code] != 200
     
-    @out_of_office_days = (ooo_response[:body][0]['end_time'].to_datetime - ooo_response[:body][0]['start_time'].to_datetime).to_i
+    @out_of_office_days = (ooo_response[:body]['data'][0]['end_time'].to_datetime - ooo_response[:body]['data'][0]['start_time'].to_datetime).to_i
   end
 
   protected

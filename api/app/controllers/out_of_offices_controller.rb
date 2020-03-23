@@ -22,11 +22,13 @@ class OutOfOfficesController < ApiApplicationController
     def extended_url(action, out_of_office_id)
       case action
       when :index, :create
-        OUT_OF_OFFICE_INDEX
+        params[:state].present? ? (OUT_OF_OFFICE_INDEX + format(QUERY_PARAM, state_value: params[:state])) : OUT_OF_OFFICE_INDEX
       else
         format(OUT_OF_OFFICE_SHOW, out_of_office_id: out_of_office_id)
       end
     end
+
+    def validate_filter_params; end
 
     def launch_party_name
       FeatureConstants::OUT_OF_OFFICE

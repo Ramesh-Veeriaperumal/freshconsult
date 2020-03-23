@@ -27,7 +27,7 @@ module Admin::ShiftHelper
   end
 
   def perform_shift_request(params = nil, cname_params = nil, model_query_params = false)
-    extnd_url = model_query_params ? (OUT_OF_OFFICE_INDEX + ACTIVE_QUERY_PARAM) : extended_url(action, params['id'])
+    extnd_url = model_query_params ? (OUT_OF_OFFICE_INDEX + format(QUERY_PARAM, state_value: model_query_params)) : extended_url(action, params['id'])
     url = base_url + extnd_url
     options = { headers: headers }
     options[:body] = cname_params.to_json if cname_params.present?
@@ -41,7 +41,8 @@ module Admin::ShiftHelper
 
   def execute_shift_request(url, options, model_query_params = false)
     options[:verify_blacklist] = true
-    proxy_response = model_query_params ? HTTParty::Request.new(ACTION_METHOD_TO_CLASS_MAPPING[:index], url, options).perform : HTTParty::Request.new(ACTION_METHOD_TO_CLASS_MAPPING[action], url, options).perform
+    action_method = model_query_params ? :index : action
+    proxy_response = HTTParty::Request.new(ACTION_METHOD_TO_CLASS_MAPPING[action_method], url, options).perform
     { code: proxy_response.code, body: proxy_response.parsed_response }
   rescue StandardError => e
     NewRelic::Agent.notice_error(e, description: 'error while hitting shift service')

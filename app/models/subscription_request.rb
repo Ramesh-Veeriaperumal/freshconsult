@@ -29,6 +29,11 @@ class SubscriptionRequest < ActiveRecord::Base
     fsm_field_agents.present?
   end
 
+  def product_loss?
+    account.has_feature?(:unlimited_multi_product) && !subscription_plan.unlimited_multi_product? &&
+      subscription_plan.multi_product? && account.products.count > AccountConstants::MULTI_PRODUCT_LIMIT
+  end
+
   private
 
   def set_feature_loss

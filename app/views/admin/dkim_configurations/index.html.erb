@@ -31,12 +31,16 @@
             :class => "pagination pagination-centered"%>
       </div>
     <%else%>
-      <div class="new-email-domain muted"> 
-        <span><%= t('email_configs.dkim.new_dkim') %> - </span>
-        <%if current_account.launched?(:email_mailbox) %>
-          <a class="falcon-mailbox-new falcon-mailbox-link"><%= t("create") %></a>
+      <div class="new-email-domain muted">
+        <%if current_account.multiple_emails_enabled? %>
+          <span><%= t('email_configs.dkim.new_dkim') %> - </span>
+          <%if current_account.launched?(:email_mailbox) %>
+            <a class="falcon-mailbox-new falcon-mailbox-link"><%= t("create") %></a>
+          <% else %>
+            <a href="/admin/email_configs/new" class="email_config-new"><%= t("create") %></a>
+          <% end %>
         <% else %>
-          <a href="/admin/email_configs/new" class="email_config-new"><%= t("create") %></a>
+          <span><%= t('email_configs.dkim.new_dkim') %></span>
         <% end %>
       </div>
     <%end%>

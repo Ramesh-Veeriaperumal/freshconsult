@@ -58,7 +58,9 @@ module Widget
         end
 
         def decorator_options
-          [::Widget::Solutions::ArticleDecorator, {}]
+          options = {}
+          options[:widget_product_id] = @help_widget.product_id if show?
+          [::Widget::Solutions::ArticleDecorator, options]
         end
 
         def load_articles

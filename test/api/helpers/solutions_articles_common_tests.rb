@@ -304,6 +304,25 @@ module SolutionsArticlesCommonTests
     assert article.status == 1
   end
 
+  def test_create_article_translation_without_manage_solution_privilege
+    User.any_instance.stubs(:privilege?).with(:manage_solutions).returns(false)
+    User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
+    User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+    User.any_instance.stubs(:privilege?).with(:delete_solution).returns(true)
+    User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+    sample_article = create_article(article_params(lang_codes: ['primary']))
+    title = 'translated title'
+    description = 'translated description'
+    status = 1
+    category_name = 'translated category_name'
+    folder_name = 'translated folder_name'
+    post :create, construct_params({ version: version, id: sample_article.parent_id, language: @account.supported_languages.last }, title: title, description: description, status: status, category_name: category_name, folder_name: folder_name)
+    assert_response 400
+    match_json([bad_request_error_pattern('folder_name', :permission_required_to_edit_category_folder, code: :incomaptiable_field), bad_request_error_pattern('category_name', :permission_required_to_edit_category_folder, code: :incomaptiable_field)])
+  ensure
+    User.any_instance.unstub(:privilege?)
+  end
+
   def test_create_translation_with_type
     sample_article = get_article_without_translation
     title = 'translated title'

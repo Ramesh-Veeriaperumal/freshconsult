@@ -43,15 +43,15 @@ module Widget
 
       def teardown
         @article.try(:destroy)
-        @help_widget_category.try(:destroy)
+        @widget.try(:destroy)
         super
         controller.class.any_instance.unstub(:api_current_user)
         User.unstub(:current)
         unset_login_support
       end
 
-      def set_widget
-        @widget = create_widget
+      def set_widget(options = {})
+        @widget = create_widget(options)
         @widget.settings[:components][:solution_articles] = true
         @widget.save
         @request.env['HTTP_X_WIDGET_ID'] = @widget.id
@@ -123,6 +123,24 @@ module Widget
         @help_widget_category.save
       end
 
+      def portal
+        if @widget.product_id
+          Account.current.portals.where(product_id: @widget_product_id).first
+        else
+          Account.current.main_portal_from_cache
+        end
+      end
+
+      def create_portal_association
+        portal_solution_category = portal.portal_solution_categories.new
+        portal_solution_category.solution_category_meta_id = @help_widget_category.solution_category_meta_id
+        portal_solution_category.save
+      end
+
+      def remove_portal_assoication
+        portal.portal_solution_categories.destroy
+      end
+
       def relavant_article(user = nil, ids = nil)
         relavant_article = @account.solution_article_meta
                                    .for_help_widget(@widget, user)
@@ -148,9 +166,64 @@ module Widget
         @account.stubs(:multilingual?).returns(false)
         get :show, controller_params(id: @article.parent_id)
         assert_response 200
-        match_json(widget_article_show_pattern(@article))
+        match_json(widget_article_show_pattern(@article, @widget))
         ar_article = @account.solution_articles.where(parent_id: @article.parent_id, language_id: Language.find_by_code('en').id).first
-        match_json(widget_article_show_pattern(ar_article))
+        match_json(widget_article_show_pattern(ar_article, @widget))
+        solution_folder_meta = @article.parent.solution_folder_meta
+        assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
+        result = parse_response(@response.body)
+        assert_equal result['title'], 'en Test'
+        assert_nil Language.current
+      ensure
+        @account.unstub(:multilingual?)
+      end
+
+      def test_show_article_with_product_portal_association
+        @account.stubs(:multilingual?).returns(false)
+        create_portal_association
+        get :show, controller_params(id: @article.parent_id)
+        assert_response 200
+        match_json(widget_article_show_pattern(@article, @widget))
+        ar_article = @account.solution_articles.where(parent_id: @article.parent_id, language_id: Language.find_by_code('en').id).first
+        match_json(widget_article_show_pattern(ar_article, @widget))
+        solution_folder_meta = @article.parent.solution_folder_meta
+        assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
+        result = parse_response(@response.body)
+        assert_equal result['title'], 'en Test'
+        assert_nil Language.current
+      ensure
+        remove_portal_assoication
+        @account.unstub(:multilingual?)
+      end
+
+      def test_show_article_with_main_portal_association
+        @account.stubs(:multilingual?).returns(false)
+        set_widget(product_id: nil)
+        set_category
+        create_portal_association
+        get :show, controller_params(id: @article.parent_id)
+        assert_response 200
+        match_json(widget_article_show_pattern(@article, @widget))
+        ar_article = @account.solution_articles.where(parent_id: @article.parent_id, language_id: Language.find_by_code('en').id).first
+        match_json(widget_article_show_pattern(ar_article, @widget))
+        solution_folder_meta = @article.parent.solution_folder_meta
+        assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
+        result = parse_response(@response.body)
+        assert_equal result['title'], 'en Test'
+        assert_nil Language.current
+      ensure
+        remove_portal_assoication
+        @account.unstub(:multilingual?)
+      end
+
+      def test_show_article_with_product_without_portal
+        @account.stubs(:multilingual?).returns(false)
+        Account.current.products.find_by_id(@widget.product_id).portal.destroy
+        get :show, controller_params(id: @article.parent_id)
+        assert_response 200
+        match_json(widget_article_show_pattern(@article, @widget))
+        ar_article = @account.solution_articles.where(parent_id: @article.parent_id, language_id: Language.find_by_code('en').id).first
+        match_json(widget_article_show_pattern(ar_article, @widget))
         solution_folder_meta = @article.parent.solution_folder_meta
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         result = parse_response(@response.body)
@@ -164,9 +237,9 @@ module Widget
         @account.stubs(:multilingual?).returns(false)
         get :show, controller_params(id: @article.parent_id)
         assert_response 200
-        match_json(widget_article_show_pattern(@article))
+        match_json(widget_article_show_pattern(@article, @widget))
         ar_article = @account.solution_articles.where(parent_id: @article.parent_id, language_id: Language.find_by_code('en').id).first
-        match_json(widget_article_show_pattern(ar_article))
+        match_json(widget_article_show_pattern(ar_article, @widget))
         solution_folder_meta = @article.parent.solution_folder_meta
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         result = parse_response(@response.body)
@@ -195,9 +268,9 @@ module Widget
         set_user_login_headers(name: user.name, email: user.email)
         get :show, controller_params(id: @article.parent_id)
         assert_response 200
-        match_json(widget_article_show_pattern(@article))
+        match_json(widget_article_show_pattern(@article, @widget))
         ar_article = @account.solution_articles.where(parent_id: @article.parent_id, language_id: Language.find_by_code('en').id).first
-        match_json(widget_article_show_pattern(ar_article))
+        match_json(widget_article_show_pattern(ar_article, @widget))
         solution_folder_meta = @article.parent.solution_folder_meta
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         result = parse_response(@response.body)
@@ -281,7 +354,7 @@ module Widget
         get :show, controller_params(id: solution_article.parent_id)
         assert_response 200
         ar_article = @account.solution_articles.where(parent_id: solution_article.parent_id, language_id: Language.find_by_code('en').id).first
-        match_json(widget_article_show_pattern(ar_article))
+        match_json(widget_article_show_pattern(ar_article, @widget))
         solution_folder_meta = solution_article.parent.solution_folder_meta
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         result = parse_response(@response.body)
@@ -296,7 +369,7 @@ module Widget
         get :show, controller_params(id: @article.parent_id, language: 'es')
         assert_response 200
         ar_article = @account.solution_articles.where(parent_id: @article.parent_id, language_id: Language.find_by_code('es').id).first
-        match_json(widget_article_show_pattern(ar_article))
+        match_json(widget_article_show_pattern(ar_article, @widget))
         solution_folder_meta = @article.parent.solution_folder_meta
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         result = parse_response(@response.body)
@@ -308,7 +381,7 @@ module Widget
         get :show, controller_params(id: @article.parent_id, language: 'essss')
         assert_response 200
         ar_article = @account.solution_articles.where(parent_id: @article.parent_id, language_id: Language.find_by_code('en').id).first
-        match_json(widget_article_show_pattern(ar_article))
+        match_json(widget_article_show_pattern(ar_article, @widget))
         solution_folder_meta = @article.parent.solution_folder_meta
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
         result = parse_response(@response.body)
@@ -330,7 +403,7 @@ module Widget
         assert_response 200
         solution_folder_meta = @article.parent.solution_folder_meta
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
-        match_json(widget_article_show_pattern(att_article))
+        match_json(widget_article_show_pattern(att_article, @widget))
         assert_nil Language.current
       ensure
         attachments.destroy
@@ -1206,7 +1279,7 @@ module Widget
         assert_response 200
         solution_folder_meta = @article.parent.solution_folder_meta
         assert_equal solution_folder_meta.visibility, Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone]
-        match_json(widget_article_show_pattern(@article))
+        match_json(widget_article_show_pattern(@article, @widget))
         assert_nil Language.current
       end
     end

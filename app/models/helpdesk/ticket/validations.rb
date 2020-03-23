@@ -34,7 +34,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   validate :requester_company_id_validation, :if => :company_id_changed?
 
-  validate :field_agent_can_manage_appointments?, on: :update, if: -> { errors.blank? && valid_service_task? && Account.current.field_agents_can_manage_appointments_setting_enabled? }
+  validate :field_agent_can_manage_appointments?, on: :update, if: -> { errors.blank? && valid_service_task? }
   validate :check_appointment_time_range, if: -> { errors.blank? && valid_service_task? }
 
   def due_by_validation

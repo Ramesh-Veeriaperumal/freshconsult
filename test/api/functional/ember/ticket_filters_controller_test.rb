@@ -246,16 +246,21 @@ module Ember
     end
 
     def test_list_all_filters_when_fsm_enabled
-      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
-      get :index, controller_params.merge(version: 'private')
-      assert_response 200
-      match_custom_json(response.body, ticket_filter_index_pattern)
-      fsm_filter = JSON.parse(response.body).find { |x| x['id'] == 'unresolved_service_tasks' }
-      assert fsm_filter.present?
-      assert_equal 'appointment_start_time', fsm_filter['order_by']
-      assert_equal 'asc', fsm_filter['order_type']
-    ensure
-      Account.any_instance.unstub(:field_service_management_enabled?)
+      enable_fsm do
+        begin
+          Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+          perform_fsm_operations
+          get :index, controller_params.merge(version: 'private')
+          assert_response 200
+          match_custom_json(response.body, ticket_filter_index_pattern)
+          fsm_filter = JSON.parse(response.body).find { |x| x['id'] == 'unresolved_service_tasks' }
+          assert fsm_filter.present?
+          assert_equal 'appointment_start_time', fsm_filter['order_by']
+          assert_equal 'asc', fsm_filter['order_type']
+        ensure
+          Account.any_instance.unstub(:field_service_management_enabled?)
+        end
+      end
     end
 
     def test_list_all_filters_when_fsm_disabled
@@ -274,6 +279,7 @@ module Ember
         begin
           Account.current.ticket_filters.where(name: 'Unassigned service tasks').destroy_all
           Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+          perform_fsm_operations
           get :index, controller_params.merge(version: 'private')
           assert_response 200
           match_custom_json(response.body, ticket_filter_index_pattern)
@@ -299,11 +305,10 @@ module Ember
       Account.any_instance.unstub(:field_service_management_enabled?)
     end
 
-    def test_overdue_tasks_filter_present_when_fsm_enabled_with_lp
+    def test_overdue_tasks_filter_present_when_fsm_enabled
       enable_fsm do
         begin
           Account.current.ticket_filters.where(name: 'Overdue service tasks').destroy_all
-          Account.current.launch(:fsm_custom_to_default_filter)
           Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
           perform_fsm_operations
           get :index, controller_params.merge(version: 'private')
@@ -314,48 +319,14 @@ module Ember
           assert_equal 'appointment_start_time', fsm_filter['order_by']
           assert_equal 'asc', fsm_filter['order_type']
         ensure
-          Account.current.rollback(:fsm_custom_to_default_filter)
           Account.any_instance.unstub(:field_service_management_enabled?)
         end
       end
     end
 
-    def test_overdue_tasks_filter_not_present_when_fsm_enabled_without_lp
-      enable_fsm do
-        begin
-          Account.current.ticket_filters.where(name: 'Overdue service tasks').destroy_all
-          Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
-          Account.any_instance.stubs(:fsm_custom_to_default_filter_enabled?).returns(false)
-          get :index, controller_params.merge(version: 'private')
-          assert_response 200
-          match_custom_json(response.body, ticket_filter_index_pattern)
-          fsm_filter = JSON.parse(response.body).find { |x| x['id'] == 'overdue_service_tasks' }
-          assert_nil fsm_filter
-        ensure
-          Account.any_instance.unstub(:field_service_management_enabled?)
-          Account.any_instance.unstub(:fsm_custom_to_default_filter_enabled?)
-        end
-      end
-    end
-
-    def test_overdue_tasks_filter_not_present_when_fsm_disabled_with_lp
+    def test_overdue_tasks_filter_not_present_when_fsm_disabled
       Account.current.ticket_filters.where(name: 'Overdue service tasks').destroy_all
-      Account.current.launch(:fsm_custom_to_default_filter)
       Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
-      get :index, controller_params.merge(version: 'private')
-      assert_response 200
-      match_custom_json(response.body, ticket_filter_index_pattern)
-      fsm_filter = JSON.parse(response.body).find { |x| x['id'] == 'overdue_service_tasks' }
-      assert_nil fsm_filter
-    ensure
-      Account.current.rollback(:fsm_custom_to_default_filter)
-      Account.any_instance.unstub(:field_service_management_enabled?)
-    end
-
-    def test_overdue_tasks_filter_not_present_when_fsm_disabled_without_lp
-      Account.current.ticket_filters.where(name: 'overdue service tasks').destroy_all
-      Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
-      Account.any_instance.stubs(:fsm_custom_to_default_filter_enabled?).returns(false)
       get :index, controller_params.merge(version: 'private')
       assert_response 200
       match_custom_json(response.body, ticket_filter_index_pattern)
@@ -365,11 +336,10 @@ module Ember
       Account.any_instance.unstub(:field_service_management_enabled?)
     end
 
-    def test_service_tasks_due_today_filter_present_when_fsm_enabled_with_lp
+    def test_service_tasks_due_today_filter_present_when_fsm_enabled
       enable_fsm do
         begin
           Account.current.ticket_filters.where(name: 'Service tasks due today').destroy_all
-          Account.current.launch(:fsm_custom_to_default_filter)
           Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
           perform_fsm_operations
           get :index, controller_params.merge(version: 'private')
@@ -380,33 +350,13 @@ module Ember
           assert_equal 'appointment_start_time', fsm_filter['order_by']
           assert_equal 'asc', fsm_filter['order_type']
         ensure
-          Account.current.rollback(:fsm_custom_to_default_filter)
           Account.any_instance.unstub(:field_service_management_enabled?)
         end
       end
     end
 
-    def test_service_tasks_due_today_filter_not_present_when_fsm_enabled_without_lp
-      enable_fsm do
-        begin
-          Account.current.ticket_filters.where(name: 'Service tasks due today').destroy_all
-          Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
-          Account.any_instance.stubs(:fsm_custom_to_default_filter_enabled?).returns(false)
-          get :index, controller_params.merge(version: 'private')
-          assert_response 200
-          match_custom_json(response.body, ticket_filter_index_pattern)
-          fsm_filter = JSON.parse(response.body).find { |x| x['id'] == 'service_tasks_due_today' }
-          assert_nil fsm_filter
-        ensure
-          Account.any_instance.unstub(:field_service_management_enabled?)
-          Account.any_instance.unstub(:fsm_custom_to_default_filter_enabled?)
-        end
-      end
-    end
-
-    def test_service_tasks_due_today_filter_not_present_when_fsm_disabled_with_lp
+    def test_service_tasks_due_today_filter_not_present_when_fsm_disabled
       Account.current.ticket_filters.where(name: 'Service tasks due today').destroy_all
-      Account.current.launch(:fsm_custom_to_default_filter)
       Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
       get :index, controller_params.merge(version: 'private')
       assert_response 200
@@ -414,28 +364,12 @@ module Ember
       fsm_filter = JSON.parse(response.body).find { |x| x['id'] == 'service_tasks_due_today' }
       assert_nil fsm_filter
     ensure
-      Account.current.rollback(:fsm_custom_to_default_filter)
       Account.any_instance.unstub(:field_service_management_enabled?)
     end
 
-    def test_service_tasks_due_today_filter_not_present_when_fsm_disabled_without_lp
-      Account.current.ticket_filters.where(name: 'Service tasks due today').destroy_all
-      Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
-      Account.any_instance.stubs(:fsm_custom_to_default_filter_enabled?).returns(false)
-      get :index, controller_params.merge(version: 'private')
-      assert_response 200
-      match_custom_json(response.body, ticket_filter_index_pattern)
-      fsm_filter = JSON.parse(response.body).find { |x| x['id'] == 'service_tasks_due_today' }
-      assert_nil fsm_filter
-    ensure
-      Account.any_instance.unstub(:field_service_management_enabled?)
-      Account.any_instance.unstub(:fsm_custom_to_default_filter_enabled?)
-    end
-
-    def test_service_tasks_starts_today_filter_present_when_fsm_enabled_with_lp
+    def test_service_tasks_starts_today_filter_present_when_fsm_enabled
       enable_fsm do
         begin
-          Account.current.launch(:fsm_custom_to_default_filter)
           Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
           perform_fsm_operations
           get :index, controller_params.merge(version: 'private')
@@ -446,31 +380,12 @@ module Ember
           assert_equal 'appointment_start_time', fsm_filter['order_by']
           assert_equal 'asc', fsm_filter['order_type']
         ensure
-          Account.current.rollback(:fsm_custom_to_default_filter)
           Account.any_instance.unstub(:field_service_management_enabled?)
         end
       end
     end
 
-    def test_service_tasks_starts_today_filter_not_present_when_fsm_enabled_without_lp
-      enable_fsm do
-        begin
-          Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
-          Account.any_instance.stubs(:fsm_custom_to_default_filter_enabled?).returns(false)
-          get :index, controller_params.merge(version: 'private')
-          assert_response 200
-          match_custom_json(response.body, ticket_filter_index_pattern)
-          fsm_filter = JSON.parse(response.body).find { |x| x['id'] == 'service_tasks_starts_today' }
-          assert_nil fsm_filter
-        ensure
-          Account.any_instance.unstub(:field_service_management_enabled?)
-          Account.any_instance.unstub(:fsm_custom_to_default_filter_enabled?)
-        end
-      end
-    end
-
-    def test_service_tasks_starts_today_filter_not_present_when_fsm_disabled_with_lp
-      Account.current.launch(:fsm_custom_to_default_filter)
+    def test_service_tasks_starts_today_filter_not_present_when_fsm_disabled
       Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
       get :index, controller_params.merge(version: 'private')
       assert_response 200
@@ -478,21 +393,8 @@ module Ember
       fsm_filter = JSON.parse(response.body).find { |x| x['id'] == 'service_tasks_starts_today' }
       assert_nil fsm_filter
     ensure
-      Account.current.rollback(:fsm_custom_to_default_filter)
       Account.any_instance.unstub(:field_service_management_enabled?)
     end
 
-    def test_service_tasks_starts_today_filter_not_present_when_fsm_disabled_without_lp
-      Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
-      Account.any_instance.stubs(:fsm_custom_to_default_filter_enabled?).returns(false)
-      get :index, controller_params.merge(version: 'private')
-      assert_response 200
-      match_custom_json(response.body, ticket_filter_index_pattern)
-      fsm_filter = JSON.parse(response.body).find { |x| x['id'] == 'service_tasks_starts_today' }
-      assert_nil fsm_filter
-    ensure
-      Account.any_instance.unstub(:field_service_management_enabled?)
-      Account.any_instance.unstub(:fsm_custom_to_default_filter_enabled?)
-    end
   end
 end

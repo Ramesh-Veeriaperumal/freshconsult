@@ -47,13 +47,26 @@ module Authority
     private
 
       def write_file
-        File.open("#{::Rails.root}/config/#{@file}", "w") do |f|
-          f.write(@data.to_yaml)
-        end  
+        file = "#{::Rails.root}/config/#{@file}"
+        if Rails.env.test?
+          File.open(file, File::RDWR) do |f|
+            f.flock(File::LOCK_EX)
+            f.write(@data.to_yaml)
+          end
+        else
+          File.open(file, "w") do |f|
+            f.write(@data.to_yaml)
+          end
+        end
       end
 
       def read_file
-        YAML.load_file("#{::Rails.root}/config/#{@file}")
+        file = "#{::Rails.root}/config/#{@file}"
+        if Rails.env.test?
+          File.open(file, "r") { |f| f.flock(File::LOCK_EX); YAML.load(f.read) }
+        else
+          YAML.load_file(file)
+        end
       end
 
       def build_data(data)

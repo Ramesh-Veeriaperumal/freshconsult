@@ -24,4 +24,8 @@ module UsageMetrics::ForestFeatures
       .try(:[], :sandbox)
       .try(:[], :status).present?
   end
+
+  def unlimited_multi_product(args)
+    args[:account].products.count > AccountConstants::MULTI_PRODUCT_LIMIT
+  end
 end

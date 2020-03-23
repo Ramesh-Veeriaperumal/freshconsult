@@ -204,18 +204,15 @@ class UpdateTicketStatesTest < ActionView::TestCase
     assert_equal @agent.id, reports_hash['first_response_agent_id']
   end
 
-  def test_update_first_response_with_rails_lock_exception
+  def test_update_first_response_with_rails_lock_exception_not_thrown
     input = get_update_ticket_states_worker_payload
-    status = @ticket.status
     Tickets::UpdateTicketStatesWorker.new.perform(input)
     stub_const(LockVersion::Utility, 'MAX_RETRY_COUNT', 0) do
-      assert_raises ActiveRecord::StaleObjectError do
-        @ticket.update_attributes(status: 3)
-      end
+      @ticket.update_attributes(status: 3)
     end
     @ticket.reload
     reports_hash = @ticket.schema_less_ticket.reports_hash
-    assert_equal status, @ticket.status
+    assert_equal @ticket.status, 3
     assert_equal @note.id, reports_hash['first_response_id']
     assert_equal @agent.id, reports_hash['first_response_agent_id']
   end
@@ -237,17 +234,13 @@ class UpdateTicketStatesTest < ActionView::TestCase
     end
   end
 
-  def test_destroy_ticket_with_rails_lock_exception
+  def test_destroy_ticket_with_rails_lock_exception_not_thrown
     Tickets::UpdateTicketStatesWorker.new.perform(get_update_ticket_states_worker_payload)
+    ticket_id = @ticket.id
     stub_const(LockVersion::Utility, 'MAX_RETRY_COUNT', 0) do
-      assert_raises ActiveRecord::StaleObjectError do
-        @ticket.destroy
-      end
+      @ticket.destroy
     end
-    assert_nothing_raised { @ticket.reload }
-    reports_hash = @ticket.schema_less_ticket.reports_hash
-    assert_equal @note.id, reports_hash['first_response_id']
-    assert_equal @agent.id, reports_hash['first_response_agent_id']
+    assert_nil Account.current.tickets.find_by_id(ticket_id)
   end
 
   def test_destroy_ticket_with_lock_column_null_in_database

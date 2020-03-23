@@ -195,10 +195,6 @@ def distributed_run(category) {
 
                 // Running setup
                 if(category != 'pronto') {
-                    // Adding Hard Sleep of 1 minute to handle random rake abort failure
-                    if(category == 'public') {
-                        sleep(time: 10, unit: 'MINUTES')
-                    }
                     echo "Running Setup of $category categorized TestCases"
                     build_setup(category)
                 }
@@ -301,7 +297,7 @@ def sonarqube_analysis() {
 node("spot_backend") {
    try {
       // Adding timout to the node
-      timeout(time: 80, unit: 'MINUTES') {
+      timeout(time: 60, unit: 'MINUTES') {
 
         cleanWs()
 

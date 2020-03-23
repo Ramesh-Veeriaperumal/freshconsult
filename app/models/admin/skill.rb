@@ -74,7 +74,6 @@ class Admin::Skill < ActiveRecord::Base
   end
   
   def matches?(ticket)
-    Rails.logger.debug "Inside SKILL matches? WITH ticket : #{ticket.inspect} conditions : #{conditions.inspect}"
     return true if conditions.blank?
     conditions.safe_send("#{match_type}?") do |c|
       current_evaluate_on = custom_eval(ticket, c.evaluate_on_type)

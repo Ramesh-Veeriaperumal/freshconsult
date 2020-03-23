@@ -9,7 +9,15 @@
 	</b>
 
 	<h2 class="heading">{{ article.title | h}}
-		<a href="javascript:print();" class="icon-print solution-print-icon" title="{% translate portal.print_title %}"></a>
+	 	<a href="javascript:print();"
+            class="solution-print--icon print--remove"
+ 			title="{% translate portal.print_title %}"
+ 			arial-role="link"
+ 			arial-label="{% translate portal.print_title %}"
+ 		>
+			<span class="icon-print"></span>
+			<span class="text-print">{% translate print %}</span>
+ 		</a>
 	</h2>
 	{% if article.personalized_articles? %}
 	<div> {% translate portal.article.created_by %} {{ article.author }} </div> 

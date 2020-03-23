@@ -11,15 +11,11 @@ class SubscriptionsControllerTest < ActionController::TestCase
   include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
 
   def setup
-    Subscription.any_instance.stubs(:chk_change_field_agents).returns(nil)
-    Subscription.any_instance.stubs(:chk_change_agents).returns(nil)
     Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(false)
     super
   end
 
   def teardown
-    Subscription.any_instance.unstub(:chk_change_field_agents)
-    Subscription.any_instance.unstub(:chk_change_agents)
     Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
   end
 
@@ -68,7 +64,6 @@ class SubscriptionsControllerTest < ActionController::TestCase
     current_plan_id = @account.subscription.subscription_plan_id
     params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
     params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
-    Subscription.any_instance.unstub(:chk_change_agents)
     SubscriptionPlan.any_instance.stubs(:amount).returns(0)
     @account.rollback(:downgrade_policy)
     post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :agent_limit)))
@@ -87,7 +82,6 @@ class SubscriptionsControllerTest < ActionController::TestCase
     current_plan_id = @account.subscription.subscription_plan_id
     params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
     params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
-    Subscription.any_instance.unstub(:chk_change_agents)
     SubscriptionPlan.any_instance.stubs(:amount).returns(0)
     @account.subscription.agent_limit = 1
     @account.subscription.save!
@@ -109,7 +103,6 @@ class SubscriptionsControllerTest < ActionController::TestCase
     current_plan_id = @account.subscription.subscription_plan_id
     params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
     params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
-    Subscription.any_instance.unstub(:chk_change_agents)
     SubscriptionPlan.any_instance.stubs(:amount).returns(35.00)
     current_subscription = @account.subscription
     current_subscription.agent_limit = 1
@@ -133,7 +126,6 @@ class SubscriptionsControllerTest < ActionController::TestCase
     current_plan_id = @account.subscription.subscription_plan_id
     params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
     params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
-    Subscription.any_instance.unstub(:chk_change_agents)
     SubscriptionPlan.any_instance.stubs(:amount).returns(35.00)
     current_subscription = @account.subscription
     current_subscription.state = 'active'
@@ -155,7 +147,6 @@ class SubscriptionsControllerTest < ActionController::TestCase
     current_plan_id = @account.subscription.subscription_plan_id
     params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
     params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
-    Subscription.any_instance.unstub(:chk_change_agents)
     SubscriptionPlan.any_instance.stubs(:amount).returns(35.00)
     current_subscription = @account.subscription
     current_subscription.state = 'trial'
@@ -177,7 +168,6 @@ class SubscriptionsControllerTest < ActionController::TestCase
     current_plan_id = @account.subscription.subscription_plan_id
     params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
     params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
-    Subscription.any_instance.unstub(:chk_change_agents)
     SubscriptionPlan.any_instance.stubs(:amount).returns(0)
     current_subscription = @account.subscription
     current_subscription.state = 'trial'
@@ -198,7 +188,6 @@ class SubscriptionsControllerTest < ActionController::TestCase
     current_plan_id = @account.subscription.subscription_plan_id
     params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
     params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
-    Subscription.any_instance.unstub(:chk_change_agents)
     SubscriptionPlan.any_instance.stubs(:amount).returns(35.00)
     current_subscription = @account.subscription
     current_subscription.state = 'trial'
@@ -221,7 +210,6 @@ class SubscriptionsControllerTest < ActionController::TestCase
     current_plan_id = @account.subscription.subscription_plan_id
     params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
     params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
-    Subscription.any_instance.unstub(:chk_change_agents)
     SubscriptionPlan.any_instance.stubs(:amount).returns(0)
     current_subscription = @account.subscription
     current_subscription.state = 'trial'
@@ -241,7 +229,6 @@ class SubscriptionsControllerTest < ActionController::TestCase
   def test_handle_field_agents_when_moving_from_trial_with_dp_enabled
     params = { agent_limit: '1', addons: { field_service_management: { enabled: 'true', value: '1' } } }
     stub_chargebee_requests
-    Subscription.any_instance.unstub(:chk_change_field_agents)
     Account.any_instance.stubs(:field_agents_count).returns(2)
     current_subscription = @account.subscription
     current_subscription.state = 'trial'
@@ -261,7 +248,6 @@ class SubscriptionsControllerTest < ActionController::TestCase
   def test_handle_field_agents_when_moving_from_trial_without_dp_enabled
     params = { agent_limit: '1', addons: { field_service_management: { enabled: 'true', value: '1' } } }
     stub_chargebee_requests
-    Subscription.any_instance.unstub(:chk_change_field_agents)
     Account.any_instance.stubs(:field_agents_count).returns(2)
     @account.rollback(:downgrade_policy)
     current_subscription = @account.subscription
@@ -282,7 +268,6 @@ class SubscriptionsControllerTest < ActionController::TestCase
   def test_handle_field_agents_when_moving_from_active_with_dp_enabled
     params = { agent_limit: '1', addons: { field_service_management: { enabled: 'true', value: '1' } } }
     stub_chargebee_requests
-    Subscription.any_instance.unstub(:chk_change_field_agents)
     Account.any_instance.stubs(:field_agents_count).returns(2)
     current_subscription = @account.subscription
     current_subscription.agent_limit = 6
@@ -301,7 +286,6 @@ class SubscriptionsControllerTest < ActionController::TestCase
   def test_handle_field_agents_when_moving_from_active_without_dp_enabled
     params = { agent_limit: '1', addons: { field_service_management: { enabled: 'true', value: '1' } } }
     stub_chargebee_requests
-    Subscription.any_instance.unstub(:chk_change_field_agents)
     Account.any_instance.stubs(:field_agents_count).returns(2)
     @account.rollback(:downgrade_policy)
     current_subscription = @account.subscription
@@ -316,6 +300,105 @@ class SubscriptionsControllerTest < ActionController::TestCase
   ensure
     unstub_chargebee_requests
     Account.any_instance.unstub(:field_agents_count)
+  end
+
+  def test_handle_subscription_with_agent_field_agent_and_product_reduction
+    plan_ids = SubscriptionPlan.current.map(&:id)
+    stub_chargebee_requests
+    stub_fsm_field_agents
+    get_multi_product_plans
+    current_plan_id = @account.subscription.subscription_plan_id
+    current_agents = @account.subscription.agent_limit
+    params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
+    params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1, addons: { field_service_management: { enabled: 'true', value: '1' } } }
+    6.times { @account.products.new(name: Faker::Lorem.characters(5)) }
+    @account.save!
+    @account.subscription.additional_info[:field_agent_limit] = 3
+    @account.subscription.save!
+    post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :agent_limit)))
+    @account.reload
+    assert_equal @account.subscription.agent_limit, current_agents
+    assert_equal @account.subscription.additional_info[:field_agent_limit], 3
+    assert_equal @account.subscription.subscription_request.nil?, true
+    assert_equal @account.subscription.subscription_plan_id, current_plan_id
+    assert_response 302
+  ensure
+    unstub_chargebee_requests
+    unstub_fsm_field_agents
+    SubscriptionPlan.any_instance.unstub(:unlimited_multi_product?)
+    SubscriptionPlan.any_instance.unstub(:multi_product?)
+    Account.any_instance.unstub(:launched?)
+  end
+
+  def test_handle_subscription_with_agent_and_field_agent
+    plan_ids = SubscriptionPlan.current.map(&:id)
+    stub_chargebee_requests
+    stub_fsm_field_agents
+    current_plan_id = @account.subscription.subscription_plan_id
+    params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
+    to_plan =  SubscriptionPlan.find(params_plan_id)
+    params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1, addons: { field_service_management: { enabled: 'true', value: '1' } } }
+    Account.any_instance.stubs(:launched?).returns(false)
+    @account.revoke_feature(:unlimited_multi_product)
+    @account.subscription.additional_info[:field_agent_limit] = 3
+    @account.subscription.save!
+    post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :agent_limit)))
+    @account.reload
+    assert_equal @account.subscription.additional_info[:field_agent_limit], 3
+    assert_equal @account.subscription.subscription_request.nil?, true
+    assert_equal @account.subscription.subscription_plan_id, current_plan_id
+    assert_response 302
+  ensure
+    unstub_chargebee_requests
+    unstub_fsm_field_agents
+    Account.any_instance.unstub(:launched?)
+  end
+
+  def test_handle_subscription_with_agent_and_product_reduction
+    plan_ids = SubscriptionPlan.current.map(&:id)
+    stub_chargebee_requests
+    get_multi_product_plans
+    current_plan_id = @account.subscription.subscription_plan_id
+    params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
+    params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1 }
+    6.times { @account.products.new(name: Faker::Lorem.characters(5)) }
+    @account.save!
+    post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :agent_limit)))
+    @account.reload
+    assert_equal @account.subscription.subscription_request.nil?, true
+    assert_equal @account.subscription.subscription_plan_id, current_plan_id
+    assert_response 302
+  ensure
+    unstub_chargebee_requests
+    SubscriptionPlan.any_instance.unstub(:unlimited_multi_product?)
+    SubscriptionPlan.any_instance.unstub(:multi_product?)
+    Account.any_instance.unstub(:launched?)
+  end
+
+  def test_handle_subscription_with_field_agents_and_product_reduction
+    plan_ids = SubscriptionPlan.current.map(&:id)
+    stub_chargebee_requests
+    stub_fsm_field_agents
+    get_multi_product_plans
+    current_plan_id = @account.subscription.subscription_plan_id
+    params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
+    params = { plan_id: params_plan_id, addons: { field_service_management: { enabled: 'true', value: '1' } } }
+    6.times { @account.products.new(name: Faker::Lorem.characters(5)) }
+    @account.save!
+    @account.subscription.additional_info[:field_agent_limit] = 3
+    @account.subscription.save!
+    post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :agent_limit)))
+    @account.reload
+    assert_equal @account.subscription.additional_info[:field_agent_limit], 3
+    assert_equal @account.subscription.subscription_request.nil?, true
+    assert_equal @account.subscription.subscription_plan_id, current_plan_id
+    assert_response 302
+  ensure
+    unstub_chargebee_requests
+    unstub_fsm_field_agents
+    SubscriptionPlan.any_instance.unstub(:unlimited_multi_product?)
+    SubscriptionPlan.any_instance.unstub(:multi_product?)
+    Account.any_instance.unstub(:launched?)
   end
 
   def test_new_subscription_plan_change
@@ -1110,6 +1193,19 @@ class SubscriptionsControllerTest < ActionController::TestCase
       @account.subscription.save!
     end
 
+    def stub_fsm_field_agents
+      Account.any_instance.stubs(:field_service_management_enabled_changed?).returns(false)
+      Account.any_instance.stubs(:field_agents_count).returns(2)
+    end
+
+    def unstub_fsm_field_agents
+      Account.any_instance.unstub(:field_service_management_enabled_changed?)
+      Account.any_instance.unstub(:launched?)
+      Subscription.any_instance.unstub(:active?)
+      Subscription.any_instance.unstub(:trial?)
+      Account.any_instance.unstub(:field_agents_count)
+    end
+
     def unstub_chargebee_requests
       ChargeBee::Subscription.unstub(:update)
       ChargeBee::Estimate.unstub(:update_subscription)
@@ -1122,56 +1218,22 @@ class SubscriptionsControllerTest < ActionController::TestCase
       @account.destroy
     end
 
-    def stub_estimate_params
-      {
-        estimate:
-           {
-             created_at: 1_565_933_968, recurring: true, subscription_id: '11', subscription_status: 'in_trial',
-             term_ends_at: 1_577_182_206, collect_now: false, price_type: 'tax_exclusive', amount: 740_900,
-             credits_applied: 0, amount_due: 740_900, object: 'estimate', sub_total: 705_600,
-             line_items: [{ date_from: 1_577_182_206, date_to: 1_608_804_606, unit_amount: 58_800,
-                            quantity: 12, amount: 705_600, is_taxed: true, tax: 35_280, tax_rate: 5.0, object: 'line_item',
-                            description: 'Estate Annual plan', type: 'charge', entity_type: 'plan', entity_id: 'estate_jan_17_annual' }],
-             taxes: [{ object: 'tax', description: 'IND TAX @ 5%', amount: 35_280 }]
-           }
-      }
+    def get_multi_product_plans
+      SubscriptionPlan.any_instance.stubs(:unlimited_multi_product?).returns(false)
+      SubscriptionPlan.any_instance.stubs(:multi_product?).returns(true)
+      Account.any_instance.stubs(:launched?).returns(false)
     end
 
-    def stub_chargebee_coupon
-      {
-        coupon:
-          {
-            id: '1FREEAGENT', name: '1 free agent', invoice_name: '1 free agent',
-            discount_type: 'offer_quantity', discount_quantity: 1, duration_type: 'forever',
-            status: 'active', apply_discount_on: 'not_applicable', apply_on: 'each_specified_item',
-            plan_constraint: 'all', addon_constraint: 'none', created_at: 1_430_995_878,
-            object: 'coupon', redemptions: 22
-          }
-      }
+    def create_subscription_request(account)
+      if account.subscription.subscription_request.blank?
+        t = SubscriptionRequest.new(
+          account_id: account.id,
+          agent_limit: 1,
+          plan_id: SubscriptionPlan.current.map(&:id).third,
+          renewal_period: 1,
+          subscription_id: account.subscription.id
+        )
+        t.save!
+      end
     end
-
-    def stub_chargebee_plan
-      {
-        plan:
-          {
-            id: 'blossom_jan_19_monthly', name: 'Blossom Monthly plan 2019', invoice_name: 'Blossom Monthly plan',
-            price: 1900, period: 1, period_unit: 'month', trial_period: 26, trial_period_unit: 'day',
-            free_quantity: 0, status: 'active', enabled_in_hosted_pages: true, enabled_in_portal: true,
-            object: 'plan', charge_model: 'per_unit', taxable: true
-          }
-      }
-    end
-
-  def create_subscription_request(account)
-    if account.subscription.subscription_request.blank?
-      t = SubscriptionRequest.new(
-        account_id: account.id,
-        agent_limit: 1,
-        plan_id: SubscriptionPlan.current.map(&:id).third,
-        renewal_period: 1,
-        subscription_id: account.subscription.id
-      )
-      t.save!
-    end
-  end
 end

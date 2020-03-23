@@ -1,6 +1,7 @@
 require_relative  '../../api/unit_test_helper'
 require 'faker'
 require 'minitest'
+require_relative '../../core/helpers/users_test_helper'
 
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'tickets_test_helper.rb')
@@ -8,6 +9,7 @@ require Rails.root.join('test', 'core', 'helpers', 'tickets_test_helper.rb')
 class UnicodeSanitizerTest < ActionView::TestCase
   include CoreTicketsTestHelper
   include AccountTestHelper
+  include CoreUsersTestHelper
 
   def setup
     create_test_account

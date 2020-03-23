@@ -272,7 +272,7 @@ class Account < ActiveRecord::Base
       user_notifications: false, freshplug_enabled: false, dkim: false, dkim_email_service: false,
       sha1_enabled: false, disable_archive: false, sha256_enabled: false,
       auto_ticket_export: false, select_all: false, facebook_realtime: false,
-      :"Freshfone Call Tracker" => false, ticket_contact_export: false, field_agent_availability: false,
+      :"Freshfone Call Tracker" => false, ticket_contact_export: false,
       custom_apps: false, timesheet: false, api_jwt_auth: false, disable_emails: false,
       skip_portal_cname_chk: false, falcon_signup: false, falcon_portal_theme: false,
       image_annotation: false, email_actions: false, ner: false, disable_freshchat: false,
@@ -290,7 +290,7 @@ class Account < ActiveRecord::Base
       bot_email_channel: false, bot_email_central_publish: false, archive_ticket_fields: false,
       sso_login_expiry_limitation: false, csat_email_scan_compatibility: false,
       email_deprecated_style_parsing: false, saml_ecrypted_assertion: false,
-      quoted_text_parsing_feature: false, description_by_default: false, field_agent_availability: false,
+      quoted_text_parsing_feature: false, description_by_default: false,
       ticket_fields_central_publish: false, skip_invoice_due_warning: false,
       agent_group_central_publish: false, custom_fields_search: true,
       update_billing_info: false, allow_billing_info_update: false, tag_central_publish: false,
@@ -303,13 +303,14 @@ class Account < ActiveRecord::Base
       requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false, supervisor_custom_status: false,
       sandbox_temporary_offset: false, downgrade_policy: true, skip_posting_to_fb: true, launch_fsm_geolocation: false,
       allow_update_agent: false, facebook_dm_outgoing_attachment: true, hide_mailbox_error_from_agents: false,
-      facebook_post_outgoing_attachment: true, incoming_mentions_in_tms: false, fsm_custom_to_default_filter: false,
+      facebook_post_outgoing_attachment: true, incoming_mentions_in_tms: false,
       prevent_lang_detect_for_spam: false, jira_onpremise_reporter: false, support_ticket_rate_limit: false, sidekiq_logs_to_central: false, portal_central_publish: false, encode_emoji_in_solutions: false,
       forums_agent_portal: false, mailbox_google_oauth: false, migrate_euc_pages_to_us: false, agent_collision_revamp: false, topic_editor_with_html: false,
       mailbox_forward_setup: false, remove_image_attachment_meta_data: false, ticket_field_revamp: false, new_timeline_view: false, email_mailbox: true, facebook_admin_ui_revamp: false,
-      detect_lang_from_email_service: false, sla_policy_revamp: false, freshdesk_freshsales_bundle: false, field_agents_can_manage_appointments_setting: false,
+      detect_lang_from_email_service: false, sla_policy_revamp: false, freshdesk_freshsales_bundle: false,
       fsm_for_garden_plan: false, fsm_for_blossom_plan: false, requester_widget_timeline: false, enable_secure_login_check: false, contact_form_enhancement: false, enable_twitter_requester_fields: true, marketplace_gallery: false,
-      facebook_public_api: false, twitter_public_api: false, retry_emails: false, fb_message_echo_support: false, portal_prototype_update: false, solutions_quick_view: false, solutions_freshconnect: false
+      facebook_public_api: false, twitter_public_api: false, retry_emails: false, fb_message_echo_support: false, portal_prototype_update: false, solutions_quick_view: false, solutions_freshconnect: false,
+      fsm_scheduler_month_view: false
     }, :merge
   )
 

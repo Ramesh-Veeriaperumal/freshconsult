@@ -11,7 +11,7 @@ module ApiSearch
       @folder_id = params[:folder_id].to_i if params[:folder_id].present?
       @sort_direction = 'desc'
       @search_sort  = params[:search_sort] if params[:search_sort].present?
-      @language_id  = params[:language] if params[:language].present?
+      @language_id  = params[:language] if params[:language].present? && valid_language?(params[:language])
       @user = User.find_by_id(params[:user_id]) if params[:user_id].present?
 
       if params[:context] == 'spotlight'
@@ -79,6 +79,10 @@ module ApiSearch
           params[:language] = language.id
           params.delete(:language_code)
         end
+      end
+
+      def valid_language?(language_id)
+        Language.find(language_id).present?
       end
   end
 end

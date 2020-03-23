@@ -3,6 +3,7 @@ class Subscription < ActiveRecord::Base
   include Redis::OthersRedis
   include Cache::Memcache::SubscriptionPlan
   include Onboarding::OnboardingRedisMethods
+  include SubscriptionsHelper
 
   self.primary_key = :id
   SUBSCRIPTION_TYPES = ["active", "trial", "free", "suspended"]
@@ -401,27 +402,30 @@ class Subscription < ActiveRecord::Base
   end
   alias :is_paid_account :paid_account?
 
-
-  def chk_change_agents
-    if agent_limit && agent_limit < account.full_time_support_agents.count
-     errors.add(:base,I18n.t("subscription.error.lesser_agents", {:agent_count => account.full_time_support_agents.count}))
-     Agent::SUPPORT_AGENT
-    end
-  end
-
-  def chk_change_field_agents
-    if field_agent_limit && field_agent_limit < account.field_agents_count
-      errors.add(:base, I18n.t('subscription.error.lesser_field_agents', agent_count: account.field_agents_count))
-      Agent::FIELD_AGENT
-    end
-  end
-
   def verify_agent_limit
-    chk_change_agents unless downgrade?
+    if !downgrade? && agent_limit && agent_limit < account.full_time_support_agents.count
+      errors.add(:base, agents: I18n.t('subscription.error.agents_count', agents_count: account.full_time_support_agents.count))
+    end
   end
 
   def verify_agent_field_limit
-    chk_change_field_agents unless (account.launched?(:downgrade_policy) && active?)
+    if immediate_downgrade? && field_agent_limit && field_agent_limit < account.field_agents_count
+      errors.add(:base, 'field technicians': I18n.t('subscription.error.field_agents_count', field_agents_count: account.field_agents_count))
+    end
+  end
+
+  def verify_unlimited_multi_product
+    if immediate_downgrade? && chk_multi_product
+      errors.add(:base, products: I18n.t('subscription.error.products_count', products_count: account.products.count))
+    end
+  end
+
+  def immediate_downgrade?
+    !(account.launched?(:downgrade_policy) && active?)
+  end
+
+  def chk_multi_product
+    account.has_feature?(:unlimited_multi_product) && !subscription_plan.unlimited_multi_product? && subscription_plan.multi_product? && account.products.count > AccountConstants::MULTI_PRODUCT_LIMIT
   end
 
   def non_free_agents
@@ -742,9 +746,13 @@ class Subscription < ActiveRecord::Base
       @old_addons = Subscription.find(id).addons.dup
     end
 
-    def validate_on_update
-      chk_change_agents unless trial?
-      chk_change_field_agents if account.field_service_management_enabled?
+    def validate_errors_on_update
+      verify_agent_limit || verify_agent_field_limit || verify_unlimited_multi_product
+      validation_errors = errors[:base]
+      return false if validation_errors.blank?
+
+      errors[:base] = construct_subscription_error_msgs(validation_errors)
+      true
     end
 
     def finished_trial?
@@ -812,6 +820,8 @@ class Subscription < ActiveRecord::Base
         self.free_agents = new_plan.free_agents
         convert_to_free if new_sprout?
       end
+      return false if validate_errors_on_update
+
       applicable_coupon = verify_coupon(present_subscription.coupon)
       if subscription_downgrade?
         total_amount(updated_addons, applicable_coupon)

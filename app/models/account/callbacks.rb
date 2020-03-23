@@ -49,7 +49,7 @@ class Account < ActiveRecord::Base
   after_commit :update_sendgrid, on: :create
   after_commit :remove_email_restrictions, on: :update , :if => :account_verification_changed?
 
-  after_commit :update_crm_and_map, :send_domain_change_email, on: :update, :if => :account_domain_changed?
+  after_commit :update_crm_and_map, :send_domain_change_email, :update_account_domain_in_chargebee, on: :update, if: :account_domain_changed?
   after_commit :change_fluffy_account_domain, on: :update, if: [:account_domain_changed?, :fluffy_integration_enabled?]
   after_commit :update_bot, on: :update, if: :update_bot?
 
@@ -377,6 +377,10 @@ class Account < ActiveRecord::Base
       else
         Billing::AddSubscriptionToChargebee.perform_async
       end
+    end
+
+    def update_account_domain_in_chargebee
+      Billing::UpdateAccountDomain.perform_async
     end
 
     def build_new_subscription

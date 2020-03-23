@@ -108,17 +108,33 @@ class Billing::BillingController < ApplicationController
       @subscription_data = subscription_info(@billing_data.subscription, @billing_data.customer)
       Rails.logger.debug @subscription_data.inspect
     end
-
     #Events
     def subscription_changed(content)
       plan = subscription_plan(@billing_data.subscription.plan_id)
       @old_subscription = @account.subscription.dup
       @existing_addons = @account.addons.dup
-
-      @account.subscription.subscription_request.destroy if has_pending_downgrade_request?(@account) && !has_scheduled_changes?(content)
-      @account.subscription.update_attributes(@subscription_data.merge(plan_info(plan)))
-      update_addons(@account.subscription, @billing_data.subscription)
-      check_subscribed_seats_availability(@account.subscription, @billing_data.subscription)
+      subscription_request = @account.subscription.subscription_request
+      billing_subscription = @billing_data.subscription
+      subscription_hash = {}
+      update_applicable_addons(@account.subscription, billing_subscription)
+      if has_pending_downgrade_request?(@account) && !has_scheduled_changes?(content)
+        if plan.name != @account.subscription.subscription_plan.name && subscription_request.product_loss?
+          subscription_hash.merge!(plan_info(@account.subscription.subscription_plan))
+        else
+          @account.subscription.subscription_plan = plan
+        end
+        subscription_request.destroy
+      end
+      subscription_hash[:agent_limit] = @account.subscription.agent_limit = @account.full_time_support_agents.count if agent_quantity_exceeded?(billing_subscription)
+      subscription_hash[:field_agent_limit] = @account.subscription.field_agent_limit if update_field_agent_limit(@account.subscription, billing_subscription)
+      if subscription_hash.present?
+        @account.subscription.renewal_period = @subscription_data[:renewal_period]
+        @account.subscription.state = @subscription_data[:state]
+        Billing::Subscription.new.update_subscription(@account.subscription, false, @account.subscription.addons)
+        @subscription_data.merge!(subscription_hash)
+      end
+      @subscription_data.merge!(plan_info(plan)) if @subscription_data[:subscription_plan].blank?
+      @account.subscription.update_attributes(@subscription_data)
       update_features if update_features?
       @account.account_additional_settings.set_payment_preference(@billing_data.subscription.cf_reseller)
     end
@@ -218,13 +234,17 @@ class Billing::BillingController < ApplicationController
     end
 
     def update_addons(subscription, billing_subscription)
+      update_applicable_addons(subscription, billing_subscription)
+      subscription.save #to update amount in subscription
+    end
+
+    def update_applicable_addons(subscription, billing_subscription)
       addons = billing_subscription.addons.to_a.collect{ |addon| 
         Subscription::Addon.fetch_addon(addon.id) unless ADDONS_TO_IGNORE.include?(addon.id)
       }.compact
       
       plan = subscription_plan(billing_subscription.plan_id)
       subscription.addons = subscription.applicable_addons(addons, plan)
-      subscription.save #to update amount in subscription
     end
 
     def update_features

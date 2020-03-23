@@ -3052,7 +3052,7 @@ en:
       same_ticket: 'On the same ticket'
       related_ticket_count: 'Related ticket count on tracker'
       agent_availability: 'Agent status'
-      out_of_office_days: 'days'
+      out_of_office_days: 'number of days'
       any_days: 'any'
     custom_translation:
       status_translated: Translated

@@ -4,7 +4,10 @@ class Admin::Marketplace::AppsController < Admin::AdminController
 
   def index
     params_to_encrypt = default_mkp_params
-    additional_params = { pod: PodConfig['CURRENT_POD'] }
+    additional_params = {
+      pod: PodConfig['CURRENT_POD'],
+      locale: current_user.language
+    }
 
     Rails.logger.info("Render App Gallery for account #{current_account.id} and pod #{PodConfig['CURRENT_POD']}")
 

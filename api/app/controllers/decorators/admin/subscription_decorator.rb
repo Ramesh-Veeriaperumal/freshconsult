@@ -141,7 +141,8 @@ class Admin::SubscriptionDecorator < ApiDecorator
 
     subscription_request = record.subscription_request
     request_hash = { plan_name: subscription_request.plan_name,
-                     feature_loss: subscription_request.feature_loss?
+                     feature_loss: subscription_request.feature_loss?,
+                     products_limit_exceeded: subscription_request.product_loss?
                    }
     unless subscription_request.subscription_plan.amount.zero?
       request_hash.merge!(

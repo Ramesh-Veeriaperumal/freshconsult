@@ -167,6 +167,14 @@
                   "items": {
                     "$ref": "#/definitions/attachment"
                   }
+                },
+                "meta": {
+                  "type": "object",
+                  "properties": {
+                    "portal_link": {
+                      "type": "string"
+                    }
+                  }
                 }
               }
             }
