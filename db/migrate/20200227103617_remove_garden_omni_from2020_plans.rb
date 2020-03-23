@@ -1,5 +1,5 @@
 class RemoveGardenOmniFrom2020Plans < ActiveRecord::Migration
-  shard :all
+  shard :none
 
   def up
     plan = SubscriptionPlan.find { |p| p.name == 'Garden Omni Jan 20' }

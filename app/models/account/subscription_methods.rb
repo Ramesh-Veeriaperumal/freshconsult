@@ -174,7 +174,7 @@ class Account < ActiveRecord::Base
   end
 
   def first_time_account_purchased
-    set_others_redis_key(account_activated_within_last_week_key, true, 7.days.seconds)
+    set_others_redis_key(account_activated_within_last_week_key, true, 21.days.seconds)
   end
 
   def fetch_freshsales_account_info(freshsales_app)

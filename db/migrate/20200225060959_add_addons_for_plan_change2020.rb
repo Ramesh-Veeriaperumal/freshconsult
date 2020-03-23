@@ -1,5 +1,5 @@
 class AddAddonsForPlanChange2020 < ActiveRecord::Migration
-  shard :all
+  shard :none
   def self.up
     addon_types = Subscription::Addon::ADDON_TYPES
     execute <<-SQL
@@ -122,7 +122,7 @@ class AddAddonsForPlanChange2020 < ActiveRecord::Migration
     SQL
     execute <<-SQL
       DELETE FROM subscription_addons WHERE subscription_addon_id
-        IN (SELECT id FROM subscription_addons WHERE name IN ( "Field Service Management 20", "Custom Slas 20", "Custom Ssl 20", "One Contact Multiple Companies 20","Whitelisted Ips 20", "Unique External Id 19", "Fluffy Forest 20", "Fluffy Higher Plan1 20", "Fluffy Higher Plan2 20", "Fluffy Higher Plan3 20", "Fluffy Higher Plan4 20"  ))
+        IN (SELECT id FROM subscription_addons WHERE name IN ( "Field Service Management 20", "Custom Slas 20", "Custom Ssl 20", "One Contact Multiple Companies 20","Whitelisted Ips 20", "Unique External Id 20", "Fluffy Forest 20", "Fluffy Higher Plan1 20", "Fluffy Higher Plan2 20", "Fluffy Higher Plan3 20", "Fluffy Higher Plan4 20"  ))
     SQL
   end
 end
