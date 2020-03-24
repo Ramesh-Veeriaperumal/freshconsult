@@ -1187,14 +1187,6 @@
         "_outgoing_proxy_ip": "10.3.2.77",
         "office365_originator_id": "EJ[1:rARacshGO2r1mki1h/kXfIC82/t1w0xgPTTl62qHq0Q=:SZOyQglxL/fUcWg2/mMY3Nkui9YTg+wA:MDvwup0gWV49WrPx1L8vbMEAf/bQV7eEjSz0b3JhIcsjpUsat3F+8L15ZYpsN+HqdaMHeQ==]"
       },
-      "smart_filter": {
-        "auth_key": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:fOvhWWjE96yb7qvJCsgNNDPpGwPtZBIB:ElqqR0PyYkI/3AL8pFdL6WMT7wa2sxRP9bESn/bOjcab/w4c2w7f6Ff4r0OjTaWCSnjFjvJTX3uxLCCw+oDLqULquwT3Qxh8mt8jQiP9btf/R8jc+VbhFb2+g0VOOizQmXgnz4pMx/2tawXqbCnFehpGpk/lB7p4mVvq/TijOZX+aYmibWyhuMnEPPjIDqcrDATKyRzM9UKPzKfnn2wnXA8BZeer6BYdl2efv6IUg3/rtgOXYGJiNrIiswie9Wd9cm3jY3rNAhlEguK582Dtcx6QYG0L7Rizo2qLQpyHGLw3v8HGAegv34egLJR0qJ5aR6zQg/TbaAhI5glYCnmCRIsYai9zsEXRsvuuYxtCow==]",
-        "_api_endpoint": "https://ncapsyd.freshworksapi.com",
-        "_init_url": "/init",
-        "_query_url": "/query",
-        "_feedback_url": "/update",
-        "_max_tries": 4
-      },
       "kafka": {
         "service": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:GifSM0IvIzlqS+isrBVXa2vocOkLhqH5:AgU7+fSWdBPLmkGbEY9NGYrArH5CI1D2mvitV/IQA0T8qmNNrtlHhaSQFRuchAm/DK6/pVFMiqLP8hkW]",
         "_endpoint": "https://central-sydney.freshworksapi.com",

@@ -45,10 +45,6 @@ module Social::Constants
     :delete => "DELETE"
   }
 
-  SMART_FILTER_CONTENT_TYPE = {
-    :twitter => "tw"
-  }
-
   TABLES = {
     "feeds" => {
       :name => "fd_social_feeds",
@@ -149,15 +145,6 @@ module Social::Constants
  
   NEW_LINE_CHARACTER = "\n"
 
-  SMART_FILTER_FEEDBACK_TYPE = {
-    :spam => 1,
-    :new_ticket => 2
-  }
-  SMART_FILTER_DETECTED_AS_TICKET = 1;
-  SMART_FILTER_DETECTED_AS_SPAM = 0;
-  SMART_FILTER_MANUAL_CONVERT_TO_TICKET = 2;
-  SMART_FILTER_MANUAL_DONT_CONVERT_TO_TICKET = 3;
-  SMART_FILTER_FEEDBACK_GIVEN = -1;
   TWITTER_MENTION = "@"
   EU_TWITTER_HANDLES = "eu_twitter_handles"
   TWEET_MEDIA_PHOTO = 'photo'.freeze

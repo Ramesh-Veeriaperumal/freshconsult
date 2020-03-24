@@ -111,14 +111,6 @@
         "app_id": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:q7KKwYo70aVz5+nIGsvb727ycNiOnCQc:nss91pCEoOnHxIIZt99KKsKIIA==]",
         "falcon_app_id": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:tdiMtnpLH6PJEYS9ruiUFzRfv45n/RP5:m/byNoSXN40Q4PNMcjjF8hb1+vQ=]"
       },
-      "smart_filter": {
-        "auth_key": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:3BZZOVpGq59FqacKxc9LVzlA9NspoBxo:z53QTm4AhcOlHAb9B65C6oRzrFUJdFUyqvgcZT68H9FqpBOtj+l42X2wC7YWkrO60/3t8+3ANIPnM7zqs6LfxMSEoetTnRoYiUuvLXenX7oKFtWXIqEgoTe25IdihPvzsegJDQ1fiJCJzCi9TjWjBwmIsHxbGG8AF0b1DqFyMub6SgctXrkaX8RwfatH6PXUAqXY1tEHgmskKjPYRdM0sAWKiu0TZo3hELgEqekl6waOzo8IC2+O9htT/QksQ9D2ZN2kd1K3JhDUKZKL0UKZbuHuM/HXuRvdVxheIchIIyzHYXnrnNQn0ldZ4D7RmT+OdMSQfOBNWgLDYTSEFtVt4PInDN06InQYeVTE4EiUMC5Tf/bnsw==]",
-        "_api_endpoint": "https://ncuseast.freshworksapi.com",
-        "_init_url": "/init",
-        "_query_url": "/query",
-        "_feedback_url": "/update",
-        "_max_tries": 4
-      },
       "collab": {
         "secret_key": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:xOM6wYJw/byl2jsGx8p2SlDzmd/imVge:PTjdmPoYl/vyVpQb2lm1xj8ZPJh68xgzP/qCHT9v3emyl3vQ/HbOwXgkAPFfWsxF90ZwyWnJYUtD8BzePyyFw/Sj8uDqlHMIWQ9IwJbUvOvrmvBlt1Kw7cfMBvR0t1Uf9PVZCZyLeg8=]",
         "_collab_url": "https://api.fdcollab.com",

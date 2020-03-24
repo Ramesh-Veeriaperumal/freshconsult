@@ -774,7 +774,6 @@ HEREDOC
       :social_fb_messenger,
       :sqs_es_index_queue,
       :trial_customer_email_queue,
-      :twitter_realtime_queue,
       :fd_scheduler_export_cleanup_queue,
       :fd_scheduler_downgrade_policy_reminder_queue,
     ]
@@ -791,7 +790,6 @@ HEREDOC
       "scheduled_ticket_export_complete": "scheduled_ticket_export",
       "search_etl_queue": "search_etlqueue",
       "trial_customer_email_queue": "trial_email",
-      "twitter_realtime_queue": "social_gnip_tweets",
       'fd_scheduler_downgrade_policy_reminder_queue': 'downgrade_policy_reminder',
       'suspended_account_cleanup_queue': 'suspended_account_cleanup'
     }

@@ -111,7 +111,6 @@ helpdesk:
     - ner_api_config
     - freshid
     - freshquery
-    - smart_filter_config
     - heap_analytics
     - bot
     - central

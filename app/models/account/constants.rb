@@ -303,14 +303,13 @@ class Account < ActiveRecord::Base
       requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false, supervisor_custom_status: false,
       sandbox_temporary_offset: false, downgrade_policy: true, skip_posting_to_fb: true, launch_fsm_geolocation: false,
       allow_update_agent: false, facebook_dm_outgoing_attachment: true, hide_mailbox_error_from_agents: false,
-      facebook_post_outgoing_attachment: true, incoming_mentions_in_tms: false,
       prevent_lang_detect_for_spam: false, jira_onpremise_reporter: false, support_ticket_rate_limit: false, sidekiq_logs_to_central: false, portal_central_publish: false, encode_emoji_in_solutions: false,
       forums_agent_portal: false, mailbox_google_oauth: false, migrate_euc_pages_to_us: false, agent_collision_revamp: false, topic_editor_with_html: false,
       mailbox_forward_setup: false, remove_image_attachment_meta_data: false, ticket_field_revamp: false, new_timeline_view: false, email_mailbox: true, facebook_admin_ui_revamp: false,
       detect_lang_from_email_service: false, sla_policy_revamp: false, freshdesk_freshsales_bundle: false,
       fsm_for_garden_plan: false, fsm_for_blossom_plan: false, requester_widget_timeline: false, enable_secure_login_check: false, contact_form_enhancement: false, enable_twitter_requester_fields: true, marketplace_gallery: false,
       facebook_public_api: false, twitter_public_api: false, retry_emails: false, fb_message_echo_support: false, portal_prototype_update: false, solutions_quick_view: false, solutions_freshconnect: false,
-      fsm_scheduler_month_view: false
+      fsm_scheduler_month_view: false, facebook_post_outgoing_attachment: true
     }, :merge
   )
 

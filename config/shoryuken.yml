@@ -30,7 +30,6 @@ aws:
   - <%= SQS[:fd_scheduler_reminder_todo_queue] %>
   - <%= SQS[:custom_mailbox_status] %>
   - <%= SQS[:bot_feedback_queue] %>
-  - <%= SQS[:twitter_realtime_queue] %>
   - <%= SQS[:fd_scheduler_export_cleanup_queue] %>
   - <%= SQS[:spam_trash_delete_free_acc_queue] %>
   - <%= SQS[:spam_trash_delete_paid_acc_queue] %>

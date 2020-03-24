@@ -1598,13 +1598,6 @@
         "_archive_port": "18362",
         "archive_password": "EJ[1:SFBAntw51muTS027JWb9ynVGGjwvgzl/L94mHm+UG3c=:DKtKtN78yQkFMBpnZ2zFyf3K1GBKOcAz:jPrMNezDnRoU9pSTEUJBbFXvoxdhrCNIzMyeffg1Jujl+zGIJD6rTDKW1zdIuJcc]"
       },
-      "smart_filter": {
-        "auth_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:AIXGL/Wtd7bZ4Z1xJWYL7lIoUck0BgTW:+4WyNeAu7G3aXhqrCM1tBok8XpsBETbRpaCFcPgo7sS7CpSIYUUswP6lZ2gpbvTbVhExulTQ5hM0HDReaO1B5YW8VzHmuzULfIACCIb3t8v+Iuzw6yhQCwdVOEDkVfYNagW5JKivSLhhrTAUpl7jBLOl8uUHHfdftjyfgt4TT53xolBtvnEG1jhi3fiZ2xA5AOv9YW45ITIJcfYUnJC4ZHV2y0bLaU2KYMWvE62Rb2F5PixydZ+txwGjUVbap4LAfErqqGn13LYa9YpxRwl6RGdE2YG+1s0QukARlc6chIwWJ8GdrW4A5oG88Uj35irjEAYj5y10Ee9H9MxkERJbJx6cQN+l5c+fSpfL6O15wXxWErvQtg==]",
-        "_api_endpoint": "https://ncstaging.freshworksapi.com",
-        "_feedback_url": "/update",
-        "_init_url": "/init",
-        "_query_url": "/query"
-      },
       "spam_watcher": {
         "_email": "sengottaian.nallasamy@freshworks.com"
       },
