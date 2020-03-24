@@ -33,5 +33,6 @@ class Vault::AccountWorker < BaseWorker
     def delete_account
       token = JWT::SecureServiceJWEFactory.new(PciConstants::ACTION[:delete]).account_info_payload
       Vault::Client.new(PciConstants::ACCOUNT_INFO_URL, :delete, token).delete_account
+      JWT::SecureFieldMethods.new.secure_fields_from_cache.map(&:destroy)
     end
 end

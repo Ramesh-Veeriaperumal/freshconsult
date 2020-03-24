@@ -4,8 +4,10 @@ require 'webmock/minitest'
 WebMock.allow_net_connect!
 Sidekiq::Testing.fake!
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
+require Rails.root.join('test', 'api', 'helpers', 'ticket_fields_test_helper.rb')
 class Vault::AccountWorkerTest < ActionView::TestCase
   include AccountTestHelper
+  include TicketFieldsTestHelper
 
   def setup
     Account.stubs(:current).returns(Account.first)
@@ -51,10 +53,13 @@ class Vault::AccountWorkerTest < ActionView::TestCase
 
   def test_offboard_account_vault_service_success_test
     @account.add_feature(:pci_compliance_field)
+    name = "secure_text_#{Faker::Lorem.characters(rand(10..20))}"
+    create_custom_field_dn(name, 'secure_text')
     stub_request(:delete, PciConstants::ACCOUNT_INFO_URL).to_return(status: 204)
     Vault::AccountWorker.new.perform(action: PciConstants::ACCOUNT_ROLLBACK)
     @account.reload
     assert_equal false, @account.pci_compliance_field_enabled?
+    assert_equal @account.ticket_fields.where(field_type: TicketFieldsConstants::SECURE_TEXT).count, 0
   ensure
     Account.unstub(:current)
     @account.revoke_feature(:pci_compliance_field)
