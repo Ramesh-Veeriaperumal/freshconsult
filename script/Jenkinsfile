@@ -281,15 +281,15 @@ def sonarqube_analysis() {
                 }
             }
         }
-        stage("SonarQube Quality Gate") {
-            timeout(time: 1, unit: 'HOURS') {
-                def qualityGateStatus = waitForQualityGate()
-
-                if (qualityGateStatus.status != 'OK') {
-                    error "Pipeline aborted due to Quality Gate failure: ${qualityGateStatus.status}"
-                }
-            }
-        }
+//         stage("SonarQube Quality Gate") {
+//             timeout(time: 1, unit: 'HOURS') {
+//                 def qualityGateStatus = waitForQualityGate()
+//
+//                 if (qualityGateStatus.status != 'OK') {
+//                     error "Pipeline aborted due to Quality Gate failure: ${qualityGateStatus.status}"
+//                 }
+//             }
+//         }
     }
 }
 
@@ -361,7 +361,8 @@ node("spot_backend") {
             // Running SonarQube Analysis
             sonarqube_analysis()
         } catch (e) {
-            currentBuild.result = 'UNSTABLE'
+            // currentBuild.result = 'UNSTABLE'
+            echo "> SonarQube Analysis Failed ------> " + e.toString()
         }
 
         // Pushing logs to s3
