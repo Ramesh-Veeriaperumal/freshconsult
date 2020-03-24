@@ -5,6 +5,8 @@ module ExportCsvUtil
 
   ALL_TEXT_FIELDS = [:default_description, :default_note, :default_address, :custom_paragraph]
 
+  TWITTER_REQUESTER_FIELDS = %i[twitter_profile_status twitter_followers_count].freeze
+
   CONTACT         = "contact"
 
   DEFAULT_SELECTED_FIELDS = {
@@ -88,6 +90,7 @@ module ExportCsvUtil
     custom_fields = type.eql?("contact") ? custom_form.safe_send("#{type}_fields", true, !Account.current.falcon_and_encrypted_fields_enabled?) 
     : custom_form.safe_send("#{type}_fields", !Account.current.falcon_and_encrypted_fields_enabled?)
     custom_fields.reject!{ |x| ["tag_names"].include?(x.name) } if type.eql?("contact")
+    custom_fields.reject! { |x| TWITTER_REQUESTER_FIELDS.include?(x.name.to_sym) } unless Account.current.twitter_requester_fields_enabled?
     custom_fields.collect { |cf|
             { :label => cf.label,
               :value => cf.name,

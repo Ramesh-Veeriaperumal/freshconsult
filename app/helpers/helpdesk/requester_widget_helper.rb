@@ -4,6 +4,7 @@ module Helpdesk::RequesterWidgetHelper
   include ContactsCompaniesHelper
   include DateHelper
   include MemcacheKeys
+  include ContactsHelper
 
   COMPANY_FIELDS_DEFAULT_TYPES      = [:default_name]
   CONTACT_FIELDS_DEFAULT_TYPES      = [:default_name, :default_job_title]
@@ -18,7 +19,7 @@ module Helpdesk::RequesterWidgetHelper
   TWITTER_LINK                      = "https://twitter.com/"
   FIELDS_INFO                       = { :contact => 
                                         { :form             => "contact_form",
-                                          :disabled_fields  => [],
+                                          :disabled_fields  => TWITTER_REQUESTER_FIELDS,
                                           :loading_icon     => []
                                         }, 
                                         :company => 
@@ -184,7 +185,13 @@ module Helpdesk::RequesterWidgetHelper
   private
 
     def field_value(field, object)
-      value = (object.present? && object.safe_send(field.name).present?) ? object.safe_send(field.name) : field.default_value
+      field_value = object.safe_send(field.name) if object.present?
+      field_value = field_value ? 'Yes' : 'No' if twitter_requester_fields_present? field, object
+      field_value.presence || field.default_value
+    end
+
+    def twitter_requester_fields_present?(field, object)
+      field.name == TWITTER_REQUESTER_FIELDS[0] && object.safe_send(TWITTER_REQUESTER_FIELDS[1])
     end
 
     def object_name field
@@ -232,6 +239,8 @@ module Helpdesk::RequesterWidgetHelper
         link_to(value,value, :title => value, :target => "_blank", :rel => 'noreferrer')
       when :default_twitter_id
         link_to(value,"#{TWITTER_LINK}#{value}", :title => value, :target => "_blank", :rel => 'noreferrer')
+      when :default_twitter_profile_status
+        value ? 'Yes' : 'No'
       else
         value
       end

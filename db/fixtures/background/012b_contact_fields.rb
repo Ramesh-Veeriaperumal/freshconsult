@@ -5,10 +5,10 @@ def self.twitter_requester_fields_data
 
   [
     { name: 'twitter_profile_status',
-      label: 'Twitter Profile Status',
+      label: 'Twitter Verified Profile',
       position: 15 },
     { name: 'twitter_followers_count',
-      label: 'Twitter Followers Count',
+      label: 'Twitter Follower Count',
       position: 16 }
   ]
 end

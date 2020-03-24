@@ -5,6 +5,7 @@ module ContactsHelper
   include Marketplace::ApiHelper
 
   MIN_USER_EMAIL = 5
+  TWITTER_REQUESTER_FIELDS = %w[twitter_profile_status twitter_followers_count].freeze
 
   def contact_fields
     @contact_fields ||= @user.helpdesk_agent? ? 
@@ -16,9 +17,13 @@ module ContactsHelper
     contact_fields.find { |f| f.name == "company_name" }.required_for_agent
   end
 
-  def render_as_list form_builder, field
-    return if field.encrypted_field?
-    field_value = (field_value = @user.safe_send(field.name)).blank? ? field.default_value : field_value
+  def render_as_list(form_builder, field)
+    return if field.encrypted_field? || reject_twitter_requester_fields?(form_builder, field)
+
+    field_value = @user.safe_send(field.name) if @user.present?
+    field_value = field_value ? 'Yes' : 'No' if field.name == TWITTER_REQUESTER_FIELDS[0]
+    field_value = field_value.presence || field.default_value
+
     if form_builder.nil? 
       if field.name == "email"
         render_user_email_field field
@@ -38,8 +43,16 @@ module ContactsHelper
   def view_contact_fields 
     reject_fields = [:default_name, :default_job_title, :default_company_name, :default_description, :default_tag_names, :encrypted_text]
     view_contact_fields = contact_fields.reject do |item|
-      (reject_fields.include? item.field_type) || !(@user.safe_send(item.name).present?)
+      (reject_fields.include? item.field_type) || !(@user.safe_send(item.name).present?) unless valid_twitter_contact? item
     end
+  end
+
+  def reject_twitter_requester_fields?(form_builder, field)
+    TWITTER_REQUESTER_FIELDS.include?(field.name) && (form_builder || !Account.current.twitter_requester_fields_enabled?)
+  end
+
+  def valid_twitter_contact?(item)
+    item.name == TWITTER_REQUESTER_FIELDS[0] && @user.safe_send(TWITTER_REQUESTER_FIELDS[1]).present?
   end
 
   def user_activities

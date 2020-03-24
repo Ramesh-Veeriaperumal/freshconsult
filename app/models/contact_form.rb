@@ -111,8 +111,8 @@ class ContactForm < ActiveRecord::Base
         'language' => Account.current.features?(:multi_language),
         'client_manager' => !Account.current.multiple_user_companies_enabled?,
         'unique_external_id' => Account.current.unique_contact_identifier_enabled?,
-        'twitter_profile_status' => false,
-        'twitter_followers_count' => false }
+        'twitter_profile_status' => Account.current.twitter_requester_fields_enabled?,
+        'twitter_followers_count' => Account.current.twitter_requester_fields_enabled? }
     end
     
 end
