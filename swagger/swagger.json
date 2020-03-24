@@ -15673,6 +15673,14 @@
                       "type": "string"
                     }
                   }
+                },
+                "freshid": {
+                  "type": "object",
+                  "properties": {
+                    "client_id": {
+                      "type": "string"
+                    }
+                  }
                 }
               }
             }

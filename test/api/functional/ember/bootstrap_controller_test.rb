@@ -630,4 +630,22 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
     Account.current.email_configs.destroy(email_config)
   end
+
+  def test_account_v1_with_freshid
+    Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal, false))
+  ensure
+    Account.any_instance.unstub(:freshid_enabled?)
+  end
+
+  def test_account_v1_with_freshid_v2
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(true)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal, false))
+  ensure
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+  end
 end

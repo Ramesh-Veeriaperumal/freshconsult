@@ -11,6 +11,7 @@ class ConfigDecorator < ApiDecorator
     ret_hash[:warnings] = warn_items
     ret_hash.merge!(update_billing_info)
     ret_hash[:dkim_configuration] = dkim_configuration
+    ret_hash[:freshid] = freshid_config
     ret_hash
   end
 
@@ -80,5 +81,18 @@ class ConfigDecorator < ApiDecorator
       dkim_config[:dkim_support_link] = DKIM_SUPPORT_LINK
     end
     dkim_config
+  end
+
+  def freshid_config
+    # JSON parsing on frontend gives different number
+    # JSON.parse('{ "client_id": 12345678912345659}'); gives 12345678912345660
+    client_id = if current_account.freshid_enabled?
+                  FRESHID_CLIENT_ID.to_s
+                elsif current_account.freshid_org_v2_enabled?
+                  FRESHID_V2_CLIENT_ID.to_s
+                end
+    {
+      client_id: client_id
+    }
   end
 end
