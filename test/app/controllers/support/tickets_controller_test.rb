@@ -335,4 +335,18 @@ class Support::TicketsControllerTest < ActionController::TestCase
     log_out
     ticket.destroy
   end
+
+  def test_redirect_to_freshid_on_idle_session_timeout
+    Account.current.launch(:idle_session_timeout)
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(true)
+    @controller.stubs(:web_request?).returns(true)
+    controller.session[:last_request_at] = Time.now.to_i - 901
+    get :index, version: :private
+    assert_response 302
+    assert_includes response.redirect_url, '/api/v2/logout'
+  ensure
+    Account.current.rollback(:idle_session_timeout)
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+    @controller.unstub(:web_request?)
+  end
 end

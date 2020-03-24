@@ -1,5 +1,6 @@
 module AuthenticationSystem
-  
+  DEFAULT_SESSION_TIMEOUT = 900 # 15.minutes
+
   def self.included(base)
     base.helper_method :current_user_session, :current_user, :logged_in?, :revert_current_user, :is_assumed_user?, :is_allowed_to_assume?
   end
@@ -189,6 +190,7 @@ module AuthenticationSystem
     end
 
     def log_out!
+      cookies.delete 'user_credentials'
       current_user_session.destroy if current_user_session 
       @current_user = nil
       @current_user_session = nil
@@ -301,6 +303,45 @@ module AuthenticationSystem
     def log_authentication_type(auth_token, format)
       auth_type = auth_token.include?('@') ? "UN_PASS" : "API_KEY"
       ApiAuthLogger.log "FRESHID API version=V1, auth_type=#{auth_type}, format=#{format}, a=#{current_account.id}"
+    end
+
+    def check_session_timeout
+      if session_timedout?
+        session.delete(:last_request_at)
+
+        if current_account.freshid_org_v2_enabled? && current_user.agent?
+          log_out!
+          redirect_to Freshid::V2::UrlGenerator.freshid_logout(support_home_url)
+        else
+          log_out!
+          access_denied
+        end
+        return false
+      end
+
+      update_last_request_at
+    end
+
+    def session_timeout_allowed?
+      current_account.present? && current_account.launched?(:idle_session_timeout) && web_request? && session.present?
+    end
+
+    def session_timeout_in_seconds
+      current_account.account_additional_settings_from_cache.additional_settings[:idle_session_timeout] || DEFAULT_SESSION_TIMEOUT
+    end
+
+    def session_timedout?
+      current_user_session.present? &&
+        session[:last_request_at].present? &&
+        ((session[:last_request_at] + session_timeout_in_seconds) < Time.now.to_i)
+    end
+
+    def update_last_request_at
+      session[:last_request_at] = Time.now.to_i if current_user_session.present?
+    end
+
+    def web_request?
+      request.cookies['_helpkit_session']
     end
 
     SUPPORTED_API_KEY_FORMATS = ['xml', 'json', 'widget']

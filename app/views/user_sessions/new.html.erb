@@ -10,10 +10,12 @@
 		  		<%= f.label t('.password') %>
 		  		<%= f.password_field :password, :class => "text" %>
 		  	</li>
+        <% unless current_account.launched?(:idle_session_timeout) %>
 		  	<li class="checkbox">
 				<%= f.check_box :remember_me %>
 				<%= f.label :remember_me, t('.remember') %>
 		  	</li>
+        <% end %>
 		  	<li>
 		  		<%= f.submit t('.login'), { :class => "uiButton"} %>
 				<%if feature?(:signup_link)%>

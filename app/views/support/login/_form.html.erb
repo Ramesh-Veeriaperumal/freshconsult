@@ -19,6 +19,7 @@
             <%= recaptcha_tags :display => { :theme => "white" } %>
           </div>
        <% end %>
+    <% unless current_account.launched?(:idle_session_timeout) %>
 		<div class="control-group">			
 	  		<div class="controls" title="<%= t('uncheck_remember_tooltip') %>">
 	  			<label class="checkbox">
@@ -27,6 +28,7 @@
 				</label>
 			</div>
 	  	</div>
+    <% end %>
 	  	<div class="control-group">			
 	  		<%= link_to(t('.forgot'), "", 
 					:id => "forgot_password",

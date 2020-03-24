@@ -11,7 +11,7 @@ class ApiSolutionsArticlesDependencyTest < ActionView::TestCase
                         :portal_check, :set_selected_tab, :page_title, :load_meta_objects, :check_create_privilege, :old_folder, :check_new_folder,
                         :bulk_update_folder, :validate_author, :language, :cleanup_params_for_title, :language_scoper, :check_parent_params,
                         :unset_thread_variables, :set_parent_for_old_params, :check_account_activation,
-                        :ensure_proper_sts_header, :record_query_comment, :log_csrf, :remove_session_data]
+                        :ensure_proper_sts_header, :record_query_comment, :log_csrf, :remove_session_data, :check_session_timeout]
     actual_filters = Solution::ArticlesController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end

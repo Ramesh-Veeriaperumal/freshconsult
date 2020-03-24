@@ -2,7 +2,7 @@ class Integrations::Marketplace::GoogleController < Integrations::Marketplace::L
   include Redis::RedisKeys
   include Redis::OthersRedis
   skip_before_filter :check_privilege, :verify_authenticity_token, :set_current_account, :check_account_state,
-                       :set_time_zone, :check_day_pass_usage, :set_locale, :only => [:onboard, :home, :old_app_redirect]
+                     :set_time_zone, :check_day_pass_usage, :set_locale, :check_session_timeout, only: [:onboard, :home, :old_app_redirect]
   
   before_filter :get_redis_keys, :only => [:onboard]
 

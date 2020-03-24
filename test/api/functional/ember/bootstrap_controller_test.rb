@@ -13,6 +13,43 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     @subscription_plan = SubscriptionPlan.last
   end
 
+  def test_unauthorized_on_idle_session_timeout
+    Account.current.launch(:idle_session_timeout)
+    @controller.stubs(:web_request?).returns(true)
+    controller.session[:last_request_at] = Time.now.to_i - 901
+    get :index, controller_params(version: 'private')
+    assert_response 401
+    match_json(request_error_pattern(:invalid_credentials))
+  ensure
+    @controller.unstub(:web_request?)
+    Account.current.rollback(:idle_session_timeout)
+  end
+
+  def test_success_within_idle_session_timeout
+    Account.current.launch(:idle_session_timeout)
+    @controller.stubs(:web_request?).returns(true)
+    controller.session[:last_request_at] = Time.now.to_i - 10
+    get :index, controller_params(version: 'private')
+    assert_response 200
+  ensure
+    @controller.unstub(:web_request?)
+    Account.current.rollback(:idle_session_timeout)
+  end
+
+  def test_unauthorized_on_custom_session_timeout
+    Account.current.launch(:idle_session_timeout)
+    Account.current.account_additional_settings.additional_settings[:idle_session_timeout] = 600
+    Account.current.account_additional_settings.save
+    @controller.stubs(:web_request?).returns(true)
+    controller.session[:last_request_at] = Time.now.to_i - 601
+    get :index, controller_params(version: 'private')
+    assert_response 401
+    match_json(request_error_pattern(:invalid_credentials))
+  ensure
+    @controller.unstub(:web_request?)
+    Account.current.rollback(:idle_session_timeout)
+  end
+
   def test_index
     get :index, controller_params(version: 'private')
     assert_response 200

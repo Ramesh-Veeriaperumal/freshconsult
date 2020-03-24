@@ -1,8 +1,8 @@
 class Integrations::Marketplace::QuickbooksSsoController < Integrations::Marketplace::LoginController
   skip_filter :select_shard, :only => [:open_id, :open_id_complete]
   around_filter :select_shard_marketplace, :only => [:open_id, :open_id_complete]
-  skip_before_filter :check_privilege, :verify_authenticity_token, :set_current_account, :check_account_state, 
-    :set_time_zone, :check_day_pass_usage, :set_locale, :only => [:open_id, :open_id_complete]
+  skip_before_filter :check_privilege, :verify_authenticity_token, :set_current_account, :check_account_state,
+                     :set_time_zone, :check_day_pass_usage, :set_locale, :check_session_timeout, only: [:open_id, :open_id_complete]
 
   def open_id
     unless valid_quickbook_claim_id?

@@ -8,7 +8,7 @@ class Integrations::GmailGadgetController < ApplicationController
   skip_filter :select_shard, :only => [:open_social_auth]
 
   skip_before_filter :check_account_state, :check_day_pass_usage, :determine_pod, :set_current_account, :set_locale,
-                     :ensure_proper_protocol, :ensure_proper_sts_header,  :only => [:open_social_auth]
+                     :ensure_proper_protocol, :ensure_proper_sts_header, :check_session_timeout, only: [:open_social_auth]
 
   skip_after_filter :set_last_active_time, :only => [:open_social_auth]
 

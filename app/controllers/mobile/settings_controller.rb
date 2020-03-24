@@ -9,7 +9,7 @@ class Mobile::SettingsController < ApplicationController
 
   skip_filter :select_shard, :only => :mobile_login
   before_filter :determine_pod , :only => :mobile_login
-  skip_before_filter :unset_current_account, :set_current_account , :only => :mobile_login
+  skip_before_filter :unset_current_account, :set_current_account, :check_session_timeout, only: :mobile_login
   skip_before_filter :check_account_state, :only => :mobile_login
   skip_before_filter :set_time_zone, :check_day_pass_usage  , :only => :mobile_login
   skip_before_filter :set_locale, :force_utf8_params , :only => :mobile_login

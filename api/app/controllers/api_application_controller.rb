@@ -47,6 +47,7 @@ class ApiApplicationController < MetalApiController
   before_filter :force_utf8_params
   before_filter :set_cache_buster
   before_filter :set_service_worker, if: :private_api?
+  before_filter :check_session_timeout, if: :session_timeout_allowed?
 
   include AuthenticationSystem
   include HelpdeskSystem

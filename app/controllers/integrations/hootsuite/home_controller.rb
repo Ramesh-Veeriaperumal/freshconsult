@@ -1,7 +1,7 @@
 class Integrations::Hootsuite::HomeController < Integrations::Hootsuite::HootsuiteController
 
-  skip_before_filter :check_privilege, :verify_authenticity_token, :set_current_account,:check_account_state,
-   :set_time_zone, :check_day_pass_usage, :set_locale, :only => [:domain_page, :iframe_page, :plugin, :uninstall, :verify_domain, :plugin_url, :destroy]
+  skip_before_filter :check_privilege, :verify_authenticity_token, :set_current_account, :check_account_state,
+                     :set_time_zone, :check_day_pass_usage, :set_locale, :check_session_timeout, only: [:domain_page, :iframe_page, :plugin, :uninstall, :verify_domain, :plugin_url, :destroy]
   before_filter :update_params, :only => [:index]
   before_filter :update_redis, :only => [:search,:refresh]
   before_filter :agent_check, :filter_tickets, :only => [:index, :search, :refresh]

@@ -13,6 +13,7 @@ module AdminControllerMethods
     base.send :skip_before_filter, :ensure_proper_protocol
     base.send :skip_before_filter, :ensure_proper_sts_header
     base.send :skip_before_filter, :check_day_pass_usage
+    base.send :skip_before_filter, :check_session_timeout
     base.send :skip_filter, :select_shard
     base.send :prepend_before_filter, :set_time_zone
     base.send :before_filter, :check_admin_user_privilege
