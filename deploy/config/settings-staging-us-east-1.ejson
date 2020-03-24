@@ -185,7 +185,7 @@
         },
         "freshbots": {
           "_auth_type": "jwt",
-          "jwt_secret": "EJ[1:68QP1ySQm6GM/vddFtrrOPby58jN33DUkNN2BKPx1nY=:sqbeB0D0ChC8cWM6Y3+QUxRpIyv7vYln:kLklkPuV3MCgg42hc1Sel03Cwi03CkHwdQBLvohuPCaBCMKL]"
+          "jwt_secret": ["EJ[1:MmjFrz3/ifI+PiZgBsyRBrqCHzC5DLXBy9xY+/5U/20=:IU4GNZW0o5iq896xyoueF3II/nLUdjHl:WLvG9hdcyy+RyKHX+oFySMKlCoOUS/sScMQD59ELySJSPTml]"]
         }
       },
       "channel_v2_api": {
@@ -1795,13 +1795,13 @@
           "secret": "EJ[1:Gu1wmqd+hs6mzZ0Gl8zLlBmQrUKozXx42rdWS2GruGs=:bLI0ACKZhhve2VLtI5bxRvI7ivnRQMa8:Hu73oA+mxQY3wLPvjEiQNnpMjsWhYLmz/L7Vb2UTNl4ba9V+0k80/vzriUmc]"
         },
         "agent_assist" :{
-          "_host": "https://admin.intfreshbots.com/",
-          "_onboard_url": "https://api.intfreshbots.com/rest/api/v1/bots",
-          "client_id": "EJ[1:/YkX76IIhGrziFImuSHmGUtYk5T40VKp67HwQ6aL328=:mpD+M3Bi02H6fvMCalAd+2hUyDIfo1Om:7H57IQbVfxZDb2ikowlXbrPlH8s+mFT/5h9kCY37LBHObN5vEPTZxNPcKP99ER0ADO61vqVbDQA=]",
-          "_product_id": "99e1562292b512ce14a077f246c8cd75dcc6b392",
+          "_host": "https://admin.stagfreshbots.com/",
+          "_onboard_url": "https://api.stagfreshbots.com/rest/api/v1/bots",
+          "client_id": "EJ[1:MmjFrz3/ifI+PiZgBsyRBrqCHzC5DLXBy9xY+/5U/20=:xecEUy6qpDP5FD0IbWBG0tAki6ulXAZn:/mwOnnTlMR3I+OJ6oVqLnYDKN3Hre5MWTXwhZ8fJuuMG0S+2xCZZCPBnb20uZC9xXHrG0Famw4I=]",
+          "_product_id": "6d4dbdbdda6e2cbb9905041b56ae7e3f3c77bc15",
           "_template_hash": "965122f2937e823fbec5cc806e45d5a0c0d5a746",
-          "jwt_secret": "EJ[1:PX2adMAz4P255iH709RXxuoCLg6afs/GlRLWDAge0V8=:5xuw3fyG/V7r9msgiZ1BImqIgCphE7qB:w60XyGbEA3IplKbHcaxi20ntw9ifkUCmfsWvXwoxHS32Ja6NY6A04S233+pLKrGPYTARnBfKi/fSsmY=]",
-          "_demo_email": "rahul.gupta@freshworks.com",
+          "jwt_secret": "EJ[1:MmjFrz3/ifI+PiZgBsyRBrqCHzC5DLXBy9xY+/5U/20=:SVcfhiWCaybZlWrTgen1/OWqx/zU/uDH:Xztt82zDZVX8ne2Fkd/lP+CtaRSWw9yfSh3zdHkZnIbaI+xkkBrW0NXL04v3bErp6MQqkVNlVeMvcr8=]",
+          "_demo_email": "support@freshdesk.com",
           "_timeout": 5,
           "_onboard_timeout": 5        
         }

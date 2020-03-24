@@ -43,7 +43,7 @@ defaults: &defaults
     jwt_secret: 9rQ7H5RVm35vSvNUDWFjZPz3YKsqxp8p
   freshbots:
     auth_type: jwt
-    jwt_secret: freshbotsdevelopment
+    jwt_secret: ["freshbotsdevelopment"]
 development:
   <<: *defaults
 
