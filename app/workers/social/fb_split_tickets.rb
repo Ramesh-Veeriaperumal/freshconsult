@@ -25,7 +25,7 @@ module Social
       @account.notes.where([ "id IN (?) and notable_id != ?", @child_fb_notes.map(&:postable_id), @comment_ticket.id ]).update_all_with_publish({ notable_id: @comment_ticket.id }, 
                                   {})
       
-      @account.facebook_posts.update_all("ancestry = #{comment_fb_post.id}", [ "id IN (?)", child_post_ids ] )
+      @account.facebook_posts.where(['id IN (?)', child_post_ids]).update_all("ancestry = #{comment_fb_post.id}")
       @child_fb_notes.each do |note|
         note.postable.manual_publish(["create", RabbitMq::Constants::RMQ_ACTIVITIES_NOTE_KEY], [])
       end

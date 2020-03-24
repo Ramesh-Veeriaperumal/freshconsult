@@ -17,11 +17,9 @@ class MergeTickets < BaseWorker
       move_source_description_to_target(source_ticket,target_ticket,args[:target_note_private])
       source_ticket_note_ids << source_ticket.notes.pluck(:id)
       source_ticket.notes.update_all_with_publish({ notable_id: args[:target_ticket_id] },
-                                    [ "account_id = ? and notable_id != ?", account.id, args[:target_ticket_id] ])
-      source_ticket.activities.update_all("notable_id = #{args[:target_ticket_id]}", [ "account_id = ? and description NOT IN (?)", 
-                                                                                account.id, ACTIVITIES_TO_BE_DISCARDED ] )
-      source_ticket.time_sheets.update_all("workable_id = #{args[:target_ticket_id]}", [ "account_id = ?", 
-                                                                                account.id ] )
+                                                  ['account_id = ? and notable_id != ?', account.id, args[:target_ticket_id]])
+      source_ticket.activities.where(['account_id = ? and description NOT IN (?)', account.id, ACTIVITIES_TO_BE_DISCARDED]).update_all("notable_id = #{args[:target_ticket_id]}")
+      source_ticket.time_sheets.where(['account_id = ?', account.id]).update_all("workable_id = #{args[:target_ticket_id]}")
       STATES_TO_BE_MOVED.each do |state|
         tkt_states_hash[state] = (tkt_states_hash[state] || []).push(source_ticket.safe_send(state))
       end
