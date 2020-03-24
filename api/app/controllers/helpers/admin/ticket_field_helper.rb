@@ -181,6 +181,12 @@ module Admin::TicketFieldHelper
       end
     end
 
+    def status_choice_update?
+      # We should allow existing choice update and should not allow new choice creation in sprout plan
+      # So checking whether the payload has only choice update params
+      status_field? && request_params[:choices].all? { |choice| choice.key?(:id) }
+    end
+
     def empty_choice_error
       errors[:invalid_request] << :clear_ticket_field_choices_error
     end

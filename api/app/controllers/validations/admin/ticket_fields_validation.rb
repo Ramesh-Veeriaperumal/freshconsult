@@ -49,13 +49,14 @@ module Admin
 
     # choices validation
     validates :choices, presence: true, if: -> { choices_required_for_type? }, on: :create
-    validates :choices, custom_absence: { message: :sprout_plan_choices_error },
-                        if: -> { instance_variable_defined?(:@choices) && !Account.current.custom_ticket_fields_enabled? && !default_ticket_type? }
     validates :choices, data_type: { rules: Array }, if: lambda {
       create_or_update? && (choices_required_for_type? || status_field?) && instance_variable_defined?(:@choices)
     }
     validates :choices, custom_absence: { message: :ticket_field_choice_condition }, if: lambda {
       create_or_update? && !choices_required_for_type? && instance_variable_defined?(:@choices) && !status_field?
+    }
+    validates :choices, custom_absence: { message: :sprout_plan_choices_error }, if: lambda {
+      instance_variable_defined?(:@choices) && !Account.current.custom_ticket_fields_enabled? && !default_ticket_type? && !status_choice_update?
     }
 
     # nested field validation

@@ -639,4 +639,70 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
   ensure
     Account.any_instance.unstub(:pci_compliance_field_enabled?)
   end
+
+  def test_updating_type_field_in_sprout_plan
+    launch_ticket_field_revamp do
+      type_field = @account.ticket_fields.find_by_field_type('default_ticket_type')
+      type_field_choice_position = type_field.picklist_values.count
+      Account.current.stubs(:custom_ticket_fields_enabled?).returns(false)
+      put :update, construct_params({ id: type_field.id }, choices: [{ value: Faker::Lorem.characters(5), position: type_field_choice_position + 1 }])
+      assert_response 200
+    end
+  ensure
+    Account.current.unstub(:custom_ticket_fields_enabled?)
+  end
+
+  def test_adding_status_choice_in_sprout_plan
+    launch_ticket_field_revamp do
+      field = @account.ticket_fields.find_by_field_type('default_status')
+      field_choice_position = field.ticket_statuses.reject(&:deleted?).count
+      Account.current.stubs(:custom_ticket_fields_enabled?).returns(false)
+      put :update, construct_params({ id: field.id }, choices: [{ value: Faker::Lorem.characters(5), position: field_choice_position + 1 }])
+      assert_response 400
+    end
+  ensure
+    Account.current.unstub(:custom_ticket_fields_enabled?)
+  end
+
+  def test_updating_status_choice_in_sprout_plan
+    launch_ticket_field_revamp do
+      field = @account.ticket_fields.find_by_field_type('default_status')
+      pending_status = field.ticket_statuses.find_by_name('Pending')
+      Account.current.stubs(:custom_ticket_fields_enabled?).returns(false)
+      put :update, construct_params({ id: field.id }, choices: [{ id: pending_status.status_id, stop_sla_timer: !pending_status.stop_sla_timer }])
+      assert_response 200
+    end
+  ensure
+    Account.current.unstub(:custom_ticket_fields_enabled?)
+  end
+
+  def test_sanitize_malicious_ticket_field_name
+    launch_ticket_field_revamp do
+      name1 = "<script>alert(‘#{Faker::Lorem.characters(rand(1..4))}’)</script>"
+      tf1 = create_custom_field_dropdown(name1, Faker::Lorem.words(6))
+      name2 = "<title>#{Faker::Lorem.characters(rand(5..10))}</title>"
+      tf2 = create_custom_field_dn(name2, 'text', rand(0..1) == 1)
+      field1 = @account.ticket_fields_with_nested_fields.find(tf1.id)
+      field2 = @account.ticket_fields_with_nested_fields.find(tf2.id)
+      assert_equal field1.label, RailsFullSanitizer.sanitize(name1)
+      assert_equal field2.label, RailsFullSanitizer.sanitize(name2)
+      assert_equal field1.label_in_portal, RailsFullSanitizer.sanitize(name1)
+      assert_equal field2.label_in_portal, RailsFullSanitizer.sanitize(name2)
+    end
+  end
+
+  def test_sanitization_of_nested_field_names
+    launch_ticket_field_revamp do
+      names = Faker::Lorem.words(3).map { |x| "<script>alert(‘#{x}’)</script>" }
+      tf = create_dependent_custom_field(names, 13, rand(0..1) == 1)
+      parent_field = @account.all_ticket_fields_with_nested_fields.find(tf.id)
+      child_fields = parent_field.nested_ticket_fields
+      assert_equal parent_field.label, RailsFullSanitizer.sanitize(names[0])
+      assert_equal parent_field.label_in_portal, RailsFullSanitizer.sanitize(names[0])
+      assert_equal child_fields[0].label, RailsFullSanitizer.sanitize(names[1])
+      assert_equal child_fields[0].label_in_portal, RailsFullSanitizer.sanitize(names[1])
+      assert_equal child_fields[1].label, RailsFullSanitizer.sanitize(names[2])
+      assert_equal child_fields[1].label_in_portal, RailsFullSanitizer.sanitize(names[2])
+    end
+  end
 end
