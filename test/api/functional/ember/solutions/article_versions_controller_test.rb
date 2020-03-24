@@ -434,7 +434,7 @@ module Ember
         session = Faker::Name.name
         stub_version_session(session) do
           stub_version_content do
-            article_version = article_meta.safe_send('primary_article').solution_article_versions.second
+            article_version = article_meta.safe_send('primary_article').solution_article_versions.latest.second
             params_hash = { session: article_version.session }
             should_create_version(article) do
               post :restore, controller_params(version: 'private', article_id: article_meta.id, id: article_version.version_no)
@@ -463,7 +463,7 @@ module Ember
         session = Faker::Name.name
         stub_version_session(session) do
           stub_version_content do
-            article_version = article_meta.safe_send('primary_article').solution_article_versions.second
+            article_version = article_meta.safe_send('primary_article').solution_article_versions.latest.second
             params_hash = { session: article_version.session }
             should_create_version(article) do
               post :restore, controller_params(version: 'private', article_id: article_meta.id, id: article_version.version_no)
@@ -472,6 +472,87 @@ module Ember
             end
           end
         end
+      end
+
+      def test_restore_with_deleted_attachments_in_draft
+        article_meta = get_article_with_versions.parent
+        article = article_meta.safe_send('primary_article')
+        article.draft.publish! if article.draft
+
+        attachment = article.attachments.build(content: fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), description: Faker::Name.first_name, account_id: article.account_id)
+        attachment.save
+
+        create_draft(article: article)
+        article.draft.meta[:deleted_attachments] ||= {}
+
+        deleted_attachment = article.draft.meta[:deleted_attachments].key?(:attachments) ? article.draft.meta[:deleted_attachments][:attachments] : []
+        deleted_attachment << attachment.id
+        article.draft.meta[:deleted_attachments][:attachments] = deleted_attachment
+        article.draft.save
+
+        session = Faker::Name.name
+        stub_version_session(session) do
+          stub_version_content do
+            article_version = article_meta.safe_send('primary_article').solution_article_versions.latest.third
+            params_hash = { session: article_version.session }
+            should_create_version(article) do
+              post :restore, controller_params(version: 'private', article_id: article_meta.id, id: article_version.version_no)
+              assert_equal article.draft.meta[:deleted_attachments][:attachments].count, 1
+              assert_response 204
+            end
+          end
+        end
+      end
+
+      def test_attachment_size_validation_during_restore
+        article_meta = get_article_with_versions.parent
+        article = article_meta.safe_send('primary_article')
+
+        file_size = Account.current.attachment_limit
+        file_props = {
+          content: fixture_file_upload('/files/attachment.txt', 'text/plain', :binary),
+          description: Faker::Name.first_name,
+          account_id: article.account_id,
+          content_file_size: file_size.megabytes
+        }
+
+        attachment = article.attachments.build(file_props)
+        attachment.save
+
+        cloud_file = article.cloud_files.build(url: 'https://www.dropbox.com/s/7d3z51nidxe358m/GettingStarted.pdf?dl=0', application_id: 20, filename: 'Getting Started.pdf')
+        cloud_file.save
+
+        article.draft.publish! if article.draft
+        create_draft(article: article)
+
+        article.draft.meta[:deleted_attachments] ||= {}
+        deleted_attachment = article.draft.meta[:deleted_attachments].key?(:attachments) ? article.draft.meta[:deleted_attachments][:attachments] : []
+        deleted_attachment << article.attachments.first.id
+        article.draft.meta[:deleted_attachments][:attachments] = deleted_attachment
+
+        deleted_cloud_file = article.draft.meta[:deleted_attachments].key?(:cloud_files) ? article.draft.meta[:deleted_attachments][:cloud_files] : []
+        deleted_cloud_file << article.cloud_files.first.id
+        article.draft.meta[:deleted_attachments][:cloud_files] = deleted_cloud_file
+        article.draft.save
+
+        draft_attachment = article.draft.attachments.build(file_props)
+        draft_attachment.save
+
+        session = Faker::Name.name
+        stub_version_session(session) do
+          stub_version_content do
+            should_not_create_version(article) do
+              article_version = article_meta.safe_send('primary_article').solution_article_versions.latest.second
+              params_hash = { session: article_version.session }
+              post :restore, controller_params(version: 'private', article_id: article_meta.id, id: article_version.version_no)
+              assert_response 400
+              match_json(attachment_size_validation_error_pattern(file_size))
+            end
+          end
+        end
+      ensure
+        article.attachments.delete(attachment)
+        article.draft.attachments.delete(draft_attachment)
       end
 
       private
