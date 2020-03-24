@@ -94,7 +94,7 @@ class Admin::FreshcallerAccountController < ApiApplicationController
     end
 
     def agent_scoper
-      current_account.freshcaller_agents.where(fc_enabled: true).preload(:user)
+      current_account.freshcaller_agents.where(fc_enabled: true).preload(:user).select { |fc_agent| fc_agent.user }
     end
 
     def load_object

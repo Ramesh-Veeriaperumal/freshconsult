@@ -22,6 +22,15 @@ module Freshcaller::TestHelper
     @agent.agent.reload
   end
 
+  def create_freshcaller_enabled_agent_with_custom_user_id(user_id: 1, agent_id: @agent.agent.id)
+    freshcaller_agent = Account.current.freshcaller_agents.new(
+      agent_id: agent_id,
+      fc_user_id: user_id,
+      fc_enabled: true
+    )
+    freshcaller_agent.save
+  end
+
   def create_freshcaller_disabled_agent
     freshcaller_agent = @agent.agent.build_freshcaller_agent(
       fc_user_id: 1,
@@ -55,6 +64,23 @@ module Freshcaller::TestHelper
           email: email,
           user_id: 1234
         }
+      ],
+      freshcaller_account_id: 1234,
+      freshcaller_account_domain: 'test.freshcaller.com'
+    }
+    @req = stub_request(:put, link_url).to_return(body: response_hash.to_json,
+                                                  status: 200,
+                                                  headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stub_link_account_success_with_null_user_detail(email)
+    response_hash = {
+      user_details: [
+        {
+          email: email,
+          user_id: 1234
+        },
+        nil
       ],
       freshcaller_account_id: 1234,
       freshcaller_account_domain: 'test.freshcaller.com'

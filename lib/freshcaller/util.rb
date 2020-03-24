@@ -105,7 +105,7 @@ module Freshcaller::Util
     end
 
     def link_freshcaller_agents(freshcaller_response)
-      email_user_id_hash = freshcaller_response['user_details'].map { |user_hash| [user_hash['email'], user_hash['user_id']] }.to_h
+      email_user_id_hash = freshcaller_response['user_details'].compact.map { |user_hash| [user_hash['email'], user_hash['user_id']] }.to_h
       users = current_account.technicians.active(true).preload(:agent).where(email: email_user_id_hash.keys)
       users.each do |user|
         user.agent.create_freshcaller_agent(agent_id: user.agent.id,
