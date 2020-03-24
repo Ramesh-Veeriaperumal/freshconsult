@@ -217,7 +217,7 @@ module TicketConcern
 
     def get_additional_params
       # placeholder function to pass additional params into ticket validation
-      { version: params[:version] }
+      { version: params[:version], enforce_mandatory: params[:enforce_mandatory] }
     end
 
     def set_default_values

@@ -13,7 +13,7 @@ class HashValidator < ApiValidator
     # some cases. So the proc has to be invoked for those cases.
     valid_options = call_block(delimeter) if delimeter && delimeter.is_a?(Proc)
     valid_options.keys.each do |nested_field|
-      # The key :nested_field is added for more clear error response but that cant be iteratable
+      # The key :nested_field is added for more clear error response but that cant be iterable
       # So skipping the iteration for this
       next if nested_field == :nested_field
 
