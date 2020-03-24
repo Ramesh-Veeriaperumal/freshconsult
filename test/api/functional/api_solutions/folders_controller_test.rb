@@ -6,6 +6,7 @@ module ApiSolutions
     include SolutionFoldersTestHelper
     include SolutionsHelper
     include SolutionBuilderHelper
+    include CoreSolutionsTestHelper
 
     def setup
       super
@@ -329,6 +330,20 @@ module ApiSolutions
       put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('company_ids', :cant_set_company_ids, code: :incompatible_field)])
+    end
+
+    def test_reindex_on_update_folder_with_company_visibility
+      name = Faker::Name.name
+      description = Faker::Lorem.paragraph
+      visibility = 4
+      company1 = create_company
+      company2 = create_company
+      sample_folder = create_folder
+      sample_folder.add_visibility(Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:company_users], [company1.id], false)
+      Solution::FolderMeta.any_instance.expects(:update_search_index).once
+      params_hash = { name: name, description: description, visibility: visibility, company_ids: [company1.id, company2.id] }
+      put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
+      assert_response 200
     end
 
     def test_update_folder_with_company_ids_and_no_visibility

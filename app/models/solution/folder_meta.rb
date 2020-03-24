@@ -261,11 +261,12 @@ class Solution::FolderMeta < ActiveRecord::Base
 	end
 
 	def backup_folder_changes
+      @companies_updated = self.customer_folders.any? { |a| a.changed? }
 	  @all_changes = self.changes.clone
 	end
 
 	def update_es?
-	  (@all_changes.keys & ["visibility", "solution_category_meta_id"]).present?
+      (@all_changes.keys & ['visibility', 'solution_category_meta_id']).present? || @companies_updated
 	end
 	
 	def backup_category
