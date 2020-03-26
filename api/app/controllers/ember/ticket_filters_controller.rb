@@ -192,7 +192,7 @@ module Ember
       end
 
       def ff_entries
-        @ff_entries_cache ||= Account.current.flexifield_def_entries.find(:all, select: [:flexifield_alias, :flexifield_name]).map(&:attributes)
+        @ff_entries_cache ||= Account.current.flexifield_def_entries.select('flexifield_alias, flexifield_name').to_a.map(&:attributes)
       end
 
       def set_user_visibility

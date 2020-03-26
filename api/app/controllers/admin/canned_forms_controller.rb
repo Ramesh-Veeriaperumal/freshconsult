@@ -45,7 +45,7 @@ class Admin::CannedFormsController < ApiApplicationController
     end
 
     def render_201_with_location(template_name: 'admin/canned_forms/show', location_url: 'canned_form_url', item_id: @item.id)
-      render template_name, location: send(location_url, item_id)
+      render template_name, location: safe_send(location_url, item_id)
     end
 
     def render_errors(errors, meta = {})
