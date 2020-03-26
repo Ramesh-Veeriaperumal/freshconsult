@@ -123,7 +123,7 @@ class TicketMerge
     end
 
     def target_note_source(is_private)
-      is_private ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email']
+      is_private ? Account.current.helpdesk_sources.note_source_keys_by_token['note'] : Account.current.helpdesk_sources.note_source_keys_by_token['email']
     end
 
     def target_note_emails(is_private, type = :to_emails)

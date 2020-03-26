@@ -15,7 +15,7 @@ module Facebook
             :requester  => facebook_user(koala_feed.requester),
             :product_id => ticket_attributes[:product_id],
             :group_id   => ticket_attributes[:group_id] ,
-            :source     => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook],
+            :source     => Helpdesk::Source.ticket_source_keys_by_token[:facebook],
             :created_at => koala_feed.created_at,
             :fb_post_attributes => {
               :post_id          => koala_feed.feed_id,
@@ -58,7 +58,7 @@ module Facebook
             },
             :private    => true ,
             :incoming   => true,
-            :source     => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"],
+            :source     => Helpdesk::Source.note_source_keys_by_token["facebook"],
             :account_id => @fan_page.account_id,
             :user       => requester,
             :created_at => koala_comment.created_at,

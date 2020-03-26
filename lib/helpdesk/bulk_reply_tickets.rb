@@ -7,7 +7,7 @@ class Helpdesk::BulkReplyTickets
   include Social::Util
   attr_accessor :params, :tickets, :attachments, :inline_images_clone
 
-  DEFAULT_NOTE_SOURCE = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email']
+  DEFAULT_NOTE_SOURCE = Helpdesk::Source.note_source_keys_by_token['email']
 
   def initialize(args)
     self.params = args
@@ -113,7 +113,7 @@ class Helpdesk::BulkReplyTickets
 
     def note_params(ticket)
       params[:helpdesk_note].merge(
-        source: Helpdesk::Note::TICKET_NOTE_SOURCE_MAPPING.fetch(ticket.source, DEFAULT_NOTE_SOURCE),
+        source: Helpdesk::Source.ticket_note_source_mapping.fetch(ticket.source, DEFAULT_NOTE_SOURCE),
         note_body_attributes: reply_content(ticket)
       )
     end

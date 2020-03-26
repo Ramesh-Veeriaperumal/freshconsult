@@ -17,7 +17,7 @@ schema_less_note = note.schema_less_note
 outgoing_failure = nil
 
 outgoing_failures_hash = schema_less_note.note_properties[:errors] if schema_less_note.present?
-if note.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["twitter"] && outgoing_failures_hash.present?
+if note.source == current_account.helpdesk_sources.note_source_keys_by_token["twitter"] && outgoing_failures_hash.present?
 	outgoing_failures = outgoing_failures_hash[:twitter] 
 	outgoing_failure = outgoing_failures[:error_message] if outgoing_failures.present?
 end

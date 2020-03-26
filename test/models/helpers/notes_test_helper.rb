@@ -16,7 +16,7 @@ module NotesTestHelper
     body = params[:body_html] || Faker::Lorem.paragraph
     { 
       :note_body_attributes => { :body_html => body}, 
-      :source => params[:source] || Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"],
+      :source => params[:source] || Account.current.helpdesk_sources.note_source_keys_by_token["note"],
       :category => params[:category],
       :private => params[:private],
       :incoming => params[:incoming],
@@ -31,7 +31,7 @@ module NotesTestHelper
       id: note.id,
       account_id: note.account_id,
       category: { id: category, name: Helpdesk::Note::CATEGORIES_NAMES_BY_KEY[category].to_s },
-      source: { id: source, name: Helpdesk::Note::SOURCE_NAMES_BY_KEY[source] },
+      source: { id: source, name: Account.current.helpdesk_sources.note_source_names_by_key[source] },
       incoming: note.incoming,
       private: note.private,
       deleted: note.deleted,
@@ -122,8 +122,8 @@ module NotesTestHelper
   end
 
   def email_note?(source)
-    [Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
-     Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']].include?(source)
+    [Account.current.helpdesk_sources.note_source_keys_by_token['email'],
+     Account.current.helpdesk_sources.note_source_keys_by_token['note']].include?(source)
   end
 
   def fb_page_details(fb_page, note)

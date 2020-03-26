@@ -404,14 +404,14 @@
       "file": "app/models/helpdesk/ticket.rb",
       "line": 509,
       "link": "https://brakemanscanner.org/docs/warning_types/unsafe_deserialization",
-      "code": "YAML.load(self.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[\"meta\"]).body)",
+      "code": "YAML.load(self.notes.find_by_source(Helpdesk::Source.note_source_keys_by_token[\"meta\"]).body)",
       "render_path": null,
       "location": {
         "type": "method",
         "class": "Helpdesk::Ticket",
         "method": "outbound_initiator"
       },
-      "user_input": "Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[\"meta\"]",
+      "user_input": "Helpdesk::Source.note_source_keys_by_token[\"meta\"]",
       "confidence": "Medium",
       "note": ""
     },
@@ -1833,7 +1833,7 @@
       "file": "app/controllers/support/notes_controller.rb",
       "line": 24,
       "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
-      "code": "Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account).notes.build({ \"incoming\" => true, \"private\" => false, \"source\" => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[\"note\"], \"user_id\" => ((current_user and current_user.id)), \"account_id\" => ((current_account and current_account.id)) }.merge(params[:helpdesk_note].permit(*[{ :attachments => ([:resource]) }, { :inline_attachment_ids => ([]) }, { :note_body_attributes => ([:body_html]) }])))",
+      "code": "Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account).notes.build({ \"incoming\" => true, \"private\" => false, \"source\" => Helpdesk::Source.note_source_keys_by_token[\"note\"], \"user_id\" => ((current_user and current_user.id)), \"account_id\" => ((current_account and current_account.id)) }.merge(params[:helpdesk_note].permit(*[{ :attachments => ([:resource]) }, { :inline_attachment_ids => ([]) }, { :note_body_attributes => ([:body_html]) }])))",
       "render_path": null,
       "location": {
         "type": "method",
@@ -1922,14 +1922,14 @@
       "file": "app/models/helpdesk/archive_ticket.rb",
       "line": 575,
       "link": "https://brakemanscanner.org/docs/warning_types/unsafe_deserialization",
-      "code": "YAML.load(self.archive_notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[\"meta\"]).body)",
+      "code": "YAML.load(self.archive_notes.find_by_source(Helpdesk::Source.note_source_keys_by_token[\"meta\"]).body)",
       "render_path": null,
       "location": {
         "type": "method",
         "class": "Helpdesk::ArchiveTicket",
         "method": "outbound_initiator"
       },
-      "user_input": "Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[\"meta\"]",
+      "user_input": "Helpdesk::Source.note_source_keys_by_token[\"meta\"]",
       "confidence": "Medium",
       "note": ""
     },

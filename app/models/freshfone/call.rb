@@ -368,7 +368,7 @@ class Freshfone::Call < ActiveRecord::Base
       :phone => get_phone_number(params[:phone_number]),
       :requester_id => customer_id,
       :responder => params[:agent],
-      :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone],
+      :source => Account.current.helpdesk_sources.ticket_source_keys_by_token[:phone],
       :subject => ticket_subject,
       :group => group,
       :cc_email => ::Helpdesk::Ticket.default_cc_hash
@@ -405,7 +405,7 @@ class Freshfone::Call < ActiveRecord::Base
       :account_id => account_id,
       :note_body_attributes => { :body_html =>  description_html(false) },
       :incoming => true,
-      :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"],
+      :source => Account.current.helpdesk_sources.note_source_keys_by_token["note"],
       :user => params[:agent],
       :private => private_note?
     }

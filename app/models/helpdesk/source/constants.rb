@@ -19,4 +19,6 @@ class Helpdesk::Source < Helpdesk::Choice
 
   NOTE_EXCLUDE_SOURCES = ['meta', 'summary'].freeze
   MAXIMUM_NUMBER_OF_SOURCES = 1000
+  ARCHIVE_NOTE_SOURCES = ['email', 'form', 'note', 'status', 'meta', 'twitter', 'feedback', 'facebook',   
+               'forward_email', 'phone', 'mobihelp', 'mobihelp_app_review', 'summary', 'automation_rule_forward'].freeze
 end

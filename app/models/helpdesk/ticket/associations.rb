@@ -59,7 +59,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   has_one :summary, 
     :class_name => 'Helpdesk::Note',
-    :as => 'notable', :conditions => {:source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['summary']}
+    :as => 'notable', :conditions => {:source => Helpdesk::Source.note_source_keys_by_token['summary']}
 
   has_many :activities, :class_name => 'Helpdesk::Activity', :as => 'notable', :dependent => :destroy
 

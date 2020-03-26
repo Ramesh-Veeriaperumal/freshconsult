@@ -70,11 +70,11 @@ class ConversationDelegator < ConversationBaseDelegator
   end
 
   def facebook_ticket?
-    Account.current.launched?(:facebook_public_api) && ticket_source.present? && (ticket_source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook])
+    Account.current.launched?(:facebook_public_api) && ticket_source.present? && (ticket_source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook])
   end
 
   def twitter_ticket?
-    Account.current.launched?(:twitter_public_api) && ticket_source.present? && (ticket_source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:twitter])
+    Account.current.launched?(:twitter_public_api) && ticket_source.present? && (ticket_source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter])
   end
 
   def social_ticket?

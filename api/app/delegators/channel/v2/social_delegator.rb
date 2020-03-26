@@ -15,7 +15,7 @@ module Channel::V2
     end
 
     def twitter_ticket?
-      Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['twitter'] == source
+      Account.current.helpdesk_sources.note_source_keys_by_token['twitter'] == source
     end
   end
 end

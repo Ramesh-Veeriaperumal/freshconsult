@@ -65,7 +65,7 @@ RSpec.describe "Ticket and Agent score specs" do
         :note_body_attributes => { :body => Faker::Lorem.sentence(3)},
         :private => false,
         :incoming => true,
-        :source     => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email],
+        :source     => Account.current.helpdesk_sources.ticket_source_keys_by_token[:email],
         :account_id => @ticket.account_id,
         :user_id => @ticket.requester.id
       })

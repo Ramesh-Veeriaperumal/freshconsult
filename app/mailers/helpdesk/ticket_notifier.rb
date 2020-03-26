@@ -71,7 +71,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
              :email_body_plain => plain_version,
              :email_body_html => html_version,
              :subject => r_s_template.render('ticket' => ticket.to_liquid, 'helpdesk_name' => ticket.account.helpdesk_name).html_safe}
-      if(notification_type == EmailNotification::NEW_TICKET and ticket.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone])
+      if(notification_type == EmailNotification::NEW_TICKET and ticket.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:phone])
         params[:attachments] = ticket.all_attachments
         params[:cloud_files] = ticket.cloud_files
       end
@@ -157,7 +157,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
         params[:smtp_envelope_to] = smtp_envelope_to
       end
       
-      if(e_notification.notification_type == EmailNotification::NEW_TICKET_CC and ticket.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone])
+      if(e_notification.notification_type == EmailNotification::NEW_TICKET_CC and ticket.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:phone])
          params[:attachments] = ticket.attachments
          params[:cloud_files] = ticket.cloud_files
       end
@@ -314,7 +314,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       remove_email_config
     end
 
-    if params[:notification_type] == EmailNotification::NEW_TICKET and params[:ticket].source != Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
+    if params[:notification_type] == EmailNotification::NEW_TICKET and params[:ticket].source != Account.current.helpdesk_sources.ticket_source_keys_by_token[:email]
       set_others_redis_key(message_key(params[:ticket].account_id, message_id),
                            "#{params[:ticket].display_id}:#{message_id}",
                            86400*7) unless message_id.nil?
@@ -774,7 +774,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       if ((ticket.account_id > get_spam_account_id_threshold) &&
           (account.subscription.state.downcase == "trial") && 
           (Freemail.free_or_disposable?(account.admin_email)) &&
-          (ticket.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email] || ticket.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone] ))
+          (ticket.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email] || ticket.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:phone] ))
         if note.present?
           to_emails = validate_emails(note.to_emails, note)
           bcc_emails = validate_emails(note.bcc_emails, note)

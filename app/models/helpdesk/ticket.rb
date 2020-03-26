@@ -28,6 +28,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include AccountConstants
   include RoundRobinCapping::Methods
   include MemcacheKeys
+  include TicketConstants
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed",
@@ -248,7 +249,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
           :conditions => ["frDueBy <=? AND fr_escalated=? AND status IN (?) AND
                             helpdesk_ticket_states.first_response_time IS ? AND source != ?",
                             due_by,false,Helpdesk::TicketStatus::donot_stop_sla_statuses(account),nil,
-                            Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email]]
+                            Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]]
   }}
 
   scope :response_reminder,lambda { |sla_rule_ids| {
@@ -263,7 +264,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
           :select => "helpdesk_tickets.*",
           :conditions => ['due_by <=? AND isescalated=? AND status IN (?) AND source != ?',
                             due_by,false, Helpdesk::TicketStatus::donot_stop_sla_statuses(account),
-                            Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email]]
+                            Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]]
   }}
 
   scope :resolution_reminder, lambda {|sla_rule_ids|{
@@ -278,7 +279,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
           :select => "helpdesk_tickets.*",
           :conditions => ["nr_due_by <=? AND nr_escalated=? AND status IN (?) AND source != ?",
                             due_by,false,Helpdesk::TicketStatus::donot_stop_sla_statuses(account),
-                            Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email]]
+                            Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]]
   }}
 
   scope :next_response_reminder, lambda {|sla_rule_ids|{
@@ -428,11 +429,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def twitter?
-    source == SOURCE_KEYS_BY_TOKEN[:twitter] and (tweet) and (tweet.twitter_handle)
+    source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter] and (tweet) and (tweet.twitter_handle)
   end
 
   def email?
-    source == SOURCE_KEYS_BY_TOKEN[:email]
+    source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:email]
   end
 
   def show_facebook_reply?
@@ -444,7 +445,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def facebook?
-     source == SOURCE_KEYS_BY_TOKEN[:facebook] and (fb_post) and (fb_post.facebook_page)
+     source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook] and (fb_post) and (fb_post.facebook_page)
   end
 
   def facebook_realtime_message?
@@ -453,15 +454,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   #This is for mobile app since it expects twitter handle & facebook page and not a boolean value
   def is_twitter
-    source == SOURCE_KEYS_BY_TOKEN[:twitter] ? (tweet and tweet.twitter_handle) : nil
+    source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter] ? (tweet and tweet.twitter_handle) : nil
   end
 
   def is_facebook
-    source == SOURCE_KEYS_BY_TOKEN[:facebook] ? (fb_post and fb_post.facebook_page) : nil
+    source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook] ? (fb_post and fb_post.facebook_page) : nil
   end
 
   def bot?
-    source == SOURCE_KEYS_BY_TOKEN[:bot]
+    source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:bot]
   end
   alias :is_bot :bot?
 
@@ -483,11 +484,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def mobihelp?
-    source == SOURCE_KEYS_BY_TOKEN[:mobihelp]
+    source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:mobihelp]
   end
 
   def outbound_email?
-    (source == SOURCE_KEYS_BY_TOKEN[:outbound_email]) && Account.current.compose_email_enabled?
+    (source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]) && Account.current.compose_email_enabled?
   end
 
   def parent_ticket?
@@ -535,7 +536,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def outbound_initiator
     return requester unless outbound_email?
     begin
-      meta_note = self.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"])
+      meta_note = self.notes.find_by_source(Account.current.helpdesk_sources.note_source_keys_by_token["meta"])
       meta = YAML::load(meta_note.body) unless meta_note.blank?
       if !meta.blank? && meta["created_by"].present?
         user_id = meta["created_by"]
@@ -572,7 +573,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def source=(val)
-    self[:source] = SOURCE_KEYS_BY_TOKEN[val] || val
+    self[:source] = Account.current.helpdesk_sources.ticket_source_keys_by_token[val] || val
   end
 
   def source_name
@@ -588,7 +589,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def chat?
-    source == SOURCE_KEYS_BY_TOKEN[:chat]
+    source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:chat]
   end
 
   def requester_info
@@ -1037,7 +1038,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def last_forwardable_note
-    public_notes.where(['source NOT IN (?)', Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['feedback']]).last
+    public_notes.where(['source NOT IN (?)', Account.current.helpdesk_sources.note_source_keys_by_token['feedback']]).last
   end
 
   def current_cc_emails
@@ -1110,7 +1111,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   #Ecommerce methods
   def ecommerce?
-    source == SOURCE_KEYS_BY_TOKEN[:ecommerce] && self.ebay_question.present?
+    source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:ecommerce] && self.ebay_question.present?
   end
 
   def allow_ecommerce_reply?

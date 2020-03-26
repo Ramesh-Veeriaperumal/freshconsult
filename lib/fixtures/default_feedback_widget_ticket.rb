@@ -7,7 +7,7 @@ class Fixtures::DefaultFeedbackWidgetTicket < Fixtures::DefaultTicket
     end
 
     def source
-      TicketConstants::SOURCE_KEYS_BY_TOKEN[:feedback_widget]
+      Account.current.helpdesk_sources.ticket_source_keys_by_token[:feedback_widget]
     end
 
     def type

@@ -30,12 +30,12 @@ class Integrations::Cti::ScreenPopController < ApplicationController
         ticket = call.recordable
       else
         note_body = "#{cti_header_msg(call)} #{cti_call_url_msg(call)} #{cti_call_info_msg(call)}"
-        note = create_note(ticket, note_body, current_user, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["phone"])
+        note = create_note(ticket, note_body, current_user, current_account.helpdesk_sources.note_source_keys_by_token["phone"])
         call.recordable = note
         call.save!
       end
       if(params[:note_body].present?)
-        agent_note = create_note(ticket, params[:note_body], current_user, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"], @installed_app.configs_call_note_private.to_bool)
+        agent_note = create_note(ticket, params[:note_body], current_user, current_account.helpdesk_sources.note_source_keys_by_token["note"], @installed_app.configs_call_note_private.to_bool)
         #A Small Hack to maintain the order of the notes as mysql DateTime precision is only upto seconds.
         if note.present? && note.created_at.to_i == agent_note.created_at.to_i
           agent_note.update_column(:created_at, agent_note.created_at + 1.seconds)
@@ -59,7 +59,7 @@ class Integrations::Cti::ScreenPopController < ApplicationController
           req.save!
         end
         link_call_to_new_ticket(call, false, params[:subject])
-        create_note(call.recordable, params[:note_body], current_user, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"], @installed_app.configs_call_note_private.to_bool) if params[:note_body].present?
+        create_note(call.recordable, params[:note_body], current_user, current_account.helpdesk_sources.note_source_keys_by_token["note"], @installed_app.configs_call_note_private.to_bool) if params[:note_body].present?
         call.status = Integrations::CtiCall::AGENT_CONVERTED
         call.save!
         render :json => {:ticket_path => helpdesk_ticket_path(call.recordable)}, :status => :ok
@@ -79,7 +79,7 @@ class Integrations::Cti::ScreenPopController < ApplicationController
       call = current_account.cti_calls.where(:id => params[:call_id]).first
       call.status = Integrations::CtiCall::IGNORED
       if params[:note_body].present?
-        create_note(call.recordable, params[:note_body], current_user, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"], @installed_app.configs_call_note_private.to_bool)
+        create_note(call.recordable, params[:note_body], current_user, current_account.helpdesk_sources.note_source_keys_by_token["note"], @installed_app.configs_call_note_private.to_bool)
         call.status = Integrations::CtiCall::AGENT_CONVERTED
       end
       call.save!

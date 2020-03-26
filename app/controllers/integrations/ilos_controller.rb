@@ -21,7 +21,7 @@ class Integrations::IlosController < ApplicationController
         :user => get_user,
         :account_id => current_account.id,
         :incoming => incoming,
-        :source => TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal],
+        :source => current_account.helpdesk_sources.ticket_source_keys_by_token[:portal],
         :note_body_attributes => { :body_html => note_desc_html }
     )
     if note.save_note!

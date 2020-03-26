@@ -33,7 +33,7 @@ class UpdateTicketStatesTest < ActionView::TestCase
     User.stubs(:current).returns(user)
     @ticket = create_ticket
     User.unstub(:current)
-    @note = create_note(notable_id: @ticket.id, private: false, incoming: false, source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'])
+    @note = create_note(notable_id: @ticket.id, private: false, incoming: false, source: Account.current.helpdesk_sources.note_source_keys_by_token['email'])
     {
       id: @note.id,
       model_changes: nil,
@@ -173,7 +173,7 @@ class UpdateTicketStatesTest < ActionView::TestCase
     User.stubs(:current).returns(user)
     ticket = create_ticket
     User.unstub(:current)
-    note = create_note(notable_id: ticket.id, private: false, incoming: false, source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'])
+    note = create_note(notable_id: ticket.id, private: false, incoming: false, source: Account.current.helpdesk_sources.note_source_keys_by_token['email'])
     input = {
       id: note.id,
       model_changes: nil,
@@ -181,7 +181,7 @@ class UpdateTicketStatesTest < ActionView::TestCase
       current_user_id: @agent.id
     }
     Tickets::UpdateTicketStatesWorker.new.perform(input)
-    note1 = create_note(notable_id: ticket.id, private: false, incoming: false, source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'], user_id: user.id)
+    note1 = create_note(notable_id: ticket.id, private: false, incoming: false, source: Account.current.helpdesk_sources.note_source_keys_by_token['email'], user_id: user.id)
     input = {
       id: note1.id,
       model_changes: nil,

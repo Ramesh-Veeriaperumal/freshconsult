@@ -64,9 +64,9 @@ module Admin::AutomationConstants
 
   LANGUAGE_CODES = LANGUAGE_HASH.keys.freeze
 
-  SOURCE = TicketConstants::SOURCE_TOKEN_BY_KEY.inject({}) { |hash, key| hash.merge!(key.first.to_s => key.second.to_s) }.freeze
+  SOURCE = Helpdesk::Source.ticket_source_token_by_key.inject({}) { |hash, key| hash.merge!(key.first.to_s => key.second.to_s) }.freeze
 
-  SOURCE_BY_ID = TicketConstants::SOURCE_TOKEN_BY_KEY.keys.freeze
+  SOURCE_BY_ID = Helpdesk::Source.ticket_source_token_by_key.keys.freeze
 
   HASH_SUMMARY_CLASS = { 1 => 'Key', 2 => 'Value', 3 => 'Operator', 4 => 'Evaluate_on' }.freeze
 

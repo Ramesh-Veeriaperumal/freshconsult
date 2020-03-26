@@ -24,20 +24,20 @@ module ConversationConstants
   ECOMMERCE_REPLY_FIELDS = %w[body agent_id last_note_id attachment_ids].freeze
   MAX_INCLUDE = 10
   TYPE_FOR_ACTION = {
-    'create' => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
-    'reply'  => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
-    'reply_to_forward' => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
-    'forward' => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['forward_email'],
-    'facebook_reply' => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook'],
-    'ecommerce_reply' => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['ecommerce'],
-    'tweet' => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['twitter'],
-    'broadcast' => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
+    'create' => Helpdesk::Source.note_source_keys_by_token['note'],
+    'reply'  => Helpdesk::Source.note_source_keys_by_token['email'],
+    'reply_to_forward' => Helpdesk::Source.note_source_keys_by_token['note'],
+    'forward' => Helpdesk::Source.note_source_keys_by_token['forward_email'],
+    'facebook_reply' => Helpdesk::Source.note_source_keys_by_token['facebook'],
+    'ecommerce_reply' => Helpdesk::Source.note_source_keys_by_token['ecommerce'],
+    'tweet' => Helpdesk::Source.note_source_keys_by_token['twitter'],
+    'broadcast' => Helpdesk::Source.note_source_keys_by_token['note']
   }.freeze
 
   PUBLIC_API_DEFAULT_FIELDS = %w[body user_id attachments].freeze
   PUBLIC_API_FIELDS = {
-    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook] => %w[parent_note_id].freeze | PUBLIC_API_DEFAULT_FIELDS,
-    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter] => [twitter: [:tweet_type, :twitter_handle_id]].freeze | PUBLIC_API_DEFAULT_FIELDS
+    Helpdesk::Source.ticket_source_keys_by_token[:facebook] => %w[parent_note_id].freeze | PUBLIC_API_DEFAULT_FIELDS,
+    Helpdesk::Source.ticket_source_keys_by_token[:twitter] => [twitter: [:tweet_type, :twitter_handle_id]].freeze | PUBLIC_API_DEFAULT_FIELDS
   }.freeze
 
   PIPE_REPLY_FIELDS  = REPLY_FIELDS | %w(created_at updated_at)

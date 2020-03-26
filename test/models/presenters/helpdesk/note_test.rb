@@ -71,7 +71,7 @@ class NoteTest < ActiveSupport::TestCase
     note = create_note(note_params_hash)
     note = Helpdesk::Note.find(note.id)
     CentralPublishWorker::ActiveNoteWorker.jobs.clear
-    note.update_attributes(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"])
+    note.update_attributes(source: Account.current.helpdesk_sources.note_source_keys_by_token["email"])
     note.reload
     payload = note.central_publish_payload.to_json    
     payload.must_match_json_expression(central_publish_note_pattern(note))

@@ -84,7 +84,7 @@ class Fixtures::DefaultTicket
     end
 
     def source_name
-      TicketConstants::SOURCE_NAMES_BY_KEY[source]
+      Account.current.helpdesk_sources.ticket_source_names_by_key[source]
     end
 
     def updated_at
@@ -94,7 +94,7 @@ class Fixtures::DefaultTicket
     def create_reply
       reply_note = ticket.notes.new(
         :user_id      => agent.id,
-        :source       => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"],
+        :source       => Account.current.helpdesk_sources.note_source_keys_by_token["email"],
         :private      => false,
         :note_body_attributes  => {:body_html => note_body_html},
         :skip_notification     => true,

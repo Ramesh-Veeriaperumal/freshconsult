@@ -136,7 +136,7 @@ def ticket_post_process ticket_prop , ticket
     note_props = comment.to_hash.tap { |hs| hs.delete(:public) }.merge({:user_id =>user.id, :private => !(comment.public.to_bool) ,:incoming =>user.customer?,
                                                                         :account_id => @current_account.id , 
                                                                         :note_body_attributes => {:body =>comment.body} ,:deleted => false ,
-                                                                        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] , :created_at =>comment.created_at.to_datetime()})
+                                                                        :source => Account.current.helpdesk_sources.note_source_keys_by_token['note'] , :created_at =>comment.created_at.to_datetime()})
     note_props = note_props.to_hash.tap{|hs| hs.delete(:body)}
     @note = ticket.notes.build(note_props)
     # Injecting '@skip_resource_rate_limit' instance variable to skip resource rate limit

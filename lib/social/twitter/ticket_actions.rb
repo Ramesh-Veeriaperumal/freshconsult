@@ -19,7 +19,7 @@ module Social::Twitter::TicketActions
       :twitter_id =>  user.twitter_id,
       :product_id => options[:product_id] || twt_handle.product_id,
       :group_id   => options[:group_id] || ( twt_handle.product ? twt_handle.product.primary_email_config.group_id : nil),
-      :source     => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
+      :source     => Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter],
       :created_at =>  tkt_hash[:posted_time] ,
       :tweet_attributes => {
         :tweet_id           => tkt_hash[:tweet_id] ,
@@ -57,7 +57,7 @@ module Social::Twitter::TicketActions
 
     note = ticket.notes.build(
       :incoming   => true,
-      :source     => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
+      :source     => Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter],
       :account_id => twt_handle.account_id,
       :user_id    => user.id,
       :created_at => note_hash[:posted_time],

@@ -541,7 +541,7 @@ module ApiTicketsTestHelper
       },
       incoming: true,
       user_id:  ticket.requester.id,
-      source: Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter]
+      source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter]
     }
   end
 
@@ -1015,7 +1015,7 @@ module ApiTicketsTestHelper
   end
 
   def ticket_meta_pattern(ticket)
-    meta_info = ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta']).body
+    meta_info = ticket.notes.find_by_source(Account.current.helpdesk_sources.note_source_keys_by_token['meta']).body
     meta_info = YAML.load(meta_info)
     handle_secret_id(meta_info, ticket) if Account.current.agent_collision_revamp_enabled?
     handle_timestamps(meta_info)
@@ -1394,7 +1394,7 @@ module ApiTicketsTestHelper
     ebay_account = @account.ebay_accounts.new(name: Faker::Lorem.characters(10), configs: {}, status: 2, reauth_required: false)
     ebay_account.external_account_id = Faker::Number.number(10)
     ebay_account.save
-    ecommerce_ticket = create_ticket(source: TicketConstants::SOURCE_KEYS_BY_TOKEN[:ecommerce])
+    ecommerce_ticket = create_ticket(source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:ecommerce])
     ecommerce_ticket.requester.external_id = 'bssmb_us_03'
     ecommerce_ticket.requester.save
     ecommerce_ticket.build_ebay_question(user_id: ecommerce_ticket.requester.id, item_id: Faker::Number.number(10).to_s, ebay_account_id: ebay_account.id, account_id: @account.id, message_id: Faker::Number.number(10).to_s)

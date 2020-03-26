@@ -42,7 +42,7 @@ RSpec.describe Helpdesk::TicketsController do
     note = ticket.notes.build(
         :note_body_attributes => {:body => meta_data.map { |k, v| "#{k}: #{v}" }.join("\n")},
         :private => true,
-        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
+        :source => Account.current.helpdesk_sources.note_source_keys_by_token['meta'],
         :account_id => ticket.account.id,
         :user_id => ticket.requester.id
     )
@@ -57,7 +57,7 @@ RSpec.describe Helpdesk::TicketsController do
 
     ticket = create_ticket({:status => 2, :source => 10, :email_config_id => @email_config.id})
     get :show, :id => ticket.display_id
-    ticket.source..should = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email]
+    ticket.source..should = Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]
     Delayed::Job.last.handler.should_not include("biz_rules_check")
     @account.features.compose_email.destroy
   end
@@ -65,7 +65,7 @@ RSpec.describe Helpdesk::TicketsController do
   it "should create a meta for created by for phone tickets" do
     ticket = create_ticket({:status => 2, :source => 3})
     get :show, :id => ticket.display_id
-    note = ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'])
+    note = ticket.notes.find_by_source(Account.current.helpdesk_sources.note_source_keys_by_token['meta'])
     note.body.should_not be_nil
   end
 
@@ -88,7 +88,7 @@ RSpec.describe Helpdesk::TicketsController do
     user.make_current
     ticket = create_ticket({:status => 2, :source => 3, :requester_id => user.id})
     get :show, :id => ticket.display_id
-    note = ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'])
+    note = ticket.notes.find_by_source(Account.current.helpdesk_sources.note_source_keys_by_token['meta'])
     note.should be_nil
   end
 
@@ -96,7 +96,7 @@ RSpec.describe Helpdesk::TicketsController do
   it "should create a meta for created by for portal tickets" do
     ticket = create_ticket({:status => 2, :source => 2})
     get :show, :id => ticket.display_id
-    note = ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'])
+    note = ticket.notes.find_by_source(Account.current.helpdesk_sources.note_source_keys_by_token['meta'])
     note.should_not be_nil
   end
 
@@ -109,7 +109,7 @@ RSpec.describe Helpdesk::TicketsController do
         :to_emails =>[agent_details],
         :note_body_attributes => {:body => Faker::Lorem.sentence },
         :private => true,
-        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
+        :source => Account.current.helpdesk_sources.note_source_keys_by_token['email'],
         :account_id => ticket.account.id,
         :user_id => ticket.requester.id
     )
@@ -296,7 +296,7 @@ RSpec.describe Helpdesk::TicketsController do
                                        :requester_id => "",
                                        :subject => "New Oubound Ticket #{now}",
                                        :ticket_type => "Question",
-                                       :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email],
+                                       :source => Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email],
                                        :status => "2",
                                        :priority => "1",
                                        :group_id => "",
@@ -309,7 +309,7 @@ RSpec.describe Helpdesk::TicketsController do
     t = @account.tickets.find_by_subject("New Oubound Ticket #{now}")
     t.cc_email[:cc_email].include?("someone@cc.com")
     t.outbound_email?.should be true
-    t.source.should be_eql(Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email])
+    t.source.should be_eql(Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email])
     @account.tickets.find_by_subject("New Oubound Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)
   end
 
@@ -320,7 +320,7 @@ RSpec.describe Helpdesk::TicketsController do
                                        :requester_id => "",
                                        :subject => "New Oubound Ticket #{now}",
                                        :ticket_type => "Question",
-                                       :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email],
+                                       :source => Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email],
                                        :status => "2",
                                        :priority => "1",
                                        :group_id => "",
@@ -330,7 +330,7 @@ RSpec.describe Helpdesk::TicketsController do
                                       }
     Delayed::Job.last.handler.should_not include("biz_rules_check")
     t = @account.tickets.find_by_subject("New Oubound Ticket #{now}")
-    t.source.should be_eql(Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email])
+    t.source.should be_eql(Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email])
 
     t.outbound_email?.should be false
     @account.tickets.find_by_subject("New Oubound Ticket #{now}").should be_an_instance_of(Helpdesk::Ticket)

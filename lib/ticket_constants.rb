@@ -1,5 +1,38 @@
 module TicketConstants
+  def self.const_missing(constant_name, *args)
+    if [:SOURCES, :SOURCE_OPTIONS, :SOURCE_NAMES_BY_KEY, :SOURCE_KEYS_BY_TOKEN, :SOURCE_KEYS_BY_NAME, :SOURCE_TOKEN_BY_KEY, 
+          :SOURCES_FOR_LANG_DETECTION, :SOURCE_KEYS_BY_TOKEN, :BOT_SOURCE].include?(constant_name)
+      new_constant_name = 'TicketConstants::'+ constant_name.to_s + '_1'
+      Rails.logger.debug("Warning accessing ticket constants :: #{new_constant_name}")
+      Rails.logger.debug(caller[0..10].join("\n"))
+      new_constant_name.constantize
+    else
+      Rails.logger.debug("Constant missing #{constant_name}")
+      Rails.logger.debug(caller[0..10].join("\n"))
+      super(constant_name, *args)
+    end
+  end
+
+  module ClassMethods
+    def const_missing(constant_name, *args)
+      if [:SOURCES, :SOURCE_OPTIONS, :SOURCE_NAMES_BY_KEY, :SOURCE_KEYS_BY_TOKEN, :SOURCE_KEYS_BY_NAME, :SOURCE_TOKEN_BY_KEY, 
+            :SOURCES_FOR_LANG_DETECTION, :SOURCE_KEYS_BY_TOKEN, :BOT_SOURCE].include?(constant_name)
+        new_constant_name = 'TicketConstants::'+ constant_name.to_s + '_1'
+        Rails.logger.debug("Warning accessing ticket constants :: #{new_constant_name}")
+        Rails.logger.debug(caller[0..10].join("\n"))
+        new_constant_name.constantize
+      else
+        Rails.logger.debug("Constant missing #{constant_name}")
+        Rails.logger.debug(caller[0..10].join("\n"))
+        super(constant_name, *args)
+      end
+    end
+  end
   
+  def self.included(receiver)
+    receiver.extend ClassMethods
+  end
+
   CHAT_SOURCES = { :snapengage =>  "snapengage.com", :olark => "olark.com"}
 
   SERVICE_TASK_NAME = "Service Task"
@@ -38,7 +71,7 @@ module TicketConstants
   SKILL_DEFAULT_CONDITION_FIELDS = [:group_id, :priority, :source, :ticket_type, :product_id]
 
   ### Bump the version of "TICKETS_LIST_PAGE_FILTERS" key in fragment_cache/keys.rb when SOURCES are modified.
-  SOURCES = [
+  SOURCES_1 = [
     [ :email,            'email',            1 ],
     [ :portal,           'portal_key',       2 ],
     [ :phone,            'phone',            3 ],
@@ -53,15 +86,14 @@ module TicketConstants
     [:bot,              'bot',              12]
   ]
 
-  SOURCE_OPTIONS = SOURCES.map { |i| [i[1], i[2]] }
-  SOURCE_NAMES_BY_KEY = Hash[*SOURCES.map { |i| [i[2], i[1]] }.flatten]
-  SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.map { |i| [i[0], i[2]] }.flatten]
-  SOURCE_KEYS_BY_NAME = Hash[*SOURCES.map { |i| [i[1], i[2]] }.flatten]
-  SOURCE_TOKEN_BY_KEY = Hash[*SOURCES.map { |i| [i[2], i[0]] }.flatten]
-  SOURCES_FOR_LANG_DETECTION = [SOURCE_KEYS_BY_TOKEN[:portal], SOURCE_KEYS_BY_TOKEN[:feedback_widget]]
+  SOURCE_OPTIONS_1 = SOURCES_1.map { |i| [i[1], i[2]] }
+  SOURCE_NAMES_BY_KEY_1 = Hash[*SOURCES_1.map { |i| [i[2], i[1]] }.flatten]
+  SOURCE_KEYS_BY_TOKEN_1 = Hash[*SOURCES_1.map { |i| [i[0], i[2]] }.flatten]
+  SOURCE_KEYS_BY_NAME_1 = Hash[*SOURCES_1.map { |i| [i[1], i[2]] }.flatten]
+  SOURCE_TOKEN_BY_KEY_1 = Hash[*SOURCES_1.map { |i| [i[2], i[0]] }.flatten]
+  SOURCES_FOR_LANG_DETECTION_1 = [SOURCE_KEYS_BY_TOKEN_1[:portal], SOURCE_KEYS_BY_TOKEN_1[:feedback_widget]]
 
-  BOT_SOURCE = SOURCE_KEYS_BY_TOKEN[:bot]
-  
+  BOT_SOURCE_1 = SOURCE_KEYS_BY_TOKEN_1[:bot]
   ### Bump the version of "TICKETS_LIST_PAGE_FILTERS" key in fragment_cache/keys.rb when PRIORITIES are modified.
   PRIORITIES = [
     [ :low,       'low',         1,    '#7ebf00' ],
@@ -391,19 +423,19 @@ module TicketConstants
   end
   
   def self.translate_source_name(source)
-    I18n.t(SOURCE_NAMES_BY_KEY[source])
+    I18n.t(Account.current.helpdesk_sources.default_ticket_source_names_by_key[source])
   end
 
   def self.source_list
-    Hash[*SOURCES.map { |i| [i[2], I18n.t(i[1])] }.flatten]
+    Hash[*Account.current.helpdesk_sources.default_ticket_sources.map { |i| [i[2], I18n.t(i[1])] }.flatten]
   end
 
   def self.source_names
-    SOURCES.map { |i| [I18n.t(i[1]), i[2]] }
+    Account.current.helpdesk_sources.default_ticket_sources.map { |i| [I18n.t(i[1]), i[2]] }
   end
 
   def self.source_token(key)
-    SOURCE_TOKEN_BY_KEY[key]
+    Account.current.helpdesk_sources.ticket_source_token_by_key[key]
   end
 
   def self.due_by_list
@@ -461,7 +493,7 @@ module TicketConstants
   end
 
   def self.readable_source_names_by_key
-    Hash[*SOURCES.map { |i| [i[2].to_s, I18n.t(i[1])] }.flatten]
+    Hash[*Account.current.helpdesk_sources.ticket_sources.map { |i| [i[2].to_s, I18n.t(i[1])] }.flatten]
   end
 
   def self.archive_date_options

@@ -266,7 +266,7 @@ class Helpdesk::ConversationsController < ApplicationController
     end
     
     def set_default_source
-      @item.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if params[:helpdesk_note][:source].blank?
+      @item.source = current_account.helpdesk_sources.note_source_keys_by_token["note"] if params[:helpdesk_note][:source].blank?
     end
 
     def after_restore_url
@@ -452,7 +452,7 @@ class Helpdesk::ConversationsController < ApplicationController
 
       def learn_valid_ticket_data
         if (current_account.proactive_spam_detection_enabled? && @parent.notes.count.zero? &&
-         @parent.source.eql?(Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]) && !@parent.spam?)
+         @parent.source.eql?(current_account.helpdesk_sources.ticket_source_keys_by_token[:email]) && !@parent.spam?)
           SpamDetection::LearnTicketWorker.perform_async({ :ticket_id => @parent.id, 
             :type => Helpdesk::Email::Constants::MESSAGE_TYPE_BY_NAME[:ham]})
           Rails.logger.info "Enqueued job to sidekiq to learn ticket"

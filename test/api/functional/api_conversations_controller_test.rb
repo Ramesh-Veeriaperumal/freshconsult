@@ -29,7 +29,7 @@ class ApiConversationsControllerTest < ActionController::TestCase
 
   def note
     @agent.preferences[:agent_preferences][:undo_send] = false
-    Helpdesk::Note.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'], deleted: false).first || create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
+    Helpdesk::Note.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['note'], deleted: false).first || create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
   end
 
   def account

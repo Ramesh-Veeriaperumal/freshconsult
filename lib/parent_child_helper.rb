@@ -20,7 +20,7 @@ module ParentChildHelper
     else
       source = :phone
     end
-    @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[source]
+    @item.source = Account.current.helpdesk_sources.ticket_source_keys_by_token[source]
   end
 
   def compose_email?

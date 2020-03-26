@@ -84,7 +84,7 @@
     <%= @ticket.description_html.html_safe %>
   </div>  
   <span class="seperator"></span>
-  <% @ticket_notes = @ticket.notes.visible.exclude_source(Helpdesk::Note::EXCLUDE_SOURCE) %>
+  <% @ticket_notes = @ticket.notes.visible.exclude_source(Account.current.helpdesk_sources.note_exclude_sources) %>
   <% unless @ticket_notes.empty? %>
   <h3><%= t("comments") %></h3>  
   <div>

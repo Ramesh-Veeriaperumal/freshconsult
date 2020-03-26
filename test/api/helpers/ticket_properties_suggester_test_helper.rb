@@ -20,7 +20,7 @@ module TicketPropertiesSuggesterTestHelper
         :subject => sub,
         :ticket_body_attributes => {:description => desc, :description_html => desc},
         :email => "sales@gmail.com",
-        :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone],
+        :source => Account.current.helpdesk_sources.ticket_source_keys_by_token[:phone],
         cc_email: Helpdesk::Ticket.default_cc_hash.merge(cc_emails: cc_emails, fwd_emails: fwd_emails),
       )
       ticket.save_ticket!

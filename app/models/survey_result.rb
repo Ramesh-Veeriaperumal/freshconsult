@@ -26,7 +26,7 @@ class SurveyResult < ActiveRecord::Base
     note = surveyable.notes.build({
       :user_id => customer_id,
       :note_body_attributes => {:body => Helpdesk::HTMLSanitizer.plain(feedback)},
-      :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["feedback"],
+      :source => Account.current.helpdesk_sources.note_source_keys_by_token["feedback"],
       :incoming => true,
       :private => false
     })

@@ -71,7 +71,7 @@ module Ember
     end
 
     def note
-      Helpdesk::Note.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'], deleted: false).first || create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
+      Helpdesk::Note.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['note'], deleted: false).first || create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
     end
 
     def create_note_params_hash
@@ -811,7 +811,7 @@ module Ember
       ticket = create_ticket_from_fb_post(true)
       put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
       sample_put_comment = { 'id' => put_comment_id }
-      fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
+      fb_comment_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
       Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
       params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id, msg_type: 'post' }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
@@ -836,7 +836,7 @@ module Ember
 
     def test_facebook_reply_to_non_fb_post_note
       ticket = create_ticket_from_fb_direct_message
-      fb_dm_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
+      fb_dm_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
       params_hash = { body: Faker::Lorem.paragraph, note_id: fb_dm_note.id, msg_type: 'post' }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
@@ -845,7 +845,7 @@ module Ember
 
     def test_facebook_reply_to_non_commentable_note
       ticket = create_ticket_from_fb_post(true, true)
-      fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).last
+      fb_comment_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).last
       params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id, msg_type: 'post' }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
@@ -892,7 +892,7 @@ module Ember
       fb_page = ticket.fb_post.facebook_page
       fb_page.reauth_required = true
       fb_page.save
-      fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
+      fb_comment_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
       put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
       sample_put_comment = { 'id' => put_comment_id }
       Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
@@ -919,7 +919,7 @@ module Ember
 
     def test_facebook_reply_without_msg_type
       ticket = create_ticket_from_fb_post(true, true)
-      fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
+      fb_comment_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
       params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
@@ -928,7 +928,7 @@ module Ember
 
     def test_facebook_dm_reply_with_incorrect_msg_type
       ticket = create_ticket_from_fb_post(true, true)
-      fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
+      fb_comment_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
       params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id, msg_type: 'posts' }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
@@ -937,7 +937,7 @@ module Ember
 
     def test_facebook_reply_dm_with_more_than_one_attachment_ids
       ticket = create_ticket_from_fb_post(true, true)
-      fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
+      fb_comment_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
       params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id, msg_type: 'post', attachment_ids: [3, 4] }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
@@ -977,7 +977,7 @@ module Ember
       ticket = create_ticket_from_fb_post(true)
       put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
       sample_put_comment = { 'id' => put_comment_id }
-      fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
+      fb_comment_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
       Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
       params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id, msg_type: 'post' }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
@@ -992,7 +992,7 @@ module Ember
       file = fixture_file_upload('files/image4kb.png', 'image/png')
       attachment_ids << create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
       ticket = create_ticket_from_fb_post(true)
-      fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
+      fb_comment_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
       params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id, msg_type: 'post', attachment_ids: attachment_ids }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
@@ -2266,7 +2266,7 @@ module Ember
       end
       put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
       sample_put_comment = { 'id' => put_comment_id }
-      fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
+      fb_comment_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
       Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
       params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id, last_note_id: note.id }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
@@ -2341,7 +2341,7 @@ module Ember
       assert(JSON.parse(response.body)['cc_emails'] == cc_emails)
       assert(JSON.parse(response.body)['cc_emails'] == t.cc_email[:cc_emails])
       cc_emails.pop
-      @note = t.notes.build(private: false, user_id: @agent.id, account_id: @account.id, source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'], cc_emails: cc_emails)
+      @note = t.notes.build(private: false, user_id: @agent.id, account_id: @account.id, source: Account.current.helpdesk_sources.note_source_keys_by_token['email'], cc_emails: cc_emails)
       @note.save
       get :reply_template, construct_params({ version: 'private', id: t.display_id }, false)
       assert_response 200

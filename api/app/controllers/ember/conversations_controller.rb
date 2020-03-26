@@ -602,7 +602,7 @@ module Ember
       end
 
       def last_forwardable_note
-        @ticket.public_notes.where(['source NOT IN (?)', Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['feedback']]).last
+        @ticket.public_notes.where(['source NOT IN (?)', current_account.helpdesk_sources.note_source_keys_by_token['feedback']]).last
       end
 
       def after_load_object

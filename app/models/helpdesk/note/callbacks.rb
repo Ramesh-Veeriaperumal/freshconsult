@@ -83,7 +83,7 @@ class Helpdesk::Note < ActiveRecord::Base
     elsif inbound_email?
       notable.destroy_activity('activities.tickets.conversation.in_email.long', id)
     else
-      notable.destroy_activity("activities.tickets.conversation.#{ACTIVITIES_HASH.fetch(source, "note")}.long", id)
+      notable.destroy_activity("activities.tickets.conversation.#{Account.current.helpdesk_sources.note_activities_hash.fetch(source, "note")}.long", id)
     end
   end
 
@@ -91,8 +91,8 @@ class Helpdesk::Note < ActiveRecord::Base
     if Account.current.customer_sentiment_enabled?
       if User.current.nil? || User.current.language.nil? || User.current.language = "en"
         is_agent_performed = notable.agent_performed?(self.user)
-        if !is_agent_performed && ![SOURCE_KEYS_BY_TOKEN["meta"]].include?(self.source)
-          if [SOURCE_KEYS_BY_TOKEN["phone"]].include?(self.source)
+        if !is_agent_performed && ![Account.current.helpdesk_sources.note_source_keys_by_token["meta"]].include?(self.source)
+          if [Account.current.helpdesk_sources.note_source_keys_by_token["phone"]].include?(self.source)
             schema_less_note.sentiment = 0
             schema_less_note.save
           else
@@ -236,7 +236,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def send_requester_replied_notification(internal_notification = false)
       # if the source is "feedback" then send the notification email after 2 minutes
-      send_at = ([SOURCE_KEYS_BY_TOKEN["feedback"]].include?(self.source))? 2 : 0
+      send_at = ([Account.current.helpdesk_sources.note_source_keys_by_token["feedback"]].include?(self.source))? 2 : 0
       args = [(EmailNotification::REPLIED_BY_REQUESTER), notable, self, {:internal_notification => internal_notification}]
       Delayed::Job.enqueue(Delayed::PerformableMethod.new(Helpdesk::TicketNotifier, :notify_by_email, args), nil, send_at.minutes.from_now)
     end
@@ -282,10 +282,10 @@ class Helpdesk::Note < ActiveRecord::Base
                                 {'ticket_id' => notable.display_id, 'comment_id' => id}]}},
           'activities.tickets.conversation.in_email.short')
       else
-        notable.create_activity(user, "activities.tickets.conversation.#{ACTIVITIES_HASH.fetch(source, "note")}.long",
-          {'eval_args' => {"#{ACTIVITIES_HASH.fetch(source, "comment")}_path" => ["#{ACTIVITIES_HASH.fetch(source, "comment")}_path",
+        notable.create_activity(user, "activities.tickets.conversation.#{Account.current.helpdesk_sources.note_activities_hash.fetch(source, "note")}.long",
+          {'eval_args' => {"#{Account.current.helpdesk_sources.note_activities_hash.fetch(source, "comment")}_path" => ["#{Account.current.helpdesk_sources.note_activities_hash.fetch(source, "comment")}_path",
                                 {'ticket_id' => notable.display_id, 'comment_id' => id}]}},
-          "activities.tickets.conversation.#{ACTIVITIES_HASH.fetch(source, "note")}.short")
+          "activities.tickets.conversation.#{Account.current.helpdesk_sources.note_activities_hash.fetch(source, "note")}.short")
       end
     end
 

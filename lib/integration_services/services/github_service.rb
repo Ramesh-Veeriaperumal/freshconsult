@@ -312,7 +312,7 @@ module IntegrationServices::Services
       note_hash = {
         :private => true,
         :user_id => user.id,
-        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+        :source => Account.current.helpdesk_sources.note_source_keys_by_token['note'],
         :account_id => @installed_app.account_id,
         :note_body_attributes => {
           :body_html => body_html,

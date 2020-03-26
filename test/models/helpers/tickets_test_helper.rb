@@ -162,7 +162,7 @@ module TicketsTestHelper
       status: { id: ticket.status, name: ticket.status_name },
       priority: { id: ticket.priority, name: TicketConstants::PRIORITY_NAMES_BY_KEY[ticket.priority] },
       ticket_type: ticket.ticket_type,
-      source: {id: ticket.source, name: TicketConstants::SOURCE_NAMES_BY_KEY[ticket.source] },
+      source: {id: ticket.source, name: Account.current.helpdesk_sources.ticket_source_names_by_key[ticket.source] },
       requester_id: ticket.requester_id,
       due_by: ticket.due_by.try(:utc).try(:iso8601),
       created_at: ticket.created_at.try(:utc).try(:iso8601),
@@ -253,7 +253,7 @@ module TicketsTestHelper
     tweet = ticket.try(:tweet)
     fb_post = ticket.try(:fb_post)
 
-    if tweet && ticket.source == TicketConstants::SOURCE_KEYS_BY_NAME['twitter_source']
+    if tweet && ticket.source == Account.current.helpdesk_sources.ticket_source_keys_by_name['twitter_source']
       twitter_handle = tweet.twitter_handle
       source_info = {
         twitter: {
@@ -283,8 +283,8 @@ module TicketsTestHelper
   end
 
   def email_ticket?(source)
-    [Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email],
-     Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:chat]].include?(source)
+    [Account.current.helpdesk_sources.ticket_source_keys_by_token[:email],
+     Account.current.helpdesk_sources.ticket_source_keys_by_token[:chat]].include?(source)
   end
 
   def cp_assoc_ticket_pattern(expected_output = {}, ticket)

@@ -15,7 +15,7 @@ module Channel::V2
                         hash: { validatable_fields_hash: proc { |x| x.twitter_fields_validation } }, if: -> { twitter_reply? }, on: :create
 
     def twitter_reply?
-      Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['twitter'] == source
+      Account.current.helpdesk_sources.note_source_keys_by_token['twitter'] == source
     end
 
     def twitter_hash_presence?

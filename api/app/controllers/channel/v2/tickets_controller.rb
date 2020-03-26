@@ -91,11 +91,11 @@ module Channel::V2
     end
 
     def facebook_ticket?
-      params[cname][:source] == ::TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook]
+      params[cname][:source] == current_account.helpdesk_sources.ticket_source_keys_by_token[:facebook]
     end
 
     def twitter_ticket?
-      params[cname][:source] == ::TicketConstants::SOURCE_KEYS_BY_TOKEN[:twitter]
+      params[cname][:source] == current_account.helpdesk_sources.ticket_source_keys_by_token[:twitter]
     end
 
     def set_default_values

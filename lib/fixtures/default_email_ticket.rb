@@ -6,7 +6,7 @@ class Fixtures::DefaultEmailTicket < Fixtures::DefaultTicket
     end
 
     def source
-      TicketConstants::SOURCE_KEYS_BY_TOKEN[:email]
+      Account.current.helpdesk_sources.ticket_source_keys_by_token[:email]
     end
 
     def type

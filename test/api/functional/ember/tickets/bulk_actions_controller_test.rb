@@ -617,7 +617,7 @@ module Ember
         Account.any_instance.stubs(:support_bot_configured?).returns(true)
         ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         ticket = @account.tickets.where(display_id: ticket_ids.first).first
-        ticket.source = TicketConstants::BOT_SOURCE
+        ticket.source = Account.current.helpdesk_sources.ticket_bot_source
         ticket.save
         notes_count = ticket.notes.count
         reply_hash = { body: Faker::Lorem.paragraph }

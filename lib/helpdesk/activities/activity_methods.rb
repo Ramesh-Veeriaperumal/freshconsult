@@ -277,7 +277,7 @@ module Helpdesk::Activities
     end
 
     def parse_notes(notes)
-      notes.select { |key,value| value.source != Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['summary']}
+      notes.select { |key,value| value.source != Account.current.helpdesk_sources.note_source_keys_by_token['summary']}
     end
 
     def dev_notification(subj, message, topic = nil)

@@ -136,9 +136,9 @@ module MetaHelperMethods
 
   def meta_note_info(ticket)
     if ticket.is_a?(Helpdesk::ArchiveTicket)
-      ticket.archive_notes.find_by_source(Helpdesk::ArchiveNote::SOURCE_KEYS_BY_TOKEN["meta"]) 
+      ticket.archive_notes.find_by_source(Account.current.helpdesk_sources.archive_note_source_keys_by_token["meta"]) 
     else  
-      ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) 
+      ticket.notes.find_by_source(Account.current.helpdesk_sources.note_source_keys_by_token["meta"]) 
     end
   end
 

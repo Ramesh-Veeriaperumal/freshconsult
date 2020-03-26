@@ -13,7 +13,7 @@ class FacebookRealtimeTest < ActionView::TestCase
     super
     @account.facebook_streams.destroy_all
     @account.facebook_pages.destroy_all
-    @account.tickets.where(source: Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook]).destroy_all
+    @account.tickets.where(source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook]).destroy_all
     Social::FacebookPage.any_instance.unstub(:unsubscribe_realtime)
     HttpRequestProxy.any_instance.unstub(:fetch_using_req_params)
     Account.unstub(:current)
@@ -66,7 +66,7 @@ class FacebookRealtimeTest < ActionView::TestCase
 
     assert_equal ticket.requester.fb_profile_id, fb_user_id
     assert_equal ticket.description, message
-    assert_equal ticket.source, Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook]
+    assert_equal ticket.source, Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook]
     assert_equal ticket.created_at, post_created_at
   end
 
@@ -223,7 +223,7 @@ class FacebookRealtimeTest < ActionView::TestCase
     assert_equal @account.facebook_posts.find_by_post_id(fb_post_id).postable.is_a?(Helpdesk::Ticket), true
     note = @account.facebook_posts.find_by_post_id(fb_comment_id).postable
     assert_equal note.is_a?(Helpdesk::Note), true
-    assert_equal note.source, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']
+    assert_equal note.source, Account.current.helpdesk_sources.note_source_keys_by_token['facebook']
     assert_equal note.body, comment_content
     assert_equal note.user.fb_profile_id, comment_user
     assert_equal note.created_at, comment_time

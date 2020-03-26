@@ -14,7 +14,7 @@
             <%= ff.text_area :body_html, :class => "required", :id => "#{cntid}-body", :value => "", :"data-wrap-font-family" => true %>
           <% end %>
           <%= f.label(:private, f.check_box(:private, :checked => true) + t("ticket.note_form.private_note"), :class => "checkbox") %>
-          <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>
+          <%= f.hidden_field :source , :value => current_account.helpdesk_sources.note_source_keys_by_token["note"]%>
           <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
 		      <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=>:note_ticket_status  )%>
         </div>

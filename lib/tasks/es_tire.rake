@@ -215,7 +215,7 @@ def import_condition(id, item)
     when "User" then
       condition = ".where(['account_id=? and updated_at<? and deleted=?', #{id}, Time.now.utc, false])"
     when "Helpdesk::Note" then
-      condition = ".where(['account_id=? and updated_at<? and notable_type=? and deleted=? and source<>?', #{id}, Time.now.utc, 'Helpdesk::Ticket', false, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta']])"
+      condition = ".where(['account_id=? and updated_at<? and notable_type=? and deleted=? and source<>?', #{id}, Time.now.utc, 'Helpdesk::Ticket', false, Account.current.helpdesk_sources.note_source_keys_by_token['meta']])"
     when "Helpdesk::Tag" then
       condition = ".where(['account_id=?', #{id}])"
     when "Freshfone::Caller" then

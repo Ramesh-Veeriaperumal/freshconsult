@@ -18,7 +18,7 @@
             <% end %>
             <%= f.hidden_field :private, :value=> 0 %>
             <%= f.hidden_field :user_id, :value=> current_user && current_user.id %>
-            <%= f.hidden_field :source, :value=> Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"]%>
+            <%= f.hidden_field :source, :value=> current_account.helpdesk_sources.note_source_keys_by_token["email"]%>
         </li>
         <li class="attachment-options-reply">
           <% unless local_assigns[:no_attachments] %>

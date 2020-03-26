@@ -15,7 +15,7 @@
     <%= f.error_messages %>
     <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>  
     <%= f.hidden_field :private , :value => "false" %>
-    <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["ecommerce"]%>  
+    <%= f.hidden_field :source , :value => current_account.helpdesk_sources.note_source_keys_by_token["ecommerce"]%>  
     <%= hidden_field_tag :last_note_id,'', :value => @last_note_id, :class => "last_note_id" %>
 
     <ul class="ui-form dont-validate">

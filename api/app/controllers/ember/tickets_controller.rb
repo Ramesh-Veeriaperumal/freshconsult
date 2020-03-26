@@ -279,7 +279,7 @@ module Ember
         @item.schema_less_ticket.product ||= current_portal.product unless cname_params.key?(:product_id)
 
         # Default source is set to phone. Instead of portal as set in the model.
-        @item.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone] if @item.source === 0
+        @item.source = current_account.helpdesk_sources.ticket_source_keys_by_token[:phone] if @item.source === 0
       end
 
       def load_objects
@@ -429,7 +429,7 @@ module Ember
       end
 
       def build_topic_ticket
-        @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:forum]
+        @item.source =  current_account.helpdesk_sources.ticket_source_keys_by_token[:forum]
         @item.build_ticket_topic(topic_id: @topic_id)
       end
 

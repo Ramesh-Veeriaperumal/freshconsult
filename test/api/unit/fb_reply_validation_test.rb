@@ -1,6 +1,14 @@
 require_relative '../unit_test_helper'
 
 class FbReplyValidationTest < ActionView::TestCase
+  def setup
+    Account.stubs(:current).returns(Account.first)
+  end
+
+  def teardown
+    Account.unstub(:current)
+  end
+
   def test_numericality
     FbReplyValidation.any_instance.stubs(:facebook_outgoing_attachment_enabled?).returns(false)
     controller_params = { 'body' => 'XYZ', 'note_id' => 'XYZ', 'agent_id' => 'XYZ' }
@@ -31,7 +39,7 @@ class FbReplyValidationTest < ActionView::TestCase
     refute fb_reply_validation.valid?
     assert fb_reply_validation.errors.full_messages.include?('Ticket not_a_facebook_ticket')
 
-    item.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook]
+    item.source = Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook]
     fb_reply_validation = FbReplyValidation.new(controller_params, item)
     assert fb_reply_validation.valid?
   end

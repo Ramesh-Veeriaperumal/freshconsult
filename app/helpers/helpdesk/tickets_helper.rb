@@ -242,7 +242,7 @@ module Helpdesk::TicketsHelper
 
     o << select_tag(
       'search-source',
-      options_for_select(Helpdesk::Ticket::SOURCE_OPTIONS, params[:v].to_i),
+      options_for_select(current_account.helpdesk_sources.ticket_source_options, params[:v].to_i),
       html)
 
     o << select_tag(
@@ -429,7 +429,7 @@ module Helpdesk::TicketsHelper
   end
 
   def latest_note_helper(ticket)
-    latest_note_obj = ticket.notes.visible.exclude_source(Helpdesk::Note::EXCLUDE_SOURCE).newest_first.first
+    latest_note_obj = ticket.notes.visible.exclude_source(current_account.helpdesk_sources.note_exclude_sources).newest_first.first
     latest_note_hash = {}
     unless latest_note_obj.nil?
         action_msg = latest_note_obj.fwd_email? ? 'helpdesk.tickets.overlay_forward' : (latest_note_obj.note? ? 'helpdesk.tickets.overlay_note' : 'helpdesk.tickets.overlay_reply')

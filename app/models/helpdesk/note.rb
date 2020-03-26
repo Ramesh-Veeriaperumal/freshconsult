@@ -78,7 +78,7 @@ class Helpdesk::Note < ActiveRecord::Base
   }
 
   scope :for_quoted_text, lambda { |first_note_id|
-    { :conditions => ["source != ? AND helpdesk_notes.id < ? ",SOURCE_KEYS_BY_TOKEN["forward_email"], first_note_id],
+    { :conditions => ["source != ? AND helpdesk_notes.id < ? ", Account.current.helpdesk_sources.note_source_keys_by_token["forward_email"], first_note_id],
       :order => "helpdesk_notes.created_at DESC",
       :limit => 4
     }
@@ -86,7 +86,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   scope :conversations, lambda { |preload_options = nil, order_conditions = nil, limit = nil|
     {
-      :conditions => ["source NOT IN (?) and deleted = false", EXCLUDE_SOURCE.map{|s| SOURCE_KEYS_BY_TOKEN[s]}],
+      :conditions => ["source NOT IN (?) and deleted = false", Account.current.helpdesk_sources.note_exclude_sources.map{|s| Account.current.helpdesk_sources.note_source_keys_by_token[s]}],
       :order => order_conditions,
       :include => preload_options,
       :limit => limit
@@ -119,7 +119,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   scope :conversations, lambda { |preload_options = nil, order_conditions = nil, limit = nil|
       {
-        :conditions => ["source NOT IN (?) and deleted = false", EXCLUDE_SOURCE.map{|s| SOURCE_KEYS_BY_TOKEN[s]}],
+        :conditions => ["source NOT IN (?) and deleted = false", Account.current.helpdesk_sources.note_exclude_sources.map{|s| Account.current.helpdesk_sources.note_source_keys_by_token[s]}],
         :order => order_conditions,
         :include => preload_options,
         :limit => limit
@@ -129,7 +129,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   validates_presence_of  :source, :notable_id
   validates_numericality_of :source
-  validates_inclusion_of :source, :in => 0..SOURCES.size-1
+  validate :inclusion_of_note_source
   validates :user, presence: true, if: -> {user_id.present?}
   validate :edit_broadcast_note, on: :update, :if => :broadcast_note?
 
@@ -168,62 +168,62 @@ class Helpdesk::Note < ActiveRecord::Base
 
   def self.exclude_condition source
     if source.is_a?(Array)
-      { :conditions => ['`helpdesk_notes`.source NOT IN (?)', source.map{|s| SOURCE_KEYS_BY_TOKEN[s]} ] }
+      { :conditions => ['`helpdesk_notes`.source NOT IN (?)', source.map{|s| Account.current.helpdesk_sources.note_source_keys_by_token[s]} ] }
     else
-      { :conditions => ['`helpdesk_notes`.source <> ?', SOURCE_KEYS_BY_TOKEN[source]] }
+      { :conditions => ['`helpdesk_notes`.source <> ?', Account.current.helpdesk_sources.note_source_keys_by_token[source]] }
     end
   end
 
   def status?
-    source == SOURCE_KEYS_BY_TOKEN["status"]
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["status"]
   end
 
   def email?
-    source == SOURCE_KEYS_BY_TOKEN["email"]
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["email"]
   end
 
   def note?
-  	source == SOURCE_KEYS_BY_TOKEN["note"]
+  	source == Account.current.helpdesk_sources.note_source_keys_by_token["note"]
   end
 
   def tweet?
-    source == SOURCE_KEYS_BY_TOKEN["twitter"]
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["twitter"]
   end
 
   def fb_note?
-    source == SOURCE_KEYS_BY_TOKEN["facebook"]
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["facebook"]
   end
 
   def feedback?
-    source == SOURCE_KEYS_BY_TOKEN["feedback"]
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["feedback"]
   end
 
   def meta?
-    source == SOURCE_KEYS_BY_TOKEN["meta"]
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["meta"]
   end
 
   def private_note?
-    source == SOURCE_KEYS_BY_TOKEN["note"] && private
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["note"] && private
   end
 
   def public_note?
-    source == SOURCE_KEYS_BY_TOKEN["note"] && !private
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["note"] && !private
   end
 
   def phone_note?
-    source == SOURCE_KEYS_BY_TOKEN["phone"]
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["phone"]
   end
 
   def summary_note?
-    source == SOURCE_KEYS_BY_TOKEN["summary"]
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["summary"]
   end
 
   def ecommerce?
-    source == SOURCE_KEYS_BY_TOKEN["ecommerce"] && self.ebay_question.present?
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["ecommerce"] && self.ebay_question.present?
   end
 
   def canned_form?
-    source == SOURCE_KEYS_BY_TOKEN['canned_form']
+    source == Account.current.helpdesk_sources.note_source_keys_by_token['canned_form']
   end
 
   def inbound_email?
@@ -239,11 +239,11 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def user_fwd_email?
-    source == SOURCE_KEYS_BY_TOKEN["forward_email"]
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["forward_email"]
   end
 
   def automation_fwd_email?
-    source == SOURCE_KEYS_BY_TOKEN["automation_rule_forward"]
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["automation_rule_forward"]
   end
 
   def email_conversation?
@@ -263,7 +263,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def broadcast_note?
-    source == SOURCE_KEYS_BY_TOKEN["note"] && schema_less_note.category == CATEGORIES[:broadcast]
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["note"] && schema_less_note.category == CATEGORIES[:broadcast]
   end
 
   def as_json(options = {})
@@ -276,7 +276,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def source_name
-    SOURCES[source]
+    Account.current.helpdesk_sources.note_sources[source]
   end
 
   def to_liquid
@@ -297,7 +297,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def summary_note?
-    source == SOURCE_KEYS_BY_TOKEN["summary"]
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["summary"]
   end
 
   def support_email
@@ -455,7 +455,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def eligible_to_detect_thank_you?
-    user.customer? && !import_note && body.present? && !Helpdesk::Note::BLACKLISTED_THANK_YOU_DETECTOR_NOTE_SOURCES.include?(source) &&
+    user.customer? && !import_note && body.present? && !Account.current.helpdesk_sources.note_blacklisted_thank_you_detector_note_sources.include?(source) &&
       recently_created_note?
   end
 
@@ -501,7 +501,11 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def mobihelp?
-      self.source == SOURCE_KEYS_BY_TOKEN['mobihelp'] || self.source == SOURCE_KEYS_BY_TOKEN['mobihelp_app_review']
+      self.source == Account.current.helpdesk_sources.note_source_keys_by_token['mobihelp'] || self.source == Account.current.helpdesk_sources.note_source_keys_by_token['mobihelp_app_review']
+    end
+
+    def inclusion_of_note_source
+      Account.current.helpdesk_sources.note_source_keys_by_token.values.include?(source)
     end
 
   private
@@ -513,11 +517,11 @@ class Helpdesk::Note < ActiveRecord::Base
     # end
 
     def human_note_for_ticket?
-      (self.notable.is_a? Helpdesk::Ticket) && user && (source != SOURCE_KEYS_BY_TOKEN['meta'])
+      (self.notable.is_a? Helpdesk::Ticket) && user && (source != Account.current.helpdesk_sources.note_source_keys_by_token['meta'])
     end
 
     def automated_note_for_ticket?
-      (source == SOURCE_KEYS_BY_TOKEN["automation_rule"])
+      (source == Account.current.helpdesk_sources.note_source_keys_by_token["automation_rule"])
     end
 
     # Replied by third pary to the forwarded email

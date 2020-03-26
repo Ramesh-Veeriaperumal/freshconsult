@@ -45,8 +45,8 @@ class MergeTickets < BaseWorker
     source_note = source_ticket.notes.build(
       :note_body_attributes => {:body_html => source_info_note},
       :private => pvt_note || false,
-      :source => pvt_note ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : 
-      										Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
+      :source => pvt_note ? Account.current.helpdesk_sources.note_source_keys_by_token['note'] : 
+      										Account.current.helpdesk_sources.note_source_keys_by_token['email'],
       :account_id => Account.current.id,
       :user_id => User.current && User.current.id,
       :from_email => source_ticket.reply_email,
@@ -124,7 +124,7 @@ class MergeTickets < BaseWorker
     source_description_note = target_ticket.notes.build(
       :note_body_attributes => {:body_html => build_source_description_body_html(source_ticket)},
       :private => target_note_private || false,
-      :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+      :source => Account.current.helpdesk_sources.note_source_keys_by_token['note'],
       :account_id => Account.current.id,
       :user_id => User.current && User.current.id
     )

@@ -56,7 +56,7 @@ module Helpdesk::TicketActions
 
   def set_default_values
     @ticket.status = OPEN unless (Helpdesk::TicketStatus.status_names_by_key(current_account).key?(@ticket.status) or @ticket.ticket_status.try(:deleted?))
-    @ticket.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if @ticket.source == 0
+    @ticket.source = Account.current.helpdesk_sources.ticket_source_keys_by_token[:portal] if @ticket.source == 0
     @ticket.email ||= current_user && current_user.email
     @ticket.product ||= current_portal.product
   end
