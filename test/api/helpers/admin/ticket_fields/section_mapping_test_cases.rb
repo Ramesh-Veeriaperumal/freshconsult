@@ -130,4 +130,14 @@ module Admin::TicketFields::SectionMappingTestCases
       assert_match 'multi_dynamic_sections feature', response.body
     end
   end
+
+  def test_sanitization_of_section_name
+    launch_ticket_field_revamp do
+      type_field = Account.current.ticket_fields_only.find_by_field_type('default_ticket_type')
+      picklist_ids = type_field.list_all_choices.pluck_all(:picklist_id)
+      section_name = "<script>alert(‘#{Faker::Lorem.characters(rand(1..4))}’)</script>"
+      section = create_section(type_field, picklist_ids[0], section_name)
+      assert_equal section.label, RailsFullSanitizer.sanitize(section_name)
+    end
+  end
 end

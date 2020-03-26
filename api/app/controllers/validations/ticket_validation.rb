@@ -14,7 +14,7 @@ class TicketValidation < ApiValidation
                 :product, :tags, :custom_fields, :attachments, :request_params, :item, :statuses, :status_ids, :ticket_fields, :company_id, :scenario_id,
                 :primary_id, :ticket_ids, :note_in_primary, :note_in_secondary, :convert_recepients_to_cc, :cloud_files, :skip_close_notification,
                 :related_ticket_ids, :internal_group_id, :internal_agent_id, :parent_template_id, :child_template_ids, :template_text,
-                :unique_external_id, :skill_id, :parent_id, :inline_attachment_ids, :tracker_id, :version
+                :unique_external_id, :skill_id, :parent_id, :inline_attachment_ids, :tracker_id, :version, :enforce_mandatory
 
   alias_attribute :type, :ticket_type
   alias_attribute :product_id, :product
@@ -202,6 +202,8 @@ class TicketValidation < ApiValidation
   validates :tags, data_type: { rules: Array }, array: { data_type: { rules: String, allow_nil: true }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }
   validates :tags, string_rejection: { excluded_chars: [','], allow_nil: true }
 
+  # Validates enforce_mandatory param that should be either true or false
+  validate  :validate_enforce_mandatory, if: -> { enforce_mandatory.present? }, only: [:create, :update]
   # Custom fields validations
   validates :custom_fields, data_type: { rules: Hash }
   # TODO: EMBER - error messages to be changed for validations that require values for fields on status change
@@ -247,6 +249,7 @@ class TicketValidation < ApiValidation
   def initialize(request_params, item, allow_string_param = false, additional_params = {})
     @request_params = request_params
     @status_ids = request_params[:statuses].map(&:status_id) if request_params.key?(:statuses)
+    @enforce_mandatory = additional_params[:enforce_mandatory] || 'true'
     super(request_params, item, allow_string_param)
     @description = item.description_html if !request_params.key?(:description) && item
     @fr_due_by ||= item.try(:frDueBy).try(:iso8601) if item
@@ -446,5 +449,13 @@ class TicketValidation < ApiValidation
 
     def public_api?
       @version == 'v2'
+    end
+
+    def validate_enforce_mandatory
+      unless %w[true false].include? @enforce_mandatory
+        errors.add(:enforce_mandatory, ErrorConstants::ERROR_MESSAGES[:enforce_mandatory_value_error])
+        return
+      end
+      @enforce_mandatory = @enforce_mandatory.to_bool
     end
 end

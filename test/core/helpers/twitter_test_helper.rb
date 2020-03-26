@@ -186,10 +186,10 @@ module TwitterTestHelper
     contact_fields_data =
       [
         { name: 'twitter_profile_status',
-          label: 'Twitter Profile Status',
+          label: 'Twitter Verified Profile',
           position: count + 1 },
         { name: 'twitter_followers_count',
-          label: 'Twitter Followers Count',
+          label: 'Twitter Follower Count',
           position: count + 2 }
       ]
     last_contact_field = nil

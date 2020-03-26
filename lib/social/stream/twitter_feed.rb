@@ -65,8 +65,6 @@ class Social::Stream::TwitterFeed < Social::Stream::Feed
         notable = add_as_ticket(feed_obj, handle, :mention, options, nil, user) 
       end
     end
-    dynamo_helper.update_fd_link(self.stream_id, self.feed_id, notable, user) if notable.class.name == 'Helpdesk::Note' &&
-      !Account.current.incoming_mentions_in_tms_enabled?
     notable
   end
 

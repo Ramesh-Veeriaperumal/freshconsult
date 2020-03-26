@@ -99,6 +99,10 @@
 	table{
 		@extend .table !optional;
 	}
+	
+	a {
+		color: #2753d7;
+	}
 }
 
 .article-list li, .topic-list li, .ticket-list li,

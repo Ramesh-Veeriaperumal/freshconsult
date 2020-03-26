@@ -1,7 +1,7 @@
  class Integrations::XeroController < ApplicationController
 
   skip_before_filter :set_current_account, :check_privilege, :check_account_state, :set_time_zone,
-                    :check_day_pass_usage, :set_locale, :only => [:install]
+                     :check_day_pass_usage, :set_locale, :check_session_timeout, only: [:install]
 
   before_filter :get_xero_client
   before_filter :authorize_client, :except => [:authorize, :install, :authdone, :update_params]

@@ -14,38 +14,6 @@ class Social::Dynamo::Twitter
     @interactions_helper = Social::Dynamo::Interaction.new
   end
 
-  def update_tweet(args, attributes, gnip_twt_feed, tweet_obj)
-    id = args[:stream_id]
-    args[:stream_id] = id.starts_with?(TAG_PREFIX) ? id.gsub(TAG_PREFIX, "") : id
-    posted_time = Time.parse(gnip_twt_feed.posted_time)
-    attributes.merge!(:posted_time => "#{(posted_time.to_f * 1000).to_i}")
-    can_insert_feed = true
-    if gnip_twt_feed.in_reply_to and !feeds_helper.has_parent_feed?(posted_time, args, gnip_twt_feed.in_reply_to)
-      can_insert_feed = false
-    end
-    update_tweet_in_dynamo(posted_time, args, attributes, gnip_twt_feed) if can_insert_feed or !requeue(tweet_obj)
-  end
-
-  def update_tweet_in_dynamo(posted_time, args, attributes, gnip_twt_feed)
-    dynamo_hash_key = "#{args[:account_id]}_#{args[:stream_id]}"
-    parent_feed_id_hash = feeds_helper.insert_feed(posted_time, args, attributes, gnip_twt_feed)
-    params = {
-      :in_reply_to_user_id => gnip_twt_feed.twitter_user_id,
-      :id                  => gnip_twt_feed.feed_id
-    }
-    interactions_helper.insert_user_interactions(posted_time, dynamo_hash_key, parent_feed_id_hash, params)
-  end
-
-  def update_dm(stream_id, dm_params)
-    dm_hash = {
-      :body => "#{dm_params[:body]}",
-      :id => "#{dm_params[:id]}"
-    }
-    user_id = dm_params[:user_id]
-    posted_time = Time.parse(dm_params[:posted_at])
-    @interactions_helper.insert_user_dm_interactions(posted_time, stream_id, user_id, dm_hash)
-  end
-
   def update_live_feed(posted_time, args, dynamo_params, feed_obj )
     dynamo_hash_key = "#{args[:account_id]}_#{args[:stream_id]}"
     attributes = { :posted_time => "#{(posted_time.to_f * 1000).to_i}" }
@@ -124,31 +92,6 @@ class Social::Dynamo::Twitter
   
   def delete_fd_link(stream_id, feed_id)
     feeds_helper.delete_fd_link(stream_id, feed_id, SOURCE[:twitter])
-  end
-
-  def fetch_feed_info_from_dynamo(args)
-    table = "feeds"
-    table_name = Social::DynamoHelper.select_table(table, Time.now)
-    schema = TABLES[table][:schema]
-    dynamo_hash_key = "#{args[:account_id]}_#{args[:stream_id]}"
-    Social::DynamoHelper.get_item(table_name, dynamo_hash_key, "#{args[:feed_id]}", schema, args[:attributes])[:item]
-  end
-  
-  #Feedback should be given only once. Resetting smart_filter_response to SMART_FILTER_FEEDBACK_GIVEN so that further agent's actions don't trigger feedback.
-  def record_smart_filter_feedback_given_in_dynamo(args)
-    table = "feeds"
-    dynamo_hash_key = "#{args[:account_id]}_#{args[:stream_id]}"
-    item_hash = feeds_helper.feeds_hash(dynamo_hash_key, args[:feed_id], "", 0, 0, "", "Twitter")
-    item_hash.merge!(
-      "smart_filter_response" => { 
-        :n => SMART_FILTER_FEEDBACK_GIVEN.to_s
-      })
-    retention_period = TABLES[table][:retention_period]
-    times = [Time.now, Time.now + retention_period]
-    times.each do |time|
-      table_name = Social::DynamoHelper.select_table(table, time)
-      Social::DynamoHelper.update(table_name, item_hash, TABLES[table][:schema], ["smart_filter_response"])
-    end
   end
 
   private

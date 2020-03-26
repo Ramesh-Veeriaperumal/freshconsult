@@ -29,7 +29,6 @@
     - freshfone_node
     - freshfone_trial_worker
     - livechat_worker
-    - smart_filter_tweet_to_ticket
     - channel_framework_command
     - calculate_sla
     - add_agent_to_round_robin
@@ -69,8 +68,6 @@
     - chargebee_invoice
     - facebook
     - premium_facebook
-    - twitter
-    - premium_twitter
     - custom_twitter
     - send_activation_reminder_mail
     - block_account
@@ -113,8 +110,6 @@
     - product_feedback
     - freshcaller_migration_worker
     - ner_worker
-    - smart_filter_initialise
-    - smart_filter_feedback
     - launch_party_actions
     - ml_solutions_training
     - customer_note_body_queue
@@ -280,7 +275,6 @@
     - trial_dispatcher
     - trial_account_jobs
     - trial_facebook
-    - trial_twitter
     - contacts_sync_trial
     - trial_ticket_central_publish
     - trial_note_central_publish

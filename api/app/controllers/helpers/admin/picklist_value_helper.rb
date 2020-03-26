@@ -12,7 +12,7 @@ module Admin::PicklistValueHelper
     db_choices = build_custom_choices(ticket_field, choices[:choices])
     # choices_position_validation(ticket_field, db_choices) # please ignore the position of choices due to issue in performance, will take that later on
     duplicate_choice_validation(ticket_field, db_choices)
-    level_wise_choice_validation(ticket_field, db_choices)
+    level_wise_choice_validation(ticket_field, db_choices) if ticket_field.nested_field?
   end
 
   private

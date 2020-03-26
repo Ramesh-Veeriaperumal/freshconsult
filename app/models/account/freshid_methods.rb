@@ -86,7 +86,6 @@ class Account < ActiveRecord::Base
       account_creator.create_in_existing_org(freshid_attributes, nil, join_token)
     elsif organisation_domain.present?
       account_creator.create_in_existing_org(freshid_attributes, organisation_domain)
-      user.create_freshid_user!
     else
       account_creator.create_in_new_org(freshid_org_attributes, freshid_attributes, user.freshid_attributes)
     end

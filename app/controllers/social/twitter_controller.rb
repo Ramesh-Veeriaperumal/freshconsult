@@ -48,7 +48,6 @@ class Social::TwitterController < Social::BaseController
       fd_items = tweet_to_fd_item(current_feed, params[:search_type])      
       fd_items.compact!
       @items_info = fd_items.inject([]) do |arr, item|
-        new_ticket_feedback_to_smart_filter(item.id) unless current_account.incoming_mentions_in_tms_enabled?
         arr << {:feed_id => item.tweet.tweet_id,
                 :link => helpdesk_ticket_link(item),
                 :user_in_db => db_user?(item)  }
@@ -471,11 +470,6 @@ class Social::TwitterController < Social::BaseController
   def db_user?(item)
     item_screen_name = item.is_a?(Helpdesk::Ticket) ? item.requester.twitter_id : item.user.twitter_id
     !@all_screen_names.include?(item_screen_name)
-  end
-
-  def new_ticket_feedback_to_smart_filter(ticket_id)
-    Social::SmartFilterFeedbackWorker.perform_async({ :ticket_id => ticket_id,
-      :type_of_feedback => SMART_FILTER_FEEDBACK_TYPE[:new_ticket]}) 
   end
 
   def construct_twitter_reply_hash(note, reply_handle)

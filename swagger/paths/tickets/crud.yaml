@@ -1,68 +1,68 @@
+get:
+  tags: [ticket]
+  summary: Show Ticket
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      description: Display ID of ticket
+      required: true
+    - name: include
+      in: query
+      type: string
+      description: Comma-separated values
+      enum: ["conversations", "requester", "company", "survey", "sla_policy"]
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/ticket_show'
+    404:
+      description: Ticket not found
+    403:
+      description: Access denied
 
-  get:
-    tags: [ticket]
-    summary: Show Ticket
-    parameters:
-      - name: id
-        in: path
-        type: integer
-        format: int64
-        description: Display ID of ticket
-        required: true
-      - name: include
-        in: query
-        type: string
-        description: Comma-separated values
-        enum: ["conversations", "requester", "company", "survey", "sla_policy"]
-    responses:
-      200:
-        description: Success
-        schema:
-          $ref: '#/definitions/ticket_show'
-      404:
-        description: Ticket not found
-      403:
-        description: Access denied
-  
-  delete:
-    tags: [ticket]
-    summary: Delete Ticket
-    parameters:
-      - name: id
-        in: path
-        type: integer
-        format: int64
-        description: Display ID of ticket
-        required: true
-    responses:
-      204:
-        description: Success
-      404:
-        description: Ticket not found
-      403:
-        description: Access denied
+delete:
+  tags: [ticket]
+  summary: Delete Ticket
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      description: Display ID of ticket
+      required: true
+  responses:
+    204:
+      description: Success
+    404:
+      description: Ticket not found
+    403:
+      description: Access denied
 
-  put:
-    tags: [ticket]
-    description: Update a ticket
-    parameters:
-      - $ref: '#/parameters/id'
-      - name: data
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/ticket_input'
-    responses:
-      200:
-        description: Success
-        schema:
-          $ref: '#/definitions/ticket_show'
-      403:
-        description: Access denied
-      404:
-        description: Ticket not found
-      400:
-        description: Bad Request Error
-        schema:
-          $ref: '#/definitions/bad_request_error'
+put:
+  tags: [ticket]
+  description: Update a ticket
+  parameters:
+    - $ref: '#/parameters/id'
+    - $ref: '#/parameters/enforce_mandatory'
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/ticket_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/ticket_show'
+    403:
+      description: Access denied
+    404:
+      description: Ticket not found
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
 

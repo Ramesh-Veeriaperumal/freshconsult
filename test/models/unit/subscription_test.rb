@@ -111,4 +111,20 @@ class SubscriptionTest < ActiveSupport::TestCase
     custom_stream.save!
     custom_stream.populate_accessible(Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all])
   end
+
+  def test_check_fd_fs_banner_redis_expiry
+    Subscription.any_instance.stubs(:trial?).returns(true)
+    Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(true)
+    subscription = @account.subscription
+    previous_state = subscription.state
+    subscription.state = 'active'
+    subscription.save
+    redis_expiry = get_others_redis_expiry(@account.account_activated_within_last_week_key)
+    assert_operator 1_814_000, :<=, redis_expiry
+  ensure
+    subscription.state = previous_state
+    subscription.save
+    Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
+    Subscription.any_instance.unstub(:trial?)
+  end
 end

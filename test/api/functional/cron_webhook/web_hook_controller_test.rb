@@ -48,7 +48,7 @@ class CronWebhook::WebHooksControllerTest < ActionController::TestCase
   end
 
   def test_web_hooks_controller_with_queue_for_queue_unexpected_tasks
-    task_hash = { task_name: 'google_contacts_sync', queue_name: 'twitter_realtime_queue', mode: 'webhook' }
+    task_hash = { task_name: 'google_contacts_sync', queue_name: 'facebook_realtime_queue', mode: 'webhook' }
     post :trigger, construct_params({ version: 'cron' }.merge(task_hash), task_hash)
     assert_response 400
     match_json([bad_request_error_pattern('queue_name', :queue_name_not_expected, code: :invalid_value)])

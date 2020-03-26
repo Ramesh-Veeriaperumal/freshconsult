@@ -32,7 +32,8 @@ class User < ActiveRecord::Base
                           "helpdesk_agent", "role_ids", "customer_attributes", "company_name"]
 
   USER_SECONDARY_ATTRIBUTES = ["twitter_id", "avatar", "time_zone", "phone", "mobile", "fb_profile_id", "address",
-                                "external_id", "job_title", "language", "description", "unique_external_id"] #client_manager will be moved directly
+                               "external_id", "job_title", "language", "description", "unique_external_id",
+                               'twitter_profile_status', 'twitter_followers_count'] # client_manager will be moved directly
 
   MAX_USER_EMAILS = 10
   MAX_USER_COMPANIES = 300

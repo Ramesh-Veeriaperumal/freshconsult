@@ -103,12 +103,6 @@ module Social::Util
     attributes
   end
 
-  def smart_filter_info(num)
-    {
-      "smart_filter_response" => num
-    }
-  end
-
   def fd_info(notable, user)
     link = notable.nil? ? nil : helpdesk_ticket_link(notable)
     user = user.nil? ? nil : user.id

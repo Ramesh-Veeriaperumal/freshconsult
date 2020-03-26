@@ -63,7 +63,7 @@ module Helpdesk
       end
 
       def custome_bot_attack?(spam_data)
-        (!spam_data['rules'].nil? && (spam_data['rules'] & custom_bot_attack_rules).size != 0)
+        spam_data && (!spam_data['rules'].nil? && (spam_data['rules'] & custom_bot_attack_rules).size != 0)
       end
 
       def get_ticket_params

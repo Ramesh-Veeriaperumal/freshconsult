@@ -280,6 +280,24 @@ module Ember
       ticket.destroy
     end
 
+    def test_reply_with_ticket_params_and_attachment
+      ::Tickets::SendAndSetWorker.clear
+      conversation = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
+      attachment = create_attachment(attachable_type: 'Helpdesk::Note', attachable_id: conversation.id)
+      params_hash = reply_note_params_hash.merge(attachment_ids: [attachment.id])
+      ticket_params = { ticket: { priority: 3, status: 3, source: 5, type: 'Problem' } }
+      params_hash.merge!(ticket_params)
+      stub_attachment_to_io do
+        post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      end
+      assert_response 201
+      assert_equal ::Tickets::SendAndSetWorker.jobs.size, 1
+      note_attachment = Helpdesk::Note.last.attachments.first
+      refute_equal note_attachment.id, attachment.id
+      assert_equal attachment_content_hash(note_attachment), attachment_content_hash(attachment)
+      ticket.destroy
+    end
+
     def test_reply_without_ticket_params
       ::Tickets::SendAndSetWorker.clear
       params_hash = reply_note_params_hash

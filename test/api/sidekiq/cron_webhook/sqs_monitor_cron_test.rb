@@ -12,13 +12,13 @@ class SqsMonitorCronTest < ActionMailer::TestCase
     AWS::SQS.any_instance.stubs(:approximate_number_of_messages).returns(51)
     AWS::SQS::QueueCollection.any_instance.stubs(:named).returns(AWS::SQS.new)
     Mail::Message.any_instance.expects(:deliver).once
-    CronWebhooks::SqsMonitor.new.perform(queue_name: 'twitter_realtime_queue', task_name: 'sqs_monitor')
+    CronWebhooks::SqsMonitor.new.perform(queue_name: 'facebook_realtime_queue', task_name: 'sqs_monitor')
   end
 
   def test_no_escalation
     AWS::SQS.any_instance.stubs(:approximate_number_of_messages).returns(49)
     AWS::SQS::QueueCollection.any_instance.stubs(:named).returns(AWS::SQS.new)
     Mail::Message.any_instance.expects(:deliver).never
-    CronWebhooks::SqsMonitor.new.perform(queue_name: 'twitter_realtime_queue', task_name: 'sqs_monitor')
+    CronWebhooks::SqsMonitor.new.perform(queue_name: 'facebook_realtime_queue', task_name: 'sqs_monitor')
   end
 end

@@ -99,7 +99,7 @@ module Social::Twitter::TicketActions
           if feed.feed_id == current_feed_id
             index_to_be_deleted = index
             params_hash = {:convert => true, :tweet =>true}
-            params_hash.merge!(from_social_tab: true) if Account.current.incoming_mentions_in_tms_enabled?
+            params_hash.merge!(from_social_tab: true)
             notable = feed.convert_to_fd_item(stream, params_hash)
             fd_items << notable
           else

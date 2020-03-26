@@ -80,6 +80,7 @@ post:
   tags: [ticket]
   description: Create a ticket
   parameters:
+    - $ref: '#/parameters/enforce_mandatory'
     - name: data
       in: body
       required: true

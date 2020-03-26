@@ -36,15 +36,6 @@ class Social::Dynamo::Interaction
     end
   end
 
-  def insert_user_dm_interactions(posted_time, stream_id, user_id, dm_hash)
-    item_hash = interactions_hash(stream_id, "user:#{user_id}", "", dm_hash)
-    execute_on_table(posted_time) do |table_name, time|
-      if Social::DynamoHelper.table_validity(TABLE, table_name, Time.now)
-        Social::DynamoHelper.insert(table_name, item_hash, SCHEMA)
-      end
-    end
-  end
-  
   private
   
   def update_current_interaction_list(table_name, key, parent_feed_id, feed_id, schema)

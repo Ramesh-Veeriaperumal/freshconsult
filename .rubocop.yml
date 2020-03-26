@@ -13,3 +13,6 @@ Metrics/LineLength:
   
 Rails/DynamicFindBy:
   Enabled: false
+
+Rails/ActionFilter:
+  Enabled: false

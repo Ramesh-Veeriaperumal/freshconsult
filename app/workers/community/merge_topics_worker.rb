@@ -6,7 +6,7 @@ class Community::MergeTopicsWorker < BaseWorker
   def perform(args)
     args.symbolize_keys!
     user = User.current
-    sources = Account.current.topics.find(:all, :conditions => { :id => args[:source_topic_ids] })
+    sources = Account.current.topics.where(id: args[:source_topic_ids]).to_a
     target = Account.current.topics.find(args[:target_topic_id])
     source_note = args[:source_note]
     Community::TopicsMerge.merge_topic(sources,target,user,source_note)

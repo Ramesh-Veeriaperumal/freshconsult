@@ -25,7 +25,7 @@
         "channel_cipher_key": "EJ[1:dpHTxajSS1+zXn8v/znpqMr1PV2eMV5ppQhV5MLtXTw=:WpKaBHPbytiO8IZgZvotkeDM8bx7HG50:zRd4bi1cAjYjPCPn21Tkd60woiSGIlUFt7Ush14kWhCwiEvxwtXSRLJxl5+1RIZD3Y0a8YE6g49epxDa+qRcaWfkvyvu6bftIZc80ayTRQ==]"
       },
       "secure_field": {
-        "_domain": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/"
+        "_domain": "https://vault-service.freshworks.com/"
       },
       "announcements": {
         "shared_secret": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:sceumkeAgL4yqlRpeySbS7TGxrVCXSs3:8HeEFgZtfWMiUWnOJsaOi57RBc1T2Gon5grelcS2i0PoEFylwUPbUa124g4f/yGV]",
@@ -110,14 +110,6 @@
       "zendesk": {
         "app_id": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:q7KKwYo70aVz5+nIGsvb727ycNiOnCQc:nss91pCEoOnHxIIZt99KKsKIIA==]",
         "falcon_app_id": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:tdiMtnpLH6PJEYS9ruiUFzRfv45n/RP5:m/byNoSXN40Q4PNMcjjF8hb1+vQ=]"
-      },
-      "smart_filter": {
-        "auth_key": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:3BZZOVpGq59FqacKxc9LVzlA9NspoBxo:z53QTm4AhcOlHAb9B65C6oRzrFUJdFUyqvgcZT68H9FqpBOtj+l42X2wC7YWkrO60/3t8+3ANIPnM7zqs6LfxMSEoetTnRoYiUuvLXenX7oKFtWXIqEgoTe25IdihPvzsegJDQ1fiJCJzCi9TjWjBwmIsHxbGG8AF0b1DqFyMub6SgctXrkaX8RwfatH6PXUAqXY1tEHgmskKjPYRdM0sAWKiu0TZo3hELgEqekl6waOzo8IC2+O9htT/QksQ9D2ZN2kd1K3JhDUKZKL0UKZbuHuM/HXuRvdVxheIchIIyzHYXnrnNQn0ldZ4D7RmT+OdMSQfOBNWgLDYTSEFtVt4PInDN06InQYeVTE4EiUMC5Tf/bnsw==]",
-        "_api_endpoint": "https://ncuseast.freshworksapi.com",
-        "_init_url": "/init",
-        "_query_url": "/query",
-        "_feedback_url": "/update",
-        "_max_tries": 4
       },
       "collab": {
         "secret_key": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:xOM6wYJw/byl2jsGx8p2SlDzmd/imVge:PTjdmPoYl/vyVpQb2lm1xj8ZPJh68xgzP/qCHT9v3emyl3vQ/HbOwXgkAPFfWsxF90ZwyWnJYUtD8BzePyyFw/Sj8uDqlHMIWQ9IwJbUvOvrmvBlt1Kw7cfMBvR0t1Uf9PVZCZyLeg8=]",
@@ -1601,6 +1593,26 @@
             "_slave2_host": "shard37slave2.internal.poduseast1.freshdesk.com",
             "_username": "dbuser"
           },
+          "shard_38_1": {
+            "_database": "helpkit_shard38_1",
+            "_host": "shard38.internal.poduseast1.freshdesk.com",
+            "password": "EJ[1:OVnfsv+AA+xrg7NYWnjm5lXkIibpgs/9sfl4vd+ErHY=:tyb9YEZep/kymZnUo7QMpLVzwlfWphnH:CSkBGPYnQpajmmX3v63RHkKYUmqtgTNgsTY=]",
+            "slave1": {
+              "_host": "shard38slave1.internal.poduseast1.freshdesk.com",
+              "password": "EJ[1:OVnfsv+AA+xrg7NYWnjm5lXkIibpgs/9sfl4vd+ErHY=:JAnBdCORLB0YRq0XIDjNzRHsOvH6Sizu:8KzHIteWjFxdeluZn3j9gVzpiYdLesxkstA=]",
+              "_port": 3306,
+              "_username": "dbuser"
+            },
+            "_slave1_host": "shard38slave1.internal.poduseast1.freshdesk.com",
+            "slave2": {
+              "_host": "shard38slave2.internal.poduseast1.freshdesk.com",
+              "password": "EJ[1:OVnfsv+AA+xrg7NYWnjm5lXkIibpgs/9sfl4vd+ErHY=:oGPKYpa3M9e2T3PQQ645RDLxC0rdqj5+:yJAd/StYyQAdJswEuLyegu9yqwCzxyav/bo=]",
+              "_port": 3306,
+              "_username": "dbuser"
+            },
+            "_slave2_host": "shard38slave2.internal.poduseast1.freshdesk.com",
+            "_username": "dbuser"
+          },
           "shard_38_2": {
             "_database": "helpkit_shard38_2",
             "_host": "shard38.internal.poduseast1.freshdesk.com",
@@ -2476,7 +2488,7 @@
         "_script_asset_url": "https://assets1.freshconnect.io/freshconnect-sidebar/freshconnect-sidebar.js",
         "_base_url": "https://api.freshconnect.io"
       },
-      "_vault_service_url": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/",
+      "_vault_service_url": "https://vault-service.freshworks.com/",
       "_sentry_dsn": "https://932f384a375f45db84667227e44ccaf1@sentry.io/1189802",
       "_announcement_account_url": "productupdates.freshdesk.com",
       "_anonymous_signup_redirect_url": "https://freshdesk.com/trial/thank-you"
@@ -2563,6 +2575,10 @@
             "shard_37": {
               "_username": "migration",
               "password": "EJ[1:ByWKFZCqMExeawDRUmyb+dlUALyLWxv2Zaw0UfcAogA=:v/QFyaEh/MtxDYZIcgaT6IY2Tp5SRENc:5CI3YmJ8HzYan7hN0lBhYUiVhE2HD6AupA8=]"
+            },
+            "shard_38_1": {
+              "_username": "migration",
+              "password": "EJ[1:OVnfsv+AA+xrg7NYWnjm5lXkIibpgs/9sfl4vd+ErHY=:NJPrGuCq+t5ZKPT99QInYjAcYsmgpQTG:3aBYK1ViJkB/vrRb8vGypyJ0T3Z6EAtq758=]"
             },
             "shard_38_2": {
               "_username": "migration",

@@ -4,7 +4,6 @@ class Social::TwitterStream < Social::Stream
   include Social::Constants
   include Social::Util
   include Redis::RedisKeys
-  include Social::SmartFilter
 
   concerned_with :callbacks, :presenter
 
@@ -46,43 +45,6 @@ class Social::TwitterStream < Social::Stream
       end
     end
     return hash
-  end
-
-  def check_smart_filter(tweet_body, tweet_id, twitter_user_id)
-    hash = {
-      :stream_id => self.id,
-      :tweet => true
-    }
-    if is_english?(tweet_body)
-      smart_filter_params = construct_smart_filter_params(tweet_body, tweet_id, twitter_user_id)
-      convert_all_relevant_tweets = self.smart_filter_rule.action_data[:with_keywords].to_i == 0
-      can_convert_to_ticket = smart_filter_query(smart_filter_params, convert_all_relevant_tweets)
-      if can_convert_to_ticket == SMART_FILTER_DETECTED_AS_TICKET
-        rule = smart_filter_rule #FOR NOW. WE NEED TO CHANGE THIS
-        hash.merge!({
-           :convert    => true,
-           :smart_filter_response => SMART_FILTER_DETECTED_AS_TICKET,
-           :group_id   => rule.action_data[:group_id],
-           :product_id => rule.action_data[:product_id]
-        })
-      else 
-        hash.merge!({
-          :smart_filter_response => SMART_FILTER_DETECTED_AS_SPAM
-        })
-      end
-    end
-    hash
-  end
-
-  def construct_smart_filter_params(tweet_body, tweet_id, twitter_user_id)
-    {
-     :entity_id => smart_filter_enitytID(:twitter,Account.current.id,tweet_id),
-     :account_id => smart_filter_accountID(:twitter, Account.current.id, twitter_user_id),
-     :text => tweet_body,
-     :screen_name => [],
-     :source => "twitter",
-     :lang => "en"
-    }.to_json
   end
 
   def populate_ticket_rule(group_id = nil, includes = [])
@@ -162,9 +124,9 @@ class Social::TwitterStream < Social::Stream
     end
   end
 
-  def should_check_smart_filter?
-    self.default_stream? && self.twitter_handle.smart_filter_enabled?
-  end
+  # def should_check_smart_filter?
+  #   self.default_stream? && self.twitter_handle.smart_filter_enabled?
+  # end
 
   def capture_tweets_as_ticket?
     self.ticket_rules.exists?

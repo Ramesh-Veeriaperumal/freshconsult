@@ -79,7 +79,7 @@ class AgentDestroyCleanup < BaseWorker
 
     # Clearing Leaderboard API response cache.
     def clear_leaderboard_response_cache
-      users = @account.technicians.includes(:agent_groups).find(:all)
+      users = @account.technicians.includes(:agent_groups).to_a
       users.each do |user|
         MemcacheKeys.delete_from_cache(account_leaderboard_widget_cache_key(@account.id, user.id))
         user.agent_groups.each do |agent_group|

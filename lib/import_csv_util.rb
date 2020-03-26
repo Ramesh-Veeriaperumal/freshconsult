@@ -4,6 +4,7 @@ module ImportCsvUtil
 
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include ContactsHelper
 
   ONE_MEGABYTE  = 1000000
   CUSTOMER_TYPE = ["contact", "company", "agent_skill"]
@@ -22,6 +23,7 @@ module ImportCsvUtil
       :name  => f.name, 
       :label => f.label
     }}
+    @fields.reject! { |field| TWITTER_REQUESTER_FIELDS.include?(field[:name]) }
     if params[:type] == 'contact' && Account.current.multiple_user_companies_enabled?
       cm_field = current_account.contact_form.fetch_client_manager_field
       @fields.append({:name  => cm_field.name,

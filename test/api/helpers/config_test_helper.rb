@@ -10,6 +10,7 @@ module ConfigTestHelper
     config_hash[:email] = email_mailbox_config_pattern
     config_hash[:warnings] = warn_list_pattern
     config_hash[:dkim_configuration] = dkim_configuration_pattern(dkim_config_required)
+    config_hash[:freshid] = freshid_config_pattern
     config_hash.merge!(update_billing_info)
     config_hash
   end
@@ -74,5 +75,16 @@ module ConfigTestHelper
       dkim_config[:dkim_support_link] = DKIM_SUPPORT_LINK
     end
     dkim_config
+  end
+
+  def freshid_config_pattern
+    client_id = if Account.current.freshid_enabled?
+                  FRESHID_CLIENT_ID.to_s
+                elsif Account.current.freshid_org_v2_enabled?
+                  FRESHID_V2_CLIENT_ID.to_s
+                end
+    {
+      client_id: client_id
+    }
   end
 end

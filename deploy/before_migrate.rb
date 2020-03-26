@@ -80,7 +80,6 @@ run "ln -nfs #{shared_path}/config/freshid.yml #{node[:rel_path]}/config/freshid
 run "ln -nfs #{shared_path}/config/freshid_v2.yml #{node[:rel_path]}/config/freshid_v2.yml"
 run "ln -nfs #{shared_path}/config/fluffy.yml #{node[:rel_path]}/config/fluffy.yml"
 run "ln -nfs #{shared_path}/config/ner_api.yml #{node[:rel_path]}/config/ner_api.yml"
-run "ln -nfs #{shared_path}/config/smart_filter.yml #{node[:rel_path]}/config/smart_filter.yml"
 run "ln -nfs #{shared_path}/config/heap_analytics.yml #{node[:rel_path]}/config/heap_analytics.yml"
 run "ln -nfs #{shared_path}/config/mailgun_out_going_email_mappings.yml #{node[:rel_path]}/config/mailgun_out_going_email_mappings.yml"
 run "ln -nfs #{shared_path}/config/bot.yml #{node[:rel_path]}/config/bot.yml"

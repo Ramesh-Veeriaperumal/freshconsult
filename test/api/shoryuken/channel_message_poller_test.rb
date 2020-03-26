@@ -65,14 +65,11 @@ class ChannelMessagePollerTest < ActionView::TestCase
   end
 
   def test_twitter_mention_convert_as_note_and_ticket_archived_case
-    Account.current.launch(:incoming_mentions_in_tms)
     @account.enable_ticket_archiving(ARCHIVE_DAYS)
     @account.features.send(:archive_tickets).create
     payload, command_payload = twitter_create_note_command('mention',true)
     archive_result = ChannelIntegrations::Commands::Processor.new.process(command_payload[:payload])
     assert_equal archive_result, ticket_archived_error_payload(payload[:ticket_id])
-  ensure
-    Account.current.rollback(:incoming_mentions_in_tms)
   end
 
   def test_twitter_mention_convert_as_ticket

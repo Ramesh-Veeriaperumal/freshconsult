@@ -3,8 +3,11 @@
   <h3 class="lead"><%= t('support.tickets.ticket_survey.title_v2') %></h3>
   <div class="survey-form">
     <%
-      choices = current_account.active_custom_survey_from_cache.choices
-      default_question_label = current_account.active_custom_survey_from_cache.default_question.label
+      custom_survey = current_account.active_custom_survey_from_cache
+      language = Language.current
+      translation_record = custom_survey.translation_record(language) if language
+      choices = custom_survey.choices
+      default_question_label = translation_record.present? ? translation_record.translations.fetch('default_question', {})['question'] || custom_survey.default_question.label : custom_survey.default_question.label
       survey_result = @ticket.custom_survey_results.last
     %>
     <%
@@ -27,8 +30,8 @@
             </a>
         </div>
         <div class="border-<%=CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[ticket_info[:value]] %> default_question">
-            <div class="muted"><%= ticket_info[:label]%></div>
-            <div><%= ticket_info[:text]%></div>
+            <div class="muted"><%= default_question_label || ticket_info[:label]%></div>
+            <div><%= translation_record.present? ? translation_record.translations.fetch('default_question', {}).fetch('choices', {})[ticket_info[:value]] || ticket_info[:text] : ticket_info[:text] %></div>
         </div>
         <% if question_values.present? || feedback.present? %>
             <a id="load_questions" href="#" data-toggle-dom="#additional_questions_wrapper,#load_questions">
@@ -37,8 +40,8 @@
             <div id="additional_questions_wrapper" class="hide">
                 <% question_values.each do |question|%>
                 <div class="border-<%=CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[question[:key]] %>">
-                    <div class="muted"><%= question[:label] %></div>
-                    <div class="rating-text"> <%= question[:value] %></div>
+                    <div class="muted"><%= translation_record.present? ? translation_record.translations.fetch('additional_questions', {})["question_#{question[:question_id]}"] || question[:label] : question[:label] %></div>
+                    <div class="rating-text"> <%= translation_record.present? ? translation_record.translations.fetch('additional_questions', {}).fetch('choices', {})[question[:key]] || question[:value] : question[:value] %></div>
                 </div>
                 <% end %>
                 <% if feedback.present? %>
@@ -65,7 +68,7 @@
              <a class="survey-options" target="_blank" href="#" id= <%="#{face_value}"%> >
                <span class="survey-rating <%= CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[face_value] %>">
                </span>
-               <span class='survey-rating-label'><%=h(option["survey_question_choice"]["value"])%></span>
+               <span class='survey-rating-label'><%= translation_record.present? ? translation_record.translations.fetch('default_question', {}).fetch('choices', {})[option["survey_question_choice"]["face_value"]] || option["survey_question_choice"]["value"] : option["survey_question_choice"]["value"] %></span>
              </a>
            </div>
            <%end%>

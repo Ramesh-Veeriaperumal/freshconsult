@@ -4,7 +4,6 @@ class Admin::Social::TwitterHandlesController < ApplicationController
   include ChannelIntegrations::Utils::Schema
   include ChannelIntegrations::Constants
   include Social::Util
-  include Social::SmartFilter
   before_filter :build_item, :twitter_wrapper, :only => [:authdone]
   before_filter :load_item, :only => [:destroy]
   
@@ -56,7 +55,6 @@ class Admin::Social::TwitterHandlesController < ApplicationController
       handle.state = Social::TwitterHandle::TWITTER_STATE_KEYS_BY_TOKEN[:active]
       if handle.save
         handle.activate_mention_streams
-        handle.initialise_smart_filter if handle.smart_filter_enabled?
         post_command_to_central(Social::TwitterHandle::ACTIVATE_HANDLE_COMMAND,
                                 'twitter', handle)
       end

@@ -31,7 +31,7 @@ module Admin
 
     def freshcaller_account_show_response
       fc_account = Account.current.freshcaller_account.as_api_response(:api)
-      fc_account[:agents] = Account.current.freshcaller_agents.where(fc_enabled: true).map { |agent| agent.as_api_response(:api) }
+      fc_account[:agents] = Account.current.freshcaller_agents.where(fc_enabled: true).select { |fc_agent| fc_agent.user }.map { |agent| agent.as_api_response(:api) }
       fc_account
     end
 
@@ -86,6 +86,21 @@ module Admin
       create_freshcaller_account unless Account.current.freshcaller_account
       freshcaller_account = Account.current.freshcaller_account
       create_freshcaller_enabled_agent
+      get :show, controller_params(version: 'private')
+      assert_response 200
+      match_json(freshcaller_account_show_response)
+    ensure
+      delete_freshcaller_account
+      delete_freshcaller_agent unless @agent.agent.freshcaller_agent.nil?
+    end
+
+    def test_show_with_freshcaller_agents_with_deleted_user
+      create_freshcaller_account unless Account.current.freshcaller_account
+      Account.current.freshcaller_account
+      agent = Account.current.agents.where("agents.id != #{@agent.agent.id}").first
+      user = agent.user
+      create_freshcaller_enabled_agent_with_custom_user_id(user_id: user.id, agent_id: agent.id)
+      user.delete # delete without callbacks
       get :show, controller_params(version: 'private')
       assert_response 200
       match_json(freshcaller_account_show_response)
@@ -219,6 +234,23 @@ module Admin
       post :link, construct_params({ version: 'private' }.merge(params_hash), params_hash)
       assert_response 403
       match_json(request_error_pattern(:account_linked))
+    ensure
+      delete_freshcaller_account
+      remove_stubs
+    end
+
+    def test_link_freshcaller_agents_if_user_details_has_null_value
+      agent = add_test_agent(@account)
+      stub_link_account_success_with_null_user_detail(agent.email)
+      params_hash = {
+        url: 'test.freshcaller.com',
+        email: agent.email,
+        password: 'test1234'
+      }
+      post :link, construct_params({ version: 'private' }.merge(params_hash), params_hash)
+      assert_response 200
+      Account.current.reload
+      match_json(freshcaller_account_show_response)
     ensure
       delete_freshcaller_account
       remove_stubs

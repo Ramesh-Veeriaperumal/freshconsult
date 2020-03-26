@@ -1,7 +1,6 @@
 class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
 
   include Social::Twitter::Constants
-  include Social::SmartFilter
 
   before_filter { access_denied unless current_account.basic_twitter_enabled? }
   before_filter :add_stream_allowed?, :only => [:new, :create]

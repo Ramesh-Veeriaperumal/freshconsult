@@ -13,6 +13,43 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     @subscription_plan = SubscriptionPlan.last
   end
 
+  def test_unauthorized_on_idle_session_timeout
+    Account.current.launch(:idle_session_timeout)
+    @controller.stubs(:web_request?).returns(true)
+    controller.session[:last_request_at] = Time.now.to_i - 901
+    get :index, controller_params(version: 'private')
+    assert_response 401
+    match_json(request_error_pattern(:invalid_credentials))
+  ensure
+    @controller.unstub(:web_request?)
+    Account.current.rollback(:idle_session_timeout)
+  end
+
+  def test_success_within_idle_session_timeout
+    Account.current.launch(:idle_session_timeout)
+    @controller.stubs(:web_request?).returns(true)
+    controller.session[:last_request_at] = Time.now.to_i - 10
+    get :index, controller_params(version: 'private')
+    assert_response 200
+  ensure
+    @controller.unstub(:web_request?)
+    Account.current.rollback(:idle_session_timeout)
+  end
+
+  def test_unauthorized_on_custom_session_timeout
+    Account.current.launch(:idle_session_timeout)
+    Account.current.account_additional_settings.additional_settings[:idle_session_timeout] = 600
+    Account.current.account_additional_settings.save
+    @controller.stubs(:web_request?).returns(true)
+    controller.session[:last_request_at] = Time.now.to_i - 601
+    get :index, controller_params(version: 'private')
+    assert_response 401
+    match_json(request_error_pattern(:invalid_credentials))
+  ensure
+    @controller.unstub(:web_request?)
+    Account.current.rollback(:idle_session_timeout)
+  end
+
   def test_index
     get :index, controller_params(version: 'private')
     assert_response 200
@@ -592,5 +629,23 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
     Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
     Account.current.email_configs.destroy(email_config)
+  end
+
+  def test_account_v1_with_freshid
+    Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal, false))
+  ensure
+    Account.any_instance.unstub(:freshid_enabled?)
+  end
+
+  def test_account_v1_with_freshid_v2
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(true)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal, false))
+  ensure
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
   end
 end

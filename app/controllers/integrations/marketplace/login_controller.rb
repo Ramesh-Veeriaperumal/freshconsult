@@ -5,7 +5,7 @@ class Integrations::Marketplace::LoginController < ApplicationController
 
   skip_before_filter :check_privilege, :only => [:login, :tryout]
   skip_before_filter :set_current_account, :verify_authenticity_token, :check_account_state,
-    :set_time_zone, :check_day_pass_usage, :set_locale, :only => [:tryout]
+                     :set_time_zone, :check_day_pass_usage, :set_locale, :check_session_timeout, only: [:tryout]
 
   before_filter :get_user_from_redis, :only => [:login]
 

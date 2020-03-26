@@ -532,8 +532,8 @@ en:
     email: Email
     emails: Emails
     unique_external_id: Unique external ID
-    twitter_profile_status: Twitter Profile Status
-    twitter_followers_count: Twitter Followers Count
+    twitter_profile_status: Twitter Verified Profile
+    twitter_followers_count: Twitter Follower Count
     choose_another_photo: "Choose another photo"
     add_photo: "Add Photo"
     change_photo: "Change photo"

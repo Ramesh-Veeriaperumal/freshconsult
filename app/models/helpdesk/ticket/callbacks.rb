@@ -95,7 +95,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :enqueue_skill_based_round_robin, :on => :update, :if => :enqueue_sbrr_job?
   after_commit :save_sentiment, on: :create
   after_commit :update_spam_detection_service, :if => :model_changes?
-  after_commit :spam_feedback_to_smart_filter, :on => :update, if: -> { twitter_ticket_spammed? && !Account.current.incoming_mentions_in_tms_enabled? } 
   after_commit :tag_update_central_publish, :on => :update, :if => :tags_updated?
   after_commit :trigger_ticket_properties_suggester_feedback, on: :update, if: :ticket_properties_suggester_feedback_required?
   after_commit :trigger_detect_thank_you_note_feedback, on: :update, if: :detect_thank_you_note_feedback_required?
@@ -663,10 +662,6 @@ private
     @model_changes.present?
   end
 
-  def twitter_ticket_spammed?
-    self.twitter? && @model_changes.key?(:spam) && @model_changes[:spam][1] == true
-  end
-
   def fsm_enabled?
     Account.current.field_service_management_enabled?
   end
@@ -1091,13 +1086,6 @@ private
   # Reason for moving it to BJ is for activites(to generate as a system activity)
   def reopen_tickets item
     ::Tickets::ReopenTickets.perform_async({:ticket_ids=>[item.display_id]})
-  end
-
-  def spam_feedback_to_smart_filter
-    Social::SmartFilterFeedbackWorker.perform_async({
-      ticket_id: id,
-      type_of_feedback: Social::Constants::SMART_FILTER_FEEDBACK_TYPE[:spam]
-    })
   end
 
   def sanitize_meta_data

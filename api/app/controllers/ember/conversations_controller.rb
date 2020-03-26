@@ -181,6 +181,14 @@ module Ember
 
     private
 
+      def attachment_attributes
+        # The attachments added to reply from another item (ticket/note) using attach to response fails validation at base delegator.
+        # This scenario happens only when the attachment is sent in reply through 'Send and Set As'.
+        # So, we are passing nil instead of attachment_ids and shared_attachments to skip validation.
+        # These attachments will be validated in conversations delegator.
+        nil
+      end
+
       def add_facebook_attachments
         @item.attachments = @item.attachments + @delegator.draft_attachments if @delegator.draft_attachments
       end

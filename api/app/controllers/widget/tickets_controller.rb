@@ -12,6 +12,7 @@ module Widget
     before_filter :check_ticket_permission, only: :create
     before_filter :check_recaptcha, unless: :predictive_ticket?
     before_filter :validate_attachment_ids, if: :attachment_ids?
+    skip_before_filter :check_session_timeout
 
     private
 

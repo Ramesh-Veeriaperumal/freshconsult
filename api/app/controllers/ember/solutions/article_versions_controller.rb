@@ -4,6 +4,7 @@ module Ember
       include HelperConcern
       include SolutionConcern
       include CloudFilesHelper
+      include SolutionHelper
 
       SLAVE_ACTIONS = %w[index].freeze
 
@@ -14,6 +15,7 @@ module Ember
       before_filter :load_object, only: [:restore, :show]
       before_filter :validate_draft_unlocked, only: [:restore]
       before_filter :validate_version, only: [:restore]
+      before_filter :validate_attachments_size, only: [:restore]
 
       def index
         super
@@ -21,7 +23,7 @@ module Ember
       end
 
       def restore
-        @draft = @article.draft || @article.build_draft_from_article
+        @draft ||= @article.build_draft_from_article
         assign_draft_attributes
         @draft.restored_version = @item.version_no
         update_deleted_attachment_info
@@ -90,18 +92,47 @@ module Ember
           end
         end
 
+        def validate_attachments_size
+          @draft = @article.draft
+          if @draft
+            set_deleted_attachment_info if @draft.meta.present? && @draft.meta[:deleted_attachments].present?
+            active_attachments = @draft.attachments + @article.attachments
+
+            overall_attachments = @deleted_attachments.present? ? active_attachments.reject { |a| @deleted_attachments.include?(a.id) } : active_attachments
+            overall_attachment_size = overall_attachments.collect(&:content_file_size).sum
+
+            overall_attachment_limit = cumulative_attachment_limit
+            render_request_error(:article_version_file_size_exceeded, 400, max_limit: overall_attachment_limit) if overall_attachment_size > overall_attachment_limit.megabytes
+          end
+        end
+
+        def set_deleted_attachment_info
+          if @draft.meta[:deleted_attachments][:attachments].present?
+            attachments = @item.meta[:attachments] || []
+            restored_attachment_ids = attachments.map { |attachment| attachment[:id] }
+            @deleted_attachments = @draft.meta[:deleted_attachments][:attachments].reject { |a| restored_attachment_ids.include?(a) }
+          end
+
+          if @draft.meta[:deleted_attachments][:cloud_files].present?
+            cloud_files = @item.meta[:cloud_files] || []
+            restored_cloud_files_ids = cloud_files.map { |cloud_file| cloud_file[:id] }
+            @deleted_cloud_files = @draft.meta[:deleted_attachments][:cloud_files].reject { |a| restored_cloud_files_ids.include?(a) }
+          end
+        end
+
         # remove restored attachments from meta[:deleted_attachments]
         def update_deleted_attachment_info
-          if @draft.meta.present? && @draft.meta[:deleted_attachments].present?
-            if @draft.meta[:deleted_attachments][:attachments].present?
-              attachments = @item.meta[:attachments] || []
-              restored_attachment_ids = attachments.map { |attachment| attachment[:id] }
-              @draft.meta[:deleted_attachments][:attachments].reject! { |a| restored_attachment_ids.include?(a) }
-            end
-            if @draft.meta[:deleted_attachments][:cloud_files].present?
-              cloud_files = @item.meta[:cloud_files] || []
-              restored_cloud_files_ids = cloud_files.map { |cloud_file| cloud_file[:id] }
-              @draft.meta[:deleted_attachments][:cloud_files].reject! { |a| restored_cloud_files_ids.include?(a) }
+          update_deleted_file_info(@deleted_attachments, :attachments)
+          update_deleted_file_info(@deleted_cloud_files, :cloud_files)
+          @draft.meta.delete(:deleted_attachments) if @draft.meta.key?(:deleted_attachments) && @draft.meta[:deleted_attachments].empty?
+        end
+
+        def update_deleted_file_info(deleted_files, type)
+          if deleted_files
+            if deleted_files.empty?
+              @draft.meta[:deleted_attachments].delete(type)
+            else
+              @draft.meta[:deleted_attachments][type] = deleted_files
             end
           end
         end

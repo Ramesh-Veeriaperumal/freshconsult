@@ -3,7 +3,7 @@ class FacebookRedirectAuthController < ApplicationController
   before_filter :check_params
   skip_before_filter :check_privilege, :verify_authenticity_token
   skip_before_filter :set_current_account, :redactor_form_builder, :check_account_state, :set_time_zone,
-                     :check_day_pass_usage, :set_locale, :only => [:complete]
+                     :check_day_pass_usage, :set_locale, :check_session_timeout, only: [:complete]
   skip_after_filter :set_last_active_time
 
   def complete

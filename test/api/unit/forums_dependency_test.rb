@@ -9,7 +9,8 @@ class ForumsDependencyTest < ActionView::TestCase
                         :persist_user_agent, :set_cache_buster, :remove_pjax_param, :set_pjax_url, :set_last_active_time, :reset_language,
                         :set_affiliate_cookie, :verify_authenticity_token, :portal_check, :set_selected_tab,
                         :find_or_initialize_forum, :fetch_monitorship, :load_topics, :set_customer_forum_params, :fetch_selected_customers,
-                        :unset_thread_variables, :ensure_proper_sts_header, :set_ui_preference, :record_query_comment, :log_csrf, :remove_session_data]
+                        :unset_thread_variables, :ensure_proper_sts_header, :set_ui_preference, :record_query_comment, :log_csrf, :remove_session_data,
+                        :check_session_timeout]
     actual_filters = Discussions::ForumsController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end

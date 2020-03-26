@@ -154,6 +154,7 @@ api_error_messages:
   no_create_and_edit_article_privilege: "The user is not authorized to send items for review"
   invalid_user_id: "The user id is not invalid"
   article_not_in_draft_state: "The article should be in draft state in order to send it for review"
+  article_version_file_size_exceeded: "Restore failed. The total attachment(s) in the selected version and the current version exceeds the %{max_limit}MB limit."
   facebook_user_blocked: "Facebook 230 exception"
   twitter_write_access_blocked: "Cannot write, Twitter write permission has been revoked"
   ebay_reply_limit_exceeded: "Exceeded maximum message limit of 2000 letters"

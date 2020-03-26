@@ -267,6 +267,9 @@
         "description": "Create a ticket",
         "parameters": [
           {
+            "$ref": "#/parameters/enforce_mandatory"
+          },
+          {
             "name": "data",
             "in": "body",
             "required": true,
@@ -370,6 +373,9 @@
         "parameters": [
           {
             "$ref": "#/parameters/id"
+          },
+          {
+            "$ref": "#/parameters/enforce_mandatory"
           },
           {
             "name": "data",
@@ -9917,32 +9923,6 @@
         }
       }
     },
-    "/subscription/estimate_feature_loss": {
-      "get": {
-        "tags": [
-          "subscription"
-        ],
-        "description": "Estimate the feature loss when moving to a lower plan",
-        "summary": "Estimate feature loss",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/estimate_feature_loss"
-            }
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      }
-    },
     "/proactive/rules": {
       "get": {
         "tags": [
@@ -15690,6 +15670,14 @@
                       "type": "boolean"
                     },
                     "twitter_reauth_link": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "freshid": {
+                  "type": "object",
+                  "properties": {
+                    "client_id": {
                       "type": "string"
                     }
                   }
@@ -26367,6 +26355,32 @@
         },
         "tax_inclusive": {
           "type": "boolean"
+        }
+      }
+    },
+    "/subscription/estimate_feature_loss": {
+      "get": {
+        "tags": [
+          "subscription"
+        ],
+        "description": "Estimate the feature loss when moving to a lower plan",
+        "summary": "Estimate feature loss",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/estimate_feature_loss"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
         }
       }
     },

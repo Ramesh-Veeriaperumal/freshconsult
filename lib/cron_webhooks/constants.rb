@@ -19,7 +19,7 @@ module CronWebhooks::Constants
   CONTROLLER = 'web_hooks_controller'.freeze
   CONTROLLER_SEMAPHORE_EXPIRY = 180
 
-  MONITORED_QUEUES = %w[twitter_realtime_queue facebook_realtime_queue].freeze
+  MONITORED_QUEUES = %w[facebook_realtime_queue].freeze
 
   WORKER_ARGS_KEYS = %w[type task_name mode queue_name account_id shard_name].freeze
 

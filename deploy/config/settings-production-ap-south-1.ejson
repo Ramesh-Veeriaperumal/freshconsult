@@ -1188,14 +1188,6 @@
         "_outgoing_proxy_ip": "10.3.2.77",
         "office365_originator_id": "EJ[1:JenLY5vhu661rn3eGPCdVlWtN2QRQMHGFulTkPC0iiE=:s6d/pXzQOMZIYUpKuSd1STNzpyKUzI+X:AFoD0D3rjUIiGSmzTgmESOXmJ3N6pgTOxroJmiGyLQPHXnvlXaBhJbzIlXlj3pAXzCR3Og==]"
       },
-      "smart_filter": {
-        "auth_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:uAwSUNgagj01x21DpDpg5NAFV3zBXRu1:9X4gxZzYDMgN5QebXvy2pbo4UXcmIij2TrvSPKoPL72VKqxly5xZoaN0S2Obb42oL9EKhVDcv4K9cksHuu/Mzr7J+bpXtQVx2DZ0YQ25oqTzXaXY5JV36rahQMTp/ygUyGHJCxBqzUAQeKHqTBIlWUjakBpQhBOetk6t7GUTjBmjMuLM6DOUsGf+7R2FLo1xDf7CXVC/8tm3/xUHTXikru4vypQFG5jHOwMaRzHWvB72WdYhLM+3Db/rfA45EYQiUrdZ3ShIE8IlX1ZMB8E6/McLPoqXXR509KRdZ8iLfYXECEgRV4cQtSFuSa2IfjDVA8lcd+tvdAts7jrjmdR9HlR9skSRjUehtZE8Bf/Yp4v1tDGEJQ==]",
-        "_api_endpoint": "https://ncind.freshworksapi.com",
-        "_init_url": "/init",
-        "_query_url": "/query",
-        "_feedback_url": "/update",
-        "_max_tries": 4
-      },
       "kafka": {
         "service": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:Mc/RbnaFlJQ893j9fsRVOY/62sualOog:HDlysb2lmtkG4nAdLnsHcAM4fMo7kR5IHsUp6lvxs483j+hWYqTD6NeqEDvzXXwpAaw5wTNHTCQ9v3pS]",
         "_endpoint": "https://central-mumbai.freshworksapi.com",

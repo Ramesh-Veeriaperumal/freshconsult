@@ -27,7 +27,6 @@ module Social::Twitter::Constants
 
   # time in sec
   TIME = {
-    :max_time_in_sqs => 120,
     :reconnect_timeout => 30,
     :replay_stream_wait_time => 1800
   }

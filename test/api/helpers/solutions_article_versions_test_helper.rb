@@ -221,4 +221,11 @@ module SolutionsArticleVersionsTestHelper
   ensure
     AwsWrapper::S3Object.unstub(:read)
   end
+
+  def attachment_size_validation_error_pattern(cumulative_size)
+    {
+      code: 'article_version_file_size_exceeded',
+      message: "Restore failed. The total attachment(s) in the selected version and the current version exceeds the #{cumulative_size}MB limit."
+    }
+  end
 end

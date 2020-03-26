@@ -11,7 +11,7 @@ module SBRR
         args.symbolize_keys!
         @user  = Account.current.users.find_by_id args[:user_id]
         @group = Account.current.groups.find_by_id args[:group_id]
-        @skills = Account.current.skills.find_all_by_id args[:skill_ids] if args[:skill_ids] #agent destroy
+        @skills = Account.current.skills.where(id: args[:skill_ids]).to_a if args[:skill_ids] # agent destroy
 
         sbrr_user_config_synchronizer.sync args[:action].to_sym if @group.present? #group destroyed
 

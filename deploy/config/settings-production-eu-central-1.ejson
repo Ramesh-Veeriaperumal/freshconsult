@@ -105,14 +105,6 @@
         "app_id": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:VNMUBSwxbP77KfT8oDeHDlDv+/9nqHR/:0/L/9iOyz5eTvSo7iFVamL6JHw==]",
         "falcon_app_id": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:bkXb1ZAyIgu7G3LVgurOAJXWeFKkbSuK:fON8FgykMhqDu+QyMgsVaPC8vw8=]"
       },
-      "smart_filter": {
-        "auth_key": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:5F/kAP7X2uko9Jc8l5lJmjePM3G8Lvjw:E8pDrahXooeVQl9F58w68mVYXLzVnEREQ5fbhbY3tjWaIjRfvgog/fzh9AVsovNIyBHD7ui2j1tQzpt7al1Kq6PGG22cjhLLOgUx63x/jRkiGQ0yunlzWtbGdor/lOH7aOrfUMhw3psOQaPHoQVovOiZSasKmQ1SdtlAoqORi292N+0n2eoMUSFNqKiJDudPNEQMg15edBOOW/fhQKOEPqayPpJDZBD266bafcPCKSHf17ZB2A8Q7EOohbWgMe9W+6DEIVglyWLPJt0jdxMKa8J/aMiDavX2mNVAzgRKACjsyT1Kt8tk+TO5u5fY2GV84SDJK6225UAv17wEVkFzUFAuDi5RHSFoyb0R06KsnZbS/my4/w==]",
-        "_api_endpoint": "https://nceuc.freshworksapi.com",
-        "_init_url": "/init",
-        "_query_url": "/query",
-        "_feedback_url": "/update",
-        "_max_tries": 4
-      },
       "fdadmin_api": {
         "secret_key": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:O0RUgBD2Ihbg0f4EEyzJpOzUlUHEmM6V:Lt3Q4wHvDczss73BIev+yjPjVLz5jhQKZg25t8ScpZfIJb5BMVCZ42VD8i4753LG]",
         "authorization_password": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:rpZhnTqLFwn4KAe4DkMsy84RmP5F1Q7b:XVPc9tPNk6yT1AeJlf1HPZ38BylwfD04uaS4TKWwST6T3wY=]",

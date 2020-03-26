@@ -28,6 +28,7 @@ class ApplicationController < ActionController::Base
   before_filter :remove_pjax_param
   before_filter :set_pjax_url
   after_filter :set_last_active_time, :reset_language
+  before_filter :check_session_timeout, if: :session_timeout_allowed?
 
 
   rescue_from ActionController::RoutingError, :with => :render_404
@@ -330,10 +331,6 @@ class ApplicationController < ActionController::Base
 
     def is_ajax?
       request.xhr?
-    end
-
-    def web_request?
-      request.cookies["_helpkit_session"]
     end
 
     def set_last_active_time

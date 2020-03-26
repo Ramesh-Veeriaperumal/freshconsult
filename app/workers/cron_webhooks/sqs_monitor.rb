@@ -3,7 +3,6 @@ module CronWebhooks
     sidekiq_options queue: :cron_sqs_monitor, retry: 0, dead: true, failures: :exhausted
 
     SQS_THRESHOLD = {
-      twitter_realtime_queue: 50,
       facebook_realtime_queue: 50
     }.freeze
 

@@ -8,7 +8,7 @@ class ShopifyListingController < ApplicationController
   skip_filter :select_shard
   skip_before_filter :check_privilege, :verify_authenticity_token
   skip_before_filter :set_current_account, :redactor_form_builder, :check_account_state, :set_time_zone,
-                    :check_day_pass_usage, :set_locale
+                     :check_day_pass_usage, :set_locale, :check_session_timeout
   before_filter :get_base_domain
 
 

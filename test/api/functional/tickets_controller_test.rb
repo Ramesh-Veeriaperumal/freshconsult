@@ -97,7 +97,12 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def wrap_cname(params = {})
-    { ticket: params }
+    query_params = params[:query_params]
+    cparams = params.clone
+    cparams.delete(:query_params)
+    return query_params.merge(ticket: cparams) if query_params
+
+    { ticket: cparams }
   end
 
   def requester
@@ -6273,5 +6278,610 @@ class TicketsControllerTest < ActionController::TestCase
     5.times { create_ticket(requester_id: user.id) }
     params = { requester_id: user.id, per_page: 3 }
     match_query_response_with_es_enabled(params)
+  end
+
+  # Skip mandatory custom field validation on create ticket
+  def test_create_ticket_with_enforce_mandatory_true_not_passing_custom_field
+    cf = create_custom_field('cf_ticket', 'text', '05', true)
+    Account.reset_current_account
+    @account = Account.first
+    created_ticket = post :create, construct_params({},
+                                                    create_ticket_params.merge(query_params: { enforce_mandatory: 'true' }))
+    result = JSON.parse(created_ticket.body)
+    assert_response 400, result
+    match_json(
+      [{
+        field: 'custom_fields.cf_ticket',
+        code: :missing_field,
+        message: 'It should be a/an String'
+      }]
+    )
+  ensure
+    @account.ticket_fields.find_by_name("cf_ticket_#{@account.id}").destroy
+  end
+
+  def test_create_ticket_with_enforce_mandatory_true_custom_field_empty
+    cf = create_custom_field('cf_ticket', 'text', '05', true)
+    Account.reset_current_account
+    @account = Account.first
+    created_ticket = post :create, construct_params(
+      {},
+      create_ticket_params.merge(custom_fields: { cf_ticket: '' }, query_params: { enforce_mandatory: 'true' })
+    )
+
+    result = JSON.parse(created_ticket.body)
+    assert_response 400, result
+    match_json(
+      [{
+        field: 'custom_fields.cf_ticket',
+        code: :invalid_value,
+        message: 'It should not be blank as this is a mandatory field'
+      }]
+    )
+  ensure
+    @account.ticket_fields.find_by_name("cf_ticket_#{@account.id}").destroy
+  end
+
+  def test_create_ticket_with_enforce_mandatory_true_passing_custom_field
+    cf = create_custom_field('cf_ticket', 'text', '05', true)
+    Account.reset_current_account
+    @account = Account.first
+    created_ticket = post :create, construct_params(
+      {},
+      create_ticket_params.merge(custom_fields: { cf_ticket: 'test' }, query_params: { enforce_mandatory: 'true' })
+    )
+
+    result = JSON.parse(created_ticket.body)
+    assert_response 201, result
+  ensure
+    @account.ticket_fields.find_by_name("cf_ticket_#{@account.id}").destroy
+  end
+
+  def test_create_ticket_with_enforce_mandatory_false_not_passing_custom_field
+    cf = create_custom_field('cf_ticket', 'text', '05', true)
+    Account.reset_current_account
+    @account = Account.first
+    created_ticket = post :create, construct_params(
+      {},
+      create_ticket_params.merge(query_params: { enforce_mandatory: 'false' })
+    )
+
+    result = JSON.parse(created_ticket.body)
+    assert_response 201, result
+  ensure
+    @account.ticket_fields.find_by_name("cf_ticket_#{@account.id}").destroy
+  end
+
+  def test_create_ticket_with_enforce_mandatory_false_custom_field_empty
+    cf = create_custom_field('cf_ticket', 'text', '05', true)
+    Account.reset_current_account
+    @account = Account.first
+    created_ticket = post :create, construct_params(
+      {},
+      create_ticket_params.merge(custom_fields: { cf_ticket: '' }, query_params: { enforce_mandatory: 'false' })
+    )
+
+    result = JSON.parse(created_ticket.body)
+    assert_response 201, result
+  ensure
+    @account.ticket_fields.find_by_name("cf_ticket_#{@account.id}").destroy
+  end
+
+  def test_create_ticket_with_enforce_mandatory_false_passing_custom_field
+    cf = create_custom_field('cf_ticket', 'text', '05', true)
+    Account.reset_current_account
+    @account = Account.first
+    created_ticket = post :create, construct_params(
+      {},
+      create_ticket_params.merge(custom_fields: { cf_ticket: 'test' }, query_params: { enforce_mandatory: 'false' })
+    )
+
+    result = JSON.parse(created_ticket.body)
+    assert_response 201, result
+  ensure
+    @account.ticket_fields.find_by_name("cf_ticket_#{@account.id}").destroy
+  end
+
+  def test_create_ticket_with_enforce_mandatory_as_garbage_value
+    create_custom_field('cf_ticket', 'text', '05', true)
+    Account.reset_current_account
+    @account = Account.first
+    created_ticket = post :create, construct_params(
+      {},
+      create_ticket_params.merge(custom_fields: { cf_ticket: 'test' }, query_params: { enforce_mandatory: 'test' })
+    )
+
+    result = JSON.parse(created_ticket.body)
+    assert_response 400, result
+    match_json(
+      [{
+        field: 'enforce_mandatory',
+        code: :invalid_value,
+        message: "It should be either 'true' or 'false'"
+      }]
+    )
+  ensure
+    @account.ticket_fields.find_by_name("cf_ticket_#{@account.id}").destroy
+  end
+
+  # Skip mandatory custom field validation on update ticket
+  def test_update_ticket_without_required_custom_fields_with_enforce_mandatory_as_false
+    cf = create_custom_field('cf_ticket', 'text', '05', true)
+    Account.reset_current_account
+    @account = Account.first
+    created_ticket = post :create, construct_params(
+      {},
+      create_ticket_params.merge(query_params: { enforce_mandatory: 'false' })
+    )
+    created_ticket_id = JSON.parse(created_ticket.body)['id']
+    updated_ticket = put :update, construct_params(
+      { id: created_ticket_id },
+      description: 'testing',
+      query_params: { enforce_mandatory: 'false' }
+    )
+
+    result = JSON.parse(updated_ticket.body)
+    assert_response 200, result
+    assert_equal result['description'], 'testing'
+  ensure
+    @account.ticket_fields.find_by_name("cf_ticket_#{@account.id}").destroy
+  end
+
+  def test_update_ticket_without_required_custom_fields_with_enforce_mandatory_as_true
+    cf = create_custom_field('cf_ticket', 'text', '05', true)
+    Account.reset_current_account
+    @account = Account.first
+    created_ticket = post :create, construct_params(
+      {},
+      create_ticket_params.merge(query_params: { enforce_mandatory: 'false' })
+    )
+    created_ticket_id = JSON.parse(created_ticket.body)['id']
+    updated_ticket = put :update, construct_params(
+      { id: created_ticket_id },
+      description: 'testing',
+      query_params: { enforce_mandatory: 'true' }
+    )
+
+    result = JSON.parse(updated_ticket.body)
+    assert_response 400, result
+    match_json(
+      [{
+        field: 'custom_fields.cf_ticket',
+        code: :missing_field,
+        message: 'It should be a/an String'
+      }]
+    )
+  ensure
+    @account.ticket_fields.find_by_name("cf_ticket_#{@account.id}").destroy
+  end
+
+  def test_update_ticket_without_required_custom_fields_default_enforce_mandatory_true
+    cf = create_custom_field('cf_ticket', 'text', '05', true)
+    Account.reset_current_account
+    @account = Account.first
+    created_ticket = post :create, construct_params(
+      {},
+      create_ticket_params.merge(query_params: { enforce_mandatory: 'false' })
+    )
+    created_ticket_id = JSON.parse(created_ticket.body)['id']
+    updated_ticket = put :update, construct_params(
+      { id: created_ticket_id },
+      description: 'testing'
+    )
+
+    result = JSON.parse(updated_ticket.body)
+    assert_response 400, result
+    match_json(
+      [{
+        field: 'custom_fields.cf_ticket',
+        code: :missing_field,
+        message: 'It should be a/an String'
+      }]
+    )
+  ensure
+    @account.ticket_fields.find_by_name("cf_ticket_#{@account.id}").destroy
+  end
+
+  def test_update_ticket_with_enforce_mandatory_true_existing_custom_field_empty_new_empty
+    cf = create_custom_field('cf_ticket', 'text', '05', true)
+    Account.reset_current_account
+    @account = Account.first
+    created_ticket = post :create, construct_params(
+      {},
+      create_ticket_params.merge(query_params: { enforce_mandatory: 'false' })
+    )
+    created_ticket_id = JSON.parse(created_ticket.body)['id']
+    updated_ticket = put :update, construct_params(
+      { id: created_ticket_id },
+      description: 'testing',
+      custom_fields: { cf_ticket: '' },
+      query_params: { enforce_mandatory: 'true' }
+    )
+
+    result = JSON.parse(updated_ticket.body)
+    assert_response 400, result
+    match_json(
+      [{
+        field: 'custom_fields.cf_ticket',
+        code: :invalid_value,
+        message: 'It should not be blank as this is a mandatory field'
+      }]
+    )
+  ensure
+    @account.ticket_fields.find_by_name("cf_ticket_#{@account.id}").destroy
+  end
+
+  def test_update_ticket_with_enforce_mandatory_true_existing_custom_field_empty_new_not_empty
+    cf = create_custom_field('cf_ticket', 'text', '05', true)
+    Account.reset_current_account
+    @account = Account.first
+    created_ticket = post :create, construct_params(
+      {},
+      create_ticket_params.merge(query_params: { enforce_mandatory: 'false' })
+    )
+    created_ticket_id = JSON.parse(created_ticket.body)['id']
+    updated_ticket = put :update, construct_params(
+      { id: created_ticket_id },
+      description: 'testing',
+      custom_fields: { cf_ticket: 'testing' },
+      query_params: { enforce_mandatory: 'true' }
+    )
+
+    result = JSON.parse(updated_ticket.body)
+    assert_response 200, result
+    assert_equal result['description'], 'testing'
+  ensure
+    @account.ticket_fields.find_by_name("cf_ticket_#{@account.id}").destroy
+  end
+
+  def test_update_ticket_with_enforce_mandatory_true_existing_custom_field_not_empty_new_empty
+    cf = create_custom_field('cf_ticket', 'text', '05', true)
+    Account.reset_current_account
+    @account = Account.first
+    created_ticket = post :create, construct_params(
+      {},
+      create_ticket_params.merge(custom_fields: { cf_ticket: 'existing' })
+    )
+    created_ticket_id = JSON.parse(created_ticket.body)['id']
+    updated_ticket = put :update, construct_params(
+      { id: created_ticket_id },
+      description: 'testing',
+      custom_fields: { cf_ticket: '' },
+      query_params: { enforce_mandatory: 'true' }
+    )
+
+    result = JSON.parse(updated_ticket.body)
+    assert_response 400, result
+    match_json(
+      [{
+        field: 'custom_fields.cf_ticket',
+        code: :invalid_value,
+        message: 'It should not be blank as this is a mandatory field'
+      }]
+    )
+  ensure
+    @account.ticket_fields.find_by_name("cf_ticket_#{@account.id}").destroy
+  end
+
+  def test_update_ticket_with_enforce_mandatory_true_existing_custom_field_not_empty_new_not_empty
+    cf = create_custom_field('cf_ticket', 'text', '05', true)
+    Account.reset_current_account
+    @account = Account.first
+    created_ticket = post :create, construct_params(
+      {},
+      create_ticket_params.merge(custom_fields: { cf_ticket: 'existing' })
+    )
+    created_ticket_id = JSON.parse(created_ticket.body)['id']
+    updated_ticket = put :update, construct_params(
+      { id: created_ticket_id },
+      description: 'testing',
+      custom_fields: { cf_ticket: 'testing' },
+      query_params: { enforce_mandatory: 'true' }
+    )
+
+    result = JSON.parse(updated_ticket.body)
+    assert_response 200, result
+    assert_equal result['description'], 'testing'
+  ensure
+    @account.ticket_fields.find_by_name("cf_ticket_#{@account.id}").destroy
+  end
+
+  def test_update_ticket_with_enforce_mandatory_false_existing_custom_field_empty_new_empty
+    cf = create_custom_field('cf_ticket', 'text', '05', true)
+    Account.reset_current_account
+    @account = Account.first
+    created_ticket = post :create, construct_params(
+      {},
+      create_ticket_params.merge(query_params: { enforce_mandatory: 'false' })
+    )
+    created_ticket_id = JSON.parse(created_ticket.body)['id']
+    updated_ticket = put :update, construct_params(
+      { id: created_ticket_id },
+      description: 'testing',
+      custom_fields: { cf_ticket: '' },
+      query_params: { enforce_mandatory: 'false' }
+    )
+
+    result = JSON.parse(updated_ticket.body)
+    assert_response 400, result
+    match_json(
+      [{
+        field: 'custom_fields.cf_ticket',
+        code: :invalid_value,
+        message: 'It should not be blank as this is a mandatory field'
+      }]
+    )
+  ensure
+    @account.ticket_fields.find_by_name("cf_ticket_#{@account.id}").destroy
+  end
+
+  def test_update_ticket_with_enforce_mandatory_false_existing_custom_field_empty_new_not_empty
+    cf = create_custom_field('cf_ticket', 'text', '05', true)
+    Account.reset_current_account
+    @account = Account.first
+    created_ticket = post :create, construct_params(
+      {},
+      create_ticket_params.merge(query_params: { enforce_mandatory: 'false' })
+    )
+    created_ticket_id = JSON.parse(created_ticket.body)['id']
+    updated_ticket = put :update, construct_params(
+      { id: created_ticket_id },
+      description: 'testing',
+      custom_fields: { cf_ticket: 'testing' },
+      query_params: { enforce_mandatory: 'false' }
+    )
+
+    result = JSON.parse(updated_ticket.body)
+    assert_response 200, result
+    assert_equal result['description'], 'testing'
+  ensure
+    @account.ticket_fields.find_by_name("cf_ticket_#{@account.id}").destroy
+  end
+
+  def test_update_ticket_with_enforce_mandatory_false_existing_custom_field_not_empty_new_empty
+    cf = create_custom_field('cf_ticket', 'text', '05', true)
+    Account.reset_current_account
+    @account = Account.first
+    created_ticket = post :create, construct_params(
+      {},
+      create_ticket_params.merge(custom_fields: { cf_ticket: 'existing' })
+    )
+    created_ticket_id = JSON.parse(created_ticket.body)['id']
+    updated_ticket = put :update, construct_params(
+      { id: created_ticket_id },
+      description: 'testing',
+      custom_fields: { cf_ticket: '' },
+      query_params: { enforce_mandatory: 'false' }
+    )
+
+    result = JSON.parse(updated_ticket.body)
+    assert_response 400, result
+    match_json(
+      [{
+        field: 'custom_fields.cf_ticket',
+        code: :invalid_value,
+        message: 'It should not be blank as this is a mandatory field'
+      }]
+    )
+  ensure
+    @account.ticket_fields.find_by_name("cf_ticket_#{@account.id}").destroy
+  end
+
+  def test_update_ticket_with_enforce_mandatory_false_existing_custom_field_not_empty_new_not_empty
+    cf = create_custom_field('cf_ticket', 'text', '05', true)
+    Account.reset_current_account
+    @account = Account.first
+    created_ticket = post :create, construct_params(
+      {},
+      create_ticket_params.merge(custom_fields: { cf_ticket: 'existing' })
+    )
+    created_ticket_id = JSON.parse(created_ticket.body)['id']
+    updated_ticket = put :update, construct_params(
+      { id: created_ticket_id },
+      description: 'testing',
+      custom_fields: { cf_ticket: 'testing' },
+      query_params: { enforce_mandatory: 'false' }
+    )
+
+    result = JSON.parse(updated_ticket.body)
+    assert_response 200, result
+    assert_equal result['description'], 'testing'
+  ensure
+    @account.ticket_fields.find_by_name("cf_ticket_#{@account.id}").destroy
+  end
+
+  def test_create_ticket_with_enforce_mandatory_false_with_wrong_datatype
+    cf = create_custom_field('cf_ticket', 'text', '05', true)
+    Account.reset_current_account
+    @account = Account.first
+    created_ticket = post :create, construct_params(
+      {},
+      create_ticket_params.merge(
+        custom_fields: { cf_ticket: 123 },
+        query_params: { enforce_mandatory: 'false' }
+      )
+    )
+
+    result = JSON.parse(created_ticket.body)
+    assert_response 400, result
+    match_json(
+      [{
+        field: 'custom_fields.cf_ticket',
+        code: :datatype_mismatch,
+        message: 'Value set is of type Integer.It should be a/an String'
+      }]
+    )
+  ensure
+    @account.ticket_fields.find_by_name("cf_ticket_#{@account.id}").destroy
+  end
+
+  def test_create_ticket_with_enforce_mandatory_false_with_required_for_closure_custom_field
+    cf = create_custom_field('cf_ticket', 'text', '05', false, true)
+    Account.reset_current_account
+    @account = Account.first
+    created_ticket = post :create, construct_params(
+      {},
+      create_ticket_params
+    )
+    created_ticket_id = JSON.parse(created_ticket.body)['id']
+
+    closed_ticket = put :update, construct_params(
+      { id: created_ticket_id },
+      status: 5,
+      query_params: { enforce_mandatory: 'false' }
+    )
+    result = JSON.parse(closed_ticket.body)
+
+    assert_response 400, result
+    match_json(
+      [{
+        field: 'custom_fields.cf_ticket',
+        code: :missing_field,
+        message: 'It should be a/an String'
+      }]
+    )
+  ensure
+    @account.ticket_fields.find_by_name("cf_ticket_#{@account.id}").destroy
+  end
+
+
+  def test_create_service_task_enforce_mandatory_false_without_contact_name
+    enable_adv_ticketing([:field_service_management]) do
+      begin
+        perform_fsm_operations
+
+        created_ticket = post :create, construct_params(
+          {},
+          create_ticket_params
+        )
+        created_ticket_id = JSON.parse(created_ticket.body)['id']
+
+        Account.current.instance_variable_set('@ticket_fields_from_cache', nil)
+        Account.reset_current_account
+
+        created_service_task = post :create, construct_params(
+          {},
+          service_task_params.merge(
+            parent_id: created_ticket_id,
+            custom_fields: {
+              cf_fsm_phone_number: Faker::Lorem.characters(10),
+              cf_fsm_service_location: Faker::Lorem.characters(10)
+            },
+            query_params: { enforce_mandatory: 'false' }
+          )
+        )
+        result = JSON.parse(created_service_task.body)
+        assert_response 400, result
+        match_json(
+          [{
+            field: 'cf_fsm_contact_name',
+            code: :invalid_value,
+            message: "can't be blank"
+          }]
+        )
+      ensure
+        cleanup_fsm
+      end
+    end
+  end
+
+  def test_create_service_task_enforce_mandatory_false_without_phone_number
+    enable_adv_ticketing([:field_service_management]) do
+      begin
+        perform_fsm_operations
+
+        created_ticket = post :create, construct_params(
+          {},
+          create_ticket_params
+        )
+        created_ticket_id = JSON.parse(created_ticket.body)['id']
+
+        Account.current.instance_variable_set('@ticket_fields_from_cache', nil)
+        Account.reset_current_account
+        created_service_task = post :create, construct_params(
+          {},
+          service_task_params.merge(
+            parent_id: created_ticket_id,
+            custom_fields: {
+              cf_fsm_contact_name: Faker::Lorem.characters(10),
+              cf_fsm_service_location: Faker::Lorem.characters(10)
+            },
+            query_params: { enforce_mandatory: 'false' }
+          )
+        )
+
+        result = JSON.parse(created_service_task.body)
+        assert_response 400, result
+        match_json(
+          [{
+            field: 'cf_fsm_phone_number',
+            code: :invalid_value,
+            message: "can't be blank"
+          }]
+        )
+      ensure
+        cleanup_fsm
+      end
+    end
+  end
+
+  def test_create_service_task_enforce_mandatory_false_without_service_location
+    enable_adv_ticketing([:field_service_management]) do
+      begin
+        perform_fsm_operations
+
+        created_ticket = post :create, construct_params(
+          {},
+          create_ticket_params
+        )
+        created_ticket_id = JSON.parse(created_ticket.body)['id']
+
+        Account.current.instance_variable_set('@ticket_fields_from_cache', nil)
+        Account.reset_current_account
+        created_service_task = post :create, construct_params(
+          {},
+          service_task_params.merge(
+            parent_id: created_ticket_id,
+            custom_fields: {
+              cf_fsm_contact_name: Faker::Lorem.characters(10),
+              cf_fsm_phone_number: Faker::Lorem.characters(10)
+            },
+            query_params: { enforce_mandatory: 'false' }
+          )
+        )
+
+        result = JSON.parse(created_service_task.body)
+        assert_response 400, result
+        match_json(
+          [{
+            field: 'cf_fsm_service_location',
+            code: :invalid_value,
+            message: "can't be blank"
+          }]
+        )
+      ensure
+        cleanup_fsm
+      end
+    end
+  end
+
+  def create_ticket_params
+    {
+      subject: Faker::Lorem.characters(10),
+      description: Faker::Lorem.characters(10),
+      status: 2,
+      priority: 1,
+      email: Faker::Internet.email
+    }
+  end
+
+  def service_task_params
+    {
+      subject: Faker::Lorem.characters(10),
+      description: Faker::Lorem.characters(10),
+      status: 2,
+      type: 'Service Task',
+      priority: 1
+    }
   end
 end

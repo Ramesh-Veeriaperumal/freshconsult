@@ -2,7 +2,6 @@ namespace :sqs do
   desc "Monitoring SQS"
   
   SQS_THRESHOLD = {
-    :twitter_realtime_queue => 50,
     :facebook_realtime_queue => 50
   }
 
