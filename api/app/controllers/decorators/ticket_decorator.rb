@@ -51,7 +51,7 @@ class TicketDecorator < ApiDecorator
                                                  format_date(v)
                                                end
                                              elsif @custom_fields_mapping[k] == Helpdesk::TicketField::CUSTOM_FILE && v.present?
-                                               v.to_i
+                                               v.to_i.zero? ? nil : v.to_i
                                              else
                                                v
                                              end

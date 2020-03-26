@@ -19,7 +19,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_create :set_subsidiary_count, :if => :tracker_ticket?
 
-      before_update :assign_email_config
+  before_update :assign_email_config
 
   before_update :update_message_id, :if => :deleted_changed?
 
@@ -122,7 +122,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def assign_outbound_agent
     return if responder_id
-     if User.current.try(:id) and User.current.agent?
+    if User.current.try(:id) and User.current.agent?
       self.responder_id = User.current.id
     end
   end
@@ -1163,20 +1163,25 @@ private
     schema_less_ticket.schema_less_was == schema_less_ticket.attributes
   end
 
-    def fetch_and_validate_file_field_attachment_ids
-      account_file_field_names = account.custom_file_field_names_cache
-      self.file_field_attachment_ids = account_file_field_names.map { |file_field| self.safe_send(file_field) }.compact
-      return if self.file_field_attachment_ids.empty?
+  def fetch_and_validate_file_field_attachment_ids
+    account_file_field_names = account.custom_file_field_names_cache
+    file_field_values = account_file_field_names.map do |file_field|
+      value = safe_send(file_field)
+      value unless value.nil? || value.to_i.zero?
+    end.compact
+    return if file_field_values.empty?
 
-      total_file_size = account.attachments.where(id: self.file_field_attachment_ids).collect(&:content_file_size).sum
-      max_attachment_size = account.attachment_limit.megabytes
-      if total_file_size > max_attachment_size
-        self.errors[:ticket] << :exceeded_total_file_field_attachments_size
-        return false
-      end
-      if self.file_field_attachment_ids.size != self.file_field_attachment_ids.uniq.size
-        self.errors[:ticket] << :non_unique_file_field_attachment_ids
-        return false
-      end
+    if file_field_values.length != file_field_values.uniq.length
+      errors[:ticket] << :non_unique_file_field_attachment_ids
+      return false
     end
+    file_attachments = account.attachments.where(id: file_field_values)
+    self.file_field_attachment_ids = file_attachments.map(&:id)
+    total_file_size = file_attachments.collect(&:content_file_size).sum
+    max_attachment_size = account.attachment_limit.megabytes
+    if total_file_size > max_attachment_size
+      errors[:ticket] << :exceeded_total_file_field_attachments_size
+      return false
+    end
+  end
 end

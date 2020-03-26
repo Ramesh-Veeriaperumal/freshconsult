@@ -690,6 +690,21 @@ module Ember
       Account.reset_current_account
     end
 
+    def test_update_ticket_with_random_data_in_file_field
+      custom_field = create_custom_field_dn('test_file_field', 'file')
+      Account.first.make_current
+      ticket = create_ticket
+      assert_not_nil ticket
+      ticket.update_attribute(:custom_field, custom_field.name.to_sym => 'Name')
+      update_params = { status: Helpdesk::Ticketfields::TicketStatus::CLOSED }
+      put :update, construct_params({ id: ticket.display_id, version: 'private' }, update_params)
+      assert_response 200
+    ensure
+      custom_field.destroy
+      ticket.destroy
+      Account.reset_current_account
+    end
+
     def test_close_ticket_with_nil_file_field_attachment_when_required_for_submission
       custom_field = create_custom_field_dn('test_file_field', 'file', true, false)
       Account.first.make_current
