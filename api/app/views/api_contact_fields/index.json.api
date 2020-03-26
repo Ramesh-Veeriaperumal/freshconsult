@@ -1,4 +1,4 @@
-JSON.generate(@items.map do |contact_field|
+@items.map do |contact_field|
   response_hash = {
     editable_in_signup: contact_field.editable_in_signup,
     id: contact_field.id,
@@ -15,6 +15,6 @@ JSON.generate(@items.map do |contact_field|
     created_at: contact_field.created_at.try(:utc),
     updated_at: contact_field.updated_at.try(:utc)
   }
-  response_hash.merge!(choices: contact_field.contact_field_choices) unless contact_field.contact_field_choices.blank?
+  response_hash[:choices] = contact_field.contact_field_choices if contact_field.contact_field_choices.present?
   response_hash
-end)
+end.to_json

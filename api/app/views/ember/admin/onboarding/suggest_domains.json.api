@@ -1,1 +1,1 @@
-JSON.generate(@suggest_domains)
+@suggest_domains.to_json

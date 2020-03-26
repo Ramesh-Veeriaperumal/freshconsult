@@ -1,1 +1,1 @@
-JSON.generate(@widgets_result)
+@widgets_result.to_json

@@ -1,4 +1,4 @@
-JSON.generate(@items.map do |api_company|
+@items.map do |api_company|
   response_hash = {
     id: api_company.id,
     name: api_company.name,
@@ -11,4 +11,4 @@ JSON.generate(@items.map do |api_company|
   }
   response_hash.merge!(api_company.tam_fields) if api_company.tam_default_fields_enabled?
   response_hash
-end)
+end.to_json

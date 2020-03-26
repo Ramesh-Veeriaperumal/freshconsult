@@ -1,1 +1,1 @@
-JSON.generate(@items.map(&:to_full_hash))
+@items.map(&:to_full_hash).to_json

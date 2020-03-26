@@ -1,1 +1,1 @@
-JSON.generate(@item)
+@item.to_json

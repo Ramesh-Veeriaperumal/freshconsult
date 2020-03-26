@@ -1,1 +1,1 @@
-JSON.generate(@preferences)
+@preferences.to_json

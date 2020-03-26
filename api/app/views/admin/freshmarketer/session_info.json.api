@@ -1,1 +1,1 @@
-JSON.generate(@session_data)
+@session_data.to_json

@@ -1,1 +1,1 @@
-JSON.generate(ChatSettingDecorator.new(current_account, current_portal, current_user).to_hash)
+ChatSettingDecorator.new(current_account, current_portal, current_user).to_hash.to_json

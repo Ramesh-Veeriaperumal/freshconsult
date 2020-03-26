@@ -1,4 +1,4 @@
-JSON.generate(
+{
   id: @handle.id,
   handle_url: @handle.handle_url
-)
+}.to_json

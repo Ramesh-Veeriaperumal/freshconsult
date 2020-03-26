@@ -1,1 +1,1 @@
-JSON.generate((@data || {}).to_hash)
+(@data || {}).to_hash.to_json

@@ -1,1 +1,1 @@
-JSON.generate({ account: @item })
+{ account: @item }.to_json

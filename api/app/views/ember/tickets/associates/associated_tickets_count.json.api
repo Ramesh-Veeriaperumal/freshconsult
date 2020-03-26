@@ -1,1 +1,1 @@
-JSON.generate(@associated_tickets_by_count)
+@associated_tickets_by_count.to_json

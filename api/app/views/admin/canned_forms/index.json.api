@@ -1,1 +1,1 @@
-JSON.generate(@items.map(&:restricted_hash))
+@items.map(&:restricted_hash).to_json

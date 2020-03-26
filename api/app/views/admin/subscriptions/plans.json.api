@@ -1,1 +1,1 @@
-JSON.generate(@items.map(&:plan_hash))
+@items.map(&:plan_hash).to_json

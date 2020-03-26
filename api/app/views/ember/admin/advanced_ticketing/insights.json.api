@@ -1,4 +1,4 @@
-JSON.generate({
+{
   parent_child_tickets: {
     parent_tickets_count: @items['parent_tickets_count'].to_i,
     child_tickets_count: @items['child_tickets_count'].to_i
@@ -10,4 +10,4 @@ JSON.generate({
   shared_ownership: {
     shared_ownership_tickets_count: @items['shared_ownership_tickets_count'].to_i
   }
-})
+}.to_json

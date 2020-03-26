@@ -1,1 +1,1 @@
-JSON.generate(ConfigDataDecorator.new(@config).safe_send(@config[:id]))
+ConfigDataDecorator.new(@config).safe_send(@config[:id]).to_json

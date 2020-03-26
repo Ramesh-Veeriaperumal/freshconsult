@@ -1,58 +1,59 @@
- response_hash = {cc_emails: @item.cc_email.try(:[], :cc_emails),
-              fwd_emails: @item.cc_email.try(:[], :fwd_emails),
-              reply_cc_emails: @item.cc_email.try(:[], :reply_cc),
-              ticket_cc_emails: @item.cc_email.try(:[], :tkt_cc),
-              fr_escalated: @item.fr_escalated,
-              spam: @item.spam,
-              email_config_id: @item.email_config_id,
-              group_id: @item.group_id,
-              priority: @item.priority,
-              requester_id: @item.requester_id,
-              responder_id: @item.responder_id,
-              source: @item.source,
-              company_id: @item.company_id,
-              status: @item.status,
-              subject: @item.subject,
-              to_emails: @item.schema_less_ticket.try(:to_emails),
-              product_id: @item.schema_less_ticket.try(:product_id),
-              id: @item.display_id,
-              type: @item.ticket_type,
-              due_by: @item.due_by.try(:utc),
-              fr_due_by: @item.frDueBy.try(:utc),
-              is_escalated: @item.isescalated,
-              description: @item.description_html,
-              description_text: @item.description,
-              custom_fields: @item.custom_fields,
-              created_at: @item.created_at.try(:utc),
-              updated_at: @item.updated_at.try(:utc),
-              tags: @item.tag_names,
-              attachments: @item.attachments.map do |a|
-                                            {
-                                              id: a.id,
-                                              content_type: a.content_content_type,
-                                              size: a.content_file_size,
-                                              name: a.content_file_name,
-                                              attachment_url: a.attachment_url_for_api,
-                                              created_at: a.created_at.try(:utc),
-                                              updated_at: a.updated_at.try(:utc)
-                                            }
-                                          end
-                }
-              source_additional_info = {}
-              tweet = @item.tweet_public_hash
-              source_additional_info[:twitter] = tweet if tweet.present?
-              source_additional_info = source_additional_info.presence
-              response_hash[:source_additional_info] = source_additional_info if source_additional_info.present?
-              channel_v2_attributes = @item.channel_v2_attributes
-              stats_hash = @item.stats
-              response_hash.merge!(channel_v2_attributes) if channel_v2_attributes
-              response_hash.merge!(stats: stats_hash) if stats_hash && channel_v2_attributes
-              response_hash.merge!(internal_agent_id: @item.internal_agent_id, internal_group_id: @item.internal_group_id) if Account.current.shared_ownership_enabled?
-              if @item.associated_ticket?
-                response_hash[:association_type] = @item.association_type
-                response_hash[:associated_tickets_list] = @item.associates
-              end
-              response_hash[:failed_related_ticket_ids] = @failed_related_ticket_ids if @failed_related_ticket_ids.present?
-              render partial: 'shared/nr_params', locals: { response_hash: response_hash, item: @item }
-              JSON.generate(response_hash)
-
+response_hash = { cc_emails: @item.cc_email.try(:[], :cc_emails),
+                  fwd_emails: @item.cc_email.try(:[], :fwd_emails),
+                  reply_cc_emails: @item.cc_email.try(:[], :reply_cc),
+                  ticket_cc_emails: @item.cc_email.try(:[], :tkt_cc),
+                  fr_escalated: @item.fr_escalated,
+                  spam: @item.spam,
+                  email_config_id: @item.email_config_id,
+                  group_id: @item.group_id,
+                  priority: @item.priority,
+                  requester_id: @item.requester_id,
+                  responder_id: @item.responder_id,
+                  source: @item.source,
+                  company_id: @item.company_id,
+                  status: @item.status,
+                  subject: @item.subject,
+                  to_emails: @item.schema_less_ticket.try(:to_emails),
+                  product_id: @item.schema_less_ticket.try(:product_id),
+                  id: @item.display_id,
+                  type: @item.ticket_type,
+                  due_by: @item.due_by.try(:utc),
+                  fr_due_by: @item.frDueBy.try(:utc),
+                  is_escalated: @item.isescalated,
+                  description: @item.description_html,
+                  description_text: @item.description,
+                  custom_fields: @item.custom_fields,
+                  created_at: @item.created_at.try(:utc),
+                  updated_at: @item.updated_at.try(:utc),
+                  tags: @item.tag_names,
+                  attachments: @item.attachments.map do |a|
+                                 {
+                                   id: a.id,
+                                   content_type: a.content_content_type,
+                                   size: a.content_file_size,
+                                   name: a.content_file_name,
+                                   attachment_url: a.attachment_url_for_api,
+                                   created_at: a.created_at.try(:utc),
+                                   updated_at: a.updated_at.try(:utc)
+                                 }
+                               end }
+source_additional_info = {}
+tweet = @item.tweet_public_hash
+source_additional_info[:twitter] = tweet if tweet.present?
+source_additional_info = source_additional_info.presence
+response_hash[:source_additional_info] = source_additional_info if source_additional_info.present?
+channel_v2_attributes = @item.channel_v2_attributes
+stats_hash = @item.stats
+response_hash.merge!(channel_v2_attributes) if channel_v2_attributes
+response_hash[:stats] = stats_hash if stats_hash && channel_v2_attributes
+if Account.current.shared_ownership_enabled?
+  response_hash[:internal_agent_id] = @item.internal_agent_id
+  response_hash[:internal_group_id] = @item.internal_group_id
+end
+if @item.associated_ticket?
+  response_hash[:association_type] = @item.association_type
+  response_hash[:associated_tickets_list] = @item.associates
+end
+response_hash[:failed_related_ticket_ids] = @failed_related_ticket_ids if @failed_related_ticket_ids.present?
+render partial: 'shared/nr_params', locals: { response_hash: response_hash, item: @item }
+response_hash.to_json

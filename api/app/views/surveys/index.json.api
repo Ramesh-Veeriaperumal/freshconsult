@@ -2,8 +2,7 @@
 # Whenever we change the Structure (add/modify/remove keys),
 # we will have to modify the CURRENT_VERSION constant in the controller
 
-
-JSON.generate(@items.map do |item|
+@items.map do |item|
   response_hash = {
     id: item.id,
     title: item.title_text,
@@ -11,6 +10,6 @@ JSON.generate(@items.map do |item|
     created_at: item.created_at,
     updated_at: item.updated_at
   }
-  response_hash.merge!(questions: item.questions) if item.custom_survey?
+  response_hash[:questions] = item.questions if item.custom_survey?
   response_hash
-end)
+end.to_json

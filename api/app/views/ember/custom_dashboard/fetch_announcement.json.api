@@ -1,1 +1,1 @@
-JSON.generate(@announcement)
+@announcement.to_json

@@ -1,1 +1,1 @@
-JSON.generate(@item.as_api_response(:api).merge(agents: @agents.map { |agent| agent.as_api_response(:api) }))
+@item.as_api_response(:api).merge(agents: @agents.map { |agent| agent.as_api_response(:api) }).to_json

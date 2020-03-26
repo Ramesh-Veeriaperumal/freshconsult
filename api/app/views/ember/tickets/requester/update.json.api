@@ -1,4 +1,4 @@
 response_hash = {}
 response_hash[:contact] = @contact.restricted_requester_hash if @contact.present?
 response_hash[:company] = @company.company_hash if @company.present?
-JSON.generate(response_hash)
+response_hash.to_json

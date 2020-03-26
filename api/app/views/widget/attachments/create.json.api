@@ -1,1 +1,1 @@
-JSON.generate(id: @item.id)
+{ id: @item.id }.to_json

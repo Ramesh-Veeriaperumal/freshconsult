@@ -1,11 +1,11 @@
-JSON.generate(@items.map do |item|
+@items.map do |item|
   response_hash = {
     id: item.id,
     name: item.name,
     created_at: item.created_at.try(:utc),
-  	updated_at: item.updated_at.try(:utc),
+    updated_at: item.updated_at.try(:utc),
     personal: item.personal?,
     responses_count: item.visible_responses_count
   }
   response_hash
-end)
+end.to_json

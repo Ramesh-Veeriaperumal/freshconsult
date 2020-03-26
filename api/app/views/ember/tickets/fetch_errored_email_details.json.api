@@ -2,5 +2,4 @@ result_hash = {
   to_list: @to_list,
   cc_list: @cc_list
 }
-JSON.generate(result_hash)
-
+result_hash.to_json

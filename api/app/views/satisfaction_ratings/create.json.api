@@ -10,6 +10,6 @@ response_hash = {
   created_at: @item.created_at.try(:utc),
   updated_at: @item.updated_at.try(:utc)
 }
-response_hash.merge!(ratings: @item.custom_ratings) if @custom_survey
-response_hash.merge!(ratings: { default_question: @item.rating }) unless @custom_survey
-JSON.generate(response_hash)
+response_hash[:ratings] = @item.custom_ratings if @custom_survey
+response_hash[:ratings] = { default_question: @item.rating } unless @custom_survey
+response_hash.to_json

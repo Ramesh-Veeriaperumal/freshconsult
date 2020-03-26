@@ -1,1 +1,1 @@
-JSON.generate({ status: 'rake task was started' })
+{ status: 'rake task was started' }.to_json

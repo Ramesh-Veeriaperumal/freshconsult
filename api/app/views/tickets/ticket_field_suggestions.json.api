@@ -1,1 +1,1 @@
-JSON.generate(@ticket_field_suggestions)
+@ticket_field_suggestions.to_json

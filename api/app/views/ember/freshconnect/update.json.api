@@ -1,5 +1,5 @@
-JSON.generate({
+{
   product_account_id: @item.product_account_id,
   freshconnect_domain: @item.freshconnect_domain,
   enabled: @item.enabled
-})
+}.to_json

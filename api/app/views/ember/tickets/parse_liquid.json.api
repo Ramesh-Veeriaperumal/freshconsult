@@ -1,5 +1,5 @@
 response_hash = {
-	evaluated_text: @response_text
+  evaluated_text: @response_text
 }
 
-JSON.generate(response_hash)
+response_hash.to_json

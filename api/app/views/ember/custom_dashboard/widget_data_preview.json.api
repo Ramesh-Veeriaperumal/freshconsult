@@ -1,1 +1,1 @@
-JSON.generate(@preview_data.to_hash)
+@preview_data.to_hash.to_json

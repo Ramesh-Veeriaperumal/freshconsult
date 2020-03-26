@@ -1,1 +1,1 @@
-JSON.generate(@account_setup)
+@account_setup.to_json

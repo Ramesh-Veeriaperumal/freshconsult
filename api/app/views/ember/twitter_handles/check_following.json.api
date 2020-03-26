@@ -1,1 +1,1 @@
-JSON.generate({following: @following})
+{ following: @following }.to_json

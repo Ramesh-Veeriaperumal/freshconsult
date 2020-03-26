@@ -1,1 +1,1 @@
-JSON.generate(success: true)
+{ success: true }.to_json

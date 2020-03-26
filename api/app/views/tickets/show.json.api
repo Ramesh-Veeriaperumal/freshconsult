@@ -52,18 +52,21 @@ sla_policy_hash = @item.sla_policy_hash
 facebook = @item.facebook_public_hash
 tweet = @item.tweet_public_hash
 email_spam = @item.email_spam_data
-source_additional_info.merge!(facebook: facebook) if facebook.present?
-source_additional_info.merge!(twitter: tweet) if tweet.present?
+source_additional_info[:facebook] = facebook if facebook.present?
+source_additional_info[:twitter] = tweet if tweet.present?
 source_additional_info[:email_spam_data] = email_spam if email_spam.present?
 source_additional_info = source_additional_info.presence
-response_hash.merge!(source_additional_info: source_additional_info)
-response_hash.merge!(deleted: @item.deleted) if @item.deleted
-response_hash.merge!(associated_tickets_list: @item.associates) if @item.associated_ticket?
-response_hash.merge!(requester: requester_hash) if requester_hash
-response_hash.merge!(stats: stats_hash) if stats_hash
-response_hash.merge!(company: company_hash) if company_hash
+response_hash[:source_additional_info] = source_additional_info
+response_hash[:deleted] = @item.deleted if @item.deleted
+response_hash[:associated_tickets_list] = @item.associates if @item.associated_ticket?
+response_hash[:requester] = requester_hash if requester_hash
+response_hash[:stats] = stats_hash if stats_hash
+response_hash[:company] = company_hash if company_hash
 response_hash[:sla_policy] = sla_policy_hash if sla_policy_hash
-response_hash.merge!(conversations: conversations_hash) if conversations_hash
-response_hash.merge!(internal_agent_id: @item.internal_agent_id, internal_group_id: @item.internal_group_id) if Account.current.shared_ownership_enabled?
+response_hash[:conversations] = conversations_hash if conversations_hash
+if Account.current.shared_ownership_enabled?
+  response_hash[:internal_agent_id] = @item.internal_agent_id
+  response_hash[:internal_group_id] = @item.internal_group_id
+end
 render partial: 'shared/nr_params', locals: { response_hash: response_hash, item: @item }
-JSON.generate(response_hash)
+response_hash.to_json

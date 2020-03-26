@@ -1,6 +1,6 @@
-JSON.generate({
-  agent: AgentDecorator.new(current_user.agent, {is_assumed_user: session.has_key?(:assumed_user)}).to_full_hash,
+{
+  agent: AgentDecorator.new(current_user.agent, is_assumed_user: session.key?(:assumed_user)).to_full_hash,
   account: AccountDecorator.new(current_account).to_hash,
   portal: PortalDecorator.new(current_portal).to_hash,
   config: ConfigDecorator.new(current_account).to_hash
-})
+}.to_json

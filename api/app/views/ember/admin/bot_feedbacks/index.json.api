@@ -1,3 +1,3 @@
-JSON.generate(@unanswered_list.map do |item|
-	BotFeedbackDecorator.new(item).to_hash
-end)
+@unanswered_list.map do |item|
+  BotFeedbackDecorator.new(item).to_hash
+end.to_json

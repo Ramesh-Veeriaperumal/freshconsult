@@ -1,1 +1,1 @@
-JSON.generate(@items.map{ |item| item.to_hash })
+@items.map(&:to_hash).to_json

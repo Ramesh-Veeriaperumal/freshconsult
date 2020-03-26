@@ -1,5 +1,5 @@
 shared_ownership_enabled = Account.current.shared_ownership_enabled?
-JSON.generate(@items.map do |item|
+@items.map do |item|
   response_hash = {
     cc_emails: item.cc_email.try(:[], :cc_emails),
     fwd_emails: item.cc_email.try(:[], :fwd_emails),
@@ -37,11 +37,14 @@ JSON.generate(@items.map do |item|
   channel_v2_attributes = item.channel_v2_attributes
   response_hash.merge!(description_hash) if description_hash
   response_hash.merge!(channel_v2_attributes) if channel_v2_attributes
-  response_hash.merge!(deleted: item.deleted) if item.deleted
-  response_hash.merge!(requester: requester_hash) if requester_hash
-  response_hash.merge!(stats: stats_hash) if stats_hash
-  response_hash.merge!(company: company_hash) if company_hash
-  response_hash.merge!(internal_agent_id: item.internal_agent_id, internal_group_id: item.internal_group_id) if shared_ownership_enabled
+  response_hash[:deleted] = item.deleted if item.deleted
+  response_hash[:requester] = requester_hash if requester_hash
+  response_hash[:stats] = stats_hash if stats_hash
+  response_hash[:company] = company_hash if company_hash
+  if shared_ownership_enabled
+    response_hash[:internal_agent_id] = item.internal_agent_id
+    response_hash[:internal_group_id] = item.internal_group_id
+  end
   render partial: 'shared/nr_params', locals: { response_hash: response_hash, item: item }
   response_hash
-end)
+end.to_json

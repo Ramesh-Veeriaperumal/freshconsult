@@ -1,1 +1,1 @@
-JSON.generate(@item.to_private_hash)
+@item.to_private_hash.to_json

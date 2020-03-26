@@ -1,1 +1,1 @@
-JSON.generate(@agent_assist_config)
+@agent_assist_config.to_json

@@ -35,5 +35,7 @@ results = @items.map do |item|
   response_hash
 end
 
-JSON.generate(results: results,
-              total: @items.total_entries)
+{
+  results: results,
+  total: @items.total_entries
+}.to_json

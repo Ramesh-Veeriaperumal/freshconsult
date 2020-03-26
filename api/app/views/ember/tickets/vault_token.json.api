@@ -1,1 +1,1 @@
-JSON.generate({})
+{}.to_json

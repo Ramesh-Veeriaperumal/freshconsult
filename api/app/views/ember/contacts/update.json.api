@@ -1,4 +1,4 @@
 result = @item.to_hash
 # Ugly hack to be fixed asap
 result.delete(:other_companies)
-JSON.generate(result)
+result.to_json

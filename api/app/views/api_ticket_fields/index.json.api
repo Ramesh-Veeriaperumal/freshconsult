@@ -1,4 +1,4 @@
-JSON.generate(@items.map do |ticket_field|
+@items.map do |ticket_field|
   response_hash = {
     id: ticket_field.id,
     name: ticket_field.name,
@@ -16,9 +16,9 @@ JSON.generate(@items.map do |ticket_field|
     created_at: ticket_field.created_at.try(:utc),
     updated_at: ticket_field.updated_at.try(:utc)
   }
-  response_hash.merge!(choices: ticket_field.ticket_field_choices) if ticket_field.ticket_field_choices.present?
-  response_hash.merge!(portal_cc: ticket_field.portal_cc) if ticket_field.default_requester?
-  response_hash.merge!(portal_cc_to: ticket_field.portalcc_to) if ticket_field.default_requester?
+  response_hash[:choices] = ticket_field.ticket_field_choices if ticket_field.ticket_field_choices.present?
+  response_hash[:portal_cc] = ticket_field.portal_cc if ticket_field.default_requester?
+  response_hash[:portal_cc_to] = ticket_field.portalcc_to if ticket_field.default_requester?
   if ticket_field.field_type == 'nested_field'
     nested_ticket_fields = ticket_field.nested_ticket_fields.map do |tf_nested_field|
       {
@@ -33,7 +33,7 @@ JSON.generate(@items.map do |ticket_field|
         updated_at: tf_nested_field.updated_at.try(:utc)
       }
     end
-    response_hash.merge!(nested_ticket_fields: nested_ticket_fields)
+    response_hash[:nested_ticket_fields] = nested_ticket_fields
   end
   response_hash
-end)
+end.to_json

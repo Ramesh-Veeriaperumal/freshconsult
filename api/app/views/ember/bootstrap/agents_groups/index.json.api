@@ -1,1 +1,1 @@
-JSON.generate(AccountDecorator.new(current_account).agents_groups_hash)
+AccountDecorator.new(current_account).agents_groups_hash.to_json

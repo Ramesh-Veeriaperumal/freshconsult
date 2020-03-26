@@ -1,1 +1,1 @@
-JSON.generate(@widget_count)
+@widget_count.to_json

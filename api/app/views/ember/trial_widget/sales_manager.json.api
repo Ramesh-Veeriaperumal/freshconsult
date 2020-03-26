@@ -1,1 +1,1 @@
-JSON.generate(@sales_manager)
+@sales_manager.to_json

@@ -1,4 +1,4 @@
 articles = @items.map do |item|
   Solutions::ArticleDecorator.new(item, draft: item.draft, is_list_page: true, language_metric: @language_metric).to_hash
 end
-JSON.generate(articles)
+articles.to_json

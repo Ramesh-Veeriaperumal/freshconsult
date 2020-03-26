@@ -1,13 +1,15 @@
-response_hash = {
-  body: @item.body,
-  quoted_text: @item.quoted_text,
-  cc_emails: @item.cc_emails,
-  bcc_emails: @item.bcc_emails,
-  from_email: @item.from_email,
-  attachments: @attachments.map { |att| AttachmentDecorator.new(att).to_hash },
-  inline_attachment_ids: @item.inline_attachment_ids,
-  articles_suggested: @item.articles_suggested,
-  saved_at: @item.saved_at
-} if @item
+if @item
+  response_hash = {
+    body: @item.body,
+    quoted_text: @item.quoted_text,
+    cc_emails: @item.cc_emails,
+    bcc_emails: @item.bcc_emails,
+    from_email: @item.from_email,
+    attachments: @attachments.map { |att| AttachmentDecorator.new(att).to_hash },
+    inline_attachment_ids: @item.inline_attachment_ids,
+    articles_suggested: @item.articles_suggested,
+    saved_at: @item.saved_at
+  }
+end
 
-JSON.generate(response_hash || {})
+(response_hash || {}).to_json

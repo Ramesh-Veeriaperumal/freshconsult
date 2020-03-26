@@ -1,1 +1,1 @@
-JSON.generate(@items.map(&:company_hash))
+@items.map(&:company_hash).to_json

@@ -1,4 +1,4 @@
-JSON.generate(@installed_apps.map do |installed_app|
+@installed_apps.map do |installed_app|
   extension_details = installed_app[:extension_details]
   installation_details = installed_app[:installation_details]
   response_hash = {
@@ -7,13 +7,18 @@ JSON.generate(@installed_apps.map do |installed_app|
     configs: installation_details['configs'],
     placeholders: extension_details['placeholders'],
     enabled: installation_details['enabled']
-  }.merge(Marketplace::Constants::VERSIONABLE_EXTENSION.include?(extension_details['type']) ? {
-    version_id: installation_details['version_id'],
-    features: extension_details['features'],
-    extension_type: extension_details['type']
-  } : {}).merge(extension_details['features'].include?(Marketplace::Constants::AGENT_OAUTH) ? {
-    authorize_url: installed_app[:authorize_url],
-    reauthorize_url: installed_app[:reauthorize_url]
-  } : {})
+  }
+
+  if Marketplace::Constants::VERSIONABLE_EXTENSION.include?(extension_details['type'])
+    response_hash[:version_id] = installation_details['version_id']
+    response_hash[:features] = extension_details['features']
+    response_hash[:extension_type] = extension_details['type']
+  end
+
+  if extension_details['features'].include?(Marketplace::Constants::AGENT_OAUTH)
+    response_hash[:authorize_url] = installed_app[:authorize_url]
+    response_hash[:reauthorize_url] = installed_app[:reauthorize_url]
+  end
+
   response_hash
-end)
+end.to_json

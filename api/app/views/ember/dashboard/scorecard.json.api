@@ -1,1 +1,1 @@
-JSON.generate(@scorecard.values)
+@scorecard.values.to_json

@@ -22,13 +22,9 @@ response_hash = {
   updated_at: @item.updated_at.try(:utc)
 }
 
-response_hash.merge!(
-  other_companies: @item.other_companies
-) if @item.multiple_user_companies_enabled?
+response_hash[:other_companies] = @item.other_companies if @item.multiple_user_companies_enabled?
 
-response_hash.merge!(
-  unique_external_id: @item.unique_external_id
-) if @item.unique_contact_identifier_enabled?
+response_hash[:unique_external_id] = @item.unique_external_id if @item.unique_contact_identifier_enabled?
 
 response_hash.merge!(@item.twitter_requester_fields) if @item.twitter_requester_fields_enabled?
 
@@ -42,9 +38,9 @@ if @item.avatar
     created_at: @item.avatar.created_at.try(:utc),
     updated_at: @item.avatar.updated_at.try(:utc)
   }
-  response_hash.merge!(avatar: avatar_hash)
+  response_hash[:avatar] = avatar_hash
 else
-  response_hash.merge!(avatar: nil)
+  response_hash[:avatar] = nil
 end
 
-JSON.generate(response_hash)
+response_hash.to_json

@@ -1,1 +1,1 @@
-JSON.generate(@config)
+@config.to_json

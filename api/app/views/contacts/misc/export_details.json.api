@@ -1,1 +1,1 @@
-JSON.generate(@export_details)
+@export_details.to_json

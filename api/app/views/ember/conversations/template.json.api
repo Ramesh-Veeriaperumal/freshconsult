@@ -1,11 +1,11 @@
 ret_hash = {
-	template: @content,
-	signature: @agent_signature,
-	quoted_text: @quoted_text
+  template: @content,
+  signature: @agent_signature,
+  quoted_text: @quoted_text
 }
-ret_hash.merge!(cc_emails: @cc_emails) if @cc_emails
-ret_hash.merge!(bcc_emails: @bcc_emails) if @bcc_emails
-ret_hash.merge!(to_emails: @to_emails) if @to_emails
-ret_hash.merge!(attachments: @attachments.map { |x| AttachmentDecorator.new(x).to_hash }) if @attachments
-ret_hash.merge!(cloud_files: @cloud_attachments.map { |x| CloudFileDecorator.new(x).to_hash }) if @cloud_attachments
-JSON.generate(ret_hash)
+ret_hash[:cc_emails] = @cc_emails if @cc_emails
+ret_hash[:bcc_emails] = @bcc_emails if @bcc_emails
+ret_hash[:to_emails] = @to_emails if @to_emails
+ret_hash[:attachments] = @attachments.map { |x| AttachmentDecorator.new(x).to_hash } if @attachments
+ret_hash[:cloud_files] = @cloud_attachments.map { |x| CloudFileDecorator.new(x).to_hash } if @cloud_attachments
+ret_hash.to_json

@@ -1,4 +1,4 @@
-JSON.generate(@items.map do |api_company_field|
+@items.map do |api_company_field|
   response_hash = {
     id: api_company_field.id,
     name: api_company_field.name,
@@ -10,6 +10,6 @@ JSON.generate(@items.map do |api_company_field|
     created_at: api_company_field.created_at.try(:utc),
     updated_at: api_company_field.updated_at.try(:utc)
   }
-  response_hash.merge!(choices: api_company_field.company_field_choices) unless api_company_field.company_field_choices.blank?
+  response_hash[:choices] = api_company_field.company_field_choices if api_company_field.company_field_choices.present?
   response_hash
-end)
+end.to_json

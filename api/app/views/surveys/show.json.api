@@ -1,9 +1,9 @@
-  response_hash = {
-    id: @item.id,
-    title: @item.title_text,
-    active: !@item.active.zero?,
-    created_at: @item.created_at,
-    updated_at: @item.updated_at
-  }
-  response_hash.merge!(questions: @item.questions)
-  JSON.generate(response_hash)
+response_hash = {
+  id: @item.id,
+  title: @item.title_text,
+  active: !@item.active.zero?,
+  created_at: @item.created_at,
+  updated_at: @item.updated_at
+}
+response_hash[:questions] = @item.questions
+response_hash.to_json

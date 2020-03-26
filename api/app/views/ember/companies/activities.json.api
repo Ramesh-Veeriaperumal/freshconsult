@@ -1,1 +1,1 @@
-JSON.generate(@activities)
+@activities.to_json

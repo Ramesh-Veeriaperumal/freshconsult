@@ -1,1 +1,1 @@
-JSON.generate(@leaderboard)
+@leaderboard.to_json

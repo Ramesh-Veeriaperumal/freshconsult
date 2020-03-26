@@ -1,1 +1,1 @@
-JSON.generate(@forward_email_confirmation)
+@forward_email_confirmation.to_json

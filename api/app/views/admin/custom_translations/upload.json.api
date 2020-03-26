@@ -1,4 +1,4 @@
-JSON.generate(
+{
   id: @custom_translation_record.translatable_id,
   status: @custom_translation_record.status
-)
+}.to_json
