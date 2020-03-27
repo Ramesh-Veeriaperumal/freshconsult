@@ -176,8 +176,10 @@ class Export::Ticket < Struct.new(:export_params)
       @custom_date_time_fields ||= Account.current.custom_date_time_fields_from_cache.map(&:name)
       date_format = Account.current.date_type(:short_day_separated)
       if data.present?
-        if DATE_TIME_PARSE.include?(val.to_sym) || @custom_date_time_fields.include?(val)
+        if DATE_TIME_PARSE.include?(val.to_sym)
           data = parse_date(data)
+        elsif @custom_date_time_fields.include?(val)
+          data = parse_date(data.in_time_zone(Time.zone.name))
         elsif @custom_field_names.include?(val) && data.is_a?(Time)
           data = data.utc.strftime(date_format)
         end

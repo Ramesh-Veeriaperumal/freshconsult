@@ -3646,7 +3646,14 @@ module Ember
         create_ticket
       end
       initial_count = ticket_data_export(DataExport::EXPORT_TYPE[:ticket]).count
+      @account.ticket_fields.find_by_column_name("ff_date06").try(:destroy)
+      create_custom_field('cf_fsm_appointment_start_time', 'date_time', '06', true)
+      Account.reset_current_account
+      @account = Account.first
+      custom_fields = { cf_fsm_appointment_start_time: Time.zone.now.iso8601 }
       params_hash = ticket_export_param
+      params_hash[:ticket_fields][:custom_fields] = custom_fields
+
       Sidekiq::Testing.inline! do
         post :export_csv, construct_params({ version: 'private' }, params_hash)
       end
