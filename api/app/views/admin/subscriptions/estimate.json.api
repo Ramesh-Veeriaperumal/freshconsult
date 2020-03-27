@@ -1,1 +1,1 @@
-JSON.generate(@item.estimate_hash)
+@item.estimate_hash.to_json

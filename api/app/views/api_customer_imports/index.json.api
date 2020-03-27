@@ -1,1 +1,1 @@
-JSON.generate(@import_items)
+@import_items.to_json

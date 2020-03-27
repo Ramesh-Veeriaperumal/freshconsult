@@ -1,26 +1,26 @@
 @count_hash = if current_account.launched?(:solutions_quick_view)
-  {
-    all_categories: @categories_cnt,
-    all_articles: @articles_cnt,
-    all_drafts: @drafts_cnt,
-    my_drafts: @my_drafts_cnt,
-    published: @published_articles_cnt,
-    all_feedback: @all_feedback_cnt,
-    my_feedback: @my_feedback_cnt,
-    unassociated_categories_count: @orphan_categories.count
-  }
-else
-  {
-    all_categories: @categories.count,
-    all_articles: @articles.count,
-    all_drafts: @drafts.count - @approvals.count,
-    my_drafts: @my_drafts.count,
-    published: @published_articles.count,
-    all_feedback: @all_feedback.count,
-    my_feedback: @my_feedback.count,
-    unassociated_categories_count: @orphan_categories.count
-  }
-end
+                {
+                  all_categories: @categories_cnt,
+                  all_articles: @articles_cnt,
+                  all_drafts: @drafts_cnt,
+                  my_drafts: @my_drafts_cnt,
+                  published: @published_articles_cnt,
+                  all_feedback: @all_feedback_cnt,
+                  my_feedback: @my_feedback_cnt,
+                  unassociated_categories_count: @orphan_categories.count
+                }
+              else
+                {
+                  all_categories: @categories.count,
+                  all_articles: @articles.count,
+                  all_drafts: @drafts.count - @approvals.count,
+                  my_drafts: @my_drafts.count,
+                  published: @published_articles.count,
+                  all_feedback: @all_feedback.count,
+                  my_feedback: @my_feedback.count,
+                  unassociated_categories_count: @orphan_categories.count
+                }
+              end
 
 @count_hash[:unassociated_categories] = @orphan_categories.map do |category|
   {
@@ -32,9 +32,9 @@ if @secondary_language
   @count_hash[:outdated] = @outdated_articles
   @count_hash[:not_translated] = @not_translated_articles
 end
-@count_hash.merge!(
-  in_review: @articles_with_approval_status[Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review]] || 0,
-  approved: @articles_with_approval_status[Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]] || 0
-) if Account.current.article_approval_workflow_enabled?
+if Account.current.article_approval_workflow_enabled?
+  @count_hash[:in_review] = @articles_with_approval_status[Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review]] || 0
+  @count_hash[:approved] = @articles_with_approval_status[Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]] || 0
+end
 
-JSON.generate(@count_hash)
+@count_hash.to_json

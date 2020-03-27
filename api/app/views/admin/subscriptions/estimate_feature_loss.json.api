@@ -1,1 +1,1 @@
-JSON.generate(features: @items)
+{ features: @items }.to_json

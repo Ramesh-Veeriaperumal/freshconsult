@@ -1,1 +1,1 @@
-JSON.generate(@unresolved_tickets)
+@unresolved_tickets.to_json

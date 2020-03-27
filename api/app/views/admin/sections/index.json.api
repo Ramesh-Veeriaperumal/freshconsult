@@ -1,1 +1,1 @@
-JSON.generate(@decorated_items)
+@decorated_items.to_json

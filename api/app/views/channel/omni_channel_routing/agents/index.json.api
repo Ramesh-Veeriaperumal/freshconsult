@@ -1,10 +1,10 @@
-JSON.generate({:agents => @items.map do |agent|
-  contact_details=ContactDecorator.new(agent.user, {}).to_ocr_hash
+{ agents: @items.map do |agent|
+  contact_details = ContactDecorator.new(agent.user, {}).to_ocr_hash
   response_hash = {
     id: agent.user_id,
     name: contact_details[:name],
     available: agent.available,
-    email: contact_details[:email]     
-  }  
+    email: contact_details[:email]
+  }
   response_hash
-end})
+end }.to_json

@@ -1,5 +1,5 @@
 if @errors.length > 0
- JSON.generate({"errors": @errors}.to_hash)
+  { "errors": @errors }.to_hash.to_json
 else
- JSON.generate({"success": "Migration reverted"}.to_hash)
+  { "success": 'Migration reverted' }.to_hash.to_json
 end

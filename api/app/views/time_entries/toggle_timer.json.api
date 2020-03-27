@@ -1,1 +1,1 @@
-JSON.generate(@item.to_public_hash)
+@item.to_public_hash.to_json

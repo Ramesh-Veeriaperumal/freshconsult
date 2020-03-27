@@ -1,1 +1,1 @@
-JSON.generate(@chat_history)
+@chat_history.to_json

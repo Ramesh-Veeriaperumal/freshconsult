@@ -1,5 +1,5 @@
 if @errors.present?
- JSON.generate({"error": @errors}.to_hash)
+  { "error": @errors }.to_hash.to_json
 else
- JSON.generate({"success": "Migration started", "jid": @jid}.to_hash)
+  { "success": 'Migration started', "jid": @jid }.to_hash.to_json
 end

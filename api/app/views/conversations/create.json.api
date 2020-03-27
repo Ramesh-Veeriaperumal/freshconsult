@@ -1,1 +1,1 @@
-JSON.generate(@item.conversation_json)
+@item.conversation_json.to_json

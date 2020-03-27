@@ -1,1 +1,1 @@
-JSON.generate(@fsm_settings)
+@fsm_settings.to_json

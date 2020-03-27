@@ -1,1 +1,1 @@
-JSON.generate(@post)
+@post.to_json

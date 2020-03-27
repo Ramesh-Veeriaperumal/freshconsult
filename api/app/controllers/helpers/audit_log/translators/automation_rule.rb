@@ -173,7 +173,8 @@ module AuditLog::Translators::AutomationRule
         next
       end
       actionable = Account.current.safe_send(readable[1])
-                          .safe_send("find_all_by_#{readable[2]}", action[key])
+                          .safe_send('where', "#{readable[2]}": action[key])
+                          .to_a
       readable_value = if actionable.present?
                          val = actionable.map do |act|
                            act.respond_to?('name') ? act.name : act.value

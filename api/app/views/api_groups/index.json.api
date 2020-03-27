@@ -3,7 +3,7 @@ group_type_name = {}
 group_types.each do |group_type|
   group_type_name[group_type.group_type_id] = group_type.name
 end
-JSON.generate(@items.map do |group|
+@items.map do |group|
   response_hash = {
     id: group.id,
     name: group.name,
@@ -15,6 +15,6 @@ JSON.generate(@items.map do |group|
     created_at: group.created_at.try(:utc),
     updated_at: group.updated_at.try(:utc)
   }
-  response_hash.merge!(auto_ticket_assign: group.auto_ticket_assign)  if group.round_robin_enabled?
+  response_hash[:auto_ticket_assign] = group.auto_ticket_assign if group.round_robin_enabled?
   response_hash
-end)
+end.to_json

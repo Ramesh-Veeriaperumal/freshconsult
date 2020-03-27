@@ -1,3 +1,3 @@
 # Whenever we change the Structure (add/modify/remove keys),
 # we will have to modify the CURRENT_VERSION constant in the controller
-JSON.generate(@items.map(&:to_private_hash))
+@items.map(&:to_private_hash).to_json

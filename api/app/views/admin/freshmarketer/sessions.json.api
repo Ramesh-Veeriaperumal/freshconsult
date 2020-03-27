@@ -1,1 +1,1 @@
-JSON.generate(@sessions)
+@sessions.to_json

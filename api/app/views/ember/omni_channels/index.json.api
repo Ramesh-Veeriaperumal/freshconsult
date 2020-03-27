@@ -1,1 +1,1 @@
-JSON.generate(@channel)
+@channel.to_json

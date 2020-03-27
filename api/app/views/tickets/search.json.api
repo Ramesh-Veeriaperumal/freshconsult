@@ -1,4 +1,4 @@
-JSON.generate(@items.map do |item|
+@items.map do |item|
   response_hash = {
     cc_emails: item.cc_email.try(:[], :cc_emails),
     fwd_emails: item.cc_email.try(:[], :fwd_emails),
@@ -26,6 +26,6 @@ JSON.generate(@items.map do |item|
     created_at: item.created_at.try(:utc),
     updated_at: item.updated_at.try(:utc)
   }
-  response_hash.merge!(deleted: item.deleted) if item.deleted
+  response_hash[:deleted] = item.deleted if item.deleted
   response_hash
-end)
+end.to_json

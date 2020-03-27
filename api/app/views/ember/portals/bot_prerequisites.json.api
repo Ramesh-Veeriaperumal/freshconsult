@@ -1,1 +1,1 @@
-JSON.generate(@pre_requisites)
+@pre_requisites.to_json

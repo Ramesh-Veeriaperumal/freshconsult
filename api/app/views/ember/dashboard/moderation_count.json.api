@@ -1,1 +1,1 @@
-JSON.generate(@counts)
+@counts.to_json

@@ -1,1 +1,1 @@
-JSON.generate(jid: @jid)
+{ jid: @jid }.to_json

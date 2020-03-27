@@ -1,1 +1,1 @@
-JSON.generate(@achievements_hash)
+@achievements_hash.to_json

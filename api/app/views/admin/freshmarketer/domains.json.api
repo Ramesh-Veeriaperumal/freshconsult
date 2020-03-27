@@ -1,1 +1,1 @@
-JSON.generate(@domains)
+@domains.to_json

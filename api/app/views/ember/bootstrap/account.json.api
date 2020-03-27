@@ -1,5 +1,5 @@
-JSON.generate({
+{
   account: AccountDecorator.new(current_account).simple_hash,
   portal: PortalDecorator.new(current_portal).to_hash,
   config: ConfigDecorator.new(current_account).to_hash
-})
+}.to_json

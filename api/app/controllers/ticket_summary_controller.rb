@@ -60,7 +60,7 @@ class TicketSummaryController < ApiApplicationController
 
     def parent_attachments
       @parent_attachments = []
-      current_account.attachments.find_all_by_id(@attachment_ids).each do |attach|
+      current_account.attachments.where(id: @attachment_ids).to_a.each do |attach|
       ticket_as_type = attach.attachable_type == AttachmentConstants::ATTACHABLE_TYPES["ticket"]
       conversation_as_type = attach.attachable_type == AttachmentConstants::ATTACHABLE_TYPES["conversation"]
         if ticket_as_type && attach.attachable_id == @ticket.id 

@@ -1,5 +1,5 @@
-JSON.generate(@items.map do |company|
+@items.map do |company|
   response_hash = company.to_hash
-  response_hash.merge!(contacts_count: company.users.count) if @sideload_options.try(:include?, "contacts_count")
+  response_hash[:contacts_count] = company.users.count if @sideload_options.try(:include?, 'contacts_count')
   response_hash
-end)
+end.to_json

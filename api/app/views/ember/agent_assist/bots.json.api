@@ -1,1 +1,1 @@
-JSON.generate(@agent_assist_bots) if @agent_assist_bots.present?
+@agent_assist_bots.to_json if @agent_assist_bots.present?

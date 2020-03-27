@@ -1,9 +1,9 @@
 # Whenever we change the Structure (add/modify/remove keys),
 # we will have to modify the CURRENT_VERSION constant in the controller
-JSON.generate(@items.map do |ticket_field|
+@items.map do |ticket_field|
   response_hash = ticket_field.to_widget_hash
   if ticket_field.has_section?
-    sections =  ticket_field.picklist_values.map(&:section).compact.uniq.map do |section|
+    sections = ticket_field.picklist_values.map(&:section).compact.uniq.map do |section|
       {
         id: section.id,
         label: section.label,
@@ -11,16 +11,16 @@ JSON.generate(@items.map do |ticket_field|
           section_ticket_field = sf.ticket_field
           next unless section_ticket_field.editable_in_portal && !(section_ticket_field.deleted? && Account.current.archive_ticket_fields_enabled?)
 
-            {
-              id: sf.id,
-              position: sf.position,
-              ticket_field_id: sf.ticket_field_id
-            } 
+          {
+            id: sf.id,
+            position: sf.position,
+            ticket_field_id: sf.ticket_field_id
+          }
         end.compact,
         picklist_mapping_ids: section.section_picklist_mappings.map(&:picklist_value_id)
       }
     end
-    response_hash.merge!(sections: sections)
+    response_hash[:sections] = sections
   end
   response_hash
-end)
+end.to_json

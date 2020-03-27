@@ -1,1 +1,1 @@
-JSON.generate(@item.votes_hash)
+@item.votes_hash.to_json

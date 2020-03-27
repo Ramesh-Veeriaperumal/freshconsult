@@ -19,7 +19,7 @@ class ApiRolesController < ApiApplicationController
     end
 
     def fetch_objects(items = scoper)
-      @items = items.preload(preload_options).find_all_by_id(params[cname][:ids])
+      @items = items.preload(preload_options).where(id: params[cname][:ids]).to_a
     end
 
     def scoper

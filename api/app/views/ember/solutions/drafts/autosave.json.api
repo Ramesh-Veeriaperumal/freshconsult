@@ -1,1 +1,1 @@
-JSON.generate(timestamp: @draft.updation_timestamp)
+{ timestamp: @draft.updation_timestamp }.to_json

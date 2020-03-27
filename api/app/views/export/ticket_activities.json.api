@@ -1,1 +1,1 @@
-JSON.generate({:export => @result})
+{ export: @result }.to_json

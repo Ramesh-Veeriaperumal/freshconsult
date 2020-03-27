@@ -1,1 +1,1 @@
-JSON.generate(key: @item.help_widget_secret)
+{ key: @item.help_widget_secret }.to_json

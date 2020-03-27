@@ -1,1 +1,1 @@
-JSON.generate(@email_provider.to_hash)
+@email_provider.to_hash.to_json

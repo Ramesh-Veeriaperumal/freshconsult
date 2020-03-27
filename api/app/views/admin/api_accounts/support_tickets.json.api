@@ -1,1 +1,1 @@
-JSON.generate({ unresolved_count: @unresolved_tickets.count })
+{ unresolved_count: @unresolved_tickets.count }.to_json

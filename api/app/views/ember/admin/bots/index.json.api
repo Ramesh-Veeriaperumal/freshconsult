@@ -1,1 +1,1 @@
-JSON.generate([@bots])
+[@bots].to_json

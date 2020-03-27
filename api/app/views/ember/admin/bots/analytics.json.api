@@ -1,1 +1,1 @@
-JSON.generate(@analytics)
+@analytics.to_json

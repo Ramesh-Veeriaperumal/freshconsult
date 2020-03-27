@@ -3,4 +3,4 @@ response_hash = @item.to_full_hash
 evaluated_response = @item.evaluated_response
 response_hash.merge!(evaluated_response) if evaluated_response
 
-JSON.generate(response_hash)
+response_hash.to_json

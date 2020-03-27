@@ -1,7 +1,7 @@
-JSON.generate(
+{
   first_name: current_account.admin_first_name,
   last_name: current_account.admin_last_name,
   admin_email: current_account.admin_email,
   company_name: current_account.admin_company_name,
   anonymous_account: current_account.anonymous_account? || false
-)
+}.to_json

@@ -1,4 +1,4 @@
 @items.each do |context, context_response|
   context_response.map!(&:to_search_hash)
 end
-JSON.generate(@items)
+@items.to_json

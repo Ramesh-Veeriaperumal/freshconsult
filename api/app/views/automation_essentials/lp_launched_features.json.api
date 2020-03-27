@@ -1,1 +1,1 @@
-JSON.generate({ features: current_account.all_launched_features })
+{ features: current_account.all_launched_features }.to_json

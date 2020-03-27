@@ -1,3 +1,3 @@
 response_hash = @item.to_hash
 response_hash[:sla_policies] = @item.sla_policies
-JSON.generate(response_hash)
+response_hash.to_json

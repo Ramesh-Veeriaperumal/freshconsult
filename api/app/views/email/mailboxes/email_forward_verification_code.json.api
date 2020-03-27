@@ -1,1 +1,1 @@
-JSON.generate(@email_forward_verification_code.to_hash)
+@email_forward_verification_code.to_hash.to_json

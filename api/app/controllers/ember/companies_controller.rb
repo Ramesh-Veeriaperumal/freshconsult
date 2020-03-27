@@ -74,7 +74,7 @@ module Ember
       end
 
       def fetch_objects(items = scoper)
-        @items = items.find_all_by_id(params[cname][:ids])
+        @items = items.where(id: params[cname][:ids]).to_a
       end
 
       def validate_filter_params

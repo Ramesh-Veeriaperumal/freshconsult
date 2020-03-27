@@ -1,4 +1,4 @@
-JSON.generate(@items.map do |business_hour|
+@items.map do |business_hour|
   {
     id: business_hour.id,
     name: business_hour.name,
@@ -8,4 +8,4 @@ JSON.generate(@items.map do |business_hour|
     created_at: business_hour.created_at.try(:utc),
     updated_at: business_hour.updated_at.try(:utc)
   }
-end)
+end.to_json

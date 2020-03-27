@@ -85,7 +85,7 @@ class ApiCustomerImportsController < ApiApplicationController
 
     def load_objects
       conditions = params[:status] ? filter_conditions : {}
-      @imports = scoper.find(:all, conditions: conditions, order: 'created_at DESC', limit: 5)
+      @imports = scoper.where(conditions).order('created_at DESC').limit(5).to_a
     end
 
     def filter_conditions

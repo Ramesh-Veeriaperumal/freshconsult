@@ -1,1 +1,1 @@
-JSON.generate(@bot)
+@bot.to_json

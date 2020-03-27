@@ -1,1 +1,1 @@
-JSON.generate(PasswordPolicyDecorator.new(@password_policy).to_hash)
+PasswordPolicyDecorator.new(@password_policy).to_hash.to_json

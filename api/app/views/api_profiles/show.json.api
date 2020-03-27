@@ -1,1 +1,1 @@
-JSON.generate(@item.show_agent_hash(params[:version]))
+@item.show_agent_hash(params[:version]).to_json

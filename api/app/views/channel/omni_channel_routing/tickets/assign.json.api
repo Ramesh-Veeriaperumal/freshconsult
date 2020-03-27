@@ -1,10 +1,10 @@
 response_hash = if @assignment
-  { assignment: true }
-else
-  {
-    assignment: false,
-    current_state: @item.round_robin_attributes
-  }
-end
+                  { assignment: true }
+                else
+                  {
+                    assignment: false,
+                    current_state: @item.round_robin_attributes
+                  }
+                end
 
-JSON.generate(response_hash)
+response_hash.to_json

@@ -1,1 +1,1 @@
-JSON.generate(@folder_meta)
+@folder_meta.to_json

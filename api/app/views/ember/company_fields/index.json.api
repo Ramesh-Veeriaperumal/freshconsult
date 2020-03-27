@@ -2,7 +2,7 @@
 # Whenever we change the Structure (add/modify/remove keys),
 # we will have to modify the CURRENT_VERSION constant in the controller
 
-JSON.generate(@items.map do |company_field|
+@items.map do |company_field|
   response_hash = {
     id: company_field.id,
     name: company_field.name,
@@ -15,6 +15,6 @@ JSON.generate(@items.map do |company_field|
     updated_at: company_field.updated_at.try(:utc)
   }
   response_hash[:widget_position] = company_field.field_options.present? ? company_field.field_options['widget_position'] : nil
-  response_hash[:choices] = company_field.choice_list unless company_field.choice_list.blank?
+  response_hash[:choices] = company_field.choice_list if company_field.choice_list.present?
   response_hash
-end)
+end.to_json

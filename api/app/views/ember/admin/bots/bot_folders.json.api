@@ -1,3 +1,3 @@
-JSON.generate(@bot_folder_groups.map do |item|
+@bot_folder_groups.map do |item|
   BotSolutionDecorator.new(item).to_hash
-end)
+end.to_json

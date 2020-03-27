@@ -1,1 +1,1 @@
-JSON.generate(@item.to_prime_association_hash)
+@item.to_prime_association_hash.to_json

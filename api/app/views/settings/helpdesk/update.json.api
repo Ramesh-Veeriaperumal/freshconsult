@@ -1,5 +1,5 @@
-JSON.generate(
+{
   "primary_language": @item.main_portal.language,
   "supported_languages": @item.account_additional_settings.supported_languages.to_a,
   "portal_languages": @item.account_additional_settings.additional_settings[:portal_languages].to_a
-)
+}.to_json

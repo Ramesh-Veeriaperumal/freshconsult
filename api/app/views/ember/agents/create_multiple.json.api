@@ -1,4 +1,4 @@
-JSON.generate({
-	:succeeded => @succeeded,
-	:failed => @failed
-})
+{
+  succeeded: @succeeded,
+  failed: @failed
+}.to_json

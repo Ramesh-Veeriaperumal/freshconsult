@@ -1,1 +1,1 @@
-JSON.generate(AgentDecorator.new(current_user.agent, {is_assumed_user: session.has_key?(:assumed_user)}).to_full_hash)
+AgentDecorator.new(current_user.agent, is_assumed_user: session.key?(:assumed_user)).to_full_hash.to_json

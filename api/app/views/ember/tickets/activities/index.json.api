@@ -1,1 +1,1 @@
-JSON.generate(@items.map(&:to_hash).reject { |item| item[:actions].blank? || item[:performer].blank? })
+@items.map(&:to_hash).reject { |item| item[:actions].blank? || item[:performer].blank? }.to_json

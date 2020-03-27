@@ -1,1 +1,1 @@
-JSON.generate(@settings.to_hash)
+@settings.to_hash.to_json

@@ -1,1 +1,1 @@
-JSON.generate(@bar_chart_result)
+@bar_chart_result.to_json

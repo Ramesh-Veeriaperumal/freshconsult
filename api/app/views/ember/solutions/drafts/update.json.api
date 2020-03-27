@@ -1,1 +1,1 @@
-JSON.generate(Solutions::ArticleDecorator.new(@draft.article, draft: @draft).to_hash)
+Solutions::ArticleDecorator.new(@draft.article, draft: @draft).to_hash.to_json

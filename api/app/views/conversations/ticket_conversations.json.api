@@ -1,1 +1,1 @@
-JSON.generate(@items.map(&:public_json))
+@items.map(&:public_json).to_json

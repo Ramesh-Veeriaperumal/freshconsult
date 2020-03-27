@@ -1,1 +1,1 @@
-JSON.generate(@test_email_forwarding)
+@test_email_forwarding.to_json

@@ -20,4 +20,4 @@ response_hash = {
   updated_at: @item.updated_at.try(:utc)
 }.merge(@item.raw_custom_fields)
 
-JSON.generate(response_hash)
+response_hash.to_json
