@@ -133,9 +133,6 @@ class SidekiqConfigUsEast
     # yml files
     worker_count.times do |count|
       actual_queues = queues[count]
-      if node[:opsworks][:instance][:hostname].include?("sidekiq-archive-")
-        actual_queues = ["archive_account_tickets", "archive_ticket", "manual_publish", "delayed_central_publish", "es_v2_queue", "archive_account_tickets"]
-      end
 
       instances_list = DEDICATED_INSTANCE_LIST
       if instances_list.any? {|instance_name| node[:opsworks][:instance][:hostname].include?(instance_name) }
@@ -273,7 +270,7 @@ class SidekiqConfigUsEast
     export                   = ["exports"]
     bulk_scheduled           = ["bulk_scheduled"]
     central_realtime         = ["central_realtime"]
-    archive                  = ["archive"]
+    archive                  = ['archive_account_tickets', 'archive_ticket', 'manual_publish', 'delayed_central_publish', 'es_v2_queue', 'central_realtime']
     mailbox_jobs             = ["mailbox_jobs"]
     bulk_api                 = ["bulk_api"]
     # falcon_occasional        = ["falcon_occasional"]
@@ -302,19 +299,19 @@ class SidekiqConfigUsEast
   "reset_internal_group", "update_ticket_filter", "reset_internal_agent", "s3_retry_worker", "learn_spam_message", 
   "github", "select_all_tickets", "select_all_batcher", "email_notification_spam_queue", "sendgrid_domain_updates", 
   "sandbox_sync", "premium_sla_reminders", "sla_reminders", "trial_sla_reminders", "free_sla_reminders", "webhook_v1_worker",
-  "cti", "delete_account", "bulk_child_tkt_creation", "templates_cleanup", "bulk_ticket_actions", "bulk_ticket_reply", 
-  "clear_tickets", "code_console_execution", "update_user_language", "chargebee_add_subscription", "partners_event_queue", 
-  "detect_user_language", "integrations", "marketplace_apps", "installed_app_business_rule", "cloud_elements_delete", 
-  "salesforce_integrated_resource_migrate", "cloud_elements_logger_email", "active_dispatcher", "premium_dispatcher", 
-  "dispatcher", "trial_dispatcher", "free_dispatcher", "api_webhook_rule", "plan_change", "pod_route_update", 
-  "helpdesk_ticket_body_queue", "plan_change_workerv2", "activation_worker", "contact_import", "company_import", 
-  "helpdesk_note_body_queue", "helpdesk_update_ticket_body_queue", "helpdesk_update_note_body_queue", "update_sentiment", 
-  "update_notes_sentiment", "notify_broadcast_message", "contact_export", "company_export", "livechat_worker", 
-  "delete_spam_tickets", "tickets_export_queue", "long_running_ticket_export", "premium_ticket_export", 
-  "suspended_accounts_deletion", "round_robin_capping", "assign_tickets_to_agents", "sbrr_assignment", "sbrr_user_toggle", 
-  "sbrr_group_toggle", "sbrr_config_agent_group", "sbrr_config_user_skill", "trial_account_jobs", "free_account_jobs", 
-  "active_account_jobs", "premium_account_jobs", "mailbox_jobs", "bulk_api_jobs", "dkim_verifier", "dkim_general","sbrr_config_skill", 
-  "skill_import","forum_content_spam_checker", "scheduled_ticket_export_config","scheduled_ticket_export", 
+  "cti", "delete_account", "bulk_child_tkt_creation", "templates_cleanup", "bulk_ticket_actions", "bulk_ticket_reply",
+  "clear_tickets", "code_console_execution", "update_user_language", "chargebee_add_subscription", "partners_event_queue",
+  "detect_user_language", "integrations", "marketplace_apps", "installed_app_business_rule", "cloud_elements_delete",
+  "salesforce_integrated_resource_migrate", "cloud_elements_logger_email", "active_dispatcher", "premium_dispatcher",
+  "dispatcher", "trial_dispatcher", "free_dispatcher", "api_webhook_rule", "plan_change", "pod_route_update",
+  "helpdesk_ticket_body_queue", "plan_change_workerv2", "activation_worker", "contact_import", "company_import",
+  "helpdesk_note_body_queue", "helpdesk_update_ticket_body_queue", "helpdesk_update_note_body_queue", "update_sentiment",
+  "update_notes_sentiment", "notify_broadcast_message", "contact_export", "company_export", "livechat_worker",
+  "delete_spam_tickets", "tickets_export_queue", "long_running_ticket_export", "premium_ticket_export",
+  "suspended_accounts_deletion", "round_robin_capping", "assign_tickets_to_agents", "sbrr_assignment", "sbrr_user_toggle",
+  "sbrr_group_toggle", "sbrr_config_agent_group", "sbrr_config_user_skill", "trial_account_jobs", "free_account_jobs",
+  "active_account_jobs", "premium_account_jobs", "mailbox_jobs", "bulk_api_jobs", "dkim_verifier", "dkim_general","sbrr_config_skill",
+  "skill_import","forum_content_spam_checker", "scheduled_ticket_export_config","scheduled_ticket_export",
   "account_creation_fixtures","email_delivery","collaboration_publish","activity_export","send_and_set_observer",
   "realtime","scheduled","occasional","maintainence","external","free","email","trial","spam", "product_feedback",
   "block_account","signup_restricted_domain_validation","send_activation_reminder_mail",
@@ -323,7 +320,7 @@ class SidekiqConfigUsEast
   'freshid_v2_agents_migration', "launch_party_actions", "data_enrichment", "central_publish", 
   "free_ticket_central_publish", "trial_ticket_central_publish", "active_ticket_central_publish", "suspended_ticket_central_publish", 
   "free_note_central_publish", "trial_note_central_publish", "active_note_central_publish", "suspended_note_central_publish",
-  "channel_framework_command", "ml_solutions_training","bot_cleanup","calculate_sla", "delayed_central_publish", "update_taggables_queue", 
+  "channel_framework_command", "ml_solutions_training","bot_cleanup","calculate_sla", "delayed_central_publish", "update_taggables_queue",
   "customer_note_body_queue", "toggle_agent_from_all_roundrobin_groups","add_agent_to_round_robin","marketo_queue",
   "subscription_events_queue","restore_spam_tickets","jira_acc_config_updates","report_post_worker","merge_topics",
   "spam_digest_mailer","forum_post_spam_marker","forum_ban_user","nullify_deleted_custom_field_data", "track_customer_in_freshsales", "gamification", "community", "subscription","subscriptions", "freshid_agents_migration",
@@ -529,7 +526,7 @@ class SidekiqConfigUsEast
 end
 
 class SidekiqConfigStandard
-  
+
   SLA_SIDEKIQ              = "sidekiq-sla-"
   SUPERVISOR_SIDEKIQ       = "sidekiq-supervisor-"
   SOCIAL_SIDEKIQ           = "sidekiq-social-"
@@ -555,7 +552,7 @@ class SidekiqConfigStandard
   CRON_SIDEKIQ             = 'sidekiq-cron-'
   DATAEXPORT_SIDEKIQ       = "sidekiq-dataexport-"
   CENTRAL_REALTIME_SIDEKIQ = "sidekiq-central-realtime-"
-  
+
 
   def self.get_pool(node)
     utility_name = node[:opsworks][:instance][:hostname]
@@ -633,7 +630,7 @@ all_sidekiq_jobs =  cron_jobs + [
       "forum_post_spam_marker","forum_ban_user","nullify_deleted_custom_field_data","gamification_user_score",
       "gamification_ticket_score", "gamification_topic_quests","gamification_ticket_quests","gamification_solution_quests",
       "gamification_post_quests", "track_customer_in_freshsales", "freshid_agents_migration","contact_delete_forever","create_sandbox_account",
-      "delete_sandbox","sandbox_data_to_file","sandbox_file_to_data", "clone", "inline_image_shredder", "deactivate_product_widgets", 
+      "delete_sandbox","sandbox_data_to_file","sandbox_file_to_data", "clone", "inline_image_shredder", "deactivate_product_widgets",
       "deactivate_filter_widgets","update_time_zone","sandbox_diff", "sandbox_merge", "run_rake_task","check_bot_training","update_segment_filter",
       "register_freshconnect", "undo_send", "unlink_tickets", "primary_language_change", "send_domain_changed_mail", "default_data_population", 'freshops_service', 'twitter_reply',
       "widget_upload_config", "bot_email_reply", "bot_email_ml_feedback", 'migration',
@@ -661,7 +658,7 @@ all_sidekiq_jobs =  cron_jobs + [
     email                    = ["email"]
     trial                    = ["trial"]
     spam                     = ["spam"]
-    archive                  = ["archive"]
+    archive                  = ['archive_account_tickets', 'archive_ticket', 'manual_publish', 'delayed_central_publish', 'es_v2_queue', 'central_realtime']
     mailbox                  = ["mailbox_jobs"]
     export                   = ["exports"]
     cron_webhook             = ['cron_webhook']
@@ -781,7 +778,6 @@ all_sidekiq_jobs =  cron_jobs + [
 
     # yml files
     worker_count.times do |count|
-
       out = File.join(options[:outdir], "sidekiq_client_#{count}.yml")
       File.open(out, 'w') do |f|
         @environment = node[:opsworks][:environment]

@@ -1737,6 +1737,8 @@
     "fc-app-api-channel": {
     },
     "fc-bg-sidekiq-cron": {
+    },
+    "fc-bg-shoryuken-archive": {
     }
   }
 }

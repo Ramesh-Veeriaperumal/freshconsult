@@ -1875,6 +1875,8 @@
     "fc-bg-sidekiq-search": {
     },
     "fc-bg-sidekiq-cron": {
+    },
+    "fc-bg-shoryuken-archive": {
     }
   }
 }

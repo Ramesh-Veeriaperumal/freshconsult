@@ -1130,8 +1130,9 @@
         "_host": "sidekiq.internal.podapsouth1.freshdesk.com",
         "_port": "17338",
         "_keepalive": 0,
-        "_archive_host": "sidekiq.internal.podapsouth1.freshdesk.com",
-        "_archive_port": "13702",
+        "_archive_host": "sidekiq-archive.internal.podapsouth1.freshdesk.com",
+        "_archive_port": "17749",
+        "archive_password": "EJ[1:taRS3WIzJ3URGBgSLi8kEKpIUIpYlDyM/BjSmXhpF2Y=:fQMsWmKTTaRXOXIC1qqmHJIEgWVKw2AJ:vzVQzebGxpC6r25YivMp5GEfLzdsnuajRtV1CiSEHQ0KsFsfybv/W+5IMjJfmNip]",
         "_scheduled_poll_interval": 1
       },
       "ml_app": {
@@ -1734,6 +1735,8 @@
     "fc-app-api-channel": {
     },
     "fc-bg-sidekiq-cron": {
+    },
+    "fc-bg-shoryuken-archive": {
     }
   }
 }

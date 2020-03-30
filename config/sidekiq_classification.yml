@@ -292,7 +292,7 @@
     - manual_publish
     - delayed_central_publish
     - es_v2_queue
-
+    - central_realtime
   :exports:
     - scheduled_ticket_export_config
     - scheduled_ticket_export
