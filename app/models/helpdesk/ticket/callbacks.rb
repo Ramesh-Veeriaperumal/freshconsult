@@ -931,6 +931,7 @@ private
 
   def assign_flexifield
     build_flexifield
+    flexifield.build_denormalized_flexifield
     self.flexifield_def = Account.current.ticket_field_def
     assign_ff_values custom_field
     @custom_field = nil

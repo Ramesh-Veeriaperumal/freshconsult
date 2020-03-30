@@ -774,7 +774,38 @@ module Cache::Memcache::Account
     @picklist_ids_by_value_cache ||= MemcacheKeys.get_multi_from_cache(dropdown_nested_fields.map(&:picklist_ids_by_value_key))
   end
 
+  def observer_condition_fields_from_cache
+    key = format(OBSERVER_CONDITION_FIELDS, account_id: id)
+    fetch_from_cache(key) do
+      custom_ticket_field_names = ticket_fields_name_type_mapping_cache.each_with_object([]) do |field, arr|
+        arr.push(field[0]) unless Va::Constants::OBSERVER_TEXT_CUSTOM_FIELD_TYPES.include?(field[1])
+      end
+      observer_rules.each_with_object([]) do |rule, fields|
+        rule.rule_conditions.each do |condition|
+          if observer_field_check(fields, custom_ticket_field_names, condition[:name])
+            fields.push(condition[:name])
+            if condition[:related_conditions].present?
+              condition[:related_conditions].each do |related|
+                fields.push(related[:name]) if observer_field_check(fields, custom_ticket_field_names, related[:name])
+              end
+            end
+          end
+          if condition[:associated_fields].present? &&
+             observer_field_check(fields, custom_ticket_field_names, condition[:associated_fields][:name])
+            fields.push(condition[:associated_fields][:name])
+          end
+        end
+      end
+    end
+  end
+
   private
+    def observer_field_check(fields, custom_ticket_field_names, field_name)
+      !fields.include?(field_name) &&
+        (Va::Constants::OBSERVER_CONDITION_FIELD_NAMES.include?(field_name) ||
+        custom_ticket_field_names.include?(field_name))
+    end
+
     def permissible_domains_memcache_key id = self.id
       HELPDESK_PERMISSIBLE_DOMAINS % { :account_id => id }
     end

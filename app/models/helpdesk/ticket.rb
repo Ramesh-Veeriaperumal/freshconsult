@@ -73,7 +73,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :schedule_observer, :required_fields_on_closure, :observer_args, :skip_sbrr_save,
     :sbrr_state_attributes, :escape_liquid_attributes, :update_sla, :sla_on_background,
     :sla_calculation_time, :disable_sla_calculation, :import_ticket, :ocr_update, :skip_ocr_sync,
-    :custom_fields_hash, :thank_you_note_id, :perform_post_observer_actions, :prime_ticket_args, :current_note_id, :bulk_updation
+    :custom_fields_hash, :thank_you_note_id, :perform_post_observer_actions, :prime_ticket_args, :current_note_id,
+    :bulk_updation, :old_last_interaction_id, :old_tag_ids, :return_old_tag_ids
 
     # :skip_sbrr_assigner and :skip_sbrr_save can be combined together if needed.
     # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
@@ -345,6 +346,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
+  def inbound_count=(count)
+    ticket_states.inbound_count = count
+  end
+
+  def outbound_count=(count)
+    ticket_states.outbound_count = count
+  end
+
+  def agent_availability=(available)
+    agent.available = available if agent.present?
+  end
+
   class << self # Class Methods
 
     def mobile_filtered_tickets(query_string,display_id,order_param,limit_val)
@@ -507,6 +520,35 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def fetch_latest_cf_handle(cf_obj)
     self.canned_form_handles.where(canned_form_id: cf_obj.id).last
+  end
+
+  def duplicate(original_attributes)
+    self.flexifield
+    self.ticket_states
+    dup_ticket = self.dup
+    dup_ticket.id = self.id
+    dup_ticket.flexifield = self.flexifield.dup
+    dup_ticket.flexifield.denormalized_flexifield = self.flexifield.denormalized_flexifield.dup
+    dup_ticket.schema_less_ticket = self.schema_less_ticket.dup
+    dup_ticket.ticket_states = self.ticket_states.dup
+    dup_ticket.ticket_old_body = self.ticket_old_body
+    original_attributes.each do |field, value|
+      case field
+      when :last_interaction
+        dup_ticket.old_last_interaction_id = value
+      when :tag_ids
+        dup_ticket.old_tag_ids = value
+        dup_ticket.return_old_tag_ids = true
+      when :agent_availability
+        if dup_ticket.responder.present? && dup_ticket.responder.agent.present?
+          dup_ticket.responder.agent.old_agent_availability = value
+          dup_ticket.responder.agent.return_old_agent_availability = true
+        end
+      else
+        dup_ticket.safe_send("#{field}=", value) rescue nil
+      end
+    end
+    dup_ticket
   end
 
   # Create/Fetch canned form handle
@@ -760,6 +802,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def tag_ids
+    return old_tag_ids if return_old_tag_ids
+
     tag_uses.pluck(:tag_id)
   end
 
@@ -800,8 +844,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     company ? company.name : "No company"
   end
 
+  def last_interaction_note
+    notes.visible.newest_first.exclude_source(['feedback', 'meta', 'forward_email', 'summary']).first
+  end
+
   def last_interaction
-    notes.visible.newest_first.exclude_source(["feedback","meta","forward_email","summary"]).first.try(:body).to_s
+    if old_last_interaction_id.present?
+      notes.find_by_id(old_last_interaction_id).try(:body).to_s
+    else
+      last_interaction_note.try(:body).to_s
+    end
   end
 
   #To use liquid template...

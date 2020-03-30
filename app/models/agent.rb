@@ -51,7 +51,9 @@ class Agent < ActiveRecord::Base
 
   attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled, :field_service, :undo_send, :falcon_ui, :shortcuts_mapping,
                   :scoreboard_level_id, :user_attributes, :group_ids, :freshchat_token, :agent_type, :search_settings, :focus_mode, :show_onBoarding, :notification_timestamp
-  attr_accessor :agent_role_ids, :freshcaller_enabled, :user_changes, :group_changes, :ocr_update, :misc_changes, :out_of_office_days
+  attr_accessor :agent_role_ids, :freshcaller_enabled, :user_changes, :group_changes,
+                :ocr_update, :misc_changes, :out_of_office_days, :old_agent_availability,
+                :return_old_agent_availability
 
   scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
   scope :full_time_support_agents, :conditions => { :occasional => false, :agent_type => SUPPORT_AGENT_TYPE, 'users.deleted' => false}
@@ -367,6 +369,8 @@ class Agent < ActiveRecord::Base
   end
   
   def agent_availability
+    return old_agent_availability if return_old_agent_availability
+
     unless available
       out_of_office.is_a?(Integer) ? Agent::OUT_OF_OFFICE : Agent::UN_AVAILABLE
     end

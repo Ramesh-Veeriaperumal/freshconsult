@@ -312,6 +312,8 @@ module MemcacheKeys
 
   HELP_WIDGET_SUGGESTED_ARTICLE_RULES = 'v2/HELP_WIDGET_SUGGESTED_ARTICLE_RULES:%{account_id}:%{help_widget_id}'.freeze
 
+  OBSERVER_CONDITION_FIELDS = 'v1/OBSERVER_CONDITION_FIELDS:%{account_id}'.freeze
+
   def fetch_from_cache(key, &block)
     @cached_values = {} unless @cached_values
     return @cached_values[key] if @cached_values.include? key

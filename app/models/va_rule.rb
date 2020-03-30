@@ -31,7 +31,7 @@ class VaRule < ActiveRecord::Base
   before_save :set_encrypted_password
   before_save :migrate_filter_data, :if => :conditions_changed?
   before_destroy :save_deleted_rule_info
-  after_commit :clear_observer_rules_cache, if: :ticket_observer_rule?
+  after_commit :clear_observer_rules_cache, :clear_observer_condition_field_names_cache, if: :ticket_observer_rule?
   after_commit :clear_api_webhook_rules_from_cache, :if => :api_webhook_rule?
   after_commit :clear_installed_app_business_rules_from_cache, :if => :installed_app_business_rule?
   after_commit :log_rule_change, if: :automated_rule?
@@ -247,13 +247,13 @@ class VaRule < ActiveRecord::Base
     return to_ret
   end
 
-  def check_rule_events(doer, evaluate_on, current_events)
+  def check_rule_events(doer, evaluate_on, current_events, original_ticket = nil)
     performer_matched = rule_performer.matches? doer, evaluate_on
     Va::Logger::Automation.log("rule performer matched=#{performer_matched}", true)
     return unless performer_matched
     event_matched = rule_event_matches? current_events, evaluate_on
     Va::Logger::Automation.log("rule event matched=#{event_matched}", true)
-    check_rule_conditions evaluate_on, nil, doer if event_matched
+    check_rule_conditions evaluate_on, nil, doer, original_ticket if event_matched
   end
 
   def rule_event_matches?(current_events, evaluate_on)
@@ -267,11 +267,14 @@ class VaRule < ActiveRecord::Base
     false
   end
 
-  def check_rule_conditions(evaluate_on, actions=nil, doer=nil)
+  def check_rule_conditions(evaluate_on, actions=nil, doer=nil, original_ticket=nil)
     is_a_match = false
     self.current_evaluate_on_id = evaluate_on.id
-    benchmark { is_a_match = RuleEngine::NestedCondition.new(evaluate_on,
-                              rule_operator).process_block(rule_conditions(true, true)) }
+    ticket = original_ticket.presence || evaluate_on
+    benchmark do
+      is_a_match = RuleEngine::NestedCondition.new(ticket, rule_operator)
+                                              .process_block(rule_conditions(true, true))
+    end
     is_a_match = true if rule_conditions.blank? && observer_rule?
     Va::Logger::Automation.log("rule condition matched=#{is_a_match}", true)
     trigger_actions(evaluate_on, doer) if is_a_match
