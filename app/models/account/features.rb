@@ -48,7 +48,7 @@ class Account < ActiveRecord::Base
     :fsm_for_garden_plan, :fsm_for_blossom_plan, :requester_widget_timeline,
     :out_of_office, :enable_secure_login_check, :contact_form_enhancement, :public_api_filter_factory, :enable_twitter_requester_fields, :marketplace_gallery, :solutions_quick_view,
     :translations_proxy, :translations_cdn, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :retry_emails, :disable_beamer, :fb_message_echo_support, :portal_prototype_update,
-    :bot_banner, :solutions_freshconnect, :fsm_scheduler_month_view, :idle_session_timeout
+    :bot_banner, :solutions_freshconnect, :fsm_scheduler_month_view, :idle_session_timeout, :solutions_dashboard
   ].freeze
 
   DB_FEATURES = [

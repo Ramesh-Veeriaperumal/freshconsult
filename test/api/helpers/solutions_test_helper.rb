@@ -376,6 +376,7 @@ module SolutionsTestHelper
     @categories = fetch_categories(portal_id, language_id)
     @articles = fetch_articles(language_id)
     @drafts = fetch_drafts
+    @folders = fetch_folders(language_id)
     @approvals = fetch_approvals
     @my_drafts = @drafts.empty? ? [] : @drafts.where(user_id: User.current.id)
     @my_drafts = fetch_my_drafts if Account.current.article_approval_workflow_enabled?
@@ -386,6 +387,7 @@ module SolutionsTestHelper
     response.api_root_key = :quick_views
     result = {
       all_categories: @categories.count,
+      all_folders: @folders.count,
       all_articles: @articles.count,
       all_drafts: @drafts.count - @approvals.count,
       my_drafts: @my_drafts.count,
@@ -416,6 +418,17 @@ module SolutionsTestHelper
     portal_categories = Account.current.solution_categories.where(parent_id: @category_meta.map(&:id), language_id: language_id)
     @category_meta += [Account.current.solution_category_meta.where(is_default: true).first]
     portal_categories
+  end
+
+  def fetch_folders(language_id)
+    folders_meta = []
+    return [] if @category_meta.empty?
+
+    @category_meta.each do |categ_meta|
+      folders_meta << categ_meta.solution_folder_meta unless categ_meta.is_default
+    end
+    folders_meta.flatten!
+    Account.current.solution_folders.where(parent_id: folders_meta.map(&:id), language_id: language_id)
   end
 
   def fetch_articles(language_id)

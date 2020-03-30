@@ -1,26 +1,28 @@
 @count_hash = if current_account.launched?(:solutions_quick_view)
-                {
-                  all_categories: @categories_cnt,
-                  all_articles: @articles_cnt,
-                  all_drafts: @drafts_cnt,
-                  my_drafts: @my_drafts_cnt,
-                  published: @published_articles_cnt,
-                  all_feedback: @all_feedback_cnt,
-                  my_feedback: @my_feedback_cnt,
-                  unassociated_categories_count: @orphan_categories.count
-                }
-              else
-                {
-                  all_categories: @categories.count,
-                  all_articles: @articles.count,
-                  all_drafts: @drafts.count - @approvals.count,
-                  my_drafts: @my_drafts.count,
-                  published: @published_articles.count,
-                  all_feedback: @all_feedback.count,
-                  my_feedback: @my_feedback.count,
-                  unassociated_categories_count: @orphan_categories.count
-                }
-              end
+  {
+    all_categories: @categories_cnt,
+    all_folders: @folders_cnt,
+    all_articles: @articles_cnt,
+    all_drafts: @drafts_cnt,
+    my_drafts: @my_drafts_cnt,
+    published: @published_articles_cnt,
+    all_feedback: @all_feedback_cnt,
+    my_feedback: @my_feedback_cnt,
+    unassociated_categories_count: @orphan_categories.count
+  }
+else
+  {
+    all_categories: @categories.count,
+    all_folders: @folders.count,
+    all_articles: @articles.count,
+    all_drafts: @drafts.count - @approvals.count,
+    my_drafts: @my_drafts.count,
+    published: @published_articles.count,
+    all_feedback: @all_feedback.count,
+    my_feedback: @my_feedback.count,
+    unassociated_categories_count: @orphan_categories.count
+  }
+end
 
 @count_hash[:unassociated_categories] = @orphan_categories.map do |category|
   {

@@ -1,10 +1,28 @@
 module ApiDashboardConstants
+  DASHBOARD_FOR = { :default => 1, :solutions => 2 }.freeze
   ROLE_BASED_SCORECARD_FIELDS = { agent: [:unresolved, :overdue, :due_today, :open, :on_hold],
                                   supervisor: [:unresolved, :overdue, :due_today, :open, :on_hold, :new],
                                   admin: [:unresolved, :overdue, :due_today, :open, :on_hold, :new],
                                   sprout_17_agent: [:unresolved, :open, :on_hold],
                                   sprout_17_supervisor: [:unresolved, :open, :on_hold, :new],
                                   sprout_17_admin: [:unresolved, :open, :on_hold, :new] }.freeze
+
+  DASHBOARD_WIGETS_FOR_SOLUTIONS = [
+    # key, widget name, h,w, group by, order by, limit,
+    [:all_categories, 'all_categories', 1, 1],
+    [:all_folders, 'all_folders', 1, 1],
+    [:all_articles, 'all_articles', 1, 1],
+    [:all_feedback, 'all_feedback', 1, 1],
+    [:all_drafts, 'all_drafts', 1, 1],
+    [:in_review, 'in_review', 1, 1],
+    [:approved, 'approved', 1, 1],
+    [:published, 'published', 1, 1],
+    [:outdated, 'outdated', 2, 1],
+    [:articles_by_language, 'articles-by-language', 2, 5],
+    [:article_performance, 'article-performance', 2, 3],
+    [:approval_pending_articles, 'approval-pending-articles', 2, 3],
+    [:recent_drafts,        'recent-drafts',        2, 3]
+  ].freeze
 
   SPROUT_DASHBOARD = [
     # key, widget name, h,w, group by, order by, limit,
