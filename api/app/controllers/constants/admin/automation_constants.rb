@@ -237,7 +237,7 @@ module Admin::AutomationConstants
   TICKET_STATE_FILTERS = %i[inbound_count outbound_count].freeze
 
   # Observer + Dispatcher
-  CONDITION_CONTACT_FIELDS = %i[email name job_title time_zone language segments].freeze
+  CONDITION_CONTACT_FIELDS = %i[email name job_title time_zone language segments twitter_profile_status twitter_followers_count].freeze
 
   # Observer + Dispatcher
   CONDITION_COMPANY_FIELDS = %i[name domains segments].freeze

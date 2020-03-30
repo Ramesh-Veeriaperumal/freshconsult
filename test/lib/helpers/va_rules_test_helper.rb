@@ -78,7 +78,9 @@ module VaRulesTesthelper
     test_custom_text: :text,
     test_custom_paragraph: :text,
     test_custom_checkbox: :checkbox,
-    test_custom_number: :number
+    test_custom_number: :number,
+    twitter_followers_count: :number,
+    twitter_profile_status: :checkbox
   }.freeze
 
   FIELD_TO_TYPE_MAPPING_COMPANY = {

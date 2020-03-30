@@ -11,6 +11,10 @@ module Admin::Condition::ContactFieldConstants
     { name: :language, field_type: :choicelist, data_type: :String,
       invalid_rule_types: [3] }.freeze,
     { name: :segments, field_type: :object_id, data_type: :Integer,
+      invalid_rule_types: [3] }.freeze,
+    { name: :twitter_profile_status, field_type: :checkbox, data_type: :String,
+      invalid_rule_types: [3] }.freeze,
+    { name: :twitter_followers_count, field_type: :number, data_type: :Integer,
       invalid_rule_types: [3] }.freeze
   ].freeze
 

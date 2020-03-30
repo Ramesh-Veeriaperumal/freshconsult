@@ -258,6 +258,20 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
     dispatcher_create_test(:segments, :add_tag, :contact)
   end
 
+  def test_dispatcher_create_with_twitter_followers_count
+    Account.any_instance.stubs(:twitter_requester_fields_enabled?).returns(true)
+    dispatcher_create_test(:twitter_followers_count, :add_tag, :contact)
+  ensure
+    Account.any_instance.unstub(:twitter_requester_fields_enabled?)
+  end
+
+  def test_dispatcher_create_with_twitter_profile_status
+    Account.any_instance.stubs(:twitter_requester_fields_enabled?).returns(true)
+    dispatcher_create_test(:twitter_profile_status, :add_tag, :contact)
+  ensure
+    Account.any_instance.unstub(:twitter_requester_fields_enabled?)
+  end
+
   def test_dispatcher_create_with_contact_time_zone
     dispatcher_create_test(:time_zone, :add_tag, :contact)
   end

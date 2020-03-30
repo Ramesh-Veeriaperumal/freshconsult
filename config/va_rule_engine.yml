@@ -37,6 +37,8 @@ fields:
         domains: text_array
         renewal_date: date
         segments: object_id_array
+        twitter_profile_status: checkbox
+        twitter_followers_count: numeric
         to_emails: email
         domain_list: text_array
         association_type: numeric
