@@ -97,3 +97,5 @@ FreshIDConfig = YAML.load_file(Rails.root.join('config', 'freshid.yml'))[Rails.e
 SecureFieldConfig = YAML.load_file(Rails.root.join('config', 'jwe', 'secure_field.yml'))[Rails.env]
 
 AuthzConfig = YAML.load_file(Rails.root.join('config', 'authz_config.yml'))[Rails.env].with_indifferent_access
+
+ProductPlansConfig = YAML.load_file(Rails.root.join('config', 'product_plan_mapping.yml')).with_indifferent_access

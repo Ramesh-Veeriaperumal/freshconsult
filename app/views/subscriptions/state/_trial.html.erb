@@ -28,6 +28,7 @@
   <%
     plan = @subscription.subscription_plan
     is_new_sprout = new_sprout?(plan.name)
+    show_omni_toggle = current_account.freshcaller_account_present? || current_account.freshchat_account_present?
   %>
 
   <div class="clearfix choose-plan-container">
@@ -40,7 +41,7 @@
     </div>
   </div> 
   <div class="features">
-    <%= render :partial => "/subscriptions/features/toggle-box/ocr_toggle", :locals => { :plan => plan }%>
+    <%= render :partial => "/subscriptions/features/toggle-box/ocr_toggle", :locals => { :plan => plan, :trial => true, :show_omni_toggle => show_omni_toggle }%>
     <% if current_account.disable_old_ui_enabled? %>
       <span class="vr-line"></span>
       <%= render :partial => "/subscriptions/features/toggle-box/fsm_toggle", :locals => { :current_account => current_account }%>

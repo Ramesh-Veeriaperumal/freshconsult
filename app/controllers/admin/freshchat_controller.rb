@@ -46,7 +46,7 @@ class Admin::FreshchatController < Admin::AdminController
   end
 
   def load_plan
-    @is_2019_plan = SubscriptionPlan::JAN_2019_PLAN_NAMES.include? current_account.subscription.plan_name
+    @is_2019_plan = Subscription::FRESHCHAT_PLANS.include? current_account.subscription.plan_name
   end
 
   def load_profile

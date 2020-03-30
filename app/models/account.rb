@@ -1049,6 +1049,16 @@ class Account < ActiveRecord::Base
     redis_key_exists?(TWITTER_REQUESTER_FIELDS_ENABLED) && Account.current.launched?(:enable_twitter_requester_fields)
   end
 
+  def freshcaller_account_present?
+    freshcaller_account = Freshcaller::Account.find_by_account_id(id)
+    freshcaller_account.nil? ? false : true
+  end
+
+  def freshchat_account_present?
+    freshchat_account = Freshchat::Account.find_by_account_id(id)
+    freshchat_account.nil? ? false : true
+  end
+
   protected
 
     def external_url_is_valid?(url)
