@@ -127,6 +127,19 @@ module Conversations::Twitter
     end
   end
 
+  def sanitize_tweet_body(tweet_body)
+    tweet_body = RailsSanitizer.full_sanitizer.sanitize(tweet_body)
+    begin
+      tweet_body.scan(/&#\d+;/).each do |emoji|
+        encoded_emoji = emoji.tr('&#;', '').to_i.chr('UTF-8')
+        tweet_body.gsub!(emoji, encoded_emoji)
+      end
+    rescue StandardError => e
+      Rails.logger.error "Error while encoding emoji for #{tweet_body} :: Message :: #{e.message}"
+    end
+    tweet_body
+  end
+
   protected
 
     def process_tweet note, twt, handle_id, twt_type

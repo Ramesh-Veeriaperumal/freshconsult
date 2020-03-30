@@ -14,7 +14,7 @@ module Social
       ticket = Account.current.tickets.find(args[:ticket_id])
       note = ticket.notes.find(args[:note_id]) unless ticket.blank?
       return if note.blank?
-      tweet_body = note.body.strip
+      tweet_body = sanitize_tweet_body(note.body_html.strip)
       allow_attachments = true
       error_message, reply_twt, error_code = safe_send("send_tweet_as_#{args[:tweet_type]}", args[:twitter_handle_id], ticket, note, tweet_body, allow_attachments)
       post_success_or_failure_command(error_message, reply_twt, error_code, note.tweet.try(:stream_id), args)

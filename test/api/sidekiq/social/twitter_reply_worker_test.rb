@@ -1,6 +1,7 @@
 require_relative '../../unit_test_helper'
 require_relative '../../../../spec/support/social_tickets_creation_helper'
 require_relative '../../../../spec/support/note_helper'
+require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 require 'sidekiq/testing'
 require 'faker'
 
@@ -8,6 +9,7 @@ Sidekiq::Testing.fake!
 
 module Social
   class TwitterReplyWorkerTest < ActionView::TestCase
+    include AccountTestHelper
     include SocialTicketsCreationHelper
     include NoteHelper
 
@@ -47,6 +49,17 @@ module Social
                    match_success_response_payload(Channel::CommandWorker.jobs.last['args'][0]['payload'])
     end
 
+    def test_publish_success_to_central_with_emoji
+      old_count = Channel::CommandWorker.jobs.size
+      twitter_note = sample_twitter_note_with_emoji(@twitter_ticket)
+      TwitterReplyWorker.any_instance.stubs(:send_tweet_as_mention).returns([nil, 4321, nil])
+      Social::TwitterReplyWorker.new.perform(construct_args)
+      new_count = Channel::CommandWorker.jobs.size
+      assert_equal old_count + 1, new_count
+      assert_equal true,
+                   match_success_response_payload(Channel::CommandWorker.jobs.last['args'][0]['payload'])
+    end
+
     def construct_args
       {
         ticket_id: @twitter_ticket.id,
@@ -58,6 +71,13 @@ module Social
 
     def sample_twitter_note(ticket)
       note = create_note(source: 5, ticket_id: ticket.id, user_id: ticket.requester.id, private: false, body: Faker::Lorem.paragraph)
+      note.build_tweet(tweet_id: 1234, tweet_type: 'mention', twitter_handle_id: get_twitter_handle.id)
+      note.save
+      note.reload
+    end
+
+    def sample_twitter_note_with_emoji(ticket)
+      note = create_note(source: 5, ticket_id: ticket.id, user_id: ticket.requester.id, private: false, body: "hey 👋 there⛺️😅💁")
       note.build_tweet(tweet_id: 1234, tweet_type: 'mention', twitter_handle_id: get_twitter_handle.id)
       note.save
       note.reload
