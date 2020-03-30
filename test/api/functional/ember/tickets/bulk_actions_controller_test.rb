@@ -1645,7 +1645,31 @@ module Ember
           ::Tickets::UnlinkTickets.any_instance.unstub(:tracker_ticket_permission?)
         end
       end
-    
+
+      def test_bulk_close_with_secure_text_field
+        Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+        name = "secure_text_#{Faker::Lorem.characters(rand(5..10))}"
+        secure_text_field = create_custom_field_dn(name, 'secure_text')
+        ticket_display_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5)
+        params_hash = { ids: ticket_display_ids, properties: properties_hash }
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        bulk_action_args = ::Tickets::BulkTicketActions.jobs.first['args'][0]
+        ::Tickets::BulkTicketActions.new.perform(bulk_action_args)
+        ticket_ids = Account.current.tickets.where(display_id: ticket_display_ids).pluck(:id)
+        assert_equal 1, ::Tickets::VaultDataCleanupWorker.jobs.size
+        vault_cleanup_args = ::Tickets::VaultDataCleanupWorker.jobs.first.deep_symbolize_keys[:args][0]
+        assert_equal ticket_ids, vault_cleanup_args[:object_ids]
+        assert_equal 'close', vault_cleanup_args[:action]
+      ensure
+        secure_text_field.destroy
+        Account.reset_current_account
+        ::Tickets::BulkTicketActions.jobs.clear
+        ::Tickets::VaultDataCleanupWorker.jobs.clear
+        Account.any_instance.unstub(:pci_compliance_field_enabled?)
+      end
+
       private
         def partial_success_and_customfield_response_pattern(succeeded_ids, failures = {})
           {

@@ -30,6 +30,7 @@ class Helpdesk::TicketBulkActions
   private
     def construct_ticket_change(params)
       action = params[:id] || params[:action]
+      params[:helpdesk_ticket][:bulk_updation] = true unless  params[:helpdesk_ticket].nil?
       user_id = User.current.present? ? User.current.id : nil;
       change_hash= {
         :close_multiple  => { :status => Helpdesk::Ticketfields::TicketStatus::CLOSED },
@@ -37,7 +38,7 @@ class Helpdesk::TicketBulkActions
         :assign          => { :responder_id => params[:responder_id] ? 
                                 params[:responder_id] 
                                 : user_id },
-        :update_multiple =>  params[:helpdesk_ticket], 
+        :update_multiple => params[:helpdesk_ticket],
         :spam            => { :spam => true },
         :delete          => { :deleted => true },
         :destroy          => { :deleted => true },

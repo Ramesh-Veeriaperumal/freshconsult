@@ -73,7 +73,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :schedule_observer, :required_fields_on_closure, :observer_args, :skip_sbrr_save,
     :sbrr_state_attributes, :escape_liquid_attributes, :update_sla, :sla_on_background,
     :sla_calculation_time, :disable_sla_calculation, :import_ticket, :ocr_update, :skip_ocr_sync,
-    :custom_fields_hash, :thank_you_note_id, :perform_post_observer_actions, :prime_ticket_args, :current_note_id
+    :custom_fields_hash, :thank_you_note_id, :perform_post_observer_actions, :prime_ticket_args, :current_note_id, :bulk_updation
 
     # :skip_sbrr_assigner and :skip_sbrr_save can be combined together if needed.
     # Added :system_changes, :activity_type, :misc_changes for activity_revamp -

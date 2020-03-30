@@ -6440,5 +6440,26 @@ module Ember
       ticket.destroy
       Account.any_instance.unstub(:pci_compliance_field_enabled?)
     end
+
+    def test_close_ticket_with_secure_text_field
+      Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+      Account.first.make_current
+      name = "secure_text_#{Faker::Lorem.characters(rand(5..10))}"
+      secure_text_field = create_custom_field_dn(name, 'secure_text')
+      ticket = create_ticket
+      assert_not_nil ticket
+      update_params = { status: Helpdesk::Ticketfields::TicketStatus::CLOSED }
+      put :update, construct_params({ id: ticket.display_id, version: 'private' }, update_params)
+      assert_response 200
+      assert_equal 1, ::Tickets::VaultDataCleanupWorker.jobs.size
+      job = ::Tickets::VaultDataCleanupWorker.jobs.first.deep_symbolize_keys
+      assert_equal [ticket.display_id], job[:args][0][:object_ids]
+      assert_equal 'close', job[:args][0][:action]
+    ensure
+      secure_text_field.destroy
+      Account.reset_current_account
+      ::Tickets::VaultDataCleanupWorker.jobs.clear
+      Account.any_instance.unstub(:pci_compliance_field_enabled?)
+    end
   end
 end

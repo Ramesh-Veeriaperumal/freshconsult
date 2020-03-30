@@ -8,19 +8,17 @@ class JWT::SecureServiceJWEFactory
     @account = Account.current
   end
 
-  def generate_jwe_payload(secure_field_methods_object)
-    jwe_payload = {
-      otype: @object_type,
-      oid: @object_id,
-      scope: jwe_payload_scope(@action, secure_field_methods_object),
-      portal: @portal_type
-    }.merge(basic_hash)
-    get_payload(jwe_payload)
+  def generate_jwe_payload(secure_field_methods_object = nil)
+    get_payload(secure_data_hash(secure_field_methods_object))
   end
 
   def account_info_payload
     organisation_id = @account.freshid_org_v2_enabled? && @account.organisation_from_cache.try(:organisation_id)
     get_payload(basic_hash.merge(organisation_id ? { org_id: organisation_id } : {}))
+  end
+
+  def bulk_delete_payload(object_ids = [])
+    get_payload(secure_data_hash.merge(bulk_oids: object_ids))
   end
 
   private
@@ -37,19 +35,30 @@ class JWT::SecureServiceJWEFactory
       }
     end
 
-    def get_payload(jwe_payload)
+    def secure_data_hash(secure_field_methods_object = nil)
+      {
+        otype: @object_type,
+        oid: @object_id,
+        scope: jwe_payload_scope(@action, secure_field_methods_object),
+        portal: @portal_type
+      }.merge(basic_hash)
+    end
+
+    def get_payload(payload_hash)
       key = OpenSSL::PKey::RSA.new(PciConstants::PUBLIC_KEY)
-      JWE.encrypt(jwe_payload.to_json, key, enc: 'A256GCM')
+      JWE.encrypt(payload_hash.to_json, key, enc: 'A256GCM')
     end
 
     def jwe_payload_scope(action, secure_field_methods_object)
       # Gives the list of secure ticket fields' names to payload
       @scope = []
       case action
-      when 1
+      when PciConstants::ACTION[:read]
         @scope << TicketDecorator.display_name(secure_field_methods_object.secure_fields_from_cache.first.name)
-      when 2
+      when PciConstants::ACTION[:write]
         secure_field_methods_object.secure_fields(@custom_fields_in_params).each { |secure_field| @scope << TicketDecorator.display_name(secure_field) }
+      when PciConstants::ACTION[:delete]
+        @scope.concat(@custom_fields_in_params)
       end
       @scope
     end

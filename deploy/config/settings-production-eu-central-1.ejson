@@ -25,7 +25,7 @@
         "channel_cipher_key": "EJ[1:hI0x2N6WsBq7D9HK8XrlVS38pvYZ7Vzo5E0JIHD5hEk=:UO3NrX6ZM+Pkp3j7swS60iuYorOQaVaO:lVR+WbU+bgelErgac72Go/s66rm6ImT8OXtkY5sBI3reRMAIxMhwh/rK30sGmUpJy0icxQRveuUFgFe2qVS92O/TmY5s9COF2eGEnXfJoLM=]"
       },
       "secure_field": {
-        "_domain": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/"
+        "_domain": "https://vault-service-eu.freshworks.com/"
       },
       "announcements": {
         "shared_secret": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:zxh3vis1TaRL9u5GxaEYJIWxUZ/eupt+:08dRralGLBCCz/okTNaLtkSQA8s9YUBrGGTRWQzbbmXECiZqlfm3a94Ph/MZBhLy]",
@@ -1629,7 +1629,7 @@
         "_script_asset_url": "https://assets1.freshconnect.io/freshconnect-sidebar/freshconnect-sidebar.js",
         "_base_url": "https://api.freshconnect.io"
       },
-      "_vault_service_url": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/"
+      "_vault_service_url": "https://vault-service-eu.freshworks.com/"
     },
     "aws_config": {
     },

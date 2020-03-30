@@ -390,6 +390,7 @@ defaults: &defaults
     - [agent_assist_email]
     - [cron_archive_automation]
     - [vault_account_update]
+    - [vault_data_cleanup]
 
 development:
   <<: *defaults

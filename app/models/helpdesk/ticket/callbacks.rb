@@ -70,6 +70,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_update :update_ticket_states
 
   after_update :update_sla_model_changes, :if => Proc.new { self.changes.present? }
+  after_commit :cleanup_vault_data, on: :update, if: :vault_data_cleanup_required?
 
   after_commit :create_initial_activity, on: :create
   after_commit :trigger_dispatcher, on: :create, :unless => :skip_dispatcher_with_advanced_automations?
@@ -1183,5 +1184,13 @@ private
       errors[:ticket] << :exceeded_total_file_field_attachments_size
       return false
     end
+  end
+
+  def vault_data_cleanup_required?
+    Account.current.pci_compliance_field_enabled? && @model_changes.key?(:status) && status == CLOSED && !bulk_updation
+  end
+
+  def cleanup_vault_data
+    Tickets::VaultDataCleanupWorker.perform_async(object_ids: [self.id], action: 'close')
   end
 end
