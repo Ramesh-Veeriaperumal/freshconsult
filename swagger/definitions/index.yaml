@@ -534,6 +534,11 @@ audit_log_export:
 dashboard_activities:
   $ref: './response/dashboard/activities.yaml'
 
+article_performance:
+  $ref: './response/dashboard/article_performance.yaml'
+translation_summary:
+    $ref: './response/dashboard/translation_summary.yaml'
+
 #dashbord quests
 dashboard_quests:
   $ref: './response/dashboard/quest.yaml'

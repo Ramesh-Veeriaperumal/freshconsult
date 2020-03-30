@@ -1,0 +1,1 @@
+JSON.generate(@article_performance_info)

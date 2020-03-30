@@ -233,6 +233,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :'ember/solutions/home', only: %i[summary quick_views]
     resource :'ember/solutions/draft', only: %i[index]
     resource :'ember/solutions/article_version', only: %i[index show]
+    resource :"ember/dashboard/solution", only: %i[article_performance translation_summary]
   end
 
   export_articles do

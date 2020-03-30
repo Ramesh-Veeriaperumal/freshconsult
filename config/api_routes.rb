@@ -859,6 +859,8 @@ Helpkit::Application.routes.draw do
         get :ticket_summaries, to: 'ember/dashboard#scorecard'
         get :activities, to: 'ember/dashboard/activities#index'
         get :quests, to: 'ember/dashboard/quests#index'
+        get :article_performance, to: 'ember/dashboard/solutions#article_performance'
+        get :translation_summary, to: 'ember/dashboard/solutions#translation_summary'
       end
     end
 

@@ -1,0 +1,15 @@
+type: object
+properties:
+  translation_summary:
+    description: Gives count of articles translated count in all configured languages
+    type: object
+    properties:
+      en:
+        type: integer
+        description: No of articles in English language
+      fr:
+        type: integer
+        description: No of articles in French language
+      jp:
+        type: integer
+        description: No of articles in French language

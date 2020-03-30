@@ -42,7 +42,7 @@ class Solution::PortalLanguageFilter
     sol_art_meta.where(solution_folder_meta: { account_id: Account.current.id })
   end
 
-  def articles
+  def all_article_translations
     sol_arts = Account.current.solution_articles
     sol_arts = if @portal_id.present?
                  sol_arts.joins(solution_article_meta: [solution_folder_meta: [solution_category_meta: [portal_solution_categories: :portal]]])
@@ -54,7 +54,10 @@ class Solution::PortalLanguageFilter
     sol_arts.where(solution_category_meta: { account_id: Account.current.id })
             .where(solution_folder_meta: { account_id: Account.current.id })
             .where(solution_article_meta: { account_id: Account.current.id })
-            .where(solution_articles: { language_id: @lang_id })
+  end
+
+  def articles
+    all_article_translations.where(solution_articles: { language_id: @lang_id })
   end
 
   def published_articles

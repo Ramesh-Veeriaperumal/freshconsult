@@ -356,6 +356,10 @@
   $ref: ./dashboard/ticket_trends.yaml
 /default_dashboards/ticket_metrics:
   $ref: ./dashboard/ticket_metrics.yaml
+/default_dashboards/article_performance:
+  $ref: ./dashboard/article_performance.yaml
+/default_dashboards/translation_summary:
+  $ref: ./dashboard/translation_summary.yaml
 /dashboards/leaderboard_agents:
   $ref: ./dashboard/leaderboard/agents.yaml
 /dashboards/leaderboard_groups:

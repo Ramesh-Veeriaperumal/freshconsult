@@ -6864,6 +6864,75 @@
         }
       }
     },
+    "/default_dashboards/article_performance": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Article performance",
+        "parameters": [
+          {
+            "name": "portal_id",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/article_performance"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/default_dashboards/translation_summary": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Article translation summary",
+        "parameters": [
+          {
+            "name": "portal_id",
+            "in": "query",
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/translation_summary"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/dashboards/leaderboard_agents": {
       "get": {
         "tags": [
@@ -24228,6 +24297,52 @@
               "content": {
                 "type": "string"
               }
+            }
+          }
+        }
+      }
+    },
+    "article_performance": {
+      "type": "object",
+      "properties": {
+        "article_performance": {
+          "description": "Total hits, thumbs up and thumbs down for the particular portal in the given language",
+          "type": "object",
+          "properties": {
+            "hits": {
+              "type": "integer",
+              "description": "Total article views"
+            },
+            "thumbs_up": {
+              "type": "integer",
+              "description": "Total article thumbs up"
+            },
+            "thumbs_down": {
+              "type": "integer",
+              "description": "Total article thumbs down"
+            }
+          }
+        }
+      }
+    },
+    "translation_summary": {
+      "type": "object",
+      "properties": {
+        "translation_summary": {
+          "description": "Gives count of articles translated count in all configured languages",
+          "type": "object",
+          "properties": {
+            "en": {
+              "type": "integer",
+              "description": "No of articles in English language"
+            },
+            "fr": {
+              "type": "integer",
+              "description": "No of articles in French language"
+            },
+            "jp": {
+              "type": "integer",
+              "description": "No of articles in French language"
             }
           }
         }
