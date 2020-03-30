@@ -49,10 +49,26 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
     va_rules = Account.current.account_va_rules.find_by_id(@va_rule_id)
     va_rules.destroy if va_rules.present?
     @va_rule_id = nil
+    User.any_instance.unstub(:privilege?)
+    unstub_service_task_automation_lp_and_privilege
+    super
   end
 
   def toggle_automation_revamp_feature(enable)
     enable ? Account.current.launch(:automation_revamp) : Account.current.rollback(:automation_revamp)
+  end
+
+  def enable_service_task_automation_lp_and_privileges
+    User.any_instance.stubs(:privilege?).with(:manage_service_task_automation_rules).returns(true)
+    User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+    Account.any_instance.stubs(:fsm_admin_automations_enabled?).returns(true)
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+  end
+
+  def unstub_service_task_automation_lp_and_privilege
+    User.any_instance.unstub(:privilege?)
+    Account.any_instance.unstub(:fsm_admin_automations_enabled?)
+    Account.any_instance.unstub(:field_service_management_enabled?)
   end
 
   # Start Invalid rule & Feature not enabled test cases
@@ -606,5 +622,122 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
     assert_response 200
   ensure
     Account.current.reload
+  end
+
+  # Service task automation cases
+
+  def test_create_service_task_dispatcher_rule_when_service_task_automation_disabled
+    enable_service_task_automation_lp_and_privileges
+    Account.any_instance.stubs(:fsm_admin_automations_enabled?).returns(false)
+    va_rule_request = valid_request_dispatcher_with_ticket_conditions(:source)
+    post :create, construct_params({ rule_type: VAConfig::RULES[:service_task_dispatcher] }.merge(va_rule_request), va_rule_request)
+    assert_response 403
+    match_json(request_error_pattern(:access_denied))
+  end
+
+  def test_create_service_task_dispatcher_rule_when_field_service_management_is_disabled
+    enable_service_task_automation_lp_and_privileges
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
+    va_rule_request = valid_request_dispatcher_with_ticket_conditions(:source)
+    post :create, construct_params({ rule_type: VAConfig::RULES[:service_task_dispatcher] }.merge(va_rule_request), va_rule_request)
+    assert_response 403
+    match_json(request_error_pattern(:access_denied))
+  end
+
+  def test_create_service_task_observer_rule_without_manage_service_task_automations_privilege
+    enable_service_task_automation_lp_and_privileges
+    User.any_instance.stubs(:privilege?).with(:manage_service_task_automation_rules).returns(false)
+    va_rule_request = valid_request_observer(:priority)
+    post :create, construct_params({ rule_type: VAConfig::RULES[:service_task_observer] }.merge(va_rule_request), va_rule_request)
+    assert_response 403
+    match_json(request_error_pattern(:access_denied))
+  end
+
+  def test_service_task_dispatcher_create_with_ticket_conditions_cf_date
+    enable_service_task_automation_lp_and_privileges
+    dispatcher_create_test(:cf_date, :priority, :ticket, VAConfig::RULES[:service_task_dispatcher])
+  end
+
+  def test_service_task_dispatcher_create_with_ticket_conditions_cf_date_time
+    enable_service_task_automation_lp_and_privileges
+    dispatcher_create_test(:cf_date_time, :priority, :ticket, VAConfig::RULES[:service_task_dispatcher])
+  end
+
+  def test_get_service_task_dispatcher_rules
+    enable_service_task_automation_lp_and_privileges
+    get :index, controller_params(rule_type: VAConfig::RULES[:service_task_dispatcher])
+    assert_response 200
+    rules = Account.current.all_service_task_dispatcher_rules
+    match_json(rules_pattern(rules))
+  end
+
+  def test_update_service_task_dispatcher_rule
+    enable_service_task_automation_lp_and_privileges
+    va_rule_request = valid_request_dispatcher_with_ticket_conditions(:source)
+    post :create, construct_params({ rule_type: VAConfig::RULES[:service_task_dispatcher] }.merge(va_rule_request), va_rule_request)
+    assert_response 201
+    parsed_response = JSON.parse(response.body)
+    rule_id = parsed_response['id'].to_i
+    new_va_rule_request = valid_request_dispatcher_with_ticket_conditions(:ticket_type)
+    put :update, construct_params({ rule_type: VAConfig::RULES[:service_task_dispatcher], id: rule_id }, new_va_rule_request)
+    parsed_update_response = JSON.parse(response.body)
+    rule = Account.current.account_va_rules.find(rule_id)
+    assert_response 200
+    match_custom_json(parsed_update_response, new_va_rule_request.merge!(default_rule_pattern(rule, false)))
+  end
+
+  def test_delete_service_task_dispatcher_rule
+    enable_service_task_automation_lp_and_privileges
+    va_rule_request = valid_request_dispatcher_with_ticket_conditions(:source)
+    post :create, construct_params({ rule_type: VAConfig::RULES[:service_task_dispatcher] }.merge(va_rule_request), va_rule_request)
+    assert_response 201
+    parsed_response = JSON.parse(response.body)
+    rule_id = parsed_response['id'].to_i
+    delete :destroy,
+           controller_params(rule_type: VAConfig::RULES[:service_task_dispatcher]).merge(id: rule_id)
+    rule = Account.current.account_va_rules.find_by_id(rule_id)
+    assert_response 204
+    assert_nil rule
+  end
+
+  def test_create_service_task_observer_rule_with_ticket_events_ticket_type
+    enable_service_task_automation_lp_and_privileges
+    observer_create_test(:ticket_type, :subject, :priority, VAConfig::RULES[:service_task_observer])
+  end
+
+  def test_update_service_task_observer_rule
+    enable_service_task_automation_lp_and_privileges
+    va_rule_request = valid_request_observer(:priority)
+    post :create, construct_params({ rule_type: VAConfig::RULES[:service_task_observer] }.merge(va_rule_request), va_rule_request)
+    assert_response 201
+    parsed_response = JSON.parse(response.body)
+    rule_id = parsed_response['id'].to_i
+    new_va_rule_request = valid_request_dispatcher_with_ticket_conditions(:ticket_type)
+    put :update, construct_params({ rule_type: VAConfig::RULES[:service_task_observer], id: rule_id }, new_va_rule_request)
+    parsed_update_response = JSON.parse(response.body)
+    rule = Account.current.account_va_rules.find(rule_id)
+    assert_response 200
+    match_custom_json(parsed_update_response, automation_rule_pattern(rule))
+  end
+
+  def test_get_service_task_observer_rules
+    enable_service_task_automation_lp_and_privileges
+    get :index, controller_params(rule_type: VAConfig::RULES[:service_task_observer])
+    assert_response 200
+    rules = Account.current.all_service_task_observer_rules
+    match_json(rules_pattern(rules))
+  end
+
+  def test_delete_service_task_observer_rule
+    enable_service_task_automation_lp_and_privileges
+    va_rule_request = valid_request_observer(:ticket_type)
+    post :create, construct_params({ rule_type: VAConfig::RULES[:service_task_observer] }.merge(va_rule_request), va_rule_request)
+    parsed_response = JSON.parse(response.body)
+    va_rule_id = parsed_response['id'].to_i
+    delete :destroy,
+           controller_params(rule_type: VAConfig::RULES[:service_task_observer]).merge(id: va_rule_id)
+    rule = Account.current.account_va_rules.find_by_id(va_rule_id)
+    assert_response 204
+    assert_nil rule
   end
 end

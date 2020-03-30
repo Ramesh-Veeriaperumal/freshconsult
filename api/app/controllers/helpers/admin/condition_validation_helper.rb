@@ -275,13 +275,11 @@ module Admin::ConditionValidationHelper
   end
 
   def dispatcher_rule?
-    rule_name = VAConfig::RULES_BY_ID[rule_type.to_i]
-    rule_name == :dispatcher
+    VAConfig::DISPATCHER_RULE_TYPES.include?(rule_type.to_i)
   end
 
   def observer_rule?
-    rule_name = VAConfig::RULES_BY_ID[rule_type.to_i]
-    rule_name == :observer
+    VAConfig::OBSERVER_RULE_TYPES.include?(rule_type.to_i)
   end
 
   def supervisor_rule?

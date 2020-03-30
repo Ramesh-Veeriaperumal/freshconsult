@@ -12,7 +12,9 @@ module Admin::AutomationConstants
   AUTOMATION_FIELDS = {
     dispatcher: [:conditions, :actions],
     observer: [:performer, :events, :conditions, :actions],
-    supervisor: [:conditions, :actions]
+    supervisor: [:conditions, :actions],
+    service_task_dispatcher: [:conditions, :actions],
+    service_task_observer: [:performer, :events, :conditions, :actions]
   }.freeze
 
   AUTOMATION_RULE_TYPES = AUTOMATION_FIELDS.keys.freeze
@@ -391,7 +393,9 @@ module Admin::AutomationConstants
   PRIVATE_API_ROOT_KEY_MAPPING = {
     1 => :ticket_creation_rule,
     3 => :time_trigger_rule,
-    4 => :ticket_update_rule
+    4 => :ticket_update_rule,
+    5 => :service_task_creation_rule,
+    6 => :service_task_update_rule
   }.freeze
 
   SUPERVISOR_OPERATOR_CONVERSION_FIELD = %i[status priority source responder_id group_id product_id ticket_type].freeze

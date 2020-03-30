@@ -8,15 +8,22 @@ module VAConfig
   #    return params 
   #  end
   
-  RULES = { dispatcher: 1, scenario_automation: 2, supervisor: 3, observer: 4, app_business_rule: 11, installed_app_business_rule: 12, api_webhook_rule: 13 }
+  RULES = { dispatcher: 1, scenario_automation: 2, supervisor: 3, observer: 4,
+            service_task_dispatcher: 5, service_task_observer: 6, app_business_rule: 11,
+            installed_app_business_rule: 12,
+            api_webhook_rule: 13 }.freeze
 
   BUSINESS_RULE = RULES[:dispatcher]
   SCENARIO_AUTOMATION = RULES[:scenario_automation]
   SUPERVISOR_RULE = RULES[:supervisor]
   OBSERVER_RULE = RULES[:observer]
+  SERVICE_TASK_DISPATCHER_RULE = RULES[:service_task_dispatcher]
+  SERVICE_TASK_OBSERVER_RULE = RULES[:service_task_observer]
   APP_BUSINESS_RULE = RULES[:app_business_rule]
   INSTALLED_APP_BUSINESS_RULE = RULES[:installed_app_business_rule]
   API_WEBHOOK_RULE = RULES[:api_webhook_rule]
+  DISPATCHER_RULE_TYPES = [RULES[:dispatcher], RULES[:service_task_dispatcher]].freeze
+  OBSERVER_RULE_TYPES = [RULES[:observer], RULES[:service_task_observer]].freeze
 
   RULES_BY_ID = RULES.invert
   # TODO-RAIL3:: Get these I18N based constants out of Initializers
@@ -28,11 +35,13 @@ module VAConfig
 
   CREATED_DURING_NAMES_BY_KEY = Hash[*CREATED_DURING_VALUES.map { |i| [i[2], i[1]] }.flatten]
 
-  ASSOCIATION_MAPPING = { 
-                          dispatcher: :va_rules,
-                          observer: :observer_rules,
-                          supervisor: :supervisor_rules
-                        }
+  ASSOCIATION_MAPPING = {
+    dispatcher:              :va_rules,
+    observer:                :observer_rules,
+    supervisor:              :supervisor_rules,
+    service_task_dispatcher: :service_task_dispatcher_rules,
+    service_task_observer:   :service_task_observer_rules
+  }.freeze
 
   def self.handler(field, account, evaluate_on_type = nil)
     fetch_handler field, account, :rule, evaluate_on_type

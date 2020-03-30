@@ -22,6 +22,7 @@ module VaRulesTesthelper
     source: :choice_list,
     cf_decimal: :decimal,
     cf_date: :date,
+    cf_date_time: :date_time,
     nested_field: :nested_field
   }.freeze
 
@@ -58,6 +59,7 @@ module VaRulesTesthelper
     number: %i[is is_not greater_than less_than is_any_of is_none_of],
     decimal: %i[is is_not greater_than less_than],
     date: %i[is is_not greater_than less_than],
+    date_time: %i[is is_not greater_than less_than],
     nested_field: %i[is is_not is_any_of is_none_of],
     choice_list: %i[in not_in]
   }.freeze
@@ -133,6 +135,8 @@ module VaRulesTesthelper
       nil
     when :date
       Time.zone.now.strftime('%Y-%m-%d')
+    when :date_time
+      Time.zone.now.iso8601
     when :number
       1
     when :decimal

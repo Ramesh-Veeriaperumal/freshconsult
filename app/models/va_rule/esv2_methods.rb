@@ -27,10 +27,10 @@ class VaRule < ActiveRecord::Base
   end
 
   def search_performer
-    observer_rule? ? VA::Search::Performer::SearchTransformer.new(rule_performer).to_search_format : []
+    ticket_observer_rule? ? VA::Search::Performer::SearchTransformer.new(rule_performer).to_search_format : []
   end
 
   def search_events
-    observer_rule? ? VA::Search::Events::SearchTransformer.new(rule_events).to_search_format : []
+    ticket_observer_rule? ? VA::Search::Events::SearchTransformer.new(rule_events).to_search_format : []
   end
 end
