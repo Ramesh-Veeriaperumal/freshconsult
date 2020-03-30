@@ -149,7 +149,8 @@ Helpkit::Application.routes.draw do
 
     resources :agents, controller: 'api_agents', only: [:index, :show, :update, :destroy, :create] do
       collection do
-        put :update_multiple
+        post :create_multiple
+        put  :update_multiple
       end
     end
     resources :out_of_offices, only: [:index, :show, :update, :destroy, :create]
@@ -801,7 +802,6 @@ Helpkit::Application.routes.draw do
     resources :agents, controller: 'ember/agents', only: [:index, :show, :update], id: /\d+/ do
       collection do
         get :search_in_freshworks
-        post :create_multiple
         get :revert_identity
         post :complete_gdpr_acceptance
         post :enable_undo_send
@@ -978,7 +978,7 @@ Helpkit::Application.routes.draw do
         get 'filters/:filter_id', to: 'channel/v2/ticket_misc#index'
       end
     end
-    resources :agents, controller: 'channel/v2/agents' do
+    resources :agents, controller: 'channel/v2/agents', only: [:create] do
       collection do
         put :update_multiple
       end

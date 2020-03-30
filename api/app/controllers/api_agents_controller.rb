@@ -69,13 +69,23 @@ class ApiAgentsController < ApiApplicationController
     render_custom_errors
   end
 
+  def create_multiple
+    @errors = []
+    build_default_required_params
+    validate_agent_params
+    @job_id = request.uuid
+    initiate_bulk_job(AgentConstants::BULK_API_JOBS_CLASS, params[cname][:agents], @job_id, action_name)
+    @job_link = current_account.bulk_job_url(@job_id)
+    render('api_agents/create_multiple', status: 202) unless @errors.present?
+  end
+
   def update_multiple
     @errors = []
-    return unless validate_agent_params
-
-    initiate_bulk_job(AgentConstants::BULK_API_JOBS_CLASS, params[cname][:agents], request.uuid)
+    validate_agent_params
     @job_id = request.uuid
-    @job_link = "#{Account.current.full_url}/api/v2/jobs/#{@job_id}"
+    initiate_bulk_job(AgentConstants::BULK_API_JOBS_CLASS, params[cname][:agents], @job_id, action_name)
+    @job_link = current_account.bulk_job_url(@job_id)
+    render('api_agents/update_multiple', status: 202) unless @errors.present?
   end
 
   def destroy
@@ -125,9 +135,8 @@ class ApiAgentsController < ApiApplicationController
 
   def validate_agent_params
     params[cname][:agents].each do |agent_params|
-      return false unless validate_request(nil, agent_params, nil)
+      validate_params(agent_params)
     end
-    true
   end
 
   def search_in_freshworks
@@ -147,6 +156,12 @@ class ApiAgentsController < ApiApplicationController
       agent_params[:attachment_ids] = Array.wrap(params[cname][:avatar_id].to_i) if params[cname][:avatar_id].present?
       agent_params[:action] = action_name
       agent_params
+    end
+
+    def build_default_required_params
+      params[cname][:agents].each do |agent|
+        agent[:name] ||= agent[:email].split('@')[0]
+      end
     end
 
     def after_load_object
@@ -170,11 +185,12 @@ class ApiAgentsController < ApiApplicationController
       params[cname].except!(AgentConstants::IGNORE_PARAMS)
     end
 
-    def validate_params
+    def validate_params(agent_params = nil)
+      agent_params ||= params[cname]
       allowed_fields = "#{constants_class}::#{action_name.upcase}_FIELDS".constantize
       allowed_fields += AgentConstants::SKILLS_FIELDS if current_account.skill_based_round_robin_enabled?
-      params[cname].permit(*allowed_fields)
-      agent = AgentValidation.new(params[cname], @item, string_request_params?)
+      agent_params.permit(*allowed_fields)
+      agent = AgentValidation.new(agent_params, @item, string_request_params?)
       render_custom_errors(agent, true) unless agent.valid?(action_name.to_sym)
     end
 

@@ -25,6 +25,14 @@ class ApiAgentsControllerTest < ActionController::TestCase
     @@before_all_run = true
   end
 
+  def create_multiple_emails emails, other_params = {}
+    email_params = []
+    1..2.times do |loop_number|
+      email_params.push({ email: emails[loop_number] })
+    end
+    email_params
+  end
+
   def test_agent_index
     3.times do
       add_test_agent(@account, role: Role.find_by_name('Agent').id)
@@ -1571,7 +1579,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
               ]}
     put :update_multiple, construct_params(payload)
     result = parse_response(@response.body)
-    assert_response 200
+    assert_response 202
     assert_equal result, {"job_id"=>nil, "href"=>"https://localhost.freshpo.com/api/v2/jobs/"}
   end
 
@@ -1615,24 +1623,197 @@ class ApiAgentsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:gamification_enabled?)
   end
 
-  # def test_update_multiple_with_50_agents
-  #   agent_array = []
-  #   agent_role_id = Role.find_by_name('Agent').id
-  #   50.times do 
-  #     agent_array << { 
-  #       "id" => add_test_agent(@account, role: agent_role_id).id,
-  #       "ticket_assignment" => { "available" => true }
-  #     }
-  #   end
-  #   payload = { "agents" => agent_array }
-  #   Sidekiq::Testing.inline! do
-  #     put :update_multiple, construct_params(payload)
-  #   end
-  #   result = parse_response(@response.body)
-  #   assert_response 200
-  #   assert_equal result, {"job_id"=>nil, "href"=>"https://localhost.freshpo.com/api/v2/jobs/"}
-  #   payload['agents'].each do |agent|
-  #     assert_equal Account.current.agents.find_by_user_id(agent['id']).available, true
-  #   end
-  # end
+  def test_multiple_agent_creation_with_valid_emails_and_no_role
+    uuid = SecureRandom.hex
+    request.stubs(:uuid).returns(uuid)
+    valid_emails = [Faker::Internet.email, Faker::Internet.email]
+    invalid_emails = []
+    emails = create_multiple_emails(valid_emails)
+    dynamo_response = { 'payload' => emails , 'action' => 'create_multiple' }
+    BulkApiJobs::Agent.any_instance.stubs(:pick_job).returns(dynamo_response)
+    Sidekiq::Testing.inline! do
+      post :create_multiple, construct_params(version: 'private', agents: emails)
+    end
+    assert_response 202
+    pattern = { job_id: uuid, href: @account.bulk_job_url(uuid) }
+    match_json(pattern)
+    @account.reload
+    valid_emails.each do |email|
+      assert_equal @account.users.find_by_email(email).agent.present?, true
+    end
+  ensure
+    request.unstub(:uuid)
+    BulkApiJobs::Agent.any_instance.unstub(:pick_job)
+  end
+
+  def test_multiple_agent_creation_with_freshid
+    uuid = SecureRandom.hex
+    request.stubs(:uuid).returns(uuid)
+    @account.launch(:freshid)
+    valid_emails = [Faker::Internet.email, Faker::Internet.email]
+    freshid_users = {}
+    valid_emails.each { |email| freshid_users[email] = freshid_user }
+    Freshid::User.stubs(:create).returns(freshid_users[valid_emails[0]], freshid_users[valid_emails[1]])
+    User.any_instance.stubs(:deliver_agent_invitation!).returns(true)
+    emails = create_multiple_emails(valid_emails)
+    dynamo_response = { 'payload' => emails , 'action' => 'create_multiple' }
+    BulkApiJobs::Agent.any_instance.stubs(:pick_job).returns(dynamo_response)
+    Sidekiq::Testing.inline! do
+      post :create_multiple, construct_params(version: 'private', agents: emails)
+    end
+    assert_response 202
+    pattern = { job_id: uuid, href: @account.bulk_job_url(uuid) }
+    match_json(pattern)
+    @account.reload
+    valid_emails.each do |email|
+      assert_equal @account.users.find_by_email(email).agent.present?, true
+    end
+    User.any_instance.unstub(:deliver_agent_invitation!)
+    Freshid::User.unstub(:create)
+    @account.rollback(:freshid)
+  ensure
+    BulkApiJobs::Agent.any_instance.unstub(:pick_job)
+    request.unstub(:uuid)
+  end
+
+  def test_multiple_agent_creation_with_existing_user_in_freshid
+    uuid = SecureRandom.hex
+    request.stubs(:uuid).returns(uuid)
+    @account.launch(:freshid)
+    fid_user_params = { first_name: "Existing", last_name: "User", phone: "543210", mobile: "9876543210" }
+    existing_freshid_user = freshid_user(fid_user_params)
+    valid_email = Faker::Internet.email
+    agent_params = [{ email: valid_email }]
+    Freshid::User.stubs(:create).returns(existing_freshid_user)
+    User.any_instance.stubs(:deliver_agent_invitation!).returns(true)
+    dynamo_response = { 'payload' => agent_params , 'action' => 'create_multiple' }
+    BulkApiJobs::Agent.any_instance.stubs(:pick_job).returns(dynamo_response)
+    Sidekiq::Testing.inline! do
+      post :create_multiple, construct_params(version: 'private', agents: agent_params)
+    end
+    assert_response 202
+    pattern = { job_id: uuid, href: @account.bulk_job_url(uuid) }
+    match_json(pattern)
+    @account.reload
+
+    user = @account.users.find_by_email(valid_email)
+    assert_equal user.name, "#{fid_user_params[:first_name]} #{fid_user_params[:last_name]}"
+    assert_equal user.phone, fid_user_params[:phone]
+    assert_equal user.mobile, fid_user_params[:mobile]
+
+    User.any_instance.unstub(:deliver_agent_invitation!)
+    Freshid::User.unstub(:create)
+    @account.rollback(:freshid)
+  ensure
+    BulkApiJobs::Agent.any_instance.unstub(:pick_job)
+    request.unstub(:uuid)
+  end
+
+  def test_multiple_agent_creation_with_valid_email_and_role
+    uuid = SecureRandom.hex
+    request.stubs(:uuid).returns(uuid)
+    valid_email = Faker::Internet.email
+    request_params = [ {:email => valid_email, :role_ids => [ @account.roles.admin.first.id ]} ]
+    dynamo_response = { 'payload' => request_params , 'action' => 'create_multiple' }
+    BulkApiJobs::Agent.any_instance.stubs(:pick_job).returns(dynamo_response)
+    Sidekiq::Testing.inline! do
+      post :create_multiple, construct_params(version: 'private', agents: request_params)
+    end
+
+    assert_response 202
+    assert_equal @account.users.find_by_email(valid_email).agent.present?, true
+    pattern = { job_id: uuid, href: @account.bulk_job_url(uuid) }
+    match_json(pattern)
+    @account.reload
+  ensure
+    BulkApiJobs::Agent.any_instance.unstub(:pick_job)
+    request.unstub(:uuid)
+  end
+
+  def test_multiple_agent_creation_with_invalid_emails
+    uuid = SecureRandom.hex
+    request.stubs(:uuid).returns(uuid)
+    invalid_emails = [Faker::Name.name, Faker::Name.name]
+    emails = create_multiple_emails(invalid_emails)
+    dynamo_response = { 'payload' => emails , 'action' => 'create_multiple' }
+    BulkApiJobs::Agent.any_instance.stubs(:pick_job).returns(dynamo_response)
+    Sidekiq::Testing.inline! do
+      post :create_multiple, construct_params(version: 'private', agents: emails)
+    end
+    assert_response 400
+    match_json([bad_request_error_pattern('email', "It should be in the 'valid email address' format")])
+  ensure
+    BulkApiJobs::Agent.any_instance.unstub(:pick_job)
+    request.unstub(:uuid)
+  end
+
+  def test_multiple_agent_creation_with_duplicate_emails
+    uuid = SecureRandom.hex
+    request.stubs(:uuid).returns(uuid)
+    agents = []
+    email = Faker::Internet.email
+    duplicate_emails = [email, email]
+    emails = create_multiple_emails(duplicate_emails)
+    dynamo_response = { 'payload' => emails , 'action' => 'create_multiple' }
+    BulkApiJobs::Agent.any_instance.stubs(:pick_job).returns(dynamo_response)
+    Sidekiq::Testing.inline! do
+      post :create_multiple, construct_params(version: 'private', agents: emails)
+    end
+    assert_response 202
+    pattern = { job_id: uuid, href: @account.bulk_job_url(uuid) }
+    match_json(pattern)
+    assert_equal @account.users.where('email = ?', email).count, 1
+  ensure
+    BulkApiJobs::Agent.any_instance.unstub(:pick_job)
+    request.unstub(:uuid)
+  end
+
+  def test_validate_item_with_invalid_role_ids
+    uuid = SecureRandom.hex
+    request.stubs(:uuid).returns(uuid)
+    valid_email = Faker::Internet.email
+    request_params = [ {:email => valid_email, :role_ids => [ @account.roles.admin.first.id ]} ]
+    Account.any_instance.stubs(:roles_from_cache).returns([])
+    dynamo_response = { 'payload' => request_params , 'action' => 'create_multiple' }
+    BulkApiJobs::Agent.any_instance.stubs(:pick_job).returns(dynamo_response)
+    Sidekiq::Testing.inline! do
+      post :create_multiple, construct_params(version: 'private', agents: request_params)
+    end
+    assert_response 202
+    pattern = { job_id: uuid, href: @account.bulk_job_url(uuid) }
+    match_json(pattern)
+    assert_equal @account.users.find_by_email(valid_email).present?, false
+  ensure
+    Account.any_instance.unstub(:roles_from_cache)
+    BulkApiJobs::Agent.any_instance.unstub(:pick_job)
+    request.unstub(:uuid)
+  end
+
+  def test_update_multiple_with_50_agents
+    uuid = SecureRandom.hex
+    request.stubs(:uuid).returns(uuid)
+    agent_array = []
+    agent_role_id = Role.find_by_name('Agent').id
+    50.times do 
+      agent_array << { 
+        "id" => add_test_agent(@account, role: agent_role_id).id,
+        "ticket_assignment" => { "available" => true }
+      }
+    end
+    payload = { "agents" => agent_array }
+    dynamo_response = { 'payload' => agent_array , 'action' => 'update_multiple' }
+    BulkApiJobs::Agent.any_instance.stubs(:pick_job).returns(dynamo_response)
+    Sidekiq::Testing.inline! do
+      put :update_multiple, construct_params(payload)
+    end
+    assert_response 202
+    pattern = { job_id: uuid, href: @account.bulk_job_url(uuid) }
+    match_json(pattern)
+    payload['agents'].each do |agent|
+      assert_equal Account.current.agents.find_by_user_id(agent['id']).available, true
+    end
+  ensure
+    BulkApiJobs::Agent.any_instance.unstub(:pick_job)
+    request.unstub(:uuid)
+  end
 end

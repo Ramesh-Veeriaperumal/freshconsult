@@ -206,6 +206,9 @@ class Agent < ActiveRecord::Base
     MemcacheKeys.delete_from_cache(ACCOUNT_GROUPS % { :account_id =>self.account_id })
   end
 
+  def agent_url
+    "#{account.full_url}/api/v2/agents/#{user_id}"
+  end
 
   def to_xml(options = {})
     options.merge!(API_OPTIONS)

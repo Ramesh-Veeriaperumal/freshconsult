@@ -7,7 +7,7 @@ module AgentConstants
   UPDATE_FIELDS = %w[name email phone mobile time_zone job_title language signature ticket_scope occasional shortcuts_enabled focus_mode agent_level_id freshcaller_agent avatar_id].freeze | UPDATE_ARRAY_FIELDS | [ticket_assignment: [:available]].freeze | [search_settings: [tickets: TICKET_SEARCH_SETTINGS]].freeze
   CREATE_FIELDS = %w[name email phone mobile time_zone job_title language signature ticket_scope occasional agent_type agent_level_id freshcaller_agent avatar_id].freeze | UPDATE_ARRAY_FIELDS | [ticket_assignment: [:available]].freeze
   SKILLS_FIELDS = %w[skill_ids].freeze
-  CREATE_MULTIPLE_FIELDS = UPDATE_FIELDS
+  CREATE_MULTIPLE_FIELDS = CREATE_FIELDS
   UPDATE_MULTIPLE_FIELDS = ['id', ticket_assignment: [:available]].freeze
   TICKET_SCOPES = Agent::PERMISSION_TOKENS_BY_KEY.keys
   FIELD_AGENT_SCOPES = Agent::PERMISSIONS_TOKEN_FOR_FIELD_AGENT.keys

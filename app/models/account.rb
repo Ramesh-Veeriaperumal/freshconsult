@@ -167,6 +167,10 @@ class Account < ActiveRecord::Base
     secret_keys[:help_widget]
   end
 
+  def bulk_job_url(job_id)
+    "#{full_url}/api/v2/jobs/#{job_id}"
+  end
+
   #Temporary feature check methods - using redis keys - ends here
 
   def round_robin_capping_enabled?

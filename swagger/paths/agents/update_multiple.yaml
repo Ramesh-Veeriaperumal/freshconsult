@@ -12,7 +12,7 @@ patch:
       in: body
       required: true
       schema:
-        $ref: '#/definitions/update_multiple_agents_input'
+        $ref: '#/definitions/agent_input'
   responses:
     202:
       description: Accepted

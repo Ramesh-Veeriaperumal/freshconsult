@@ -1,4 +1,0 @@
-{
-  succeeded: @succeeded,
-  failed: @failed
-}.to_json

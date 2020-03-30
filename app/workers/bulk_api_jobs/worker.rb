@@ -4,18 +4,32 @@ module BulkApiJobs
 
     def perform(args)
       args.symbolize_keys!
-      account = Account.current
-      job = pick_job(args[:request_id])
+      item = pick_job(args[:request_id])
       update_job(args[:request_id], 'status_id' => BULK_API_JOB_STATUSES['IN_PROGRESS'])
-      payload = job.item['payload']
-      partial = false
+      payload = item['payload']
+      if item['current_user_id'].present?
+        user = Account.current.technicians.find_by_id(item['current_user_id'])
+        if user.present?
+          user.make_current
+        else
+          Rails.logger.debug "User not found : #{item['current_user_id']}"
+        end
+      end
+      succeeded = 0
 
-      payload, partial = safe_send('process_payload', account, payload, partial)
+      payload, succeeded = safe_send("process_#{item['action']}_payload", payload, succeeded)
 
-      status = partial ? BULK_API_JOB_STATUSES['PARTIAL'] : BULK_API_JOB_STATUSES['SUCCESS']
+      status = case succeeded
+               when 0
+                 BULK_API_JOB_STATUSES['FAILED']
+               when payload.count
+                 BULK_API_JOB_STATUSES['SUCCESS']
+               else
+                 BULK_API_JOB_STATUSES['PARTIAL']
+               end
       update_job(args[:request_id], {'status_id' => status, 'payload' => payload})
     rescue Exception => e
-      Rails.logger.debug "Failed to bulk update : #{e.class} #{e.message}"
+      Rails.logger.debug "Failed to perform bulk operation : #{e.class} #{e.message} #{e.backtrace}"
       update_job(args[:request_id], {'status_id' => BULK_API_JOB_STATUSES['FAILED']})
       NewRelic::Agent.notice_error(e, {:args => args})
     end
