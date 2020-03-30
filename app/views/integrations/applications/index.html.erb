@@ -1,159 +1,171 @@
-<%= stylesheet_link_tag_with_rtl :'cdn/freshplugs' %>
-<%= stylesheet_link_tag_with_rtl :'cdn/marketplace' %>
-<% more_apps_params = { type: Marketplace::Constants::DEFAULT_EXTENSION_TYPES,sort_by: Marketplace::Constants::EXTENSION_SORT_TYPES }.to_query %>
-<% content_for :helpcard do %>
-  <%= render :partial => "helpnote" %>
-<% end %>
-<!-- TITLE -->
-<% if feature?(:marketplace) && !Account.current.launched?(:native_apps) %>
-  <h3 class="title"><%=t('marketplace.apps')%></h3>
-  <div class="intro"><%=t('marketplace.app_description')%></div>
-<% else %>
-  <h3 class="title"><%=t('application.title')%></h3>
-  <div class="intro"><%=t('application.desc')%></div>
-<% end %>
+<% if !Account.current.launched?(:marketplace_gallery) %>
+  <%= stylesheet_link_tag_with_rtl :'cdn/freshplugs' %>
+  <%= stylesheet_link_tag_with_rtl :'cdn/marketplace' %>
+  <% more_apps_params = { type: Marketplace::Constants::DEFAULT_EXTENSION_TYPES,sort_by: Marketplace::Constants::EXTENSION_SORT_TYPES }.to_query %>
+  <% content_for :helpcard do %>
+    <%= render 'helpnote' %>
+  <% end %>
+  <!-- TITLE -->
+  <% if feature?(:marketplace) && !Account.current.launched?(:native_apps) %>
+    <h3 class="title"><%=t('marketplace.apps')%></h3>
+    <div class="intro"><%=t('marketplace.app_description')%></div>
+  <% else %>
+    <h3 class="title"><%=t('application.title')%></h3>
+    <div class="intro"><%=t('application.desc')%></div>
+  <% end %>
 
-<% active_account = current_account.active? %>
+  <% active_account = current_account.active? %>
 
-<div id="integrations-list">
-  <div>
-    <div class="tab-actions">
-      <% if feature?(:marketplace) && !Account.current.launched?(:native_apps) %>
-        <div class="button-bar browse-apps pull-right <%= active_account ? '' : 'tooltip' %>" 
-          <% unless active_account %> data-placement=below title="<%=t('marketplace.tooltip.suspended')%>" <% end %> >
-          <a class="browse-btn btn btn-flat browse-apps-btn <%= active_account ? '' : 'disabled' %> " 
-             href="" data-url="<%= active_account ? "#{admin_marketplace_extensions_path}?#{more_apps_params}" : '' %>">
-             <span class="ficon-cube-filled"></span> <%= t('marketplace.get_more_apps') %>
-          </a>
+  <div id="integrations-list">
+    <div>
+      <div class="tab-actions">
+        <% if feature?(:marketplace) && !Account.current.launched?(:native_apps) %>
+          <div class="button-bar browse-apps pull-right <%= active_account ? '' : 'tooltip' %>"
+            <% unless active_account %> data-placement=below title="<%=t('marketplace.tooltip.suspended')%>" <% end %> >
+            <a class="browse-btn btn btn-flat browse-apps-btn <%= active_account ? '' : 'disabled' %> "
+              href="" data-url="<%= active_account ? "#{admin_marketplace_extensions_path}?#{more_apps_params}" : '' %>">
+              <span class="ficon-cube-filled"></span> <%= t('marketplace.get_more_apps') %>
+            </a>
+          </div>
+        <% end %>
+        <% if current_account.custom_apps_enabled? %>
+        <div class="button-bar create-new pull-right" style="display:none;">
+          <a class="browse-btn btn btn-flat get-custom-apps <%= active_account ? '' : 'disabled' %>" href="" data-url="<%= active_account ? "#{custom_apps_admin_marketplace_extensions_path}" : '' %>"><%= t('integrations.custom_application.get_custom_apps') %></a>
+          <% if current_account.launched?(:freshplug_enabled) && platform_version == Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v1] %>
+            <%= link_to t('integrations.custom_application.new_custom_app').html_safe, new_admin_integrations_freshplug_path, :class =>"btn btn-flat new-customapp" %>
+          <% else %>
+            <a class="btn btn-flat" href="<%= MarketplaceConfig::DEV_URL %>/dashboard/<%= current_account.full_domain %>/login" target="_blank"><%= t('integrations.custom_application.new_custom_app') %></a>
+          <% end %>
         </div>
-      <% end %>
-      <% if current_account.custom_apps_enabled? %>
-      <div class="button-bar create-new pull-right" style="display:none;">
-        <a class="browse-btn btn btn-flat get-custom-apps <%= active_account ? '' : 'disabled' %>" href="" data-url="<%= active_account ? "#{custom_apps_admin_marketplace_extensions_path}" : '' %>"><%= t('integrations.custom_application.get_custom_apps') %></a>
-        <% if current_account.launched?(:freshplug_enabled) && platform_version == Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v1] %>
-          <%= link_to t('integrations.custom_application.new_custom_app').html_safe, new_admin_integrations_freshplug_path, :class =>"btn btn-flat new-customapp" %>
-        <% else %>
-          <a class="btn btn-flat" href="<%= MarketplaceConfig::DEV_URL %>/dashboard/<%= current_account.full_domain %>/login" target="_blank"><%= t('integrations.custom_application.new_custom_app') %></a>
         <% end %>
       </div>
-      <% end %>
-    </div>
-    <ul class="tabs nav-tabs sleek-tab" id="myTab">
-      <li class="active">
-        <% if feature?(:marketplace) && !Account.current.launched?(:native_apps) %>
-          <a href="#apps" class="apps-tab mkt-apps" data-toggle="tab"><%= t('marketplace.apps').html_safe %></a>
-        <% else %>
-          <a href="#native-apps" class="apps-tab nat-apps" data-toggle="tab"><%= t('integrations.native_integrations') %></a>
+      <ul class="tabs nav-tabs sleek-tab" id="myTab">
+        <li class="active">
+          <% if feature?(:marketplace) && !Account.current.launched?(:native_apps) %>
+            <a href="#apps" class="apps-tab mkt-apps" data-toggle="tab"><%= t('marketplace.apps').html_safe %></a>
+          <% else %>
+            <a href="#native-apps" class="apps-tab nat-apps" data-toggle="tab"><%= t('integrations.native_integrations') %></a>
+          <% end %>
+        </li>
+        <% if current_account.custom_apps_enabled? %>
+        <li>
+          <a href="#custom_apps" class="apps-tab cla-plugs" data-toggle="tab"><%= t('marketplace.custom_apps') %></a>
+        </li>
         <% end %>
-      </li>
-      <% if current_account.custom_apps_enabled? %>
-      <li>
-        <a href="#custom_apps" class="apps-tab cla-plugs" data-toggle="tab"><%= t('marketplace.custom_apps') %></a>
-      </li>
-      <% end %>
-    </ul>
+      </ul>
 
-    <div id="myTabContent" class="tab-content">
-      <% if feature?(:marketplace) && !Account.current.launched?(:native_apps) %>
-        <%= render :partial => '/admin/marketplace/marketplace_apps', :locals => { 
-                   :installed_mkp_apps => @installed_mkp_apps, :more_apps_params => more_apps_params } %>
-      <% else %>
-       <%= render :partial => 'native_integrations', :locals => { :applications => @applications, 
-                  :installed_applications => @installed_applications } %>
-      <% end %>
-      <% if current_account.custom_apps_enabled? %>
-      <%= render :partial => '/admin/marketplace/installed_custom_applications', :locals => { 
-                 :custom_applications => @custom_applications, :installed_custom_apps => @installed_custom_apps,
-                 :type =>  Marketplace::Constants::EXTENSION_TYPE[:custom_app]} %>
-      <% end %>
-    </div>
+      <div id="myTabContent" class="tab-content">
+        <% if feature?(:marketplace) && !Account.current.launched?(:native_apps) %>
+          <%= render :partial => '/admin/marketplace/marketplace_apps', :locals => { 
+                    :installed_mkp_apps => @installed_mkp_apps, :more_apps_params => more_apps_params } %>
+        <% else %>
+        <%= render 'native_integrations', :locals => { :applications => @applications, 
+                    :installed_applications => @installed_applications } %>
+        <% end %>
+        <% if current_account.custom_apps_enabled? %>
+        <%= render :partial => '/admin/marketplace/installed_custom_applications', :locals => { 
+                  :custom_applications => @custom_applications, :installed_custom_apps => @installed_custom_apps,
+                  :type =>  Marketplace::Constants::EXTENSION_TYPE[:custom_app]} %>
+        <% end %>
+      </div>
 
-    <div id="toggle-confirm" style="display:none;">
-    </div>
+      <div id="toggle-confirm" style="display:none;">
+      </div>
 
-    <ul class="tabs nav-tabs sleek-tab hide" id="appTab">
-      <li>
-        <a href="#app-dtl" class="app-dtl moreinfo-lnk show_btn hide" data-toggle="tab"></a>
-      </li>
-    </ul>
-  </div>    
-</div>
+      <ul class="tabs nav-tabs sleek-tab hide" id="appTab">
+        <li>
+          <a href="#app-dtl" class="app-dtl moreinfo-lnk show_btn hide" data-toggle="tab"></a>
+        </li>
+      </ul>
+    </div>    
+  </div>
+<% end %>
 
-<%= javascript_include_tag :'cdn/marketplace/fa_marketplace_browser' %>
-<script type="text/javascript">
-    var settingsLinks = { appBrowser: ".app-browser",
-                appBrowserClose: ".appbrowser-close, .closable",
-                browseBtn: ".browse-btn, .moreinfo-lnk, .update, .update-iframe-settings",
-                activationSwitch: ".switch",
-                deleteBtn: ".delete-btn",
-                reauthorizeBtn: ".reauthorize-btn",
-                updateOAuth: ".update-oauth",
-                accApiPollInterval: "<%= MarketplaceConfig::ACCOUNT_API_POLL_INTERVAL %>",
-                accApiPollRetryLimit: "<%= MarketplaceConfig::ACCOUNT_API_POLL_RETRY_LIMIT %>"
-              }
-    var customMessages  = {
-                            delete_success: "<%= I18n.t('marketplace.delete_action.success') %>",
-                            delete_error: "<%= I18n.t('marketplace.delete_action.error') %>",
-                            api_error : "<%= I18n.t('marketplace.api_error') %>",
-                            no_connection: "<%= I18n.t('marketplace.no_connection') %>"
-                          };
-
-
-    var platformVersion = '<%= current_account.falcon_ui_enabled?(current_user) ? Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2]
-                              : Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v1] %>'
-    var marketplaceBrowser = new MarketplaceBrowser(settingsLinks, customMessages, platformVersion);
-
-    marketplaceBrowser.toggleAppsMessage(marketplaceBrowser.getAppsLength() > 0 );
-    marketplaceBrowser.togglePlugsMessage(marketplaceBrowser.getFreshPlugsLength() > 0 );
-
-    Fjax.afterNextPage = function () {
-       marketplaceBrowser.destroy();
-    }
-
+<% if Account.current.launched?(:marketplace_gallery) %>
+  <% content_for :onload_script do %>
     jQuery(document).ready(function(){
-      jQuery(jQuery('#myTab > li.active > a').attr('href')).addClass('active');
+      window.App = window.App || {};
+      window.App.Channel = window.App.Channel || new MessageChannel();
+      window.App.Channel.port1.postMessage({action: "load_marketplace_gallery"});
+    });
+  <% end %>
+<% else %>
+  <%= javascript_include_tag :'cdn/marketplace/fa_marketplace_browser' %>
+  <script type="text/javascript">
+      var settingsLinks = { appBrowser: ".app-browser",
+                  appBrowserClose: ".appbrowser-close, .closable",
+                  browseBtn: ".browse-btn, .moreinfo-lnk, .update, .update-iframe-settings",
+                  activationSwitch: ".switch",
+                  deleteBtn: ".delete-btn",
+                  reauthorizeBtn: ".reauthorize-btn",
+                  updateOAuth: ".update-oauth",
+                  accApiPollInterval: "<%= MarketplaceConfig::ACCOUNT_API_POLL_INTERVAL %>",
+                  accApiPollRetryLimit: "<%= MarketplaceConfig::ACCOUNT_API_POLL_RETRY_LIMIT %>"
+                }
+      var customMessages  = {
+                              delete_success: "<%= I18n.t('marketplace.delete_action.success') %>",
+                              delete_error: "<%= I18n.t('marketplace.delete_action.error') %>",
+                              api_error : "<%= I18n.t('marketplace.api_error') %>",
+                              no_connection: "<%= I18n.t('marketplace.no_connection') %>"
+                            };
 
-      if(platformVersion == '2.0' && window.location.hash && !parent.location.hash.length){
-        window.location.hash = '';
+
+      var platformVersion = '<%= current_account.falcon_ui_enabled?(current_user) ? Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2]
+                                : Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v1] %>'
+      var marketplaceBrowser = new MarketplaceBrowser(settingsLinks, customMessages, platformVersion);
+
+      marketplaceBrowser.toggleAppsMessage(marketplaceBrowser.getAppsLength() > 0 );
+      marketplaceBrowser.togglePlugsMessage(marketplaceBrowser.getFreshPlugsLength() > 0 );
+
+      Fjax.afterNextPage = function () {
+        marketplaceBrowser.destroy();
       }
 
-      var hash = window.location.hash,
-          hash_value = window.location.hash.substring(1);
+      jQuery(document).ready(function(){
+        jQuery(jQuery('#myTab > li.active > a').attr('href')).addClass('active');
 
-      var app_info = hash_value.split('_');
-      app_id = app_info[0]
+        if(platformVersion == '2.0' && window.location.hash && !parent.location.hash.length){
+          window.location.hash = '';
+        }
 
-      <% zendesk_app_id = current_account.falcon_ui_enabled?(User.current) ? ZendeskAppConfig::FALCON_APP_ID : ZendeskAppConfig::APP_ID%>
-      if(app_id == <%= zendesk_app_id.to_s %> && jQuery('#ext-<%=zendesk_app_id%>').length != 0) {
-        jQuery('#ext-<%=zendesk_app_id%>').find('.btn-settings').trigger('click');
-      }else if(hash.match('^#[0-9]')) {
-        jQuery('.app-dtl').attr('href',hash);
-        jQuery('.app-dtl').attr('data-url','/admin/marketplace/extensions/' + app_id + '?type=1,4,5');
-      };
+        var hash = window.location.hash,
+            hash_value = window.location.hash.substring(1);
 
-      var selectedTab = jQuery('a[href="' + hash + '"]', jQuery("#myTab,#appTab"));
-      if(selectedTab.length > 0) 
-        jQuery(selectedTab).click();
+        var app_info = hash_value.split('_');
+        app_id = app_info[0]
 
-      jQuery(".modal").livequery(function(){
-        jQuery(this).on('shown', function(e) {
-          jQuery(".twipsy").hide();
+        <% zendesk_app_id = current_account.falcon_ui_enabled?(User.current) ? ZendeskAppConfig::FALCON_APP_ID : ZendeskAppConfig::APP_ID%>
+        if(app_id == <%= zendesk_app_id.to_s %> && jQuery('#ext-<%=zendesk_app_id%>').length != 0) {
+          jQuery('#ext-<%=zendesk_app_id%>').find('.btn-settings').trigger('click');
+        }else if(hash.match('^#[0-9]')) {
+          jQuery('.app-dtl').attr('href',hash);
+          jQuery('.app-dtl').attr('data-url','/admin/marketplace/extensions/' + app_id + '?type=1,4,5');
+        };
+
+        var selectedTab = jQuery('a[href="' + hash + '"]', jQuery("#myTab,#appTab"));
+        if(selectedTab.length > 0) 
+          jQuery(selectedTab).click();
+
+        jQuery(".modal").livequery(function(){
+          jQuery(this).on('shown', function(e) {
+            jQuery(".twipsy").hide();
+          });
         });
       });
-    });
 
-    jQuery(document).on("click", "a[href='#toggle-confirm']", function(ev) {
-      ev.preventDefault();
-      var target = jQuery(this).attr("data-confirm-content");
-      jQuery("#toggle-confirm .modal-body").empty().append("<p>"+ target + "</p>");
-    });
+      jQuery(document).on("click", "a[href='#toggle-confirm']", function(ev) {
+        ev.preventDefault();
+        var target = jQuery(this).attr("data-confirm-content");
+        jQuery("#toggle-confirm .modal-body").empty().append("<p>"+ target + "</p>");
+      });
 
-    jQuery(document).on("click", ".apps-tab", function(e) {
-      window.location.hash = jQuery(this).attr("href");
-      parent.location.hash = jQuery(this).attr("href");
-    });
+      jQuery(document).on("click", ".apps-tab", function(e) {
+        window.location.hash = jQuery(this).attr("href");
+        parent.location.hash = jQuery(this).attr("href");
+      });
 
-    jQuery(document).on('hide.bs.modal','#toggle-confirm', function () {
-       jQuery("#toggle-confirm .modal-body").empty();
-    });
-</script>
+      jQuery(document).on('hide.bs.modal','#toggle-confirm', function () {
+        jQuery("#toggle-confirm .modal-body").empty();
+      });
+  </script>
+<% end %>
