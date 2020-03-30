@@ -122,6 +122,7 @@
               .replace(new RegExp('&gt', 'g'), '>'))
             .insertAfter(jQuery("#"+this.id).parent().parent());
       }
+      jQuery('#portal_ticket_form').trigger('sectionFieldChanged');
   }).trigger('change');
 
   jQuery('#portal_ticket_form [type=submit]').click(function(event) {
