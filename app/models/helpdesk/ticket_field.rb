@@ -195,6 +195,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   def picklist_values_with_sublevels
     list_choices = picklist_values_from_cache
+    return list_choices unless nested_field?
+
     picklist_id_to_choice_map = list_choices.group_by(&:pickable_id)
     list_choices.each do |choice|
       choice.sub_level_choices ||= []
