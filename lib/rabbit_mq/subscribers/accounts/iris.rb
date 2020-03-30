@@ -9,7 +9,7 @@ module RabbitMq::Subscribers::Accounts::Iris
   end
 
   def mq_iris_valid(action, model)
-    iris_valid_model?(model) && destroy_action?(action)
+    !Account.current.disable_rabbitmq_iris_enabled? && iris_valid_model?(model) && destroy_action?(action)
   end
   
   private

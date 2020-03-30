@@ -25,6 +25,8 @@ module RabbitMq::Subscribers::Tickets::Iris
   end
 
   def mq_iris_valid(action, model)
+    return false if Account.current.disable_rabbitmq_iris_enabled?
+
     valid = (iris_valid_model?(model) && !archive && (create_action?(action) || iris_non_archive_destroy?(action) || iris_valid_changes.any?))
     Rails.logger.debug "#{Account.current.id} --- #{model} --- #{valid}"
     valid
