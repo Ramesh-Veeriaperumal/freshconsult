@@ -77,14 +77,25 @@ class Middleware::TrustedIp
   def valid_ip(current_ip, current_user_id, req_path)
     # If api request, valid ip check should occur as both options in trusted_ip is applicable for agents.
     # If api is changed to accept customer login also, this should be changed.
-    if api_request?(req_path) || trusted_ip_applicable_to_user?(current_user_id)
-      whitelisted_ips.ip_ranges.each do |ip|
-        return true if ip_is_in_range?(IPAddress(ip[:start_ip]),IPAddress(ip[:end_ip]),IPAddress(current_ip))
-      end
+    # For help_widget api request,
+    # 1. if IP whitelisting is enabled only for agent, no IP range check is needed.
+    # 2. if IP whitelisting is enabled for agents and customers, IP range check should be done.
+
+    if widget_api_request?(req_path)
+      return (whitelisted_ips.applies_only_to_agents ? true : ip_whitelisted?(current_ip))
+    elsif api_request?(req_path) || trusted_ip_applicable_to_user?(current_user_id)
+      return ip_whitelisted?(current_ip)
     else
       return true
     end
     return false
+  end
+
+  def ip_whitelisted?(current_ip)
+    whitelisted_ips.ip_ranges.each do |ip|
+      return true if ip_is_in_range?(IPAddress(ip[:start_ip]), IPAddress(ip[:end_ip]), IPAddress(current_ip))
+    end
+    false
   end
 
   # If applicable to only agents, check for agent login else customer login.
@@ -104,10 +115,12 @@ class Middleware::TrustedIp
   end
 
   def set_response(req_path, api_status, location_header, message)
-    if api_request?(req_path)
-      return [api_status, {"Content-type" => "application/json"}, [{message: message}.to_json]]
+    if widget_api_request?(req_path)
+      [api_status, { 'Content-type' => 'application/json' }, [error_hash(:ip_blocked, message)]]
+    elsif api_request?(req_path)
+      [api_status, { 'Content-type' => 'application/json' }, [{ message: message }.to_json]]
     else
-      return [302, {"Location" => location_header}, [message]]
+      [302, { 'Location' => location_header }, [message]]
     end
   end
 
@@ -122,6 +135,10 @@ class Middleware::TrustedIp
     @api_request ||= req_path.starts_with?('/api/')
   end
 
+  def widget_api_request?(req_path)
+    req_path.starts_with?('/api/widget/')
+  end
+
   def execute_request(env)
     @status, @headers, @response = @app.call(env)
     [@status, @headers, @response]
@@ -129,5 +146,9 @@ class Middleware::TrustedIp
 
   def skipped_subdomain?(env)
     SKIPPED_SUBDOMAINS.include?(env["HTTP_HOST"].split(".")[0]) 
+  end
+
+  def error_hash(code = nil, message = '')
+    { code: code, message: message }.to_json
   end
 end

@@ -14,9 +14,9 @@ integration_test = [
   'test/api/integration/flows/ticket_fields_flows_test.rb',
   'test/api/integration/flows/surveys_flows_test.rb'
 ]
-
 # sidekiq
 sidekiq_tests   = Dir.glob('test/api/sidekiq/*_test.rb')
+
 
 # shoryuken
 shoryuken_tests = Dir.glob('test/api/shoryuken/*_test.rb')
