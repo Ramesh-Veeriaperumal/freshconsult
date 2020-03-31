@@ -123,14 +123,27 @@ class ContactDecorator < ApiDecorator
     req_hash = construct_hash(requester_widget_contact_fields, record)
     req_hash[:has_email] = record.email.present? if !req_hash.key?(:email)
     req_hash[:active] = record.active
-    req_hash[:twitter_id] = twitter_id if !req_hash.key?(:twitter_id) && twitter_id.present?
     req_hash
+  end
+
+  def other_requester_fields(req_hash)
+    fields_hash = {}
+    fields_hash[:email] = email if !req_hash.key?(:email) && email.present?
+    fields_hash[:other_emails] = other_emails if other_emails.present?
+    fields_hash[:phone] = phone if !req_hash.key?(:phone) && phone.present?
+    fields_hash[:mobile] = mobile if !req_hash.key?(:mobile) && mobile.present?
+    fields_hash[:twitter_id] = twitter_id if !req_hash.key?(:twitter_id) && twitter_id.present?
+    fields_hash[:facebook_id] = fb_profile_id if !req_hash.key?(:facebook_id) && fb_profile_id.present?
+    fields_hash[:unique_external_id] = unique_external_id if !req_hash.key?(:unique_external_id) && unique_external_id.present?
+    fields_hash[:external_id] = external_id if !req_hash.key?(:external_id) && external_id.present?
+    fields_hash
   end
 
   def requester_hash
     return agent_info.merge(id: id) if record.agent?
     req_hash = restricted_requester_hash.merge(company_info)
     req_hash[:avatar] = avatar_hash
+    req_hash.merge!(other_requester_fields(req_hash.symbolize_keys))
     req_hash
   end
 
@@ -143,6 +156,17 @@ class ContactDecorator < ApiDecorator
 
   def channel_v2_attributes
     channel_v2_hash if channel_v2_api? && @additional_info
+  end
+
+  def company_info_for_search
+    ret_hash = {}
+    ret_hash[:company] = company_hash(default_company) if default_company.present? && default_company.company.present?
+    if multiple_user_companies_enabled? && company_id.present?
+      ret_hash[:other_companies] = record.user_companies.map do |c|
+        company_hash(c) if c.company.present? && !c.default
+      end.compact
+    end
+    ret_hash
   end
 
   private
