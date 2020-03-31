@@ -113,7 +113,7 @@
 #   	note = ticket.notes.build(
 #   	  :note_body_attributes => {:body_html => (0...50).map { ('a'..'z').to_a[rand(26)] }.join},
 #   	  :private => false,
-#   	  :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+#   	  :source => Account.current.helpdesk_sources.note_source_keys_by_token['note'],
 #   	  :account_id => @account.id,
 #   	  :user_id => @agent.id
 #   	)

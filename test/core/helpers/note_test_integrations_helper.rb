@@ -14,7 +14,7 @@ module NoteTestIntegrationsHelper
   PUBLIC = 0
   def create_note_with_to_email(params = {})
     test_note = FactoryGirl.build(:helpdesk_note,
-                                  :source => params[:source] || Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"],
+                                  :source => params[:source] || Account.current.helpdesk_sources.note_source_keys_by_token["note"],
                                   :notable_id => params[:ticket_id] || Helpdesk::Ticket.last.id,
                                   :created_at => params[:created_at],
                                   :user_id => params[:user_id] || @agent.id,

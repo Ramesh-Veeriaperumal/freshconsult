@@ -107,6 +107,8 @@ class ApiApplicationController < MetalApiController
   BEARER_REGEX = /Bearer (.*)/.freeze
   RESPONSE_CACHE_TIMEOUT = 30.days.to_i
 
+  CHANNEL_V2_PATHS = %w[update_multiple /api/channel/v2/agents].freeze
+
   def response_cache
     if response_cache_data.present?
       Rails.logger.info "API cache HIT | #{controller_name}/#{action_name} | Acc: #{current_account.id}"
@@ -586,7 +588,7 @@ class ApiApplicationController < MetalApiController
       if CustomRequestStore.read(:private_api_request) || (get_request? && !request.authorization)
         session_auth
       elsif CustomRequestStore.read(:channel_api_request)
-        request.path.include?('update_multiple') ? channel_v2_jwt_auth : api_key_auth
+        CHANNEL_V2_PATHS.any? { |path| request.path.include?(path) } ? channel_v2_jwt_auth : api_key_auth
       else
         if current_account.launched?(:api_jwt_auth) && request.env['HTTP_AUTHORIZATION'] && request.env['HTTP_AUTHORIZATION'][/^Token (.*)/]
           ApiAuthLogger.log "FRESHID API version=V2, auth_type=JWT_TOKEN, a=#{current_account.id}"
@@ -636,11 +638,13 @@ class ApiApplicationController < MetalApiController
       auth = auth.match(BEARER_REGEX) unless auth.nil?
       auth = auth[1].strip if !auth.nil? && auth.length > 1
       begin
-        JWT.decode auth, CHANNEL_V2_API_CONFIG['jwt_secret']
+        payload = JWT.decode auth, CHANNEL_V2_API_CONFIG['jwt_secret']
+        current_user_id = payload.first['current_user_id'] if payload.first.is_a?(Hash)
       rescue Exception => e
         render_request_error :invalid_credentials, Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized]
       end
-      @current_user = Account.current.account_managers.first
+      @current_user = current_user_id.present? ? Account.current.technicians.find_by_id(current_user_id) :
+                                                 Account.current.account_managers.first
     end
 
     def email_given?(username)

@@ -292,16 +292,16 @@ class TicketDelegator < BaseDelegator
   end
 
   def source_update_permissible?
-    if ApiTicketConstants::UNPERMITTED_SOURCES_FOR_UPDATE.include?(self.source)
+    if Account.current.helpdesk_sources.api_unpermitted_sources_for_update.include?(self.source)
       errors[:source] << :source_update_not_permitted
-      error_options.merge!(source: { sources: ApiTicketConstants::UNPERMITTED_SOURCES_FOR_UPDATE.join(',') })
+      error_options.merge!(source: { sources: Account.current.helpdesk_sources.api_unpermitted_sources_for_update.join(',') })
     end
   end
 
   private
 
     def widget_ticket?
-      @ticket.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:feedback_widget]
+      @ticket.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:feedback_widget]
     end
 
     def property_update?

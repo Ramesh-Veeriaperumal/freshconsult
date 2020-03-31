@@ -147,7 +147,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def source_hash
     { 
       id: source, 
-      name: SOURCE_NAMES_BY_KEY[source]
+      name: Account.current.helpdesk_sources.ticket_source_names_by_key[source]
     }
   end
 

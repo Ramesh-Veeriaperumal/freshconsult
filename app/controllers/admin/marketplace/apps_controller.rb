@@ -1,6 +1,7 @@
 class Admin::Marketplace::AppsController < Admin::AdminController
+  include Marketplace::GalleryConstants
+
   before_filter :access_denied, unless: :marketplace_feature_enabled?
-  DEFAULT_AUTH = 'doorkeeper'.freeze
 
   def index
     params_to_encrypt = default_mkp_params

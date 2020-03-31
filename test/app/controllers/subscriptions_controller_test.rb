@@ -58,6 +58,21 @@ class SubscriptionsControllerTest < ActionController::TestCase
     @account.destroy
   end
 
+  def test_bitmap_twitter_automation_feature_present_for_estate_and_above
+    plan_ids = SubscriptionPlan.current.map(&:id)
+    sprout_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount == 0.0 }.compact.first
+    params = { plan_id: sprout_plan_id }
+    stub_chargebee_requests
+    assert_equal @account.has_feature?(:twitter_field_automation), true
+    @account.rollback(:downgrade_policy)
+    post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
+    assert_equal @account.subscription.subscription_request.nil?, true
+    @account.reload
+    assert_equal @account.has_feature?(:twitter_field_automation), false
+  ensure
+    unstub_chargebee_requests
+  end
+
   def test_handle_agents_when_moving_from_non_paying_plan_without_dp_enabled
     plan_ids = SubscriptionPlan.current.map(&:id)
     stub_chargebee_requests

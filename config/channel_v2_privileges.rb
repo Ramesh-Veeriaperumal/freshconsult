@@ -19,6 +19,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"channel/api_contact", only: [:create, :index, :show]
   end
   manage_users do
-    resource :"channel/v2/agent", only: [:update_multiple]
+    resource :"channel/v2/agent", only: [:create, :update_multiple]
   end
 end

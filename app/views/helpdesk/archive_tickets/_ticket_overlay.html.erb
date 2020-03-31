@@ -1,7 +1,7 @@
 <div class="ticket_overlay_tip">
 	<div class="ticket_overlay_content">
 		<%
-		latest_note = ticket.archive_notes.exclude_source(Helpdesk::Note::EXCLUDE_SOURCE).newest_first.first
+		latest_note = ticket.archive_notes.exclude_source(Account.current.helpdesk_sources.note_exclude_sources).newest_first.first
 		unless latest_note.nil?
 			action_msg = latest_note.fwd_email? ? 'helpdesk.tickets.overlay_fwd_time' : (latest_note.note? ? 'helpdesk.tickets.overlay_note_time' : 'helpdesk.tickets.overlay_reply_time')
 		%>

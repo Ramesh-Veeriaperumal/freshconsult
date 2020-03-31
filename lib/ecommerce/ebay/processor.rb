@@ -74,7 +74,7 @@ class Ecommerce::Ebay::Processor
       ticket = @account.tickets.build(
             :subject => subject,
             :requester => requester,
-            :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:ecommerce],
+            :source => Account.current.helpdesk_sources.ticket_source_keys_by_token[:ecommerce],
             :ticket_body_attributes => {
               :description_html => body
              },
@@ -97,7 +97,7 @@ class Ecommerce::Ebay::Processor
             :body_html => body
           },
           :incoming => true,
-          :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["ecommerce"],
+          :source => Account.current.helpdesk_sources.note_source_keys_by_token["ecommerce"],
           :account_id => @account.id,
           :user => requester,
           :private => false

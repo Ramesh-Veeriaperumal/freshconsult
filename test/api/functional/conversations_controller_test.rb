@@ -47,7 +47,7 @@ class ConversationsControllerTest < ActionController::TestCase
 
   def note
     @agent.preferences[:agent_preferences][:undo_send] = false
-    Helpdesk::Note.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'], deleted: false).first || create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
+    Helpdesk::Note.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['note'], deleted: false).first || create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
   end
 
   def reply_note_params_hash
@@ -714,7 +714,7 @@ class ConversationsControllerTest < ActionController::TestCase
     ticket = create_ticket_from_fb_post(true)
     put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
     sample_put_comment = { 'id' => put_comment_id }
-    fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
+    fb_comment_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
     Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
     params_hash = { body: Faker::Lorem.paragraph, parent_note_id: fb_comment_note.id }
     post :reply, construct_params({ id: ticket.display_id }, params_hash)
@@ -816,7 +816,7 @@ class ConversationsControllerTest < ActionController::TestCase
     fb_page = ticket.fb_post.facebook_page
     fb_page.reauth_required = true
     fb_page.save
-    fb_comment_note = ticket.notes.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook']).first
+    fb_comment_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
     put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
     sample_put_comment = { 'id' => put_comment_id }
     Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)

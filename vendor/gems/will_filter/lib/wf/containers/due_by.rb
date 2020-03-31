@@ -71,7 +71,7 @@ module Wf
       end
 
       def fr_due_condition
-        "helpdesk_tickets.source != #{TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]} and helpdesk_ticket_states.agent_responded_at IS NULL "
+        "helpdesk_tickets.source != #{Helpdesk::Source.ticket_source_keys_by_token[:outbound_email]} and helpdesk_ticket_states.agent_responded_at IS NULL "
       end
 
       def minimum_required_condition(conditions)

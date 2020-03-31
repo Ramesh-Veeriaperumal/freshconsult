@@ -66,11 +66,11 @@ module SimpleCovSetup
 
       add_filter SimpleCov::StringFilter.new("^((?!#{root}/(api|lib|app\/models|app\/workers|app\/observers|app\/drops|app\/helpers)\/).)*$")
 
-      add_filter  'spec/'
-      add_filter  'config/'
-      add_filter  'test/'
-      add_filter  'fdadmin'
-      add_filter  'vendor/gems'
+      add_filter 'spec/'
+      add_filter 'config/'
+      add_filter 'test/'
+      add_filter 'fdadmin'
+      add_filter 'vendor/gems'
 
       # Revisit again
       add_filter  'app/helpers'
@@ -129,8 +129,9 @@ module SimpleCovSetup
 
     coverage_directory = ENV.fetch('COVERAGE_DIR', 'tmp/coverage')
     SimpleCov.coverage_dir coverage_directory
+
     if !defined?($local_dev_testing) || $local_dev_testing != true
-      SimpleCov.command_name "rails_app_#{$$}"
+      SimpleCov.command_name "rails_app_#{$$}#{Random.rand(10...9999).to_s}"
       SimpleCov.merge_timeout 3600 # 1 hour
     else
       SimpleCov.command_name "local_dev_testing"

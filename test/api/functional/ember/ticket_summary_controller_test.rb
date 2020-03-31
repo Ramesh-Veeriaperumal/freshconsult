@@ -39,7 +39,7 @@ class TicketSummaryControllerTest < ActionController::TestCase
   end
 
   def ticket_summary
-    Helpdesk::Note.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['summary'], deleted: false).first ||
+    Helpdesk::Note.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['summary'], deleted: false).first ||
                    create_note(user_id: @agent.id, ticket_id: ticket.id, source: 13)
   end
 

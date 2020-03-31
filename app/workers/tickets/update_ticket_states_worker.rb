@@ -42,8 +42,8 @@ module Tickets
       end
 
       def note_from_social?
-        @note.source.eql?(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"]) || 
-          @note.source.eql?(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["twitter"])
+        @note.source.eql?(Account.current.helpdesk_sources.note_source_keys_by_token["facebook"]) || 
+          @note.source.eql?(Account.current.helpdesk_sources.note_source_keys_by_token["twitter"])
       end
   end
 end

@@ -38,7 +38,7 @@ class Fixtures::DefaultTickets
       subject: tickets_content[ind][:subject],
       email: ticket_requester.email,
       status: account.ticket_statuses.find_by_name(ticket["status"].to_sym).status_id,
-      source: TicketConstants::SOURCE_KEYS_BY_TOKEN[ticket["source"].to_sym],
+      source: Account.current.helpdesk_sources.ticket_source_keys_by_token[ticket["source"].to_sym],
       priority:  TicketConstants::PRIORITY_KEYS_BY_TOKEN[ticket["priority"].to_sym],
       group: ticket_group(ticket["group"]),
       ticket_type: ticket_type(ticket["type"]),
@@ -161,7 +161,7 @@ class Fixtures::DefaultTickets
       reply_data["replies"].each do | reply | 
         reply_note = ticket.notes.new(
           :user_id      => reply["requester"]? @requester.id : agent.id,
-          :source       => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"],
+          :source       => Account.current.helpdesk_sources.note_source_keys_by_token["email"],
           :private      => false,
           :note_body_attributes  => {:body_html => tickets_content[ind]["replies"][reply["content"]]},
           :skip_notification     => true,

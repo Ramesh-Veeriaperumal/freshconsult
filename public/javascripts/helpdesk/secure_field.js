@@ -7,12 +7,20 @@
   var isPciFieldChanged = false;
   var initTry = 0;
 
-  jQuery('.secure_field').each(function(event){
-    pciFieldsObject.name[this.name] = true;
-    pciFieldsObject.fieldName[jQuery(this).data('field-name')]=true;
+  function initSecureFields() {
+    jQuery('.secure_field').each(function(event){
+      pciFieldsObject.name[this.name] = true;
+      pciFieldsObject.fieldName[jQuery(this).data('field-name')]=true;
+    });
+  }
+
+  initSecureFields();
+
+  jQuery('#portal_ticket_form').on('sectionFieldChanged', function() {
+    initSecureFields();
   });
 
-  jQuery('.pci-field-container').on('change', '.secure_field', function(event){
+  jQuery('#portal_ticket_form').on('change', '.secure_field', function(event){
     isPciFieldChanged = true;
   });
 
@@ -33,7 +41,7 @@
     return false;
   });
 
-  jQuery('#pci-overwrite').click(function(event){
+  jQuery('#portal_ticket_form').on('click', '#pci-overwrite', function(event){
     isPciFieldChanged = true;
     jQuery(this).attr('disabled', true);
     var parent = jQuery(this).parent();

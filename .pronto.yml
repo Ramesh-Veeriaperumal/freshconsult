@@ -1,6 +1,8 @@
 all:
   exclude:
     - 'spec/**/*'
+    - 'Gemfile.lock'
+    - 'Gemfile'
 eslint:
   exclude:
     - 'app/assets/**/*'

@@ -70,7 +70,8 @@ module Va::Observer::Util
         ticket_id: fetch_ticket_id,
         current_events: observer_changes,
         enqueued_class: self.class.name,
-        note_id: note_id
+        note_id: note_id,
+        original_attributes: original_ticket_attributes
       }
 
       if self.class == Helpdesk::Ticket
@@ -90,7 +91,8 @@ module Va::Observer::Util
     end
 
     def send_system_events observer_changes
-      args = { ticket_id: fetch_ticket_id, system_event: true, current_events: observer_changes }
+      args = { ticket_id: fetch_ticket_id, system_event: true, current_events: observer_changes,
+               original_attributes: original_ticket_attributes }
       evaluate_on.try(:invoke_ticket_observer_worker, args)
     end
 
@@ -131,4 +133,16 @@ module Va::Observer::Util
       end
     end
 
+    def original_ticket_attributes
+      return {} unless Account.current.observer_race_condition_fix_enabled?
+
+      Account.current.observer_condition_fields_from_cache.each_with_object({}) do |field, hash|
+        hash[field] = case field
+                      when 'last_interaction'
+                        last_interaction_note.id
+                      else
+                        safe_send(field)
+                      end
+      end
+    end
 end

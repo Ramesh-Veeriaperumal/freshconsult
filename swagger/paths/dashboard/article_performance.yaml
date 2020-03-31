@@ -1,0 +1,21 @@
+get:
+  tags: [Dashboard]
+  summary: Article performance
+  parameters:
+    - name: portal_id
+      in: query
+      type: number
+    - name: language
+      in: query
+      type: string
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/article_performance'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

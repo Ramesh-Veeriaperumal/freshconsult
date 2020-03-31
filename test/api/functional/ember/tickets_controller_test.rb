@@ -690,6 +690,21 @@ module Ember
       Account.reset_current_account
     end
 
+    def test_update_ticket_with_random_data_in_file_field
+      custom_field = create_custom_field_dn('test_file_field', 'file')
+      Account.first.make_current
+      ticket = create_ticket
+      assert_not_nil ticket
+      ticket.update_attribute(:custom_field, custom_field.name.to_sym => 'Name')
+      update_params = { status: Helpdesk::Ticketfields::TicketStatus::CLOSED }
+      put :update, construct_params({ id: ticket.display_id, version: 'private' }, update_params)
+      assert_response 200
+    ensure
+      custom_field.destroy
+      ticket.destroy
+      Account.reset_current_account
+    end
+
     def test_close_ticket_with_nil_file_field_attachment_when_required_for_submission
       custom_field = create_custom_field_dn('test_file_field', 'file', true, false)
       Account.first.make_current
@@ -919,7 +934,7 @@ module Ember
       assert_response 201
       latest_ticket = Helpdesk::Ticket.last
       match_json(ticket_show_pattern(latest_ticket))
-      assert latest_ticket.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone]
+      assert latest_ticket.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:phone]
     end
 
     def test_create_with_attachment_and_attachment_ids
@@ -2062,7 +2077,7 @@ module Ember
 
     def test_latest_note_ticket_with_private_note
       ticket = create_ticket
-      note = create_note(custom_note_params(ticket, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[:note], true))
+      note = create_note(custom_note_params(ticket, Account.current.helpdesk_sources.note_source_keys_by_token[:note], true))
       get :latest_note, construct_params({ version: 'private', id: ticket.display_id }, false)
       assert_response 200
       match_json(latest_note_response_pattern(note))
@@ -2070,7 +2085,7 @@ module Ember
 
     def test_latest_note_ticket_with_public_note
       ticket = create_ticket
-      note = create_note(custom_note_params(ticket, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[:note]))
+      note = create_note(custom_note_params(ticket, Account.current.helpdesk_sources.note_source_keys_by_token[:note]))
       get :latest_note, construct_params({ version: 'private', id: ticket.display_id }, false)
       assert_response 200
       match_json(latest_note_response_pattern(note))
@@ -2078,7 +2093,7 @@ module Ember
 
     def test_latest_note_ticket_with_reply
       ticket = create_ticket
-      reply = create_note(custom_note_params(ticket, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[:email]))
+      reply = create_note(custom_note_params(ticket, Account.current.helpdesk_sources.note_source_keys_by_token[:email]))
       get :latest_note, construct_params({ version: 'private', id: ticket.display_id }, false)
       assert_response 200
       match_json(latest_note_response_pattern(reply))
@@ -2126,8 +2141,8 @@ module Ember
     end
 
     def test_split_note_with_outbound_email_reply
-      ticket = create_ticket(source: TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email])
-      reply = create_note(custom_note_params(ticket, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[:email]))
+      ticket = create_ticket(source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email])
+      reply = create_note(custom_note_params(ticket, Account.current.helpdesk_sources.note_source_keys_by_token[:email]))
       put :split_note, construct_params({ version: 'private', id: ticket.display_id, note_id: reply.id }, false)
       assert_response 200
       assert_equal 1, JSON.parse(response.body)['source']
@@ -2138,9 +2153,9 @@ module Ember
         initialize_internal_agent_with_default_internal_group
         group_restricted_agent = add_agent_to_group(group_id = @internal_group.id,
                                                     ticket_permission = 2, role_id = @account.roles.first.id)
-        ticket = create_ticket({ status: @status.status_id, source: TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email], internal_agent_id: @internal_agent.id }, nil, @internal_group)
+        ticket = create_ticket({ status: @status.status_id, source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email], internal_agent_id: @internal_agent.id }, nil, @internal_group)
         login_as(@internal_agent)
-        reply = create_note(custom_note_params(ticket, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[:email]))
+        reply = create_note(custom_note_params(ticket, Account.current.helpdesk_sources.note_source_keys_by_token[:email]))
         put :split_note, construct_params({ version: 'private', id: ticket.display_id, note_id: reply.id }, false)
         assert_response 200
         assert_equal 1, JSON.parse(response.body)['source']
@@ -2165,7 +2180,7 @@ module Ember
       user = add_new_user_without_email(@account)
       params_hash = {
         requester_id: user.id,
-        source: TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone]
+        source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:phone]
       }
       ticket = create_ticket(params_hash)
       note = create_normal_reply_for(ticket)
@@ -2278,7 +2293,7 @@ module Ember
     end
 
     def test_update_properties_with_subject_description_requester_source_phone
-      ticket = create_ticket(source: TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone])
+      ticket = create_ticket(source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:phone])
       subject = Faker::Lorem.words(10).join(' ')
       description = Faker::Lorem.paragraph
       user = add_new_user(@account)
@@ -2306,7 +2321,7 @@ module Ember
     end
 
     def test_update_properties_with_subject_description_requester_source_email
-      ticket = create_ticket(source: TicketConstants::SOURCE_KEYS_BY_TOKEN[:email])
+      ticket = create_ticket(source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:email])
       subject = Faker::Lorem.words(10).join(' ')
       description = Faker::Lorem.paragraph
       user = add_new_user(@account)
@@ -3183,12 +3198,12 @@ module Ember
 
       # Adding meta note
       meta_data = "created_by: 1\ntime: 2017-03-14 15:13:13 +0530\nuser_agent: Mozilla/5.0"
-      meta_note = t.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'])
+      meta_note = t.notes.find_by_source(Account.current.helpdesk_sources.note_source_keys_by_token['meta'])
 
       if meta_note
         meta_note.note_body_attributes = { body: meta_data }
       else
-        meta_note = t.notes.build(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
+        meta_note = t.notes.build(source: Account.current.helpdesk_sources.note_source_keys_by_token['meta'],
                                   note_body_attributes: {
                                     body: meta_data
                                   },
@@ -3208,12 +3223,12 @@ module Ember
       t = create_ticket(requester_id: add_test_agent(@account, role: Role.find_by_name('Agent').id).id)
       # Adding meta note
       meta_data = "user_agent: Mozilla/5.0 (Windows NT 6.1; Trident/7.0; swrinfo: 2576:cbc.ad.colchester.gov.uk:kayd; rv:11.0) like Gecko\nreferrer: https://colchesterboroughcouncil.freshservice.com/itil/custom_reports/ticket/2271"
-      meta_note = t.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'])
+      meta_note = t.notes.find_by_source(Account.current.helpdesk_sources.note_source_keys_by_token['meta'])
 
       if meta_note
         meta_note.note_body_attributes = { body: meta_data }
       else
-        meta_note = t.notes.build(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
+        meta_note = t.notes.build(source: Account.current.helpdesk_sources.note_source_keys_by_token['meta'],
                                   note_body_attributes: {
                                     body: meta_data
                                   },
@@ -3631,7 +3646,14 @@ module Ember
         create_ticket
       end
       initial_count = ticket_data_export(DataExport::EXPORT_TYPE[:ticket]).count
+      @account.ticket_fields.find_by_column_name("ff_date06").try(:destroy)
+      create_custom_field('cf_fsm_appointment_start_time', 'date_time', '06', true)
+      Account.reset_current_account
+      @account = Account.first
+      custom_fields = { cf_fsm_appointment_start_time: Time.zone.now.iso8601 }
       params_hash = ticket_export_param
+      params_hash[:ticket_fields][:custom_fields] = custom_fields
+
       Sidekiq::Testing.inline! do
         post :export_csv, construct_params({ version: 'private' }, params_hash)
       end
@@ -4274,7 +4296,7 @@ module Ember
 
     def test_failed_email_details_note
       @ticket = create_ticket
-      @note = create_note(custom_note_params(@ticket, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[:email],true,0))
+      @note = create_note(custom_note_params(@ticket, Account.current.helpdesk_sources.note_source_keys_by_token[:email],true,0))
       stub_data = email_failures_note_activity
       @controller.stubs(:get_object_activities).returns(stub_data)
       @controller.stubs(:private_email_failure?).returns(true)
@@ -4891,7 +4913,7 @@ module Ember
       post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
       t = Helpdesk::Ticket.last
       match_json(ticket_show_pattern(t))
-      assert t.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]
+      assert t.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]
       assert_response 201
     end
 
@@ -5001,7 +5023,7 @@ module Ember
       post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
       t = Helpdesk::Ticket.last
       match_json(ticket_show_pattern(t))
-      assert t.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]
+      assert t.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]
       assert_response 201
       @account.email_configs.find(email_config.id).destroy
       update_params = { status: 5, email: agent.email }
@@ -6416,6 +6438,27 @@ module Ember
       assert_response 200
     ensure
       ticket.destroy
+      Account.any_instance.unstub(:pci_compliance_field_enabled?)
+    end
+
+    def test_close_ticket_with_secure_text_field
+      Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+      Account.first.make_current
+      name = "secure_text_#{Faker::Lorem.characters(rand(5..10))}"
+      secure_text_field = create_custom_field_dn(name, 'secure_text')
+      ticket = create_ticket
+      assert_not_nil ticket
+      update_params = { status: Helpdesk::Ticketfields::TicketStatus::CLOSED }
+      put :update, construct_params({ id: ticket.display_id, version: 'private' }, update_params)
+      assert_response 200
+      assert_equal 1, ::Tickets::VaultDataCleanupWorker.jobs.size
+      job = ::Tickets::VaultDataCleanupWorker.jobs.first.deep_symbolize_keys
+      assert_equal [ticket.display_id], job[:args][0][:object_ids]
+      assert_equal 'close', job[:args][0][:action]
+    ensure
+      secure_text_field.destroy
+      Account.reset_current_account
+      ::Tickets::VaultDataCleanupWorker.jobs.clear
       Account.any_instance.unstub(:pci_compliance_field_enabled?)
     end
   end

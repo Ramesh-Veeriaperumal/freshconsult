@@ -58,8 +58,8 @@ module TicketsNotesHelper
   end
 
   def email_note?
-    [Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
-     Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']].include?(source)
+    [Account.current.helpdesk_sources.note_source_keys_by_token['email'],
+     Account.current.helpdesk_sources.note_source_keys_by_token['note']].include?(source)
   end
 
   def email_ticket?

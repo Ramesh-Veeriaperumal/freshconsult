@@ -125,6 +125,7 @@
       - :segments
       - :unlimited_multi_product
       - :next_response_sla
+      - :twitter_field_automation
     :inherits:
       - :garden_jan_17
     :exclude: []
@@ -333,6 +334,7 @@
       - :unlimited_multi_product
       - :help_widget_article_customisation
       - :next_response_sla
+      - :twitter_field_automation
     :inherits:
       - :garden_jan_19
     :exclude: []
@@ -543,6 +545,7 @@
       - :help_widget_article_customisation
       - :next_response_sla
       - :sla_reminder_automation
+      - :twitter_field_automation
       - :fb_ad_posts
     :inherits:
       - :garden_jan_20

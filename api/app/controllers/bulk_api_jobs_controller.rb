@@ -3,8 +3,9 @@ class BulkApiJobsController < ApiApplicationController
 
   def show
     response = pick_job(params[:id].to_s)
-    head(404) if response.item.blank?
-    @job = response.item
+    response['payload'] = decimal_to_int(response['payload'])
+    head(404) if response.blank?
+    @job = response
   end
 
   def load_object

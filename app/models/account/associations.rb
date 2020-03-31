@@ -150,6 +150,20 @@ class Account < ActiveRecord::Base
     rule_type: VAConfig::OBSERVER_RULE
   }, order: 'active desc, position'
 
+  has_many :service_task_dispatcher_rules, class_name: 'VaRule', conditions: {
+    rule_type: VAConfig::SERVICE_TASK_DISPATCHER_RULE, active: true
+  }, order: 'position'
+  has_many :all_service_task_dispatcher_rules, class_name: 'VaRule', conditions: {
+    rule_type: VAConfig::SERVICE_TASK_DISPATCHER_RULE
+  }, order: 'active desc, position'
+
+  has_many :service_task_observer_rules, class_name: 'VaRule', conditions: {
+    rule_type: VAConfig::SERVICE_TASK_OBSERVER_RULE, active: true
+  }, order: 'position'
+  has_many :all_service_task_observer_rules, class_name: 'VaRule', conditions: {
+    rule_type: VAConfig::SERVICE_TASK_OBSERVER_RULE
+  }, order: 'active desc, position'
+
   has_many :api_webhook_rules, :class_name => 'VaRule', :conditions => {
   :rule_type => VAConfig::API_WEBHOOK_RULE, :active => true }, :order => "position"
 

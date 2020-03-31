@@ -4,7 +4,7 @@
     <%= hidden_field_tag(:ticket_requester_name, @ticket.requester.name, :id => "ticket_requester_name")%>
     <%= hidden_field_tag(:parent_post, "", :id => "parent_post_id")%>
     <%= hidden_field_tag :fb_post, "true", :id => "fb_comment" %>
-    <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"]%>          
+    <%= f.hidden_field :source , :value => Account.current.helpdesk_sources.note_source_keys_by_token["facebook"]%>          
     <%= f.hidden_field :private , :value => "false" %>
 
     <%= f.label(:reply_email, "From:", :class => "mailaddr-label from" ) %>&nbsp;

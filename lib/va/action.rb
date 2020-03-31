@@ -385,7 +385,7 @@ class Va::Action
       content           = RedCloth.new(content).to_html unless content_key == :email_subject
 
       placeholder_hash  = {'ticket' => act_on, 'helpdesk_name' => act_on.account.helpdesk_name,
-                           'comment' => act_on.notes.visible.exclude_source(Helpdesk::Note::EXCLUDE_SOURCE).last}
+                           'comment' => act_on.notes.visible.exclude_source(Account.current.helpdesk_sources.note_exclude_sources).last}
       placeholder_hash.merge!('event_performer' => doer) if doer.present?
 
       Liquid::Template.parse(content).render(placeholder_hash)
@@ -405,7 +405,7 @@ class Va::Action
       note.build_schema_less_note
       note.account_id = act_on.account_id
       note.note_body.body_html = substitute_placeholders(act_on, note_params[:note_body_key].to_sym)
-      note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[note_params[:source]]
+      note.source = Account.current.helpdesk_sources.note_source_keys_by_token[note_params[:source]]
       note.private = note_params[:private]
       note.user = system_added ? nil : User.current
       note.incoming = false

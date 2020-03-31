@@ -87,7 +87,7 @@ class Integrations::Office365Controller < Admin::AdminController
     end
 
     def create_note(ticket, note_body, user)
-      source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
+      source = current_account.helpdesk_sources.note_source_keys_by_token['note']
       note_hash = {
         :private => true,
         :user_id => user.id,

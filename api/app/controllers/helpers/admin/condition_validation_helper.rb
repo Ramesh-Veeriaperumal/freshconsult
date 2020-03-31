@@ -140,13 +140,20 @@ module Admin::ConditionValidationHelper
     property_field_name = evaluate_on.try(:to_sym) != :ticket ? "cf_#{field_name}" : "#{field_name}_#{Account.current.id}"
     is_checkbox = case evaluate_on.try(:to_sym)
                   when :contact
-                    contact_form_fields.find { |conf| conf.name == property_field_name }.try(:custom_checkbox_field?)
+                    contact_form_fields.find { |conf| conf.name == property_field_name }.try(:custom_checkbox_field?) || default_contact_checkbox?(field_name)
                   when :company
                     company_form_fields.find { |conf| conf.name == property_field_name }.try(:custom_checkbox_field?)
                   else
                     Account.current.ticket_fields_from_cache.find { |tf| tf.name == property_field_name }.try(:custom_checkbox_field?)
                   end
     is_checkbox ? CONDITION_SET_PROPERTIES - %i[value] : CONDITION_SET_PROPERTIES
+  end
+
+  def default_contact_checkbox?(field_name)
+    contact_field = CONDITION_CONTACT_FIELDS_HASH.find { |field| field if field[:name].to_s == field_name }
+    return contact_field[:field_type].to_s == 'checkbox' if contact_field
+
+    false
   end
 
   def validate_condition_set_names(condition_names)
@@ -275,13 +282,11 @@ module Admin::ConditionValidationHelper
   end
 
   def dispatcher_rule?
-    rule_name = VAConfig::RULES_BY_ID[rule_type.to_i]
-    rule_name == :dispatcher
+    VAConfig::DISPATCHER_RULE_TYPES.include?(rule_type.to_i)
   end
 
   def observer_rule?
-    rule_name = VAConfig::RULES_BY_ID[rule_type.to_i]
-    rule_name == :observer
+    VAConfig::OBSERVER_RULE_TYPES.include?(rule_type.to_i)
   end
 
   def supervisor_rule?

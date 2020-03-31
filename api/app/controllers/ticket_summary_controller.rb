@@ -107,7 +107,7 @@ class TicketSummaryController < ApiApplicationController
     def sanitize_params
       sanitize_body_params
       params[cname].merge! ({
-        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['summary'],
+        :source => current_account.helpdesk_sources.note_source_keys_by_token['summary'],
         :private => true,
         :notable_id => @ticket.id
       })

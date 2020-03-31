@@ -19,7 +19,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_create :set_subsidiary_count, :if => :tracker_ticket?
 
-      before_update :assign_email_config
+  before_update :assign_email_config
 
   before_update :update_message_id, :if => :deleted_changed?
 
@@ -70,6 +70,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_update :update_ticket_states
 
   after_update :update_sla_model_changes, :if => Proc.new { self.changes.present? }
+  after_commit :cleanup_vault_data, on: :update, if: :vault_data_cleanup_required?
 
   after_commit :create_initial_activity, on: :create
   after_commit :trigger_dispatcher, on: :create, :unless => :skip_dispatcher_with_advanced_automations?
@@ -122,7 +123,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def assign_outbound_agent
     return if responder_id
-     if User.current.try(:id) and User.current.agent?
+    if User.current.try(:id) and User.current.agent?
       self.responder_id = User.current.id
     end
   end
@@ -141,7 +142,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def set_default_values
-    self.source       = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
+    self.source       = Account.current.helpdesk_sources.ticket_source_keys_by_token[:portal] if self.source == 0
     self.ticket_type  = nil if self.ticket_type.blank?
 
     self.subject    ||= ''
@@ -196,7 +197,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def save_sentiment
     if Account.current.customer_sentiment_enabled?
      if User.current.nil? || User.current.language.nil? || User.current.language = "en"
-       if [SOURCE_KEYS_BY_TOKEN[:chat],SOURCE_KEYS_BY_TOKEN[:phone]].include?(self.source)
+       if [Account.current.helpdesk_sources.ticket_source_keys_by_token[:chat], Account.current.helpdesk_sources.ticket_source_keys_by_token[:phone]].include?(self.source)
          schema_less_ticket.sentiment = 0
          Rails.logger.info "Helpdesk::Ticket::save_sentiment::#{Time.zone.now.to_f} and schema_less_ticket_object :: #{schema_less_ticket.reports_hash.inspect}"
          schema_less_ticket.save
@@ -309,7 +310,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
           :private => true,
           :notable => self,
           :user => self.requester,
-          :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
+          :source => Account.current.helpdesk_sources.note_source_keys_by_token['meta'],
           :account_id => self.account.id,
           :user_id => self.requester.id,
           :disable_observer => true,
@@ -808,8 +809,8 @@ private
   def create_requester
     if can_add_requester?
       portal = self.product.try(:portal)
-      detect_language = SOURCES_FOR_LANG_DETECTION.include?(self.source) && account.features?(:dynamic_content)
-      language = portal.language if (portal and self.source!=SOURCE_KEYS_BY_TOKEN[:email] and !detect_language) #Assign languages only for non-email tickets
+      detect_language = Account.current.helpdesk_sources.ticket_sources_for_language_detection.include?(self.source) && account.features?(:dynamic_content)
+      language = portal.language if (portal and self.source!= Account.current.helpdesk_sources.ticket_source_keys_by_token[:email] and !detect_language) #Assign languages only for non-email tickets
       requester = account.users.new
       requester.account = account
       requester.signup!({:user => {
@@ -930,6 +931,7 @@ private
 
   def assign_flexifield
     build_flexifield
+    flexifield.build_denormalized_flexifield
     self.flexifield_def = Account.current.ticket_field_def
     assign_ff_values custom_field
     @custom_field = nil
@@ -1075,7 +1077,7 @@ private
 
   def update_spam_detection_service
     if (Account.current.proactive_spam_detection_enabled? && @model_changes.include?(:spam) &&
-     self.source.eql?(Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]))
+     self.source.eql?(Account.current.helpdesk_sources.ticket_source_keys_by_token[:email]))
       type = @model_changes[:spam][1] ? :spam : :ham
       SpamDetection::LearnTicketWorker.perform_async({ :ticket_id => self.id,
         :type => Helpdesk::Email::Constants::MESSAGE_TYPE_BY_NAME[type]})
@@ -1163,20 +1165,33 @@ private
     schema_less_ticket.schema_less_was == schema_less_ticket.attributes
   end
 
-    def fetch_and_validate_file_field_attachment_ids
-      account_file_field_names = account.custom_file_field_names_cache
-      self.file_field_attachment_ids = account_file_field_names.map { |file_field| self.safe_send(file_field) }.compact
-      return if self.file_field_attachment_ids.empty?
+  def fetch_and_validate_file_field_attachment_ids
+    account_file_field_names = account.custom_file_field_names_cache
+    file_field_values = account_file_field_names.map do |file_field|
+      value = safe_send(file_field)
+      value unless value.nil? || value.to_i.zero?
+    end.compact
+    return if file_field_values.empty?
 
-      total_file_size = account.attachments.where(id: self.file_field_attachment_ids).collect(&:content_file_size).sum
-      max_attachment_size = account.attachment_limit.megabytes
-      if total_file_size > max_attachment_size
-        self.errors[:ticket] << :exceeded_total_file_field_attachments_size
-        return false
-      end
-      if self.file_field_attachment_ids.size != self.file_field_attachment_ids.uniq.size
-        self.errors[:ticket] << :non_unique_file_field_attachment_ids
-        return false
-      end
+    if file_field_values.length != file_field_values.uniq.length
+      errors[:ticket] << :non_unique_file_field_attachment_ids
+      return false
     end
+    file_attachments = account.attachments.where(id: file_field_values)
+    self.file_field_attachment_ids = file_attachments.map(&:id)
+    total_file_size = file_attachments.collect(&:content_file_size).sum
+    max_attachment_size = account.attachment_limit.megabytes
+    if total_file_size > max_attachment_size
+      errors[:ticket] << :exceeded_total_file_field_attachments_size
+      return false
+    end
+  end
+
+  def vault_data_cleanup_required?
+    Account.current.pci_compliance_field_enabled? && @model_changes.key?(:status) && status == CLOSED && !bulk_updation
+  end
+
+  def cleanup_vault_data
+    Tickets::VaultDataCleanupWorker.perform_async(object_ids: [self.id], action: 'close')
+  end
 end

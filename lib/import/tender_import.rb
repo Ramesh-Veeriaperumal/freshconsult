@@ -8,8 +8,8 @@ class Import::TenderImport < Struct.new(:params)
 #       tender.perform
 #   This is done for ordercup
 
- TENDER_TICKET_SOURCE = { :web=> Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:portal], 
-                          :email=> Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
+ TENDER_TICKET_SOURCE = { :web=> Helpdesk::Source.ticket_source_keys_by_token[:portal], 
+                          :email=> Helpdesk::Source.ticket_source_keys_by_token[:email]
                         }
  OBJ_TO_PATH = {:ticket => "categories" , :solution => "sections"}
 
@@ -76,7 +76,7 @@ end
 
 def create_notes_for_ticket ticket,comment
     user = get_requester(comment)
-    @note = ticket.notes.build({:incoming => user.customer?, :private => false, :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+    @note = ticket.notes.build({:incoming => user.customer?, :private => false, :source => Helpdesk::Source.note_source_keys_by_token['note'],
                                 :user => user,   :account_id =>@current_account && @current_account.id,
                                 :note_body_attributes => {:body =>comment[:body] , :body_html => comment[:formatted_body]}   , :created_at => comment[:created_at].to_datetime()      
                               })

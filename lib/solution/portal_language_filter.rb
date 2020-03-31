@@ -19,6 +19,19 @@ class Solution::PortalLanguageFilter
             .where(solution_categories: { language_id: @lang_id })
   end
 
+  def folders
+    sol_folders = Account.current.solution_folders
+    sol_folders = if @portal_id.present?
+                 sol_folders.joins(solution_folder_meta: [solution_category_meta: :portal_solution_categories])
+                         .where(portal_solution_categories: { account_id: Account.current.id, portal_id: @portal_id })
+               else
+                 sol_folders.joins(solution_folder_meta: :solution_category_meta)
+               end
+    sol_folders.where(solution_category_meta: { is_default: 0, account_id: Account.current.id })
+            .where(solution_folder_meta: { account_id: Account.current.id })
+            .where(solution_folders: { language_id: @lang_id })
+  end
+
   # Returns unassociated categories.
   # For all portal, it's same. As its not portal specific.
   def unassociated_categories
@@ -42,7 +55,7 @@ class Solution::PortalLanguageFilter
     sol_art_meta.where(solution_folder_meta: { account_id: Account.current.id })
   end
 
-  def articles
+  def all_article_translations
     sol_arts = Account.current.solution_articles
     sol_arts = if @portal_id.present?
                  sol_arts.joins(solution_article_meta: [solution_folder_meta: [solution_category_meta: [portal_solution_categories: :portal]]])
@@ -54,7 +67,10 @@ class Solution::PortalLanguageFilter
     sol_arts.where(solution_category_meta: { account_id: Account.current.id })
             .where(solution_folder_meta: { account_id: Account.current.id })
             .where(solution_article_meta: { account_id: Account.current.id })
-            .where(solution_articles: { language_id: @lang_id })
+  end
+
+  def articles
+    all_article_translations.where(solution_articles: { language_id: @lang_id })
   end
 
   def published_articles

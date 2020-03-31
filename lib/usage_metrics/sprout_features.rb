@@ -46,7 +46,7 @@ module UsageMetrics::SproutFeatures
   def ticket_summary(args)
     args[:account].has_feature?(:ticket_summary) && args[:account]
       .notes
-      .where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['summary'])
+      .where(source: Account.current.helpdesk_sources.note_source_keys_by_token['summary'])
       .last
       .try(:created_at).try(:>, 30.days.ago).present?
   end

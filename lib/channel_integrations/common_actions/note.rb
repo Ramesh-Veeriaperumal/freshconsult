@@ -7,7 +7,7 @@ module ChannelIntegrations::CommonActions
       data = payload[:data]
 
       # we will try to use payload's source. defaults to note.
-      data[:source] ||= Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
+      data[:source] ||= Account.current.helpdesk_sources.note_source_keys_by_token['note']
       note = construct_note(data)
       note.save_note!
 
@@ -21,7 +21,7 @@ module ChannelIntegrations::CommonActions
       data = payload[:data]
 
       # we will try to use payload's source. defaults to email.
-      data[:source] ||= Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email']
+      data[:source] ||= Account.current.helpdesk_sources.note_source_keys_by_token['email']
       note = construct_note(data)
       note.save_note!
 

@@ -22,6 +22,7 @@ module Ember
         if current_account.launched?(:solutions_quick_view)
           pl_filter = Solution::PortalLanguageFilter.new(params[:portal_id], @lang_id)
           @categories_cnt = pl_filter.categories.count
+          @folders_cnt = @categories_cnt > 0 ? pl_filter.folders.count : 0
           @articles_cnt = @categories_cnt > 0 ? pl_filter.articles.count : 0
           all_drafts_cnt = @articles_cnt > 0 ? pl_filter.drafts.count : 0
           all_approvals_cnt = all_drafts_cnt > 0 ? pl_filter.approvals.count : 0
@@ -43,6 +44,7 @@ module Ember
           @categories = fetch_categories(params[:portal_id])
           @articles = fetch_articles
           @drafts =  fetch_drafts
+          @folders =  fetch_folders
           @approvals = fetch_approvals
           @my_drafts = @drafts.empty? ? [] : @drafts.where(user_id: current_user.id)
           @my_drafts = fetch_my_drafts if Account.current.article_approval_workflow_enabled?
@@ -71,6 +73,17 @@ module Ember
           portal_categories = current_account.solution_categories.where(parent_id: @category_meta.map(&:id), language_id: @lang_id)
           @category_meta += [current_account.solution_category_meta.where(is_default: true).first]
           portal_categories
+        end
+
+        def fetch_folders
+          folders_meta = []
+          return [] if @category_meta.empty?
+
+          @category_meta.each do |categ_meta|
+            folders_meta << categ_meta.solution_folder_meta unless categ_meta.is_default
+          end
+          folders_meta.flatten!
+          current_account.solution_folders.where(parent_id: folders_meta.map(&:id), language_id: @lang_id)
         end
 
         def fetch_articles

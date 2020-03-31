@@ -22,7 +22,7 @@ class TicketSummaryDelegator < BaseDelegator
   end
 
   def validate_ticket_summary
-    errors[:source] << :"is invalid" unless source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["summary"]
+    errors[:source] << :"is invalid" unless source == Account.current.helpdesk_sources.note_source_keys_by_token["summary"]
   end
 
   def validate_agent_id

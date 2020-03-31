@@ -382,6 +382,7 @@
       :help_widget_article_customisation: 377
       :sla_reminder_automation: 378
       :pci_compliance_field: 379
+      :twitter_field_automation: 380
 :selectable_features:
   :redis_display_id: true
   :branding: true

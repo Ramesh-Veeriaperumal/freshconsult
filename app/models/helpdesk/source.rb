@@ -92,5 +92,41 @@ class Helpdesk::Source < Helpdesk::Choice
         note_source_keys_by_token['automation_rule']
       ]
     end
+
+    def archive_note_sources  
+      ARCHIVE_NOTE_SOURCES  
+    end 
+
+    def archive_note_source_keys_by_token 
+      Hash[*ARCHIVE_NOTE_SOURCES.zip((0..ARCHIVE_NOTE_SOURCES.size-1).to_a).flatten]  
+    end 
+
+    def archive_note_ticket_note_source_mapping 
+      { 
+        ticket_source_keys_by_token[:email] => note_source_keys_by_token['email'],  
+        ticket_source_keys_by_token[:portal] => note_source_keys_by_token['email'], 
+        ticket_source_keys_by_token[:phone] => note_source_keys_by_token['email'],  
+        ticket_source_keys_by_token[:forum] => note_source_keys_by_token['email'],  
+        ticket_source_keys_by_token[:twitter] => note_source_keys_by_token['twitter'],  
+        ticket_source_keys_by_token[:facebook] => note_source_keys_by_token['facebook'],  
+        ticket_source_keys_by_token[:chat] => note_source_keys_by_token['email'], 
+        ticket_source_keys_by_token[:mobihelp] => note_source_keys_by_token['mobihelp'],  
+        ticket_source_keys_by_token[:feedback_widget] => note_source_keys_by_token['email'] 
+      } 
+    end 
+
+    def archive_note_activities_hash  
+      { 
+        ticket_source_keys_by_token[:twitter] => 'twitter'  
+      } 
+    end 
+
+    def default_ticket_sources  
+      TICKET_SOURCES  
+    end 
+
+    def default_ticket_source_names_by_key  
+      Hash[*TICKET_SOURCES.map { |i| [i[2], i[1]] }.flatten]  
+    end
   end
 end

@@ -231,7 +231,7 @@ class Search::V2::SpotlightControllerTest < ActionController::TestCase
 
     ticket = create_ticket({ :responder_id => @agent.id })
     note = create_note({ 
-                          source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+                          source: Account.current.helpdesk_sources.note_source_keys_by_token['note'],
                           ticket_id: ticket.id,
                           user_id: @agent.id,
                           private: false,
@@ -251,7 +251,7 @@ class Search::V2::SpotlightControllerTest < ActionController::TestCase
 
     ticket = create_ticket({ :responder_id => @agent.id })
     note = create_note({ 
-                          source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+                          source: Account.current.helpdesk_sources.note_source_keys_by_token['note'],
                           ticket_id: ticket.id,
                           user_id: @agent.id,
                           private: false,
@@ -271,7 +271,7 @@ class Search::V2::SpotlightControllerTest < ActionController::TestCase
 
     ticket = create_ticket({ :responder_id => @agent.id })
     note = create_note({ 
-                          source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+                          source: Account.current.helpdesk_sources.note_source_keys_by_token['note'],
                           ticket_id: ticket.id,
                           user_id: @agent.id,
                           private: true,
@@ -291,7 +291,7 @@ class Search::V2::SpotlightControllerTest < ActionController::TestCase
 
     ticket = create_ticket({ :responder_id => @agent.id })
     note = create_note({ 
-                          source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+                          source: Account.current.helpdesk_sources.note_source_keys_by_token['note'],
                           ticket_id: ticket.id,
                           user_id: @agent.id,
                           private: true,
@@ -510,7 +510,7 @@ class Search::V2::SpotlightControllerTest < ActionController::TestCase
 
     ticket = create_ticket({ :responder_id => @@group_agent.id })
     note = create_note({ 
-                          source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+                          source: Account.current.helpdesk_sources.note_source_keys_by_token['note'],
                           ticket_id: ticket.id,
                           user_id: @agent.id,
                           private: false,
@@ -530,7 +530,7 @@ class Search::V2::SpotlightControllerTest < ActionController::TestCase
 
     ticket = create_ticket({ :responder_id => @@group_agent.id })
     note = create_note({ 
-                          source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+                          source: Account.current.helpdesk_sources.note_source_keys_by_token['note'],
                           ticket_id: ticket.id,
                           user_id: @agent.id,
                           private: false,
@@ -550,7 +550,7 @@ class Search::V2::SpotlightControllerTest < ActionController::TestCase
 
     ticket = create_ticket({ :responder_id => @@group_agent.id })
     note = create_note({ 
-                          source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+                          source: Account.current.helpdesk_sources.note_source_keys_by_token['note'],
                           ticket_id: ticket.id,
                           user_id: @agent.id,
                           private: true,
@@ -570,7 +570,7 @@ class Search::V2::SpotlightControllerTest < ActionController::TestCase
 
     ticket = create_ticket({ :responder_id => @@group_agent.id })
     note = create_note({ 
-                          source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+                          source: Account.current.helpdesk_sources.note_source_keys_by_token['note'],
                           ticket_id: ticket.id,
                           user_id: @agent.id,
                           private: true,
@@ -789,7 +789,7 @@ class Search::V2::SpotlightControllerTest < ActionController::TestCase
 
     ticket = create_ticket({ :responder_id => @@restricted_agent.id })
     note = create_note({ 
-                          source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+                          source: Account.current.helpdesk_sources.note_source_keys_by_token['note'],
                           ticket_id: ticket.id,
                           user_id: @agent.id,
                           private: false,
@@ -809,7 +809,7 @@ class Search::V2::SpotlightControllerTest < ActionController::TestCase
 
     ticket = create_ticket({ :responder_id => @@restricted_agent.id })
     note = create_note({ 
-                          source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+                          source: Account.current.helpdesk_sources.note_source_keys_by_token['note'],
                           ticket_id: ticket.id,
                           user_id: @agent.id,
                           private: false,
@@ -829,7 +829,7 @@ class Search::V2::SpotlightControllerTest < ActionController::TestCase
 
     ticket = create_ticket({ :responder_id => @@restricted_agent.id })
     note = create_note({ 
-                          source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+                          source: Account.current.helpdesk_sources.note_source_keys_by_token['note'],
                           ticket_id: ticket.id,
                           user_id: @agent.id,
                           private: true,
@@ -849,7 +849,7 @@ class Search::V2::SpotlightControllerTest < ActionController::TestCase
 
     ticket = create_ticket({ :responder_id => @@restricted_agent.id })
     note = create_note({ 
-                          source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+                          source: Account.current.helpdesk_sources.note_source_keys_by_token['note'],
                           ticket_id: ticket.id,
                           user_id: @agent.id,
                           private: true,

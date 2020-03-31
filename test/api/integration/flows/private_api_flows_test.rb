@@ -103,6 +103,39 @@ class PrivateApiFlowsTest < ActionDispatch::IntegrationTest
     response.body.must_match_json_expression(request_error_pattern('access_denied'))
   end
 
+  def test_private_api_jwt_auth_with_ip_blocked
+    @account.launch(:api_jwt_auth)
+    token = generate_jwt_token(1, 1, Time.now.to_i, Time.now.to_i)
+    auth = ActionController::HttpAuthentication::Token.encode_credentials(token)
+    @account.features.whitelisted_ips.create
+    create_whitelisted_ips
+    @account.reload
+    WhitelistedIp.any_instance.stubs(:ip_ranges).returns([{ start_ip: '172.0.1.1', end_ip: '172.0.1.10' }])
+    @headers['CLIENT_IP'] = '0.0.0.0'
+    get 'api/_/bootstrap', nil, @headers.merge('HTTP_AUTHORIZATION' => auth)
+    assert_response 403
+  ensure
+    @account.features.whitelisted_ips.destroy
+    WhitelistedIp.any_instance.unstub(:ip_ranges)
+  end
+
+  def test_private_api_basic_auth_ip_whitelisted
+    @account.features.whitelisted_ips.create
+    create_whitelisted_ips(true)
+    @account.reload
+    ip_ranges = @account.whitelisted_ip.ip_ranges.first.symbolize_keys!
+    WhitelistedIp.any_instance.stubs(:ip_ranges).returns([ip_ranges])
+    @headers['CLIENT_IP'] = '127.0.1.2'
+    @account.launch(:api_jwt_auth)
+    token = generate_jwt_token(1, 1, Time.now.to_i, Time.now.to_i)
+    auth = ActionController::HttpAuthentication::Token.encode_credentials(token)
+    get 'api/_/bootstrap', nil, @headers.merge('HTTP_AUTHORIZATION' => auth)
+    assert_response 200
+  ensure
+    @account.features.whitelisted_ips.destroy
+    WhitelistedIp.any_instance.unstub(:ip_ranges)
+  end
+
   def test_private_api_jwt_auth
     @account.launch(:api_jwt_auth)
     token = generate_jwt_token(1, 1, Time.now.to_i, Time.now.to_i)

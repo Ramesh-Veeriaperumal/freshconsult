@@ -93,7 +93,7 @@
         <!-- reply will be always public -->
         <%= f.hidden_field :private , :value => false %>
         <!--reply source will be always email-->
-        <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"] %>
+        <%= f.hidden_field :source , :value => Account.current.helpdesk_sources.note_source_keys_by_token["email"] %>
         <%= f.hidden_field :to_emails , :value =>  @ticket.from_email %>
         <%= f.hidden_field :from_email, :id => "reply_from_email_#{cntid}", :value => @selected_reply_email%>
         <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>

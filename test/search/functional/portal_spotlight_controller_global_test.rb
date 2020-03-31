@@ -260,7 +260,7 @@ class Support::SearchV2::SpotlightControllerTest < ActionController::TestCase
     dept = Faker::Commerce.department
     ticket = create_ticket({ requester_id: @ticket_contact.id })
     note = create_note({ 
-                          source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+                          source: Account.current.helpdesk_sources.note_source_keys_by_token['note'],
                           ticket_id: ticket.id,
                           user_id: @ticket_contact.id,
                           private: false,
@@ -279,7 +279,7 @@ class Support::SearchV2::SpotlightControllerTest < ActionController::TestCase
     dept = Faker::Commerce.department
     ticket = create_ticket({ requester_id: @ticket_contact.id })
     note = create_note({ 
-                          source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+                          source: Account.current.helpdesk_sources.note_source_keys_by_token['note'],
                           ticket_id: ticket.id,
                           user_id: @ticket_contact.id,
                           private: false,

@@ -21,12 +21,6 @@ Metrics/AbcSize:
 
 # Offense count: 1
 # Configuration parameters: CountComments.
-Metrics/ClassLength:
-  Max: 173
-  Enabled: false
-
-# Offense count: 1
-# Configuration parameters: CountComments.
 Metrics/MethodLength:
   Max: 12
   Enabled: false
@@ -108,7 +102,7 @@ Layout/EmptyLinesAroundModuleBody:
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Layout/FirstParameterIndentation:
+Layout/IndentFirstArgument:
   AutoCorrect: true
   Enabled: true
 
@@ -134,7 +128,7 @@ Style/IfUnlessModifier:
 # Offense count: 4
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Layout/IndentHash:
+Layout/IndentFirstHashElement:
   AutoCorrect: true
   Enabled: true
 
@@ -158,8 +152,11 @@ Layout/IndentationWidth:
 # Configuration parameters: SupportedStyles.
 Style/LambdaCall:
   AutoCorrect: true
-  Enabled: true
+  Enabled: false
   EnforcedStyle: braces
+  Exclude:
+    - test/**/*.rb
+    - api/**/*.rb
 
 # Offense count: 3
 # Cop supports --auto-correct.
@@ -191,13 +188,6 @@ Naming/PredicateName:
 # Cop supports --auto-correct.
 Style/RedundantSelf:
   AutoCorrect: false
-  Enabled: true
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, AllowInnerSlashes.
-Style/RegexpLiteral:
-  EAutoCorrect: true
   Enabled: true
 
 # Offense count: 1
@@ -296,15 +286,16 @@ Style/DoubleNegation:
   # Regarding use !! double bang to convert
 
 Style/RegexpLiteral:
+  EAutoCorrect: true
   Enabled: false
 
 Metrics/CyclomaticComplexity:
   Exclude:
-   - test/**/*.rb
+    - test/**/*.rb
 
 Metrics/PerceivedComplexity:
   Exclude:
-   - test/**/*.rb
+    - test/**/*.rb
 
 Metrics/ModuleLength:
   Max: 150
@@ -313,37 +304,31 @@ Metrics/ModuleLength:
 Metrics/ClassLength:
   Max: 150
   Exclude:
-   - test/**/*.rb
+    - test/**/*.rb
   # Test if this works pre-commit hooks
 
 Lint/UselessAssignment:
   Exclude:
-   - test/**/*.rb
+    - test/**/*.rb
 
 Lint/HandleExceptions:
   Exclude:
-   - test/**/*.rb
+    - test/**/*.rb
 
 Naming/AccessorMethodName:
   Exclude:
-   - test/**/*.rb
+    - test/**/*.rb
 
 Style/GlobalVars:
   Exclude:
-   - test/**/*.rb
+    - test/**/*.rb
 
 Lint/EndAlignment:
   AutoCorrect: true
 
-Style/LambdaCall:
-  Enabled: false
-  Exclude:
-   - test/**/*.rb
-   - api/**/*.rb
-
 Lint/ParenthesesAsGroupedExpression:
   Exclude:
-   - test/**/*.rb
+    - test/**/*.rb
 
 Rails/ApplicationRecord:
   Enabled: false

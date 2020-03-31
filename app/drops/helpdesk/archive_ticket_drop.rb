@@ -87,7 +87,7 @@ class Helpdesk::ArchiveTicketDrop < BaseDrop
 
 	def public_comments
 		# source.notes.public.exclude_source('meta').newest_first
-		@source.public_notes.exclude_source(Helpdesk::Note::EXCLUDE_SOURCE)
+		@source.public_notes.exclude_source(Account.current.helpdesk_sources.note_exclude_sources)
 	end
 
 	def total_time_spent

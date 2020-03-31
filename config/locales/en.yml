@@ -430,6 +430,8 @@ en:
   requester_time_zone: Requester Timezone
   requester_language: Requester Language
   requester_segment: Requester Segment
+  requester_twitter_profile_status: Verified by Twitter
+  requester_twitter_followers_count: Twitter Follower Count
   company_domain: Company Domain
   company_segment: Company Segment
   eight: 8 Hours
@@ -3009,6 +3011,8 @@ en:
       resolved_at: "Hour Since Resolved"
       responder_id: "Agent"
       segments: "Segments"
+      twitter_profile_status: "Verified by Twitter"
+      twitter_followers_count: "Twitter Followers Count"
       selected: "Selected"
       send_email_to_agent: 'Send Email to Agent'
       send_email_to_group: 'Send Email to Group'

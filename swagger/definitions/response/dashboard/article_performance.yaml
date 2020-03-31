@@ -1,0 +1,15 @@
+type: object
+properties:
+  article_performance:
+    description: Total hits, thumbs up and thumbs down for the particular portal in the given language
+    type: object
+    properties:
+      hits:
+        type: integer
+        description: Total article views
+      thumbs_up:
+        type: integer
+        description: Total article thumbs up
+      thumbs_down:
+        type: integer
+        description: Total article thumbs down

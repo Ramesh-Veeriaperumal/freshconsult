@@ -5,12 +5,15 @@ module Ember
     include ::Dashboard::UtilMethods
     include DashboardConcern
     include HelperConcern
+    include SolutionConcern
 
     before_filter :set_dashboard_type
     before_filter :survey_active?, only: [:survey_info]
+    before_filter :validate_language, only: [:show]
+    before_filter :validate_privilege?, only: [:show]
     around_filter :run_on_slave
     around_filter :use_time_zone, only: [:scorecard, :ticket_trends, :ticket_metrics] # Uses user/account's zone instead of UTC
-    
+
     skip_before_filter :load_object
 
     attr_accessor :dashboard_type, :widget_privileges
@@ -47,7 +50,7 @@ module Ember
       # ember needs an id to store it in model,so building the hash with id.
       @config = {}
       @config[:widgets] = widget_config
-      @config[:id] = 1
+      @config[:id] = params["id"]
     end
 
     def survey_info
@@ -102,6 +105,21 @@ module Ember
 
       def survey_active?
         return access_denied unless current_account.any_survey_feature_enabled_and_active?
+      end
+
+      # Validating w.r.t default dashboard request vs privileage he has
+      # i.e agent request for default dashboard has manage_tickest --> true
+      # i.e agent request for default dashboard has create_and_edit_articles and no manage_tickest --> 403
+      # i.e agent request for default solution dashboard has create_and_edit_articles --> true
+      # i.e agent request for default solution dashboard has manage_tickest no create_and_edit_articles --> 403
+      def validate_privilege?
+        has_privilege = false
+        if is_sol_dashboard?
+          has_privilege = current_user.privilege?(:create_and_edit_article) && current_account.solutions_dashboard_enabled?
+        else
+          has_privilege = current_user.privilege?(:manage_tickets)
+        end
+        render_request_error(:access_denied, 403) unless has_privilege 
       end
   end
 end

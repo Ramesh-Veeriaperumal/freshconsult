@@ -7,6 +7,8 @@ class Integrations::ApplicationsController < Admin::AdminController
   before_filter :load_object, :only => [:show]
   
   def index
+    return if current_account.marketplace_gallery_enabled?
+
     if current_account.native_apps_enabled?
       @applications = Integrations::Application.available_apps(current_account)
       @installed_applications = get_installed_apps

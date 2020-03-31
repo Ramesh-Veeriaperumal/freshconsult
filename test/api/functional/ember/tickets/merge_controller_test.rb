@@ -254,6 +254,26 @@ module Ember
           assert_equal true, primary_tkt.reload.can_be_associated?
         end
       end
+
+      def test_merge_with_secure_text_field
+        Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+        name = "secure_text_#{Faker::Lorem.characters(rand(5..10))}"
+        secure_text_field = create_custom_field_dn(name, 'secure_text')
+        primary_ticket = create_ticket
+        source_tickets = 2.times.inject([]) { |arr, i| arr << create_ticket }
+        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id))
+        request_params[:convert_recepients_to_cc] = true
+        put :merge, construct_params({ version: 'private' }, request_params)
+        assert_response 204
+        assert_equal 1, ::Tickets::VaultDataCleanupWorker.jobs.size
+        args = ::Tickets::VaultDataCleanupWorker.jobs.first.deep_symbolize_keys[:args][0]
+        assert_equal source_tickets.map(&:id), args[:object_ids]
+        assert_equal 'close', args[:action]
+      ensure
+        secure_text_field.destroy
+        ::Tickets::VaultDataCleanupWorker.jobs.clear
+        Account.any_instance.unstub(:pci_compliance_field_enabled?)
+      end
     end
   end
 end

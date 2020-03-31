@@ -134,7 +134,7 @@ module SocialTicketsCreationHelper
       twitter_id: requester.twitter_id,
       product_id: options[:twitter_handle].product_id,
       group_id:   options[:group_id] || (options[:twitter_handle].product ? options[:twitter_handle].product.primary_email_config.group_id : nil),
-      source:     Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
+      source:     Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter],
       cc_email: Helpdesk::Ticket.default_cc_hash,
       created_at: Time.zone.now, # Time.at(Time.parse(tweet[:posted_time]).to_i),
       tweet_attributes: tweet_attributes_params(options),
@@ -166,7 +166,7 @@ module SocialTicketsCreationHelper
       note_body_attributes: {
         body_html: options[:tweet][:body]
       },
-      source: Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
+      source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter],
       created_at: Time.zone.now, # Time.at(Time.parse(options[:tweet][:posted_time]).to_i),
       tweet_attributes: tweet_attributes_params(options)
     }
@@ -263,7 +263,7 @@ module SocialTicketsCreationHelper
       requester:  requester,
       product_id: options[:fb_page].product_id,
       group_id:   options[:group_id],
-      source:     Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook],
+      source:     Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook],
       cc_email: Helpdesk::Ticket.default_cc_hash,
       created_at: Time.zone.now, # Time.zone.parse(options[:post][:created_time]),
       fb_post_attributes: get_fb_post_attributes(options),
@@ -289,7 +289,7 @@ module SocialTicketsCreationHelper
       requester:  requester,
       product_id: options[:fb_page].product_id,
       group_id:   options[:group_id],
-      source:     Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook],
+      source:     Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook],
       cc_email: Helpdesk::Ticket.default_cc_hash,
       created_at: Time.zone.now, # Time.zone.parse(options[:post][:created_time]),
       fb_post_attributes: get_fb_post_attributes(options),
@@ -336,7 +336,7 @@ module SocialTicketsCreationHelper
       note_body_attributes: {
         body_html: options[:post][:message]
       },
-      source:              Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook'],
+      source:              Account.current.helpdesk_sources.note_source_keys_by_token['facebook'],
       created_at:          Time.zone.now, # Time.at(Time.parse(options[:tweet][:posted_time]).to_i),
       fb_post_attributes:  get_fb_post_attributes(options)
     }

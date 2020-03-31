@@ -38,7 +38,7 @@ module Helpdesk::SendAndSetHelper
   end
 
   def check_for_from_email
-    if @note.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"] and @note.from_email.present? and !current_account.support_emails_in_downcase.include?(parse_email_text(@note.from_email)[:email])
+    if @note.source == Account.current.helpdesk_sources.note_source_keys_by_token["email"] and @note.from_email.present? and !current_account.support_emails_in_downcase.include?(parse_email_text(@note.from_email)[:email])
       flash[:notice] = I18n.t('ticket.errors.request_dropped')
       logger.debug "From email in request doesn't match with supported emails for the account #{current_account.id} for ticket #{@note.notable.id} with display_id #{@note.notable.display_id}, had the from email #{@note.from_email}"
       @scroll_to_top = true
@@ -96,12 +96,12 @@ module Helpdesk::SendAndSetHelper
   end
 
   def set_default_source
-    @note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if params[:helpdesk_note][:source].blank?
+    @note.source = Account.current.helpdesk_sources.note_source_keys_by_token["note"] if params[:helpdesk_note][:source].blank?
   end
 
   def kbase_email_included
     kbase_email = current_account.kbase_email
-    if @note.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"] and (params[:helpdesk_note].slice(*[:to_emails, :cc_emails, :bcc_emails]).values.flatten.include?(kbase_email))
+    if @note.source == Account.current.helpdesk_sources.note_source_keys_by_token["email"] and (params[:helpdesk_note].slice(*[:to_emails, :cc_emails, :bcc_emails]).values.flatten.include?(kbase_email))
       @note.bcc_emails.delete(kbase_email)
       @note.cc_emails.delete(kbase_email)
       @note.instance_variable_set(:@create_solution_privilege, privilege?(:publish_solution))
@@ -128,12 +128,12 @@ module Helpdesk::SendAndSetHelper
   end
 
   def check_for_public_notes
-    return unless traffic_cop_feature_enabled? and @note.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]
+    return unless traffic_cop_feature_enabled? and @note.source == Account.current.helpdesk_sources.note_source_keys_by_token["note"]
     traffic_cop_warning unless params[:helpdesk_note][:private].to_s.to_bool
   end
 
   def check_reply_trial_customers_limit
-    return unless @note.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"]
+    return unless @note.source == Account.current.helpdesk_sources.note_source_keys_by_token["email"]
     if ((current_account.id > get_spam_account_id_threshold) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)))
       if (current_account.subscription.trial?) && Freemail.free?(current_account.admin_email) && max_to_cc_threshold_crossed?
         respond_to do |format|
@@ -247,7 +247,7 @@ module Helpdesk::SendAndSetHelper
   end
 
   def is_reply?
-    @note and @note.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"]
+    @note and @note.source == Account.current.helpdesk_sources.note_source_keys_by_token["email"]
   end
 
   def create_error(note_type = nil)

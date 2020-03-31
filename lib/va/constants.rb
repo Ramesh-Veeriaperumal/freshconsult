@@ -130,6 +130,11 @@ module Va
 
     PRIME_TICKETS = %w(parent_ticket tracker_ticket).freeze
 
+    OBSERVER_CONDITION_FIELD_NAMES = %w[ticket_type status priority product_id group_id
+      responder_id internal_group_id internal_agent_id tag_ids created_at updated_at
+      inbound_count outbound_count last_interaction agent_availability].freeze
+    OBSERVER_TEXT_CUSTOM_FIELD_TYPES = %w[custom_text custom_paragraph].freeze
+
     def self.webhook_content_layouts
       {
         '1' => I18n.t('admin.shared.filter_jsinit.simple_layout'),

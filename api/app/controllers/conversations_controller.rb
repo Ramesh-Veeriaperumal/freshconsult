@@ -172,7 +172,7 @@ class ConversationsController < ApiApplicationController
 
     def can_update?
       # note without source type as 'note' should not be allowed to update
-      unless @item.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
+      unless @item.source == current_account.helpdesk_sources.note_source_keys_by_token['note']
         render_405_error(['DELETE'])
         return false
       end
@@ -214,11 +214,11 @@ class ConversationsController < ApiApplicationController
     end
 
     def fb_public_api?
-      Account.current.launched?(:facebook_public_api) && (@ticket[:source] == TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook]) && reply?
+      Account.current.launched?(:facebook_public_api) && (@ticket[:source] == Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook]) && reply?
     end
 
     def twitter_public_api?
-      Account.current.launched?(:twitter_public_api) && (@ticket[:source] == TicketConstants::SOURCE_KEYS_BY_TOKEN[:twitter]) && reply?
+      Account.current.launched?(:twitter_public_api) && (@ticket[:source] == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter]) && reply?
     end
 
     def validate_params
@@ -300,15 +300,15 @@ class ConversationsController < ApiApplicationController
     end
 
     def assign_source
-      fb_public_api? || twitter_public_api? ? Helpdesk::Note::TICKET_NOTE_SOURCE_MAPPING[@ticket[:source]] : ConversationConstants::TYPE_FOR_ACTION[action_name]
+      fb_public_api? || twitter_public_api? ? Account.current.helpdesk_sources.ticket_note_source_mapping[@ticket[:source]] : ConversationConstants::TYPE_FOR_ACTION[action_name]
     end
 
     def assign_private
-      update? || params[cname][:source] == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
+      update? || params[cname][:source] == current_account.helpdesk_sources.note_source_keys_by_token['note']
     end
 
     def fetch_delegation_hash
-      respond_to?("#{Helpdesk::Ticket::SOURCE_NAMES_BY_KEY[@ticket[:source]]}_delegation_hash".to_sym, true) ? safe_send("#{Helpdesk::Ticket::SOURCE_NAMES_BY_KEY[@ticket[:source]]}_delegation_hash") : { notable: @ticket }
+      respond_to?("#{Account.current.helpdesk_sources.ticket_source_names_by_key[@ticket[:source]]}_delegation_hash".to_sym, true) ? safe_send("#{Account.current.helpdesk_sources.ticket_source_names_by_key[@ticket[:source]]}_delegation_hash") : { notable: @ticket }
     end
 
     def facebook_source_delegation_hash
@@ -347,7 +347,7 @@ class ConversationsController < ApiApplicationController
     end
 
     def fetch_validation_hash
-      respond_to?("#{Helpdesk::Ticket::SOURCE_NAMES_BY_KEY[@ticket[:source]]}_validation_hash".to_sym, true) ? safe_send("#{Helpdesk::Ticket::SOURCE_NAMES_BY_KEY[@ticket[:source]]}_validation_hash") : params[cname]
+      respond_to?("#{Account.current.helpdesk_sources.ticket_source_names_by_key[@ticket[:source]]}_validation_hash".to_sym, true) ? safe_send("#{Account.current.helpdesk_sources.ticket_source_names_by_key[@ticket[:source]]}_validation_hash") : params[cname]
     end
 
     def build_fb_association

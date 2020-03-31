@@ -155,7 +155,7 @@
 </div>
   <div class="choose-plan-drop" style="<%= 'display:none' if @selected_plan.nil? %>">
   <div class="features">
-    <%= render :partial => "/subscriptions/features/toggle-box/ocr_toggle", :locals => { :plan => plan }%>
+    <%= render :partial => "/subscriptions/features/toggle-box/ocr_toggle", :locals => { :plan => plan, :trial => false, :show_omni_toggle => false }%>
     <% if current_account.disable_old_ui_enabled? %>
       <span class="vr-line"></span>
       <%= render :partial => "/subscriptions/features/toggle-box/fsm_toggle", :locals => { :current_account => current_account }%>

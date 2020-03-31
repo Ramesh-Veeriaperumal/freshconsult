@@ -50,7 +50,7 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
     note = @ticket.notes.build(
         :note_body_attributes => { :body_html => cti_note_desc },
         :private => false,
-        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["phone"],
+        :source => current_account.helpdesk_sources.note_source_keys_by_token["phone"],
         :account_id => current_account.id,
         :user_id => current_user.id
       )
@@ -59,7 +59,7 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
         note2 = @ticket.notes.build(
           :note_body_attributes => { :body_html => agent_note_desc },
           :private => current_account.cti_installed_app_from_cache.configs[:inputs][:add_note_as_private].to_s.to_bool,
-          :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+          :source => current_account.helpdesk_sources.note_source_keys_by_token['note'],
           :account_id => current_account.id,
           :user_id => current_user.id
         )
@@ -106,7 +106,7 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
       end
     end
     @ticket = current_account.tickets.build(
-                  :source => TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone],
+                  :source => current_account.helpdesk_sources.ticket_source_keys_by_token[:phone],
                   :requester_id => user.id,
                   :subject  => params[:ticket][:subject],
                   :responder_id => current_user.id,
@@ -118,7 +118,7 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
                   :private => current_account.cti_installed_app_from_cache.configs[:inputs][:add_note_as_private].to_s.to_bool,
                   :user_id => current_user.id,
                   :account_id => current_account.id,
-                  :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+                  :source => current_account.helpdesk_sources.note_source_keys_by_token['note'],
                   :note_body_attributes => { :body_html => note_desc }
               )
         @note.save_note

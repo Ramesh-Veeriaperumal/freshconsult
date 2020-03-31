@@ -1,7 +1,7 @@
 module NoteTestHelper
   def create_note(params = {})
     test_note = FactoryGirl.build(:helpdesk_note,
-                         :source => params[:source] || Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"],
+                         :source => params[:source] || Account.current.helpdesk_sources.note_source_keys_by_token["note"],
                          :notable_id => params[:ticket_id] || Helpdesk::Ticket.last.id,
                          :created_at => params[:created_at],
                          :user_id => params[:user_id] || @agent.id,
@@ -48,7 +48,7 @@ module NoteTestHelper
   def note_params(params={})
     params_hash = {:helpdesk_note => { 
                                       :note_body_attributes => { :body_html => params[:body] || Faker::Lorem.paragraph}, 
-                                      :source => params[:source] || Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"],
+                                      :source => params[:source] || Account.current.helpdesk_sources.note_source_keys_by_token["note"],
                                       :category => params[:category],
                                       :private => params[:private],
                                      },
@@ -88,7 +88,7 @@ module NoteTestHelper
   # end
 
   def create_note_with_survey_result(ticket, params = {})
-    note = create_note(note_params_hash({:source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["feedback"]}))
+    note = create_note(note_params_hash({:source => Account.current.helpdesk_sources.note_source_keys_by_token["feedback"]}))
     survey = @account.surveys.first
     survey.send_while = 4
     survey.save
@@ -104,7 +104,7 @@ module NoteTestHelper
   end
 
   def create_note_with_notifier(_ticket, _params = {})
-    note = create_note(note_params_hash(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['feedback']))
+    note = create_note(note_params_hash(source: Account.current.helpdesk_sources.note_source_keys_by_token['feedback']))
     schema_less_note = @account.schema_less_notes.find_by_note_id(note.id)
     schema_less_note.to_emails = [@account.users.first.email]
     schema_less_note.save

@@ -31,12 +31,12 @@ class VaRule < ActiveRecord::Base
   before_save :set_encrypted_password
   before_save :migrate_filter_data, :if => :conditions_changed?
   before_destroy :save_deleted_rule_info
-  after_commit :clear_observer_rules_cache, :if => :observer_rule?
+  after_commit :clear_observer_rules_cache, :clear_observer_condition_field_names_cache, if: :ticket_observer_rule?
   after_commit :clear_api_webhook_rules_from_cache, :if => :api_webhook_rule?
   after_commit :clear_installed_app_business_rules_from_cache, :if => :installed_app_business_rule?
   after_commit :log_rule_change, if: :automated_rule?
-  after_commit :perform_thank_you_redis_op, if: :observer_rule?
-  after_commit :delete_rule_from_redis_set, on: :destroy, if: :observer_rule?
+  after_commit :perform_thank_you_redis_op, if: :ticket_observer_rule?
+  after_commit :delete_rule_from_redis_set, on: :destroy, if: :ticket_observer_rule?
   after_update :reorder_rules, if: :position_changed?
 
   attr_writer :conditions, :actions, :events, :performer, :rule_operator,
@@ -247,13 +247,13 @@ class VaRule < ActiveRecord::Base
     return to_ret
   end
 
-  def check_rule_events(doer, evaluate_on, current_events)
+  def check_rule_events(doer, evaluate_on, current_events, original_ticket = nil)
     performer_matched = rule_performer.matches? doer, evaluate_on
     Va::Logger::Automation.log("rule performer matched=#{performer_matched}", true)
     return unless performer_matched
     event_matched = rule_event_matches? current_events, evaluate_on
     Va::Logger::Automation.log("rule event matched=#{event_matched}", true)
-    check_rule_conditions evaluate_on, nil, doer if event_matched
+    check_rule_conditions evaluate_on, nil, doer, original_ticket if event_matched
   end
 
   def rule_event_matches?(current_events, evaluate_on)
@@ -267,11 +267,14 @@ class VaRule < ActiveRecord::Base
     false
   end
 
-  def check_rule_conditions(evaluate_on, actions=nil, doer=nil)
+  def check_rule_conditions(evaluate_on, actions=nil, doer=nil, original_ticket=nil)
     is_a_match = false
     self.current_evaluate_on_id = evaluate_on.id
-    benchmark { is_a_match = RuleEngine::NestedCondition.new(evaluate_on,
-                              rule_operator).process_block(rule_conditions(true, true)) }
+    ticket = original_ticket.presence || evaluate_on
+    benchmark do
+      is_a_match = RuleEngine::NestedCondition.new(ticket, rule_operator)
+                                              .process_block(rule_conditions(true, true))
+    end
     is_a_match = true if rule_conditions.blank? && observer_rule?
     Va::Logger::Automation.log("rule condition matched=#{is_a_match}", true)
     trigger_actions(evaluate_on, doer) if is_a_match
@@ -454,8 +457,12 @@ class VaRule < ActiveRecord::Base
     @deleted_model_info = central_publish_payload
   end
 
-  def observer_rule?
+  def ticket_observer_rule?
     rule_type == VAConfig::OBSERVER_RULE
+  end
+
+  def observer_rule?
+    ticket_observer_rule? || service_task_observer_rule?
   end
 
   def api_webhook_rule?
@@ -470,12 +477,24 @@ class VaRule < ActiveRecord::Base
     rule_type == VAConfig::SUPERVISOR_RULE
   end
 
-  def dispatchr_rule?
+  def ticket_dispatcher_rule?
     rule_type == VAConfig::BUSINESS_RULE
+  end
+
+  def dispatchr_rule?
+    ticket_dispatcher_rule? || service_task_dispatcher_rule?
   end
 
   def automation_rule?
     rule_type == VAConfig::SCENARIO_AUTOMATION
+  end
+
+  def service_task_dispatcher_rule?
+    rule_type == VAConfig::SERVICE_TASK_DISPATCHER_RULE
+  end
+
+  def service_task_observer_rule?
+    rule_type == VAConfig::SERVICE_TASK_OBSERVER_RULE
   end
 
   def automated_rule?
@@ -489,9 +508,9 @@ class VaRule < ActiveRecord::Base
 
   # Used for sending webhook failure notifications
   def rule_type_desc
-    if dispatchr_rule?
+    if ticket_dispatcher_rule?
       I18n.t('admin.home.index.dispatcher')
-    elsif observer_rule?
+    elsif ticket_observer_rule?
       I18n.t('admin.home.index.observer')
     elsif supervisor_rule?
       I18n.t('admin.home.index.supervisor')
@@ -499,7 +518,7 @@ class VaRule < ActiveRecord::Base
   end
 
   def rule_path
-    if observer_rule?
+    if ticket_observer_rule?
       if account.automation_revamp_enabled?
         "#{Account.current.url_protocol}://#{Account.current.host}/a/admin/automations/ticket_updates/#{id}/edit"
       else
@@ -507,7 +526,7 @@ class VaRule < ActiveRecord::Base
                                                         host: Account.current.host,
                                                         protocol: Account.current.url_protocol)
       end
-    elsif dispatchr_rule?
+    elsif ticket_dispatcher_rule?
       if account.automation_revamp_enabled?
         "#{Account.current.url_protocol}://#{Account.current.host}/a/admin/automations/ticket_creation/#{id}/edit"
       else

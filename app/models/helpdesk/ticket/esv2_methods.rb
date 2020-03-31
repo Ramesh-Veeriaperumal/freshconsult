@@ -157,9 +157,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # _Note_: Will be deprecated and removed in near future
   #
   def es_from
-    if source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:twitter]
+    if source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter]
       requester.twitter_id
-    elsif source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook]
+    elsif source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook]
       requester.fb_profile_id
     else
       from_email

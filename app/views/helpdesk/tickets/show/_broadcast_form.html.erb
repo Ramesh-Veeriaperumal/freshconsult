@@ -35,7 +35,7 @@
           <% end %>
       </li>
     </ul> 
-    <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>
+    <%= f.hidden_field :source , :value => Account.current.helpdesk_sources.note_source_keys_by_token["note"]%>
     <%= f.hidden_field :category , :value => Helpdesk::Note::CATEGORIES[:broadcast] %>
     <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
     <%= hidden_field_tag :last_note_id,'', :value => @last_note_id, :class => "last_note_id" %>

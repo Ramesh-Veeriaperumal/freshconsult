@@ -14,6 +14,9 @@ INTEGRATION_TESTS = [
   'test/api/integration/flows/surveys_flows_test.rb',
   'test/api/integration/flows/sla_flow_test.rb'
 ].freeze
+
+WIDGET_PUBLIC_API_FLOW_TESTS = ['test/api/integration/flows/widget_api_flows_test.rb'].freeze
+
 PRESENTER_TESTS = [
   'test/models/presenters/account_test.rb',
   'test/models/presenters/helpdesk/ticket_test.rb',
@@ -60,6 +63,6 @@ MODEL_TESTS = Dir.glob('test/models/**/*_test.rb') + Dir.glob('test/app/models/*
 MAILER_TESTS = Dir.glob('test/app/mailers/**/*_test.rb')
 
 ALL_TESTS_FALCON = (UNIT_TESTS | FUNCTIONAL_TESTS_EMBER | SIDEKIQ_TESTS | SHORYUKEN_TESTS | INTEGRATION_TESTS | FRESHCALLER_CHANNEL_TESTS | LIB_TESTS | MODEL_TESTS | PRESENTER_TESTS | MAILER_TESTS | API_APP_CONTROLLER_TESTS) - SKIP_FILES_FALCON + SUCCESSFUL_SEARCH_TESTS - SKIP_FILES_SIDEKIQ
-ALL_TESTS_PUBLIC = (FUNCTIONAL_TESTS_PUBLIC | OLD_UI_FUNCTIONAL_TESTS) - FUNCTIONAL_TESTS_EMBER - SEARCH_TESTS - SKIP_FILES_PUBLIC
+ALL_TESTS_PUBLIC = (FUNCTIONAL_TESTS_PUBLIC | OLD_UI_FUNCTIONAL_TESTS | WIDGET_PUBLIC_API_FLOW_TESTS) - FUNCTIONAL_TESTS_EMBER - SEARCH_TESTS - SKIP_FILES_PUBLIC
 
 ALL_TESTS = (ALL_TESTS_FALCON + ALL_TESTS_PUBLIC).uniq

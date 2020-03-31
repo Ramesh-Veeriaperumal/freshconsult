@@ -119,7 +119,7 @@ class Integrations::ObjectMapper
                           :account_id => "{{account_id}}"}}}, 
           {:ours=>"user", :theirs_to_ours=>{:handler=>:db_fetch, :use_if_empty=>"admin", :entity=>User, :using=>{:conditions=>["email=?", "{{comment.author.emailAddress}}"]}}},
 
-          {:ours=>"source", :theirs_to_ours=>{:handler=>:static_value, :value=>Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]}},
+          {:ours=>"source", :theirs_to_ours=>{:handler=>:static_value, :value=>Helpdesk::Source.note_source_keys_by_token["note"]}},
           {:ours=>"private", :theirs_to_ours=>{:handler=>:static_value, :value=>true}},
           {:ours=>"notable", :theirs_to_ours=>{:handler=>:db_fetch, :entity=>Helpdesk::Ticket, 
                         :using=>{:select=>"helpdesk_tickets.*", :joins=>"INNER JOIN integrated_resources ON integrated_resources.local_integratable_id=helpdesk_tickets.id", 
@@ -174,7 +174,7 @@ class Integrations::ObjectMapper
   STATUS_AS_PUBLIC_NOTE_CONFIG[:map][3][:theirs_to_ours][:value] = false
 
   REPLY_CONFIG = clone(generic_config)
-  REPLY_CONFIG[:map][2][:theirs_to_ours][:value] = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"] #source
+  REPLY_CONFIG[:map][2][:theirs_to_ours][:value] = Helpdesk::Source.note_source_keys_by_token["email"] #source
   REPLY_CONFIG[:map][3][:theirs_to_ours][:value] = false #private
   REPLY_CONFIG[:map][0][:theirs_to_ours][:create_params][:full_text] = "JIRA comment {{notification_cause}} # {{comment.id}}:\n {{comment.body}}\n"
   

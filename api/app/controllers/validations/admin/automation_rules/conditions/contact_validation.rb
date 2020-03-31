@@ -12,6 +12,7 @@ module Admin::AutomationRules::Conditions
     validate :contact_conditions_attribute_type
     validate :multi_language_enabled?, if: -> { language.present? }
     validate :multi_timezone_enabled?, if: -> { time_zone.present? }
+    validate :twitter_field_automation_enabled?, if: -> { twitter_profile_status.present? || twitter_followers_count.present? }
     validate :errors_for_invalid_attributes, if: -> { invalid_attributes.present? }
 
     def initialize(request_params, custom_fields, set, rule_type, additional_options = {})
@@ -32,6 +33,10 @@ module Admin::AutomationRules::Conditions
 
     def multi_timezone_enabled?
       Account.current.multi_timezone_enabled?
+    end
+
+    def twitter_field_automation_enabled?
+      Account.current.has_feature?(:twitter_field_automation) && Account.current.twitter_requester_fields_enabled?
     end
   end
 end

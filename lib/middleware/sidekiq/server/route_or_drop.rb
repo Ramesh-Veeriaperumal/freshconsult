@@ -27,8 +27,8 @@ module Middleware
               elsif route_or_drop.ends_with?('_queue')
                 payload['rerouted_queue'] = route_or_drop.split('_queue')[0]
                 Rails.logger.info "Rerouting worker #{worker_name} account_id: #{account_id} payload: #{payload.inspect} rerouting: #{route_or_drop}"
-                if Account::SidekiqControl::RouteDrop.via_redis_pool_exist?
-                  ::Sidekiq::Client.new(Account::SidekiqControl::Config.via_redis_pool).push(payload)
+                if Account::SidekiqControl::RouteDrop.via_redis_pool_exist?(worker_name)
+                  ::Sidekiq::Client.new(Account::SidekiqControl::Config.via_redis_pool(worker_name)).push(payload)
                 else
                   ::Sidekiq::Client.push(payload)
                 end

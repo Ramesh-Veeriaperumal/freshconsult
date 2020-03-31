@@ -55,11 +55,11 @@ module Channel::V2
     end
 
     def sources
-      super | [::TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook], ::TicketConstants::SOURCE_KEYS_BY_TOKEN[:twitter]]
+      super | [Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook], Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter]]
     end
 
     def facebook_ticket?
-      ::TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook] == source
+      Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook] == source
     end
 
     def facebook_hash_presence?
@@ -111,7 +111,7 @@ module Channel::V2
     end
 
     def twitter_ticket?
-      ::TicketConstants::SOURCE_KEYS_BY_TOKEN[:twitter] == source
+      Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter] == source
     end
 
     def twitter_hash_presence?

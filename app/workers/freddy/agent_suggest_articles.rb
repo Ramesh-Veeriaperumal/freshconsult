@@ -38,7 +38,7 @@ module Freddy
     private
 
       def source_email?
-        @ticket.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email] && (account.bot_email_channel_enabled? || account.email_articles_suggest_enabled?)
+        @ticket.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:email] && (account.bot_email_channel_enabled? || account.email_articles_suggest_enabled?)
       end
 
       def fetch_ml_response

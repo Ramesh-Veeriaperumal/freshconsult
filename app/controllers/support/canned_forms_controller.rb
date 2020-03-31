@@ -25,7 +25,7 @@ class Support::CannedFormsController < SupportController
       note = form_handle_ticket.notes.build(
         user_id: User.current.id,
         note_body_attributes: { body_html: parsed_note_body },
-        source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['canned_form'],
+        source: current_account.helpdesk_sources.note_source_keys_by_token['canned_form'],
         incoming: true,
         private: false
       )

@@ -21,6 +21,8 @@ module RabbitMq::Subscribers::Users::Iris
   end
 
   def mq_iris_valid(action, model)
+    return false if Account.current.disable_rabbitmq_iris_enabled?
+
     if self.is_a?(UserEmail)
       iris_user_email_changes.any? || destroy_action?(action)
     else

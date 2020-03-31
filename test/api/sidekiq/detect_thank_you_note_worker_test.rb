@@ -15,8 +15,7 @@ class DetectThankYouNoteWorkerTest < ActionView::TestCase
   include AccountTestHelper
   include CoreUsersTestHelper
 
-  BLACKLISTED_THANK_YOU_DETECTOR_NOTE_SOURCES = [Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['feedback'], Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'], Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['summary'],
-                                                 Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['automation_rule_forward'], Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['automation_rule']]
+  BLACKLISTED_THANK_YOU_DETECTOR_NOTE_SOURCES = Helpdesk::Source.note_blacklisted_thank_you_detector_note_sources
 
   def setup
     @account = Account.first.presence || create_test_account
@@ -164,7 +163,7 @@ class DetectThankYouNoteWorkerTest < ActionView::TestCase
     def ticket_params
       {
         email: 'sample@freshdesk.com',
-        source: Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
+        source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:email]
       }
     end
 

@@ -1,19 +1,25 @@
 post:
   tags: [agent]
-  description: Bulk agent creation
+  summary: Create multiple agents
+  description: Create multiple agents
+  operationId: createMultipleAgents
+  consumes:
+  - application/json
+  produces:
+  - application/json
   parameters:
-    - name: data
+    - name: agents
       in: body
       required: true
       schema:
         $ref: '#/definitions/bulk_agent_input'
 
   responses:
-    200:
-      description: Success
+    202:
+      description: Accepted
       schema:
-        $ref: '#/definitions/agent_partial_success_response'
-    400:
-      description: Bad Request Error
-      schema:
-        $ref: '#/definitions/bad_request_error'
+        $ref: '#/definitions/bulk_response'
+    404:
+      description: Resource not found
+    403:
+      description: Access denied

@@ -46,6 +46,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   CUSTOM_FILE = 'custom_file'.freeze
   FILE_FIELD = 'file'.freeze
+  SECURE_TEXT = 'secure_text'.freeze
 
   SKIP_FIELD_TYPES = [CUSTOM_DATE_TIME.to_sym, CUSTOM_FILE.to_sym].freeze
 
@@ -195,6 +196,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   def picklist_values_with_sublevels
     list_choices = picklist_values_from_cache
+    return list_choices unless nested_field?
+
     picklist_id_to_choice_map = list_choices.group_by(&:pickable_id)
     list_choices.each do |choice|
       choice.sub_level_choices ||= []
@@ -322,7 +325,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
   scope :default_fields, -> { where(:default => true ) }
   scope :custom_checkbox_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'custom_checkbox'"]
   scope :encrypted_custom_fields, conditions: ["flexifield_def_entry_id is not null and field_type = 'encrypted_text'"]
-  scope :non_secure_fields, -> { where("field_type != 'secure_text'") }
+  scope :secure_fields, -> { where(field_type: SECURE_TEXT) }
+  scope :non_secure_fields, -> { where("field_type != '#{SECURE_TEXT}'") }
 
 
   # Enumerator constant for mapping the CSS class name to the field type

@@ -72,7 +72,7 @@ class Helpdesk::Issue < ActiveRecord::Base
 
   def create_status_note(message, user = nil)
     notes.create(
-      :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['status'],
+      :source => Account.current.helpdesk_sources.note_source_keys_by_token['status'],
       :user => user,
       :note_body_attributes => {:body => message}
     )

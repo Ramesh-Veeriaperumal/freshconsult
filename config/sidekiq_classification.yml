@@ -207,6 +207,7 @@
     - search_analytics_account_cleanup
     - search_analytics_tickets_cleanup
     - update_url_in_sandbox
+    - vault_data_cleanup
 
   :external:
     - thank_you_note
@@ -291,7 +292,7 @@
     - manual_publish
     - delayed_central_publish
     - es_v2_queue
-
+    - central_realtime
   :exports:
     - scheduled_ticket_export_config
     - scheduled_ticket_export

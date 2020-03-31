@@ -20,6 +20,11 @@ class Vault::Client
     @account.pci_compliance_field_enabled? && @account.revoke_feature(:pci_compliance_field)
   end
 
+  def delete_vault_data
+    response_code = execute
+    SUCCESS.include?(response_code)
+  end
+
   private
 
     def params(payload = nil)

@@ -143,7 +143,7 @@ class Integrations::PivotalTrackerController < ApplicationController
         note = @ticket.notes.build(
             :note_body_attributes => {:body_html => msg },
             :private => true,
-            :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"],
+            :source => current_account.helpdesk_sources.note_source_keys_by_token["note"],
             :account_id => current_account.id,
             :user_id => user_id
           )

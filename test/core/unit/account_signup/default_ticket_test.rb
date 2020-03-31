@@ -14,8 +14,8 @@ include AccountTestHelper
     @responder = @account.all_users.find_by_email(Helpdesk::AGENT[:email])
     
     DEFAULT_TICKET_SOURCES.each do |type|
-      instance_variable_set("@#{type}_ticket", @account.tickets.order(:created_at).find_by_source(TicketConstants::SOURCE_KEYS_BY_TOKEN["#{type}".to_sym]))
-      instance_variable_set("@#{type}_note", instance_variable_get("@#{type}_ticket").notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"]))
+      instance_variable_set("@#{type}_ticket", @account.tickets.order(:created_at).find_by_source(Account.current.helpdesk_sources.ticket_source_keys_by_token["#{type}".to_sym]))
+      instance_variable_set("@#{type}_note", instance_variable_get("@#{type}_ticket").notes.find_by_source(Account.current.helpdesk_sources.note_source_keys_by_token["email"]))
       instance_variable_set("@expected_#{type}_ticket", eval("Fixtures::Default#{type.to_s.camelize()}Ticket").new )
     end
   end
@@ -41,7 +41,7 @@ include AccountTestHelper
       if(instance_variable_get("@#{type}_note"))
         assert_present instance_variable_get("@#{type}_note")
         assert_equal instance_variable_get("@#{type}_note").user_id, @responder.id
-        assert_equal instance_variable_get("@#{type}_note").source, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"]
+        assert_equal instance_variable_get("@#{type}_note").source, Account.current.helpdesk_sources.note_source_keys_by_token["email"]
         assert_equal instance_variable_get("@#{type}_note").private, false
       end
     end
@@ -61,7 +61,7 @@ include AccountTestHelper
   end
 
   def test_feedback_widget_ticket_for_meta_data
-    meta_note = @feedback_widget_ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"])
+    meta_note = @feedback_widget_ticket.notes.find_by_source(Account.current.helpdesk_sources.note_source_keys_by_token["meta"])
     meta_data = YAML::load(meta_note.body)
     required_meta_data = Helpdesk::DEFAULT_TICKET_PROPERTIES[:feedback_widget_ticket][:meta]
     assert_equal meta_data["user_agent"] , required_meta_data[:user_agent]

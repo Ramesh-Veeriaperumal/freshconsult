@@ -287,7 +287,7 @@ class Account < ActiveRecord::Base
       es_msearch: true, canned_forms: false, attachment_virus_detection: false,
       old_link_back_url_validation: false, stop_contacts_count_query: false,
       product_central_publish: false, help_widget: false, undo_send: false,
-      bot_email_channel: false, bot_email_central_publish: false, archive_ticket_fields: false,
+      bot_email_channel: false, bot_email_central_publish: false, archive_ticket_fields: true,
       sso_login_expiry_limitation: false, csat_email_scan_compatibility: false,
       email_deprecated_style_parsing: false, saml_ecrypted_assertion: false,
       quoted_text_parsing_feature: false, description_by_default: false,
@@ -305,11 +305,11 @@ class Account < ActiveRecord::Base
       allow_update_agent: false, facebook_dm_outgoing_attachment: true, hide_mailbox_error_from_agents: false,
       prevent_lang_detect_for_spam: false, jira_onpremise_reporter: false, support_ticket_rate_limit: false, sidekiq_logs_to_central: false, portal_central_publish: false, encode_emoji_in_solutions: false,
       forums_agent_portal: false, mailbox_google_oauth: false, migrate_euc_pages_to_us: false, agent_collision_revamp: false, topic_editor_with_html: false,
-      mailbox_forward_setup: false, remove_image_attachment_meta_data: false, ticket_field_revamp: false, new_timeline_view: false, email_mailbox: true, facebook_admin_ui_revamp: false,
+      mailbox_forward_setup: false, remove_image_attachment_meta_data: false, ticket_field_revamp: true, new_timeline_view: false, email_mailbox: true, facebook_admin_ui_revamp: false,
       detect_lang_from_email_service: false, sla_policy_revamp: false, freshdesk_freshsales_bundle: false,
       fsm_for_garden_plan: false, fsm_for_blossom_plan: false, requester_widget_timeline: false, enable_secure_login_check: false, contact_form_enhancement: false, enable_twitter_requester_fields: true, marketplace_gallery: false,
       facebook_public_api: false, twitter_public_api: false, retry_emails: false, fb_message_echo_support: false, portal_prototype_update: false, solutions_quick_view: false, solutions_freshconnect: false,
-      fsm_scheduler_month_view: false, facebook_post_outgoing_attachment: true
+      fsm_scheduler_month_view: false, facebook_post_outgoing_attachment: true, solutions_dashboard: false
     }, :merge
   )
 

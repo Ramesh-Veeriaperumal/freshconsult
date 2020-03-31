@@ -2829,6 +2829,8 @@
     "hk-app-web-p0": {
     },
     "fc-bg-sidekiq-cron": {
+    },
+    "fc-bg-shoryuken-archive": {
     }
   }
 }

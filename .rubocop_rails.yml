@@ -1,0 +1,56 @@
+require:
+  - ./script/rubocop/cop/rails/query_args.rb
+  - ./script/rubocop/cop/rails/finder_method.rb
+  - ./script/rubocop/cop/rails/match_route.rb
+  - ./script/rubocop/cop/rails/update_all_query.rb
+  - ./script/rubocop/cop/rails/json_generate.rb
+  - ./script/rubocop/cop/gem/will_paginate.rb
+  - ./script/rubocop/cop/gem/aws_v1.rb
+  - ./script/rubocop/cop/gem/aws_global_var.rb
+  - ./script/rubocop/cop/gem/aws_s3.rb
+
+Rails:
+  Enabled: true
+AllCops:
+  DisabledByDefault: true
+  Include:
+    - '**/*.api'
+  Exclude:
+    - 'test/api/query_reports/*'
+
+# default rules
+Rails/HasAndBelongsToMany:
+  Enabled: true
+
+# custom rules
+Rails/QueryArgs:
+  Enabled: true
+
+Rails/FinderMethod:
+  Enabled: true
+
+Rails/MatchRoute:
+  Enabled: true
+  Include:
+    - '**/*routes.rb'
+
+Rails/UpdateAllQuery:
+  Enabled: true
+
+Rails/JsonGenerate:
+  Enabled: true
+  Include:
+    - 'api/app/views/**/*'
+
+Gem/WillPaginate:
+  Enabled: true
+
+Gem/AwsV1:
+  Enabled: true
+
+Gem/AwsS3:
+  Enabled: true
+
+Gem/AwsGlobalVar:
+  Enabled: true
+

@@ -91,7 +91,7 @@ class Widgets::FeedbackWidgetsController < SupportController
     def build_item
       @ticket = current_account.tickets.new
       @ticket.build_ticket_body
-      @ticket.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:feedback_widget]
+      @ticket.source = current_account.helpdesk_sources.ticket_source_keys_by_token[:feedback_widget]
     end
 
     def decord_params
@@ -126,6 +126,6 @@ class Widgets::FeedbackWidgetsController < SupportController
     end
 
     def set_ticket_source
-      params[:helpdesk_ticket][:source] = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:feedback_widget]
+      params[:helpdesk_ticket][:source] = current_account.helpdesk_sources.ticket_source_keys_by_token[:feedback_widget]
     end
 end

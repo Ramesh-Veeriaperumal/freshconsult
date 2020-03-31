@@ -246,7 +246,7 @@ module ConversationsTestHelper
   def create_broadcast_note(ticket_id, params = {})
     broadcast_params = {
       ticket_id: ticket_id,
-      source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+      source: Account.current.helpdesk_sources.note_source_keys_by_token['note'],
       user_id: @agent.id,
       account_id: @account.id,
       notable_type: 'Helpdesk::Ticket',

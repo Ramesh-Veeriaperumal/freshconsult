@@ -164,7 +164,7 @@ class Helpdesk::NotesController < ApplicationController
     end
     
     def email_reply?
-      @item.source.eql?(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"])
+      @item.source.eql?(current_account.helpdesk_sources.note_source_keys_by_token["email"])
     end
     
     def create_article
@@ -228,7 +228,7 @@ class Helpdesk::NotesController < ApplicationController
   end
 
   def set_default_source
-    @item.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if params[:helpdesk_note][:source].blank?
+    @item.source = current_account.helpdesk_sources.note_source_keys_by_token["note"] if params[:helpdesk_note][:source].blank?
   end
 
   def after_restore_url

@@ -63,7 +63,7 @@ class ChatsController < ApplicationController
       return if !check_permissibility(params[:ticket][:email])
     end
     ticket_params = {
-                      :source => TicketConstants::SOURCE_KEYS_BY_TOKEN[:chat],
+                      :source => current_account.helpdesk_sources.ticket_source_keys_by_token[:chat],
                       :email  => params[:ticket][:email],
                       :phone  => params[:ticket][:phone],
                       :subject  => params[:ticket][:subject],
@@ -275,7 +275,7 @@ class ChatsController < ApplicationController
                 :private => false,
                 :user_id => userId,
                 :account_id => accId,
-                :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+                :source => current_account.helpdesk_sources.note_source_keys_by_token['note'],
                 :note_body_attributes => { :body_html => note }
             )
     if @note.save_note
@@ -331,7 +331,7 @@ class ChatsController < ApplicationController
       desc = desc + "<br>" + message
     end
     ticket_params = {
-                      :source => TicketConstants::SOURCE_KEYS_BY_TOKEN[:chat],
+                      :source => current_account.helpdesk_sources.ticket_source_keys_by_token[:chat],
                       :email  => params[:email],
                       :subject  => subject,
                       :requester_name => params[:name],

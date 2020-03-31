@@ -642,7 +642,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           :bcc_emails => [], :reply_cc => global_cc.dup, :tkt_cc => parse_cc_email },
         :email_config => email_config,
         :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
-        :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
+        :source => Account.current.helpdesk_sources.ticket_source_keys_by_token[:email]
       }
       ticket_params.merge!({
                   :created_at => params[:migration_internal_date].to_time,
@@ -668,7 +668,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def check_for_chat_scources(ticket,from_email)
-      ticket.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:chat] if Helpdesk::Ticket::CHAT_SOURCES.has_value?(from_email[:domain])
+      ticket.source = Account.current.helpdesk_sources.ticket_source_keys_by_token[:chat] if Helpdesk::Ticket::CHAT_SOURCES.has_value?(from_email[:domain])
       if from_email[:domain] == Helpdesk::Ticket::CHAT_SOURCES[:snapengage]
         emailreg = Regexp.new(/\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)
         chat_email =  params[:subject].scan(emailreg).uniq[0]
@@ -773,7 +773,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       note_params = build_note_params ticket, from_email, user, from_fwd_recipients, body, body_html, full_text, full_text_html, cc_emails
       note = ticket.notes.build note_params
       note.subject = Helpdesk::HTMLSanitizer.clean(params[:subject])   
-      note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if (from_fwd_recipients or ticket.agent_performed?(user) or rsvp_to_fwd?(ticket, from_email, user))
+      note.source = Account.current.helpdesk_sources.note_source_keys_by_token["note"] if (from_fwd_recipients or ticket.agent_performed?(user) or rsvp_to_fwd?(ticket, from_email, user))
       note.schema_less_note.category = ::Helpdesk::Note::CATEGORIES[:third_party_response] if rsvp_to_fwd?(ticket, from_email, user)
       note.update_email_received_at(params[:x_received_at] || parse_internal_date(params[:internal_date]))
 
@@ -842,7 +842,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           :full_text => tokenize_emojis(full_text),
           :full_text_html => full_text_html || ""
          },
-        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"],
+        :source => Account.current.helpdesk_sources.note_source_keys_by_token["email"],
         :user => user, #by Shan temp
         :account_id => ticket.account_id,
         :from_email => from_email[:email],

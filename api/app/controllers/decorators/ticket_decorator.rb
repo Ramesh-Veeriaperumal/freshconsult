@@ -51,7 +51,7 @@ class TicketDecorator < ApiDecorator
                                                  format_date(v)
                                                end
                                              elsif @custom_fields_mapping[k] == Helpdesk::TicketField::CUSTOM_FILE && v.present?
-                                               v.to_i
+                                               v.to_i.zero? ? nil : v.to_i
                                              else
                                                v
                                              end
@@ -266,7 +266,7 @@ class TicketDecorator < ApiDecorator
   end
 
   def meta
-    meta_info = record.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'])
+    meta_info = record.notes.find_by_source(Account.current.helpdesk_sources.note_source_keys_by_token['meta'])
     return {} unless meta_info
     meta_info = YAML.load(meta_info.body)
     handle_timestamps(meta_info)

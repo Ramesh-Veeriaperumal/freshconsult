@@ -22,10 +22,24 @@
    		<%= render :partial => "application_form", :object => f, :locals => { :is_edit => false, :installed_app =>Integrations::InstalledApplication.new, :form => f } %>
 		</li>
   </ul>
+
   <div class="button-container">
-    <%= link_to t('back'), {:controller => 'applications', :action => 'index'}, :class => "uiButton uiButton--uppercase floatl" %>
+    <% if current_account.marketplace_gallery_enabled? %>
+      <a id="cancel-app-btn" class="uiButton uiButton--uppercase floatl"><%= t("back") %></a>
+    <% else %>
+      <a class="uiButton uiButton--uppercase floatl"><%= t("back") %></a>
+    <% end %>
     <% if @installing_application.name != "seoshop" %>
       <%= f.submit t('application.enable'), :class => "btn btn-primary" %>
     <%end%>
   </div>
+<% end %>
+
+<% if current_account.marketplace_gallery_enabled? %>
+  <% content_for :onload_script do %>
+    jQuery("#cancel-app-btn").on("click", function(ev){
+      ev.preventDefault();
+      window.App.Channel.port1.postMessage({action: "load_marketplace_gallery"});
+    });
+  <% end %>
 <% end %>

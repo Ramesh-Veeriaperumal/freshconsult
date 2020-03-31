@@ -11,7 +11,7 @@
 			} do |f| %>
 	<ul class="ui-form dont-validate">
 		<li class="inline-field field continous">
-			<%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>
+			<%= f.hidden_field :source , :value => current_account.helpdesk_sources.note_source_keys_by_token["note"]%>
 			<%= f.fields_for :note_body, @item.note_body do |ff| %>
 				<%= ff.text_area :body_html, :class => "required", :value => @item.body_html, :id =>"#{@item.id}-body" %>
 			<% end %>

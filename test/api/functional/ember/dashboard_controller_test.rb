@@ -1,5 +1,7 @@
 require_relative '../../test_helper'
 require_relative "#{Rails.root}/test/api/helpers/custom_dashboard/search_service_result.rb"
+require Rails.root.join('test', 'core', 'helpers', 'solutions_test_helper.rb')
+
 module Ember
   class DashboardControllerTest < ::ActionController::TestCase
     include GroupHelper
@@ -8,9 +10,16 @@ module Ember
     include DashboardRedshiftTestHelper
     include ApiTicketsTestHelper
     include SurveysTestHelper
+    include SolutionsTestHelper
+
+    def setup
+      super
+      @account = Account.first
+      Account.stubs(:current).returns(@account)
+      setup_multilingual
+    end
 
     # ticket_summaries
-
     def test_scorecard_without_access_to_dashboard
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false)
       get :scorecard, controller_params(version: 'private')
@@ -126,6 +135,158 @@ module Ember
       get :show, controller_params(version: 'private', id: 1)
       assert_response 403
     ensure
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_show_without_access_to_solutions_dashboard
+      Account.any_instance.stubs(:solutions_dashboard_enabled?).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false)
+      User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(false)
+      get :show, controller_params(version: 'private', id: 2)
+      assert_response 403
+    ensure
+      Account.any_instance.unstub(:solutions_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_show_solutions_dashboard
+      Account.any_instance.stubs(:solutions_dashboard_enabled?).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
+      User.any_instance.stubs(:privilege?).with(:approve_article).returns(true)
+      get :show, controller_params(version: 'private', id: 2)
+      assert_response 200
+    ensure
+      Account.any_instance.unstub(:solutions_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_show_solutions_dashboard_with_language_code
+      Account.any_instance.stubs(:solutions_dashboard_enabled?).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
+      User.any_instance.stubs(:privilege?).with(:approve_article).returns(true)      
+      get :show, controller_params(version: 'private', id: 2, language: Account.current.language)
+      assert !get_widget_names.include?('outdated')
+      assert_response 200
+    ensure
+      Account.any_instance.unstub(:solutions_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_show_solutions_dashboard_with_secondary_language
+      Account.any_instance.stubs(:solutions_dashboard_enabled?).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
+      User.any_instance.stubs(:privilege?).with(:approve_article).returns(true)
+      get :show, controller_params(version: 'private', id: 2, language: Account.current.supported_languages.first)
+      assert get_widget_names.include?('outdated')
+      assert_response 200
+    ensure
+      Account.any_instance.unstub(:solutions_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_show_solutions_dashboard_without_article_approval_workflow
+      Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(false)
+      Account.any_instance.stubs(:solutions_dashboard_enabled?).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
+      User.any_instance.stubs(:privilege?).with(:approve_article).returns(true)
+      get :show, controller_params(version: 'private', id: 2, language: Account.current.supported_languages.first)
+      assert !get_widget_names.include?('in_review')
+      assert !get_widget_names.include?('approved')
+      assert_response 200
+    ensure
+      Account.any_instance.unstub(:solutions_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+      Account.any_instance.unstub(:article_approval_workflow_enabled?)
+    end
+
+    def test_show_solutions_dashboard_with_article_approval_workflow
+      Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+      Account.any_instance.stubs(:solutions_dashboard_enabled?).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
+      User.any_instance.stubs(:privilege?).with(:approve_article).returns(true)
+      get :show, controller_params(version: 'private', id: 2, language: Account.current.supported_languages.first)
+      assert get_widget_names.include?('in_review')
+      assert get_widget_names.include?('approved')
+      assert_response 200
+    ensure
+      Account.any_instance.unstub(:solutions_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+      Account.any_instance.unstub(:article_approval_workflow_enabled?)
+    end
+
+    def test_show_solutions_dashboard_with_article_approval_workflow_without_approval_privilege
+      Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+      Account.any_instance.stubs(:solutions_dashboard_enabled?).returns(true)
+      User.any_instance.stubs(:privilege?).with(:approve_article).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
+      get :show, controller_params(version: 'private', id: 2, language: Account.current.supported_languages.first)
+      assert get_widget_names.include?('in_review')
+      assert get_widget_names.include?('approved')
+      assert !get_widget_names.include?('approval_pending_articles')
+      assert_response 200
+    ensure
+      Account.any_instance.unstub(:solutions_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+      Account.any_instance.unstub(:article_approval_workflow_enabled?)
+    end
+
+    def test_show_solutions_dashboard_with_secondary_language_without_multilingual
+      Account.any_instance.stubs(:multilingual?).returns(false)
+      Account.any_instance.stubs(:solutions_dashboard_enabled?).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
+      User.any_instance.stubs(:privilege?).with(:approve_article).returns(true)
+      get :show, controller_params(version: 'private', id: 2, language: Account.current.supported_languages.first)
+      assert_response 404
+    ensure
+      Account.any_instance.unstub(:solutions_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+      Account.any_instance.unstub(:multilingual?)
+    end
+
+    def test_show_with_manage_ticket_access_to_solutions_dashboard
+      Account.any_instance.stubs(:solutions_dashboard_enabled?).returns(true)
+      User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(false)
+      User.any_instance.stubs(:privilege?).with(:approve_article).returns(true)
+      get :show, controller_params(version: 'private', id: 2)
+      assert_response 403
+    ensure
+      Account.any_instance.unstub(:solutions_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_show_with_solution_privilege_access_to_default_dashboard
+      Account.any_instance.stubs(:solutions_dashboard_enabled?).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false)
+      User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
+      User.any_instance.stubs(:privilege?).with(:approve_article).returns(true)
+      get :show, controller_params(version: 'private', id: 2)
+      assert_response 403
+    ensure
+      Account.any_instance.unstub(:solutions_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
     end
 
@@ -642,5 +803,11 @@ module Ember
       SearchService::Client.any_instance.unstub(:aggregate)
       Account.current.rollback(:count_service_es_reads)
     end
+
+    private
+
+      def get_widget_names
+        JSON.parse(response.body)['widgets'].map {|widget| widget['name']}
+      end
   end
 end

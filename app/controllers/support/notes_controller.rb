@@ -18,7 +18,7 @@ class Support::NotesController < ApplicationController
     @note = @ticket.notes.build({
         "incoming" => true,
         "private" => false,
-        "source" => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+        "source" => current_account.helpdesk_sources.note_source_keys_by_token['note'],
         "user_id" => current_user && current_user.id,
         "account_id" => current_account && current_account.id
       }.merge(params[:helpdesk_note].permit(*(Helpdesk::Note::PERMITTED_PARAMS))))

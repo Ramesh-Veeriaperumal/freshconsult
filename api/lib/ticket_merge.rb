@@ -43,11 +43,13 @@ class TicketMerge
         close_source_ticket(source_ticket)
         update_header_info(source_ticket.header_info) if source_ticket.header_info
       end
+      Tickets::VaultDataCleanupWorker.perform_async(object_ids: source_tickets.map(&:id), action: 'close') if Account.current.pci_compliance_field_enabled?
     end
 
     def close_source_ticket(source_ticket)
       disable_notification(Account.current)
       source_ticket.parent_ticket = target.id
+      source_ticket.bulk_updation = true
       source_ticket.update_attribute(:status, Helpdesk::Ticketfields::TicketStatus::CLOSED)
       enable_notification(Account.current)
     end
@@ -123,7 +125,7 @@ class TicketMerge
     end
 
     def target_note_source(is_private)
-      is_private ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email']
+      is_private ? Account.current.helpdesk_sources.note_source_keys_by_token['note'] : Account.current.helpdesk_sources.note_source_keys_by_token['email']
     end
 
     def target_note_emails(is_private, type = :to_emails)

@@ -34,35 +34,48 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
 
   concerned_with :attributes, :s3, :esv2_methods
   
-  scope :exclude_source, lambda { |s| { :conditions => ['source <> ?', SOURCE_KEYS_BY_TOKEN[s]] } }
+  scope :exclude_source, lambda { |s| { :conditions => ['source <> ?', Account.current.helpdesk_sources.note_source_keys_by_token[s]] } }
   scope :visible, :conditions => { :deleted => false }
   
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
 
-  SOURCES = %w{email form note status meta twitter feedback facebook 
-               forward_email phone mobihelp mobihelp_app_review summary automation_rule_forward}
+  def self.const_missing(constant_name, *args)  
+    if [:SOURCES, :SOURCE_KEYS_BY_TOKEN, :ACTIVITIES_HASH, :TICKET_NOTE_SOURCE_MAPPING, :EXCLUDE_SOURCE].include?(constant_name)  
+      new_constant_name = 'Helpdesk::ArchiveNote::'+ constant_name.to_s + '_1'  
+      Rails.logger.debug("Warning accessing note constants :: #{new_constant_name}")  
+      Rails.logger.debug(caller[0..10].join("\n"))  
+      new_constant_name.constantize 
+    else 
+      Rails.logger.debug("Constant missing #{constant_name}") 
+      Rails.logger.debug(caller[0..10].join("\n"))  
+      super(constant_name, *args) 
+    end 
+  end 
+
+  SOURCES_1 = %w{email form note status meta twitter feedback facebook    
+               forward_email phone mobihelp mobihelp_app_review summary automation_rule_forward}  
+
+  SOURCE_KEYS_BY_TOKEN_1 = Hash[*SOURCES_1.zip((0..SOURCES_1.size-1).to_a).flatten]   
+
+  ACTIVITIES_HASH_1 = { Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN_1[:twitter] => "twitter" }   
+
+  EXCLUDE_SOURCE_1 =  %w{meta summary}.freeze   
+
+  TICKET_NOTE_SOURCE_MAPPING_1 = {    
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN_1[:email] => SOURCE_KEYS_BY_TOKEN_1["email"] ,     
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN_1[:portal] => SOURCE_KEYS_BY_TOKEN_1["email"] ,    
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN_1[:phone] => SOURCE_KEYS_BY_TOKEN_1["email"] ,     
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN_1[:forum] => SOURCE_KEYS_BY_TOKEN_1["email"] ,     
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN_1[:twitter] => SOURCE_KEYS_BY_TOKEN_1["twitter"] ,     
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN_1[:facebook] => SOURCE_KEYS_BY_TOKEN_1["facebook"] ,     
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN_1[:chat] => SOURCE_KEYS_BY_TOKEN_1["email"],   
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN_1[:mobihelp] => SOURCE_KEYS_BY_TOKEN_1["mobihelp"],    
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN_1[:feedback_widget] => SOURCE_KEYS_BY_TOKEN_1["email"]   
+  }.freeze
 
   NOTE_TYPE = { true => :private, false => :public }
-  
-  SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.zip((0..SOURCES.size-1).to_a).flatten]
-  
-  ACTIVITIES_HASH = { Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter] => "twitter" }
-
-  EXCLUDE_SOURCE =  %w{meta summary}.freeze
-
-  TICKET_NOTE_SOURCE_MAPPING = { 
-    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email] => SOURCE_KEYS_BY_TOKEN["email"] , 
-    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:portal] => SOURCE_KEYS_BY_TOKEN["email"] ,
-    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone] => SOURCE_KEYS_BY_TOKEN["email"] , 
-    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:forum] => SOURCE_KEYS_BY_TOKEN["email"] , 
-    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter] => SOURCE_KEYS_BY_TOKEN["twitter"] , 
-    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook] => SOURCE_KEYS_BY_TOKEN["facebook"] , 
-    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:chat] => SOURCE_KEYS_BY_TOKEN["email"],
-    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:mobihelp] => SOURCE_KEYS_BY_TOKEN["mobihelp"],
-    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:feedback_widget] => SOURCE_KEYS_BY_TOKEN["email"]
-  }
 
   CATEGORIES = {
     :customer_response => 1,
@@ -103,7 +116,7 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
   }
   
   scope :for_quoted_text, lambda { |first_note_id|
-    { :conditions => ["source != ? AND archive_notes.id < ? ",SOURCE_KEYS_BY_TOKEN["forward_email"], first_note_id], 
+    { :conditions => ["source != ? AND archive_notes.id < ? ", Account.current.helpdesk_sources.note_source_keys_by_token["forward_email"], first_note_id], 
       :order => "archive_notes.id DESC",
       :limit => 4
     }
@@ -114,11 +127,11 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
               :joins => "INNER join social_fb_posts on archive_notes.id = social_fb_posts.postable_id and archive_notes.account_id = social_fb_posts.account_id", 
               :order => "id desc"
 
-  scope :exclude_source, lambda { |s| { :conditions => ['source <> ?', SOURCE_KEYS_BY_TOKEN[s]] } }
+  scope :exclude_source, lambda { |s| { :conditions => ['source <> ?', Account.current.helpdesk_sources.note_source_keys_by_token[s]] } }
 
   scope :conversations, lambda { |preload_options = nil, order_conditions = nil, limit = nil|
     {
-      :conditions => ["source NOT IN (?) and deleted = false", EXCLUDE_SOURCE.map{|s| SOURCE_KEYS_BY_TOKEN[s]}],
+      :conditions => ["source NOT IN (?) and deleted = false", Account.current.helpdesk_sources.note_exclude_sources.map{|s| Account.current.helpdesk_sources.note_source_keys_by_token[s]}],
       :order => order_conditions,
       :include => preload_options,
       :limit => limit
@@ -126,47 +139,47 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
   }
 
   def status?
-    source == SOURCE_KEYS_BY_TOKEN["status"]
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["status"]
   end
   
   def email?
-    source == SOURCE_KEYS_BY_TOKEN["email"]
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["email"]
   end
 
   def note?
-    source == SOURCE_KEYS_BY_TOKEN["note"]
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["note"]
   end
   
   def tweet?
-    source == SOURCE_KEYS_BY_TOKEN["twitter"]    
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["twitter"]    
   end
   
   def feedback?
-    source == SOURCE_KEYS_BY_TOKEN["feedback"]    
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["feedback"]    
   end
 
   def meta?
-    source == SOURCE_KEYS_BY_TOKEN["meta"]
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["meta"]
   end
 
   def private_note?
-    source == SOURCE_KEYS_BY_TOKEN["note"] && private
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["note"] && private
   end
   
   def public_note?
-    source == SOURCE_KEYS_BY_TOKEN["note"] && !private
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["note"] && !private
   end
 
   def phone_note?
-    source == SOURCE_KEYS_BY_TOKEN["phone"]
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["phone"]
   end
 
   def summary_note?
-    source == SOURCE_KEYS_BY_TOKEN["summary"]
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["summary"]
   end
   
   def summary_note?
-    source == SOURCE_KEYS_BY_TOKEN["summary"]
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["summary"]
   end
 
   def inbound_email?
@@ -182,11 +195,11 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
   end
 
   def user_fwd_email?
-    source == SOURCE_KEYS_BY_TOKEN["forward_email"]
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["forward_email"]
   end
 
   def automation_fwd_email?
-    source == SOURCE_KEYS_BY_TOKEN["automation_rule_forward"]
+    source == Account.current.helpdesk_sources.note_source_keys_by_token["automation_rule_forward"]
   end
 
   def email_conversation?
@@ -194,7 +207,7 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
   end
 
   def automated_note_for_ticket?
-    (source == SOURCE_KEYS_BY_TOKEN["automation_rule"])
+    (source == Account.current.helpdesk_sources.note_source_keys_by_token["automation_rule"])
   end
 
   def kind

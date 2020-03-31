@@ -8,7 +8,7 @@ failing_category = ""
 REPORT_BASE_DIR = "test/reports"
 COVERAGE_BASE_DIR = "tmp/coverage"
 BACKEND_DOCKER_IMAGE = "792634465463.dkr.ecr.us-east-1.amazonaws.com/freshdesk/backend"
-PRONTO_DOCKER_IMAGE = "792634465463.dkr.ecr.us-east-1.amazonaws.com/fworks/pronto"
+PRONTO_DOCKER_IMAGE = "792634465463.dkr.ecr.us-east-1.amazonaws.com/fworks/pronto:rubcop-0.68.0" // Branch - https://github.com/Rajeshguna/pronto/tree/fd-master
 
 if(job_name.contains("merge")) {
     def HEAD_COMMIT_URL = params.commit_url
@@ -114,15 +114,39 @@ def execute_test_cases(category) {
     def coverageDir = "${COVERAGE_BASE_DIR}/$category"
     def reportDir = "${REPORT_BASE_DIR}/$category"
 
-    if(category == 'pronto') {
-       sh """#!/bin/bash
-          source /usr/local/rvm/scripts/rvm
-          cd ${env.WORKSPACE}
-          rm -rf Gemfile*
-          PRONTO_GITHUB_ACCESS_TOKEN="${params.PRONTO_TOKEN}" PRONTO_PULL_REQUEST_ID=$params.ghprbPullId pronto run -f github_status github_pr -c origin/falcon-prestaging
+   
+    if(category.contains('pronto')) {
+        if(category == 'pronto-rails') {
+          sh """#!/bin/bash
+            source /usr/local/rvm/scripts/rvm
+            cd ${env.WORKSPACE}
+            if [ -f Gemfile ]; then
+              mv Gemfile* /tmp
+            fi
+            RUBOCOP_CONFIG='.rubocop_rails.yml'
+            export RUBOCOP_CONFIG
+            PRONTO_RUBOCOP_TITLE='rubocop_rails'
+            export PRONTO_RUBOCOP_TITLE
+            PRONTO_GITHUB_ACCESS_TOKEN="${params.PRONTO_TOKEN}" PRONTO_PULL_REQUEST_ID=$params.ghprbPullId pronto run -r=rubocop -f github_status github_pr -c origin/falcon-prestaging
+            if [ -f /tmp/Gemfile ]; then
+              mv /tmp/Gemfile* ${env.WORKSPACE}
+            fi
           """
+        } else {
+           sh """#!/bin/bash
+            source /usr/local/rvm/scripts/rvm
+            cd ${env.WORKSPACE}
+            if [ -f Gemfile ]; then
+              mv Gemfile* /tmp
+            fi
+            PRONTO_GITHUB_ACCESS_TOKEN="${params.PRONTO_TOKEN}" PRONTO_PULL_REQUEST_ID=$params.ghprbPullId pronto run -f github_status github_pr -c origin/falcon-prestaging
+            if [ -f /tmp/Gemfile ]; then
+              mv /tmp/Gemfile* ${env.WORKSPACE}
+            fi
+          """
+        }
     }
-
+      
     if(category == 'public') {
        sh """#!/bin/bash
           source /etc/profile.d/rvm.sh
@@ -181,8 +205,12 @@ def publish_report(category) {
 def distributed_run(category) {
     timestamps {
         def image_name = "";
+        def pronto_run = category.contains('pronto');
+        sh """#!/bin/bash
+        eval \$(aws  ecr get-login --no-include-email --region us-east-1)
+        """
 
-        if(category != 'pronto') {
+        if(!pronto_run) {
             image_name = BACKEND_DOCKER_IMAGE
         } else {
             image_name = PRONTO_DOCKER_IMAGE
@@ -194,7 +222,7 @@ def distributed_run(category) {
             stage(category) {
 
                 // Running setup
-                if(category != 'pronto') {
+                if(!pronto_run) {
                     echo "Running Setup of $category categorized TestCases"
                     build_setup(category)
                 }
@@ -206,7 +234,7 @@ def distributed_run(category) {
                 }
                 catch (e) {
                     // Not applicable for pronto since it will lots of warning which in turns make build unstable
-                    if(category != 'pronto') {
+                    if(!pronto_run) {
                         echo "Issue with Test Execution" + e
                         failing_category = category
                         echo "Build UNSTABLE"
@@ -216,14 +244,14 @@ def distributed_run(category) {
                     }
                 }
                 finally {
-                    if(category != 'pronto') {
+                    if(!pronto_run) {
                         echo "Publishing Result of $category categorized TestCases"
                         publish_report(category)
                     }
                 }
 
                 //Copy build logs to vm
-                if(category != 'pronto') {
+                if(!pronto_run) {
                     s3_copy(category)
                     echo "copied s3 files $category to host VM"
                 }
@@ -341,6 +369,14 @@ node("spot_backend") {
            encryption_check();
         }
 
+        // Running Pronto
+        parallel Pronto: {
+          distributed_run("pronto");
+        },ProntoRails: {
+          // Running Custom Rubocop for Rails deprecated methods
+          distributed_run("pronto-rails");
+        }
+
         // Running Test in Parallel
         parallel Public: {
             distributed_run("public");
@@ -350,9 +386,6 @@ node("spot_backend") {
         // Sandbox: {
         //   distributed_run("sandbox");
         // }
-
-        // Running Pronto
-        distributed_run("pronto");
 
         // Extracting xml file
         junit testResults: "${REPORT_BASE_DIR}/public/*.xml,${REPORT_BASE_DIR}/private/*.xml"

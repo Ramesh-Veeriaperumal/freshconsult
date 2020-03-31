@@ -300,7 +300,7 @@ module Ember
           {
             private: false,
             user_id: api_current_user.id,
-            source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
+            source: Account.current.helpdesk_sources.note_source_keys_by_token['email'],
             note_body_attributes: {
               body_html: @reply_hash[:body]
             },

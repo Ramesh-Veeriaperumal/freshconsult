@@ -4,8 +4,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   validates_presence_of :requester_id, :message => "should be a valid email address"
   validates_numericality_of :source, :status, :only_integer => true
   validates_numericality_of :requester_id, :responder_id, :only_integer => true, :allow_nil => true
-  validates_inclusion_of :source, :in => 1..SOURCES.size
-  validates_exclusion_of :source, in: [SOURCE_KEYS_BY_TOKEN[:bot]], on: :create, unless: :support_bot_configured?, message: I18n.t('not_supported')
+  validate :inclusion_of_source
+  validate :exclusion_of_source, on: :create, unless: :support_bot_configured?, message: I18n.t('not_supported')
   validates_inclusion_of :priority, :in => PRIORITY_TOKEN_BY_KEY.keys, :message=>"should be a valid priority" #for api
   validates_uniqueness_of :display_id, :scope => :account_id
   validate :due_by_validation, :if => :due_by
@@ -158,6 +158,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
         errors.add(:"custom_fields.#{FSM_APPOINTMENT_END_TIME}", 'access_denied') if flexifield.changes.key?(end_time_ff)
       end
     end
+  end
+
+  def inclusion_of_source
+    Account.current.helpdesk_sources.ticket_source_keys_by_token.values.include?(source)
+  end
+
+  def exclusion_of_source
+    !Account.current.helpdesk_sources.ticket_source_keys_by_token[:bot].equal?(source)
   end
 
   private

@@ -671,7 +671,7 @@ module SupportHelper
       :current_page_name => @current_page_token,
       :current_tab => @current_tab,
       vault_service: {
-        url: SecureFieldConfig['domain'],
+        url: PciConstants::DATA_URL,
         max_try: PciConstants::MAX_TRY,
         product_name: PciConstants::ISSUER
       },

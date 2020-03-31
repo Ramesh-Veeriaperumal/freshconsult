@@ -68,9 +68,9 @@ module Account::SidekiqControl::RouteDrop
     end
   end
 
-  def via_redis_pool_exist?
+  def via_redis_pool_exist?(worker_name)
     redis_pool do |redis|
-      redis.exists(Account::SidekiqControl::Config::ROUTE_CONFIG)
+      redis.exists(Account::SidekiqControl::Config::route_config_key(worker_name))
     end
   end
 

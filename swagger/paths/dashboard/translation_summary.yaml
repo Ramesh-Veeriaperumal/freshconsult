@@ -1,0 +1,18 @@
+get:
+  tags: [Dashboard]
+  summary: Article translation summary
+  parameters:
+    - name: portal_id
+      in: query
+      type: number
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/translation_summary'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

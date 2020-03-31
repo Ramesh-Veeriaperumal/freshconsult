@@ -255,26 +255,28 @@ module AutomationTestHelper
     create_segment(input_params)
   end
 
-  def dispatcher_create_test(field_name, action_field_name = :priority, resource_type = :ticket)
+  def dispatcher_create_test(field_name, action_field_name = :priority, resource_type = :ticket, rule_type = VAConfig::RULES[:dispatcher])
     va_rule_request = valid_request_dispatcher_with_ticket_conditions(field_name, action_field_name, resource_type)
-    post :create, construct_params({ rule_type: VAConfig::RULES[:dispatcher] }.merge(va_rule_request), va_rule_request)
+    post :create, construct_params({ rule_type: rule_type }.merge(va_rule_request), va_rule_request)
     assert_response 201
     parsed_response = JSON.parse(response.body)
     @va_rule_id = parsed_response['id'].to_i
     rule = Account.current.account_va_rules.find(@va_rule_id)
+    assert_equal rule.rule_type, rule_type
     @status = nil
     match_custom_json(parsed_response, va_rule_request.merge!(default_rule_pattern(rule, false)))
   end
 
-  def observer_create_test(event_field_name, condition_field_name = :subject, action_field_name = :priority)
+  def observer_create_test(event_field_name, condition_field_name = :subject, action_field_name = :priority, rule_type = VAConfig::RULES[:observer])
     Account.current.account_va_rules.destroy_all
     va_rule_request = valid_request_observer(event_field_name, condition_field_name, action_field_name)
-    post :create, construct_params({ rule_type: VAConfig::RULES[:observer] }.merge(va_rule_request), va_rule_request)
+    post :create, construct_params({ rule_type: rule_type }.merge(va_rule_request), va_rule_request)
 
     assert_response 201
     parsed_response = JSON.parse(response.body)
     @va_rule_id = parsed_response['id'].to_i
     rule = Account.current.account_va_rules.find(@va_rule_id)
+    assert_equal rule.rule_type, rule_type
     match_custom_json(parsed_response, va_rule_request.merge!(default_rule_pattern(rule, false)))
   end
 

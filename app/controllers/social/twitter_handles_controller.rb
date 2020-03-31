@@ -152,7 +152,7 @@ class Social::TwitterHandlesController < ApplicationController
   def create_ticket_from_tweet
     user    = get_twitter_user(params[:helpdesk_tickets][:twitter_id],params[:profile_image][:url])
     @ticket = current_account.tickets.build(params[:helpdesk_tickets])
-    @ticket.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter]
+    @ticket.source = current_account.helpdesk_sources.ticket_source_keys_by_token[:twitter]
     @ticket
   end
 
@@ -193,7 +193,7 @@ class Social::TwitterHandlesController < ApplicationController
         },
         :private          => true,
         :incoming         => true,
-        :source           => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
+        :source           => current_account.helpdesk_sources.ticket_source_keys_by_token[:twitter],
         :account_id       => current_account.id,
         :user_id          => user.id,
         :tweet_attributes => {

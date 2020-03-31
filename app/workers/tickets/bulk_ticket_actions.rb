@@ -3,6 +3,7 @@ class Tickets::BulkTicketActions < BaseWorker
   sidekiq_options :queue => :bulk_ticket_actions, :retry => 0, :failures => :exhausted
   include Helpdesk::ToggleEmailNotification
   include Helpdesk::BulkActionMethods
+  include Helpdesk::Ticketfields::TicketStatus
 
   def perform(params)
     Thread.current[:sbrr_log] = [self.jid]
@@ -21,6 +22,10 @@ class Tickets::BulkTicketActions < BaseWorker
         bulk_action_handler.perform(ticket)
       end
     end
+    if cleanup_vault_data?(params)
+      ticket_ids = @items.map(&:id)
+      Tickets::VaultDataCleanupWorker.perform_async(object_ids: ticket_ids, action: 'close')
+    end
   rescue => e
       NewRelic::Agent.notice_error(e, {
         :custom_params => {
@@ -32,4 +37,10 @@ class Tickets::BulkTicketActions < BaseWorker
     enable_notification(@account)
     Thread.current[:sbrr_log] = nil
   end
+
+  private
+
+    def cleanup_vault_data?(params)
+      @account.pci_compliance_field_enabled? && params[:action] == 'update_multiple' && params[:helpdesk_ticket] && params[:helpdesk_ticket]['status'] == CLOSED
+    end
 end

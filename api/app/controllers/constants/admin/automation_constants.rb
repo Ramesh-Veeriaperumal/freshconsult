@@ -12,7 +12,9 @@ module Admin::AutomationConstants
   AUTOMATION_FIELDS = {
     dispatcher: [:conditions, :actions],
     observer: [:performer, :events, :conditions, :actions],
-    supervisor: [:conditions, :actions]
+    supervisor: [:conditions, :actions],
+    service_task_dispatcher: [:conditions, :actions],
+    service_task_observer: [:performer, :events, :conditions, :actions]
   }.freeze
 
   AUTOMATION_RULE_TYPES = AUTOMATION_FIELDS.keys.freeze
@@ -64,9 +66,9 @@ module Admin::AutomationConstants
 
   LANGUAGE_CODES = LANGUAGE_HASH.keys.freeze
 
-  SOURCE = TicketConstants::SOURCE_TOKEN_BY_KEY.inject({}) { |hash, key| hash.merge!(key.first.to_s => key.second.to_s) }.freeze
+  SOURCE = Helpdesk::Source.ticket_source_token_by_key.inject({}) { |hash, key| hash.merge!(key.first.to_s => key.second.to_s) }.freeze
 
-  SOURCE_BY_ID = TicketConstants::SOURCE_TOKEN_BY_KEY.keys.freeze
+  SOURCE_BY_ID = Helpdesk::Source.ticket_source_token_by_key.keys.freeze
 
   HASH_SUMMARY_CLASS = { 1 => 'Key', 2 => 'Value', 3 => 'Operator', 4 => 'Evaluate_on' }.freeze
 
@@ -235,7 +237,7 @@ module Admin::AutomationConstants
   TICKET_STATE_FILTERS = %i[inbound_count outbound_count].freeze
 
   # Observer + Dispatcher
-  CONDITION_CONTACT_FIELDS = %i[email name job_title time_zone language segments].freeze
+  CONDITION_CONTACT_FIELDS = %i[email name job_title time_zone language segments twitter_profile_status twitter_followers_count].freeze
 
   # Observer + Dispatcher
   CONDITION_COMPANY_FIELDS = %i[name domains segments].freeze
@@ -391,7 +393,9 @@ module Admin::AutomationConstants
   PRIVATE_API_ROOT_KEY_MAPPING = {
     1 => :ticket_creation_rule,
     3 => :time_trigger_rule,
-    4 => :ticket_update_rule
+    4 => :ticket_update_rule,
+    5 => :service_task_creation_rule,
+    6 => :service_task_update_rule
   }.freeze
 
   SUPERVISOR_OPERATOR_CONVERSION_FIELD = %i[status priority source responder_id group_id product_id ticket_type].freeze

@@ -3348,7 +3348,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = { source: 1 }
     put :update, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('source', :source_update_not_permitted, sources: ApiTicketConstants::UNPERMITTED_SOURCES_FOR_UPDATE.join(','))])
+    match_json([bad_request_error_pattern('source', :source_update_not_permitted, sources: Account.current.helpdesk_sources.api_unpermitted_sources_for_update.join(','))])
   end
 
   def test_update_source_of_facebook_ticket_fails
@@ -3356,7 +3356,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = { source: 1 }
     put :update, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('source', :source_update_not_permitted, sources: ApiTicketConstants::UNPERMITTED_SOURCES_FOR_UPDATE.join(','))])
+    match_json([bad_request_error_pattern('source', :source_update_not_permitted, sources: Account.current.helpdesk_sources.api_unpermitted_sources_for_update.join(','))])
   end
 
   def test_destroy

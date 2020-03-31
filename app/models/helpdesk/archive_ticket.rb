@@ -180,12 +180,12 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def twitter?
-    source == SOURCE_KEYS_BY_TOKEN[:twitter] and (tweet) and (tweet.twitter_handle)
+    source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter] and (tweet) and (tweet.twitter_handle)
   end
   alias :is_twitter :twitter?
 
   def facebook?
-     source == SOURCE_KEYS_BY_TOKEN[:facebook] and (fb_post) and (fb_post.facebook_page)
+     source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook] and (fb_post) and (fb_post.facebook_page)
   end
   alias :is_facebook :facebook?
 
@@ -203,11 +203,11 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def mobihelp?
-    source == SOURCE_KEYS_BY_TOKEN[:mobihelp]
+    source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:mobihelp]
   end
 
   def chat?
-    source == SOURCE_KEYS_BY_TOKEN[:chat]
+    source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:chat]
   end
 
   def description
@@ -561,7 +561,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def outbound_email?
-    (source == SOURCE_KEYS_BY_TOKEN[:outbound_email]) && Account.current.compose_email_enabled?
+    (source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]) && Account.current.compose_email_enabled?
   end
 
     #This method will return the user who initiated the outbound email
@@ -569,7 +569,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   def outbound_initiator
     return requester unless outbound_email?
     begin
-      meta_note = self.archive_notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"])
+      meta_note = self.archive_notes.find_by_source(Account.current.helpdesk_sources.note_source_keys_by_token["meta"])
       meta = YAML::load(meta_note.body) unless meta_note.blank?
       if !meta.blank? && meta["created_by"].present?
         user_id = meta["created_by"]

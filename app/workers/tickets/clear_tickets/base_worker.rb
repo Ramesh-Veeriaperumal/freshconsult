@@ -15,6 +15,10 @@ class Tickets::ClearTickets::BaseWorker
       tickets.each do |ticket|
         ticket.destroy
       end
+      if @account.pci_compliance_field_enabled?
+        destroyed_ticket_ids = tickets.map(&:id)
+        Tickets::VaultDataCleanupWorker.perform_async(object_ids: destroyed_ticket_ids, action: 'delete')
+      end
     end
   rescue => e
     Rails.logger.debug "Clear Ticket Error - #{e}:\nParams: #{params.inspect}\nAccount ID: #{@account.id}"

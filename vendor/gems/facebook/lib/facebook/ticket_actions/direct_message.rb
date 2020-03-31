@@ -33,7 +33,7 @@ module Facebook
             @note                      = ticket.notes.build(
               private:            true,
               incoming:           true,
-              source:             Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['facebook'],
+              source:             Helpdesk::Source.note_source_keys_by_token['facebook'],
               account_id:         @fan_page.account_id,
               user:               user,
               created_at:         Time.zone.parse(message[:created_time]),
@@ -89,7 +89,7 @@ module Facebook
             requester:          requester,
             product_id:         @fan_page.product_id,
             group_id:           group_id,
-            source:             Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook],
+            source:             Helpdesk::Source.ticket_source_keys_by_token[:facebook],
             created_at:         Time.zone.parse(first_message_from_customer[:created_time]),
             fb_post_attributes: {
               post_id:          first_message_from_customer[:id],

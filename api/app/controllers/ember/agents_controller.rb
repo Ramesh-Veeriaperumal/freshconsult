@@ -22,18 +22,6 @@ module Ember
       assign_avatar if params[cname][:avatar_id].present? && @delegator.draft_attachments.present?
     end
 
-    def create_multiple
-      @errors = []
-      build_default_required_params
-      return unless validate_agent_params
-
-      build_objects
-      validate_items_to_create
-      create_objects
-      render_partial_success(@succeeded_items, @errors, 'ember/agents/create_multiple')
-      # response.api_meta = { count: @items.count }
-    end
-
     private
 
       def validate_params
@@ -60,81 +48,8 @@ module Ember
         @item.user.avatar = @delegator.draft_attachments.first
       end
 
-      def build_default_required_params
-        params[cname][:agents].each do |agent|
-          agent[:name] ||= agent[:email].split('@')[0]
-        end
-      end
-
-      def build_objects
-        @items = []
-        @validation_failed_items = []
-        agent_role_id = current_account.roles.agent.first.id
-        params[cname][:agents].each do |agent_params|
-          delegator = agent_delegator_klass.new(nil, agent_params.slice(:role_ids, :group_ids, :available, :avatar_id))
-          push_create_multiple_errors(delegator, params) && next if delegator.invalid?
-
-          user = current_account.users.build(agent_params)
-          user.helpdesk_agent = true
-          user.role_ids = [agent_role_id] unless agent_params[:role_ids]
-          @items << user
-        end
-      end
-
-      def push_create_multiple_errors(delegator, params)
-        @validation_failed_items << params
-        delegator.errors.messages.each_pair { |error, error_message| @errors << { error => error_message } }
-      end
-
-      def validate_items_to_create
-        @items.each do |item|
-          unless validate_item_delegator(item)
-            @validation_failed_items << item
-            @errors.push(delegation_error_hash(item))
-          end
-        end
-      end
-
-      def validate_item_delegator(item)
-        @agent_delegator = agent_delegator_klass.new(item, params[cname]['agents'].first.slice(:role_ids, :group_ids, :available, :avatar_id))
-        @agent_delegator.valid?
-      end
-
       def agent_delegator_klass
         'AgentDelegator'.constantize
-      end
-
-      def delegation_error_hash(item)
-        ret_hash = {}
-        ret_hash[:email] = item.email
-        ret_hash[:validation_errors] = @agent_delegator
-        ret_hash
-      end
-
-      def create_objects
-        create_failed_items = []
-        @succeeded_items = []
-        items_to_create.each do |item|
-          if create_user_and_make_agent(item)
-            @succeeded_items << AgentDecorator.new(item.agent, group_mapping_ids: []).to_hash
-          else
-            @errors.push(agent_creation_error(item))
-            create_failed_items << item
-          end
-        end
-        create_failed_items
-      end
-
-      def items_to_create
-        @items - @validation_failed_items
-      end
-
-      def create_user_and_make_agent(item)
-        item.signup!({}, nil, !current_account.freshid_integration_enabled?, false) && item.create_agent
-      end
-
-      def agent_creation_error(item)
-        ret_hash = { email: item.email, errors: item.errors, error_options: {} }
       end
 
       def load_objects

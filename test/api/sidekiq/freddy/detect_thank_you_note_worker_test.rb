@@ -56,7 +56,7 @@ class DetectThankYouNoteWorkerTest < ActionView::TestCase
     def ticket_params
       {
         email: 'sample@freshdesk.com',
-        source: Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]
+        source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:email]
       }
     end
 

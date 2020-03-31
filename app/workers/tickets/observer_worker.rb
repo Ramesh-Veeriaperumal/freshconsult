@@ -11,6 +11,7 @@ module Tickets
         args.symbolize_keys!
         account, ticket_id, doer_id, system_event = Account.current, args[:ticket_id], args[:doer_id], args[:system_event]
         current_events = args[:current_events].symbolize_keys
+        original_attributes = args[:original_attributes].symbolize_keys if args[:original_attributes].present?
         sla_args = args[:sla_args].try(:symbolize_keys)
         Va::Logger::Automation.set_thread_variables(account.id, ticket_id, doer_id)
 
@@ -29,15 +30,22 @@ module Tickets
           observer_rules = account.observer_rules_from_cache
           rule_ids_with_exec_count = {}
           evaluate_on.prime_ticket_args = args
+          original_ticket = Account.current.observer_race_condition_fix_enabled? ? evaluate_on.duplicate(original_attributes) : evaluate_on
           observer_rules.each do |vr|
             begin
               Va::Logger::Automation.set_rule_id(vr.id)
               ticket = nil
               time = Benchmark.realtime {
-                ticket = account.automation_revamp_enabled? ? 
-                          vr.check_rule_events(doer, evaluate_on, current_events) : 
+                ticket = account.automation_revamp_enabled? ?
+                          vr.check_rule_events(doer, evaluate_on, current_events, original_ticket) :
                           vr.check_events(doer, evaluate_on, current_events)
               }
+              if Account.current.observer_race_condition_fix_enabled?
+                changed_attributes = evaluate_on.changes.each_with_object({}) do |(field, changes), hash|
+                  hash[field] = changes[1]
+                end
+                original_ticket = original_ticket.duplicate(changed_attributes)
+              end
               rule_ids_with_exec_count[vr.id] = 1 if ticket.present?
               Va::Logger::Automation.log_execution_and_time(time, (ticket.present? ? 1 : 0), rule_type)
               aggregated_response_time += vr.response_time[:matches] || 0

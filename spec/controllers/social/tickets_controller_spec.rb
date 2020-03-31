@@ -49,7 +49,7 @@ RSpec.describe Helpdesk::TicketsController do
       :note_body_attributes => {
         :body_html => body_text
       },
-      :incoming   => true, :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
+      :incoming   => true, :source => Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter],
       :account_id => @handle.account_id, :user_id    => ticket.requester_id,
       :tweet_attributes => {
         :tweet_id           => twt_id ,

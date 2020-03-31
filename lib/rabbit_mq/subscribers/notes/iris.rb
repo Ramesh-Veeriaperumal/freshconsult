@@ -16,7 +16,7 @@ module RabbitMq::Subscribers::Notes::Iris
   end
 
   def mq_iris_valid(action, model)
-    iris_valid_model?(model) and iris_note_valid?(action)
+    !Account.current.disable_rabbitmq_iris_enabled? && iris_valid_model?(model) && iris_note_valid?(action)
   end
 
   private

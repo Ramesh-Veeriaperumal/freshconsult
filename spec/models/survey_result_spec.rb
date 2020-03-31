@@ -48,7 +48,7 @@ describe SurveyResult do
             :body => "body two",
             :body_html => "<div>body two</div>"
         },
-        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["feedback"],
+        :source => Account.current.helpdesk_sources.note_source_keys_by_token["feedback"],
         :incoming => true,
         :private => false
         )

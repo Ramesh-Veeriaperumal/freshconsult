@@ -39,7 +39,7 @@ module Helpdesk::MergeTicketActions
 			source_description_note = @target_ticket.notes.build(
 				:note_body_attributes => {:body_html => build_source_description_body_html(source_ticket)},
 				:private => desc_pvt_note || false,
-				:source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+				:source => Account.current.helpdesk_sources.note_source_keys_by_token['note'],
 				:account_id => current_account.id,
 				:user_id => current_user && current_user.id
 			)
@@ -108,8 +108,8 @@ module Helpdesk::MergeTicketActions
 			@target_note = @target_ticket.notes.build(
 				:note_body_attributes => {:body_html => params[:target][:note]},
 				:private => target_pvt_note  || false,
-				:source => target_pvt_note ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : 
-																Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
+				:source => target_pvt_note ? Account.current.helpdesk_sources.note_source_keys_by_token['note'] : 
+																Account.current.helpdesk_sources.note_source_keys_by_token['email'],
 				:account_id => current_account.id,
 				:user_id => current_user && current_user.id,
 				:from_email => @target_ticket.reply_email,

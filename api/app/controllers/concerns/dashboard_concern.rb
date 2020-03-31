@@ -1,6 +1,7 @@
 module DashboardConcern
   extend ActiveSupport::Concern
   include ApiDashboardConstants
+  include SolutionConcern
 
   def feature_name
     case action_name
@@ -148,23 +149,17 @@ module DashboardConcern
     widgets = widget_list dashboard_type
     widgets_details = []
     widgets.each_with_index do |widget, index|
-      widgets_details.push(widget.instance_values.symbolize_keys.merge(id: index))
+      if is_sol_dashboard?
+        widgets_details.push(widget.instance_values.symbolize_keys.merge(id: "solutions-default-#{widget.name}"))
+      else
+        widgets_details.push(widget.instance_values.symbolize_keys.merge(id: index))
+      end
     end
     widgets_details
   end
 
   def widget_list(dashboard_type)
-    widgets = if current_account.subscription.sprout_plan?
-                items = SPROUT_DASHBOARD.dup
-                items << [:unresolved_tickets, 'unresolved-tickets', 2, 2] if current_user.privilege?(:admin_tasks) || current_user.privilege?(:view_reports)
-                items
-              elsif dashboard_type.include?('admin')
-                ADMIN_DASHBOARD.dup
-              elsif dashboard_type.include?('supervisor')
-                SUPERVISOR_DASHBOARD.dup
-              else
-                AGENT_DASHBOARD.dup
-              end
+    widgets = is_sol_dashboard? ? solution_widgets(dashboard_type) : default_widgets(dashboard_type)
     set_widget_privileges
     widgets.select! { |widget| widget_privileges[widget.first.to_sym] }
     widget_object = ::Dashboard::Grid.new
@@ -172,19 +167,41 @@ module DashboardConcern
     widgets_with_coordinates
   end
 
+  def default_widgets(dashboard_type)
+    if current_account.subscription.sprout_plan?
+      items = SPROUT_DASHBOARD.dup
+      items << [:unresolved_tickets, 'unresolved-tickets', 2, 2] if current_user.privilege?(:admin_tasks) || current_user.privilege?(:view_reports)
+      items
+    elsif dashboard_type.include?('admin')
+      ADMIN_DASHBOARD.dup
+    elsif dashboard_type.include?('supervisor')
+      SUPERVISOR_DASHBOARD.dup
+    else
+      AGENT_DASHBOARD.dup
+    end
+  end
+
+  def solution_widgets(dashboard_type)
+    DASHBOARD_WIGETS_FOR_SOLUTIONS.dup
+  end
+
   def set_widget_privileges
-    non_sprout_plan = current_account.subscription.non_sprout_plan?
-    @widget_privileges = {
-      tickets: true,
-      activities: !non_sprout_plan,
-      todo: true,
-      trend_count: non_sprout_plan,
-      unresolved_tickets: current_account.unresolved_tickets_widget_for_sprout_enabled? || non_sprout_plan
-    }
-    widgets_with_feature = check_widgets_with_feature(non_sprout_plan)
-    chat_related_widgets = check_chat_related_widgets(non_sprout_plan)
-    @widget_privileges.merge!(widgets_with_feature)
-    @widget_privileges.merge!(chat_related_widgets)
+    if is_sol_dashboard?
+      @widget_privileges = check_solutions_related_widgets
+    else
+      non_sprout_plan = current_account.subscription.non_sprout_plan?
+      @widget_privileges = {
+        tickets: true,
+        activities: !non_sprout_plan,
+        todo: true,
+        trend_count: non_sprout_plan,
+        unresolved_tickets: current_account.unresolved_tickets_widget_for_sprout_enabled? || non_sprout_plan
+      }
+      widgets_with_feature = check_widgets_with_feature(non_sprout_plan)
+      chat_related_widgets = check_chat_related_widgets(non_sprout_plan)
+      @widget_privileges.merge!(widgets_with_feature)
+      @widget_privileges.merge!(chat_related_widgets)
+    end
     @widget_privileges
   end
 
@@ -204,6 +221,24 @@ module DashboardConcern
     {
       chat: false, # non_sprout_plan && chat_feature
       agent_status: non_sprout_plan && (round_robin?)
+    }
+  end
+
+  def check_solutions_related_widgets
+    {
+      all_categories: true,
+      all_folders: true,
+      all_articles: true,
+      all_feedback: true,
+      all_drafts: true,
+      in_review: current_account.article_approval_workflow_enabled?,
+      approved: current_account.article_approval_workflow_enabled?,
+      published: true,
+      outdated: secondary_language?,
+      article_performance: true,
+      approval_pending_articles: current_account.article_approval_workflow_enabled? && current_user.privilege?(:approve_article),
+      recent_drafts: true,
+      articles_by_language: current_account.multilingual?
     }
   end
 
@@ -263,4 +298,7 @@ module DashboardConcern
     result
   end
 
+  def is_sol_dashboard?
+    params["id"].to_i === ApiDashboardConstants::DASHBOARD_FOR[:solutions]
+  end
 end

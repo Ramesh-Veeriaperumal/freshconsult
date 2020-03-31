@@ -86,7 +86,7 @@ module Widget
       def set_default_values
         super
         params[cname][:product_id] = @help_widget.product_id unless params[cname].key?(:product_id)
-        params[cname][:source] = TicketConstants::SOURCE_KEYS_BY_TOKEN[:feedback_widget]
+        params[cname][:source] = current_account.helpdesk_sources.ticket_source_keys_by_token[:feedback_widget]
       end
 
       def check_recaptcha

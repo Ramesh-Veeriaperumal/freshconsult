@@ -27,7 +27,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         create_service_task_field_type
         fsm_fields_to_be_created = fetch_fsm_fields_to_be_created
         reserve_fsm_custom_fields(fsm_fields_to_be_created)
-        create_section(fsm_fields_to_be_created)
+        create_fsm_section
         unarchive_ticket_fields if Account.current.archive_ticket_fields_enabled?
         create_fsm_dashboard
         generate_fsm_seed_data
@@ -133,7 +133,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
           position: options[:position],
           name: "#{options[:name]}_#{Account.current.id}",
           label_in_portal: options[:label_in_portal],
-          field_options: { 'section' => true, 'fsm' => true }.with_indifferent_access,
+          field_options: { section: true, fsm: true }.with_indifferent_access,
           description: '',
           active: true,
           required: options[:required] || false,
@@ -146,53 +146,48 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
 
       # create a dynamic section named "Service Task" and attach the reserved custom fields to them.
-      def create_section(fields_to_be_created)
+      def create_fsm_section
         # TODO: check for section limit.
-        service_task_picklist = Account.current.ticket_fields.find_by_field_type('default_ticket_type').picklist_values.find_by_value(SERVICE_TASK_TYPE)
-        picklist_id = service_task_picklist.id
-        parent_ticket_field_id = service_task_picklist.pickable_id
+        ticket_type_field = Account.current.ticket_fields_with_nested_fields.find_by_field_type('default_ticket_type')
+        unless ticket_type_field.field_options['section_present']
+          ticket_type_field.field_options['section_present'] = true
+          ticket_type_field.save!
+        end
 
         # Build Section picklist_mappings
+        service_task_picklist = ticket_type_field.picklist_values.find_by_value(SERVICE_TASK_TYPE)
+        picklist_id = service_task_picklist.id
+        parent_ticket_field_id = service_task_picklist.pickable_id
         service_task_section = Account.current.sections.find_by_label(SERVICE_TASK_SECTION)
-        ticket_type_field =  Account.current.ticket_fields_with_nested_fields.find_by_field_type('default_ticket_type')
         if service_task_section.blank?
           service_task_section = ticket_type_field.sections.build
           service_task_section.label = SERVICE_TASK_SECTION
           service_task_section.ticket_field_id = ticket_type_field.id
           service_task_section.options = { 'fsm' => true }.with_indifferent_access
           service_task_section.section_picklist_mappings.build(picklist_value_id: picklist_id, picklist_id: service_task_picklist.picklist_id)
+        else
+          service_task_section.ticket_field_id = ticket_type_field.id
+          service_task_section.options = service_task_section.options.with_indifferent_access
+          service_task_section.options['fsm'] = true
         end
 
         # Build Section fields
-        section_fields = []
-        if service_task_section.section_fields.blank?
-          fields_to_be_created = fsm_custom_field_to_reserve
-          fields_to_be_created.each do |field|
-            field_data = Account.current.ticket_fields.find_by_name(field[:name] + "_#{Account.current.id}")
-            next if field_data.field_options['section'] && field_data.field_options['fsm']
-
-            field_data.field_options = field_data.field_options.with_indifferent_access
-            field_data.field_options[:section] = true
-            field_data.field_options[:fsm] = true
-            field_data.save!
-          end
-          unless ticket_type_field.field_options['section_present']
-            ticket_type_field.field_options = { 'section_present' => true }
-            ticket_type_field.save!
-          end
-        end
+        fields_to_be_created = fsm_custom_field_to_reserve
+        section_fields_ticket_field_ids = service_task_section.section_fields.map(&:ticket_field_id)
         fields_to_be_created.each_with_index do |custom_field, index|
-          field = Account.current.ticket_fields.find_by_name("#{custom_field[:name]}_#{Account.current.id}")
-          section_fields << { parent_ticket_field_id: parent_ticket_field_id, ticket_field_id: field.id, position: index + 1 }
+          field_data = Account.current.ticket_fields.find_by_name("#{custom_field[:name]}_#{Account.current.id}")
+          unless section_fields_ticket_field_ids.include?(field_data.id)
+            section_field = { parent_ticket_field_id: parent_ticket_field_id, ticket_field_id: field_data.id, position: index + 1 }
+            service_task_section.section_fields.build(section_field)
+          end
+          next if field_data.field_options[:section] && field_data.field_options[:fsm]
+
+          field_data.field_options = field_data.field_options.with_indifferent_access
+          field_data.field_options[:section] = true
+          field_data.field_options[:fsm] = true
+          field_data.save!
         end
-        section_data = service_task_section
-        section_data.ticket_field_id = ticket_type_field.id
-        section_data.options[:fsm] = true
-        section_fields.each do |section_field|
-          section_data.section_fields.build(section_field)
-        end
-        section_data.save!
-        ticket_type_field.save!
+        service_task_section.save!
       end
 
       def create_field_group_type

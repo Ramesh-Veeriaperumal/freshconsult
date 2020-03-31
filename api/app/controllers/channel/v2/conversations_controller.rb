@@ -92,7 +92,7 @@ module Channel::V2
       end
 
       def twitter_reply?
-        params[cname][:source] == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['twitter']
+        params[cname][:source] == current_account.helpdesk_sources.note_source_keys_by_token['twitter']
       end
 
       def assign_private
@@ -108,7 +108,7 @@ module Channel::V2
       end
 
       def social_source?
-        [Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['twitter']].include?(params[cname][:source])
+        [current_account.helpdesk_sources.note_source_keys_by_token['twitter']].include?(params[cname][:source])
       end
   end
 end

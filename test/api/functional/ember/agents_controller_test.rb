@@ -26,14 +26,6 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     { agent: params }
   end
 
-  def create_multiple_emails emails, other_params = {}
-    email_params = []
-    1..2.times do |loop_number|
-      email_params.push({ email: emails[loop_number] })
-    end
-    email_params
-  end
-
   def get_or_create_agent(agent_type = nil)
     last_active_agent = Account.current.users.joins(:agent).where(active: true).last
     if last_active_agent.nil?
@@ -56,106 +48,6 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     group.toggle_availability = toggle_availability
     group.save!
     group
-  end
-
-  def test_multiple_agent_creation_with_valid_emails_and_no_role
-    valid_emails = [Faker::Internet.email, Faker::Internet.email]
-    invalid_emails = []
-    post :create_multiple, construct_params(version: 'private', agents: create_multiple_emails(valid_emails))
-    assert_response 202
-    @account.reload
-
-    agents = []
-    valid_emails.each do |email|
-      agents << @account.users.find_by_email(email).agent
-    end
-
-    success_pattern = agents.map { |agent| private_api_agent_pattern(agent) }
-    failure_pattern = failure_pattern()
-
-    pattern = {:succeeded => success_pattern.ordered, :failed => failure_pattern.ordered}
-    match_json(pattern)
-  end
-
-  def test_multiple_agent_creation_with_freshid
-    @account.launch(:freshid)
-    valid_emails = [Faker::Internet.email, Faker::Internet.email]
-    freshid_users = {}
-    valid_emails.each { |email| freshid_users[email] = freshid_user }
-    Freshid::User.stubs(:create).returns(freshid_users[valid_emails[0]], freshid_users[valid_emails[1]])
-    User.any_instance.stubs(:deliver_agent_invitation!).returns(true)
-    post :create_multiple, construct_params(version: 'private', agents: create_multiple_emails(valid_emails))
-    assert_response 202
-    @account.reload
-
-    valid_emails.each do |email|
-      user = @account.users.find_by_email(email)
-      assert_present user.freshid_authorization
-      assert_equal user.freshid_authorization.uid, freshid_users[user.email].uuid
-    end
-
-    User.any_instance.unstub(:deliver_agent_invitation!)
-    Freshid::User.unstub(:create)
-    @account.rollback(:freshid)
-  end
-
-  def test_multiple_agent_creation_with_existing_user_in_freshid
-    @account.launch(:freshid)
-    fid_user_params = { first_name: "Existing", last_name: "User", phone: "543210", mobile: "9876543210" }
-    existing_freshid_user = freshid_user(fid_user_params)
-    valid_email = Faker::Internet.email
-    agent_params = [{ email: valid_email }]
-    Freshid::User.stubs(:create).returns(existing_freshid_user)
-    User.any_instance.stubs(:deliver_agent_invitation!).returns(true)
-    post :create_multiple, construct_params(version: 'private', agents: agent_params)
-    assert_response 202
-    @account.reload
-
-    user = @account.users.find_by_email(valid_email)
-    assert_equal user.name, "#{fid_user_params[:first_name]} #{fid_user_params[:last_name]}"
-    assert_equal user.phone, fid_user_params[:phone]
-    assert_equal user.mobile, fid_user_params[:mobile]
-
-    User.any_instance.unstub(:deliver_agent_invitation!)
-    Freshid::User.unstub(:create)
-    @account.rollback(:freshid)
-  end
-
-  def test_multiple_agent_creation_with_valid_email_and_role
-    valid_email = Faker::Internet.email
-    request_params = [ {:email => valid_email, :role_ids => [ @account.roles.admin.first.id ]} ]
-    post :create_multiple, construct_params(version: 'private', agents: request_params)
-
-    assert_response 202
-    agent = @account.users.find_by_email(valid_email).agent
-    success_pattern = [ private_api_agent_pattern(agent) ]
-    pattern = {:succeeded => success_pattern.ordered, :failed => failure_pattern().ordered}
-    match_json(pattern)
-    success_pattern[0][:contact][:name] = success_pattern[0][:contact][:email].split('@')[0]
-    pattern = {:succeeded => success_pattern.ordered, :failed => failure_pattern().ordered}
-    match_json(pattern)
-  end
-
-  def test_multiple_agent_creation_with_invalid_emails
-    invalid_emails = [Faker::Name.name, Faker::Name.name]
-    post :create_multiple, construct_params(version: 'private', agents: create_multiple_emails(invalid_emails))
-    assert_response 400
-  end
-
-  def test_multiple_agent_creation_with_duplicate_emails
-    agents = []
-    email = Faker::Internet.email
-    duplicate_emails = [email, email]
-    post :create_multiple, construct_params(version: 'private', agents: create_multiple_emails(duplicate_emails))
-    assert_response 202
-    @account.reload
-    failures = {}
-    failures[email] = { "primary_email.email": "Email has already been taken".to_sym,
-                        "base": "Email has already been taken".to_sym }
-    agents << @account.users.find_by_email(email).agent
-    success_pattern = agents.map { |agent| private_api_agent_pattern(agent) }
-    failure_pattern = failure_pattern(failures)
-    match_json({:succeeded => success_pattern.ordered, :failed => failure_pattern})
   end
 
   def test_agent_index
@@ -831,16 +723,6 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     assert_response 403
     ensure
       User.any_instance.unstub(:privilege?)
-  end
-
-  def test_validate_item_with_invalid_role_ids
-    valid_email = Faker::Internet.email
-    request_params = [ {:email => valid_email, :role_ids => [ @account.roles.admin.first.id ]} ]
-    Account.any_instance.stubs(:roles_from_cache).returns([])
-    post :create_multiple, construct_params(version: 'private', agents: request_params)
-    assert_response 202
-    ensure
-      Account.any_instance.unstub(:roles_from_cache)
   end
 
   def test_enable_undo_send
