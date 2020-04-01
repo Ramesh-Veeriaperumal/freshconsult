@@ -94,6 +94,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
 
   def test_index_with_count
     set_widget_count
+    Account.current.help_widgets.destroy_all
     create_widget
     get :index, controller_params(version: 'v2')
     pattern = []
@@ -102,6 +103,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     end
     assert_response 200
     assert_equal response.api_meta[:limit], 7
+    assert_equal response.api_meta[:count], 1
     match_json(pattern)
     reset_widget_count
   end
@@ -109,13 +111,14 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   def test_index_with_count_without_widget
     set_widget_count
     Account.current.help_widgets.destroy_all
-    get :index, controller_params(version: 'v2')
+    get :index, controller_params(version: 'private')
     pattern = []
     Account.current.help_widgets.active.all.each do |help_widget|
       pattern << widget_list_pattern(help_widget)
     end
     assert_response 200
     assert_equal response.api_meta[:limit], 7
+    assert_equal response.api_meta[:count], 0
     match_json(pattern)
     reset_widget_count
   end
