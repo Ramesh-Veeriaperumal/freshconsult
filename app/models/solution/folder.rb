@@ -34,6 +34,8 @@ class Solution::Folder < ActiveRecord::Base
   # Hack to make sure JSON responses for Search API is proper.
   delegate :customer_folders, :to => :solution_folder_meta
 
+  delegate :folder_visibility_mapping, to: :solution_folder_meta
+
   include Solution::LanguageMethods
   
   SELECT_ATTRIBUTES = ["id"]

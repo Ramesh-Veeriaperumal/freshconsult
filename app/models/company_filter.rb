@@ -6,6 +6,10 @@ class CompanyFilter < ActiveRecord::Base
 
   belongs_to_account
 
+  has_many :folder_visibility_mapping, class_name: 'Solution::FolderVisibilityMapping', as: 'mappable', dependent: :destroy
+
+  has_many :folder_meta, class_name: 'Solution::FolderMeta', through: :folder_visibility_mapping
+
   attr_accessible :account_id, :data, :name
 
   validates :data, presence: true

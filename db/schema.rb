@@ -3783,6 +3783,19 @@ ActiveRecord::Schema.define(:version => 20200228063609) do
   add_index "solution_folders", ["account_id", "parent_id", "language_id"], :name => "index_solution_folders_on_account_id_parent_id_and_language"
   add_index "solution_folders", ["category_id", "position"], :name => "index_solution_folders_on_category_id_and_position"
 
+  create_table 'folder_visibility_mapping', :force => true do |t|
+    t.integer  'account_id', limit: 8
+    t.integer  'mappable_id'
+    t.string   'mappable_type'
+    t.integer  'folder_meta_id', limit: 8, null: false
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+  end
+
+  add_index 'folder_visibility_mapping', ['account_id', 'mappable_id'], name: 'index_folder_visibility_mapping_on_acc_and_mappable_id'
+  add_index 'folder_visibility_mapping', ['folder_meta_id', 'mappable_id'], name: 'index_visibility_mapping_on_foldermeta_and_mappable_id'
+  add_index 'folder_visibility_mapping', ['folder_meta_id', 'mappable_type'], name: 'index_visibility_mapping_on_foldermeta_and_mappable_type'
+
   create_table "status_groups", :force => true do |t|
     t.integer  "status_id",  :limit => 8, :null => false
     t.integer  "group_id",   :limit => 8, :null => false

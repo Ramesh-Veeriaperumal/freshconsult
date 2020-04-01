@@ -51,7 +51,9 @@ class Solution::Article < ActiveRecord::Base
       folder_id: solution_folder_meta.id,
       folder_category_id: solution_folder_meta.solution_category_meta_id,
       folder_visibility: solution_folder_meta.visibility,
-      company_ids: solution_folder_meta.customer_folders.pluck(:customer_id)
+      company_ids: solution_folder_meta.customer_folders.pluck(:customer_id),
+      contact_filter_ids: solution_folder_meta.folder_visibility_mapping.where(mappable_type: 'ContactFilter').pluck(:mappable_id),
+      company_filter_ids: solution_folder_meta.folder_visibility_mapping.where(mappable_type: 'CompanyFilter').pluck(:mappable_id)
     }
   end
 

@@ -951,6 +951,22 @@ class User < ActiveRecord::Base
     customer? and company_ids.any?
   end
 
+  def company_segment_ids
+    company_segments = []
+    companies.each do |c| 
+      company_segments << Segments::Match::Company.new(c).ids
+    end    
+    company_segments.flatten.uniq
+  end
+
+  def has_company_segment?
+    customer? and company_segment_ids.present?
+  end
+
+  def company_segment_ids_str
+    company_segment_ids.join(",")
+  end
+
   def company_name= name
     if name.present?
       comp = find_or_create_company(name)
@@ -983,6 +999,14 @@ class User < ActiveRecord::Base
 
   def company_ids
     user_companies.map(&:company_id)
+  end
+
+  def has_contact_segment?
+    customer? and segments.present? #checks for contact segment
+  end
+
+  def contact_segment_ids_str
+    segments.join(",")
   end
 
   def company_names

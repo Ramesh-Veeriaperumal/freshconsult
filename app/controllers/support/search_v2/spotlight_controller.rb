@@ -82,8 +82,13 @@ class Support::SearchV2::SpotlightController < SupportController
         if searchable_klasses.include?('Solution::Article')
           es_params[:language_id]               = Language.current.try(:id) || Language.for_current_account.id
           es_params[:article_status]            = SearchUtil::DEFAULT_SEARCH_VALUE.to_i
-          es_params[:article_visibility]        = visibility_opts(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN)
-          es_params[:article_company_id]        = current_user.company_ids if current_user
+          es_params[:article_visibility]        = article_visibility_opts(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN)
+          if current_user
+            es_params[:article_company_id]                = current_user.company_ids
+            es_params[:article_company_filter_ids]        = current_user.company_segment_ids  if (@search_context == :portal_spotlight_global)
+            es_params[:article_contact_filter_ids]        = current_user.segments if (@search_context == :portal_spotlight_global) #contact segment ids 
+            es_params[:query] = @query_condition if (@search_context == :portal_spotlight_solution && soln_search_segments.present?)
+          end
           es_params[:article_category_id]       = soln_search_categories
           if current_account.portal_article_filters_enabled?
             es_params[:article_folder_id]         = soln_search_folders if params[:folder_ids]
@@ -113,6 +118,19 @@ class Support::SearchV2::SpotlightController < SupportController
         if current_user
           visiblity.push(visiblity_class[:logged_users])
           visiblity.push(visiblity_class[:company_users]) if current_user.has_company?
+          visiblity.push(visiblity_class[:agents]) if current_user.agent?
+        end
+      end
+    end
+
+    def article_visibility_opts visiblity_class
+      Array.new.tap do |visiblity|
+        visiblity.push(visiblity_class[:anyone])
+        if current_user
+          visiblity.push(visiblity_class[:logged_users])
+          visiblity.push(visiblity_class[:company_users]) if current_user.has_company? || current_user.agent?
+          visiblity.push(visiblity_class[:contact_segment]) if current_user.has_contact_segment? || current_user.agent?
+          visiblity.push(visiblity_class[:company_segment]) if current_user.has_company_segment? || current_user.agent?
           visiblity.push(visiblity_class[:agents]) if current_user.agent?
         end
       end
@@ -261,6 +279,18 @@ class Support::SearchV2::SpotlightController < SupportController
       filtered_folders = params[:folder_ids].split(',').map(&:to_i) & portal_folder_meta_ids
       @invalid = true if filtered_folders.empty?
       filtered_folders.presence || portal_folder_meta_ids
+    end
+
+    def soln_search_segments
+      filtered_contact_segments = current_user.segments
+      filtered_contact_segments.map!(&:to_s)
+      query_condition1 = filtered_contact_segments.collect{|id| 'contact_filter_ids:'+id}.join(' OR ')
+      filtered_company_segments = current_user.company_segment_ids
+      filtered_company_segments.map!(&:to_s)
+      query_condition2 = filtered_company_segments.collect{|id| 'company_filter_ids:'+id}.join(' OR ')
+      query_condition1 = 'contact_filter_ids:null OR '+ query_condition1 if query_condition1.present?
+      query_condition2 = 'company_filter_ids:null OR ' + query_condition2 if query_condition2.present?
+      @query_condition = query_condition1.present? && query_condition2.present? ? "("+query_condition1+")" + " AND "+ "("+query_condition2+")" : query_condition1.present? ? "("+query_condition1+")" : query_condition2.present? ? "("+query_condition2+")" : ""
     end
 
     def search_forums_with_ids(category_ids)

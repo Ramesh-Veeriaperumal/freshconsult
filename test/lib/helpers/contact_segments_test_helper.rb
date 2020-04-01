@@ -3,6 +3,15 @@
 module ContactSegmentsTestHelper
   include SegmentsHelper
 
+  CONTACT_FILTER_PARAMS = {"name"=>"Today", "query_hash"=>[{"condition"=>"created_at", "operator"=>"is_greater_than", "type"=>"default", "value"=>"today"}, {"condition"=>"tag_names", "operator"=>"is_in", "type"=>"default", "value"=>["apple"]}]}
+  CONTACT_UPDATED_FILTER_PARAMS = {"name"=>"This month", "query_hash"=>[{"condition"=>"created_at", "operator"=>"is_greater_than", "type"=>"default", "value"=>"month"}, {"condition"=>"tag_names", "operator"=>"is_in", "type"=>"default", "value"=>["apple", "RK"]}]}
+
+  def create_contact_segment
+    contact_filter = @account.contact_filters.new({name: Faker::Name.name, data: CONTACT_FILTER_PARAMS["query_hash"]})
+    contact_filter.save!
+    contact_filter
+  end
+
   def create_contact(options={})
     if options[:email]
       user = User.find_by_email(options[:email])

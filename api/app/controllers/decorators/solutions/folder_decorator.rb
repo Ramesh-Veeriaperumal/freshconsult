@@ -1,6 +1,6 @@
 class Solutions::FolderDecorator < ApiDecorator
   delegate :name, :description, :language_code, :created_at, :updated_at, to: :record
-  delegate :id, :is_default, :position, :article_order, :solution_article_meta, :visibility, :customer_folders, :solution_category_meta_id, to: :parent
+  delegate :id, :is_default, :position, :article_order, :solution_article_meta, :visibility, :customer_folders, :solution_category_meta_id, :folder_visibility_mapping, to: :parent
 
   def initialize(record, options = {})
     super(record)
@@ -18,6 +18,8 @@ class Solutions::FolderDecorator < ApiDecorator
       updated_at: updated_at
     }
     response_hash[:company_ids] = company_ids if company_ids_visible?
+    response_hash[:contact_filter_ids] = mappable_ids if contact_filter_ids_visible?
+    response_hash[:company_filter_ids] = mappable_ids if company_filter_ids_visible?
     if private_api?
       response_hash[:position] = position
       response_hash[:article_order] = article_order
@@ -34,12 +36,24 @@ class Solutions::FolderDecorator < ApiDecorator
     visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users]
   end
 
+  def contact_filter_ids_visible?
+    visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:contact_segment]
+  end
+
+  def company_filter_ids_visible?
+    visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_segment]
+  end
+
   def parent
     @parent ||= record.parent
   end
 
   def company_ids
-    customer_folders.map(&:customer_id)
+    customer_folders.pluck(:customer_id)
+  end
+
+  def mappable_ids
+    folder_visibility_mapping.pluck(:mappable_id)
   end
 
   def company_names

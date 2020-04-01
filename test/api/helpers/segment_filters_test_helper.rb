@@ -1,26 +1,11 @@
+require_relative '../../test_helper'
+['contact_segments_test_helper.rb', 'company_segments_test_helper.rb'].each { |file| require "#{Rails.root}/test/lib/helpers/#{file}" }
 module SegmentFiltersTestHelper
-  CONTACT_FILTER_PARAMS = {"name"=>"This month", "query_hash"=>[{"condition"=>"created_at", "operator"=>"is_greater_than", "type"=>"default", "value"=>"month"}, {"condition"=>"tag_names", "operator"=>"is_in", "type"=>"default", "value"=>["apple"]}]}
-  CONTACT_UPDATED_FILTER_PARAMS = {"name"=>"This month", "query_hash"=>[{"condition"=>"created_at", "operator"=>"is_greater_than", "type"=>"default", "value"=>"month"}, {"condition"=>"tag_names", "operator"=>"is_in", "type"=>"default", "value"=>["apple", "RK"]}]}
+  include ContactSegmentsTestHelper
+  include CompanySegmentsTestHelper
 
-
-
-  COMPANY_FILTER_PARAMS = {"name"=>"First Com Filter", "query_hash"=>[{"condition"=>"created_at", "operator"=>"is_greater_than", "type"=>"default", "value"=>"today"}]}
-
-  COMPANY_UPDATED_FILTER_PARAMS = {"name"=>"First Com Filter", "query_hash"=>[{"condition"=>"created_at", "operator"=>"is_greater_than", "type"=>"default", "value"=>"month"}]}
   include Redis::RedisKeys
   include Redis::OthersRedis
-
-  def create_contact_segment
-    contact_filter = @account.contact_filters.new({name: Faker::Name.name, data: CONTACT_FILTER_PARAMS["query_hash"]})
-    contact_filter.save!
-    contact_filter
-  end
-
-  def create_company_segment
-    company_filter = @account.company_filters.new({name: Faker::Name.name, data: COMPANY_FILTER_PARAMS["query_hash"]})
-    company_filter.save!
-    company_filter
-  end
 
   def test_prevent_unauthorized_access
     remove_privilege(@agent, :manage_segments)

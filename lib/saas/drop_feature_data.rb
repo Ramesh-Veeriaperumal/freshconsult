@@ -1,6 +1,7 @@
 module SAAS::DropFeatureData
   include Marketplace::ApiMethods
   include Marketplace::HelperMethods
+  include Solution::Constants
 
   def handle_multi_timezone_drop_data
     UpdateTimeZone.perform_async(time_zone: account.time_zone)
@@ -194,6 +195,13 @@ module SAAS::DropFeatureData
     account.solution_articles.where('int_01 > 0').find_each do |article|
       article.suggested = 0
       article.save
+    end
+  end
+
+  def handle_segments_drop_data
+    account.solution_folder_meta.where(visibility: [VISIBILITY_KEYS_BY_TOKEN[:contact_segment], VISIBILITY_KEYS_BY_TOKEN[:company_segment]]).find_each do |folder_meta|
+      folder_meta.visibility = VISIBILITY_KEYS_BY_TOKEN[:company_users]
+      folder_meta.save
     end
   end
 

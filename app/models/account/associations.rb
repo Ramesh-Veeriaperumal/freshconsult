@@ -86,6 +86,8 @@ class Account < ActiveRecord::Base
 
   has_many :cloud_files,  :class_name=> 'Helpdesk::CloudFile'
 
+  has_many :folder_visibility_mapping, class_name: 'Solution::FolderVisibilityMapping'
+
   has_many :users, :conditions =>{:deleted =>false}, :order => :name
   has_many :all_users , :class_name => 'User'
   has_many :user_emails, :class_name => 'UserEmail'
