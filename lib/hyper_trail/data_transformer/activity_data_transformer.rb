@@ -24,5 +24,6 @@ class HyperTrail::DataTransformer::ActivityDataTransformer
       activity[:activity][:context] = fetch_decorated_properties_for_object(activity_object)
       activity[:activity][:timestamp] = activity_object.created_at.try(:utc)
     end
+    @activities.reject! { |activity| activity[:activity][:object] && activity[:activity][:object][:type] == activity_type && !fetched_object_ids.include?(activity[:activity][:object][:id]) }
   end
 end

@@ -25,8 +25,8 @@ module TimelineTestHelper
     [sample_data, @result]
   end
 
-  def create_custom_timeline_sample_data(sample_user)
-    custom_event_data = sample_custom_event(sample_user)
+  def create_custom_timeline_sample_data(sample_user, use_context = true)
+    custom_event_data = sample_custom_event(sample_user, use_context)
     @result = {}
     @result[:links] = []
     @result[:data] = [custom_event_data]
@@ -119,8 +119,8 @@ module TimelineTestHelper
     response_pattern
   end
 
-  def sample_custom_event(sample_user)
-    {
+  def sample_custom_event(sample_user, use_context)
+    ret_hash = {
       'object': {
         'type': 'contact',
         'id': 18_052
@@ -140,22 +140,6 @@ module TimelineTestHelper
               'name': 'shopify'
             },
             'timestamp': 1_580_793_883_031,
-            'context': {
-              'author': 'Shopify',
-              'body': nil,
-              'path': '450789469',
-              'description': 'Received new order 1001 by Bob Norman.',
-              'id': 164_748_010,
-              'verb': 'confirmed',
-              'message': 'Received new order by Bob Norman.',
-              'created_at': '2008-01-10T06:00:00-05:00',
-              'subject_type': 'Order',
-              'subject_id': 450_789_469,
-              'arguments': [
-                '#1001',
-                'Bob Norman'
-              ]
-            },
             'object': {
               'id': '1234',
               'type': 'call'
@@ -169,5 +153,24 @@ module TimelineTestHelper
       },
       'action_epoch': 1_580_793_883_031
     }
+    if use_context
+      ret_hash['context'] = {
+        'author': 'Shopify',
+        'body': nil,
+        'path': '450789469',
+        'description': 'Received new order 1001 by Bob Norman.',
+        'id': 164_748_010,
+        'verb': 'confirmed',
+        'message': 'Received new order by Bob Norman.',
+        'created_at': '2008-01-10T06:00:00-05:00',
+        'subject_type': 'Order',
+        'subject_id': 450_789_469,
+        'arguments': [
+          '#1001',
+          'Bob Norman'
+        ]
+      }
+    end
+    ret_hash
   end
 end
