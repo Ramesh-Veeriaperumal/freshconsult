@@ -1291,8 +1291,8 @@
           "jwt_secret": "EJ[1:MwCFdHxlJVvU5w85rNFakkaxDE271NvAsQnoG8KwdHI=:2+SvdGOFBMV4Bbr8ihauiwS2YifGjm5v:v8oNP00rqc8ELc0x8g4s4ZQjvWjNc0sfXLQYauyEcEHoQH6/PfZk2S6pAJNfaCpM]"
         },
         "freshbots": {
-          "_auth_type": "",
-          "_jwt_secret": ""
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:fLvErlgsFsv6jk8AshQApQ8/VT0ozRN/VQBbaS+Umj8=:ySfcuBq67TcjDdvEZjO/bzsmP5UqMX4A:BAK4p8CsgiCUDV4ZZ5599kZZwrH94Ir+meycHe5owviVhKMvBARc/vnuk8z1l21njuIoM77FLDJSHZw=]"]
         }
       },
       "scheduler_client_keys": {
@@ -1442,12 +1442,12 @@
           "secret": "EJ[1:F/stKH30EiUwSbfRAaY3OpP3gChjRqF3k2qQenJQuXs=:YwAr1lBzWevAai91wrPnXQoGjJjnY0AH:wZopUot3ij1DG1j9vuY/BoTrDNBbyzgT+kBlMDms75sDPWlLcvNb48S9y4yZ]"
         },
         "agent_assist" :{
-          "_host": "https://admin.freshbots.ai/",
-          "_onboard_url": "https://api.freshbots.ai/rest/api/v1/bots",
-          "_client_id": "",
-          "_product_id": "9193acd017242b1896f97f2272372b3fb29dd8da",
-          "_template_hash": "25e54072a16274aed8f7eeafdd36357f54be179b",
-          "_jwt_secret": "",
+          "_host": "https://admin.in-freshbots.ai/",
+          "_onboard_url": "https://api.in-freshbots.ai/rest/api/v1/bots",
+          "client_id": "EJ[1:rS21oHqEr8ZN2dpD1co896++jFivTsQyuwxogoij4Aw=:h35d5UmJ2xlT4Y45P+DmjWt78ZuHeHqC:CQjrlNH69HvJN0rP3WGdy8xBf4RStbVrqAy7lzPnB+QG7T3ZxR7NhE+uIjjTA9oBPJ6NddrRfHQ=]",
+          "_product_id": "54cbad9aba9c7835eac16c9a3d76e4e4c51aa62e",
+          "_template_hash": "effacedf6cbd71c77b42318fbe91f18bc4e3bf61",
+          "jwt_secret": "EJ[1:rS21oHqEr8ZN2dpD1co896++jFivTsQyuwxogoij4Aw=:I27m1J0u9ZNmHWmbzLioqjd8KXjY9++p:lJJy85yvcJk3as0Kmw9NnBsZMujQzRaFHtxL8rvswn36DwVL0blSjCCU8wciwaNMw8mod8gzpv+xk8c=]",
           "_demo_email": "support@frsshdesk.com",
           "_timeout": 5,
           "_onboard_timeout": 5        
