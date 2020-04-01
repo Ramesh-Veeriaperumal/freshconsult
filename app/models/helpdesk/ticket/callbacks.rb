@@ -74,10 +74,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_commit :create_initial_activity, on: :create
   after_commit :trigger_dispatcher, on: :create, :unless => :skip_dispatcher_with_advanced_automations?
+  after_commit :trigger_service_task_dispatcher, on: :create, if: -> { service_task? && account.fsm_admin_automations_enabled? }
 
-  # TODO: Need to remove once we start supporting dispatcher for service tasks
-  after_commit :service_task_create_notification, on: :create, if: :service_task?
-  
+  after_commit :service_task_create_notification, on: :create, if: -> { service_task? && !account.fsm_admin_automations_enabled? }
+
   after_commit :update_capping_on_create, :update_count_for_skill, on: :create, if: -> { outbound_email? }
   after_commit :send_outbound_email, on: :create, if: -> { outbound_email? && import_ticket.blank? }
   after_commit :trigger_observer_events, on: :update, :if => :execute_observer?
@@ -353,6 +353,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Helpdesk::Dispatcher.enqueue(self, (User.current.blank? ? nil : User.current.id)) unless Account.current.skip_dispatcher?
   end
 
+  def trigger_service_task_dispatcher
+    Helpdesk::ServiceTaskDispatcher.enqueue(self, (User.current.blank? ? nil : User.current.id))
+  end
+
   #To be removed after dispatcher redis check removed
   def delayed_rule_check current_user, freshdesk_webhook
    begin
@@ -618,6 +622,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def sync_task_changes_to_ocr(changes = round_robin_attribute_changes)
+    return if service_task?
+
     # Will remove the log later
     Rails.logger.debug "sync_task_changes_to_ocr, trace :: #{caller[0..10].inspect}"
     OmniChannelRouting::TaskSync.perform_async(id: display_id, attributes: round_robin_attributes, changes: changes)

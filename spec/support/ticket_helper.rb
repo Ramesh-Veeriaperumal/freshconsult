@@ -69,7 +69,7 @@ module TicketHelper
     params = { assoc_parent_id: parent_ticket_id, email: Faker::Internet.email,
                responder_id: options[:responder_id],
                description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
-               priority: 2, status: 2, type: Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE,
+               priority: options[:priority] || 2, status: options[:status] || 2, type: Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE,
                custom_field: fsm_custom_fields }
     fsm_ticket = create_ticket(params)
     fsm_ticket

@@ -24,9 +24,6 @@ module Helpdesk::TicketNotifications
       end
     end
 
-    # Adding a new method as for we are skipping dispatcher for service task
-    # duplicate autoreply without model changes in the ticket callback
-
     def service_task_create_notification
       # dont send email if user creates ticket by "save and close"
       self.reload
