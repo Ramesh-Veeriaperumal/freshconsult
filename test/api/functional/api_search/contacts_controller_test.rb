@@ -2,6 +2,7 @@ require_relative '../../test_helper'
 module ApiSearch
   class ContactsControllerTest < ActionController::TestCase
     include SearchTestHelper
+    include UsersTestHelper
 
     CHOICES = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'].freeze
 
@@ -70,6 +71,22 @@ module ApiSearch
 
     def contact_params_hash_with_unique_external_id
       contact_params_hash.merge!(unique_external_id: UNIQUE_EXTERNAL_ID)
+    end
+
+    def get_company
+      company = Company.first
+      return company if company
+
+      company = Company.create(name: Faker::Name.name, account_id: @account.id)
+      company.save
+      company
+    end
+
+    def get_user_with_default_company
+      new_user = add_new_user(@account)
+      new_user.user_companies.create(company_id: get_company.id, default: true)
+      new_user.save!
+      new_user.reload
     end
 
     def test_contacts_active
@@ -284,6 +301,22 @@ module ApiSearch
       contact.save
       contact.reload
       contacts = @account.contacts.select { |x| x.email == contact_email }
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"email: \'' + contact_email + '\'"')
+      end
+      assert_response 200
+      pattern = contacts.map { |contact| public_search_contact_pattern(contact) }
+      match_json(results: pattern, total: contacts.size)
+    end
+
+    def test_contacts_with_company_and_other_companies
+      sample_user = get_user_with_default_company
+      company_ids = Company.all.map(&:id) - sample_user.company_ids
+      sample_user.user_companies.build(company_id: company_ids.first, client_manager: true)
+      sample_user.user_companies.build(company_id: company_ids.last, client_manager: true)
+      sample_user.save
+      contact_email = sample_user.email
+      contacts = @account.contacts.reload.select { |x| x.email == contact_email }
       stub_public_search_response(contacts) do
         get :index, controller_params(query: '"email: \'' + contact_email + '\'"')
       end

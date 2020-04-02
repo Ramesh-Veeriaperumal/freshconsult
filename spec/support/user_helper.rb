@@ -80,6 +80,7 @@ module UsersHelper
     new_user.custom_field = options[:custom_fields] if options.key?(:custom_fields)
     new_user.avatar = options[:avatar] if options[:avatar]
     new_user.updated_at = options[:updated_at] if options[:updated_at]
+    new_user.created_at = options[:created_at] if options[:created_at]
     new_user.save_without_session_maintenance
     new_user.reload
   end

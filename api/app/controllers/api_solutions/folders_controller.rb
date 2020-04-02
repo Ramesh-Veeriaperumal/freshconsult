@@ -7,6 +7,8 @@ module ApiSolutions
     before_filter :validate_filter_params, only: [:category_folders]
 
     def create
+      return unless delegator_validation
+
       if create_or_update_folder
         render_201_with_location(item_id: @item.parent_id)
       else
@@ -15,6 +17,8 @@ module ApiSolutions
     end
 
     def update
+      return unless delegator_validation
+
       render_solution_item_errors unless create_or_update_folder
     end
 
@@ -46,6 +50,18 @@ module ApiSolutions
 
       def meta_scoper
         current_account.solution_folder_meta.where(is_default: false)
+      end
+
+      def delegator_validation
+        @delegator = ApiSolutions::FolderDelegator.new(delegator_params)
+        return true if @delegator.valid?(action_name.to_sym)
+
+        render_custom_errors(@delegator, true)
+        return false
+      end
+
+      def delegator_params
+        delegator_params = @folder_params.slice(:contact_folders_attributes, :company_folders_attributes, :customer_folders_attributes)
       end
 
       def create_or_update_folder
@@ -92,11 +108,11 @@ module ApiSolutions
       end
 
       def sanitize_params
-        prepare_array_fields [:company_ids]
+        prepare_array_fields [:company_ids, :contact_filter_ids, :company_filter_ids]
         language_params = params[cname].slice(:name, :description)
         params[cname][language_scoper] = language_params unless language_params.empty?
         params[cname][category] = params[:id]
-        ParamsHelper.assign_and_clean_params({ company_ids: :customer_folders_attributes }, params[cname])
+        ParamsHelper.assign_and_clean_params({ company_ids: :customer_folders_attributes, contact_filter_ids: :contact_folders_attributes, company_filter_ids: :company_folders_attributes }, params[cname])
         @folder_params = params[cname].except!(:name, :description)
       end
 
@@ -128,15 +144,6 @@ module ApiSolutions
 
       def validate_filter_params
         super(SolutionConstants::INDEX_FIELDS)
-      end
-
-      def set_custom_errors(item = @item)
-        if !item.respond_to?(:parent) && item.respond_to?(:customer_folders)
-          bad_customer_ids = item.customer_folders.select { |x| x.errors.present? }.map(&:customer_id)
-          item.errors[:company_ids] << :invalid_list if bad_customer_ids.present?
-          @error_options = { remove: :"customer_folders.customer", company_ids: { list: bad_customer_ids.join(', ').to_s } }
-        end
-        @error_options
       end
   end
 end

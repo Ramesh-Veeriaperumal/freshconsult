@@ -36,6 +36,23 @@ class Solution::FolderMeta < ActiveRecord::Base
 
 	has_many :customers, :through => :customer_folders
 
+  has_many :folder_visibility_mapping,
+    class_name: 'Solution::FolderVisibilityMapping',
+    autosave: true,
+    dependent: :destroy
+
+  has_many :contact_filters,
+    class_name: 'ContactFilter',
+    source: :mappable,
+    source_type: 'ContactFilter',
+    through: :folder_visibility_mapping
+
+  has_many :company_filters,
+    class_name: 'CompanyFilter',
+    source: :mappable,
+    source_type: 'CompanyFilter',
+    through: :folder_visibility_mapping
+
 	has_many :solution_article_meta,
 		:order => :"solution_article_meta.position",
 		:class_name => "Solution::ArticleMeta",
@@ -69,7 +86,7 @@ class Solution::FolderMeta < ActiveRecord::Base
 	PORTAL_CACHEABLE_ATTRIBUTES = ["id", "account_id", "current_child_id", "name", "description",
 	 "visibility", "solution_category_meta_id"]
 
-	before_update :clear_customer_folders, :backup_folder_changes
+	before_update :clear_customer_folders, :backup_folder_changes, :clear_segment_folders
 	after_commit :update_search_index, on: :update, :if => :update_es?
   
   after_commit ->(obj) { obj.safe_send(:clear_cache) }, on: :create
@@ -106,6 +123,22 @@ class Solution::FolderMeta < ActiveRecord::Base
     end
   end
 
+  def contact_folders_attributes=(contact_ids)
+    return if contact_ids.nil?
+    folder_visibility_mapping.destroy_all
+    contact_ids.each do |contact_filter_id|
+      folder_visibility_mapping.build({ mappable_id: contact_filter_id, mappable_type: 'ContactFilter' })
+    end
+  end
+
+  def company_folders_attributes=(company_ids)
+    return if company_ids.nil?
+    folder_visibility_mapping.destroy_all
+    company_ids.each do |company_filter_id|
+      folder_visibility_mapping.build({ mappable_id: company_filter_id, mappable_type: 'CompanyFilter' })
+    end
+  end
+
 	def add_visibility(visibility, customer_ids, add_to_existing)
     ActiveRecord::Base.transaction do
       add_companies(customer_ids, add_to_existing) if visibility == Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:company_users]
@@ -136,15 +169,25 @@ class Solution::FolderMeta < ActiveRecord::Base
 	def clear_customer_folders
 	  customer_folders.destroy_all if (visibility_changed? and visibility_was == VISIBILITY_KEYS_BY_TOKEN[:company_users])
 	end
+
+  def clear_segment_folders
+    folder_visibility_mapping.where(mappable_type: 'ContactFilter').destroy_all if visibility_changed? && visibility_was == VISIBILITY_KEYS_BY_TOKEN[:contact_segment]
+    folder_visibility_mapping.where(mappable_type: 'CompanyFilter').destroy_all if visibility_changed? && visibility_was == VISIBILITY_KEYS_BY_TOKEN[:company_segment]
+  end
   
 	def visible?(user)
 	  return true if (user and user.privilege?(:view_solutions))
 	  return true if self.visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
 	  return false unless user
 	  return true if self.visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]
-      company_cdn = user.contractor? ? (user.company_ids & customer_folders.map(&:customer_id)).any? : 
-                     (user.company  && customer_folders.map(&:customer_id).include?(user.company.id))
-      return true if ((self.visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && company_cdn)
+      company_cdn = !customer_folders.where(customer_id: user.company_ids).empty?
+	  return true if (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && company_cdn
+
+      contact_filter_cdn = !folder_visibility_mapping.where(mappable_type: 'ContactFilter', mappable_id: user.segments).empty?
+	  return true if (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:contact_segment]) && contact_filter_cdn
+
+      company_filter_cdn = !folder_visibility_mapping.where(mappable_type: 'CompanyFilter', mappable_id: user.company_segment_ids).empty?
+      return true if (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:company_segment]) && company_filter_cdn
 	end
 
 	def visible_articles_count
@@ -243,6 +286,22 @@ class Solution::FolderMeta < ActiveRecord::Base
 					"AND solution_customer_folders.account_id = #{user.account_id}))"
 		end
 					# solution_customer_folders.customer_id = #{ user.company_id})" if (user && user.has_company?)
+		if (user && user.has_company_segment?)		  
+		  condition += "OR (`solution_folder_meta`.visibility=#{VISIBILITY_KEYS_BY_TOKEN[:company_segment]} " <<
+					"AND `solution_folder_meta`.id in (SELECT folder_visibility_mapping.folder_meta_id " <<
+					"FROM folder_visibility_mapping " <<
+					"WHERE folder_visibility_mapping.mappable_id in (#{user.company_segment_ids_str}) " <<
+					"AND folder_visibility_mapping.account_id = #{user.account_id} " <<
+					"AND `folder_visibility_mapping`.mappable_type='CompanyFilter'))"
+		end
+		if (user && user.has_contact_segment?)
+			condition += "OR (`solution_folder_meta`.visibility=#{VISIBILITY_KEYS_BY_TOKEN[:contact_segment]} " <<
+					  "AND `solution_folder_meta`.id in (SELECT folder_visibility_mapping.folder_meta_id " <<
+					  "FROM folder_visibility_mapping " <<
+					  "WHERE folder_visibility_mapping.mappable_id in (#{user.contact_segment_ids_str}) " <<
+					  "AND folder_visibility_mapping.account_id = #{user.account_id} " <<
+					  "AND `folder_visibility_mapping`.mappable_type='ContactFilter'))"
+		end
 		return condition
 	end
 
@@ -261,14 +320,15 @@ class Solution::FolderMeta < ActiveRecord::Base
 	end
 
 	def backup_folder_changes
-      @companies_updated = self.customer_folders.any? { |a| a.changed? }
+	  @companies_updated = self.customer_folders.any? { |a| a.changed? }
+	  @segments_updated = self.folder_visibility_mapping.any? { |a| a.changed? }
 	  @all_changes = self.changes.clone
 	end
 
 	def update_es?
-      (@all_changes.keys & ['visibility', 'solution_category_meta_id']).present? || @companies_updated
+	  (@all_changes.keys & ['visibility', 'solution_category_meta_id']).present? || @companies_updated || @segments_updated
 	end
-	
+
 	def backup_category
 		@category_obj = solution_category_meta
 	end

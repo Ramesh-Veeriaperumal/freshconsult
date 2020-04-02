@@ -25,7 +25,6 @@ class HyperTrail::Response
       transformer_object.construct_transformed_timeline_activities
     end
 
-    @activities.reject! { |activity| activity[:activity][:context].blank? }
     @activities
   end
 

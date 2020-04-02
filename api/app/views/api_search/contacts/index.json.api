@@ -15,11 +15,14 @@ results = @items.map do |item|
     phone: item.phone,
     time_zone: item.time_zone,
     twitter_id: item.twitter_id,
+    facebook_id: item.fb_profile_id,
+    external_id: item.external_id,
     created_at: item.created_at.try(:utc),
     updated_at: item.updated_at.try(:utc)
   }
   response_hash[:deleted] = true if item.deleted
   response_hash[:unique_external_id] = item.unique_external_id if item.unique_contact_identifier_enabled?
+  response_hash.merge!(item.company_info_for_search)
   response_hash
 end
 

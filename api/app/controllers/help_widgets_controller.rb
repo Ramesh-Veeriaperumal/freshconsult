@@ -9,7 +9,11 @@ class HelpWidgetsController < ApiApplicationController
 
   def index
     super
-    response.api_meta = { limit: current_account.account_additional_settings_from_cache.widget_count }
+    @items_count ||= scoper.count
+    response.api_meta = {
+      limit: current_account.account_additional_settings_from_cache.widget_count,
+      count: @items_count
+    }
   end
 
   def create

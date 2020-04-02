@@ -45,8 +45,11 @@
     def execute
       Time.use_zone(@account.time_zone) {
         execute_rules unless @is_webhook
-        round_robin unless @ticket.spam? || @ticket.deleted?
-        @ticket.sbrr_fresh_ticket = @ticket.skip_ocr_sync = true
+        unless skip_rr?
+          round_robin unless @ticket.spam? || @ticket.deleted?
+          @ticket.sbrr_fresh_ticket = true
+        end
+        @ticket.skip_ocr_sync = true
         if @sla_on_background && @ticket.is_in_same_sla_state?(@sla_attributes)
           @ticket.update_sla = true
           @ticket.sla_calculation_time = @sla_calculation_time
@@ -91,12 +94,11 @@
 
     def execute_rules
       start_time = Time.now.utc
-      rule_type = VAConfig::RULES_BY_ID[VAConfig::RULES[:dispatcher]]
       evaluate_on = @ticket
       total_rules = 0 # used if cascade_dispatcher feature not present
       rule_ids_with_exec_count = {}
       Va::Logger::Automation.log('Dispatcher execution starts', true)
-      @account.va_rules.each do |vr|
+      rules.each do |vr|
         begin
           Va::Logger::Automation.set_rule_id(vr.id)
           evaluate_on = nil
@@ -145,5 +147,18 @@
       Va::Logger::Automation.log_execution_and_time(total_time, total_tickets, rule_type, start_time, end_time)
     rescue Exception => e
       Va::Logger::Automation.log_error("Error in log_total_execution_info", e)
+    end
+
+    # Adding these methods since service_task_dispatcher.rb inherits this class
+    def rules
+      @account.va_rules
+    end
+
+    def rule_type
+      VAConfig::RULES_BY_ID[VAConfig::RULES[:dispatcher]]
+    end
+
+    def skip_rr?
+      false
     end
   end

@@ -38,7 +38,7 @@ class Account < ActiveRecord::Base
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr, :fsm_admin_automations,
     :csat_email_scan_compatibility, :mint_portal_applicable, :quoted_text_parsing_feature, :enable_customer_journey,
     :email_mailbox, :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
-    :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :optar_cache, :launch_fsm_geolocation,
+    :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :launch_fsm_geolocation,
     :ticket_field_revamp, :facebook_dm_outgoing_attachment, :skip_posting_to_fb, :hide_mailbox_error_from_agents, :hide_og_meta_tags,
     :freshcaller_admin_new_ui, :facebook_post_outgoing_attachment, :disable_occlusion_rendering,
     :prevent_lang_detect_for_spam, :jira_onpremise_reporter, :support_ticket_rate_limit, :sidekiq_logs_to_central, :portal_central_publish, :encode_emoji_in_solutions,

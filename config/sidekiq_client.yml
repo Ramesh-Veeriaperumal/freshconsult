@@ -91,6 +91,7 @@ defaults: &defaults
     - [trial_dispatcher]
     - [free_dispatcher]
     - [active_dispatcher]
+    - [service_task_dispatcher]
     - [merge_tickets]
     - [merge_tickets_attachments]
     - [marketplace_apps]

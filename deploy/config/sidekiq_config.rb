@@ -211,6 +211,7 @@ class SidekiqConfigUsEast
     integrations             = ["integrations","chargebee_invoice","clear_tickets","marketplace_apps","installed_app_business_rule","cloud_elements_delete","salesforce_integrated_resource_migrate","cloud_elements_logger_email"]
     dispatcher               = ["active_dispatcher","premium_dispatcher","dispatcher","trial_dispatcher","free_dispatcher"]
     premium_dispatcher       = ["premium_dispatcher","active_dispatcher","dispatcher","trial_dispatcher","free_dispatcher"]
+    service_task_dispatcher  = ["service_task_dispatcher"]
     api_webhook_rule         = ["api_webhook_rule"]
     plan_change              = ["plan_change","pod_route_update","helpdesk_ticket_body_queue","modify_ticket_status","plan_change_workerv2","activation_worker"]
     contact_import           = ["contact_import","company_import","helpdesk_note_body_queue","data_export","broadcast_note","link_tickets","reset_associations","modify_ticket_status"]
@@ -302,7 +303,7 @@ class SidekiqConfigUsEast
   "cti", "delete_account", "bulk_child_tkt_creation", "templates_cleanup", "bulk_ticket_actions", "bulk_ticket_reply",
   "clear_tickets", "code_console_execution", "update_user_language", "chargebee_add_subscription", "partners_event_queue",
   "detect_user_language", "integrations", "marketplace_apps", "installed_app_business_rule", "cloud_elements_delete",
-  "salesforce_integrated_resource_migrate", "cloud_elements_logger_email", "active_dispatcher", "premium_dispatcher",
+  "salesforce_integrated_resource_migrate", "cloud_elements_logger_email", "active_dispatcher", "premium_dispatcher", "service_task_dispatcher",
   "dispatcher", "trial_dispatcher", "free_dispatcher", "api_webhook_rule", "plan_change", "pod_route_update",
   "helpdesk_ticket_body_queue", "plan_change_workerv2", "activation_worker", "contact_import", "company_import",
   "helpdesk_note_body_queue", "helpdesk_update_ticket_body_queue", "helpdesk_update_note_body_queue", "update_sentiment",
@@ -610,7 +611,7 @@ all_sidekiq_jobs =  cron_jobs + [
       "delete_account", "bulk_child_tkt_creation", "templates_cleanup", "bulk_ticket_actions", "bulk_ticket_reply", "clear_tickets",
       "code_console_execution", "update_user_language", "chargebee_add_subscription", "partners_event_queue", "detect_user_language",
       "integrations", "marketplace_apps", "installed_app_business_rule", "cloud_elements_delete", "salesforce_integrated_resource_migrate",
-      "cloud_elements_logger_email", "active_dispatcher", "premium_dispatcher", "dispatcher", "trial_dispatcher", "free_dispatcher",
+      "cloud_elements_logger_email", "active_dispatcher", "premium_dispatcher", "dispatcher", "trial_dispatcher", "free_dispatcher", "service_task_dispatcher",
       "api_webhook_rule", "plan_change", "pod_route_update", "helpdesk_ticket_body_queue", "plan_change_workerv2", "activation_worker",
       "contact_import", "company_import", "helpdesk_note_body_queue", "helpdesk_update_ticket_body_queue", "helpdesk_update_note_body_queue",
       "update_sentiment", "update_notes_sentiment", "notify_broadcast_message", "contact_export", "company_export", "livechat_worker",

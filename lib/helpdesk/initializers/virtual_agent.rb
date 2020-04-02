@@ -24,7 +24,6 @@ module VAConfig
   API_WEBHOOK_RULE = RULES[:api_webhook_rule]
   DISPATCHER_RULE_TYPES = [RULES[:dispatcher], RULES[:service_task_dispatcher]].freeze
   OBSERVER_RULE_TYPES = [RULES[:observer], RULES[:service_task_observer]].freeze
-
   RULES_BY_ID = RULES.invert
   # TODO-RAIL3:: Get these I18N based constants out of Initializers
   CREATED_DURING_VALUES = [

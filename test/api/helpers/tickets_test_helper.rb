@@ -1,4 +1,4 @@
-['ticket_fields_test_helper.rb', 'conversations_test_helper.rb', 'attachments_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
+['ticket_fields_test_helper.rb', 'conversations_test_helper.rb', 'attachments_test_helper.rb', 'users_test_helper'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 ['ticket_helper.rb', 'company_helper.rb', 'group_helper.rb', 'note_helper.rb', 'email_configs_helper.rb', 'products_helper.rb', 'freshfone_spec_helper.rb', 'freshcaller_spec_helper.rb', 'forum_helper.rb', 'agent_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 require "#{Rails.root}/spec/helpers/social_tickets_helper.rb"
 module ApiTicketsTestHelper
@@ -16,6 +16,7 @@ module ApiTicketsTestHelper
   include FreshcallerSpecHelper
   include ForumHelper
   include AttachmentsTestHelper
+  include UsersTestHelper
   include Helpdesk::Email::Constants
   include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
   include Crypto::TokenHashing
@@ -903,7 +904,7 @@ module ApiTicketsTestHelper
   end
 
   def ticket_requester_pattern(requester)
-    {
+    req_hash = {
       name: requester.name,
       job_title: requester.job_title,
       email: requester.email,
@@ -917,6 +918,13 @@ module ApiTicketsTestHelper
       language: requester.language,
       address: requester.address
     }
+    req_hash[:facebook_id] = requester.fb_profile_id if requester.fb_profile_id
+    req_hash[:external_id] = requester.external_id if requester.external_id
+    default_company = get_default_company(requester)
+    req_hash[:company] = company_hash(default_company) if default_company.present? && default_company.company.present?
+    req_hash[:other_companies] = other_companies_hash(true, requester) if Account.current.multiple_user_companies_enabled? && requester.company_id.present?
+    req_hash[:unique_external_id] = requester.unique_external_id if Account.current.unique_contact_identifier_enabled? && requester.unique_external_id
+    req_hash
   end
 
   def bg_worker_update_pattern(params)

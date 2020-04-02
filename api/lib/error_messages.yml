@@ -147,6 +147,8 @@ api_error_messages:
   duplicate_companies: "One or more duplicate company_ids found"
   cant_add_primary_resource_to_others: "Cannot add %{resource} to %{attribute} since it is %{status}"
   invalid_company_id: "There is no record matching the id %{company_id}"
+  invalid_contact_filter_ids: "There are invalid contact filter ids"
+  invalid_company_filter_ids: "There are invalid company filter ids"
   status_is_not_valid: "The status value to be updated for the article is not valid"
   outdated_property_is_not_valid: "Outdated property is not valid"
   no_publish_article_privilege: "The user is not authorized to publish articles"

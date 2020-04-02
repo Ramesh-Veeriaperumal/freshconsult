@@ -225,7 +225,7 @@ module SearchTestHelper
   end
 
   def requester_pattern(requester)
-    {
+    req_hash = {
       name: requester.name,
       job_title: requester.job_title,
       email: requester.email,
@@ -239,6 +239,13 @@ module SearchTestHelper
       language: requester.language,
       address: requester.address
     }
+    req_hash[:facebook_id] = requester.fb_profile_id if requester.fb_profile_id
+    req_hash[:external_id] = requester.external_id if requester.external_id
+    default_company = get_default_company(requester)
+    req_hash[:company] = company_hash(default_company) if default_company.present? && default_company.company.present?
+    req_hash[:other_companies] = other_companies_hash(true, requester) if Account.current.multiple_user_companies_enabled? && requester.company_id.present?
+    req_hash[:unique_external_id] = requester.unique_external_id if Account.current.unique_contact_identifier_enabled? && requester.unique_external_id
+    req_hash
   end
 
   def stats(ticket)

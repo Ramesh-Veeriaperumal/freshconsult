@@ -189,20 +189,31 @@ module UsersTestHelper
   def public_search_index_contact_pattern(contact)
     keys = [
       :avatar, :tags, :deleted,
-      :other_companies, :view_all_tickets, :was_agent, :agent_deleted_forever, :marked_for_hard_delete
+      :other_companies, :view_all_tickets, :was_agent, :agent_deleted_forever, :marked_for_hard_delete, :unique_external_id
     ]
+    keys -= [:unique_external_id] if Account.current.unique_contact_identifier_enabled?
     keys -= [:deleted] if contact.deleted
-    contact_pattern(contact).except(*keys)
+    result = contact_pattern(contact).except(*keys)
+    result[:external_id] = contact.external_id
+    default_company = get_default_company(contact)
+    result[:company] = company_hash(default_company) if default_company.present? && default_company.company.present?
+    result[:other_companies] = other_companies_hash(true, contact) if Account.current.multiple_user_companies_enabled? && contact.default_user_company.present?
+    result
   end
 
   def public_search_contact_pattern(contact)
     keys = [
       :avatar, :tags, :deleted,
-      :other_companies, :view_all_tickets, :was_agent, :agent_deleted_forever, :marked_for_hard_delete, :facebook_id, :unique_external_id
+      :other_companies, :view_all_tickets, :was_agent, :agent_deleted_forever, :marked_for_hard_delete, :unique_external_id
     ]
     keys -= [:unique_external_id] if Account.current.unique_contact_identifier_enabled?
     keys -= [:deleted] if contact.deleted
-    contact_pattern(contact).except(*keys)
+    result = contact_pattern(contact).except(*keys)
+    result[:external_id] = contact.external_id
+    default_company = get_default_company(contact)
+    result[:company] = company_hash(default_company) if default_company.present? && default_company.company.present?
+    result[:other_companies] = other_companies_hash(true, contact) if Account.current.multiple_user_companies_enabled? && contact.default_user_company.present?
+    result
   end
 
   def index_contact_pattern_with_unique_external_id(contact)

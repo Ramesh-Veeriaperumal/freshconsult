@@ -43,7 +43,9 @@ module Solution::Constants
   [ :logged_users,  "solutions.visibility.logged_in_users", 2 ],
   [ :agents,        "solutions.visibility.agents",          3 ],
   [ :company_users, "solutions.visibility.select_company",  4 ],
-  [ :bot,           "solutions.visibility.bot",             5 ]
+  [ :bot, 'solutions.visibility.bot', 5 ],
+  [ :contact_segment, 'solutions.visibility.contact_segment', 6 ],
+  [ :company_segment, 'solutions.visibility.company_segment', 7 ]
   ]
   
   VISIBILITY_OPTIONS = VISIBILITY.map { |i| [i[1], i[2]] }
@@ -87,6 +89,10 @@ module Solution::Constants
   }
 
   COMPANIES_LIMIT = 250
+
+  CONTACT_FILTER_LIMIT = 20
+
+  COMPANY_FILTER_LIMIT = 20
 
   CONTENT_ALPHA_NUMERIC_REGEX = "[^0-9|S|I|l|O|B|b|q]"
 

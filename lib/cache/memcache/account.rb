@@ -186,7 +186,7 @@ module Cache::Memcache::Account
   end
 
   def agents_details_from_cache
-    optar_cache_enabled? ? agents_details_optar_cache : agents_details_ar_from_cache
+    agents_details_optar_cache
   end
 
   def groups_from_cache
@@ -214,13 +214,8 @@ module Cache::Memcache::Account
 
   def agent_groups_from_cache
     @agent_groups_from_cache ||= begin
-      if optar_cache_enabled?
-        key = agent_groups_optar_key
-        MemcacheKeys.fetch(key) { agent_groups.basic_info }
-      else
-        key = agent_groups_memcache_key
-        MemcacheKeys.fetch(key) { agent_groups.select('user_id,group_id').all }
-      end
+      key = agent_groups_optar_key
+      MemcacheKeys.fetch(key) { agent_groups.basic_info }
     end
   end
 
@@ -247,21 +242,16 @@ module Cache::Memcache::Account
 
   def products_ar_cache
     key = format(ACCOUNT_PRODUCTS, account_id: id)
-    MemcacheKeys.fetch(key) { products.order('name') }
+    MemcacheKeys.fetch(key) { products.order('name').all }
   end
 
   def products_from_cache
-    optar_cache_enabled? ? products_optar_cache : products_ar_cache
+    products_optar_cache
   end
 
   def tags_from_cache
-    if optar_cache_enabled?
-      key = tags_optar_key
-      MemcacheKeys.fetch(key) { tags.basic_info }
-    else
-      key = tags_memcache_key
-      MemcacheKeys.fetch(key) { tags.all }
-    end
+    key = tags_optar_key
+    MemcacheKeys.fetch(key) { tags.basic_info }
   end
 
   def feature_from_cache
@@ -284,13 +274,8 @@ module Cache::Memcache::Account
   end
 
   def companies_from_cache
-    if optar_cache_enabled?
-      key = companies_optar_key
-      MemcacheKeys.fetch(key) { companies.basic_info }
-    else
-      key = companies_memcache_key
-      MemcacheKeys.fetch(key) { companies.all }
-    end
+    key = companies_optar_key
+    MemcacheKeys.fetch(key) { companies.basic_info }
   end
 
   def default_calendar_from_cache
@@ -592,13 +577,8 @@ module Cache::Memcache::Account
   end
 
   def helpdesk_permissible_domains_from_cache
-    if optar_cache_enabled?
-      key = permissible_domains_optar_key
-      MemcacheKeys.fetch(key) { helpdesk_permissible_domains.basic_info }
-    else
-      key = permissible_domains_memcache_key
-      MemcacheKeys.fetch(key) { helpdesk_permissible_domains.select(:domain).all }
-    end
+    key = permissible_domains_optar_key
+    MemcacheKeys.fetch(key) { helpdesk_permissible_domains.basic_info }
   end
 
   def clear_helpdesk_permissible_domains_from_cache

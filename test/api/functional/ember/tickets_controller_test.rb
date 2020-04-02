@@ -3123,10 +3123,12 @@ module Ember
 
     def test_show_with_full_requester_info
       t = create_ticket
+      sample_requester = get_user_with_multiple_companies
+      t.update_attributes(requester: sample_requester)
       get :show, controller_params(version: 'private', id: t.display_id, include: 'requester')
       assert_response 200
       response_body = JSON.parse(response.body)
-      assert_equal ticket_requester_pattern(t.requester), response_body['requester'].symbolize_keys
+      assert_equal ticket_requester_pattern(t.requester), response_body['requester'].deep_symbolize_keys
       match_json(ticket_show_pattern(t, nil, true))
     end
 
