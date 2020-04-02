@@ -20490,6 +20490,9 @@
                 },
                 "csat_rating": {
                   "type": "integer"
+                },
+                "preferred_source": {
+                  "type": "string"
                 }
               }
             }

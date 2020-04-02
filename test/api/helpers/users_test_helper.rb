@@ -61,7 +61,8 @@ module UsersTestHelper
                   spam: contact.spam?,
                   deleted: contact.deleted,
                   parent_id: contact.parent_id,
-                  csat_rating: contact.last_csat_rating)
+                  csat_rating: contact.last_csat_rating,
+                  preferred_source: Helpdesk::Source.ticket_source_token_by_key[expected_output[:preferred_source]] || contact.preferred_source)
     result[:company] = company_hash(contact.default_user_company) if expected_output[:include].eql?('company') && contact.default_user_company.present?
     result[:other_companies] = other_companies_hash(expected_output[:include].eql?('company'), contact) if Account.current.multiple_user_companies_enabled? && contact.default_user_company.present?
     result

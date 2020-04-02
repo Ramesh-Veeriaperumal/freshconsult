@@ -1295,6 +1295,24 @@ module Ember
       assert_response :missing
     end
 
+    def test_show_a_contact_with_preferred_source
+      sample_user = add_new_user(@account)
+      sample_user.merge_preferences = { preferred_source: 2 }
+      sample_user.save_without_session_maintenance
+      get :show, controller_params(version: 'private', id: sample_user.id)
+      assert_response 200
+      res = JSON.parse(response.body)
+      assert_equal Helpdesk::Source.ticket_source_token_by_key[2].to_s, res['preferred_source']
+    end
+
+    def test_show_a_contact_without_preferred_source
+      sample_user = add_new_user(@account)
+      get :show, controller_params(version: 'private', id: sample_user.id)
+      assert_response 200
+      res = JSON.parse(response.body)
+      assert_nil res['preferred_source']
+    end
+
     def test_deletion
       contact_id = add_new_user(@account).id
       delete :destroy, controller_params(version: 'private', id: contact_id)

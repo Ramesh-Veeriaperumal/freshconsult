@@ -61,7 +61,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_destroy :save_deleted_ticket_info
 
-  after_create :refresh_display_id, :create_meta_note, :update_content_ids
+  after_create :refresh_display_id, :create_meta_note, :update_content_ids, :add_preferred_source
   after_create :tag_update_central_publish, :on => :create, :if => :tags_updated?
 
   after_save :set_parent_child_assn, :if => :child_ticket?
@@ -835,6 +835,10 @@ private
 
   def can_add_requester?
     email.present? || twitter_id.present? || external_id.present? || phone.present? || unique_external_id.present?
+  end
+
+  def add_preferred_source
+    self.requester.add_preferred_source source if self.requester
   end
 
   def update_content_ids

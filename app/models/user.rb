@@ -1325,6 +1325,17 @@ class User < ActiveRecord::Base
     }
   end
 
+  def preferred_source
+    Helpdesk::Source.ticket_source_token_by_key[preferences[:preferred_source]]
+  end
+
+  def add_preferred_source(source)
+    unless preferences[:preferred_source] && preferences[:preferred_source] == source
+      self.merge_preferences = { preferred_source: source }
+      save
+    end
+  end
+
   private
 
     def find_or_create_company(name)

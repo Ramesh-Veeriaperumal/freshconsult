@@ -225,7 +225,8 @@ class ContactDecorator < ApiDecorator
                                        agent_deleted_forever: record.agent_deleted_forever?,
                                        marked_for_hard_delete: record.marked_for_hard_delete?,
                                        parent_id: record.parent_id,
-                                       csat_rating: record.last_csat_rating)
+                                       csat_rating: record.last_csat_rating,
+                                       preferred_source: record.preferred_source)
       response_hash.merge!(record.twitter_requester_fields)
       response_hash[:custom_fields] = custom_fields if custom_fields.present?
       response_hash.merge(company_info)
