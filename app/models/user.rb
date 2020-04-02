@@ -533,6 +533,15 @@ class User < ActiveRecord::Base
     save
   end
 
+  def update_csat_rating(rating)
+    self.merge_preferences = { csat_rating: rating }
+    save
+  end
+
+  def last_csat_rating
+    preferences[:csat_rating]
+  end
+
   def update_attributes(params) # Overriding to normalize params at one place
     normalize_params(params) # hack to facilitate contact_fields & deprecate customer
     self.active = params["active"] if params["active"]

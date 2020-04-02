@@ -60,7 +60,8 @@ module UsersTestHelper
                   blocked: contact.blocked?,
                   spam: contact.spam?,
                   deleted: contact.deleted,
-                  parent_id: contact.parent_id)
+                  parent_id: contact.parent_id,
+                  csat_rating: contact.last_csat_rating)
     result[:company] = company_hash(contact.default_user_company) if expected_output[:include].eql?('company') && contact.default_user_company.present?
     result[:other_companies] = other_companies_hash(expected_output[:include].eql?('company'), contact) if Account.current.multiple_user_companies_enabled? && contact.default_user_company.present?
     result
@@ -294,6 +295,13 @@ module UsersTestHelper
       company_attributes << h
     end
     new_user.user_companies_attributes = Hash[(0...company_attributes.size).zip company_attributes]
+    new_user.save_without_session_maintenance
+    new_user
+  end
+
+  def create_contact_with_csat_rating(account, rating)
+    new_user = add_new_user(account)
+    new_user.update_csat_rating(rating) if !rating.nil?
     new_user.save_without_session_maintenance
     new_user
   end

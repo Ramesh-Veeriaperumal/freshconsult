@@ -13,3 +13,5 @@ allOf:
         type: boolean
       avatar:
         $ref: '#/definitions/avatar'
+      csat_rating:
+        type: integer

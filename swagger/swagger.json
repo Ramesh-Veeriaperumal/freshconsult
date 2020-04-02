@@ -20487,6 +20487,9 @@
                 },
                 "avatar": {
                   "$ref": "#/definitions/avatar"
+                },
+                "csat_rating": {
+                  "type": "integer"
                 }
               }
             }

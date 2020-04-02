@@ -1274,6 +1274,22 @@ module Ember
       assert_equal sensitive_data, res['custom_fields']['enc_sensitive_info']
     end
 
+    def test_show_a_contact_without_csat_rating
+      sample_user = create_contact_with_csat_rating(@account, nil)
+      get :show, controller_params(version: 'private', id: sample_user.id)
+      assert_response 200
+      res = JSON.parse(response.body)
+      assert_nil res['csat_rating']
+    end
+
+    def test_show_a_contact_with_csat_rating
+      sample_user = create_contact_with_csat_rating(@account, 103)
+      get :show, controller_params(version: 'private', id: sample_user.id)
+      assert_response 200
+      res = JSON.parse(response.body)
+      assert_equal 103, res['csat_rating']
+    end
+
     def test_show_a_non_existing_contact
       get :show, controller_params(version: 'private', id: 0)
       assert_response :missing
