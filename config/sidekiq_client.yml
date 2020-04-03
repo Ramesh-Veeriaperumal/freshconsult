@@ -390,6 +390,7 @@ defaults: &defaults
     - [fdadmin_freshid_migration]
     - [agent_assist_email]
     - [cron_archive_automation]
+    - [update_user_privilege]
     - [vault_account_update]
     - [vault_data_cleanup]
 
