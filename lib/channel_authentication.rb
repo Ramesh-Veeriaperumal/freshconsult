@@ -11,6 +11,7 @@ module ChannelAuthentication
     freshchat: 'freshchat'.freeze,
     facebook: 'facebook'.freeze,
     freshbots: 'freshbots'.freeze,
+    twilight: 'twilight'.freeze
   }.freeze
 
   def channel_client_authentication
