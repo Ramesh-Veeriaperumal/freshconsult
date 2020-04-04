@@ -3,6 +3,7 @@ defaults: &defaults
   key: "33E15283B3FE1D1FD22B1619DA9C"
   lang_key: "33E15283B3FE1D1FD22B1619DA9C"
   host: "http://mailservice.freshpo.com"
+  dkim_host: "http://mailservice.freshpo.com"
   lang_host: "http://mailservice.freshpo.com"
   timeout: 30
   email_send_urlpath: "api/v1/email/send"
