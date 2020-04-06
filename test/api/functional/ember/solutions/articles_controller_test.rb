@@ -988,6 +988,8 @@ module Ember
           put :bulk_update, construct_params({ version: 'private' }, ids: [article.parent_id], properties: { tags: tags })
           assert_response 400
         end
+      ensure
+        User.any_instance.unstub(:privilege?)
       end
 
       def test_bulk_update_old_tags_without_tags_privilege
@@ -1164,6 +1166,8 @@ module Ember
           assert_response 404
           match_json(request_error_pattern(:language_not_allowed, code: non_supported_language, list: (@account.supported_languages + [@account.language]).sort.join(', ')))
         end
+      ensure
+        User.any_instance.unstub(:privilege?)
       end
 
       def test_bulk_update_with_language_without_multilingual_feature
@@ -1192,6 +1196,8 @@ module Ember
         put :update, construct_params(version: 'private', id: 1, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
         assert_response 403
         match_json(request_error_pattern(:access_denied))
+      ensure
+        User.any_instance.unstub(:privilege?)
       end
 
       def test_update_article_unpublish_without_access
@@ -1490,6 +1496,7 @@ module Ember
         get :filter, controller_params(version: 'private')
         assert_response 403
         match_json(request_error_pattern(:access_denied))
+      ensure
         User.any_instance.unstub(:privilege?)
       end
 
@@ -2514,6 +2521,7 @@ module Ember
         get :untranslated_articles, controller_params(version: 'private', language: 'es', portal_id: @account.main_portal.id)
         assert_response 403
         match_json(request_error_pattern(:access_denied))
+      ensure
         User.any_instance.unstub(:privilege?)
       end
 

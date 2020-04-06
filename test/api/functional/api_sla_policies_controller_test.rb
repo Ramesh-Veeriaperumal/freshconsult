@@ -3,8 +3,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
   include SlaPoliciesTestHelper
 
   def setup
-    super
     CustomRequestStore.store[:private_api_request] = false
+    super
     @sla_policy = nil
     @agent_1 = nil
     @agent_2 = nil
