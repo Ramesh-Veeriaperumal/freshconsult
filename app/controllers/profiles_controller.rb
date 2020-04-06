@@ -143,13 +143,11 @@ private
 
   def change_password_fail
     @password_failed = true
-    if current_account.falcon_ui_enabled?(current_user)
-      render :partial => '/profiles/change_password.rjs'
-      return
-    end
 
     if current_user.customer?
-      redirect_to edit_support_profile_path 
+      redirect_to edit_support_profile_path
+    elsif current_account.falcon_ui_enabled?(current_user)
+      render partial: '/profiles/change_password.rjs'
     else
       redirect_to edit_profile_path # redirect_to used to fix breadcrums issue in Freshservice
     end
