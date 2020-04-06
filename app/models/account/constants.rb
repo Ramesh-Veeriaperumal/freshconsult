@@ -300,7 +300,7 @@ class Account < ActiveRecord::Base
       text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
       recalculate_daypass: false, prevent_wc_ticket_create: true, allow_wildcard_ticket_create: false,
       attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false, fsm_admin_automations: false,
-      requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false, supervisor_custom_status: false,
+      requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false, supervisor_custom_status: false, asset_management: false,
       sandbox_temporary_offset: false, downgrade_policy: true, skip_posting_to_fb: true, launch_fsm_geolocation: false,
       allow_update_agent: false, facebook_dm_outgoing_attachment: true, hide_mailbox_error_from_agents: false,
       prevent_lang_detect_for_spam: false, jira_onpremise_reporter: false, support_ticket_rate_limit: false, sidekiq_logs_to_central: false, portal_central_publish: false, encode_emoji_in_solutions: false,

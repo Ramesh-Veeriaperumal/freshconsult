@@ -534,6 +534,10 @@ class VaRule < ActiveRecord::Base
                                                         host: Account.current.host,
                                                         protocol: Account.current.url_protocol)
       end
+    elsif service_task_observer_rule? && account.automation_revamp_enabled?
+      "#{Account.current.url_protocol}://#{Account.current.host}/a/field-service/admin/automations/service-task-updates/#{id}/edit"
+    elsif service_task_dispatcher_rule? && account.automation_revamp_enabled?
+      "#{Account.current.url_protocol}://#{Account.current.host}/a/field-service/admin/automations/service-task-creation/#{id}/edit"
     else
       I18n.t('not_available')
     end
