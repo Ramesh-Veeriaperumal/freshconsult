@@ -25,13 +25,13 @@ class Search::V2::SpotlightController < ApplicationController
   end
 
   # Tickets scoped spotlight search
-  # filteredTicketSearch is for custom filtered search
+  # filtered_ticket_search is for custom filtered search
   #
   def tickets
     if filter_params?
       (render([]) && return) unless @es_search_term.present? #=> To not search when no term is passed.
 
-      @search_context = :filteredTicketSearch
+      @search_context = :filtered_ticket_search
     else
       @search_context = :agent_spotlight_ticket
     end

@@ -34,7 +34,7 @@ module Ember
           @sort_direction = 'desc'
           if filter_params?
             @filter_params = params[:filter_params]
-            @search_context = :filteredTicketSearch
+            @search_context = :filtered_ticket_search
           else
             @search_context = :agent_spotlight_ticket
           end
@@ -143,7 +143,7 @@ module Ember
         end
 
         def transform_with_search_settings?
-          [:agent_spotlight_ticket, :filteredTicketSearch].include?(@search_context) && search_settings?
+          [:agent_spotlight_ticket, :filtered_ticket_search].include?(@search_context) && search_settings?
         end
 
         def include_archive?
