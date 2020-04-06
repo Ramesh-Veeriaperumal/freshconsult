@@ -36,7 +36,7 @@ class Account < ActiveRecord::Base
     :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,
     :prevent_wc_ticket_create, :allow_wildcard_ticket_create, :requester_privilege,
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr, :fsm_admin_automations,
-    :csat_email_scan_compatibility, :mint_portal_applicable, :quoted_text_parsing_feature, :enable_customer_journey,
+    :csat_email_scan_compatibility, :mint_portal_applicable, :quoted_text_parsing_feature,
     :email_mailbox, :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
     :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :launch_fsm_geolocation,
     :ticket_field_revamp, :facebook_dm_outgoing_attachment, :skip_posting_to_fb, :hide_mailbox_error_from_agents, :hide_og_meta_tags,
@@ -49,7 +49,7 @@ class Account < ActiveRecord::Base
     :out_of_office, :enable_secure_login_check, :contact_form_enhancement, :public_api_filter_factory, :enable_twitter_requester_fields, :marketplace_gallery, :solutions_quick_view,
     :translations_proxy, :translations_cdn, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :retry_emails, :disable_beamer, :fb_message_echo_support, :portal_prototype_update,
     :bot_banner, :solutions_freshconnect, :fsm_scheduler_month_view, :idle_session_timeout, :solutions_dashboard,
-    :observer_race_condition_fix
+    :observer_race_condition_fix, :contact_graphical_avatar
   ].freeze
 
   DB_FEATURES = [

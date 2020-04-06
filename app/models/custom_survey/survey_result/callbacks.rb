@@ -2,6 +2,7 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
 
   before_validation :backup_custom_field_changes, on: :update
   before_create :build_survey_remark_and_feedback_note
+  after_create :update_rating_to_customer
   after_create  :update_observer_events, :update_ticket_rating, :if => :ticket_survey?
   after_commit  :filter_observer_events, on: :create, :if => :user_present?
   after_commit :backup_custom_field_changes, on: :update
@@ -45,4 +46,7 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
     (@model_changes[:custom_fields] ||= []) << survey_result_data_payload
   end
 
+  def update_rating_to_customer
+    customer.update_csat_rating rating
+  end
 end

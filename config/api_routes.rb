@@ -1048,6 +1048,7 @@ Helpkit::Application.routes.draw do
     match '/bots/:id/training_completed', to: 'channel/bot/services#training_completed', via: :post
 
     post '/search/tickets', to: 'channel/search/tickets#results'
+    post '/search/customers', to: 'channel/search/customers#results'
   end
 
   ocr_routes = proc do

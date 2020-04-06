@@ -6,7 +6,7 @@ class Role < ActiveRecord::Base
   include MemcacheKeys
 
   before_destroy :destroy_user_privileges
-  after_update :update_user_privileges
+  after_commit :update_user_privileges, on: :update
   before_create :set_or_remove_company_privilege
   before_update :set_or_remove_company_privilege
 
@@ -150,10 +150,7 @@ class Role < ActiveRecord::Base
     end
     
     def update_user_privileges
-      users.all.each do |user|
-        privileges = (union_privileges user.roles).to_s
-        user.update_attribute(:privileges, privileges)
-      end 
+      Roles::UpdateUserPrivileges.perform_async({role_id: self.id, performed_by_id: User.current.id})
     end
 
     def set_or_remove_company_privilege

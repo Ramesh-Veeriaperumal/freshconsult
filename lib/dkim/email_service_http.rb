@@ -52,7 +52,7 @@ module Dkim
       end
 
       def fetch_service_params(email_service_url, email_service_action)
-        service_params = { domain: EMAIL_SERVICE_HOST }
+        service_params = { domain: EMAIL_SERVICE_HOST, skip_blacklist_verification: true }
 
         case email_service_action
         when EMAIL_SERVICE_ACTION[:get_domains]  

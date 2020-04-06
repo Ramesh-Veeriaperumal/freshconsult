@@ -533,6 +533,15 @@ class User < ActiveRecord::Base
     save
   end
 
+  def update_csat_rating(rating)
+    self.merge_preferences = { csat_rating: rating }
+    save
+  end
+
+  def last_csat_rating
+    preferences[:csat_rating]
+  end
+
   def update_attributes(params) # Overriding to normalize params at one place
     normalize_params(params) # hack to facilitate contact_fields & deprecate customer
     self.active = params["active"] if params["active"]
@@ -1314,6 +1323,17 @@ class User < ActiveRecord::Base
       'twitter_profile_status'  => twitter_profile_status,
       'twitter_followers_count' => twitter_followers_count
     }
+  end
+
+  def preferred_source
+    Helpdesk::Source.ticket_source_token_by_key[preferences[:preferred_source]]
+  end
+
+  def add_preferred_source(source)
+    unless preferences[:preferred_source] && preferences[:preferred_source] == source
+      self.merge_preferences = { preferred_source: source }
+      save
+    end
   end
 
   private
