@@ -2988,10 +2988,13 @@ module Ember
         Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
         sample_article = get_article_with_draft
         approver = add_test_agent
-        add_privilege(approver, :approve_article)
-        remove_privilege(User.current, :create_and_edit_article)
+        # add_privilege(approver, :approve_article)
+        # remove_privilege(User.current, :create_and_edit_article)
+        User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(false)
+        User.any_instance.stubs(:privilege?).with(:approve_article).returns(true)
         User.current.reload
         post :send_for_review, construct_params({ version: 'private', id: sample_article.parent_id }, approver_id: approver.id)
+        User.any_instance.unstub(:privilege?)
         assert_response 403
       ensure
         Account.any_instance.unstub(:article_approval_workflow_enabled?)
@@ -3103,10 +3106,12 @@ module Ember
         Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
         sample_article = get_article_with_draft
         approver = add_test_agent
-        remove_privilege(User.current, :approve_article)
-        User.current.reload
+        # remove_privilege(User.current, :approve_article)
+        # User.current.reload
+        User.any_instance.stubs(:privilege?).with(:approve_article).returns(false)
         post :approve, controller_params(version: 'private', id: sample_article.parent_id)
         assert_response 403, response.body
+        User.any_instance.unstub(:privilege?)
         match_json(request_error_pattern(:access_denied))
       ensure
         Account.any_instance.unstub(:article_approval_workflow_enabled?)

@@ -8,7 +8,7 @@ class Admin::PortalController < Admin::AdminController
 
   def index
     main_portal_edit unless current_account.multi_product_enabled?
-    @products = current_account.products.all(:include => :portal).select{ |p| !p.portal_enabled? }
+    @products = current_account.products.includes(:portal).to_a.select { |p| !p.portal_enabled? }
   end
 
   def settings

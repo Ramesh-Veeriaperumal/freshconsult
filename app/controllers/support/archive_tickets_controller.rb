@@ -110,8 +110,7 @@ protected
       current_order = visible_fields.include?(current_wf_order.to_s) && is_correct_order_type  ? "#{current_wf_order} #{current_wf_order_type}" :
         "#{TicketsFilter::DEFAULT_PORTAL_SORT} #{TicketsFilter::DEFAULT_PORTAL_SORT_ORDER}" 
       
-      @tickets = @tickets.paginate(:page => params[:page], :per_page => per_page, 
-          :order => current_order) 
+      @tickets = @tickets.order(current_order.to_sym).paginate(page: params[:page], per_page: per_page)
       @tickets ||= []
     end
 

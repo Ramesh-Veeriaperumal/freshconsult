@@ -173,7 +173,7 @@ class Search::AutocompleteController < ApplicationController
   	def results
       @results ||= begin 
         return [] if params[:q].blank? 
-        current_account.users.find(:all, :conditions => safe_send("requester_conditions"), :limit => 100 )
+        current_account.users.where(safe_send('requester_conditions')).limit(100).to_a
       end
   	end  
 
@@ -187,7 +187,7 @@ class Search::AutocompleteController < ApplicationController
 
     def tag_results
       @results ||= begin 
-        current_account.tags.find(:all, :order => "tag_uses_count desc", :limit => 25)
+        current_account.tags.order('tag_uses_count desc').limit(25).to_a
       end
     end
 

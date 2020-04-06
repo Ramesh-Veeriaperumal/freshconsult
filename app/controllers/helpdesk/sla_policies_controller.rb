@@ -104,7 +104,7 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
   #Method to add company's SLA policy via API
   def company_sla
     @new_company_ids = @new_company_ids.split(',').map { |x| x.to_i } 
-    @new_company_ids = current_account.companies.find_all_by_id(@new_company_ids,:select => "id").map(&:id)
+    @new_company_ids = current_account.companies.where(id: @new_company_ids).pluck(:id)
     conditions = @sla_policy.conditions
     conditions ||= {}
     conditions[:company_id] = @new_company_ids
@@ -156,13 +156,11 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
     end
 
     def initialize_escalation_level_details
-      @sla_policy = scoper.find(params[:id], :include =>:sla_details) 
+      @sla_policy = scoper.includes(:sla_details).find(params[:id])
 
-      @companies = current_account.companies.find(:all, 
-            :conditions => ["id in (?)", @sla_policy.conditions[:company_id]]).map {|company| 
-            [company.name, company.id]} unless (@sla_policy.is_default || 
-                                                @sla_policy.conditions[:company_id].blank?)
-      
+      @companies = current_account.companies.where(['id in (?)', @sla_policy.conditions[:company_id]]).select([:id, :name]).to_a.map { |company|
+        [company.name, company.id]
+      } unless @sla_policy.is_default || @sla_policy.conditions[:company_id].blank?
       return if @sla_policy.escalations.blank?
 
       fetch_time_and_agents_list
@@ -190,10 +188,10 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
         assigned_agent_id = Helpdesk::SlaPolicy::custom_users_id_by_type[:assigned_agent]
         @agents_cache = {}
         @agents_id.uniq!
-        current_account.users.technicians.visible.find(:all, :conditions => ["id in (?)", @agents_id], 
-                        :select => "id, name, email").each{|agent| 
-                        @agents_cache[agent.id] = {:name => agent.name, :email => agent.email}}
-        @agents_cache[assigned_agent_id] = {:name => Helpdesk::SlaPolicy::custom_users_value_by_type[:assigned_agent], :email => ""} if @agents_id.include? assigned_agent_id
+        current_account.users.technicians.visible.where(['id in (?)', @agents_id]).select('id, name, email').each { |agent|
+          @agents_cache[agent.id] = { name: agent.name, email: agent.email }
+        }
+        @agents_cache[assigned_agent_id] = { name: Helpdesk::SlaPolicy::custom_users_value_by_type[:assigned_agent], email: '' } if @agents_id.include? assigned_agent_id
       end
     end
 

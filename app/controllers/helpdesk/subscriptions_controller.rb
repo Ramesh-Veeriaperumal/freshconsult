@@ -57,14 +57,10 @@ class Helpdesk::SubscriptionsController < ApplicationController
   end
 
   def unwatch_multiple
-    if Helpdesk::Subscription.destroy_all(:ticket_id => current_account.tickets.find( :all, 
-                                              :conditions => { :display_id => params[:ids] }).map(&:id),
-                                         :user_id => current_user.id,
-                                         :account_id => current_account.id)
-      flash[:notice] = render_to_string(
-          :inline => t("flash.tickets.unwatch.success", :tickets => get_updated_ticket_count ))
+    flash[:notice] = if Helpdesk::Subscription.where(ticket_id: current_account.tickets.where(display_id: params[:ids]).pluck(:id), user_id: current_user.id, account_id: current_account.id).destroy_all
+      render_to_string(inline: t('flash.tickets.unwatch.success', tickets: get_updated_ticket_count))
     else
-      flash[:notice] = t(:'flash.tickets.unwatch.failure')
+      t(:'flash.tickets.unwatch.failure')
     end
     redirect_to helpdesk_tickets_path
   end

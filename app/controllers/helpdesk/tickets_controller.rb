@@ -1678,7 +1678,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def find_topic
-    	@topic = current_account.topics.find(:first, :conditions => {:id => params[:topic_id]}) unless params[:topic_id].nil?
+    	@topic = current_account.topics.where(id: params[:topic_id]).first unless params[:topic_id].nil?
     end
 
     def redirect_merged_topics

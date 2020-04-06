@@ -335,10 +335,7 @@ class ContactsController < ApplicationController
   end
 
   def autocomplete
-    items = current_account.companies.find(:all,
-                                            :conditions => ["name like ? ", "%#{params[:v]}%"],
-                                            :limit => 30)
-
+    items = current_account.companies.where(['name like ? ', "%#{params[:v]}%"]).limit(30).to_a
     r = {:results => items.map {|i| {:id => i.id, :value => i.name} } }
     respond_to do |format|
       format.json { render :json => r.to_json }
@@ -456,17 +453,14 @@ protected
     end
 
     def define_contact_tickets
-      @total_user_tickets = current_account.tickets.permissible(current_user).
-        requester_active(@user).visible.newest(11).find(:all,
-          :include => [:ticket_states,:ticket_status,:responder,:requester])
+      @total_user_tickets = current_account.tickets.permissible(current_user).requester_active(@user).visible.newest(11).includes([:ticket_states, :ticket_status, :responder, :requester]).to_a
       @total_user_tickets_size = @total_user_tickets.length
       @user_tickets = @total_user_tickets.take(10)
     end
 
     def define_contact_archive_tickets
       if current_account.features_included?(:archive_tickets)
-        @total_archive_user_tickets = current_account.archive_tickets.permissible(current_user).
-          requester_active(@user).newest(11).find(:all, :include => [:responder,:requester])
+        @total_archive_user_tickets = current_account.archive_tickets.permissible(current_user).requester_active(@user).newest(11).includes([:responder, :requester]).to_a
         @total_archive_user_tickets_size = @total_archive_user_tickets.length
         @user_archive_tickets = @total_archive_user_tickets.take(10)
       end

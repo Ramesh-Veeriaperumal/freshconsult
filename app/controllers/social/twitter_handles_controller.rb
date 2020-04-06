@@ -41,9 +41,7 @@ class Social::TwitterHandlesController < ApplicationController
   end
 
   def tweet_exists
-    converted_tweets = current_account.tweets.find(:all,
-                                                   :conditions => { :tweet_id => params[:tweet_ids].split(",")},
-                                                   :include => :tweetable)
+    converted_tweets = current_account.tweets.where(tweet_id: params[:tweet_ids].split(",")).includes(:tweetable).to_a
     @tweet_tkt_hsh = {}
     converted_tweets.each do |tweet|
       @tweet_tkt_hsh.store(tweet.tweet_id,tweet.get_ticket.display_id)

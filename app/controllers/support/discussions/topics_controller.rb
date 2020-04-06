@@ -57,7 +57,7 @@ class Support::Discussions::TopicsController < SupportController
         return render :json => @topic.to_json(:include => :posts)
       end
       format.rss do
-        @posts = @topic.posts.find(:all, :order => 'created_at desc', :limit => 25)
+        @posts = @topic.posts.order('created_at desc').limit(25).to_a
         return render(:action => 'show', :layout => false)
       end
     end

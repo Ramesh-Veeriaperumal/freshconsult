@@ -105,7 +105,7 @@ class Helpdesk::AttachmentsController < ApplicationController
   protected
 
     def load_shared
-      @item = Helpdesk::SharedAttachment.find_by_shared_attachable_id(params[:item_id], :conditions=>["attachment_id=?", params[:id]])
+      @item = Helpdesk::SharedAttachment.where(shared_attachable_id: params[:item_id], attachment_id: params[:id]).try(:first)
     end
 
     def can_unlink?

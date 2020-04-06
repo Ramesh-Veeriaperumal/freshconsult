@@ -105,7 +105,7 @@ class AgentsController < ApplicationController
     @agent.user.avatar = Helpdesk::Attachment.new
     @agent.user.time_zone = current_account.time_zone
     @agent.user.language = current_portal.language
-    @scoreboard_levels = current_account.scoreboard_levels.find(:all, :order => "points ASC")
+    @scoreboard_levels = current_account.scoreboard_levels.order('points ASC').to_a
      respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @agent }
@@ -171,7 +171,7 @@ class AgentsController < ApplicationController
     else  
         check_email_exist
         @agent.user =@user
-        @scoreboard_levels = current_account.scoreboard_levels.find(:all, :order => "points ASC")
+        @scoreboard_levels = current_account.scoreboard_levels.order('points ASC').to_a
         set_skill_data
         render :action => :new
     end
@@ -502,7 +502,7 @@ private
     #Validating role ids. API - CSV(To maintain consistency across all APIs), HTML - array
     role_ids = params[:user][:role_ids] #[],[1,2],"","1,2,3" --> [],[1,2,3],[],[1,2,3]
     role_ids = params[:user][:role_ids].split(',').map{|x| x.to_i} if role_ids.is_a? String
-    role_ids = current_account.roles.find_all_by_id(role_ids, :select => "id").map(&:id) unless role_ids.blank?
+    role_ids = current_account.roles.where(id: role_ids).pluck(:id) if role_ids.present?
     if role_ids.blank?
       params[:user].delete(:role_ids)
     else

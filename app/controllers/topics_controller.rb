@@ -24,7 +24,7 @@ class TopicsController < ApplicationController
 		respond_to do |format|
 			format.html { redirect_to forum_path(params[:forum_id]) }
 			format.xml do
-				@topics = Topic.paginate_by_forum_id(params[:forum_id], :order => 'sticky desc, replied_at desc', :page => params[:page])
+				@topics = Topic.where(forum_id: params[:forum_id]).order('sticky desc, replied_at desc').paginate(:page => params[:page])
 				render :xml => @topics.to_xml
 			end
 		end
@@ -46,7 +46,7 @@ class TopicsController < ApplicationController
 				render :json => @topic.to_json(:include => :posts)
 			end
 			format.rss do
-				@posts = @topic.posts.published.find(:all, :order => 'created_at desc', :limit => 25)
+				@posts = @topic.posts.published.order('created_at desc').limit(25).to_a
 				render :action => 'show', :layout => false
 			end
 		end
@@ -167,7 +167,7 @@ class TopicsController < ApplicationController
 	end
 
 	def destroy_vote
-		@votes = Vote.find(:all, :conditions => ["user_id = ? and voteable_id = ?", current_user.id, params[:id]] )
+		@votes = Vote.where(['user_id = ? and voteable_id = ?', current_user.id, params[:id]]).to_a
 		@votes.first.destroy
 		@topic.reload
 		render :partial => "forum_shared/topic_vote", :object => @topic
@@ -225,7 +225,7 @@ class TopicsController < ApplicationController
 		end
 
 		def fetch_monitorship
-			@monitorship = @topic.monitorships.count(:conditions => ["user_id = ? and active = ?", current_user.id, true])
+			@monitorship = @topic.monitorships.where(["user_id = ? and active = ?", current_user.id, true]).count
 		end
 
 		def set_selected_tab
