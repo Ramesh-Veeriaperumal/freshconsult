@@ -41,6 +41,7 @@ class CannedResponseFoldersController < ApiApplicationController
 
     def fetch_ca_responses_from_db(folder_id = nil)
       options = folder_id ? [{ folder_id: folder_id }] : [nil, [:folder]]
+      options << account_limit if !account_limit.nil? && folder_id.nil?
       ca_responses = accessible_elements(current_account.canned_responses,
                                          query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', *options))
       (ca_responses || []).compact
@@ -48,6 +49,10 @@ class CannedResponseFoldersController < ApiApplicationController
 
     def fetch_ca_responses(folder_id = nil)
       @ca_responses = fetch_ca_responses_from_db(folder_id)
+    end
+
+    def account_limit
+      current_account.account_additional_settings.additional_settings[:canned_responses_limit]
     end
 
     def validation_class

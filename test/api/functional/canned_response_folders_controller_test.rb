@@ -171,6 +171,39 @@ class CannedResponseFoldersControllerTest < ActionController::TestCase
     folders.map(&:destroy)
   end
 
+  def test_index_with_cr_limit_increase
+    folder = create_cr_folder(name: 'Test folder')
+    params = {
+      response: {
+        title: 'Test',
+        folder_id: folder.id,
+        helpdesk_accessible_attributes:
+        {
+          accessible_type: 'Admin::CannedResponses::Response',
+          access_type: 0
+        },
+        content_html: 'Test'
+      }
+    }
+    crs = []
+    (1..350).each do |i|
+      params[:response][:title] = "Test CR #{i}"
+      crs << canned_response = Account.current.canned_responses.new(params[:response])
+      canned_response.save!
+    end
+    settings = Account.current.account_additional_settings
+    settings.additional_settings[:canned_responses_limit] = 400
+    settings.save
+    get :index, controller_params(version: 'v2')
+    folder_count = JSON.parse(response.body).select { |f| f['id'] == folder.id }.last['responses_count']
+    assert_equal 350, folder_count
+  ensure
+    crs.map(&:destroy)
+    folder.destroy
+    settings.additional_settings.delete(:canned_responses_limit)
+    settings.save
+  end
+
   def test_show_list_responses
 
     ::Search::V2::Count::AccessibleMethods.any_instance.stubs(:es_request).returns(nil)
