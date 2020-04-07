@@ -166,7 +166,8 @@ module Ember
           primary_email: @email_objects[:primary_email],
           custom_fields: params[cname][:custom_field],
           default_company: @def_company.try(:id),
-          avatar_id: params[cname][:avatar_id]
+          avatar_id: params[cname][:avatar_id],
+          enforce_mandatory: params[:enforce_mandatory]
         }
       end
 

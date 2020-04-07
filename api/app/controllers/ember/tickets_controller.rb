@@ -59,7 +59,7 @@ module Ember
                          attachment_ids: @attachment_ids, shared_attachments: shared_attachments,
                          parent_child_params: parent_child_params, parent_attachment_params: parent_attachment_params,
                          tags: cname_params[:tags], company_id: cname_params[:company_id], inline_attachment_ids: @inline_attachment_ids,
-                         topic_id: @topic_id }
+                         topic_id: @topic_id, enforce_mandatory: params[:enforce_mandatory] }
       return unless validate_delegator(@item, delegator_hash)
       save_ticket_and_respond
     end

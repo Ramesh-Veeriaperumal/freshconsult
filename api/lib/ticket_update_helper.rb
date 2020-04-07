@@ -8,6 +8,7 @@ module TicketUpdateHelper
       hash[:ticket_fields] = @ticket_fields
       hash[:custom_fields] = ticket_update_params[:custom_field]
       hash[:company_id] = ticket_update_params[:company_id]
+      hash[:enforce_mandatory] =  params[:enforce_mandatory]
       hash[:tracker_ticket_id] = ticket_update_params[:tracker_ticket_id] if link_or_unlink?
     end.merge!(attachment_attributes || {})
 

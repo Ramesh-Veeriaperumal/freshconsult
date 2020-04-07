@@ -3,7 +3,7 @@ class BaseDelegator < SimpleDelegator
 
   CREATE_AND_UPDATE_ACTIONS = %i[create update].freeze
 
-  attr_accessor :error_options, :draft_attachments
+  attr_accessor :error_options, :draft_attachments, :enforce_mandatory
 
   validate :validate_draft_attachments, :validate_attachment_size, if: -> { @attachment_ids }
 
@@ -11,6 +11,7 @@ class BaseDelegator < SimpleDelegator
     super(record)
     @error_options = {}
     @attachment_ids = options[:attachment_ids]
+    @enforce_mandatory = options[:enforce_mandatory] != 'false'
     retrieve_draft_attachments if @attachment_ids
   end
 

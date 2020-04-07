@@ -3026,7 +3026,14 @@ class ApiContactsControllerTest < ActionController::TestCase
     )
 
     result = JSON.parse(created_contact.body)
-    assert_response 201, result
+    assert_response 400, result
+    match_json(
+      [{
+        field: 'custom_fields.code',
+        code: :invalid_value,
+        message: 'It should not be blank as this is a mandatory field'
+      }]
+    )
   ensure
     cf.delete
   end
@@ -3068,6 +3075,42 @@ class ApiContactsControllerTest < ActionController::TestCase
         message: "It should be either 'true' or 'false'"
       }]
     )
+  ensure
+    cf.delete
+  end
+
+  def test_create_contact_with_enforce_mandatory_false_not_passing_custom_dropdown_value
+    cf = create_contact_field(cf_params(
+                                type: 'dropdown',
+                                field_type: 'custom_dropdown',
+                                label: 'code',
+                                editable_in_signup: 'true',
+                                required_for_agent: 'true',
+                                custom_field_choices_attributes: [
+                                  {
+                                    value: 'First Choice',
+                                    position: 1,
+                                    _destroy: 0,
+                                    name: 'First Choice'
+                                  },
+                                  {
+                                    value: 'Second Choice',
+                                    position: 2,
+                                    _destroy: 0,
+                                    name: 'Second Choice'
+                                  }
+                                ]
+    ))
+    @account.reload
+    created_contact = post :create, construct_params(
+      {},
+      name: Faker::Lorem.characters(15),
+      email: Faker::Internet.email,
+      query_params: { enforce_mandatory: 'false' }
+    )
+
+    result = JSON.parse(created_contact.body)
+    assert_response 201, result
   ensure
     cf.delete
   end

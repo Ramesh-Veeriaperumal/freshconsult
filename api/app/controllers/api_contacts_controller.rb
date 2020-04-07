@@ -11,7 +11,8 @@ class ApiContactsController < ApiApplicationController
       primary_email: @email_objects[:primary_email],
       custom_fields: params[cname][:custom_field],
       default_company: @company_id,
-      avatar_id: params[cname][:avatar_id]
+      avatar_id: params[cname][:avatar_id],
+      enforce_mandatory: params[:enforce_mandatory]
     }
     contact_delegator = ContactDelegator.new(@item, delegator_params)
     if !contact_delegator.valid?
@@ -37,7 +38,8 @@ class ApiContactsController < ApiApplicationController
       primary_email: @email_objects[:primary_email],
       custom_fields: custom_fields,
       default_company: @company_id,
-      avatar_id: params[cname][:avatar_id]
+      avatar_id: params[cname][:avatar_id],
+      enforce_mandatory: params[:enforce_mandatory]
     }
     contact_delegator = ContactDelegator.new(@item, delegator_params)
     unless contact_delegator.valid?

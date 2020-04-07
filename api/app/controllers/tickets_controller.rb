@@ -32,7 +32,8 @@ class TicketsController < ApiApplicationController
     ticket_delegator = ticket_delegator_class.new(@item, ticket_fields: @ticket_fields,
                                                          custom_fields: params[cname][:custom_field], tags: cname_params[:tags],
                                                          company_id: params[cname][:company_id], parent_attachment_params: parent_attachment_params,
-                                                         inline_attachment_ids: @inline_attachment_ids, version: params[:version])
+                                                         inline_attachment_ids: @inline_attachment_ids, version: params[:version],
+                                                         enforce_mandatory: params[:enforce_mandatory])
     if !ticket_delegator.valid?(:create)
       render_custom_errors(ticket_delegator, true)
     elsif @item.save_ticket
@@ -52,7 +53,7 @@ class TicketsController < ApiApplicationController
     custom_fields = params[cname][:custom_field] # Assigning it here as it would be deleted in the next statement while assigning.
     @item.assign_attributes(validatable_delegator_attributes)
     @item.assign_description_html(params[cname][:ticket_body_attributes]) if params[cname][:ticket_body_attributes]
-    delegator_hash = { ticket_fields: @ticket_fields, custom_fields: custom_fields,
+    delegator_hash = { ticket_fields: @ticket_fields, custom_fields: custom_fields, enforce_mandatory: params[:enforce_mandatory],
                        company_id: params[cname][:company_id], tags: cname_params[:tags], version: params[:version] }
     delegator_hash[:tracker_ticket_id] = cname_params[:tracker_ticket_id] if link_or_unlink?
     delegator_hash[:source] = params[cname][:source]

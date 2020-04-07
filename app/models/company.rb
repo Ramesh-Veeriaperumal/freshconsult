@@ -13,7 +13,8 @@ class Company < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :account_id , :case_sensitive => false
   attr_accessible :name,:description,:note,:domains ,:sla_policy_id, :import_id,
                   :domain_name, :health_score, :account_tier, :renewal_date, :industry
-  attr_accessor :highlight_name, :escape_liquid_attributes, :validatable_default_fields, :avatar_changes
+  attr_accessor :highlight_name, :escape_liquid_attributes, :validatable_default_fields,
+                :avatar_changes, :custom_fields_hash
 
   xss_sanitize  :only => [:name], :plain_sanitizer => [:name]
   alias_attribute :domain_name, :domains
@@ -97,6 +98,14 @@ class Company < ActiveRecord::Base
 
   def custom_field_types
     @custom_field_types ||=  custom_form.custom_company_fields.inject({}) { |types,field| types.merge(field.name => field.field_type) }
+  end
+
+  def custom_field= custom_field_hash
+    self.custom_fields_hash = custom_field_hash
+    unless custom_field_hash.blank?
+      @custom_field = nil # resetting to reflect the assignments properly
+      assign_ff_values custom_field_hash
+    end
   end
 
   def domain_list
