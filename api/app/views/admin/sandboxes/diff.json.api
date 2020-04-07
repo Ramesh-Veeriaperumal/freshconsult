@@ -1,1 +1,9 @@
-@items.to_json
+# Important:: If you are changing any association, make sure you add the corresponding
+# translation data maaping in Sync::Constants::TRANSLATION_DATA
+(@items.each_with_object({}) do |(key, value), obj|
+   if Sync::Constants::TRANSLATION_DATA.key?(key.to_sym)
+     obj[Sync::Constants::TRANSLATION_DATA[key.to_sym]] = value
+   else
+     obj[key] = value
+   end
+end).to_json

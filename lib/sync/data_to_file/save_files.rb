@@ -14,7 +14,9 @@ class Sync::DataToFile::SaveFiles
 
     objects = [*base_object.safe_send(config)]
     objects.each do |object|
-      next if ignore_object?(object)
+      # Copy soft deleted data only from tables mention in IGNORE_SOFT_DELETE_TABLES
+      next if ignore_object?(object) && !(IGNORE_SOFT_DELETE_TABLES.include?(object.class.table_name) && Account.current.archive_ticket_fields_enabled?)
+
       obj_id = generate_id(object, config)
       dump_object(path, config, object, obj_id)
       associations.each do |association|

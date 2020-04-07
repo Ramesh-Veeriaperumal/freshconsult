@@ -20,7 +20,8 @@ module Sync::Constants
     ["canned_responses",             [{:helpdesk_accessible => [:group_accesses, :user_accesses]}, {:shared_attachments => [:attachment]}]],
     ["scn_automations",              [{:accessible => [:group_accesses, :user_accesses]}]],
     ["ticket_field_def",             []],
-    ["ticket_fields",                [:ticket_statuses, :child_levels, :flexifield_def_entry, {:section_fields => [{:section => [{:section_picklist_mappings => [:picklist_value]}]},  { :parent_ticket_field => [:flexifield_def_entry]}]},  {:picklist_values => [{:sub_picklist_values => [{:sub_picklist_values => []}]}]}, {:nested_ticket_fields => [:flexifield_def_entry]}]],
+    # This association includes both normal, archived Ticket Fields
+    ['ticket_fields_with_archived_fields', [:ticket_statuses, :child_levels, :flexifield_def_entry, { section_fields: [{ section: [{ section_picklist_mappings: [:picklist_value] }] }, { parent_ticket_field: [:flexifield_def_entry] }] }, { picklist_values: [{ sub_picklist_values: [{ sub_picklist_values: [] }] }] }, { nested_ticket_fields: [:flexifield_def_entry] }]],
     ['agent_types',                  []],
     ["agents",                       [:agent_groups, {:user => [:user_emails, :user_roles, :avatar, :user_skills, :forum_moderator]}]],
     ['group_types',                  []],
@@ -91,7 +92,8 @@ module Sync::Constants
   MODEL_MEMCACHE_KEYS = {
     'HelpdeskPermissibleDomain' => ['clear_helpdesk_permissible_domains_from_cache'],
     'Product'                   => ['clear_fragment_caches', 'clear_cache'],
-    'Admin::Skill'              => ['clear_skills_cache']
+    'Admin::Skill'              => ['clear_skills_cache'],
+    'Helpdesk::TicketField'     => ['clear_cache', 'clear_new_ticket_field_cache', 'clear_fragment_caches', 'clear_all_section_ticket_fields_cache']
   }.freeze
 
   ACCOUNT_MEMCACHE_KEYS = [
@@ -134,7 +136,7 @@ module Sync::Constants
     'all_va_rules' => ['VaRule', ['name', 'rule_type']],
     'all_observer_rules' => ['VaRule', ['name', 'rule_type']],
     'all_supervisor_rules' => ['VaRule', ['name', 'rule_type']],
-    'ticket_fields' => ['Helpdesk::TicketField', ['name'], true],
+    'ticket_fields_with_archived_fields' => ['Helpdesk::TicketField', ['name'], true],
     'contact_form' => ['ContactField', ['name', 'contact_form_id'], true],
     'company_form' => ['CompanyField', ['name', 'company_form_id'], true],
     'groups' => ['Group', ['name']],
@@ -145,6 +147,15 @@ module Sync::Constants
     'ticket_templates' => ['Helpdesk::TicketTemplate', ['name']],
     'canned_responses' => ['Admin::CannedResponses::Response', ['title', 'folder_id']],
     'roles' => ['Role', ['name']]
+  }.freeze
+
+  # In UI the diff data was identified using a translation file where the translation names were the names
+  # of the associations in RELATIONS. So changing the association breaks the translation in UI.
+  # Example: To support archive_ticket_fields feature in sanbox we changed the association 'ticket_fields' to 'ticket_fields_with_archived_fields'
+  # due to which the translation got broken. So this constant will contain translation mapping for the respective association.
+  # This will be used in diff api response. We will replace the assciation mapping with translation mapping there.
+  TRANSLATION_DATA = {
+    'ticket_fields_with_archived_fields': 'ticket_fields'
   }.freeze
 
   FORM_BASED_MODELS = ['contact_form', 'company_form'].freeze
