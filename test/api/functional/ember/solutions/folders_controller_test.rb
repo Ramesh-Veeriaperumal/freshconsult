@@ -569,7 +569,9 @@ module Ember
       def test_create_with_supported_language
         languages = @account.supported_languages + ['primary']
         language = @account.supported_languages.first
-        folder_meta = create_solution_folder
+        category = create_category(portal_id: Account.current.main_portal.id, lang_codes: languages)
+        folder_meta = create_folder(visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category.id)
+
         post :create, construct_params({ version: 'private', id: folder_meta.id, language: language }, name: Faker::Name.name, description: Faker::Lorem.paragraph)
         assert_response 201
         match_json(solution_folder_pattern_private(folder_meta.safe_send("#{language}_folder")))
