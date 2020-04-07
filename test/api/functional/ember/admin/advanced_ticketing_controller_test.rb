@@ -1,6 +1,7 @@
 require_relative '../../../test_helper'
 require 'sidekiq/testing'
 
+require Rails.root.join('test', 'api', 'helpers', 'automations_test_helper.rb')
 module Ember
   module Admin
     class AdvancedTicketingControllerTest < ActionController::TestCase
@@ -11,6 +12,7 @@ module Ember
       include ::Admin::AdvancedTicketing::FieldServiceManagement::Constant
       include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
       include TicketFieldsTestHelper
+      include AutomationsHelper
 
       def setup
         super
@@ -152,22 +154,35 @@ module Ember
       def test_destroy_fsm_without_any_data_loss
         enable_fsm do
           begin
+            Account.current.all_service_task_dispatcher_rules.destroy_all
+            Account.current.all_service_task_observer_rules.destroy_all
             Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
+            Account.any_instance.stubs(:fsm_admin_automations_enabled?).returns(true)
+            Account.any_instance.stubs(:automation_revamp_enabled?).returns(true)
             Sidekiq::Testing.inline! do
               post :create, construct_params({ version: 'private' }, name: 'field_service_management')
               assert_response 204
               assert Account.current.field_service_management_enabled?
 
               fields_count_after_installation = Account.current.ticket_fields.size
-
+              service_task_dispatcher = create_dispatchr_rule(rule_type: VAConfig::SERVICE_TASK_DISPATCHER_RULE)
+              assert service_task_dispatcher.present?
+              assert_equal true, Account.current.all_service_task_dispatcher_rules.all?(&:active)
+              service_task_observer = create_observer_rule(rule_type: VAConfig::SERVICE_TASK_OBSERVER_RULE)
+              assert service_task_observer.present?
+              assert_equal true, Account.current.all_service_task_observer_rules.all?(&:active)
               delete :destroy, controller_params(version: 'private', id: 'field_service_management')
               fields_count_after_destroy = Account.current.ticket_fields.size
               assert_equal true, Account.current.picklist_values.find_by_value(SERVICE_TASK_TYPE).present?
               assert_equal true, Account.current.sections.find_by_label(SERVICE_TASK_SECTION).present?
               assert fields_count_after_destroy == fields_count_after_installation - 1
               assert_blank Account.current.ticket_fields.where(name: CUSTOMER_SIGNATURE + "_#{Account.current.id}")
+              assert_equal true, Account.current.all_service_task_dispatcher_rules.none?(&:active)
+              assert_equal true, Account.current.all_service_task_observer_rules.none?(&:active)
             end
           ensure
+            Account.any_instance.unstub(:fsm_admin_automations_enabled?)
+            Account.any_instance.unstub(:automation_revamp_enabled?)
             Account.any_instance.unstub(:disable_old_ui_enabled?)
           end
         end

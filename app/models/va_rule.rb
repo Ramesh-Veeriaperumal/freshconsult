@@ -598,6 +598,11 @@ class VaRule < ActiveRecord::Base
     end
   end
 
+  def disable
+    self.active = false
+    self.save!
+  end
+
   private
 
     def benchmark
