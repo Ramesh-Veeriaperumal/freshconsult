@@ -28,7 +28,7 @@
         "channel_cipher_key": "EJ[1:bPyLDoNV/6e0ZU3cnFz7eRIogZVR8VwWgbIUIlQdElc=:XPaiN5mvEr3tkQ/rndwwNmTXwuGNMeXv:UWDULE7Eh1f3ky5J8/hHgOyEWd909mesJMq7uaOcK1NXfYmz7VB7CmP5M7L6m4DytjTALaIj+heqDCOhaXRY4WBIzPDa9d8bWMzAWjL7MSE=]"
       },
       "secure_field": {
-        "_domain": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/"
+        "_domain": "https://vaultservice.freshpo.com/"
       },
       "cron_webhook": {
         "_domain": "helpkitworkflowauto170.freshpo.com",
@@ -1867,7 +1867,7 @@
         "_script_asset_url": "https://assets1.fconstage.io/freshconnect-sidebar/freshconnect-sidebar.js",
         "_base_url": "https://api.fconstage.io"
       },
-      "_vault_service_url": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/"
+      "_vault_service_url": "https://vaultservice.freshpo.com/"
     },
     "aws_config": {
       "access_key_id": "EJ[1:0+zY2CDV3YCJNog+WPT2TVsoX83AeKLOKvvaGzltvDY=:kMSaqjp76A163AkLZTe1+cWKx9F1f6A1:xuCayGW5XiIzPtlp81zFQ8cj9Sw=]",
