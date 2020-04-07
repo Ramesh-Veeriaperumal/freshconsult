@@ -1324,6 +1324,15 @@ class ConversationsControllerTest < ActionController::TestCase
     match_json(v2_update_note_pattern({}, latest_note))
   end
 
+  def test_private_note_has_no_quoted_text
+    user = add_new_user(@account)
+    note = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2, private: true)
+    params = update_note_params_hash
+    put :update, construct_params({ id: note.id }, params)
+    assert_response 200
+    assert_equal JSON.parse(response.body)['has_quoted_text'], nil
+  end
+
   def test_destroy
     n = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
     delete :destroy, construct_params(id: n.id)
