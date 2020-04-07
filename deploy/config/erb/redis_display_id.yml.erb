@@ -4,7 +4,19 @@ defaults: &defaults
  <% if node[:ymls][:redis_display_id][:password] %>
  password: <%= node[:ymls][:redis_display_id][:password] %>
  <% end %>
+ <% if node[:ymls][:redis_display_id][:retry_password] %>
+ retry_password: <%= node[:ymls][:redis_display_id][:retry_password] %>
+ <% end %>
+ <% if node[:ymls][:redis_display_id][:retry_port] %>
+ retry_port: <%= node[:ymls][:redis_display_id][:retry_port] %>
+ <% end %>
+ <% if node[:ymls][:redis_display_id][:retry_host] %>
+ retry_host: <%= node[:ymls][:redis_display_id][:retry_host] %>
+ <% end %>
  timeout: <%= node[:ymls][:redis_display_id][:timeout] %>
+ <% if node[:ymls][:redis_display_id][:connect_timeout] %>
+ connect_timeout: <%= node[:ymls][:redis_display_id][:connect_timeout] %>
+ <% end %>
  keepalive: <%= node[:ymls][:redis_display_id][:keepalive] %>
 <%= node[:opsworks][:environment] %>:
   <<: *defaults

@@ -1332,14 +1332,22 @@
         "site_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:RiiA6RXA6BX6c0FYQzJ653bywUrEP2Kj:nnYtRc/bKYglpWmK6COnxXGpWy+/4b7tZJdjTlQBE/nmuWItxb2ifIBoX1Jay+/15iQeYLC6bXQ=]"
       },
       "redis": {
-        "_host": "redis-10719.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_host": "staging-main-redis.internal-freshpo.com",
+        "_retry_host": "redis-10570.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_retry_port": 10570,
+        "retry_password": "EJ[1:nJ6PaHMQnt+Pr41ri1gKLBDFoTrb0Iu5Do+Qtczesig=:iahEJfMdS45yf+kXHgkzZgJggLwCKtyA:tRY7idSJ1UE/oiNac05YJQXeA6emservmT58klyo+gky0IMAYTJBSltUWwnakCFx]",
+        "_connect_timeout": 0.5,
         "_keepalive": 10,
         "_namespace": "resque-blue",
         "_port": 10719,
         "_timeout": 5
       },
       "redis_display_id": {
-        "_host": "redis-10719.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_host": "staging-main-redis.internal-freshpo.com",
+        "_retry_host": "redis-10570.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_retry_port": 10570,
+        "retry_password": "EJ[1:nJ6PaHMQnt+Pr41ri1gKLBDFoTrb0Iu5Do+Qtczesig=:rU1jSfoDWdF6fiIKudv27JWxhn0CuWgV:1xrh9st/h9E6iMezTVu1w4KEcZndQ4inT9lZi5d/+Gue+QXPDuDumPIYj88ikgH1]",
+        "_connect_timeout": 0.5,
         "_keepalive": 10,
         "_port": 10719,
         "_timeout": 5
@@ -1351,31 +1359,51 @@
         "_timeout": 5
       },
       "redis_rate_limit": {
-        "_host": "redis-10719.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_host": "staging-main-redis.internal-freshpo.com",
+        "_retry_host": "redis-10570.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_retry_port": 10570,
+        "retry_password": "EJ[1:nJ6PaHMQnt+Pr41ri1gKLBDFoTrb0Iu5Do+Qtczesig=:U3yh7Gr9pEg1I4eW6QgEvn1Z4MDZ1TJz:UjUB6vJ5NBwQ/xyRQTyr93M3iIjfpVoPC7k6qfUGa/ngwnDs72C+leNOqQ8lflJj]",
+        "_connect_timeout": 0.5,
         "_keepalive": 10,
         "_port": 10719,
         "_timeout": 5
       },
       "redis_round_robin": {
-        "_host": "redis-10719.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_host": "staging-main-redis.internal-freshpo.com",
+        "_retry_host": "redis-10570.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_retry_port": 10570,
+        "retry_password": "EJ[1:nJ6PaHMQnt+Pr41ri1gKLBDFoTrb0Iu5Do+Qtczesig=:MOm931lgJKRuJxF0aW9PhUt7t/2jmLye:xTjH/0Yj/b5EfhhcVHdgCMkQ04RKPkkz3tbD+p4I88A5JDDq5tdFxc9GuWFsR60u]",
+        "_connect_timeout": 0.5,
         "_keepalive": 10,
         "_port": 10719,
         "_timeout": 5
       },
       "automation_rule_redis": {
-        "_host": "redis-10719.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_host": "staging-main-redis.internal-freshpo.com",
+        "_retry_host": "redis-10570.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_retry_port": 10570,
+        "retry_password": "EJ[1:nJ6PaHMQnt+Pr41ri1gKLBDFoTrb0Iu5Do+Qtczesig=:rF8HG2mS40JlJpLBiQTkACY+G7/ipXVf:BbeWTgWLshIswg6vyOeia34mUOkxCKDLQm55S6LrVK+jJZVdst1YyA+CZTLFajce]",
+        "_connect_timeout": 0.5,
         "_keepalive": 10,
         "_port": 10719,
         "_timeout": 5
       },
       "redis_routes": {
-        "_host": "redis-10719.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_host": "staging-main-redis.internal-freshpo.com",
+        "_retry_host": "redis-10570.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_retry_port": 10570,
+        "retry_password": "EJ[1:nJ6PaHMQnt+Pr41ri1gKLBDFoTrb0Iu5Do+Qtczesig=:uwCDfhn4uxiDtm8tzHRXi+4Tean0NmPB:FXUQ0Im9KpFEhpU+APr8kHKpz3aV7wFyPvepzrwP7LVqlM/kwM42m5Ax2jfa+Cbh]",
+        "_connect_timeout": 0.5,
         "_keepalive": 10,
         "_port": 10719,
         "_timeout": 5
       },
       "redis_session": {
-        "_host": "redis-10719.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_host": "staging-main-redis.internal-freshpo.com",
+        "_retry_host": "redis-10570.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_retry_port": 10570,
+        "retry_password": "EJ[1:nJ6PaHMQnt+Pr41ri1gKLBDFoTrb0Iu5Do+Qtczesig=:HN0tMcpm5KLeR8wDOS5Ft6AvSy1bSMdT:aUspcomIHa92P55QHUokJhLjzXWhPLwI3NihUq2VXLTvDWK+h0y80hDaMfro7zdM]",
+        "_connect_timeout": 0.5,
         "_keepalive": 10,
         "_port": 10719,
         "_timeout": 5

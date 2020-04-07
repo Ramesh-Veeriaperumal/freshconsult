@@ -1,3 +1,4 @@
+include Redis::ClientPatch if ENV['PATCH_REDIS_CLIENT']
 include Redis::RedisWrapper
 
 def load_file(config_path)
@@ -19,7 +20,8 @@ ENV['TIME_BANDITS_VERBOSE'] = 'true' if Rails.env.development? # logging is enab
 
 # Include connection objects to new redis instances here. This is used for redis_maintenance.rake.
 # There are 3 DBs per region, having one connection object per DB below.
-REDIS_CONFIG_KEYS = ['host', 'port', 'timeout', 'password'].freeze
+REDIS_CONFIG_KEYS = ['host', 'port', 'timeout', 'connect_timeout',
+                     'password', 'retry_password', 'retry_port', 'retry_host'].freeze
 
 def fetch_options(options)
   redis_options = options.slice(*REDIS_CONFIG_KEYS).merge(tcp_keepalive: options['keepalive'])

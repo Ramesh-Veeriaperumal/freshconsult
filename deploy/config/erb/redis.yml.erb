@@ -4,8 +4,20 @@ defaults: &defaults
  <% if node[:ymls][:redis][:password] %>
  password: <%= node[:ymls][:redis][:password] %>
  <% end %>
+ <% if node[:ymls][:redis][:retry_password] %>
+ retry_password: <%= node[:ymls][:redis][:retry_password] %>
+ <% end %>
+ <% if node[:ymls][:redis][:retry_port] %>
+ retry_port: <%= node[:ymls][:redis][:retry_port] %>
+ <% end %>
+ <% if node[:ymls][:redis][:retry_host] %>
+ retry_host: <%= node[:ymls][:redis][:retry_host] %>
+ <% end %>
  namespace: <%= node[:unique_keys][:redis][:namespace] %>
  timeout: <%= node[:ymls][:redis][:timeout] %>
+ <% if node[:ymls][:redis][:connect_timeout] %>
+ connect_timeout: <%= node[:ymls][:redis][:connect_timeout] %>
+ <% end %>
  keepalive: <%= node[:ymls][:redis][:keepalive] %>
 <%= node[:opsworks][:environment] %>:
   <<: *defaults
