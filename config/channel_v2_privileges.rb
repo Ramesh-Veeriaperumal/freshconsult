@@ -21,4 +21,7 @@ Authority::Authorization::PrivilegeList.build do
   manage_users do
     resource :"channel/v2/agent", only: [:create, :update_multiple]
   end
+  manage_canned_responses do
+    resource :"channel/v2/canned_response", only: [:create]
+  end
 end

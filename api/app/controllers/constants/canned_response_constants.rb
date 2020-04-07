@@ -10,4 +10,6 @@ module CannedResponseConstants
   LOAD_OBJECT_EXCEPT = [:folder_responses].freeze
   DELEGATE_FIELDS= %w(folder_id visibility group_ids attachment_ids).freeze
   WRAP_PARAMS = [:canned_response, exclude: [], format: [:json, :multipart_form]].freeze
+  BULK_API_JOBS_CLASS = 'CannedResponse'.freeze
+  BULK_API_PARAMS_LIMIT = 500
 end.freeze

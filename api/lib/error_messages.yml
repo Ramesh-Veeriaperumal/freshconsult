@@ -561,3 +561,5 @@ api_error_messages:
   choices_based_level_error: "There should be at least one choice for level `%{level}`"
 
   duplicate_name_in_sla_policy: "A policy already exists with name '%{policy_name}'."
+
+  bulk_api_limit_exceed: "Total %{resource} params size is %{current}, it should not exceed %{max}"

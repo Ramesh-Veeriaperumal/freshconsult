@@ -700,4 +700,92 @@ class CannedResponsesControllerTest < ActionController::TestCase
     assert_equal 'canned_response_destroy', job['args'][0]
     CentralPublisher::Worker.jobs.clear
   end
+
+  def test_create_multiple_valid_ca_response
+    uuid = SecureRandom.hex
+    request.stubs(:uuid).returns(uuid)
+    payload = { 'canned_responses' =>
+                    [
+                        create_ca_response_input(@@ca_folder_all.id, 0),
+                        create_ca_response_input(nil, 1),
+                        create_ca_response_input(@@ca_folder_all.id, 2, [Account.first.groups_from_cache.first.try(:id)])
+                    ] }
+    dynamo_response = { 'payload' => payload['canned_responses'], 'action' => 'create_multiple' }
+    BulkApiJobs::Agent.any_instance.stubs(:pick_job).returns(dynamo_response)
+    Sidekiq::Testing.inline! do
+      post :create_multiple, construct_params(payload)
+    end
+    assert_response 202
+    pattern = { job_id: uuid, href: @account.bulk_job_url(uuid) }
+    match_json(pattern)
+  ensure
+    BulkApiJobs::Agent.any_instance.unstub(:pick_job)
+    request.unstub(:uuid)
+  end
+
+  def test_create_multiple_ca_response_with_invalid_folder_id
+    uuid = SecureRandom.hex
+    request.stubs(:uuid).returns(uuid)
+    payload = { 'canned_responses' =>
+                    [
+                        create_ca_response_input(999, 0),
+                        create_ca_response_input(999, 2, [Account.first.groups_from_cache.first.try(:id)])
+                    ] }
+    dynamo_response = { 'payload' => payload['canned_responses'], 'action' => 'create_multiple' }
+    BulkApiJobs::Agent.any_instance.stubs(:pick_job).returns(dynamo_response)
+    Sidekiq::Testing.inline! do
+      post :create_multiple, construct_params(payload)
+    end
+    assert_response 202
+    pattern = { job_id: uuid, href: @account.bulk_job_url(uuid) }
+    match_json(pattern)
+    @account.reload
+
+    all_titles = payload['canned_responses'].map { |ca| ca[:title] }
+    all_titles.each { |title| assert_equal @account.canned_responses.find_by_title(title), nil }
+  ensure
+    BulkApiJobs::Agent.any_instance.unstub(:pick_job)
+    request.unstub(:uuid)
+  end
+
+  def test_create_multiple_ca_response_with_invalid_visibility
+    uuid = SecureRandom.hex
+    request.stubs(:uuid).returns(uuid)
+    payload = { 'canned_responses' =>
+                    [
+                        create_ca_response_input(@@ca_folder_all.id, 999),
+                        create_ca_response_input(nil, 999),
+                        create_ca_response_input(@@ca_folder_all.id, 999, [Account.first.groups_from_cache.first.try(:id)])
+                    ] }
+    dynamo_response = { 'payload' => payload['canned_responses'], 'action' => 'create_multiple' }
+    BulkApiJobs::Agent.any_instance.stubs(:pick_job).returns(dynamo_response)
+    Sidekiq::Testing.inline! do
+      post :create_multiple, construct_params(payload)
+    end
+    assert_response 400
+  ensure
+    BulkApiJobs::Agent.any_instance.unstub(:pick_job)
+    request.unstub(:uuid)
+  end
+
+  def test_create_multiple_ca_response_with_invalid_group_id
+    uuid = SecureRandom.hex
+    request.stubs(:uuid).returns(uuid)
+    payload = { 'canned_responses' => [create_ca_response_input(@@ca_folder_all.id, 2, [999])] }
+    dynamo_response = { 'payload' => payload['canned_responses'], 'action' => 'create_multiple' }
+    BulkApiJobs::Agent.any_instance.stubs(:pick_job).returns(dynamo_response)
+    Sidekiq::Testing.inline! do
+      post :create_multiple, construct_params(payload)
+    end
+    assert_response 202
+    pattern = { job_id: uuid, href: @account.bulk_job_url(uuid) }
+    match_json(pattern)
+    @account.reload
+
+    all_titles = payload['canned_responses'].map { |ca| ca[:title] }
+    all_titles.each { |title| assert_equal @account.canned_responses.find_by_title(title), nil }
+  ensure
+    BulkApiJobs::Agent.any_instance.unstub(:pick_job)
+    request.unstub(:uuid)
+  end
 end

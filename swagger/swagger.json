@@ -4957,6 +4957,46 @@
         }
       }
     },
+    "/canned_responses/create_multiple": {
+      "post": {
+        "tags": [
+          "canned response"
+        ],
+        "summary": "Create multiple canned responses",
+        "description": "Create multiple canned responses",
+        "operationId": "createMultipleCannedResponses",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "canned_responses",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulk_canned_response_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/bulk_response"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
     "/agents": {
       "get": {
         "tags": [
@@ -19503,6 +19543,18 @@
         }
       }
     },
+    "bulk_canned_response_input": {
+      "type": "object",
+      "properties": {
+        "canned_responses": {
+          "type": "array",
+          "description": "array of canned responses",
+          "items": {
+            "$ref": "#/definitions/canned_response_create"
+          }
+        }
+      }
+    },
     "fb_post": {
       "type": "object",
       "allOf": [
@@ -28307,13 +28359,16 @@
       "type": "object",
       "properties": {
         "title": {
-          "type": "string"
+          "type": "string",
+          "example": "We’ve received your request"
         },
         "content_html": {
-          "type": "string"
+          "type": "string",
+          "example": "<div dir=\"ltr\"> Thank you for reaching out to us. Our team will look into your request and get back to you shortly. <br> <br> You can check the status of your request and add comments here: <br> {{ticket.url}} <br> <br> Regards,<br> {{ticket.agent.name}} </div>"
         },
         "folder_id": {
-          "type": "integer"
+          "type": "integer",
+          "example": 1
         },
         "attachments": {
           "type": "array",
@@ -28325,16 +28380,24 @@
         "attachment_ids": {
           "type": "array",
           "items": {
-            "type": "integer"
+            "type": "integer",
+            "example": 1
           }
         },
         "visibility": {
-          "type": "integer"
+          "type": "integer",
+          "enum": [
+            0,
+            1,
+            2
+          ],
+          "example": 0
         },
         "group_ids": {
           "type": "array",
           "items": {
-            "type": "integer"
+            "type": "integer",
+            "example": 1
           }
         }
       }

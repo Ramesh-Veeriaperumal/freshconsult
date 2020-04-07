@@ -1,0 +1,24 @@
+post:
+  tags: ['canned response']
+  summary: Create multiple canned responses
+  description: Create multiple canned responses
+  operationId: createMultipleCannedResponses
+  consumes:
+    - application/json
+  produces:
+    - application/json
+  parameters:
+    - name: canned_responses
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/bulk_canned_response_input'
+  responses:
+    202:
+      description: Accepted
+      schema:
+        $ref: '#/definitions/bulk_response'
+    404:
+      description: Resource not found
+    403:
+      description: Access denied
