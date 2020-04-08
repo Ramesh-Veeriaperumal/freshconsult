@@ -54,3 +54,23 @@ module HTTParty
     end
   end
 end
+
+#########################################################################
+# Patching this for Request Shadowing environment to accept proxy env   #
+#                                                                       #
+# HTTParty is not honoring the HTTP and HTTPS proxy envs unlike other   #
+#   adapters. In case we move to a local proxy model for egress traffic #
+#   via envoy, etc., the conditions can be simply removed to read proxy #
+#   server details from the environment                                 #
+#########################################################################
+
+if ENV['REQUEST_SHADOW_ENABLED'] == 'true' && (ENV['HTTP_PROXY'] || ENV['http_proxy'])
+  proxy_url = ENV['HTTP_PROXY'] || ENV['http_proxy']
+  url_regex = Regexp.new('(https?)?[:\/]*([\w\.]+):?([:\d]+)')
+  re_match = proxy_url.match(url_regex)
+
+  host = re_match[2]
+  port = re_match[3] || 80
+
+  HTTParty::Basement.http_proxy(host, port) if host
+end
