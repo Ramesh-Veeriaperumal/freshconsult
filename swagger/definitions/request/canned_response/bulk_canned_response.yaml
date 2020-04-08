@@ -1,0 +1,7 @@
+type: object
+properties:
+  canned_responses:
+    type: array
+    description: array of canned responses
+    items:
+      $ref: '#/definitions/canned_response_create'

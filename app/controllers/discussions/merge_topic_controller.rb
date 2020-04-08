@@ -26,7 +26,7 @@ class Discussions::MergeTopicController < ApplicationController
 	protected
 
 		def load_topics
-			@source_topics = current_account.topics.find(:all, :conditions =>{ :id => params[:source_topics] }, :order => "created_at DESC")
+			@source_topics = current_account.topics.where(id: params[:source_topics]).order('created_at DESC').to_a
 			@target_topic = current_account.topics.find(params[:target_topic_id]) if params[:target_topic_id]
 		end
 

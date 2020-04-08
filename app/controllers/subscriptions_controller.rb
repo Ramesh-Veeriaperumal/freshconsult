@@ -259,8 +259,7 @@ class SubscriptionsController < ApplicationController
     end
 
     def free_plan
-      SubscriptionPlan.find(:first,
-        :conditions => {:name => SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout]})
+      SubscriptionPlan.where(name: SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout]).first
     end
 
     def build_paying_subscription

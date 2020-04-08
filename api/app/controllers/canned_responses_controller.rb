@@ -4,15 +4,25 @@ class CannedResponsesController < ApiApplicationController
   include CannedResponseConcern
   include AttachmentConcern
   include HelpdeskAccessMethods
+  include BulkApiJobsHelper
 
   decorate_views(decorate_objects: [:folder_responses])
 
   before_filter :canned_response_permission?, :load_ticket, only: [:show, :update]
   before_filter :filter_ids, only: :index
   before_filter :load_folder, :validate_filter_params, only: :folder_responses
+  before_filter :check_bulk_params_limit, :validate_ca_response_params, only: :create_multiple
   SLAVE_ACTIONS = %w[index search].freeze
 
   MAX_IDS_COUNT = 10
+
+  def create_multiple
+    @errors = []
+    @job_id = request.uuid
+    initiate_bulk_job(CannedResponseConstants::BULK_API_JOBS_CLASS, params[cname][:canned_responses], @job_id, action_name)
+    @job_link = current_account.bulk_job_url(@job_id)
+    render('canned_responses/create_multiple', status: 202) if @errors.blank?
+  end
 
   def folder_responses
     @items = fetch_ca_responses_from_db(@folder.id)
@@ -111,6 +121,21 @@ class CannedResponsesController < ApiApplicationController
       else
         log_and_render_404
         false
+      end
+    end
+
+    def check_bulk_params_limit
+      max_limit = CannedResponseConstants::BULK_API_PARAMS_LIMIT
+      if params[cname][:canned_responses].size > max_limit
+        render_request_error(:bulk_api_limit_exceed, 400,
+                             resource: 'canned_responses', current: params[cname][:canned_responses].size, max: max_limit)
+      end
+    end
+
+    def validate_ca_response_params
+      params[cname][:canned_responses].each do |canned_response|
+        ca_response = CannedResponsesValidation.new(canned_response, nil, string_request_params?)
+        render_custom_errors(ca_response, true) && break unless ca_response.valid?(action_name)
       end
     end
 

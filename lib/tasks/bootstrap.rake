@@ -52,6 +52,27 @@ namespace :db do
     end    
   end
 
+  # to remove all metadata from DB and create one user (admin) for test environment
+  task test_clean_setup: :environment do
+    unless Rails.env.production?
+      config = YAML.safe_load(IO.read(File.join(::Rails.root, 'config/database.yml')))
+      sh "test/clean_db.sh #{config['test']['database']}"
+      account = Account.first.make_current
+      user_details = {
+        name: 'Support',
+        email: 'sample@freshdesk.com',
+        password: 'test1234',
+        password_confirmation: 'test1234'
+      }
+      account.users.create(user_details)
+      user = User.find_by_email(user_details[:email]).make_current
+      user.make_agent ({ role_ids: account.roles.first.id })
+      user.active = true
+      user.save
+      puts "All done!  You can now login to the test account at the localhost domain with the login #{Helpdesk::EMAIL[:sample_email]} and password test1234.\n\n"
+    end
+  end
+
   task :sandbox_shard_setup =>  :environment do
     unless Rails.env.production?
       shard_name = 'sandbox_shard_1'

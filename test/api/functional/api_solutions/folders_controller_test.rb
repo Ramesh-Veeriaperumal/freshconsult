@@ -43,8 +43,9 @@ module ApiSolutions
     end
 
     def test_show_folder_with_unavailable_translation
-      sample_folder = get_folder_without_translation
-      get :show, controller_params(id: sample_folder.parent_id, language: @account.supported_languages.first)
+      language_code = @account.supported_languages.first
+      sample_folder = get_folder_without_translation_with_translated_category(language_code)
+      get :show, controller_params(id: sample_folder.parent_id, language: language_code)
       assert_response :missing
     end
 
@@ -217,9 +218,9 @@ module ApiSolutions
     end
 
     def test_create_folder_translation
-      folder = get_folder_without_translation
-      params_hash = {name: Faker::Name.name, description: Faker::Lorem.paragraph}
       language_code = @account.supported_languages.first
+      folder = get_folder_without_translation_with_translated_category(language_code)
+      params_hash = { name: Faker::Name.name, description: Faker::Lorem.paragraph }
       post :create, construct_params({id: folder.parent_id, language: language_code}, params_hash)
       assert_response 201
       result = parse_response(@response.body)
@@ -228,9 +229,9 @@ module ApiSolutions
     end
 
     def test_create_folder_with_supported_language_without_description
-      folder = get_folder_without_translation
-      params_hash = {name: Faker::Name.name}
       language_code = @account.supported_languages.first
+      folder = get_folder_without_translation_with_translated_category(language_code)
+      params_hash = { name: Faker::Name.name }
       post :create, construct_params({id: folder.parent_id, language: language_code}, params_hash)
       assert_response 201
       result = parse_response(@response.body)
@@ -239,18 +240,18 @@ module ApiSolutions
     end
 
     def test_create_folder_with_supported_language_param
-      folder = get_folder_without_translation
-      params_hash = {name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1}
       language_code = @account.supported_languages.last
+      folder = get_folder_without_translation_with_translated_category(language_code)
+      params_hash = { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1 }
       post :create, construct_params({id: folder.parent_id, language: language_code}, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('visibility', :cant_set_for_secondary_language, code: :incompatible_field)])
     end
 
     def test_create_folder_with_supported_language_visibility_and_company_ids
-      folder = get_folder_without_translation
-      params_hash = {name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 4, company_ids: [@account.customer_ids.last]}
       language_code = @account.supported_languages.last
+      folder = get_folder_without_translation_with_translated_category(language_code)
+      params_hash = { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 4, company_ids: [@account.customer_ids.last] }
       post :create, construct_params({id: folder.parent_id, language: language_code}, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('visibility', :cant_set_for_secondary_language, code: :incompatible_field)])
@@ -270,6 +271,18 @@ module ApiSolutions
       post :create, construct_params({id: folder.parent_id, language: language_code}, params_hash)
       assert_response 404
       match_json(request_error_pattern(:language_not_allowed, code: language_code, list: (@account.supported_languages).sort.join(', ')))
+    end
+
+    def test_create_folder_translation_for_unvailable_category_translation
+      Account.any_instance.stubs(:multilingual?).returns(true)
+      params_hash = { name: Faker::Name.name, description: Faker::Lorem.paragraph }
+      language_code = @account.supported_languages.first
+      folder = get_folder_without_translation_without_translated_category
+      post :create, construct_params({ id: folder.parent_id, language: language_code }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('category_id', :invalid_category_translation)])
+    ensure
+      Account.any_instance.unstub(:multilingual?)
     end
 
     # Update Folder
@@ -364,14 +377,15 @@ module ApiSolutions
     end
 
     def test_update_unavailable_folder_translation
-      sample_folder = get_folder_without_translation
+      language_code = @account.supported_languages.first
+      sample_folder = get_folder_without_translation_with_translated_category(language_code)
       params_hash  = { name: name = Faker::Name.name }
-      put :update, construct_params({ id: sample_folder.parent_id, language: @account.supported_languages.first }, params_hash)
+      put :update, construct_params({ id: sample_folder.parent_id, language: language_code }, params_hash)
       assert_response :missing
     end
 
     def test_update_folder_with_boolean_visibility
-      sample_folder = get_folder_without_translation
+      sample_folder = get_folder_without_translation_without_translated_category
       params_hash  = { visibility: false }
       put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
       assert_response 400

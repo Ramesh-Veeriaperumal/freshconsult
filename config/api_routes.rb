@@ -149,13 +149,17 @@ Helpkit::Application.routes.draw do
 
     resources :agents, controller: 'api_agents', only: [:index, :show, :update, :destroy, :create] do
       collection do
-        post :create_multiple
+        post :bulk, to: 'api_agents#create_multiple'
         put  :update_multiple
       end
     end
     resources :out_of_offices, only: [:index, :show, :update, :destroy, :create]
     resources :canned_response_folders, controller: 'canned_response_folders', only: [:index, :show, :create, :update]
-    resources :canned_responses, controller: 'canned_responses', only: [:index, :show, :create, :update]
+    resources :canned_responses, controller: 'canned_responses', only: [:index, :show, :create, :update] do
+      collection do
+        post :bulk, to: 'canned_responses#create_multiple'
+      end
+    end
     resources :scenario_automations, controller: 'scenario_automations', only: :index
     get 'canned_response_folders/:id/responses', to: 'canned_responses#folder_responses'
 
@@ -983,6 +987,7 @@ Helpkit::Application.routes.draw do
         put :update_multiple
       end
     end
+    post '/canned_responses', to: 'channel/v2/canned_responses#create'
     post 'tickets/bulk_archive', to: 'channel/v2/tickets/bulk_actions#bulk_archive'
     get '/account', to: 'channel/v2/accounts#show'
     match '/authenticate', to: 'channel/v2/iam/authentication#authenticate', via: [:get, :post, :delete]

@@ -158,6 +158,32 @@ module Ember::Search
       assert_equal [search_ticket_pattern(ticket)].to_json, response.body
     end
 
+    def test_results_with_exact_match
+      ticket = create_ticket(subject: 'My ticket123')
+      stub_private_search_response([ticket]) do
+        post :results, construct_params(version: 'private', context: 'spotlight', term: "\"#{ticket.subject}\"")
+      end
+      assert_response 200
+      assert_equal [search_ticket_pattern(ticket)].to_json, response.body
+    end
+
+    def test_results_with_custom_field_filter_params_exact_match
+      account = Account.current
+      account.ticket_fields.custom_fields.each(&:destroy)
+      ticket_field = []
+      custom_field_name = []
+      ticket_field << create_custom_field('test_custom_number', 'number')
+      custom_field_name << ticket_field.last.name
+      account.save
+      ticket = create_ticket(subject: 'My ticket123', custom_field: { 'test_custom_number_1': '3' })
+      create_ticket(subject: 'My ticket', custom_field: { 'test_custom_number_1': '3' })
+      stub_private_search_response([ticket]) do
+        post :results, construct_params(version: 'private', context: 'spotlight', term: "\"#{ticket.subject}\"", filter_params: { custom_fields: { 'test_custom_number_1': '3' } })
+      end
+      assert_response 200
+      assert_equal [search_ticket_pattern(ticket)].to_json, response.body
+    end
+
     def test_results_with_merge_context_and_search_field_display_id
       ticket = create_ticket
       stub_private_search_response([ticket]) do

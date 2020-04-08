@@ -50,12 +50,14 @@ class Admin::Marketplace::AppsController < Admin::AdminController
     end
 
     def default_mkp_params
+      host = Rails.env.development? ? request.host_with_port : request.host
       {
         account_id: current_account.id,
         user_id: current_user.id,
         product_id: Marketplace::Constants::PRODUCT_ID,
         product_name: Marketplace::Constants::PRODUCT_NAME,
-        account_domain: "#{request.protocol}#{request.host_with_port}",
+        account_domain: host,
+        protocol: request.protocol,
         isCustomAppsEnabled: current_account.custom_apps_enabled?
       }
     end

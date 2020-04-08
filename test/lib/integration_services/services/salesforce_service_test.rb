@@ -40,6 +40,9 @@ class SalesforceServiceTest < ActionView::TestCase
     app = Integrations::InstalledApplication.new
     cust_obj = ::IntegrationServices::Services::SalesforceService.new(app, { data_object: Account.first.tickets.first }, {}).receive_create_custom_object
     assert_equal nil, cust_obj
+    IntegrationServices::Services::Salesforce::SalesforceCustomObjectResource.unstub(:check_fields_synced?)
+    IntegrationServices::Services::Salesforce::SalesforceCustomObjectResource.unstub(:create)
+    IntegrationServices::Services::Salesforce::SalesforceCustomObjectResource.unstub(:update)
   end
 
   def test_receive_link_opportunity
@@ -106,6 +109,9 @@ class SalesforceServiceTest < ActionView::TestCase
     app = Integrations::InstalledApplication.new
     cust_obj = ::IntegrationServices::Services::SalesforceService.new(app, { data_object: Account.first.tickets.first }, {}).receive_update_custom_object
     assert_equal nil, cust_obj
+    IntegrationServices::Services::Salesforce::SalesforceCustomObjectResource.unstub(:check_fields_synced)
+    IntegrationServices::Services::Salesforce::SalesforceCustomObjectResource.unstub(:find)
+    IntegrationServices::Services::Salesforce::SalesforceCustomObjectResource.unstub(:update)
   end
 
   def test_receive_update_custom_object_no_records
@@ -125,6 +131,10 @@ class SalesforceServiceTest < ActionView::TestCase
     app = Integrations::InstalledApplication.new
     cust_obj = ::IntegrationServices::Services::SalesforceService.new(app, { data_object: Account.first.tickets.first }, {}).receive_update_custom_object
     assert_equal nil, cust_obj
+    IntegrationServices::Services::Salesforce::SalesforceCustomObjectResource.unstub(:check_fields_synced)
+    IntegrationServices::Services::Salesforce::SalesforceCustomObjectResource.unstub(:create)
+    IntegrationServices::Services::Salesforce::SalesforceCustomObjectResource.unstub(:update)
+    IntegrationServices::Services::Salesforce::SalesforceCustomObjectResource.unstub(:find)
   end
 
   def test_receive_contact_fields

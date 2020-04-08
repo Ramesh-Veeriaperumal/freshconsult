@@ -107,7 +107,7 @@ class ApiApplicationController < MetalApiController
   BEARER_REGEX = /Bearer (.*)/.freeze
   RESPONSE_CACHE_TIMEOUT = 30.days.to_i
 
-  CHANNEL_V2_PATHS = %w[update_multiple /api/channel/v2/agents].freeze
+  CHANNEL_V2_PATHS = %w[update_multiple /api/channel/v2/agents /api/channel/v2/canned_responses].freeze
 
   def response_cache
     if response_cache_data.present?

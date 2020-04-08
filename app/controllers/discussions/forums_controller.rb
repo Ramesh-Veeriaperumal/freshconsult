@@ -121,7 +121,7 @@ class Discussions::ForumsController < ApplicationController
 		end
 
 		def fetch_monitorship
-			@monitorship = @forum.monitorships.count(:conditions => ["user_id = ? and active = ?", current_user.id, true])
+			@monitorship = @forum.monitorships.where(['user_id = ? and active = ?', current_user.id, true]).count
 		end
 
 		def reorder_redirect_url
@@ -134,7 +134,7 @@ class Discussions::ForumsController < ApplicationController
 
 			unless params[:filter].blank?
 				stamps = params[:filter].delete('-').split(',')
-				@topics = @topics.find(:all,:conditions => [filter_conditions, stamps])
+				@topics = @topics.where([filter_conditions, stamps]).to_a
 			end
 		end
 

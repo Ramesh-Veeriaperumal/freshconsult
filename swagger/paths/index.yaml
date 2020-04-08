@@ -235,6 +235,8 @@
   $ref: ./canned_responses/show_and_update.yaml
 /canned_responses/search:
   $ref: ./canned_responses/search.yaml
+/canned_responses/create_multiple:
+  $ref: ./canned_responses/create_multiple.yaml
 
 # Agents
 /agents:

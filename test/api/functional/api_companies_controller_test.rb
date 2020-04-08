@@ -620,7 +620,14 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     )
 
     result = JSON.parse(created_company.body)
-    assert_response 201, result
+    assert_response 400, result
+    match_json(
+      [{
+        field: 'custom_fields.cf_company',
+        code: :invalid_value,
+        message: 'It should not be blank as this is a mandatory field'
+      }]
+    )
   ensure
     cf.delete
   end
@@ -946,6 +953,40 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     result = JSON.parse(updated_company.body)
     assert_response 200, result
     assert_equal result['description'], 'testing'
+  ensure
+    cf.delete
+  end
+
+  def test_create_company_with_enforce_mandatory_false_not_passing_mandatory_dropdown_value
+    cf = create_company_field(company_params(
+                                type: 'dropdown',
+                                field_type: 'custom_dropdown',
+                                label: 'cf_company',
+                                required_for_agent: 'true',
+                                custom_field_choices_attributes: [
+                                  {
+                                    value: 'First Choice',
+                                    position: 1,
+                                    _destroy: 0,
+                                    name: 'First Choice'
+                                  },
+                                  {
+                                    value: 'Second Choice',
+                                    position: 2,
+                                    _destroy: 0,
+                                    name: 'Second Choice'
+                                  }
+                                ]
+    ))
+    @account.reload
+    created_company = post :create, construct_params(
+      {},
+      name: Faker::Lorem.characters(15),
+      query_params: { enforce_mandatory: 'false' }
+    )
+    result = JSON.parse(created_company.body)
+
+    assert_response 201, result
   ensure
     cf.delete
   end

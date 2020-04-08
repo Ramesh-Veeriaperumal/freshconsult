@@ -4,7 +4,19 @@ defaults: &defaults
  <% if node[:ymls][:automation_rule_redis][:password] %>
  password: <%= node[:ymls][:automation_rule_redis][:password] %>
  <% end %>
+ <% if node[:ymls][:automation_rule_redis][:retry_password] %>
+ retry_password: <%= node[:ymls][:automation_rule_redis][:retry_password] %>
+ <% end %>
+ <% if node[:ymls][:automation_rule_redis][:retry_port] %>
+ retry_port: <%= node[:ymls][:automation_rule_redis][:retry_port] %>
+ <% end %>
+ <% if node[:ymls][:automation_rule_redis][:retry_host] %>
+ retry_host: <%= node[:ymls][:automation_rule_redis][:retry_host] %>
+ <% end %>
  timeout: <%= node[:ymls][:automation_rule_redis][:timeout] %>
+ <% if node[:ymls][:automation_rule_redis][:connect_timeout] %>
+ connect_timeout: <%= node[:ymls][:automation_rule_redis][:connect_timeout] %>
+ <% end %>
  keepalive: <%= node[:ymls][:automation_rule_redis][:keepalive] %>
 <%= node[:opsworks][:environment] %>:
   <<: *defaults

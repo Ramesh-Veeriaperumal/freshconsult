@@ -138,6 +138,10 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
     self.central_publish_action(:destroy)
   end
 
+  def canned_response_url
+    "#{account.full_url}/api/v2/canned_responses/#{id}"
+  end
+
   private
 
   def validate_title

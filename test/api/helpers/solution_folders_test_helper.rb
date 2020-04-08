@@ -25,6 +25,15 @@ module SolutionFoldersTestHelper
     @account.solution_category_meta.where(is_default: false).first
   end
 
+  def get_category_meta_with_translation(language)
+    category_meta = @account.solution_category_meta.where(is_default: false).select { |x| x.children if x.children.count > 1 }.first
+    category_meta ||= get_category
+
+    language = Language.find_by_code(language).to_key
+    category_meta = category_meta.safe_send("create_#{language}_category", name: 'Sample Category') unless category_meta.safe_send("#{language}_category")
+    category_meta
+  end
+
   def get_category_with_folders
     @account.solution_category_meta.where(is_default: false).select { |x| x if x.solution_folder_meta.count > 0 }.first
   end
@@ -33,7 +42,11 @@ module SolutionFoldersTestHelper
     @account.solution_category_meta.where(is_default: false).select { |x| x if x.children.count > 0 }
   end
 
-  def get_folder_without_translation
+  def get_folder_without_translation_with_translated_category(language)
+    get_category_meta_with_translation(language).solution_folder_meta.select { |x| x.children if x.children.count == 1 }.first
+  end
+
+  def get_folder_without_translation_without_translated_category
     meta_scoper.select { |x| x.children if x.children.count == 1 }.first
   end
 

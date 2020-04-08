@@ -146,7 +146,7 @@ class Discussions::TopicsController < ApplicationController
 				render :json => @topic.to_json(:include => :posts)
 			end
 			format.rss do
-				@posts = @topic.posts.published.find(:all, :order => 'created_at desc', :limit => 25)
+				@posts = @topic.posts.published.order('created_at').limit(25).to_a
 				render :action => 'show', :layout => false
 			end
 		end
@@ -226,7 +226,7 @@ class Discussions::TopicsController < ApplicationController
 	private
 
 		def load_posts
-			@posts = @topic.posts.published.find(:all, :include => [:attachments, :user]).paginate :page => params[:page], :per_page => POSTS_PER_PAGE
+			@posts = @topic.posts.published.includes([:attachments, :user]).paginate(page: params[:page], per_page: POSTS_PER_PAGE).to_a
 		end
 
 		def assign_protected
@@ -285,7 +285,7 @@ class Discussions::TopicsController < ApplicationController
 
 
 		def fetch_monitorship
-			@monitorship = @topic.monitorships.count(:conditions => ["user_id = ? and active = ?", current_user.id, true])
+			@monitorship = @topic.monitorships.where(['user_id = ? and active = ?', current_user.id, true]).count
 		end
 
 

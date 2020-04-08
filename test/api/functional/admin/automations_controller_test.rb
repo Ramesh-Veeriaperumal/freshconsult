@@ -667,6 +667,19 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
     match_json(request_error_pattern(:access_denied))
   end
 
+  def test_service_task_dispatcher_rule_path
+    enable_service_task_automation_lp_and_privileges
+    va_rule_request = valid_request_dispatcher_with_ticket_conditions(:source)
+    post :create, construct_params({ rule_type: VAConfig::RULES[:service_task_dispatcher] }.merge(va_rule_request), va_rule_request)
+    assert_response 201
+    parsed_response = JSON.parse(response.body)
+    rule_id = parsed_response['id'].to_i
+    rule = Account.current.account_va_rules.find(rule_id)
+    expected_rule_path = "https://#{Account.current.host}/a/field-service/admin/automations/service-task-creation/#{rule_id}/edit"
+    actual_rule_path = rule.rule_path
+    assert_equal expected_rule_path, actual_rule_path
+  end
+
   def test_service_task_dispatcher_create_with_ticket_conditions_cf_date
     enable_service_task_automation_lp_and_privileges
     dispatcher_create_test(:cf_date, :priority, :ticket, VAConfig::RULES[:service_task_dispatcher])
@@ -717,6 +730,19 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
   def test_create_service_task_observer_rule_with_ticket_events_ticket_type
     enable_service_task_automation_lp_and_privileges
     observer_create_test(:ticket_type, :subject, :priority, VAConfig::RULES[:service_task_observer])
+  end
+
+  def test_service_task_observer_rule_path
+    enable_service_task_automation_lp_and_privileges
+    va_rule_request = valid_request_observer(:priority)
+    post :create, construct_params({ rule_type: VAConfig::RULES[:service_task_observer] }.merge(va_rule_request), va_rule_request)
+    assert_response 201
+    parsed_response = JSON.parse(response.body)
+    rule_id = parsed_response['id'].to_i
+    rule = Account.current.account_va_rules.find(rule_id)
+    expected_rule_path = "https://#{Account.current.host}/a/field-service/admin/automations/service-task-updates/#{rule_id}/edit"
+    actual_rule_path = rule.rule_path
+    assert_equal expected_rule_path, actual_rule_path
   end
 
   def test_update_service_task_observer_rule

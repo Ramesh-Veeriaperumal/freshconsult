@@ -3,7 +3,7 @@
 	<% display ||= 9 %>
 	<div class="widget user-list">
 		<div class="muted mb20"><%= title %></div>
-		<% user_list.all(:limit => display).each do |user| %>
+		<% user_list.limit(display).each do |user| %>
 			<%= link_to user_avatar(user, :thumb, 'preview_pic small circle'), user, :class => 'tooltip tooltip-icon', :title => user.name, :"data-placement" => 'below' %>
 		<% end %>
 

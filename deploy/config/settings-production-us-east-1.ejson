@@ -164,6 +164,7 @@
         "_verify_domain_url": "api/v1/whitelabel/domains/verify",
         "_remove_domain_url": "api/v1/whitelabel/domains",
         "_lang_detect_path": "api/v1/detect/lang",
+        "_dkim_host": "https://mailservice.freshdesk.com",
         "envoy_egress": {
           "_host_address": "http://127.0.0.1",
           "_host_port": "8183",

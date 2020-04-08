@@ -226,6 +226,8 @@ canned_response:
   $ref: ./resource/canned_response.yaml
 canned_response_folder:
   $ref: ./resource/canned_response_folder.yaml
+bulk_canned_response_input:
+  $ref: ./request/canned_response/bulk_canned_response.yaml
 fb_post:
   $ref: ./resource/fb_post.yaml
 fb_page:

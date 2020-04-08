@@ -5,6 +5,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     include Helpdesk::Ticketfields::ControllerMethods
     include Cache::Memcache::Helpdesk::Section
     include GroupConstants
+    include SubscriptionsHelper
 
     def notify_fsm_dev(subject, message)
       message ||= {}
@@ -253,6 +254,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         destroy_field_agent
         destroy_field_group
         destroy_customer_signature
+        handle_service_task_automations if Account.current.fsm_admin_automations_enabled?
         Rails.logger.info "Completed disabling FSM feature for Account - #{Account.current.id}"
       rescue StandardError => e
         log_operation_failure('Disable', e)
@@ -287,6 +289,22 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
       def destroy_customer_signature
         Account.current.ticket_fields.where(name: CUSTOMER_SIGNATURE + "_#{Account.current.id}").destroy_all
+      end
+
+      def handle_service_task_automations
+        fsm_supported_plan?(Account.current.subscription_plan) ? disable_service_task_automation_rules : destroy_service_task_automation_rules
+      end
+
+      def destroy_service_task_automation_rules
+        Account.current.all_service_task_dispatcher_rules.find_each(&:destroy)
+        Account.current.all_service_task_observer_rules.find_each(&:destroy)
+        Account.current.reload
+      end
+
+      def disable_service_task_automation_rules
+        Account.current.service_task_dispatcher_rules.each(&:disable)
+        Account.current.service_task_observer_rules.each(&:disable)
+        Account.current.reload
       end
 
       def expire_cache

@@ -162,7 +162,8 @@
         "_configure_domain_url": "api/v1/whitelabel/configure",
         "_verify_domain_url": "api/v1/whitelabel/domains/verify",
         "_remove_domain_url": "api/v1/whitelabel/domains",
-        "_lang_detect_path": "api/v1/detect/lang"
+        "_lang_detect_path": "api/v1/detect/lang",
+        "_dkim_host": "https://mailserviceeuc.freshdesk.com"
       },
       "product_feedback": {
         "api_key": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:stgDrgIhK/bD0WRPFE6dYU5Yf59DT6or:o1arDB7Gw/uV7NNxXQ1qQEMgihV9DtzaP/v+RbM/OSyk7CZQ]",

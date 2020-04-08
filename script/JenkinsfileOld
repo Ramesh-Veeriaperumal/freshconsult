@@ -1,0 +1,434 @@
+import groovy.json.JsonSlurperClassic
+
+// Assigning variable
+job_name = env.JOB_NAME
+build   = env.BUILD_NUMBER
+build_numb = build.toInteger()
+failing_category = ""
+REPORT_BASE_DIR = "test/reports"
+COVERAGE_BASE_DIR = "tmp/coverage"
+BACKEND_DOCKER_IMAGE = "792634465463.dkr.ecr.us-east-1.amazonaws.com/freshdesk/backend"
+PRONTO_DOCKER_IMAGE = "792634465463.dkr.ecr.us-east-1.amazonaws.com/fworks/pronto:rubcop-0.68.0" // Branch - https://github.com/Rajeshguna/pronto/tree/fd-master
+
+if(job_name.contains("merge")) {
+    def HEAD_COMMIT_URL = params.commit_url
+    currentBuild.description = "<a href='$HEAD_COMMIT_URL'>commit_link</a>"
+}
+
+def send_email() {
+    def authorLogin = params.ghprbPullAuthorLogin
+    def authorEmail = params.ghprbPullAuthorEmail
+    def pullTitle = params.ghprbPullTitle
+    def pullLink = params.ghprbPullLink
+    def pullId = params.ghprbPullId
+    def jobUrl = env.BUILD_URL
+    def mailRecipients = authorEmail + ", cc:freshdesk-tech-leads@freshworks.com, bcc:mahendran.kumaraguru@freshworks.com, bcc:nagarajan.raman@freshworks.com"
+
+    emailext body: "Build Failed on PR <a href=${pullLink}>#${pullId}</a> <strong> $pullTitle <br/><br/>Author:</strong> $authorLogin <br/><br/><strong>Job URL:</strong> $jobUrl ",
+        mimeType: 'text/html',
+        subject: "[Jenkins] Falcon-Backend Unit Test Build Failed - #${build_numb}",
+        to: "${mailRecipients}",
+        replyTo: "${mailRecipients}"
+}
+
+// Encryption check
+def encryption_check() {
+    docker.image(BACKEND_DOCKER_IMAGE).inside {
+        source = params.ghprbSourceBranch
+
+        sh """#!/bin/bash
+         source /etc/profile.d/rvm.sh
+         cd ${env.WORKSPACE}
+         function validate_ejson() {
+              git diff --raw $ghprbSourceBranch origin/$ghprbTargetBranch
+              for f in \$(git diff --raw $ghprbSourceBranch origin/$ghprbTargetBranch | awk  '{print \$6}' | grep .ejson)
+                 do
+                    tf=\$(mktemp)
+                    git show :\$f > \$tf
+                    ./deploy/config/dynamic_config_util.rb validate --file="\$tf"
+                    if [ \$? -ne 0 ]; then
+                       echo "ERROR: EJSON file \$f validation failed" && { echo "ERROR: You have secrets not encrypted, run \"ejson encrypt ./deploy/config/*.ejson\" and try again"; exit 1; }
+                    fi
+                    rm -f \$tf
+                 done
+         }
+         function validate_test_file() {
+              FILE=deploy/config/test
+              if test -f "\$FILE"; then
+                    if [[ -z \$(grep '[^[:space:]]' \$FILE) ]] ; then
+                        echo "Empty file"
+                    else
+                        echo "\$FILE not Empty file please pull from falcon-prestaging"
+                        exit 1
+                    fi
+              fi
+         }
+         validate_ejson
+         validate_test_file"""
+
+    }
+}
+
+// Build Setup based on category
+def build_setup(category) {
+    sh  """#!/bin/bash
+        source /etc/profile.d/rvm.sh
+        aws s3 cp s3://testengineering/Dockerfile-backend/s3.yml ${env.WORKSPACE}/config/s3.yml
+        aws s3 cp s3://testengineering/Dockerfile-backend/elasticsearch.yml ${env.WORKSPACE}/config/elasticsearch.yml
+        aws s3 cp s3://testengineering/Dockerfile-backend/redis.yml ${env.WORKSPACE}/config/redis.yml
+        aws s3 cp s3://testengineering/Dockerfile-backend/channel_api_keys.yml ${env.WORKSPACE}/config/channel_api_keys.yml
+        sudo service mysqld start
+        sudo service elasticsearch start
+        export CODECOV_TOKEN="${params.CODECOV_TOKEN}"
+        """
+
+    if(category != 'private' && category != 'public') {
+      sh  """#!/bin/bash
+          source /etc/profile.d/rvm.sh
+          redis-server --daemonize yes
+          cd ${env.WORKSPACE}
+          bundle install
+          bundle exec rake db:create RAILS_ENV=test
+          bundle exec rake db:bootstrap RAILS_ENV=test
+          """
+      }
+
+
+    if(category == 'sandbox')  {
+     sh """#!/bin/bash
+        source /etc/profile.d/rvm.sh
+        cd ${env.WORKSPACE}
+        echo "create database sandbox${BUILD_NUMBER}" | mysql -uroot
+        sed -i "s/sandbox_test/sandbox${BUILD_NUMBER}/g" config/database.yml
+        bundle exec rake db:sandbox_shard_setup RAILS_ENV=test
+        mkdir tmp/sandbox_test
+        git init tmp/sandbox_test/
+        git config --global user.email "sample@freshdesk.com"
+        git config --global user.name "Sample"
+        """
+     }
+}
+
+// Execute TestCases
+def execute_test_cases(category) {
+    def coverageDir = "${COVERAGE_BASE_DIR}/$category"
+    def reportDir = "${REPORT_BASE_DIR}/$category"
+
+   
+    if(category.contains('pronto')) {
+        if(category == 'pronto-rails') {
+          sh """#!/bin/bash
+            source /usr/local/rvm/scripts/rvm
+            cd ${env.WORKSPACE}
+            if [ -f Gemfile ]; then
+              mv Gemfile* /tmp
+            fi
+            RUBOCOP_CONFIG='.rubocop_rails.yml'
+            export RUBOCOP_CONFIG
+            PRONTO_RUBOCOP_TITLE='rubocop_rails'
+            export PRONTO_RUBOCOP_TITLE
+            PRONTO_GITHUB_ACCESS_TOKEN="${params.PRONTO_TOKEN}" PRONTO_PULL_REQUEST_ID=$params.ghprbPullId pronto run -r=rubocop -f github_status github_pr -c origin/falcon-prestaging
+            if [ -f /tmp/Gemfile ]; then
+              mv /tmp/Gemfile* ${env.WORKSPACE}
+            fi
+          """
+        } else {
+           sh """#!/bin/bash
+            source /usr/local/rvm/scripts/rvm
+            cd ${env.WORKSPACE}
+            if [ -f Gemfile ]; then
+              mv Gemfile* /tmp
+            fi
+            PRONTO_GITHUB_ACCESS_TOKEN="${params.PRONTO_TOKEN}" PRONTO_PULL_REQUEST_ID=$params.ghprbPullId pronto run -f github_status github_pr -c origin/falcon-prestaging
+            if [ -f /tmp/Gemfile ]; then
+              mv /tmp/Gemfile* ${env.WORKSPACE}
+            fi
+          """
+        }
+    }
+      
+    if(category == 'public') {
+       sh """#!/bin/bash
+          source /etc/profile.d/rvm.sh
+          export MINITEST_REPORT_DIR=${env.WORKSPACE}/${reportDir}
+          export COVERAGE_DIR=${env.WORKSPACE}/${coverageDir}
+          cd ${env.WORKSPACE}
+          ruby test/parallel_test.rb 3 public
+          if ((\$? != 0)); then
+            exit 1
+          fi
+          """
+    }
+
+    if(category == 'private') {
+       sh """#!/bin/bash
+          source /etc/profile.d/rvm.sh
+          export MINITEST_REPORT_DIR=${env.WORKSPACE}/${reportDir}
+          export COVERAGE_DIR=${env.WORKSPACE}/${coverageDir}
+          cd ${env.WORKSPACE}
+          ruby test/parallel_test.rb 5 private
+          if ((\$? != 0)); then
+            exit 1
+          fi
+          """
+    }
+
+    if(category == 'sandbox') {
+       sh """#!/bin/bash
+          source /etc/profile.d/rvm.sh
+          export MINITEST_REPORT_DIR=${env.WORKSPACE}/${reportDir}
+          export COVERAGE_DIR=${env.WORKSPACE}/${coverageDir}
+          cd ${env.WORKSPACE}
+          bundle exec ruby test/api/suites/sandbox_test_suite.rb
+          """
+    }
+}
+
+// Copy build Logs to vm
+def s3_copy(category) {
+    sh """#!/bin/bash
+       mkdir -p ${env.WORKSPACE}/s3/$category/
+       yes | cp -rf ${env.WORKSPACE}/log/* ${env.WORKSPACE}/s3/$category/
+       """
+}
+
+// Publish Reports
+def publish_report(category) {
+    def coverageDir = "${COVERAGE_BASE_DIR}/$category"
+
+    publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true,
+                             reportDir: "${env.WORKSPACE}/${coverageDir}", reportFiles: 'index.html',
+                             reportName: "Coverage $category"])
+}
+
+// Distributed run based on category
+def distributed_run(category) {
+    timestamps {
+        def image_name = "";
+        def pronto_run = category.contains('pronto');
+        sh """#!/bin/bash
+        eval \$(aws  ecr get-login --no-include-email --region us-east-1)
+        """
+
+        if(!pronto_run) {
+            image_name = BACKEND_DOCKER_IMAGE
+        } else {
+            image_name = PRONTO_DOCKER_IMAGE
+        }
+
+        // Image name where this job has to run
+        docker.image(image_name).inside("--privileged") {
+            // Checkout stage
+            stage(category) {
+
+                // Running setup
+                if(!pronto_run) {
+                    echo "Running Setup of $category categorized TestCases"
+                    build_setup(category)
+                }
+
+                //Executing test cases
+                try{
+                    echo "Executing $category categorized TestCases"
+                    execute_test_cases(category)
+                }
+                catch (e) {
+                    // Not applicable for pronto since it will lots of warning which in turns make build unstable
+                    if(!pronto_run) {
+                        echo "Issue with Test Execution" + e
+                        failing_category = category
+                        echo "Build UNSTABLE"
+                        currentBuild.result = 'UNSTABLE'
+                    } else {
+                        echo "Verify Pronto code" + e
+                    }
+                }
+                finally {
+                    if(!pronto_run) {
+                        echo "Publishing Result of $category categorized TestCases"
+                        publish_report(category)
+                    }
+                }
+
+                //Copy build logs to vm
+                if(!pronto_run) {
+                    s3_copy(category)
+                    echo "copied s3 files $category to host VM"
+                }
+
+            }
+        }
+    }
+}
+
+def sonarqube_analysis() {
+    def FD_SCANNER_HOME = tool 'freshdesk-sonarqube'
+    def FD_JAVA_HOME = tool 'sonarqube-java'
+
+    docker.image(BACKEND_DOCKER_IMAGE).inside("--privileged -e JAVA_HOME=$FD_JAVA_HOME -v $FD_JAVA_HOME:$FD_JAVA_HOME -v $FD_SCANNER_HOME:$FD_SCANNER_HOME") {
+        stage("SonarQube Analysis") {
+            def githubToken
+
+            withCredentials([string(credentialsId: 'SonarqubeGithubToken', variable: 'SonarqubeGithubToken')]) {
+                githubToken = SonarqubeGithubToken
+            }
+            withSonarQubeEnv('FreshdeskSonarqube') {
+                if(job_name.contains("pullrequest") && env.ghprbPullId) {
+                    sh  """
+                            #!/bin/bash
+                            echo "export LANG='en_US.UTF-8'" >> ~/.profile
+                            echo "export LC_ALL='en_US.UTF-8'" >> ~/.profile
+                            source ~/.profile
+                            cd ${env.WORKSPACE}
+                            ${FD_SCANNER_HOME}/bin/sonar-scanner \
+                            -Dsonar.pullrequest.key=${env.ghprbPullId} \
+                            -Dsonar.pullrequest.branch=${env.ghprbSourceBranch} \
+                            -Dsonar.pullrequest.base=${env.ghprbTargetBranch} \
+                            -Dsonar.github.oauth=${githubToken}
+                        """
+                }
+                else {
+                    commit_url = params.commit_url
+                    if(commit_url != null){
+                        PROJECT_VERSION = commit_url.split("/").last().trim()
+                    }
+                    else{
+                        PROJECT_VERSION = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%H'").trim()
+                    }
+                    sh  """
+                            #!/bin/bash
+                            echo "export LANG='en_US.UTF-8'" >> ~/.profile
+                            echo "export LC_ALL='en_US.UTF-8'" >> ~/.profile
+                            source ~/.profile
+                            cd ${env.WORKSPACE}
+                            ${FD_SCANNER_HOME}/bin/sonar-scanner \
+                            -Dsonar.branch.name=${params.BRANCH} \
+                            -Dsonar.projectVersion=${PROJECT_VERSION} \
+                            -Dsonar.github.oauth=${githubToken}
+                        """
+                }
+            }
+        }
+//         stage("SonarQube Quality Gate") {
+//             timeout(time: 1, unit: 'HOURS') {
+//                 def qualityGateStatus = waitForQualityGate()
+//
+//                 if (qualityGateStatus.status != 'OK') {
+//                     error "Pipeline aborted due to Quality Gate failure: ${qualityGateStatus.status}"
+//                 }
+//             }
+//         }
+    }
+}
+
+   //Machine label where this jobs needs to run
+node("spot_backend") {
+   try {
+      // Adding timout to the node
+      timeout(time: 60, unit: 'MINUTES') {
+
+        cleanWs()
+
+        docker.image(BACKEND_DOCKER_IMAGE).inside("--privileged") {
+            echo "> Container created"
+
+            stage('Checkout') {
+
+             if(job_name.contains("pullrequest")) {
+               TEST_BRANCH = params.ghprbSourceBranch
+             } else {
+               TEST_BRANCH = params.BRANCH
+             }
+
+             checkout scm: [
+               $class: 'GitSCM',
+               branches: [[name: "*/$TEST_BRANCH"]],
+               doGenerateSubmoduleConfigurations: false,
+               extensions: [],
+               submoduleCfg: [],
+               userRemoteConfigs: [[
+                 credentialsId: env.GITHUB_RUNWAYCI_CREDENTIAL_ID,
+                 url: 'git@github.com:freshdesk/helpkit.git'
+               ]]
+             ]
+             echo "> stage 'checkout' completed"
+            }
+        }
+
+        // Creating Reports directories
+        sh "mkdir -p ${env.WORKSPACE}/${COVERAGE_BASE_DIR}/public"
+        sh "mkdir -p ${env.WORKSPACE}/${COVERAGE_BASE_DIR}/private"
+        // sh "mkdir -p ${env.WORKSPACE}/${COVERAGE_BASE_DIR}/sandbox"
+        sh "mkdir -p ${env.WORKSPACE}/${REPORT_BASE_DIR}/public"
+        sh "mkdir -p ${env.WORKSPACE}/${REPORT_BASE_DIR}/private"
+        // sh "mkdir -p ${env.WORKSPACE}/${REPORT_BASE_DIR}/sandbox"
+        sh "mkdir -p ${env.WORKSPACE}/s3/"
+
+        // Checking Encryption
+        if(job_name.contains("pullrequest")) {
+           encryption_check();
+        }
+
+        // Running Pronto
+        parallel Pronto: {
+          distributed_run("pronto");
+        },ProntoRails: {
+          // Running Custom Rubocop for Rails deprecated methods
+          distributed_run("pronto-rails");
+        }
+
+        // Running Test in Parallel
+        parallel Public: {
+            distributed_run("public");
+        },Private: {
+            distributed_run("private");
+        }
+        // Sandbox: {
+        //   distributed_run("sandbox");
+        // }
+
+        // Extracting xml file
+        junit testResults: "${REPORT_BASE_DIR}/public/*.xml,${REPORT_BASE_DIR}/private/*.xml"
+
+        try {
+            // Running SonarQube Analysis
+            sonarqube_analysis()
+        } catch (e) {
+            // currentBuild.result = 'UNSTABLE'
+            echo "> SonarQube Analysis Failed ------> " + e.toString()
+        }
+
+        // Pushing logs to s3
+        sh  """ #!/bin/bash
+                apt-get install zip -y
+                cd ${env.WORKSPACE}
+                tar -zcvf $job_name-$build-logs.tar.gz s3
+                aws s3 cp $job_name-$build-logs.tar.gz s3://jenkins-build-log-store/fdesk/$job_name-$build-logs.tar.gz --storage-class STANDARD_IA
+                echo "https://jenkins-build-log-store.s3.amazonaws.com/fdesk/$job_name-$build-logs.tar.gz"
+            """
+
+        if(currentBuild.result == "UNSTABLE") {
+            send_email();
+        }
+
+        if (failing_category) {
+            echo "***Issue with test execution. A process in " + failing_category + " test suite failed. Please check !***"
+        }
+      }
+   } catch (e) {
+      currentBuild.result = 'FAILURE' //marking as failure for environment issues
+   }
+   finally {
+      // To persist test random failures
+      monitJob = params.testMonitJob
+      if (monitJob?.trim()) {
+         build job: monitJob,
+         wait: false,
+         propagate: false,
+         parameters: [
+            string(name:'RUN_JOB_NAME', value:env.JOB_NAME),
+            string(name:'RUN_BUILD_NUMBER', value:env.BUILD_NUMBER)
+         ]
+      }
+   }
+}

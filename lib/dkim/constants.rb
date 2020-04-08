@@ -83,7 +83,7 @@ module Dkim::Constants
 
   FD_EMAIL_SERVICE = YAML.load_file(File.join(Rails.root, 'config', 'fd_email_service.yml'))[Rails.env]
   EMAIL_SERVICE_AUTHORISATION_KEY = FD_EMAIL_SERVICE['key']
-  EMAIL_SERVICE_HOST = FD_EMAIL_SERVICE['host']
+  EMAIL_SERVICE_HOST = FD_EMAIL_SERVICE['dkim_host']
   EMAIL_SERVICE_GET_DOMAINS = FD_EMAIL_SERVICE['get_domains']
   EMAIL_SERVICE_CONFIGURE_DOMAIN = FD_EMAIL_SERVICE['configure_domain']
   EMAIL_SERVICE_VERIFY_DOMAIN = FD_EMAIL_SERVICE['verify_domain']

@@ -1,6 +1,7 @@
 require_relative '../../api/test_helper'
 require 'sidekiq/testing'
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
+require Rails.root.join('test', 'api', 'helpers', 'automations_test_helper.rb')
 require Rails.root.join('test', 'models', 'helpers', 'subscription_test_helper.rb')
 class SubscriptionsControllerTest < ActionController::TestCase
   include AccountTestHelper
@@ -9,6 +10,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
   include Redis::Keys::Others
   include TicketFieldsTestHelper
   include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
+  include AutomationsHelper
 
   def setup
     Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(false)
@@ -1102,31 +1104,41 @@ class SubscriptionsControllerTest < ActionController::TestCase
   #   unstub_chargebee_requests
   # end
   #
-  # def test_disable_fsm_when_downgrade_from_estate_to_sprout_with_fsm_enabled
-  #   stub_chargebee_requests
-  #   SAAS::SubscriptionEventActions.any_instance.stubs(:handle_collab_feature).returns(true)
-  #   SAAS::SubscriptionEventActions.any_instance.stubs(:handle_feature_add_data).returns(true)
-  #   Subscription.any_instance.stubs(:add_to_crm).returns(true)
-  #   plan_ids = SubscriptionPlan.current.map(&:id)
-  #   sprout_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount == 0.0 }.compact.first
-  #   @account.reload
-  #   @account.add_feature(:field_service_management) unless @account.field_service_management_enabled?
-  #   perform_fsm_operations
-  #   params = { plan_id: sprout_plan_id }
-  #   @account.rollback :downgrade_policy
-  #   Sidekiq::Testing.inline! do
-  #     post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
-  #   end
-  #   @account.reload
-  #   assert_equal @account.subscription.subscription_plan_id, sprout_plan_id
-  #   refute @account.field_service_management_enabled?
-  # ensure
-  #   cleanup_fsm
-  #   SAAS::SubscriptionEventActions.any_instance.unstub(:handle_collab_feature)
-  #   SAAS::SubscriptionEventActions.any_instance.unstub(:handle_feature_add_data)
-  #   Subscription.any_instance.unstub(:add_to_crm)
-  #   unstub_chargebee_requests
-  # end
+  def test_disable_fsm_when_downgrade_from_estate_to_sprout_with_fsm_enabled
+    stub_chargebee_requests
+    Account.any_instance.stubs(:fsm_admin_automations_enabled?).returns(true)
+    Account.any_instance.stubs(:automation_revamp_enabled?).returns(true)
+    SAAS::SubscriptionEventActions.any_instance.stubs(:handle_collab_feature).returns(true)
+    SAAS::SubscriptionEventActions.any_instance.stubs(:handle_feature_add_data).returns(true)
+    Subscription.any_instance.stubs(:add_to_crm).returns(true)
+    service_task_dispatcher = create_dispatchr_rule(rule_type: VAConfig::SERVICE_TASK_DISPATCHER_RULE)
+    assert service_task_dispatcher.present?
+    service_task_observer = create_observer_rule(rule_type: VAConfig::SERVICE_TASK_OBSERVER_RULE)
+    assert service_task_observer.present?
+    plan_ids = SubscriptionPlan.current.map(&:id)
+    sprout_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount == 0.0 }.compact.first
+    @account.reload
+    @account.add_feature(:field_service_management) unless @account.field_service_management_enabled?
+    perform_fsm_operations
+    params = { plan_id: sprout_plan_id }
+    @account.rollback :downgrade_policy
+    Sidekiq::Testing.inline! do
+      post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
+    end
+    @account.reload
+    assert_equal @account.subscription.subscription_plan_id, sprout_plan_id
+    assert_equal true, @account.all_service_task_dispatcher_rules.empty?
+    assert_equal true, @account.all_service_task_observer_rules.empty?
+    refute @account.field_service_management_enabled?
+  ensure
+    cleanup_fsm
+    SAAS::SubscriptionEventActions.any_instance.unstub(:handle_collab_feature)
+    SAAS::SubscriptionEventActions.any_instance.unstub(:handle_feature_add_data)
+    Subscription.any_instance.unstub(:add_to_crm)
+    unstub_chargebee_requests
+    Account.any_instance.unstub(:fsm_admin_automations_enabled?)
+    Account.any_instance.unstub(:automation_revamp_enabled?)
+  end
   #
   # def test_fsm_dependent_features_removed_when_downgrade_from_estate_to_sprout_with_fsm_enabled
   #   stub_chargebee_requests

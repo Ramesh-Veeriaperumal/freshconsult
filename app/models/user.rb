@@ -157,7 +157,7 @@ class User < ActiveRecord::Base
   attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, :sbrr_fresh_user,
                 :primary_email_attributes, :tags_updated, :keep_user_active, :escape_liquid_attributes, 
                 :role_ids_changed, :detect_language, :tag_use_updated, :user_companies_updated, 
-                :perishable_token_reset, :prev_tags, :latest_tags, :model_changes
+                :perishable_token_reset, :prev_tags, :latest_tags, :model_changes, :custom_fields_hash
   # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
   # As role_ids are not part of user_model(it is an association_reader), 
   # agent.update_attributes won't trigger user callbacks since user doesn't have any change.
@@ -1186,6 +1186,14 @@ class User < ActiveRecord::Base
 
   def custom_field_types
     @custom_field_types ||= (helpdesk_agent? || (Account.current || account).blank?) ? {} : custom_form.custom_contact_fields.inject({}) { |types,field| types.merge(field.name => field.field_type) }
+  end
+
+  def custom_field= custom_field_hash
+    self.custom_fields_hash = custom_field_hash
+    unless custom_field_hash.blank?
+      @custom_field = nil # resetting to reflect the assignments properly
+      assign_ff_values custom_field_hash
+    end
   end
 
   def self.search_by_name search_by, account_id, options = { :load => true, :page => 1, :size => 10, :preference => :_primary_first }

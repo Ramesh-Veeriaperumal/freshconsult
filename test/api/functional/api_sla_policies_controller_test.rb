@@ -3,8 +3,8 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
   include SlaPoliciesTestHelper
 
   def setup
-    super
     CustomRequestStore.store[:private_api_request] = false
+    super
     @sla_policy = nil
     @agent_1 = nil
     @agent_2 = nil
@@ -2659,12 +2659,16 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
   end
 
   def test_create_description_sla_policy
+    agent = get_admin
     params_hash = create_sla_params_hash_with_company
     params_hash = params_hash.merge({description: "This sla is related to unit test"})
+    @controller.stubs(:api_current_user).returns(agent)
     post :create, construct_params(params_hash)
+    p "response :: #{response.inspect}"
     assert_response 201
     match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
     Helpdesk::SlaPolicy.last.delete
+    @controller.unstub(:api_current_user)
   end
 
   def test_create_with_invalid_description_sla_policy

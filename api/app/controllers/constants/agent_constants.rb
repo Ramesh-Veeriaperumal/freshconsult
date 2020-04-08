@@ -72,4 +72,5 @@ module AgentConstants
   ].freeze
   AGENTS_ORDER_TYPE = ['asc', 'desc'].freeze
   AGENTS_ORDER_BY = ['name', 'last_active_at', 'created_at'].freeze
+  BULK_API_PARAMS_LIMIT = 500
 end.freeze

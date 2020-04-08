@@ -11,6 +11,7 @@ class Admin::ServiceTaskDispatcher::WorkerTest < ActionView::TestCase
   include Admin::AdvancedTicketing::FieldServiceManagement::Util
   include TicketHelper
   include UsersHelper
+  include AccountTestHelper
 
   FIELD_OPERATOR_MAPPING = {
     priority: ['in', 'not_in']
@@ -99,6 +100,8 @@ class Admin::ServiceTaskDispatcher::WorkerTest < ActionView::TestCase
   end
 
   def test_service_task_dispatcher_is_enqueued_on_service_task_create
+    Admin::Dispatcher::Worker.jobs.clear
+    Admin::ServiceTaskDispatcher::Worker.jobs.clear
     perform_fsm_operations
     condition_data = priority_condition_data_hash(TicketConstants::PRIORITY_KEYS_BY_TOKEN[:high])
     action_data = responder_action_data_hash
@@ -112,6 +115,8 @@ class Admin::ServiceTaskDispatcher::WorkerTest < ActionView::TestCase
   end
 
   def test_dispatcher_is_enqueued_on_ticket_create
+    Admin::Dispatcher::Worker.jobs.clear
+    Admin::ServiceTaskDispatcher::Worker.jobs.clear
     perform_fsm_operations
     condition_data = priority_condition_data_hash(TicketConstants::PRIORITY_KEYS_BY_TOKEN[:high])
     action_data = responder_action_data_hash

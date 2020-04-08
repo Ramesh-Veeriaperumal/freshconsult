@@ -200,6 +200,7 @@ api_error_messages:
   invalid_category_ids: "Categories should be associated to the portal."
   invalid_category_id: "Category should be associated to the bot."
   invalid_bot_feedback_state: "Cannot perform the action as bot feedback state is invalid"
+  invalid_category_translation: "Category translation not available."
   invalid_article: "Article id is invalid"
   invalid_feedback: "Feedback id is invalid"
   invalid_folder: "Folder id is invalid"
@@ -561,3 +562,5 @@ api_error_messages:
   choices_based_level_error: "There should be at least one choice for level `%{level}`"
 
   duplicate_name_in_sla_policy: "A policy already exists with name '%{policy_name}'."
+
+  bulk_api_limit_exceed: "Total %{resource} params size is %{current}, it should not exceed %{max}"

@@ -86,7 +86,8 @@ module Ember
         {
           custom_fields: params[cname][:custom_field],
           avatar_id: params[cname][:avatar_id],
-          default_fields: params[cname].except(:custom_field)
+          default_fields: params[cname].except(:custom_field),
+          enforce_mandatory: params[:enforce_mandatory]
         }
       end
 

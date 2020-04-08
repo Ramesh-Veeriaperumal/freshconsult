@@ -9,6 +9,7 @@ class ApiAgentsController < ApiApplicationController
   before_filter :check_gdpr_pending?, only: :complete_gdpr_acceptance
   before_filter :load_data_export, only: [:export_s3_url]
   before_filter :validate_params_for_export, only: [:export]
+  before_filter :check_bulk_params_limit, only: %i[create_multiple]
   SLAVE_ACTIONS = %w[index achievements].freeze
 
   def check_edit_privilege
@@ -136,6 +137,14 @@ class ApiAgentsController < ApiApplicationController
   def validate_agent_params
     params[cname][:agents].each do |agent_params|
       validate_params(agent_params)
+    end
+  end
+
+  def check_bulk_params_limit
+    max_limit = AgentConstants::BULK_API_PARAMS_LIMIT
+    if params[cname][:agents].size > max_limit
+      render_request_error(:bulk_api_limit_exceed, 400,
+                           resource: 'agents', current: params[cname][:canned_responses].size, max: max_limit)
     end
   end
 

@@ -62,6 +62,9 @@ module ApiSolutions
 
       def delegator_params
         delegator_params = @folder_params.slice(:contact_folders_attributes, :company_folders_attributes, :customer_folders_attributes)
+        delegator_params[:id] = params[:id] if params[:id].present?
+        delegator_params[:language_code] = params[:language] if params[:language].present?
+        delegator_params
       end
 
       def create_or_update_folder

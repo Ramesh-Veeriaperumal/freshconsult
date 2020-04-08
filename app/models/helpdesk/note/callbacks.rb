@@ -67,12 +67,13 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def load_full_text
-    self.note_body.full_text ||= note_body.body unless note_body.body.blank?
-    self.note_body.full_text_html ||= note_body.body_html unless note_body.body_html.blank?
+    note_body.full_text ||= note_body.body if note_body.body.present?
+    note_body.full_text_html ||= note_body.body_html if note_body.body_html.present?
     if self.note && self.note.note? && !self.note.incoming  # for updating full_text content if body_html is edited
-      self.note_body.full_text = note_body.body unless note_body.body.blank?
-      self.note_body.full_text_html = note_body.body_html unless note_body.body_html.blank?
+      note_body.full_text = note_body.body if note_body.body.present?
+      note_body.full_text_html = note_body.body_html if note_body.body_html.present?
     end
+    note_body.full_text_html_changed = true if note_body.changes.present? && note_body.changes.key?('full_text_html')
   end
 
   def remove_activity

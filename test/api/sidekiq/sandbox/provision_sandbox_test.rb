@@ -33,6 +33,12 @@ class ProvisionSandboxTest < ActionView::TestCase
       @production_account = @user.account.make_current
       delete_sandbox_references(@production_account)
       @user.make_current
+      create_ticket_fields(@production_account)
+      # Mark all custom fields as archived
+      @production_account.ticket_fields_only.custom_fields.each do |field|
+        field.deleted = true
+        field.save!
+      end
       @production_account.create_sandbox_job
       enable_background_fixtures
       Account.reset_current_account

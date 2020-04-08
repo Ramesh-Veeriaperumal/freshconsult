@@ -276,7 +276,7 @@ class PartnerAdmin::AffiliatesController < ApplicationController
     def affiliate_accounts(affiliate, state)
       accounts = []
       accounts = Sharding.run_on_all_slaves do
-        affiliate.subscriptions.filter_with_state(state).find(:all)
+        affiliate.subscriptions.filter_with_state(state).to_a
       end
       accounts.flatten.uniq{|x| x.account_id}
     end

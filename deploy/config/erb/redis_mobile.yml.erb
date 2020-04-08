@@ -4,7 +4,19 @@ defaults: &defaults
  <% if node[:ymls][:redis_mobile][:password] %>
  password: <%= node[:ymls][:redis_mobile][:password] %>
  <% end %>
+ <% if node[:ymls][:redis_mobile][:retry_password] %>
+ retry_password: <%= node[:ymls][:redis_mobile][:retry_password] %>
+ <% end %>
+ <% if node[:ymls][:redis_mobile][:retry_port] %>
+ retry_port: <%= node[:ymls][:redis_mobile][:retry_port] %>
+ <% end %>
+ <% if node[:ymls][:redis_mobile][:retry_host] %>
+ retry_host: <%= node[:ymls][:redis_mobile][:retry_host] %>
+ <% end %>
  timeout: <%= node[:ymls][:redis_mobile][:timeout] %>
+ <% if node[:ymls][:redis_mobile][:connect_timeout] %>
+ connect_timeout: <%= node[:ymls][:redis_mobile][:connect_timeout] %>
+ <% end %>
  keepalive: <%= node[:ymls][:redis_mobile][:keepalive] %>
 <%= node[:opsworks][:environment] %>:
   <<: *defaults

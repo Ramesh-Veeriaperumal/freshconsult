@@ -40,7 +40,7 @@ module Facebook
           user = facebook_user(message[:from])
           is_page_message = is_a_page?(message[:from], @fan_page.page_id)
           fb_note_properties = {
-            private: !is_page_message,
+            private: true,
             incoming: !is_page_message,
             source: Helpdesk::Source.note_source_keys_by_token['facebook'],
             account_id: @fan_page.account_id,

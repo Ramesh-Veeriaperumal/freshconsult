@@ -117,22 +117,20 @@ private
     # Forum Sidebar Cache is cleared from here
     # As forum callbacks will not be fired from here.
     topic.account.clear_forum_categories_from_cache if topic.published_changed? || topic.forum_id_changed?
-    forum_conditions = ['topics_count = ?', Topic.count(:id, :conditions => {:forum_id => topic.forum_id, :published => true})]
+    forum_conditions = ['topics_count = ?', Topic.where(forum_id: topic.forum_id, published: true).count(:id)]
     # if the topic moved forums
     if !topic.frozen? && @old_forum_id && @old_forum_id != topic.forum_id
-      Post.update_all ['forum_id = ?', topic.forum_id], ['topic_id = ?', topic.id]
-      Forum.update_all ['topics_count = ?, posts_count = ?',
-        Topic.count(:id, :conditions => {:forum_id => @old_forum_id, :published => true }),
-        Post.count(:id,  :conditions => {:forum_id => @old_forum_id, :published => true })], ['id = ?', @old_forum_id]
+      Post.where(['topic_id = ?', topic.id]).update_all(['forum_id = ?', topic.forum_id])
+      Forum.where(['id = ?', @old_forum_id]).update_all(['topics_count = ?, posts_count = ?', Topic.where(forum_id: @old_forum_id, published: true).count(:id), Post.where(forum_id: @old_forum_id, published: true).count(:id)])
     end
     # if the topic moved forums or was deleted
     if topic.frozen? || (@old_forum_id && @old_forum_id != topic.forum_id)
-      forum_conditions.first << ", posts_count = ?"
-      forum_conditions       << Post.count(:id, :conditions => {:forum_id => topic.forum_id, :published => true})
+      forum_conditions.first << ', posts_count = ?'
+      forum_conditions       << Post.where(forum_id: topic.forum_id, published: true).count(:id)
     end
     # User doesn't have update_posts_count method in SB2, as reported by Ryan
     # @voices.each &:update_posts_count if @voices
-    Forum.update_all forum_conditions, ['id = ?', topic.forum_id]
+    Forum.where(['id = ?', topic.forum_id]).update_all(forum_conditions)
     @old_forum_id = @voices = nil
   end
 

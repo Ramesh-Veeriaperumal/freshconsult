@@ -120,6 +120,7 @@ module ProvisionSandboxTestHelper
   end
 
   def create_ticket_fields(account)
+    @account = account.make_current
     account.ticket_fields.custom_fields.each(&:destroy)
     create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
     create_custom_field_dropdown('test_custom_dropdown', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])

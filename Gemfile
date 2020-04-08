@@ -162,6 +162,8 @@ gem "sax-machine", "~> 0.1.0"
 
 gem "insensitive_hash", "0.2.3"
 
+# Redis::Client is patched in lib/redis/client_patch.rb
+# Patch has to be removed before upgrading redis gem
 gem "redis","3.3.1"
 gem 'redis-namespace'
 gem "resque","~> 1.24.0"

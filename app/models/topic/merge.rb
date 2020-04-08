@@ -1,7 +1,7 @@
 class Topic < ActiveRecord::Base
 
 	def merge_followers(target)
-		self.monitorships.active_monitors.find(:all, :include => [:user]).each do |mon|
+		self.monitorships.active_monitors.includes([:user]).find_each do |mon|
 			new_mon = find_or_initialize_monitorship(mon.user_id, target)
 			new_mon.active = true
 			new_mon.portal ||= possible_portal(target)
@@ -10,7 +10,7 @@ class Topic < ActiveRecord::Base
 	end
 
 	def merge_user_votes(target)
-		self.votes.find(:all, :include => [:user]).each do |source_vote|
+		self.votes.includes([:user]).find_each do |source_vote|
 			new_vote = find_or_initialize_vote(source_vote.user_id, target)
 			new_vote.vote = source_vote.vote
 			new_vote.account_id = source_vote.account_id

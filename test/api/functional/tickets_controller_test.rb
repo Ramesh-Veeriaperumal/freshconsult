@@ -6362,7 +6362,14 @@ class TicketsControllerTest < ActionController::TestCase
     )
 
     result = JSON.parse(created_ticket.body)
-    assert_response 201, result
+    assert_response 400, result
+    match_json(
+      [{
+        field: 'custom_fields.cf_ticket',
+        code: :invalid_value,
+        message: 'It should not be blank as this is a mandatory field'
+      }]
+    )
   ensure
     @account.ticket_fields.find_by_name("cf_ticket_#{@account.id}").destroy
   end
@@ -6665,6 +6672,22 @@ class TicketsControllerTest < ActionController::TestCase
     )
   ensure
     @account.ticket_fields.find_by_name("cf_ticket_#{@account.id}").destroy
+  end
+
+  def test_create_ticket_with_enforce_mandatory_false_not_passing_mandatory_dropdown_value
+    cf = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
+    cf.required = true
+    Account.reset_current_account
+    @account = Account.first
+    created_ticket = post :create, construct_params(
+      {},
+      create_ticket_params.merge(query_params: { enforce_mandatory: 'false' })
+    )
+
+    result = JSON.parse(created_ticket.body)
+    assert_response 201, result
+  ensure
+    cf.required = false
   end
 
   def test_update_ticket_with_enforce_mandatory_false_existing_custom_field_not_empty_new_not_empty

@@ -28,7 +28,7 @@
         "channel_cipher_key": "EJ[1:bPyLDoNV/6e0ZU3cnFz7eRIogZVR8VwWgbIUIlQdElc=:XPaiN5mvEr3tkQ/rndwwNmTXwuGNMeXv:UWDULE7Eh1f3ky5J8/hHgOyEWd909mesJMq7uaOcK1NXfYmz7VB7CmP5M7L6m4DytjTALaIj+heqDCOhaXRY4WBIzPDa9d8bWMzAWjL7MSE=]"
       },
       "secure_field": {
-        "_domain": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/"
+        "_domain": "https://vaultservice.freshpo.com/"
       },
       "cron_webhook": {
         "_domain": "helpkitworkflowauto170.freshpo.com",
@@ -51,8 +51,6 @@
       "archive_note": {
         "shard_id_map": {
           "_shard_1": 9398,
-          "_shard_2": 1000000127,
-          "_shard_6": 5000000739,
           "_shard_7": 505408
         }
       },
@@ -362,30 +360,6 @@
             "_dryrun": false,
             "_enable": true
           },
-          "sandbox_shard_2": {
-            "slave1_host": {
-              "_dryrun": false,
-              "_enable": true
-            },
-            "slave2_host": {
-              "_dryrun": true,
-              "_enable": true
-            },
-            "_dryrun": false,
-            "_enable": true
-          },
-          "sandbox_shard_6": {
-            "slave1_host": {
-              "_dryrun": false,
-              "_enable": true
-            },
-            "slave2_host": {
-              "_dryrun": true,
-              "_enable": true
-            },
-            "_dryrun": false,
-            "_enable": true
-          },
           "sandbox_shard_7": {
             "slave1_host": {
               "_dryrun": false,
@@ -410,30 +384,6 @@
             "_dryrun": false,
             "_enable": true
           },
-          "shard_2": {
-            "slave1_host": {
-              "_dryrun": false,
-              "_enable": true
-            },
-            "slave2_host": {
-              "_dryrun": true,
-              "_enable": true
-            },
-            "_dryrun": false,
-            "_enable": true
-          },
-          "shard_6": {
-            "slave1_host": {
-              "_dryrun": false,
-              "_enable": true
-            },
-            "slave2_host": {
-              "_dryrun": true,
-              "_enable": true
-            },
-            "_dryrun": false,
-            "_enable": true
-          },
           "shard_7": {
             "slave1_host": {
               "_dryrun": false,
@@ -444,18 +394,6 @@
               "_enable": true
             },
             "_dryrun": false,
-            "_enable": true
-          },
-          "shard_8": {
-            "slave1_host": {
-              "_dryrun": true,
-              "_enable": true
-            },
-            "slave2_host": {
-              "_dryrun": true,
-              "_enable": true
-            },
-            "_dryrun": true,
             "_enable": true
           }
         },
@@ -481,58 +419,6 @@
               "_username": "freshhelp"
             },
             "_database": "sandbox_staging_shard1",
-            "_host": "usrds1.internal-freshpo.com",
-            "_slave1_host": "usrds1slave1.internal-freshpo.com",
-            "_slave2_host": "usrds1slave2.internal-freshpo.com",
-            "_username": "freshhelp"
-          },
-          "sandbox_shard_2": {
-            "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:DZBfHUYjrDNxGs0KVXERWCHA1mi65bXS:mTJNLosFKBTlSqCECiGQus4tlDFaDRb2]",
-            "slave1": {
-              "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:YtMc/3AThHu/VhcHU6d57AosD1M4kASf:oKcYWSqtpZypxGKRv3ZnEPwzNsuy7LS3]",
-              "_host": "usrds7slave1.internal-freshpo.com",
-              "_port": "3306",
-              "_username": "freshhelp"
-            },
-            "slave_proxy": {
-              "password": "EJ[1:iS7ZhZe4R5cnxUCz1IHj1y0f3EROaxCbe2WgjCYzMEQ=:LJOrlSgCot2R3xod8nNVVek3ovTSHfdA:WfIOi99+zgc+h52mYV5EPFyYjGShTACW]",
-              "_host": "127.0.0.1",
-              "_port": "6033",
-              "_username": "prem"
-            },
-            "slave2": {
-              "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:fMehqJkTUFKi2Z8iRdzRNJL2S6D30AGJ:HIe1tkg4aNwkRPYKw8mmw2NDNbPXp38Y]",
-              "_host": "usrds7slave2.internal-freshpo.com",
-              "_port": "3306",
-              "_username": "freshhelp"
-            },
-            "_database": "sandbox_staging_shard2",
-            "_host": "usrds7.internal-freshpo.com",
-            "_slave1_host": "usrds7slave1.internal-freshpo.com",
-            "_slave2_host": "usrds7slave2.internal-freshpo.com",
-            "_username": "freshhelp"
-          },
-          "sandbox_shard_6": {
-            "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:eXynvGFckEKZC4I3s1dkh/infpbF+cK+:Yj/91aXxCqUEx3F6pyso1185AsHXtgr6]",
-            "slave1": {
-              "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:OHQ9nsuvLBdAMy/1t8zTYhZH/n5r8T89:FrNOU8WMI+vjP3fpdJli2hMHU+1Bij65]",
-              "_host": "usrds1.internal-freshpo.com",
-              "_port": "3306",
-              "_username": "freshhelp"
-            },
-            "slave_proxy": {
-              "password": "EJ[1:iS7ZhZe4R5cnxUCz1IHj1y0f3EROaxCbe2WgjCYzMEQ=:JyMQoPg/xwRJwRTL1ulLoJOglCp+TzGq:TLWRoWKngsR72mJp065EOyeMq8AuukPk]",
-              "_host": "127.0.0.1",
-              "_port": "6033",
-              "_username": "prem"
-            },
-            "slave2": {
-              "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:VZU9oFzEYANz0mePwEx9ytOB4jQ8nIQX:Z8stiwhVWJE6lwa3uCB1xDAxv0hYCWMQ]",
-              "_host": "usrds1.internal-freshpo.com",
-              "_port": "3306",
-              "_username": "freshhelp"
-            },
-            "_database": "sandbox_staging_shard6",
             "_host": "usrds1.internal-freshpo.com",
             "_slave1_host": "usrds1slave1.internal-freshpo.com",
             "_slave2_host": "usrds1slave2.internal-freshpo.com",
@@ -591,60 +477,6 @@
             "_slave2_host": "usrds1slave2.internal-freshpo.com",
             "_username": "freshhelp"
           },
-          "shard_2": {
-            "_proxy_enabled": true,
-            "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:++2pSVPrtVwuJB2ZtKEaNVVDDTAIcttC:T9SY8iEIMjZMPWRvQdJIcz+YqG1YPt4m]",
-            "slave1": {
-              "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:elmZc4uaOcm3i0aPBWt6wB5hKJbSGuyT:tQg9sDX8xgnlQlcEr+okI3OYf/ssQB9q]",
-              "_host": "usrds7slave1.internal-freshpo.com",
-              "_port": "3306",
-              "_username": "freshhelp"
-            },
-            "slave_proxy": {
-              "password": "EJ[1:iS7ZhZe4R5cnxUCz1IHj1y0f3EROaxCbe2WgjCYzMEQ=:FpQ3vGCMGBTfQ+iwg91eyius43WmCzB+:LCmsa6x34hSzTFU24xdmwv8i9s0wqH5/]",
-              "_host": "127.0.0.1",
-              "_port": "6033",
-              "_username": "prem"
-            },
-            "slave2": {
-              "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:EwGPSre+vgWf0qXtH+kp3k9yMBQ4XMjC:sZJ/s06uXHlrjzjJxUQg6+Km9uOeo2qD]",
-              "_host": "usrds7slave2.internal-freshpo.com",
-              "_port": "3306",
-              "_username": "freshhelp"
-            },
-            "_database": "staging_shard2",
-            "_host": "usrds7.internal-freshpo.com",
-            "_slave1_host": "usrds7slave1.internal-freshpo.com",
-            "_slave2_host": "usrds7slave2.internal-freshpo.com",
-            "_username": "freshhelp"
-          },
-          "shard_6": {
-            "_proxy_enabled": true,
-            "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:8XntULzjGMtHp6P2AefX+RO9eDaZxtru:jdSUqglvsm8g7ODvwXhw22bwB53kTx2e]",
-            "slave1": {
-              "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:qsgsCIR0a+Sr3YEy/PEWg/jTePWKkeKm:jh9m/wxuaMUBH/CaUapvEUdo/Mw+nEGk]",
-              "_host": "usrds1.internal-freshpo.com",
-              "_port": "3306",
-              "_username": "freshhelp"
-            },
-            "slave_proxy": {
-              "password": "EJ[1:iS7ZhZe4R5cnxUCz1IHj1y0f3EROaxCbe2WgjCYzMEQ=:dcW52ehjFjtayLqzGtDxHf/C6S7K1ka4:0w1ChK6RuuNwvOP0ljmvWfGsdPnMc3/K]",
-              "_host": "127.0.0.1",
-              "_port": "6033",
-              "_username": "prem"
-            },
-            "slave2": {
-              "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:v35wmJ6xUNcP8UGOO2LBYo8m/pMWA/Yc:vAKpkH/v2rbGQTNiJFyQJ9keP6a5pXC3]",
-              "_host": "usrds1.internal-freshpo.com",
-              "_port": "3306",
-              "_username": "freshhelp"
-            },
-            "_database": "staging_shard6",
-            "_host": "usrds1.internal-freshpo.com",
-            "_slave1_host": "usrds1slave1.internal-freshpo.com",
-            "_slave2_host": "usrds1slave2.internal-freshpo.com",
-            "_username": "freshhelp"
-          },
           "shard_7": {
             "_proxy_enabled": true,
             "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:5RScK29IZfMnTfJHFGAZ0HG+07bYZnKl:gB1Fs1Zf+ZdRuSGvALXSRR7jUloU3aln]",
@@ -670,60 +502,6 @@
             "_host": "usrds7.internal-freshpo.com",
             "_slave1_host": "usrds7slave1.internal-freshpo.com",
             "_slave2_host": "usrds7slave2.internal-freshpo.com",
-            "_username": "freshhelp"
-          },
-          "shard_8": {
-            "_proxy_enabled": true,
-            "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:VHgbvPqiU9C3OQRl7PVeXLfnQHYYSe0D:pnyxhChrdouHzzKvEozC8bkZaTeDAUW+]",
-            "slave1": {
-              "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:2Smx6xxCwpk+NMjOXEbghx6ADPMNt07b:uXf4pEasdYL9bVFyWS4FadckpW1I9eeo]",
-              "_host": "usrds1slave2.internal-freshpo.com",
-              "_port": "3306",
-              "_username": "freshhelp"
-            },
-            "slave_proxy": {
-              "password": "EJ[1:iS7ZhZe4R5cnxUCz1IHj1y0f3EROaxCbe2WgjCYzMEQ=:v/ZzhlJ0325yBcoXBav0OLbdMkoWO35S:C6gR284oYjVkxpdFL2ZO8JY1CBqNH57G]",
-              "_host": "127.0.0.1",
-              "_port": "6033",
-              "_username": "prem"
-            },
-            "slave2": {
-              "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:xyBzSW8DJ7AqmUmsHjazcwiftIuB0sTX:LLiaPeLNL0HBvm1A9JFo8S1zg/XX6hku]",
-              "_host": "usrds1slave2.internal-freshpo.com",
-              "_port": "3306",
-              "_username": "freshhelp"
-            },
-            "_database": "helpkit_staging",
-            "_host": "usrds1.internal-freshpo.com",
-            "_slave1_host": "usrds1slave2.internal-freshpo.com",
-            "_slave2_host": "usrds1slave2.internal-freshpo.com",
-            "_username": "freshhelp"
-          },
-          "shard_2date": {
-            "_proxy_enabled": true,
-            "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:3e+0WycEZpW1dYuRI/tT/qJGXaLbdV7N:7vptgTlVBylwd20wiLXegdj0kFToAcUl]",
-            "slave1": {
-              "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:3bv0zyx+bbEPd8a1t+DM6h67NILKdF28:HG0TMuva+CqIgWE6F9UQQhImFTRi0CeA]",
-              "_host": "usrds1slave1.internal-freshpo.com",
-              "_port": "3306",
-              "_username": "freshhelp"
-            },
-            "slave_proxy": {
-              "password": "EJ[1:iS7ZhZe4R5cnxUCz1IHj1y0f3EROaxCbe2WgjCYzMEQ=:QbP8hZPky1Lqg0fIDgNw8ej+FiRGPtAJ:4KIcg+mHW+PtE6xiP+jRLLMN/c3dAlqQ]",
-              "_host": "127.0.0.1",
-              "_port": "6033",
-              "_username": "prem"
-            },
-            "slave2": {
-              "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:ChcllrjYq9wiFdg/Xip9K0mzfX2i6xRj:lfvpTL6LwQLiNxDFiOQ5EC8g0E0+dQcp]",
-              "_host": "usrds1slave2.internal-freshpo.com",
-              "_port": "3306",
-              "_username": "freshhelp"
-            },
-            "_database": "staging_uptodate",
-            "_host": "usrds1.internal-freshpo.com",
-            "_slave1_host": "usrds1slave1.internal-freshpo.com",
-            "_slave2_host": "usrds1slave2.internal-freshpo.com",
             "_username": "freshhelp"
           }
         }
@@ -987,6 +765,7 @@
         "_verify_domain_url": "api/v1/whitelabel/domains/verify",
         "_remove_domain_url": "api/v1/whitelabel/domains",
         "_lang_detect_path": "api/v1/detect/lang",
+        "_dkim_host": "https://mailservice.freshpo.com",
         "envoy_egress": {
           "_host_address": "http://127.0.0.1",
           "_host_port": "8183",
@@ -1331,14 +1110,22 @@
         "site_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:RiiA6RXA6BX6c0FYQzJ653bywUrEP2Kj:nnYtRc/bKYglpWmK6COnxXGpWy+/4b7tZJdjTlQBE/nmuWItxb2ifIBoX1Jay+/15iQeYLC6bXQ=]"
       },
       "redis": {
-        "_host": "redis-10719.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_host": "staging-main-redis.internal-freshpo.com",
+        "_retry_host": "redis-10570.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_retry_port": 10570,
+        "retry_password": "EJ[1:nJ6PaHMQnt+Pr41ri1gKLBDFoTrb0Iu5Do+Qtczesig=:iahEJfMdS45yf+kXHgkzZgJggLwCKtyA:tRY7idSJ1UE/oiNac05YJQXeA6emservmT58klyo+gky0IMAYTJBSltUWwnakCFx]",
+        "_connect_timeout": 0.5,
         "_keepalive": 10,
         "_namespace": "resque-blue",
         "_port": 10719,
         "_timeout": 5
       },
       "redis_display_id": {
-        "_host": "redis-10719.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_host": "staging-main-redis.internal-freshpo.com",
+        "_retry_host": "redis-10570.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_retry_port": 10570,
+        "retry_password": "EJ[1:nJ6PaHMQnt+Pr41ri1gKLBDFoTrb0Iu5Do+Qtczesig=:rU1jSfoDWdF6fiIKudv27JWxhn0CuWgV:1xrh9st/h9E6iMezTVu1w4KEcZndQ4inT9lZi5d/+Gue+QXPDuDumPIYj88ikgH1]",
+        "_connect_timeout": 0.5,
         "_keepalive": 10,
         "_port": 10719,
         "_timeout": 5
@@ -1350,31 +1137,51 @@
         "_timeout": 5
       },
       "redis_rate_limit": {
-        "_host": "redis-10719.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_host": "staging-main-redis.internal-freshpo.com",
+        "_retry_host": "redis-10570.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_retry_port": 10570,
+        "retry_password": "EJ[1:nJ6PaHMQnt+Pr41ri1gKLBDFoTrb0Iu5Do+Qtczesig=:U3yh7Gr9pEg1I4eW6QgEvn1Z4MDZ1TJz:UjUB6vJ5NBwQ/xyRQTyr93M3iIjfpVoPC7k6qfUGa/ngwnDs72C+leNOqQ8lflJj]",
+        "_connect_timeout": 0.5,
         "_keepalive": 10,
         "_port": 10719,
         "_timeout": 5
       },
       "redis_round_robin": {
-        "_host": "redis-10719.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_host": "staging-main-redis.internal-freshpo.com",
+        "_retry_host": "redis-10570.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_retry_port": 10570,
+        "retry_password": "EJ[1:nJ6PaHMQnt+Pr41ri1gKLBDFoTrb0Iu5Do+Qtczesig=:MOm931lgJKRuJxF0aW9PhUt7t/2jmLye:xTjH/0Yj/b5EfhhcVHdgCMkQ04RKPkkz3tbD+p4I88A5JDDq5tdFxc9GuWFsR60u]",
+        "_connect_timeout": 0.5,
         "_keepalive": 10,
         "_port": 10719,
         "_timeout": 5
       },
       "automation_rule_redis": {
-        "_host": "redis-10719.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_host": "staging-main-redis.internal-freshpo.com",
+        "_retry_host": "redis-10570.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_retry_port": 10570,
+        "retry_password": "EJ[1:nJ6PaHMQnt+Pr41ri1gKLBDFoTrb0Iu5Do+Qtczesig=:rF8HG2mS40JlJpLBiQTkACY+G7/ipXVf:BbeWTgWLshIswg6vyOeia34mUOkxCKDLQm55S6LrVK+jJZVdst1YyA+CZTLFajce]",
+        "_connect_timeout": 0.5,
         "_keepalive": 10,
         "_port": 10719,
         "_timeout": 5
       },
       "redis_routes": {
-        "_host": "redis-10719.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_host": "staging-main-redis.internal-freshpo.com",
+        "_retry_host": "redis-10570.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_retry_port": 10570,
+        "retry_password": "EJ[1:nJ6PaHMQnt+Pr41ri1gKLBDFoTrb0Iu5Do+Qtczesig=:uwCDfhn4uxiDtm8tzHRXi+4Tean0NmPB:FXUQ0Im9KpFEhpU+APr8kHKpz3aV7wFyPvepzrwP7LVqlM/kwM42m5Ax2jfa+Cbh]",
+        "_connect_timeout": 0.5,
         "_keepalive": 10,
         "_port": 10719,
         "_timeout": 5
       },
       "redis_session": {
-        "_host": "redis-10719.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_host": "staging-main-redis.internal-freshpo.com",
+        "_retry_host": "redis-10570.internal.c3291.us-east-1-mz.ec2.cloud.rlrcp.com",
+        "_retry_port": 10570,
+        "retry_password": "EJ[1:nJ6PaHMQnt+Pr41ri1gKLBDFoTrb0Iu5Do+Qtczesig=:HN0tMcpm5KLeR8wDOS5Ft6AvSy1bSMdT:aUspcomIHa92P55QHUokJhLjzXWhPLwI3NihUq2VXLTvDWK+h0y80hDaMfro7zdM]",
+        "_connect_timeout": 0.5,
         "_keepalive": 10,
         "_port": 10719,
         "_timeout": 5
@@ -1866,7 +1673,7 @@
         "_script_asset_url": "https://assets1.fconstage.io/freshconnect-sidebar/freshconnect-sidebar.js",
         "_base_url": "https://api.fconstage.io"
       },
-      "_vault_service_url": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/"
+      "_vault_service_url": "https://vaultservice.freshpo.com/"
     },
     "aws_config": {
       "access_key_id": "EJ[1:0+zY2CDV3YCJNog+WPT2TVsoX83AeKLOKvvaGzltvDY=:kMSaqjp76A163AkLZTe1+cWKx9F1f6A1:xuCayGW5XiIzPtlp81zFQ8cj9Sw=]",

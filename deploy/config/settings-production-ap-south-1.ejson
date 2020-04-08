@@ -165,7 +165,8 @@
         "_configure_domain_url": "api/v1/whitelabel/configure",
         "_verify_domain_url": "api/v1/whitelabel/domains/verify",
         "_remove_domain_url": "api/v1/whitelabel/domains",
-        "_lang_detect_path": "api/v1/detect/lang"
+        "_lang_detect_path": "api/v1/detect/lang",
+        "_dkim_host": "https://mailservicemum.freshdesk.com"
       },
       "product_feedback": {
         "api_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:BCwEQ3OU5wYIi7BbO6itwd9A3W6ajGl3:M2FF0TmMBz+R2jwiWCFZ6cTZd+RkhgalBQvlXMuQMYIw6pgL]",

@@ -21,7 +21,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
         field_name = custom_field.name # assign field name
         value = values.try(:[], custom_field.name) # assign value
         @parent = nested_field? && parent_exists? ? get_parent(values) : {} # get parent if nested_field for computing required
-        @is_required = required_field?(record, values) # find if the field is required
+        @is_required = required_field?(record, values, field_name) # find if the field is required
         @current_field_defined = key_exists?(values, field_name) # check if the field is defined for required validator
         next unless validate?(record, field_name, values) # check if it can be validated
         record.class.safe_send(:attr_accessor, field_name)
@@ -216,9 +216,9 @@ class CustomFieldValidator < ActiveModel::EachValidator
     end
 
     # required based on ticket field attribute or combination of status & ticket field attribute.
-    def required_field?(record, values)
+    def required_field?(record, values, field_name)
       # Should we have to raise exception or warn if current_field doen't respond to required_attribute?
-      is_required = tickets_api_relaxation_enabled?(record) || required_field_relaxation_enabled?(record, values) ? required_for_closure? : required_for_submit_or_closure?
+      is_required = tickets_api_relaxation_enabled?(record) || required_field_relaxation_enabled?(record, values, field_name) ? required_for_closure? : required_for_submit_or_closure?
       is_required ||= @parent[@required_attribute.to_sym] if @parent.present?
       is_required = section_parent_present?(record, values) if is_required && section_field?
       is_required
@@ -238,9 +238,10 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
     # If enforce_mandatory is set to false and the value is not (nil or empty)
     # then require validation will be skipped
-    def required_field_relaxation_enabled?(record, values)
-      values = {} if values.class != Hash
-      record.respond_to?(:enforce_mandatory) ? !(record.enforce_mandatory || values.value?(nil) || values.value?('')) : false
+    def required_field_relaxation_enabled?(record, values, field_name)
+      field_hash = record.respond_to?(:custom_fields_hash) ? record.custom_fields_hash : values
+      field_value_blank = (field_hash || {}).key?(field_name) ? field_hash[field_name].blank? : false
+      record.respond_to?(:enforce_mandatory) ? !(record.enforce_mandatory || field_value_blank) : false
     end
 
     def public_api?(record)
