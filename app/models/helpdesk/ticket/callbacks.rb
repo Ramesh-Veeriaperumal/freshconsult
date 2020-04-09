@@ -1116,7 +1116,7 @@ private
   end
 
   def round_robin_attributes_changed?
-    @model_changes.key?(:responder_id) || @model_changes.key?(:group_id) || rr_active_changed?
+    @model_changes.key?(:responder_id) || @model_changes.key?(:group_id) || rr_active_changed? || response_or_resolution_changed?
   end
 
   def round_robin_attribute_changes
@@ -1124,7 +1124,28 @@ private
       field_changes[:active]   = rr_active_change if rr_active_changed?
       field_changes[:agent_id] = @model_changes[:responder_id].map(&:to_s).map(&:presence) if @model_changes.key?(:responder_id)
       field_changes[:group_id] = @model_changes[:group_id].map(&:to_s).map(&:presence) if @model_changes.key?(:group_id)
+      field_changes[:assignment_params] = response_or_resolution_changes if response_or_resolution_changed?
     end
+  end
+
+  def response_or_resolution_changed?
+    @response_or_resolution_changed ||= (@model_changes.key?(:due_by) || @model_changes.key?(:nr_due_by) || @model_changes.key?(:frDueBy))
+  end
+
+  def response_or_resolution_changes
+    Hash.new.tap do |time_change|
+      time_change[:response_due] = expected_response_time_changes if @model_changes.key?(:nr_due_by) || @model_changes.key?(:frDueBy)
+      time_change[:resolution_due] = sla_time_changes(:due_by) if @model_changes.key?(:due_by)
+    end
+  end
+
+  def expected_response_time_changes
+    @model_changes.key?(:nr_due_by) ? sla_time_changes(:nr_due_by) : sla_time_changes(:frDueBy)
+  end
+
+  def sla_time_changes(param)
+    changes = @model_changes[param].map(&:presence)
+    [DateTime.parse(changes[0].to_s).to_i * 1000, DateTime.parse(changes[1].to_s).to_i * 1000]
   end
 
   def ticket_delete_or_spam?
