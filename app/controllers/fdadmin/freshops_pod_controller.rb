@@ -34,6 +34,8 @@ class Fdadmin::FreshopsPodController < Fdadmin::DevopsMainController
       domain_mapping = DomainMapping.find_by_domain(domain)
       if domain_mapping && domain_mapping.account_id.eql?(params[:custom_portal][:account_id].to_i)
         return domain_mapping.update_attributes(params[:custom_portal]) ? true : false
+      elsif !domain.include?(AppConfig['base_domain'][Rails.env])
+        return DomainMapping.new(params[:custom_portal]).save ? true : false
       else
         return false
       end

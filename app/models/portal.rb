@@ -33,9 +33,9 @@ class Portal < ActiveRecord::Base
   before_save :save_route_info, :add_default_solution_category
   after_destroy :destroy_route_info
 
-  before_create :update_custom_portal , :unless => :main_portal
-  after_create :update_custom_portal , :unless => :main_portal
-  before_update :update_custom_portal , :unless => :main_portal
+  before_create :update_custom_portal
+  after_create :update_custom_portal
+  before_update :update_custom_portal
   after_commit :toggle_autofaq_features, :on => :update, if: :main_portal_language_changes?
   before_save :create_model_changes, on: :update
   before_destroy :save_deleted_portal_info
