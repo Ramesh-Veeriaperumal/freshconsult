@@ -22,11 +22,12 @@ class HttpRequestWorker < BaseWorker
     route = args[:route]
     data = args[:data]
     hrp = HttpRequestProxy.new
-    service_params = if data.present?
-                       { domain: domain, rest_url: route, body: data.to_json }
-                     else
-                       { domain: domain, rest_url: route }
-                     end
+    service_params = {
+      domain: domain,
+      rest_url: route
+    }
+    service_params[:body] = data.to_json if data.present?
+    service_params[:skip_blacklist_verification] = true if args[:skip_blacklist_verification]
     request_params = { method: args[:request_method], auth_header: args[:auth_header] }
     hrp.fetch_using_req_params(service_params, request_params)
   end
