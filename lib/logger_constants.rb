@@ -35,4 +35,6 @@ module LoggerConstants
     support_ticket: %w[show new check_email index filter close export_csv],
     support_solutions_article: %w[show hit]
   }.freeze
+
+  SIDEKIQ_LOG_TAGS_MAX_LENGTH = 6
 end

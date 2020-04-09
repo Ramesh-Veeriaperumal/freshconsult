@@ -14,6 +14,8 @@ module Middleware
           begin
             log_tags = (msg.try(:[], 'message_uuid') || [])
             log_tags << msg["jid"]
+            # First 3 and last 3/4 uuids in log
+            log_tags.delete_at(log_tags_max_length / 2) if log_tags.length > log_tags_max_length
             Thread.current[:message_uuid] = log_tags
           rescue Exception => e
             log_tags = []
@@ -50,6 +52,10 @@ module Middleware
           Rails.logger.error "Account not found in shard :: #{e.message}"
         ensure
           Thread.current[:message_uuid] = nil
+        end
+
+        def log_tags_max_length
+          LoggerConstants::SIDEKIQ_LOG_TAGS_MAX_LENGTH
         end
       end
     end
