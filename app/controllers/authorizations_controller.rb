@@ -54,7 +54,7 @@ class AuthorizationsController < ApplicationController
       portal = Portal.find(origin.to_i)
       @account_id = portal.account_id if portal
     else
-      origin = CGI.parse(origin)
+      origin = CGI.parse(origin || '')
       @app_name = origin['app_name'][0].to_s if origin.has_key?('app_name')
       @app_name ||= Integrations::Constants::PROVIDER_TO_APPNAME_MAP["#{@provider}"] unless @provider.blank?
       @origin_user_id = origin.has_key?('user_id') ? origin['user_id'][0].to_i : params[:user_id]
