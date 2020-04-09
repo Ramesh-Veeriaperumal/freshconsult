@@ -72,7 +72,9 @@ module TwitterTestHelper
       "requester_id": options[:requester_id],
       "description": options[:description],
       "source": 5,
-      "created_at": options[:created_at] || '2015-07-09T13:08:06Z'
+      "created_at": options[:created_at] || '2015-07-09T13:08:06Z',
+      "twitter_profile_status": true,
+      "twitter_followers_count": 49
     }
     options = {
       owner: 'twitter',

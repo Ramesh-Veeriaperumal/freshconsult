@@ -15,6 +15,7 @@ module ChannelIntegrations::Commands::Services
       data = payload[:data]
 
       set_current_user(data[:requester_id])
+      update_contact_twitter_fields(data) if twitter_requester_fields_present?(data)
       check_twitter_handle?(context[:twitter_handle_id])
 
       Rails.logger.debug("Twitter::CreateTicket, account_id: #{current_account.id}, tweet_id: #{context[:tweet_id]}")
