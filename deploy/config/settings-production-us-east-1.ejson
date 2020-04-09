@@ -2060,9 +2060,9 @@
         "_esv2_host": "search.internal.poduseast1.freshdesk.com"
       },
       "sidekiq": {
-        "_host": "redis-sidekiq.internal.poduseast1.freshdesk.com",
-        "_port": 11945,
-        "password": "EJ[1:QGtDmPwJIm7L+TAmu6YxxymJ+4FAmd9PClcPDoKnSWo=:R7Zoc7meSWdbAVAhwJehgs5x15z2OT+g:67+dy/QM3iv1TvOJet5utqhfDd4z0MMkP/LGGGg0UKHdx/3hzvtybTcvPn5w2n7x]",
+        "_host": "redis-sidekiq-main.internal.poduseast1.freshdesk.com",
+        "_port": 11102,
+        "password": "EJ[1:8MfLpqelnzv06+YZADF0y7Kv2vyw2adqqcWEO63TSS8=:Z7RP4eDZRiBVOuh162IJ5PsHM7rLUjG8:n/QbLq1RhkVSuUWmUAjfwkVAFmwpfeB6GtjMJU7em+egf6WtqD07KSYCZueUN+Yt]",
         "_namespace": "sidekiq-green",
         "_keepalive": 0,
         "_archive_host": "redislabs-miscellaneous.internal.poduseast1.freshdesk.com",
