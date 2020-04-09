@@ -172,6 +172,12 @@
           "_lang_host_port": "8184"
         }
       },
+      "freno": {
+        "envoy_egress": {
+          "_service_address": "http://localhost",
+          "_service_port": 8189
+        }
+      },
       "product_feedback": {
         "api_key": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:wLwvFyTvf/39xqoMzKxypJ7caJJ7NePd:BQryuMxBdjBrTGYovifjBaM4yHS6hJdkhMk1WGJwsim9dxkL]",
         "_contacts_path": "api/v2/contacts",
