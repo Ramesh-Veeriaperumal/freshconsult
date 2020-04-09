@@ -208,7 +208,7 @@ class Helpdesk::Note < ActiveRecord::Base
         end
 
         # Jira notes notifier was sending emails for portal added notes with no notifying emails. Added a to emails check to prevent that.
-        integrations_private_note_notifications unless replied_by_customer? || to_emails.blank?
+        integrations_private_note_notifications unless replied_by_customer? || to_emails.blank? || (!incoming && notable.agent_as_requester?(user.id))
 
       else
         #notify the agents only for notes
