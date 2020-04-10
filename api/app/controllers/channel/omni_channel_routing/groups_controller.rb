@@ -20,7 +20,7 @@ module Channel::OmniChannelRouting
       status_ids = Helpdesk::TicketStatus.sla_timer_on_status_ids(current_account)
       unassigned_tickets = []
       paginate_items(@group.tickets.visible.unassigned.sla_on_tickets(status_ids)).each do |ticket|
-        unassigned_tickets << { id: ticket.display_id, updated_at: (ticket.updated_at.to_f * 1000).to_i, assignment_params: ticket.assignment_params }
+        unassigned_tickets << { id: ticket.display_id, updated_at: (ticket.updated_at.to_f * 1000).to_i }
       end
       @response_hash = { unassigned_tasks: unassigned_tickets, meta: { next_page: @more_items } }
     end
