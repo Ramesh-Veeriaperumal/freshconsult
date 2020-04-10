@@ -17,7 +17,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
                 :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial, :reactivate_account,
                 :suspend_account, :change_webhook_limit, :change_primary_language, :trigger_action, :clone_account, :enable_fluffy,
                 :change_fluffy_limit, :change_fluffy_min_level_limit, :enable_min_level_fluffy , :disable_min_level_fluffy, :min_level_fluffy_info,
-                :reset_ticket_display_id]
+                :reset_ticket_display_id, :skip_mandatory_checks]
   before_filter :validate_params, :only => [:change_api_limit, :change_webhook_limit, :change_fluffy_limit, :change_fluffy_min_level_limit]
   before_filter :load_account, :only => [:user_info, :reset_login_count,
     :migrate_to_freshconnect, :extend_higher_plan_trial, :change_trial_plan]
@@ -26,6 +26,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   before_filter :check_freshconnect_migrate, :only => [:migrate_to_freshconnect]
   before_filter :validate_extend_higher_plan_trial, only: [:extend_higher_plan_trial]
   before_filter :validate_change_trial_plan, only: [:change_trial_plan]
+  before_filter :validate_operations, only: [:skip_mandatory_checks]
 
   SUCCESS = 200..299
   MAX_THP_EXTENSION_DAYS_COUNT = 20
@@ -989,6 +990,29 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
   end
 
+  def skip_mandatory_checks
+    begin
+      result = {}
+      account = Account.find_by_id(params[:account_id]).make_current
+      if params[:operation] != 'check'
+        account.account_additional_settings.additional_settings[:skip_mandatory_checks] = params[:operation] == 'launch'
+        account.account_additional_settings.save!
+      end
+      result[:status] = account.account_additional_settings.additional_settings[:skip_mandatory_checks].present?
+    rescue StandardError => e
+      Rails.logger.debug("FDAdmin Error while trying to save account_additional_settings for account ##{account.id} : \n#{e}")
+      result[:status] = 'error'
+    ensure
+      Account.reset_current_account
+    end
+
+    respond_to do |format|
+      format.json do
+        render json: result
+      end
+    end
+  end
+
   private
 
     def validate_reset_id
@@ -1015,6 +1039,10 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
              SubscriptionsHelper::PLAN_RANKING[new_plan.downcase]
         render status: :bad_request, json: { status: :notice }
       end
+    end
+
+    def validate_operations
+      head 400 unless Fdadmin::ApiConstants::OPERATIONS.include?(params[:operation])
     end
 
     def check_freshconnect_migrate

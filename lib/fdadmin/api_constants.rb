@@ -16,4 +16,5 @@ module Fdadmin::ApiConstants
 
   CARD_PAYMENT = 'card'.freeze
   OFFLINE_PAYMENT = 'offline'.freeze
+  OPERATIONS = ['launch', 'rollback', 'check'].freeze
 end

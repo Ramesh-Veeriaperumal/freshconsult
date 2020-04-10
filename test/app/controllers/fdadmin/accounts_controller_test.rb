@@ -9,7 +9,7 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
   end
 
   def before_all
-    @account = Account.first.make_current
+    @account = Account.first.nil? ? create_test_account : Account.first.make_current
   end
 
   def test_account_detail_with_id
@@ -76,5 +76,80 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
   ensure
     Account.unstub(:current)
     ShardMapping.unstub(:find)
+  end
+
+  def test_disabling_skip_mandatory_checks
+    Account.stubs(:current).returns(@account)
+    ShardMapping.stubs(:find).returns(ShardMapping.first)
+    OpenSSL::HMAC.stubs(:hexdigest).returns('xyz')
+    Fdadmin::DevopsMainController.stubs(:verify_signature).returns(nil)
+    Fdadmin::DevopsMainController.stubs(:permit_internal_tools_ip).returns(nil)
+    id = @account.id
+    FreshopsSubdomains.stubs(:include?).returns(true)
+    $redis_routes.stubs(:perform_redis_op).returns(true)
+    @account.account_additional_settings.additional_settings[:skip_mandatory_checks] = true
+    @account.account_additional_settings.save!
+    params = { 'account_id' => @account.id, 'operation' => 'rollback', 'digest' => 'xyz', 'name_prefix' => 'fdadmin_', 'path_prefix' => nil, 'action' => 'skip_mandatory_checks', 'controller' => 'fdadmin/accounts' }
+    post :skip_mandatory_checks, construct_params(params)
+    @account.account_additional_settings.reload
+    assert_response 200
+    assert_equal @account.account_additional_settings.additional_settings[:skip_mandatory_checks], false
+  ensure
+    Account.unstub(:current)
+    OpenSSL::HMAC.unstub(:hexdigest)
+    FreshopsSubdomains.unstub(:include?)
+    ShardMapping.unstub(:find)
+    Fdadmin::DevopsMainController.unstub(:verify_signature)
+    Fdadmin::DevopsMainController.unstub(:permit_internal_tools_ip)
+  end
+
+  def test_enabling_skip_mandatory_checks
+    Account.stubs(:current).returns(@account)
+    ShardMapping.stubs(:find).returns(ShardMapping.first)
+    OpenSSL::HMAC.stubs(:hexdigest).returns('xyz')
+    Fdadmin::DevopsMainController.stubs(:verify_signature).returns(nil)
+    Fdadmin::DevopsMainController.stubs(:permit_internal_tools_ip).returns(nil)
+    id = @account.id
+    FreshopsSubdomains.stubs(:include?).returns(true)
+    $redis_routes.stubs(:perform_redis_op).returns(true)
+    @account.account_additional_settings.additional_settings[:skip_mandatory_checks] = false
+    @account.account_additional_settings.save!
+    params = { 'account_id' => @account.id, 'operation' => 'launch', 'digest' => 'xyz', 'name_prefix' => 'fdadmin_', 'path_prefix' => nil, 'action' => 'skip_mandatory_checks', 'controller' => 'fdadmin/accounts' }
+    post :skip_mandatory_checks, construct_params(params)
+    @account.account_additional_settings.reload
+    assert_response 200
+    assert_equal @account.account_additional_settings.additional_settings[:skip_mandatory_checks], true
+  ensure
+    Account.unstub(:current)
+    OpenSSL::HMAC.unstub(:hexdigest)
+    FreshopsSubdomains.unstub(:include?)
+    ShardMapping.unstub(:find)
+    Fdadmin::DevopsMainController.unstub(:verify_signature)
+    Fdadmin::DevopsMainController.unstub(:permit_internal_tools_ip)
+  end
+
+  def test_skip_mandatory_checks_with_invalid_operation
+    Account.stubs(:current).returns(@account)
+    ShardMapping.stubs(:find).returns(ShardMapping.first)
+    OpenSSL::HMAC.stubs(:hexdigest).returns('xyz')
+    Fdadmin::DevopsMainController.stubs(:verify_signature).returns(nil)
+    Fdadmin::DevopsMainController.stubs(:permit_internal_tools_ip).returns(nil)
+    id = @account.id
+    FreshopsSubdomains.stubs(:include?).returns(true)
+    $redis_routes.stubs(:perform_redis_op).returns(true)
+    @account.account_additional_settings.additional_settings[:skip_mandatory_checks] = true
+    @account.account_additional_settings.save!
+    params = { 'account_id' => @account.id, 'operation' => 'abcd', 'digest' => 'xyz', 'name_prefix' => 'fdadmin_', 'path_prefix' => nil, 'action' => 'skip_mandatory_checks', 'controller' => 'fdadmin/accounts' }
+    post :skip_mandatory_checks, construct_params(params)
+    @account.account_additional_settings.reload
+    assert_response 400
+    assert_equal @account.account_additional_settings.additional_settings[:skip_mandatory_checks], true
+  ensure
+    Account.unstub(:current)
+    OpenSSL::HMAC.unstub(:hexdigest)
+    FreshopsSubdomains.unstub(:include?)
+    ShardMapping.unstub(:find)
+    Fdadmin::DevopsMainController.unstub(:verify_signature)
+    Fdadmin::DevopsMainController.unstub(:permit_internal_tools_ip)
   end
 end
