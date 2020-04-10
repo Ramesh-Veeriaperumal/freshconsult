@@ -46,7 +46,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   SLA_DATETIME_ATTRIBUTES = ['due_by', 'frDueBy', 'nr_due_by'].freeze
 
-  TICKET_SLA_ATTRIBUTES = ['isescalated', 'fr_escalated', 'nr_escalated', 'escalation_level', 'nr_due_by', 'due_by', 'frDueBy'].freeze
+  TICKET_SLA_ATTRIBUTES = ['isescalated', 'fr_escalated', 'nr_escalated', 'escalation_level'].freeze
 
   OBSERVER_ATTR = []
   self.table_name =  "helpdesk_tickets"
@@ -1497,15 +1497,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   alias_method :rr_active?, :rr_active
 
   def round_robin_attributes
-    { active: rr_active, agent_id: responder_id.to_s.presence, group_id: group_id.to_s.presence, assignment_params: assignment_params }
-  end
-
-  def assignment_params
-    { created_at: created_at.to_i * 1000, response_due: expected_response_time.to_i * 1000, resolution_due: due_by.to_i * 1000 }
-  end
-
-  def expected_response_time
-    nr_due_by.presence || frDueBy
+    { active: rr_active, agent_id: responder_id.to_s.presence, group_id: group_id.to_s.presence }
   end
 
   def eligible_for_ocr?
