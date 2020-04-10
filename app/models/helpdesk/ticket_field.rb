@@ -356,6 +356,13 @@ class Helpdesk::TicketField < ActiveRecord::Base
                   custom_file: { type: :custom, dom_type: 'file' },
                   secure_text: { type: :custom,  dom_type: 'secure_text' } }.freeze
 
+  FSM_FIELD_CLASS = { contact: { i18n_label: 'cf_fsm_contact_name' },
+                      customer_phone_number: { i18n_label: 'cf_fsm_phone_number' },
+                      service_location: { i18n_label: 'cf_fsm_service_location' },
+                      appointment_start_time: { i18n_label: 'cf_fsm_appointment_start_time' },
+                      appointment_end_time: { i18n_label: 'cf_fsm_appointment_end_time' },
+                      customer_s_signature: { i18n_label: 'cf_fsm_customer_signature' } }.freeze
+
   CUSTOM_FIELD_TYPES = Helpdesk::TicketField::FIELD_CLASS.select { |field_name, prop| prop[:type] == :custom }.keys.map(&:to_s).freeze
 
   MODIFIABLE_CUSTOM_FIELD_TYPES = Helpdesk::TicketField::FIELD_CLASS.select { |field_name, prop| prop[:type] == :custom }.except(*SKIP_FIELD_TYPES).keys.map(&:to_s).freeze
@@ -417,7 +424,13 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   def i18n_label
     default_label = FIELD_CLASS[field_type.to_sym] && FIELD_CLASS[field_type.to_sym][:i18n_label] # adding condition here for skill from decorator
-    default_label ? I18n.t("ticket_fields.fields.#{default_label}") : label
+    default_label ? I18n.t("ticket_fields.fields.#{default_label}") : default_custom_field
+  end
+
+  def default_custom_field
+    custom_label = label_in_portal.to_s.parameterize.underscore
+    custom_field_label = FSM_FIELD_CLASS[custom_label.to_sym] && FSM_FIELD_CLASS[custom_label.to_sym][:i18n_label]
+    custom_field_label ? I18n.t("ticket_fields.field_service_fields.#{custom_field_label}") : label
   end
 
   def visible_in_view_form?

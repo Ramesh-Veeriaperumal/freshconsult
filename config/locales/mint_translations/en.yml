@@ -5159,6 +5159,13 @@ en:
       description: Description
       fsm_fields_edit: This default field cannot be edited
       fsm_fields_moved_out: Default fields in this section cannot be moved out of the section.
+    field_service_fields:
+      cf_fsm_contact_name: Contact
+      cf_fsm_phone_number: Phone number
+      cf_fsm_service_location: Service location
+      cf_fsm_appointment_start_time: Appointment start time
+      cf_fsm_appointment_end_time: Appointment end time
+      cf_fsm_customer_signature: Customer's signature
     formfield_props:
       behavior: Behavior
       customer_edit: Customer can edit

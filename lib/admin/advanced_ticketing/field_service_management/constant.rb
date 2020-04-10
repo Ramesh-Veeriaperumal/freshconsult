@@ -6,7 +6,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     CUSTOMER_SIGNATURE = 'cf_fsm_customer_signature'.freeze
     FSM_DEFAULT_TICKET_FIELDS = [
       {
-        label: 'Contact',
+        label: I18n.t('ticket_fields.field_service_fields.cf_fsm_contact_name'),
         type: 'text',
         field_type: 'custom_text',
         label_in_portal: 'Contact',
@@ -15,7 +15,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         flexifield_alias: 'fsm_contact_name'
       },
       {
-        label: 'Phone number',
+        label: I18n.t('ticket_fields.field_service_fields.cf_fsm_phone_number'),
         type: 'text',
         field_type: 'custom_text',
         label_in_portal: 'Customer phone number',
@@ -24,7 +24,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         flexifield_alias: 'fsm_phone_number'
       },
       {
-        label: 'Service location',
+        label: I18n.t('ticket_fields.field_service_fields.cf_fsm_service_location'),
         type: 'text',
         field_type: 'custom_text',
         label_in_portal: 'Service location',
@@ -33,7 +33,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         flexifield_alias: 'fsm_service_location'
       },
       {
-        label: 'Appointment start time',
+        label: I18n.t('ticket_fields.field_service_fields.cf_fsm_appointment_start_time'),
         type: 'date_time',
         field_type: 'custom_date_time',
         label_in_portal: 'Appointment start time',
@@ -41,7 +41,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         flexifield_alias: 'fsm_appointment_start_time'
       },
       {
-        label: 'Appointment end time',
+        label: I18n.t('ticket_fields.field_service_fields.cf_fsm_appointment_end_time'),
         type: 'date_time',
         field_type: 'custom_date_time',
         label_in_portal: 'Appointment end time',
@@ -49,7 +49,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         flexifield_alias: 'fsm_appointment_end_time'
       },
       {
-        label: "Customer's signature",
+        label: I18n.t('ticket_fields.field_service_fields.cf_fsm_customer_signature'),
         type: 'file',
         field_type: 'custom_file',
         label_in_portal: "Customer's signature",
