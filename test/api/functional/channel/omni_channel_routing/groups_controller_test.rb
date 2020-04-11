@@ -57,7 +57,7 @@ class Channel::OmniChannelRouting::GroupsControllerTest < ActionController::Test
     response = get :unassigned_tasks, controller_params(version: 'channel/ocr', id: @group.id)
     response_body = JSON.parse response.body.gsub('=>', ':')
     ticket.reload
-    expected_json = { unassigned_tasks: [{ id: ticket.display_id, updated_at: (ticket.updated_at.to_f * 1000).to_i, assignment_params: ticket.assignment_params }], meta: { next_page: false } }
+    expected_json = { unassigned_tasks: [{ id: ticket.display_id, updated_at: (ticket.updated_at.to_f * 1000).to_i }], meta: { next_page: false } }
     assert_response 200
     match_json(expected_json)
     ticket.ticket_status.stop_sla_timer = status
@@ -98,7 +98,7 @@ class Channel::OmniChannelRouting::GroupsControllerTest < ActionController::Test
     ticket2.reload
     response = get :unassigned_tasks, controller_params(version: 'channel/ocr', id: @group.id, per_page: 1, page: 1)
     response_body = JSON.parse response.body.gsub('=>', ':')
-    expected_json = { unassigned_tasks: [{ id: ticket1.display_id, updated_at: (ticket1.updated_at.to_f * 1000).to_i, assignment_params: ticket1.assignment_params }], meta: { next_page: true } }
+    expected_json = { unassigned_tasks: [{ id: ticket1.display_id, updated_at: (ticket1.updated_at.to_f * 1000).to_i }], meta: { next_page: true } }
     assert_response 200
     match_json(expected_json)
     ticket1.destroy
