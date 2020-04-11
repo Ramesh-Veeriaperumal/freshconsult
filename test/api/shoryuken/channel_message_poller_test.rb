@@ -84,6 +84,28 @@ class ChannelMessagePollerTest < ActionView::TestCase
     assert_equal ticket.description, payload[:description]
   end
 
+  def test_twitter_mention_convert_as_ticket_and_update_twitter_contact_fields
+    payload, command_payload = twitter_create_ticket_command('mention')
+    data = command_payload[:payload][:data]
+    twitter_profile_status = data[:twitter_profile_status]
+    twitter_followers_count = data[:twitter_followers_count]
+    push_to_channel(command_payload)
+    user = @account.users.find(data[:requester_id])
+    assert_equal twitter_profile_status, user.twitter_profile_status
+    assert_equal twitter_followers_count, user.twitter_followers_count
+  end
+
+  def test_twitter_mention_convert_as_ticket_and_update_twitter_contact_fields_without_values_in_payload
+    payload, command_payload = twitter_create_ticket_command('mention')
+    data = command_payload[:payload][:data]
+    data.delete(:twitter_profile_status)
+    data.delete(:twitter_followers_count)
+    push_to_channel(command_payload)
+    user = @account.users.find(data[:requester_id])
+    assert_equal false, user.twitter_profile_status
+    assert_nil user.twitter_followers_count
+  end
+
   def test_twitter_mention_convert_as_note_and_update_twitter_contact_fields
     create_twitter_default_fields
     Account.current.launch(:incoming_mentions_in_tms)
@@ -450,10 +472,11 @@ class ChannelMessagePollerTest < ActionView::TestCase
   private
 
     def twitter_create_ticket_command(tweet_type)
+      user = create_twitter_user
       payload = {
         "subject": SecureRandom.uuid,
         "description": Faker::Lorem.characters(100),
-        "requester_id": @account.users.last.id,
+        "requester_id": user.id,
         "tweet_type": tweet_type,
         "tweet_id": Faker::Number.between(1, 999999999).to_s
       }

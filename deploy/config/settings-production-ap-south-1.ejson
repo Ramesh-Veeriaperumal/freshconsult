@@ -712,6 +712,20 @@
             "_priority": 1
           }
         },
+        "archive": {
+          "search_etl_queue": {
+            "_sqs_queue": "search-etlqueue-archive-production",
+            "_priority": 1
+          },
+          "count_etl_queue": {
+            "_priority": 1,
+            "_sqs_queue": "count_etl_queue_archive_production"
+          },
+          "analytics_etl_queue": {
+            "_priority": 1,
+            "_sqs_queue": "analytics_etl_queue_archive_production"
+          }
+        },
         "maintenance": {
           "search_etlqueue_maintenance": {
             "_sqs_queue": "search-etlqueue-production_maintenance",

@@ -1,5 +1,10 @@
+<% config = node[:ymls][:freno] %>
 defaults: &defaults
+<% if @envoy_egress_allowed && config && config[:envoy_egress] %>
+  freno_base_url: "<%= config[:envoy_egress][:service_address] %>:<%= config[:envoy_egress][:service_port] %>"
+<% else %>
   freno_base_url: "http://freno.freshdesk.internal"
+<% end %>
 
 development:
   <<: *defaults

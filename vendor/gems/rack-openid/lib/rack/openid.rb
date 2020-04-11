@@ -72,6 +72,9 @@ module Rack #:nodoc:
 
     URL_FIELD_SELECTOR = lambda { |field| field.to_s =~ %r{^https?://} }
 
+    EXECUTION_TIMEOUT_PERIOD = 10 # 10 Seconds
+    OPENID_TIMEOUT_REDIS_KEY = 'OPENID_TIMEOUT_PERIOD'.freeze
+    OPENID_BLACKLIST_IP_KEY = 'OPENID_BLACKLISTED_IPS'.freeze
     # :startdoc:
 
     # Initialize middleware with application and optional OpenID::Store.
@@ -121,17 +124,27 @@ module Rack #:nodoc:
           raise RuntimeError, "Rack::OpenID requires a session"
         end
 
-        consumer = ::OpenID::Consumer.new(session, @store)
         identifier = params['identifier'] || params['identity']
 
+        request_timeout = $redis_others.perform_redis_op('get', OPENID_TIMEOUT_REDIS_KEY) || EXECUTION_TIMEOUT_PERIOD
+        blocked_ips = $redis_others.perform_redis_op('smembers', OPENID_BLACKLIST_IP_KEY)
+        blacked_ips_regex_pattern = blocked_ips.join('|')
         begin
-          oidreq = consumer.begin(identifier)
+          # Raise Exception if the IP is blocked
+          raise ::OpenID::OpenIDError, 'IP Address Blocked' if blacked_ips_regex_pattern.present? && identifier =~ /((\w*):\/\/)*(#{blacked_ips_regex_pattern})\b(\w*)/
+
+          oidreq = Timeout.timeout(request_timeout.to_i) do
+            consumer = ::OpenID::Consumer.new(session, @store)
+            consumer.begin(identifier)
+          end
+
           add_simple_registration_fields(oidreq, params)
           add_attribute_exchange_fields(oidreq, params)
           add_oauth_fields(oidreq, params)
           url = open_id_redirect_url(req, oidreq, params["trust_root"], params["return_to"], params["method"])
           return redirect_to(url)
         rescue ::OpenID::OpenIDError, Timeout::Error => e
+          Rails.logger.debug "OpenID : Error  #{e}"
           env[RESPONSE] = MissingResponse.new
           return @app.call(env)
         end

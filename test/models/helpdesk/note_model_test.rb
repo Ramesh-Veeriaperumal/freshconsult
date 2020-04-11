@@ -21,6 +21,25 @@ class NoteModelTest < ActiveSupport::TestCase
     super
   end
 
+  def test_email_agent_as_requester
+    @account = Account.current
+    @agent = add_agent(Account.current)
+    ticket = create_ticket(requester_id: @agent.id)
+    test_note = FactoryGirl.build(:helpdesk_note, source: 2,
+                                                  notable_id: ticket.id,
+                                                  user_id: @agent.id,
+                                                  account_id: @account.id,
+                                                  notable_type: 'Helpdesk::Ticket')
+    test_note.incoming = false
+    test_note.private = true
+    test_note.build_note_body(body: Faker::Lorem.paragraph, body_html: Faker::Lorem.paragraph)
+
+    test_note.expects(:handle_notification_for_agent_as_req).times(1)
+    test_note.expects(:integrations_private_note_notifications).times(0)
+
+    test_note.save_note
+  end
+
   def test_update_email_received_at_note
     time = Time.zone.now.to_s
     parsed_date = parse_internal_date(time)

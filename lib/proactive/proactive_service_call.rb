@@ -9,7 +9,8 @@ module Proactive
     def build_generic_proactive_service_args
       {
         'domain': ProactiveServiceConfig['service_url'],
-        'auth_header': build_proactive_header
+        'auth_header': build_proactive_header,
+        'skip_blacklist_verification': true
       }
     end
 

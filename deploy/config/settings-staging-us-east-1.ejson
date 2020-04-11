@@ -724,6 +724,12 @@
         "_outgoing_domain": "freshpo.com",
         "_outgoing_user_name": "freshdesk_user"
       },
+      "freno": {
+        "envoy_egress": {
+          "_service_address": "http://localhost",
+          "_service_port": 8189
+        }
+      },
       "facebook": {
         "app_id": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:hhxCNWWh/meTiskR3WiZG9zwmpG3pvZ+:/FkTSUsEt6STw9rC+NzDenmy2+VQN3qNGslZsBFNDw==]",
         "app_id_fallback": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:vKiag3h54EX2KIi7qhnZE0OKfkKXQXra:p4k6qY6PNyob8ZSGq/TG/ru5W92r]",
