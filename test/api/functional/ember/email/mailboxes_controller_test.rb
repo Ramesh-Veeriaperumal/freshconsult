@@ -24,14 +24,15 @@ module Ember
       User.any_instance.stubs(:has_privilege?).returns(true)
     end
 
-    def create_forwarding_test_ticket(email_config, requester_email)
+    def create_forwarding_test_ticket(email_config, requester_email, parsing_error = false)
       email = new_email(
         email_config: email_config.to_email,
         reply: requester_email,
         from: requester_email,
         include_to: email_config.to_email
       )
-      email[:subject] = "(#774985325) Gmail Forwarding Confirmation - Receive Mail from #{email_config.to_email}"
+      verifcation_code = parsing_error ? '774985325' : '(#774985325)'
+      email[:subject] = "#{verifcation_code}Gmail Forwarding Confirmation - Receive Mail from #{email_config.to_email}"
       Account.stubs(:current).returns(@account)
       ticket = Helpdesk::ProcessEmail.new(email).perform
       requester_id = @account.tickets.find(ticket['ticket_id']).requester.id
@@ -160,6 +161,24 @@ module Ember
       get :email_forward_verification_code, construct_params(params)
       assert_response 404
       match_json(request_error_pattern(:forwarding_ticket_not_found))
+    end
+
+    def test_verify_confirmation_code_parsing_failure
+      domain = @account.primary_email_config.to_email.split('@')[1]
+      mailbox = create_email_config(
+        support_email: "test14@#{domain}",
+        forward_email: "test14@#{domain}",
+        name: 'testname'
+      )
+      mailbox.active = false
+      mailbox.save!
+      create_forwarding_test_ticket(mailbox, 'forwarding-noreply@google.com', true)
+      id = mailbox.id
+      params = { version: 'private', id: id }
+      get :email_forward_verification_code, construct_params(params)
+      parsed_response = JSON.parse(response.body)
+      assert_response 200
+      assert_equal parsed_response['confirmation_code'], verification_parsing_failure_hash['confirmation_code']
     end
   end
 end
