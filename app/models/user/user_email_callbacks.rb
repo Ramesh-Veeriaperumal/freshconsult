@@ -115,7 +115,7 @@ class User < ActiveRecord::Base
   end
 
   def update_verified
-    UserEmail.update_all({:verified => self.active},{:user_id => self.id})
+    UserEmail.where(user_id: self.id).update_all(verified: self.active)
   end
 
   def update_user_table_email

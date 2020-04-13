@@ -1,4 +1,4 @@
-<% @monitoring = !Monitorship.count(:id, :conditions => ['user_id = ? and active = ?', current_user.id, true]).zero? %>
+<% @monitoring = !Monitorship.where(['user_id = ? and active = ?', current_user.id, true]).count.zero? %>
 <div class="clearfix">
 	<div class="pull-right">
     <% if privilege?(:delete_topic) -%>

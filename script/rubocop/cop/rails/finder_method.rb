@@ -54,8 +54,8 @@ module RuboCop
           find_all_by_: 'where(...)',
           find_last_by_: 'where(...).last',
           scoped_by_: 'where(...)',
-          find_or_initialize_by_: 'find_or_initialize_by(...)',
-          find_or_create_by_: 'find_or_create_by(...)',
+          # find_or_initialize_by_: 'find_or_initialize_by(...)',
+          # find_or_create_by_: 'find_or_create_by(...)',
           paginate_by_: 'where(...).paginate(...)'
         }.freeze
 

@@ -24,9 +24,9 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     sync_tag_name = params[:integrations_google_account][:sync_tag]
     if id.blank?
       # The below line has to be removed, to support multiple sync for same google account.
-      goog_acc = Integrations::GoogleAccount.find(:first, :conditions => ["email=? and account_id=?", params[:integrations_google_account][:email], account]) unless params[:integrations_google_account][:email].blank?
+      goog_acc = Integrations::GoogleAccount.where(['email=? and account_id=?', params[:integrations_google_account][:email], account]).first if params[:integrations_google_account][:email].present?
     else
-      goog_acc = Integrations::GoogleAccount.find(:first, :conditions => ["id=? and account_id=?", id, account])
+      goog_acc = Integrations::GoogleAccount.where(['id=? and account_id=?', id, account]).first
     end
     filtered_google_account_params = params[:integrations_google_account].except(:id, :sync_tag, :account)
     if goog_acc.blank?
@@ -39,14 +39,12 @@ class Integrations::GoogleAccount < ActiveRecord::Base
   end
 
   def self.find_all_installed_google_accounts(account=nil)
-    goog_cnt_app = Integrations::Application.find(:first, :conditions => {:name => "google_contacts"})
+    goog_cnt_app = Integrations::Application.where(name: 'google_contacts').first
     conditions = ["installed_applications.application_id = ?", goog_cnt_app]
     unless account.blank?
       conditions = ["installed_applications.application_id = ? and installed_applications.account_id=?", goog_cnt_app, account]
     end
-    Integrations::GoogleAccount.find(:all, 
-                  :joins => "INNER JOIN installed_applications ON installed_applications.account_id=google_accounts.account_id", 
-                  :select => "google_accounts.*, installed_applications.configs", :conditions => conditions)
+    Integrations::GoogleAccount.where(conditions).joins('INNER JOIN installed_applications ON installed_applications.account_id=google_accounts.account_id').select('google_accounts.*, installed_applications.configs').to_a
   end
 
   def create_google_group(group_name, use_oauth2=nil)
@@ -476,8 +474,9 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     end
 
     def find_user_by_google_id(google_id)
-      self.account.all_users.first(:include=>[:tags], :joins=>"INNER JOIN google_contacts ON google_contacts.user_id=users.id", 
-                                  :conditions=>["google_contacts.google_id = ? and google_contacts.google_account_id = ?", google_id, self.id], :readonly => false) unless google_id.blank?
+      self.account.all_users.includes([:tags]).joins('INNER JOIN google_contacts ON google_contacts.user_id=users.id')
+          .where(['google_contacts.google_id = ? and google_contacts.google_account_id = ?', google_id, self.id])
+          .readonly(false).first if google_id.present?
     end
 
     def fetch_current_account_contact(db_contact) #possible dead code

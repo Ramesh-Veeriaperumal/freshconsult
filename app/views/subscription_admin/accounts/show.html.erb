@@ -104,7 +104,7 @@
   <div class="span4">
   <table id="sample-tickets" class="table table-bordered">
     <tr><th>Sample tickets</th></tr>
-    <% @account.tickets.find(:all,:order => 'created_at desc',:limit => 5).each do |tkt| %>
+    <% @account.tickets.order('created_at desc').limit(5).each do |tkt| %>
       <tr>
       <td><%=tkt.subject%></td>
       </tr>

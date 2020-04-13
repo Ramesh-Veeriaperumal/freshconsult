@@ -30,10 +30,10 @@ class Solution::ArticleVersionsWorker < BaseWorker
   private
 
     def payload
-      JSON.generate(
+      {
         title: @title,
         description: @description
-      )
+      }.to_json
     end
 
     # article version and article record won't be there for destroy action, use this only for update action

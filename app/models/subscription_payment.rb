@@ -83,11 +83,8 @@ class SubscriptionPayment < ActiveRecord::Base
 
   def self.non_recurring_payments(start_date = 1.month.ago.beginning_of_month, 
       end_date = 1.month.ago.end_of_month.end_of_day)
-    find(:all, 
-      :joins => ["INNER JOIN subscriptions ON subscription_payments.account_id = 
-                  subscriptions.account_id and subscriptions.state = 'active'"], 
-      :conditions => [ "subscription_payments.created_at > ? AND subscription_payments.created_at < ? 
-                        AND subscription_payments.misc = 1", start_date, end_date ])
+    where(['subscription_payments.created_at > ? AND subscription_payments.created_at < ? AND subscription_payments.misc = 1', start_date, end_date])
+      .joins(["INNER JOIN subscriptions ON subscription_payments.account_id = subscriptions.account_id and subscriptions.state = 'active'"]).to_a
   end
 
 end

@@ -392,7 +392,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def stop_timesheet_timers
     if @model_changes.key?(:status) && [RESOLVED, CLOSED].include?(status)
-       running_timesheets =  time_sheets.find(:all , :conditions =>{:timer_running => true})
+      running_timesheets = time_sheets.where(timer_running: true).to_a
        running_timesheets.each{|timer|
         timer.stop_timer
         Integrations::TimeSheetsSync.update(timer, User.current)

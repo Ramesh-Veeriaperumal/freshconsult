@@ -116,18 +116,17 @@ class Helpdesk::Filters::ArchiveTicketFilter < Wf::Filter
         all_joins = get_joins(sql_conditions)
 
         if @without_pagination
-          return model_class.find(:all , :select => @filter_fields_to_select , :order => order_clause, 
-                                        :limit => per_page, :offset => (page - 1) * per_page,
-                                        :conditions => all_conditions, :joins => all_joins)
+
+          return model_class.select(@filter_fields_to_select).joins(all_joins).where(all_conditions).order(order_clause).limit(per_page).offset((page - 1) * per_page).to_a
+
         end
         
-        select = @html_format ? ticket_select : "archive_tickets.*"
-        select = "DISTINCT(archive_tickets.id) as 'unique_id' , #{select}" if all_conditions[0].include?("helpdesk_tags.name")
+        select_column = @html_format ? ticket_select : 'archive_tickets.*'
+        select_column = "DISTINCT(archive_tickets.id) as 'unique_id' , #{select_column}" if all_conditions[0].include?('helpdesk_tags.name')
 
-        recs = model_class.paginate(:select => select,
-                                   :order => order_clause, :page => page, 
-                                   :per_page => per_page, :conditions => all_conditions, :joins => all_joins,
-                                   :total_entries => count_without_query).preload([:ticket_status, :responder, :requester])
+        recs = model_class.select(select_column).joins(all_joins).where(all_conditions).order(order_clause)
+               .preload([:ticket_status, :responder, :requester])
+               .paginate(page: page, per_page: per_page, total_entries: count_without_query)
         recs.wf_filter = self
         recs
       end
