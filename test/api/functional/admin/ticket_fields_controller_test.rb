@@ -705,4 +705,22 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
       assert_equal child_fields[1].label_in_portal, RailsFullSanitizer.sanitize(names[2])
     end
   end
+
+  def test_deletion_of_secure_text_field
+    Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+    ::Tickets::VaultDataCleanupWorker.jobs.clear
+    launch_ticket_field_revamp do
+      name = "secure_text_#{Faker::Lorem.characters(rand(5..10))}"
+      secure_text_field = create_custom_field_dn(name, 'secure_text')
+      delete :destroy, construct_params(id: secure_text_field.id)
+      assert_response 204
+      assert @account.ticket_fields.find_by_id(secure_text_field.id).blank?
+      assert_equal 1, ::Tickets::VaultDataCleanupWorker.jobs.size
+      args = ::Tickets::VaultDataCleanupWorker.jobs.first.deep_symbolize_keys[:args][0]
+      assert_equal args[:field_names], [TicketDecorator.display_name(secure_text_field.name)]
+    end
+  ensure
+    ::Tickets::VaultDataCleanupWorker.jobs.clear
+    Account.any_instance.unstub(:pci_compliance_field_enabled?)
+  end
 end

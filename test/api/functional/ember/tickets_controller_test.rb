@@ -6348,7 +6348,7 @@ module Ember
       assert_equal payload['uuid'].to_s, uuid
       assert_equal payload['iss'], 'fd/poduseast'
       assert_equal payload['scope'], ['custom_card_no_test']
-      assert_equal payload['exp'], payload['iat'] + 120
+      assert_equal payload['exp'], payload['iat'] + PciConstants::EXPIRY_DURATION.to_i
       assert_equal payload['accid'], current_account_id
       assert_equal payload['portal'], 1
       assert_response 200
@@ -6401,7 +6401,7 @@ module Ember
       assert_equal payload['uuid'].to_s, uuid
       assert_equal payload['iss'], 'fd/poduseast'
       assert_equal payload['scope'], ['custom_card_no_test']
-      assert_equal payload['exp'], payload['iat'] + 120
+      assert_equal payload['exp'], payload['iat'] + PciConstants::EXPIRY_DURATION.to_i
       assert_equal payload['accid'], current_account_id
       assert_equal payload['portal'], 1
       assert_response 200
@@ -6468,6 +6468,7 @@ module Ember
 
     def test_close_ticket_with_secure_text_field
       Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+      ::Tickets::VaultDataCleanupWorker.jobs.clear
       Account.first.make_current
       name = "secure_text_#{Faker::Lorem.characters(rand(5..10))}"
       secure_text_field = create_custom_field_dn(name, 'secure_text')
@@ -6485,6 +6486,35 @@ module Ember
       Account.reset_current_account
       ::Tickets::VaultDataCleanupWorker.jobs.clear
       Account.any_instance.unstub(:pci_compliance_field_enabled?)
+    end
+
+    def test_show_with_old_secure_text_field_data
+      Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+      Account.first.make_current
+      add_privilege(User.current, :view_secure_field)
+      add_privilege(User.current, :edit_secure_field)
+      name = "secure_text_#{Faker::Lorem.characters(rand(5..10))}"
+      secure_text_field = create_custom_field_dn(name, 'secure_text')
+      secure_text_field_name = "_#{name}"
+      ticket = create_ticket
+      assert_not_nil ticket
+      update_params = { custom_fields: { secure_text_field_name => Faker::Number.number(5) } }
+      put :update, construct_params({ id: ticket.display_id, version: 'private' }, update_params)
+      assert_response 200
+      secure_text_field.destroy
+      name = "secure_text_#{Faker::Lorem.characters(rand(5..10))}"
+      new_secure_text_field = create_custom_field_dn(name, 'secure_text')
+      get :show, controller_params(version: 'private', id: ticket.display_id)
+      assert_response 200
+      response_body = JSON.parse(response.body)
+      assert_nil response_body['custom_fields'][name]
+    ensure
+      Account.any_instance.unstub(:pci_compliance_field_enabled?)
+      new_secure_text_field.destroy
+      ticket.destroy
+      ::Tickets::VaultDataCleanupWorker.jobs.clear
+      remove_privilege(User.current, :view_secure_field)
+      remove_privilege(User.current, :edit_secure_field)
     end
   end
 end

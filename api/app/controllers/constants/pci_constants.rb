@@ -3,7 +3,7 @@ module PciConstants
   OBJECT_TYPE = {
     ticket: 'ticket'
   }.freeze
-  EXPIRY_DURATION = 2.minutes.freeze
+  EXPIRY_DURATION = 30.seconds.freeze
   MAX_TRY = 2
   PREFIX = '_'.freeze
   ACTION = {

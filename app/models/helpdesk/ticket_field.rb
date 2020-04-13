@@ -154,6 +154,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   after_commit :clear_new_ticket_field_cache
   after_commit :clear_fragment_caches
   after_commit :clear_all_section_ticket_fields_cache
+  after_commit :cleanup_secure_field_data, if: -> { field_type == SECURE_TEXT }, on: :destroy
 
   after_commit :construct_model_changes
 
@@ -1166,5 +1167,9 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
     def translation_record
       @translation_record ||= Account.current.custom_translations_enabled? && Account.current.supported_languages.include?(language.code) ? safe_send("#{language.to_key}_translation") : nil
+    end
+
+    def cleanup_secure_field_data
+      Tickets::VaultDataCleanupWorker.perform_async(field_names: [TicketDecorator.display_name(name)])
     end
 end

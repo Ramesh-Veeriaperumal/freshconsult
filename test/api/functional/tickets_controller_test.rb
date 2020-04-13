@@ -6215,7 +6215,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal payload['uuid'].to_s, uuid
     assert_equal payload['iss'], 'fd/poduseast'
     assert_equal payload['scope'], ['custom_card_no_test']
-    assert_equal payload['exp'], payload['iat'] + 120
+    assert_equal payload['exp'], payload['iat'] + PciConstants::EXPIRY_DURATION.to_i
     assert_equal payload['accid'], current_account_id
     assert_equal payload['portal'], 1
     assert_response 200

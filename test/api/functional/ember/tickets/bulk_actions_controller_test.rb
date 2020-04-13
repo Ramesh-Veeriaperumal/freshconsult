@@ -1648,6 +1648,8 @@ module Ember
 
       def test_bulk_close_with_secure_text_field
         Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+        ::Tickets::VaultDataCleanupWorker.jobs.clear
+        ::Tickets::BulkTicketActions.jobs.clear
         name = "secure_text_#{Faker::Lorem.characters(rand(5..10))}"
         secure_text_field = create_custom_field_dn(name, 'secure_text')
         ticket_display_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
