@@ -5,7 +5,7 @@ class HomeControllerTest < ActionController::TestCase
   include ControllerTestHelper
   def setup
     super
-    end
+  end
 
   def test_mobile_app_onboarding_calls_for_android
     login_admin
@@ -32,5 +32,15 @@ class HomeControllerTest < ActionController::TestCase
 
     get :index
     assert_response 302
+  end
+
+  def test_index_html_to_return_index_page
+    html_content = '<html><body>Hey buddy.. test works!!</body></html>'
+    Net::HTTP.stubs(:get).with(URI(AppConfig['falcon_ui']['index_page'])).returns(html_content)
+    get :index_html
+    assert_response 200
+    assert_equal response.body, html_content
+  ensure
+    Net::HTTP.unstub(:get)
   end
 end

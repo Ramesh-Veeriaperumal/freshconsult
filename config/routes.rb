@@ -193,6 +193,8 @@ Helpkit::Application.routes.draw do
 
   root :to => 'home#index'
 
+  get '/a/*others', to: 'home#index_html'
+  get '/a/', to: 'home#index_html'
   match "/support/sitemap" => "support#sitemap", :format => "xml", :as => :sitemap, :via => :get
   match "/robots" => "support#robots", :format => "text", :as => :robots, :via => :get
 

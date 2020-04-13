@@ -31,6 +31,10 @@ class HomeController < ApplicationController
     # end
   end
 
+  def index_html
+    render text: Assets::IndexPage.html_content, content_type: 'text/html'
+  end
+
   protected
 
     def set_content_scope

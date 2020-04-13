@@ -433,6 +433,7 @@ HEREDOC
     @is_fc_shoryuken_layer = opsworks.fc_shoryuken_layer?()
     @is_reports_layer = opsworks.reports_layer?()
     @is_migration_layer = opsworks.migration_layer?()
+    @color_code = opsworks.get_color()
 
     @is_hk_layer = opsworks.hk_layer?()
     @is_fc_layer = opsworks.fc_layer?()
