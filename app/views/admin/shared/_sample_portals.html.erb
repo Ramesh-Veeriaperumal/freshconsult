@@ -1,10 +1,21 @@
-<div class="portal_helpnote">
-      <h3 class="title externalid-title"><%=t('admin.portal.helpnote.portal_freshdesk_title').html_safe %></h3>
-      <p class="externalid-content"><%= t('admin.portal.helpnote.portal_info').html_safe %></p>
-      <span class="freshdesk-portal-link">
-      	<a href="https://freshdesk.com/customized-support-portal-collection" 
-      		target="_blank"><%=t("admin.portal.helpnote.portal_freshdesk_link")%>
-      			
-      	</a>
-      	</span>
-</div>
+<% if current_account.help_widget_enabled? %>
+	<div class="portal_helpnote">
+		<h3 class="title externalid-title"><%=t('admin.portal.helpnote.help_widget_title').html_safe %></h3>
+		<p class="externalid-content"><%= t('admin.portal.helpnote.help_widget_info').html_safe %></p>
+		<span class="freshdesk-portal-link">
+			<a href="/a/admin/widgets" data-heap-id="open-widget-settings-from-portal"
+				target="_blank"><%=t("admin.portal.helpnote.help_widget_link")%>
+			</a>
+		</span>
+	</div>
+<% else %>
+	<div class="portal_helpnote">
+		<h3 class="title externalid-title"><%=t('admin.portal.helpnote.portal_freshdesk_title').html_safe %></h3>
+		<p class="externalid-content"><%= t('admin.portal.helpnote.portal_info').html_safe %></p>
+		<span class="freshdesk-portal-link">
+		<a href="https://freshdesk.com/customized-support-portal-collection"
+				target="_blank"><%=t("admin.portal.helpnote.portal_freshdesk_link")%>
+			</a>
+		</span>
+	</div>
+<% end %>
