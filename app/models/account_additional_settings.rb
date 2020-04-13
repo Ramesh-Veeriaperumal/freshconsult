@@ -311,7 +311,6 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def update_help_widget_languages
     Account.current.help_widgets.active.map(&:upload_configs)
-    @portal_languages_changed = false
   end
 
   def publish_account_central_payload

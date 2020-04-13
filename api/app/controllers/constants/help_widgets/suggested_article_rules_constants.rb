@@ -1,5 +1,6 @@
 module HelpWidgets
   module SuggestedArticleRulesConstants
+    FEATURES = [:help_widget, :help_widget_article_customisation].freeze
     LIST_FIELDS = [:help_widget_id].freeze
     CREATE_FIELDS = [{ conditions: [:evaluate_on, :name, :operator, :value] },
                      { filter: [:type, :order_by, :value] },

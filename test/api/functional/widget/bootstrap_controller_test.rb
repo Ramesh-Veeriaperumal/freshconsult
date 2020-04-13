@@ -415,12 +415,13 @@ module Widget
 
     def test_widget_bootstrap_without_help_widget_enabled
       set_user_login_headers
-      @account.stubs(:help_widget_enabled?).returns(false)
+      @account.revoke_feature(:help_widget)
       get :index, construct_params(version: 'widget')
       assert_response 403
-      match_json(request_error_pattern(:require_feature, feature: :help_widget))
+      match_json('code' => 'require_feature',
+                 'message' => 'The Help Widget feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
     ensure
-      @account.unstub(:help_widget_enabled?)
+      @account.add_feature(:help_widget)
     end
   end
 end

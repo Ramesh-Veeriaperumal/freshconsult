@@ -5,7 +5,6 @@ module HelpWidgets
 
     decorate_views
 
-    before_filter :check_feature
     before_filter :fetch_widget
     before_filter :check_rule_limit, only: [:create]
     before_filter :load_object, only: [:show, :update, :destroy]
@@ -32,6 +31,10 @@ module HelpWidgets
         @help_widget.help_widget_suggested_article_rules
       end
 
+      def feature_name
+        FEATURES
+      end
+
       def validate_params
         cname_params.permit(*CREATE_FIELDS)
         rules_validation = validation_klass.new(cname_params, @item, string_request_params?)
@@ -42,12 +45,6 @@ module HelpWidgets
         params.permit(*LIST_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
         rules_filter = HelpWidgets::SuggestedArticleRulesFilterValidation.new(params, nil, string_request_params?)
         render_errors(rules_filter.errors, rules_filter.error_options) unless rules_filter.valid?
-      end
-
-      def check_feature
-        return if current_account.help_widget_enabled? && current_account.help_widget_article_customisation_enabled?
-
-        render_request_error(:require_feature, 403, feature: 'help_widget, help_widget_article_customisation')
       end
 
       def constants_class

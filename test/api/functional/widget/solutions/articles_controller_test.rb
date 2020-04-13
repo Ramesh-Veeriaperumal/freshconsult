@@ -1115,7 +1115,6 @@ module Widget
       end
 
       def test_suggested_articles_without_feature
-        @account.stubs(:help_widget_article_customisation_enabled?).returns(false)
         @account.stubs(:multilingual?).returns(false)
         get :suggested_articles, controller_params
         assert_response 200
@@ -1124,7 +1123,6 @@ module Widget
         match_json(get_suggested_articles)
         assert_nil Language.current
       ensure
-        @account.unstub(:help_widget_article_customisation_enabled?)
         @account.unstub(:multilingual?)
       end
 
@@ -1256,16 +1254,8 @@ module Widget
         assert_nil Language.current
       end
 
-      def test_show_without_help_widget_launch
-        @account.rollback(:help_widget)
-        get :show, controller_params(id: @article.parent_id)
-        assert_response 403
-        @account.launch(:help_widget)
-        assert_nil Language.current
-      end
-
       def test_show_without_help_widget_feature
-        @account.remove_feature(:help_widget)
+        @account.revoke_feature(:help_widget)
         get :show, controller_params(id: @article.parent_id)
         assert_response 403
         @account.add_feature(:help_widget)
