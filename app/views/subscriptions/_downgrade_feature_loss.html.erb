@@ -4,6 +4,7 @@
 	current_plan_rank = SubscriptionsHelper::PLAN_RANKING["#{current_plan}"] || 0
 	equal_plan_rank = (new_plan_rank == current_plan_rank) && (new_plan != current_plan)
 	new_plan_name = new_plan.split(' ').first.capitalize
+	omni_account = current_account.omni_bundle_account?
 %>
 <div class="plan-confirm-message-new">
 	<div class="plan-confirm-message-info">
@@ -14,7 +15,7 @@
 			# current_account.features_list & PLANS[:subscription_plans][:forest_jan_20][:features]) 
 			# will return only current account plan featrues eliminating extra tech features
 			features_lost = (current_account.features_list & PLANS[:subscription_plans][:forest_jan_20][:features]) - PLANS[:subscription_plans][plan.canon_name][:features]
-			important_features_lost = features_lost & IMPORTANT_FEATURES
+			important_features_lost = (features_lost & IMPORTANT_FEATURES) + (omni_account ? get_omni_features(current_plan) : [])
 		%>
 		<%unless features_lost.empty?%>
 			<div class="downgrade-feature-list">
@@ -32,7 +33,7 @@
 	</div>
 	<% if show_omni_warning %>
 		<div class="omni_warning">
-			<img alt="omni channel experience" class="omni-channel-icon" src="/assets/omni-channel.svg" width="52" />
+			<img alt="<%= t('fd_omni_channel_experience') %>" class="omni-channel-icon" src="/assets/omni-channel.svg" width="52" />
 			<span><%= t('omni_warning') %></span>
 		</div>
 	<% end %>

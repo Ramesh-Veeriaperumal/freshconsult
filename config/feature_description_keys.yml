@@ -34,3 +34,8 @@
     :marketplace: app_gallery_desc
     :supervisor: time_event_automation_desc
     :sla_management: sla_reminders
+    :abandoned_call_metrics: abandoned_call_metrics
+    :service_level_monitoring: service_level_monitoring
+    :abandoned_call_reports: abandoned_call_reports
+    :service_level_report: service_level_report
+    :cre_metrics: cre_metrics

@@ -6023,6 +6023,15 @@ en:
     ivr: IVR
     api_rate_limit_estate: API rate limit - 400rpm
     custom_dashboard_desc: Custom dashboard
+    apple_business_chat: Apple business chat
+    custom_bots_chat: Custom bots on chat
+    custom_agent_statuses: Custom agent statuses
+    recording_opt_out: Recording opt-out
+    abandoned_call_metrics: Abandoned call metrics
+    service_level_monitoring: Service level monitoring
+    abandoned_call_reports: Abandoned call reports
+    service_level_report: Service level report
+    cre_metrics: CRE metrics
   admin_onboarding:
     modal:
       channels_frame:
@@ -8184,6 +8193,7 @@ en:
   fsm_content: >-
     Connect and collaborate with your field workforce to deliver productive and
     exceptional customer service on site. Available from
+  fsm_content_new: Create service tasks, schedule appointments, and deliver solutions to customers anywhere with Field Service Management for Freshdesk.
   fsm_title: Field service management
   subscription_change_confirm_body: >-
     You have an existing request to cancel your account. Click on 'Proceed' to
@@ -8208,3 +8218,6 @@ en:
   billed_annually: per agent/month billed annually
   facebook:
     page_message_subject: "%{from_name} has contacted %{to_name}"
+  fd_channel: Freshdesk Omnichannel
+  add_phone_credits: Add phone credits
+  fd_omni_channel_experience: omni channel experience

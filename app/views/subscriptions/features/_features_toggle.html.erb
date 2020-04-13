@@ -1,8 +1,10 @@
  <% omni_amount = plan.omni_channel_cost(@subscription.currency_name) 
- show_ocr_toggle = omni_amount != 0 && !plan.free_omni_channel_plan? %>
+ show_ocr_toggle = omni_amount != 0 && !plan.free_omni_channel_plan? 
+ omni_account = current_account.omni_bundle_account?
+ %>
 
 <div class="features-billing">
-	<% if show_ocr_toggle %>
+	<% if (show_ocr_toggle && !omni_account) %>
 		<p class="features-billing__toggle toggle-omni-billing hide">
 		  <span class="omni-toggle-holder">
 		    <input rel="toggle" type="checkbox" data-plan-id="<%= plan.id %>" data-plan="<%= plan_name_id %>" id="exclude-omni" name="stop_sla_timer" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" checked=true />

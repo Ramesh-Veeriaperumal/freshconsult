@@ -1,0 +1,16 @@
+<%
+  isSuspended = current_account.subscription.suspended?
+  phone_credit_url = current_account.freshcaller_billing_url
+%>
+
+<div class="<%=wrapper_class%>">
+    <div class="phone-credit-info">
+        <div class="credits"><%= t('phone_credits') %> - <strong> <%= @freshcaller_credit_info[:phone_credits] %> </strong></div>
+            <% if @subscription.active? %>
+                <div><%= t('auto_recharge_for') %> <%= @freshcaller_credit_info[:auto_recharge] %></div>
+            <% end %>
+        </div>
+    <div class="add-phone-credits">
+        <a href=<%= phone_credit_url %> target="_blank" class="<%='account-suspended' if isSuspended%>"><%= t('add_phone_credits') %> <i class="ficon-open-new-tab fsize-12 ml2"></i></a>
+    </div>
+</div>

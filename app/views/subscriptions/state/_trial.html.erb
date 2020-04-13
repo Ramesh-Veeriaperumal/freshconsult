@@ -1,4 +1,7 @@
-<% trial_days = current_account.subscription.trial_days %>
+<%
+  trial_days = current_account.subscription.trial_days
+  omni_account = current_account.omni_bundle_account?
+%>
 <div class="well well-trial well-<%= trial_days > 10 ? 'info' : 'danger' %>">
   <h1 class="lead">
     <%= t('current_plan').html_safe %> :
@@ -10,6 +13,9 @@
           <%= content_tag(:span, t('classic_label'), :class => "label") %>
         <%end%>
     </strong>
+    <% if omni_account %>
+        <%= t("downgrade.omnichannel") %>
+    <% end %>
   </h1>
   <span class="label label-<%= trial_days > 10 ? 'success' : 'important' %> label-lead">
     <%= trial_expiry_title(trial_days) %>
@@ -19,6 +25,10 @@
       <!--<%#= render :partial => "/subscriptions/request_trial_extension" %>-->
     <!--</div>-->
   <%# end %>
+  <% if @freshcaller_credit_info.present? %>
+    <%= render :partial => "freshcaller_credits", :locals => {
+      :wrapper_class => 'trial-phone-credits' } %>
+  <% end %>
   <p>
       <%= t('choose_plan_trial_v2').html_safe %>
   </p>
@@ -31,7 +41,7 @@
     show_omni_toggle = current_account.freshcaller_account_present? || current_account.freshchat_account_present?
   %>
 
-  <div class="clearfix choose-plan-container">
+  <div class="clearfix choose-plan-container <%='choose-plan-border' unless omni_account%>">
     <%= content_tag(:h3, t('choose_plan'), :class => "lead mb0 pull-left") %>
     <div class="pull-right">
       <span class="lead">
@@ -39,17 +49,22 @@
       </span>
       <%= select_tag :currency, fetch_currencies, :id => "switch-currency", :class => "select2" %>
     </div>
-  </div> 
-  <div class="features">
-    <%= render :partial => "/subscriptions/features/toggle-box/ocr_toggle", :locals => { :plan => plan, :trial => true, :show_omni_toggle => show_omni_toggle }%>
-    <% if current_account.disable_old_ui_enabled? %>
-      <span class="vr-line"></span>
-      <%= render :partial => "/subscriptions/features/toggle-box/fsm_toggle", :locals => { :current_account => current_account }%>
-    <% end %>
   </div>
+  <% if omni_account%>
+    <%= render :partial => "/subscriptions/features/omni_channel/features", :locals => { :current_account => current_account }%>
+  <% else %>
+    <div class="features">
+    <%= render :partial => "/subscriptions/features/toggle-box/ocr_toggle", :locals => { :plan => plan, :trial => true, :show_omni_toggle => show_omni_toggle }%>
+      <% if current_account.disable_old_ui_enabled? %>
+        <span class="vr-line"></span>
+        <%= render :partial => "/subscriptions/features/toggle-box/fsm_toggle", :locals => { :current_account => current_account }%>
+      <% end %>
+    </div>
+  <% end %>
 <%= render :partial => "select_new_plans", :locals => { :plans => plans, :subscription => @subscription, :show_all => true } %>
 
 <script type="text/javascript">
+var isOmniAccount = <%= omni_account %>
 jQuery(document).ready(function() {
 
   // Adding the below logic for currency change
@@ -68,7 +83,9 @@ jQuery(document).ready(function() {
     function(data){
       jQuery("#ChangePlan").removeClass("sloading");
       jQuery("#ChangePlan").html(data);
-      jQuery("#omni-channel .toggle-button").hasClass("active") ? show_omni_plans() : hide_omni_plans();
+      if (!isOmniAccount) {
+        jQuery("#omni-channel .toggle-button").hasClass("active") ? show_omni_plans() : hide_omni_plans();
+      }
       jQuery("#field-service-management .toggle-button").hasClass("active") ? jQuery(".fsm-card").removeClass("hide") : jQuery(".fsm-card").addClass("hide");
     });
   }
