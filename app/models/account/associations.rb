@@ -364,8 +364,8 @@ class Account < ActiveRecord::Base
   has_many :sections, :class_name => 'Helpdesk::Section', :dependent => :destroy
   has_many :section_fields_with_field_values_mapping, :class_name => 'Helpdesk::SectionField',
             :include => [:parent_ticket_field, :section => {:section_picklist_mappings => :picklist_value}]
-  has_many :section_fields_without_archived_fields, :through => :ticket_fields_only, :class_name => 'Helpdesk::SectionField',
-													source: 'section_fields'
+  has_many :section_fields_without_archived_fields, through: :ticket_fields_only, class_name: 'Helpdesk::SectionField',
+                                                    source: 'section_fields', order: :position
   has_many :section_fields, :class_name => 'Helpdesk::SectionField', order: :position, :dependent => :destroy
 
   has_many :subscription_invoices
