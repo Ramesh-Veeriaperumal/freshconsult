@@ -389,5 +389,3 @@ gem 'ejson', :require => false
 gem 'rack-protection', '1.5.5'
 
 gem 'coverband', '1.5.4', :group => [:staging]
-
-gem 'oj'

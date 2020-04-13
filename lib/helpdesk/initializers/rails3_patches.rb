@@ -425,11 +425,3 @@ ActionDispatch::Request.prepend(Module.new do
     end
   end
 end)
-
-[Object, Array, FalseClass, Float, Hash, Integer, NilClass, String, TrueClass].each do |klass|
-  klass.class_eval do
-    def to_json(options = {})
-      Oj.dump(self.as_json(options), mode: :compat)
-    end
-  end
-end
