@@ -40,7 +40,7 @@ class TicketDecorator < ApiDecorator
       next if @custom_fields_mapping[k] == Helpdesk::TicketField::CUSTOM_FILE && !private_api?
 
       if @custom_fields_mapping[k] == TicketFieldsConstants::SECURE_TEXT
-        custom_fields_hash[TicketDecorator.display_name(k)] = v if User.current.privilege?(:view_secure_field) && private_api?
+        custom_fields_hash[TicketDecorator.display_name(k)] = v if display_secure_text_data(k, v.to_i)
         next
       end
 
@@ -586,5 +586,13 @@ class TicketDecorator < ApiDecorator
       res[key] = ticket_states_association.safe_send(key).try(:utc) || (value.include?(status) ? ticket_states_association.updated_at.try(:utc) : nil)
       res
     end
+  end
+
+  def display_secure_text_data(field_name, value)
+    return false unless private_api? && User.current.privilege?(:view_secure_field)
+
+    ticket_field_created_at = Account.current.ticket_fields_from_cache.find { |tf| tf.name == field_name }.try(:created_at).to_i
+    # Current Timestamp is stored in DB for secure_text. Valid only if ticket field was created before that and value is within ttl
+    ticket_field_created_at < value && Time.now.to_i < value + TicketFieldsConstants::SECURE_TEXT_DATA_TTL
   end
 end

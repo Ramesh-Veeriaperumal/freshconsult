@@ -109,7 +109,7 @@ function toggleGroup(access_id)
 					<%= t('.groups') %>
 			  </label>
 					<div style="display:none;" class="tabbed" id="accessible_group">
-			         <%= access.select_tag("admin_canned_responses_response[visibility][group_id]", options_from_collection_for_select(Group.find_all_by_account_id(current_account.id , :order=>'name'),"id", "name"), {:multiple => true, :class => "select2 input-xxlarge", :size => 4, :placeholder => t('.select_groups')}) %>
+			         <%= access.select_tag("admin_canned_responses_response[visibility][group_id]", options_from_collection_for_select(Group.where(account_id: current_account.id).order(:name).to_a,"id", "name"), {:multiple => true, :class => "select2 input-xxlarge", :size => 4, :placeholder => t('.select_groups')}) %>
 			        </div>
 			</div>
 		<%end%>

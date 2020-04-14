@@ -19,7 +19,6 @@ class HelpWidgetsControllerTest < ActionController::TestCase
 
   def before_all
     @account = Account.first.make_current
-    @account.launch(:help_widget)
     @account.add_feature(:multi_product)
   end
 
@@ -192,14 +191,6 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     get :show, controller_params(version: 'v2', id: help_widget.id, test: 'test')
     assert_response 400
     match_json(validation_error_pattern(bad_request_error_pattern(:test, 'Unexpected/invalid field in request', code: 'invalid_field')))
-  end
-
-  def test_show_without_launch_party
-    help_widget = create_widget
-    @account.rollback(:help_widget)
-    get :show, controller_params(version: 'v2', id: help_widget.id)
-    assert_response 403
-    @account.launch(:help_widget)
   end
 
   def test_show_without_feature

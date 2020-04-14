@@ -19,7 +19,7 @@
 		<!-- 0 is the value for all groups.-->
 		<option value="">- Select -</option>
 		<option value="0">All Groups</option>
-		<% current_account.groups.find(:all, :order =>'name').each do |group| %>
+		<% current_account.groups.order('name').each do |group| %>
 			<option value = <%=h(group.id)%> > <%=h(group.name)%> </option>
 		<% end %>
 	</select>

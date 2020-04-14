@@ -78,7 +78,7 @@ private
     ids =  self.config_data[:emails].values.collect{|id| id.to_i}
     select_col = "id, name, blocked, deleted, helpdesk_agent"
 
-    users = ids.present? ? Account.current.all_users.find_all_by_id(ids, select: select_col).collect{|u| [u.id, u]}.to_h : {}
+    users = ids.present? ? Account.current.all_users.where(id: ids).select(select_col).to_a.collect { |u| [u.id, u] }.to_h : {}
     self.config_data[:emails].inject([]) do |result, (email, user_id)|
       user = users[user_id.to_i]
       res = { email: email }

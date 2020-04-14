@@ -1,7 +1,7 @@
 class Helpdesk::Access < ActiveRecord::Base
   def create_user_accesses(user_ids)
     return if user_ids.blank?
-    users = Account.current.users.find(:all, :conditions => { :id => user_ids })
+    users = Account.current.users.where(id: user_ids).to_a
     users.each do |user|
       self.users << user
     end

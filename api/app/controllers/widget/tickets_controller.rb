@@ -14,6 +14,14 @@ module Widget
     before_filter :validate_attachment_ids, if: :attachment_ids?
     skip_before_filter :check_session_timeout
 
+    protected
+
+      def requires_feature(feature)
+        unless Account.current.send("#{feature}_enabled?")
+          render_request_error(:require_feature, 403, feature: feature.to_s.titleize)
+        end
+      end
+
     private
 
       def validation_class

@@ -6,15 +6,16 @@
   has_credit_card = current_account.has_credit_card?
   field_agent_limit = @subscription.field_agents_display_count
   fluffyMinLevelEnabled = current_account.fluffy_min_level_enabled?
+  omni_account = current_account.omni_bundle_account?
 %>
 <div id="ChangePlan">
-  <div class="plans">
+  <div class="plans <%='omni_change_plan' if omni_account%>">
     <table>
       <tr>
         <% plans.each do |plan| %>
           <input type="hidden" data-omni-plan-id="<%= plan.name.parameterize.underscore %>" data-plan-amount="<%= fetch_plan_amount(plan) %>" data-plan-id="<%= plan.id %>"/>
           <%
-            next if !(subscription.trial? || subscription.suspended?) &&
+            next if !omni_account && !(subscription.trial? || subscription.suspended?) &&
               ((subscribed_plan.omni_plan? && subscribed_plan.basic_variant_name == plan.name) ||
               (subscribed_plan.basic_variant? && subscribed_plan.omni_plan_name == plan.name))
             plan_name = plan.name.downcase.split(' ').first
@@ -31,8 +32,8 @@
             omniFilter = "omni"
           %>
           <% unless plan_name == "free"  %>
-            <% unless plan.id == subscription.subscription_plan_id and !subscription.trial? and !show_all%>
-              <td class="pricelist <%= plan_name %> <%= is_active ? 'active' : ''%> <%= plan_name_id.include?(omniFilter) ? 'hide' : ''%>"
+            <% unless (plan.id == subscription.subscription_plan_id and !omni_account) and !subscription.trial? and !show_all%>
+              <td class="pricelist <%= plan_name %> <%= is_active ? 'active' : ''%> <%= plan_name_id.include?(omniFilter) && !omni_account ? 'hide' : ''%>"
                   id = "plan-<%= plan_name_id %>" width='<%="#{(100/(plans.size.to_f)).to_i}%"%>'>
                   <input type="hidden" data-omni-plan-id="<%=plan_name_id%>" data-plan-amount="<%= fetch_plan_amount(plan) %>" data-plan-id="<%= plan.id %>"/>
                   <div class="plan-details">
@@ -47,13 +48,23 @@
                           <%= content_tag(:h3, "Free", :class => "plan-cost") %>
                           <%= content_tag(:div, t('free_plan_agents_v2').html_safe, :class => "info-data") %>
                         <% else %>
-                          <%= content_tag(:h3, fetch_plan_amount(plan), :class => "plan-cost") %>
+                          <% if omni_account %>
+                            <div class="omni_plan_pricing">
+                              <h3 class="bundle-price"><%= fetch_plan_amount(plan) %></h3>
+                            </div>
+                          <% else %>
+                            <%= content_tag(:h3, fetch_plan_amount(plan), :class => "plan-cost") %>
+                          <% end %>
                           <%= content_tag(:div, t('billed_annually'), :class => "info-data") %>
                         <% end %>
                       <% end %>
                       <%= content_tag(:div, (plan_name == "premium") ? t("special_beta_offer") : "&nbsp;".html_safe, :class => "discount-info-text" ) if(@discount && @discount.name.downcase == "beta users special")  %>
                     </div>
-                    <p class="plan-details plan-feature-list">
+                    <%
+                      plan_name = plan.name.downcase.split(' ').first
+                      basic_plan = (plan_name === 'sprout' || (omni_account && plan_name === 'estate')) || false
+                    %>
+                    <p class="plan-details plan-feature-list <%='basic_plan' if basic_plan %>">
                       <% unless SubscriptionsHelper::PLANS_FEATURES["#{plan.name.downcase}"].nil? %>
                         <% SubscriptionsHelper::PLANS_FEATURES["#{plan.name.downcase}"].each do |feature_name| %>
                           <% if feature_name == "omni_channel_option" || feature_name == "omni_channel_option_basic" %>
@@ -236,20 +247,24 @@
                       <% if downgrade_plan_check || subscribe_direct_flag %>
                         <%= plan_button(plan, t('choose_plan'), "plan-button btn btn-flat", subscribe_direct_flag, false) %>
                       <% else %>
-                        <%= plan_button(plan, t('choose_plan'), "downgrade-plan-button btn btn-flat", subscribe_direct_flag, true,
-                          equal_plan_check ? t('change_equal_plan_title', :to_plan => plan.display_name) : t('downgrade_plan_title'), t('proceed_billing_info'), t('cancel'), "downgrade-modal" ) %>
+                        <% if plan.id === subscription.subscription_plan_id && omni_account %>
+                          <button class='btn btn-flat current-plan-disabled' disabled><%= t('current_plan') %></button>
+                        <% else %>
+                          <%= plan_button(plan, t('choose_plan'), "downgrade-plan-button btn btn-flat", subscribe_direct_flag, true,
+                            equal_plan_check ? t('change_equal_plan_title', :to_plan => plan.display_name) : t('downgrade_plan_title'), t('proceed_billing_info'), t('cancel'), "downgrade-modal" ) %>
 
-                        <div id="confirm-message-<%= plan.id %>" class="plan-confirm-message hide">
-                          <%= render :partial => "downgrade_feature_loss",
-                                :locals => {
+                          <div id="confirm-message-<%= plan.id %>" class="plan-confirm-message hide">
+                            <%= render "downgrade_feature_loss",
+                                {
                                   :downgrade_msg => t('downgrade_confirm_v2', :current_plan => current_account.subscription.subscription_plan.display_name, :new_plan => plan.display_name ).html_safe,
                                   :current_plan_name => current_account.subscription.subscription_plan.display_name.upcase,
                                   :current_plan => current_plan_name,
                                   :plan => plan,
                                   :show_omni_warning => show_omni_downgrade
                                 }
-                          %>
-                        </div>
+                            %>
+                          </div>
+                        <% end %>
                       <% end %>
                     <% elsif subscription.suspended? %>
                       <% if (plan_ranking >= current_plan_ranking || subscribe_direct_flag) && !equal_plan_check%>

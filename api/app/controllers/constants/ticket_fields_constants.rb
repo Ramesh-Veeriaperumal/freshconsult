@@ -22,4 +22,5 @@ module TicketFieldsConstants
   DEFAULT_VALIDATION_CLASS = TicketFieldValidation
   DELEGATOR_CLASS = TicketFieldDelegator
   SECURE_TEXT = 'secure_text'.freeze
+  SECURE_TEXT_DATA_TTL = 30.days.seconds.to_i
 end

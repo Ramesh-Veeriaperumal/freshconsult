@@ -241,8 +241,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 
 	def recalculate_note_count
 		recalculated_count = Hash.new(0)
-		notes = self.ticket.notes.find(:all, :include => [:schema_less_note])
-		notes.each do |note|
+		self.ticket.notes.includes(:schema_less_note).each do |note|
 			category = note.safe_send("reports_note_category")
 			recalculated_count["#{category}"]+=1
 	  end

@@ -26,9 +26,12 @@
     plan_id = plan.name.parameterize.underscore
     field_agent_limit = @subscription.field_agent_limit || 0
     show_field_agent_info = fsm_supported_plan?(plan) && current_account.field_service_management_enabled? && field_agent_limit > 0
+    omni_account = current_account.omni_bundle_account?
+    isSelected_plan_present = @selected_plan.present?
+    isSelected_plan_nil = @selected_plan.nil?
   %>
 <%= render :partial => "downgrade_info" %>
-<div class="well-active well-active-new">
+<div class="well-active well-active-new <%='omni-current-plan' if omni_account%>">
   <div class="current-plan" >
     <h1 class="plan-title <%= 'classic' if @subscription.classic?%>">
       <%= t('plan') %> :
@@ -38,24 +41,33 @@
             <%= content_tag(:span, t('classic_label'), :class => "label") %>
           <%end%>
       </strong>
+      <% if omni_account %>
+        <%= t("downgrade.omnichannel") %>
+      <% end %>
     </h1>
     <% if plan.omni_plan? || plan.free_omni_channel_plan? %>
-      <p class="omni-enabled">
-        <img alt="omni channel experience" class="omni-close" src="/assets/tick.svg" width="11" />
-        <%= t('omni_enabled') %>
-      </p>
+      <% unless omni_account %>
+        <p class="omni-enabled">
+          <img alt="<%= t('fd_omni_channel_experience') %>" class="omni-close" src="/assets/tick.svg" width="11" />
+          <%= t('omni_enabled') %>
+        </p>
+      <% end %>
     <% elsif plan.basic_variant? %>
       <p class="omni-disabled">
-        <img alt="omni channel experience" class="omni-close" src="/assets/close.svg" width="11" />
+        <img alt="<%= t('fd_omni_channel_experience') %>" class="omni-close" src="/assets/close.svg" width="11" />
         <%= t('omni_disabled') %>
       </p>
+    <% end %>
+    <% if @freshcaller_credit_info.present? %>
+      <%= render :partial => "freshcaller_credits", :locals => {
+        :wrapper_class => 'active-phone-credits' } %>
     <% end %>
   </div>
 
   <input type="hidden" data-omni-plan-id="<%= plan.name.parameterize.underscore %>" data-plan-id="<%= plan.id %>"/>
   <div class="calculate-container" id="<%= plan.name.parameterize.underscore %>">
     <div class="features-billing-edit hide">
-    <% if plan.omni_plan? || plan.basic_variant? %>
+    <% if (plan.omni_plan? || plan.basic_variant?) && !omni_account %>
       <p class="omni-billing-edit features-billing-edit__toggle">
         <span><%= t('omni_channel') %></span>
         <input rel="toggle" type="checkbox" data-plan="<%= plan_id %>"  id="exclude-omni" name="omni-edit-toggle" data-checked-label="<%= t('plain_yes') %>"
@@ -148,19 +160,27 @@
 
 <% unless @offline_subscription || @reseller_paid_account %>
 <div class="plan-section-title">
-<div class="choose-plan-title">
-  <a class="plan-expand <%= 'plan-expand-click' if @selected_plan.present? %>" href="#">
-  <%= t('choose_different_plan') %>
-  </a>
-</div>
-  <div class="choose-plan-drop" style="<%= 'display:none' if @selected_plan.nil? %>">
-  <div class="features">
-    <%= render :partial => "/subscriptions/features/toggle-box/ocr_toggle", :locals => { :plan => plan, :trial => false, :show_omni_toggle => false }%>
-    <% if current_account.disable_old_ui_enabled? %>
-      <span class="vr-line"></span>
-      <%= render :partial => "/subscriptions/features/toggle-box/fsm_toggle", :locals => { :current_account => current_account }%>
-    <% end %>
+<% if omni_account %>
+  <h3 class="ft-wt"><%= t('choose_different_plan') %></h3>
+<% else %>
+  <div class="choose-plan-title">
+    <a role="button" class="plan-expand <%= 'plan-expand-click' if isSelected_plan_present %>" href="#">
+      <%= t('choose_different_plan') %>
+    </a>
   </div>
+<% end %>
+  <div class="choose-plan-drop" style="<%= 'display:none' if (isSelected_plan_nil && !omni_account) %>">
+  <% if omni_account%>
+    <%= render :partial => "/subscriptions/features/omni_channel/features", :locals => { :current_account => current_account }%>
+  <% else %>
+    <div class="features">
+    <%= render :partial => "/subscriptions/features/toggle-box/ocr_toggle", :locals => { :plan => plan, :trial => false, :show_omni_toggle => false }%>
+      <% if current_account.disable_old_ui_enabled? %>
+        <span class="vr-line"></span>
+        <%= render :partial => "/subscriptions/features/toggle-box/fsm_toggle", :locals => { :current_account => current_account }%>
+      <% end %>
+    </div>
+  <% end %>
     <%= render :partial => "/subscriptions/select_new_plans", :locals => {:plans => @plans, :subscription => @subscription,
       :show_all => false } %>
   </div>

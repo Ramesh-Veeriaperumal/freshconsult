@@ -1,16 +1,31 @@
- <div id="field-service-management" data-heap-id="fsm-external-toggle" class="features__wrapper">
- 	<img alt="field service management" class="features__icon" src="/assets/field-service-management.svg" width="40">
-    <div class="features__content">
-    	<h4>
-    		<%= t('fsm_title') %>
-			<input rel="toggle" type="checkbox" id="fsm-toggle" name="fsm-toggle" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" />
-    	</h4>
-      <h5 class="lead-note">
-        <%= t('fsm_content') %>
-        <span class="highlight"> <%= t('fsm_content_highlight') %> </span>
-      </h5>
-	</div>
+<% if current_account.omni_bundle_account? %>
+<div id="field-service-management" data-heap-id="fsm-external-toggle" class="features__wrapper fsm">
+  <img alt="field service management" class="features__icon fsm__icon" src="/assets/field-service-management-new.svg" width="40">
+    <div class="features__content fsm__content">
+      <h4 class="title">
+        <%= t('fsm_title') %>
+      <input rel="toggle" type="checkbox" id="fsm-toggle" name="fsm-toggle" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" />
+      </h4>
+      <h6 class="lead-note">
+        <%= t('fsm_content_new') %>
+      </h6>
+  </div>
 </div>
+<% else %>
+  <div id="field-service-management" data-heap-id="fsm-external-toggle" class="features__wrapper">
+   	<img alt="field service management" class="features__icon" src="/assets/field-service-management.svg" width="40">
+      <div class="features__content">
+      	<h4>
+      		<%= t('fsm_title') %>
+  			<input rel="toggle" type="checkbox" id="fsm-toggle" name="fsm-toggle" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" />
+      	</h4>
+        <h5 class="lead-note">
+          <%= t('fsm_content') %>
+          <span class="highlight"> <%= t('fsm_content_highlight') %> </span>
+        </h5>
+  	</div>
+  </div>
+<% end %>
 <%= render :partial => "subscriptions/features/dialogs/fsm_disable", :locals => {
   :current_account => current_account, :identifier => 'fsm-toggle-box' } %>
 

@@ -597,18 +597,15 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                       end
 
         if @without_pagination
-          return model_klass.find(:all , :select => @filter_fields_to_select , :order => order_clause, 
-                                        :limit => per_page, :offset => (page - 1) * per_page,
-                                        :conditions => all_conditions, :joins => all_joins)
+          return model_klass.select(@filter_fields_to_select).joins(all_joins).where(all_conditions).order(order_clause).limit(per_page).offset((page - 1) * per_page).to_a
         end
         
-        select = @html_format ? ticket_select : "helpdesk_tickets.*"
-        select = "DISTINCT(helpdesk_tickets.id) as 'unique_id' , #{select}" if all_conditions[0].include?("helpdesk_tags.name")
+        select_column = @html_format ? ticket_select : 'helpdesk_tickets.*'
+        select_column = "DISTINCT(helpdesk_tickets.id) as 'unique_id' , #{select_column}" if all_conditions[0].include?('helpdesk_tags.name')
 
-        recs = model_klass.paginate(:select => select,
-                                   :order => order_clause, :page => page, 
-                                   :per_page => per_page, :conditions => all_conditions, :joins => all_joins,
-                                   :total_entries => count_without_query).preload([:ticket_states, :ticket_status, :responder,:requester, :schema_less_ticket])
+        recs = model_klass.select(select_column).joins(all_joins).where(all_conditions).order(order_clause)
+               .preload([:ticket_states, :ticket_status, :responder, :requester, :schema_less_ticket])
+               .paginate(page: page, per_page: per_page, total_entries: count_without_query)
         recs.wf_filter = self
         recs
       end

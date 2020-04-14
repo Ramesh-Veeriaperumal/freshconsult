@@ -12,7 +12,7 @@ class SlaNotifier < ActionMailer::Base
     trigger_escalation(ticket, agent, n_type, 
                       { :email_body => email_body, :subject => email_subject })
   ensure
-    User.reset_current
+    User.reset_current_user
   end
 
   def group_escalation(ticket, agent_ids, n_type)
@@ -20,8 +20,7 @@ class SlaNotifier < ActionMailer::Base
       e_notification = find_email_notification(ticket.account, n_type)
       return unless e_notification.agent_notification?
 
-      agents_arr = ticket.account.users.technicians.visible
-                         .find(:all, :conditions => ["id in (?)", agent_ids])
+      agents_arr = ticket.account.users.technicians.visible.where(['id in (?)', agent_ids]).to_a
 
       agents_arr.each do |agent|
         i_notif = (ticket.internal_agent_id == agent.id)

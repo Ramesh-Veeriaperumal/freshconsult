@@ -3,8 +3,6 @@ class HelpWidgetsController < ApiApplicationController
   include HelpWidgetConstants
   include FrustrationTrackingConcern
 
-  before_filter :check_feature
-
   decorate_views
 
   def index
@@ -55,6 +53,10 @@ class HelpWidgetsController < ApiApplicationController
       current_account.help_widgets.active
     end
 
+    def feature_name
+      :help_widget
+    end
+
     def build_object
       super
       @item.name = widget_name if cname_params[:name].blank?
@@ -90,10 +92,6 @@ class HelpWidgetsController < ApiApplicationController
       cname_params[:freshmarketer].permit(*HelpWidgetConstants::FRESHMARKETER_FIELDS) if cname_params.key?('freshmarketer')
       widget = validation_klass.new(cname_params, @item, string_request_params?)
       render_custom_errors(widget, true) unless widget.valid?(action_name.to_sym)
-    end
-
-    def check_feature
-      render_request_error(:require_feature, 403, feature: :help_widget) unless current_account.help_widget_enabled?
     end
 
     def widget_name

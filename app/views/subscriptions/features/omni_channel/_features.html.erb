@@ -1,0 +1,14 @@
+<div class="omni-features">
+  <div id="omni-channel-account" class="omni-features__wrapper">
+    <div class="omni-features__wrapper__header">
+      <img alt="<%= t('fd_omni_channel_experience') %>" class="features__icon" src="/assets/omni-channel.svg" width="52">
+      <h2 class="title"><%= t('fd_channel') %></h2>
+    </div>
+    <div class="omni-features__wrapper__description">
+      <span class="content"><%= t('omni_channel_content') %></span>
+    </div>
+  </div>
+  <% if current_account.disable_old_ui_enabled? %>
+    <%= render :partial => "/subscriptions/features/toggle-box/fsm_toggle", :locals => { :current_account => current_account }%>
+  <% end %>
+</div>

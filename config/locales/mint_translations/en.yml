@@ -2351,6 +2351,7 @@ en:
     portal:
       helpnote:
         portal_info: We've handpicked a few customized portals for you.
+        help_widget_info: With the help widget, you can surface solution articles and a contact form in your website.
         info3: >-
           Additionally, you can rebrand the look and feel of your helpdesk by
           uploading your logo and favicon, giv​e​ your helpdesk a name, and
@@ -2398,11 +2399,13 @@ en:
           target='_blank'>FreshThemes Guide </a> </b> to learn more about
           developing your own support portal theme.
         portal_freshdesk_title: Looking for ideas?
+        help_widget_title: Embed solutions on your website
         info2: >-
           You can also choose specific solution and forum categories to be
           listed in the main portal and other portals​.​
         custom_stylesheets: Using Custom Stylesheets
         portal_freshdesk_link: Take a look
+        help_widget_link: Try the help widget now
         customize_the_layout: >-
           You can customize the layout of each page in your Freshdesk portal.
           You will need to design your layout using the Freshdesk Portal
@@ -2831,7 +2834,7 @@ en:
       privilege:
         manage_service_task_automation_rules: Manage automation rules for service tasks
         view_secure_field: View secure information
-        edit_secure_field: Add or edit secure data  
+        edit_secure_field: Add or edit secure data
     help_image_alt:
       helpdesk_arcarde: Helpdesk Arcade
     mobihelp:
@@ -5159,6 +5162,13 @@ en:
       description: Description
       fsm_fields_edit: This default field cannot be edited
       fsm_fields_moved_out: Default fields in this section cannot be moved out of the section.
+    field_service_fields:
+      cf_fsm_contact_name: Contact
+      cf_fsm_phone_number: Phone number
+      cf_fsm_service_location: Service location
+      cf_fsm_appointment_start_time: Appointment start time
+      cf_fsm_appointment_end_time: Appointment end time
+      cf_fsm_customer_signature: Customer's signature
     formfield_props:
       behavior: Behavior
       customer_edit: Customer can edit
@@ -6013,6 +6023,15 @@ en:
     ivr: IVR
     api_rate_limit_estate: API rate limit - 400rpm
     custom_dashboard_desc: Custom dashboard
+    apple_business_chat: Apple business chat
+    custom_bots_chat: Custom bots on chat
+    custom_agent_statuses: Custom agent statuses
+    recording_opt_out: Recording opt-out
+    abandoned_call_metrics: Abandoned call metrics
+    service_level_monitoring: Service level monitoring
+    abandoned_call_reports: Abandoned call reports
+    service_level_report: Service level report
+    cre_metrics: CRE metrics
   admin_onboarding:
     modal:
       channels_frame:
@@ -8174,6 +8193,7 @@ en:
   fsm_content: >-
     Connect and collaborate with your field workforce to deliver productive and
     exceptional customer service on site. Available from
+  fsm_content_new: Create service tasks, schedule appointments, and deliver solutions to customers anywhere with Field Service Management for Freshdesk.
   fsm_title: Field service management
   subscription_change_confirm_body: >-
     You have an existing request to cancel your account. Click on 'Proceed' to
@@ -8198,3 +8218,6 @@ en:
   billed_annually: per agent/month billed annually
   facebook:
     page_message_subject: "%{from_name} has contacted %{to_name}"
+  fd_channel: Freshdesk Omnichannel
+  add_phone_credits: Add phone credits
+  fd_omni_channel_experience: omni channel experience

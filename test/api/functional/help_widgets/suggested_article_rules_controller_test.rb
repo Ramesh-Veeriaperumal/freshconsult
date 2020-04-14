@@ -16,8 +16,8 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
 
   def before_all
     @account = Account.first.make_current
-    @account.stubs(:help_widget_enabled?).returns(true)
-    @account.stubs(:help_widget_article_customisation_enabled?).returns(true)
+    @account.add_feature(:help_widget)
+    @account.add_feature(:help_widget_article_customisation)
     subscription = @account.subscription
     @old_subscription_state = subscription.state
     subscription.state = 'active'
@@ -31,8 +31,8 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
     subscription.state = @old_subscription_state
     subscription.save
     @widget.destroy
-    @account.unstub(:help_widget_enabled?)
-    @account.unstub(:help_widget_article_customisation_enabled?)
+    @account.revoke_feature(:help_widget)
+    @account.revoke_feature(:help_widget_article_customisation)
     super
   end
 
@@ -76,23 +76,23 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   end
 
   def test_index_without_help_widget_article_customisation_feature
-    @account.stubs(:help_widget_article_customisation_enabled?).returns(false)
+    @account.revoke_feature(:help_widget_article_customisation)
     get :index, controller_params(version: 'private', help_widget_id: @widget.id)
     assert_response 403
     match_json('code' => 'require_feature',
-               'message' => 'The help_widget, help_widget_article_customisation feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
+               'message' => 'The Help Widget,Help Widget Article Customisation feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
   ensure
-    @account.unstub(:help_widget_article_customisation_enabled?)
+    @account.add_feature(:help_widget_article_customisation)
   end
 
   def test_index_without_help_widget_enabled
-    @account.stubs(:help_widget_enabled?).returns(false)
+    @account.revoke_feature(:help_widget)
     get :index, controller_params(version: 'private', help_widget_id: @widget.id)
     assert_response 403
     match_json('code' => 'require_feature',
-               'message' => 'The help_widget, help_widget_article_customisation feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
+               'message' => 'The Help Widget,Help Widget Article Customisation feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
   ensure
-    @account.unstub(:help_widget_enabled?)
+    @account.add_feature(:help_widget)
   end
 
   def test_index_with_invalid_help_widget_id
@@ -259,23 +259,23 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   end
 
   def test_create_without_help_widget_article_customisation_feature
-    @account.stubs(:help_widget_article_customisation_enabled?).returns(false)
+    @account.revoke_feature(:help_widget_article_customisation)
     post :create, construct_params(suggested_article_rule_request_params)
     assert_response 403
     match_json('code' => 'require_feature',
-               'message' => 'The help_widget, help_widget_article_customisation feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
+               'message' => 'The Help Widget,Help Widget Article Customisation feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
   ensure
-    @account.unstub(:help_widget_article_customisation_enabled?)
+    @account.add_feature(:help_widget_article_customisation)
   end
 
   def test_create_without_help_widget_enabled
-    @account.stubs(:help_widget_enabled?).returns(false)
+    @account.revoke_feature(:help_widget)
     post :create, construct_params(suggested_article_rule_request_params)
     assert_response 403
     match_json('code' => 'require_feature',
-               'message' => 'The help_widget, help_widget_article_customisation feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
+               'message' => 'The Help Widget,Help Widget Article Customisation feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
   ensure
-    @account.unstub(:help_widget_enabled?)
+    @account.add_feature(:help_widget)
   end
 
   def test_update_suggested_article_rule
@@ -297,13 +297,13 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   end
 
   def test_update_without_help_widget_enabled
-    @account.stubs(:help_widget_enabled?).returns(false)
+    @account.revoke_feature(:help_widget)
     put :update, construct_params(suggested_article_rule_request_params)
     assert_response 403
     match_json('code' => 'require_feature',
-               'message' => 'The help_widget, help_widget_article_customisation feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
+               'message' => 'The Help Widget,Help Widget Article Customisation feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
   ensure
-    @account.unstub(:help_widget_enabled?)
+    @account.add_feature(:help_widget)
   end
 
   def test_update_without_condition_and_filter
@@ -362,13 +362,13 @@ class HelpWidgets::SuggestedArticleRulesControllerTest < ActionController::TestC
   end
 
   def test_delete_suggested_article_rule_without_feature
-    @account.stubs(:help_widget_article_customisation_enabled?).returns(false)
+    @account.revoke_feature(:help_widget_article_customisation)
     get :index, controller_params(version: 'private', help_widget_id: @widget.id)
     assert_response 403
     match_json('code' => 'require_feature',
-               'message' => 'The help_widget, help_widget_article_customisation feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
+               'message' => 'The Help Widget,Help Widget Article Customisation feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
   ensure
-    @account.unstub(:help_widget_article_customisation_enabled?)
+    @account.add_feature(:help_widget_article_customisation)
   end
 
   def test_plan_based_article_customisation_features_estate_17

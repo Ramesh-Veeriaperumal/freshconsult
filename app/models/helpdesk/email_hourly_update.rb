@@ -4,7 +4,7 @@ class Helpdesk::EmailHourlyUpdate < ActiveRecord::Base
 
   def lock_exclusively!
     now = self.class.db_time_now
-    affected_rows = self.class.update_all(["locked_at = ?", now], ["id = ? and (locked_at is null or locked_at < ?)", id, (now - MAX_RUN_TIME.to_i)])
+    affected_rows = self.class.where(['id = ? and (locked_at is null or locked_at < ?)', id, (now - MAX_RUN_TIME.to_i)]).update_all(['locked_at = ?', now])
     if affected_rows == 1
       self.locked_at = now
       return true

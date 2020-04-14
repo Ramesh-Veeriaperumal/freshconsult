@@ -5,9 +5,12 @@ module WidgetConcern
 
   included do
     skip_before_filter :check_privilege
-    before_filter :check_feature
     before_filter :validate_widget
     before_filter :widget_token_authentication
+  end
+
+  def feature_name
+    :help_widget
   end
 
   def validate_widget
@@ -23,10 +26,6 @@ module WidgetConcern
 
   def fetch_portal
     @current_portal = current_account.portals.find_by_product_id(@help_widget.product_id) || @current_portal
-  end
-
-  def check_feature
-    render_request_error(:require_feature, 403, feature: :help_widget) unless current_account.help_widget_enabled?
   end
 
   def add_attachments

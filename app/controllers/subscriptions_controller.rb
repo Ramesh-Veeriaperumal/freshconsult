@@ -5,6 +5,7 @@ class SubscriptionsController < ApplicationController
   include Redis::RedisKeys
   include Redis::OthersRedis
   include Admin::AdvancedTicketing::FieldServiceManagement::CustomFieldValidator
+  include Freshcaller::JwtAuthentication
   include SubscriptionsHelper
 
   before_filter :prevent_actions_for_sandbox
@@ -89,6 +90,7 @@ class SubscriptionsController < ApplicationController
     @offline_subscription = scoper.offline_subscription?
     @reseller_paid_account = scoper.reseller_paid_account?
     @invoice = scoper.subscription_invoices.last unless @offline_subscription || scoper.affiliate.present? || @reseller_paid_account
+    @freshcaller_credit_info = fetch_freshcaller_credit_info if current_account.freshcaller_account.present? && @omni_account
   end
 
   def request_trial_extension
@@ -155,8 +157,13 @@ class SubscriptionsController < ApplicationController
     def load_objects
       Rails.logger.debug "FSM already enabled for account #{current_account.id} :: #{current_account.field_service_management_enabled?}"
       # TODO: Remove force_2020_plan?() after 2020 plan launched
-      plans = (current_account.force_2020_plan? ? SubscriptionPlan.plans_2020 : SubscriptionPlan.current)
-      plans << scoper.subscription_plan if scoper.subscription_plan.classic?
+      @omni_account = current_account.omni_bundle_account?
+      if @omni_account
+        plans = SubscriptionPlan.omni_channel_plan
+      else
+        plans = (current_account.force_2020_plan? ? SubscriptionPlan.plans_2020 : SubscriptionPlan.current)
+        plans << scoper.subscription_plan if scoper.subscription_plan.classic?
+      end
       @subscription = scoper
       @addons = scoper.addons.dup
       @plans = plans.uniq
@@ -535,5 +542,22 @@ class SubscriptionsController < ApplicationController
         flash[:notice] = t('fsm_requirements_not_met')
         redirect_to subscription_url
       end
+    end
+
+    def fetch_freshcaller_credit_info
+      response = freshcaller_request({},
+                                     "#{protocol}#{current_account.freshcaller_account.domain}/credits",
+                                     :get).parsed_response
+      response.key?('data') ? credit_info_hash(response['data']['attributes']) : nil
+    end
+
+    def credit_info_hash(data_attributes)
+      currency = CURRENCY_UNITS[current_account.currency_name]
+      { phone_credits: "#{currency} #{data_attributes['available-credit']}",
+        auto_recharge: "#{currency} #{data_attributes['recharge-quantity']}" }
+    end
+
+    def protocol
+      Rails.env.development? ? 'http://' : 'https://'
     end
 end

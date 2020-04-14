@@ -113,13 +113,6 @@ module Widget
                  'errors' => [bad_request_error_pattern('token', 'Signature has expired', code: 'unauthorized')])
     end
 
-    def test_create_attachment_without_help_widget_launch
-      @account.rollback(:help_widget)
-      post :create, construct_params({ version: 'widget' }, attachment_params_hash)
-      assert_response 403
-      @account.launch(:help_widget)
-    end
-
     def test_create_attachment_without_help_widget_feature
       @account.remove_feature(:help_widget)
       post :create, construct_params({ version: 'widget' }, attachment_params_hash)

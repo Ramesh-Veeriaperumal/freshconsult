@@ -111,12 +111,12 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   end
 
   def user_access_token(current_user_id)
-    user_cred = user_credentials.find(:first, :conditions => {:user_id => current_user_id})
+    user_cred = user_credentials.where(user_id: current_user_id).first
     return user_cred.auth_info['oauth_token'] if user_cred and user_cred.auth_info
   end
 
   def user_registered_email(current_user_id)
-    user_cred = user_credentials.find(:first, :conditions => {:user_id => current_user_id})
+    user_cred = user_credentials.where(user_id: current_user_id).first
     return user_cred.auth_info['email'] if user_cred and user_cred.auth_info
   end
 

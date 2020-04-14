@@ -142,4 +142,10 @@ module EmailMailboxTestHelper
     outgoing_hash[:refresh_token] = options[:smtp_refresh_token] || 'refreshtoken' if options[:smtp_authentication] == OAUTH && options[:with_refresh_token]
     outgoing_hash
   end
+
+  def verification_parsing_failure_hash
+    {
+      'confirmation_code' => nil
+    }
+  end
 end

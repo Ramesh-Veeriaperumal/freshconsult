@@ -3,13 +3,11 @@ require_relative '../../test_helper.rb'
 class Admin::SecurityKeysControllerTest < ActionController::TestCase
   def setup
     super
-    Account.current.launch(:help_widget)
     Account.current.add_feature(:help_widget)
   end
 
   def teardown
     super
-    Account.current.rollback(:help_widget)
     Account.current.remove_feature(:help_widget)
   end
 

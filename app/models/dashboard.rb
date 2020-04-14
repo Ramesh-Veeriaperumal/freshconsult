@@ -18,11 +18,23 @@ class Dashboard < ActiveRecord::Base
 
   has_one :accessible, class_name: 'Helpdesk::Access', as: 'accessible', dependent: :destroy
 
+  has_many :group_accesses,
+           through: :accessible,
+           source: :group_accesses
+
+  has_many :users,
+           through: :accessible,
+           source: :users
+
+  has_many :groups,
+           through: :accessible,
+           source: :groups
+
   accepts_nested_attributes_for :accessible, :widgets, allow_destroy: true
 
   alias_attribute :helpdesk_accessible, :accessible
 
-  delegate :group_accesses, :users, :access_type, :groups, to: :accessible
+  delegate :access_type, to: :accessible
 
   validates_presence_of :name
 

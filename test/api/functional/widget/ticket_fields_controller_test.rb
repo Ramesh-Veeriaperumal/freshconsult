@@ -115,13 +115,6 @@ module Widget
       assert JSON.parse(response.body).count > 1
     end
 
-    def test_index_without_help_widget_launch
-      @account.rollback(:help_widget)
-      get :index, controller_params
-      assert_response 403
-      @account.launch(:help_widget)
-    end
-
     def test_index_without_help_widget_feature
       @account.remove_feature(:help_widget)
       get :index, controller_params

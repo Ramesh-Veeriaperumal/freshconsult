@@ -55,7 +55,13 @@ module Ember
 
         def process_confirmation_email
           ticket = forwarded_activation_ticket
-          [ticket.subject.to_s.match(CONFIRMATION_CODE_REGEX).captures.first.to_s, ticket.subject.to_s.match(EMAIL_REGEX).to_s]
+          parsed_confirmation_code = ticket.subject.to_s.match(CONFIRMATION_CODE_REGEX)
+
+          if parsed_confirmation_code.present?
+            [parsed_confirmation_code.captures.first.to_s, ticket.subject.to_s.match(EMAIL_REGEX).to_s]
+          else
+            [parsed_confirmation_code, ticket.subject.to_s.match(EMAIL_REGEX).to_s]
+          end
         end
 
         def forwarded_activation_requester
@@ -68,7 +74,7 @@ module Ember
           @forwarded_activation_ticket ||= current_account.tickets.forward_setup_latest_tickets(
             forwarded_activation_requester,
             @item.to_email, TEST_MAIL_VERIFY_DURATION.ago
-          ).last
+          ).first
         end
 
         def verify_mailbox_type

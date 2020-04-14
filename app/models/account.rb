@@ -1049,6 +1049,18 @@ class Account < ActiveRecord::Base
     redis_key_exists?(TWITTER_REQUESTER_FIELDS_ENABLED) && Account.current.launched?(:enable_twitter_requester_fields)
   end
 
+  def omni_bundle_id
+    account_additional_settings.additional_settings.try(:[], :bundle_id)
+  end
+
+  def omni_bundle_account?
+    Account.current.launched?(:omni_bundle_2020) && omni_bundle_id.present?
+  end
+
+  def freshcaller_billing_url
+    ((Rails.env.staging? || Rails.env.production?) && !subscription.suspended?) ? "https://#{freshcaller_account.domain}/admin/billing?purchaseCreditModal=true" : "#"
+  end
+
   def freshcaller_account_present?
     freshcaller_account = Freshcaller::Account.find_by_account_id(id)
     freshcaller_account.nil? ? false : true

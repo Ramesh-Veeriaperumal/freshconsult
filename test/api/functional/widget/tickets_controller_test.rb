@@ -177,14 +177,6 @@ module Widget
                  'errors' => [bad_request_error_pattern('token', 'Signature has expired', code: 'unauthorized')])
     end
 
-    def test_create_without_help_widget_launch
-      @account.rollback(:help_widget)
-      params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
-      post :create, construct_params({ version: 'widget' }, params)
-      assert_response 403
-      @account.launch(:help_widget)
-    end
-
     def test_create_without_help_widget_feature
       @account.remove_feature(:help_widget)
       params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }

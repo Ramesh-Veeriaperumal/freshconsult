@@ -30,6 +30,8 @@ class SubscriptionPlan < ActiveRecord::Base
   scope :plans_2020, conditions: { name: ['Sprout Jan 20', 'Blossom Jan 20', 'Garden Jan 20', 'Estate Jan 20', 'Estate Omni Jan 20', 'Forest Jan 20', 'Forest Omni Jan 20'] }, order: 'amount asc'
   # END
 
+  scope :omni_channel_plan, -> { where(name: ['Estate Omni Jan 20', 'Forest Omni Jan 20']).order('amount asc') }
+
   after_commit :clear_cache
 
   SUBSCRIPTION_PLANS = { basic: 'Basic',

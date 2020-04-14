@@ -409,6 +409,16 @@ module Ember
         match_json(private_api_solution_article_pattern(Solution::Article.last))
       end
 
+      def test_create_article_with_html_data_content
+        folder_meta = get_folder_meta
+        title = Faker::Name.name
+        paragraph = '<div data-identifyelement="123"><a data-toggle="tooltip">Click</a></div>'
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 2)
+        assert_response 201
+        match_json(private_api_solution_article_pattern(Solution::Article.last))
+        assert_equal paragraph, (parse_response @response.body)['description']
+      end
+
       def test_create_article_with_seo_data
         folder_meta = get_folder_meta
         title = Faker::Name.name
@@ -802,6 +812,15 @@ module Ember
         sample_article.reload
         match_json(private_api_solution_article_pattern(sample_article))
         assert sample_article.draft.cloud_files.count == att_count + 1
+      end
+
+      def test_update_article_with_html_data_content
+        sample_article = get_article_with_draft
+        paragraph = '<div data-identifyelement="123"><a data-toggle="tooltip">Click</a></div>'
+        put :update, construct_params({ version: 'private', id: sample_article.parent_id }, status: 2, title: 'publish draft title', description: paragraph, agent_id: @agent.id)
+        assert_response 200
+        match_json(private_api_solution_article_pattern(sample_article.reload))
+        assert_equal paragraph, (parse_response @response.body)['description']
       end
 
       def test_delete_article

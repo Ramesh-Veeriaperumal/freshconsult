@@ -171,9 +171,7 @@ class ScheduledTaskMailer < ActionMailer::Base
   def pre_load_user_with_emails ids
     Sharding.select_shard_of(Account.current.id) do
       Sharding.run_on_slave do
-        Account.current.all_users.find_all_by_id(ids,
-                                                 select: 'id, email, blocked, deleted, helpdesk_agent',
-                                                 include: :user_emails).collect { |u| [u.id, u] }.to_h
+        Account.current.all_users.where(id: ids).select([:id, :email, :blocked, :deleted, :helpdesk_agent]).includes(:user_emails).to_a.collect { |u| [u.id, u] }.to_h
       end
     end
   end

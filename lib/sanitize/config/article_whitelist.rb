@@ -4,7 +4,7 @@ class Sanitize
     ARTICLE_WHITELIST = {
       :elements => HTML_RELAXED[:elements] + ['iframe', 'object', 'param', 'embed', 'canvas', 'video', 'track'],
       :attributes => {
-        :all => HTML_RELAXED[:attributes][:all] + ['name'],
+        all: HTML_RELAXED[:attributes][:all] + ['name', :data],
         'iframe' => ['src', 'width', 'height', 'frameborder', 'allowfullscreen', 'align', 'sandbox'],
         'pre' => HTML_RELAXED[:attributes]['pre'] + ['contenteditable'],
         'audio' => HTML_RELAXED[:attributes]['audio'] + ['src', 'crossorigin', 'preload', 'autoplay', 'mediagroup', 'loop', 'muted'],
@@ -58,7 +58,7 @@ class Sanitize
 
         Sanitize.node!(node, {
           :elements => ARTICLE_WHITELIST[:elements],
-          :attributes => ARTICLE_WHITELIST[:attributes].merge({node.name => (ARTICLE_WHITELIST[:attributes][node.name] || []) + data_attrs.collect(&:name) }),
+          attributes: ARTICLE_WHITELIST[:attributes],
           :protocols => ARTICLE_WHITELIST[:protocols],
           :remove_contents => ARTICLE_WHITELIST[:remove_contents]
         })

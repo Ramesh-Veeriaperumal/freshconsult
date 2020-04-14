@@ -22,8 +22,10 @@ class Social::Stream < ActiveRecord::Base
     :as => :accessible,
     :dependent => :destroy
 
-  delegate :groups, :users, :to => :accessible
-  
+  has_many :groups, through: :accessible, source: :groups
+
+  has_many :users, through: :accessible, source: :users
+
   accepts_nested_attributes_for :accessible
 
   def create_global_access

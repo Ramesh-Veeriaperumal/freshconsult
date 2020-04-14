@@ -1,7 +1,7 @@
 class Helpdesk::Access < ActiveRecord::Base
   def create_group_accesses(group_ids)
     return if group_ids.blank?
-    groups = Account.current.groups.find(:all, :conditions => { :id => group_ids })
+    groups = Account.current.groups.where(id: group_ids).to_a
     groups.each do |group|
       self.groups << group
     end

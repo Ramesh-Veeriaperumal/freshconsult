@@ -27,7 +27,7 @@ class Helpdesk::Note < ActiveRecord::Base
     t.add :response_time_by_bhrs
     t.add :response_violated, :if => proc { Account.current.next_response_sla_enabled? }
     t.add :last_modified_user_id
-    t.add proc { |x| x.account.user_emails.where(email: x.to_emails).pluck(:user_id) }, as: :to_email_user_ids
+    t.add proc { |x| x.account.user_emails.where(email: x.parsed_to_emails).pluck(:user_id) }, as: :to_email_user_ids
     DATETIME_FIELDS.each do |key|
       t.add proc { |x| x.utc_format(x.safe_send(key)) }, as: key
     end
@@ -179,5 +179,18 @@ class Helpdesk::Note < ActiveRecord::Base
 
   def event_info(event)
     { pod: ChannelFrameworkConfig['pod'] }
+  end
+
+  def parsed_to_emails
+    return if to_emails.blank?
+
+    begin
+      to_emails.map do |email|
+        encoded = Mail::Encodings.address_encode(email)
+        Mail::Address.new(encoded).address
+      end
+    rescue StandardError => e
+      Rails.logger.error "Error in to_email parse of Note central publish :: #{e.message} :: #{e.backtrace}"
+    end
   end
 end

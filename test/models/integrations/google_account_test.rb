@@ -37,14 +37,6 @@ class GoogleAccountTest < ActionView::TestCase
     assert_equal response.status, 200
   end
 
-  def test_find_all_installed_google_accounts
-    Integrations::GoogleAccount.stubs(:find).returns(true)
-    resp = Integrations::GoogleAccount.find_all_installed_google_accounts(Account.current)
-    assert_equal resp, true
-  ensure
-    Integrations::GoogleAccount.unstub(:find)
-  end
-
   def test_create_google_group
     Integrations::GoogleAccount.any_instance.stubs(:prepare_access_token).returns(OAuth2::AccessToken.from_hash('client', {}))
     OAuth2::AccessToken.any_instance.stubs(:post).returns(ActionController::TestResponse.new(status = 200))

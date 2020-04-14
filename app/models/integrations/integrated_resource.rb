@@ -33,18 +33,19 @@ class Integrations::IntegratedResource < ActiveRecord::Base
   end
 
   def self.delete_resource_by_remote_integratable_id(params)
-    irParams = params[:integrated_resource]
-    remote_integratable_id = irParams['remote_integratable_id']
-    remoteIdArray = Integrations::IntegratedResource.find(:all, :joins=>"INNER JOIN installed_applications ON integrated_resources.installed_application_id=installed_applications.id", 
-                     :conditions=>['integrated_resources.remote_integratable_id=? and installed_applications.account_id=?',remote_integratable_id, irParams[:account]])
-    Integrations::IntegratedResource.delete(remoteIdArray) unless remoteIdArray.blank?
+    ir_params = params[:integrated_resource]
+    remote_integratable_id = ir_params['remote_integratable_id']
+    remote_id_array = Integrations::IntegratedResource
+    .where(['integrated_resources.remote_integratable_id=? and installed_applications.account_id=?', remote_integratable_id, ir_params[:account]])
+    .joins('INNER JOIN installed_applications ON integrated_resources.installed_application_id=installed_applications.id').to_a
+    Integrations::IntegratedResource.delete(remote_id_array) if remote_id_array.present?
   end
 
   def self.deleteResource(params)
     irParams = params[:integrated_resource]
     unless(irParams.blank?)
-      ir = Integrations::IntegratedResource.find(:first, :joins=>"INNER JOIN installed_applications ON integrated_resources.installed_application_id=installed_applications.id", 
-                     :conditions=>['integrated_resources.id=? and installed_applications.account_id=?',irParams[:id],irParams[:account]])
+      ir = Integrations::IntegratedResource.where(['integrated_resources.id=? and installed_applications.account_id=?', irParams[:id], irParams[:account]])
+                                           .joins('INNER JOIN installed_applications ON integrated_resources.installed_application_id=installed_applications.id').first
       ir.delete unless ir.blank?
     end
   end

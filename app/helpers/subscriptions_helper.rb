@@ -59,6 +59,16 @@ module SubscriptionsHelper
     'forest omni jan 20' => 5
   }
 
+  IMPORTANT_OMNI_FEATURES = {
+    'forest omni jan 20' => [
+      :abandoned_call_metrics,
+      :service_level_monitoring,
+      :abandoned_call_reports,
+      :service_level_report,
+      :cre_metrics
+    ]
+  }
+
 
   NEW_SPROUT = ['Sprout Jan 17', 'Sprout Jan 19', 'Sprout Jan 20'].freeze
 
@@ -255,5 +265,9 @@ module SubscriptionsHelper
                   end
     action_sentence = I18n.t('subscription.error.action_sentence', exceeded_agent_and_product_count: error_type.to_sentence(last_word_connector: I18n.t('subscription.error.word_connector')))
     I18n.t('subscription.error.agents_and_product_limit_exceeded', entities: entities) << second_part << action_sentence
+  end
+
+  def get_omni_features(plan_name)
+    IMPORTANT_OMNI_FEATURES["#{plan_name}"] || []
   end
 end
