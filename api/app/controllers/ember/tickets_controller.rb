@@ -69,7 +69,7 @@ module Ember
       custom_fields = params[cname][:custom_field]
       return unless validate_and_assign
       if @item.update_ticket_attributes(cname_params)
-        get_jwe_token(custom_fields) if Account.current.pci_compliance_field_enabled? && custom_fields && check_for_secure_fields(custom_fields)
+        update_secure_fields(custom_fields) if Account.current.pci_compliance_field_enabled? && custom_fields.present?
         render 'ember/tickets/show'
       else
         render_errors(@item.errors)
@@ -376,15 +376,9 @@ module Ember
         cname_params[:attachments] = attachments_array
       end
 
-      def check_for_secure_fields(custom_fields)
+      def update_secure_fields(custom_fields)
         @secure_field_methods = JWT::SecureFieldMethods.new
-        @secure_field_methods.secure_fields(custom_fields).present?
-      end
-
-      def get_jwe_token(custom_fields)
-        # Generates JWE token
-        jwe = JWT::SecureServiceJWEFactory.new(PciConstants::ACTION[:write], @item.id, PciConstants::PORTAL_TYPE[:agent_portal], PciConstants::OBJECT_TYPE[:ticket], custom_fields)
-        (response.api_meta ||= {})[:vault_token] = jwe.generate_jwe_payload(@secure_field_methods)
+        (response.api_meta ||= {})[:vault_token] = @secure_field_methods.get_jwe_token(custom_fields, @item.id, PciConstants::PORTAL_TYPE[:agent_portal]) if @secure_field_methods.secure_fields(custom_fields).present?
       end
 
       def parent_template_attachments
