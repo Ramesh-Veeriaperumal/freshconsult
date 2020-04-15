@@ -19,7 +19,7 @@ class OnedriveMint < ActiveRecord::Migration
 
   def self.down
     execute("DELETE installed_applications FROM installed_applications INNER JOIN applications ON applications.ID=installed_applications.application_id WHERE applications.name='#{@app_name}'")
-    Integrations::Application.find(:first, :conditions => {:name => @app_name}).delete
+    Integrations::Application.where(name: @app_name).first.delete
   end
 
 end

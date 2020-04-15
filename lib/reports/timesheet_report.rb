@@ -125,8 +125,7 @@ module Reports::TimesheetReport
 
   def csv_filter(start_date,end_date)
     time_sheets_non_archive = []
-    scoper(start_date,end_date).select(" #{construct_custom_column_select_statement} helpdesk_time_sheets.*   ").find_in_batches(:batch_size => BATCH_LIMIT_FOR_EXPORT,:conditions => (select_conditions || {}),
-    :include => [:user, :workable => [:schema_less_ticket, :group, :ticket_status, :requester, :company]]) do |time_sheets_batch|# need to ensure - Hari
+    scoper(start_date, end_date).where(select_conditions || {}).includes([:user, workable: [:schema_less_ticket, :group, :ticket_status, :requester, :company]]).select(" #{construct_custom_column_select_statement} helpdesk_time_sheets.*   ").find_in_batches(batch_size: BATCH_LIMIT_FOR_EXPORT) do |time_sheets_batch| # need to ensure - Hari
       time_sheets_non_archive << time_sheets_batch
     end
     time_sheets_non_archive.flatten
@@ -158,8 +157,8 @@ module Reports::TimesheetReport
         helpdesk_time_sheets.workable_id,
         (CASE WHEN #{group_by_caluse==:customer_name} THEN IFNULL(archive_tickets.owner_id,archive_tickets.requester_id)
              ELSE #{GROUP_TO_FIELD_MAP[group_by_caluse]} END) AS #{ALIAS_GROUP_NAME[group_by_caluse]}"
-      ).group("#{ALIAS_GROUP_NAME[group_by_caluse]}, current, billable").find(:all, :conditions => (archive_select_conditions || {}),
-                                                                              :include => [:user, :workable => [:product, :group, :ticket_status, :requester, :company]])
+      ).group("#{ALIAS_GROUP_NAME[group_by_caluse]}, current, billable").where(archive_select_conditions || {})
+                                                                        .includes([:user, workable: [:product, :group, :ticket_status, :requester, :company]]).to_a
     else
       scoper(previous_start, @end_date).select("
         (case when (helpdesk_time_sheets.executed_at >= '#{@start_date}') then 1 else 0 END) as current,
@@ -171,17 +170,18 @@ module Reports::TimesheetReport
         max(helpdesk_time_sheets.id) as max_timesheet_id,
         helpdesk_time_sheets.workable_id,
          (CASE WHEN #{group_by_caluse==:customer_name} THEN IFNULL(helpdesk_tickets.owner_id,helpdesk_tickets.requester_id)
-             ELSE #{GROUP_TO_FIELD_MAP[group_by_caluse]} END) AS #{ALIAS_GROUP_NAME[group_by_caluse]}").group("#{ALIAS_GROUP_NAME[group_by_caluse]}, current, billable").find(:all, :conditions => (select_conditions || {}),
-                                                                                                                                                                       :include => [:user, :workable => [:schema_less_ticket, :group, :ticket_status, :requester, :company]])
+             ELSE #{GROUP_TO_FIELD_MAP[group_by_caluse]} END) AS #{ALIAS_GROUP_NAME[group_by_caluse]}").group("#{ALIAS_GROUP_NAME[group_by_caluse]}, current, billable").where(select_conditions || {})
+                                                                                                                                                                        .includes([:user, workable: [:schema_less_ticket, :group, :ticket_status, :requester, :company]]).to_a
     end
   end
 
   def fetch_timesheet_entries(offset=0, row_limit=nil)
     row_limit ||= @pdf_export ? BATCH_LIMIT_FOR_EXPORT : TIMESHEET_ROWS_LIMIT
-    entries = scoper(@start_date, @end_date).where("helpdesk_time_sheets.id <= #{@latest_timesheet_id}").select("helpdesk_time_sheets.*, #{construct_custom_column_select_statement}  #{group_to_column_map(group_by_caluse, false)}").reorder("#{ALIAS_GROUP_NAME[group_by_caluse]}, id asc").find(:all, :limit => row_limit, :offset => offset,:conditions => (select_conditions || {}),
-                                                                                                                                                                                                                                                                                                    :include => [:user, :workable => [{:schema_less_ticket => :product}, :group, :ticket_status, :requester, :company]])
+    # PRE-RAILS4: select.size chaining ---> false positive
+    entries = scoper(@start_date, @end_date).where("helpdesk_time_sheets.id <= #{@latest_timesheet_id}").select("helpdesk_time_sheets.*, #{construct_custom_column_select_statement}  #{group_to_column_map(group_by_caluse, false)}").reorder("#{ALIAS_GROUP_NAME[group_by_caluse]}, id asc").limit(row_limit).offset(offset).where(select_conditions || {})
+                                                                                                                                                                                                                                                                                                    .includes([:user, workable: [{:schema_less_ticket => :product}, :group, :ticket_status, :requester, :company]]).to_a
     if (archive_enabled? && entries.size < row_limit )
-      entries << archive_scoper(@start_date, @end_date).where("helpdesk_time_sheets.id <= #{@latest_timesheet_id}").select("helpdesk_time_sheets.*,  #{group_to_column_map(group_by_caluse, true)}").reorder("#{ALIAS_GROUP_NAME[group_by_caluse]}, id asc").find(:all, :limit => row_limit, :offset => offset,:conditions => (archive_select_conditions || {}),                                                                                                                                                                                                                                                                 :include => [:user, :workable => [:product, :group, :ticket_status, :requester, :company]])
+      entries << archive_scoper(@start_date, @end_date).where("helpdesk_time_sheets.id <= #{@latest_timesheet_id}").select("helpdesk_time_sheets.*,  #{group_to_column_map(group_by_caluse, true)}").reorder("#{ALIAS_GROUP_NAME[group_by_caluse]}, id asc").includes([:user, workable: [:product, :group, :ticket_status, :requester, :company]]).where(archive_select_conditions || {}).limit(row_limit).offset(offset).to_a
     end
     entries.flatten
   end

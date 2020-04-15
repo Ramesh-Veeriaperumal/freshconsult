@@ -27,7 +27,7 @@ module Helpdesk::TagMethods
   end
 
   def remove_ticket_tags(tags_to_be_removed, item)
-    tags = item.tags.find_all_by_name(tags_to_be_removed)
+    tags = item.tags.where(name: tags_to_be_removed).to_a
     unless tags.blank?
         tag_uses = item.tag_uses.tags_to_remove(item.id, tags.map{ |tag| tag.id }, 'Helpdesk::Ticket')
         item.tag_uses.destroy tag_uses

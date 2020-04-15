@@ -11,10 +11,8 @@ class Vote < ActiveRecord::Base
   before_create :set_account_id
 
   def self.find_votes_cast_by_user(user)
-    find(:all,
-      :conditions => ["user_id = ?", user.id],
-      :order => "created_at DESC"
-    )
+    where(['user_id = ?', user.id])
+      .order('created_at DESC').to_a
   end
 
   def update_user_votes_count

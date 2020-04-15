@@ -22,28 +22,25 @@ module Juixe
       module SingletonMethods
         def find_votes_cast_by_user(user)
           voteable = ActiveRecord::Base.send(:class_name_of_active_record_descendant, self).to_s
-          Vote.find(:all,
-            :conditions => ["user_id = ? and voteable_type = ?", user.id, voteable],
-            :order => "created_at DESC"
-          )
+          Vote.where(['user_id = ? and voteable_type = ?', user.id, voteable]).order('created_at DESC').to_a
         end
       end
       
       # This module contains instance methods
       module InstanceMethods
         def votes_for
-          votes = Vote.find(:all, :conditions => [
-            "voteable_id = ? AND voteable_type = ? AND vote = ?",
+          votes = Vote.where([
+            'voteable_id = ? AND voteable_type = ? AND vote = ?',
             id, self.class.name,true
-          ])
+          ]).to_a
           votes.size
         end
         
         def votes_against
-          votes = Vote.find(:all, :conditions => [
-            "voteable_id = ? AND voteable_type = ? AND vote = ?",
+          votes = Vote.where([
+            'voteable_id = ? AND voteable_type = ? AND vote = ?',
             id, self.class.name, false
-          ])
+          ]).to_a
           votes.size
         end
         

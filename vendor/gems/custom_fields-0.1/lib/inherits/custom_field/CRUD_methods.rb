@@ -26,8 +26,7 @@ module Inherits
           def populate_meta_data custom_field, custom_form_id
             custom_field.custom_form = custom_field.safe_send(self::CUSTOM_FORM_METHOD, custom_form_id)
 
-            similar_form_fields = custom_field.custom_form.all_fields.all(:conditions => 
-                                    { :field_type => custom_field.similar_field_types })
+            similar_form_fields = custom_field.custom_form.all_fields.where(field_type: custom_field.similar_field_types).to_a
 
             used_columns  = similar_form_fields.collect &:column_name
             total_columns =  custom_field.all_suitable_columns
