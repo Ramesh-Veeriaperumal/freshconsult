@@ -20,7 +20,10 @@ class ChannelMessagePollerTest < ActionView::TestCase
   def teardown
     cleanup_twitter_handles(@account)
     remove_others_redis_key(TWITTER_REQUESTER_FIELDS_ENABLED)
+    Account.current.contact_fields.find_by_name('twitter_followers_count').delete
+    Account.current.contact_fields.find_by_name('twitter_profile_status').delete
     Account.current.rollback(:skip_posting_to_fb)
+    Account.current.rollback(:enable_twitter_requester_fields)
   end
 
   def setup
@@ -32,7 +35,9 @@ class ChannelMessagePollerTest < ActionView::TestCase
     @stream = @handle.default_stream
     @fb_ticket = create_ticket_from_fb_post
     @fb_page = @fb_ticket.fb_post.facebook_page
+    create_twitter_default_fields
     Account.current.launch(:skip_posting_to_fb)
+    Account.current.launch(:enable_twitter_requester_fields)
   end
 
   def test_twitter_dm_convert_as_ticket
@@ -107,9 +112,6 @@ class ChannelMessagePollerTest < ActionView::TestCase
   end
 
   def test_twitter_mention_convert_as_note_and_update_twitter_contact_fields
-    create_twitter_default_fields
-    Account.current.launch(:incoming_mentions_in_tms)
-    Account.current.launch(:enable_twitter_requester_fields)
     payload, command_payload = twitter_create_note_command('mention', true)
     data = command_payload[:payload][:data]
     twitter_profile_status = data[:twitter_profile_status]
@@ -119,16 +121,11 @@ class ChannelMessagePollerTest < ActionView::TestCase
     assert_equal twitter_profile_status, user.twitter_profile_status
     assert_equal twitter_followers_count, user.twitter_followers_count
   ensure
-    Account.current.contact_fields.find_by_name('twitter_followers_count').delete
-    Account.current.contact_fields.find_by_name('twitter_profile_status').delete
-    Account.current.rollback(:incoming_mentions_in_tms)
-    Account.current.rollback(:enable_twitter_requester_fields)
     Account.reset_current_account
   end
 
   def test_update_twitter_contact_fields_without_redis
     remove_others_redis_key(TWITTER_REQUESTER_FIELDS_ENABLED)
-    Account.current.launch(:incoming_mentions_in_tms)
     payload, command_payload = twitter_create_note_command('mention', true)
     data = command_payload[:payload][:data]
     ChannelIntegrations::Commands::Processor.new.process(command_payload[:payload])
@@ -136,12 +133,10 @@ class ChannelMessagePollerTest < ActionView::TestCase
     assert_equal false, user.twitter_profile_status
     assert_nil user.twitter_followers_count
   ensure
-    Account.current.rollback(:incoming_mentions_in_tms)
     Account.reset_current_account
   end
 
   def test_update_twitter_contact_fields_without_values_in_payload
-    Account.current.launch(:incoming_mentions_in_tms)
     payload, command_payload = twitter_create_note_command('mention', true)
     data = command_payload[:payload][:data]
     data.delete(:twitter_profile_status)
@@ -151,13 +146,11 @@ class ChannelMessagePollerTest < ActionView::TestCase
     assert_equal false, user.twitter_profile_status
     assert_nil user.twitter_followers_count
   ensure
-    Account.current.rollback(:incoming_mentions_in_tms)
     Account.reset_current_account
   end
 
   def test_update_twitter_contact_fields_without_redis_and_values
     remove_others_redis_key(TWITTER_REQUESTER_FIELDS_ENABLED)
-    Account.current.launch(:incoming_mentions_in_tms)
     payload, command_payload = twitter_create_note_command('mention', true)
     data = command_payload[:payload][:data]
     data.delete(:twitter_profile_status)
@@ -167,7 +160,6 @@ class ChannelMessagePollerTest < ActionView::TestCase
     assert_equal false, user.twitter_profile_status
     assert_nil user.twitter_followers_count
   ensure
-    Account.current.rollback(:incoming_mentions_in_tms)
     Account.reset_current_account
   end
 
