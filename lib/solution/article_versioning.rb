@@ -1,6 +1,8 @@
 module Solution::ArticleVersioning
   extend ActiveSupport::Concern
 
+  include Redis::Redlock
+
   included do
     def version_create_or_update(record, from_migration_worker = false)
       @delegator = if record.instance_of? Solution::Article
@@ -9,7 +11,11 @@ module Solution::ArticleVersioning
                      DraftHandler.new(record)
                    end
       @delegator.from_migration_worker = from_migration_worker
-      @delegator.create_or_update
+      if Account.current.launched?(:article_versioning_redis_lock)
+        raise 'Failed to acquire the lock for version creation' unless acquire_lock_and_run(key: @delegator.lock_key, ttl: 3000) { @delegator.create_or_update }
+      else  
+        @delegator.create_or_update
+      end
     end
 
     def version_discard_or_destroy(record)
@@ -29,7 +35,7 @@ module Solution::ArticleVersioning
 
     def discard_or_destroy
       return unless latest_version # destroy(delete button) article should not do the below
-      
+
       if (discarding || cancelling) && destroy_version?
         # if session is set and no discarding then article is being published
         article_version_scoper.latest.first.destroy
@@ -40,7 +46,7 @@ module Solution::ArticleVersioning
 
     def update_version
       assign_version_attributes(latest_version)
-      latest_version.update_attachments_info 
+      latest_version.update_attachments_info
       latest_version.save!
       latest_version
     end
@@ -65,9 +71,7 @@ module Solution::ArticleVersioning
 
     def mark_unlive
       live_version = article_version_scoper.where(live: true).first
-      if live_version
-        live_version.unlive!
-      end
+      live_version.unlive! if live_version
     end
 
     def assign_version_no(version_record)
@@ -85,6 +89,10 @@ module Solution::ArticleVersioning
       Solution::ArticleVersion::COMMON_ATTRIBUTES.each do |attribute|
         version_record.safe_send("#{attribute}=", safe_send(attribute))
       end
+    end
+
+    def lock_key
+      format(Redis::Keys::Others::ARTICLE_VERSION_LOCK_KEY, account_id: account_id, article_id: article_id)
     end
   end
 
@@ -118,6 +126,10 @@ module Solution::ArticleVersioning
     def current_user
       @current_user ||= User.current ? User.current.id : (modified_by || user_id)
       # When migration is run, current user will not be present. We need to take modified_by into consideration for article and user_id for draft
+    end
+
+    def article_id
+      id
     end
   end
 

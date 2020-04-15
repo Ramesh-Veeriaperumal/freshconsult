@@ -42,12 +42,15 @@ $redis_round_robin = Redis.new(fetch_options(round_robin_config))
 $redis_session = Redis.new(fetch_options(redis_session_config))
 $redis_mobile = Redis.new(fetch_options(mobile_config))
 $semaphore = Redis.new(fetch_options(config))
+$redlock = Redis.new(fetch_options(config))
 $redis_automation_rule = Redis.new(fetch_options(automation_rule_config))
 
 REDIS_UNIQUE_CONNECTION_OBJECTS = [$redis_tickets, $rate_limit].freeze
 
 Redis::DisplayIdLua.load_display_id_lua_script_to_redis
 Redis::DisplayIdLua.load_picklist_id_lua_script
+
+Redis::Redlock.load_unlock_lua_script_to_redis
 
 Redis.class_eval {add_method_tracer :set}
 Redis.class_eval {add_method_tracer :get}

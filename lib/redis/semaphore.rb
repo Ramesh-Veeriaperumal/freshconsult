@@ -27,6 +27,7 @@ module Redis::Semaphore
     $semaphore.perform_redis_op('exec')
   end
 
+  # For a given key, the given block can run at most only once in N machines. if the key is already locked, the block is skips execution.
   def lock_and_run(key, expiry = nil)
     return if semaphore_exists?(key)
 

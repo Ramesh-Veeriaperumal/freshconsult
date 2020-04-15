@@ -54,7 +54,7 @@ module ApiSolutions
         set_session
         @draft.unlock # So that the lock in period for 'editing' status is reset
         assign_draft_attributes(@draft_params)
-        render_custom_errors(@draft, true) unless @draft.save
+        render_custom_errors(@draft) unless @draft.save
       elsif @draft
         # draft should be unlocked in all update cases
         set_session

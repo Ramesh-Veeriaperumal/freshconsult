@@ -5,12 +5,14 @@ class Solution::ApprovalNotificationWorker < BaseWorker
 
   def perform(args)
     args.symbolize_keys!
-    @solution_approver_mapping = Solution::ApproverMapping.new(Account.current.helpdesk_approver_mappings.where(id: args[:id]).first)
+    approver_mapping = Account.current.helpdesk_approver_mappings.where(id: args[:id]).first
 
-    unless @solution_approver_mapping
+    unless approver_mapping
       Rails.logger.info "AA::Approval record not found [#{Account.current.id},#{args[:article_id]}"
       return
     end
+
+    @solution_approver_mapping = Solution::ApproverMapping.new(approver_mapping)
 
     Rails.logger.info "AA::Approval sending notification:: [#{Account.current.id}, #{@solution_approver_mapping.article.id}, #{@solution_approver_mapping.approval_status}] #{@solution_approver_mapping.article.title}"
     @to_users = to_users
