@@ -362,7 +362,7 @@ class TicketDecorator < ApiDecorator
     response_hash[:description] = ticket_body.description_html
     response_hash[:description_text] = ticket_body.description
 
-    [:requester, :stats, :conversations, :deleted, :freshfone_call, :fb_post, :tweet, :ticket_topic, :ebay, :email_spam_data, :sender_email, :meta].each do |attribute|
+    [:requester, :stats, :conversations, :deleted, :freshfone_call, :fb_post, :tweet, :ticket_topic, :ebay, :email_spam_data, :meta].each do |attribute|
       value = safe_send(attribute)
       response_hash[attribute] = value if value
     end
@@ -371,6 +371,8 @@ class TicketDecorator < ApiDecorator
       value = safe_send("#{attribute}_hash")
       response_hash[attribute] = value if value
     end
+
+    response_hash[:sender_email] = safe_send(:sender_email)
 
     # response_hash[:meta] = meta
     response_hash[:collaboration] = collaboration_hash if include_collab?

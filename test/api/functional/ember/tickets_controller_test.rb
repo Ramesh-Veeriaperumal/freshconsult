@@ -2270,6 +2270,22 @@ module Ember
       assert_equal response_body['requester_id'], sample_requester.id
     end
 
+    def test_sender_email_nil_when_requester_email_is_nil
+      sample_requester = add_new_user_without_email(@account)
+      description = Faker::Lorem.paragraph
+      subject = Faker::Lorem.words(10).join(' ')
+      params_hash = {
+        subject: subject,
+        description: description,
+        requester_id: sample_requester.id
+      }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 200
+      response_body = JSON.parse(response.body)
+      assert_equal response_body['sender_email'], nil
+      assert_equal response_body['requester_id'], sample_requester.id
+    end
+
     def test_update_properties_with_subject_description
       ticket = create_ticket
       subject = Faker::Lorem.words(10).join(' ')
