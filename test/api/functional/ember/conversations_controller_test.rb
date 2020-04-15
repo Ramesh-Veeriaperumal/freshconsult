@@ -475,6 +475,30 @@ module Ember
       @account.revoke_feature(:undo_send)
     end
 
+    def test_reply_to_tictet_sender_email_undo_send_enabled
+      @account.add_feature(:undo_send)
+      user = add_user_with_multiple_emails(@account, 2)
+      secondary_email = user.user_emails.first.email
+      new_ticket = create_ticket(requester_id: user.id)
+      new_ticket.reload
+      ticket.schema_less_ticket.update_attribute(:sender_email, secondary_email)
+      User.any_instance.stubs(:enabled_undo_send?).returns(true)
+      params_hash = reply_note_params_hash
+      params_hash[:user_id] = user.id
+      Sidekiq::Testing.inline! do
+        post :reply, construct_params({ version: 'private', id: new_ticket.display_id }, params_hash)
+      end
+      assert_response 201
+      response = parse_response @response.body
+      assert_equal response['to_emails'], [secondary_email]
+      assert_include new_ticket.notes.last.schema_less_note.to_emails, secondary_email
+    ensure
+      new_ticket.destroy
+      user.destroy
+      @account.revoke_feature(:undo_send)
+      User.any_instance.unstub(:enabled_undo_send?)
+    end
+
     def test_reply_without_from_email
       # Without personalized_email_replies
       @account.features.personalized_email_replies.destroy
