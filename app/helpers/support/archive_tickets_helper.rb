@@ -3,7 +3,6 @@ module Support::ArchiveTicketsHelper
                             "data-response-type" => "script",
                             "data-method" => :get,
                             "data-loading-box" => "#ticket-list" }
-  ALL_COMPANIES_OPTION_THRESHOLD = 20
   def visible_fields
     visible_fields = ["display_id", "status", "created_at", "updated_at", "requester_name"] # removed "due_by", "resolved_at"
     current_portal.ticket_fields(:customer_visible).each { |field| visible_fields.push(field.name) }
@@ -131,16 +130,7 @@ module Support::ArchiveTicketsHelper
                                                                   :requested_by => 0),
                               (@requested_by_company.to_i == x.id) ] unless( current_user.id == x.id )
                       }
-
-    # Do not show all companies option when the number of companies for a contact
-    # exceeds 20. When the contact is a  client manager for all the companies,
-    # allowing all companies option will select all companies tickets and this may
-    # have a impact in performance. 
-    dropdown_options = if @companies.length > ALL_COMPANIES_OPTION_THRESHOLD
-                      companies_list
-                    else
-                      all_companies_option.concat(companies_list)
-                    end
+    dropdown_options = all_companies_option.concat(companies_list)
     dropdown_menu dropdown_options, TOOLBAR_LINK_OPTIONS
   end
 
