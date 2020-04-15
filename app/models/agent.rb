@@ -384,6 +384,8 @@ class Agent < ActiveRecord::Base
     return if ooo_response[:body].empty? || ooo_response[:code] != 200
     
     @out_of_office_days = (ooo_response[:body]['data'][0]['end_time'].to_datetime - ooo_response[:body]['data'][0]['start_time'].to_datetime).to_i
+  ensure
+    User.reset_current_user
   end
 
   protected
