@@ -99,7 +99,41 @@
 	table{
 		@extend .table !optional;
 	}
-	
+
+	pre {
+		&.fd-callout {
+			margin: 0;
+      padding: 12px 16px;
+      background-color: #fff;
+      border: 1px solid #ebedf0;
+			border-left: 6px solid;
+      border-radius: 4px;
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
+
+      &--info {
+        border-left: 6px solid #475867
+      }
+
+      &--idea {
+        border-left: 6px solid #2c5cc5;
+      }
+
+      &--note {
+        border-left: 6px solid #e86f25;
+      }
+
+      // adding these classes so that we can change the colour from code view by adding these classes
+      &--success {
+        border-left: 6px solid #007958;
+      }
+
+      &--warning {
+        border-left: 6px solid #d72d30;
+      }
+    }
+	}
+
 	a {
 		color: #2753d7;
 	}
