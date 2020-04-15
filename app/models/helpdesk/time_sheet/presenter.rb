@@ -68,4 +68,13 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       _model: workable_type
     }
   end
+
+  def event_info(_action)
+    hypertrail_hash = Account.current.hypertrail_activities_enabled? ? construct_hypertrail_hash : {}
+    {}.merge!(hypertrail_hash)
+  end
+
+  def construct_hypertrail_hash
+    { hypertrail: true }
+  end
 end

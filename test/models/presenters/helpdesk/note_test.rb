@@ -58,6 +58,17 @@ class NoteTest < ActiveSupport::TestCase
     event_info.must_match_json_expression(event_info(:create))
   end
 
+  def test_central_publish_payload_event_info_with_hypertrail_enabled
+    Account.any_instance.stubs(:hypertrail_activities_enabled?).returns(true)
+    note = create_note(note_params_hash)
+    payload = note.central_publish_payload.to_json
+    event_info = note.event_info(:create)
+    assert_equal event_info[:hypertrail], true
+    payload.must_match_json_expression(central_publish_note_pattern(note))
+    event_info.must_match_json_expression(event_info(:create))
+    Account.any_instance.stubs(:hypertrail_activities_enabled?).returns(false)
+  end
+
   # def test_central_publish_payload_for_notes_having_freshcaller
   #   create_note_with_freshcaller
   #   note = create_note_with_freshcaller(note_params_hash)

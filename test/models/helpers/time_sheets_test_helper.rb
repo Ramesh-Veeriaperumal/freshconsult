@@ -57,4 +57,13 @@ module TimeSheetsTestHelper
   def generate_random_boolean
     Random.rand(0..1)
   end
+
+  def event_info_pattern(_event)
+    hypertrail_hash = Account.current.hypertrail_activities_enabled? ? construct_hypertrail_hash : {}
+    {}.merge!(hypertrail_hash)
+  end
+
+  def construct_hypertrail_hash
+    { hypertrail: true }
+  end
 end

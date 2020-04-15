@@ -410,10 +410,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def event_info(event_name)
     lifecycle_hash = event_name == :create && resolved_at ? default_lifecycle_properties : @ticket_lifecycle || {}
     activity_hash = construct_activity_hash
-    {
+    hypertrail_hash = Account.current.hypertrail_activities_enabled? ? construct_hypertrail_hash : {}
+    event_info_hash = {
       action_in_bhrs: action_in_bhrs?,
       pod: ChannelFrameworkConfig['pod']
     }.merge(lifecycle_hash).merge(activity_hash)
+    event_info_hash.merge!(hypertrail_hash)
+  end
+
+  def construct_hypertrail_hash
+    { hypertrail: true }
   end
 
   def construct_activity_hash

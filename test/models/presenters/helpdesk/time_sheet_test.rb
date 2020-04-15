@@ -79,4 +79,22 @@ class TimeSheetTest < ActiveSupport::TestCase
     assert_equal({}, job['args'][1]['model_changes'])
     job['args'][1]['model_properties'].must_match_json_expression(pattern_to_match)
   end
+
+  def test_central_time_sheet_create_event_info
+    Account.current.reload
+    Account.any_instance.stubs(:hypertrail_activities_enabled?).returns(true)
+    ticket = create_ticket(ticket_params_hash)
+    ticket.reload
+    CentralPublisher::Worker.jobs.clear
+    time_sheet = ticket.time_sheets.new(time_sheet_params_hash)
+    time_sheet.save
+    assert_equal 'time_sheet_create', CentralPublisher::Worker.jobs.last['args'][0]
+    time_sheet.reload
+    payload = time_sheet.central_publish_payload.to_json
+    event_info = time_sheet.event_info(:create)
+    assert_equal event_info[:hypertrail], true
+    payload.must_match_json_expression(cp_time_sheet_model_properties(time_sheet))
+    event_info.must_match_json_expression(event_info_pattern(:create))
+    Account.any_instance.stubs(:hypertrail_activities_enabled?).returns(false)
+  end
 end
