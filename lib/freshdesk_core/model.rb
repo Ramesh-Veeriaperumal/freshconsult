@@ -253,7 +253,8 @@ module FreshdeskCore::Model
                     'scheduled_tasks',
                     'subscription_requests',
                     'qna_insights_reports',
-                    'schedule_configurations'].freeze
+                    'schedule_configurations',
+                    'helpdesk_choices'].freeze
 
   STATUS = {
       :deleted => 0,
