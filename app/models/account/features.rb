@@ -49,7 +49,7 @@ class Account < ActiveRecord::Base
     :out_of_office, :enable_secure_login_check, :contact_form_enhancement, :public_api_filter_factory, :enable_twitter_requester_fields, :marketplace_gallery, :solutions_quick_view,
     :translations_proxy, :translations_cdn, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :retry_emails, :disable_beamer, :fb_message_echo_support, :portal_prototype_update,
     :bot_banner, :solutions_freshconnect, :fsm_scheduler_month_view, :idle_session_timeout, :solutions_dashboard,
-    :observer_race_condition_fix, :contact_graphical_avatar, :omni_bundle_2020
+    :observer_race_condition_fix, :contact_graphical_avatar, :omni_bundle_2020, :article_versioning_redis_lock, :hypertrail_activities
   ].freeze
 
   DB_FEATURES = [
@@ -87,7 +87,7 @@ class Account < ActiveRecord::Base
     :secure_attachments, :article_versioning, :article_export, :article_approval_workflow, :next_response_sla, :advanced_automations,
     :fb_ad_posts, :suggested_articles_count, :unlimited_multi_product,
     :help_widget_article_customisation, :agent_assist, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
-    :twitter_field_automation, :robo_assist, :triage
+    :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 

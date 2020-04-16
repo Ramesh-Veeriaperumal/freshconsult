@@ -58,7 +58,7 @@ class NERWorker < BaseWorker
   end
 
   def encrypt_pii(key)
-    Encryptor.encrypt(value: key, key: NER_API_TOKENS['secret_key'], iv: NER_API_TOKENS['iv'])
+    Encryptor.encrypt(value: key, key: NER_API_TOKENS['secret_key'], iv: NER_API_TOKENS['iv']).encode(::Encoding::UTF_8, undef: :replace)
   end
 
   # If it's a note & body & full_text length are same, it is possible that body will have quoted_text in it. 

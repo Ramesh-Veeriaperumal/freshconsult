@@ -39,8 +39,6 @@ Rails/UpdateAllQuery:
 
 Rails/JsonGenerate:
   Enabled: true
-  Include:
-    - 'api/app/views/**/*'
 
 Gem/WillPaginate:
   Enabled: true

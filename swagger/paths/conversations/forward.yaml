@@ -12,7 +12,10 @@ post:
     200:
       description: Success
       schema:
-        $ref: '#/definitions/extended_note'
+        type: object
+        properties: 
+          conversation:        
+            $ref: '#/definitions/extended_note'
     400:
       description: Bad Request Error
       schema:

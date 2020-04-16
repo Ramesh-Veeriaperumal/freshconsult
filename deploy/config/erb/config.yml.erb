@@ -121,3 +121,7 @@ show_trail_notifier_in_days: 30
 
 support_ticket_rate_limit: <%= node[:ymls][:config][:support_ticket_rate_limit] %>
 support_ticket_rate_limit_period: <%= node[:ymls][:config][:support_ticket_rate_limit_period] %>
+
+# Frontend Ember config.
+falcon_ui:
+  index_page: https://<%=node[:falcon_ui][@color_code.to_sym][:ember_frontend_s3]%>/<%=node[:opsworks][:environment]%>/a/index.html

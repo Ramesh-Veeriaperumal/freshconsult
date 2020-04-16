@@ -44,7 +44,7 @@ class Helpdesk::BulkReplyTickets
   private
 
     def load_tickets
-      self.tickets = Account.current.tickets.find_all_by_display_id(params[:ids])
+      self.tickets = Account.current.tickets.where(display_id: params[:ids]).to_a
     end
 
     def load_attachments

@@ -526,8 +526,8 @@ Helpkit::Application.routes.draw do
 
     resources :botflow, controller: 'ember/flows' do
       collection do
-        match '/actions' => 'ember/flows#system42_proxy'
-        match '/resources/*others' => 'ember/flows#system42_proxy'
+        match '/actions' => 'ember/flows#system42_proxy', :via => :get
+        match '/resources/*others' => 'ember/flows#system42_proxy', :via => :get
         get '*all', to: 'ember/flows#freshbot_proxy'
         put '*all', to: 'ember/flows#freshbot_proxy'
         post '*all', to: 'ember/flows#freshbot_proxy'
@@ -1128,11 +1128,11 @@ Helpkit::Application.routes.draw do
     end
     constraints ApiConstraints.new(version: 2), &api_routes # "/api/.." with Accept Header
     scope '', &api_routes
-    match '*route_not_found.:format', to: 'api_application#route_not_found'
-    match '*route_not_found',         to: 'api_application#route_not_found'
+    match '*route_not_found.:format', to: 'api_application#route_not_found', via: [:get, :post, :delete, :put, :patch, :head, :options]
+    match '*route_not_found',         to: 'api_application#route_not_found', via: [:get, :post, :delete, :put, :patch, :head, :options]
   end
 
   # Dev only routes
-  match '/swagger/*path' => 'swagger#respond'
-  match '/swagger' => 'swagger#respond'
+  match '/swagger/*path' => 'swagger#respond', via: :get
+  match '/swagger' => 'swagger#respond', via: :get
 end

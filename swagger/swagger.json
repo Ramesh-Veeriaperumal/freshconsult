@@ -1591,7 +1591,12 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/extended_note"
+              "type": "object",
+              "properties": {
+                "conversation": {
+                  "$ref": "#/definitions/extended_note"
+                }
+              }
             }
           },
           "400": {
@@ -1629,7 +1634,15 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/extended_note"
+              "type": "object",
+              "properties": {
+                "conversation": {
+                  "$ref": "#/definitions/extended_note"
+                },
+                "meta": {
+                  "$ref": "#/definitions/meta"
+                }
+              }
             }
           },
           "400": {
@@ -1724,7 +1737,12 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/extended_note"
+              "type": "object",
+              "properties": {
+                "conversation": {
+                  "$ref": "#/definitions/extended_note"
+                }
+              }
             }
           },
           "400": {
@@ -1759,7 +1777,12 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/extended_note"
+              "type": "object",
+              "properties": {
+                "conversation": {
+                  "$ref": "#/definitions/extended_note"
+                }
+              }
             }
           },
           "400": {
@@ -1851,7 +1874,12 @@
           "201": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/extended_note"
+              "type": "object",
+              "properties": {
+                "conversation": {
+                  "$ref": "#/definitions/extended_note"
+                }
+              }
             }
           },
           "400": {
@@ -1886,7 +1914,12 @@
           "201": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/extended_note"
+              "type": "object",
+              "properties": {
+                "conversation": {
+                  "$ref": "#/definitions/extended_note"
+                }
+              }
             }
           },
           "400": {
@@ -1921,7 +1954,12 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/extended_note"
+              "type": "object",
+              "properties": {
+                "conversation": {
+                  "$ref": "#/definitions/extended_note"
+                }
+              }
             }
           },
           "400": {
@@ -2366,7 +2404,12 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/extended_note"
+              "type": "object",
+              "properties": {
+                "conversation": {
+                  "$ref": "#/definitions/extended_note"
+                }
+              }
             }
           },
           "400": {
@@ -2456,7 +2499,12 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/reply_to_forward_template"
+              "type": "object",
+              "properties": {
+                "conversation": {
+                  "$ref": "#/definitions/extended_note"
+                }
+              }
             }
           },
           "400": {

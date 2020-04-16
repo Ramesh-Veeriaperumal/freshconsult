@@ -3733,6 +3733,7 @@ module Ember
         setup_multilingual
         before_all
         @account.add_feature(:article_versioning)
+        @account.launch(:article_versioning_redis_lock)
         create_article(article_params(lang_codes: all_account_languages))
       end
 
@@ -3799,6 +3800,20 @@ module Ember
       def test_draft_save
         sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 1)).primary_article
         assert sample_article.status == 1
+        should_create_version(sample_article) do
+          params_hash = { status: 1, unlock: true, session: nil }
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+          assert_response 200
+          latest_version = get_latest_version(sample_article)
+          assert_version_draft(latest_version)
+        end
+      end
+
+      def test_draft_without_redislock
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 1)).primary_article
+        assert sample_article.status == 1
+        @account.rollback(:article_versioning_redis_lock)
+        Redis::Redlock.expects(:acquire_lock_and_run).times(0)        
         should_create_version(sample_article) do
           params_hash = { status: 1, unlock: true, session: nil }
           put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)

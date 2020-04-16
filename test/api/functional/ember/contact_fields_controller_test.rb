@@ -1,7 +1,11 @@
 require_relative '../../test_helper'
+require Rails.root.join('test', 'core', 'helpers', 'twitter_test_helper.rb')
+
 module Ember
   class ContactFieldsControllerTest < ActionController::TestCase
     include ApiContactFieldsTestHelper
+    include TwitterTestHelper
+
     def wrap_cname(params)
       { contact_field: params }
     end
@@ -31,6 +35,37 @@ module Ember
         contact_field.except!(*["created_at", "updated_at"])
       end
       match_custom_json(parsed_response.to_json, pattern.ordered!)
+    end
+
+    def test_contact_field_index_for_mobile_app_request
+      create_twitter_default_fields
+      @account.reload
+      Account.any_instance.stubs(:twitter_requester_fields_enabled?).returns(true)
+      @request.user_agent = 'Freshdesk_Native_Android'
+      get :index, controller_params
+      assert_response 200
+      twitter_requester_fields = ['twitter_profile_status', 'twitter_followers_count']
+      fields = JSON.parse(response.body)
+      assert_equal fields.select { |field| twitter_requester_fields.include?(field['name']) }.count, 0
+    ensure
+      Account.current.contact_fields.find_by_name('twitter_followers_count').delete
+      Account.current.contact_fields.find_by_name('twitter_profile_status').delete
+      Account.any_instance.unstub(:twitter_requester_fields_enabled?)
+    end
+
+    def test_contact_field_index_for_web_app_request
+      create_twitter_default_fields
+      @account.reload
+      Account.any_instance.stubs(:twitter_requester_fields_enabled?).returns(true)
+      get :index, controller_params
+      assert_response 200
+      twitter_requester_fields = ['twitter_profile_status', 'twitter_followers_count']
+      fields = JSON.parse(response.body)
+      assert_equal fields.select { |field| twitter_requester_fields.include?(field['name']) }.count, 2
+    ensure
+      Account.current.contact_fields.find_by_name('twitter_followers_count').delete
+      Account.current.contact_fields.find_by_name('twitter_profile_status').delete
+      Account.any_instance.unstub(:twitter_requester_fields_enabled?)
     end
 
     def test_index_without_privilege

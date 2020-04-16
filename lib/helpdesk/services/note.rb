@@ -14,7 +14,7 @@ module Helpdesk
       def save_note_later(publish_solution_later, post_to_forum_topic)
         ticket = notable
         build_note_and_sanitize
-        self.to_emails = build_to_emails(ticket.requester)
+        self.to_emails = [ticket.from_email]
         attachment_list = build_attachments || []
         inline_attachment_list = inline_attachment_ids || []
         note_schema_less_associated_attributes = build_note_schema_less_associated_attributes
@@ -62,14 +62,6 @@ module Helpdesk
             formatted_text = body_html_with_formatting(CGI.escapeHTML(note_body_attributes[element]))
             note_body_attributes[element_html] = body_html_with_tags_renamed(formatted_text)
           end
-        end
-      end
-
-      def build_to_emails(ticket_requester)
-        if ticket_requester.second_email.present?
-          [ticket_requester.email, ticket_requester.second_email]
-        else
-          [ticket_requester.email]
         end
       end
 

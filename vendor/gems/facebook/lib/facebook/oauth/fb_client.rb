@@ -167,7 +167,7 @@ module Facebook
       PAGE_TAB_BLOCK = Proc.new{ |tabs_added|
         if Account.current
           page_ids  = tabs_added.keys
-          page_tabs = Account.current.facebook_pages.find_all_by_page_id(page_ids)
+          page_tabs = Account.current.facebook_pages.where(page_id: page_ids).to_a
           @edit_tab = true unless page_tabs.blank?
           page_tabs.each do |page_tab|
             page_tab.update_attribute(:page_token_tab, page_tab.page_id) if tabs_added[page_tab.page_id.to_s]

@@ -23,8 +23,7 @@ module Gamification
 				f_criteria = quest.time_condition(end_time)
 				conditions[0] = conditions.empty? ? f_criteria : (conditions[0] + ' and ' + f_criteria)
 				
-				created_topics_in_time = quest_scoper(topic.account, topic.user).count(
-					'topics.id', :conditions => conditions)
+				created_topics_in_time = quest_scoper(topic.account, topic.user).where(conditions).count('topics.id')
 				
 				quest_achieved = created_topics_in_time >= quest.quest_data[0][:value].to_i
 			end

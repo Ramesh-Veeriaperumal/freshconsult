@@ -4,8 +4,8 @@ module CentralConstants
   # In case of any breaking changes, bump the majore version, update from 0.0 to 1.0
   MODEL_PAYLOAD_VERSION = {
     'Account' => '1.3',
-    'Helpdesk::Ticket' => '2.12',
-    'Helpdesk::Note' => '0.7',
+    'Helpdesk::Ticket' => '2.13',
+    'Helpdesk::Note' => '0.8',
     'Solution::Category' => '0.1',
     'Solution::Folder' => '0.1',
     'Solution::Article' => '0.2',
@@ -17,7 +17,7 @@ module CentralConstants
     'VaRule' => '0.2',
     'Group' => '3.1',
     'Post' => '0.1',
-    'Helpdesk::TimeSheet' => '1.2',
+    'Helpdesk::TimeSheet' => '1.3',
     'DashboardAnnouncement' => '0.1',
     'Social::TwitterHandle' => '0.1',
     'Social::TwitterStream' => '0.1',

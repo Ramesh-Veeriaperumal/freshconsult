@@ -98,6 +98,6 @@ class TicketMergeDelegator < BaseDelegator
     end
 
     def ticket_permission?(ticket)
-      User.current.has_ticket_permission?(ticket) || !ticket.schema_less_ticket.try(:trashed)
+      User.current.has_ticket_permission?(ticket) && !ticket.schema_less_ticket.try(:trashed)
     end
 end

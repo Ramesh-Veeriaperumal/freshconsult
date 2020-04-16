@@ -71,7 +71,7 @@ class Support::TicketsController < SupportController
       token = nil
       respond_to do |format|
         flash[:notice] = t(:'flash.general.update.success', human_name: cname.humanize.downcase)
-        token = get_jwe_token(custom_fields) if custom_fields && check_pci_feature && check_for_secure_fields(custom_fields)
+        token = update_secure_fields(custom_fields) if custom_fields && check_pci_feature
         format.json do
           render json: {
             success: true
@@ -132,15 +132,9 @@ class Support::TicketsController < SupportController
 
   protected 
 
-    def check_for_secure_fields(custom_fields)
+    def update_secure_fields(custom_fields)
       @secure_field_methods = JWT::SecureFieldMethods.new
-      @secure_field_methods.secure_fields(custom_fields).present?
-    end
-
-    def get_jwe_token(custom_fields)
-      # Generates JWE token
-      jwe = JWT::SecureServiceJWEFactory.new(PciConstants::ACTION[:write], @item.id, PciConstants::PORTAL_TYPE[:support_portal], PciConstants::OBJECT_TYPE[:ticket], custom_fields)
-      (response.api_meta ||= {})[:vault_token] = jwe.generate_jwe_payload(@secure_field_methods)
+      @secure_field_methods.get_jwe_token(custom_fields, @item.id, PciConstants::PORTAL_TYPE[:support_portal]) if @secure_field_methods.secure_fields(custom_fields).present?
     end
 
     def check_pci_feature_validation

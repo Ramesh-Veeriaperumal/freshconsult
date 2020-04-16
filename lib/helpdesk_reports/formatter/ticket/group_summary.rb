@@ -51,7 +51,7 @@ class HelpdeskReports::Formatter::Ticket::GroupSummary
   end
 
   def list_of_agent_groups
-    users = Account.current.users.where(helpdesk_agent: true).find_all_by_id(@args[:agent_ids], :include => :agent_groups)
+    users = Account.current.users.where(helpdesk_agent: true, id: @args[:agent_ids]).includes(:agent_groups)
     users.inject([]) do |group_ids, usr|
       group_ids |= usr.agent_groups.collect{|ag| ag.group_id}
       group_ids
@@ -59,7 +59,7 @@ class HelpdeskReports::Formatter::Ticket::GroupSummary
   end
 
   def group_id_name_hash ids
-    Account.current.groups.find_all_by_id(ids, :select => "id, name").collect{ |g| [g.id, g.name]}.to_h
+    Account.current.groups.where(id: ids).select('id, name').collect { |g| [g.id, g.name] }.to_h
   end
 
   def populate_result_in_summary

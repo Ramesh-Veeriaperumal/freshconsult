@@ -377,7 +377,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def find_all_by_param(token)
-      find_all_by_display_id(token)
+      where(display_id: token).to_a
     end
 
     def extract_id_token(text, delimeter)

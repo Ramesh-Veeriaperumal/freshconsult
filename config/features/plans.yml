@@ -159,7 +159,7 @@
       - :analytics_ticket_volume_trend
       - :analytics_tickets_resource
       - :help_widget
-      - :freshreports_analytics 
+      - :freshreports_analytics
     :inherits: []
     :exclude: []
   :blossom_jan_19:
@@ -220,6 +220,7 @@
 #     - :field_service_management_toggle
       - :sla_reminder_automation
       - :article_interlinking
+      - :advanced_article_toolbar_options
     :inherits:
       - :sprout_jan_19
     :exclude: []
@@ -315,7 +316,7 @@
       - :analytics_report_search_widget
       - :analytics_report_add_widgets
       - :analytics_widget_save_as
-      - :analytics_widget_add_to_reports     
+      - :analytics_widget_add_to_reports
       - :analytics_widget_filter
       - :analytics_performance_distribution
       - :analytics_customer_analysis
@@ -373,7 +374,7 @@
       - :analytics_ticket_volume_trend
       - :analytics_tickets_resource
       - :help_widget
-      - :freshreports_analytics 
+      - :freshreports_analytics
     :inherits: []
     :exclude: []
   :blossom_jan_20:
@@ -432,6 +433,7 @@
       - :help_widget_appearance
       - :article_export
       - :article_interlinking
+      - :advanced_article_toolbar_options
 #     - :field_service_management_toggle
     :inherits:
       - :sprout_jan_20
@@ -525,7 +527,7 @@
       - :analytics_report_search_widget
       - :analytics_report_add_widgets
       - :analytics_widget_save_as
-      - :analytics_widget_add_to_reports     
+      - :analytics_widget_add_to_reports
       - :analytics_widget_filter
       - :analytics_performance_distribution
       - :analytics_customer_analysis

@@ -67,11 +67,11 @@ class HelpdeskReports::Formatter::Ticket::AgentSummary
   end
 
   def agent_id_name_hash ids
-    Account.current.users.where(helpdesk_agent: true).find_all_by_id(ids, :select => "id, name").collect{ |a| [a.id, a.name]}.to_h
+    Account.current.users.where(helpdesk_agent: true, id: ids).select('id, name').collect { |a| [a.id, a.name] }.to_h
   end
 
   def deleted_agent_id_name_hash ids
-    Account.current.users.unscoped.where(helpdesk_agent: false).find_all_by_id(ids, :select => "id, name").collect{ |a| [a.id, a.name]}.to_h
+    Account.current.users.unscoped.where(helpdesk_agent: false, id: ids).select('id, name').collect { |a| [a.id, a.name] }.to_h
   end
 
   def populate_result_in_summary

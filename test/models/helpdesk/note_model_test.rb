@@ -68,4 +68,18 @@ class NoteModelTest < ActiveSupport::TestCase
     assert_not_equal note.note_body.full_text_html, "<img src='cid:abc' class='inline-image'> This is content <img src='cid:abc' class='inline-image'> "
     Helpdesk::Note.any_instance.unstub(:inline_attachments)
   end
+
+  def test_update_sender_email_for_ticket_on_create_note
+    @account = Account.current
+    user = add_new_user(@account)
+    ticket = create_ticket(requester_id: user.id)
+    assert_equal user.email, ticket.from_email
+    email = Faker::Internet.email
+    user.email = email
+    user.save!
+    note = create_note(ticket_id: ticket.id, source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'], incoming: false)
+    ticket.reload
+    assert_equal email, note.notable.sender_email
+    assert_equal email, ticket.from_email
+  end
 end

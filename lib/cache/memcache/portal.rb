@@ -7,7 +7,7 @@ module Cache::Memcache::Portal
     def fetch_by_url(url)
       return if url.blank?
       key = PORTAL_BY_URL % { :portal_url => url }
-      MemcacheKeys.fetch(key) { self.find(:first, :conditions => { :portal_url => url }) }
+      MemcacheKeys.fetch(key) { self.where(portal_url: url).first }
     end
   end
 
@@ -97,7 +97,7 @@ module Cache::Memcache::Portal
 
   def current_customer_folder_ids
     @current_customer_folder_ids ||= (User.current.company_ids.select do |company_id|
-      (Account.current.solution_customer_folders.count(:conditions => {:customer_id => company_id}) > 0)
+      (Account.current.solution_customer_folders.where(customer_id: company_id).count > 0)
     end).sort
   end
 

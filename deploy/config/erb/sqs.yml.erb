@@ -4,6 +4,9 @@
     sqs_queues['search_etl_queue'] = node[:ymls][:archive_sqs_queues][:search_etl_queue]
     sqs_queues['count_etl_queue'] = node[:ymls][:archive_sqs_queues][:count_etl_queue]
     sqs_queues['analytics_etl_queue'] = node[:ymls][:archive_sqs_queues][:analytics_etl_queue]
+    sqs_queues['search_etlqueue_maintenance'] = node[:ymls][:archive_sqs_queues][:search_etl_queue]
+    sqs_queues['count_etl_queue_maintenance'] = node[:ymls][:archive_sqs_queues][:count_etl_queue]
+    sqs_queues['analytics_etl_queue_maintenance'] = node[:ymls][:archive_sqs_queues][:analytics_etl_queue]
   end
 %>
 

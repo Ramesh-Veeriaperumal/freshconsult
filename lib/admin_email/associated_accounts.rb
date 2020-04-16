@@ -65,7 +65,7 @@ class AdminEmail::AssociatedAccounts < Dynamo
     agents = results = []
 
     Sharding.run_on_all_slaves do
-      agents = User.technicians.find_all_by_email(email)
+      agents = User.technicians.where(email: email).to_a
       agents.each do |agent|
         agent.account.host
         results.push(agent.account)

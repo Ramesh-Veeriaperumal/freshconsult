@@ -59,12 +59,11 @@ module Reports::HelpdeskReportingQuery
     model = ('responder_id').eql?(group_by) ? User : ('group_id').eql?(group_by) ? Group : Customer
     deleted_label = ('responder_id').eql?(group_by) ? I18n.t("adv_reports.deleted_agent") : (('group_id').eql?(group_by) ? 
         I18n.t("adv_reports.deleted_group") : I18n.t("adv_reports.deleted_customer"))
-    xaxis_Hash = model.find_all_by_id(id_arr).inject({}) do |result_hash, u| 
+    xaxis_hash = model.where(id: id_arr).each_with_object({}) do |u, result_hash|
      result_hash[u.id] = u.name
-     result_hash
     end
-    id_arr.each {|id| xaxis_Hash[id.to_i] = deleted_label unless xaxis_Hash.key?(id.to_i)} if id_arr.length != xaxis_Hash.length
-    xaxis_Hash
+    id_arr.each { |id| xaxis_hash[id.to_i] = deleted_label unless xaxis_hash.key?(id.to_i) } if id_arr.length != xaxis_hash.length
+    xaxis_hash
   end
 
 # generate select columns from the select columns string like 'received_tickets,resolved_tickets,backlog_tickets'

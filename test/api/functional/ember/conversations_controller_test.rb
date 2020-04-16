@@ -20,6 +20,7 @@ module Ember
     include Redis::RedisKeys
     include Redis::OthersRedis
     include Redis::TicketsRedis
+    include PrivilegesHelper
 
     BULK_ATTACHMENT_CREATE_COUNT = 2
     BULK_NOTE_CREATE_COUNT       = 2
@@ -473,6 +474,30 @@ module Ember
     ensure
       Account.any_instance.unstub(:bcc_email)
       @account.revoke_feature(:undo_send)
+    end
+
+    def test_reply_to_tictet_sender_email_undo_send_enabled
+      @account.add_feature(:undo_send)
+      user = add_user_with_multiple_emails(@account, 2)
+      secondary_email = user.user_emails.first.email
+      new_ticket = create_ticket(requester_id: user.id)
+      new_ticket.reload
+      ticket.schema_less_ticket.update_attribute(:sender_email, secondary_email)
+      User.any_instance.stubs(:enabled_undo_send?).returns(true)
+      params_hash = reply_note_params_hash
+      params_hash[:user_id] = user.id
+      Sidekiq::Testing.inline! do
+        post :reply, construct_params({ version: 'private', id: new_ticket.display_id }, params_hash)
+      end
+      assert_response 201
+      response = parse_response @response.body
+      assert_equal response['to_emails'], [secondary_email]
+      assert_include new_ticket.notes.last.schema_less_note.to_emails, secondary_email
+    ensure
+      new_ticket.destroy
+      user.destroy
+      @account.revoke_feature(:undo_send)
+      User.any_instance.unstub(:enabled_undo_send?)
     end
 
     def test_reply_without_from_email
@@ -2541,6 +2566,88 @@ module Ember
       response_text = JSON.parse(response.body)['body_text']
       required_text = 'A  B  C  D'
       assert_equal response_text, required_text
+    end
+
+    def test_reply_with_secure_field_and_ticket_params
+      Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+      ::Tickets::SendAndSetWorker.clear
+      add_privilege(User.current, :view_secure_field)
+      add_privilege(User.current, :edit_secure_field)
+      create_custom_field_dn('custom_card_no_test', 'secure_text')
+      ticket = create_ticket(requester_id: User.current.id)
+      uuid = SecureRandom.hex
+      request.stubs(:uuid).returns(uuid)
+      ticket_params = { ticket: { priority: 3, status: 3, source: 5, type: 'Problem', custom_fields: { '_custom_card_no_test' => 'c0376b8ce26458010ceceb9de2fde759' } } }
+      params_hash = reply_note_params_hash.merge!(ticket_params)
+      CustomRequestStore.store[:private_api_request] = true
+      post :reply, construct_params({ id: ticket.display_id }, params_hash)
+      assert_response 201
+      token = @response.api_meta[:vault_token]
+      key = ApiTicketsTestHelper::PRIVATE_KEY_STRING
+      assert_equal ::Tickets::SendAndSetWorker.jobs.size, 1
+      payload = JSON.parse(JWE.decrypt(token, key))
+      assert_equal payload['action'], 2
+      assert_equal payload['otype'], 'ticket'
+      assert_equal payload['oid'], ticket.id
+      assert_equal payload['user_id'], User.current.id
+      assert_equal payload['uuid'].to_s, uuid
+      assert_equal payload['iss'], 'fd/poduseast'
+      assert_equal payload['scope'], ['custom_card_no_test']
+      assert_equal payload['exp'], payload['iat'] + PciConstants::EXPIRY_DURATION.to_i
+      assert_equal payload['accid'], Account.current.id
+      assert_equal payload['portal'], 1
+    ensure
+      CustomRequestStore.store[:private_api_request] = false
+      ticket.destroy
+      request.unstub(:uuid)
+      Account.current.ticket_fields.find_by_name('custom_card_no_test_1').destroy
+      remove_privilege(User.current, :view_secure_field)
+      remove_privilege(User.current, :edit_secure_field)
+      Account.any_instance.unstub(:pci_compliance_field_enabled?)
+    end
+
+    def test_reply_with_ticket_params_and_secure_field_without_prefix
+      Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+      ::Tickets::SendAndSetWorker.clear
+      add_privilege(User.current, :view_secure_field)
+      add_privilege(User.current, :edit_secure_field)
+      create_custom_field_dn('custom_card_no_test', 'secure_text')
+      ticket = create_ticket(requester_id: User.current.id)
+      uuid = SecureRandom.hex
+      request.stubs(:uuid).returns(uuid)
+      ticket_params = { ticket: { priority: 3, status: 3, source: 5, type: 'Problem', custom_fields: { 'custom_card_no_test' => 'c0376b8ce26458010ceceb9de2fde759' } } }
+      params_hash = reply_note_params_hash.merge!(ticket_params)
+      CustomRequestStore.store[:private_api_request] = true
+      post :reply, construct_params({ id: ticket.display_id }, params_hash)
+      assert_response 400
+    ensure
+      CustomRequestStore.store[:private_api_request] = false
+      ticket.destroy
+      request.unstub(:uuid)
+      Account.current.ticket_fields.find_by_name('custom_card_no_test_1').destroy
+      remove_privilege(User.current, :view_secure_field)
+      remove_privilege(User.current, :edit_secure_field)
+      Account.any_instance.unstub(:pci_compliance_field_enabled?)
+    end
+
+    def test_reply_with_ticket_params_and_secure_field_without_privilege
+      ::Tickets::SendAndSetWorker.clear
+      Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+      create_custom_field_dn('custom_card_no_test', 'secure_text')
+      ticket = create_ticket(requester_id: User.current.id)
+      uuid = SecureRandom.hex
+      request.stubs(:uuid).returns(uuid)
+      ticket_params = { ticket: { priority: 3, status: 3, source: 5, type: 'Problem', custom_fields: { '_custom_card_no_test' => 'c0376b8ce26458010ceceb9de2fde759' } } }
+      params_hash = reply_note_params_hash.merge!(ticket_params)
+      CustomRequestStore.store[:private_api_request] = true
+      post :reply, construct_params({ id: ticket.display_id }, params_hash)
+      assert_response 400
+    ensure
+      CustomRequestStore.store[:private_api_request] = false
+      ticket.destroy
+      request.unstub(:uuid)
+      Account.current.ticket_fields.find_by_name('custom_card_no_test_1').destroy
+      Account.any_instance.unstub(:pci_compliance_field_enabled?)
     end
 
     private

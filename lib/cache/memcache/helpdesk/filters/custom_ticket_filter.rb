@@ -4,7 +4,7 @@ module Cache::Memcache::Helpdesk::Filters::CustomTicketFilter
 
   def clear_cache
     MemcacheKeys.delete_from_cache(account_filters_memcache_key)
-    account.agents.find(:all, :include => :user).each do |agent|
+    account.agents.includes(:user).each do |agent|
       key = user_filters_memcache_key(agent.user,account)
       MemcacheKeys.delete_from_cache(key)
     end
@@ -17,8 +17,10 @@ module Cache::Memcache::Helpdesk::Filters::CustomTicketFilter
 
   def my_ticket_filters(user)
     key = self.user_filters_memcache_key(user)
-    MemcacheKeys.fetch(key) { self.find(:all, :joins =>"JOIN admin_user_accesses acc ON acc.account_id =  wf_filters.account_id AND acc.accessible_id = wf_filters.id AND acc.accessible_type = 'Wf::Filter' LEFT JOIN agent_groups ON acc.group_id=agent_groups.group_id", :order => 'created_at desc', :conditions =>["acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]} OR agent_groups.user_id=#{user.id} OR (acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]} and acc.user_id=#{user.id})"],
-      :include => :accessible) }
+    MemcacheKeys.fetch(key) { self.joins("JOIN admin_user_accesses acc ON acc.account_id =  wf_filters.account_id AND acc.accessible_id = wf_filters.id AND acc.accessible_type = 'Wf::Filter' LEFT JOIN agent_groups ON acc.group_id=agent_groups.group_id")
+      .order('created_at desc')
+      .where(["acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]} OR agent_groups.user_id=#{user.id} OR (acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]} and acc.user_id=#{user.id})"])
+      .includes(:accessible).to_a }
   end
 
   def account_filters

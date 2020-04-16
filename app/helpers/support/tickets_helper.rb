@@ -4,7 +4,6 @@ module Support::TicketsHelper
                             "data-response-type" => "script",
                             "data-method" => :get,
                             "data-loading-box" => "#ticket-list" }
-  ALL_COMPANIES_OPTION_THRESHOLD = 20
 
   def current_filter
     @current_filter ||= set_cookie :wf_filter, "open_or_pending"
@@ -81,15 +80,7 @@ module Support::TicketsHelper
                                                           :requested_by => 0),
                               (@requested_by_company.to_i == x.id) ]
                      }
-    # Do not show all companies option when the number of companies for a contact
-    # exceeds 20. When the contact is a  client manager for all the companies,
-    # allowing all companies option will select all companies tickets and this may
-    # have a impact in performance. 
-    dropdown_options = if @companies.length > ALL_COMPANIES_OPTION_THRESHOLD
-                      companies_list
-                    else
-                      all_companies_option.concat(companies_list)
-                    end
+    dropdown_options = all_companies_option.concat(companies_list)
     dropdown_menu dropdown_options, TOOLBAR_LINK_OPTIONS
   end
 

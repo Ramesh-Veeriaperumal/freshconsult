@@ -144,7 +144,7 @@ gem "lockfile","1.4.3"
 
 gem "newrelic_rpm","~> 5.5.0"
 
-gem "prometheus_exporter", :git => "git@github.com:freshdesk/prometheus_exporter.git", :tag => "v1.0.6"
+gem "prometheus_exporter", :git => "git@github.com:freshdesk/prometheus_exporter.git", :tag => "v1.0.7"
 gem "ddtrace"
 gem "dogstatsd-ruby"
 
@@ -389,3 +389,5 @@ gem 'ejson', :require => false
 gem 'rack-protection', '1.5.5'
 
 gem 'coverband', '1.5.4', :group => [:staging]
+
+gem 'oj'

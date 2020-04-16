@@ -53,12 +53,14 @@ module Ember
     def reply
       @post_to_forum_topic = params[cname][:post_to_forum_topic]
       @last_note_id = params[:last_note_id].to_i
+      custom_fields_in_params = @ticket_params[:custom_fields] if @ticket_params
       @last_note_id = @ticket.notes.last.try(:id) if @last_note_id == 1
       return unless validate_params
       sanitize_and_build
       return unless validate_delegator(@item, delegator_hash)
 
       if @ticket_params.nil? || update_ticket_attributes
+        update_secure_fields(custom_fields_in_params) if Account.current.pci_compliance_field_enabled? && custom_fields_in_params.present?
         if current_user.enabled_undo_send? && @ticket.schedule_observer.blank?
           save_note_and_respond_later
         else
@@ -187,6 +189,11 @@ module Ember
         # So, we are passing nil instead of attachment_ids and shared_attachments to skip validation.
         # These attachments will be validated in conversations delegator.
         nil
+      end
+
+      def update_secure_fields(custom_fields)
+        @secure_field_methods = JWT::SecureFieldMethods.new
+        (response.api_meta ||= {})[:vault_token] = @secure_field_methods.get_jwe_token(custom_fields, @item.notable_id, PciConstants::PORTAL_TYPE[:agent_portal]) if @secure_field_methods.secure_fields(custom_fields).present?
       end
 
       def add_facebook_attachments

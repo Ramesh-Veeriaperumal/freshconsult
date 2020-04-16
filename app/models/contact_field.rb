@@ -116,4 +116,8 @@ class ContactField < ActiveRecord::Base
   def custom_checkbox_field?
     field_type.to_sym == :custom_checkbox
   end
+
+  def twitter_field?
+    name == 'twitter_profile_status' || name == 'twitter_followers_count'
+  end
 end

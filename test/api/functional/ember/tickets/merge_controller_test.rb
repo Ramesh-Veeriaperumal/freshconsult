@@ -79,28 +79,47 @@ module Ember
       end
 
       def test_merge_with_primary_ticket_with_group_permission_only
-        primary_ticket = create_ticket
-        source_tickets_ids = create_n_tickets(BULK_TICKET_CREATE_COUNT)
         @controller.stubs(:group_ticket_permission?).returns(true)
-        @controller.stubs(:assigned_ticket_permission?).returns(false)
+        User.any_instance.stubs(:group_ticket_permission).returns(true)
+        User.any_instance.stubs(:assigned_ticket_permission?).returns(false)
         User.any_instance.stubs(:can_view_all_tickets?).returns(false)
-        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets_ids)
+        group = create_group_with_agents(@account, agent_list: [User.current.id])
+        primary_ticket = create_ticket({}, group)
+        source_tickets_ids = 2.times.inject([]) { |arr, i| arr << create_ticket({}, group) }
+        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets_ids.map(&:display_id))
         put :merge, construct_params({ version: 'private' }, request_params)
         assert_response 204
+      ensure
         User.any_instance.unstub(:can_view_all_tickets?)
+        User.any_instance.unstub(:group_ticket_permission)
+        User.any_instance.unstub(:assigned_ticket_permission?)
         @controller.unstub(:group_ticket_permission?)
-        @controller.unstub(:assigned_ticket_permission?)
       end
 
       def test_merge_with_secondary_tickets_without_permission
         primary_ticket = create_ticket
         source_tickets_ids = create_n_tickets(BULK_TICKET_CREATE_COUNT)
         request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets_ids)
-        TicketMergeDelegator.any_instance.stubs(:ticket_permission?).returns(false)
+        User.any_instance.stubs(:has_ticket_permission?).returns(false)
         put :merge, construct_params({ version: 'private' }, request_params)
         assert_response 400
-        TicketMergeDelegator.any_instance.unstub(:ticket_permission?)
+        User.any_instance.unstub(:has_ticket_permission?)
         match_json(merge_imperssible_ids_pattern(source_tickets_ids))
+      end
+
+      def test_merge_with_secondary_ticket_when_trashed
+        primary_ticket = create_ticket
+        secondary_ticket = create_ticket
+        secondary_ticket.trashed = true
+        secondary_ticket.save
+        source_tickets_id = secondary_ticket.display_id
+        request_params = sample_merge_request_params(primary_ticket.display_id, [source_tickets_id])
+        User.any_instance.stubs(:has_ticket_permission?).returns(true)
+        put :merge, construct_params({ version: 'private' }, request_params)
+        assert_response 400
+        match_json(merge_imperssible_ids_pattern([source_tickets_id]))
+      ensure
+        User.any_instance.unstub(:has_ticket_permission?)
       end
 
       def test_merge_with_invalid_and_permission_denined_tickets

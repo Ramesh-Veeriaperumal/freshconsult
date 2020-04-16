@@ -20,7 +20,7 @@ class Helpdesk::TagsController < ApplicationController
   def index
     sort_order = params[:sort] || cookies[:tag_sort_key] || :activity_desc 
     @archive_feature = current_account.features_included?(:archive_tickets)
-    @tags = params[:tag_id].blank? ? Helpdesk::Tag.sort_tags(sort_order).tag_search(params['name']).includes([:tag_uses]).paginate(page: params[:page], per_page: 50).to_a : [Helpdesk::Tag.sort_tags(sort_order).tag_search(params['name']).find(params[:tag_id])]
+    @tags = params[:tag_id].blank? ? Helpdesk::Tag.sort_tags(sort_order).tag_search(params['name']).paginate(page: params[:page], per_page: 50).to_a : [Helpdesk::Tag.sort_tags(sort_order).tag_search(params['name']).find(params[:tag_id])]
     cookies[:tag_sort_key] = sort_order;
     if params[:sort].present? and params[:page].blank?
       render :partial => "sort_results"
