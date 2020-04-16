@@ -78,7 +78,8 @@ properties:
                 properties:
                   field_agents_can_manage_appointments:
                     type: boolean
-                    description: Available only if value is false
+                  location_tagging_enabled:
+                    type: boolean
               onboarding_version:
                 type: string
           ssl_enabled:

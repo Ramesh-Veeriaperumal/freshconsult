@@ -8,12 +8,14 @@ put:
       schema:
         $ref: '#/definitions/fsm_save_settings_input'
   responses:
-    201:
+    200:
       description: Success
       schema:
         type: object
         properties:
           field_agents_can_manage_appointments:
+            type: boolean
+          location_tagging_enabled:
             type: boolean
     400:
       description: Bad Request Error
@@ -30,6 +32,8 @@ get:
         type: object
         properties:
           field_agents_can_manage_appointments:
+            type: boolean
+          location_tagging_enabled:
             type: boolean
     400:
       description: Bad Request Error
