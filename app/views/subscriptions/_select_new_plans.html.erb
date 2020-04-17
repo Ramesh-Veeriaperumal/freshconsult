@@ -36,6 +36,13 @@
               <td class="pricelist <%= plan_name %> <%= is_active ? 'active' : ''%> <%= plan_name_id.include?(omniFilter) && !omni_account ? 'hide' : ''%>"
                   id = "plan-<%= plan_name_id %>" width='<%="#{(100/(plans.size.to_f)).to_i}%"%>'>
                   <input type="hidden" data-omni-plan-id="<%=plan_name_id%>" data-plan-amount="<%= fetch_plan_amount(plan) %>" data-plan-id="<%= plan.id %>"/>
+                  <!--# Allow subscription to be updated to current plan omni variant. eg. Estate Jan 19 to Estate Omni Jan 19 -->
+                  <% old_plan_omni_added = false %>
+                  <% if !old_plan_omni_added && subscribed_plan.classic && subscribed_plan.basic_variant? %>
+                     <% old_plan_omni = subscribed_plan.omni_plan_variant %>
+                     <input type="hidden" data-omni-plan-id="<%= old_plan_omni.name.parameterize.underscore %>" data-plan-amount="<%= fetch_plan_amount(old_plan_omni) %>" data-plan-id="<%= old_plan_omni.id %>"/>
+                     <% old_plan_omni_added = true %>
+                  <% end %>
                   <div class="plan-details">
                     <div class="plan-title">
                       <% bool_beta_plan = (plan_name == "premium" && @discount  && @discount.name.downcase == "beta users special") %>
