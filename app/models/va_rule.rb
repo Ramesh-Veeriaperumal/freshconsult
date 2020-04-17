@@ -32,6 +32,7 @@ class VaRule < ActiveRecord::Base
   before_save :migrate_filter_data, :if => :conditions_changed?
   before_destroy :save_deleted_rule_info
   after_commit :clear_observer_rules_cache, :clear_observer_condition_field_names_cache, if: :ticket_observer_rule?
+  after_commit :clear_service_task_observer_rules_cache, if: :service_task_observer_rule?
   after_commit :clear_api_webhook_rules_from_cache, :if => :api_webhook_rule?
   after_commit :clear_installed_app_business_rules_from_cache, :if => :installed_app_business_rule?
   after_commit :log_rule_change, if: :automated_rule?

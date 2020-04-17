@@ -1031,7 +1031,7 @@ private
 
   def execute_observer?
     @execute_observer ||= begin
-      _execute_observer = user_present? && !disable_observer_rule && !import_ticket && !service_task?
+      _execute_observer = user_present? && !disable_observer_rule && !import_ticket && (!service_task? || account.fsm_admin_automations_enabled?)
       SBRR.log "Ticket ##{self.display_id} save done. Model_changes #{@model_changes.inspect}"
       Va::Logger::Automation.log('Skipping observer', true) unless _execute_observer
       _execute_observer

@@ -17,21 +17,19 @@ module Tickets
 
         evaluate_on = account.tickets.find_by_id ticket_id
         evaluate_on.thank_you_note_id = args[:note_id]
-        evaluate_on.current_note_id = args[:note_id] if account.next_response_sla_enabled?
+        evaluate_on.current_note_id = args[:note_id] if account.next_response_sla_enabled? && evaluate_sla?
         evaluate_on.attributes = args[:attributes]
         doer = account.users.find_by_id doer_id unless system_event
 
         Va::Logger::Automation.log("system_event=#{system_event}, user_nil=#{doer.nil?}", true) if system_event || doer.nil?
         if evaluate_on.present? and (doer.present? || system_event)
           start_time = Time.now.utc
-          rule_type = VAConfig::RULES_BY_ID[VAConfig::RULES[:observer]]
           Thread.current[:observer_doer_id] = doer_id || SYSTEM_DOER_ID
           aggregated_response_time = 0
-          observer_rules = account.observer_rules_from_cache
           rule_ids_with_exec_count = {}
           evaluate_on.prime_ticket_args = args
-          original_ticket = Account.current.observer_race_condition_fix_enabled? ? evaluate_on.duplicate(original_attributes) : evaluate_on
-          observer_rules.each do |vr|
+          original_ticket = original_ticket_data(evaluate_on, original_attributes)
+          rules.each do |vr|
             begin
               Va::Logger::Automation.set_rule_id(vr.id)
               ticket = nil
@@ -40,12 +38,7 @@ module Tickets
                           vr.check_rule_events(doer, evaluate_on, current_events, original_ticket) :
                           vr.check_events(doer, evaluate_on, current_events)
               }
-              if Account.current.observer_race_condition_fix_enabled?
-                changed_attributes = evaluate_on.changes.each_with_object({}) do |(field, changes), hash|
-                  hash[field] = changes[1]
-                end
-                original_ticket = original_ticket.duplicate(changed_attributes)
-              end
+              original_ticket = update_original_ticket_with_changes evaluate_on, original_ticket
               rule_ids_with_exec_count[vr.id] = 1 if ticket.present?
               Va::Logger::Automation.log_execution_and_time(time, (ticket.present? ? 1 : 0), rule_type)
               aggregated_response_time += vr.response_time[:matches] || 0
@@ -57,13 +50,13 @@ module Tickets
           end_time = Time.now.utc
           total_time = end_time - start_time
           Va::Logger::Automation.unset_rule_id
-          Va::Logger::Automation.log_execution_and_time(total_time, observer_rules.size, rule_type, start_time, end_time)
+          Va::Logger::Automation.log_execution_and_time(total_time, rules.size, rule_type, start_time, end_time)
           ticket_changes = evaluate_on.merge_changes(current_events, 
                             evaluate_on.changes) if current_events.present?
-          evaluate_on.round_robin_on_ticket_update(ticket_changes) if evaluate_on.rr_allowed_on_update?
+          evaluate_on.round_robin_on_ticket_update(ticket_changes) if evaluate_on.rr_allowed_on_update? && evaluate_rr?
           ticket_changes = evaluate_on.merge_changes(ticket_changes, evaluate_on.changes.slice(:responder_id)) 
-          evaluate_on.update_old_group_capping(ticket_changes)
-          if sla_args && sla_args[:sla_on_background] && evaluate_on.is_in_same_sla_state?(sla_args[:sla_state_attributes])
+          evaluate_on.update_old_group_capping(ticket_changes) if evaluate_rr?
+          if evaluate_sla? && sla_args && sla_args[:sla_on_background] && evaluate_on.is_in_same_sla_state?(sla_args[:sla_state_attributes])
             evaluate_on.update_sla = true
             evaluate_on.sla_calculation_time = sla_args[:sla_calculation_time]
           end
@@ -77,12 +70,12 @@ module Tickets
           Va::Logger::Automation.log("Skipping observer worker, ticket present?=#{evaluate_on.present?}, user present?=#{(doer.present? || system_event)}", true)
         end
       rescue => e
-        Va::Logger::Automation.log_error(OBSERVER_ERROR, e, args)
+        Va::Logger::Automation.log_error(OBSERVER_ERROR, err, args)
         NewRelic::Agent.notice_error(e, {:custom_params => {:args => args }})
         raise e
       ensure
         Va::Logger::Automation.unset_thread_variables
-        if Account.current.skill_based_round_robin_enabled?
+        if evaluate_rr? && Account.current.skill_based_round_robin_enabled?
           if evaluate_on.present? && args[:enqueued_class] == 'Helpdesk::Ticket'
             #merges the diff between previous save transaction & observer save transaction
             previous_changes = args[:model_changes]
@@ -93,17 +86,15 @@ module Tickets
             end
             evaluate_on.sbrr_state_attributes = args[:sbrr_state_attributes]
             evaluate_on.enqueue_skill_based_round_robin if evaluate_on.should_enqueue_sbrr_job? && !evaluate_on.skip_sbrr
-          else
-            if evaluate_on.should_enqueue_sbrr_job? && !evaluate_on.skip_sbrr && !evaluate_on.errors.any?
+          elsif evaluate_rr? && evaluate_on.should_enqueue_sbrr_job? && !evaluate_on.skip_sbrr && !evaluate_on.errors.any?
               evaluate_on.enqueue_skill_based_round_robin
-            end
           end
         end
 
         Thread.current[:observer_doer_id] = nil
 
         # Need to refactor this
-        if Account.current.omni_channel_routing_enabled?
+        if enable_ocr_sync? && Account.current.omni_channel_routing_enabled?
           evaluate_on.skip_ocr_sync = false
           if evaluate_on.present? && args[:enqueued_class] == 'Helpdesk::Ticket'
             previous_changes = args[:model_changes]
@@ -113,13 +104,47 @@ module Tickets
               evaluate_on.model_changes = evaluate_on.merge_changes previous_changes, evaluate_on.model_changes
             end
             evaluate_on.sync_task_changes_to_ocr if evaluate_on.allow_ocr_sync?
-          else
-            if evaluate_on.allow_ocr_sync? && !evaluate_on.skip_sbrr && !evaluate_on.errors.any?
+          elsif evaluate_rr? && enable_ocr_sync? && evaluate_on.allow_ocr_sync? && !evaluate_on.skip_sbrr && !evaluate_on.errors.any?
               evaluate_on.sync_task_changes_to_ocr
-            end
           end
         end
-        return {:sbrr_exec => evaluate_on.try(:sbrr_exec_obj)}
+        return { sbrr_exec: evaluate_on.try(:sbrr_exec_obj) } if evaluate_rr?
+      end
+    end
+
+    # Adding these methods since service_task_observer_worker.rb inherits this class
+    def rule_type
+      VAConfig::RULES_BY_ID[VAConfig::RULES[:observer]]
+    end
+
+    def rules
+      Account.current.observer_rules_from_cache
+    end
+
+    def evaluate_rr?
+      true
+    end
+
+    def evaluate_sla?
+      true
+    end
+
+    def enable_ocr_sync?
+      true
+    end
+
+    def original_ticket_data(evaluate_on, original_attributes)
+      Account.current.observer_race_condition_fix_enabled? ? evaluate_on.duplicate(original_attributes) : evaluate_on
+    end
+
+    def update_original_ticket_with_changes(evaluate_on, original_ticket)
+      if Account.current.observer_race_condition_fix_enabled?
+        changed_attributes = evaluate_on.changes.each_with_object({}) do |(field, changes), hash|
+          hash[field] = changes[1]
+        end
+        original_ticket.duplicate(changed_attributes)
+      else
+        original_ticket
       end
     end
   end

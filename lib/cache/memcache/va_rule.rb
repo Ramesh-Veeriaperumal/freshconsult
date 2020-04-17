@@ -7,6 +7,11 @@ module Cache::Memcache::VARule
 		MemcacheKeys.delete_from_cache key
 	end
 
+  def clear_service_task_observer_rules_cache
+    key = ACCOUNT_SERVICE_TASK_OBSERVER_RULES % { account_id: self.account_id }
+    delete_value_from_cache key
+  end
+
   def clear_observer_condition_field_names_cache
     key = format(OBSERVER_CONDITION_FIELDS, account_id: account_id)
     delete_value_from_cache(key)

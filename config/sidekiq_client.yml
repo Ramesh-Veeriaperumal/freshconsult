@@ -61,6 +61,7 @@ defaults: &defaults
     - [chargebee_invoice]
     - [update_ticket_states]
     - [ticket_observer]
+    - [service_task_observer]
     - [password_expiry]
     - [sla_reminders]
     - [trial_sla_reminders]

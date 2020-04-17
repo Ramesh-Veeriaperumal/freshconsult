@@ -28,10 +28,14 @@ module Admin
         super
       end
 
+      def rule_object
+        @account.observer_rules.first
+      end
+
       def test_resolution_due_condition_in_observer
         ticket_params = ticket_params_hash.merge(created_at: (Time.zone.now - 2.hours), due_by: 30.minutes.ago.iso8601)
-        ticket = create_ticket(ticket_params)
-        rule = @account.observer_rules.first
+        ticket = create_ticket_for_observer(ticket_params)
+        rule = rule_object
         rule.name = 'check_resolution_due'
         rule.filter_data = []
         rule.condition_data = { performer: { 'type' => '4' }, events: [{ name: 'resolution_due' }], conditions: { any: [{ evaluate_on: :ticket, name: 'priority', operator: 'in', value: [1, 2, 3, 4] }] } }
@@ -43,8 +47,8 @@ module Admin
 
       def test_response_due_condition_in_observer
         ticket_params = ticket_params_hash.merge(created_at: (Time.zone.now - 2.hours), fr_due_by: 30.minutes.ago.iso8601)
-        ticket = create_ticket(ticket_params)
-        rule = @account.observer_rules.first
+        ticket = create_ticket_for_observer(ticket_params)
+        rule = rule_object
         rule.name = 'check_response_due'
         rule.filter_data = []
         rule.condition_data = { performer: { 'type' => '4' }, events: [{ name: 'response_due' }], conditions: { any: [{ evaluate_on: :ticket, name: 'priority', operator: 'in', value: [1, 2, 3, 4] }] } }
@@ -56,8 +60,8 @@ module Admin
 
       def test_next_response_due_condition_in_observer
         ticket_params = ticket_params_hash.merge(created_at: (Time.zone.now - 2.hours), nr_due_by: 30.minutes.ago.iso8601)
-        ticket = create_ticket(ticket_params)
-        rule = @account.observer_rules.first
+        ticket = create_ticket_for_observer(ticket_params)
+        rule = rule_object
         rule.name = 'check_next_response_due'
         rule.filter_data = []
         rule.condition_data = { performer: { 'type' => '4' }, events: [{ name: 'next_response_due' }], conditions: { any: [{ evaluate_on: :ticket, name: 'priority', operator: 'in', value: [1, 2, 3, 4] }] } }
@@ -122,17 +126,21 @@ module Admin
         # => Ticket, Rule object
         def send_email_observer_base(emailing_type)
           ticket_params = ticket_params_hash.merge(created_at: (Time.zone.now - 2.hours), nr_due_by: 30.minutes.ago.iso8601)
-          ticket = create_ticket(ticket_params)
+          ticket = create_ticket_for_observer(ticket_params)
           # Mark ticket as spam
           ticket.spam = true
           ticket.save!
-          rule = @account.observer_rules.first
+          rule = rule_object
           rule.name = "check_#{emailing_type}"
           rule.filter_data = []
           rule.condition_data = { performer: { 'type' => '3' }, events: [{ name: 'ticket_action', value: 'marked_spam' }], conditions: { all: [] } }
           rule.action_data = [{ name: emailing_type.to_s, email_to: -2, email_subject: 'Test Email', email_body: '<p dir="ltr">Test Email description</p>' }]
           rule.save!
           [ticket, rule]
+        end
+
+        def create_ticket_for_observer(ticket_params)
+          create_ticket(ticket_params)
         end
     end
   end
