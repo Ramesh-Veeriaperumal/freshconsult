@@ -27,6 +27,7 @@ module ApiSearch
       @items = esv2_query_results(esv2_agent_models)
       response.api_meta = { count: @items.total_entries }
       @items = [] if @count_request
+      @items.reject! { |item| item.parent.nil? || item.parent.solution_folder_meta.nil? || item.parent.solution_folder_meta.solution_category_meta.nil? }
     end
 
     private
