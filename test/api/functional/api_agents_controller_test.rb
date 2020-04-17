@@ -1622,4 +1622,32 @@ class ApiAgentsControllerTest < ActionController::TestCase
   ensure
     Account.any_instance.unstub(:gamification_enabled?)
   end
+
+  def test_update_multiple_with_50_agents
+    uuid = SecureRandom.hex
+    request.stubs(:uuid).returns(uuid)
+    agent_array = []
+    agent_role_id = Role.find_by_name('Agent').id
+    50.times do 
+      agent_array << { 
+        "id" => add_test_agent(@account, role: agent_role_id).id,
+        "ticket_assignment" => { "available" => true }
+      }
+    end
+    payload = { "agents" => agent_array }
+    dynamo_response = { 'payload' => agent_array , 'action' => 'update_multiple' }
+    BulkApiJobs::Agent.any_instance.stubs(:pick_job).returns(dynamo_response)
+    Sidekiq::Testing.inline! do
+      put :update_multiple, construct_params(payload)
+    end
+    assert_response 202
+    pattern = { job_id: uuid, href: @account.bulk_job_url(uuid) }
+    match_json(pattern)
+    payload['agents'].each do |agent|
+      assert_equal Account.current.agents.find_by_user_id(agent['id']).available, true
+    end
+  ensure
+    BulkApiJobs::Agent.any_instance.unstub(:pick_job)
+    request.unstub(:uuid)
+  end
 end
