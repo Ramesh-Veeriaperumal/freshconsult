@@ -13,7 +13,8 @@ module Search::Filters::EsQueryMethods
     # Loop and construct ES conditions from WF filter conditions
     def construct_conditions(es_wrapper, wf_conditions)
       wf_conditions.each do |field|
-        cond_field = (COLUMN_MAPPING[field['condition']].presence || field['condition'].to_s).gsub('flexifields.', '')
+        cond_field = (COLUMN_MAPPING[field['condition']].presence || field['condition'].to_s).gsub(QueryHash::FLEXIFIELDS, '')
+        cond_field = cond_field.gsub(QueryHash::TICKET_FIELD_DATA, '') if cond_field.include?(QueryHash::TICKET_FIELD_DATA)
         field_values = field['value'].to_s.split(',')
         es_wrapper.push(handle_field(cond_field, field_values)) if cond_field.present?
       end

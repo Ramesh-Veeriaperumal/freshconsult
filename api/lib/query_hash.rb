@@ -5,6 +5,8 @@ class QueryHash
   SPAM_CONDITION = { 'condition' => 'spam', 'operator' => 'is', 'value' => false }.freeze
   DELETED_CONDITION = { 'condition' => 'deleted', 'operator' => 'is', 'value' => false }.freeze
   ARRAY_VALUED_OPERATORS = ['is_in', 'due_by_op'].freeze
+  TICKET_FIELD_DATA = 'ticket_field_data.'.freeze
+  FLEXIFIELDS = 'flexifields.'.freeze
 
   def initialize(params, other_options = {})
     @query_hash = params
@@ -35,7 +37,7 @@ class QueryHash
       return result if skip_transform?(query)
       result.merge!(transform_condition(query))
       if format == :presentable
-        result['type'] = is_flexi_field?(query) ? 'custom_field' : 'default'
+        result['type'] = custom_field?(query) ? 'custom_field' : 'default'
       end
       result
     end
@@ -61,7 +63,7 @@ class QueryHash
       if format.eql?(:system)
         condition_to_system_format(query)
       else
-        { 'condition' => (is_flexi_field?(query) ? ff_field_alias(query) : sanitize_condition_param(query['condition'], true)) }
+        { 'condition' => (custom_field?(query) ? ff_field_alias(query) : sanitize_condition_param(query['condition'], true)) }
       end
     end
 
@@ -74,13 +76,16 @@ class QueryHash
       condition = { 'ff_name' => 'default', 'condition' => sanitize_condition_param(query['condition']) }
       if query['type'] == 'custom_field'
         ff_name = "#{query['condition']}_#{Account.current.id}"
-        condition = { 'condition' => "flexifields.#{ff_alias_name_map[ff_name]}", 'ff_name' => ff_name }
+        ff_table_name = Helpdesk::Filters::CustomTicketFilter.custom_field_table_name
+        condition = { 'condition' => "#{ff_table_name}.#{ff_alias_name_map[ff_name]}", 'ff_name' => ff_name }
       end
       condition
     end
 
-    def is_flexi_field?(query)
-      query['ff_name'] != 'default' && query['condition'].include?('flexifields.')
+    def custom_field?(query)
+      return false if query['ff_name'] == 'default'
+
+      query['condition'].include?(FLEXIFIELDS) || query['condition'].include?(TICKET_FIELD_DATA)
     end
 
     def ff_field_alias(query)
@@ -145,7 +150,7 @@ class QueryHash
       return true if REMOVE_FFNAME_FOR.include?(query['condition'])
       if format == :system && query['type'] == 'custom_field'
         ff_alias_name_map["#{query['condition']}_#{Account.current.id}"].nil?
-      elsif format == :presentable && is_flexi_field?(query)
+      elsif format == :presentable && custom_field?(query)
         ff_alias_name_map[get_ff_field_name_from_query(query)].nil?
       else
         false

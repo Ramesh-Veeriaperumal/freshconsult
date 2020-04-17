@@ -268,7 +268,6 @@ api_error_messages:
   must_be_more_than_15_minutes: "Must be more than 15 minutes"
 
   fsm_only_on_mint_ui: "Old UI must be disabled for the field service management to work."
-  fsm_not_supported: "Field service management is not supported for the account. Please contact support."
   fsm_custom_fields_not_available: "Required custom fields are not available to be reserved."
   fsm_dynamic_sections_absence: "Dynamic sections feature has to be enabled for field service management to be enabled."
   something_wrong_in_fsm_enable: "Something went wrong while trying to reserve fields for field service management."

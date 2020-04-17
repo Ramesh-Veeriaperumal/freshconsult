@@ -64,15 +64,17 @@ module QueryHashHelper
     query_hash.each do |query|
       if output_format && query['type'] == 'custom_field' && query['condition'] == cf_display_name(custom_field.name)
         return true
-      elsif !output_format && is_flexi_field?(query) && query['ff_name'] == custom_field.name
+      elsif !output_format && custom_field?(query) && query['ff_name'] == custom_field.name
         return true
       end
     end
     false
   end
 
-  def is_flexi_field?(query)
-    query['ff_name'] != 'default' && query['condition'].include?('flexifields.')
+  def custom_field?(query)
+    return false if query['ff_name'] == 'default'
+
+    query['condition'].include?(QueryHash::FLEXIFIELDS) || query['condition'].include?(QueryHash::TICKET_FIELD_DATA)
   end
 
   def only_me_accessibility

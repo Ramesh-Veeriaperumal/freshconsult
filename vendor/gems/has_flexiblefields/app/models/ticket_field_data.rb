@@ -7,7 +7,7 @@ class TicketFieldData < ActiveRecord::Base
   belongs_to :flexifield_def, include: 'flexifield_def_entries'
   delegate :to_ff_alias, :to_ff_field, :to_ff_def_entry, to: :flexifield_def
 
-  ALLOWED_FIELD_TYPES = ['custom_dropdown', 'custom_number', 'custom_checkbox', 'nested_field', 'custom_date'].freeze
+  ALLOWED_FIELD_TYPES = ['custom_dropdown', 'custom_number', 'custom_checkbox', 'nested_field', 'custom_date', 'custom_date_time', 'custom_file'].freeze
   NEW_DROPDOWN_COLUMN_NAMES = column_names.grep(/ffs.+/)[80..249]
   NEW_DROPDOWN_COLUMN_NAMES_SET = Set.new(NEW_DROPDOWN_COLUMN_NAMES)
   NEW_CHECKBOX_COLUMN_NAMES = column_names.grep(/ff_boolean.+/)[10..30]
@@ -87,6 +87,7 @@ class TicketFieldData < ActiveRecord::Base
       self[attribute]
     else
       Rails.logger.info "Trying to read #{attribute}; Field doesnt exist"
+      nil
     end
   end
 

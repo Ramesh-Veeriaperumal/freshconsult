@@ -545,7 +545,7 @@ class SubscriptionsController < ApplicationController
     def check_fsm_requirements
       return true if Account.current.field_service_management_enabled?
 
-      if !fsm_artifacts_available? || Account.current.ticket_field_limit_increase_enabled?
+      unless fsm_artifacts_available?
         flash[:notice] = t('fsm_requirements_not_met')
         redirect_to subscription_url
       end

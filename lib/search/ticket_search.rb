@@ -105,7 +105,11 @@ module Search::TicketSearch
   
   
   def get_id_from_field(tf)
-    "flexifields.#{tf.flexifield_def_entry.flexifield_name}"
+    if Account.current.ticket_field_limit_increase_enabled?
+      "#{Helpdesk::Filters::CustomTicketFilter::TICKET_FIELD_DATA}.#{tf.flexifield_def_entry.flexifield_name}"
+    else
+      "#{Helpdesk::Filters::CustomTicketFilter::FLEXIFIELDS}.#{tf.flexifield_def_entry.flexifield_name}"
+    end
   end
   
   def get_container_from_field(tf)

@@ -21,7 +21,7 @@ module FilterFactory::Filter
     TICKET_STATES_ORDER_BY = 'helpdesk_ticket_states.%{order} %{order_type}, helpdesk_tickets.created_at asc'.freeze
     TICKETS_ORDER_BY = '%{order} %{order_type}, helpdesk_tickets.created_at asc'.freeze
 
-    FLEXIFIELDS_JOIN = ['INNER JOIN flexifields ON flexifields.flexifield_set_id = helpdesk_tickets.id and flexifields.account_id = helpdesk_tickets.account_id '].freeze
+    FLEXIFIELDS_JOIN = 'INNER JOIN flexifields ON flexifields.flexifield_set_id = helpdesk_tickets.id and flexifields.account_id = helpdesk_tickets.account_id '.freeze
 
     TICKETANALYTICS_ORDER_MAPPINGS = {
       requester_responded_at: TICKET_STATES_JOIN_CONDITION,
@@ -31,7 +31,8 @@ module FilterFactory::Filter
 
     def flexifields_order_by(_order_by, order_type)
       ff_column_name = fsm_appointment_start_time_ff_column_name
-      "flexifields.#{ff_column_name} #{order_type.upcase}"
+      ff_table_name = Helpdesk::Filters::CustomTicketFilter.custom_field_table_name
+      "#{ff_table_name}.#{ff_column_name} #{order_type.upcase}"
     end
 
     def ticket_states_order_by(order_by, order_type)
