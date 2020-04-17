@@ -47,6 +47,12 @@ module Cache::Memcache::Helpdesk::TicketField
     delete_value_from_cache(ticket_fields_name_type_mapping_key(account_id))
     delete_value_from_cache(custom_nested_field_choices_hash_key(account_id))
     # In Scripts, clear_all_section_ticket_fields_cache in Cache::Memcache::Helpdesk::Section
+    if nested_field? && parent_id.blank?
+      child_levels.each do |children|
+        MemcacheKeys.delete_from_cache(children.picklist_ids_by_value_key)
+        MemcacheKeys.delete_from_cache(children.picklist_values_by_id_key)
+      end
+    end
   end
 
   def product_field_set_reqd_false

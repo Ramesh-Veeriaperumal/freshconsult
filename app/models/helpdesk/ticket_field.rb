@@ -970,7 +970,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
           { label: source[0], value: source[1] }
         end
       when 'default_status'
-        ticket_field_statuses_from_cache.reject(&:deleted).map(&:new_response_hash)
+        ticket_field_statuses_from_cache.reject(&:deleted).sort_by(&:position).map(&:new_response_hash)
       else
         []
     end
