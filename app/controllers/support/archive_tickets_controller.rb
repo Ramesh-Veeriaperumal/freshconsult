@@ -135,7 +135,8 @@ protected
         else
           requested_for = current_account.users.find_by_id(@requested_by)
           @requested_item = requested_for.company.presence == @company ? requested_for : current_user
-          @requested_item.archive_tickets.preload(preload_options).contractor_tickets(nil, current_user.company_id, "or")
+          user_id = @requested_by.to_i == current_user.id ? @requested_by.to_i : nil
+          @requested_item.archive_tickets.preload(preload_options).contractor_tickets(user_id, current_user.company_id, 'or')
         end
       else
         @requested_item = current_user
