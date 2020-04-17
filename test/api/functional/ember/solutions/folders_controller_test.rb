@@ -8,12 +8,15 @@ module Ember
       include SolutionFoldersTestHelper
       include SolutionBuilderHelper
       include SolutionsHelper
+      include ContactSegmentsTestHelper
+      include CompanySegmentsTestHelper
 
       def setup
         super
         initial_setup
         @account.reload
         @account.features.enable_multilingual.create
+        @account.add_feature(:segments)
       end
 
       @@initial_setup_run = false
@@ -199,6 +202,68 @@ module Ember
         put :bulk_update, construct_params({ version: 'private' }, ids: sample_category_meta.solution_folder_meta.pluck(:id), properties: { visibility: 4, company_ids: [10_101_010] })
         assert_response 400
         match_json(bulk_validation_error_pattern(:company_ids, :invalid_company_ids))
+      end
+
+      # bulk update contact segments
+      def test_bulk_update_visibility_contact_segments_without_contact_segment_ids
+        sample_category_meta = get_category_with_folders
+        put :bulk_update, construct_params({ version: 'private' }, ids: sample_category_meta.solution_folder_meta.pluck(:id), properties: { visibility: 6 })
+        assert_response 400
+        match_json(bulk_validation_error_pattern(:contact_segment_ids, :contact_segment_ids_not_present))
+      end
+
+      def test_bulk_update_invalid_visibility_with_contact_segment_ids
+        segment = create_contact_segment
+        sample_category_meta = get_category_with_folders
+        put :bulk_update, construct_params({ version: 'private' }, ids: sample_category_meta.solution_folder_meta.pluck(:id), properties: { visibility: 3, contact_segment_ids: [segment.id] })
+        assert_response 400
+        match_json(bulk_validation_error_pattern(:contact_segment_ids, :contact_segment_ids_not_allowed))
+      end
+
+      def test_bulk_update_with_visibility_contact_segments_with_contact_segment_ids
+        sample_category_meta = get_category_with_folders
+        segment = create_contact_segment
+        put :bulk_update, construct_params({ version: 'private' }, ids: sample_category_meta.solution_folder_meta.pluck(:id), properties: { visibility: 6, contact_segment_ids: [segment.id] })
+        assert_response 204
+        sample_category_meta.reload.solution_folder_meta.each { |folder| assert folder.folder_visibility_mapping.where(mappable_type: 'ContactFilter').pluck(:mappable_id).include?(segment.id) }
+      end
+
+      def test_bulk_update_with_visibility_contact_segments_with_invalid_contact_segment_ids
+        sample_category_meta = get_category_with_folders
+        put :bulk_update, construct_params({ version: 'private' }, ids: sample_category_meta.solution_folder_meta.pluck(:id), properties: { visibility: 6, contact_segment_ids: [10_101_010] })
+        assert_response 400
+        match_json(bulk_validation_error_pattern(:contact_segment_ids, :invalid_contact_segment_ids))
+      end
+
+      # bulk update company segments
+      def test_bulk_update_visibility_company_segments_without_company_segment_ids
+        sample_category_meta = get_category_with_folders
+        put :bulk_update, construct_params({ version: 'private' }, ids: sample_category_meta.solution_folder_meta.pluck(:id), properties: { visibility: 7 })
+        assert_response 400
+        match_json(bulk_validation_error_pattern(:company_segment_ids, :company_segment_ids_not_present))
+      end
+
+      def test_bulk_update_invalid_visibility_with_company_segment_ids
+        segment = create_company_segment
+        sample_category_meta = get_category_with_folders
+        put :bulk_update, construct_params({ version: 'private' }, ids: sample_category_meta.solution_folder_meta.pluck(:id), properties: { visibility: 3, company_segment_ids: [segment.id] })
+        assert_response 400
+        match_json(bulk_validation_error_pattern(:company_segment_ids, :company_segment_ids_not_allowed))
+      end
+
+      def test_bulk_update_with_visibility_company_segments_with_company_segment_ids
+        sample_category_meta = get_category_with_folders
+        segment = create_company_segment
+        put :bulk_update, construct_params({ version: 'private' }, ids: sample_category_meta.solution_folder_meta.pluck(:id), properties: { visibility: 7, company_segment_ids: [segment.id] })
+        assert_response 204
+        sample_category_meta.reload.solution_folder_meta.each { |folder| assert folder.folder_visibility_mapping.where(mappable_type: 'CompanyFilter').pluck(:mappable_id).include?(segment.id) }
+      end
+
+      def test_bulk_update_with_visibility_company_segments_with_invalid_company_segment_ids
+        sample_category_meta = get_category_with_folders
+        put :bulk_update, construct_params({ version: 'private' }, ids: sample_category_meta.solution_folder_meta.pluck(:id), properties: { visibility: 7, company_segment_ids: [10_101_010] })
+        assert_response 400
+        match_json(bulk_validation_error_pattern(:company_segment_ids, :invalid_company_segment_ids))
       end
 
       def test_bulk_update_without_anyproperties

@@ -7,6 +7,8 @@ class FolderBulkUpdateValidation < ApiValidation
   validate :validate_properties
 
   validate :validate_company_ids, if: -> { errors.blank? }
+  validate :validate_contact_segment_ids, if: -> { errors.blank? }
+  validate :validate_company_segment_ids, if: -> { errors.blank? }
 
   def validate_properties
     errors[:properties] << :select_a_field if properties.blank?
@@ -17,7 +19,9 @@ class FolderBulkUpdateValidation < ApiValidation
     {
       category_id: { data_type: { rules: Integer, allow_nil: false } },
       visibility: { custom_numericality: { only_integer: true, greater_than: 0 }, custom_inclusion: { in: Solution::Constants::VISIBILITY_NAMES_BY_KEY.keys } },
-      company_ids: { data_type: { rules: Array, allow_nil: false } }
+      company_ids: { data_type: { rules: Array, allow_nil: false } },
+      contact_segment_ids: { data_type: { rules: Array, allow_nil: false } },
+      company_segment_ids: { data_type: { rules: Array, allow_nil: false } }
     }
   end
 
@@ -28,6 +32,26 @@ class FolderBulkUpdateValidation < ApiValidation
     elsif properties[:company_ids].present? && properties[:visibility] != Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:company_users]
       (error_options[:properties] ||= {}).merge!(nested_field: :company_ids, code: :company_ids_not_allowed)
       errors[:properties] = :company_ids_not_allowed
+    end
+  end
+
+  def validate_contact_segment_ids
+    if properties[:visibility] == Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:contact_segment] && properties[:contact_segment_ids].blank?
+      (error_options[:properties] ||= {}).merge!(nested_field: :contact_segment_ids, code: :contact_segment_ids_not_present)
+      errors[:properties] = :contact_segment_ids_not_present
+    elsif properties[:contact_segment_ids].present? && properties[:visibility] != Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:contact_segment]
+      (error_options[:properties] ||= {}).merge!(nested_field: :contact_segment_ids, code: :contact_segment_ids_not_allowed)
+      errors[:properties] = :contact_segment_ids_not_allowed
+    end
+  end
+
+  def validate_company_segment_ids
+    if properties[:visibility] == Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:company_segment] && properties[:company_segment_ids].blank?
+      (error_options[:properties] ||= {}).merge!(nested_field: :company_segment_ids, code: :company_segment_ids_not_present)
+      errors[:properties] = :company_segment_ids_not_present
+    elsif properties[:company_segment_ids].present? && properties[:visibility] != Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:company_segment]
+      (error_options[:properties] ||= {}).merge!(nested_field: :company_segment_ids, code: :company_segment_ids_not_allowed)
+      errors[:properties] = :company_segment_ids_not_allowed
     end
   end
 end
