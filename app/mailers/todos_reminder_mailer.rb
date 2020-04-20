@@ -1,5 +1,6 @@
 class TodosReminderMailer < ActionMailer::Base
   layout 'email_font'
+  include EmailHelper
 
   def send_reminder_email(user, todo_body, ticket, reminder, ticket_url)
     @user_name = user.name
@@ -14,6 +15,7 @@ class TodosReminderMailer < ActionMailer::Base
       subject: subject,
       sent_on: Time.zone.now
     }
+    configure_email_config Account.current.primary_email_config if Account.current.primary_email_config.active?
     mail(@headers) do |part|
       part.text { render '/helpdesk/todos/email_todos_reminder.text.plain.erb' }
       part.html { render '/helpdesk/todos/email_todos_reminder.text.html.erb' }
