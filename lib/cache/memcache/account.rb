@@ -453,6 +453,11 @@ module Cache::Memcache::Account
     end
   end
 
+  def service_task_observer_rules_from_cache
+    key = ACCOUNT_SERVICE_TASK_OBSERVER_RULES % { account_id: self.id }
+    fetch_from_cache(key) { self.service_task_observer_rules.all }
+  end
+
    def whitelisted_ip_from_cache
     key = WHITELISTED_IP_FIELDS % { :account_id => self.id }
 

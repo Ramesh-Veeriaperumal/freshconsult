@@ -37,5 +37,7 @@ window.add_csrf_token = function(form) {
 // });
 
 jQuery('form').livequery(function(){
-    add_csrf_token(this);
+    if(jQuery(this).attr('data-csrf-ignore') !== "true") {
+        add_csrf_token(this);
+    }
 })

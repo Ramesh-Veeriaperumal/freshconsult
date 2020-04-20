@@ -25,10 +25,10 @@ module IntegrationServices::Services
       end
 
       def fetch_autocomplete_results(payload)
-        url = "#{server_url}#{payload[:url]}"
+        url = "#{@service.instance_url}#{payload[:url]}"
         response = http_get url
         process_response(response, 200) do |results|
-          return { results: results }
+          return process_autocomplete_results(results)
         end
       end
 
@@ -42,12 +42,25 @@ module IntegrationServices::Services
         result
       end
 
+      def process_autocomplete_results(results)
+        results = results.map do |result|
+          result['_id'] = result['id'] if result['id'].present?
+          result
+        end
+        { results: results }
+      end
+
       def filter_system_information(resource)
         basic_information = resource['fields'].select { |x| x['name'] == 'basic_information' }.first
         basic_fields = basic_information['fields']
         basic_fields.reject! { |x| x['name'] == 'system_information' || x['name'] == 'email' }
         email_field = basic_fields.find { |field| field['name'] == 'emails' }
         email_field['type'] = 'email'
+        sales_account_field = basic_fields.find { |field| field['name'] == 'sales_accounts' }
+        if sales_account_field
+          sales_account_field['field_options']['creatable'] = false
+          sales_account_field['field_options']['remove_item_label'] = I18n.t('ticket_templates.remove')
+        end
         resource
       end
     end

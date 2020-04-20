@@ -192,6 +192,7 @@ class SidekiqConfigUsEast
     archive_delete_ticket_dependencies = ["archive_delete_ticket_dependencies","archive_delete_ticket","archive_modify_ticket_association","archive_build_create_ticket"]
     ebay                     = ["ebay_user_worker","ebay_worker","ebay_message_worker"]
     observer                 = ["ticket_observer","update_ticket_states","merge_tickets","merge_tickets_attachments","send_and_set_observer","thank_you_note"]
+    service_task_observer    = ["service_task_observer"]
     ticket_states            = ["update_ticket_states","ticket_observer","merge_tickets","merge_tickets_attachments"]
     merge_tickets            = ["merge_tickets","merge_tickets_attachments","update_ticket_states","ticket_observer"]
     gamification             = ["reset_gamification_score","bulk_scenario"]
@@ -295,7 +296,7 @@ class SidekiqConfigUsEast
   "natero_worker", "reopen_tickets", "solution_language_change", "deactivate_monitorship", "export_agents", "clear_moderation_records", "empty_moderation_trash", "generate_sitemap", 
   "clear_sitemap", "archive_ticket_splitter", "archive_delete_ticket", "archive_modify_ticket_association", 
   "archive_build_create_ticket", "archive_delete_ticket_dependencies", "ebay_user_worker", "ebay_worker", 
-  "ebay_message_worker", "ticket_observer", "update_ticket_states", "merge_tickets", "merge_tickets_attachments", 
+  "ebay_message_worker", "ticket_observer", "service_task_observer", "update_ticket_states", "merge_tickets", "merge_tickets_attachments",
   "reset_gamification_score", "bulk_scenario", "password_expiry", "chargebee_invoice", "sla_on_status_change", 
   "reset_internal_group", "update_ticket_filter", "reset_internal_agent", "s3_retry_worker", "learn_spam_message", 
   "github", "select_all_tickets", "select_all_batcher", "email_notification_spam_queue", "sendgrid_domain_updates", 
@@ -604,7 +605,7 @@ all_sidekiq_jobs =  cron_jobs + [
       "solution_binarize_sync", "update_all_callbacks", "esv2_count_index", "kbase_content_spam_checker", "new_es_index",
       "natero_worker", "reopen_tickets", "solution_language_change", "deactivate_monitorship", "export_agents", "clear_moderation_records", "empty_moderation_trash", "generate_sitemap", "clear_sitemap",
       "archive_ticket_splitter", "archive_delete_ticket", "archive_modify_ticket_association", "archive_build_create_ticket",
-      "archive_delete_ticket_dependencies", "ebay_user_worker", "ebay_worker", "ebay_message_worker", "ticket_observer",
+      "archive_delete_ticket_dependencies", "ebay_user_worker", "ebay_worker", "ebay_message_worker", "ticket_observer", "service_task_observer",
       "update_ticket_states", "merge_tickets", "merge_tickets_attachments", "reset_gamification_score", "bulk_scenario", "password_expiry",
       "chargebee_invoice", "sla_on_status_change", "reset_internal_group", "update_ticket_filter", "reset_internal_agent", "s3_retry_worker",
       "learn_spam_message", "github", "select_all_tickets", "select_all_batcher", "email_notification_spam_queue", "sendgrid_domain_updates",

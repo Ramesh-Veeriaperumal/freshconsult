@@ -55,7 +55,8 @@ module Va::Observer::Util
         event = event.to_sym
         observer_changes[event] = @model_changes[event] if @model_changes.key? event
       end
-      TICKET_EVENTS.each(&filter_changes)
+      events = service_task? ? SERVICE_TASK_EVENTS : TICKET_EVENTS
+      events.each(&filter_changes)
       Account.current.event_flexifields_with_ticket_fields_from_cache.map(&:flexifield_name).each(&filter_changes)
       observer_changes
     end
@@ -76,11 +77,15 @@ module Va::Observer::Util
 
       if self.class == Helpdesk::Ticket
         args[:model_changes] = @model_changes
-        include_sbrr_state_attributes(args) if Account.current.skill_based_round_robin_enabled?
-        args[:sla_args] = {:sla_on_background => sla_on_background, :sla_state_attributes => sla_state_attributes, :sla_calculation_time => sla_calculation_time.to_i}
+        unless service_task?
+          include_sbrr_state_attributes(args) if Account.current.skill_based_round_robin_enabled?
+          args[:sla_args] = { sla_on_background: sla_on_background, sla_state_attributes: sla_state_attributes, sla_calculation_time: sla_calculation_time.to_i }
+        end
       end
       if inline
-        User.run_without_current_user { Tickets::ObserverWorker.new.perform(args) }
+        return User.run_without_current_user { Tickets::ObserverWorker.new.perform(args) } unless service_task?
+
+        User.run_without_current_user { Tickets::ServiceTaskObserverWorker.new.perform(args) }
       elsif self.class == Helpdesk::Ticket and self.schedule_observer
         # skipping observer for send and set ticket operation & bulk ticket actions for skill
         Va::Logger::Automation.log "Skipping observer schedule_observer=true"
@@ -134,7 +139,7 @@ module Va::Observer::Util
     end
 
     def original_ticket_attributes
-      return {} unless Account.current.observer_race_condition_fix_enabled?
+      return {} unless Account.current.observer_race_condition_fix_enabled? && !service_task?
 
       Account.current.observer_condition_fields_from_cache.each_with_object({}) do |field, hash|
         hash[field] = case field
@@ -144,5 +149,9 @@ module Va::Observer::Util
                         safe_send(field)
                       end
       end
+    end
+
+    def service_task?
+      self.class == Helpdesk::Ticket ? self.service_task? : false
     end
 end

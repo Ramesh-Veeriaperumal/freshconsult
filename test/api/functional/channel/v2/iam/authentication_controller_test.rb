@@ -65,6 +65,18 @@ class Channel::V2::Iam::AuthenticationControllerTest < ActionController::TestCas
     assert_response 200
   end
 
+  def test_basic_auth_for_put_method
+    Channel::V2::Iam::AuthenticationController.any_instance.stubs(:private_api?).returns(false)
+    agent = add_test_agent(@account)
+    request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(agent.email, 'test')
+    put :authenticate, controller_params(version: 'private')
+    assert_equal JSON.parse(response.body)['success'], true
+    assert response.headers.key?('Authorization')
+    assert_response 200
+  ensure
+    Channel::V2::Iam::AuthenticationController.any_instance.unstub(:private_api?)
+  end
+
   def test_basic_auth_for_delete_method
     Channel::V2::Iam::AuthenticationController.any_instance.stubs(:private_api?).returns(false)
     agent = add_test_agent(@account)

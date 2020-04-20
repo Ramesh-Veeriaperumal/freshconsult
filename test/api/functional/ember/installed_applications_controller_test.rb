@@ -159,7 +159,7 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
   def test_freshsales_autocomplete_results
     app_id = get_installed_app('freshsales').id
     response = "[{\"id\":\"2009495244\", \"type\": \"contact\",
-                                         \"name\": \"testtest\", \"email\": \"test@test.com\"}]"
+                                         \"name\": \"testtest\", \"email\": \"test@test.com\", \"_id\":\"2009495244\"}]"
     response_mock = Minitest::Mock.new
     response_mock.expect :body, response
     response_mock.expect :status, 200

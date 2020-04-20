@@ -39,7 +39,7 @@ class Helpdesk::Ticketfields::PicklistValueTransformer::StringToId < Helpdesk::T
       next unless con_hash['ff_name'].present? && con_hash['ff_name'] != 'default'
       if @nested_field_helper.column_name_map.key(con_hash['ff_name'])
         con_hash['value'] = handle_nested_field(con_hash)
-      else
+      elsif dropdown_nested_field?(con_hash['ff_name'])
         con_hash['value'] = fetch_ids(con_hash['value'].split(','), con_hash['ff_name']).join(',')
       end
       con_hash['condition'].gsub!('flexifields.', 'ticket_field_data.')
@@ -48,12 +48,12 @@ class Helpdesk::Ticketfields::PicklistValueTransformer::StringToId < Helpdesk::T
 
   private
 
+    def dropdown_nested_field?(name)
+      fields_from_cache[name].present?
+    end
+
     def fetch_col_name(ff_alias)
-      if fields_from_cache[ff_alias].column_name.present?
-        fields_from_cache[ff_alias].column_name
-      else
-        fields_from_cache[ff_alias].flexifield_def_entry.flexifield_name
-      end
+      fields_from_cache[ff_alias].column_name.presence || fields_from_cache[ff_alias].flexifield_def_entry.flexifield_name
     end
 
     def handle_nested_field(con_hash)
@@ -88,7 +88,7 @@ class Helpdesk::Ticketfields::PicklistValueTransformer::StringToId < Helpdesk::T
     end
 
     def fields_from_cache
-      @fields_from_cache ||= ticket_fields.each_with_object({}) do |field, f_hash|
+      @fields_from_cache ||= dropdown_nested_fields.each_with_object({}) do |field, f_hash|
         f_hash[field.name] = field unless field.is_default_field?
       end
     end

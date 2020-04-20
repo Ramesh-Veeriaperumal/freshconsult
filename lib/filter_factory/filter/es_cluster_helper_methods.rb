@@ -68,7 +68,9 @@ module FilterFactory::Filter
       end
 
       def fetch_joins
-        "FilterFactory::Filter::Mappings::#{scoper[:documents].upcase}_ORDER_MAPPINGS".constantize[order_by.to_sym]
+        join = "FilterFactory::Filter::Mappings::#{scoper[:documents].upcase}_ORDER_MAPPINGS".constantize[order_by.to_sym]
+        join = join.gsub('flexifields', 'ticket_field_data') if join && Account.current.ticket_field_limit_increase_enabled?
+        join
       end
 
       # Modularize

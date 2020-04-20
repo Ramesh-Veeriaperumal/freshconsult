@@ -2311,7 +2311,6 @@ en:
         remote_authentication: Remote Authentication
         enable_SSL: "Secure Connection using SSL"
         enable_SSL_anon: "Secure Sockets Layer allows you to encrypt data that is transfered to and from Freshdesk"
-        customer_portal_ssl_warning: "Since custom helpdesk URL is configured for your account you will be redirected to "
         multiple_product_ssl_warning: "SSL will not be applicable if multiple products are configured."
         enabled: Enabled
         disabled: Disabled

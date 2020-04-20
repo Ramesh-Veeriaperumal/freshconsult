@@ -199,11 +199,18 @@ class SubscriptionsController < ApplicationController
     end
 
     def load_subscription_plan
-      # TODO: Remove force_2020_plan?() after 2020 plan launched
-      if current_account.force_2020_plan?
-        @subscription_plan = SubscriptionPlan.plans_2020.find_by_id(params[:plan_id]) if params[:plan_id].present?
-      else
-        @subscription_plan = SubscriptionPlan.current.find_by_id(params[:plan_id]) if params[:plan_id].present?
+      if params[:plan_id].present?
+        # TODO: Remove force_2020_plan?() after 2020 plan launched
+        if current_account.force_2020_plan?
+          @subscription_plan = SubscriptionPlan.plans_2020.find_by_id(params[:plan_id])
+        else
+          @subscription_plan = SubscriptionPlan.current.find_by_id(params[:plan_id])
+          # Allow subscription to be updated to existing plan omni variant. eg. Estate Jan 19 to Estate Omni Jan 19
+          current_plan_omni_variant = scoper.subscription_plan.omni_plan_variant if @subscription_plan.nil?
+          if scoper.subscription_plan.classic && current_plan_omni_variant && current_plan_omni_variant.id.to_s == params[:plan_id]
+            @subscription_plan = current_plan_omni_variant
+          end
+        end
       end
       @subscription_plan ||= scoper.subscription_plan
     end
@@ -538,7 +545,7 @@ class SubscriptionsController < ApplicationController
     def check_fsm_requirements
       return true if Account.current.field_service_management_enabled?
 
-      if !fsm_artifacts_available? || Account.current.ticket_field_limit_increase_enabled?
+      unless fsm_artifacts_available?
         flash[:notice] = t('fsm_requirements_not_met')
         redirect_to subscription_url
       end

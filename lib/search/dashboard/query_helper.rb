@@ -32,7 +32,7 @@ module Search::Dashboard::QueryHelper
     wf_conditions.each do |field|
       cond_field = (COLUMN_MAPPING[field['condition']].presence || field['condition'].to_s)
       field_values = field['value'].to_s.split(',').map { |value| encode_value(value)} # Hack to handle special chars in query
-      if cond_field.include?('flexifields')
+      if cond_field.include?(QueryHash::FLEXIFIELDS) || cond_field.include?(QueryHash::TICKET_FIELD_DATA)
         conditions << transform_flexifield_filter(field['ff_name'].gsub("_#{Account.current.id}", ''), field_values)
 
       elsif cond_field.present?

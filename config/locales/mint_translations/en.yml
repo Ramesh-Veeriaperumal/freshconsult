@@ -1620,9 +1620,9 @@ en:
         remote_login_url_info: >-
           This is the URL to which Freshdesk will redirect users for
           authentication when they attempt to access Freshdesk.
-        customer_portal_ssl_warning: >-
+        customer_portal_ssl_alert: >-
           Since custom helpdesk URL is configured for your account you will be
-          redirected to
+          redirected to %{full_domain} to avoid SSL errors.
         saml_cert_fingerprint: Security Certificate Fingerprint
         success_message: >-
           Your request for a Custom SSL certificate has been initiated and will

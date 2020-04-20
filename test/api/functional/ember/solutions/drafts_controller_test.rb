@@ -341,6 +341,17 @@ module Ember
         assert_nil @article.reload.draft
       end
 
+      def test_destroy_with_draft_article
+        article_with_draft
+        @article.set_status(false)
+        @article.save!
+        assert @article.draft.present?
+        delete :destroy, controller_params(version: 'private', article_id: @article.parent_id)
+        assert_response 400
+        assert @article.reload.draft.present?
+        match_json([bad_request_error_pattern('status', :cannot_destroy_draft_for_draft_article)])
+      end
+
       def test_destroy_with_primary_language
         article_with_draft
         assert @article.draft.present?

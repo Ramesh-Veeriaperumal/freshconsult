@@ -27,8 +27,8 @@ module SolutionsTestHelper
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
     result[:company_ids] = folder.solution_folder_meta.customer_ids if folder.parent.visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users]
-    result[:contact_filter_ids] = folder.solution_folder_meta.contact_filter_ids if folder.parent.visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:contact_segment]
-    result[:company_filter_ids] = folder.solution_folder_meta.company_filter_ids if folder.parent.visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_segment]
+    result[:contact_segment_ids] = folder.solution_folder_meta.contact_filter_ids if folder.parent.visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:contact_segment]
+    result[:company_segment_ids] = folder.solution_folder_meta.company_filter_ids if folder.parent.visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_segment]
     result
   end
 

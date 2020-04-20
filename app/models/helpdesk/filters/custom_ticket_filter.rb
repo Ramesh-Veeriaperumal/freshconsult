@@ -15,6 +15,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   before_destroy :deactivate_widgets
 
   MODEL_NAME = "Helpdesk::Ticket"
+  TICKET_FIELD_DATA = 'ticket_field_data'.freeze
+  FLEXIFIELDS = 'flexifields'.freeze
 
   def self.deleted_condition(input)
     { "condition" => "deleted", "operator" => "is", "value" => input}
@@ -56,17 +58,17 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
   def self.appointment_time_in_the_past_condition
     appointment_time = Helpdesk::Filters::CustomTicketFilter.fetch_appointment_time
-    { 'condition' => "flexifields.#{appointment_time[:end_time].column_name}", 'operator' => 'is', 'value' => 'in_the_past', 'ff_name' => appointment_time[:end_time].name.to_s }
+    { 'condition' => "#{custom_field_table_name}.#{appointment_time[:end_time].column_name}", 'operator' => 'is', 'value' => 'in_the_past', 'ff_name' => appointment_time[:end_time].name.to_s }
   end
 
   def self.appointment_time_ends_today_condition
     appointment_time = Helpdesk::Filters::CustomTicketFilter.fetch_appointment_time
-    { 'condition' => "flexifields.#{appointment_time[:end_time].column_name}", 'operator' => 'is', 'value' => 'today', 'ff_name' => appointment_time[:end_time].name.to_s }
+    { 'condition' => "#{custom_field_table_name}.#{appointment_time[:end_time].column_name}", 'operator' => 'is', 'value' => 'today', 'ff_name' => appointment_time[:end_time].name.to_s }
   end
 
   def self.appointment_time_starts_today_condition
     appointment_time = Helpdesk::Filters::CustomTicketFilter.fetch_appointment_time
-    { 'condition' => "flexifields.#{appointment_time[:start_time].column_name}", 'operator' => 'is', 'value' => 'today', 'ff_name' => appointment_time[:start_time].name.to_s }
+    { 'condition' => "#{custom_field_table_name}.#{appointment_time[:start_time].column_name}", 'operator' => 'is', 'value' => 'today', 'ff_name' => appointment_time[:start_time].name.to_s }
   end
 
   def self.open_pending_condition
@@ -624,7 +626,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   def get_joins(all_conditions)
     all_joins = [""]
     if join_tf_data?
-      all_joins = tf_data_join if all_conditions[0].include?("ticket_field_data")
+      all_joins = tf_data_join if all_conditions[0].include?('ticket_field_data') || sort_by_flexi_field?(order)
     elsif all_conditions[0].include?('flexifields') || sort_by_flexi_field?(order)
       all_joins = joins
     end
@@ -704,7 +706,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
           x.flexifield_alias == TicketFilterConstants::SORTABLE_CUSTOM_FIELDS[order_columns] + "_#{Account.current.id}"
         end
         flexi_col_name = def_entry.flexifield_name
-        "flexifields.#{flexi_col_name} #{order_type}"
+        flexi_table_name = Helpdesk::Filters::CustomTicketFilter.custom_field_table_name
+        "#{flexi_table_name}.#{flexi_col_name} #{order_type}"
       else
         if order_parts.size > 1
           "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"
@@ -717,6 +720,10 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         end
       end
     end
+  end
+
+  def self.custom_field_table_name
+    Account.current.ticket_field_limit_increase_enabled? ? TICKET_FIELD_DATA : FLEXIFIELDS
   end
 
   private

@@ -996,6 +996,21 @@ module Ember
       end
     end
 
+    def test_filter_overdue_service_tasks_with_ticket_field_limit_increase
+      Account.any_instance.stubs(:ticket_field_limit_increase_enabled?).returns(true)
+      Account.any_instance.stubs(:join_ticket_field_data_enabled?).returns(true)
+      setup_field_service_management_feature do
+        filter_name = 'overdue_service_tasks'
+        get :index, controller_params(version: 'private', filter: filter_name)
+        assert_response 200
+        match_json(private_api_ticket_index_default_filter_pattern(filter_name, 'appointment_start_time', 'asc'))
+        match_default_filter_response_with_es_enabled(filter_name, 'appointment_start_time', 'asc')
+      end
+    ensure
+      Account.any_instance.unstub(:ticket_field_limit_increase_enabled?)
+      Account.any_instance.unstub(:join_ticket_field_data_enabled?)
+    end
+
     def test_filter_service_tasks_starting_today
       setup_field_service_management_feature do
         filter_name = 'service_tasks_starting_today'

@@ -111,11 +111,11 @@ module ApiSolutions
       end
 
       def sanitize_params
-        prepare_array_fields [:company_ids, :contact_filter_ids, :company_filter_ids]
+        prepare_array_fields [:company_ids, :contact_segment_ids, :company_segment_ids]
         language_params = params[cname].slice(:name, :description)
         params[cname][language_scoper] = language_params unless language_params.empty?
         params[cname][category] = params[:id]
-        ParamsHelper.assign_and_clean_params({ company_ids: :customer_folders_attributes, contact_filter_ids: :contact_folders_attributes, company_filter_ids: :company_folders_attributes }, params[cname])
+        ParamsHelper.assign_and_clean_params({ company_ids: :customer_folders_attributes, contact_segment_ids: :contact_folders_attributes, company_segment_ids: :company_folders_attributes }, params[cname])
         @folder_params = params[cname].except!(:name, :description)
       end
 

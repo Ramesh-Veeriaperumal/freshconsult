@@ -71,7 +71,7 @@ module SolutionBulkActionConcern
     @validation_klass = 'FolderBulkUpdateValidation'.freeze
     return unless validate_body_params
 
-    options = { category_id: cname_params[:properties][:category_id], visibility: cname_params[:properties][:visibility], company_ids: cname_params[:properties][:company_ids] }
+    options = { category_id: cname_params[:properties][:category_id], visibility: cname_params[:properties][:visibility], company_ids: cname_params[:properties][:company_ids], contact_segment_ids: cname_params[:properties][:contact_segment_ids], company_segment_ids: cname_params[:properties][:company_segment_ids] }
     @delegator = ApiSolutions::FolderBulkUpdateDelegator.new(options)
     return true if @delegator.valid?(action_name.to_sym)
 
@@ -80,6 +80,14 @@ module SolutionBulkActionConcern
 
   def valid_companies
     @valid_companies ||= Account.current.companies.where(id: cname_params[:properties][:company_ids]).pluck(:id) if cname_params[:properties][:company_ids].present?
+  end
+
+  def valid_contact_filters
+    @valid_contact_filters ||= Account.current.contact_filters.where(id: cname_params[:properties][:contact_segment_ids]).pluck(:id) if cname_params[:properties][:contact_segment_ids].present?
+  end
+
+  def valid_company_filters
+    @valid_company_filters ||= Account.current.company_filters.where(id: cname_params[:properties][:company_segment_ids]).pluck(:id) if cname_params[:properties][:company_segment_ids].present?
   end
 
   def update_folder_properties(folder_meta)
@@ -103,6 +111,8 @@ module SolutionBulkActionConcern
     visibility = cname_params[:properties][:visibility]
     if visibility
       folder_meta.add_companies(valid_companies, cname_params[:properties][:add_to_existing] != false) if visibility == Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:company_users]
+      folder_meta.add_contact_filters(valid_contact_filters, cname_params[:properties][:add_to_existing] != false) if visibility == Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:contact_segment]
+      folder_meta.add_company_filters(valid_company_filters, cname_params[:properties][:add_to_existing] != false) if visibility == Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:company_segment]
       folder_meta.visibility = cname_params[:properties][:visibility]
     end
   end

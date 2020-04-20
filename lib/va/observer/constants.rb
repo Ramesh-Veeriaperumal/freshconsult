@@ -17,6 +17,9 @@ module Va::Observer::Constants
                     :mail_del_failed_requester, :mail_del_failed_others, :response_due, :resolution_due,
                     :association_type, :next_response_due ]
 
+  SERVICE_TASK_EVENTS = [:status, :priority, :group_id, :responder_id, :deleted, :reply_sent, :note_type,
+                          :mail_del_failed_requester, :mail_del_failed_others, :association_type].freeze
+
   TICKET_UPDATED = { :ticket_action => :update }
   TICKET_DELETED = { :ticket_action => :delete }
   TICKET_MARKED_SPAM = { :ticket_action => :marked_spam }

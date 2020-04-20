@@ -172,7 +172,7 @@ module ApiSolutions
       category_meta = get_category
       post :create, construct_params({ id: category_meta.id }, {name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 4, company_ids:[99999] })
       assert_response 400
-      match_json([bad_request_error_pattern('company_ids', :invalid_company_ids , code: :invalid_company)])
+      match_json([bad_request_error_pattern('company_ids', :invalid_list, list: '99999')])
     end
 
 
@@ -489,71 +489,71 @@ module ApiSolutions
     end
 
     # company filter visibility
-    def test_create_folder_with_valid_visibility_and_company_filter_ids
+    def test_create_folder_with_valid_visibility_and_company_segment_ids
       category_meta = get_category
       segment = create_company_segment
-      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 7, company_filter_ids: [segment.id] })
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 7, company_segment_ids: [segment.id] })
       assert_response 201
       result = parse_response(@response.body)
       assert_equal "http://#{@request.host}/api/v2/solutions/folders/#{result['id']}", response.headers['Location']
       match_json(solution_folder_pattern(Solution::Folder.where(parent_id: result['id']).first))
     end
 
-    def test_create_folder_with_valid_visibility_and_empty_company_filter_ids
+    def test_create_folder_with_valid_visibility_and_empty_company_segment_ids
       category_meta = get_category
-      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 7, company_filter_ids: [] })
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 7, company_segment_ids: [] })
       assert_response 400
     end
 
-    def test_create_folder_with_valid_company_filter_ids_and_invalid_visibility
+    def test_create_folder_with_valid_company_segment_ids_and_invalid_visibility
       category_meta = get_category
       segment = create_company_segment
-      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 3, company_filter_ids: [segment.id] })
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 3, company_segment_ids: [segment.id] })
       assert_response 400
-      match_json([bad_request_error_pattern('company_filter_ids', :cant_set_company_filter_ids, code: :incompatible_field)])
+      match_json([bad_request_error_pattern('company_segment_ids', :cant_set_company_segment_ids, code: :incompatible_field)])
     end
 
-    def test_create_folder_with_invalid_company_filter_ids_and_invalid_visibility
+    def test_create_folder_with_invalid_company_segment_ids_and_invalid_visibility
       category_meta = get_category
       segment = create_company_segment
-      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 3, company_filter_ids: [999_999] })
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 3, company_segment_ids: [999_999] })
       assert_response 400
-      match_json([bad_request_error_pattern('company_filter_ids', :cant_set_company_filter_ids, code: :incompatible_field)])
+      match_json([bad_request_error_pattern('company_segment_ids', :cant_set_company_segment_ids, code: :incompatible_field)])
     end
 
     def test_create_folder_with_invalid_company_filter_and_valid_visibility
       category_meta = get_category
-      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 7, company_filter_ids: [999_999] })
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 7, company_segment_ids: [99999] })
       assert_response 400
-      match_json([bad_request_error_pattern('company_filter_ids', :invalid_company_filter_ids, code: :invalid_company_filter)])
+      match_json([bad_request_error_pattern('company_segment_ids', :invalid_list, list: '99999')])
     end
 
-    def test_create_folder_with_string_company_filter_ids
+    def test_create_folder_with_string_company_segment_ids
       category_meta = get_category
-      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 7, company_filter_ids: ['999_999'] })
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 7, company_segment_ids: ['99999'] })
       assert_response 400
-      match_json([bad_request_error_pattern('company_filter_ids', :array_datatype_mismatch, expected_data_type: 'Positive Integer', code: :datatype_mismatch)])
+      match_json([bad_request_error_pattern('company_segment_ids', :array_datatype_mismatch, expected_data_type: 'Positive Integer', code: :datatype_mismatch)])
     end
 
-    def test_create_folder_with_company_filter_ids_having_duplicates
+    def test_create_folder_with_company_segment_ids_having_duplicates
       category_meta = get_category
       segment = create_company_segment
-      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 7, company_filter_ids: [segment.id, segment.id] })
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 7, company_segment_ids: [segment.id, segment.id] })
       assert_response 201
       result = parse_response(@response.body)
       assert_equal "http://#{@request.host}/api/v2/solutions/folders/#{result['id']}", response.headers['Location']
       assert Solution::FolderMeta.where(id: result['id']).first.company_filter_ids == [segment.id]
     end
 
-    def test_create_folder_with_max_company_filter_ids
+    def test_create_folder_with_max_company_segment_ids
       category_meta = get_category
-      company_filter_ids = Array.new(251) { rand(1...2) }
-      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 7, company_filter_ids: company_filter_ids })
+      company_segment_ids = Array.new(251) { rand(1...2) }
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 7, company_segment_ids: company_segment_ids })
       assert_response 400
-      match_json([bad_request_error_pattern('company_filter_ids', :too_long, current_count: company_filter_ids.size, element_type: :elements, max_count: Solution::Constants::COMPANY_FILTER_LIMIT)])
+      match_json([bad_request_error_pattern('company_segment_ids', :too_long, current_count: company_segment_ids.size, element_type: :elements, max_count: Solution::Constants::COMPANY_FILTER_LIMIT)])
     end
 
-    def test_create_folder_with_visibility_selected_company_filters_without_company_filter_ids
+    def test_create_folder_with_visibility_selected_company_filters_without_company_segment_ids
       category_meta = get_category
       post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 7 })
       assert_response 201
@@ -562,30 +562,30 @@ module ApiSolutions
       match_json(solution_folder_pattern(Solution::Folder.where(parent_id: result['id']).first))
     end
 
-    def test_create_folder_without_visibility_and_with_company_filter_ids
+    def test_create_folder_without_visibility_and_with_company_segment_ids
       category_meta = get_category
-      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, company_filter_ids: @account.company_filter_ids })
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, company_segment_ids: @account.company_filter_ids })
       match_json([bad_request_error_pattern('visibility', :missing_field)])
       assert_response 400
     end
 
-    def test_update_folder_with_company_filter_ids_and_valid_visibility
+    def test_update_folder_with_company_segment_ids_and_valid_visibility
       folder_meta = create_folder(visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_segment], category_id: @account.solution_categories.last.id)
       visibility = 7
       segment = create_company_segment
       sample_folder = get_folder
-      params_hash = { visibility: visibility, company_filter_ids: [segment.id] }
+      params_hash = { visibility: visibility, company_segment_ids: [segment.id] }
       put :update, construct_params({ id: folder_meta.parent_id }, params_hash)
       assert_response 200
     end
 
-    def test_update_folder_with_company_filter_ids_and_has_valid_segment_folder_record
+    def test_update_folder_with_company_segment_ids_and_has_valid_segment_folder_record
       segment1 = create_company_segment
-      folder_meta = create_folder(visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_segment], category_id: @account.solution_categories.last.id, company_filter_ids: [segment1.id])
+      folder_meta = create_folder(visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_segment], category_id: @account.solution_categories.last.id, company_segment_ids: [segment1.id])
       visibility = 7
       segment2 = create_company_segment
       sample_folder = get_folder
-      params_hash = { visibility: visibility, company_filter_ids: [segment2.id] }
+      params_hash = { visibility: visibility, company_segment_ids: [segment2.id] }
       put :update, construct_params({ id: folder_meta.parent_id }, params_hash)
       assert_response 200
       Solution::FolderVisibilityMapping.where(folder_meta_id: folder_meta.id).count == 1
@@ -593,71 +593,71 @@ module ApiSolutions
     end
 
     # contact filter visibility
-    def test_create_folder_with_valid_visibility_and_contact_filter_ids
+    def test_create_folder_with_valid_visibility_and_contact_segment_ids
       category_meta = get_category
       segment = create_contact_segment
-      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 6, contact_filter_ids: [segment.id] })
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 6, contact_segment_ids: [segment.id] })
       assert_response 201
       result = parse_response(@response.body)
       assert_equal "http://#{@request.host}/api/v2/solutions/folders/#{result['id']}", response.headers['Location']
       match_json(solution_folder_pattern(Solution::Folder.where(parent_id: result['id']).first))
     end
 
-    def test_create_folder_with_valid_visibility_and_empty_contact_filter_ids
+    def test_create_folder_with_valid_visibility_and_empty_contact_segment_ids
       category_meta = get_category
-      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 6, contact_filter_ids: [] })
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 6, contact_segment_ids: [] })
       assert_response 400
     end
 
-    def test_create_folder_with_valid_contact_filter_ids_and_invalid_visibility
+    def test_create_folder_with_valid_contact_segment_ids_and_invalid_visibility
       category_meta = get_category
       segment = create_contact_segment
-      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 3, contact_filter_ids: [segment.id] })
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 3, contact_segment_ids: [segment.id] })
       assert_response 400
-      match_json([bad_request_error_pattern('contact_filter_ids', :cant_set_contact_filter_ids, code: :incompatible_field)])
+      match_json([bad_request_error_pattern('contact_segment_ids', :cant_set_contact_segment_ids, code: :incompatible_field)])
     end
 
-    def test_create_folder_with_invalid_contact_filter_ids_and_invalid_visibility
+    def test_create_folder_with_invalid_contact_segment_ids_and_invalid_visibility
       category_meta = get_category
       segment = create_contact_segment
-      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 7, contact_filter_ids: [999_999] })
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 7, contact_segment_ids: [999_999] })
       assert_response 400
-      match_json([bad_request_error_pattern('contact_filter_ids', :cant_set_contact_filter_ids, code: :incompatible_field)])
+      match_json([bad_request_error_pattern('contact_segment_ids', :cant_set_contact_segment_ids, code: :incompatible_field)])
     end
 
     def test_create_folder_with_invalid_contact_filter_and_valid_visibility
       category_meta = get_category
-      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 6, contact_filter_ids: [999_999] })
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 6, contact_segment_ids: [99999] })
       assert_response 400
-      match_json([bad_request_error_pattern('contact_filter_ids', :invalid_contact_filter_ids, code: :invalid_contact_filter)])
+      match_json([bad_request_error_pattern('contact_segment_ids', :invalid_list, list: '99999')])
     end
 
-    def test_create_folder_with_string_contact_filter_ids
+    def test_create_folder_with_string_contact_segment_ids
       category_meta = get_category
-      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 6, contact_filter_ids: ['99999'] })
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 6, contact_segment_ids: ['99999'] })
       assert_response 400
-      match_json([bad_request_error_pattern('contact_filter_ids', :array_datatype_mismatch, expected_data_type: 'Positive Integer', code: :datatype_mismatch)])
+      match_json([bad_request_error_pattern('contact_segment_ids', :array_datatype_mismatch, expected_data_type: 'Positive Integer', code: :datatype_mismatch)])
     end
 
-    def test_create_folder_with_contact_filter_ids_having_duplicates
+    def test_create_folder_with_contact_segment_ids_having_duplicates
       category_meta = get_category
       segment = create_contact_segment
-      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 6, contact_filter_ids: [segment.id, segment.id] })
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 6, contact_segment_ids: [segment.id, segment.id] })
       assert_response 201
       result = parse_response(@response.body)
       assert_equal "http://#{@request.host}/api/v2/solutions/folders/#{result['id']}", response.headers['Location']
       assert Solution::FolderMeta.where(id: result['id']).first.contact_filter_ids == [segment.id]
     end
 
-    def test_create_folder_with_max_contact_filter_ids
+    def test_create_folder_with_max_contact_segment_ids
       category_meta = get_category
-      contact_filter_ids = Array.new(251) { rand(1...2) }
-      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 6, contact_filter_ids: contact_filter_ids })
+      contact_segment_ids = Array.new(251) { rand(1...2) }
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 6, contact_segment_ids: contact_segment_ids })
       assert_response 400
-      match_json([bad_request_error_pattern('contact_filter_ids', :too_long, current_count: contact_filter_ids.size, element_type: :elements, max_count: Solution::Constants::CONTACT_FILTER_LIMIT)])
+      match_json([bad_request_error_pattern('contact_segment_ids', :too_long, current_count: contact_segment_ids.size, element_type: :elements, max_count: Solution::Constants::CONTACT_FILTER_LIMIT)])
     end
 
-    def test_create_folder_with_visibility_selected_contact_filters_without_contact_filter_ids
+    def test_create_folder_with_visibility_selected_contact_filters_without_contact_segment_ids
       category_meta = get_category
       post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 6 })
       assert_response 201
@@ -666,23 +666,23 @@ module ApiSolutions
       match_json(solution_folder_pattern(Solution::Folder.where(parent_id: result['id']).first))
     end
 
-    def test_update_folder_with_contact_filter_ids_and_valid_visibility
+    def test_update_folder_with_contact_segment_ids_and_valid_visibility
       folder_meta = create_folder(visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:contact_segment], category_id: @account.solution_categories.last.id)
       visibility = 6
       segment = create_contact_segment
       sample_folder = get_folder
-      params_hash = { visibility: visibility, contact_filter_ids: [segment.id] }
+      params_hash = { visibility: visibility, contact_segment_ids: [segment.id] }
       put :update, construct_params({ id: folder_meta.parent_id }, params_hash)
       assert_response 200
     end
 
-    def test_update_folder_with_contact_filter_ids_and_has_valid_segment_folder_record
+    def test_update_folder_with_contact_segment_ids_and_has_valid_segment_folder_record
       segment1 = create_contact_segment
-      folder_meta = create_folder(visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:contact_segment], category_id: @account.solution_categories.last.id, contact_filter_ids: [segment1.id])
+      folder_meta = create_folder(visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:contact_segment], category_id: @account.solution_categories.last.id, contact_segment_ids: [segment1.id])
       visibility = 6
       segment2 = create_contact_segment
       sample_folder = get_folder
-      params_hash = { visibility: visibility, contact_filter_ids: [segment2.id] }
+      params_hash = { visibility: visibility, contact_segment_ids: [segment2.id] }
       put :update, construct_params({ id: folder_meta.parent_id }, params_hash)
       assert_response 200
       Solution::FolderVisibilityMapping.where(folder_meta_id: folder_meta.id).count == 1

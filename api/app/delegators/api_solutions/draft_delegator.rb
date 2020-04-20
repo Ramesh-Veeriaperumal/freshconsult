@@ -6,6 +6,7 @@ module ApiSolutions
     validate :validate_portal_id, if: -> { @portal_id }
     validate :validate_author, on: :update
     validate :validate_approval_data, on: :update
+    validate :validate_article_status, on: :destroy
 
     def initialize(record, options = {})
       @item = record
@@ -13,6 +14,10 @@ module ApiSolutions
         instance_variable_set("@#{key}", value)
       end
       super(record, options)
+    end
+
+    def validate_article_status
+      errors[:status] = :cannot_destroy_draft_for_draft_article unless @item.article.published?
     end
 
     def validate_author

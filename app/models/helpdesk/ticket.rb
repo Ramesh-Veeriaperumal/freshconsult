@@ -1463,7 +1463,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
       ::Freddy::DetectThankYouNoteWorker.perform_async(args)
       Rails.logger.info "Enqueueing DetectThankYouNoteWorker T :: #{id} , N :: #{args[:note_id]}"
     else
-      job_id = ::Tickets::ObserverWorker.perform_async(args)
+      job_id = if service_task?
+                 ::Tickets::ServiceTaskObserverWorker.perform_async(args)
+               else
+                 ::Tickets::ObserverWorker.perform_async(args)
+               end
       Va::Logger::Automation.set_thread_variables(Account.current.id, id, args[:doer_id], nil)
       Va::Logger::Automation.log("Triggering Observer, job_id=#{job_id}, info=#{args.inspect}", true)
       Va::Logger::Automation.unset_thread_variables
@@ -1472,7 +1476,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def trigger_thank_you_worker?(args)
-    return false unless args[:note_id].present?
+    return false unless args[:note_id].present? && !service_task?
+
     note = notes.find_by_id(args[:note_id])
     return false unless note.present?
     Account.current.detect_thank_you_note_enabled? && Account.current.thank_you_configured_in_automation_rules? && sla_timer_off_status? &&

@@ -8,7 +8,7 @@ class Helpdesk::Ticketfields::PicklistValueTransformer::Base
 
   private
 
-    def ticket_fields
+    def dropdown_nested_fields
       account.dropdown_nested_fields
     end
 

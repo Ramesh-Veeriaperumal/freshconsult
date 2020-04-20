@@ -217,6 +217,22 @@ class Solution::FolderMeta < ActiveRecord::Base
 	    end
 	end
 
+    def add_contact_filters(contact_segment_ids, add_to_existing)
+      folder_visibility_mapping.destroy_all unless add_to_existing
+      filtered_contact_segment_ids = contact_segment_ids - folder_visibility_mapping.where('mappable_id IN (?) and mappable_type = ?', contact_segment_ids, 'ContactFilter').pluck(:mappable_id)
+      filtered_contact_segment_ids.each do |contact_segment_id|
+        folder_visibility_mapping.build({ mappable_id: contact_segment_id, mappable_type: 'ContactFilter' })
+      end
+    end
+
+    def add_company_filters(company_segment_ids, add_to_existing)
+      folder_visibility_mapping.destroy_all unless add_to_existing
+      filtered_company_segment_ids = company_segment_ids - folder_visibility_mapping.where('mappable_id IN (?) and mappable_type = ?', company_segment_ids, 'CompanyFilter').pluck(:mappable_id)
+      filtered_company_segment_ids.each do |company_segment_id|
+        folder_visibility_mapping.build({ mappable_id: company_segment_id, mappable_type: 'CompanyFilter' })
+      end
+    end
+
   def article_order
     Account.current.auto_article_order_enabled? ? self[:article_order] : Solution::Constants::ARTICLE_ORDER_KEYS_TOKEN[:custom]
   end

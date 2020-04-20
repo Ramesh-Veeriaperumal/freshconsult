@@ -18,8 +18,8 @@ class Solutions::FolderDecorator < ApiDecorator
       updated_at: updated_at
     }
     response_hash[:company_ids] = company_ids if company_ids_visible?
-    response_hash[:contact_filter_ids] = mappable_ids if contact_filter_ids_visible?
-    response_hash[:company_filter_ids] = mappable_ids if company_filter_ids_visible?
+    response_hash[:contact_segment_ids] = mappable_ids if contact_segment_ids_visible?
+    response_hash[:company_segment_ids] = mappable_ids if company_segment_ids_visible?
     if private_api?
       response_hash[:position] = position
       response_hash[:article_order] = article_order
@@ -36,11 +36,11 @@ class Solutions::FolderDecorator < ApiDecorator
     visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users]
   end
 
-  def contact_filter_ids_visible?
+  def contact_segment_ids_visible?
     visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:contact_segment]
   end
 
-  def company_filter_ids_visible?
+  def company_segment_ids_visible?
     visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_segment]
   end
 

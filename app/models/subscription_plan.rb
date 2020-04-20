@@ -202,6 +202,10 @@ class SubscriptionPlan < ActiveRecord::Base
     costs.nil? ? 0 : costs[in_currency.to_sym]
   end
 
+  def omni_plan_variant
+    omni_plan_name ? SubscriptionPlan.find_by_name(omni_plan_name) : nil
+  end
+
   def fsm_cost(in_currency)
     costs = price[:FSM]
     costs.nil? ? 0 : costs[in_currency.to_sym]

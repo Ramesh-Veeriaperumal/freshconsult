@@ -87,7 +87,7 @@ module Helpdesk::BulkActionMethods
       Rails.logger.debug "ticket.observer_args nil #{caller.join("\n")}" if ticket.observer_args.nil?
       args = ticket.observer_args
       args = args.merge({:attributes => ticket.sbrr_attributes.merge(:bg_jobs_inline => true)}) if account.skill_based_round_robin_enabled?
-      response = Tickets::ObserverWorker.new.perform(args)
+      response = ticket.service_task? ? Tickets::ServiceTaskObserverWorker.new.perform(args) : Tickets::ObserverWorker.new.perform(args)
       @sbrr_exec_objs = (@sbrr_exec_objs || []).push(response[:sbrr_exec])
     end
   end

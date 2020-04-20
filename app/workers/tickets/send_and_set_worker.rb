@@ -29,6 +29,8 @@ class Tickets::SendAndSetWorker < BaseWorker
     if args[:ticket_changes]
       args[:ticket_changes].symbolize_keys!
       @evaluate_on = @account.tickets.find_by_id(args[:ticket_changes][:ticket_id])
+      return Tickets::ServiceTaskObserverWorker.new.perform(args[:ticket_changes]) if @evaluate_on.service_task?
+
       Tickets::ObserverWorker.new.perform(args[:ticket_changes])
     end
   rescue => e

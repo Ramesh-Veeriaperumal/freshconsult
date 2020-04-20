@@ -45,6 +45,12 @@ module CronWebhooks::SchedulerHelper
               set_scheduler_semaphore(account.id, class_constant)
             end
             if name.eql?('supervisor')
+              account_shard_name = ShardMapping.find_by_account_id(account.id).shard_name
+              current_shard_name = ActiveRecord::Base.current_shard_selection.shard.to_s
+              if account_shard_name != current_shard_name
+                puts "Skipping supervisor for account #{account.id} #{account.full_domain} #{account_shard_name} #{current_shard_name}"
+                next
+              end
               class_constant.perform_async if account.supervisor_enabled? &&
                                               account.supervisor_rules.count > 0
             else

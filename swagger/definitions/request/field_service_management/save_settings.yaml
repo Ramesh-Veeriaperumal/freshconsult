@@ -2,3 +2,5 @@ type: object
 properties:
   field_agents_can_manage_appointments:
     type: boolean
+  location_tagging_enabled:
+    type: boolean

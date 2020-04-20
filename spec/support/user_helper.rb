@@ -45,7 +45,9 @@ module UsersHelper
     options[:role_ids] = [@account.roles.find_by_name("Agent").id] if options[:role_ids].blank?
     new_user.agent = new_agent
     new_user.privileges = options[:privileges] || account.roles.find_by_id(options[:role_ids].first).privileges
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
     v = new_user.save_without_session_maintenance
+    Account.any_instance.unstub(:freshid_integration_enabled?)
     if options[:group_id]
       ag_grp = AgentGroup.new(:user_id => new_agent.user_id , :account_id =>  account.id, :group_id => options[:group_id])
       ag_grp.save!
