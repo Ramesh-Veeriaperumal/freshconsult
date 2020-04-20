@@ -17,6 +17,8 @@ put:
             type: boolean
           location_tagging_enabled:
             type: boolean
+          geo_location_enabled:
+            type: boolean
     400:
       description: Bad Request Error
       schema:
@@ -34,6 +36,8 @@ get:
           field_agents_can_manage_appointments:
             type: boolean
           location_tagging_enabled:
+            type: boolean
+          geo_location_enabled:
             type: boolean
     400:
       description: Bad Request Error
