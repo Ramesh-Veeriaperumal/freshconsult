@@ -118,8 +118,8 @@ module Ember
           REQUESTER_FIELDS.each do |type|
             object = instance_variable_get("@#{type}")
             next if object.blank?
-            custom_fields = cname_params[type.to_sym].delete(:custom_field)
-            object.assign_attributes(custom_field: custom_fields)
+            custom_fields = cname_params[type.to_sym][:custom_field]
+            object.assign_attributes(cname_params[type.to_sym])
             requester_delegator = safe_send("#{type}_delegator", custom_fields)
             requester_error_messages(requester_delegator, type) unless requester_delegator.valid?(ACTION)
           end

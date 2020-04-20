@@ -131,6 +131,27 @@ module Ember
         assert_equal ticket.owner_id, response['company']['id']
       end
 
+      def test_update_requester_with_tam_fields
+        field = @account.company_form.company_fields.find { |x| x.name == 'health_score' }
+        field.field_options = { 'widget_position' => 8 }
+        field.save!
+        @account.reload
+        user = add_new_user(@account)
+        ticket = create_ticket(ticket_params_hash.merge(requester_id: user.id))
+        params_hash = { contact: { name: Faker::Lorem.word, custom_fields: { position: Faker::Lorem.word } }, company: { name: Faker::Lorem.word, health_score: 'At risk' } }
+        put :update, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+        assert_response 200
+        response = parse_response @response.body
+        user.reload
+        ticket.reload
+        assert_equal user.customer_id, response['company']['id']
+        assert_equal params_hash[:company][:health_score], response['company']['health_score']
+      ensure
+        field.field_options = {}
+        field.save!
+        @account.reload
+      end
+
       def test_update_requester_with_new_company_2
         #ticket with deleted company
         company = create_company
