@@ -1,4 +1,5 @@
 require_relative '../../test_helper'
+['surveys_test_helper.rb'].each { |file| require Rails.root.join('test', 'api', 'helpers', file) }
 require 'webmock/minitest'
 WebMock.allow_net_connect!
 
@@ -11,9 +12,10 @@ module Ember
     include ArchiveTicketTestHelper
     include CustomFieldsTestHelper
     include TimelineTestHelper
+    include SurveysTestHelper
 
     BULK_CONTACT_CREATE_COUNT = 2
-    BASE_URL_CONTACT_TIMELINE = 'http://hypertrail-dev.freshworksapi.com/api/v2/activities/account'
+    BASE_URL_CONTACT_TIMELINE = 'http://hypertrail-dev.freshworksapi.com/api/v2/activities/account'.freeze
 
     def setup
       super
@@ -57,6 +59,7 @@ module Ember
     def create_company(options = {})
       company = @account.companies.find_by_name(options[:name])
       return company if company
+
       name = options[:name] || Faker::Name.name
       company = FactoryGirl.build(:company, name: name)
       company.account_id = @account.id
@@ -64,7 +67,7 @@ module Ember
       company
     end
 
-    def create_n_users(count, account, params={})
+    def create_n_users(count, account, params = {})
       contact_ids = []
       count.times do
         contact_ids << add_new_user(account, params).id
@@ -82,7 +85,7 @@ module Ember
 
     def construct_other_companies_hash(company_ids)
       other_companies = []
-      (1..company_ids.count-1).each do |itr|
+      (1..company_ids.count - 1).each do |itr|
         company_hash = {}
         company_hash[:id] = company_ids[itr]
         company_hash[:view_all_tickets] = true
@@ -1992,6 +1995,20 @@ module Ember
       get :timeline, controller_params(version: 'private', id: sample_user.id)
       assert_response 200
       match_json(custom_timeline_activity_response(result_data))
+    end
+
+    def test_contact_timeline_returns_csat_activities
+      sample_user = add_new_user(@account)
+      create_survey(1, true)
+      survey = @account.custom_surveys.last
+      result_data = create_timeline_sample_data(sample_user, 1, false, survey)
+      url = "#{BASE_URL_CONTACT_TIMELINE}/#{@account.id}/contacttimeline/#{sample_user.id}"
+      stub_request(:get, url).to_return(body: result_data[1].to_json, status: 200)
+      get :timeline, controller_params(version: 'private', id: sample_user.id)
+      assert_response 200
+      match_json(timeline_activity_response(sample_user, result_data[0]))
+    ensure
+      survey.destroy
     end
   end
 end

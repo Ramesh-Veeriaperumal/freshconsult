@@ -431,14 +431,36 @@ module UsersTestHelper
     response_pattern = {}
     objects.map do |item|
       archived?(item) ? type = "ticket" : type = item.class.name.gsub('Helpdesk::', '').downcase
-      to_ret = object_activity_pattern(item)
+      to_ret = object_activity_pattern(item, type)
       (response_pattern[type.to_sym] ||= []).push to_ret
     end
     response_pattern
   end
 
-  def object_activity_pattern(obj)
-    obj.class.name == 'Post' ? forum_activity_pattern(obj) : ticket_activity_pattern(obj)
+  def object_activity_pattern(obj, type = nil)
+    case type
+    when 'ticket'
+      ticket_activity_pattern(obj)
+    when 'post'
+      forum_activity_pattern(obj)
+    when 'survey'
+      survey_activity_pattern(obj)
+    end
+  end
+
+  def survey_activity_pattern(survey_result)
+    ret_hash = {
+      id: survey_result.id,
+      survey_id: survey_result.survey_id,
+      agent_id: survey_result.agent_id,
+      group_id: survey_result.group_id,
+      rating: survey_result.custom_ratings,
+      created_at: survey_result.created_at.try(:utc).try(:iso8601),
+      associated_data: {
+        comment: survey_result.survey_remark.feedback.body,
+        ticket_subject: survey_result.surveyable.subject
+      }
+    }
   end
 
   def ticket_activity_pattern(obj)

@@ -1,13 +1,41 @@
 class HyperTrail::Response
+  attr_accessor :activities, :meta
+
   NEXT_KEYWORD = 'next'.freeze
-  TRANSFORMATION_CLASSES = ['TicketDataTransformer', 'PostDataTransformer'].freeze
+  OBJECT_CLASSES_MAP = {
+    'ticket' => 'TicketActivity',
+    'post' => 'PostActivity',
+    'survey' => 'SurveyActivity',
+    'contact_custom_activity' => 'CustomActivity'
+  }.freeze
 
-  def initialize(response)
-    @data = response
-    @activities = response[:activities]
+  def initialize
+    @activities = []
     @meta = nil
+    @ticket_data_transformer = HyperTrail::DataTransformer::TicketDataTransformer.new
+    @post_data_transformer = HyperTrail::DataTransformer::PostDataTransformer.new
+    @survey_data_transformer = HyperTrail::DataTransformer::SurveyResultDataTransformer.new
+  end
 
-    link_data = response[:link]
+  def push(activity)
+    content = activity[:content]
+    type = content.keys.first
+    object_class = Object.const_get("HyperTrail::ActivityObject::#{OBJECT_CLASSES_MAP[type]}")
+    object = object_class.new(activity)
+    @activities.push(object)
+    case type
+    when 'ticket'
+      @ticket_data_transformer.push(object)
+    when 'post'
+      @post_data_transformer.push(object)
+    when 'survey'
+      @survey_data_transformer.push(object)
+    else
+      return
+    end
+  end
+
+  def meta_info(link_data)
     if link_data.present?
       link_data.each(&:symbolize_keys!)
       next_page = link_data.find { |link| link[:rel] == NEXT_KEYWORD }
@@ -16,19 +44,9 @@ class HyperTrail::Response
     end
   end
 
-  def fetch_transformed_response
-    return @activities if @activities.blank?
-
-    TRANSFORMATION_CLASSES.each do |transformation_class|
-      transformer_class = Object.const_get("HyperTrail::DataTransformer::#{transformation_class}")
-      transformer_object = transformer_class.new(@activities)
-      transformer_object.construct_transformed_timeline_activities
-    end
-
-    @activities
-  end
-
-  def fetch_meta_info
-    @meta
+  def transform_activities
+    @ticket_data_transformer.transform
+    @post_data_transformer.transform
+    @survey_data_transformer.transform
   end
 end

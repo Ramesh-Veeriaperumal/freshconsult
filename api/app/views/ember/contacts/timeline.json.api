@@ -1,1 +1,1 @@
-@activities.to_json
+@activities.map { |indiv_activity| indiv_activity.activity if indiv_activity.valid }.compact.to_json

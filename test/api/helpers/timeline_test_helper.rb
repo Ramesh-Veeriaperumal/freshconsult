@@ -1,10 +1,18 @@
-['tickets_test_helper.rb', 'users_test_helper.rb'].each { |file| require Rails.root.join('test', 'api', 'helpers', file) }
+['tickets_test_helper.rb', 'users_test_helper.rb', 'surveys_test_helper.rb', 'surveys_test_helper.rb'].each { |file| require Rails.root.join('test', 'api', 'helpers', file) }
 
 module TimelineTestHelper
   include ApiTicketsTestHelper
   include UsersTestHelper
+  include SurveysTestHelper
 
-  def create_timeline_sample_data(sample_user, count = 1, next_page = false)
+  CLASS_TO_ACTIVITY_NAME_MAP = {
+    'Helpdesk::ArchiveTicket' => 'ticket',
+    'Helpdesk::Ticket' => 'ticket',
+    'Post' => 'post',
+    'CustomSurvey::SurveyResult' => 'survey'
+  }.freeze
+
+  def create_timeline_sample_data(sample_user, count = 1, next_page = false, survey = nil)
     sample_data = []
     @result = {}
     @result[:links] = next_page ? [{ 'rel' => 'next', 'href' => 'https://hypertrail-staging.freshworksapi.com/api/v2/activities?start_token=1651334132522601834', 'type' => 'GET' }] : []
@@ -12,6 +20,11 @@ module TimelineTestHelper
     count.times do
       sample_ticket = create_ticket(requester_id: sample_user.id)
       sample_data.push(sample_ticket)
+      if survey.present?
+        survey_result = create_survey_result(sample_ticket, 103, nil, survey.id)
+        sample_data.push(survey_result)
+        construct_payload(sample_user, survey_result, 'survey')
+      end
       construct_payload(sample_user, sample_ticket, 'ticket')
     end
     count.times do
@@ -73,18 +86,30 @@ module TimelineTestHelper
       }
       data[:action] = 'post_create'
       @result[:data].push(data)
+    when 'survey'
+      data[:content] = {
+        survey: {
+          id: entry.id,
+          surveyable_type: entry.surveyable_type,
+          surveyable_id: entry.surveyable_id,
+          survey_id: entry.survey_id
+        }
+      }
+      data[:action] = 'survey_result_create'
+      @result[:data].push(data)
     end
   end
 
   def timeline_activity_response(sample_user, objects)
     response_pattern = []
     objects.map do |item|
-      type = archived?(item) ? 'ticket' : item.class.name.gsub('Helpdesk::', '').downcase
+      type = CLASS_TO_ACTIVITY_NAME_MAP[item.class.name]
+      event_type = type == 'survey' ? 'survey_result_create' : "#{type}_create"
       to_ret = {
         activity: {
-          name: "#{type}_create",
+          name: event_type,
           timestamp: item.created_at.try(:utc).try(:iso8601),
-          context: object_activity_pattern(item),
+          context: object_activity_pattern(item, type),
           source: {
             name: 'freshdesk',
             id: Account.current.id

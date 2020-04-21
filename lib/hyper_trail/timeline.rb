@@ -1,12 +1,12 @@
 class HyperTrail::Timeline < HyperTrail::Base
-
   TIMELINE_BASIC_AUTH = {
     username: HyperTrail::CONFIG['timeline']['username'].freeze,
     password: HyperTrail::CONFIG['timeline']['password'].freeze
-  }
+  }.freeze
 
   TICKET_TYPE = 'ticket'.freeze
   POST_TYPE = 'post'.freeze
+  SURVEY_TYPE = 'survey'.freeze
   CUSTOM_ACTIVITY = 'contact_custom_activity'.freeze
   FRESHDESK_SOURCE = 'freshdesk'.freeze
 
@@ -41,21 +41,17 @@ class HyperTrail::Timeline < HyperTrail::Base
   end
 
   def modify_response(response)
+    ht_response = HyperTrail::Response.new
     response.symbolize_keys!
     activity_data = response[:data]
-    all_activities = []
     link_data = response[:links]
     activity_data.each do |activity|
       activity.symbolize_keys!
-      content = activity[:content]
-      type = content.keys.first
-
-      if respond_to?("#{type}_properties", activity)
-        all_activities << safe_send("#{type}_properties", activity)
-      end
+      ht_response.push(activity)
     end
-    modified_response = { activities: all_activities, link: link_data }
-    HyperTrail::Response.new(modified_response)
+    ht_response.meta_info(link_data)
+    ht_response.transform_activities
+    ht_response
   end
 
   private
@@ -73,47 +69,5 @@ class HyperTrail::Timeline < HyperTrail::Base
         raise
       end
       JSON.parse response.body
-    end
-
-    def freshdesk_source
-      {
-        name: FRESHDESK_SOURCE,
-        id: Account.current.id
-      }
-    end
-
-    def freshdesk_activity_hash(activity, activity_type)
-      {
-        activity: {
-          name: activity[:action],
-          actor: activity[:actor].symbolize_keys,
-          source: freshdesk_source,
-          object: {
-            type: activity_type
-          }
-        }
-      }
-    end
-
-    def ticket_properties(activity)
-      ticket_activity = activity[:content][TICKET_TYPE]
-      ret_hash = freshdesk_activity_hash(activity, TICKET_TYPE)
-      ret_hash[:activity][:object][:id] = ticket_activity['display_id']
-      ret_hash
-    end
-
-    def post_properties(activity)
-      post_activity = activity[:content][POST_TYPE]
-      ret_hash = freshdesk_activity_hash(activity, POST_TYPE)
-      ret_hash[:activity][:object][:id] = post_activity['id']
-      ret_hash
-    end
-
-    def contact_custom_activity_properties(activity)
-      custom_activity = activity[:content][CUSTOM_ACTIVITY]
-      {
-        activity: custom_activity['activity'].symbolize_keys,
-        contact: custom_activity['contact'].symbolize_keys
-      }
     end
 end
