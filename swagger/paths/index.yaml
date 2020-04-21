@@ -772,3 +772,9 @@
 
 /admin/agent_levels:
   $ref: ./admin/scoreboard_levels/index.yaml
+
+#agent-statuses
+/agent-statuses:
+  $ref: ./agent-statuses/list_and_create.yaml
+/agent-statuses/{id}:
+  $ref: ./agent-statuses/read_update_delete.yaml

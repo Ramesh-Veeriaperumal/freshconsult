@@ -1,0 +1,41 @@
+get:
+  tags: [agent-statuses]
+  summary: List all agent statuses
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          agent_statuses:
+            type: array
+            items:
+              $ref: '#/definitions/agent_statuses_response'
+          meta:
+            type: object
+            allOf:
+              - $ref: '#/definitions/meta'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+post:
+  tags: [agent-statuses]
+  description: Create status of an agent
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/agent_statuses_request'
+  responses:
+    201:
+      description: Success
+      schema:
+        $ref: '#/definitions/agent_statuses_response'
+    404:
+      description: out of office not found
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

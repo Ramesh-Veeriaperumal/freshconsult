@@ -1,0 +1,24 @@
+type: object
+properties:
+  name:
+    description: Name of the status
+    type: string
+    example: 'offline'
+  state:
+    description: Enable for status for agent
+    type: string
+    enum: ['active', 'inactive']
+  icon_id:
+    description: Status icon
+    type: integer
+    format: int64
+    example: 123
+  type:
+    description: Type of status
+    type: string
+    enum: ['productive', 'unproductive']
+required:
+ - name
+ - state
+ - icon_id
+ - type
