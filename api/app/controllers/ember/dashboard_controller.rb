@@ -12,7 +12,7 @@ module Ember
     before_filter :validate_language, only: [:show]
     before_filter :validate_privilege?, only: [:show]
     around_filter :run_on_slave
-    around_filter :use_time_zone, only: [:scorecard, :ticket_trends, :ticket_metrics] # Uses user/account's zone instead of UTC
+    around_filter :use_time_zone, only: [:scorecard, :ticket_trends, :ticket_metrics, :survey_info] # Uses user/account's zone instead of UTC
 
     skip_before_filter :load_object
 
