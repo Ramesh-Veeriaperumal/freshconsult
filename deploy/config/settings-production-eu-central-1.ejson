@@ -1249,8 +1249,9 @@
         "_port": 18489,
         "_namespace": "sidekiq-blue",
         "_keepalive": 0,
-        "_archive_host": "redis-sidekiq.internal.podeucentral1.freshdesk.com",
-        "_archive_port": 18489,
+        "_archive_host": "sidekiq-archive.internal.podeucentral1.freshdesk.com",
+        "_archive_port": 17255,
+        "archive_password": "EJ[1:txyUQUwFRE+IIdPpWkT8b0RMK6B3kFZbUpIpVQumzTg=:joUtCvLxhQt2cEE6mMyMOOB5d2H24OUr:wdJnpLrfAg2RfV2h303o5tzTKuMYl34ywqSGACu8PvPhI58klHXSOc5+4I8ybiLe]",
         "_scheduled_poll_interval": 1
       },
       "ml_app": {
