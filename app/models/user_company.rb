@@ -42,7 +42,7 @@ class UserCompany < ActiveRecord::Base
   end
 
   def set_default_company
-    if default && user.user_companies.reload.present?
+    if default && user && user.user_companies.reload.present?
       uc = user.user_companies.first
       uc.update_attributes(:default => true)
       user.customer_id = uc.company_id

@@ -31,7 +31,7 @@ class User < ActiveRecord::Base
   has_many :day_pass_usages, :dependent => :destroy
   has_custom_fields :class_name => 'ContactFieldData', :discard_blank => false # coz of schema_less_user_columns
 
-  has_many :user_emails , :class_name =>'UserEmail', :validate => true, :dependent => :destroy, :order => "primary_role desc"
+  has_many :user_emails, class_name: 'UserEmail', validate: true, dependent: :destroy, order: 'primary_role desc', before_remove: :update_user_emails, before_add: :update_user_emails
   has_many :verified_emails, :class_name =>'UserEmail', :dependent => :destroy, :conditions => { :verified => true }
   has_one :primary_email, :class_name => 'UserEmail', :conditions => { :primary_role => true }, :autosave => true
 

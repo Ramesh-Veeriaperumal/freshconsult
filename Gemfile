@@ -49,7 +49,7 @@ gem 'iconv', '~> 1.0.4'
 gem 'thrift', '~> 0.9.2.0'
 gem 'charlock_holmes', "0.7.3"
 gem "tnef", "1.0.2"
-gem "central-publisher", git: 'git@github.com:freshdesk/central-publisher.git', tag: 'v2.0.14'
+gem "central-publisher", git: 'git@github.com:freshdesk/central-publisher.git', tag: 'v2.0.15'
 
 gem 'optar', git: 'git@github.com:freshdesk/optar.git', tag: 'v1.1.4'
 

@@ -65,6 +65,10 @@ class User < ActiveRecord::Base
   def update_user_companies(obj)
     self.user_companies_updated = true
   end
+
+  def update_user_emails(*)
+    self.user_emails_updated = true
+  end
   ##########################
   ### V1 Cluster methods ###
   ##########################
