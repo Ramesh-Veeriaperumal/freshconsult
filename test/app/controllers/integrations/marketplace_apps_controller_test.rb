@@ -132,4 +132,18 @@ class Integrations::MarketplaceAppsControllerTest < ActionController::TestCase
     Integrations::InstalledApplication.any_instance.unstub(:save!)
     @application.destroy
   end
+
+  def test_cleanup_cache_and_etags
+    Account.stubs(:current).returns(@account)
+    Account.any_instance.stubs(:marketplace_gallery_enabled?).returns(true)
+    DataVersioning::ExternalModel.stubs(:update_version_timestamp).returns(nil)
+    MemcacheKeys.stubs(:delete_from_cache).returns(true)
+    post :clear_cache
+    assert_response 202
+  ensure
+    Account.unstub(:current)
+    Account.any_instance.unstub(:marketplace_gallery_enabled?)
+    DataVersioning::ExternalModel.unstub(:update_version_timestamp)
+    MemcacheKeys.unstub(:delete_from_cache)
+  end
 end

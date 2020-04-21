@@ -1,5 +1,8 @@
 class Integrations::MarketplaceAppsController < Admin::AdminController
   include Marketplace::GalleryConstants
+  include Marketplace::Constants
+  include MemcacheKeys
+  include DataVersioning::ExternalModel
 
   # Used when MarketplaceFeature is enabled
   before_filter { |c| c.requires_feature :marketplace }
@@ -93,6 +96,19 @@ class Integrations::MarketplaceAppsController < Admin::AdminController
     end
   rescue => e
     render :json => { :status => :internal_server_error }
+  end
+
+  def clear_cache
+    Rails.logger.info("Marketplace app installation for Account:: #{current_account.id} \
+                       app name: #{params[:extention_name]}, action: #{params[:event_type]} \
+                       event detail: #{params[:event_id]}")
+    update_timestamp
+    clear_memcache
+    render json: { success: true }, status: 202
+  rescue StandardError => e
+    Rails.logger.error("Marketplace app installation for Account:: #{current_account.id} \
+                        app name: #{params[:extention_name]} error:: #{e.inspect}")
+    render json: { error: message }, status: :error
   end
 
   private
@@ -208,5 +224,13 @@ class Integrations::MarketplaceAppsController < Admin::AdminController
     def render_error(message)
       Rails.logger.error("#{message} for account: #{current_account.id} \n #{@application.inspect}")
       render json: { error: message }, status: :bad_request
+    end
+
+    def update_timestamp
+      update_version_timestamp(MARKETPLACE_VERSION_MEMBER_KEY)
+    end
+
+    def clear_memcache
+      MemcacheKeys.delete_from_cache(format(INSTALLED_APPS_V2, account_id: current_account.id))
     end
 end
