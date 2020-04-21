@@ -148,10 +148,6 @@ class Account < ActiveRecord::Base
     end
     if redis_key_exists?(ENABLE_AUTOMATION_REVAMP)
       launch(:automation_revamp)
-      if redis_key_exists?(ENABLE_THANK_YOU_DETECTOR)
-        add_feature(:detect_thank_you_note)
-        add_feature(:detect_thank_you_note_eligible)
-      end
     end
     #next response sla feature based on redis. Remove once its stable
     if redis_key_exists?(ENABLE_NEXT_RESPONSE_SLA)

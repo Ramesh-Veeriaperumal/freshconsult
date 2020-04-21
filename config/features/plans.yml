@@ -494,7 +494,6 @@
     :name: Estate
     :features:
       - :custom_survey
-      - :smart_filter
       - :parent_child_tickets_toggle
       - :multi_product
       - :multiple_business_hours
@@ -568,11 +567,14 @@
       - :unlimited_multi_product
       - :audit_log_ui
       - :article_approval_workflow
+      - :detect_thank_you_note
+      - :detect_thank_you_note_eligible
+      - :smart_filter
     :inherits:
       - :estate_jan_20
     :exclude: []
   :forest_omni_jan_20:
-    :name: Estate Omni Channel
+    :name: Forest Omni Channel
     :features: []
     :inherits:
       - :forest_jan_20
