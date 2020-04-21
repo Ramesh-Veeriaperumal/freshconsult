@@ -99,4 +99,30 @@ class AccountAdminsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:sandbox?)
     AccountConfiguration.any_instance.unstub(:anonymous_account?)
   end
+
+  def test_feedback_widget_set_captcha_disabled
+    post :preferences=, construct_params(feedback_widget: { disable_captcha: true })
+    assert_response 204
+    @account.reload
+    refute @account.feedback_widget_captcha_allowed?
+  end
+
+  def test_feedback_widget_set_captcha_enabled
+    put :preferences=, construct_params(feedback_widget: { disable_captcha: false })
+    assert_response 204
+    @account.reload
+    assert @account.feedback_widget_captcha_allowed?
+  end
+
+  def test_feedback_widget_set_captcha_wrong_params
+    post :preferences=, construct_params(feedback_widget: { enable_captcha: true })
+    assert_response 400
+    match_json(account_admin_bad_request_error_patterns(:enable_captcha, 'Unexpected/invalid field in request', code: :invalid_field))
+  end
+
+  def test_feedback_widget_set_captcha_wrong_param_type
+    post :preferences=, construct_params(feedback_widget: { disable_captcha: 'true' })
+    assert_response 400
+    match_json([bad_request_error_pattern_with_nested_field('feedback_widget', 'disable_captcha', 'It should be a/an Boolean', code: :datatype_mismatch)])
+  end
 end

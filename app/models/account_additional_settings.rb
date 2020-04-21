@@ -240,6 +240,18 @@ class AccountAdditionalSettings < ActiveRecord::Base
     additional_settings[:widget_count] || AccountConstants::WIDGET_COUNT_FOR_PLAN[key]
   end
 
+  def feedback_widget_captcha_allowed?
+    !additional_settings[:feedback_widget].try(:[], 'disable_captcha')
+  end
+
+  def add_feedback_widget_settings(feedback_widget_hash)
+    return if self.additional_settings[:feedback_widget] == feedback_widget_hash
+
+    self.additional_settings ||= {}
+    (self.additional_settings[:feedback_widget] ||= {}).merge!(feedback_widget_hash)
+    save!
+  end
+
   def update_onboarding_goals(goals)
     current_user = User.current
     additional_settings[:onboarding_goals] = goals
