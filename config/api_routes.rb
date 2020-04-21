@@ -23,7 +23,7 @@ Helpkit::Application.routes.draw do
         put :unwatch, to: 'tickets/subscriptions#unwatch'
         get :watchers, to: 'tickets/subscriptions#watchers'
         resource :bot_response, controller: 'tickets/bot_response', only: [:show, :update]
-        get :vault_token
+        get :vault_token, constraints: { id: /\d+/ }
       end
     end
     namespace :admin do
@@ -685,7 +685,7 @@ Helpkit::Application.routes.draw do
         put :requester, to: 'ember/tickets/requester#update'
         post :parse_template, to: 'ember/tickets#parse_template'
         get :ticket_field_suggestions, to: 'ember/tickets#ticket_field_suggestions'
-        get :vault_token, to: 'ember/tickets#vault_token'
+        get :vault_token, to: 'ember/tickets#vault_token', constraints: { id: /\d+/ }
       end
       resources :activities, controller: 'ember/tickets/activities', only: [:index]
       resource :summary, controller: 'ticket_summary', only: [:show, :update, :destroy]
