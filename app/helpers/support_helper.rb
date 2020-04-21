@@ -166,6 +166,28 @@ module SupportHelper
     output.join("").html_safe
   end
 
+  def agent_login_link
+    if Account.current.agent_custom_sso_enabled?
+      Freshid::V2::UrlGenerator.url_with_query_params(
+          Account.current.agent_custom_login_url,
+          { client_id: FRESHID_V2_CLIENT_ID, redirect_uri: freshid_authorize_callback_url }
+      )
+    else
+      Account.current.freshid_enabled? ? Freshid::Config.login_url(freshid_authorize_callback_url, freshid_logout_url, {}) : Freshid::V2::UrlGenerator.login_url(freshid_authorize_callback_url, {})
+    end
+  end
+
+  def customer_login_link
+    if Account.current.contact_custom_sso_enabled?
+      Freshid::V2::UrlGenerator.url_with_query_params(
+          Account.current.customer_custom_login_url,
+          { client_id: FRESHID_V2_CLIENT_ID, redirect_uri: freshid_customer_authorize_callback_url }
+      )
+    else
+      customer_login_url
+    end
+  end
+
   # Portal header
   def facebook_header portal
     output = []

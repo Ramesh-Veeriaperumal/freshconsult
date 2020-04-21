@@ -34,7 +34,7 @@ class Account < ActiveRecord::Base
     
     def valid_sso_options?
       if self.sso_enabled?
-        self.sso_options[:sso_type] = SsoUtil::SSO_TYPES[:simple_sso] if self.sso_options[:sso_type].blank?
+        self.sso_options[:sso_type] = SsoUtil::SSO_TYPES[:simple_sso] if self.sso_options[:sso_type].blank? && self.sso_options[:login_url].present?
         if self.sso_options[:sso_type] == SsoUtil::SSO_TYPES[:simple_sso] && self.sso_options[:login_url].blank?
           self.errors.add(:sso_options, ", #{I18n.t('admin.security.errors.simple_sso.invalid_login_url')}")
         elsif self.sso_options[:sso_type] == SsoUtil::SSO_TYPES[:saml]

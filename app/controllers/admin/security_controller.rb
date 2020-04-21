@@ -48,7 +48,12 @@ class Admin::SecurityController <  Admin::AdminController
         @account.sso_options[key] = @account.sso_options[key].to_bool if @account.sso_options[key].present?
       end
     else
-      @account.reset_sso_options
+      if @account.freshid_sso_sync_enabled? && @account.freshid_sso_enabled?
+        Rails.logger.info "freshid_sso_sync enabled so removing freshdesk sso options"
+        @account.remove_freshdesk_sso_options
+      else
+        @account.reset_sso_options
+      end
     end
 
     set_password_policies if @account.custom_password_policy_enabled? && !@account.sso_enabled?
