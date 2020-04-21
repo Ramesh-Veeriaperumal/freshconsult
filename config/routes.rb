@@ -3022,6 +3022,7 @@ Helpkit::Application.routes.draw do
           get :min_level_fluffy_info
           post :reset_ticket_display_id
           post :disable_freshid_org_v2
+          post :enable_freshid_org_v2
           post :skip_mandatory_checks
         end
       end

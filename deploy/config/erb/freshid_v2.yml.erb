@@ -12,6 +12,15 @@ defaults: &defaults
   freshid_request_timeout: <%= config[:freshid_request_timeout] %>
   mobile_deep_link_protocol: <%= config[:mobile_deep_link_protocol] %>
   end_point: <%= config[:end_point] %>
+  v2_migration_freshchat_path: <%= config[:v2_migration_freshchat_path] %>
+  v2_migration_freshchat_host: <%= config[:v2_migration_freshchat_host] %>
+  v2_migration_freshchat_int_name: <%= config[:v2_migration_freshchat_int_name] %>
+  v2_migration_freshchat_token: <%= config[:v2_migration_freshchat_token] %>
+  v2_migration_product_mapping:
+    freshconnect: <%= config[:v2_migration_product_mapping][:freshconnect] %>
+    freshcaller: <%= config[:v2_migration_product_mapping][:freshcaller] %>
+    freshsales: <%= config[:v2_migration_product_mapping][:freshsales] %>
+    freshchat: <%= config[:v2_migration_product_mapping][:freshchat] %>
 
 <%= node[:opsworks][:environment] %>:
   <<: *defaults

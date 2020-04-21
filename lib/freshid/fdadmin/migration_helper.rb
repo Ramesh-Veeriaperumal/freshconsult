@@ -2,12 +2,14 @@ module Freshid::Fdadmin::MigrationHelper
   FDADMIN_FRESHID_MIGRATION_WORKER_ERROR = 'FDADMIN_FRESHID_MIGRATION_WORKER_ERROR'.freeze
   FDADMIN_FRESHID_REVERT_AGENTS_ERROR = 'FDADMIN_FRESHID_REVERT_AGENTS_ERROR'.freeze
   FDADMIN_FRESHID_SILENT_MIGRATION_ERROR = 'FDADMIN_FRESHID_SILENT_MIGRATION_ERROR'.freeze
+  FDADMIN_FRESHID_V2_MIGRATION_ERROR = 'FDADMIN_FRESHID_V2_MIGRATION_ERROR'.freeze
   DISABLE_V2_MIGRATION_INPROGRESS = :disable_org_v2_inProgress
   ENABLE_V1_MIGRATION_INPROGRESS = :enable_freshid_v1_inProgress
   ENABLE_V2_MIGRATION_INPROGRESS = :enable_org_v2_inProgress
 
   FRESHID_V1_EMAIL_SUBJECT = 'Migrate accounts to freshid V1'.freeze
-  FRESHID_VALIDATION_EMAIL_SUBJECT = 'Freshid  V1 Validation report'.freeze
+  FRESHID_VALIDATION_EMAIL_SUBJECT = 'Freshid Validation report'.freeze
+  FRESHID_V2_EMAIL_SUBJECT = 'Migrate accounts From Freshid V1 to V2'.freeze
 
   CUSTSERV_EMAIL = 'custserv@freshdesk.com'.freeze
   PASSWORD_TYPE = 'sha512'.freeze
@@ -29,7 +31,7 @@ module Freshid::Fdadmin::MigrationHelper
 
   def write_file(file_name, data)
     file_path = File.join("#{Rails.root}/tmp", file_name)
-    #file_path = Rails.root.join('tmp', file_name)
+    # file_path = Rails.root.join('tmp', file_name)
     File.open(file_path, 'w') { |f| f.write(data) }
   end
 
@@ -59,7 +61,7 @@ module Freshid::Fdadmin::MigrationHelper
   end
 
   def migration_check_fails?(account)
-    Rails.logger.info "MIGRATION_CHECK :: Subscription_nil=#{account.subscription.nil?} :: Suspended=#{account.subscription.suspended?} :: Freshid_integration=#{account.freshid_integration_enabled?} :: SSO_enabled=#{sso_enabled(account)} :: Portal_customization=#{portal_customization?(account)} :: Password_policy=#{password_policy_modified(account)}"
+    Rails.logger.info "MIGRATION_CHECK :: a=#{account.id} :: Subscription_nil=#{account.subscription.nil?}, Suspended=#{account.subscription.suspended?}, Freshid_integration=#{account.freshid_integration_enabled?}, SSO_enabled=#{sso_enabled(account)}, Portal_customization=#{portal_customization?(account)}, Password_policy=#{password_policy_modified(account)}"
     account.subscription.nil? || account.subscription.suspended? || account.freshid_integration_enabled? || sso_enabled(account) || portal_customization?(account) || password_policy_modified(account)
   end
 
@@ -69,19 +71,38 @@ module Freshid::Fdadmin::MigrationHelper
 
   def check_and_enable_freshid(account)
     return true if account.freshid_enabled?
-
-    fd_agent_count = account.all_technicians.count - 1 # -1 for custserv@freshdesk.com
-    freshid_agent_count = account.authorizations.where(provider: 'freshid').count
     uid = account.authorizations.where(provider: 'freshid').first.uid
-    # if Authorization entry is <= to FD agent count then all agent authorization is present so we can enable freshid
-    if (fd_agent_count <= freshid_agent_count) && validate_v1_uuid_format(uid)
+    if agent_mapped_correctly?(account) && validate_v1_uuid_format(uid)
       account.launch(:freshid)
       return true
     end
     false
   end
 
+  def check_and_enable_freshid_v2(account)
+    return true if account.freshid_org_v2_enabled?
+    uid = account.authorizations.where(provider: 'freshid').first.uid
+    if agent_mapped_correctly?(account) && !validate_v1_uuid_format(uid)
+      account.launch(:freshid_org_v2)
+      return true
+    end
+    false
+  end
+
+  def agent_mapped_correctly?(account)
+    fd_agent_count = account.all_technicians.count - 1 # -1 for custserv@freshdesk.com
+    freshid_agent_count = account.authorizations.where(provider: 'freshid').count
+    # if Authorization entry is <= to FD agent count then all agent authorization is present so we can enable freshid
+    return true if fd_agent_count <= freshid_agent_count
+    Rails.logger.debug "MIGRATION_CHECK :: agent_mapped_correctly? a=#{account.id}, Some agent authorization missing"
+    false
+  end
+
   def validate_v1_uuid_format(uuid)
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.match(uuid.to_s.downcase)
+  end
+
+  def get_sandbox_account_id(account)
+    account.sandbox_job.try(:sandbox_account_id)
   end
 end

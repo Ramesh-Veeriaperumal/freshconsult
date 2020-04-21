@@ -8,6 +8,15 @@ defaults: &defaults
   product_domain: ""
   freshid_request_timeout: 1
   mobile_deep_link_protocol: ""
+  v2_migration_freshchat_path: ""
+  v2_migration_freshchat_host: ""
+  v2_migration_freshchat_int_name: ""
+  v2_migration_freshchat_token: ""
+  v2_migration_product_mapping:
+    freshconnect: ""
+    freshcaller: ""
+    freshsales: ""
+    freshchat: ""
 
   #customer_base_url:  ""
   #customer_client_id: ""
