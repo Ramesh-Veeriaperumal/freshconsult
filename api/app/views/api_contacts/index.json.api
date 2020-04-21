@@ -16,7 +16,9 @@
     custom_fields: item.custom_fields,
     facebook_id: item.fb_profile_id,
     created_at: item.created_at.try(:utc),
-    updated_at: item.updated_at.try(:utc)
+    updated_at: item.updated_at.try(:utc),
+    csat_rating: item.last_csat_rating,
+    preferred_source: item.preferred_source
   }
   response_hash[:unique_external_id] = item.unique_external_id if item.unique_contact_identifier_enabled?
   response_hash.merge!(item.twitter_requester_fields) if item.twitter_requester_fields_enabled?

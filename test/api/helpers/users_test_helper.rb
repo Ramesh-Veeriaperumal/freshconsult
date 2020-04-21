@@ -35,7 +35,9 @@ module UsersTestHelper
       facebook_id: expected_output[:facebook_id] || contact.fb_profile_id,
       was_agent: expected_output[:was_agent] || contact.was_agent?,
       agent_deleted_forever: expected_output[:agent_deleted_forever] || contact.agent_deleted_forever?,
-      marked_for_hard_delete: expected_output[:marked_for_hard_delete] || contact.marked_for_hard_delete?
+      marked_for_hard_delete: expected_output[:marked_for_hard_delete] || contact.marked_for_hard_delete?,
+      csat_rating: contact.last_csat_rating,
+      preferred_source: Helpdesk::Source.ticket_source_token_by_key[expected_output[:preferred_source]] || contact.preferred_source
     }
     result[:other_emails] = expected_output[:other_emails] ||
                             contact.user_emails.where(primary_role: false).map(&:email)
@@ -60,9 +62,7 @@ module UsersTestHelper
                   blocked: contact.blocked?,
                   spam: contact.spam?,
                   deleted: contact.deleted,
-                  parent_id: contact.parent_id,
-                  csat_rating: contact.last_csat_rating,
-                  preferred_source: Helpdesk::Source.ticket_source_token_by_key[expected_output[:preferred_source]] || contact.preferred_source)
+                  parent_id: contact.parent_id)
     result[:company] = company_hash(contact.default_user_company) if expected_output[:include].eql?('company') && contact.default_user_company.present?
     result[:other_companies] = other_companies_hash(expected_output[:include].eql?('company'), contact) if Account.current.multiple_user_companies_enabled? && contact.default_user_company.present?
     result
@@ -206,7 +206,8 @@ module UsersTestHelper
   def public_search_contact_pattern(contact)
     keys = [
       :avatar, :tags, :deleted,
-      :other_companies, :view_all_tickets, :was_agent, :agent_deleted_forever, :marked_for_hard_delete, :unique_external_id
+      :other_companies, :view_all_tickets, :was_agent, :agent_deleted_forever, :marked_for_hard_delete, :unique_external_id,
+      :preferred_source, :csat_rating
     ]
     keys -= [:unique_external_id] if Account.current.unique_contact_identifier_enabled?
     keys -= [:deleted] if contact.deleted
