@@ -16,9 +16,7 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
   def initial_setup
     return if @@initial_setup_run
     Account.stubs(:current).returns(@account)
-    additional = @account.account_additional_settings
-    additional.supported_languages = ['es', 'ru-RU']
-    additional.save
+    setup_multilingual(supported_languages = ['es', 'ru-RU'])
     subscription = @account.subscription
     subscription.state = 'active'
     subscription.save
@@ -107,7 +105,7 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
     @folder.description = 'test description'
     @folder.account = @account
     @folder.parent_id = @folder_meta.id
-    @folder.language_id = Language.find_by_code('es').id
+    @folder.language_id = Language.find_by_code('ru-RU').id
     @folder.save
 
     @articlemeta = Solution::ArticleMeta.new
@@ -122,7 +120,7 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
     @article_with_lang.title = 'Sample'
     @article_with_lang.description = '<b>aaa</b>'
     @article_with_lang.status = 1
-    @article_with_lang.language_id = 8
+    @article_with_lang.language_id = Language.find_by_code('ru-RU').id
     @article_with_lang.parent_id = @articlemeta.id
     @article_with_lang.account_id = @account.id
     @article_with_lang.user_id = @account.agents.first.id
@@ -147,6 +145,20 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
     sample_article = get_article_without_draft
 
     get :show, controller_params(id: sample_article.parent_id)
+
+    match_json(channel_api_solution_article_pattern(sample_article))
+    assert_response 200
+  ensure
+    CustomRequestStore.unstub(:read)
+  end
+
+  def test_show_published_article_multilingual_without_draft_freshconnect_source
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    set_jwt_auth_header(FRESHCONNECT_SRC)
+    sample_article = get_article_without_draft(language = Language.find_by_code('ru-RU'))
+
+    get :show, controller_params(id: sample_article.id, language: 'ru-RU')
 
     match_json(channel_api_solution_article_pattern(sample_article))
     assert_response 200

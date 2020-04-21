@@ -61,11 +61,10 @@ class Solutions::FolderDecorator < ApiDecorator
   end
 
   def enriched_hash
-    folder = record.safe_send("#{@lang_code}_available?") ? record.safe_send("#{@lang_code}_folder") : record.primary_folder
     unless is_default
       response_hash = {
         id: id,
-        name: folder.name,
+        name: name,
         visibility: visibility
       }
       response_hash[:company_names] = company_names if company_ids_visible?

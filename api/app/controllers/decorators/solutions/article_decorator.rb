@@ -143,9 +143,11 @@ class Solutions::ArticleDecorator < ApiDecorator
 
   def folder_category_hash
     fc_hash = {}
-    folder_hash = Solutions::FolderDecorator.new(record.solution_folder_meta, language_code: language_code).enriched_hash
+    # TODO Need to refactor langauge_code and language_key usage(Start from solution_concern - @lang_code).
+    # TODO It is required to pass folder as record, not folder_meta. Need to correct it in other places.
+    folder_hash = Solutions::FolderDecorator.new(folder).enriched_hash
     fc_hash[:folder] = folder_hash if folder_hash
-    category_hash = Solutions::CategoryDecorator.new(record.solution_folder_meta.solution_category_meta, language_code: language_code).enriched_hash
+    category_hash = Solutions::CategoryDecorator.new(category).enriched_hash
     fc_hash[:category] = category_hash if category_hash
     fc_hash
   end
@@ -237,6 +239,15 @@ class Solutions::ArticleDecorator < ApiDecorator
   end
 
   private
+
+    def folder
+      solution_folder_meta.safe_send("#{language_key}_available?") ? solution_folder_meta.safe_send("#{language_key}_folder") : solution_folder_meta.primary_folder
+    end
+
+    def category
+      category_meta = solution_folder_meta.solution_category_meta
+      category_meta.safe_send("#{language_key}_available?") ? category_meta.safe_send("#{language_key}_category") : category_meta.primary_category
+    end
 
     def folder_name
       # articles moved from one folder to other may not have folder/category name if not translated.

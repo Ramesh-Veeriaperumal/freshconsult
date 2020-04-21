@@ -141,11 +141,16 @@ module SolutionsTestHelper
     ret_hash[:author_name] = article.user && article.user.helpdesk_agent ? article.user.try(:name) : nil
     draft = expected_output[:exclude_draft] ? nil : article.draft
     ret_hash[:draft_present] = draft.present?
-    folder_hash = enriched_folder_pattern(article.solution_folder_meta, article.language_code)
-    category_hash = enriched_category_pattern(article.solution_folder_meta.solution_category_meta, article.language_code)
+    folder_hash = enriched_folder_pattern(article.solution_folder_meta, article.language_key)
+    category_hash = enriched_category_pattern(article.solution_folder_meta.solution_category_meta, article.language_key)
     ret_hash[:folder] = folder_hash if folder_hash
     ret_hash[:category] = category_hash if category_hash
     ret_hash[:language_id] = article.language_id
+
+    if Account.current.multilingual?
+      ret_hash[:outdated] = article.outdated
+      ret_hash[:language_name] = article.language.name
+    end
 
     if ret_hash[:status] == Solution::Constants::STATUS_KEYS_BY_TOKEN[:published]
       ret_hash[:published_by] = article.recent_author && article.recent_author.helpdesk_agent ? article.recent_author.try(:name) : nil
@@ -598,8 +603,8 @@ module SolutionsTestHelper
     }
   end
 
-  def enriched_folder_pattern(folder_meta, lang_code)
-    folder = folder_meta.safe_send("#{lang_code}_available?") ? folder_meta.safe_send("#{lang_code}_folder") : folder_meta.primary_folder
+  def enriched_folder_pattern(folder_meta, lang_key)
+    folder = folder_meta.safe_send("#{lang_key}_available?") ? folder_meta.safe_send("#{lang_key}_folder") : folder_meta.primary_folder
     unless folder_meta.is_default
       resp_hash = {
         id: folder.id,
@@ -611,8 +616,8 @@ module SolutionsTestHelper
     end
   end
 
-  def enriched_category_pattern(category_meta, lang_code)
-    category = category_meta.safe_send("#{lang_code}_available?") ? category_meta.safe_send("#{lang_code}_category") : category_meta.primary_category
+  def enriched_category_pattern(category_meta, lang_key)
+    category = category_meta.safe_send("#{lang_key}_available?") ? category_meta.safe_send("#{lang_key}_category") : category_meta.primary_category
     unless category_meta.is_default
       {
         id: category.id,
