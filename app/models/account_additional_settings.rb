@@ -112,6 +112,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def portal_language_setter(portal_languages)
     @portal_languages_changed = true
+    @add_portal_languages_to_model_changes = true
     additional_settings[:portal_languages] = portal_languages
   end
 
@@ -323,7 +324,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def construct_model_changes
     changes = {}
-    changes[:portal_languages] = [@portal_languages_was, portal_languages] if @portal_languages_changed
+    changes[:portal_languages] = [@portal_languages_was, portal_languages] if @add_portal_languages_to_model_changes
     if Account.current.agent_collision_revamp_enabled?
       rts_changes = attribute_changes('additional_settings')
       rts_changes.merge!(attribute_changes('secret_keys'))
