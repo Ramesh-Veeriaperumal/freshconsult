@@ -1,3 +1,5 @@
+require 'faker'
+
 module VaRulesTesthelper
   FIELD_TO_TYPE_MAPPING = {
     subject: :text,
@@ -193,5 +195,41 @@ module VaRulesTesthelper
     else
       FIELD_TO_TYPE_MAPPING[field_name]
     end
+  end
+
+  def create_rule_with_type(rule_type, account_id)
+    va_rule = FactoryGirl.build(:va_rule,
+      name: "created by #{Faker::Name.name}",
+      description: Faker::Lorem.sentence(2),
+      action_data: [
+        {
+          name: 'priority',
+          value: '3'
+
+        }
+      ],
+      filter_data: {
+        events: [
+          {
+            name: 'priority',
+            from: '--',
+            to: '--'
+          }
+        ],
+        performer: {
+          'type' => '1'
+        },
+        conditions: [
+          {
+            name: 'ticket_type',
+            operator: 'in',
+            value: ['Problem', 'Question']
+          }
+        ]
+      })
+    va_rule.rule_type = rule_type
+    va_rule.account_id = account_id
+    va_rule.save(validate: false)
+    va_rule
   end
 end

@@ -412,4 +412,10 @@ module Admin::AutomationConstants
   ADD_COMMENT = 'add_comment'.freeze
 
   CUSTOMER_FEEDBACK_RATINGS = (CustomSurvey::Survey::CUSTOMER_RATINGS_FACE_VALUE + %w(--)).freeze
+
+  WEBHOOK_ERROR_TYPES = {
+    failure: 'failure',
+    dropoff: 'dropoff',
+    rate_limit: 'rate_limit'
+  }.freeze
 end.freeze

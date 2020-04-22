@@ -3,6 +3,7 @@ class WebhookV1Worker < ::BaseWorker
   include Redis::RedisKeys
   include Redis::OthersRedis
   include Admin::Automation::WebhookValidations
+  include Admin::AutomationConstants
   
   SUCCESS     = 200..299
   REDIRECTION = 300..399
@@ -82,7 +83,8 @@ class WebhookV1Worker < ::BaseWorker
       Sharding.select_shard_of(args[:account_id]) do
         current_account = Account.find(args[:account_id]).make_current
         executing_rule = VaRule.find_by_id(args[:rule_id])
-
+        args[:error_type] = WEBHOOK_ERROR_TYPES[:failure]
+        CentralPublish::CRECentralWorker.perform_async(args, CentralPublish::CRECentralUtil::CRE_PAYLOAD_TYPES[:webhook_error]) if Account.current.cre_account_enabled?
         return unless executing_rule.present?
 
         set_others_redis_key( error_notification_key, true, ERROR_NOTIFICATION_TIMEOUT)

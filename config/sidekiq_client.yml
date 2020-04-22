@@ -394,6 +394,7 @@ defaults: &defaults
     - [update_user_privilege]
     - [vault_account_update]
     - [vault_data_cleanup]
+    - [cre_central_publish]
 
 development:
   <<: *defaults

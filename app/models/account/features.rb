@@ -49,7 +49,7 @@ class Account < ActiveRecord::Base
     :out_of_office, :enable_secure_login_check, :contact_form_enhancement, :public_api_filter_factory, :enable_twitter_requester_fields, :marketplace_gallery, :solutions_quick_view,
     :translations_proxy, :translations_cdn, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :retry_emails, :disable_beamer, :fb_message_echo_support, :portal_prototype_update,
     :bot_banner, :solutions_freshconnect, :fsm_scheduler_month_view, :idle_session_timeout, :solutions_dashboard, :show_ssl_config,
-    :observer_race_condition_fix, :contact_graphical_avatar, :omni_bundle_2020, :article_versioning_redis_lock, :hypertrail_activities, :freshid_sso_sync, :fw_sso_admin_security
+    :observer_race_condition_fix, :contact_graphical_avatar, :omni_bundle_2020, :article_versioning_redis_lock, :hypertrail_activities, :freshid_sso_sync, :fw_sso_admin_security, :cre_account
   ].freeze
 
   DB_FEATURES = [
