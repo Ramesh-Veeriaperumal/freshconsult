@@ -50,4 +50,17 @@ module CentralConstants
     'ConversionMetric' => '0.1',
     'Portal' => '0.1'
   }
+
+  # To avoid duplicate central event of associated models(user_companies) with model(user) as exchange payload,
+  # include attr_accessor(associated_model_changes) in model, it will skip associated model central events for a certain model action.
+  SKIP_EVENT = [
+    # [model, model_payload, associated_model, associated_model_changed]
+    ['User', :contact_create, :user_companies, :user_companies_updated],
+    ['User', :contact_create, :user_emails, :user_emails_updated]
+  ].freeze
+
+  # { "User" => { 
+  #              :contact_create => { :user_companies => :user_companies_updated, :user_emails => :user_emails_updated } 
+  # } }
+  SKIP_EVENT_BY_EXCHANGE_KLASS = SKIP_EVENT.each_with_object({}) { |arr, hash| hash[arr[0]] = (hash[arr[0]] || {}).merge(arr[1] => ((hash[arr[0]] && hash[arr[0]][arr[1]]) || {}).merge(arr[2] => arr[3])) }.freeze
 end

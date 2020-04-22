@@ -157,7 +157,7 @@ class User < ActiveRecord::Base
   attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, :sbrr_fresh_user,
                 :primary_email_attributes, :tags_updated, :keep_user_active, :escape_liquid_attributes, 
                 :role_ids_changed, :detect_language, :tag_use_updated, :user_companies_updated, 
-                :perishable_token_reset, :prev_tags, :latest_tags, :model_changes, :custom_fields_hash
+                :perishable_token_reset, :prev_tags, :latest_tags, :model_changes, :custom_fields_hash, :user_emails_updated
   # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
   # As role_ids are not part of user_model(it is an association_reader), 
   # agent.update_attributes won't trigger user callbacks since user doesn't have any change.
@@ -1340,6 +1340,7 @@ class User < ActiveRecord::Base
   def add_preferred_source(source)
     unless preferences[:preferred_source] && preferences[:preferred_source] == source
       self.merge_preferences = { preferred_source: source }
+      self.skip_central_publish = true
       save
     end
   end

@@ -1,6 +1,5 @@
 <% responsive = widget_option(:responsive) %>
 <% disable_options = params[:disable]%>
-<% captcha = widget_option(:captcha) %>
 <% @params = params %>
 
 <% if(responsive != "no") %>
@@ -88,7 +87,7 @@
       end %>
   <% end %>
 </div>
-<% check_captcha_for_anonymous = current_account.launched?(:feedback_widget_captcha) || captcha == "yes" %>
+<% check_captcha_for_anonymous = current_account.launched?(:feedback_widget_captcha) || current_account.feedback_widget_captcha_allowed? %>
 <% if show_captcha?(check_captcha_for_anonymous) %>
   <div class="control-group">
     <div class="controls recaptcha-control">
@@ -98,8 +97,6 @@
           <%= t("recaptcha_require_message") %>
         </div>
       </div>
-      <!-- end captch_wrap -->
-      <input type="hidden" name="check_captcha" value="true" />
     </div>
   </div>
 <% end %>

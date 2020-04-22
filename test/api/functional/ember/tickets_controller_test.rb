@@ -6482,6 +6482,22 @@ module Ember
       Account.any_instance.unstub(:pci_compliance_field_enabled?)
     end
 
+    def test_jwe_token_generation_for_invalid_ticket_id
+      Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+      add_privilege(User.current, :view_secure_field)
+      name = "secure_text_#{Faker::Lorem.characters(rand(5..10))}"
+      secure_text_field = create_custom_field_dn(name, 'secure_text')
+      id = "1#{Faker::Lorem.characters(2)}"
+      params = { id: id, version: 'private' }
+      get :vault_token, controller_params(params)
+      assert_response 404
+    ensure
+      secure_text_field.destroy
+      remove_privilege(User.current, :view_secure_field)
+      ::Tickets::VaultDataCleanupWorker.jobs.clear
+      Account.any_instance.unstub(:pci_compliance_field_enabled?)
+    end
+
     def test_close_ticket_with_secure_text_field
       Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
       ::Tickets::VaultDataCleanupWorker.jobs.clear

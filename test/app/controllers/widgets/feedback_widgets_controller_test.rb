@@ -59,4 +59,18 @@ class Widgets::FeedbackWidgetsControllerTest < ActionController::TestCase
     log_out
     user.destroy
   end
+
+  def test_feedback_widget_create_with_captcha_true
+    Account.any_instance.stubs(:feedback_widget_captcha_allowed?).returns(true)
+    @controller.stubs(:current_user).returns(nil)
+    @controller.stubs(:verify_recaptcha).returns(false)
+    retain_params = { widgetType: 'popup' }.to_json
+    post :create, version: :private, helpdesk_ticket: { email: 'abc@gmail.com', ticket_type: 'Question' }, widgetType: 'popup', retainParams: retain_params
+    assert_response 200
+    refute JSON.parse(response.body)['success']
+  ensure
+    Account.any_instance.unstub(:feedback_widget_captcha_allowed?)
+    @controller.unstub(:current_user)
+    @controller.unstub(:verify_recaptcha)
+  end
 end

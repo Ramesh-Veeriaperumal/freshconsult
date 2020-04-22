@@ -112,6 +112,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def portal_language_setter(portal_languages)
     @portal_languages_changed = true
+    @add_portal_languages_to_model_changes = true
     additional_settings[:portal_languages] = portal_languages
   end
 
@@ -239,6 +240,18 @@ class AccountAdditionalSettings < ActiveRecord::Base
     additional_settings[:widget_count] || AccountConstants::WIDGET_COUNT_FOR_PLAN[key]
   end
 
+  def feedback_widget_captcha_allowed?
+    !additional_settings[:feedback_widget].try(:[], 'disable_captcha')
+  end
+
+  def add_feedback_widget_settings(feedback_widget_hash)
+    return if self.additional_settings[:feedback_widget] == feedback_widget_hash
+
+    self.additional_settings ||= {}
+    (self.additional_settings[:feedback_widget] ||= {}).merge!(feedback_widget_hash)
+    save!
+  end
+
   def update_onboarding_goals(goals)
     current_user = User.current
     additional_settings[:onboarding_goals] = goals
@@ -323,7 +336,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def construct_model_changes
     changes = {}
-    changes[:portal_languages] = [@portal_languages_was, portal_languages] if @portal_languages_changed
+    changes[:portal_languages] = [@portal_languages_was, portal_languages] if @add_portal_languages_to_model_changes
     if Account.current.agent_collision_revamp_enabled?
       rts_changes = attribute_changes('additional_settings')
       rts_changes.merge!(attribute_changes('secret_keys'))

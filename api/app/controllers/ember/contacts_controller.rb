@@ -113,10 +113,10 @@ module Ember
       next_page = params[:after]
       hypertrail_response = next_page.present? ? timeline_object.fetch_next_page : timeline_object.fetch
 
-      @activities = hypertrail_response.fetch_transformed_response
+      @activities = hypertrail_response.activities
       response.api_root_key = :activities
 
-      meta_info = hypertrail_response.fetch_meta_info
+      meta_info = hypertrail_response.meta
       response.api_meta = { next_page: meta_info[:next_page] } if meta_info.present? && meta_info[:next_page].present?
     rescue StandardError => e
       Rails.logger.error "Error occurred while fetching contact timeline #{e.inspect}"

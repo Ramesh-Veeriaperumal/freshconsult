@@ -9,7 +9,7 @@ class ContactDecorator < ApiDecorator
             :preferences, :password_salt, :user_role, :delta, :privileges,
             :crypted_password, :last_login_at, :current_login_at, :history_column,
             :last_login_ip, :current_login_ip, :login_count, :second_email,
-            :failed_login_count, :last_seen_at, :posts_count, to: :record
+            :failed_login_count, :last_seen_at, :posts_count, :preferred_source, :last_csat_rating, to: :record
 
   delegate :company_id, :client_manager, to: :default_company, allow_nil: true
   delegate :multiple_user_companies_enabled?, :unique_contact_identifier_enabled?, :twitter_requester_fields_enabled?, to: 'Account.current'

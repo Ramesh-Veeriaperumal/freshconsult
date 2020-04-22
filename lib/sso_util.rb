@@ -2,6 +2,37 @@
 module SsoUtil
   SSO_TYPES = { saml: 'saml', simple_sso: 'simple', oauth2: 'oauth2', freshid_saml: 'freshid_saml'}.freeze
   FRESHDESK_SSO_TYPES = SSO_TYPES.slice(:saml, :simple_sso).freeze
+  FRESHDESK_SAML_SSO_CONFIG_KEYS = ['saml_login_url', 'saml_logout_url', 'saml_cert_fingerprint'].freeze
+  FRESHDESK_SIMPLE_SSO_CONFIG_KEYS = ['login_url', 'logout_url'].freeze
+  FRESHID_SSO_EVENT_SAML = 'SAML'.freeze
+  FRESHID_SSO_EVENT_OAUTH = 'OAUTH'.freeze
+  FRESHID_SSO_EVENT_OIDC = 'OIDC'.freeze
+  FRESHID_SSO_EVENT_TYPES = [FRESHID_SSO_EVENT_SAML, FRESHID_SSO_EVENT_OAUTH, FRESHID_SSO_EVENT_OIDC].freeze
+  FRESHID_SSO_METHOD_MAP = {
+      FRESHID_SSO_EVENT_SAML => 'freshid_saml',
+      FRESHID_SSO_EVENT_OAUTH => 'oauth2',
+      FRESHID_SSO_EVENT_OIDC => 'oidc'
+  }
+
+  FRESHID_AGENT_SAML_SSO = 'agent_freshid_saml'.freeze
+  FRESHID_AGENT_OAUTH_SSO = 'agent_oauth2'.freeze
+  FRESHID_AGENT_OIDC_SSO = 'agent_oidc'.freeze
+  FRESHID_AGENT_DEFAULT_SSO = [FRESHID_AGENT_SAML_SSO, FRESHID_AGENT_OAUTH_SSO, FRESHID_AGENT_OIDC_SSO].freeze
+  FRESHID_AGENT_CUSTOM_SSO = 'agent_custom_sso'.freeze
+  FRESHID_AGENT_SSO = [FRESHID_AGENT_DEFAULT_SSO, FRESHID_AGENT_CUSTOM_SSO].flatten.freeze
+
+  FRESHID_CONTACT_SAML_SSO = 'customer_freshid_saml'.freeze
+  FRESHID_CONTACT_OAUTH_SSO = 'customer_oauth2'.freeze
+  FRESHID_CONTACT_V1_SSO = [FRESHID_CONTACT_SAML_SSO, FRESHID_CONTACT_OAUTH_SSO].freeze
+  FRESHID_CONTACT_CUSTOM_SSO = 'customer_custom_sso'.freeze
+  FRESHID_CONTACT_SSO = [FRESHID_CONTACT_V1_SSO, FRESHID_CONTACT_CUSTOM_SSO].flatten.freeze
+
+  FRESHID_SSO = [FRESHID_AGENT_SSO, FRESHID_CONTACT_SSO].flatten.freeze
+
+  FRESHDESK_SAML_SSO = 'saml_login_url'.freeze
+  FRESHDESK_SIMPLE_SSO = 'login_url'.freeze
+  FRESHDESK_SSO = [FRESHDESK_SAML_SSO, FRESHDESK_SIMPLE_SSO].freeze
+
   SAML_NAME_ID_FORMAT = 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress'.freeze
   SAML_NAME_ID_UNSPECIFIED = 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified'.freeze
   SSO_ALLOWED_IN_SECS = 1800

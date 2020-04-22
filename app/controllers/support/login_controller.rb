@@ -161,6 +161,12 @@ class Support::LoginController < SupportController
     end
 
     def freshdesk_sso_enabled?
-      current_account.sso_enabled? && !current_account.freshid_sso_enabled? && check_request_referrer
+      current_account.freshdesk_sso_enabled? && check_freshid_sso && check_request_referrer
+    end
+
+    def check_freshid_sso
+      return true if current_account.freshid_sso_sync_enabled?
+
+      !current_account.freshid_sso_enabled?
     end
 end

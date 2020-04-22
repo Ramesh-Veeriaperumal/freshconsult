@@ -18,7 +18,9 @@ response_hash = {
   other_emails: @item.other_emails,
   facebook_id: @item.fb_profile_id,
   created_at: @item.created_at.try(:utc),
-  updated_at: @item.updated_at.try(:utc)
+  updated_at: @item.updated_at.try(:utc),
+  csat_rating: @item.last_csat_rating,
+  preferred_source: @item.preferred_source
 }
 
 response_hash[:other_companies] = @item.other_companies if @item.multiple_user_companies_enabled?

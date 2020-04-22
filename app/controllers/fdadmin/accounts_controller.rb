@@ -64,6 +64,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:account_cancellation_requested_on] = fetch_account_cancellation_requested_time(account)
     account_summary[:freshid_enabled] = account.freshid_enabled?
     account_summary[:freshid_org_v2_enabled] = account.freshid_org_v2_enabled?
+    account_summary[:sandbox_account] = account.account_type == Account::ACCOUNT_TYPES[:sandbox]
     account_summary[:disable_org_v2_in_progress] = account.account_additional_settings.freshid_migration_running?(DISABLE_V2_MIGRATION_INPROGRESS)
     account_summary[:enable_freshid_v1_in_progress] = account.account_additional_settings.freshid_migration_running?(ENABLE_V1_MIGRATION_INPROGRESS)
     account_summary[:enable_org_v2_in_progress] = account.account_additional_settings.freshid_migration_running?(ENABLE_V2_MIGRATION_INPROGRESS)
@@ -444,6 +445,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
           Rails.logger.info "Migrate account to Freshid V1 has been triggered for A = #{params[:account_id]}"
           account.account_additional_settings.create_freshid_migration(ENABLE_V1_MIGRATION_INPROGRESS)
           Admin::FdadminFreshidMigrationWorker.perform_async(freshid_silent_migration: true, account_id: account.id, doer_email: params[:doer_email])
+          sandbox_account = get_sandbox_account_id(account.id)
+          Admin::FdadminFreshidMigrationWorker.perform_async(freshid_silent_migration: true, account_id: sandbox_account, doer_email: params[:doer_email]) if sandbox_account.present?
           result[:status] = 'success'
         end
       rescue StandardError => e
@@ -474,6 +477,44 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
           Rails.logger.info "Freshid Org V2 disabled has been triggered for account a = #{params[:account_id]}"
           account.account_additional_settings.create_freshid_migration(DISABLE_V2_MIGRATION_INPROGRESS)
           Admin::FdadminFreshidMigrationWorker.perform_async(freshid_v2_revert_migration: true, account_id: account.id)
+          result[:status] = 'success'
+        else
+          result[:status] = 'notice'
+        end
+      rescue StandardError => e
+        result[:status] = 'error'
+        Rails.logger.info "Exception while disabling freshid org V2 from freshops admin for a = #{params[:account_id]} : #{e.inspect}"
+      ensure
+        Account.reset_current_account
+      end
+    end
+    respond_to do |format|
+      format.json do
+        render json: result
+      end
+    end
+  end
+
+  def enable_freshid_org_v2
+    result = {}
+    allowed_account = get_all_members_in_a_redis_set(FRESHID_MIGRATION_ENABLED_ACCOUNT_FRESHOPS) || []
+    Sharding.admin_select_shard_of(params[:account_id]) do
+      begin
+        account = Account.find(params[:account_id])
+        account.make_current
+        enable_inprogress = account.account_additional_settings.freshid_migration_running?(ENABLE_V2_MIGRATION_INPROGRESS)
+        if allowed_account.present? && allowed_account.exclude?(account.id.to_s)
+          Rails.logger.info "A = #{params[:account_id]} is not present in redis List"
+          result[:status] = 'invalid_acc'
+        elsif enable_inprogress
+          Rails.logger.info "Freshid Org V2 enable is already in progress for a = #{params[:account_id]}"
+          result[:status] = 'inprogress'
+        elsif account.account_type == Account::ACCOUNT_TYPES[:sandbox]
+          result[:status] = 'notice'
+        elsif account.freshid_enabled? && agent_mapped_correctly?(account)
+          Rails.logger.info "Freshid Org V2 disabled has been triggered for account a = #{params[:account_id]}, org_domain=#{params[:org_domain]}"
+          account.account_additional_settings.create_freshid_migration(ENABLE_V2_MIGRATION_INPROGRESS)
+          Admin::FdadminFreshidMigrationWorker.perform_async(freshid_v2_migration: true, account_id: account.id, org_domain: params[:org_domain], doer_email: params[:doer_email])
           result[:status] = 'success'
         else
           result[:status] = 'notice'

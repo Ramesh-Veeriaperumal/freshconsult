@@ -1115,7 +1115,10 @@ Helpkit::Application.routes.draw do
       put :update
     end
 
-    resources :marketplace_apps, :only => [:edit] do
+    resources :marketplace_apps, only: [:edit, :clear_cache] do
+      collection do
+        post :clear_cache
+      end
       member do
         post :install
         delete :uninstall
@@ -3019,6 +3022,7 @@ Helpkit::Application.routes.draw do
           get :min_level_fluffy_info
           post :reset_ticket_display_id
           post :disable_freshid_org_v2
+          post :enable_freshid_org_v2
           post :skip_mandatory_checks
         end
       end

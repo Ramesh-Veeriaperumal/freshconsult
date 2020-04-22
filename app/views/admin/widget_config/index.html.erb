@@ -50,11 +50,20 @@
 				account_url = "<%= "#{current_account.full_url}" %>";
 			var widget_config = new WidgetConfig(widget_urls, account_url, <%= help_widget_enabled %> );
 
-		    $('.pseudoCheckbox').bind('change', function(ev) {
-		    	$(this).siblings('[rel=pseudo]').val(this.checked ? '' : 'no');
+		  $('.pseudoCheckbox').bind('change', function(ev) {
+		    $(this).siblings('[rel=pseudo]').val(this.checked ? '' : 'no');
 			});
+
 			$('.captchapseudoCheckbox').bind('change', function(ev) {
-				$(this).siblings('[rel=pseudo]').val(this.checked ? 'yes' : '');
+        var value = !ev.target.checked;
+        var captcha_hash = { disable_captcha: value };
+        var data = JSON.stringify({ feedback_widget:  captcha_hash });
+        $.ajax({
+          type: 'PUT',
+          contentType: "application/json",
+          url: '/api/_/admin/accounts/preferences',
+          data: data
+        });
 			});
 
 			$('.codetextarea').on('click', function (ev) {

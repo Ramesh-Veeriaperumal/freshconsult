@@ -204,10 +204,10 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/central-publisher.git
-  revision: ed1ee9d4888806e30b7c81a78be6a3dcc69b4e03
-  tag: v2.0.14
+  revision: 5889c81a40e4496827c5bed592ad1d0a8c53cd4b
+  tag: v2.0.15
   specs:
-    central-publisher (2.0.14)
+    central-publisher (2.0.15)
       active_record_shards (>= 3.2.0)
       faraday (= 0.9)
       faraday_middleware (~> 0.10.0)
@@ -284,10 +284,10 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/freshid-ruby-client.git
-  revision: 10dad461a873dcad3dbc10a278b8f4de758a1499
-  tag: v4.0.5
+  revision: 514df4e71d479d21b41e1565be7aacd7ce9763ec
+  tag: v4.0.9
   specs:
-    freshid (4.0.5)
+    freshid (4.0.9)
       freshid-sdk
 
 GIT

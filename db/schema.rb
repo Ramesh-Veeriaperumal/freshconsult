@@ -2310,7 +2310,7 @@ ActiveRecord::Schema.define(:version => 20200228063609) do
     t.string   "type"
   end
 
-  add_index "helpdesk_choices", ["account_choice_id", "type", "account_id"], :name => "index_choice_on_account_and_choice_id_and_field_type"
+  add_index "helpdesk_choices", ["account_id", "type", "account_choice_id"], :name => "index_choice_on_account_and_choice_id_and_field_type"
 
   create_table "helpdesk_dropboxes", :id => false, :force => true do |t|
     t.integer  "id",             :limit => 8, :null => false

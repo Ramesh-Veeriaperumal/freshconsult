@@ -121,6 +121,28 @@ class AccountTest < ActiveSupport::TestCase
     Account.unstub(:current)
   end
 
+  def test_account_publish_for_account_additional_settings_portal_languages_with_help_widget_enabled
+    Account.stubs(:current).returns(Account.first || create_test_account)
+    @account.reload
+    @account.launch(:help_widget)
+    @account.add_feature(:help_widget)
+    CentralPublishWorker::AccountWorker.jobs.clear
+    account_additional_settings = @account.account_additional_settings
+    expected_model_change = { 'portal_languages' => [account_additional_settings.portal_languages, ['en']] }
+    account_additional_settings.portal_language_setter(['en'])
+    account_additional_settings.save!
+    assert_equal 1, CentralPublishWorker::AccountWorker.jobs.size
+    payload = @account.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_account_post(@account))
+    job = CentralPublishWorker::AccountWorker.jobs.last
+    assert_equal 'account_update', job['args'][0]
+    assert_equal(expected_model_change, job['args'][1]['model_changes'])
+  ensure
+    @account.rollback(:help_widget)
+    @account.revoke_feature(:help_widget)
+    Account.unstub(:current)
+  end
+
   def test_publish_for_rts_info
     Account.stubs(:current).returns(Account.first || create_test_account)
     CentralPublishWorker::AccountWorker.jobs.clear

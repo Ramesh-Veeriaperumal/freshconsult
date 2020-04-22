@@ -25,7 +25,7 @@ class Account < ActiveRecord::Base
   has_many :portals, :dependent => :destroy
   has_one  :main_portal, :class_name => 'Portal', :conditions => { :main_portal => true}
   has_one :account_additional_settings, :class_name => 'AccountAdditionalSettings'
-  delegate :supported_languages, :secret_keys, :max_template_limit, :max_skills_per_account, to: :account_additional_settings_from_cache
+  delegate :supported_languages, :secret_keys, :max_template_limit, :max_skills_per_account, :feedback_widget_captcha_allowed?, to: :account_additional_settings_from_cache
   has_one  :whitelisted_ip
   has_one :contact_password_policy, :class_name => 'PasswordPolicy',
     :conditions => {:user_type => PasswordPolicy::USER_TYPE[:contact]}, :dependent => :destroy
@@ -396,9 +396,9 @@ class Account < ActiveRecord::Base
   has_many :status_groups
 
   has_many :account_webhook_key, dependent: :destroy
-  
+
   has_one :sandbox_job, :class_name => 'Admin::Sandbox::Job'
-  
+
   has_many :ticket_subscriptions, :class_name => 'Helpdesk::Subscription'
 
   has_many :required_ticket_fields, :class_name => 'Helpdesk::TicketField', :conditions => "parent_id IS null AND required_for_closure IS true AND field_options NOT LIKE '%section: true%' AND field_type NOT IN ('default_subject','default_description','default_company')",

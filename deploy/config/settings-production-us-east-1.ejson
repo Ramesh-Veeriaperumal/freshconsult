@@ -2391,6 +2391,16 @@
         "envoy_egress": {
           "_address": "http://127.0.0.1",
           "_port": "8182"
+        },
+        "_v2_migration_freshchat_path": "/app/org/preferred_domain/fetch",
+        "_v2_migration_freshchat_host": "web.freshchat.com",
+        "_v2_migration_freshchat_int_name": "FRESH_DESK",
+        "v2_migration_freshchat_token": "EJ[1:lgmMwxsY9CwJFx5ZmFMim7kdI/lIED7YzZUDKWr/ASI=:Ac1BvpDl1mcD3lSy47nJdF6O85NUHOKm:8U6Bgx1j184877dwdP6VH31Cq1spfukzWe9KfwzTaqwx8APSh8zNuX4mLIjy8tqW8/2bJA==]",
+        "v2_migration_product_mapping": {
+          "_freshconnect": "55919062480617498",
+          "_freshcaller": "60735412357513604",
+          "_freshsales": "66069886861266193",
+          "_freshchat": "105244803164542146"
         }
       },
       "fluffy": {

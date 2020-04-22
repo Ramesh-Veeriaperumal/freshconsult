@@ -15437,6 +15437,156 @@
           }
         }
       }
+    },
+    "/agent-statuses": {
+      "get": {
+        "tags": [
+          "agent-statuses"
+        ],
+        "summary": "List all agent statuses",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "agent_statuses": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/agent_statuses_response"
+                  }
+                },
+                "meta": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/meta"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "agent-statuses"
+        ],
+        "description": "Create status of an agent",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/agent_statuses_request"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/agent_statuses_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "out of office not found"
+          }
+        }
+      }
+    },
+    "/agent-statuses/{id}": {
+      "get": {
+        "tags": [
+          "agent-statuses"
+        ],
+        "description": "Show an agent's status",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/agent_statuses_response"
+            }
+          },
+          "404": {
+            "description": "Agent status not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "agent-statuses"
+        ],
+        "description": "Destroys an agent's status",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Agent status not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "agent-statuses"
+        ],
+        "description": "Updates an agent's status",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/agent_statuses_request"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/agent_statuses_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Agent status not found"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -30245,6 +30395,60 @@
           "type": "string"
         }
       }
+    },
+    "agent_statuses": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Name of the status",
+          "type": "string",
+          "example": "offline"
+        },
+        "state": {
+          "description": "Enable for status for agent",
+          "type": "string",
+          "enum": [
+            "active",
+            "inactive"
+          ]
+        },
+        "icon_id": {
+          "description": "Status icon",
+          "type": "integer",
+          "format": "int64",
+          "example": 123
+        },
+        "type": {
+          "description": "Type of status",
+          "type": "string",
+          "enum": [
+            "productive",
+            "unproductive"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "state",
+        "icon_id",
+        "type"
+      ]
+    },
+    "agent_statuses_request": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/agent_statuses"
+        }
+      ]
+    },
+    "agent_statuses_response": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/agent_statuses"
+        }
+      ]
     }
   },
   "parameters": {

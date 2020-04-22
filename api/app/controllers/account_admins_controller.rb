@@ -30,12 +30,16 @@ class AccountAdminsController < ApiApplicationController
         current_account.account_additional_settings.disable_skip_mandatory
       end
     end
+    if params[:feedback_widget].present?
+      current_account.account_additional_settings.add_feedback_widget_settings(params[:feedback_widget])
+    end
     head 204
   end
 
   private
 
   def validate_params
+    params[:feedback_widget].permit(*AccountAdminConstants::FEEDBACK_WIDGET_FIELDS) if params[:feedback_widget].present?
     account_admin_validation = AccountAdminValidation.new(params[cname], nil, true)
     render_errors(account_admin_validation.errors, account_admin_validation.error_options) if account_admin_validation.invalid?(params[:action].to_sym)
   end

@@ -6,12 +6,14 @@ class SsoMethodsTest < ActionView::TestCase
     Account.any_instance.stubs(:save).returns(true)
     Account.any_instance.stubs(:save!).returns(true)
     @account = Account.first
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(true)
   end
 
   def teardown
     Account.unstub(:current)
     Account.any_instance.unstub(:save)
     Account.any_instance.unstub(:save!)
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
     super
   end
 
@@ -124,12 +126,11 @@ class SsoMethodsTest < ActionView::TestCase
   end
 
   def test_disable_agent_freshid_saml_sso
-    Account.any_instance.stubs(:agent_freshid_saml_sso_enabled?).returns(true)
-    Account.any_instance.stubs(:sso_options).returns(agent_freshid_saml: 'agent saml', agent_freshid_saml_config: 'saml config', sso_type: 'type')
-    Account.any_instance.stubs(:customer_freshid_saml_sso_enabled?).returns(false)
+    @account.enable_agent_freshid_saml_sso!('test_url')
     Account.any_instance.stubs(:reset_feature).returns(true)
     sso = @account.disable_agent_freshid_saml_sso!
     assert_equal true, sso
+    assert_equal false, @account.sso_enabled
   end
 
   def test_disable_customer_freshid_saml_sso
@@ -186,5 +187,54 @@ class SsoMethodsTest < ActionView::TestCase
     Account.any_instance.stubs(:sso_options).returns(logout_url: 'logout_url')
     sso = @account.sso_logout_url
     assert_equal 'logout_url', sso
+  end
+
+  def test_enable_agent_custom_sso
+    Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    Account.any_instance.stubs(:add_feature).returns(true)
+    sso = @account.enable_agent_custom_sso!({entrypoint_url: 'some_login_link'})
+    assert_equal true, sso
+  end
+
+  def test_disable_agent_custom_sso
+    @account.enable_agent_custom_sso!({entrypoint_url: 'some_login_link'})
+    sso = @account.disable_agent_custom_sso!
+    assert_equal true, sso
+    assert_equal false, @account.sso_enabled
+  end
+
+  def test_enable_contact_custom_sso
+    Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    Account.any_instance.stubs(:add_feature).returns(true)
+    sso = @account.enable_contact_custom_sso!({entrypoint_url: 'some_login_link'})
+    assert_equal true, sso
+    assert_equal true, @account.sso_enabled
+  end
+
+  def test_disable_contact_custom_sso
+    @account.enable_contact_custom_sso!({entrypoint_url: 'some_login_link'})
+    sso = @account.disable_contact_custom_sso!
+    assert_equal true, sso
+    assert_equal false, @account.sso_enabled
+  end
+
+  def test_enable_agent_oidc
+    Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    Account.any_instance.stubs(:add_feature).returns(true)
+    sso = @account.enable_agent_oidc_sso!('logout_url')
+    assert_equal true, sso
+    assert_equal true, @account.sso_enabled
+  end
+
+  def test_disable_agent_oidc
+    @account.enable_agent_oidc_sso!('logout_url')
+    sso = @account.disable_agent_oidc_sso!
+    assert_equal true, sso
+    assert_equal false, @account.sso_enabled
+  end
+
+  def test_sso_configured
+    @account.enable_agent_oidc_sso!('logout_url')
+    assert_equal true, @account.sso_configured?
   end
 end

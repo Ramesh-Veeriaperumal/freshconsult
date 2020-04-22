@@ -397,25 +397,6 @@
       "note": ""
     },
     {
-      "warning_type": "Remote Code Execution",
-      "warning_code": 25,
-      "fingerprint": "16fd18314c9272c840ef43acfef98fdf08e48a122ee48a4ed23ec8f78d820be7",
-      "message": "YAML.load called with model attribute",
-      "file": "app/models/helpdesk/ticket.rb",
-      "line": 509,
-      "link": "https://brakemanscanner.org/docs/warning_types/unsafe_deserialization",
-      "code": "YAML.load(self.notes.find_by_source(Helpdesk::Source.note_source_keys_by_token[\"meta\"]).body)",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "Helpdesk::Ticket",
-        "method": "outbound_initiator"
-      },
-      "user_input": "Helpdesk::Source.note_source_keys_by_token[\"meta\"]",
-      "confidence": "Medium",
-      "note": ""
-    },
-    {
       "warning_type": "SQL Injection",
       "warning_code": 0,
       "fingerprint": "180e6cec020e4f55c312812d1e821a7e4b02d760ea9bf04a37b0c89208db7273",
@@ -1915,25 +1896,6 @@
       "note": ""
     },
     {
-      "warning_type": "Remote Code Execution",
-      "warning_code": 25,
-      "fingerprint": "5deab4999cdb8cfb723e6767942e95deb21d3876a6091f4a22be6ea89c45646f",
-      "message": "YAML.load called with model attribute",
-      "file": "app/models/helpdesk/archive_ticket.rb",
-      "line": 575,
-      "link": "https://brakemanscanner.org/docs/warning_types/unsafe_deserialization",
-      "code": "YAML.load(self.archive_notes.find_by_source(Helpdesk::Source.note_source_keys_by_token[\"meta\"]).body)",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "Helpdesk::ArchiveTicket",
-        "method": "outbound_initiator"
-      },
-      "user_input": "Helpdesk::Source.note_source_keys_by_token[\"meta\"]",
-      "confidence": "Medium",
-      "note": ""
-    },
-    {
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "5e9e76ce4c097699faaba0982c296133800a8cf2b006d93cc91adcda3c8a4927",
@@ -2915,6 +2877,26 @@
       "note": ""
     },
     {
+      "warning_type": "Remote Code Execution",
+      "warning_code": 25,
+      "fingerprint": "9d7831d5b13c184a3019cc6852855b6e8290fe9bfc660fc4c0f075f7a77dcabb",
+      "check_name": "Deserialize",
+      "message": "YAML.load called with model attribute",
+      "file": "app/models/helpdesk/archive_ticket.rb",
+      "line": 573,
+      "link": "http://brakemanscanner.org/docs/warning_types/unsafe_deserialization",
+      "code": "YAML.load(self.archive_notes.find_by_source(Account.current.helpdesk_sources.note_source_keys_by_token[\"meta\"]).body)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Helpdesk::ArchiveTicket",
+        "method": "outbound_initiator"
+      },
+      "user_input": "Account.current.helpdesk_sources",
+      "confidence": "Medium",
+      "note": "previously ignored"
+    },
+    {
       "warning_type": "Command Injection",
       "warning_code": 14,
       "fingerprint": "9effebdfbf0a43564c54ecf31e0f5bc024e73ed43010456796c5b4e85a069c11",
@@ -2977,6 +2959,26 @@
       "user_input": null,
       "confidence": "High",
       "note": ""
+    },
+    {
+      "warning_type": "Remote Code Execution",
+      "warning_code": 25,
+      "fingerprint": "a4d06848242d663fdefbc8f030cf546998c561483b367be3f1424454f81b535b",
+      "check_name": "Deserialize",
+      "message": "YAML.load called with model attribute",
+      "file": "app/models/helpdesk/ticket.rb",
+      "line": 582,
+      "link": "http://brakemanscanner.org/docs/warning_types/unsafe_deserialization",
+      "code": "YAML.load(self.notes.find_by_source(Account.current.helpdesk_sources.note_source_keys_by_token[\"meta\"]).body)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Helpdesk::Ticket",
+        "method": "outbound_initiator"
+      },
+      "user_input": "Account.current.helpdesk_sources",
+      "confidence": "Medium",
+      "note": "previously ignored"
     },
     {
       "warning_type": "Cross Site Scripting",
@@ -4386,6 +4388,6 @@
       "note": "The embed is within quoted text"
     }
   ],
-  "updated": "2019-10-04 19:06:15 +0530",
+  "updated": "2020-04-16 18:46:32 +0530",
   "brakeman_version": "3.7.2"
 }

@@ -80,6 +80,8 @@ properties:
                     type: boolean
                   location_tagging_enabled:
                     type: boolean
+                  geo_location_enabled:
+                    type: boolean
               onboarding_version:
                 type: string
           ssl_enabled:

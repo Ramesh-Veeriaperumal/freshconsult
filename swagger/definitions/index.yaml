@@ -920,3 +920,10 @@ search_in_freshworks_freshid_response:
 
 search_in_freshworks_user_info_response:
   $ref: './response/agents/search_in_freshworks_user_info_response.yaml'
+
+agent_statuses:
+  $ref: ./resource/agent_statuses.yaml
+agent_statuses_request:
+  $ref: ./request/agent_statuses.yaml
+agent_statuses_response:
+  $ref: ./response/agent_statuses.yaml

@@ -41,7 +41,7 @@
 
   <ul class="security-form">
     <li class="inline-field">
-      <% if current_account.freshid_org_v2_enabled? && !current_account.sso_enabled?%>
+      <% if current_account.freshid_org_v2_enabled? && (current_account.freshid_sso_sync_enabled? ? !current_account.freshdesk_sso_enabled? : !current_account.sso_enabled?)%>
       <% if !current_account.launched?(:fw_sso_admin_security)%>
        <a href="<%= Freshid::V2::UrlGenerator.security_url %>" class="freshid-sso-button" target="_blank"><span class="ficon-open-in-new-window"></span></a>
         <span class="enable_heading"> <%=t(".enable_sso")%></span>

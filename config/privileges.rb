@@ -670,7 +670,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_business_hour", :only => [:index, :show]
     resource :"api_group", :only => [:create, :update, :destroy, :index, :show]
     resource :"api_sla_policy", :only => [:index, :update, :create]
-    resource :"api_product", :only => [:show]
+    resource :"api_product", :only => [:show, :index]
     resource :survey, :only => [:index]
     resource :"satisfaction_rating", :only => [:create, :index]
     resource :"api_role", :only => [:index, :show]

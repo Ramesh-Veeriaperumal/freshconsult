@@ -16,8 +16,13 @@ class FreshidController < ApplicationController
   end
 
   def customer_authorize_callback
-    current_account.freshid_org_v2_enabled? ? customer_authorize_callback_v2_helper :
+    if current_account.freshid_org_v2_enabled? && current_account.contact_custom_sso_enabled?
+      customer_authorize_callback_v2_entrypoint_helper
+    elsif current_account.freshid_org_v2_enabled?
+      customer_authorize_callback_v2_helper
+    else
       customer_authorize_callback_helper
+    end
   end
 
   private
@@ -145,6 +150,30 @@ class FreshidController < ApplicationController
       if email.present?
         user = current_account.user_emails.user_for_email(email) || current_account.users.new(email: email)
         Rails.logger.info "FRESHID authorize_callback :: user_present=#{user.present?} , user=#{user.try(:id)}, valid_user=#{user.try(:valid_user?)}"
+        user.assign_freshid_attributes_to_contact(freshid_user_data)
+        user.save if user.changed?
+      end
+      show_login_error(user.nil?, !user.try(:valid_user?)) and return if user.nil? || !user.valid_user?
+      create_user_session(user)
+    end
+
+    def customer_authorize_callback_v2_entrypoint_helper
+      org_domain = current_account.organisation_domain
+      freshid_user_data_token = Freshid::V2::LoginUtil.fetch_contact_token_by_code(org_domain, params[:code], freshid_customer_authorize_callback_url)
+      decoded_token_hash = JWT.decode(freshid_user_data_token, nil, false)
+      freshid_user_data = nil
+      email = nil
+      if decoded_token_hash.present?
+        freshid_user_data_collection = decoded_token_hash.select { |user_data| user_data.key?('email') }
+        freshid_user_data = freshid_user_data_collection.first.presence
+        email = freshid_user_data.try(:[], 'email')
+      else
+        Rails.logger.info "Not able to decode the user token - #{freshid_user_data_token}"
+      end
+      user = nil
+      if email.present?
+        user = current_account.user_emails.user_for_email(email) || current_account.users.new(email: email)
+        Rails.logger.info "FRESHID authorize_callback :: user_present=#{user.present?} , user=#{user.try(:id)}, valid_user=#{user.try(:valid_user?)}, email=#{email}"
         user.assign_freshid_attributes_to_contact(freshid_user_data)
         user.save if user.changed?
       end

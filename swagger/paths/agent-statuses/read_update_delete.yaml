@@ -1,0 +1,44 @@
+get:
+  tags: [agent-statuses]
+  description: Show an agent's status
+  parameters:
+    - $ref: '#/parameters/id'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/agent_statuses_response'
+    404:
+      description: Agent status not found
+delete:
+  tags: [agent-statuses]
+  description: Destroys an agent's status
+  parameters:
+    - $ref: '#/parameters/id'
+  responses:
+    204:
+      description: Success
+    404:
+      description: Agent status not found
+put:
+  tags: [agent-statuses]
+  description: Updates an agent's status
+  parameters:
+    - $ref: '#/parameters/id'
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/agent_statuses_request'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/agent_statuses_response'
+    404:
+      description: Agent status not found 
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+

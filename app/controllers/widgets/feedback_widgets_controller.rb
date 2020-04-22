@@ -31,15 +31,15 @@ class Widgets::FeedbackWidgetsController < SupportController
   end
 
   def create
-    check_captcha_for_anonymous = params[:check_captcha] == "true" || (current_account && current_account.launched?(:feedback_widget_captcha))
+    check_captcha_for_anonymous = current_account.feedback_widget_captcha_allowed? || current_account.launched?(:feedback_widget_captcha)
     widget_response = {}
 
     if params[:meta].present?
       params[:meta][:user_agent] = RailsFullSanitizer.sanitize params[:meta][:user_agent] if params[:meta][:user_agent].present?
       params[:meta][:referrer] = sanitize_referrer params[:meta][:referrer] if params[:meta][:referrer].present?
     end
-
     if create_the_ticket(enforce_captcha?(check_captcha_for_anonymous))
+
       widget_response = {:success => true }
     else
       @feeback_widget_error = true

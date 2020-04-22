@@ -859,6 +859,16 @@
         "envoy_egress": {
           "_address": "http://127.0.0.1",
           "_port": "8182"
+        },
+        "_v2_migration_freshchat_path": "/app/org/preferred_domain/fetch",
+        "_v2_migration_freshchat_host": "mr-yellow.freshpori.com",
+        "_v2_migration_freshchat_int_name": "FRESH_DESK",
+        "v2_migration_freshchat_token": "EJ[1:ZMEHbmAlPJ3/lGAA0xyizmWgT6MGPWiXHobRffFwjnc=:tDqymQ1bmV3PBPuh3DPy3xbxPrpvyAF7:Esc1ClKeRCPAwJzStZPg41pLZIDaXb756dr93ibekRinL9hx1dhUcun4e4D4TrKAfcTFsw==]",
+        "v2_migration_product_mapping": {
+          "_freshconnect": "41144967508246533",
+          "_freshcaller": "41147065681395717",
+          "_freshsales": "51287714288649514",
+          "_freshchat": "94311855211594962"
         }
       },
       "freshops": {

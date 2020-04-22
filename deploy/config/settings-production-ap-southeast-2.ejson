@@ -995,7 +995,17 @@
         "_product_id": "112438380997492748",
         "_product_domain": "freshdesk.com",
         "_freshid_request_timeout": 10,
-        "_mobile_deep_link_protocol": "com.freshworks.freshdesk"
+        "_mobile_deep_link_protocol": "com.freshworks.freshdesk",
+        "_v2_migration_freshchat_path": "/app/org/preferred_domain/fetch",
+        "_v2_migration_freshchat_host": "web.au.freshchat.com",
+        "_v2_migration_freshchat_int_name": "FRESH_DESK",
+        "v2_migration_freshchat_token": "EJ[1:klXzH4+yXgDO5LQhunyTR9+6H/wduqgT0Rgo+P6aXyc=:HtR6ioIbL9DSV1UHhs2JhoUWqyAA/QOI:ln/8AU/QBtWfklO9LG2Kjlo6ogAlprDPHAyPJzWHAVZDWTyzR0i8g2Ye4A1LXNg/U80Oxw==]",
+        "v2_migration_product_mapping": {
+          "_freshconnect": "112438822097502219",
+          "_freshcaller": "112441045622046735",
+          "_freshsales": "112440691855310861",
+          "_freshchat": "105250068925661185"
+        }
       },
       "database": {
         "secret_key": "EJ[1:adlca33GNsimc+29oCbCYTrhoKmktpp2yBXtGEdltVk=:bzhcVV6vbl5xTyGxP7n4EhMm8Dnce81m:jjtEQOhQRkihGwCWxfUa4SH8+Dn3HvSgDzSfoA5w]",

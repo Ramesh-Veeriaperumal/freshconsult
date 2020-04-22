@@ -35,7 +35,9 @@ module UsersTestHelper
       facebook_id: expected_output[:facebook_id] || contact.fb_profile_id,
       was_agent: expected_output[:was_agent] || contact.was_agent?,
       agent_deleted_forever: expected_output[:agent_deleted_forever] || contact.agent_deleted_forever?,
-      marked_for_hard_delete: expected_output[:marked_for_hard_delete] || contact.marked_for_hard_delete?
+      marked_for_hard_delete: expected_output[:marked_for_hard_delete] || contact.marked_for_hard_delete?,
+      csat_rating: contact.last_csat_rating,
+      preferred_source: Helpdesk::Source.ticket_source_token_by_key[expected_output[:preferred_source]] || contact.preferred_source
     }
     result[:other_emails] = expected_output[:other_emails] ||
                             contact.user_emails.where(primary_role: false).map(&:email)
@@ -60,9 +62,7 @@ module UsersTestHelper
                   blocked: contact.blocked?,
                   spam: contact.spam?,
                   deleted: contact.deleted,
-                  parent_id: contact.parent_id,
-                  csat_rating: contact.last_csat_rating,
-                  preferred_source: Helpdesk::Source.ticket_source_token_by_key[expected_output[:preferred_source]] || contact.preferred_source)
+                  parent_id: contact.parent_id)
     result[:company] = company_hash(contact.default_user_company) if expected_output[:include].eql?('company') && contact.default_user_company.present?
     result[:other_companies] = other_companies_hash(expected_output[:include].eql?('company'), contact) if Account.current.multiple_user_companies_enabled? && contact.default_user_company.present?
     result
@@ -206,7 +206,8 @@ module UsersTestHelper
   def public_search_contact_pattern(contact)
     keys = [
       :avatar, :tags, :deleted,
-      :other_companies, :view_all_tickets, :was_agent, :agent_deleted_forever, :marked_for_hard_delete, :unique_external_id
+      :other_companies, :view_all_tickets, :was_agent, :agent_deleted_forever, :marked_for_hard_delete, :unique_external_id,
+      :preferred_source, :csat_rating
     ]
     keys -= [:unique_external_id] if Account.current.unique_contact_identifier_enabled?
     keys -= [:deleted] if contact.deleted
@@ -431,14 +432,36 @@ module UsersTestHelper
     response_pattern = {}
     objects.map do |item|
       archived?(item) ? type = "ticket" : type = item.class.name.gsub('Helpdesk::', '').downcase
-      to_ret = object_activity_pattern(item)
+      to_ret = object_activity_pattern(item, type)
       (response_pattern[type.to_sym] ||= []).push to_ret
     end
     response_pattern
   end
 
-  def object_activity_pattern(obj)
-    obj.class.name == 'Post' ? forum_activity_pattern(obj) : ticket_activity_pattern(obj)
+  def object_activity_pattern(obj, type = nil)
+    case type
+    when 'ticket'
+      ticket_activity_pattern(obj)
+    when 'post'
+      forum_activity_pattern(obj)
+    when 'survey'
+      survey_activity_pattern(obj)
+    end
+  end
+
+  def survey_activity_pattern(survey_result)
+    ret_hash = {
+      id: survey_result.id,
+      survey_id: survey_result.survey_id,
+      agent_id: survey_result.agent_id,
+      group_id: survey_result.group_id,
+      rating: survey_result.custom_ratings,
+      created_at: survey_result.created_at.try(:utc).try(:iso8601),
+      associated_data: {
+        comment: survey_result.survey_remark.feedback.body,
+        ticket_subject: survey_result.surveyable.subject
+      }
+    }
   end
 
   def ticket_activity_pattern(obj)

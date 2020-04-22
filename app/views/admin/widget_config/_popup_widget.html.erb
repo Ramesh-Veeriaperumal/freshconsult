@@ -120,8 +120,10 @@
         <div class="span6 widget_option">
             <label class="control-label"><%= t(".feedbackwidget_use_captcha") %></label>
             <div class="controls">
-              <input data-set-query-string="true" name="captcha" rel="pseudo" type="hidden" value="yes"/>
-              <input checked="checked" class="captchapseudoCheckbox" data-checked-label=<%= t('plain_yes') %> data-unchecked-label=<%= t('plain_no') %> rel="toggle" type="checkbox"/>
+              <% captcha_enabled = current_account.feedback_widget_captcha_allowed? ||
+                 current_account.launched?(:feedback_widget_captcha) %>
+              <% checked = (captcha_enabled ? 'checked' : '') %>
+              <input <%= checked=checked%> class="captchapseudoCheckbox" data-checked-label=<%= t('plain_yes') %> data-unchecked-label=<%= t('plain_no') %> rel="toggle" type="checkbox"/>
             </div>
         </div>
       </div>

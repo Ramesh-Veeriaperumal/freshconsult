@@ -5,6 +5,8 @@ class Helpdesk::TagsController < ApplicationController
 
   include HelpdeskControllerMethods
 
+  TAGS_PER_PAGE_LIMIT = 30
+
   def create
     tag_name = params[:name]
     if scoper.where(name: tag_name).blank?
@@ -18,14 +20,16 @@ class Helpdesk::TagsController < ApplicationController
   end
 
   def index
-    sort_order = params[:sort] || cookies[:tag_sort_key] || :activity_desc 
+    sort_order = params[:sort] || cookies[:tag_sort_key] || :activity_desc
     @archive_feature = current_account.features_included?(:archive_tickets)
-    @tags = params[:tag_id].blank? ? Helpdesk::Tag.sort_tags(sort_order).tag_search(params['name']).paginate(page: params[:page], per_page: 50).to_a : [Helpdesk::Tag.sort_tags(sort_order).tag_search(params['name']).find(params[:tag_id])]
-    cookies[:tag_sort_key] = sort_order;
-    if params[:sort].present? and params[:page].blank?
-      render :partial => "sort_results"
-    end
+    @tags = if params[:tag_id].blank?
+              Helpdesk::Tag.sort_tags(sort_order).tag_search(params['name']).paginate(page: params[:page], per_page: TAGS_PER_PAGE_LIMIT).to_a
+            else
+              Helpdesk::Tag.sort_tags(sort_order).tag_search(params['name']).where(id: params[:tag_id]).paginate(page: 1, per_page: TAGS_PER_PAGE_LIMIT).to_a
+            end
+    cookies[:tag_sort_key] = sort_order
 
+    render partial: 'sort_results' if params[:sort].present? && params[:page].blank?
   end
 
   def rename_tags

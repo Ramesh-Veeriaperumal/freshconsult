@@ -43,11 +43,10 @@ class Solutions::CategoryDecorator < ApiDecorator
   end
 
   def enriched_hash
-    category = record.safe_send("#{@lang_code}_available?") ? record.safe_send("#{@lang_code}_category") : record.primary_category
     unless is_default
       {
         id: id,
-        name: category.name,
+        name: name,
         visible_in_portals: visible_in_portal_names
       }
     end

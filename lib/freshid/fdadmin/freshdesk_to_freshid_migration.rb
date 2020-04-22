@@ -63,7 +63,8 @@ class Freshid::Fdadmin::FreshdeskToFreshidMigration < ActiveRecord::Migration
     if check_and_enable_freshid(@account)
       # @account.launch(:freshid)
       @account.launch(:freshworks_omnibar)
-      @account.agent_password_policy.try(:destroy)
+      # @account.agent_password_policy.try(:destroy)
+      # for password policy enabled account we are ready for migration
       # Turn off password reset email notification
       @account.email_notifications.find_by_notification_type(EmailNotification::PASSWORD_RESET).update_attribute(:agent_notification, false) if @account.email_notifications.find_by_notification_type(EmailNotification::PASSWORD_RESET).present?
       # Create agent invitation email notification

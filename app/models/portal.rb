@@ -421,7 +421,7 @@ class Portal < ActiveRecord::Base
 
     # * * * POD Operation Methods Begin * * *
     def update_custom_portal
-      if Fdadmin::APICalls.non_global_pods? && portal_url_changed?
+      if Fdadmin::APICalls.non_global_pods? && portal_url_changed? && !portal_url.blank?
         action = (safe_send(:transaction_include_action?, :create) && new_record?) ? :create : :update
         request_parameters = {
           :target_method => :update_domain_mapping_for_pod,

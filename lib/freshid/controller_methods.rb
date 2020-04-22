@@ -35,7 +35,20 @@ module Freshid::ControllerMethods
   end
 
   def redirect_to_v2_customer_authorize
-    redirect_to customer_freshid_sso_enabled? ? freshid_customer_authorize(freshid_customer_authorize_callback_url, freshid_logout_url, current_account.full_domain) : support_login_path
+    redirect_to customer_login_url
+  end
+
+  def customer_login_url
+    if current_account.contact_custom_sso_enabled?
+      Freshid::V2::UrlGenerator.url_with_query_params(
+          Account.current.customer_custom_login_url,
+          { client_id: FRESHID_V2_CLIENT_ID, redirect_uri: freshid_customer_authorize_callback_url }
+      )
+    elsif customer_freshid_sso_enabled?
+      freshid_customer_authorize(freshid_customer_authorize_callback_url, freshid_logout_url, current_account.full_domain)
+    else
+      support_login_path
+    end
   end
 
   def redirect_to_freshid_login(options = {})

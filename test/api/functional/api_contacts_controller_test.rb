@@ -117,6 +117,40 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response 200
   end
 
+  def test_show_a_contact_without_csat_rating
+    sample_user = create_contact_with_csat_rating(@account, nil)
+    get :show, construct_params(id: sample_user.id)
+    assert_response 200
+    res = JSON.parse(response.body)
+    assert_nil res['csat_rating']
+  end
+
+  def test_show_a_contact_with_csat_rating
+    sample_user = create_contact_with_csat_rating(@account, 103)
+    get :show, construct_params(id: sample_user.id)
+    assert_response 200
+    res = JSON.parse(response.body)
+    assert_equal 103, res['csat_rating']
+  end
+
+  def test_show_a_contact_with_preferred_source
+    sample_user = add_new_user(@account)
+    sample_user.merge_preferences = { preferred_source: 2 }
+    sample_user.save_without_session_maintenance
+    get :show, construct_params(id: sample_user.id)
+    assert_response 200
+    res = JSON.parse(response.body)
+    assert_equal Helpdesk::Source.ticket_source_token_by_key[2].to_s, res['preferred_source']
+  end
+
+  def test_show_a_contact_without_preferred_source
+    sample_user = add_new_user(@account)
+    get :show, construct_params(id: sample_user.id)
+    assert_response 200
+    res = JSON.parse(response.body)
+    assert_nil res['preferred_source']
+  end
+
   def test_show_a_non_existing_contact
     sample_user = add_new_user(@account)
     get :show, construct_params(id: 0)
