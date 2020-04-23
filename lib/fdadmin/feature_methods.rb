@@ -17,7 +17,7 @@ module Fdadmin::FeatureMethods
       feature_types = []
       feature_types << "bitmap" if BITMAP_FEATURES.include?(feature_name)
       # feature_types << "db" if @account.features.respond_to?(feature_name) # disabling adding db features via freshops
-      feature_types << "launchparty" if Account::LAUNCHPARTY_FEATURES.keys.include?(feature_name) && !BLACKLISTED_LP_FEATURES.include?(feature_name)
+      feature_types << 'launchparty' if (Account::LAUNCHPARTY_FEATURES.keys + Account::LP_FEATURES).uniq.include?(feature_name) && !BLACKLISTED_LP_FEATURES.include?(feature_name)
       feature_types
     end
 
