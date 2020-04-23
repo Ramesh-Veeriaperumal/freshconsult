@@ -155,6 +155,7 @@ module AccountTestHelper
       freshid_account_id: account.freshid_account_id,
       fs_cookie: account.fs_cookie,
       account_configuration: account.account_configuration.account_configuration_for_central,
+      account_additional_settings: set_account_additional_settings(account),
       portal_languages: portal_languages
     }
   end
@@ -181,6 +182,7 @@ module AccountTestHelper
       freshid_account_id: account.freshid_account_id,
       fs_cookie: account.fs_cookie,
       account_configuration: account.account_configuration.account_configuration_for_central,
+      account_additional_settings: set_account_additional_settings(account),
       portal_languages: portal_languages,
       rts_account_id: account.account_additional_settings.rts_account_id,
       rts_account_secret: encrypt_for_central(account.account_additional_settings.rts_account_secret, 'account_additional_settings'),
@@ -221,5 +223,12 @@ module AccountTestHelper
   ensure
     Account.any_instance.unstub(:field_service_management_enabled?)
     cleanup_fsm
+  end
+
+  def set_account_additional_settings(account)
+    {}.tap do |settings|
+      settings[:bundle_id] = account.omni_bundle_id
+      settings[:bundle_name] = account.omni_bundle_name
+    end
   end
 end
