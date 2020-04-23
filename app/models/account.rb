@@ -1050,7 +1050,11 @@ class Account < ActiveRecord::Base
   end
 
   def omni_bundle_id
-    account_additional_settings.additional_settings.try(:[], :bundle_id)
+    account_additional_settings.try(:additional_settings).try(:[], :bundle_id)
+  end
+
+  def omni_bundle_name
+    account_additional_settings.try(:additional_settings).try(:[], :bundle_name)
   end
 
   def omni_bundle_account?
