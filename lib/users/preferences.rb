@@ -7,6 +7,7 @@ module Users
         :shortcuts_mapping => [],
         :notification_timestamp => nil,
         :show_onBoarding => true, 
+        :show_loyalty_upgrade => false,
         :falcon_ui => false,
         freshchat_token: nil,
         undo_send: false,

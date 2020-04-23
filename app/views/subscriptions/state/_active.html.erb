@@ -1,3 +1,18 @@
+<%
+    plan = @subscription.subscription_plan
+    is_new_sprout = new_sprout?(plan.name)
+    has_feature_gain = @subscription.additional_info[:feature_gain]
+    plan_id = plan.name.parameterize.underscore
+    field_agent_limit = @subscription.field_agent_limit || 0
+    show_field_agent_info = fsm_supported_plan?(plan) && current_account.field_service_management_enabled? && field_agent_limit > 0
+    omni_account = current_account.omni_bundle_account?
+    isSelected_plan_present = @selected_plan.present?
+    isSelected_plan_nil = @selected_plan.nil?
+  %>
+<% if has_feature_gain %>
+  <%= render :partial => "loyalty_upgrade_info" %>
+<% end %>
+
 <div>
   <label class="accounted-created muted">
     <%= t('account_created', :total_time => distance_of_time_in_words(current_account.created_at, Time.now.to_s), :date => formated_date(current_account.created_at, {:format => :short_day_with_week, :include_year => true}) ) %>
@@ -20,16 +35,6 @@
     <button data-submit="modal" class="btn btn-primary cancel-request"><%= t("proceed_btn") %></button>
   </div>
 </div>
-  <%
-    plan = @subscription.subscription_plan
-    is_new_sprout = new_sprout?(plan.name)
-    plan_id = plan.name.parameterize.underscore
-    field_agent_limit = @subscription.field_agent_limit || 0
-    show_field_agent_info = fsm_supported_plan?(plan) && current_account.field_service_management_enabled? && field_agent_limit > 0
-    omni_account = current_account.omni_bundle_account?
-    isSelected_plan_present = @selected_plan.present?
-    isSelected_plan_nil = @selected_plan.nil?
-  %>
 <%= render :partial => "downgrade_info" %>
 <div class="well-active well-active-new <%='omni-current-plan' if omni_account%>">
   <div class="current-plan" >
@@ -127,8 +132,21 @@
       <% if !is_new_sprout %>
         <div class="billing-info-divider">
           <% subscription_end = @subscription.next_renewal_at - Time.now %>
+          <%
+            if has_feature_gain 
+              total_amount = @subscription.amount_with_tax_safe_access
+              discount = subscription.additional_info[:discount]
+              actual_amount = format_amount(total_amount * (100.to_f / (100 - discount)), @currency)
+            end 
+          %>
           <ul>
-            <li class="price"> <%= format_amount(@subscription.amount_with_tax_safe_access, @currency) %> </li>
+            <li class="price">
+              <% if has_feature_gain %>
+                <span class="strike"><%= actual_amount %></span>
+                <i class="right-arrow-billing ficon-arrow-right-2"></i>
+              <% end %>
+              <%= format_amount(@subscription.amount_with_tax_safe_access, @currency) %>
+            </li>
             <%if tax_inclusive?(@subscription)%>
               <li class = "tax-text"> <%=t('tax_inclusion') %> </li>
             <%end%>

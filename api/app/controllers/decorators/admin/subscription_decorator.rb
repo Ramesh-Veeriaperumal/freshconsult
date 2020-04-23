@@ -34,7 +34,9 @@ class Admin::SubscriptionDecorator < ApiDecorator
       currency: currency_info,
       addons: addon_hash,
       paying_account: record.paying_account?,
-      update_payment_site: @update_payment_site
+      update_payment_site: @update_payment_site,
+      features_gained: record.additional_info[:feature_gain],
+      discount: record.additional_info[:discount]
     }
   end
 

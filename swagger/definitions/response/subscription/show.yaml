@@ -71,3 +71,9 @@ properties:
         type: string
       site:
         type: string
+  features_gained:
+    type: array
+    items:
+      type: string
+  discount:
+    type: integer

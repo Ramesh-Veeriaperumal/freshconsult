@@ -30,6 +30,19 @@ module Ember
         match_json(@agent.agent.preferences)
         assert_equal result['field_service']['dismissed_sample_scheduling_dashboard'], true
       end
+
+      def test_preferencs_update_with_loyalty_upgrade
+        updated_agent = put :update, construct_params(
+          { version: 'private' },
+          show_loyalty_upgrade: true
+        )
+
+        result = JSON.parse(updated_agent.body)
+        assert_response 200, result
+
+        match_json(@agent.agent.preferences)
+        assert_equal result['show_loyalty_upgrade'], @agent.agent.show_loyalty_upgrade
+      end
     end
   end
 end

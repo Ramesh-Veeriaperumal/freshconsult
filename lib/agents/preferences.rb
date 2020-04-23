@@ -50,6 +50,14 @@ module Agents
       update_preferences({:show_onBoarding => enabled})
     end
 
+    def show_loyalty_upgrade
+      preferences[:show_loyalty_upgrade]
+    end
+
+    def show_loyalty_upgrade=(enabled)
+      update_preferences(show_loyalty_upgrade: enabled)
+    end
+
     # Helpers for getting and setting Freshchat token
     def freshchat_token
       preferences[:freshchat_token]

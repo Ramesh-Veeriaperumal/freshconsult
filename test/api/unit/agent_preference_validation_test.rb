@@ -136,4 +136,19 @@ class AgentPreferencesValidationTest < ActionView::TestCase
     agent = Ember::AgentPreferencesValidation.new(controller_params, nil)
     assert agent.valid?
   end
+
+  def test_show_loyalty_upgrade_param_value_is_not_boolean
+    controller_params = { show_loyalty_upgrade: 'true' }
+    agent = Ember::AgentPreferencesValidation.new(controller_params, nil)
+    refute agent.valid?
+    errors = agent.errors.full_messages
+    assert errors.include?('Show loyalty upgrade datatype_mismatch'), errors[0]
+    assert_equal({ show_loyalty_upgrade: { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String } }, agent.error_options)
+  end
+
+  def test_show_loyalty_upgrade_param_value_is_boolean
+    controller_params = { show_loyalty_upgrade: true }
+    agent = Ember::AgentPreferencesValidation.new(controller_params, nil)
+    assert agent.valid?
+  end
 end

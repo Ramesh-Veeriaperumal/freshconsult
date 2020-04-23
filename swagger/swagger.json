@@ -16022,6 +16022,9 @@
         "show_onBoarding": {
           "type": "boolean"
         },
+        "show_loyalty_upgrade": {
+          "type": "boolean"
+        },
         "falcon_ui": {
           "type": "boolean"
         },
@@ -26605,7 +26608,16 @@
               "type": "string"
             }
           }
-        }
+        },
+        "features_gained": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "discount": {
+          "type": "integer"
+        },
       }
     },
     "plans": {

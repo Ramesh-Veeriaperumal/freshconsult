@@ -73,6 +73,8 @@ properties:
             format: date-time
           show_onBoarding:
             type: boolean
+          show_loyalty_upgrade:
+            type: boolean
       api_key:
         type: string
   meta:

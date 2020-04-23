@@ -1,7 +1,7 @@
 module Ember
   class AgentPreferencesValidation < ApiValidation
     attr_accessor :shortcuts_enabled, :shortcuts_mapping, :notification_timestamp, :show_onBoarding, :falcon_ui,
-                  :undo_send, :focus_mode, :search_settings, :field_service
+                  :undo_send, :focus_mode, :search_settings, :field_service, :show_loyalty_upgrade
 
     validates :shortcuts_enabled, data_type: { rules: 'Boolean' }
 
@@ -14,6 +14,8 @@ module Ember
     validates :notification_timestamp, date_time: { allow_nil: true }
 
     validates :show_onBoarding, data_type: { rules: 'Boolean' }
+
+    validates :show_loyalty_upgrade, data_type: { rules: 'Boolean' }
 
     validates :falcon_ui, data_type: { rules: 'Boolean' }
 
