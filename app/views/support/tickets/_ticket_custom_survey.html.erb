@@ -1,6 +1,6 @@
 <% return unless customer_survey_required? %>
 <section class="widget survey-widget-wrapper" id="survey-sidebar-details">
-  <h3 class="lead"><%= t('support.tickets.ticket_survey.title_v2') %></h3>
+  <h3 class="lead" id="survey-header"><%= t('support.tickets.ticket_survey.title_v2') %></h3>
   <div class="survey-form">
     <%
       custom_survey = current_account.active_custom_survey_from_cache
@@ -65,7 +65,7 @@
             <% face_value = option["survey_question_choice"]["face_value"]
             url_new_via_portal = support_portal_custom_survey_path(@ticket,face_value) %>
             <div class="survey-options-wrapper"  data-url="<%= url_new_via_portal %>" data-face-value="<%= face_value %>" >
-             <a class="survey-options" target="_blank" href="#" id= <%="#{face_value}"%> >
+             <a class="survey-options" target="_blank" href="#" id= <%="#{face_value}"%>>
                <span class="survey-rating <%= CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[face_value] %>">
                </span>
                <span class='survey-rating-label'><%= translation_record.present? ? translation_record.translations.fetch('default_question', {}).fetch('choices', {})[option["survey_question_choice"]["face_value"]] || option["survey_question_choice"]["value"] : option["survey_question_choice"]["value"] %></span>
@@ -77,3 +77,10 @@
  </div>
 </section>
 <hr class="content-divider" />
+
+<script type="text/javascript">
+  jQuery('.survey-options').on('click', function(event){
+    jQuery('#survey-feedback').hide();
+    jQuery('#survey-header').addClass('sloading loading-small loading-right');
+  });
+</script>
