@@ -13,6 +13,7 @@ class ConversationDecorator < ApiDecorator
     @ticket_decorator = options[:ticket_decorator]
     @send_and_set = options[:send_and_set]
     @sideload_options = options[:sideload_options] || []
+    @cdn_url = Account.current.cdn_attachments_enabled?
   end
 
   def public_json
@@ -40,7 +41,7 @@ class ConversationDecorator < ApiDecorator
       to_emails: to_emails,
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc),
-      attachments: attachments.map { |att| AttachmentDecorator.new(att).to_hash }
+      attachments: attachments.map { |att| AttachmentDecorator.new(att).to_hash(@cdn_url) }
     }
     src_info = source_additional_info
     response_hash[:source_additional_info] = src_info if src_info.present?
@@ -68,7 +69,7 @@ class ConversationDecorator < ApiDecorator
       outgoing_failures: schema_less_properties[:errors],
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc),
-      attachments: attachments.map { |att| AttachmentDecorator.new(att).to_hash }
+      attachments: attachments.map { |att| AttachmentDecorator.new(att).to_hash(@cdn_url) }
     }
   end
 
@@ -174,7 +175,7 @@ class ConversationDecorator < ApiDecorator
   end
 
   def attachments_hash
-    (attachments | attachments_sharable).map { |a| AttachmentDecorator.new(a).to_hash }
+    (attachments | attachments_sharable).map { |a| AttachmentDecorator.new(a).to_hash(@cdn_url) }
   end
 
   def cloud_files_hash

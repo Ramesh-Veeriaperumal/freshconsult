@@ -17,11 +17,12 @@ class Helpdesk::AttachmentsController < ApplicationController
     options.merge!({ response_content_disposition: 'attachment' }) if params[:download]
 
     attachment_content = @attachment.content
-    redir_url = AwsWrapper::S3Object.url_for(attachment_content.path(style.to_sym), attachment_content.bucket_name, options)
+    redirect_url = fetch_redirect_url(attachment_content.path(style.to_sym), attachment_content.bucket_name, options)
+
     respond_to do |format|
       
       format.html do
-        redirect_to redir_url
+        redirect_to redirect_url
       end
 
       format.xml  do
@@ -33,10 +34,10 @@ class Helpdesk::AttachmentsController < ApplicationController
       end
 
       format.nmobile do
-        render :json => { "url" => redir_url}.to_json
+        render :json => { "url" => redirect_url}.to_json
       end
       format.all do
-        redirect_to redir_url
+        redirect_to redirect_url
       end
     end
   end
@@ -103,6 +104,14 @@ class Helpdesk::AttachmentsController < ApplicationController
   end
 
   protected
+
+    def fetch_redirect_url(path, bucket_name, options)
+      if Account.current.cdn_attachments_enabled?
+        AwsWrapper::CloudFront.url_for(path, options)
+      else
+        AwsWrapper::S3Object.url_for(path, bucket_name, options)
+      end
+    end
 
     def load_shared
       @item = Helpdesk::SharedAttachment.where(shared_attachable_id: params[:item_id], attachment_id: params[:id]).try(:first)

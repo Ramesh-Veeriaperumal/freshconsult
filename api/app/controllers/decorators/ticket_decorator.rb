@@ -249,7 +249,8 @@ class TicketDecorator < ApiDecorator
   end
 
   def attachments_hash
-    (attachments | attachments_sharable).map { |a| AttachmentDecorator.new(a).to_hash }
+    @cdn_url = Account.current.cdn_attachments_enabled? unless defined? @cdn_url
+    (attachments | attachments_sharable).map { |a| AttachmentDecorator.new(a).to_hash(@cdn_url) }
   end
 
   def cloud_files_hash
