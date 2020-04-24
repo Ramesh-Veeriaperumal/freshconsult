@@ -620,6 +620,26 @@ module Ember
       assert_response 400
     end
 
+    def test_create_with_invalid_freshcaller_id
+      fc_call_id = Faker::Number.number(3).to_i
+      params_hash = ticket_params_hash.merge(fc_call_id: fc_call_id)
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 400
+      match_json('description' => 'Validation failed',
+                 'errors' => [bad_request_error_pattern('fc_call_id', 'Value not present: ' + fc_call_id.to_s, code: 'invalid_value')])
+    end
+
+    def test_create_with_valid_freshcaller_id
+      fc_call_id = Faker::Number.number(3).to_i
+      params_hash = ticket_params_hash.merge(fc_call_id: fc_call_id)
+      Account.current.freshcaller_calls.new(fc_call_id: fc_call_id).save
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 201
+    ensure
+      Account.current.freshcaller_calls.find_by_fc_call_id(fc_call_id).destroy
+      Account.current.tickets.last.destroy
+    end
+
     def test_create_with_invalid_attachment_size
       attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       params_hash = ticket_params_hash.merge(attachment_ids: [attachment_id])

@@ -14,7 +14,7 @@ class TicketValidation < ApiValidation
                 :product, :tags, :custom_fields, :attachments, :request_params, :item, :statuses, :status_ids, :ticket_fields, :company_id, :scenario_id,
                 :primary_id, :ticket_ids, :note_in_primary, :note_in_secondary, :convert_recepients_to_cc, :cloud_files, :skip_close_notification,
                 :related_ticket_ids, :internal_group_id, :internal_agent_id, :parent_template_id, :child_template_ids, :template_text,
-                :unique_external_id, :skill_id, :parent_id, :inline_attachment_ids, :tracker_id, :version, :enforce_mandatory
+                :unique_external_id, :skill_id, :parent_id, :inline_attachment_ids, :tracker_id, :version, :enforce_mandatory, :fc_call_id
 
   alias_attribute :type, :ticket_type
   alias_attribute :product_id, :product
@@ -54,6 +54,8 @@ class TicketValidation < ApiValidation
   validates :source, custom_inclusion: { in: proc { |x| x.sources }, ignore_string: :allow_string_param, detect_type: true, allow_nil: true }, on: :create
   validates :source, custom_inclusion: { in: proc { |x| x.sources }, ignore_string: :allow_string_param, detect_type: true }, unless: :private_api?, on: :update
   validates :requester_id, :email_config_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }
+
+  validates :fc_call_id, data_type: { rules: Integer, allow_nil: true }, on: :create
 
   validates :company_id, custom_absence: {
     message: :require_feature_for_attribute,

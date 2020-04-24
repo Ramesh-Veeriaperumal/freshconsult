@@ -68,6 +68,8 @@ class TicketDelegator < BaseDelegator
 
   validate :secure_field_update_permissible?, if: -> { (validation_context == :update) && @custom_fields }
 
+  validate :validate_freshcaller_call_id, if: -> { (validation_context == :create) && @fc_call_id }
+
   def initialize(record, options)
     @version = options[:version]
     @ticket_fields = options[:ticket_fields]
@@ -93,6 +95,7 @@ class TicketDelegator < BaseDelegator
     super(record, options)
     @ticket = record
     @custom_fields = options[:custom_fields]
+    @fc_call_id = options[:fc_call_id]
   end
 
   def product_presence
@@ -103,6 +106,16 @@ class TicketDelegator < BaseDelegator
       errors[:product_id] << :"can't be blank"
     else
       schema_less_ticket.product = product
+    end
+  end
+
+  def validate_freshcaller_call_id
+    freshcaller_call = Account.current.freshcaller_calls.find_by_fc_call_id(@fc_call_id)
+    if freshcaller_call.blank?
+      errors[:fc_call_id] << :invalid_value
+      @error_options[:fc_call_id] = { value: @fc_call_id }
+    else
+      self.freshcaller_call = freshcaller_call
     end
   end
 
