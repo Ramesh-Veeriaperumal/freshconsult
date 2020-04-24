@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20200228063609) do
+ActiveRecord::Schema.define(version: 20200423091413) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -251,6 +251,7 @@ ActiveRecord::Schema.define(:version => 20200228063609) do
     t.datetime "active_since"
     t.datetime "last_active_at"
     t.integer  "agent_type",                       :default => 1
+    t.text     "additional_settings"
   end
 
   add_index "agents", ["account_id", "google_viewer_id"], :name => "index_agents_on_account_id_and_google_viewer_id"
