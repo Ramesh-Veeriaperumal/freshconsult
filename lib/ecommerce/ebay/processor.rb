@@ -123,7 +123,33 @@ class Ecommerce::Ebay::Processor
 
   def beautify_html(text)
     text=text.gsub("<![CDATA[", "").gsub("]]>", "")
-    Nokogiri::HTML(text).to_html.delete('\\"').delete("\n")
+    html = Nokogiri::HTML(text).to_html.delete('\\"').delete("\n")
+    beautify_ebay_message_html_text(html)
+  end
+
+  def beautify_ebay_message_html_text(html)
+    parsed_html = Nokogiri::HTML.parse(html)
+    table_ids = []
+    parsed_html.css('table').each { |t| table_ids << t['id'] unless t['id'].nil? }
+    retain_table_ids = ['ebaylogo', 'area5Container', 'PrimaryMessage']
+    retain_table_include_text = 'MessageHistory'
+    table_ids.each do |id|
+      unless retain_table_ids.include?(id) || id.include?(retain_table_include_text)
+        css_selector = "table##{id}"
+        parsed_html.css(css_selector).remove
+      end
+    end
+
+    div_ids = []
+    parsed_html.css('div').each { |d| div_ids << d['id'] unless d['id'].nil? }
+    retain_div_include_text = 'UserInputtedText'
+    div_ids.each do |id|
+      unless id.include?(retain_div_include_text)
+        css_selector = "div##{id}"
+        parsed_html.css(css_selector).remove
+      end
+    end
+    parsed_html.to_html.delete('\\"').delete("\n")
   end
 
   def match_ticket_subject(ticket_ids, subject)
