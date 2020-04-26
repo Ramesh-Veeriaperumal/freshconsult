@@ -1,4 +1,5 @@
 class HelpWidget < ActiveRecord::Base
+  include RepresentationHelper
 
   acts_as_api
 
@@ -14,6 +15,19 @@ class HelpWidget < ActiveRecord::Base
     t.add :account_url
     t.add :languages
     t.add :date_format
+  end
+
+  api_accessible :central_publish do |f|
+    f.add :id
+    f.add :name
+    f.add :active
+    f.add :product_id
+    f.add :account_id
+  end
+
+  api_accessible :central_publish_destroy do |cf|
+    cf.add :id
+    cf.add :account_id
   end
 
   def account_url
@@ -34,5 +48,9 @@ class HelpWidget < ActiveRecord::Base
 
   def date_format
     Account.current.account_additional_settings_from_cache.date_format
+  end
+
+  def relationship_with_account
+    :help_widgets
   end
 end

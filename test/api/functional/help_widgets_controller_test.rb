@@ -214,16 +214,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     help_widget = create_widget
     delete :destroy, controller_params(version: 'v2', id: help_widget.id)
     assert_response 204
-    get :show, controller_params(version: 'v2', id: help_widget.id)
-    assert_response 404
-  end
-
-  def test_soft_delete
-    help_widget = create_widget
-    delete :destroy, controller_params(version: 'v2', id: help_widget.id)
-    assert_response 204
-    deleted_widget = Account.current.help_widgets.find(help_widget.id)
-    refute deleted_widget.active
+    assert_nil Account.current.help_widgets.where(id: help_widget.id).first
   end
 
   def test_soft_delete_with_predictive_support
@@ -238,8 +229,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     help_widget.save
     delete :destroy, controller_params(version: 'v2', id: help_widget.id)
     assert_response 204
-    deleted_widget = Account.current.help_widgets.find(help_widget.id)
-    refute deleted_widget.active
+    assert_nil Account.current.help_widgets.where(id: help_widget.id).first
     fm_widget_hash = Account.current.account_additional_settings.widget_predictive_support_hash
     assert fm_widget_hash['test.fresh.com'][:exp_id] == '4151515152505F435F415C51405F594C5C5A5F5F'
     assert fm_widget_hash['test.fresh.com'][:widget_ids] == []
@@ -1791,8 +1781,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
       delete :destroy, controller_params(version: 'v2', id: widget.id)
     end
     assert_response 204
-    deleted_widget = Account.current.help_widgets.find(widget.id)
-    refute deleted_widget.active
+    assert_nil Account.current.help_widgets.where(id: widget.id).first
   end
 
   def test_config_upload_failure_for_create

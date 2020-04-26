@@ -41,10 +41,8 @@ class HelpWidgetsController < ApiApplicationController
   end
 
   def destroy
-    @item.active = false
     toggle_predictive_support(false) if @item.predictive?
-    @item.save
-    head 204
+    super
   end
 
   private

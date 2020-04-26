@@ -48,6 +48,8 @@ class HelpWidget < ActiveRecord::Base
     black: '#000000'
   }.freeze
 
+  PUBLISHABLE_COLUMNS = [:name, :product_id, :active].freeze
+
   def self.default_settings(product, portal)
     {
       message: product ? I18n.t('help_widget.name', name: product.name) : I18n.t('help_widget.message'),

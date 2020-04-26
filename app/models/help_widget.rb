@@ -15,9 +15,14 @@ class HelpWidget < ActiveRecord::Base
 
   after_commit :clear_cache, :upload_configs
 
+  before_destroy :save_deleted_help_widget_info
+
   default_scope order: 'created_at DESC'
 
   scope :active, conditions: { active: true }
+
+  publishable on: [:create, :destroy]
+  publishable on: :update, if: -> { model_changes.present? }
 
   def captcha_enabled?
     settings[:contact_form][:captcha]
@@ -78,6 +83,16 @@ class HelpWidget < ActiveRecord::Base
   end
 
   private
+
+    def model_changes
+      @model_changes = previous_changes || {}
+      @model_changes.slice!(*PUBLISHABLE_COLUMNS)
+      @model_changes
+    end
+
+    def save_deleted_help_widget_info
+      @deleted_model_info = as_api_response(:central_publish_destroy)
+    end
 
     def clear_cache
       key = HELP_WIDGETS % { :account_id => self.account_id, :id => self.id }
