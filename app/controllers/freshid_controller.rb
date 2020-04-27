@@ -16,7 +16,9 @@ class FreshidController < ApplicationController
   end
 
   def customer_authorize_callback
-    if current_account.freshid_org_v2_enabled? && current_account.contact_custom_sso_enabled?
+    if current_account.freshid_org_v2_enabled? &&
+        current_account.freshid_sso_sync_enabled? &&
+        current_account.contact_custom_sso_enabled?
       customer_authorize_callback_v2_entrypoint_helper
     elsif current_account.freshid_org_v2_enabled?
       customer_authorize_callback_v2_helper

@@ -237,4 +237,19 @@ class SsoMethodsTest < ActionView::TestCase
     @account.enable_agent_oidc_sso!('logout_url')
     assert_equal true, @account.sso_configured?
   end
+
+  def test_enable_customer_oidc
+    Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    Account.any_instance.stubs(:add_feature).returns(true)
+    sso = @account.enable_customer_oidc_sso!('logout_url')
+    assert_equal true, sso
+    assert_equal true, @account.sso_enabled
+  end
+
+  def test_disable_customer_oidc
+    @account.enable_customer_oidc_sso!('logout_url')
+    sso = @account.disable_customer_oidc_sso!
+    assert_equal true, sso
+    assert_equal false, @account.sso_enabled
+  end
 end
