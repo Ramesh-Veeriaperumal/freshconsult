@@ -7,7 +7,7 @@ module Ember
     def show
       @item = {
         rts_account_id: @account_additional_settings.rts_account_id,
-        url: RTSConfig['end_point'],
+        url: RTSConfig['ws_end_point'],
         token: generate_jwt_token
       }
       response.api_root_key = :rts

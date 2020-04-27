@@ -19,7 +19,8 @@
       "rts": {
         "app_id": "EJ[1:PQjPhtCH/3e30SyAXH8osYeWIjX5+qK98ZwOHqV09xY=:4haSY+XO+eq+n410CWy6XvwlrUjTPFRO:JL/r+04NFxrTuiYqLmWTTmBWibt6untM]",
         "app_secret": "EJ[1:PQjPhtCH/3e30SyAXH8osYeWIjX5+qK98ZwOHqV09xY=:2n0047/eD492IySEcdCSq1ifm9Xu85gd:FcHmj5Zv6KsinrdL+1F6A9p/Z5G/i88JwXExWD1LoUeRvtGU2NNTp/8nsPy38IO8EMwwN2OU6JPtVEKs]",
-        "_end_point": "https://rts-in.freshworksapi.com",
+        "_ws_end_point": "https://rts-in.freshworksapi.com",
+        "_rest_end_point": "https://rts-in.freshworksapi.com",
         "db_cipher_key": "EJ[1:PQjPhtCH/3e30SyAXH8osYeWIjX5+qK98ZwOHqV09xY=:1pTFZb45Zp63Ff9qFyw0ewOkhSc6CxqK:W4oHwX0UtyAkgEiB0YzEL8+T+mFbowQVTVd5qrW9wnIiuR8CmcWCqAPIzd5pFWMedLp3DediDfRh8i/O]",
         "_jwt_default_expiry": "100",
         "channel_cipher_key": "EJ[1:mbNtkFlVyYada5sSyukiQZatGrIv+QjtxEm/1AeQFl8=:qN+nrNNKt+gylOpALnsIeQm8tovTlS8a:uOiNMKJoeE/3AXO/X5ZBdWFedJRn5U4RJmm1AroVi0C0ugJGxrpYK8ngM6xPDB/nzYS3aW6biRvo5Wp95dGYUJlCVtZaY/ts3hoD9WAsyDY=]"
