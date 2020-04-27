@@ -33,7 +33,7 @@ module Freshcaller
       def add_or_remove_agents
         agents.each do |agent|
           agent.freshcaller_enabled = agents_to_add.include?(agent.user_id)
-          handle_fcaller_agent(agent)
+          handle_fcaller_agent(agent) if valid_fcaller_agent_action?(agent)
         end
       end
 
