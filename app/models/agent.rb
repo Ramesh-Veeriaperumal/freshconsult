@@ -388,6 +388,10 @@ class Agent < ActiveRecord::Base
     User.reset_current_user
   end
 
+  def agent_freshcaller_enabled?
+    freshcaller_agent.try(:fc_enabled) || false
+  end
+
   protected
     # adding the agent role ids through virtual attr agent_role_ids.
     # reason is this callback is getting executed before user roles update.

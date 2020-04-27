@@ -452,6 +452,8 @@ module Admin
         fc_enabled: true,
         fc_user_id: 5678
       )
+      stub_create_users_already_present(1234, true)
+      stub_create_users_already_present(5678, true)
       params_hash = { agent_ids: [] }
       Sidekiq::Testing.inline! do
         put :update, construct_params({ version: 'private' }.merge(params_hash), params_hash)
@@ -480,6 +482,7 @@ module Admin
         fc_enabled: true,
         fc_user_id: 5678
       )
+      stub_create_users_already_present(5678, true)
       params_hash = { agent_ids: [agent1.user.id] }
       Sidekiq::Testing.inline! do
         put :update, construct_params({ version: 'private' }.merge(params_hash), params_hash)
@@ -501,12 +504,12 @@ module Admin
 
     def test_update_agents_existing_freshcaller_agent
       create_freshcaller_account unless Account.current.freshcaller_account
-      stub_create_users_already_present_error
       agent1 = add_test_agent(@account).agent
       agent1.create_freshcaller_agent(
         fc_enabled: false,
         fc_user_id: 5678
       )
+      stub_create_users_already_present(5678, false)
       params_hash = { agent_ids: [agent1.user.id] }
       Sidekiq::Testing.inline! do
         put :update, construct_params({ version: 'private' }.merge(params_hash), params_hash)

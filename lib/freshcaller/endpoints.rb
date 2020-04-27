@@ -47,6 +47,10 @@ module Freshcaller
       "#{freshcaller_url}/users"
     end
 
+    def freshcaller_update_agent_url(user_id)
+      "#{freshcaller_url}/users/#{user_id}"
+    end
+
     def protocol
       Rails.env.development? ? 'http://' : 'https://'
     end

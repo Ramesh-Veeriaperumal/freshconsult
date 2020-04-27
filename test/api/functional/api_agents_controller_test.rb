@@ -1,6 +1,8 @@
 require_relative '../test_helper'
 ['agents_test_helper.rb', 'attachments_test_helper.rb', 'freshcaller_test_helper.rb'].each { |file| require Rails.root.join('test', 'api', 'helpers', file) }
 require_relative '../helpers/admin/skills_test_helper'
+require 'webmock/minitest'
+WebMock.allow_net_connect!
 class ApiAgentsControllerTest < ActionController::TestCase
   include Redis::OthersRedis
   include AgentsTestHelper
@@ -1412,6 +1414,33 @@ class ApiAgentsControllerTest < ActionController::TestCase
     Account.unstub(:current)
   end
 
+  def test_create_agent_with_freshcaller_enabled
+    Account.any_instance.stubs(:freshcaller_enabled?).returns(true)
+    create_freshcaller_account unless Account.current.freshcaller_account
+    stub_create_users
+    params_hash = { email: Faker::Internet.email, ticket_scope: 2, role_ids: [Account.current.roles.find_by_name('Account Administrator').id], name: Faker::Name.name, freshcaller_agent: true }
+    post :create, construct_params(params_hash)
+    assert_response 201
+    response = parse_response @response.body
+    assert_equal true, response['freshcaller_agent']
+  ensure
+    delete_freshcaller_account
+    Account.any_instance.unstub(:freshcaller_enabled?)
+  end
+
+  def test_create_agent_with_freshcaller_disabled
+    Account.any_instance.stubs(:freshcaller_enabled?).returns(true)
+    create_freshcaller_account unless Account.current.freshcaller_account
+    params_hash = { email: Faker::Internet.email, ticket_scope: 2, role_ids: [Account.current.roles.find_by_name('Account Administrator').id], name: Faker::Name.name, freshcaller_agent: false }
+    post :create, construct_params(params_hash)
+    assert_response 201
+    response = parse_response @response.body
+    assert_equal false, response['freshcaller_agent']
+  ensure
+    delete_freshcaller_account
+    Account.any_instance.unstub(:freshcaller_enabled?)
+  end
+
   def test_update_admin_with_skills
     agent = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id)
     Account.stubs(:current).returns(Account.first)
@@ -1591,6 +1620,149 @@ class ApiAgentsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern(:freshcaller_agent, :require_feature_for_attribute, code: :inaccessible_field, attribute: 'freshcaller_agent', feature: :freshcaller)])
     assert_response 400
   ensure
+    Account.any_instance.unstub(:freshcaller_enabled?)
+  end
+
+  def test_agent_update_to_create_freshcaller_agent
+    Account.any_instance.stubs(:freshcaller_enabled?).returns(true)
+    create_freshcaller_account unless Account.current.freshcaller_account
+    agent = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id)
+    stub_create_users
+    params = { freshcaller_agent: true }
+    put :update, construct_params({ id: agent.id }, params)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal true, response['freshcaller_agent']
+  ensure
+    delete_freshcaller_account
+    Account.any_instance.unstub(:freshcaller_enabled?)
+  end
+
+  def test_agent_update_to_disable_freshcaller_agent_omni_account
+    Account.any_instance.stubs(:freshcaller_enabled?).returns(true)
+    Account.any_instance.stubs(:omni_bundle_id).returns(123)
+    create_freshcaller_account unless Account.current.freshcaller_account
+    user = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id)
+    agent = user.agent
+    agent.create_freshcaller_agent(
+      fc_enabled: true,
+      fc_user_id: 1234
+    )
+    stub_create_users_already_present(1234, true)
+    freshcaller_enabled = agent.freshcaller_agent.try(:fc_enabled)
+    params = { freshcaller_agent: false }
+    put :update, construct_params({ id: user.id }, params)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal true, freshcaller_enabled
+    assert_equal false, response['freshcaller_agent']
+  ensure
+    delete_freshcaller_account
+    Account.any_instance.unstub(:omni_bundle_id)
+    Account.any_instance.unstub(:freshcaller_enabled?)
+  end
+
+  def test_agent_update_to_disable_freshcaller_agent_standalone_account
+    Account.any_instance.stubs(:freshcaller_enabled?).returns(true)
+    create_freshcaller_account unless Account.current.freshcaller_account
+    user = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id)
+    agent = user.agent
+    agent.create_freshcaller_agent(
+      fc_enabled: true,
+      fc_user_id: 1234
+    )
+    freshcaller_enabled = agent.freshcaller_agent.try(:fc_enabled)
+    params = { freshcaller_agent: false }
+    put :update, construct_params({ id: user.id }, params)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal true, freshcaller_enabled
+    assert_equal false, response['freshcaller_agent']
+  ensure
+    delete_freshcaller_account
+    Account.any_instance.unstub(:omni_bundle_id)
+    Account.any_instance.unstub(:freshcaller_enabled?)
+  end
+
+  def test_agent_update_to_re_enable_freshcaller_agent
+    Account.any_instance.stubs(:freshcaller_enabled?).returns(true)
+    create_freshcaller_account unless Account.current.freshcaller_account
+    user = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id)
+    agent = user.agent
+    agent.create_freshcaller_agent(
+      fc_enabled: false,
+      fc_user_id: 1234
+    )
+    stub_create_users_already_present(1234, false)
+    freshcaller_enabled = agent.freshcaller_agent.try(:fc_enabled)
+    params = { freshcaller_agent: true }
+    put :update, construct_params({ id: user.id }, params)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal false, freshcaller_enabled
+    assert_equal true, response['freshcaller_agent']
+  ensure
+    delete_freshcaller_account
+    Account.any_instance.unstub(:freshcaller_enabled?)
+  end
+
+  def test_agent_update_with_duplicate_update_to_freshcaller_agent
+    Account.any_instance.stubs(:freshcaller_enabled?).returns(true)
+    create_freshcaller_account unless Account.current.freshcaller_account
+    user = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id)
+    agent = user.agent
+    agent.create_freshcaller_agent(
+      fc_enabled: true,
+      fc_user_id: 1234
+    )
+    freshcaller_enabled = agent.freshcaller_agent.try(:fc_enabled)
+    params = { freshcaller_agent: true }
+    put :update, construct_params({ id: user.id }, params)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal true, freshcaller_enabled
+    assert_equal true, response['freshcaller_agent']
+  ensure
+    delete_freshcaller_account
+    Account.any_instance.unstub(:freshcaller_enabled?)
+  end
+
+  def test_destroy_agent_with_omni_freshcaller
+    Account.any_instance.stubs(:freshcaller_enabled?).returns(true)
+    Account.any_instance.stubs(:omni_bundle_id).returns(123)
+    create_freshcaller_account unless Account.current.freshcaller_account
+    user = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id)
+    agent = user.agent
+    agent.create_freshcaller_agent(
+      fc_enabled: true,
+      fc_user_id: 1234
+    )
+    freshcaller_enabled = agent.freshcaller_agent.try(:fc_enabled)
+    stub_create_users_already_present(1234, true)
+    delete :destroy, construct_params(id: user.id)
+    assert_response 204
+    assert_equal true, freshcaller_enabled
+  ensure
+    delete_freshcaller_account
+    Account.any_instance.unstub(:omni_bundle_id)
+    Account.any_instance.unstub(:freshcaller_enabled?)
+  end
+
+  def test_destroy_agent_with_standalone_freshcaller
+    Account.any_instance.stubs(:freshcaller_enabled?).returns(true)
+    create_freshcaller_account unless Account.current.freshcaller_account
+    user = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id)
+    agent = user.agent
+    agent.create_freshcaller_agent(
+      fc_enabled: false,
+      fc_user_id: 1234
+    )
+    freshcaller_enabled = agent.freshcaller_agent.try(:fc_enabled)
+    delete :destroy, construct_params(id: user.id)
+    assert_response 204
+    assert_equal false, freshcaller_enabled
+  ensure
+    delete_freshcaller_account
     Account.any_instance.unstub(:freshcaller_enabled?)
   end
 

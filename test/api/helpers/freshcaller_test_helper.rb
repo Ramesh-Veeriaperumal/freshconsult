@@ -53,6 +53,10 @@ module Freshcaller::TestHelper
     'https://localhost.test.domain/users'
   end
 
+  def update_agent_url(fc_user_id)
+    "https://localhost.test.domain/users/#{fc_user_id}"
+  end
+
   def signup_url
     "#{FreshcallerConfig['signup_domain']}/accounts"
   end
@@ -200,8 +204,9 @@ module Freshcaller::TestHelper
 
   def stub_create_users
     response_hash = {
-      data: {
-        id: 111
+      'data' => {
+        'id' => '111',
+        'attributes' => { 'deleted' => false }
       }
     }
     @req = stub_request(:post, add_agent_url).to_return(body: response_hash.to_json,
@@ -209,15 +214,16 @@ module Freshcaller::TestHelper
                                                         headers: { 'Content-Type' => 'application/json' })
   end
 
-  def stub_create_users_already_present_error
+  def stub_create_users_already_present(fc_user_id, is_deleted)
     response_hash = {
-      errors: [{
-        detail: 'Agent has already been taken'
-      }]
+      'data' => {
+        'id' => fc_user_id.to_s,
+        'attributes' => { 'deleted' => is_deleted }
+      }
     }
-    @req = stub_request(:post, add_agent_url).to_return(body: response_hash.to_json,
-                                                        status: 400,
-                                                        headers: { 'Content-Type' => 'application/json' })
+    @req = stub_request(:patch, update_agent_url(fc_user_id)).to_return(body: response_hash.to_json,
+                                                                        status: 200,
+                                                                        headers: { 'Content-Type' => 'application/json' })
   end
 
   def stub_create_users_agent_limit_error
