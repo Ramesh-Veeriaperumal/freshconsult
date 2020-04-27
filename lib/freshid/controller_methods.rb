@@ -39,7 +39,7 @@ module Freshid::ControllerMethods
   end
 
   def customer_login_url
-    if current_account.contact_custom_sso_enabled?
+    if current_account.freshid_sso_sync_enabled? && current_account.contact_custom_sso_enabled?
       Freshid::V2::UrlGenerator.url_with_query_params(
           Account.current.customer_custom_login_url,
           { client_id: FRESHID_V2_CLIENT_ID, redirect_uri: freshid_customer_authorize_callback_url }
@@ -116,8 +116,12 @@ module Freshid::ControllerMethods
     current_account.customer_freshid_saml_sso_enabled? && current_account.freshid_integration_enabled?
   end
 
+  def agent_oidc_enabled?
+    current_account.agent_oidc_sso_enabled? && current_account.freshid_enabled?
+  end
+
   def agent_freshid_sso_enabled?
-    agent_oauth2_enabled? || agent_freshid_saml_enabled?
+    agent_oauth2_enabled? || agent_freshid_saml_enabled? || agent_oidc_enabled?
   end
 
   def customer_freshid_sso_enabled?

@@ -195,8 +195,19 @@ module Freshid::V2::EventProcessorExtensions
       Freshid.account_class.reset_current_account
     end
 
+    def filtered_sso_auth_modules(auth_modules = [])
+      sso_enabled_auth_modules = auth_modules.select { |auth_module| auth_module[:enabled] == true }
+      if sso_enabled_auth_modules.present?
+        sso_enabled_auth_modules.first
+      else
+        auth_modules.first
+      end
+    end
+
     def process_custom_freshid_sso_events(auth_modules, entrypoint_hash, user_type)
-      auth_modules.each { |auth_module| update_custom_sso_event(auth_module[:enabled], user_type, entrypoint_hash) }
+      filtered_auth_module = filtered_sso_auth_modules(auth_modules)
+      Rails.logger.info "process_custom_freshid_sso_events filtered_auth_module #{filtered_auth_module.inspect}"
+      update_custom_sso_event(filtered_auth_module[:enabled], user_type, entrypoint_hash) if filtered_auth_module.present?
     end
 
     def process_entrypoint_deleted_event(auth_modules, user_type)

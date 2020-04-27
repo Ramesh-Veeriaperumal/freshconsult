@@ -167,18 +167,20 @@ module SupportHelper
   end
 
   def agent_login_link
-    if Account.current.agent_custom_sso_enabled?
+    if current_account.freshid_sso_sync_enabled? && current_account.agent_custom_sso_enabled?
       Freshid::V2::UrlGenerator.url_with_query_params(
-          Account.current.agent_custom_login_url,
+          current_account.agent_custom_login_url,
           { client_id: FRESHID_V2_CLIENT_ID, redirect_uri: freshid_authorize_callback_url }
       )
+    elsif (current_account.agent_oauth2_sso_enabled? || current_account.agent_freshid_saml_sso_enabled? || current_account.agent_oidc_sso_enabled?)
+      agent_login_url
     else
-      Account.current.freshid_enabled? ? Freshid::Config.login_url(freshid_authorize_callback_url, freshid_logout_url, {}) : Freshid::V2::UrlGenerator.login_url(freshid_authorize_callback_url, {})
+      current_account.freshid_enabled? ? Freshid::Config.login_url(freshid_authorize_callback_url, freshid_logout_url, {}) : Freshid::V2::UrlGenerator.login_url(freshid_authorize_callback_url, {})
     end
   end
 
   def customer_login_link
-    if Account.current.contact_custom_sso_enabled?
+    if current_account.freshid_sso_sync_enabled? && current_account.contact_custom_sso_enabled?
       Freshid::V2::UrlGenerator.url_with_query_params(
           Account.current.customer_custom_login_url,
           { client_id: FRESHID_V2_CLIENT_ID, redirect_uri: freshid_customer_authorize_callback_url }
