@@ -18,6 +18,8 @@ Mail::Message.class_eval do
       rescue Net::SMTPAuthenticationError => e
         Rails.logger.info "Net::SMTPAuthenticationError while sending email - #{e.message}"
         update_mailbox_error_type if e.inspect.include?(Email::Mailbox::Constants::SMTP_AUTH_ERROR_CODE)
+      rescue Net::SMTPFatalError => e
+        Rails.logger.info "Net::SMTPFatalError while sending email by deliver - #{e.message}"
       rescue StandardError => e
         Rails.logger.info "SMTP error while sending email #{e.message}"
       end
@@ -40,6 +42,8 @@ Mail::Message.class_eval do
       elsif e.inspect.include?(Email::Mailbox::Constants::SMTP_TOO_MANY_LOGIN_ATTEMPTS)
         raise e
       end
+    rescue Net::SMTPFatalError => e
+      Rails.logger.info "Net::SMTPFatalError while sending email by deliver! - #{e.message}"
     end
     retry_mail! if response.blank? && oauth_retry?
     Rails.logger.info "Email successfully relayed to SMTP mail server through deliver!. Response from mail server: #{response.string}" if response.present? && response.class == Net::SMTP::Response

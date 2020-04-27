@@ -17,6 +17,7 @@ helpdesk:
     - akismet_config
     - asset_sync
     - aws_s3
+    - aws_cloud_front
     - aws/aws_v2
     - aws/dynamo_sdk2
     - aws/sqs_sdk2

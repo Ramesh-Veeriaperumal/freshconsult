@@ -69,6 +69,7 @@ class Subscription < ActiveRecord::Base
   before_save :update_amount, unless: :anonymous_account?
 
   before_update :cache_old_model, :cache_old_addons
+  before_update :clear_feature_gain, if: :plan_changed?
   after_update :add_to_crm, unless: [:anonymous_account?, :disable_freshsales_api_integration?]
   after_update :update_reseller_subscription, unless: :anonymous_account?
   after_update :set_redis_for_first_time_account_activation, if: :freshdesk_freshsales_bundle_enabled?
@@ -756,6 +757,11 @@ class Subscription < ActiveRecord::Base
     end
 
   private
+
+    # Clear the feature so that loyalty upgrade is not shown to the customers.
+    def clear_feature_gain
+      additional_info[:feature_gain] = nil unless @old_subscription.additional_info[:feature_gain].nil?
+    end
 
     def fetch_migration_data
       data = billing.retrieve_subscription(account_id)

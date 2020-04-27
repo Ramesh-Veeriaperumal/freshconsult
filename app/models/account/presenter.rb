@@ -25,6 +25,7 @@ class Account < ActiveRecord::Base
     s.add :freshid_account_id
     s.add proc { |x| x.fs_cookie }, as: :fs_cookie
     s.add proc { |x| x.account_configuration.account_configuration_for_central }, as: :account_configuration
+    s.add :set_account_additional_settings, as: :account_additional_settings
     s.add proc { |x| x.account_additional_settings.rts_account_id }, as: :rts_account_id, if: proc { Account.current.agent_collision_revamp_enabled? }
     s.add proc { |x| x.encrypt_for_central(x.account_additional_settings.rts_account_secret, 'account_additional_settings') }, as: :rts_account_secret, if: proc { Account.current.agent_collision_revamp_enabled? }
     s.add proc { |x| x.encryption_key_name('account_additional_settings') }, as: :cipher_key, if: proc { Account.current.agent_collision_revamp_enabled? }
@@ -90,5 +91,12 @@ class Account < ActiveRecord::Base
     return false if payload_type == ACCOUNT_DESTROY
 
     super
+  end
+
+  def set_account_additional_settings
+    {}.tap do |settings|
+      settings[:bundle_id] = omni_bundle_id
+      settings[:bundle_name] = omni_bundle_name
+    end
   end
 end

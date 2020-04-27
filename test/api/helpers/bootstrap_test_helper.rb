@@ -101,7 +101,9 @@ module BootstrapTestHelper
         freshmarketer_linked: account.account_additional_settings.freshmarketer_linked?,
         freshcaller_linked: account.freshcaller_account.present? && account.freshcaller_account.enabled?,
         onboarding_version: account.account_additional_settings.additional_settings[:onboarding_version],
-	freshdesk_freshsales_bundle: account.account_additional_settings.additional_settings[:freshdesk_freshsales_bundle] || false
+        freshdesk_freshsales_bundle: account.account_additional_settings.additional_settings[:freshdesk_freshsales_bundle] || false,
+        bundle_id: account.account_additional_settings.additional_settings.try(:[], :bundle_id),
+        bundle_name: account.account_additional_settings.additional_settings.try(:[], :bundle_name)
       },
       verified: account.verified?,
       created_at: account.created_at.try(:utc),

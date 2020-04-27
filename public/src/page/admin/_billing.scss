@@ -903,6 +903,27 @@ input[type=text].input-agent-count{
 	.downgrade-backdrop {
 		z-index: -1;
 	}
+
+	.right-arrow-billing {
+		color: #91A2B2;
+		font-size: 20px;
+    display: inline-block;
+    vertical-align: top;
+    padding: 0 10px;
+	}
+
+	.strike {
+		text-decoration: line-through;
+    color: #91A2B2;
+	}
+
+	.loyalty-upgrade-wrapper {
+		border: 1px solid #DADFE3;
+		border-radius: 4px;
+		padding: 16px 15px 18px;
+		margin-bottom: 40px;
+	}
+
    .request-change-wrapper {
 			border: 1px solid #DADFE3;
 			border-bottom: 0;

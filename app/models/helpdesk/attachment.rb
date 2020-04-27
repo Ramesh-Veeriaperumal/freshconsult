@@ -231,6 +231,11 @@ class Helpdesk::Attachment < ActiveRecord::Base
     AwsWrapper::S3Object.url_for(content.path(valid_size_type(type)), content.bucket_name, expiry_secure_data)
   end
 
+  def attachment_cdn_url_for_api(secure = true, type = :original, expires = 1.day)
+    options = { expires: expires, secure: secure }
+    AwsWrapper::CloudFront.url_for(content.path(valid_size_type(type)), options)
+  end
+
   def attachment_url_for_export(secure = true, type = :original, expires = 7.days.to_i)
     attachment_url_for_api(secure, type, expires)
   end

@@ -25,6 +25,7 @@ module Middleware
             
             rate_limit = RateLimit.new(worker, webhook_args, queue, @options)
             log_content = "throttler_count=#{rate_limit.throttler_count}, webhook_limit=#{rate_limit.threshold}"
+            notify_cre_webhook_limit(webhook_args, true) if rate_limit.get_count == 1
 
             rate_limit.within_bounds do
               Va::Logger::Automation.log("WEBHOOK: TRIGGERING, #{log_content}", true)
@@ -34,6 +35,7 @@ module Middleware
             rate_limit.exceeded do |delay|
               Va::Logger::Automation.log("WEBHOOK: EXCEEDED, #{log_content}, perform_in=#{delay}", true)
               worker.class.perform_in(delay, webhook_args)
+              notify_cre_webhook_limit(webhook_args, false)
             end
 
             rate_limit.execute
@@ -56,10 +58,21 @@ module Middleware
               UserNotifier.send_email_to_group(:notify_webhook_drop, email_list.split(','),
                 account
               )
+              webhook_args['error_type'] = Admin::AutomationConstants::WEBHOOK_ERROR_TYPES[:dropoff]
+              CentralPublish::CRECentralWorker.perform_async(webhook_args, CentralPublish::CRECentralUtil::CRE_PAYLOAD_TYPES[:webhook_error]) if Account.current.cre_account_enabled?
             end
           end
         end
 
+        def notify_cre_webhook_limit(webhook_args, reset_metric)
+          Sharding.select_shard_of(webhook_args['account_id']) do
+            Account.find(webhook_args['account_id']).make_current
+            webhook_args['error_type'] = Admin::AutomationConstants::WEBHOOK_ERROR_TYPES[:rate_limit]
+            webhook_args['reset_metric'] = reset_metric
+            CentralPublish::CRECentralWorker.perform_async(webhook_args, CentralPublish::CRECentralUtil::CRE_PAYLOAD_TYPES[:webhook_error]) if Account.current.cre_account_enabled?
+            Account.reset_current_account
+          end
+        end
       end
     end
   end

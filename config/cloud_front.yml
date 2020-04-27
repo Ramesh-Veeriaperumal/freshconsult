@@ -1,0 +1,16 @@
+defaults: &defaults
+  key_pair_id: dummy
+  private_key: dummy
+  host: dummy.cloudfront.net
+
+development:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+production:
+  <<: *defaults

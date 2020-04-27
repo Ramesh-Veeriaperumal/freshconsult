@@ -1050,7 +1050,11 @@ class Account < ActiveRecord::Base
   end
 
   def omni_bundle_id
-    account_additional_settings.additional_settings.try(:[], :bundle_id)
+    account_additional_settings.try(:additional_settings).try(:[], :bundle_id)
+  end
+
+  def omni_bundle_name
+    account_additional_settings.try(:additional_settings).try(:[], :bundle_name)
   end
 
   def omni_bundle_account?
@@ -1069,6 +1073,10 @@ class Account < ActiveRecord::Base
   def freshchat_account_present?
     freshchat_account = Freshchat::Account.find_by_account_id(id)
     freshchat_account.nil? ? false : true
+  end
+
+  def omni_bundle_name
+    account_additional_settings.additional_settings.try(:[], :bundle_name)
   end
 
   protected

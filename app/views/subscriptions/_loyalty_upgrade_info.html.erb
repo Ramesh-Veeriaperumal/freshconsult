@@ -1,0 +1,11 @@
+
+<%
+  feature_gains = @subscription.additional_info[:feature_gain]
+  sub_plan_display_name = @subscription.subscription_plan.display_name
+  params  = {:value => sub_plan_display_name}
+%>
+<% if feature_gains %>
+  <div class="loyalty-upgrade-wrapper">
+    <img src="/assets/giftbox.svg" /> <%= t("accounts.loyalty_upgrade", params).html_safe %>
+  </div>
+<% end %>

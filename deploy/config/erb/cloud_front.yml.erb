@@ -1,0 +1,6 @@
+<% if node[:ymls][:cloudfront] && node[:ymls][:cloudfront][:key_pair_id] && node[:ymls][:cloudfront][:private_key] %>
+<%= node[:opsworks][:environment] %>:
+  key_pair_id: <%= node[:ymls][:cloudfront][:key_pair_id] %>
+  private_key: "<%= node[:ymls][:cloudfront][:private_key] %>"
+  host: <%= node[:ymls][:cloudfront][:attachments_host] %>
+<% end %>

@@ -60,6 +60,7 @@ module AgentConstants
     :falcon_ui,
     :undo_send,
     :focus_mode,
+    :show_loyalty_upgrade,
     { field_service: [:dismissed_sample_scheduling_dashboard] },
     { search_settings:
       { tickets: [
