@@ -1658,8 +1658,6 @@
     },
     "fc-bg-sidekiq-misc": {
     },
-    "fc-bg-sidekiq-occasional": {
-    },
     "hk-app": {
     },
     "hk-app-http-request": {
@@ -1697,8 +1695,6 @@
     "hk-app-freshid": {
     },
     "fc-bg-sidekiq-dedicated-887984": {
-    },
-    "fc-bg-sidekiq-external": {
     },
     "fc-app": {
     },
@@ -1758,8 +1754,6 @@
     },
     "hk-app-api-contacts": {
     },
-    "fc-bg-sidekiq-archive": {
-    },
     "fc-app-buffer": {
     },
     "fc-app-merge": {
@@ -1769,6 +1763,18 @@
     "fc-bg-sidekiq-cron": {
     },
     "fc-bg-shoryuken-archive": {
+    },
+    "fc-bg-sidekiq-occasional": {
+    },
+    "fc-bg-sidekiq-archive": {
+    },
+    "fc-bg-sidekiq-external": {
+    },
+    "fc-bg-sidekiq-frequent": {
+    },
+    "fc-bg-sidekiq-maintenance": {
+    },
+    "fc-bg-sidekiq-longrunning": {
     }
   }
 }

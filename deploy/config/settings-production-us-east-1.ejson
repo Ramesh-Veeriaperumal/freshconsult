@@ -2656,8 +2656,6 @@
     },
     "fc-bg-sidekiq-trial": {
     },
-    "fc-bg-sidekiq-external": {
-    },
     "hk-app-support": {
     },
     "hk-app-pipeline": {
@@ -2688,8 +2686,6 @@
     "fc-bg-sidekiq-dedicated-892785": {
     },
     "fc-app-api-public-buffer": {
-    },
-    "fc-bg-sidekiq-occasional": {
     },
     "hk-app-free": {
       "docker": {
@@ -2804,8 +2800,6 @@
     },
     "hk-bg-utility": {
     },
-    "fc-bg-sidekiq-archive": {
-    },
     "fc-bg-sidekiq-hard-delete": {
     },
     "fc-app-api-channel": {
@@ -2875,6 +2869,18 @@
     "fc-bg-sidekiq-cron": {
     },
     "fc-bg-shoryuken-archive": {
+    },
+    "fc-bg-sidekiq-occasional": {
+    },
+    "fc-bg-sidekiq-archive": {
+    },
+    "fc-bg-sidekiq-external": {
+    },
+    "fc-bg-sidekiq-frequent": {
+    },
+    "fc-bg-sidekiq-maintenance": {
+    },
+    "fc-bg-sidekiq-longrunning": {
     }
   }
 }

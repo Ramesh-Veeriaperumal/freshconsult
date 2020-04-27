@@ -1706,10 +1706,6 @@
     },
     "hk-app-buffer": {
     },
-    "fc-bg-sidekiq-external": {
-    },
-    "fc-bg-sidekiq-occasional": {
-    },
     "fc-bg-sidekiq-maintainence": {
     },
     "hk-app-http-request": {
@@ -1756,8 +1752,6 @@
     },
     "hk-app-support": {
     },
-    "fc-bg-sidekiq-archive": {
-    },
     "fc-app-buffer": {
     },
     "fc-app-merge": {
@@ -1767,6 +1761,18 @@
     "fc-bg-sidekiq-cron": {
     },
     "fc-bg-shoryuken-archive": {
+    },
+    "fc-bg-sidekiq-occasional": {
+    },
+    "fc-bg-sidekiq-archive": {
+    },
+    "fc-bg-sidekiq-external": {
+    },
+    "fc-bg-sidekiq-frequent": {
+    },
+    "fc-bg-sidekiq-maintenance": {
+    },
+    "fc-bg-sidekiq-longrunning": {
     }
   }
 }

@@ -31,13 +31,21 @@ module Middleware
                 $redis_others.smembers('DEDICATED_SIDEKIQ_QUEUE_LIST')
               end
 
+              new_classified_queues = Rails.cache.fetch('SIDEKIQ_CLASSIFICATION_NEW', expires_in: 5.minutes) do
+                $redis_others.smembers('SIDEKIQ_QUEUE_CLASSIFICATION_LIST_NEW')
+              end
+
               if Account.current && dedicated_list.include?(Account.current.id.to_s)
                 members.include?(queue_name) ? "#{SIDEKIQ_CLASSIFICATION_MAPPING[queue_name]}_#{Account.current.id}" : queue_name
               else
+                return SIDEKIQ_CLASSIFICATION_MAPPING_NEW[queue_name] if new_classified_queues.include?(queue_name)
+
                 members.include?(queue_name) ? SIDEKIQ_CLASSIFICATION_MAPPING[queue_name] : queue_name
               end
             rescue StandardError => e
               Rails.logger.info "Error in fetching classification... #{e.message}"
+              return SIDEKIQ_CLASSIFICATION_MAPPING_NEW[queue_name] if new_classified_queues.include?(queue_name)
+
               members.include?(queue_name) ? SIDEKIQ_CLASSIFICATION_MAPPING[queue_name] : queue_name
             end
           end

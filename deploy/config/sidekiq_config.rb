@@ -68,21 +68,15 @@ class SidekiqConfigUsEast
   # FALCON_COMMON_SIDEKIQ    = "fc-bg-sidekiq-common-"
   FRESHCALLER_SIDEKIQ      = "sidekiq-freshcaller-"
 
-
-  # new sidekiq classification
-
   REALTIME_SIDEKIQ         = "sidekiq-realtime-"
   SCHEDULED_SIDEKIQ        = "sidekiq-scheduled-"
-  OCCASIONAL_SIDEKIQ       = "sidekiq-occasional-"
   MAINTAINENCE_SIDEKIQ     = "sidekiq-maintainence-"
-  EXTERNAL_SIDEKIQ         = "sidekiq-external-"
   FREE_SIDEKIQ             = "sidekiq-free-"
   EMAIL_SIDEKIQ            = "sidekiq-email-"
   TRIAL_SIDEKIQ            = "sidekiq-trial-"
   SPAM_SIDEKIQ             = "sidekiq-spam-"
   MOVED_SIDEKIQ            = "sidekiq-moved-"
   CENTRAL_REALTIME_SIDEKIQ = "sidekiq-central-realtime-"
-  ARCHIVE_SIDEKIQ          = "sidekiq-archive-"
   MAILBOXJOB_SIDEKIQ       = "sidekiq-mailbox-jobs-"
   BULK_API_SIDEKIQ         = "sidekiq-bulk-api-"
 
@@ -100,6 +94,14 @@ class SidekiqConfigUsEast
   DEDICATED_CENTRAL        = "sidekiq-dedicated-central"
   DEDICATED_SCHEDULED      = "sidekiq-dedicated-scheduled"
   DEDICATED_COMMON         = "sidekiq-dedicated-common"
+
+  # new classifications
+  OCCASIONAL_SIDEKIQ       = 'sidekiq-occasional-'.freeze
+  FREQUENT_SIDEKIQ         = 'sidekiq-frequent-'.freeze
+  MAINTENANCE_SIDEKIQ      = 'sidekiq-maintenance-'.freeze
+  ARCHIVE_SIDEKIQ          = 'sidekiq-archive-'.freeze
+  EXTERNAL_SIDEKIQ         = 'sidekiq-external-'.freeze
+  LONG_RUNNING             = 'sidekiq-longrunning-'.freeze
 
 
   DEDICATED_INSTANCE_LIST  = [DEDICATED_REALTIME, DEDICATED_BULK, DEDICATED_EMAIL, DEDICATED_OCCASIONAL,DEDICATED_CENTRAL, DEDICATED_SCHEDULED, DEDICATED_COMMON]
@@ -258,13 +260,9 @@ class SidekiqConfigUsEast
       end
     end
 
-
-    # new sidekiq classification
     realtime                 = ["realtime"]
     scheduled                = ["scheduled"]
-    occasional               = ["occasional"]
     maintainence             = ["maintainence"]
-    external                 = ["external"]
     free                     = ["free"]
     email                    = ["email"]
     trial                    = ["trial"]
@@ -272,7 +270,6 @@ class SidekiqConfigUsEast
     export                   = ["exports"]
     bulk_scheduled           = ["bulk_scheduled"]
     central_realtime         = ["central_realtime"]
-    archive                  = ['archive_account_tickets', 'archive_ticket', 'manual_publish', 'delayed_central_publish', 'es_v2_queue', 'central_realtime']
     mailbox_jobs             = ["mailbox_jobs"]
     bulk_api                 = ["bulk_api"]
     # falcon_occasional        = ["falcon_occasional"]
@@ -281,6 +278,14 @@ class SidekiqConfigUsEast
     subscriptions            = ["subscriptions"]
     hard_delete              = ["hard_delete"]
     cron_webhook             = ['cron_webhook']
+
+    # new classification
+    occasional               = ['occasional']
+    frequent                 = ['frequent']
+    maintenance              = ['maintenance']
+    archive                  = ['archive_account_tickets', 'archive_ticket', 'manual_publish', 'delayed_central_publish', 'es_v2_queue', 'central_realtime']
+    external                 = ['external']
+    long_running             = ['long_running']
 
     all_sidekiq_jobs         = cron_jobs + ["default", "rabbitmq_publish", "merge_contacts", "account_info_to_dynamo", 
   "broadcast_note", "link_tickets", "reset_associations", "manual_publish", "supervisor", "free_supervisor,supervisor", 
@@ -372,12 +377,9 @@ class SidekiqConfigUsEast
     # FALCON_COMMON_POOL       = [[falcon_all_sidekiq, common_pool_worker_count]]
     _FRESHCALLER_POOL         = [[freshcaller,6]]
 
-    # new sidekiq classification
     _REALTIME_POOL            = [[realtime,6]]
     _SCHEDULED_POOL           = [[scheduled,6]]
-    _OCCASIONAL_POOL          = [[occasional,6]]
     _MAINTAINENCE_POOL        = [[maintainence,6]]
-    _EXTERNAL_POOL            = [[external,6]]
     _FREE_POOL                = [[free,6]]
     _EMAIL_POOL               = [[email,6]]
     _TRIAL_POOL               = [[trial,6]]
@@ -389,7 +391,6 @@ class SidekiqConfigUsEast
     # This has to be made dynamic based on the type of machine.
     _BULK_SCHEDULED_POOL      = [[bulk_scheduled,8]]
     _CENTRAL_REALTIME_POOL    = [[central_realtime, 6]]
-    _ARCHIVE_POOL             = [[archive, 6]]
     _MAILBOXJOB_POOL          = [[mailbox_jobs, 6]]
     _BULK_API_POOL            = [[bulk_api, 6]]
     _GAMIFICATION_POOL        = [[gamification, 6]]
@@ -405,6 +406,14 @@ class SidekiqConfigUsEast
     _DEDICATED_SCHEDULED_POOL    = [[dedicated_scheduled,6]]
     _DEDICATED_COMMON_POOL       = [[dedicated_common,6]]
 
+    # new classification
+    occasional_pool          = [[occasional, 6]]
+    frequent_pool            = [[frequent, 6]]
+    maintenance_pool         = [[maintenance, 6]]
+    archive_pool             = [[archive, 6]]
+    external_pool            = [[external, 6]]
+    longrunning_pool         = [[long_running, 6]]
+
     case
     when utility_name.include?(SLA_SIDEKIQ)
       _SLA_POOL
@@ -418,8 +427,6 @@ class SidekiqConfigUsEast
       _SEARCH_POOL
     when utility_name.include?(FRESHFONE_SIDEKIQ)
       _FRESHFONE_POOL
-    when utility_name.include?(ARCHIVE_SIDEKIQ)
-      _ARCHIVE_POOL
     when utility_name.include?(OBSERVER_SIDEKIQ)
       _OBSERVER_POOL
     when utility_name.include?(TICKETS_SIDEKIQ)
@@ -472,12 +479,8 @@ class SidekiqConfigUsEast
       _SCHEDULED_POOL
     # when utility_name.include?(FALCON_OCCASIONAL)
     #   FALCON_OCCASIONAL_POOL
-    when utility_name.include?(OCCASIONAL_SIDEKIQ)
-      _OCCASIONAL_POOL
     when utility_name.include?(MAINTAINENCE_SIDEKIQ)
       _MAINTAINENCE_POOL
-    when utility_name.include?(EXTERNAL_SIDEKIQ)
-      _EXTERNAL_POOL
     when utility_name.include?(FREE_SIDEKIQ)
       _FREE_POOL
     when utility_name.include?(EMAIL_SIDEKIQ)
@@ -488,8 +491,6 @@ class SidekiqConfigUsEast
       _SPAM_POOL
     when utility_name.include?(MOVED_SIDEKIQ)
       _MOVED_POOL
-    when utility_name.include?(ARCHIVE_SIDEKIQ)
-      _ARCHIVE_POOL
     when utility_name.include?(MAILBOXJOB_SIDEKIQ)
       _MAILBOXJOB_POOL
     when utility_name.include?(CRON_SIDEKIQ)
@@ -510,6 +511,19 @@ class SidekiqConfigUsEast
       _DEDICATED_COMMON_POOL
     when utility_name.include?(FRESHCALLER_SIDEKIQ)
       _FRESHCALLER_POOL
+    # new classification
+    when utility_name.include?(OCCASIONAL_SIDEKIQ)
+      occasional_pool
+    when utility_name.include?(FREQUENT_SIDEKIQ)
+      frequent_pool
+    when utility_name.include?(MAINTENANCE_SIDEKIQ)
+      maintenance_pool
+    when utility_name.include?(ARCHIVE_SIDEKIQ)
+      archive_pool
+    when utility_name.include?(EXTERNAL_SIDEKIQ)
+      external_pool
+    when utility_name.include?(LONG_RUNNING)
+      longrunning_pool
     # when utility_name.include?(FALCON_COMMON_SIDEKIQ)
     #   FALCON_COMMON_POOL
     when utility_name.include?(COMMON_SIDEKIQ)
@@ -541,9 +555,7 @@ class SidekiqConfigStandard
   MISC_SIDEKIQ             = "sidekiq-misc-"
   REALTIME_SIDEKIQ         = "sidekiq-realtime-"
   SCHEDULED_SIDEKIQ        = "sidekiq-scheduled-"
-  OCCASIONAL_SIDEKIQ       = "sidekiq-occasional-"
   MAINTAINENCE_SIDEKIQ     = "sidekiq-maintainence-"
-  EXTERNAL_SIDEKIQ         = "sidekiq-external-"
   FREE_SIDEKIQ             = "sidekiq-free-"
   EMAIL_SIDEKIQ            = "sidekiq-email-"
   TRIAL_SIDEKIQ            = "sidekiq-trial-"
@@ -555,6 +567,14 @@ class SidekiqConfigStandard
   CRON_SIDEKIQ             = 'sidekiq-cron-'
   DATAEXPORT_SIDEKIQ       = "sidekiq-dataexport-"
   CENTRAL_REALTIME_SIDEKIQ = "sidekiq-central-realtime-"
+
+  # new classifications
+  OCCASIONAL_SIDEKIQ       = 'sidekiq-occasional-'.freeze
+  FREQUENT_SIDEKIQ         = 'sidekiq-frequent-'.freeze
+  MAINTENANCE_SIDEKIQ      = 'sidekiq-maintenance-'.freeze
+  ARCHIVE_SIDEKIQ          = 'sidekiq-archive-'.freeze
+  EXTERNAL_SIDEKIQ         = 'sidekiq-external-'.freeze
+  LONG_RUNNING             = 'sidekiq-longrunning-'.freeze
 
 
   def self.get_pool(node)
@@ -651,18 +671,13 @@ all_sidekiq_jobs =  cron_jobs + [
     # falcon_all_sidekiq = ["scheduler_post_message", "scheduler_cancel_message", "delete_archive_ticket","freshcaller_account_delete","toggle_agent_from_all_roundrobin_groups","add_agent_to_round_robin","marketoQueue","salesforceQueue","events_queue","metrics_data","restore_spam_tickets_worker",
     #     "jira_updates","check_for_spam","report_post","merge_topics","spam_digest_mailer","bulk_spam","ban_user","nullify_deleted_custom_field_data",
     #     "gamification_user_score","gamification_ticket_score","gamification_topic_quests","gamification_ticket_quests","gamification_solution_quests","gamification_post_quests"]
-
-    # new sidekiq classification
     realtime                 = ["realtime"]
     scheduled                = ["scheduled"]
-    occasional               = ["occasional"]
     maintainence             = ["maintainence"]
-    external                 = ["external"]
     free                     = ["free"]
     email                    = ["email"]
     trial                    = ["trial"]
     spam                     = ["spam"]
-    archive                  = ['archive_account_tickets', 'archive_ticket', 'manual_publish', 'delayed_central_publish', 'es_v2_queue', 'central_realtime']
     mailbox                  = ["mailbox_jobs"]
     export                   = ["exports"]
     cron_webhook             = ['cron_webhook']
@@ -676,6 +691,14 @@ all_sidekiq_jobs =  cron_jobs + [
     subscriptions            = ["subscriptions"]
     hard_delete              = ["hard_delete"]
 
+    # new classification
+    occasional               = ['occasional']
+    frequent                 = ['frequent']
+    maintenance              = ['maintenance']
+    archive                  = ['archive_account_tickets', 'archive_ticket', 'manual_publish', 'delayed_central_publish', 'es_v2_queue', 'central_realtime']
+    external                 = ['external']
+    long_running             = ['long_running']
+
     # SUPERVISOR_POOL        = [[rabbitmq,1],[#paid_sla,1],[premium_free_supervisor,1][trial_supervisor,1][search_one,1][solution_one,1]]
     _SEARCH_POOL              = [[search_one,1],[solution_one,1],[reports_one,1],[solution,1],[reset,1],[ebay,1],[batch_select_and_sla,1],[sla,1]]
     _DELAYEDJOB_POOL          = [[trial_account_jobs,1],[free_account_jobs,1],[active_account_jobs,1],[premium_account_jobs,1]]
@@ -684,23 +707,27 @@ all_sidekiq_jobs =  cron_jobs + [
     _COMMON_POOL              = [[all_sidekiq_jobs, common_pool_worker_count]]
     # FALCON_COMMON_POOL       = [[falcon_all_sidekiq, common_pool_worker_count]]
 
-    # new sidekiq classification
     _REALTIME_POOL            = [[realtime,6]]
     _SCHEDULED_POOL           = [[scheduled,6]]
-    _OCCASIONAL_POOL          = [[occasional,6]]
     _MAINTAINENCE_POOL        = [[maintainence,6]]
-    _EXTERNAL_POOL            = [[external,6]]
     _FREE_POOL                = [[free,6]]
     _EMAIL_POOL               = [[email,6]]
     _TRIAL_POOL               = [[trial,6]]
     _SPAM_POOL                = [[spam,6]]
-    _ARCHIVE_POOL             = [[archive,6]]
     _MAILBOX_POOL             = [[mailbox,6]]
     _BULK_API_POOL            = [[bulk_api, 6]]
     _EXPORT_POOL              = [[export, 6]]
     _MISC_POOL                = [[misc_sidekiq,6]]
     _CRON_POOL                = [[cron_webhook, 6]]
     _CENTRAL_REALTIME_POOL    = [[central_realtime, 6]]
+
+    # new classification
+    occasional_pool          = [[occasional, 6]]
+    frequent_pool            = [[frequent, 6]]
+    maintenance_pool         = [[maintenance, 6]]
+    archive_pool             = [[archive, 6]]
+    external_pool            = [[external, 6]]
+    longrunning_pool         = [[long_running, 6]]
 
     case
     when utility_name.include?(SEARCH_SIDEKIQ)
@@ -719,12 +746,8 @@ all_sidekiq_jobs =  cron_jobs + [
       _REALTIME_POOL
     when utility_name.include?(SCHEDULED_SIDEKIQ)
       _SCHEDULED_POOL
-    when utility_name.include?(OCCASIONAL_SIDEKIQ)
-      _OCCASIONAL_POOL
     when utility_name.include?(MAINTAINENCE_SIDEKIQ)
       _MAINTAINENCE_POOL
-    when utility_name.include?(EXTERNAL_SIDEKIQ)
-      _EXTERNAL_POOL
     when utility_name.include?(FREE_SIDEKIQ)
       _FREE_POOL
     when utility_name.include?(EMAIL_SIDEKIQ)
@@ -733,8 +756,6 @@ all_sidekiq_jobs =  cron_jobs + [
       _TRIAL_POOL
     when utility_name.include?(SPAM_SIDEKIQ)
       _SPAM_POOL
-    when utility_name.include?(ARCHIVE_SIDEKIQ)
-      _ARCHIVE_POOL
     when utility_name.include?(MAILBOXJOBS_SIDEKIQ)
       _MAILBOX_POOL
     when utility_name.include?(BULK_API_SIDEKIQ)
@@ -747,6 +768,19 @@ all_sidekiq_jobs =  cron_jobs + [
       _CENTRAL_REALTIME_POOL
     when utility_name.include?(CRON_SIDEKIQ)
       _CRON_POOL
+    # new classification
+    when utility_name.include?(OCCASIONAL_SIDEKIQ)
+      occasional_pool
+    when utility_name.include?(FREQUENT_SIDEKIQ)
+      frequent_pool
+    when utility_name.include?(MAINTENANCE_SIDEKIQ)
+      maintenance_pool
+    when utility_name.include?(ARCHIVE_SIDEKIQ)
+      archive_pool
+    when utility_name.include?(EXTERNAL_SIDEKIQ)
+      external_pool
+    when utility_name.include?(LONG_RUNNING)
+      longrunning_pool
     # when utility_name.include?(FALCON_COMMON_SIDEKIQ)
     #   FALCON_COMMON_POOL
     when utility_name.include?(COMMON_SIDEKIQ)

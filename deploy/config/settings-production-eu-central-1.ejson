@@ -1773,8 +1773,6 @@
     },
     "fc-app-reports": {
     },
-    "fc-bg-sidekiq-occasional": {
-    },
     "fc-app-archive": {
     },
     "hk-app-free": {
@@ -1804,8 +1802,6 @@
     "hk-app-archive": {
     },
     "fc-bg-sidekiq-spam": {
-    },
-    "fc-bg-sidekiq-external": {
     },
     "fc-bg-sidekiq-fc-occasional": {
     },
@@ -1883,8 +1879,6 @@
         "_enable": true
       }
     },
-    "fc-bg-sidekiq-archive": {
-    },
     "fc-app-api-channel": {
     },
     "fc-bg-resque-freshfone": {
@@ -1896,6 +1890,18 @@
     "fc-bg-sidekiq-cron": {
     },
     "fc-bg-shoryuken-archive": {
+    },
+    "fc-bg-sidekiq-occasional": {
+    },
+    "fc-bg-sidekiq-archive": {
+    },
+    "fc-bg-sidekiq-external": {
+    },
+    "fc-bg-sidekiq-frequent": {
+    },
+    "fc-bg-sidekiq-maintenance": {
+    },
+    "fc-bg-sidekiq-longrunning": {
     }
   }
 }
