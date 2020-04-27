@@ -8,7 +8,6 @@ module Helpdesk::Ticketfields::PublisherMethods
   end
 
   def construct_model_changes
-    return unless Account.current.ticket_fields_central_publish_enabled?
     @model_changes ||= {}
     @model_changes.merge!(self.previous_changes.clone.to_hash)
     if @choices.present? && choice_fields?

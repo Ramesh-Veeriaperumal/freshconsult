@@ -30,7 +30,6 @@ class TicketFieldsControllerTest < ActionController::TestCase
     CentralPublishWorker::TicketFieldWorker.jobs.clear
     return if @@before_all_run
     @account.ticket_fields.custom_fields.each(&:destroy)
-    @account.launch(:ticket_fields_central_publish)
     @@before_all_run = true
   end
 

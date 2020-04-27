@@ -23,7 +23,6 @@ class TicketFieldTest < ActiveSupport::TestCase
     return if @@before_all_run
     @account = @account.make_current
     @account.ticket_fields.custom_fields.each(&:destroy)
-    @account.launch(:ticket_fields_central_publish)
     CentralPublishWorker::TicketFieldWorker.jobs.clear
     @@before_all_run = true
   end
