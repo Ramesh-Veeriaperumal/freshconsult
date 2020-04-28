@@ -2,6 +2,7 @@ class Freshid::Fdadmin::FreshidV1ToV2Migration < ActiveRecord::Migration
   include Redis::RedisKeys
   include Redis::OthersRedis
   include Freshid::Fdadmin::MigrationHelper
+  include Freshid::V2::Migration::MigratorExtensions
 
   attr_accessor :product_account_mapping, :chain_migration
 
@@ -74,12 +75,6 @@ class Freshid::Fdadmin::FreshidV1ToV2Migration < ActiveRecord::Migration
     subject = "#{FRESHID_V2_EMAIL_SUBJECT} A = #{account_id}"
     Emailer.export_logs([], subject, message, @doer_email)
   end
-
-  def fetch_sandbox_account(account); end
-
-  def fetch_freshconnect_accounts(account, linked_accounts); end
-
-  def fetch_freshcaller_accounts(account, linked_accounts); end
 
   def fetch_freshchat_accounts(account, linked_accounts)
     account.freshchat_account
