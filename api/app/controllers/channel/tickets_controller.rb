@@ -4,8 +4,8 @@ module Channel
     CHANNEL_TICKETS_VALIDATION_CLASS = 'TicketValidation'.constantize
 
     include ChannelAuthentication
+    prepend_before_filter :channel_client_authentication
     skip_before_filter :check_privilege, if: :skip_privilege_check?
-    before_filter :channel_client_authentication
 
     private
 
@@ -49,7 +49,7 @@ module Channel
       end
 
       def skip_privilege_check?
-        channel_source?(:freshchat)
+        channel_source?(:freshchat) || channel_source?(:field_service)
       end
   end
 end

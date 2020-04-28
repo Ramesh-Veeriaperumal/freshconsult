@@ -223,5 +223,51 @@ module Channel
       end
       match_json(pattern)
     end
+
+    def test_create_ticket_with_field_service_jwt_header_success
+      params = ticket_params_hash
+      params.delete(:tags)
+      set_jwt_auth_header('field_service')
+      post :create, construct_params({ version: 'channel' }, params)
+      assert_response 201
+    ensure
+      @controller.unstub(:api_current_user)
+    end
+
+    def test_get_ticket_with_field_service_jwt_header_success
+      params = ticket_params_hash
+      params.delete(:tags)
+      set_jwt_auth_header_for_field_service
+      created_ticket = post :create, construct_params({ version: 'channel' }, params)
+      parsed_ticket = JSON.parse(created_ticket.body)
+
+      set_jwt_auth_header_for_field_service(user_id = parsed_ticket['responder_id'])
+      get :show, controller_params(version: 'channel', id: parsed_ticket['id'])
+      assert_response 200
+    end
+
+    def test_get_ticket_with_field_service_jwt_header_with_unauthorized_actor
+      params = ticket_params_hash
+      params.delete(:tags)
+      set_jwt_auth_header_for_field_service
+      created_ticket = post :create, construct_params({ version: 'channel' }, params)
+      parsed_ticket = JSON.parse(created_ticket.body)
+
+      added_agent = add_test_agent(@account, role: Role.find_by_name('Agent').id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
+      set_jwt_auth_header_for_field_service(user_id = added_agent.id)
+      get :show, controller_params(version: 'channel', id: parsed_ticket['id'])
+      assert_response 403
+      match_json(
+        code: 'access_denied',
+        message: 'You are not authorized to perform this action.'
+      )
+    end
+
+    def set_jwt_auth_header_for_field_service(user_id = nil)
+      payload = { enc_payload: { 'account_id' => @account.id, 'timestamp' => Time.now.iso8601 } }
+      payload[:actor] = user_id if user_id
+      token = JWT.encode payload, CHANNEL_API_CONFIG[:field_service][:jwt_secret], 'HS256', source: 'field_service'
+      request.env['X-Channel-Auth'] = token
+    end
   end
 end

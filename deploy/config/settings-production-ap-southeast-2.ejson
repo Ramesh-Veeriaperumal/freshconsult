@@ -1310,6 +1310,10 @@
         "twilight": {
           "_auth_type": "jwt",
           "jwt_secret": "EJ[1:cvYUI5rmePswiEBfr9Tldk8vFokpij+Rt55cYii7DB4=:o3X2W8WGbt5H7GPZcW7YtL7EAKxQpBhb:aWXo2FJ6495v/n9oUeWCSrWZBbGWhyaDZi5oHvLgT2ysdHu1j2VCw/ZeQe+BsUOJ]"
+        },
+        "field_service": {
+          "_auth_type": "jwt",
+          "jwt_secret": "EJ[1:HoRCYcb2hscPRyzlao/BFOQwsygfY+LiI35NqTX9Y04=:HwAyWlEKbqjvj68fUGerwQ4ltLjouiiD:h2OrMBtfcruben1HUBVBzPQc9yHWgUuIXsaWbfDWz3gMPV9D6VPlwB9NzWgaidS5ywelHAxaEnyZXf+VX2PIx3q46EiBdAq3XPwsm3aaJQ==]"
         }
       },
       "scheduler_client_keys": {

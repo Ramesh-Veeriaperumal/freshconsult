@@ -189,6 +189,10 @@
         "twilight": {
           "_auth_type": "jwt",
           "jwt_secret": "EJ[1:yHngE5On+uaOB1J8F9vNIgKScfhpKJzjGb36sNJp2XY=:cT7vON+sWOcRebU/87g7N/sWeqrdeOg/:uGteG73OeDWUl3wg4r3J0yJXZ+Iw+rQnoukRYo2oGGg2540I0N6dg9SwUBEPYoNo]"
+        },
+        "field_service": {
+          "_auth_type": "jwt",
+          "jwt_secret": "EJ[1:WCTxEk4kHDroUaHv2BhudGav+9O8HH7iwNv991qx7jI=:otuVCsHk/NlAHXayKHlokHnrJJXbNnZZ:9Jyjfid4HlIqv6X5GO9DJmrKJ0WBpz0ex9L6YCmuAOnZQL2/T16b/0y9NQAWRLnyvWnooDSsj0AQdngO9MkS87l4lxZm0wjMTp9e0JI7Eg==]"
         }
       },
       "channel_v2_api": {
