@@ -40,7 +40,7 @@ class Account < ActiveRecord::Base
     :email_mailbox, :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
     :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :launch_fsm_geolocation,
     :ticket_field_revamp, :facebook_dm_outgoing_attachment, :skip_posting_to_fb, :hide_mailbox_error_from_agents, :hide_og_meta_tags,
-    :freshcaller_admin_new_ui, :facebook_post_outgoing_attachment, :disable_occlusion_rendering,
+    :facebook_post_outgoing_attachment, :disable_occlusion_rendering,
     :prevent_lang_detect_for_spam, :jira_onpremise_reporter, :support_ticket_rate_limit, :sidekiq_logs_to_central, :portal_central_publish, :encode_emoji_in_solutions,
     :forums_agent_portal, :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html,
     :mailbox_forward_setup, :remove_image_attachment_meta_data, :automated_private_notes_notification, :detect_lang_from_email_service,
@@ -87,7 +87,7 @@ class Account < ActiveRecord::Base
     :secure_attachments, :article_versioning, :article_export, :article_approval_workflow, :next_response_sla, :advanced_automations,
     :fb_ad_posts, :suggested_articles_count, :unlimited_multi_product,
     :help_widget_article_customisation, :agent_assist, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
-    :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options
+    :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -253,10 +253,6 @@ class Account < ActiveRecord::Base
 
   def freshcaller_enabled?
     has_feature?(:freshcaller) and freshcaller_account.present?
-  end
-
-  def freshcaller_admin_new_ui_enabled?
-    has_feature?(:freshcaller) and launched?(:freshcaller_admin_new_ui)
   end
 
   def livechat_enabled?

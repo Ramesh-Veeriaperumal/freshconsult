@@ -1075,10 +1075,6 @@ class Account < ActiveRecord::Base
     freshchat_account.nil? ? false : true
   end
 
-  def omni_bundle_id
-    account_additional_settings.additional_settings.try(:[], :bundle_id)
-  end
-
   protected
 
     def external_url_is_valid?(url)

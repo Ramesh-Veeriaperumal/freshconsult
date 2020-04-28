@@ -71,6 +71,7 @@
       - :article_export
 #     - :field_service_management_toggle
       - :sla_reminder_automation
+      - :advanced_freshcaller
     :inherits:
       - :sprout_jan_17
     :exclude: []
@@ -221,6 +222,7 @@
       - :sla_reminder_automation
       - :article_interlinking
       - :advanced_article_toolbar_options
+      - :advanced_freshcaller
     :inherits:
       - :sprout_jan_19
     :exclude: []
@@ -435,6 +437,7 @@
       - :article_interlinking
       - :advanced_article_toolbar_options
 #     - :field_service_management_toggle
+      - :advanced_freshcaller
     :inherits:
       - :sprout_jan_20
     :exclude: []

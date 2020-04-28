@@ -5,7 +5,7 @@ class Admin::FreshcallerAccountController < ApiApplicationController
   include Freshcaller::Util
 
   skip_before_filter :build_object, only: [:create]
-  before_filter :check_feature
+  before_filter :check_feature, only: [:enable, :disable, :update]
   before_filter :load_agents, only: [:show]
   before_filter :validate_params, only: [:link, :update]
   before_filter :validate_linking, only: [:create, :link]
@@ -84,9 +84,9 @@ class Admin::FreshcallerAccountController < ApiApplicationController
   private
 
     def check_feature
-      return if current_account.freshcaller_admin_new_ui_enabled?
+      return if current_account.advanced_freshcaller_enabled?
 
-      render_request_error(:require_feature, 403, feature: FeatureConstants::ADMIN_FRESHCALLER.join(',').titleize)
+      render_request_error(:require_feature, 403, feature: 'advanced_freshcaller'.titleize)
     end
 
     def scoper

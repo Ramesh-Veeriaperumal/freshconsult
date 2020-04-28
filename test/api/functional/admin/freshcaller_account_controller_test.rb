@@ -1,4 +1,5 @@
 require_relative '../../../test_helper'
+require_relative '../../../core/helpers/account_test_helper'
 require 'sidekiq/testing'
 Sidekiq::Testing.fake!
 require 'webmock/minitest'
@@ -8,6 +9,7 @@ module Admin
   class FreshcallerAccountControllerTest < ActionController::TestCase
     include ::Freshcaller::TestHelper
     include ::Freshcaller::Endpoints
+    include AccountTestHelper
 
     def setup
       super
@@ -20,13 +22,11 @@ module Admin
     end
 
     def launch_freshcaller_features
-      Account.current.launch :freshcaller_admin_new_ui
-      Account.current.add_feature :freshcaller
+      Account.current.add_feature :advanced_freshcaller
     end
 
     def revoke_freshcaller_features
-      Account.current.rollback :freshcaller_admin_new_ui
-      Account.current.revoke_feature :freshcaller
+      Account.current.revoke_feature :advanced_freshcaller
     end
 
     def freshcaller_account_show_response
@@ -56,9 +56,7 @@ module Admin
     def test_show_with_no_feature_check
       revoke_freshcaller_features
       get :show, controller_params(version: 'private')
-      assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:forbidden]
-      match_json(code: 'require_feature', message:
-            'The Freshcaller,Freshcaller Admin New Ui feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
+      assert_response 204
     ensure
       launch_freshcaller_features
     end
@@ -115,6 +113,26 @@ module Admin
       assert_response 204
     end
 
+    def test_destroy_with_no_feature
+      revoke_freshcaller_features
+      current_account = Account.current
+      create_freshcaller_account unless Account.current.freshcaller_account
+      create_freshcaller_enabled_agent
+      freshcaller_account = Account.current.freshcaller_account
+      stub_freshcaller_request
+      Sidekiq::Testing.inline! do
+        delete :destroy, construct_params(id: freshcaller_account.id)
+      end
+      unstub_freshcaller_request
+      assert_response 204
+    ensure
+      unstub_freshcaller_request
+      current_account.make_current
+      delete_freshcaller_account
+      delete_freshcaller_agent unless @agent.agent.freshcaller_agent.nil?
+      launch_freshcaller_features
+    end
+
     def test_freshcaller_destroy
       current_account = Account.current
       create_freshcaller_account unless Account.current.freshcaller_account
@@ -154,6 +172,19 @@ module Admin
       unstub_freshcaller_request
     end
 
+    def test_enable_with_no_feature
+      revoke_freshcaller_features
+      create_freshcaller_account unless Account.current.freshcaller_account
+      put :enable, construct_params({})
+      assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:forbidden]
+      match_json(code: 'require_feature', message:
+            'The Advanced Freshcaller feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
+    ensure
+      delete_freshcaller_account
+      unstub_freshcaller_request
+      launch_freshcaller_features
+    end
+
     def test_freshcaller_enable
       create_freshcaller_account unless Account.current.freshcaller_account
       stub_freshcaller_request
@@ -174,6 +205,19 @@ module Admin
     ensure
       delete_freshcaller_account
       unstub_freshcaller_request
+    end
+
+    def test_disable_with_no_feature
+      revoke_freshcaller_features
+      create_freshcaller_account unless Account.current.freshcaller_account
+      put :disable, construct_params({})
+      assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:forbidden]
+      match_json(code: 'require_feature', message:
+            'The Advanced Freshcaller feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
+    ensure
+      delete_freshcaller_account
+      unstub_freshcaller_request
+      launch_freshcaller_features
     end
 
     def test_freshcaller_disable
@@ -203,6 +247,22 @@ module Admin
       put :enable, construct_params({})
       assert_response 400
       match_json([bad_request_error_pattern('freshcaller_account', :fc_account_absent)])
+    end
+
+    def test_link_with_no_feature
+      revoke_freshcaller_features
+      agent = add_test_agent(@account)
+      stub_link_account_success(agent.email)
+      params_hash = {
+        url: 'test.freshcaller.com',
+        email: agent.email,
+        password: 'test1234'
+      }
+      post :link, construct_params({ version: 'private' }.merge(params_hash), params_hash)
+      assert_response 200
+    ensure
+      delete_freshcaller_account
+      launch_freshcaller_features
     end
 
     def test_link_with_feature_and_correct_user_email
@@ -331,6 +391,18 @@ module Admin
       remove_stubs
     end
 
+    def test_create_with_no_feature
+      revoke_freshcaller_features
+      agent = add_test_agent(@account)
+      stub_create_success
+      post :create, controller_params(version: 'private')
+      assert_response 200
+    ensure
+      delete_freshcaller_account
+      remove_stubs
+      launch_freshcaller_features
+    end
+
     def test_create_new_account_success
       agent = add_test_agent(@account)
       stub_create_success
@@ -386,6 +458,19 @@ module Admin
       match_json(request_error_pattern(:unknown_error))
     ensure
       remove_stubs
+    end
+
+    def test_update_without_feature
+      revoke_freshcaller_features
+      params_hash = { agent_ids: [] }
+      Sidekiq::Testing.inline! do
+        put :update, construct_params({ version: 'private' }.merge(params_hash), params_hash)
+      end
+      assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:forbidden]
+      match_json(code: 'require_feature', message:
+            'The Advanced Freshcaller feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
+    ensure
+      launch_freshcaller_features
     end
 
     def test_update_agents_without_freshcaller_account
