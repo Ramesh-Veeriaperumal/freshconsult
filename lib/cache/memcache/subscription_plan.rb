@@ -35,9 +35,10 @@ module Cache::Memcache::SubscriptionPlan
   module ClassMethods
     
     def cached_current_plans
+      omni_account = Account.current.omni_bundle_account? if Account.current.present?
       MemcacheKeys.fetch(MemcacheKeys::SUBSCRIPTION_PLANS) do 
         SubscriptionPlan.select("id,name,display_name,classic").all
-      end.select { |plan| plan.classic == false }
+      end.select { |plan| omni_account ? (!plan.classic && plan.omni_plan?) : plan.classic == false }
     end
 
     def current_plan_names_from_cache

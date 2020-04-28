@@ -17,7 +17,6 @@ module Helpdesk::Ticketfields::Publisher
   end
 
   def backup_changes
-    return unless Account.current.ticket_fields_central_publish_enabled?
     @section_was = section.central_publish_payload
   end
 
@@ -26,7 +25,6 @@ module Helpdesk::Ticketfields::Publisher
   end
 
   def publish_field
-    return unless Account.current.ticket_fields_central_publish_enabled?
     if ticket_field
       ticket_field.model_changes = self.sections_changes
       ticket_field.updated_at = Time.now.utc

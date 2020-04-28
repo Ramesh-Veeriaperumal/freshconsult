@@ -13,7 +13,7 @@ class AgentObserver < ActiveRecord::Observer
   end
   
   def after_commit(agent)
-    create_update_fc_agent(agent) if save_fc_agent?(agent)
+    handle_fcaller_agent(agent) if Account.current.freshcaller_enabled? && valid_fcaller_agent_action?(agent)
     handle_capping(agent) if agent.safe_send(:transaction_include_action?, :update)
     true
   end

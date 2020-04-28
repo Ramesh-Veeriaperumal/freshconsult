@@ -3064,6 +3064,8 @@ en:
         unassigned_service_tasks: Unassigned service tasks
         service_tasks_starting_today: Service tasks starting today
         unresolved_service_tasks: Unresolved service tasks
+        visible_and_pending: Pending Tickets
+        visible_and_resolved: Resolved Tickets
       friendly_status:
         customer_responded: Customer Responded
         elapsed: Response Due

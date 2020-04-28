@@ -4,113 +4,169 @@ module Freshcaller
     include Freshcaller::Endpoints
 
     FRESHCALLER_ROLE_PRIVILEGES = {
-      :account_admin => :manage_account,
-      :admin => :admin_tasks,
-      :supervisor => :view_reports
-    }
+      account_admin: :manage_account,
+      admin: :admin_tasks,
+      supervisor: :view_reports
+    }.freeze
 
-    def freshcaller_enabled?(agent)
-      agent.account.freshcaller_enabled?
+    ACTION_MAPPINGS = {
+      post: 'create',
+      patch: 'update'
+    }.freeze
+
+    SUCCESS_CODES = (200..204).freeze
+
+    POST_TYPE = 'post'.freeze
+
+    PATCH_TYPE = 'patch'.freeze
+
+    def valid_fcaller_agent_action?(agent)
+      fcaller_agent_create?(agent) || fcaller_agent_update?(agent) || fcaller_agent_destroy?(agent)
     end
 
-    def save_fc_agent?(agent)
-      %i[create update].any? { |transact_type| agent.safe_send(:transaction_include_action?, transact_type) } &&
-        freshcaller_enabled?(agent) && !agent.freshcaller_enabled.nil? &&
-        agent.freshcaller_agent.try(:fc_enabled) != agent.freshcaller_enabled
+    def handle_fcaller_agent(agent)
+      @agent = agent
+      @user = agent.user
+      action = fetch_agent_action
+      log_request_and_call_freshcaller(action) do
+        update_to_freshcaller(action)
+      end
     end
 
-    def create_update_fc_agent(agent)
-      if agent.freshcaller_enabled
-        add_response = add_agent_to_freshcaller(agent)
-        parsed_response = add_response.parsed_response
-        if fc_agent_created?(add_response)
-          return create_freshcaller_agent(agent, parsed_response)
-        elsif fc_agent_limit?(parsed_response)
-          return agent.errors[:base] << :freshcaller_agent_limit
-        elsif fc_agent_already_present?(agent, parsed_response)
-          return agent.errors[:base] << :freshcaller_agent_present
-        elsif fc_error?(add_response)
-          return :unable_to_perform
+    private
+
+      def current_account
+        ::Account.current
+      end
+
+      def fcaller_agent_create?(agent)
+        agent.safe_send(:transaction_include_action?, :create) && agent.freshcaller_enabled && agent.freshcaller_agent.try(:fc_enabled).nil?
+      end
+
+      def fcaller_agent_update?(agent)
+        if agent.safe_send(:transaction_include_action?, :update)
+          if agent.freshcaller_enabled.nil? || agent.freshcaller_enabled == agent.agent_freshcaller_enabled?
+            agent_properties_changed?(agent)
+          else
+            current_account.omni_bundle_id ? true : standalone_freshcaller_account?(agent)
+          end
         end
       end
-      agent.freshcaller_agent.update_attributes!(fc_enabled: agent.freshcaller_enabled || false)
-    end
 
-    def add_agent_params(agent)
-      {
-        data: {
-          attributes: {
-            name: agent.user.name
-          },
-          relationships: {
-            user_emails: {
-              data: [{
-                type: 'user_emails',
-                attributes: {
-                  email: agent.user.email,
-                  primary_email: true
-                }
-              }]
+      def fcaller_agent_destroy?(agent)
+        agent.safe_send(:transaction_include_action?, :destroy) && current_account.omni_bundle_id && agent.freshcaller_agent.present?
+      end
+
+      def standalone_freshcaller_account?(agent)
+        agent.freshcaller_agent.update_attributes!(fc_enabled: agent.freshcaller_enabled) if agent.freshcaller_enabled == false
+        agent.freshcaller_enabled
+      end
+
+      def agent_properties_changed?(agent)
+        (agent.user.previous_changes.keys & ['privileges', 'email']).present? && agent.agent_freshcaller_enabled?
+      end
+
+      def fetch_agent_action
+        @agent.freshcaller_agent.nil? ? POST_TYPE : PATCH_TYPE
+      end
+
+      def log_request_and_call_freshcaller(action)
+        Rails.logger.debug "Freshcaller Agent #{action} API called for Account #{current_account.id} and for Agent #{@agent.id}"
+        response = yield
+        parsed_response = response.parsed_response
+        if fcaller_agent_success?(response)
+          return safe_send("#{ACTION_MAPPINGS[action.to_sym]}_freshcaller_agent", parsed_response)
+        else
+          raise "Response status: #{response.code}:: Body: #{response.message}:: #{response.body}"
+        end
+      rescue StandardError => e
+        Rails.logger.error "Exception in Freshcaller Agent #{action} API :: #{e.message} for Account #{current_account.id} and for Agent #{@agent.id}"
+        NewRelic::Agent.notice_error(e, description: "Exception in Freshcaller Agent #{action} API :: error: #{e.message} for Account #{current_account.id} and for Agent #{@agent.id}")
+      end
+
+      def update_to_freshcaller(action)
+        freshcaller_request(add_agent_params(action), freshcaller_agent_url(action), action.to_sym, email: ::User.current.email)
+      end
+
+      def add_agent_params(action)
+        request_body = {
+          data: {
+            attributes: {
+              name: @user.name,
+              phone: @user.phone,
+              language: @user.language || current_account.language
             },
-            roles: {
-              data: [{
-                name: deduct_freshcaller_role(agent),
-                type: 'roles'
-              }]
-            }
-          },
-          role: deduct_freshcaller_role(agent),
-          type: 'users'
+            relationships: {
+              user_emails: {
+                data: [{
+                  type: 'user_emails',
+                  attributes: {
+                    email: @user.email,
+                    primary_email: true
+                  }
+                }]
+              },
+              roles: {
+                data: [{
+                  name: deduct_freshcaller_role,
+                  type: 'roles'
+                }]
+              }
+            },
+            role: deduct_freshcaller_role,
+            type: 'users'
+          }
         }
-      }
-    end
-
-    def add_agent_to_freshcaller(agent)
-      freshcaller_request(add_agent_params(agent), freshcaller_add_agent_url, :post, email: ::User.current.email)
-    end
-
-    def deduct_freshcaller_role(agent)
-      deducted_role = FRESHCALLER_ROLE_PRIVILEGES.detect do |k, v|
-        agent.user.privilege? v
-      end.try(:first)
-      deducted_role || :agent
-    end
-
-    def fc_error?(response)
-      response['error_code'].present?
-    end
-
-    def fc_agent_limit?(result)
-      return unless result.key?('errors')
-
-      result['errors'].any? do |kv|
-        kv['detail'].include?('Please purchase extra to add new agents')
+        request_body[:data][:attributes][:deleted] = !@agent.freshcaller_enabled if action == 'patch' && add_is_deleted?
+        request_body
       end
-    end
 
-    def fc_agent_already_present?(agent, result)
-      return if agent.freshcaller_agent.try(:fc_user_id).present?
-
-      return unless result.key?('errors')
-
-      result['errors'].any? do |kv|
-        kv['detail'].include?('has already been taken')
+      def deduct_freshcaller_role
+        deducted_role = FRESHCALLER_ROLE_PRIVILEGES.detect do |k, v|
+          @user.privilege? v
+        end.try(:first)
+        deducted_role || :agent
       end
-    end
 
-    def fc_agent_created?(result)
-      [200, 201].include?(result.code)
-    end
+      def add_is_deleted?
+        (!@agent.freshcaller_enabled.nil? || @agent.safe_send(:transaction_include_action?, :destroy))
+      end
 
-    def create_freshcaller_agent(agent, result)
-      if agent.freshcaller_agent.present?
-        agent.freshcaller_agent.update_attributes(fc_enabled: true, fc_user_id: result.try(:[], 'data').try(:[], 'id'))
-      else
-        agent.create_freshcaller_agent(
-          fc_enabled: true,
-          fc_user_id: result.try(:[], 'data').try(:[], 'id')
+      def freshcaller_agent_url(action)
+        if action == 'patch'
+          raise 'Freshcaller UserID not present' if fcaller_user_id.nil?
+
+          freshcaller_update_agent_url(fcaller_user_id)
+        else
+          freshcaller_add_agent_url
+        end
+      end
+
+      def fcaller_user_id
+        @agent.freshcaller_agent.try(:fc_user_id)
+      end
+
+      def fcaller_agent_success?(result)
+        SUCCESS_CODES.include?(result.code)
+      end
+
+      def create_freshcaller_agent(result)
+        @agent.create_freshcaller_agent(
+          fc_enabled: !parse_response(result)[:is_deleted],
+          fc_user_id: parse_response(result)[:fc_user_id]
         )
       end
-    end
+
+      def update_freshcaller_agent(result)
+        is_deleted = parse_response(result)[:is_deleted]
+        @agent.freshcaller_agent.update_attributes(fc_enabled: !is_deleted, fc_user_id: parse_response(result)[:fc_user_id]) if (is_deleted == @agent.freshcaller_agent.try(:fc_enabled)) && @agent.safe_send(:transaction_include_action?, :update)
+      end
+
+      def parse_response(result)
+        {
+          is_deleted: result.try(:[], 'data').try(:[], 'attributes').try(:[], 'deleted'),
+          fc_user_id: result.try(:[], 'data').try(:[], 'id')
+        }
+      end
   end
 end

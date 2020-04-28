@@ -1,7 +1,8 @@
 <%= node[:opsworks][:environment] %>:
     app_id: <%= node[:ymls][:rts][:app_id] %>
     app_secret: <%= node[:ymls][:rts][:app_secret] %>
-    end_point: <%= node[:ymls][:rts][:end_point] %>
+    ws_end_point: <%= node[:ymls][:rts][:ws_end_point] %>
+    rest_end_point: <%= node[:ymls][:rts][:rest_end_point] %>
     db_cipher_key: <%= node[:ymls][:rts][:db_cipher_key] %>
     jwt_default_expiry: <%= node[:ymls][:rts][:jwt_default_expiry] %>
     channel_cipher_key: <%= node[:ymls][:rts][:channel_cipher_key] %>

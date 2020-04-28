@@ -6,11 +6,9 @@ class TicketStatusTest < ActiveSupport::TestCase
   def setup
     super
     @account = @account.make_current
-    @account.launch(:ticket_fields_central_publish)
   end
 
   def teardown
-    @account.rollback(:ticket_fields_central_publish)
     Account.unstub(:current)
   end
 

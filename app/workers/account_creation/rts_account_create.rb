@@ -25,7 +25,7 @@ module AccountCreation
     def make_rts_http_call
       hrp = HttpRequestProxy.new
       service_params = {
-        domain: RTSConfig['end_point'],
+        domain: RTSConfig['rest_end_point'],
         rest_url: RTS_ACCOUNT_REGISTER[:end_point],
         body: payload.to_json,
         custom_auth_header: custom_auth_header.stringify_keys

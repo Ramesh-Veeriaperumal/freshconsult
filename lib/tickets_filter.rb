@@ -260,6 +260,10 @@ module TicketsFilter
     filters.select { |filter| (filter_id = visible ? filter[:id] : filter) && filter_id == param_filter_id }
   end
 
+  def self.visible_status(status)
+    ["status=#{status} and helpdesk_tickets.deleted=false and spam=false"]
+  end
+
   ### ES Count query related hacks : START ###
 
   ### Hack for dashboard/API summary count fetching from ES
@@ -327,6 +331,8 @@ module TicketsFilter
         :twitter          => ["source = ?", Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter]],
         :mobihelp          => ["source = ?", Account.current.helpdesk_sources.ticket_source_keys_by_token[:mobihelp]],
         :open_or_pending  => ["status not in (?, ?) and helpdesk_tickets.deleted=? and spam=?" , RESOLVED, CLOSED , false, false],
+        visible_and_resolved: visible_status(RESOLVED),
+        visible_and_pending:  visible_status(PENDING),
         :resolved_or_closed  => ["status in (?, ?) and helpdesk_tickets.deleted=?" , RESOLVED, CLOSED,false]
       }
     end

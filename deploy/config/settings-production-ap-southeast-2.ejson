@@ -19,7 +19,8 @@
       "rts": {
         "app_id": "EJ[1:1zOzrZtls6fbRAMGjYsYBnux5Un9yduX8HTheTLRnRQ=:rbjcR7M3eyYl5ZebvkFmoShYM+RhIXSB:j3zvTpwg5cGdWaZSjxamXwTWGm01axJ5]",
         "app_secret": "EJ[1:1zOzrZtls6fbRAMGjYsYBnux5Un9yduX8HTheTLRnRQ=:HCd2uVsy08rUVZWT7lLWh0MET3syBB1S:9gD2iVt6w2zR/tZ46hFSJQJHTDDSAFkLVCBqZ0BscpNW1W2Vu+HR8lgFoC4ah3UimINcpEvSjeWShOYZ]",
-        "_end_point": "https://rts-aus.freshworksapi.com",
+        "_ws_end_point": "https://rts-aus.freshworksapi.com",
+        "_rest_end_point": "https://rts-aus.freshworksapi.com",
         "db_cipher_key": "EJ[1:1zOzrZtls6fbRAMGjYsYBnux5Un9yduX8HTheTLRnRQ=:3SQffjli3dVMzPuQhmN3UfbSc3C1Rgec:7LGRVb6vqcGB1rrPft6ikGQFZkSvyUfbXqlyS75AVjjQ9MQUSf2b/ZbDK46rHGFKb+NHP60iuzg3JXuW]",
         "_jwt_default_expiry": "100",
         "channel_cipher_key": "EJ[1:MMCVpuMN7YCy8AO1L+UoZvH0kWBd2zoEOTnCNGFWoD0=:kThnxDcPtKH0vP94FiHF4zexOBS73Lw2:/yXSxpIHaXvDgJBphckQz8QJmjsG62wuT1g1ZcOYhCfXNsvK3VydWXhrPidMNbX7vSHYNbH7LwsXBXf1f9+ELSkYd8SApK8f5Za2YbRM/WM=]"
@@ -1706,10 +1707,6 @@
     },
     "hk-app-buffer": {
     },
-    "fc-bg-sidekiq-external": {
-    },
-    "fc-bg-sidekiq-occasional": {
-    },
     "fc-bg-sidekiq-maintainence": {
     },
     "hk-app-http-request": {
@@ -1756,8 +1753,6 @@
     },
     "hk-app-support": {
     },
-    "fc-bg-sidekiq-archive": {
-    },
     "fc-app-buffer": {
     },
     "fc-app-merge": {
@@ -1767,6 +1762,18 @@
     "fc-bg-sidekiq-cron": {
     },
     "fc-bg-shoryuken-archive": {
+    },
+    "fc-bg-sidekiq-occasional": {
+    },
+    "fc-bg-sidekiq-archive": {
+    },
+    "fc-bg-sidekiq-external": {
+    },
+    "fc-bg-sidekiq-frequent": {
+    },
+    "fc-bg-sidekiq-maintenance": {
+    },
+    "fc-bg-sidekiq-longrunning": {
     }
   }
 }

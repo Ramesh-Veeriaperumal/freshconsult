@@ -20,7 +20,7 @@ class Account < ActiveRecord::Base
     :onboarding_inlinemanual, :skip_portal_cname_chk,
     :product_central_publish, :redis_picklist_id,
     :bot_email_channel, :bot_email_central_publish, :description_by_default,
-    :bot_chat_history, :new_es_api, :filter_factory, :ticket_fields_central_publish,
+    :bot_chat_history, :new_es_api, :filter_factory,
     :skip_invoice_due_warning, :automation_revamp, :archive_ticket_fields,
     :scheduled_export_fix, :compact_lang_detection,
     :agent_group_central_publish, :custom_fields_search, :disable_rabbitmq_iris,

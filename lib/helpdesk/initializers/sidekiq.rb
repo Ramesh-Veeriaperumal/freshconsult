@@ -12,6 +12,13 @@ SIDEKIQ_CLASSIFICATION_MAPPING = SIDEKIQ_CLASSIFICATION[:classification].inject(
   t_h
 end
 
+SIDEKIQ_CLASSIFICATION_MAPPING_NEW = SIDEKIQ_CLASSIFICATION[:new_classification].inject({}) do |t_h, queue|
+  queue.last.each do |q|
+    t_h[q] = queue.first
+  end
+  t_h
+end
+
 REDIS_CONFIG_KEYS = ['host', 'port', 'password', 'namespace'].freeze
 
 redis_config = config.slice(*REDIS_CONFIG_KEYS).merge(tcp_keepalive: config['keepalive'], network_timeout: sidekiq_config['timeout'])
