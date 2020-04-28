@@ -36,22 +36,27 @@ module CronWebhooks
         domain_details = []
         Sharding.run_on_all_slaves do
           current_shard_name = ActiveRecord::Base.current_shard_selection.shard.to_s
-          Subscription.find_each do |subscription|
-            if subscription.state.eql? 'suspended'
-              domain =  DomainMapping.find_by_account_id(subscription.account_id).try(:domain)
-              suspended_domains << domain
-            else
-              account_shard_name = ShardMapping.find_by_account_id(account.id).shard_name
-              if account_shard_name == current_shard_name
-                domain = DomainMapping.find_by_account_id(subscription.account_id).try(:domain)
-                account_shard_name.slice! 'shard_'
-                state = (subscription.state.eql? 'active') ? 'paid' : subscription.state
-                domain_details << domain + ' ' + account_shard_name + ' ' + state
+            Subscription.find_each do |subscription|
+              begin
+                if subscription.state.eql? 'suspended'
+                  domain =  DomainMapping.find_by_account_id(subscription.account_id).try(:domain)
+                  suspended_domains << domain
+                else
+                  account_shard_name = ShardMapping.lookup_with_account_id(subscription.account_id).shard_name
+                  if account_shard_name == current_shard_name
+                      domain = DomainMapping.find_by_account_id(subscription.account_id).try(:domain)
+                      account_shard_name.slice! 'shard_'
+                      state = (subscription.state.eql? 'active') ? 'paid' : subscription.state
+                      domain_details << domain + ' ' + account_shard_name + ' ' + state
+                  end
+                end
+              rescue StandardError => e
+                NewRelic::Agent.notice_error(e)
               end
             end
-          end
         end
 
+        s3 = Aws::S3::Client.new(region: 'us-east-1')
         File.open('/tmp/suspended_domains.lst', 'w') do |f|
           suspended_domains.each { |domain| f.puts(domain) }
         end
@@ -64,7 +69,7 @@ module CronWebhooks
 
         # The S3 File (haproxy-domains/billed_domains.lst) holds the billed domains which should not be treated
         # as sample domains during FREE or PARTIAL Traffic switch
-        s3 = Aws::S3::Client.new(region: 'us-east-1')
+        
         billed_domains_list = []
         begin
           billed_domains_object = s3.get_object(key: 'haproxy-domains/billed_domains.lst', bucket: bucket_name)
