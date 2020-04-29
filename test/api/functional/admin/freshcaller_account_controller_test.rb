@@ -42,6 +42,7 @@ module Admin
     def stub_freshcaller_request(code: 200, body: {}, message: 'OK')
       ::Freshcaller::Account.any_instance.stubs(:domain).returns('test.freshcaller.com')
       HTTParty::Response.any_instance.stubs(:body).returns(body.to_json)
+      HTTParty::Response.any_instance.stubs(:parsed_response).returns(body)
       HTTParty::Response.any_instance.stubs(:message).returns(message)
       HTTParty::Response.any_instance.stubs(:code).returns(code)
     end
@@ -625,6 +626,54 @@ module Admin
       delete_freshcaller_account
       delete_freshcaller_agent unless @agent.agent.freshcaller_agent.nil?
       remove_stubs
+    end
+
+    def test_credit_info_without_caller_features
+      revoke_freshcaller_features
+      get :credit_info, controller_params(version: 'private')
+      assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:forbidden]
+      match_json(code: 'require_feature', message:
+            'The Advanced Freshcaller feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
+    ensure
+      launch_freshcaller_features
+    end
+
+    def test_credit_info_without_freshcaller_account
+      delete_freshcaller_account if Account.current.freshcaller_account
+      get :credit_info, controller_params(version: 'private')
+      assert_response 204
+    end
+
+    def test_credit_info_with_freshcaller_account_without_bundle_id
+      create_freshcaller_account unless Account.current.freshcaller_account
+      get :credit_info, controller_params(version: 'private')
+      assert_response 204
+    ensure
+      delete_freshcaller_account
+    end
+
+    def test_credit_info_with_freshcaller_account_with_bundle_id
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      create_freshcaller_account unless Account.current.freshcaller_account
+      currency_name = Subscription::Currencies::Constants::CURRENCY_UNITS[Account.current.currency_name]
+      credits_hash = {
+        'available-credit' => 10,
+        'recharge-quantity' => 10,
+        'auto-recharge' => true
+      }
+      stub_freshcaller_request(code: 200, body: { 'data' => { 'attributes' => credits_hash }})
+      get :credit_info, controller_params(version: 'private')
+      assert_response 200
+      match_json({
+        phone_credits: 10,
+        recharge_quantity: 10,
+        auto_recharge: true,
+        currency_name: currency_name,
+        freshcaller_domain: Account.current.freshcaller_account.domain
+      })
+    ensure
+      Account.any_instance.unstub(:omni_bundle_account)
+      unstub_freshcaller_request
     end
   end
 end

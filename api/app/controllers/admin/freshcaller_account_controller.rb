@@ -3,9 +3,10 @@ class Admin::FreshcallerAccountController < ApiApplicationController
   include HelperConcern
   include FreshcallerConcern
   include Freshcaller::Util
+  include Freshcaller::CreditsHelper
 
   skip_before_filter :build_object, only: [:create]
-  before_filter :check_feature, only: [:enable, :disable, :update]
+  before_filter :check_feature, only: [:enable, :disable, :update, :credit_info]
   before_filter :load_agents, only: [:show]
   before_filter :validate_params, only: [:link, :update]
   before_filter :validate_linking, only: [:create, :link]
@@ -15,6 +16,12 @@ class Admin::FreshcallerAccountController < ApiApplicationController
 
   def show
     head 204 unless @item
+  end
+
+  def credit_info
+    return head(204) unless scoper.present? && current_account.omni_bundle_account?
+
+    @credit_info = fetch_freshcaller_credit_info
   end
 
   def create

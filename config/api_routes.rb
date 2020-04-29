@@ -43,6 +43,7 @@ Helpkit::Application.routes.draw do
       resource :freshcaller_account, controller: 'freshcaller_account', only: [:show, :create, :update, :destroy] do
         collection do
           post :link
+          get  :credit_info
         end
         member do
           put :enable
