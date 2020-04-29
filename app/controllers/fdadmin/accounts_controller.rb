@@ -8,6 +8,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   include EmailHelper
   include SandboxConstants
   include Freshid::Fdadmin::MigrationHelper
+  include ::Freshcaller::Util
 
   before_filter :check_domain_exists, :only => :change_url , :if => :non_global_pods?
   around_filter :select_slave_shard , :only => [:api_jwt_auth_feature,:sha1_enabled_feature,:select_all_feature,:show, :features,
@@ -592,6 +593,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       result[:account_name] = current_account.name
       if current_account.save
         result[:status] = "success"
+        current_account.reload
+        propagate_new_domain_to_freshcaller if current_account.freshcaller_account.present?
       else
         result[:status] = "error"
       end
