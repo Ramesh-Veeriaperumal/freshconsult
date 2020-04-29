@@ -3,8 +3,11 @@ class Support::SearchV2::SpotlightController < SupportController
 
   include ActionView::Helpers::TextHelper
   include Search::V2::AbstractController
-  
+
+  before_filter :force_exact_match
   before_filter :set_es_locale
+
+  NON_UNICODE_LANGUAGES = %w[th ja-JP].freeze
 
   # Unscoped customer-side spotlight search
   #
@@ -306,5 +309,9 @@ class Support::SearchV2::SpotlightController < SupportController
       filter_forum_category_ids = params[:forum_category_ids].split(',').map(&:to_i) & forum_category_ids
       @invalid = true if filter_forum_category_ids.empty?
       filter_forum_category_ids.presence || forum_category_ids
+    end
+
+    def force_exact_match
+      @exact_match = true if NON_UNICODE_LANGUAGES.include?(params[:url_locale])
     end
 end
