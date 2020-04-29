@@ -42,6 +42,24 @@ module Freshchat::Util
     freshchat_response
   end
 
+  def freshchat_subscription_request(payload)
+    options = {
+      :headers => {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+        'Authorization' => "Bearer #{sign_payload(payload)}",
+        'x-fc-client-id' => 'OC_FD'
+      },
+      :body => payload.to_json
+    }
+    path = FreshchatSubscriptionConfig['subscription_host']
+    Rails.logger.info "Freshchat Request Params :: #{URI.encode(path)} #{options.inspect}"
+    request = HTTParty::Request.new(Net::HTTP::Post, URI.encode(path), options)
+    freshchat_response = request.perform
+    Rails.logger.info "Freshchat Response :: #{freshchat_response.body} #{freshchat_response.code} #{freshchat_response.message} #{freshchat_response.headers.inspect}"
+    freshchat_response
+  end
+
   private
 
     def save_freshchat_account(app_id, widget_token, portal_widget_enabled = false, enabled = true, domain = nil)
@@ -83,5 +101,9 @@ module Freshchat::Util
         claims[:iat] = Time.zone.now.to_i
         claims[:iss] = SYSTEM42_SERVICE
       end
+    end
+
+    def sign_payload(payload)
+      JWT.encode(payload, FreshchatSubscriptionConfig['jwt_secret'], 'HS256', 'alg' => 'HS256', 'typ' => 'JWT')
     end
 end

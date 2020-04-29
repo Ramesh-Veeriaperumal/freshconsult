@@ -1659,8 +1659,13 @@
         "_host": "https://aloha.fid.freshworksapi.com/"
       },
       "freshcaller_subscription_config": {
-         "_subscription_host": "https://staging-subscription-webhook.freshcaller.com/api/v1/billing",
+         "_subscription_host": "https://fcaller-billing-staging.freshfonehello.com/ubx/billing/callback",
          "_timeout": 10
+      },
+      "freshchat_subscription_config": {
+        "_subscription_host": "https://maverics2.freshpori.com/v2/billing/callback",
+        "_timeout": 10,
+        "jwt_secret": "EJ[1:us7XEBvYkoSCvPtQvfIRKexMyhGyD2Fv90nJfF9EzSk=:PEvw/u1Rkm5GFlq7pmXAZW7CrTU/hBXG:DM95ov6LrCSY7GDKBD0CH92Nhu4CfiRqsUlLf5fNoKJJ06Pkfo4QA7iHWlgTwyVv]"
       }
     },
     "unique_keys": {

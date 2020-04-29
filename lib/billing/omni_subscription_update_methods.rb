@@ -6,6 +6,54 @@ module Billing::OmniSubscriptionUpdateMethods
     annual: ['annual', 12].freeze
   }.freeze
 
+  def construct_payload_for_ui_update(response)
+    {
+      id: request.uuid,
+      event_type: 'subscription_changed',
+      occurred_at: Time.now.utc.to_i,
+      source: 'admin_action',
+      object: 'event',
+      api_version: 'v1',
+      content: {
+        subscription: {
+          id: response.subscription.id,
+          plan_id: response.subscription.plan_id,
+          plan_quantity: response.subscription.plan_quantity,
+          status: response.subscription.status,
+          trial_start: response.subscription.trial_start,
+          trial_end: response.subscription.trial_end,
+          created_at: response.subscription.created_at,
+          started_at: response.subscription.started_at,
+          has_scheduled_changes: response.subscription.has_scheduled_changes,
+          object: response.subscription.object,
+          due_invoices_count: response.subscription.due_invoices_count,
+          cf_test_reseller_card: response.subscription.cf_test_reseller_card
+        },
+        customer: {
+          id: response.customer.id,
+          first_name: response.customer.first_name,
+          last_name: response.customer.last_name,
+          email: response.customer.email,
+          company: response.customer.company,
+          auto_collection: response.customer.auto_collection,
+          allow_direct_debit: response.customer.allow_direct_debit,
+          created_at: response.customer.created_at,
+          taxability: response.customer.taxability,
+          object: response.customer.object,
+          card_status: response.customer.card_status,
+          account_credits: response.customer.account_credits,
+          refundable_credits: response.customer.refundable_credits,
+          excess_payments: response.customer.excess_payments,
+          cf_account_domain: response.customer.cf_account_domain,
+          cf_test_reseller_card: response.customer.cf_test_reseller_card,
+          meta_data: {
+            customer_key: response.customer.meta_data[:customer_key]
+          }
+        }
+      }
+    }
+  end
+
   def construct_payload(chargebee_result)
     {
       organisationId: Account.current.organisation.try(:id),

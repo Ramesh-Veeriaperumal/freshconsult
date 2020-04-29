@@ -396,6 +396,7 @@ defaults: &defaults
     - [vault_data_cleanup]
     - [cre_central_publish]
     - [freshcaller_subscription_events_queue]
+    - [freshchat_subscription_events_queue]
 
 development:
   <<: *defaults

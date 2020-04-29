@@ -1598,8 +1598,13 @@
         "_host": "https://aloha-eu.freshworks.com/"
       },
       "freshcaller_subscription_config": {
-        "_subscription_host": "https://euc-subscription-webhook.freshcaller.com/api/v1/billing",
+        "_subscription_host": "https://fcaller-billing-euc.freshcaller.com/ubx/billing/callback",
         "_timeout": 10
+      },
+      "freshchat_subscription_config": {
+        "_subscription_host": "https://api.eu.freshchat.com/v2/billing/callback",
+        "_timeout": 10,
+        "jwt_secret": "EJ[1:vQXuAL5tBrqTKdx8vzi8fHhWOTRpIJhLkY+b2bCrjBQ=:zDzrFufhp1lk2g2iGr0dOVXTYNxNB84F:Md6gUGBcZMF7TwkX9GixtfYPADuk3MD7HD4w95ruHc8dCywnENRtgojCco6DInt2]"
       }
     },
     "unique_keys": {

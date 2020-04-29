@@ -8,6 +8,7 @@ class SubscriptionsController < ApplicationController
   include Freshcaller::JwtAuthentication
   include Freshcaller::CreditsHelper
   include SubscriptionsHelper
+  include Billing::OmniSubscriptionUpdateMethods
 
   before_filter :prevent_actions_for_sandbox
   skip_before_filter :check_account_state
@@ -316,6 +317,11 @@ class SubscriptionsController < ApplicationController
         flash[:notice] = t('subscription_info_update') if current_account.launched?(:downgrade_policy) && scoper.subscription_request.present?
         current_account.delete_account_cancellation_requested_time_key if scoper.suspended? && current_account.launched?(:downgrade_policy) && current_account.account_cancellation_requested?
         result = billing_subscription.update_subscription(scoper, prorate?, @addons)
+        if Account.current.omni_bundle_account?
+          chargebee_params = construct_payload_for_ui_update(result)
+          Billing::FreshcallerSubscriptionUpdate.perform_async(chargebee_params)
+          Billing::FreshchatSubscriptionUpdate.perform_async(chargebee_params)
+        end
         scoper.subscription_request.destroy if scoper.subscription_request.present?
         unless result.subscription.coupon == coupon
           billing_subscription.add_discount(scoper.account, coupon)

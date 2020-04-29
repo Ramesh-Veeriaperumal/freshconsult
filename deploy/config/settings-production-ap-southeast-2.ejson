@@ -1488,8 +1488,13 @@
         "_host": "https://aloha-au.freshworks.com/"
       },
       "freshcaller_subscription_config": {
-        "_subscription_host": "https://au-subscription-webhook.freshcaller.com/api/v1/billing",
+        "_subscription_host": "https://fcaller-billing-au.freshcaller.com/ubx/billing/callback",
         "_timeout": 10
+      },
+      "freshchat_subscription_config": {
+        "_subscription_host": "https://api.au.freshchat.com/v2/billing/callback",
+        "_timeout": 10,
+        "jwt_secret": "EJ[1:GjARK2Af/FBiJAa6HfIiOWSHRTMHSepbwg0aye/OrBQ=:RG8tn/37eaWJnIQpQ7YnDy9eyqVBfiGx:XthPTNKpb+arlLRnoBc89ZfbrjK/r78JQ5Ctb0/hWs7xZ7f3juhOQAnC5z++rjgU]"
       }
     },
     "unique_keys": {
