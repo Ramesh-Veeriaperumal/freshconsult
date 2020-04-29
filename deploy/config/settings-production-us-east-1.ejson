@@ -2484,6 +2484,36 @@
       }
     },
     "falcon_ui": {
+      "site_announcement": {
+        "_message": "On 1 Sep 2019, between 1:30 am to 2:30 am UTC, live chat will be inaccessible for customers and agents, owing to yearly maintenance. No chats will be received. Sorry for the Inconvenience.",
+        "_features": [
+          "chat"
+        ],
+        "_launched": [
+          "custom_product_notification"
+        ],
+        "_startTime": "2019-08-01T00:00:00Z",
+        "_endTime": "2019-09-01T00:00:00Z"
+      },
+      "analyticsCollectorConfig": {
+        "analyticsCollectorScript": "EJ[1:NoZIO8nzNU20o/ZZl+X7T6/1s+K1zbgK68nVG52cMF4=:s6SfHgUhP1EjBFr9CWC+zjmqMVjpSJj0:cVvCflpIRyARze2EAnGirntJgGvBQ2zQSJiAS6r2UeRq3fu4LQvpC+zyqyDsclTf/5tEU/t35AiH/X3CsOubsRPD00d1hg==]",
+        "schedulerConfig": {
+          "metricsAdapters": [
+            {
+              "_name": "newrelic",
+              "options": {
+                  "_applicationID": "71923091",
+                  "licenseKey": "EJ[1:NoZIO8nzNU20o/ZZl+X7T6/1s+K1zbgK68nVG52cMF4=:mvbBst/7RrwqHlda/tewXp6nFSfbTsQg:S+Pxf8ZKDTku6fYmpjunoYa5iiJSOGtXNyM=]",
+                  "_agent": "js-agent.newrelic.com/nr-spa-1016.min.js",
+                  "_beacon": "bam.nr-data.net",
+                  "_errorBeacon": "bam.nr-data.net",
+                  "_spaMonitoring": true,
+                  "_sa": 1
+              }
+            }
+          ]
+        }
+      },
       "s3": {
         "_bucket": "falconassets",
         "_region": "us-east-1"
@@ -2520,7 +2550,6 @@
       "_fullstory_org_id": "16is",
       "_heap_project_id": "2826793817",
       "_fingerprint_prepend": "https://fassets.freshdesk.com/production/",
-      "_site_announcement": "",
       "_integrations_url": "https://login.freshdesk.com",
       "_widget_domain": "https://widget.freshworks.com/widgets",
       "_color": "",

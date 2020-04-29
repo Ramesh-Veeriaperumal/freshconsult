@@ -1517,6 +1517,17 @@
       }
     },
     "falcon_ui": {
+      "site_announcement": {
+        "_message": "On 1 Sep 2019, between 1:30 am to 2:30 am UTC, live chat will be inaccessible for customers and agents, owing to yearly maintenance. No chats will be received. Sorry for the Inconvenience.",
+        "_features": [
+          "chat"
+        ],
+        "_launched": [
+          "custom_product_notification"
+        ],
+        "_startTime": "2019-08-01T00:00:00Z",
+        "_endTime": "2019-09-01T00:00:00Z"
+      },
       "s3": {
         "_bucket": "ind-falconassets-blue",
         "_region": "ap-south-1"

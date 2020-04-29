@@ -1611,6 +1611,36 @@
       }
     },
     "falcon_ui": {
+      "site_announcement": {
+        "_message": "On 1 Sep 2019, between 1:30 am to 2:30 am UTC, live chat will be inaccessible for customers and agents, owing to yearly maintenance. No chats will be received. Sorry for the Inconvenience.",
+        "_features": [
+          "chat"
+        ],
+        "_launched": [
+          "custom_product_notification"
+        ],
+        "_startTime": "2019-08-01T00:00:00Z",
+        "_endTime": "2019-09-01T00:00:00Z"
+      },
+      "analyticsCollectorConfig": {
+        "_analyticsCollectorScript": "https://assets.freshdesk.com/analytics/analytics-v1.js",
+        "schedulerConfig": {
+          "metricsAdapters": [
+            {
+              "_name": "newrelic",
+              "options": {
+                  "_applicationID": "71923091",
+                  "licenseKey": "EJ[1:4J4LGp5MhDpVX1jEPA1vx6U9ixVABP069aX7sycmAGg=:i2MNxnCtAN3uq8nf/h2SmAYq9PODP2yQ:bzjsw179f1xR4tfON71sqNX8eJrEF5heum8=]",
+                  "_agent": "js-agent.newrelic.com/nr-spa-1016.min.js",
+                  "_beacon": "bam.nr-data.net",
+                  "_errorBeacon": "bam.nr-data.net",
+                  "_spaMonitoring": true,
+                  "_sa": 1
+              }
+            }
+          ]
+        }
+      },
       "s3": {
         "_bucket": "euc-falconassets-blue",
         "_region": "eu-central-1"
