@@ -120,6 +120,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
+  def central_publish_payload
+    as_api_response(:central_publish)
+  end
+
+  def central_publish_associations
+    as_api_response(:central_publish_associations)
+  end
+
   def relationship_with_account
     'tickets'
   end

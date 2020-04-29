@@ -10,6 +10,8 @@
 
     DISPATCHER_ERROR = 'DISPATCHER_EXECUTION_FAILED'.freeze
     ROUNDROBIN_ERROR = 'ROUND_ROBIN_FAILED'.freeze
+    TICKET_MODEL = 'Helpdesk::Ticket'.freeze
+    UPDATE = 'update'.freeze
 
     def self.enqueue(ticket, user_id)
       #based on account subscription, enqueue into proper queue
@@ -67,6 +69,7 @@
       ::Freddy::AgentSuggestArticles.perform_async(ticket_id: @ticket.id) if source_email?
       dispatcher_set_priority = Thread.current[:dispatcher_set_priority].present? ? true : false
       ::Freddy::TicketPropertiesSuggesterWorker.perform_async(ticket_id: @ticket.id, action: 'predict', dispatcher_set_priority: dispatcher_set_priority) if trigger_ticket_properties_suggester?
+      push_payload_to_ml(@ticket, :ml_ticket_update) if bot_features_enabled?
     rescue Exception => e
       Va::Logger::Automation.log_error(DISPATCHER_ERROR, e)
       NewRelic::Agent.notice_error(e)
@@ -76,6 +79,56 @@
     end
 
     private
+
+      def bot_features_enabled?
+        @account.email_bot_enabled? || @account.triage_enabled?
+      end
+
+      def push_payload_to_ml(object, payload_type)
+        conn = CentralPublisher.configuration.central_connection
+        rt_measure = Benchmark.measure do
+          @ml_response = conn.post { |r| r.body = request_body(object, payload_type) }
+        end
+        Rails.logger.info("Time Taken for request :: Account id : #{Account.current.id} :: Ticket id : #{@ticket.id} Time taken : #{rt_measure.real} Response status : #{@ml_response.status}")
+      rescue StandardError => e
+        Rails.logger.error("Central publish ml_ticket_update failed Account id : #{Account.current.id} :: Ticket id : #{@ticket.id} serv request:: #{e.message}")
+        NewRelic::Agent.notice_error(e, custom_params: { account_id: Account.current.id, ticket_id: @ticket.id, job_id: Thread.current[:message_uuid].last, description: "Error while publishing requester ml_ticket_update : #{e.message}"})
+      end
+
+      def request_body(object, payload_type)
+        {
+          account_id: Account.current.id.to_s,
+          organisation_id: Account.current.organisation.try(:organisation_id).try(:to_s),
+          organisation_user_id: org_user_id,
+          pod: PodConfig['CURRENT_POD'],
+          region: PodConfig['CURRENT_REGION'],
+          payload_version: CentralPublisher.generate_payload_version(TICKET_MODEL),
+          payload_type: payload_type,
+          payload: training_payload(object, payload_type)
+        }.to_json
+      end
+
+      def org_user_id
+        @user.freshid_authorization.uid if @user && @user.try(:helpdesk_agent) && @user.freshid_authorization
+      end
+
+      def training_payload(object, payload_type)
+        object.central_payload_type = payload_type
+        actor_epoch = Time.zone.now.to_f
+        {
+          model: TICKET_MODEL,
+          action: UPDATE,
+          actor: @user.try(:central_publish_payload),
+          action_epoch: actor_epoch,
+          uuid: CentralPublisher.generate_uuid,
+          event_info: object.event_info(:update),
+          account_full_domain: Account.current.full_domain,
+          event_timestamp: Time.at(actor_epoch).utc.iso8601(3),
+          product_push_timestamp: Time.now.utc.iso8601(3),
+          model_properties: object.central_publish_payload,
+          associations: object.central_publish_associations
+        }
+      end
 
     def source_email?
       if @ticket.spam_or_deleted?

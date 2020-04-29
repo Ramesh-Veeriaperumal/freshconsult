@@ -384,7 +384,8 @@
       :pci_compliance_field: 379
       :twitter_field_automation: 380
       :triage: 381
-      :advanced_freshcaller: 382      
+      :advanced_freshcaller: 382  
+      :email_bot: 383
 :selectable_features:
   :redis_display_id: true
   :branding: true
