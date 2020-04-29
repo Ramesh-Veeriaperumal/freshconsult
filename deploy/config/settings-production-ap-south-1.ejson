@@ -1500,6 +1500,9 @@
         "_product_id": 1,
         "_timeout": 10
       },
+      "aloha_config": {
+        "_host": "https://aloha-in.freshworks.com/"
+      },
       "freshcaller_subscription_config": {
         "_subscription_host": "https://ind-subscription-webhook.freshcaller.com/api/v1/billing",
         "_timeout": 10

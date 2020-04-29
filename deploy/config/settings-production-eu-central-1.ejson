@@ -1594,6 +1594,9 @@
         "_product_id": 1,
         "_timeout": 10
       },
+      "aloha_config": {
+        "_host": "https://aloha-eu.freshworks.com/"
+      },
       "freshcaller_subscription_config": {
         "_subscription_host": "https://euc-subscription-webhook.freshcaller.com/api/v1/billing",
         "_timeout": 10

@@ -1,4 +1,6 @@
 module Freshchat::Util
+  include IntegrationProduct::Signup
+  
   SYSTEM42_SERVICE = 'system42'.freeze
   def freshchat_signup
     response = HTTParty.post("#{Freshchat::Account::CONFIG[:signup][:host]}signup", body: freshchat_signup_body.to_json)
@@ -18,9 +20,14 @@ module Freshchat::Util
   end
 
   def enable_freshchat_feature
+    if current_account.freshid_org_v2_enabled?
+      freshchat_response = signup_via_aloha('freshchat')
+      save_freshchat_v2_account(freshchat_response['product_signup_response']) if freshchat_response.code == 200
+      freshchat_response
+    end
     freshchat_response = signup_freshchat_account
     if freshchat_response.code == 200
-      save_freshchat_account(freshchat_response['userInfoList'][0]['appId'], freshchat_response['userInfoList'][0]['appKey']) if freshchat_response.try(:[], 'errorCode').blank?
+      save_freshchat_account(freshchat_response['userInfoList'][0]['appId'], freshchat_response['userInfoList'][0]['webchatId']) if freshchat_response.try(:[], 'errorCode').blank?
     end
     freshchat_response
   end
@@ -37,8 +44,13 @@ module Freshchat::Util
 
   private
 
-    def save_freshchat_account(app_id, widget_token, portal_widget_enabled = false, enabled = true)
-      current_account.create_freshchat_account(app_id: app_id, portal_widget_enabled: portal_widget_enabled, token: widget_token, enabled: enabled)
+    def save_freshchat_account(app_id, widget_token, portal_widget_enabled = false, enabled = true, domain = nil)
+      current_account.create_freshchat_account(app_id: app_id, portal_widget_enabled: portal_widget_enabled, token: widget_token, enabled: enabled, domain: domain)
+    end
+
+    def save_freshchat_v2_account(response)
+      freshchat_account = response['misc']['userInfoList'].select { |fc_acc| fc_acc['appIdReal'] == response['misc']['defaultApp'] }.first
+      current_account.create_freshchat_account(app_id: freshchat_account['appId'], token: freshchat_account['webchatId'], domain: response['account']['domain'], portal_widget_enabled: true, enabled: true)
     end
 
     def freshchat_signup_body

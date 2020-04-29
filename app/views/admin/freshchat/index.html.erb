@@ -68,7 +68,7 @@
 
           <span class="pl5 chat-key-copy">
             <a
-              href="<%=Freshchat::Account::CONFIG[:agentWidgetHostUrl]%>/settings/appdata#integration"
+              href="<%=@domain%>/settings/appdata#integration"
               target="_blank"
               class="freshchat_settings_integration_url">
               <%= t('freshchat.admin.copy_from_freshchat')%></a>
@@ -87,7 +87,7 @@
           <span class="required_star">*</span>
           <span class="pl5 chat-key-copy">
             <a
-              href="<%=Freshchat::Account::CONFIG[:agentWidgetHostUrl]%>/settings/appdata#integration"
+              href="<%=@domain%>/settings/appdata#integration"
               target="_blank"
               class="freshchat_settings_integration_url">
               <%= t('freshchat.admin.copy_from_freshchat')%></a>
@@ -116,7 +116,7 @@
           <%= t('freshchat.admin.did_you_know') %>
         </h5>
 
-        <p class="small muted lead-desc pt3"> <%= t('freshchat.admin.did_you_know_info', :url => 'https://web.freshchat.com/settings/integrations/freshdesk' , :article_url => 'https://support.freshchat.com/support/solutions/articles/229225-setup-freshdesk-integration-for-freshchat').html_safe %></p>
+        <p class="small muted lead-desc pt3"> <%= t('freshchat.admin.did_you_know_info', :url => "#{@domain}/settings/integrations/freshdesk" , :article_url => 'https://support.freshchat.com/support/solutions/articles/229225-setup-freshdesk-integration-for-freshchat').html_safe %></p>
       </div>
 
       <div class="chatlist-item">

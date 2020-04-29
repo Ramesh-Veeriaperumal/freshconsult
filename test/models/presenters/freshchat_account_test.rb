@@ -2,6 +2,7 @@ require_relative '../test_helper'
 
 class FreshchatAccountTest < ActiveSupport::TestCase
   include FreshchatAccountTestHelper
+  include ::Freshchat::Util
 
   def setup
     super
@@ -14,11 +15,14 @@ class FreshchatAccountTest < ActiveSupport::TestCase
   end
 
   def test_create_freshchat_account
+    @account.launch(:freshid_org_v2)
     fchat_account = create_freshchat_account @account
     assert_equal 1, CentralPublishWorker::FreshchatAccountWorker.jobs.size
     payload = fchat_account.central_publish_payload.to_json
     payload.must_match_json_expression(freshchat_account_publish_pattern(fchat_account))
+    assert_equal fchat_account.domain, "#{@account.domain}.freshchat.com"
     fchat_account.destroy
+    @account.rollback(:freshid_org_v2)
   end
 
   def test_update_freshchat_account
@@ -43,4 +47,5 @@ class FreshchatAccountTest < ActiveSupport::TestCase
     assert_equal 'freshchat_account_destroy', job['args'][0]
     job['args'][1]['model_properties'].must_match_json_expression(freshchat_account_destroy_pattern(fchat_account))
   end
+
 end

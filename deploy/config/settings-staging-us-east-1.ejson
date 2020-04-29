@@ -816,7 +816,7 @@
       },
       "freshchat": {
         "_agent_widget_host_url": "https://mr-yellow.freshpori.com",
-        "_visitor_widget_host_url": "https://webchat-mryellow.freshpori.com",
+        "_visitor_widget_host_url": "https://webchat-mrblonde.freshpori.com",
         "_api_host_url": "https://mr-yellow.freshpori.com",
         "signup": {
           "_host": "https://mr-yellow.freshpori.com/internal/system42/",
@@ -1650,6 +1650,9 @@
          "_host": "https://authz.freshpo.com/",
          "_product_id": 1,
          "_timeout": 10
+      },
+      "aloha_config": {
+        "_host": "https://aloha.fid.freshworksapi.com/"
       },
       "freshcaller_subscription_config": {
          "_subscription_host": "https://staging-subscription-webhook.freshcaller.com/api/v1/billing",
