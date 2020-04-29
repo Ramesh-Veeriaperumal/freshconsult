@@ -48,7 +48,7 @@ class Mobile::SettingsController < ApplicationController
                     sso_logout_url = account.sso_logout_url
                     google_signin_enabled = account.features_included?(:google_signin)
                     facebook_signin_enabled = account.features_included?(:facebook_signin)
-                    org_login_url = freshid_v2_mobile_authorize_url(account) if account.freshid_org_v2_enabled?
+                    org_login_url = freshid_v2_mobile_authorize_url(account, params[:scheme]) if account.freshid_org_v2_enabled?
                   end
                 end
               end
