@@ -5611,6 +5611,7 @@ en:
     welcome:
       turn_on: Turn ON Social
       helptext_title2: Calculate your Social Response Rate
+      helptext_placeholder: "Your company's twitter handle"
       turn_off: Turn OFF Social
       30to70_html: >-
         Improve your social customer satisfaction by <a %{link_meta}> adding a
@@ -8224,6 +8225,3 @@ en:
   fd_channel: Freshdesk Omnichannel
   add_phone_credits: Add phone credits
   fd_omni_channel_experience: omni channel experience
-  social:
-    welcome:
-      helptext_placeholder: "Your company's twitter handle"
