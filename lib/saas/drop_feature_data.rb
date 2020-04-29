@@ -72,16 +72,16 @@ module SAAS::DropFeatureData
   end
 
   def handle_dynamic_sections_drop_data
-    # if account.field_service_management_enabled?
-    #   account.ticket_fields.each do |field|
-    #     field.rollback_section_in_field_options if field.section_field? && !field.fsm_field?
-    #     if field.field_type != 'default_ticket_type' && field.has_sections?
-    #       field.field_options['section_present'] = false
-    #       field.save
-    #     end
-    #   end
-    #   account.sections.where('label NOT IN (?)', Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_SECTION).destroy_all
-    # else
+    if account.field_service_management_enabled?
+      account.ticket_fields.each do |field|
+        field.rollback_section_in_field_options if field.section_field? && !field.fsm_field?
+        if field.field_type != 'default_ticket_type' && field.has_sections?
+          field.field_options['section_present'] = false
+          field.save
+        end
+      end
+      account.sections.where('label NOT IN (?)', Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_SECTION).destroy_all
+    else
       account.ticket_fields.each do |field|
         field.rollback_section_in_field_options if field.section_field?
         if field.section_dropdown? && field.has_sections?
@@ -90,7 +90,7 @@ module SAAS::DropFeatureData
         end
       end
       account.sections.destroy_all
-    # end
+    end
   end
 
   def handle_helpdesk_restriction_toggle_drop_data

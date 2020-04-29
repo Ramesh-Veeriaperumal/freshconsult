@@ -19,7 +19,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       def perform_fsm_operations(enable_options = {})
         Rails.logger.info "Started adding FSM artifacts for Account - #{Account.current.id}"
         @fsm_signup_flow = enable_options[:fsm_signup_flow].presence || false
-        # add_required_features_for_lower_plans
+        add_required_features_for_lower_plans
         create_field_tech_role
         update_field_agent_limit_for_active_account
         create_field_agent_type
@@ -64,7 +64,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
 
       def create_field_service_manager_role
-        return if Account.current.roles.map(&:name).include?(I18n.t('fsm_scheduling_dashboard.name')) # || !Account.current.has_feature?(:custom_roles)
+        return if Account.current.roles.map(&:name).include?(I18n.t('fsm_scheduling_dashboard.name')) || !Account.current.has_feature?(:custom_roles)
 
         role_params = { name: I18n.t('fsm_scheduling_dashboard.name'),
                         description: I18n.t('fsm_scheduling_dashboard.description'),
@@ -206,7 +206,8 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
 
       def create_fsm_dashboard
-        # return unless Account.current.has_feature?(:custom_dashboard)
+        return unless Account.current.has_feature?(:custom_dashboard)
+
         dashboard_object = DashboardObjectConcern.new(I18n.t("fsm_dashboard.name"))
         dashboard_object_with_widget = add_widgets_to_fsm_dashboard(dashboard_object)
         fsm_dashboard = Dashboard.new(dashboard_object_with_widget.get_dashboard_payload(:db))

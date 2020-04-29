@@ -223,7 +223,7 @@ module SubscriptionsHelper
   end
 
   def fsm_supported_for_garden?(plan_name)
-    garden_plan = ['Garden', 'Garden Jan 17', 'Garden Jan 19', 'Garden Omni Jan 19', 'Garden Jan 20', 'Garden Omni Jan 20']
+    garden_plan = ['Garden', 'Garden Jan 17', 'Garden Jan 19', 'Garden Omni Jan 19', 'Garden Jan 20']
     garden_plan.include?(plan_name) && !Account.current.fsm_for_garden_plan_enabled?
   end
 
