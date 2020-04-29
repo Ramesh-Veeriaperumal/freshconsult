@@ -3,11 +3,19 @@ module IntegrationServices::Services
     class ShopifyCustomerResource < IntegrationServices::Services::Shopify::ShopifyGenericResource
       def get_customer_id(email, phone)
         if email.present?
-          request_url = "#{server_url}/admin/customers/search.json?query=email:#{email}&fields=email,id"
+          request_url = if Account.current.shopify_api_revamp_enabled?
+            "#{server_url}/admin/#{SHOPIFY_API_VERSION}/customers/search.json?query=email:#{email}&fields=email,id"
+          else
+            "#{server_url}/admin/customers/search.json?query=email:#{email}&fields=email,id"
+          end
         elsif phone.present?
           # removing any special characters other than digits
           phone.gsub!(/\D/, '')
-          request_url = "#{server_url}/admin/customers/search.json?query=phone:#{phone}&fields=phone,id"
+          request_url = if Account.current.shopify_api_revamp_enabled?
+            "#{server_url}/admin/#{SHOPIFY_API_VERSION}/customers/search.json?query=phone:#{phone}&fields=phone,id"
+          else
+            "#{server_url}/admin/customers/search.json?query=phone:#{phone}&fields=phone,id"
+          end
         else
           Rails.logger.info("No email or phone is present to fetch the shopify customer id.")
           return {}
