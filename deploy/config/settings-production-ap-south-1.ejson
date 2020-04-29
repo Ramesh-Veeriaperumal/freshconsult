@@ -1483,6 +1483,7 @@
         },
         "agent_assist" :{
           "_host": "https://admin.in-freshbots.ai/",
+          "_api_host": "https://api.in-freshbots.ai/",
           "_onboard_url": "https://api.in-freshbots.ai/rest/api/v1/bots",
           "client_id": "EJ[1:rS21oHqEr8ZN2dpD1co896++jFivTsQyuwxogoij4Aw=:h35d5UmJ2xlT4Y45P+DmjWt78ZuHeHqC:CQjrlNH69HvJN0rP3WGdy8xBf4RStbVrqAy7lzPnB+QG7T3ZxR7NhE+uIjjTA9oBPJ6NddrRfHQ=]",
           "_product_id": "54cbad9aba9c7835eac16c9a3d76e4e4c51aa62e",

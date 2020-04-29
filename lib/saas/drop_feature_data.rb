@@ -2,6 +2,7 @@ module SAAS::DropFeatureData
   include Marketplace::ApiMethods
   include Marketplace::HelperMethods
   include Solution::Constants
+  include ::AgentAssist::Util
 
   def handle_multi_timezone_drop_data
     UpdateTimeZone.perform_async(time_zone: account.time_zone)
@@ -213,5 +214,13 @@ module SAAS::DropFeatureData
         Rails.logger.info "Exception while deleting approval [#{approval.account_id}, #{approval.id}]: #{e.backtrace}"
       end
     end
+  end
+
+  def handle_agent_assist_ultimate_drop_data
+    drop_agent_assist_ultimate
+  end
+
+  def handle_agent_assist_lite_drop_data
+    drop_agent_assist_lite
   end
 end
