@@ -2,9 +2,9 @@ class AgentValidation < ApiValidation
   include Gamification::GamificationUtil
   attr_accessor :name, :phone, :mobile, :email, :time_zone, :language, :occasional, :signature, :ticket_scope,
                 :role_ids, :group_ids, :job_title, :id, :avatar_id, :search_settings, :agent_type, :focus_mode,
-                :shortcuts_enabled, :skill_ids, :ticket_assignment, :agent_level_id, :freshcaller_agent
+                :shortcuts_enabled, :skill_ids, :ticket_assignment, :agent_level_id, :freshcaller_agent, :freshchat_agent
 
-  CHECK_PARAMS_SET_FIELDS = %w[time_zone language occasional role_ids ticket_scope search_settings agent_level_id freshcaller_agent skill_ids].freeze
+  CHECK_PARAMS_SET_FIELDS = %w[time_zone language occasional role_ids ticket_scope search_settings agent_level_id freshcaller_agent skill_ids freshchat_agent].freeze
 
   validates :name, data_type: { rules: String, required: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }, on: :update
   validates :name, data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }, on: :create
@@ -42,6 +42,8 @@ class AgentValidation < ApiValidation
 
   validates :freshcaller_agent, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field, message_options: { attribute: 'freshcaller_agent', feature: :freshcaller } }, unless: -> { Account.current.freshcaller_enabled? }
   validates :freshcaller_agent, data_type: { rules: 'Boolean' }
+  validates :freshchat_agent, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field, message_options: { attribute: 'freshchat_agent', feature: :omni_chat_agent } }, unless: -> { Account.current.omni_chat_agent_enabled? }
+  validates :freshchat_agent, data_type: { rules: 'Boolean' }
   validates :agent_level_id, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field, message_options: { attribute: 'agent_level_id', feature: :gamification } }, unless: -> { gamification_feature?(Account.current) }
   validates :agent_level_id, custom_numericality: { only_integer: true, greater_than: 0 }
 

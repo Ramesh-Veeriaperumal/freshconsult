@@ -159,6 +159,7 @@ class AgentsController < ApplicationController
       @agent.user_id = @user.id
       @agent.scoreboard_level_id = params[:agent][:scoreboard_level_id]
       @agent.freshcaller_enabled = (params[:freshcaller_agent].try(:to_bool) || false)
+      @agent.freshchat_enabled = params[:freshchat_agent].try(:to_bool) if params[:freshchat_agent].present?
       @agent.build_agent_groups_attributes(group_ids)
       if @agent.save
         flash[:notice] = t(:'flash.agents.create.success', :email => @user.email)
@@ -224,6 +225,7 @@ class AgentsController < ApplicationController
     #check_agent_limit
     @agent.scoreboard_level_id = params[:agent][:scoreboard_level_id] if gamification_feature?(current_account)
     @agent.freshcaller_enabled = (params[:freshcaller_agent].try(:to_bool) || false)
+    @agent.freshchat_enabled = params[:freshchat_agent].try(:to_bool) unless params[:agent][:freshchat_agent].nil?
     # @user = @agent.user
     # @agent.user.attributes = params[:user]
     #for live chat sync

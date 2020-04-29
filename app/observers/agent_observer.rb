@@ -3,6 +3,7 @@ class AgentObserver < ActiveRecord::Observer
   include MemcacheKeys
   include RoundRobinCapping::Methods
   include Freshcaller::AgentUtil
+  include Freshchat::AgentUtil
 
   def before_create(agent)
     set_default_values(agent)
@@ -14,6 +15,7 @@ class AgentObserver < ActiveRecord::Observer
   
   def after_commit(agent)
     handle_fcaller_agent(agent) if Account.current.freshcaller_enabled? && valid_fcaller_agent_action?(agent)
+    handle_fchat_agent(agent) if Account.current.omni_chat_agent_enabled? && valid_freshchat_agent_action?(agent)
     handle_capping(agent) if agent.safe_send(:transaction_include_action?, :update)
     true
   end

@@ -2286,7 +2286,10 @@
         "signup": {
           "_host": "https://internal-api.freshchat.com/internal/system42/",
           "secret": "EJ[1:wA7/BQnSeTgdlm1Z2W3m7mpqW7i3nOV/84nCASVGKVY=:00jfSQnmHOO9ZP7zMJPHeEOAve3d6W9G:vHUlQgVlaxmVM1bpdVGQmQDuITYTKv+TzqrkuIx8YnSOlKvKMx1UKkAu7hO0ZWFq6AwXVOK4OKh4YEw=]"
-        }
+        },
+        "freshchat_shared_key": "EJ[1:PRGIYFYh1NpR3e+PFsd6nA78SMe3ahC+rZrXVBTlYVc=:vsVVJ2yDyHZ/4uxG23JkB/sS1i20K0O3:xpLmeckrZTFpCORlnNJ/TDbQn0K3PEvduRAkfTwwd8fv98vruVCR71+lqQVx/80E]",
+        "_issuer": "FreshDesk",
+        "_freshchat_client": "OC_FD"
       },
       "formserv": {
         "api_token": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:AYC9abdjdnpPKHEeDBtp8QeH+dJsSZXB:X8DBwFOco90A7u0qaeH65dw0PDtSrVMWX+1ozdhMVnDWc7ZVijntYDoUasHSRSt3]",

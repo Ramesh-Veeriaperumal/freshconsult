@@ -1332,7 +1332,10 @@
         "signup": {
           "_host": "https://internal-api.au.freshchat.com/internal/system42/",
           "secret": "EJ[1:a2H1sj2RrtdiZImVJlb87NRJs3KdC/ycEe6Cu3n+uxQ=:1vYwkbuyAk6Je7Tsy9spwMK/hh4Mzahs:EOmR57LFW2EuZtzalSW6l18M1N8c+sclZc+5LmyMrB2R13z5PO+8c7kKjCwFeLy0PxeWBn0xzny38jo=]"
-        }
+        },
+        "freshchat_shared_key": "EJ[1:O6+Fxh0fwdF212sGe7fO4a+3VZS8uY4wEGow11o7kWQ=:+5fq/MmEnI/+05PWTz4dxH4YPKsPUCVp:MZelTc9i7Wy93fC6lO9EzWceITmTcOdMUkYcnu4D/+fFkUTftpTYvu030sdUEufe]",
+        "_issuer": "FreshDesk",
+        "_freshchat_client": "OC_FD"
       },
       "formserv": {
         "api_token": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:P3ud0ySZ/TTb0h0q0vP19kckuXUMKNre:woPwbWLgaXwua/yShEc0LwGqs3zUAMZiLLxIYVn1O5a3WuJC7MngnBg5vNfNX2FI]",

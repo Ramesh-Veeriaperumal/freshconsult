@@ -54,6 +54,8 @@ properties:
     format: date-time
   freshcaller_agent:
     type: boolean
+  freshchat_agent:
+    type: boolean
   agent_level_id:
     type: integer
   read_only:

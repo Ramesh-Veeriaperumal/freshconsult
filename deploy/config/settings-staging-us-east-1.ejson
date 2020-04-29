@@ -820,12 +820,15 @@
       },
       "freshchat": {
         "_agent_widget_host_url": "https://mr-yellow.freshpori.com",
-        "_visitor_widget_host_url": "https://webchat-mrblonde.freshpori.com",
-        "_api_host_url": "https://mr-yellow.freshpori.com",
+        "_visitor_widget_host_url": "https://webchat-mryellow.freshpori.com",
+        "_api_host_url": "https://mr-pink.freshpori.com",
         "signup": {
           "_host": "https://mr-yellow.freshpori.com/internal/system42/",
           "secret": "EJ[1:agdMwKSxBnJe0E8/KT3Q3SafRIycf9BaGM6N1vsqm2I=:V2ecreMuQQxwaA8He/WBkppM8wXRJ75a:67QI2c/fbH8t/5U+1IkaJdRZRoQJ8dh3QIIvSelW1WexH0enqp35HJkP2PBo21FXD8JFqGQJ0W7oq2qOUNxk4uplZ42twVIyoF23EXQz3lsRBLw=]"
-        }
+        },
+        "freshchat_shared_key": "EJ[1:FOfxolkp4NlEykL7rb/4wRxJGZ6POjgCXUabLI99/E0=:Zakff26sQjBIAUWvyXIGFytLF0we/A14:m6myQaT8d2esHTkt30vTDS7R+dQaCbTK8NpHNeb0AU5LLKsRepT3HPNnH92cDvRc]",
+        "_issuer": "FreshDesk",
+        "_freshchat_client": "OC_FD"
       },
       "freshconnect": {
         "app_integration": {

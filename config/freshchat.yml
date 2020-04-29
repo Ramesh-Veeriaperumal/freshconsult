@@ -4,3 +4,6 @@ apiHostUrl: "https://api.freshchat.com"
 signup: 
   host: "https://mr-orange.freshpori.com/internal/system42/"
   secret: "OYZQS8DOM0xZL8vMGZOFwUi9abDxxAMabiOYZQS8DOM0xZL8vMGZOFwUi9abDxxAMat"
+freshchatSharedKey: dummy
+issuer: "FreshDesk"
+freshchatClient: "OC_FD"
