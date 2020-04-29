@@ -2835,6 +2835,8 @@ en:
         manage_service_task_automation_rules: Manage automation rules for service tasks
         view_secure_field: View secure information
         edit_secure_field: Add or edit secure data
+        do_not_publish: Do not publish
+        export_articles: Export articles
     help_image_alt:
       helpdesk_arcarde: Helpdesk Arcade
     mobihelp:
