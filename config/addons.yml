@@ -131,4 +131,6 @@ Custom Ssl 20:
   - :custom_ssl
 Field Service Management 20:
   - :field_service_management
+Freddy Ultimate:
+  - :agent_assist_ultimate
   

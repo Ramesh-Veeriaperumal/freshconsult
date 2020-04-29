@@ -1577,6 +1577,7 @@
         },
         "agent_assist" :{
           "_host": "http://admin.euc-freshbots.ai/",
+          "_api_host": "https://api.euc-freshbots.ai/",
           "_onboard_url": "https://api.euc-freshbots.ai/rest/api/v1/bots",
           "client_id": "EJ[1:98cftjxbK5m4OMZpuXddoIawb/rslM0G08WtlQZjLVY=:ZvhNhiP1Y3sAGI+2kecPyPJ1GGGnMVmj:/x+wT01FHUQN4Fa1GNUPQmSNuB9FJEzD/XLbK+cugXuac6PVY4eQtz4soaFIKulywlcwJsS1EU0=]",
           "_product_id": "3c983e2e81db535fdc692fd49e68034cee4f5f2b",

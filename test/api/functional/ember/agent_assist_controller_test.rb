@@ -15,7 +15,18 @@ module Ember
       @user = create_test_account
       @account = @user.account.make_current
       @account.account_additional_settings.additional_settings.delete(:agent_assist_config)
+      @account.set_feature(:agent_assist_lite)
       @account.save!
+    end
+
+    def stub_plan_url(feature)
+      stub_request(:put, "#{::AgentAssist::Util::PLAN_UPDATE_URL}?_plan=#{feature}")
+        .with(headers: {
+                'External-Client-Id' => @account.id.to_s,
+                'Product-Id' => FreddySkillsConfig[:agent_assist][:product_id],
+                'fbots-service' => 'bot-admin'
+              })
+        .to_return(status: 200, body: '', headers: {})
     end
 
     def test_with_freshconnect_disabled?
@@ -24,7 +35,7 @@ module Ember
       put :onboard, construct_params(version: 'private')
       assert_response 403
       match_json('code' => 'require_feature',
-                 'message' => 'The freshconnect feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
+                 'message' => 'The Freshconnect,Agent Assist Lite feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
     ensure
       @account.rollback(:freshid_org_v2)
       @account.add_feature(:freshconnect)
@@ -35,6 +46,16 @@ module Ember
       assert_response 403
       match_json('code' => 'require_feature',
                  'message' => 'The freshid_org_v2 feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
+    end
+
+    def test_with_agent_assist_lite_disabled?
+      @account.revoke_feature(:agent_assist_lite)
+      put :onboard, construct_params(version: 'private')
+      assert_response 403
+      match_json('code' => 'require_feature',
+                 'message' => 'The Freshconnect,Agent Assist Lite feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
+    ensure
+      @account.add_feature(:agent_assist_lite)
     end
 
     def test_without_manage_bot_privilege?
@@ -87,6 +108,43 @@ module Ember
       assert_response 403
     ensure
       User.any_instance.unstub(:privilege?)
+    end
+
+    def test_agent_assist_lite_forest_jan_20
+      sub_plan = SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_20])
+      SubscriptionPlan.stubs(:find_by_name).returns(sub_plan)
+      create_sample_account('forestjan20agentassistlite', 'forestjan20agentassistlite@freshdesk.test')
+      assert @account.has_features?(:agent_assist_lite)
+    ensure
+      SubscriptionPlan.unstub(:find_by_name)
+      @account.destroy
+    end
+
+    def test_agent_assist_ultimate_add
+      create_test_account
+      agent_ssist_stub = stub_plan_url(::AgentAssist::Util::AGENT_ASSIST_ULTIMATE)
+      clean_up = SAAS::AccountDataCleanup.new(@account, ['agent_assist_ultimate'], 'add')
+      assert_equal clean_up.handle_agent_assist_ultimate_add_data.response.code, '200'
+    ensure
+      remove_request_stub(agent_ssist_stub)
+    end
+
+    def test_agent_assist_ultimate_drop
+      create_test_account
+      agent_ssist_stub = stub_plan_url(::AgentAssist::Util::AGENT_ASSIST_LITE)
+      clean_up = SAAS::AccountDataCleanup.new(@account, ['agent_assist_ultimate'], 'drop')
+      assert_equal clean_up.handle_agent_assist_ultimate_drop_data.response.code, '200'
+    ensure
+      remove_request_stub(agent_ssist_stub)
+    end
+
+    def test_agent_assist_lite_drop
+      create_test_account
+      agent_ssist_stub = stub_request(:put, ::AgentAssist::Util::DISABLE_FRESHBOTS_URL).to_return(status: 200)
+      clean_up = SAAS::AccountDataCleanup.new(@account, ['agent_assist_lite'], 'drop')
+      assert_equal clean_up.handle_agent_assist_lite_drop_data.response.code, '200'
+    ensure
+      remove_request_stub(agent_ssist_stub)
     end
   end
 end

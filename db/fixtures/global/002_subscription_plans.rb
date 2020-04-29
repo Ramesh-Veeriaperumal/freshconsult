@@ -1,4 +1,4 @@
-def self.plan_list(all_addons, estate_addons, garden_addons, blossom_addons, estate_17_addons, garden_17_addons, blossom_17_addons, sprout_17_addons, estate_19_addons, forest_19_addons)
+def self.plan_list(all_addons, estate_addons, garden_addons, blossom_addons, estate_17_addons, garden_17_addons, blossom_17_addons, sprout_17_addons, estate_19_addons, forest_19_addons, forest_20_addons)
 	[
     { :name => 'Sprout', :amount => 15, :free_agents => 3, :day_pass_amount => 1.00,
     	:addons => all_addons, :price => plan_price[:sprout], :classic => true, :display_name => "Sprout" },
@@ -58,13 +58,13 @@ def self.plan_list(all_addons, estate_addons, garden_addons, blossom_addons, est
       addons: estate_19_addons },
     { name: 'Forest Jan 20', amount: 125.0, renewal_period: 1, trial_period: 1, free_agents: 0,
       day_pass_amount: 6, price: plan_price[:forest_jan_19], classic: true, display_name: 'Forest',
-      addons: forest_19_addons },
+      addons: forest_20_addons },
     { name: 'Estate Omni Jan 20', amount: 85.0, renewal_period: 1, trial_period: 1, free_agents: 0,
       day_pass_amount: 4, price: plan_price[:estate_omni_jan_19], classic: true, display_name: 'Estate',
       addons: estate_19_addons },
     { name: 'Forest Omni Jan 20', amount: 85.0, renewal_period: 1, trial_period: 1, free_agents: 0,
       day_pass_amount: 4, price: plan_price[:estate_omni_jan_19], classic: true, display_name: 'Forest',
-      addons: forest_19_addons }
+      addons: forest_20_addons }
 	]
 end
 
@@ -554,6 +554,13 @@ unless Account.current
     a.addon_type = addon_types[:field_agent_quantity]
   end
 
+  freddy_ultimate = Subscription::Addon.seed(:name) do |a|
+    a.name = 'Freddy Ultimate'
+    a.amount = 75.0
+    a.renewal_period = 1
+    a.addon_type = addon_types[:agent_quantity]
+  end
+
 	all_addons = [ agent_collision, custom_ssl, custom_roles, gamification, layout_customization,
 	               multiple_business_hours, round_robin, chat, enterprise_reporting, custom_domain,
 	               custom_slas, custom_mailbox, whitelisted_ips, chat_routing, dynamic_sections,
@@ -573,7 +580,9 @@ unless Account.current
 
 	forest_jan_19 = [fluffy_higher_plan1, fluffy_higher_plan2, fluffy_higher_plan3, fluffy_higher_plan4, field_service_management]
 
-  SubscriptionPlan.seed_many(:name, plan_list(all_addons, estate_addons, garden_addons, blossom_addons, estate_17_addons, garden_17_addons, blossom_17_addons, sprout_17_addons, estate_jan_19, forest_jan_19))
+  forest_jan_20 = forest_jan_19 + [freddy_ultimate]
+
+  SubscriptionPlan.seed_many(:name, plan_list(all_addons, estate_addons, garden_addons, blossom_addons, estate_17_addons, garden_17_addons, blossom_17_addons, sprout_17_addons, estate_jan_19, forest_jan_19, forest_jan_20))
 
   Subscription::Currency.seed_many(:name, currencies)
 end

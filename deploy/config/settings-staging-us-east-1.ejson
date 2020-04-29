@@ -1638,6 +1638,7 @@
         },
         "agent_assist" :{
           "_host": "https://admin.stagfreshbots.com/",
+          "_api_host": "https://api.stagfreshbots.com/",
           "_onboard_url": "https://api.stagfreshbots.com/rest/api/v1/bots",
           "client_id": "EJ[1:TdlmWIh7MmWzMRcU2fY4x5wtZxwpcKrdhePHdRtoMhw=:MdFezweXbt9Pi7YhhLGdcI/5OL1aGjS8:hbE7sw7pUB3aLCocYv74zM9KLzeLh5TmdA26wgAGEBojCENNPBW26lGK3nLi6Fd97UPABc6JAYY=]",
           "_product_id": "6d4dbdbdda6e2cbb9905041b56ae7e3f3c77bc15",

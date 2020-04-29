@@ -3,6 +3,10 @@ module AgentAssist
     include Fdadmin::ApiCallConstants
     SUCCESS = 201
     LIST_BOTS_PATH = '/rest/api/v2/bots/agentassist/'.freeze
+    PLAN_UPDATE_URL = "#{FreddySkillsConfig[:agent_assist][:api_host]}rest/api/v1/clients/plan".freeze
+    DISABLE_FRESHBOTS_URL = "#{FreddySkillsConfig[:agent_assist][:api_host]}rest/api/v1/clients/inactive".freeze
+    AGENT_ASSIST_LITE = 'AGENT_ASSIST_LITE'.freeze
+    AGENT_ASSIST_ULTIMATE = 'AGENT_ASSIST_ULTIMATE'.freeze
     def onboarding_headers
       {
         'Content-Type' => 'application/json',
@@ -22,7 +26,7 @@ module AgentAssist
           'eml': current_account.admin_email,
           'nm': current_account.name,
           'phn': '',
-          'pln': 'AGENT_ASSIST',
+          'pln': current_plan,
           'prtl': 'portal new',
           'orgDmn': current_account.organisation.try(:domain),
           'wbst': current_account.name,
@@ -33,6 +37,10 @@ module AgentAssist
       }.to_json
     end
 
+    def current_plan
+      current_account.agent_assist_ultimate_enabled? ? AGENT_ASSIST_ULTIMATE : AGENT_ASSIST_LITE
+    end
+
     def bot_list_headers
       {
         'Content-Type' => 'application/json',
@@ -41,15 +49,24 @@ module AgentAssist
       }
     end
 
+    def update_feature_header
+      {
+        'external-client-id' => Account.current.id.to_s,
+        'product-id' => FreddySkillsConfig[:agent_assist][:product_id],
+        'fbots-service' => 'bot-admin'
+      }
+    end
+
     def bot_list_body
       params.except(:version, :format, :controller, :action, :agent_assist).to_json
     end
 
-    def options(headers, body)
+    def options(headers, body = nil, query = nil)
       {
         headers: headers,
         body: body,
-        timeout: 5
+        timeout: 5,
+        query: query
       }
     end
 
@@ -73,7 +90,7 @@ module AgentAssist
       Rails.logger.info "Agent Assist Response :: #{http_response.body} #{http_response.code} #{http_response.message} #{http_response.headers.inspect} #{Thread.current[:message_uuid]}"
       http_response
     rescue StandardError => e
-      Rails.logger.error "Error in AgentAssist API Call ::Exception:: A - #{current_account.id} #{e.message}  #{e.backtrace[0..10].join(', ')}"
+      Rails.logger.error "Error in AgentAssist API Call ::Exception:: A - #{Account.current.id} #{e.message}  #{e.backtrace[0..10].join(', ')}"
       options_hash = {
         custom_params: {
           description: "Error in AgentAssist API Call::Exception:: #{e.message}",
@@ -101,6 +118,18 @@ module AgentAssist
 
       url = "https://#{agent_assist_config[:domain]}#{LIST_BOTS_PATH}?group_ids=#{params[:group_ids]}"
       @agent_assist_bots = execute_api_call('get', url, options(bot_list_headers, bot_list_body))
+    end
+
+    def drop_agent_assist_ultimate
+      execute_api_call('put', PLAN_UPDATE_URL, options(update_feature_header, nil, _plan: AGENT_ASSIST_LITE))
+    end
+
+    def add_agent_assist_ultimate
+      execute_api_call('put', PLAN_UPDATE_URL, options(update_feature_header, nil, _plan: AGENT_ASSIST_ULTIMATE))
+    end
+
+    def drop_agent_assist_lite
+      execute_api_call('put', DISABLE_FRESHBOTS_URL, options(update_feature_header))
     end
   end
 end

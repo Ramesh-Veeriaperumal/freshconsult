@@ -1467,6 +1467,7 @@
         },
         "agent_assist" :{
           "_host": "http://admin.au-freshbots.ai/",
+          "_api_host": "https://api.au-freshbots.ai/",
           "_onboard_url": "https://api.au-freshbots.ai/rest/api/v1/bots",
           "client_id": "EJ[1:QNURo00+v9gddIruumZJvettHmmRSEhkMpSozuiOkX0=:S/EvgSNf244Nt6fLk88uWLGlIiTRXHcs:yIIP7Uf4e14OkTi6j0G0SKfOVkiUi8WkV/JBYs7NIRDVc157kV7aQKpr/HILBpTHkakP9av0sR4=]",
           "_product_id": "a053d8dede9c79d3bb62c60d1091cd2cadb9552c",

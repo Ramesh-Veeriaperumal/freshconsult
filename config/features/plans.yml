@@ -567,6 +567,7 @@
       - :detect_thank_you_note
       - :detect_thank_you_note_eligible
       - :smart_filter
+      - :agent_assist_lite
     :inherits:
       - :estate_jan_20
     :exclude: []
