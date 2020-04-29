@@ -3013,6 +3013,7 @@ Helpkit::Application.routes.draw do
           get :clone_account
           post :clone_account
           post :enable_freshid
+          post :make_account_admin
           put :enable_fluffy
           put :change_fluffy_plan
           post :extend_higher_plan_trial
