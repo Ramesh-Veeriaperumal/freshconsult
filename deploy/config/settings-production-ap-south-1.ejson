@@ -1499,6 +1499,10 @@
         "_host": "https://authz-ind.freshdesk.com/",
         "_product_id": 1,
         "_timeout": 10
+      },
+      "freshcaller_subscription_config": {
+        "_subscription_host": "https://ind-subscription-webhook.freshcaller.com/api/v1/billing",
+        "_timeout": 10
       }
     },
     "unique_keys": {

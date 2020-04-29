@@ -101,3 +101,5 @@ AuthzConfig = YAML.load_file(Rails.root.join('config', 'authz_config.yml'))[Rail
 FreshIDV2Config = YAML.load_file(Rails.root.join('config', 'freshid_v2.yml'))[Rails.env]
 
 ProductPlansConfig = YAML.load_file(Rails.root.join('config', 'product_plan_mapping.yml')).with_indifferent_access
+
+FreshcallerSubscriptionConfig = YAML.load_file(Rails.root.join('config', 'freshcaller_subscription_config.yml'))[Rails.env]

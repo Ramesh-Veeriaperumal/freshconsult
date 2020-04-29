@@ -1650,6 +1650,10 @@
          "_host": "https://authz.freshpo.com/",
          "_product_id": 1,
          "_timeout": 10
+      },
+      "freshcaller_subscription_config": {
+         "_subscription_host": "https://staging-subscription-webhook.freshcaller.com/api/v1/billing",
+         "_timeout": 10
       }
     },
     "unique_keys": {

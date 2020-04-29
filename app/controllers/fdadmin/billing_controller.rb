@@ -28,7 +28,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
     end
 
     handle_due_invoices if check_due_invoices?
-
+    Billing::FreshcallerSubscriptionUpdate.perform_async(params) if Account.current.omni_bundle_account? && params[:event_type] != 'subscription_created'
     Account.reset_current_account
     respond_to do |format|
       format.xml { head 200 }

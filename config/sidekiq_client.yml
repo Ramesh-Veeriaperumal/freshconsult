@@ -395,6 +395,7 @@ defaults: &defaults
     - [vault_account_update]
     - [vault_data_cleanup]
     - [cre_central_publish]
+    - [freshcaller_subscription_events_queue]
 
 development:
   <<: *defaults

@@ -94,4 +94,8 @@ module Freshcaller::JwtAuthentication
     check_day_pass_usage_with_user_time_zone
     set_current_account
   end
+
+  def protocol
+    Rails.env.development? ? 'http://' : 'https://'
+  end
 end
