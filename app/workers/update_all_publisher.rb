@@ -15,7 +15,6 @@ class UpdateAllPublisher
     count_es_enabled  = Account.current.count_es_writes_enabled?
     args[:options]  ||= {}
     options           = args[:options].deep_symbolize_keys
-    Account.current.users.find(options[:doer_id]).make_current if options[:doer_id].present?
     # Move feature check inside if multiple subscribers added
     if esv2_enabled || count_es_enabled || options[:manual_publish].present?
       args[:klass_name].constantize.where(account_id: Account.current.id, id: args[:ids]).each do |record|
@@ -28,17 +27,14 @@ class UpdateAllPublisher
             record.misc_changes = options[:reason]
             key = RabbitMq::Constants::RMQ_GENERIC_TICKET_KEY
           end
-          key = options[:routing_key] if options[:routing_key].present?
           rmq_options = ["update", key, {:manual_publish => true}]
-          central_publish_options = {}
-          central_publish_options[:model_changes] = options[:model_changes] || (args[:updates] || {}).each_with_object({}) { |h, (k, v)| h[k] = ['*', v] }
+          central_publish_options = { model_changes: (args[:updates] || {}).inject({}) {|h, (k, v)| h[k] = ["*", v]; h} }
           central_publish_options.merge!(misc_changes: options[:reason]) if options[:reason].present?
           record.manual_publish(rmq_options, [:update, central_publish_options], true)
         end
         # Add other subscribers here if needed like reports, etc./
       end
     end
-  ensure
-    options[:doer_id].present? && User.reset_current_user
   end
+
 end

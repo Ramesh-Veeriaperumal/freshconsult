@@ -195,8 +195,6 @@ class Helpdesk::Tag < ActiveRecord::Base
     end
     
     def remove_taguses
-      args = { tag_id: id, tag_name: name }
-      args[:doer_id] = User.current.id if User.current
-      TagUsesCleaner.perform_async(args)
+      TagUsesCleaner.perform_async({ tag_id: self.id })
     end
 end

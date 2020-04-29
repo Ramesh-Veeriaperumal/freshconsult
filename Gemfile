@@ -56,6 +56,7 @@ gem 'optar', git: 'git@github.com:freshdesk/optar.git', tag: 'v1.1.4'
 group :development, :test do
   gem 'active_record_query_trace'
   gem 'rails-dev-boost', :git => 'git://github.com/thedarkone/rails-dev-boost.git'
+  gem 'better_errors', '~> 1.1.0'
   # Commenting out for ruby ~> 2.1.0 upgrade
   # gem "debugger", "~> 1.6.8"
   gem 'pry'
@@ -68,7 +69,6 @@ group :development, :test do
 end
 
 group :development do
-  gem 'better_errors', '~> 1.1.0'
   gem 'pronto'
   gem 'pronto-rubocop', require: false
   gem 'pronto-rails_best_practices', require: false
