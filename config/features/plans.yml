@@ -324,8 +324,6 @@
       - :analytics_survey_results
       - :custom_translations
       - :portal_article_filters
-      - :autofaq
-      - :botflow
       - :supervisor_custom_status
       - :omni_channel_routing
       - :lbrr_by_omniroute
@@ -533,8 +531,6 @@
       - :analytics_survey_results
       - :custom_translations
       - :portal_article_filters
-      - :autofaq
-      - :botflow
       - :supervisor_custom_status
       - :omni_channel_routing
       - :lbrr_by_omniroute
@@ -568,6 +564,8 @@
       - :detect_thank_you_note_eligible
       - :smart_filter
       - :agent_assist_lite
+      - :autofaq
+      - :botflow
     :inherits:
       - :estate_jan_20
     :exclude: []
