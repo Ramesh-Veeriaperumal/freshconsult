@@ -65,6 +65,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:account_cancellation_requested_on] = fetch_account_cancellation_requested_time(account)
     account_summary[:freshid_enabled] = account.freshid_enabled?
     account_summary[:freshid_org_v2_enabled] = account.freshid_org_v2_enabled?
+    account_summary[:freshid_sso_sync_enabled] = account.freshid_sso_sync_enabled?
     account_summary[:sandbox_account] = account.account_type == Account::ACCOUNT_TYPES[:sandbox]
     account_summary[:disable_org_v2_in_progress] = account.account_additional_settings.freshid_migration_running?(DISABLE_V2_MIGRATION_INPROGRESS)
     account_summary[:enable_freshid_v1_in_progress] = account.account_additional_settings.freshid_migration_running?(ENABLE_V1_MIGRATION_INPROGRESS)
