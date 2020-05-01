@@ -5,6 +5,10 @@
   support_email: 3 
   automation: 5 
   data_import: 6
+  setup_chat_channel: 66
+  setup_caller_channel: 67
+  choose_channel: 68
+  explore_support_channels: 69
 :condition_based_setup_keys:
   twitter: 4
   custom_app: 7
@@ -140,3 +144,7 @@
   - custom_apps
   - overview_fsm_video
   - explore_fsm_features
+  - setup_chat_channel
+  - setup_caller_channel
+  - choose_channel
+  - explore_support_channels
