@@ -2,7 +2,7 @@ module Billing::OmniSubscriptionUpdateMethods
   BILLING_PERIOD = {
     monthly: ['month', 1].freeze,
     quarterly: ['quarter', 3].freeze,
-    six_month: ['six-month', 6].freeze,
+    yearly: ['six-month', 6].freeze, # originally half_yearly
     annual: ['annual', 12].freeze
   }.freeze
 
@@ -56,9 +56,9 @@ module Billing::OmniSubscriptionUpdateMethods
 
   def construct_payload(chargebee_result)
     {
-      organisationId: Account.current.organisation.try(:id),
+      organisation_id: Account.current.organisation.try(:id),
       type: chargebee_result[:event_type],
-      accountId: Account.current.id,
+      account_id: Account.current.id,
       payload: {
         vendor_name: 'chargebee',
         transaction_id: begin

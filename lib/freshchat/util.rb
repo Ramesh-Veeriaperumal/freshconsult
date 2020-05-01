@@ -1,5 +1,6 @@
 module Freshchat::Util
   include IntegrationProduct::Signup
+  include Freshchat::JwtAuthentication
   
   SYSTEM42_SERVICE = 'system42'.freeze
   def freshchat_signup
@@ -47,7 +48,7 @@ module Freshchat::Util
       :headers => {
         'Accept' => 'application/json',
         'Content-Type' => 'application/json',
-        'Authorization' => "Bearer #{sign_payload(payload)}",
+        'Authorization' => "Bearer #{freshchat_jwt_token}",
         'x-fc-client-id' => 'OC_FD'
       },
       :body => payload.to_json
@@ -91,19 +92,15 @@ module Freshchat::Util
     end
 
     def sync_freshchat_jwt_token(app_id)
-      JWT.encode sync_freshchat_payload(app_id), Freshchat::Account::CONFIG[:signup][:secret], 'HS256', { 'alg': 'HS256', 'typ': 'JWT' }
+      JWT.encode sync_fresh_chat_payload(app_id), Freshchat::Account::CONFIG[:signup][:secret], 'HS256', { 'alg': 'HS256', 'typ': 'JWT' }
     end
 
-    def sync_freshchat_payload(app_id)
+    def sync_fresh_chat_payload(app_id)
       {}.tap do |claims|
         claims[:aud] = app_id.to_s
         claims[:exp] = Time.zone.now.to_i + 10.minutes
         claims[:iat] = Time.zone.now.to_i
         claims[:iss] = SYSTEM42_SERVICE
       end
-    end
-
-    def sign_payload(payload)
-      JWT.encode(payload, FreshchatSubscriptionConfig['jwt_secret'], 'HS256', 'alg' => 'HS256', 'typ' => 'JWT')
     end
 end
