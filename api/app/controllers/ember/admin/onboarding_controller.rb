@@ -73,7 +73,10 @@ module Ember
       def customize_domain
         return unless validate_delegator(@item, new_domain: @full_domain)
         @support_email_configured = current_account.support_email_setup?
-        current_account.mark_customize_domain_setup_and_save if current_account.update_default_domain_and_email_config(params[:subdomain])
+        if current_account.update_default_domain_and_email_config(params[:subdomain])
+          propagate_new_domain_to_freshcaller if current_account.freshcaller_account.present?
+          current_account.mark_customize_domain_setup_and_save
+        end
       end
 
       def anonymous_to_trial

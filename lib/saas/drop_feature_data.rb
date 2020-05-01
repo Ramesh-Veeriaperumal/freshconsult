@@ -2,6 +2,7 @@ module SAAS::DropFeatureData
   include Marketplace::ApiMethods
   include Marketplace::HelperMethods
   include Solution::Constants
+  include ::AgentAssist::Util
 
   def handle_multi_timezone_drop_data
     UpdateTimeZone.perform_async(time_zone: account.time_zone)
@@ -72,16 +73,16 @@ module SAAS::DropFeatureData
   end
 
   def handle_dynamic_sections_drop_data
-    # if account.field_service_management_enabled?
-    #   account.ticket_fields.each do |field|
-    #     field.rollback_section_in_field_options if field.section_field? && !field.fsm_field?
-    #     if field.field_type != 'default_ticket_type' && field.has_sections?
-    #       field.field_options['section_present'] = false
-    #       field.save
-    #     end
-    #   end
-    #   account.sections.where('label NOT IN (?)', Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_SECTION).destroy_all
-    # else
+    if account.field_service_management_enabled?
+      account.ticket_fields.each do |field|
+        field.rollback_section_in_field_options if field.section_field? && !field.fsm_field?
+        if field.field_type != 'default_ticket_type' && field.has_sections?
+          field.field_options['section_present'] = false
+          field.save
+        end
+      end
+      account.sections.where('label NOT IN (?)', Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_SECTION).destroy_all
+    else
       account.ticket_fields.each do |field|
         field.rollback_section_in_field_options if field.section_field?
         if field.section_dropdown? && field.has_sections?
@@ -90,7 +91,7 @@ module SAAS::DropFeatureData
         end
       end
       account.sections.destroy_all
-    # end
+    end
   end
 
   def handle_helpdesk_restriction_toggle_drop_data
@@ -213,5 +214,13 @@ module SAAS::DropFeatureData
         Rails.logger.info "Exception while deleting approval [#{approval.account_id}, #{approval.id}]: #{e.backtrace}"
       end
     end
+  end
+
+  def handle_agent_assist_ultimate_drop_data
+    drop_agent_assist_ultimate
+  end
+
+  def handle_agent_assist_lite_drop_data
+    drop_agent_assist_lite
   end
 end

@@ -1,4 +1,7 @@
 module Marketplace::HelperMethods
+  include Redis::RedisKeys
+  include Redis::OthersRedis
+  include Marketplace::GalleryConstants
 
   OAUTH_IPARAM_FEATURE = 'oauth_iparams'
 
@@ -66,11 +69,21 @@ module Marketplace::HelperMethods
   end
 
   def paid_app_params
+    return ni_paid_app_params if can_fetch_ni_addon_from_cache?
+
     paid_app? ? {
       :billing => {
         :addon_id => addon_details['addon_id']
       }.merge(account_params)
     } : {}
+  end
+
+  def ni_paid_app_params
+    {
+      billing: {
+        addon_id: marketplace_ni_addon_detail
+      }.merge(account_params)
+    }
   end
 
   def per_agent_plan?
@@ -82,6 +95,8 @@ module Marketplace::HelperMethods
   end
 
   def app_units_count
+    return app_units_count_ni if can_fetch_ni_addon_from_cache?
+
     if trial_subscription?
       # Agent limit is set to 1 as it is null for trial accounts
       return Marketplace::Constants::ACCOUNT_ADDON_APP_UNITS
@@ -92,6 +107,12 @@ module Marketplace::HelperMethods
     else
       return Marketplace::Constants::ACCOUNT_ADDON_APP_UNITS
     end
+  end
+
+  def app_units_count_ni
+    return Marketplace::Constants::ACCOUNT_ADDON_APP_UNITS if trial_subscription?
+
+    Account.current.subscription.agent_limit == Fdadmin::BillingController::DEFAULT_AGENT_LIMIT ? Account.current.full_time_support_agents.count : Account.current.subscription.agent_limit
   end
 
   def account_params
@@ -127,5 +148,30 @@ module Marketplace::HelperMethods
     subscription_mkp_addons = Billing::Subscription.new.retrieve_subscription(Account.current.id).subscription.addons
     subscription_mkp_addons.present? ? subscription_mkp_addons.map(&:id).include?(addon_details['addon_id']) : false
   end
-    
+
+  def can_fetch_ni_addon_from_cache?
+    Account.current.marketplace_gallery_enabled? && NATIVE_PAID_APPS.include?(extension_name)
+  end
+
+  def marketplace_cache_key
+    format(
+      MARKETPLACE_NI_PAID_APP,
+      account_id: Account.current.id,
+      app_name: extension_name
+    )
+  end
+
+  def marketplace_ni_addon_detail
+    marketplace_addon_detail = get_others_redis_key(marketplace_cache_key)
+    remove_others_redis_key(marketplace_cache_key)
+    marketplace_addon_detail
+  rescue StandardError => e
+    Rails.logger.error("Error while fetching cached addon detail for account:: #{Account.current.id} \
+                        for app:: #{extension_name}, error:: #{e.inspect}")
+    nil
+  end
+
+  def extension_name
+    @extension['name']
+  end
 end

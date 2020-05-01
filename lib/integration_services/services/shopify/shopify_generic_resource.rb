@@ -1,6 +1,7 @@
 module IntegrationServices::Services
   module Shopify
     class ShopifyGenericResource < IntegrationServices::GenericResource
+      SHOPIFY_API_VERSION = "api/2020-01"
 
       def initialize(service, store, token)
         super(service)

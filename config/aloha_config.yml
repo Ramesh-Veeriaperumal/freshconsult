@@ -1,0 +1,10 @@
+defaults: &defaults
+  host: "https://aloha.fid.freshworksapi.com/"
+development:
+  <<: *defaults
+staging:
+  <<: *defaults
+test:
+  <<: *defaults
+production:
+  <<: *defaults

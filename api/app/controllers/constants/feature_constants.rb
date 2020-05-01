@@ -23,7 +23,6 @@ module FeatureConstants
   BOTFLOW = :botflow
   HELP_WIDGET = :help_widget
   AGENT_ARTICLES_SUGGEST = :agent_articles_suggest
-  ADMIN_FRESHCALLER = %w(freshcaller freshcaller_admin_new_ui).freeze
   TICKET_FIELD_REVAMP = :ticket_field_revamp
   AGENT_SHIFTS = :agent_shifts.freeze
   OUT_OF_OFFICE = :out_of_office

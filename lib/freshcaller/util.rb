@@ -26,6 +26,12 @@ module Freshcaller::Util
     freshcaller_response
   end
 
+  def propagate_new_domain_to_freshcaller
+    http_request_params = { domain_url: current_account.full_domain, token: current_user.single_access_token }
+    freshcaller_response = freshcaller_request(http_request_params, freshcaller_integration_update_url, :put, email: current_user.email)
+    freshcaller_response
+  end
+
   private
 
     def activate_freshcaller(freshcaller_response)

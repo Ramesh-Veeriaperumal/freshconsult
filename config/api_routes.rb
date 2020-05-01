@@ -43,6 +43,7 @@ Helpkit::Application.routes.draw do
       resource :freshcaller_account, controller: 'freshcaller_account', only: [:show, :create, :update, :destroy] do
         collection do
           post :link
+          get  :credit_info
         end
         member do
           put :enable
@@ -1020,7 +1021,7 @@ Helpkit::Application.routes.draw do
     post '/freshcaller/migration/reset_freshfone', to: 'channel/freshcaller/migration#reset_freshfone'
     post '/freshcaller/migration/fetch_pod_info', to: 'channel/freshcaller/migration#fetch_pod_info'
 
-    resources :tickets, controller: 'channel/tickets', only: [:create]
+    resources :tickets, controller: 'channel/tickets', only: [:create, :show]
     resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show, :index] do
       collection do
         get :fetch_contact_by_email

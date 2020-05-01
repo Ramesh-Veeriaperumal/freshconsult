@@ -4,8 +4,8 @@ module AgentConstants
   INDEX_FIELDS = %w[state email phone mobile only type privilege group_id include order_type order_by].freeze
   UPDATE_ARRAY_FIELDS = %w[group_ids role_ids].freeze
   TICKET_SEARCH_SETTINGS = [:include_subject, :include_description, :include_other_properties, :include_notes, :include_attachment_names, :archive].freeze
-  UPDATE_FIELDS = %w[name email phone mobile time_zone job_title language signature ticket_scope occasional shortcuts_enabled focus_mode agent_level_id freshcaller_agent avatar_id].freeze | UPDATE_ARRAY_FIELDS | [ticket_assignment: [:available]].freeze | [search_settings: [tickets: TICKET_SEARCH_SETTINGS]].freeze
-  CREATE_FIELDS = %w[name email phone mobile time_zone job_title language signature ticket_scope occasional agent_type agent_level_id freshcaller_agent avatar_id].freeze | UPDATE_ARRAY_FIELDS | [ticket_assignment: [:available]].freeze
+  UPDATE_FIELDS = %w[name email phone mobile time_zone job_title language signature ticket_scope occasional shortcuts_enabled focus_mode agent_level_id freshcaller_agent avatar_id freshchat_agent].freeze | UPDATE_ARRAY_FIELDS | [ticket_assignment: [:available]].freeze | [search_settings: [tickets: TICKET_SEARCH_SETTINGS]].freeze
+  CREATE_FIELDS = %w[name email phone mobile time_zone job_title language signature ticket_scope occasional agent_type agent_level_id freshcaller_agent avatar_id freshchat_agent].freeze | UPDATE_ARRAY_FIELDS | [ticket_assignment: [:available]].freeze
   SKILLS_FIELDS = %w[skill_ids].freeze
   CREATE_MULTIPLE_FIELDS = CREATE_FIELDS
   UPDATE_MULTIPLE_FIELDS = ['id', ticket_assignment: [:available]].freeze

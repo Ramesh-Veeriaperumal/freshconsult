@@ -63,8 +63,8 @@ module Freshid::ControllerMethods
     end
   end
 
-  def freshid_v2_mobile_authorize_url(account)
-    Freshid::V2::UrlGenerator.freshid_authorize(freshid_authorize_callback_url(host: account.full_domain, params: { mobile_login: true }), account.full_domain, false)
+  def freshid_v2_mobile_authorize_url(account, mobile_scheme = nil)
+    Freshid::V2::UrlGenerator.freshid_authorize(freshid_authorize_callback_url(host: account.full_domain, params: { mobile_login: true, scheme: mobile_scheme }), account.full_domain, false)
   end
   
   def freshid_integration_enabled_and_not_logged_in?

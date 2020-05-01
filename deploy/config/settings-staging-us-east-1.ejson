@@ -6,6 +6,10 @@
       "enabled": false
     },
     "ymls": {
+      "asknicely_app": {
+        "_domain_key": "freshworkstest",
+        "_template_name": "inapp"
+      },
       "datacenter_config": {
       "freshcaller_signup_supported": true,
       "freshconnect_signup_supported": true,
@@ -189,6 +193,10 @@
         "twilight": {
           "_auth_type": "jwt",
           "jwt_secret": "EJ[1:yHngE5On+uaOB1J8F9vNIgKScfhpKJzjGb36sNJp2XY=:cT7vON+sWOcRebU/87g7N/sWeqrdeOg/:uGteG73OeDWUl3wg4r3J0yJXZ+Iw+rQnoukRYo2oGGg2540I0N6dg9SwUBEPYoNo]"
+        },
+        "field_service": {
+          "_auth_type": "jwt",
+          "jwt_secret": "EJ[1:WCTxEk4kHDroUaHv2BhudGav+9O8HH7iwNv991qx7jI=:otuVCsHk/NlAHXayKHlokHnrJJXbNnZZ:9Jyjfid4HlIqv6X5GO9DJmrKJ0WBpz0ex9L6YCmuAOnZQL2/T16b/0y9NQAWRLnyvWnooDSsj0AQdngO9MkS87l4lxZm0wjMTp9e0JI7Eg==]"
         }
       },
       "channel_v2_api": {
@@ -241,7 +249,7 @@
         },
         "freshworksOmnibarV2": {
           "_environment": "staging",
-          "_product": "freshdesk",
+          "_product": "freshdesk-staging",
           "_region": "STAGING",
           "_clientid": "38562334847549459"
         },
@@ -813,11 +821,14 @@
       "freshchat": {
         "_agent_widget_host_url": "https://mr-yellow.freshpori.com",
         "_visitor_widget_host_url": "https://webchat-mryellow.freshpori.com",
-        "_api_host_url": "https://mr-yellow.freshpori.com",
+        "_api_host_url": "https://mr-pink.freshpori.com",
         "signup": {
           "_host": "https://mr-yellow.freshpori.com/internal/system42/",
           "secret": "EJ[1:agdMwKSxBnJe0E8/KT3Q3SafRIycf9BaGM6N1vsqm2I=:V2ecreMuQQxwaA8He/WBkppM8wXRJ75a:67QI2c/fbH8t/5U+1IkaJdRZRoQJ8dh3QIIvSelW1WexH0enqp35HJkP2PBo21FXD8JFqGQJ0W7oq2qOUNxk4uplZ42twVIyoF23EXQz3lsRBLw=]"
-        }
+        },
+        "freshchat_shared_key": "EJ[1:FOfxolkp4NlEykL7rb/4wRxJGZ6POjgCXUabLI99/E0=:Zakff26sQjBIAUWvyXIGFytLF0we/A14:m6myQaT8d2esHTkt30vTDS7R+dQaCbTK8NpHNeb0AU5LLKsRepT3HPNnH92cDvRc]",
+        "_issuer": "FreshDesk",
+        "_freshchat_client": "OC_FD"
       },
       "freshconnect": {
         "app_integration": {
@@ -1627,6 +1638,7 @@
         },
         "agent_assist" :{
           "_host": "https://admin.stagfreshbots.com/",
+          "_api_host": "https://api.stagfreshbots.com/",
           "_onboard_url": "https://api.stagfreshbots.com/rest/api/v1/bots",
           "client_id": "EJ[1:TdlmWIh7MmWzMRcU2fY4x5wtZxwpcKrdhePHdRtoMhw=:MdFezweXbt9Pi7YhhLGdcI/5OL1aGjS8:hbE7sw7pUB3aLCocYv74zM9KLzeLh5TmdA26wgAGEBojCENNPBW26lGK3nLi6Fd97UPABc6JAYY=]",
           "_product_id": "6d4dbdbdda6e2cbb9905041b56ae7e3f3c77bc15",
@@ -1646,6 +1658,18 @@
          "_host": "https://authz.freshpo.com/",
          "_product_id": 1,
          "_timeout": 10
+      },
+      "aloha_config": {
+        "_host": "https://aloha.fid.freshworksapi.com/"
+      },
+      "freshcaller_subscription_config": {
+         "_subscription_host": "https://fcaller-billing-staging.freshfonehello.com/ubx/billing/callback",
+         "_timeout": 10
+      },
+      "freshchat_subscription_config": {
+        "_subscription_host": "https://maverics2.freshpori.com/v2/billing/callback",
+        "_timeout": 10,
+        "jwt_secret": "EJ[1:us7XEBvYkoSCvPtQvfIRKexMyhGyD2Fv90nJfF9EzSk=:PEvw/u1Rkm5GFlq7pmXAZW7CrTU/hBXG:DM95ov6LrCSY7GDKBD0CH92Nhu4CfiRqsUlLf5fNoKJJ06Pkfo4QA7iHWlgTwyVv]"
       }
     },
     "unique_keys": {
@@ -1657,6 +1681,46 @@
       }
     },
     "falcon_ui": {
+      "analyticsCollectorConfig": {
+        "_analyticsCollectorScript": "https://assets.freshpo.com/analytics/analyticsv1.js",
+        "schedulerConfig": {
+          "metricsAdapters": [
+            {
+              "_name": "newrelic",
+              "options": {
+                "_applicationID": "48084678",
+                "licenseKey": "EJ[1:lN2dwp9eDJrqB2NU0qclz67qjb/T/XnSCofhfcZ7VlA=:C2OkNF+HBf8ACHqG3klLtqyPPkIYy3ib:cgqpkZXTNYT2u0CWN8SZlxAkSckBzx33HtQ=]",
+                "_agent": "js-agent.newrelic.com/nr-spa-1016.min.js",
+                "_beacon": "bam.nr-data.net",
+                "_errorBeacon": "bam.nr-data.net",
+                "_spaMonitoring": true,
+                "_sa": 1
+              }
+            }
+          ]
+        }
+      },
+      "site_announcement": {
+        "_message": "On 1 Sep 2019, between 1:30 am to 2:30 am UTC, live chat will be inaccessible for customers and agents, owing to yearly maintenance. No chats will be received. Sorry for the inconvenience.",
+        "_features": [
+            "chat"
+        ],
+        "_launched": [
+            "custom_product_notification"
+        ],
+        "_startTime": "2019-07-30T01:00:00Z",
+        "_endTime": "2019-08-01T23:59:00Z"
+      },
+      "blue": {
+        "_bucket": "falconstagingvpc",
+        "_fingerprint_prepend": "https://d2641u002940uc.cloudfront.net/staging/",
+        "_ember_frontend_s3": "s3.amazonaws.com/falconstagingvpc"
+      },
+      "green": {
+        "_bucket": "falconstagingvpc-green",
+        "_fingerprint_prepend": "https://d36xa16q6wpz3d.cloudfront.net/staging/",
+        "_ember_frontend_s3": "s3.amazonaws.com/falconstagingvpc-green"
+      },
       "freshcaller": {
         "_sdk_url": "https://s3.amazonaws.com/freshcallersdk/sdk/v1/freshcaller-sdk.js",
         "_widget_loader_url": "https://s3.amazonaws.com/freshcallerwidgetloader/staging/fc-widget.js"

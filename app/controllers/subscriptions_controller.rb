@@ -6,7 +6,9 @@ class SubscriptionsController < ApplicationController
   include Redis::OthersRedis
   include Admin::AdvancedTicketing::FieldServiceManagement::CustomFieldValidator
   include Freshcaller::JwtAuthentication
+  include Freshcaller::CreditsHelper
   include SubscriptionsHelper
+  include Billing::OmniSubscriptionUpdateMethods
 
   before_filter :prevent_actions_for_sandbox
   skip_before_filter :check_account_state
@@ -315,6 +317,11 @@ class SubscriptionsController < ApplicationController
         flash[:notice] = t('subscription_info_update') if current_account.launched?(:downgrade_policy) && scoper.subscription_request.present?
         current_account.delete_account_cancellation_requested_time_key if scoper.suspended? && current_account.launched?(:downgrade_policy) && current_account.account_cancellation_requested?
         result = billing_subscription.update_subscription(scoper, prorate?, @addons)
+        if Account.current.omni_bundle_account?
+          chargebee_params = construct_payload_for_ui_update(result)
+          Billing::FreshcallerSubscriptionUpdate.perform_async(chargebee_params)
+          Billing::FreshchatSubscriptionUpdate.perform_async(chargebee_params)
+        end
         scoper.subscription_request.destroy if scoper.subscription_request.present?
         unless result.subscription.coupon == coupon
           billing_subscription.add_discount(scoper.account, coupon)
@@ -549,22 +556,5 @@ class SubscriptionsController < ApplicationController
         flash[:notice] = t('fsm_requirements_not_met')
         redirect_to subscription_url
       end
-    end
-
-    def fetch_freshcaller_credit_info
-      response = freshcaller_request({},
-                                     "#{protocol}#{current_account.freshcaller_account.domain}/credits",
-                                     :get).parsed_response
-      response.key?('data') ? credit_info_hash(response['data']['attributes']) : nil
-    end
-
-    def credit_info_hash(data_attributes)
-      currency = CURRENCY_UNITS[current_account.currency_name]
-      { phone_credits: "#{currency} #{data_attributes['available-credit']}",
-        auto_recharge: "#{currency} #{data_attributes['recharge-quantity']}" }
-    end
-
-    def protocol
-      Rails.env.development? ? 'http://' : 'https://'
     end
 end

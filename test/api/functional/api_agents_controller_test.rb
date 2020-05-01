@@ -1,6 +1,7 @@
 require_relative '../test_helper'
 ['agents_test_helper.rb', 'attachments_test_helper.rb', 'freshcaller_test_helper.rb'].each { |file| require Rails.root.join('test', 'api', 'helpers', file) }
 require_relative '../helpers/admin/skills_test_helper'
+require Rails.root.join('test', 'models', 'helpers', 'freshchat_account_test_helper.rb')
 require 'webmock/minitest'
 WebMock.allow_net_connect!
 class ApiAgentsControllerTest < ActionController::TestCase
@@ -10,6 +11,8 @@ class ApiAgentsControllerTest < ActionController::TestCase
   include Admin::SkillsTestHelper
   include ::Freshcaller::TestHelper
   include ::Freshcaller::Endpoints
+  include FreshchatAccountTestHelper
+  include Freshchat::AgentUtil
   def wrap_cname(params)
     { api_agent: params }
   end
@@ -771,6 +774,26 @@ class ApiAgentsControllerTest < ActionController::TestCase
     match_json(request_error_pattern(:access_denied))
   end
 
+  def test_destroy_agent_with_freshchat
+    Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
+    AgentObserver.any_instance.stubs(:freshchat_domain).returns('test-freshchat.freshpo.com')
+    create_fc_account
+    stub_request(:post, %r{^https://test-freshchat.freshpo.com/v2/agents.*?$}).to_return(body: {}.to_json, status: 200)
+    user = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id, freshchat_agent: true)
+    freshid_authorization = user.authorizations.build(provider: Freshid::Constants::FRESHID_PROVIDER, uid: SecureRandom.uuid)
+    User.any_instance.stubs(:freshid_authorization).returns(freshid_authorization)
+    agent = Account.current.agents.find_by_user_id(user.id)
+    freshchat_enabled = agent.additional_settings[:freshchat][:enabled]
+    stub_request(:delete, %r{^https://test-freshchat.freshpo.com/v2/agents.*?$}).to_return(status: 404)
+    delete :destroy, construct_params(id: user.id)
+    assert_response 204
+    assert_equal true, freshchat_enabled
+  ensure
+    User.any_instance.unstub(:freshid_authorization)
+    AgentObserver.any_instance.unstub(:freshchat_domain)
+    Account.any_instance.unstub(:omni_chat_agent_enabled?)
+  end
+
   def test_destroy_agent_with_manage_user_privilege_only
     agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
     User.stubs(:current).returns(@agent)
@@ -1414,6 +1437,31 @@ class ApiAgentsControllerTest < ActionController::TestCase
     Account.unstub(:current)
   end
 
+  def test_create_agent_with_freshchat_enabled
+    Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
+    AgentObserver.any_instance.stubs(:freshchat_domain).returns('test-freshchat.freshpo.com')
+    create_fc_account
+    stub_request(:post, %r{^https://test-freshchat.freshpo.com/v2/agents.*?$}).to_return(body: {}.to_json, status: 200)
+    params_hash = { email: Faker::Internet.email, ticket_scope: 2, role_ids: [Account.current.roles.find_by_name('Account Administrator').id], name: Faker::Name.name, freshchat_agent: true }
+    post :create, construct_params(params_hash)
+    assert_response 201
+    response = parse_response @response.body
+    assert_equal response['freshchat_agent'], true
+  ensure
+    AgentObserver.unstub(:freshchat_domain)
+    Account.any_instance.unstub(:omni_chat_agent_enabled?)
+  end
+
+  def test_create_agent_in_freshchat_with_feature_disabled
+    Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(false)
+    params_hash = { email: Faker::Internet.email, ticket_scope: 2, role_ids: [Account.current.roles.find_by_name('Account Administrator').id], name: Faker::Name.name, freshchat_agent: true }
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern(:freshchat_agent, :require_feature_for_attribute, code: :inaccessible_field, attribute: 'freshchat_agent', feature: :omni_chat_agent)])
+  ensure
+    Account.any_instance.unstub(:omni_chat_agent_enabled?)
+  end
+
   def test_create_agent_with_freshcaller_enabled
     Account.any_instance.stubs(:freshcaller_enabled?).returns(true)
     create_freshcaller_account unless Account.current.freshcaller_account
@@ -1623,6 +1671,136 @@ class ApiAgentsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:freshcaller_enabled?)
   end
 
+  def test_agent_update_to_create_freshchat_agent
+    Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
+    AgentObserver.any_instance.stubs(:freshchat_domain).returns('test-freshchat.freshpo.com')
+    create_fc_account
+    agent = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id)
+    stub_request(:post, %r{^https://test-freshchat.freshpo.com/v2/agents.*?$}).to_return(body: {}.to_json, status: 200)
+    params = { freshchat_agent: true }
+    put :update, construct_params({ id: agent.id }, params)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal response['freshchat_agent'], true
+  ensure
+    AgentObserver.any_instance.unstub(:freshchat_domain?)
+    Account.any_instance.unstub(:omni_chat_agent_enabled?)
+  end
+
+  def test_agent_update_to_disable_freshchat_agent_standalone_account
+    Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
+    AgentObserver.any_instance.stubs(:freshchat_domain).returns('test-freshchat.freshpo.com')
+    create_fc_account
+    stub_request(:post, %r{^https://test-freshchat.freshpo.com/v2/agents.*?$}).to_return(body: {}.to_json, status: 200)
+    user = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id, freshchat_agent: true)
+    agent = Account.current.agents.find_by_user_id(user.id)
+    freshchat_enabled = agent.additional_settings[:freshchat][:enabled]
+    params = { freshchat_agent: false }
+    put :update, construct_params({ id: user.id }, params)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal true, freshchat_enabled
+    assert_equal response['freshchat_agent'], false
+  ensure
+    AgentObserver.any_instance.unstub(:freshchat_domain)
+    Account.any_instance.unstub(:omni_chat_agent_enabled?)
+  end
+
+  def test_agent_update_to_disable_freshchat_agent_omni_account
+    Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
+    Account.any_instance.stubs(:omni_bundle_id).returns(123)
+    AgentObserver.any_instance.stubs(:freshchat_domain).returns('test-freshchat.freshpo.com')
+    create_fc_account
+    stub_request(:post, %r{^https://test-freshchat.freshpo.com/v2/agents.*?$}).to_return(body: {}.to_json, status: 200)
+    stub_request(:put, %r{^https://test-freshchat.freshpo.com/v2/agents/.*?$}).to_return(body: { 'is_deactivated' => true }.to_json, headers: { 'Content-Type' => 'application/json' }, status: 200)
+    user = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id, freshchat_agent: true)
+    freshid_authorization = user.authorizations.build(provider: Freshid::Constants::FRESHID_PROVIDER, uid: SecureRandom.uuid)
+    User.any_instance.stubs(:freshid_authorization).returns(freshid_authorization)
+    agent = Account.current.agents.find_by_user_id(user.id)
+    freshchat_enabled = agent.additional_settings[:freshchat][:enabled]
+    params = { freshchat_agent: false }
+    put :update, construct_params({ id: user.id }, params)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal true, freshchat_enabled
+    assert_equal response['freshchat_agent'], false
+  ensure
+    User.any_instance.unstub(:freshid_authorization)
+    AgentObserver.any_instance.unstub(:freshchat_domain)
+    Account.any_instance.unstub(:omni_bundle_id)
+    Account.any_instance.unstub(:omni_chat_agent_enabled?)
+  end
+
+  def test_agent_update_to_re_enable_freshchat_agent
+    Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
+    AgentObserver.any_instance.stubs(:freshchat_domain).returns('test-freshchat.freshpo.com')
+    create_fc_account
+    stub_request(:post, %r{^https://test-freshchat.freshpo.com/v2/agents.*?$}).to_return(body: {}.to_json, status: 200)
+    stub_request(:put, %r{^https://test-freshchat.freshpo.com/v2/agents.*?$}).to_return(body: { 'is_deactivated' => false }.to_json, headers: { 'Content-Type' => 'application/json' }, status: 200)
+    user = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id, freshchat_agent: true)
+    freshid_authorization = user.authorizations.build(provider: Freshid::Constants::FRESHID_PROVIDER, uid: SecureRandom.uuid)
+    User.any_instance.stubs(:freshid_authorization).returns(freshid_authorization)
+    agent = Account.current.agents.find_by_user_id(user.id)
+    freshchat_enabled_before_disabling = agent.additional_settings[:freshchat][:enabled]
+    agent.additional_settings[:freshchat][:enabled] = false
+    agent.save
+    agent.reload
+    freshchat_enabled_after_disabling = agent.additional_settings[:freshchat][:enabled]
+    params = { freshchat_agent: true }
+    put :update, construct_params({ id: user.id }, params)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal true, freshchat_enabled_before_disabling
+    assert_equal false, freshchat_enabled_after_disabling
+    assert_equal response['freshchat_agent'], true
+  ensure
+    User.any_instance.unstub(:freshid_authorization)
+    AgentObserver.any_instance.unstub(:freshchat_domain)
+    Account.any_instance.unstub(:omni_chat_agent_enabled?)
+  end
+
+  def test_agent_update_with_duplicate_update_to_freshchat_agent
+    Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
+    AgentObserver.any_instance.stubs(:freshchat_domain).returns('test-freshchat.freshpo.com')
+    create_fc_account
+    stub_request(:post, %r{^https://test-freshchat.freshpo.com/v2/agents.*?$}).to_return(body: {}.to_json, status: 200)
+    user = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id, freshchat_agent: true)
+    agent = Account.current.agents.find_by_user_id(user.id)
+    freshchat_enabled = agent.additional_settings[:freshchat][:enabled]
+    params = { freshchat_agent: true }
+    put :update, construct_params({ id: user.id }, params)
+    AgentObserver.any_instance.expects(:handle_fchat_agent).times(0)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal true, freshchat_enabled
+    assert_equal response['freshchat_agent'], true
+  ensure
+    AgentObserver.any_instance.unstub(:freshchat_domain)
+    Account.any_instance.unstub(:omni_chat_agent_enabled?)
+  end
+
+  def test_agent_update_with_invalid_freshchat_agent_update
+    Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
+    AgentObserver.any_instance.stubs(:freshchat_domain).returns('test-freshchat.freshpo.com')
+    create_fc_account
+    stub_request(:post, %r{^https://test-freshchat.freshpo.com/v2/agents.*?$}).to_return(body: {}.to_json, status: 200)
+    user = add_test_agent(@account, role: Role.find_by_name('Account Administrator').id)
+    agent = Account.current.agents.find_by_user_id(user.id)
+    freshchat_enabled = agent.additional_settings.try(:[], :freshchat).try(:[], :enabled)
+    params = { freshchat_agent: false }
+    put :update, construct_params({ id: user.id }, params)
+    agent.reload
+    AgentObserver.any_instance.expects(:handle_fchat_agent).times(0)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal nil, freshchat_enabled
+    assert_equal false, response['freshchat_agent']
+    assert_equal nil, agent.additional_settings.try(:[], :freshchat).try(:[], :enabled)
+  ensure
+    AgentObserver.any_instance.unstub(:freshchat_domain)
+    Account.any_instance.unstub(:omni_chat_agent_enabled?)
+  end
+
   def test_agent_update_to_create_freshcaller_agent
     Account.any_instance.stubs(:freshcaller_enabled?).returns(true)
     create_freshcaller_account unless Account.current.freshcaller_account
@@ -1822,4 +2000,11 @@ class ApiAgentsControllerTest < ActionController::TestCase
     BulkApiJobs::Agent.any_instance.unstub(:pick_job)
     request.unstub(:uuid)
   end
+
+  private
+
+    def create_fc_account
+      @fchat_account = Freshchat::Account.where(account_id: Account.current.id).first
+      @fchat_account ||= create_freshchat_account Account.current
+    end
 end

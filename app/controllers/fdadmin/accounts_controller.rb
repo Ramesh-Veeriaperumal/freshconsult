@@ -8,6 +8,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   include EmailHelper
   include SandboxConstants
   include Freshid::Fdadmin::MigrationHelper
+  include ::Freshcaller::Util
 
   before_filter :check_domain_exists, :only => :change_url , :if => :non_global_pods?
   around_filter :select_slave_shard , :only => [:api_jwt_auth_feature,:sha1_enabled_feature,:select_all_feature,:show, :features,
@@ -17,7 +18,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
                 :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial, :reactivate_account,
                 :suspend_account, :change_webhook_limit, :change_primary_language, :trigger_action, :clone_account, :enable_fluffy,
                 :change_fluffy_limit, :change_fluffy_min_level_limit, :enable_min_level_fluffy , :disable_min_level_fluffy, :min_level_fluffy_info,
-                :reset_ticket_display_id, :skip_mandatory_checks]
+                :reset_ticket_display_id, :skip_mandatory_checks, :make_account_admin]
   before_filter :validate_params, :only => [:change_api_limit, :change_webhook_limit, :change_fluffy_limit, :change_fluffy_min_level_limit]
   before_filter :load_account, :only => [:user_info, :reset_login_count,
     :migrate_to_freshconnect, :extend_higher_plan_trial, :change_trial_plan]
@@ -463,6 +464,41 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
   end
 
+  def make_account_admin
+    result = {}
+    begin
+      account = Account.find(params[:account_id]).make_current
+      role = account.roles.account_admin.first
+      user = account.users.find_by_email(params[:email])
+      raise 'User not present' if user.blank?
+      user.make_current
+      Rails.logger.info "Before User's Role IDS: #{user.role_ids.inspect}"
+      if !user.role_ids.include?(role.id)
+        user.roles << role
+        user.save!
+        user.reload
+        if user.role_ids.include?(role.id)
+          Rails.logger.info 'Account admin privilege added'
+          call_location = 'Agent Update'
+          SpamDetection::SignupRestrictedDomainValidation.perform_async(account_id: params[:account_id], email: params[:email], call_location: call_location)
+        end
+        result[:status] = 'success'
+      else
+        result[:status] = 'notice'
+      end
+    rescue StandardError => e
+      result[:status] = 'error'
+      Rails.logger.info "Unable to make agent as account admin:: #{e.message}"
+    ensure
+      Account.reset_current_account
+    end
+    respond_to do |format|
+      format.json do
+        render json: result
+      end
+    end
+  end
+
   def disable_freshid_org_v2
     result = {}
     Sharding.admin_select_shard_of(params[:account_id]) do
@@ -557,6 +593,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       result[:account_name] = current_account.name
       if current_account.save
         result[:status] = "success"
+        current_account.reload
+        propagate_new_domain_to_freshcaller if current_account.freshcaller_account.present?
       else
         result[:status] = "error"
       end

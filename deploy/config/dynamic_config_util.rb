@@ -65,6 +65,18 @@ HEREDOC
         opts.on('-x', '--override_ejson=OVERRIDE_EJSON', 'Override Input Settings EJSON') { |v| @options[:override_ejson] = v }
         opts.on('-s', '--infra_secrets=INFRA_SECRETS', 'Infra Secrets Name') { |v| @options[:infra_secrets] = v }
       end,
+      'generate_falcon_assets' => OptionParser.new do |opts|
+        opts.banner = "Usage: generate_falcon_assets [options]"
+        opts.on('-r', '--region=REGION', 'Region where app is currently running') { |v| @options[:region] = v }
+        opts.on('-e', '--environment=APP_ENV', 'Application environment: staging or production') { |v| @options[:environment] = v }
+        opts.on('-f', '--file=SETTINGS.EJSON', 'Input settings ejson file') { |v| @options[:file] = v }
+        opts.on('-x', '--override_ejson=OVERRIDE_EJSON', 'Override Input Settings EJSON') { |v| @options[:override_ejson] = v }
+        opts.on('-s', '--infra_secrets=INFRA_SECRETS', 'Infra Secrets Name') { |v| @options[:infra_secrets] = v }
+        opts.on('-k', '--kms', 'Use KMS to decrypt the ejson') { |v| @options[:kms] = true }
+        opts.on('-l', '--layer=LAYER', 'Layer this app belongs to') { |v| @options[:layer] = v }
+        opts.on('-n', '--stackname=STACKNAME', 'OpsWorks Stack name') { |v| @options[:stackname] = v }
+        opts.on('-h', '--hostname=HOSTNAME', 'Host name of the app') { |v| @options[:hostname] = v }
+      end,
       'decrypt' => OptionParser.new do |opts|
         opts.banner = "Usage: decrypt [options]\n One of --kms or --private_key should be provided"
         opts.on('-f', '--file=SETTINGS.EJSON', 'Input settings ejson file') { |v| @options[:file] = v }
@@ -354,6 +366,45 @@ HEREDOC
     end
   end
 
+  def self.generate_falcon_assets()
+    require 'erubis'
+    decrypt()
+    node = Node.new(@options, @settings)
+    opsworks = OpsWorks.new(node, @options)
+    color_code = opsworks.get_color()
+    config_dir = "/data/shared"
+    File.open("#{config_dir}/deploy.js", "wb") do |f|
+      @settings[:falcon_ui][:s3][:bucket] = @settings[:falcon_ui][color_code.to_sym][:bucket]
+      @settings[:falcon_ui][:fingerprint_prepend] = @settings[:falcon_ui][color_code.to_sym][:fingerprint_prepend]
+      @settings[:ember_frontend_s3] = @settings[:falcon_ui][color_code.to_sym][:ember_frontend_s3]
+      @falcon_ui = @settings[:falcon_ui]
+      @opsworks_access_keys = @settings[:opsworks_access_keys]
+      template = File.open("/data/falcon-config/deploy.js.erb").read
+      content = Erubis::Eruby.new(template).result(binding)
+      f.write(content)
+      f.close
+    end
+
+    File.open("#{config_dir}/stack-config.js", "wb") do |f|
+      @settings[:falcon_ui][:s3][:bucket] = @settings[:falcon_ui][color_code.to_sym][:bucket]
+      @settings[:falcon_ui][:fingerprint_prepend] = @settings[:falcon_ui][color_code.to_sym][:fingerprint_prepend]
+      @settings[:ember_frontend_s3] = @settings[:falcon_ui][color_code.to_sym][:ember_frontend_s3]
+      node = @settings
+      use_tag = node[:falcon_ui][:sentry] && node[:falcon_ui][:sentry][:usetag] ? "#{node[:falcon_ui][:sentry][:usetag]}"  : ""
+      if use_tag.eql? "true"
+        release_id = "#{node[:falcon_ui][:revision]}"
+      else
+        release_hash = `cd /data/helpkit-ember && git log -1 --format="%H"`.gsub(/\n/,"")
+        release_id = 'FD_' + Time.now.strftime('%y.%m.%d') + "-#{release_hash}"
+      end
+      node[:release_id] = release_id
+      template = File.open("/data/falcon-config/stack-config.js.erb").read
+      content = Erubis::Eruby.new(template).result(binding)
+      f.write(content)
+      f.close
+    end
+  end
+
   def self.generate_config()
     require 'erubis'
 
@@ -502,6 +553,8 @@ HEREDOC
         "shoryuken.monitrc.erb",
         "resque.monitrc.erb",
         "resque-scheduler.monitrc.erb",
+        "deploy.js.erb",
+        "stack-config.js.erb"
       ]
 
       if skip_file_list.any?{ |skip_file| filename.include?(skip_file) }
@@ -1022,6 +1075,8 @@ HEREDOC
     case @command
     when "generate_config"
       generate_config
+    when "generate_falcon_assets"
+      generate_falcon_assets
     when "decrypt"
       decrypt
       puts(JSON.pretty_generate(@settings))

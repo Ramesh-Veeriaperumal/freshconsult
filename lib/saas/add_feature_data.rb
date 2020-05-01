@@ -1,4 +1,6 @@
 module SAAS::AddFeatureData
+  include ::AgentAssist::Util
+
   def handle_round_robin_add_data
     Role.add_manage_availability_privilege account
   end
@@ -9,5 +11,9 @@ module SAAS::AddFeatureData
 
   def handle_article_versioning_add_data
     ::Solution::ArticleVersionsMigrationWorker.perform_async(action: 'add')
+  end
+
+  def handle_agent_assist_ultimate_add_data
+    add_agent_assist_ultimate
   end
 end

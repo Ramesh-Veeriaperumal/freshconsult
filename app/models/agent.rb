@@ -18,6 +18,7 @@ class Agent < ActiveRecord::Base
   VERSION_MEMBER_KEY = 'AGENTS_GROUPS_LIST'.freeze
 
   concerned_with :associations, :constants, :presenter
+  serialize :additional_settings, Hash
 
   publishable on: [:create, :update, :destroy]
 
@@ -53,7 +54,7 @@ class Agent < ActiveRecord::Base
                   :scoreboard_level_id, :user_attributes, :group_ids, :freshchat_token, :agent_type, :search_settings, :focus_mode, :show_onBoarding, :notification_timestamp, :show_loyalty_upgrade
   attr_accessor :agent_role_ids, :freshcaller_enabled, :user_changes, :group_changes,
                 :ocr_update, :misc_changes, :out_of_office_days, :old_agent_availability,
-                :return_old_agent_availability
+                :return_old_agent_availability, :freshchat_enabled
 
   scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
   scope :full_time_support_agents, :conditions => { :occasional => false, :agent_type => SUPPORT_AGENT_TYPE, 'users.deleted' => false}
@@ -390,6 +391,10 @@ class Agent < ActiveRecord::Base
 
   def agent_freshcaller_enabled?
     freshcaller_agent.try(:fc_enabled) || false
+  end
+
+  def agent_freshchat_enabled?
+    self.additional_settings.try(:[], :freshchat).try(:[], :enabled) || false
   end
 
   protected

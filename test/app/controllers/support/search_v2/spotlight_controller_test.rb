@@ -27,4 +27,11 @@ class Support::SearchV2::SpotlightControllerTest < ActionController::TestCase
     expected_query = [forum_category1.id, forum_category2.id]
     assert_equal expected_query, query
   end
+
+  def test_force_exact_match
+    @exact_match = false
+    @controller.params = { url_locale: 'th' }
+    @exact_match = @controller.safe_send('force_exact_match')
+    assert_equal @exact_match, true
+  end
 end

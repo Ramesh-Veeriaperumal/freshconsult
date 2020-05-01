@@ -54,6 +54,7 @@ class ApiAgentsController < ApiApplicationController
 
     check_and_assign_skills_for_update if Account.current.skill_based_round_robin_enabled?
     @item.freshcaller_enabled = params[cname][:freshcaller_agent] unless params[cname][:freshcaller_agent].nil?
+    @item.freshchat_enabled = params[cname][:freshchat_agent] unless params[cname][:freshchat_agent].nil?
     @item.scoreboard_level_id = params[cname][:agent_level_id] if params[cname][:agent_level_id].present?
     params[cname][:user_attributes].each do |k, v|
       @item.user.safe_send("#{k}=", v)
@@ -267,6 +268,7 @@ class ApiAgentsController < ApiApplicationController
       @item.signature_html = params[cname][:signature_html] if params[cname][:signature_html].present?
       @item.build_agent_groups_attributes(group_ids) if group_ids.present?
       @item.freshcaller_enabled = params[:freshcaller_agent] || false
+      @item.freshchat_enabled = params[cname][:freshchat_agent] if params[cname][:freshchat_agent].present?
       @item.scoreboard_level_id = params[:agent_level_id]
     end
 

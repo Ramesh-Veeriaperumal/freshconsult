@@ -29,6 +29,7 @@ agent_types = Account.current.agent_types_from_cache
   if Account.current.freshcaller_enabled?
     response_hash[:freshcaller_agent] = agent.freshcaller_agent.present? ? agent.freshcaller_agent.try(:fc_enabled) : false
   end
+  response_hash[:freshchat_agent] = agent.agent_freshchat_enabled? if Account.current.omni_chat_agent_enabled?
   response_hash[:agent_level_id] = agent.scoreboard_level_id if Account.current.gamification_enabled? && Account.current.gamification_enable_enabled?
   response_hash[:contact][:avatar] = AttachmentDecorator.new(user.avatar).to_hash if user.avatar.present?
   response_hash

@@ -7,6 +7,7 @@ class Freshchat::Account < ActiveRecord::Base
     fc.add :account_id, as: :freshdesk_account_id
     fc.add :app_id, as: :freshchat_account_id
     fc.add :api_domain, as: :freshchat_domain
+    fc.add :domain, as: :freshchat_account_domain
     fc.add :preferences
     fc.add :enabled
     fc.add proc { |x| x.utc_format(x.created_at) }, as: :created_at

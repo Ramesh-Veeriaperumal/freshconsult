@@ -368,7 +368,7 @@
       :agent_articles_suggest: 363
       :email_articles_suggest: 364
       :botflow: 365
-      :agent_assist: 366
+      :agent_assist_lite: 366
       :robo_assist: 367
       :help_widget: 368
       :help_widget_appearance: 369
@@ -384,6 +384,9 @@
       :pci_compliance_field: 379
       :twitter_field_automation: 380
       :triage: 381
+      :advanced_freshcaller: 382  
+      :email_bot: 383
+      :agent_assist_ultimate: 384
 :selectable_features:
   :redis_display_id: true
   :branding: true

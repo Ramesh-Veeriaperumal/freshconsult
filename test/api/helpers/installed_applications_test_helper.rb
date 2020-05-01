@@ -283,4 +283,120 @@ module InstalledApplicationsTestHelper
       }
     }
   end
+
+  def nested_emails_form_fields_result
+    {
+      'Lead' => {
+        'id' => 2_000_022_747,
+        'name' => 'DefaultLeadForm',
+        'field_class' => 'Lead',
+        'fields' => [{
+          'id' => 'b802a38d',
+          'name' => 'basic_information',
+          'label' => 'Basicinformation',
+          'fields' => [{
+            'id' => 'd3198e57',
+            'name' => 'telephone_numbers',
+            'label' => 'TelephoneNumbers',
+            'fields' => [{
+              'id' => '9f50c437',
+              'name' => 'emails',
+              'type' => 'email',
+              'label' => 'Emails',
+              'fields' => [],
+              'form_id' => 2_000_022_747,
+              'field_class' => 'Lead',
+              'visible' => 'true',
+              'field_options' => { 'show_in_import' => true }
+            }, {
+              'id' => '7e0basd636d',
+              'name' => 'work_number',
+              'type' => 'phone_number',
+              'label' => 'Work',
+              'fields' => [],
+              'form_id' => 2_000_022_747,
+              'field_class' => 'Lead',
+              'visible' => 'true',
+              'field_options' => { 'show_in_import' => true }
+            }],
+            'form_id' => 2_000_022_747,
+            'field_class' => 'Lead',
+            'type' => 'section'
+          }],
+          'form_id' => 2_000_022_747,
+          'field_class' => 'Lead'
+        }]
+      },
+      'Contact' => {
+        'id' => 2_000_022_746,
+        'name' => 'DefaultContactForm',
+        'field_class' => 'Contact',
+        'fields' => [{
+          'id' => '3d16cb19',
+          'name' => 'basic_information',
+          'label' => 'Basicinformation',
+          'fields' => [{
+            'id' => 'aae7d8ed',
+            'name' => 'telephone_numbers',
+            'label' => 'TelephoneNumbers',
+            'fields' => [{
+              'id' => 'aeda1254',
+              'name' => 'emails',
+              'type' => 'email',
+              'label' => 'Emails',
+              'fields' => [],
+              'form_id' => 2_000_022_746,
+              'field_class' => 'Contact',
+              'visible' => 'true',
+              'field_options' => { 'show_in_import' => true }
+            }, {
+              'id' => 'a65154ae',
+              'name' => 'work_number',
+              'type' => 'phone_number',
+              'label' => 'Work',
+              'fields' => [],
+              'form_id' => 2_000_022_746,
+              'field_class' => 'Contact',
+              'visible' => 'true',
+              'field_options' => { 'show_in_import' => true }
+            }],
+            'form_id' => 2_000_022_746,
+            'field_class' => 'Contact',
+            'type' => 'section'
+          }],
+          'form_id' => 2_000_022_746,
+          'field_class' => 'Contact'
+        }]
+      }
+    }
+  end
+
+  private
+
+    def fetch_nested_emails_response
+      "{\"forms\":[{\"id\":2000022747,\"name\":\"DefaultLeadForm\",
+                  \"field_class\":\"Lead\",\"fields\":[{\"id\":\"b802a38d\",
+                  \"name\":\"basic_information\",\"label\":\"Basicinformation\",
+                  \"fields\":[{\"id\":\"d3198e57\",\"name\":\"telephone_numbers\",
+                  \"label\":\"TelephoneNumbers\",\"fields\":[{\"id\":\"9f50c437\",\"name\":\"emails\",\"type\":\"email\",
+                  \"label\":\"Emails\",\"fields\":[],\"form_id\":2000022747,\"visible\":\"true\",
+                  \"field_class\":\"Lead\",\"field_options\":{\"show_in_import\":true}},
+                  {\"id\":\"7e0basd636d\",\"name\":\"work_number\",\"type\":\"phone_number\",
+                  \"label\":\"Work\",\"fields\":[],\"form_id\":2000022747,\"visible\":\"true\",
+                  \"field_class\":\"Lead\",\"field_options\":{\"show_in_import\":true}}],\"form_id\":2000022747,
+                  \"field_class\":\"Lead\",\"type\":\"section\"}],
+                  \"form_id\":2000022747,\"field_class\":\"Lead\"}]},
+                  {\"id\":2000022746,\"name\":\"DefaultContactForm\",
+                  \"field_class\":\"Contact\",\"fields\":[{\"id\":\"3d16cb19\",
+                  \"name\":\"basic_information\",\"label\":\"Basicinformation\",
+                  \"fields\":[{\"id\":\"aae7d8ed\",\"name\":\"telephone_numbers\",
+                  \"label\":\"TelephoneNumbers\",\"fields\":[{\"id\":\"aeda1254\",\"name\":\"emails\",\"type\":\"email\",
+                  \"label\":\"Emails\",\"fields\":[],\"form_id\":2000022746,\"visible\":\"true\",
+                  \"field_class\":\"Contact\",\"field_options\":{\"show_in_import\":true}},
+                  {\"id\":\"a65154ae\",\"name\":\"work_number\",\"type\":\"phone_number\",
+                  \"label\":\"Work\",\"fields\":[],\"form_id\":2000022746,\"visible\":\"true\",
+                  \"field_class\":\"Contact\",\"field_options\":{\"show_in_import\":true}}],\"form_id\":2000022746,
+                  \"field_class\":\"Contact\",\"type\":\"section\"}],
+                  \"form_id\":2000022746,\"field_class\":\"Contact\"}]}]}"
+    end
 end

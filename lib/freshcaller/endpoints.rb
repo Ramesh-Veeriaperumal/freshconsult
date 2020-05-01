@@ -5,6 +5,7 @@ module Freshcaller
     DELETE_INTEGRATION = '/integrations/freshdesk/delete'.freeze
     ENABLE_INTEGRATION = '/integrations/freshdesk/enable'.freeze
     DISABLE_INTEGRATION = '/integrations/freshdesk/disable'.freeze
+    UPDATE_INTEGRATION = '/integrations/freshdesk/update'.freeze
 
     def freshcaller_base_sso_url
       "#{protocol}#{current_account.freshcaller_account.domain}/sso/freshdesk/#{sign_payload(email: current_user.email)}"
@@ -45,6 +46,10 @@ module Freshcaller
 
     def freshcaller_add_agent_url
       "#{freshcaller_url}/users"
+    end
+
+    def freshcaller_integration_update_url
+      "#{freshcaller_url}#{UPDATE_INTEGRATION}"
     end
 
     def freshcaller_update_agent_url(user_id)

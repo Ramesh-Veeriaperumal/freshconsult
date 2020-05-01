@@ -33,6 +33,7 @@ class FreshidController < ApplicationController
       @user_session = current_account.user_sessions.new(user)
       @user_session.web_session = true
       mobile_login = params[:mobile_login] || false
+      mobile_scheme = params[:scheme]
       if @user_session.save
         @current_user_session = @user_session
         @current_user = @user_session.record
@@ -42,12 +43,12 @@ class FreshidController < ApplicationController
         set_freshid_session_info_in_cookie if current_account.freshid_org_v2_enabled?
         return unless grant_day_pass
         set_cookies_for_mobile if is_native_mobile?
-        mobile_and_freshid_v2?(mobile_login) ? redirect_to_mobile_freshid_login(@current_user) : redirect_back_or_default(default_return_url)
+        mobile_and_freshid_v2?(mobile_login) ? redirect_to_mobile_freshid_login(@current_user, mobile_scheme) : redirect_back_or_default(default_return_url)
       else
         cookies['mobile_access_token'] = { :value => 'failed', :http_only => true } if is_native_mobile?
         redirect_to login_url && return unless mobile_and_freshid_v2?(mobile_login)
         Rails.logger.error "FRESHID MOBILE LOGIN :: Failed :: a=#{current_account.try(:id)}"
-        redirect_to Freshid::V2::UrlGenerator.mobile_login_url(current_account.full_domain, { login: 'failed' })
+        redirect_to Freshid::V2::UrlGenerator.mobile_login_url(current_account.full_domain, login: 'failed', scheme: mobile_scheme)
       end
     end
 
@@ -60,14 +61,14 @@ class FreshidController < ApplicationController
       cookies['fd_mobile_email'] = { :value => @current_user.email, :http_only => true }
     end
 
-    def redirect_to_mobile_freshid_login(user)
-      query_params = { login: 'success', token: user.mobile_auth_token, email: user.email }
+    def redirect_to_mobile_freshid_login(user, scheme)
+      query_params = { login: 'success', token: user.mobile_auth_token, email: user.email, scheme: scheme }
       redirect_to Freshid::V2::UrlGenerator.mobile_login_url(current_account.full_domain, query_params)
     end
 
     def show_login_error(user_not_present, invalid_user=false)
       if params[:mobile_login]
-        redirect_to freshid_login_url({mobile_login: true})
+        redirect_to freshid_login_url(mobile_login: true, scheme: params[:scheme])
       else
         error_message = (user_not_present ? FLASH_USER_NOT_EXIST : (invalid_user ? FLASH_INVALID_USER : nil))
         freshid_auth_failure_redirect_back(error_message, support_login_path) if error_message.present?
@@ -117,7 +118,7 @@ class FreshidController < ApplicationController
     
     def authorize_callback_v2_helper
       org_domain = current_account.organisation_domain
-      freshid_authorize_url = params[:mobile_login] ? freshid_authorize_callback_url({ mobile_login: params[:mobile_login] }) : freshid_authorize_callback_url
+      freshid_authorize_url = params[:mobile_login] ? freshid_authorize_callback_url(mobile_login: params[:mobile_login], scheme: params[:scheme]) : freshid_authorize_callback_url
       response = Freshid::V2::LoginUtil.fetch_user_by_code(org_domain, params[:code], freshid_authorize_url, current_account)
       user = response.present? ? response[:user] : nil
       Rails.logger.info "FRESHID V2 authorize_callback :: user_present=#{user.present?} , user=#{user.try(:id)}, valid_user=#{user.try(:valid_user?)}, organisation domain:#{org_domain}"
@@ -128,7 +129,7 @@ class FreshidController < ApplicationController
     end
 
     def freshid_v2_redirect_url
-      params[:mobile_login] ? freshid_authorize_callback_url({ mobile_login: true }) : freshid_authorize_callback_url
+      params[:mobile_login] ? freshid_authorize_callback_url(mobile_login: true, scheme: params[:scheme]) : freshid_authorize_callback_url
     end
     
     def customer_authorize_callback_helper

@@ -95,7 +95,7 @@ class SAAS::SubscriptionEventActions
       handle_feature_drop_data
       handle_feature_add_data
       handle_fluffy_feature(to_be_added, to_be_removed)
-      # add_implicit_features_to_new_plan
+      add_implicit_features_to_new_plan
     end
 
   end
@@ -281,7 +281,6 @@ class SAAS::SubscriptionEventActions
     def add_implicit_features_to_new_plan
       if account.field_service_management_toggle_enabled? && account.field_service_management_enabled?
         account.add_feature(:dynamic_sections) unless account.has_feature?(:dynamic_sections)
-        account.add_feature(:parent_child_infra) unless account.has_feature?(:parent_child_infra)
       end
     end
 end

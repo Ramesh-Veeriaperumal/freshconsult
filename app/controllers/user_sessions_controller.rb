@@ -274,11 +274,12 @@ class UserSessionsController < ApplicationController
   def destroy
     logout_user
     return if current_account.sso_enabled? and current_account.sso_logout_url.present? and !is_native_mobile?
+    mobile_scheme = params[:scheme]
     if current_user.present? && freshid_agent?(current_user.email)
       Rails.logger.info "FRESHID destroy :: a=#{current_account.try(:id)}, u=#{current_user.try(:id)}"
       org_mapping = current_account.organisation_account_mapping
       if current_account.freshid_org_v2_enabled? && org_mapping.present? && org_mapping.created_at < current_user.current_login_at
-        redirect_url = params[:mobile_logout]? mobile_freshid_logout_url : support_home_url
+        redirect_url = params[:mobile_logout] ? mobile_freshid_logout_url(scheme: mobile_scheme) : support_home_url
         redirect_to Freshid::V2::UrlGenerator.freshid_logout(redirect_url) and return
       else
         redirect_to freshid_logout(agent_redirect_url || support_home_url) and return
@@ -286,7 +287,7 @@ class UserSessionsController < ApplicationController
     elsif current_user.present? && !current_user.agent? && customer_freshid_sso_enabled?
       redirect_to freshid_end_user_logout(customer_redirect_url || support_home_url) and return
     end
-    redirect_to mobile_freshid_logout_url && return if current_account.freshid_org_v2_enabled? && params[:mobile_logout]
+    redirect_to mobile_freshid_logout_url(scheme: mobile_scheme) && return if current_account.freshid_org_v2_enabled? && params[:mobile_logout]
     respond_to do |format|
       format.html  {
         redirect_to root_url
@@ -314,7 +315,7 @@ class UserSessionsController < ApplicationController
   end
 
   def mobile_freshid_logout
-    redirect_to Freshid::V2::UrlGenerator.mobile_logout_url(current_account.full_domain)
+    redirect_to Freshid::V2::UrlGenerator.mobile_logout_url(current_account.full_domain, scheme: params[:scheme])
   end    
 
   def freshid_user_authentication

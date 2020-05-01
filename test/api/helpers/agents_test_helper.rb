@@ -32,6 +32,7 @@ module AgentsTestHelper
     if Account.current.freshcaller_enabled?
       agent_hash[:freshcaller_agent] = agent.freshcaller_agent.present? ? agent.freshcaller_agent.try(:fc_enabled) : false
     end
+    agent_hash[:freshchat_agent] = agent.additional_settings.try(:[], :freshchat).try(:[], :enabled) || false if Account.current.omni_chat_agent_enabled?
     agent_hash[:agent_level_id] = agent.scoreboard_level_id if Account.current.gamification_enabled? && Account.current.gamification_enable_enabled?
     agent_hash
   end
@@ -205,6 +206,7 @@ module AgentsTestHelper
     if Account.current.freshcaller_enabled?
       agent_hash[:freshcaller_agent] = agent.freshcaller_agent.present? ? agent.freshcaller_agent.try(:fc_enabled) : false
     end
+    agent_hash[:freshchat_agent] = agent.additional_settings.try(:[], :freshchat).try(:[], :enabled) || false if Account.current.omni_chat_agent_enabled?
     agent_hash[:agent_level_id] = agent.scoreboard_level_id if Account.current.gamification_enabled? && Account.current.gamification_enable_enabled?
     agent_hash
   end

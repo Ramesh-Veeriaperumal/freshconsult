@@ -12,7 +12,8 @@ module UsersHelper
                         :role_ids => ["#{role_id}"],
                         :unique_external_id => options[:unique_external_id],
                         :agent_type => options[:agent_type] || 1,
-                        :agent_level_id => options[:agent_level_id]})
+                        :agent_level_id => options[:agent_level_id],
+                        :freshchat_agent => options[:freshchat_agent]})
   end
 
   def add_agent(account, options={})
@@ -41,6 +42,7 @@ module UsersHelper
       new_user.unique_external_id = options[:unique_external_id]
     end
     new_agent.scoreboard_level_id = options[:agent_level_id] if Account.current.gamification_enabled? && options[:agent_level_id].present?
+    new_agent.freshchat_enabled = options[:freshchat_agent] if Account.current.omni_chat_agent_enabled? && options[:freshchat_agent].present?
     @account = Account.first if @account.blank?
     options[:role_ids] = [@account.roles.find_by_name("Agent").id] if options[:role_ids].blank?
     new_user.agent = new_agent

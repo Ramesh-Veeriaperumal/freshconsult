@@ -5,9 +5,15 @@
 
 <div class="<%=wrapper_class%>">
     <div class="phone-credit-info">
-        <div class="credits"><%= t('phone_credits') %> - <strong> <%= @freshcaller_credit_info[:phone_credits] %> </strong></div>
+        <div class="credits"><%= t('phone_credits') %> - <strong><%= @freshcaller_credit_info[:currency_name] %><%= @freshcaller_credit_info[:phone_credits] %> </strong></div>
             <% if @subscription.active? %>
-                <div><%= t('auto_recharge_for') %> <%= @freshcaller_credit_info[:auto_recharge] %></div>
+                <div class="auto_recharge">
+                    <% if @freshcaller_credit_info[:auto_recharge] %>
+                      <%= t('auto_recharge.enabled') %> <%= @freshcaller_credit_info[:currency_name] %><%= @freshcaller_credit_info[:recharge_quantity] %>
+                    <% else %>
+                      <%= t('auto_recharge.disabled') %>
+                    <% end %>
+                </div>
             <% end %>
         </div>
     <div class="add-phone-credits">

@@ -48,6 +48,8 @@ properties:
     example: 100
   freshcaller_agent:
     type: boolean
+  freshchat_agent:
+    type: boolean
   agent_level_id:
     type: integer
   search_settings:

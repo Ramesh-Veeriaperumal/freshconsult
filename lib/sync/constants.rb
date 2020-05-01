@@ -129,7 +129,8 @@ module Sync::Constants
     'Helpdesk::TicketField' => ['field_options'],
     'Helpdesk::SlaDetail' => ['sla_target_time'],
     'Helpdesk::SlaPolicy' => ['conditions', 'escalations'],
-    'Helpdesk::Section' => ['options']
+    'Helpdesk::Section' => ['options'],
+    'Agent' => ['additional_settings']
   }.freeze
 
   UNIQUE_MODEL_DATA = {

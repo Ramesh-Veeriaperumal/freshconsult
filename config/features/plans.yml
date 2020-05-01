@@ -69,8 +69,9 @@
       - :canned_forms
       - :help_widget_appearance
       - :article_export
-#     - :field_service_management_toggle
+      - :field_service_management_toggle
       - :sla_reminder_automation
+      - :advanced_freshcaller
     :inherits:
       - :sprout_jan_17
     :exclude: []
@@ -88,7 +89,6 @@
       - :help_widget_predictive
       - :article_versioning
       - :suggested_articles_count
-#      - :field_service_management_toggle
     :inherits:
       - :blossom_jan_17
     :exclude: []
@@ -121,7 +121,6 @@
       - :custom_dashboard
       - :audit_logs_central_publish
       - :audit_log_ui
-      - :field_service_management_toggle
       - :segments
       - :unlimited_multi_product
       - :next_response_sla
@@ -217,10 +216,11 @@
       - :auto_article_order
       - :help_widget_appearance
       - :article_export
-#     - :field_service_management_toggle
+      - :field_service_management_toggle
       - :sla_reminder_automation
       - :article_interlinking
       - :advanced_article_toolbar_options
+      - :advanced_freshcaller
     :inherits:
       - :sprout_jan_19
     :exclude: []
@@ -268,7 +268,6 @@
       - :advanced_automations
       - :article_versioning
       - :suggested_articles_count
-#      - :field_service_management_toggle
     :inherits:
       - :blossom_jan_19
     :exclude: []
@@ -309,7 +308,6 @@
       - :custom_dashboard
       - :audit_logs_central_publish
       - :audit_log_ui
-      - :field_service_management_toggle
       - :segments
       - :analytics_landing_data_schedules
       - :analytics_landing_new_report
@@ -326,8 +324,6 @@
       - :analytics_survey_results
       - :custom_translations
       - :portal_article_filters
-      - :autofaq
-      - :botflow
       - :supervisor_custom_status
       - :omni_channel_routing
       - :lbrr_by_omniroute
@@ -434,7 +430,8 @@
       - :article_export
       - :article_interlinking
       - :advanced_article_toolbar_options
-#     - :field_service_management_toggle
+      - :field_service_management_toggle
+      - :advanced_freshcaller
     :inherits:
       - :sprout_jan_20
     :exclude: []
@@ -480,7 +477,6 @@
       - :help_widget_predictive
       - :advanced_automations
       - :suggested_articles_count
-#      - :field_service_management_toggle
     :inherits:
       - :blossom_jan_20
     :exclude: []
@@ -519,7 +515,6 @@
       - :unique_contact_identifier
       - :custom_dashboard
       - :audit_logs_central_publish
-      - :field_service_management_toggle
       - :segments
       - :analytics_landing_data_schedules
       - :analytics_landing_new_report
@@ -536,8 +531,6 @@
       - :analytics_survey_results
       - :custom_translations
       - :portal_article_filters
-      - :autofaq
-      - :botflow
       - :supervisor_custom_status
       - :omni_channel_routing
       - :lbrr_by_omniroute
@@ -570,6 +563,9 @@
       - :detect_thank_you_note
       - :detect_thank_you_note_eligible
       - :smart_filter
+      - :agent_assist_lite
+      - :autofaq
+      - :botflow
     :inherits:
       - :estate_jan_20
     :exclude: []

@@ -18169,6 +18169,9 @@
         "freshcaller_agent": {
           "type": "boolean"
         },
+        "freshchat_agent": {
+          "type": "boolean"
+        },
         "agent_level_id": {
           "type": "integer"
         },
@@ -18234,6 +18237,7 @@
         "shortcuts_enabled": false,
         "avatar_id": 100,
         "freshcaller_agent": true,
+        "freshchat_agent": true,
         "agent_level_id": 3,
         "search_settings": {
           "tickets": {
@@ -18310,6 +18314,9 @@
           "type": "integer"
         },
         "freshcaller_agent": {
+          "type": "boolean"
+        },
+        "freshchat_agent": {
           "type": "boolean"
         },
         "agent_level_id": {
@@ -19468,6 +19475,9 @@
           "format": "date-time"
         },
         "freshcaller_agent": {
+          "type": "boolean"
+        },
+        "freshchat_agent": {
           "type": "boolean"
         },
         "agent_level_id": {

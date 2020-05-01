@@ -1,7 +1,7 @@
 module IntegrationServices::Services
   module Shopify
     class ShopifyRefundResource < IntegrationServices::Services::Shopify::ShopifyGenericResource
-      
+
       def refund_full_order(order_id)
         return {} if order_id.blank?
         order_resource = IntegrationServices::Services::Shopify::ShopifyOrderResource.new(@service, @store, @token)
@@ -18,11 +18,16 @@ module IntegrationServices::Services
             "shipping": {
               "full_refund": true
             },
-            "refund_line_items": refund_line_items
+            "refund_line_items": refund_line_items,
+            "location_id": order['location_id']
           }
         }
         refund_values = {}
-        refund_calculate_url = "#{server_url}/admin/orders/#{order_id}/refunds/calculate.json"
+        refund_calculate_url = if Account.current.shopify_api_revamp_enabled?
+          "#{server_url}/admin/#{SHOPIFY_API_VERSION}/orders/#{order_id}/refunds/calculate.json"
+        else
+          "#{server_url}/admin/orders/#{order_id}/refunds/calculate.json"
+        end
         response = http_post refund_calculate_url, refund_calculate_hash.to_json
         process_response(response, 200) do |refund|
           refund_values = refund
@@ -33,14 +38,19 @@ module IntegrationServices::Services
             "shipping": {
               "full_refund": true
             },
-            "refund_line_items": refund_line_items
+            "refund_line_items": refund_line_items,
+            "location_id": order['location_id']
           }
         }
         refund_values["refund"]["transactions"].each do |t|
           t["kind"] = "refund"
         end
         refund_hash[:refund][:transactions] = refund_values["refund"]["transactions"]
-        refund_url = "#{server_url}/admin/orders/#{order_id}/refunds.json"
+        refund_url = if Account.current.shopify_api_revamp_enabled?
+          "#{server_url}/admin/#{SHOPIFY_API_VERSION}/orders/#{order_id}/refunds.json"
+        else
+          "#{server_url}/admin/orders/#{order_id}/refunds.json"
+        end
         response = http_post refund_url, refund_hash.to_json
         process_response(response, 201) do |refund|
           return refund
@@ -63,6 +73,7 @@ module IntegrationServices::Services
         refund_calculate_hash = {
           "refund": {
             "currency": presentment_currency,
+            "location_id": order['location_id'],
             "refund_line_items": [
               {
                 "line_item_id": line_item_id,
@@ -72,7 +83,11 @@ module IntegrationServices::Services
           }
         }
         refund_values = {}
-        refund_calculate_url = "#{server_url}/admin/orders/#{order_id}/refunds/calculate.json"
+        refund_calculate_url = if Account.current.shopify_api_revamp_enabled?
+          "#{server_url}/admin/#{SHOPIFY_API_VERSION}/orders/#{order_id}/refunds/calculate.json"
+        else
+          "#{server_url}/admin/orders/#{order_id}/refunds/calculate.json"
+        end
         response = http_post refund_calculate_url, refund_calculate_hash.to_json
         process_response(response, 200) do |refund|
           refund_values = refund
@@ -80,6 +95,7 @@ module IntegrationServices::Services
         refund_hash = {
           "refund": {
             "currency": presentment_currency,
+            "location_id": order['location_id'],
             "refund_line_items": [
               {
                 "line_item_id": line_item_id,
@@ -92,7 +108,11 @@ module IntegrationServices::Services
           t["kind"] = "refund"
         end
         refund_hash[:refund][:transactions] = refund_values["refund"]["transactions"]
-        refund_url = "#{server_url}/admin/orders/#{order_id}/refunds.json"
+        refund_url = if Account.current.shopify_api_revamp_enabled?
+          "#{server_url}/admin/#{SHOPIFY_API_VERSION}/orders/#{order_id}/refunds.json"
+        else
+          "#{server_url}/admin/orders/#{order_id}/refunds.json"
+        end
         response = http_post refund_url, refund_hash.to_json
         process_response(response, 201) do |refund|
           return refund

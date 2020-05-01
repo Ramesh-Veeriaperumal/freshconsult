@@ -1,0 +1,3 @@
+<%= node[:opsworks][:environment]%>:
+  subscription_host: <%= node[:ymls][:freshcaller_subscription_config][:subscription_host] %>
+  timeout: <%= node[:ymls][:freshcaller_subscription_config][:timeout] %>

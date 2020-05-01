@@ -289,4 +289,12 @@ describe Fdadmin::AccountsController do
 
 	end
 
+	describe "make an agent as account admin for accounts controller" do 
+		before :each do
+			@account = Account.first
+		end
+		it "must be routable to change_account_url action" do
+			{:post=>"fdadmin/accounts/make_account_admin"}.should be_routable
+		end
+	end
 end

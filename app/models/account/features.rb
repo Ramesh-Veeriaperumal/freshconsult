@@ -40,7 +40,7 @@ class Account < ActiveRecord::Base
     :email_mailbox, :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
     :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :launch_fsm_geolocation,
     :ticket_field_revamp, :facebook_dm_outgoing_attachment, :skip_posting_to_fb, :hide_mailbox_error_from_agents, :hide_og_meta_tags,
-    :freshcaller_admin_new_ui, :facebook_post_outgoing_attachment, :disable_occlusion_rendering,
+    :facebook_post_outgoing_attachment, :disable_occlusion_rendering,
     :prevent_lang_detect_for_spam, :jira_onpremise_reporter, :support_ticket_rate_limit, :sidekiq_logs_to_central, :portal_central_publish, :encode_emoji_in_solutions,
     :forums_agent_portal, :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html,
     :mailbox_forward_setup, :remove_image_attachment_meta_data, :automated_private_notes_notification, :detect_lang_from_email_service,
@@ -49,7 +49,8 @@ class Account < ActiveRecord::Base
     :out_of_office, :enable_secure_login_check, :public_api_filter_factory, :enable_twitter_requester_fields, :marketplace_gallery, :solutions_quick_view,
     :translations_proxy, :translations_cdn, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :retry_emails, :disable_beamer, :fb_message_echo_support, :portal_prototype_update,
     :bot_banner, :solutions_freshconnect, :fsm_scheduler_month_view, :idle_session_timeout, :solutions_dashboard, :show_ssl_config,
-    :observer_race_condition_fix, :contact_graphical_avatar, :omni_bundle_2020, :article_versioning_redis_lock, :hypertrail_activities, :freshid_sso_sync, :fw_sso_admin_security, :cre_account, :cdn_attachments
+    :observer_race_condition_fix, :contact_graphical_avatar, :omni_bundle_2020, :article_versioning_redis_lock, :hypertrail_activities, :freshid_sso_sync, :fw_sso_admin_security, :cre_account, :cdn_attachments, :handle_custom_fields_conflicts, :shopify_api_revamp,
+    :omni_chat_agent
   ].freeze
 
   DB_FEATURES = [
@@ -86,8 +87,8 @@ class Account < ActiveRecord::Base
     :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters, :supervisor_custom_status, :lbrr_by_omniroute,
     :secure_attachments, :article_versioning, :article_export, :article_approval_workflow, :next_response_sla, :advanced_automations,
     :fb_ad_posts, :suggested_articles_count, :unlimited_multi_product,
-    :help_widget_article_customisation, :agent_assist, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
-    :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options
+    :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
+    :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -255,8 +256,12 @@ class Account < ActiveRecord::Base
     has_feature?(:freshcaller) and freshcaller_account.present?
   end
 
-  def freshcaller_admin_new_ui_enabled?
-    has_feature?(:freshcaller) and launched?(:freshcaller_admin_new_ui)
+  def freshchat_linked?
+    has_feature?(:freshchat) && freshchat_account.try(:enabled)
+  end
+
+  def omni_chat_agent_enabled?
+    launched?(:omni_chat_agent) && freshchat_linked? && freshid_integration_enabled?
   end
 
   def livechat_enabled?

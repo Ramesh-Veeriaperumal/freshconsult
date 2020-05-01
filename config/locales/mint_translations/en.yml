@@ -2835,6 +2835,8 @@ en:
         manage_service_task_automation_rules: Manage automation rules for service tasks
         view_secure_field: View secure information
         edit_secure_field: Add or edit secure data
+        do_not_publish: Do not publish
+        export_articles: Export articles
     help_image_alt:
       helpdesk_arcarde: Helpdesk Arcade
     mobihelp:
@@ -5611,6 +5613,7 @@ en:
     welcome:
       turn_on: Turn ON Social
       helptext_title2: Calculate your Social Response Rate
+      helptext_placeholder: "Your company's twitter handle"
       turn_off: Turn OFF Social
       30to70_html: >-
         Improve your social customer satisfaction by <a %{link_meta}> adding a
@@ -8224,6 +8227,6 @@ en:
   fd_channel: Freshdesk Omnichannel
   add_phone_credits: Add phone credits
   fd_omni_channel_experience: omni channel experience
-  social:
-    welcome:
-      helptext_placeholder: "Your company's twitter handle"
+  auto_recharge:
+    enabled: Auto recharge for
+    disabled: Auto recharge is disabled

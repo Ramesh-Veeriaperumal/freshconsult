@@ -1,4 +1,6 @@
 class Integrations::MarketplaceAppsController < Admin::AdminController
+  include Redis::RedisKeys
+  include Redis::OthersRedis
   include Marketplace::GalleryConstants
   include Marketplace::Constants
   include MemcacheKeys
@@ -9,6 +11,8 @@ class Integrations::MarketplaceAppsController < Admin::AdminController
   before_filter :load_object, :only => [:edit, :uninstall]
   before_filter :load_application, :only => :install
   before_filter :check_conditions, :only => [:install, :edit]
+
+  after_filter :cache_ni_addon_key, only: [:install, :uninstall]
 
   def edit
     return edit_marketplace_gallery if current_account.marketplace_gallery_enabled?
@@ -224,6 +228,20 @@ class Integrations::MarketplaceAppsController < Admin::AdminController
     def render_error(message)
       Rails.logger.error("#{message} for account: #{current_account.id} \n #{@application.inspect}")
       render json: { error: message }, status: :bad_request
+    end
+
+    def marketplace_cache_key
+      format(
+        MARKETPLACE_NI_PAID_APP,
+        account_id: current_account.id,
+        app_name: @application.name
+      )
+    end
+
+    def cache_ni_addon_key
+      if NATIVE_PAID_APPS.include?(@application.name) && params[:addon_id]
+        set_others_redis_key(marketplace_cache_key, params[:addon_id], MARETPLACE_PAID_NI_APPS_EXPIRY)
+      end
     end
 
     def update_timestamp

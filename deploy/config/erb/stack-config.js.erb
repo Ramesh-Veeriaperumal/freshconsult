@@ -1,0 +1,150 @@
+<%
+  config = {
+    OPTIONS: {
+      'fingerprint' => {
+        prepend: node[:falcon_ui][:fingerprint_prepend]
+      },
+      'asset-cache' => {
+        version: node[:release_id]
+      },
+      'esw-cache-first' => {
+        version: node[:release_id]
+      }
+    },
+    release: {
+      releaseId: node[:release_id]
+    },
+    dataCenterConfig: {
+      freshcallerSignupSupported: node[:ymls][:datacenter_config][:freshcaller_signup_supported],
+      freshconnectSignupSupported: node[:ymls][:datacenter_config][:freshconnect_signup_supported],
+      freshmarketerSignupSupported: node[:ymls][:datacenter_config][:freshmarketer_signup_supported]
+    },
+    dataCenter: node[:falcon_ui][:data_center],
+    askNicely: {
+      domainKey: node[:ymls][:asknicely_app][:domain_key],
+      templateName: node[:ymls][:asknicely_app][:template_name]
+    }
+  }
+
+  if(node[:falcon_ui][:freshcaller] && node[:falcon_ui][:freshcaller][:sdk_url])
+    config[:FRESHCALLER_URL] = node[:falcon_ui][:freshcaller][:sdk_url]
+  end
+
+  if(node[:falcon_ui][:sentry] && node[:falcon_ui][:sentry][:enabled])
+    config[:sentry] = {
+      enabled: true
+    }
+    if(node[:falcon_ui][:sentry_dsn])
+      config[:sentryDSN] = node[:falcon_ui][:sentry_dsn]
+    end
+  end
+
+  if(node[:falcon_ui][:freshcaller] && node[:falcon_ui][:freshcaller][:widget_loader_url])
+    config[:FRESHCALLER_WIDGET_LOADER_URL] = node[:falcon_ui][:freshcaller][:widget_loader_url]
+  end
+
+  if(node[:falcon_ui][:integrations_url])
+    config[:INTEGRATIONS_REDIRECT_URL] = node[:falcon_ui][:integrations_url]
+  end
+
+  if(node[:falcon_ui][:heap_project_id].present?)
+    config[:heap] = {
+      projectId: node[:falcon_ui][:heap_project_id]
+    }
+  end
+
+  if(node[:falcon_ui][:google_map_api_key])
+    config["ember-google-maps"] = {
+      key: node[:falcon_ui][:google_map_api_key]
+    }
+  end
+
+  if(node[:ymls][:config][:freshchat])
+    config[:freshchat] = {
+      token: node[:ymls][:config][:freshchat][:token],
+      appId: node[:ymls][:config][:freshchat][:app_id],
+      agentWidgetHostUrl: node[:ymls][:freshchat][:agent_widget_host_url],
+      visitorWidgetHostUrl: node[:ymls][:freshchat][:visitor_widget_host_url]
+    }
+  end
+
+  if(node[:ymls][:marketplace])
+    config[:marketplace] = {
+      datapipeKey: node[:ymls][:marketplace][:data_pipe_key],
+      awolRegion: node[:ymls][:marketplace][:awol_region]
+    }
+  end
+
+  if(node[:ymls][:iris][:rtsURL] && node[:ymls][:iris][:rts_accId])
+    config[:notifications] = {
+      rtsURL: node[:ymls][:iris][:rtsURL],
+      accId: node[:ymls][:iris][:rts_accId],
+      irisURL: node[:ymls][:iris][:collector_host]
+    }
+  end
+
+  if(node[:falcon_ui][:inline_manual] && node[:falcon_ui][:inline_manual][:token])
+    config[:inlineManual] = { token: node[:falcon_ui][:inline_manual][:token] }
+  end
+
+  if(node[:falcon_ui][:site_announcement] && node[:falcon_ui][:site_announcement].is_a?(Hash))
+    config[:siteAnnouncement] = node[:falcon_ui][:site_announcement]
+  end
+
+  if(node[:falcon_ui][:announcement_account_url])
+    config[:announcements] = {
+      accountUrl: node[:falcon_ui][:announcement_account_url]
+    }
+  end
+
+  if(node[:falcon_ui][:vault_service_url])
+    config[:vaultServiceUrl] = node[:falcon_ui][:vault_service_url]
+  end
+
+  if(node[:falcon_ui][:anonymous_signup_redirect_url])
+    config[:anonymousSignup] = {
+      thankyouUrl: node[:falcon_ui][:anonymous_signup_redirect_url]
+    }
+  end
+
+  if(node[:falcon_ui][:widget_domain])
+    config[:widgetDomain] = node[:falcon_ui][:widget_domain]
+  end
+
+  if(node[:ymls][:config][:freshworksOmnibar])
+    config[:freshworksOmnibar] = {
+      environment: node[:ymls][:config][:freshworksOmnibar][:environment],
+      product: node[:ymls][:config][:freshworksOmnibar][:product],
+      region: node[:ymls][:config][:freshworksOmnibar][:region]
+    }
+  end
+
+  if(node[:ymls][:config][:freshworksOmnibarV2])
+    config[:freshworksOmnibarV2] = {
+      environment: node[:ymls][:config][:freshworksOmnibarV2][:environment],
+      product: node[:ymls][:config][:freshworksOmnibarV2][:product],
+      region: node[:ymls][:config][:freshworksOmnibarV2][:region],
+      clientid: node[:ymls][:config][:freshworksOmnibarV2][:clientid]
+    }
+  end
+
+  if(node[:ymls][:config][:freshworksOmnibarAssets])
+    config[:freshworksOmnibarAssets] = {
+      script_asset_url: node[:ymls][:config][:freshworksOmnibarAssets][:script_asset_url],
+      style_asset_url: node[:ymls][:config][:freshworksOmnibarAssets][:style_asset_url]
+    }
+  end
+
+  if(node[:falcon_ui][:analyticsCollectorConfig])
+    config[:analyticsCollectorConfig] = node[:falcon_ui][:analyticsCollectorConfig]
+  end
+
+  if(node[:falcon_ui][:freshconnectAssets])
+    config[:freshconnectAssets] = node[:falcon_ui][:freshconnectAssets]
+  end
+%>
+
+module.exports = function() {
+  let ENV = <%= config.to_json %>
+  return ENV;
+};

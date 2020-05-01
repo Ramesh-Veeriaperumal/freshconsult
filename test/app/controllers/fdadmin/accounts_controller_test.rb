@@ -152,4 +152,26 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
     Fdadmin::DevopsMainController.unstub(:verify_signature)
     Fdadmin::DevopsMainController.unstub(:permit_internal_tools_ip)
   end
+
+  def test_make_account_admin_success
+    Account.stubs(:current).returns(@account)
+    ShardMapping.stubs(:find).returns(ShardMapping.first)
+    OpenSSL::HMAC.stubs(:hexdigest).returns('xyz')
+    Fdadmin::DevopsMainController.stubs(:verify_signature).returns(nil)
+    Fdadmin::DevopsMainController.stubs(:permit_internal_tools_ip).returns(nil)
+    FreshopsSubdomains.stubs(:include?).returns(true)
+    $redis_routes.stubs(:perform_redis_op).returns(true)
+    agent = add_test_agent(@account, role: @account.roles.find_by_name('Agent').id)
+    params = { 'version' => 'v1', 'account_id' => @account.id, 'email' => agent.email, 'digest' => 'xyz', 'name_prefix' => 'fdadmin_', 'path_prefix' => nil, 'action' => 'make_account_admin', 'controller' => 'fdadmin/accounts' }
+    post :make_account_admin, construct_params(params)
+    assert_response 200
+    assert_equal true, @account.users.find_by_email(agent.email).roles.include?(@account.roles.find_by_name('Account Administrator'))
+  ensure
+    Account.unstub(:current)
+    OpenSSL::HMAC.unstub(:hexdigest)
+    FreshopsSubdomains.unstub(:include?)
+    ShardMapping.unstub(:find)
+    Fdadmin::DevopsMainController.unstub(:verify_signature)
+    Fdadmin::DevopsMainController.unstub(:permit_internal_tools_ip)
+  end
 end

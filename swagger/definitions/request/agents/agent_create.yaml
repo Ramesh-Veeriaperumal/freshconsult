@@ -44,3 +44,5 @@ properties:
     type: boolean
   agent_level_id:
     type: integer
+  freshchat_agent:
+    type: boolean

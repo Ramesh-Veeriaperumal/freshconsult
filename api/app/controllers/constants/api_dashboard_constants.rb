@@ -18,7 +18,7 @@ module ApiDashboardConstants
     [:approved, 'approved', 1, 1],
     [:published, 'published', 1, 1],
     [:outdated, 'outdated', 2, 1],
-    [:articles_by_language, 'articles-by-language', 2, 5],
+    [:articles_by_language, 'articles-by-language', 2, 4],
     [:article_performance, 'article-performance', 2, 3],
     [:approval_pending_articles, 'approval-pending-articles', 2, 3],
     [:recent_drafts,        'recent-drafts',        2, 3]

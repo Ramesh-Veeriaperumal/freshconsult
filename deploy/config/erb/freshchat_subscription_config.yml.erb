@@ -1,0 +1,4 @@
+<%= node[:opsworks][:environment]%>:
+  subscription_host: <%= node[:ymls][:freshchat_subscription_config][:subscription_host] %>
+  timeout: <%= node[:ymls][:freshchat_subscription_config][:timeout] %>
+  jwt_secret: <%= node[:ymls][:freshchat_subscription_config][:jwt_secret] %>

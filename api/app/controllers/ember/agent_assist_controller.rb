@@ -3,7 +3,7 @@ module Ember
     include ::AgentAssist::Util
 
     before_filter(only: [:onboard]) { |c| c.requires_launchparty_feature :freshid_org_v2 }
-    before_filter(only: [:onboard]) { |c| c.requires_this_feature :freshconnect }
+
     ROOT_KEY = :agent_assist
 
     def onboard
@@ -30,8 +30,8 @@ module Ember
 
     private
 
-      def non_covered_feature
-        render_request_error(:require_feature, 403, feature: :freshconnect)
+      def feature_name
+        [:freshconnect, :agent_assist_lite]
       end
 
       def non_covered_launchparty_feature

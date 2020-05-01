@@ -9,7 +9,7 @@
       jQuery('#freshchat-icon').removeClass('hide');
       window.fcAgentWidget.init({
         token: '<%=current_account.freshchat_account.app_id%>',
-        host: '<%=Freshchat::Account::CONFIG[:agentWidgetHostUrl]%>',
+        host: '<%=current_account.freshchat_account.try(:domain) || Freshchat::Account::CONFIG[:agentWidgetHostUrl]%>',
         src: 'Freshdesk',
         config: {
           colorCustomization: {

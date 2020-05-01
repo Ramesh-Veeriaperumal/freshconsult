@@ -40,7 +40,7 @@ module SearchService
       additional_info.each { |k, v| output << "#{k}=#{v}" }
 
       output << "request_payload=#{request_payload}" if request_payload
-      output << "response_payload=#{response_payload}" if response_payload
+      output << "response_payload=#{response_payload}".force_encoding('UTF-8') if response_payload
       output << "response_error=#{response.error}" if response.error
       log(output.join(', '))
     end

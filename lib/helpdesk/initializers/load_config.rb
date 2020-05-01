@@ -98,6 +98,11 @@ SecureFieldConfig = YAML.load_file(Rails.root.join('config', 'jwe', 'secure_fiel
 
 AuthzConfig = YAML.load_file(Rails.root.join('config', 'authz_config.yml'))[Rails.env].with_indifferent_access
 
+AlohaConfig = YAML.load_file(Rails.root.join('config', 'aloha_config.yml'))[Rails.env].with_indifferent_access
 FreshIDV2Config = YAML.load_file(Rails.root.join('config', 'freshid_v2.yml'))[Rails.env]
 
 ProductPlansConfig = YAML.load_file(Rails.root.join('config', 'product_plan_mapping.yml')).with_indifferent_access
+
+FreshcallerSubscriptionConfig = YAML.load_file(Rails.root.join('config', 'freshcaller_subscription_config.yml'))[Rails.env]
+
+FreshchatSubscriptionConfig = YAML.load_file(Rails.root.join('config', 'freshchat_subscription_config.yml'))[Rails.env]

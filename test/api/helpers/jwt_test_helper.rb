@@ -9,7 +9,8 @@ module JwtTestHelper
   FACEBOOK = 'facebook'.freeze
   FRESHBOTS = 'freshbots'.freeze
   TWILIGHT = 'twilight'.freeze
-  JWT_SECRET_SOURCES = [TWITTER, PROACTIVE, FRESHMOVER, FRESHCONNECT, SHERLOCK, FACEBOOK, FRESHBOTS, TWILIGHT].freeze
+  FIELD_SERVICE = 'field_service'.freeze
+  JWT_SECRET_SOURCES = [TWITTER, PROACTIVE, FRESHMOVER, FRESHCONNECT, SHERLOCK, FACEBOOK, FRESHBOTS, TWILIGHT, FIELD_SERVICE].freeze
   JWT_ARRAY_SECRET_SOURCES = [FREDDY, FRESHCHAT].freeze
   def generate_jwt_token(user_id, account_id, jti, iat, algorithm = 'HS256')
     payload = {:jti => jti, :iat => iat,

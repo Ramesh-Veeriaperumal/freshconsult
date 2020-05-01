@@ -1,0 +1,44 @@
+/* jshint node: true */
+const STAGING = 'staging';
+const PRODUCTION = 'production';
+
+module.exports = function(deployTarget) {
+  var ENV = {
+    'build': {
+      environment: deployTarget
+    },
+    's3': {
+      accessKeyId: '<%= @opsworks_access_keys[:access_key_id] %>',
+      secretAccessKey: '<%= @opsworks_access_keys[:secret_access_key] %>',
+      bucket: '<%= @falcon_ui[:s3][:bucket] %>',
+      region: '<%= @falcon_ui[:s3][:region] %>',
+      filePattern: '**/*.{js,css,png,gif,ico,jpg,swf,svg,eot,ttf,woff,woff2,csv,json,mp3,br,gz,html}',
+      prefix: `${deployTarget}/a`
+    },
+    's3-index': {
+      accessKeyId: '<%= @opsworks_access_keys[:access_key_id] %>',
+      secretAccessKey: '<%= @opsworks_access_keys[:secret_access_key] %>',
+      bucket: '<%= @falcon_ui[:s3][:bucket] %>',
+      region: '<%= @falcon_ui[:s3][:region] %>',
+      allowOverwrite: true,
+      prefix: `${deployTarget}/a`
+    },
+    'revision-data': {
+      type: 'git-commit'
+    },
+    'gzip-brotli': {
+      zopfli: true,
+      filePattern: '**/*.{js,css,json,ico,svg,xml,txt,eot,ttf,woff,woff2}', // if this pattern modified need to do corresponding changes in lambda too
+      compression: ['gzip', 'brotli']
+    },
+    "pipeline": {
+      "activateOnDeploy": true
+    }
+  };
+
+  if (deployTarget === STAGING) {
+    ENV.build.environment = PRODUCTION;
+  }
+
+  return ENV;
+};
