@@ -99,6 +99,7 @@ module AccountConstants
   FRESHSALES_SUBSCRIPTION_URL = 'https://%{domain}/subscription'.freeze
   DEFAULT_SKILL_LIMIT = 180
   MULTI_PRODUCT_LIMIT = 5
+  IGNORE_SIGNUP_PARAMS = ['company_name'].freeze
 
   def attachment_limit
     @attachment_limit ||= Account.current.outgoing_attachment_limit_25_enabled? ? 25 : ATTACHMENT_LIMIT
