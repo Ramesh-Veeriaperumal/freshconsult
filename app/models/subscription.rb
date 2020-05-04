@@ -894,7 +894,7 @@ class Subscription < ActiveRecord::Base
       {
         :day_pass => subscription_plan.canon_name,
         :freshfone => :freshfonecredits,
-        :field_service_management => :field_service_management
+        :field_service_management => (subscription_plan.classic ? :field_service_management : :field_service_management_20)
       }
     end
 
