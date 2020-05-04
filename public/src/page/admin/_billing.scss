@@ -14,7 +14,7 @@
 }
 
 .add-phone-credits {
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
 
 	.account-suspended {
 		pointer-events: none;
@@ -1527,7 +1527,7 @@ input[type=text].input-agent-count{
                 letter-spacing: 0.5px;
                 .toggle-button {
                     position: absolute;
-                    @include right(15px);
+                    @include right(20px);
                     bottom: 40px;
                 }
             }

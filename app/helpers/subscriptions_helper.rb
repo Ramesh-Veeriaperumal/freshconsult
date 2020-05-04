@@ -149,7 +149,7 @@ module SubscriptionsHelper
 
   def fetch_plan_amount(plan)
     currency = current_account.currency_name
-    amount = plan.pricing(currency)
+    amount = current_account.omni_bundle_account? ? plan.omni_pricing(currency) : plan.pricing(currency)
     format_amount(amount, currency)
   end
 

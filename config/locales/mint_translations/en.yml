@@ -8237,6 +8237,7 @@ en:
   fd_channel: Freshdesk Omnichannel
   add_phone_credits: Add phone credits
   fd_omni_channel_experience: omni channel experience
+  phone_credits: Phone credits
   auto_recharge:
     enabled: Auto recharge for
     disabled: Auto recharge is disabled
