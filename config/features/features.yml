@@ -387,6 +387,7 @@
       :advanced_freshcaller: 382  
       :email_bot: 383
       :agent_assist_ultimate: 384
+      :canned_response_suggest: 385
 :selectable_features:
   :redis_display_id: true
   :branding: true
