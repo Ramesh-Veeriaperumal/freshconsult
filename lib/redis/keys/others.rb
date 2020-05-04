@@ -288,4 +288,6 @@ module Redis::Keys::Others
 
   # For sources fixture
   POPULATE_DEFAULT_SOURCES = 'POPULATE_DEFAULT_SOURCES'.freeze
+
+  AGENT_CHAT_MANAGEMENT = 'AGENT_CHAT_MANAGEMENT'.freeze
 end
