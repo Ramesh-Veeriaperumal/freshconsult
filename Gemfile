@@ -237,6 +237,7 @@ gem "add_pod_support", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/ad
 gem "custom_fields", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/custom_fields-0.1"
 
 gem "jwt", "1.5.4"
+gem "json-jwt", "1.9.4"
 gem "jwe", "0.3.0", :git => 'git@github.com:freshdesk/ruby-jwe.git'
 gem "jose", "1.1.2"
 

@@ -1660,6 +1660,7 @@
          "_timeout": 10
       },
       "aloha_config": {
+        "_jwks_url": "https://accounts.freshworks360.io/.well-known/jwks.json",
         "_host": "https://aloha.fid.freshworksapi.com/"
       },
       "freshcaller_subscription_config": {
