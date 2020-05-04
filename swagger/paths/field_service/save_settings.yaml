@@ -1,0 +1,47 @@
+put:
+  tags: [Field Service Settings]
+  summary: Save field service additional settings
+  description: Enable and disable field service settings
+  parameters:
+    - name: settings
+      in: body
+      schema:
+        $ref: '#/definitions/field_service_save_settings_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          field_agents_can_manage_appointments:
+            type: boolean
+          location_tagging_enabled:
+            type: boolean
+          geo_location_enabled:
+            type: boolean
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+
+get:
+  tags: [Field Service Settings]
+  summary: Get field service settings
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          field_agents_can_manage_appointments:
+            type: boolean
+          location_tagging_enabled:
+            type: boolean
+          geo_location_enabled:
+            type: boolean
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+
+
