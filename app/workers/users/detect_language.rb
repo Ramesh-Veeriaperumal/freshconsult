@@ -18,7 +18,7 @@ class Users::DetectLanguage < BaseWorker
     account = Account.current
     @user   = account.all_users.find(args[:user_id])
     @big_text = args[:text]
-    @text = @big_text[0..20].squish.split.first(15).join(' ')
+    @text = (@big_text.first(30) + @big_text[@big_text.length/2, 30] + @big_text.last(30)).squish.split.first(15).join(' ')
     if account.compact_lang_detection_enabled?
       detect_lang_from_cld
     elsif account.detect_lang_from_email_service_enabled?
