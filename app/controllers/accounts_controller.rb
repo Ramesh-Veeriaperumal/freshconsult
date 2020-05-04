@@ -191,6 +191,10 @@ class AccountsController < ApplicationController
    if @signup.save
      enable_field_service_management if fsm_signup_page?
       finish_signup
+      if is_aloha_signup?
+        render :json => fetch_product_signup_response, :content_type => 'application/json'
+        return
+      end
       respond_to do |format|
         format.json {
           render :json => { :success => true,
@@ -342,13 +346,24 @@ class AccountsController < ApplicationController
   end
 
   def fetch_product_signup_response
-    # we are sending default values for now. This will be updated while building Aloha flow.
+    acc_additional_settings = @signup.account.account_additional_settings
+    bundle_id = acc_additional_settings.present? ? acc_additional_settings.additional_settings[:bundle_id] : nil
+    bundle_name = acc_additional_settings.present? ? acc_additional_settings.additional_settings[:bundle_name] : nil
     {
       "redirect_url": signup_complete_url(:token => @signup.user.perishable_token, :host => @signup.account.full_domain),
       "account": {
         "id": @signup.account.id,
         "domain": @signup.account.full_domain,
-        "name": @signup.account.name
+        "name": @signup.account.name,
+        "locale": nil,
+        "timezone": nil,
+        "alternate_url": '',
+        "description": ''
+      },
+      "misc": {
+        "bundle_name": bundle_name,
+        "bundle_id": bundle_id,
+        "account_domain": @signup.account.full_domain
       }
     }
   end
@@ -461,9 +476,9 @@ class AccountsController < ApplicationController
           Rails.logger.info "Error while building conversion metrics. User Information is not been provided while creating an account"
         end
         if params[:session_json].present?
-          metrics =  JSON.parse(params[:session_json])
+          metrics =  params[:session_json].is_a?(Hash) ? params[:session_json] : JSON.parse(params[:session_json])
           metrics_obj[:first_referrer] = params[:first_referrer]
-          metrics_obj[:first_landing_url] = params[:first_landing_url]
+          metrics_obj[:first_landing_url] = params[:first_landing_url] || params[:first_landing_page]
           metrics_obj[:visits] = params[:pre_visits]
           metrics_obj[:referrer] = metrics["current_session"]["referrer"]
           metrics_obj[:landing_url] = metrics["current_session"]["url"]
@@ -543,8 +558,25 @@ class AccountsController < ApplicationController
     end
 
     def build_signup_param
+      assign_account_params
+      assign_signup_params
+      assign_freshid_attributes
+      metrics_obj, account_obj = build_metrics
+      params[:signup][:metrics] = metrics_obj
+      params[:signup][:account_details] = account_obj
+    end
+
+    def assign_account_params
+      params[:account] = {} unless params[:account]
+      if params[:misc].present?
+        params[:account][:name] = params[:misc][:account_name]
+        params[:account][:lang] = params[:misc][:account_lang]
+      end
+    end
+
+    def assign_signup_params
       params[:signup] = {}
-      
+      IGNORE_SIGNUP_PARAMS.each { |p| params[:user].delete p }
       [:user, :account].each do |param|
         params[param].each do |key, value|
           params[:signup]["#{param}_#{key}"] = value
@@ -553,14 +585,30 @@ class AccountsController < ApplicationController
       
       params[:signup][:locale] = assign_language || http_accept_language.compatible_language_from(I18n.available_locales)
       params[:signup][:time_zone] = params[:utc_offset]
-      params[:signup][:org_id] = params[:org_id]
-      params[:signup][:join_token] = params[:join_token]
-      metrics_obj, account_obj = build_metrics
-      params[:signup][:metrics] = metrics_obj
-      params[:signup][:account_details] = account_obj
+    end
+
+    def assign_freshid_attributes
+      org_details = params[:organisation].present? && params[:organisation][:domain] && params[:organisation][:id]
+      params[:signup][:aloha_signup] = false
+      if org_details
+        params[:signup][:freshid_user] = params[:user]
+        params[:signup][:organisation] = params[:organisation]
+        params[:signup][:aloha_signup] = true
+      else
+        params[:signup][:org_id] = params[:org_id]
+      end
       if params[:join_token].present?
         params[:signup][:fresh_id_version] = params[:fresh_id_version].presence || Freshid::V2::Constants::FRESHID_SIGNUP_VERSION_V2
+        params[:signup][:join_token] = params[:join_token]
       end
+      if params[:misc].present? && params[:misc][:bundle_id].present? && params[:misc][:bundle_name].present?
+        params[:signup][:bundle_id] = params[:misc][:bundle_id]
+        params[:signup][:bundle_name] = params[:misc][:bundle_name]
+      end
+    end
+
+    def is_aloha_signup?
+      params[:signup][:aloha_signup]
     end
 
     def assign_language

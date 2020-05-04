@@ -180,13 +180,17 @@ class User < ActiveRecord::Base
     end
 
     def assign_freshid_attributes_to_agent freshid_user
-      self.name = freshid_user.full_name
+      self.name = freshid_full_name(freshid_user)
       self.phone = freshid_user.phone
       self.mobile = freshid_user.mobile
       self.job_title = freshid_user.job_title
       self.active = self.primary_email.verified = freshid_user.active?
       self.account.verify_account_with_email if freshid_user.active?
       self.password_salt = self.crypted_password = nil
+    end
+
+    def freshid_full_name(freshid_user)
+      freshid_user.full_name || [freshid_user.first_name, freshid_user.middle_name, freshid_user.last_name].compact.join(' ').strip
     end
 
     def freshid_split_names

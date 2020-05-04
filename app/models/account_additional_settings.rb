@@ -116,6 +116,14 @@ class AccountAdditionalSettings < ActiveRecord::Base
     additional_settings[:portal_languages] = portal_languages
   end
 
+  def bundle_details_setter(bundle_id, bundle_name)
+    if bundle_id.present? && bundle_name.present?
+      additional_settings[:bundle_id] = bundle_id
+      additional_settings[:bundle_name] = bundle_name
+      account.launch :omni_bundle_2020 if account.freshid_org_v2_enabled?
+    end
+  end
+
   def delete_spam_tickets_days
     additional_settings[:delete_spam_days] unless additional_settings.blank?
   end
