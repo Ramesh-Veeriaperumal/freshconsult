@@ -70,13 +70,13 @@ module UsersHelper
     new_user = FactoryGirl.build(:user, :account => account,
                                     :name => options[:name] || Faker::Name.name,
                                     :email => options[:email] || Faker::Internet.email,
-                                    :time_zone => "Chennai",
+                                    :time_zone => options[:time_zone] || "Chennai",
                                     :delta => 1,
                                     :deleted => options[:deleted] || 0,
                                     :blocked => options[:blocked] || 0,
                                     :active => options.key?(:active) ? options[:active] : 1,
                                     :company_id => options[:customer_id] || nil,
-                                    :language => "en",
+                                    :language => options[:language] || "en",
                                     :tag_names => tag_names)
     if options[:unique_external_id]
       new_user.unique_external_id = options[:unique_external_id]

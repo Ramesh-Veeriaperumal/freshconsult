@@ -339,6 +339,18 @@ ticket_show:
     meta:
       type: object
       $ref: '#/definitions/meta'       
+ticket_update:
+  type: object
+  properties: 
+    ticket:
+      allOf:
+        - $ref: '#/definitions/extended_ticket'
+        - $ref: ./resource/extension/ticket/show.yaml
+    meta:
+      type: object
+      allOf:
+        - $ref: '#/definitions/meta'
+        - $ref: '#/definitions/vault_meta_token'
 archive_ticket_show:
   allOf:
     - $ref: '#/definitions/extended_archive_ticket'
@@ -529,6 +541,8 @@ freshmarketer_sessions:
 
 vault_token:
   $ref: './response/tickets/vault_token.yaml'
+vault_meta_token:
+  $ref: './response/tickets/vault_meta_token.yaml'
 
 # Audit log
 audit_log_export:
