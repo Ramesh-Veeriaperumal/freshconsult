@@ -1,9 +1,9 @@
 <% content_for :sidebar do -%>&nbsp;<% end %>
-<% @page_title = t('freshchat.admin.title_text')%>
+<% @page_title = t('chat')%>
 <% content_for :sidebar do %>
   <div class="sidepanel">
     <i class="common-icon-help"></i>
-    <h3 class="lead"><%=t('freshchat.admin.sidebar_title')%></h3>
+    <h3 class="lead"><%=t('chat')%></h3>
     <p><%= t('freshchat.admin.sidebar_content.para1') %></p>
     <p><%= t('freshchat.admin.sidebar_content.para2.header') %></p>
     <p>
@@ -17,119 +17,129 @@
 <% end %>
 <div class="list-page-body freshchat-edit">
   <div id="message" class="alert notice hide"></div>
-  <div class="chat-header">
-    <h3 class="lead"> <%= t('freshchat.admin.title_text') %></h3>
-  </div>
-
-  <div class="chatlist-item pt20 chat-content-card">
-    <div class="row-fluid">
-      <div class="span10">
-        <h5 class="lead"> <%= t('freshchat.admin.enable_chat') %></h5>
-      </div>
-      <div class="span2 align-right">
-        <input rel="toggle" type="checkbox" id="em" name="chat_enabled" <%= (@item[:enabled]) ? "checked" : "" %> >
-      </div>
-    </div>
-  </div>
-
-  <div id="fields_container" class="chat-fields-sontainer <%= (@item[:enabled]) ? '' : 'hide' %>">
-    <%= form_for @item, :url => {action: @item.new_record? ? "create" : "update"}, :html => { :rel=> "validate" } do |f| %>
-      <%=f.hidden_field :enabled, :value => true %>
-      <% if(@item.new_record?) %>
-        <div class="mint-bg-box">
-          <h5 class="lead"> <%=t('freshchat.admin.sign_up_text')%></h5>
-          <%if @is_2019_plan %>
-            <a
-              href= '/admin/freshchat/signup'
-              class="btn btn-primary signup-chat">
-              <%=t('freshchat.admin.activate_now')%>
-            </a>
-            <% else %>
-          <a
-            href="https://www.freshworks.com/live-chat-software/?utm_source=Freshdesk-App&utm_medium=FD-Product-Admin&utm_campaign=FD-Admin-Portal"
-            target="_blank"
-            class="btn btn-primary signup-chat">
-            <%=t('freshchat.admin.sign_up_btn')%>
-          </a>
-          <a
-            href="https://www.freshworks.com/live-chat-software?utm_source=Freshdesk-App"
-            target="_blank"
-            class="btn btn-primary activate-freshchat hide">
-            <%=t('freshchat.admin.activate_now')%>
-          </a>
-          <%end %>
-        </div>
-      <% end %>
-
-      <div class="control-group">
-        <label class="control-label">
-          <%= t('freshchat.admin.app_id') %>
-          <span class="required_star">*</span>
-
-          <span class="pl5 chat-key-copy">
-            <a
-              href="<%=@domain%>/settings/appdata#integration"
-              target="_blank"
-              class="freshchat_settings_integration_url">
-              <%= t('freshchat.admin.copy_from_freshchat')%></a>
-            <i class="ficon ficon-open-in-portal fsize-12"></i>
-          </span>
-
-        </label>
-        <div class="controls">
-          <%= f.text_field :app_id, :value=> @item[:app_id],:placeholder => t('freshchat.admin.app_id_placeholder'), :class => 'required'%>
-        </div>
-      </div>
-
-      <div class="control-group">
-        <label class="control-label">
-          <%= t('freshchat.admin.widget_token') %>
-          <span class="required_star">*</span>
-          <span class="pl5 chat-key-copy">
-            <a
-              href="<%=@domain%>/settings/appdata#integration"
-              target="_blank"
-              class="freshchat_settings_integration_url">
-              <%= t('freshchat.admin.copy_from_freshchat')%></a>
-            <i class="ficon ficon-open-in-portal fsize-12"></i>
-          </span>
-        </label>
-        <div class="controls">
-          <%= f.text_field :token, :placeholder => t('freshchat.admin.widget_token_placeholder'), :value => @item.token, :class => 'required'%>
-        </div>
-      </div>
-      <div class="chatlist-item pt20 pb10">
-        <div class="row-fluid">
-          <div class="span10">
-            <h5 class="lead"> <%= t('freshchat.admin.enable_chat_in_portal')%></h5>
-            <p class="small lead-desc muted pt3"><%= t('freshchat.admin.enable_chat_in_portal_info')%></p>
-          </div>
-          <div class="span2 align-right">
-            <%= f.check_box :portal_widget_enabled,
-                { :rel => "toggle", :checked => (@item.portal_widget_enabled === 'true')}, true, false %>
-          </div>
-        </div>
-      </div>
-
-      <div class="chatlist-item pb10">
-        <h5  class="lead">
-          <%= t('freshchat.admin.did_you_know') %>
-        </h5>
-
-        <p class="small muted lead-desc pt3"> <%= t('freshchat.admin.did_you_know_info', :url => "#{@domain}/settings/integrations/freshdesk" , :article_url => 'https://support.freshchat.com/support/solutions/articles/229225-setup-freshdesk-integration-for-freshchat').html_safe %></p>
-      </div>
-
-      <div class="chatlist-item">
-        <p class="small lead-desc"> <span class="muted"><%=t('freshchat.admin.portal_url')%> </span>https://<%=current_account.full_domain%></p>
-        <p class="small lead-desc"> <span class="muted"><%=t('freshchat.admin.admin_apikey')%> </span><%=@profile.user.single_access_token%></p>
-
-        <div class="button-container pr5">
-          <a href="/admin/home" id="cancel" class="btn btn-secondary"> <%= t('freshchat.admin.cancel')%></a>
-          <%= f.submit t('freshchat.admin.save'), :class => "btn btn-primary" %>
-        </div>
-      </div>
+  <div class="chat-header clearfix">
+    <h3 class="lead pull-left"> <%= t('chat') %></h3>
+    <% if (current_account.omni_bundle_account? && @item.present?) %>
+      <a class="pull-right pt8" href="<%=@domain%>/settings" target="_blank">
+        <%= t('manage_settings') %>
+        <%= font_icon "open-new-tab", { :size => 12 , :class => "ficon pl4"} %>
+      </a>
     <% end %>
   </div>
+
+  <% if current_account.omni_bundle_account? %>
+    <%= render :partial => "/admin/freshchat/omnichannel_chat", :locals => { :item => @item, :omni_chat_features => ChatHelper::OMNI_CHAT_FEATURES, :domain => @domain } %>
+  <% else %>
+    <div class="chatlist-item pt20 chat-content-card">
+      <div class="row-fluid">
+        <div class="span10">
+          <h5 class="lead"> <%= t('freshchat.admin.enable_chat') %></h5>
+        </div>
+        <div class="span2 align-right">
+          <input rel="toggle" type="checkbox" id="em" name="chat_enabled" <%= (@item[:enabled]) ? "checked" : "" %> >
+        </div>
+      </div>
+    </div>
+
+    <div id="fields_container" class="chat-fields-sontainer <%= (@item[:enabled]) ? '' : 'hide' %>">
+      <%= form_for @item, :url => {action: @item.new_record? ? "create" : "update"}, :html => { :rel=> "validate" } do |f| %>
+        <%=f.hidden_field :enabled, :value => true %>
+        <% if(@item.new_record?) %>
+          <div class="mint-bg-box">
+            <h5 class="lead"> <%=t('freshchat.admin.sign_up_text')%></h5>
+            <%if @is_2019_plan %>
+              <a
+                href= '/admin/freshchat/signup'
+                class="btn btn-primary signup-chat">
+                <%=t('freshchat.admin.activate_now')%>
+              </a>
+              <% else %>
+            <a
+              href="https://www.freshworks.com/live-chat-software/?utm_source=Freshdesk-App&utm_medium=FD-Product-Admin&utm_campaign=FD-Admin-Portal"
+              target="_blank"
+              class="btn btn-primary signup-chat">
+              <%=t('freshchat.admin.sign_up_btn')%>
+            </a>
+            <a
+              href="https://www.freshworks.com/live-chat-software?utm_source=Freshdesk-App"
+              target="_blank"
+              class="btn btn-primary activate-freshchat hide">
+              <%=t('freshchat.admin.activate_now')%>
+            </a>
+            <%end %>
+          </div>
+        <% end %>
+
+        <div class="control-group">
+          <label class="control-label">
+            <%= t('freshchat.admin.app_id') %>
+            <span class="required_star">*</span>
+
+            <span class="pl5 chat-key-copy">
+              <a
+                href="<%=@domain%>/settings/appdata#integration"
+                target="_blank"
+                class="freshchat_settings_integration_url">
+                <%= t('freshchat.admin.copy_from_freshchat')%></a>
+              <i class="ficon ficon-open-in-portal fsize-12"></i>
+            </span>
+
+          </label>
+          <div class="controls">
+            <%= f.text_field :app_id, :value=> @item[:app_id],:placeholder => t('freshchat.admin.app_id_placeholder'), :class => 'required'%>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">
+            <%= t('freshchat.admin.widget_token') %>
+            <span class="required_star">*</span>
+            <span class="pl5 chat-key-copy">
+              <a
+                href="<%=@domain%>/settings/appdata#integration"
+                target="_blank"
+                class="freshchat_settings_integration_url">
+                <%= t('freshchat.admin.copy_from_freshchat')%></a>
+              <i class="ficon ficon-open-in-portal fsize-12"></i>
+            </span>
+          </label>
+          <div class="controls">
+            <%= f.text_field :token, :placeholder => t('freshchat.admin.widget_token_placeholder'), :value => @item.token, :class => 'required'%>
+          </div>
+        </div>
+        <div class="chatlist-item pt20 pb10">
+          <div class="row-fluid">
+            <div class="span10">
+              <h5 class="lead"> <%= t('freshchat.admin.enable_chat_in_portal')%></h5>
+              <p class="small lead-desc muted pt3"><%= t('freshchat.admin.enable_chat_in_portal_info')%></p>
+            </div>
+            <div class="span2 align-right">
+              <%= f.check_box :portal_widget_enabled,
+                  { :rel => "toggle", :checked => (@item.portal_widget_enabled === 'true')}, true, false %>
+            </div>
+          </div>
+        </div>
+
+        <div class="chatlist-item pb10">
+          <h5  class="lead">
+            <%= t('freshchat.admin.did_you_know') %>
+          </h5>
+
+          <p class="small muted lead-desc pt3"> <%= t('freshchat.admin.did_you_know_info', :url => "#{@domain}/settings/integrations/freshdesk" , :article_url => 'https://support.freshchat.com/support/solutions/articles/229225-setup-freshdesk-integration-for-freshchat').html_safe %></p>
+        </div>
+
+        <div class="chatlist-item">
+          <p class="small lead-desc"> <span class="muted"><%=t('freshchat.admin.portal_url')%> </span>https://<%=current_account.full_domain%></p>
+          <p class="small lead-desc"> <span class="muted"><%=t('freshchat.admin.admin_apikey')%> </span><%=@profile.user.single_access_token%></p>
+
+          <div class="button-container pr5">
+            <a href="/admin/home" id="cancel" class="btn btn-secondary"> <%= t('freshchat.admin.cancel')%></a>
+            <%= f.submit t('freshchat.admin.save'), :class => "btn btn-primary" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
 </div>
 <% if current_account.freshid_integration_enabled? %>
 <script type="text/javascript">
@@ -191,7 +201,7 @@
     jQuery('body').on('change.freshchat', 'input[name="chat_enabled"]', function() {
       var chat_enabled = jQuery('input[name="chat_enabled"]').is(':checked');
       jQuery('#fields_container').toggleClass('hide', !chat_enabled);
-      <% unless @item.new_record? %>
+      <% if (@item.present? && !@item.new_record?) %>
         var form_data = {};
         form_data['freshchat_account[enabled]'] = jQuery('input[name="chat_enabled"]').is(':checked');
         jQuery.ajax({
@@ -203,6 +213,11 @@
           window.location.href= '/admin/freshchat';
         });
       <% end %>
+    });
+
+    jQuery("#accordion-trigger").on("click", function(e){
+      jQuery("#accordion-trigger-content").toggleClass("collapse in");
+      jQuery("#accordion-trigger .ficon").toggleClass("ficon-arrow-up ficon-arrow-down");
     });
   });
 </script>

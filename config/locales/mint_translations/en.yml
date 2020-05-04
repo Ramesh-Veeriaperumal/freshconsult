@@ -7934,10 +7934,20 @@ en:
       enable_chat: Link Freshchat with your Freshdesk account
       admin_apikey: 'API Key:'
       title_text: Freshchat
+      error_title: "Oops! Seems like your messenger is on its way"
+      error_description: "While we're getting your chat messenger up and running, feel free to get in touch with our support team, and they'll be able to help you sort this out."
       sign_up_text: 'Start chatting with customers on your website, portal or mobile app.'
       enable_chat_in_portal_info: >-
         Make it easy for your customers to chat with you, when they land on your
         support portal.
+      widget_token_app_id_title: Chat widget token and App ID
+      widget_token_app_id_description: You'll find your messenger token and secret ID here. Useful for integrations and troubleshooting.
+      web_messenger_title: Web messenger
+      web_messenger_description: Configure your messenger where your customer can contact you
+      chat_assignment_rules_title: Chat assignment rules
+      chat_assignment_rules_description: Auto assign conversations to team members based on pre-defined rules, events, filters and keywords.
+      topics_title: Topics
+      topics_description: Categorize conversations into Topics and route your customers to the right groups.
       app_id_placeholder: 'Eg: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         To convert Freshchat conversations to tickets, please go to this <a
@@ -8230,3 +8240,6 @@ en:
   auto_recharge:
     enabled: Auto recharge for
     disabled: Auto recharge is disabled
+  chat: "Chat"
+  manage_settings: "Manage settings"
+
