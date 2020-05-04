@@ -33,7 +33,9 @@ class Admin::FreshchatController < Admin::AdminController
   private
 
   def load_item
-    @item = current_account.freshchat_account || Freshchat::Account.new
+    @item = current_account.omni_bundle_account? ?
+              current_account.freshchat_account :
+              current_account.freshchat_account || Freshchat::Account.new
   end
 
   def load_plan

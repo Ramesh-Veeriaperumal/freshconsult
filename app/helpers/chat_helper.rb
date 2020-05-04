@@ -29,6 +29,27 @@ module ChatHelper
       SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_omni_jan_19]
     ].freeze
 
+  OMNI_CHAT_FEATURES = [
+    {
+      id: 'web_messenger',
+      title: 'web_messenger_title',
+      description: 'web_messenger_description',
+      path: '/settings/widget'
+    },
+    {
+      id: 'chat_assignment_rules',
+      title: 'chat_assignment_rules_title',
+      description: 'chat_assignment_rules_description',
+      path: '/settings/assignmentrules'
+    },
+    {
+      id: 'topics',
+      title: 'topics_title',
+      description: 'topics_description',
+      path: '/settings/channels'
+    }
+  ].freeze
+
   def chat_activated?
     !current_account.subscription.suspended? && feature?(:chat) && current_account.chat_setting.site_id
   end

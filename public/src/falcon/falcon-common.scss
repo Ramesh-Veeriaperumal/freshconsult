@@ -1947,70 +1947,6 @@ div[class$="-toggle"]{
   }
 }
 
-
-/*Chat settings*/
-
-.freshchat-edit {
-  width: 70%;
-  margin: 0 auto;
-  color: #183247;
-
-  .muted {
-    color: #6f7c87;
-  }
-
-  h3.lead{
-    font-family: $font-family-semibold;
-    padding-top: 48px;
-    font-size: 26px;
-    font-weight: 600;
-  }
-
-  .controls {
-    input {
-      height: 25px;
-      color: #183247;
-    }
-  }
-
-  .chat-fields-sontainer {
-    margin-top: 24px;
-  }
-
-  h5.lead, .control-label{
-    font-size: 16px;
-    font-family: $font-family-semibold;
-    font-weight: 600;
-  }
-
-  .required_star {
-    top: 0;
-    color: #ff5959;
-    font-size: 16px;
-    margin-left: -1px;
-  }
-
-  .chat-key-copy {
-    font-size: 12px;
-    font-weight: normal;
-    position: relative;
-    top: -1px;
-
-    .ficon {
-      color: #6f7c87;
-      padding-left: 2px;
-    }
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
-  input::-webkit-input-placeholder,
-  textarea::-webkit-input-placeholder {
-    color: #acb6be;
-  }
-}
 /* twitter smart filter */
 
 .smart-filter-wrapper {
@@ -2033,7 +1969,7 @@ div[class$="-toggle"]{
 
 .freshchat-edit {
   width: 70%;
-  margin: 0 auto;
+  @include margin-left(16px);
   color: #183247;
 
   .muted {
@@ -2042,9 +1978,12 @@ div[class$="-toggle"]{
 
   h3.lead{
     font-family: $font-family-semibold;
-    padding-top: 48px;
     font-size: 26px;
     font-weight: 600;
+  }
+
+  .chat-header {
+    padding-top: 48px;
   }
 
   .controls {
