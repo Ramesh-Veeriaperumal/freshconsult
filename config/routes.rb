@@ -2539,7 +2539,14 @@ Helpkit::Application.routes.draw do
     end
   end
 
-
+  namespace :aloha, only: [:callback] do
+    resources :signup do
+      collection do
+        post :callback
+      end
+    end
+  end
+  
   get 'discussions' => 'discussions#index', as: :discussions
 
   resources :discussions do
