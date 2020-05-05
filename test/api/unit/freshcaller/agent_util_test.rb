@@ -53,7 +53,7 @@ class Freshcaller::AgentUtilTest < ActiveSupport::TestCase
     User.stubs(:current).returns(user)
     agent = user.agent
     mock = Minitest::Mock.new
-    mock.expect(:call, true, ["Exception in Freshcaller Agent post API :: Response status: 400:: Body: :: {\"errors\":[{\"detail\":\"Please purchase extra to add new agents\"}]} for Account #{current_account.id} and for Agent #{agent.id}"])
+    mock.expect(:call, true, ["Exception in Freshcaller Agent post API :: Response status: 400:: Body: :: {\"errors\":[{\"detail\":\"Please purchase extra to add new agents\"}]} for Account #{Account.current.id} and for Agent #{agent.id}"])
     Rails.logger.stub :error, mock do
       safe_send(:handle_fcaller_agent, agent)
     end
@@ -75,7 +75,7 @@ class Freshcaller::AgentUtilTest < ActiveSupport::TestCase
     agent.reload
     mock = Minitest::Mock.new
     stubs(:fetch_http_action).returns('put')
-    mock.expect(:call, true, ["Exception in Freshcaller Agent patch API :: Freshcaller UserID not present for Account #{current_account.id} and for Agent #{agent.id}"])
+    mock.expect(:call, true, ["Exception in Freshcaller Agent patch API :: Freshcaller UserID not present for Account #{Account.current.id} and for Agent #{agent.id}"])
     Rails.logger.stub :error, mock do
       safe_send(:handle_fcaller_agent, agent)
     end

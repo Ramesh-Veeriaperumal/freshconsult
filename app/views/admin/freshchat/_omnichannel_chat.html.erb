@@ -1,0 +1,66 @@
+<div class="omni-bundle">
+  <% if item.present? %>
+    <div class="chat-content-card display-flex">
+      <div>
+        <h5 class="secondary-title"> <%= t('freshchat.admin.enable_chat_in_portal')%></h5>
+        <p class="secondary-help-text"><%= t('freshchat.admin.enable_chat_in_portal_info')%></p>
+      </div>
+      <%= form_for item, :url => {action: "update"}, :html => { :rel=> "validate" } do |f| %>
+        <%=f.hidden_field :enabled, :value => true %>
+        <%= f.check_box :portal_widget_enabled,
+          { :rel => "toggle",
+            :checked => (item.portal_widget_enabled === 'true'),
+            onchange: 'this.form.submit();'
+          }, true, false %>
+      <% end %>
+    </div>
+
+    <% omni_chat_features.each do |feature| %>
+      <a href=<%= "#{domain}#{feature[:path]}" %> target="_blank" class="explore-link">
+        <div class="chat-content-card display-flex">
+          <div>
+            <h5 class="secondary-title"> <%= t("freshchat.admin.#{feature[:title]}") %></h5>
+            <p class="secondary-help-text"><%= t("freshchat.admin.#{feature[:description]}")%></p>
+          </div>
+          <%= font_icon "open-new-tab", { :size => 14 , :class => "ficon"} %>
+        </div>
+      </a>
+    <% end %>
+
+    <div class="chat-content-card accordion">
+      <div id="accordion-trigger" class="display-flex single_click_link">
+        <div>
+          <h5 class="secondary-title"> <%= t('freshchat.admin.widget_token_app_id_title')%></h5>
+          <p class="secondary-help-text"><%= t('freshchat.admin.widget_token_app_id_description')%></p>
+        </div>
+        <div>
+          <%= font_icon "arrow-down", { :size => 16 , :class => "ficon"} %>
+        </div>
+      </div>
+
+      <div id="accordion-trigger-content" class="collapse mt20">
+        <div class="mb8">
+          <label class="secondary-help-text"> <%= t('freshchat.admin.app_id') %> </label>
+          <div class="controls">
+            <%= text_field("app_id", :app_id, :value=> item[:app_id], :placeholder => t('freshchat.admin.app_id_placeholder'), :class => 'required', :disabled => true)%>
+          </div>
+        </div>
+
+        <div class="mb8">
+          <label class="secondary-help-text"> <%= t('freshchat.admin.widget_token') %> </label>
+          <div class="controls">
+            <%= text_field("token", :token, :placeholder => t('freshchat.admin.widget_token_placeholder'), :value => item.token, :class => 'required', :disabled => true)%>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <div class="row-fluid admin_help_image error_state">
+      <img alt="<%= t("freshchat.admin.error_title") %>" src="/assets/freshchat/freshchat-sync-error.svg">
+      <div>
+        <h5 class="error_state__title"><%= t("freshchat.admin.error_title") %></h5>
+        <p class="error_state__description"><%= t("freshchat.admin.error_description") %></p>
+      </div>
+    </div>
+  <% end %>
+</div>

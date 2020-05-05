@@ -1505,6 +1505,7 @@
         "_timeout": 10
       },
       "aloha_config": {
+        "_jwks_url": "https://accounts-in.freshworks.com/.well-known/jwks.json",
         "_host": "https://aloha-in.freshworks.com/"
       },
       "freshcaller_subscription_config": {

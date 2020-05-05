@@ -1,16 +1,16 @@
 <% content_for :sidebar do -%>&nbsp;<% end %>
 <%= stylesheet_link_tag_with_rtl :'cdn/freshfone_admin' %>
-<% @page_title = t('freshchat.admin.title_text')%>
+<% @page_title = t('chat')%>
 <% content_for :sidebar do %>
   <div class="sidepanel">
     <i class="common-icon-help"></i>
-    <h3 class="lead"><%=t('freshchat.admin.sidebar_title')%></h3>
+    <h3 class="lead"><%=t('chat')%></h3>
     <p><%= t('freshchat.admin.header_info').html_safe %></p>
   </div>
 <% end %>
 
 <div class="list-page-body ">
-  <h3 class="lead"> <%= t('freshchat.admin.title_text').html_safe %> </h3>
+  <h3 class="lead"> <%= t('chat').html_safe %> </h3>
   <ul class="ui-form row-fluid">
     <li class="inline-field">
       <div class="row-fluid admin_help_image ff_welcome_page trial">

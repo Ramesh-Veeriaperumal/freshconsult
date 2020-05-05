@@ -1489,6 +1489,7 @@
         "_timeout": 10
       },
       "aloha_config": {
+        "_jwks_url": "https://accounts-au.freshworks.com/.well-known/jwks.json",
         "_host": "https://aloha-au.freshworks.com/"
       },
       "freshcaller_subscription_config": {

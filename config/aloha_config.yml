@@ -1,4 +1,5 @@
 defaults: &defaults
+  jwks_url: "https://accounts.freshworks360.io/.well-known/jwks.json"
   host: "https://aloha.fid.freshworksapi.com/"
 development:
   <<: *defaults

@@ -312,7 +312,7 @@ class Account < ActiveRecord::Base
       fsm_for_garden_plan: true, fsm_for_blossom_plan: true, requester_widget_timeline: false, enable_secure_login_check: false, enable_twitter_requester_fields: true, marketplace_gallery: false,
       facebook_public_api: false, twitter_public_api: false, retry_emails: false, fb_message_echo_support: false, portal_prototype_update: false, solutions_quick_view: false, solutions_freshconnect: false,
       fsm_scheduler_month_view: false, facebook_post_outgoing_attachment: true, solutions_dashboard: false, freshid_sso_sync: false, fw_sso_admin_security: false, article_versioning_redis_lock: false, show_ssl_config: false, handle_custom_fields_conflicts: false, shopify_api_revamp: false,
-      omni_chat_agent: false
+      omni_chat_agent: false, emberize_agent_form: true, emberize_agent_list: true
     }, :merge
   )
 

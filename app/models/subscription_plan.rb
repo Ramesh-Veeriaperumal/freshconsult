@@ -181,6 +181,10 @@ class SubscriptionPlan < ActiveRecord::Base
     price[currency]
   end
 
+  def omni_pricing(currency)
+    price[currency] + omni_channel_cost(currency)
+  end
+
   def omni_plan?
     OMNI_TO_BASIC_PLAN_MAP.key? name.to_sym
   end

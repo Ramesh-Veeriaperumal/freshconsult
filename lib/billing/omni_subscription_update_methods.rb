@@ -56,7 +56,7 @@ module Billing::OmniSubscriptionUpdateMethods
 
   def construct_payload(chargebee_result)
     {
-      organisation_id: Account.current.organisation.try(:id),
+      organisation_id: Account.current.organisation.try(:organisation_id),
       type: chargebee_result[:event_type],
       account_id: Account.current.id,
       payload: {

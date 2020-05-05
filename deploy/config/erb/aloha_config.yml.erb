@@ -1,3 +1,4 @@
 <%= node[:opsworks][:environment]%>:
+  jwks_url: <%= node[:ymls][:aloha_config][:jwks_url] %>
   host: <%= node[:ymls][:aloha_config][:host] %>
   

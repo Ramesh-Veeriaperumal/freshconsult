@@ -225,7 +225,7 @@ gem 'freshdesk_features', :git => 'git@github.com:freshdesk/freshdesk-features.g
 gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :tag => 'v0.2.1'
 gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'not_a_model_column'
 gem 'rule_engine', git: 'git@github.com:freshdesk/rule_engine.git', :tag => 'hv0.0.13.15'
-gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v4.0.10'
+gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v4.0.11'
 gem "freshid-sdk", :git => 'git@github.com:freshdesk/platforms-sdk-ruby.git', tag: '1.0.1', glob: 'gems/freshid-sdk/freshid-sdk.gemspec'
 gem "fluffy", git: 'git@github.com:freshdesk/api-gateway.git', tag: 'v0.0.2', glob: 'clients/fluffy_ruby/src/fluffy.gemspec'
 
@@ -237,6 +237,7 @@ gem "add_pod_support", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/ad
 gem "custom_fields", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/custom_fields-0.1"
 
 gem "jwt", "1.5.4"
+gem "json-jwt", "1.9.4"
 gem "jwe", "0.3.0", :git => 'git@github.com:freshdesk/ruby-jwe.git'
 gem "jose", "1.1.2"
 

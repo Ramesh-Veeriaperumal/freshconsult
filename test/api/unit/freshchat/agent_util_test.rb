@@ -54,7 +54,7 @@ class Freshchat::AgentUtilTest < ActiveSupport::TestCase
     stub_request(:post, %r{^https://test-freshchat.freshpo.com/v2/agents.*?$}).to_return(body: { 'message' => 'invalid params/values' }.to_json, headers: { 'Content-Type' => 'application/json' }, status: 400)
     mock = Minitest::Mock.new
     stubs(:fetch_http_action).returns('post')
-    mock.expect(:call, true, ["Exception in Freshchat Agent post API :: Response status: 400:: Response Body: invalid params/values for Account #{current_account.id} and for Agent #{agent.id}"])
+    mock.expect(:call, true, ["Exception in Freshchat Agent post API :: Response status: 400:: Response Body: invalid params/values for Account #{Account.current.id} and for Agent #{agent.id}"])
     Rails.logger.stub :error, mock do
       safe_send(:handle_fchat_agent, agent)
     end
@@ -94,7 +94,7 @@ class Freshchat::AgentUtilTest < ActiveSupport::TestCase
     agent.reload
     mock = Minitest::Mock.new
     stubs(:fetch_http_action).returns('put')
-    mock.expect(:call, true, ["Exception in Freshchat Agent put API :: FreshID uuid not present for Account #{current_account.id} and for Agent #{agent.id}"])
+    mock.expect(:call, true, ["Exception in Freshchat Agent put API :: FreshID uuid not present for Account #{Account.current.id} and for Agent #{agent.id}"])
     Rails.logger.stub :error, mock do
       safe_send(:handle_fchat_agent, agent)
     end

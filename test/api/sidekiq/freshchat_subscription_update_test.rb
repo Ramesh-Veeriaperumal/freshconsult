@@ -3,11 +3,13 @@ require 'sidekiq/testing'
 require 'faker'
 require 'webmock/minitest'
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
+require Rails.root.join('test', 'models', 'helpers', 'freshchat_account_test_helper.rb')
 
 Sidekiq::Testing.fake!
 
 class FreshchatSubscriptionUpdateTest < ActionView::TestCase
   include AccountTestHelper
+  include FreshchatAccountTestHelper
 
   def setup
     super
@@ -25,6 +27,7 @@ class FreshchatSubscriptionUpdateTest < ActionView::TestCase
 
   def test_omni_subscription_update_successful_update
     stub_freshchat_omni_request(200, 'OK', { transactionId: 'S311111111', message: "success" })
+    create_freshchat_account(Account.current)
     assert_nothing_raised do
       Billing::FreshchatSubscriptionUpdate.new.perform(construct_test_subscription_params)
     end
