@@ -6029,8 +6029,8 @@ en:
     ivr: IVR
     api_rate_limit_estate: API rate limit - 400rpm
     custom_dashboard_desc: Custom dashboard
-    apple_business_chat: Apple business chat
-    custom_bots_chat: Custom bots on chat
+    apple_business_chat: Apple business chat (add-on)
+    custom_bots_chat: Chat bots with Answers and flows
     custom_agent_statuses: Custom agent statuses
     recording_opt_out: Recording opt-out
     abandoned_call_metrics: Abandoned call metrics

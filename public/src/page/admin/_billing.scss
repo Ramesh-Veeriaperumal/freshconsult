@@ -642,6 +642,12 @@ input[type=text].input-agent-count{
 				margin-left: 20px;
 			}
 
+			&.hide_first_feature {
+				span:first-child {
+					display: none;
+				}
+			}
+
 			&:not(.basic_plan) {
 				span:first-child {
 					font-style: italic;

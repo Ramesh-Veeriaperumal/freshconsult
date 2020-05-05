@@ -12,8 +12,8 @@ module SubscriptionsHelper
     "blossomomni_channel_option" => ["blossom_omni"],
     'gardenomni_channel_option_basic' => ['blossom_omni'],
     "gardenomni_channel_option" => ["chat_faq", "chat_message", "ivr", "masking_recording"],
-    "estateomni_channel_option" => ["chatbots", "inapp_chat", "smart_calls", "barging_monitoring"],
-    "forestomni_channel_option" => ["co_browsing", "multilingual_chat", "holiday_routing"]
+    "estateomni_channel_option" => ["holiday_routing", "multilingual_chat", "apple_business_chat", "smart_calls", "barging_monitoring"],
+    "forestomni_channel_option" => ["omni_routing", "co_browsing", "custom_bots_chat", "abandoned_call_metrics", "service_level_monitoring", "abandoned_call_reports", "service_level_report", "cre_metrics"]
   }
 
   PLAN_RANKING = {
@@ -60,7 +60,14 @@ module SubscriptionsHelper
   }
 
   IMPORTANT_OMNI_FEATURES = {
+    'estate omni jan 20' => [
+      :multilingual_chat,
+      :holiday_routing,
+      :apple_business_chat
+    ],
     'forest omni jan 20' => [
+      :omni_routing,
+      :custom_bots_chat,
       :abandoned_call_metrics,
       :service_level_monitoring,
       :abandoned_call_reports,

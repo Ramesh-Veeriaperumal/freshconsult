@@ -39,3 +39,8 @@
     :abandoned_call_reports: abandoned_call_reports
     :service_level_report: service_level_report
     :cre_metrics: cre_metrics
+    :multilingual_chat: multilingual_chat
+    :holiday_routing: holiday_routing
+    :apple_business_chat: apple_business_chat
+    :custom_bots_chat: custom_bots_chat
+    :omni_routing: omni_routing
