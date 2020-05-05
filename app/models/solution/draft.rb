@@ -106,12 +106,12 @@ class Solution::Draft < ActiveRecord::Base
   end
 
   def unlock!(skip_versioning = false)
-    unlock
     if skip_versioning
       self.skip_version_creation = true
-      self.save
+      self.update_column(:status, STATUS_KEYS_BY_TOKEN[:work_in_progress])
       self.skip_version_creation = false
     else
+      unlock
       self.save
     end
   end
