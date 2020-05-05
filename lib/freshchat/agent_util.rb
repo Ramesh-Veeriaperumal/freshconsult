@@ -24,17 +24,17 @@ module Freshchat
       @user = @agent.user
       action = fetch_http_action
       log_request_and_call_freschat(action) do |connection|
-        Rails.logger.debug "Freshchat Agent #{action} API called for Account #{current_account.id} and for Agent #{@agent.id}"
+        Rails.logger.debug "Freshchat Agent #{action} API called for Account #{account.id} and for Agent #{@agent.id}"
         connection.safe_send(action) do |request|
           request.body = safe_send("agent_#{action}_request_body") if ['post', 'put'].include?(action)
-          Rails.logger.info "Freshchat Agent Request:: #{request.inspect} and connection #{connection.url_prefix.inspect} for Account #{current_account.id} and for Agent #{@agent.id}"
+          Rails.logger.info "Freshchat Agent Request:: #{request.inspect} and connection #{connection.url_prefix.inspect} for Account #{account.id} and for Agent #{@agent.id}"
         end
       end
     end
 
     private
 
-      def current_account
+      def account
         ::Account.current
       end
 
@@ -47,13 +47,13 @@ module Freshchat
           if agent.freshchat_enabled.nil? || agent.freshchat_enabled == agent.agent_freshchat_enabled?
             roles_changed?(agent)
           else
-            current_account.omni_bundle_id ? true : standalone_account(agent)
+            account.omni_bundle_id ? true : standalone_account(agent)
           end
         end
       end
 
       def fchat_agent_destroy?(agent)
-        agent.safe_send(:transaction_include_action?, :destroy) && current_account.omni_bundle_id && agent.additional_settings[:freshchat].present?
+        agent.safe_send(:transaction_include_action?, :destroy) && account.omni_bundle_id && agent.additional_settings[:freshchat].present?
       end
 
       def roles_changed?(agent)
@@ -84,14 +84,14 @@ module Freshchat
       def log_request_and_call_freschat(action)
         response = yield(create_connection(action))
         if fchat_agent_success?(response)
-          Rails.logger.debug "Freshchat Agent #{action} API Success. Response Body: #{response.body.inspect} for Account #{current_account.id} and for Agent #{@agent.id}"
+          Rails.logger.debug "Freshchat Agent #{action} API Success. Response Body: #{response.body.inspect} for Account #{account.id} and for Agent #{@agent.id}"
           return safe_send("#{ACTION_MAPPINGS[action.to_sym]}_freshchat_channel", response) if ['post', 'put'].include?(action)
         else
           raise "Response status: #{response.status}:: Response Body: #{response.body['message'].presence || response.body['error_message']}"
         end
       rescue StandardError => e
-        Rails.logger.error "Exception in Freshchat Agent #{action} API :: #{e.message} for Account #{current_account.id} and for Agent #{@agent.id}"
-        NewRelic::Agent.notice_error(e, description: "Exception in Freshchat Agent #{action} API :: error: #{e.message} for Account #{current_account.id} and for Agent #{@agent.id}")
+        Rails.logger.error "Exception in Freshchat Agent #{action} API :: #{e.message} for Account #{account.id} and for Agent #{@agent.id}"
+        NewRelic::Agent.notice_error(e, description: "Exception in Freshchat Agent #{action} API :: error: #{e.message} for Account #{account.id} and for Agent #{@agent.id}")
       end
 
       def create_connection(action)
@@ -119,11 +119,11 @@ module Freshchat
       end
 
       def freshid_uuid
-        current_account.freshid_org_v2_enabled? ? Freshid::V2::Models::User.find_by_email(@user.email.to_s).id : Freshid::User.find_by_email(@user.email.to_s).uuid
+        account.freshid_org_v2_enabled? ? Freshid::V2::Models::User.find_by_email(@user.email.to_s).id : Freshid::User.find_by_email(@user.email.to_s).uuid
       end
 
       def freshchat_domain
-        current_account.freshchat_account.api_domain
+        account.freshchat_account.api_domain
       end
 
       def agent_host_url
@@ -154,7 +154,7 @@ module Freshchat
       end
 
       def freshchat_role(role_id)
-        current_account.roles_from_cache.map do |r|
+        account.roles_from_cache.map do |r|
           if r.id == role_id
             return ['Account Administrator', 'Administrator', 'Supervisor', 'Agent'].include?(r.name) ? USER_ROLE_MAPPINGS[r.name] : 'AGENT'
           end

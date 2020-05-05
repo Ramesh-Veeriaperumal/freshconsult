@@ -35,7 +35,7 @@ module Freshcaller
 
     private
 
-      def current_account
+      def account
         ::Account.current
       end
 
@@ -48,13 +48,13 @@ module Freshcaller
           if agent.freshcaller_enabled.nil? || agent.freshcaller_enabled == agent.agent_freshcaller_enabled?
             agent_properties_changed?(agent)
           else
-            current_account.omni_bundle_id ? true : standalone_freshcaller_account?(agent)
+            account.omni_bundle_id ? true : standalone_freshcaller_account?(agent)
           end
         end
       end
 
       def fcaller_agent_destroy?(agent)
-        agent.safe_send(:transaction_include_action?, :destroy) && current_account.omni_bundle_id && agent.freshcaller_agent.present?
+        agent.safe_send(:transaction_include_action?, :destroy) && account.omni_bundle_id && agent.freshcaller_agent.present?
       end
 
       def standalone_freshcaller_account?(agent)
@@ -71,7 +71,7 @@ module Freshcaller
       end
 
       def log_request_and_call_freshcaller(action)
-        Rails.logger.debug "Freshcaller Agent #{action} API called for Account #{current_account.id} and for Agent #{@agent.id}"
+        Rails.logger.debug "Freshcaller Agent #{action} API called for Account #{account.id} and for Agent #{@agent.id}"
         response = yield
         parsed_response = response.parsed_response
         if fcaller_agent_success?(response)
@@ -80,8 +80,8 @@ module Freshcaller
           raise "Response status: #{response.code}:: Body: #{response.message}:: #{response.body}"
         end
       rescue StandardError => e
-        Rails.logger.error "Exception in Freshcaller Agent #{action} API :: #{e.message} for Account #{current_account.id} and for Agent #{@agent.id}"
-        NewRelic::Agent.notice_error(e, description: "Exception in Freshcaller Agent #{action} API :: error: #{e.message} for Account #{current_account.id} and for Agent #{@agent.id}")
+        Rails.logger.error "Exception in Freshcaller Agent #{action} API :: #{e.message} for Account #{account.id} and for Agent #{@agent.id}"
+        NewRelic::Agent.notice_error(e, description: "Exception in Freshcaller Agent #{action} API :: error: #{e.message} for Account #{account.id} and for Agent #{@agent.id}")
       end
 
       def update_to_freshcaller(action)
@@ -94,7 +94,7 @@ module Freshcaller
             attributes: {
               name: @user.name,
               phone: @user.phone,
-              language: @user.language || current_account.language
+              language: @user.language || account.language
             },
             relationships: {
               user_emails: {

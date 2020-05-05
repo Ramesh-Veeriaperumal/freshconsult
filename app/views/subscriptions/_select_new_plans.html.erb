@@ -71,9 +71,16 @@
                       plan_name = plan.name.downcase.split(' ').first
                       basic_plan = (plan_name === 'sprout' || (omni_account && plan_name === 'estate')) || false
                     %>
-                    <p class="plan-details plan-feature-list <%='basic_plan' if basic_plan %>">
+                    <p class="plan-details plan-feature-list <%='basic_plan' if basic_plan %> <%='hide_first_feature' if omni_account && basic_plan %>">
                       <% unless SubscriptionsHelper::PLANS_FEATURES["#{plan.name.downcase}"].nil? %>
-                        <% SubscriptionsHelper::PLANS_FEATURES["#{plan.name.downcase}"].each do |feature_name| %>
+                        <%
+                          if (omni_account)
+                            omni_features_list = SubscriptionsHelper::IMPORTANT_OMNI_FEATURES["#{plan.name.downcase}"].clone.map{ |x| x.to_s }
+                          end
+                          plans_features = SubscriptionsHelper::PLANS_FEATURES["#{plan.name.downcase}"].clone
+                          features_list = omni_account ? plans_features.insert(plans_features.length - 2, *omni_features_list) : plans_features
+                        %>
+                        <% features_list.each do |feature_name| %>
                           <% if feature_name == "omni_channel_option" || feature_name == "omni_channel_option_basic" %>
                             <%= render :partial => "/subscriptions/features/info-box/ocr_info", :locals => { :plan => plan,
                               :feature_name => feature_name }%>
