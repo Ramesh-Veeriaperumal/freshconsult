@@ -46,7 +46,7 @@ class DetectUserLanguageTest < ActionView::TestCase
 
   def test_language_detect_from_cache
     big_text = Faker::Lorem.sentence(7)
-    text = big_text[0..20].squish.split.first(15).join(' ')
+    text = (big_text.first(30) + big_text[big_text.length/2, 30] + big_text.last(30)).squish.split.first(15).join(' ')
     key  = "DETECT_USER_LANGUAGE:#{text}"
     set_others_redis_key(key, 'ro', 600)
     response = Struct.new(:body)

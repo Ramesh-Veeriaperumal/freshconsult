@@ -79,7 +79,7 @@ module ModelsUsersTestHelper
                                     deleted: options[:deleted] || 0,
                                     blocked: options[:blocked] || 0,
                                     company_id: options[:customer_id] || nil,
-                                    language: 'en',
+                                    language: options[:language] || 'en',
                                     active: options[:active] || false,
                                     tags: build_tags(options[:tags]))
       new_user.custom_field = options[:custom_fields] if options.key?(:custom_fields)

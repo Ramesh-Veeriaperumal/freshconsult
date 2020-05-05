@@ -10,8 +10,7 @@ module Channel::V2
 
     def validate_filter_id
       @ticket_filter = Account.current.ticket_filters.find_by_id(filter_id)
-      errors[:filter_id] << :"There is no ticket_filter matching the given filter" if @ticket_filter.present? || \
-        !@ticket_filter.has_permission?(User.current)
+      errors[:filter_id] << :"There is no ticket_filter matching the given filter" if @ticket_filter.nil? || !@ticket_filter.has_permission?(User.current)
     end
   end
 end

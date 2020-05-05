@@ -1172,6 +1172,68 @@ module Helpdesk
         Helpdesk::Email::SpamDetector.any_instance.unstub :check_spam
         ShardMapping.unstub :fetch_by_domain
       end
+
+      def test_show_quoted_text_with_plain_as_true
+        $redis_others.perform_redis_op('set', QUOTED_TEXT_PARSE_FROM_REGEX, '(from|von|fra|van)')
+        id = Faker::Lorem.characters(50)
+        subject = 'Test Subject'
+        params = default_params(id, subject)
+        ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
+        Helpdesk::Email::SpamDetector.any_instance.stubs(:check_spam).returns(spam: nil)
+        params[:attachments] = 0
+        params[:text] = 'sample text. Van: Test <test@tabsnot.space>'
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
+        show_quoted_text_plain = incoming_email_handler.show_quoted_text(params[:text], Account.current.tickets.first.reply_email)
+        assert_equal 'sample text. ', show_quoted_text_plain[:body]
+        assert_equal params[:text], show_quoted_text_plain[:full_text]
+      ensure
+        ShardMapping.unstub(:fetch_by_domain)
+        Helpdesk::Email::SpamDetector.any_instance.unstub(:check_spam)
+        $redis_others.perform_redis_op('del', QUOTED_TEXT_PARSE_FROM_REGEX)
+      end
+
+      def test_show_quoted_text_with_plain_as_false
+        $redis_others.perform_redis_op('set', QUOTED_TEXT_PARSE_FROM_REGEX, '(from|von|fra|van)')
+        id = Faker::Lorem.characters(50)
+        subject = 'Test Subject'
+        params = default_params(id, subject)
+        ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
+        Helpdesk::Email::SpamDetector.any_instance.stubs(:check_spam).returns(spam: nil)
+        params[:attachments] = 0
+        params[:text] = 'sample text. Van: Test <test@tabsnot.space>'
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
+        show_quoted_text_non_plain = incoming_email_handler.show_quoted_text(params[:text], Account.current.tickets.first.reply_email, false)
+        returned_body = '<p>sample text. </p><div class=\'freshdesk_quote\'><blockquote class=\'freshdesk_quote\'><p>Van: Test <test></test></p></blockquote></div>'
+        assert_equal returned_body, show_quoted_text_non_plain[:body]
+        assert_equal returned_body, show_quoted_text_non_plain[:full_text]
+      ensure
+        ShardMapping.unstub(:fetch_by_domain)
+        Helpdesk::Email::SpamDetector.any_instance.unstub(:check_spam)
+        $redis_others.perform_redis_op('del', QUOTED_TEXT_PARSE_FROM_REGEX)
+      end
+
+      def test_show_quoted_text_fail_when_redis_key_not_set
+        redis_key_set = false
+        if $redis_others.perform_redis_op('get', QUOTED_TEXT_PARSE_FROM_REGEX)
+          redis_key_set = true
+          $redis_others.perform_redis_op('del', QUOTED_TEXT_PARSE_FROM_REGEX)
+        end
+        id = Faker::Lorem.characters(50)
+        subject = 'Test Subject'
+        params = default_params(id, subject)
+        ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
+        Helpdesk::Email::SpamDetector.any_instance.stubs(:check_spam).returns(spam: nil)
+        params[:attachments] = 0
+        params[:text] = 'sample text. Van: Test <test@tabsnot.space>'
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
+        show_quoted_text = incoming_email_handler.show_quoted_text(params[:text], Account.current.tickets.first.reply_email)
+        assert_equal params[:text], show_quoted_text[:body]
+        assert_equal params[:text], show_quoted_text[:full_text]
+      ensure
+        ShardMapping.unstub(:fetch_by_domain)
+        Helpdesk::Email::SpamDetector.any_instance.unstub(:check_spam)
+        $redis_others.perform_redis_op('set', QUOTED_TEXT_PARSE_FROM_REGEX, '(from|von|fra|van)') if redis_key_set
+      end
     end
   end
 end

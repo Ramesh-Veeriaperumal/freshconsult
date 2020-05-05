@@ -4,7 +4,7 @@ class FieldServiceManagementController < ApiApplicationController
 
   skip_before_filter :load_object
   before_filter :validate_fsm_enabled
-  before_filter :validate_body_params, only: [:update_settings]
+  before_filter :check_params, :validate_body_params, only: [:update_settings]
 
   def update_settings
     scoper.account_additional_settings.save_field_service_management_settings(params[cname])

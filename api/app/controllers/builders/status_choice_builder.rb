@@ -8,7 +8,8 @@ module StatusChoiceBuilder
 
     custom_choice = choice.dup
     custom_choice.delete(:id)
-    custom_choice[:position] ||= 1 # add into top if not there
+    # If position is passed in args use it or use the existing position.
+    custom_choice[:position] ||= ticket_status.position
     group_ids = custom_choice.delete(:group_ids)
     archive_data(custom_choice, choice)
     ticket_status.assign_attributes(build_params(STATUS_CHOICES_PARAMS, custom_choice))

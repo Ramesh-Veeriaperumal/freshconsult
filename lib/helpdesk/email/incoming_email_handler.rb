@@ -1105,7 +1105,8 @@ module Helpdesk
 				return text if text.blank?
 
 				Timeout.timeout(LARGE_TEXT_TIMEOUT) do
-					regex_arr = get_quoted_text_regex_array address
+        			from_all_regex = $redis_others.perform_redis_op('get', QUOTED_TEXT_PARSE_FROM_REGEX) || 'from'
+					regex_arr = get_quoted_text_regex_array(address, from_all_regex)
 					tl = text.length
 
 					#calculates the matching regex closest to top of page
@@ -1150,15 +1151,15 @@ module Helpdesk
 				return {:body => text,:full_text => text}
 			end
 
-			def get_quoted_text_regex_array address
+			def get_quoted_text_regex_array(address, from_all_regex)
 				[
-					Regexp.new("From:\s*" + Regexp.escape(address), Regexp::IGNORECASE),
+					Regexp.new("#{from_all_regex}:\s*" + Regexp.escape(address), Regexp::IGNORECASE),
 					Regexp.new("<" + Regexp.escape(address) + ">", Regexp::IGNORECASE),
 					Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),
 					Regexp.new("<div>\n<br>On.*?wrote:"), 
 					Regexp.new("On((?!On).)*wrote:"),
 					Regexp.new("-+original\s+message-+\s*", Regexp::IGNORECASE),
-					Regexp.new("from:\s*", Regexp::IGNORECASE)
+					Regexp.new("#{from_all_regex}:\s*", Regexp::IGNORECASE)
 				]
 			end
 

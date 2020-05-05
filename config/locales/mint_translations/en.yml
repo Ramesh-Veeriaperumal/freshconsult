@@ -1,4 +1,7 @@
 en:
+  time:
+    am: AM
+    pm: PM
   attach_file: Attach a file
   edit_forum_category: Edit Forum Category
   total: Total

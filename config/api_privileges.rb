@@ -193,6 +193,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/api_skill", only: [:index, :create, :show, :update, :destroy]
     resource :"admin/shift", only: [:index, :show, :create, :update, :destroy]
     resource :field_service_management, only: [:update_settings, :show_settings]
+    resource :"settings/helpdesk/field_service", only: [:update_settings, :show_settings]
     resource :"ember/sla_policy", only: [:index, :show, :create, :update, :destroy]
   end
 

@@ -1794,6 +1794,36 @@ module Ember
       Account.any_instance.unstub(:bot_email_channel_enabled?)
     end
 
+    def test_create_ticket_ml_central_publish
+      assert_nothing_raised do
+        Account.any_instance.stubs(:email_bot_enabled?).returns(true)
+        @account.reload
+        ticket = create_ticket(source: 1)
+        stub_request(:post, 'https://central-staging.freshworksapi.com/collector').to_return(body: '', status: 202)
+        CentralPublisher::Worker.jobs.clear
+        args = { 'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => { 'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i }}
+        disptchr = Helpdesk::Dispatcher.new(args)
+        disptchr.execute
+      end
+    ensure
+      Account.any_instance.unstub(:email_bot_enabled?)
+    end
+
+    def test_create_ticket_ml_central_publish_with_error
+      assert_nothing_raised do
+        Account.any_instance.stubs(:email_bot_enabled?).returns(true)
+        @account.reload
+        ticket = create_ticket(source: 1)
+        stub_request(:post, 'https://central-staging.freshworksapi.com/collector').to_raise(StandardError)
+        CentralPublisher::Worker.jobs.clear
+        args = { 'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => { 'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i } }
+        disptchr = Helpdesk::Dispatcher.new(args)
+        disptchr.execute
+      end
+    ensure
+      Account.any_instance.unstub(:email_bot_enabled?)
+    end
+
     def test_create_from_email_without_bot_configuration
       Account.any_instance.stubs(:support_bot_configured?).returns(false)
       Account.any_instance.stubs(:bot_email_channel_enabled?).returns(true)
@@ -6531,7 +6561,7 @@ module Ember
       assert_response 200
       assert_equal 1, ::Tickets::VaultDataCleanupWorker.jobs.size
       job = ::Tickets::VaultDataCleanupWorker.jobs.first.deep_symbolize_keys
-      assert_equal [ticket.display_id], job[:args][0][:object_ids]
+      assert_equal [ticket.id], job[:args][0][:object_ids]
       assert_equal 'close', job[:args][0][:action]
     ensure
       secure_text_field.destroy

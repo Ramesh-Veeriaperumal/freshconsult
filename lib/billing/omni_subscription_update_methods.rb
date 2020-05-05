@@ -2,7 +2,7 @@ module Billing::OmniSubscriptionUpdateMethods
   BILLING_PERIOD = {
     monthly: ['month', 1].freeze,
     quarterly: ['quarter', 3].freeze,
-    six_month: ['six-month', 6].freeze,
+    yearly: ['six-month', 6].freeze, # originally half_yearly
     annual: ['annual', 12].freeze
   }.freeze
 

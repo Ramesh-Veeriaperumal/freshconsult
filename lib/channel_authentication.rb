@@ -12,6 +12,7 @@ module ChannelAuthentication
     facebook: 'facebook'.freeze,
     freshbots: 'freshbots'.freeze,
     twilight: 'twilight'.freeze,
+    freddy: 'freddy'.freeze,
     field_service: 'field_service'.freeze
   }.freeze
 
