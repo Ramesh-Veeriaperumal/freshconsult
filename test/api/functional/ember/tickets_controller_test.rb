@@ -6561,7 +6561,7 @@ module Ember
       assert_response 200
       assert_equal 1, ::Tickets::VaultDataCleanupWorker.jobs.size
       job = ::Tickets::VaultDataCleanupWorker.jobs.first.deep_symbolize_keys
-      assert_equal [ticket.display_id], job[:args][0][:object_ids]
+      assert_equal [ticket.id], job[:args][0][:object_ids]
       assert_equal 'close', job[:args][0][:action]
     ensure
       secure_text_field.destroy

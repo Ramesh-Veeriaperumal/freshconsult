@@ -209,7 +209,7 @@ class Ember::AttachmentsControllerTest < ActionController::TestCase
   end
 
   def test_show_attachment_without_ticket_permission
-    ticket_id = create_ticket.display_id
+    ticket_id = create_ticket.id
     attachment = create_attachment(attachable_type: 'Helpdesk::Ticket', attachable_id: ticket_id)
     User.any_instance.stubs(:has_ticket_permission?).returns(false)
     get :show, construct_params(version: 'private', id: attachment.id)
