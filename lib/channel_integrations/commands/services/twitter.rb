@@ -217,7 +217,7 @@ module ChannelIntegrations::Commands::Services
         current_user.twitter_followers_count = data.delete(:twitter_followers_count)
         current_user.save!
       rescue StandardError => e
-        Rails.logger.info "Twitter::CreateNote exception while updating user account_id: #{current_account.id} context: #{context.inspect} #{e.message} #{e.backtrace[0.10]}"
+        Rails.logger.info "Twitter::CreateNote exception while updating user account_id: #{current_account.id} data: #{data.inspect} #{e.message} #{e.backtrace[0.10]}"
       end
   end
 end
