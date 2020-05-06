@@ -498,6 +498,10 @@ class VaRule < ActiveRecord::Base
     rule_type == VAConfig::SERVICE_TASK_OBSERVER_RULE
   end
 
+  def service_task_automation?
+    service_task_dispatcher_rule? || service_task_observer_rule?
+  end
+
   def automated_rule?
     observer_rule? || supervisor_rule? || dispatchr_rule?
   end

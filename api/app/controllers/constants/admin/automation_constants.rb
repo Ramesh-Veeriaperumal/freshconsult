@@ -9,6 +9,17 @@ module Admin::AutomationConstants
 
   SHOW_FIELDS = %i[rule_type].freeze
 
+  PERFORMER_TYPES = {
+    agent: '1',
+    requester: '2',
+    agent_or_requester: '3',
+    system: '4',
+    field_technician: '5',
+    field_technician_or_requester: '6'
+  }.freeze
+
+  SERVICE_TASK_RESOURCE_TYPES = ['same_ticket', 'ticket'].freeze
+
   AUTOMATION_FIELDS = {
     dispatcher: [:conditions, :actions],
     observer: [:performer, :events, :conditions, :actions],
@@ -16,6 +27,27 @@ module Admin::AutomationConstants
     service_task_dispatcher: [:conditions, :actions],
     service_task_observer: [:performer, :events, :conditions, :actions]
   }.freeze
+
+  GROUP_ID_FIELD_NAME = 'group_id'.freeze
+
+  RESPONDER_ID_FIELD_NAME = 'responder_id'.freeze
+
+  FIELD_SERVICE_GROUP_ID = 'field_service_group_id'.freeze
+
+  FIELD_SERVICE_RESPONDER_ID = 'field_service_responder_id'.freeze
+
+  ADD_NOTE_ACTION = 'add_note'.freeze
+
+  ADD_NOTE_AND_NOTIFY_FEIELD_TECH = 'add_note_for_field_techician'.freeze
+
+  SAME_TICKET_EVALUATE_ON = 'same_ticket'.freeze
+
+  SEND_EMAIL = {
+    agent: 'send_email_to_agent',
+    group: 'send_email_to_group',
+    field_tech: 'send_email_to_field_tech',
+    field_group: 'send_email_to_field_group'
+  }
 
   AUTOMATION_RULE_TYPES = AUTOMATION_FIELDS.keys.freeze
 
@@ -210,8 +242,6 @@ module Admin::AutomationConstants
   SUPERVISOR_CONDITION_TICKET_FIELDS = %i[contact_name company_name].freeze
 
   SEND_EMAIL_FIELDS = %i[send_email_to_group send_email_to_agent send_email_to_requester].freeze
-
-  PERFORMER_TYPES = [1, 2, 3, 4].freeze
 
   ANY_NONE = { NONE: '', ANY: '--', ANY_WITHOUT_NONE: '##' }.freeze
 
