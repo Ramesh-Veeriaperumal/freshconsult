@@ -12,7 +12,7 @@ module HelpWidgetsTestHelper
     if options.key?(:product_id)
       product_id = options[:product_id]
     else
-      test_product = create_product(portal_url: Faker::Internet.url, language: options[:language])
+      test_product = create_product(portal_url: "#{Faker::Lorem.characters(7)}#{rand(999_999)}.widget.com", language: options[:language])
       product_id = test_product.id
     end
     test_widget = FactoryGirl.build(:help_widget,

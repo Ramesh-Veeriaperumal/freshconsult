@@ -8,6 +8,7 @@ module Community::HitMethods
 		flush_hits(current_klass::HITS_CACHE_THRESHOLD) if new_count >= current_klass::HITS_CACHE_THRESHOLD
 		return true unless self.respond_to?(:language)
 		self.parent.hit!
+    manual_publish_interaction(:incr, :hits)
 		true
 	end
 

@@ -108,8 +108,9 @@ class AccountTest < ActiveSupport::TestCase
     @account.reload
     CentralPublishWorker::AccountWorker.jobs.clear
     account_additional_settings = @account.account_additional_settings
-    expected_model_change = { 'portal_languages' => [account_additional_settings.portal_languages, ['en']] }
-    account_additional_settings.portal_language_setter(['en'])
+    portal_languages_was = account_additional_settings.portal_languages.presence || []
+    expected_model_change = { 'portal_languages' => [portal_languages_was, ['es', 'jp-JP']] }
+    account_additional_settings.portal_language_setter(['es', 'jp-JP'])
     account_additional_settings.save!
     assert_equal 1, CentralPublishWorker::AccountWorker.jobs.size
     payload = @account.central_publish_payload.to_json
@@ -140,6 +141,53 @@ class AccountTest < ActiveSupport::TestCase
   ensure
     @account.rollback(:help_widget)
     @account.revoke_feature(:help_widget)
+    Account.unstub(:current)
+  end
+
+  def test_account_publish_for_account_additional_settings_supported_languages
+    # multilingual enabled and hence only supported languages can be changed
+    Account.stubs(:current).returns(Account.first || create_test_account)
+    setup_multilingual
+    @account.reload
+    CentralPublishWorker::AccountWorker.jobs.clear
+    account_additional_settings = @account.account_additional_settings
+    removed_language = [@account.supported_languages.first]
+    expected_model_change = { 'all_languages' => { 'added' => [], 'removed' => language_details([removed_language]) }}
+    account_additional_settings.supported_language_setter(@account.supported_languages-removed_language)
+    account_additional_settings.save!
+    assert_equal 1, CentralPublishWorker::AccountWorker.jobs.size
+    payload = @account.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_account_post(@account))
+    job = CentralPublishWorker::AccountWorker.jobs.last
+    assert_equal 'account_update', job['args'][0]
+    assert_equal(expected_model_change, job['args'][1]['model_changes'])
+  ensure
+    Account.unstub(:current)
+  end
+
+  def test_account_publish_for_portal_language
+    # multilingual not enabled and hence only primary language can be changed, which is portal language
+    Account.stubs(:current).returns(Account.first || create_test_account)
+    @account.reload
+    Account.any_instance.stubs(:multilingual?).returns(false)
+    account_additional_settings = @account.account_additional_settings
+    account_additional_settings.supported_language_setter([])
+    account_additional_settings.portal_language_setter([])
+    account_additional_settings.save!
+    old_primary_lang = @account.main_portal.language
+    CentralPublishWorker::AccountWorker.jobs.clear
+    expected_model_change = { 'all_languages' => { 'added' => language_details(['es']), 'removed' => language_details([old_primary_lang]) }}
+    portal = @account.main_portal
+    portal.language = 'es'
+    portal.save
+    @account.reload
+    payload = @account.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_account_post(@account))
+    job = CentralPublishWorker::AccountWorker.jobs.last
+    assert_equal 'account_update', job['args'][0]
+    assert_equal(expected_model_change, job['args'][1]['model_changes'])
+  ensure
+    Account.any_instance.unstub(:multilingual?)
     Account.unstub(:current)
   end
 

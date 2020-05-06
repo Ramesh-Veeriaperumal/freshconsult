@@ -1,7 +1,7 @@
 module Publish
   def manual_publish(rmq_publish_args, central_publish_args, delayed = false)
     # generate and send common uuid to rabbitmq and kafka
-    uuid = generate_uuid
+    uuid = RabbitMq::Utils.generate_uuid
     # publish to rabbitmq
     if rmq_publish_args.present?
       delayed ? delayed_manual_publish_to_rmq(uuid, *rmq_publish_args) : manual_publish_to_rmq(uuid, *rmq_publish_args)

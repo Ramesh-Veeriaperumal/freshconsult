@@ -1535,7 +1535,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   def test_create_with_product_id_without_multi_product_feature
     Account.current.revoke_feature(:multi_product)
     Account.current.help_widgets.destroy_all
-    product = create_product(portal_url: Faker::Avatar.image)
+    product = create_product(portal_url: "#{Faker::Lorem.characters(7)}#{rand(999_999)}.helpwidgets.com")
     request_params = {
       product_id: product.id,
       settings: {
@@ -1551,7 +1551,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
 
   def test_create_with_product_associated
     Account.current.help_widgets.destroy_all
-    product = create_product(portal_url: Faker::Avatar.image)
+    product = create_product(portal_url: "#{Faker::Lorem.characters(7)}#{rand(999_999)}.widgets.com")
     request_params = {
       product_id: product.id,
       settings: {
@@ -1567,7 +1567,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   end
 
   def test_create_default
-    product = create_product(portal_url: Faker::Avatar.image)
+    product = create_product(portal_url: "#{Faker::Lorem.characters(7)}#{rand(999_999)}.helpwidget.com")
     request_params = {
       product_id: product.id,
       settings: {

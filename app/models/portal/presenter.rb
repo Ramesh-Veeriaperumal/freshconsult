@@ -20,7 +20,11 @@ class Portal < ActiveRecord::Base
       g.add proc { |x| x.utc_format(x.send(key)) }, as: key
     end
   end
-    
+
+  api_accessible :central_publish_associations do |t|
+    t.add :product, template: :product_as_association
+  end
+
   api_accessible :central_publish_destroy do |br|
     br.add :id
     br.add :account_id

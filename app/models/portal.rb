@@ -28,9 +28,9 @@ class Portal < ActiveRecord::Base
   delegate :friendly_email, :to => :product, :allow_nil => true
   before_save :downcase_portal_url
   after_save :update_chat_widget
-  after_commit :update_site_language, :if => :main_portal_language_changes?
+  after_commit :update_site_language, :publish_account_central_payload, :if => :main_portal_language_changes?
   before_save :update_portal_forum_categories
-  before_save :save_route_info, :add_default_solution_category
+  before_save :save_route_info
   after_destroy :destroy_route_info
 
   before_create :update_custom_portal
@@ -252,6 +252,22 @@ class Portal < ActiveRecord::Base
     @deleted_model_info = as_api_response(:central_publish_destroy)
   end
 
+  def publish_account_central_payload
+    model_changes = construct_model_changes
+    if model_changes.present?
+      account.model_changes = model_changes
+      # account payload will anyway be sent and hence no need to manual publish
+    end
+  end
+
+  def construct_model_changes
+    changes = {}
+    prev_languages = [@portal_changes['language'].first] + account.supported_languages
+    current_languages = [language] + account.supported_languages
+    changes[:all_languages] = [prev_languages, current_languages]
+    changes
+  end
+
   def bot_info
     logo_url = logo.content.url if logo.present?
     bot_name, bot_id = [bot.name, bot.id] if bot
@@ -272,6 +288,20 @@ class Portal < ActiveRecord::Base
 
   def falcon_portal_enable?
     preferences.key?(:falcon_portal_key)
+  end
+
+  def solution_category_metum_ids=(category_attr)
+    # The below line is needed, as we created portals before soln categories, while creating an account.
+    return if account.solution_category_meta.empty?
+
+    # empty string is passed in param (which is 0 after to_i) and needs to be removed to avoid building it
+    category_ids = category_attr.map(&:to_i) - [0]
+    default_category_meta = account.solution_category_meta.find_by_is_default(true)
+    category_ids |= [default_category_meta.id] if default_category_meta.present?
+    portal_solution_categories.where('solution_category_meta_id NOT IN (?)', category_ids).destroy_all
+    (category_ids - portal_solution_categories.pluck(:solution_category_meta_id)).each do |category_meta_id|
+      portal_solution_categories.build(solution_category_meta_id: category_meta_id)
+    end
   end
 
   private
@@ -405,14 +435,6 @@ class Portal < ActiveRecord::Base
     def destroy_route_info(old_portal_url = portal_url)
       Rails.logger.info "Deleting #{old_portal_url} route."
       Redis::RoutesRedis.delete_route_info(old_portal_url) unless old_portal_url.blank?
-    end
-
-    def add_default_solution_category
-      return if account.solution_category_meta.empty?
-      #The above line is needed, as we created portals before soln categories, while creating an account.
-
-      default_category_meta = account.solution_category_meta.find_by_is_default(true)
-      self.solution_category_metum_ids = self.solution_category_metum_ids | [default_category_meta.id] if default_category_meta.present?
     end
 
     def clear_solution_cache(obj=nil)

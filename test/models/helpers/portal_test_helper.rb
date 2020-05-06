@@ -29,4 +29,10 @@ module PortalTestHelper
       account_id: portal.account_id
     }
   end
+
+  def association_portal_pattern(portal)
+    {
+      product: (portal.product ? Hash : nil)
+    }
+  end
 end

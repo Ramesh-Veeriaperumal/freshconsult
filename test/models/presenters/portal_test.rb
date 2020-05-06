@@ -36,6 +36,8 @@ class PortalTest < ActiveSupport::TestCase
     test_portal = create_portal
     payload = test_portal.central_publish_payload.to_json
     payload.must_match_json_expression(central_publish_portal_pattern(test_portal))
+    assoc_payload = test_portal.associations_to_publish.to_json
+    assoc_payload.must_match_json_expression(association_portal_pattern(test_portal))
   end
 
   def test_portal_update_central_publish_payload
@@ -49,6 +51,8 @@ class PortalTest < ActiveSupport::TestCase
     job = CentralPublisher::Worker.jobs.last
     assert_equal 'portal_update', job['args'][0]
     assert_equal(model_changes_for_central_pattern([old_name, test_portal.name]), job['args'][1]['model_changes'])
+    assoc_payload = test_portal.associations_to_publish.to_json
+    assoc_payload.must_match_json_expression(association_portal_pattern(test_portal))
   end
 
   def test_response_destroy_central_publish

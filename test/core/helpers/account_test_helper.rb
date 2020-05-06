@@ -137,33 +137,12 @@ module AccountTestHelper
     if account.account_additional_settings.present? && account.account_additional_settings.portal_languages.present?
       portal_languages = account.account_additional_settings.portal_languages
     end
-    {
-      id: account.id,
-      name: account.name,
-      full_domain: account.full_domain,
-      time_zone: account.time_zone,
-      helpdesk_name: account.helpdesk_name,
-      sso_enabled: account.sso_enabled,
-      sso_options: account.sso_options,
-      ssl_enabled: account.ssl_enabled,
-      reputation: account.reputation,
-      account_type: { id: account.account_type, name: Account::ACCOUNT_TYPES.key(account.account_type) },
-      features: account.features_list,
-      created_at: account.created_at.try(:utc).try(:iso8601),
-      updated_at: account.updated_at.try(:utc).try(:iso8601),
-      premium: account.premium,
-      freshid_account_id: account.freshid_account_id,
-      fs_cookie: account.fs_cookie,
-      account_configuration: account.account_configuration.account_configuration_for_central,
-      account_additional_settings: set_account_additional_settings(account),
-      portal_languages: portal_languages
-    }
-  end
-
-  def central_publish_rts_info(account)
-    portal_languages = []
-    portal_languages = account.account_additional_settings.portal_languages if account.account_additional_settings.present? && account.account_additional_settings.portal_languages.present?
-
+    all_languages = if account.account_additional_settings.present? && account.account_additional_settings.supported_languages.present?
+                      account.account_additional_settings.supported_languages + [account.main_portal.language]
+                    else
+                      [account.main_portal.language]
+                    end
+    all_languages = language_details(all_languages)
     {
       id: account.id,
       name: account.name,
@@ -184,6 +163,40 @@ module AccountTestHelper
       account_configuration: account.account_configuration.account_configuration_for_central,
       account_additional_settings: set_account_additional_settings(account),
       portal_languages: portal_languages,
+      all_languages: all_languages
+    }
+  end
+
+  def central_publish_rts_info(account)
+    portal_languages = []
+    portal_languages = account.account_additional_settings.portal_languages if account.account_additional_settings.present? && account.account_additional_settings.portal_languages.present?
+    all_languages = if account.account_additional_settings.present? && account.account_additional_settings.supported_languages.present?
+                      account.account_additional_settings.supported_languages + [account.main_portal.language]
+                    else
+                      [account.main_portal.language]
+                    end
+    all_languages = language_details(all_languages)
+    {
+      id: account.id,
+      name: account.name,
+      full_domain: account.full_domain,
+      time_zone: account.time_zone,
+      helpdesk_name: account.helpdesk_name,
+      sso_enabled: account.sso_enabled,
+      sso_options: account.sso_options,
+      ssl_enabled: account.ssl_enabled,
+      reputation: account.reputation,
+      account_type: { id: account.account_type, name: Account::ACCOUNT_TYPES.key(account.account_type) },
+      features: account.features_list,
+      created_at: account.created_at.try(:utc).try(:iso8601),
+      updated_at: account.updated_at.try(:utc).try(:iso8601),
+      premium: account.premium,
+      freshid_account_id: account.freshid_account_id,
+      fs_cookie: account.fs_cookie,
+      account_configuration: account.account_configuration.account_configuration_for_central,
+      account_additional_settings: set_account_additional_settings(account),
+      portal_languages: portal_languages,
+      all_languages: all_languages,
       rts_account_id: account.account_additional_settings.rts_account_id,
       rts_account_secret: encrypt_for_central(account.account_additional_settings.rts_account_secret, 'account_additional_settings'),
       cipher_key: 'account_additional_settings'
@@ -209,6 +222,24 @@ module AccountTestHelper
     subscription = account.subscription
     subscription.state = state
     subscription.save!
+  end
+
+  def language_details(language_codes)
+    language_details = []
+    language_codes.each do |code|
+      lang_obj = Language.find_by_code(code)
+      language_details << lang_obj.as_json
+    end
+    language_details
+  end
+
+  def setup_multilingual(supported_languages = ['es', 'ru-RU'])
+    @account.add_feature(:multi_language)
+    @account.features.enable_multilingual.create
+    @account.reload
+    additional = @account.account_additional_settings
+    additional.supported_languages = supported_languages
+    additional.save
   end
 
   def setup_field_service_management_feature

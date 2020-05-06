@@ -17,10 +17,14 @@ class Helpdesk::Approval < ActiveRecord::Base
     in: [Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review], Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved], Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:rejected]]
   }, presence: true
 
+  scope :solution_approvals, -> { where(approvable_type: 'Solution::Article') }
+
+  after_commit :approval_changes_on_create, on: :create
+  after_commit :approval_changes_on_update, on: :update
+  after_commit :approval_changes_on_destroy, on: :destroy
+  after_commit :publish_article_approver_changes
 
   after_commit :trigger_callback
-
-  scope :solution_approvals, conditions: { approvable_type: 'Solution::Article' }
 
   def in_review?
     approval_status == Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review]
@@ -28,6 +32,10 @@ class Helpdesk::Approval < ActiveRecord::Base
 
   def approved?
     approval_status == Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]
+  end
+
+  def rejected?
+    approval_status == Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:rejected]
   end
 
   def update_approval_status!
@@ -58,5 +66,46 @@ class Helpdesk::Approval < ActiveRecord::Base
     rescue StandardError => e
       Rails.logger.error "Error while triggering callback  #{action} on #{model_class} #{e}"
     end
+  end
+
+  def model_changes
+    @model_changes ||= {}
+  end
+
+  def approval_changes_on_create
+    # If the status is not in-review when 'Create', it is required to handle those cases
+    model_changes[:approval_status] = [nil, approval_status]
+  end
+
+  def approval_changes_on_update
+    # Handle updates only when not in IN-Review status
+    return unless approval_status != Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review]
+
+    model_changes[:approval_status] = [Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review], approval_status]
+    if approval_status == Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]
+      model_changes[:approved_at] = [nil, approved_at]
+      model_changes[:approved_by] = [nil, approved_by]
+    end
+  end
+
+  def approval_changes_on_destroy
+    model_changes[:approval_status] = [approval_status, nil]
+  end
+
+  # Publish approver changes to central as a part of Article payload
+  # A new column - approved_at can be added in approver_mapping table later, instead using updated_at for now.
+  # Need to handle multi-approver case when it comes.
+  def publish_article_approver_changes
+    approvable.publish_approver_changes_to_central(model_changes) if approvable_type == 'Solution::Article' && !model_changes.empty?
+  end
+
+  # returns the first approver if approved
+  def approved_by
+    approver_mappings.first.approver_id if approved?
+  end
+
+  # returns the first approved time
+  def approved_at
+    updated_at if approved?
   end
 end

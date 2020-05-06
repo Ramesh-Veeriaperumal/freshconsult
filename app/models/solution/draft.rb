@@ -23,11 +23,17 @@ class Solution::Draft < ActiveRecord::Base
   validates_numericality_of :user_id
 
   before_validation :populate_defaults
-  before_save :change_modified_at, :encode_emoji_in_articles
+  before_save :change_modified_at, :encode_emoji_in_articles, :save_model_changes
   before_destroy :discard_notification
 
+  after_commit :draft_changes_on_create, on: :create
+  after_commit :draft_changes_on_destroy, on: :destroy
+  after_commit :publish_article_draft_changes
+
   attr_accessible :title, :meta, :description
-  attr_accessor :discarding, :publishing, :keep_previous_author, :session, :cancelling, :unpublishing, :false_delete_attachment_trigger, :restored_version, :skip_version_creation
+  attr_accessor :discarding, :publishing, :keep_previous_author, :session, :cancelling, :unpublishing,
+                :false_delete_attachment_trigger, :restored_version, :skip_version_creation,
+                :model_changes
 
   alias_attribute :modified_by, :user_id
   alias_attribute :body, :draft_body
@@ -78,6 +84,29 @@ class Solution::Draft < ActiveRecord::Base
 
   COMMON_ATTRIBUTES = ["title", "description"]
   #defining writer method for delegated attribute
+
+  def model_changes
+    @model_changes ||= {}
+  end
+
+  def save_model_changes
+    @model_changes = changes.to_hash
+    @model_changes.symbolize_keys!
+  end
+
+  def draft_changes_on_create
+    model_changes[:draft_exists] = [0, 1]
+    model_changes[:modified_at] = [nil, created_at]
+    model_changes[:user_id] = [nil, user_id]
+  end
+
+  def draft_changes_on_destroy
+    model_changes[:draft_exists] = [1, 0]
+  end
+
+  def publish_article_draft_changes
+    self.article.publish_draft_changes_to_central(model_changes) unless model_changes.empty?
+  end
 
   def description= content
     unless self.draft_body.present?

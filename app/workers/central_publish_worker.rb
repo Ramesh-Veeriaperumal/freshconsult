@@ -81,4 +81,8 @@ module CentralPublishWorker
   class FreshchatAccountWorker < CentralPublisher::Worker
     sidekiq_options queue: 'freshchat_account_central_publish', retry: 5, dead: true, failures: :exhausted
   end
+
+  class SolutionArticleWorker < CentralPublisher::Worker
+    sidekiq_options queue: 'solution_article_central_publish', retry: 5, dead: true, failures: :exhausted
+  end
 end

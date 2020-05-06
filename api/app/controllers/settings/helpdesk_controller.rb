@@ -12,7 +12,7 @@ module Settings
 
     def update
       @item.main_portal.language = cname_params['primary_language'] if cname_params['primary_language'].present? && !@item.features_included?(:enable_multilingual)
-      @item.account_additional_settings.supported_languages = cname_params['supported_languages'] unless cname_params['supported_languages'].nil?
+      @item.account_additional_settings.supported_language_setter(cname_params['supported_languages']) unless cname_params['supported_languages'].nil?
       @item.account_additional_settings.portal_language_setter(cname_params['portal_languages']) unless cname_params['portal_languages'].nil?
       @item.save ? Account.current.check_and_enable_multilingual_feature : render_errors(@item.errors)
     end

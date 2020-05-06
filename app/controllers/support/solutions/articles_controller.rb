@@ -34,6 +34,7 @@ class Support::Solutions::ArticlesController < SupportController
   before_filter :cleanup_params_for_title, :only => [:show]
   before_filter :load_current_object_id, :only => [:show]
  
+  before_filter :set_interaction_source, only: [:hit, :thumbs_up, :thumbs_down]
 
    CREATE_TICKET_VALID_FIELDS = ["email"]
 
@@ -75,6 +76,11 @@ class Support::Solutions::ArticlesController < SupportController
   end
 
   private
+
+    def set_interaction_source
+      @article.current_article.interaction_source_type = Solution::Constants::INTERACTION_SOURCE[:portal]
+      @article.current_article.interaction_source_id = (Portal.current || Account.current.main_portal).id
+    end
 
     def filter_params
       if params[:helpdesk_ticket].present?

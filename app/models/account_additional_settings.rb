@@ -111,9 +111,14 @@ class AccountAdditionalSettings < ActiveRecord::Base
   end
 
   def portal_language_setter(portal_languages)
-    @portal_languages_changed = true
-    @add_portal_languages_to_model_changes = true
+    @portal_languages_was = [] if @portal_languages_was.blank?
+    @portal_languages_changed = (@portal_languages_was - portal_languages | portal_languages - @portal_languages_was).present? ? true : false
     additional_settings[:portal_languages] = portal_languages
+  end
+
+  def supported_language_setter(support_languages)
+    @supported_languages_changed = true
+    self.supported_languages = support_languages
   end
 
   def bundle_details_setter(bundle_id, bundle_name)
@@ -344,7 +349,11 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def construct_model_changes
     changes = {}
-    changes[:portal_languages] = [@portal_languages_was, portal_languages] if @add_portal_languages_to_model_changes
+    changes[:portal_languages] = [@portal_languages_was, portal_languages] if @portal_languages_changed
+    if @supported_languages_changed
+      primary_language = [Account.current.language]
+      changes[:all_languages] = [@prev_supported_languages + primary_language, supported_languages + primary_language]
+    end
     if Account.current.agent_collision_revamp_enabled?
       rts_changes = attribute_changes('additional_settings')
       rts_changes.merge!(attribute_changes('secret_keys'))
@@ -365,6 +374,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def load_state
     @portal_languages_was = portal_languages
+    @prev_supported_languages = supported_languages
   end
 
   def validate_supported_languages
