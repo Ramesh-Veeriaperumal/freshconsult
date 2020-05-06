@@ -36,6 +36,8 @@ class Aloha::SignupControllerTest < ActionController::TestCase
     post :callback, params
     assert_response 200
     assert JSON.parse(response.body)['message'] == "#{params[:product_name]} record created successfully"
+    assert_equal true, @account.freshcaller_enabled?
+    assert_not_nil @account.account_managers.first.agent.freshcaller_agent
   end
 
   def test_bundle_id_mismatch

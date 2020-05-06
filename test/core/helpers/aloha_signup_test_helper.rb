@@ -37,9 +37,15 @@ module AlohaSignupTestHelper
         'email': 'freshdesk_user@freshworks.com'
       },
       'misc': {
-        'userInfoList': {
-          'appId': '002e124d-a917-4178-90dd-3d4bc2ea3f56',
-          'appKey': '5e829219-7749-43d5-a9fa-37b1da2236e9'
+        'userInfoList': [
+          {
+            'appId': '002e124d-a917-4178-90dd-3d4bc2ea3f56',
+            'webchatId': '5e829219-7749-43d5-a9fa-37b1da2236e9'
+          }
+        ],
+        'user': {
+          'freshcaller_account_admin_id': 51_725,
+          'freshcaller_account_admin_email': 'freshdesk_user@freshworks.com'
         }
       }
     }
