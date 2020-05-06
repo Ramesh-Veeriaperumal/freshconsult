@@ -111,6 +111,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     t.add :display_id
     t.add :account_id
     t.add :archive
+    t.add :source_hash, as: :source
+    t.add :ticket_type
   end
 
   def central_payload_type

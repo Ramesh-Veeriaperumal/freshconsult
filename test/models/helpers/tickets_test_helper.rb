@@ -337,7 +337,9 @@ module TicketsTestHelper
       id: ticket.id,
       display_id: ticket.display_id,
       account_id: ticket.account_id,
-      archive: false
+      archive: false,
+      ticket_type: ticket.ticket_type,
+      source: { id: ticket.source, name: Account.current.helpdesk_sources.ticket_source_names_by_key[ticket.source] }
     }
   end
 
@@ -346,7 +348,9 @@ module TicketsTestHelper
       id: ticket.id,
       display_id: ticket.display_id,
       account_id: ticket.account_id,
-      archive: true
+      archive: true,
+      ticket_type: ticket.ticket_type,
+      source: { id: ticket.source, name: Account.current.helpdesk_sources.ticket_source_names_by_key[ticket.source] }
     }
   end
 
