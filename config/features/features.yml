@@ -391,6 +391,7 @@
       :contact_custom_activity_api: 386
       :assets: 387
       :assets_toggle: 388
+      :prevent_ticket_creation_for_others: 389
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -498,3 +499,4 @@
   :assets: false
   :assets_toggle: false
   :contact_custom_activity_api: false
+  :prevent_ticket_creation_for_others: true

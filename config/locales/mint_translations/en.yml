@@ -2449,6 +2449,8 @@ en:
           Enable this feature for advanced spam protection. System will check
           all topics and replies for third party links and other spam activity.
         logged_in: Logged in users
+        restrict_create_ticket_for_others: Allow users to raise tickets on behalf of others
+        portal_section_help: The above settings applies to the feedback form.
         moderate_all: Moderate all topics and replies
         user_permissions: User Permissions for portal
         moderate_links: Moderate all topics and replies containing external links

@@ -14,7 +14,6 @@ module Helpdesk::TicketActions
   def create_the_ticket(need_captcha = nil, skip_notifications = nil)
 
     cc_emails = fetch_valid_emails(params[:cc_emails])
-    
     @ticket = current_account.tickets.build(params[:helpdesk_ticket])
     #Using .dup as otherwise its stored in reference format(&id0001 & *id001).
     @ticket.cc_email = {:cc_emails => cc_emails , :fwd_emails => [], :bcc_emails => [], :reply_cc => cc_emails.dup, :tkt_cc => cc_emails.dup}
@@ -57,7 +56,13 @@ module Helpdesk::TicketActions
   def set_default_values
     @ticket.status = OPEN unless (Helpdesk::TicketStatus.status_names_by_key(current_account).key?(@ticket.status) or @ticket.ticket_status.try(:deleted?))
     @ticket.source = Account.current.helpdesk_sources.ticket_source_keys_by_token[:portal] if @ticket.source == 0
-    @ticket.email ||= current_user && current_user.email
+    if current_user
+      if !current_account.features_included?(:prevent_ticket_creation_for_others) || current_account.has_feature?(:anonymous_tickets)
+        @ticket.email ||= current_user.email
+      else
+        @ticket.email = current_user.email
+      end
+    end
     @ticket.product ||= current_portal.product
   end
   

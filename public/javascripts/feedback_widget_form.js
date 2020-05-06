@@ -174,45 +174,6 @@
 			}
  		});
 
-	 	// USED in ticket form
-		// Checking if the email is already present in the system
-    	// If email is new requester then a "name" field will be shown to the user as an optional input in the request form
-	    $("#helpdesk_ticket_email").focusout(function(){
-	    	var $this = $(this),
-				ticket_email = $this.val(),
-				email_path = $this.data("checkEmailPath"),
-				toggle_name = function(enable){
-					var _name_div = $("#name_field").find("input")
-										.attr("disabled", !enable).parent()
-					if(enable){
-						_name_div.slideDown()
-						if($("input[name='helpdesk_ticket[name]']").data('userName')){
-							jQuery("input[name='helpdesk_ticket[name]']").val($("input[name='helpdesk_ticket[name]']").data('userName'));
-						}
-					}
-					else{
-						_name_div.slideUp()
-					}
-				}
-			if(email_path == "") return
-
-			if(ticket_email.isValidEmail()){
-				$this.addClass("loading-right")
-
-				$.ajax({ url: email_path,
-            type: 'POST',
-            datatype: 'json',
-            data: { v : ticket_email }, 
-				  	success: function(data){
-					    $this.removeClass("loading-right")
-					    toggle_name(!data.user_exists)
-					}
-				})
-			}else{
-				toggle_name(false)
-			}
-		})
-
 	 	jQuery("#freshwidget-submit-frame").bind("load", function() {
 	 		if(jQuery("#freshwidget-submit-frame").contents().find("#ui-widget-container").length != 0) {
 	 			jQuery("#ui-widget-container").hide();
