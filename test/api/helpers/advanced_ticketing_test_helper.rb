@@ -22,6 +22,15 @@ module AdvancedTicketingTestHelper
     Account.current.revoke_feature(:field_service_management)
   end
 
+  def enable_assets
+    Account.current.set_feature(:disable_old_ui)
+    Account.current.set_feature(:assets_toggle) unless Account.current.has_feature?(:assets_toggle)
+    yield
+  ensure
+    Account.current.revoke_feature(:assets_toggle)
+    Account.current.revoke_feature(:assets)
+  end
+
   def create_installed_application(app_name)
     application = Integrations::Application.available_apps(Account.current.id).find_by_name(app_name)
     Account.current.installed_applications.create({application: application})

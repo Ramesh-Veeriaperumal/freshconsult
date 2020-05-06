@@ -389,6 +389,8 @@
       :agent_assist_ultimate: 384
       :canned_response_suggest: 385
       :contact_custom_activity_api: 386
+      :assets: 387
+      :assets_toggle: 388
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -493,4 +495,6 @@
   :fluffy_higher_plan2: false
   :fluffy_higher_plan3: false
   :fluffy_higher_plan4: false
+  :assets: false
+  :assets_toggle: false
   :contact_custom_activity_api: false
