@@ -2705,7 +2705,7 @@ module Ember
       dependent_field.update_attribute(:required, true)
       params = ticket_params_hash.merge(custom_field: {}, type: 'Question')
       params[:custom_field][dependent_field.name] = 'USA'
-      child_level_fields = Helpdesk::TicketField.where(parent_id: dependent_field.id)
+      child_level_fields = dependent_field.child_levels
       params[:custom_field][child_level_fields[0].name.to_sym] = 'California'
       params[:custom_field][child_level_fields[1].name.to_sym] = 'Burlingame'
       @account.reload

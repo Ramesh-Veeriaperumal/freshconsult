@@ -5281,6 +5281,24 @@ class TicketsControllerTest < ActionController::TestCase
     @account.revoke_feature :unique_contact_identifier
   end
 
+  def test_create_meta_note_publish
+    CentralPublishWorker::ActiveNoteWorker.jobs.clear
+    CentralPublishWorker::TrialNoteWorker.jobs.clear
+    Account.any_instance.stubs(:note_central_publish_enabled?).returns(true)
+    sample_requester = get_user_with_default_company
+    params = {
+      requester_id: sample_requester.id,
+      status: 2, priority: 2,
+      subject: Faker::Name.name, description: Faker::Lorem.paragraph
+    }
+    post :create, construct_params({}, params)
+    assert_response 201
+    assert_equal 0, CentralPublishWorker::ActiveNoteWorker.jobs.size
+    assert_equal 0, CentralPublishWorker::TrialNoteWorker.jobs.size
+  ensure
+    Account.any_instance.unstub(:note_central_publish_enabled?)
+  end
+
   def test_update_with_new_unique_external_id
     @account.add_feature :unique_contact_identifier
     params_hash = { unique_external_id: Faker::Lorem.characters(20) }
