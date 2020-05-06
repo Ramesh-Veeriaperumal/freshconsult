@@ -31,9 +31,17 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
     :as => 'accessible',
     :dependent => :destroy
 
+  has_many :groups,
+           through: :helpdesk_accessible,
+           source: :groups
+
+  has_many :users,
+           through: :helpdesk_accessible,
+           source: :users
+
   accepts_nested_attributes_for :helpdesk_accessible
 
-  delegate :groups, :users, :visible_to_me?, :to => :helpdesk_accessible
+  delegate :visible_to_me?, to: :helpdesk_accessible
 
   attr_accessor :visibility, :attachment_removed, :action_destroy
   attr_accessible :title, :content_html, :folder_id, :helpdesk_accessible_attributes
