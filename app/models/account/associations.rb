@@ -104,6 +104,11 @@ class Account < ActiveRecord::Base
 
   has_many :solution_drafts, :class_name =>'Solution::Draft'
   has_many :solution_draft_bodies, :class_name =>'Solution::DraftBody'
+
+  has_many :solution_templates,
+           class_name: 'Solution::Template',
+           dependent: :destroy
+
   has_many :article_tickets, :class_name => 'ArticleTicket'
 
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'

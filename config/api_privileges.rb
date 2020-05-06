@@ -253,6 +253,11 @@ Authority::Authorization::PrivilegeList.build do
   create_and_edit_article do
     resource :'ember/solutions/article', only: %i[create update send_for_review bulk_update]
     resource :'ember/solutions/draft', only: %i[autosave update delete_attachment destroy]
+    resource :'ember/solutions/template', only: %i[index show default]
+  end
+
+  manage_solution_templates do
+    resource :'ember/solutions/template', only: %i[index show create destroy update default]
   end
 
   approve_article do

@@ -485,6 +485,14 @@ Helpkit::Application.routes.draw do
             get :index, path: '(:language)', constraints: { language: Regexp.union(Language.all_codes) }
           end
         end
+
+        resources :templates, controller: 'ember/solutions/templates', only: [:show, :update, :destroy], constraints: { id: /\d+/ } do
+          collection do
+            get :index
+            get :default
+            post :create
+          end
+        end
       end
     end
 

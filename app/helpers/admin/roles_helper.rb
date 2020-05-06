@@ -65,7 +65,8 @@ module Admin::RolesHelper
                    { :dom_type => "check_box", :id => "approve_article", :not_display => !current_account.article_approval_workflow_enabled? },
                    { :dom_type => "check_box", :id => "delete_solution" },
                    { :dom_type => "check_box", :id => "manage_solutions" },
-                   { :dom_type => "check_box", :id => "export_articles" }]
+                   { dom_type: 'check_box', id: 'export_articles' },
+                   { dom_type: 'check_box', id: 'manage_solution_templates' }]
               }]
           },
 
