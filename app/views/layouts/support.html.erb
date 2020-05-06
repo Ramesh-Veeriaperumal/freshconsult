@@ -29,7 +29,7 @@
 		<%= portal_fonts %>
 
 		<!-- Including default portal based script framework at the top -->
-		<% if current_account.portal_prototype_update_enabled? %>
+		<% if current_account.portal_prototype_update_enabled? || current_account.portal_frameworks_update_enabled? %>
 			<%= javascript_include_tag :'cdn/portal_head_v2' %>
 		<% else %>
 			<%= javascript_include_tag :'cdn/portal_head' %>
@@ -67,7 +67,11 @@
 			<%= render :partial => "layouts/shared/bot" %>
 		<% end %>
 
-	    <%= javascript_include_tag :'cdn/portal_bottom' %>
+	  <% if current_account.portal_frameworks_update_enabled? %>
+			<%= javascript_include_tag :'cdn/portal_bottom_v2' %>
+		<% else %>
+			<%= javascript_include_tag :'cdn/portal_bottom' %>
+		<% end %>
 		<%= javascript_include_tag :'cdn/redactor' %>
 		<%= javascript_include_tag :'cdn/freshfone_portal' %>	
 		<%= javascript_include_tag :"cdn/lang/#{I18n.locale.to_s.downcase}" %>
