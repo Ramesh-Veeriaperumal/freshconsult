@@ -63,7 +63,7 @@
 
 .avatar-options {
 	.option {
-		@include padding(3px 24px);
+		@include padding(3px 10px);
 		&.uplink {
 			@extend .file-holder;
 		}
