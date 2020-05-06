@@ -56,9 +56,13 @@ class Support::SignupsController < SupportController
 
     def set_user_language
       return unless current_account.features_included?(:multi_language)
-      params[:user][:language] ||= ( http_accept_language.compatible_language_from I18n.available_locales || 
-        current_portal.language || current_account.language
-      ).to_s
+      language = set_locale
+      params[:user][:language] ||= (Languages::Constants::LANGUAGE_ALT_CODE[language] || language ||
+        current_portal.language || current_account.language).to_s
+    end
+
+    def set_locale
+      http_accept_language.compatible_language_from I18n.available_locales
     end
 
     def set_validatable_custom_fields
