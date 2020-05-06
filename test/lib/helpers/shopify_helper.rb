@@ -8,6 +8,7 @@ module ShopifyHelper
           closed_at: '',
           created_at: '2019-06-03T09:31:55-04:00',
           updated_at: '2019-06-03T09:31:56-04:00',
+          admin_url: 'https://awesomedestroyed.myshopify.com/admin/orders/1234',
           number: 19,
           note: '',
           token: '01b14f8ddedf10892741b0ba7065f044',

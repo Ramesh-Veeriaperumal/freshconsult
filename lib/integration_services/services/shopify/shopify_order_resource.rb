@@ -82,11 +82,7 @@ module IntegrationServices::Services
       end
 
       def format_order(order)
-        order["admin_url"] = if Account.current.shopify_api_revamp_enabled?
-          "#{server_url}/admin/#{SHOPIFY_API_VERSION}/orders/#{order["id"]}"
-        else
-          "#{server_url}/admin/orders/#{order["id"]}"
-        end
+        order['admin_url'] = "#{server_url}/admin/orders/#{order["id"]}"
         required_keys = [
           'currency', 'customer', 'email', 'financial_status',
           'fulfillment_status', 'id', 'line_items', 'order_number', 'total_price',

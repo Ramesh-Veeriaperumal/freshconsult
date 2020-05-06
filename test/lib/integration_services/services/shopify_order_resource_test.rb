@@ -39,5 +39,6 @@ class ShopifyOrderResourceTest < ActionView::TestCase
     recent_orders = order_response.get_recent_orders(@customers['customers'][0]['id'])
     formatted_order = order_response.send(:format_order, recent_orders[:orders][0].stringify_keys)
     assert_equal(formatted_order['name'], '###FF##1019')
+    assert_equal(formatted_order['admin_url'], 'https://awesomedestroyed.myshopify.com/admin/orders/1234')
   end
 end
