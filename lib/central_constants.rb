@@ -51,7 +51,8 @@ module CentralConstants
     'Admin::CannedResponses::Response' => '0.1',
     'ConversionMetric' => '0.1',
     'Portal' => '0.2',
-    'HelpWidget' => '0.1'
+    'HelpWidget' => '0.1',
+    'Helpdesk::Filters::CustomTicketFilter' => '0.1'
   }
 
   # To avoid duplicate central event of associated models(user_companies) with model(user) as exchange payload,

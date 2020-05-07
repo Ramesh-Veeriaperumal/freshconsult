@@ -8,11 +8,15 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
   attr_accessor :query_hash
 
+  concerned_with :presenter
+
   has_many :dashboard_widgets, class_name: 'DashboardWidget', foreign_key: 'ticket_filter_id'
 
   after_commit :update_widgets, on: :update
 
-  before_destroy :deactivate_widgets
+  before_destroy :deactivate_widgets, :save_deleted_filters_info
+
+  publishable on: [:create, :update, :destroy]
 
   MODEL_NAME = "Helpdesk::Ticket"
   TICKET_FIELD_DATA = 'ticket_field_data'.freeze
@@ -724,6 +728,10 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
   def self.custom_field_table_name
     Account.current.ticket_field_limit_increase_enabled? ? TICKET_FIELD_DATA : FLEXIFIELDS
+  end
+
+  def save_deleted_filters_info
+    @deleted_model_info = as_api_response(:central_publish)
   end
 
   private
