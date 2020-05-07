@@ -28,7 +28,11 @@ module Freshcaller::Util
 
   def propagate_new_domain_to_freshcaller
     http_request_params = { domain_url: current_account.full_domain, token: current_user.single_access_token }
-    freshcaller_response = freshcaller_request(http_request_params, freshcaller_integration_update_url, :put, email: current_user.email)
+    freshcaller_endpoint_url = current_account.omni_bundle_id.nil? ? freshcaller_integration_update_url : freshcaller_omni_integration_update_url
+    freshcaller_response = freshcaller_request(http_request_params, freshcaller_endpoint_url, :put, email: current_user.email)
+    if freshcaller_response.code != 200
+      NewRelic::Agent.notice_error(freshcaller_response.message, description: "Unable to propagate domain url to freshcaller for Account #{current_account.id}")
+    end
     freshcaller_response
   end
 
