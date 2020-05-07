@@ -56,7 +56,7 @@ put:
     200:
       description: Success
       schema:
-        $ref: '#/definitions/ticket_update'
+        $ref: '#/definitions/ticket_show'
     403:
       description: Access denied
     404:
