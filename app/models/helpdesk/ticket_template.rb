@@ -65,6 +65,14 @@ class Helpdesk::TicketTemplate < ActiveRecord::Base
     :through => :parents,
     :source  => :parent_template
 
+  has_many :groups,
+           through: :accessible,
+           source: :groups
+
+  has_many :users,
+           through: :accessible,
+           source: :users
+
   serialize :template_data, Hash
   attr_accessor :reset_tmpl_assoc
   attr_accessible :name, :description, :template_data, :accessible_attributes, :parents_attributes, :children_attributes, :association_type
@@ -74,7 +82,7 @@ class Helpdesk::TicketTemplate < ActiveRecord::Base
   accepts_nested_attributes_for :parents, :allow_destroy => true
   accepts_nested_attributes_for :children, :allow_destroy => true
   alias_attribute :helpdesk_accessible, :accessible
-  delegate :groups, :users, :visible_to_me?,:visible_to_only_me?, :to => :accessible
+  delegate :visible_to_me?, :visible_to_only_me?, to: :accessible
 
   scope :shared_templates, lambda { |user|
     {

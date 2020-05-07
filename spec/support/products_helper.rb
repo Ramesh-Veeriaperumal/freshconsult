@@ -1,6 +1,7 @@
 module ProductsHelper
 
 	def create_product(option={})
+		@account.launch(:skip_portal_cname_chk)
 		defaults = {
 			:email => "#{Faker::Internet.domain_word}#{rand(0..9999)}@#{@account.full_domain}",
 			:portal_name => Faker::Company.name
@@ -36,7 +37,7 @@ module ProductsHelper
 													:tab_color=>"#006063", 
                                  		            :bg_color=>"#efefef" 
                                  		        })
-			test_portal.save(validate: false)
+			test_portal.save!
 		end
 		test_product
 	end

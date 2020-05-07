@@ -381,6 +381,9 @@ Helpkit::Application.routes.draw do
     resources :skills, controller: 'admin/api_skills', only: [:index, :show, :create, :update, :destroy]
     resources :shifts, controller: 'admin/shifts', only: [:index, :show, :create, :update, :destroy]
 
+    get 'settings/helpdesk/field-service', to: 'settings/helpdesk/field_service#show_settings'
+    put 'settings/helpdesk/field-service', to: 'settings/helpdesk/field_service#update_settings'
+
     scope 'field-service' do
       put :settings, to: 'field_service_management#update_settings'
       get :settings, to: 'field_service_management#show_settings'
@@ -480,6 +483,14 @@ Helpkit::Application.routes.draw do
         resources :drafts, controller: 'ember/solutions/drafts' do
           collection do
             get :index, path: '(:language)', constraints: { language: Regexp.union(Language.all_codes) }
+          end
+        end
+
+        resources :templates, controller: 'ember/solutions/templates', only: [:show, :update, :destroy], constraints: { id: /\d+/ } do
+          collection do
+            get :index
+            get :default
+            post :create
           end
         end
       end

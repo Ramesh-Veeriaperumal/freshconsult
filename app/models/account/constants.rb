@@ -119,7 +119,7 @@ class Account < ActiveRecord::Base
 
   }
 
-  ADVANCED_FEATURES = [:link_tickets, :parent_child_tickets, :shared_ownership, :field_service_management]
+  ADVANCED_FEATURES = [:link_tickets, :parent_child_tickets, :shared_ownership, :field_service_management, :assets]
   ADVANCED_FEATURES_TOGGLE = ADVANCED_FEATURES.map{|f| "#{f}_toggle".to_sym}
 
   # to be removed in DB to bitmap phase 3 changes.
@@ -157,12 +157,12 @@ class Account < ActiveRecord::Base
     :helpdesk_restriction_toggle => false, :freshfone_acw => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false,
     :freshfone_custom_forwarding => false, :freshfone_onboarding => false, :freshfone_gv_forward => false, :skill_based_round_robin => false,
     :salesforce_v2 => false, :advanced_search => false, :advanced_search_bulk_actions => false, :dynamics_v2 => false, :chat => false, :chat_routing => false,
-    :freshreports_analytics => false, :disable_old_reports => false }
+    :freshreports_analytics => false, :disable_old_reports => false, contact_custom_activity_api: false, assets: false, assets_toggle: false }
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  {:anonymous_tickets => true, :open_solutions => true, :auto_suggest_solutions => true,
                             :open_forums => false, :google_signin => true, :twitter_signin => true, :facebook_signin => true,
-                            :signup_link => true, :captcha => true,
+                            :signup_link => true, :captcha => true, :prevent_ticket_creation_for_others=> true,
                             :moderate_all_posts => false, :moderate_posts_with_links => true, :hide_portal_forums => false,
                             :forum_captcha_disable => false, :public_ticket_url => false }
 
@@ -312,7 +312,7 @@ class Account < ActiveRecord::Base
       fsm_for_garden_plan: true, fsm_for_blossom_plan: true, requester_widget_timeline: false, enable_secure_login_check: false, enable_twitter_requester_fields: true, marketplace_gallery: false,
       facebook_public_api: false, twitter_public_api: false, retry_emails: false, fb_message_echo_support: false, portal_prototype_update: false, solutions_quick_view: false, solutions_freshconnect: false,
       fsm_scheduler_month_view: false, facebook_post_outgoing_attachment: true, solutions_dashboard: false, freshid_sso_sync: false, fw_sso_admin_security: false, article_versioning_redis_lock: false, show_ssl_config: false, handle_custom_fields_conflicts: false, shopify_api_revamp: false,
-      omni_chat_agent: false, emberize_agent_form: true, emberize_agent_list: true
+      omni_chat_agent: false, emberize_agent_form: true, emberize_agent_list: true, portal_frameworks_update: false
     }, :merge
   )
 

@@ -54,10 +54,15 @@ class Wf::Filter < ActiveRecord::Base
     :class_name => "Helpdesk::Access",
     :as => 'accessible',
     :dependent => :destroy
- 
-   delegate :groups, :users, :to => :helpdesk_accessible
- 
-  
+
+  has_many :groups,
+           through: :helpdesk_accessible,
+           source: :groups
+
+  has_many :users,
+           through: :helpdesk_accessible,
+           source: :users
+
   has_many :agent_groups , :through =>:accessible , :foreign_key => "group_id" , :source => :group
 
   has_one :scheduled_task,
@@ -559,6 +564,7 @@ class Wf::Filter < ActiveRecord::Base
   end
   
   def empty?
+    Rails.logger.info "Wf::Filter::empty? #{size == 0}"
     size == 0
   end
 
@@ -707,7 +713,7 @@ class Wf::Filter < ActiveRecord::Base
         end
       end
 
-      user_filters = Wf::Filter.find(:all, :conditions => conditions)
+      user_filters = Wf::Filter.where(conditions).all.to_a
       
       if user_filters.size > 0
         filters << ["-- Select Saved Filter --", "-2"] if include_default

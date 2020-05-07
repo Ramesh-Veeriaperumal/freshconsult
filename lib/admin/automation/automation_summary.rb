@@ -21,6 +21,7 @@ module Admin::Automation::AutomationSummary
 
     def performer_summary
       performer_type = record.rule_performer.instance_variable_get(:@type)
+      performer_type = service_task_performer_text_change performer_type if record.service_task_automation?
       requesters = record.rule_performer.instance_variable_get(:@members)
       performer = add_html_tag(I18n.t("admin.automation_summary.performer_#{performer_type}"), 1)
       if requesters.nil?
@@ -28,6 +29,16 @@ module Admin::Automation::AutomationSummary
       else
         p_value = generate_value(:responder_id, requesters, ' OR ')
         I18n.t('admin.automation_summary.performer_value', field_name: performer, field_value: p_value)
+      end
+    end
+
+    def service_task_performer_text_change(performer_type)
+      if performer_type == PERFORMER_TYPES[:agent]
+        PERFORMER_TYPES[:field_technician]
+      elsif performer_type == PERFORMER_TYPES[:agent_or_requester]
+        PERFORMER_TYPES[:field_technician_or_requester]
+      else
+        performer_type
       end
     end
 
@@ -145,7 +156,6 @@ module Admin::Automation::AutomationSummary
       field_name = data[:name].try(:to_sym)
       translated_key = :action
       return if field_name.nil?
-
       values = nil
       case true
       when data.key?(:value)
@@ -200,16 +210,24 @@ module Admin::Automation::AutomationSummary
     end
 
     def create_sentence(field_name, cons_field_name, value = nil, evaluate_on = 'ticket', type = nil, action_resource_type = nil)
-      name = generate_key(field_name, evaluate_on, ', ', type)
+      name = generate_key(field_name, evaluate_on, ', ', type, action_resource_type)
       field = ticket_fields.find { |tf| tf.name == field_name.to_s }
       value = value.map { |val| CGI.escapeHTML(val) } if field.present? && CUSTOM_TEXT_FIELD_TYPES.include?(field.field_type.to_sym)
       value1 = generate_value(field_name, value.first || I18n.t('admin.automation_summary.none')) if value.present?
       value2 = generate_value(field_name, value.second ||
                   I18n.t('admin.automation_summary.none')) if value.present? && value.length == 2
-      resource_type = I18n.t("admin.automation_summary.#{action_resource_type}") if action_resource_type.present?
+      resource_type = resouce_type_translation action_resource_type if action_resource_type.present?
       I18n.t("admin.automation_summary.#{cons_field_name}",
              field_name: name, field_value: value1, field_from: value1, field_to: value2,
              resource_type: resource_type)
+    end
+
+    def resouce_type_translation(action_resource_type)
+      if SAME_TICKET_EVALUATE_ON == action_resource_type && record.service_task_automation?
+        I18n.t('admin.automation_summary.same_service_task')
+      else
+        I18n.t("admin.automation_summary.#{action_resource_type}")
+      end
     end
 
     def get_name(method_name, input, separator = ', ')
@@ -227,18 +245,53 @@ module Admin::Automation::AutomationSummary
       end
     end
 
-    def generate_key(field_name, evaluate_on = 'ticket', separator = ', ', type = nil)
-      value = if type == :action && ACTION_FIELDS_SUMMARY.include?(field_name.try(:to_sym))
-                I18n.t("admin.automation_summary.action_#{field_name}")
-              elsif SUMMARY_DEFAULT_FIELDS.include?(field_name.try(:to_sym))
-                I18n.t("admin.automation_summary.#{field_name}")
-              elsif field_name.to_s.include? TIME_AND_STATUS_BASED_FILTER[0].to_s
-                supervisor_custom_status_name(field_name)
-              else
-                evaluate_on = 'ticket' unless EVALUATE_ON_MAPPING.values.include?(evaluate_on)
-                get_name("custom_#{evaluate_on}_fields", field_name, separator)
-              end
+    def generate_key(field_name, evaluate_on = 'ticket', separator = ', ', type = nil, action_resource_type = nil)
+      action_resource_type ||= evaluate_on
+      value = action_summary_default_fields_text_change(type, field_name, action_resource_type)
+      if value.nil?
+        value = if field_name.to_s.include? TIME_AND_STATUS_BASED_FILTER[0].to_s
+                  supervisor_custom_status_name(field_name)
+                else
+                  evaluate_on = 'ticket' unless EVALUATE_ON_MAPPING.values.include?(evaluate_on)
+                  get_name("custom_#{evaluate_on}_fields", field_name, separator)
+                end
+        end
       add_html_tag(value, 1)
+    end
+
+    def action_summary_default_fields_text_change(type, field_name, action_resource_type)
+      if type == :action && ACTION_FIELDS_SUMMARY.include?(field_name.try(:to_sym))
+        field_name = service_task_condition_action_text_change(field_name, action_resource_type) if record.service_task_automation?
+        I18n.t("admin.automation_summary.action_#{field_name}")
+      elsif SUMMARY_DEFAULT_FIELDS.include?(field_name.try(:to_sym))
+        field_name = service_task_condition_action_text_change(field_name, action_resource_type) if record.service_task_automation?
+        I18n.t("admin.automation_summary.#{field_name}")
+      end
+    end
+
+    def service_task_condition_action_text_change(field_name, action_resource_type)
+      if service_task_resource_type?(action_resource_type)
+        case field_name.to_s
+          when RESPONDER_ID_FIELD_NAME
+            FIELD_SERVICE_RESPONDER_ID
+          when GROUP_ID_FIELD_NAME
+            FIELD_SERVICE_GROUP_ID
+          when ADD_NOTE_ACTION
+            ADD_NOTE_AND_NOTIFY_FEIELD_TECH
+          when SEND_EMAIL[:agent]
+            SEND_EMAIL[:field_tech]
+          when SEND_EMAIL[:group]
+            SEND_EMAIL[:field_group]
+          else
+            field_name
+        end
+      else
+        field_name
+      end
+    end
+
+    def service_task_resource_type?(action_resource_type)
+      SERVICE_TASK_RESOURCE_TYPES.include?(action_resource_type.to_s)
     end
 
     def generate_value(field_name, value, separator = ', ')
@@ -274,7 +327,7 @@ module Admin::Automation::AutomationSummary
       if field_name == :responder_id && RESPONDER_ACTIONS_ID.include?(value)
         case value
         when 0
-          I18n.t("admin.automation_summary.assigned_agent")
+          record.service_task_automation? ? I18n.t('admin.automation_summary.assigned_field_service_agent') : I18n.t('admin.automation_summary.assigned_agent')
         when -2
           record.dispatchr_rule? ? I18n.t("admin.automation_summary.ticket_creating_agent") :
                                    I18n.t("admin.automation_summary.event_agent")

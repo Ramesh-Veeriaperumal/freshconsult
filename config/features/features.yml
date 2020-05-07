@@ -344,7 +344,7 @@
       :kb_increased_file_limit: 339
       :advanced_article_toolbar_options: 340
       :solutions_14: 341
-      :solutions_15: 342
+      :solutions_templates: 342
       :solutions_16: 343
       :solutions_17: 344
       :solutions_18: 345
@@ -387,6 +387,11 @@
       :advanced_freshcaller: 382  
       :email_bot: 383
       :agent_assist_ultimate: 384
+      :canned_response_suggest: 385
+      :contact_custom_activity_api: 386
+      :assets: 387
+      :assets_toggle: 388
+      :prevent_ticket_creation_for_others: 389
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -491,3 +496,7 @@
   :fluffy_higher_plan2: false
   :fluffy_higher_plan3: false
   :fluffy_higher_plan4: false
+  :assets: false
+  :assets_toggle: false
+  :contact_custom_activity_api: false
+  :prevent_ticket_creation_for_others: true

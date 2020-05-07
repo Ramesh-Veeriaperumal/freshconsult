@@ -66,14 +66,13 @@ class AccountsControllerTest < ActionController::TestCase
   end
 
   def test_twitter_requester_fields_not_created_after_disabled
-    Account.stubs(:current).returns(Account.first)
     get :new_signup_free, callback: '', user: { name: Faker::Name.name, email: Faker::Internet.email, time_zone: 'Chennai', language: 'en' }, account: { account_name: Faker::Lorem.word, account_domain: Faker::Lorem.word, locale: I18n.default_locale, time_zone: 'Chennai', user_name: 'Support', user_password: 'test1234', user_password_confirmation: 'test1234', user_email: Faker::Internet.email, user_helpdesk_agent: true, new_plan_test: true }, format: 'json'
     assert_response 200
-    assert_equal false, Account.current.twitter_requester_fields_enabled?
+    resp = JSON.parse(response.body)
+    account = Account.find(resp['account_id'])
+    assert_equal false, account.twitter_requester_fields_enabled?
     twitter_requester_fields = ['twitter_profile_status', 'twitter_followers_count']
-    assert_equal false, Account.current.contact_fields.collect(&:name) & twitter_requester_fields == twitter_requester_fields
-  ensure
-    Account.unstub(:current)
+    assert_equal false, account.contact_fields.collect(&:name) & twitter_requester_fields == twitter_requester_fields
   end
 
   def test_fsm_enabled_on_signup

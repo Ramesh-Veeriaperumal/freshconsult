@@ -91,21 +91,21 @@ class Aloha::SignupController < ApplicationController
 
     def enable_freshchat_agent
       account_admin = @current_account.account_managers.first
-      if account_admin.present? && @current_account.omni_chat_agent_enabled? && valid_freshchat_agent_action?(account_admin.agent)
+      unless account_admin.nil?
         agent = account_admin.agent
         agent.freshchat_enabled = true
-        handle_fchat_agent(agent)
+        handle_fchat_agent(agent) if @current_account.omni_chat_agent_enabled? && valid_freshchat_agent_action?(agent)
       end
     end
 
     def enable_freshcaller_agent
       account_admin = @current_account.account_managers.first
-      if account_admin.present? && Account.current.freshcaller_enabled? && valid_fcaller_agent_action?(account_admin.agent)
+      unless account_admin.nil?
         agent = account_admin.agent
         agent.freshcaller_enabled = true
         freshcaller_misc_params = params['misc'].is_a?(Hash) ? params['misc'] : JSON.parse(params['misc'])
         agent.create_freshcaller_agent(agent: agent, fc_enabled: true, fc_user_id: freshcaller_misc_params['user']['freshcaller_account_admin_id'])
-        handle_fcaller_agent(agent)
+        handle_fcaller_agent(agent) if Account.current.freshcaller_enabled? && valid_fcaller_agent_action?(agent)
       end
     end
 

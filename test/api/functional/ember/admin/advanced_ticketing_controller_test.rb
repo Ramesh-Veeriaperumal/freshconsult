@@ -49,6 +49,17 @@ module Ember
         end
       end
 
+      def test_create_assets
+        Account.stubs(:current).returns(Account.first)
+        enable_assets do
+          post :create, construct_params({version: 'private'}, {name: 'assets'})
+          assert_response 204
+          assert Account.current.assets_enabled?
+        end
+      ensure
+        Account.unstub(:current)
+      end
+
       def test_create_shared_ownership
         disable_feature(:shared_ownership) do
           post :create, construct_params({version: 'private'}, {name: 'shared_ownership'})
@@ -452,6 +463,21 @@ module Ember
           delete :destroy, controller_params(version: 'private', id: 'shared_ownership')
           destroy_success_pattern(:shared_ownership)
         end
+      end
+
+      def test_destroy_assets
+        Account.stubs(:current).returns(Account.first)
+        enable_assets do
+          post :create, construct_params({ version: 'private' }, name: 'assets')
+          assert_response 204
+          assert Account.current.assets_enabled?
+
+          delete :destroy, controller_params(version: 'private', id: 'assets')
+          assert_response 204
+          assert_equal false, Account.current.assets_enabled?
+        end
+      ensure
+        Account.unstub(:current)
       end
 
       def test_destroy_with_disable_old_ui_enabled

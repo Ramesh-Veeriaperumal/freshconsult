@@ -13,6 +13,7 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
   include CompanyFieldsTestHelper
   include ContactFieldsTestHelper
   include SharedOwnershipTestHelper
+  include Admin::Automation::AutomationSummary
 
   def wrap_cname(params)
     { automation: params }
@@ -727,9 +728,170 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
     assert_nil rule
   end
 
+  def test_summary_in_service_task_dispatcher_for_add_note_action
+    enable_service_task_automation_lp_and_privileges
+    rule = create_service_task_dispatcher_rule('add_note')
+    summary = generate_summary(rule, true)
+    assert_equal 'If <div class = SummaryKey>Priority</div> <div class = SummaryOperator>is</div> <div class = SummaryValue>Low</div>', summary[:conditions][:condition_set_1][0]
+    assert_equal ' <div class = SummaryKey>Add note and notify field technician</div> ', summary[:actions][0]
+  end
+
+  def test_summary_in_service_task_dispatcher_for_assign_group_action
+    enable_service_task_automation_lp_and_privileges
+    rule = create_service_task_dispatcher_rule('group_id')
+    summary = generate_summary(rule, true)
+    assert_equal 'If <div class = SummaryKey>Priority</div> <div class = SummaryOperator>is</div> <div class = SummaryValue>Low</div>', summary[:conditions][:condition_set_1][0]
+    assert_equal ' <div class = SummaryKey>Assign to Service Group</div> <div class = SummaryValue>Product Management</div>', summary[:actions][0]
+  end
+
+  def test_summary_in_service_task_dispatcher_for_assign_group_in_same_ticket
+    enable_service_task_automation_lp_and_privileges
+    rule = create_service_task_dispatcher_rule('group_id', 'priority', 'same_ticket')
+    summary = generate_summary(rule, true)
+    assert_equal 'If <div class = SummaryKey>Priority</div> <div class = SummaryOperator>is</div> <div class = SummaryValue>Low</div>', summary[:conditions][:condition_set_1][0]
+    assert_equal 'On the same service task <div class = SummaryKey>Assign to Service Group</div> <div class = SummaryValue>Product Management</div>', summary[:actions][0]
+  end
+
+  def test_summary_in_service_task_dispatcher_for_assign_group_in_parent_ticket
+    enable_service_task_automation_lp_and_privileges
+    rule = create_service_task_dispatcher_rule('group_id', 'priority', 'parent_ticket')
+    summary = generate_summary(rule, true)
+    assert_equal 'If <div class = SummaryKey>Priority</div> <div class = SummaryOperator>is</div> <div class = SummaryValue>Low</div>', summary[:conditions][:condition_set_1][0]
+    assert_equal 'On the parent ticket <div class = SummaryKey>Assign to Group</div> <div class = SummaryValue>Product Management</div>', summary[:actions][0]
+  end
+
+  def test_summary_in_service_task_dispatcher_for_group_assign_in_condition
+    enable_service_task_automation_lp_and_privileges
+    rule = create_service_task_dispatcher_rule('priority', 'group_id')
+    summary = generate_summary(rule, true)
+    assert_equal 'If <div class = SummaryKey>Service Group</div> <div class = SummaryOperator>is</div> <div class = SummaryValue>Product Management</div>', summary[:conditions][:condition_set_1][0]
+    assert_equal ' <div class = SummaryKey>Set Priority as</div> <div class = SummaryValue>Low</div>', summary[:actions][0]
+  end
+
+  def test_summary_in_service_task_dispatcher_for_agent_assign
+    enable_service_task_automation_lp_and_privileges
+    rule = create_service_task_dispatcher_rule('responder_id')
+    summary = generate_summary(rule, true)
+    assert_equal 'If <div class = SummaryKey>Priority</div> <div class = SummaryOperator>is</div> <div class = SummaryValue>Low</div>', summary[:conditions][:condition_set_1][0]
+    assert_equal ' <div class = SummaryKey>Assign to Field Technician</div> <div class = SummaryValue>Support</div>', summary[:actions][0]
+  end
+
+  def test_summary_in_service_task_dispatcher_for_agent_assign_in_same_ticket
+    enable_service_task_automation_lp_and_privileges
+    rule = create_service_task_dispatcher_rule('responder_id', 'priority', 'same_ticket')
+    summary = generate_summary(rule, true)
+    assert_equal 'If <div class = SummaryKey>Priority</div> <div class = SummaryOperator>is</div> <div class = SummaryValue>Low</div>', summary[:conditions][:condition_set_1][0]
+    assert_equal 'On the same service task <div class = SummaryKey>Assign to Field Technician</div> <div class = SummaryValue>Support</div>', summary[:actions][0]
+  end
+
+  def test_summary_in_service_task_dispatcher_for_assign_agent_in_parent_ticket
+    enable_service_task_automation_lp_and_privileges
+    rule = create_service_task_dispatcher_rule('responder_id', 'priority', 'parent_ticket')
+    summary = generate_summary(rule, true)
+    assert_equal 'If <div class = SummaryKey>Priority</div> <div class = SummaryOperator>is</div> <div class = SummaryValue>Low</div>', summary[:conditions][:condition_set_1][0]
+    assert_equal 'On the parent ticket <div class = SummaryKey>Assign to Agent</div> <div class = SummaryValue>Support</div>', summary[:actions][0]
+  end
+
+  def test_summary_in_service_task_dispatcher_for_agent_assign_in_condition
+    enable_service_task_automation_lp_and_privileges
+    rule = create_service_task_dispatcher_rule('priority', 'responder_id')
+    summary = generate_summary(rule, true)
+    assert_equal 'If <div class = SummaryKey>Field Technician</div> <div class = SummaryOperator>is</div> <div class = SummaryValue>Support</div>', summary[:conditions][:condition_set_1][0]
+    assert_equal ' <div class = SummaryKey>Set Priority as</div> <div class = SummaryValue>Low</div>', summary[:actions][0]
+  end
+
   def test_create_service_task_observer_rule_with_ticket_events_ticket_type
     enable_service_task_automation_lp_and_privileges
     observer_create_test(:ticket_type, :subject, :priority, VAConfig::RULES[:service_task_observer])
+  end
+
+  def test_service_task_observer_for_agent_assign_condition
+    enable_service_task_automation_lp_and_privileges
+    va_rule_request = valid_request_observer(:priority, :responder_id, :status, 3)
+    post :create, construct_params({ rule_type: VAConfig::RULES[:service_task_observer] }.merge(va_rule_request), va_rule_request)
+    assert_response 201
+    parsed_response = JSON.parse(response.body)
+    rule_id = parsed_response['id'].to_i
+    rule = Account.current.account_va_rules.find(rule_id)
+    match_custom_json(parsed_response, va_rule_request.merge!(default_rule_pattern(rule, false)))
+  end
+
+  def test_summary_in_service_task_observer_for_association_type_same_ticket_in_action_with_agent_performer
+    enable_service_task_automation_lp_and_privileges
+    rule = create_service_task_observer_rule('1', 'same_ticket')
+    summary = generate_summary(rule, true)
+    assert_equal 'When an action performed by <div class = SummaryKey>Field Technician</div>', summary[:performer]
+    assert_equal 'On the same service task <div class = SummaryKey>Set Priority as</div> <div class = SummaryValue>Low</div>', summary[:actions][0]
+    assert_equal 'When <div class = SummaryKey>Priority</div>', summary[:events][0]
+  end
+
+  def test_summary_in_service_task_observer_for_association_type_same_ticket_in_action_with_requester_performer
+    enable_service_task_automation_lp_and_privileges
+    rule = create_service_task_observer_rule('2', 'same_ticket')
+    summary = generate_summary(rule, true)
+    assert_equal 'When an action performed by <div class = SummaryKey>Requester</div>', summary[:performer]
+    assert_equal 'On the same service task <div class = SummaryKey>Set Priority as</div> <div class = SummaryValue>Low</div>', summary[:actions][0]
+    assert_equal 'When <div class = SummaryKey>Priority</div>', summary[:events][0]
+  end
+
+  def test_summary_in_service_task_observer_for_association_same_ticket_in_action_with_any_performer
+    enable_service_task_automation_lp_and_privileges
+    rule = create_service_task_observer_rule('3', 'same_ticket')
+    summary = generate_summary(rule, true)
+    assert_equal 'When an action performed by <div class = SummaryKey>Field Technician or Requester</div>', summary[:performer]
+    assert_equal 'On the same service task <div class = SummaryKey>Set Priority as</div> <div class = SummaryValue>Low</div>', summary[:actions][0]
+    assert_equal 'When <div class = SummaryKey>Priority</div>', summary[:events][0]
+  end
+
+  def test_summary_in_service_task_observer_for_association_type_parent_ticket_action
+    enable_service_task_automation_lp_and_privileges
+    rule = create_service_task_observer_rule('3', 'parent_ticket')
+    summary = generate_summary(rule, true)
+    assert_equal 'When an action performed by <div class = SummaryKey>Field Technician or Requester</div>', summary[:performer]
+    assert_equal 'On the parent ticket <div class = SummaryKey>Set Priority as</div> <div class = SummaryValue>Low</div>', summary[:actions][0]
+    assert_equal 'When <div class = SummaryKey>Priority</div>', summary[:events][0]
+  end
+
+  def test_summary_in_service_task_observer_for_add_note_action
+    enable_service_task_automation_lp_and_privileges
+    rule = create_service_task_observer_rule('3', 'same_ticket', 'add_note')
+    summary = generate_summary(rule, true)
+    assert_equal 'When an action performed by <div class = SummaryKey>Field Technician or Requester</div>', summary[:performer]
+    assert_equal 'On the same service task <div class = SummaryKey>Add note and notify field technician</div> ', summary[:actions][0]
+    assert_equal 'When <div class = SummaryKey>Priority</div>', summary[:events][0]
+  end
+
+  def test_service_task_observer_for_agent_assign_action
+    enable_service_task_automation_lp_and_privileges
+    va_rule_request = valid_request_observer(:priority, :status, :responder_id, 3)
+    post :create, construct_params({ rule_type: VAConfig::RULES[:service_task_observer] }.merge(va_rule_request), va_rule_request)
+    assert_response 201
+    parsed_response = JSON.parse(response.body)
+    rule_id = parsed_response['id'].to_i
+    rule = Account.current.account_va_rules.find(rule_id)
+    match_custom_json(parsed_response, va_rule_request.merge!(default_rule_pattern(rule, false)))
+  end
+
+  def test_service_task_observer_for_assign_group_condition
+    enable_service_task_automation_lp_and_privileges
+    va_rule_request = valid_request_observer(:priority, :group_id, :status, 3)
+    post :create, construct_params({ rule_type: VAConfig::RULES[:service_task_observer] }.merge(va_rule_request), va_rule_request)
+    assert_response 201
+    parsed_response = JSON.parse(response.body)
+    rule_id = parsed_response['id'].to_i
+    rule = Account.current.account_va_rules.find(rule_id)
+    match_custom_json(parsed_response, va_rule_request.merge!(default_rule_pattern(rule, false)))
+  end
+
+  def test_service_task_observer_for_assign_group_action
+    enable_service_task_automation_lp_and_privileges
+    va_rule_request = valid_request_observer(:priority, :status, :group_id, 3)
+    post :create, construct_params({ rule_type: VAConfig::RULES[:service_task_observer] }.merge(va_rule_request), va_rule_request)
+    assert_response 201
+    parsed_response = JSON.parse(response.body)
+    rule_id = parsed_response['id'].to_i
+    rule = Account.current.account_va_rules.find(rule_id)
+    match_custom_json(parsed_response, va_rule_request.merge!(default_rule_pattern(rule, false)))
   end
 
   def test_service_task_observer_rule_path

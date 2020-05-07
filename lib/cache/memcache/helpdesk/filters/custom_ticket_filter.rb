@@ -19,7 +19,7 @@ module Cache::Memcache::Helpdesk::Filters::CustomTicketFilter
     key = self.user_filters_memcache_key(user)
     MemcacheKeys.fetch(key) { self.joins("JOIN admin_user_accesses acc ON acc.account_id =  wf_filters.account_id AND acc.accessible_id = wf_filters.id AND acc.accessible_type = 'Wf::Filter' LEFT JOIN agent_groups ON acc.group_id=agent_groups.group_id")
       .order('created_at desc')
-      .where(["acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]} OR agent_groups.user_id=#{user.id} OR (acc.VISIBILITY=#{Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]} and acc.user_id=#{user.id})"])
+      .where(['acc.VISIBILITY = ? OR agent_groups.user_id = ? OR (acc.VISIBILITY = ? and acc.user_id = ?)', Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents], user.id, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me], user.id])
       .includes(:accessible).to_a }
   end
 

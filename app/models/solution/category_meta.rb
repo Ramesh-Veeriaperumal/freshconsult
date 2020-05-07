@@ -90,6 +90,13 @@ class Solution::CategoryMeta < ActiveRecord::Base
 				solution_folder_meta.visible(User.current).all : [])
 	end
 
+  def portal_solution_categories_attributes=(portal_attr)
+    portal_solution_categories.destroy_all
+    portal_attr[:portal_id].each do |portal_id|
+      portal_solution_categories.build(portal_id: portal_id)
+    end
+  end
+
 	private
 	
 		def delete_folder_meta
@@ -99,13 +106,6 @@ class Solution::CategoryMeta < ActiveRecord::Base
 
 	def clear_cache(args = nil)
 		Account.current.clear_solution_categories_from_cache
-	end
-
-	def portal_solution_categories_attributes=(portal_attr)
-		portal_solution_categories.destroy_all
-		portal_attr[:portal_id].each do |portal_id|
-		  portal_solution_categories.build({:portal_id =>portal_id})
-		end
 	end
 
 	def set_default_portal

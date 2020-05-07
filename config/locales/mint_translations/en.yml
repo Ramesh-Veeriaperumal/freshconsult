@@ -2,6 +2,7 @@ en:
   attach_file: Attach a file
   edit_forum_category: Edit Forum Category
   total: Total
+  service_task: Service Task
   export_data:
     thirt_days: Last 30 Days
     seven_days: Last 7 Days
@@ -1373,6 +1374,19 @@ en:
     mobile: Mobile
     job_title: Job title
   admin:
+    automation_summary:
+      performer_5: "Field Technician"
+      performer_6: "Field Technician or Requester"
+      add_note_for_field_techician: "Add note and notify field technician"
+      same_service_task: 'On the same service task'
+      field_service_responder_id: "Field Technician"
+      field_service_group_id: "Service Group"
+      action_field_service_group_id: 'Assign to Service Group'
+      action_field_service_responder_id: 'Assign to Field Technician'
+      assigned_field_service_group: 'Assigned Service Group'
+      assigned_field_service_agent: "Assigned Field Technician"
+      send_email_to_field_tech: 'Send Email to Field Technician'
+      send_email_to_field_group: 'Send Email to Service Group'
     products:
       helpnote:
         heading3: Supporting Multiple Products
@@ -2432,6 +2446,8 @@ en:
           Enable this feature for advanced spam protection. System will check
           all topics and replies for third party links and other spam activity.
         logged_in: Logged in users
+        restrict_create_ticket_for_others: Allow users to raise tickets on behalf of others
+        portal_section_help: The above settings applies to the feedback form.
         moderate_all: Moderate all topics and replies
         user_permissions: User Permissions for portal
         moderate_links: Moderate all topics and replies containing external links

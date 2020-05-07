@@ -199,11 +199,11 @@ module AutomationTestHelper
     }
   end
 
-  def valid_request_observer(event_field_name, condition_field_name = :subject, action_field_name = :priority)
+  def valid_request_observer(event_field_name, condition_field_name = :subject, action_field_name = :priority, performer = 1)
     {
       name: Faker::Lorem.characters(10),
       active: true,
-      performer: { type: 1 },
+      performer: { type: performer },
       conditions: [{  name: 'condition_set_1',
                       match_type: 'all',
                       properties: generate_request_condition_data(condition_field_name) }],
@@ -289,5 +289,73 @@ module AutomationTestHelper
 
   def nested?(conditions)
     conditions.first && (conditions.first.key?(:all) || conditions.first.key?(:any))
+  end
+
+  def create_service_task_observer_rule(performer_type, evaluate_on, action = 'priority')
+    rule = Account.current.service_task_observer_rules.new
+    rule[:name] = Faker::Lorem.characters(10)
+    rule[:filter_data] = []
+    rule[:condition_data] = {
+      performer: { type: performer_type },
+      events: [{
+                 name: 'priority'
+               }],
+      conditions: {
+        any: [{
+                evaluate_on: :ticket,
+                name: 'priority',
+                operator: 'in',
+                value: [1, 2, 3, 4]
+              }]
+      }
+    }
+    rule[:action_data] = if action == 'priority'
+                           [{
+                              name: action,
+                              value: 1,
+                              evaluate_on: evaluate_on
+                            }]
+                         elsif action == 'add_note'
+                           [{
+                             name: 'add_note',
+                             note_body:"<p dir=\"ltr\">nmnbfsnsdf</p>",
+                             notify_agents:[
+                               43048867973
+                             ],
+                             evaluate_on: evaluate_on
+                           }]
+                         end
+    rule.save!
+    rule
+  end
+
+  def create_service_task_dispatcher_rule(action, condition_field_name = 'priority', resource_type = 'ticket')
+    rule = Account.current.service_task_dispatcher_rules.new
+    rule.name = Faker::Lorem.characters(10)
+    rule.condition_data = {
+      all: [{
+              evaluate_on: 'ticket',
+              name: condition_field_name,
+              operator: 'is',
+              value: 1
+            }]
+    }
+    rule.action_data = if action == 'add_note'
+                         [{
+                            name: 'add_note',
+                            note_body:"<p dir=\"ltr\">nmnbfsnsdf</p>",
+                            notify_agents:[
+                              43048867973
+                            ]
+                          }]
+                       else
+                         [{
+                            name: action,
+                            value: 1
+                          }]
+                       end
+    rule.action_data[0][:evaluate_on] = resource_type if resource_type != 'ticket' && action != 'add_note'
+    rule.save!
+    rule
   end
 end

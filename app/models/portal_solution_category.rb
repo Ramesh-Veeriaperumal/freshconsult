@@ -4,11 +4,15 @@ class PortalSolutionCategory < ActiveRecord::Base
 
   self.primary_key = :id
 	belongs_to_account
-	belongs_to :portal
+  belongs_to :portal, :inverse_of => :portal_solution_categories
 	belongs_to :solution_category, :class_name => 'Solution::Category'
 	belongs_to :solution_category_meta, :class_name => 'Solution::CategoryMeta'
-  attr_accessible :portal_id, :solution_category_id, :position
+  attr_accessible :portal_id, :solution_category_id, :solution_category_meta_id, :position
 	acts_as_list :scope => :portal
+
+  concerned_with :presenter
+  publishable
+  before_destroy :save_deleted_post_info
 
   validates :portal, :presence => true
 
@@ -37,5 +41,9 @@ class PortalSolutionCategory < ActiveRecord::Base
 
   def clear_cache_with_condition
     clear_cache if previous_changes['position'].present?
+  end
+
+  def save_deleted_post_info
+    @deleted_model_info = as_api_response(:central_publish_destroy)
   end
 end

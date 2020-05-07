@@ -3,7 +3,8 @@ class Portal < ActiveRecord::Base
            class_name: 'PortalSolutionCategory',
            foreign_key: :portal_id,
            order: 'position',
-           dependent: :delete_all
+           inverse_of: :portal,
+           dependent: :destroy
 
   has_many :solution_category_meta,
            class_name: 'Solution::CategoryMeta',

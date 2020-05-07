@@ -24,7 +24,8 @@ module Archive
 
       MODIFY_ASSOCIATIONS_TO_CENTRAL = {
         helpdesk_tickets: {
-          helpdesk_time_sheets: { account_association: :time_sheets }
+          helpdesk_time_sheets: { account_association: :time_sheets },
+          article_tickets: { account_association: :article_tickets }
         }
       }.freeze
 
@@ -262,7 +263,8 @@ module Archive
                       ids:            ids,
                       table_name:     symbol,
                       rel_table:      key,
-                      rel_table_args: MODIFY_ASSOCIATIONS_TO_CENTRAL[symbol][key]
+                      rel_table_args: MODIFY_ASSOCIATIONS_TO_CENTRAL[symbol][key],
+                      archive_ticket_id: archive.id
                     }
                     publish_to_central(options)
                   end
@@ -285,6 +287,10 @@ module Archive
 
         def helpdesk_time_sheets_publish_args(time_sheet, _options)
           [[], [:update, { archive_changes: { archive_ticket_id: [nil, time_sheet.archive_ticket_id], ticket_id: [time_sheet.ticket_id, nil] } }]]
+        end
+
+        def article_tickets_publish_args(article_ticket, _options)
+          [[], [:update, { archive_changes: { ticketable_type: ['Helpdesk::Ticket', 'Helpdesk::ArchiveTicket'], ticketable_id: [article_ticket.ticketable_id, _options[:archive_ticket_id]] } }]]
         end
     end
   end

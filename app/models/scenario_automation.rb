@@ -3,18 +3,26 @@ class ScenarioAutomation < VaRule
   attr_accessible :name, :description, :action_data, :accessible_attributes
   belongs_to_account
   
-  default_scope { where(:rule_type => VAConfig::SCENARIO_AUTOMATION) }
+  default_scope -> { where(rule_type: VAConfig::SCENARIO_AUTOMATION) }
 
   has_one :accessible,
     :class_name => 'Helpdesk::Access',
     :as => 'accessible',
     :dependent => :destroy
 
+  has_many :groups,
+           through: :accessible,
+           source: :groups
+
+  has_many :users,
+           through: :accessible,
+           source: :users
+
   accepts_nested_attributes_for :accessible 
   
   alias_attribute :helpdesk_accessible, :accessible 
 
-  delegate :groups, :users, :visible_to_me?,:visible_to_only_me?, :to => :accessible
+  delegate :visible_to_me?, :visible_to_only_me?, to: :accessible
 
   before_validation :validate_name, :validate_add_note_action
   before_save :set_active

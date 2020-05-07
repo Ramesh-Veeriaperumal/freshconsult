@@ -317,6 +317,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
           :s3_create => false
         )
         meta_note.attachments = meta_note.inline_attachments = []
+        meta_note.skip_central_publish = true
         meta_note.save_note
       end
   end

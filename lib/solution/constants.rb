@@ -80,6 +80,11 @@ module Solution::Constants
                   }
   }
 
+  INTERACTION_SOURCE = {
+    portal: 1,
+    widget: 2
+  }.freeze
+
   HUMANIZE_STATS = {
     :thousand => "K+", 
     :million => "M+", 

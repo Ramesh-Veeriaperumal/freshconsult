@@ -676,6 +676,28 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
     Account.current.unstub(:custom_ticket_fields_enabled?)
   end
 
+  def test_update_status_choice_check_position
+    launch_ticket_field_revamp do
+      field = @account.ticket_fields.find_by_field_type('default_status')
+      waiting_on_customer = field.ticket_statuses.find_by_name('Waiting on Customer')
+      old_position = waiting_on_customer.position
+      put :update, construct_params({ id: field.id }, choices: [{ id: waiting_on_customer.status_id, stop_sla_timer: !waiting_on_customer.stop_sla_timer }])
+      waiting_on_customer.reload
+      assert_equal waiting_on_customer.position, old_position
+    end
+  end
+
+  def test_update_status_position_change
+    launch_ticket_field_revamp do
+      field = @account.ticket_fields.find_by_field_type('default_status')
+      waiting_on_customer = field.ticket_statuses.find_by_name('Waiting on Customer')
+      new_position = rand(1..4)
+      put :update, construct_params({ id: field.id }, choices: [{ id: waiting_on_customer.status_id, position: new_position }])
+      waiting_on_customer.reload
+      assert_equal waiting_on_customer.position, new_position
+    end
+  end
+
   def test_sanitize_malicious_ticket_field_name
     launch_ticket_field_revamp do
       name1 = "<script>alert(‘#{Faker::Lorem.characters(rand(1..4))}’)</script>"

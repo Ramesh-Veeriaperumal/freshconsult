@@ -112,6 +112,61 @@ module Channel::V2
       Account.any_instance.unstub(:shared_ownership_enabled?)
     end
 
+    def test_index_with_jwt
+      CustomRequestStore.store[:channel_api_request] = true
+      @channel_v2_api = true
+      Helpdesk::Ticket.update_all(created_at: 2.months.ago)
+      Helpdesk::Ticket.first.update_attributes(created_at: 1.month.ago,
+                                               deleted: false, spam: false)
+      get :index, controller_params(version: 'channel')
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 1, response.size
+    ensure
+      @channel_v2_api = false
+      CustomRequestStore.store[:channel_api_request] = false
+    end
+
+    def test_create_with_jwt
+      created_at = updated_at = Time.zone.now
+      params = {
+        requester_id: requester.id, status: 2, priority: 2,
+        subject: Faker::Name.name, description: Faker::Lorem.paragraph,
+        'created_at' => created_at, 'updated_at' => updated_at
+      }
+      Account.any_instance.stubs(:shared_ownership_enabled?).returns(false)
+      post :create, construct_params({ version: 'channel' }, params)
+      assert_response 201
+      t = Helpdesk::Ticket.last
+      match_json(ticket_pattern(params, t))
+      match_json(ticket_pattern({}, t))
+      assert (t.created_at - created_at).to_i.zero?
+      assert (t.updated_at - updated_at).to_i.zero?
+    ensure
+      Account.any_instance.unstub(:shared_ownership_enabled?)
+    end
+
+    def test_update_with_jwt
+      t = create_ticket
+      t.update_attributes(created_at: Time.zone.now - 10.days, updated_at: Time.zone.now - 10.days)
+      t = t.reload
+      closed_at = Time.zone.now - 1.day
+      params = {
+        status: 5, priority: 2, source: 2, type: 'Question',
+        closed_at: closed_at
+      }
+      Account.any_instance.stubs(:shared_ownership_enabled?).returns(false)
+      update_params = construct_params({ id: t.display_id, version: 'channel' }, params)
+      put :update, update_params
+      assert_response 200
+      t = Helpdesk::Ticket.last
+      match_json(update_ticket_pattern(params, t))
+      match_json(update_ticket_pattern({}, t))
+      assert (t.closed_at - closed_at).to_i.zero?
+    ensure
+      Account.any_instance.unstub(:shared_ownership_enabled?)
+    end
+
     def test_create_with_pending_since
       created_at = updated_at = (Time.now - 10.days)
       pending_since = (Time.now - 5.days)

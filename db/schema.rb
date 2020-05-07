@@ -3797,6 +3797,26 @@ ActiveRecord::Schema.define(version: 20200423091413) do
   add_index 'folder_visibility_mapping', ['folder_meta_id', 'mappable_id'], name: 'index_visibility_mapping_on_foldermeta_and_mappable_id'
   add_index 'folder_visibility_mapping', ['folder_meta_id', 'mappable_type'], name: 'index_visibility_mapping_on_foldermeta_and_mappable_type'
 
+  create_table 'solution_templates', :force => true do |t|
+    t.integer  'account_id',  limit: 8, null: false
+    t.string   'title', null:false
+    t.text     'description', limit: 2147483647
+    t.integer  'user_id', limit: 8, null: false
+    t.integer  'modified_by', limit: 8
+    t.datetime 'modified_at'
+    t.boolean  'is_active', default: true
+    t.boolean  'is_default', default: false
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.integer  'folder_id', limit: 8
+    t.integer  'int_01', limit: 8
+    t.integer  'int_02', limit: 8
+    t.text     'text_01'
+    t.text     'text_02'
+  end
+
+  add_index 'solution_templates', ['account_id'], name: 'index_solution_templates_on_acc_id'
+
   create_table "status_groups", :force => true do |t|
     t.integer  "status_id",  :limit => 8, :null => false
     t.integer  "group_id",   :limit => 8, :null => false

@@ -93,7 +93,8 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     assert_response 200
     assert response_mock.verify
     match_json JSON.parse(response)
-    IntegrationServices::Services::Salesforce::SalesforceContactResource.any_instance.unstub
+  ensure
+    IntegrationServices::Services::Salesforce::SalesforceContactResource.any_instance.unstub(:http_get)
   end
 
   def test_salesforce_account_fetch
@@ -112,7 +113,8 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     assert_response 200
     assert response_mock.verify
     match_json JSON.parse(response)
-    IntegrationServices::Services::Salesforce::SalesforceAccountResource.any_instance.unstub
+  ensure
+    IntegrationServices::Services::Salesforce::SalesforceAccountResource.any_instance.unstub(:http_get)
   end
 
   def test_salesforce_lead_fetch
@@ -131,7 +133,8 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     assert_response 200
     assert response_mock.verify
     match_json JSON.parse(response)
-    IntegrationServices::Services::Salesforce::SalesforceLeadResource.any_instance.unstub
+  ensure
+    IntegrationServices::Services::Salesforce::SalesforceLeadResource.any_instance.unstub(:http_get)
   end
 
   def test_salesforce_opportunity_fetch
@@ -153,7 +156,8 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     data = JSON.parse(response)
     data["records"][0]["link_status"] = false
     match_json data
-    IntegrationServices::Services::Salesforce::SalesforceOpportunityResource.any_instance.unstub
+  ensure
+    IntegrationServices::Services::Salesforce::SalesforceOpportunityResource.any_instance.unstub(:http_get)
   end
 
   def test_freshsales_autocomplete_results
@@ -172,7 +176,8 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     assert response_mock.verify
     data = JSON.parse(response)
     match_json ({"results" => data})
-    IntegrationServices::Services::Freshsales::FreshsalesCommonResource.any_instance.unstub
+  ensure
+    IntegrationServices::Services::Freshsales::FreshsalesCommonResource.any_instance.unstub(:http_get)
   end
 
   def test_freshsales_dropdown_choices
@@ -190,7 +195,8 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     assert response_mock.verify
     data = JSON.parse(response).values.first
     match_json ({"results" => data})
-    IntegrationServices::Services::Freshsales::FreshsalesCommonResource.any_instance.unstub
+  ensure
+    IntegrationServices::Services::Freshsales::FreshsalesCommonResource.any_instance.unstub(:http_get)
   end
 
   def test_freshsales_create_contact
@@ -209,7 +215,8 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     assert response_mock.verify
     data = JSON.parse(response)
     match_json data
-    IntegrationServices::Services::Freshsales::FreshsalesContactResource.any_instance.unstub
+  ensure
+    IntegrationServices::Services::Freshsales::FreshsalesContactResource.any_instance.unstub(:http_get)
   end
 
   def test_freshsales_create_lead
@@ -228,7 +235,8 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     assert response_mock.verify
     data = JSON.parse(response)
     match_json data
-    IntegrationServices::Services::Freshsales::FreshsalesLeadResource.any_instance.unstub
+  ensure
+    IntegrationServices::Services::Freshsales::FreshsalesLeadResource.any_instance.unstub(:http_post)
   end
 
 
@@ -266,7 +274,8 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     assert response_mock.verify
     data = form_fields_result
     match_json data
-    IntegrationServices::Services::Freshsales::FreshsalesCommonResource.any_instance.unstub
+  ensure
+    IntegrationServices::Services::Freshsales::FreshsalesCommonResource.any_instance.unstub(:http_get)
   end
 
   def test_freshsales_fetch_form_fields_with_nested_emails
@@ -284,7 +293,7 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     data = nested_emails_form_fields_result
     match_json data
   ensure
-    IntegrationServices::Services::Freshsales::FreshsalesCommonResource.any_instance.unstub
+    IntegrationServices::Services::Freshsales::FreshsalesCommonResource.any_instance.unstub(:http_get)
   end
 
   def test_fetch_for_404_on_invalid_installed_application_id
@@ -321,7 +330,7 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     assert response_mock.verify
     match_json(salesforce_v2_response_pattern(response, configured_fields, 'Contact'))
   ensure
-    IntegrationServices::Services::CloudElements::Hub::Crm::ContactResource.any_instance.unstub
+    IntegrationServices::Services::CloudElements::Hub::Crm::ContactResource.any_instance.unstub(:http_get)
   end
 
   def test_account_fetch_on_salesforce_v2
@@ -369,8 +378,8 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     assert response_mock.verify
     match_json(salesforce_v2_response_pattern(response, configured_fields, 'Account'))
   ensure
-    IntegrationServices::Services::CloudElements::Hub::Crm::AccountResource.any_instance.unstub
-    IntegrationServices::Services::CloudElements::Hub::Crm::ContactResource.any_instance.unstub
+    IntegrationServices::Services::CloudElements::Hub::Crm::AccountResource.any_instance.unstub(:http_get)
+    IntegrationServices::Services::CloudElements::Hub::Crm::ContactResource.any_instance.unstub(:http_get)
   end
 
   def test_shopify_refund_full_order
@@ -390,7 +399,6 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
 
     calculate_url = "#{url}/admin/orders/#{order_id}/refunds/calculate.json"
     refund_url = "#{url}/admin/orders/#{order_id}/refunds.json"
-
     IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.stubs(:http_get).returns(order_mock)
     IntegrationServices::Services::Shopify::ShopifyRefundResource.any_instance.stubs(:http_post).with(calculate_url, full_refund_calculate_hash.to_json).returns(calculate_mock)
     IntegrationServices::Services::Shopify::ShopifyRefundResource.any_instance.stubs(:http_post).with(refund_url, full_refund_hash.to_json).returns(response_mock)
@@ -399,8 +407,9 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     post :fetch, param
     assert_response 200
     match_json JSON.parse(response)
-    IntegrationServices::Services::Shopify::ShopifyRefundResource.any_instance.unstub
-    IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.unstub
+  ensure
+    IntegrationServices::Services::Shopify::ShopifyRefundResource.any_instance.unstub(:http_post)
+    IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.unstub(:http_get)
   end
 
   def test_shopify_refund_line_item
@@ -420,7 +429,6 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
 
     calculate_url = "#{url}/admin/orders/#{order_id}/refunds/calculate.json"
     refund_url = "#{url}/admin/orders/#{order_id}/refunds.json"
-
     IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.stubs(:http_get).returns(order_mock)
     IntegrationServices::Services::Shopify::ShopifyRefundResource.any_instance.stubs(:http_post).with(calculate_url, lineitem_refund_calculate_hash.to_json).returns(calculate_mock)
     IntegrationServices::Services::Shopify::ShopifyRefundResource.any_instance.stubs(:http_post).with(refund_url, lineitem_refund_hash.to_json).returns(response_mock)
@@ -429,8 +437,9 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     post :fetch, param
     assert_response 200
     match_json JSON.parse(response)
-    IntegrationServices::Services::Shopify::ShopifyRefundResource.any_instance.unstub
-    IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.unstub
+  ensure
+    IntegrationServices::Services::Shopify::ShopifyRefundResource.any_instance.unstub(:http_post)
+    IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.unstub(:http_get)
   end
 
   def test_shopfiy_fetch_orders
@@ -443,9 +452,10 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.stubs(:http_get).returns(order_mock)
     param = construct_params(version: 'private', id: installed_app.id, event: 'fetch_orders', payload: { email: 'test120181211142937@yopmail.com' })
     post :fetch, param
-    IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.unstub
-    IntegrationServices::Services::Shopify::ShopifyCustomerResource.any_instance.unstub
     assert_response 200
+  ensure
+    IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.unstub(:http_get)
+    IntegrationServices::Services::Shopify::ShopifyCustomerResource.any_instance.unstub(:http_get)
   end
 
   def test_shopfiy_fetch_orders_from_phone
@@ -458,9 +468,10 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.stubs(:http_get).returns(order_mock)
     param = construct_params(version: 'private', id: installed_app.id, event: 'fetch_orders', payload: { email: nil, phone: '9999999999' })
     post :fetch, param
-    IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.unstub
-    IntegrationServices::Services::Shopify::ShopifyCustomerResource.any_instance.unstub
     assert_response 200
+  ensure
+    IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.unstub(:http_get)
+    IntegrationServices::Services::Shopify::ShopifyCustomerResource.any_instance.unstub(:http_get)
   end
 
   def test_shopify_cancel_order_errors_on_shopify_action_disabled
@@ -518,6 +529,7 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     {
       refund: {
         currency: "USD", 
+        location_id: 13_114_900_538,
         refund_line_items: [
           {
             line_item_id: 2382039318586,
@@ -532,6 +544,7 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     {
       refund: {
         currency: "USD",
+        location_id: 13_114_900_538,
         refund_line_items: [
           {
             line_item_id: 2382039318586,
@@ -569,7 +582,8 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
             line_item_id: 2382039351354,
             quantity: 1
           }
-        ]
+        ],
+        location_id: 13_114_900_538
       }
     }
   end
@@ -591,6 +605,7 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
             quantity: 1
           }
         ],
+        location_id: 13_114_900_538,
         transactions: [
            {
               order_id: 1025918795834,

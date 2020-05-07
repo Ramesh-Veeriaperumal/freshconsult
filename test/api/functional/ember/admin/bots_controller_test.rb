@@ -386,6 +386,7 @@ module Ember
             create_category.id
           end
           bot.portal.solution_category_metum_ids = category_ids
+          bot.portal.save
           bot.category_ids = category_ids[0...-1]
           get :show, controller_params(version: 'private', id: bot.id)
           assert_response 200
@@ -402,6 +403,7 @@ module Ember
             create_category.id
           end
           bot.portal.solution_category_metum_ids = category_ids
+          bot.portal.save
           bot.category_ids = category_ids[0...-1]
           get :show, controller_params(version: 'private', id: bot.id)
           assert_response 200
@@ -443,6 +445,7 @@ module Ember
             create_category.id
           end
           bot.portal.solution_category_metum_ids = category_ids
+          bot.portal.save
           bot.category_ids = category_ids[0...-1]
           get :show, controller_params(version: 'private', id: bot.id)
           assert_response 200
@@ -634,6 +637,7 @@ module Ember
             create_category.id
           end
           bot.portal.solution_category_metum_ids = category_ids
+          bot.portal.save
           Ml::Bot.stubs(:update_ml).returns(false)
           put :map_categories, construct_params({ version: 'private', id: bot.id, category_ids: category_ids }, false)
           Ml::Bot.unstub(:update_ml)
@@ -650,6 +654,7 @@ module Ember
             create_category.id
           end
           bot.portal.solution_category_metum_ids = category_ids
+          bot.portal.save
           Ml::Bot.stubs(:update_ml).returns(true)
           put :map_categories, construct_params({ version: 'private', id: bot.id, category_ids: category_ids }, false)
           Ml::Bot.unstub(:update_ml)
@@ -665,6 +670,7 @@ module Ember
             create_category.id
           end
           bot.portal.solution_category_metum_ids = category_ids
+          bot.portal.save
           Ml::Bot.stubs(:update_ml).returns(true)
           put :map_categories, construct_params({ version: 'private', id: bot.id, category_ids: category_ids }, false)
           Ml::Bot.unstub(:update_ml)
@@ -680,6 +686,7 @@ module Ember
             create_category.id
           end
           bot.portal.solution_category_metum_ids = category_ids
+          bot.portal.save
           stub_request(:put, %r{^https://system42-serv-dev.staging.freddyproject.com.*?$}).to_return(body: { 'success': true }.to_json, headers: { 'Content-Type' => 'application/json' }, status: 200)
           put :map_categories, construct_params({ version: 'private', id: bot.id, category_ids: category_ids }, false)
           assert_response 204
@@ -908,6 +915,7 @@ module Ember
           bot = create_bot({ product: true})
           category = create_category
           bot.portal.solution_category_metum_ids = [category.id]
+          bot.portal.save
           bot.category_ids = [category.id]
           params = { name: Faker::Name.name, visibility: 1, category_id: category.id }
           post :create_bot_folder, construct_params(params.merge(version: 'private' , id: bot.id), false)
@@ -975,6 +983,7 @@ module Ember
           bot = create_bot({ product: true})
           folder = create_folder
           bot.portal.solution_category_metum_ids = [folder.solution_category_meta.id]
+          bot.portal.save
           bot.category_ids = [folder.solution_category_meta.id]
           params = { name: folder.name, visibility: 1, category_id: folder.solution_category_meta.id }
           post :create_bot_folder, construct_params(params.merge(version: 'private' , id: bot.id), false)

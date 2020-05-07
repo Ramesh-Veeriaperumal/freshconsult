@@ -10,6 +10,7 @@
     this.requiredTab = "solutions"
     this.portal_url_vars = '';
     this.portal = portal;
+    this.baseUrl = '/api/_/email-bots';
     this.filterUrl = '/support/bot_responses/filter';
     this.updateUrl = '/support/bot_responses/update_response';
     this.widgetHtml = "<div class='do-you-find-it-helpful'></div>";
@@ -41,15 +42,22 @@
       }
       this.portal_url_vars = vars;
     },
+    getUrl : function(appendUrl){
+      var pathname = window.location.pathname
+      pathname = this.baseUrl + pathname.substr(0, pathname.indexOf('/support')) + appendUrl
+      return window.origin + pathname
+    },
     populateWidget : function() {
       var self = this;
       var params = {
         query_id: self.portal_url_vars.query_id,
         solution_id: self.portal.current_object_id
       };
+      
+      
       $.ajax({
         type: 'GET',
-        url: self.filterUrl,
+        url: self.getUrl(this.filterUrl),
         async: false,
         data: params,
         success: function(data){
@@ -72,7 +80,7 @@
       }
       $.ajax({
         type: 'PUT',
-        url: self.updateUrl,
+        url: self.getUrl(this.updateUrl),
         async: false,
         data: params,
         success: function(data) {

@@ -1008,7 +1008,7 @@
         "_freshid_request_timeout": 10,
         "_mobile_deep_link_protocol": "com.freshworks.freshdesk",
         "_v2_migration_freshchat_path": "/app/org/preferred_domain/fetch",
-        "_v2_migration_freshchat_host": "web.in.freschat.com",
+        "_v2_migration_freshchat_host": "web.in.freshchat.com",
         "_v2_migration_freshchat_int_name": "FRESH_DESK",
         "v2_migration_freshchat_token": "EJ[1:VEA0IMrltW9k77niFPz5asHZ8zFGeskD5vF2h5BoFRc=:qUheUWGUVLesTymryAPfknvcH8etAkx2:INTRPUJl/m3fJr8s1aOTNpNVlEbzneqRHCWVE1X2FnsUPLSfMuydOmkelHKF1SZyMZWjUw==]",
         "v2_migration_product_mapping": {

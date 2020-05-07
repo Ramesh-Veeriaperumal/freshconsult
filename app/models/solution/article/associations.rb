@@ -26,8 +26,10 @@ class Solution::Article < ActiveRecord::Base
     :dependent => :destroy
 
   has_many :tags,
-    :through => :tag_uses,
-    :class_name => 'Helpdesk::Tag'
+           class_name: 'Helpdesk::Tag',
+           through: :tag_uses,
+           after_add: :add_tag_activity,
+           after_remove: :remove_tag_activity
 
   has_many :support_scores, :as => :scorable, :dependent => :destroy
 

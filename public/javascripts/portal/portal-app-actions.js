@@ -31,41 +31,6 @@
 					});
 		    });
 
-		// USED in New ticket form		    
-		// Checking if the email is already present in the system
-    	// If email is new requester then a "name" field will be shown to the user as an optional input in the request form
-	    $("#helpdesk_ticket_email").focusout(function(){
-	    	var $this = $(this),
-				ticket_email = $this.val(),
-				email_path = $this.data("checkEmailPath"),
-				toggle_name = function(enable){ 
-					var _name_div = $("#name_field").find("input")
-										.attr("disabled", !enable).parent()
-					if(enable)
-						_name_div.slideDown()
-					else
-						_name_div.slideUp()
-				}
-
-			if(email_path == "") return
-
-			if(ticket_email.isValidEmail()){				
-				$this.addClass("loading-right")
-				$.ajax({ 
-					type: 'POST',
-					datatype: 'json',
-					data: { v :  ticket_email},
-					url: email_path,
-				  	success: function(data){
-					    $this.removeClass("loading-right")
-					    toggle_name(!data.user_exists)
-					}
-				})
-			}else{
-				toggle_name(false)
-			}
-		})
-
 		// USED in New ticket form and Add cc email for ticket details page
 		var _static_cc_emails_opts = {
 			data: [],

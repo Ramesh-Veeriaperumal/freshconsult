@@ -316,7 +316,8 @@ class PrivateApiFlowsTest < ActionDispatch::IntegrationTest
       'COMPANY_FIELD_LIST' => redis_timestamp,
       'SURVEY_LIST' => redis_timestamp,
       'MARKETPLACE_APPS_LIST' => redis_timestamp,
-      'AGENTS_GROUPS_LIST' => redis_timestamp
+      'AGENTS_GROUPS_LIST' => redis_timestamp,
+      'FRESHCHAT_ACCOUNT_LIST' => redis_timestamp
     }
     [requests, redis_timestamp, version_set]
   end

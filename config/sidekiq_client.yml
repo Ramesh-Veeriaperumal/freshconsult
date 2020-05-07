@@ -397,6 +397,7 @@ defaults: &defaults
     - [cre_central_publish]
     - [freshcaller_subscription_events_queue]
     - [freshchat_subscription_events_queue]
+    - [solution_article_central_publish]
 
 development:
   <<: *defaults

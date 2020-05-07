@@ -48,7 +48,7 @@ module Channel::V2::Iam
         }
         payload[:type] = user.helpdesk_agent? ? 'agent' : 'contact'
         payload[:org_user_id] = user.freshid_authorization.uid if user.helpdesk_agent? && user.freshid_authorization.try(:provider) == 'freshid'
-        payload[:org_id] = Account.current.organisation_account_mapping.organisation_id if Account.current.organisation_account_mapping.present?
+        payload[:org_id] = Account.current.organisation_account_mapping.organisation_id.to_s if Account.current.organisation_account_mapping.present?
         headers = {
           kid: ::Iam::IAM_CONFIG['kid'],
           typ: 'JWT',

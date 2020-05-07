@@ -9,7 +9,7 @@ class Solution::Article < ActiveRecord::Base
 
   before_destroy :save_deleted_article_info
   before_save :encode_emoji_in_articles
-  
+
   include Juixe::Acts::Voteable
   include Search::ElasticSearchIndex
   include Email::Antivirus::EHawk
@@ -18,10 +18,10 @@ class Solution::Article < ActiveRecord::Base
   has_one :draft, inverse_of: :article, :dependent => :destroy
 
   include Solution::LanguageMethods
-  
+
   include Mobile::Actions::Article
   include Solution::Constants
-  
+
   include Community::HitMethods
   include Redis::RedisKeys
   include Redis::OthersRedis
@@ -32,12 +32,15 @@ class Solution::Article < ActiveRecord::Base
 
   spam_watcher_callbacks
   rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['solution_articles'] }, :if => lambda{|obj| obj.rl_enabled? }
-  
+
   acts_as_voteable
-  
+
   serialize :seo_data, Hash
-  
-  attr_accessor :highlight_title, :highlight_desc_un_html, :tags_changed, :prev_tags, :latest_tags, :session, :unpublishing, :false_delete_attachment_trigger, :attachment_added, :version_through
+
+  attr_accessor :highlight_title, :highlight_desc_un_html, :tags_changed, :prev_tags, :latest_tags, :session,
+                :unpublishing, :false_delete_attachment_trigger, :attachment_added, :version_through,
+                :model_changes, :interaction_source_id, :interaction_source_type, :tag_changes
+
   alias_attribute :body, :article_body
   alias_attribute :suggested, :int_01
   alias_attribute :name, :title
@@ -52,8 +55,8 @@ class Solution::Article < ActiveRecord::Base
   validate :check_for_spam_content
 
   after_commit :tag_update_central_publish, on: :update, :if => :tags_updated?
-  
-  # Callbacks will be executed in the order in which they have been included. 
+
+  # Callbacks will be executed in the order in which they have been included.
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
 
@@ -86,13 +89,36 @@ class Solution::Article < ActiveRecord::Base
   xss_sanitize only: [:title], plain_sanitizer: [:title]
 
   VOTE_TYPES = [:thumbs_up, :thumbs_down]
+  VOTE_COUNTERS = [:reset, :toggle].freeze
+
 
   VOTES = {
     thumbs_up: 1,
     thumbs_down: 0
   }.freeze
-  
+
   SELECT_ATTRIBUTES = ["id", "thumbs_up", "thumbs_down"]
+
+
+  def model_changes
+    @model_changes ||= {}
+  end
+
+  def publish_draft_changes_to_central(draft_changes)
+    model_changes[:draft_modified_at] = draft_changes[:modified_at] if draft_changes.key?(:modified_at)
+    model_changes[:draft_modified_by] = draft_changes[:user_id] if draft_changes.key?(:user_id)
+    model_changes[:draft_exists] = draft_changes[:draft_exists] if draft_changes.key?(:draft_exists)
+    manual_publish_to_central(nil, :update, {}, false) unless model_changes.empty?
+  end
+
+  def publish_approver_changes_to_central(approver_changes)
+    return unless Account.current.article_approval_workflow_enabled?
+
+    model_changes[:approved_at] = approver_changes[:approved_at] if approver_changes.key?(:approved_at)
+    model_changes[:approved_by] = approver_changes[:approved_by] if approver_changes.key?(:approved_by)
+    model_changes[:approval_status] = approver_changes[:approval_status] if approver_changes.key?(:approval_status)
+    manual_publish_to_central(nil, :update, {}, false) unless model_changes.empty?
+  end
 
   def tag_update_central_publish
     @latest_tags = self.tags.map(&:name)
@@ -100,6 +126,22 @@ class Solution::Article < ActiveRecord::Base
     tag_args[:added_tags] = @latest_tags - @prev_tags
     tag_args[:removed_tags] = @prev_tags - @latest_tags
     CentralPublish::UpdateTag.perform_async(tag_args)
+  end
+
+  def add_tag_activity(tag)
+    if tag_changes.present?
+      tag_changes[:added_tags].present? ? tag_changes[:added_tags] << tag.name : tag_changes[:added_tags] = [tag.name]
+    else
+      self.tag_changes = { added_tags: [tag.name] }
+    end
+  end
+
+  def remove_tag_activity(tag)
+    if tag_changes.present?
+      tag_changes[:removed_tags].present? ? tag_changes[:removed_tags] << tag.name : tag_changes[:removed_tags] = [tag.name]
+    else
+      self.tag_changes = { removed_tags: [tag.name] }
+    end
   end
 
   def save_tags
@@ -242,6 +284,7 @@ class Solution::Article < ActiveRecord::Base
       toggle_method = (VOTE_TYPES - [method]).first
       self.class.update_counters(self.id, method => 1, toggle_method => -1 )
       meta_class.update_counters(self.parent_id, method => 1, toggle_method => -1 )
+      manual_publish_interaction(:toggle, method)
       version_class.update_counters(self.live_version.id, method => 1, toggle_method => -1 ) if Account.current.article_versioning_enabled? && self.live_version
       self.sqs_manual_publish #=> Publish to ES
       queue_quest_job if self.published?
@@ -253,7 +296,7 @@ class Solution::Article < ActiveRecord::Base
       meta_class.increment_counter(method, self.parent_id)
       version_class.increment_counter(method, self.live_version.id) if Account.current.article_versioning_enabled? && self.live_version
       self.sqs_manual_publish #=> Publish to ES
-      self.manual_publish_to_central(nil, method, {}, true)
+      manual_publish_interaction(:incr, method)
       queue_quest_job if (method == :thumbs_up && self.published?)
       return true
     end
@@ -268,9 +311,13 @@ class Solution::Article < ActiveRecord::Base
 
   def suggested!
     self.class.increment_counter('int_01', self.id)
+    set_portal_interaction_source
+    manual_publish_interaction(:incr, :suggested)
   end
 
   def reset_ratings
+    set_portal_interaction_source
+    manual_publish_interaction(:reset) # publish before updating counters
     self.class.where({ :id => self.id}).update_all_with_publish({:thumbs_up => 0, :thumbs_down => 0}, {})
     meta_class.update_counters(self.parent_id, :thumbs_up => -self.thumbs_up, :thumbs_down => -self.thumbs_down)
     if Account.current.article_versioning_enabled?
@@ -279,6 +326,26 @@ class Solution::Article < ActiveRecord::Base
       Rails.logger.info("AVRR:: Reset Rating [Account Id :: #{account_id} :: Article Id : #{id} :: Job Id : #{job_id}]")
     end
     self.votes.destroy_all
+  end
+
+  def manual_publish_interaction(counter, interaction = :thumbs_up)
+    reload
+    count = safe_send(interaction.to_s)
+    if VOTE_COUNTERS.include? counter
+      # :reset and :toggle
+      vote_model_changes(counter, interaction, count)
+    elsif counter == :incr
+      # :thumbs_up, thumbs_down, :suggested, :hits
+      self.model_changes["article_#{interaction}"] = prev_curr_count(counter, count)
+      meta_model_changes(counter, interaction) if (VOTE_TYPES.include? interaction) || interaction == :hits
+    end
+    manual_publish_to_central(nil, :interactions, {}, false)
+  end
+
+  def set_portal_interaction_source
+    current_portal = Portal.current || Account.current.main_portal
+    self.interaction_source_type = INTERACTION_SOURCE[:portal]
+    self.interaction_source_id = current_portal.id
   end
 
   def self.article_type_option
@@ -365,6 +432,38 @@ class Solution::Article < ActiveRecord::Base
   end
 
   private
+
+    def vote_model_changes(counter, interaction, count)
+      # This method is only for :reset and :toggle as both thumbs_up, thumbs_down of both article and article_meta changes
+      counter = :incr if counter == :toggle
+      toggle_counter = counter == :reset ? :reset : :decr
+      toggle_interaction = (VOTE_TYPES - [interaction]).first
+      toggle_interaction_count = safe_send(toggle_interaction.to_s)
+      count_by = counter == :reset ? count : 1
+      toggle_count_by = counter == :reset ? toggle_interaction_count : 1
+      self.model_changes["article_#{interaction}"] = prev_curr_count(counter, count, count_by)
+      self.model_changes["article_#{toggle_interaction}"] = prev_curr_count(toggle_counter, toggle_interaction_count, toggle_count_by)
+      meta_model_changes(counter, interaction, count_by)
+      meta_model_changes(toggle_counter, toggle_interaction, toggle_count_by)
+    end
+
+    def meta_model_changes(counter, interaction, count_by = 1)
+      meta_count = parent.safe_send(interaction.to_s)
+      self.model_changes.merge!(interaction => prev_curr_count(counter, meta_count, count_by))
+    end
+
+    def prev_curr_count(counter, count, count_by = 1)
+      case counter
+      when :reset
+        [count, count - count_by]
+      when :incr
+        [count - count_by, count]
+      when :decr
+        [count + count_by, count]
+      else
+        [count, count]
+      end
+    end
 
     def queue_quest_job
       args = { :id => self.id, :account_id => self.account_id }

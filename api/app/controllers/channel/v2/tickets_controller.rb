@@ -3,6 +3,11 @@ module Channel::V2
 
     CHANNEL_V2_TICKETS_CONSTANTS_CLASS = 'Channel::V2::TicketConstants'.freeze
 
+    include ChannelAuthentication
+
+    skip_before_filter :check_privilege, :verify_authenticity_token, :after_load_object, if: :jwt_eligible?
+    before_filter :channel_client_authentication, if: :jwt_eligible?
+
     private
 
     def ticket_delegator_class
@@ -197,6 +202,10 @@ module Channel::V2
           @item.ticket_states.safe_send("#{attribute}=", instance_variable_get("@#{attribute}"))
         end
       end
+    end
+
+    def jwt_eligible?
+      request.headers['X-Channel-Auth'].present? && channel_source?(:freddy)
     end
   end
 end

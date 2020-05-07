@@ -269,6 +269,107 @@ class Support::TicketsControllerTest < ActionController::TestCase
     user.destroy
   end
 
+  def test_create_ticket_for_login_user_with_feature_enabled_with_diff_email
+    @account.add_feature(:prevent_ticket_creation_for_others)
+    user = add_new_user(Account.current, active: true)
+    user.make_current
+    login_as(user)
+    post :create, :version => :private, :helpdesk_ticket => { :email => Faker::Internet.email, :subject => Faker::Name.name }
+    ticket = @account.tickets.last
+    assert_equal user.email, @account.users.find(ticket.requester_id).email
+    log_out
+    user.destroy
+  ensure
+    @account.remove_feature(:prevent_ticket_creation_for_others)
+  end
+
+  def test_create_ticket_for_login_user_with_feature_enabled
+    @account.add_feature(:prevent_ticket_creation_for_others)
+    user = add_new_user(Account.current, active: true)
+    user.make_current
+    login_as(user)
+    post :create, :version => :private, :helpdesk_ticket => { :email => user.email, :subject => Faker::Name.name }
+    ticket = @account.tickets.last
+    assert_equal user.email, @account.users.find(ticket.requester_id).email
+    log_out
+    user.destroy
+  ensure
+    @account.remove_feature(:prevent_ticket_creation_for_others)
+
+  end
+
+  def test_create_ticket_for_login_user_with_feature_disabled
+    @account.remove_feature(:prevent_ticket_creation_for_others)
+    user = add_new_user(Account.current, active: true)
+    user.make_current
+    login_as(user)
+    post :create, :version => :private, :helpdesk_ticket => { :email => user.email, :subject => Faker::Name.name }
+    ticket = @account.tickets.last
+    assert_equal user.email, @account.users.find(ticket.requester_id).email
+    log_out
+    user.destroy
+  end
+
+  def test_create_ticket_for_login_user_with_feature_disabled_and_diff_email
+    @account.remove_feature(:prevent_ticket_creation_for_others)
+    user = add_new_user(Account.current, active: true)
+    user.make_current
+    login_as(user)
+    email = Faker::Internet.email
+    post :create, :version => :private, :helpdesk_ticket => { :email => email, :subject => Faker::Name.name }
+    ticket = @account.tickets.last
+    assert_equal email, @account.users.find(ticket.requester_id).email
+    log_out
+    user.destroy
+  end
+
+  def test_create_ticket_for_login_user_without_anonymous_tickets_and_with_prevent_ticket_creation_for_others_feature
+    @account.add_feature(:prevent_ticket_creation_for_others)
+    @account.remove_feature(:anonymous_tickets)
+    user = add_new_user(Account.current, active: true)
+    user.make_current
+    login_as(user)
+    email = Faker::Internet.email
+    post :create, :version => :private, :helpdesk_ticket => { :email => email, :subject => Faker::Name.name }
+    ticket = @account.tickets.last
+    assert_equal user.email, @account.users.find(ticket.requester_id).email
+    log_out
+    user.destroy
+  ensure
+    @account.remove_feature(:prevent_ticket_creation_for_others)
+  end
+
+  def test_create_ticket_for_login_user_without_anonymous_tickets_feature_and_without_prevent_ticket_creation_for_others_feature
+    @account.remove_feature(:prevent_ticket_creation_for_others)
+    @account.remove_feature(:anonymous_tickets)
+    user = add_new_user(Account.current, active: true)
+    user.make_current
+    login_as(user)
+    email = Faker::Internet.email
+    post :create, :version => :private, :helpdesk_ticket => { :email => email, :subject => Faker::Name.name }
+    ticket = @account.tickets.last
+    assert_equal email, @account.users.find(ticket.requester_id).email
+    log_out
+    user.destroy
+  end
+
+  def test_create_ticket_for_login_user_with_anonymous_tickets_feature_and_with_prevent_ticket_creation_for_others_feature
+    @account.add_feature(:prevent_ticket_creation_for_others)
+    @account.add_feature(:anonymous_tickets)
+    user = add_new_user(Account.current, active: true)
+    user.make_current
+    login_as(user)
+    email = Faker::Internet.email
+    post :create, :version => :private, :helpdesk_ticket => { :email => email, :subject => Faker::Name.name }
+    ticket = @account.tickets.last
+    assert_equal email, @account.users.find(ticket.requester_id).email
+    log_out
+    user.destroy
+  ensure
+    @account.remove_feature(:anonymous_tickets)
+    @account.remove_feature(:prevent_ticket_creation_for_others)
+  end
+
   def test_create_with_svg_ticket_type
     user = add_new_user(Account.current, active: true)
     user.make_current

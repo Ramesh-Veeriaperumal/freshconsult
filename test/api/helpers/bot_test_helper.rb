@@ -25,7 +25,7 @@ module ApiBotTestHelper
     }
 
     if options[:product]
-      test_product = create_product(portal_url: Faker::Avatar.image)
+      test_product = create_product(portal_url: "#{Faker::Lorem.characters(7)}#{rand(999_999)}.new.com")
       portal_id = test_product.portal.id
       product_id = test_product.id
     else
@@ -46,7 +46,7 @@ module ApiBotTestHelper
                                  last_updated_by: options[:last_updated_by] || 1)
     test_bot.logo = attachment
     test_bot.email_channel = options[:email_channel] || false
-    test_bot.save(validate: false)
+    test_bot.save!
     test_bot.training_not_started!
     test_bot
   end

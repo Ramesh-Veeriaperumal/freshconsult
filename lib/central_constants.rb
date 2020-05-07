@@ -6,9 +6,11 @@ module CentralConstants
     'Account' => '1.3',
     'Helpdesk::Ticket' => '2.13',
     'Helpdesk::Note' => '0.8',
-    'Solution::Category' => '0.1',
-    'Solution::Folder' => '0.1',
-    'Solution::Article' => '0.2',
+    'Solution::Category' => '0.2',
+    'Solution::Folder' => '0.2',
+    'Solution::Article' => '0.3',
+    'ArticleTicket' => '0.1',
+    'PortalSolutionCategory' => '0.1',
     'Bot::FeedbackMapping' => '0.1',
     'User' => '0.4',
     'Company' => '1.2',
@@ -48,7 +50,7 @@ module CentralConstants
     'Admin::CannedResponses::Folder' => '0.1',
     'Admin::CannedResponses::Response' => '0.1',
     'ConversionMetric' => '0.1',
-    'Portal' => '0.1',
+    'Portal' => '0.2',
     'HelpWidget' => '0.1'
   }
 

@@ -1,0 +1,1 @@
+@items.map(&:to_index_hash).to_json

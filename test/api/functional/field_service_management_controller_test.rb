@@ -102,4 +102,17 @@ class FieldServiceManagementControllerTest < ActionController::TestCase
   ensure
     Account.any_instance.unstub(:field_service_management_enabled?)
   end
+
+  def test_update_field_service_with_invalid_params
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+    params = {}
+    put :update_settings, construct_params({}, params)
+    assert_response 400
+    match_json(request_error_pattern(:missing_params))
+    params = { field_agents_can_manage_appointments: nil }
+    put :update_settings, construct_params({}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('field_agents_can_manage_appointments', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null')])
+  end
 end

@@ -19,6 +19,7 @@ class Account < ActiveRecord::Base
     s.add :account_type_hash, as: :account_type
     s.add :premium
     s.add :set_portal_languages, as: :portal_languages
+    s.add :set_all_languages, as: :all_languages
     s.add proc { |x| x.features_list }, as: :features
     s.add proc { |x| x.utc_format(x.created_at) }, as: :created_at
     s.add proc { |x| x.utc_format(x.updated_at) }, as: :updated_at
@@ -41,6 +42,12 @@ class Account < ActiveRecord::Base
     if @model_changes.present? && @model_changes.key?(:rts_account_secret)
       @model_changes[:rts_account_secret].map! { |x| EncryptorDecryptor.new(RTSConfig['db_cipher_key']).decrypt(x) if x.present? }
       @model_changes[:rts_account_secret].map! { |x| encrypt_for_central(x, 'account_additional_settings') if x.present? }
+    end
+    if @model_changes.present? && @model_changes.key?(:all_languages)
+      all_languages_model_changes = { added: [], removed: [] }
+      all_languages_model_changes[:added] = language_details(@model_changes[:all_languages][1] - @model_changes[:all_languages][0])
+      all_languages_model_changes[:removed] = language_details(@model_changes[:all_languages][0] - @model_changes[:all_languages][1])
+      @model_changes[:all_languages] = all_languages_model_changes
     end
     return @model_changes if @model_changes.present?
     changes = self.previous_changes
@@ -85,6 +92,19 @@ class Account < ActiveRecord::Base
       return self.account_additional_settings.portal_languages
     end
     []
+  end
+
+  def set_all_languages
+    all_languages = if self.account_additional_settings.present? && self.account_additional_settings.supported_languages.present?
+                      self.account_additional_settings.supported_languages + [self.main_portal.language]
+                    else
+                      [self.main_portal.language]
+                    end
+    language_details(all_languages)
+  end
+
+  def language_details(language_codes)
+    language_codes.map { |code| Language.find_by_code(code).as_json }
   end
 
   def self.disallow_payload?(payload_type)

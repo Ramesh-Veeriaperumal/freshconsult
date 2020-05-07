@@ -327,7 +327,7 @@ class Solutions::ArticleDecorator < ApiDecorator
       if category_meta.is_default
         { source: ::SolutionConstants::KBASE_EMAIL_SOURCE }
       else
-        { category_id: @draft.try(:category_meta_id) || category_meta.id,
+        { category_id: category_meta.id,
           folder_id: parent.solution_folder_meta.id }
       end
     end

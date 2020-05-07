@@ -44,15 +44,11 @@ class Group < ActiveRecord::Base
   belongs_to :escalate , :class_name => "User", :foreign_key => "escalate_to"
   belongs_to :business_calendar
 
-  has_and_belongs_to_many :accesses, 
-    :class_name => 'Helpdesk::Access',
-    :join_table => 'group_accesses',
-    :insert_sql => proc { |record|
-      %{
-        INSERT INTO group_accesses (account_id, group_id, access_id) VALUES
-        ("#{self.account_id}", "#{self.id}", "#{ActiveRecord::Base.sanitize(record.id)}")
-     }
-    }
+  has_many :group_accesses, class_name: 'Helpdesk::GroupAccess'
+  has_many :accesses,
+           through: :group_accesses,
+           source: :helpdesk_access,
+           class_name: 'Helpdesk::Access'
 
   has_many :status_groups, :foreign_key => "group_id", :dependent => :destroy
 

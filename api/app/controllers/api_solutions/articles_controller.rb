@@ -41,7 +41,7 @@ module ApiSolutions
       return unless delegator_validation
 
       # for an article with unassociated folder, folder needs to be set before publishing the article
-      @item.solution_article_meta.update_attributes(solution_folder_meta_id: @article_params[:folder_id]) if @article_params.key?(:folder_id)
+      @item.solution_article_meta.solution_folder_meta_id = @article_params[:folder_id] if @article_params.key?(:folder_id)
 
       if @status == STATUS_KEYS_BY_TOKEN[:published] && @draft
         # When article is published with content change and without autosave we need to make sure draft has updated content
@@ -58,7 +58,7 @@ module ApiSolutions
       elsif @draft
         # draft should be unlocked in all update cases
         set_session
-        @draft.unlock!(true) 
+        @draft.unlock!(true)
       end
       # we should send status in all the cases, that might not have effect on somecases. thus removing it from article update.
       skip_status_update_if_possible

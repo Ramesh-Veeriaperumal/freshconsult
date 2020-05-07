@@ -151,15 +151,12 @@ class User < ActiveRecord::Base
 
   has_many :survey_results, class_name: 'SurveyResult', foreign_key: 'customer_id'
 
-  has_and_belongs_to_many :accesses,  
-    :class_name => 'Helpdesk::Access',
-    :join_table => 'user_accesses',
-    :insert_sql => proc { |record|
-      %{
-        INSERT INTO user_accesses (account_id, user_id, access_id) VALUES
-        ("#{self.account_id}", "#{self.id}", "#{ActiveRecord::Base.sanitize(record.id)}")
-     }
-    }
+  has_many :user_accesses, class_name: 'Helpdesk::UserAccess'
+  has_many :accesses,
+           through: :user_accesses,
+           source: :helpdesk_access,
+           class_name: 'Helpdesk::Access'
+
 
   has_one :forum_moderator , :class_name => 'ForumModerator' , :foreign_key => "moderator_id", :dependent => :destroy
 

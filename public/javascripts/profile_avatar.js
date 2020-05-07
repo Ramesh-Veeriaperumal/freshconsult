@@ -7,6 +7,8 @@
       ie9FileChangeMessage : 'You have selected %{filename}. Click save to see the changes.',
       // Path of the default avatar pic
       defaultPath: PROFILE_BLANK_MEDIUM_PATH,
+      //To permit the delete confirm box to appear while removing the picture
+      deleteConfirm: DELETECONFIRM,
       // Array of supported image formats
       supportedImageFormats : ['image/jpeg', 'image/png'],
       // Selector that wraps the avatar options change & delete
@@ -24,7 +26,7 @@
         // destroy param to indicate whether the avatar is removed
         avatarDestroy : '.avatar-destroy',
         avatarText : '.avatar-text',
-        ie9FileChangeElmt: '.ie9-file-change-msg'
+        ie9FileChangeElmt: '.ie9-file-change-msg',
       }
     };
     this.options = $.extend({}, defaults, options);
@@ -100,7 +102,7 @@
       (this.options.fields.ie9FileChangeElmt).html('').hide();
     },
     removePic : function() {
-      var confDelete = confirm(this.options.confirmDeleteMessage);
+      var confDelete = (!this.options.deleteConfirm) ? true : confirm(this.options.confirmDeleteMessage);
       if(confDelete) {
         this.changeAvatarText('Add Photo');
         this.resetPicField();

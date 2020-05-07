@@ -58,13 +58,6 @@ module SupportTicketControllerMethods
     (@ticket.closed? || @ticket.resolved?)
   end
 
-  def check_email
-    items = current_account.user_emails.user_for_email(params[:v])
-    respond_to do |format|
-      format.json { render :json => { :user_exists => items.present? }  }
-    end
-  end  
-
    private
   
     def check_email_scoper # possible dead code

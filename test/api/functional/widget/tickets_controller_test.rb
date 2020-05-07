@@ -139,7 +139,7 @@ module Widget
       match_json(id: ticket.display_id)
     ensure
       unset_login_support
-      user.destroy
+      user.try(:destroy)
     end
 
     def test_create_with_required_fields_with_x_widget_auth_user_absent

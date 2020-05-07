@@ -111,6 +111,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     t.add :display_id
     t.add :account_id
     t.add :archive
+    t.add :source_hash, as: :source
+    t.add :ticket_type
   end
 
   def central_payload_type
@@ -118,6 +120,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
       action = [:create, :update].find{ |action| transaction_include_action? action }
       "import_ticket_#{action}" if action.present?
     end
+  end
+
+  def central_publish_payload
+    as_api_response(:central_publish)
+  end
+
+  def central_publish_associations
+    as_api_response(:central_publish_associations)
   end
 
   def relationship_with_account
