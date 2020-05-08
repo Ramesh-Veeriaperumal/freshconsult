@@ -1561,6 +1561,15 @@ class ConversationsControllerTest < ActionController::TestCase
     assert_response 400
   end
 
+  def test_agent_email_id_case_insensitive_in_note_creation
+    agent_emails = [@agent.email.slice(0, 1).capitalize + @agent.email.slice(1..-1)]
+    params_hash = create_note_params_hash.merge(notify_emails: agent_emails)
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 201
+    notify_emails = JSON.parse(@response.body)['to_emails']
+    assert_equal notify_emails, agent_emails.map(&:downcase)
+  end
+
   def test_create_datatype_nil_array_fields
     params_hash = { notify_emails: [], attachments: [], body: Faker::Lorem.paragraph }
     post :create, construct_params({ id: ticket.display_id }, params_hash)
@@ -1581,8 +1590,8 @@ class ConversationsControllerTest < ActionController::TestCase
   def test_avoid_duplicate_email_notification_for_cc
     user = create_contact
     notification_count_before_note_creation = Delayed::Job.where(SEND_CC_EMAIL_JOB_STRING).all.count
-    ticket = create_ticket({source: 1, subject: "TEST_TICKET", description: "Test duplicate notify to cc", requester_id: user.id, cc_emails: [user.email, "cc1@gmail.com", "cc2@gmail.com"] })
-    note = create_note({source: 0, incoming: 1, private: false, body: "Requester Reply", body: "<div>Requester Reply</div>", ticket_id: ticket.id, user_id: user.id })
+    ticket = create_ticket(source: 1, subject: 'TEST_TICKET', description: 'Test duplicate notify to cc', requester_id: user.id, cc_emails: [user.email, 'cc1@gmail.com', 'cc2@gmail.com'])
+    note = create_note(source: 0, incoming: 1, private: false, body: '<div>Requester Reply</div>', ticket_id: ticket.id, user_id: user.id)
     notification_count_after_note_creation = Delayed::Job.where(SEND_CC_EMAIL_JOB_STRING).all.count
     assert_equal notification_count_after_note_creation, notification_count_before_note_creation + 1
   end
@@ -1590,8 +1599,8 @@ class ConversationsControllerTest < ActionController::TestCase
   def test_send_comment_added_notification_to_cc_when_requester_adds_comment
     user = create_contact
     notification_count_before_note_creation = Delayed::Job.where(SEND_CC_EMAIL_JOB_STRING).all.count
-    ticket = create_ticket({source: 1, subject: "TEST_TICKET", description: "Test send comment notification to cc", requester_id: user.id, cc_emails: ["cc1@gmail.com", "cc2@gmail.com"] })
-    note = create_note({source: 0, incoming: 1, private: false, body: "Requester Reply", body: "<div>Requester Reply</div>", ticket_id: ticket.id, user_id: user.id })
+    ticket = create_ticket(source: 1, subject: 'TEST_TICKET', description: 'Test send comment notification to cc', requester_id: user.id, cc_emails: ['cc1@gmail.com', 'cc2@gmail.com'])
+    note = create_note(source: 0, incoming: 1, private: false, body: '<div>Requester Reply</div>', ticket_id: ticket.id, user_id: user.id)
     notification_count_after_note_creation = Delayed::Job.where(SEND_CC_EMAIL_JOB_STRING).all.count
     assert_equal notification_count_after_note_creation, notification_count_before_note_creation + 1
   end
@@ -1600,8 +1609,8 @@ class ConversationsControllerTest < ActionController::TestCase
     requester = create_contact
     cc = create_contact
     notification_count_before_note_creation = Delayed::Job.where(SEND_CC_EMAIL_JOB_STRING).all.count
-    ticket = create_ticket({source: 1, subject: "TEST_TICKET", description: "Test send comment notification to cc", requester_id: requester.id, cc_emails: [cc.email] })
-    note = create_note({source: 0, incoming: 1, private: false, body: "CC Reply", body: "<div>CC Reply</div>", ticket_id: ticket.id, user_id: cc.id })
+    ticket = create_ticket(source: 1, subject: 'TEST_TICKET', description: 'Test send comment notification to cc', requester_id: requester.id, cc_emails: [cc.email])
+    note = create_note(source: 0, incoming: 1, private: false, body: '<div>CC Reply</div>', ticket_id: ticket.id, user_id: cc.id)
     notification_count_after_note_creation = Delayed::Job.where(SEND_CC_EMAIL_JOB_STRING).all.count
     assert_equal notification_count_after_note_creation, notification_count_before_note_creation + 1
   end
