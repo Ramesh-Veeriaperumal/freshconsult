@@ -5,6 +5,7 @@ module FdSpamDetectionService
       @content = content
       @user = user
       @timeout = FdSpamDetectionService.config.timeout
+      @header = { 'Authorization' => "Basic #{FdSpamDetectionService.config.api_key}" }
     end
 
     def check_spam
@@ -12,7 +13,7 @@ module FdSpamDetectionService
       return result unless FdSpamDetectionService.config.global_enable or @content.nil? or @user.nil?
       url = FdSpamDetectionService.config.service_url + "/get_email_score"
       Rails.logger.info "Sending check_spam score request for account_id : #{@user} "
-      res = HTTParty.post(url, :body => {:message => @content, :username => @user, :timeout => @timeout})
+      res = HTTParty.post(url, body: { message: @content, username: @user, timeout: @timeout }, headers: @header)
       process_response(res)
     rescue Exception => e
       Rails.logger.info "Error in SDS check spam: #{e.message} - #{e.backtrace}"
@@ -24,7 +25,7 @@ module FdSpamDetectionService
       return false unless FdSpamDetectionService.config.global_enable or @content.nil? or @user.nil?
       url = FdSpamDetectionService.config.service_url + "/learn_spam"
       Rails.logger.info "Sending learn_spam request for account_id : #{@user} "
-      res = HTTParty.post(url, :body => {:message => @content, :username => @user, :timeout => @timeout})
+      res = HTTParty.post(url, body: { message: @content, username: @user, timeout: @timeout }, headers: @header)
       res["success"].to_s.to_bool
     rescue Exception => e
       Rails.logger.info "Error in SDS learn spam: #{e.message} - #{e.backtrace}"
@@ -36,7 +37,7 @@ module FdSpamDetectionService
       return false unless FdSpamDetectionService.config.global_enable or @content.nil? or @user.nil?
       url = FdSpamDetectionService.config.service_url + "/learn_ham"
       Rails.logger.info "Sending learn_ham request for account_id : #{@user} "
-      res = HTTParty.post(url, :body => {:message => @content, :username => @user, :timeout => @timeout}) 
+      res = HTTParty.post(url, body: { message: @content, username: @user, timeout: @timeout }, headers: @header)
       res['success'].to_s.to_bool
     rescue Exception => e
       Rails.logger.info "Error in SDS learn ham: #{e.message} - #{e.backtrace}"
@@ -48,7 +49,7 @@ module FdSpamDetectionService
       return false unless FdSpamDetectionService.config.global_enable or @content.nil? or @user.nil?
       url = FdSpamDetectionService.config.service_url + "/forget"
       Rails.logger.info "Sending spam forget request for account_id : #{@user} "
-      res = HTTParty.post(url, :body => {:message => @content, :username => @user, :timeout => @timeout}) 
+      res = HTTParty.post(url, body: { message: @content, username: @user, timeout: @timeout }, headers: @header)
       res['success'].to_s.to_bool
     rescue Exception => e
       Rails.logger.info "Error in SDS forget: #{e.message} - #{e.backtrace}"
@@ -109,7 +110,7 @@ module FdSpamDetectionService
       return result unless FdSpamDetectionService.config.global_enable or @content.nil? or @user.nil?
       url = FdSpamDetectionService.config.service_url + "/get_content_score"
       Rails.logger.info "Sending check_spam_content score request for account_id : #{@user}"
-      res = HTTParty.post(url, :body => {:message => @content, :username => @user, :account_creation_date => date}) # by default level is set as 3 in spam service side. We can change label later 
+      res = HTTParty.post(url, body: { message: @content, username: @user, account_creation_date: date }, headers: @header) # by default level is set as 3 in spam service side. We can change label later
       Rails.logger.info "Response by spam service for check spam content #{res.body}"
       process_response(JSON.parse(res.body))
     rescue Exception => e

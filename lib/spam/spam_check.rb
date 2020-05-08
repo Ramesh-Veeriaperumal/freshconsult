@@ -86,7 +86,8 @@ module Spam
     end
 
     def build_http_post(uri, message)
-      http_post = Net::HTTP::Post.new(uri.path, 'Content-Type' => 'application/x-www-form-urlencoded')
+      header = { 'Content-Type': 'application/x-www-form-urlencoded', 'Authorization': "Basic #{FdSpamDetectionService.config.api_key}" }
+      http_post = Net::HTTP::Post.new(uri.path, header)
       curr_account = Account.current
       http_post.set_form_data({
         username: curr_account.id,

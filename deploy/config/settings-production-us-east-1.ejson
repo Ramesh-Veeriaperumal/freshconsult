@@ -638,6 +638,7 @@
       },
       "sds": {
         "_service_url": "https://antispam.freshdesk.com",
+        "api_key": "EJ[1:UgMK3HxRgODI6sj8y+EXssui90Fh6vqDOuZ8ryUDbwU=:04mQvOW+Z7edhyf6uqwRTaRot4FcUcAf:vnt5NJtLZamTiA6FUXbd4uOChT4Zv4cxDxb5rLWyEjJorLip2Yqji1UJQSe6YydT/sPmkqlQiFNf/DWB/YlWMzrBYgQxU5oEY8x9AwdqLAoE3z224iO4iDPWiZV5hse+TgbzWr98Qg0NYKZidWeFYw==]",
         "_outgoing_block_mrr_threshold": 300
       },
       "s3": {

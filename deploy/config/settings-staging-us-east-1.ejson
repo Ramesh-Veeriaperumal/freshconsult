@@ -1271,6 +1271,7 @@
       },
       "sds": {
         "_service_url": "https://sds-staging-elb-89416071.us-east-1.elb.amazonaws.com",
+        "api_key": "EJ[1:iRnFJBq9nA1OF1VSCYw94WSojGWbOzyCdav3q1o4D3U=:cdJTY7GFmfciwZbbi3gZDU4kNtSELOob:m+2NoCn8tH71xh8TUzVhaiZxlL0Blb2V1Upe4klgAO7Mm0TZ8seCb5VFn8JUCQcyttoAKmYT8vUIxsQWbALZWijQu5YQpxNast3gce/SPfUDm10hasY0EsAwXOOK/81v5O1IFQQ+WELWB09ziXptng==]",
         "_outgoing_block_mrr_threshold": 300
       },
       "sendgrid_webhook": {
