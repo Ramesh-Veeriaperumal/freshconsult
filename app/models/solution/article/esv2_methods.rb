@@ -1,7 +1,7 @@
 class Solution::Article < ActiveRecord::Base
 
   def to_esv2_json
-    as_json({
+    json_object = as_json({
         root: false,
         tailored_json: true,
         only: [ :title, :desc_un_html, :user_id, :status, :created_at,
@@ -11,7 +11,9 @@ class Solution::Article < ActiveRecord::Base
         methods: [ :tag_names, :tag_ids ]
       }).merge(meta_referenced_attributes)
         .merge(es_draft_attributes)
-        .merge(attachments: es_v2_attachments).to_json
+        .merge(attachments: es_v2_attachments)
+    json_object.merge!(approver_attributes) if Account.current.article_approval_workflow_enabled?
+    json_object.to_json
   end
 
   def es_draft_attributes
@@ -39,6 +41,10 @@ class Solution::Article < ActiveRecord::Base
 
   def es_v2_attachments
     attachments.pluck(:content_file_name)
+  end
+
+  def approver_attributes
+    helpdesk_approval.present? ? { approvers: helpdesk_approval.approver_mappings.pluck(:approver_id) } : { approvers: [] }
   end
 
   # _Note_: If these attributes will be delegated in future,
