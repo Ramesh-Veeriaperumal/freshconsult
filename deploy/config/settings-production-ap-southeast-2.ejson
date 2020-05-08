@@ -5,7 +5,7 @@
     "ymls": {
       "datacenter_config": {
       "freshcaller_signup_supported": true,
-      "freshconnect_signup_supported": false,
+      "freshconnect_signup_supported": true,
       "freshmarketer_signup_supported": false
       },
       "custom_survey_result_key": {
