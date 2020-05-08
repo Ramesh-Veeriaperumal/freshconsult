@@ -105,7 +105,8 @@ class User < ActiveRecord::Base
       phone: phone.presence,
       mobile: mobile.presence,
       job_title: job_title.presence,
-      domain: account.full_domain
+      domain: account.full_domain,
+      company_name: account.account_configuration.admin_company_name
     }
   end
 

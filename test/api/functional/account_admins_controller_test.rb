@@ -14,14 +14,16 @@ class AccountAdminsControllerTest < ActionController::TestCase
   end
 
   def test_successful_updation_account_config_contact_info_and_invoice_email
-    params = { email: 'test@me.com', first_name: 'me', last_name: 'you', phone: '283923911', invoice_emails: ['test@me.com'] }
+    company_name = Faker::Lorem.characters(6)
+    params = { email: 'test@me.com', first_name: 'me', last_name: 'you', phone: '283923911', invoice_emails: ['test@me.com'], company_name: company_name }
     put :update, controller_params({ version: 'private' }.merge(wrap_cname(params)), false)
     assert_response 200
+    assert_equal @account.helpdesk_name, company_name
     match_json(account_admin_response(params))
   end
 
   def test_bad_request_on_not_permitted_params
-    params = { email: 'test@me.com', first_name: 'me', last_name: 'you', phone: '283923911', extra: 'not permitted'}
+    params = { email: 'test@me.com', first_name: 'me', last_name: 'you', phone: '283923911', extra: 'not permitted' }
     put :update, controller_params({ version: 'private' }.merge(wrap_cname(params)), false)
     assert_response 400
     match_json(account_admin_bad_request_error_patterns(:extra, 'Unexpected/invalid field in request', { code: "invalid_field" }))

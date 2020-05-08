@@ -6,6 +6,7 @@ module AccountAdminTestHelper
       email: params[:email],
       phone: params[:phone]
     }
+    response.merge!(company_name: params[:company_name]) if params[:company_name]
     response.merge!(invoice_emails: params[:invoice_emails]) if params[:invoice_emails]
   end
 

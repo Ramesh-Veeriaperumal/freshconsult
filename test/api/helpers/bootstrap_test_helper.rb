@@ -136,7 +136,8 @@ module BootstrapTestHelper
     pattern[:subscription][:mrr] = account.subscription.cmrr if User.current.privilege?(:admin_tasks) || User.current.privilege?(:manage_account)
     pattern[:subscription][:invoice_email] = account.invoice_emails.first if User.current.privilege?(:manage_account)
     pattern[:subscription][:field_agent_limit] = (account.subscription.field_agent_limit || 0) if account.field_service_management_enabled?
-    pattern[:contact_info] = account.contact_info.presence
+    pattern[:contact_info] = account.contact_info.presence || {}
+    pattern[:contact_info][:company_name] = account.account_configuration.admin_company_name
     pattern[:anonymous_account] = true if account.anonymous_account?
     pattern
   end
