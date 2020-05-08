@@ -365,7 +365,7 @@ module Integrations::CloudElements::Crm::CrmUtil
       })
     end
     hash[:fields] = arr
-    JSON.generate(hash)
+    hash.to_json
   end
 
   def crm_element_trans_payload obj_synced, obj_name, obj_fields
@@ -422,7 +422,7 @@ module Integrations::CloudElements::Crm::CrmUtil
   def parse_trans_payload arr, obj_name
     json_payload = INSTANCE_TRANSFORMATION_JSON
     json_payload['fields'] = arr
-    JSON.generate(json_payload) % {:object_name => obj_name}
+    json_payload.to_json % { object_name: obj_name }
   end
 
   def get_selected_field_arrays(fields)

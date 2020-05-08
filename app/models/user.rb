@@ -327,7 +327,7 @@ class User < ActiveRecord::Base
     end
 
     def update_posts_count(id)
-      User.update_all ['posts_count = ?', Post.count(:id, :conditions => {:user_id => id, :published => true})],   ['id = ?', id]
+      User.where(['id = ?', id]).update_all(['posts_count = ?', Post.where(user_id: id, published: true).count(:id)])
     end
 
     def reset_current_user
@@ -1143,7 +1143,7 @@ class User < ActiveRecord::Base
   end
 
   def moderator_of?(forum)
-    moderatorships.count(:all, :conditions => ['forum_id = ?', (forum.is_a?(Forum) ? forum.id : forum)]) == 1
+    moderatorships.where(['forum_id = ?', (forum.is_a?(Forum) ? forum.id : forum)]).count == 1
   end
 
   def make_current
@@ -1350,12 +1350,12 @@ class User < ActiveRecord::Base
     def find_or_create_company(name)
       if User.current.present?
         if User.current.privilege?(:manage_companies)
-          account.companies.find_or_create_by_name(name)
+          account.companies.where(name: name).first_or_create
         else
           account.companies.find_by_name(name)
         end
       else
-        account.companies.find_or_create_by_name(name)
+        account.companies.where(name: name).first_or_create
       end
     end
 

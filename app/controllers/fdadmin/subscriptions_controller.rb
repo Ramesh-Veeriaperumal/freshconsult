@@ -54,7 +54,7 @@ class Fdadmin::SubscriptionsController < Fdadmin::DevopsMainController
 
 	def deleted_customers
 		records_to_skip = params[:page] ? params[:page].to_i * PAGE_LIMIT : 0
-    deleted_customers = DeletedCustomers.all(:conditions =>  ['status not in (?)', [0]], :offset => records_to_skip, :limit => PAGE_LIMIT ,:order => "created_at DESC")
+    deleted_customers = DeletedCustomers.where(['status not in (?)', [0]]).offset(records_to_skip).limit(PAGE_LIMIT).order("created_at DESC").all.to_a
     respond_to do |format|
     	format.json do 
     		render :json => deleted_customers 
@@ -89,14 +89,14 @@ class Fdadmin::SubscriptionsController < Fdadmin::DevopsMainController
 
   def fetch_deleted_customers
   	deleted_count_hash = {}
-    deleted_paid_customers = merge_array_of_hashes(Sharding.run_on_all_slaves { DeletedCustomers.count(:id,:distinct => true,
-                           :group => "DATE_FORMAT(deleted_customers.created_at, '%b, %Y')", 
-                           :order => "deleted_customers.created_at desc", 
-                           :joins => " INNER JOIN subscription_payments ON deleted_customers.account_id = subscription_payments.account_id") })
+    deleted_paid_customers = merge_array_of_hashes(Sharding.run_on_all_slaves {
+                           DeletedCustomers.group("DATE_FORMAT(deleted_customers.created_at, '%b, %Y')")
+                                           .order('deleted_customers.created_at desc')
+                                           .joins(' INNER JOIN subscription_payments ON deleted_customers.account_id = subscription_payments.account_id')
+                                           .count(:id, distinct: true) })
    
-    deleted_total_customers = merge_array_of_hashes(Sharding.run_on_all_slaves { DeletedCustomers.count(:id,:distinct => true,
-                           :group => "DATE_FORMAT(created_at, '%b, %Y')", 
-                           :order => "created_at desc")})
+    deleted_total_customers = merge_array_of_hashes(Sharding.run_on_all_slaves { DeletedCustomers.group("DATE_FORMAT(created_at, '%b, %Y')")
+                                                                                                 .order('created_at desc').count(:id, distinct: true) })
 
     
     deleted_count_hash[:paid] = deleted_paid_customers
@@ -105,8 +105,7 @@ class Fdadmin::SubscriptionsController < Fdadmin::DevopsMainController
   end
 
   def converted_customers_per_month
-    results = Sharding.run_on_all_slaves {  Account.count(:id,:distinct => true,:joins => :subscription_payments,
-                                                 :group => "DATE_FORMAT(accounts.created_at,'%b %Y')") }
+    results = Sharding.run_on_all_slaves { Account.joins(:subscription_payments).group("DATE_FORMAT(accounts.created_at,'%b %Y')").count(:id, distinct: true) }
 
     conv_customers_by_month = merge_array_of_hashes(results)
     conv_customers_by_month = conv_customers_by_month.sort_by{|k,v| Time.parse(k)}.reverse.to_h

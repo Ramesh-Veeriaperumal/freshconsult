@@ -304,7 +304,7 @@ module Ember
       options = { time_range: 3 }
       Account.current.launch(:es_msearch)
       dashboard = create_dashboard_with_widgets(nil, 1, 0, [options])
-      ::Search::Filters::Docs.any_instance.stubs(:bulk_es_request).returns(JSON.generate({ 'responses' => [{'error':{'root_cause':'I dont know'}}, {'took':2,'timed_out':false,'_shards':{'total':1,'successful':1,'failed':0},'hits':{'total':1,'max_score':0.0,'hits':[]}}] }))
+      ::Search::Filters::Docs.any_instance.stubs(:bulk_es_request).returns({ 'responses' => [{ 'error': { 'root_cause':'I dont know' } }, { 'took':2, 'timed_out':false, '_shards': { 'total':1, 'successful':1, 'failed':0 },'hits': { 'total':1, 'max_score':0.0, 'hits':[] }}] }.to_json)
       get :widgets_data, controller_params(version: 'private', type: 'scorecard', id: dashboard.id)
       assert_response 400
     ensure

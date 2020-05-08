@@ -36,7 +36,7 @@ class Support::Discussions::TopicsController < SupportController
     respond_to do |format|
       format.html { redirect_to forum_path(params[:forum_id]) }
       format.xml do
-        @topics = Topic.paginate_by_forum_id(params[:forum_id], :order => 'sticky desc, replied_at desc', :page => params[:page])
+        @topics = Topic.where(forum_id: params[:forum_id]).order('sticky desc, replied_at desc').paginate(page: params[:page])
         return render :xml => @topics.to_xml
       end
     end

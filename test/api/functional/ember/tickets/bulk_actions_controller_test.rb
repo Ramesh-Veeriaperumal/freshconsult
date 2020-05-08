@@ -1646,7 +1646,7 @@ module Ember
         end
       end
 
-      def test_bulk_close_with_secure_text_field
+      def test_bulk_update_close_with_secure_text_field
         Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
         ::Tickets::VaultDataCleanupWorker.jobs.clear
         ::Tickets::BulkTicketActions.jobs.clear

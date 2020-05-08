@@ -34,7 +34,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
         render :json=>@time_sheets, :status => find_status #temp_hack. Will be addressed in API_Versioning
       end
       format.mobile do
-        render :json=>@time_sheets.all(:order => "executed_at").to_json()
+        render json: @time_sheets.order('executed_at').all.to_a.to_json
       end
       format.nmobile do
         time_entries = Array.new

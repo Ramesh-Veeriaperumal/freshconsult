@@ -69,7 +69,7 @@ module ProductTestHelper
       account_id: product.account_id,
       #product_push_timestamp: product_push_timestamp,
       portal_id: product.portal.id,
-      email_config_ids: product.email_configs.all(:select => :id).collect(&:id),
+      email_config_ids: product.email_configs.pluck(:id),
       created_at: product.created_at.try(:utc).try(:iso8601),
       updated_at: product.updated_at.try(:utc).try(:iso8601)
     }

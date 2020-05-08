@@ -6,9 +6,7 @@ module Helpdesk::TicketCustomFields
   module InstanceMethods
 
   	def custom_fields
-      @custom_fields = FlexifieldDef.all(:include => 
-        [:flexifield_def_entries =>:flexifield_picklist_vals], 
-        :conditions => ['account_id=? AND name=?',account_id,"Ticket_#{account_id}"] ) 
+      @custom_fields = FlexifieldDef.includes([flexifield_def_entries: :flexifield_picklist_vals]).where(['account_id=? AND name=?', account_id, "Ticket_#{account_id}"])
     end
 
     def custom_field_attribute attribute, args    

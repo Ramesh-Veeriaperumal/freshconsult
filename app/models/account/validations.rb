@@ -25,7 +25,7 @@ class Account < ActiveRecord::Base
 
   	def valid_domain?
       conditions = new_record? ? ['full_domain = ?', self.full_domain] : ['full_domain = ? and id <> ?', self.full_domain, self.id]
-      self.errors[:base] << 'Domain is not available!' if self.full_domain.blank? || self.class.count(:conditions => conditions) > 0 || self.full_domain.split('.').count > 3
+      self.errors[:base] << 'Domain is not available!' if self.full_domain.blank? || self.class.where(conditions).count > 0 || self.full_domain.split('.').count > 3
     end
 
     def reserved_domain?

@@ -70,7 +70,7 @@ module Livechat::Enabler
       if requestType == "GET" || requestType == "DELETE"
         options[:query] = request_data.collect{|k,v| [k.to_sym, v]}.to_h
       else
-        options[:body] = JSON.generate(request_data)
+        options[:body] = request_data.to_json
       end
       options[:headers] = { "Accept" => accept_type, "Content-Type" => content_type}.delete_if{ |k,v| v.blank? }  # TODO: remove delete_if use and find any better way to do it in single line
       options[:timeout] = params[:timeout] || 15 #Returns status code 504 on timeout expiry 

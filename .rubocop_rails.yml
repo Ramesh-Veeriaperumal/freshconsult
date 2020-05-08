@@ -16,6 +16,7 @@ AllCops:
   DisabledByDefault: true
   Include:
     - '**/*.api'
+    - '**/*.rb'
   Exclude:
     - 'test/api/query_reports/*'
 

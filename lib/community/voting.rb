@@ -1,7 +1,7 @@
 module Community::Voting
 
   def fetch_vote
-    @vote = vote_parent.votes.find_or_initialize_by_user_id(current_user.id)
+    @vote = vote_parent.votes.where(user_id: current_user.id).first_or_initialize
   end
 
   def toggle_vote

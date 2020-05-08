@@ -91,7 +91,10 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
   scope :newest_first, :order => "id DESC"
   scope :public, :conditions => { :private => false } 
   scope :private, :conditions => { :private => true } 
-   
+
+  scope :public_notes, -> { where(private: false) }
+  scope :private_notes, -> { where(private: true) }
+
   scope :latest_twitter_comment,
               :conditions => [" incoming = 1 and social_tweets.tweetable_type =
  'Helpdesk::Note'"],

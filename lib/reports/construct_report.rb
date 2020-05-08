@@ -66,19 +66,17 @@ module Reports::ConstructReport
 
  def fetch_tkts_and_data 
   # Calculating Avg. 1st response time, First call resolution and On time resolution all in the same query
-  tkt_scoper.find( 
-     :all,
-     :include => @val, 
-     :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id", 
-     :select => ActiveRecord::Base.send(:sanitize_sql_array, ["?, 
-                avg(helpdesk_ticket_states.avg_response_time) as avgresponsetime,
-                avg(TIME_TO_SEC(TIMEDIFF(helpdesk_ticket_states.first_response_time, helpdesk_tickets.created_at))) as avgfirstresptime, 
-                sum(case when helpdesk_ticket_states.inbound_count = 1 then 1 else 0 end ) as fcr_tickets, 
-                sum(case when (helpdesk_tickets.due_by >= helpdesk_ticket_states.resolved_at) then 1 else 0 end) as sla_tickets, 
-                avg(helpdesk_ticket_states.resolution_time_by_bhrs) as avgresolutiontime,
-                count(*) as resolved_tickets", "#{@val}_id"]),
-     :conditions => ['helpdesk_ticket_states.resolved_at > ? and helpdesk_ticket_states.resolved_at < ?', start_date_db, end_date_db],
-     :group => ActiveRecord::Base.send(:sanitize_sql_array, ["?", "#{@val}_id"]))
+   tkt_scoper.includes(@val)
+            .joins('INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id')
+            .select(ActiveRecord::Base.send(:sanitize_sql_array, ['?,
+              avg(helpdesk_ticket_states.avg_response_time) as avgresponsetime,
+              avg(TIME_TO_SEC(TIMEDIFF(helpdesk_ticket_states.first_response_time, helpdesk_tickets.created_at))) as avgfirstresptime,
+              sum(case when helpdesk_ticket_states.inbound_count = 1 then 1 else 0 end ) as fcr_tickets,
+              sum(case when (helpdesk_tickets.due_by >= helpdesk_ticket_states.resolved_at) then 1 else 0 end) as sla_tickets,
+              avg(helpdesk_ticket_states.resolution_time_by_bhrs) as avgresolutiontime,
+              count(*) as resolved_tickets', "#{@val}_id"]))
+            .where(['helpdesk_ticket_states.resolved_at > ? and helpdesk_ticket_states.resolved_at < ?', start_date_db, end_date_db])
+            .group(ActiveRecord::Base.send(:sanitize_sql_array, ['?', "#{@val}_id"])).to_a
  end
 
  def start_date_db(zone = true)

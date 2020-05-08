@@ -51,7 +51,7 @@ class TopicObserver < ActiveRecord::Observer
   end
 
   def monitor_topic topic
-    topic.forum.monitorships.active_monitors.all(:include => :portal).each do |monitor|
+    topic.forum.monitorships.active_monitors.includes(:portal).all.each do |monitor|
       next if monitor.user.email.blank? or (topic.user_id == monitor.user_id)
       TopicMailer.send_later(:monitor_email, monitor.user.email, topic, topic.user, monitor.portal, *monitor.sender_and_host, {locale_object: monitor.user})
     end

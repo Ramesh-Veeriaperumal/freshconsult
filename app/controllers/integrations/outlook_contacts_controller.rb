@@ -176,7 +176,7 @@ class Integrations::OutlookContactsController < Admin::AdminController
       if @configs['contacts_sync'].present?
         sync_tag_name = @configs['contacts_sync']['sync_tag']
         if sync_tag_name.present?
-          sync_tag = Account.current.tags.find_or_create_by_name(sync_tag_name)
+          sync_tag = Account.current.tags.where(name: sync_tag_name).first_or_create
           @sync_account.sync_tag_id = sync_tag.id
         end
         @sync_account.overwrite_existing_user = @configs['contacts_sync']['overwrite_existing_user']

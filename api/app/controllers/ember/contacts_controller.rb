@@ -262,7 +262,7 @@ module Ember
 
       def find_or_create_company(company)
         company[:id].present? ? current_account.companies.find_by_id(company[:id]) :
-          current_account.companies.find_or_create_by_name(company[:name])
+          current_account.companies.where(name: company[:name]).first_or_create
       end
 
       def user_company_hash(company, cm, default = false)

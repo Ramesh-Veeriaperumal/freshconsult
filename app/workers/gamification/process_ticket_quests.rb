@@ -31,10 +31,7 @@ module Gamification
       joins << %(inner join helpdesk_schema_less_tickets on helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id and helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id ) unless conditions[0].index('helpdesk_schema_less_tickets').nil?
       joins << %(inner join helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id ) unless conditions[0].index('helpdesk_ticket_states').nil?
       joins << %(inner join flexifields on helpdesk_tickets.id = flexifields.flexifield_set_id  and helpdesk_tickets.account_id = flexifields.account_id and flexifields.flexifield_set_type = 'Helpdesk::Ticket' ) unless conditions[0].index('flexifields').nil?
-      resolv_tkts_in_time = Sharding.run_on_slave { quest_scoper(user.account, user).count(
-        'helpdesk_tickets.id',
-        :joins => joins,
-        :conditions => conditions) }
+      resolv_tkts_in_time = Sharding.run_on_slave { quest_scoper(user.account, user).joins(joins).where(conditions).count('helpdesk_tickets.id') }
 
       quest_achieved = resolv_tkts_in_time >= quest.quest_data[0][:value].to_i
     end
