@@ -22,7 +22,12 @@ module Ember
         super
         Sidekiq::Worker.clear_all
         before_all
+        SearchService::Client.any_instance.stubs(:write_count_object).returns(true)
         @account.add_feature(:scenario_automation)
+      end
+
+      def teardown
+        SearchService::Client.any_instance.unstub(:write_count_object)
       end
 
       @@before_all_run = false

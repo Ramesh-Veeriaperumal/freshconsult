@@ -590,8 +590,8 @@ class Account < ActiveRecord::Base
     end
 
     def enable_count_es
-      self.launch(:count_service_es_writes) if redis_key_exists?(SEARCH_SERVICE_COUNT_ES_WRITES_ENABLED)
-      self.launch(:count_service_es_reads) if redis_key_exists?(SEARCH_SERVICE_COUNT_ES_READS_ENABLED)
+      self.launch(:count_service_es_writes)
+      self.launch(:count_service_es_reads)
     end
 
     def disable_searchv2

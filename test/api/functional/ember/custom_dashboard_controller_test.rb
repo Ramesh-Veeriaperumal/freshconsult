@@ -1097,9 +1097,13 @@ module Ember
       widget = @@bar_chart_dashboard.widgets.first
       stub_data = bar_chart_data_es_response_stub(widget)
       ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(stub_data)
+      stub_data = bar_chart_data_es_response_service_stub(widget)
+      ::SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
       get :bar_chart_data, controller_params(version: 'private', id: @@bar_chart_dashboard.id, widget_id: widget.id)
       assert_response 200
       match_json(bar_chart_data_response_pattern(widget))
+    ensure
+      ::SearchService::Client.any_instance.unstub(:multi_aggregate)
     end
 
     def test_widgets_data_for_ticket_trend_card_widgets
