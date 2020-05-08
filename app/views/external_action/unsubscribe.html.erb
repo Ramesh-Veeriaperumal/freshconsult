@@ -1,13 +1,15 @@
 <%= stylesheet_link_tag_with_rtl :'cdn/unsubscribe' %>
 <div class="main-content">
-  <div class="unsubscribe-container__logo">
-    <span class="admin__logo_span">
-      <img src="/images/misc/admin-logo.png" alt="Freshdesk" class="admin__logo"/>
-    </span>
-    <span class="admin__logo_text">
-      freshdesk
-    </span>
-  </div>
+  <% unless Account.current.subscription.paid_account? %>
+    <div class="unsubscribe-container__logo">
+      <span class="admin__logo_span">
+        <img src="/images/misc/admin-logo.png" alt="Freshdesk" class="admin__logo"/>
+      </span>
+      <span class="admin__logo_text">
+        freshdesk
+      </span>
+    </div>
+  <% end %>
   <% if @unsubscribe_status %>
     <div class="unsubscribe-container__success">
       <div class="unsubscribe-container__heading"><%= t('unsubscribe.success_heading') %></div>
