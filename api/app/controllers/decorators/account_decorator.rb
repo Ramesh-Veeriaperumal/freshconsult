@@ -219,8 +219,11 @@ class AccountDecorator < ApiDecorator
     end
 
     def agents_count_payload(agent_type = :support_agent)
+      agent_license_available = (record.subscription.agent_limit || 0) - record.full_time_support_agents.size
+      is_trial = agent_license_available < 0 && record.subscription.trial?
+      agent_license_available = is_trial ? nil : agent_license_available
       {
-        license_available: record.subscription.trial_or_sprout_plan? ? nil : safe_send("available_#{agent_type.to_s.pluralize}"),
+        license_available: agent_type == :support_agent ? agent_license_available : safe_send("available_#{agent_type.to_s.pluralize}"),
         full_time_agent_count: agent_count(agent_type),
         occasional_agent_count: agent_type == :support_agent ? agent_count(:occasional) : nil
       }
