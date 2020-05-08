@@ -153,7 +153,12 @@ class Account < ActiveRecord::Base
     if redis_key_exists?(ENABLE_NEXT_RESPONSE_SLA)
       launch(:sla_policy_revamp)
     end
-    self.launch(:omni_chat_agent) if redis_key_exists?(AGENT_CHAT_MANAGEMENT)
+    if redis_key_exists?(EMBERIZE_AGENT_FORM)
+      [:emberize_agent_form, :emberize_agent_list].each do |feature|
+        self.launch(feature)
+      end
+      self.launch(:omni_chat_agent) if redis_key_exists?(AGENT_CHAT_MANAGEMENT)
+    end
   end
 
   def update_activity_export
