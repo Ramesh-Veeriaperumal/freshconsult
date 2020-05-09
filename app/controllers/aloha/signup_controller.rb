@@ -91,10 +91,12 @@ class Aloha::SignupController < ApplicationController
 
     def enable_freshchat_agent
       account_admin = @current_account.account_managers.first
-      unless account_admin.nil?
+      if account_admin.present? && @current_account.omni_chat_agent_enabled? && account_admin.agent.additional_settings.try(:[], :freshchat).nil?
         agent = account_admin.agent
-        agent.freshchat_enabled = true
-        handle_fchat_agent(agent) if @current_account.omni_chat_agent_enabled? && valid_freshchat_agent_action?(agent)
+        additional_settings = agent.additional_settings
+        additional_settings.merge!(freshchat: { enabled: true })
+        agent.update_attribute(:additional_settings, additional_settings)
+        Rails.logger.info "Enabled Freshchat from signup for Account #{@current_account.id} and for Agent #{agent.id}"
       end
     end
 
