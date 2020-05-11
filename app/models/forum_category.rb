@@ -76,6 +76,9 @@ class ForumCategory < ActiveRecord::Base
 
   # retrieves forums ordered by position
   def self.find_ordered(account, options = {})
+    return where(account_id: account).order('name').all.to_a if options.blank?
+
+    Rails.logger.info "forum_category :: find_ordered :: #{options.inspect}" # PRE-RAILS4: Need to update find(:all) once options passed is changeable.
     find :all, options.update(:conditions => {:account_id => account}, :order => 'name')
   end
 

@@ -9,7 +9,7 @@ class Middleware::ApiResponseWrapper
 
     if to_be_wrapped?
       json_array = ["\"#{api_root_key}\": #{@response.body}"]
-      json_array << ["\"meta\": #{JSON.generate(@response.api_meta)}"] if @response.respond_to?(:api_meta) && @response.api_meta
+      json_array << ["\"meta\": #{@response.api_meta.to_json}"] if @response.respond_to?(:api_meta) && @response.api_meta
       @response.body = "{#{json_array.join(',')}}"
     end
     [@status, @headers, @response]

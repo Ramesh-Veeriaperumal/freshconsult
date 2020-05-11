@@ -41,7 +41,7 @@ class DiscussionsController < ApplicationController
 
 	def show
 
-		@forums = @forum_category.forums.all(:order => 'position')
+		@forums = @forum_category.forums.order('position').all.to_a
 		@page_title = @forum_category.name
 
 		respond_to do |format|
@@ -78,7 +78,7 @@ class DiscussionsController < ApplicationController
 		@topics_count = current_account.topics.count
     respond_to do |format|
       format.html {
-      	@forum_categories = portal_scoper.all(:include => :portals)
+      	@forum_categories = portal_scoper.includes(:portals).all.to_a
       }
       format.any(:json, :xml)  { 
       	# To remove unused eager loading in API request. Temp HACK

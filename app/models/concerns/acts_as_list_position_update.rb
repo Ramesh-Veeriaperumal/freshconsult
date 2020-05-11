@@ -18,7 +18,7 @@ module Concerns::ActsAsListPositionUpdate
 
         Rails.logger.info "----Triggering relative position update-----From #{old_position} to #{new_position}"
         # moving all the ticket_field upwards by 1 relative to current field old position
-        acts_as_list_class.where(scope_condition).update_all('position = (position - 1)', ['position >= ?', old_position]) if old_position.present?
+        acts_as_list_class.where(scope_condition).where(['position >= ?', old_position]).update_all('position = (position - 1)') if old_position.present?
         update_column(:position, nil) # making it null to avoid including in below update
         increment_positions_on_lower_items(new_position) # moving all the ticket field downward by 1 relative to new position
         update_column(:position, new_position) # update to new position

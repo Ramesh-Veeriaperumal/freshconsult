@@ -304,7 +304,7 @@ module Ember
       options = { time_range: 3 }
       Account.current.launch(:es_msearch)
       dashboard = create_dashboard_with_widgets(nil, 1, 0, [options])
-      ::Search::Filters::Docs.any_instance.stubs(:bulk_es_request).returns(JSON.generate({ 'responses' => [{'error':{'root_cause':'I dont know'}}, {'took':2,'timed_out':false,'_shards':{'total':1,'successful':1,'failed':0},'hits':{'total':1,'max_score':0.0,'hits':[]}}] }))
+      ::Search::Filters::Docs.any_instance.stubs(:bulk_es_request).returns({ 'responses' => [{ 'error': { 'root_cause':'I dont know' } }, { 'took':2, 'timed_out':false, '_shards': { 'total':1, 'successful':1, 'failed':0 },'hits': { 'total':1, 'max_score':0.0, 'hits':[] }}] }.to_json)
       get :widgets_data, controller_params(version: 'private', type: 'scorecard', id: dashboard.id)
       assert_response 400
     ensure
@@ -1097,9 +1097,13 @@ module Ember
       widget = @@bar_chart_dashboard.widgets.first
       stub_data = bar_chart_data_es_response_stub(widget)
       ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(stub_data)
+      stub_data = bar_chart_data_es_response_service_stub(widget)
+      ::SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
       get :bar_chart_data, controller_params(version: 'private', id: @@bar_chart_dashboard.id, widget_id: widget.id)
       assert_response 200
       match_json(bar_chart_data_response_pattern(widget))
+    ensure
+      ::SearchService::Client.any_instance.unstub(:multi_aggregate)
     end
 
     def test_widgets_data_for_ticket_trend_card_widgets

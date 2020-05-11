@@ -1,14 +1,5 @@
-db/schema.rb @venkatesanmurali @thanashyam
-db/migrate/*.rb @venkatesanmurali @thanashyam
-
-lib/rabbit_mq/* @sram2020
-
-swagger/* @thanashyam @venkatesanmurali @abinaya21 @ksashikumar
-
-public/* @rajasegar-c @parsurv @vishnubalajikm
 config/locales/en.yml @prakash-chokalingam @rajasegar-c
-api/lib/error_messages.yml @shankar-ganesh @akshayasrikanth
 
 lib/sanitize/config/html_relaxed.rb  @paschalraj
 lib/sanitize/config/image_relaxed.rb @paschalraj
-lib/sanitize/config/* @thanashyam @hrishikesh-p
+lib/sanitize/config/* @thanashyam @hrishikesh-p @ramesh-naidu-e2605-fw

@@ -49,8 +49,7 @@ module CoreTicketFieldsTestHelper
 
   def flexifield_mapping type
     ff_def = @account.ticket_field_def
-    ff_def_entries = ff_def.flexifield_def_entries.all(:conditions => {
-      :flexifield_coltype => FIELD_COLUMN_MAPPING[type][0] })
+    ff_def_entries = ff_def.flexifield_def_entries.where(flexifield_coltype: FIELD_COLUMN_MAPPING[type][0]).all.to_a
 
     used_columns = ff_def_entries.collect { |ff_entry| ff_entry.flexifield_name }
     available_columns = FIELD_COLUMN_MAPPING[type][1] - used_columns

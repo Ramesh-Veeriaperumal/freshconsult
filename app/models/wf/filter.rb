@@ -562,7 +562,7 @@ class Wf::Filter < ActiveRecord::Base
   def errors?
    (@errors and @errors.size > 0)
   end
-  
+
   def empty?
     Rails.logger.info "Wf::Filter::empty? #{size == 0}"
     size == 0

@@ -30,7 +30,7 @@ then
   exit 1;
 fi
 
-source_dir=$2/config/locales
+source_dir=$2/config/locales/mint_translations
 new_dir=$1
 base_lang='en'
 

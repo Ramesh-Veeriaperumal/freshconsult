@@ -1,7 +1,7 @@
 class AccountAdminValidation < ApiValidation
   include AccountConstants
 
-  attr_accessor :first_name, :last_name, :email, :phone, :invoice_emails, :skip_mandatory_checks, :feedback_widget
+  attr_accessor :first_name, :last_name, :email, :phone, :invoice_emails, :skip_mandatory_checks, :feedback_widget, :company_name
 
   validates_presence_of :first_name, :last_name, message: I18n.t('user.errors.required_field'), unless: -> { skip_mandatory_checks_request? }
 

@@ -182,7 +182,7 @@ class SubscriptionAffiliate < ActiveRecord::Base
   # Return the fees owed to an affiliate for a particular time
   # period. The period defaults to the previous month.
   def fees(period = (Time.now.beginning_of_month - 1).beginning_of_month .. (Time.now.beginning_of_month - 1).end_of_month)
-    subscription_payments.all(:conditions => ["created_at > '#{1.year.ago}'"]).collect(&:affiliate_amount).sum    
+    subscription_payments.where(SubscriptionPayment.arel_table[:created_at].gt(1.year.ago)).sum(:affiliate_amount).to_i
   end
 
 end

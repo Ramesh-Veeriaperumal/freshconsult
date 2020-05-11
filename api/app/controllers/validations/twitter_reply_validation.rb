@@ -27,7 +27,7 @@ class TwitterReplyValidation < ApiValidation
 
   def valid_attachments?
     attachment_config = ApiConstants::TWITTER_ATTACHMENT_CONFIG[@tweet_type.to_sym]
-    attachments = Helpdesk::Attachment.find_all_by_id(@attachment_ids) if attachment_config.present?
+    attachments = Helpdesk::Attachment.where(id: @attachment_ids).all.to_a if attachment_config.present?
 
     if attachments.present? && attachments.length == @attachment_ids.length
       attachment_types = []

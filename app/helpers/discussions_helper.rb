@@ -286,7 +286,7 @@ module DiscussionsHelper
   
   def populate_vote_list_content object
     return "" unless User.current.present?
-    output = object.voters.all(:limit => 5).collect(&:name).map do |name|
+    output = object.voters.limit(5).pluck(:name).map do |name|
     					h(name.size > 20 ? name.truncate(20) : name)
     				 end
     output << "..." if object.user_votes > 5

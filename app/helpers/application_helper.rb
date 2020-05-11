@@ -2240,13 +2240,4 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   def split_with_separator(bucket)
     bucket.present? ? bucket.split('||').map(&:strip) : []
   end
-
-  def show_ssl_config_option
-    #  Hide SSL checkbox only if
-    #     (i)  all portals except main portal has cname and ssl_enabled.
-    #     (ii) all portals have no cname.
-    return true if current_account.launched?(:show_ssl_config)
-    return true unless (current_account.portals.where(main_portal: false).all? { |portal| portal.portal_url.present? && portal.ssl_enabled? } || current_account.portals.all? { |portal| portal.portal_url.blank? })
-    false
-  end
 end

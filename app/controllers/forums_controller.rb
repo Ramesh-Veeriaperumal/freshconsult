@@ -112,7 +112,7 @@ class ForumsController < ApplicationController
     end
 
     def fetch_monitorship
-      @monitorship = @forum.monitorships.count(:conditions => ["user_id = ? and active = ?", current_user.id, true])
+      @monitorship = @forum.monitorships.where(['user_id = ? and active = ?', current_user.id, true]).count
     end
 
     def reorder_redirect_url

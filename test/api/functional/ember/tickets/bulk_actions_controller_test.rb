@@ -22,7 +22,12 @@ module Ember
         super
         Sidekiq::Worker.clear_all
         before_all
+        SearchService::Client.any_instance.stubs(:write_count_object).returns(true)
         @account.add_feature(:scenario_automation)
+      end
+
+      def teardown
+        SearchService::Client.any_instance.unstub(:write_count_object)
       end
 
       @@before_all_run = false
@@ -1646,7 +1651,7 @@ module Ember
         end
       end
 
-      def test_bulk_close_with_secure_text_field
+      def test_bulk_update_close_with_secure_text_field
         Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
         ::Tickets::VaultDataCleanupWorker.jobs.clear
         ::Tickets::BulkTicketActions.jobs.clear

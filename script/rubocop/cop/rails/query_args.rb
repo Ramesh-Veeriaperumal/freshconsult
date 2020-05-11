@@ -29,7 +29,7 @@ module RuboCop
         def_node_matcher :query?, '(hash <$(pair (sym {:conditions :order :include :join :joins :group :select :limit :offset}) !nil) ...>)'
 
         def on_send(node)
-          return nil unless [:scope, :count].include?(node.method_name.to_sym)
+          return nil unless [:scope, :count, :sum, :all].include?(node.method_name.to_sym)
 
           node.arguments.each do |args|
             if args.respond_to?(:method_name) && args.method_name.to_sym == :lambda

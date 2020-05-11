@@ -3,6 +3,7 @@ required:
   - first_name
   - last_name
   - email
+  - company_name
 properties:
   first_name:
     type: string
@@ -25,3 +26,5 @@ properties:
     items:
       type: string
       format: email
+  company_name:
+    description: name of the company

@@ -675,3 +675,6 @@
     - premium_supervisor
     - premium_sla_reminders
     - sla_reminders
+    - freshcaller_migration_worker
+    - freshcaller_account_delete
+    - freshcaller_update_agents

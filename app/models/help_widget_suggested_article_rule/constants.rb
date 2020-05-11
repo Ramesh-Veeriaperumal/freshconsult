@@ -4,7 +4,7 @@ class HelpWidgetSuggestedArticleRule < ActiveRecord::Base
   ].freeze
 
   NAME_SET = [
-    [:url, 'HTTP_REFERER', 1].freeze
+    [:url, 'HTTP_X_WIDGET_REFERRER', 1].freeze
   ].freeze
 
   OPERATOR = Hash[*OPERATOR_SET.map { |i| [i[0], i[2]] }.flatten].freeze

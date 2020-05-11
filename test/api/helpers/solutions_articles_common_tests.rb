@@ -854,7 +854,7 @@ module SolutionsArticlesCommonTests
     User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
     User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
     User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
-    @controller.stubs(:publish_privilege?).returns(false)
+    User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(false)
     put :update, construct_params(version: version, id: 1, status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft])
     assert_response 403
     error_info_hash = { details: 'dont have permission to perfom on published article' }

@@ -1807,25 +1807,6 @@
       "note": ""
     },
     {
-      "warning_type": "Mass Assignment",
-      "warning_code": 17,
-      "fingerprint": "59d8c3eb18bf4c627bb5b7873ce46de6ebfba5b889fa31e3965f4741de62a65f",
-      "message": "Unprotected mass assignment",
-      "file": "app/controllers/support/notes_controller.rb",
-      "line": 24,
-      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
-      "code": "Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account).notes.build({ \"incoming\" => true, \"private\" => false, \"source\" => Helpdesk::Source.note_source_keys_by_token[\"note\"], \"user_id\" => ((current_user and current_user.id)), \"account_id\" => ((current_account and current_account.id)) }.merge(params[:helpdesk_note].permit(*[{ :attachments => ([:resource]) }, { :inline_attachment_ids => ([]) }, { :note_body_attributes => ([:body_html]) }])))",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "Support::NotesController",
-        "method": "create"
-      },
-      "user_input": "params[:helpdesk_note].permit(*[{ :attachments => ([:resource]) }, { :inline_attachment_ids => ([]) }, { :note_body_attributes => ([:body_html]) }])",
-      "confidence": "Medium",
-      "note": ""
-    },
-    {
       "warning_type": "SQL Injection",
       "warning_code": 0,
       "fingerprint": "5b3ca8d41afe33ed67005b2f34be8996757bcd43bb73706a487c5d4dc95d711a",
@@ -2913,6 +2894,26 @@
         "method": "s(:self).link_script"
       },
       "user_input": "script_name",
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 17,
+      "fingerprint": "a1873820966713bd807cd27bfb511754e39e242b077098356963365c70b9ef32",
+      "check_name": "MassAssignment",
+      "message": "Unprotected mass assignment",
+      "file": "app/controllers/support/notes_controller.rb",
+      "line": 24,
+      "link": "http://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account).notes.build({ \"incoming\" => true, \"private\" => false, \"source\" => current_account.helpdesk_sources.note_source_keys_by_token[\"note\"], \"user_id\" => ((current_user and current_user.id)), \"account_id\" => ((current_account and current_account.id)) }.merge(params[:helpdesk_note].permit(*[{ :attachments => ([:resource]) }, { :inline_attachment_ids => ([]) }, { :note_body_attributes => ([:body_html]) }])))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Support::NotesController",
+        "method": "create"
+      },
+      "user_input": "params[:helpdesk_note].permit(*[{ :attachments => ([:resource]) }, { :inline_attachment_ids => ([]) }, { :note_body_attributes => ([:body_html]) }])",
       "confidence": "Medium",
       "note": ""
     },
@@ -4388,6 +4389,6 @@
       "note": "The embed is within quoted text"
     }
   ],
-  "updated": "2020-04-16 18:46:32 +0530",
+  "updated": "2020-05-05 09:47:14 +0530",
   "brakeman_version": "3.7.2"
 }

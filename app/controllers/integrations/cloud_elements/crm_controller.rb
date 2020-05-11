@@ -160,7 +160,7 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     api_key = current_user.single_access_token
     tz = ActiveSupport::TimeZone.new(current_account.time_zone).to_s
     tz =~ /\((.*)\)/
-    JSON.generate(json_payload) % {:api_key => api_key, :subdomain => subdomain, :fd_instance_name => "freshdesk_#{element}_#{subdomain}_#{current_account.id}", :time_zone => $1}
+    json_payload.to_json % { api_key: api_key, subdomain: subdomain, fd_instance_name: "freshdesk_#{element}_#{subdomain}_#{current_account.id}", time_zone: $1 }
   end
 
   def fetch_metadata_fields(element_token)

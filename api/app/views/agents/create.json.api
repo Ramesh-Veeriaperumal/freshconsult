@@ -31,4 +31,4 @@ if Account.current.freshcaller_enabled?
 end
 response_hash[:agent_level_id] = @item.scoreboard_level_id if Account.current.gamification_enabled? && Account.current.gamification_enable_enabled?
 response_hash[:contact][:avatar] = AttachmentDecorator.new(user.avatar).to_hash if user.avatar.present?
-JSON.generate(response_hash)
+response_hash.to_json

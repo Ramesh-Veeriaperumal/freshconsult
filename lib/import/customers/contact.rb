@@ -19,9 +19,7 @@ class Import::Customers::Contact < Import::Customers::Base
       item_param[:company_name] = company_param.join(IMPORT_DELIMITER)
     else
       item_param[:client_manager] = cm_param[0] if cm_param.present?
-      item_param[:company_id] = current_account.companies.
-                                find_or_create_by_name(first_valid_company).id unless
-                                first_valid_company.blank?
+      item_param[:company_id] = current_account.companies.where(name: first_valid_company).first_or_create.id if first_valid_company.present?
       item_param.delete(:company_name)
     end
     load_item item_param

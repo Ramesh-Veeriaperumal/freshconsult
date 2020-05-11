@@ -1,1 +1,1 @@
-JSON.generate(@translation_summary)
+@translation_summary.to_json

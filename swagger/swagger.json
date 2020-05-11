@@ -28676,7 +28676,8 @@
       "required": [
         "first_name",
         "last_name",
-        "email"
+        "email",
+        "company_name"
       ],
       "properties": {
         "first_name": {
@@ -28705,6 +28706,9 @@
             "type": "string",
             "format": "email"
           }
+        },
+        "company_name": {
+          "description": "name of the company"
         }
       }
     },

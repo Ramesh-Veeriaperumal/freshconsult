@@ -55,4 +55,16 @@ class AccountAdminValidationTest < ActionView::TestCase
     invoice_email_invalid_message = { invoice_emails: :too_long }
     assert_equal invoice_email_invalid_message, account_admin_validation.errors.to_h
   end
+
+  def test_valid_company_name_string
+    Account.stubs(:current).returns(Account.new)
+    account_admin_validation = AccountAdminValidation.new(first_name: 'me', last_name: 'you', invoice_emails: ['me@you.we'], company_name: 'test')
+    assert account_admin_validation.valid?
+  end
+
+  def test_valid_company_name_integer
+    Account.stubs(:current).returns(Account.new)
+    account_admin_validation = AccountAdminValidation.new(first_name: 'me', last_name: 'you', invoice_emails: ['me@you.we'], company_name: 1)
+    assert account_admin_validation.valid?
+  end
 end
