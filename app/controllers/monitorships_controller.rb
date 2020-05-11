@@ -72,7 +72,7 @@ class MonitorshipsController < ApplicationController
 
     def fetch_monitorship
       user_id = params[:user_id] || current_user.id      
-      @monitorship = Monitorship.find_or_initialize_by_user_id_and_monitorable_id_and_monitorable_type(user_id, params[:id], params[:object].capitalize)
+      @monitorship = Monitorship.where(user_id: user_id, monitorable_id: params[:id], monitorable_type: params[:object].capitalize).first_or_initialize
     end
     
     def follow

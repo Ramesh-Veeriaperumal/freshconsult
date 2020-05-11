@@ -887,11 +887,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def latest_public_comment
-    notes.conversations.public.newest_first.first
+    notes.conversations.public_notes.newest_first.first
   end
 
   def latest_private_comment
-    notes.conversations.private.newest_first.first
+    notes.conversations.private_notes.newest_first.first
   end
 
   def liquidize_comment(comm, html=true)

@@ -114,7 +114,7 @@ class Forum::ForumDrop < BaseDrop
   end
 
   def followed_by_current_user?
-    portal_user.present? && !source.monitorships.count(:conditions => ["user_id = ? and active = ?", portal_user.id, true]).zero?
+    portal_user.present? && !source.monitorships.where(['user_id = ? and active = ?', portal_user.id, true]).count.zero?
   end
 
   def toggle_follow_url

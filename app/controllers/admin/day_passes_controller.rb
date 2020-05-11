@@ -58,7 +58,7 @@ class Admin::DayPassesController < ApplicationController
     end
     
     def load_purchases
-      @day_pass_purchases = current_account.day_pass_purchases.all(:include => :payment)
+      @day_pass_purchases = current_account.day_pass_purchases.includes(:payment).all.to_a
     end
   
     def set_selected_tab

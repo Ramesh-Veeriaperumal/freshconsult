@@ -5,7 +5,7 @@
     "ymls": {
       "datacenter_config": {
       "freshcaller_signup_supported": true,
-      "freshconnect_signup_supported": false,
+      "freshconnect_signup_supported": true,
       "freshmarketer_signup_supported": false
       },
       "custom_survey_result_key": {
@@ -591,6 +591,7 @@
       },
       "sds": {
         "_service_url": "https://antispam-syd.freshdesk.com",
+        "api_key": "EJ[1:pdsUukt5IBLmJtlgCm/LhnTqf1Fvs1i1h+8T7frVtmQ=:ICBxF8lzT1MDuHzqqcDY9nkfOjr5X6tY:mHW/aoj+s/lz5CK/E+w/yZSicIRW48SlORV0j0nFIWjXOQIimo1F3k61Ug0LGXdmmqT/45dcmeYyAUbUR3GK8qC73yVqapo7+oPFoXaCJhKwwdodMSDkEtweQIY1osfP2M9ThIXWTDUYSlk84cr7Qg==]",
         "_outgoing_block_mrr_threshold": 300
       },
       "s3": {

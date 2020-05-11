@@ -11,6 +11,7 @@ module TestClassMethods
   end
 
   def create_session
+    @agent.make_current
     session = UserSession.create!(@agent)
     session.save
     set_request_auth_headers

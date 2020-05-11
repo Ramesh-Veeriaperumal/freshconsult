@@ -27,9 +27,20 @@ scope :something, :include => { something: false }, :order => ""something""
 scope :something, -> { includes(something: true).order(something) }”
 
 # bad
-something.count(:conditions => <some_condition>)
+something.count(..., :conditions => <some_condition>)
 # good
-something.where(<some_condition>).count
+something.where(<some_condition>).count(...)
+
+# bad
+something.sum(..., :conditions => <some_condition>)
+# good
+something.where(<some_condition>).sum(...)
+
+# bad
+something.all(:conditions => <some_condition>, :order => 'some_order')
+# good
+something.where(<some_condition>).order('some_order').all
+
 ```
 
 ### Rails/FinderMethod
@@ -61,12 +72,12 @@ User.where(...)
 # bad
 User.find_or_initialize_by_...(...)
 # good
-User.find_or_initialize_by(...)
+User.where(...).first_or_initialize
 
 # bad
 User.find_or_create_by_...(...)
 # good
-User.find_or_create_by(...)
+User.where(...).first_or_create
 
 # bad
 Topic.paginate_by_forum_id(id, order: 'something desc', page: page)

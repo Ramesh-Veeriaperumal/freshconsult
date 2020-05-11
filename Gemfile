@@ -49,14 +49,13 @@ gem 'iconv', '~> 1.0.4'
 gem 'thrift', '~> 0.9.2.0'
 gem 'charlock_holmes', "0.7.3"
 gem "tnef", "1.0.2"
-gem "central-publisher", git: 'git@github.com:freshdesk/central-publisher.git', tag: 'v2.0.15'
+gem "central-publisher", git: 'git@github.com:freshdesk/central-publisher.git', tag: 'v2.0.16'
 
 gem 'optar', git: 'git@github.com:freshdesk/optar.git', tag: 'v1.1.4'
 
 group :development, :test do
   gem 'active_record_query_trace'
   gem 'rails-dev-boost', :git => 'git://github.com/thedarkone/rails-dev-boost.git'
-  gem 'better_errors', '~> 1.1.0'
   # Commenting out for ruby ~> 2.1.0 upgrade
   # gem "debugger", "~> 1.6.8"
   gem 'pry'
@@ -69,6 +68,7 @@ group :development, :test do
 end
 
 group :development do
+  gem 'better_errors', '~> 1.1.0'
   gem 'pronto'
   gem 'pronto-rubocop', require: false
   gem 'pronto-rails_best_practices', require: false
@@ -227,7 +227,7 @@ gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branc
 gem 'rule_engine', git: 'git@github.com:freshdesk/rule_engine.git', :tag => 'hv0.0.13.15'
 gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v4.0.11'
 gem "freshid-sdk", :git => 'git@github.com:freshdesk/platforms-sdk-ruby.git', tag: '1.0.1', glob: 'gems/freshid-sdk/freshid-sdk.gemspec'
-gem "fluffy", git: 'git@github.com:freshdesk/api-gateway.git', tag: 'v0.0.2', glob: 'clients/fluffy_ruby/src/fluffy.gemspec'
+gem "fluffy", git: 'git@github.com:freshdesk/api-gateway.git', tag: 'v0.0.5', glob: 'clients/fluffy_ruby/src/fluffy.gemspec'
 
 gem 'net-http-persistent', '~> 2.9.4'
 

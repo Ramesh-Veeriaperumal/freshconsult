@@ -34,7 +34,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
     end
     goog_acc.attributes = filtered_google_account_params
     goog_acc.account = account
-    goog_acc.sync_tag = sync_tag_name.blank? ? nil : account.tags.find_or_create_by_name(sync_tag_name)
+    goog_acc.sync_tag = sync_tag_name.blank? ? nil : account.tags.where(name: sync_tag_name).first_or_create
     return goog_acc
   end
 

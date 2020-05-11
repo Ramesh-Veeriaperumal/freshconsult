@@ -274,7 +274,7 @@ class Account < ActiveRecord::Base
     end
 
     def actual_customer_count
-      Account.count('id',:distinct => true,:joins => :subscription_payments)
+      Account.joins(:subscription_payments).count('id', distinct: true) # PRE-RAILS: Query has to be changed in rails upgrade.
     end
 
     def current

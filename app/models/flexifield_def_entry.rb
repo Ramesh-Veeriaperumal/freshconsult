@@ -77,8 +77,7 @@ class FlexifieldDefEntry < ActiveRecord::Base
   end
 
   def self.dropdown_custom_fields(account=Account.current)
-    account.ticket_field_def.flexifield_def_entries.
-              drop_down_fields.all(:select => :flexifield_name).map(&:flexifield_name)
+    account.ticket_field_def.flexifield_def_entries.drop_down_fields.pluck(:flexifield_name)
   end
 
   private

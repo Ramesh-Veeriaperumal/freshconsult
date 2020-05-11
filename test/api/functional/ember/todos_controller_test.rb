@@ -24,7 +24,7 @@ module Ember
       contacts = []
       total_contacts = User.contacts.count
       if total_contacts && total_contacts >= count
-        contacts = User.contacts.all(limit: count)
+        contacts = User.contacts.limit(count).all.to_a
       else
         count.times { contacts.push(add_new_user(@account)) }
       end

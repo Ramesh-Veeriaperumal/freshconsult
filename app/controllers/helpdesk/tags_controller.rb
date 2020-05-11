@@ -34,7 +34,7 @@ class Helpdesk::TagsController < ApplicationController
 
   def rename_tags
     tag = Helpdesk::Tag.find(params[:tag_id])
-    same_name_tags = Helpdesk::Tag.count(:all, :conditions => ["name = ? and id != ?", params[:tag_name], params[:tag_id]])
+    same_name_tags = Helpdesk::Tag.where(['name = ? and id != ?', params[:tag_name], params[:tag_id]]).count
       if same_name_tags > 0
         stat = "existing_tag"
       else
@@ -54,18 +54,16 @@ class Helpdesk::TagsController < ApplicationController
   end
 
   def remove_tag
-    condition = { taggable_type: params[:tag_type], tag_id: params[:tag_id] }
-    tag_uses_count = Account.current.tag_uses.where(condition).count
-    TagUsesCleaner.perform_async(condition) unless tag_uses_count.zero?
+    args = { taggable_type: params[:tag_type], tag_id: params[:tag_id] }
+    tag_uses_count = Account.current.tag_uses.where(args).count
+    args[:doer_id] = User.current.id
+    TagUsesCleaner.perform_async(args) unless tag_uses_count.zero?
     render :json => {:tag_uses_removed_count => tag_uses_count }
   end
 
 
   def autocomplete #Ideally account scoping should go to autocomplete_scoper -Shan
-    items = autocomplete_scoper.find(
-        :all,
-        :conditions => ["name like ?", "#{params[:v]}%"],
-        :limit => 30)
+    items = autocomplete_scoper.where(['name like ?', "#{params[:v]}%"]).limit(30).all.to_a
 
     r = {:results => items.map {|i| {:id => autocomplete_id(i), :value => i.safe_send(autocomplete_field)} } }
 

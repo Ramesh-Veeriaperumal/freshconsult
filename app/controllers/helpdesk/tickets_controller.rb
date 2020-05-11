@@ -440,7 +440,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def latest_ticket_count # Possible dead code
     index_filter =  current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME).deserialize_from_params(params)
-    ticket_count =  current_account.tickets.permissible(current_user).latest_tickets(params[:latest_updated_at]).count(:id, :conditions=> index_filter.sql_conditions)
+    ticket_count =  current_account.tickets.permissible(current_user).latest_tickets(params[:latest_updated_at]).where(index_filter.sql_conditions).count(:id)
 
     respond_to do |format|
       format.html do
@@ -533,9 +533,7 @@ class Helpdesk::TicketsController < ApplicationController
     draft_hash = get_tickets_redis_hash_key(draft_key)
     @draft = draft_hash ? draft_hash["draft_data"] : ""
 
-    @subscription = current_user && @item.subscriptions.find(
-      :first,
-      :conditions => {:user_id => current_user.id}) if current_account.add_watcher_enabled?
+    @subscription = current_user && @item.subscriptions.where(user_id: current_user.id).first if current_account.add_watcher_enabled?
 
     @page_title = "[##{@ticket.display_id}] #{@ticket.subject}"
 

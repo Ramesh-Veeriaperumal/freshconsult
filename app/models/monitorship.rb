@@ -55,7 +55,7 @@ class Monitorship < ActiveRecord::Base
   def merging_topic_followers?
     return false unless monitorable.is_a?(Topic)
     ((monitorable.merged_topics.exists?) and
-      monitorable.merged_monitorships.all(:select => "monitorships.user_id").map(&:user_id).include?(self.user_id))
+      monitorable.merged_monitorships.pluck(:'monitorships.user_id').include?(self.user_id))
   end
 
   def user_has_email

@@ -26,11 +26,11 @@ class Topic < ActiveRecord::Base
 		end
 
 		def find_or_initialize_monitorship(user_id, topic)
-			Monitorship.find_or_initialize_by_user_id_and_monitorable_id_and_monitorable_type(user_id, topic.id, "Topic")
+			Monitorship.where(user_id: user_id, monitorable_id: topic.id, monitorable_type: 'Topic').first_or_initialize
 		end
 
 		def find_or_initialize_vote(user_id, topic)
-			Vote.find_or_initialize_by_user_id_and_voteable_id_and_voteable_type(user_id, topic.id, "Topic")
+			Vote.where(user_id: user_id, voteable_id: topic.id, voteable_type: 'Topic').first_or_initialize
 		end
 
 end

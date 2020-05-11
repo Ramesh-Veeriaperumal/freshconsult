@@ -2,4 +2,5 @@
   global_enable: true
   service_url: <%= node[:ymls][:sds][:service_url] %>
   timeout: 2.0
+  api_key: <%= node[:ymls][:sds][:api_key] %>
   outgoing_block_mrr_threshold: <%= node[:ymls][:sds][:outgoing_block_mrr_threshold] %>

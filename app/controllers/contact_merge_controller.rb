@@ -17,7 +17,7 @@ class ContactMergeController < ApplicationController
     begin
       items = search_users.results.reject(&:parent_id?)
     rescue
-      items = scoper.preload([:user_emails, :avatar, :companies, :default_user_company]).matching_users_from(params[:search_key]).without(@source_user).all(:conditions => { :string_uc04 => nil })
+      items = scoper.preload([:user_emails, :avatar, :companies, :default_user_company]).matching_users_from(params[:search_key]).without(@source_user).where(string_uc04: nil).all.to_a
     end
     r = { :results => search_results(items) }
     render :json => r.to_json

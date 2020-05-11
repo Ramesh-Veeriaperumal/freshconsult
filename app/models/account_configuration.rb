@@ -15,6 +15,7 @@ class AccountConfiguration < ActiveRecord::Base
   after_commit :update_crm_and_map, on: :update, unless: [:sandbox?, :anonymous_account?]
   after_commit :publish_account_central_payload, on: :update, unless: [:sandbox?, :is_anonymous_account?]
   after_commit :populate_industry_based_default_data, on: :update
+  after_commit :update_helpdesk_name, on: :update
   include Concerns::DataEnrichmentConcern
 
   CONTACT_INFO_KEYS = [:full_name, :first_name, :last_name, :email, :notification_emails,  :job_title, :phone]
@@ -202,5 +203,15 @@ class AccountConfiguration < ActiveRecord::Base
         changes[0][:annual_revenue] = prev_metrics[:annualRevenue]
       end
       { account_configuration: changes }
+    end
+
+    def update_helpdesk_name
+      unless previous_changes['company_info'].nil?
+        to_company_name = previous_changes['company_info'][1][:name]
+        if previous_changes['company_info'][0][:name] != to_company_name
+          account.helpdesk_name = to_company_name
+          account.save!
+        end
+      end
     end
 end

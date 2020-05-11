@@ -32,7 +32,8 @@ class AccountDecorator < ApiDecorator
     ret_hash[:social_options] = social_options_hash if record.features?(:twitter) || record.basic_twitter_enabled?
     ret_hash[:dashboard_limits] = record.account_additional_settings.custom_dashboard_limits if record.custom_dashboard_enabled?
     ret_hash[:freshchat] = freshchat_options_hash if record.freshchat_enabled?
-    ret_hash[:contact_info] = record.contact_info.presence
+    ret_hash[:contact_info] = record.contact_info.presence || {}
+    ret_hash[:contact_info][:company_name] = record.account_configuration.admin_company_name
     trial_subscription = record.latest_trial_subscription_from_cache
     ret_hash[:trial_subscription] = trial_subscription_hash(trial_subscription) if trial_subscription
     cancellation_requested = record.account_cancellation_requested?

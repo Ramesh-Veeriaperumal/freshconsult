@@ -51,11 +51,12 @@ module RuboCop
         FINDER_METHOD_PATTERN = /^((find|scoped|paginate)_((all|last|or_initialize|or_create)_)?by_)(.+?)(!)?$/.freeze
         FINDER_METHOD_ALTERNATE = {
           find: 'where(...) or where(...).first',
+          find_by_: 'where(...).first',
           find_all_by_: 'where(...)',
           find_last_by_: 'where(...).last',
           scoped_by_: 'where(...)',
-          # find_or_initialize_by_: 'find_or_initialize_by(...)',
-          # find_or_create_by_: 'find_or_create_by(...)',
+          find_or_initialize_by_: 'where(...).first_or_initialize',
+          find_or_create_by_: 'where(...).first_or_create',
           paginate_by_: 'where(...).paginate(...)'
         }.freeze
 

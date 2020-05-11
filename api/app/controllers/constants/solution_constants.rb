@@ -77,7 +77,7 @@ module SolutionConstants
   SUGGESTED_FIELDS = %w[articles_suggested].freeze
 
   KBASE_EMAIL_SOURCE = 'kbase_email'.freeze
-  UNTRANSLATED_ARTICLES_FIELDS = %w[portal_id language category folder status page per_page].freeze
+  UNTRANSLATED_ARTICLES_FIELDS = %w[portal_id language category folder status approver page per_page].freeze
   INSERT_SOLUTION_ACTIONS = %w[index article_content].freeze
 
   ARTICLES_PRIVATE_CONTROLLER = 'ember/solutions/articles'.freeze

@@ -77,7 +77,7 @@ module Concerns
       def quoted_text(item, forward = false)
         # item can be note/ticket
         # If its a ticket we will be getting the last note from the ticket
-        @last_item = (item.is_a?(Helpdesk::Note) || forward) ? item : (item.notes.visible.public.last || item)
+        @last_item = item.is_a?(Helpdesk::Note) || forward ? item : (item.notes.visible.public_notes.last || item)
 
         %(<div class="freshdesk_quote">
             <blockquote class="freshdesk_quote">
@@ -129,7 +129,7 @@ module Concerns
       end
 
       def reply_cc_emails(ticket)
-        ticket.notes.visible.public.exists? ? ticket.current_cc_emails : ticket.reply_to_all_emails
+        ticket.notes.visible.public_notes.exists? ? ticket.current_cc_emails : ticket.reply_to_all_emails
       end
   end
 end

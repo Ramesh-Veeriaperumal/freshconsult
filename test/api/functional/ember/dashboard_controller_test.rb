@@ -107,10 +107,14 @@ module Ember
     def test_scorecard_for_admin
       agent = add_test_agent(@account, role: Role.where(name: 'Administrator').first.id)
       group = create_group(@account)
+      stub_data = scorecard_stub_data
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
       @controller.stubs(:current_user).returns(agent)
       get :scorecard, controller_params(version: 'private', group_ids: [group.id])
       assert_response 200
       @controller.unstub(:current_user)
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
     end
 
     def test_scorecard_with_group_id_not_a_number

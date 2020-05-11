@@ -191,7 +191,7 @@ class ConversationDelegator < ConversationBaseDelegator
   end
 
   def validate_agent_emails
-    invalid_emails = to_emails - Account.current.agents_details_from_cache.map(&:email)
+    invalid_emails = to_emails.map(&:downcase) - Account.current.agents_details_from_cache.map(&:email)
     unless invalid_emails.empty?
       errors[:notify_emails] << :invalid_agent_emails
       (self.error_options ||= {}).merge!(notify_emails: { invalid_emails: invalid_emails.join(', ').to_s })

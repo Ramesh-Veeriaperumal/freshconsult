@@ -39,7 +39,7 @@ class PostObserver < ActiveRecord::Observer
   end
 
   def send_monitorship_emails(post)
-    post.topic.monitorships.active_monitors.all(:include => [:portal, :user]).each do |monitorship|
+    post.topic.monitorships.active_monitors.includes([:portal, :user]).each do |monitorship|
     	next if monitorship.user.nil? or monitorship.user.email.blank? or (post.user_id == monitorship.user_id)
     	PostMailer.send_email(:monitor_email, monitorship.user, monitorship.user.email, post, post.user, monitorship.portal, *monitorship.sender_and_host)
     end
@@ -66,7 +66,7 @@ class PostObserver < ActiveRecord::Observer
     end
 
     def update_cached_fields(post)
-      Forum.update_all ['posts_count = ?', Post.count(:id, :conditions => {:forum_id => post.forum_id, :published => true })], ['id = ?', post.forum_id]
+      Forum.where(['id = ?', post.forum_id]).update_all(['posts_count = ?', Post.where(forum_id: post.forum_id, published: true).count(:id)])
       User.update_posts_count(post.user_id)
       post.topic.update_cached_post_fields(post)
   	end

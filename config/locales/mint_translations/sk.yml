@@ -1,2265 +1,2696 @@
-"sk":
-  "attach_file": "Priložiť súbor"
-  "edit_forum_category": "Upraviť kategóriu fóra"
-  "total": "Súčet"
-  "export_data":
-    "export": "Export"
-    "csv": "CSV"
-    "xls": "Excel"
-    "select_all": "Vybrať všetko"
-    "select_header": "Vybrať všetky polia"
-    "from": "Od"
-    "select_format": "Exportovať ako:"
-    "to": "Komu"
-    "view_all_tickets": "Exportovať ako CSV"
-  "go_back": "Ísť Späť"
-  "mailbox":
-    "imap_port": "Port"
-    "authentication": "Autentifikácia:"
-    "user_name": "Meno užívateľa"
-    "verifying_mailbox_input": "Overovanie..."
-    "use_ssl_tls": "Použiť SSL/TLS"
-    "use_ssl": "Použiť SSL"
-    "smtp_port": "Port"
-    "password": "Heslo"
-    "incoming_mail_settings": "Nastavenia prichádzajúcej pošty"
-  "success": "Úspech"
-  "forum":
-    "visible_to": "Kto to uvidí"
-    "confim_msg1": "Ste si istý, že chcete zmazať toto fórum?"
-    "verb":
-      "announcement": "Oznámené"
-      "questions": "Otázka položená"
-      "problems": "Problém hlásený"
-      "ideas": "Nápad zdieľaný s"
-    "start_topic": "Založiť tému"
-    "type": "Typ fóra"
-    "new": "Nové Fórum"
-    "edit": "Upraviť Fórum"
-    "title": "Fóra"
-  "agent_working_on_this_ticket": "Agent pracujúci na tomto tikete"
-  "more": "viac"
-  "message": "Správa"
-  "level_label": "Stupeň"
-  "topics":
-    "edit_title": "Upraviť"
-    "show":
-      "mark_this_idea_as": "Označiť tento nápad ako"
-  "step1": "Krok 1"
-  "contacts":
-    "contacts": "kontakty"
-    "reply": "Odpovedať"
-    "new": "Nový Kontakt"
-    "send_activation": "Odoslať aktivačný email"
-    "add_new_requester": "Pridať Nového Zadávateľa"
-    "status_title":
-      "verified": "Aktívny kontakt"
-      "unverified": "Osoby s neovereným emailom"
-      "blocked": "Zablokované kontakty"
-      "all": "Všetky kontakty"
-      "deleted": "Zmazané kontakty"
-    "showing": "Zobrazenie:"
-    "status":
-      "all": "Všetci"
-      "unverified": "Neoverený"
-      "deleted": "Zmazané"
-      "blocked": "Blokovaný"
-      "verified": "Overené"
-      "spam": "Spam"
-    "title": "Kontakty"
-    "info2": "Zmeniť na Agenta"
-    "restore": "Obnoviť"
-  "forum_confirm_msg1": "Ste si istý, že chcete zmazať túto kategóriu?"
-  "reorder": "Usporiadať."
-  "billing_address": "Fakturačná adresa"
-  "save": "Uložiť"
-  "change_password": "Zmena hesla"
-  "filter_options":
-    "tags": "Značky"
-    "source": "Zdroj"
-    "unassigned": "Neprioradené"
-  "folder":
-    "edit": "Upraviť zložku"
-  "example": "príklad"
-  "customers": "Zákazníci"
-  "import_solution_article_info": "Poznámka: Neukládáme komentáre k fóram"
-  "none": "Žiadny"
-  "mailer_notifier":
-    "hi": "Ahoj,"
-    "thanks": "Ďakujeme,"
-  "copied_link": "Skopírované"
-  "Email": "E-mail zadávateľa"
-  "zendesk_backup_info": "Zvoľte zálohovací súbor, ktorý ste vytvorili v Zendesk aplikácii"
-  "right": "Vpravo"
-  "agent":
-    "insert_placeholder": "Vložiť zástupný symbol"
-    "permissions": "Oprávnenia"
-    "days_ago": "%{days} pred"
-    "more": "viac"
-    "agent_restored": "Agent bol obnovený"
-    "assign": "Priradiť"
-    "info3": "Ste si istý, že chcete zmazať"
-    "ago": "%{time} pred."
-    "group_info": "Môžu si pozerať tikery vo svojej skupině alebo skupinách a im priradené tikety"
-    "full_time_agent": "Agent na plný úväzok"
-    "add_signature": "Pridať podpis"
-    "group": "Agent (Skupinový Prístup)"
-    "export": "Export"
-    "individual": "Agent (Obmedzený Prístup)"
-    "contact_exists": "Zadávateľ s emailom '%{existing_email}' už existuje, %{use_email}"
-    "password_reset_note": "Poznámka: Obnovenie emailu s pokynmi bude odoslané zadávateľovi %{requester} "
-    "info1": "Toto je Zmazaný Agent"
-    "occasional_agent": "Príležitostný Agent"
-    "day_pass_expired": "Vaše denné vstupy vypršali, prihlásením získáte novú dennú priepustku."
-    "occasional": "Občas"
-    "admin_info": "Môže vykonávať všetky činnosti správy"
-    "admin": "Administrátor"
-    "last_logged_in": "Posledné prihlásenie pred %{time}"
-    "new": "Nový Agent"
-    "supervisor": "Supervízor"
-    "update": "Aktualizovať"
-    "supervisor_info": "Môže si zobrazovať všetky tikety v helpdesku a pristupovať k zostavám (bez správcovských oprávnení)"
-    "never_logged_in": "Doteraz sa neprihlásil"
-    "individual_info": "Môžu si zobrazovať len im priradené tikety"
-    "full_time": "Celodenne"
-    "info4": "Peeviesť na osobu zákazníka"
-    "showing": "Zobrazenie:"
-    "edit": "Upraviť Agenta"
-    "use_email": "Použiť tento email"
-    "view_user": "Ukázať Užívateľa"
-    "insufficient_day_pass": "Nebolo možné Vám priradiť dennú priepustku, kontaktujte prosím svôjho správcu."
-    "helpcard":
-      "title3": "Agent (Skupinový Prístup)"
-    "signature": "Podpis"
-    "password_reset_message": "Chcete obnovit heslo zadávateľa %{requester}?"
-    "title": "Agenti"
-    "no_recent_activity": "Žiadna nedávna aktivita"
-    "deleted":
-      "no_agents": "Nemáte žiadnych zmazaných agentov"
-      "agent_deleted": "Agent bol zmazaný"
-    "occasional_description": "Tento agent bude pristupovať k portálu podpory"
-    "make_admin": "Urobiť tohoto agenta administrátorom"
-    "global_info": "Môže si zobrazovať všetky tikety v helpdesku"
-    "skill": "Skúsenosti"
-    "info2": "Tento email je už použitý"
-    "active":
-      "no_agents": "Nepridali ste do zoznamu žiadneho agenta"
-    "restore": "Obnoviť"
-    "global": "Agent (Globálny Prístup)"
-    "account_suspended": "účet bol pozastavený"
-    "roles": "Roly"
-    "last_seen_at": "Naposledy zobrazené"
-  "back": "Späť"
-  "change_plan": "Zmeniť licenciu"
-  "agent_emailnotverified": "Email nebol overený pre tohoto agenta!"
-  "zendesk_url_info": "e.g:- http://acme.zendesk.com"
-  "add_holiday": "Pridať sviatok"
-  "next": "Ďalší"
-  "top": "Hore"
-  "enter_a_value": "Zadajte hodnotu"
-  "email_command_preview_to_email_value": "support@acme.freshdesk.com"
-  "dispatch":
-    "reorder": "Usporiadať."
-    "match_any": "Hľadať Akékoľvek"
-    "info3": "Kde by toto pravidlo malo byť použité"
-    "rule_name": "Názov pravidla"
-    "new_rule": "Nové pravidlo"
-    "new": "Dispečér - Nové pravidlo"
-    "add_new_action": "Pridat novú akcii"
-    "dispatch_rules": "Dispečer - Pravidla"
-    "edit": "Dispečér - Upraviť pravidlo"
-    "helpcard":
-      "info1": "Dispečér umožňuje previesť vaše interné procesy do automatizovaných postupov podpory, aplikováním preddefinovaných sád akcií na novo vytvorené tikety v závislosti na daných podmienkach. Môžete napríklad použiť Dispečér na automatické zaraďovanie do kategórií, prideľovaním priorít alebo priraďovanie nových tiketov príslušným agentom Vášho týmu."
-    "inactive_rules": "Neaktívne pravidlá"
-    "title": "Dispečér"
-    "match_all": "Hľadať Akékoľvek"
-    "add_condition": "Pridať novú podmienku"
-    "description": "Popis"
-    "act_to_perform": "Akcie na vykonanie"
-    "conditions": "Podmienky"
-    "actions": "Akcie"
-  "warning": "UPOZORNENIE"
-  "zendesk_url": "Zendesk URL"
-  "delete_topic_msg": "Zmazať túto tému navždy"
-  "errors_in_payment_info": "Vo Vašich platobných údajoch sa vyskytla chyba:"
-  "change_plan_info": "Svoju licenciu môžete kedykoľvek zmeniť, dalšia fakturácia je %{date}."
-  "forum_category":
-    "product_portal_visibility": "Viditeľné v jazyku"
-  "cancel": "Zrušiť"
-  "errors_in_plan_change": "Chyby vzniknuté pri zmene:"
-  "non_covered_feature_error": "Vaša súčasná licencia neobsahuje túto funkciu."
-  "company":
-    "title": "Spoločnosti"
-    "title1": "spoločnosti?"
-    "new": "Nová spoločnosť"
-    "info11": "Naozaj chcete túto položku odstrániť"
-  "marketplace":
-    "delete_action":
-      "success": "Integrácia bola úspešne zakázaná!"
-    "view_all": "Zobraziť všetko"
-    "view_more": "Zobraziť viac"
-    "cancel": "Zrušiť"
-    "help_and_support": "Pomoc a podpora"
-    "settings": "Nastavenia"
-    "helpnote1": "Apps in Freshdesk let you share data with third party solutions and services that you use regularly. They also enable you to add additional features to the ticket and contact details page. Freshdesk offers several apps out-of-the-box. To browse our selection of apps, click on the “Get more Apps” button."
-    "tooltip":
-      "suspended": "Nedostupné"
-    "custom_apps": "Vlastné aplikácie"
-    "time_ago": "dozadu"
-    "validation_failed": "Overenie zlyhalo."
-    "installing_text": "Čakajte, prosím…"
-    "paid_app": "ZAPLATENÉ"
-    "overview": "Prehľad"
-    "install": "Nainštalovať"
-    "published_in": "v"
-    "popular": "Obľúbené"
-    "apps": "Aplikácie"
-    "reauthorize": "Opätovné autorizovanie"
-    "go_to_dev_portal": "Prejdite na portál pre vývojárov"
-    "no_mktp_apps_note": "Integrovali sme niektoré z vašich obľúbených aplikácií."
-    "ver": "Verzia: "
-    "coming_soon": "Prichádza čoskoro"
-    "latest": "Najnovšie"
-    "no_custom_apps_note": "Vytvorte vlastné aplikácie a zverejnite ich na portáli pre vývojárov."
-    "field_blank": "Vyplňte povinné polia."
-    "terms_of_use": "Podmienky používania"
-    "description": "Popis"
-    "no_mktp_apps": "Neboli nainštalované žiadne aplikácie"
-  "shortcuts":
-    "ticket_detail_list_common":
-      "reply": "Odpovedať"
-      "scenario": "Scenáre"
-      "forward": "Preposlať"
-      "delete_ticket": "Vymazať tiket"
-      "search": "Hľadať"
-      "add_note": "Pridať poznámku"
-    "goto_tab":
-      "social": "Socialne siete"
-      "tickets": "Tikety"
-      "dashboard": "Nástenka"
-      "forums": "Fóra"
-      "customers": "Zákazníci"
-      "solutions": "Riešenia"
-    "title": "Klávesové skratky"
-  "proceed_billing_info": "Áno, pokračovať k fakturácii"
-  "integration":
-    "helpcard":
-      "title2": "Vlastné aplikácie"
-      "title1": "Prepojenie"
-  "plans_billing": "Plán a Platby"
-  "gamification":
-    "levels":
-      "expert": "Expert"
-      "intermediate": "Stredne pokročilý"
-      "professional": "Profesionál"
-      "guru": "Guru"
-      "master": "Majster"
-      "beginner": "Začiatočník"
-    "leaderboard":
-      "sharpshooter_trophie_info": "Agent s najvyšším počtom bodov za vyriešenie pri prvom volaní za tento mesiac"
-      "love_trophie_info": "Agent s maximálnym počtom bodov spokojnosti zákazníkov v tomto mesiaci"
-      "mvp_trophie_info": "Zástupca s nejväčším celkovým počtom bodov v tomto mesiaci"
-      "speed_trophie_label": "Pretekár"
-      "speed_trophie_info": "Agent s nejväčším celkovým počtom bodov za rychlé riešenie v tomto mesiaci"
-      "mvp_trophie_label": "Najužitočnější hráč"
-      "sharpshooter_trophie_label": "Ostrostrelec"
-      "love_trophie_label": "Zákaznicky šampión"
-  "delete": "Zmazať"
-  "add_note": "Pridať Poznámku"
-  "reply": "Odpovedať"
-  "user_sessions":
-    "new":
-      "email": "E-mail zadávateľa"
-      "sign_in_using_google": "Zaregistrovať se pomocou účtu Google"
-      "password": "Heslo"
-      "remember": "Zapamätaj si ma na tomto počítači"
-      "sign_in_using": "Prihlásiť sa"
-      "help": "Pomocník"
-      "login": "Prihlásenie"
-  "current_plan": "Aktuálna licencia"
-  "settings": "nastavenia"
-  "group":
-    "working_hours_header": "Pracovné hodiny"
-    "toggle_availability_for_rr": "Povoliť zástupcom zmeniť svoju dostupnosť pre automatické priradenie tiketu"
-    "info1": "Agenti"
-    "new": "Nová Skupina"
-    "maximum": "Maximum"
-    "enable": "Aktivovať"
-    "learn_more": "Čítaj viac"
-    "name": "Názov Skupiny"
-    "info5": "Ste si istý"
-    "info4": "pokiaľ tiket zostane nepriradený dlhšie ako"
-    "edit": "Upraviť Skupinu"
-    "confirm": "Potvrdiť"
-    "title": "Agent (Skupinový Prístup)"
-    "helptext": "Môžete si usporiadať svojich agentov do špecifických skupín, ako sú \"Predaj\" a \"Produktový management\". Segmentácia do divízií umožňuje ľahko priradiť tikety, vytvárať špecifické odpovede, nastaviť upozornenie e-mailom, vytváranie obchodných pravidiel a generovanie zostáv na úrovni skupiny. Všimnite si, že rovnaký agent môže byť členom viacerých skupín."
-    "ticket_assignment": "Automatické Priradenie Tiketu"
-    "select_an_agent": "Zvoliť Agenta"
-    "business_calendar": "Pracovné hodiny"
-    "description": "Popis Skupiny"
-  "email_command_preview_to_email": "Komu"
-  "ticket_field":
-    "helpcard":
-      "title1": "Pole tiketu"
-  "activations":
-    "activate_freshdesk_account": "Aktivujte svoj účet"
-  "import_note_info": "Uistite sa, že prvý riadok hlavičky obsahuje informácie (napr. meno, e-mail a pod). Pole v súbore CSV môže byť v ľubovoľnom poradí."
-  "export": "Export"
-  "no_tags": "Nenájdené žiadne značky"
-  "save_changes": "Uložiť Zmeny"
-  "payment_info": "Údaje o platbe"
-  "attach_files": "Pripojiť súbory"
-  "username": "Uživateľské meno"
-  "reports":
-    "scoreboard_title_nav": "Rebríčky"
-    "survey_reports":
-      "main":
-        "time_period": "Časové obdobie"
-        "neutral": "Neutrálne"
-        "survey_name": "Názov prieskumu"
-        "total_responses_v2": "Súčet"
-        "agent": "Zástupca"
-        "positive": "Pozitívne"
-        "group": "Skupina"
-        "overall_rating": "Hodnotenie"
-        "responses": "Odpovede"
-        "negative": "Negatívne"
-        "no_overview": "Nie sú dostupné žiadne dáta"
-        "unanswered": "Bez odovede"
-        "overview": "Prehľad"
-        "answered": "Opovedané"
-        "all": "Všetci"
-        "rating": "Hodnotenie"
-    "summary":
-      "fcr": "Vyriešené pri prvom zavolaní"
-    "discard_changes": "Zrušiť zmeny"
-    "date_ranges":
-      "yesterday": "Včera"
-      "custom": "Rozpätie dátumov"
-      "today": "Dnes"
-      "last_30_days": "Posledných 30 dní"
-      "last_90_days": "Posledných 90 dní"
-      "last_7_days": "Posledných 7 dní"
-    "livechat":
-      "time_period": "Časové obdobie"
-      "chat_type": "Typ chatu"
-      "answered_chats": "Opovedané"
-      "missed_chats": "Zmeškané"
-      "group": "Skupina"
-      "filter_close": "Zavrieť"
-      "filter_report": "Upraviť filter"
-      "total_chats": "Súčet"
-      "widget": "Widget"
-      "filter_by_title": "Filtrované podľa"
-    "timesheet_reports":
-      "index":
-        "select_agent": "Zvoliť Agenta"
-        "filter_report": "Upraviť filter"
-        "ticket_type": "Typ Tiketu"
-    "freshfone":
-      "time_period": "Časové obdobie"
-      "group": "Skupina"
-      "call_type": "Typ hovoru"
-      "filter_option_all_calls": "Všetky hovory"
-      "filter_close": "Zavrieť"
-      "all_numbers": "Všetky čísla"
-      "filter_report": "Upraviť filter"
-      "number": "Číslo"
-      "business_hours": "Pracovné hodiny"
-      "unanswered_count": "Bez odovede"
-      "options":
-        "unassigned": "Neprioradené"
-        "incoming": "Prichádzajúci"
-        "outgoing": "Odchádzajúci"
-      "filter_by_title": "Filtrované podľa"
-    "time_sheets":
-      "time_period": "Časové obdobie"
-      "filter_by_title": "Filtrované podľa"
-  "import_user_org_text": "Všetci užívatelia; Organizácie Vášho účtu Zendesk budú importované na účet Freshdesk ako aj \"Kontakty a Spoločnosti\""
-  "portal_key": "Portál"
-  "agent_info_title": "Informácie o Agentovi"
-  "favicon": "Ikona pre adresný riadok internetového prehiadača"
-  "number_of_attachments": " prílohy"
-  "ticket":
-    "properties": "Vlastnosti Tiketu"
-    "reported": "reportované"
-    "sort_by": "Zoradiť podľa"
-    "submit_ticket": "Predložiť"
-    "priority": "Priorita"
-    "via": "prostredníctvom"
-    "add_note": "Pridať poznámku"
-    "update_done": "Hotovo"
-    "note_form":
-      "form_title": "Pridať Poznámku"
-      "private_note": "Toto je súkromá poznámka. Zadávateľovii sa nezobrazí."
-    "view_facebook": "Zobraziť na Facebooku"
-    "search_text": "Hľadaj Články"
-    "view_twitter": "Pozrieť Twitter"
-    "assigned_agent": "Zástupca"
-    "created_by": "Vytvoril(a):"
-    "status": "Stav"
-    "ticket_url": "URL tiketu"
-    "action": "Akcia"
-    "available_commands": "Dostupné Príkazy"
-    "submit_loading": "Odosielanie..."
-    "source": "Zdroj"
-    "type": "Typ"
-    "updating": "Aktualizácia"
-    "from": "Od:"
-    "close_btn_title": "Uzatvoriť Tiket"
-    "thanks_v1": "Ďakujeme za odoslání reakcie"
-  "user":
-    "phone_no": "Telefónny kontakt"
-    "remove_profile_image_confirm": "Skutočne chcete zmazať obrázok z Vášho profilu?"
-    "full_name": "Celé Meno"
-    "change_photo": "Zmeniť foto"
-    "phone_number": "Telefónny kontakt"
-    "info1": "Profilový obrázok osoby. Pre zachovanie kvality, doporučujeme použiť obrázok  s rovnakou šírkou a výškou."
-    "choose_another_photo": "Vyberte iné foto"
-    "profile_picture": "Foto"
-    "remove_photo": "Odstrániť foto"
-    "email": "E-mail zadávateľa"
-    "industry": "Odvetvie"
-    "name": "Meno"
-    "photo": "Foto"
-    "last_name": "Priezvisko"
-    "twitter_id": "Twitter"
-    "first_name": "Krstné meno"
-    "title": "Titul"
-    "mobile_phone": "Mobilný telefón"
-    "work": "Práca"
-    "company_name": "Spoločnosť"
-    "mobile": "Mobil"
-    "job_title": "Pracovná pozícia"
-  "admin":
-    "products":
-      "helpnote":
-        "content1": "Môžete podporovať svoje rôzne produkty na rôznych portáloch z jedného účtu FreshDesk. Nakonfigurujte e-maily podpory pre každý produkt zvlášť a automaticky ho smerujte na príslušné skupiny agentov."
-        "heading2": "Nakonfigurujte rôzne portály pro každý produkt"
-        "content2": "Keď nakonfigurujete oddelene portál pre každý produkt, môžete zároveň poskytovať jedinečnú sadu riešení a fór pre každý z nich."
-        "heading1": "Viac produktov"
-      "index":
-        "add_product": "Nový produkt"
-        "title": "Produkty"
-      "primary_product_support_email": "Primárný e-mail produktovej podpory"
-      "form":
-        "forwarding_email_info": "Adresa pre preposlanie e-mailu:"
-        "product_support_emails": "E-maily produktovej podpory"
-        "enter_support_email_id": "Váš email podpory"
-        "product_desc": "Popis"
-        "product_name": "Názov produktu"
-      "new":
-        "title": "Nový Produkt"
-      "product":
-        "email_not_verified": "Neoverený"
-        "customize_portal": "Prispôsobiť portál"
-        "delete": "Ste si istý, že chcete zmazať tento produkt?"
-        "enable_portal": "Povoliť portál"
-      "edit":
-        "title": "Upraviť produkt"
-      "portal":
-        "select_solution_category": "Zvoľte kategóriu riešení..."
-        "select_forum_category": "Zvoľte kategóriu fóra"
-        "ago": "dozadu"
-        "portal_customization": "Prispôsobenie portálu"
-        "settings": "Nastavenia"
-        "customer_portal": "Zákaznícky Portál"
-        "customize_portal": "Prispôsobiť portál"
-        "portal_rebranding": "Zmena vzhľadu portálu"
-        "portal_name_info": "Názov / méno bude zobrazené na portály Vašho produktu, v hlavičke vedľa loga"
-        "portal_settings": "Nastavenie portálu"
-        "portal_language": "Jazyk portálu"
-        "portal_name": "Názov portálu"
-        "portal_language_info": "Toto bude predvolený jazyk pri návšteve zákazníkov na Vašom portály"
-        "portal_url": "Adresa portálu"
-        "contact_us": "Kontaktujte nás"
-      "add_another_email": "Pridať ďalší e-mail"
-    "skills":
-      "index":
-        "skills": "Skúsenosti"
-        "description": "Popis"
-        "skill_create": "Vytvoriť"
-        "agents": "Agenti"
-        "add_label": "Pridať"
-        "manage_label": "Spravovať"
-        "agent_label": "Zástupca"
-        "agents_label": "Agenti"
-    "security":
-      "index":
-        "request_custom_ssl": "Chcete na svojom portály používať uživateľské SSL?"
-        "enable_sso_info": "Jednotné Prihlásenie Vám umožní používať Vašu vlastnú aplikáciu alebo centralizovaný server (jako je MS Active Directory) k autentifikácii agentov a zákazníkov tak, že budú môcť pristupovať do Freshdesku bez nutnosti zadávať oddelene uživateľské meno a heslo."
-        "submit_request": "Odoslať Požiadavku"
-        "helpdesk_url": "Helpdesk URL"
-        "security_title": "Zabezpečenie"
-        "default_ssl": "Predvolený SSL"
-        "add_new": "Pridať nový"
-        "enable_SSL": "Aktivovať SSL"
-        "enable_SSL_anon": "SSL zaisťuje šifrovanie dát z/na portály FreshDesk"
-        "multiple_product_ssl_warning": "SSL nebude použiteľné, pokiaľ je nakonfigurovaných viac produkto."
-        "whitelisted_ips_enabled": "Biela listina IP"
-        "custom_ssl": "Užívateľský SSL"
-        "only_agents": "Agenti"
-        "remote_login_url_info": "Na túto adresu bude Freshdesk presmerovávať užívateľov k autentifikácii v prípade, že sa budú prihlasovať do Freshdesku."
-        "customer_portal_ssl_warning": "Keďže má Váš účet nakonfigurovanú vlastnú adresu URL helpdesku, budete presmerovaný na"
-        "success_message": "Vaša požiadavka o uživatelský certifikát SSL bola prijatá a bude spracovaná v najkratšom možnom termíne. Pred schválením obdržíte potvrdzujúci mail od nášho providera. Prosím skontrolujte si maily."
-        "saml_logout_url": "URL pre odhlásenie"
-        "shared_secret_info": "Prosím, skopírujte si tento kľúč a bezpečne uschovajte. Budete ho potrebovať k povoleniu vzdialeného overovania. Toto je spoločné tajemstvo mezi Vami a Freshdeskom."
-        "for_agents": "Pre Agentov"
-        "remote_login_url": "Adresa pre vzdialené prihlásenie"
-        "remote_logout_url_info": "Toto je webová adresa, ktorá v prípade, že sa užívateľ odhlási z Freshdesku, presmeruje daných užívateľov na požadovanú stránku."
-        "agents_customers": "Agenti a Zákazníci"
-        "shared_secret": "Spoločné Tajomstvo"
-        "remote_logout_url": "Adresa pre vzdialené odhlásenie"
-        "thanks_message": "<span class=\\\"thanks_message\\\">Ďakujeme za žiadosť o užívatelský certifikát SSL.</span><br />"
-        "enable_sso": "Jednotné Príhlásenie"
-      "password_security":
-        "never": "Nikdy"
-        "days": "dni"
-        "characters": "znaky"
-        "have_mixed_case": "Použite kombináciu"
-        "password": "heslo"
-        "default": "Predvolené"
-        "advanced": "Pokročilé"
-      "helpnote":
-        "title": "Bezpečnostné nastavenie"
-        "info2": "<b>Povolenie SSL zabezpečenia</b><br />Môžete si zaistiť bezpečnú komunikáciu k Vášmu portálu podpory prostredníctvom povolení SSL kódov. Freshdesk ponúka predvolený \"wildcard\" SSL certifikát pre všetky účty na doméne freshdesk.com. <b>Upozorňujeme, že nie je možné použiť \"wildcard\" SSL pokiaľ používate pri tomto portály vlastné URL. </b>Pokiaľ máte zvolenú licenciu \"Estate\", môžete si pre toto URL požiadať o užívateľský SSL certifikát."
-        "info1": "<b>Povolenie jednotného prístupu \"Single Sign On\"</b><br /> Keď Vaši užívatelia už od Vás majú prihlasovacie oprávnenie (napr. cez Active Directory alebo Vašu vlastnú WEB aplikáciu) môžete im umožniť prístup na Váš portál podpory s týmito oprávneniami, tj. v režime Single Sign On. Ďalšie informácie o nastavení jednotného prístupu na Freshdesk<a href=\"https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk\">zistite tu</a>."
-    "user_skills":
-      "index":
-        "more": "viac"
-        "groups": "Skupina"
-        "any": "Ľubovolné"
-    "ecommerce":
-      "new":
-        "account_name": "Meno účtu"
-        "title": "Nový účet"
-        "assign_group": "Priradiť do skupiny"
-      "index":
-        "new_account": "Nový účet"
-      "index_title": "Elektronický obchod"
-    "widget_config":
-      "popup_widget":
-        "feedbackwidget_search_area": "Hľadaj Články"
-        "feedbackwidget_attach_a_file": "Priložiť súbor"
-        "feedbackwidget_button_text_placeholder": "podporu"
-        "feedbackwidget_offset": "Vyrovnať:"
-        "feedbackwidget_submit_title": "Odoslať spätnú väzbu"
-        "thankyou_default": "Ďakujeme za odoslání reakcie"
-      "index":
-        "feedbackwidget_popup_tab": "Popup widget"
-      "embedded_widget":
-        "feedbackwidget_attach_a_file": "Priložiť súbor"
-        "feedbackwidget_submit_title": "Odoslať spätnú väzbu"
-        "feedbackwidget_search_area": "Hľadaj Články"
-        "thankyou_default": "Ďakujeme za odoslání reakcie"
-      "popup_embedded_widget":
-        "feedbackwidget_search_area": "Hľadaj Články"
-        "feedbackwidget_button_text_placeholder": "podporu"
-        "thankyou_default": "Ďakujeme za odoslání reakcie"
-        "feedbackwidget_attach_a_file": "Priložiť súbor"
-    "gamification":
-      "gamification_settings":
-        "title_ticket_points": "Body Tiketov"
-        "award_points": "Body ocenení"
-        "title_levels": "Úrovne agentov"
-        "bonus_points_for": "Bonusové body pre:"
-        "firstcall_resolution": "Vyriešené pri prvom zavolaní"
-        "fast_resolution": "Rýchle <span>(< 1 hr)</span>"
-        "title_points_configuration": "Konfigurácia bodov"
-        "ontime_resolution": "Včas <span>(V rámci SLA)</span>"
-        "happy_customer": "Spokojný zákazník"
-        "info_levels": "Nastavte body, ktoré musí agent získať, aby dosiahol danej úrovne"
-        "late_resolution": "Neskoro <span>(Oneskorené)</span>"
-        "agent_resolves_ticket": "Keď agent <br /> vyrieši tiket:"
-        "unhappy_customer": "Nespokojný zákazník"
-        "bonus_points": "Bónusové body"
-        "title_trophies": "Trofeje"
-        "new_quest": "Nová výzva"
-        "enable_label": "Gamifikácia zástupcov"
-        "quest_title": "Výzvy"
-      "help_text":
-        "why_game_info2": "Agent môže dosiahnúť vyššiu úroveň získavaním stále väčšieho počtu bodov. Počet bodov, ktorý je nutné získať, nastavuje administrátor."
-        "quest_form_info2": "Po dokončení vyberte kritéria výzvy (čo má agent urobiť) a pridajte podmienky, ktoré keď sa splnia získa agent známku."
-        "quest": "Výzvy"
-        "quest_info2": "Všetky výzvy sú primárne nastavené ako zapnuté. Môžete vybrať tie, ktoré nechcete, a vypnete ich. Ak chcete pridať viac výziev alebo vytvoriť výzvu podľa vlastných cieľov, kliknutím na položku „Nová výzva“ vytvoríte novú výzvu s podmienkami, ktoré chcete."
-        "trophies_info1": "Agent obdrží 4 trofeje na základe rôznych kritérií."
-        "quest_form_info3": "Vyberte body, ktoré agent získa, a známku, ktorou bude odmenený. Potom svoju výzvu nazvite a krátko ju opíšte."
-        "quest_info1": "Výzvy predstavujú výkonnnostné ciele, ktoré nastavujete pre agentov. Keď ich splnia, sú odmenený známkami."
-        "why_game": "Body a úrovne"
-        "why_game_info1": "Body sú udelované agentom na základe toho, ako rýchle vyriešia priradené tikeky. K dispozícii sú aj bónusové body za vyriešenie prvého volania a spokojenosti zákazníkov. Agenti aj strácajú body za neskoré vyriešenie tiketov a za nespokojných zákazníkov."
-        "quest_form_info4": "Uložte nastavenia kliknutím na položku „Uložiť výzvu“."
-        "quest_form_info1": "Vyberte typ výzvy, ktorý chcete nastaviť pre agenta. Môže to byť jedna z troch možností: <br /> a) objasnené tikety,<br /> b) publikované riešenia a <br /> c) príspevky vo fórach."
-      "quests": "Výzvy"
-      "index":
-        "learn_arcade": "Naučte se viac o arkáde"
-        "info1": "Nyní je pro zástupce každý požadavek šancí skórovat. A co je ještě lepší - za odměnu dostanete pro váš tým takové bonusové body, které jsou pro vás důležité. Dávejte rychlé odpovědi a správná řešení jako první a vyhrajte skvělé hodnocení od vašich zákazníků."
-        "enable_arcade": "Povoliť FreshDesk arkádu"
-        "video": "Vyskúšajte video"
-        "info2": "Sledujte postup svého týmu vpravo na nástěnce a získejte speciální trofeje pro nejlepší \"střelce\" a staňte se Závodníkem, Ostrostřelcem, Zákaznickým šampiónem a nebo nejlépe Nejvíce hodnoceným hráčem měsíce."
-        "title": "Nastavenie Arcade"
-        "start_over": "Resetovať"
-      "new_quest": "Nová výzva"
-      "points": "Body"
-      "fresh_arcade": "Čo je to FreshDesk arkáda?"
-    "surveys":
-      "new_layout":
-        "title": "Názov prieskumu"
-        "loading": "Načítavanie..."
-      "index":
-        "hide": "Odobrať"
-        "cancel": "Zrušiť"
-        "delete": "Zmazať"
-        "new": "Nová"
-        "update": "aktualizovať"
-        "save_survey": "Uložiť"
-        "edit": "Upraviť"
-        "title": "Nastavení parametrů Spokojenosti zákazníků"
-        "activate_survey": "Aktivovať"
-        "preview_survey": "Náhľad"
-      "new_thanks":
-        "additional_comments_feedback_v2": "Vrátane ďalšieho políčka na komentáre"
-        "thanks_message_feedback_v2": "Správa s poďakovaním pre doplnkovú spätnú väzbu"
-      "satisfaction_settings":
-        "link_text_info": "Tento text se zobrazí pod Vaším podpisem v dolnej části e-mailu odoslanom zákazníkovi."
-        "link_text_input": "Sdělte nám prosím, jak jste byli spokojeni s podporou."
-        "send_while_option4": "Umožnite agentom, aby pridali odkazy na dotazník do konkrétnych e-mailov."
-        "send_while_option2": "E-maily odoslané po objasnení tiketu."
-        "link_text_label": "Text odkazu na dotazník spokojnosti"
-        "send_while_title": "Vyberte, které e-maily mají mít odkaz na dotazník spokojenosti"
-        "send_while_option1": "Všetky e-maily odoslané zákazníkovi."
-        "send_while_option3": "E-maily odoslané po uzavretí tiketu."
-        "enable_label": "Dotazník spokojnosti zákazníkov"
-      "helptext": "<p><b>Why enable satisfaction surveys?</b> <br> Satisfaction Surveys let you add a link to your response emails and directly collect customer feedback and satisfaction. <br><br> <b>Creating your satisfaction survey:</b><br> The following steps let you collect feedback from your customers through a link in your response emails:<br> 1.Enable the Customer Satisfaction Surveys checkbox<br> 2.Specify the Satisfaction Link Text. The default text goes as &ldquo;Please let us know your opinion on our support experience.&rdquo;<br> <br> <b>Choose which emails have the satisfaction survey link:</b><br> You can choose whether satisfaction survey links are sent to customers in every email, or only in the final email once the ticket is resolved. <br><br> You can learn more about satisfaction surveys from our solutions page. </p>"
-      "new_questions_layout":
-        "questions": "Otázky"
-      "new_rating":
-        "error_text": "Toto pole je povinné"
-      "thanks_contents":
-        "title_text_v2": "Správa s poďakovaním pre prieskum spokojnosti zákazníkov"
-    "shared":
-      "filter_jsinit":
-        "insert_placeholder": "Vložiť zástupný symbol"
-        "user_pass?": "Mám užívateľské meno a heslo?"
-        "selected": "Vybrané"
-        "api_key": "Kľúč API"
-        "change_password": "Zmena hesla"
-        "url": "URL výzvy"
-        "body": "Telo"
-        "api_key?": "Mám kľúč API?"
-        "params": "Obsah"
-        "username": "Uživateľské meno"
-        "request_type": "Typ žiadosti"
-        "simple_layout": "Jednoduché"
-        "subject": "Predmet"
-        "advanced_webhook_tip": "Táto sekcia vám umožňuje písať vlastné API požiadavky. Pre začlenenie informácií o tikete kliknite na tlačítko Vložiť zástupné symboly, ako napr. Meno zadávateľa, Priorita, Stav tiketu atď."
-        "not_selected": "Nevybrané"
-        "password": "Heslo"
-        "advanced_layout": "Pokročilé"
-        "to": "Komu"
-        "content_type": "Kódovanie"
-    "contact_fields":
-      "formfield_props":
-        "behavior": "Správanie"
-        "customer_edit": "Zákazník môže upravovať"
-        "field_label_agents": "Značka poľa pro agentov"
-        "for_customer": "Pre Zákazníkov"
-        "label": "Štítok"
-        "customer_visible": "Zobraziť zákazníkovi"
-        "customer_mandatory": "Povinné pre odoslanie formulára"
-        "field_label_customer": "Značka poľa pro zákazníkov"
-        "customer_edit_signup": "Zákazník to môže vidieť, ak sa zaregistruje"
-        "for_agents": "Pre Agentov"
-        "agent_mandatory_submission": "Povinné pre odoslanie formulára"
-        "delete_field": "Odstrániť pole"
-        "default": "Predvolené"
-        "form_title": "Vlastnosti"
-    "quests":
-      "quest_form":
-        "quest_type": "Typ Výzvy"
-        "forum": "Zapojené <br /> <strong>v komunite </strong>"
-        "save": "Uložiť výzvu"
-        "no_condition": "Tu nie sú žiadne podmienky"
-        "quest_objectives": "Ciele výzvy"
-        "ticket": "Objasnené <br /> <strong> Tikety </strong>"
-        "brief": "Stručne o vašej výzve"
-        "edit": "Editácia výzvy"
-        "bonus_points": "Bónusové body"
-        "final": "... a nakoniec"
-        "completion": "Po úspešnom splnení výzvy nasleduje odmena známkou a bonusovými bodmi"
-        "pick_badge": "Vybrať si známku"
-        "reward": "Odmena"
-        "quest_name": "Názov Vašej výzvy"
-        "solution": "Publikované <br /> <strong> Riešenia </strong>"
-        "change": "Zmeniť"
-        "badge": "Známka"
-      "index":
-        "new_quest": "Nová výzva"
-        "quest_description": "Výzvy sú konkrétne obchodné ciele, ktoré vytvárate pre agentov, aby sa ich snažili dosiahnuť!"
-        "quest_title": "Výzvy"
-    "observer_rules":
-      "agent": "Zástupca"
-      "helpnote":
-        "help_title_2a": "Udalosti"
-        "help_title_2d": "Akcie"
-        "help_title": "Pozorovateľ"
-      "anyone": "Ktokoľvek"
-      "system": "Systém"
-      "actions": "akcie na vykonanie"
-      "customer": "Zadávateľ"
-    "portal_settings":
-      "simple":
-        "bg_color": "Telo"
-        "headingsColor": "Farba titulku"
-        "btn_background": "Tlačítko druhotnej akcie"
-        "inputFocusRingColor": "Farba aktívneho rámčeku"
-        "tab_color": "Pozadie"
-        "linkColor": "Text odkazu"
-        "headingsFont": "Font titulku"
-        "footer_color": "Päta"
-        "textColor": "Základná farba"
-        "header_color": "Záhlavie"
-        "baseFont": "Základný font"
-        "btn_primary_background": "Tlačítko prvotnej akcie"
-        "tab_hover_color": "Aktívna záložka"
-        "help_center_color": "Centrum nápovedy"
-        "linkColorHover": "Farba textu nad odkazom"
-    "supervisor_rules":
-      "new":
-        "title": "Supervízor - Upraviť Pravidlo"
-      "index":
-        "title": "Pravidlá Supervízora"
-      "edit":
-        "title": "Supervízor - Upraviť Pravidlo"
-      "helpnote":
-        "help_title": "Supervízor"
-        "help_info_2": "Supervízor bude spustený každú hodinu a spracuje tikety aktualizované v priebehu posledných 30 dní. Tieto pravidlá sú sputené sekvenčne, takže ich poradie je dôležité - akcie jedného pravidla môžu ovplyvniť podmienky následujúceho."
-        "help_info_1": "Supervízor vytvára akcie na tikety v závislosti od ich stavu a času spracovania. Periodicky kontroluje posledné tikety a vytvára akcie, ako sú posielanie upomienok zákazníkovi pri čakání na jeho reakciu, alebo eskaláciu omeškaných tiketov na zodpovednú osobu."
-    "portal":
-      "settings":
-        "simple_none": "Žiadny"
-        "everyone": "Všetci"
-        "facebook": "Facebook"
-        "twitter": "Twitter"
-        "google": "Google"
-        "important": "Dôležitý"
-    "day_passes":
-      "index":
-        "agent": "Zástupca"
-        "payment_info": "Pre pridanie ďalších denních vstupov vložte údaje o platbe"
-        "no_of_day_passes": "# z Denných Vstupov"
-        "email": "E-mail zadávateľa"
-        "auto_recharge": "Automatické dobíjanie"
-        "add_confirm": "Čiastka bude odpočítaná z Vašej kreditnej karty"
-        "day_pass_history": "História Nákupov"
-        "add_payment_info": "Vložte údaje o platbe"
-        "order": "Objednávka #"
-        "title": "Denný Vstup"
-        "recharge_quantity": "Dobíjané množstvo:"
-        "buy_now": "Kúpiť teraz"
-        "date": "Dátum"
-        "helptext": "Vaše denné vstupy sa automaticky dobíjajú, akonáhle počet dostupných denných vstupov klesne na 2."
-        "no_credit_card": "Nemáme záznam o žiadnej kreditnej karte."
-        "all": "Všetci"
-        "filtered_by": "Filtrovať podľa:"
-      "helpnote":
-        "title": "Denný Vstup"
-        "info": "Za každý den, kdy se občasný zástupce přihlásí do helpdesku se použije jedna Denní propustka. Můžete si koupit Denní propustky v balíčcích po 5ks a nastavit FreshDesk tak, aby je automaticky dokupoval, jakmile je spotřebujete."
-    "home":
-      "index":
-        "billing": "Plán a Platby"
-        "title": "Administrátor"
-    "getting_started":
-      "index":
-        "support_email_subtitle": "Pridajte primárnu emailovú adresu podpory"
-        "emails_invalid": "Jeden alebo viac Vašich e-mailov je neplatných."
-        "agent_limit_reached": "Presiahli ste limit max.počtu agentov."
-        "going_social": "Zapojte <br>sa do sociálnych sietí"
-        "support_email_title": "E-mail<br> podpory"
-        "title_message": "Naštartujte Vašu podporu v štyroch krokoch..."
-        "rebranding_header": "Zvoľte pre Váš helpdesk nejaké príma meno :-)"
-        "next_please_wait": "Čakajte, prosím…"
-        "rebrand_tab_empty": "Je vyžadovaný kód farby záložky."
-        "info": "Budete musieť v mailovej schránke podpory vytvoriť jednoduché pravidlo na preposielanie emailu na túto adresu."
-        "rebrand_title": "Logo <br>&amp; farby"
-        "email_sent_success": "E-mail bol úspešne odoslaný."
-        "social_add_account": "Pridať účet"
-        "rebrand_header_invalid": "Kód farby hlavičky nie je správne zadáný."
-        "adding_agents": "Pridanie<br> agentov"
-        "support_email_submsg": "Toto bude primárna adresa na preposielanie keď budete odpovedať  na<br>dotazy z FreshDesku."
-        "skip_text": "Nie ďakujem, presmerujte ma na môj helpdesk."
-        "agents_subtitle": "Pozvěte svůj tým aby se podílel na té zábavě :-)"
-        "send_test_mail_info2": "Tu je uvedené<a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>ako to urobiť</a>."
-        "rebrand_subtitle": "Zmeňte vzhľad pomocou vlastného loga a farieb!"
-        "agent_title_info": "Přidejte emaily členů svého týmu a pozvěte je doFreshDesku. Vícenásobné adrfesy oddělujte středníkem."
-        "rebrand_bg_invalid": "Kód farby pozadia nie je správne zadáný."
-        "email_send_problem": "Problém pri odosielaní e-mailu."
-        "implement_changes": "Implementovanie zmien..."
-        "rebrand_company_field_placeholder": "Zadajte názov Vašej spoločnosti"
-        "rebrand_tab_invalid": "Kód farby záložky nie je správne zadáný."
-        "back_link": "Späť"
-        "agent_email_required": "K odoslaniu pozvánky je nutné ID e-mailu"
-        "agent_invite_field_placeholder": "Zadať e-maily členov Vášho tímu"
-        "send_invite": "Poslať pozvánku"
-        "congratulations": "Gratulujeme! Váš FreshDesk je pripravený!"
-        "sending_test_mail_progress": "Odesielanie skúšobného e-mailu, prosím čakejte..."
-        "title1": "A teraz dajte tieto emaily na FreshDesk"
-        "rebrand_header_empty": "Je vyžadovaný kód farby hlavičky."
-        "problem_updating": "Problém s aktualizáciou, skúste to prosím znovu."
-        "updating": "Aktualizovanie..."
-        "rebrand_bg_empty": "Je vyžadovaný kód farby pozadia."
-        "validating": "Overovanie..."
-        "social_info_text": "Pridajte sem svoje účty z Twitteru a Facebooku a budete môcť sledovať svoje sociálne interakcie a prenášať na FreshDesk správy z nástenky, tweety, DMka a správy."
-        "successfully_sent": "Úspešne odoslané."
-        "email_invalid": "Váš e-mail je neplatný, skontrolujte si ho."
-        "info2": "Nie ste s tím spokojný? Vložte nový email a kliknite na \"Uložiť\""
-        "next_alt_text": "Skočit priamo tam!"
-        "social_twitter_add": "Pridať účet"
-        "helpdesk_preview_text": "Náhľad"
-        "social_subtitle": "Zapojte podporu do sociálnych sietí!"
-        "agent_email_sending": "Odosielanie pozvánok..."
-        "successfully_updated": "Úspešne aktualizované."
-        "rebrand_submit_label": "Zmeniť vzhľad"
-        "next_link": "Ďalší"
-        "footer_msg": "<strong>Poznámka:<strong>Tieto nastavenia môžete kedykoľvek zmeniť na <a href='/admin/home' target='_blank' style='text-decoration:none; color:#1272DE'>záložke Admin</a>"
-      "send_mail_content":
-        "send_test_mail_yes_response": "Dobrá práca! Práve ste úspešne nastavili email podpory v systéme FreshDesk. Prejeme úspešné podporovanie!"
-        "send_test_mail_confirm_no": "Nie, nevidím žiadny tiket."
-        "button_title": "Odoslať skúšobný e-mail"
-        "send_test_mail_confirm_yes": "Ano, mám to."
-        "button_sending": "Odesielanie…"
-        "test_info_1": "Myslíte, že všetko zatiaľ vypadá v poriadku? Skúste poslať testovací email."
-        "button_again_title": "…alebo odošlite znovu skúšobný e-mail"
-    "company_fields":
-      "formfield_props":
-        "behavior": "Správanie"
-        "customer_edit": "Zákazník môže upravovať"
-        "field_label_agents": "Značka poľa pro agentov"
-        "dropdown_items_edit": "Položky rozbaľovacieho zoznamu – upraviť pohľad"
-        "for_customer": "Pre Zákazníkov"
-        "label": "Štítok"
-        "cc_company_contacts": "Do Kópie je možné pridať len kontakty spoločnosti"
-        "customer_visible": "Zobraziť zákazníkovi"
-        "cc_any_email": "Do Kópie je možné pridať akúkoľvek emailovú adresu"
-        "customer_mandatory": "Povinné pre odoslanie formulára"
-        "sla_timer": "Počítadlo SLA"
-        "field_label_customer": "Značka poľa pro zákazníkov"
-        "level2": "Úroveň 2"
-        "nestedfield_helptext_preview": "Toto je \"Náhľad\" vzor rozbaľovacích položiek pri použití voľných textových formov v \"Uprav zobrazenie\" k editovaniu položiek"
-        "dropdown_items_preview": "Položky rozbaľovacieho zoznamu – Náhľad"
-        "agent_mandatory_closure": "Povinné pre uzatvorenie tiketu"
-        "level3": "Úroveň 3"
-        "display_cc_field": "Zobraziť pole Kópie"
-        "customer_edit_signup": "Zákazník to môže vidieť, ak sa zaregistruje"
-        "for_agents": "Pre Agentov"
-        "status_choices": "Voľby stavu"
-        "nested_label": "Popisky vnoreného poľa"
-        "agent_mandatory_submission": "Povinné pre odoslanie formulára"
-        "level1": "Úroveň 1"
-        "display_to_customer": "Zobraziť správu pre zákazníka"
-        "delete_field": "Odstrániť pole"
-        "default": "Predvolené"
-        "description": "Popis"
-        "form_title": "Vlastnosti"
-    "social":
-      "streams":
-        "visibility":
-          "all": "Všetci"
-        "cancel": "Zrušiť"
-        "twitter_streams":
-          "reauthorize": "Opätovné autorizovanie"
-          "edit": "Upraviť"
-        "update": "Aktualizovať"
-        "index":
-          "new_account": "Nový účet"
-      "twitter_streams":
-        "edit":
-          "visible_to": "Kto to uvidí"
-        "new":
-          "create": "Vytvoriť"
-      "ticket_rules":
-        "assign_to_gp": "Priradiť do skupiny"
-    "roles":
-      "permissions": "Oprávnenia"
-      "role_name": "Názov role"
-      "agent_label": "Zástupca"
-      "add_agent_label": "Pridať agenta"
-      "scroll":
-        "customers": "Zákazníci"
-        "forums": "Fóra"
-        "solutions": "Riešenia"
-        "reports": "Reporty"
-        "bots": "Boty"
-        "general": "Všeobecný"
-        "tickets": "Tikety"
-      "agents_label": "Agenti"
-      "new": "Nová rola"
-      "saving_label": "Uloženie..."
-      "role_description": "Popis"
-      "cancel_label": "Zrušiť"
-      "done_label": "Hotovo"
-      "save_label": "Uložiť"
-      "manage_label": "Spravovať"
-      "add_label": "Pridať"
-  "posted_by": "Poslané"
-  "cloud_log_mailer":
-    "logger_email":
-      "regards": "S pozdravom,"
-      "account": "Účet: "
-      "reason": "Príčina"
-  "validation":
-    "required": "Toto pole je povinné."
-  "merge_contacts":
-    "please_wait": "Čakajte, prosím..."
-  "portals_key": "Portály"
-  "forgot_password": "Zabudnuté Heslo"
-  "profile":
-    "current_password": "Súčasné heslo"
-    "manage": "Spravujte svôj profil"
-    "new_password": "Nové herslo"
-    "api_key":
-      "reset_warning": "Po resetovaní API kľúča prestanú pracovať všetky aplikácie, ktoré používajú starý kľúč. Naozaj chcete pokračovat?"
-      "reset": "Resetovať API kľúč"
-      "title": "Váš API kľúč"
-    "change_password": "Zmena hesla"
-    "edit": "Upraviť Profil"
-    "confirm_password": "Potvrdiť heslo"
-  "canned_folders":
-    "insert_placeholder": "Vložiť zástupný symbol"
-  "enable": "Aktivovať"
-  "plain_yes": "Áno"
-  "enabled": "Povolené"
-  "attachment_help_info": "Veľkosť príloh(y) môže byť až 15 MB"
-  "agent_deleted_message": "Zoto je zmazaný agent"
-  "footer":
-    "helpdesk_software": "Helpdesk softvér"
-    "by_freshdesk": "Freshdesk"
-  "email": "E-mail zadávateľa"
-  "reset": "Resetovať"
-  "your_email": "Váš email"
-  "event":
-    "type": "Typ"
-  "errors":
-    "invalid_domain":
-      "freshdesk": "Freshdesk"
-  "medium": "Stredná"
-  "yes_password_reset": "Áno"
-  "update": "Aktualizovať"
-  "note": "Poznámka:"
-  "plan_amount": "za 1 agenta / mesiac"
-  "make_payment": "Vykonať platbu"
-  "helpdesk":
-    "time_sheets":
-      "agent": "Zástupca"
-      "group_by": "Zoskupiť podľa"
-      "customer": "Zákazník"
-      "group": "Skupina"
-      "report":
-        "no_timeentry": "Nie sú dostupné žiadne dáta"
-        "total": "Súčet"
-      "product": "Produkt"
-    "tickets":
-      "views":
-        "shared_by_me": "Tikety, ktoré som zdieľal"
-        "shared_with_me": "Tikety, ktoré zdieľali so mnou"
-        "my_open": "Moje Otvorené Tikety"
-        "article_feedback": "Spätná väzba na článok"
-        "my_overdue": "Moje Oneskorené Tikety"
-        "archived": "Archivované"
-        "resolved_or_closed": "Vyriešené alebo Uzatvorené"
-        "deleted": "Kôš"
-        "open_or_pending": "Otvorené alebo Nerozhodnuté"
-        "my_article_feedback": "Spätná väzba na Moje články"
-        "spam": "Spam"
-        "all": "Všetky tikety"
-        "overdue": "Oneskorené tikety"
-        "open": "Otvorené Tikety"
-        "all_tickets": "Všetky tikety"
-      "friendly_status":
-        "customer_responded": "Zákazník reagoval"
-        "elapsed": "Oneskorená odozva"
-        "customer_responded_overdue": "Zákazník reagoval"
-        "resolved": "Vyriešené"
-        "overdue": "Oneskorenie"
-        "new": "Nová"
-      "show":
-        "reply_form":
-          "to": "Komu:"
-        "forward_form":
-          "title": "Od:"
-      "note":
-        "deleted_note": "Zmazané"
-      "add_watcher":
-        "me": "Ja"
-    "shared":
-      "ok": "OK"
-      "update": "Aktualizovať"
-      "hide_cc": "Skryť kópiu"
-      "cc": "kópia"
-  "import_solution_article": "Zaradiť článok z fóra ako riešenie"
-  "solutions":
-    "status":
-      "published": "Publikované"
-      "draft": "Návrh"
-  "undo": "Späť"
-  "agents": "Agenti"
-  "google_signup":
-    "associate_google":
-      "login": "Prihlásenie"
-      "email_address": "E-mailová adresa"
-    "signup_google":
-      "company_name": "Názov spoločnosti"
-      "phone_no": "Telefónne číslo"
-      "create_my_account": "Vytvoriť si účet"
-      "submit": "Predložiť"
-  "import_zendesk_title": "Importovať zo Zendesk"
-  "admin_upgrade":
-    "enable_mint_title": "Umožnite zástupcom vyskúšať novší a rýchlejší Mint"
-    "enable_mint_error": "Mint bol zapnutý pre všetkých zástupcov. Najnovšie nastavenia sa zobrazia po obnovení."
-    "enable_mint_success": "Výborne! Mint bol úspešne zapnutý pre všetkých zástupcov."
-  "plain_off": "Vypnutý"
-  "Agent": "Zástupca"
-  "attachment": "Príloha"
-  "import_user_org": "Uživatelia a Organizácie"
-  "step2": "Krok 2"
-  "name": "Meno"
-  "email_notifications":
-    "insert_placeholder": "Vložiť Zástupnú Značku/Placeholder"
-    "notify_agents": "Upozorniť zástupcov"
-    "agent_select_title": "Upozorniť zástupcov"
-    "notification_template": "Šablóny"
-    "edit": "Upraviť"
-    "singular_title": "Upozornenie"
-    "helpcard":
-      "info3": "V pripravenej odpovedi môžete použiť zástupné značky pre vytvorenie premenného obsahu (napr. meno zadávateľa, ID tiketu, URL adresa, ...)"
-      "reply_template_15":
-        "topic": "Šablóna Odpovede Agenta"
-      "agent_template_12":
-        "topic": "Nebolo dodržané SLA pri prvej odpovedi"
-      "agent_template_10":
-        "topic": "Aktivačný email užívateľa"
-      "agent_template_25":
-        "topic": "E-mail s pozvaním pre zástupcu"
-      "requester_template_1":
-        "topic": "Vytvorený nový tiket"
-      "requester_template_8":
-        "topic": "Agent uzatvára Tiket"
-      "requester_template_7":
-        "topic": "Agent vyriešil Tiket"
-      "agent_template_13":
-        "topic": "Nesplnenie času na vyriešenie podľa SLA"
-      "agent_template_14":
-        "topic": "E-mail pre obnovu hesla"
-      "agent_template_1":
-        "topic": "Vytvorený nový tiket"
-      "info2": "Môžete nastaviť zákaz upozorňovania a nastaviť pravidlá Dispečera a Supervízora pre doplnenie udalosti."
-      "requester_template_10":
-        "topic": "Aktivačný email užívateľa"
-      "requester_template_14":
-        "topic": "E-mail pre obnovu hesla"
-    "requestor_notification": "Upozornenie Zadávateľa"
-    "subject": "Predmet"
-    "title": "Emailové Upozornenie"
-    "add": "Pridať"
-    "default_reply_template_info": "Šablóna sa objaví automaticky pre všetky odpovede agentov, kedykoľvek budú odpovedať na tikety"
-    "agent_notification": "Notifikácia Agenta"
-  "widgets":
-    "feedback_widgets":
-      "new":
-        "feedback_widgets_search_results": "Výsledky hľadania"
-        "problems_with_fields": "V nasledujúcích poliach boll zistené problémy:"
-        "feedback_widgets_search": "Hľadať"
-        "feedback_widgets_knowledge_base": "Databáza znalostí "
-  "quests":
-    "solution_mand": "Doplňte prosím riešenia"
-    "js_forum_txt": "$$questmode$$ $$questvalue$$ príspevkov fór v rozpätí $$questtime$$ za splnenia týchto podmienok."
-    "delete": "Chcete určite odstrániť túto výzvu?"
-    "ticket_mand": "Doplňte prosím počet vyriešených tiketov."
-    "badge_mand": "Zvoľte prosím znak."
-    "js_ticket_txt": "Vyriešte Tikety $$questvalue$$ v rozpätí $$questtime$$ za splnenia týchto podmienok."
-    "js_solution_txt": "Vytvorte $$questvalue $$  príspevok do databázy znalostí  v rozpätí $$questtime$$  a zodpovedajúci týmto podmienkam."
-    "js_quest_txt": "Po úspešnom splnení vyhľadania môžete ovoľniť znaky $$badgename$$ a bonusové body $$questpoints$$."
-    "forum_mand": "Doplňte prosím počet fór."
-    "name_mand": "Uveďte prosím názov vyhľadávania."
-  "add_a_topic": "Založiť Tému"
-  "attach": "Priložiť"
-  "tag":
-    "title": "Značky"
-  "index_tooltip_loading_msg": "Načítavanie..."
-  "forum_shared":
-    "topic_vote":
-      "problem":
-        "voted_users_widget_title": "Ľudia ktorý majú tento problém"
-        "vote_button": "Mám tento problém"
-        "vote_info_include_1": "Máte tento problém"
-      "ideas":
-        "vote_button": "Páči sa mi tento nápad"
-        "voted_users_widget_title": "Ľudia, ktorým sa páči tento nápad"
-        "vote_info_include_1": "Tento nápad sa Vám páči"
-      "howto":
-        "voted_users_widget_title": "Ľudia s touto otázkou"
-        "vote_info_include_1": "Máte túto otázku"
-        "vote_button": "Mám túto otázku"
-      "unlike": "Nepáči sa"
-    "follow_topic": "Sledovať tému"
-    "post":
-      "delete_comment": "Zmazať komentár"
-      "edit_comment": "Upraviť komentár"
-      "delete_comment_confirm": "Zmazať tento komentár? Ste si istý?"
-      "post_accepted_as_a_good_answer": "Tento príspevok je prijatý ako dobrá odpoveď na danú tému"
-      "unmark_answer": "Zrušte to ako odpoveď"
-      "answer": "Odpoveď"
-      "mark_answer": "Označit ako odpoveď"
-    "edit_title": "Upraviť"
-  "send_feedback": "Odoslať spätnú väzbu"
-  "support":
-    "tickets":
-      "ticket_survey":
-        "rate_again": "Ohodnoťte nás znova"
-        "cancel": "Zrušiť"
-        "load_questions": "Zobraziť viac"
-        "change_of_mind": "Zmenili ste názor?"
-        "rating_sub_title": "Ohodnotili ste nás"
-        "submit": "Predložiť"
-        "title": "Užívateľské hodnotenie"
-        "feedback_title": "Pokiaľ chcete, popíšte svoju skúsenosť s podporou"
-        "comments": "Poznámky"
-        "survey_title": "Urobte si prosím chvíľku na zhodnotenie našej podpory"
-    "shared":
-      "survey_form":
-        "feedback_title": "Aké Vaše postrehy a konkrétna kritika nám umožní zlepšiť našu podporu do budúcna"
-        "survey_title": "Vyčleňte si chvíľku prosím a ohodnoťte našu podporu"
-        "submit": "Predložiť"
-        "cancel": "Zrušiť"
-        "change_of_mind": "Zmenili ste názor?"
-        "rate_again": "Ohodnoťte nás znova"
-      "related_files": "Súvisiace súbory"
-      "was_this_article_useful": "Bol tento článok užitočný?"
-    "surveys":
-      "new":
-        "feedback_optional": "Spätná väzba nie je povinná"
-        "submit": "Predložiť"
-        "unhappy_info": "Zaistíme, že budeme dbať na zvýšenú opatrnosť."
-        "thanks_info": "Ďakujeme, že ste si vyčlenili chvíľku a ohodnotili naši podporu."
-        "happy_info": "S radosťou sme Vám poskytli naše služby a sme radi, že ste boli spokojní s našimi službami"
-        "additional_info": "Môžete s nami zdieľať ako se vám s nami spolupracovalo."
-        "send": "Odoslať spätnú väzbu"
-        "thanks": "Veľmi pekne ďakujeme za Vaše hodnotenie!"
-    "canned_form":
-      "hey": "Ahoj"
-      "next": "Ďalší"
-      "thank_you_text": "Ďakujeme"
-      "form_submit": "Predložiť"
-    "login":
-      "form":
-        "remember": "Zapamätaj si ma na tomto počítači"
-        "login": "Prihlásenie"
-        "forgot": "zabudli ste heslo?"
-        "password": "Heslo"
-  "import": "Importovať"
-  "edit": "Upraviť"
-  "application":
-    "tooltip":
-      "edit": "Upraviť"
-      "settings": "Nastavenia"
-    "connect": "Pripojiť"
-    "enabled": "Povolené"
-    "enable": "Aktivovať"
-    "title": "Prepojenie"
-    "disabled": "Zakázané"
-  "confirm": "Potvrdiť"
-  "discussions":
-    "unpublished":
-      "spam":
-        "reply":
-          "title": "Odpovedať"
-          "posted": "odpovedať komu"
-      "index":
-        "title": "Spam"
-        "unpublished": "Čaká sa na schválenie"
-      "invalid_topic":
-        "went_wrong": "Niečo sa pokazilo"
-      "page_title": "Moderovanie fóra"
-    "topics":
-      "replied": "odpovedať"
-      "widgets":
-        "ticket":
-          "agent": "Zástupca"
-      "answer": "Odpoveď"
-      "reply": "Odpovedať"
-      "post":
-        "replied": "odpovedať"
-        "delete_confirm": "Zmazať tento komentár? Ste si istý?"
-      "edit_topic": "Upraviť Tému"
-    "show_more": "Ukázať viac"
-    "moderation":
-      "index":
-        "title": "Spam"
-      "spam":
-        "reply":
-          "posted": "odpovedať komu"
-          "title": "Odpovedať"
-    "topic_merge":
-      "mark_primary": "Označiť ako primárny"
-      "continue": "Pokračovať"
-      "confirm_and_merge": "Potvrdiť a zlúčiť"
-      "cancel": "Zrušiť"
-      "add": "Pridať"
-      "please_wait": "Čakajte, prosím..."
-    "shared":
-      "topic":
-        "tags":
-          "reply": "Odpovedať"
-  "users":
-    "activations":
-      "users": "užívatelia."
-      "bulk_send_invite_success": "Platnosť Vášho aktivačného kódu vypršala!"
-      "user": "užívateľ."
-  "add_cc": "Pridať kópiu"
-  "failure": "Chyba ..."
-  "freshcaller":
-    "admin":
-      "sidebar_title": "Telefón"
-      "link_account_request_content":
-        "password": "Heslo"
-        "email": "E-mail zadávateľa"
-        "link_errors":
-          "validation_error": "Toto pole je povinné"
-        "continue": "Pokračovať"
-        "cancel": "Zrušiť"
-      "feature_request_content":
-        "create_new_account": "Vytvoriť nový účet"
-      "title_text": "Telefón"
-  "agent_assigned_info": "Žiadne otvorené ani rozpacované tiketyi pre tohoto agenta"
-  "status": "Stav"
-  "or": "alebo"
-  "feedbackwidget_background": "Pozadie"
-  "custom_fields":
-    "url": "URL adresa"
-    "delete": "Zmazať"
-    "nested_field": "Závislé pole"
-    "phone_number": "Telefónne číslo"
-    "dropdown": "Rozbaľovací zoznam"
-    "email": "E-mail zadávateľa"
-    "checkbox": "Zaškrtávacie políčko"
-    "dropdown_blank": "Rozbaľovací zoznam"
-    "text": "Jednoriadkový text"
-    "number": "Číslo"
-    "date": "Dátum"
-  "edit_agent": "Upraviť Agenta"
-  "subscription":
-    "total": "Súčet"
-    "free": "Voľné"
-    "paid": "Platené"
-    "invoice": "Faktúra"
-    "refund": "Refundované"
-    "upgrade":
-      "message": "Pre odblokovanie tejto funkcie urobte upgrade."
-      "cname": "Chcete použíť Vašu vlastnú doménu? Upradujte, prosím, svoju licenciu."
-    "download": "Stiahnuť"
-    "info1": "Svoje predplatné môžete kedykoľvek zmenťt. Vaša karta bude nabitá odo dňa predplatenia do ďalšieho dátumu účtovania."
-    "billing": "Fakturácia"
-    "status": "Stav"
-    "type": "Typ"
-    "date": "Dátum"
-    "info2": "Pri downgrade z vyššej licencie na nižšiu budú stratené konfiguračné dáta prepojené s funkciami vyššej licencie."
-  "disable": "Deaktivovať"
-  "cancel_and_back": "Zrušiť a ísť späť"
-  "remove": "Odobrať"
-  "accounts":
-    "show":
-      "export_data": "Exportovať dát"
-      "export_data_text": "Generovať XML pre všetky dostupné údaje help desku a odoslať e-mail"
-      "account_settings": "Nastavenie Účtu"
-      "contact_email": "E-mail zadávateľa"
-      "contact_phone": "Telefón"
-      "primary_contact": "Detail hlavného kontaktu"
-      "invoice_email_info": "Odoslať faktúry na"
-      "contact_first_name": "Meno"
-      "primary_contact_info": "(Používá sa pre celú komunikáciu spojenú s účtom z aplikácie Freshdesk)"
-      "contact_last_name": "Priezvisko"
-      "export_now": "Exportovať teraz"
-    "cancel":
-      "you_must_confirm": "Musíte potvrdiť Vašu žiadosť o zrušenie"
-      "deleting_account": "Zrušenie"
-      "confirm_and_cancel_my_account": "Potvrdzujem, že chcem zrušiť môj účet a zmazať všetky moje dáta..."
-      "delete_my_account": "Zmazať môj účet"
-      "cancel_account": "Zrušiť Freshdesk účet"
-      "goback": "&#x2190; Spät do nastavenia účtu"
-    "signup_google":
-      "sign_up": "Registrácia!"
-      "privacy_policy": "zásady ochrany osobných údajov"
-    "multilingual_support":
-      "add_languages": "Pridať jazyky"
-    "billing":
-      "begin_subscription_info": "dobite Vašu kartu a môžete začať okamžite využívať Vaše predplatné."
-      "billing": "Fakturácia"
-    "new":
-      "create_an_account": "Vytvoriť účet"
-      "company": "Spoločnosť"
-      "full_name": "Celé meno"
-      "confirmation": "Potvrdenie"
-    "edit_domain":
-      "getting_started": "Začíname"
-  "zendesk_import":
-    "group": "Agent (Skupinový Prístup)"
-    "user": "Užívateľov"
-    "ticket": "Tikety"
-  "on": "dňa"
-  "fav_delete_msg": "Ste si istí, že chcete zmazať túto ikonu?"
-  "reset_my_password": "Obnoviť moje heslo"
-  "upgrade_plan": "Upgrade"
-  "plain_no": "Nie"
-  "save_as": "Uložiť ako"
-  "business_hours":
-    "delete": "Naozaj chcete túto položku odstrániť?"
-    "holiday_calendar": "Kalendár sviatkov"
-    "info1": "Nastavenie pracovných hodín vo Freshdesku Vám umožní mať väčšiu kontrolu nad SLA."
-    "new": "Nové pracovné hodiny"
-    "valid_time": "Zadajte platný čas"
-    "name": "Meno"
-    "time_zone": "Časové pásmo"
-    "title": "Pracovné hodiny"
-    "holidays": "Sviatky"
-    "to": "do"
-    "description": "Popis"
-    "multiple": "Mimo pracovnej doby"
-  "chatwidget_title": "Živý chat"
-  "register": "Registrovať"
-  "signup": "<b> Prihlásiť sa </b>"
-  "multifile_attachments":
-    "remove": "Odobrať"
-    "mb": " MB "
-    "label": "Pripojiť súbory"
-  "account":
-    "us": "MESIAC-DEŇ-ROK"
-    "gdpr_terms_link": "Podmienky"
-    "save": "Uložiť"
-    "date_format": "Formát dátumu"
-    "info3": "Obnoviť predvolené farby"
-    "gdpr_admin": "Administrátor."
-    "cancel": "Zrušiť"
-    "settings": "Nastavenia"
-    "important": "Dôležitý"
-    "gdpr_policy": "Zásady ochrany osobných údajov."
-    "helpdesk": "Helpdesk"
-    "name": "Meno účtu"
-    "time_zone": "Časová zóna"
-    "languages": "Jazyky"
-    "gdpr_agent": "Zástupca"
-    "non_us": "DEŇ-MESIAC-ROK"
-    "active_since": "Farba Helpdsku"
-    "page_colors":
-      "header": "Záhlavie"
-      "background": "Pozadie"
-      "title": "Farby helpdesku"
-      "tab_color": "Farba záložky"
-    "anyone": "Ktokoľvek"
-    "change_logo": "Zmeniť logo"
-    "gdpr_acknowledgement": "a potvrdzujete, že ste si prečítali náš dokument"
-    "forums_toggle":
-      "title": "Fóra"
-    "gdpr_to": "do"
-    "language": "Jazyk"
-    "primary_language": "Hlavný jazyk"
-    "additional_languages": "Podporované jazyky"
-  "portal_pages":
-    "pages":
-      "ticket_view": "Detaily Tiketu"
-      "article_view": "Zobrazenie článku"
-      "portal_home": "Domovská stránka portálu"
-      "topic_view": "Zobrazenie témy"
-      "submit_ticket": "Nový Tiket"
-      "article_list": "Zoznam článkov"
-      "topic_list": "Zoznam tém"
-      "profile_edit": "Profil užívateľa"
-      "forgot_password": "Zabudnuté heslo"
-      "user_login": "Prihlasovacia stránka"
-      "ticket_list": "Tikety užívateľa"
-      "discussions_home": "Domovská diskusná stránka"
-      "new_topic": "Nová téma"
-      "solution_home": "Domovská stránka riešení"
-      "solution_category": "Kategória riešení – úvod"
-      "search": "Výsledky hľadania"
-      "user_signup": "Registrácia nového užívateľa"
-    "groups":
-      "tickets": "Tikety"
-      "general": "Hlavné stránky"
-      "solutions": "Riešenia"
-      "discussions": "Diskusia"
-  "your_email_address": "Vaše e-mailová adresa"
-  "livechat":
-    "routing_info": "Nasmerujte všetky prichádzajúce chaty do špecifických skupín"
-    "help_offline_thank_msg": "Potvrdzujúca správa"
-    "prechat_dropdown_msg": "Možnosti rozbaľovacej ponuky môžete priradiť k rôznym skupinám v záložke Vlastnosti. Chaty budú priradené podľa toho k jednotlivým skupinám."
-    "non_availability_msg_header": "Poslať správu, keď je agent preč"
-    "integrate_msg": "Skopírujte a prilepte tento kód pred poslednú </body> značku na vašej internetovej stránke alebo aplikácii"
-    "save": "Uložiť"
-    "wait_title": "Správa, kým sa čaká na pripojenie agenta"
-    "msgbox_placeholder_title": "Záložka na odpoveď"
-    "help_offline_thank_header_msg": "Hlavička po správe je odoslaná"
-    "prechat_desc": "Zozbierať detaily o vašich návštevníkoch tak, aby ste mali lepší kontext, keď s nimi chatujete. Keď je toto aktivované, návštevníci budú musieť odoslať formulár, aby sa začala konverzácia."
-    "installation": "Kód widgetu"
-    "show_widget": "Keď sú agenti online a akceptujú chaty"
-    "cancel": "Zrušiť"
-    "integrate_livechat_title": "Integrujte Live Chat do vašej internetovej schránky a aplikácií"
-    "header_title": "Záhlavie"
-    "maximum_chat_desc": "Nastavte limit pre počet chatov, ktoré môže agent spravovať súčasne. Keď agent dosiahne tento limit, nedostanú žiadne nové notifikácie chatu."
-    "chatbox_bgcolor": "Farba"
-    "maximum_chat_title": "Maximálny počet chatov návštevníka"
-    "valid_code": "Zadajte platnú hodnotu farby"
-    "non_availability_msg_help": "Ak chcete vytvoriť prepojenie na vetu vo vašej správe s odkazom na vašu URL, pripojte ho medzi '# #'"
-    "maximum_change_label": "Upraviť"
-    "chat_availability": "Dostupnosť chatu"
-    "proactive_title": "Proaktívny chat"
-    "intro": "Integrované riešenie Live Chat vo Freshdesk vám umožňuje vidieť a chatovať s používateľmi na vašej internetovej stránke, online softvér alebo podporiť portál priamo z Freshdesk. Môžete proaktívne začať chatovať s návštevníkmi vašej internetovej stránky. Keď skončíte reláciu chatu môžete si zvoliť možnosť a konvertovať konverzáciu do tiketu a pokračovať v komunikácii s návštevníkom prostredníctvom e-mailu alebo archivovať chat."
-    "texton": "Zapnutý"
-    "show_chat_hours": "Zobraziť chat"
-    "agent_network_disconnect_msg_title": "Správa, keď sa agent odpojí"
-    "thank_title": "Ďakovná správa"
-    "prechat_msg": "Správa predbežného chatu"
-    "enable": "Aktivovať"
-    "enabled": "Povolené"
-    "welcome": "Uvítacia správa"
-    "portal_desc": "Zatiaľ čo, widget chatu na vašej internetovej stránke je viditeľný pre každého, môžete ho aktivovať na vašom podpornom portáli iba pre vašich zákazníkov."
-    "copy_to_clipboard": "Kopírovať do schránky"
-    "missed_chat_title": "Formulár zmeškaného chatu"
-    "portal_option_info": "Ukážte widget chatu pre"
-    "missed_chat_desc": "Zozbierať detaily návštevníka, keď nie ste k dispozícii."
-    "proactive_note": "Poznámka: Predbežný chat sa nezobrazí, keď sa chat začal proaktívne. Stále môžete manuálne pridať všetky detaily návštevníka."
-    "edit": "Upraviť"
-    "default_routing": "Predvolené smerovanie"
-    "routing": "Smerovanie chatu"
-    "anytime": "Vždy (24/7)"
-    "help_text_wait_onhold_msg": "Táto správa sa zobrazí, keď návštevník čaká na agenta viac ako jednu minútu"
-    "support_portal": "Chat pre váš podporný portál"
-    "chat_hours_msg_note": "Poznámka: Okno chatu bude tentokrát skryté."
-    "form_details": "Detaily formulára"
-    "show_chat_hours_msg": "Nastaviť, keď bude vaše okno chatu dostupné pre vašich návštevníkov."
-    "intro_title": "Prečo živý chat?"
-    "text_no": "Nie"
-    "set_default_msgs": "Predvolené správy"
-    "enable_chat": "Aktivovať živý chat"
-    "text_yes": "Áno"
-    "business_hours": "Počas pracovnej doby"
-    "chat_enabled_label": "Aktivovať chat"
-    "chat_transfer_msg_title": "Správa prenosu chatu"
-    "offline_message": "Hromadné správy"
-    "window_position": "Pozícia"
-    "custom_chat_window": "Okno chatu"
-    "help_offline_title": "Záhlavie"
-    "learn_livechat": "Dočítať sa viac živom chate"
-    "widget": "Widget"
-    "textoff": "Vypnutý"
-    "enabling": "Povolenie"
-    "use_custom_link": "Presmerovať návštevníkov na separátnu stránku "
-    "procative_info": "Automaticky začnite konverzáciu chatu s návštevníkmi, ak na tej istej stránke strávia dlhší čas."
-    "dropdown_based_routing": "Smerovanie na základe rozbaľovacieho menu"
-    "widgets_list_info": "Pre každý produkt, ktorý ste nastavili do Freshdesku budete mať príslušný widget chatu, ktorý bude k dispozícii"
-    "visitor_form": "Formulár návštevníka"
-    "disabled": "Zakázané"
-    "url_error_msg": "Zadajte platnú URL"
-    "window_offset": "Vyrovnať"
-    "everyone": "Všetci"
-    "prechat_title": "Forma predbežného chatu"
-    "cobrowsing": "Pomoc na stránke"
-    "end_chat_confirm_msg_title": "Potvrdzujúca správa ukončenia chatu"
-    "chat_with_us": "Spojte sa s nami"
-    "logged_in_users": "Iba pre prihlásených užívateľov"
-    "cobrowsing_info": "Riaďte svojich zákazníkov efektívnejšie počas vášho chatu tak, že budete mať možnosť zobraziť a ovládať ich obrazovku."
-    "window_offset_error_msg": "Zadajte prosím platnú hodnotu obsadenia(< 500px)."
-    "preferences": "Preferencie"
-  "feedbackwidget_custom_image_info": "Pokiaľ používate vlastný obrázok, farba a text budú ignorované."
-  "reset_password_title": "Obnoviť Heslo"
-  "feedbackwidget_offset_info": "Offset bude vzdialenosť widget tlačidla (pixelov) od ľavej alebo hornej časti obrazovky založenej na vyrovnanie, ktoré si vyberiete."
-  "automations":
-    "info4": "Select the below Placeholders to append to the email content and they will get converted into the appropriate data"
-    "available_placeholders": "Vložiť Zástupnú Značku/Placeholder"
-  "portalcss":
-    "apply_mint": "Použiť"
-    "layout_pages":
-      "header_layout_title": "Záhlavie"
-      "footer_layout_title": "Päta"
-    "save_and_continue": "Uložiť"
-    "please_wait": "Čakajte, prosím…"
-    "cosmetic":
-      "subheader_background_color": "Farba pozadia"
-  "date_title": "Dátum"
-  "zendesk_backup": "Záložný súbor"
-  "suspended_plan_admin_info": "Váš účet bol zmrazený. Pre bližšie informácie kontaktujte Vášho administrátora účtu, %{email}."
-  "close": "Zavrieť"
-  "email_command_setting":
-    "helpcard":
-      "note": "Poznámka"
-      "ticket_type_example": "Otázky"
-  "portal":
-    "topic":
-      "default_select_option": "Zvoliť typ fóra"
-      "topic_title": "Názov témy"
-      "post_topic": "Vyvesiť tému na"
-    "topic_vote":
-      "howto_unlike_button": "Nemám túto otázku!"
-      "ideas_unlike_button": "nepáči sa"
-      "problem_button": "Máte tiež tento problém ?"
-      "ideas_button": "Páči sa Vám tento nápad?"
-      "announce_unlike_button": "nepáči sa"
-      "problem_unlike_button": "Ja nemám tento problém !"
-    "search":
-      "placeholder": "Hľadať pomocou klľúčového slova..."
-    "tickets":
-      "add_or_remove_emails": "Pridajte alebo odoberte e-maily, ktoré je nutné skopírovať pri odosielaní notifikácii pre tento tiket."
-      "submit_export": "Export"
-      "export_ticket_data": "Exportovať däta z tiketov do CSV"
-      "details": "Detaily Tiketu"
-    "cookie":
-      "privacy_policy": "Zásady Ochrany Osobných Údajov"
-    "said": "povedal"
-  "title": "Titul"
-  "freshfone":
-    "admin":
-      "settings": "Nastavenia"
-      "important": "Dôležitý"
-      "freshfone_numbers_title": "Telefón"
-      "welcome_page":
-        "title_text": "Telefón"
-      "numbers":
-        "buy": "Kúpiť číslo"
-        "address":
-          "address": "Adresa"
-          "state": "Štát/Provincia/Oblasť"
-          "city": "Mesto"
-          "postal_code": "PSČ"
-        "caller_id":
-          "manage_caller_id": "Spravovať ID volajúceho "
-          "add_new": "Pridať novú"
-        "manage": "Spravovať"
-        "buy_button_text": "Kúpiť"
-      "feature_request_content":
-        "pricing": "Zobraziť všetky sadzby hovorov a podporované krajiny"
-        "learn_more": "Čítaj viac"
-        "title_text": "Telefón"
-        "trial_or": "ALEBO"
-      "local": "Miestne"
-      "ivr":
-        "turn_on": "Zapnutý"
-        "save": "Uložiť"
-        "turn_off": "Vypnutý"
-        "rename": "premenovať"
-        "action": "Akcia"
-        "delete_menu": "Vymaž menu"
-        "previewing": "Náhľad"
-        "saving": "Uloženie..."
-        "preview": "Náhľad"
-        "done": "zmazať"
-        "welcome_message": "Uvítacia správa"
-      "number_settings":
-        "greeting_message": "Sem zadajte správu"
-        "number_accessible": "Dostupné prostredníctvom"
-        "record_all": "Nahrávať všetky hovory"
-        "voicemail_on": "Zapnutý"
-        "cancel": "Zrušiť"
-        "record_none": "Nezaznamenávať hovory"
-        "voicemail_off": "Vypnutý"
-        "name": "Meno"
-        "voicemail": "Hlasová schránka"
-        "business_hours": "Pracovné hodiny"
-        "start_recording": "Spustiť nahrávanie"
-        "preparing_recording": "Pripravujeme vašu správu..."
-        "audio_upload": "Nahrať"
-        "business_calendar": "Vyberte pracovnú dobu"
-        "name_placeholder": "Zadajte názov pre vaše číslo"
-        "welcome_message": "Uvítacia správa"
-        "change": "Zmeniť"
-    "subscription":
-      "purchase_credits": "Zakúpiť kredity"
-  "special_beta_offer": "Špeciálna ponuka pre účty Beta"
-  "days": "dni"
-  "tickets_filter":
-    "sort_fields":
-      "status": "Stav"
-      "last_modified": "Posledná Zmena"
-      "desc": "Zostupne"
-      "priority": "Priorita"
-      "due_by": "Termín riešení"
-      "updated_at": "Posledná Zmena"
-      "asc": "Vzostupne"
-    "company": "Spoločnosť"
-    "raised_by": "Tikety vytvorené"
-  "saving": "Uloženie..."
-  "logo_delete_msg": "Ste si istý, že chcete zmazať toto logo?"
-  "reload": "Znovu načítať"
-  "amount": "Množstvo"
-  "free_plan_agents": "prr %{free_agents} agetov"
-  "forums":
-    "search_all":
-      "placeholder": "Hľadať všetky témy"
-    "form":
-      "type": "Typ fóra"
-      "visible_to": "Kto to uvidí"
-  "working": "Pracujem"
-  "comments": "Poznámky"
-  "Portal": "Portál"
-  "ticket_fields":
-    "index":
-      "title": "Pole tiketu"
-      "save_ticket_fields": "Uložiť"
-    "untitled": "Bez názvu"
-    "confirm_delete": "Chcete určite odstrániť toto pole?"
-    "second_choice": "Druhá Voľba"
-    "first_choice": "Prvá Voľba"
-    "section":
-      "confirm_btn": "Potvrdiť"
-      "delete_btn": "Zmazať"
-      "ok_btn": "OK"
-      "continue_btn": "Pokračovať"
-      "oops_btn": "Ups!"
-    "fields":
-      "agent": "Zástupca"
-      "priority": "Priorita"
-      "requester": "Vyhľadať zadávateľa"
-      "company": "Spoločnosť"
-      "group": "Skupina"
-      "ticket_type": "Typ"
-      "tags": "Značky"
-      "product": "Produkt"
-      "status": "Stav"
-      "subject": "Predmet"
-      "source": "Zdroj"
-      "created_at": "Vytvoril"
-      "skill": "Skúsenosť"
-      "description": "Popis"
-    "formfield_props":
-      "behavior": "Správanie"
-      "customer_edit": "Zákazník môže upravovať"
-      "field_label_agents": "Značka poľa pro agentov"
-      "dropdown_items_edit": "Položky rozbaľovacieho zoznamu – upraviť pohľad"
-      "for_customer": "Pre Zákazníkov"
-      "label": "Názov Poľa"
-      "cc_company_contacts": "Do Kópie je možné pridať len kontakty spoločnosti"
-      "customer_visible": "Viditeľné zákazníkom"
-      "cc_any_email": "Do Kópie je možné pridať akúkoľvek emailovú adresu"
-      "customer_mandatory": "Povinné pre odoslanie formulára"
-      "level": "Stupeň"
-      "sla_timer": "Počítadlo SLA"
-      "field_label_customer": "Značka poľa pro zákazníkov"
-      "level2": "Úroveň 2"
-      "nestedfield_helptext_preview": "Toto je \"Náhľad\" vzor rozbaľovacích položiek pri použití voľných textových formov v \"Uprav zobrazenie\" k editovaniu položiek"
-      "dropdown_items_preview": "Položky rozbaľovacieho zoznamu – Náhľad"
-      "dropdown_choices": "Rozbaľovacie možnosti"
-      "agent_mandatory_closure": "Povinné pre uzatvorenie tiketu"
-      "level3": "Úroveň 3"
-      "display_cc_field": "Zobraziť pole Kópie"
-      "for_agents": "Pre Agentov"
-      "status_choices": "Voľby stavu"
-      "add_new_choice": "Pridať novú voľbu"
-      "nested_label": "Popisky vnoreného poľa"
-      "agent_mandatory_submission": "Povinné pre odoslanie formulára"
-      "level1": "Úroveň 1"
-      "display_to_customer": "Zobraziť správu pre zákazníka"
-      "delete_field": "Odstrániť pole"
-      "description": "Popis"
-      "form_title": "Vlastnosti poľa"
-    "no_choice_message": "Je nutné uviesť aspoň jednu platnú voľbu"
-  "export_to_CSV": "Exportovať do CSV"
-  "email_configs":
-    "info7": "To je tiež Vaše adresa pre odpoveď, napr. support@yourcompany.com"
-    "remove_msg": "Chcete určite tento email odobrať?"
-    "dkim":
-      "last_verified": "Naposledy overené"
-      "config": "Konfigurovať"
-      "cname": "CNAME"
-      "verified": "Overené"
-      "verify": "Overiť"
-      "status": "Stav"
-      "remove": "Odobrať"
-      "unverified": "Neoverený"
-      "type": "Typ"
-    "info17": "Táto emailová adresa bude automaticky zahrnutá v poli Bcc"
-    "freshdesk": "Freshdesk"
-    "info9": "Priradiť do skupiny"
-    "info8": "Preposielať svoje emaily na"
-    "send_verification_email": "Odošlite overovací email"
-    "reply_email": "Váš email podpory"
-    "bcc_text": "Skrytá kópia"
-    "secondary_supp_email_tool_tip": "Nastaviť tento email podpory"
-    "global_support_emails": "Globálny Email Podpory"
-    "assign_to_product_msg": "Prepojiť tento email podpory s produktom"
-    "name": "Meno"
-    "name_info_msg": "Názov emailové adresy, ktorá bude použitá v odpovediach na tiket"
-    "Personalized_email_replies_no": "Nie"
-    "edit": "Upraviť"
-    "helpcard":
-      "info21": "You can add unlimited incoming and outgoing mailboxes (like info@yourcompany.com, sales@yourcompany.com, etc.) in your helpdesk. You can even setup Freshdesk to automatically assign emails from each mailbox to a specific group."
-      "tour1": "Pomôžte mi nastaviť môj email podpory"
-    "new_support_email": "Nový Email Podpory"
-    "info11": "Nakonfigurovať hlavné  emailové adresy podpory"
-    "set_bcc_email_text": "Nastaviť automatický email Bcc"
-    "unverified_info1": "Na tento email bola odoslaná správa s overovacím odkazom. Tento email pre podporu bude aktivny až po overení."
-    "title": "Nastavenie emailu"
-    "reply_to_tickets": "Použite \"Odpovedať na\" e-mailovú adresu k vytvoreniu kontaktu žiadateľa"
-    "add_bcc_text": "Pridať Bcc"
-    "mark_as_primary_msg": "Chcete určite tento email nastaviť ako hlavný email podpory?"
-    "info10": "Nové tikety, ktoré prišli na tento email podpory, budú automaticky priradené do skupiny"
-    "Personalized_email_replies_yes": "Áno"
-    "plain_unverified": "Neoverený -"
-    "primary_supp_email_tool_tip": "Primárný e-mail produktovej podpory"
-    "bcc_email": "Skrytá kópia / Bcc"
-  "agent_list":
-    "sort":
-      "last_active_at": "Naposledy zobrazené"
-      "sorted_by": "Zoradiť podľa"
-      "created_at": "Dátum vytvorenia"
-      "asc": "Vzostupne"
-      "desc": "Zostupne"
-      "name": "Meno"
-  "email_command_preview_subject": "Predmet"
-  "currency_label": "Mena :"
-  "add_new_forum": "pridaj nové fórum"
-  "plain_on": "Zapnutý"
-  "password": "Heslo"
-  "clone": "Klonovať"
-  "helpdesk_reports":
-    "chats": "Čety"
-    "more": "Viac..."
-    "insights":
-      "customize_link": "Prispôsobiť"
-    "saved_report":
-      "edit_dialog_header": "Upraviť report"
-      "cancel": "Zrušiť"
-      "save": "Uložiť"
-      "delete_dialog_header": "Odstrániť report"
-    "today": "Dnes"
-    "ticket_schedule":
-      "new":
-        "select_all": "Vybrať všetko"
-        "description": "Popis"
-        "one_time_export_label": "Export obsahu tiketu od začiatku mesiaca po spustení rozvrhu"
-        "helpnote":
-          "api_info1": "API bude mať odkaz na najnovší export."
-        "frequency": "Plán"
-        "email": "E-mail zadávateľa"
-        "ticket_fields_title": "Pole tiketu"
-        "contact_fields_title": "Polia kontaktu"
-      "new_schedule": "Nový rozvrh"
-      "index":
-        "delete_text": "Naozaj chcete odstrániť tento plán?"
-        "cancel": "Zrušiť"
-        "confirm": "Potvrdiť"
-      "schedule": "Plán"
-      "all_reports": "Všetky reporty"
-      "schedule_export": "Naplánovať export"
-    "this_week": "Tento týždeň"
-    "agent_summary":
-      "title": "Výkon agenta"
-    "this_month": "Tento mesiac"
-    "edit_filter": "Filtrovať"
-    "scheduled_reports":
-      "dialog":
-        "monthly": "Mesačne"
-        "generate_report": "Generovať report"
-        "email": "E-mail zadávateľa"
-        "on": "Zapnutý"
-        "desc": "Popis"
-        "daily": "denný"
-        "weekly": "týždenný"
-        "subject": "Predmet"
-    "year_in_review":
-      "title": "Zhodnotenie vášho roka"
-    "ticket_volume":
-      "time_trends":
-        "year": "Rok"
-        "week": "Týždeň"
-        "day": "Deň"
-        "month": "Mesiac"
-    "summary": "Súhrn"
-    "show": "Ukázať:"
-    "date_range": "Rozpätie dátumov"
-    "filter_by": "Filtrovať podľa"
-    "timespent_export":
-      "export_csv": "Exportovať CSV"
-      "button_export": "Export"
-    "performance_distribution":
-      "title": "Rozdelenie výkonu"
-      "resolution_bar": "Čas vyriešenia"
-      "first_response_bar": "Čas prvej odpovede"
-      "response_bar": "Priemerný čas odpovede"
-    "group_summary":
-      "title": "Výkon skupiny"
-    "ticket_activity":
-      "edit": "Upraviť plán"
-      "helpnote":
-        "api_info1": "API bude mať odkaz na najnovší export."
-      "learn_more": "Čítaj viac"
-    "filtered_by": "Filtrovať podľa:"
-    "at": "v"
-    "yesterday": "Včera"
-    "change": "Zmeniť"
-  "enter_payment": "Vložte fakturačné údaje..."
-  "logo": "Logo"
-  "create": "Vytvoriť"
-  "replies": "odpovede"
-  "date":
-    "day_names":
-    - "Nedeľa"
-    - "Pondelok"
-    - "Utorok"
-    - "Streda"
-    - "Štvrtok"
-    - "Piatok"
-    - "Sobota"
-    "abbr_month_names":
-    - !!null "null"
-    - "Jan"
-    - "Feb"
-    - "Mar"
-    - "Apr"
-    - "Máj"
-    - "Jún"
-    - "Júl"
-    - "Aug"
-    - "Sep"
-    - "Okt"
-    - "Nov"
-    - "Dec"
-  "social":
-    "streams":
-      "compose": "Komponovať"
-      "twitter":
-        "tickets": "Tikety"
-        "post": " Odoslať "
-      "tooltip":
-        "replied": "Zodpovedané"
-        "db_contact": "Kontakt"
-      "index":
-        "all": "Všetci"
-      "search_btn": "Hľadať"
-    "twitter_handles":
-      "index":
-        "search": "Hľadať"
-        "from": "Od: "
-        "reply": "Odpovedať"
-        "reauthorize": "Opätovné autorizovanie"
-        "note_title": "Poznámka:"
-      "form":
-        "product": "Produkt"
-    "welcome":
-      "get_started": "Začíname"
-  "conversation": "Konverzácia"
-  "plan": "Program"
-  "Phone": "Telefón"
-  "back_plans_billing": "Späť k licenciám a platbám"
-  "add": "Pridať"
-  "Twitter": "Twitter"
-  "bottom": "Dole"
-  "solution_category":
-    "edit": "Upraviť kategóriu riešení"
-    "product_portal_visibility": "Viditeľné v jazyku"
-    "info2": "V tejto kategórii nie sú žiadne zložky"
-    "new": "Nová kategória riešení"
-    "name": "Meno"
-    "manage_categories": "Spravovať"
-  "flash":
-    "customers":
-      "info_select": "Prosím, zvoľte aspoň jedného zákazníka."
-    "general":
-      "access_denied": "Nemáte oprávnenie pre prístup na túto stránku."
-    "contacts":
-      "info_select": "Prosím, zvoľte aspoň jedného uživateľa."
-  "import_forum": "Fóra"
-  "choose_different_plan": "Zvoľte inú licenciu"
-  "import_user_notification": "Môžete poslať užívateľom aktivačný e-mail z importovaných kontaktov zákazníckych kárt"
-  "category":
-    "edit": "Upraviť Kategóriu"
-    "new": "Nová Kategória"
-  "saving_draft": "Uloženie..."
-  "feedbackwidget_position": "Pozícia"
-  "notification":
-    "load_more": "Načítať viac"
-    "submit_feedback": "Odoslať Názor"
-  "attachment_delete": "Chystáte se navždy zmazať túto prílohu. Pokračovat?"
-  "clear": "Vymazať"
-  "import_step1_info": "Vyberte súbor CSV a kliknite na import"
-  "preview": "Náhľad"
-  "disabled": "Zakázané"
-  "forums_order":
-    "recent": "Nedávny"
-    "overview": "Prehľad"
-    "popular": "Obľúbené"
-  "features":
-    "bot": "Robot"
-    "gamification": "Gamifikácia"
-    "parent_child": "Vydávanie rodičovských a detských tiketov"
-    "auto_ticket_assignment": "Automatické Priradenie Tiketu"
-    "scheduled_reports": "Naplánované reporty"
-    "knowledge_base": "Databáza znalostí"
-    "phone_integration": "Integrácia telefónu"
-    "custom_ssl": "Užívateľský SSL"
-    "feedback_widget": "Nastavenie Formulára"
-    "automations": "Automatizácia"
-    "forums": "Komunitné fóra"
-    "custom_roles": "Vlastné úlohy"
-    "ticket_templates": "Šablóny tiketov"
-    "freshchat": "Integrácia Freshchat"
-  "admin_onboarding":
-    "modal":
-      "channels_frame":
-        "forums_channel": "Fóra"
-        "phone_channel": "Telefón"
-        "chat_channel": "Živý chat"
-        "forward_link": "Pozvite svoj tím"
-        "social_channel": "Socialne siete"
-        "title": "Ako dnes komunikujete so svojimi zákazníkmi?"
-        "email_channel": "E-mail zadávateľa"
-      "agents_frame":
-        "send_invite": "Poslať pozvánku"
-        "emails_invalid": "Jeden alebo viac Vašich e-mailov je neplatných."
-        "emails_placeholder": "bruce@just.ly, diana@just.ly, clark@just.ly"
-      "welcome_frame":
-        "title": "Vitajte na Freshdesk"
-    "account_verification_message":
-      "cancel_button": "Zrušiť"
-      "modal_title": "Prihlásenie pomocou zlej e-mailovej adresy?"
-      "modal_send_button": "Poslať aktiváciu"
-      "modal_invalid_email_error": "Zadajte platnú e-mailovú adresu."
-      "resend_message": "Znovu poslať aktiváciu"
-      "change_email": "zmeniť váš e-mail"
-      "helpnote_or": "alebo"
-  "Group": "Skupina"
-  "pending": "Spracovávaný"
-  "adv_reports":
-    "load":
-      "resp_time": "Čas odpovede"
-    "select_an_option": "Vyberte jednu z možností"
-    "glance":
-      "select_agent_msg": "Zvoliť Agenta"
-      "all_reports": "Všetky reporty"
-    "report": " Report "
-    "reports": "Reporty"
-    "summary": "Súhrn"
-    "select_option_msg": "Prosím, vyberte možnosť"
-  "linkback_info": "Môžete si zvoliť Spätný odkaz na Vaše vlastné webové stránky, na ktoré sa bude môcť zákazník dostať kliknutím na logo v hlavičke stránky"
-  "forgot_password_intro": "Vyplňte formulár nížšie a inštrukcie k resetovaniu Vášho hesla Vám budú zaslané emailom"
-  "credit_card_info": "Údaje platobnej karty"
-  "no_password_reset": "Nie"
-  "no_forum_category": "Žiadne fóra v tejto kategórii"
-  "begin_subscription_confirm": "Z Vašej kreditnej karty bude odpočítaná čiastka %{cost} dolarov a Vaše predplatné bude ihneď k dispozícii. \\n\\nPokračovat?"
-  "integrations":
-    "ilos":
-      "agent_ticket":
-        "placeholder": "Tiket#"
-      "solution":
-        "placeholder": "Článok#"
-      "settings":
-        "for_agents": "Pre Agentov"
-        "for_customer": "Pre Zákazníkov"
-      "portal_ticket":
-        "placeholder": "Tiket#"
-      "messages":
-        "video_desc": "Popis"
-    "logmein":
-      "form":
-        "company_id": "ID spoločnosti"
-    "icontact":
-      "form":
-        "api_url": "API URL"
-    "dynamics_v2":
-      "form":
-        "username": "Uživateľské meno"
-        "password": "Heslo"
-    "remote_login":
-      "connect": "Pripojiť"
-      "sign_up": "Registrácia"
-    "marketplace_login":
-      "associate_account":
-        "phone_no": "Telefónne číslo"
-        "create_my_account": "Vytvoriť si účet"
-        "submit": "Predložiť"
-        "email": "E-mail zadávateľa"
-        "user_name": "Meno"
-        "company_name": "Názov spoločnosti"
-      "admin_credentials":
-        "email_address": "E-mailová adresa"
-        "login": "Prihlásenie"
-    "sugarcrm":
-      "form":
-        "account": "Polia účtu"
-        "contact": "Polia kontaktu"
-        "password": "Heslo"
-        "username": "Uživateľské meno"
-    "applications":
-      "crm":
-        "mapping":
-          "company": "Spoločnosť"
-          "contact": "Kontakt"
-          "contact_fields": " Polia kontaktu "
-          "account_fields": " Polia účtu "
-    "shopify":
-      "edit":
-        "disconnect": "Odpojiť"
-    "dynamicscrm":
-      "form":
-        "account": "Polia účtu"
-        "contact_email": "E-mail kontaktnej osoby"
-        "contact": "Polia kontaktu"
-        "password": "Heslo"
-    "screen_pop":
-      "widget":
-        "recent_tickets": "Posledné tikety"
-        "requester": "Meno zadávateľa"
-        "add_note_text": "Poznámky z hovoru"
-        "cancel": "Zrušiť"
-        "subject": "Predmet"
-        "create": "Vytvoriť"
-        "view_all": "Zobraziť všetko"
-    "freshbooks":
-      "form":
-        "api_url": "API URL"
-    "hootsuite":
-      "reply_btn": "Odpovedať"
-      "send": "Odoslať spätnú väzbu"
-      "reset": "Resetovať"
-      "domain":
-        "continue_to_login": "Pokračovať na prihlásenie"
-      "filter":
-        "priority": "Priorita"
-        "all": "Všetci"
-        "status": "Stav"
-      "submit": "Predložiť"
-      "social":
-        "description": "Popis"
-        "requester": "Zadávateľ"
-      "login":
-        "password": "Heslo"
-        "email": "E-mail zadávateľa"
-      "search":
-        "ticket_id": "ID požiadavky"
-        "keyword": "Kľúčové slovo"
-      "header":
-        "reply": "Odpovedať"
-    "custom_apps":
-      "refresh": "Aktualizovať"
-    "infusionsoft":
-      "form":
-        "contact": "Polia kontaktu"
-        "account": "Polia účtu"
-        "select": "Vyberte jednu z možností"
-    "seoshop":
-      "form":
-        "language": "Jazyk"
-        "en": "English"
-        "nl": "Nederlands"
-    "campaignmonitor":
-      "form":
-        "api_key": "Kľúč API"
-    "google_contacts":
-      "OVERWRITE_REMOTE_small": "Importovať"
-      "edit_app": "Aktualizovať"
-      "delete": "Zmazať"
-      "email": "E-mail zadávateľa"
-      "last_sync_time": "Čas poslednej synchronizácie"
-      "import": "Importovať"
-      "edit": "Upraviť"
-      "account": "Účet"
-      "OVERWRITE_LOCAL_small": "Export"
-      "sync_status":
-        "added": "pridané"
-        "modified": "zmenené"
-        "deleted": "vymazané"
-    "batchbook":
-      "form":
-        "api_key": "Kľúč API"
-    "cti_admin":
-      "ctd":
-        "api_key": "Kľúč API"
-        "callback_url": "URL výzvy"
-        "username": "Uživateľské meno"
-        "encoding": "Kódovanie"
-        "request_type": "Typ žiadosti"
-        "have_api_key": "Mám kľúč API?"
-        "content": "Obsah"
-        "password": "Heslo"
-        "have_user_pass": "Mám užívateľské meno a heslo?"
-      "phone":
-        "save": "Uložiť"
-        "cancel": "Zrušiť"
-        "delete_msg": "Naozaj chcete odstrániť toto číslo?"
-    "uninstall": "Odinštalovať"
-    "custom_application":
-      "name": "Meno"
-      "description": "Popis"
-      "form":
-        "insert_placeholder": "Vložiť zástupný symbol"
-    "github_settings":
-      "resolved": "Vyriešené"
-      "closed": "Zatvoriť"
-    "workflow_max":
-      "form":
-        "api_key": "Kľúč API"
-    "magento":
-      "form":
-        "product": "Produkt"
-    "salesforce":
-      "form":
-        "select": "Vyberte jednu z možností"
-        "contact": "Polia kontaktu"
-        "account": "Polia účtu"
-    "freshsales":
-      "form":
-        "account": "Polia účtu"
-        "domain": "Doména účtu"
-        "contact": "Polia kontaktu"
-        "deal": "Polia obchodných príležitostí"
-        "select": "Vyberte jednu z možností"
-    "jira":
-      "form":
-        "username": "Uživateľské meno"
-        "password": "Heslo"
-    "highrise":
-      "form":
-        "api_key": "Kľúč API"
-    "outlook_contacts":
-      "edit_form":
-        "account": "Účet"
-        "edit_account": "Upraviť"
-        "delete_account": "Zmazať"
-        "last_sync_time": "Čas poslednej synchronizácie"
-    "zohocrm":
-      "form":
-        "api_key": "Overovací token"
-    "cloud_elements":
-      "form":
-        "contact": "Polia kontaktu"
-        "account": "Polia účtu"
-        "daily": "denný"
-        "hourly": "Za hodinu"
-  "chatwidget_help_content":
-    "title": "Živý chat"
-  "please_wait": "Čakajte, prosím..."
-  "close_this_ticket": "Uzatvoriť Tiket"
-  "cancel_my_account": "Zrušiť môj účet"
-  "search":
-    "in": "v"
-    "by": "podľa:"
-    "searching": "Vyhľadávanie"
-    "no_results_msg": "Nenašli sa žiadne výsledky"
-  "created_on": "Vytvorené"
-  "total_price": "Súčet"
-  "paid_with": "Platené s"
-  "attachments": "Prílohy"
-  "sales": "Predaj"
-  "feedbackwidget_button_text": "Štítok"
-  "ticket_form":
-    "your_email_address": "E-mail zadávateľa"
-  "done": "Hotovo"
-  "sign_in_info": "Budete sa prihlasovať pomocou"
-  "user_notifications":
-    "mark_all_as_read": "Označiť všetko ako prečítané"
-    "header": "Upozornenia"
-    "preferences": "Preferencie"
-  "at": "v"
-  "import_ticket_group": "Tikety"
-  "header":
-    "tabs":
-      "solutions": "Riešenia"
-      "forums": "Fóra"
-    "signout": "Odhlásiť sa"
-    "search": "Hľadať"
-  "left": "Ľavý"
-  "description": "Popis"
-  "solution":
-    "solution_meta_description": "Meta Description"
-    "folder": "Zložka"
-    "kb": "Znalostná báza"
-    "via": "prostredníctvom"
-    "solution_meta_title": "Title Tag"
-    "solution_meta_keywords": "Meta Keywords"
-    "sidebar":
-      "feedbacks":
-        "title": "Spätná väzba na článok"
-      "view_all": "Zobraziť všetko"
-      "drafts":
-        "title": "Koncepty"
-      "view_less": "Zobraziť menej"
-    "draft":
-      "portal":
-        "all": "Všetci"
-      "name": "Koncepty"
-    "general":
-      "something_wrong": "Niečo sa pokazilo!"
-      "analytics": "Analýza"
-      "feedback": "Spätná väzba"
-      "created_by": "Vytvoril(a)"
-      "mark_as_outdated":
-        "text_1": "Označte ďalšie preklady ako neaktuálne"
-    "solution_meta": "Meta-tagy pre vyhľadávanie"
-    "articles":
-      "prop_tabs":
-        "meta": "Meta"
-      "reset_rating":
-        "link": "Resetovať"
-        "dialog_submit": "Resetovať"
-      "search_all": "Hľadaj Články"
-      "views": "Pozretí"
-    "meta_keywords_message": "Kľúčové slová sa oddeľujú čiarkami"
-    "folders":
-      "folder_form":
-        "category": "Kategória"
-        "visible_to": "Kto to uvidí"
-      "new":
-        "new_folder": "Nová Zložka"
-    "title": "Riešenia"
-    "move_to": "Presunúť do"
-    "add_category": "Nová Kategória"
-    "solution_title": "Titul"
-  "choose_plan": "Zvoliť Licenciu"
-  "unblock": "Biela listina"
-  "edit_plan": "Upraviť program"
-  "change": "Zmeniť"
-  "freshchat":
-    "admin":
-      "save": "Uložiť"
-      "action":
-        "success_message": "Nastavenia boli aktualizované"
-      "sidebar_title": "Freshchat"
-      "app_id": "ID aplikácie"
-      "admin_apikey": "Kľúč API:"
-      "portal_url": "Adresa portálu:"
-      "title_text": "Freshchat"
-      "cancel": "Zrušiť"
-  "suspended_plan_info": "Váš účet bol pozastavený!"
-  "ticket_deleted": "Tento tiket bol vymazaný"
-  "signup_complete_activate_info": "Vítajte! Odoslali sme Vám súbor s odkazom, kde si môžete nastaviť heslo a aktivovat svôj účet."
-  "in": "v"
-  "topic":
-    "last_reply": "Posledná odpoveď"
-    "requester": "Zadávateľ"
-    "post_comment": "Odoslať"
-    "new": "Nová Téma"
-    "post": "Odoslať Tému"
-    "categories": "Kategórie"
-    "filter_1": "Plánované"
-    "name": "Názov Témy"
-    "filter_2": "Implementované"
-    "filter_4": "Prebieha"
-    "edit": "Upraviť Tému"
-    "filter_7": "Bez odovede"
-    "filter_0": "Všetci"
-    "msg1": "Komentáre sú pre túto tému uzavreté"
-    "filter_5": "Odložené"
-    "close": "Uzavrieť túto diskusiu"
-    "filter_6": "Opovedané"
-    "unmark_answer": "Zrušte to ako odpoveď"
-    "update_comment": "Aktualizovať komentár"
-    "filter_3": "Neprijaté"
-    "spam": "Spam"
-    "all": "Všetci"
-    "visible_in": "Viditeľné v jazyku"
-    "locked": "Zamknuté"
-    "filtered_by": "Zobrazené"
-    "open": "Znovu otvoriť túto diskusiu"
-    "add_category": "Pridať kategóriu"
-    "sticky": "Vždy navrchu"
-    "add_comment": "Pridať komentár"
-    "questions":
-      "answered": "Opovedané"
-    "change": "zmeniť"
-  "change_my_plan": "Vybrať túto licenciu"
+sk:
+  attach_file: Priložiť súbor
+  edit_forum_category: Upraviť kategóriu fóra
+  total: Súčet
+  export_data:
+    export: Export
+    csv: CSV
+    xls: Excel
+    select_all: Vybrať všetko
+    select_header: Vybrať všetky polia
+    from: Od
+    select_format: 'Exportovať ako:'
+    to: Komu
+    view_all_tickets: Exportovať ako CSV
+    thirt_days: Tento mesiac
+    seven_days: Tento týždeň
+    twenty_four: Od včera
+  go_back: Ísť Späť
+  mailbox:
+    imap_port: Port
+    authentication: 'Autentifikácia:'
+    user_name: Meno užívateľa
+    verifying_mailbox_input: Overovanie...
+    use_ssl_tls: Použiť SSL/TLS
+    use_ssl: Použiť SSL
+    smtp_port: Port
+    password: Heslo
+    incoming_mail_settings: Nastavenia prichádzajúcej pošty
+  success: Úspech
+  forum:
+    visible_to: Kto to uvidí
+    confim_msg1: 'Ste si istý, že chcete zmazať toto fórum?'
+    verb:
+      announcement: Oznámené
+      questions: Otázka položená
+      problems: Problém hlásený
+      ideas: Nápad zdieľaný s
+    start_topic: Založiť tému
+    type: Typ fóra
+    new: Nové Fórum
+    edit: Upraviť Fórum
+    title: Fóra
+  agent_working_on_this_ticket: Agent pracujúci na tomto tikete
+  more: viac
+  message: Správa
+  level_label: Stupeň
+  topics:
+    edit_title: Upraviť
+    show:
+      mark_this_idea_as: Označiť tento nápad ako
+  step1: Krok 1
+  contacts:
+    contacts: kontakty
+    reply: Odpovedať
+    new: Nový Kontakt
+    send_activation: Odoslať aktivačný email
+    add_new_requester: Pridať Nového Zadávateľa
+    status_title:
+      verified: Aktívny kontakt
+      unverified: Osoby s neovereným emailom
+      blocked: Zablokované kontakty
+      all: Všetky kontakty
+      deleted: Zmazané kontakty
+    showing: 'Zobrazenie:'
+    status:
+      all: Všetci
+      unverified: Neoverený
+      deleted: Zmazané
+      blocked: Blokovaný
+      verified: Overené
+      spam: Spam
+    title: Kontakty
+    info2: Zmeniť na Agenta
+    restore: Obnoviť
+  forum_confirm_msg1: 'Ste si istý, že chcete zmazať túto kategóriu?'
+  reorder: Usporiadať.
+  billing_address: Fakturačná adresa
+  save: Uložiť
+  change_password: Zmena hesla
+  filter_options:
+    tags: Značky
+    source: Zdroj
+    unassigned: Neprioradené
+  folder:
+    edit: Upraviť zložku
+  example: príklad
+  customers: Zákazníci
+  import_solution_article_info: 'Poznámka: Neukládáme komentáre k fóram'
+  none: Žiadny
+  mailer_notifier:
+    hi: 'Ahoj,'
+    thanks: 'Ďakujeme,'
+    note: 'Poznámka:'
+    regards: 'S pozdravom,'
+    freshdesk: Freshdesk
+    report_export_mailer:
+      common:
+        date_range: Rozpätie dátumov
+    topic_notifications:
+      reply: Odpovedať
+  copied_link: Skopírované
+  Email: E-mail zadávateľa
+  zendesk_backup_info: 'Zvoľte zálohovací súbor, ktorý ste vytvorili v Zendesk aplikácii'
+  right: Vpravo
+  agent:
+    insert_placeholder: Vložiť zástupný symbol
+    permissions: Oprávnenia
+    days_ago: '%{days} pred'
+    more: viac
+    agent_restored: Agent bol obnovený
+    assign: Priradiť
+    info3: 'Ste si istý, že chcete zmazať'
+    ago: '%{time} pred.'
+    group_info: >-
+      Môžu si pozerať tikery vo svojej skupině alebo skupinách a im priradené
+      tikety
+    full_time_agent: Agent na plný úväzok
+    add_signature: Pridať podpis
+    group: Agent (Skupinový Prístup)
+    export: Export
+    individual: Agent (Obmedzený Prístup)
+    contact_exists: 'Zadávateľ s emailom ''%{existing_email}'' už existuje, %{use_email}'
+    password_reset_note: >-
+      Poznámka: Obnovenie emailu s pokynmi bude odoslané zadávateľovi
+      %{requester} 
+    info1: Toto je Zmazaný Agent
+    occasional_agent: Príležitostný Agent
+    day_pass_expired: 'Vaše denné vstupy vypršali, prihlásením získáte novú dennú priepustku.'
+    occasional: Občas
+    admin_info: Môže vykonávať všetky činnosti správy
+    admin: Administrátor
+    last_logged_in: 'Posledné prihlásenie pred %{time}'
+    new: Nový Agent
+    supervisor: Supervízor
+    update: Aktualizovať
+    supervisor_info: >-
+      Môže si zobrazovať všetky tikety v helpdesku a pristupovať k zostavám (bez
+      správcovských oprávnení)
+    never_logged_in: Doteraz sa neprihlásil
+    individual_info: Môžu si zobrazovať len im priradené tikety
+    full_time: Celodenne
+    info4: Peeviesť na osobu zákazníka
+    showing: 'Zobrazenie:'
+    edit: Upraviť Agenta
+    use_email: Použiť tento email
+    view_user: Ukázať Užívateľa
+    insufficient_day_pass: >-
+      Nebolo možné Vám priradiť dennú priepustku, kontaktujte prosím svôjho
+      správcu.
+    helpcard:
+      title3: Agent (Skupinový Prístup)
+    signature: Podpis
+    password_reset_message: 'Chcete obnovit heslo zadávateľa %{requester}?'
+    title: Agenti
+    no_recent_activity: Žiadna nedávna aktivita
+    deleted:
+      no_agents: Nemáte žiadnych zmazaných agentov
+      agent_deleted: Agent bol zmazaný
+    occasional_description: Tento agent bude pristupovať k portálu podpory
+    make_admin: Urobiť tohoto agenta administrátorom
+    global_info: Môže si zobrazovať všetky tikety v helpdesku
+    skill: Skúsenosti
+    info2: Tento email je už použitý
+    active:
+      no_agents: Nepridali ste do zoznamu žiadneho agenta
+    restore: Obnoviť
+    global: Agent (Globálny Prístup)
+    account_suspended: účet bol pozastavený
+    roles: Roly
+    last_seen_at: Naposledy zobrazené
+  back: Späť
+  change_plan: Zmeniť licenciu
+  agent_emailnotverified: Email nebol overený pre tohoto agenta!
+  zendesk_url_info: 'e.g:- http://acme.zendesk.com'
+  add_holiday: Pridať sviatok
+  next: Ďalší
+  top: Hore
+  enter_a_value: Zadajte hodnotu
+  email_command_preview_to_email_value: support@acme.freshdesk.com
+  dispatch:
+    reorder: Usporiadať.
+    match_any: Hľadať Akékoľvek
+    info3: Kde by toto pravidlo malo byť použité
+    rule_name: Názov pravidla
+    new_rule: Nové pravidlo
+    new: Dispečér - Nové pravidlo
+    add_new_action: Pridat novú akcii
+    dispatch_rules: Dispečer - Pravidla
+    edit: Dispečér - Upraviť pravidlo
+    helpcard:
+      info1: >-
+        Dispečér umožňuje previesť vaše interné procesy do automatizovaných
+        postupov podpory, aplikováním preddefinovaných sád akcií na novo
+        vytvorené tikety v závislosti na daných podmienkach. Môžete napríklad
+        použiť Dispečér na automatické zaraďovanie do kategórií, prideľovaním
+        priorít alebo priraďovanie nových tiketov príslušným agentom Vášho týmu.
+    inactive_rules: Neaktívne pravidlá
+    title: Dispečér
+    match_all: Hľadať Akékoľvek
+    add_condition: Pridať novú podmienku
+    description: Popis
+    act_to_perform: Akcie na vykonanie
+    conditions: Podmienky
+    actions: Akcie
+  warning: UPOZORNENIE
+  zendesk_url: Zendesk URL
+  delete_topic_msg: Zmazať túto tému navždy
+  errors_in_payment_info: 'Vo Vašich platobných údajoch sa vyskytla chyba:'
+  change_plan_info: 'Svoju licenciu môžete kedykoľvek zmeniť, dalšia fakturácia je %{date}.'
+  forum_category:
+    product_portal_visibility: Viditeľné v jazyku
+  cancel: Zrušiť
+  errors_in_plan_change: 'Chyby vzniknuté pri zmene:'
+  non_covered_feature_error: Vaša súčasná licencia neobsahuje túto funkciu.
+  company:
+    title: Spoločnosti
+    title1: spoločnosti?
+    new: Nová spoločnosť
+    info11: Naozaj chcete túto položku odstrániť
+  marketplace:
+    delete_action:
+      success: Integrácia bola úspešne zakázaná!
+    view_all: Zobraziť všetko
+    view_more: Zobraziť viac
+    cancel: Zrušiť
+    help_and_support: Pomoc a podpora
+    settings: Nastavenia
+    helpnote1: >-
+      Apps in Freshdesk let you share data with third party solutions and
+      services that you use regularly. They also enable you to add additional
+      features to the ticket and contact details page. Freshdesk offers several
+      apps out-of-the-box. To browse our selection of apps, click on the “Get
+      more Apps” button.
+    tooltip:
+      suspended: Nedostupné
+    custom_apps: Vlastné aplikácie
+    time_ago: dozadu
+    validation_failed: Overenie zlyhalo.
+    installing_text: 'Čakajte, prosím…'
+    paid_app: ZAPLATENÉ
+    overview: Prehľad
+    install: Nainštalovať
+    published_in: v
+    popular: Obľúbené
+    apps: Aplikácie
+    reauthorize: Opätovné autorizovanie
+    go_to_dev_portal: Prejdite na portál pre vývojárov
+    no_mktp_apps_note: Integrovali sme niektoré z vašich obľúbených aplikácií.
+    ver: 'Verzia: '
+    coming_soon: Prichádza čoskoro
+    latest: Najnovšie
+    no_custom_apps_note: Vytvorte vlastné aplikácie a zverejnite ich na portáli pre vývojárov.
+    field_blank: Vyplňte povinné polia.
+    terms_of_use: Podmienky používania
+    description: Popis
+    no_mktp_apps: Neboli nainštalované žiadne aplikácie
+  shortcuts:
+    ticket_detail_list_common:
+      reply: Odpovedať
+      scenario: Scenáre
+      forward: Preposlať
+      delete_ticket: Vymazať tiket
+      search: Hľadať
+      add_note: Pridať poznámku
+    goto_tab:
+      social: Socialne siete
+      tickets: Tikety
+      dashboard: Nástenka
+      forums: Fóra
+      customers: Zákazníci
+      solutions: Riešenia
+    title: Klávesové skratky
+  proceed_billing_info: 'Áno, pokračovať k fakturácii'
+  integration:
+    helpcard:
+      title2: Vlastné aplikácie
+      title1: Prepojenie
+  plans_billing: Plán a Platby
+  gamification:
+    levels:
+      expert: Expert
+      intermediate: Stredne pokročilý
+      professional: Profesionál
+      guru: Guru
+      master: Majster
+      beginner: Začiatočník
+    leaderboard:
+      sharpshooter_trophie_info: >-
+        Agent s najvyšším počtom bodov za vyriešenie pri prvom volaní za tento
+        mesiac
+      love_trophie_info: Agent s maximálnym počtom bodov spokojnosti zákazníkov v tomto mesiaci
+      mvp_trophie_info: Zástupca s nejväčším celkovým počtom bodov v tomto mesiaci
+      speed_trophie_label: Pretekár
+      speed_trophie_info: >-
+        Agent s nejväčším celkovým počtom bodov za rychlé riešenie v tomto
+        mesiaci
+      mvp_trophie_label: Najužitočnější hráč
+      sharpshooter_trophie_label: Ostrostrelec
+      love_trophie_label: Zákaznicky šampión
+  delete: Zmazať
+  add_note: Pridať Poznámku
+  reply: Odpovedať
+  user_sessions:
+    new:
+      email: E-mail zadávateľa
+      sign_in_using_google: Zaregistrovať se pomocou účtu Google
+      password: Heslo
+      remember: Zapamätaj si ma na tomto počítači
+      sign_in_using: Prihlásiť sa
+      help: Pomocník
+      login: Prihlásenie
+  current_plan: Aktuálna licencia
+  settings: nastavenia
+  group:
+    working_hours_header: Pracovné hodiny
+    toggle_availability_for_rr: >-
+      Povoliť zástupcom zmeniť svoju dostupnosť pre automatické priradenie
+      tiketu
+    info1: Agenti
+    new: Nová Skupina
+    maximum: Maximum
+    enable: Aktivovať
+    learn_more: Čítaj viac
+    name: Názov Skupiny
+    info5: Ste si istý
+    info4: pokiaľ tiket zostane nepriradený dlhšie ako
+    edit: Upraviť Skupinu
+    confirm: Potvrdiť
+    title: Agent (Skupinový Prístup)
+    helptext: >-
+      Môžete si usporiadať svojich agentov do špecifických skupín, ako sú
+      "Predaj" a "Produktový management". Segmentácia do divízií umožňuje ľahko
+      priradiť tikety, vytvárať špecifické odpovede, nastaviť upozornenie
+      e-mailom, vytváranie obchodných pravidiel a generovanie zostáv na úrovni
+      skupiny. Všimnite si, že rovnaký agent môže byť členom viacerých skupín.
+    ticket_assignment: Automatické Priradenie Tiketu
+    select_an_agent: Zvoliť Agenta
+    business_calendar: Pracovné hodiny
+    description: Popis Skupiny
+  email_command_preview_to_email: Komu
+  ticket_field:
+    helpcard:
+      title1: Pole tiketu
+  activations:
+    activate_freshdesk_account: Aktivujte svoj účet
+  import_note_info: >-
+    Uistite sa, že prvý riadok hlavičky obsahuje informácie (napr. meno, e-mail
+    a pod). Pole v súbore CSV môže byť v ľubovoľnom poradí.
+  export: Export
+  no_tags: Nenájdené žiadne značky
+  save_changes: Uložiť Zmeny
+  payment_info: Údaje o platbe
+  attach_files: Pripojiť súbory
+  username: Uživateľské meno
+  reports:
+    scoreboard_title_nav: Rebríčky
+    survey_reports:
+      main:
+        time_period: Časové obdobie
+        neutral: Neutrálne
+        survey_name: Názov prieskumu
+        total_responses_v2: Súčet
+        agent: Zástupca
+        positive: Pozitívne
+        group: Skupina
+        overall_rating: Hodnotenie
+        responses: Odpovede
+        negative: Negatívne
+        no_overview: Nie sú dostupné žiadne dáta
+        unanswered: Bez odovede
+        overview: Prehľad
+        answered: Opovedané
+        all: Všetci
+        rating: Hodnotenie
+    summary:
+      fcr: Vyriešené pri prvom zavolaní
+    discard_changes: Zrušiť zmeny
+    date_ranges:
+      yesterday: Včera
+      custom: Rozpätie dátumov
+      today: Dnes
+      last_30_days: Posledných 30 dní
+      last_90_days: Posledných 90 dní
+      last_7_days: Posledných 7 dní
+    livechat:
+      time_period: Časové obdobie
+      chat_type: Typ chatu
+      answered_chats: Opovedané
+      missed_chats: Zmeškané
+      group: Skupina
+      filter_close: Zavrieť
+      filter_report: Upraviť filter
+      total_chats: Súčet
+      widget: Widget
+      filter_by_title: Filtrované podľa
+    timesheet_reports:
+      index:
+        select_agent: Zvoliť Agenta
+        filter_report: Upraviť filter
+        ticket_type: Typ Tiketu
+    freshfone:
+      time_period: Časové obdobie
+      group: Skupina
+      call_type: Typ hovoru
+      filter_option_all_calls: Všetky hovory
+      filter_close: Zavrieť
+      all_numbers: Všetky čísla
+      filter_report: Upraviť filter
+      number: Číslo
+      business_hours: Pracovné hodiny
+      unanswered_count: Bez odovede
+      options:
+        unassigned: Neprioradené
+        incoming: Prichádzajúci
+        outgoing: Odchádzajúci
+      filter_by_title: Filtrované podľa
+    time_sheets:
+      time_period: Časové obdobie
+      filter_by_title: Filtrované podľa
+  import_user_org_text: >-
+    Všetci užívatelia; Organizácie Vášho účtu Zendesk budú importované na účet
+    Freshdesk ako aj "Kontakty a Spoločnosti"
+  portal_key: Portál
+  agent_info_title: Informácie o Agentovi
+  favicon: Ikona pre adresný riadok internetového prehiadača
+  number_of_attachments: ' prílohy'
+  ticket:
+    properties: Vlastnosti Tiketu
+    reported: reportované
+    sort_by: Zoradiť podľa
+    submit_ticket: Predložiť
+    priority: Priorita
+    via: prostredníctvom
+    add_note: Pridať poznámku
+    update_done: Hotovo
+    note_form:
+      form_title: Pridať Poznámku
+      private_note: Toto je súkromá poznámka. Zadávateľovii sa nezobrazí.
+    view_facebook: Zobraziť na Facebooku
+    search_text: Hľadaj Články
+    view_twitter: Pozrieť Twitter
+    assigned_agent: Zástupca
+    created_by: 'Vytvoril(a):'
+    status: Stav
+    ticket_url: URL tiketu
+    action: Akcia
+    available_commands: Dostupné Príkazy
+    submit_loading: Odosielanie...
+    source: Zdroj
+    type: Typ
+    updating: Aktualizácia
+    from: 'Od:'
+    close_btn_title: Uzatvoriť Tiket
+    thanks_v1: Ďakujeme za odoslání reakcie
+  user:
+    phone_no: Telefónny kontakt
+    remove_profile_image_confirm: Skutočne chcete zmazať obrázok z Vášho profilu?
+    full_name: Celé Meno
+    change_photo: Zmeniť foto
+    phone_number: Telefónny kontakt
+    info1: >-
+      Profilový obrázok osoby. Pre zachovanie kvality, doporučujeme použiť
+      obrázok  s rovnakou šírkou a výškou.
+    choose_another_photo: Vyberte iné foto
+    profile_picture: Foto
+    remove_photo: Odstrániť foto
+    email: E-mail zadávateľa
+    industry: Odvetvie
+    name: Meno
+    photo: Foto
+    last_name: Priezvisko
+    twitter_id: Twitter
+    first_name: Krstné meno
+    title: Titul
+    mobile_phone: Mobilný telefón
+    work: Práca
+    company_name: Spoločnosť
+    mobile: Mobil
+    job_title: Pracovná pozícia
+  admin:
+    products:
+      helpnote:
+        content1: >-
+          Môžete podporovať svoje rôzne produkty na rôznych portáloch z jedného
+          účtu FreshDesk. Nakonfigurujte e-maily podpory pre každý produkt
+          zvlášť a automaticky ho smerujte na príslušné skupiny agentov.
+        heading2: Nakonfigurujte rôzne portály pro každý produkt
+        content2: >-
+          Keď nakonfigurujete oddelene portál pre každý produkt, môžete zároveň
+          poskytovať jedinečnú sadu riešení a fór pre každý z nich.
+        heading1: Viac produktov
+      index:
+        add_product: Nový produkt
+        title: Produkty
+      primary_product_support_email: Primárný e-mail produktovej podpory
+      form:
+        forwarding_email_info: 'Adresa pre preposlanie e-mailu:'
+        product_support_emails: E-maily produktovej podpory
+        enter_support_email_id: Váš email podpory
+        product_desc: Popis
+        product_name: Názov produktu
+      new:
+        title: Nový Produkt
+      product:
+        email_not_verified: Neoverený
+        customize_portal: Prispôsobiť portál
+        delete: 'Ste si istý, že chcete zmazať tento produkt?'
+        enable_portal: Povoliť portál
+      edit:
+        title: Upraviť produkt
+      portal:
+        select_solution_category: Zvoľte kategóriu riešení...
+        select_forum_category: Zvoľte kategóriu fóra
+        ago: dozadu
+        portal_customization: Prispôsobenie portálu
+        settings: Nastavenia
+        customer_portal: Zákaznícky Portál
+        customize_portal: Prispôsobiť portál
+        portal_rebranding: Zmena vzhľadu portálu
+        portal_name_info: >-
+          Názov / méno bude zobrazené na portály Vašho produktu, v hlavičke
+          vedľa loga
+        portal_settings: Nastavenie portálu
+        portal_language: Jazyk portálu
+        portal_name: Názov portálu
+        portal_language_info: Toto bude predvolený jazyk pri návšteve zákazníkov na Vašom portály
+        portal_url: Adresa portálu
+        contact_us: Kontaktujte nás
+      add_another_email: Pridať ďalší e-mail
+    skills:
+      index:
+        skills: Skúsenosti
+        description: Popis
+        skill_create: Vytvoriť
+        agents: Agenti
+        add_label: Pridať
+        manage_label: Spravovať
+        agent_label: Zástupca
+        agents_label: Agenti
+    security:
+      index:
+        request_custom_ssl: Chcete na svojom portály používať uživateľské SSL?
+        enable_sso_info: >-
+          Jednotné Prihlásenie Vám umožní používať Vašu vlastnú aplikáciu alebo
+          centralizovaný server (jako je MS Active Directory) k autentifikácii
+          agentov a zákazníkov tak, že budú môcť pristupovať do Freshdesku bez
+          nutnosti zadávať oddelene uživateľské meno a heslo.
+        submit_request: Odoslať Požiadavku
+        helpdesk_url: Helpdesk URL
+        security_title: Zabezpečenie
+        default_ssl: Predvolený SSL
+        add_new: Pridať nový
+        enable_SSL: Aktivovať SSL
+        enable_SSL_anon: SSL zaisťuje šifrovanie dát z/na portály FreshDesk
+        multiple_product_ssl_warning: 'SSL nebude použiteľné, pokiaľ je nakonfigurovaných viac produkto.'
+        whitelisted_ips_enabled: Biela listina IP
+        custom_ssl: Užívateľský SSL
+        only_agents: Agenti
+        remote_login_url_info: >-
+          Na túto adresu bude Freshdesk presmerovávať užívateľov k
+          autentifikácii v prípade, že sa budú prihlasovať do Freshdesku.
+        customer_portal_ssl_warning: >-
+          Keďže má Váš účet nakonfigurovanú vlastnú adresu URL helpdesku, budete
+          presmerovaný na
+        success_message: >-
+          Vaša požiadavka o uživatelský certifikát SSL bola prijatá a bude
+          spracovaná v najkratšom možnom termíne. Pred schválením obdržíte
+          potvrdzujúci mail od nášho providera. Prosím skontrolujte si maily.
+        saml_logout_url: URL pre odhlásenie
+        shared_secret_info: >-
+          Prosím, skopírujte si tento kľúč a bezpečne uschovajte. Budete ho
+          potrebovať k povoleniu vzdialeného overovania. Toto je spoločné
+          tajemstvo mezi Vami a Freshdeskom.
+        for_agents: Pre Agentov
+        remote_login_url: Adresa pre vzdialené prihlásenie
+        remote_logout_url_info: >-
+          Toto je webová adresa, ktorá v prípade, že sa užívateľ odhlási z
+          Freshdesku, presmeruje daných užívateľov na požadovanú stránku.
+        agents_customers: Agenti a Zákazníci
+        shared_secret: Spoločné Tajomstvo
+        remote_logout_url: Adresa pre vzdialené odhlásenie
+        thanks_message: >-
+          <span class=\"thanks_message\">Ďakujeme za žiadosť o užívatelský
+          certifikát SSL.</span><br />
+        enable_sso: Jednotné Príhlásenie
+        widget:
+          reset: Resetovať
+          copy_to_clipboard: Kopírovať do schránky
+      password_security:
+        never: Nikdy
+        days: dni
+        characters: znaky
+        have_mixed_case: Použite kombináciu
+        password: heslo
+        default: Predvolené
+        advanced: Pokročilé
+      helpnote:
+        title: Bezpečnostné nastavenie
+        info2: >-
+          <b>Povolenie SSL zabezpečenia</b><br />Môžete si zaistiť bezpečnú
+          komunikáciu k Vášmu portálu podpory prostredníctvom povolení SSL
+          kódov. Freshdesk ponúka predvolený "wildcard" SSL certifikát pre
+          všetky účty na doméne freshdesk.com. <b>Upozorňujeme, že nie je možné
+          použiť "wildcard" SSL pokiaľ používate pri tomto portály vlastné URL.
+          </b>Pokiaľ máte zvolenú licenciu "Estate", môžete si pre toto URL
+          požiadať o užívateľský SSL certifikát.
+        info1: >-
+          <b>Povolenie jednotného prístupu "Single Sign On"</b><br /> Keď Vaši
+          užívatelia už od Vás majú prihlasovacie oprávnenie (napr. cez Active
+          Directory alebo Vašu vlastnú WEB aplikáciu) môžete im umožniť prístup
+          na Váš portál podpory s týmito oprávneniami, tj. v režime Single Sign
+          On. Ďalšie informácie o nastavení jednotného prístupu na Freshdesk<a
+          href="https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk">zistite
+          tu</a>.
+    user_skills:
+      index:
+        more: viac
+        groups: Skupina
+        any: Ľubovolné
+    ecommerce:
+      new:
+        account_name: Meno účtu
+        title: Nový účet
+        assign_group: Priradiť do skupiny
+      index:
+        new_account: Nový účet
+      index_title: Elektronický obchod
+    widget_config:
+      popup_widget:
+        feedbackwidget_search_area: Hľadaj Články
+        feedbackwidget_attach_a_file: Priložiť súbor
+        feedbackwidget_button_text_placeholder: podporu
+        feedbackwidget_offset: 'Vyrovnať:'
+        feedbackwidget_submit_title: Odoslať spätnú väzbu
+        thankyou_default: Ďakujeme za odoslání reakcie
+      index:
+        feedbackwidget_popup_tab: Popup widget
+      embedded_widget:
+        feedbackwidget_attach_a_file: Priložiť súbor
+        feedbackwidget_submit_title: Odoslať spätnú väzbu
+        feedbackwidget_search_area: Hľadaj Články
+        thankyou_default: Ďakujeme za odoslání reakcie
+      popup_embedded_widget:
+        feedbackwidget_search_area: Hľadaj Články
+        feedbackwidget_button_text_placeholder: podporu
+        thankyou_default: Ďakujeme za odoslání reakcie
+        feedbackwidget_attach_a_file: Priložiť súbor
+    gamification:
+      gamification_settings:
+        title_ticket_points: Body Tiketov
+        award_points: Body ocenení
+        title_levels: Úrovne agentov
+        bonus_points_for: 'Bonusové body pre:'
+        firstcall_resolution: Vyriešené pri prvom zavolaní
+        fast_resolution: Rýchle <span>(< 1 hr)</span>
+        title_points_configuration: Konfigurácia bodov
+        ontime_resolution: Včas <span>(V rámci SLA)</span>
+        happy_customer: Spokojný zákazník
+        info_levels: 'Nastavte body, ktoré musí agent získať, aby dosiahol danej úrovne'
+        late_resolution: Neskoro <span>(Oneskorené)</span>
+        agent_resolves_ticket: 'Keď agent <br /> vyrieši tiket:'
+        unhappy_customer: Nespokojný zákazník
+        bonus_points: Bónusové body
+        title_trophies: Trofeje
+        new_quest: Nová výzva
+        enable_label: Gamifikácia zástupcov
+        quest_title: Výzvy
+      help_text:
+        why_game_info2: >-
+          Agent môže dosiahnúť vyššiu úroveň získavaním stále väčšieho počtu
+          bodov. Počet bodov, ktorý je nutné získať, nastavuje administrátor.
+        quest_form_info2: >-
+          Po dokončení vyberte kritéria výzvy (čo má agent urobiť) a pridajte
+          podmienky, ktoré keď sa splnia získa agent známku.
+        quest: Výzvy
+        quest_info2: >-
+          Všetky výzvy sú primárne nastavené ako zapnuté. Môžete vybrať tie,
+          ktoré nechcete, a vypnete ich. Ak chcete pridať viac výziev alebo
+          vytvoriť výzvu podľa vlastných cieľov, kliknutím na položku „Nová
+          výzva“ vytvoríte novú výzvu s podmienkami, ktoré chcete.
+        trophies_info1: Agent obdrží 4 trofeje na základe rôznych kritérií.
+        quest_form_info3: >-
+          Vyberte body, ktoré agent získa, a známku, ktorou bude odmenený. Potom
+          svoju výzvu nazvite a krátko ju opíšte.
+        quest_info1: >-
+          Výzvy predstavujú výkonnnostné ciele, ktoré nastavujete pre agentov.
+          Keď ich splnia, sú odmenený známkami.
+        why_game: Body a úrovne
+        why_game_info1: >-
+          Body sú udelované agentom na základe toho, ako rýchle vyriešia
+          priradené tikeky. K dispozícii sú aj bónusové body za vyriešenie
+          prvého volania a spokojenosti zákazníkov. Agenti aj strácajú body za
+          neskoré vyriešenie tiketov a za nespokojných zákazníkov.
+        quest_form_info4: Uložte nastavenia kliknutím na položku „Uložiť výzvu“.
+        quest_form_info1: >-
+          Vyberte typ výzvy, ktorý chcete nastaviť pre agenta. Môže to byť jedna
+          z troch možností: <br /> a) objasnené tikety,<br /> b) publikované
+          riešenia a <br /> c) príspevky vo fórach.
+      quests: Výzvy
+      index:
+        learn_arcade: Naučte se viac o arkáde
+        info1: >-
+          Nyní je pro zástupce každý požadavek šancí skórovat. A co je ještě
+          lepší - za odměnu dostanete pro váš tým takové bonusové body, které
+          jsou pro vás důležité. Dávejte rychlé odpovědi a správná řešení jako
+          první a vyhrajte skvělé hodnocení od vašich zákazníků.
+        enable_arcade: Povoliť FreshDesk arkádu
+        video: Vyskúšajte video
+        info2: >-
+          Sledujte postup svého týmu vpravo na nástěnce a získejte speciální
+          trofeje pro nejlepší "střelce" a staňte se Závodníkem, Ostrostřelcem,
+          Zákaznickým šampiónem a nebo nejlépe Nejvíce hodnoceným hráčem měsíce.
+        title: Nastavenie Arcade
+        start_over: Resetovať
+      new_quest: Nová výzva
+      points: Body
+      fresh_arcade: Čo je to FreshDesk arkáda?
+    surveys:
+      new_layout:
+        title: Názov prieskumu
+        loading: Načítavanie...
+      index:
+        hide: Odobrať
+        cancel: Zrušiť
+        delete: Zmazať
+        new: Nová
+        update: aktualizovať
+        save_survey: Uložiť
+        edit: Upraviť
+        title: Nastavení parametrů Spokojenosti zákazníků
+        activate_survey: Aktivovať
+        preview_survey: Náhľad
+      new_thanks:
+        additional_comments_feedback_v2: Vrátane ďalšieho políčka na komentáre
+        thanks_message_feedback_v2: Správa s poďakovaním pre doplnkovú spätnú väzbu
+      satisfaction_settings:
+        link_text_info: >-
+          Tento text se zobrazí pod Vaším podpisem v dolnej části e-mailu
+          odoslanom zákazníkovi.
+        link_text_input: 'Sdělte nám prosím, jak jste byli spokojeni s podporou.'
+        send_while_option4: >-
+          Umožnite agentom, aby pridali odkazy na dotazník do konkrétnych
+          e-mailov.
+        send_while_option2: E-maily odoslané po objasnení tiketu.
+        link_text_label: Text odkazu na dotazník spokojnosti
+        send_while_title: 'Vyberte, které e-maily mají mít odkaz na dotazník spokojenosti'
+        send_while_option1: Všetky e-maily odoslané zákazníkovi.
+        send_while_option3: E-maily odoslané po uzavretí tiketu.
+        enable_label: Dotazník spokojnosti zákazníkov
+      helptext: >-
+        <p><b>Why enable satisfaction surveys?</b> <br> Satisfaction Surveys let
+        you add a link to your response emails and directly collect customer
+        feedback and satisfaction. <br><br> <b>Creating your satisfaction
+        survey:</b><br> The following steps let you collect feedback from your
+        customers through a link in your response emails:<br> 1.Enable the
+        Customer Satisfaction Surveys checkbox<br> 2.Specify the Satisfaction
+        Link Text. The default text goes as &ldquo;Please let us know your
+        opinion on our support experience.&rdquo;<br> <br> <b>Choose which
+        emails have the satisfaction survey link:</b><br> You can choose whether
+        satisfaction survey links are sent to customers in every email, or only
+        in the final email once the ticket is resolved. <br><br> You can learn
+        more about satisfaction surveys from our solutions page. </p>
+      new_questions_layout:
+        questions: Otázky
+      new_rating:
+        error_text: Toto pole je povinné
+      thanks_contents:
+        title_text_v2: Správa s poďakovaním pre prieskum spokojnosti zákazníkov
+    shared:
+      filter_jsinit:
+        insert_placeholder: Vložiť zástupný symbol
+        user_pass?: Mám užívateľské meno a heslo?
+        selected: Vybrané
+        api_key: Kľúč API
+        change_password: Zmena hesla
+        url: URL výzvy
+        body: Telo
+        api_key?: Mám kľúč API?
+        params: Obsah
+        username: Uživateľské meno
+        request_type: Typ žiadosti
+        simple_layout: Jednoduché
+        subject: Predmet
+        advanced_webhook_tip: >-
+          Táto sekcia vám umožňuje písať vlastné API požiadavky. Pre začlenenie
+          informácií o tikete kliknite na tlačítko Vložiť zástupné symboly, ako
+          napr. Meno zadávateľa, Priorita, Stav tiketu atď.
+        not_selected: Nevybrané
+        password: Heslo
+        advanced_layout: Pokročilé
+        to: Komu
+        content_type: Kódovanie
+    contact_fields:
+      formfield_props:
+        behavior: Správanie
+        customer_edit: Zákazník môže upravovať
+        field_label_agents: Značka poľa pro agentov
+        for_customer: Pre Zákazníkov
+        label: Štítok
+        customer_visible: Zobraziť zákazníkovi
+        customer_mandatory: Povinné pre odoslanie formulára
+        field_label_customer: Značka poľa pro zákazníkov
+        customer_edit_signup: 'Zákazník to môže vidieť, ak sa zaregistruje'
+        for_agents: Pre Agentov
+        agent_mandatory_submission: Povinné pre odoslanie formulára
+        delete_field: Odstrániť pole
+        default: Predvolené
+        form_title: Vlastnosti
+    quests:
+      quest_form:
+        quest_type: Typ Výzvy
+        forum: Zapojené <br /> <strong>v komunite </strong>
+        save: Uložiť výzvu
+        no_condition: Tu nie sú žiadne podmienky
+        quest_objectives: Ciele výzvy
+        ticket: Objasnené <br /> <strong> Tikety </strong>
+        brief: Stručne o vašej výzve
+        edit: Editácia výzvy
+        bonus_points: Bónusové body
+        final: ... a nakoniec
+        completion: Po úspešnom splnení výzvy nasleduje odmena známkou a bonusovými bodmi
+        pick_badge: Vybrať si známku
+        reward: Odmena
+        quest_name: Názov Vašej výzvy
+        solution: Publikované <br /> <strong> Riešenia </strong>
+        change: Zmeniť
+        badge: Známka
+      index:
+        new_quest: Nová výzva
+        quest_description: >-
+          Výzvy sú konkrétne obchodné ciele, ktoré vytvárate pre agentov, aby sa
+          ich snažili dosiahnuť!
+        quest_title: Výzvy
+    observer_rules:
+      agent: Zástupca
+      helpnote:
+        help_title_2a: Udalosti
+        help_title_2d: Akcie
+        help_title: Pozorovateľ
+      anyone: Ktokoľvek
+      system: Systém
+      actions: akcie na vykonanie
+      customer: Zadávateľ
+    portal_settings:
+      simple:
+        bg_color: Telo
+        headingsColor: Farba titulku
+        btn_background: Tlačítko druhotnej akcie
+        inputFocusRingColor: Farba aktívneho rámčeku
+        tab_color: Pozadie
+        linkColor: Text odkazu
+        headingsFont: Font titulku
+        footer_color: Päta
+        textColor: Základná farba
+        header_color: Záhlavie
+        baseFont: Základný font
+        btn_primary_background: Tlačítko prvotnej akcie
+        tab_hover_color: Aktívna záložka
+        help_center_color: Centrum nápovedy
+        linkColorHover: Farba textu nad odkazom
+    supervisor_rules:
+      new:
+        title: Supervízor - Upraviť Pravidlo
+      index:
+        title: Pravidlá Supervízora
+      edit:
+        title: Supervízor - Upraviť Pravidlo
+      helpnote:
+        help_title: Supervízor
+        help_info_2: >-
+          Supervízor bude spustený každú hodinu a spracuje tikety aktualizované
+          v priebehu posledných 30 dní. Tieto pravidlá sú sputené sekvenčne,
+          takže ich poradie je dôležité - akcie jedného pravidla môžu ovplyvniť
+          podmienky následujúceho.
+        help_info_1: >-
+          Supervízor vytvára akcie na tikety v závislosti od ich stavu a času
+          spracovania. Periodicky kontroluje posledné tikety a vytvára akcie,
+          ako sú posielanie upomienok zákazníkovi pri čakání na jeho reakciu,
+          alebo eskaláciu omeškaných tiketov na zodpovednú osobu.
+    portal:
+      settings:
+        simple_none: Žiadny
+        everyone: Všetci
+        facebook: Facebook
+        twitter: Twitter
+        google: Google
+        important: Dôležitý
+    day_passes:
+      index:
+        agent: Zástupca
+        payment_info: Pre pridanie ďalších denních vstupov vložte údaje o platbe
+        no_of_day_passes: '# z Denných Vstupov'
+        email: E-mail zadávateľa
+        auto_recharge: Automatické dobíjanie
+        add_confirm: Čiastka bude odpočítaná z Vašej kreditnej karty
+        day_pass_history: História Nákupov
+        add_payment_info: Vložte údaje o platbe
+        order: 'Objednávka #'
+        title: Denný Vstup
+        recharge_quantity: 'Dobíjané množstvo:'
+        buy_now: Kúpiť teraz
+        date: Dátum
+        helptext: >-
+          Vaše denné vstupy sa automaticky dobíjajú, akonáhle počet dostupných
+          denných vstupov klesne na 2.
+        no_credit_card: Nemáme záznam o žiadnej kreditnej karte.
+        all: Všetci
+        filtered_by: 'Filtrovať podľa:'
+      helpnote:
+        title: Denný Vstup
+        info: >-
+          Za každý den, kdy se občasný zástupce přihlásí do helpdesku se použije
+          jedna Denní propustka. Můžete si koupit Denní propustky v balíčcích po
+          5ks a nastavit FreshDesk tak, aby je automaticky dokupoval, jakmile je
+          spotřebujete.
+    home:
+      index:
+        billing: Plán a Platby
+        title: Administrátor
+    getting_started:
+      index:
+        support_email_subtitle: Pridajte primárnu emailovú adresu podpory
+        emails_invalid: Jeden alebo viac Vašich e-mailov je neplatných.
+        agent_limit_reached: Presiahli ste limit max.počtu agentov.
+        going_social: Zapojte <br>sa do sociálnych sietí
+        support_email_title: E-mail<br> podpory
+        title_message: Naštartujte Vašu podporu v štyroch krokoch...
+        rebranding_header: 'Zvoľte pre Váš helpdesk nejaké príma meno :-)'
+        next_please_wait: 'Čakajte, prosím…'
+        rebrand_tab_empty: Je vyžadovaný kód farby záložky.
+        info: >-
+          Budete musieť v mailovej schránke podpory vytvoriť jednoduché pravidlo
+          na preposielanie emailu na túto adresu.
+        rebrand_title: Logo <br>&amp; farby
+        email_sent_success: E-mail bol úspešne odoslaný.
+        social_add_account: Pridať účet
+        rebrand_header_invalid: Kód farby hlavičky nie je správne zadáný.
+        adding_agents: Pridanie<br> agentov
+        support_email_submsg: >-
+          Toto bude primárna adresa na preposielanie keď budete odpovedať 
+          na<br>dotazy z FreshDesku.
+        skip_text: 'Nie ďakujem, presmerujte ma na môj helpdesk.'
+        agents_subtitle: 'Pozvěte svůj tým aby se podílel na té zábavě :-)'
+        send_test_mail_info2: >-
+          Tu je uvedené<a
+          href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957'
+          target='_blank'>ako to urobiť</a>.
+        rebrand_subtitle: Zmeňte vzhľad pomocou vlastného loga a farieb!
+        agent_title_info: >-
+          Přidejte emaily členů svého týmu a pozvěte je doFreshDesku.
+          Vícenásobné adrfesy oddělujte středníkem.
+        rebrand_bg_invalid: Kód farby pozadia nie je správne zadáný.
+        email_send_problem: Problém pri odosielaní e-mailu.
+        implement_changes: Implementovanie zmien...
+        rebrand_company_field_placeholder: Zadajte názov Vašej spoločnosti
+        rebrand_tab_invalid: Kód farby záložky nie je správne zadáný.
+        back_link: Späť
+        agent_email_required: K odoslaniu pozvánky je nutné ID e-mailu
+        agent_invite_field_placeholder: Zadať e-maily členov Vášho tímu
+        send_invite: Poslať pozvánku
+        congratulations: Gratulujeme! Váš FreshDesk je pripravený!
+        sending_test_mail_progress: 'Odesielanie skúšobného e-mailu, prosím čakejte...'
+        title1: A teraz dajte tieto emaily na FreshDesk
+        rebrand_header_empty: Je vyžadovaný kód farby hlavičky.
+        problem_updating: 'Problém s aktualizáciou, skúste to prosím znovu.'
+        updating: Aktualizovanie...
+        rebrand_bg_empty: Je vyžadovaný kód farby pozadia.
+        validating: Overovanie...
+        social_info_text: >-
+          Pridajte sem svoje účty z Twitteru a Facebooku a budete môcť sledovať
+          svoje sociálne interakcie a prenášať na FreshDesk správy z nástenky,
+          tweety, DMka a správy.
+        successfully_sent: Úspešne odoslané.
+        email_invalid: 'Váš e-mail je neplatný, skontrolujte si ho.'
+        info2: Nie ste s tím spokojný? Vložte nový email a kliknite na "Uložiť"
+        next_alt_text: Skočit priamo tam!
+        social_twitter_add: Pridať účet
+        helpdesk_preview_text: Náhľad
+        social_subtitle: Zapojte podporu do sociálnych sietí!
+        agent_email_sending: Odosielanie pozvánok...
+        successfully_updated: Úspešne aktualizované.
+        rebrand_submit_label: Zmeniť vzhľad
+        next_link: Ďalší
+        footer_msg: >-
+          <strong>Poznámka:<strong>Tieto nastavenia môžete kedykoľvek zmeniť na
+          <a href='/admin/home' target='_blank' style='text-decoration:none;
+          color:#1272DE'>záložke Admin</a>
+      send_mail_content:
+        send_test_mail_yes_response: >-
+          Dobrá práca! Práve ste úspešne nastavili email podpory v systéme
+          FreshDesk. Prejeme úspešné podporovanie!
+        send_test_mail_confirm_no: 'Nie, nevidím žiadny tiket.'
+        button_title: Odoslať skúšobný e-mail
+        send_test_mail_confirm_yes: 'Ano, mám to.'
+        button_sending: Odesielanie…
+        test_info_1: >-
+          Myslíte, že všetko zatiaľ vypadá v poriadku? Skúste poslať testovací
+          email.
+        button_again_title: …alebo odošlite znovu skúšobný e-mail
+    company_fields:
+      formfield_props:
+        behavior: Správanie
+        customer_edit: Zákazník môže upravovať
+        field_label_agents: Značka poľa pro agentov
+        dropdown_items_edit: Položky rozbaľovacieho zoznamu – upraviť pohľad
+        for_customer: Pre Zákazníkov
+        label: Štítok
+        cc_company_contacts: Do Kópie je možné pridať len kontakty spoločnosti
+        customer_visible: Zobraziť zákazníkovi
+        cc_any_email: Do Kópie je možné pridať akúkoľvek emailovú adresu
+        customer_mandatory: Povinné pre odoslanie formulára
+        sla_timer: Počítadlo SLA
+        field_label_customer: Značka poľa pro zákazníkov
+        level2: Úroveň 2
+        nestedfield_helptext_preview: >-
+          Toto je "Náhľad" vzor rozbaľovacích položiek pri použití voľných
+          textových formov v "Uprav zobrazenie" k editovaniu položiek
+        dropdown_items_preview: Položky rozbaľovacieho zoznamu – Náhľad
+        agent_mandatory_closure: Povinné pre uzatvorenie tiketu
+        level3: Úroveň 3
+        display_cc_field: Zobraziť pole Kópie
+        customer_edit_signup: 'Zákazník to môže vidieť, ak sa zaregistruje'
+        for_agents: Pre Agentov
+        status_choices: Voľby stavu
+        nested_label: Popisky vnoreného poľa
+        agent_mandatory_submission: Povinné pre odoslanie formulára
+        level1: Úroveň 1
+        display_to_customer: Zobraziť správu pre zákazníka
+        delete_field: Odstrániť pole
+        default: Predvolené
+        description: Popis
+        form_title: Vlastnosti
+    social:
+      streams:
+        visibility:
+          all: Všetci
+        cancel: Zrušiť
+        twitter_streams:
+          reauthorize: Opätovné autorizovanie
+          edit: Upraviť
+        update: Aktualizovať
+        index:
+          new_account: Nový účet
+      twitter_streams:
+        edit:
+          visible_to: Kto to uvidí
+        new:
+          create: Vytvoriť
+      ticket_rules:
+        assign_to_gp: Priradiť do skupiny
+    roles:
+      permissions: Oprávnenia
+      role_name: Názov role
+      agent_label: Zástupca
+      add_agent_label: Pridať agenta
+      scroll:
+        customers: Zákazníci
+        forums: Fóra
+        solutions: Riešenia
+        reports: Reporty
+        bots: Boty
+        general: Všeobecný
+        tickets: Tikety
+      agents_label: Agenti
+      new: Nová rola
+      saving_label: Uloženie...
+      role_description: Popis
+      cancel_label: Zrušiť
+      done_label: Hotovo
+      save_label: Uložiť
+      manage_label: Spravovať
+      add_label: Pridať
+    hotline:
+      content3:
+        note_title: 'Poznámka:'
+    mobihelp:
+      apps:
+        form:
+          saving: Uloženie...
+          select_a_solution_category: Zvoľte kategóriu riešení
+    custom_translation:
+      download: Stiahnuť
+      edit: Upraviť
+      preview: Náhľad
+  posted_by: Poslané
+  cloud_log_mailer:
+    logger_email:
+      regards: 'S pozdravom,'
+      account: 'Účet: '
+      reason: Príčina
+  validation:
+    required: Toto pole je povinné.
+  merge_contacts:
+    please_wait: 'Čakajte, prosím...'
+  portals_key: Portály
+  forgot_password: Zabudnuté Heslo
+  profile:
+    current_password: Súčasné heslo
+    manage: Spravujte svôj profil
+    new_password: Nové herslo
+    api_key:
+      reset_warning: >-
+        Po resetovaní API kľúča prestanú pracovať všetky aplikácie, ktoré
+        používajú starý kľúč. Naozaj chcete pokračovat?
+      reset: Resetovať API kľúč
+      title: Váš API kľúč
+    change_password: Zmena hesla
+    edit: Upraviť Profil
+    confirm_password: Potvrdiť heslo
+  canned_folders:
+    insert_placeholder: Vložiť zástupný symbol
+  enable: Aktivovať
+  plain_yes: Áno
+  enabled: Povolené
+  attachment_help_info: Veľkosť príloh(y) môže byť až 15 MB
+  agent_deleted_message: Zoto je zmazaný agent
+  footer:
+    helpdesk_software: Helpdesk softvér
+    by_freshdesk: Freshdesk
+  email: E-mail zadávateľa
+  reset: Resetovať
+  your_email: Váš email
+  event:
+    type: Typ
+  errors:
+    invalid_domain:
+      freshdesk: Freshdesk
+  medium: Stredná
+  yes_password_reset: Áno
+  update: Aktualizovať
+  note: 'Poznámka:'
+  plan_amount: za 1 agenta / mesiac
+  make_payment: Vykonať platbu
+  helpdesk:
+    time_sheets:
+      agent: Zástupca
+      group_by: Zoskupiť podľa
+      customer: Zákazník
+      group: Skupina
+      report:
+        no_timeentry: Nie sú dostupné žiadne dáta
+        total: Súčet
+      product: Produkt
+    tickets:
+      views:
+        shared_by_me: 'Tikety, ktoré som zdieľal'
+        shared_with_me: 'Tikety, ktoré zdieľali so mnou'
+        my_open: Moje Otvorené Tikety
+        article_feedback: Spätná väzba na článok
+        my_overdue: Moje Oneskorené Tikety
+        archived: Archivované
+        resolved_or_closed: Vyriešené alebo Uzatvorené
+        deleted: Kôš
+        open_or_pending: Otvorené alebo Nerozhodnuté
+        my_article_feedback: Spätná väzba na Moje články
+        spam: Spam
+        all: Všetky tikety
+        overdue: Oneskorené tikety
+        open: Otvorené Tikety
+        all_tickets: Všetky tikety
+      friendly_status:
+        customer_responded: Zákazník reagoval
+        elapsed: Oneskorená odozva
+        customer_responded_overdue: Zákazník reagoval
+        resolved: Vyriešené
+        overdue: Oneskorenie
+        new: Nová
+      show:
+        reply_form:
+          to: 'Komu:'
+        forward_form:
+          title: 'Od:'
+      note:
+        deleted_note: Zmazané
+      add_watcher:
+        me: Ja
+        mail:
+          hi: 'Dobrý deň,'
+    shared:
+      ok: OK
+      update: Aktualizovať
+      hide_cc: Skryť kópiu
+      cc: kópia
+  import_solution_article: Zaradiť článok z fóra ako riešenie
+  solutions:
+    status:
+      published: Publikované
+      draft: Návrh
+  undo: Späť
+  agents: Agenti
+  google_signup:
+    associate_google:
+      login: Prihlásenie
+      email_address: E-mailová adresa
+    signup_google:
+      company_name: Názov spoločnosti
+      phone_no: Telefónne číslo
+      create_my_account: Vytvoriť si účet
+      submit: Predložiť
+  import_zendesk_title: Importovať zo Zendesk
+  admin_upgrade:
+    enable_mint_title: Umožnite zástupcom vyskúšať novší a rýchlejší Mint
+    enable_mint_error: >-
+      Mint bol zapnutý pre všetkých zástupcov. Najnovšie nastavenia sa zobrazia
+      po obnovení.
+    enable_mint_success: Výborne! Mint bol úspešne zapnutý pre všetkých zástupcov.
+  plain_off: Vypnutý
+  Agent: Zástupca
+  attachment: Príloha
+  import_user_org: Uživatelia a Organizácie
+  step2: Krok 2
+  name: Meno
+  email_notifications:
+    insert_placeholder: Vložiť Zástupnú Značku/Placeholder
+    notify_agents: Upozorniť zástupcov
+    agent_select_title: Upozorniť zástupcov
+    notification_template: Šablóny
+    edit: Upraviť
+    singular_title: Upozornenie
+    helpcard:
+      info3: >-
+        V pripravenej odpovedi môžete použiť zástupné značky pre vytvorenie
+        premenného obsahu (napr. meno zadávateľa, ID tiketu, URL adresa, ...)
+      reply_template_15:
+        topic: Šablóna Odpovede Agenta
+      agent_template_12:
+        topic: Nebolo dodržané SLA pri prvej odpovedi
+      agent_template_10:
+        topic: Aktivačný email užívateľa
+      agent_template_25:
+        topic: E-mail s pozvaním pre zástupcu
+      requester_template_1:
+        topic: Vytvorený nový tiket
+      requester_template_8:
+        topic: Agent uzatvára Tiket
+      requester_template_7:
+        topic: Agent vyriešil Tiket
+      agent_template_13:
+        topic: Nesplnenie času na vyriešenie podľa SLA
+      agent_template_14:
+        topic: E-mail pre obnovu hesla
+      agent_template_1:
+        topic: Vytvorený nový tiket
+      info2: >-
+        Môžete nastaviť zákaz upozorňovania a nastaviť pravidlá Dispečera a
+        Supervízora pre doplnenie udalosti.
+      requester_template_10:
+        topic: Aktivačný email užívateľa
+      requester_template_14:
+        topic: E-mail pre obnovu hesla
+    requestor_notification: Upozornenie Zadávateľa
+    subject: Predmet
+    title: Emailové Upozornenie
+    add: Pridať
+    default_reply_template_info: >-
+      Šablóna sa objaví automaticky pre všetky odpovede agentov, kedykoľvek budú
+      odpovedať na tikety
+    agent_notification: Notifikácia Agenta
+  widgets:
+    feedback_widgets:
+      new:
+        feedback_widgets_search_results: Výsledky hľadania
+        problems_with_fields: 'V nasledujúcích poliach boll zistené problémy:'
+        feedback_widgets_search: Hľadať
+        feedback_widgets_knowledge_base: 'Databáza znalostí '
+  quests:
+    solution_mand: Doplňte prosím riešenia
+    js_forum_txt: >-
+      $$questmode$$ $$questvalue$$ príspevkov fór v rozpätí $$questtime$$ za
+      splnenia týchto podmienok.
+    delete: Chcete určite odstrániť túto výzvu?
+    ticket_mand: Doplňte prosím počet vyriešených tiketov.
+    badge_mand: Zvoľte prosím znak.
+    js_ticket_txt: >-
+      Vyriešte Tikety $$questvalue$$ v rozpätí $$questtime$$ za splnenia týchto
+      podmienok.
+    js_solution_txt: >-
+      Vytvorte $$questvalue $$  príspevok do databázy znalostí  v rozpätí
+      $$questtime$$  a zodpovedajúci týmto podmienkam.
+    js_quest_txt: >-
+      Po úspešnom splnení vyhľadania môžete ovoľniť znaky $$badgename$$ a
+      bonusové body $$questpoints$$.
+    forum_mand: Doplňte prosím počet fór.
+    name_mand: Uveďte prosím názov vyhľadávania.
+  add_a_topic: Založiť Tému
+  attach: Priložiť
+  tag:
+    title: Značky
+  index_tooltip_loading_msg: Načítavanie...
+  forum_shared:
+    topic_vote:
+      problem:
+        voted_users_widget_title: Ľudia ktorý majú tento problém
+        vote_button: Mám tento problém
+        vote_info_include_1: Máte tento problém
+      ideas:
+        vote_button: Páči sa mi tento nápad
+        voted_users_widget_title: 'Ľudia, ktorým sa páči tento nápad'
+        vote_info_include_1: Tento nápad sa Vám páči
+      howto:
+        voted_users_widget_title: Ľudia s touto otázkou
+        vote_info_include_1: Máte túto otázku
+        vote_button: Mám túto otázku
+      unlike: Nepáči sa
+    follow_topic: Sledovať tému
+    post:
+      delete_comment: Zmazať komentár
+      edit_comment: Upraviť komentár
+      delete_comment_confirm: Zmazať tento komentár? Ste si istý?
+      post_accepted_as_a_good_answer: Tento príspevok je prijatý ako dobrá odpoveď na danú tému
+      unmark_answer: Zrušte to ako odpoveď
+      answer: Odpoveď
+      mark_answer: Označit ako odpoveď
+    edit_title: Upraviť
+  send_feedback: Odoslať spätnú väzbu
+  support:
+    tickets:
+      ticket_survey:
+        rate_again: Ohodnoťte nás znova
+        cancel: Zrušiť
+        load_questions: Zobraziť viac
+        change_of_mind: Zmenili ste názor?
+        rating_sub_title: Ohodnotili ste nás
+        submit: Predložiť
+        title: Užívateľské hodnotenie
+        feedback_title: 'Pokiaľ chcete, popíšte svoju skúsenosť s podporou'
+        comments: Poznámky
+        survey_title: Urobte si prosím chvíľku na zhodnotenie našej podpory
+    shared:
+      survey_form:
+        feedback_title: >-
+          Aké Vaše postrehy a konkrétna kritika nám umožní zlepšiť našu podporu
+          do budúcna
+        survey_title: Vyčleňte si chvíľku prosím a ohodnoťte našu podporu
+        submit: Predložiť
+        cancel: Zrušiť
+        change_of_mind: Zmenili ste názor?
+        rate_again: Ohodnoťte nás znova
+      related_files: Súvisiace súbory
+      was_this_article_useful: Bol tento článok užitočný?
+    surveys:
+      new:
+        feedback_optional: Spätná väzba nie je povinná
+        submit: Predložiť
+        unhappy_info: 'Zaistíme, že budeme dbať na zvýšenú opatrnosť.'
+        thanks_info: 'Ďakujeme, že ste si vyčlenili chvíľku a ohodnotili naši podporu.'
+        happy_info: >-
+          S radosťou sme Vám poskytli naše služby a sme radi, že ste boli
+          spokojní s našimi službami
+        additional_info: Môžete s nami zdieľať ako se vám s nami spolupracovalo.
+        send: Odoslať spätnú väzbu
+        thanks: Veľmi pekne ďakujeme za Vaše hodnotenie!
+    canned_form:
+      hey: Ahoj
+      next: Ďalší
+      thank_you_text: Ďakujeme
+      form_submit: Predložiť
+    login:
+      form:
+        remember: Zapamätaj si ma na tomto počítači
+        login: Prihlásenie
+        forgot: zabudli ste heslo?
+        password: Heslo
+  import: Importovať
+  edit: Upraviť
+  application:
+    tooltip:
+      edit: Upraviť
+      settings: Nastavenia
+    connect: Pripojiť
+    enabled: Povolené
+    enable: Aktivovať
+    title: Prepojenie
+    disabled: Zakázané
+  confirm: Potvrdiť
+  discussions:
+    unpublished:
+      spam:
+        reply:
+          title: Odpovedať
+          posted: odpovedať komu
+      index:
+        title: Spam
+        unpublished: Čaká sa na schválenie
+      invalid_topic:
+        went_wrong: Niečo sa pokazilo
+      page_title: Moderovanie fóra
+    topics:
+      replied: odpovedať
+      widgets:
+        ticket:
+          agent: Zástupca
+      answer: Odpoveď
+      reply: Odpovedať
+      post:
+        replied: odpovedať
+        delete_confirm: Zmazať tento komentár? Ste si istý?
+      edit_topic: Upraviť Tému
+    show_more: Ukázať viac
+    moderation:
+      index:
+        title: Spam
+      spam:
+        reply:
+          posted: odpovedať komu
+          title: Odpovedať
+    topic_merge:
+      mark_primary: Označiť ako primárny
+      continue: Pokračovať
+      confirm_and_merge: Potvrdiť a zlúčiť
+      cancel: Zrušiť
+      add: Pridať
+      please_wait: 'Čakajte, prosím...'
+    shared:
+      topic:
+        tags:
+          reply: Odpovedať
+  users:
+    activations:
+      users: užívatelia.
+      bulk_send_invite_success: Platnosť Vášho aktivačného kódu vypršala!
+      user: užívateľ.
+  add_cc: Pridať kópiu
+  failure: Chyba ...
+  freshcaller:
+    admin:
+      sidebar_title: Telefón
+      link_account_request_content:
+        password: Heslo
+        email: E-mail zadávateľa
+        link_errors:
+          validation_error: Toto pole je povinné
+        continue: Pokračovať
+        cancel: Zrušiť
+      feature_request_content:
+        create_new_account: Vytvoriť nový účet
+      title_text: Telefón
+  agent_assigned_info: Žiadne otvorené ani rozpacované tiketyi pre tohoto agenta
+  status: Stav
+  or: alebo
+  feedbackwidget_background: Pozadie
+  custom_fields:
+    url: URL adresa
+    delete: Zmazať
+    nested_field: Závislé pole
+    phone_number: Telefónne číslo
+    dropdown: Rozbaľovací zoznam
+    email: E-mail zadávateľa
+    checkbox: Zaškrtávacie políčko
+    dropdown_blank: Rozbaľovací zoznam
+    text: Jednoriadkový text
+    number: Číslo
+    date: Dátum
+  edit_agent: Upraviť Agenta
+  subscription:
+    total: Súčet
+    free: Voľné
+    paid: Platené
+    invoice: Faktúra
+    refund: Refundované
+    upgrade:
+      message: Pre odblokovanie tejto funkcie urobte upgrade.
+      cname: 'Chcete použíť Vašu vlastnú doménu? Upradujte, prosím, svoju licenciu.'
+    download: Stiahnuť
+    info1: >-
+      Svoje predplatné môžete kedykoľvek zmenťt. Vaša karta bude nabitá odo dňa
+      predplatenia do ďalšieho dátumu účtovania.
+    billing: Fakturácia
+    status: Stav
+    type: Typ
+    date: Dátum
+    info2: >-
+      Pri downgrade z vyššej licencie na nižšiu budú stratené konfiguračné dáta
+      prepojené s funkciami vyššej licencie.
+    agents: Agenti
+  disable: Deaktivovať
+  cancel_and_back: Zrušiť a ísť späť
+  remove: Odobrať
+  accounts:
+    show:
+      export_data: Exportovať dát
+      export_data_text: Generovať XML pre všetky dostupné údaje help desku a odoslať e-mail
+      account_settings: Nastavenie Účtu
+      contact_email: E-mail zadávateľa
+      contact_phone: Telefón
+      primary_contact: Detail hlavného kontaktu
+      invoice_email_info: Odoslať faktúry na
+      contact_first_name: Meno
+      primary_contact_info: (Používá sa pre celú komunikáciu spojenú s účtom z aplikácie Freshdesk)
+      contact_last_name: Priezvisko
+      export_now: Exportovať teraz
+    cancel:
+      you_must_confirm: Musíte potvrdiť Vašu žiadosť o zrušenie
+      deleting_account: Zrušenie
+      confirm_and_cancel_my_account: 'Potvrdzujem, že chcem zrušiť môj účet a zmazať všetky moje dáta...'
+      delete_my_account: Zmazať môj účet
+      cancel_account: Zrušiť Freshdesk účet
+      goback: '&#x2190; Spät do nastavenia účtu'
+    signup_google:
+      sign_up: Registrácia!
+      privacy_policy: zásady ochrany osobných údajov
+    multilingual_support:
+      add_languages: Pridať jazyky
+    billing:
+      begin_subscription_info: dobite Vašu kartu a môžete začať okamžite využívať Vaše predplatné.
+      billing: Fakturácia
+    new:
+      create_an_account: Vytvoriť účet
+      company: Spoločnosť
+      full_name: Celé meno
+      confirmation: Potvrdenie
+    edit_domain:
+      getting_started: Začíname
+  zendesk_import:
+    group: Agent (Skupinový Prístup)
+    user: Užívateľov
+    ticket: Tikety
+  'on': dňa
+  fav_delete_msg: 'Ste si istí, že chcete zmazať túto ikonu?'
+  reset_my_password: Obnoviť moje heslo
+  upgrade_plan: Upgrade
+  plain_no: Nie
+  save_as: Uložiť ako
+  business_hours:
+    delete: Naozaj chcete túto položku odstrániť?
+    holiday_calendar: Kalendár sviatkov
+    info1: >-
+      Nastavenie pracovných hodín vo Freshdesku Vám umožní mať väčšiu kontrolu
+      nad SLA. 
+    new: Nové pracovné hodiny
+    valid_time: Zadajte platný čas
+    name: Meno
+    time_zone: Časové pásmo
+    title: Pracovné hodiny
+    holidays: Sviatky
+    to: do
+    description: Popis
+    multiple: Mimo pracovnej doby
+  chatwidget_title: Živý chat
+  register: Registrovať
+  signup: <b> Prihlásiť sa </b>
+  multifile_attachments:
+    remove: Odobrať
+    mb: ' MB '
+    label: Pripojiť súbory
+  account:
+    us: MESIAC-DEŇ-ROK
+    gdpr_terms_link: Podmienky
+    save: Uložiť
+    date_format: Formát dátumu
+    info3: Obnoviť predvolené farby
+    gdpr_admin: Administrátor.
+    cancel: Zrušiť
+    settings: Nastavenia
+    important: Dôležitý
+    gdpr_policy: Zásady ochrany osobných údajov.
+    helpdesk: Helpdesk
+    name: Meno účtu
+    time_zone: Časová zóna
+    languages: Jazyky
+    gdpr_agent: Zástupca
+    non_us: DEŇ-MESIAC-ROK
+    active_since: Farba Helpdsku
+    page_colors:
+      header: Záhlavie
+      background: Pozadie
+      title: Farby helpdesku
+      tab_color: Farba záložky
+    anyone: Ktokoľvek
+    change_logo: Zmeniť logo
+    gdpr_acknowledgement: 'a potvrdzujete, že ste si prečítali náš dokument'
+    forums_toggle:
+      title: Fóra
+    gdpr_to: do
+    language: Jazyk
+    primary_language: Hlavný jazyk
+    additional_languages: Podporované jazyky
+  portal_pages:
+    pages:
+      ticket_view: Detaily Tiketu
+      article_view: Zobrazenie článku
+      portal_home: Domovská stránka portálu
+      topic_view: Zobrazenie témy
+      submit_ticket: Nový Tiket
+      article_list: Zoznam článkov
+      topic_list: Zoznam tém
+      profile_edit: Profil užívateľa
+      forgot_password: Zabudnuté heslo
+      user_login: Prihlasovacia stránka
+      ticket_list: Tikety užívateľa
+      discussions_home: Domovská diskusná stránka
+      new_topic: Nová téma
+      solution_home: Domovská stránka riešení
+      solution_category: Kategória riešení – úvod
+      search: Výsledky hľadania
+      user_signup: Registrácia nového užívateľa
+    groups:
+      tickets: Tikety
+      general: Hlavné stránky
+      solutions: Riešenia
+      discussions: Diskusia
+  your_email_address: Vaše e-mailová adresa
+  livechat:
+    routing_info: Nasmerujte všetky prichádzajúce chaty do špecifických skupín
+    help_offline_thank_msg: Potvrdzujúca správa
+    prechat_dropdown_msg: >-
+      Možnosti rozbaľovacej ponuky môžete priradiť k rôznym skupinám v záložke
+      Vlastnosti. Chaty budú priradené podľa toho k jednotlivým skupinám.
+    non_availability_msg_header: 'Poslať správu, keď je agent preč'
+    integrate_msg: >-
+      Skopírujte a prilepte tento kód pred poslednú </body> značku na vašej
+      internetovej stránke alebo aplikácii
+    save: Uložiť
+    wait_title: 'Správa, kým sa čaká na pripojenie agenta'
+    msgbox_placeholder_title: Záložka na odpoveď
+    help_offline_thank_header_msg: Hlavička po správe je odoslaná
+    prechat_desc: >-
+      Zozbierať detaily o vašich návštevníkoch tak, aby ste mali lepší kontext,
+      keď s nimi chatujete. Keď je toto aktivované, návštevníci budú musieť
+      odoslať formulár, aby sa začala konverzácia.
+    installation: Kód widgetu
+    show_widget: Keď sú agenti online a akceptujú chaty
+    cancel: Zrušiť
+    integrate_livechat_title: Integrujte Live Chat do vašej internetovej schránky a aplikácií
+    header_title: Záhlavie
+    maximum_chat_desc: >-
+      Nastavte limit pre počet chatov, ktoré môže agent spravovať súčasne. Keď
+      agent dosiahne tento limit, nedostanú žiadne nové notifikácie chatu.
+    chatbox_bgcolor: Farba
+    maximum_chat_title: Maximálny počet chatov návštevníka
+    valid_code: Zadajte platnú hodnotu farby
+    non_availability_msg_help: >-
+      Ak chcete vytvoriť prepojenie na vetu vo vašej správe s odkazom na vašu
+      URL, pripojte ho medzi '# #'
+    maximum_change_label: Upraviť
+    chat_availability: Dostupnosť chatu
+    proactive_title: Proaktívny chat
+    intro: >-
+      Integrované riešenie Live Chat vo Freshdesk vám umožňuje vidieť a chatovať
+      s používateľmi na vašej internetovej stránke, online softvér alebo
+      podporiť portál priamo z Freshdesk. Môžete proaktívne začať chatovať s
+      návštevníkmi vašej internetovej stránky. Keď skončíte reláciu chatu môžete
+      si zvoliť možnosť a konvertovať konverzáciu do tiketu a pokračovať v
+      komunikácii s návštevníkom prostredníctvom e-mailu alebo archivovať chat.
+    texton: Zapnutý
+    show_chat_hours: Zobraziť chat
+    agent_network_disconnect_msg_title: 'Správa, keď sa agent odpojí'
+    thank_title: Ďakovná správa
+    prechat_msg: Správa predbežného chatu
+    enable: Aktivovať
+    enabled: Povolené
+    welcome: Uvítacia správa
+    portal_desc: >-
+      Zatiaľ čo, widget chatu na vašej internetovej stránke je viditeľný pre
+      každého, môžete ho aktivovať na vašom podpornom portáli iba pre vašich
+      zákazníkov.
+    copy_to_clipboard: Kopírovať do schránky
+    missed_chat_title: Formulár zmeškaného chatu
+    portal_option_info: Ukážte widget chatu pre
+    missed_chat_desc: 'Zozbierať detaily návštevníka, keď nie ste k dispozícii.'
+    proactive_note: >-
+      Poznámka: Predbežný chat sa nezobrazí, keď sa chat začal proaktívne. Stále
+      môžete manuálne pridať všetky detaily návštevníka.
+    edit: Upraviť
+    default_routing: Predvolené smerovanie
+    routing: Smerovanie chatu
+    anytime: Vždy (24/7)
+    help_text_wait_onhold_msg: >-
+      Táto správa sa zobrazí, keď návštevník čaká na agenta viac ako jednu
+      minútu
+    support_portal: Chat pre váš podporný portál
+    chat_hours_msg_note: 'Poznámka: Okno chatu bude tentokrát skryté.'
+    form_details: Detaily formulára
+    show_chat_hours_msg: 'Nastaviť, keď bude vaše okno chatu dostupné pre vašich návštevníkov.'
+    intro_title: Prečo živý chat?
+    text_no: Nie
+    set_default_msgs: Predvolené správy
+    enable_chat: Aktivovať živý chat
+    text_yes: Áno
+    business_hours: Počas pracovnej doby
+    chat_enabled_label: Aktivovať chat
+    chat_transfer_msg_title: Správa prenosu chatu
+    offline_message: Hromadné správy
+    window_position: Pozícia
+    custom_chat_window: Okno chatu
+    help_offline_title: Záhlavie
+    learn_livechat: Dočítať sa viac živom chate
+    widget: Widget
+    textoff: Vypnutý
+    enabling: Povolenie
+    use_custom_link: 'Presmerovať návštevníkov na separátnu stránku '
+    procative_info: >-
+      Automaticky začnite konverzáciu chatu s návštevníkmi, ak na tej istej
+      stránke strávia dlhší čas.
+    dropdown_based_routing: Smerovanie na základe rozbaľovacieho menu
+    widgets_list_info: >-
+      Pre každý produkt, ktorý ste nastavili do Freshdesku budete mať príslušný
+      widget chatu, ktorý bude k dispozícii
+    visitor_form: Formulár návštevníka
+    disabled: Zakázané
+    url_error_msg: Zadajte platnú URL
+    window_offset: Vyrovnať
+    everyone: Všetci
+    prechat_title: Forma predbežného chatu
+    cobrowsing: Pomoc na stránke
+    end_chat_confirm_msg_title: Potvrdzujúca správa ukončenia chatu
+    chat_with_us: Spojte sa s nami
+    logged_in_users: Iba pre prihlásených užívateľov
+    cobrowsing_info: >-
+      Riaďte svojich zákazníkov efektívnejšie počas vášho chatu tak, že budete
+      mať možnosť zobraziť a ovládať ich obrazovku.
+    window_offset_error_msg: Zadajte prosím platnú hodnotu obsadenia(< 500px).
+    preferences: Preferencie
+  feedbackwidget_custom_image_info: 'Pokiaľ používate vlastný obrázok, farba a text budú ignorované.'
+  reset_password_title: Obnoviť Heslo
+  feedbackwidget_offset_info: >-
+    Offset bude vzdialenosť widget tlačidla (pixelov) od ľavej alebo hornej
+    časti obrazovky založenej na vyrovnanie, ktoré si vyberiete.
+  automations:
+    info4: >-
+      Select the below Placeholders to append to the email content and they will
+      get converted into the appropriate data
+    available_placeholders: Vložiť Zástupnú Značku/Placeholder
+  portalcss:
+    apply_mint: Použiť
+    layout_pages:
+      header_layout_title: Záhlavie
+      footer_layout_title: Päta
+    save_and_continue: Uložiť
+    please_wait: 'Čakajte, prosím…'
+    cosmetic:
+      subheader_background_color: Farba pozadia
+  date_title: Dátum
+  zendesk_backup: Záložný súbor
+  suspended_plan_admin_info: >-
+    Váš účet bol zmrazený. Pre bližšie informácie kontaktujte Vášho
+    administrátora účtu, %{email}.
+  close: Zavrieť
+  email_command_setting:
+    helpcard:
+      note: Poznámka
+      ticket_type_example: Otázky
+  portal:
+    topic:
+      default_select_option: Zvoliť typ fóra
+      topic_title: Názov témy
+      post_topic: Vyvesiť tému na
+      follow: Sledovať
+      following: Nasledovný
+      monitor_topic: Monitorovať túto tému
+      comments_closed: K tejto diskusi už nie je možné pridávať komentáre!
+      start_new_topic: Zahájiť novú tému
+      see_all_topics: 'Pozrite sa na všetky témy (%{count})'
+      comment_placeholder: Klliknutím sem pridajte komentár
+      started: začať tému
+      more_topic: Viac tém v
+      last_reply: Posledná odpoveď
+      sort_heading: 'Zoradiť podľa:'
+      sort_order:
+        popularity: Obľúbené
+      sort_by_most_recent: Posledná
+      sort_by_default: Predvolené
+    topic_vote:
+      howto_unlike_button: Nemám túto otázku!
+      ideas_unlike_button: nepáči sa
+      problem_button: Máte tiež tento problém ?
+      ideas_button: Páči sa Vám tento nápad?
+      announce_unlike_button: nepáči sa
+      problem_unlike_button: Ja nemám tento problém !
+      ideas:
+        one: páči sa tento nápad
+        few: páči sa tento nápad
+        many: páči sa tento nápad
+        other: páči sa tento nápad
+      problem:
+        one: má tento problém
+        few: má tento problém
+        many: má tento problém
+        other: má tento problém
+      howto:
+        one: má túto otázku
+        few: má túto otázku
+        many: má túto otázku
+        other: má túto otázku
+      votes: stemmer
+      ideas_users_voted_title: 'Ľudia, ktorým sa páči tento nápad'
+      problem_users_voted_title: Ľudia ktorý majú tento problém
+      howto_users_voted_title: Ľudia s touto otázkou
+    search:
+      placeholder: Hľadať pomocou klľúčového slova...
+      filters:
+        all: Všetci
+        solutions: Riešenia
+        topics: Témy
+        tickets: Tikety
+      results_for: Hľadať výsledky pre
+    tickets:
+      add_or_remove_emails: >-
+        Pridajte alebo odoberte e-maily, ktoré je nutné skopírovať pri
+        odosielaní notifikácii pre tento tiket.
+      submit_export: Export
+      export_ticket_data: Exportovať däta z tiketov do CSV
+      details: Detaily Tiketu
+      export: Exportovať däta z tiketov do CSV
+      export_to_csv: Exportovať do CSV
+      ticket_list: Zoznam tiketov
+      mark_closed: Označiť tiket ako uzavretý
+      add_people: Pridať osoby
+      reply_placeholder: Kliknutím sem odpovdzte na tento tiket
+      comments: Poznámky
+      add_people_title: Pridať osoby ku konverzácii
+      reopen_reply: Odpovedať
+    cookie:
+      privacy_policy: Zásady Ochrany Osobných Údajov
+      cookie_policy: Politika práce s COOKIE
+      why_we_love_cookies: Prečo máme radi COOKIES
+      cookie_dialog_info1: Používame "cookies" aby se Vám s Freshdeskem lepšie pracovalo.
+      cookie_dialog_info2: >-
+        Keď chcete zistiť, aké "cookies" používame, kedy a prečo, pozrite sa sem
+        %{privacy_link}. Pokiaľ nemáte "cookies" radi, alebo to nechcete
+        používať, môžete to kľudne zakázať. Len si uvedomte, že služby
+        Freshdesku sú na cookies závislé a niektoré časti Freshdesku bez toho
+        nemusí správne fungovať.
+      cookie_dialog_info3: >-
+        Pokiaľ "cookies" nevypnete na Vašom prehliadači, budeme predpokladať, že
+        súhlasíte s ich používaním tak, ako je to popísané tu %{privacy_link}.
+    said: povedal
+    article:
+      see_all_articles: 'Pozrite sa na všetky články (%{count})'
+      created_by: 'Vytvoril(a):'
+    no_topics_in_this_view: ~ Žiadne témy v tomto  náhľade  ~
+    reported: reportované
+    header:
+      preview_message: >-
+        <b>Režim náhľadu</b> - pre návrat <a
+        href='javascript:window.close()'>kliknite sem</a>.
+    new_support_ticket: Nový tiket pre podporu
+    submit_new_ticket: …alebo Odešlite nový tiket
+    login: Prihlásenie
+    login_portal: Prihláste sa na portál podpory
+    login_details: 'Zadajte prihlasovacie údaje, ktoré ste uviedli pri registrácii.'
+    agent_login_details: 'Zadajte prihlasovacie údaje, ktoré ste uviedli pri registrácii.'
+    login_options: … alebo sa prihláste pomocou
+    reset_password: >-
+      Uveďte svoju emailovú adresu a my Vám zašleme pokyny k obnoveniu Vášho
+      hesla.
+    signup: Registrácia
+    account: účet
+    to_post_comment: pre odoslanie komentára
+    to_submit_ticket: pre odoslanie nového tiketu
+    to_post_topic: pre odoslanie témy
+    popular_topics: Obľúbené témy
+    showing_recently_popular_topics: Zobrazenie nedávno obľúbených tém
+    community_forums: Komunitné fóra
+    knowledge_base: Databáza znalostí
+    showing_recent_updates: Zobrazenie naposledy zmenených
+    no_articles_info_1: 'Ospravedlňujeme se, ale neboli publikované žiadne články.'
+    no_articles_info_2: 'Prosím, skúste neskôr.'
+    no_forums_info_1: Zatiaľ žiadne témy
+    no_forums_info_2: 'Prečo nezačnete tu %{start_topic_link}?'
+    folder:
+      filler_text: 'Sledovať na tomto mieste články týkajíce se %{folder_name}'
+    vote_label:
+      one: 1 stemme
+      few: stemmer
+      many: stemmer
+      other: stemmer
+  title: Titul
+  freshfone:
+    admin:
+      settings: Nastavenia
+      important: Dôležitý
+      freshfone_numbers_title: Telefón
+      welcome_page:
+        title_text: Telefón
+      numbers:
+        buy: Kúpiť číslo
+        address:
+          address: Adresa
+          state: Štát/Provincia/Oblasť
+          city: Mesto
+          postal_code: PSČ
+        caller_id:
+          manage_caller_id: 'Spravovať ID volajúceho '
+          add_new: Pridať novú
+        manage: Spravovať
+        buy_button_text: Kúpiť
+      feature_request_content:
+        pricing: Zobraziť všetky sadzby hovorov a podporované krajiny
+        learn_more: Čítaj viac
+        title_text: Telefón
+        trial_or: ALEBO
+      local: Miestne
+      ivr:
+        turn_on: Zapnutý
+        save: Uložiť
+        turn_off: Vypnutý
+        rename: premenovať
+        action: Akcia
+        delete_menu: Vymaž menu
+        previewing: Náhľad
+        saving: Uloženie...
+        preview: Náhľad
+        done: zmazať
+        welcome_message: Uvítacia správa
+      number_settings:
+        greeting_message: Sem zadajte správu
+        number_accessible: Dostupné prostredníctvom
+        record_all: Nahrávať všetky hovory
+        voicemail_on: Zapnutý
+        cancel: Zrušiť
+        record_none: Nezaznamenávať hovory
+        voicemail_off: Vypnutý
+        name: Meno
+        voicemail: Hlasová schránka
+        business_hours: Pracovné hodiny
+        start_recording: Spustiť nahrávanie
+        preparing_recording: Pripravujeme vašu správu...
+        audio_upload: Nahrať
+        business_calendar: Vyberte pracovnú dobu
+        name_placeholder: Zadajte názov pre vaše číslo
+        welcome_message: Uvítacia správa
+        change: Zmeniť
+    subscription:
+      purchase_credits: Zakúpiť kredity
+  special_beta_offer: Špeciálna ponuka pre účty Beta
+  days: dni
+  tickets_filter:
+    sort_fields:
+      status: Stav
+      last_modified: Posledná Zmena
+      desc: Zostupne
+      priority: Priorita
+      due_by: Termín riešení
+      updated_at: Posledná Zmena
+      asc: Vzostupne
+    company: Spoločnosť
+    raised_by: Tikety vytvorené
+  saving: Uloženie...
+  logo_delete_msg: 'Ste si istý, že chcete zmazať toto logo?'
+  reload: Znovu načítať
+  amount: Množstvo
+  free_plan_agents: 'prr %{free_agents} agetov'
+  forums:
+    search_all:
+      placeholder: Hľadať všetky témy
+    form:
+      type: Typ fóra
+      visible_to: Kto to uvidí
+  working: Pracujem
+  comments: Poznámky
+  Portal: Portál
+  ticket_fields:
+    index:
+      title: Pole tiketu
+      save_ticket_fields: Uložiť
+    untitled: Bez názvu
+    confirm_delete: Chcete určite odstrániť toto pole?
+    second_choice: Druhá Voľba
+    first_choice: Prvá Voľba
+    section:
+      confirm_btn: Potvrdiť
+      delete_btn: Zmazať
+      ok_btn: OK
+      continue_btn: Pokračovať
+      oops_btn: Ups!
+    fields:
+      agent: Zástupca
+      priority: Priorita
+      requester: Vyhľadať zadávateľa
+      company: Spoločnosť
+      group: Skupina
+      ticket_type: Typ
+      tags: Značky
+      product: Produkt
+      status: Stav
+      subject: Predmet
+      source: Zdroj
+      created_at: Vytvoril
+      skill: Skúsenosť
+      description: Popis
+    formfield_props:
+      behavior: Správanie
+      customer_edit: Zákazník môže upravovať
+      field_label_agents: Značka poľa pro agentov
+      dropdown_items_edit: Položky rozbaľovacieho zoznamu – upraviť pohľad
+      for_customer: Pre Zákazníkov
+      label: Názov Poľa
+      cc_company_contacts: Do Kópie je možné pridať len kontakty spoločnosti
+      customer_visible: Viditeľné zákazníkom
+      cc_any_email: Do Kópie je možné pridať akúkoľvek emailovú adresu
+      customer_mandatory: Povinné pre odoslanie formulára
+      level: Stupeň
+      sla_timer: Počítadlo SLA
+      field_label_customer: Značka poľa pro zákazníkov
+      level2: Úroveň 2
+      nestedfield_helptext_preview: >-
+        Toto je "Náhľad" vzor rozbaľovacích položiek pri použití voľných
+        textových formov v "Uprav zobrazenie" k editovaniu položiek
+      dropdown_items_preview: Položky rozbaľovacieho zoznamu – Náhľad
+      dropdown_choices: Rozbaľovacie možnosti
+      agent_mandatory_closure: Povinné pre uzatvorenie tiketu
+      level3: Úroveň 3
+      display_cc_field: Zobraziť pole Kópie
+      for_agents: Pre Agentov
+      status_choices: Voľby stavu
+      add_new_choice: Pridať novú voľbu
+      nested_label: Popisky vnoreného poľa
+      agent_mandatory_submission: Povinné pre odoslanie formulára
+      level1: Úroveň 1
+      display_to_customer: Zobraziť správu pre zákazníka
+      delete_field: Odstrániť pole
+      description: Popis
+      form_title: Vlastnosti poľa
+      note: 'Poznámka:'
+    no_choice_message: Je nutné uviesť aspoň jednu platnú voľbu
+  export_to_CSV: Exportovať do CSV
+  email_configs:
+    info7: 'To je tiež Vaše adresa pre odpoveď, napr. support@yourcompany.com'
+    remove_msg: Chcete určite tento email odobrať?
+    dkim:
+      last_verified: Naposledy overené
+      config: Konfigurovať
+      cname: CNAME
+      verified: Overené
+      verify: Overiť
+      status: Stav
+      remove: Odobrať
+      unverified: Neoverený
+      type: Typ
+    info17: Táto emailová adresa bude automaticky zahrnutá v poli Bcc
+    freshdesk: Freshdesk
+    info9: Priradiť do skupiny
+    info8: Preposielať svoje emaily na
+    send_verification_email: Odošlite overovací email
+    reply_email: Váš email podpory
+    bcc_text: Skrytá kópia
+    secondary_supp_email_tool_tip: Nastaviť tento email podpory
+    global_support_emails: Globálny Email Podpory
+    assign_to_product_msg: Prepojiť tento email podpory s produktom
+    name: Meno
+    name_info_msg: 'Názov emailové adresy, ktorá bude použitá v odpovediach na tiket'
+    Personalized_email_replies_no: Nie
+    edit: Upraviť
+    helpcard:
+      info21: >-
+        You can add unlimited incoming and outgoing mailboxes (like
+        info@yourcompany.com, sales@yourcompany.com, etc.) in your helpdesk. You
+        can even setup Freshdesk to automatically assign emails from each
+        mailbox to a specific group.
+      tour1: Pomôžte mi nastaviť môj email podpory
+    new_support_email: Nový Email Podpory
+    info11: Nakonfigurovať hlavné  emailové adresy podpory
+    set_bcc_email_text: Nastaviť automatický email Bcc
+    unverified_info1: >-
+      Na tento email bola odoslaná správa s overovacím odkazom. Tento email pre
+      podporu bude aktivny až po overení.
+    title: Nastavenie emailu
+    reply_to_tickets: Použite "Odpovedať na" e-mailovú adresu k vytvoreniu kontaktu žiadateľa
+    add_bcc_text: Pridať Bcc
+    mark_as_primary_msg: Chcete určite tento email nastaviť ako hlavný email podpory?
+    info10: >-
+      Nové tikety, ktoré prišli na tento email podpory, budú automaticky
+      priradené do skupiny
+    Personalized_email_replies_yes: Áno
+    plain_unverified: Neoverený -
+    primary_supp_email_tool_tip: Primárný e-mail produktovej podpory
+    bcc_email: Skrytá kópia / Bcc
+  agent_list:
+    sort:
+      last_active_at: Naposledy zobrazené
+      sorted_by: Zoradiť podľa
+      created_at: Dátum vytvorenia
+      asc: Vzostupne
+      desc: Zostupne
+      name: Meno
+  email_command_preview_subject: Predmet
+  currency_label: 'Mena :'
+  add_new_forum: pridaj nové fórum
+  plain_on: Zapnutý
+  password: Heslo
+  clone: Klonovať
+  helpdesk_reports:
+    chats: Čety
+    more: Viac...
+    insights:
+      customize_link: Prispôsobiť
+    saved_report:
+      edit_dialog_header: Upraviť report
+      cancel: Zrušiť
+      save: Uložiť
+      delete_dialog_header: Odstrániť report
+    today: Dnes
+    ticket_schedule:
+      new:
+        select_all: Vybrať všetko
+        description: Popis
+        one_time_export_label: Export obsahu tiketu od začiatku mesiaca po spustení rozvrhu
+        helpnote:
+          api_info1: API bude mať odkaz na najnovší export.
+        frequency: Plán
+        email: E-mail zadávateľa
+        ticket_fields_title: Pole tiketu
+        contact_fields_title: Polia kontaktu
+      new_schedule: Nový rozvrh
+      index:
+        delete_text: Naozaj chcete odstrániť tento plán?
+        cancel: Zrušiť
+        confirm: Potvrdiť
+      schedule: Plán
+      all_reports: Všetky reporty
+      schedule_export: Naplánovať export
+    this_week: Tento týždeň
+    agent_summary:
+      title: Výkon agenta
+    this_month: Tento mesiac
+    edit_filter: Filtrovať
+    scheduled_reports:
+      dialog:
+        monthly: Mesačne
+        generate_report: Generovať report
+        email: E-mail zadávateľa
+        'on': Zapnutý
+        desc: Popis
+        daily: denný
+        weekly: týždenný
+        subject: Predmet
+    year_in_review:
+      title: Zhodnotenie vášho roka
+    ticket_volume:
+      time_trends:
+        year: Rok
+        week: Týždeň
+        day: Deň
+        month: Mesiac
+    summary: Súhrn
+    show: 'Ukázať:'
+    date_range: Rozpätie dátumov
+    filter_by: Filtrovať podľa
+    timespent_export:
+      export_csv: Exportovať CSV
+      button_export: Export
+    performance_distribution:
+      title: Rozdelenie výkonu
+      resolution_bar: Čas vyriešenia
+      first_response_bar: Čas prvej odpovede
+      response_bar: Priemerný čas odpovede
+    group_summary:
+      title: Výkon skupiny
+    ticket_activity:
+      edit: Upraviť plán
+      helpnote:
+        api_info1: API bude mať odkaz na najnovší export.
+      learn_more: Čítaj viac
+    filtered_by: 'Filtrovať podľa:'
+    at: v
+    yesterday: Včera
+    change: Zmeniť
+  enter_payment: Vložte fakturačné údaje...
+  logo: Logo
+  create: Vytvoriť
+  replies: odpovede
+  date:
+    day_names:
+      - Nedeľa
+      - Pondelok
+      - Utorok
+      - Streda
+      - Štvrtok
+      - Piatok
+      - Sobota
+    abbr_month_names:
+      - null
+      - Jan
+      - Feb
+      - Mar
+      - Apr
+      - Máj
+      - Jún
+      - Júl
+      - Aug
+      - Sep
+      - Okt
+      - Nov
+      - Dec
+  social:
+    streams:
+      compose: Komponovať
+      twitter:
+        tickets: Tikety
+        post: ' Odoslať '
+      tooltip:
+        replied: Zodpovedané
+        db_contact: Kontakt
+      index:
+        all: Všetci
+      search_btn: Hľadať
+    twitter_handles:
+      index:
+        search: Hľadať
+        from: 'Od: '
+        reply: Odpovedať
+        reauthorize: Opätovné autorizovanie
+        note_title: 'Poznámka:'
+      form:
+        product: Produkt
+    welcome:
+      get_started: Začíname
+  conversation: Konverzácia
+  plan: Program
+  Phone: Telefón
+  back_plans_billing: Späť k licenciám a platbám
+  add: Pridať
+  Twitter: Twitter
+  bottom: Dole
+  solution_category:
+    edit: Upraviť kategóriu riešení
+    product_portal_visibility: Viditeľné v jazyku
+    info2: V tejto kategórii nie sú žiadne zložky
+    new: Nová kategória riešení
+    name: Meno
+    manage_categories: Spravovať
+  flash:
+    customers:
+      info_select: 'Prosím, zvoľte aspoň jedného zákazníka.'
+    general:
+      access_denied: Nemáte oprávnenie pre prístup na túto stránku.
+    contacts:
+      info_select: 'Prosím, zvoľte aspoň jedného uživateľa.'
+  import_forum: Fóra
+  choose_different_plan: Zvoľte inú licenciu
+  import_user_notification: >-
+    Môžete poslať užívateľom aktivačný e-mail z importovaných kontaktov
+    zákazníckych kárt
+  category:
+    edit: Upraviť Kategóriu
+    new: Nová Kategória
+  saving_draft: Uloženie...
+  feedbackwidget_position: Pozícia
+  notification:
+    load_more: Načítať viac
+    submit_feedback: Odoslať Názor
+  attachment_delete: Chystáte se navždy zmazať túto prílohu. Pokračovat?
+  clear: Vymazať
+  import_step1_info: Vyberte súbor CSV a kliknite na import
+  preview: Náhľad
+  disabled: Zakázané
+  forums_order:
+    recent: Nedávny
+    overview: Prehľad
+    popular: Obľúbené
+    planned: Plánované
+    implemented: Implementované
+    nottaken: Neprijaté
+    deferred: Odložené
+    inprogress: Prebieha
+    answered: Opovedané
+    unanswered: Bez odovede
+  features:
+    bot: Robot
+    gamification: Gamifikácia
+    parent_child: Vydávanie rodičovských a detských tiketov
+    auto_ticket_assignment: Automatické Priradenie Tiketu
+    scheduled_reports: Naplánované reporty
+    knowledge_base: Databáza znalostí
+    phone_integration: Integrácia telefónu
+    custom_ssl: Užívateľský SSL
+    feedback_widget: Nastavenie Formulára
+    automations: Automatizácia
+    forums: Komunitné fóra
+    custom_roles: Vlastné úlohy
+    ticket_templates: Šablóny tiketov
+    freshchat: Integrácia Freshchat
+    ticket_templates_desc: Šablóny tiketov
+  admin_onboarding:
+    modal:
+      channels_frame:
+        forums_channel: Fóra
+        phone_channel: Telefón
+        chat_channel: Živý chat
+        forward_link: Pozvite svoj tím
+        social_channel: Socialne siete
+        title: Ako dnes komunikujete so svojimi zákazníkmi?
+        email_channel: E-mail zadávateľa
+      agents_frame:
+        send_invite: Poslať pozvánku
+        emails_invalid: Jeden alebo viac Vašich e-mailov je neplatných.
+        emails_placeholder: 'bruce@just.ly, diana@just.ly, clark@just.ly'
+      welcome_frame:
+        title: Vitajte na Freshdesk
+    account_verification_message:
+      cancel_button: Zrušiť
+      modal_title: Prihlásenie pomocou zlej e-mailovej adresy?
+      modal_send_button: Poslať aktiváciu
+      modal_invalid_email_error: Zadajte platnú e-mailovú adresu.
+      resend_message: Znovu poslať aktiváciu
+      change_email: zmeniť váš e-mail
+      helpnote_or: alebo
+  Group: Skupina
+  pending: Spracovávaný
+  adv_reports:
+    load:
+      resp_time: Čas odpovede
+    select_an_option: Vyberte jednu z možností
+    glance:
+      select_agent_msg: Zvoliť Agenta
+      all_reports: Všetky reporty
+    report: ' Report '
+    reports: Reporty
+    summary: Súhrn
+    select_option_msg: 'Prosím, vyberte možnosť'
+  linkback_info: >-
+    Môžete si zvoliť Spätný odkaz na Vaše vlastné webové stránky, na ktoré sa
+    bude môcť zákazník dostať kliknutím na logo v hlavičke stránky
+  forgot_password_intro: >-
+    Vyplňte formulár nížšie a inštrukcie k resetovaniu Vášho hesla Vám budú
+    zaslané emailom
+  credit_card_info: Údaje platobnej karty
+  no_password_reset: Nie
+  no_forum_category: Žiadne fóra v tejto kategórii
+  begin_subscription_confirm: >-
+    Z Vašej kreditnej karty bude odpočítaná čiastka %{cost} dolarov a Vaše
+    predplatné bude ihneď k dispozícii. \n\nPokračovat?
+  integrations:
+    ilos:
+      agent_ticket:
+        placeholder: 'Tiket#'
+      solution:
+        placeholder: 'Článok#'
+      settings:
+        for_agents: Pre Agentov
+        for_customer: Pre Zákazníkov
+      portal_ticket:
+        placeholder: 'Tiket#'
+      messages:
+        video_desc: Popis
+    logmein:
+      form:
+        company_id: ID spoločnosti
+    icontact:
+      form:
+        api_url: API URL
+    dynamics_v2:
+      form:
+        username: Uživateľské meno
+        password: Heslo
+    remote_login:
+      connect: Pripojiť
+      sign_up: Registrácia
+    marketplace_login:
+      associate_account:
+        phone_no: Telefónne číslo
+        create_my_account: Vytvoriť si účet
+        submit: Predložiť
+        email: E-mail zadávateľa
+        user_name: Meno
+        company_name: Názov spoločnosti
+      admin_credentials:
+        email_address: E-mailová adresa
+        login: Prihlásenie
+    sugarcrm:
+      form:
+        account: Polia účtu
+        contact: Polia kontaktu
+        password: Heslo
+        username: Uživateľské meno
+    applications:
+      crm:
+        mapping:
+          company: Spoločnosť
+          contact: Kontakt
+          contact_fields: ' Polia kontaktu '
+          account_fields: ' Polia účtu '
+    shopify:
+      edit:
+        disconnect: Odpojiť
+    dynamicscrm:
+      form:
+        account: Polia účtu
+        contact_email: E-mail kontaktnej osoby
+        contact: Polia kontaktu
+        password: Heslo
+    screen_pop:
+      widget:
+        recent_tickets: Posledné tikety
+        requester: Meno zadávateľa
+        add_note_text: Poznámky z hovoru
+        cancel: Zrušiť
+        subject: Predmet
+        create: Vytvoriť
+        view_all: Zobraziť všetko
+    freshbooks:
+      form:
+        api_url: API URL
+    hootsuite:
+      reply_btn: Odpovedať
+      send: Odoslať spätnú väzbu
+      reset: Resetovať
+      domain:
+        continue_to_login: Pokračovať na prihlásenie
+      filter:
+        priority: Priorita
+        all: Všetci
+        status: Stav
+      submit: Predložiť
+      social:
+        description: Popis
+        requester: Zadávateľ
+      login:
+        password: Heslo
+        email: E-mail zadávateľa
+      search:
+        ticket_id: ID požiadavky
+        keyword: Kľúčové slovo
+      header:
+        reply: Odpovedať
+    custom_apps:
+      refresh: Aktualizovať
+    infusionsoft:
+      form:
+        contact: Polia kontaktu
+        account: Polia účtu
+        select: Vyberte jednu z možností
+    seoshop:
+      form:
+        language: Jazyk
+        en: English
+        nl: Nederlands
+    campaignmonitor:
+      form:
+        api_key: Kľúč API
+    google_contacts:
+      OVERWRITE_REMOTE_small: Importovať
+      edit_app: Aktualizovať
+      delete: Zmazať
+      email: E-mail zadávateľa
+      last_sync_time: Čas poslednej synchronizácie
+      import: Importovať
+      edit: Upraviť
+      account: Účet
+      OVERWRITE_LOCAL_small: Export
+      sync_status:
+        added: pridané
+        modified: zmenené
+        deleted: vymazané
+    batchbook:
+      form:
+        api_key: Kľúč API
+    cti_admin:
+      ctd:
+        api_key: Kľúč API
+        callback_url: URL výzvy
+        username: Uživateľské meno
+        encoding: Kódovanie
+        request_type: Typ žiadosti
+        have_api_key: Mám kľúč API?
+        content: Obsah
+        password: Heslo
+        have_user_pass: Mám užívateľské meno a heslo?
+      phone:
+        save: Uložiť
+        cancel: Zrušiť
+        delete_msg: Naozaj chcete odstrániť toto číslo?
+    uninstall: Odinštalovať
+    custom_application:
+      name: Meno
+      description: Popis
+      form:
+        insert_placeholder: Vložiť zástupný symbol
+    github_settings:
+      resolved: Vyriešené
+      closed: Zatvoriť
+    workflow_max:
+      form:
+        api_key: Kľúč API
+    magento:
+      form:
+        product: Produkt
+    salesforce:
+      form:
+        select: Vyberte jednu z možností
+        contact: Polia kontaktu
+        account: Polia účtu
+    freshsales:
+      form:
+        account: Polia účtu
+        domain: Doména účtu
+        contact: Polia kontaktu
+        deal: Polia obchodných príležitostí
+        select: Vyberte jednu z možností
+    jira:
+      form:
+        username: Uživateľské meno
+        password: Heslo
+    highrise:
+      form:
+        api_key: Kľúč API
+    outlook_contacts:
+      edit_form:
+        account: Účet
+        edit_account: Upraviť
+        delete_account: Zmazať
+        last_sync_time: Čas poslednej synchronizácie
+    zohocrm:
+      form:
+        api_key: Overovací token
+    cloud_elements:
+      form:
+        contact: Polia kontaktu
+        account: Polia účtu
+        daily: denný
+        hourly: Za hodinu
+  chatwidget_help_content:
+    title: Živý chat
+  please_wait: 'Čakajte, prosím...'
+  close_this_ticket: Uzatvoriť Tiket
+  cancel_my_account: Zrušiť môj účet
+  search:
+    in: v
+    by: 'podľa:'
+    searching: Vyhľadávanie
+    no_results_msg: Nenašli sa žiadne výsledky
+  created_on: Vytvorené
+  total_price: Súčet
+  paid_with: Platené s
+  attachments: Prílohy
+  sales: Predaj
+  feedbackwidget_button_text: Štítok
+  ticket_form:
+    your_email_address: E-mail zadávateľa
+  done: Hotovo
+  sign_in_info: Budete sa prihlasovať pomocou
+  user_notifications:
+    mark_all_as_read: Označiť všetko ako prečítané
+    header: Upozornenia
+    preferences: Preferencie
+  at: v
+  import_ticket_group: Tikety
+  header:
+    tabs:
+      solutions: Riešenia
+      forums: Fóra
+      tickets: Tikety
+      home: Domov
+    signout: Odhlásiť sa
+    search: Hľadať
+    welcome: Vítajte
+    login: <b>Prihlásiť sa</b>
+    edit_profile: Upraviť profil
+    assumed_text: Zobrazuje sa ako
+    help_center: Ako Vám dnes môžeme pomôcť?
+    new_support_ticket: Nový tiket pre podporu
+    check_ticket_status: Preveriť stav tiketu
+  left: Ľavý
+  description: Popis
+  solution:
+    solution_meta_description: Meta Description
+    folder: Zložka
+    kb: Znalostná báza
+    via: prostredníctvom
+    solution_meta_title: Title Tag
+    solution_meta_keywords: Meta Keywords
+    sidebar:
+      feedbacks:
+        title: Spätná väzba na článok
+      view_all: Zobraziť všetko
+      drafts:
+        title: Koncepty
+      view_less: Zobraziť menej
+    draft:
+      portal:
+        all: Všetci
+      name: Koncepty
+    general:
+      something_wrong: Niečo sa pokazilo!
+      analytics: Analýza
+      feedback: Spätná väzba
+      created_by: Vytvoril(a)
+      mark_as_outdated:
+        text_1: Označte ďalšie preklady ako neaktuálne
+    solution_meta: Meta-tagy pre vyhľadávanie
+    articles:
+      prop_tabs:
+        meta: Meta
+      reset_rating:
+        link: Resetovať
+        dialog_submit: Resetovať
+      search_all: Hľadaj Články
+      views: Pozretí
+    meta_keywords_message: Kľúčové slová sa oddeľujú čiarkami
+    folders:
+      folder_form:
+        category: Kategória
+        visible_to: Kto to uvidí
+      new:
+        new_folder: Nová Zložka
+    title: Riešenia
+    move_to: Presunúť do
+    add_category: Nová Kategória
+    solution_title: Titul
+  choose_plan: Zvoliť Licenciu
+  unblock: Biela listina
+  edit_plan: Upraviť program
+  change: Zmeniť
+  freshchat:
+    admin:
+      save: Uložiť
+      action:
+        success_message: Nastavenia boli aktualizované
+      sidebar_title: Freshchat
+      app_id: ID aplikácie
+      admin_apikey: 'Kľúč API:'
+      portal_url: 'Adresa portálu:'
+      title_text: Freshchat
+      cancel: Zrušiť
+  suspended_plan_info: Váš účet bol pozastavený!
+  ticket_deleted: Tento tiket bol vymazaný
+  signup_complete_activate_info: >-
+    Vítajte! Odoslali sme Vám súbor s odkazom, kde si môžete nastaviť heslo a
+    aktivovat svôj účet.
+  in: v
+  topic:
+    last_reply: Posledná odpoveď
+    requester: Zadávateľ
+    post_comment: Odoslať
+    new: Nová Téma
+    post: Odoslať Tému
+    categories: Kategórie
+    filter_1: Plánované
+    name: Názov Témy
+    filter_2: Implementované
+    filter_4: Prebieha
+    edit: Upraviť Tému
+    filter_7: Bez odovede
+    filter_0: Všetci
+    msg1: Komentáre sú pre túto tému uzavreté
+    filter_5: Odložené
+    close: Uzavrieť túto diskusiu
+    filter_6: Opovedané
+    unmark_answer: Zrušte to ako odpoveď
+    update_comment: Aktualizovať komentár
+    filter_3: Neprijaté
+    spam: Spam
+    all: Všetci
+    visible_in: Viditeľné v jazyku
+    locked: Zamknuté
+    filtered_by: Zobrazené
+    open: Znovu otvoriť túto diskusiu
+    add_category: Pridať kategóriu
+    sticky: Vždy navrchu
+    add_comment: Pridať komentár
+    questions:
+      answered: Opovedané
+    change: zmeniť
+  change_my_plan: Vybrať túto licenciu
+  current_free_plan: Aktuálna voľná licencia
+  custom_mailbox_admin_email_notifications:
+    regards: S pozdravom
+  feedbackwidget_title: Nastavenie Formulára
+  feedbackwidget_intro: >-
+    Upravte si panel Freshdesku a rovno môžete sledovať zobrazenie v reálnej
+    podobe.
+  being_processed: Spracovávané
+  awaiting_your_reply: Čaká na odpoveď
+  helpcard:
+    title: Jedinečné externé ID
+  customize_domain:
+    email:
+      cheers: 'Pozdravujeme,'
+  feedbackwidget_help_title: Nastavenie Formulára
+  feedbackwidget_help_para1: >-
+    Tento doplnok pre vytvorenie formulára tiketu si môžete upraviť podľa seba a
+    umiestniť kdekoľvek na Vašich stránkach - stačí skopírovať HTML kód a vložiť
+    ho tam kde potrebujete - tak bude formulár na odosielanie tiketu na podporu
+    dostupný všade.
+  sandbox:
+    mail:
+      greeting: 'Dobrý deň,'
+  help_widget:
+    form_title: Kontaktujte nás
+    form_button_text: Odoslať spätnú väzbu
+    form_submit_message: Ďakujeme za odoslání reakcie.
+    button_text: Pomocník
+    welcome_message: Môžeme vám pomôcť?
+    predictive_message: >-
+      Všimli sme si, že neviete postupovať ďalej. Povedzte nám, čo ste chceli
+      dosiahnuť, a náš tím podpory vás bude čo najskôr kontaktovať.
+    success_message: Ďakujeme. Budeme v kontakte!
+  downgrade:
+    confirm_btn: Potvrdiť
+    agents: Agenti
+    plan: Program
+    to: do
+  unique_external_id:
+    helpcard:
+      title: Jedinečné externé ID

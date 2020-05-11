@@ -2,7 +2,7 @@ module SupportDiscussionsControllerMethods
 
   def toggle_monitor
     current_object = instance_variable_get(%{@#{controller_name.singularize}})
-    @monitorship = current_object.monitorships.find_or_initialize_by_user_id(current_user.id)
+    @monitorship = current_object.monitorships.where(user_id: current_user.id).first_or_initialize
     if @monitorship.new_record?
       @monitorship.portal_id = current_portal.id
       @monitorship.save

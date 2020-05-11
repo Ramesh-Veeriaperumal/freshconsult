@@ -32,7 +32,7 @@ class Monitoring::PagerDuty
                 url = URI.parse config['event_url']
                 http = Net::HTTP.new(url.host, url.port)
                 req = Net::HTTP::Post.new(url.request_uri)
-                req.body = JSON.generate(params)
+                req.body = params.to_json
                 res = http.request(req)
                 case res
                 when Net::HTTPSuccess, Net::HTTPRedirection

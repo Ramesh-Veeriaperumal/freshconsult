@@ -70,6 +70,6 @@ module TicketPropertiesSuggesterTestHelper
       end
       @ticket_field_suggestions = { ticket_field_suggestions: ret_hash }
       
-      JSON.parse(JSON.generate(@ticket_field_suggestions))
+      JSON.parse(@ticket_field_suggestions.to_json)
     end    
 end

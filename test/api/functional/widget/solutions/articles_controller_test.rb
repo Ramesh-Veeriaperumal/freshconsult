@@ -1025,7 +1025,7 @@ module Widget
         create_articles
         id = suggested_article_ids.first
         create_widget_suggested_article_rules(suggested_article_rule(filter_value: [id]))
-        @request.env['HTTP_REFERER'] = 'testrefundmoney'
+        @request.env['HTTP_X_WIDGET_REFERRER'] = 'testrefundmoney'
         get :suggested_articles, controller_params
         assert_response 200
         article_meta_ids = @widget.help_widget_suggested_article_rules.first.filter[:value]
@@ -1041,7 +1041,7 @@ module Widget
         @account.stubs(:multilingual?).returns(false)
         article_meta_id = @account.solution_article_meta.last.id + 200
         create_widget_suggested_article_rules(suggested_article_rule(filter_value: [article_meta_id]))
-        @request.env['HTTP_REFERER'] = 'testrefundmoney'
+        @request.env['HTTP_X_WIDGET_REFERRER'] = 'testrefundmoney'
         get :suggested_articles, controller_params
         assert_response 200
         match_json([])
@@ -1055,7 +1055,7 @@ module Widget
         @account.stubs(:multilingual?).returns(false)
         @controller.stubs(:rule_based_articles).returns([])
         create_widget_suggested_article_rules(suggested_article_rule(filter_value: [1, 2]))
-        @request.env['HTTP_REFERER'] = 'testrefundmoney'
+        @request.env['HTTP_X_WIDGET_REFERRER'] = 'testrefundmoney'
         get :suggested_articles, controller_params
         assert_response 200
         match_json([])
@@ -1070,7 +1070,7 @@ module Widget
         @account.stubs(:multilingual?).returns(false)
         id = suggested_article_ids.first
         create_widget_suggested_article_rules(suggested_article_rule(filter_value: [id]))
-        @request.env['HTTP_REFERER'] = 'nomatch'
+        @request.env['HTTP_X_WIDGET_REFERRER'] = 'nomatch'
         get :suggested_articles, controller_params
         assert_response 200
         solution_folder_meta = @article.parent.solution_folder_meta
@@ -1087,7 +1087,7 @@ module Widget
         @account.stubs(:multilingual?).returns(false)
         id = suggested_article_ids.first
         create_widget_suggested_article_rules(suggested_article_rule(filter_value: [id], evaluate_on: 2))
-        @request.env['HTTP_REFERER'] = 'nomatch'
+        @request.env['HTTP_X_WIDGET_REFERRER'] = 'nomatch'
         get :suggested_articles, controller_params
         assert_response 200
         solution_folder_meta = @article.parent.solution_folder_meta
@@ -1105,7 +1105,7 @@ module Widget
         param = suggested_article_rule
         param[:filter][:value] = []
         create_widget_suggested_article_rules(param)
-        @request.env['HTTP_REFERER'] = 'test'
+        @request.env['HTTP_X_WIDGET_REFERRER'] = 'test'
         get :suggested_articles, controller_params
         assert_response 200
         match_json([])
@@ -1141,7 +1141,7 @@ module Widget
         @account.stubs(:help_widget_article_customisation_enabled?).returns(true)
         id = suggested_article_ids.first
         create_widget_suggested_article_rules(suggested_article_rule(filter_value: [id]))
-        @request.env['HTTP_REFERER'] = 'testrefundmoney'
+        @request.env['HTTP_X_WIDGET_REFERRER'] = 'testrefundmoney'
         get :suggested_articles, controller_params(language: 'es')
         assert_response 200
         article_meta_ids = @widget.help_widget_suggested_article_rules.first.filter[:value]
@@ -1160,7 +1160,7 @@ module Widget
         create_article_for_suggested_article
         ids = suggested_article_ids.sort { |a, b| b <=> a }
         create_widget_suggested_article_rules(suggested_article_rule(filter_value: ids))
-        @request.env['HTTP_REFERER'] = 'testrefundmoney'
+        @request.env['HTTP_X_WIDGET_REFERRER'] = 'testrefundmoney'
         get :suggested_articles, controller_params(language: 'en')
         assert_response 200
         article_meta_ids = @widget.help_widget_suggested_article_rules.first.filter[:value]

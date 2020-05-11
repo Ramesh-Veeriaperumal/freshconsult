@@ -413,10 +413,13 @@ module Ember
     end
 
     def test_index_with_only_count
+      @account.stubs(:count_es_enabled?).returns(false)
       get :index, controller_params(version: 'private', only: 'count')
       assert_response 200
       assert response.api_meta[:count] == @account.tickets.where(['spam = false AND deleted = false AND created_at > ?', 30.days.ago]).count
       match_json([])
+    ensure
+      @account.unstub(:count_es_enabled?)
     end
 
     def test_meta_data_with_next_page
