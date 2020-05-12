@@ -3,8 +3,6 @@ class ArticleTicket < ActiveRecord::Base
   include Publish
   attr_accessor :archive_changes
 
-  DATETIME_FIELDS = [:created_at, :updated_at].freeze
-
   acts_as_api
 
   api_accessible :central_publish do |g|
@@ -13,10 +11,6 @@ class ArticleTicket < ActiveRecord::Base
     g.add :account_id
     g.add :ticketable_type
     g.add :ticketable_id
-
-    DATETIME_FIELDS.each do |key|
-      g.add proc { |x| x.utc_format(x.ticketable.send(key)) }, as: key
-    end
   end
 
   api_accessible :central_publish_destroy do |a|
