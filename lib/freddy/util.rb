@@ -31,10 +31,11 @@ module Freddy
         [content_type, body]
       end
 
-      def options(content_type, body, action)
+      def options(content_type, body, action, portal_id = nil)
         secret = FreddySkillsConfig[action][:secret]
         current_account = Account.current
-        portal_id = Portal.current.id.to_s || Account.current.main_portal.id.to_s
+        portal_id = Portal.current.id.to_s || Account.current.main_portal.id.to_s if portal_id.nil?
+
         query = { user_id: User.current.id, account_id: current_account.id.to_s, product: SERVICE, group_id: portal_id, domain: current_account.full_domain }
         {
           headers: safe_send("#{action}_headers", content_type, secret),

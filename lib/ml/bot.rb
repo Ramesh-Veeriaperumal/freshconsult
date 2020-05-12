@@ -7,7 +7,7 @@ module Ml
         begin
           url = FreddySkillsConfig[:system42][:host] + '/api/v1/map_categories'
           body = { category_ids: bot.solution_category_metum_ids }.to_json
-          time_taken = Benchmark.realtime { @proxy_response = HTTParty.put(url, options('application/json', body, :system42)) }
+          time_taken = Benchmark.realtime { @proxy_response = HTTParty.put(url, options('application/json', body, :system42, bot.portal_id.to_s)) }
           Rails.logger.info "Time Taken for map_categories - #{@proxy_response} #{bot.account_id} time - #{time_taken}"
           response = @proxy_response.parsed_response
           response['success'] if (response.is_a? Hash) && (@proxy_response.code == 200)
