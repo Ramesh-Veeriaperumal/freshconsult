@@ -15163,6 +15163,80 @@
         }
       }
     },
+    "/settings/helpdesk/field-service": {
+      "put": {
+        "tags": [
+          "Field Service Settings"
+        ],
+        "summary": "Save field service additional settings",
+        "description": "Enable and disable field service settings",
+        "parameters": [
+          {
+            "name": "settings",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/field_service_save_settings_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "field_agents_can_manage_appointments": {
+                  "type": "boolean"
+                },
+                "location_tagging_enabled": {
+                  "type": "boolean"
+                },
+                "geo_location_enabled": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Field Service Settings"
+        ],
+        "summary": "Get field service settings",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "field_agents_can_manage_appointments": {
+                  "type": "boolean"
+                },
+                "location_tagging_enabled": {
+                  "type": "boolean"
+                },
+                "geo_location_enabled": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/field-service/settings": {
       "put": {
         "tags": [
@@ -15180,12 +15254,18 @@
           }
         ],
         "responses": {
-          "201": {
+          "200": {
             "description": "Success",
             "schema": {
               "type": "object",
               "properties": {
                 "field_agents_can_manage_appointments": {
+                  "type": "boolean"
+                },
+                "location_tagging_enabled": {
+                  "type": "boolean"
+                },
+                "geo_location_enabled": {
                   "type": "boolean"
                 }
               }
@@ -15211,6 +15291,12 @@
               "type": "object",
               "properties": {
                 "field_agents_can_manage_appointments": {
+                  "type": "boolean"
+                },
+                "location_tagging_enabled": {
+                  "type": "boolean"
+                },
+                "geo_location_enabled": {
                   "type": "boolean"
                 }
               }
@@ -15841,13 +15927,18 @@
                     "show_on_boarding": {
                       "type": "boolean"
                     },
-                    "field_service_management_settings": {
+                    "field_service": {
                       "type": "object",
                       "description": "Available only if Field Service Management feature is enabled",
                       "properties": {
                         "field_agents_can_manage_appointments": {
-                          "type": "boolean",
-                          "description": "Available only if value is false"
+                          "type": "boolean"
+                        },
+                        "location_tagging_enabled": {
+                          "type": "boolean"
+                        },
+                        "geo_location_enabled": {
+                          "type": "boolean"
                         }
                       }
                     },
@@ -18237,7 +18328,6 @@
         "shortcuts_enabled": false,
         "avatar_id": 100,
         "freshcaller_agent": true,
-        "freshchat_agent": true,
         "agent_level_id": 3,
         "search_settings": {
           "tickets": {
@@ -18316,11 +18406,11 @@
         "freshcaller_agent": {
           "type": "boolean"
         },
-        "freshchat_agent": {
-          "type": "boolean"
-        },
         "agent_level_id": {
           "type": "integer"
+        },
+        "freshchat_agent": {
+          "type": "boolean"
         }
       }
     },
@@ -18943,10 +19033,31 @@
     "email_notification_bcc_input": {
       "$ref": "#/definitions/email_notification_bcc"
     },
-    "fsm_save_settings_input": {
+    "field_service_save_settings_input": {
       "type": "object",
       "properties": {
         "field_agents_can_manage_appointments": {
+          "type": "boolean"
+        },
+        "location_tagging_enabled": {
+          "type": "boolean"
+        },
+        "geo_location_enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "fsm_save_settings_input": {
+      "type": "object",
+      "description": "Available only if the property has to be updated",
+      "properties": {
+        "field_agents_can_manage_appointments": {
+          "type": "boolean"
+        },
+        "location_tagging_enabled": {
+          "type": "boolean"
+        },
+        "geo_location_enabled": {
           "type": "boolean"
         }
       }
@@ -19279,15 +19390,8 @@
         },
         "source": {
           "type": "integer",
-          "enum": [
-            1,
-            2,
-            3,
-            7,
-            8,
-            9,
-            10
-          ]
+          "default": 2,
+          "description": "default sources - email(1), portal(2), phone(3), forum(4), twitter(5), facebook(6), chat(7), feedback_widget(9), outbound_email(10), ecommerce(11), bot(12)."
         },
         "status": {
           "type": "integer",
@@ -19594,6 +19698,9 @@
                   "format": "date-time"
                 },
                 "show_onBoarding": {
+                  "type": "boolean"
+                },
+                "show_loyalty_upgrade": {
                   "type": "boolean"
                 }
               }
@@ -22961,15 +23068,8 @@
         },
         "source": {
           "type": "integer",
-          "enum": [
-            1,
-            2,
-            3,
-            7,
-            8,
-            9,
-            10
-          ]
+          "default": 2,
+          "description": "default sources - email(1), portal(2), phone(3), forum(4), twitter(5), facebook(6), chat(7), feedback_widget(9), outbound_email(10), ecommerce(11), bot(12)."
         },
         "company_id": {
           "type": "integer"
@@ -25364,6 +25464,9 @@
         "priority": {
           "type": "number"
         },
+        "source": {
+          "type": "integer"
+        },
         "group_id": {
           "type": "number"
         },
@@ -26627,7 +26730,7 @@
         },
         "discount": {
           "type": "integer"
-        },
+        }
       }
     },
     "plans": {
@@ -26759,33 +26862,7 @@
         }
       }
     },
-    "/subscription/estimate_feature_loss": {
-      "get": {
-        "tags": [
-          "subscription"
-        ],
-        "description": "Estimate the feature loss when moving to a lower plan",
-        "summary": "Estimate feature loss",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/estimate_feature_loss"
-            }
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      }
-    },
-    "estimate_feature_loss": {
+    "subscription_estimate_feature_loss": {
       "type": "object",
       "properties": {
         "features": {

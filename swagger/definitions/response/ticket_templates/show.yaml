@@ -25,7 +25,9 @@ properties:
   status:
     type: number
   priority:
-    type: number    
+    type: number
+  source:
+    type: integer
   group_id:
     type: number
   responder_id:
