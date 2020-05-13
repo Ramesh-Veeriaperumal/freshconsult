@@ -48,6 +48,21 @@ class CannedResponseFoldersControllerTest < ActionController::TestCase
   # 4. should not list responses visible in particular group to agents not in the group
   # 5. Check with invalid folder id
 
+  def canned_response_attributes
+    {
+      response: {
+        title: Faker::Name.name,
+        folder_id: 1,
+        helpdesk_accessible_attributes:
+        {
+          accessible_type: 'Admin::CannedResponses::Response',
+          access_type: 0
+        },
+        content_html: 'Test'
+      }
+    }
+  end
+
   def test_index_listing
     remove_wrap_params
     
@@ -171,6 +186,100 @@ class CannedResponseFoldersControllerTest < ActionController::TestCase
     folders.map(&:destroy)
   end
 
+  def test_index_with_split_and_combine
+    global_folder = Account.current.canned_response_folders.new(name: 'global folder')
+    global_folder.save
+    group_folder = Account.current.canned_response_folders.new(name: 'Group folder')
+    group_folder.save
+
+    first_agent = @agent
+    login_as(@agent)
+    second_agent = add_agent_to_account(@account, name: Faker::Name.name, active: 1, role: 1)
+
+    params = canned_response_attributes
+
+    crs = []
+    20.times do |i|
+      params[:response][:title] = "global cr #{i}"
+      params[:response][:folder_id] = global_folder.id
+      crs << canned_response = Account.current.canned_responses.new(params[:response])
+      canned_response.save!
+    end
+
+    # Group access type
+    agent_groups = create_groups(Account.current, options = { count: 2 })
+    non_agent_groups = create_groups(Account.current, options = { count: 2 })
+
+    # assign group to agent
+    agent_groups.each do |group|
+      Account.current.agent_groups.create(user_id: first_agent.id, group_id: group.id)
+    end
+    params[:response][:helpdesk_accessible_attributes][:access_type] = 2
+    params[:response][:helpdesk_accessible_attributes][:group_ids] = agent_groups.map(&:id)
+
+    10.times do |i|
+      params[:response][:title] = "agent group cr #{i}"
+      params[:response][:folder_id] = group_folder.id
+      crs << canned_response = Account.current.canned_responses.new(params[:response])
+      canned_response.save!
+    end
+
+    params[:response][:helpdesk_accessible_attributes][:group_ids] = non_agent_groups.map(&:id)
+
+    10.times do |i|
+      params[:response][:title] = "non agent group cr #{i}"
+      params[:response][:folder_id] = group_folder.id
+      crs << canned_response = Account.current.canned_responses.new(params[:response])
+      canned_response.save!
+    end
+
+    # User access
+
+    params[:response][:helpdesk_accessible_attributes][:access_type] = 1
+
+    # User 1
+    params[:response][:title] = "user access cr #{first_agent.id}"
+    params[:response][:folder_id] = group_folder.id
+    crs << canned_response = Account.current.canned_responses.new(params[:response])
+    canned_response.save!
+    user_access1 = Helpdesk::UserAccess.new(user_id: User.current.id, access_id: canned_response.helpdesk_accessible.id)
+    user_access1.save!
+
+    # User 2
+    params[:response][:title] = "user access cr #{second_agent.user_id}"
+    params[:response][:folder_id] = group_folder.id
+    crs << canned_response = Account.current.canned_responses.new(params[:response])
+    canned_response.save!
+    user_access2 = Helpdesk::UserAccess.new(user_id: second_agent.user_id, access_id: canned_response.helpdesk_accessible.id)
+    user_access2.save!
+
+    get :index, controller_params(version: 'v2')
+    assert_response 200
+
+    folders = accessible_elements(Account.current.canned_responses, query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', nil, :folder)).map(&:folder)
+    folders.uniq.sort_by { |f| [f.folder_type, f.name] }.map { |f| f.visible_responses_count = folders.count(f) }
+
+    expected_folders = folders.uniq.map(&:id).sort
+    response_folders = JSON.parse(response.body).map { |x| x['id'] }.sort
+
+    assert_equal expected_folders, response_folders, 'Folders mismatch!'
+
+    expected_count = {}
+    response_count = {}
+
+    folders.uniq.map { |x| expected_count[x.id] = x.visible_responses_count }
+    JSON.parse(response.body).map { |x| response_count[x['id']] = x['responses_count'] }
+
+    assert_equal expected_count, response_count, 'Folder count mismatch!'
+  ensure
+    crs.map(&:destroy)
+    global_folder.destroy
+    group_folder.destroy
+    second_agent.destroy
+    agent_groups.map(&:destroy)
+    non_agent_groups.map(&:destroy)
+  end
+
   def test_index_with_cr_limit_increase
     folder = create_cr_folder(name: 'Test folder')
     params = {
@@ -201,6 +310,41 @@ class CannedResponseFoldersControllerTest < ActionController::TestCase
     crs.map(&:destroy)
     folder.destroy
     settings.additional_settings.delete(:canned_responses_limit)
+    settings.save
+  end
+
+  def test_index_with_access_type_limit
+    Account.current.canned_responses.destroy_all
+    folder = create_cr_folder(name: 'Test folder')
+    params = {
+      response: {
+        title: 'Test',
+        folder_id: folder.id,
+        helpdesk_accessible_attributes:
+        {
+          accessible_type: 'Admin::CannedResponses::Response',
+          access_type: 0
+        },
+        content_html: 'Test'
+      }
+    }
+    crs = []
+    (1..30).each do |i|
+      params[:response][:title] = "Test CR #{i}"
+      crs << canned_response = Account.current.canned_responses.new(params[:response])
+      canned_response.save!
+    end
+    settings = Account.current.account_additional_settings
+    settings.additional_settings[:canned_responses_all_limit] = 10
+    settings.save
+
+    get :index, controller_params(version: 'v2')
+    folder_count = JSON.parse(response.body).select { |f| f['id'] == folder.id }.last['responses_count']
+    assert folder_count < 30, 'Folder count matching!'
+  ensure
+    crs.map(&:destroy)
+    folder.destroy
+    settings.additional_settings.delete(:canned_responses_all_limit)
     settings.save
   end
 

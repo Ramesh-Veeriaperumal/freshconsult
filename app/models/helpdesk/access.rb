@@ -29,6 +29,8 @@ class Helpdesk::Access < ActiveRecord::Base
   ACCESS_TYPES_KEYS_BY_TYPE = Hash[*ACCESS_TYPES.map { |i| [i[2], i[0]] }.flatten]
   ACCESS_TYPES_KEYS = ACCESS_TYPES.map{|i| i[0].to_s.singularize}
 
+  DEFAULT_ACCESS_LIMIT = 300
+
   ACCESS_TYPES_KEYS.product(ACCESS_TYPES_KEYS).each do |types|
     define_method("update_#{types[0]}_access_type_to_#{types[1]}") do |new_ids|
       if types[1] == types[0]
@@ -121,6 +123,18 @@ class Helpdesk::Access < ActiveRecord::Base
       self.all_user_accessible(type,user).to_sql
     end
 
+    def all_accessible_sql(type, user)
+      all_accessible(type, user).to_sql
+    end
+
+    def user_accessible_sql(type, user)
+      user_accessible(type, user).to_sql
+    end
+
+    def group_accessible_sql(type, user)
+      group_accessible(type, user).to_sql
+    end
+
     def shared_accessible_sql(type,user)
       self.safe_send(:construct_finder_sql,:select => "accessible_id, accessible_type, access_type, helpdesk_accesses.account_id",
         :joins => "#{group_accesses_join(type, user)} #{agent_groups_join}",
@@ -148,6 +162,23 @@ class Helpdesk::Access < ActiveRecord::Base
       :conditions => "#{type_conditions(type)} AND (#{user_conditions(user)[:global]} OR #{user_conditions(user)[:users_via_group]})",
       :select     => "accessible_id, accessible_type, access_type"
     }
+  }
+
+  scope :all_accessible, lambda { |type, user|
+    where("#{type_conditions(type)} AND #{user_conditions(user)[:global]}")
+  }
+
+  scope :user_accessible, lambda { |type, user|
+    select('accessible_id')
+      .joins(user_accesses_join(type, user).to_s)
+      .where("#{type_conditions(type)} AND #{user_conditions(user)[:users]}")
+  }
+
+  scope :group_accessible, lambda { |type, user|
+    select('accessible_id')
+      .joins("#{group_accesses_join(type, user)} #{agent_groups_join}")
+      .where("#{type_conditions(type)} AND #{user_conditions(user)[:users_via_group]}")
+      .group('accessible_id')
   }
 
   def global_access_type?
