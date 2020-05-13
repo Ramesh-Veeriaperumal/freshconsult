@@ -151,9 +151,7 @@ module ModelsSolutionsTestHelper
       article_id: article_ticket.article_id,
       account_id: article_ticket.account_id,
       ticketable_type: article_ticket.ticketable_type,
-      ticketable_id: article_ticket.ticketable_id,
-      created_at: article_ticket.ticketable.created_at.try(:utc).try(:iso8601),
-      updated_at: article_ticket.ticketable.updated_at.try(:utc).try(:iso8601)
+      ticketable_id: article_ticket.ticketable_id
     }
   end
 

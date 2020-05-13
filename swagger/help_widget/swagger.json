@@ -571,15 +571,8 @@
         },
         "source": {
           "type": "integer",
-          "enum": [
-            1,
-            2,
-            3,
-            7,
-            8,
-            9,
-            10
-          ]
+          "default": 2,
+          "description": "default sources - email(1), portal(2), phone(3), forum(4), twitter(5), facebook(6), chat(7), feedback_widget(9), outbound_email(10), ecommerce(11), bot(12)."
         },
         "status": {
           "type": "integer",

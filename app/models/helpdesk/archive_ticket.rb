@@ -48,6 +48,9 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
 
   has_one :ticket_topic, :as => :ticketable, :dependent => :destroy
   has_one :topic, :through => :ticket_topic
+
+  has_one :article_ticket, as: :ticketable, dependent: :destroy
+  has_one :article, through: :article_ticket
   
   belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
   belongs_to :product
