@@ -27,10 +27,6 @@ class SAAS::SubscriptionEventActions
   ADD   = "add"
   DEFAULT_DAY_PASS_LIMIT = 3
 
-  SELECTABLE_DB_FEATURES = (Account::SELECTABLE_FEATURES.keys +
-                           Account::TEMPORARY_FEATURES.keys +
-                           Account::ADMIN_CUSTOMER_PORTAL_FEATURES.keys).freeze
-
   TOGGLES_AND_FEATURES = [[:field_service_management_toggle, :field_service_management]].freeze
 
   ####################################################################################################################

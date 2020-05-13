@@ -53,12 +53,9 @@ class Account < ActiveRecord::Base
     :omni_chat_agent, :portal_frameworks_update, :ticket_filters_central_publish
   ].freeze
 
-  DB_FEATURES = [
-    :custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone
-  ].freeze
-
   BITMAP_FEATURES = [
-    :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor,
+    :custom_survey, :requester_widget, :split_tickets, :add_watcher, :traffic_cop,
+    :custom_ticket_views, :supervisor, :archive_tickets, :sitemap,
     :create_observer, :sla_management, :email_commands, :assume_identity, :rebranding,
     :custom_apps, :custom_ticket_fields, :custom_company_fields, :custom_contact_fields,
     :occasional_agent, :allow_auto_suggest_solutions, :basic_twitter, :basic_facebook,
@@ -113,12 +110,6 @@ class Account < ActiveRecord::Base
     end
   end
 
-  DB_FEATURES.each do |item|
-    define_method "#{item.to_s}_enabled?" do
-      features?(item)
-    end
-  end
-
   BITMAP_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
       has_feature?(item)
@@ -149,9 +140,8 @@ class Account < ActiveRecord::Base
 
   def features?(*feature_names)
     feature_names = feature_names.to_set
-    features_migrated_to_bmp = Account.handle_feature_name_change(feature_names &
-      DB_TO_BITMAP_MIGRATION_P2_FEATURES_LIST)
-    features_migrated_to_lp = feature_names & DB_TO_LP_MIGRATION_P2_FEATURES_LIST
+    features_migrated_to_bmp = Account.handle_feature_name_change(feature_names)
+    features_migrated_to_lp = feature_names & DB_TO_LP_FEATURES
     has_features?(*features_migrated_to_bmp) && launched?(*features_migrated_to_lp)
   end
 
@@ -300,11 +290,6 @@ class Account < ActiveRecord::Base
     features?(:euc_hide_agent_metrics)
   end
 
-  # TODO: Remove new_pricing_launched?() after 2019 pricing plan launch
-  def new_pricing_launched?
-    on_new_plan? || redis_key_exists?(NEW_SIGNUP_ENABLED)
-  end
-
   def advance_facebook_enabled?
     features?(:facebook)
   end
@@ -315,11 +300,6 @@ class Account < ActiveRecord::Base
 
   def twitter_smart_filter_revoked?
     redis_key_exists?(TWITTER_SMART_FILTER_REVOKED) && smart_filter_enabled? && !Account.current.twitter_handles_from_cache.blank?
-  end
-
-  # TODO: Remove on_new_plan?() after 2019 pricing plan launch
-  def on_new_plan?
-    @on_new_plan ||= [:sprout_jan_17,:blossom_jan_17,:garden_jan_17,:estate_jan_17,:forest_jan_17].include?(plan_name)
   end
 
   def tags_filter_reporting_enabled?
@@ -443,11 +423,11 @@ class Account < ActiveRecord::Base
   end
 
   def db_to_lp?(fname)
-    DB_TO_LP_MIGRATION_P2_FEATURES_LIST.include? fname
+    DB_TO_LP_FEATURES.include? fname
   end
 
   def launched_db_feature
-    DB_TO_LP_MIGRATION_P2_FEATURES_LIST.select { |f| launched?(f) }
+    DB_TO_LP_FEATURES.select { |f| launched?(f) }
   end
   # TODO : Cleanup up after 2020 pricing changes
   # START
