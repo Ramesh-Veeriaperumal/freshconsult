@@ -277,12 +277,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       end
 
       unless @account.secure_attachments_enabled?
-        @attachment_files.each do |a|
-          attachments[a.content_file_name] = {
-            :mime_type => a.content_content_type,
-            :content => Paperclip.io_adapters.for(a.content).read
-          }
-        end if @attachment_files.present?
+        add_attachments if @attachment_files.present?
       end
 
       if !params[:cc_mails].nil?
@@ -379,12 +374,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
         handle_inline_attachments(attachments, note.full_text_html, note.account)
       end
 
-      @attachment_files.each do |a|
-        attachments[a.content_file_name] = {
-          :mime_type => a.content_content_type, 
-          :content => Paperclip.io_adapters.for(a.content).read
-        }
-      end unless @account.secure_attachments_enabled?
+      add_attachments unless @account.secure_attachments_enabled?
 
       if Account.current.launched?(:retry_emails)
         mail(headers) do |part|
@@ -445,12 +435,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
       unless @account.secure_attachments_enabled?
         self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
-          @attachment_files.each do |a|
-            attachments[a.content_file_name] = {
-              :mime_type => a.content_content_type, 
-              :content => Paperclip.io_adapters.for(a.content).read
-            }
-          end
+          add_attachments
         end
       end
 
@@ -509,12 +494,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
       unless @account.secure_attachments_enabled?
         self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
-          @attachment_files.each do |a|
-            attachments[a.content_file_name] = {
-              :mime_type => a.content_content_type, 
-              :content => Paperclip.io_adapters.for(a.content).read
-            }
-          end
+          add_attachments
         end
       end
 
@@ -645,12 +625,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
       unless @account.secure_attachments_enabled?
         self.class.trace_execution_scoped(['Custom/Helpdesk::TicketNotifier/read_binary_attachment']) do
-          @attachment_files.each do |a|
-            attachments[ a.content_file_name] = { 
-              :mime_type => a.content_content_type, 
-              :content => Paperclip.io_adapters.for(a.content).read
-            }
-          end
+          add_attachments
         end
       end
 
@@ -714,6 +689,24 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
 
   private
+    def add_attachments
+      if Account.current.launched?(:attachment_encoding)
+        @attachment_files.each do |a|
+          attachments[a.content_file_name] = {
+            encoding: 'base64',
+            content: Mail::Encodings::Base64.encode(Paperclip.io_adapters.for(a.content).read)
+          }
+        end
+      else
+        @attachment_files.each do |a|
+          attachments[a.content_file_name] = {
+            mime_type: a.content_content_type,
+            content: Paperclip.io_adapters.for(a.content).read
+          }
+        end
+      end
+    end
+
     def construct_email_header_message_id(email_type)
       "#{Mail.random_tag}.#{::Socket.gethostname}@#{Helpdesk::EMAIL_TYPE_TO_MESSAGE_ID_DOMAIN[email_type]}"
     end

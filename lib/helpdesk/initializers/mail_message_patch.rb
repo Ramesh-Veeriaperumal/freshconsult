@@ -20,6 +20,7 @@ Mail::Message.class_eval do
         update_mailbox_error_type if e.inspect.include?(Email::Mailbox::Constants::SMTP_AUTH_ERROR_CODE)
       rescue Net::SMTPFatalError => e
         Rails.logger.info "Net::SMTPFatalError while sending email by deliver - #{e.message}"
+        raise if e.to_s.downcase.include?('line length exceeded')
       rescue StandardError => e
         Rails.logger.info "SMTP error while sending email #{e.message}"
       end
@@ -44,6 +45,7 @@ Mail::Message.class_eval do
       end
     rescue Net::SMTPFatalError => e
       Rails.logger.info "Net::SMTPFatalError while sending email by deliver! - #{e.message}"
+      raise if e.to_s.downcase.include?('line length exceeded')
     end
     retry_mail! if response.blank? && oauth_retry?
     Rails.logger.info "Email successfully relayed to SMTP mail server through deliver!. Response from mail server: #{response.string}" if response.present? && response.class == Net::SMTP::Response
