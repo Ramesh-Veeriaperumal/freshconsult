@@ -189,6 +189,18 @@ class ConversationsControllerTest < ActionController::TestCase
     assert_response 400
   end
 
+  def test_create_email_format_invalid_new_regex
+    Account.stubs(:current).returns(Account.first || create_test_account)
+    Account.any_instance.stubs(:new_email_regex_enabled?).returns(true)
+    params_hash = { notify_emails: ['test.@test.com'], body: Faker::Lorem.paragraph }
+    post :create, construct_params({ id: ticket.display_id }, params_hash)
+    match_json([bad_request_error_pattern('notify_emails', :array_invalid_format, accepted: 'valid email address')])
+    assert_response 400
+  ensure
+    Account.any_instance.unstub(:new_email_regex_enabled?)
+    Account.unstub(:current)
+  end
+
   def test_create_invalid_ticket_id
     params_hash = { body: 'test' }
     post :create, construct_params({ id: 789_789_789 }, params_hash)

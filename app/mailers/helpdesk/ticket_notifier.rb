@@ -352,7 +352,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
       @body = note.full_text
       @body_html = generate_body_html(note.full_text_html)
-      @note = note 
+      @note = note
       @cloud_files = note.cloud_files    
       @include_quoted_text = options[:quoted_text]
       @surveymonkey_survey =  Integrations::SurveyMonkey.survey(options[:include_surveymonkey_link], ticket, note.user)

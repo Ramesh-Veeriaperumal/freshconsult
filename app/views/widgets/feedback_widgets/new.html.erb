@@ -589,5 +589,14 @@
       });
     });
 
-	});
+
+    jQuery.validator.addMethod("customEmail", function(value, element) {
+      return this.optional( element ) || /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test( value );
+    }, jQuery.validator.messages["email"]);
+
+    jQuery('#helpdesk_ticket_email').rules('add', {
+      customEmail: true
+    });
+
+    });
   <% end %>

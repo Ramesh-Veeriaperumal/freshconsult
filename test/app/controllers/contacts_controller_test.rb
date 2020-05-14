@@ -34,6 +34,18 @@ class ContactsControllerTest < ActionController::TestCase
     log_out
   end
 
+  def test_create_contact_invalid_email
+    login_admin
+    Account.stubs(:current).returns(Account.first || create_test_account)
+    Account.any_instance.stubs(:new_email_regex_enabled?).returns(true)
+    post :create_contact, user: { name: Faker::Name.name, email: 'test[@test.com', time_zone: 'Chennai', language: 'en' }, format: 'json'
+    assert_response 422
+    assert response.body.include?('Email is invalid')
+  ensure
+    Account.any_instance.unstub(:new_email_regex_enabled?)
+    Account.unstub(:current)
+  end
+
   def test_create_contact_duplication
     login_admin
 

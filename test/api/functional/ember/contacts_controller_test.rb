@@ -1226,9 +1226,21 @@ module Ember
     end
 
     def test_quick_create_contact_without_any_contact_detail
-      post :quick_create, construct_params({version: 'private'},  name: Faker::Lorem.characters(10))
+      post :quick_create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10))
       match_json([bad_request_error_pattern('email', :missing_contact_detail)])
       assert_response 400
+    end
+
+    def test_quick_create_contact_invalid_email
+      Account.stubs(:current).returns(Account.first || create_test_account)
+      Account.any_instance.stubs(:new_email_regex_enabled?).returns(true)
+      post :quick_create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
+                                                                   email: 'test.@test.com')
+      match_json([bad_request_error_pattern('email', :invalid_format, accepted: 'valid email address')])
+      assert_response 400
+    ensure
+      Account.any_instance.unstub(:new_email_regex_enabled?)
+      Account.unstub(:current)
     end
 
     def test_quick_create_without_company

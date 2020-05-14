@@ -2559,6 +2559,19 @@ module Ember
       assert_equal count_of_delayed_jobs_before + 1, Delayed::Job.count
     end
 
+    def test_email_notification_with_invalid_notifying_emails
+      current_account = Account.current
+      Account.any_instance.stubs(:new_email_regex_enabled?).returns(true)
+      assigned_agent = add_test_agent(@account)
+      ticket = create_ticket(requester_id: assigned_agent.id)
+      params_hash = create_note_params_hash.merge(private: true, notify_emails: ['test.@test.com'])
+      post :create, construct_params({ version: 'private', id: ticket.display_id, user_id: assigned_agent.id }, params_hash)
+      match_json([bad_request_error_pattern('notify_emails', :array_invalid_format, accepted: 'valid email address')])
+      assert_response 400
+    ensure
+      Account.any_instance.unstub(:new_email_regex_enabled?)
+    end
+
     def test_html_to_text_conversion_in_conversations
       ticket = create_ticket
       body_html = "<table border='1'><tbody><tr><td>A</td><td>B</td></tr><tr><td>C</td><td>D</td></tr></tbody></table><div>"

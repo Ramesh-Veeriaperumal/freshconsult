@@ -124,7 +124,7 @@ module ParserUtil
         name = matches [0][3]
       else
         # Validating plain email addresses,
-        simple_email_regex = /\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b/
+        simple_email_regex = AccountConstants.email_scanner
         simple_email  = address.scan(simple_email_regex)
         if simple_email
           email = simple_email[0]

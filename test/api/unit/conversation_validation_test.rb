@@ -88,6 +88,46 @@ class ConversationValidationTest < ActionView::TestCase
     assert errors.include?('From email invalid_format')
   end
 
+  def test_emails_validation_invalid_new_regex_enabled
+    Account.stubs(:current).returns(Account.first || create_test_account)
+    Account.any_instance.stubs(:new_email_regex_enabled?).returns(true)
+    controller_params = { 'notify_emails' => ['test.@gmail.com'], 'to_emails' => ['test1.@gmail.com'],
+                          'cc_emails' => ['test(@gmail.com'], 'bcc_emails' => ['test)@gmail.com'],
+                          'from_email' => 'test]@gmail.com'  }
+    item = nil
+    conversation = ConversationValidation.new(controller_params, item)
+    refute conversation.valid?
+    errors = conversation.errors.full_messages
+    assert errors.include?('Cc emails array_invalid_format')
+    assert errors.include?('To emails array_invalid_format')
+    assert errors.include?('Bcc emails array_invalid_format')
+    assert errors.include?('Notify emails array_invalid_format')
+    assert errors.include?('From email invalid_format')
+  ensure
+    Account.any_instance.unstub(:new_email_regex_enabled?)
+    Account.unstub(:current)
+  end
+
+  def test_emails_validation_valid_new_regex_enabled
+    Account.stubs(:current).returns(Account.first || create_test_account)
+    Account.any_instance.stubs(:new_email_regex_enabled?).returns(true)
+    controller_params = { 'notify_emails' => ['<!--test@gmail.com-->', 'abc<a_b@gmail.com>', 'a@b.com', 'a.b.c@gmail.com'], 'to_emails' => ['test1@gmail.com'],
+                          'cc_emails' => ['test@gmail.com'], 'bcc_emails' => ['test@gmail.com'],
+                          'from_email' => 'a.b.c@gmail.com'  }
+    item = nil
+    conversation = ConversationValidation.new(controller_params, item)
+    conversation.valid?
+    errors = conversation.errors.full_messages
+    refute errors.include?('Cc emails array_invalid_format')
+    refute errors.include?('To emails array_invalid_format')
+    refute errors.include?('Bcc emails array_invalid_format')
+    refute errors.include?('Notify emails array_invalid_format')
+    refute errors.include?('From email invalid_format')
+  ensure
+    Account.any_instance.unstub(:new_email_regex_enabled?)
+    Account.unstub(:current)
+  end
+
   def test_emails_validation_non_english_characters
     controller_params = { 'body' => 'test', 'notify_emails' => ['0_9flaadaagas <adgasg@fff.com>'], 'to_emails' => ['aasgasA0d<adgasg@fff.com>'],
                             'cc_emails' => ['Бургер Кинг<adgasg@fff.com>'], 'bcc_emails' => ['ÒÂÅÎÏÍÍÅ<adgasg@fff.com>'], 'from_email' => 'fggg@ddd.com'}

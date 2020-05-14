@@ -1584,6 +1584,18 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
   end
 
+  def test_create_invalid_email_with_dot
+    Account.stubs(:current).returns(Account.first || create_test_account)
+    Account.any_instance.stubs(:new_email_regex_enabled?).returns(true)
+    params = ticket_params_hash.merge(email: 'test.@gmail.com')
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('email', :"It should be in the 'valid email address' format")])
+    assert_response 400
+  ensure
+    Account.any_instance.unstub(:new_email_regex_enabled?)
+    Account.unstub(:current)
+  end
+
   def test_create_length_valid_email_with_trailing_spaces
     params = ticket_params_hash.merge(email: "#{Faker::Lorem.characters(23)}@#{Faker::Lorem.characters(20)}.com" + white_space)
     post :create, construct_params({}, params)
@@ -1614,6 +1626,24 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('email', "It should be in the 'valid email address' format"),
                 bad_request_error_pattern('cc_emails', "It should contain elements that are in the 'valid email address' format")])
+  end
+
+  def test_create_cc_email_format_invalid
+    Account.stubs(:current).returns(Account.first || create_test_account)
+    Account.any_instance.stubs(:new_email_regex_enabled?).returns(true)
+    params = ticket_params_hash.merge(email: 'test@test.com', cc_emails: ['test.@test.com'])
+    post :create, construct_params({}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('cc_emails', "It should contain elements that are in the 'valid email address' format")])
+  ensure
+    Account.any_instance.unstub(:new_email_regex_enabled?)
+    Account.unstub(:current)
+  end
+
+  def test_create_cc_email_format_valid
+    params = ticket_params_hash.merge(email: 'test_1@test.com', cc_emails: ['test.2@test.com'])
+    post :create, construct_params({}, params)
+    assert_response 201
   end
 
   def test_create_data_type_invalid

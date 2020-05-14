@@ -926,6 +926,20 @@ module Ember
       assert_response 400
     end
 
+    def test_create_with_invalid_email_new_regex
+      Account.stubs(:current).returns(Account.first || create_test_account)
+      Account.any_instance.stubs(:new_email_regex_enabled?).returns(true)
+      create_custom_field('email', 'text')
+      params = { email: 'test.@test.com', status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph, custom_fields: { email: 0 } }
+      post :create, construct_params({ version: 'private' }, params)
+      match_json([bad_request_error_pattern(:email, :invalid_format, accepted: 'valid email address'),
+                  bad_request_error_pattern(custom_field_error_label('email'), :datatype_mismatch, expected_data_type: 'String', given_data_type: 'Integer', prepend_msg: :input_received)])
+      assert_response 400
+    ensure
+      Account.any_instance.unstub(:new_email_regex_enabled?)
+      Account.unstub(:current)
+    end
+
     def test_create_with_errors
       attachment_ids = []
       rand(2..10).times do
