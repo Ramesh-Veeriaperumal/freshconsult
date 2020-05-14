@@ -30,7 +30,7 @@ class Sanitize
       }.merge(HTML_RELAXED[:attributes].except('object','param','embed','video','audio','source','track','font', 'td', 'pre', :all)),
 
       :protocols => {
-        'img' => { 'src' => HTML_RELAXED[:protocols]['img']['src'] + ['data', 'cid'] },
+        'img' => { 'src' => HTML_RELAXED[:protocols]['img']['src'] + ['cid'] },
         'embed' => {'src'  => ['http', 'https']},
         'video' => {'src'  => ['http', 'https']},
         'iframe' => {'src'  => ['http', 'https', :relative]}

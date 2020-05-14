@@ -390,6 +390,17 @@ module Ember
         match_json(private_api_solution_article_pattern(Solution::Article.last))
       end
 
+      def test_create_with_base64_description
+        folder_meta = get_folder_meta
+        title = Faker::Name.name
+        description = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==" alt="Red dot" />'
+
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: description, status: 1)
+
+        assert_response 400
+        match_json([bad_request_error_pattern('description', :article_description_base64_error, code: :article_base64_content_error)])
+      end
+
       def test_create_and_publish_article
         folder_meta = get_folder_meta
         title = Faker::Name.name
@@ -632,6 +643,17 @@ module Ember
         assert sample_article.reload.draft.reload.title == 'new draft title'
         assert sample_article.reload.draft.reload.status == 1
         match_json(private_api_solution_article_pattern(sample_article.reload))
+      end
+
+      def test_update_with_base64_description
+        sample_article = get_article_without_draft
+        base64_content = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==" alt="Red dot" />'
+
+        params_hash = { description: base64_content, agent_id: @agent.id }
+        put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+
+        assert_response 400
+        match_json([bad_request_error_pattern('description', :article_description_base64_error, code: :article_base64_content_error)])
       end
 
       def test_update_article_and_publish

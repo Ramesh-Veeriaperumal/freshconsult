@@ -211,7 +211,7 @@ module ApiSolutions
 
       def delegator_params
         delegator_params = { language_id: @lang_id, article_meta: @meta, tags: @tags }
-        delegator_params.merge!(params[cname].slice(:folder_name, :category_name, :user_id, :outdated))
+        delegator_params.merge!(params[cname].slice(:folder_name, :category_name, :user_id, :outdated, :description, :status))
         delegator_params = add_attachment_params(delegator_params) if private_api?
         delegator_params.with_indifferent_access
       end
