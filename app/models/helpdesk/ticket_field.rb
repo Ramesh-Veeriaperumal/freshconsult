@@ -221,8 +221,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
     common_types = *common_types
     common_types.each { |col_type| used_fields += (fetch_flexifield_columns[col_type] || []) }
     used_fields.compact!
-    return nil if used_fields.length >= max_allowed_count
-
     (all_fields - used_fields).sort.first
   end
 
