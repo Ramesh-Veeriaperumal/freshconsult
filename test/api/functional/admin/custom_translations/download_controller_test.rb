@@ -12,12 +12,10 @@ class Admin::CustomTranslations::DownloadControllerTest < ActionController::Test
 
   def stub_for_custom_translations
     Account.current.add_feature(:custom_translations)
-    Account.current.launch :redis_picklist_id
   end
 
   def unstub_for_custom_translations
     Account.current.revoke_feature(:custom_translations)
-    Account.current.rollback :redis_picklist_id
   end
 
   def set_secondary_language

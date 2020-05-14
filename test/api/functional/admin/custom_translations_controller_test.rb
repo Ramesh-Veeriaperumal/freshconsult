@@ -12,7 +12,6 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     all_languages = ['en', 'de', 'fr', 'ko']
     @language = supported_languages.sample
     Account.current.add_feature(:custom_translations)
-    Account.current.launch :redis_picklist_id
     Account.any_instance.stubs(:supported_languages).returns(supported_languages)
     Account.any_instance.stubs(:language).returns('en')
     Account.any_instance.stubs(:all_languages).returns(all_languages)
@@ -20,7 +19,6 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
 
   def unstub_for_custom_translations
     Account.current.revoke_feature(:custom_translations)
-    Account.current.rollback :redis_picklist_id
     Account.any_instance.unstub(:supported_languages)
     Account.any_instance.unstub(:language)
     Account.any_instance.unstub(:all_languages)

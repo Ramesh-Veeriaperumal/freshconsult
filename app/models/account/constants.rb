@@ -222,7 +222,7 @@ class Account < ActiveRecord::Base
     saml_ecrypted_assertion: false, quoted_text_parsing_feature: false, description_by_default: false,
     skip_invoice_due_warning: false, agent_group_central_publish: false,
     custom_fields_search: true, update_billing_info: false, allow_billing_info_update: false,
-    tag_central_publish: false, archive_tickets_api: false, redis_picklist_id: true, bot_agent_response: false,
+    tag_central_publish: false, archive_tickets_api: false, bot_agent_response: false,
     fluffy: false, scheduling_fsm_dashboard: false, nested_field_revamp: true, service_worker: false,
     kbase_mint: true, freshvisual_configs: false, freshid_org_v2: false, hide_agent_login: false,
     office365_adaptive_card: false, helpdesk_tickets_by_product: false, article_es_search_by_filter: false,

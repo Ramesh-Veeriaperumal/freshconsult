@@ -7,8 +7,6 @@ class StringToIdTest < ActionView::TestCase
   def setup
     super
     @account.make_current
-    @feature_presence = @account.launched?(:redis_picklist_id)
-    @account.launch(:redis_picklist_id)
     @dropdown_field = create_custom_field_dropdown("cf_#{Faker::Name.name}", Faker::Lorem.words(5).uniq.freeze)
     @picklist_values = @dropdown_field.picklist_values
     @picklist_value_mapping_by_id = @picklist_values.each_with_object({}) { |pv, map| map[pv.picklist_id] = pv.value }
@@ -17,7 +15,6 @@ class StringToIdTest < ActionView::TestCase
   end
 
   def teardown
-    @account.rollback(:redis_picklist_id) unless @feature_presence
     super
   end
 

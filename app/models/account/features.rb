@@ -18,7 +18,7 @@ class Account < ActiveRecord::Base
     :denormalized_select_for_update, :installed_app_publish, :es_tickets,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
     :onboarding_inlinemanual, :skip_portal_cname_chk, :attachment_encoding,
-    :product_central_publish, :redis_picklist_id,
+    :product_central_publish,
     :bot_email_channel, :bot_email_central_publish, :description_by_default,
     :bot_chat_history, :new_es_api, :filter_factory,
     :skip_invoice_due_warning, :automation_revamp, :archive_ticket_fields,
@@ -400,7 +400,7 @@ class Account < ActiveRecord::Base
   end
 
   def custom_translations_enabled?
-    redis_picklist_id_enabled? && has_feature?(:custom_translations)
+    has_feature?(:custom_translations)
   end
 
   def automatic_ticket_assignment_enabled?
