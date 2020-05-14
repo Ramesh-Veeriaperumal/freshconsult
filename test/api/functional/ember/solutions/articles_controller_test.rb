@@ -2017,6 +2017,33 @@ module Ember
         add_privilege(User.current, :publish_solution)
       end
 
+      def test_article_filters_with_search_term_status_approved_and_approver_with_es_filter_privilege
+        Account.current.launch(:article_es_search_by_filter)
+        user = add_new_user(@account, active: true)
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        approver = add_test_agent
+        add_privilege(approver, :approve_article)
+        User.current.reload
+        remove_privilege(User.current, :publish_solution)
+        article = get_approved_article(Account.current.language_object, user, approver)
+        base_struct = Struct.new(:records, :total_entries)
+        records_struct = Struct.new(:results)
+        result_struct = Struct.new(:id)
+        @results = base_struct.new(records_struct.new, 1)
+        @results.records['results'] = [result_struct.new(article.id)]
+        stub_private_search_response_with_object(@results) do
+          get :filter, controller_params(version: 'private', portal_id: @portal_id, status: SolutionConstants::STATUS_FILTER_BY_TOKEN[:approved], approver: approver.id, term: article.title)
+        end
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, action: :filter)
+        match_json([pattern])
+      ensure
+        Account.current.rollback(:article_es_search_by_filter)
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+        add_privilege(User.current, :publish_solution)
+      end
+
       def test_article_filters_unpublished_diff_user
         author_id = add_test_agent.id
         article_meta = create_article(user_id: author_id, folder_meta_id: @@folder_meta.id, status: '1')
