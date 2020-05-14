@@ -43,6 +43,13 @@
     config[:FRESHCALLER_WIDGET_LOADER_URL] = node[:falcon_ui][:freshcaller][:widget_loader_url]
   end
 
+  if(node[:falcon_ui][:beamer])
+    config[:beamer] = {
+      productId: node[:falcon_ui][:beamer][:productId]
+      script_url: node[:falcon_ui][:beamer][:script_url]
+    }
+  end
+
   if(node[:falcon_ui][:integrations_url])
     config[:INTEGRATIONS_REDIRECT_URL] = node[:falcon_ui][:integrations_url]
   end
