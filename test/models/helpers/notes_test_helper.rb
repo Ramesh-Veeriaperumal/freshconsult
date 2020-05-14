@@ -74,12 +74,8 @@ module NotesTestHelper
   end
 
   def event_info(event)
-    hypertrail_hash = Account.current.hypertrail_activities_enabled? ? construct_hypertrail_hash : {}
-    { pod: ChannelFrameworkConfig['pod'] }.merge!(hypertrail_hash)
-  end
-
-  def construct_hypertrail_hash
-    { hypertrail: true }
+    meta_hash = { meta: TicketsTestHelper::HYPERTRAIL_META_VALUE }
+    { pod: ChannelFrameworkConfig['pod'] }.merge!(meta_hash)
   end
 
   def central_assoc_note_pattern(expected_output = {}, note)

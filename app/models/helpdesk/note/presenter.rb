@@ -178,12 +178,8 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def event_info(event)
-    hypertrail_hash = Account.current.hypertrail_activities_enabled? ? construct_hypertrail_hash : {}
-    { pod: ChannelFrameworkConfig['pod'] }.merge!(hypertrail_hash)
-  end
-
-  def construct_hypertrail_hash
-    { hypertrail: true }
+    meta_hash = { meta: Account.current.construct_meta_for_event_info }
+    { pod: ChannelFrameworkConfig['pod'] }.merge!(meta_hash)
   end
 
   def parsed_to_emails

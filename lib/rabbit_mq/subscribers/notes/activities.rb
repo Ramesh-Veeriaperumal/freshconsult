@@ -12,7 +12,7 @@ module RabbitMq::Subscribers::Notes::Activities
   end
 
   def note_activities_subscriber_properties(action, note)
-    { :object_id => note.notable.display_id, :content => note_properties(action, note) }
+    { object_id: note.notable.display_id, content: note_properties(action, note), hypertrail_version: CentralConstants::HYPERTRAIL_VERSION }
   end
 
   def mq_activities_valid(action, model)

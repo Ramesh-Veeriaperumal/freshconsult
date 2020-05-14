@@ -59,11 +59,7 @@ module TimeSheetsTestHelper
   end
 
   def event_info_pattern(_event)
-    hypertrail_hash = Account.current.hypertrail_activities_enabled? ? construct_hypertrail_hash : {}
-    {}.merge!(hypertrail_hash)
+    { meta: TicketsTestHelper::HYPERTRAIL_META_VALUE }
   end
 
-  def construct_hypertrail_hash
-    { hypertrail: true }
-  end
 end

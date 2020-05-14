@@ -77,16 +77,17 @@ class TicketTest < ActiveSupport::TestCase
     event_info.must_match_json_expression(cp_ticket_event_info_pattern(t))
   end
 
-  def test_central_publish_payload_event_info_with_hypertrail_enabled
+  def test_central_publish_payload_event_info_check_hypertrail_version
     custom_fields_hash = { "test_custom_dropdown_#{@account.id}" => DROPDOWN_CHOICES.sample, "test_custom_text_#{@account.id}" => 'Sample Text' }
-    Account.any_instance.stubs(:hypertrail_activities_enabled?).returns(true)
     t = create_ticket(ticket_params_hash.merge(custom_field: custom_fields_hash))
+    meta = TicketsTestHelper::HYPERTRAIL_META_VALUE
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
-    event_info = t.event_info(:create)
-    assert_equal event_info[:hypertrail], true
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t))
-    Account.any_instance.stubs(:hypertrail_activities_enabled?).returns(false)
+    create_event_info = t.event_info(:create)
+    assert_equal meta, create_event_info[:meta]
+    create_event_info.must_match_json_expression(cp_ticket_event_info_pattern(t))
+  ensure
+    t.destroy
   end
 
   def test_central_publish_payload_event_info_on_split_ticket
