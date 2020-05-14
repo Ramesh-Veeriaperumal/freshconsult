@@ -78,10 +78,7 @@ class Social::Dynamo::Twitter
   def update_favorite_in_dynamo(stream_id, feed_id, favorite)
     table = "feeds"
     item_hash = feeds_helper.feeds_hash(stream_id, feed_id, "", 0, 0, "", SOURCE[:twitter])
-    item_hash.merge!(
-      "favorite" => { 
-        :n => "#{favorite}"
-      })
+    item_hash.merge!('favorite' => favorite.to_i)
     retention_period = TABLES[table][:retention_period]
     times = [Time.now, Time.now + retention_period]
     times.each do |time|

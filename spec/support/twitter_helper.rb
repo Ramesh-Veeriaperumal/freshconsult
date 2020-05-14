@@ -39,17 +39,7 @@ module TwitterHelper
     tweet_feed.process
     [tweet_id, sample_gnip_feed, sender_id]
   end
-  
-  def sample_dynamo_query_params(tweet_id)
-    {
-      :item => {
-        "stream_id" => {:s=>"#{@account.id}_#{@default_stream.id}"}, 
-        "feed_ids" => {:ss=>["#{tweet_id}"]}, 
-        "object_id" => {:s=>"feed:#{tweet_id}"}
-      }
-    }
-  end
-  
+
   def sample_tweets_array(feeds = true)
     tweet_array = {
       "statuses" => []
@@ -88,72 +78,65 @@ module TwitterHelper
     cursor.attrs = {:ids => [@handle.twitter_user_id]}
     cursor
   end
-  
+
   def sample_dynamo_query_params
     {
-      :member =>
-            [
-              {
-                "stream_id"=>{:s=>"#{@account.id}_#{@default_stream.id}"}, 
-                "feed_id"=>{:s=>"140264336660376"}, 
-                "posted_time"=>{:ss=>["1402643366000"]}, 
-                "parent_feed_id"=>{:ss=>["140264336660376"]
-              }, 
-              "source" => {:s=>"Twitter"}, 
-              "in_conversation" => {:n=>"0"}, 
-              "data" => {
-                :ss=>[
-                        "{\"body\":\"@TestingGnip accusamus aut saepe sint voluptatem autem amet eaque suscipit eos qui consectetur delectus nesciunt dolore sed provident quasi consequuntur recusandae\",\"retweetCount\":2,\"gnip\":{\"matching_rules\":[{\"value\":\"(@TestingGnip OR from:TestingGnip ) -is:retweet\",\"tag\":\"S22_1\"}],\"klout_score\":\"0\"},\"actor\":{\"preferredUsername\":\"GnipTestUser\",\"image\":\"https://si0.twimg.com/profile_images/2816192909/db88b820451fa8498e8f3cf406675e13_normal.png\",\"id\":\"id:twitter.com:140264336660398\",\"displayName\":\"Gnip Test User\"},\"verb\":\"post\",\"postedTime\":\"2014-06-13T07:09:26Z\",\"id\":\"tag:search.twitter.com,2005:140264336660376\"}"
-                      ]
-                      }, 
-              "is_replied"=>{:n=>"0"}
-              }
-            ], 
-            :count=>1
+      items: [{
+        'stream_id' => "#{@account.id}_#{@default_stream.id}",
+        'feed_id' => '140264336660376',
+        'posted_time' => ['1402643366000'],
+        'parent_feed_id' => ['140264336660376'],
+        'source' => 'Twitter',
+        'in_conversation' => 0,
+        'data' => ["{\"body\":\"@TestingGnip accusamus aut saepe sint voluptatem autem amet eaque suscipit eos qui consectetur delectus nesciunt dolore sed provident quasi consequuntur recusandae\",\"retweetCount\":2,\"gnip\":{\"matching_rules\":[{\"value\":\"(@TestingGnip OR from:TestingGnip ) -is:retweet\",\"tag\":\"S22_1\"}],\"klout_score\":\"0\"},\"actor\":{\"preferredUsername\":\"GnipTestUser\",\"image\":\"https://si0.twimg.com/profile_images/2816192909/db88b820451fa8498e8f3cf406675e13_normal.png\",\"id\":\"id:twitter.com:140264336660398\",\"displayName\":\"Gnip Test User\"},\"verb\":\"post\",\"postedTime\":\"2014-06-13T07:09:26Z\",\"id\":\"tag:search.twitter.com,2005:140264336660376\"}"],
+        'is_replied' => 0
+      }],
+      count: 1
     }
-
   end
   
   def sample_interactions_batch_get(tweet_id)
-    [
-      {
-        :responses => 
-            {
-              "#{Social::DynamoHelper.select_table("feeds", Time.now)}"=>[
-                {
-                  "stream_id"=>{:s=>"#{@account.id}_#{@default_stream.id}"}, 
-                  "feed_id"=>{:s=>"#{tweet_id}"}, 
-                  "posted_time"=>{:ss=>["#{tweet_id}"]
-                }, 
-              "parent_feed_id"=>{:ss=>["#{tweet_id}"]}, 
-              "source"=>{:s=>"Twitter"}, 
-              "in_conversation"=>{:n=>"0"}, 
-              "data"=>{:ss=>["{\"body\":\"@TestingGnip quae animi consequatur omnis repudiandae unde et cum molestiae nihil qui asperiores voluptas quibusdam quidem rerum aut vero eum fugit\",\"retweetCount\":2,\"gnip\":{\"matching_rules\":[{\"value\":\"(@TestingGnip OR from:TestingGnip ) -is:retweet\",\"tag\":\"S46_1\"}],\"klout_score\":\"0\"},\"actor\":{\"preferredUsername\":\"GnipTestUser\",\"image\":\"https://si0.twimg.com/profile_images/2816192909/db88b820451fa8498e8f3cf406675e13_normal.png\",\"id\":\"id:twitter.com:140265255013396\",\"displayName\":\"Gnip Test User\"},\"verb\":\"post\",\"postedTime\":\"2014-06-13T09:42:30Z\",\"id\":\"tag:search.twitter.com,2005:140265255013371\"}"]}, 
-              "is_replied"=>{:n=>"0"}
-              }
-            ]
-            }, 
-            :unprocessed_keys=>{}
-      }
-    ]
+    [{
+      responses: {
+        Social::DynamoHelper.select_table('feeds', Time.now).to_s => [{
+          'stream_id' => "#{@account.id}_#{@default_stream.id}",
+          'feed_id' => tweet_id.to_s,
+          'posted_time' => [tweet_id.to_s],
+          'parent_feed_id' => [tweet_id.to_s],
+          'source' => 'Twitter',
+          'in_conversation' => 0,
+          'data' => ["{\"body\":\"@TestingGnip quae animi consequatur omnis repudiandae unde et cum molestiae nihil qui asperiores voluptas quibusdam quidem rerum aut vero eum fugit\",\"retweetCount\":2,\"gnip\":{\"matching_rules\":[{\"value\":\"(@TestingGnip OR from:TestingGnip ) -is:retweet\",\"tag\":\"S46_1\"}],\"klout_score\":\"0\"},\"actor\":{\"preferredUsername\":\"GnipTestUser\",\"image\":\"https://si0.twimg.com/profile_images/2816192909/db88b820451fa8498e8f3cf406675e13_normal.png\",\"id\":\"id:twitter.com:140265255013396\",\"displayName\":\"Gnip Test User\"},\"verb\":\"post\",\"postedTime\":\"2014-06-13T09:42:30Z\",\"id\":\"tag:search.twitter.com,2005:140265255013371\"}"],
+          'is_replied' => 0
+        }]
+      },
+      unprocessed_keys: {}
+    }]
   end
-  
-  def dynamo_update_attributes(tweet_id)
+
+  def sample_favourite_params(tweet_id, stream_id)
     {
-      :attributes=>{
-        "stream_id"=>{:s=>"#{@account.id}_#{@default_stream.id}"}, 
-        "fd_user"=>{:ss=>["6"]}, 
-        "feed_id"=>{:s=>"#{tweet_id}"}, 
-        "posted_time"=>{:ss=>["#{tweet_id}"]}, 
-        "parent_feed_id"=>{:ss=>["#{tweet_id}"]}, 
-        "source"=>{:s=>"Twitter"}, 
-        "in_conversation"=>{:n=>"1"}, 
-        "fd_link"=>{:ss=>["2"]}, 
-        "data"=>{:ss=>["{\"body\":\"@TestingGnip et aperiam ipsa assumenda neque sit non repellat deserunt natus dolorem perferendis magni dolores odio quo ab quia ut nam\",\"retweetCount\":2,\"gnip\":{\"matching_rules\":[{\"value\":\"(@TestingGnip OR from:TestingGnip ) -is:retweet\",\"tag\":\"S67_1\"}],\"klout_score\":\"0\"},\"actor\":{\"preferredUsername\":\"GnipTestUser\",\"image\":\"https://si0.twimg.com/profile_images/2816192909/db88b820451fa8498e8f3cf406675e13_normal.png\",\"id\":\"id:twitter.com:140265655633631\",\"displayName\":\"Gnip Test User\"},\"verb\":\"post\",\"postedTime\":\"2014-06-13T10:49:16Z\",\"id\":\"tag:search.twitter.com,2005:140265655633605\"}"]}, 
-        "is_replied"=>{:n=>"1"}
+      item: {
+        stream_id: stream_id,
+        feed_id: tweet_id
       }
     }
+  end
 
+  def dynamo_update_attributes(tweet_id)
+    {
+      attributes: {
+        'stream_id' => "#{@account.id}_#{@default_stream.id}",
+        'fd_user' => ['6'],
+        'feed_id' => tweet_id.to_s,
+        'posted_time' => [tweet_id.to_s],
+        'parent_feed_id' => [tweet_id.to_s],
+        'source' => 'Twitter',
+        'in_conversation' => 1,
+        'fd_link' => ['2'],
+        'data' => ["{\"body\":\"@TestingGnip et aperiam ipsa assumenda neque sit non repellat deserunt natus dolorem perferendis magni dolores odio quo ab quia ut nam\",\"retweetCount\":2,\"gnip\":{\"matching_rules\":[{\"value\":\"(@TestingGnip OR from:TestingGnip ) -is:retweet\",\"tag\":\"S67_1\"}],\"klout_score\":\"0\"},\"actor\":{\"preferredUsername\":\"GnipTestUser\",\"image\":\"https://si0.twimg.com/profile_images/2816192909/db88b820451fa8498e8f3cf406675e13_normal.png\",\"id\":\"id:twitter.com:140265655633631\",\"displayName\":\"Gnip Test User\"},\"verb\":\"post\",\"postedTime\":\"2014-06-13T10:49:16Z\",\"id\":\"tag:search.twitter.com,2005:140265655633605\"}"],
+        'is_replied' => 1
+      }
+    }
   end
   
   def sample_params_fd_item(tweet_id, stream_id, search_type, parent_tweet_id = nil)

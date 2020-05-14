@@ -20,13 +20,12 @@ class Social::Dynamo::Interaction
       end
     end
   end
-  
+
   def get_feed_interaction(hash, feed_id)
-    table_name = Social::DynamoHelper.select_table(TABLE, Time.now.utc)    
+    table_name = Social::DynamoHelper.select_table(TABLE, Time.now.utc)
     Social::DynamoHelper.get_item(table_name, hash, "feed:#{feed_id}", SCHEMA, ["feed_ids"])[:item]
   end
-  
-  
+
   def update_comment_interation_list(posted_time, key, parent_feed_id, feed_id)
     execute_on_table(posted_time) do |table_name, time|
       if Social::DynamoHelper.table_validity(TABLE, table_name, Time.now)
@@ -42,25 +41,15 @@ class Social::Dynamo::Interaction
     item_hash = interactions_hash(key, "feed:#{parent_feed_id}", feed_id, "")
     Social::DynamoHelper.update(table_name, item_hash, schema)
   end
-  
 
-  def interactions_hash(hash, range, feed_id, dm)
+  def interactions_hash(hash, range, feed_id, dm_id)
     item = {
-      "stream_id" => {
-        :s => "#{hash}"
-      },
-      "object_id" => {
-        :s => "#{range}"
-      }
+      'stream_id' => hash.to_s,
+      'object_id' => range.to_s
     }
-    unless feed_id.blank?
-      item.merge!("feed_ids" => { :ss => [feed_id.to_s]})
-    end
-
-    unless dm.blank?
-      item.merge!("dm" => { :ss => [dm.to_json]})
-    end
-    return item
+    item.merge!('feed_ids' => [feed_id.to_s].to_set) if feed_id.present?
+    item.merge!('dm' => [dm_id.to_json].to_set) if dm_id.present?
+    item
   end
 
   def execute_on_table(time_range, &block)

@@ -24,11 +24,11 @@ class Social::Dynamo::Feed::Facebook < Social::Dynamo::Feed::Base
       Social::DynamoHelper.update(table_name, item_hash, SCHEMA) if has_parent_feed?(time, dynamo_keys, feed_id)
     end
   end
-  
+
   def update_fd_links(table_name, parent_feed_id, hash)
-    parent_interaction = Social::Dynamo::Interaction.new.get_feed_interaction(hash, parent_feed_id)   
+    parent_interaction = Social::Dynamo::Interaction.new.get_feed_interaction(hash, parent_feed_id)
     if parent_interaction && parent_interaction.present?
-      interactions = parent_interaction["feed_ids"][:ss]
+      interactions = parent_interaction['feed_ids']
       interactions.each do |interaction|
         attributes = fd_attributes(interaction)
         item_hash  = feeds_hash(hash, interaction, "", 0, 0, attributes, SOURCE[:facebook])
@@ -36,9 +36,9 @@ class Social::Dynamo::Feed::Facebook < Social::Dynamo::Feed::Base
           Social::DynamoHelper.update(table_name, item_hash, SCHEMA, ['fd_link'])
         end
       end
-    end    
+    end
   end
-  
+
   private
   def fetch_parent_data(table_name, hash, feed_obj)
     in_conversation = 0

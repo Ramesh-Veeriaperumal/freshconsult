@@ -32,9 +32,9 @@ class Social::TwitterControllerTest < ActionController::TestCase
     user = Account.current.account_managers.first.make_current
     @controller.stubs(:current_user).returns(user)
     tweet_id = (Time.now.utc.to_f*100000).to_i
-    AWS::DynamoDB::ClientV2.any_instance.stubs(:query).returns(sample_dynamo_query_params)
-    Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
-    Social::DynamoHelper.stubs(:batch_get).returns(sample_interactions_batch_get(tweet_id))
+    Aws::DynamoDB::Client.any_instance.stubs(:query).returns(sample_dynamo_query_params)
+    Aws::DynamoDB::Client.any_instance.stubs(:get_item).returns(sample_dynamo_get_item_params)
+    Aws::DynamoDB::Client.any_instance.stubs(:batch_get_item).returns(sample_interactions_batch_get(tweet_id).first)
     @request.env['HTTP_ACCEPT'] = 'application/json'
     with_twitter_update_stubbed do
       sample_gnip_feed = sample_gnip_feed(@rule, nil, Time.now.utc.iso8601)
@@ -54,9 +54,29 @@ class Social::TwitterControllerTest < ActionController::TestCase
     end
   ensure
     @controller.unstub(:current_user)
-    AWS::DynamoDB::ClientV2.unstub(:query)
-    Social::DynamoHelper.unstub(:get_item)
-    Social::DynamoHelper.unstub(:batch_get)
+    Aws::DynamoDB::Client.any_instance.unstub(:query)
+    Aws::DynamoDB::Client.any_instance.unstub(:get_item)
+    Aws::DynamoDB::Client.any_instance.unstub(:batch_get_item)
+  end
+
+  def test_twitter_add_to_favourites_option_from_social_tab
+    user = Account.current.account_managers.first.make_current
+    @controller.stubs(:current_user).returns(user)
+    tweet_id = (Time.now.utc.to_f * 100_000).to_i
+    @request.env['HTTP_ACCEPT'] = 'application/json'
+    Social::Twitter::Feed.stubs(:twitter_action).returns([nil, true])
+    with_twitter_update_stubbed do
+      @account = Account.current
+      tweet = @account.tweets.where(tweet_id: tweet_id).first
+      assert_equal tweet, nil
+      stream_id = "#{@account.id}_#{@default_stream.id}"
+      favourite_params = sample_favourite_params(tweet_id.to_s, stream_id)
+
+      post :favorite, favourite_params
+      assert_response 200
+    end
+  ensure
+    Social::Twitter::Feed.unstub(:twitter_action)
   end
 
   def test_twitter_reply_to_tweet_ticket_from_social_tab

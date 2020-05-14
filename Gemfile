@@ -210,7 +210,7 @@ gem "cocaine", :git => "git@github.com:freshdesk/cocaine.git", :tag => 'v0.5.8.1
 gem "paperclip", "~> 4.2.2"
 
 gem "aws-sdk", "~> 1.31.3"
-gem "aws-sdk-resources", '~> 2'
+gem 'aws-sdk-resources', '~> 2.11.222'
 gem "xml-simple", "1.1.4", :require => 'xmlsimple'
 
 

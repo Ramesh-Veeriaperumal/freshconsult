@@ -26,10 +26,8 @@ module Social
       def unprocessed_facebook_feeds(page_id)
         table_name = Social::DynamoHelper.select_table(TABLE, Time.now.utc)
         hash_key   = {
-          :comparison_operator  => "EQ",
-          :attribute_value_list => [{
-            :n => "#{page_id}"
-          }]
+          comparison_operator: 'EQ',
+          attribute_value_list: [page_id.to_s]
         }
         Social::DynamoHelper.query(table_name, hash_key, nil, SCHEMA, RECORDS_FETCH_LIMIT, true)
       end
@@ -48,35 +46,22 @@ module Social
       end
 
       private
-      
+
       def facebook_feed_hash(hash_key, range_key, feed)
-        query_options = {
-          "page_id" => {
-            :n => "#{hash_key}"
-          },
-          "timestamp" => {
-            :n => "#{range_key}"
-          },
-          "feed" => {
-            :s => "#{feed}"
-          }
+        {
+          'page_id' => hash_key.to_s,
+          'timestamp' => range_key.to_s,
+          'feed' => feed.to_s
         }
       end
 
       def facebook_message_hash(hash_key, range_key, message)
-        query_options = {
-          "page_id" => {
-            :n => "#{hash_key}"
-          },
-          "timestamp" => {
-            :n => "#{range_key}"
-          },
-          "message" => {
-            :s => "#{message}"
-          }
+        {
+          'page_id' => hash_key.to_s,
+          'timestamp' => range_key.to_s,
+          'message' => message.to_s
         }
       end
-      
     end
   end
 end

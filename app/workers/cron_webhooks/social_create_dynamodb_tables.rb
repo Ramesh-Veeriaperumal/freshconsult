@@ -21,10 +21,9 @@ module CronWebhooks
           schema = TABLES[table][:schema]
           properties = DYNAMO_DB_CONFIG[table]
           name  = Social::DynamoHelper.select_table(table, time)
-          read  = properties['start_read_capacity']
           write = properties['write_capacity']
 
-          Social::DynamoHelper.create_table(name, schema[:hash], schema[:range], read, write)
+          Social::DynamoHelper.create_table(name, schema[:hash], schema[:range])
 
           options = {
             metric: METRIC_NAME[:write_capacity],

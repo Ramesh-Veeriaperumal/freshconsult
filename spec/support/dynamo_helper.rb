@@ -18,7 +18,7 @@ module DynamoHelper
     if present
       result = false
       feed_entry.should_not be_nil
-      feed_entry["data"][:ss].each do |twt|
+      feed_entry["data"].each do |twt|
         result ||= compare_intersecting_keys(tweet_feed, JSON.parse(twt))
       end
       result.should be_truthy
@@ -33,7 +33,7 @@ module DynamoHelper
       user_entry = dynamodb_entry(table, hash_key, "user:#{user_id}", tweet_feed["postedTime"])
       tweet_id = tweet_feed["id"].split(":").last
       unless user_entry.nil?
-        user_entry_tweet_ids = user_entry["feed_ids"][:ss]
+        user_entry_tweet_ids = user_entry['feed_ids']
         result ||= user_entry_tweet_ids.include?(tweet_id)
       end
       break if result
@@ -55,32 +55,23 @@ module DynamoHelper
 
   def sample_dynamo_get_item_params
     {
-      :item => 
-          { 
-            "stream_id" => {:s=>"#{@account.id}_#{@default_stream.id}"}, 
-            "feed_ids"=>{:ss=>["140264973268266"]
-          }, 
-          "object_id" => {
-            :s =>"feed:140264973268266"
-            }
-          }
+      item: {
+        'stream_id' => "#{@account.id}_#{@default_stream.id}",
+        'feed_ids' => ['140264973268266'],
+        'object_id' => 'feed:140264973268266'
+      }
     }
   end
 
   private
     def dynamodb_entry(table, hash_value, range_value, postedTime)
-      
       hash_key = {
-          :comparison_operator => "EQ",
-          :attribute_value_list => [
-            {'s' => hash_value}
-          ]
+        comparison_operator: 'EQ',
+        attribute_value_list: [hash_value.to_s]
       }
       range_key = {
-          :comparison_operator => "EQ",
-          :attribute_value_list => [
-            {'s' => range_value}
-          ]
+        comparison_operator: 'EQ',
+        attribute_value_list: [range_value]
       }
       time = Time.parse(postedTime)
 
@@ -90,8 +81,8 @@ module DynamoHelper
 
       for i in 1..5
         result = Social::DynamoHelper.query(name, hash_key, range_key, schema, 1, false)
-        unless result[:member].empty?
-          return result[:member].first
+        unless result.empty?
+          return result.first
         else
           sleep 1
         end

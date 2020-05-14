@@ -29,15 +29,9 @@ class FacebookDeltaTest < ActionView::TestCase
 
   def facebook_feed_hash(page_id, timestamp, message)
     query_options = {
-      'page_id' => {
-        :n => '#{page_id}'
-      },
-      'timestamp' => {
-        :n => '#{timestamp}'
-      },
-      'feed' => {
-        :s => '#{message}'
-      }
+      'page_id' => page_id.to_s,
+      'timestamp' => timestamp.to_s,
+      'feed' => message.to_s
     }
   end
 

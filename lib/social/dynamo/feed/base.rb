@@ -47,44 +47,34 @@ class Social::Dynamo::Feed::Base
     end
     parent_feed_id_hash
   end
-  
+
   def feeds_hash(hash, range, data, reply, conversation, attributes, source)
     item = {
-      "stream_id" => {
-        :s => "#{hash}"
-      },
-      "feed_id" => {
-        :s => "#{range}"
-      },
-      "is_replied" => {
-        :n => "#{reply}"
-      },
-      "in_conversation" => {
-        :n => "#{conversation}"
-      },
-      "source" => {
-        :s => source
-      }
+      'stream_id' => hash.to_s,
+      'feed_id' => range.to_s,
+      'is_replied' => reply.to_i,
+      'in_conversation' => conversation.to_i,
+      'source' => source
     }
-    
-    item.merge!("data" => { :ss => [data.to_json] }) if data.is_a?(Hash)
+
+    item.merge!('data' => [data.to_json].to_set) if data.is_a?(Hash)
 
     if attributes.is_a?(Hash)
       attributes.delete_if { |key, value| value.blank? }
-      
+
       attributes.each do |key, val|
-        if NUMERIC_KEYS.include?("#{key}")
-          item.merge!(key.to_s =>{ :n => val.to_s })
+        if NUMERIC_KEYS.include?(key.to_s)
+          item.merge!(key.to_s => val.to_i)
         else
           value = val.is_a?(Array) ? val : [val.to_s]
-          item.merge!(key.to_s =>{ :ss => value }) 
+          item.merge!(key.to_s => value.to_set)
         end
-      end  
+      end
     end
-    
+
     item
   end
-  
+
   def get_feeds_data(attributes_to_get)
     feeds_data = {
       :name => Social::DynamoHelper.select_table(TABLE, Time.now.utc),
@@ -106,18 +96,17 @@ class Social::Dynamo::Feed::Base
     end
   end
 
-
   private
-  
+
   def get_parent_data(table_name, hash, in_reply_to, attributes_to_get)
     parent_attributes = {}
     parent = Social::DynamoHelper.get_item(table_name, hash, in_reply_to, SCHEMA, attributes_to_get)
     if parent && parent[:item] && parent[:item]["parent_feed_id"]
       parent_attributes = {
-        :in_conversation => 1,
-        :parent_feed_id  => parent[:item]["parent_feed_id"][:ss],
-        :parent_conversation => parent[:item]["in_conversation"][:n].to_i,
-        :source => parent[:item]["source"][:s]
+        in_conversation: 1,
+        parent_feed_id: parent[:item]['parent_feed_id'],
+        parent_conversation: parent[:item]['in_conversation'].to_i,
+        source: parent[:item]['source']
       }
     end
     parent_attributes

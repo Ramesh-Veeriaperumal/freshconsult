@@ -22,7 +22,7 @@ class Social::Dynamo::Feed::Twitter < Social::Dynamo::Feed::Base
       response   = Social::DynamoHelper.update(table_name, item_hash, SCHEMA)
 
       if response[:attributes]["parent_feed_id"]
-        parent_feed_id = response[:attributes]["parent_feed_id"][:ss].first
+        parent_feed_id = response[:attributes]['parent_feed_id'].first
         parent_feed_id_hash.merge!("#{time}" => "#{parent_feed_id}" )
         parent_data = {
           :feed_id => parent_feed_id,

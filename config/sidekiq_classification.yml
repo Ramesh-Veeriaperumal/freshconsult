@@ -345,8 +345,6 @@
     - cron_gnip_stream_replay
     - cron_social_create_dynamodb_tables
     - cron_social_delete_dynamodb_tables
-    - cron_social_increase_dynamodb_capacity
-    - cron_social_reduce_dynamodb_capacity
     - cron_sqs_monitor
     - cron_account_spam_cleanup
     - cron_attachment_user_draft_cleanup

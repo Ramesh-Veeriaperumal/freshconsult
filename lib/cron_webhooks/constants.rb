@@ -172,14 +172,6 @@ module CronWebhooks::Constants
       class_name: 'CronWebhooks::SocialDeleteDynamodbTables',
       semaphore_expiry: 1.hour
     },
-    social_increase_dynamoDb_capacity: {
-      class_name: 'CronWebhooks::SocialIncreaseDynamodbCapacity',
-      semaphore_expiry: 1.hour
-    },
-    social_reduce_dynamoDb_capacity: {
-      class_name: 'CronWebhooks::SocialReduceDynamodbCapacity',
-      semaphore_expiry: 1.hour
-    },
     sqs_monitor: {
       class_name: 'CronWebhooks::SqsMonitor',
       semaphore_expiry: 1.hour
