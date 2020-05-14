@@ -28,7 +28,7 @@ class Account < ActiveRecord::Base
     :native_apps, :archive_tickets_api, :bot_agent_response,
     :fetch_ticket_from_ref_first, :query_from_singleton,
     :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp, :service_worker, :kbase_mint,
-    :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :bypass_signup_captcha,
+    :ticket_field_limit_increase, :join_ticket_field_data, :bypass_signup_captcha,
     :simple_outreach, :disable_simple_outreach, :supervisor_text_field, :disable_mint_analytics,
     :freshid_org_v2, :hide_agent_login, :office365_adaptive_card, :facebook_admin_ui_revamp,
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,

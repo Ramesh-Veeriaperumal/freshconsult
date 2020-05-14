@@ -104,13 +104,11 @@ class Reports::PricingApiTest < ActiveSupport::TestCase
 
   def test_worker_enqueue_on_feature_addition
     @account.revoke_feature(:analytics_report_save)
-    Account.current.stubs(:freshvisual_configs_enabled?).returns(true)
     Reports::FreshvisualConfigs.jobs.clear
     @account.add_feature :analytics_report_save
     assert_equal Reports::FreshvisualConfigs.jobs.size, 1
   ensure
     @account.revoke_feature :analytics_report_save
-    Account.current.unstub(:freshvisual_configs_enabled?)
   end
 
   private
