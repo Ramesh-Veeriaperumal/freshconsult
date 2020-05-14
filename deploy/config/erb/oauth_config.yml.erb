@@ -74,7 +74,7 @@ oauth_options:
    consumer_token: <%= node[:ymls][:oauth_config][:shopify_token] %>
    consumer_secret: <%= node[:ymls][:oauth_config][:shopify_secret] %>
    options:
-      scope: 'read_orders'   
+      scope: 'read_all_orders'   
  box:
   consumer_token: <%= node[:ymls][:oauth_config][:box_token] %>
   consumer_secret: <%= node[:ymls][:oauth_config][:box_secret] %>

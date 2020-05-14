@@ -70,7 +70,7 @@ development:
   consumer_token: b78ef7808d2dba974b17fd21dc94201f
   consumer_secret: 5c1ec02d8e143e1f14505f008eeafdaf
   options:
-    scope: 'read_orders'
+    scope: 'read_all_orders'
  box:
   consumer_token: vyexjzanqd64g8bj1w2cjy1drmv0gfgn
   consumer_secret: pvRFRQ0vMacLUqRmavgdzGCObBPNbEux
@@ -117,7 +117,7 @@ defaults: &defaults
   consumer_token: b78ef7808d2dba974b17fd21dc94201f
   consumer_secret: 5c1ec02d8e143e1f14505f008eeafdaf
   options:
-    scope: 'read_orders'
+    scope: 'read_all_orders'
  slack:
    consumer_token: "3575209657.3577497590"
    consumer_secret: 7193779dab625ec3e6764dd5df21309e
@@ -186,10 +186,10 @@ staging:
   options:
     api_key: cjw2pjzf2s9fbvkz8863wwmt
  shopify:
-   consumer_token: b78ef7808d2dba974b17fd21dc94201f
-   consumer_secret: 5c1ec02d8e143e1f14505f008eeafdaf
-   options:
-      scope: 'read_orders'   
+  consumer_token: b78ef7808d2dba974b17fd21dc94201f
+  consumer_secret: 5c1ec02d8e143e1f14505f008eeafdaf
+  options:
+    scope: 'read_all_orders'   
  box:
   consumer_token: zkc8ikgqnaxxp8d8hmof0de1777zmcou
   consumer_secret: ygt0d5OC2EjOjBzTmnB3QUaVD0vZ9pem
@@ -244,10 +244,10 @@ production:
   options:
     api_key: d499g57y8synva8crhycgmfx
  shopify:
-   consumer_token: b78ef7808d2dba974b17fd21dc94201f
-   consumer_secret: 5c1ec02d8e143e1f14505f008eeafdaf
-   options:
-         scope: 'read_orders'
+  consumer_token: b78ef7808d2dba974b17fd21dc94201f
+  consumer_secret: 5c1ec02d8e143e1f14505f008eeafdaf
+  options:
+    scope: 'read_all_orders'
  box:
   consumer_token: itfsn1ixctz4uwru9d03bozxo92bwnh8
   consumer_secret: 8BcKLFpMi26RxvQhQxTslPlkS1A0rJXV
