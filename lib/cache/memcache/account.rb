@@ -709,7 +709,7 @@ module Cache::Memcache::Account
   def agent_types_from_cache
     key = agent_type_memcache_key(self.id)
     fetch_from_cache(key) { self.get_or_create_agent_types }
- end
+  end
 
   def clear_agent_types_cache
     key = agent_type_memcache_key(self.id)

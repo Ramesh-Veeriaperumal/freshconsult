@@ -872,7 +872,7 @@ class Account < ActiveRecord::Base
     DomainMapping.where(account_id: sandbox_job.try(:sandbox_account_id)).first.try(:domain)
   end
 
-  #Temp method to directly create support agent type if it was not created as part of fixtures/migration.
+  # Temp method to directly create support agent type if it was not created as part of fixtures/migration.
   def get_or_create_agent_types
     agent_types = self.agent_types.all
     if agent_types.length == 0

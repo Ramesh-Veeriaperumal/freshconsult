@@ -3321,6 +3321,7 @@ ActiveRecord::Schema.define(version: 20200423091413) do
     t.integer  "account_id",   :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "agent_type",                       :default => 1
   end
 
   add_index "roles", ["account_id", "name"], :name => "index_roles_on_account_id_and_name", :unique => true
