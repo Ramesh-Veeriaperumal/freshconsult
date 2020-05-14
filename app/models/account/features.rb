@@ -71,7 +71,7 @@ class Account < ActiveRecord::Base
     :opt_out_analytics, :freshchat, :disable_old_ui, :contact_company_notes,
     :sandbox, :session_replay, :segments, :freshconnect, :proactive_outreach,
     :audit_logs_central_publish, :audit_log_ui, :omni_channel_routing, :undo_send,
-    :custom_encrypted_fields, :custom_translations, :parent_child_infra,
+    :custom_encrypted_fields, :custom_translations, :parent_child_infra, :custom_source,
     :canned_forms, :customize_table_view, :public_url_toggle, :solutions_templates,
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,

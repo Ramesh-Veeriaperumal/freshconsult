@@ -392,6 +392,7 @@
       :assets: 387
       :assets_toggle: 388
       :prevent_ticket_creation_for_others: 389
+      :custom_source: 390
 :selectable_features:
   :redis_display_id: true
   :branding: true
