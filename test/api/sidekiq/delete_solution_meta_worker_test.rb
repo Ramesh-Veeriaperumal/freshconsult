@@ -33,7 +33,10 @@ class DeleteSolutionMetaWorkerTest < ActionView::TestCase
   def setup_articles
     @category_meta = create_category
     @folder_meta = create_folder(visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: @category_meta.id)
-    populate_articles(@folder_meta)
+    (1..7).each do |i|
+      # Load 70 articles
+      populate_articles(@folder_meta, true)
+    end
   end
 
   def test_job_push_and_article_meta_deletion

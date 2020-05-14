@@ -84,8 +84,8 @@ module SolutionsArticlesTestHelper
     @draft_body.save
   end
 
-  def populate_articles(folder_meta)
-    return if folder_meta.article_count > 10
+  def populate_articles(folder_meta, bulk = false)
+    return if folder_meta.article_count > 10 && bulk == false
 
     (1..10).each do |i|
       articlemeta = Solution::ArticleMeta.new
