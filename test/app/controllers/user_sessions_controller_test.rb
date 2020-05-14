@@ -1032,4 +1032,31 @@ class UserSessionsControllerTest < ActionController::TestCase
     User.any_instance.unstub(:active_freshid_agent?)
     Account.any_instance.unstub(:anonymous_account?)
   end
+
+  def test_fetch_mobile_token_should_return_valid_mobile_jwt_token_and_reset_perishable_token
+    user = create_user_for_session
+    initial_perishable_token = user.perishable_token
+    post :mobile_token, construct_params(token: initial_perishable_token)
+    assert_response 200
+    parsed_response = parse_response response.body
+    assert_equal parsed_response['auth_token'], user.mobile_auth_token
+    assert_not_equal initial_perishable_token, user.reload.perishable_token
+  ensure
+    user.destroy
+  end
+
+  def test_fetch_mobile_token_should_return_bad_request_without_token
+    post :mobile_token
+    assert_response 400
+  end
+
+  def test_fetch_mobile_token_should_return_bad_request_for_empty_token
+    post :mobile_token, construct_params(token: '')
+    assert_response 400
+  end
+
+  def test_fetch_mobile_token_should_return_access_denied_for_invalid_token
+    post :mobile_token, construct_params(token: Faker::Lorem.word)
+    assert_response 403
+  end
 end
