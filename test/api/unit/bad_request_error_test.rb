@@ -59,4 +59,9 @@ class BadRequestErrorTest < ActionView::TestCase
     assert_equal 'nested_field', test.nested_field
   end
 
+  def test_key_error_in_base_error
+    assert_raise(KeyError) do
+      BadRequestError.new('attribute', :datatype_mismatch, dummykey: 'dumyvalue')
+    end
+  end
 end

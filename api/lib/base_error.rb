@@ -4,6 +4,9 @@ class BaseError
   def initialize(value, params_hash = {})
     message = retrieve_message(params_hash[:prepend_msg]) + retrieve_message(value) + retrieve_message(params_hash[:append_msg])
     @message = message % params_hash
+  rescue KeyError
+    Rails.logger.error("API Error with value :: #{value.inspect} :: message :: #{message.inspect} :: Params: #{params_hash.inspect}")
+    raise
   end
 
   def retrieve_message(value)
