@@ -16,7 +16,7 @@ module Channel
         custom_fields: params[cname][:custom_field],
         default_company: @company_id
       }
-      delegator_params.merge!(twitter_requester_fields_hash) if Account.current.twitter_requester_fields_enabled?
+      delegator_params.merge!(twitter_requester_fields_hash)
       contact_delegator = ContactDelegator.new(@item, delegator_params)
       if !contact_delegator.valid?(:channel_contact_create)
         render_custom_errors(contact_delegator, true)

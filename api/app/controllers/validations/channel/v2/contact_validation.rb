@@ -21,15 +21,6 @@ module Channel::V2
                            allow_nil: true },
               custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
 
-    validates :twitter_followers_count, custom_absence:
-                             { message: :require_feature_for_attribute,
-                               code: :inaccessible_field,
-                               message_options: {
-                                 attribute: 'twitter_followers_count',
-                                 feature: :enable_twitter_requester_fields
-                               } },
-                                        unless: :twitter_requester_fields_enabled?
-
     validates :blocked_at, :deleted_at, :last_login_at, :current_login_at,
               :last_seen_at, date_time: { allow_nil: true }
 
@@ -38,18 +29,5 @@ module Channel::V2
     validates :deleted, :blocked, :whitelisted, :delta, :twitter_profile_status, data_type: { rules: 'Boolean',
                                                                                               ignore_string: :allow_string_param,
                                                                                               allow_nil: true }
-
-    validates :twitter_profile_status, custom_absence:
-                             { message: :require_feature_for_attribute,
-                               code: :inaccessible_field,
-                               message_options: {
-                                 attribute: 'twitter_profile_status',
-                                 feature: :enable_twitter_requester_fields
-                               } },
-                                       unless: :twitter_requester_fields_enabled?
-
-    def twitter_requester_fields_enabled?
-      Account.current.twitter_requester_fields_enabled?
-    end
   end
 end

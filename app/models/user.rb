@@ -1325,8 +1325,6 @@ class User < ActiveRecord::Base
   end
 
   def twitter_requester_fields
-    return {} unless Account.current.twitter_requester_fields_enabled?
-
     {
       'twitter_profile_status'  => twitter_profile_status,
       'twitter_followers_count' => twitter_followers_count

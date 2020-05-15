@@ -240,7 +240,7 @@ class Account < ActiveRecord::Base
     ticket_field_revamp: true, new_timeline_view: false, email_mailbox: true, facebook_admin_ui_revamp: false,
     detect_lang_from_email_service: false, sla_policy_revamp: false, freshdesk_freshsales_bundle: false,
     fsm_for_garden_plan: true, fsm_for_blossom_plan: true, requester_widget_timeline: false,
-    enable_secure_login_check: false, enable_twitter_requester_fields: true,
+    enable_secure_login_check: false,
     marketplace_gallery: false, facebook_public_api: false, twitter_public_api: false, retry_emails: false,
     fb_message_echo_support: false, portal_prototype_update: false, solutions_quick_view: false,
     solutions_freshconnect: false, fsm_scheduler_month_view: false, solutions_dashboard: false,

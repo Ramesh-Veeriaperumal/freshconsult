@@ -36,7 +36,7 @@ module Admin::AutomationRules::Conditions
     end
 
     def twitter_field_automation_enabled?
-      Account.current.has_feature?(:twitter_field_automation) && Account.current.twitter_requester_fields_enabled?
+      Account.current.has_feature?(:twitter_field_automation)
     end
   end
 end

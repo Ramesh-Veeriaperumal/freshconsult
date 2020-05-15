@@ -48,8 +48,7 @@ class AccountsControllerTest < ActionController::TestCase
     Account.unstub(:current)
   end
 
-  def test_twitter_requester_fields_created_after_enabled
-    set_others_redis_key(TWITTER_REQUESTER_FIELDS_ENABLED, true)
+  def test_twitter_requester_fields_creation_on_signup
     Freemail.stubs(:free?).returns(false)
     subdomain = Account::RESERVED_DOMAINS.first
     user_email = "#{Faker::Lorem.word}#{rand(1_000)}@#{subdomain}.com"
@@ -57,22 +56,10 @@ class AccountsControllerTest < ActionController::TestCase
     get :new_signup_free, params
     Account.stubs(:current).returns(Account.find_by_id(JSON.parse(response.body)['account_id']))
     assert_response 200
-    assert Account.current.twitter_requester_fields_enabled?
     twitter_requester_fields = ['twitter_profile_status', 'twitter_followers_count']
     assert_equal Account.current.contact_fields.collect(&:name) & twitter_requester_fields, twitter_requester_fields
   ensure
-    remove_others_redis_key TWITTER_REQUESTER_FIELDS_ENABLED
     Account.unstub(:current)
-  end
-
-  def test_twitter_requester_fields_not_created_after_disabled
-    get :new_signup_free, callback: '', user: { name: Faker::Name.name, email: Faker::Internet.email, time_zone: 'Chennai', language: 'en' }, account: { account_name: Faker::Lorem.word, account_domain: Faker::Lorem.word, locale: I18n.default_locale, time_zone: 'Chennai', user_name: 'Support', user_password: 'test1234', user_password_confirmation: 'test1234', user_email: Faker::Internet.email, user_helpdesk_agent: true, new_plan_test: true }, format: 'json'
-    assert_response 200
-    resp = JSON.parse(response.body)
-    account = Account.find(resp['account_id'])
-    assert_equal false, account.twitter_requester_fields_enabled?
-    twitter_requester_fields = ['twitter_profile_status', 'twitter_followers_count']
-    assert_equal false, account.contact_fields.collect(&:name) & twitter_requester_fields == twitter_requester_fields
   end
 
   def test_fsm_enabled_on_signup

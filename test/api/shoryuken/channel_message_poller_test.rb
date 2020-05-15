@@ -19,15 +19,10 @@ class ChannelMessagePollerTest < ActionView::TestCase
 
   def teardown
     cleanup_twitter_handles(@account)
-    remove_others_redis_key(TWITTER_REQUESTER_FIELDS_ENABLED)
-    Account.current.contact_fields.find_by_name('twitter_followers_count').delete
-    Account.current.contact_fields.find_by_name('twitter_profile_status').delete
     Account.current.rollback(:skip_posting_to_fb)
-    Account.current.rollback(:enable_twitter_requester_fields)
   end
 
   def setup
-    set_others_redis_key(TWITTER_REQUESTER_FIELDS_ENABLED, true)
     @user = create_test_account
     @account = @user.account
     Account.stubs(:current).returns(@account)
@@ -35,9 +30,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
     @stream = @handle.default_stream
     @fb_ticket = create_ticket_from_fb_post
     @fb_page = @fb_ticket.fb_post.facebook_page
-    create_twitter_default_fields
     Account.current.launch(:skip_posting_to_fb)
-    Account.current.launch(:enable_twitter_requester_fields)
   end
 
   def test_twitter_dm_convert_as_ticket
@@ -124,33 +117,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
     Account.reset_current_account
   end
 
-  def test_update_twitter_contact_fields_without_redis
-    remove_others_redis_key(TWITTER_REQUESTER_FIELDS_ENABLED)
-    payload, command_payload = twitter_create_note_command('mention', true)
-    data = command_payload[:payload][:data]
-    ChannelIntegrations::Commands::Processor.new.process(command_payload[:payload])
-    user = Account.current.users.find(data[:user_id])
-    assert_equal false, user.twitter_profile_status
-    assert_nil user.twitter_followers_count
-  ensure
-    Account.reset_current_account
-  end
-
   def test_update_twitter_contact_fields_without_values_in_payload
-    payload, command_payload = twitter_create_note_command('mention', true)
-    data = command_payload[:payload][:data]
-    data.delete(:twitter_profile_status)
-    data.delete(:twitter_followers_count)
-    ChannelIntegrations::Commands::Processor.new.process(command_payload[:payload])
-    user = Account.current.users.find(data[:user_id])
-    assert_equal false, user.twitter_profile_status
-    assert_nil user.twitter_followers_count
-  ensure
-    Account.reset_current_account
-  end
-
-  def test_update_twitter_contact_fields_without_redis_and_values
-    remove_others_redis_key(TWITTER_REQUESTER_FIELDS_ENABLED)
     payload, command_payload = twitter_create_note_command('mention', true)
     data = command_payload[:payload][:data]
     data.delete(:twitter_profile_status)

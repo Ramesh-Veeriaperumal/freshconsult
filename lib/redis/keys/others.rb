@@ -274,7 +274,6 @@ module Redis::Keys::Others
 
   # Holds the processed job details for ticket status deletion
   TICKET_STATUS_DELETION_JOBS = 'TICKET_STATUS_DELETION_JOBS:%{account_id}:%{status_id}'.freeze
-  TWITTER_REQUESTER_FIELDS_ENABLED = 'TWITTER_REQUESTER_FIELDS_ENABLED'.freeze
   LATEST_SHARDS = 'LATEST_SHARDS_FROM_REDIS'.freeze
 
   FRESHID_MIGRTATION_SSO_ALLOWED = 'FRESHID_MIGRTATION_SSO_ALLOWED'.freeze

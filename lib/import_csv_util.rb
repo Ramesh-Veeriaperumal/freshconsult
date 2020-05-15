@@ -4,7 +4,6 @@ module ImportCsvUtil
 
   include Redis::RedisKeys
   include Redis::OthersRedis
-  include ContactsHelper
 
   ONE_MEGABYTE  = 1000000
   CUSTOMER_TYPE = ["contact", "company", "agent_skill"]
@@ -13,6 +12,7 @@ module ImportCsvUtil
   AND_SYMBOL = "&"
   IMPORT_BATCH_SIZE = 25
   IMPORT_KEY_EXPIRY = 30.days.to_i
+  TWITTER_REQUESTER_FIELDS = %w[twitter_profile_status twitter_followers_count].freeze
   #------------------------------------Customers include both contacts and companies-----------------------------------------------
 
   def import_fields

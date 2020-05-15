@@ -182,42 +182,4 @@ module TwitterTestHelper
         reply_status: 'error'
     }
   end
-
-  def create_twitter_default_fields
-    count = @account.contact_fields.count
-    contact_fields_data =
-      [
-        { name: 'twitter_profile_status',
-          label: 'Twitter Verified Profile',
-          position: count + 1 },
-        { name: 'twitter_followers_count',
-          label: 'Twitter Follower Count',
-          position: count + 2 }
-      ]
-    last_contact_field = nil
-    contact_fields_data.each do |f|
-      contact_field = ContactField.new(
-        label: f[:label],
-        label_in_portal: f[:label],
-        deleted: false,
-        field_type: :"default_#{f[:name]}",
-        position: f[:position],
-        required_for_agent: f[:required_for_agent] || false,
-        visible_in_portal: f[:visible_in_portal] || false,
-        editable_in_portal: f[:editable_in_portal] || false,
-        editable_in_signup: f[:editable_in_signup] || false,
-        required_in_portal: f[:required_in_portal] || false,
-        field_options: f[:field_options]
-      )
-      contact_field.column_name = 'default'
-      contact_field.name = f[:name]
-      contact_field.contact_form_id = @account.contact_form.id
-      contact_field.created_at = Time.zone.now # The important callbacks.
-      contact_field.updated_at = Time.zone.now # The important callbacks.
-      contact_field.sneaky_save # To avoid the callbacks of acts-as-list which is changing the other field positions.
-      last_contact_field = contact_field
-    end
-  rescue StandardError => e
-    Rails.logger.info "Exception while adding twitter contact fields : #{e.inspect}"
-  end
 end

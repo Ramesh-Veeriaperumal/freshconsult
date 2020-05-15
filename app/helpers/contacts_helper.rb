@@ -48,7 +48,7 @@ module ContactsHelper
   end
 
   def reject_twitter_requester_fields?(form_builder, field)
-    TWITTER_REQUESTER_FIELDS.include?(field.name) && (form_builder || !Account.current.twitter_requester_fields_enabled?)
+    TWITTER_REQUESTER_FIELDS.include?(field.name) && form_builder
   end
 
   def valid_twitter_contact?(item)

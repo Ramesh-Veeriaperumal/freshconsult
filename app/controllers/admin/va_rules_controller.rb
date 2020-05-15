@@ -364,9 +364,9 @@ class Admin::VaRulesController < Admin::AdminController
           condition: current_account.segments_enabled? },
         { name: 'twitter_followers_count', value: t('requester_twitter_followers_count'), domtype: 'number',
           operatortype: 'number',
-          condition: trf_automation_enabled? },
+          condition: current_account.twitter_field_automation_enabled? },
         { name: 'twitter_profile_status', value: t('requester_twitter_profile_status'), domtype: 'string',
-          operatortype: 'checkbox', condition: trf_automation_enabled? }
+          operatortype: 'checkbox', condition: current_account.twitter_field_automation_enabled? }
       ]
       add_customer_custom_fields filter_hash['requester'], "contact"
       filter_hash['requester'] = filter_hash['requester'].select{ |filter| filter.fetch(:condition, true) }
@@ -478,9 +478,5 @@ class Admin::VaRulesController < Admin::AdminController
 
     def company_field_enabled?
       supervisor_rules_controller? && current_account.launched?(:supervisor_company_field)
-    end
-
-    def trf_automation_enabled?
-      current_account.twitter_requester_fields_enabled? && current_account.has_feature?(:twitter_field_automation)
     end
 end
