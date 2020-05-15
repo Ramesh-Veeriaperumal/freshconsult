@@ -299,7 +299,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
 
       def handle_service_task_automations
-        fsm_supported_plan?(Account.current.subscription_plan) ? disable_service_task_automation_rules : destroy_service_task_automation_rules
+        fsm_supported_plan?(Account.current.subscription.subscription_plan) ? disable_service_task_automation_rules : destroy_service_task_automation_rules
       end
 
       def destroy_service_task_automation_rules
