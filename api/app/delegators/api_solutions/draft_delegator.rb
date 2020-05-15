@@ -2,11 +2,13 @@ module ApiSolutions
   class DraftDelegator < BaseDelegator
     include SolutionConcern
     include SolutionApprovalConcern
+    include SolutionHelper
 
     validate :validate_portal_id, if: -> { @portal_id }
     validate :validate_author, on: :update
     validate :validate_approval_data, on: :update
     validate :validate_article_status, on: :destroy
+    validate :validate_description, if: -> { @description || (@status && @status != Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]) }
 
     def initialize(record, options = {})
       @item = record
@@ -36,6 +38,14 @@ module ApiSolutions
           (error_options[:approval_data] ||= {}).merge!(nested_field: :user_id, code: :invalid_user_id)
           errors[:approval_data] = :invalid_user_id
         end
+      end
+    end
+
+    def validate_description
+      description_content = @description || @item.description
+      if base64_content?(description_content)
+        errors[:description] << :article_description_base64_error
+        (self.error_options ||= {}).merge!(description: { code: :article_base64_content_error })
       end
     end
   end

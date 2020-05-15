@@ -343,6 +343,13 @@ class Account < ActiveRecord::Base
     end
   end
 
+  def construct_meta_for_event_info
+    CentralConstants::ADDITIONAL_META.each_with_object([]) do |(key, value), arr|
+      arr << { name: key.to_s, value: value }
+      arr
+    end
+  end
+
   # Does the account qualify for a particular subscription plan
   # based on the plan's limits
   def qualifies_for?(plan)
@@ -972,8 +979,6 @@ class Account < ActiveRecord::Base
   end
 
   def reset_picklist_id
-    return unless redis_picklist_id_enabled?
-
     key = PICKLIST_ID % { account_id: id }
     computed_id = picklist_values.maximum('picklist_id').to_i
     set_display_id_redis_key(key, computed_id)

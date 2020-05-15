@@ -7,6 +7,8 @@ module TicketsTestHelper
 
   MAX_DESC_LIMIT = 10000
 
+  HYPERTRAIL_META_VALUE = [{ name: 'hypertrail_version', value: CentralConstants::HYPERTRAIL_VERSION }]
+
   def ticket_params_hash(params = {})
     description = params[:description] || Faker::Lorem.paragraph
     description_html = params[:description_html] || "<div>#{description}</div>"
@@ -89,7 +91,7 @@ module TicketsTestHelper
   def cp_ticket_event_info_pattern(ticket)
     # TODO: Testing lifecycle_hash.
     lifecycle_hash = {}
-    hypertrail_hash = Account.current.hypertrail_activities_enabled? ? construct_hypertrail_hash : {}
+    meta_hash = { meta: HYPERTRAIL_META_VALUE }
     activity_type = ticket.activity_type
     activity_type_hash = if activity_type
                            case activity_type[:type]
@@ -111,11 +113,7 @@ module TicketsTestHelper
       action_in_bhrs: action_in_bhrs?(ticket),
       pod: ChannelFrameworkConfig['pod']
     }.merge(lifecycle_hash).merge(activity_type_hash)
-    event_info_hash.merge!(hypertrail_hash)
-  end
-
-  def construct_hypertrail_hash
-    { hypertrail: true }
+    event_info_hash.merge!(meta_hash)
   end
 
   def split_ticket_hash(activity_type)

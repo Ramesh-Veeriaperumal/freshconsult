@@ -668,7 +668,7 @@ class Account < ActiveRecord::Base
     end
 
     def call_freshvisuals_api?
-      freshvisual_configs_enabled? && analytics_features_changed?
+      analytics_features_changed?
     end
 
     def analytics_features_changed?

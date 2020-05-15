@@ -16,20 +16,17 @@ class SAAS::SubscriptionEventActions
                            :helpdesk_restriction_toggle, :ticket_templates,
                            :round_robin_load_balancing, :multi_timezone, :custom_translations,
                            :sitemap, :article_versioning, :suggested_articles_count, :unlimited_multi_product, :article_approval_workflow,
-                           :fb_ad_posts, :segments].freeze
+                           :fb_ad_posts, :segments, :agent_assist_ultimate, :agent_assist_lite].freeze
 
 
   ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle, :multiple_companies_toggle,
-                           :tam_default_fields, :smart_filter, :contact_company_notes, :unique_contact_identifier, :custom_dashboard, 
-                           :personal_canned_response, :round_robin, :field_service_management, :multi_language, :article_versioning].freeze
+                           :tam_default_fields, :smart_filter, :contact_company_notes, :unique_contact_identifier, :custom_dashboard,
+                           :personal_canned_response, :round_robin, :field_service_management, :multi_language, :article_versioning,
+                           :agent_assist_ultimate].freeze
 
   DROP  = "drop"
   ADD   = "add"
   DEFAULT_DAY_PASS_LIMIT = 3
-
-  SELECTABLE_DB_FEATURES = (Account::SELECTABLE_FEATURES.keys +
-                           Account::TEMPORARY_FEATURES.keys +
-                           Account::ADMIN_CUSTOMER_PORTAL_FEATURES.keys).freeze
 
   TOGGLES_AND_FEATURES = [[:field_service_management_toggle, :field_service_management]].freeze
 
@@ -132,7 +129,6 @@ class SAAS::SubscriptionEventActions
     def add_new_plan_features
       Rails.logger.debug "List of new plan features for account #{account.id} :: #{plan_features.inspect}"
       plan_features.delete(:support_bot) if account.revoke_support_bot?
-      plan_features.delete(:custom_translations) unless account.redis_picklist_id_enabled?
       plan_features.delete(:lbrr_by_omniroute) if account.round_robin_capping_enabled? && !account.lbrr_by_omniroute_enabled?
       plan_features.each do |feature|
         account.set_feature(feature) unless skipped_features.include?(feature)

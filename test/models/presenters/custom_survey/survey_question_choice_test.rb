@@ -14,7 +14,6 @@ class SurveyQuestionChoiceTest < ActiveSupport::TestCase
 
   def before_all
     return if @@before_all_run
-    @account.launch(:surveys_central_publish)
     create_survey(1, true)
     CentralPublishWorker::SurveyWorker.jobs.clear
     @@before_all_run = true

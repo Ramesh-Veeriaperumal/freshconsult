@@ -26,6 +26,7 @@ module ApiSolutions
     validate :validate_approval_permission, on: :send_for_review, if: -> { errors.blank? }
     validate :validate_draft, on: :send_for_review, if: -> { errors.blank? }
     validate :validate_draft_locked?, on: :send_for_review, if: -> { errors.blank? }
+    validate :validate_description, if: -> { @description || (@status && @status != Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]) }
 
     FILTER_ACTIONS = %i[filter untranslated_articles].freeze
 
@@ -43,6 +44,9 @@ module ApiSolutions
       @folder_id = params[:folder_id]
       @outdated = params[:outdated]
       @approver_id = params[:approver_id]
+      @description = params[:description]
+      @status = params[:status]
+
       super(params)
       check_params_set(params.slice(:folder_name, :category_name))
     end
@@ -163,6 +167,14 @@ module ApiSolutions
 
     def validate_draft_locked?
       errors[:draft_locked] << :draft_locked if @item.draft.locked?
+    end
+
+    def validate_description
+      description_content = @description || (@item.draft || @item).description
+      if base64_content?(description_content)
+        errors[:description] << :article_description_base64_error
+        (self.error_options ||= {}).merge!(description: { code: :article_base64_content_error })
+      end
     end
   end
 end

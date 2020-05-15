@@ -26,6 +26,7 @@ class UserSessionsController < ApplicationController
   before_filter :redirect_to_agent_sso_freshid_authorize, only: :agent_login, if: -> { !logged_in? && freshid_integration_enabled? }
   before_filter :redirect_to_customer_sso_freshid_authorize, only: :customer_login, if: -> { !logged_in? && freshid_integration_enabled? }
   before_filter :check_exisiting_saml_session, only: :saml_login
+  before_filter :verify_perishable_token_presence, only: :mobile_token
 
   ONBOARDING_ROUTE = '/a/getstarted'.freeze
   ROOT_PATH = '/'.freeze
@@ -384,6 +385,19 @@ class UserSessionsController < ApplicationController
     end
   end
 
+  def mobile_token
+    current_user = current_account.users.find_by_perishable_token(params[:token])
+    if current_user.present?
+      response = {
+        auth_token: current_user.mobile_auth_token
+      }
+      current_user.reset_perishable_token!
+      render(json: response, status: :ok)
+    else
+      render(json: { error: :access_denied }, status: :forbidden)
+    end
+  end
+
   # ITIL Related Methods starts here
 
   def redirect_to_getting_started
@@ -393,6 +407,10 @@ class UserSessionsController < ApplicationController
   # ITIL Related Methods ends here
 
   private
+
+    def verify_perishable_token_presence
+      render(json: { error: :invalid_request }, status: :bad_request) if params[:token].blank?
+    end
 
     def render_failed_login_template
       respond_to do |format|

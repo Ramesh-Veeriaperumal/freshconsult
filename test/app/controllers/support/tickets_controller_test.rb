@@ -100,6 +100,28 @@ class Support::TicketsControllerTest < ActionController::TestCase
     t1.destroy
   end
 
+  def test_add_people_invalid_email
+    Account.stubs(:current).returns(Account.first || create_test_account)
+    Account.any_instance.stubs(:new_email_regex_enabled?).returns(true)
+    user = add_new_user(Account.current, active: true)
+    user.make_current
+    t1 = create_ticket(requester_id: user.id, cc_emails: ['test.@gmail.com'])
+    login_as(user)
+    put :add_people, version: :private, id: t1.display_id, helpdesk_ticket: { cc_email: { reply_cc: %w[test1.@gmail.com test2@gmail.com] } }
+    t1.reload
+    assert_includes t1.cc_email[:reply_cc], 'test2@gmail.com'
+    refute_includes t1.cc_email[:reply_cc], 'test1.@gmail.com'
+    assert_response 302
+    assert_equal flash[:notice], 'Email(s) successfully added to CC.'
+
+    log_out
+    user.destroy
+    t1.destroy
+  ensure
+    Account.any_instance.unstub(:new_email_regex_enabled?)
+    Account.unstub(:current)
+  end
+
   def test_export_csv
   	user = add_new_user(Account.current, active: true)
   	user.make_current

@@ -30,7 +30,7 @@ class ProxyFeatureTest < ActiveSupport::TestCase
 
   def check_feature(feature)
     feature_name = Account::FEATURE_NAME_CHANGES[feature] || feature
-    if Account::DB_TO_LP_MIGRATION_P2_FEATURES_LIST.include?(feature)
+    if Account::DB_TO_LP_FEATURES.include?(feature)
       @account.launched?(feature_name)
     else
       @account.has_feature?(feature_name)

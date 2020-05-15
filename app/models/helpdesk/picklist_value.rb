@@ -30,7 +30,7 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   
   before_validation :trim_spaces, :if => :value_changed?
 
-  before_create :assign_picklist_id, if: :redis_picklist_id_enabled?
+  before_create :assign_picklist_id
 
   before_save :assign_ticket_field_id, if: -> { pickable_type == 'Helpdesk::TicketField' && !skip_ticket_field_id_assignment }
 
@@ -173,10 +173,6 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
       self.picklist_id = computed_id.to_i
     end
 
-    def redis_picklist_id_enabled?
-      account.redis_picklist_id_enabled?
-    end
-
     def filter_fields fields
       fields.select {|field| field.required_for_closure? }
     end
@@ -184,5 +180,4 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
     def trim_spaces
       value.to_s.strip!
     end
-
 end

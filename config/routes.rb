@@ -423,6 +423,7 @@ Helpkit::Application.routes.draw do
   match 'agent/login' => 'user_sessions#agent_login', :as => :agent_login
   match 'customer/login' => 'user_sessions#customer_login', :as => :customer_login
   match '/signup_complete/:token' => 'user_sessions#signup_complete', :as => :signup_complete
+  match '/mobile/token' => 'user_sessions#mobile_token', via: :post
   match '/zendesk/import' => 'admin/zen_import#index', :as => :zendesk_import
   match '/twitter/authdone' => 'social/twitter_handles#authdone', :as => :tauth
   match '/download_file/:source/:token' => 'admin/data_export#download', :as => :download_file

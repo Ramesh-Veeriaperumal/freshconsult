@@ -10,7 +10,7 @@ module RabbitMq::Subscribers::TicketOldBodies::Activities
   end
 
   def ticket_old_body_subscriber_properties(action)
-    { :object_id => self.ticket.display_id, :content => {:description => [nil, DONT_CARE_VALUE]} }
+    { object_id: self.ticket.display_id, content: { description: [nil, DONT_CARE_VALUE] }, hypertrail_version: CentralConstants::HYPERTRAIL_VERSION }
   end
 
   def mq_activities_ticket_old_body_valid(action, model)

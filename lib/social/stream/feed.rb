@@ -20,19 +20,15 @@ class Social::Stream::Feed
     threads = Array.new
     keys.each_with_index do |key, index|
       range_key = {
-        :comparison_operator  => key[:operator],
-        :attribute_value_list => [{
-          's' => "#{key[:range_key]}"
-        }]
+        comparison_operator: key[:operator],
+        attribute_value_list: [key[:range_key].to_s]
       }
       hash_key = {
-        :comparison_operator  => "EQ",
-        :attribute_value_list => [{
-          's' => "#{key[:hash_key]}"
-        }]
+        comparison_operator: 'EQ',
+        attribute_value_list: [key[:hash_key].to_s]
       }
       results[index] = query(hash_key, range_key)
-      
+
       # threads << Thread.new(key, index) { |key|
       #   range_key = {
       #     :comparison_operator  => key[:operator],
@@ -63,9 +59,7 @@ class Social::Stream::Feed
     results = Social::DynamoHelper.query(table_name, hash_key, range_key, schema, limit, false)
     unless results.blank?
       stream_feeds = results.inject([]) do |arr, result_data|
-        if result_data["source"] and result_data["source"][:s] == SOURCE[:twitter]
-          arr << Social::Stream::TwitterFeed.new(result_data.symbolize_keys!)
-        end
+        arr << Social::Stream::TwitterFeed.new(result_data.symbolize_keys!) if result_data['source'] && result_data['source'] == SOURCE[:twitter]
         arr
       end
     end

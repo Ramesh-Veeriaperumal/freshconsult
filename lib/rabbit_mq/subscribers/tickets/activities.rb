@@ -66,7 +66,7 @@ module RabbitMq::Subscribers::Tickets::Activities
       ticket_changes.merge!(ticket_related_changes) if !manual_publish?
       ticket_changes.merge!(set_default_priority) if create_action?(action) and !priority_present?(ticket_changes)
     end
-    properties = { :object_id => self.display_id, :skip_dashboard => skip_dashboard, :skip_dynamo => false}
+    properties = { object_id: self.display_id, skip_dashboard: skip_dashboard, skip_dynamo: false, hypertrail_version: CentralConstants::HYPERTRAIL_VERSION }
     self.misc_changes = nil if misc_changes?
     if va_rule_changes?
       properties.merge({:system_changes => ticket_changes, :content => {} })

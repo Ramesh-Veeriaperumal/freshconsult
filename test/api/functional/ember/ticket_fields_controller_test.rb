@@ -199,7 +199,6 @@ module Ember
     end
 
     def test_index_with_custom_translations_for_type_with_same_user_language
-      Account.current.launch :redis_picklist_id
       type = Account.current.ticket_fields.find_by_field_type(:default_ticket_type)
       type.picklist_values.build(value: Faker::Lorem.characters(10))
       type.save
@@ -215,12 +214,10 @@ module Ember
       choice = type_field['choices'].find { |x| x['choice_id'] == db_choice.picklist_id }
       assert_equal choice['label'], ct['choices']["choice_#{db_choice.picklist_id}"]
     ensure
-      Account.current.rollback :redis_picklist_id
       unstub_params_for_custom_translations
     end
 
     def test_index_with_custom_translations_for_type_with_different_user_language
-      Account.current.launch :redis_picklist_id
       type = Account.current.ticket_fields.find_by_field_type(:default_ticket_type)
       type.picklist_values.build(value: Faker::Lorem.characters(10))
       type.save
@@ -236,7 +233,6 @@ module Ember
       choice = type_field['choices'].find { |x| x['choice_id'] == db_choice.picklist_id }
       assert_equal choice['label'], db_choice.value
     ensure
-      Account.current.rollback :redis_picklist_id
       unstub_params_for_custom_translations
     end
 

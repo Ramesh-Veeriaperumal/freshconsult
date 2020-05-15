@@ -19,42 +19,34 @@ module Social
               :table => table_name,
               :item  => item
             }
-            
-            begin           
-              #Adding timeouts for all Dynamo Calls        
+
+            begin
+              # Adding timeouts for all Dynamo Calls
               Timeout.timeout(SocialConfig::DYNAMO_TIMEOUT) do
-                return_value = yield 
+                return_value = yield
               end
-              
-            rescue AWS::DynamoDB::Errors::ConditionalCheckFailedException => exception
-              #An entry with the same primary key already exists, so update the entry instead of over-writing it
-              #Temprorily avaoiding send of SNS for ConditionalCheckFailedException
+            rescue Aws::DynamoDB::Errors::ConditionalCheckFailedException => e
+              # An entry with the same primary key already exists, so update the entry instead of over-writing it
+              # Temprorily avaoiding send of SNS for ConditionalCheckFailedException
               # notify_social_dev("DynamoDB Exception Condition Check Failed", error_params.merge(error: exception.message))
-              Rails.logger.error("DynamoDB Exception Condition Check Failed")
-              raise exception
-              
-            rescue AWS::DynamoDB::Errors::ValidationException => exception 
-              notify_social_dev("DynamoDB Validation Exception In Update", error_params.merge(error: exception.message))
-              
-            rescue AWS::DynamoDB::Errors::ResourceNotFoundException => exception
-              notify_social_dev("DynamoDB ResourceNotFoundException", error_params.merge(error: exception.message))
-              
-            rescue AWS::DynamoDB::Errors::ServiceError => exception
-              notify_social_dev("DynamoDB Exception In Social", error_params.merge(error: exception.message))      
-              
-            rescue Timeout::Error => exception
-              notify_social_dev("Dynamo Timeout Exception", error_params.merge(trace: caller[0..11]))     
-            end 
-       
-            
+              Rails.logger.error("DynamoDB Exception Condition Check Failed #{e.inspect}")
+              raise e
+            rescue Aws::DynamoDB::Errors::ValidationException => e
+              notify_social_dev('DynamoDB Validation Exception In Update', error_params.merge(error: e.message))
+            rescue Aws::DynamoDB::Errors::ResourceNotFoundException => e
+              notify_social_dev('DynamoDB ResourceNotFoundException', error_params.merge(error: e.message))
+            rescue Aws::DynamoDB::Errors::ServiceError => e
+              notify_social_dev('DynamoDB Exception In Social', error_params.merge(error: e.message))
+            rescue Timeout::Error => e
+              Rails.logger.error("DynamoDB Exception Timeout error #{e.inspect}")
+              notify_social_dev('Dynamo Timeout Exception', error_params.merge(trace: caller[0..11]))
+            end
+
             return_value = false unless exception.nil?
 
-            return_value   
-            
+            return_value
           end
-          
         end
-      
     end
   end
 end

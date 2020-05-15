@@ -17,8 +17,8 @@ class Account < ActiveRecord::Base
     :sso_login_expiry_limitation, :undo_send, :old_link_back_url_validation, :stop_contacts_count_query,
     :denormalized_select_for_update, :installed_app_publish, :es_tickets,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
-    :onboarding_inlinemanual, :skip_portal_cname_chk,
-    :product_central_publish, :redis_picklist_id,
+    :onboarding_inlinemanual, :skip_portal_cname_chk, :attachment_encoding,
+    :product_central_publish,
     :bot_email_channel, :bot_email_central_publish, :description_by_default,
     :bot_chat_history, :new_es_api, :filter_factory,
     :skip_invoice_due_warning, :automation_revamp, :archive_ticket_fields,
@@ -26,9 +26,9 @@ class Account < ActiveRecord::Base
     :agent_group_central_publish, :custom_fields_search, :disable_rabbitmq_iris,
     :update_billing_info, :allow_billing_info_update, :tag_central_publish,
     :native_apps, :archive_tickets_api, :bot_agent_response,
-    :fetch_ticket_from_ref_first, :query_from_singleton, :surveys_central_publish,
+    :fetch_ticket_from_ref_first, :query_from_singleton,
     :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp, :service_worker, :kbase_mint,
-    :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :bypass_signup_captcha,
+    :ticket_field_limit_increase, :join_ticket_field_data, :bypass_signup_captcha,
     :simple_outreach, :disable_simple_outreach, :supervisor_text_field, :disable_mint_analytics,
     :freshid_org_v2, :hide_agent_login, :office365_adaptive_card, :facebook_admin_ui_revamp,
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
@@ -49,16 +49,13 @@ class Account < ActiveRecord::Base
     :out_of_office, :enable_secure_login_check, :public_api_filter_factory, :enable_twitter_requester_fields, :marketplace_gallery, :solutions_quick_view,
     :translations_proxy, :translations_cdn, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :retry_emails, :disable_beamer, :fb_message_echo_support, :portal_prototype_update,
     :bot_banner, :solutions_freshconnect, :fsm_scheduler_month_view, :idle_session_timeout, :solutions_dashboard,
-    :observer_race_condition_fix, :contact_graphical_avatar, :omni_bundle_2020, :article_versioning_redis_lock, :hypertrail_activities, :freshid_sso_sync, :fw_sso_admin_security, :cre_account, :cdn_attachments, :handle_custom_fields_conflicts, :shopify_api_revamp,
-    :omni_chat_agent, :portal_frameworks_update, :ticket_filters_central_publish
-  ].freeze
-
-  DB_FEATURES = [
-    :custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone
+    :observer_race_condition_fix, :contact_graphical_avatar, :omni_bundle_2020, :article_versioning_redis_lock, :freshid_sso_sync, :fw_sso_admin_security, :cre_account, :cdn_attachments, :handle_custom_fields_conflicts, :shopify_api_revamp,
+    :omni_chat_agent, :portal_frameworks_update, :ticket_filters_central_publish, :new_email_regex
   ].freeze
 
   BITMAP_FEATURES = [
-    :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor,
+    :custom_survey, :requester_widget, :split_tickets, :add_watcher, :traffic_cop,
+    :custom_ticket_views, :supervisor, :archive_tickets, :sitemap,
     :create_observer, :sla_management, :email_commands, :assume_identity, :rebranding,
     :custom_apps, :custom_ticket_fields, :custom_company_fields, :custom_contact_fields,
     :occasional_agent, :allow_auto_suggest_solutions, :basic_twitter, :basic_facebook,
@@ -74,7 +71,7 @@ class Account < ActiveRecord::Base
     :opt_out_analytics, :freshchat, :disable_old_ui, :contact_company_notes,
     :sandbox, :session_replay, :segments, :freshconnect, :proactive_outreach,
     :audit_logs_central_publish, :audit_log_ui, :omni_channel_routing, :undo_send,
-    :custom_encrypted_fields, :custom_translations, :parent_child_infra,
+    :custom_encrypted_fields, :custom_translations, :parent_child_infra, :custom_source,
     :canned_forms, :customize_table_view, :public_url_toggle, :solutions_templates,
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
@@ -113,12 +110,6 @@ class Account < ActiveRecord::Base
     end
   end
 
-  DB_FEATURES.each do |item|
-    define_method "#{item.to_s}_enabled?" do
-      features?(item)
-    end
-  end
-
   BITMAP_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
       has_feature?(item)
@@ -149,9 +140,8 @@ class Account < ActiveRecord::Base
 
   def features?(*feature_names)
     feature_names = feature_names.to_set
-    features_migrated_to_bmp = Account.handle_feature_name_change(feature_names &
-      DB_TO_BITMAP_MIGRATION_P2_FEATURES_LIST)
-    features_migrated_to_lp = feature_names & DB_TO_LP_MIGRATION_P2_FEATURES_LIST
+    features_migrated_to_bmp = Account.handle_feature_name_change(feature_names)
+    features_migrated_to_lp = feature_names & DB_TO_LP_FEATURES
     has_features?(*features_migrated_to_bmp) && launched?(*features_migrated_to_lp)
   end
 
@@ -300,11 +290,6 @@ class Account < ActiveRecord::Base
     features?(:euc_hide_agent_metrics)
   end
 
-  # TODO: Remove new_pricing_launched?() after 2019 pricing plan launch
-  def new_pricing_launched?
-    on_new_plan? || redis_key_exists?(NEW_SIGNUP_ENABLED)
-  end
-
   def advance_facebook_enabled?
     features?(:facebook)
   end
@@ -315,11 +300,6 @@ class Account < ActiveRecord::Base
 
   def twitter_smart_filter_revoked?
     redis_key_exists?(TWITTER_SMART_FILTER_REVOKED) && smart_filter_enabled? && !Account.current.twitter_handles_from_cache.blank?
-  end
-
-  # TODO: Remove on_new_plan?() after 2019 pricing plan launch
-  def on_new_plan?
-    @on_new_plan ||= [:sprout_jan_17,:blossom_jan_17,:garden_jan_17,:estate_jan_17,:forest_jan_17].include?(plan_name)
   end
 
   def tags_filter_reporting_enabled?
@@ -420,7 +400,7 @@ class Account < ActiveRecord::Base
   end
 
   def custom_translations_enabled?
-    redis_picklist_id_enabled? && has_feature?(:custom_translations)
+    has_feature?(:custom_translations)
   end
 
   def automatic_ticket_assignment_enabled?
@@ -443,11 +423,11 @@ class Account < ActiveRecord::Base
   end
 
   def db_to_lp?(fname)
-    DB_TO_LP_MIGRATION_P2_FEATURES_LIST.include? fname
+    DB_TO_LP_FEATURES.include? fname
   end
 
   def launched_db_feature
-    DB_TO_LP_MIGRATION_P2_FEATURES_LIST.select { |f| launched?(f) }
+    DB_TO_LP_FEATURES.select { |f| launched?(f) }
   end
   # TODO : Cleanup up after 2020 pricing changes
   # START

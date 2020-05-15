@@ -19,8 +19,8 @@
       "rts": {
         "app_id": "EJ[1:/HbrGexE9GRCbKa57tbOqB9+Q+hAEoHGzqzpeFxcplE=:zgjOG/iM5obvgtY+y97DRedLBQ22d/H1:EsCUIRPYHGbHOf7ASXlYivy3jLZShSrq]",
         "app_secret": "EJ[1:/HbrGexE9GRCbKa57tbOqB9+Q+hAEoHGzqzpeFxcplE=:aVtHwronZhuRAmE38qPdd5CRdKJ24/KJ:IcruPyoTU14EO5zCYcyQxCYObbHRaB9xsX+Zk2QBAfZhXLb3/oDaIpk7UeNpiRg5Jtpl6oED4+SxeyMA]",
-        "_ws_end_point": "https://rts-us.freshworksapi.com",
-        "_rest_end_point": "https://rts-rest-api-us.freshworksapi.com",
+        "_ws_end_point": "https://rts-us-fd.freshworksapi.com",
+        "_rest_end_point": "https://rts-rest-api-us-fd.freshworksapi.com",
         "db_cipher_key": "EJ[1:/HbrGexE9GRCbKa57tbOqB9+Q+hAEoHGzqzpeFxcplE=:+y9eRy2uVARXM7V2ShPMPvP/peHsglX8:SKigU+T+FSbI7JYIYy4lVQ4Ro7vuyYoM0RBH0AVuZkY1RDCKTL7x9feJo7bdEVDI5cKBmDgSS3nTly08]",
         "_jwt_default_expiry": "100",
         "channel_cipher_key": "EJ[1:dpHTxajSS1+zXn8v/znpqMr1PV2eMV5ppQhV5MLtXTw=:WpKaBHPbytiO8IZgZvotkeDM8bx7HG50:zRd4bi1cAjYjPCPn21Tkd60woiSGIlUFt7Ush14kWhCwiEvxwtXSRLJxl5+1RIZD3Y0a8YE6g49epxDa+qRcaWfkvyvu6bftIZc80ayTRQ==]"

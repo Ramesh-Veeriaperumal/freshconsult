@@ -47,6 +47,7 @@ class SubscriptionNotifierTest < ActionView::TestCase
   end
 
   def test_admin_account_cancelled
+    I18n.locale = I18n.default_locale
     user1 = add_agent(@account)
     user2 = add_agent(@account)
     admin_emails = { group: [user1.email, user2.email], other: ['random1@xyz.com'] }

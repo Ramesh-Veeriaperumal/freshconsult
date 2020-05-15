@@ -38,7 +38,8 @@ module Social::Stream::Interaction
       interaction_results = results.map {|result| result[:responses][interactions_table[:name]]}.flatten
       interactions =  process_results(interaction_results, nil,false)
       all_interactions = interactions.select{ |feed| feed.ticket_id.blank? }
-    rescue AWS::DynamoDB::Errors::ValidationException => e
+    rescue Aws::DynamoDB::Errors::ValidationException => e
+      Rails.logger.error("Exception occurred while building social user interactions #{e.inspect}")
       error_params = {
         :account_id => Account.current.id,
         :stream_id => visible_stream_ids,
@@ -52,12 +53,8 @@ module Social::Stream::Interaction
   def batch_get_interaction_params(user_id, streams_ids)
     interaction_table_keys =  streams_ids.inject([]) do |arr, stream_id|
       arr << {
-        "stream_id" => {
-          :s => "#{Account.current.id}_#{stream_id}"
-        },
-        "object_id" => {
-          :s => "#{user_id}"
-        }
+        'stream_id' => "#{Account.current.id}_#{stream_id}",
+        'object_id' => user_id.to_s
       }
       arr
     end

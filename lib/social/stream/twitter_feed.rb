@@ -6,13 +6,13 @@ class Social::Stream::TwitterFeed < Social::Stream::Feed
   attr_accessor :user_mentions, :favorited , :dynamo_helper
 
   def initialize(feed_obj)
-    @stream_id          = feed_obj[:stream_id][:s]
-    @feed_id            = feed_obj[:feed_id][:s]
-    @is_replied         = feed_obj[:is_replied][:n].to_i
-    @dynamo_posted_time = feed_obj[:posted_time][:ss][0]
-    @parent_feed_id     = feed_obj[:parent_feed_id][:ss][0]
-    @source             = feed_obj[:source][:s]
-    data                = JSON.parse(feed_obj[:data][:ss][0]).symbolize_keys!
+    @stream_id          = feed_obj[:stream_id]
+    @feed_id            = feed_obj[:feed_id]
+    @is_replied         = feed_obj[:is_replied].to_i
+    @dynamo_posted_time = feed_obj[:posted_time].first
+    @parent_feed_id     = feed_obj[:parent_feed_id].first
+    @source             = feed_obj[:source]
+    data                = JSON.parse(feed_obj[:data].first).symbolize_keys!
     @user = {
       :name        => data[:actor]["displayName"],
       :screen_name => data[:actor]["preferredUsername"],
@@ -25,10 +25,10 @@ class Social::Stream::TwitterFeed < Social::Stream::Feed
     @posted_time = Time.at(@dynamo_posted_time.to_i/1000).utc.strftime("%FT%T.000Z")
     @body        = data[:body]
     @user_in_db  = true unless feed_obj[:fd_user].nil?
-    @in_conv     = feed_obj[:in_conversation][:n].to_i
-    @favorited   = (feed_obj[:favorite].nil? || feed_obj[:favorite][:n].to_i == 0) ? false : true
-    @ticket_id   = feed_obj[:fd_link][:ss][0] unless feed_obj[:fd_link].nil?
-    @agent_name  = feed_obj[:replied_by][:ss][0] unless feed_obj[:replied_by].nil?
+    @in_conv     = feed_obj[:in_conversation].to_i
+    @favorited   = feed_obj[:favorite].nil? || feed_obj[:favorite].to_i.zero? ? false : true
+    @ticket_id   = feed_obj[:fd_link].first unless feed_obj[:fd_link].nil?
+    @agent_name  = feed_obj[:replied_by].first unless feed_obj[:replied_by].nil?
     @dynamo_helper = Social::Dynamo::Twitter.new
   end
 

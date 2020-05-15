@@ -390,6 +390,17 @@ module Ember
         match_json(private_api_solution_article_pattern(Solution::Article.last))
       end
 
+      def test_create_with_base64_description
+        folder_meta = get_folder_meta
+        title = Faker::Name.name
+        description = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==" alt="Red dot" />'
+
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: description, status: 1)
+
+        assert_response 400
+        match_json([bad_request_error_pattern('description', :article_description_base64_error, code: :article_base64_content_error)])
+      end
+
       def test_create_and_publish_article
         folder_meta = get_folder_meta
         title = Faker::Name.name
@@ -632,6 +643,17 @@ module Ember
         assert sample_article.reload.draft.reload.title == 'new draft title'
         assert sample_article.reload.draft.reload.status == 1
         match_json(private_api_solution_article_pattern(sample_article.reload))
+      end
+
+      def test_update_with_base64_description
+        sample_article = get_article_without_draft
+        base64_content = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==" alt="Red dot" />'
+
+        params_hash = { description: base64_content, agent_id: @agent.id }
+        put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+
+        assert_response 400
+        match_json([bad_request_error_pattern('description', :article_description_base64_error, code: :article_base64_content_error)])
       end
 
       def test_update_article_and_publish
@@ -1991,6 +2013,33 @@ module Ember
         pattern = private_api_solution_article_pattern(article, action: :filter)
         match_json([pattern])
       ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+        add_privilege(User.current, :publish_solution)
+      end
+
+      def test_article_filters_with_search_term_status_approved_and_approver_with_es_filter_privilege
+        Account.current.launch(:article_es_search_by_filter)
+        user = add_new_user(@account, active: true)
+        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+        approver = add_test_agent
+        add_privilege(approver, :approve_article)
+        User.current.reload
+        remove_privilege(User.current, :publish_solution)
+        article = get_approved_article(Account.current.language_object, user, approver)
+        base_struct = Struct.new(:records, :total_entries)
+        records_struct = Struct.new(:results)
+        result_struct = Struct.new(:id)
+        @results = base_struct.new(records_struct.new, 1)
+        @results.records['results'] = [result_struct.new(article.id)]
+        stub_private_search_response_with_object(@results) do
+          get :filter, controller_params(version: 'private', portal_id: @portal_id, status: SolutionConstants::STATUS_FILTER_BY_TOKEN[:approved], approver: approver.id, term: article.title)
+        end
+        article.reload
+        assert_response 200
+        pattern = private_api_solution_article_pattern(article, action: :filter)
+        match_json([pattern])
+      ensure
+        Account.current.rollback(:article_es_search_by_filter)
         Account.any_instance.unstub(:article_approval_workflow_enabled?)
         add_privilege(User.current, :publish_solution)
       end

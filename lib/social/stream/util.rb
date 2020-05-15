@@ -23,8 +23,8 @@ module Social::Stream::Util
     unless interaction_results.blank?
       interaction_hash = {}
       interaction_results.each do |stream_interaction|
-        stream_id = stream_interaction["stream_id"][:s]
-        feed_ids = stream_interaction["feed_ids"][:ss]
+        stream_id = stream_interaction['stream_id']
+        feed_ids = stream_interaction['feed_ids']
         interaction_hash[stream_id] = convert_to_ticket ? feed_ids.select{ |feed_id| feed_id >= current_feed_id } : feed_ids
       end
       feeds_table_keys = interaction_hash.inject([]) do |arr, (key, value)|
@@ -46,12 +46,8 @@ module Social::Stream::Util
   def batch_get_feeds_params(stream_id, feed_ids)
     feeds_table_keys = feed_ids.inject([]) do |arr, feed_id|
       arr << {
-        "stream_id" => {
-          :s  => stream_id
-        },
-        "feed_id" => {
-          :s => feed_id
-        }
+        'stream_id' => stream_id,
+        'feed_id' => feed_id
       }
       arr
     end
@@ -85,15 +81,12 @@ module Social::Stream::Util
   def current_interactions_table
     { :name => Social::DynamoHelper.select_table("interactions", Time.now) }
   end
-  
+
   def build_stream_feed_objects(feeds)
     feed_objects = feeds.inject([]) do |arr, feed| 
       feed.symbolize_keys!
-      if feed[:source] and feed[:source][:s] == SOURCE[:twitter]
-        arr << Social::Stream::TwitterFeed.new(feed)
-      end
+      arr << Social::Stream::TwitterFeed.new(feed) if feed[:source] && feed[:source] == SOURCE[:twitter]
       arr
     end
   end
-  
 end

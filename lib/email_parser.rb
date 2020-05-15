@@ -20,7 +20,7 @@ module EmailParser
         parsed_addresses.each do |email| 
           address = email.address
           address = Mail::Encodings.unquote_and_convert_to(address, "UTF-8") if address.include?("=?")
-          if address =~ EMAIL_REGEX
+          if address =~ AccountConstants.email_regex
             parsed_email = $1.downcase
 
             next if ignore_emails.include?(parsed_email)
@@ -41,7 +41,7 @@ module EmailParser
         Rails.logger.debug "Exception when parsing addresses #{addresses} : #{add}"
         add.gsub!("\'", "")
         add.gsub!("\"", "")
-        position = add =~ EMAIL_REGEX
+        position = add =~ AccountConstants.email_regex
         if position
           email_address = $1.downcase
           next if ignore_emails.include?(email_address)

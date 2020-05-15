@@ -157,6 +157,7 @@ api_error_messages:
   invalid_user_id: "The user id is not invalid"
   article_not_in_draft_state: "The article should be in draft state in order to send it for review"
   article_version_file_size_exceeded: "Restore failed. The total attachment(s) in the selected version and the current version exceeds the %{max_limit}MB limit."
+  article_description_base64_error: "Failed to update article as Base64 images are not supported"
   facebook_user_blocked: "Facebook 230 exception"
   twitter_write_access_blocked: "Cannot write, Twitter write permission has been revoked"
   ebay_reply_limit_exceeded: "Exceeded maximum message limit of 2000 letters"

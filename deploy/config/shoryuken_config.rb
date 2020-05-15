@@ -60,7 +60,7 @@ class ShoryukenConfig
     end
 
     if hostname.include?("shoryuken-archive")
-      settings[:workers]                           = node[:cpu][:total]
+      settings[:workers] = 6
       queue_category = node[:ymls][:shoryuken][:archive]
       queue_category.each do |queue_key, queue_config|
         settings[:queues][queue_config[:sqs_queue]] = queue_config[:priority]

@@ -21,8 +21,8 @@ module AccountConstants
       :short_day_with_week => "%a, %-d %b, %Y",
       :short_day_with_time => "%a, %-d %b, %Y at %l:%M %p",
     }
-  } 
-  
+  }
+
   # Default email settings for additional settings
   DEFAULTS_FONT_SETTINGS = {
     email_template: {
@@ -31,7 +31,7 @@ module AccountConstants
     }
   }.freeze
 
-  DATA_DATEFORMATS = { 
+  DATA_DATEFORMATS = {
     :non_us => {
       :moment_date_with_week  => 'ddd, D MMM, YYYY',
       :datepicker       => 'd M, yy',
@@ -48,7 +48,7 @@ module AccountConstants
     }
   }
 
-  DATEFORMATS_NAME_BY_VALUE = Hash[*DATEFORMATS.flatten] 
+  DATEFORMATS_NAME_BY_VALUE = Hash[*DATEFORMATS.flatten]
 
   MAINTENANCE_STATUS = 503
   TIME_ZONES = ActiveSupport::TimeZone.all.map(&:name).freeze
@@ -63,6 +63,12 @@ module AccountConstants
   SPECIAL_CHARACTERS_REGEX = /(?=.*([\x20-\x2F]|[\x3A-\x40]|[\x5B-\x60]|[\x7B-\x7E]))/
   AUTHLOGIC_EMAIL_REGEX = /\A[A-Z0-9_\.&%\+\-']+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,13})\z/i
 
+  NEW_NAMED_EMAIL_VALIDATOR = /(\A[-A-Z0-9'’_&%=~+]+(?:\.[^<>()\[\]\\.,;:\s@"]+)*@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,15})\z)|([\w\p{L}][^<\>]*)<(\b[A-Z0-9'_&%+-]+(?:\.[^<>()\[\]\\.,;:\s@"]+)*@[A-Z0-9.-]+\.[A-Z]{2,15}\b)\>\z|\A<!--?((\b[A-Z0-9'_&%+-]+(?:\.[^<>()\[\]\\.,;:\s@"]+)*)@[A-Z0-9.-]+\.[A-Z]{2,15}\b)-->?\z/i.freeze
+  NEW_EMAIL_VALIDATOR = /\A[-A-Z0-9'’_&%=~+]+(?:\.[^<>()\[\]\\.,;:\s@"]+)*@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,15})\z/i.freeze
+  NEW_EMAIL_REGEX = /([-a-zA-Z0-9'’_&%=~+]+(?:\.[^<>()\[\]\\.,;:\s@"]+)*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15})/.freeze
+  NEW_EMAIL_SCANNER = /\b[-a-zA-Z0-9'’_&%=~+]+(?:\.[^<>()\[\]\\.,;:\s@"]+)*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b/.freeze
+  NEW_AUTHLOGIC_EMAIL_REGEX = /\A[A-Z0-9_&%\+\-']+(?:\.[^<>()\[\]\\.,;:\s@"]+)*@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,13})\z/i.freeze
+
 
   SPAM_EMAIL_EXACT_REGEX = /bank|paypal|finance|erection|free|apple|amazon/i
   SPAM_EMAIL_APPRX_REGEX = /b[a]+[n]+[kc]+|p[auo]+[y]+[p]+[auo]+l|finance|erection|free|a[p]+le|[a]+[m]+[a]+[z]+[aoe]+n/i
@@ -75,14 +81,14 @@ module AccountConstants
   DEFAULT_FORUM_POST_SPAM_REGEX = "(gmail|kindle|f.?a.?c.?e.?b.?o.?o.?k|apple|microsoft|google|aol |hotmail|mozilla|q.?u.?i.?c.?k.?b.?o.?o.?k.?s?|norton|netgear|bsnl|webroot|cann?on|hp.?printer|lexmark.?printer|avg.?antivirus|symantec|avast|mcafee|bitty.?browser|netscape|belkin|dlink|tp-link|buffalo.?router|deepnet.?explorer|cisco|hitachi|linksys|panda|bitdefender|bullguard|trend.?micro|avira|kaspersky|plenty.?of.?fish|pof |zoho|rogers |windstream|sbcglobal|verizon |icloud |roadrunner |thunderbird|sasktel |hewlett.?packard|bell.?canada|skype |webroot |dell ).*(s.?u.?p.?p.?o.?r.?t| p.?h.?o.?n.?e|n.?u.?m.?b.?e.?r|t.?o.?l.?l)"
 
   ATTACHMENT_LIMIT = 20
-  
+
   # min is used by default
   DASHBOARD_LIMITS = {
     min: { dashboard: 15, widgets: { scorecard: 15, bar_chart: 5, csat: 3, leaderboard: 3, ticket_trend_card: 2, time_trend_card: 2, sla_trend_card: 2 } },
     mid: { dashboard: 20, widgets: { scorecard: 20, bar_chart: 7, csat: 3, leaderboard: 3, ticket_trend_card: 3, time_trend_card: 3, sla_trend_card: 3 } },
     max: { dashboard: 25, widgets: { scorecard: 25, bar_chart: 9, csat: 3, leaderboard: 3, ticket_trend_card: 4, time_trend_card: 4, sla_trend_card: 4 } }
   }.freeze
-  
+
   PAID_BY_RESELLER = {
     'Yes' =>  true,
     'No' => false
@@ -104,4 +110,37 @@ module AccountConstants
   def attachment_limit
     @attachment_limit ||= Account.current.outgoing_attachment_limit_25_enabled? ? 25 : ATTACHMENT_LIMIT
   end
+
+  class << self
+    def named_email_validator
+      return NAMED_EMAIL_VALIDATOR if Account.current.nil?
+
+      Account.current.new_email_regex_enabled? ? NEW_NAMED_EMAIL_VALIDATOR : NAMED_EMAIL_VALIDATOR
+    end
+
+    def email_validator
+      return EMAIL_VALIDATOR if Account.current.nil?
+
+      Account.current.new_email_regex_enabled? ? NEW_EMAIL_VALIDATOR : EMAIL_VALIDATOR
+    end
+
+    def email_regex
+      return EMAIL_REGEX if Account.current.nil?
+
+      Account.current.new_email_regex_enabled? ? NEW_EMAIL_REGEX : EMAIL_REGEX
+    end
+
+    def email_scanner
+      return EMAIL_SCANNER if Account.current.nil?
+
+      Account.current.new_email_regex_enabled? ? NEW_EMAIL_SCANNER : EMAIL_SCANNER
+    end
+
+    def authlogic_email_regex
+      return AUTHLOGIC_EMAIL_REGEX if Account.current.nil?
+
+      Account.current.new_email_regex_enabled? ? NEW_AUTHLOGIC_EMAIL_REGEX : AUTHLOGIC_EMAIL_REGEX
+    end
+  end
+
 end

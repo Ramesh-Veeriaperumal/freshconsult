@@ -28,7 +28,6 @@ class Admin::CustomTranslations::UploadControllerTest < ActionController::TestCa
     super
     supported_languages = ['de', 'fr', 'ja-JP', 'ko']
     Account.current.add_feature(:custom_translations)
-    Account.current.launch(:redis_picklist_id)
     Account.any_instance.stubs(:supported_languages).returns(supported_languages)
     Account.any_instance.stubs(:language).returns('en')
     Sidekiq::Worker.clear_all
@@ -38,7 +37,6 @@ class Admin::CustomTranslations::UploadControllerTest < ActionController::TestCa
 
   def teardown
     Account.current.revoke_feature(:custom_translations)
-    Account.current.rollback :redis_picklist_id
     Account.any_instance.unstub(:supported_languages)
     Account.any_instance.unstub(:language)
     CustomTranslation.delete_all

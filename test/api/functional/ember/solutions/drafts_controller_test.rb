@@ -156,6 +156,60 @@ module Ember
         assert_equal @draft.description, @description
       end
 
+      def test_autosave_with_base64_png_content
+        article_with_draft
+        params = { title: 'dummy', description: base64_png_image }
+        put :autosave, construct_params({ version: 'private', article_id: @article.parent_id }, params)
+
+        assert_response 400
+        match_json([bad_request_error_pattern('description', :article_description_base64_error, code: :article_base64_content_error)])
+      end
+
+      def test_autosave_with_base64_jpeg_content
+        article_with_draft
+        params = { title: 'dummy', description: base64_jpeg_image }
+        put :autosave, construct_params({ version: 'private', article_id: @article.parent_id }, params)
+
+        assert_response 400
+        match_json([bad_request_error_pattern('description', :article_description_base64_error, code: :article_base64_content_error)])
+      end
+
+      def test_autosave_with_base64_gif_content
+        article_with_draft
+        params = { title: 'dummy', description: base64_gif_image }
+        put :autosave, construct_params({ version: 'private', article_id: @article.parent_id }, params)
+
+        assert_response 400
+        match_json([bad_request_error_pattern('description', :article_description_base64_error, code: :article_base64_content_error)])
+      end
+
+      def test_autosave_with_base64_svg_content
+        article_with_draft
+        params = { title: 'dummy', description: base64_svg_image }
+        put :autosave, construct_params({ version: 'private', article_id: @article.parent_id }, params)
+
+        assert_response 400
+        match_json([bad_request_error_pattern('description', :article_description_base64_error, code: :article_base64_content_error)])
+      end
+
+      def test_autosave_with_base64_plain_text_content
+        article_with_draft
+        params = { title: 'dummy', description: base64_plain_text }
+        put :autosave, construct_params({ version: 'private', article_id: @article.parent_id }, params)
+
+        assert_response 400
+        match_json([bad_request_error_pattern('description', :article_description_base64_error, code: :article_base64_content_error)])
+      end
+
+      def test_autosave_with_base64_html_content
+        article_with_draft
+        params = { title: 'dummy', description: base64_html_text }
+        put :autosave, construct_params({ version: 'private', article_id: @article.parent_id }, params)
+
+        assert_response 400
+        match_json([bad_request_error_pattern('description', :article_description_base64_error, code: :article_base64_content_error)])
+      end
+
       def test_autosave_with_article_approval
         Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
         add_privilege(User.current, :approve_article)
@@ -421,6 +475,66 @@ module Ember
         put :update, construct_params({ version: 'private', article_id: @article.parent_id }, update_params)
         assert_response 200
         match_json(private_api_solution_article_pattern(@article.reload))
+      end
+
+      def test_update_description_with_base64_png
+        article_with_draft
+        params_hash = update_params
+        params_hash[:description] = base64_png_image
+
+        put :update, construct_params({ version: 'private', article_id: @article.parent_id }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern('description', :article_description_base64_error, code: :article_base64_content_error)])
+      end
+
+      def test_update_description_with_base64_jpeg
+        article_with_draft
+        params_hash = update_params
+        params_hash[:description] = base64_jpeg_image
+
+        put :update, construct_params({ version: 'private', article_id: @article.parent_id }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern('description', :article_description_base64_error, code: :article_base64_content_error)])
+      end
+
+      def test_update_description_with_base64_svg
+        article_with_draft
+        params_hash = update_params
+        params_hash[:description] = base64_svg_image
+
+        put :update, construct_params({ version: 'private', article_id: @article.parent_id }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern('description', :article_description_base64_error, code: :article_base64_content_error)])
+      end
+
+      def test_update_description_with_base64_gif
+        article_with_draft
+        params_hash = update_params
+        params_hash[:description] = base64_gif_image
+
+        put :update, construct_params({ version: 'private', article_id: @article.parent_id }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern('description', :article_description_base64_error, code: :article_base64_content_error)])
+      end
+
+      def test_update_description_with_base64_html
+        article_with_draft
+        params_hash = update_params
+        params_hash[:description] = base64_html_text
+
+        put :update, construct_params({ version: 'private', article_id: @article.parent_id }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern('description', :article_description_base64_error, code: :article_base64_content_error)])
+      end
+
+      def test_update_description_with_base64_plain_text
+        article_with_draft
+        params_hash = update_params
+        params_hash[:description] = base64_plain_text
+
+        put :update, construct_params({ version: 'private', article_id: @article.parent_id }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern('description', :article_description_base64_error, code: :article_base64_content_error)])
       end
 
       def test_update_with_primary_language

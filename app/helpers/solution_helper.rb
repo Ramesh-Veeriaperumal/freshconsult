@@ -565,6 +565,10 @@ module SolutionHelper
       active_attachments
     end
 
+    def base64_content?(content)
+      content ? content.match(/src\s*=\s*("|')data:((image\/(png|gif|jpg|jpeg|svg\+xml){1})|(text\/(plain|html){1})){1};base64/i) : false
+    end
+
     private
 
       def modify_articles_suggested_hash(articles_suggested)

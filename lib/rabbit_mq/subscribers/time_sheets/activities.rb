@@ -11,7 +11,7 @@ module RabbitMq::Subscribers::TimeSheets::Activities
   end
 
   def mq_activities_subscriber_properties(action)
-    { :object_id => self.workable.display_id, :content => timesheet_properties(action) }
+    { object_id: self.workable.display_id, content: timesheet_properties(action), hypertrail_version: CentralConstants::HYPERTRAIL_VERSION }
   end
 
   def mq_activities_valid(action, model)

@@ -9,7 +9,7 @@ module RabbitMq::Subscribers::Subscriptions::Activities
   end
 
   def subscription_subscriber_properties(action)
-    { :object_id => self.ticket.display_id , :content => watcher_properties(action) }
+    { object_id: self.ticket.display_id, content: watcher_properties(action), hypertrail_version: CentralConstants::HYPERTRAIL_VERSION }
   end
 
   def mq_activities_subscription_valid(action, model)
