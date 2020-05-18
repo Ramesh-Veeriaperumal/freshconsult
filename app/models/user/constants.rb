@@ -27,9 +27,9 @@ class User < ActiveRecord::Base
   }
 
   # For preventing non-agents from updating inaccessible user attibutes
-  PROTECTED_ATTRIBUTES = ["email", "password", "password_confirmation", "primary_email_attributes",
-                          "user_emails_attributes", "customer_id", "client_manager",
-                          "helpdesk_agent", "role_ids", "customer_attributes", "company_name"]
+  PROTECTED_ATTRIBUTES = ['email', 'password', 'password_confirmation', 'primary_email_attributes',
+                          'user_emails_attributes', 'customer_id', 'client_manager',
+                          'helpdesk_agent', 'role_ids', 'customer_attributes', 'company_name', 'company_id']
 
   USER_SECONDARY_ATTRIBUTES = ["twitter_id", "avatar", "time_zone", "phone", "mobile", "fb_profile_id", "address",
                                "external_id", "job_title", "language", "description", "unique_external_id",
