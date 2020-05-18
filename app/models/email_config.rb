@@ -8,6 +8,7 @@ class EmailConfig < ActiveRecord::Base
   include AccountConstants
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include MemcacheKeys
 
 
   concerned_with :presenter
@@ -38,6 +39,8 @@ class EmailConfig < ActiveRecord::Base
   
   after_commit ->(obj) { obj.create_email_domain }, on: :create
   after_commit ->(obj) { obj.create_email_domain }, on: :update
+
+  after_commit :clear_email_configs_cache
 
   TRUSTED_PERIOD = 30
 
@@ -143,7 +146,12 @@ class EmailConfig < ActiveRecord::Base
     # Wrap name with double quotes if it has a special character and not already wrapped
     def format_name(name)
       (name =~ SPECIAL_CHARACTERS_REGEX and name !~ /".+"/) ? "\"#{name}\"" : name
-    end      
+    end
+
+    def clear_email_configs_cache
+      key = ACCOUNT_EMAIL_CONFIG % { account_id: account.id }
+      MemcacheKeys.delete_from_cache key
+    end
 
     def assign_category
       domain_name = self.reply_email.split("@").last

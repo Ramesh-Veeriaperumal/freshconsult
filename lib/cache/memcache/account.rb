@@ -58,6 +58,13 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key) { self.help_widgets.active.find_by_id(widget_id) }
   end
 
+  def email_configs_from_cache
+    @email_configs_from_cache ||= begin
+      key = format(ACCOUNT_EMAIL_CONFIG, account_id: id)
+      MemcacheKeys.fetch(key) { email_configs.all.each_with_object({}) { |e, map| map[e.id] = e.reply_email } }
+    end
+  end
+
   def clear_required_ticket_fields_cache
     key = ACCOUNT_REQUIRED_TICKET_FIELDS % { :account_id => self.id }
     MemcacheKeys.delete_from_cache(key)

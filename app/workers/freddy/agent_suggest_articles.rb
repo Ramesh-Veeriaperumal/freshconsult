@@ -63,6 +63,7 @@ module Freddy
           ticket_id: @ticket.id.to_s,
           product_name: 'Freshdesk',
           feature_name: 'emailbot',
+          channel: 'FAQSSUGGEST',
           subject: @ticket.subject,
           query: @ticket.ticket_body.description,
           query_html: @ticket.ticket_body.description_html,
