@@ -6,7 +6,7 @@
 	:placeholder => t("ticket_form.your_email_address"), 
 	"data-remote" => "true" %>
 
-	<div id="name_field" class="default_name_field">
+	<div id="name_field" class="default_name_field hide">
 	<input class="text span12 name_field" placeholder="<%= t("ticket_form.your_name") %>" 
 	name="helpdesk_ticket[name]" type="text" />
 	</div>
@@ -17,99 +17,3 @@
 	</div>
 <%= render_add_cc_field field, _cc_condition%>
 
-<% if current_user %>
-	<% if  current_account.features_included?(:prevent_ticket_creation_for_others) && !current_account.has_feature?(:anonymous_tickets)  %>
-		<script type="text/javascript">
-		var nameField = document.getElementById('name_field');
-		var helpdeskTicketEmail = document.getElementById("helpdesk_ticket_email");
-		helpdeskTicketEmail.disabled = true;
-		nameField.style.display = "none";
-		</script>
-		<%else%>
-		<%= javascript_tag do %>
-  		(function($){
-				jQuery(document).ready(function(){
-				jQuery("#helpdesk_ticket_email").focusout(function(){
-				var ticket_email = jQuery("#helpdesk_ticket_email").val().trim().toLowerCase();
-				if(ticket_email === "<%= current_user.email.to_s()%>")
-					{
-						jQuery("#name_field").slideUp();
-					}
-					else{
-						jQuery("#name_field").slideDown();
-					}
-					if(!ticket_email.isValidEmail() && ticket_email!==""){
-				
-						jQuery("#helpdesk_ticket_email").css('border-color', '#b94a48');
-						jQuery("#helpdesk_ticket_email").css('color', '#b94a48');
-						jQuery(".control-group:first").css('color', '#b94a48');
-						waitForElementToDisplay("#helpdesk_ticket_email-error", 1);}
-						
-			
-
-				});
-				jQuery("#helpdesk_ticket_email").focusin(function(){
-					jQuery("#helpdesk_ticket_email").css('border-color', '');
-					jQuery("#helpdesk_ticket_email").css('color', '');
-					jQuery(".control-group:first").css('color', '');
-				});
-				jQuery("#helpdesk_ticket_submit").click(function(){
-					waitForElementToDisplay("#helpdesk_ticket_email-error", 1);
-				});
-
-				waitForElementToDisplay = function(selector, time) {
-        if(document.querySelector(selector)!=null) {
-					jQuery("#helpdesk_ticket_email-error").css("margin-top", "-10px");
-					jQuery("#helpdesk_ticket_email-error").css("padding-bottom", "18px");
-            return;
-        }
-        else {
-            setTimeout(function() {
-                waitForElementToDisplay(selector, time);
-            }, time);
-        }
-    		}
-				});
-			})(jQuery);
-		<% end %>
-	<% end %>
-<%else%>
-<%= javascript_tag do %>
- 		(function($){
-				jQuery(document).ready(function(){
-				jQuery("#helpdesk_ticket_email").focusout(function(){
-				var ticket_email = jQuery("#helpdesk_ticket_email").val().trim().toLowerCase();
-
-					if(!ticket_email.isValidEmail() && ticket_email!==""){
-						jQuery("#helpdesk_ticket_email").css('border-color', '#b94a48');
-						jQuery("#helpdesk_ticket_email").css('color', '#b94a48');
-						jQuery(".control-group:first").css('color', '#b94a48');
-						waitForElementToDisplay("#helpdesk_ticket_email-error", 1);				
-					}
-
-				});
-				jQuery("#helpdesk_ticket_email").focusin(function(){
-					jQuery("#helpdesk_ticket_email").css('border-color', '');
-					jQuery("#helpdesk_ticket_email").css('color', '');
-					jQuery(".control-group:first").css('color', '');
-				});
-				jQuery("#helpdesk_ticket_submit").click(function(){
-					waitForElementToDisplay("#helpdesk_ticket_email-error", 1);
-				});
-
-				waitForElementToDisplay = function(selector, time) {
-        if(document.querySelector(selector)!=null) {
-					jQuery("#helpdesk_ticket_email-error").css("margin-top", "-10px");
-					jQuery("#helpdesk_ticket_email-error").css("padding-bottom", "18px");
-            return;
-        }
-        else {
-            setTimeout(function() {
-                waitForElementToDisplay(selector, time);
-            }, time);
-        }
-    		}
-				});
-			})(jQuery);
-		<% end %>
-<% end %>
