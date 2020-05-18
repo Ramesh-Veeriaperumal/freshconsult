@@ -30,6 +30,11 @@ class Helpdesk::Filters::TransformTicketFilter
 
   def transform_value(data)
     condition = data['condition']
+    if data['value'].is_a?(Integer)
+      data['value'] = data['value'].to_s
+    elsif data['value'].is_a?(Array)
+      data['value'] = data['value'].join(',')
+    end 
     if condition == 'helpdesk_tags.name'
       @account.tags.where(name: data['value'].split(',')).pluck(:id)
     elsif check_data_type(:number, condition)
