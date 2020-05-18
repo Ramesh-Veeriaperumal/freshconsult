@@ -5,6 +5,8 @@ class Support::Solutions::ArticlesController < SupportController
   include Solution::ArticlesVotingMethods
   include Solution::PathHelper
   include Helpdesk::Permission::Ticket
+  include ApplicationHelper
+
   before_filter :redirect_to_support, :only => [:show], :if => :facebook?
   before_filter :load_and_check_permission, :except => [:index]
 
@@ -163,6 +165,7 @@ class Support::Solutions::ArticlesController < SupportController
         title: @article.article_title,
         short_description: @article.desc_un_html.truncate(250)
       }
+      @og_meta[:image_url] = logo_url
         @og_meta[:author] = @article.user.name if @article.user && Account.current.main_portal.personalized_articles?
         @og_meta
     end

@@ -153,11 +153,13 @@ HTML
 	end
 
   def common_properties(meta)
-    {
+    properties = {
       title: meta['title'],
       url: meta['canonical'],
       description: meta['short_description']
     }
+    properties['image'] = meta['image_url'] if meta['image_url']
+    properties
   end
 
   def og_properties(meta)

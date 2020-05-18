@@ -82,4 +82,12 @@ class Support::HomeControllerTest < ActionController::TestCase
     get :index
     assert_not_match "/support/solutions/folders/#{folder.id}", response.body
   end
+
+    def test_image_property_included_in_og_meta_tags
+      user = add_new_user(Account.current, active: true)
+      user.make_current
+      login_as(user)
+      get :index
+      assert_match "<meta property=\"og:image\"", response.body
+    end
 end
