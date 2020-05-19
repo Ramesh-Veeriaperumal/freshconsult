@@ -93,11 +93,14 @@ class Signup < ActivePresenter::Base
     end
 
     def build_roles
-     DEFAULT_ROLES_LIST.each do |role|
-      account.roles.build(:name => role[0],
-        :default_role => true,
-        :privilege_list => role[1],
-        :description => role[2])
+      DEFAULT_ROLES_LIST.each do |role|
+        account.roles.build(
+          name: role[0],
+          default_role: true,
+          privilege_list: role[1],
+          description: role[2],
+          agent_type: role[4]
+        )
       end
     end
 

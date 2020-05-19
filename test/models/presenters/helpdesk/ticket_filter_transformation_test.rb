@@ -23,9 +23,12 @@ class TicketFilterTransformationTest < ActiveSupport::TestCase
       data_hash: [
         { 'condition' => 'internal_agent_id', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => '2,3' },
         { 'condition' => 'requester_id', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => '12,13' },
+        { 'condition' => 'requester_id', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => [12, 13] },
         { 'condition' => 'owner_id', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => '122,123' },
+        { 'condition' => 'owner_id', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => ['122', '123'] },
         { 'condition' => 'any_group_id', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => '6,7' },
         { 'condition' => 'responder_id', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => '0,-1' },
+        { 'condition' => 'responder_id', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => 0 },
         { 'condition' => 'group_id', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => '0,3' },
         { 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => '2' },
         { 'condition' => 'priority', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => '1,4' },
@@ -45,6 +48,7 @@ class TicketFilterTransformationTest < ActiveSupport::TestCase
         { 'condition' => 'created_at', 'operator' => 'is_greater_than', 'ff_name' => 'default', 'value' => 'two_months' },
         { 'condition' => 'created_at', 'operator' => 'is_greater_than', 'ff_name' => 'default', 'value' => 'six_months' },
         { 'condition' => 'due_by', 'operator' => 'due_by_op', 'ff_name' => 'default', 'value' => '1,2,3,4,5,6,7,8' },
+        { 'condition' => 'due_by', 'operator' => 'due_by_op', 'ff_name' => 'default', 'value' => 1 },
         { 'condition' => 'flexifields.ff_date01', 'operator' => 'is', 'ff_name' => "cf_fsm_appointment_start_time_#{Account.current.id}", 'value' => 'none' },
         { 'condition' => 'flexifields.ff_date01', 'operator' => 'is', 'ff_name' => "cf_fsm_appointment_start_time_#{Account.current.id}", 'value' => 'next_week' },
         { 'condition' => 'flexifields.ff_date02', 'operator' => 'is', 'ff_name' => "cf_fsm_appointment_end_time_#{Account.current.id}", 'value' => { from: '12 MAR 2020', to: '20 MAR 2020' } }
@@ -58,9 +62,12 @@ class TicketFilterTransformationTest < ActiveSupport::TestCase
       conditions: [
         { field: 'internal_agent_id', is_in: [2, 3], type: 'number', default_field: true },
         { field: 'requester_id', is_in: [12, 13], type: 'number', default_field: true },
+        { field: 'requester_id', is_in: [12, 13], type: 'number', default_field: true },
+        { field: 'company_id', is_in: [122, 123], type: 'number', default_field: true },
         { field: 'company_id', is_in: [122, 123], type: 'number', default_field: true },
         { field: 'any_group_id', is_in: [6, 7], type: 'number', default_field: true },
         { field: 'responder_id', is_in: [0, -1], type: 'number', default_field: true },
+        { field: 'responder_id', is_in: [0], type: 'number', default_field: true },
         { field: 'group_id', is_in: [0, 3], type: 'number', default_field: true },
         { field: 'status', is_in: [2], type: 'number', default_field: true },
         { field: 'priority', is_in: [1, 4], type: 'number', default_field: true },
@@ -80,6 +87,7 @@ class TicketFilterTransformationTest < ActiveSupport::TestCase
         { field: 'created_at', gte: 'now-2M/M', lt: 'now/M', type: 'date_time', default_field: true },
         { field: 'created_at', gte: 'now-6M/M', lt: 'now/M', type: 'date_time', default_field: true },
         { field: 'due_by', is_in: [{ lt: 'now' }, { gte: 'now/d', lt: 'now+1d/d' }, { gte: 'now+1d/d', lt: 'now+2d/d' }, { gte: 'now', lt: 'now+8h' }, { gte: 'now', lt: 'now+4h' }, { gte: 'now', lt: 'now+2h' }, { gte: 'now', lt: 'now+1h' }, { gte: 'now', lt: 'now+30m' }], type: 'date_time', default_field: true },
+        { field: 'due_by', is_in: [{ lt: 'now' }], type: 'date_time', default_field: true },
         { field: "cf_fsm_appointment_start_time_#{Account.current.id}", eq: 'none', type: 'date_time', default_field: false },
         { field: "cf_fsm_appointment_start_time_#{Account.current.id}", gte: 'now+1w/w', lt: 'now+2w/w', type: 'date_time', default_field: false },
         { field: "cf_fsm_appointment_end_time_#{Account.current.id}", gte: '2020-03-12T00:00:00Z', lt: '2020-03-20T23:59:59Z', type: 'date_time', default_field: false }

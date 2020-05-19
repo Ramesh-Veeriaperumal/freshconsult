@@ -28,7 +28,7 @@ response_hash[:deleted] = @item.deleted if @item.deleted
 
 response_hash[:unique_external_id] = @item.unique_external_id if @item.unique_contact_identifier_enabled?
 
-response_hash.merge!(@item.twitter_requester_fields) if @item.twitter_requester_fields_enabled?
+response_hash.merge!(@item.twitter_requester_fields)
 
 if @item.avatar
   avatar_hash = {

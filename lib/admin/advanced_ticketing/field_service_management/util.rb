@@ -55,10 +55,13 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         field_tech_role = Helpdesk::Roles::FIELD_TECHNICIAN_ROLE
         return if Account.current.roles.map(&:name).include?(field_tech_role[:name])
 
-        role_params = { name: field_tech_role[:name],
-                        description: field_tech_role[:description],
-                        default_role: true,
-                        privilege_list: field_tech_role[:privileges] }
+        role_params = {
+          name: field_tech_role[:name],
+          description: field_tech_role[:description],
+          default_role: true,
+          privilege_list: field_tech_role[:privileges],
+          agent_type: AgentType.agent_type_id(:field_agent)
+        }
         role = Account.current.roles.build(role_params)
         role.save!
       end
@@ -66,9 +69,12 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       def create_field_service_manager_role
         return if Account.current.roles.map(&:name).include?(I18n.t('fsm_scheduling_dashboard.name')) || !Account.current.has_feature?(:custom_roles)
 
-        role_params = { name: I18n.t('fsm_scheduling_dashboard.name'),
-                        description: I18n.t('fsm_scheduling_dashboard.description'),
-                        privilege_list: FIELD_SERVICE_MANAGER_ROLE_PRIVILEGES }
+        role_params = {
+          name: I18n.t('fsm_scheduling_dashboard.name'),
+          description: I18n.t('fsm_scheduling_dashboard.description'),
+          privilege_list: FIELD_SERVICE_MANAGER_ROLE_PRIVILEGES,
+          agent_type: AgentType.agent_type_id(:support_agent)
+        }
         role = Account.current.roles.build(role_params)
         role.save!
       end
@@ -293,7 +299,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
 
       def handle_service_task_automations
-        fsm_supported_plan?(Account.current.subscription_plan) ? disable_service_task_automation_rules : destroy_service_task_automation_rules
+        fsm_supported_plan?(Account.current.subscription.subscription_plan) ? disable_service_task_automation_rules : destroy_service_task_automation_rules
       end
 
       def destroy_service_task_automation_rules

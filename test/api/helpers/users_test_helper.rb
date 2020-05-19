@@ -45,8 +45,8 @@ module UsersTestHelper
                                get_other_companies(contact) if Account.current.multiple_user_companies_enabled?
 
     result[:unique_external_id] = expected_output[:unique_external_id] || contact.unique_external_id if Account.current.unique_contact_identifier_enabled?
-    result[:twitter_profile_status] = expected_output[:twitter_profile_status] || contact.twitter_profile_status if Account.current.twitter_requester_fields_enabled?
-    result[:twitter_followers_count] = expected_output[:twitter_followers_count] || contact.twitter_followers_count if Account.current.twitter_requester_fields_enabled?
+    result[:twitter_profile_status] = expected_output[:twitter_profile_status] || contact.twitter_profile_status
+    result[:twitter_followers_count] = expected_output[:twitter_followers_count] || contact.twitter_followers_count
     result[:deleted] = true if contact.deleted
     result
   end
@@ -206,7 +206,7 @@ module UsersTestHelper
   def public_search_contact_pattern(contact)
     keys = [
       :avatar, :tags, :deleted,
-      :other_companies, :view_all_tickets, :was_agent, :agent_deleted_forever, :marked_for_hard_delete, :unique_external_id,
+      :other_companies, :view_all_tickets, :was_agent, :agent_deleted_forever, :marked_for_hard_delete, :unique_external_id, :twitter_profile_status, :twitter_followers_count,
       :preferred_source, :csat_rating
     ]
     keys -= [:unique_external_id] if Account.current.unique_contact_identifier_enabled?

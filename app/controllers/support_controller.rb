@@ -21,6 +21,7 @@ class SupportController < ApplicationController
   include Redis::OthersRedis
   include Portal::PreviewKeyTemplate
   include SupportTicketRateLimitMethods
+  include ApplicationHelper
 
   helper SupportTicketRateLimitMethods
 
@@ -173,6 +174,7 @@ class SupportController < ApplicationController
                        
       canonical_path = request.original_fullpath.gsub(/\?.*/, '')
       @page_meta[:canonical] ||= "#{@portal.url_protocol}://#{@portal.host}#{canonical_path}"
+      @page_meta[:image_url] ||= logo_url
       #additions in canonical URL is removed in the view E.g: /facebook added by FB routing is removed in faceboook view.
       multilingual_meta(page_token) if current_portal.multilingual? 
       @meta = HashDrop.new( @page_meta )

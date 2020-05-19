@@ -15,7 +15,6 @@ window.App.Admin = window.App.Admin || {};
 			this.bindMultiRadio();
 			this.bindShowCaptcha();
 			this.bindForumCaptcha();
-			this.bindShowTicketForOther()
 		},
 
 		bindMultiRadio: function () {
@@ -36,19 +35,9 @@ window.App.Admin = window.App.Admin || {};
 			$('[name="account[features][anonymous_tickets]"]').on('change.portal_settings', function () {
 				if ($('[name="account[features][anonymous_tickets]"]:checked').val() === "1") {
 					$('.captcha').slideDown();
-					$('.hr-line').show();
-				} else {
-					$('.captcha').slideUp();
-					$('.hr-line').hide();
-				}
-			}).trigger('change');
-		},
-
-		bindShowTicketForOther:function () {
-			$('[name="account[features][anonymous_tickets]"]').on('change.portal_settings', function () {
-				if ($('[name="account[features][anonymous_tickets]"]:checked').val() === "1") {
 					$('.ticket_for_other').hide();
 				} else {
+					$('.captcha').slideUp();
 					$('.ticket_for_other').show();
 				}
 			}).trigger('change');

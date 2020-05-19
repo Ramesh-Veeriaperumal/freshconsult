@@ -1883,6 +1883,10 @@
         "_product": "falcon-ui-staging",
         "_usetag": true
       },
+      "beamer": {
+        "_productId": "CkAnkUkX19260",
+        "_script_url": "https://app.getbeamer.com/js/beamer-embed.js"
+      },
       "_fingerprint_prepend": "https://dgo81pbxzafwr.cloudfront.net/staging/",
       "_fullstory_org_id": "16is",
       "_heap_project_id": "298895843",

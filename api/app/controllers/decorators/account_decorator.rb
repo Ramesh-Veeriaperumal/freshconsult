@@ -2,7 +2,6 @@ class AccountDecorator < ApiDecorator
   include Social::Util
   include FieldServiceManagementHelper
   include AgentsHelper
-  include Redis::OthersRedis
 
   def to_hash
     simple_hash.merge(agents_groups_hash)
@@ -18,7 +17,7 @@ class AccountDecorator < ApiDecorator
       date_format: record.account_additional_settings.date_format,
       language: record.language,
       features: record.enabled_features_list,
-      launched: launched_features_list,
+      launched: record.all_launched_features,
       subscription: subscription_hash,
       portal_languages: record.all_portal_language_objects,
       settings: settings_hash,
@@ -197,12 +196,6 @@ class AccountDecorator < ApiDecorator
         days_left_until_next_trial: trial_subscription.days_left_until_next_trial,
         plan_name: trial_subscription.trial_plan
       }
-    end
-
-    def launched_features_list
-      record.all_launched_features.tap do |lp_features|
-        lp_features.delete :enable_twitter_requester_fields unless redis_key_exists?(TWITTER_REQUESTER_FIELDS_ENABLED)
-      end
     end
 
     def extended_user_companies

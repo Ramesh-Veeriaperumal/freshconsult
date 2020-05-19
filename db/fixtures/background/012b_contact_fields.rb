@@ -1,18 +1,5 @@
 account = Account.current 
 
-def self.twitter_requester_fields_data
-  return [] unless Account.current.twitter_requester_fields_enabled?
-
-  [
-    { name: 'twitter_profile_status',
-      label: 'Twitter Verified Profile',
-      position: 15 },
-    { name: 'twitter_followers_count',
-      label: 'Twitter Follower Count',
-      position: 16 }
-  ]
-end
-
 def self.contact_fields_data
   [
     { :name               => "mobile", 
@@ -47,8 +34,16 @@ def self.contact_fields_data
 
     { :name               => "unique_external_id", 
       :label              => "Unique External Id",
-      :position           => 14 }
-  ] + twitter_requester_fields_data
+      :position           => 14 },
+
+    { name: 'twitter_profile_status',
+      label: 'Twitter Verified Profile',
+      position: 15 },
+
+    { name: 'twitter_followers_count',
+      label: 'Twitter Follower Count',
+      position: 16 }
+  ]
 end
 
 last_contact_field = nil

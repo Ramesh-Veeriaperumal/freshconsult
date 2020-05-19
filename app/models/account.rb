@@ -872,7 +872,7 @@ class Account < ActiveRecord::Base
     DomainMapping.where(account_id: sandbox_job.try(:sandbox_account_id)).first.try(:domain)
   end
 
-  #Temp method to directly create support agent type if it was not created as part of fixtures/migration.
+  # Temp method to directly create support agent type if it was not created as part of fixtures/migration.
   def get_or_create_agent_types
     agent_types = self.agent_types.all
     if agent_types.length == 0
@@ -1048,10 +1048,6 @@ class Account < ActiveRecord::Base
 
   def disable_freshsales_api_integration?
     redis_key_exists?(DISABLE_FRESHSALES_API_CALLS)
-  end
-
-  def twitter_requester_fields_enabled?
-    redis_key_exists?(TWITTER_REQUESTER_FIELDS_ENABLED) && Account.current.launched?(:enable_twitter_requester_fields)
   end
 
   def omni_bundle_id

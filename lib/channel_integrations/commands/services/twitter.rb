@@ -15,7 +15,7 @@ module ChannelIntegrations::Commands::Services
       data = payload[:data]
 
       set_current_user(data[:requester_id])
-      update_contact_twitter_fields(data) if allow_twitter_contact_update?(data)
+      update_contact_twitter_fields(data) if twitter_requester_fields_present?(data)
       check_twitter_handle?(context[:twitter_handle_id])
 
       Rails.logger.debug("Twitter::CreateTicket, account_id: #{current_account.id}, tweet_id: #{context[:tweet_id]}")
@@ -38,7 +38,7 @@ module ChannelIntegrations::Commands::Services
       data = payload[:data]
       ticket_id = payload[:data][:ticket_id]
       set_current_user(data[:user_id])
-      update_contact_twitter_fields(data) if allow_twitter_contact_update?(data)
+      update_contact_twitter_fields(data) if twitter_requester_fields_present?(data)
       check_twitter_handle?(context[:twitter_handle_id])
 
       Rails.logger.debug("Twitter::CreateNote, account_id: #{current_account.id}, tweet_id: #{context[:tweet_id]}")
@@ -201,10 +201,6 @@ module ChannelIntegrations::Commands::Services
         raise 'Twitter Handle Not found' if twitter_handle.blank?
 
         twitter_handle
-      end
-
-      def allow_twitter_contact_update?(data)
-        Account.current.twitter_requester_fields_enabled? && twitter_requester_fields_present?(data)
       end
 
       def twitter_requester_fields_present?(data)

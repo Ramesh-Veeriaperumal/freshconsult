@@ -1561,6 +1561,10 @@
         "_product": "falcon-ui-production",
         "_usetag": true
       },
+      "beamer": {
+        "_productId": "CkAnkUkX19260",
+        "_script_url": "https://app.getbeamer.com/js/beamer-embed.js"
+      },
       "blue": {
         "_bucket": "ind-falconassets-blue",
         "_fingerprint_prepend": "https://indfassetsblue.freshdesk.com/production/",

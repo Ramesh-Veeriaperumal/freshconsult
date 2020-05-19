@@ -5,7 +5,7 @@ module OmniAuth
     class Shopify < OmniAuth::Strategies::OAuth2
       # Available scopes: content themes products customers orders script_tags shipping
       # read_*  or write_*
-      DEFAULT_SCOPE = 'read_orders, read_customers, write_orders'
+      DEFAULT_SCOPE = 'read_all_orders, read_customers, write_orders'.freeze
       MINUTE = 60
       CODE_EXPIRES_AFTER = 10 * MINUTE
 

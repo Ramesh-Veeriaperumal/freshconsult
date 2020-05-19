@@ -125,9 +125,17 @@
           account_full_domain: Account.current.full_domain,
           event_timestamp: Time.at(actor_epoch).utc.iso8601(3),
           product_push_timestamp: Time.now.utc.iso8601(3),
-          model_properties: object.central_publish_payload,
+          model_properties: object.central_publish_payload.merge(additional_properties),
           associations: object.central_publish_associations
         }
+      end
+
+      def additional_properties
+        additional_properties = {}
+        email_configs = Account.current.email_configs_from_cache
+        additional_properties[:reply_email] = email_configs[@ticket.email_config_id] if email_configs[@ticket.email_config_id].present?
+        additional_properties[:header_info] = @ticket.header_info if @ticket.header_info.present?
+        additional_properties
       end
 
     def source_email?

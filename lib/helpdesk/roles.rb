@@ -480,32 +480,49 @@ module Helpdesk
       :solution_exports
     ].freeze
 
-    FIELD_TECHNICIAN_ROLE = { name: 'Field technician',
-                              description: 'Can view, reply, update and resolve service tasks',
-                              privileges:  FIELD_TECHNICIAN }.freeze
+    FIELD_TECHNICIAN_ROLE = {
+      name: 'Field technician',
+      description: 'Can view, reply, update and resolve service tasks',
+      privileges: FIELD_TECHNICIAN,
+      agent_type: AgentType.agent_type_id(:field_agent)
+    }.freeze
 
-    DEFAULT_ROLES_LIST = 
-    [  
-      [ "Account Administrator",
+    # Array structure [0, 1, 2, 3, 4]
+    # 0 - name
+    # 1 - privileges
+    # 2 - description
+    # 3 - symbol
+    # 4 - agent type
+    DEFAULT_ROLES_LIST = [
+      [
+        'Account Administrator',
         ACCOUNT_ADMINISTRATOR,
-        "Has complete control over the help desk including access to Account or Billing related information, and receives Invoices.",
-        :account_administrator],
-      
-      [ "Administrator",
+        'Has complete control over the help desk including access to Account or Billing related information, and receives Invoices.',
+        :account_administrator,
+        AgentType.agent_type_id(:support_agent)
+      ],
+      [
+        'Administrator',
         ADMINISTRATOR,
-        "Can configure all features through the Admin tab, but is restricted from viewing Account or Billing related information.",
-        :administrator],
-      
-      [ "Supervisor",
+        'Can configure all features through the Admin tab, but is restricted from viewing Account or Billing related information.',
+        :administrator,
+        AgentType.agent_type_id(:support_agent)
+      ],
+      [
+        'Supervisor',
         SUPERVISOR,
-        "Can perform all agent related activities, access reports and see unresolved tickets dashboard.",
-        :supervisor],
-      
-      [ "Agent",
+        'Can perform all agent related activities, access reports and see unresolved tickets dashboard.',
+        :supervisor,
+        AgentType.agent_type_id(:support_agent)
+      ],
+      [
+        'Agent',
         AGENT,
-        "Can log, view, reply, update and resolve tickets and manage contacts.",
-        :agent],
-     ]
+        'Can log, view, reply, update and resolve tickets and manage contacts.',
+        :agent,
+        AgentType.agent_type_id(:support_agent)
+      ]
+    ]
 
     DEFAULT_ROLES_PRIVILEGE_BY_KEY = DEFAULT_ROLES_LIST.inject({}) {|hash,r| hash[r[3]] = r[1]; hash }
   end

@@ -427,15 +427,15 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def enable_freshid
     result = {}
-    allowed_account = get_all_members_in_a_redis_set(FRESHID_MIGRATION_ENABLED_ACCOUNT_FRESHOPS) || []
+    migration_disabled_account = get_all_members_in_a_redis_set(FRESHID_MIGRATION_DISABLED_ACCOUNT_FRESHOPS) || []
     Sharding.admin_select_shard_of(params[:account_id]) do
       begin
         account = Account.find(params[:account_id])
         account.make_current
         enable_inprogress = account.account_additional_settings.freshid_migration_running?(ENABLE_V1_MIGRATION_INPROGRESS)
         result[:account_id] = account.id
-        if allowed_account.present? && allowed_account.exclude?(account.id.to_s)
-          Rails.logger.info "A = #{params[:account_id]} is not present in redis List"
+        if migration_disabled_account.present? && migration_disabled_account.include?(account.id.to_s)
+          Rails.logger.info "FRESHID MIGRATION :: A = #{params[:account_id]} is present in blocked migration List"
           result[:status] = 'invalid_acc'
         elsif enable_inprogress
           Rails.logger.info "Freshid Migration already in progress for A = #{params[:account_id]}"
@@ -447,7 +447,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
           Rails.logger.info "Migrate account to Freshid V1 has been triggered for A = #{params[:account_id]}"
           account.account_additional_settings.create_freshid_migration(ENABLE_V1_MIGRATION_INPROGRESS)
           Admin::FdadminFreshidMigrationWorker.perform_async(freshid_silent_migration: true, account_id: account.id, doer_email: params[:doer_email])
-          sandbox_account = get_sandbox_account_id(account.id)
+          sandbox_account = get_sandbox_account_id(account)
           Admin::FdadminFreshidMigrationWorker.perform_async(freshid_silent_migration: true, account_id: sandbox_account, doer_email: params[:doer_email]) if sandbox_account.present?
           result[:status] = 'success'
         end
@@ -534,14 +534,14 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def enable_freshid_org_v2
     result = {}
-    allowed_account = get_all_members_in_a_redis_set(FRESHID_MIGRATION_ENABLED_ACCOUNT_FRESHOPS) || []
+    migration_disabled_account = get_all_members_in_a_redis_set(FRESHID_MIGRATION_DISABLED_ACCOUNT_FRESHOPS) || []
     Sharding.admin_select_shard_of(params[:account_id]) do
       begin
         account = Account.find(params[:account_id])
         account.make_current
         enable_inprogress = account.account_additional_settings.freshid_migration_running?(ENABLE_V2_MIGRATION_INPROGRESS)
-        if allowed_account.present? && allowed_account.exclude?(account.id.to_s)
-          Rails.logger.info "A = #{params[:account_id]} is not present in redis List"
+        if migration_disabled_account.present? && migration_disabled_account.include?(account.id.to_s)
+          Rails.logger.info "FRESHID MIGRATION :: A = #{params[:account_id]} is present in blocked migration List"
           result[:status] = 'invalid_acc'
         elsif enable_inprogress
           Rails.logger.info "Freshid Org V2 enable is already in progress for a = #{params[:account_id]}"
