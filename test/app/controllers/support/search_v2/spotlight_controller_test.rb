@@ -30,8 +30,10 @@ class Support::SearchV2::SpotlightControllerTest < ActionController::TestCase
 
   def test_force_exact_match
     @exact_match = false
-    @controller.params = { url_locale: 'th' }
+    Language.find_by_code('th').make_current
     @exact_match = @controller.safe_send('force_exact_match')
     assert_equal @exact_match, true
+  ensure
+    Language.reset_current
   end
 end
