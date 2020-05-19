@@ -11,6 +11,7 @@ module Ember
       include SolutionBuilderHelper
       include ArchiveTicketTestHelper
       include TicketHelper
+      include SolutionsTemplatesTestHelper
 
       ARCHIVE_DAYS = 30
 
@@ -322,6 +323,38 @@ module Ember
       ensure
         Account.any_instance.unstub(:article_approval_workflow_enabled?)
         Account.current.rollback(:solutions_quick_view)
+      end
+
+      def test_quick_views_with_templates_with_feature
+        Account.any_instance.stubs(:solutions_templates_enabled?).returns(true)
+        solution_test_setup
+        create_article(article_params)
+        portal = Account.current.main_portal
+        t1 = create_sample_template
+        t2 = create_sample_template
+        get :quick_views, controller_params(version: 'private', portal_id: portal.id, language: @account.language)
+        assert_response 200
+        match_json(quick_views_pattern(portal.id, Language.find_by_code(@account.language).id))
+      ensure
+        Account.any_instance.unstub(:solutions_templates_enabled?)
+        t1.destroy
+        t2.destroy
+      end
+
+      def test_quick_views_with_templates_without_feature
+        Account.any_instance.stubs(:solutions_templates_enabled?).returns(false)
+        solution_test_setup
+        create_article(article_params)
+        portal = Account.current.main_portal
+        t1 = create_sample_template
+        t2 = create_sample_template
+        get :quick_views, controller_params(version: 'private', portal_id: portal.id, language: @account.language)
+        assert_response 200
+        match_json(quick_views_pattern(portal.id, Language.find_by_code(@account.language).id))
+      ensure
+        Account.any_instance.unstub(:solutions_templates_enabled?)
+        t1.destroy
+        t2.destroy
       end
 
       private

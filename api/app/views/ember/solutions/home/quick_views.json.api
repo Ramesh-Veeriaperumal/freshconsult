@@ -39,4 +39,6 @@ if Account.current.article_approval_workflow_enabled?
   @count_hash[:approved] = @articles_with_approval_status[Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]] || 0
 end
 
+@count_hash[:templates] = @templates.count if Account.current.solutions_templates_enabled?
+
 @count_hash.to_json

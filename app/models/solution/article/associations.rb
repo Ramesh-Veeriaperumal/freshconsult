@@ -6,6 +6,10 @@ class Solution::Article < ActiveRecord::Base
 
   belongs_to_account
 
+  has_many :solution_template_mappings,
+           class_name: 'Solution::TemplateMapping',
+           inverse_of: :article
+
   has_many :voters, 
     :through => :votes, 
     :source => :user,

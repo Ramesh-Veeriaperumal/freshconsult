@@ -19,8 +19,19 @@ module Ember
         return unless validate_query_params
         return unless validate_delegator(nil, portal_id: params[:portal_id])
 
+        pl_filter = Solution::PortalLanguageFilter.new(params[:portal_id], @lang_id)
         if current_account.launched?(:solutions_quick_view)
-          pl_filter = Solution::PortalLanguageFilter.new(params[:portal_id], @lang_id)
+          quick_view_counts_with_filter(pl_filter)
+        else
+          quick_view_counts_without_filter
+        end
+        @templates = pl_filter.active_templates if current_account.solutions_templates_enabled?
+        response.api_root_key = :quick_views
+      end
+
+      private
+
+        def quick_view_counts_with_filter(pl_filter)
           @categories_cnt = pl_filter.categories.count
           @folders_cnt = @categories_cnt > 0 ? pl_filter.folders.count : 0
           @articles_cnt = @categories_cnt > 0 ? pl_filter.articles.count : 0
@@ -40,11 +51,13 @@ module Ember
             @not_translated_articles = pl_filter.article_meta.count - @articles_cnt
           end
           @articles_with_approval_status = pl_filter.articles_count_by_approval_status if current_account.article_approval_workflow_enabled?
-        else
+        end
+
+        def quick_view_counts_without_filter
           @categories = fetch_categories(params[:portal_id])
           @articles = fetch_articles
-          @drafts =  fetch_drafts
-          @folders =  fetch_folders
+          @drafts = fetch_drafts
+          @folders = fetch_folders
           @approvals = fetch_approvals
           @my_drafts = @drafts.empty? ? [] : @drafts.where(user_id: current_user.id)
           @my_drafts = fetch_my_drafts if Account.current.article_approval_workflow_enabled?
@@ -59,10 +72,6 @@ module Ember
           end
           @articles_with_approval_status = fetch_articles_by_approval_status if current_account.article_approval_workflow_enabled?
         end
-        response.api_root_key = :quick_views
-      end
-
-      private
 
         def fetch_categories(portal_id)
           if portal_id.present?

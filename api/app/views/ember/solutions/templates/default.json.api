@@ -1,1 +1,1 @@
-(@item.nil? ? {} : Solutions::TemplateDecorator.new(@item).to_index_hash).to_json
+(@item.nil? ? {} : Solutions::TemplateDecorator.new(@item).to_hash).to_json

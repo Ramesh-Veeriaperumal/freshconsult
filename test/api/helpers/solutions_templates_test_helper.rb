@@ -27,6 +27,14 @@ module SolutionsTemplatesTestHelper
     sample_template
   end
 
+  def create_sample_template_mapping(params = {})
+    sample_template_mapping = Solution::TemplateMapping.new(template_id: params[:template_id] || 1,
+                                                            article_id: params[:article_id] || 1,
+                                                            used_cnt: params[:used_cnt] || 1)
+    sample_template_mapping.save
+    sample_template_mapping
+  end
+
   def create_sample_templates(template_count = 5)
     template_count.times do
       create_sample_template
@@ -55,7 +63,7 @@ module SolutionsTemplatesTestHelper
       is_active: template.is_active,
       is_default: template.is_default,
       created_at: template.created_at.try(:utc).try(:iso8601),
-      usage: 0
+      usage: template.solution_template_mappings.size
     }
   end
 

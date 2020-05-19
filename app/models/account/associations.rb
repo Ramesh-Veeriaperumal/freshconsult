@@ -109,6 +109,10 @@ class Account < ActiveRecord::Base
            class_name: 'Solution::Template',
            dependent: :destroy
 
+  has_many :solution_template_mappings,
+           class_name: 'Solution::TemplateMapping',
+           dependent: :destroy
+
   has_many :article_tickets, :class_name => 'ArticleTicket'
 
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'

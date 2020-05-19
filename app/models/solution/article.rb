@@ -39,7 +39,7 @@ class Solution::Article < ActiveRecord::Base
 
   attr_accessor :highlight_title, :highlight_desc_un_html, :tags_changed, :prev_tags, :latest_tags, :session,
                 :unpublishing, :false_delete_attachment_trigger, :attachment_added, :version_through,
-                :model_changes, :interaction_source_id, :interaction_source_type, :tag_changes
+                :model_changes, :interaction_source_id, :interaction_source_type, :tag_changes, :templates_used
 
   alias_attribute :body, :article_body
   alias_attribute :suggested, :int_01
@@ -313,6 +313,20 @@ class Solution::Article < ActiveRecord::Base
     self.class.increment_counter('int_01', self.id)
     set_portal_interaction_source
     manual_publish_interaction(:incr, :suggested)
+  end
+
+  def templates_used=(templates_used)
+    return unless Account.current.solutions_templates_enabled?
+
+    valid_template_ids = Account.current.solution_templates.where(id: templates_used).pluck(:id)
+    unless valid_template_ids.empty?
+      existing_template_ids = solution_template_mappings.where(template_id: valid_template_ids).pluck(:template_id)
+      missing_template_ids = valid_template_ids - existing_template_ids
+      missing_template_ids.each { |tid| solution_template_mappings.build(template_id: tid, used_cnt: 1) }
+      existing_mapping_ids = solution_template_mappings.where(template_id: existing_template_ids).pluck(:id)
+      # solution_template_mappings.where(template_id: existing_template_ids).update_all('used_cnt = used_cnt+1')
+      Solution::TemplateMapping.update_counters(existing_mapping_ids, used_cnt: 1) unless existing_mapping_ids.empty? # rubocop:disable Rails/SkipsModelValidations
+    end
   end
 
   def reset_ratings

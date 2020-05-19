@@ -29362,6 +29362,10 @@
         "approved": {
           "type": "number",
           "description": "Available only if article_approval_workflow feature enabled."
+        },
+        "templates": {
+          "type": "number",
+          "description": "Available only if solutions_templates feature enabled."
         }
       }
     },

@@ -19,6 +19,7 @@ module Ember
       include SolutionsArticlesCommonTests
       include SolutionsArticleVersionsTestHelper
       include SolutionsApprovalsTestHelper
+      include SolutionsTemplatesTestHelper
 
       def setup
         super
@@ -39,6 +40,7 @@ module Ember
       def initial_setup
         @portal_id = Account.current.main_portal.id
         return if @@initial_setup_run
+
         setup_redis_for_articles
 
         @account.add_feature(:article_filters)
@@ -631,6 +633,101 @@ module Ember
         paragraph = Faker::Lorem.paragraph
         post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 1, cloud_file_attachments: cloud_file_params)
         assert_response 400
+      end
+
+      def test_create_a_draft_article_with_templates_used
+        Account.any_instance.stubs(:solutions_templates_enabled?).returns(true)
+        folder_meta = get_folder_meta
+        title = Faker::Name.name
+        paragraph = Faker::Lorem.paragraph
+        sample_template1 = create_sample_template
+        sample_template2 = create_sample_template
+        post :create, construct_params({ version: 'private', id: folder_meta.id },
+                                       title: title, description: paragraph,
+                                       status: 1, templates_used: [sample_template1.id, sample_template2.id])
+        assert_response 201
+        article = Solution::Article.last
+        stm = article.solution_template_mappings
+        assert article.draft
+        match_json(private_api_solution_article_pattern(article))
+        assert_equal 2, stm.size
+        assert_equal article.id, stm[0].article_id
+        assert_equal sample_template1.id, stm[0].template_id
+        assert_equal 1, stm[0].used_cnt
+        assert_equal article.id, stm[1].article_id
+        assert_equal sample_template2.id, stm[1].template_id
+        assert_equal 1, stm[1].used_cnt
+      ensure
+        Account.any_instance.unstub(:solutions_templates_enabled?)
+        sample_template2.destroy
+        sample_template1.destroy
+      end
+
+      def test_create_a_draft_article_with_templates_used_with_nonexistent_template_ids
+        Account.any_instance.stubs(:solutions_templates_enabled?).returns(true)
+        folder_meta = get_folder_meta
+        title = Faker::Name.name
+        paragraph = Faker::Lorem.paragraph
+        post :create, construct_params({ version: 'private', id: folder_meta.id },
+                                       title: title, description: paragraph,
+                                       status: 1, templates_used: [2311, 1989])
+        assert_response 201
+        article = Solution::Article.last
+        assert_equal 0, article.solution_template_mappings.size
+        assert article.draft
+        match_json(private_api_solution_article_pattern(article))
+      ensure
+        Account.any_instance.unstub(:solutions_templates_enabled?)
+      end
+
+      def test_create_a_draft_article_with_templates_used_with_invalid_template_ids
+        Account.any_instance.stubs(:solutions_templates_enabled?).returns(true)
+        folder_meta = get_folder_meta
+        title = Faker::Name.name
+        paragraph = Faker::Lorem.paragraph
+        post :create, construct_params({ version: 'private', id: folder_meta.id },
+                                       title: title, description: paragraph,
+                                       status: 1, templates_used: ['FZ1', 'FZ2'])
+        assert_response 400
+        expected = { description: 'Validation failed', errors: [{ field: 'templates_used', message: 'It should contain elements of type Positive Integer only', code: 'datatype_mismatch' }] }
+        assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+      ensure
+        Account.any_instance.unstub(:solutions_templates_enabled?)
+      end
+
+      def test_update_article_with_templates_used
+        Account.any_instance.stubs(:solutions_templates_enabled?).returns(true)
+        article = get_article_without_draft
+        sample_template1 = create_sample_template
+        sample_template2 = create_sample_template
+        put :update, construct_params({ version: 'private', id: article.parent_id }, status: 2,
+                                                                                     templates_used: [sample_template1.id, sample_template2.id])
+        assert_response 200
+        match_json(private_api_solution_article_pattern(article.reload))
+        stm = article.reload.solution_template_mappings
+        assert_equal 2, stm.size
+        assert_equal article.id, stm[0].article_id
+        assert_equal sample_template1.id, stm[0].template_id
+        assert_equal 1, stm[0].used_cnt
+        assert_equal article.id, stm[1].article_id
+        assert_equal sample_template2.id, stm[1].template_id
+        assert_equal 1, stm[1].used_cnt
+      ensure
+        Account.any_instance.unstub(:solutions_templates_enabled?)
+        sample_template2.destroy
+        sample_template1.destroy
+      end
+
+      def test_update_article_with_templates_used_with_non_existent_templates
+        Account.any_instance.stubs(:solutions_templates_enabled?).returns(true)
+        article = get_article_without_draft
+        put :update, construct_params({ version: 'private', id: article.parent_id }, status: 2,
+                                                                                     templates_used: [23_111_989])
+        assert_response 200
+        match_json(private_api_solution_article_pattern(article.reload))
+        assert_equal 0, article.solution_template_mappings.size
+      ensure
+        Account.any_instance.unstub(:solutions_templates_enabled?)
       end
 
       def test_update_article_as_draft
@@ -3116,7 +3213,7 @@ module Ember
         assert_response 403
       ensure
         Account.any_instance.unstub(:article_approval_workflow_enabled?)
-        add_privilege(User.current, :publish_solution)        
+        add_privilege(User.current, :publish_solution)
       end
 
       def test_update_article_review_record
@@ -3794,6 +3891,7 @@ module Ember
 
       def before_all
         return if @@before_all_run
+
         setup_redis_for_articles
         setup_multilingual
         @account.reload
@@ -3862,7 +3960,7 @@ module Ember
         sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 1)).primary_article
         assert sample_article.status == 1
         @account.rollback(:article_versioning_redis_lock)
-        Redis::Redlock.expects(:acquire_lock_and_run).times(0)        
+        Redis::Redlock.expects(:acquire_lock_and_run).times(0)
         should_create_version(sample_article) do
           params_hash = { status: 1, unlock: true, session: nil }
           put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)

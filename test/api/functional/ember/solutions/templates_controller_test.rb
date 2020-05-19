@@ -42,6 +42,17 @@ module Ember
         sample_template.destroy
       end
 
+      def test_show_template_with_article_usage
+        sample_template = create_sample_template
+        create_sample_template_mapping(template_id: sample_template.id, used_cnt: 5)
+        get :show, controller_params(version: 'private', id: sample_template.id)
+        assert_response 200
+        sample_template.reload
+        match_json(template_show_pattern(sample_template))
+      ensure
+        sample_template.destroy
+      end
+
       def test_show_without_feature
         disable_solutions_templates do
           get :show, controller_params(version: 'private', id: 345_846)
@@ -99,6 +110,17 @@ module Ember
       # index
       def test_index
         sample_templates = get_sample_templates
+        get :index, controller_params(version: 'private')
+        assert_response 200
+        templates = Account.current.solution_templates.latest
+        match_json(template_index_pattern(templates))
+      ensure
+        sample_templates.destroy_all
+      end
+
+      def test_index_with_usage
+        sample_templates = get_sample_templates
+        sample_templates[0..3].each { |template| create_sample_template_mapping(template_id: template.id, used_cnt: 10) }
         get :index, controller_params(version: 'private')
         assert_response 200
         templates = Account.current.solution_templates.latest
@@ -234,12 +256,11 @@ module Ember
       end
 
       def test_create_with_invalid_params_types
-        post :create, construct_params({ version: 'private' }, title: 1_212_121,
+        post :create, construct_params({ version: 'private' }, title: 'fdsafdsaljk',
                                                                description: 2_121_212,
                                                                is_active: 1212)
         assert_response 400
         match_json([bad_request_error_pattern('description', :datatype_mismatch, code: :datatype_mismatch, expected_data_type: 'String', given_data_type: 'Integer', prepend_msg: :input_received),
-                    bad_request_error_pattern('title', :datatype_mismatch, code: :datatype_mismatch, expected_data_type: 'String', given_data_type: 'Integer', prepend_msg: :input_received),
                     bad_request_error_pattern('is_active', :datatype_mismatch, code: :datatype_mismatch, expected_data_type: 'Boolean', given_data_type: 'Integer', prepend_msg: :input_received)])
       end
 
@@ -305,6 +326,24 @@ module Ember
       ensure
         template.destroy
         existing_template.destroy
+      end
+
+      def test_create_template_with_emoji_content_in_description_and_title_with_encode_emoji_enabled
+        Account.current.launch(:encode_emoji_in_solutions)
+        sample_title = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is title with emoji </span>'
+        sample_paragraph = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is line after emoji </span>'
+
+        post :create, construct_params({ version: 'private' }, title: sample_title,
+                                                               description: sample_paragraph, is_active: false)
+
+        assert_response 201
+        template = Account.current.solution_templates.last
+        paragraph_with_emoji_enabled = UnicodeSanitizer.utf84b_html_c(sample_paragraph)
+        assert_equal template.description, paragraph_with_emoji_enabled
+        match_json(template_show_pattern(template))
+      ensure
+        Account.current.rollback(:encode_emoji_in_solutions)
+        template.destroy
       end
 
       # update
@@ -475,6 +514,25 @@ module Ember
         template.destroy
       end
 
+      def test_update_template_with_emoji_content_in_description_and_title_with_encode_emoji_enabled
+        Account.current.launch(:encode_emoji_in_solutions)
+        template = create_sample_template
+        sample_title = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is title with emoji </span>'
+        sample_paragraph = '<span> hey 👋 there ⛺️😅💁🏿‍♀️👨‍👨‍👧‍👧this is line after emoji </span>'
+        put :update, construct_params({ version: 'private', id: template.id },
+                                      title: sample_title,
+                                      description: sample_paragraph)
+        assert_response 200
+        template.reload
+        assert_equal UnicodeSanitizer.utf84b_html_c(sample_paragraph), template.description
+        assert_equal ' hey ', template.title
+        # it is required to match the full template. Need to check
+        # match_json(template_show_pattern(template))
+      ensure
+        Account.current.rollback(:encode_emoji_in_solutions)
+        template.destroy
+      end
+
       # destroy
       def test_destroy_template
         sample_template = create_sample_template
@@ -537,9 +595,15 @@ module Ember
         get :default, controller_params(version: 'private')
         assert_response 200
         sample_template.reload
-        match_json(template_index_element_pattern(sample_template))
+        match_json(template_show_pattern(sample_template))
       ensure
         sample_template.destroy
+      end
+
+      def test_default_template_without_any_default_templates
+        get :default, controller_params(version: 'private')
+        assert_response 200
+        match_json({})
       end
 
       def test_default_template_without_feature
@@ -567,7 +631,7 @@ module Ember
         get :default, controller_params(version: 'private')
         assert_response 200
         sample_template.reload
-        match_json(template_index_element_pattern(sample_template))
+        match_json(template_show_pattern(sample_template))
       ensure
         User.any_instance.unstub(:privilege?)
         sample_template.destroy
@@ -580,7 +644,7 @@ module Ember
         get :default, controller_params(version: 'private')
         assert_response 200
         sample_template.reload
-        match_json(template_index_element_pattern(sample_template))
+        match_json(template_show_pattern(sample_template))
       ensure
         User.any_instance.unstub(:privilege?)
         sample_template.destroy
