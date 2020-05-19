@@ -53,10 +53,21 @@ namespace :db do
   end
 
   # to remove all metadata from DB and create one user (admin) for test environment
-  task test_clean_setup: :environment do
+  task bootstrap_w_clean_setup: :environment do
     unless Rails.env.production?
-      config = YAML.safe_load(IO.read(File.join(::Rails.root, 'config/database.yml')))
-      sh "test/clean_db.sh #{config['test']['database']}"
+      db_config = YAML.safe_load(IO.read(File.join(::Rails.root, 'config/database.yml')))
+      new_database = db_config['test_new']['database']
+
+      conn_config = ActiveRecord::Base.connection_config # getting old configuration
+      unless conn_config[:database].eql? new_database
+        conn_config[:database] = new_database # changing database name
+        ActiveRecord::Base.establish_connection conn_config # establishing new connection
+      end
+
+      Rake::Task['db:bootstrap'].invoke # run bootstrap on new database
+      sh "test/clean_db.sh #{new_database}" # clean all meta-data from database for clean test environment
+
+      # create new admin in account
       account = Account.first.make_current
       user_details = {
         name: 'Support',
