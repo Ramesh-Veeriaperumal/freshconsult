@@ -1,4 +1,6 @@
 module TicketFiltersHelper
+  include Crypto::TokenHashing
+
   def sample_filter_input_params(options = {})
     {
       name: options[:name] || Faker::Name.name,
@@ -23,7 +25,7 @@ module TicketFiltersHelper
     QueryHash.new(sample_filter_conditions[:data_hash]).to_json
   end
 
-  def ticket_filter_show_pattern(filter)
+  def ticket_filter_show_pattern(filter, can_add_meta = true)
     basic_pattern = {
       id: filter[:id],
       name: filter[:name]
@@ -40,6 +42,11 @@ module TicketFiltersHelper
       if CustomFilterConstants::REMOVE_QUERY_HASH.exclude?(filter[:id])
         basic_pattern[:query_hash] = query_hash_pattern_output(filter[:query_hash])
       end
+    end
+    if can_add_meta && Account.current.auto_refresh_revamp_enabled?
+      basic_pattern[:meta] = {
+        secret_id: mask_id(filter[:id])
+      }
     end
     basic_pattern
   end
@@ -75,7 +82,7 @@ module TicketFiltersHelper
   def ticket_filter_index_pattern(user = User.current)
     all_filters = []
     (all_custom_ticket_filters(user) + TicketsFilter.default_visible_filters + TicketsFilter.default_hidden_filters).compact.each do |filter|
-      all_filters << ticket_filter_show_pattern(filter)
+      all_filters << ticket_filter_show_pattern(filter, false)
     end
     all_filters
   end

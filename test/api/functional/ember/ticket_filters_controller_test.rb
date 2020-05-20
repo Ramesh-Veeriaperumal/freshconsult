@@ -19,6 +19,7 @@ module Ember
     def before_all
       @account = Account.first.make_current
       Account.any_instance.stubs(:sla_management_v2_enabled?).returns(true)
+      Account.any_instance.stubs(:auto_refresh_revamp_enabled?).returns(true)
       @agent = get_admin.make_current
     end
 
