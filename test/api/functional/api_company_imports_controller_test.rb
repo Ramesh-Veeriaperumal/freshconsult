@@ -154,4 +154,13 @@ class ApiCompanyImportsControllerTest < ActionController::TestCase
                                                      failures: { count: 1 })
     match_json response_body
   end
+
+  def test_company_import_200_on_uppercase_csv_file_format
+    request_params = { file: fixture_file_upload('/files/companies2_import.CSV', 'text/csv', :binary),
+                       fields: { name: '0',
+                                 description: '1',
+                                 note: '2' } }
+    post :create, construct_params(request_params)
+    assert_response 200
+  end
 end
