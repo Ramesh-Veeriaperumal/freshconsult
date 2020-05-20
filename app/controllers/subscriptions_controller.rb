@@ -431,6 +431,8 @@ class SubscriptionsController < ApplicationController
       perform_ui_based_addon_operations
       return unless plan_changed?
 
+      Rails.logger.info "Calling change_plan for Account :: #{scoper.account.inspect} ;
+            new_plan : #{scoper.account.subscription} ; old_plan : #{@cached_subscription.inspect}"
       SAAS::SubscriptionEventActions.new(scoper.account, @cached_subscription, @cached_addons, features_to_skip).change_plan
       if Account.current.active_trial.present?
         Account.current.active_trial.update_result!(@cached_subscription, Account.current.subscription)
