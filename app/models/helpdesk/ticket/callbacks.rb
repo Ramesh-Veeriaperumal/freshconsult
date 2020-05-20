@@ -745,6 +745,7 @@ private
 
   def update_sla_model_changes
     @model_changes.merge!(self.changes.to_hash.slice(*TICKET_SLA_ATTRIBUTES)).symbolize_keys!
+    @sla_time_changes = self.changes.to_hash.slice(*SLA_DATETIME_ATTRIBUTES).symbolize_keys!
   end
 
   def load_ticket_status
@@ -1130,22 +1131,22 @@ private
   end
 
   def response_or_resolution_changed?
-    @response_or_resolution_changed ||= (@model_changes.key?(:due_by) || @model_changes.key?(:nr_due_by) || @model_changes.key?(:frDueBy))
+    @response_or_resolution_changed ||= (@sla_time_changes.present? ? (@sla_time_changes.key?(:due_by) || @sla_time_changes.key?(:nr_due_by) || @sla_time_changes.key?(:frDueBy)) : false)
   end
 
   def response_or_resolution_changes
     Hash.new.tap do |time_change|
-      time_change[:response_due] = expected_response_time_changes if @model_changes.key?(:nr_due_by) || @model_changes.key?(:frDueBy)
-      time_change[:resolution_due] = due_time_changes(:due_by) if @model_changes.key?(:due_by)
+      time_change[:response_due] = expected_response_time_changes if @sla_time_changes.key?(:nr_due_by) || @sla_time_changes.key?(:frDueBy)
+      time_change[:resolution_due] = due_time_changes(:due_by) if @sla_time_changes.key?(:due_by)
     end
   end
 
   def expected_response_time_changes
-    @model_changes.key?(:nr_due_by) ? due_time_changes(:nr_due_by) : due_time_changes(:frDueBy)
+    @sla_time_changes.key?(:nr_due_by) ? due_time_changes(:nr_due_by) : due_time_changes(:frDueBy)
   end
 
   def due_time_changes(sla_target_type)
-    old_due_time, new_due_time = @model_changes[sla_target_type].map(&:presence)
+    old_due_time, new_due_time = @sla_time_changes[sla_target_type].map(&:presence)
     if sla_target_type == :nr_due_by
       # if nr_due_by changes, passing 'frDueBy' instead of nil value
       old_due_time = frDueBy.to_s if old_due_time.nil?
