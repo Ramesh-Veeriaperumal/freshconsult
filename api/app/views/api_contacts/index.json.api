@@ -20,6 +20,7 @@
     csat_rating: item.last_csat_rating,
     preferred_source: item.preferred_source
   }
+  response_hash.merge!(item.company_info)
   response_hash[:unique_external_id] = item.unique_external_id if item.unique_contact_identifier_enabled?
   response_hash.merge!(item.twitter_requester_fields)
   response_hash[:deleted] = true if item.deleted

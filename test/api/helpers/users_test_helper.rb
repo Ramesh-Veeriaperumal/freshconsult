@@ -179,13 +179,17 @@ module UsersTestHelper
     }.merge(contact_pattern(contact))
   end
 
-  def index_contact_pattern(contact)
+  def index_contact_pattern(contact, expected_output = {})
     keys = [
       :avatar, :tags, :other_emails, :deleted,
       :other_companies, :view_all_tickets, :was_agent, :agent_deleted_forever, :marked_for_hard_delete
     ]
     keys -= [:deleted] if contact.deleted
-    contact_pattern(contact).except(*keys)
+    result = contact_pattern(contact).except(*keys)
+    result.except!(:other_companies)
+    result[:company] = company_hash(contact.default_user_company) if expected_output[:include].eql?('company') && contact.default_user_company.present?
+    result[:other_companies] = other_companies_hash(expected_output[:include].eql?('company'), contact) if Account.current.multiple_user_companies_enabled? && contact.default_user_company.present?
+    result
   end
 
   def public_search_index_contact_pattern(contact)
@@ -219,10 +223,14 @@ module UsersTestHelper
     result
   end
 
-  def index_contact_pattern_with_unique_external_id(contact)
+  def index_contact_pattern_with_unique_external_id(contact, expected_output = {})
     keys = [:avatar, :tags, :other_emails, :deleted, :view_all_tickets, :other_companies]
     keys -= [:deleted] if contact.deleted
-    unique_external_id_contact_pattern(contact).except(*keys)
+    result = unique_external_id_contact_pattern(contact).except(*keys)
+    result.except!(:other_companies)
+    result[:company] = company_hash(contact.default_user_company) if expected_output[:include].eql?('company') && contact.default_user_company.present?
+    result[:other_companies] = other_companies_hash(expected_output[:include].eql?('company'), contact) if Account.current.multiple_user_companies_enabled? && contact.default_user_company.present?
+    result
   end
 
   def v1_contact_payload

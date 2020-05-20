@@ -56,6 +56,13 @@ class ContactDecorator < ApiDecorator
     others.map { |x| { company_id: x.company_id, view_all_tickets: x.client_manager } }
   end
 
+  def company_info
+    ret_hash = {}
+    ret_hash[:company] = company_hash(default_company) if @sideload_options.include?('company') && default_company.present? && default_company.company.present?
+    ret_hash[:other_companies] = other_companies_hash if multiple_user_companies_enabled? && company_id.present?
+    ret_hash
+  end
+
   def fetch_primary_company_details
     if record.company.present?
       primary_company = record.company.attributes.except!(*EXCEPT_LIST)
@@ -259,13 +266,6 @@ class ContactDecorator < ApiDecorator
         extn: extn,
         history_column: history_column
       }
-    end
-
-    def company_info
-      ret_hash = {}
-      ret_hash[:company] = company_hash(default_company) if @sideload_options.include?('company') && default_company.present? && default_company.company.present?
-      ret_hash[:other_companies] = other_companies_hash if multiple_user_companies_enabled? && company_id.present?
-      ret_hash
     end
 
     def company_hash(uc)
