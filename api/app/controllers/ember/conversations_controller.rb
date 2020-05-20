@@ -523,7 +523,13 @@ module Ember
       end
 
       def delegator_hash
-        { parent_attachments: parent_attachments, attachment_ids: @attachment_ids, shared_attachments: shared_attachments, inline_attachment_ids: @inline_attachment_ids }
+        {
+          parent_attachments: parent_attachments,
+          attachment_ids: @attachment_ids,
+          shared_attachments: shared_attachments,
+          inline_attachment_ids: @inline_attachment_ids,
+          reply_ticket_id: @reply_ticket_id
+        }
       end
 
       def ember_redirect?

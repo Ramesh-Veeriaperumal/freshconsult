@@ -2663,6 +2663,22 @@ module Ember
       Account.any_instance.unstub(:pci_compliance_field_enabled?)
     end
 
+    def test_reply_with_valid_reply_ticket_id_param
+      params_hash = reply_note_params_hash.merge(full_text: Faker::Lorem.paragraph(10), reply_ticket_id: ticket.display_id)
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+    end
+
+    def test_reply_with_invalid_reply_ticket_id_param
+      params_hash = reply_note_params_hash.merge(full_text: Faker::Lorem.paragraph(10), reply_ticket_id: rand(10_000))
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('reply_ticket_id', :invalid_ticket_reply)])
+    end
+
     private
 
       def archive_note_payload(note, payload)

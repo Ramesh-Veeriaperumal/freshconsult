@@ -12,7 +12,7 @@ module ConversationConstants
   SIDE_LOADING = %w(requester).freeze
   PERMITTED_ARCHIVE_FIELDS = (TICKET_CONVERSATIONS_FIELDS + ApiConstants::PAGINATE_FIELDS).freeze
 
-  REPLY_FIELDS = %w[body full_text user_id from_email send_survey last_note_id include_surveymonkey_link post_to_forum_topic].freeze | REPLY_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
+  REPLY_FIELDS = %w[body full_text user_id from_email send_survey last_note_id include_surveymonkey_link post_to_forum_topic reply_ticket_id].freeze | REPLY_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   BROADCAST_FIELDS = %w(body user_id inline_attachment_ids).freeze
   REPLY_TO_FORWARD_FIELDS = %w(body full_text user_id from_email to_emails send_survey).freeze | REPLY_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   FORWARD_FIELDS = %w(body full_text agent_id from_email include_quoted_text include_original_attachments).freeze | FORWARD_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
@@ -69,7 +69,7 @@ module ConversationConstants
   AGENT_USER_MAPPING = { user: :agent_id }.freeze
 
   PARAMS_MAPPINGS = { notify_emails: :to_emails, agent_id: :user_id, name: :filename }.freeze
-  PARAMS_TO_SAVE_AND_REMOVE = [:note_id, :cloud_files, :attachment_ids, :cloud_file_ids, :include_quoted_text, :include_original_attachments, :tweet_type, :twitter_handle_id, :inline_attachment_ids, :msg_type].freeze
+  PARAMS_TO_SAVE_AND_REMOVE = [:note_id, :cloud_files, :attachment_ids, :cloud_file_ids, :include_quoted_text, :include_original_attachments, :tweet_type, :twitter_handle_id, :inline_attachment_ids, :msg_type, :reply_ticket_id].freeze
   PARAMS_TO_REMOVE = [:body, :full_text].freeze
 
   TICKET_LOAD_REQUIRED = %i[create reply forward reply_to_forward ticket_conversations facebook_reply tweet ecommerce_reply reply_template forward_template latest_note_forward_template broadcast].freeze

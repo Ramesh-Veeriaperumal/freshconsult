@@ -5,7 +5,7 @@ class ConversationValidation < ApiValidation
                 :attachments, :to_emails, :cc_emails, :bcc_emails, :item, :from_email,
                 :include_quoted_text, :include_original_attachments, :cloud_file_ids,
                 :cloud_files, :send_survey, :last_note_id, :include_surveymonkey_link, :inline_attachment_ids,
-                :ticket_source, :msg_type, :parent_note_id, :twitter
+                :ticket_source, :msg_type, :parent_note_id, :twitter, :reply_ticket_id
 
   validates :body, data_type: { rules: String, required: true }, if: -> { !forward? && attachment_ids.blank? && cloud_files.blank? && !facebook_ticket? }
   validates :body, data_type: { rules: String, required: true }, if: -> { !forward? && attachment_ids.blank? && cloud_files.blank? && facebook_ticket? && validation_context != :reply }
@@ -24,6 +24,7 @@ class ConversationValidation < ApiValidation
   validates :to_emails, required: true, on: :forward
   validates :to_emails, required: true, on: :reply_to_forward
   validates :include_quoted_text, custom_absence: { message: :cannot_be_set }, if: -> { include_quoted_text.to_s == 'true' && full_text.present? }
+  validates :reply_ticket_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }, on: :reply
 
   validates :attachments, array: { data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true } }
   validates :attachments, file_size: {

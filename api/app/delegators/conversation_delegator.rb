@@ -3,13 +3,15 @@ class ConversationDelegator < ConversationBaseDelegator
   include Redis::OthersRedis
   include Redis::RedisKeys
 
-  attr_accessor :email_config_id, :email_config, :cloud_file_attachments, :parent_note_id, :parent_note, :fb_page, :ticket_source, :msg_type, :twitter_handle_id, :tweet_type, :body, :twitter_handle
+  attr_accessor :email_config_id, :email_config, :cloud_file_attachments, :parent_note_id, :parent_note, :fb_page, :ticket_source, :msg_type, :twitter_handle_id, :tweet_type, :body, :twitter_handle, :reply_ticket_id
 
   validate :validate_agent_emails, if: -> { note? && !reply_to_forward? && to_emails.present? && attr_changed?('to_emails', schema_less_note) }
 
   validate :validate_from_email, if: -> { (email_conversation? || (schema_less_note.present? && reply_to_forward?)) && from_email.present? && attr_changed?('from_email', schema_less_note) }
 
   validate :validate_agent_id, if: -> { (fwd_email? && user_id.present? && attr_changed?('user_id')) || (social_ticket? && user_id.present?) }
+
+  validate :validate_reply_ticket_id, if: -> { reply_ticket_id.present? }
 
   validate :validate_tracker_id, if: -> { broadcast_note? }
 
@@ -45,6 +47,7 @@ class ConversationDelegator < ConversationBaseDelegator
     retrieve_cloud_files if @cloud_file_ids
     @conversation = record
     @notable = options[:notable]
+    @reply_ticket_id = options[:reply_ticket_id]
     initialize_fb_variables(options) if Account.current.launched?(:facebook_public_api)
     initialize_twitter_variables(options) if Account.current.launched?(:twitter_public_api)
   end
@@ -79,6 +82,10 @@ class ConversationDelegator < ConversationBaseDelegator
 
   def social_ticket?
     ticket_source.present? && (facebook_ticket? || twitter_ticket?)
+  end
+
+  def validate_reply_ticket_id
+    invalid_ticket_reply_error(:reply_ticket_id) if reply_ticket_id.to_i != notable.display_id
   end
 
   def validate_parent_note_id
@@ -289,5 +296,15 @@ class ConversationDelegator < ConversationBaseDelegator
 
     def public_note?
       !self.private.nil? && !self.private
+    end
+
+    def invalid_ticket_reply_error(field)
+      options_hash = {
+        account_id: Account.current.id,
+        ticket_id: notable.display_id
+      }
+      NewRelic::Agent.notice_error('Reply crossover error', options_hash)
+      Rails.logger.info "Reply crossover error : #{Account.current.id}"
+      errors[field] << :invalid_ticket_reply
     end
 end

@@ -564,3 +564,4 @@ api_error_messages:
   duplicate_name_in_sla_policy: "A policy already exists with name '%{policy_name}'."
 
   bulk_api_limit_exceed: "Total %{resource} params size is %{current}, it should not exceed %{max}"
+  invalid_ticket_reply: "Something went wrong while replying. Please refresh the page."
