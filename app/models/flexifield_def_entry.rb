@@ -9,12 +9,15 @@ class FlexifieldDefEntry < ActiveRecord::Base
 
   has_many :flexifield_picklist_vals#, :dependent => :destroy # commenting to reduce a query while contact_field deletion
   has_one :ticket_field, :class_name => 'Helpdesk::TicketField'#, :dependent => :destroy # Confirm with Shan
+  # This association is used in a Join condition in FlexifieldDaf. Since there is no foregin key mapping for `helpdesk_ticket_fields`
+  # from `flexifield_def` filtering using account_id as well as deleted.
+  has_one :active_ticket_field, class_name: 'Helpdesk::TicketField',
+                                conditions: proc { 'helpdesk_ticket_fields.account_id = flexifield_def_entries.account_id AND helpdesk_ticket_fields.deleted = 0' }
   validates_presence_of :flexifield_name, :flexifield_alias, :flexifield_order
 
   scope :drop_down_fields, :conditions => {:flexifield_coltype => 'dropdown' }
 
-  scope :event_fields, 
-              :conditions => [ "flexifield_coltype = 'dropdown' or flexifield_coltype = 'checkbox'" ]  
+  scope :event_fields, -> { joins(:active_ticket_field).where("flexifield_def_entries.flexifield_coltype = 'dropdown' or flexifield_def_entries.flexifield_coltype = 'checkbox'") }
   
   before_save :ensure_alias_is_one_word
   after_commit :clear_custom_date_field_cache, :clear_custom_date_time_field_cache, :clear_custom_file_field_name_cache

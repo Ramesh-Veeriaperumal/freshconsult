@@ -9,7 +9,11 @@ class FlexifieldDef < ActiveRecord::Base
 
   attr_protected  :account_id
 
-  has_many :flexifield_def_entries, :class_name => 'FlexifieldDefEntry', :order => 'flexifield_order', :dependent => :destroy
+  has_many :flexifield_def_entries, class_name: 'FlexifieldDefEntry', order: 'flexifield_order', dependent: :destroy do
+    def with_active_ticket_field
+      joins(:active_ticket_field)
+    end
+  end
   accepts_nested_attributes_for :flexifield_def_entries,
     :reject_if => proc { |attrs| attrs['flexifield_alias'].blank? }
 
@@ -36,21 +40,11 @@ class FlexifieldDef < ActiveRecord::Base
   end
 
   def to_ff_field ff_alias
-    idx = nil
-    ffa = "#{ff_alias}"
-    ff_aliases.each_with_index do |c,i|
-      idx = i if c == ffa
-    end
-    idx ? flexifield_def_entries[idx].to_ff_field : nil
+    ff_alias_column_mapping[ff_alias.to_s]
   end
 
   def to_ff_alias ff_field
-    idx = nil
-    fff = "#{ff_field}" #make sure it is a string
-    ff_fields.each_with_index do |c,i|
-      idx = i if c == fff
-    end
-    idx ? flexifield_def_entries[idx].to_ff_alias : nil
+    ff_column_alias_mapping[ff_field.to_s]
   end
 
   def to_ff_def_entry ff_alias
@@ -58,15 +52,21 @@ class FlexifieldDef < ActiveRecord::Base
   end
 
   def ff_aliases
-    flexifield_def_entries.nil? ? [] : flexifield_def_entries.map(&:flexifield_alias)
+    @ff_aliases ||= flexifield_def_entries.nil? ? [] : flexifield_def_entries.with_active_ticket_field.map(&:flexifield_alias)
   end
 
   def ff_alias_column_mapping
-    @mapping ||= flexifield_def_entries.each_with_object({}) { |ff_def_entry, hash| hash[ff_def_entry.flexifield_alias] = ff_def_entry.flexifield_name }
+    @ff_alias_column_mapping ||= flexifield_def_entries.with_active_ticket_field.each_with_object({}) { |ff_def_entry, hash| hash[ff_def_entry.flexifield_alias] = ff_def_entry.flexifield_name }
+  end
+
+  def ff_column_alias_mapping
+    @ff_column_alias_mapping ||= flexifield_def_entries.with_active_ticket_field.each_with_object({}) { |ff_def_entry, hash| hash[ff_def_entry.flexifield_name] = ff_def_entry.flexifield_alias }
   end
 
   def ff_alias_column_type_mapping
-    @ff_alias_column_type_mapping ||= flexifield_def_entries.each_with_object({}) { |ff_def_entry, hash| hash[ff_def_entry.flexifield_alias] = [ff_def_entry.flexifield_name, ff_def_entry.flexifield_coltype] }
+    @ff_alias_column_type_mapping ||= flexifield_def_entries.with_active_ticket_field.each_with_object({}) do |ff_def_entry, hash|
+      hash[ff_def_entry.flexifield_alias] = [ff_def_entry.flexifield_name, ff_def_entry.flexifield_coltype]
+    end
   end
 
   def boolean_ff_aliases
@@ -221,7 +221,7 @@ class FlexifieldDef < ActiveRecord::Base
   def select_fields(fields, field_name, coltype)
     fields.select { |field| field.flexifield_name.include?(field_name) && field.flexifield_coltype == coltype }.map(&:flexifield_name)
   end
-  
+
   def text_group_include?(type)
     TEXT_GROUP.include?(type)
   end

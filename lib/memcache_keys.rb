@@ -71,9 +71,9 @@ module MemcacheKeys
 
   ACCOUNT_NESTED_FIELDS = 'v5/ACCOUNT_NESTED_FIELDS:%{account_id}'.freeze
 
-  ACCOUNT_EVENT_FIELDS = 'v4/ACCOUNT_EVENT_FIELDS:%{account_id}'.freeze
+  ACCOUNT_EVENT_FIELDS = 'v5/ACCOUNT_EVENT_FIELDS:%{account_id}'.freeze
 
-  ACCOUNT_FLEXIFIELDS = 'v4/ACCOUNT_FLEXIFIELDS:%{account_id}'.freeze
+  ACCOUNT_FLEXIFIELDS = 'v5/ACCOUNT_FLEXIFIELDS:%{account_id}'.freeze
 
   ACCOUNT_TICKET_FIELDS = 'v4/ACCOUNT_TICKET_FIELDS:%{account_id}'.freeze
 

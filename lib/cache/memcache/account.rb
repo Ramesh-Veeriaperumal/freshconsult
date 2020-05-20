@@ -354,7 +354,7 @@ module Cache::Memcache::Account
   def flexifields_with_ticket_fields_from_cache
     key = ACCOUNT_FLEXIFIELDS % { :account_id => self.id }
     fetch_from_cache(key) do
-      ticket_field_def.flexifield_def_entries.preload(:ticket_field).all
+      ticket_field_def.flexifield_def_entries.with_active_ticket_field.preload(:ticket_field).all
     end
   end
 
