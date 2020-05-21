@@ -20,5 +20,5 @@ module CustomerImportConstants
   }.freeze
   NO_CONTENT_TYPE_REQUIRED = [:cancel].freeze
   ACCEPTED_FILE_TYPE = { accepted: 'CSV' }.freeze
-  CSV_FILE_EXTENSION_REGEX = /.*\.csv\z/
+  CSV_FILE_EXTENSION_REGEX = /.*\.csv\z/i.freeze
 end

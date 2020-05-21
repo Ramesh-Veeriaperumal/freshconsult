@@ -2,7 +2,8 @@ class ApiSolutions::ArticleValidation < ApiValidation
   CHECK_PARAMS_SET_FIELDS = %w[type folder_name category_name].freeze
   attr_accessor :title, :description, :agent_id, :status, :type, :tags,
                 :seo_data, :meta_title, :meta_keywords, :meta_description,
-                :folder_name, :category_name, :attachments, :attachments_list, :cloud_file_attachments, :folder_id, :item, :attachable, :outdated, :prefer_published
+                :folder_name, :category_name, :attachments, :attachments_list, :cloud_file_attachments, :folder_id,
+                :item, :attachable, :outdated, :prefer_published, :templates_used
 
   validates :title, required: true, on: :create
   validates :title, data_type: { rules: String }, custom_length: { maximum: SolutionConstants::TITLE_MAX_LENGTH, minimum: SolutionConstants::TITLE_MIN_LENGTH, message: :too_long_too_short }
@@ -56,7 +57,7 @@ class ApiSolutions::ArticleValidation < ApiValidation
   validates :folder_id, data_type: { rules: Integer, allow_nil: false }
   validates :outdated,  data_type: { rules: 'Boolean' }
   validates :prefer_published, data_type: { rules: 'Boolean' }
-
+  validates :templates_used, data_type: { rules: Array, allow_nil: false }, array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false } }
 
   def initialize(request_params, article, attachable, lang_id, allow_string_param = false)
     super(request_params, article, allow_string_param)

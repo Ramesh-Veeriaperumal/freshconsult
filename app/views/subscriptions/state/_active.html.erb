@@ -136,12 +136,13 @@
             if has_feature_gain 
               total_amount = @subscription.amount_with_tax_safe_access
               discount = subscription.additional_info[:discount]
+              has_discount = discount > 0;
               actual_amount = format_amount(total_amount * (100.to_f / (100 - discount)), @currency)
             end 
           %>
           <ul>
             <li class="price">
-              <% if has_feature_gain %>
+              <% if has_feature_gain && has_discount %>
                 <span class="strike"><%= actual_amount %></span>
                 <i class="right-arrow-billing ficon-arrow-right-2"></i>
               <% end %>

@@ -312,6 +312,6 @@ class Support::SearchV2::SpotlightController < SupportController
     end
 
     def force_exact_match
-      @exact_match = true if NON_UNICODE_LANGUAGES.include?(params[:url_locale])
+      @exact_match = true if NON_UNICODE_LANGUAGES.include?(Language.current.code)
     end
 end

@@ -60,6 +60,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     @account.destroy
   end
 
+=begin
   def test_bitmap_twitter_automation_feature_present_for_estate_and_above
     plan_ids = SubscriptionPlan.current.map(&:id)
     sprout_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount == 0.0 }.compact.first
@@ -74,6 +75,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
   ensure
     unstub_chargebee_requests
   end
+=end
 
   def test_handle_agents_when_moving_from_non_paying_plan_without_dp_enabled
     plan_ids = SubscriptionPlan.current.map(&:id)
@@ -828,6 +830,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     unstub_chargebee_requests
   end
 
+=begin
   def test_fsm_dependent_features_removed_when_downgrade_from_estate_to_garden_with_fsm_disabled
     stub_chargebee_requests
     garden_plan_id = SubscriptionPlan.select(:id).where(name: 'Garden Omni Jan 19').map(&:id).last
@@ -842,6 +845,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
   ensure
     unstub_chargebee_requests
   end
+=end
 
   def test_enable_fsm_when_downgrade_from_estate_to_garden_through_ui_fsm_toggle
     stub_chargebee_requests
@@ -1005,6 +1009,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     unstub_chargebee_requests
   end
 
+=begin
   def test_fsm_dependent_features_removed_when_downgrade_from_estate_to_blossom_with_fsm_disabled
     stub_chargebee_requests
     blossom_plan_id = SubscriptionPlan.select(:id).where(name: 'Blossom Jan 19').map(&:id).last
@@ -1019,6 +1024,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
   ensure
     unstub_chargebee_requests
   end
+=end
 
   def test_enable_fsm_when_downgrade_from_estate_to_blossom_through_ui_fsm_toggle
     stub_chargebee_requests
@@ -1104,6 +1110,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     unstub_chargebee_requests
   end
 
+=begin
   def test_disable_fsm_when_downgrade_from_estate_to_sprout_with_fsm_enabled
     stub_chargebee_requests
     Account.any_instance.stubs(:fsm_admin_automations_enabled?).returns(true)
@@ -1140,7 +1147,9 @@ class SubscriptionsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:fsm_admin_automations_enabled?)
     Account.any_instance.unstub(:automation_revamp_enabled?)
   end
+=end
 
+=begin
   def test_fsm_dependent_features_removed_when_downgrade_from_estate_to_sprout_with_fsm_enabled
     stub_chargebee_requests
     plan_ids = SubscriptionPlan.current.map(&:id)
@@ -1158,7 +1167,9 @@ class SubscriptionsControllerTest < ActionController::TestCase
     cleanup_fsm
     unstub_chargebee_requests
   end
+=end
 
+=begin
   def test_sections_data_cleanup_when_downgrade_from_estate_to_sprout_with_fsm_enabled
     stub_chargebee_requests
     SAAS::SubscriptionEventActions.any_instance.stubs(:handle_collab_feature).returns(true)
@@ -1186,6 +1197,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     SAAS::SubscriptionEventActions.any_instance.unstub(:handle_feature_add_data)
     unstub_chargebee_requests
   end
+=end
 
   private
 

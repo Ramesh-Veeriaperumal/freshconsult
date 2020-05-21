@@ -46,7 +46,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   SLA_DATETIME_ATTRIBUTES = ['due_by', 'frDueBy', 'nr_due_by'].freeze
 
-  TICKET_SLA_ATTRIBUTES = ['isescalated', 'fr_escalated', 'nr_escalated', 'escalation_level', 'nr_due_by', 'due_by', 'frDueBy'].freeze
+  TICKET_SLA_ATTRIBUTES = ['isescalated', 'fr_escalated', 'nr_escalated', 'escalation_level'].freeze
 
   OBSERVER_ATTR = []
   self.table_name =  "helpdesk_tickets"
@@ -74,7 +74,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :sbrr_state_attributes, :escape_liquid_attributes, :update_sla, :sla_on_background,
     :sla_calculation_time, :disable_sla_calculation, :import_ticket, :ocr_update, :skip_ocr_sync,
     :custom_fields_hash, :thank_you_note_id, :perform_post_observer_actions, :prime_ticket_args, :current_note_id,
-    :bulk_updation, :old_last_interaction_id, :old_tag_ids, :return_old_tag_ids
+    :bulk_updation, :old_last_interaction_id, :old_tag_ids, :return_old_tag_ids, :sla_time_changes
 
     # :skip_sbrr_assigner and :skip_sbrr_save can be combined together if needed.
     # Added :system_changes, :activity_type, :misc_changes for activity_revamp -

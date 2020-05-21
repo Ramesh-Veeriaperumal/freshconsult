@@ -11,7 +11,7 @@ class ActivityMethodsTest < ActionView::TestCase
   include UsersTestHelper
 
   
-   def setup
+  def setup
     Rails.env.stubs(:test?).returns(false)
     load 'helpdesk/initializers/thrift.rb'
     super

@@ -1298,6 +1298,7 @@
             "_slave1_host": "shard21slave1.internal.poduseast1.freshdesk.com"
           },
           "shard_22": {
+            "_proxy_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:1/hOlpGdUu/Yw8opxMSuyqYgMAjlN538:8VzIowKL0ywaViirIiorSjLozSqDW7DohQ4=]",
             "_database": "helpkit",
             "_username": "dbuser",
@@ -1426,6 +1427,7 @@
             "_slave1_host": "shard29-1slave1.internal.poduseast1.freshdesk.com"
           },
           "shard_29_2": {
+            "_proxy_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:kot5ojs/N6yuQ2LpOrRGATT6Ra3DjMev:tAJZ50wmUHMAOmhEPCPqfp4YGZdLRVW86HM=]",
             "_database": "helpkit_shard29_2",
             "_username": "dbuser",

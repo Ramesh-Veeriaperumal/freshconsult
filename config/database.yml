@@ -81,7 +81,7 @@ staging:
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
-test:
+test: &test
   # adapter: sqlite3
   # database: db/test.sqlite3
   # timeout: 5000
@@ -100,7 +100,7 @@ test:
     bulkhead: false
     dryrun: false
   shards:
-    shard_1:
+    shard_1: &test_shard
       host: 127.0.0.1
       database: helpkit_test_rails3
       not_a_shard: false
@@ -111,7 +111,7 @@ test:
         error_timeout: 20
         bulkhead: false
         dryrun: false
-    sandbox_shard_1:
+    sandbox_shard_1: &test_sandbox
       host: 127.0.0.1
       database: sandbox_test
       not_a_shard: false
@@ -122,6 +122,16 @@ test:
         error_timeout: 20
         bulkhead: false
         dryrun: false
+test_new:
+  <<: *test
+  database: helpkit_test_new_rails3
+  shards:
+    shard_1:
+      <<: *test_shard
+      database: helpkit_test_new_rails3
+    sandbox_shard_1:
+      <<: *test_sandbox
+      database: sandbox_test_new
 production:
   adapter: sqlite3
   database: db/production.sqlite3

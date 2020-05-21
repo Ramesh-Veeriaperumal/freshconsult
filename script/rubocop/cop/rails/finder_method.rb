@@ -60,8 +60,14 @@ module RuboCop
           paginate_by_: 'where(...).paginate(...)'
         }.freeze
 
+        def_node_matcher :ignore_node?, '(send $(const nil? :Language) {:find_by_code :find_by_codes :find_by_name :find_by_key :find} (...))'
+
         def on_send(node)
           method_name = static_name = nil
+
+          ignore_node?(node) do |second_arg|
+            return nil
+          end
 
           if find_all_method(node)
             static_name = FINDER_METHOD_ALTERNATE[FIND_METHOD_NAME.to_sym]

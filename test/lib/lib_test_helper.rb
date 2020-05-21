@@ -1,8 +1,12 @@
+# https://confluence.freshworks.com/display/FDCORE/BaseTestHelper+for+BE+Unit+Tests
+
 require_relative '../base_test_helper.rb'
 require_relative 'helpers/test_files.rb'
 
 class ActiveSupport::TestCase
   def setup
+    self.use_transactional_fixtures = true
+
     $redis_others.flushall # redis cleanup
     WebMock.disable_net_connect! # disabling Webmock
 

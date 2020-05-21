@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200423091413) do
+ActiveRecord::Schema.define(version: 20200502053301) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -2698,6 +2698,7 @@ ActiveRecord::Schema.define(version: 20200423091413) do
   add_index "helpdesk_ticket_fields", ["account_id", "field_type", "position"], :name => "index_tkt_flds_on_account_id_and_field_type_and_position"
   add_index "helpdesk_ticket_fields", ["account_id", "name"], :name => "index_helpdesk_ticket_fields_on_account_id_and_name", :unique => true
   add_index "helpdesk_ticket_fields", ["account_id", "ticket_form_id", "column_name"], :name => "index_tkt_flds_on_account_id_ticket_form_id_column_name"
+  add_index 'helpdesk_ticket_fields', ['account_id', 'flexifield_def_entry_id'], name: 'index_ticket_fields_on_account_id_and_flexifield_def_entry_id'
 
   create_table "helpdesk_ticket_issues", :force => true do |t|
     t.integer "ticket_id"
@@ -3817,6 +3818,18 @@ ActiveRecord::Schema.define(version: 20200423091413) do
   end
 
   add_index 'solution_templates', ['account_id'], name: 'index_solution_templates_on_acc_id'
+
+  create_table 'solution_template_mappings', :force => true do |t|
+    t.integer  'account_id', limit: 8, null: false
+    t.integer  'used_cnt', limit: 8, null: false
+    t.integer  'article_id', limit: 8, null: false
+    t.integer  'template_id', limit: 8, null: false
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+  end
+
+  add_index 'solution_template_mappings', ['account_id'], :name => 'index_solution_template_mappings_on_acc_id'
+  add_index 'solution_template_mappings', ['account_id', 'article_id', 'template_id'], :name => 'index_solution_template_mappings_on_acc_article_template_id'
 
   create_table "status_groups", :force => true do |t|
     t.integer  "status_id",  :limit => 8, :null => false

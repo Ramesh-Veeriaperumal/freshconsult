@@ -4010,7 +4010,7 @@ en:
       edit_post: Edit Post
   plans_and_pricing: Plans & Pricing
   accounts:
-    loyalty_upgrade: <strong>Loyalty upgrade!</strong> We have upgraded your account to the latest version of <strong>%{value}</strong> plan at no extra cost with <a href="/a/admin/explore?bonus=true" target="_top">additional features</a>.
+    loyalty_upgrade: <strong>Loyalty bonus!</strong> We have upgraded your account to the latest version of <strong>%{value}</strong> plan at no extra cost with <a href="/a/admin/explore?bonus=true" target="_top">additional features</a>.
     multilingual_support:
       helpcard:
         portal_languages:

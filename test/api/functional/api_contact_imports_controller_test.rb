@@ -154,4 +154,13 @@ class ApiContactImportsControllerTest < ActionController::TestCase
                                                      failures: { count: 1 })
     match_json response_body
   end
+
+  def test_contact_import_200_on_uppercase_csv_file_format
+    request_params = { file: fixture_file_upload('/files/contacts3_import.CSV', 'text/csv', :binary),
+                       fields: { name: '0',
+                                 job_title: '1',
+                                 email: '2' } }
+    post :create, construct_params(request_params)
+    assert_response 200
+  end
 end

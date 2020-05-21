@@ -18,20 +18,19 @@ module SolutionConstants
   UPDATEABLE_ARTICLE_META_FIELDS = %w[folder_id art_type solution_folder_meta_id].freeze
   ARTICLE_META_FIELDS = (UPDATEABLE_ARTICLE_META_FIELDS | %w[id]).freeze
 
-  UPDATEABLE_ARTICLE_LANGUAGE_FIELDS = ARTICLE_LANGUAGE_FIELDS = %w[title description status seo_data attachments attachments_list cloud_file_attachments tags outdated user_id].freeze
+  UPDATEABLE_ARTICLE_LANGUAGE_FIELDS = ARTICLE_LANGUAGE_FIELDS = %w[title description status seo_data attachments attachments_list cloud_file_attachments tags outdated user_id templates_used].freeze
 
   DRAFT_FIELDS = %w[title description attachments attachments_list cloud_file_attachments unlock].freeze
 
   ARTICLE_ARRAY_FIELDS = %w[tags attachments attachments_list cloud_file_attachments].freeze
   # all fields possible in update or create API call
   ARTICLE_API_FIELDS = (%w[category_name folder_name description
-                       title status seo_data type folder_id session unlock] | ARTICLE_ARRAY_FIELDS |
+                           title status seo_data type folder_id session unlock templates_used] | ARTICLE_ARRAY_FIELDS |
                    ['seo_data' => ARTICLE_SEO_DATA_FIELDS]).freeze
 
   CREATE_ARTICLE_FIELDS = { all: ARTICLE_API_FIELDS }.freeze
   # for mark as outdated and uptodate, we can pass outdated along with all other params
   UPDATE_ARTICLE_FIELDS = { all: ARTICLE_API_FIELDS | ['outdated'], admin_tasks: ['agent_id'] }.freeze
-
 
   SEND_FOR_REVIEW_FIELDS = %w[approver_id].freeze
 

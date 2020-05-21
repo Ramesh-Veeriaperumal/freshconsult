@@ -44,6 +44,15 @@ class TicketTest < ActiveSupport::TestCase
     @@before_all_run = true
   end
 
+  def central_publish_with_ticket_field_revamp
+    @account.launch :ticket_field_revamp
+    @account.launch :archive_ticket_fields
+    yield
+  ensure
+    @account.rollback :ticket_field_revamp
+    @account.rollback :archive_ticket_fields
+  end
+
   def test_central_publish_with_launch_party_disabled
     Account.current.rollback(:ticket_central_publish)
     CentralPublishWorker::ActiveTicketWorker.jobs.clear
@@ -66,6 +75,51 @@ class TicketTest < ActiveSupport::TestCase
     payload.must_match_json_expression(cp_ticket_pattern(t))
     assoc_payload = t.associations_to_publish.to_json
     assoc_payload.must_match_json_expression(cp_assoc_ticket_pattern(t))
+  end
+
+  def test_central_publish_payload_on_field_limit_increase
+    custom_fields_hash = { "test_custom_dropdown_#{@account.id}" => DROPDOWN_CHOICES.sample, "test_custom_text_#{@account.id}" => 'Sample Text' }
+    central_publish_with_ticket_field_revamp do
+      Account.current.stubs(:ticket_field_limit_increase_enabled?).returns(true)
+      Account.current.stubs(:join_ticket_field_data_enabled?).returns(true)
+      Account.current.stubs(:id_for_choices_write_enabled?).returns(true)
+      t = create_ticket(ticket_params_hash.merge(custom_field: custom_fields_hash))
+      tf = Account.current.ticket_fields_only.where(field_type: 'custom_dropdown').first
+      payload = t.central_publish_payload.to_json
+      payload.must_match_json_expression(cp_ticket_pattern(t))
+      assoc_payload = t.associations_to_publish.to_json
+      assert_equal Account.current.ticket_field_def.to_ff_alias(tf.column_name), tf.name
+      assoc_payload.must_match_json_expression(cp_assoc_ticket_pattern(t))
+    end
+  ensure
+    Account.current.unstub(:ticket_field_limit_increase_enabled?)
+    Account.current.unstub(:join_ticket_field_data_enabled?)
+    Account.current.unstub(:id_for_choices_write_enabled?)
+  end
+
+  def test_central_publish_payload_with_archived_custom_fields
+    custom_fields_hash = { "test_custom_dropdown_#{@account.id}" => DROPDOWN_CHOICES.sample, "test_custom_text_#{@account.id}" => 'Sample Text' }
+    central_publish_with_ticket_field_revamp do
+      Account.current.stubs(:ticket_field_limit_increase_enabled?).returns(true)
+      Account.current.stubs(:join_ticket_field_data_enabled?).returns(true)
+      Account.current.stubs(:id_for_choices_write_enabled?).returns(true)
+      ['number', 'checkbox', 'decimal'].each do |field_type|
+        @account.ticket_fields_with_archived_fields.custom_fields.where(field_type: "custom_#{field_type}").first.update_attributes(deleted: true)
+      end
+
+      t = create_ticket(ticket_params_hash.merge(custom_field: custom_fields_hash))
+      payload = t.central_publish_payload.to_json
+      payload.must_match_json_expression(cp_ticket_pattern(t))
+      assoc_payload = t.associations_to_publish.to_json
+      assoc_payload.must_match_json_expression(cp_assoc_ticket_pattern(t))
+    end
+  ensure
+    ['number', 'checkbox', 'decimal'].each do |field_type|
+      @account.ticket_fields_with_archived_fields.custom_fields.where(field_type: "custom_#{field_type}").first.update_attributes(deleted: false)
+    end
+    Account.current.unstub(:ticket_field_limit_increase_enabled?)
+    Account.current.unstub(:join_ticket_field_data_enabled?)
+    Account.current.unstub(:id_for_choices_write_enabled?)
   end
 
   def test_central_publish_payload_event_info
@@ -412,7 +466,7 @@ class TicketTest < ActiveSupport::TestCase
     event_info = t.event_info(:create)
     event_info.must_match_json_expression(cp_ticket_event_info_pattern(t))
   end
- 
+
   def test_central_publish_internal_agent_associations
     Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
     initialize_internal_agent_with_default_internal_group(permission = 3)

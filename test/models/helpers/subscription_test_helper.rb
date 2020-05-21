@@ -46,8 +46,8 @@ module SubscriptionTestHelper
        {
          id: account_id, plan_id: 'blossom_jan_19_annual',
          plan_quantity: 1, status: 'active', trial_start: 1_556_863_974,
-         trial_end: 1_556_864_678, current_term_start: 1_557_818_479,
-         current_term_end: 1_589_440_879, created_at: 1_368_442_623,
+         trial_end: 1_556_864_678, current_term_start: (DateTime.now - 1.day).to_i,
+         current_term_end: (DateTime.now + 1.day).to_i, created_at: 1_368_442_623,
          started_at: 1_368_442_623, activated_at: 1_556_891_503,
          has_scheduled_changes: false, object: 'subscription',
          coupon: '1FREEAGENT', coupons: [{ coupon_id: '1FREEAGENT',

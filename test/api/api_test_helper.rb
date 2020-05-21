@@ -1,8 +1,12 @@
+# https://confluence.freshworks.com/display/FDCORE/BaseTestHelper+for+BE+Unit+Tests
+
 require_relative '../base_test_helper.rb'
 require_relative 'helpers/test_files.rb'
 require 'sidekiq/testing'
 
 class ActionController::TestCase
+  self.use_transactional_fixtures = true
+
   rescue_from AWS::DynamoDB::Errors::ResourceNotFoundException do |exception|
     Rake::Task['forum_moderation:create_tables'].invoke(Time.zone.now.year, Time.zone.now.month) if Rails.env.test?
     Rake::Task['forum_moderation:create_tables'].invoke(Time.zone.now.year, (Time.zone.now.month + 1)) if Rails.env.test?
@@ -72,6 +76,8 @@ class ActionController::TestCase
 end
 
 class ActionDispatch::IntegrationTest
+  self.use_transactional_fixtures = true
+
   rescue_from AWS::DynamoDB::Errors::ResourceNotFoundException do |exception|
     Rake::Task['forum_moderation:create_tables'].invoke(Time.zone.now.year, Time.zone.now.month) if Rails.env.test?
     Rake::Task['forum_moderation:create_tables'].invoke(Time.zone.now.year, (Time.zone.now.month + 1)) if Rails.env.test?

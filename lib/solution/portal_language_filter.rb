@@ -152,4 +152,9 @@ class Solution::PortalLanguageFilter
                        .where(article_id: my_articles.select('solution_articles.id'), ticketable_type: 'Helpdesk::Ticket')
                        .select(:ticketable_id), spam: false, deleted: false)
   end
+
+  # Returns all active templates.
+  def active_templates
+    Account.current.solution_templates.where(is_active: true)
+  end
 end

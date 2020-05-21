@@ -37,10 +37,14 @@ class SAAS::SubscriptionEventActions
   ####################################################################################################################
   def initialize(account, old_plan = nil, add_ons = [], features_to_skip = [])
     @account     = account || Account.current
-    @new_plan    = @account.subscription
+    @new_plan    = Account.current.subscription
     @old_plan    = old_plan
     set_existing_addon_feature(add_ons)
     @skipped_features = features_to_skip
+
+    Rails.logger.info "Empty account object passed to SubscriptionEventActions :: Account - #{Account.current.inspect}" if account.nil?
+    Rails.logger.info "Initialising SubscriptionEventActions :: account -> #{account.inspect} ; @account -> #{@account.inspect} ;
+                       @newplan -> #{@new_plan.inspect} ; @old_plan -> #{old_plan.inspect}"
   end
 
   def change_plan

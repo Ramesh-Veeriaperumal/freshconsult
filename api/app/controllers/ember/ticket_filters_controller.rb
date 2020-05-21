@@ -1,6 +1,7 @@
 module Ember
   class TicketFiltersController < ApiApplicationController
     include AccessibleControllerMethods
+    include Crypto::TokenHashing
 
     FEATURE_NAME = :custom_ticket_views
 
@@ -145,12 +146,25 @@ module Ember
       end
 
       def transform_single_response(item)
+        item[:meta] = construct_meta(item) if can_add_meta?
+
         return item unless item[:query_hash]
         # remove the spam & deleted conditions from query hash
         item[:query_hash] = remove_query_conditions(item)
         # transform query hash to a presentable form
         item[:query_hash] = QueryHash.new(item[:query_hash], ff_entries: ff_entries).to_json
         item
+      end
+
+      def can_add_meta?
+        (create? || show? || update?) && Account.current.auto_refresh_revamp_enabled?
+      end
+
+      def construct_meta(item)
+        filter_id = item[:id].presence || item['id']
+        {
+          secret_id: mask_id(filter_id.to_s)
+        }
       end
 
       def remove_query_conditions(item)

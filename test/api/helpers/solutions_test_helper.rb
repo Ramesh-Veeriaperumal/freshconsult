@@ -413,6 +413,7 @@ module SolutionsTestHelper
       result[:in_review] = Account.current.helpdesk_approvals.where(approvable_id: get_article_ids(@articles), approvable_type: 'Solution::Article', approval_status: Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review]).count
       result[:approved] = Account.current.helpdesk_approvals.where(approvable_id: get_article_ids(@articles), approvable_type: 'Solution::Article', approval_status: Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]).count
     end
+    result[:templates] = Account.current.solution_templates.where(is_active: true).count if Account.current.solutions_templates_enabled?
     result
   end
 

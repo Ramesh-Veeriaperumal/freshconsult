@@ -132,6 +132,7 @@ class Ecommerce::Ebay::Processor
     table_ids = []
     parsed_html.css('table').each { |t| table_ids << t['id'] unless t['id'].nil? }
     retain_table_ids = ['ebaylogo', 'area5Container', 'PrimaryMessage']
+    retain_table_ids << 'area7Container' unless table_ids.include?('MessageHistory1')
     table_ids.each do |id|
       unless retain_table_ids.include?(id)
         css_selector = "table##{id}"

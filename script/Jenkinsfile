@@ -132,7 +132,6 @@ def getCategoryRun(category) {
                                     println "$sub_category started services :: " + getTimeStamp()
                                     buildSetup(sub_category)
                                     println "$sub_category setup completed :: " + getTimeStamp()
-                                    if (category.contains('_w_rollback')) { cleanDb() }
                                     executeTestCase(sub_category)
                                     println "$sub_category :: completed :: " + getTimeStamp()
                                 }
@@ -222,6 +221,14 @@ def buildSetup(category) {
         bundle exec rake db:create RAILS_ENV=test
         bundle exec rake db:bootstrap RAILS_ENV=test
     """
+
+    if (category.contains('_w_rollback')) {
+        sh """#!/bin/bash
+            source /etc/profile.d/rvm.sh
+            mysql -u root -e "create database helpkit_test_new_rails3"
+            bundle exec rake db:bootstrap_w_clean_setup RAILS_ENV=test
+        """
+    }
 
     if (category.equals('sandbox')) {
         println "running additional setup for sandbox"
@@ -326,13 +333,6 @@ def executeTestCase(category) {
             currentBuild.result = 'UNSTABLE'
         }
     }
-}
-
-def cleanDb() {
-    sh """#!/bin/bash
-        source /etc/profile.d/rvm.sh
-        bundle exec rake db:test_clean_setup RAILS_ENV=test
-    """
 }
 
 def publishReport() {

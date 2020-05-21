@@ -131,7 +131,7 @@ class ApiContactsController < ApiApplicationController
     end
 
     def sideload_options
-      []
+      @contact_filter.try(:include_array) if index?
     end
 
     def get_name_mapping

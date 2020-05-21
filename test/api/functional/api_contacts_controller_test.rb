@@ -1141,6 +1141,32 @@ class ApiContactsControllerTest < ActionController::TestCase
     @account.all_contacts.update_all(deleted: false)
   end
 
+  def test_contact_index_with_include_company_params
+    sample_user = get_user_with_default_company
+    company_ids = Company.all.map(&:id) - sample_user.company_ids
+    sample_user.user_companies.build(company_id: company_ids.first, client_manager: true)
+    sample_user.user_companies.build(company_id: company_ids.last, client_manager: true)
+    sample_user.save
+    get :index, controller_params(include: 'company')
+    assert_response 200
+    users = @account.all_contacts.order('users.name').select { |x| x.deleted == false && x.blocked == false }
+    pattern = users.map { |user| index_contact_pattern(user, { include: 'company' }) }
+    match_json(pattern.ordered!)
+  end
+
+  def test_contact_index_without_include_company_params
+    sample_user = get_user_with_default_company
+    company_ids = Company.all.map(&:id) - sample_user.company_ids
+    sample_user.user_companies.build(company_id: company_ids.first, client_manager: true)
+    sample_user.user_companies.build(company_id: company_ids.last, client_manager: true)
+    sample_user.save
+    get :index, controller_params
+    assert_response 200
+    users = @account.all_contacts.order('users.name').select { |x| x.deleted == false && x.blocked == false }
+    pattern = users.map { |user| index_contact_pattern(user) }
+    match_json(pattern.ordered!)
+  end
+
   # Make agent out of a user
   def test_make_agent
     assert_difference 'Agent.count', 1 do
