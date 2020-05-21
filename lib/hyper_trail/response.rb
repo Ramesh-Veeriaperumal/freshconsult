@@ -45,8 +45,8 @@ class HyperTrail::Response
   end
 
   def transform_activities
-    @ticket_data_transformer.transform
-    @post_data_transformer.transform
-    @survey_data_transformer.transform
+    @ticket_data_transformer.transform if @ticket_data_transformer.object_ids.present?
+    @post_data_transformer.transform if @post_data_transformer.object_ids.present?
+    @survey_data_transformer.transform if @survey_data_transformer.object_ids.present?
   end
 end
