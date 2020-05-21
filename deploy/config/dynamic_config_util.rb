@@ -48,7 +48,7 @@ HEREDOC
       opts.separator ""
     end
 
-    subcommands = { 
+    subcommands = {
       'generate_config' => OptionParser.new do |opts|
         opts.banner = "Usage: generate_config [options]"
         opts.on('-r', '--region=REGION', 'Region where app is currently running') { |v| @options[:region] = v }
@@ -161,7 +161,7 @@ HEREDOC
   end
 
   def self.set_stack_meta
-    begin 
+    begin
       stack_meta = JSON.parse(`opsworks-agent-cli get_json`)
       @options[:stackid] = stack_meta["opsworks"]["stack"]["id"] unless @options[:stackid]
       @options[:stackname] = stack_meta["opsworks"]["stack"]["name"] unless @options[:stackname]
@@ -488,7 +488,6 @@ HEREDOC
 
     @is_hk_layer = opsworks.hk_layer?()
     @is_fc_layer = opsworks.fc_layer?()
-    
     @is_app_layer = opsworks.app_layer?()
     @is_bg_layer = opsworks.bg_layer?()
 
@@ -830,6 +829,7 @@ HEREDOC
       :trial_customer_email_queue,
       :fd_scheduler_export_cleanup_queue,
       :fd_scheduler_downgrade_policy_reminder_queue,
+      :analytics_etl_queue
     ]
 
     sqs_shoryken = {
