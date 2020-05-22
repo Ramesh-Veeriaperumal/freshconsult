@@ -52,4 +52,9 @@ class TrialWidgetValidationTest < ActionView::TestCase
     trial_widget_validator = TrialWidgetValidation.new({ goals: [Account::ONBOARDING_V2_GOALS[Random.rand(n_steps)]] }, nil)
     assert trial_widget_validator.valid?(:complete_step)
   end
+
+  def test_valid_fsm_goal
+    trial_widget_validator = TrialWidgetValidation.new({ goals: ['manage_field_workforce'] }, nil)
+    assert trial_widget_validator.valid?(:complete_step)
+  end
 end
