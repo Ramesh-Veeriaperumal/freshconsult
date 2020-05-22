@@ -15,4 +15,11 @@ class Support::SignupsControllerTest < ActionController::TestCase
   ensure
     Support::SignupsController.any_instance.unstub(:set_locale)
   end
+
+  def test_remove_agent_params
+    role_id = @account.roles.first.id
+    user_params = { name: Faker::Name.name, email: Faker::Internet.email }
+    controller.params[:user] = user_params.merge(helpdesk_agent: 1, role_ids: [role_id.to_s])
+    assert_equal user_params.stringify_keys, controller.safe_send('remove_agent_params')
+  end
 end

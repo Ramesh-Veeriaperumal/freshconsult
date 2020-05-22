@@ -10,7 +10,7 @@ class Support::SignupsController < SupportController
   skip_before_filter :verify_authenticity_token
   before_filter :authenticate_with_freshid, only: :new, if: :freshid_integration_enabled_and_not_logged_in?
   before_filter :set_validatable_custom_fields, :remove_noneditable_fields_in_params, :set_user_language,
-                :set_required_fields, :only => [:create]
+                :set_required_fields, :remove_agent_params, :only => [:create]
   
   def new
     respond_to do |format|
@@ -40,6 +40,10 @@ class Support::SignupsController < SupportController
       profile_field_names = current_account.contact_form.customer_signup_invisible_contact_fields.map(&:name)
       params[:user][:custom_field].except! *profile_field_names unless params[:user][:custom_field].nil?
       params[:user].except! *profile_field_names # except! pushed into Hash Class in will_paginate plugin
+    end
+
+    def remove_agent_params
+      params[:user].except!(*agent_params)
     end
 
     def initialize_user
