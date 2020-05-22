@@ -261,6 +261,8 @@
   $ref: ./agents/search_in_freshworks.yaml
 /agents/update_multiple:
   $ref: ./agents/update_multiple.yaml
+/agents/verify_agent_privilege:
+  $ref: ./agents/verify_agent_privilege.yaml
 
 # Profiles
 /agents/me:
@@ -778,7 +780,7 @@
   $ref: ./admin/scoreboard_levels/index.yaml
 
 #agent-statuses
-/agent-statuses:
-  $ref: ./agent-statuses/list_and_create.yaml
-/agent-statuses/{id}:
-  $ref: ./agent-statuses/read_update_delete.yaml
+/agent_statuses:
+  $ref: ./agent_statuses/list_and_create.yaml
+/agent_statuses/{id}:
+  $ref: ./agent_statuses/read_update_delete.yaml

@@ -5,20 +5,23 @@ properties:
     type: string
     example: 'offline'
   state:
-    description: Enable for status for agent
+    description: Enable status for agent
     type: string
-    enum: ['active', 'inactive']
-  icon_id:
+    enum: ['on', 'off']
+  icon:
     description: Status icon
     type: integer
-    format: int64
     example: 123
   type:
     description: Type of status
     type: string
-    enum: ['productive', 'unproductive']
+    enum: ['active', 'inactive']
+  after_call_work:
+    description: Needed time for agents after call
+    type: integer
+    example: 20
 required:
- - name
- - state
- - icon_id
- - type
+  - name
+  - state
+  - icon
+  - type

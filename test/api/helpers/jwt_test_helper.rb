@@ -10,6 +10,7 @@ module JwtTestHelper
   FRESHBOTS = 'freshbots'.freeze
   TWILIGHT = 'twilight'.freeze
   FIELD_SERVICE = 'field_service'.freeze
+  FRESHDESK = 'freshdesk'.freeze
   JWT_SECRET_SOURCES = [TWITTER, PROACTIVE, FRESHMOVER, FRESHCONNECT, SHERLOCK, FACEBOOK, FRESHBOTS, TWILIGHT, FIELD_SERVICE].freeze
   JWT_ARRAY_SECRET_SOURCES = [FREDDY, FRESHCHAT].freeze
   def generate_jwt_token(user_id, account_id, jti, iat, algorithm = 'HS256')
@@ -22,6 +23,7 @@ module JwtTestHelper
   def generate_custom_jwt_token(source_name)
     return generate_freddy_jwt(source_name) if JWT_ARRAY_SECRET_SOURCES.include?(source_name)
     return generate_jwt_for_jwt_secret_sources(source_name) if JWT_SECRET_SOURCES.include?(source_name)
+    return generate_jwt_token_for_privilege(source_name) if source_name == FRESHDESK
 
     domain = @account.full_domain.split('.')[0]
     account_details = { 'domain_name' => domain,
@@ -81,5 +83,10 @@ module JwtTestHelper
                 typ: 'JWT',
                 alg: 'RS256' }
     JWT.encode(payload, private_key, 'RS256', headers)
+  end
+
+  def generate_jwt_token_for_privilege(source_name)
+    payload = { account_id: Account.current.id, domain: Account.current.full_domain, current_user_id: User.current.id }
+    JWT.encode payload, source_name, 'HS256', 'alg' => 'HS256'
   end
 end

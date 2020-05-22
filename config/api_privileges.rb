@@ -55,6 +55,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :'ember/rt', only: [:show]
     resource :"out_of_office", only: %i[index show create update destroy]
     resource :'ember/agent_assist', only: [:bots]
+    resource :agent_status, only: [:index]
   end
 
   view_secure_field do
@@ -195,6 +196,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :field_service_management, only: [:update_settings, :show_settings]
     resource :"settings/helpdesk/field_service", only: [:update_settings, :show_settings]
     resource :"ember/sla_policy", only: [:index, :show, :create, :update, :destroy]
+    resource :agent_status, only: [:show, :create, :update, :destroy]
   end
 
   edit_ticket_properties do
