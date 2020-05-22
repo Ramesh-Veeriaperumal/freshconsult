@@ -4,7 +4,7 @@ class Ryuken::CountPerformer
       search_payload = args["#{args['object']}_properties"].merge(
         'version' => (args['action_epoch'] * 1_000_000).ceil
       )
-      legacy = args['legacy'].nil? ? true : args['legacy']
+      legacy = false
       analytics = args['analytics'].nil? ? true : args['analytics']
       case search_payload['action']
       when 'destroy'

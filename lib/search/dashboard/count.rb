@@ -25,7 +25,6 @@ module Search
         model_class = payload[:klass_name]
         document_id = payload[:document_id]
         delete_from_analytics_cluster(document_id) if analytics_index && Account.current.launched?(:count_service_es_writes)
-        delete_from_legacy_cluster(model_class, document_id) if legacy_index && Account.current.features?(:countv2_writes)
       end
 
       def alias_name
@@ -107,22 +106,11 @@ module Search
           version: version_stamp
         }
         write_to_analytics_cluster(model_object, version_stamp) if analytics_index && Account.current.launched?(:count_service_es_writes)
-        write_to_legacy_cluster(model_object.to_count_es_json, version) if legacy_index && Account.current.features?(:countv2_writes)
-      end
-
-      def write_to_legacy_cluster(object_json, version)
-        model_class = payload[:klass_name]
-        document_id = payload[:document_id]
-        Search::Dashboard::CountClient.new('put', document_path(model_class, document_id, version), object_json)
       end
 
       def write_to_analytics_cluster(model_object, version_stamp)
         Rails.logger.info "Index to CountClient --- account::: #{@account_id}, #{@payload[:klass_name]}::: #{@payload[:document_id]}, action::: #{@payload[:action]}, version::: #{version_stamp}"
         SearchService::Client.new(@account_id).write_count_object(model_object, version_stamp)
-      end
-
-      def delete_from_legacy_cluster(model_class, document_id)
-        Search::Dashboard::CountClient.new(:delete, document_path(model_class, document_id), nil, Search::Utils::SEARCH_LOGGING[:response]).response
       end
 
       def delete_from_analytics_cluster(document_id)
