@@ -724,6 +724,16 @@ module Ember
           end
         end
       end
+
+      def test_revoke_geolocation_when_fsm_disabled
+        Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+        Account.current.add_feature(:field_service_geolocation)
+        assert_equal Account.current.has_feature?(:field_service_geolocation), true
+        cleanup_fsm
+        assert_equal Account.current.has_feature?(:field_service_geolocation), false
+      ensure
+        Account.any_instance.unstub(:field_service_management_enabled?)
+      end
     end
   end
 end

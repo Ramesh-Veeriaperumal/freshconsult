@@ -84,6 +84,8 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     SERVICE_TASKS_DUE_TODAY_WIDGET_NAME = 'service_tasks_due_today'.freeze
     SERVICE_TASKS_UNASSIGNED_WIDGET_NAME = 'unassigned_service_tasks'.freeze
     SERVICE_TASKS_OVERDUE_WIDGET_NAME = 'overdue_service_tasks'.freeze
+    GEO_LOCATION_FEATURE_KEY = 'geo_location_enabled'.freeze
+    GEO_TAGGING_FEATURE_KEY = 'location_tagging_enabled'.freeze
 
     WIDGETS_NAME_TO_TYPE_MAP = {
       SERVICE_TASKS_INCOMING_TREND_WIDGET_NAME => WIDGET_MODULE_TOKEN_BY_NAME[TICKET_TREND_CARD],
@@ -92,6 +94,16 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       SERVICE_TASKS_DUE_TODAY_WIDGET_NAME => WIDGET_MODULE_TOKEN_BY_NAME[SCORE_CARD],
       SERVICE_TASKS_UNASSIGNED_WIDGET_NAME => WIDGET_MODULE_TOKEN_BY_NAME[SCORE_CARD],
       SERVICE_TASKS_OVERDUE_WIDGET_NAME => WIDGET_MODULE_TOKEN_BY_NAME[SCORE_CARD]
+    }.freeze
+
+    FEATURE_MAPPING = {
+      GEO_LOCATION_FEATURE_KEY => :field_service_geolocation,
+      GEO_TAGGING_FEATURE_KEY => :location_tagging
+    }.freeze
+
+    LAUNCH_PARTY_MAPPING = {
+      GEO_LOCATION_FEATURE_KEY => :launch_fsm_geolocation,
+      GEO_TAGGING_FEATURE_KEY => :launch_location_tagging
     }.freeze
 
     FSM_TICKET_FILTERS = ['service_tasks_due_today', 'unassigned_service_tasks', 'overdue_service_tasks', 'unresolved_service_tasks', 'service_tasks_starting_today'].freeze
@@ -114,7 +126,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       SERVICE_TASKS_AVG_RESOLUTION_WIDGET_NAME => ::Dashboard::Custom::TimeTrendCard::METRICS_MAPPING.key('AVG_RESOLUTION_TIME')
     }.freeze
 
-    FSM_SETTINGS_DEFAULT_VALUES = { field_agents_can_manage_appointments: true }.freeze
+    FSM_SETTINGS_DEFAULT_VALUES = { field_agents_can_manage_appointments: true, geo_location_enabled: false, location_tagging_enabled: true }.freeze
     UPDATE_SETTINGS_FIELDS = FSM_SETTINGS_DEFAULT_VALUES.keys.freeze
   end
 end

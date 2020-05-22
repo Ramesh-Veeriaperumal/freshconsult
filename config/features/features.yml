@@ -393,6 +393,7 @@
       :assets_toggle: 388
       :prevent_ticket_creation_for_others: 389
       :custom_source: 390
+      :location_tagging: 391
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -501,3 +502,6 @@
   :assets_toggle: false
   :contact_custom_activity_api: false
   :prevent_ticket_creation_for_others: true
+  :field_service_geolocation: false
+  :location_tagging: false
+ 
