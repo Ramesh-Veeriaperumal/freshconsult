@@ -74,8 +74,7 @@ module NotesTestHelper
   end
 
   def event_info(event)
-    meta_hash = { meta: TicketsTestHelper::HYPERTRAIL_META_VALUE }
-    { pod: ChannelFrameworkConfig['pod'] }.merge!(meta_hash)
+    { pod: ChannelFrameworkConfig['pod'], hypertrail_version: CentralConstants::HYPERTRAIL_VERSION }
   end
 
   def central_assoc_note_pattern(expected_output = {}, note)

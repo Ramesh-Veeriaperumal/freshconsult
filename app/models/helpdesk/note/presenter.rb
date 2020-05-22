@@ -178,8 +178,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def event_info(event)
-    meta_hash = { meta: Account.current.construct_meta_for_event_info }
-    { pod: ChannelFrameworkConfig['pod'] }.merge!(meta_hash)
+    { pod: ChannelFrameworkConfig['pod'], hypertrail_version: CentralConstants::HYPERTRAIL_VERSION }
   end
 
   def parsed_to_emails

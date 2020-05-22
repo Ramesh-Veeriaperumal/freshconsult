@@ -4,8 +4,8 @@ module CentralConstants
   # In case of any breaking changes, bump the majore version, update from 0.0 to 1.0
   MODEL_PAYLOAD_VERSION = {
     'Account' => '1.4',
-    'Helpdesk::Ticket' => '2.14',
-    'Helpdesk::Note' => '0.9',
+    'Helpdesk::Ticket' => '2.15',
+    'Helpdesk::Note' => '1.0',
     'Solution::Category' => '0.2',
     'Solution::Folder' => '0.2',
     'Solution::Article' => '0.3',
@@ -19,7 +19,7 @@ module CentralConstants
     'VaRule' => '0.2',
     'Group' => '3.1',
     'Post' => '0.1',
-    'Helpdesk::TimeSheet' => '1.4',
+    'Helpdesk::TimeSheet' => '1.5',
     'DashboardAnnouncement' => '0.1',
     'Social::TwitterHandle' => '0.1',
     'Social::TwitterStream' => '0.1',
@@ -56,10 +56,6 @@ module CentralConstants
   }
 
   HYPERTRAIL_VERSION = '0.0.1'.freeze
-
-  ADDITIONAL_META = {
-    hypertrail_version: HYPERTRAIL_VERSION
-  }.freeze
   # To avoid duplicate central event of associated models(user_companies) with model(user) as exchange payload,
   # include attr_accessor(associated_model_changes) in model, it will skip associated model central events for a certain model action.
   SKIP_EVENT = [

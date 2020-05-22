@@ -61,9 +61,8 @@ class NoteTest < ActiveSupport::TestCase
   def test_central_publish_payload_event_info_check_hypertrail_version
     note = create_note(note_params_hash)
     payload = note.central_publish_payload.to_json
-    meta = TicketsTestHelper::HYPERTRAIL_META_VALUE
     create_event_info = note.event_info(:create)
-    assert_equal meta, create_event_info[:meta]
+    assert_equal CentralConstants::HYPERTRAIL_VERSION, create_event_info[:hypertrail_version]
     payload.must_match_json_expression(central_publish_note_pattern(note))
     create_event_info.must_match_json_expression(event_info(:create))
   ensure

@@ -70,7 +70,6 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   end
 
   def event_info(_action)
-    { meta: Account.current.construct_meta_for_event_info }
+    { hypertrail_version: CentralConstants::HYPERTRAIL_VERSION }
   end
-
 end

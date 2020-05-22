@@ -59,7 +59,6 @@ module TimeSheetsTestHelper
   end
 
   def event_info_pattern(_event)
-    { meta: TicketsTestHelper::HYPERTRAIL_META_VALUE }
+    { hypertrail_version: CentralConstants::HYPERTRAIL_VERSION }
   end
-
 end

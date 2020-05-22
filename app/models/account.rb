@@ -343,13 +343,6 @@ class Account < ActiveRecord::Base
     end
   end
 
-  def construct_meta_for_event_info
-    CentralConstants::ADDITIONAL_META.each_with_object([]) do |(key, value), arr|
-      arr << { name: key.to_s, value: value }
-      arr
-    end
-  end
-
   # Does the account qualify for a particular subscription plan
   # based on the plan's limits
   def qualifies_for?(plan)
