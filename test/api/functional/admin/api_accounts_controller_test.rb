@@ -86,12 +86,12 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
   end
 
   def test_account_cancellation
-    reset_account_subscription_state('trail')
+    reset_account_subscription_state('trial')
     url = "#{CHARGEBEE_SUBSCRIPTION_BASE_URL}/#{@account.id}"
     stub_request(:get, url).to_return(status: 200, body: chargebee_subscripiton_reponse.to_json, headers: {})
     put :cancel, construct_params(get_valid_params_for_cancel)
     assert_response 204
-    reset_account_subscription_state('trail')
+    reset_account_subscription_state('trial')
   end
 
   def test_account_cancellation_for_paid_accounts
@@ -103,7 +103,7 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:account_cancellation_requested?).returns(true)
     assert_response 204
     assert_equal true, @account.account_cancellation_requested?
-    reset_account_subscription_state('trail')
+    reset_account_subscription_state('trial')
   ensure
     @account.subscription_payments.destroy_all
     @account.delete_account_cancellation_request_job_key
@@ -127,7 +127,7 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     put :cancel, construct_params(get_valid_params_for_cancel)
     assert_response 403
     match_json('code' => 'account_suspended', 'message' => 'Your account has been suspended.')
-    reset_account_subscription_state('trail')
+    reset_account_subscription_state('trial')
   end
 
   def test_account_cancellation_request_already_placed
@@ -155,7 +155,7 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     assert_response 204
     assert @account.account_cancellation_requested?
   ensure
-    reset_account_subscription_state('trail')
+    reset_account_subscription_state('trial')
     @account.delete_account_cancellation_requested_time_key
     DateTime.unstub(:now)
     Billing::Subscription.any_instance.unstub(:remove_scheduled_cancellation)

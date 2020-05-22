@@ -347,23 +347,25 @@ class AccountsController < ApplicationController
 
   def fetch_product_signup_response
     acc_additional_settings = @signup.account.account_additional_settings
+    perishable_token = @signup.user.perishable_token
     bundle_id = acc_additional_settings.present? ? acc_additional_settings.additional_settings[:bundle_id] : nil
     bundle_name = acc_additional_settings.present? ? acc_additional_settings.additional_settings[:bundle_name] : nil
     {
-      "redirect_url": signup_complete_url(:token => @signup.user.perishable_token, :host => @signup.account.full_domain),
-      "account": {
-        "id": @signup.account.id,
-        "domain": @signup.account.full_domain,
-        "name": @signup.account.name,
-        "locale": nil,
-        "timezone": nil,
-        "alternate_url": '',
-        "description": ''
+      redirect_url: signup_complete_url(token: perishable_token, host: @signup.account.full_domain),
+      account: {
+        id: @signup.account.id,
+        domain: @signup.account.full_domain,
+        name: @signup.account.name,
+        locale: nil,
+        timezone: nil,
+        alternate_url: '',
+        description: '',
+        token: perishable_token
       },
-      "misc": {
-        "bundle_name": bundle_name,
-        "bundle_id": bundle_id,
-        "account_domain": @signup.account.full_domain
+      misc: {
+        bundle_name: bundle_name,
+        bundle_id: bundle_id,
+        account_domain: @signup.account.full_domain
       }
     }
   end
