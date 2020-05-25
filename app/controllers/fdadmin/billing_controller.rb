@@ -28,7 +28,8 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
     end
 
     handle_due_invoices if check_due_invoices?
-    if Account.current.omni_bundle_account?
+    if @account.present? && @account.make_current && @account.omni_bundle_account?
+      Rails.logger.info "Pushing event data for Freshcaller/Freshchat product account-id: #{@account.id}"
       Billing::FreshcallerSubscriptionUpdate.perform_async(params)
       Billing::FreshchatSubscriptionUpdate.perform_async(params)
     end
