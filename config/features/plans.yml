@@ -72,6 +72,7 @@
       - :field_service_management_toggle
       - :sla_reminder_automation
       - :advanced_freshcaller
+      - :custom_ssl
     :inherits:
       - :sprout_jan_17
     :exclude: []
@@ -103,7 +104,6 @@
       - :collision
       - :round_robin
       - :enterprise_reporting
-      - :custom_ssl
       - :custom_roles
       - :chat_routing
       - :dynamic_sections
@@ -222,6 +222,7 @@
       - :article_interlinking
       - :advanced_article_toolbar_options
       - :advanced_freshcaller
+      - :custom_ssl
     :inherits:
       - :sprout_jan_19
     :exclude: []
@@ -292,7 +293,6 @@
       - :layout_customization
       - :round_robin
       - :enterprise_reporting
-      - :custom_ssl
       - :custom_roles
       - :chat_routing
       - :dynamic_sections
@@ -435,6 +435,7 @@
       - :advanced_article_toolbar_options
       - :field_service_management_toggle
       - :advanced_freshcaller
+      - :custom_ssl
     :inherits:
       - :sprout_jan_20
     :exclude: []
@@ -502,7 +503,6 @@
       - :layout_customization
       - :round_robin
       - :enterprise_reporting
-      - :custom_ssl
       - :custom_roles
       - :chat_routing
       - :dynamic_sections
