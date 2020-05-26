@@ -2022,5 +2022,49 @@ module Ember
     ensure
       survey.destroy
     end
+
+    def test_create_contact_with_facebook_id
+      facebook_id = Faker::Lorem.characters(15)
+      post :create, construct_params({}, name: Faker::Lorem.characters(15), facebook_id: facebook_id)
+      assert_response 201
+      assert_equal parse_response(@response.body)['facebook_id'], facebook_id
+    end
+
+    def test_length_exceeded_validation_error_with_facebook_id
+      facebook_id = Faker::Lorem.characters(300)
+      post :create, construct_params({}, name: Faker::Lorem.characters(15), facebook_id: facebook_id)
+      match_json([bad_request_error_pattern('facebook_id', :too_long, element_type: :characters, max_count: "#{ApiConstants::MAX_LENGTH_STRING}", current_count: 300)])
+      assert_response 400
+    end
+
+    def test_mandatory_unique_identifier_field
+      Account.any_instance.stubs(:unique_contact_identifier_enabled?).returns(false)
+      post :create, construct_params({}, name: Faker::Lorem.characters(15))
+      assert_response 400
+      match_json(
+        [{
+          field: 'email',
+          code: :missing_field,
+          message: 'Please fill at least 1 of email, mobile, phone, twitter_id, facebook_id fields'
+        }]
+      )
+    ensure
+      Account.any_instance.unstub(:unique_contact_identifier_enabled?)
+    end
+
+    def test_mandatory_unique_identifier_field_with_unique_contact_identifier_enabled
+      Account.any_instance.stubs(:unique_contact_identifier_enabled?).returns(true)
+      post :create, construct_params({}, name: Faker::Lorem.characters(15))
+      assert_response 400
+      match_json(
+        [{
+          field: 'email',
+          code: :missing_field,
+          message: 'Please fill at least 1 of email, mobile, phone, twitter_id, unique_external_id, facebook_id fields'
+        }]
+      )
+    ensure
+      Account.any_instance.unstub(:unique_contact_identifier_enabled?)
+    end
   end
 end
