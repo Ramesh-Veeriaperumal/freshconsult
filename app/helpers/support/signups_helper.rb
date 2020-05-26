@@ -4,6 +4,10 @@ module Support::SignupsHelper
     current_account.contact_form.customer_signup_contact_fields
   end
 
+  def agent_params
+    ['helpdesk_agent', 'role_ids']
+  end
+
   def render_as_list form_builder, field
     field_value = (field_value = @user.safe_send(field.name)).blank? ? field.default_value : field_value
     required = (field.field_type == :default_email) ? true : field.required_in_portal

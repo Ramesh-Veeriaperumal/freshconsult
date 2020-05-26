@@ -16,7 +16,7 @@ class SAAS::SubscriptionEventActions
                            :helpdesk_restriction_toggle, :ticket_templates,
                            :round_robin_load_balancing, :multi_timezone, :custom_translations,
                            :sitemap, :article_versioning, :suggested_articles_count, :unlimited_multi_product, :article_approval_workflow,
-                           :fb_ad_posts, :segments, :agent_assist_ultimate, :agent_assist_lite].freeze
+                           :fb_ad_posts, :segments, :agent_assist_ultimate, :agent_assist_lite, :field_service_geolocation_toggle].freeze
 
 
   ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle, :multiple_companies_toggle,
@@ -166,7 +166,7 @@ class SAAS::SubscriptionEventActions
     def handle_feature_drop_data
       drop_data_features_v2 = features_list_to_drop_data.select { |feature| feature unless account.has_feature?(feature) }
       similar_toggle_features.each do |toggle, feature|
-        drop_data_features_v2.delete(toggle) if drop_data_features_v2.include?(toggle) && drop_data_features_v2.include?(feature)
+        drop_data_features_v2.delete(feature) if drop_data_features_v2.include?(toggle) && drop_data_features_v2.include?(feature)
       end
       handle_feature_data(drop_data_features_v2, DROP) if drop_data_features_v2.present?
     end
@@ -282,5 +282,6 @@ class SAAS::SubscriptionEventActions
       if account.field_service_management_toggle_enabled? && account.field_service_management_enabled?
         account.add_feature(:dynamic_sections) unless account.has_feature?(:dynamic_sections)
       end
+      account.add_feature(:location_tagging) if account.launched?(:launch_location_tagging) && old_plan.subscription_plan.display_name.eql?('Sprout')
     end
 end

@@ -46,7 +46,7 @@ class ShoryukenConfig
     layers = node[:opsworks][:instance][:layers]
     shoruken_layer = layers.any? {|layer| layer.eql?(node[:falcon][:shoryuken][:layer])}
 
-    common_pool_worker_count = (ENV['SQUAD'] == '1') || (node[:opsworks][:instance][:layers].count > 1) ? 2 : 8
+    common_pool_worker_count = (ENV['SQUAD'] == '1' && ENV['PRERUN'] != '1') || (node[:opsworks][:instance][:layers].count > 1) ? 2 : 8
 
     dedicated_execution = false
 
@@ -234,6 +234,7 @@ class ShoryukenConfig
       :social_fb_feed,
       :trial_email,
       :fd_scheduler_export_cleanup_queue,
+      :analytics_etl_queue
     ]
 
     queue_prefix = ENV["HELPKIT_TEST_SETUP_SQS_QUEUE_PREFIX"]

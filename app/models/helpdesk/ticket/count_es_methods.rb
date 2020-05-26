@@ -31,16 +31,30 @@ class Helpdesk::Ticket < ActiveRecord::Base
       }, false).merge(count_es_ffs_fields).merge(schema_less_fields).merge(fsm_appointment_times).map{ |k, v| [k, v] }.to_h.to_json
   end
 
+  # changing all the below variable to be instance variable rather than class variable as column count could change depending
+  # on "ticket_field_limit_increase" feature.
   def count_es_columns
-    @@count_es_columns ||= ticket_indexed_fields.concat(ticket_states_columns).concat(count_es_ff_columns).concat(schema_less_columns).concat([:tags])
+    @count_es_columns ||= ticket_indexed_fields.concat(ticket_states_columns).concat(count_es_ff_columns).concat(schema_less_columns).concat([:tags])
   end
 
   def count_es_ff_columns
-    @@count_es_ff_columns ||= Flexifield.column_names.select {|v| v =~ /^ff(s|_date|_int|_decimal|_boolean)/}.map(&:to_sym)
+    @count_es_ff_columns ||= begin
+      if Account.current.ticket_field_limit_increase_enabled?
+        ticket_field_data_custom_field_column_names
+      else
+        flexifield_custom_field_column_names
+      end
+    end
   end
 
   def count_es_ffs_columns
-    @@count_es_ffs_columns ||= Flexifield.column_names.select { |v| v =~ /^ffs/ }.map(&:to_sym)
+    @count_es_ffs_columns ||= begin
+      if Account.current.ticket_field_limit_increase_enabled?
+        ticket_field_data_dropdown_column_names
+      else
+        flexifield_dropdown_column_names
+      end
+    end
   end
 
   def ticket_states_columns
@@ -72,12 +86,43 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def count_es_ff_fields
-    flexifield.as_json(root: false, only: count_es_ff_columns)
+    if Account.current.ticket_field_limit_increase_enabled?
+      ticket_field_data.as_json(root: false, only: count_es_ff_columns).merge(convert_to_choice_value)
+    else
+      flexifield.as_json(root: false, only: count_es_ff_columns)
+    end
   end
 
   def count_es_ffs_fields
-    flexifield.as_json(root: false, only: count_es_ffs_columns)
+    if Account.current.ticket_field_limit_increase_enabled?
+      ticket_field_data.as_json(root: false, only: count_es_ffs_columns).merge(convert_to_choice_value)
+    else
+      flexifield.as_json(root: false, only: count_es_ffs_columns)
+    end
   end
 
+  def convert_to_choice_value
+    (retrieve_ff_values_via_mapping || {}).each_with_object({}) do |field_value, mapping|
+      ffs_name = Account.current.ticket_field_def.to_ff_field(field_value[0])
+      next if ffs_name.blank? || field_value[1].blank?
 
+      mapping[ffs_name] = field_value[1]
+    end
+  end
+
+  def flexifield_dropdown_column_names
+    Flexifield.column_names.select { |v| v =~ /^ffs/ }.map(&:to_sym)
+  end
+
+  def flexifield_custom_field_column_names
+    Flexifield.column_names.select { |v| v =~ /^ff(s|_date|_int|_decimal|_boolean)/ }.map(&:to_sym)
+  end
+
+  def ticket_field_data_dropdown_column_names
+    TicketFieldData.column_names.select { |v| v =~ /^ffs/ }.map(&:to_sym)
+  end
+
+  def ticket_field_data_custom_field_column_names
+    TicketFieldData.column_names.select { |v| v =~ /^ff(s|_date|_int|_decimal|_boolean)/ }.map(&:to_sym)
+  end
 end

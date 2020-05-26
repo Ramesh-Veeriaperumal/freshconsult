@@ -83,7 +83,6 @@ class TimeSheetTest < ActiveSupport::TestCase
   def test_central_time_sheet_create_event_info_check_hypertrail_version
     Account.current.reload
     ticket = create_ticket(ticket_params_hash)
-    meta = TicketsTestHelper::HYPERTRAIL_META_VALUE
     ticket.reload
     CentralPublisher::Worker.jobs.clear
     time_sheet = ticket.time_sheets.new(time_sheet_params_hash)
@@ -93,7 +92,7 @@ class TimeSheetTest < ActiveSupport::TestCase
     payload = time_sheet.central_publish_payload.to_json
     payload.must_match_json_expression(cp_time_sheet_model_properties(time_sheet))
     create_event_info = time_sheet.event_info(:create)
-    assert_equal meta, create_event_info[:meta]
+    assert_equal CentralConstants::HYPERTRAIL_VERSION, create_event_info[:hypertrail_version]
     create_event_info.must_match_json_expression(event_info_pattern(:create))
   ensure
     time_sheet.destroy

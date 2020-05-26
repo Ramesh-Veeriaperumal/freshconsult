@@ -134,11 +134,10 @@ class TicketTest < ActiveSupport::TestCase
   def test_central_publish_payload_event_info_check_hypertrail_version
     custom_fields_hash = { "test_custom_dropdown_#{@account.id}" => DROPDOWN_CHOICES.sample, "test_custom_text_#{@account.id}" => 'Sample Text' }
     t = create_ticket(ticket_params_hash.merge(custom_field: custom_fields_hash))
-    meta = TicketsTestHelper::HYPERTRAIL_META_VALUE
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
     create_event_info = t.event_info(:create)
-    assert_equal meta, create_event_info[:meta]
+    assert_equal CentralConstants::HYPERTRAIL_VERSION, create_event_info[:hypertrail_version]
     create_event_info.must_match_json_expression(cp_ticket_event_info_pattern(t))
   ensure
     t.destroy

@@ -8,7 +8,7 @@ module AwsWrapper
     end
     
     def self.put(bucket_name, key, content, options = {})
-      fetch_obj(bucket_name, key).put(body: content)
+      fetch_obj(bucket_name, key).put({ body: content }.merge(options))
     end
     
     def self.copy(copy_source, target_bucket, target_key)

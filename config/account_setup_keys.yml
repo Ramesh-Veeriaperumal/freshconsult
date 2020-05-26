@@ -74,6 +74,7 @@
   offer_self_service: 62
   track_agents_performance: 63
   integrate_with_apps: 64
+  manage_field_workforce: 70
 
 :onboarding_v2_goals:
   - organiseand_keep_track
@@ -82,6 +83,7 @@
   - offer_self_service
   - track_agents_performance
   - integrate_with_apps
+  - manage_field_workforce
 
 :setup_keys_display_order:
   - new_account

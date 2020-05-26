@@ -348,4 +348,14 @@ class Export::Ticket < Struct.new(:export_params)
     def skip_association_preload(association_model)
       export_params[:archived_tickets].present? && DISASSOCIATED_MODELS[:archive_tickets].include?(association_model)
     end
+
+    # build_attachment method is overridden here to support larger export files
+    # uploads the file to S3 only after the attachment is saved.
+    def build_attachment(file_path)
+      file = File.open(file_path, 'r')
+      file_name = file_path.split('/').last
+      attachment = @data_export.build_attachment(content_file_name: file_name, content_file_size: file.size.to_i)
+      attachment.upload_to_s3(file) if attachment.save!
+      @data_export.file_uploaded!
+    end
 end

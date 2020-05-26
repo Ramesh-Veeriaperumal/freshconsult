@@ -141,3 +141,9 @@ run "ln -nfs #{shared_path}/config/cert/integrations/xero/publickey.cer #{node[:
 
 # for copying previous files
 run "rsync --ignore-existing -razv /data/helpkit/current/public/assets #{node[:rel_path]}/public" if ::File.directory?('/data/helpkit/current') && ::File.directory?('/data/helpkit/current/public/assets')
+
+# for log sync
+if ENV['SQUAD'] == '1'
+  run "rm -rf #{node[:rel_path]}/log"
+  run "ln -nsf #{shared_path}/log #{node[:rel_path]}"
+end

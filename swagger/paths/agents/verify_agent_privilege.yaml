@@ -1,0 +1,10 @@
+get:
+  tags: [agents]
+  description: verify agent permission to list all agent statuses
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/verify_agent_privilege_response'
+    403:
+      description: Access denied

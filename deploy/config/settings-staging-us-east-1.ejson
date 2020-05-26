@@ -848,7 +848,7 @@
       "freshchat": {
         "_agent_widget_host_url": "https://mr-yellow.freshpori.com",
         "_visitor_widget_host_url": "https://webchat-mryellow.freshpori.com",
-        "_api_host_url": "https://mr-pink.freshpori.com",
+        "_api_host_url": "https://mr-yellow.freshpori.com",
         "signup": {
           "_host": "https://mr-yellow.freshpori.com/internal/system42/",
           "secret": "EJ[1:agdMwKSxBnJe0E8/KT3Q3SafRIycf9BaGM6N1vsqm2I=:V2ecreMuQQxwaA8He/WBkppM8wXRJ75a:67QI2c/fbH8t/5U+1IkaJdRZRoQJ8dh3QIIvSelW1WexH0enqp35HJkP2PBo21FXD8JFqGQJ0W7oq2qOUNxk4uplZ42twVIyoF23EXQz3lsRBLw=]"
@@ -884,7 +884,7 @@
         "_central_url": "https://login.freshpo.com/freshid/event_callback",
         "_product": "freshdesk-staging",
         "_ui_url": "https://staging-ui.fid.freshworksapi.com",
-        "v1_migration_api_key": "EJ[1:dKYBoOAEoDUYs01PLU8c1jgzS4MSrHi/HBOcFuVbsAI=:pe2mJ1ZU+kmACpRV/aRRORR7MSze2HNK:pLPyNQ57jbBZzQ1u5bEL4I3dNNiMTrqr1/FruYzC1MARY3y9fhfuQmGDDTwLnPeY/DaZHAc2Fp0=]",
+        "v1_migration_api_key": "EJ[1:3y9zqnN1YveN0lNhuTjO583i7UAfwh95nL+BRkGHcUU=:UtkNX9bNaS9fbsLa/OdH26DkwjNg7W5C:DU2YxPlJku9oI2DOiFtYAXUrqPB38jLPbjkjfPcZwnb4e9WxbEmUuRKqk1r7fxFwcxC6xMbVNpI=]",
         "_v1_migration_url": "https://staging-migration.fid.freshworksapi.com/v2/user",
         "_v1_migration_product": "freshdesk-prestaging"
       },
@@ -1678,7 +1678,7 @@
         }
       },
       "shift_config": {
-        "_shift_service_host": "https://shift.freshpo.com/",
+        "_shift_service_host": "https://shift-staging.freshpo.com/",
         "jwt_secret": "EJ[1:aincBz1BNgVhiUnbgvHfGonYVKmvdgV6sxvwksiEk04=:NB6rMiYQLmyM4+wFMCOb4nbIXE1+Lrc1:quJ6EEHr8AxhqHgkLuX4lZPUw65VOrZAAg==]",
         "_time_out": 10
       },

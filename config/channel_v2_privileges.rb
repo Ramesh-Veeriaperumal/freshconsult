@@ -5,6 +5,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"channel/v2/ticket_filter", only: %i[index show]
     resource :"channel/v2/ticket_misc", only: %i[index]
     resource :"channel/v2/tickets/bulk_action", only: %i[bulk_archive]
+    resource :"channel/v2/agent", only: [:verify_agent_privilege]
   end
   view_solutions do
     resource :"channel/v2/api_solutions/category", only: [:index, :show]

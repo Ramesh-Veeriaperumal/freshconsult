@@ -126,11 +126,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
         att = account.attachments.new(attributes)
         if att.save
-          path = s3_path(att.id, att.content_file_name)
-          AwsWrapper::S3Object.store(path,
-                                     file_content,
-                                     S3_CONFIG[:bucket],
-                                     write_options)
+          att.upload_to_s3(file_content, write_options)
           att
         end
       end
@@ -144,6 +140,12 @@ class Helpdesk::Attachment < ActiveRecord::Base
       nil
     end
 
+  end
+
+  def upload_to_s3(file, write_options = nil)
+    write_options ||= { content_type: content_content_type }
+    path = self.class.s3_path(id, content_file_name)
+    AwsWrapper::S3.put(S3_CONFIG[:bucket], path, file, write_options.merge(server_side_encryption: 'AES256'))
   end
 
   def user_attachment?

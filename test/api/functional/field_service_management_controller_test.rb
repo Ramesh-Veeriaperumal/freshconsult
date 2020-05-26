@@ -11,14 +11,14 @@ class FieldServiceManagementControllerTest < ActionController::TestCase
   def test_update_settings
     Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
     add_privilege(User.current, :admin_tasks) unless User.current.privilege?(:admin_tasks)
-    params = FSM_SETTINGS_DEFAULT_VALUES.dup
+    params = { field_agents_can_manage_appointments: true }
     params = params.each { |key, value| params[key] = !value }
     put :update_settings, construct_params({}, params)
     params.map { |key, value| [key.to_sym, value] }
     assert params == Account.current.account_additional_settings.additional_settings[:field_service]
     match_json(fetch_fsm_settings(Account.current.account_additional_settings))
     assert_response 200
-    params = FSM_SETTINGS_DEFAULT_VALUES.dup
+    params = { field_agents_can_manage_appointments: true }
     put :update_settings, construct_params({}, params)
     assert Account.current.account_additional_settings.additional_settings[:field_service].empty?
     match_json(fetch_fsm_settings(Account.current.account_additional_settings))
@@ -33,7 +33,7 @@ class FieldServiceManagementControllerTest < ActionController::TestCase
     Account.current.account_additional_settings.additional_settings.delete(:field_service)
     Account.current.account_additional_settings.additional_settings[:field_service_management] = {}
     Account.current.account_additional_settings.save!
-    params = FSM_SETTINGS_DEFAULT_VALUES.dup
+    params = { field_agents_can_manage_appointments: true }
     put :update_settings, construct_params({}, params)
     assert_response 200
     assert Account.current.account_additional_settings.additional_settings.key?(:field_service)
@@ -44,6 +44,17 @@ class FieldServiceManagementControllerTest < ActionController::TestCase
 
   def test_update_settings_when_fsm_disabled
     Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
+    add_privilege(User.current, :admin_tasks) unless User.current.privilege?(:admin_tasks)
+    params = FSM_SETTINGS_DEFAULT_VALUES
+    put :update_settings, construct_params({}, params)
+    match_json(request_error_pattern(:require_fsm_feature))
+    assert_response 403
+  ensure
+    Account.any_instance.unstub(:field_service_management_enabled?)
+  end
+
+  def test_update_settings_when_fsm_toggle_disabled
+    Account.any_instance.stubs(:field_service_management_toggle_enabled?).returns(false)
     add_privilege(User.current, :admin_tasks) unless User.current.privilege?(:admin_tasks)
     params = FSM_SETTINGS_DEFAULT_VALUES
     put :update_settings, construct_params({}, params)
@@ -97,7 +108,104 @@ class FieldServiceManagementControllerTest < ActionController::TestCase
   def test_show_settings_when_fsm_disabled
     Account.any_instance.stubs(:field_service_management_enabled?).returns(false)
     get :show_settings, construct_params({})
+    match_json(request_error_pattern(:require_fsm_feature))
+    assert_response 403
+  ensure
+    Account.any_instance.unstub(:field_service_management_enabled?)
+  end
+
+  def test_show_settings_when_fsm_toggle_disabled
+    Account.any_instance.stubs(:field_service_management_toggle_enabled?).returns(false)
+    get :show_settings, construct_params({})
     match_json(request_error_pattern(:require_feature, feature: 'field_service_management'.titleize))
+    assert_response 403
+  ensure
+    Account.any_instance.unstub(:field_service_management_toggle_enabled?)
+  end
+
+  def test_enable_geo_location
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    add_privilege(User.current, :admin_tasks) unless User.current.privilege?(:admin_tasks)
+    Account.current.add_feature(:field_service_geolocation_toggle)
+    Account.current.launch(:launch_fsm_geolocation)
+    Account.current.account_additional_settings.save!
+    assert_equal Account.current.has_feature?(:field_service_geolocation), false
+    params = { geo_location_enabled: true }
+    put :update_settings, construct_params({}, params)
+    assert_response 200
+    assert Account.current.has_feature?(:field_service_geolocation)
+  ensure
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.current.rollback :launch_fsm_geolocation
+    Account.current.revoke_feature(:field_service_geolocation)
+    Account.current.revoke_feature(:field_service_geolocation_toggle)
+  end
+
+  def test_disable_geo_location
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    add_privilege(User.current, :admin_tasks) unless User.current.privilege?(:admin_tasks)
+    Account.current.add_feature(:field_service_geolocation_toggle)
+    Account.current.launch(:launch_fsm_geolocation)
+    Account.current.add_feature(:field_service_geolocation)
+    Account.current.account_additional_settings.save!
+    params = { geo_location_enabled: false }
+    put :update_settings, construct_params({}, params)
+    assert_response 200
+    assert_equal Account.current.has_feature?(:field_service_geolocation), false
+  ensure
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.current.rollback :launch_fsm_geolocation
+    Account.current.revoke_feature(:field_service_geolocation_toggle)
+  end
+
+  def test_geo_location_without_lp
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    add_privilege(User.current, :admin_tasks) unless User.current.privilege?(:admin_tasks)
+    Account.current.account_additional_settings.save!
+    params = { geo_location_enabled: false }
+    put :update_settings, construct_params({}, params)
+    assert_response 403
+  ensure
+    Account.any_instance.unstub(:field_service_management_enabled?)
+  end
+
+  def test_enable_geo_tagging
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    add_privilege(User.current, :admin_tasks) unless User.current.privilege?(:admin_tasks)
+    Account.current.launch(:launch_location_tagging)
+    Account.current.account_additional_settings.save!
+    assert_equal Account.current.has_feature?(:location_tagging), false
+    params = { location_tagging_enabled: true }
+    put :update_settings, construct_params({}, params)
+    assert_response 200
+    assert Account.current.has_feature?(:location_tagging)
+  ensure
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.current.rollback :launch_location_tagging
+    Account.current.revoke_feature(:location_tagging)
+  end
+
+  def test_disable_geo_tagging
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    add_privilege(User.current, :admin_tasks) unless User.current.privilege?(:admin_tasks)
+    Account.current.launch(:launch_location_tagging)
+    Account.current.add_feature(:location_tagging)
+    Account.current.account_additional_settings.save!
+    params = { location_tagging_enabled: false }
+    put :update_settings, construct_params({}, params)
+    assert_response 200
+    assert_equal Account.current.has_feature?(:location_tagging), false
+  ensure
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.current.rollback :launch_location_tagging
+  end
+
+  def test_geo_tagging_without_lp
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    add_privilege(User.current, :admin_tasks) unless User.current.privilege?(:admin_tasks)
+    Account.current.account_additional_settings.save!
+    params = { location_tagging_enabled: false }
+    put :update_settings, construct_params({}, params)
     assert_response 403
   ensure
     Account.any_instance.unstub(:field_service_management_enabled?)

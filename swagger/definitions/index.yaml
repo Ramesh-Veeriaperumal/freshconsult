@@ -930,3 +930,6 @@ agent_statuses_request:
   $ref: ./request/agent_statuses.yaml
 agent_statuses_response:
   $ref: ./response/agent_statuses.yaml
+
+verify_agent_privilege_response:
+  $ref: ./response/agents/verify_agent_privilege_response.yaml

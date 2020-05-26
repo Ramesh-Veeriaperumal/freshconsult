@@ -5485,6 +5485,25 @@
         }
       }
     },
+    "/agents/verify_agent_privilege": {
+      "get": {
+        "tags": [
+          "agents"
+        ],
+        "description": "verify agent permission to list all agent statuses",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/verify_agent_privilege_response"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/agents/me": {
       "get": {
         "tags": [
@@ -15524,7 +15543,7 @@
         }
       }
     },
-    "/agent-statuses": {
+    "/agent_statuses": {
       "get": {
         "tags": [
           "agent-statuses"
@@ -15595,7 +15614,7 @@
         }
       }
     },
-    "/agent-statuses/{id}": {
+    "/agent_statuses/{id}": {
       "get": {
         "tags": [
           "agent-statuses"
@@ -30512,32 +30531,36 @@
           "example": "offline"
         },
         "state": {
-          "description": "Enable for status for agent",
+          "description": "Enable status for agent",
           "type": "string",
           "enum": [
-            "active",
-            "inactive"
+            "on",
+            "off"
           ]
         },
-        "icon_id": {
+        "icon": {
           "description": "Status icon",
           "type": "integer",
-          "format": "int64",
           "example": 123
         },
         "type": {
           "description": "Type of status",
           "type": "string",
           "enum": [
-            "productive",
-            "unproductive"
+            "active",
+            "inactive"
           ]
+        },
+        "after_call_work": {
+          "description": "Needed time for agents after call",
+          "type": "integer",
+          "example": 20
         }
       },
       "required": [
         "name",
         "state",
-        "icon_id",
+        "icon",
         "type"
       ]
     },
@@ -30556,6 +30579,21 @@
           "$ref": "#/definitions/agent_statuses"
         }
       ]
+    },
+    "verify_agent_privilege_response": {
+      "type": "object",
+      "properties": {
+        "admin": {
+          "type": "boolean",
+          "description": "Returns whether agent is admin or not",
+          "example": true
+        },
+        "allow_agent_to_change_status": {
+          "type": "boolean",
+          "description": "Returns whether agent is admin or not",
+          "example": true
+        }
+      }
     }
   },
   "parameters": {

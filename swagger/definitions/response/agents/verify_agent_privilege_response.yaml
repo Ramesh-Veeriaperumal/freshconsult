@@ -1,0 +1,11 @@
+type: object
+properties:
+  admin:
+    type: boolean
+    description: Returns whether agent is admin or not
+    example: true
+  allow_agent_to_change_status:
+    type: boolean
+    description: Returns whether agent is admin or not
+    example: true
+    

@@ -26,5 +26,6 @@ module FeatureConstants
   TICKET_FIELD_REVAMP = :ticket_field_revamp
   AGENT_SHIFTS = :agent_shifts.freeze
   OUT_OF_OFFICE = :out_of_office
+  AGENT_STATUSES = :agent_statuses
   SOLUTIONS_TEMPLATES = :solutions_templates
 end

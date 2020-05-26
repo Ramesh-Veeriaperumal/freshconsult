@@ -420,11 +420,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def event_info(event_name)
     lifecycle_hash = event_name == :create && resolved_at ? default_lifecycle_properties : @ticket_lifecycle || {}
     activity_hash = construct_activity_hash
-    meta_hash = { meta: Account.current.construct_meta_for_event_info }
-    event_info_hash = {
+    {
       action_in_bhrs: action_in_bhrs?,
-      pod: ChannelFrameworkConfig['pod']
-    }.merge(lifecycle_hash).merge(activity_hash).merge!(meta_hash)
+      pod: ChannelFrameworkConfig['pod'],
+      hypertrail_version: CentralConstants::HYPERTRAIL_VERSION
+    }.merge(lifecycle_hash).merge(activity_hash)
   end
 
   def construct_activity_hash

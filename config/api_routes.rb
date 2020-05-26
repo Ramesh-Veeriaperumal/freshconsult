@@ -176,6 +176,7 @@ Helpkit::Application.routes.draw do
     resources :company_filters, controller: 'ember/segments/company_filters', only: [:index, :create, :update, :destroy]
 
     resources :roles, controller: 'api_roles', only: [:index, :show]
+    resources :agent_statuses, only: [:index, :show, :update, :destroy, :create]
 
     namespace :settings do
       resources :helpdesk, only: [:index]
@@ -997,6 +998,7 @@ Helpkit::Application.routes.draw do
     resources :agents, controller: 'channel/v2/agents', only: [:create] do
       collection do
         put :update_multiple
+        get :verify_agent_privilege
       end
     end
     post '/canned_responses', to: 'channel/v2/canned_responses#create'
@@ -1017,6 +1019,7 @@ Helpkit::Application.routes.draw do
     get '/solutions/folders/:id', to: 'channel/v2/api_solutions/folders#show'
     get '/solutions/articles/:id', to: 'channel/v2/api_solutions/articles#show'
     get '/solutions/folders/:id/articles', to: 'channel/v2/api_solutions/articles#folder_articles'
+    
   end
 
   channel_routes = proc do
