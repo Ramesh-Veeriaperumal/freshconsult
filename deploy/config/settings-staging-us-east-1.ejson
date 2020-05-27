@@ -886,7 +886,7 @@
         "_ui_url": "https://staging-ui.fid.freshworksapi.com",
         "v1_migration_api_key": "EJ[1:3y9zqnN1YveN0lNhuTjO583i7UAfwh95nL+BRkGHcUU=:UtkNX9bNaS9fbsLa/OdH26DkwjNg7W5C:DU2YxPlJku9oI2DOiFtYAXUrqPB38jLPbjkjfPcZwnb4e9WxbEmUuRKqk1r7fxFwcxC6xMbVNpI=]",
         "_v1_migration_url": "https://staging-migration.fid.freshworksapi.com/v2/user",
-        "_v1_migration_product": "freshdesk-prestaging"
+        "_v1_migration_product": "freshdesk-staging"
       },
       "freshid_v2": {
         "_region_code": "STAGING",
