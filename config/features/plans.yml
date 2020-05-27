@@ -204,11 +204,14 @@
       - :quick_reply
       - :tam_default_fields
       - :todos_reminder_scheduler
+      - :timesheets
       - :analytics_report_clone
       - :analytics_report_presentation_mode
       - :analytics_report_delete
       - :analytics_report_save
       - :analytics_widget_save
+      - :analytics_widget_show_tabular_data
+      - :analytics_widget_edit_tabular_data
       - :analytics_widget_change_chart
       - :analytics_widget_delete
       - :analytics_helpdesk_in_depth_report
@@ -232,7 +235,6 @@
       - :ticket_templates
       - :surveys
       - :default_survey
-      - :timesheets
       - :performance_report
       - :custom_password_policy
       - :sitemap
@@ -252,8 +254,6 @@
       - :analytics_report_schedule
       - :analytics_widget_schedule
       - :analytics_widget_export
-      - :analytics_widget_show_tabular_data
-      - :analytics_widget_edit_tabular_data
       - :analytics_agent_performance
       - :analytics_group_performance
       - :analytics_time_sheet_summary_report
@@ -418,11 +418,14 @@
       - :quick_reply
       - :tam_default_fields
       - :todos_reminder_scheduler
+      - :timesheets
       - :analytics_report_clone
       - :analytics_report_presentation_mode
       - :analytics_report_delete
       - :analytics_report_save
       - :analytics_widget_save
+      - :analytics_widget_show_tabular_data
+      - :analytics_widget_edit_tabular_data
       - :analytics_widget_change_chart
       - :analytics_widget_delete
       - :analytics_helpdesk_in_depth_report
@@ -445,7 +448,6 @@
       - :ticket_templates
       - :surveys
       - :default_survey
-      - :timesheets
       - :performance_report
       - :custom_password_policy
       - :sitemap
@@ -464,8 +466,6 @@
       - :analytics_report_schedule
       - :analytics_widget_schedule
       - :analytics_widget_export
-      - :analytics_widget_show_tabular_data
-      - :analytics_widget_edit_tabular_data
       - :analytics_agent_performance
       - :analytics_group_performance
       - :analytics_time_sheet_summary_report

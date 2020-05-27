@@ -29,7 +29,6 @@ class Reports::PricingApiTest < ActiveSupport::TestCase
       curated_reports_list.each do |f|
         Account.any_instance.stubs("#{f}_enabled?".to_sym).returns(true)
       end
-
       payload = self.safe_send(:construct_restrictions_payload)
       assert_equal payload[:curatedRestrictions].size, 0
       assert_equal payload[:resourceRestrictions].size, 0
@@ -111,6 +110,73 @@ class Reports::PricingApiTest < ActiveSupport::TestCase
     @account.revoke_feature :analytics_report_save
   end
 
+  def test_timesheets_tabular_presence_when_upgraded_19
+    Account.stubs(:current).returns(@account)
+    @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.where(name: 'Sprout Jan 19').first.id, state: 'active', account_id: @account.id))
+    old_subscription = @account.subscription.dup
+    s = @account.subscription
+    s.subscription_plan_id = SubscriptionPlan.where(name: 'Blossom Jan 19').first.id
+    s.save
+    SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
+    Account.current.stubs(:freshvisual_configs_enabled?).returns(true)
+    assert @account.has_feature? :timesheets
+    assert @account.has_feature? :analytics_widget_show_tabular_data
+    assert @account.has_feature? :analytics_widget_edit_tabular_data
+  ensure
+    Account.unstub(:current)
+    @account.unstub(:subscription)
+  end
+
+  def test_timesheets_tabular_absence_when_downgraded_19
+    Account.stubs(:current).returns(@account)
+    @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.where(name: 'Blossom Jan 19').first.id, state: 'active', account_id: @account.id))
+    old_subscription = @account.subscription.dup
+    s = @account.subscription
+    s.subscription_plan_id = SubscriptionPlan.where(name: 'Sprout Jan 19').first.id
+    s.save
+    SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
+    Account.current.stubs(:freshvisual_configs_enabled?).returns(true)
+    assert_equal(@account.has_feature?(:timesheets), false)
+    assert_equal(@account.has_feature?(:analytics_widget_show_tabular_data), false)
+    assert_equal(@account.has_feature?(:analytics_widget_edit_tabular_data), false)
+  ensure
+    Account.unstub(:current)
+    @account.unstub(:subscription)
+  end
+
+  def test_timesheets_tabular_presence_when_upgraded_20
+    Account.stubs(:current).returns(@account)
+    @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.where(name: 'Sprout Jan 20').first.id, state: 'active', account_id: @account.id))
+    old_subscription = @account.subscription.dup
+    s = @account.subscription
+    s.subscription_plan_id = SubscriptionPlan.where(name: 'Blossom Jan 20').first.id
+    s.save
+    SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
+    Account.current.stubs(:freshvisual_configs_enabled?).returns(true)
+    assert @account.has_feature? :timesheets
+    assert @account.has_feature? :analytics_widget_show_tabular_data
+    assert @account.has_feature? :analytics_widget_edit_tabular_data
+  ensure
+    Account.unstub(:current)
+    @account.unstub(:subscription)
+  end
+
+  def test_timesheets_tabular_absence_when_downgraded_20
+    Account.stubs(:current).returns(@account)
+    @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.where(name: 'Blossom Jan 20').first.id, state: 'active', account_id: @account.id))
+    old_subscription = @account.subscription.dup
+    s = @account.subscription
+    s.subscription_plan_id = SubscriptionPlan.where(name: 'Sprout Jan 20').first.id
+    s.save
+    SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
+    Account.current.stubs(:freshvisual_configs_enabled?).returns(true)
+    assert_equal(@account.has_feature?(:timesheets), false)
+    assert_equal(@account.has_feature?(:analytics_widget_show_tabular_data), false)
+    assert_equal(@account.has_feature?(:analytics_widget_edit_tabular_data), false)
+  ensure
+    Account.unstub(:current)
+    @account.unstub(:subscription)
+  end
   private
 
     def stub_faraday
