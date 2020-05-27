@@ -50,8 +50,8 @@ module Email::EmailService::EmailCampaignDelivery
 
   def email_data(params)
     {
-      'subject' => params[:subject] || "Notification from #{Account.current.helpdesk_name}",
-      'html' => params[:description].gsub('{{', '${').gsub('}}', '}').concat("<p>Click to <a href = ${contact.unsubscribe_link}>unsubscribe</a> from these emails</p>"),
+      'subject' => params[:subject].present? ? params[:subject].gsub('{{', '${').gsub('}}', '}') : "Notification from #{Account.current.helpdesk_name}",
+      'html' => params[:description].present? ? params[:description].gsub('{{', '${').gsub('}}', '}').concat("<p>Click to <a href = ${contact.unsubscribe_link}>unsubscribe</a> from these emails</p>") : '',
       'tags' => tags(params[:user_ids]),
       'accountId' => params[:account_id].to_s,
       'headers' => {},
@@ -63,10 +63,12 @@ module Email::EmailService::EmailCampaignDelivery
   def tags(user_ids)
     Account.current.users.with_user_ids(user_ids).preload(:flexifield, :default_user_company, :companies).each_with_object([]) do |contact, tags|
       unless contact.simple_outreach_unsubscribe?
+        placeholder_tags = html_tags(contact)
         tags << {
           'email' => contact.email,
           'name' => contact.name,
-          'html_tags' => html_tags(contact)
+          'html_tags' => placeholder_tags,
+          'subject_tags' => placeholder_tags
         }
       end
     end
