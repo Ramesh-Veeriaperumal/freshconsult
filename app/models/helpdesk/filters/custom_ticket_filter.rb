@@ -873,12 +873,21 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     end
 
     if type
-      values = condition.container.value.split(",")
+      if Account.current.wf_comma_filter_fix_enabled?
+        values = condition.container.values
+      else
+        values = condition.container.value.split(",")
+      end
       if values.include?("0")
         values.delete("0")
         values << convert_special_values(type)
+        if Account.current.wf_comma_filter_fix_enabled?
+          condition.container.values = values.flatten
+        end
       end
-      condition.container.values[0] = values.join(",")
+      unless Account.current.wf_comma_filter_fix_enabled?
+        condition.container.values[0] = values.join(",")
+      end
     end
   end
 
@@ -903,13 +912,21 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     agent_index = group_index = nil
     conditions.each_with_index do |condition, index|
       handle_special_values(condition, ["any_agent_id"], ["any_group_id"])
-      values = condition.container.value.split(",")
+      if Account.current.wf_comma_filter_fix_enabled?
+        values = condition.container.values
+      else
+        values = condition.container.value.split(",")
+      end
       key = condition.key.to_s
 
       if key == "any_agent_id" and values.include?("-1")
         agent_index = index
       elsif key == "any_group_id" and values.present?
-        condition.container.values[0] = values.join(",") if values.delete("-1")
+        if Account.current.wf_comma_filter_fix_enabled?
+          condition.container.values = values if values.delete('-1')
+        else
+          condition.container.values[0] = values.join(",") if values.delete("-1")
+        end
         group_index = index
       end
     end

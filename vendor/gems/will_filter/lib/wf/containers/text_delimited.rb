@@ -40,7 +40,11 @@ module Wf
       end
 
       def split_values
-        value.split(TEXT_DELIMITER)
+        if Account.current.wf_comma_filter_fix_enabled?
+          values
+        else
+          value.split(TEXT_DELIMITER)
+        end
       end
       
       # -1 represents unassigned 
@@ -52,7 +56,7 @@ module Wf
       end
 
       def sql_condition
-        return [" #{condition.full_key} is NULL "] if value.empty?
+        return [" #{condition.full_key} is NULL "] if value.blank?
         return handle_unassigned if split_values.include?("-1")
         return [" #{condition.full_key} in (?) ", split_values] if operator == :is_in 
       end

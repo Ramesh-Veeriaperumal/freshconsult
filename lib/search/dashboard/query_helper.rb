@@ -31,7 +31,12 @@ module Search::Dashboard::QueryHelper
     conditions = []
     wf_conditions.each do |field|
       cond_field = (COLUMN_MAPPING[field['condition']].presence || field['condition'].to_s)
-      field_values = field['value'].to_s.split(',').map { |value| encode_value(value)} # Hack to handle special chars in query
+      if Account.current.wf_comma_filter_fix_enabled?
+        field_values = field['value'].is_a?(Array) ? field['value'].map(&:to_s) : field['value'].to_s.split(::FilterFactory::TicketFilterer::TEXT_DELIMITER)
+        field_values = field_values.map { |value| encode_value(value) } # Hack to handle special chars in query
+      else
+        field_values = field['value'].to_s.split(',').map { |value| encode_value(value)}
+      end
       if cond_field.include?(QueryHash::FLEXIFIELDS) || cond_field.include?(QueryHash::TICKET_FIELD_DATA)
         conditions << transform_flexifield_filter(field['ff_name'].gsub("_#{Account.current.id}", ''), field_values)
 

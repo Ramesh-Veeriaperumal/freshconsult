@@ -39,7 +39,11 @@ module Wf
       
       def split_values
         cond_str = ""
-        cond_arr = values[0].split(TEXT_DELIMITER).collect! {|n| n}
+        if Account.current.wf_comma_filter_fix_enabled?
+          cond_arr = values.collect! { |n| n }
+        else
+          cond_arr = values[0].split(TEXT_DELIMITER).collect! {|n| n}
+        end
         min_value = minimum_required_condition(cond_arr.collect(&:to_i))
         cond_arr.each do |val|
           next if min_value.present? && val.to_i > min_value

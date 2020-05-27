@@ -52,7 +52,11 @@ class QueryHash
       val = query['value']
       return formatted_created_at(query) if date_time_field?(query)
       if format.eql?(:system)
-        val.is_a?(Array) ? val.join(',') : val
+        if Account.current.wf_comma_filter_fix_enabled?
+          val
+        else
+          val.is_a?(Array) ? val.join(',') : val
+        end
       else
         return val unless ARRAY_VALUED_OPERATORS.include?(query['operator'])
         val.is_a?(String) ? val.split(',') : (val.is_a?(Array) ? val : [val])

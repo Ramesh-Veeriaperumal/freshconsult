@@ -72,11 +72,17 @@ module FilterFactory::Tickets
         transform_group_type(condition)
       end
 
-      def transform_status(condition)
-        values = condition['value'].to_s.split(',')
-        values.delete('0')
-        values += Helpdesk::TicketStatus.unresolved_statuses(Account.current)
-        condition['value'] = values
+      ['status', 'group_type', 'agent_type'].each do |name|
+        define_method "transform_#{name}" do |condition|
+          if Account.current.wf_comma_filter_fix_enabled?
+            values = condition['value'].is_a?(Array) ? condition['value'] : condition['value'].to_s.split(::FilterFactory::TicketFilterer::TEXT_DELIMITER)
+          else
+            values = condition['value'].to_s.split(',')
+          end
+          values.delete('0')
+          values += transform_special_values(name)
+          condition['value'] = values
+        end
       end
 
       def transform_any_agent_id(condition)
@@ -91,18 +97,15 @@ module FilterFactory::Tickets
         transform_agent_type(condition)
       end
 
-      def transform_group_type(condition)
-        values = condition['value'].to_s.split(',')
-        values.delete('0')
-        values += fetch_user_group_ids
-        condition['value'] = values
-      end
-
-      def transform_agent_type(condition)
-        values = condition['value'].to_s.split(',')
-        values.delete('0')
-        values << User.current.id.to_s
-        condition['value'] = values
+      def transform_special_values(type)
+        case type
+        when 'agent_type'
+          [User.current.id.to_s]
+        when 'group_type'
+          fetch_user_group_ids
+        when 'status'
+          Helpdesk::TicketStatus.unresolved_statuses(Account.current)
+        end
       end
 
       def transform_created_at(condition)
@@ -202,7 +205,11 @@ module FilterFactory::Tickets
 
       def fetch_due_by(condition, due_by_type)
         transformed_conditions = []
-        values = condition['value'].to_s.split(',')
+        if Account.current.wf_comma_filter_fix_enabled?
+          values = condition['value'].is_a?(Array) ? condition['value'] : condition['value'].to_s.split(::FilterFactory::TicketFilterer::TEXT_DELIMITER)
+        else
+          values = condition['value'].to_s.split(',')
+        end
         min_value = minimum_required_due_condition(values.collect(&:to_i))
         values.each do |value|
           next if min_value.present? && value.to_i > min_value
@@ -348,7 +355,11 @@ module FilterFactory::Tickets
       end
 
       def include_choice?(value, choice)
-        value.is_a?(Array) ? value.include?(choice) : value.to_s.split(',').include?(choice)
+        if Account.current.wf_comma_filter_fix_enabled?
+          value.is_a?(Array) ? value.include?(choice) : value.to_s.split(::FilterFactory::TicketFilterer::TEXT_DELIMITER).include?(choice)
+        else
+          value.is_a?(Array) ? value.include?(choice) : value.to_s.split(',').include?(choice)
+        end
       end
 
       def fsm_appointment_filter?(condition)

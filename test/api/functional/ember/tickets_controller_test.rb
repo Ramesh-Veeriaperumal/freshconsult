@@ -3577,6 +3577,30 @@ module Ember
       @account.rollback(:ticket_contact_export)
     end
 
+    def test_export_csv_with_privilege_filter_with_comma_values
+      @account.launch(:wf_comma_filter_fix)
+      User.any_instance.stubs(:privilege?).with(:export_tickets).returns(true)
+      User.any_instance.stubs(:privilege?).with(:export_customers).returns(true)
+      @account.launch(:ticket_contact_export)
+      create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'Address', name: 'cf_address'))
+      create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'Location', name: 'cf_location', editable_in_signup: 'true'))
+      contact_fields = @account.contact_form.fields.map(&:name) - %i[name phone mobile fb_profile_id contact_id]
+      company_fields = @account.company_form.fields.map(&:name) - %i[name]
+      ticket_field = create_custom_field_dropdown('test_export_csv', ['Chennai, In', 'bangalore'])
+      params_hash = { ticket_fields: { display_id: rand(2..10) }, contact_fields: { custom_fields: { location: Faker::Lorem.word } },
+                      company_fields: { custom_fields: { address: Faker::Lorem.word } },
+                      format: 'csv', date_filter: '30',
+                      ticket_state_filter: 'resolved_at', start_date: 6.days.ago.iso8601, end_date: Time.zone.now.iso8601,
+                      query_hash: [{ 'condition' => 'test_export_csv', 'operator' => 'is_in', 'ff_name' => 'test_export_csv', 'value' => [ticket_field.picklist_values.first.value] }] }
+      post :export_csv, construct_params({ version: 'private' }, params_hash)
+      assert_response 204
+    ensure
+      User.any_instance.unstub(:privilege?)
+      @account.rollback(:ticket_contact_export)
+      @account.rollback(:wf_comma_filter_fix)
+      ticket_field.destroy
+    end
+
     def test_export_csv_monitor_by_me
       User.any_instance.stubs(:privilege?).with(:export_tickets).returns(true)
       User.any_instance.stubs(:privilege?).with(:export_customers).returns(false)

@@ -27,6 +27,9 @@ class Helpdesk::Ticketfields::PicklistValueTransformer::StringToId < Helpdesk::T
   end
 
   def fetch_ids(values_list, ff_alias)
+    if Account.current.wf_comma_filter_fix_enabled?
+      values_list = values_list.is_a?(Array) ? values_list : values_list.to_s.split(::Wf::Filter::TEXT_DELIMITER)
+    end
     values_list.collect do |value|
       value == NONE_VALUE ? value : transform(value, fetch_col_name(ff_alias))
     end
@@ -40,7 +43,11 @@ class Helpdesk::Ticketfields::PicklistValueTransformer::StringToId < Helpdesk::T
       if @nested_field_helper.column_name_map.key(con_hash['ff_name'])
         con_hash['value'] = handle_nested_field(con_hash)
       elsif dropdown_nested_field?(con_hash['ff_name'])
-        con_hash['value'] = fetch_ids(con_hash['value'].split(','), con_hash['ff_name']).join(',')
+        if Account.current.wf_comma_filter_fix_enabled?
+          con_hash['value'] = fetch_ids(con_hash['value'], con_hash['ff_name']).join(::Wf::Filter::TEXT_DELIMITER)
+        else
+          con_hash['value'] = fetch_ids(con_hash['value'].split(','), con_hash['ff_name']).join(',')
+        end
       end
       con_hash['condition'].gsub!('flexifields.', 'ticket_field_data.')
     end
@@ -58,7 +65,11 @@ class Helpdesk::Ticketfields::PicklistValueTransformer::StringToId < Helpdesk::T
 
     def handle_nested_field(con_hash)
       field_parent_id = fetch_parent_id(con_hash)
-      result = fetch_ids([con_hash['value']], con_hash['ff_name'])
+      if Account.current.wf_comma_filter_fix_enabled?
+        result = fetch_ids(con_hash['value'], con_hash['ff_name'])
+      else
+        result = fetch_ids([con_hash['value']], con_hash['ff_name'])
+      end
       if result.first.is_a?(Hash)
         result = result.first
         nested_level = @nested_column_key_pair[field_parent_id].index(con_hash['value'])
