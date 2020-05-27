@@ -20,7 +20,16 @@ module Helpdesk
         shard.save
         @from_email = Faker::Internet.email
         @to_email = Faker::Internet.email
-        @account = Account.current
+        @account = Account.current || create_test_account
+        ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
+        Helpdesk::Email::SpamDetector.any_instance.stubs(:check_spam).returns(spam: nil)
+        @in_reply_to = "<#{Faker::Internet.email}>"
+        @agent_email = @account.technicians.first.email
+        @parse_name = Faker::Name.name
+        @parse_email = Faker::Internet.email
+        @parsed_to_email = { name: Faker::Name.name, email: @custom_config.to_email, domain: @account.full_domain }
+        @account.revoke_feature(:disable_agent_forward)
+        Account.any_instance.stubs(:parse_replied_email_enabled?).returns(true)
       end
 
       def teardown
@@ -28,13 +37,15 @@ module Helpdesk
         Account.unstub(:current)
         Account.unstub(:find_by_full_domain)
         @custom_config.destroy
+        Helpdesk::Email::SpamDetector.any_instance.unstub :check_spam
+        ShardMapping.unstub :fetch_by_domain
       end
 
       def default_params(id, subject = nil)
         if subject.present?
-          { from: @from_email, to: @to_email, subject: subject, headers: "Date: DateTime.now\r\nFrom: <#{@from_email}>\r\nTo: #{@to_email}\r\nmessage-id: <#{id}>, attachments: 0 }", message_id: '<' + id + '>' }
+          { from: @from_email, to: @to_email, subject: subject, attachments: 0, headers: "Date: DateTime.now\r\nFrom: <#{@from_email}>\r\nTo: #{@to_email}\r\nmessage-id: <#{id}>, attachments: 0 }", message_id: '<' + id + '>' }
         else
-          { from: @from_email, to: @to_email, headers: "Date: DateTime.now\r\nFrom: <#{@from_email}>\r\nTo: #{@to_email}\r\nmessage-id: <#{id}>, attachments: 0 }", message_id: '<' + id + '>' }
+          { from: @from_email, to: @to_email, attachments: 0, headers: "Date: DateTime.now\r\nFrom: <#{@from_email}>\r\nTo: #{@to_email}\r\nmessage-id: <#{id}>, attachments: 0 }", message_id: '<' + id + '>' }
         end
       end
 
@@ -160,6 +171,7 @@ module Helpdesk
       end
 
       def test_email_perform_no_shardmapping
+        ShardMapping.unstub :fetch_by_domain
         id = Faker::Lorem.characters(50)
         subject = 'Test Subject'
         params = default_params(id, subject)
@@ -167,6 +179,8 @@ module Helpdesk
         failed_response = incoming_email_handler.perform
         assert_equal failed_response[:account_id], shard_mapping_failed_response[:account_id]
         assert_equal failed_response[:processed_status], shard_mapping_failed_response[:processed_status]
+      ensure
+        ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
       end
 
       def test_email_perform_maintenance_shardmapping
@@ -777,10 +791,10 @@ module Helpdesk
         assign_language(user, account, ticket)
         user = account.users.find_by_id(user.id)
         assert_equal account.language, user.language
-        ensure
-          account.rollback(:prevent_lang_detect_for_spam)
+      ensure
+        account.rollback(:prevent_lang_detect_for_spam)
       end
-      
+
       def test_lang_detect_for_non_spam
         account = Account.current
         user = account.users.first
@@ -789,7 +803,7 @@ module Helpdesk
         ticket = account.tickets.first
         ticket.spam = false
         text = Faker::Lorem.characters(10)
-        Helpdesk::DetectUserLanguage.stubs(:language_detect).returns(['fr', 1200]) 
+        Helpdesk::DetectUserLanguage.stubs(:language_detect).returns(['fr', 1200])
         Helpdesk::DetectUserLanguage.set_user_language!(user, text)
         assert_equal 'fr', user.language
       end
@@ -802,7 +816,7 @@ module Helpdesk
         params[:from] = 'support@localhost.freshpo.com'
         incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
         support_emails = incoming_email_handler
-                         .check_support_emails_from(Account.first, Helpdesk::Note.last, User.first, email: Account.first.support_emails.first)
+                             .check_support_emails_from(Account.first, Helpdesk::Note.last, User.first, email: Account.first.support_emails.first)
         assert_equal true, support_emails
       end
 
@@ -1036,7 +1050,7 @@ module Helpdesk
         params[:text] = 'sample text'
         incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
         add_email_response = incoming_email_handler
-                             .add_email_to_ticket(Helpdesk::Ticket.first, { email: 'customfrom@test.com' }, { email: 'customto@test.com' }, User.first)
+                                 .add_email_to_ticket(Helpdesk::Ticket.first, { email: 'customfrom@test.com' }, { email: 'customto@test.com' }, User.first)
         assert_equal 'success', add_email_response[:processed_status]
       end
 
@@ -1233,6 +1247,263 @@ module Helpdesk
         ShardMapping.unstub(:fetch_by_domain)
         Helpdesk::Email::SpamDetector.any_instance.unstub(:check_spam)
         $redis_others.perform_redis_op('set', QUOTED_TEXT_PARSE_FROM_REGEX, '(from|von|fra|van)') if redis_key_set
+      end
+
+      def test_create_ticket_agent_replies_eng
+        req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
+        req_params[:in_reply_to] = @in_reply_to
+        req_params[:from] = @agent_email
+        req_params[:text] = "this is a sample test mail.Regards,V\nOn Thu, Apr 9, 2020 at 6:57 PM #{@parse_name} <#{@parse_email}> wrote:\nTesting 5, reply 1\nOn Thu, Apr 9, 2020 at 6:57 PM Rio <palermo@gmail.com> wrote:\ncheck 1. testing 5"
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(req_params)
+        ticket_creation_status = incoming_email_handler.perform(@parsed_to_email)
+        Sharding.select_shard_of(@parsed_to_email[:domain]) do
+          ticket = @account.tickets.where(id: ticket_creation_status[:ticket_id]).first
+          ticket_requestor = @account.users.reload.where(id: ticket.requester_id).first
+          assert_equal @parse_email, ticket_requestor.email
+        end
+      end
+
+      def test_create_ticket_agent_forwards_eng
+        req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
+        req_params[:in_reply_to] = @in_reply_to
+        req_params[:from] = @agent_email
+        req_params[:text] = "This is a forwarded message!\n\n---------- Forwarded message ---------\nFrom: #{@parse_name} <#{@parse_email}>\nDate: Thu, Apr 9, 2020 at 6:57 PM\nSubject: Re: demo testing 5\nTo: Rio <palermo@gmail.com>, <qwerty1234@yahoo.com>\nCc: LISBON MUMBAI <pamela.stockholm@test987.edu>\n\n\nTesting 5, reply 1\nOn Thu, Apr 9, 2020 at 6:57 PM Rio <palermo@gmail.com> wrote:\ncheck 1. testing 5"
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(req_params)
+        ticket_creation_status = incoming_email_handler.perform(@parsed_to_email)
+        Sharding.select_shard_of(@parsed_to_email[:domain]) do
+          ticket = @account.tickets.where(id: ticket_creation_status[:ticket_id]).first
+          ticket_requestor = @account.users.reload.where(id: ticket.requester_id).first
+          assert_equal @parse_email, ticket_requestor.email
+        end
+      end
+
+      def test_create_ticket_agent_replies_esp
+        req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
+        req_params[:in_reply_to] = @in_reply_to
+        req_params[:from] = @agent_email
+        req_params[:text] = "junto a los mensajes enviados a mi direcciMostrarnnn (no a una lista de distribuci Unannn), y ) al lado duna flecha doble ( flecha (\n\n\nEl vie., 24 abr. 2020 a las 11:37, #{@parse_name} (<#{@parse_email}>) escribi:::\nFYI please.\nOn Sat, Apr 11, 2020 at 10:26 AM Rio <palermo@gmail.com> wrote:\ntesting 2\nOn Sat, Apr 11, 2020 at 10:25 AM qwerty <qwerty1234@gmail.com> wrote:\ntesting 1"
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(req_params)
+        ticket_creation_status = incoming_email_handler.perform(@parsed_to_email)
+        Sharding.select_shard_of(@parsed_to_email[:domain]) do
+          ticket = @account.tickets.where(id: ticket_creation_status[:ticket_id]).first
+          ticket_requestor = @account.users.reload.where(id: ticket.requester_id).first
+          assert_equal @parse_email, ticket_requestor.email
+        end
+      end
+
+      def test_create_ticket_agent_forwards_esp
+        req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
+        req_params[:in_reply_to] = @in_reply_to
+        req_params[:from] = @agent_email
+        req_params[:text] = "de distribuci Unannn), y ) al lado duna flecha doble ( flecha (\n\n\nEl vie., 24 abr. 2020 a las 11:37,\n\n---------- Forwarded message ---------\nDe: #{@parse_name} <#{@parse_email}>\nDate: vie., 24 abr. 2020 a las 11:37\nSubject: Re: testing reply-to 1\nTo: Rio <palermo@gmail.com>\nCc: <qwerty1234@yahoo.com>, Lisbon Tokyo <pamelamay20@gmail.com>, <support@angrynerds1993.freshpo.com>\n\n\nFYI please.\nOn Sat, Apr 11, 2020 at 10:26 AM Rio <palermo@gmail.com> wrote:\ntesting 2\nOn Sat, Apr 11, 2020 at 10:25 AM qwerty <qwerty1234@gmail.com> wrote:\ntesting 1"
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(req_params)
+        ticket_creation_status = incoming_email_handler.perform(@parsed_to_email)
+        Sharding.select_shard_of(@parsed_to_email[:domain]) do
+          ticket = @account.tickets.where(id: ticket_creation_status[:ticket_id]).first
+          ticket_requestor = @account.users.reload.where(id: ticket.requester_id).first
+          assert_equal @parse_email, ticket_requestor.email
+        end
+      end
+
+      def test_create_ticket_agent_replies_deutshe
+        req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
+        req_params[:in_reply_to] = @in_reply_to
+        req_params[:from] = @agent_email
+        req_params[:text] = "testemailB dnjdndf. dknfjan\nAm Fr., 24. Apr. 2020 um 13:05B Uhr schrieb #{@parse_name} <#{@parse_email}>:\nPFA. Thanks & Regards\nOn Wed, Apr 8, 2020 at 12:08 PM John Wick <qwerty1234@outlook.com> wrote:\nPlease check.From: John Wick <qwerty1234@outlook.com>\nSent: 08 April 2020 11:46\nTo: Rio <palermo@gmail.com>; qwerty <qwerty1234@gmail.com>; support@angrynerds1993.freshpo.com <support@angrynerds1993.freshpo.com>\nCc: LISBON MUMBAI <pamela.stockholm@test987.edu>; Lisbon Tokyo <pamelamay20@gmail.com>\nSubject: Re: Another test mailB Please look into it.\nRegards,V"
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(req_params)
+        ticket_creation_status = incoming_email_handler.perform(@parsed_to_email)
+        Sharding.select_shard_of(@parsed_to_email[:domain]) do
+          ticket = @account.tickets.where(id: ticket_creation_status[:ticket_id]).first
+          ticket_requestor = @account.users.reload.where(id: ticket.requester_id).first
+          assert_equal @parse_email, ticket_requestor.email
+        end
+      end
+
+      def test_create_ticket_agent_forwards_deutshe
+        req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
+        req_params[:in_reply_to] = @in_reply_to
+        req_params[:from] = @agent_email
+        req_params[:text] = "forwajdnd dnfsjf\n\n---------- Forwarded message ---------\nVon: #{@parse_name} <#{@parse_email}>\nDate: Fr., 24. Apr. 2020 um 13:05B Uhr\nSubject: Re: Another test mail\nTo: John Wick <qwerty1234@outlook.com>\nCc: Rio <palermo@gmail.com>, LISBON MUMBAI <pamela.stockholm@test987.edu>, Lisbon Tokyo <pamelamay20@gmail.com>, <support@angrynerds1993.freshpo.com>\n\n\nPFA. Thanks & Regards\nAm Fr., 24. Apr. 2020 um 13:05B Uhr schrieb qwerty <qwerty1234@gmail.com>:\nPlease check.From: John Wick <qwerty1234@outlook.com>\nSent: 08 April 2020 11:46\nTo: Rio <palermo@gmail.com>; qwerty <qwerty1234@gmail.com>; support@angrynerds1993.freshpo.com <support@angrynerds1993.freshpo.com>\nCc: LISBON MUMBAI <pamela.stockholm@test987.edu>; Lisbon Tokyo <pamelamay20@gmail.com>\nSubject: Re: Another test mailB Please look into it.\nRegards,V"
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(req_params)
+        ticket_creation_status = incoming_email_handler.perform(@parsed_to_email)
+        Sharding.select_shard_of(@parsed_to_email[:domain]) do
+          ticket = @account.tickets.where(id: ticket_creation_status[:ticket_id]).first
+          ticket_requestor = @account.users.reload.where(id: ticket.requester_id).first
+          assert_equal @parse_email, ticket_requestor.email
+        end
+      end
+
+      def test_create_ticket_agent_replies_dutch
+        req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
+        req_params[:in_reply_to] = @in_reply_to
+        req_params[:from] = @agent_email
+        req_params[:text] = "djnsnvsjB dgnnksvB djns\nOp za 11 apr. 2020 om 14:43 schreef #{@parse_name} <#{@parse_email}>:\nAnother hi\nOn Sat, Apr 11, 2020 at 2:42 PM John Wick <qwerty1234@outlook.com> wrote:\nSay hiFrom: Denver ghuio <bogotacena@outlook.com>\nSent: 11 April 2020 13:49\nTo: qwerty1234@outlook.com <qwerty1234@outlook.com>\nSubject: TestB Hi"
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(req_params)
+        ticket_creation_status = incoming_email_handler.perform(@parsed_to_email)
+        Sharding.select_shard_of(@parsed_to_email[:domain]) do
+          ticket = @account.tickets.where(id: ticket_creation_status[:ticket_id]).first
+          ticket_requestor = @account.users.reload.where(id: ticket.requester_id).first
+          assert_equal @parse_email, ticket_requestor.email
+        end
+      end
+
+      def test_create_ticket_agent_forwards_dutch
+        req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
+        req_params[:in_reply_to] = @in_reply_to
+        req_params[:from] = @agent_email
+        req_params[:text] = "dnfjsnfB djfnsjf\n\n---------- Forwarded message ---------\nVan: #{@parse_name} <#{@parse_email}>\nDate: za 11 apr. 2020 om 14:43\nSubject: Re: Test\nTo: John Wick <qwerty1234@outlook.com>\nCc: palermo@gmail.com <palermo@gmail.com>, pamela.stockholm@test987.edu <pamela.stockholm@test987.edu>\n\n\nAnother hi\nOn Sat, Apr 11, 2020 at 2:42 PM John Wick <qwerty1234@outlook.com> wrote:\nSay hiFrom: Denver ghuio <bogotacena@outlook.com>\nSent: 11 April 2020 13:49\nTo: qwerty1234@outlook.com <qwerty1234@outlook.com>\nSubject: TestB"
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(req_params)
+        ticket_creation_status = incoming_email_handler.perform(@parsed_to_email)
+        Sharding.select_shard_of(@parsed_to_email[:domain]) do
+          ticket = @account.tickets.where(id: ticket_creation_status[:ticket_id]).first
+          ticket_requestor = @account.users.reload.where(id: ticket.requester_id).first
+          assert_equal @parse_email, ticket_requestor.email
+        end
+      end
+
+      def test_create_ticket_agent_replies_french
+        req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
+        req_params[:in_reply_to] = @in_reply_to
+        req_params[:from] = @agent_email
+        req_params[:text] = "djnfsf jdnf Le\nLeB sam. 11 avr. 2020 C B 10:43, #{@parse_name} <#{@parse_email}> a C)critB :\ndemo"
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(req_params)
+        ticket_creation_status = incoming_email_handler.perform(@parsed_to_email)
+        Sharding.select_shard_of(@parsed_to_email[:domain]) do
+          ticket = @account.tickets.where(id: ticket_creation_status[:ticket_id]).first
+          ticket_requestor = @account.users.reload.where(id: ticket.requester_id).first
+          assert_equal @parse_email, ticket_requestor.email
+        end
+      end
+
+      def test_create_ticket_agent_forwards_french
+        req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
+        req_params[:in_reply_to] = @in_reply_to
+        req_params[:from] = @agent_email
+        req_params[:text] = "kdfknsf\n\n---------- Forwarded message ---------\nDe : #{@parse_name} <#{@parse_email}>\nDate: sam. 11 avr. 2020 C B 10:43\nSubject: test\nTo: qwerty <qwerty1234@gmail.com>\n\n\ndemo"
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(req_params)
+        ticket_creation_status = incoming_email_handler.perform(@parsed_to_email)
+        Sharding.select_shard_of(@parsed_to_email[:domain]) do
+          ticket = @account.tickets.where(id: ticket_creation_status[:ticket_id]).first
+          ticket_requestor = @account.users.reload.where(id: ticket.requester_id).first
+          assert_equal @parse_email, ticket_requestor.email
+        end
+      end
+
+      def test_create_ticket_agent_replies_portuguese
+        req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
+        req_params[:in_reply_to] = @in_reply_to
+        req_params[:from] = @agent_email
+        req_params[:text] = "dfadf\n#{@parse_name} <#{@parse_email}> escreveu no dia sC!bado, 11/04/2020 C (s) 11:01:\n yes this is demo\n On Saturday, 11 April 2020, 10:44:01 GMT+5:30, qwerty <qwerty1234@gmail.com> wrote: \n \n demo"
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(req_params)
+        ticket_creation_status = incoming_email_handler.perform(@parsed_to_email)
+        Sharding.select_shard_of(@parsed_to_email[:domain]) do
+          ticket = @account.tickets.where(id: ticket_creation_status[:ticket_id]).first
+          ticket_requestor = @account.users.reload.where(id: ticket.requester_id).first
+          assert_equal @parse_email, ticket_requestor.email
+        end
+      end
+
+      def test_create_ticket_agent_forwards_portuguese
+        req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
+        req_params[:in_reply_to] = @in_reply_to
+        req_params[:from] = @agent_email
+        req_params[:text] = "dfsfsdfdsf\ndfdff\n---------- Forwarded message ---------\nDe: #{@parse_name} <#{@parse_email}>\nDate: sC!bado, 11/04/2020 C (s) 11:01\nSubject: Re: test\nTo: qwerty <qwerty1234@gmail.com>\n\n\n yes this is demo\n On Saturday, 11 April 2020, 10:44:01 GMT+5:30, qwerty <qwerty1234@gmail.com> wrote: \n \n demo"
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(req_params)
+        ticket_creation_status = incoming_email_handler.perform(@parsed_to_email)
+        Sharding.select_shard_of(@parsed_to_email[:domain]) do
+          ticket = @account.tickets.where(id: ticket_creation_status[:ticket_id]).first
+          ticket_requestor = @account.users.reload.where(id: ticket.requester_id).first
+          assert_equal @parse_email, ticket_requestor.email
+        end
+      end
+
+      def test_create_ticket_agent_replies_oth_locale
+        req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
+        req_params[:in_reply_to] = @in_reply_to
+        req_params[:from] = @agent_email
+        req_params[:text] = "dnfdjn njfiw VypnDjnsjdndsns pre jazyk: anglitinaB \nne 12. 4. 2020 oB 11:12 #{@parse_name} <#{@parse_email}> napC-sal(a):\n how abt this ?\n On Sunday, 12 April 2020, 11:10:32 GMT+5:30, qwerty <qwerty1234@gmail.com> wrote: \n \n checking\nOn Sun, Apr 12, 2020 at 10:59 AM qwerty <qwerty1234@gmail.com> wrote:\nhiiii\nOn Sun, Apr 12, 2020 at 10:47 AM John Wick <qwerty1234@outlook.com> wrote:\nplease check.From: John Wick <qwerty1234@outlook.com>\nSent: 09 April 2020 15:10\nTo: Rio <palermo@gmail.com>; qwerty <qwerty1234@gmail.com>\nCc: LISBON MUMBAI <pamela.stockholm@test987.edu>; bogotacena@outlook.com <bogotacena@outlook.com>\nSubject: Re: test forward featureB Reply no. 2From: Rio <palermo@gmail.com>\nSent: 09 April 2020 15:09\nTo: John Wick <qwerty1234@outlook.com>\nCc: Lisbon Tokyo <pamelamay20@gmail.com>; LISBON MUMBAI <pamela.stockholm@test987.edu>; bogotacena@outlook.com <bogotacena@outlook.com>\nSubject:fdfdf"
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(req_params)
+        ticket_creation_status = incoming_email_handler.perform(@parsed_to_email)
+        Sharding.select_shard_of(@parsed_to_email[:domain]) do
+          ticket = @account.tickets.where(id: ticket_creation_status[:ticket_id]).first
+          ticket_requestor = @account.users.reload.where(id: ticket.requester_id).first
+          assert_equal @parse_email, ticket_requestor.email
+        end
+      end
+
+      def test_create_ticket_agent_replies_eng_feature_disabled
+        Account.any_instance.stubs(:parse_replied_email_enabled?).returns(false)
+        req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
+        req_params[:in_reply_to] = @in_reply_to
+        req_params[:from] = @agent_email
+        from_name = Faker::Name.name
+        from_email = Faker::Internet.email
+        req_params[:text] = "this is a sample test mail.Regards,V\nOn Thu, Apr 9, 2020 at 6:57 PM #{@parse_name} <#{@parse_email}> wrote:\nTesting 5, reply 1\nOn Thu, Apr 9, 2020 at 6:57 PM Rio <palermo@gmail.com> wrote:\nFrom: #{from_name} <#{from_email}> check 1. testing 5"
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(req_params)
+        ticket_creation_status = incoming_email_handler.perform(@parsed_to_email)
+        Sharding.select_shard_of(@parsed_to_email[:domain]) do
+          ticket = @account.tickets.where(id: ticket_creation_status[:ticket_id]).first
+          ticket_requestor = @account.users.reload.where(id: ticket.requester_id).first
+          assert_equal from_email, ticket_requestor.email
+        end
+      end
+
+      def test_create_ticket_agent_replies_eng_long_email_line_break1
+        req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
+        req_params[:in_reply_to] = @in_reply_to
+        req_params[:from] = @agent_email
+        req_params[:text] = "this is a sample test mail.Regards,V\nOn Thu, Apr 9, 2020 at 6:57 PM #{@parse_name} <\n#{@parse_email}> wrote:\nTesting 5, reply 1\nOn Thu, Apr 9, 2020 at 6:57 PM Rio <palermo@gmail.com> wrote:\ncheck 1. testing 5"
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(req_params)
+        ticket_creation_status = incoming_email_handler.perform(@parsed_to_email)
+        Sharding.select_shard_of(@parsed_to_email[:domain]) do
+          ticket = @account.tickets.where(id: ticket_creation_status[:ticket_id]).first
+          ticket_requestor = @account.users.reload.where(id: ticket.requester_id).first
+          assert_equal @parse_email, ticket_requestor.email
+        end
+      end
+
+      def test_create_ticket_agent_replies_eng_email_line_break2
+        req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
+        req_params[:in_reply_to] = @in_reply_to
+        req_params[:from] = @agent_email
+        req_params[:text] = "this is a sample test mail.Regards,V\nOn Thu, Apr 9, 2020 at 6:57 PM #{@parse_name} <#{@parse_email}\n> wrote:\nTesting 5, reply 1\nOn Thu, Apr 9, 2020 at 6:57 PM Rio <palermo@gmail.com> wrote:\ncheck 1. testing 5"
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(req_params)
+        ticket_creation_status = incoming_email_handler.perform(@parsed_to_email)
+        Sharding.select_shard_of(@parsed_to_email[:domain]) do
+          ticket = @account.tickets.where(id: ticket_creation_status[:ticket_id]).first
+          ticket_requestor = @account.users.reload.where(id: ticket.requester_id).first
+          assert_equal @parse_email, ticket_requestor.email
+        end
+      end
+
+      def test_create_ticket_agent_replies_eng_long_name_line_break
+        req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
+        req_params[:in_reply_to] = @in_reply_to
+        req_params[:from] = @agent_email
+        test_name = Faker::Name.name
+        req_params[:text] = "this is a sample test mail.Regards,V\nOn Thu, Apr 9, 2020 at 6:57 PM #{@parse_name}\n#{test_name} <#{@parse_email}> wrote:\nTesting 5, reply 1\nOn Thu, Apr 9, 2020 at 6:57 PM Rio <palermo@gmail.com> wrote:\ncheck 1. testing 5"
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(req_params)
+        ticket_creation_status = incoming_email_handler.perform(@parsed_to_email)
+        Sharding.select_shard_of(@parsed_to_email[:domain]) do
+          ticket = @account.tickets.where(id: ticket_creation_status[:ticket_id]).first
+          ticket_requestor = @account.users.reload.where(id: ticket.requester_id).first
+          assert_equal @parse_email, ticket_requestor.email
+        end
+      end
+
+      def test_create_ticket_agent_replies_eng_line_break
+        req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
+        req_params[:in_reply_to] = @in_reply_to
+        req_params[:from] = @agent_email
+        test_name = Faker::Name.name
+        req_params[:text] = "this is a sample test mail.Regards,V\nOn Thu, Apr 9, 2020 at 6:57 PM #{@parse_name} \n<#{@parse_email}> wrote:\nTesting 5, reply 1\nOn Thu, Apr 9, 2020 at 6:57 PM Rio <palermo@gmail.com> wrote:\ncheck 1. testing 5"
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(req_params)
+        ticket_creation_status = incoming_email_handler.perform(@parsed_to_email)
+        Sharding.select_shard_of(@parsed_to_email[:domain]) do
+          ticket = @account.tickets.where(id: ticket_creation_status[:ticket_id]).first
+          ticket_requestor = @account.users.reload.where(id: ticket.requester_id).first
+          assert_equal @parse_email, ticket_requestor.email
+        end
       end
     end
   end
