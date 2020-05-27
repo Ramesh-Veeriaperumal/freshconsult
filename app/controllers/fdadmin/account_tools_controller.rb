@@ -1,10 +1,12 @@
 class Fdadmin::AccountToolsController < Fdadmin::DevopsMainController
 
-	include Redis::RedisKeys
-	include Redis::ReportsRedis
+  include Redis::OthersRedis
+  include Redis::RedisKeys
+  include Redis::ReportsRedis
   include Cache::Memcache::GlobalBlacklistIp
 
   before_filter :validate_method_names, :only => [:operations_on_shard]
+  before_filter :validate_shard, only: [:add_shard_to_redis]
 
   BLOCKTYPE = {
     :ip => 1,
@@ -158,7 +160,42 @@ class Fdadmin::AccountToolsController < Fdadmin::DevopsMainController
     end
   end
 
+  def redis_signup_shards
+    shards = get_all_members_in_a_redis_set(LATEST_SHARDS)
+    respond_to do |format|
+      format.json do
+        render json: { latest_shards: shards }
+      end
+    end
+  end
+
+  def add_shard_to_redis
+    shard = params[:shard]
+    status = add_member_to_redis_set(LATEST_SHARDS, shard)
+    respond_to do |format|
+      format.json do
+        render json: { status: status }
+      end
+    end
+  end
+
+  def remove_shard_from_redis
+    shard = params[:shard]
+    status = remove_member_from_redis_set(LATEST_SHARDS, shard)
+    respond_to do |format|
+      format.json do
+        render json: { status: status }
+      end
+    end
+  end
+
   private 
+    def validate_shard
+      unless Sharding.all_shards.include? params[:shard].to_s
+        head 400
+        render json: { message: 'invalid shard'} && return
+      end
+    end
 
     def validate_method_names
       if ["add_to_shard","remove_from_shard","dynamic_rubyscript_evaluation"].include?(params[:method_name])
