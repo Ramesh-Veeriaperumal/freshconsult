@@ -28,8 +28,9 @@ class Groups::SyncAndAssignTickets < BaseWorker
       agent.groups.capping_enabled_groups.each do |group|
         group.safe_send(action, agent.user_id)
         
-        Rails.logger.debug "RR Success : #{action} : #{agent.user_id} : #{group.id} : #{group.list_capping_range.inspect}
-                            #{group.list_unassigned_tickets_in_group.inspect}".squish
+        rr_tickets_key_length = group.count_unassigned_tickets_in_group
+        Rails.logger.debug "RR Success : #{action} : #{agent.user_id} : #{group.id} : #{group.list_capping_range.inspect} : count=#{rr_tickets_key_length} :
+                            #{group.list_unassigned_tickets_in_group(rr_tickets_key_length).inspect}".squish
       end
   end
 end

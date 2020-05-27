@@ -287,8 +287,9 @@ class Group < ActiveRecord::Base
   def rpush_to_rr_capping_queue ticket_id
     update_sorted_set("rpush", ticket_id)
     rpush_round_robin_redis(round_robin_tickets_key, ticket_id)
+    rr_tickets_key_length = count_unassigned_tickets_in_group
     Rails.logger.debug "RR SUCCESS Added ticket to unassigned queue : #{ticket_id} 
-                        #{self.id} #{list_unassigned_tickets_in_group.inspect}".squish
+                        #{self.id} : count=#{rr_tickets_key_length} : #{list_unassigned_tickets_in_group(rr_tickets_key_length).inspect}".squish
   end
 
   def lpop_from_rr_capping_queue
@@ -312,8 +313,14 @@ class Group < ActiveRecord::Base
   end
 
   # Method for logging
-  def list_unassigned_tickets_in_group
-    lrange_round_robin_redis(round_robin_tickets_key, 0, -1)
+  def list_unassigned_tickets_in_group(end_index = MAX_FETCH_TICKETS_COUNT)
+    end_index = [MAX_FETCH_TICKETS_COUNT, end_index].min
+    lrange_round_robin_redis(round_robin_tickets_key, 0, end_index)
+  end
+  
+  # Method for logging
+  def count_unassigned_tickets_in_group
+    llen_round_robin_redis(round_robin_tickets_key)
   end
   
   private
