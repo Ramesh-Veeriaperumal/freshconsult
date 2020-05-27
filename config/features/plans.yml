@@ -572,6 +572,8 @@
       - :autofaq
       - :botflow
       - :agent_articles_suggest
+      - :robo_assist
+      - :email_bot
     :inherits:
       - :estate_jan_20
     :exclude: []
