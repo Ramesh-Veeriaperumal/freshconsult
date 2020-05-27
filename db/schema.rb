@@ -11,6 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+
 ActiveRecord::Schema.define(version: 20200502053301) do
 
   create_table "account_additional_settings", :force => true do |t|
@@ -2302,13 +2303,14 @@ ActiveRecord::Schema.define(version: 20200502053301) do
   create_table "helpdesk_choices", :force => true do |t|
     t.string   "name"
     t.integer  "position"
-    t.integer  "default",           :limit => 1
-    t.integer  "deleted",           :limit => 1, :default => 0
+    t.boolean  "default"
+    t.boolean  "deleted",           :default => false
     t.integer  "account_choice_id", :limit => 3
     t.integer  "account_id",        :limit => 8
     t.datetime "created_at",                                    :null => false
     t.datetime "updated_at",                                    :null => false
     t.string   "type"
+    t.text     "meta"
   end
 
   add_index "helpdesk_choices", ["account_id", "type", "account_choice_id"], :name => "index_choice_on_account_and_choice_id_and_field_type"

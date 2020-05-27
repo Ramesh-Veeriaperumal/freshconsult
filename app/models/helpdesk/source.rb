@@ -1,6 +1,8 @@
 class Helpdesk::Source < Helpdesk::Choice
   concerned_with :associations, :constants, :validations, :callbacks
 
+  serialize :meta, HashWithIndifferentAccess
+
   class << self
     def ticket_sources
       TICKET_SOURCES
