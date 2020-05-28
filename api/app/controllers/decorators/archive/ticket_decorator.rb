@@ -1,4 +1,6 @@
 class Archive::TicketDecorator < TicketDecorator
+  include Crypto::TokenHashing
+
   delegate :ticket_body, :custom_field, :cc_email, :email_config_id, :fr_escalated, :group_id, :priority,
            :requester_id, :responder, :responder_id, :source, :spam, :status, :subject, :display_id, :ticket_type,
            :schema_less_ticket, :deleted, :due_by, :frDueBy, :isescalated, :description,
@@ -29,7 +31,21 @@ class Archive::TicketDecorator < TicketDecorator
   end
 
   def full_hash
-    [basic_hash, attachments_hash, associations_hash].inject(&:merge)
+    [basic_hash, attachments_hash, associations_hash, meta_hash].inject(&:merge)
+  end
+
+  def meta_hash
+    meta = {}
+    return meta unless Account.current.agent_collision_revamp_enabled?
+
+    meta[:meta] = {
+      secret_id: generate_secret_id
+    }
+    meta
+  end
+
+  def generate_secret_id
+    mask_id(display_id)
   end
 
   def basic_hash
