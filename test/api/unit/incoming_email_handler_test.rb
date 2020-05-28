@@ -36,6 +36,8 @@ module Helpdesk
         super
         Account.unstub(:current)
         Account.unstub(:find_by_full_domain)
+        Helpdesk::Email::SpamDetector.any_instance.unstub :check_spam
+        ShardMapping.unstub :fetch_by_domain
         @custom_config.destroy
         Helpdesk::Email::SpamDetector.any_instance.unstub :check_spam
         ShardMapping.unstub :fetch_by_domain
@@ -1248,7 +1250,59 @@ module Helpdesk
         Helpdesk::Email::SpamDetector.any_instance.unstub(:check_spam)
         $redis_others.perform_redis_op('set', QUOTED_TEXT_PARSE_FROM_REGEX, '(from|von|fra|van)') if redis_key_set
       end
+      
+      # Try creating ticket if the message params does not contain "in-reply-to" which will be present only for replied/forwarded mails
+      def test_create_ticket_with_composed_email_feature_enabled
+        Account.any_instance.stubs(:composed_email_check_enabled?).returns(true)
+        req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
+        req_params[:attachments] = 0
+        req_params[:from] = @agent_email
+        req_params[:text] = "<p>this is a test email</p>\n------\nFrom: #{@parse_name} <#{@parse_email}>\nTo: qwe@tyu.com\nSubject: test subject 123\n-----\n"
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(req_params)
+        result = incoming_email_handler.perform(@parsed_to_email)
+        Sharding.select_shard_of(@parsed_to_email[:domain]) do
+          ticket = @account.tickets.where(id: result[:ticket_id]).first
+          ticket_requester = @account.users.reload.where(id: ticket.requester_id).first
+          # Assert if 'from' field in message params is equal to the requestor in the ticket as this is a composed mail
+          assert_equal req_params[:from], ticket_requester.email
+        end
+      end
 
+      # Try creating ticket if the message params does not contain "in-reply-to" which will be present only for replied/forwarded mails
+      def test_create_ticket_with_composed_email_feature_disabled
+        Account.any_instance.stubs(:composed_email_check_enabled?).returns(false)
+        req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
+        req_params[:attachments] = 0
+        req_params[:from] = @agent_email
+        req_params[:text] = "<p>this is a test email</p>\n------\nFrom: #{@parse_name} <#{@parse_email}>\nTo: qwe@tyu.com\nSubject: test subject 123\n-----\n"
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(req_params)
+        result = incoming_email_handler.perform(@parsed_to_email)
+        Sharding.select_shard_of(@parsed_to_email[:domain]) do
+          ticket = @account.tickets.where(id: result[:ticket_id]).first
+          ticket_requester = @account.users.reload.where(id: ticket.requester_id).first
+          # Assert if the ticket requester is equal to email parsed from the quoted message since the launch-party feature is disabled
+          assert_equal @parse_email, ticket_requester.email
+        end
+      end
+
+      # Try creating ticket if the message params contains "in-reply-to". This should be irregardless of the feature
+      def test_create_ticket_with_forwarded_email
+        req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
+        req_params[:in_reply_to] = @in_reply_to
+        req_params[:attachments] = 0
+        req_params[:from] = @agent_email
+        req_params[:text] = "<p>this is a test email</p>\n------\nFrom: #{@parse_name} <#{@parse_email}>\nTo: qwe@tyu.com\nSubject: test subject\n-----\n"
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(req_params)
+        result = incoming_email_handler.perform(@parsed_to_email)
+        Sharding.select_shard_of(@parsed_to_email[:domain]) do
+          ticket = @account.tickets.where(id: result[:ticket_id]).first
+          ticket_requester = @account.users.reload.where(id: ticket.requester_id).first
+          # Assert if 'from' field in message params is not equal to the requestor in the ticket as this is a forwarded mail
+          # Assuming that the toggle for :disable_agent_forward is false
+          assert_equal @parse_email, ticket_requester.email
+        end
+      end
+    
       def test_create_ticket_agent_replies_eng
         req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
         req_params[:in_reply_to] = @in_reply_to

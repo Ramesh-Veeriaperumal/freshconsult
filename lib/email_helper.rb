@@ -15,6 +15,7 @@ module EmailHelper
   COLLAB_STR_ARRAY = ['Invited to Team Huddle - [#', 'Mentioned in Team Huddle - [#',
                   'mentioned in Team Huddle - [#', 'Reply in Team Huddle - [#',
                   'Team Huddle - New Messages in [#', 'Team Huddle - New Message in [#'].freeze
+  MESSAGE_ID_REGEX = /<+([^>]+)/
 
   def verify_inline_attachments(item, content_id)
     content = "\"cid:#{content_id}\""
@@ -254,5 +255,9 @@ module EmailHelper
     Time.parse(internal_date).getutc.iso8601
   rescue StandardError => err
     ::Rails.logger.error("Exception parsing internal date :: #{err.message}")
+  end
+
+  def composed_email?
+    Account.current.composed_email_check_enabled? && !(params[:in_reply_to].present?) && !(params[:headers] =~ /in-reply-to: #{MESSAGE_ID_REGEX}/i)
   end
 end
