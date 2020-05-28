@@ -205,7 +205,19 @@ module UsersHelper
     new_user.save_without_session_maintenance
     new_user.reload
   end
-  
+
+  def mark_all_agents_as_deleted(account)
+    users = account.users.where(helpdesk_agent: true)
+    unless users.empty?
+      users.each do |user|
+        unless user == User.current
+          user.deleted = true
+          user.save!
+        end
+      end
+    end
+  end
+
   # Helpers
   def other_user
     u = User.find { |x| @agent.can_assume?(x) } || create_dummy_customer

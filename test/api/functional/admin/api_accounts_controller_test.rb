@@ -264,31 +264,158 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     assert_response 404
   end
 
-  def test_agents_limit
+  def setup_common_agents_limit
+    mark_all_agents_as_deleted(@account)
     add_privilege(User.current, :manage_users)
-    Subscription.any_instance.stubs(:state).returns(Subscription::TRIAL)
-    agent1 = add_test_agent(@account).agent
-    agent1.occasional = false
-    agent1.save!
-    agent2 = add_test_agent(@account).agent
-    agent2.occasional = true
-    agent2.save!
-    Subscription.any_instance.stubs(:agent_limit).returns(3)
+  end
+
+  def test_support_agent_trial_before_setting_limit
+    setup_common_agents_limit
+    Subscription.any_instance.stubs(:trial?).returns(true)
     DayPassConfig.any_instance.stubs(:available_passes).returns(5)
     @account.revoke_feature(:field_service_management)
     @account.save!
     get :agents_limit, controller_params(version: 'private')
     assert_response 200
     json_response = JSON.parse(response.body)
-    assert_equal json_response['support_agent']['full_time_agent_count'], 2
-    assert_equal json_response['support_agent']['occasional_agent_count'], 1
-    assert_equal json_response['support_agent']['license_available'], 1
+    assert_equal json_response['support_agent']['full_time_agent_count'], 1
+    assert_equal json_response['support_agent']['occasional_agent_count'], 0
+    assert_equal json_response['support_agent']['license_available'], nil
     assert_equal json_response['day_passes_available'], 5
     assert_equal json_response['field_agent'], nil
   ensure
-    Subscription.any_instance.unstub(:agent_limit)
     DayPassConfig.any_instance.unstub(:available_passes)
-    Subscription.any_instance.unstub(:state)
+    Subscription.any_instance.unstub(:trial?)
+  end
+
+  def test_support_agent_active_before_setting_limit
+    setup_common_agents_limit
+    Subscription.any_instance.stubs(:trial?).returns(false)
+    Subscription.any_instance.stubs(:agent_limit).returns(1) # setting limit = 1, as active accounts have atleast one support agent
+    get :agents_limit, controller_params(version: 'private')
+    assert_response 200
+    json_response = JSON.parse(response.body)
+    assert_equal json_response['support_agent']['full_time_agent_count'], 1
+    assert_equal json_response['support_agent']['license_available'], 0
+  ensure
+    Subscription.any_instance.unstub(:agent_limit)
+    Subscription.any_instance.unstub(:trial?)
+  end
+
+  def test_support_agent_trial_after_setting_limit
+    setup_common_agents_limit
+    Subscription.any_instance.stubs(:trial?).returns(true)
+    Subscription.any_instance.stubs(:agent_limit).returns(3)
+    agent1 = add_test_agent(@account).agent
+    agent1.occasional = false
+    agent2 = add_test_agent(@account).agent
+    agent2.occasional = true
+    agent2.save!
+    get :agents_limit, controller_params(version: 'private')
+    assert_response 200
+    json_response = JSON.parse(response.body)
+    assert_equal json_response['support_agent']['full_time_agent_count'], 2
+    assert_equal json_response['support_agent']['occasional_agent_count'], 1
+    assert_equal json_response['support_agent']['license_available'], 1
+  ensure
+    Subscription.any_instance.unstub(:agent_limit)
+    Subscription.any_instance.unstub(:trial?)
+  end
+
+  def test_support_agent_active_after_setting_limit
+    setup_common_agents_limit
+    Subscription.any_instance.stubs(:trial?).returns(false)
+    Subscription.any_instance.stubs(:agent_limit).returns(3)
+    agent1 = add_test_agent(@account).agent
+    agent1.occasional = false
+    agent2 = add_test_agent(@account).agent
+    agent2.occasional = true
+    agent2.save!
+    get :agents_limit, controller_params(version: 'private')
+    assert_response 200
+    json_response = JSON.parse(response.body)
+    assert_equal json_response['support_agent']['full_time_agent_count'], 2
+    assert_equal json_response['support_agent']['occasional_agent_count'], 1
+    assert_equal json_response['support_agent']['license_available'], 1
+  ensure
+    Subscription.any_instance.unstub(:agent_limit)
+    Subscription.any_instance.unstub(:trial?)
+  end
+
+  def test_field_agent_trial_before_setting_limit
+    setup_common_agents_limit
+    Subscription.any_instance.stubs(:trial?).returns(true)
+    @account.add_feature(:field_service_management)
+    @account.save!
+    get :agents_limit, controller_params(version: 'private')
+    assert_response 200
+    json_response = JSON.parse(response.body)
+    assert_equal json_response['field_agent']['full_time_agent_count'], 0
+    assert_equal json_response['field_agent']['occasional_agent_count'], nil
+    assert_equal json_response['field_agent']['license_available'], nil
+  ensure
+    Subscription.any_instance.unstub(:trial?)
+    @account.revoke_feature(:field_service_management)
+  end
+
+  def test_field_agent_active_before_setting_limit
+    setup_common_agents_limit
+    Subscription.any_instance.stubs(:trial?).returns(false)
+    @account.add_feature(:field_service_management)
+    @account.save!
+    get :agents_limit, controller_params(version: 'private')
+    assert_response 200
+    json_response = JSON.parse(response.body)
+    assert_equal json_response['field_agent']['full_time_agent_count'], 0
+    assert_equal json_response['field_agent']['occasional_agent_count'], nil
+    assert_equal json_response['field_agent']['license_available'], 0
+  ensure
+    Subscription.any_instance.unstub(:trial?)
+    @account.revoke_feature(:field_service_management)
+  end
+
+  def test_field_agent_trial_after_setting_limit
+    setup_common_agents_limit
+    Subscription.any_instance.stubs(:trial?).returns(true)
+    Subscription.any_instance.stubs(:field_agent_limit).returns(1)
+    @account.add_feature(:field_service_management)
+    @account.save!
+    agent3 = add_test_agent(@account).agent
+    agent3.agent_type = 2
+    agent3.sneaky_save
+    Account.any_instance.stubs(:field_agents_count).returns(1)
+    get :agents_limit, controller_params(version: 'private')
+    assert_response 200
+    json_response = JSON.parse(response.body)
+    assert_equal json_response['field_agent']['full_time_agent_count'], 1
+    assert_equal json_response['field_agent']['license_available'], 0
+  ensure
+    Subscription.any_instance.unstub(:field_agent_limit)
+    Subscription.any_instance.unstub(:trial?)
+    Account.any_instance.unstub(:field_agents_count)
+    @account.revoke_feature(:field_service_management)
+  end
+
+  def test_field_agent_active_after_setting_limit
+    setup_common_agents_limit
+    Subscription.any_instance.stubs(:trial?).returns(false)
+    Subscription.any_instance.stubs(:field_agent_limit).returns(1)
+    @account.add_feature(:field_service_management)
+    @account.save!
+    agent3 = add_test_agent(@account).agent
+    agent3.agent_type = 2
+    agent3.sneaky_save
+    Account.any_instance.stubs(:field_agents_count).returns(1)
+    get :agents_limit, controller_params(version: 'private')
+    assert_response 200
+    json_response = JSON.parse(response.body)
+    assert_equal json_response['field_agent']['full_time_agent_count'], 1
+    assert_equal json_response['field_agent']['license_available'], 0
+  ensure
+    Subscription.any_instance.unstub(:field_agent_limit)
+    Subscription.any_instance.unstub(:trial?)
+    Account.any_instance.unstub(:field_agents_count)
+    @account.revoke_feature(:field_service_management)
   end
 
   private
