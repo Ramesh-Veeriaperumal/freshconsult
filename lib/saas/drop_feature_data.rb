@@ -73,15 +73,19 @@ module SAAS::DropFeatureData
   end
 
   def handle_dynamic_sections_drop_data
-    if account.field_service_management_enabled?
+    service_task_section_constant = Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_SECTION
+    service_task_section = account.sections.where(label: service_task_section_constant).first if account.field_service_management_enabled?
+
+    if account.field_service_management_enabled? && service_task_section.present?
+      service_task_section_field_ids = service_task_section.section_fields.map(&:ticket_field_id)
       account.ticket_fields.each do |field|
-        field.rollback_section_in_field_options if field.section_field? && !field.fsm_field?
+        field.rollback_section_in_field_options if field.section_field? && !service_task_section_field_ids.include?(field.id)
         if field.field_type != 'default_ticket_type' && field.has_sections?
           field.field_options['section_present'] = false
           field.save
         end
       end
-      account.sections.where('label NOT IN (?)', Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_SECTION).destroy_all
+      account.sections.where('label NOT IN (?)', service_task_section_constant).destroy_all
     else
       account.ticket_fields.each do |field|
         field.rollback_section_in_field_options if field.section_field?

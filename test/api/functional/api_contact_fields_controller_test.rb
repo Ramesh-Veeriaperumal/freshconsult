@@ -65,6 +65,34 @@ class ApiContactFieldsControllerTest < ActionController::TestCase
     match_json(pattern)
   end
 
+  def test_contact_field_index_with_custom_field_name_same_as_default_field_name
+    Account.any_instance.stubs(:handle_custom_fields_conflicts_enabled?).returns(true)
+    create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'Name', editable_in_signup: 'true'))
+    create_contact_field(cf_params(type: 'boolean', field_type: 'custom_checkbox', label: 'Job title', editable_in_signup: 'true'))
+    create_contact_field(cf_params(type: 'date', field_type: 'custom_date', label: 'Time Zone', editable_in_signup: 'true'))
+    create_contact_field(cf_params(type: 'text', field_type: 'custom_dropdown', label: 'Language', editable_in_signup: 'true'))
+    ContactFieldChoice.create(value: 'English', position: 1)
+    ContactFieldChoice.create(value: 'Espanol', position: 2)
+    ContactFieldChoice.create(value: 'French', position: 3)
+    ContactFieldChoice.update_all(account_id: @account.id)
+    ContactFieldChoice.update_all(contact_field_id: ContactField.where(name: 'cf_custom_language').first.id)
+    @account.reload
+
+    contact_custom_fields = @account.contact_form.custom_fields
+    assert_equal contact_custom_fields.where(label: 'Name').first.name, 'cf_custom_name'
+    assert_equal contact_custom_fields.where(label: 'Job Title').first.name, 'cf_custom_job_title'
+    assert_equal contact_custom_fields.where(label: 'Time Zone').first.name, 'cf_custom_time_zone'
+    assert_equal contact_custom_fields.where(label: 'Language').first.name, 'cf_custom_language'
+
+    get :index, controller_params
+    assert_response 200
+    contact_fields = @account.reload.contact_form.contact_fields
+    pattern = contact_fields.map { |contact_field| contact_field_pattern(contact_field) }
+    match_json(pattern)
+  ensure
+    Account.any_instance.unstub(:handle_custom_fields_conflicts_enabled?)
+  end
+
   def test_index_ignores_pagination
     get :index, controller_params(per_page: 1, page: 2)
     assert_response 200

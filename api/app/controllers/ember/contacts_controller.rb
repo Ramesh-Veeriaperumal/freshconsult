@@ -130,6 +130,11 @@ module Ember
 
     private
 
+      def assign_protected
+        @item.fb_profile_id = params[cname][:facebook_id] if params[cname][:facebook_id].present?
+        super
+      end
+
       def timeline_object
         HyperTrail::Timeline.new(params.merge!(type: cname).to_h)
       end

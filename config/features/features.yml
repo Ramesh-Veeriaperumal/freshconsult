@@ -394,6 +394,7 @@
       :prevent_ticket_creation_for_others: 389
       :custom_source: 390
       :location_tagging: 391
+      :robo_assist_ultimate: 392
 :selectable_features:
   :redis_display_id: true
   :branding: true

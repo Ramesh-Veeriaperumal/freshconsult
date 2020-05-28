@@ -1338,7 +1338,6 @@ class User < ActiveRecord::Base
   def add_preferred_source(source)
     unless preferences[:preferred_source] && preferences[:preferred_source] == source
       self.merge_preferences = { preferred_source: source }
-      self.skip_central_publish = true
       save
     end
   end

@@ -43,7 +43,14 @@ module Inherits
             label = label.gsub(/[^ _0-9a-zA-Z]+/,"")
             label = "rand#{rand(999999)}" if label.blank?
             prefix = encrypted ? CustomField::Constants::ENCRYPTED_FIELD_LABEL_PREFIX : CustomField::Constants::CUSTOM_FIELD_LABEL_PREFIX
-            "#{prefix}#{label.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase}".squeeze("_")
+            label = label.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase
+            prefix = "#{prefix}_custom_" if Account.current.handle_custom_fields_conflicts_enabled? && default_contact_company_field_name?(label)
+            "#{prefix}#{label}".squeeze('_')
+          end
+
+          def default_contact_company_field_name?(label)
+            default_field_names = (name.constantize::DEFAULT_FIELD_PROPS || {}).keys.map { |key| key.to_s.gsub('default_', '') }
+            default_field_names.nil? ? false : default_field_names.include?(label)
           end
 
       end

@@ -6,6 +6,7 @@ module RoundRobinCapping::Methods
   ROUND_ROBIN_DEFAULT_SCORE = 10**15
   ROUND_ROBIN_MAX_SCORE     = 200 * 10**15
   RR_BUFFER                 = 5
+  MAX_FETCH_TICKETS_COUNT   = 100
 
   def generate_new_score tickets_count, timestamp = nil
     tickets_count = 0 if tickets_count < 0

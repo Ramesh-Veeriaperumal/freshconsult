@@ -308,6 +308,14 @@ module Ember
       match_db_and_es_query_responses(query_hash_params)
     end
 
+    def test_multiple_overdue_filter
+      Account.current.launch(:wf_comma_filter_fix)
+      query_hash_params = { '0' => query_hash_param('due_by', 'due_by_op', [1, 2]) }
+      match_db_and_es_query_responses(query_hash_params)
+    ensure
+      Account.current.rollback(:wf_comma_filter_fix)
+    end
+
     def test_today_dueby_filter
       query_hash_params = { '0' => query_hash_param('due_by', 'due_by_op', [2]) }
       match_db_and_es_query_responses(query_hash_params)
@@ -634,6 +642,14 @@ module Ember
       match_db_and_es_query_responses(query_hash_params)
     end
 
+    def test_type_with_none_filter
+      Account.current.launch(:wf_comma_filter_fix)
+      query_hash_params = { '0' => query_hash_param('ticket_type', 'is_in', [-1, @account.ticket_type_values.sample.value]) }
+      match_db_and_es_query_responses(query_hash_params)
+    ensure
+      Account.current.rollback(:wf_comma_filter_fix)
+    end
+
     def test_multiple_type_filter
       query_hash_params = { '0' => query_hash_param('ticket_type', 'is_in', @account.ticket_type_values.map(&:value).sample(rand(1..3))) }
       match_db_and_es_query_responses(query_hash_params)
@@ -694,6 +710,48 @@ module Ember
       match_db_and_es_query_responses(query_hash_params)
     end
 
+    def test_custom_dropdown_filters_with_comma_single
+      Account.current.launch(:wf_comma_filter_fix)
+      query_hash_params = { '0' => query_hash_param('test_custom_dropdown', 'is_in', ['Chennai, In'], 'custom_field') }
+      match_db_and_es_query_responses(query_hash_params)
+    ensure
+      Account.current.rollback(:wf_comma_filter_fix)
+    end
+
+    def test_custom_dropdown_filters_with_comma_single_none
+      Account.current.launch(:wf_comma_filter_fix)
+      query_hash_params = { '0' => query_hash_param('test_custom_dropdown', 'is_in', ['Chennai, In', '-1'], 'custom_field') }
+      match_db_and_es_query_responses(query_hash_params)
+    ensure
+      Account.current.rollback(:wf_comma_filter_fix)
+    end
+
+    def test_custom_dropdown_filters_with_comma_multiple
+      Account.current.launch(:wf_comma_filter_fix)
+      query_hash_params = { '0' => query_hash_param('test_custom_dropdown', 'is_in', ['Chennai, In', 'bangalore'], 'custom_field') }
+      match_db_and_es_query_responses(query_hash_params)
+    ensure
+      Account.current.rollback(:wf_comma_filter_fix)
+    end
+
+    def test_custom_dropdown_filters_with_comma_multiple_and_unresolved
+      Account.current.launch(:wf_comma_filter_fix)
+      query_hash_params = { '0' => query_hash_param('test_custom_dropdown', 'is_in', ['Chennai, In', 'bangalore'], 'custom_field'),
+                            '1' => query_hash_param('status', 'is_in', [0]) }
+      match_db_and_es_query_responses(query_hash_params)
+    ensure
+      Account.current.rollback(:wf_comma_filter_fix)
+    end
+
+    def test_custom_dropdown_filters_with_comma_multiple_and_agent_me
+      Account.current.launch(:wf_comma_filter_fix)
+      query_hash_params = { '0' => query_hash_param('test_custom_dropdown', 'is_in', ['Chennai, In', 'bangalore'], 'custom_field'),
+                            '1' => query_hash_param('responder_id', 'is_in', [0]) }
+      match_db_and_es_query_responses(query_hash_params)
+    ensure
+      Account.current.rollback(:wf_comma_filter_fix)
+    end
+
     def test_multiple_custom_filter
       query_hash_params = { '0' => query_hash_param('test_custom_dropdown', 'is_in', DROPDOWN_OPTIONS.sample(3), 'custom_field') }
       match_db_and_es_query_responses(query_hash_params)
@@ -702,6 +760,14 @@ module Ember
     def test_dependent_field_one_level
       query_hash_params = { '0' => query_hash_param('test_custom_country', 'is_in', [DEPENDENT_FIELD_VALUES.keys.sample.dup], 'custom_field') }
       match_db_and_es_query_responses(query_hash_params)
+    end
+
+    def test_dependent_field_one_level_with_comma_choices
+      Account.current.launch(:wf_comma_filter_fix)
+      query_hash_params = { '0' => query_hash_param('test_custom_country', 'is_in', ['Chennai, In'], 'custom_field') }
+      match_db_and_es_query_responses(query_hash_params)
+    ensure
+      Account.current.rollback(:wf_comma_filter_fix)
     end
 
     def test_dependent_field_two_level
@@ -804,6 +870,22 @@ module Ember
       match_json(private_api_ticket_index_filter_pattern(custom_filter.data))
 
       match_filter_response_with_es_enabled(custom_filter)
+    end
+
+    def test_index_with_custom_filter_having_custom_field_with_comma_value
+      Account.current.launch(:wf_comma_filter_fix)
+      @custom_field = create_custom_field_dropdown('city', ['Chennai, IN'])
+      custom_filter = create_filter(@custom_field, data_hash: [])
+      ticket = create_ticket(custom_field: { city_1: 'Chennai, IN' })
+      get :index, controller_params(version: 'private', filter: custom_filter.id)
+      assert_response 200
+      response_data = JSON.parse(response.body)
+      assert_equal 1, response_data.count
+      assert_equal ticket.id, response_data[0]['id']
+      match_json(private_api_ticket_index_filter_pattern(custom_filter.data))
+      match_filter_response_with_es_enabled(custom_filter)
+    ensure
+      Account.current.rollback(:wf_comma_filter_fix)
     end
 
     def test_index_with_order_clauses

@@ -5,6 +5,8 @@ module FilterFactory
 
     FINAL_ARGS_PARAMS = [:conditions, :or_conditions, :missing_fields, :include, :order_by, :order_type, :page, :per_page].freeze
 
+    TEXT_DELIMITER = ','.freeze
+
     class << self
       attr_accessor :args
 

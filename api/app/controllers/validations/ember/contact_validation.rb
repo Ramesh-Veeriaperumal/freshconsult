@@ -1,5 +1,7 @@
 class Ember::ContactValidation < ContactValidation
-  attr_accessor :company
+  attr_accessor :company, :facebook_id
+
+  MANDATORY_FIELDS = [:email, :mobile, :phone, :twitter_id, :unique_external_id, :facebook_id].freeze
 
   alias_attribute :company, :company_name
 
@@ -8,7 +10,8 @@ class Ember::ContactValidation < ContactValidation
     allow_nil: true,
     hash: -> { other_companies_format }
   }
-
+  validates :facebook_id, data_type: { rules: String, allow_nil: true },
+                          custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   def initialize(request_params, item, allow_string_param = false, enforce_mandatory = 'true')
     self.skip_hash_params_set_for_parameters = ['company']
     super(request_params, item, allow_string_param, enforce_mandatory)
@@ -87,5 +90,17 @@ class Ember::ContactValidation < ContactValidation
 
   def view_all_tickets_present?
     false
+  end
+
+  def email_mandatory?
+    MANDATORY_FIELDS.all? { |x| safe_send(x).blank? && errors[x].blank? }
+  end
+
+  def mandatory_field_array
+    if unique_contact_identifier_enabled?
+      MANDATORY_FIELDS
+    else
+      MANDATORY_FIELDS - [:unique_external_id]
+    end
   end
 end

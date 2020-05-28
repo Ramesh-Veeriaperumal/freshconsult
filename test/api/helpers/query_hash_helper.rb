@@ -6,13 +6,14 @@ module QueryHashHelper
   DELETED_CONDITION = { 'condition' => 'deleted', 'operator' => 'is', 'value' => false }
 
   def sample_filter_conditions(params={})
+    feature = Account.current && Account.current.launched?(:wf_comma_filter_fix)
     {
       data_hash: [
-        { "condition"=>"responder_id", "operator"=>"is_in", "ff_name"=>"default", "value"=>"0,-1" },
-        { "condition"=>"due_by", "operator"=>"due_by_op", "ff_name"=>"default", "value"=>"1,2,3,4" },
-        { "condition"=>"group_id", "operator"=>"is_in", "ff_name"=>"default", "value"=>"0,3" },
-        { "condition"=>"status", "operator"=>"is_in", "ff_name"=>"default", "value"=>"2" },
-        { "condition"=>"created_at", "operator"=>"is_greater_than", "ff_name"=>"default", "value"=>"13 Sep 2016 - 23 Feb 2016" },
+        { 'condition' => 'responder_id', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => (feature ? ['0', '-1'] : '0,-1' ) },
+        { 'condition' => 'due_by', 'operator' => 'due_by_op', 'ff_name' => 'default', 'value' => (feature ? ['1', '2', '3', '4'] : '1,2,3,4') },
+        { 'condition' => 'group_id', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => (feature ? ['0', '3'] : '0,3') },
+        { 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => (feature ? ['2'] : '2') },
+        { 'condition' => 'created_at', 'operator' => 'is_greater_than', 'ff_name' => 'default', 'value' => '13 Sep 2016 - 23 Feb 2016'}
       ],
       wf_model: "Helpdesk::Ticket",
       wf_order: "created_at",
@@ -44,7 +45,7 @@ module QueryHashHelper
       'condition' => "flexifields.#{field_name}",
       'operator' => 'is_in',
       'ff_name' => field_alias,
-      'value' => value
+      'value' => Account.current.launched?(:wf_comma_filter_fix) ? [value] : value
     }
   end
 

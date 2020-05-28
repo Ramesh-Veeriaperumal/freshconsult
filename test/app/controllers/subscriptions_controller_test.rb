@@ -914,6 +914,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     @account.add_feature(:field_service_management) unless @account.field_service_management_enabled?
     perform_fsm_operations
     params = { plan_id: garden_plan_id }
+    fsm_fields_count =  @account.sections.where(label: SERVICE_TASK_SECTION).first.section_fields.count
     @account.rollback :downgrade_policy
     Sidekiq::Testing.inline! do
       post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
@@ -921,6 +922,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     @account.reload
     assert_equal @account.subscription.subscription_plan_id, garden_plan_id
     assert_equal true, @account.sections.find_by_label(SERVICE_TASK_SECTION).present?
+    assert_equal fsm_fields_count, @account.sections.where(label: SERVICE_TASK_SECTION).first.section_fields.count
     refute @account.section_fields.empty?
     assert_equal 0, ticket_fields.all.select { |field| field.field_options['section'] == true && !field.field_options.include?('fsm') }.count
     assert_equal true, ticket_fields.all.select { |field| field.field_options['section'] == true && field.field_options.include?('fsm') }.present?
@@ -1093,6 +1095,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     @account.add_feature(:field_service_management) unless @account.field_service_management_enabled?
     perform_fsm_operations
     params = { plan_id: blossom_plan_id }
+    fsm_fields_count = @account.sections.where(label: SERVICE_TASK_SECTION).first.section_fields.count
     @account.rollback :downgrade_policy
     Sidekiq::Testing.inline! do
       post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
@@ -1100,6 +1103,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     @account.reload
     assert_equal @account.subscription.subscription_plan_id, blossom_plan_id
     assert_equal true, @account.sections.find_by_label(SERVICE_TASK_SECTION).present?
+    assert_equal fsm_fields_count, @account.sections.where(label: SERVICE_TASK_SECTION).first.section_fields.count
     refute @account.section_fields.empty?
     assert_equal 0, ticket_fields.all.select { |field| field.field_options['section'] == true && !field.field_options.include?('fsm') }.count
     assert_equal true, ticket_fields.all.select { |field| field.field_options['section'] == true && field.field_options.include?('fsm') }.present?

@@ -19146,6 +19146,9 @@
         "twitter_id": {
           "type": "string"
         },
+        "facebook_id": {
+          "type": "string"
+        },
         "deleted_agent": {
           "type": "boolean"
         },

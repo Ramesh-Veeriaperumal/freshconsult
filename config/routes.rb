@@ -3052,6 +3052,9 @@ Helpkit::Application.routes.draw do
           put :add_blacklisted_domain
           put :remove_blacklisted_domain
           get :fetch_latest_shard
+          get :redis_signup_shards
+          post :add_shard_to_redis
+          post :remove_shard_from_redis
         end
       end
 

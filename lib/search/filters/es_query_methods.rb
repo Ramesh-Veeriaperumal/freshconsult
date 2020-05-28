@@ -15,7 +15,11 @@ module Search::Filters::EsQueryMethods
       wf_conditions.each do |field|
         cond_field = (COLUMN_MAPPING[field['condition']].presence || field['condition'].to_s).gsub(QueryHash::FLEXIFIELDS, '')
         cond_field = cond_field.gsub(QueryHash::TICKET_FIELD_DATA, '') if cond_field.include?(QueryHash::TICKET_FIELD_DATA)
-        field_values = field['value'].to_s.split(',')
+        if Account.current.wf_comma_filter_fix_enabled?
+          field_values = field['value'].is_a?(Array) ? field['value'] : field['value'].to_s.split(::FilterFactory::TicketFilterer::TEXT_DELIMITER)
+        else
+          field_values = field['value'].to_s.split(',')
+        end
         es_wrapper.push(handle_field(cond_field, field_values)) if cond_field.present?
       end
     end

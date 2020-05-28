@@ -32,6 +32,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   SUCCESS = 200..299
   MAX_THP_EXTENSION_DAYS_COUNT = 20
 
+  FRESIDV1_MIGRATION_NOTIFICATION_DISABLE_TIMEOUT = 900 # 15 mins
+
   def show
     account_summary = {}
     account = fetch_account
@@ -444,6 +446,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
           Rails.logger.info "Freshid Migration check failed for A = #{params[:account_id]}"
           result[:status] = 'notice'
         else
+          migration_redis_key = format(SUPPRESS_FRESHID_V1_MIG_AGENT_NOTIFICATION, account_id: account.id.to_s)
+          set_others_redis_key(migration_redis_key, true, FRESIDV1_MIGRATION_NOTIFICATION_DISABLE_TIMEOUT)
           Rails.logger.info "Migrate account to Freshid V1 has been triggered for A = #{params[:account_id]}"
           account.account_additional_settings.create_freshid_migration(ENABLE_V1_MIGRATION_INPROGRESS)
           Admin::FdadminFreshidMigrationWorker.perform_async(freshid_silent_migration: true, account_id: account.id, doer_email: params[:doer_email])

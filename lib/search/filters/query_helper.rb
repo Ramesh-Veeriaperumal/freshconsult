@@ -65,7 +65,11 @@ module Search::Filters::QueryHelper
       wf_conditions.each do |field|
         # Doing gsub as flexifields are flat now.
         cond_field = (COLUMN_MAPPING[field['condition']].presence || field['condition'].to_s).gsub('flexifields.','')
-        field_values = field['value'].to_s.split(',')
+        if Account.current.wf_comma_filter_fix_enabled?
+          field_values = field['value'].is_a?(Array) ? field['value'] : field['value'].to_s.split(',')
+        else
+          field_values = field['value'].to_s.split(',')
+        end
 
         # Hack for any agent filter has unassigned and has value for any group filter
         # Need to do (Agent = Unassigned & Group = X) OR (I.Agent = Unassigned  & I.Group = X)

@@ -886,7 +886,7 @@
         "_ui_url": "https://staging-ui.fid.freshworksapi.com",
         "v1_migration_api_key": "EJ[1:3y9zqnN1YveN0lNhuTjO583i7UAfwh95nL+BRkGHcUU=:UtkNX9bNaS9fbsLa/OdH26DkwjNg7W5C:DU2YxPlJku9oI2DOiFtYAXUrqPB38jLPbjkjfPcZwnb4e9WxbEmUuRKqk1r7fxFwcxC6xMbVNpI=]",
         "_v1_migration_url": "https://staging-migration.fid.freshworksapi.com/v2/user",
-        "_v1_migration_product": "freshdesk-prestaging"
+        "_v1_migration_product": "freshdesk-staging"
       },
       "freshid_v2": {
         "_region_code": "STAGING",
@@ -1135,9 +1135,9 @@
         "slack_secret": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:9tujHWzauEnuOvPyNxzdONExgitLjatM:CUC0vUp9OR0AYzs1Ff1oUbz+5FpQggrABP7uZow3UNjgJzV0gsrZx/byPHzxPdwR]",
         "slack_slash_cmd_token": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:TNt+NLjLSPekl04laqUfjcGXejm9D451:+nBCclaJ7Ak+/sxnEyZzdPI/H2DOnjNXLGddfegFrpajpmgTMcJoSA==]",
         "slack_token": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:x3pDauWVbgcguCdQ8HvGMUkwaqin6fk4:mHOH9uXl0ZF7dWou373BMExN7Bz1V6q8bRLDEMxRuPLU785KNwMU]",
-        "surveymonkey_api_key": "EJ[1:0+zY2CDV3YCJNog+WPT2TVsoX83AeKLOKvvaGzltvDY=:LpL2Uz0Tb/jWeD3eDs01y5mNnoW5G7bL:h4wqyl7gN2I9x3Q6dqZpy6SqQ28H4RR7OSSjRonrSTzBpl2MgvHeWg==]",
-        "surveymonkey_secret": "EJ[1:d4VKwTT1vqha+EmtTn4bARTBSJ6VjUG3oH0De5V+SRQ=:DCW+aTDlT4Fy0rhqHK+KbCE4idJ252t7:/0dfqm6UZ4jPiOdujwHW17NLWjeHOqUarQiF23gE4rtiXonMoQhRU4tG9QL4hYEsp9zqwcfkPw==]",
-        "surveymonkey_token": "EJ[1:d4VKwTT1vqha+EmtTn4bARTBSJ6VjUG3oH0De5V+SRQ=:+k4YRN9MI6dgvQHfHdjDYXVpPjqzlQjy:3sqvsUYtwgvoHnS4jQ4eZg8x+OSKTqwcKC4g9KQTQbUvOV2INAQ=]"
+        "surveymonkey_api_key": "EJ[1:mXYCWwIKn34JaHq/c/D9AODm+k+vQstg02F6aLskFQM=:7HJsG1ZUcENMt80miV/47mnDtdhIFY6C:HPrm9yzYn6K5HZZc62TnulMgN8w6vt1tZkSTnHRtr+h9+IibeIsXh46ePL1gMC1bDoRZBjIKI01PkDxyAWM1+3fLcEE2CidRcunwRiU2RNqnKYQEzzD9K1JO9hqjbJXBNhrjMbrMG6HWFiiEJgXn01CcCO8onWP16gZhrXWHf4PANkASFVYt8iPp+E3gS55P]",
+        "surveymonkey_secret": "EJ[1:mXYCWwIKn34JaHq/c/D9AODm+k+vQstg02F6aLskFQM=:olTQ/XSVT1xGkEtsuiyLBtOZfPdDRpnb:KZbWPtl8dNvvpl58lLVohfG3046tGmPXfYQR2PvQvQmNsvaW7T+GC4ojvMY3QwJghDyHhS8=]",
+        "surveymonkey_token": "EJ[1:mXYCWwIKn34JaHq/c/D9AODm+k+vQstg02F6aLskFQM=:FUSaMWc7XIm2N8OyeLQ+P52Fh5L7wUG7:Ys+pDtzts+Ou+TjjL8UEYFL+WSpfz23FB2glEjWQ/Ea/V6xny3U=]"
       },
       "pod_dns": {
         "domains": {
