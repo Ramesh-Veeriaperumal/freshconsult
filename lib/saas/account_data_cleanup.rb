@@ -30,6 +30,19 @@ class SAAS::AccountDataCleanup
     clear_fragment_caches
   end
 
+  def handle_custom_source_drop_data
+    account.helpdesk_sources.visible.custom.each do |source|
+      begin
+        # make the source as soft deleted.
+        source.deleted = true
+        source.save!
+      rescue StandardError => e
+        Rails.logger.error "Exception in custom source deletion.. #{e.backtrace}"
+        NewRelic::Agent.notice_error(e)
+      end
+    end
+  end
+
   def handle_create_observer_drop_data
     account.all_observer_rules.find_each do |rule|
       rule.destroy

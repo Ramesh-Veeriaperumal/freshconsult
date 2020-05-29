@@ -13,7 +13,7 @@ class SAAS::SubscriptionEventActions
                            :scenario_automation, :personal_canned_response, :marketplace,
                            :custom_domain, :css_customization, :field_service_management, :field_service_management_toggle,
                            :custom_roles, :dynamic_sections, :custom_survey, :mailbox,
-                           :helpdesk_restriction_toggle, :ticket_templates,
+                           :helpdesk_restriction_toggle, :ticket_templates, :custom_source,
                            :round_robin_load_balancing, :multi_timezone, :custom_translations,
                            :sitemap, :article_versioning, :suggested_articles_count, :unlimited_multi_product, :article_approval_workflow,
                            :fb_ad_posts, :segments, :agent_assist_ultimate, :agent_assist_lite, :field_service_geolocation_toggle].freeze
