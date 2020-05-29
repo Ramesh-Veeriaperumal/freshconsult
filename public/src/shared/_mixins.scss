@@ -66,6 +66,7 @@
     &.fr-dii.fr-fir { float: right; margin: 5px 0 5px 5px; max-width: calc(100% - 5px); }
     &.fr-rounded { border-radius: 100%; @include background-clip(padding-box); }
     &.fr-bordered { border: solid 1px #CCC; @include box-sizing( content-box ); }
+    &.fr-shadow { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 1px 1px rgba(0, 0, 0, 0.16); }
   }
 
   table.fr-dashed-borders th, table.fr-dashed-borders td {border-style: dashed;}
