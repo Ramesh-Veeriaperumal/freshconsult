@@ -141,7 +141,7 @@ class Account < ActiveRecord::Base
 
   def features?(*feature_names)
     feature_names = feature_names.to_set
-    features_migrated_to_bmp = Account.handle_feature_name_change(feature_names)
+    features_migrated_to_bmp = Account.handle_feature_name_change(feature_names - DB_TO_LP_FEATURES)
     features_migrated_to_lp = feature_names & DB_TO_LP_FEATURES
     has_features?(*features_migrated_to_bmp) && launched?(*features_migrated_to_lp)
   end
