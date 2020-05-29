@@ -395,6 +395,7 @@
       :custom_source: 390
       :location_tagging: 391
       :robo_assist_ultimate: 392
+      :agent_articles_suggest_eligible: 393
 :selectable_features:
   :redis_display_id: true
   :branding: true

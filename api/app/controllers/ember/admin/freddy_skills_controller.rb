@@ -2,6 +2,7 @@ module Ember
   module Admin
     class FreddySkillsController < ApiApplicationController
       include ::Admin::FreddyConstants
+      include ::Freddy::BulkCreateBot
 
       skip_before_filter :before_load_object, :load_object, :after_load_object
       before_filter :check_eligibility, only: [:show, :update]
@@ -47,8 +48,20 @@ module Ember
 
         def execute_callbacks(skill, action)
           if CALLBACKS[skill] && CALLBACKS[skill][action]
-            current_account.safe_send(CALLBACKS[skill][action])
+            safe_send(CALLBACKS[skill][action])
           end
+        end
+
+        def configure_thank_you_redis_key
+          current_account.configure_thank_you_redis_key
+        end
+
+        def remove_thank_you_redis_key
+          current_account.remove_thank_you_redis_key
+        end
+
+        def create_agent_articles_suggest_bot
+          bulk_create_bot_perform(action: :agent_articles_suggest)
         end
     end
   end

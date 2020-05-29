@@ -81,7 +81,7 @@ class Account < ActiveRecord::Base
     :location_tagging, :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
     :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :autofaq, :proactive_spam_detection,
     :ticket_properties_suggester, :ticket_properties_suggester_eligible,
-    :hide_first_response_due, :agent_articles_suggest, :email_articles_suggest, :customer_journey, :botflow,
+    :hide_first_response_due, :agent_articles_suggest, :agent_articles_suggest_eligible, :email_articles_suggest, :customer_journey, :botflow,
     :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters, :supervisor_custom_status, :lbrr_by_omniroute,
     :secure_attachments, :article_versioning, :article_export, :article_approval_workflow, :next_response_sla, :advanced_automations,
     :fb_ad_posts, :suggested_articles_count, :unlimited_multi_product,
