@@ -230,6 +230,17 @@ module Admin
         ).trigger(act_on: ticket, doer: User.first, triggered_event: { ticket_action: 'marked_Spam' })
       end
 
+      def test_textile_to_html_conversion_in_send_email_observer
+        ticket, rule = send_email_observer_base('send_email_to_agent')
+        rule.action_data[0][:email_body] = '<div data-identifyelement="277" dir="ltr">{% if ticket.company %}</div><ul><li dir="ltr">With Company</li></ul><p dir="ltr">{% else %}</p><ul><li dir="ltr">Without company</li></ul><p dir="ltr">{% endif %}</p>'
+        rule.save!
+        act_hash = {
+          name: 'send_email_to_group', email_to: User.first.id, email_subject: rule.action_data[0][:email_subject],
+          email_body: rule.action_data[0][:email_body]
+        }
+        assert Va::Action.new(act_hash: act_hash, va_rule: rule).trigger(act_on: ticket, doer: User.first, triggered_event: { ticket_action: 'marked_Spam' })
+      end
+
       private
 
         def construct_overdue_type_hash(overdue_type)
