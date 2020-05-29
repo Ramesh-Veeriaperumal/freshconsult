@@ -1069,6 +1069,15 @@ class Account < ActiveRecord::Base
     freshchat_account.nil? ? false : true
   end
 
+  def mark_authorization_code_expiry
+    set_others_redis_key(authorization_expiry_key, true, 30.minutes)
+  end
+
+  def authorization_code_expired?
+    value = get_others_redis_key(authorization_expiry_key)
+    value.blank? || value != 'true'
+  end
+
   protected
 
     def external_url_is_valid?(url)
@@ -1092,6 +1101,10 @@ class Account < ActiveRecord::Base
     end
 
   private
+
+    def authorization_expiry_key
+      format(AUTHORIZATION_CODE_EXPIRY, account_id: id)
+    end
 
     def update_features(features)
       if features.present?
