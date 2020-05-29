@@ -1,13 +1,25 @@
 <div class="row-fluid">
 	<%= email_field object_name, :email,
 			:value => value, :class => "span12 email required",
-			"data-check-email-path" => check_email_support_tickets_path,
 			"data-remote" => "true", 
 			"data-remote-triggers" => "focusout" %>
 		
 	<div id="name_field" class="default_name_field hide">
 		<% requester_user_name = params[:helpdesk_ticket][:name] if params[:helpdesk_ticket]%>
 		<input class="text span12 name_field" placeholder="<%= t("ticket_form.your_name") %>" 
-			name="helpdesk_ticket[name]" type="text" disabled="disabled" data-user-name="<%= requester_user_name || ''%>"/>
+			name="helpdesk_ticket[name]" type="text" data-user-name="<%= requester_user_name || ''%>"/>
 	</div>
 </div>
+
+<%= javascript_tag do %>
+  	(function($){
+			$(document).ready(function(){
+			  $("#helpdesk_ticket_email").focusout(function(){
+			    var ticket_email = $("#helpdesk_ticket_email").val().trim().toLowerCase();
+          var current_user_email = "<%= current_user ? current_user.email.to_s() : '' %>";
+          var $nameField = $("#name_field");
+			    (ticket_email === current_user_email || !ticket_email.isValidEmail()) ? $nameField.hide() : $nameField.slideDown();
+			  });
+			});
+		})(jQuery);
+	<% end %>
