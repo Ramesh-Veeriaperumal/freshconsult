@@ -1,4 +1,6 @@
 class AccountAdminsController < ApiApplicationController
+  include Redis::HashMethods
+
   before_filter :load_object
   before_filter :validate_params, only: [:update, :preferences=]
 
@@ -18,7 +20,9 @@ class AccountAdminsController < ApiApplicationController
   end
 
   def preferences
-    @preferences = current_account.account_additional_settings.additional_settings
+    additional_settings = current_account.account_additional_settings.additional_settings
+    account_setting_redis_key = format(ACCOUNT_SETTINGS_REDIS_HASH, account_id: current_account.id)
+    @preferences = multi_get_all_redis_hash(account_setting_redis_key).reverse_merge!(additional_settings)
     response.api_root_key = :preferences
   end
 
