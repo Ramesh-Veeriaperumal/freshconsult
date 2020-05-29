@@ -671,6 +671,11 @@ module SupportHelper
     output.join("").html_safe
   end
 
+  def portal_session_replay_allowed?
+    # If the account is enabled with PCI compliance, the sessions should not be recorded.
+    current_account.session_replay_enabled? && current_account.account_additional_settings.freshmarketer_linked? && !current_account.pci_compliance_field_enabled?
+  end
+
   def portal_session_replay
     output = current_account.account_additional_settings.freshmarketer_cdn_script
     output.html_safe

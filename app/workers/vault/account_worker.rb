@@ -24,6 +24,8 @@ class Vault::AccountWorker < BaseWorker
         token = JWT::SecureServiceJWEFactory.new(PciConstants::ACTION[:write]).account_info_payload
         payload = whitelisted_ip.as_api_response(:vault_service)
         Vault::Client.new(PciConstants::ACCOUNT_INFO_URL, :put, token).update_account(payload.to_json)
+        @account.add_feature(:single_session_per_user) unless @account.has_feature?(:single_session_per_user)
+        @account.launch(:idle_session_timeout) unless @account.launched?(:idle_session_timeout)
       else
         @account.pci_compliance_field_enabled? && @account.revoke_feature(:pci_compliance_field)
         Rails.logger.info("whitelisted_ips feature is not enabled for A- #{@account.id}. hence feature is rollbacked")

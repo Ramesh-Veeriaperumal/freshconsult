@@ -76,6 +76,24 @@ class Vault::AccountWorkerTest < ActionView::TestCase
     @account.revoke_feature(:pci_compliance_field)
   end
 
+  def test_idle_session_time_out_and_single_session_per_user_when_account_vault_service_success
+    @account.features.whitelisted_ips.create
+    Account.any_instance.stubs(:whitelisted_ip).returns(whitelisted_ip_stub)
+    stub_request(:put, PciConstants::ACCOUNT_INFO_URL).to_return(status: 204)
+    Vault::AccountWorker.new.perform(action: PciConstants::ACCOUNT_UPDATE)
+    @account.reload
+    assert_equal true, @account.pci_compliance_field_enabled?
+    assert_equal true, @account.idle_session_timeout_enabled?
+    assert_equal true, @account.has_feature?(:single_session_per_user)
+  ensure
+    Account.unstub(:current)
+    @account.features.whitelisted_ips.destroy
+    @account.revoke_feature(:pci_compliance_field)
+    @account.revoke_feature(:idle_session_timeout)
+    @account.revoke_feature(:single_session_per_user)
+    Account.any_instance.unstub(:whitelisted_ip)
+  end
+
   private
 
     def whitelisted_ip_stub
