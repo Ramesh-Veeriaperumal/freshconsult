@@ -260,6 +260,12 @@ class PrivateApiFlowsTest < ActionDispatch::IntegrationTest
     @account.freshconnect_account.destroy if @account.freshconnect_account.present?
   end
 
+  def test_invalid_ticket_id_for_vault_token_generation
+    id = '1abc'
+    get "api/_/tickets/#{id}/vault_token"
+    assert_response 404
+  end
+
   def private_api_key(account_id = @account.id)
     "PRIVATE_API_THROTTLER:#{account_id}"
   end
