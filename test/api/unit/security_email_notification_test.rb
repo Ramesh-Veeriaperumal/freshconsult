@@ -87,7 +87,7 @@ class SecurityEmailNotificationTest < ActionView::TestCase
   end
 
   def test_admin_alert_mail
-    recipient1 = add_agent_to_account(@account, name: Faker::Name.name, active: 1, role: 1, language: 'de').user
+    recipient1 = add_agent_to_account(@account, name: Faker::Name.name, active: 1, role: 1, language: 'en').user
     recipient2 = add_agent_to_account(@account, name: Faker::Name.name, active: 1, role: 1, language: 'en').user
     emails = [recipient1.email, recipient2.email]
     subject = { key: 'mailer_notifier_subject.agent_added',
@@ -97,8 +97,8 @@ class SecurityEmailNotificationTest < ActionView::TestCase
               }
     roles_name = recipient1.roles.map(&:name)
     mail_message = SecurityEmailNotification.send_email_to_group(:admin_alert_mail_message, emails, recipient1, subject, 'agent_create', roles_name.to_a, recipient2.name)
-    assert_equal mail_message['de'].first, recipient1.email
-    assert_equal mail_message['en'].first, recipient2.email
+    assert_equal mail_message['en'].first, recipient1.email
+    assert_equal mail_message['en'].second, recipient2.email
   end
 
   def test_admin_alert_mail_message
