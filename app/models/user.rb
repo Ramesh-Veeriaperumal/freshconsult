@@ -26,7 +26,7 @@ class User < ActiveRecord::Base
   include Redis::FreshidPasswordRedis
   include ContactsCompaniesHelper
 
-  concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq, :esv2_methods, :presenter, :freshid_methods
+  concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq, :esv2_methods, :presenter, :freshid_methods, :presenter_helper
 
   include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams # Placed here to handle deprecated Customer class. Has to be after associations
 

@@ -97,8 +97,8 @@ class User < ActiveRecord::Base
     helpdesk_agent ? 'agent' : 'contact'
   end
 
-  def event_info action
-    { :ip_address => Thread.current[:current_ip] }
+  def event_info(action)
+    { ip_address: Thread.current[:current_ip], marketplace_event: valid_marketplace_event?(action) }
   end
 
   def model_changes_for_central

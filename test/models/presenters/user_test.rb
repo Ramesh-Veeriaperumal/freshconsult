@@ -217,4 +217,47 @@ class UserTest < ActiveSupport::TestCase
 
     CentralPublishWorker::UserWorker.jobs.clear
   end
+
+  def test_central_publish_payload_event_info_marketplace_attribute_for_custom_field_update
+    label = Faker::Lorem.characters(10)
+    choices = [{ value: Faker::Lorem.characters(10), position: 1 }, { value: Faker::Lorem.characters(10), position: 2 }]
+    custom_field = create_contact_field(cf_params(type: 'dropdown', field_type: 'custom_dropdown', label: label, editable_in_signup: 'true', custom_field_choices_attributes: choices))
+    user = add_new_user(@account)
+    user.save
+    user.update_attributes(custom_field: { custom_field.name => choices.sample })
+    event_info = user.event_info(:update)
+    event_info.must_match_json_expression(cp_user_event_info_pattern(marketplace_event: true))
+  end
+
+  def test_central_publish_payload_event_info_marketplace_attribute_for_user_emails_updated
+    user = add_new_user(@account)
+    user.user_emails.build(email: Faker::Internet.email, primary_role: false)
+    user.save
+    event_info = user.event_info(:update)
+    event_info.must_match_json_expression(cp_user_event_info_pattern(marketplace_event: true))
+  end
+
+  def test_central_publish_payload_event_info_marketplace_attribute_for_tags_updated
+    new_tags = [Faker::Lorem.characters(10), Faker::Lorem.characters(10)]
+    user = add_new_user(@account, tags: new_tags)
+    user.save
+    user.save_tags
+    event_info = user.event_info(:update)
+    event_info.must_match_json_expression(cp_user_event_info_pattern(marketplace_event: true))
+  end
+
+  def test_central_publish_payload_event_info_marketplace_attribute_with_invalid_attribute_updated
+    user = add_new_user(@account)
+    user.update_attributes(login_count: 2)
+    event_info = user.event_info(:update)
+    event_info.must_match_json_expression(cp_user_event_info_pattern(marketplace_event: false))
+  end
+
+  def test_central_publish_payload_event_info_marketplace_attribute_with_valid_marketplace_attribute
+    user = add_new_user(@account)
+    user.save
+    user.update_attributes(description: Faker::Lorem.characters(10))
+    event_info = user.event_info(:update)
+    event_info.must_match_json_expression(cp_user_event_info_pattern(marketplace_event: true))
+  end
 end

@@ -68,4 +68,7 @@ module CentralConstants
   #              :contact_create => { :user_companies => :user_companies_updated, :user_emails => :user_emails_updated } 
   # } }
   SKIP_EVENT_BY_EXCHANGE_KLASS = SKIP_EVENT.each_with_object({}) { |arr, hash| hash[arr[0]] = (hash[arr[0]] || {}).merge(arr[1] => ((hash[arr[0]] && hash[arr[0]][arr[1]]) || {}).merge(arr[2] => arr[3])) }.freeze
+
+  # To skip event without valid properties in model changes but has below properties
+  INVALID_MODEL_CHANGES = [:updated_at].freeze
 end
