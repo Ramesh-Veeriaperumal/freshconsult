@@ -22,7 +22,7 @@ class Flexifield < ActiveRecord::Base
 
   zero_downtime_migration_methods :methods => {:remove_columns => ["ff_boolean11","ff_boolean12","ff_boolean13","ff_boolean14","ff_boolean15","ff_boolean16","ff_boolean17","ff_boolean18","ff_boolean19","ff_boolean20"] }
 
-  before_validation :nested_field_correction
+  before_validation :nested_field_correction, if: -> { !ticket_field_limit_increase_enabled? }
 
   def self.flexiblefield_names
     @flexiblefield_names ||= column_names.grep(/ff.+/)

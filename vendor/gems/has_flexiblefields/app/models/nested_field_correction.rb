@@ -5,8 +5,9 @@ class NestedFieldCorrection
   LEVEL_2 = 1
   LEVEL_3 = 2
 
-  def initialize(flexifield = nil)
+  def initialize(flexifield = nil, read_transformer = nil)
     @flexifield = flexifield
+    @read_transformer = read_transformer
     @column_id_map = {}
     @column_name_map = {}
     @only_nested_keys = []
@@ -37,17 +38,21 @@ class NestedFieldCorrection
     end
 
     def handle_ff_values(nested_column_set)
-      lvl_1, lvl_2, lvl_3 = current_set_values(nested_column_set)
+      lvl1, lvl2, lvl3 = if Account.current.ticket_field_limit_increase_enabled?
+                           transformed_set_values(nested_column_set)
+                         else
+                           current_set_values(nested_column_set)
+                         end
       nested_values_set = current_nested_field_choices(nested_column_set[LEVEL_1])
-      ffs_list = if nested_values_set[lvl_1].nil?
-        nested_column_set
-      elsif nested_values_set[lvl_1][lvl_2].nil?
-        list = [nested_column_set[LEVEL_2]]
-        list.push(nested_column_set[LEVEL_3]) if has_third_level?(nested_column_set)
-        list
-      elsif has_third_level?(nested_column_set) && nested_values_set[lvl_1][lvl_2].exclude?(lvl_3)
-        [nested_column_set[LEVEL_3]]
-      end
+      ffs_list = if nested_values_set[lvl1].nil?
+                   nested_column_set
+                 elsif nested_values_set[lvl1][lvl2].nil?
+                   list = [nested_column_set[LEVEL_2]]
+                   list.push(nested_column_set[LEVEL_3]) if has_third_level?(nested_column_set)
+                   list
+                 elsif has_third_level?(nested_column_set) && nested_values_set[lvl1][lvl2].exclude?(lvl3)
+                   [nested_column_set[LEVEL_3]]
+                 end
       reset_values(ffs_list) if ffs_list.present?
     end
 
@@ -84,6 +89,13 @@ class NestedFieldCorrection
     def current_set_values(field_set)
       field_set.collect do |column_name|
         flexifield.safe_send(column_name)
+      end
+    end
+
+    def transformed_set_values(flexifield_column_names)
+      flexifield_column_names.collect do |ffs_column|
+        # Get the flexifield value and transform it using PicklistValueTransformer::IdToString transformer
+        @read_transformer.transform(flexifield.safe_send(ffs_column), ffs_column)
       end
     end
 

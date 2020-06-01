@@ -7,6 +7,8 @@ class TicketFieldData < ActiveRecord::Base
   belongs_to :flexifield_def, include: 'flexifield_def_entries'
   delegate :to_ff_alias, :to_ff_field, :to_ff_def_entry, to: :flexifield_def
 
+  before_validation :nested_field_correction
+
   ALLOWED_FIELD_TYPES = ['custom_dropdown', 'custom_number', 'custom_checkbox', 'nested_field', 'custom_date', 'custom_date_time', 'custom_file'].freeze
   NEW_DROPDOWN_COLUMN_NAMES = column_names.grep(/ffs.+/)[80..249]
   NEW_DROPDOWN_COLUMN_NAMES_SET = Set.new(NEW_DROPDOWN_COLUMN_NAMES)
@@ -103,6 +105,10 @@ class TicketFieldData < ActiveRecord::Base
     def flexiblefield_names_set
       @flexiblefield_names_set ||= Set.new(flexiblefield_names)
     end
+  end
+
+  def nested_field_correction
+    NestedFieldCorrection.new(self, read_transformer).clear_child_levels if Account.current.dependent_field_validation_enabled?
   end
 
   private
