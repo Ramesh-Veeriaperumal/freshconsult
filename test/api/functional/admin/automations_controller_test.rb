@@ -763,35 +763,43 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
   end
 
   def test_summary_in_service_task_dispatcher_for_agent_assign
+    agent = add_agent_to_group(nil, ticket_permission = 1, role_id = @account.roles.supervisor.first.id)
     enable_service_task_automation_lp_and_privileges
-    rule = create_service_task_dispatcher_rule('responder_id')
+    rule = create_service_task_dispatcher_rule('responder_id', nil, nil, action: { responder_id: agent.id })
     summary = generate_summary(rule, true)
     assert_equal 'If <div class = SummaryKey>Priority</div> <div class = SummaryOperator>is</div> <div class = SummaryValue>Low</div>', summary[:conditions][:condition_set_1][0]
-    assert_equal ' <div class = SummaryKey>Assign to Field Technician</div> <div class = SummaryValue>Support</div>', summary[:actions][0]
+    assert_equal " <div class = SummaryKey>Assign to Field Technician</div> <div class = SummaryValue>#{agent.name}</div>", summary[:actions][0]
+    agent.try(:destroy)
   end
 
   def test_summary_in_service_task_dispatcher_for_agent_assign_in_same_ticket
     enable_service_task_automation_lp_and_privileges
-    rule = create_service_task_dispatcher_rule('responder_id', 'priority', 'same_ticket')
+    agent = add_agent_to_group(nil, ticket_permission = 1, role_id = @account.roles.supervisor.first.id)
+    rule = create_service_task_dispatcher_rule('responder_id', 'priority', 'same_ticket', action: { responder_id: agent.id }, condition: { priority: 1 })
     summary = generate_summary(rule, true)
     assert_equal 'If <div class = SummaryKey>Priority</div> <div class = SummaryOperator>is</div> <div class = SummaryValue>Low</div>', summary[:conditions][:condition_set_1][0]
-    assert_equal 'On the same service task <div class = SummaryKey>Assign to Field Technician</div> <div class = SummaryValue>Support</div>', summary[:actions][0]
+    assert_equal "On the same service task <div class = SummaryKey>Assign to Field Technician</div> <div class = SummaryValue>#{agent.name}</div>", summary[:actions][0]
+    agent.try(:destroy)
   end
 
   def test_summary_in_service_task_dispatcher_for_assign_agent_in_parent_ticket
     enable_service_task_automation_lp_and_privileges
-    rule = create_service_task_dispatcher_rule('responder_id', 'priority', 'parent_ticket')
+    agent = add_agent_to_group(nil, ticket_permission = 1, role_id = @account.roles.supervisor.first.id)
+    rule = create_service_task_dispatcher_rule('responder_id', 'priority', 'parent_ticket', action: { responder_id: agent.id }, condition: { priority: 1 })
     summary = generate_summary(rule, true)
     assert_equal 'If <div class = SummaryKey>Priority</div> <div class = SummaryOperator>is</div> <div class = SummaryValue>Low</div>', summary[:conditions][:condition_set_1][0]
-    assert_equal 'On the parent ticket <div class = SummaryKey>Assign to Agent</div> <div class = SummaryValue>Support</div>', summary[:actions][0]
+    assert_equal "On the parent ticket <div class = SummaryKey>Assign to Agent</div> <div class = SummaryValue>#{agent.name}</div>", summary[:actions][0]
+    agent.try(:destroy)
   end
 
   def test_summary_in_service_task_dispatcher_for_agent_assign_in_condition
     enable_service_task_automation_lp_and_privileges
-    rule = create_service_task_dispatcher_rule('priority', 'responder_id')
+    agent = add_agent_to_group(nil, ticket_permission = 1, role_id = @account.roles.supervisor.first.id)
+    rule = create_service_task_dispatcher_rule('priority', 'responder_id', nil, action: { priority: 1 }, condition: { responder_id: agent.id })
     summary = generate_summary(rule, true)
-    assert_equal 'If <div class = SummaryKey>Field Technician</div> <div class = SummaryOperator>is</div> <div class = SummaryValue>Support</div>', summary[:conditions][:condition_set_1][0]
+    assert_equal "If <div class = SummaryKey>Field Technician</div> <div class = SummaryOperator>is</div> <div class = SummaryValue>#{agent.name}</div>", summary[:conditions][:condition_set_1][0]
     assert_equal ' <div class = SummaryKey>Set Priority as</div> <div class = SummaryValue>Low</div>', summary[:actions][0]
+    agent.try(:destroy)
   end
 
   def test_create_service_task_observer_rule_with_ticket_events_ticket_type

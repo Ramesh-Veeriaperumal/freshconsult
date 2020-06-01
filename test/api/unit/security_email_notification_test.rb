@@ -97,8 +97,10 @@ class SecurityEmailNotificationTest < ActionView::TestCase
               }
     roles_name = recipient1.roles.map(&:name)
     mail_message = SecurityEmailNotification.send_email_to_group(:admin_alert_mail_message, emails, recipient1, subject, 'agent_create', roles_name.to_a, recipient2.name)
-    assert_equal mail_message['en'].first, recipient1.email
-    assert_equal mail_message['en'].second, recipient2.email
+    # order email changed as per users query lib/helpdesk/initializers/action_mailer_callbacks.rb#emails_by_locale. so fixing it here.
+    assert_includes mail_message['en'], recipient1.email
+    assert_includes mail_message['en'], recipient2.email
+    assert_equal mail_message['en'].length, 2
   end
 
   def test_admin_alert_mail_message
