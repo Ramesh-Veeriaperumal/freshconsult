@@ -135,6 +135,8 @@ module Ember
         end
 
         def search_settings?
+          return false if @skip_user_privilege
+
           current_user.agent_preferences[:search_settings].present?
         end
 
