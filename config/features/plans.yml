@@ -571,7 +571,7 @@
       - :agent_assist_lite
       - :autofaq
       - :botflow
-      - :agent_articles_suggest
+      - :agent_articles_suggest_eligible
       - :robo_assist
       - :email_bot
     :inherits:

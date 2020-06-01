@@ -66,6 +66,7 @@ class ProductFeedbackWorker < BaseWorker
     def format_payload(payload, files_to_upload = nil)
       payload[:"attachments[]"] = files_to_upload if files_to_upload.present?
       payload.delete(:attachment_ids) if payload.key? :attachment_ids
+      payload.delete(:ticket_reference) if payload.key? :ticket_reference
       if payload[:tags].present?
         payload[:"tags[]"] = payload[:tags]
         payload.delete(:tags)

@@ -1085,4 +1085,28 @@ class AccountsControllerTest < ActionController::TestCase
     unstub_signup_calls
     $redis_others.perform_redis_op('del', NEW_2020_PRICING_ENABLED)
   end
+
+  def test_new_signup_should_set_perishable_token_expiry_redis
+    stub_signup_calls
+    Signup.any_instance.stubs(:account).returns(Account.new)
+    Account.stubs(:current).returns(current_account)
+    Account.any_instance.stubs(:id).returns(1)
+    User.any_instance.stubs(:id).returns(1)
+    user_email = Faker::Internet.email
+    account_name = Faker::Lorem.word
+    get :new_signup_free, callback: '', user: { name: Faker::Name.name, email: user_email, time_zone: 'Chennai', language: 'en' }, account: { account_name: account_name, locale: I18n.default_locale, time_zone: 'Chennai', user_name: 'Support', user_password: 'test1234', user_password_confirmation: 'test1234', user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }, session_json: { current_session: { referrer: Faker::Lorem.word, url: Faker::Internet.url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } }, device: {}, location: { countryName: 'India', countryCode: 'IND', cityName: 'Chennai', ipAddress: '127.0.0.1' }, locale: 'en', browser: {}, time: {} }.to_json, creditcard: { first_name: Faker::Name.first_name, last_name: Faker::Name.last_name }, address: { address1: Faker::Lorem.word, address2: Faker::Lorem.word, city: Faker::Lorem.word, state: Faker::Lorem.word, zip: Faker::Number.number(6), country: 'India', first_name: Faker::Name.first_name, last_name: Faker::Name.last_name, phone: Faker::Number.number(10) }
+    assert_response 200
+    perishable_token_key = format(PERISHABLE_TOKEN_EXPIRY, account_id: 1, user_id: 1)
+    authroization_token_key = format(AUTHORIZATION_CODE_EXPIRY, account_id: 1)
+    assert_equal get_others_redis_key(perishable_token_key), 'true'
+    assert_equal get_others_redis_key(authroization_token_key), 'true'
+    assert_operator 1800, :<=, get_others_redis_expiry(perishable_token_key)
+    assert_operator 1800, :<=, get_others_redis_expiry(authroization_token_key)
+  ensure
+    Signup.any_instance.unstub(:account)
+    Account.unstub(:current)
+    Account.any_instance.unstub(:id)
+    User.any_instance.unstub(:id)
+    unstub_signup_calls
+  end
 end

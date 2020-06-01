@@ -54,8 +54,8 @@ class AccountDecorator < ApiDecorator
 
   def agents_limit
     {
-      support_agent: agents_count_payload(:support_agent),
-      field_agent: record.field_service_management_enabled? ? agents_count_payload(:field_agent) : nil,
+      support_agent: available_agents_count(:support_agent),
+      field_agent: record.field_service_management_enabled? ? available_agents_count(:field_agent) : nil,
       day_passes_available: available_passes
     }
   end
@@ -211,12 +211,9 @@ class AccountDecorator < ApiDecorator
       organisation.try(:alternate_domain) || organisation.try(:domain)
     end
 
-    def agents_count_payload(agent_type = :support_agent)
-      agent_license_available = (record.subscription.agent_limit || 0) - record.full_time_support_agents.size
-      is_trial = agent_license_available < 0 && record.subscription.trial?
-      agent_license_available = is_trial ? nil : agent_license_available
+    def available_agents_count(agent_type = :support_agent)
       {
-        license_available: agent_type == :support_agent ? agent_license_available : safe_send("available_#{agent_type.to_s.pluralize}"),
+        license_available: safe_send("available_#{agent_type}_licenses"),
         full_time_agent_count: agent_count(agent_type),
         occasional_agent_count: agent_type == :support_agent ? agent_count(:occasional) : nil
       }

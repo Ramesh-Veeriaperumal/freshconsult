@@ -11,8 +11,10 @@ module Freddy
       args.symbolize_keys!
       @current_account = Account.current
       @action = args[:action]
-      @proxy_response = enable_freshchat if @action == :autofaq
-      return unless FRESHCHAT_SUCCESS_STATUS_CODES.include?(@proxy_response.code)
+      if @action == :autofaq
+        @proxy_response = enable_freshchat
+        return unless FRESHCHAT_SUCCESS_STATUS_CODES.include?(@proxy_response.code)
+      end
 
       time_taken = Benchmark.realtime { @proxy_response = HTTParty.put(FreddySkillsConfig[:system42][:onboard_url], bulk_create_bot_options) }
       Rails.logger.info "Time Taken for bulk_create_bot - #{@current_account.id} time - #{time_taken}"
@@ -74,7 +76,7 @@ module Freddy
             user_id: User.current.id,
             status: 'DISABLE'
           }
-        end 
+        end
       end
 
       def system42_features
@@ -86,7 +88,7 @@ module Freddy
       end
 
       def construct_freshchat_params
-        if @action == :autofaq && @current_account.freshchat_account
+        if @current_account.autofaq_enabled? && @current_account.freshchat_account
           {
             app_id: @current_account.freshchat_account.app_id,
             widget_token: @current_account.freshchat_account.token

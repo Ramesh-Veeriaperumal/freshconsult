@@ -191,6 +191,7 @@ class AccountsController < ApplicationController
    if @signup.save
      enable_field_service_management if fsm_signup_page?
       finish_signup
+      mark_perishable_token_expiry(@signup.account, @signup.user)
       if is_aloha_signup?
         render :json => fetch_product_signup_response, :content_type => 'application/json'
         return
@@ -525,6 +526,11 @@ class AccountsController < ApplicationController
     end      
 
   private
+
+    def mark_perishable_token_expiry(account, user)
+      account.mark_authorization_code_expiry
+      user.mark_perishable_token_expiry
+    end
 
     def render_signup_error(errors)
       render json: { success: false, errors: errors }, status: :unprocessable_entity

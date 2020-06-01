@@ -59,6 +59,42 @@ class Ember::Admin::FreddySkillsControllerTest < ActionController::TestCase
     end
   end
 
+  def test_agent_article_suggest_feature
+    Account.current.add_feature(:agent_articles_suggest_eligible)
+    sync_bot_stub = stub_request(:put, %r{^#{FreddySkillsConfig[:system42][:onboard_url]}.*?$}).to_return(status: 200)
+    put :update, construct_params({ version: 'private', name: 'agent_articles_suggest' }, enabled: true)
+    match_json(show_json({ enabled: true }, 'agent_articles_suggest'))
+    assert Account.current.agent_articles_suggest_enabled?
+  ensure
+    Account.current.revoke_feature(:agent_articles_suggest_eligible)
+    Account.current.revoke_feature(:agent_articles_suggest)
+    remove_request_stub(sync_bot_stub)
+  end
+
+  def test_detect_thank_you_note_feature_enable
+    Account.current.add_feature(:detect_thank_you_note_eligible)
+    sync_bot_stub = stub_request(:put, %r{^#{FreddySkillsConfig[:system42][:onboard_url]}.*?$}).to_return(status: 200)
+    put :update, construct_params({ version: 'private', name: 'detect_thank_you_note' }, enabled: true)
+    match_json(show_json({ enabled: true }, 'detect_thank_you_note'))
+    assert Account.current.detect_thank_you_note_enabled?
+  ensure
+    Account.current.revoke_feature(:detect_thank_you_note_eligible)
+    Account.current.revoke_feature(:detect_thank_you_note)
+    remove_request_stub(sync_bot_stub)
+  end
+
+  def test_detect_thank_you_note_feature_disable
+    Account.current.add_feature(:detect_thank_you_note_eligible)
+    sync_bot_stub = stub_request(:put, %r{^#{FreddySkillsConfig[:system42][:onboard_url]}.*?$}).to_return(status: 200)
+    put :update, construct_params({ version: 'private', name: 'detect_thank_you_note' }, enabled: false)
+    match_json(show_json({ enabled: false }, 'detect_thank_you_note'))
+    refute Account.current.detect_thank_you_note_enabled?
+  ensure
+    Account.current.revoke_feature(:detect_thank_you_note_eligible)
+    Account.current.revoke_feature(:detect_thank_you_note)
+    remove_request_stub(sync_bot_stub)
+  end
+
   def wrap_cname(params)
     { freddy_skill: params }
   end

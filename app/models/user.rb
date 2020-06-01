@@ -1342,7 +1342,20 @@ class User < ActiveRecord::Base
     end
   end
 
+  def mark_perishable_token_expiry
+    set_others_redis_key(perishable_token_expiry_key, true, 30.minutes)
+  end
+
+  def perishable_token_expired?
+    value = get_others_redis_key(perishable_token_expiry_key)
+    value.blank? || value != 'true'
+  end
+
   private
+
+    def perishable_token_expiry_key
+      format(PERISHABLE_TOKEN_EXPIRY, account_id: account_id, user_id: id)
+    end
 
     def find_or_create_company(name)
       if User.current.present?

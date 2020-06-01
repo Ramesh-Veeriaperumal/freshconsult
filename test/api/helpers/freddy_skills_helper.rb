@@ -10,10 +10,10 @@ module FreddySkillsHelper
     Account.current.revoke_feature(:ticket_properties_suggester)
   end
 
-  def show_json(params = {})
+  def show_json(params = {}, feature = 'ticket_properties_suggester')
     enabled = params.key?(:enabled) ? params[:enabled] : true
     {
-      name: 'ticket_properties_suggester',
+      name: feature,
       enabled: enabled
     }
   end

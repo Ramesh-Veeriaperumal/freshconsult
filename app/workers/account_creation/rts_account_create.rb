@@ -10,9 +10,12 @@ module AccountCreation
       if SUCCESS_CODES.include?(service_response[:status])
         data = JSON.parse(service_response[:text])
         acc_add_settings = acc.account_additional_settings
-        acc_add_settings.additional_settings[:rts_account_id] = data['accId']
-        acc_add_settings.assign_rts_account_secret(data['key'])
-        acc_add_settings.save
+        acc_add_settings.with_lock do
+          acc_add_settings.additional_settings ||= {}
+          acc_add_settings.additional_settings[:rts_account_id] = data['accId']
+          acc_add_settings.assign_rts_account_secret(data['key'])
+          acc_add_settings.save
+        end
       else
         Rails.logger.info "Received failure response from the RTS account register #{service_response.inspect}"
       end

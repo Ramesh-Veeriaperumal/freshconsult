@@ -2,6 +2,7 @@ require_relative '../test_helper'
 class AccountAdminsControllerTest < ActionController::TestCase
   include AccountAdminTestHelper
   include PrivilegesHelper
+  include Redis::HashMethods
 
   def wrap_cname(params)
     { account_admin: params }
@@ -65,6 +66,17 @@ class AccountAdminsControllerTest < ActionController::TestCase
     get :preferences, controller_params
     assert_response 200
     match_json(preferences_response(additional_settings)) if additional_settings.key? :skip_mandatory_checks
+  end
+
+  def test_preferences_get_with_account_additional_redis_hash
+    additional_settings = @account.account_additional_settings.additional_settings
+    # Set account settings redis hash key
+    account_setting_redis_key = format(ACCOUNT_SETTINGS_REDIS_HASH, account_id: @account.id)
+    set_key_in_redis_hash(account_setting_redis_key, 'omni_phone_error_report', true)
+    additional_settings_with_redis = multi_get_all_redis_hash(account_setting_redis_key).reverse_merge!(additional_settings)
+    get :preferences, controller_params
+    assert_response 200
+    match_json(additional_settings_with_redis)
   end
 
   def test_forbidden_access_without_manage_account_privilege_preferences_set

@@ -3,6 +3,8 @@ require Rails.root.join('spec', 'support', 'user_helper.rb')
 
 class UserSessionsControllerTest < ActionController::TestCase
   include UsersHelper
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   def current_account
     Account.first
@@ -1034,7 +1036,9 @@ class UserSessionsControllerTest < ActionController::TestCase
   end
 
   def test_fetch_mobile_token_should_return_valid_mobile_jwt_token_and_reset_perishable_token
+    current_account.mark_authorization_code_expiry
     user = create_user_for_session
+    user.mark_perishable_token_expiry
     initial_perishable_token = user.perishable_token
     post :mobile_token, construct_params(token: initial_perishable_token)
     assert_response 200
@@ -1042,21 +1046,64 @@ class UserSessionsControllerTest < ActionController::TestCase
     assert_equal parsed_response['auth_token'], user.mobile_auth_token
     assert_not_equal initial_perishable_token, user.reload.perishable_token
   ensure
+    reset_perishable_token_expiry(user)
     user.destroy
   end
 
   def test_fetch_mobile_token_should_return_bad_request_without_token
+    current_account.mark_authorization_code_expiry
     post :mobile_token
     assert_response 400
+  ensure
+    reset_perishable_token_expiry
   end
 
   def test_fetch_mobile_token_should_return_bad_request_for_empty_token
+    current_account.mark_authorization_code_expiry
     post :mobile_token, construct_params(token: '')
     assert_response 400
+  ensure
+    reset_perishable_token_expiry
   end
 
   def test_fetch_mobile_token_should_return_access_denied_for_invalid_token
+    current_account.mark_authorization_code_expiry
     post :mobile_token, construct_params(token: Faker::Lorem.word)
     assert_response 403
+  ensure
+    reset_perishable_token_expiry
   end
+
+  def test_fetch_mobile_token_should_return_bad_request_when_perishable_token_expiry_is_nil
+    current_account.mark_authorization_code_expiry
+    user = create_user_for_session
+    initial_perishable_token = user.perishable_token
+    post :mobile_token, construct_params(token: initial_perishable_token)
+    assert_response 400
+  ensure
+    reset_perishable_token_expiry
+    user.destroy
+  end
+
+  def test_fetch_mobile_token_should_return_bad_request_when_authorization_code_expiry_is_nil
+    user = create_user_for_session
+    user.mark_perishable_token_expiry
+    initial_perishable_token = user.perishable_token
+    post :mobile_token, construct_params(token: initial_perishable_token)
+    assert_response 400
+  ensure
+    reset_perishable_token_expiry(user)
+    user.destroy
+  end
+
+  private
+
+    def reset_perishable_token_expiry(user = nil)
+      authroization_token_key = format(AUTHORIZATION_CODE_EXPIRY, account_id: current_account.id)
+      remove_others_redis_key(authroization_token_key)
+      if user.present?
+        perishable_token_key = format(PERISHABLE_TOKEN_EXPIRY, account_id: current_account.id, user_id: user.id)
+        remove_others_redis_key(perishable_token_key)
+      end
+    end
 end

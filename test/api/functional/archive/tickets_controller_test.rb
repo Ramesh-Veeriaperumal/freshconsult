@@ -7,6 +7,7 @@ class Archive::TicketsControllerTest < ActionController::TestCase
   include ApiTicketsTestHelper
   include TicketHelper
   include ContactFieldsHelper
+  include Crypto::TokenHashing
 
   ARCHIVE_DAYS = 120
   TICKET_UPDATED_DATE = 150.days.ago
@@ -19,6 +20,7 @@ class Archive::TicketsControllerTest < ActionController::TestCase
     @account.enable_ticket_archiving(ARCHIVE_DAYS)
     Sidekiq::Worker.clear_all
     @account.features.send(:archive_tickets).create
+    Account.any_instance.stubs(:agent_collision_revamp_enabled?).returns(true)
     create_archive_ticket_with_assoc(
       created_at: TICKET_UPDATED_DATE,
       updated_at: TICKET_UPDATED_DATE,
@@ -327,8 +329,15 @@ class Archive::TicketsControllerTest < ActionController::TestCase
       ticket_pattern = exclude_ticket_attributes(ticket_pattern, EXCLUDE_ATTRIBUTES_FOR_SHOW)
       ticket_pattern[:stats] = ticket_states_pattern(archive_ticket.ticket_states, archive_ticket.status)
       ticket_pattern.merge!(include_json(archive_ticket, include_params)) if include_params.present?
+      ticket_pattern[:meta] = construct_meta(archive_ticket) if Account.current.agent_collision_revamp_enabled?
 
       ticket_pattern
+    end
+
+    def construct_meta(ticket)
+      {
+        secret_id: mask_id(ticket.display_id)
+      }
     end
 
     def include_json(ticket, params)
@@ -340,7 +349,10 @@ class Archive::TicketsControllerTest < ActionController::TestCase
     def requester_hash(ticket, options={})
       if CustomRequestStore.read(:private_api_request)
         options[:sideload_options] = ['company'] if @account.multiple_user_companies_enabled?
-        ContactDecorator.new(ticket.requester, options).requester_hash
+        requester_hash = ContactDecorator.new(ticket.requester, options).requester_hash
+        requester_hash[:language] = ticket.requester.language
+        requester_hash[:address] = ticket.requester.address
+        requester_hash
       else
         requester_pattern(ticket.requester)
       end

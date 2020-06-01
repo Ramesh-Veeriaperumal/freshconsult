@@ -34,7 +34,18 @@ module AgentsHelper
     privilege?(:manage_account) && (current_account.reached_agent_limit? || current_account.reached_field_agent_limit?)
   end
   
+  def available_support_agent_licenses
+    support_agent_license_available = ((current_account.subscription.agent_limit || 0) - current_account.full_time_support_agents.size)
+    current_account.subscription.trial? && support_agent_license_available < 0 ? nil : support_agent_license_available
+  end
+
+  def available_field_agent_licenses
+    field_agent_license_available = ((current_account.subscription.field_agent_limit || 0) - current_account.field_agents_count)
+    is_initial_state = current_account.subscription.field_agent_limit.nil? && current_account.field_agents_count.zero?
+    current_account.subscription.trial? && (is_initial_state || field_agent_license_available < 0) ? nil : field_agent_license_available
+  end
   # Should be used only if NOT trial account
+
   def available_agents
     current_account.subscription.agent_limit - current_account.full_time_support_agents.size
   end

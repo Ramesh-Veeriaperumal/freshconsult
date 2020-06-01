@@ -291,4 +291,10 @@ module Redis::Keys::Others
   AGENT_CHAT_MANAGEMENT = 'AGENT_CHAT_MANAGEMENT'.freeze
 
   EMBERIZE_AGENT_FORM = 'EMBERIZE_AGENT_FORM'.freeze
+
+  # Global account specify redis keys
+  ACCOUNT_SETTINGS_REDIS_HASH = 'account_settings_redis_hash:%{account_id}'.freeze
+
+  PERISHABLE_TOKEN_EXPIRY = 'PERISHABLE_TOKEN_EXPIRY:%{account_id}:%{user_id}'.freeze
+  AUTHORIZATION_CODE_EXPIRY = 'AUTHORIZATION_CODE_EXPIRY:%{account_id}'.freeze
 end

@@ -42,7 +42,7 @@
 		<!-- Access portal settings information via javascript -->
 		<%= portal_access_varibles %>
 
-		<% if current_account.session_replay_enabled? && current_account.account_additional_settings.freshmarketer_linked? %>
+		<% if portal_session_replay_allowed? %>
 			<%= portal_session_replay %>
 			<% if current_user.present? %>
 				<%= identify_user %>

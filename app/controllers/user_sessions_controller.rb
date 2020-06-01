@@ -26,6 +26,7 @@ class UserSessionsController < ApplicationController
   before_filter :redirect_to_agent_sso_freshid_authorize, only: :agent_login, if: -> { !logged_in? && freshid_integration_enabled? }
   before_filter :redirect_to_customer_sso_freshid_authorize, only: :customer_login, if: -> { !logged_in? && freshid_integration_enabled? }
   before_filter :check_exisiting_saml_session, only: :saml_login
+  before_filter :verify_authorization_code_expiry, only: :mobile_token
   before_filter :verify_perishable_token_presence, only: :mobile_token
 
   ONBOARDING_ROUTE = '/a/getstarted'.freeze
@@ -387,14 +388,12 @@ class UserSessionsController < ApplicationController
 
   def mobile_token
     current_user = current_account.users.find_by_perishable_token(params[:token])
-    if current_user.present?
+    if can_access_token?(current_user)
       response = {
         auth_token: current_user.mobile_auth_token
       }
       current_user.reset_perishable_token!
       render(json: response, status: :ok)
-    else
-      render(json: { error: :access_denied }, status: :forbidden)
     end
   end
 
@@ -407,6 +406,24 @@ class UserSessionsController < ApplicationController
   # ITIL Related Methods ends here
 
   private
+
+    def verify_authorization_code_expiry
+      render(json: { error: :invalid_request }, status: :bad_request) if current_account.authorization_code_expired?
+    end
+
+    def can_access_token?(user)
+      can_access = true
+      if user.present?
+        if user.perishable_token_expired?
+          render(json: { error: :invalid_request }, status: :bad_request)
+          can_access = false
+        end
+      else
+        render(json: { error: :access_denied }, status: :forbidden)
+        can_access = false
+      end
+      can_access
+    end
 
     def verify_perishable_token_presence
       render(json: { error: :invalid_request }, status: :bad_request) if params[:token].blank?

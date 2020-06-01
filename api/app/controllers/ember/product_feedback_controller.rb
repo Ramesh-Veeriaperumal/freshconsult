@@ -3,6 +3,7 @@ class Ember::ProductFeedbackController < ApiApplicationController
   include ActionView::Helpers::TextHelper
   include HelperConcern
   include TicketConstants
+  include Redis::HashMethods
 
   skip_before_filter :build_object, only: [:create]
   skip_before_filter :check_account_state
@@ -10,6 +11,9 @@ class Ember::ProductFeedbackController < ApiApplicationController
   # validate and sanitize gets called before create
   def create
     ProductFeedbackWorker.perform_async(request_payload)
+    account_setting_redis_key = format(ACCOUNT_SETTINGS_REDIS_HASH, account_id: current_account.id)
+    ticket_reference = request_payload[:ticket_reference]
+    set_key_in_redis_hash(account_setting_redis_key, ticket_reference, true) if ticket_reference.present?
     head 204
   end
 
@@ -29,7 +33,8 @@ class Ember::ProductFeedbackController < ApiApplicationController
         description: description,
         source: current_account.helpdesk_sources.ticket_source_keys_by_token[:feedback_widget],
         tags: params[cname][:tags],
-        attachment_ids: params[cname][:attachment_ids]
+        attachment_ids: params[cname][:attachment_ids],
+        ticket_reference: params[cname][:ticket_reference]
       }
     end
 

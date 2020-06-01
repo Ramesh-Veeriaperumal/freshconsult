@@ -82,4 +82,15 @@ class ProxyFeatureTest < ActiveSupport::TestCase
     refute @account.has_feature?(:open_solutions), 'open_solutions should be false'
     assert @account.has_feature?(:hide_portal_forums), 'hide_portal_forums should be true'
   end
+
+  def test_launch_party_feature_flags
+    Account::DB_TO_LP_FEATURES.each { |feature| @account.launch(feature) }
+    Account::DB_TO_LP_FEATURES.each { |feature| assert(@account.features?(feature), "Expected true, but its false: #{feature}") }
+    Account::DB_TO_LP_FEATURES.each { |feature| @account.rollback(feature) }
+    Account::DB_TO_LP_FEATURES.each { |feature| refute(@account.features?(feature), "Expected false, but its true: #{feature}") }
+    @account.add_feature :open_solutions
+    assert(@account.features?(:open_solutions), "Expected true, but its false: open_solutions")
+    @account.revoke_feature :open_solutions
+    refute(@account.features?(:open_solutions), "Expected false, but its true: open_solutions")
+  end
 end
