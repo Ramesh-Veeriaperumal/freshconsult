@@ -16,7 +16,7 @@ class Ryuken::DeleteSpamTrashTicket
     return sqs_msg.try(:delete) unless ticket && ticket.spam_or_deleted? && ticket.updated_at < number_of_days.days.ago
 
     shard_name = ActiveRecord::Base.current_shard_selection.shard.to_s
-    lag = get_replication_lag_for_shard(APPLICATION_NAME, shard_name)
+    lag = get_replication_lag_for_shard(APPLICATION_NAME, shard_name, 5.seconds)
     lag > 0 ? rerun_after(sqs_msg, lag, shard_name) : ticket.destroy
     sqs_msg.try(:delete)
   rescue StandardError => e

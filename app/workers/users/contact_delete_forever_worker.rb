@@ -30,7 +30,7 @@ class Users::ContactDeleteForeverWorker < BaseWorker
       return if @user.blank? || @user.agent_deleted_forever?
 
       # Check for any replication lag detected by Freno for the current user's shard in DB.
-      lag_seconds = get_replication_lag_for_shard(APPLICATION_NAME, shard_name)
+      lag_seconds = get_replication_lag_for_shard(APPLICATION_NAME, shard_name, 5.seconds)
       if lag_seconds > 0
         Rails.logger.debug("Warning: Freno: ContactDeleteForeverWorker: replication lag: #{lag_seconds} secs :: user:: #{args[:user_id]} shard :: #{shard_name}")
         rerun_after(lag_seconds, args)
