@@ -174,4 +174,28 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
     Fdadmin::DevopsMainController.unstub(:verify_signature)
     Fdadmin::DevopsMainController.unstub(:permit_internal_tools_ip)
   end
+
+  def test_validate_and_fix_freshid
+    Account.stubs(:current).returns(@account)
+    OpenSSL::HMAC.stubs(:hexdigest).returns('xyz')
+    FreshopsSubdomains.stubs(:include?).returns(true)
+
+    # clean previous run keys
+    redis_key = format(FRESHID_VALIDATION_TIMEOUT, account_id: @account.id.to_s)
+    remove_others_redis_key(redis_key)
+
+    $redis_routes.stubs(:perform_redis_op).returns(true)
+    Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    params = { 'version' => 'v1', 'account_id' => @account.id, 'doer-email' => 'sample-invalid@freshdesk.dev', 'digest' => 'xyz', 'name_prefix' => 'fdadmin_', 'path_prefix' => nil, 'action' => 'validate_and_fix_freshid', 'controller' => 'fdadmin/accounts' }
+    post :validate_and_fix_freshid, construct_params(params)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal 'success', response['status']
+  ensure
+    $redis_routes.unstub(:perform_redis_op)
+    Account.any_instance.unstub(:freshid_enabled?)
+    Account.unstub(:current)
+    OpenSSL::HMAC.unstub(:hexdigest)
+    FreshopsSubdomains.unstub(:include?)
+  end
 end

@@ -12,8 +12,19 @@ class Admin::FdadminFreshidMigrationWorker < BaseWorker
       @doer_email = args[:doer_email]
       @freshid_v2_revert_migration = args[:freshid_v2_revert_migration] || false
       @freshid_v2_migration = args[:freshid_v2_migration] || false
+      @freshid_account_validation = args[:freshid_account_validation] || false
+      @freshid_agent_validation = args[:freshid_agent_email] || false
       @org_domain = args[:org_domain] || ''
       Rails.logger.info "Inside Admin::FdadminFreshidMigration Worker :: a=#{@account.try(:id)}, d=#{@account.try(:full_domain)}, args = #{args.inspect}"
+
+      freshid_type = @freshid_v2_migration ? :freshid_v2 : :freshid
+      if @freshid_account_validation
+        Freshid::Fdadmin::FreshidValidateAndFix.new(@doer_email, freshid_type).freshops_account_validation(@account.id)
+        return
+      elsif @freshid_agent_validation
+        Freshid::Fdadmin::FreshidValidateAndFix.new(@doer_email, freshid_type).freshops_agent_validation(@account.id, @freshid_agent_validation)
+        return
+      end
 
       if @freshid_v2_revert_migration
         revert_freshid_v2

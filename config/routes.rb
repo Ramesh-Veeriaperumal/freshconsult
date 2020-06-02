@@ -3032,6 +3032,7 @@ Helpkit::Application.routes.draw do
           post :reset_ticket_display_id
           post :disable_freshid_org_v2
           post :enable_freshid_org_v2
+          post :validate_and_fix_freshid
           post :skip_mandatory_checks
         end
       end

@@ -574,6 +574,32 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
   end
 
+  def validate_and_fix_freshid
+    result = {}
+    Sharding.admin_select_shard_of(params[:account_id]) do
+      begin
+        account = Account.find(params[:account_id])
+        account.make_current
+        enable_inprogress = account.account_additional_settings.freshid_migration_running?(ENABLE_V2_MIGRATION_INPROGRESS)
+        if account.freshid_enabled? || account.freshid_org_v2_enabled?
+          result = check_and_run_freshid_validation(enable_inprogress, account)
+        else
+          result[:status] = 'notice'
+        end
+      rescue StandardError => e
+        result[:status] = 'error'
+        Rails.logger.info "Exception while runing freshid validation from freshops admin for a = #{params[:account_id]} : #{e.inspect}"
+      ensure
+        Account.reset_current_account
+      end
+    end
+    respond_to do |format|
+      format.json do
+        render json: result
+      end
+    end
+  end
+
   def change_url
     result = {}
     old_url = params[:domain_name]
@@ -1321,5 +1347,28 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
     def fetch_account
       @fetch_account ||= fetch_account_from_params
+    end
+
+    def check_and_run_freshid_validation(enable_inprogress, account)
+      if get_others_redis_key(format(FRESHID_VALIDATION_TIMEOUT, account_id: account.id.to_s))
+        { status: 'validation_waiting' }
+      elsif enable_inprogress
+        Rails.logger.info "Freshid Org V2 Migration is in progress for a = #{params[:account_id]}"
+        result[:status] = 'inprogress'
+        { status: 'inprogress' }
+      else
+        run_freshid_validation(account)
+      end
+    end
+
+    def run_freshid_validation(account)
+      args = { account_id: account.id, doer_email: params[:doer_email], freshid_v2_migration: account.freshid_org_v2_enabled? }
+      if params[:agent_email].present?
+        args[:freshid_agent_email] = params[:agent_email]
+      else
+        args[:freshid_account_validation] = true
+      end
+      Admin::FdadminFreshidMigrationWorker.perform_async(args)
+      { status: 'success' }
     end
 end
