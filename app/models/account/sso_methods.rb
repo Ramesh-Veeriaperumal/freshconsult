@@ -1,5 +1,7 @@
 class Account < ActiveRecord::Base
 
+  RAILS_LOGGER_PREFIX = 'FRESHID CUSTOM POLICY :: SSO METHODS :: '.freeze
+
   def allow_sso_login?
     (sso_enabled? && (is_saml_sso? || is_simple_sso?)) || launched?(:whitelist_sso_login)
   end
@@ -290,7 +292,10 @@ class Account < ActiveRecord::Base
 
   # toggle agent_custom_sso
   def enable_agent_custom_sso!(entrypoint_config)
-    puts 'Freshid not enabled' || return unless self.freshid_integration_enabled?
+    unless freshid_integration_enabled?
+      Rails.logger.info "#{RAILS_LOGGER_PREFIX} Enable Agent Custom SSO :: Freshid integeration not enabled"
+      return
+    end
     sso_config = { agent_custom_sso: true, agent_custom_sso_config: entrypoint_config }
     self.sso_options = sso_configured? ? sso_options.merge(sso_config) : sso_config
     self.sso_enabled = true
@@ -319,17 +324,31 @@ class Account < ActiveRecord::Base
     self.sso_enabled = false unless sso_options.present?
   end
 
+  # @params entity => :agent or :contact
+  def custom_policy_login_url(entity)
+    account_additional_settings.additional_settings[:freshid_custom_policy_configs][entity][:entrypoint_url] if freshid_custom_policy_enabled?(entity)
+  end
+
   def agent_custom_login_url
+    return custom_policy_login_url(:agent) if freshid_custom_policy_enabled?(:agent)
+
+    # Need to Remove below code after migration
     self.sso_options[:agent_custom_sso_config][:entrypoint_url] if self.agent_custom_sso_enabled?
   end
 
   def customer_custom_login_url
+    return custom_policy_login_url(:contact) if freshid_custom_policy_enabled?(:contact)
+
+    # Need to Remove below code after migration
     self.sso_options[:customer_custom_sso_config][:entrypoint_url] if self.contact_custom_sso_enabled?
   end
 
   # toggle contact_custom_sso
   def enable_contact_custom_sso!(entrypoint_config)
-    puts 'Freshid not enabled' or return unless self.freshid_org_v2_enabled?
+    unless freshid_org_v2_enabled?
+      Rails.logger.info "#{RAILS_LOGGER_PREFIX} Enable Contact Custom SSO :: Freshid not enabled"
+      return
+    end
     sso_config = { customer_custom_sso: true, customer_custom_sso_config: entrypoint_config }
     self.sso_options = sso_configured? ? sso_options.merge(sso_config) : sso_config
     self.sso_enabled = true
@@ -352,6 +371,11 @@ class Account < ActiveRecord::Base
       self.sso_options.delete(:customer_custom_sso)
       self.sso_options.delete(:customer_custom_sso_config)
     end
+  end
+
+  def freshid_custom_sso_exists?(entity)
+    sso_config_key = entity == :contact ? 'customer_custom_sso' : 'agent_custom_sso'
+    sso_options[sso_config_key.to_sym] && sso_options["#{sso_config_key}_config".to_sym]
   end
 
   def agent_default_sso_enabled?
