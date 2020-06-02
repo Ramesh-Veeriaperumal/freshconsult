@@ -99,28 +99,21 @@ class Helpdesk::Access < ActiveRecord::Base
     end
 
     def user_accesses_join(type, item)
-      "LEFT JOIN user_accesses ON
-        helpdesk_accesses.account_id = #{item.account_id} AND
-        helpdesk_accesses.accessible_type = \'#{type}\' AND
+      'LEFT JOIN user_accesses ON
         helpdesk_accesses.id = user_accesses.access_id AND
-        helpdesk_accesses.account_id = user_accesses.account_id"
+        helpdesk_accesses.account_id = user_accesses.account_id'
     end
 
     def group_accesses_join(type, item)
-      "LEFT JOIN group_accesses ON
-          helpdesk_accesses.account_id = #{item.account_id} AND
-          helpdesk_accesses.accessible_type = \'#{type}\' AND
-          helpdesk_accesses.id = group_accesses.access_id AND
-          helpdesk_accesses.account_id = group_accesses.account_id"
+      'LEFT JOIN group_accesses ON
+        helpdesk_accesses.id = group_accesses.access_id
+        AND helpdesk_accesses.account_id = group_accesses.account_id'
     end
 
     def agent_groups_join
-      "LEFT JOIN agent_groups ON agent_groups.group_id = group_accesses.group_id AND
-          agent_groups.account_id = group_accesses.account_id"
-    end
-
-    def all_user_accessible_sql(type,user)
-      self.all_user_accessible(type,user).to_sql
+      'LEFT JOIN agent_groups ON
+        agent_groups.group_id = group_accesses.group_id AND
+        agent_groups.account_id = group_accesses.account_id'
     end
 
     def all_accessible_sql(type, user)
@@ -133,6 +126,14 @@ class Helpdesk::Access < ActiveRecord::Base
 
     def group_accessible_sql(type, user)
       group_accessible(type, user).to_sql
+    end
+
+    def all_user_accessible_sql(type, user)
+      "SELECT  accessible_id
+        FROM (#{all_accessible(type, user).to_sql}
+        UNION #{user_accessible(type, user).to_sql}
+        UNION #{group_accessible(type, user, nil).to_sql})
+        AS all_user_access_union GROUP BY accessible_id"
     end
 
     def shared_accessible_sql(type,user)
@@ -148,14 +149,6 @@ class Helpdesk::Access < ActiveRecord::Base
     end
   end
 
-  scope :all_user_accessible, lambda { |type, user|
-    { select: 'accessible_id',
-      joins: "#{user_accesses_join(type, user)} #{group_accesses_join(type, user)} #{agent_groups_join}",
-      conditions: "#{type_conditions(type)} AND (#{user_conditions(user).values.join(' OR ')})",
-      group: 'accessible_id'
-    }
-  }
-
   scope :user_accessible_items_via_group, lambda { |type, user|
     {
       :joins      => "#{group_accesses_join(type, user)} #{agent_groups_join}" ,
@@ -165,20 +158,21 @@ class Helpdesk::Access < ActiveRecord::Base
   }
 
   scope :all_accessible, lambda { |type, user|
-    where("#{type_conditions(type)} AND #{user_conditions(user)[:global]}")
+    select('accessible_id')
+      .where(sanitize_sql_for_conditions(["#{type_conditions(type)} AND #{user_conditions(user)[:global]}"]))
   }
 
   scope :user_accessible, lambda { |type, user|
     select('accessible_id')
       .joins(user_accesses_join(type, user).to_s)
-      .where("#{type_conditions(type)} AND #{user_conditions(user)[:users]}")
+      .where(sanitize_sql_for_conditions(["#{type_conditions(type)} AND #{user_conditions(user)[:users]}"]))
   }
 
-  scope :group_accessible, lambda { |type, user|
+  scope :group_accessible, lambda { |type, user, group_by_column = 'accessible_id'|
     select('accessible_id')
       .joins("#{group_accesses_join(type, user)} #{agent_groups_join}")
       .where("#{type_conditions(type)} AND #{user_conditions(user)[:users_via_group]}")
-      .group('accessible_id')
+      .group(group_by_column)
   }
 
   def global_access_type?
