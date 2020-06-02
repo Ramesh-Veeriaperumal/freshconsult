@@ -16,7 +16,7 @@ class SAAS::SubscriptionEventActions
                            :helpdesk_restriction_toggle, :ticket_templates, :custom_source,
                            :round_robin_load_balancing, :multi_timezone, :custom_translations,
                            :sitemap, :article_versioning, :suggested_articles_count, :unlimited_multi_product, :article_approval_workflow,
-                           :fb_ad_posts, :segments, :agent_assist_ultimate, :agent_assist_lite, :field_service_geolocation_toggle].freeze
+                           :fb_ad_posts, :segments, :agent_assist_ultimate, :agent_assist_lite].freeze
 
 
   ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle, :multiple_companies_toggle,

@@ -436,11 +436,6 @@ class SAAS::AccountDataCleanup
     cleanup_fsm
   end
 
-  def handle_field_service_geolocation_toggle_drop_data
-    Rails.logger.info "Removing geolocation feature for account #{account.id}"
-    Account.current.revoke_feature(:field_service_geolocation)
-  end
-
   def handle_fb_ad_posts_drop_data
     Rails.logger.info "Removing Facebook Ad Post for account #{account.id}"
     Account.current.revoke_feature(:fb_ad_posts)
