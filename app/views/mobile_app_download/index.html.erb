@@ -125,14 +125,11 @@
           heap.identify("<%= current_user.id %>");
           <% subscription = current_account.subscription %>
           heap.addUserProperties({
-            'email': "<%= current_user.email %>",
-            'account_url': "<%= current_account.full_domain %>",
+            'account_id' : "<%= current_account.id %>"
             'account_name': "<%= current_account.name %>",
             'agent_name': "<%= current_user.name %>",
             'account_plan': "<%= subscription.subscription_plan.name %>",
-            'agents_count' : "<%= subscription.agent_limit.presence || current_account.technicians.count %>",
             'account_state': "<%= subscription.state %>",
-            'account_mrr' : "<%= subscription.cmrr %>",
             'role' : "<%= current_user.privilege?(:admin_tasks) ? 'admin' : 'agent' %>"
           });
       </script>
