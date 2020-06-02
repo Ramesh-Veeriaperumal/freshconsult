@@ -49,10 +49,9 @@ module Inherits
           end
 
           def default_contact_company_field_name?(label)
-            default_field_names = (name.constantize::DEFAULT_FIELD_PROPS || {}).keys.map { |key| key.to_s.gsub('default_', '') }
+            default_field_names = CustomField::Constants::DEFAULT_FIELD_NAMES[name]
             default_field_names.nil? ? false : default_field_names.include?(label)
           end
-
       end
 
       module InstanceMethods

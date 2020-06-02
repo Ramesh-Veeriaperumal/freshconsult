@@ -1,3 +1,4 @@
+include CompanyFieldsConstants
 account = Account.current
 
 CompanyForm.seed(:account_id) do |s|
@@ -5,16 +6,7 @@ CompanyForm.seed(:account_id) do |s|
   s.active      = 1
 end
 
-def self.company_fields_data
-  [
-    { :name               => "name", 
-      :label              => "Company Name",
-      :required_for_agent => true,
-      :position           => 1 }
-  ]
-end
-
-company_fields_data.each do |f|
+FOREGROUND_COMPANY_FIELDS.each do |f|
   company_field = CompanyField.new(
     :label              => f[:label],
     :deleted            => false,

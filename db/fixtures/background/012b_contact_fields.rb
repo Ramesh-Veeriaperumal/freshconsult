@@ -1,54 +1,10 @@
-account = Account.current 
+include ContactFieldsConstants
 
-def self.contact_fields_data
-  [
-    { :name               => "mobile", 
-      :label              => "Mobile Phone", 
-      :visible_in_portal  => true, 
-      :editable_in_portal => true,
-      :field_options      => {"widget_position" => 3},
-      :position           => 5 },
-      
-    { :name               => "twitter_id", 
-      :label              => "Twitter", 
-      :visible_in_portal  => true, 
-      :editable_in_portal => true,
-      :field_options      => {"widget_position" => 4},
-      :position           => 6  },
-
-    { :name               => "address", 
-      :label              => "Address",
-      :position           => 8 },
-
-    { :name               => "tag_names", 
-      :label              => "Tags",
-      :position           => 11 },
-    
-    { :name               => "description",
-      label:                 'About',
-      :position           => 12  },
-
-    { :name               => "client_manager", 
-      :label              => "Can see all tickets from his company",
-      :position           => 13 },
-
-    { :name               => "unique_external_id", 
-      :label              => "Unique External Id",
-      :position           => 14 },
-
-    { name: 'twitter_profile_status',
-      label: 'Twitter Verified Profile',
-      position: 15 },
-
-    { name: 'twitter_followers_count',
-      label: 'Twitter Follower Count',
-      position: 16 }
-  ]
-end
+account = Account.current
 
 last_contact_field = nil
 
-contact_fields_data.each do |f|
+BACKGROUND_CONTACT_FIELDS.each do |f|
   contact_field = ContactField.new(
     :label              => f[:label],
     :label_in_portal    => f[:label],
