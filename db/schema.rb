@@ -2140,6 +2140,8 @@ ActiveRecord::Schema.define(version: 20200502053301) do
     t.boolean  "overwrite_existing_user",              :default => true,                  :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   'encrypted_token'
+    t.string   'encrypted_secret'
   end
 
   add_index "google_accounts", ["account_id"], :name => "index_google_accounts_on_account_id"

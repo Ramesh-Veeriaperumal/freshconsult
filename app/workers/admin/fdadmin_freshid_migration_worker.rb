@@ -12,8 +12,19 @@ class Admin::FdadminFreshidMigrationWorker < BaseWorker
       @doer_email = args[:doer_email]
       @freshid_v2_revert_migration = args[:freshid_v2_revert_migration] || false
       @freshid_v2_migration = args[:freshid_v2_migration] || false
+      @freshid_account_validation = args[:freshid_account_validation] || false
+      @freshid_agent_validation = args[:freshid_agent_email] || false
       @org_domain = args[:org_domain] || ''
       Rails.logger.info "Inside Admin::FdadminFreshidMigration Worker :: a=#{@account.try(:id)}, d=#{@account.try(:full_domain)}, args = #{args.inspect}"
+
+      freshid_type = @freshid_v2_migration ? :freshid_v2 : :freshid
+      if @freshid_account_validation
+        Freshid::Fdadmin::FreshidValidateAndFix.new(@doer_email, freshid_type).freshops_account_validation(@account.id)
+        return
+      elsif @freshid_agent_validation
+        Freshid::Fdadmin::FreshidValidateAndFix.new(@doer_email, freshid_type).freshops_agent_validation(@account.id, @freshid_agent_validation)
+        return
+      end
 
       if @freshid_v2_revert_migration
         revert_freshid_v2
@@ -51,6 +62,7 @@ class Admin::FdadminFreshidMigrationWorker < BaseWorker
     sleep(300)
     Freshid::Fdadmin::FreshidValidateAndFix.new(@doer_email, :freshid_v2).account_validation
     check_and_enable_freshid_v2(@account)
+    enable_freshid_sso_sync(@account)
     @account.account_additional_settings.destroy_freshid_migration(ENABLE_V2_MIGRATION_INPROGRESS) if @account.freshid_org_v2_enabled?
   rescue StandardError => e
     Rails.logger.error "#{FDADMIN_FRESHID_V2_MIGRATION_ERROR} :: a=#{@account.id}, e=#{e.inspect}, backtrace=#{e.backtrace}"

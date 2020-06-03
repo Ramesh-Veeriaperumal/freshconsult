@@ -76,7 +76,7 @@ module AccountCleanup
             break if @ticket_ids.size.zero?
 
             # Check for any replication lag detected by Freno for the current user's shard in DB.
-            lag = get_replication_lag_for_shard(APPLICATION_NAME, shard_name)
+            lag = get_replication_lag_for_shard(APPLICATION_NAME, shard_name, 5.seconds)
             lag > 0 ? rerun_after(lag, shard_name) && return : proceed_with_delete
           end
         end

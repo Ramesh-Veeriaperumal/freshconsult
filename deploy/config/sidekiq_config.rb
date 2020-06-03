@@ -409,7 +409,7 @@ class SidekiqConfigUsEast
     # new classification
     occasional_pool          = [[occasional, 6]]
     frequent_pool            = [[frequent, 6]]
-    maintenance_pool         = [[maintenance, 6]]
+    maintenance_pool         = [[maintenance, 4]]
     archive_pool             = [[archive, 6]]
     external_pool            = [[external, 6]]
     longrunning_pool         = [[long_running, 6]]
@@ -724,7 +724,7 @@ all_sidekiq_jobs =  cron_jobs + [
     # new classification
     occasional_pool          = [[occasional, 6]]
     frequent_pool            = [[frequent, 6]]
-    maintenance_pool         = [[maintenance, 6]]
+    maintenance_pool         = [[maintenance, 4]]
     archive_pool             = [[archive, 6]]
     external_pool            = [[external, 6]]
     longrunning_pool         = [[long_running, 6]]

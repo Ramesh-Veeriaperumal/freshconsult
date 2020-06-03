@@ -45,7 +45,14 @@ module CompanyFieldsConstants
     key_value_map
   end
 
-  COMPANY_FIELDS =
+  FOREGROUND_COMPANY_FIELDS = [
+    { name: 'name',
+      label: 'Company Name',
+      required_for_agent: true,
+      position: 1 }
+  ].freeze
+
+  BACKGROUND_COMPANY_FIELDS =
     [
       { :name               => "description", 
         :label              => "Description",
@@ -76,10 +83,12 @@ module CompanyFieldsConstants
         :position           => 8 }
     ]
 
+  DEFAULT_COMPANY_FIELDS = FOREGROUND_COMPANY_FIELDS + BACKGROUND_COMPANY_FIELDS
+
   FIELDS_WITH_CHOICES = ['health_score', 'account_tier', 'industry']
 
 
-  TAM_FIELDS = COMPANY_FIELDS[3..-1].map { |f| f.except(:position) }
+  TAM_FIELDS = BACKGROUND_COMPANY_FIELDS[3..-1].map { |f| f.except(:position) }
 
 
   TAM_FIELDS_DATA = {
@@ -111,7 +120,7 @@ module CompanyFieldsConstants
                            end
   }
 
-  def self.company_fields_data(account = nil, fields = COMPANY_FIELDS)
+  def self.company_fields_data(account = nil, fields = BACKGROUND_COMPANY_FIELDS)
     unless account.nil?
       existing_fields_count = account.company_form.fields.length
       fields = TAM_FIELDS

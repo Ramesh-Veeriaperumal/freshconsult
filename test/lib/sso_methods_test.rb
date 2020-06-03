@@ -1,5 +1,5 @@
 require_relative '../api/unit_test_helper'
-
+require 'webmock/minitest'
 class SsoMethodsTest < ActionView::TestCase
   def setup
     Account.stubs(:current).returns(Account.first)
@@ -196,6 +196,40 @@ class SsoMethodsTest < ActionView::TestCase
     assert_equal true, sso
   end
 
+  def test_enable_agent_custom_sso_with_freshid_disabled
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(false)
+    Account.any_instance.stubs(:add_feature).returns(true)
+    @account.enable_contact_custom_sso!(entrypoint_url: 'some_login_link')
+    assert_equal false, @account.sso_enabled
+  ensure
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+    Account.any_instance.unstub(:add_feature)
+  end
+
+  def test_enable_contact_custom_sso_without_freshid_disabled
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(false)
+    mock = Minitest::Mock.new
+    mock.expect(:call, true, ['FRESHID CUSTOM POLICY :: SSO METHODS ::  Enable Contact Custom SSO :: Freshid not enabled'])
+    Rails.logger.stub :info, mock do
+      @account.enable_contact_custom_sso!(entrypoint_url: 'some_login_link')
+    end
+    assert_equal mock.verify, true
+  ensure
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+  end
+
+  def test_enable_agent_custom_sso_without_freshid_disabled
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(false)
+    mock = Minitest::Mock.new
+    mock.expect(:call, true, ['FRESHID CUSTOM POLICY :: SSO METHODS ::  Enable Agent Custom SSO :: Freshid integeration not enabled'])
+    Rails.logger.stub :info, mock do
+      @account.enable_agent_custom_sso!(entrypoint_url: 'some_login_link')
+    end
+    assert_equal mock.verify, true
+  ensure
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+  end
+
   def test_disable_agent_custom_sso
     @account.enable_agent_custom_sso!({entrypoint_url: 'some_login_link'})
     sso = @account.disable_agent_custom_sso!
@@ -209,6 +243,18 @@ class SsoMethodsTest < ActionView::TestCase
     sso = @account.enable_contact_custom_sso!({entrypoint_url: 'some_login_link'})
     assert_equal true, sso
     assert_equal true, @account.sso_enabled
+  end
+
+  def test_enable_contact_custom_sso_with_freshid_disabled
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_enabled?).returns(false)
+    Account.any_instance.stubs(:add_feature).returns(true)
+    @account.enable_contact_custom_sso!(entrypoint_url: 'some_login_link')
+    assert_equal false, @account.sso_enabled
+  ensure
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+    Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:add_feature)
   end
 
   def test_disable_contact_custom_sso
@@ -252,4 +298,27 @@ class SsoMethodsTest < ActionView::TestCase
     assert_equal true, sso
     assert_equal false, @account.sso_enabled
   end
+
+  def test_customer_custom_login_url
+    sso = @account.account_additional_settings.enable_freshid_custom_policy(custom_policy_addtional_settings_config('contact', 'login_url', 'logout'))
+    assert_equal 'login_url', @account.customer_custom_login_url
+  end
+
+  def test_agent_custom_login_url
+    sso = @account.account_additional_settings.enable_freshid_custom_policy(custom_policy_addtional_settings_config('agent', 'login_url', 'logout'))
+    assert_equal 'login_url', @account.agent_custom_login_url
+  end
+
+  private
+
+    def custom_policy_addtional_settings_config(entity, entrypoint_url, logout_url)
+      {
+        "#{entity}": {
+          entrypoint_url: entrypoint_url,
+          entrypoint_id: '181734727304930011',
+          entrypoint_title: 'Custom Policy Agent',
+          logout_redirect_url: logout_url
+        }
+      }
+    end
 end

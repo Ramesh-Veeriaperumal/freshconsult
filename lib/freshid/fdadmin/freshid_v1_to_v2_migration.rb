@@ -127,7 +127,7 @@ class Freshid::Fdadmin::FreshidV1ToV2Migration < ActiveRecord::Migration
         return nil, true
       else
         freshchat_account = freshchat_response.body.present? ? [{
-          domain: freshchat_response.body[:domain].to_s,
+          domain: get_freshchat_preferred_domain(freshchat_response.body[:domain].to_s),
           external_id: freshchat_response.body[:appId].to_s,
           product_id: @product_account_mapping[:freshchat].to_s
         }] : []

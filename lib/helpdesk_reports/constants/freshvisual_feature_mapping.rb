@@ -35,13 +35,13 @@ module HelpdeskReports::Constants::FreshvisualFeatureMapping
   CURATED_REPORTS_LIST = ['Agent Performance', 'Group Performance', 'Helpdesk Ticket Volume', 'Helpdesk Performance', 'Performance Distribution', 'Ticket Volume Trends',
                           'Top Customer Analysis', 'Ticket Lifecycle', 'Time Sheet Summary', 'Satisfaction Survey Results', 'Satisfaction Survey Volume', 'Shared Ownership',
                           'Linked Tickets Summary', 'Parent Tickets Summary', 'Tags Summary', 'Field Service Volume Trends',
-                          'Field Service Performance'].freeze
+                          'Field Service Performance', 'Knowledge Base'].freeze
 
   # CURATED_REPORTS = {:agent_performance=>{:config_type=>:curated_reports, :value=>"Agent performance"}, :group_performance=>{:config_type=>:curated_reports, :value=>"Group performance"},...}
   CURATED_REPORTS = Hash[CURATED_REPORTS_LIST.map { |c| [c.tr('-', '_').parameterize('_').to_sym, { config_type: :curated_reports, value: c }] }]
 
   # List of Freshdesk resources that can be restricted at the account level in Fresh Visuals.
-  RESOURCE_RESTRICTION_LIST = ['Tickets', 'Timesheets', 'Tags', 'Surveys', 'Survey results'].freeze
+  RESOURCE_RESTRICTION_LIST = ['Tickets', 'Timesheets', 'Tags', 'Surveys', 'Survey results', 'Articles'].freeze
 
   # RESOURCE_RESTRICTION = {:tickets=>{:config_type=>:resource_restriction, :value=>"Tickets"}, :csat=>{:config_type=>:resource_restriction, :value=>"CSAT"}, :timesheet=>{:config_type=>:resource_restriction, :value=>"Timesheet"}, :tags=>{:config_type=>:resource_restriction, :value=>"Tags"}}
   RESOURCE_RESTRICTION = Hash[RESOURCE_RESTRICTION_LIST.map { |c| [c.parameterize('_').to_sym, { config_type: :resource_restriction, value: c }] }]
@@ -109,7 +109,9 @@ module HelpdeskReports::Constants::FreshvisualFeatureMapping
     analytics_timesheet_resource: RESOURCE_RESTRICTION[:timesheets],
     analytics_tags_resource: RESOURCE_RESTRICTION[:tags],
     analytics_surveys: RESOURCE_RESTRICTION[:surveys],
-    analytics_survey_results: RESOURCE_RESTRICTION[:survey_results]
+    analytics_survey_results: RESOURCE_RESTRICTION[:survey_results],
+    analytics_articles: RESOURCE_RESTRICTION[:articles],
+    analytics_knowledge_base: CURATED_REPORTS[:knowledge_base]
   }.freeze
 
   # Certain resources has to be enabled if some curated reports related to them is enabled. So, keeping a map like this.
@@ -132,7 +134,8 @@ module HelpdeskReports::Constants::FreshvisualFeatureMapping
     RESOURCE_RESTRICTION[:surveys][:value] => [CURATED_REPORTS[:satisfaction_survey_results][:value], CURATED_REPORTS[:satisfaction_survey_volume][:value], CURATED_REPORTS[:top_customer_analysis][:value]],
     RESOURCE_RESTRICTION[:survey_results][:value] => [CURATED_REPORTS[:satisfaction_survey_results][:value], CURATED_REPORTS[:satisfaction_survey_volume][:value], CURATED_REPORTS[:top_customer_analysis][:value]],
     RESOURCE_RESTRICTION[:timesheets][:value] => [CURATED_REPORTS[:time_sheet_summary][:value]],
-    RESOURCE_RESTRICTION[:tags][:value] => [CURATED_REPORTS[:tags_summary][:value]]
+    RESOURCE_RESTRICTION[:tags][:value] => [CURATED_REPORTS[:tags_summary][:value]],
+    RESOURCE_RESTRICTION[:articles][:value] => [CURATED_REPORTS[:knowledge_base][:value]]
   }.freeze
 
   REPORTS_FEATURES_LIST = FD_FRESVISUAL_FEATURE_MAPPING.keys.freeze

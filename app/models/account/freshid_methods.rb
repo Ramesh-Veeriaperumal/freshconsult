@@ -234,6 +234,15 @@ class Account < ActiveRecord::Base
     org_account_mapping.destroy
   end
 
+  def freshid_custom_policy_enabled?(entity)
+    additional_settings = account_additional_settings.additional_settings
+    additional_settings[:freshid_custom_policy_configs] && additional_settings[:freshid_custom_policy_configs][entity]
+  end
+
+  def freshid_custom_policy_enabled_for_account?
+    account_additional_settings.additional_settings[:freshid_custom_policy_configs]
+  end
+
   private
 
     def freshid_migration_in_progress_key

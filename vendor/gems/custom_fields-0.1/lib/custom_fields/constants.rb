@@ -19,5 +19,10 @@ module CustomFields
 
     CUSTOM_FIELD_LABEL_PREFIX = 'cf_'
     ENCRYPTED_FIELD_LABEL_PREFIX = 'cf_enc_'
+
+    DEFAULT_FIELD_NAMES = {
+      'ContactField' => ContactFieldsConstants::DEFAULT_CONTACT_FIELDS.map { |x| x[:name] },
+      'CompanyField' => CompanyFieldsConstants::DEFAULT_COMPANY_FIELDS.map { |x| x[:name] }
+    }.freeze
   end
 end

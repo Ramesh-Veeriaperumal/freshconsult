@@ -1,6 +1,7 @@
 class Helpdesk::Ticket < ActiveRecord::Base
   include RepresentationHelper
   include TicketsNotesHelper
+
   SECURE_FIELD_PREFIX = Admin::TicketFieldConstants::ENCRYPTED_FIELDS_PREFIX_BY_TYPE[:secure_text].freeze
   FLEXIFIELD_PREFIXES = (['ffs_', 'ff_text', 'ff_int', 'ff_date', 'ff_boolean', 'ff_decimal', 'dn_slt_', 'dn_mlt_'] | [SECURE_FIELD_PREFIX]).freeze
   REPORT_FIELDS = [:first_assign_by_bhrs, :first_response_id, :first_response_group_id, :first_response_agent_id,
@@ -423,7 +424,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     {
       action_in_bhrs: action_in_bhrs?,
       pod: ChannelFrameworkConfig['pod'],
-      hypertrail_version: CentralConstants::HYPERTRAIL_VERSION
+      hypertrail_version: CentralConstants::HYPERTRAIL_VERSION,
+      marketplace_event: valid_marketplace_event?(event_name)
     }.merge(lifecycle_hash).merge(activity_hash)
   end
 

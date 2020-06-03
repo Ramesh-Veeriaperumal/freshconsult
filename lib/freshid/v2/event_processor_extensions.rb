@@ -1,6 +1,9 @@
 module Freshid::V2::EventProcessorExtensions
   ACCOUNT_ORGANISATION_MAPPED = :ACCOUNT_ORGANISATION_MAPPED
   SUCCESS = 200..299
+  RAILS_LOGGER_PREFIX = 'FRESHID CUSTOM POLICY :: EVENT PROCESSOR EXTENSIONS :: '.freeze
+
+  ORGANISATION_LIST_ACCOUNTS_PAGE_SIZE = 30
 
   def initialize(params)
     initialize_attributes(params)
@@ -130,17 +133,16 @@ module Freshid::V2::EventProcessorExtensions
   end
 
   private
-
     # Custom freshid security settings
     # Enumerate the entrypoint accounts to update the sso modules
     def update_accounts(params)
       account_ids = []
-
-      if freshid_custom_sso_event?(params[:entrypoint][:modules]) && params[:entrypoint][:accounts].present?
-        Rails.logger.info 'Starting to process entrypoint sso config'
+      exclude_accounts = []
+      if params[:entrypoint][:accounts].present?
+        Rails.logger.info "#{RAILS_LOGGER_PREFIX} :: Starting to process entrypoint sso config"
         params[:entrypoint][:accounts].each do |freshid_account|
           next unless freshid_account[:product_id].eql? FRESHID_V2_PRODUCT_ID.to_s
-          Rails.logger.info 'Fresdesk account is present to be processed'
+          Rails.logger.info "#{RAILS_LOGGER_PREFIX} Fresdesk account is present to be processed"
           account_domain = freshid_account[:domain]
           raise 'domain in freshid account params is empty' if account_domain.nil?
           domain_mapping = DomainMapping.find_by_domain(account_domain)
@@ -151,29 +153,81 @@ module Freshid::V2::EventProcessorExtensions
             Rails.logger.info "Freshid sso sync feature enabled? #{current_account.freshid_sso_sync_enabled?}"
             next unless current_account.freshid_sso_sync_enabled?
 
+            exclude_accounts << account_domain
             account_ids << account_id
             if @event_type.downcase == 'entrypoint_deleted'
-              process_entrypoint_deleted_event(
-                  scrape_sso_changes(params[:entrypoint][:modules]),
-                  params[:entrypoint][:user_type])
+              process_entrypoint_deleted_event(params[:entrypoint][:entrypoint_id])
             else
-              process_custom_freshid_sso_events(
-                  scrape_sso_changes(params[:entrypoint][:modules]),
-                  entrypoint_attrs(params[:entrypoint]),
-                  params[:entrypoint][:user_type])
+              process_freshid_custom_policy_events(params[:entrypoint])
             end
           end
         end
+        remove_dangling_entrypoint(params[:entrypoint][:organisation_id], params[:entrypoint][:entrypoint_id], exclude_accounts)
+      elsif params[:entrypoint][:modules] && params[:entrypoint][:organisation_id]
+        remove_dangling_entrypoint(params[:entrypoint][:organisation_id], params[:entrypoint][:entrypoint_id], exclude_accounts)
       end
-      Rails.logger.info "Updated accounts of the entrypoint event - accounts :#{account_ids.inspect}"
+      Rails.logger.info "#{RAILS_LOGGER_PREFIX} Updated accounts of the entrypoint event - accounts :#{account_ids.inspect}"
       account_ids
     rescue StandardError => e
-      Rails.logger.error "Error while updating entrypoint event #{params[:event_type]} : org #{params[:organisation_id]} : entry id #{params[:entrypoint_id]}"
+      Rails.logger.error "#{RAILS_LOGGER_PREFIX} Error while updating entrypoint event #{params[:event_type]} : org #{params[:organisation_id]} : entry id #{params[:entrypoint_id]}"
+    end
+
+    def remove_dangling_entrypoint(organisation_id, entrypoint_id, exclude_accounts)
+      organsation_detail = Organisation.fetch_by_organisation_id(organisation_id)
+      if organsation_detail
+        Rails.logger.info "#{RAILS_LOGGER_PREFIX} Processing Dangling Entrypoint Removal for ORG #{organisation_id} "
+        freshid_org_info = Freshid::V2::Models::Account.organisation_accounts(1, ORGANISATION_LIST_ACCOUNTS_PAGE_SIZE, organsation_detail.domain)
+        if freshid_org_info
+          Rails.logger.info "#{RAILS_LOGGER_PREFIX} Dangling Entrypoint Removal :: ORG #{organisation_id} :: TOTAL ACCOUNTS #{freshid_org_info[:total_size]}"
+          page_count = freshid_org_info[:total_size] / ORGANISATION_LIST_ACCOUNTS_PAGE_SIZE
+          total_pages = page_count.zero? ? 1 : page_count
+          process_dangling_entrypoint_removal(freshid_org_info, entrypoint_id, exclude_accounts)
+          paginated_org_accounts_entrypoint_removal(total_pages, organsation_detail.domain, entrypoint_id, exclude_accounts) if freshid_org_info[:has_more]
+        end
+      end
+    end
+
+    def paginated_org_accounts_entrypoint_removal(total_pages, org_domain, entrypoint_id, exclude_accounts)
+      (2..total_pages).each do |page_number|
+        org_accounts = Freshid::V2::Models::Account.organisation_accounts(page_number, ORGANISATION_LIST_ACCOUNTS_PAGE_SIZE, org_domain)
+        break unless org_accounts[:accounts]
+
+        process_dangling_entrypoint_removal(org_accounts, entrypoint_id, exclude_accounts)
+      end
+    end
+
+    def process_dangling_entrypoint_removal(org_accounts, entrypoint_id, exclude_accounts)
+      org_accounts[:accounts].each do |org_account|
+        next if !(org_account[:product_id].eql? FRESHID_V2_PRODUCT_ID.to_s) || exclude_accounts.include?(org_account[:domain])
+
+        domain_mapping = DomainMapping.find_by_domain(org_account[:domain])
+        if domain_mapping
+          Rails.logger.info "#{RAILS_LOGGER_PREFIX} Dangling Entrypoint Removal :: EXCLUDED ACCOUNTS #{exclude_accounts.count} "
+          clear_entrypoints_from_account(domain_mapping.account_id, entrypoint_id)
+        end
+      end
+    end
+
+    def clear_entrypoints_from_account(account_id, entrypoint_id)
+      account = nil
+      Rails.logger.info "#{RAILS_LOGGER_PREFIX} Dangling Entrypoint Removal :: Clearing Entrypoint #{entrypoint_id} :: ACCOUNT #{account_id}"
+      Sharding.admin_select_shard_of(account_id) do
+        Sharding.run_on_slave do
+          account = Account.find(account_id).make_current
+          next unless account.freshid_org_v2_enabled? && account.freshid_sso_sync_enabled? && account.freshid_custom_policy_enabled_for_account?
+
+          Sharding.run_on_master do
+            process_entrypoint_deleted_event(entrypoint_id)
+          end
+        end
+      end
+    ensure
+      Account.reset_current_account if account
     end
 
     # auth modules will contain password, google, sso
     def scrape_sso_changes(auth_modules)
-      auth_modules.select {|auth_module| freshid_sso_event?(auth_module[:type]) }
+      auth_modules.select { |auth_module| freshid_sso_event?(auth_module[:type]) }
     end
 
     def entrypoint_attrs(entrypoint_payload)
@@ -190,7 +244,7 @@ module Freshid::V2::EventProcessorExtensions
         yield
       end
     rescue Exception => e
-      log_error(e, account_id: account_id)
+      Rails.logger.error "#{RAILS_LOGGER_PREFIX} Error while updating entrypoint event #{e.inspect}, account_id: #{account_id}"
     ensure
       Freshid.account_class.reset_current_account
     end
@@ -204,17 +258,35 @@ module Freshid::V2::EventProcessorExtensions
       end
     end
 
-    def process_custom_freshid_sso_events(auth_modules, entrypoint_hash, user_type)
-      filtered_auth_module = filtered_sso_auth_modules(auth_modules)
-      Rails.logger.info "process_custom_freshid_sso_events filtered_auth_module #{filtered_auth_module.inspect}"
-      update_custom_sso_event(filtered_auth_module[:enabled], user_type, entrypoint_hash) if filtered_auth_module.present?
+    def process_freshid_custom_policy_events(entrypoint_param)
+      entrypoint_hash = entrypoint_attrs(entrypoint_param)
+      update_custom_policy(entrypoint_param[:entrypoint_enabled], entrypoint_param[:user_type].downcase.to_sym, entrypoint_hash)
+      filtered_sso_auth_module = filtered_sso_auth_modules(scrape_sso_changes(entrypoint_param[:modules]))
+      Rails.logger.info "#{RAILS_LOGGER_PREFIX} :: Processing Custom Policy SSO Auth Modules ::  #{filtered_sso_auth_module.inspect}"
+      update_custom_sso_event(filtered_sso_auth_module[:enabled], entrypoint_param[:user_type], entrypoint_hash) if filtered_sso_auth_module.present?
     end
 
-    def process_entrypoint_deleted_event(auth_modules, user_type)
+    def process_entrypoint_deleted_event(entrypoint_id)
       # Though the entrypoint event is deleted, the auth modules inside this event will have enabled as true/false because
       # freshid doesn't delete the authmodule(in our case sso module) associated with the entrypoint before sending the entrypoint
       # deleted event. So we need to handle it here.
-      auth_modules.each { |auth_module| update_custom_sso_event(false, user_type) }
+
+      # Invalidating for contact
+      invalidate_previous_configs(:agent, entrypoint_id)
+      # Invaidating for agent
+      invalidate_previous_configs(:contact, entrypoint_id)
+    end
+
+    def update_custom_policy(enable, entity, entrypoint_config = {})
+      additional_settings = current_account.account_additional_settings
+      if enable
+        config = {}
+        config[entity] = entrypoint_config.merge(logout_redirect_url: "https://#{current_account.full_domain}")
+        invalidate_previous_configs(entity, entrypoint_config[:entrypoint_id])
+        additional_settings.enable_freshid_custom_policy(config)
+      else
+        additional_settings.disable_freshid_custom_policy(entity)
+      end
     end
 
     def update_custom_sso_event(enable, user_type, entrypoint_hash = {})
@@ -231,6 +303,20 @@ module Freshid::V2::EventProcessorExtensions
 
     def freshid_custom_sso_event?(auth_modules)
       scrape_sso_changes(auth_modules).present?
+    end
+
+    def custom_policy_config_exists?(entity, entrypoint_id)
+      config = current_account.freshid_custom_policy_enabled?(entity) || current_account.freshid_custom_sso_exists?(entity)
+      config && config[:entrypoint_id] == entrypoint_id ? true : false
+    end
+
+    def invalidate_previous_configs(entity, entrypoint_id)
+      additional_settings = current_account.account_additional_settings
+      if entity == :agent && custom_policy_config_exists?(:contact, entrypoint_id)
+        additional_settings.disable_freshid_custom_policy(:contact)
+      elsif entity == :contact && custom_policy_config_exists?(:agent, entrypoint_id)
+        additional_settings.disable_freshid_custom_policy(:agent)
+      end
     end
 
     ##### Default freshid security settings (Only user type is agent)

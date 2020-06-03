@@ -100,7 +100,10 @@ class UserEmail < ActiveRecord::Base
   def save_changes_before_destroy
     changes = {}
     PRESENTER_FIELDS_MAPPING.keys.each do |key|
-      changes[PRESENTER_FIELDS_MAPPING[key.to_sym].to_sym] = { added: [], removed: [self[key]] } if PRESENTER_FIELDS_MAPPING[key.to_sym]
+      if PRESENTER_FIELDS_MAPPING[key.to_sym]
+        changes[PRESENTER_FIELDS_MAPPING[key.to_sym].to_sym] = { added: [], removed: [self[key]] }
+        user.user_emails_updated = true # Added to set marketplace_event for central event_info
+      end
     end
     @model_changes = changes
   end
@@ -112,6 +115,7 @@ class UserEmail < ActiveRecord::Base
       if PRESENTER_FIELDS_MAPPING[key.to_sym]
         changes[PRESENTER_FIELDS_MAPPING[key.to_sym]] = { added: [email_change[1]], removed: [] }
         changes[PRESENTER_FIELDS_MAPPING[key.to_sym]][:removed] << email_change[0] if transaction_include_action?(:update)
+        user.user_emails_updated = true # Added to set marketplace_event for central event_info
       end
     end
     @model_changes = changes

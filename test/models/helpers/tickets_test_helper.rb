@@ -86,7 +86,7 @@ module TicketsTestHelper
     test_ticket
   end
 
-  def cp_ticket_event_info_pattern(ticket)
+  def cp_ticket_event_info_pattern(ticket, expected_hash)
     # TODO: Testing lifecycle_hash.
     lifecycle_hash = {}
     activity_type = ticket.activity_type
@@ -110,7 +110,7 @@ module TicketsTestHelper
       action_in_bhrs: action_in_bhrs?(ticket),
       pod: ChannelFrameworkConfig['pod'],
       hypertrail_version: CentralConstants::HYPERTRAIL_VERSION
-    }.merge(lifecycle_hash).merge(activity_type_hash)
+    }.merge(lifecycle_hash).merge(activity_type_hash).merge(expected_hash)
   end
 
   def split_ticket_hash(activity_type)

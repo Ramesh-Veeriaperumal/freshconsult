@@ -110,6 +110,17 @@ class Reports::PricingApiTest < ActiveSupport::TestCase
     @account.revoke_feature :analytics_report_save
   end
 
+  def test_worker_enqueue_on_kbanalytics_feature_addition
+    @account.revoke_feature(:analytics_knowledge_base)
+    @account.revoke_feature(:analytics_articles)
+    Reports::FreshvisualConfigs.jobs.clear
+    @account.add_feature :analytics_articles
+    assert_equal Reports::FreshvisualConfigs.jobs.size, 1
+  ensure
+    @account.revoke_feature :analytics_articles
+    @account.revoke_feature :analytics_knowledge_base
+  end
+
   def test_timesheets_tabular_presence_when_upgraded_19
     Account.stubs(:current).returns(@account)
     @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.where(name: 'Sprout Jan 19').first.id, state: 'active', account_id: @account.id))

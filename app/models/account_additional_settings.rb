@@ -333,6 +333,22 @@ class AccountAdditionalSettings < ActiveRecord::Base
     save!
   end
 
+  def enable_freshid_custom_policy(config = {})
+    additional_settings[:freshid_custom_policy_configs] ||= {}
+    additional_settings[:freshid_custom_policy_configs][:agent] = config[:agent] if config.key?(:agent)
+    additional_settings[:freshid_custom_policy_configs][:contact] = config[:contact] if config.key?(:contact)
+    save!
+  end
+
+  def disable_freshid_custom_policy(key)
+    if [:agent, :contact].include?(key)
+      Account.current.safe_send("disable_#{key.downcase}_custom_sso!")
+      additional_settings[:freshid_custom_policy_configs].try(:delete, key)
+    end
+    additional_settings.delete(:freshid_custom_policy_configs) if additional_settings[:freshid_custom_policy_configs].try(:empty?)
+    save!
+  end
+
   private
 
   def update_help_widget_languages

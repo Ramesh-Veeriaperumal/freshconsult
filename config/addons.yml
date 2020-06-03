@@ -133,4 +133,34 @@ Field Service Management 20:
   - :field_service_management
 Freddy Ultimate:
   - :agent_assist_ultimate
-  
+Detect Thankyou Note Migration:
+  - :detect_thank_you_note
+  - :detect_thank_you_note_eligible
+Smart Filter Migration:
+  - :smart_filter
+Sla Management Migration:
+  - :sla_management
+Customer slas Migration:
+  - :customer_slas
+Audit Log UI And Multi Product Migration:
+  - :audit_log_ui
+  - :audit_logs_central_publish
+  - :unlimited_multi_product
+Article Versioning Migration:
+  - :article_versioning
+Whitelisted Ips Migration:
+  - :whitelisted_ips
+Skill Based Round Robin Migration:
+  - :skill_based_round_robin
+Sandbox Migration:
+  - :sandbox
+Hipaa Migration:
+  - :hipaa
+Article Approval Workflow Migration:
+  - :article_approval_workflow
+Agent Assist Lite Migration:
+  - :agent_assist_lite
+Autofaq Migration:
+  - :autofaq
+Botflow Migration:
+  - :botflow

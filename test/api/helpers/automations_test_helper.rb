@@ -329,15 +329,17 @@ module AutomationTestHelper
     rule
   end
 
-  def create_service_task_dispatcher_rule(action, condition_field_name = 'priority', resource_type = 'ticket')
+  def create_service_task_dispatcher_rule(action, condition_field_name = 'priority', resource_type = 'ticket', data_hash = {})
     rule = Account.current.service_task_dispatcher_rules.new
     rule.name = Faker::Lorem.characters(10)
+    condition_field_name ||= 'priority'
+    resource_type ||= 'ticket'
     rule.condition_data = {
       all: [{
               evaluate_on: 'ticket',
               name: condition_field_name,
               operator: 'is',
-              value: 1
+              value: data_hash[:condition].present? && data_hash[:condition][condition_field_name.to_sym] ? data_hash[:condition][condition_field_name.to_sym] : 1
             }]
     }
     rule.action_data = if action == 'add_note'
@@ -351,10 +353,10 @@ module AutomationTestHelper
                        else
                          [{
                             name: action,
-                            value: 1
+                            value: data_hash[:action].present? && data_hash[:action][action.to_sym] ? data_hash[:action][action.to_sym] : 1
                           }]
                        end
-    rule.action_data[0][:evaluate_on] = resource_type if resource_type != 'ticket' && action != 'add_note'
+    rule.action_data[0][:evaluate_on] = resource_type if !resource_type.nil? && resource_type != 'ticket' && action != 'add_note'
     rule.save!
     rule
   end

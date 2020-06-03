@@ -30,6 +30,19 @@ class SAAS::AccountDataCleanup
     clear_fragment_caches
   end
 
+  def handle_custom_source_drop_data
+    account.helpdesk_sources.visible.custom.each do |source|
+      begin
+        # make the source as soft deleted.
+        source.deleted = true
+        source.save!
+      rescue StandardError => e
+        Rails.logger.error "Exception in custom source deletion.. #{e.backtrace}"
+        NewRelic::Agent.notice_error(e)
+      end
+    end
+  end
+
   def handle_create_observer_drop_data
     account.all_observer_rules.find_each do |rule|
       rule.destroy
@@ -421,11 +434,6 @@ class SAAS::AccountDataCleanup
     Rails.logger.info "Removing FSM for account #{account.id}"
     Account.current.revoke_feature(:field_service_management)
     cleanup_fsm
-  end
-
-  def handle_field_service_geolocation_toggle_drop_data
-    Rails.logger.info "Removing geolocation feature for account #{account.id}"
-    Account.current.revoke_feature(:field_service_geolocation)
   end
 
   def handle_fb_ad_posts_drop_data

@@ -9,14 +9,14 @@ module Utils
     FRENO_FAILURE_DELAY_KEY = 'FRENO_FAILURE_DELAY'.freeze
     BACKOFF_DELAY = 10
 
-    def get_replication_lag_for_shard(application_name, shard_name)
+    def get_replication_lag_for_shard(application_name, shard_name, expiry = 10.seconds)
       # if shard name or application name is empty, replication lag can't be checked for the shard.
       # can ignore replication lag for Sandbox
       return 0 if shard_name.blank? || application_name.blank? || shard_name == SANDBOX_SHARD_CONFIG
 
       freno_url = freno_api_url(application_name, shard_name)
       # check replication lag API and return based on response code.
-      Rails.cache.fetch(freno_url, expires_in: 10.seconds) do
+      Rails.cache.fetch(freno_url, expires_in: expiry) do
         response = HTTParty.get(freno_url, timeout: 1)
         if response.code == 200
           # No replication lag found, return 0

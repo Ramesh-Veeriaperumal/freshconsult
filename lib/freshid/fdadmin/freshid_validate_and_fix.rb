@@ -1,5 +1,8 @@
 class Freshid::Fdadmin::FreshidValidateAndFix
   include Freshid::Fdadmin::MigrationHelper
+
+  FRESHID_VALIDATION_TIMEOUT_DELAY = 300 # 5 Mins
+
   def initialize(doer_email, freshid_type = :freshid)
     @doer_email = doer_email
     @account = ::Account.current
@@ -28,6 +31,8 @@ class Freshid::Fdadmin::FreshidValidateAndFix
 
   def account_validation
     Rails.logger.info "Freshid Validation :: Started validation for a=#{@account.id}"
+    validation_timeout_redis_key = format(FRESHID_VALIDATION_TIMEOUT, account_id: @account.id.to_s)
+    set_others_redis_key(validation_timeout_redis_key, true, FRESHID_VALIDATION_TIMEOUT_DELAY)
     @account.all_technicians.find_each do |user|
       next if user.email == CUSTSERV_EMAIL
 
@@ -73,11 +78,11 @@ class Freshid::Fdadmin::FreshidValidateAndFix
       if freshid_user_id != authorization.uid
         authorization.uid = freshid_user_id
         authorization.save!
-        @validation_log << [@user.id, @user.email, authorization.uid, freshid_user_id, true, '']
         @diff_count += 1
       else
         @same_count += 1
       end
+      @validation_log << [@user.id, @user.email, authorization.uid, freshid_user_id, true, '']
     elsif authorization.present? && freshid_user_id.blank?
       # freshid user not present
       freshid_user = @user.create_freshid_user

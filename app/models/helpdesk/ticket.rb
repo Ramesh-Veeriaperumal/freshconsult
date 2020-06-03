@@ -56,7 +56,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   concerned_with :associations, :validations, :presenter, :callbacks, :riak, :s3, :mysql,
                  :attributes, :rabbitmq, :permissions, :esv2_methods, :count_es_methods,
                  :round_robin_methods, :association_methods, :skill_based_round_robin,
-                 :sla_calculation_methods, :kairos_methods
+                 :sla_calculation_methods, :kairos_methods, :presenter_helper
 
   text_datastore_callbacks :class => "ticket"
   spam_watcher_callbacks :user_column => "requester_id", :import_column => "import_id"

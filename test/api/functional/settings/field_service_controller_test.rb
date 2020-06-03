@@ -127,7 +127,6 @@ module Settings::Helpdesk
     def test_enable_geo_location
       Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
       add_privilege(User.current, :admin_tasks) unless User.current.privilege?(:admin_tasks)
-      Account.current.add_feature(:field_service_geolocation_toggle)
       Account.current.launch(:launch_fsm_geolocation)
       Account.current.account_additional_settings.save!
       assert_equal Account.current.has_feature?(:field_service_geolocation), false
@@ -139,13 +138,11 @@ module Settings::Helpdesk
       Account.any_instance.unstub(:field_service_management_enabled?)
       Account.current.rollback :launch_fsm_geolocation
       Account.current.revoke_feature(:field_service_geolocation)
-      Account.current.revoke_feature(:field_service_geolocation_toggle)
     end
 
     def test_disable_geo_location
       Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
       add_privilege(User.current, :admin_tasks) unless User.current.privilege?(:admin_tasks)
-      Account.current.add_feature(:field_service_geolocation_toggle)
       Account.current.launch(:launch_fsm_geolocation)
       Account.current.add_feature(:field_service_geolocation)
       Account.current.account_additional_settings.save!
@@ -156,7 +153,6 @@ module Settings::Helpdesk
     ensure
       Account.any_instance.unstub(:field_service_management_enabled?)
       Account.current.rollback :launch_fsm_geolocation
-      Account.current.revoke_feature(:field_service_geolocation_toggle)
     end
 
     def test_geo_location_without_lp

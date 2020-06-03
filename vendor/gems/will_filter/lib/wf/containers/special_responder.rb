@@ -60,9 +60,17 @@ module Wf
 
       def any_query_with_null(keys, values)
         conditions = []
-        agent_values = split_values(values[:agent][0])
+        if Account.current.wf_comma_filter_fix_enabled?
+          agent_values = values[:agent]
+        else
+          agent_values = split_values(values[:agent][0])
+        end
         agent_values.delete("-1")
-        group_values = split_values(values[:group][0])
+        if Account.current.wf_comma_filter_fix_enabled?
+          group_values = values[:group]
+        else
+          group_values = split_values(values[:group][0])
+        end
         if agent_values.present?
           keys.each { |k|
             conditions = generate_query(k, agent_values, conditions)
@@ -120,12 +128,13 @@ module Wf
 
       def sql_condition
         return nil unless operator == :is_in 
+        arg = Account.current.wf_comma_filter_fix_enabled? ? values : split_values
         if condition.key == :any_group_id
-          conditions = any_query_without_null(ANY_COLUMNS[condition.key], split_values)
+          conditions = any_query_without_null(ANY_COLUMNS[condition.key], arg)
         else
           conditions = values.is_a?(Hash) ? 
               any_query_with_null(ANY_COLUMNS[condition.key], values) :
-              any_query_without_null(ANY_COLUMNS[condition.key], split_values)
+              any_query_without_null(ANY_COLUMNS[condition.key], arg)
         end
       end
 

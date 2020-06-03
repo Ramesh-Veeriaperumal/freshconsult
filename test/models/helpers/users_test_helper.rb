@@ -150,4 +150,9 @@ module ModelsUsersTestHelper
     pattern[:custom_fields] = user.custom_field_hash('contact') unless user.helpdesk_agent
     pattern
   end
+
+  def cp_user_event_info_pattern(expected_hash)
+    event_info_hash = { ip_address: Thread.current[:current_ip] }
+    event_info_hash.merge!(expected_hash)
+  end
 end

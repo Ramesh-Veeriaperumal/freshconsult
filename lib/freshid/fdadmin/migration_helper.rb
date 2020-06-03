@@ -105,4 +105,13 @@ module Freshid::Fdadmin::MigrationHelper
   def get_sandbox_account_id(account)
     account.sandbox_job.try(:sandbox_account_id)
   end
+
+  def get_freshchat_preferred_domain(freshchat_domain)
+    freschat_main_domain = Rails.env.production? ? 'freshchat.com' : 'freshpori.com'
+    freshchat_domain.split('.', 2).count == 1 ? "#{freshchat_domain}.#{freschat_main_domain}" : freshchat_domain
+  end
+
+  def enable_freshid_sso_sync(account)
+    account.launch(:freshid_sso_sync) if account.freshid_org_v2_enabled?
+  end
 end

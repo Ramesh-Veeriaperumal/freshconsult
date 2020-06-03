@@ -128,7 +128,7 @@ class TicketTest < ActiveSupport::TestCase
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
     event_info = t.event_info(:create)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: true))
   end
 
   def test_central_publish_payload_event_info_check_hypertrail_version
@@ -138,7 +138,7 @@ class TicketTest < ActiveSupport::TestCase
     payload.must_match_json_expression(cp_ticket_pattern(t))
     create_event_info = t.event_info(:create)
     assert_equal CentralConstants::HYPERTRAIL_VERSION, create_event_info[:hypertrail_version]
-    create_event_info.must_match_json_expression(cp_ticket_event_info_pattern(t))
+    create_event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: true))
   ensure
     t.destroy
   end
@@ -150,7 +150,7 @@ class TicketTest < ActiveSupport::TestCase
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
     event_info = t.event_info(:create)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: true))
   end
 
   def test_central_publish_payload_event_info_on_merge_ticket
@@ -160,7 +160,61 @@ class TicketTest < ActiveSupport::TestCase
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
     event_info = t.event_info(:update)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: true))
+  end
+
+  def test_central_publish_payload_event_info_marketplace_attribute_with_valid_marketplace_attribute
+    t = create_ticket(ticket_params_hash)
+    t.activity_type = { type: Helpdesk::Ticket::MERGE_TICKET_ACTIVITY, soure_ticket_id: [1], target_ticket_id: [2] }
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    t.save
+    t.update_attributes(requester_id: @account.contacts.first.try(:id) || 1)
+    event_info = t.event_info(:update)
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: true))
+  end
+
+  def test_central_publish_payload_event_info_marketplace_attribute_with_invalid_marketplace_attribute
+    t = create_ticket(ticket_params_hash)
+    t.activity_type = { type: Helpdesk::Ticket::MERGE_TICKET_ACTIVITY, soure_ticket_id: [1], target_ticket_id: [2] }
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    t.save
+    t.update_attributes(description: Faker::Lorem.paragraph)
+    event_info = t.event_info(:update)
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: false))
+  end
+
+  def test_central_publish_payload_event_info_marketplace_attribute_for_archive_destory
+    t = create_ticket(ticket_params_hash)
+    t.activity_type = { type: Helpdesk::Ticket::MERGE_TICKET_ACTIVITY, soure_ticket_id: [1], target_ticket_id: [2] }
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    t.stubs(:archive).returns(true)
+    event_info = t.event_info(:destroy)
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: false))
+  end
+
+  def test_central_publish_payload_event_info_marketplace_attribute_for_non_archive_destory
+    t = create_ticket(ticket_params_hash)
+    t.activity_type = { type: Helpdesk::Ticket::MERGE_TICKET_ACTIVITY, soure_ticket_id: [1], target_ticket_id: [2] }
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    t.save
+    event_info = t.event_info(:destroy)
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: true))
+  end
+
+  def test_central_publish_payload_event_info_marketplace_attribute_for_custom_field_update
+    custom_fields_hash = { "test_custom_dropdown_#{@account.id}" => DROPDOWN_CHOICES.sample, "test_custom_text_#{@account.id}" => 'Sample Text' }
+    t = create_ticket(ticket_params_hash.merge(custom_field: custom_fields_hash))
+    t.activity_type = { type: Helpdesk::Ticket::SPLIT_TICKET_ACTIVITY, soure_ticket_id: [1], source_note_id: [2] }
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    t.save
+    t.update_attributes(custom_field: { "test_custom_dropdown_#{@account.id}" => DROPDOWN_CHOICES.sample })
+    event_info = t.event_info(:update)
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: false))
   end
 
   def test_central_publish_payload_event_info_on_ticket_from_social_tab
@@ -170,7 +224,7 @@ class TicketTest < ActiveSupport::TestCase
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
     event_info = t.event_info(:create)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: true))
   end
 
   def test_central_publish_payload_without_custom_fields
@@ -403,7 +457,7 @@ class TicketTest < ActiveSupport::TestCase
     ticket = create_ticket(ticket_params_hash(responder_id: @agent.id, group_id: group.id))
     CentralPublishWorker::ActiveTicketWorker.jobs.clear
     create_note(source: 0, ticket_id: ticket.id, user_id: @agent.id, private: false, body: Faker::Lorem.paragraph)
-    assert_equal 2, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
     job = CentralPublishWorker::ActiveTicketWorker.jobs.first
     assert_equal 'ticket_update', job['args'][0]
     assert_equal({ 'agent_reply_count' => [nil, 1] }, job['args'][1]['model_changes'])
@@ -463,7 +517,7 @@ class TicketTest < ActiveSupport::TestCase
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
     event_info = t.event_info(:create)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: true))
   end
 
   def test_central_publish_internal_agent_associations
