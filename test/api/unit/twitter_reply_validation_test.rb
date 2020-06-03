@@ -295,4 +295,20 @@ class TwitterReplyValidationTest < ActionView::TestCase
     assert validation.errors.full_messages.include?('Attachment ids twitter_attachment_single_file_size')
     ticket_instance.unstub(:twitter?)
   end
+
+  def test_with_invalid_include_surveymonkey_link
+    ticket_instance = Helpdesk::Ticket.any_instance
+    ticket_instance.stubs(:twitter?).returns(true)
+    item = Helpdesk::Ticket.new
+    validation = TwitterReplyValidation.new({
+                                               body: Faker::Lorem.characters(rand(10..140)),
+                                               twitter_handle_id: 1,
+                                               tweet_type: 'dm',
+                                               include_surveymonkey_link: 2
+                                            }, item)
+
+    refute validation.valid?
+    assert validation.errors.full_messages.include?('Include surveymonkey link is not included in the list')
+    ticket_instance.unstub(:twitter?)
+  end
 end

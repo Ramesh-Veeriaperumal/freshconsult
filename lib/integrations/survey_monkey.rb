@@ -13,6 +13,18 @@ module Integrations::SurveyMonkey
     {:link => url, :text => installed_app.configs[:inputs]['survey_text']}
   end
 
+  def self.survey_for_social(ticket, user)
+    return nil unless enabled?
+
+    installed_app = sm_installed_app
+    url = survey_url(installed_app, ticket, user) if installed_app
+
+    return nil if url.blank?
+
+    url = URI.parse(url).to_s
+    "#{installed_app.configs[:inputs]['survey_text']} \n #{url}"
+  end
+
   # CALLED: When survey is sent for ticket status change.
   def self.survey_for_notification notification_type, ticket
     return nil unless enabled?

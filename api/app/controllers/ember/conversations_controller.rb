@@ -577,6 +577,22 @@ module Ember
                                                      tweet_type: @tweet_type,
                                                      twitter_handle_id: @twitter_handle_id)
           end
+
+          include_survey_link = @item.include_surveymonkey_link.present? && @item.include_surveymonkey_link == 1
+          if include_survey_link && dm_note?(@tweet_type) && Account.current.csat_for_social_surveymonkey_enabled?
+            survey = Integrations::SurveyMonkey.survey_for_social(@ticket, @item.user)
+            if survey
+              Social::TwitterSurveyWorker.perform_in(10.seconds.from_now, note_id: @item.id,
+                                                                          user_id: @item.user_id,
+                                                                          requester_screen_name: @ticket.requester.twitter_id,
+                                                                          twitter_user_id: reply_handle.twitter_user_id,
+                                                                          twitter_handle_id: @twitter_handle_id,
+                                                                          stream_id: stream.id,
+                                                                          tweet_type: @tweet_type,
+                                                                          survey_dm: survey)
+            end
+          end
+
           render_201_with_location(template_name: 'ember/conversations/tweet')
         else
           render_response(false)

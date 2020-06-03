@@ -50,6 +50,7 @@
     - update_user_privilege
     - freshcaller_subscription_events_queue
     - freshchat_subscription_events_queue
+    - twitter_survey
 
   :bulk_api:
     - bulk_api_jobs

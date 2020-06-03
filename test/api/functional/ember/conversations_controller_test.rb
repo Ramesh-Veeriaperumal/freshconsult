@@ -1068,6 +1068,41 @@ module Ember
       ticket.destroy
     end
 
+    def test_tweet_dm_reply_with_survey
+      ticket = create_twitter_ticket
+      dm_text = Faker::Lorem.paragraphs(5).join[0..500]
+      @account = Account.current
+      Social::TwitterSurveyWorker.jobs.clear
+      Account.any_instance.stubs(:csat_for_social_surveymonkey_enabled?).returns(true)
+      reply_id = get_social_id
+      params_hash = twitter_dm_reply_params_hash.merge(include_surveymonkey_link: 1)
+      app_config = { inputs: { 'survey_link' => 'https://www.surveymonkey.com/r/NMWK2SF', 'survey_text' => 'Please fill the survey' } }
+      app = { id: 1, application_id: 1 }
+      app.stubs(:configs).returns(app_config)
+      Integrations::SurveyMonkey.stubs(:sm_installed_app).returns(app)
+      post :tweet, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      response_hash = JSON.parse(response.body)
+      args = Social::TwitterSurveyWorker.jobs.last['args'][0]
+      args.symbolize_keys!
+      reply_handle = @account.twitter_handles.where(id: params_hash[:twitter_handle_id]).first
+      assert_equal response_hash['id'], args[:note_id]
+      assert_equal response_hash['user_id'], args[:user_id]
+      assert_equal ticket.requester.twitter_id, args[:requester_screen_name]
+      assert_equal reply_handle.twitter_user_id, args[:twitter_user_id]
+      assert_equal params_hash[:twitter_handle_id], args[:twitter_handle_id]
+      assert_equal true, args[:stream_id].present?
+      assert_equal 'dm', args[:tweet_type]
+      url = URI.parse("#{app_config[:inputs]['survey_link']}?c=#{User.current.name}&fd_ticketid=#{ticket.display_id}").to_s
+      assert_equal "#{app_config[:inputs]['survey_text']} \n #{url}", args[:survey_dm]
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      ticket.destroy
+    ensure
+      Account.unstub(:csat_for_social_surveymonkey_enabled?)
+      Integrations::SurveyMonkey.unstub(:sm_installed_app)
+    end
+
     def test_tweet_reply_without_params
       ticket = create_twitter_ticket
       post :tweet, construct_params({ version: 'private', id: ticket.display_id }, {})

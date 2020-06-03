@@ -74,4 +74,6 @@ module Social::Twitter::Constants
   MONITOR_APP_PERMISSION = 'monitor_app_permission'.freeze
 
   STATUS_UPDATE_COMMAND_NAME = 'update_twitter_message'.freeze
+
+  SURVEY_DM_COMMAND_NAME = 'send_survey_twitter_dm'.freeze
 end
