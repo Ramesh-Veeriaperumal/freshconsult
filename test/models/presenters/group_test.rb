@@ -33,12 +33,12 @@ class GroupTest < ActiveSupport::TestCase
     CentralPublisher::Worker.jobs.clear
     group.agent_groups.build(user_id: new_agent.id)
     group.save
-    assert_equal 1, CentralPublisher::Worker.jobs.size
-    job = CentralPublisher::Worker.jobs.last
+    assert_equal 2, CentralPublisher::Worker.jobs.size # Changing the job size to two since agent-group and group jobs are sent
+    job = CentralPublisher::Worker.jobs.select { |jobs| jobs['args'][0] == 'group_update' }
     payload = group.central_publish_payload.to_json
     payload.must_match_json_expression(central_publish_group_pattern(group))
-    assert_equal 'group_update', job['args'][0]
-    assert_equal({ 'agents' => {'added' => [{'id' => new_agent.id, 'name' => new_agent.name}], 'removed' => [] } }, job['args'][1]['model_changes'])
+    assert_equal 'group_update', job[0]['args'][0]
+    assert_equal({ 'agents' => { 'added' => [{ 'id' => new_agent.id, 'name' => new_agent.name }], 'removed' => [] } }, job[0]['args'][1]['model_changes'])
   end
 
   def test_central_publish_payload_remove_agents
@@ -55,12 +55,12 @@ class GroupTest < ActiveSupport::TestCase
     agent_groups -= revised_agent_groups
     group.agent_groups = agent_groups
     group.save
-    assert_equal 1, CentralPublisher::Worker.jobs.size
-    job = CentralPublisher::Worker.jobs.last
+    assert_equal 2, CentralPublisher::Worker.jobs.size # Changing the job size to two since agent-group and group jobs are sent
+    job = CentralPublisher::Worker.jobs.select { |jobs| jobs['args'][0] == 'group_update' }
     payload = group.central_publish_payload.to_json
     payload.must_match_json_expression(central_publish_group_pattern(group))
-    assert_equal 'group_update', job['args'][0]
-    assert_equal({ 'agents' => {'added' => [], 'removed' => [{'id' => agents[0].id, 'name' => agents[0].name}] } }, job['args'][1]['model_changes'])
+    assert_equal 'group_update', job[0]['args'][0]
+    assert_equal({ 'agents' => { 'added' => [], 'removed' => [{ 'id' => agents[0].id, 'name' => agents[0].name }] } }, job[0]['args'][1]['model_changes'])
   end
 
   def test_central_publish_payload_add_remove_agents
@@ -79,12 +79,12 @@ class GroupTest < ActiveSupport::TestCase
     group.agent_groups = agent_groups
     group.agent_groups.build(user_id: new_agent.id)
     group.save
-    assert_equal 1, CentralPublisher::Worker.jobs.size
-    job = CentralPublisher::Worker.jobs.last
+    assert_equal 3, CentralPublisher::Worker.jobs.size # Changing the job size to three since agent-group (destroy and create) and group jobs are sent
+    job = CentralPublisher::Worker.jobs.select { |jobs| jobs['args'][0] == 'group_update' }
     payload = group.central_publish_payload.to_json
     payload.must_match_json_expression(central_publish_group_pattern(group))
-    assert_equal 'group_update', job['args'][0]
-    assert_equal({ 'agents' => {'added' => [{'id' => new_agent.id, 'name' => new_agent.name}], 'removed' => [{'id' => agents[0].id, 'name' => agents[0].name}] } }, job['args'][1]['model_changes'])
+    assert_equal 'group_update', job[0]['args'][0]
+    assert_equal({ 'agents' => { 'added' => [{ 'id' => new_agent.id, 'name' => new_agent.name }], 'removed' => [{ 'id' => agents[0].id, 'name' => agents[0].name }] } }, job[0]['args'][1]['model_changes'])
   end
 
   def test_central_publish_destroy_payload

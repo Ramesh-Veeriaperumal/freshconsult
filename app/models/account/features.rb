@@ -23,7 +23,7 @@ class Account < ActiveRecord::Base
     :bot_chat_history, :new_es_api, :filter_factory,
     :skip_invoice_due_warning, :automation_revamp, :archive_ticket_fields,
     :scheduled_export_fix, :compact_lang_detection,
-    :agent_group_central_publish, :custom_fields_search, :disable_rabbitmq_iris,
+    :custom_fields_search, :disable_rabbitmq_iris,
     :update_billing_info, :allow_billing_info_update, :tag_central_publish,
     :native_apps, :archive_tickets_api, :bot_agent_response,
     :fetch_ticket_from_ref_first, :query_from_singleton,
