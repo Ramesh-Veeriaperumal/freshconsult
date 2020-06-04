@@ -1424,19 +1424,12 @@
                         }
           },
           "shard_24_3": {
-            "_proxy_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:m2YaShQ/npq8S8WfbRZ9fe3N5sSWGzuJ:AH2NKvVASvb7Vn3dDA/+yfIZi6IaG3DjZHo=]",
             "_database": "helpkit_shard24_3",
             "_username": "dbuser",
             "_host": "shard24-3.internal.poduseast1.freshdesk.com",
             "_slave2_host": "shard24-3slave2.internal.poduseast1.freshdesk.com",
-            "_slave1_host": "shard24-3slave1.internal.poduseast1.freshdesk.com",
-            "slave_proxy": {
-                          "password": "EJ[1:f0cBORZIqJKnd96t/QYIm0vcvJMbAPQc1g1nOKJwc3g=:wEpdDnis210CYm2yXd6urDL1uojdmDnC:nm+gaOlQXDKcxOn4KRgligf2fS81zg9rPMHX]",
-                          "_host": "127.0.0.1",
-                          "_port": "6033",
-                          "_username": "shard_24_proxy"
-                        }
+            "_slave1_host": "shard24-3slave1.internal.poduseast1.freshdesk.com"
           },
           "shard_24_4": {
             "_proxy_enabled": true,
@@ -1454,19 +1447,12 @@
                         }
           },
           "shard_24_5": {
-            "_proxy_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:5mIjsbIKgmhJiYNV3YfRwIlCUcUtODsM:4/NsUYaxE93ZX2EfTnGSlz+C6FtVsJY0T3o=]",
             "_database": "helpkit_shard24_5",
             "_username": "dbuser",
             "_host": "shard24-5.internal.poduseast1.freshdesk.com",
             "_slave2_host": "shard24-5slave2.internal.poduseast1.freshdesk.com",
-            "_slave1_host": "shard24-5slave1.internal.poduseast1.freshdesk.com",
-            "slave_proxy": {
-                          "password": "EJ[1:f0cBORZIqJKnd96t/QYIm0vcvJMbAPQc1g1nOKJwc3g=:pQ8LRNUA969S8YQHl0/uwTJ10wKGqRZg:fZpYzWwutOE517jd/m8i8DRWrLTYKnLDuluS]",
-                          "_host": "127.0.0.1",
-                          "_port": "6033",
-                          "_username": "shard_24_proxy"
-                        }
+            "_slave1_host": "shard24-5slave1.internal.poduseast1.freshdesk.com"
           },
           "shard_25_1": {
             "_proxy_enabled": true,
@@ -2637,7 +2623,7 @@
           "jwt_secret": "EJ[1:mT4FumQ+T4PGDzswB5HGZtdWPCYLix21pz5ebjBsoQQ=:z/33FNEfjqvMHPbymAEszRQRR2dEYf0N:FU05WSYTg5RwXJhcu8Y/7mv0ekfEgOYHN2c9qdYt8VEcEHX9H6+pjJODE6vtYFV9sjouqpDsLHXdCEc=]",
           "_demo_email": "support@freshdesk.com",
           "_timeout": 5,
-          "_onboard_timeout": 5        
+          "_onboard_timeout": 5
         }
       },
       "shift_config": {
