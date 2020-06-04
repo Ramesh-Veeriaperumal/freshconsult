@@ -323,10 +323,10 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/prometheus_exporter.git
-  revision: d26306b3638f2fbc8aed83a5da81782f14a28683
-  tag: v1.0.9
+  revision: 9d3a9d5be3bf778e39fd0f0ff2386c398d246414
+  tag: v1.1.0
   specs:
-    prometheus_exporter (1.0.9)
+    prometheus_exporter (1.1.0)
 
 GIT
   remote: git@github.com:freshdesk/retire.git
