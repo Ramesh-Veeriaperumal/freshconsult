@@ -1,7 +1,10 @@
 require_relative '../../test_helper'
+['group_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module Tickets
   class SubscriptionsControllerTest < ActionController::TestCase
     include TicketHelper
+    include ApiTicketsTestHelper
+    include GroupHelper
 
     BULK_TICKET_CREATE_COUNT = 2
 
@@ -237,6 +240,56 @@ module Tickets
       params_hash = {  ids: ticket_ids }
       put :bulk_unwatch, construct_params({}, params_hash)
       assert_response 204
+    end
+
+    def test_bulk_watch_with_valid_user_id_with_read_scope
+      Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+      agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      group1 = create_group_with_agents(@account, agent_list: [agent.id])
+      group2 = create_group_with_agents(@account, agent_list: [agent.id])
+      agent_group = agent.agent_groups.where(group_id: group1.id).first
+      agent_group.write_access = false
+      agent_group.save!
+      ticket1 = create_ticket({}, group1)
+      ticket2 = create_ticket({}, group2)
+      ticket_ids = [ticket1.display_id, ticket2.display_id]
+      login_as(agent)
+      params_hash = { ids: ticket_ids, user_id: agent.id }
+      put :bulk_watch, construct_params({}, params_hash)
+      assert_response 202
+      failures = {}
+      failure_ticket_ids = [ticket1.display_id]
+      success_ticket_ids = [ticket2.display_id]
+      failure_ticket_ids.each { |id| failures[id] = { id: :"is invalid" } }
+      match_json(partial_success_response_pattern(success_ticket_ids, failures))
+    ensure
+      group1.destroy if group1.present?
+      group2.destroy if group2.present?
+      Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+    end
+
+    def test_bulk_unwatch_with_valid_user_id_with_read_scope
+      Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+      agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      group1 = create_group_with_agents(@account, agent_list: [agent.id])
+      agent_group = agent.agent_groups.where(group_id: group1.id).first
+      agent_group.write_access = false
+      agent_group.save!
+      ticket_ids = []
+      BULK_TICKET_CREATE_COUNT.times do
+        ticket = create_ticket
+        ticket.subscriptions.build(user_id: User.current.id)
+        ticket.group_id = group1.id
+        ticket.save
+        ticket_ids << ticket.display_id
+      end
+      params_hash = { ids: ticket_ids }
+      login_as(agent)
+      put :bulk_unwatch, construct_params({}, params_hash)
+      assert_response 202
+    ensure
+      group1.destroy if group1.present?
+      Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
     end
   end
 end

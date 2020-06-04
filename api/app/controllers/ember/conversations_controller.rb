@@ -16,6 +16,7 @@ module Ember
     include Ecommerce::Ebay::ReplyHelper
     include TicketUpdateHelper
     include Conversations::Twitter
+    include AdvancedTicketScopes
 
     decorate_views(
       decorate_objects: [:ticket_conversations],
@@ -675,7 +676,7 @@ module Ember
 
       def check_ticket_action_permissions
         (@ticket && (!verify_ticket_state ||
-          verify_ticket_permission(api_current_user, @ticket))) || # Verify ticket permission if ticket exists.
+          verify_ticket_permission(api_current_user, @ticket, @item))) || # Verify ticket permission if ticket exists.
           (update? && !can_update?)
       end
 

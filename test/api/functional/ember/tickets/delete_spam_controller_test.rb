@@ -330,6 +330,179 @@ module Ember
         assert_response 202
         match_json(partial_success_response_pattern(ticket_ids, {}))
       end
+
+      def test_spam_with_valid_ticket_id_with_read_scope
+        Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+        agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+        group = create_group_with_agents(@account, agent_list: [agent.id])
+        agent_group = agent.agent_groups.where(group_id: group.id).first
+        agent_group.write_access = false
+        agent_group.save!
+        ticket = create_ticket({}, group)
+        login_as(agent)
+        put :spam, construct_params({ version: 'private' }, false).merge(id: ticket.display_id)
+        assert_response 403
+      ensure
+        group.destroy if group.present?
+        Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+      end
+
+      def test_unspam_with_valid_ticket_id_with_read_scope
+        Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+        agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+        group = create_group_with_agents(@account, agent_list: [agent.id])
+        agent_group = agent.agent_groups.where(group_id: group.id).first
+        agent_group.write_access = false
+        agent_group.save!
+        ticket = create_ticket({ spam: true }, group)
+        login_as(agent)
+        put :unspam, construct_params({ version: 'private' }, false).merge(id: ticket.display_id)
+        assert_response 403
+      ensure
+        group.destroy if group.present?
+        Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+      end
+
+      def test_restore_with_valid_ticket_id_with_read_scope
+        Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+        agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+        group = create_group_with_agents(@account, agent_list: [agent.id])
+        agent_group = agent.agent_groups.where(group_id: group.id).first
+        agent_group.write_access = false
+        agent_group.save!
+        ticket = create_ticket(ticket_params_hash.merge(deleted: true), group)
+        login_as(agent)
+        put :restore, construct_params({ version: 'private' }, false).merge(id: ticket.display_id)
+        assert_response 403
+      ensure
+        group.destroy if group.present?
+        Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+      end
+
+      def test_bulk_delete_invalid_ids_with_read_scope
+        Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+        agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+        group1 = create_group_with_agents(@account, agent_list: [agent.id])
+        group2 = create_group_with_agents(@account, agent_list: [agent.id])
+        agent_group = agent.agent_groups.where(group_id: group1.id).first
+        agent_group.write_access = false
+        agent_group.save!
+        ticket1 = create_ticket({}, group1)
+        ticket2 = create_ticket({}, group2)
+        ticket_ids = [ticket1.display_id, ticket2.display_id]
+        login_as(agent)
+        put :bulk_delete, construct_params({ version: 'private' }, ids: ticket_ids)
+        assert_response 202
+        failures = {}
+        failure_ticket_ids = [ticket1.display_id]
+        success_ticket_ids = [ticket2.display_id]
+        failure_ticket_ids.each { |id| failures[id] = { id: :"is invalid" } }
+        match_json(partial_success_response_pattern(success_ticket_ids, failures))
+      ensure
+        group1.destroy if group1.present?
+        group2.destroy if group2.present?
+        Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+      end
+
+      def test_bulk_spam_invalid_ids_with_read_scope
+        Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+        agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+        group1 = create_group_with_agents(@account, agent_list: [agent.id])
+        group2 = create_group_with_agents(@account, agent_list: [agent.id])
+        agent_group = agent.agent_groups.where(group_id: group1.id).first
+        agent_group.write_access = false
+        agent_group.save!
+        ticket1 = create_ticket({}, group1)
+        ticket2 = create_ticket({}, group2)
+        ticket_ids = [ticket1.display_id, ticket2.display_id]
+        login_as(agent)
+        put :bulk_spam, construct_params({ version: 'private' }, ids: ticket_ids)
+        assert_response 202
+        failures = {}
+        failure_ticket_ids = [ticket1.display_id]
+        success_ticket_ids = [ticket2.display_id]
+        failure_ticket_ids.each { |id| failures[id] = { id: :"is invalid" } }
+        match_json(partial_success_response_pattern(success_ticket_ids, failures))
+      ensure
+        group1.destroy if group1.present?
+        group2.destroy if group2.present?
+        Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+      end
+
+      def test_bulk_restore_invalid_ids_with_read_scope
+        Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+        agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+        group1 = create_group_with_agents(@account, agent_list: [agent.id])
+        group2 = create_group_with_agents(@account, agent_list: [agent.id])
+        agent_group = agent.agent_groups.where(group_id: group1.id).first
+        agent_group.write_access = false
+        agent_group.save!
+        ticket1 = create_ticket(ticket_params_hash.merge(deleted: true), group1)
+        ticket2 = create_ticket(ticket_params_hash.merge(deleted: true), group2)
+        ticket_ids = [ticket1.display_id, ticket2.display_id]
+        login_as(agent)
+        put :bulk_restore, construct_params({ version: 'private' }, ids: ticket_ids)
+        assert_response 202
+        failures = {}
+        failure_ticket_ids = [ticket1.display_id]
+        success_ticket_ids = [ticket2.display_id]
+        failure_ticket_ids.each { |id| failures[id] = { id: :"is invalid" } }
+        match_json(partial_success_response_pattern(success_ticket_ids, failures))
+      ensure
+        group1.destroy if group1.present?
+        group2.destroy if group2.present?
+        Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+      end
+
+      def test_bulk_unspam_invalid_ids_with_read_scope
+        Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+        agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+        group1 = create_group_with_agents(@account, agent_list: [agent.id])
+        group2 = create_group_with_agents(@account, agent_list: [agent.id])
+        agent_group = agent.agent_groups.where(group_id: group1.id).first
+        agent_group.write_access = false
+        agent_group.save!
+        ticket1 = create_ticket(ticket_params_hash.merge(spam: true), group1)
+        ticket2 = create_ticket(ticket_params_hash.merge(spam: true), group2)
+        ticket_ids = [ticket1.display_id, ticket2.display_id]
+        login_as(agent)
+        put :bulk_restore, construct_params({ version: 'private' }, ids: ticket_ids)
+        assert_response 202
+        failures = {}
+        failure_ticket_ids = [ticket1.display_id]
+        success_ticket_ids = [ticket2.display_id]
+        failure_ticket_ids.each { |id| failures[id] = { id: :"is invalid" } }
+        match_json(partial_success_response_pattern(success_ticket_ids, failures))
+      ensure
+        group1.destroy if group1.present?
+        group2.destroy if group2.present?
+        Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+      end
+
+      def test_bulk_delete_forever_invalid_ids_with_read_scope
+        Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+        agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+        group1 = create_group_with_agents(@account, agent_list: [agent.id])
+        group2 = create_group_with_agents(@account, agent_list: [agent.id])
+        agent_group = agent.agent_groups.where(group_id: group1.id).first
+        agent_group.write_access = false
+        agent_group.save!
+        ticket1 = create_ticket(ticket_params_hash.merge(spam: true), group1)
+        ticket2 = create_ticket(ticket_params_hash.merge(spam: true), group2)
+        ticket_ids = [ticket1.display_id, ticket2.display_id]
+        login_as(agent)
+        put :delete_forever, construct_params({ version: 'private' }, ids: ticket_ids)
+        assert_response 202
+        failures = {}
+        failure_ticket_ids = [ticket1.display_id]
+        success_ticket_ids = [ticket2.display_id]
+        failure_ticket_ids.each { |id| failures[id] = { id: :"is invalid" } }
+        match_json(partial_success_response_pattern(success_ticket_ids, failures))
+      ensure
+        group1.destroy if group1.present?
+        group2.destroy if group2.present?
+        Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+      end
     end
   end
 end

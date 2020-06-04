@@ -1677,6 +1677,89 @@ module Ember
         Account.any_instance.unstub(:pci_compliance_field_enabled?)
       end
 
+      def test_bulk_execute_scenario_with_read_scope
+        Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+        agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+        scn_automation_params = scenario_automation_params
+        scn_automation_params[:accessible_attributes][:user_ids].push(agent.id)
+        group1 = create_group_with_agents(@account, agent_list: [agent.id])
+        group2 = create_group_with_agents(@account, agent_list: [agent.id])
+        agent_group = agent.agent_groups.where(group_id: group1.id).first
+        agent_group.write_access = false
+        agent_group.save!
+        ticket1 = create_ticket({}, group1)
+        ticket2 = create_ticket({}, group2)
+        ticket_ids = [ticket1.display_id, ticket2.display_id]
+        login_as(agent)
+        scenario_id = create_scn_automation_rule(scn_automation_params).id
+        post :bulk_execute_scenario, construct_params({ version: 'private' }, scenario_id: scenario_id, ids: ticket_ids)
+        assert_response 202
+        failures = {}
+        failure_ticket_ids = [ticket1.display_id]
+        success_ticket_ids = [ticket2.display_id]
+        failure_ticket_ids.each { |id| failures[id] = { id: :"is invalid" } }
+        match_json(partial_success_response_pattern(success_ticket_ids, failures))
+      ensure
+        group1.destroy if group1.present?
+        group2.destroy if group2.present?
+        Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+      end
+
+      def test_bulk_link_to_valid_tracker_with_read_scope
+        Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+        agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+        group1 = create_group_with_agents(@account, agent_list: [agent.id])
+        group2 = create_group_with_agents(@account, agent_list: [agent.id])
+        agent_group = agent.agent_groups.where(group_id: group1.id).first
+        agent_group.write_access = false
+        agent_group.save!
+        enable_adv_ticketing([:link_tickets]) do
+          tracker_id = create_tracker_ticket.display_id
+          ticket1 = create_ticket({}, group1)
+          ticket2 = create_ticket({}, group2)
+          ticket_ids = [ticket1.display_id, ticket2.display_id]
+          login_as(agent)
+          Sidekiq::Testing.inline! do
+            put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
+          end
+          assert_response 202
+          failures = {}
+          failure_ticket_ids = [ticket1.display_id]
+          success_ticket_ids = [ticket2.display_id]
+          failure_ticket_ids.each { |id| failures[id] = { id: :"is invalid" } }
+          match_json(partial_success_response_pattern(success_ticket_ids, failures))
+        end
+      ensure
+        group1.destroy if group1.present?
+        group2.destroy if group2.present?
+        Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+      end
+
+      def test_bulk_unlink_related_ticket_from_tracker_with_read_scope
+        Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+        agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+        group1 = create_group_with_agents(@account, agent_list: [agent.id])
+        agent_group = agent.agent_groups.where(group_id: group1.id).first
+        agent_group.write_access = false
+        agent_group.save!
+        enable_adv_ticketing([:link_tickets]) do
+          create_linked_tickets
+          ticket = Helpdesk::Ticket.where(display_id: @ticket_id).first
+          ticket.group_id = group1.id
+          ticket.save!
+          login_as(agent)
+          Sidekiq::Testing.inline! do
+            put :bulk_unlink, construct_params({ version: 'private', ids: [@ticket_id] }, false)
+          end
+          assert_response 204
+          ticket = Helpdesk::Ticket.where(display_id: @ticket_id).first
+          assert ticket.related_ticket?
+        end
+      ensure
+        group1.destroy if group1.present?
+        Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+      end
+
       private
         def partial_success_and_customfield_response_pattern(succeeded_ids, failures = {})
           {

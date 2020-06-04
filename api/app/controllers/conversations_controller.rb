@@ -103,7 +103,7 @@ class ConversationsController < ApiApplicationController
 
     def after_load_object
       load_notable_from_item # find ticket in case of APIs which has @item.id in url
-      return false if @ticket && !verify_ticket_permission(api_current_user, @ticket) # Verify ticket permission if ticket exists.
+      return false if @ticket && !verify_ticket_permission(api_current_user, @ticket, @item) # Verify ticket permission if ticket exists.
       return false if update? && !can_update?
       check_agent_note if update? || destroy?
     end
@@ -265,7 +265,7 @@ class ConversationsController < ApiApplicationController
 
       # load ticket and return 404 if ticket doesn't exists in case of APIs which has ticket_id in url
       return false if ticket_required? && !load_parent_ticket
-      verify_ticket_permission(api_current_user, @ticket) if @ticket
+      verify_ticket_permission(api_current_user, @ticket) if @ticket && !create?
     end
 
     def ticket_required?
@@ -354,6 +354,11 @@ class ConversationsController < ApiApplicationController
       parent_post = @delegator_note || @ticket
       association_hash = @ticket.is_fb_message? ? construct_dm_hash(@ticket) : construct_post_hash(parent_post)
       @item.build_fb_post(association_hash)
+    end
+
+    def build_object
+      super
+      verify_ticket_permission(api_current_user, @ticket, @item) if @ticket && create?
     end
 
     wrap_parameters(*wrap_params)

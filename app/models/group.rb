@@ -12,6 +12,7 @@ class Group < ActiveRecord::Base
   include RoundRobinCapping::Methods
   include DataVersioning::Model
   include GroupConstants
+  include MemcacheKeys
 
   concerned_with :round_robin_methods, :skill_based_round_robin, :presenter, :constants
 
@@ -26,6 +27,7 @@ class Group < ActiveRecord::Base
   after_commit :nullify_tickets_and_widgets, :destroy_group_in_liveChat, on: :destroy
   after_commit :sync_sbrr_queues
 
+  after_commit :clean_all_agent_group_cache
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id, :case_sensitive => false
 
@@ -308,5 +310,11 @@ class Group < ActiveRecord::Base
         return false
       end
       true
+    end
+
+    def clean_all_agent_group_cache
+      agent_changes.each do |agent_info|
+        MemcacheKeys.delete_from_cache(format(ALL_AGENT_GROUPS_CACHE_FOR_AN_AGENT, account_id: Account.current.id, user_id: agent_info[:id]))
+      end
     end
   end

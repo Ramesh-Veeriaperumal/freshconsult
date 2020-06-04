@@ -25,6 +25,7 @@ class User < ActiveRecord::Base
   include PasswordPolicies::UserHelpers
   include Redis::FreshidPasswordRedis
   include ContactsCompaniesHelper
+  include Cache::Memcache::Admin::CustomData
 
   concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq, :esv2_methods, :presenter, :freshid_methods, :presenter_helper
 
@@ -902,17 +903,34 @@ class User < ActiveRecord::Base
   alias :group_tickets_permission?    :group_ticket_permission
   alias :assigned_tickets_permission? :assigned_ticket_permission
 
+  # group_ticket?  have only write access groups in its operations
+  # read_or_write_group_ticket?? have both read and write access groups in its operations
+  def read_or_write_group_ticket?(ticket)
+    read_or_write_group_ticket_member?(ticket.group_id) ||
+      (Account.current.shared_ownership_enabled? ? read_or_write_group_ticket_member?(ticket.internal_group_id) : false) # TODO: check whether shared_ownership check required?
+  end
+
+  def read_or_write_group_ticket_member?(group_id)
+    group_id && all_associated_group_ids.include?(group_id)
+  end
+
+  # associated_group_ids have only write access groups
+  # all_associated_group_ids have both read and write access groups
+  def all_associated_group_ids
+    agent.all_agent_groups_from_cache.map(&:group_id)
+  end
+
   def associated_group_ids
-    agent_groups.pluck(:group_id).insert(0,0)
+    agent.all_agent_groups_from_cache.select{ |record| record.write_access.present? }.map(&:group_id)
   end
 
-  def group_ticket?(ticket)
-    group_member?(ticket.group_id) or
-        (Account.current.shared_ownership_enabled? ? group_member?(ticket.internal_group_id) : false)
+  def group_ticket?(ticket, agent_group_ids = nil)
+    group_member?(ticket.group_id, agent_group_ids) ||
+      (Account.current.shared_ownership_enabled? ? group_member?(ticket.internal_group_id, agent_group_ids) : false)
   end
 
-  def group_member?(group_id)
-    group_id && associated_group_ids.include?(group_id)
+  def group_member?(group_id, agent_group_ids = nil)
+    group_id && (agent_group_ids.nil? ? associated_group_ids.include?(group_id) : agent_group_ids.include?(group_id))
   end
 
   
@@ -920,8 +938,12 @@ class User < ActiveRecord::Base
     ticket.responder_id == self.id || (Account.current.shared_ownership_enabled? ? ticket.internal_agent_id == self.id : false)
   end
 
-  def has_ticket_permission? ticket
-    (ticket_agent?(ticket)) || (can_view_all_tickets?) || (group_ticket_permission && (group_ticket?(ticket)))
+  def has_ticket_permission?(ticket, agent_group_ids = nil)
+    ticket_agent?(ticket) || can_view_all_tickets? || (group_ticket_permission && group_ticket?(ticket, agent_group_ids))
+  end
+
+  def has_read_ticket_permission?(ticket)
+    ticket_agent?(ticket) || can_view_all_tickets? || (group_ticket_permission && read_or_write_group_ticket?(ticket))
   end
 
   # For a customer we need to check if he is the requester of the ticket

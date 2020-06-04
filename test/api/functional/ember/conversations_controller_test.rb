@@ -32,6 +32,7 @@ module Ember
       MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
       Account.current.features.es_v2_writes.destroy
       Account.find(Account.current.id).make_current
+      Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
       Social::CustomTwitterWorker.stubs(:perform_async).returns(true)
       @twitter_handle = get_twitter_handle
       @default_stream = @twitter_handle.default_stream
@@ -48,6 +49,7 @@ module Ember
       super
       MixpanelWrapper.unstub(:send_to_mixpanel)
       Social::CustomTwitterWorker.unstub(:perform_async)
+      Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
       Account.current.rollback(:facebook_dm_outgoing_attachment)
       Account.current.rollback(:facebook_post_outgoing_attachment)
       Account.current.rollback(:skip_posting_to_fb)
@@ -1429,13 +1431,13 @@ module Ember
     end
 
     def test_update_without_ticket_access
-      User.any_instance.stubs(:has_ticket_permission?).returns(false)
-      t = create_ticket
-      note = create_private_note(t)
+      User.any_instance.stubs(:has_read_ticket_permission?).returns(false)
+      ticket = create_ticket
+      note = create_private_note(ticket)
       put :update, construct_params({ version: 'private', id: note.id }, update_note_params_hash)
       assert_response 403
       match_json(request_error_pattern(:access_denied))
-      User.any_instance.unstub(:has_ticket_permission?)
+      User.any_instance.unstub(:has_read_ticket_permission?)
     end
 
     def test_update_success
@@ -2696,6 +2698,123 @@ module Ember
       request.unstub(:uuid)
       Account.current.ticket_fields.find_by_name('custom_card_no_test_1').destroy
       Account.any_instance.unstub(:pci_compliance_field_enabled?)
+    end
+
+    def test_update_with_public_note_with_read_scope
+      agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      group = create_group_with_agents(@account, agent_list: [agent.id])
+      agent_group = agent.agent_groups.where(group_id: group.id).first
+      agent_group.write_access = false
+      agent_group.save!
+      agent.make_current
+      note = create_public_note(ticket)
+      ticket = create_ticket({}, group)
+      login_as(agent)
+      put :update, construct_params({ version: 'private', id: note.id }, update_note_params_hash)
+      assert_response 403
+      match_json(request_error_pattern(:access_denied))
+    ensure
+      group.destroy if group.present?
+    end
+
+    def test_create_public_note_with_read_scope
+      agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      group = create_group_with_agents(@account, agent_list: [agent.id])
+      agent_group = agent.agent_groups.where(group_id: group.id).first
+      agent_group.write_access = false
+      agent_group.save!
+      agent.make_current
+      ticket = create_ticket({}, group)
+      params_hash = create_note_params_hash
+      params_hash[:private] = false
+      login_as(agent)
+      post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 403
+    ensure
+      group.destroy if group.present?
+    end
+
+    def test_reply_with_full_text_with_read_scope
+      agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      group = create_group_with_agents(@account, agent_list: [agent.id])
+      agent_group = agent.agent_groups.where(group_id: group.id).first
+      agent_group.write_access = false
+      agent_group.save!
+      agent.make_current
+      ticket = create_ticket({}, group)
+      login_as(agent)
+      params_hash = reply_note_params_hash.merge(full_text: Faker::Lorem.paragraph(10))
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 403
+    ensure
+      group.destroy if group.present?
+    end
+
+    def test_destroy_with_public_note_with_read_scope
+      agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      group = create_group_with_agents(@account, agent_list: [agent.id])
+      agent_group = agent.agent_groups.where(group_id: group.id).first
+      agent_group.write_access = false
+      agent_group.save!
+      agent.make_current
+      note = create_public_note(ticket)
+      ticket = create_ticket({}, group)
+      login_as(agent)
+      delete :destroy, construct_params(id: note.id)
+      assert_response 403
+      match_json(request_error_pattern(:access_denied))
+    ensure
+      group.destroy if group.present?
+    end
+
+    def test_create_forward_note_with_read_scope
+      agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      group = create_group_with_agents(@account, agent_list: [agent.id])
+      agent_group = agent.agent_groups.where(group_id: group.id).first
+      agent_group.write_access = false
+      agent_group.save!
+      agent.make_current
+      ticket = create_ticket({}, group)
+      login_as(agent)
+      params_hash = forward_note_params_hash.merge(full_text: Faker::Lorem.paragraph(10))
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 403
+    ensure
+      group.destroy if group.present?
+    end
+
+    def test_destroy_with_forward_note_with_read_scope
+      agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      group = create_group_with_agents(@account, agent_list: [agent.id])
+      agent_group = agent.agent_groups.where(group_id: group.id).first
+      agent_group.write_access = false
+      agent_group.save!
+      agent.make_current
+      ticket = create_ticket({}, group)
+      note = create_forward_note(ticket)
+      login_as(agent)
+      delete :destroy, construct_params(id: note.id)
+      assert_response 403
+      match_json(request_error_pattern(:access_denied))
+    ensure
+      group.destroy if group.present?
+    end
+
+    def test_destroy_with_reply_note_with_read_scope
+      agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      group = create_group_with_agents(@account, agent_list: [agent.id])
+      agent_group = agent.agent_groups.where(group_id: group.id).first
+      agent_group.write_access = false
+      agent_group.save!
+      agent.make_current
+      ticket = create_ticket({}, group)
+      note = create_reply_note(ticket)
+      login_as(agent)
+      delete :destroy, construct_params(id: note.id)
+      assert_response 403
+      match_json(request_error_pattern(:access_denied))
+    ensure
+      group.destroy if group.present?
     end
 
     def test_reply_with_valid_reply_ticket_id_param

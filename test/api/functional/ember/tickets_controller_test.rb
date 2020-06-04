@@ -44,12 +44,18 @@ module Ember
       Sidekiq::Worker.clear_all
       MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
       Account.current.features.es_v2_writes.destroy
+      Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
       Account.current.reload
       @account.sections.map(&:destroy)
       destroy_all_fsm_fields_and_service_task_type
       tickets_controller_before_all(@@before_all_run)
       @account.add_feature :scenario_automation
       @@before_all_run=true unless @@before_all_run
+    end
+
+    def teardown
+      super
+      Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
     end
 
     @@before_all_run=false
@@ -4569,11 +4575,11 @@ module Ember
         ticket_id = create_ticket(ticket_params_hash).display_id
         create_parent_child_template(1)
         child_template_ids = @child_templates.map(&:id)
-        User.any_instance.stubs(:has_ticket_permission?).returns(false)
+        User.any_instance.stubs(:has_read_ticket_permission?).returns(false)
         Sidekiq::Testing.inline! do
           put :create_child_with_template, construct_params({ version: 'private', id: ticket_id, parent_template_id: @parent_template.id, child_template_ids: child_template_ids }, false)
         end
-        User.any_instance.unstub(:has_ticket_permission?)
+        User.any_instance.unstub(:has_read_ticket_permission?)
         assert_response 403
       end
     end
@@ -6622,6 +6628,39 @@ module Ember
       ::Tickets::VaultDataCleanupWorker.jobs.clear
       remove_privilege(User.current, :view_secure_field)
       remove_privilege(User.current, :edit_secure_field)
+    end
+
+    def test_update_properties_with_scope_read
+      agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      group = create_group_with_agents(@account, agent_list: [agent.id])
+      agent_group = agent.agent_groups.where(group_id: group.id).first
+      agent_group.write_access = false
+      agent_group.save!
+      agent.make_current
+      ticket = create_ticket({}, group)
+      dt = 10.days.from_now.utc.iso8601
+      tags = Faker::Lorem.words(3).uniq
+      login_as(agent)
+      params_hash = { due_by: dt, responder_id: agent.id, status: 2, priority: 4, group_id: group.id, tags: tags }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 403
+    ensure
+      group.destroy if group.present?
+    end
+
+    def test_destroy_ticket_with_scope_read
+      agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      group = create_group_with_agents(@account, agent_list: [agent.id])
+      agent_group = agent.agent_groups.where(group_id: group.id).first
+      agent_group.write_access = false
+      agent_group.save!
+      agent.make_current
+      ticket = create_ticket({}, group)
+      login_as(agent)
+      delete :destroy, construct_params(id: ticket.display_id)
+      assert_response 403
+    ensure
+      group.destroy if group.present?
     end
   end
 end

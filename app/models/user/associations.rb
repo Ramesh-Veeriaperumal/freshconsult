@@ -109,7 +109,8 @@ class User < ActiveRecord::Base
   has_one :full_time_support_agent, :class_name => 'Agent', :foreign_key => "user_id", :conditions => { 
       :occasional => false, :agent_type => 1  } #no direct use, need this in account model for pass through.
   
-  has_many :agent_groups , :class_name =>'AgentGroup', :foreign_key => "user_id"
+  has_many :agent_groups, class_name: 'AgentGroup', foreign_key: 'user_id', conditions: { write_access: true }
+  has_many :all_agent_groups, class_name: 'AgentGroup', foreign_key: 'user_id'
   has_many :groups, :through => :agent_groups, :dependent => :destroy #https://github.com/rails/rails/issues/7618#issuecomment-11682784
 
   has_many :user_skills, :order => :rank, :class_name => 'UserSkill' , :foreign_key => "user_id"
