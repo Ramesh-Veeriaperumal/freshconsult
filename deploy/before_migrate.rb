@@ -69,6 +69,7 @@ run "ln -nfs #{shared_path}/config/iris_notifications.yml #{node[:rel_path]}/con
 run "ln -nfs #{shared_path}/config/archive_queue.yml #{node[:rel_path]}/config/archive_queue.yml"
 run "ln -nfs #{shared_path}/config/freshmarketer_automation.yml #{node[:rel_path]}/config/freshmarketer_automation.yml"
 run "ln -nfs #{shared_path}/config/iam.yml #{node[:rel_path]}/config/iam.yml"
+run "ln -nfs #{shared_path}/config/symmetric-encryption.yml #{node[:rel_path]}/config/symmetric-encryption.yml"
 run "ln -nfs #{shared_path}/config/inline_manual.yml #{node[:rel_path]}/config/inline_manual.yml"
 run "ln -nfs #{shared_path}/config/redis_session.yml #{node[:rel_path]}/config/redis_session.yml"
 run "ln -nfs #{shared_path}/config/fd_email_service.yml #{node[:rel_path]}/config/fd_email_service.yml"

@@ -1471,6 +1471,16 @@
         "password": "EJ[1:KVL1cNnTPBNTRnFFb83+ksbinnY4QOD+pNUsoGYPqnY=:haAlj4KmqqxEeWOJE5CnFYw1Ppm7Gnre:QoxDY5WaH3GkWcagO52dJudErvc9OQsrd7k=]",
         "kid": "EJ[1:sIuhi1hNeseYNOnQ8fuvmMbVlTB/M2jIhM6qc1sWPTM=:OR+G2AdQbaHuvsTtflR/LtS5SHimjb3e:iKjnxKJeQxC8Ec1lRvX+P0jmGglVbB8=]"
       },
+      "symmetric_encryption": {
+        "ciphers":{
+          "set1": {
+            "key": "EJ[1:Lk877pSs01dgi41N5PPWAslYKEeO2dxmqObnHpxjrAc=:1Usi2OEs6K/e99Fe94yBxZYrlUfPeWN7:0GmyPzgo9Q0SwBO26+eglbsDA+03IgBajPs0T6r4fM7hYkofTrsgexxsA4ETcScT]",
+            "iv": "EJ[1:Lk877pSs01dgi41N5PPWAslYKEeO2dxmqObnHpxjrAc=:5lna8dW0XEhZF4qVdQGjAc+dvSjbp30H:eZ7mwOMpMPyeaW6b/M0DwCl+g9ugop+BXhNK1g==]",
+            "_cipher_name": "aes-128-cbc",
+            "_version": 1
+          }
+        }
+      },
       "hypertrail": {
         "audit_log": {
           "password": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:fCTrToovgviWMM2GMpT1uKQPfUJGTpYg:SyTo0NajzMU3p+N68VA+/q0=]",
