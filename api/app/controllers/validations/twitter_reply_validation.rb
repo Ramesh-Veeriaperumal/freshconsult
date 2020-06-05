@@ -5,7 +5,7 @@ class TwitterReplyValidation < ApiValidation
   include Social::Util
   include Social::Twitter::Util
 
-  attr_accessor :body, :tweet_type, :twitter_handle_id, :agent_id, :attachment_ids
+  attr_accessor :body, :tweet_type, :twitter_handle_id, :agent_id, :attachment_ids, :include_surveymonkey_link
 
   validates :tweet_type, data_type: { rules: String, required: true }, custom_inclusion: { in: ApiConstants::TWITTER_REPLY_TYPES }
   validates :body, data_type: { rules: String, required: true }
@@ -15,6 +15,7 @@ class TwitterReplyValidation < ApiValidation
 
   validate :twitter_ticket?
   validate :valid_attachments?, if: -> { @attachment_ids.present? }
+  validates :include_surveymonkey_link, data_type: { rules: Integer }, inclusion: { in: [0, 1] }, if: -> { include_surveymonkey_link.present? }
 
   def initialize(request_params, item = nil, allow_string_param = false)
     @item = item

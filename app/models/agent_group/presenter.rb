@@ -18,10 +18,6 @@ class AgentGroup < ActiveRecord::Base
 
   end
 
-  def self.central_publish_enabled?
-    Account.current.agent_group_central_publish_enabled?
-  end
-
   def event_info action
     { :ip_address => Thread.current[:current_ip]}
   end

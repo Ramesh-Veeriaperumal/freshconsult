@@ -310,6 +310,7 @@ module ApiTicketsTestHelper
       due_by: expected_output[:due_by].try(:to_time).try(:utc).try(:iso8601) || ticket.due_by.try(:utc).try(:iso8601),
       fr_due_by: expected_output[:fr_due_by].try(:to_time).try(:utc).try(:iso8601) || ticket.frDueBy.try(:utc).try(:iso8601)
     }
+    ticket_hash[:write_access] = true if Account.current.advanced_ticket_scopes_enabled?
     if @account.shared_ownership_enabled?
       ticket_hash.merge!( :internal_group_id => expected_output[:internal_group_id] || ticket.internal_group_id,
                           :internal_agent_id => expected_output[:internal_agent_id] || ticket.internal_agent_id)

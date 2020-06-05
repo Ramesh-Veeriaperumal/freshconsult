@@ -531,6 +531,8 @@ HEREDOC
       STDOUT.puts "Secret #{secret_name} not found so creating it."
     end
 
+    node[:ymls][:sidekiq].deep_merge!(sidekiq_redis_from_env)
+
     node[:ymls][:database] = @database_config if @database_config
 
     files.each {|filename|
@@ -603,6 +605,29 @@ HEREDOC
 
     # Download integration certifications
     download_integration_certs(node)
+  end
+
+  def self.sidekiq_redis_from_env
+    redis_address = sidekiq_redis_address
+    config = {}
+
+    if redis_address
+      config[:host] = redis_address[0]
+      config[:port] = redis_address[1]
+      config[:password] = ENV['SIDEKIQ_REDIS_PASSWORD'] if ENV['SIDEKIQ_REDIS_PASSWORD'].present?
+    end
+    config
+  end
+
+  def self.sidekiq_redis_address
+    return nil unless ENV['SIDEKIQ_REDIS_ADDRESS'].present?
+
+    address_regex = /[A-Za-z0-9.-]*:[0-9]+/
+    unless address_regex.match(ENV['SIDEKIQ_REDIS_ADDRESS'])
+      STDERR.puts 'SIDEKIQ_REDIS_ADDRESS is not in expected format'
+      exit 0
+    end
+    ENV['SIDEKIQ_REDIS_ADDRESS'].split(':')
   end
 
   def self.is_ejson_boxed_message(msg)

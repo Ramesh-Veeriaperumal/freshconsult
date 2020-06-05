@@ -848,7 +848,7 @@
       "freshchat": {
         "_agent_widget_host_url": "https://mr-yellow.freshpori.com",
         "_visitor_widget_host_url": "https://webchat-mryellow.freshpori.com",
-        "_api_host_url": "https://mr-yellow.freshpori.com",
+        "_api_host_url": "https://mr-pink.freshpori.com",
         "signup": {
           "_host": "https://mr-yellow.freshpori.com/internal/system42/",
           "secret": "EJ[1:agdMwKSxBnJe0E8/KT3Q3SafRIycf9BaGM6N1vsqm2I=:V2ecreMuQQxwaA8He/WBkppM8wXRJ75a:67QI2c/fbH8t/5U+1IkaJdRZRoQJ8dh3QIIvSelW1WexH0enqp35HJkP2PBo21FXD8JFqGQJ0W7oq2qOUNxk4uplZ42twVIyoF23EXQz3lsRBLw=]"
@@ -880,6 +880,9 @@
         "callback_api_secret": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:VzxIAihH+A2GDouW0ejlyMmpgWKQycWL:KB9tf6cZElEcsshAFU0T9LPZ3c7sLH6i2rymCZdT8SnhqAYySm/WkTaUCwGoTy3HYmokn99LOiMyECBkUrAt6KQPTlt5Ttuc8ija1fm/J6A=]",
         "client_id": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:knGlEMMJG8tc+ssov/PuhrJGmgqfvKRT:0JyAxK3Kcs1VcGzy5XL+LRmVx39puybLfQ973xCgcuFYyFyuZk2MTBs7tan/LZSpoHgLtQ==]",
         "client_secret": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:RLiU1NfD/N9Ux9mVKO1FWDK2eMLIFCn0:vR7H6jbJPyaHtGtKCQ3XENVv3PWNbb/Y/k1miP0JrOeA3tni1Ob6/VCy5Cz9eVCh]",
+        "customer_client_id": "EJ[1:/WdA1+q5/NljBNzLlAQG4Ri00bAaEPSjWNxMz3IQ6As=:14yrzZk2U0rBZTYX+a2hTSqEFENf93ib:ds3UfXyLFp4u1EXzfbpGXwNhERQ5IdCU9XDRShemcjJGTJcGxjV+BXry51knTZnXAzKjbg==]",
+        "customer_client_secret": "EJ[1:/WdA1+q5/NljBNzLlAQG4Ri00bAaEPSjWNxMz3IQ6As=:/hTT3gGlPZKvYQ+qlacDPfYy2bE8QLUC:pzxJwnmS8aWKsg+nwUguWMFpQFospmNYB87XGLGnsz4uKleuKVqU25KXIZtmMjNu]",
+        "_customer_base_url": "https://staging-ssoproxy.fid.freshworksapi.com",
         "_base_url": "https://staging.fid.freshworksapi.com",
         "_central_url": "https://login.freshpo.com/freshid/event_callback",
         "_product": "freshdesk-staging",
@@ -1561,6 +1564,16 @@
         "_expiry": 300,
         "password": "EJ[1:iP8XvLC5wcL1ww9dJA4sB8x38IayHDAroVIuF5vlQnw=:jqKSLiyzUgZ8snwGTaIfRdm7GojYsbQl:6rUTJNpK7NPCpyOANk22oDm0fzOLq2eZLvqq8osnMgak]",
         "kid": "EJ[1:D1TZ6Mbq3JGyXCLhk/JFI4U6WMkr02dD2CUCKBvjkgQ=:9sTme0eskbJ48fmf2s6NHF50Jj22QId2:Zc5WvhJsGTzH8Psft0D4lrgsw0CFSto=]"
+      },
+      "symmetric_encryption": {
+        "ciphers":{
+          "set1": {
+            "key": "EJ[1:JeanNvjYKKo700+pcswgAnnBsNL+XwJTQLo9/MoppT4=:Mta3vS4nUE4tRODeNLAUXMcfgN6QmV7T:Qm0dfGGQSQVIx1gRGitulSWCyiN4AsrOsSp4DDHWslvWReRCuyC0AcuHAnwaNvk/]",
+            "iv": "EJ[1:JeanNvjYKKo700+pcswgAnnBsNL+XwJTQLo9/MoppT4=:+Bjn0Tpi4tTH6L8zTKil5eK1DYpOJG+z:md+Lo4ccAlOBOtMxJPQeJTLWWQdTtXVW2nGyEIc9fBleSV5tM4ACRXBQdA==]",
+            "_cipher_name": "aes-128-cbc",
+            "_version": 1
+          }
+        }
       },
       "hypertrail": {
         "audit_log": {

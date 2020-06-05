@@ -1,6 +1,7 @@
 class TicketDecorator < ApiDecorator
   include TicketPropertiesSuggester::Util
   include Crypto::TokenHashing
+  include AdvancedTicketScopes
 
   delegate :ticket_body, :custom_field_via_mapping, :cc_email, :email_config_id,
     :fr_escalated, :group_id, :priority, :requester_id, :responder, :responder_id,
@@ -349,13 +350,22 @@ class TicketDecorator < ApiDecorator
       association_type: association_type,
       associated_tickets_count: subsidiary_tkts_count,
       can_be_associated: can_be_associated?,
-      tags: tag_names
+      tags: tag_names,
+      write_access: write_access?
     }
     hash[:custom_fields] = custom_fields unless @discard_options.include?('custom_fields')
     result = [hash, simple_hash, feedback_hash, shared_ownership_hash, skill_hash].inject(&:merge!)
     result.merge!(predict_ticket_fields_hash) if ticket_properties_suggester_enabled?
     result.merge!(next_response_hash) if Account.current.next_response_sla_enabled?
     result
+  end
+
+  def write_access?
+    advanced_scope_enabled? ? agent_has_write_access?(record, agent_group_ids) : true
+  end
+
+  def agent_group_ids
+    User.current.associated_group_ids if User.current.present?
   end
 
   def to_show_hash

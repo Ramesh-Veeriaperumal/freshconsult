@@ -33,7 +33,13 @@ class GoogleAccountTest < ActionView::TestCase
   def test_find_or_create
     Integrations::GoogleAccount.find_or_create(params(1), Account.current)
     assert_equal response.status, 200
-    Integrations::GoogleAccount.find_or_create(params([]), Account.current)
+    google_account = Integrations::GoogleAccount.find_or_create({ integrations_google_account:
+      { token: Faker::Lorem.characters(6), secret: Faker::Lorem.characters(6) } }, Account.current)
+    google_account.save!
+    assert_not_nil google_account.encrypted_token
+    assert_not_nil google_account.encrypted_secret
+    assert_equal google_account.token, SymmetricEncryption.decrypt(google_account.encrypted_token)
+    assert_equal google_account.secret, SymmetricEncryption.decrypt(google_account.encrypted_secret)
     assert_equal response.status, 200
   end
 

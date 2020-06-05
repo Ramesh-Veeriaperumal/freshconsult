@@ -28,6 +28,7 @@ module Ember
       MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
       Account.any_instance.stubs(:sla_management_v2_enabled?).returns(true)
       Account.current.features.es_v2_writes.destroy
+      Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
       Account.current.time_zone = Time.zone.name
       Account.current.save
       User.current.time_zone = Time.zone.name
@@ -36,6 +37,11 @@ module Ember
       @account.sections.map(&:destroy)
       tickets_controller_before_all(@@before_all_run)
       @@before_all_run=true unless @@before_all_run
+    end
+
+    def teardown
+      super
+      Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
     end
 
     @@before_all_run = false

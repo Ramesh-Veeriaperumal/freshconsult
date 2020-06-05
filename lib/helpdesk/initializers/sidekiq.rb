@@ -274,6 +274,7 @@ Sidekiq.configure_server do |config|
     chain.add Middleware::Sidekiq::Server::Throttler, :required_classes => ["WebhookV1Worker"]
   end
   config.client_middleware do |chain|
+    chain.add PrometheusExporter::Instrumentation::SidekiqClient if ENV['ENABLE_PROMETHEUS_SIDEKIQ_CLIENT'] == '1'
     chain.add Middleware::Sidekiq::Client::RouteORDrop
     chain.add Middleware::Sidekiq::Client::BelongsToAccount, :ignore => [
       "FreshopsToolsWorker",

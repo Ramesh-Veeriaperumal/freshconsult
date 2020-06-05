@@ -19,7 +19,7 @@ gem "mysql2", "~> 0.3.0"
 gem "bootsnap", :require => false
 gem 'cld2', :require => 'cld'
 gem 'has_scope', '0.6.0'
-
+gem 'symmetric-encryption', '4.0.0'
 
 #For instrumenting cache-performance
 gem "time_bandits", :git => 'git@github.com:freshdesk/fd_time_bandits', :tag => 'v1.3'
@@ -144,7 +144,7 @@ gem "lockfile","1.4.3"
 
 gem "newrelic_rpm","~> 5.5.0"
 
-gem "prometheus_exporter", :git => "git@github.com:freshdesk/prometheus_exporter.git", :tag => "v1.0.9"
+gem "prometheus_exporter", :git => "git@github.com:freshdesk/prometheus_exporter.git", :tag => "v1.1.0"
 gem "ddtrace"
 gem "dogstatsd-ruby"
 

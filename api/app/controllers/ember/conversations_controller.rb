@@ -16,6 +16,7 @@ module Ember
     include Ecommerce::Ebay::ReplyHelper
     include TicketUpdateHelper
     include Conversations::Twitter
+    include AdvancedTicketScopes
 
     decorate_views(
       decorate_objects: [:ticket_conversations],
@@ -577,6 +578,22 @@ module Ember
                                                      tweet_type: @tweet_type,
                                                      twitter_handle_id: @twitter_handle_id)
           end
+
+          include_survey_link = @item.include_surveymonkey_link.present? && @item.include_surveymonkey_link == 1
+          if include_survey_link && dm_note?(@tweet_type) && Account.current.csat_for_social_surveymonkey_enabled?
+            survey = Integrations::SurveyMonkey.survey_for_social(@ticket, @item.user)
+            if survey
+              Social::TwitterSurveyWorker.perform_in(10.seconds.from_now, note_id: @item.id,
+                                                                          user_id: @item.user_id,
+                                                                          requester_screen_name: @ticket.requester.twitter_id,
+                                                                          twitter_user_id: reply_handle.twitter_user_id,
+                                                                          twitter_handle_id: @twitter_handle_id,
+                                                                          stream_id: stream.id,
+                                                                          tweet_type: @tweet_type,
+                                                                          survey_dm: survey)
+            end
+          end
+
           render_201_with_location(template_name: 'ember/conversations/tweet')
         else
           render_response(false)
@@ -659,7 +676,7 @@ module Ember
 
       def check_ticket_action_permissions
         (@ticket && (!verify_ticket_state ||
-          verify_ticket_permission(api_current_user, @ticket))) || # Verify ticket permission if ticket exists.
+          verify_ticket_permission(api_current_user, @ticket, @item))) || # Verify ticket permission if ticket exists.
           (update? && !can_update?)
       end
 

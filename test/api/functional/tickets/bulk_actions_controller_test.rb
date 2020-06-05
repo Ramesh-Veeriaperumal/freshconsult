@@ -127,4 +127,33 @@ class Tickets::BulkActionsControllerTest < ActionController::TestCase
       assert_response 204
     end
   end
+
+  def test_archive_valid_ticket_ids_with_read_scope
+    @account.make_current
+    Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+    agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+    group1 = create_group_with_agents(@account, agent_list: [agent.id])
+    group2 = create_group_with_agents(@account, agent_list: [agent.id])
+    agent_group = agent.agent_groups.where(group_id: group1.id).first
+    agent_group.write_access = false
+    agent_group.save!
+    ticket_ids = []
+    Account.stubs(:reset_current_account).returns(true)
+    enable_archive_tickets do
+      ticket1 = create_ticket({ status: Helpdesk::Ticketfields::TicketStatus::CLOSED }, group1)
+      ticket2 = create_ticket({ status: Helpdesk::Ticketfields::TicketStatus::CLOSED }, group2)
+      sleep 1
+      params = { ids: [ticket1.display_id, ticket2.display_id] }
+      login_as(agent)
+      Sidekiq::Testing.inline! do
+        post :bulk_archive, construct_params(params)
+      end
+      assert_response 400
+    end
+  ensure
+    group1.destroy if group1.present?
+    group2.destroy if group2.present?
+    Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+    Account.unstub(:reset_current_account)
+  end
 end

@@ -18,9 +18,20 @@ class Agent < ActiveRecord::Base
            primary_key: 'user_id',
            dependent: :destroy,
            after_add: :touch_agent_group_change,
-           after_remove: :touch_agent_group_change
+           after_remove: :touch_agent_group_change,
+           conditions: { write_access: true }
 
   has_many :groups, :through => :agent_groups, :dependent => :destroy
+
+  has_many :all_agent_groups,
+           class_name: 'AgentGroup',
+           foreign_key: :user_id,
+           primary_key: :user_id,
+           autosave: true,
+           dependent: :destroy,
+           after_add: :touch_agent_group_change,
+           after_remove: :touch_agent_group_change,
+           order: :group_id  
   
   # ActiveRecord::HasManyThroughCantAssociateThroughHasOneOrManyReflection: Cannot modify association 
   # 'Agent#time_sheets' because the source reflection class 'Agent' is associated to 'User' via :has_one

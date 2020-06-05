@@ -35,11 +35,11 @@ module MemcacheKeys
 
   ACCOUNT_GROUP_TYPES = "v1/ACCOUNT_GROUP_TYPES:%{account_id}"
 
-  ACCOUNT_AGENT_GROUPS = "v4/ACCOUNT_AGENT_GROUPS:%{account_id}"
+  ACCOUNT_AGENT_GROUPS = 'v5/ACCOUNT_AGENT_GROUPS:%{account_id}'.freeze
 
-  ACCOUNT_AGENT_GROUPS_OPTAR = 'v1/ACCOUNT_AGENT_GROUPS_OPTAR:%{account_id}'.freeze
+  ACCOUNT_AGENT_GROUPS_OPTAR = 'v2/ACCOUNT_AGENT_GROUPS_OPTAR:%{account_id}'.freeze
 
-  ACCOUNT_AGENT_GROUPS_HASH = "v4/ACCOUNT_AGENT_GROUPS_HASH:%{account_id}"
+  ACCOUNT_AGENT_GROUPS_HASH = 'v5/ACCOUNT_AGENT_GROUPS_HASH:%{account_id}'.freeze
 
   ACCOUNT_PRODUCTS = "v1/ACCOUNT_PRODUCTS:%{account_id}"
 
@@ -284,7 +284,7 @@ module MemcacheKeys
 
   AGENTS_USERS_VALUE = 'v1/AGENTS_USERS_VALUE:%{account_id}'.freeze
 
-  ACCOUNT_AGENT_GROUPS_ONLY_IDS = 'v1/AGENTS_GROUPS_IDS_ONLY:%{account_id}'.freeze
+  ACCOUNT_AGENT_GROUPS_ONLY_IDS = 'v2/AGENTS_GROUPS_IDS_ONLY:%{account_id}'.freeze
 
   CUSTOM_NESTED_FIELD_CHOICES = 'v1/CUSTOM_NESTED_FIELD_CHOICES:%{account_id}'.freeze
 
@@ -317,6 +317,8 @@ module MemcacheKeys
   HELP_WIDGET_SUGGESTED_ARTICLE_RULES = 'v2/HELP_WIDGET_SUGGESTED_ARTICLE_RULES:%{account_id}:%{help_widget_id}'.freeze
 
   OBSERVER_CONDITION_FIELDS = 'v1/OBSERVER_CONDITION_FIELDS:%{account_id}'.freeze
+
+  ALL_AGENT_GROUPS_CACHE_FOR_AN_AGENT = 'v1/ALL_AGENT_GROUPS_CACHE_FOR_AN_AGENT:%{account_id}:%{user_id}'.freeze
 
   def fetch_from_cache(key, &block)
     @cached_values = {} unless @cached_values

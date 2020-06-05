@@ -36,6 +36,9 @@ class Agent < ActiveRecord::Base
   
   after_commit  ->(obj) { obj.update_agent_to_livechat } , on: :create
   after_commit  ->(obj) { obj.update_agent_to_livechat } , on: :update  
+
+  after_commit :clear_agent_groups_related_cache
+
   before_save :set_default_type_if_needed, on: [:create, :update]
 
   before_create :check_if_agent_limit_reached?, if: :full_time_support_agent?

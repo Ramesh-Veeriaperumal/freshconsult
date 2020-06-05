@@ -15,6 +15,7 @@ class Integrations::GoogleAccount < ActiveRecord::Base
 
   serialize :last_sync_status, Hash
   has_many :google_contacts, :dependent => :destroy # TODO: Handle the destroy through single query.
+  before_validation :encrypt_fields
   attr_accessor :last_sync_index, :import_groups, :donot_update_sync_time, :access_token # Non persisted property used only for importing.
 
   #In OAuth2 , google_account.token = oauth2.access_token, google_account.secret = oauth2.refresh_token.
@@ -58,6 +59,11 @@ class Integrations::GoogleAccount < ActiveRecord::Base
       goog_grp_id = Integrations::GoogleContactsUtil.parse_id(updated_group_hash['id'])
       return goog_grp_id
     end
+  end
+
+  def encrypt_fields
+    self.encrypted_token = SymmetricEncryption.encrypt(token, random_iv: true, compress: true, type: :string)
+    self.encrypted_secret = SymmetricEncryption.encrypt(secret, random_iv: true, compress: true, type: :string)
   end
 
   def fetch_all_google_groups(query_params=nil, use_oauth2=nil)
