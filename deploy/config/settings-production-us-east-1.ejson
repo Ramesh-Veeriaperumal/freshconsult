@@ -1554,7 +1554,7 @@
             "_slave2_host": "shard30slave2.internal.poduseast1.freshdesk.com",
             "_slave1_host": "shard30slave1.internal.poduseast1.freshdesk.com",
             "slave_proxy": {
-                          "password": "EJ[1:f0cBORZIqJKnd96t/QYIm0vcvJMbAPQc1g1nOKJwc3g=:Cpg4g8M8mWj7QpP+p1pfWgKNS2qQj/Bz:WYaY1k3qzKv1AytcDR7sd0iuSoIo0hA/mUd/]",
+                          "password": "EJ[1:LMXZbfktTHT2ZLQLXW2tzOnfaQGqI7VelORRUACz+XQ=:SWijgNjOIwuRgOETYedPzd0eBu2fuiqE:Ek8CvlGj2Hqwb86z+KzDd5ywQnVeT5ngmPka]",
                           "_host": "127.0.0.1",
                           "_port": "6033",
                           "_username": "shard_30_proxy"
