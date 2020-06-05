@@ -165,6 +165,7 @@ module Admin::RolesHelper
                     { :dom_type => "check_box", :id => "manage_ticket_list_views" },
                     { :dom_type => "check_box", :id => "manage_ticket_templates" },
                     { :dom_type => "check_box", :id => "manage_bots", not_display: !current_account.support_bot_enabled? },
+                    { dom_type: 'check_box', id: 'manage_custom_objects', not_display: !current_account.custom_objects_enabled? },
                     { dom_type: 'check_box', id: 'manage_requester_notifications', not_display: !has_requester_feature? },
                     { dom_type: 'check_box', id: 'manage_proactive_outreaches', not_display: !current_account.proactive_outreach_enabled? }
                     ]
@@ -186,6 +187,7 @@ module Admin::RolesHelper
                     { :dom_type => "hidden_field", :id => "manage_ticket_templates" },
                     { :dom_type => "hidden_field", :id => "manage_bots", not_display: !current_account.support_bot_enabled? },
                     { :dom_type => "hidden_field", :id => "manage_tags" },
+                    { dom_type: 'hidden_field', id: 'manage_custom_objects', not_display: !current_account.custom_objects_enabled? },
                     { dom_type: 'hidden_field', id: 'manage_proactive_outreaches', not_display: !current_account.proactive_outreach_enabled? },
                     { dom_type: 'check_box', id: 'manage_account' }]
 
