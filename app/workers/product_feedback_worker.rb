@@ -3,9 +3,13 @@ class ProductFeedbackWorker < BaseWorker
 
   def perform(payload)
     payload.symbolize_keys!
+    if payload[:current_user_id].present?
+      user = Account.current.users.where(id: payload[:current_user_id]).first
+      user.make_current if user.present?
+    end
     api_key = PRODUCT_FEEDBACK_CONFIG['api_key']
     feedback_url = URI.parse("#{PRODUCT_FEEDBACK_CONFIG['feedback_account']}/#{PRODUCT_FEEDBACK_CONFIG['feedback_path']}")
-    files_to_upload = get_attachments(payload[:attachment_ids]) if payload[:attachment_ids].present?
+    files_to_upload = get_attachments(payload[:attachment_ids]) if payload[:attachment_ids].present? && User.current.present?
     if @attachments.length != payload[:attachment_ids].length
       NewRelic::Agent.notice_error('Failed to retrieve all attachments', payload: payload, attachments: @attachments)
       Rails.logger.error("Failed to retrieve all attachments. Payload = #{payload.to_json}. Attachments = #{@attachments.to_json}")
@@ -76,6 +80,6 @@ class ProductFeedbackWorker < BaseWorker
     # creates a new file in local and returns the file pointer
     def create_new_file(attachment)
       attachment_filename = "tempFile-#{Account.current.id}-#{attachment.id}-#{Time.zone.now.strftime('%d_%m_%Y_%H_%M_%S')}"
-      File.new(attachment_filename, 'w+b', 0o644)
+      Tempfile.new(attachment_filename)
     end
 end
