@@ -63,6 +63,23 @@ class ArticleTest < ActiveSupport::TestCase
     article.try(:destroy)
   end
 
+  def test_central_publish_article_payload_on_author_change
+    article = create_article(article_params).primary_article
+    old_author_id = article.user_id
+    new_author_id = add_test_agent.id
+    CentralPublishWorker::SolutionArticleWorker.jobs.clear
+    article.user_id = new_author_id
+    article.save
+    job = CentralPublishWorker::SolutionArticleWorker.jobs.last
+    payload = article.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_article_pattern(article))
+    assert_equal 'article_update', job['args'][0]
+    model_changes = job['args'][1]['model_changes']
+    assert_equal [old_author_id, new_author_id], model_changes['agent_id']
+  ensure
+    article.try(:destroy)
+  end
+
   def test_central_publish_article_payload_on_draft_create
     article = create_article(article_params).primary_article
     CentralPublishWorker::SolutionArticleWorker.jobs.clear
