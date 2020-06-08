@@ -1,5 +1,6 @@
 module Facebook::TicketActions::CentralUtil
   include ChannelIntegrations::Utils::Schema
+  include Social::Util
 
   STATUS_UPDATE_COMMAND_NAME = 'update_facebook_reply_state'.freeze
   OWNER = 'facebook'.freeze
@@ -7,7 +8,7 @@ module Facebook::TicketActions::CentralUtil
   def post_success_or_failure_command(args)
     is_success = args[:error_msg].blank? && args[:error_code].blank?
     command_payload = construct_payload(args, is_success)
-    msg_id = Social::Util.generate_msg_id(command_payload)
+    msg_id = generate_msg_id(command_payload)
     ::Rails.logger.info("Command from Facebook, command: #{STATUS_UPDATE_COMMAND_NAME}, msg_id: #{msg_id}")
     Channel::CommandWorker.perform_async(
       {
