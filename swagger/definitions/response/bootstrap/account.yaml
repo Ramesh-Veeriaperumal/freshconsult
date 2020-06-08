@@ -104,6 +104,13 @@ properties:
           created_at:
             type: string
             format: date-time
+          marketplace_settings:
+            type: object
+            properties:
+              data_pipe_key:
+                type: string
+              awol_region:
+                type: string
           social_options:
             type: object
             properties:

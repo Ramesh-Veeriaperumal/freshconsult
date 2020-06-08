@@ -6,6 +6,8 @@ module BootstrapTestHelper
   include PortalsCustomisationTestHelper
   include ConfigTestHelper
   include FieldServiceManagementHelper
+  include AccountConstants
+  include MarketplaceConfig
 
   DEFAULTS_FONT_SETTINGS = {
     email_template: {
@@ -108,6 +110,7 @@ module BootstrapTestHelper
       },
       verified: account.verified?,
       created_at: account.created_at.try(:utc),
+      marketplace_settings: marketplace_settings,
       email_fonts: account.account_additional_settings.email_template_settings,
       ssl_enabled: account.ssl_enabled?
     }
@@ -264,6 +267,13 @@ module BootstrapTestHelper
     round_robin_type=2 if group.ticket_assign_type==1 && group.capping_limit!=0
     round_robin_type=3 if group.ticket_assign_type==2
     round_robin_type
+  end
+
+  def marketplace_settings
+    {
+      data_pipe_key: DATA_PIPE_KEY,
+      awol_region: AWOL_REGION
+    }
   end
 
 end

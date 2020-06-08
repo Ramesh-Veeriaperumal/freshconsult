@@ -7,6 +7,7 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
   include Redis::RedisKeys
   include Redis::OthersRedis
   include EmailMailboxTestHelper
+  include MarketplaceConfig
 
   def setup 
     super
@@ -648,4 +649,14 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
   ensure
     Account.any_instance.unstub(:freshid_org_v2_enabled?)
   end
+
+  def test_account_with_marketplace_settings
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    parsed_response = parse_response response.body
+    assert_equal DATA_PIPE_KEY, parsed_response['account']['marketplace_settings']['data_pipe_key']
+    assert_equal AWOL_REGION, parsed_response['account']['marketplace_settings']['awol_region']
+  end
+
 end
