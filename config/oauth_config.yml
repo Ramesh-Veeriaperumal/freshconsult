@@ -62,6 +62,7 @@ development:
   client_id_ios: 663183371165-qov5cti179dlnlcv85rkcgce2g2s59fb.apps.googleusercontent.com
   client_id_iosv4_classic: 663183371165-lv3s96hi2hch71mda41luq5b9b5v5h5f.apps.googleusercontent.com
   consumer_secret: cBiFYwJm90bqfmBt7gg3Rxqe 
+  api_key: AIzaSyA8kkDuuYOBJHImPkz6YSQedGyGcRJuVsg # Used to detect user language by the core team.
  google_gadget_oauth2:
   consumer_token: 593295161831-52fdiqmli0c9613kld5ilj0nueb87htn.apps.googleusercontent.com
   consumer_secret: cK1hUwD5fyjV5tgS3mn_Ad2M
@@ -108,6 +109,7 @@ defaults: &defaults
   client_id_ios: 663183371165-qov5cti179dlnlcv85rkcgce2g2s59fb.apps.googleusercontent.com
   client_id_iosv4_classic: 663183371165-lv3s96hi2hch71mda41luq5b9b5v5h5f.apps.googleusercontent.com
   consumer_secret: 5c7UOsdl0okTN22LcNX0d99i
+  api_key: AIzaSyA8kkDuuYOBJHImPkz6YSQedGyGcRJuVsg
  google_gadget_oauth2:
   consumer_token: 593295161831-52fdiqmli0c9613kld5ilj0nueb87htn.apps.googleusercontent.com
   consumer_secret: cK1hUwD5fyjV5tgS3mn_Ad2M
@@ -162,6 +164,7 @@ staging:
   client_id_ios: 663183371165-0s9usgo31k637fe78gt4nq813tkb4t4g.apps.googleusercontent.com
   client_id_iosv4_classic: 663183371165-lv3s96hi2hch71mda41luq5b9b5v5h5f.apps.googleusercontent.com
   consumer_secret: 5c7UOsdl0okTN22LcNX0d99i
+  api_key: AIzaSyA8kkDuuYOBJHImPkz6YSQedGyGcRJuVsg
  google_contacts:
   consumer_token: 872717553632-61vshiv7id01g01ese7sp2vnbj7fccf6.apps.googleusercontent.com
   consumer_secret: UtAAhjbukdfktyIuxWQovVxE
@@ -222,6 +225,7 @@ production:
   client_id_ios: 663183371165-0s9usgo31k637fe78gt4nq813tkb4t4g.apps.googleusercontent.com
   client_id_iosv4_classic: 663183371165-lv3s96hi2hch71mda41luq5b9b5v5h5f.apps.googleusercontent.com
   consumer_secret: M0tVzcR4cSL-pRxDUqSV2FH1
+  api_key: AIzaSyDZWCWNdZUiq_mYe70i80tKHpzRBz4ZADM
  google_gadget_oauth2:
   consumer_token: 287551691553-uticbd9oktcqodm81m9hcb2oeolinkev.apps.googleusercontent.com
   consumer_secret: QWzwA3yw6tmfN6-J5apF7etN

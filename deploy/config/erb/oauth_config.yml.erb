@@ -47,6 +47,7 @@ oauth_options:
  google_oauth2:
   consumer_token: <%= node[:ymls][:oauth_config][:google_oauth2_token] %>
   consumer_secret: <%= node[:ymls][:oauth_config][:google_oauth2_secret] %>
+  api_key: <%= node[:ymls][:oauth_config][:google_oauth2_apikey] %>
   client_id_ios: <%= node[:ymls][:oauth_config][:google_oauth2_client_id_ios] %>
   client_id_iosv4_classic: <%= node[:ymls][:oauth_config][:google_oauth2_client_id_iosv4_classic] %>
  google_contacts:

@@ -177,6 +177,7 @@ if Rails.env.test?
     "spec/controllers/notification/product_notification_controller_spec.rb",
     #"spec/lib/workers/throttler_spec.rb",
     "spec/lib/zen_import_redis_spec.rb",
+    "spec/lib/detect_user_language_spec.rb",
     "spec/controllers/solution_uploaded_images_controller_spec.rb",
     "spec/controllers/contacts_import_controller_spec.rb",
     "spec/controllers/companies_import_controller_spec.rb",

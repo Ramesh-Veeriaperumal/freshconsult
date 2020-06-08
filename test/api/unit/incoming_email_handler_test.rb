@@ -3,7 +3,6 @@ require_relative '../../core/helpers/tickets_test_helper'
 require_relative '../../../lib/email/perform_util'
 require_relative '../../core/helpers/note_test_helper'
 require_relative '../../core/helpers/users_test_helper.rb'
-require_relative '../../core/helpers/account_test_helper.rb'
 module Helpdesk
   module Email
     class IncomingEmailHandlerTest < ActionView::TestCase
@@ -11,7 +10,6 @@ module Helpdesk
       include ::Email::PerformUtil
       include NoteTestHelper
       include CoreUsersTestHelper
-      include AccountTestHelper
 
       def setup
         Account.stubs(:current).returns(Account.first)
@@ -786,6 +784,7 @@ module Helpdesk
 
       def test_prevent_lang_detect_for_spam
         account = Account.current
+        account.launch(:prevent_lang_detect_for_spam)
         user = account.users.first
         user.language = 'ar'
         user.save
@@ -794,6 +793,8 @@ module Helpdesk
         assign_language(user, account, ticket)
         user = account.users.find_by_id(user.id)
         assert_equal account.language, user.language
+      ensure
+        account.rollback(:prevent_lang_detect_for_spam)
       end
 
       def test_lang_detect_for_non_spam
@@ -804,9 +805,8 @@ module Helpdesk
         ticket = account.tickets.first
         ticket.spam = false
         text = Faker::Lorem.characters(10)
-        Users::DetectLanguage.any_instance.stubs(:detect_lang_from_email_service).returns('fr')
-        Users::DetectLanguage.new.perform(user_id: user.id, text: text)
-        user = account.users.where(id: user.id).first
+        Helpdesk::DetectUserLanguage.stubs(:language_detect).returns(['fr', 1200])
+        Helpdesk::DetectUserLanguage.set_user_language!(user, text)
         assert_equal 'fr', user.language
       end
 

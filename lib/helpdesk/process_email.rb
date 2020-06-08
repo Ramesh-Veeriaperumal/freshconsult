@@ -556,7 +556,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       message_key = zendesk_email || message_id
       ticket = update_spam_data(ticket)
-      assign_language(user, account, ticket)
+      if Account.current.launched?(:prevent_lang_detect_for_spam)
+         assign_language(user, account, ticket)
+      end
       # Creating attachments without attachable info
       # Hitting S3 outside create-ticket transaction
       self.class.trace_execution_scoped(['Custom/Sendgrid/ticket_attachments']) do
@@ -909,6 +911,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           email_processing_log "Email Processing Failed: Couldn't create new user!"
           raise e
         end
+       unless Account.current.launched?(:prevent_lang_detect_for_spam)
+         if params[:text]
+           text = text_for_detection(params[:text])
+           if signup_status and language.nil?
+             Rails.logger.info "language_detection => tkt_source:user.email, acc_id:#{Account.current.id}, req_id:#{user.id}, text:#{text}"
+             language_detection(user.id, Account.current.id, text)
+           end
+         end  
+       end     
       else
         email_processing_log "Can't create new user for #{from_email.inspect}"
       end
