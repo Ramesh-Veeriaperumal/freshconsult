@@ -81,8 +81,18 @@ class Solution::Article < ActiveRecord::Base
     Account.current.solutions_central_publish_enabled?
   end
 
+  def column_attribute_mapping
+    # Since name in payload is change, need to change in model changes also
+    {
+      user_id: :agent_id
+    }
+  end
+
   def model_changes_for_central
     update_publish_details if published?
+    column_attribute_mapping.each_pair do |key, val| 
+      previous_changes[val] = previous_changes.delete(key) if previous_changes.key?(key)
+    end
     changes_array = [previous_changes, parent.previous_changes, article_body.previous_changes]
     changes_array << @model_changes if @model_changes
     changes_array << { tags: tag_changes } if tag_changes

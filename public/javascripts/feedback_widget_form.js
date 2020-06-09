@@ -122,55 +122,61 @@
 					show_captcha_error();
 					return false;
 				}
-
 				// Setting the submit button to a loading state
-				$("#helpdesk_ticket_submit").button("loading")
+				$("#helpdesk_ticket_submit").button("loading");
 
-	  	    	// For all other form it will be a direct page submission
-	  	    	//form.submit()
-						$(form).ajaxSubmit({
-							dataType: 'json',
-							success: function(response, status){
-								// Resetting the submit button to its default state
-							if(response.success === true){
-								// show thank you message
-								var thankyou_url = '/widgets/feedback_widget/thanks?widgetType=';
-								thankyou_url += $.urlParam('widgetType');
-								if($('#submit_message').val()) {
-									thankyou_url += "&submit_message=" + encodeURIComponent($('#submit_message').val());
-								}
+        //converting form into form data to support Attachments
+        var formData = new FormData(form);
 
-								thankyou_url += "&retainParams=" + encodeURIComponent($('#retainParams').val());
-								window.location = thankyou_url;
-                //resize parent frame for popup widget
-                if(!jQuery(".feedback-wrapper").hasClass("embedded-wrapper") && jQuery('#feedback-suggest').hasClass('feedback-suggest-change')){
-                  parent.postMessage('hidesearch', "*");
-                  jQuery('.feedback-wrapper ').addClass('feedback-wrapper-change-close');
-                  jQuery('#feedback-suggest').addClass('animate-suggest-close');
-                  window.setTimeout(function(){
-                     jQuery('#feedback-suggest').removeClass('animate-suggest-close feedback-suggest-change');
-                     jQuery('.feedback-wrapper ').removeClass('feedback-wrapper-change-close feedback-wrapper-change');
-                  },300);
-                }
-          
-                jQuery('#fs-input').val('');
-							}else {
-								$('#errorExplanation').removeClass('hide');
-								$('#feedback_widget_error').html(response.error);
-								if(typeof Recaptcha != "undefined") {
-									Recaptcha.reload();
-								}
+        // For all other form it will be a direct page submission
+        //form.submit()
+        $.ajax({
+          url     : form.action,
+          type    : form.method,
+          data    : formData,
+          // contentType flag set to false, forcing jQuery not to add a Content-Type header for you, otherwise, the boundary string will be missing from it.
+          // processData flag set to false, to avoid convertion FormData into a string
+          processData: false,
+          contentType: false,
+          dataType: 'json',
+          // Resetting the submit button to its default state
+          success : function (response, status) {
+            if(response.success === true) {
+              // show thank you message
+              var thankyou_url = '/widgets/feedback_widget/thanks?widgetType=';
+              thankyou_url += $.urlParam('widgetType');
+              if($('#submit_message').val()) {
+                thankyou_url += "&submit_message=" + encodeURIComponent($('#submit_message').val());
+              }
 
-							}
-							$("#helpdesk_ticket_submit").button("reset");
+              thankyou_url += "&retainParams=" + encodeURIComponent($('#retainParams').val());
+              window.location = thankyou_url;
+              //resize parent frame for popup widget
+              if(!jQuery(".feedback-wrapper").hasClass("embedded-wrapper") && jQuery('#feedback-suggest').hasClass('feedback-suggest-change')){
+                parent.postMessage('hidesearch', "*");
+                jQuery('.feedback-wrapper ').addClass('feedback-wrapper-change-close');
+                jQuery('#feedback-suggest').addClass('animate-suggest-close');
+                window.setTimeout(function(){
+                   jQuery('#feedback-suggest').removeClass('animate-suggest-close feedback-suggest-change');
+                   jQuery('.feedback-wrapper ').removeClass('feedback-wrapper-change-close feedback-wrapper-change');
+                },300);
+              }
 
-							},
-							error:function(err){
-								console.log(err);
-								$("#helpdesk_ticket_submit").button("reset");
-							}
-						})
-
+              jQuery('#fs-input').val('');
+            } else {
+              $('#errorExplanation').removeClass('hide');
+              $('#feedback_widget_error').html(response.error);
+              if(typeof Recaptcha != "undefined") {
+                Recaptcha.reload();
+              }
+            }
+            $("#helpdesk_ticket_submit").button("reset");
+          },
+          error : function (data)
+          {
+            $("#helpdesk_ticket_submit").button("reset");
+          }
+        });
 			}
  		});
 

@@ -50,4 +50,5 @@ module MarketplaceConfig
               redis_client: $redis_integrations,
               namespace: "DP_ROUTER"
             )
+  AWOL_REGION = config[:awol_region]
 end

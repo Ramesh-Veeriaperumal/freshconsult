@@ -384,7 +384,7 @@
       :pci_compliance_field: 379
       :twitter_field_automation: 380
       :triage: 381
-      :advanced_freshcaller: 382  
+      :advanced_freshcaller: 382
       :email_bot: 383
       :agent_assist_ultimate: 384
       :canned_response_suggest: 385
@@ -397,6 +397,7 @@
       :robo_assist_ultimate: 392
       :agent_articles_suggest_eligible: 393
       :advanced_ticket_scopes: 394
+      :custom_objects: 394
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -507,4 +508,3 @@
   :prevent_ticket_creation_for_others: true
   :field_service_geolocation: false
   :location_tagging: false
- 

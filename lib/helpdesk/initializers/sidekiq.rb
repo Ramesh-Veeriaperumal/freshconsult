@@ -253,7 +253,6 @@ Sidekiq.configure_server do |config|
       "Import::SkillWorker",
       "ExportAgents",
       "CollabNotificationWorker",
-      "ProductFeedbackWorker",
       "Community::MergeTopicsWorker",
       "Admin::Sandbox::DataToFileWorker",
       "Admin::Sandbox::FileToDataWorker",

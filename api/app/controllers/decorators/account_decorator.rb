@@ -2,6 +2,8 @@ class AccountDecorator < ApiDecorator
   include Social::Util
   include FieldServiceManagementHelper
   include AgentsHelper
+  include AccountConstants
+  include MarketplaceConfig
 
   def to_hash
     simple_hash.merge(agents_groups_hash)
@@ -24,7 +26,8 @@ class AccountDecorator < ApiDecorator
       ssl_enabled: record.ssl_enabled?,
       verified: record.verified?,
       email_fonts: record.account_additional_settings.email_template_settings,
-      created_at: record.created_at.try(:utc)
+      created_at: record.created_at.try(:utc),
+      marketplace_settings: marketplace_settings
     }
     ret_hash.merge!(sandbox_info)
     ret_hash[:collaboration] = collaboration_hash if record.collaboration_enabled? || (record.freshconnect_enabled? && record.freshid_integration_enabled? && User.current.freshid_authorization)
@@ -41,7 +44,7 @@ class AccountDecorator < ApiDecorator
     ret_hash[:anonymous_account] = true if record.anonymous_account?
     ret_hash[:organisation_domain] = organisation_domain
     ret_hash[:freshdesk_sso_enabled] = record.freshdesk_sso_enabled?
-    ret_hash[:extended_user_companies] = extended_user_companies if extended_user_companies.present? 
+    ret_hash[:extended_user_companies] = extended_user_companies if extended_user_companies.present?
     ret_hash
   end
 
@@ -216,6 +219,13 @@ class AccountDecorator < ApiDecorator
         license_available: safe_send("available_#{agent_type}_licenses"),
         full_time_agent_count: agent_count(agent_type),
         occasional_agent_count: agent_type == :support_agent ? agent_count(:occasional) : nil
+      }
+    end
+
+    def marketplace_settings
+      {
+        data_pipe_key: DATA_PIPE_KEY,
+        awol_region: AWOL_REGION
       }
     end
 end
