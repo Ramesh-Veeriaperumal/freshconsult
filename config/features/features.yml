@@ -397,7 +397,7 @@
       :robo_assist_ultimate: 392
       :agent_articles_suggest_eligible: 393
       :advanced_ticket_scopes: 394
-      :custom_objects: 394
+      :custom_objects: 395
 :selectable_features:
   :redis_display_id: true
   :branding: true
