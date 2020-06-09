@@ -2,6 +2,8 @@ module MemcacheKeys
 
   include Cache::Memcache::Dashboard::MemcacheKeys
 
+  MEMCACHE_KEY_HASH = YAML.load_file(Rails.root.join('config', 'memcached_keys.yml')).deep_symbolize_keys
+
   AVAILABLE_QUEST_LIST = "AVAILABLE_QUEST_LIST:%{user_id}:%{account_id}"
 
   USER_TICKET_FILTERS = "v1/TICKET_VIEWS:%{user_id}:%{account_id}"
@@ -355,6 +357,34 @@ module MemcacheKeys
 
     def memcache_client
       $memcache
+    end
+
+    def key(key, value)
+      memkey = MEMCACHE_KEY_HASH[:single_scoped][key]
+      raise "UnimplementedMemCacheKey #{key} with 1 value." unless memkey
+
+      "#{memkey}:#{value}"
+    end
+
+    def key2(key, value1, value2)
+      memkey = MEMCACHE_KEY_HASH[:double_scoped][key]
+      raise "UnimplementedMemCacheKey #{key} with 2 values." unless memkey
+
+      "#{memkey}:#{value1}:#{value2}"
+    end
+
+    def key3(key, value1, value2, value3)
+      memkey = MEMCACHE_KEY_HASH[:triple_scoped][key]
+      raise "UnimplementedMemCacheKey #{key} with 3 values." unless memkey
+
+      "#{memkey}:#{value1}:#{value2}:#{value3}"
+    end
+
+    def key4(key, value1, value2, value3, value4)
+      memkey = MEMCACHE_KEY_HASH[:quadruple_scoped][key]
+      raise "UnimplementedMemCacheKey #{key} with 4 values." unless memkey
+
+      "#{memkey}:#{value1}:#{value2}:#{value3}:#{value4}"
     end
   end
 end
