@@ -25,7 +25,6 @@ class Admin::ServiceTaskDispatcher::WorkerTest < ActionView::TestCase
     user.make_current
     Account.any_instance.stubs(:automation_revamp_enabled?).returns(true)
     Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
-    Account.any_instance.stubs(:fsm_admin_automations_enabled?).returns(true)
     Account.current.all_service_task_dispatcher_rules.destroy_all
   end
 

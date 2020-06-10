@@ -35,7 +35,7 @@ class Account < ActiveRecord::Base
     :recalculate_daypass, :fb_page_api_improvement, :attachment_redirect_expiry, :contact_company_split,
     :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,
     :prevent_wc_ticket_create, :allow_wildcard_ticket_create, :requester_privilege,
-    :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr, :fsm_admin_automations, :asset_management,
+    :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr, :asset_management,
     :csat_email_scan_compatibility, :mint_portal_applicable, :quoted_text_parsing_feature,
     :email_mailbox, :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
     :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :launch_fsm_geolocation, :launch_location_tagging,

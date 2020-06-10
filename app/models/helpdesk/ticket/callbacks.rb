@@ -74,10 +74,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_commit :create_initial_activity, on: :create
   after_commit :trigger_dispatcher, on: :create, :unless => :skip_dispatcher_with_advanced_automations?
-  after_commit :trigger_service_task_dispatcher, on: :create, if: -> { service_task? && account.fsm_admin_automations_enabled? }
-
-  after_commit :service_task_create_notification, on: :create, if: -> { service_task? && !account.fsm_admin_automations_enabled? }
-
+  after_commit :trigger_service_task_dispatcher, on: :create, if: -> { service_task? }
   after_commit :update_capping_on_create, :update_count_for_skill, on: :create, if: -> { outbound_email? }
   after_commit :send_outbound_email, on: :create, if: -> { outbound_email? && import_ticket.blank? }
   after_commit :trigger_observer_events, on: :update, :if => :execute_observer?
@@ -1033,7 +1030,7 @@ private
 
   def execute_observer?
     @execute_observer ||= begin
-      _execute_observer = user_present? && !disable_observer_rule && !import_ticket && (!service_task? || account.fsm_admin_automations_enabled?)
+      _execute_observer = user_present? && !disable_observer_rule && !import_ticket
       SBRR.log "Ticket ##{self.display_id} save done. Model_changes #{@model_changes.inspect}"
       Va::Logger::Automation.log('Skipping observer', true) unless _execute_observer
       _execute_observer

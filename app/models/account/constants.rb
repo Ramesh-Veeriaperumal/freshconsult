@@ -179,6 +179,7 @@ class Account < ActiveRecord::Base
   DB_TO_LP_FEATURES = Set[:salesforce_sync, :salesforce_v2, :dynamics_v2, :marketplace_app]
 
   # List of Launchparty features available in code. Set it to true if it has to be enabled when signing up a new account
+
   LAUNCHPARTY_FEATURES = {
     hide_og_meta_tags: false, admin_dashboard: false, agent_conference: false, agent_dashboard: false,
     agent_new_ticket_cache: false, api_search_beta: false, autopilot_headsup: false, autoplay: false,
@@ -228,7 +229,7 @@ class Account < ActiveRecord::Base
     text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
     recalculate_daypass: false, prevent_wc_ticket_create: true, allow_wildcard_ticket_create: false,
     attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false,
-    fsm_admin_automations: false, requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false,
+    requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false,
     supervisor_custom_status: false, asset_management: false, sandbox_temporary_offset: false, downgrade_policy: true,
     skip_posting_to_fb: true, launch_fsm_geolocation: false, launch_location_tagging: false, allow_update_agent: false,
     facebook_dm_outgoing_attachment: true, hide_mailbox_error_from_agents: false, prevent_lang_detect_for_spam: false,

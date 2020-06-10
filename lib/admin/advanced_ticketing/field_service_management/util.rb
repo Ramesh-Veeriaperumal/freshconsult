@@ -262,7 +262,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         destroy_field_group
         destroy_customer_signature
         revoke_geo_location if Account.current.field_service_geolocation_enabled?
-        handle_service_task_automations if Account.current.fsm_admin_automations_enabled?
+        handle_service_task_automations
         Rails.logger.info "Completed disabling FSM feature for Account - #{Account.current.id}"
       rescue StandardError => e
         log_operation_failure('Disable', e)

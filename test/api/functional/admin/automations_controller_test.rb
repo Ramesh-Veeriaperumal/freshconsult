@@ -62,13 +62,11 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
   def enable_service_task_automation_lp_and_privileges
     User.any_instance.stubs(:privilege?).with(:manage_service_task_automation_rules).returns(true)
     User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
-    Account.any_instance.stubs(:fsm_admin_automations_enabled?).returns(true)
     Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
   end
 
   def unstub_service_task_automation_lp_and_privilege
     User.any_instance.unstub(:privilege?)
-    Account.any_instance.unstub(:fsm_admin_automations_enabled?)
     Account.any_instance.unstub(:field_service_management_enabled?)
   end
 
@@ -634,15 +632,6 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
   end
 
   # Service task automation cases
-
-  def test_create_service_task_dispatcher_rule_when_service_task_automation_disabled
-    enable_service_task_automation_lp_and_privileges
-    Account.any_instance.stubs(:fsm_admin_automations_enabled?).returns(false)
-    va_rule_request = valid_request_dispatcher_with_ticket_conditions(:source)
-    post :create, construct_params({ rule_type: VAConfig::RULES[:service_task_dispatcher] }.merge(va_rule_request), va_rule_request)
-    assert_response 403
-    match_json(request_error_pattern(:access_denied))
-  end
 
   def test_create_service_task_dispatcher_rule_when_field_service_management_is_disabled
     enable_service_task_automation_lp_and_privileges

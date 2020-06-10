@@ -108,7 +108,7 @@ module Tickets
               evaluate_on.sync_task_changes_to_ocr
           end
         end
-        return { sbrr_exec: evaluate_on.try(:sbrr_exec_obj) } if evaluate_rr?
+        return evaluate_rr? ? { sbrr_exec: evaluate_on.try(:sbrr_exec_obj) } : { sbrr_exec: nil }
       end
     end
 
