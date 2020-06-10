@@ -244,7 +244,7 @@ class Account < ActiveRecord::Base
     fb_message_echo_support: false, portal_prototype_update: false, solutions_quick_view: false,
     solutions_freshconnect: false, fsm_scheduler_month_view: false, solutions_dashboard: false,
     facebook_post_outgoing_attachment: true, article_versioning_redis_lock: false,
-    salesforce_sync: false, salesforce_v2: false, dynamics_v2: false, marketplace_app: false, freshid_sso_sync: false,
+    salesforce_sync: false, salesforce_v2: false, dynamics_v2: false, marketplace_app: false, freshid_sso_sync: true,
     fw_sso_admin_security: false, handle_custom_fields_conflicts: false, shopify_api_revamp: false,
     omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false,
     ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false
