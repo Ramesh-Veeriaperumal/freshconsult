@@ -27,10 +27,10 @@ module Social
 
       def construct_payload_data(args)
         {
-           requester_screen_name: args[:requester_screen_name],
-           user_id: args[:user_id],
-           twitter_user_id: args[:twitter_user_id],
-           survey_dm: args[:survey_dm]
+          requester_screen_name: args[:requester_screen_name],
+          user_id: args[:user_id],
+          twitter_user_id: args[:twitter_user_id],
+          survey_dm: args[:survey_dm]
         }
       end
   end

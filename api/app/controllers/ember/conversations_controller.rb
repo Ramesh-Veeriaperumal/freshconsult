@@ -110,6 +110,18 @@ module Ember
         return unless validate_delegator(@item, note_id: @note_id, fb_page: fb_page)
       end
       reply_sent = reply_to_fb_ticket(@delegator.note)
+      include_survey = @item.include_surveymonkey_link.present? && @item.include_surveymonkey_link == 1 && @ticket.is_fb_message? && Account.current.csat_for_social_surveymonkey_enabled?
+      if include_survey
+        survey = Integrations::SurveyMonkey.survey_for_social(@ticket, @item.user)
+        if survey
+          Social::FacebookSurveyWorker.perform_in(10.seconds.from_now,
+                                                  note_id: @item.id,
+                                                  user_id: @item.user_id,
+                                                  page_scope_id: @ticket.requester.fb_profile_id,
+                                                  support_fb_page_id: fb_page.page_id,
+                                                  survey_dm: survey)
+        end
+      end
       is_success = (reply_sent == :fb_user_blocked) || (reply_sent == :failure) ? false : reply_sent
       render_response(is_success)
     end

@@ -861,6 +861,38 @@ module Ember
       match_json(private_note_pattern(params_hash, latest_note))
     end
 
+    def test_facebook_reply_with_survey_to_fb_direct_message_ticket
+      skip_posting_to_fb_launched = Account.current.launched?(:skip_posting_to_fb)
+      Account.current.rollback(:skip_posting_to_fb)
+      Account.any_instance.stubs(:csat_for_social_surveymonkey_enabled?).returns(true)
+      Social::FacebookSurveyWorker.jobs.clear
+      ticket = create_ticket_from_fb_direct_message
+      sample_reply_dm = { 'id' => Time.now.utc.to_i + 5 }
+      Koala::Facebook::API.any_instance.stubs(:put_object).returns(sample_reply_dm)
+      params_hash = { body: Faker::Lorem.paragraph, msg_type: 'dm', include_surveymonkey_link: 1 }
+      app_config = { inputs: { 'survey_link' => 'https://www.surveymonkey.com/r/NMWK2SF', 'survey_text' => 'Please fill the survey' } }
+      app = { id: 1, application_id: 1 }
+      app.stubs(:configs).returns(app_config)
+      Integrations::SurveyMonkey.stubs(:sm_installed_app).returns(app)
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      response_hash = JSON.parse(response.body)
+      args = Social::FacebookSurveyWorker.jobs.last['args'][0]
+      args.symbolize_keys!
+      assert_equal response_hash['id'], args[:note_id]
+      assert_equal response_hash['user_id'], args[:user_id]
+      assert_equal ticket.requester.fb_profile_id, args[:page_scope_id]
+      url = URI.parse("#{app_config[:inputs]['survey_link']}?c=#{User.current.name}&fd_ticketid=#{ticket.display_id}").to_s
+      assert_equal "#{app_config[:inputs]['survey_text']} \n #{url}", args[:survey_dm]
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+    ensure
+      Account.current.launch(:skip_posting_to_fb) if skip_posting_to_fb_launched
+      Account.any_instance.unstub(:csat_for_social_surveymonkey_enabled)
+      Integrations::SurveyMonkey.unstub(:sm_installed_app)
+      Koala::Facebook::API.any_instance.unstub(:put_object)
+    end
+
     def test_facebook_reply_to_non_fb_post_note
       ticket = create_ticket_from_fb_direct_message
       fb_dm_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
