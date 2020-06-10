@@ -338,7 +338,19 @@ ticket_show:
         - $ref: ./resource/extension/ticket/show.yaml
     meta:
       type: object
-      $ref: '#/definitions/meta'       
+      $ref: '#/definitions/meta'
+ticket_update:
+  type: object
+  properties: 
+    ticket:
+      allOf:
+        - $ref: '#/definitions/extended_ticket'
+        - $ref: ./resource/extension/ticket/show.yaml
+    meta:
+      type: object
+      allOf:
+        - $ref: '#/definitions/meta'
+        - $ref: '#/definitions/vault_meta_token'
 archive_ticket_show:
   allOf:
     - $ref: '#/definitions/extended_archive_ticket'
@@ -384,6 +396,8 @@ rank:
   $ref: ./response/rank.yaml
 automation_rule_meta:
   $ref: './resource/automation_rule_meta.yaml'
+vault_meta_token:
+  $ref: './response/vault_meta_token.yaml'
 ner_api_data:
   $ref: './resource/ner_api_data.yaml'
 conversations_show:

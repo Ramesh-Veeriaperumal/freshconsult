@@ -17,7 +17,7 @@ post:
           conversation:
             $ref: '#/definitions/extended_note'
           meta:
-            $ref: '#/definitions/meta'  
+            $ref: '#/definitions/vault_meta_token'  
     400:
       description: Bad Request Error
       schema:
