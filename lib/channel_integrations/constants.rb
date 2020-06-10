@@ -68,4 +68,6 @@ module ChannelIntegrations::Constants
     create_ticket: 'ChannelIntegrations::CommonActions::Ticket',
     create_note: 'ChannelIntegrations::CommonActions::Note'
   }.freeze
+
+  SURVEY_DM_ERROR_CODE = 1001
 end
