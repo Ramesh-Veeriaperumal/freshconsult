@@ -31,8 +31,8 @@ class Agent < ActiveRecord::Base
            dependent: :destroy,
            after_add: :touch_agent_group_change,
            after_remove: :touch_agent_group_change,
-           order: :group_id  
-  
+           order: :group_id
+
   # ActiveRecord::HasManyThroughCantAssociateThroughHasOneOrManyReflection: Cannot modify association 
   # 'Agent#time_sheets' because the source reflection class 'Agent' is associated to 'User' via :has_one
   # Same issue as above for both create and delete

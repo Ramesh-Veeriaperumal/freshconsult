@@ -566,3 +566,9 @@ api_error_messages:
 
   bulk_api_limit_exceed: "Total %{resource} params size is %{current}, it should not exceed %{max}"
   invalid_ticket_reply: "Something went wrong while replying. Please refresh the page."
+
+  contribution_group_not_allowed_fsm: "Contribution group is not allowed for FSM agent"
+  contribution_group_is_not_available_for_global_access: "Contribution group is only present for group access"
+  uniq_group_and_contribution_error_message: "The same group cannot have both read and write access for an agent"
+  group_ids_already_used: "These ids are already present in primary group - '%{list}'"
+  contribution_group_ids_already_used: "These ids are already present in contribution group - '%{list}'"

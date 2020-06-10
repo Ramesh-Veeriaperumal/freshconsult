@@ -27,6 +27,8 @@ class Agent < ActiveRecord::Base
   accepts_nested_attributes_for :user
   accepts_nested_attributes_for :agent_groups, :allow_destroy => true
   before_update :update_active_since, :create_model_changes
+  before_update :destroy_contribution_group_on_permission_change, if: :ticket_permission_changed?
+
   before_create :mark_unavailable
   after_commit :enqueue_round_robin_process, on: :update
   after_commit :sync_skill_based_queues, on: :update
@@ -35,9 +37,7 @@ class Agent < ActiveRecord::Base
   after_commit :nullify_tickets, :agent_destroy_cleanup, on: :destroy
   
   after_commit  ->(obj) { obj.update_agent_to_livechat } , on: :create
-  after_commit  ->(obj) { obj.update_agent_to_livechat } , on: :update  
-
-  after_commit :clear_agent_groups_related_cache
+  after_commit  ->(obj) { obj.update_agent_to_livechat } , on: :update
 
   before_save :set_default_type_if_needed, on: [:create, :update]
 
@@ -80,6 +80,10 @@ class Agent < ActiveRecord::Base
 
   def ticket_permission_token
     PERMISSION_TOKENS_BY_KEY[self.ticket_permission]
+  end
+
+  def field_agent_check_using_cache?
+    Account.current.agent_types_from_cache.find { |type| type.name == Agent::FIELD_AGENT }.try(&:agent_type_id) == agent_type
   end
 
   def signature_htm
@@ -335,26 +339,56 @@ class Agent < ActiveRecord::Base
     false
   end
 
-  def build_agent_groups_attributes(group_list)
-    return unless group_list.is_a?(Array)
-    old_group_ids    = self.new_record? ? [] : self.agent_groups.pluck(:group_id)
-    group_list      = group_list.map(&:to_i)
-    add_group_ids    = Account.current.groups.where(:id => group_list - old_group_ids).pluck(:id)
-    delete_group_ids = old_group_ids - group_list
+  def contribution_group_ids
+    agent_group = all_agent_groups_from_cache.select { |ag| ag.write_access.blank? }
+    agent_group.map(&:group_id).sort
+  end
 
-    agent_groups_array = []
-    if delete_group_ids.present?
-      agent_groups.where(:group_id => delete_group_ids).map { |agent_group|
-        agent_groups_array << build_agent_groups_hash(agent_group.group_id, agent_group.id)
-      }
+  def build_agent_groups_attributes(group_ids, contribution_group_ids = nil)
+    return if !group_ids.is_a?(Array) && !contribution_group_ids.is_a?(Array)
+
+    group_ids, contribution_group_ids = sanitize_agent_group_params(group_ids, contribution_group_ids)
+    db_agent_groups = new_record? ? [] : all_agent_groups
+    mark_destroy_for_old_agent_groups(db_agent_groups, group_ids, contribution_group_ids) unless new_record?
+    update_agent_group_list(db_agent_groups, group_ids) if group_ids.is_a?(Array)
+    update_agent_group_list(db_agent_groups, contribution_group_ids, false) if contribution_group_ids.is_a?(Array)
+  end
+
+  def update_agent_group_list(all_agent_groups, group_ids, write_access = true)
+    group_ids.each do |group_id|
+      agent_group = all_agent_groups.bsearch { |ag| group_id <=> ag.group_id }
+      if agent_group.blank?
+        self.all_agent_groups.new.tap do |ag|
+          ag.write_access = write_access
+          ag.group_id = group_id
+          ag.instance_variable_set(:@marked_for_destruction, false) # in case of scope get to all ticket permission
+        end
+      else
+        agent_group.write_access = write_access
+      end
     end
-    if add_group_ids.present?
-      multiple_agents_added = add_group_ids.count > 1
-      add_group_ids.map { |group_id|
-        agent_groups_array << build_agent_groups_hash(group_id)
-      }
+  end
+
+  def mark_destroy_for_old_agent_groups(all_agent_groups, group_ids, contribution_group_ids)
+    if group_ids.is_a?(Array) && contribution_group_ids.is_a?(Array)
+      exclude_ids = contribution_group_ids + group_ids
+      all_agent_groups.reject { |ag| exclude_ids.include?(ag.group_id) }.each(&:mark_for_destruction)
+    elsif group_ids.is_a?(Array)
+      all_agent_groups.reject { |ag| group_ids.include?(ag.group_id) || ag.write_access.blank? }.each(&:mark_for_destruction)
+    elsif contribution_group_ids.is_a?(Array)
+      all_agent_groups.reject { |ag| ag.write_access.present? || contribution_group_ids.include?(ag.group_id) }.each(&:mark_for_destruction)
     end
-    self.agent_groups_attributes = agent_groups_array if agent_groups_array.present?
+  end
+
+  def sanitize_agent_group_params(group_ids, contributing_group_ids)
+    group_ids.map!(&:to_i).compact! if group_ids.is_a?(Array)
+    contributing_group_ids.map!(&:to_i).compact! if contributing_group_ids.is_a?(Array)
+
+    [group_ids, contributing_group_ids]
+  end
+
+  def destroy_contribution_group_on_permission_change
+    all_agent_groups.select { |ag| ag.write_access.blank? }.each(&:mark_for_destruction) unless changes[:ticket_permission][1] == PERMISSION_KEYS_BY_TOKEN[:group_tickets]
   end
 
   def field_agent?
@@ -431,7 +465,7 @@ class Agent < ActiveRecord::Base
   end
 
   def check_field_agent_groups?
-    account.field_service_management_enabled? && self.agent_groups.present? && field_agent?
+    account.field_service_management_enabled? && all_agent_groups.present? && field_agent?
   end
 
   def reset_to_beginner_level
@@ -523,7 +557,7 @@ class Agent < ActiveRecord::Base
 
   # checking whether field agent has only field groups associated
   def validate_field_agent_groups
-    invalid_groups = self.agent_groups.map(&:group_id) - fetch_valid_groups.map(&:id)
+    invalid_groups = self.all_agent_groups.map(&:group_id) - fetch_valid_groups.map(&:id)
     if invalid_groups.present?
       self.errors.add(:group_ids, ErrorConstants::ERROR_MESSAGES[:should_not_be_support_group])
       return false

@@ -6,10 +6,6 @@ module Cache::Memcache::Agent
     MemcacheKeys.memcache_delete(AVAILABLE_QUEST_LIST)
   end
 
-  def clear_agent_groups_related_cache
-    MemcacheKeys.delete_from_cache(all_agent_groups_cache_key)
-  end
-
   def all_agent_groups_from_cache
     key = all_agent_groups_cache_key
     fetch_from_cache(key) do

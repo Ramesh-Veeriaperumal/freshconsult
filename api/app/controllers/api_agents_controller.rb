@@ -28,7 +28,7 @@ class ApiAgentsController < ApiApplicationController
 
   def create
     assign_protected
-    return unless validate_delegator(nil, params[cname].slice(:role_ids, :group_ids, :user_attributes, :agent_type, :occasional, :skill_ids, :agent_level_id).merge(agent_delegator_params))
+    return unless validate_delegator(nil, params[cname].slice(*AgentConstants::AGENT_CREATE_DELEGATOR_KEY).merge(agent_delegator_params))
 
     @user = current_account.users.new
     assign_avatar if params[cname][:avatar_id].present? && @delegator.draft_attachments.present?
@@ -50,7 +50,8 @@ class ApiAgentsController < ApiApplicationController
 
   def update
     assign_protected
-    return unless validate_delegator(@item, params[cname].slice(:role_ids, :group_ids, :available, :avatar_id, :user_attributes, :agent_level_id).merge(agent_delegator_params))
+    return unless validate_delegator(@item, params[cname].slice(*AgentConstants::AGENT_UPDATE_DELEGATOR_KEY)
+        .merge(agent_delegator_params).merge(ticket_scope: params[:ticket_scope]))
 
     check_and_assign_skills_for_update if Account.current.skill_based_round_robin_enabled?
     @item.freshcaller_enabled = params[cname][:freshcaller_agent] unless params[cname][:freshcaller_agent].nil?
@@ -62,10 +63,8 @@ class ApiAgentsController < ApiApplicationController
     @item.user_changes = @item.user.agent.user_changes || {}
     @item.user_changes.merge!(@item.user.changes)
     return render_custom_errors(@item) unless check_edit_privilege
-    if params[cname].key?(:group_ids)
-      group_ids = params[cname].delete(:group_ids)
-      @item.build_agent_groups_attributes(group_ids)
-    end
+
+    assign_group_with_contribution_group
     return if @item.update_attributes(params[cname].except(:user_attributes))
 
     render_custom_errors
@@ -260,16 +259,21 @@ class ApiAgentsController < ApiApplicationController
     def assign_agent_attributes
       @item.assign_attributes(occasional: true, agent_type: Account.current.agent_types.find_by_name(Agent::SUPPORT_AGENT).agent_type_id,
                               signature_html: "<div dir=\"ltr\"><p><br></p>\r\n</div>")
-      group_ids = params[cname].delete(:group_ids)
       @item.user_id = @user.id
       @item.ticket_permission = params[:ticket_scope]
       @item.occasional = false if params[cname][:occasional] == false
       @item.agent_type = params[:agent_type] if params[:agent_type].to_s.present?
       @item.signature_html = params[cname][:signature_html] if params[cname][:signature_html].present?
-      @item.build_agent_groups_attributes(group_ids) if group_ids.present?
       @item.freshcaller_enabled = params[:freshcaller_agent] || false
       @item.freshchat_enabled = params[cname][:freshchat_agent] if params[cname][:freshchat_agent].present?
       @item.scoreboard_level_id = params[:agent_level_id]
+      assign_group_with_contribution_group
+    end
+
+    def assign_group_with_contribution_group
+      group_ids = params[cname].delete(:group_ids)
+      contribution_group_ids = params[cname].delete(:contribution_group_ids)
+      @item.build_agent_groups_attributes(group_ids, contribution_group_ids)
     end
 
     def assign_avatar

@@ -2,7 +2,8 @@ class AgentValidation < ApiValidation
   include Gamification::GamificationUtil
   attr_accessor :name, :phone, :mobile, :email, :time_zone, :language, :occasional, :signature, :ticket_scope,
                 :role_ids, :group_ids, :job_title, :id, :avatar_id, :search_settings, :agent_type, :focus_mode,
-                :shortcuts_enabled, :skill_ids, :ticket_assignment, :agent_level_id, :freshcaller_agent, :freshchat_agent
+                :shortcuts_enabled, :skill_ids, :ticket_assignment, :agent_level_id, :freshcaller_agent, :freshchat_agent,
+                :contribution_group_ids, :db_ticket_permission, :db_agent_type
 
   CHECK_PARAMS_SET_FIELDS = %w[time_zone language occasional role_ids ticket_scope search_settings agent_level_id freshcaller_agent skill_ids freshchat_agent].freeze
 
@@ -47,11 +48,23 @@ class AgentValidation < ApiValidation
   validates :agent_level_id, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field, message_options: { attribute: 'agent_level_id', feature: :gamification } }, unless: -> { gamification_feature?(Account.current) }
   validates :agent_level_id, custom_numericality: { only_integer: true, greater_than: 0 }
 
+  # validate contribution group related check
+  validates :contribution_group_ids, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0 } }, if: -> { instance_variable_defined?(:@contribution_group_ids) }
+  validate :contribution_for_fsm_agent?, if: -> { instance_variable_defined?(:@contribution_group_ids) && fsm_agent? }
+  validate :advanced_ticket_scopes?, if: -> { instance_variable_defined?(:@contribution_group_ids) }
+  validate :valid_ticket_scope_for_contribution_group?, if: -> { instance_variable_defined?(:@contribution_group_ids) }
+  validate :uniq_group_and_contrubution_group_ids?, if: lambda {
+    errors.blank? && Account.current.advanced_ticket_scopes_enabled? &&
+      contribution_group_ids.present? && group_ids.present?
+  }
+
   def initialize(request_params, item, allow_string_param = false)
     if item
       user = item.user
       @previous_occasional = item.occasional
       @role_ids = user.roles.map(&:id) if user
+      self.db_ticket_permission = item.ticket_permission
+      self.db_agent_type = item.agent_type
       super(request_params, user, allow_string_param)
     else
       super(request_params, nil, allow_string_param)
@@ -140,7 +153,41 @@ class AgentValidation < ApiValidation
     errors[:avatar_id] = :invalid_field if !private_api? && avatar_id.present?
   end
 
+  def advanced_ticket_scopes?
+    unless Account.current.advanced_ticket_scopes_enabled?
+      errors[:advanced_ticket_scopes] << :require_feature
+      error_options.merge!(advanced_ticket_scopes: { feature: :advanced_ticket_scopes,
+                                                     code: :access_denied })
+    end
+  end
+
+  def contribution_for_fsm_agent?
+    errors[:contribution_group_ids] << :contribution_group_not_allowed_fsm
+  end
+
+  def valid_ticket_scope_for_contribution_group?
+    return if errors.present?
+
+    errors[:contribution_group_ids] << :contribution_group_is_not_available_for_global_access unless group_access?
+  end
+
+  def uniq_group_and_contrubution_group_ids?
+    errors[:'group_ids/contribution_group_ids'] << :uniq_group_and_contribution_error_message if (group_ids & contribution_group_ids).present?
+  end
+
   private
+
+    def fsm_agent?
+      return false unless Account.current.field_service_management_enabled?
+
+      fsm_type_id = Account.current.agent_types.where(name: Agent::FIELD_AGENT).first.try(&:agent_type_id)
+      agent_type == fsm_type_id || (agent_type.blank? && db_agent_type == fsm_type_id)
+    end
+
+    def group_access?
+      (ticket_scope.present? && ticket_scope.to_i == Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets]) ||
+        (ticket_scope.blank? && db_ticket_permission.to_i == Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+    end
 
     def is_a_field_agent?
       Account.current.field_service_management_enabled? && agent_type == Account.current.agent_types.find_by_name(Agent::FIELD_AGENT).agent_type_id
