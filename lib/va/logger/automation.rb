@@ -32,12 +32,13 @@ class Va::Logger::Automation
       Thread.current[:automation_log_vars] = thread_hash if thread_hash.present?
     end
 
-    def set_rule_id rule_id
+    def set_rule_id(rule_id, account_id = nil, ticket_id = nil, doer_id = nil)
+      Va::Logger::Automation.set_thread_variables(account_id, ticket_id, doer_id) if !Thread.current[:automation_log_vars].present? && account_id && ticket_id && doer_id && rule_id
       Thread.current[:automation_log_vars][:rule_id] = rule_id if rule_id && Thread.current[:automation_log_vars].present?
     end
 
     def unset_rule_id
-      Thread.current[:automation_log_vars][:rule_id] = nil
+      Thread.current[:automation_log_vars][:rule_id] = nil if Thread.current[:automation_log_vars].present?
     end
 
     def log_execution_and_time(time, executed, rule_type=nil, start_time=nil, end_time=nil)

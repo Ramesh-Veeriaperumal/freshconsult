@@ -31,7 +31,7 @@ module Tickets
           original_ticket = original_ticket_data(evaluate_on, original_attributes)
           rules.each do |vr|
             begin
-              Va::Logger::Automation.set_rule_id(vr.id)
+              Va::Logger::Automation.set_rule_id(vr.id, account.id, ticket_id, doer_id)
               ticket = nil
               time = Benchmark.realtime {
                 ticket = account.automation_revamp_enabled? ?
