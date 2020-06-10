@@ -299,6 +299,42 @@ module Ember
       assert_response 200
     end
 
+    def test_show_with_omni_channel_dashboard_enabled_and_user_has_view_reports_privilege
+      Account.any_instance.stubs(:omni_channel_dashboard_enabled?).returns(true)
+      User.any_instance.stubs(:privilege?).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      get :show, controller_params(version: 'private', id: 1)
+      assert_response 200
+      assert_equal get_widget_names, ApiDashboardConstants::OMNI_CHANNEL_DASHBOARD.dup.map(&:first)
+    ensure
+      Account.any_instance.unstub(:solutions_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_show_with_omni_channel_dashboard_enabled_and_user_has_not_view_reports_privilege
+      Account.any_instance.stubs(:omni_channel_dashboard_enabled?).returns(true)
+      User.any_instance.stubs(:privilege?).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
+      get :show, controller_params(version: 'private', id: 1)
+      assert_response 200
+      assert_not_equal get_widget_names, ApiDashboardConstants::OMNI_CHANNEL_DASHBOARD.dup.map(&:first)
+    ensure
+      Account.any_instance.unstub(:solutions_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_show_with_omni_channel_dashboard_not_enabled_and_user_has_view_reports_privilege
+      Account.any_instance.stubs(:omni_channel_dashboard_enabled?).returns(false)
+      User.any_instance.stubs(:privilege?).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      get :show, controller_params(version: 'private', id: 1)
+      assert_response 200
+      assert_not_equal get_widget_names, ApiDashboardConstants::OMNI_CHANNEL_DASHBOARD.dup.map(&:first)
+    ensure
+      Account.any_instance.unstub(:solutions_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
     def test_show_unresolved_tickets_widget_for_sprout_feature
       Subscription.any_instance.stubs(:sprout_plan?).returns(true)
       Account.any_instance.stubs(:unresolved_tickets_widget_for_sprout_enabled?).returns(true)

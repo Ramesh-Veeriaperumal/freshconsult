@@ -461,6 +461,10 @@ class Account < ActiveRecord::Base
     detect_thank_you_note_eligible_enabled? && has_feature?(:detect_thank_you_note)
   end
 
+  def omni_channel_dashboard_enabled?
+    omni_bundle_account? && launched?(:omni_channel_dashboard)
+  end
+
   def features
     Account::ProxyFeature::ProxyFeatureAssociation.new(self)
   end

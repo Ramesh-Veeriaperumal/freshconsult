@@ -66,6 +66,21 @@ module ApiDashboardConstants
     [:todo,               'todo',                               2, 2]
   ].freeze
 
+  OMNI_CHANNEL_DASHBOARD = [
+    ['freshdesk-volume', 2, 2, 'freshdesk', nil, nil, nil],
+    ['freshchat-volume', 2, 2, 'freshchat', 'omni_dashboard.freshchat_volume_tooltip', nil, nil],
+    ['freshcaller-volume', 2, 2, 'freshcaller', nil, nil, nil],
+    ['freshdesk-performance', 2, 2, 'freshdesk', nil, nil, nil],
+    ['freshchat-performance', 2, 2, 'freshchat', nil, nil, nil],
+    ['freshcaller-performance', 2, 2, 'freshcaller', nil, nil, nil]
+    # ['freshdesk-csat', 2, 2, 'freshdesk', nil, nil, nil],
+    # ['freshchat-csat', 2, 2, 'freshchat', nil, nil, nil],
+    # ['freshcaller-sla', 2, 2, 'freshcaller', nil, nil, nil],
+    # ['todowidget', 2, 2, 'freshdesk', nil, nil, nil],
+    # ['omni-availability', 2, 2, 'freshdesk', nil, '/a/dashboard/agent_status', 'omni_dashboard.omni_availability_detail_title'],
+    # ['freshcaller-active-calls', 2, 2, 'freshcaller', nil, nil, nil]
+  ].freeze
+
   PARAMS_FIELD_NAME_MAPPINGS = { group_ids: :group_id,
                                  product_ids: :product_id,
                                  status_ids: :status,
