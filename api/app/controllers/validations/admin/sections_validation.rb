@@ -6,8 +6,7 @@ module Admin
     attr_accessor(*SECTION_PARAMS)
 
     validate :invalid_ticket_field, if: -> { tf.blank? || tf.default? && !default_ticket_type? || !tf.default? && !custom_dropdown? }
-    validate :dynamic_section?, if: :default_ticket_type?
-    validate :multi_dynamic_section?, if: :custom_dropdown?
+    validate :dynamic_section?, if: -> { default_ticket_type? || custom_dropdown? }
     validate :ticket_field_inside_section, if: -> { tf.present? && tf.section_field? }
     validates :label, presence: true, on: :create
     validates :choice_ids, presence: true, on: :create

@@ -69,7 +69,6 @@ class Admin::SectionsControllerTest < ActionController::TestCase
 
     launch_ticket_field_revamp do
       enable_dynamic_sections_feature {}
-      enable_multi_dynamic_sections_feature {}
       delete :destroy, construct_params(id: section.id, ticket_field_id: 3)
       assert_response 403
     end

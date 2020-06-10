@@ -21,13 +21,6 @@ module Admin::TicketFieldHelper
     @account.revoke_feature :dynamic_sections
   end
 
-  def enable_multi_dynamic_sections_feature
-    @account.add_feature :multi_dynamic_sections
-    yield
-  ensure
-    @account.revoke_feature :multi_dynamic_sections
-  end
-
   def enable_custom_ticket_fields_feature
     @account.add_feature :custom_ticket_fields
     yield

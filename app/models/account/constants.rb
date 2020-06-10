@@ -53,7 +53,7 @@ class Account < ActiveRecord::Base
       :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :dynamic_sections,
         :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
-        :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections ],
+        :multiple_companies_toggle, :round_robin_on_update],
       :inherits => [ :garden ]
     },
 
@@ -82,7 +82,7 @@ class Account < ActiveRecord::Base
       :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :dynamic_sections,
         :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
-        :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections ],
+        :multiple_companies_toggle, :round_robin_on_update],
       :inherits => [ :garden_classic ]
     },
 
@@ -108,7 +108,7 @@ class Account < ActiveRecord::Base
         :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :dynamic_sections,
         :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
-        :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections, :custom_dashboard],
+        :multiple_companies_toggle, :round_robin_on_update, :custom_dashboard],
       :inherits => [ :garden_jan_17 ]
     },
 
@@ -198,7 +198,7 @@ class Account < ActiveRecord::Base
     froala_editor: false, es_v2_splqueries: false, suggest_tickets: false, "Freshfone New Notifications": false,
     feedback_widget_captcha: false, es_multilang_solutions: false, requester_widget: false,
     spam_blacklist_feature: false, custom_timesheet: false, antivirus_service: false, hide_api_key: false,
-    skip_ticket_threading: false, multi_dynamic_sections: true, dashboard_new_alias: false, attachments_scope: false,
+    skip_ticket_threading: false, dashboard_new_alias: false, attachments_scope: false,
     kbase_spam_whitelist: false, forum_post_spam_whitelist: false, enable_qna: false, enable_insights: false,
     whitelist_supervisor_sla_limitation: false, escape_liquid_attributes: true, escape_liquid_for_reply: true,
     escape_liquid_for_portal: true, close_validation: false, pjax_reload: false, one_hop: false,

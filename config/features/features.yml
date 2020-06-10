@@ -78,7 +78,6 @@
       :ticket_activity_export: 73
       :system_observer_events: 74
       :private_inline: 75
-      :multi_dynamic_sections: 76
       :caching: 77
       :collaboration: 78
       :auto_ticket_export: 79

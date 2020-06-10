@@ -29,11 +29,7 @@ class CustomFieldsController < Admin::AdminController
     end
 
     if err_str.blank?
-      if (params[:jsonSectionData] && params[:jsonSectionData].length >= 2)
-        if current_account.multi_dynamic_sections_enabled?
-          @fields_id_with_sections = fetch_fields_with_sections(sections_data)
-        end
-      end
+      @fields_id_with_sections = fetch_fields_with_sections(sections_data) if (params[:jsonSectionData] && params[:jsonSectionData].length >= 2) && current_account.dynamic_sections_enabled?
 
       field_data_group_by_action = field_data.group_by { |f_d| f_d["action"] }
       TICKET_FIELD_ACTIONS.each do |action|
@@ -81,7 +77,7 @@ class CustomFieldsController < Admin::AdminController
   private
 
     def delete_section_present_key? field
-      current_account.multi_dynamic_sections_enabled? && !@fields_id_with_sections.include?(field[:id]) &&
+      current_account.dynamic_sections_enabled? && !@fields_id_with_sections.include?(field[:id]) &&
       Helpdesk::TicketField::SECTION_DROPDOWNS.include?(field[:field_type]) &&
       field[:field_options].present?
     end
@@ -184,7 +180,8 @@ class CustomFieldsController < Admin::AdminController
     end
 
     def invalid_section? sec
-      return unless current_account.multi_dynamic_sections_enabled?
+      return unless current_account.dynamic_sections_enabled?
+
       unless @fields_id_with_sections.include?(sec[:parent_ticket_field_id].to_i)
         if sec[:id].nil?
           reset_section_fields(sec[:section_fields]) unless sec[:section_fields].nil?
