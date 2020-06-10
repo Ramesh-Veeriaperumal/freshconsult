@@ -34,6 +34,10 @@ class Solution::Folder < ActiveRecord::Base
     :solution_folders
   end
 
+  def misc_changes_for_central
+    category_update_details
+  end
+
   def model_changes_for_central
     self.previous_changes.merge(self.parent.previous_changes)
   end

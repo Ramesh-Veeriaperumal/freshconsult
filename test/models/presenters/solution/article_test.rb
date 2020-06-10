@@ -3,6 +3,7 @@ require_relative '../../test_helper'
 
 class ArticleTest < ActiveSupport::TestCase
   include ModelsSolutionsTestHelper
+  include ModelsUsersTestHelper
   include SolutionsApprovalsTestHelper
   include SolutionsTestHelper
 
@@ -143,6 +144,7 @@ class ArticleTest < ActiveSupport::TestCase
     approval = construct_approval_record(article, User.current)
     construct_approver_mapping(approval, User.current)
     approval.save
+    article.save
     job = CentralPublishWorker::SolutionArticleWorker.jobs.last
     article.reload
     payload = article.central_publish_payload.to_json
@@ -168,6 +170,7 @@ class ArticleTest < ActiveSupport::TestCase
     approval.approval_status = 2
     approval.approver_mappings.first.approver_id = 10
     approval.save
+    article.save
     job = CentralPublishWorker::SolutionArticleWorker.jobs.last
     article.reload
     payload = article.central_publish_payload.to_json
@@ -191,6 +194,7 @@ class ArticleTest < ActiveSupport::TestCase
     approval = construct_approval_record(article, User.current)
     construct_approver_mapping(approval, User.current)
     approval.save
+    article.save
     CentralPublishWorker::SolutionArticleWorker.jobs.clear
     approval.destroy
     job = CentralPublishWorker::SolutionArticleWorker.jobs.last
@@ -516,6 +520,51 @@ class ArticleTest < ActiveSupport::TestCase
     Account.any_instance.unstub(:solutions_central_publish_enabled?)
   end
 
+  def test_central_publish_payload_update_author
+    article = create_article(article_params).primary_article
+    old_author = @account.users.find(article.user_id)
+    CentralPublishWorker::SolutionArticleWorker.jobs.clear
+    article.reload
+    new_author = add_test_agent
+    article.user_id = new_author.id
+    article.save
+    payload = article.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_article_pattern(article))
+    job = CentralPublishWorker::SolutionArticleWorker.jobs.last
+    assert_equal 'article_update', job['args'][0]
+    assert_equal CentralPublishWorker::SolutionArticleWorker.jobs.size, 1
+    assert_equal({ 'agent_name' => [old_author.name, new_author.name] }, job['args'][1]['misc_changes'].slice('agent_name'))
+  end
+
+  def test_central_publish_payload_update_folder
+    article = create_article(article_params).primary_article
+    old_folder = @account.solution_folders.where(parent_id: article.parent.solution_folder_meta_id, language_id: article.language_id).first
+    CentralPublishWorker::SolutionArticleWorker.jobs.clear
+    article.reload
+    new_folder = create_folder(folder_params)
+    article.parent.solution_folder_meta_id = new_folder.id
+    article.parent.save
+    article.save
+    payload = article.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_article_pattern(article))
+    job = CentralPublishWorker::SolutionArticleWorker.jobs.last
+    assert_equal 'article_update', job['args'][0]
+    assert_equal CentralPublishWorker::SolutionArticleWorker.jobs.size, 1
+    assert_equal({ 'solution_folder_name' => [old_folder.name, new_folder.name] }, job['args'][1]['misc_changes'].slice('solution_folder_name'))
+  end
+
+  def test_central_publish_payload_for_unpublish_event
+    article = create_article(article_params).primary_article
+    CentralPublishWorker::SolutionArticleWorker.jobs.clear
+    article.status = 1
+    article.save
+    payload = article.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_article_pattern(article))
+    job = CentralPublishWorker::SolutionArticleWorker.jobs.last
+    assert_equal 'article_update', job['args'][0]
+    assert_equal job['args'][1]['model_changes']['status'], [2, 1]
+  end
+
   def article_params(options = {})
     lang_hash = { lang_codes: options[:lang_codes] }
     category = create_category({ portal_id: Account.current.main_portal.id }.merge(lang_hash))
@@ -525,5 +574,11 @@ class ArticleTest < ActiveSupport::TestCase
       folder_id: create_folder({ visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category.id }.merge(lang_hash)).id,
       status: options[:status] || Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
     }.merge(lang_hash)
+  end
+
+  def folder_params(options = {})
+    lang_hash = { lang_codes: options[:lang_codes] }
+    category = create_category({ portal_id: Account.current.main_portal.id }.merge(lang_hash))
+    { visibility: options[:visibility] || Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category.id }.merge(lang_hash)
   end
 end
