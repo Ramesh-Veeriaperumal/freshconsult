@@ -6,6 +6,7 @@ class Export::Ticket < Struct.new(:export_params)
   include Redis::RedisKeys
   include Helpdesk::TicketModelExtension
   include ArchiveTicketEs
+  include Silkroad::Export::FeatureCheck
   DATE_TIME_PARSE = [:created_at, :due_by, :resolved_at, :updated_at, :first_response_time, :closed_at].freeze
   ERB_PATH = Rails.root.join('app/views/support/tickets/export/%<file_name>s.xls.erb').to_path
   FILE_FORMAT = ['csv', 'xls'].freeze
@@ -29,6 +30,11 @@ class Export::Ticket < Struct.new(:export_params)
         send_no_ticket_email
       else
         upload_file(@file_path)
+        if send_to_silkroad?(export_params)
+          Rails.logger.info 'Silkroad Shadow Mode Started'
+          silkroad_params = export_params.merge(helpkit_export_id: @data_export.id)
+          Silkroad::Export::Ticket.new.create_job(silkroad_params)
+        end
         DataExportMailer.send_email(:ticket_export, email_params[:user], email_params)
       end
     rescue Exception => e

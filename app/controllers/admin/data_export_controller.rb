@@ -1,5 +1,4 @@
 class Admin::DataExportController < Admin::AdminController
-  
   include Redis::RedisKeys
   include Redis::OthersRedis
 
@@ -8,7 +7,7 @@ class Admin::DataExportController < Admin::AdminController
 
   def check_export_status
     @data_export = current_account.data_exports.data_backup[0]
-    if @data_export 
+    if @data_export
       if @data_export.completed? || @data_export.failed?
         @data_export.destroy
       else
@@ -35,9 +34,15 @@ class Admin::DataExportController < Admin::AdminController
   end
 
   def download
-    attachment = @item.attachment
-    file_url = helpdesk_attachment_path(attachment)
-    redirect_to file_url  
+    file_url = if @item.ticket_export? && @item.job_id
+                 check_download_permission
+                 response = Silkroad::Export::Base.new.get_job_status(@item.job_id)
+                 response['output_path']
+               else
+                 attachment = @item.attachment
+                 helpdesk_attachment_path(attachment)
+               end
+    redirect_to file_url
   end
 
   protected
@@ -50,4 +55,7 @@ class Admin::DataExportController < Admin::AdminController
       end
     end
 
+    def check_download_permission
+      access_denied unless privilege?(:manage_account) || @item.owner?(current_user)
+    end
 end

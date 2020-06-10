@@ -5,7 +5,7 @@ source 'https://rubygems.org'
 gem "rake", "~> 10.4.0"
 gem "rails","3.2.22.5"
 
-gem "freemail", "0.2.3", :require => false 
+gem "freemail", "0.2.3", :require => false
 gem 'stopwords-filter', "0.4.1", require: 'stopwords'
 
 gem 'rack-cors', '~> 0.4.1'
@@ -390,5 +390,5 @@ gem 'ejson', :require => false
 gem 'rack-protection', '1.5.5'
 
 gem 'coverband', '1.5.4', :group => [:staging]
-
 gem 'oj'
+gem 'range_operators'

@@ -347,7 +347,7 @@ module Ember
           else
             nil
           end
-          (archive_ticket.present?) ? log_and_render_301_archive : log_and_render_404 
+          archive_ticket.present? ? log_and_render_301_archive : log_and_render_404
         end
       end
 

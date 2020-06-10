@@ -1,0 +1,7 @@
+defaults: &defaults
+  host: 'http://localhost:1728'
+  timeout: 10
+development:
+  <<: *defaults
+test:
+  <<: *defaults

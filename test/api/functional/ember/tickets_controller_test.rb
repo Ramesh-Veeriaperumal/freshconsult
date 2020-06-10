@@ -3550,6 +3550,7 @@ module Ember
     end
 
     def test_export_csv_without_privilege
+      @account.rollback(:silkroad_export)
       User.any_instance.stubs(:privilege?).with(:export_tickets).returns(true)
       User.any_instance.stubs(:privilege?).with(:export_customers).returns(false)
       export_fields = Helpdesk::TicketModelExtension.allowed_ticket_export_fields
@@ -3565,6 +3566,7 @@ module Ember
     end
 
     def test_export_csv_with_privilege
+      @account.rollback(:silkroad_export)
       User.any_instance.stubs(:privilege?).with(:export_tickets).returns(true)
       User.any_instance.stubs(:privilege?).with(:export_customers).returns(true)
       @account.launch(:ticket_contact_export)
@@ -3584,6 +3586,7 @@ module Ember
     end
 
     def test_export_csv_with_privilege_filter_with_comma_values
+      @account.rollback(:silkroad_export)
       @account.launch(:wf_comma_filter_fix)
       User.any_instance.stubs(:privilege?).with(:export_tickets).returns(true)
       User.any_instance.stubs(:privilege?).with(:export_customers).returns(true)
@@ -3608,6 +3611,7 @@ module Ember
     end
 
     def test_export_csv_monitor_by_me
+      @account.rollback(:silkroad_export)
       User.any_instance.stubs(:privilege?).with(:export_tickets).returns(true)
       User.any_instance.stubs(:privilege?).with(:export_customers).returns(false)
       export_fields = Helpdesk::TicketModelExtension.allowed_ticket_export_fields
@@ -3626,6 +3630,7 @@ module Ember
     end
 
     def test_export_csv_with_invalid_filtername
+      @account.rollback(:silkroad_export)
       User.any_instance.stubs(:privilege?).with(:export_tickets).returns(true)
       User.any_instance.stubs(:privilege?).with(:export_customers).returns(false)
       export_fields = Helpdesk::TicketModelExtension.allowed_ticket_export_fields
@@ -3642,6 +3647,7 @@ module Ember
     end
 
     def test_export_csv_with_limit_reach
+      @account.rollback(:silkroad_export)
       export_ids = []
       DataExport.ticket_export_limit.times do
         export_entry = @account.data_exports.new(
@@ -3664,10 +3670,10 @@ module Ember
       post :export_csv, construct_params({ version: 'private' }, params_hash)
       assert_response 429
       DataExport.where(:id => export_ids).destroy_all
-
     end
 
     def test_export_csv_without_privilege
+      @account.rollback(:silkroad_export)
       User.any_instance.stubs(:privilege?).with(:export_tickets).returns(false)
       params_hash = { ticket_fields: { 'display_id' => 'id' },
                       contact_fields: { 'name' => 'Requester Name', 'mobile' => 'Mobile Phone' },
@@ -3684,6 +3690,7 @@ module Ember
     end
 
     def test_export_csv_with_archive_export_limit_reached
+      @account.rollback(:silkroad_export)
       export_ids = []
       @account.make_current
       DataExport.archive_ticket_export_limit.times do
@@ -3710,6 +3717,7 @@ module Ember
     end
 
     def test_export_csv_with_limit_reach_per_user
+      @account.rollback(:silkroad_export)
       export_ids = []
       agent1 = add_test_agent(@account)
       DataExport.ticket_export_limit.times do
@@ -3737,6 +3745,7 @@ module Ember
     end
 
     def test_export_inline_sidekiq_csv_with_no_tickets
+      @account.rollback(:silkroad_export)
       RestClient::Request.any_instance.stubs(:execute).returns(ActionDispatch::TestResponse.new)
       @account.launch(:ticket_contact_export)
       2.times do
@@ -3755,6 +3764,7 @@ module Ember
     end
 
     def test_export_inline_sidekiq_csv_with_privilege
+      @account.rollback(:silkroad_export)
       RestClient::Request.any_instance.stubs(:execute).returns(ActionDispatch::TestResponse.new)
       @account.launch(:ticket_contact_export)
       2.times do
@@ -3782,6 +3792,7 @@ module Ember
     end
 
     def test_export_inline_sidekiq_xls_with_privilege
+      @account.rollback(:silkroad_export)
       RestClient::Request.any_instance.stubs(:execute).returns(ActionDispatch::TestResponse.new)
       @account.launch(:ticket_contact_export)
       2.times do

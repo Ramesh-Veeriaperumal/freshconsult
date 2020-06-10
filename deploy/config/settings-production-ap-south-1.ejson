@@ -1331,6 +1331,10 @@
         "field_service": {
           "_auth_type": "jwt",
           "jwt_secret": "EJ[1:u1qHUgUY38+/afzyjOzWoUh5nfSmaeoUn/uXXiKG/2g=:PEKdWS5FIqfsQ+RaoJc7cw4HzKxwyKCP:Xr+DTtrZ2RQVeCIaC8RhBhbw/T5tatlISHQZfTSEjBvv56hkQG+6qI89sXERKFPf9Y1KCkHcYm9tFGimLduSCsWYsOhbWO9kRDCt+8COfQ==]"
+        },
+        "silkroad": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:BMbkU/WyoYswDlVVQpjJk8l9CIWB9lCnB60773xLXFk=:pUhIueXmCBzob3Jd30Xn2Sr2mpTRVtwH:Rs4PgGzKASftqsgMGAJzKN5dNd4mI1ibc2kyF03IBjLSNVtzHfKs6dyzqw7P98Mxs3CJfQ==]"]
         }
       },
       "scheduler_client_keys": {
@@ -1527,6 +1531,10 @@
         "_subscription_host": "https://api.in.freshchat.com/v2/billing/callback",
         "_timeout": 10,
         "jwt_secret": "EJ[1:53rnt6IAlEElz0g7ib6RuPOmp1NpwuQ85KYnODXQa04=:4hGiS45yLCtHUmFxYEoYy67Y2/IAPD3s:TomyjzrauT+UOFnvYzqLq5n5SpH+L9QxzX3tM/cPVDJmiKC7uKk44Mlaw47j22sU]"
+      },
+      "silkroad_config": {
+        "_host": "https://silkroad-service.internal.podapsouth1.freshdesk.com/",
+        "_timeout": 10
       }
     },
     "unique_keys": {

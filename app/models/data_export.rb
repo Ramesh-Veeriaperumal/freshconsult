@@ -3,19 +3,22 @@ class DataExport < ActiveRecord::Base
   belongs_to_account
   belongs_to :user
 
+  serialize :export_params, Hash
+
   has_one :attachment,
-    :as => :attachable,
-    :class_name => 'Helpdesk::Attachment',
-    :dependent => :destroy
-  
-  EXPORT_TYPE = { :backup => 1, :ticket => 2, :contact => 3, :company => 4, :call_history => 5, :agent => 6, :reports => 7, 
-                  :archive_ticket => 8, audit_log: 9, article: 10 }
+          as: :attachable,
+          class_name: 'Helpdesk::Attachment',
+          dependent: :destroy
+
+  EXPORT_TYPE = { backup: 1, ticket: 2, contact: 3, company: 4, call_history: 5, agent: 6, reports: 7,
+                  archive_ticket: 8, audit_log: 9, article: 10, ticket_shadow: 11 }.freeze
+  EXPORT_NAME_BY_TYPE = EXPORT_TYPE.invert.freeze
 
   TICKET_EXPORT_LIMIT = 3
   PAID_TICKET_EXPORT_LIMIT = 10
 
   ARTICLE_EXPORT_LIMIT = 3
-  
+
   CONTACT_EXPORT_LIMIT_PER_ACCOUNT = 1
   COMPANY_EXPORT_LIMIT_PER_ACCOUNT = 1
   OLD_BACKUP_UPPER_THRESHOLD_DAYS = 30
@@ -23,62 +26,71 @@ class DataExport < ActiveRecord::Base
 
   AUDIT_LOG_EXPORT_LIMIT = 1
 
-  EXPORT_STATUS = {:started => 1,
-                   :file_created => 2,
-                   :file_uploaded => 3,
-                   :completed => 4,
-                   :failed => 5,
-                   no_logs: 6}
+  EXPORT_STATUS = { started: 1,
+                    file_created: 2,
+                    file_uploaded: 3,
+                    completed: 4,
+                    failed: 5,
+                    no_logs: 6 }.freeze
 
   EXPORT_IN_PROGRESS_STATUS = [:started, :file_created, :file_upload].freeze
 
-  EXPORT_COMPLETED_STATUS = [4, 5, 6]
+  EXPORT_COMPLETED_STATUS = [4, 5, 6].freeze
 
-  scope :ticket_export, :conditions => { :source => EXPORT_TYPE[:ticket] }, :order => "id"
-  scope :data_backup, conditions: { source: EXPORT_TYPE[:backup] }, :limit => 1, order: 'id desc'
-  scope :contact_export, :conditions => { :source => EXPORT_TYPE[:contact] }, :order => "id"
-  scope :company_export, :conditions => { :source => EXPORT_TYPE[:company] }, :order => "id"
-  scope :call_history_export, :conditions => { :source => EXPORT_TYPE[:call_history] }
-  scope :agent_export, :conditions => { :source => EXPORT_TYPE[:agent] }, :order => "id"
-  scope :reports_export, :conditions => { :source => EXPORT_TYPE[:reports] }, :order => "id"
+  scope :ticket_export, conditions: { source: EXPORT_TYPE[:ticket] }, order: 'id'
+  scope :ticket_shadow_export, conditions: { source: EXPORT_TYPE[:ticket_shadow] }, order: 'id'
+  scope :data_backup, conditions: { source: EXPORT_TYPE[:backup] }, limit: 1, order: 'id desc'
+  scope :contact_export, conditions: { source: EXPORT_TYPE[:contact] }, order: 'id'
+  scope :company_export, conditions: { source: EXPORT_TYPE[:company] }, order: 'id'
+  scope :call_history_export, conditions: { source: EXPORT_TYPE[:call_history] }
+  scope :agent_export, conditions: { source: EXPORT_TYPE[:agent] }, order: 'id'
+  scope :reports_export, conditions: { source: EXPORT_TYPE[:reports] }, order: 'id'
   scope :audit_log_export, conditions: { source: EXPORT_TYPE[:audit_log] }, order: 'id'
-  scope :current_exports, :conditions => ["status = #{EXPORT_STATUS[:started]} and last_error is null"]
-  scope :running_ticket_exports, :conditions => ["source = #{EXPORT_TYPE[:ticket]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
-  scope :running_archive_ticket_exports, :conditions => ["source = #{EXPORT_TYPE[:archive_ticket]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
+  scope :current_exports, conditions: ["status = #{EXPORT_STATUS[:started]} and last_error is null"]
+  scope :running_ticket_exports, conditions: ["source = #{EXPORT_TYPE[:ticket]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
+  scope :running_archive_ticket_exports, conditions: ["source = #{EXPORT_TYPE[:archive_ticket]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
   scope :running_contact_exports, conditions: ["source = #{EXPORT_TYPE[:contact]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
   scope :running_company_exports, conditions: ["source = #{EXPORT_TYPE[:company]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
-  scope :old_data_backup, lambda{ |threshold = OLD_BACKUP_UPPER_THRESHOLD_DAYS.days.ago| {
-    conditions: ["source = #{EXPORT_TYPE[:backup]} and created_at <= (?) and created_at >= (?)", 
-      threshold, OLD_BACKUP_LOWER_THRESHOLD_DAYS.days.ago] }}
+  scope :old_data_backup, lambda { |threshold = OLD_BACKUP_UPPER_THRESHOLD_DAYS.days.ago|
+                            {
+                              conditions: ["source = #{EXPORT_TYPE[:backup]} and created_at <= (?) and created_at >= (?)",
+                                           threshold, OLD_BACKUP_LOWER_THRESHOLD_DAYS.days.ago]
+                            }
+                          }
   scope :running_article_exports, conditions: ["source = #{EXPORT_TYPE[:article]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
 
+  EXPORT_TYPE.each do |export_name, export_enum|
+    define_method("#{export_name}_export?") do
+      source == export_enum
+    end
+  end
 
   def owner?(downloader)
     user_id && downloader && (user_id == downloader.id)
   end
 
   def started!
-    self.update_attributes(:status => EXPORT_STATUS[:started])
+    update_attributes(status: EXPORT_STATUS[:started])
   end
 
   def file_created!
-    self.update_attributes(:status => EXPORT_STATUS[:file_created])
+    update_attributes(status: EXPORT_STATUS[:file_created])
   end
 
   def file_uploaded!
-    self.update_attributes(:status => EXPORT_STATUS[:file_uploaded])
+    update_attributes(status: EXPORT_STATUS[:file_uploaded])
   end
 
   def completed!
-    self.update_attributes(:status => EXPORT_STATUS[:completed])
+    update_attributes(status: EXPORT_STATUS[:completed])
   end
 
   def failure!(error)
-    self.update_attributes(:last_error => error, :status => EXPORT_STATUS[:failed])
+    update_attributes(last_error: error, status: EXPORT_STATUS[:failed])
   end
 
   def no_logs!
-    self.update_attributes(:status => EXPORT_STATUS[:no_logs])
+    update_attributes(status: EXPORT_STATUS[:no_logs])
   end
 
   def completed?
@@ -90,7 +102,7 @@ class DataExport < ActiveRecord::Base
   end
 
   def save_hash!(hash)
-    self.update_attributes(:token => hash)
+    update_attributes(token: hash)
   end
 
   def self.default_export_limit

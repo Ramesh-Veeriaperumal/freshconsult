@@ -1,0 +1,5 @@
+defaults: &defaults
+  host: <%= node[:ymls][:silkroad_config][:host] %>
+  timeout: <%= node[:ymls][:silkroad_config][:timeout] %>
+<%= node[:opsworks][:environment]%>:
+  <<: *defaults
