@@ -1,6 +1,7 @@
 module Ecommerce::Ebay::Util
 
   include Ecommerce::Ebay::Constants
+  include Social::Util
 
   def session_store(data_to_be_stored)
     data_to_be_stored.each do |key,val|
@@ -46,4 +47,32 @@ module Ecommerce::Ebay::Util
     end
   end
 
+  def create_ebay_attachments(account, item, message_id, media_array)
+    return unless media_array
+
+    attachments = []
+    media_url_hash = {}
+    media_array = [media_array] if media_array.is_a?(Hash)
+    begin
+      media_array.each do |media|
+        media_url = media['MediaURL']
+        file_name = media['MediaName']
+        options = {
+          file_content: open(media_url),
+          filename: file_name,
+          content_type: get_content_type(file_name),
+          content_size: 1000
+        }
+        image_attachment = Helpdesk::Attachment.create_for_3rd_party(account, item, options, 1, 1, false)
+        if image_attachment.present? && image_attachment.content.present?
+          media_url_hash[media_url] = image_attachment.inline_url
+          attachments << image_attachment
+        end
+      end
+    rescue StandardError => e
+      Rails.logger.info "Error attaching media from ebay, message : #{message_id} : Exception: #{e.class} : Exception Message: #{e.message} : Backtrace: #{e.backtrace[0..10]}"
+    end
+    item.inline_attachments = attachments.compact
+    media_url_hash
+  end
 end
