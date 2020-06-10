@@ -2,6 +2,9 @@ module CronWebhooks
   class TrafficSwitchFetchAccounts < CronWebhooks::CronWebhookWorker
     sidekiq_options queue: :cron_traffic_switch_fetch_accounts, retry: 0, dead: true, failures: :exhausted
 
+    S3_BUCKET_NAME = 'log-bucket-production'.freeze
+    S3_BUCKET_PATH = "haproxy-domains/#{ENV['AWS_REGION']}".freeze
+
     def perform(args)
       perform_block(args, &method(:fetch_accounts))
     end
@@ -9,16 +12,26 @@ module CronWebhooks
     private
 
       def fetch_accounts
-        bucket_name = 'log-bucket-production'
+        @s3 = Aws::S3::Client.new(region: 'us-east-1')
+
+        upload_domain_shard_mapping
+        upload_free_paid_domains
+      end
+
+      def upload_free_paid_domains
+        free_account_ids, paid_account_details = fetch_free_paid_accounts
+
+        billed_domains = fetch_billed_domains
+        free_account_domains = fetch_free_domains(free_account_ids, billed_domains)
+        paid_account_domains = fetch_paid_domains(paid_account_details, billed_domains)
+
+        write_and_upload_file('free_domains.lst', free_account_domains)
+        bucket_and_upload(paid_account_domains)
+      end
+
+      def fetch_free_paid_accounts
         free_account_ids = []
         paid_account_details = []
-        free_account_domains = []
-        paid_account_domains = {}
-        plan_details_hash = SubscriptionPlan.all.map { |i| [i.id, i.name] }.to_h
-
-        plan_details_hash.keys.each do |key|
-          paid_account_domains[key] = []
-        end
 
         Sharding.run_on_all_slaves do
           Subscription.where(state: %w[free active paid], subscription_currency_id: 1).each do |subscription|
@@ -32,73 +45,94 @@ module CronWebhooks
           end
         end
 
-        suspended_domains = []
-        domain_details = []
-        Sharding.run_on_all_slaves do
-          current_shard_name = ActiveRecord::Base.current_shard_selection.shard.to_s
-            Subscription.find_each do |subscription|
-              begin
-                if subscription.state.eql? 'suspended'
-                  domain =  DomainMapping.find_by_account_id(subscription.account_id).try(:domain)
-                  suspended_domains << domain
-                else
-                  account_shard_name = ShardMapping.lookup_with_account_id(subscription.account_id).shard_name
-                  if account_shard_name == current_shard_name
-                      domain = DomainMapping.find_by_account_id(subscription.account_id).try(:domain)
-                      account_shard_name.slice! 'shard_'
-                      state = (subscription.state.eql? 'active') ? 'paid' : subscription.state
-                      domain_details << domain + ' ' + account_shard_name + ' ' + state
-                  end
-                end
-              rescue StandardError => e
-                NewRelic::Agent.notice_error(e)
-              end
-            end
-        end
+        [free_account_ids, paid_account_details]
+      end
 
-        s3 = Aws::S3::Client.new(region: 'us-east-1')
-        File.open('/tmp/suspended_domains.lst', 'w') do |f|
-          suspended_domains.each { |domain| f.puts(domain) }
-        end
-        s3.put_object(key: 'haproxy-domains/suspended_domains.lst', bucket: bucket_name, body: IO.read('/tmp/suspended_domains.lst'))
+      def fetch_paid_domains(paid_account_details, billed_domains)
+        plan_details_hash = SubscriptionPlan.all.map { |i| [i.id, i.name] }.to_h
+        paid_account_domains = {}
 
-        File.open('/tmp/domain_details.map', 'w') do |f|
-          domain_details.each { |domain| f.puts(domain) }
-        end
-        s3.put_object(key: 'haproxy-domains/domain_details.map', bucket: bucket_name, body: IO.read('/tmp/domain_details.map'))
-
-        # The S3 File (haproxy-domains/billed_domains.lst) holds the billed domains which should not be treated
-        # as sample domains during FREE or PARTIAL Traffic switch
-        
-        billed_domains_list = []
-        begin
-          billed_domains_object = s3.get_object(key: 'haproxy-domains/billed_domains.lst', bucket: bucket_name)
-          billed_domains_list = billed_domains_object.body.string.split('\n').uniq
-        rescue Aws::S3::Errors::ServiceError
-          Rails.logger.info 'S3 File - haproxy-domains/billed_domains.lst not found'
-        end
-
-        free_account_ids.each do |acc_id|
-          domain = DomainMapping.find_by_account_id_and_portal_id(acc_id, nil).try(:domain)
-          free_account_domains << domain if domain && !(billed_domains_list.include? domain)
+        plan_details_hash.keys.each do |key|
+          paid_account_domains[key] = []
         end
 
         paid_account_details.each do |acc_id, plan_id|
-          domain = DomainMapping.find_by_account_id_and_portal_id(acc_id, nil).try(:domain)
-          paid_account_domains[plan_id] << domain if domain && !(billed_domains_list.include? domain)
+          domain = DomainMapping.where(account_id: acc_id, portal_id: nil).first.try(:domain)
+          paid_account_domains[plan_id] << domain if domain && !(billed_domains.include? domain)
+        end
+        paid_account_domains
+      end
+
+      def fetch_free_domains(free_accounts, billed_domains)
+        free_account_domains = []
+
+        free_accounts.each do |acc_id|
+          domain = DomainMapping.where(account_id: acc_id, portal_id: nil).first.try(:domain)
+          free_account_domains << domain if domain && !(billed_domains.include? domain)
+        end
+        free_account_domains
+      end
+
+      # The S3 File (#{S3_BUCKET_PATH}/billed_domains.lst) holds the billed domains which should not be treated
+      # as sample domains during FREE or PARTIAL Traffic switch
+      def fetch_billed_domains
+        begin
+          billed_domains_object = @s3.get_object(key: "#{S3_BUCKET_PATH}/billed_domains.lst", bucket: S3_BUCKET_NAME)
+          return billed_domains_object.body.string.split('\n').uniq
+        rescue Aws::S3::Errors::ServiceError
+          Rails.logger.info "S3 File - #{S3_BUCKET_PATH}/billed_domains.lst not found"
+          return []
+        rescue StandardError => e
+          Rails.logger.error "Error fetching billed domains : #{e.message}"
+          return []
+        end
+      end
+
+      def upload_domain_shard_mapping
+        suspended_domains = []
+        domain_details = []
+
+        Sharding.run_on_all_slaves do
+          current_shard_name = ActiveRecord::Base.current_shard_selection.shard.to_s
+          Subscription.find_each do |subscription|
+            begin
+              if subscription.state.eql? 'suspended'
+                domain = DomainMapping.where(account_id: subscription.account_id).first.try(:domain)
+                suspended_domains << domain
+              else
+                account_shard_name = ShardMapping.lookup_with_account_id(subscription.account_id).shard_name
+                if account_shard_name == current_shard_name
+                  domain = DomainMapping.where(account_id: subscription.account_id).first.try(:domain)
+                  account_shard_name.slice! 'shard_'
+                  state = subscription.state.eql?('active') ? 'paid' : subscription.state
+                  domain_details << domain + ' ' + account_shard_name + ' ' + state
+                end
+              end
+            rescue StandardError => e
+              Rails.logger.error "upload_domain_shard_mapping :: Error while generating map :: #{e.message}"
+              NewRelic::Agent.notice_error(e)
+            end
+          end
         end
 
-        File.open('/tmp/free_domains.lst', 'w') do |f|
-          free_account_domains.each { |domain| f.puts(domain) }
+        write_and_upload_file('suspended_domains.lst', suspended_domains)
+        write_and_upload_file('domain_details.map', domain_details)
+      end
+
+      def write_and_upload_file(file_name, content)
+        file_path = "/tmp/#{file_name}"
+        File.open(file_path, 'w') do |f|
+          content.each { |line| f.puts(line) }
         end
+        @s3.put_object(key: "#{S3_BUCKET_PATH}/#{file_name}", bucket: S3_BUCKET_NAME, body: IO.read("/tmp/#{file_name}"))
+      end
 
-        s3.put_object(key: 'haproxy-domains/free_domains.lst', bucket: bucket_name, body: IO.read('/tmp/free_domains.lst'))
-
+      def bucket_and_upload(paid_domains)
         file_name_mappings = { 0 => '/tmp/t1.lst', 1 => '/tmp/t2.lst', 2 => '/tmp/t3.lst', 3 => '/tmp/t4.lst' }
         file_object_mappings = {}
         file_name_mappings.each { |i, file_name| file_object_mappings[i] = File.open(file_name, 'w+') }
 
-        paid_account_domains.each_value do |domains_arr|
+        paid_domains.each_value do |domains_arr|
           domains_arr.each_with_index do |dom, index|
             key = index % 4
             file_object_mappings[key].puts(dom)
@@ -109,7 +143,7 @@ module CronWebhooks
 
         file_name_mappings.each_value do |path|
           name = File.basename(path)
-          s3.put_object(key: "haproxy-domains/#{name}", bucket: bucket_name, body: IO.read(path))
+          @s3.put_object(key: "#{S3_BUCKET_PATH}/#{name}", bucket: S3_BUCKET_NAME, body: IO.read(path))
         end
       end
   end
