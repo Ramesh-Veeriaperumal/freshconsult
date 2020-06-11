@@ -17,6 +17,7 @@ module Redis::RedisKeys
   include Redis::Keys::Semaphore
   include Redis::Keys::AutomationRules
   include Redis::Keys::SidekiqBgOptions
+  include Redis::Keys::Silkroad
   # Please do not any new key in this file.
   # Please add new key in respective file based on its redis host.
 

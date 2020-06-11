@@ -25,6 +25,11 @@ properties:
     type: boolean
   agent_type:
     type: integer
+  contribution_group_ids:
+    type: array
+    items:
+      type: integer
+      format: int64
   group_ids:
     type: array
     items:

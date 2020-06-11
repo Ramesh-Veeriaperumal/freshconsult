@@ -10,7 +10,9 @@ require Rails.root.join('test', 'core', 'helpers', 'users_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'automation_rules_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'shared_ownership_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'groups_test_helper.rb')
+require Rails.root.join('test', 'core', 'helpers', 'controller_test_helper.rb')
 require Rails.root.join('test', 'api', 'helpers', 'ticket_fields_test_helper.rb')
+require Rails.root.join('test', 'api', 'helpers', 'users_test_helper.rb')
 
 module Admin
   module Observer
@@ -21,6 +23,8 @@ module Admin
       include AutomationRulesTestHelper
       include SharedOwnershipTestHelper
       include TicketFieldsTestHelper
+      include UsersTestHelper
+      include ControllerTestHelper
 
       CUSTOM_FIELD_TYPES = [:checkbox, :number, :decimal, :nested_field, :date]
 
@@ -241,6 +245,32 @@ module Admin
         assert Va::Action.new(act_hash: act_hash, va_rule: rule).trigger(act_on: ticket, doer: User.first, triggered_event: { ticket_action: 'marked_Spam' })
       end
 
+      def test_parent_child_ticket_observer_adding_notes
+        Account.any_instance.stubs(:parent_child_tickets_enabled?).returns(true)
+        @agent = add_test_agent(@account, role: Role.where(name: 'Account Administrator').first.id)
+        rule = parent_child_ticket_observer_rule
+        params = {}
+        parent_ticket = create_ticket(params)
+        parent_ticket.update_attributes(association_type: 1, subsidiary_tkts_count: 1)
+        @agent.make_current
+        options = { requester_id: @agent.id, assoc_parent_id: parent_ticket.display_id, subject: "#{params[:subject]}_child_tkt" }
+        child_ticket = create_ticket(params.merge(options))
+        child_ticket.priority = 3
+        Sidekiq::Testing.inline! { child_ticket.save }
+        child_ticket = child_ticket.reload
+        parent_ticket = parent_ticket.reload
+        assert_equal rule.action_data[0][:note_body], parent_ticket.notes.last.note_body.body
+        assert_equal rule.action_data[1][:note_body], child_ticket.notes.last.note_body.body
+        Tickets::ResetAssociations.new.perform(ticket_ids: [parent_ticket.display_id, child_ticket.display_id])
+        Account.any_instance.unstub(:parent_child_tickets_enabled?)
+      ensure
+        rule.destroy if rule.present?
+        child_ticket.destroy if child_ticket.present?
+        parent_ticket.destroy if parent_ticket.present?
+        User.reset_current_user
+        @agent = nil
+      end
+
       private
 
         def construct_overdue_type_hash(overdue_type)
@@ -268,6 +298,17 @@ module Admin
           rule.action_data = [{ name: emailing_type.to_s, email_to: -2, email_subject: 'Test Email', email_body: '<p dir="ltr">Test Email description</p>' }]
           rule.save!
           [ticket, rule]
+        end
+
+        def parent_child_ticket_observer_rule
+          rule = @account.observer_rules.new
+          rule.name = 'parent_child_test_rule'
+          rule.filter_data = []
+          rule.condition_data = { performer: { 'type' => '3' }, events: [{ name: 'priority', from: '--', to: '--' }], conditions: { any: [{ evaluate_on: ':ticket', name: 'association_type', operator: 'is', value: 2 }] } }
+          rule.action_data = [{ name: 'add_note', note_body: 'adding note in parent', evaluate_on: 'parent_ticket' }, { name: 'add_note', note_body: 'adding note in child', evaluate_on: 'same_ticket' }]
+          rule.save!
+          rule.reload
+          rule
         end
 
         def create_ticket_for_observer(ticket_params)

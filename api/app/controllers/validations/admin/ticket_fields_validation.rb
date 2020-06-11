@@ -84,8 +84,7 @@ module Admin
     validate :validate_params
 
     validate :multi_product_feature?, if: -> { not_index? && tf.present? && tf.product_field? }
-    validate :multi_dynamic_section?, if: -> { create_or_update? && instance_variable_defined?(:@section_mappings) }
-    validate :multi_dynamic_section?, if: -> { create_or_update? && instance_variable_defined?(:@section_mappings) }
+    validate :dynamic_section?, if: -> { create_or_update? && instance_variable_defined?(:@section_mappings) }
     validate :multi_company_feature?, if: -> { not_index? && tf.present? && tf.company_field? }
     validate :fsm_field_check, if: -> { ((update_action? && instance_variable_defined?(:@archived)) || delete_action?) && tf.fsm? }
     validate :default_field_check, if: -> { ((update_action? && instance_variable_defined?(:@archived)) || delete_action?) && tf.default? } # need to handle for fsm too
@@ -137,7 +136,7 @@ module Admin
           errors[:include] << :not_included
           error_options[:include] = { list: ALLOWED_FIELD_INSIDE_INCLUDE.join(', ') }
         elsif rel.include?(:section)
-          (tf.default? && dynamic_section?) || (!tf.default && multi_dynamic_section?)
+          dynamic_section?
         end
       end
 

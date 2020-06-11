@@ -31,7 +31,7 @@ module Tickets
           original_ticket = original_ticket_data(evaluate_on, original_attributes)
           rules.each do |vr|
             begin
-              Va::Logger::Automation.set_rule_id(vr.id)
+              Va::Logger::Automation.set_rule_id(vr.id, account.id, ticket_id, doer_id)
               ticket = nil
               time = Benchmark.realtime {
                 ticket = account.automation_revamp_enabled? ?
@@ -108,7 +108,7 @@ module Tickets
               evaluate_on.sync_task_changes_to_ocr
           end
         end
-        return { sbrr_exec: evaluate_on.try(:sbrr_exec_obj) } if evaluate_rr?
+        return evaluate_rr? ? { sbrr_exec: evaluate_on.try(:sbrr_exec_obj) } : { sbrr_exec: nil }
       end
     end
 

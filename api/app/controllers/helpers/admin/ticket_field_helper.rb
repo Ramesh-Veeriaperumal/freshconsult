@@ -126,18 +126,10 @@ module Admin::TicketFieldHelper
     end
 
     def dynamic_section?
-      unless Account.current.features?(:dynamic_sections)
+      unless Account.current.dynamic_sections_enabled?
         errors[:dynamic_sections] << :require_feature
         error_options.merge!(dynamic_sections: { feature: :dynamic_sections,
                                                  code: :access_denied })
-      end
-    end
-
-    def multi_dynamic_section?
-      unless Account.current.multi_dynamic_sections_enabled?
-        errors[:multi_dynamic_sections] << :require_feature
-        error_options.merge!(multi_dynamic_sections: { feature: :multi_dynamic_sections,
-                                                       code: :access_denied })
       end
     end
 

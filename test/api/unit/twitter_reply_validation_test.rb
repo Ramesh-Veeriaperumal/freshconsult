@@ -301,10 +301,10 @@ class TwitterReplyValidationTest < ActionView::TestCase
     ticket_instance.stubs(:twitter?).returns(true)
     item = Helpdesk::Ticket.new
     validation = TwitterReplyValidation.new({
-                                               body: Faker::Lorem.characters(rand(10..140)),
-                                               twitter_handle_id: 1,
-                                               tweet_type: 'dm',
-                                               include_surveymonkey_link: 2
+                                              body: Faker::Lorem.characters(rand(10..140)),
+                                              twitter_handle_id: 1,
+                                              tweet_type: 'dm',
+                                              include_surveymonkey_link: 2
                                             }, item)
 
     refute validation.valid?

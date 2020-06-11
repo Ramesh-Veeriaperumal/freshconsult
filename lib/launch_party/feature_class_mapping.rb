@@ -1,6 +1,7 @@
 class FeatureClassMapping
   FEATURE_TO_CLASS = {
-    supervisor_multi_select: 'SupervisorMultiSelect'
+    supervisor_multi_select: 'SupervisorMultiSelect',
+    advanced_ticket_scopes: 'AdvancedTicketScope'
   }.freeze
 
   def self.get_class(feature_name)

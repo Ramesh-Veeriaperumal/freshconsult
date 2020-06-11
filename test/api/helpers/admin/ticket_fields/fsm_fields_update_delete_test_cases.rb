@@ -21,7 +21,7 @@ module Admin::TicketFields::FsmFieldsUpdateDeleteTestCases
 
   def test_fsm_fields_update
     launch_ticket_field_revamp do
-      enable_multi_dynamic_sections_feature do
+      enable_dynamic_sections_feature do
         add_fsm_feature do
           section = setup_fsm_fields
           params = fsm_field_update_params(section.id)
@@ -71,7 +71,7 @@ module Admin::TicketFields::FsmFieldsUpdateDeleteTestCases
 
   def test_fsm_fields_update_with_invalid_section_id
     launch_ticket_field_revamp do
-      enable_multi_dynamic_sections_feature do
+      enable_dynamic_sections_feature do
         add_fsm_feature do
           setup_fsm_fields
           tf = set_up_fsm_ticket_field

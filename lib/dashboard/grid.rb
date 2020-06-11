@@ -15,6 +15,14 @@ class Dashboard::Grid
     @widgets
   end
 
+  def process_omni_widgets(dashboard_widget)
+    dashboard_widget.each_with_index.map do |widget, i|
+      temp_widget = Dashboard::OmniWidget.new(widget)
+      @widgets.push calculate_position(temp_widget)
+    end
+    @widgets
+  end
+
   private
 
   def canFit(widget)

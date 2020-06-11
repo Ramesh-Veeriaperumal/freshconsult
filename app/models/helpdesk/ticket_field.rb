@@ -794,15 +794,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
     Account.current.features?(:dynamic_sections)
   end
 
-  def has_multi_sections_feature?
-    Account.current.multi_dynamic_sections_enabled?
-  end
-
   def has_section?
-    return true if has_sections_feature? &&
-                  ((field_type == SECTION_DROPDOWNS[0] && !has_multi_sections_feature?) ||
-                   SECTION_DROPDOWNS.include?(self.field_type) &&
-                   has_multi_sections_feature?)
+    return true if Account.current.dynamic_sections_enabled?
     # if field_type == "custom_dropdown"
     #   return false if section_field?
     #   !dynamic_section_fields.blank?

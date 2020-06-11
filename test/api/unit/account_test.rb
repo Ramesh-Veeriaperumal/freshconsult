@@ -1,5 +1,6 @@
 require_relative '../unit_test_helper'
 require_relative '../test_helper'
+require 'sidekiq/testing'
 require Rails.root.join('spec', 'support', 'account_helper.rb')
 
 class AccountTest < ActionView::TestCase
@@ -564,6 +565,20 @@ class AccountTest < ActionView::TestCase
     CRM::FreshsalesUtility.any_instance.unstub(:request_account_info)
     Account.any_instance.unstub(:created_at)
     CRM::FreshsalesUtility.any_instance.unstub(:get_entity_id)
+  end
+
+  def test_rolling_back_of_advanced_ticket_scope_feature
+    Sidekiq::Testing.inline! do
+      Account.current.add_feature(:advanced_ticket_scopes)
+      dummy_user = Account.current.technicians.first
+      group_id = Account.current.groups.first.id
+      dummy_user.agent.agent_groups.new.tap { |ag| ag.group_id = group_id; ag.write_access = false; ag.save! }
+      assert_equal 1, Account.current.agent_groups.where('user_id = ? and write_access = ?', dummy_user.id, 0).count
+      Account.current.revoke_feature(:advanced_ticket_scopes)
+      @account = create_test_account
+      @account.make_current
+      assert Account.current.agent_groups.where('user_id = ? and write_access = ?', dummy_user.id, 0).count.zero?
+    end
   end
 
   def stub_freshsales_response

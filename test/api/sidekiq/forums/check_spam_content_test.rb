@@ -114,6 +114,55 @@ class CheckSpamContentTest < ActionView::TestCase
     FreshdeskErrorsMailer.unstub(:error_email)
   end
 
+  def test_topic_observer_calls_spam_checker_once
+    forum = Forum.first
+    forum_type_symbol = Forum::TYPE_KEYS_BY_TOKEN[Forum::TYPE_SYMBOL_BY_KEY[forum.forum_type]]
+    stamp_type = Topic::ALL_TOKENS_FOR_FILTER[forum_type_symbol].keys[1]
+    topic = FactoryGirl.build(
+      :topic,
+      account_id: @account.id,
+      forum_id: forum.id,
+      user_id: @customer.id,
+      stamp_type: stamp_type,
+      user_votes: 0
+    )
+    Forum::CheckContentForSpam.expects(:perform_async).at_least_once
+    topic.save!
+    # when we use tranaction fixtures in test cases, after commit callbacks won't be called. thus triggering manually
+    # fixed in latest rails version https://github.com/rails/rails/pull/18458/files. we can remove this after ungrading rails.
+    topic.run_callbacks(:commit)
+    topic.destroy
+  end
+
+  def test_posts_observer_calls_spam_checker_once
+    forum = Forum.first
+    forum_type_symbol = Forum::TYPE_KEYS_BY_TOKEN[Forum::TYPE_SYMBOL_BY_KEY[forum.forum_type]]
+    stamp_type = Topic::ALL_TOKENS_FOR_FILTER[forum_type_symbol].keys[1]
+    topic = FactoryGirl.build(
+      :topic,
+      account_id: @account.id,
+      forum_id: forum.id,
+      user_id: @customer.id,
+      stamp_type: stamp_type,
+      user_votes: 0
+    )
+    topic.save!
+    post = FactoryGirl.build(
+      :post,
+      account_id: @account.id,
+      topic_id: topic.id,
+      user_id: @customer.id,
+      user_votes: 0,
+      published: true
+    )
+    Forum::CheckContentForSpam.expects(:perform_async).at_least_once
+    post.save!
+    # when we use tranaction fixtures in test cases, after commit callbacks won't be called. thus triggering manually
+    # fixed in latest rails https://github.com/rails/rails/pull/18458/files. we can remove this after ungrading rails
+    post.run_callbacks(:commit)
+    topic.destroy
+  end
+
   private
 
     def portal_redis_key

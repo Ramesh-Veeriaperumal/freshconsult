@@ -128,6 +128,10 @@ class Solution::Article < ActiveRecord::Base
     CentralPublish::UpdateTag.perform_async(tag_args)
   end
 
+  def merge_bulk_publish_payload
+    model_changes.merge!(status: [1, 2])
+  end
+
   def add_tag_activity(tag)
     if tag_changes.present?
       tag_changes[:added_tags].present? ? tag_changes[:added_tags] << tag.name : tag_changes[:added_tags] = [tag.name]
@@ -229,6 +233,22 @@ class Solution::Article < ActiveRecord::Base
         :customer_folders => solution_folder_meta.customer_folders.map {|cf| {"customer_id" => cf.customer_id} }
       }
     }
+  end
+
+  def author_update_details
+    return {} unless previous_changes.key?(:agent_id)
+
+    { agent_name: previous_changes[:agent_id].map { |id| Account.current.users.find(id).name } }
+  end
+
+  def folder_update_details
+    return {} unless parent.previous_changes.key?(:solution_folder_meta_id)
+
+    { solution_folder_name: parent.previous_changes[:solution_folder_meta_id].map { |id| fetch_folder_name(id) } }
+  end
+
+  def fetch_folder_name(id)
+    Account.current.solution_folders.where(parent_id: id, language_id: language_id).first.name
   end
 
   def as_json(options={})

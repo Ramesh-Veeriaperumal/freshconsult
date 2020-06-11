@@ -23,7 +23,6 @@ Custom Ssl 19:
   - :custom_ssl
 Dynamic Sections:
   - :dynamic_sections
-  - :multi_dynamic_sections
 One Contact Multiple Companies:
   - :multiple_user_companies
   - :multiple_companies_toggle

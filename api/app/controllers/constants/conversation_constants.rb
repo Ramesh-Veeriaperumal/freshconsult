@@ -20,7 +20,7 @@ module ConversationConstants
   CREATE_FIELDS = %w(body private incoming user_id last_note_id).freeze | CREATE_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   TWEET_FIELDS = %w[body tweet_type twitter_handle_id last_note_id attachment_ids include_surveymonkey_link].freeze
   UPDATE_FIELDS = %w(body).freeze | UPDATE_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
-  FACEBOOK_REPLY_FIELDS = %w[body agent_id note_id last_note_id attachment_ids msg_type].freeze
+  FACEBOOK_REPLY_FIELDS = %w[body agent_id note_id last_note_id attachment_ids msg_type include_surveymonkey_link].freeze
   ECOMMERCE_REPLY_FIELDS = %w[body agent_id last_note_id attachment_ids].freeze
   MAX_INCLUDE = 10
   TYPE_FOR_ACTION = {

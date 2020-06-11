@@ -8267,4 +8267,7 @@ en:
     landing_subheading: 'We’re sorry to see you go! If you unsubscribe now, we will no longer be able to send you any more updates. You can click on ‘unsubscribe’ button below to confirm your unsubscription.'
     success_heading: 'Successfully unsubscribed.'
     success_subheading: 'You have successfully unsubscribed from our updates and notifications mailing lists.'
+  omni_dashboard:
+    freshchat_volume_tooltip: 'Conversation that have been unassigned or assigned & not replied for 15 mins'
+    omni_availability_detail_title: 'view details'
 

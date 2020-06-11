@@ -390,7 +390,7 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/ticket_show"
+              "$ref": "#/definitions/ticket_update"
             }
           },
           "400": {
@@ -1640,7 +1640,7 @@
                   "$ref": "#/definitions/extended_note"
                 },
                 "meta": {
-                  "$ref": "#/definitions/meta"
+                  "$ref": "#/definitions/vault_meta_token"
                 }
               }
             }
@@ -18410,6 +18410,13 @@
         "agent_type": {
           "type": "integer"
         },
+        "contribution_group_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
         "group_ids": {
           "type": "array",
           "items": {
@@ -19548,6 +19555,13 @@
         },
         "signature": {
           "type": "string"
+        },
+        "contribution_group_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          }
         },
         "group_ids": {
           "type": "array",
@@ -21548,6 +21562,92 @@
         }
       }
     },
+    "ticket_update": {
+      "type": "object",
+      "properties": {
+        "ticket": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/extended_ticket"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "freshfone_call": {
+                  "$ref": "#/definitions/freshfone_call"
+                },
+                "fb_post": {
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/fb_post"
+                    },
+                    {
+                      "properties": {
+                        "fb_page": {
+                          "$ref": "#/definitions/fb_page"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "tweet": {
+                  "$ref": "#/definitions/tweet_post"
+                },
+                "survey_result": {
+                  "$ref": "#/definitions/survey_result"
+                },
+                "ticket_topic": {
+                  "$ref": "#/definitions/ticket_topic"
+                },
+                "stats": {
+                  "$ref": "#/definitions/ticket_stats"
+                },
+                "email_spam_data": {
+                  "$ref": "#/definitions/email_spam_data"
+                },
+                "collaboration": {
+                  "type": "object",
+                  "properties": {
+                    "convo_token": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "meta": {
+                  "type": "object",
+                  "properties": {
+                    "user_agent": {
+                      "type": "string"
+                    },
+                    "referrer": {
+                      "type": "string"
+                    },
+                    "created_by": {
+                      "type": "integer"
+                    },
+                    "time": {
+                      "type": "string",
+                      "format": "datetime"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "meta": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/meta"
+            },
+            {
+              "$ref": "#/definitions/vault_meta_token"
+            }
+          ]
+        }
+      }
+    },
     "archive_ticket_show": {
       "allOf": [
         {
@@ -22626,9 +22726,6 @@
       "properties": {
         "count": {
           "type": "integer"
-        },
-        "vault_token": {
-          "type": "string"
         }
       }
     },
@@ -22679,6 +22776,14 @@
       "properties": {
         "cascading_rules": {
           "type": "boolean"
+        }
+      }
+    },
+    "vault_meta_token": {
+      "type": "object",
+      "properties": {
+        "vault_token": {
+          "type": "string"
         }
       }
     },
@@ -24868,6 +24973,22 @@
                   "y": {
                     "type": "integer",
                     "description": "Vertical postion in the xy plane"
+                  },
+                  "source": {
+                    "type": "string",
+                    "description": "For omni channel dashboard what is the source of the widget"
+                  },
+                  "tooltip": {
+                    "type": "string",
+                    "description": "For omni channel dashboard, tooltip string for any widget"
+                  },
+                  "detail_link": {
+                    "type": "string",
+                    "description": "For omni channel dashboard, link in the header which redirects to detail view"
+                  },
+                  "detail_title": {
+                    "type": "string",
+                    "description": "For omni channel dashboard, title of link in the header which redirects to detail view"
                   }
                 }
               }

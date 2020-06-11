@@ -146,7 +146,7 @@ class Admin::AutomationsController < ApiApplicationController
             User.current.privilege?(:manage_supervisor_rules)
       when :service_task_dispatcher, :service_task_observer
         render_request_error :access_denied, 403 unless User.current.privilege?(:manage_service_task_automation_rules) &&
-            fsm_and_service_task_automation_enabled?
+          current_account.field_service_management_enabled?
       else
         # For scenario_automation and rest
       end
@@ -167,9 +167,5 @@ class Admin::AutomationsController < ApiApplicationController
         params[cname][:position] = new_db_position
         @item.frontend_positions = [positions_array.index(old_db_position) + 1, positions_array.index(new_db_position) + 1]
       end
-    end
-
-    def fsm_and_service_task_automation_enabled?
-       current_account.field_service_management_enabled? && current_account.fsm_admin_automations_enabled?
     end
 end

@@ -125,7 +125,10 @@ module SolutionBulkActionConcern
       if Account.current.article_approval_workflow_enabled? && User.current.privilege?(:publish_approved_solution) && !User.current.privilege?(:publish_solution)
         return false if article.helpdesk_approval.nil? || article.helpdesk_approval.approval_status != Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]
       end
-      article.draft.publish! if article.draft.present?
+      # We do article.save twice during bulk publish. Once during draft.publish! and another during article_meta.save (under def update_article_properties)
+      # As a result, previous_changes are overwritten and lost
+      # Appending status changes to article.model_changes so that appropriate payload is pushed to central
+      article.merge_bulk_publish_payload if article.draft.publish!
     end
     true
   end

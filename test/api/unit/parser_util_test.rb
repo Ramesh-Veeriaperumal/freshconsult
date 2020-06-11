@@ -44,4 +44,18 @@ class EmailParserTest < ActionView::TestCase
     Account.any_instance.unstub(:new_email_regex_enabled?)
     Account.unstub(:current)
   end
+
+  def test_memcache_keys_from_yaml
+    key = MemcacheKeys.key(:'source_account_choice_id.account_id', 1234)
+    assert_equal key, 'v1/ACCOUNT_SOURCES:1234'
+
+    key = MemcacheKeys.key2(:'componse_email_form.account_id.language', 1234, :en)
+    assert_equal key, 'v3/COMPOSE_EMAIL_FORM:1234:en'
+
+    key = MemcacheKeys.key3(:'dummy', 1234, :en, :product)
+    assert_equal key, 'dummy:1234:en:product'
+
+    key = MemcacheKeys.key4(:'dummy', 1234, :en, :product, '2020')
+    assert_equal key, 'dummy:1234:en:product:2020'
+  end
 end

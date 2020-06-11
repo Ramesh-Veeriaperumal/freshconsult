@@ -65,4 +65,14 @@ class FbReplyValidationTest < ActionView::TestCase
     fb_reply_validation = FbReplyValidation.new(controller_params, nil)
     refute fb_reply_validation.valid?
   end
+
+  def test_with_invalid_include_surveymonkey_link
+    FbReplyValidation.any_instance.stubs(:facebook_outgoing_attachment_enabled?).returns(true)
+    controller_params = { body: 'abc', msg_type: 'xyz', include_surveymonkey_link: 2 }
+    fb_reply_validation = FbReplyValidation.new(controller_params, nil)
+    refute fb_reply_validation.valid?
+    assert fb_reply_validation.errors.full_messages.include?('Include surveymonkey link is not included in the list')
+  ensure
+    FbReplyValidation.any_instance.unstub(:facebook_outgoing_attachment_enabled)
+  end
 end

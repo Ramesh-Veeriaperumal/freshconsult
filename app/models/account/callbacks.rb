@@ -27,6 +27,7 @@ class Account < ActiveRecord::Base
   after_update :update_advanced_ticketing_applications, :if => :disable_old_ui_feature_changed?
   after_update :set_disable_old_ui_changed_now, :if => :disable_old_ui_changed?
   after_update :update_round_robin_type, if: :lbrr_by_omniroute_feature_changed?
+  after_update :advanced_ticket_scopes_feature_removed?, if: :plan_features_changed?
 
   before_validation :sync_name_helpdesk_name
   before_validation :downcase_full_domain, :only => [:create , :update] , :if => :full_domain_changed?
@@ -67,6 +68,7 @@ class Account < ActiveRecord::Base
 
   after_commit :update_freshvisual_configs, on: :update, if: :call_freshvisuals_api?
   after_commit :update_account_domain_in_sandbox, if: -> { account_domain_changed? && sandbox_account_id.present? }
+  after_commit :trigger_bitmap_feature_callback, if: :advanced_ticket_scopes_removed
 
   after_rollback :destroy_freshid_account_on_rollback, on: :create, if: -> { freshid_integration_signup_allowed? && !domain_already_exists? }
   after_rollback :signup_completed, on: :create
@@ -74,6 +76,8 @@ class Account < ActiveRecord::Base
   after_save :add_or_remove_email_notification_templates, if: :next_response_sla_feature_changed?
 
   publishable on: [:create, :update]
+
+  attr_accessor :advanced_ticket_scopes_removed
 
   include MemcacheKeys
 
@@ -360,6 +364,13 @@ class Account < ActiveRecord::Base
       args = { :features => @launch_party_features, :account_id => self.id }
       LaunchPartyActionWorker.perform_async(args)
       @launch_party_features = nil
+    end
+
+    def trigger_bitmap_feature_callback
+      return unless advanced_ticket_scopes_removed
+
+      args = { account_id: id, change: :revoke_feature, feature_name: 'advanced_ticket_scopes' }
+      BitmapActionWorker.perform_async(args)
     end
 
     def sync_name_helpdesk_name
@@ -650,6 +661,12 @@ class Account < ActiveRecord::Base
 
     def field_service_management_enabled_changed?
       @all_changes[:plan_features].present? && bitmap_feature_changed?(Fdadmin::FeatureMethods::BITMAP_FEATURES_WITH_VALUES[:field_service_management])
+    end
+
+    def advanced_ticket_scopes_feature_removed?
+      added_or_drop = changes[:plan_features].present? && bitmap_feature_changed?(Fdadmin::FeatureMethods::BITMAP_FEATURES_WITH_VALUES[:advanced_ticket_scopes])
+      Rails.logger.info "Advanced ticket scope #{changes.inspect} => #{added_or_drop}"
+      self.advanced_ticket_scopes_removed = (added_or_drop == 'drop')
     end
 
     # Checks if a bitmap feature has been added or removed

@@ -2,6 +2,8 @@ module MemcacheKeys
 
   include Cache::Memcache::Dashboard::MemcacheKeys
 
+  MEMCACHE_KEY_HASH = YAML.load_file(Rails.root.join('config', 'memcached_keys.yml')).deep_symbolize_keys
+
   AVAILABLE_QUEST_LIST = "AVAILABLE_QUEST_LIST:%{user_id}:%{account_id}"
 
   USER_TICKET_FILTERS = "v1/TICKET_VIEWS:%{user_id}:%{account_id}"
@@ -86,7 +88,7 @@ module MemcacheKeys
   ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING = 'v3/ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING:%{account_id}'.freeze
 
   ACCOUNT_SECTION_FIELDS_WITHOUT_ARCHIVED_FIELDS = 'v1/ACCOUNT_SECTION_FIELDS_WITHOUT_ARCHIVED_FIELDS:%{account_id}'.freeze
-  
+
   ACCOUNT_SECTION_FIELDS = "v1/ACCOUNT_SECTION_FIELDS:%{account_id}"
 
   ACCOUNT_SECTION_FIELD_PARENT_FIELD_MAPPING = 'v1/ACCOUNT_SECTION_FIELD_PARENT_FIELD_MAPPING:%{account_id}'.freeze
@@ -318,7 +320,7 @@ module MemcacheKeys
 
   OBSERVER_CONDITION_FIELDS = 'v1/OBSERVER_CONDITION_FIELDS:%{account_id}'.freeze
 
-  ALL_AGENT_GROUPS_CACHE_FOR_AN_AGENT = 'v1/ALL_AGENT_GROUPS_CACHE_FOR_AN_AGENT:%{account_id}:%{user_id}'.freeze
+  ALL_AGENT_GROUPS_CACHE_FOR_AN_AGENT = 'v2/ALL_AGENT_GROUPS_CACHE_FOR_AN_AGENT:%{account_id}:%{user_id}'.freeze
 
   def fetch_from_cache(key, &block)
     @cached_values = {} unless @cached_values
@@ -355,6 +357,34 @@ module MemcacheKeys
 
     def memcache_client
       $memcache
+    end
+
+    def key(key, value)
+      memkey = MEMCACHE_KEY_HASH[:single_scoped][key]
+      raise "UnimplementedMemCacheKey #{key} with 1 value." unless memkey
+
+      "#{memkey}:#{value}"
+    end
+
+    def key2(key, value1, value2)
+      memkey = MEMCACHE_KEY_HASH[:double_scoped][key]
+      raise "UnimplementedMemCacheKey #{key} with 2 values." unless memkey
+
+      "#{memkey}:#{value1}:#{value2}"
+    end
+
+    def key3(key, value1, value2, value3)
+      memkey = MEMCACHE_KEY_HASH[:triple_scoped][key]
+      raise "UnimplementedMemCacheKey #{key} with 3 values." unless memkey
+
+      "#{memkey}:#{value1}:#{value2}:#{value3}"
+    end
+
+    def key4(key, value1, value2, value3, value4)
+      memkey = MEMCACHE_KEY_HASH[:quadruple_scoped][key]
+      raise "UnimplementedMemCacheKey #{key} with 4 values." unless memkey
+
+      "#{memkey}:#{value1}:#{value2}:#{value3}:#{value4}"
     end
   end
 end

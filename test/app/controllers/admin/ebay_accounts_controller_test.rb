@@ -2,6 +2,8 @@ require_relative '../../../api/test_helper'
 require 'sidekiq/testing'
 Sidekiq::Testing.fake!
 class Admin::Ecommerce::EbayAccountsControllerTest < ActionController::TestCase
+  include ApiTicketsTestHelper
+
   def setup
     super
   end
@@ -50,7 +52,7 @@ class Admin::Ecommerce::EbayAccountsControllerTest < ActionController::TestCase
     remote_user.save
   end
 
-  def test_ecommerce_reply_to_freshdesk
+  def test_ecommerce_create_incoming_reply
     eias_token = Faker::Lorem.characters(20)
     create_an_ecommerce_account eias_token
     create_ebay_remote_user eias_token
@@ -72,5 +74,87 @@ class Admin::Ecommerce::EbayAccountsControllerTest < ActionController::TestCase
   ensure
     @account.ebay_accounts.find_by_external_account_id(eias_token).destroy
     Ecommerce::Ebay::Api.any_instance.unstub(:fetch_auth_token, :fetch_user, :subscribe_to_notifications)
+  end
+
+  def test_ecommerce_create_ticket_with_incoming_attachments
+    eias_token = Faker::Lorem.characters(20)
+    create_an_ecommerce_account eias_token
+    create_ebay_remote_user eias_token
+
+    notification_subject = 'Details about item: testuser_priyo123 sent a message about Toys fixed2 #110164967547'
+    ticket_body_html = '<!DOCTYPE html><html><body><div>Subject: Details about item: testuser_priyo123 sent a message about Toys fixed2 #110164967547</div></body></html>'
+    ticket_message_id = '1137081011'
+    message_media = { 'MediaURL' => Rails.root.join('test', 'api', 'fixtures', 'files', 'image6mb.jpg'), 'MediaName' => 'image6mb.jpg' }
+
+    notification = { 'Envelope' => { 'Body' => { 'GetMyMessagesResponse' => { 'EIASToken' => eias_token, 'Messages' => { 'Message' => { 'Sender' => 'testuser_priyo123', 'SendingUserID' => '133055376',
+                                                                                                                                        'Subject' => notification_subject,
+                                                                                                                                        'MessageID' => '5882110', 'ExternalMessageID' => ticket_message_id, 'Text' => ticket_body_html, 'MessageMedia' => message_media,
+                                                                                                                                        'ItemID' => '110164967547' } } } } }, 'action' => 'notify', 'controller' => 'admin/ecommerce/ebay_accounts' }
+    Sidekiq::Testing.inline! do
+      post :notify, notification
+    end
+    assert_response 200
+    assert_equal Account.current.tickets.where(subject: notification_subject).last.inline_attachments.count, 1
+  ensure
+    @account.ebay_accounts.where(external_account_id: eias_token).last.destroy
+    Ecommerce::Ebay::Api.any_instance.unstub(:fetch_auth_token, :fetch_user, :subscribe_to_notifications)
+  end
+
+  def test_ecommerce_reply_create_note_with_incoming_attachments
+    eias_token = Faker::Lorem.characters(20)
+    create_an_ecommerce_account eias_token
+    create_ebay_remote_user eias_token
+
+    ebay_ticket = create_ebay_ticket
+    notification_subject = 'Details about item: testuser_priyo123 sent a message about Toys fixed2 #110164967548'
+    note_body = 'Reply about Toys fixed2 #110164967548'
+    note_body_html = '<!DOCTYPE html><html><body><div>Reply about Toys fixed2 #110164967548</div></body></html>'
+    note_message_id = '1137081012'
+    message_media = { 'MediaURL' => Rails.root.join('test', 'api', 'fixtures', 'files', 'image6mb.jpg'), 'MediaName' => 'image6mb.jpg' }
+
+    notification = { 'Envelope' => { 'Body' => { 'GetMyMessagesResponse' => { 'EIASToken' => eias_token, 'Messages' => { 'Message' => { 'Sender' => 'testuser_priyo123', 'SendingUserID' => '133055376',
+                                                                                                                                        'Subject' => notification_subject,
+                                                                                                                                        'MessageID' => '5882110', 'ExternalMessageID' => note_message_id, 'Text' => note_body_html, 'MessageMedia' => message_media,
+                                                                                                                                        'ItemID' => '110164967547' } } } } }, 'action' => 'notify', 'controller' => 'admin/ecommerce/ebay_accounts' }
+    Ecommerce::Ebay::Processor.any_instance.stubs(:check_parent_ticket).returns(ebay_ticket)
+    Sidekiq::Testing.inline! do
+      post :notify, notification
+    end
+    assert_response 200
+    assert_equal Account.current.tickets.where(subject: ebay_ticket.subject).last.notes.last.inline_attachments.count, 1
+  ensure
+    @account.ebay_accounts.where(external_account_id: eias_token).last.destroy
+    Ecommerce::Ebay::Api.any_instance.unstub(:fetch_auth_token, :fetch_user, :subscribe_to_notifications, :check_parent_ticket)
+  end
+
+  def test_ecommerce_reply_from_ebay_sent_folder
+    eias_token = Faker::Lorem.characters(20)
+    create_an_ecommerce_account eias_token
+    create_ebay_remote_user eias_token
+    notification = { 'Envelope' => { 'Body' => { 'GetMyMessagesResponse' => { 'EIASToken' => eias_token, 'Messages' => { 'Message' => { 'Sender' => 'testuser_priyo123', 'SendingUserID' => '133055376',
+                                                                                                                                        'Subject' => 'testuser_priyo123 sent a message',
+                                                                                                                                        'MessageID' => '5882110', 'ExternalMessageID' => '1137081010', 'Text' => 'Test',
+                                                                                                                                        'ItemTitle' => 'Toys fixed2' } } } } } }
+    sent_messages = [{ sender: 'testuser_priyo456', sending_user_id: '133055377', send_to_name: 'bssmb_us_06',
+                       subject: 'Details about item: testuser_priyo456 sent a message about item #110162958894',
+                       message_id: '5879180', external_message_id: '1136421010', item_id: '110162958894' },
+                     { sender: 'testuser_priyo456', sending_user_id: '133055377', send_to_name: 'bssmb_us_03',
+                       subject: 'Details about item: testuser_priyo456 sent a message about item #110146234712',
+                       message_id: '5879110', external_message_id: '1136413010', item_id: '110146234712' }]
+
+    message = { messages: { message: { sender: 'eBay - cmedia_group', sending_user_id: '1073158010', send_to_name: 'john1984_123',
+                                       subject: 'Re: I have a question about using my item #371374902426',
+                                       message_id: '69943180680', external_message_id: '1115863692010', text: 'Test message', item_id: '371374902426' } } }
+
+    Ecommerce::Ebay::Processor.any_instance.stubs(:fetch_user_sent_messages).returns(sent_messages)
+    Ecommerce::Ebay::Processor.any_instance.stubs(:fetch_message).returns(message)
+
+    Sidekiq::Testing.inline! do
+      post :notify, notification
+    end
+    assert_response 200
+  ensure
+    @account.ebay_accounts.where(external_account_id: eias_token).last.destroy
+    Ecommerce::Ebay::Api.any_instance.unstub(:fetch_auth_token, :fetch_user, :subscribe_to_notifications, :fetch_user_sent_messages, :fetch_message)
   end
 end

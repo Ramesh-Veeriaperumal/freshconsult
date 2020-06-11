@@ -1117,7 +1117,6 @@ class SubscriptionsControllerTest < ActionController::TestCase
 =begin
   def test_disable_fsm_when_downgrade_from_estate_to_sprout_with_fsm_enabled
     stub_chargebee_requests
-    Account.any_instance.stubs(:fsm_admin_automations_enabled?).returns(true)
     Account.any_instance.stubs(:automation_revamp_enabled?).returns(true)
     SAAS::SubscriptionEventActions.any_instance.stubs(:handle_collab_feature).returns(true)
     SAAS::SubscriptionEventActions.any_instance.stubs(:handle_feature_add_data).returns(true)
@@ -1148,7 +1147,6 @@ class SubscriptionsControllerTest < ActionController::TestCase
     SAAS::SubscriptionEventActions.any_instance.unstub(:handle_feature_add_data)
     Subscription.any_instance.unstub(:add_to_crm)
     unstub_chargebee_requests
-    Account.any_instance.unstub(:fsm_admin_automations_enabled?)
     Account.any_instance.unstub(:automation_revamp_enabled?)
   end
 =end

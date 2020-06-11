@@ -380,7 +380,7 @@ class CannedResponsesControllerTest < ActionController::TestCase
   end
 
   def test_craete_invalid_group_id
-    post :create, construct_params(build_ca_param(create_ca_response_input(@@ca_folder_all.id, 2, [100])))
+    post :create, construct_params(build_ca_param(create_ca_response_input(@@ca_folder_all.id, 2, [100_000_000])))
     assert_response 400
     match_json(validation_error_pattern(bad_request_error_pattern(:group_id, 'Please specify a valid group ID.', code: 'invalid_value')))
   end

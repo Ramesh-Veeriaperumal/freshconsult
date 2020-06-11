@@ -30,3 +30,15 @@ properties:
             y:
               type: integer
               description: Vertical postion in the xy plane
+            source:
+              type: string
+              description: For omni channel dashboard what is the source of the widget
+            tooltip:
+              type: string
+              description: For omni channel dashboard, tooltip string for any widget
+            detail_link:
+              type: string
+              description: For omni channel dashboard, link in the header which redirects to detail view
+            detail_title:
+              type: string
+              description: For omni channel dashboard, title of link in the header which redirects to detail view

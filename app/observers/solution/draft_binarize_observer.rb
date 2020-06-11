@@ -20,9 +20,10 @@ class Solution::DraftBinarizeObserver < ActiveRecord::Observer
 			Account.current.multilingual_available?
 		end
 
-		def update_draft(object, status)
-			meta = object.article.solution_article_meta
-			meta.safe_send("#{object.article.language_key}_draft_present=", status)
-			meta.save
-		end
+  def update_draft(object, status)
+    # Creating another reference for the object since model changes during unpublish event were not captured.
+    meta = Account.current.solution_article_meta.find(object.article.solution_article_meta.id)
+    meta.safe_send("#{object.article.language_key}_draft_present=", status)
+    meta.save
+  end
 end

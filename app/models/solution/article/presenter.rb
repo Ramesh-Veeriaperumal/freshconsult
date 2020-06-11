@@ -99,6 +99,11 @@ class Solution::Article < ActiveRecord::Base
     changes_array.inject(&:merge)
   end
 
+  def misc_changes_for_central
+    changes_array = [folder_update_details, author_update_details]
+    changes_array.reduce(&:merge)
+  end
+
   def update_publish_details
     PUBLISH_DETAILS_RENAMED_KEYS.each do |old_key, new_key|
       if self.previous_changes.key?(old_key)

@@ -105,7 +105,7 @@ class Ticket::ChildTicketWorker < BaseWorker
     if key == "inherit_parent"
       attrbs = if value.is_a?(Array)
         value.flatten!
-        value = merge_section_fields(value) if @account.multi_dynamic_sections_enabled?
+        value = merge_section_fields(value) if @account.dynamic_sections_enabled?
         value
       elsif  value == "all"
         all_attrs_from_parent

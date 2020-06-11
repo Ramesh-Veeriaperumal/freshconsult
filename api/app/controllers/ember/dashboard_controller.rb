@@ -49,8 +49,8 @@ module Ember
     def show
       # ember needs an id to store it in model,so building the hash with id.
       @config = {}
-      @config[:widgets] = widget_config
-      @config[:id] = params["id"]
+      @config[:widgets] = omni_privilege? ? omnichannel_widget_config : widget_config
+      @config[:id] = params['id']
     end
 
     def survey_info
@@ -120,6 +120,10 @@ module Ember
           has_privilege = current_user.privilege?(:manage_tickets)
         end
         render_request_error(:access_denied, 403) unless has_privilege 
+      end
+
+      def omni_privilege?
+        Account.current.omni_channel_dashboard_enabled? && current_user.privilege?(:view_reports)
       end
   end
 end

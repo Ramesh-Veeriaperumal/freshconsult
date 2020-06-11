@@ -2,8 +2,7 @@ class LaunchPartyActionWorker < BaseWorker
   include Sidekiq::Worker
   sidekiq_options queue: :launch_party_actions, retry: 0,  failures: :exhausted
 
-  require 'launch_party/feature_class_mapping'
-  require 'launch_party/supervisor_multi_select'
+  Dir[Rails.root.join('lib', 'launch_party', '*.rb')].each { |file| require(file) if File.exist?(file) }
 
   TYPE = [:launch, :rollback]
 

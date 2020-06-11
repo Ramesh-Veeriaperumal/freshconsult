@@ -50,6 +50,10 @@ defaults: &defaults
   field_service:
     auth_type: jwt
     jwt_secret: ix7T2vY2ZuQ8XGB7Uh0lJ4PiqJ4T7Gkj
+  silkroad:
+    auth_type: "jwt"
+    jwt_secret: ["9rQ7H5RVm35vSvNUDWFjZPz3YKsqxp8z"]
+
 development:
   <<: *defaults
 

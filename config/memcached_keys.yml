@@ -1,0 +1,8 @@
+single_scoped:
+  'source_account_choice_id.account_id': v1/ACCOUNT_SOURCES
+double_scoped:
+  'componse_email_form.account_id.language': v3/COMPOSE_EMAIL_FORM
+triple_scoped:
+  'dummy': dummy
+quadruple_scoped:
+  'dummy': dummy

@@ -1034,6 +1034,7 @@ Helpkit::Application.routes.draw do
     post '/freshcaller/migration/revert', to: 'channel/freshcaller/migration#revert'
     post '/freshcaller/migration/reset_freshfone', to: 'channel/freshcaller/migration#reset_freshfone'
     post '/freshcaller/migration/fetch_pod_info', to: 'channel/freshcaller/migration#fetch_pod_info'
+    put '/admin/data_export/update', to: 'channel/admin/data_export#update'
 
     resources :tickets, controller: 'channel/tickets', only: [:create, :show]
     resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show, :index] do

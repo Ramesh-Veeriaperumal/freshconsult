@@ -1,7 +1,7 @@
 class FbReplyValidation < ApiValidation
   include Facebook::TicketActions::Util
 
-  attr_accessor :body, :note_id, :agent_id, :msg_type, :attachment_ids
+  attr_accessor :body, :note_id, :agent_id, :msg_type, :attachment_ids, :include_surveymonkey_link
 
   validates :body, data_type: { rules: String, required: true, allow_nil: false }, if: -> { !facebook_outgoing_attachment_enabled? }
 
@@ -13,6 +13,7 @@ class FbReplyValidation < ApiValidation
   validates :msg_type, data_type: { rules: String, required: true }, custom_inclusion: { in: Facebook::Constants::FB_MSG_TYPES }, if: -> { facebook_outgoing_attachment_enabled? }
   validates :attachment_ids, data_type: { rules: Array }, array: { data_type: { rules: Integer } }, custom_length: { maximum: 1 }, if: -> { facebook_outgoing_attachment_enabled? }
   validate :either_body_attachment_ids, if: -> { facebook_outgoing_attachment_enabled? }
+  validates :include_surveymonkey_link, data_type: { rules: Integer }, inclusion: { in: [0, 1] }, if: -> { include_surveymonkey_link.present? }
 
   def initialize(request_params, item, allow_string_param = false)
     @ticket = item

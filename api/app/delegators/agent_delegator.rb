@@ -1,5 +1,6 @@
 class AgentDelegator < BaseDelegator
-  attr_accessor :group_ids, :role_ids, :available, :user_attributes, :occasional, :agent_type, :agent_level_id
+  attr_accessor :group_ids, :role_ids, :available, :user_attributes, :occasional, :agent_type, :agent_level_id,
+                :contribution_group_ids, :ticket_scope
 
   validate :validate_group_ids, unless: -> { @group_ids.nil? }
   validate :validate_role_ids, :check_role_permission, unless: -> { @role_ids.nil? }
@@ -12,7 +13,17 @@ class AgentDelegator < BaseDelegator
   validate :validate_skill_ids, if: -> { @user_attributes && @user_attributes[:skill_ids] }
   validate :validate_agent_level_id, if: -> { @agent_level_id }
 
+  # validation related to contributing group
+  validate :validate_contributing_group_ids, if: -> { instance_variable_defined?(:@contribution_group_ids) }
+  validate :validate_mutual_exclusion_group_and_contribution_group, if: lambda {
+    errors.blank? && (@action == 'update') && @item.present? && (@ticket_scope.to_i == Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets]) &&
+      (instance_variable_defined?(:@contribution_group_ids) ||
+      instance_variable_defined?(:@group_ids))
+  }
+
   def initialize(record, options = {})
+    @contribution_group_ids = options[:contribution_group_ids] if options.key?(:contribution_group_ids)
+    @ticket_scope = options[:ticket_scope] || record.ticket_permission if record.present?
     @group_ids = options[:group_ids]
     @role_ids = options[:role_ids]
     @available = options[:available]
@@ -131,7 +142,32 @@ class AgentDelegator < BaseDelegator
     end
   end
 
+  def validate_mutual_exclusion_group_and_contribution_group
+    agent_groups = @item.all_agent_groups_from_cache
+    if !group_ids.is_a?(Array) && contribution_group_ids.is_a?(Array) && contribution_group_ids.present?
+      ag = agent_groups.select { |data| data.write_access.present? }
+      common_ids = ag.map(&:group_id) & contribution_group_ids
+      not_included_error(:contribution_group_ids, common_ids, :group_ids_already_used) if common_ids.present?
+    elsif !contribution_group_ids.is_a?(Array) && group_ids.is_a?(Array) && group_ids.present?
+      ag = agent_groups.select { |data| data.write_access.blank? }
+      common_ids = ag.map(&:group_id) & group_ids
+      not_included_error(:group_ids, common_ids, :contribution_group_ids_already_used) if common_ids.present?
+    end
+  end
+
+  def validate_contributing_group_ids
+    invalid_ids = contribution_group_ids - Account.current.groups_from_cache.map(&:id)
+    not_included_error(:contribution_group_ids, invalid_ids) if invalid_ids.present?
+  end
+
   private
+
+    def not_included_error(name, list, message = :invalid_list)
+      errors[name] << message
+      error_message = {}
+      error_message[name] = { list: list.join(', ') }
+      error_options.merge!(error_message)
+    end
 
     def freshid_user_details(email)
       Account.current.freshid_org_v2_enabled? ? Freshid::V2::Models::User.find_by_email(email.to_s) : Freshid::User.find_by_email(email.to_s)

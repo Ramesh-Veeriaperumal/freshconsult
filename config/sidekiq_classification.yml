@@ -51,6 +51,7 @@
     - freshcaller_subscription_events_queue
     - freshchat_subscription_events_queue
     - twitter_survey
+    - facebook_survey
 
   :bulk_api:
     - bulk_api_jobs
@@ -138,6 +139,7 @@
     - kbase_article_versions_migration_worker
     - freshcaller_update_agents
     - ticket_field_job
+    - bitmap_callbacks
 
   :maintainence:
     - select_all_tickets
@@ -677,3 +679,4 @@
     - freshcaller_migration_worker
     - freshcaller_account_delete
     - freshcaller_update_agents
+    - bitmap_callbacks

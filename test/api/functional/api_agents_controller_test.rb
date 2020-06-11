@@ -1,3 +1,4 @@
+# require 'faker'
 require_relative '../test_helper'
 ['agents_test_helper.rb', 'attachments_test_helper.rb', 'freshcaller_test_helper.rb'].each { |file| require Rails.root.join('test', 'api', 'helpers', file) }
 require_relative '../helpers/admin/skills_test_helper'
@@ -20,6 +21,11 @@ class ApiAgentsControllerTest < ActionController::TestCase
   def setup
     super
     before_all
+  end
+
+  def teardown
+    Account.current.technicians.where(email: 'john.wick@gmal.com').each(&:destroy)
+    Account.current.groups.where(name: %w[liverpool_fc_01 liverpool_fc_02]).each(&:destroy)
   end
 
   @@before_all_run = false
@@ -1978,8 +1984,8 @@ class ApiAgentsControllerTest < ActionController::TestCase
     request.stubs(:uuid).returns(uuid)
     agent_array = []
     agent_role_id = Role.find_by_name('Agent').id
-    50.times do 
-      agent_array << { 
+    50.times do
+      agent_array << {
         "id" => add_test_agent(@account, role: agent_role_id).id,
         "ticket_assignment" => { "available" => true }
       }
@@ -2001,7 +2007,340 @@ class ApiAgentsControllerTest < ActionController::TestCase
     request.unstub(:uuid)
   end
 
+  def test_contribution_group_creation_without_feature
+    enable_advanced_ticket_scopes {}
+    params = {
+      "name": 'John doe', "email": 'john.james0709@gmal.com', "ticket_scope": 2,
+      "contribution_group_ids": [3, 4]
+    }
+    post :create, construct_params(params)
+    error_data = [bad_request_error_pattern(:advanced_ticket_scopes,
+                                            :require_feature,
+                                            code: :access_denied, feature: :advanced_ticket_scopes)]
+    assert_response 403
+    match_json(description: 'Validation failed', errors: error_data)
+  end
+
+  def test_create_contribution_group_for_global_scope
+    enable_advanced_ticket_scopes do
+      params = {
+        "name": 'John doe', "email": 'john.james0709@gmal.com', "ticket_scope": 1,
+        "contribution_group_ids": [3, 4]
+      }
+      post :create, construct_params(params)
+      error_data = [bad_request_error_pattern(:contribution_group_ids,
+                                              :contribution_group_is_not_available_for_global_access,
+                                              code: :invalid_value)]
+      assert_response 400
+      match_json(description: 'Validation failed', errors: error_data)
+    end
+  end
+
+  def test_create_contribution_group_for_restricted_access
+    enable_advanced_ticket_scopes do
+      params = {
+        "name": 'John doe', "email": 'john.james0709@gmal.com', "ticket_scope": 3,
+        "contribution_group_ids": [3, 4]
+      }
+      post :create, construct_params(params)
+      error_data = [bad_request_error_pattern(:contribution_group_ids,
+                                              :contribution_group_is_not_available_for_global_access,
+                                              code: :invalid_value)]
+      assert_response 400
+      match_json(description: 'Validation failed', errors: error_data)
+    end
+  end
+
+  def test_create_contribution_group_being_nil
+    enable_advanced_ticket_scopes do
+      params = {
+        "name": 'John doe', "email": 'john.james0709@gmal.com', "ticket_scope": 2,
+        "contribution_group_ids": nil
+      }
+      post :create, construct_params(params)
+      error_data = [bad_request_error_pattern(:contribution_group_ids,
+                                              'Value set is of type Null.It should be a/an Array',
+                                              code: :datatype_mismatch)]
+      assert_response 400
+      match_json(description: 'Validation failed', errors: error_data)
+    end
+  end
+
+  def test_create_contribution_group_being_blank
+    enable_advanced_ticket_scopes do
+      params = {
+        "name": 'John wick', "email": 'john.wick@gmal.com', "ticket_scope": 2,
+        "contribution_group_ids": []
+      }
+      post :create, construct_params(params)
+      assert_response 201
+      agent = Account.current.technicians.reload.where(email: 'john.wick@gmal.com').first.agent
+      match_json(agent_pattern_with_additional_details(agent.user))
+    end
+  end
+
+  def test_invalid_contribution_group_id_for_create_agent
+    enable_advanced_ticket_scopes do
+      last_group_id = Account.current.groups.reload.pluck_all(:id).max + 100
+      params = {
+        "name": 'John wick', "email": 'john.wick@gmal.com', "ticket_scope": 2,
+        "contribution_group_ids": [last_group_id]
+      }
+      post :create, construct_params(params)
+      error_data = [bad_request_error_pattern(:contribution_group_ids,
+                                              :invalid_list,
+                                              code: :invalid_value, list: [last_group_id])]
+      assert_response 400
+      match_json(description: 'Validation failed', errors: error_data)
+    end
+  end
+
+  def test_common_id_for_both_contribition_group_and_group_ids
+    enable_advanced_ticket_scopes do
+      group_ids = [create_group(@account, name: 'liverpool_fc_01').id,
+                   create_group(@account, name: 'liverpool_fc_02').id]
+      params = {
+        "name": 'John wick', "email": 'john.wick@gmal.com', "ticket_scope": 2,
+        "contribution_group_ids": [group_ids.first], group_ids: group_ids
+      }
+      post :create, construct_params(params)
+      error_data = [bad_request_error_pattern(:"group_ids/contribution_group_ids",
+                                              :uniq_group_and_contribution_error_message,
+                                              code: :invalid_value)]
+      assert_response 400
+      match_json(description: 'Validation failed', errors: error_data)
+    end
+  end
+
+  def test_create_agent_with_group_id_blank_contribution_not_blank
+    enable_advanced_ticket_scopes do
+      group_ids = [create_group(@account, name: 'liverpool_fc_01').id,
+                   create_group(@account, name: 'liverpool_fc_02').id]
+      params = {
+        "name": 'John wick', "email": 'john.wick@gmal.com', "ticket_scope": 2,
+        "contribution_group_ids": group_ids, group_ids: []
+      }
+      post :create, construct_params(params)
+      assert_response 201
+      agent = Account.current.technicians.reload.where(email: 'john.wick@gmal.com').first.agent
+      match_json(agent_pattern_with_additional_details(agent.user))
+      write_groups = Account.current.agent_groups.where(user_id: agent.user_id, write_access: true).count
+      read_groups = Account.current.agent_groups.where(user_id: agent.user_id, write_access: false).count
+      assert write_groups.zero?
+      assert_equal 2, read_groups
+    end
+  end
+
+  def test_create_agent_with_group_id_not_blank_contribution_blank
+    enable_advanced_ticket_scopes do
+      group_ids = [create_group(@account, name: 'liverpool_fc_01').id,
+                   create_group(@account, name: 'liverpool_fc_02').id]
+      params = {
+        "name": 'John wick', "email": 'john.wick@gmal.com', "ticket_scope": 2,
+        "contribution_group_ids": [], group_ids: group_ids
+      }
+      post :create, construct_params(params)
+      assert_response 201
+      agent = Account.current.technicians.reload.where(email: 'john.wick@gmal.com').first.agent
+      match_json(agent_pattern_with_additional_details(agent.user))
+      write_groups = Account.current.agent_groups.where(user_id: agent.user_id, write_access: true).count
+      read_groups = Account.current.agent_groups.where(user_id: agent.user_id, write_access: false).count
+      assert_equal 2, write_groups
+      assert read_groups.zero?
+    end
+  end
+
+  def test_create_agent_with_both_group_and_contribution_group_not_blank
+    enable_advanced_ticket_scopes do
+      group_ids = [create_group(@account, name: 'liverpool_fc_01').id,
+                   create_group(@account, name: 'liverpool_fc_02').id]
+      params = {
+        "name": 'John wick', "email": 'john.wick@gmal.com', "ticket_scope": 2,
+        "contribution_group_ids": [group_ids.first], group_ids: [group_ids.last]
+      }
+      post :create, construct_params(params)
+      assert_response 201
+      agent = Account.current.technicians.reload.where(email: 'john.wick@gmal.com').first.agent
+      match_json(agent_pattern_with_additional_details(agent.user))
+      write_groups = Account.current.agent_groups.where(user_id: agent.user_id, write_access: true).pluck_all(:group_id)
+      read_groups = Account.current.agent_groups.where(user_id: agent.user_id, write_access: false).pluck_all(:group_id)
+      assert_equal [group_ids.last], write_groups
+      assert_equal [group_ids.first], read_groups
+    end
+  end
+
+  def test_create_agent_with_group_ids
+    enable_advanced_ticket_scopes {}
+    group_ids = [create_group(@account, name: 'liverpool_fc_01').id,
+                 create_group(@account, name: 'liverpool_fc_02').id]
+    params = {
+      "name": 'John wick', "email": 'john.wick@gmal.com', "ticket_scope": 2,
+      group_ids: [group_ids.last]
+    }
+    post :create, construct_params(params)
+    assert_response 201
+    agent = Account.current.technicians.reload.where(email: 'john.wick@gmal.com').first.agent
+    match_json(agent_pattern_with_additional_details(agent.user))
+    write_groups = Account.current.agent_groups.where(user_id: agent.user_id, write_access: true).pluck_all(:group_id)
+    read_groups = Account.current.agent_groups.where(user_id: agent.user_id, write_access: false).pluck_all(:group_id)
+    assert_equal [group_ids.last], write_groups
+    assert read_groups.count.zero?
+  end
+
+  def test_update_agent_with_both_group_id_and_contribution_group_blank
+    dummy_user = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: 2)
+    group_ids = [create_group(@account, name: 'liverpool_fc_01').id,
+                 create_group(@account, name: 'liverpool_fc_02').id]
+    dummy_user.agent.agent_groups.new.tap { |ag| ag.group_id = group_ids.first; ag.write_access = false; ag.save! }
+    dummy_user.agent.agent_groups.new.tap { |ag| ag.group_id = group_ids.last; ag.write_access = true; ag.save! }
+    enable_advanced_ticket_scopes do
+      params = {
+        group_ids: [], "contribution_group_ids": []
+      }
+      put :update, construct_params({ id: dummy_user.id }, params)
+      write_groups = Account.current.agent_groups.where(user_id: dummy_user.id, write_access: true).count
+      read_groups = Account.current.agent_groups.where(user_id: dummy_user.id, write_access: false).count
+      assert write_groups.zero?
+      assert read_groups.zero?
+    end
+  end
+
+  def test_update_agent_with_group_and_contribution_interchanged
+    dummy_user = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: 2)
+    group_ids = [create_group(@account, name: 'liverpool_fc_01').id,
+                 create_group(@account, name: 'liverpool_fc_02').id]
+    dummy_user.agent.agent_groups.new.tap { |ag| ag.group_id = group_ids.first; ag.write_access = false; ag.save! }
+    dummy_user.agent.agent_groups.new.tap { |ag| ag.group_id = group_ids.last; ag.write_access = true; ag.save! }
+    enable_advanced_ticket_scopes do
+      params = {
+        group_ids: [group_ids.first], "contribution_group_ids": [group_ids.last]
+      }
+      put :update, construct_params({ id: dummy_user.id }, params)
+      write_groups = Account.current.agent_groups.where(user_id: dummy_user.id, write_access: true).pluck(:group_id)
+      read_groups = Account.current.agent_groups.where(user_id: dummy_user.id, write_access: false).pluck(:group_id)
+      assert_equal [group_ids.first], write_groups
+      assert_equal [group_ids.last], read_groups
+    end
+  end
+
+  def test_update_agent_with_change_to_all_ticket_permission
+    enable_advanced_ticket_scopes do
+      dummy_user = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: 2)
+      group_ids = [create_group(@account, name: 'liverpool_fc_01').id,
+                   create_group(@account, name: 'liverpool_fc_02').id]
+      dummy_user.agent.agent_groups.new.tap { |ag| ag.group_id = group_ids.first; ag.write_access = false; ag.save! }
+      dummy_user.agent.agent_groups.new.tap { |ag| ag.group_id = group_ids.last; ag.write_access = true; ag.save! }
+      params = { ticket_scope: 1 }
+      put :update, construct_params({id: dummy_user.id}, params)
+      write_groups = Account.current.agent_groups.where(user_id: dummy_user.id, write_access: true).count
+      read_groups = Account.current.agent_groups.where(user_id: dummy_user.id, write_access: false).count
+      assert_response 200
+      assert_equal 1, write_groups
+      assert read_groups.zero?
+    end
+  end
+
+  def test_update_agent_with_change_to_restricted_permission
+    enable_advanced_ticket_scopes do
+      dummy_user = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: 2)
+      group_ids = [create_group(@account, name: 'liverpool_fc_01').id,
+                   create_group(@account, name: 'liverpool_fc_02').id]
+      dummy_user.agent.agent_groups.new.tap { |ag| ag.group_id = group_ids.first; ag.write_access = false; ag.save! }
+      dummy_user.agent.agent_groups.new.tap { |ag| ag.group_id = group_ids.last; ag.write_access = true; ag.save! }
+      params = { ticket_scope: 3 }
+      put :update, construct_params({id: dummy_user.id}, params)
+      write_groups = Account.current.agent_groups.where(user_id: dummy_user.id, write_access: true).count
+      read_groups = Account.current.agent_groups.where(user_id: dummy_user.id, write_access: false).count
+      assert_response 200
+      assert_equal 1, write_groups
+      assert read_groups.zero?
+    end
+  end
+
+  def test_create_agent_with_contribution_group_for_fsm_agent
+    enable_advanced_ticket_scopes do
+      enable_fsm_feature do
+        params = {
+          "name": 'John doe', "email": 'john.wick@gmal.com', "ticket_scope": 2,
+          "contribution_group_ids": [3, 4], "agent_type": 2
+        }
+        post :create, construct_params(params)
+        error_data = [bad_request_error_pattern(:contribution_group_ids,
+                                                :contribution_group_not_allowed_fsm,
+                                                code: :invalid_value)]
+        assert_response 400
+        match_json(description: 'Validation failed', errors: error_data)
+      end
+    end
+  end
+
+  def test_update_fsm_agent_with_contribution_group
+    group_ids = Account.current.groups.pluck_all(:id)
+    enable_advanced_ticket_scopes do
+      enable_fsm_feature do
+        group_ids = Account.current.groups.pluck_all(:id)
+        dummy_user = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: 2, agent_type: 2)
+        update_params = { "contribution_group_ids": group_ids[0, 2] }
+        put :update, construct_params({ id: dummy_user.id }, update_params)
+        error_data = [bad_request_error_pattern(:contribution_group_ids,
+                                                :contribution_group_not_allowed_fsm,
+                                                code: :invalid_value)]
+        assert_response 400
+        match_json(description: 'Validation failed', errors: error_data)
+      end
+    end
+  end
+
+  def test_update_agent_with_write_access_group_as_readone
+    enable_advanced_ticket_scopes do
+      group_ids = Account.current.groups.pluck_all(:id)
+      dummy_user = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: 2)
+      dummy_user.agent.agent_groups.new.tap { |ag| ag.group_id = group_ids[0]; ag.write_access = true; ag.save! }
+      dummy_user.agent.agent_groups.new.tap { |ag| ag.group_id = group_ids[1]; ag.write_access = true; ag.save! }
+      update_params = { "contribution_group_ids": group_ids[0, 3] }
+      put :update, construct_params({ id: dummy_user.id }, update_params)
+      error_data = [bad_request_error_pattern(:contribution_group_ids,
+                                              :group_ids_already_used,
+                                              code: :invalid_value, list: group_ids[0, 2].sort.join(', '))]
+      assert_response 400
+      match_json(description: 'Validation failed', errors: error_data)
+    end
+  end
+
+  def test_update_agent_with_read_access_group_as_writeone
+    enable_advanced_ticket_scopes do
+      group_ids = Account.current.groups.pluck_all(:id)
+      dummy_user = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: 2)
+      dummy_user.agent.agent_groups.new.tap { |ag| ag.group_id = group_ids[0]; ag.write_access = false; ag.save! }
+      dummy_user.agent.agent_groups.new.tap { |ag| ag.group_id = group_ids[1]; ag.write_access = false; ag.save! }
+      update_params = { "group_ids": group_ids[0, 3] }
+      put :update, construct_params({ id: dummy_user.id }, update_params)
+      error_data = [bad_request_error_pattern(:group_ids,
+                                              :contribution_group_ids_already_used,
+                                              code: :invalid_value, list: group_ids[0, 2].sort.join(', '))]
+      assert_response 400
+      match_json(description: 'Validation failed', errors: error_data)
+    end
+  end
+
   private
+
+    def enable_advanced_ticket_scopes
+      Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+      yield
+    ensure
+      Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+    end
+
+    def enable_fsm_feature
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      fsm_agent_type = Account.current.agent_types.where(name: Agent::FIELD_AGENT.to_s).first
+      AgentType.create_agent_type(@account, Agent::FIELD_AGENT) if fsm_agent_type.blank?
+      yield
+    ensure
+      Account.current.agent_types.where(name: Agent::FIELD_AGENT).first.destroy if fsm_agent_type.blank?
+      Account.any_instance.unstub(:field_service_management_enabled?)
+    end
 
     def create_fc_account
       @fchat_account = Freshchat::Account.where(account_id: Account.current.id).first

@@ -1202,11 +1202,14 @@ ActiveRecord::Schema.define(version: 20200502053301) do
     t.integer  "user_id",    :limit => 8
     t.string   "token"
     t.text     "last_error"
+    t.string   'job_id', limit: 30
+    t.text     'export_params'
   end
 
   add_index "data_exports", ["account_id", "source", "token"], :name => "index_data_exports_on_account_id_source_and_token"
   add_index "data_exports", ["account_id", "user_id", "source"], :name => "index_data_exports_on_account_id_user_id_and_source"
   add_index "data_exports", ["source", "created_at"], :name => "index_data_exports_on_source_and_created_at"
+  add_index 'data_exports', ['account_id', 'job_id'], name: 'index_data_exports_on_account_id_and_job_id'
 
   create_table "day_pass_configs", :force => true do |t|
     t.integer  "account_id",        :limit => 8

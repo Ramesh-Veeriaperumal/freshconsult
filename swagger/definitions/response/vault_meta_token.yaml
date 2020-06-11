@@ -1,0 +1,4 @@
+type: object
+properties:
+  vault_token:
+    type: string 

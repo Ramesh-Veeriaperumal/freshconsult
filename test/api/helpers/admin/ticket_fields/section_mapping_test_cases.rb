@@ -1,7 +1,7 @@
 module Admin::TicketFields::SectionMappingTestCases
   def test_success_create_with_section_mapping
     launch_ticket_field_revamp do
-      enable_multi_dynamic_sections_feature do
+      enable_dynamic_sections_feature do
         params = ticket_field_common_params
         type_field = Account.current.ticket_fields_only.find_by_field_type('default_ticket_type')
         picklist_ids = type_field.list_all_choices.pluck_all(:picklist_id)
@@ -20,7 +20,7 @@ module Admin::TicketFields::SectionMappingTestCases
 
   def test_section_mapping_missing_position_for_multiple_data
     launch_ticket_field_revamp do
-      enable_multi_dynamic_sections_feature do
+      enable_dynamic_sections_feature do
         params = ticket_field_common_params
         type_field = Account.current.ticket_fields_only.find_by_field_type('default_ticket_type')
         picklist_ids = type_field.list_all_choices.pluck_all(:picklist_id)
@@ -39,7 +39,7 @@ module Admin::TicketFields::SectionMappingTestCases
 
   def test_create_with_redundant_section_mapping
     launch_ticket_field_revamp do
-      enable_multi_dynamic_sections_feature do
+      enable_dynamic_sections_feature do
         section_id = create_section_fields.first
         params = ticket_field_common_params
         params[:section_mappings] = []
@@ -53,7 +53,7 @@ module Admin::TicketFields::SectionMappingTestCases
 
   def test_create_with_section_mapping_invalid_section_id
     launch_ticket_field_revamp do
-      enable_multi_dynamic_sections_feature do
+      enable_dynamic_sections_feature do
         section_id = Faker::Number.number(3).to_i
         params = ticket_field_common_params
         params[:section_mappings] = [section_mapping_params(section_id: section_id)]
@@ -66,7 +66,7 @@ module Admin::TicketFields::SectionMappingTestCases
 
   def test_create_with_section_mapping_missing_section_id
     launch_ticket_field_revamp do
-      enable_multi_dynamic_sections_feature do
+      enable_dynamic_sections_feature do
         params = ticket_field_common_params
         params[:section_mappings] = [{ position: 50 }]
         post :create, construct_params({}, params)
@@ -78,7 +78,7 @@ module Admin::TicketFields::SectionMappingTestCases
 
   def test_section_mapping_position_out_of_range
     launch_ticket_field_revamp do
-      enable_multi_dynamic_sections_feature do
+      enable_dynamic_sections_feature do
         type_field = Account.current.ticket_fields_only.find_by_field_type('default_ticket_type')
         picklist_ids = type_field.list_all_choices.pluck_all(:picklist_id)
         section1 = create_section(type_field, picklist_ids[0])
@@ -97,7 +97,7 @@ module Admin::TicketFields::SectionMappingTestCases
 
   def test_create_with_section_mapping_separate_parent_fields
     launch_ticket_field_revamp do
-      enable_multi_dynamic_sections_feature do
+      enable_dynamic_sections_feature do
         params = ticket_field_common_params
         params[:section_mappings] = []
         choices_one = [{ title: 'custom_field_section_1', value_mapping: ['Choice A'], ticket_fields: %w[test_custom_number test_custom_date] }]
@@ -119,7 +119,7 @@ module Admin::TicketFields::SectionMappingTestCases
 
   def test_create_section_mapping_without_feature
     launch_ticket_field_revamp do
-      enable_multi_dynamic_sections_feature {}
+      enable_dynamic_sections_feature {}
       type_field = Account.current.ticket_fields_only.find_by_field_type('default_ticket_type')
       picklist_ids = type_field.list_all_choices.pluck_all(:picklist_id)
       section1 = create_section(type_field, picklist_ids[0])
@@ -128,7 +128,7 @@ module Admin::TicketFields::SectionMappingTestCases
       params[:section_mappings] = [section_mapping_params(section_id: section1.id, position: 0)]
       post :create, construct_params({}, params)
       assert_response 403
-      assert_match 'multi_dynamic_sections feature', response.body
+      assert_match 'dynamic_sections feature', response.body
     end
   end
 

@@ -168,7 +168,6 @@ module Ember
             Account.current.all_service_task_dispatcher_rules.destroy_all
             Account.current.all_service_task_observer_rules.destroy_all
             Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
-            Account.any_instance.stubs(:fsm_admin_automations_enabled?).returns(true)
             Account.any_instance.stubs(:automation_revamp_enabled?).returns(true)
             Sidekiq::Testing.inline! do
               post :create, construct_params({ version: 'private' }, name: 'field_service_management')
@@ -192,7 +191,6 @@ module Ember
               assert_equal true, Account.current.all_service_task_observer_rules.none?(&:active)
             end
           ensure
-            Account.any_instance.unstub(:fsm_admin_automations_enabled?)
             Account.any_instance.unstub(:automation_revamp_enabled?)
             Account.any_instance.unstub(:disable_old_ui_enabled?)
           end
@@ -214,10 +212,12 @@ module Ember
 
               post :create, construct_params({ version: 'private' }, name: 'field_service_management')
               assert_response 204
+              Account.reset_current_account
+              Account.stubs(:current).returns(Account.first)
               assert Account.current.field_service_management_enabled?
               assert_equal true, Account.current.picklist_values.find_by_value(SERVICE_TASK_TYPE).present?
               assert_equal true, Account.current.sections.find_by_label(SERVICE_TASK_SECTION).present?
-              assert Account.current.sections.find_by_label(SERVICE_TASK_SECTION).section_fields.size == (fsm_custom_field_to_reserve.size - 1)
+              assert Account.current.sections.find_by_label(SERVICE_TASK_SECTION).section_fields.size == fsm_custom_field_to_reserve.size
             end
           ensure
             Account.any_instance.unstub(:disable_old_ui_enabled?)

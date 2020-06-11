@@ -397,6 +397,8 @@ defaults: &defaults
     - [freshchat_subscription_events_queue]
     - [solution_article_central_publish]
     - [twitter_survey]
+    - [facebook_survey]
+    - [bitmap_callbacks]
 
 development:
   <<: *defaults

@@ -53,4 +53,6 @@ module Ecommerce::Ebay::Constants
   EBAY_SITE_CODE_TYPES = Hash[*EBAY_SITE_CODE.map { |i| [i[0], i[1]] }.flatten]
   EBAY_SITE_BY_CODE = Hash[*EBAY_SITE_CODE.map { |i| [i[1], i[0]] }.flatten]
 
+  INLINE_EBAY_IMAGE_HTML_ELEMENT = '<br><div><a href="%{data_test_url}" target="_blank" rel="noreferrer"><img height="180" width="180" src="%{url}" data-test-src="%{data_test_url}"></a></div>'.freeze
+  EBAY_IMAGES = '<div> %{img_content} <div>'.freeze
 end

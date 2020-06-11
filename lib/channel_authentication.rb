@@ -13,7 +13,8 @@ module ChannelAuthentication
     freshbots: 'freshbots'.freeze,
     twilight: 'twilight'.freeze,
     freddy: 'freddy'.freeze,
-    field_service: 'field_service'.freeze
+    field_service: 'field_service'.freeze,
+    silkroad: 'silkroad'.freeze,
   }.freeze
 
   def channel_client_authentication

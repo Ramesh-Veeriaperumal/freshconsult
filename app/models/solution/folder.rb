@@ -64,6 +64,16 @@ class Solution::Folder < ActiveRecord::Base
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id], :root => options[:root] ) 
   end
 
+  def category_update_details
+    return {} unless parent.previous_changes.key?(:solution_category_meta_id)
+
+    { solution_category_name: parent.previous_changes[:solution_category_meta_id].map { |id| fetch_category_name(id) } }
+  end
+
+  def fetch_category_name(id)
+    Account.current.solution_categories.where(parent_id: id, language_id: language_id).first.name
+  end
+
   def as_json(options={})
     options[:except] = [:account_id,:import_id]
     super options

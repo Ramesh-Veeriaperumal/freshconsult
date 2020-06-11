@@ -145,6 +145,17 @@ module DashboardConcern
     @dashboard_type = current_account.sla_management_enabled? ? type : 'sprout_17_' + type
   end
 
+  def omnichannel_widget_config
+    widgets_details = []
+    widgets = OMNI_CHANNEL_DASHBOARD.dup
+    widget_object = ::Dashboard::Grid.new(6)
+    widgets_with_coordinates = widget_object.process_omni_widgets(widgets)
+    widgets_with_coordinates.each_with_index do |widget, index|
+      widgets_details.push(widget.instance_values.symbolize_keys.merge(id: index))
+    end
+    widgets_details
+  end
+
   def widget_config
     widgets = widget_list dashboard_type
     widgets_details = []

@@ -10,6 +10,11 @@ properties:
     type: string
   signature:
     type: string
+  contribution_group_ids:
+    type: array
+    items:
+      type: integer
+      format: int64
   group_ids:
     type: array
     items:

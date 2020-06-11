@@ -35,7 +35,7 @@ class Account < ActiveRecord::Base
     :recalculate_daypass, :fb_page_api_improvement, :attachment_redirect_expiry, :contact_company_split,
     :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,
     :prevent_wc_ticket_create, :allow_wildcard_ticket_create, :requester_privilege,
-    :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr, :fsm_admin_automations, :asset_management,
+    :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr, :asset_management,
     :csat_email_scan_compatibility, :mint_portal_applicable, :quoted_text_parsing_feature,
     :email_mailbox, :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
     :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :launch_fsm_geolocation, :launch_location_tagging,
@@ -51,7 +51,7 @@ class Account < ActiveRecord::Base
     :bot_banner, :solutions_freshconnect, :fsm_scheduler_month_view, :idle_session_timeout, :solutions_dashboard,
     :observer_race_condition_fix, :contact_graphical_avatar, :omni_bundle_2020, :article_versioning_redis_lock, :freshid_sso_sync, :fw_sso_admin_security, :cre_account, :cdn_attachments, :handle_custom_fields_conflicts, :shopify_api_revamp,
     :omni_chat_agent, :portal_frameworks_update, :ticket_filters_central_publish, :new_email_regex, :auto_refresh_revamp, :agent_statuses,
-    :omni_plans_migration_banner, :parse_replied_email, :wf_comma_filter_fix, :composed_email_check, :omni_channel_dashboard, :csat_for_social_surveymonkey
+    :omni_plans_migration_banner, :parse_replied_email, :wf_comma_filter_fix, :composed_email_check, :omni_channel_dashboard, :csat_for_social_surveymonkey, :fresh_parent
   ].freeze
 
   BITMAP_FEATURES = [
@@ -65,7 +65,7 @@ class Account < ActiveRecord::Base
     :custom_domain, :gamification, :gamification_enable, :auto_refresh, :branding,
     :advanced_dkim, :basic_dkim, :system_observer_events, :unique_contact_identifier,
     :ticket_activity_export, :caching, :private_inline, :collaboration, :hipaa,
-    :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export,
+    :dynamic_sections, :skill_based_round_robin, :auto_ticket_export,
     :user_notifications, :falcon, :multiple_companies_toggle, :multiple_user_companies,
     :denormalized_flexifields, :custom_dashboard, :support_bot, :image_annotation,
     :tam_default_fields, :todos_reminder_scheduler, :smart_filter, :ticket_summary,
@@ -459,6 +459,10 @@ class Account < ActiveRecord::Base
 
   def detect_thank_you_note_enabled?
     detect_thank_you_note_eligible_enabled? && has_feature?(:detect_thank_you_note)
+  end
+
+  def omni_channel_dashboard_enabled?
+    omni_bundle_account? && launched?(:omni_channel_dashboard)
   end
 
   def features

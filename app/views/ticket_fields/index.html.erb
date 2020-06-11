@@ -55,8 +55,7 @@
     fsmFeature = <%= Account.current.field_service_management_enabled? %>
     customFields = <%= @ticket_field_json.to_json.html_safe %>;
     customSection = <%= @section_data_json.to_json.html_safe %>;
-    multi_sections_enabled = <%= Account.current.multi_dynamic_sections_enabled? &&
-                                 Account.current.features?(:dynamic_sections) %>;
+    multi_sections_enabled = <%= Account.current.dynamic_sections_enabled? %>;
     sectionLimit = <%= Account.current.field_service_management_enabled? ? Helpdesk::TicketField::FSM_SECTION_LIMIT : Helpdesk::TicketField::SECTION_LIMIT %>
     shared_ownership_enabled = <%= Account.current.shared_ownership_enabled?.to_json.html_safe %>;
     custom_ticket_fields_enabled = <%= current_account.custom_ticket_fields_enabled? %>

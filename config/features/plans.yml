@@ -114,7 +114,6 @@
       - :round_robin_on_update
       - :shared_ownership_toggle
       - :advanced_dkim
-      - :multi_dynamic_sections
       - :auto_ticket_export
       - :ticket_activity_export
       - :unique_contact_identifier
@@ -302,7 +301,6 @@
       - :round_robin_on_update
       - :shared_ownership_toggle
       - :advanced_dkim
-      - :multi_dynamic_sections
       - :auto_ticket_export
       - :ticket_activity_export
       - :unique_contact_identifier
@@ -511,7 +509,6 @@
       - :round_robin_on_update
       - :shared_ownership_toggle
       - :advanced_dkim
-      - :multi_dynamic_sections
       - :auto_ticket_export
       - :ticket_activity_export
       - :unique_contact_identifier
