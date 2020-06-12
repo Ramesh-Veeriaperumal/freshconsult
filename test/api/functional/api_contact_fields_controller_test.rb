@@ -66,7 +66,6 @@ class ApiContactFieldsControllerTest < ActionController::TestCase
   end
 
   def test_contact_field_index_with_custom_field_name_same_as_default_field_name
-    Account.any_instance.stubs(:handle_custom_fields_conflicts_enabled?).returns(true)
     create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'Name', editable_in_signup: 'true'))
     create_contact_field(cf_params(type: 'boolean', field_type: 'custom_checkbox', label: 'Job title', editable_in_signup: 'true'))
     create_contact_field(cf_params(type: 'date', field_type: 'custom_date', label: 'Time Zone', editable_in_signup: 'true'))
@@ -89,8 +88,6 @@ class ApiContactFieldsControllerTest < ActionController::TestCase
     contact_fields = @account.reload.contact_form.contact_fields
     pattern = contact_fields.map { |contact_field| contact_field_pattern(contact_field) }
     match_json(pattern)
-  ensure
-    Account.any_instance.unstub(:handle_custom_fields_conflicts_enabled?)
   end
 
   def test_index_ignores_pagination

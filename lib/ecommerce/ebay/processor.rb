@@ -80,7 +80,7 @@ class Ecommerce::Ebay::Processor
             :group_id => @ebay_account.group_id
         )
       ticket.ticket_body_attributes = {
-        description_html: media_array.present? ? construct_item_body(@account, ticket, body, message_id, media_array) : body
+        description_html: media_array.present? ? construct_body_with_attachments(@account, ticket, body, message_id, media_array) : body
       }
       ticket.spam = true if requester.deleted?
       ticket.status = status if status.present?
@@ -101,7 +101,7 @@ class Ecommerce::Ebay::Processor
           :private => false
         )
       note.note_body_attributes = {
-        body_html: media_array.present? ? construct_item_body(@account, note, body, message_id, media_array) : body
+        body_html: media_array.present? ? construct_body_with_attachments(@account, note, body, message_id, media_array) : body
       }
       requester.make_current
       note.build_ebay_question(:user_id => requester.id, :item_id => item_id, :ebay_account_id => @ebay_account.id, :message_id => message_id)
@@ -122,7 +122,7 @@ class Ecommerce::Ebay::Processor
     Ecommerce::Ebay::Api.new({ :ebay_account_id => @ebay_account.id}).make_ebay_api_call(:fetch_message_by_id,:external_message_id => ext_msg_id, :detail_level => "messages")
   end
 
-  def construct_item_body(account, item, body, message_id, media_array)
+  def construct_body_with_attachments(account, item, body, message_id, media_array)
     media_url_hash = create_ebay_attachments(account, item, message_id, media_array)
     if media_url_hash.present?
       img_content = ''

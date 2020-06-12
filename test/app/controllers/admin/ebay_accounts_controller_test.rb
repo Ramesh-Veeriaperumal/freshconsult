@@ -84,7 +84,11 @@ class Admin::Ecommerce::EbayAccountsControllerTest < ActionController::TestCase
     notification_subject = 'Details about item: testuser_priyo123 sent a message about Toys fixed2 #110164967547'
     ticket_body_html = '<!DOCTYPE html><html><body><div>Subject: Details about item: testuser_priyo123 sent a message about Toys fixed2 #110164967547</div></body></html>'
     ticket_message_id = '1137081011'
-    message_media = { 'MediaURL' => Rails.root.join('test', 'api', 'fixtures', 'files', 'image6mb.jpg'), 'MediaName' => 'image6mb.jpg' }
+    message_media = [{ 'MediaURL' => Rails.root.join('test', 'api', 'fixtures', 'files', 'image6mb.jpg'), 'MediaName' => 'image6mb.jpg' },
+                     { 'MediaURL' => Rails.root.join('test', 'api', 'fixtures', 'files', 'giphy.gif'), 'MediaName' => 'giphy.gif' },
+                     { 'MediaURL' => Rails.root.join('test', 'api', 'fixtures', 'files', 'image4kb.png'), 'MediaName' => 'image4kb.png' },
+                     { 'MediaURL' => Rails.root.join('test', 'api', 'fixtures', 'files', 'image4kb.png'), 'MediaName' => 'image4kb.tiff' },
+                     { 'MediaURL' => Rails.root.join('test', 'api', 'fixtures', 'files', 'image4kb.png'), 'MediaName' => 'image4kb.bmp' }]
 
     notification = { 'Envelope' => { 'Body' => { 'GetMyMessagesResponse' => { 'EIASToken' => eias_token, 'Messages' => { 'Message' => { 'Sender' => 'testuser_priyo123', 'SendingUserID' => '133055376',
                                                                                                                                         'Subject' => notification_subject,
@@ -94,7 +98,7 @@ class Admin::Ecommerce::EbayAccountsControllerTest < ActionController::TestCase
       post :notify, notification
     end
     assert_response 200
-    assert_equal Account.current.tickets.where(subject: notification_subject).last.inline_attachments.count, 1
+    assert_equal Account.current.tickets.where(subject: notification_subject).last.inline_attachments.count, 5
   ensure
     @account.ebay_accounts.where(external_account_id: eias_token).last.destroy
     Ecommerce::Ebay::Api.any_instance.unstub(:fetch_auth_token, :fetch_user, :subscribe_to_notifications)
@@ -110,7 +114,11 @@ class Admin::Ecommerce::EbayAccountsControllerTest < ActionController::TestCase
     note_body = 'Reply about Toys fixed2 #110164967548'
     note_body_html = '<!DOCTYPE html><html><body><div>Reply about Toys fixed2 #110164967548</div></body></html>'
     note_message_id = '1137081012'
-    message_media = { 'MediaURL' => Rails.root.join('test', 'api', 'fixtures', 'files', 'image6mb.jpg'), 'MediaName' => 'image6mb.jpg' }
+    message_media = [{ 'MediaURL' => Rails.root.join('test', 'api', 'fixtures', 'files', 'image6mb.jpg'), 'MediaName' => 'image6mb.jpg' },
+                     { 'MediaURL' => Rails.root.join('test', 'api', 'fixtures', 'files', 'giphy.gif'), 'MediaName' => 'giphy.gif' },
+                     { 'MediaURL' => Rails.root.join('test', 'api', 'fixtures', 'files', 'image4kb.png'), 'MediaName' => 'image4kb.png' },
+                     { 'MediaURL' => Rails.root.join('test', 'api', 'fixtures', 'files', 'image4kb.png'), 'MediaName' => 'image4kb.tiff' },
+                     { 'MediaURL' => Rails.root.join('test', 'api', 'fixtures', 'files', 'image4kb.png'), 'MediaName' => 'image4kb.bmp' }]
 
     notification = { 'Envelope' => { 'Body' => { 'GetMyMessagesResponse' => { 'EIASToken' => eias_token, 'Messages' => { 'Message' => { 'Sender' => 'testuser_priyo123', 'SendingUserID' => '133055376',
                                                                                                                                         'Subject' => notification_subject,
@@ -121,7 +129,7 @@ class Admin::Ecommerce::EbayAccountsControllerTest < ActionController::TestCase
       post :notify, notification
     end
     assert_response 200
-    assert_equal Account.current.tickets.where(subject: ebay_ticket.subject).last.notes.last.inline_attachments.count, 1
+    assert_equal Account.current.tickets.where(subject: ebay_ticket.subject).last.notes.last.inline_attachments.count, 5
   ensure
     @account.ebay_accounts.where(external_account_id: eias_token).last.destroy
     Ecommerce::Ebay::Api.any_instance.unstub(:fetch_auth_token, :fetch_user, :subscribe_to_notifications, :check_parent_ticket)
