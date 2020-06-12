@@ -203,7 +203,7 @@ class Account < ActiveRecord::Base
     kbase_spam_whitelist: false, forum_post_spam_whitelist: false, enable_qna: false, enable_insights: false,
     whitelist_supervisor_sla_limitation: false, escape_liquid_attributes: true, escape_liquid_for_reply: true,
     escape_liquid_for_portal: true, close_validation: false, pjax_reload: false, one_hop: false,
-    lifecycle_report: false, service_writes: false, service_reads: false, disable_banners: false,
+    service_writes: false, service_reads: false, disable_banners: false,
     admin_only_mint: false, send_emails_via_fd_email_service_feature: false, user_notifications: false,
     freshplug_enabled: false, dkim: false, dkim_email_service: false, sha1_enabled: false, disable_archive: false,
     sha256_enabled: false, auto_ticket_export: false, select_all: false, facebook_realtime: false,
@@ -250,7 +250,7 @@ class Account < ActiveRecord::Base
     omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false,
     ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false
   }.freeze
-
+  
   BLOCK_GRACE_PERIOD = 90.days
 
   ACCOUNT_TYPES = {
