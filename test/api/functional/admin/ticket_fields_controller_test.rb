@@ -19,6 +19,14 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
     super
     clean_db
     Account.current.add_feature(:custom_ticket_fields)
+    if Account.current.ticket_source_from_cache.blank?
+      $redis_others.perform_redis_op('set', 'POPULATE_DEFAULT_SOURCES', true)
+      ENV['SEED'] = '034_default_sources'
+      ENV['FIXTURE_PATH'] = 'db/fixtures/foreground'
+      SeedFu::PopulateSeed.populate
+      ENV['SEED'] = nil
+      ENV['FIXTURE_PATH'] = nil
+    end
   end
 
   def teardown
@@ -745,4 +753,145 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
     ::Tickets::VaultDataCleanupWorker.jobs.clear
     Account.any_instance.unstub(:pci_compliance_field_enabled?)
   end
+
+  def test_updating_source_choice
+    launch_ticket_field_revamp do
+      Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
+      field = @account.ticket_fields.where(field_type: 'default_source').first
+      label = 'source test 1'
+      put :update, construct_params(
+        { id: field.id },
+        choices: [{ label: label, position: 15, icon_id: 20 }]
+      )
+      assert_response 200
+      source = Helpdesk::Source.where(name: label).first
+      assert_equal source.position, 15
+      assert_equal source.meta[:icon_id], 20
+      put :update, construct_params({ id: field.id }, choices: [{ value: source.account_choice_id, icon_id: 15 }])
+      assert_response 200
+      source.reload
+      assert_equal source.meta[:icon_id], 15
+    end
+  ensure
+    Account.current.unstub(:ticket_source_revamp_enabled?)
+  end
+
+  def test_update_default_source_choice
+    launch_ticket_field_revamp do
+      Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
+      field = @account.ticket_fields.where(field_type: 'default_source').first
+      put :update, construct_params({ id: field.id }, choices: [{ value: 3, icon_id: 15 }])
+      assert_response 400
+      match_json([bad_request_error_pattern('value', :default_field_modified, field: :choice)])
+    end
+  ensure
+    Account.current.unstub(:ticket_source_revamp_enabled?)
+  end
+
+  def test_update_source_choice_duplicate_label
+    launch_ticket_field_revamp do
+      Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
+      field = @account.ticket_fields.where(field_type: 'default_source').first
+      label = 'source test 3'
+      put :update, construct_params(
+        { id: field.id },
+        choices: [{ label: label, position: 15, icon_id: 20 }, { label: label, position: 16, icon_id: 22 }]
+      )
+      assert_response 400
+      match_json([bad_request_error_pattern('Source[choices]', :duplicate_choice_for_ticket_field, field: 'label', value: label)])
+    end
+  ensure
+    Account.current.unstub(:ticket_source_revamp_enabled?)
+  end
+
+  def test_update_source_choice_default_choice_position
+    launch_ticket_field_revamp do
+      Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
+      field = @account.ticket_fields.where(field_type: 'default_source').first
+      label = 'source test 4'
+      put :update, construct_params(
+        { id: field.id },
+        choices: [{ label: label, position: 2, icon_id: 25 }]
+      )
+      assert_response 400
+      count = Account.current.ticket_source_from_cache.select(&:default).count + 1
+      match_json([bad_request_error_pattern('Source[choices]', :invalid_position_for_choices, range: count)])
+    end
+  ensure
+    Account.current.unstub(:ticket_source_revamp_enabled?)
+  end
+
+  def test_update_source_choice_lua_sha_failure
+    launch_ticket_field_revamp do
+      Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
+      Redis::BaseError.any_instance.stubs(:message).returns('NOSCRIPT No matching script')
+      $redis_display_id.stubs(:evalsha).raises(Redis::BaseError)
+      field = @account.ticket_fields.where(field_type: 'default_source').first
+      label = 'source test 5'
+      put :update, construct_params(
+        { id: field.id },
+        choices: [{ label: label, position: 20, icon_id: 25 }]
+      )
+      assert_response 200
+    end
+  ensure
+    $redis_display_id.unstub(:evalsha)
+    Redis::BaseError.any_instance.unstub(:message)
+    Account.current.unstub(:ticket_source_revamp_enabled?)
+  end
+
+  def test_update_source_choice_with_default_icon_id
+    launch_ticket_field_revamp do
+      Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
+      field = @account.ticket_fields.where(field_type: 'default_source').first
+      label = 'source test 6'
+      put :update, construct_params(
+          { id: field.id },
+          choices: [{ label: label, position: 22, icon_id: 2 }]
+      )
+      assert_response 400
+      count = Account.current.ticket_source_from_cache.select(&:default).max_by { |x| x.meta[:icon_id] }.meta[:icon_id]
+      match_json([bad_request_error_pattern('choices', :invalid_value_for_icon_id, range: 1 + count)])
+    end
+  ensure
+    Account.current.unstub(:ticket_source_revamp_enabled?)
+  end
+
+  def test_create_source_choice_with_maximum_length
+    launch_ticket_field_revamp do
+      Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
+      field = @account.ticket_fields.where(field_type: 'default_source').first
+      label = Faker::Lorem.characters
+      put :update, construct_params(
+          { id: field.id },
+          choices: [{ label: label, position: 22, icon_id: 25 }]
+      )
+      assert_response 400
+      match_json([bad_request_error_pattern(:label, 'is too long (maximum is 50 characters)')])
+    end
+  ensure
+    Account.current.unstub(:ticket_source_revamp_enabled?)
+  end
+
+  def test_updating_source_choice_with_maximum_length
+    launch_ticket_field_revamp do
+      Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
+      field = @account.ticket_fields.where(field_type: 'default_source').first
+      label = 'source test 7'
+      put :update, construct_params(
+          { id: field.id },
+          choices: [{ label: label, position: 15, icon_id: 20 }]
+      )
+      assert_response 200
+      source = Helpdesk::Source.where(name: label).first
+      assert_equal source.position, 15
+      assert_equal source.meta[:icon_id], 20
+      put :update, construct_params({ id: field.id }, choices: [{ value: source.account_choice_id, label: Faker::Lorem.characters }])
+      assert_response 400
+      match_json([bad_request_error_pattern(:label, 'is too long (maximum is 50 characters)')])
+    end
+  ensure
+    Account.current.unstub(:ticket_source_revamp_enabled?)
+  end
+
 end

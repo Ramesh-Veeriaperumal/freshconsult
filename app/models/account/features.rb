@@ -18,7 +18,7 @@ class Account < ActiveRecord::Base
     :denormalized_select_for_update, :installed_app_publish, :es_tickets,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
     :onboarding_inlinemanual, :skip_portal_cname_chk, :attachment_encoding,
-    :product_central_publish,
+    :product_central_publish, :ticket_source_revamp,
     :bot_email_channel, :bot_email_central_publish, :description_by_default,
     :bot_chat_history, :new_es_api, :filter_factory,
     :skip_invoice_due_warning, :automation_revamp, :archive_ticket_fields,

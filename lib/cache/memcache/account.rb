@@ -75,6 +75,14 @@ module Cache::Memcache::Account
     MemcacheKeys.delete_from_cache(key)
   end
 
+  def ticket_source_from_cache
+    fetch_from_cache(ticket_source_memcache_key) { helpdesk_sources }
+  end
+
+  def clear_ticket_source_from_cache
+    delete_value_from_cache(ticket_source_memcache_key)
+  end
+
   def onhold_and_closed_statuses_from_cache
     @onhold_and_closed_statuses_from_cache ||= begin
       key = ACCOUNT_ONHOLD_CLOSED_STATUSES % { :account_id => self.id}
@@ -892,6 +900,10 @@ module Cache::Memcache::Account
 
     def password_policy_memcache_key(user_type)
       ACCOUNT_PASSWORD_POLICY % { :account_id => self.id, :user_type => user_type}
+    end
+
+    def ticket_source_memcache_key
+      format(ACCOUNT_SOURCES, account_id: id)
     end
 
     def bots_memcache_key

@@ -131,4 +131,16 @@ class Helpdesk::Source < Helpdesk::Choice
       Hash[*TICKET_SOURCES.map { |i| [i[2], i[1]] }.flatten]  
     end
   end
+
+  def new_response_hash
+    {
+      label: name,
+      value: account_choice_id,
+      id: account_choice_id,
+      position: position,
+      icon_id: meta[:icon_id],
+      default: default,
+      deleted: deleted
+    }
+  end
 end

@@ -5,6 +5,7 @@ module TicketFieldBuilder
   include StatusChoiceBuilder
   include NestedFieldBuilder
   include SectionBuilder
+  include SourceChoiceBuilder
 
   def create_without_adding_choices
     # clear picklist values
@@ -32,7 +33,10 @@ module TicketFieldBuilder
     @item.flexifield_def_entry = create_flexifield_entry(tf_params) if create?
     associate_child_levels_and_dependent_fields if cname_params[:dependent_fields].present?
     associate_sections(@item) if cname_params[:section_mappings].present?
-    update_status_choices(@item, cname_params[:choices]) if @item.safe_send(:status_field?) && cname_params[:choices].present?
+    if cname_params[:choices].present?
+      update_status_choices(@item, cname_params[:choices]) if @item.safe_send(:status_field?)
+      handle_source_choices(@item, cname_params[:choices]) if @item.safe_send(:source_field?)
+    end
   end
 
   def save_picklist_choices

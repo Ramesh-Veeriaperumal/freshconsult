@@ -953,8 +953,12 @@ class Helpdesk::TicketField < ActiveRecord::Base
           { label: priority[0], value: priority[1] }
         end
       when 'default_source'
-        TicketConstants.source_names.collect do |source|
-          { label: source[0], value: source[1] }
+        if Account.current.ticket_source_revamp_enabled?
+          Account.current.ticket_source_from_cache.map(&:new_response_hash)
+        else
+          TicketConstants.source_names.collect do |source|
+            { label: source[0], value: source[1] }
+          end
         end
       when 'default_status'
         ticket_field_statuses_from_cache.reject(&:deleted).sort_by(&:position).map(&:new_response_hash)
@@ -1138,6 +1142,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
     def status_field?
       self.field_type.eql?("default_status")
+    end
+
+    def source_field?
+      self.field_type.eql?('default_source')
     end
 
     def type_field?

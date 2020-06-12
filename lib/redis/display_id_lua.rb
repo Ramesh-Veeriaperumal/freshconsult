@@ -1,6 +1,6 @@
 module Redis::DisplayIdLua
 
-  mattr_accessor :redis_lua_script_sha, :picklist_id_lua_script
+  mattr_accessor :redis_lua_script_sha, :picklist_id_lua_script, :ticket_source_choice_id_lua_script_sha
 
   class << self
 
@@ -40,7 +40,25 @@ module Redis::DisplayIdLua
 
     def load_picklist_id_lua_script
       @@picklist_id_lua_script = $redis_display_id.perform_redis_op("SCRIPT", :load, get_picklist_id_lua_script)
-    end    
+    end
+
+    def get_ticket_source_choice_id_lua_script
+      Rails.logger.info 'Redis ticket_source_choice_id_lua_script has been loaded'
+      @ticket_source_choice_id_lua_script ||= begin
+        <<-LUA
+          if redis.call('EXISTS', ARGV[1]) == 1 then
+            return redis.call('INCR', ARGV[1])
+          else
+            redis.call('SET', ARGV[1],'100')
+            return 100
+          end
+        LUA
+      end
+    end
+
+    def load_ticket_source_choice_id_lua_script
+      @@ticket_source_choice_id_lua_script_sha = $redis_display_id.perform_redis_op('SCRIPT', :load, get_ticket_source_choice_id_lua_script)
+    end
 
   end
 

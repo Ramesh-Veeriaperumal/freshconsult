@@ -290,6 +290,7 @@ api_error_messages:
   invalid_privilege_list: "You are not authorized to modify these privileges: '%{list}'"
   no_matching_privilege: "No matching privileges found for: '%{list}'"
   default_role_modified: "You cannot modify a default role."
+  default_field_modified: "You cannot modify a default %{field}."
   missing_privileges: "Please check privileges that are dependent on: '%{list}'"
 
   should_be_child: A ticket of type %{type} cannot be created without parent_id
@@ -507,8 +508,9 @@ api_error_messages:
   duplicate_label_ticket_field: "Ticket field with label %{label} already exist"
   ticket_field_exceeded_limit: "You can create %{limit} fields of type %{field_type} and you've reached its limit."
   ticket_field_choice_condition: "Choices is only available for dropdown or nested field only."
-  invalid_position_for_choices: "Position should be from 1 to %{range} inclusive"
-  duplicate_choice_for_ticket_field: "Duplicate values ('%{value}') present for ticket field"
+  invalid_value_for_icon_id: "Icon id should be from %{range} inclusive"
+  invalid_position_for_choices: "Position should be from %{range} inclusive"
+  duplicate_choice_for_ticket_field: "Duplicate %{field}s ('%{value}') present for ticket field"
   dependent_field_level_error: "For dependent field level should be either 2 or 3"
   ticket_field_data_corrupted_error: "Ticket field data is corrupted, please delete this field or ask for support."
   field_limit_exceeded: "You have exceeded the maximum limit for this type of field."

@@ -12,11 +12,12 @@ module Admin::TicketFieldConstants
   ALLOWED_HASH_BASIC_CHOICE_FIELDS = %w[id value archived deleted position parent_choice_id choices].freeze
 
   ALLOWED_STATUS_CHOICES = %i[id label_for_customers value stop_sla_timer archived deleted group_ids position].freeze
+  ALLOWED_SOURCE_CHOICES = %i[label value position icon_id deleted].freeze
 
   ALLOWED_HASH_CHOICES_LEVEL_2 = ALLOWED_HASH_BASIC_CHOICE_FIELDS - %w[choices] |
                                  [choices: ALLOWED_HASH_BASIC_CHOICE_FIELDS]
 
-  ALLOWED_HASH_CHOICES = ALLOWED_HASH_BASIC_CHOICE_FIELDS + ALLOWED_STATUS_CHOICES |
+  ALLOWED_HASH_CHOICES = ALLOWED_HASH_BASIC_CHOICE_FIELDS + ALLOWED_STATUS_CHOICES + ALLOWED_SOURCE_CHOICES |
                          [choices: ALLOWED_HASH_CHOICES_LEVEL_2]
 
   ALLOWED_HASH_SECTION_MAPPINGS = %i[section_id position deleted].freeze
@@ -44,6 +45,27 @@ module Admin::TicketFieldConstants
     group_ids: [Array, Integer]
   }.freeze
 
+  SOURCE_CHOICES_EXPECTED_TYPE = {
+    value: Integer,
+    label: String,
+    deleted: 'bool',
+    position: Integer,
+    icon_id: Integer,
+    choices: [Array, Hash]
+  }.freeze
+
+  DATA_TYPE_MAPPING = {
+    0.class => 'Integer',
+    0.0.class => 'Float',
+    "".class => 'String',
+    nil.class => 'Null',
+    true.class => 'Boolean',
+    false.class => 'Boolean',
+    [].class => 'Array',
+    {}.class => 'key/value pair',
+    {}.with_indifferent_access.class => 'key/value pair'
+  }.freeze
+
   SECTION_MAPPING_EXPECTED_TYPE = {
     section_id: Integer,
     position: Integer,
@@ -52,6 +74,7 @@ module Admin::TicketFieldConstants
 
   MANDATORY_CHOICE_PARAM_FOR_PICKLIST_CREATE = %i[value position].freeze
   MANDATORY_CHOICE_PARAM_FOR_STATUS_CREATE = %i[value position].freeze
+  MANDATORY_CHOICE_PARAM_FOR_SOURCE_CREATE = %i[label position].freeze
 
   MANDATORY_PARAM_FOR_SECTION_MAPPING = %i[section_id].freeze
 
@@ -218,6 +241,14 @@ module Admin::TicketFieldConstants
     stop_sla_timer: :stop_sla_timer,
     deleted: :deleted,
     position: :position
+  }.invert.freeze
+
+  SOURCE_CHOICES_PARAMS = {
+    label: :name,
+    deleted: :deleted,
+    position: :position,
+    default: :default,
+    meta: :meta
   }.invert.freeze
 
   PICKLIST_COLUMN_MAPPING = {

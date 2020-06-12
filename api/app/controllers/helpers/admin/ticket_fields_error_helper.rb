@@ -14,6 +14,13 @@ module Admin::TicketFieldsErrorHelper
     error_options.merge!(error_message)
   end
 
+  def default_field_error(name, field, message = :default_field_modified)
+    errors[name] << message
+    error_message = {}
+    error_message[name] = { field: field }
+    error_options.merge!(error_message)
+  end
+
   def invalid_section_mapping_error(name, section_id = nil, message = :invalid_section_mapping)
     errors[name] << message
     if section_id
@@ -65,25 +72,35 @@ module Admin::TicketFieldsErrorHelper
     error_options.merge! validation.error_options
   end
 
-  def choice_position_error(tf, choice_level, to)
+  def source_icon_id_error(name, to, from = 1)
+    errors[name] << :invalid_value_for_icon_id
+    range = to.nil? ? from : "#{from} to #{to}"
+    error_message = {}
+    error_message[name] = { range: range }
+    error_options.merge!(error_message)
+  end
+
+  def choice_position_error(tf, choice_level, to, from = 1)
     name = "#{tf.label}[#{choice_level}]".intern
     errors[name] << :invalid_position_for_choices
     error_message = {}
-    error_message[name] = { range: to }
+    range = to.nil? ? from : "#{from} to #{to}"
+    error_message[name] = { range: range }
     error_options.merge!(error_message)
   end
 
-  def ticket_field_position_error(tf, to)
+  def ticket_field_position_error(tf, to, from = 1)
     name = "#{tf.label}[:position]".intern
     errors[name] << :invalid_position_for_choices
     error_message = {}
-    error_message[name] = { range: to }
+    range = to.nil? ? from : "#{from} to #{to}"
+    error_message[name] = { range: range }
     error_options.merge!(error_message)
   end
 
-  def duplication_choice_error(tf, choices, choice_level)
+  def duplication_choice_error(tf, choices, choice_level, field = 'value')
     errors[:"#{tf.label}[#{choice_level}]"] << :duplicate_choice_for_ticket_field
-    error_options[:"#{tf.label}[#{choice_level}]"] = { value: choices.join(', ') }
+    error_options[:"#{tf.label}[#{choice_level}]"] = { field: field, value: choices.join(', ') }
   end
 
   def not_included_error(name, list, message: :not_included)
