@@ -153,7 +153,12 @@ Helpkit::Application.routes.draw do
         post :bulk, to: 'api_agents#create_multiple'
         put  :update_multiple
       end
+      member do
+        match 'availability' => 'api_agents#fetch_availability', via: :get
+        match 'availability' => 'api_agents#update_availability', via: :patch
+      end
     end
+
     resources :out_of_offices, only: [:index, :show, :update, :destroy, :create]
     resources :canned_response_folders, controller: 'canned_response_folders', only: [:index, :show, :create, :update]
     resources :canned_responses, controller: 'canned_responses', only: [:index, :show, :create, :update] do
@@ -1019,7 +1024,6 @@ Helpkit::Application.routes.draw do
     get '/solutions/folders/:id', to: 'channel/v2/api_solutions/folders#show'
     get '/solutions/articles/:id', to: 'channel/v2/api_solutions/articles#show'
     get '/solutions/folders/:id/articles', to: 'channel/v2/api_solutions/articles#folder_articles'
-    
   end
 
   channel_routes = proc do
