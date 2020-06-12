@@ -3,6 +3,7 @@ require_relative '../../core/helpers/users_test_helper'
 class ApiRolesControllerTest < ActionController::TestCase
   include CoreUsersTestHelper
   include RolesTestHelper
+  include QmsTestHelper
   def wrap_cname(params)
     { api_role: params }
   end
@@ -165,4 +166,31 @@ class ApiRolesControllerTest < ActionController::TestCase
     assert_equal test_agent.privilege?(:delete_contact), test_agent.privilege?(:delete_company)
   end
 
+  def test_index_with_qms_enabled
+    enable_qms
+    CustomRequestStore.store[:private_api_request] = false
+    get :index, controller_params
+    pattern = []
+    Account.current.roles_from_cache.each do |role|
+      pattern << role_pattern(role)
+    end
+    assert_response 200
+    assert Account.current.roles.map(&:name).include?('Coach')
+    match_json(pattern.ordered!)
+  ensure
+    disable_qms
+  end
+
+  def test_index_with_qms_disabled
+    disable_qms
+    CustomRequestStore.store[:private_api_request] = false
+    get :index, controller_params
+    pattern = []
+    Account.current.roles_from_cache.each do |role|
+      pattern << role_pattern(role)
+    end
+    assert_response 200
+    assert !Account.current.roles.map(&:name).include?('Coach')
+    match_json(pattern.ordered!)
+  end
 end

@@ -140,6 +140,7 @@
     - freshcaller_update_agents
     - ticket_field_job
     - bitmap_callbacks
+    - quality_management_system
 
   :maintainence:
     - select_all_tickets
@@ -680,3 +681,4 @@
     - freshcaller_account_delete
     - freshcaller_update_agents
     - bitmap_callbacks
+    - quality_management_system

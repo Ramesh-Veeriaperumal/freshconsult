@@ -487,6 +487,15 @@ module Helpdesk
       agent_type: AgentType.agent_type_id(:field_agent)
     }.freeze
 
+    COACH = (SUPERVISOR + [:manage_scores]).freeze
+
+    COACH_ROLE = {
+      name: 'Coach',
+      description: 'Can create, edit, update & view scores',
+      default_role: true,
+      privilege_list: COACH
+    }.freeze
+
     # Array structure [0, 1, 2, 3, 4]
     # 0 - name
     # 1 - privileges

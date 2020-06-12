@@ -3,6 +3,7 @@ require_relative '../../test_helper'
 class RolesControllerTest < ActionController::TestCase
   tests ApiRolesController
   include RolesTestHelper
+  include QmsTestHelper
 
   def wrap_cname(params)
     { api_role: params }
@@ -176,5 +177,33 @@ class RolesControllerTest < ActionController::TestCase
     failures[role.id] = { privilege_list: [:missing_privileges, list: 'edit_ticket_properties'] }
     assert_response 202
     match_json(partial_success_response_pattern([], failures))
+  end
+
+  def test_index_with_qms_enabled
+    enable_qms
+    CustomRequestStore.store[:private_api_request] = true
+    get :index, controller_params
+    pattern = []
+    Account.current.roles_from_cache.each do |role|
+      pattern << private_role_pattern(role)
+    end
+    assert_response 200
+    assert Account.current.roles.map(&:name).include?('Coach')
+    match_json(pattern.ordered!)
+  ensure
+    disable_qms
+  end
+
+  def test_index_with_qms_disabled
+    disable_qms
+    CustomRequestStore.store[:private_api_request] = true
+    get :index, controller_params
+    pattern = []
+    Account.current.roles_from_cache.each do |role|
+      pattern << private_role_pattern(role)
+    end
+    assert_response 200
+    assert !Account.current.roles.map(&:name).include?('Coach')
+    match_json(pattern.ordered!)
   end
 end
