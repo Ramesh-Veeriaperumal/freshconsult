@@ -470,7 +470,7 @@
   :freshfone_gv_forward: false
   :chat: false
   :freshreports_analytics: false
-  :disable_old_reports: true
+  :disable_old_reports: false
   :tokenize_emoji: false
   :report_field_regenerate: false
   :reports_regenerate_data: false
