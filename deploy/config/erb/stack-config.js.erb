@@ -43,13 +43,6 @@
     config[:FRESHCALLER_WIDGET_LOADER_URL] = node[:falcon_ui][:freshcaller][:widget_loader_url]
   end
 
-  if(node[:falcon_ui][:beamer])
-    config[:beamer] = {
-      productId: node[:falcon_ui][:beamer][:productId]
-      script_url: node[:falcon_ui][:beamer][:script_url]
-    }
-  end
-
   if(node[:falcon_ui][:integrations_url])
     config[:INTEGRATIONS_REDIRECT_URL] = node[:falcon_ui][:integrations_url]
   end
@@ -94,6 +87,13 @@
     config[:inlineManual] = { token: node[:falcon_ui][:inline_manual][:token] }
   end
 
+  if(node[:falcon_ui][:beamer])
+    config[:beamer] = {
+      productId: node[:falcon_ui][:beamer][:productId],
+      script_url: node[:falcon_ui][:beamer][:script_url]
+    }
+  end
+
   if(node[:falcon_ui][:site_announcement] && node[:falcon_ui][:site_announcement].is_a?(Hash))
     config[:siteAnnouncement] = node[:falcon_ui][:site_announcement]
   end
@@ -116,6 +116,10 @@
 
   if(node[:falcon_ui][:widget_domain])
     config[:widgetDomain] = node[:falcon_ui][:widget_domain]
+  end
+
+  if(node[:falcon_ui][:freshdesk_help_widget_url])
+    config[:freshdeskHelpWidgetURL] = node[:falcon_ui][:freshdesk_help_widget_url]
   end
 
   if(node[:ymls][:config][:freshworksOmnibar])

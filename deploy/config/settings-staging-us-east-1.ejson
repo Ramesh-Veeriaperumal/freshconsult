@@ -1811,6 +1811,8 @@
         "_base_url": "https://api.fconstage.io"
       },
       "_vault_service_url": "https://vaultservice.freshpo.com/",
+      "_freshdesk_help_widget_url": "https://widget.freshworks.com/widgets/60000003019.js",
+      "google_map_api_key": "EJ[1:XWtiWjCWn7+hf+0pxaoSfRg4QMCsj/uQpM0nfgMDGTE=:LyK1j+KZM4vXa+sm1NYDi6L9AtJNiWuB:b8ZCuo5Cy3lgwxuyOZ5SHsNRejemmEvjXpoKz5zJO8WjFv+iBWO79hZakAbY5fPtWhooawAn5g==]",
       "blue": {
         "_bucket": "falconstagingvpc",
         "_fingerprint_prepend": "https://d2641u002940uc.cloudfront.net/staging/",
