@@ -30,6 +30,7 @@ module ApplicationHelper
   include Redis::OthersRedis
   include Redis::RedisKeys
   include SandboxConstants
+  include Social::Util
 
   require "twitter"
 

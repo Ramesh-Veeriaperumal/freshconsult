@@ -12,7 +12,43 @@ module Admin::DefaultFieldHelper
     archive_deleted_key_validation(choices) if errors.blank?
   end
 
+  # ticket source validation ensures
+  # custom_source feature and ticket_source_revamp launch party are enabled.
+  # if value field not present, it is considered as a create request and ensures presence of position and label.
+  # if value present, it is considered as a update request and ensures there is a db entry with the value.
+  # ensures the data type of all request parameters as expected.
+  # default sources are not there in the request
+  # Since default fields not allowed to modify, position should be higher than of default sources.
+  # ensure uniqueness of source labels(including the soft deleted ones).
+  #
+  def validate_source_choices(source_field, choices)
+    validate_source_features
+    source_params_validation(choices) if errors.blank?
+    icon_validation(choices) if errors.blank?
+    db_source_value_validation(choices) if errors.blank?
+    default_source_choices_validation(choices) if errors.blank?
+    position_validation_for_source_choice(source_field, choices) if errors.blank?
+    validate_db_uniqueness_for_source_choices(source_field, choices) if errors.blank?
+  end
+
   private
+
+    def validate_source_features
+      missing_feature_error(:ticket_source_revamp) unless current_account.ticket_source_revamp_enabled?
+      missing_feature_error(:custom_source) unless current_account.custom_source_enabled?
+    end
+
+    def icon_validation(choices)
+      max_icon_id = current_account.ticket_source_from_cache.select(&:default).max_by { |x| x.meta[:icon_id] }.meta[:icon_id]
+      choices.each do |each_choice|
+        next unless each_choice[:icon_id]
+
+        if each_choice[:icon_id] <= max_icon_id
+          source_icon_id_error(:choices, nil, max_icon_id + 1)
+          break
+        end
+      end
+    end
 
     def archive_deleted_key_validation(choices)
       choices.each do |each_choice|
@@ -43,6 +79,16 @@ module Admin::DefaultFieldHelper
       end
     end
 
+    def default_source_choices_validation(choices)
+      source_choices = source_choices_by_id
+      choices.each do |each_choice|
+        next unless each_choice[:value]
+
+        db_choice = source_choices[each_choice[:value]].first
+        default_field_error(:value, :choice) if db_choice.default
+      end
+    end
+
     def data_type_for_status_choice(choice)
       choice.each_pair do |key, value|
         key = key.to_s.intern
@@ -52,8 +98,27 @@ module Admin::DefaultFieldHelper
       end
     end
 
+    def data_type_for_source_choice(choice)
+      choice.each_pair do |key, value|
+        key = key.to_s.intern
+        return unexpected_value_for_attribute(:"choices[#{key}]", key) if ALLOWED_SOURCE_CHOICES.exclude?(key)
+
+        unless match_type?(value, SOURCE_CHOICES_EXPECTED_TYPE[key])
+          invalid_data_type("choice[#{key}]".intern, SOURCE_CHOICES_EXPECTED_TYPE[key], DATA_TYPE_MAPPING[value.class])
+          break
+        end
+      end
+    end
+
     def missing_param_for_choices(choice)
       missing_params = MANDATORY_CHOICE_PARAM_FOR_STATUS_CREATE.select do |expected_key|
+        choice[expected_key].blank?
+      end
+      missing_param_error(:choices, missing_params.join(', ')) if missing_params.present?
+    end
+
+    def missing_param_for_source_choices(choice)
+      missing_params = MANDATORY_CHOICE_PARAM_FOR_SOURCE_CREATE.select do |expected_key|
         choice[expected_key].blank?
       end
       missing_param_error(:choices, missing_params.join(', ')) if missing_params.present?
@@ -65,6 +130,15 @@ module Admin::DefaultFieldHelper
 
         data_type_for_status_choice(each_choice)
         missing_param_for_choices(each_choice) unless each_choice.key?(:id)
+      end
+    end
+
+    def source_params_validation(choices)
+      choices.each do |each_choice|
+        break if errors.present?
+
+        missing_param_for_source_choices(each_choice) unless each_choice.key?(:value)
+        data_type_for_source_choice(each_choice) if errors.blank?
       end
     end
 
@@ -84,6 +158,15 @@ module Admin::DefaultFieldHelper
 
         absent_in_db_error(:choices, :status_choices, "id `#{each_choice[:id]}`") if status_choices[each_choice[:id]].blank?
         validate_status_groups(each_choice[:group_ids]) if each_choice.key?(:group_ids).present?
+      end
+    end
+
+    def db_source_value_validation(choices)
+      source_choices = source_choices_by_id
+      choices.each do |each_choice|
+        next if !each_choice.key?(:value) || errors.present?
+
+        absent_in_db_error(:choices, :source_choice, "value `#{each_choice[:value]}`") if source_choices[each_choice[:value]].blank?
       end
     end
 
@@ -110,12 +193,33 @@ module Admin::DefaultFieldHelper
       name_validation_for_status_choice(record, all_status_choices)
     end
 
+    def validate_db_uniqueness_for_source_choices(source, choices)
+      source_name_map = current_account.ticket_source_from_cache.map { |i| [i.name, i.account_choice_id].flatten }.to_h
+      choices.each do |each_choice|
+        next if each_choice[:label].blank? || (each_choice[:value] && source_name_map[each_choice[:label]] == each_choice[:value])
+
+        if source_name_map[each_choice[:label]]
+          duplication_choice_error(source, [each_choice[:label]], :choices, 'label')
+        else
+          source_name_map[each_choice[:label]] = each_choice[:value].presence || 0
+        end
+      end
+    end
+
     def position_validation_for_status_choice(record, choices)
       new_choices_count = choices.count { |each_choice| !each_choice.key?(:id) }
       max_allowed_position = status_choices_by_id(record).values.flatten.max_by(&:position).position + new_choices_count
       choices.each do |each_choice|
         pos = each_choice[:position] || 1
         choice_position_error(record, :choices, max_allowed_position) if pos < 1 || pos > max_allowed_position
+      end
+    end
+
+    def position_validation_for_source_choice(record, choices)
+      default_source_count = current_account.ticket_source_from_cache.select(&:default).size
+      choices.each do |each_choice|
+        invalid_position = each_choice[:position] && each_choice[:position] <= default_source_count
+        choice_position_error(record, :choices, nil, default_source_count + 1) if invalid_position
       end
     end
 
@@ -127,6 +231,12 @@ module Admin::DefaultFieldHelper
       @status_choices_by_id ||= begin
         field_status = ticket_field.ticket_field_statuses_from_cache.map { |x| x.status_id; x }
         field_status.group_by(&:status_id)
+      end
+    end
+
+    def source_choices_by_id
+      @source_choices_by_id ||= begin
+        current_account.ticket_source_from_cache.group_by(&:account_choice_id)
       end
     end
 end

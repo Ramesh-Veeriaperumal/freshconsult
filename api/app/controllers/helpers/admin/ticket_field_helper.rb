@@ -210,6 +210,10 @@ module Admin::TicketFieldHelper
       tf.present? && tf.safe_send(:status_field?)
     end
 
+    def source_field?
+      tf.present? && tf.safe_send(:source_field?)
+    end
+
     def encrypted_field?
       (type.present? && type.is_a?(String) && type.to_sym == :encrypted_text)
     end

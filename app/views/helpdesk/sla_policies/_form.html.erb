@@ -1,7 +1,7 @@
 <%= f.error_messages %>
 <% conditions = @sla_policy.conditions || {} %>
 <% esc_conditions = @sla_policy.escalations || {} %>
-<% sla_enabled = current_account.sla_management_enabled? %>
+<% sla_enabled = current_account.sla_management_enabled? && current_account.sla_reminder_automation_enabled? %>
 
 <div class="dont-validate form-horizontal">
   	<div class="control-group">

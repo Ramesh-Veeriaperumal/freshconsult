@@ -203,7 +203,7 @@ class Account < ActiveRecord::Base
     kbase_spam_whitelist: false, forum_post_spam_whitelist: false, enable_qna: false, enable_insights: false,
     whitelist_supervisor_sla_limitation: false, escape_liquid_attributes: true, escape_liquid_for_reply: true,
     escape_liquid_for_portal: true, close_validation: false, pjax_reload: false, one_hop: false,
-    lifecycle_report: false, service_writes: false, service_reads: false, disable_banners: false,
+    service_writes: false, service_reads: false, disable_banners: false,
     admin_only_mint: false, send_emails_via_fd_email_service_feature: false, user_notifications: false,
     freshplug_enabled: false, dkim: false, dkim_email_service: false, sha1_enabled: false, disable_archive: false,
     sha256_enabled: false, auto_ticket_export: false, select_all: false, facebook_realtime: false,
@@ -224,7 +224,7 @@ class Account < ActiveRecord::Base
     skip_invoice_due_warning: false, custom_fields_search: true, update_billing_info: false, allow_billing_info_update: false,
     tag_central_publish: false, archive_tickets_api: false, bot_agent_response: false,
     fluffy: false, scheduling_fsm_dashboard: false, nested_field_revamp: true, service_worker: false,
-    kbase_mint: true, freshid_org_v2: false, hide_agent_login: false,
+    kbase_mint: true, freshid_org_v2: false, hide_agent_login: false, ticket_source_revamp: false,
     office365_adaptive_card: false, helpdesk_tickets_by_product: false, article_es_search_by_filter: false,
     text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
     recalculate_daypass: false, prevent_wc_ticket_create: true, allow_wildcard_ticket_create: false,
@@ -232,13 +232,13 @@ class Account < ActiveRecord::Base
     requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false,
     supervisor_custom_status: false, asset_management: false, sandbox_temporary_offset: false, downgrade_policy: true,
     skip_posting_to_fb: true, launch_fsm_geolocation: false, launch_location_tagging: false, allow_update_agent: false,
-    facebook_dm_outgoing_attachment: true, hide_mailbox_error_from_agents: false, prevent_lang_detect_for_spam: false,
+    facebook_dm_outgoing_attachment: true, hide_mailbox_error_from_agents: false,
     jira_onpremise_reporter: false, support_ticket_rate_limit: false, sidekiq_logs_to_central: false,
     portal_central_publish: false, encode_emoji_in_solutions: false, forums_agent_portal: false,
     mailbox_google_oauth: false, migrate_euc_pages_to_us: false, agent_collision_revamp: false,
     topic_editor_with_html: false, mailbox_forward_setup: false, remove_image_attachment_meta_data: false,
     ticket_field_revamp: true, new_timeline_view: false, email_mailbox: true, facebook_admin_ui_revamp: false,
-    detect_lang_from_email_service: false, sla_policy_revamp: false, freshdesk_freshsales_bundle: false,
+    sla_policy_revamp: false, freshdesk_freshsales_bundle: false,
     fsm_for_garden_plan: true, fsm_for_blossom_plan: true, requester_widget_timeline: false,
     enable_secure_login_check: false,
     marketplace_gallery: false, facebook_public_api: false, twitter_public_api: false, retry_emails: false,
@@ -246,11 +246,11 @@ class Account < ActiveRecord::Base
     solutions_freshconnect: false, fsm_scheduler_month_view: false, solutions_dashboard: false,
     facebook_post_outgoing_attachment: true, article_versioning_redis_lock: false,
     salesforce_sync: false, salesforce_v2: false, dynamics_v2: false, marketplace_app: false, freshid_sso_sync: true,
-    fw_sso_admin_security: false, handle_custom_fields_conflicts: false, shopify_api_revamp: false,
+    fw_sso_admin_security: false, shopify_api_revamp: false,
     omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false,
     ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false
   }.freeze
-
+  
   BLOCK_GRACE_PERIOD = 90.days
 
   ACCOUNT_TYPES = {

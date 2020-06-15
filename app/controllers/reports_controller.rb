@@ -12,7 +12,7 @@ class ReportsController < ApplicationController
   include HelpdeskReports::Helper::PlanConstraints
   # include Reports::ActivityReport
 
-  helper_method :enable_lifecycle_report?, :enable_qna?, :enable_insights?, :enable_new_ticket_recieved_metric?
+  helper_method :enable_qna?, :enable_insights?, :enable_new_ticket_recieved_metric?
 
   def show
     @current_report  = @t_reports[params[:report_type].to_sym]

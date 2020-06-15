@@ -458,5 +458,5 @@ class Account < ActiveRecord::Base
   has_many :company_field_choices, class_name: 'CompanyFieldChoice', dependent: :destroy
   has_many :section_picklist_value_mappings, :class_name => 'Helpdesk::SectionPicklistValueMapping'
 
-  has_many :helpdesk_sources, class_name: 'Helpdesk::Source'
+  has_many :helpdesk_sources, class_name: 'Helpdesk::Source', order: 'position', dependent: :destroy
 end

@@ -21,10 +21,8 @@ class Users::DetectLanguage < BaseWorker
     @text = (@big_text.first(30) + @big_text[@big_text.length/2, 30] + @big_text.last(30)).squish.split.first(15).join(' ')
     if account.compact_lang_detection_enabled?
       detect_lang_from_cld
-    elsif account.detect_lang_from_email_service_enabled?
-      set_lang_via_email_service
     else
-      detect_lang_from_google
+      set_lang_via_email_service
     end
   rescue => e
     Rails.logger.error("DetectLanguage: account #{account.id} - #{args} - #{e.message} #{e.backtrace.to_a.join("\n")}")
@@ -44,20 +42,7 @@ class Users::DetectLanguage < BaseWorker
         @user.save!
       else
         Rails.logger.debug "unable to get via cld text:: #{@text}, account_id:: #{Account.current.id}"
-        if Account.current.detect_lang_from_email_service_enabled?
-          set_lang_via_email_service
-        else
-          detect_lang_from_google
-        end
-      end
-    end
-
-    def detect_lang_from_google
-      if text_available_from_cache?
-        assign_user_language
-        @user.save!
-      else
-        Helpdesk::DetectUserLanguage.set_user_language!(@user, @text)
+        set_lang_via_email_service
       end
     end
 
@@ -86,14 +71,19 @@ class Users::DetectLanguage < BaseWorker
         @user.language = @user.account.language
         language = detect_lang_from_email_service
         language = Languages::Constants::LANGUAGE_ALT_CODE[language] || language
-        Helpdesk::DetectUserLanguage.cache_user_laguage(@text, language)
+        cache_user_language(@text, language)
         @user.language = I18n.available_locales_with_name.map { |lang, sym| sym.to_s }.include?(language) ? language : @user.account.language
       end
       @user.save!
     end
 
+    def cache_user_language(text, language)
+      key = format(DETECT_USER_LANGUAGE, text: text)
+      set_others_redis_key(key, language)
+    end
+
     def text_available_from_cache?
-      @language = get_others_redis_key(DETECT_USER_LANGUAGE % { :text => @text })
+      @language = get_others_redis_key(format(DETECT_USER_LANGUAGE, text: @text))
     end
 
     def assign_user_language

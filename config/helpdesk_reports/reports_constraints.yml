@@ -64,9 +64,6 @@
     - garden
     - estate
     - forest
-  enable_lifecycle_report:
-    - estate
-    - forest
   enable_qna_insights:
     - estate
     - forest

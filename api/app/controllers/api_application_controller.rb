@@ -566,7 +566,7 @@ class ApiApplicationController < MetalApiController
 
       jwt_header = auth_token.split('.')[0] if !auth_token.nil? && auth_token.length > 1
       kid = JSON.parse(Base64.decode64(jwt_header))['kid'] rescue nil if jwt_header
-      
+
       if kid == ::Iam::IAM_CONFIG['kid']
         key = OpenSSL::PKey::RSA.new(File.read('config/cert/iam_public.pem'))
         begin
@@ -581,7 +581,7 @@ class ApiApplicationController < MetalApiController
 
     def api_current_user
       @current_user || jwt_auth_request # Authenticating using JWT token from IAM service for private APIs
-      
+
       return @current_user if defined?(@current_user)
 
       # Private API is supposed to work with session based authentication

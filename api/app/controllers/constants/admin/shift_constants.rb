@@ -4,7 +4,9 @@ module Admin::ShiftConstants
   PRODUCT = 'freshdesk'.freeze
 
   ACTION_METHOD_TO_CLASS_MAPPING = { index: Net::HTTP::Get, show: Net::HTTP::Get, update: Net::HTTP::Put,
-                                     create: Net::HTTP::Post, destroy: Net::HTTP::Delete }.freeze
+                                     create: Net::HTTP::Post, destroy: Net::HTTP::Delete,
+                                     patch: Net::HTTP::Patch,
+                                     fetch_availability: Net::HTTP::Get, update_availability: Net::HTTP::Patch }.freeze
 
   SUCCESS_CODES = 200..299.freeze
 
@@ -15,4 +17,6 @@ module Admin::ShiftConstants
   SHIFT_SHOW = 'api/v1/shifts/%{shift_id}'.freeze
 
   TIMEOUT = ShiftConfig['time_out']
+
+  AVAILABILITY = 'availability'.freeze
 end

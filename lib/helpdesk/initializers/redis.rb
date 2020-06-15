@@ -49,6 +49,7 @@ REDIS_UNIQUE_CONNECTION_OBJECTS = [$redis_tickets, $rate_limit].freeze
 
 Redis::DisplayIdLua.load_display_id_lua_script_to_redis
 Redis::DisplayIdLua.load_picklist_id_lua_script
+Redis::DisplayIdLua.load_ticket_source_choice_id_lua_script
 
 Redis::Redlock.load_unlock_lua_script_to_redis
 

@@ -1,7 +1,6 @@
 module Ecommerce::Ebay::Util
 
   include Ecommerce::Ebay::Constants
-  include Social::Util
 
   def session_store(data_to_be_stored)
     data_to_be_stored.each do |key,val|
@@ -74,5 +73,20 @@ module Ecommerce::Ebay::Util
     end
     item.inline_attachments = attachments.compact
     media_url_hash
+  end
+
+  def get_content_type(basename)
+    case basename
+    when /\.gif$/i
+      'image/gif'
+    when /\.jpe?g/i
+      'image/jpeg'
+    when /\.png$/i
+      'image/png'
+    when /\.tiff?/i
+      'image/tiff'
+    else
+      'application/octet-stream'
+    end
   end
 end

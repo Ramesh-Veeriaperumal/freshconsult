@@ -1,4 +1,27 @@
 module ChannelReplyTestHelper
+  def construct_facebook_response_payload(success = true, note_id = nil, errors = {})
+    payload =
+      {
+        client: 'facebook',
+        schema_version: 1,
+        pod: 'development',
+        context: {
+          note_id: note_id
+        },
+        command_id: '57eb357f-aa60-422c-ab2c-280e068d6c3f',
+        command_name: 'send_survey_facebook_dm',
+        region: 'us-east-1',
+        data: {
+          success: success
+        },
+        reply_status: success ? 'success' : 'error',
+        status_code: success ? 200 : errors[:error_code],
+        reply_id: 'd49dfaa9-473b-43e8-b526-cec084887fc0'
+      }
+    payload[:data][:errors] = errors if errors.present?
+    payload
+  end
+
   def construct_twitter_reply_payload_with_error(note_id = 123)
     {
       owner: 'helpkit',

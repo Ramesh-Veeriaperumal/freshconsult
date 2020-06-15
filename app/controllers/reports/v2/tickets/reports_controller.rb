@@ -371,11 +371,6 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
     end
   end
 
-  def lifecycle_launch_party_check
-    redirect_to reports_path if (report_type == :timespent) && !current_account.launched?(:lifecycle_report)
-  end
-
-
   def construct_params
     return unless(report_type == :timespent && @query_params.present?)
     #Currently input to param constructor is hash.

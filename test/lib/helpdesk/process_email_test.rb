@@ -250,7 +250,6 @@ class ProcessEmailTest < ActiveSupport::TestCase
 
   def test_prevent_lang_detect_for_spam
     account = Account.current
-    account.launch(:prevent_lang_detect_for_spam)
     user = account.users.first
     user.language = 'ar'
     user.save
@@ -261,7 +260,6 @@ class ProcessEmailTest < ActiveSupport::TestCase
     assert_equal account.language, user.language
   ensure
     Helpdesk::Ticket.any_instance.unstub(:spam_or_deleted?)
-    account.rollback(:prevent_lang_detect_for_spam)
   end
 
   def test_lang_detect_for_non_spam
@@ -272,8 +270,9 @@ class ProcessEmailTest < ActiveSupport::TestCase
     ticket = account.tickets.first
     ticket.spam = false
     text = Faker::Lorem.characters(10)
-    Helpdesk::DetectUserLanguage.stubs(:language_detect).returns(['fr', 1200])
-    Helpdesk::DetectUserLanguage.set_user_language!(user, text)
+    Users::DetectLanguage.any_instance.stubs(:detect_lang_from_email_service).returns('fr')
+    Users::DetectLanguage.new.perform(user_id: user.id, text: text)
+    user = account.users.where(id: user.id).first
     assert_equal 'fr', user.language
   end
 

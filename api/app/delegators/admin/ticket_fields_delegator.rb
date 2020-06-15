@@ -6,7 +6,7 @@ class Admin::TicketFieldsDelegator < BaseDelegator
 
   validate :validate_section_mappings, if: -> { section_mappings.present? && create_or_update? }
   validate :nested_level_db_validation, if: -> { dependent_fields.present? && record.nested_field? }, on: :update
-  validate :validate_field_choices, if: -> { choices.present? && create_or_update? && (choices_required_for_type? || status_field?)}
+  validate :validate_field_choices, if: -> { choices.present? && create_or_update? && (choices_required_for_type? || status_field? || source_field?) }
   validate :destroy_third_level_choices, if: -> { choices.blank? && dependent_fields.present? && choices_required_for_type? }, on: :update
 
   def initialize(record, request_params, _options)
@@ -22,6 +22,8 @@ class Admin::TicketFieldsDelegator < BaseDelegator
   def validate_field_choices
     if record.safe_send(:status_field?)
       validate_status_choices(record, request_params[:choices])
+    elsif record.safe_send(:source_field?)
+      validate_source_choices(record, request_params[:choices])
     else
       validate_custom_choices(record, request_params[:choices])
     end

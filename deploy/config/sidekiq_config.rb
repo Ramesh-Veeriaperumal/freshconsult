@@ -215,6 +215,7 @@ class SidekiqConfigUsEast
     dispatcher               = ["active_dispatcher","premium_dispatcher","dispatcher","trial_dispatcher","free_dispatcher"]
     premium_dispatcher       = ["premium_dispatcher","active_dispatcher","dispatcher","trial_dispatcher","free_dispatcher"]
     service_task_dispatcher  = ["service_task_dispatcher"]
+    quality_management_system = ['quality_management_system']
     api_webhook_rule         = ["api_webhook_rule"]
     plan_change              = ["plan_change","pod_route_update","helpdesk_ticket_body_queue","modify_ticket_status","plan_change_workerv2","activation_worker"]
     contact_import           = ["contact_import","company_import","helpdesk_note_body_queue","data_export","broadcast_note","link_tickets","reset_associations","modify_ticket_status"]
@@ -287,24 +288,24 @@ class SidekiqConfigUsEast
     external                 = ['external']
     long_running             = ['long_running']
 
-    all_sidekiq_jobs         = cron_jobs + ["default", "rabbitmq_publish", "merge_contacts", "account_info_to_dynamo", 
-  "broadcast_note", "link_tickets", "reset_associations", "manual_publish", "supervisor", "free_supervisor,supervisor", 
-  "trial_supervisor,supervisor", "premium_supervisor,supervisor", "premium_facebook", "facebook", "trial_facebook", 
-  "custom_twitter", "fb_split_tickets", "dev_notification_worker", 
-  "upload_avatar_worker", "facebook_delta", "twitter_gnip_worker", "twitter_replay_worker", "facebook_comments", 
-  "flush_portal_solution_cache", "sla", "premium_sla", "free_sla", "trial_sla", "report_export_queue", "scheduled_reports", 
-  "update_tickets_company", "reports_no_activity", "parallel_report_exports", "update_tickets_company_id", 
-  "agent_destroy_cleanup", "update_users_company_id", "reset_group", "reset_responder", "reset_archive_tickets", "modify_ticket_status", 
-  "remove_secondary_companies", "contacts_sync", "contacts_sync_free", "contacts_sync_paid", "contacts_sync_trial", 
-  "es_index_queue", "count_es_queue", "es_alias_queue", "es_v2_queue", "tag_uses_destroy", "solution_binarize_sync", 
-  "update_all_callbacks", "esv2_count_index", "kbase_content_spam_checker", "new_es_index", 
-  "natero_worker", "reopen_tickets", "solution_language_change", "deactivate_monitorship", "export_agents", "clear_moderation_records", "empty_moderation_trash", "generate_sitemap", 
-  "clear_sitemap", "archive_ticket_splitter", "archive_delete_ticket", "archive_modify_ticket_association", 
-  "archive_build_create_ticket", "archive_delete_ticket_dependencies", "ebay_user_worker", "ebay_worker", 
+    all_sidekiq_jobs         = cron_jobs + ["default", "rabbitmq_publish", "merge_contacts", "account_info_to_dynamo",
+  "broadcast_note", "link_tickets", "reset_associations", "manual_publish", "supervisor", "free_supervisor,supervisor",
+  "trial_supervisor,supervisor", "premium_supervisor,supervisor", "premium_facebook", "facebook", "trial_facebook",
+  "custom_twitter", "fb_split_tickets", "dev_notification_worker",
+  "upload_avatar_worker", "facebook_delta", "twitter_gnip_worker", "twitter_replay_worker", "facebook_comments",
+  "flush_portal_solution_cache", "sla", "premium_sla", "free_sla", "trial_sla", "report_export_queue", "scheduled_reports",
+  "update_tickets_company", "reports_no_activity", "parallel_report_exports", "update_tickets_company_id",
+  "agent_destroy_cleanup", "update_users_company_id", "reset_group", "reset_responder", "reset_archive_tickets", "modify_ticket_status",
+  "remove_secondary_companies", "contacts_sync", "contacts_sync_free", "contacts_sync_paid", "contacts_sync_trial",
+  "es_index_queue", "count_es_queue", "es_alias_queue", "es_v2_queue", "tag_uses_destroy", "solution_binarize_sync",
+  "update_all_callbacks", "esv2_count_index", "kbase_content_spam_checker", "new_es_index",
+  "natero_worker", "reopen_tickets", "solution_language_change", "deactivate_monitorship", "export_agents", "clear_moderation_records", "empty_moderation_trash", "generate_sitemap",
+  "clear_sitemap", "archive_ticket_splitter", "archive_delete_ticket", "archive_modify_ticket_association",
+  "archive_build_create_ticket", "archive_delete_ticket_dependencies", "ebay_user_worker", "ebay_worker",
   "ebay_message_worker", "ticket_observer", "service_task_observer", "update_ticket_states", "merge_tickets", "merge_tickets_attachments",
-  "reset_gamification_score", "bulk_scenario", "password_expiry", "chargebee_invoice", "sla_on_status_change", 
-  "reset_internal_group", "update_ticket_filter", "reset_internal_agent", "s3_retry_worker", "learn_spam_message", 
-  "github", "select_all_tickets", "select_all_batcher", "email_notification_spam_queue", "sendgrid_domain_updates", 
+  "reset_gamification_score", "bulk_scenario", "password_expiry", "chargebee_invoice", "sla_on_status_change",
+  "reset_internal_group", "update_ticket_filter", "reset_internal_agent", "s3_retry_worker", "learn_spam_message",
+  "github", "select_all_tickets", "select_all_batcher", "email_notification_spam_queue", "sendgrid_domain_updates",
   "sandbox_sync", "premium_sla_reminders", "sla_reminders", "trial_sla_reminders", "free_sla_reminders", "webhook_v1_worker",
   "cti", "delete_account", "bulk_child_tkt_creation", "templates_cleanup", "bulk_ticket_actions", "bulk_ticket_reply",
   "clear_tickets", "code_console_execution", "update_user_language", "chargebee_add_subscription", "partners_event_queue",
@@ -322,10 +323,10 @@ class SidekiqConfigUsEast
   "account_creation_fixtures","email_delivery","collaboration_publish","activity_export","send_and_set_observer",
   "realtime","scheduled","occasional","maintainence","external","free","email","trial","spam", "product_feedback",
   "block_account","signup_restricted_domain_validation","send_activation_reminder_mail",
-  "ner_worker","email_service_provider", "freshid_events", "freshid_account_details_update", 
+  "ner_worker","email_service_provider", "freshid_events", "freshid_account_details_update",
   'freshid_v2_events', 'freshid_account_details_update_v2',
   'freshid_v2_agents_migration', "launch_party_actions", "data_enrichment", "central_publish", "cre_central_publish",
-  "free_ticket_central_publish", "trial_ticket_central_publish", "active_ticket_central_publish", "suspended_ticket_central_publish", 
+  "free_ticket_central_publish", "trial_ticket_central_publish", "active_ticket_central_publish", "suspended_ticket_central_publish",
   "free_note_central_publish", "trial_note_central_publish", "active_note_central_publish", "suspended_note_central_publish",
   "channel_framework_command", "ml_solutions_training","bot_cleanup","calculate_sla", "delayed_central_publish", "update_taggables_queue",
   "customer_note_body_queue", "toggle_agent_from_all_roundrobin_groups","add_agent_to_round_robin","marketo_queue",
@@ -340,7 +341,7 @@ class SidekiqConfigUsEast
   'contact_field_central_publish', 'company_field_central_publish', 'freshid_retry_worker', "model_destroy", "freshcaller_account_central_publish", "freshchat_account_central_publish", "email_service_account_details_destroy", 'freshcaller_update_agents',
   "sandbox_cleanup", "thank_you_note", "update_sandbox_subscription", 'gateway_facebook_page', "archive_account_tickets_channel_queue", "archive_tickets_channel_queue", "ticket_properties_suggester", "update_agents_roles", "custom_translations_update_survey_status", 'kbase_article_versions_worker', 'kbase_article_versions_migration_worker',
   'kbase_article_versions_reset_rating', 'articles_export_queue', 'rts_account_create', 'image_meta_data_delete', 'kbase_approval_notification_worker', 'delete_solution_meta_worker', 'ticket_field_job', 'update_url_in_sandbox', 'fdadmin_freshid_migration', 'vault_account_update', 'vault_data_cleanup', 'update_user_privilege',
-  'archive_account_tickets', 'freshcaller_subscription_events_queue', 'freshchat_subscription_events_queue', 'solution_article_central_publish', 'central_realtime', 'frequent', 'maintenance', 'twitter_survey', 'bitmap_callbacks', 'facebook_survey'
+  'archive_account_tickets', 'freshcaller_subscription_events_queue', 'freshchat_subscription_events_queue', 'solution_article_central_publish', 'central_realtime', 'frequent', 'maintenance', 'twitter_survey', 'bitmap_callbacks', 'facebook_survey', 'quality_management_system'
 ]
 
     # sidekiq queues in falcon alone
@@ -647,7 +648,7 @@ all_sidekiq_jobs =  cron_jobs + [
       "ner_worker", "freshid_events", "freshid_account_details_update", "email_service_account_details_destroy",
       "free_note_central_publish", "trial_note_central_publish", "active_note_central_publish", "suspended_note_central_publish", "cre_central_publish",
       "launch_party_actions", "data_enrichment", "central_publish", "user_central_publish", "free_ticket_central_publish", "trial_ticket_central_publish",
-      "active_ticket_central_publish", "suspended_ticket_central_publish", "channel_framework_command", "ml_solutions_training","bot_cleanup", "calculate_sla", 
+      "active_ticket_central_publish", "suspended_ticket_central_publish", "channel_framework_command", "ml_solutions_training","bot_cleanup", "calculate_sla",
       "delayed_central_publish", "update_taggables_queue", "customer_note_body_queue", "toggle_agent_from_all_roundrobin_groups","add_agent_to_round_robin",
       "marketo_queue", "subscription_events_queue", "restore_spam_tickets","jira_acc_config_updates", "report_post_worker","merge_topics","spam_digest_mailer",
       "forum_post_spam_marker","forum_ban_user","nullify_deleted_custom_field_data","gamification_user_score",
@@ -663,7 +664,7 @@ all_sidekiq_jobs =  cron_jobs + [
       "model_destroy", "freshcaller_account_central_publish", "freshchat_account_central_publish", "sandbox_cleanup" , "thank_you_note", "update_sandbox_subscription", 'gateway_facebook_page',
       "archive_account_tickets_channel_queue", "archive_tickets_channel_queue", "ticket_properties_suggester", "update_agents_roles", "custom_translations_update_survey_status", 'kbase_article_versions_worker', 'kbase_article_versions_migration_worker',
       'kbase_article_versions_reset_rating', 'articles_export_queue', 'rts_account_create', 'kbase_approval_notification_worker', 'delete_solution_meta_worker', 'ticket_field_job', 'update_url_in_sandbox', 'fdadmin_freshid_migration', 'vault_account_update', 'vault_data_cleanup', 'update_user_privilege',
-      'archive_account_tickets', 'freshcaller_subscription_events_queue', 'freshchat_subscription_events_queue', 'solution_article_central_publish', 'central_realtime', 'frequent', 'maintenance', 'twitter_survey', 'bitmap_callbacks', 'facebook_survey'
+      'archive_account_tickets', 'freshcaller_subscription_events_queue', 'freshchat_subscription_events_queue', 'solution_article_central_publish', 'central_realtime', 'frequent', 'maintenance', 'twitter_survey', 'bitmap_callbacks', 'facebook_survey', 'quality_management_system'
     ]
 
     #falcon common sidekiq

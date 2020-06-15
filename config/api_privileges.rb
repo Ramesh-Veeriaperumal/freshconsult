@@ -56,6 +56,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"out_of_office", only: %i[index show create update destroy]
     resource :'ember/agent_assist', only: [:bots]
     resource :agent_status, only: [:index]
+    resource :api_agent, only: [:fetch_availability, :update_availability]
   end
 
   view_secure_field do

@@ -1,0 +1,50 @@
+get:
+  tags: [agent]
+  description: Allow each agent to check their status and availability in freshdesk/freshchat/freshcaller.
+  consumes:
+    - application/json
+  produces:
+    - application/json
+  parameters:
+    - name: id
+      in: path
+      type: number
+      format: int64
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/agent_availability_response'
+    404:
+      description: Resource not found
+
+patch:
+  tags: [agent]
+  description: Allow individual agents to set channel availability freshdesk/freshcaller/freshchat and set custom status.
+  consumes:
+    - application/json
+  produces:
+    - application/json
+  parameters:
+    - name: id
+      in: path
+      type: number
+      format: int64
+      required: true
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/agent_availability_request'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/agent_availability_response'
+    404:
+      description: Resource not found
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

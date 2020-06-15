@@ -3,6 +3,7 @@ require_relative '../test_helper'
 ['agents_test_helper.rb', 'attachments_test_helper.rb', 'freshcaller_test_helper.rb'].each { |file| require Rails.root.join('test', 'api', 'helpers', file) }
 require_relative '../helpers/admin/skills_test_helper'
 require Rails.root.join('test', 'models', 'helpers', 'freshchat_account_test_helper.rb')
+require Rails.root.join('test', 'api', 'helpers', 'agent_status_availability.rb')
 require 'webmock/minitest'
 WebMock.allow_net_connect!
 class ApiAgentsControllerTest < ActionController::TestCase
@@ -14,6 +15,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
   include ::Freshcaller::Endpoints
   include FreshchatAccountTestHelper
   include Freshchat::AgentUtil
+  include AgentStatusAvailabilityTestHelper
   def wrap_cname(params)
     { api_agent: params }
   end
@@ -2007,6 +2009,38 @@ class ApiAgentsControllerTest < ActionController::TestCase
     request.unstub(:uuid)
   end
 
+  def test_get_agent_statuses_availability
+    toggle_agent_status_feature(true)
+    stubbed_request = stub_request(:get, 'http://localhost:8080/api/v1/agents/1/availability').to_return(body: sample_show.to_json, status: 200)
+    get :fetch_availability, construct_params(id: '1')
+    assert_response 200
+  ensure
+    remove_request_stub(stubbed_request)
+    toggle_agent_status_feature(false)
+  end
+
+  def test_patch_agent_statuses_availability
+    toggle_agent_status_feature(true)
+    stubbed_request = stub_request(:patch, 'http://localhost:8080/api/v1/agents/1/availability').to_return(body: sample_show.to_json, status: 200)
+    process(:update_availability, construct_params(id: '1'), nil, nil, 'PATCH')
+    assert_response 200
+  ensure
+    remove_request_stub(stubbed_request)
+    toggle_agent_status_feature(false)
+  end
+
+  def test_patch_agent_availability_feature_not_present_should_return_forbidden
+    toggle_agent_status_feature(false)
+    process(:update_availability, construct_params(id: '1'), nil, nil, 'PATCH')
+    assert_response 403
+  end
+
+  def test_get_agent_availability_feature_not_present_should_return_forbidden
+    toggle_agent_status_feature(false)
+    get :fetch_availability, construct_params(id: '1')
+    assert_response 403
+  end
+
   def test_contribution_group_creation_without_feature
     enable_advanced_ticket_scopes {}
     params = {
@@ -2345,5 +2379,9 @@ class ApiAgentsControllerTest < ActionController::TestCase
     def create_fc_account
       @fchat_account = Freshchat::Account.where(account_id: Account.current.id).first
       @fchat_account ||= create_freshchat_account Account.current
+    end
+
+    def toggle_agent_status_feature(enable)
+      enable ? Account.current.launch(:agent_statuses) : Account.current.rollback(:agent_statuses)
     end
 end

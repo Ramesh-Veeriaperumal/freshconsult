@@ -35,7 +35,6 @@ class ApiCompanyFieldsControllerTest < ActionController::TestCase
   end
 
   def test_company_field_index_with_custom_field_name_same_as_default_field_name
-    Account.any_instance.stubs(:handle_custom_fields_conflicts_enabled?).returns(true)
     create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'Name', editable_in_signup: 'true'))
     create_company_field(company_params(type: 'boolean', field_type: 'custom_checkbox', label: 'Domains', editable_in_signup: 'true'))
     create_company_field(company_params(type: 'date', field_type: 'custom_date', label: 'Description', editable_in_signup: 'true'))
@@ -58,8 +57,6 @@ class ApiCompanyFieldsControllerTest < ActionController::TestCase
     company_fields = @account.reload.company_form.company_fields
     pattern = company_fields.map { |company_field| company_field_pattern(company_field) }
     match_json(pattern)
-  ensure
-    Account.any_instance.unstub(:handle_custom_fields_conflicts_enabled?)
   end
 
   def test_index_ignores_pagination

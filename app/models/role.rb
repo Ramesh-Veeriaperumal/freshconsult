@@ -27,13 +27,14 @@ class Role < ActiveRecord::Base
   attr_accessible :name, :description
 
   #Role-Based scopes
-  scope :default_roles, -> { where(:default_role => true) }
-  scope :custom_roles,  -> { where(:default_role => false) }
-  scope :account_admin, -> { where(:name => 'Account Administrator') }
-  scope :admin,         -> { where(:name => 'Administrator') }
-  scope :supervisor,    -> { where(:name => 'Supervisor') }
-  scope :agent,         -> { where(:name => 'Agent') }
-  scope :field_agent,   -> { where(:name => 'Field technician') }
+  scope :default_roles, -> { where(default_role: true) }
+  scope :custom_roles,  -> { where(default_role: false) }
+  scope :account_admin, -> { where(name: 'Account Administrator') }
+  scope :admin,         -> { where(name: 'Administrator') }
+  scope :supervisor,    -> { where(name: 'Supervisor') }
+  scope :agent,         -> { where(name: 'Agent') }
+  scope :field_agent,   -> { where(name: 'Field technician') }
+  scope :coach,         -> { where(name: 'Coach') }
   
   API_OPTIONS = { 
     :except     => [:account_id, :privileges]

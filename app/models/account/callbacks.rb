@@ -70,6 +70,9 @@ class Account < ActiveRecord::Base
   after_commit :update_account_domain_in_sandbox, if: -> { account_domain_changed? && sandbox_account_id.present? }
   after_commit :trigger_bitmap_feature_callback, if: :advanced_ticket_scopes_removed
 
+  after_commit ->(obj) { obj.perform_qms_operations }, on: :create, if: :quality_management_system_feature_toggled?
+  after_commit ->(obj) { obj.perform_qms_operations }, on: :update, if: :quality_management_system_feature_toggled?
+
   after_rollback :destroy_freshid_account_on_rollback, on: :create, if: -> { freshid_integration_signup_allowed? && !domain_already_exists? }
   after_rollback :signup_completed, on: :create
 
@@ -334,6 +337,10 @@ class Account < ActiveRecord::Base
 
     def ocr_feature_disabled?
       omni_channel_routing_feature_changed? && !omni_channel_routing_enabled?
+    end
+
+    def perform_qms_operations
+      ::QualityManagementSystem::PerformQmsOperationsWorker.perform_async
     end
 
   private

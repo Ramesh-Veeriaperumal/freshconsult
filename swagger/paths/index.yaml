@@ -263,6 +263,8 @@
   $ref: ./agents/update_multiple.yaml
 /agents/verify_agent_privilege:
   $ref: ./agents/verify_agent_privilege.yaml
+/agents/{id}/availability:
+  $ref: ./agents/availability.yaml
 
 # Profiles
 /agents/me:

@@ -61,6 +61,8 @@ module MemcacheKeys
 
   ACCOUNT_STATUSES = "v2/ACCOUNT_STATUSES:%{account_id}"
 
+  ACCOUNT_SOURCES = 'v1/ACCOUNT_SOURCES:%{account_id}'.freeze
+
   ACCOUNT_STATUS_GROUPS = "v2/ACCOUNT_STATUS_GROUPS:%{account_id}"
 
   PORTAL_BY_URL = "v4/PORTAL_BY_URL:%{portal_url}"
