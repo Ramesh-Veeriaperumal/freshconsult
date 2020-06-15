@@ -6,7 +6,7 @@
 					<span class="status-source sources-detailed-<%= TicketConstants.source_token(ticket.source).to_s %>" 
 							 title="<%= t("ticket.reported_from_source", :source => ticket.source_name.to_s.downcase) %>"> </span>
 					<span class="<%= ticket.active? ? "label-status-pending" : "label-status-closed" %> label label-small">
-						<%= ticket.status_name %>
+						<%= ticket.translated_status_name %>
 					</span>
 					<div class="ticket-brief">
 					    <div class="ellipsis">
