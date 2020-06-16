@@ -388,7 +388,14 @@ class Va::Action
                            'comment' => act_on.notes.visible.exclude_source(Account.current.helpdesk_sources.note_exclude_sources).last}
       placeholder_hash.merge!('event_performer' => doer) if doer.present?
 
-      Liquid::Template.parse(content).render(placeholder_hash)
+      # Reference: https://github.com/jgarber/redcloth. RedCloth will support html conversion only when the input is in
+      # pure textile format. In automation we are accepting HTML Template Engine codes for notes and emails. Since the
+      # Template Engine codes are not convertable to textile, RedCloth coverts them to html tags assuming it is a textile codes.
+      # So when we parse the content using Liquid::Template parser (Basically it will evaluate the Template Engine codes and make html out of it)
+      # it throws exception. To avoind this issue, applying RedCloth on Liquid::Template parsed output which will be in pure textile format.
+      parsed_content = Liquid::Template.parse(content).render(placeholder_hash)
+      skip_parsing_fields = Account.current.trim_special_characters_enabled? ? %i[email_subject fwd_note_body note_body email_body] : %i[email_subject]
+      skip_parsing_fields.include?(content_key) ? parsed_content : RedCloth.new(parsed_content).to_html
     end
 
     def assign_custom_field act_on, field, value
