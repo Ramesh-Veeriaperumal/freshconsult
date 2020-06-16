@@ -566,7 +566,6 @@
       - :autofaq
       - :botflow
       - :agent_articles_suggest_eligible
-      - :robo_assist
       - :email_bot
     :inherits:
       - :estate_jan_20
