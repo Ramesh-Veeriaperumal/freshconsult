@@ -6,7 +6,6 @@
 	@extend .icon-dual-arrow !optional;
 }
 //Login
-.btn-google:before{ @extend .icon-sign-in-google; }
 .btn-facebook:before{ @extend .icon-sign-in-facebook; }
 .btn-twitter:before{ @extend .icon-sign-in-twitter; }
 

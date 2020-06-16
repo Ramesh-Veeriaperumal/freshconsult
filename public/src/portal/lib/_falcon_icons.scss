@@ -73,6 +73,20 @@
     }
 }
 
+.ficon-google-new{
+    @include padding(6px 0 6px 8px);
+    text-transform: uppercase;
+    &:before{
+        background: none;
+        padding: 0;
+        margin: -1px 5px 0 0;
+        width: 20px;
+        height: 17px;
+        font-size:20px;
+        color: $white;
+    }
+}
+
 .ficon-twitter-new,
 .ficon-facebook-new{
     @include padding(6px 0 0 8px);
@@ -358,7 +372,7 @@
 }
 
 .btn-google{
-    @extend .ficon-google;
+    @extend .ficon-google-new;
 }
 
 .icon-article-table-row{
