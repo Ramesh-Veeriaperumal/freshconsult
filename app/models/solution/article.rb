@@ -97,6 +97,11 @@ class Solution::Article < ActiveRecord::Base
     thumbs_down: 0
   }.freeze
 
+  PUBLISH_DETAILS_RENAMED_KEYS = {
+    modified_at: :published_at,
+    modified_by: :published_by
+  }.freeze
+
   SELECT_ATTRIBUTES = ["id", "thumbs_up", "thumbs_down"]
 
 
@@ -128,8 +133,9 @@ class Solution::Article < ActiveRecord::Base
     CentralPublish::UpdateTag.perform_async(tag_args)
   end
 
-  def merge_bulk_publish_payload
-    model_changes.merge!(status: [1, 2])
+  def merge_bulk_publish_payload(status = STATUS_KEYS_BY_TOKEN[:draft])
+    model_changes.merge!(status: [status, STATUS_KEYS_BY_TOKEN[:published]])
+    update_publish_details
   end
 
   def add_tag_activity(tag)
@@ -245,6 +251,34 @@ class Solution::Article < ActiveRecord::Base
     return {} unless parent.previous_changes.key?(:solution_folder_meta_id)
 
     { solution_folder_name: parent.previous_changes[:solution_folder_meta_id].map { |id| fetch_folder_name(id) } }
+  end
+
+  def update_unpublish_details
+    if published_to_draft?
+      # modified by can be the same(same user who published, unpublishes) and so cannot rely on modified's model changes
+      PUBLISH_DETAILS_RENAMED_KEYS.each do |old_key, new_key|
+        model_changes[new_key] = previous_changes.key?(old_key) ? [previous_changes[old_key][0], nil] : [safe_send(old_key.to_s), nil]
+      end
+    end
+  end
+
+  def update_publish_details
+    if published?
+      # For bulk publish, status changes will not be present in previous_changes. Check update_status in solution_bulk_action_concern
+      previous_changes[:status] = model_changes[:status] if !previous_changes.key?(:status) && model_changes[:status]
+      if draft_to_published?
+        # modified by can be the same(same user who created draft, published) and so cannot rely on modified's model changes
+        PUBLISH_DETAILS_RENAMED_KEYS.each do |old_key, new_key|
+          model_changes[new_key] = previous_changes.key?(old_key) ? [nil, previous_changes[old_key][1]] : [nil, safe_send(old_key.to_s)]
+        end
+      else
+        PUBLISH_DETAILS_RENAMED_KEYS.each do |old_key, new_key|
+          model_changes[new_key] = previous_changes[old_key] if previous_changes.key?(old_key)
+        end
+      end
+      # For bulk publish we will have to remove status from model changes after construction published_at/by
+      model_changes.delete(:status) if model_changes[:status] == [STATUS_KEYS_BY_TOKEN[:published], STATUS_KEYS_BY_TOKEN[:published]]
+    end
   end
 
   def fetch_folder_name(id)
@@ -466,6 +500,14 @@ class Solution::Article < ActiveRecord::Base
   end
 
   private
+
+    def draft_to_published?
+      previous_changes.key?(:status) && previous_changes[:status] == [STATUS_KEYS_BY_TOKEN[:draft], STATUS_KEYS_BY_TOKEN[:published]]
+    end
+
+    def published_to_draft?
+      previous_changes.key?(:status) && previous_changes[:status] == [STATUS_KEYS_BY_TOKEN[:published], STATUS_KEYS_BY_TOKEN[:draft]]
+    end
 
     def vote_model_changes(counter, interaction, count)
       # This method is only for :reset and :toggle as both thumbs_up, thumbs_down of both article and article_meta changes
