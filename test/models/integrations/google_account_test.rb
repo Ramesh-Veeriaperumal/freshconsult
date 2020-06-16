@@ -33,13 +33,15 @@ class GoogleAccountTest < ActionView::TestCase
   def test_find_or_create
     Integrations::GoogleAccount.find_or_create(params(1), Account.current)
     assert_equal response.status, 200
+    token = Faker::Lorem.characters(6)
+    secret = Faker::Lorem.characters(6)
     google_account = Integrations::GoogleAccount.find_or_create({ integrations_google_account:
-      { token: Faker::Lorem.characters(6), secret: Faker::Lorem.characters(6) } }, Account.current)
+      { token: token, secret: secret } }, Account.current)
     google_account.save!
     assert_not_nil google_account.encrypted_token
     assert_not_nil google_account.encrypted_secret
-    assert_equal google_account.token, SymmetricEncryption.decrypt(google_account.encrypted_token)
-    assert_equal google_account.secret, SymmetricEncryption.decrypt(google_account.encrypted_secret)
+    assert_equal google_account.token, token
+    assert_equal google_account.secret, secret
     assert_equal response.status, 200
   end
 
@@ -52,7 +54,7 @@ class GoogleAccountTest < ActionView::TestCase
     resp = Integrations::GoogleAccount.new.create_google_group('param1', 'params2')
     assert_equal resp, nil
     Integrations::GoogleAccount.any_instance.unstub(:prepare_access_token)
-    OAuth::AccessToken.any_instance.stubs(:post).returns(ActionController::TestResponse.new(status = 200, header = '{}', body = { 'refresh_token' => OAuth2::AccessToken.new(1, 2) }.to_json))
+    OAuth::AccessToken.any_instance.stubs(:post).returns(ActionController::TestResponse.new(status = 200, header = '{}', body = { 'refresh_token' => Faker::Lorem.characters(6) }.to_json))
     Integrations::GoogleAccount.any_instance.stubs(:enable_integration).returns(true)
     Integrations::GoogleAccount.any_instance.stubs(:get_oauth2_access_token).returns(OAuth2::AccessToken.new(1, 2))
     Integrations::GoogleAccount.new.create_google_group('param1', 'params2')

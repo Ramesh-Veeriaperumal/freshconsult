@@ -58,8 +58,9 @@
 	<%=f.hidden_field :name %>
 	<%=f.hidden_field :email %>
 	<%if @google_account.id.blank?%>
-		<%=f.hidden_field :token %>
-		<%=f.hidden_field :secret %>
+
+		<%=f.hidden_field :token, value: @google_account.token %>
+		<%=f.hidden_field :secret, value: @google_account.secret %>
 	<%end%>
 	<div class="button-container">
 		<%= f.submit t("integrations.google_contacts.#{@omniauth_origin}"), :class => "uiButton special" %>
