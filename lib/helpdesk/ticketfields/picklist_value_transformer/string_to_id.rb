@@ -74,9 +74,17 @@ class Helpdesk::Ticketfields::PicklistValueTransformer::StringToId < Helpdesk::T
         result = result.first
         nested_level = @nested_column_key_pair[field_parent_id].index(con_hash['value'])
         if nested_level == 1 # second level
-          result[@nested_column_key_pair[field_parent_id][0].downcase]
+          if Account.current.wf_comma_filter_fix_enabled?
+            result[@nested_column_key_pair[field_parent_id][0][0].downcase]
+          else
+            result[@nested_column_key_pair[field_parent_id][0].downcase]
+          end
         elsif nested_level == 2 # third level
-          result[@nested_column_key_pair[field_parent_id][1].downcase][@nested_column_key_pair[field_parent_id][0].downcase]
+          if Account.current.wf_comma_filter_fix_enabled?
+            result[@nested_column_key_pair[field_parent_id][1][0].downcase][@nested_column_key_pair[field_parent_id][0][0].downcase]
+          else
+            result[@nested_column_key_pair[field_parent_id][1].downcase][@nested_column_key_pair[field_parent_id][0].downcase]
+          end
         end
       else
         result.join(',')

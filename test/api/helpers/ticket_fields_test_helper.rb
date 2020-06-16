@@ -250,7 +250,7 @@ module TicketFieldsTestHelper
     parent_custom_field
   end
 
-  def create_dependent_custom_field(labels, id = nil, required_for_closure = false, ff_number = nil)
+  def create_dependent_custom_field(labels, id = nil, required_for_closure = false, ff_number = nil, nested_field_values = nil)
     @invalid_fields = []
     flexifield_def_entry = []
     # ffs_07, ffs_08 and ffs_09 are created here
@@ -343,7 +343,8 @@ module TicketFieldsTestHelper
     picklist_vals_l1 = []
     picklist_vals_l2 = []
     picklist_vals_l3 = []
-    field_choices[labels[0]].map(&:first).each_with_index do |l1_val, index1|
+    nested_values = nested_field_values.presence || field_choices[labels[0]]
+    nested_values.map(&:first).each_with_index do |l1_val, index1|
       picklist_vals_l1 << FactoryGirl.build(:picklist_value, account_id: @account.id,
                                                              pickable_type: 'Helpdesk::TicketField',
                                                              pickable_id: parent_custom_field.id,
@@ -351,18 +352,20 @@ module TicketFieldsTestHelper
                                                              value: l1_val)
       picklist_vals_l1.last.save
 
-      field_choices[labels[0]][index1][2].map(&:first).each_with_index do |l2_val, index2|
+      nested_values[index1][2].map(&:first).each_with_index do |l2_val, index2|
         picklist_vals_l2 << FactoryGirl.build(:picklist_value, account_id: @account.id,
                                                                pickable_type: 'Helpdesk::PicklistValue',
                                                                pickable_id: picklist_vals_l1[picklist_vals_l1.length - 1].id,
                                                                position: index2 + 1,
+                                                               ticket_field_id: parent_custom_field.id,
                                                                value: l2_val)
         picklist_vals_l2.last.save
-        field_choices[labels[0]][index1][2][index2][2].map(&:first).each_with_index do |l3, index3|
+        nested_values[index1][2][index2][2].map(&:first).each_with_index do |l3, index3|
           picklist_vals_l3 << FactoryGirl.build(:picklist_value, account_id: @account.id,
                                                                  pickable_type: 'Helpdesk::PicklistValue',
                                                                  pickable_id: picklist_vals_l2[picklist_vals_l2.length - 1].id,
                                                                  position: index3 + 1,
+                                                                 ticket_field_id: parent_custom_field.id,
                                                                  value: l3)
           picklist_vals_l3.last.save
         end
