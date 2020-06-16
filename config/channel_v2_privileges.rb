@@ -25,4 +25,8 @@ Authority::Authorization::PrivilegeList.build do
   manage_canned_responses do
     resource :"channel/v2/canned_response", only: [:create]
   end
+
+  edit_note do
+    resource :"channel/v2/conversation", only: [:update], owned_by: { scoper: :notes }
+  end
 end
