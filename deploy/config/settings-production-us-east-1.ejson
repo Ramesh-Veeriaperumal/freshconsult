@@ -2235,6 +2235,12 @@
             "_port": "9101"
           }
         ],
+        "count_old_cluster": {
+          "envoy_egress": {
+            "_endpoint_address": "http://127.0.0.1",
+            "_endpoint_port": "8190"
+          }
+        },
         "_esv2_host": "search.internal.poduseast1.freshdesk.com"
       },
       "sidekiq": {
