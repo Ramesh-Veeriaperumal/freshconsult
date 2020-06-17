@@ -18,6 +18,11 @@ module Channel::V2
       user
     end
 
+    def note
+      @agent.preferences[:agent_preferences][:undo_send] = false
+      Helpdesk::Note.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['note'], deleted: false).first || create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
+    end
+
     def create_note_params_hash
       {
         body: Faker::Lorem.paragraph,
@@ -32,6 +37,12 @@ module Channel::V2
       bcc_emails = [Faker::Internet.email, Faker::Internet.email]
       email_config = Account.current.email_configs.where(active: true).first || create_email_config
       params_hash = { body: body, cc_emails: email, bcc_emails: bcc_emails, from_email: email_config.reply_email }
+      params_hash
+    end
+
+    def update_note_params_hash
+      body = Faker::Lorem.paragraph
+      params_hash = { body: body }
       params_hash
     end
 
@@ -80,6 +91,63 @@ module Channel::V2
       assert_response 201
       match_json(v2_note_pattern(params_hash, Helpdesk::Note.last))
       match_json(v2_note_pattern({}, Helpdesk::Note.last))
+    end
+
+    def test_update_note
+      params = update_note_params_hash
+      n = note
+      put :update, construct_params({ id: n.id }, params)
+      assert_response 200
+      match_json(v2_update_note_pattern(params, Helpdesk::Note.find(n.id)))
+      match_json(v2_update_note_pattern({}, Helpdesk::Note.find(n.id)))
+    end
+
+    def test_update_without_privilege
+      User.any_instance.stubs(:privilege?).with(:edit_note).returns(false).at_most_once
+      User.any_instance.stubs(:owns_object?).returns(false).at_most_once
+      params = update_note_params_hash
+      n = note
+      put :update, construct_params({ id: n.id }, params)
+      User.any_instance.unstub(:privilege?)
+      User.any_instance.unstub(:owns_object?)
+      assert_response 403
+      match_json(request_error_pattern(:access_denied))
+    end
+
+    def test_update_note_with_timestamps
+      params = update_note_params_hash
+      n = note
+      created_at = updated_at = Time.current - 10.days
+      params.merge!(created_at: created_at, updated_at: updated_at)
+      put :update, construct_params({ id: n.id }, params)
+      assert_response 200
+      n = n.reload
+      assert (n.created_at - created_at).to_i.zero?
+      assert (n.updated_at - updated_at).to_i.zero?
+    end
+
+    def test_update_note_private_field
+      params = update_note_params_hash
+      n = note
+      private_value = !n.private
+      params.merge!(private: private_value)
+      put :update, construct_params({ id: n.id }, params)
+      assert_response 200
+      n = n.reload
+      assert_equal n.private, private_value
+    end
+
+    def test_update_note_validation_failure
+      params = update_note_params_hash
+      n = note
+      current_time = '2020-05-10 08:08:08'
+      params.merge!(created_at: current_time, updated_at: current_time)
+      put :update, construct_params({ id: n.id }, params)
+      assert_response 400
+      match_json([
+                   bad_request_error_pattern('created_at', :invalid_date, accepted: 'combined date and time ISO8601'),
+                   bad_request_error_pattern('updated_at', :invalid_date, accepted: 'combined date and time ISO8601')
+                  ])
     end
 
     def test_reply_with_ticket_trashed

@@ -437,6 +437,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Helpdesk::TicketStatus.translate_status_name(ticket_status)
   end
 
+  def translated_status_name
+    translation_record = ticket_status.ticket_field.translation_record
+    Helpdesk::TicketStatus.translate_status_name(ticket_status, nil, translation_record)
+  end
+
   def requester_status_name
     Helpdesk::TicketStatus.translate_status_name(ticket_status, "customer_display_name")
   end

@@ -95,7 +95,7 @@ class TimeSheetTest < ActiveSupport::TestCase
     assert_equal CentralConstants::HYPERTRAIL_VERSION, create_event_info[:hypertrail_version]
     create_event_info.must_match_json_expression(event_info_pattern(:create))
   ensure
-    time_sheet.destroy
+    time_sheet.destroy if time_sheet.present?
     ticket.destroy
   end
 end

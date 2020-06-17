@@ -9,6 +9,7 @@ class TicketModelTest < ActiveSupport::TestCase
   include TicketsTestHelper
   include EmailHelper
   include TicketFieldsTestHelper
+  include TicketStatusTestHelper
 
   def setup
     Account.stubs(:current).returns(Account.first || create_test_account)
@@ -69,4 +70,33 @@ class TicketModelTest < ActiveSupport::TestCase
     xml_to_hash = doc.to_hash
     assert_nil xml_to_hash['helpdesk-ticket']['custom_field']['custom_card_no_test']
   end
+
+  def test_status_name_should_return_translated_custom_status_name_if_translation_record_is_present
+    @account = Account.current
+    language = 'fr'
+    I18n.locale = 'fr'
+    ticket_status = create_ticket_status
+    ticket = create_ticket
+    ticket.status = ticket_status.status_id
+    ticket.save!
+    trans_label = custom_translation_stub(language, ticket_status.status_id)
+    Account.current.stubs(:supported_languages).returns([language])
+    assert_equal ticket.translated_status_name, trans_label
+  ensure
+    I18n.locale = I18n.default_locale
+    ticket.destroy if ticket.present?
+    ticket_status.destroy if ticket_status.present?
+    Account.current.unstub(:supported_languages)
+  end
+
+  private
+
+    def custom_translation_stub(language, status_id)
+      field_name = 'status'
+      trans_label = 'Translated choice'
+      trans_association = language + '_translation'
+      tkt_field = @account.ticket_fields.where(name: field_name).first
+      tkt_field.safe_send('build_' + trans_association, translations: { 'choices' => { "choice_#{status_id}" => trans_label } }).save!
+      trans_label
+    end
 end

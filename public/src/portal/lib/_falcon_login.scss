@@ -36,7 +36,11 @@ $agent-signin-link-color: #02b875;
 		@include box-shadow(none);
 		border: 0;
 		&.btn-google{
-		  background-color: $red;
+		  background-color: $royal-blue;
+			background-image: url('../../assets/google_login.svg');
+			background-repeat: no-repeat;
+			background-size: 25px 25px;
+			background-position: 1% 40%;
 		  &:hover{
 			color: $white;
 		  }

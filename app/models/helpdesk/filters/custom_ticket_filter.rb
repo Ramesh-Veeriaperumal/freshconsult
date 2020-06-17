@@ -619,7 +619,11 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def open_status_in_conditions?
-    query_hash.any? {|q_h| q_h["condition"] == "status" and (q_h["value"].to_s.split(",").include?(OPEN.to_s) || q_h["value"].to_s.split(",").include?("0")) }
+    if Account.current.wf_comma_filter_fix_enabled?
+      query_hash.any? { |q_h| q_h["condition"] == "status" && ((Array.wrap(q_h["value"]) & [0, '0', OPEN, OPEN.to_s]).any?) }
+    else
+      query_hash.any? { |q_h| q_h["condition"] == "status" && (q_h["value"].to_s.split(",").include?(OPEN.to_s) || q_h["value"].to_s.split(",").include?("0")) }
+    end
   end
 
   def count_without_query
@@ -940,7 +944,11 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
   def dynamic_filter?
     # Checking if the filter condition contains me or my groups
-    accessible.only_me? || self.data[:data_hash].any? { |cond| DYNAMIC_FIELDS.include?(cond['condition']) && cond['value'] && cond['value'].split(',').include?('0') }
+    if Account.current.wf_comma_filter_fix_enabled?
+      accessible.only_me? || self.data[:data_hash].any? { |cond| DYNAMIC_FIELDS.include?(cond['condition']) && cond['value'] && (Array.wrap(cond['value']) & [0, '0']).any? }
+    else
+      accessible.only_me? || self.data[:data_hash].any? { |cond| DYNAMIC_FIELDS.include?(cond['condition']) && cond['value'] && cond['value'].to_s.split(',').include?('0') }
+    end
   end
 
   def update_widgets

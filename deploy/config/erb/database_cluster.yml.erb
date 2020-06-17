@@ -51,6 +51,13 @@
   shards:
     <% node[:ymls][:database][:shards].each do |shard_name, db_config| %>
     <%= shard_name %>:
+      <%if ENV['PROXYSQL_MASTER_SHELL_ENABLE'] == "1" && @is_fc_shoryuken_layer && node[:ymls][:database][:shards][shard_name][:proxy_master_enabled] == true%>
+      username: <%= db_config[:master_proxy][:username] %>
+      password: <%= db_config[:master_proxy][:password] %>
+      database: <%= db_config[:database] %>
+      host: <%= ENV["HOST_PRIVATE_IP"] %>
+      port: <%= db_config[:master_proxy][:port] %>
+      <% else %>
       <% if db_user_group %>
         <% if node[:ymls][:database][:user_groups]["#{feature_type}_#{job_type}".to_sym][:shards][shard_name] && node[:ymls][:database][:user_groups]["#{feature_type}_#{job_type}".to_sym][:shards][shard_name][:username] && node[:ymls][:database][:user_groups]["#{feature_type}_#{job_type}".to_sym][:shards][shard_name][:password] %>
       username: <%= node[:ymls][:database][:user_groups]["#{feature_type}_#{job_type}".to_sym][:shards][shard_name][:username] %>
@@ -65,8 +72,9 @@
       <% end %>
       database: <%= db_config[:database] %>
       host: <%= db_config[:host] %>
-      not_a_shard: false
       port: 3306
+      <% end %>
+      not_a_shard: false
       encoding: utf8
       <% if @is_app_layer %>
       semian:

@@ -468,6 +468,7 @@
           },
           "shard_1": {
             "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:3e+0WycEZpW1dYuRI/tT/qJGXaLbdV7N:7vptgTlVBylwd20wiLXegdj0kFToAcUl]",
             "slave1": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:3bv0zyx+bbEPd8a1t+DM6h67NILKdF28:HG0TMuva+CqIgWE6F9UQQhImFTRi0CeA]",
@@ -480,6 +481,12 @@
               "_host": "127.0.0.1",
               "_port": "6033",
               "_username": "shard1_proxy"
+            },
+            "master_proxy": {
+              "password": "EJ[1:t0KWkPkpVB4Ox+mVUCyb1dc6QcHXaiWjQj0ywBzpDTw=:36jGvV7DeSpt2LWm+3OjsOYBwiVgK9KV:os5RUjsxymCVr1v34iJ42ehCV4oCZlRl]",
+              "_host": "127.0.0.1",
+              "_port": "6033",
+              "_username": "shard1_writer"
             },
             "slave2": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:ChcllrjYq9wiFdg/Xip9K0mzfX2i6xRj:lfvpTL6LwQLiNxDFiOQ5EC8g0E0+dQcp]",
@@ -495,6 +502,7 @@
           },
           "shard_7": {
             "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:5RScK29IZfMnTfJHFGAZ0HG+07bYZnKl:gB1Fs1Zf+ZdRuSGvALXSRR7jUloU3aln]",
             "slave1": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:5jJeIuFcW+6JwsA7A8HgMNAimEqCRD99:uQwKG+XiTovPT4AXn0Bhr5GALukhzwBZ]",
@@ -507,6 +515,12 @@
               "_host": "127.0.0.1",
               "_port": "6033",
               "_username": "shard7_proxy"
+            },
+            "master_proxy": {
+              "password": "EJ[1:t0KWkPkpVB4Ox+mVUCyb1dc6QcHXaiWjQj0ywBzpDTw=:iiC3eKnMx1xJNRmmnBSMMG5LCLkN4Uvs:QT1FoLH8Zx5NWSyQXBwQp5hFWW/UGbZ7]",
+              "_host": "127.0.0.1",
+              "_port": "6033",
+              "_username": "shard7_writer"
             },
             "slave2": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:qnfeoqPZ2UF0ygnDMqiacnJ+A2IQaPqo:9GT7XalZ7kU47aE4peVQnGGws/9lkI4a]",
@@ -589,6 +603,12 @@
             "_port": "9101"
           }
         ],
+        "count_old_cluster": {
+          "envoy_egress": {
+            "_endpoint_address": "http://127.0.0.1",
+            "_endpoint_port": "8190"
+          }
+        },
         "_esv2_host": "internal-search-v1-1056343736.us-east-1.elb.amazonaws.com",
         "_ey": [
           {
@@ -1811,6 +1831,8 @@
         "_base_url": "https://api.fconstage.io"
       },
       "_vault_service_url": "https://vaultservice.freshpo.com/",
+      "_freshdesk_help_widget_url": "https://widget.freshworks.com/widgets/60000003019.js",
+      "google_map_api_key": "EJ[1:XWtiWjCWn7+hf+0pxaoSfRg4QMCsj/uQpM0nfgMDGTE=:LyK1j+KZM4vXa+sm1NYDi6L9AtJNiWuB:b8ZCuo5Cy3lgwxuyOZ5SHsNRejemmEvjXpoKz5zJO8WjFv+iBWO79hZakAbY5fPtWhooawAn5g==]",
       "blue": {
         "_bucket": "falconstagingvpc",
         "_fingerprint_prepend": "https://d2641u002940uc.cloudfront.net/staging/",

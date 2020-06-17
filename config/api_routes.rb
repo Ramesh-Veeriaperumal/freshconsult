@@ -1000,6 +1000,7 @@ Helpkit::Application.routes.draw do
         get 'filters/:filter_id', to: 'channel/v2/ticket_misc#index'
       end
     end
+    resources :conversations, controller: 'channel/v2/conversations', only: [:update]
     resources :agents, controller: 'channel/v2/agents', only: [:create] do
       collection do
         put :update_multiple

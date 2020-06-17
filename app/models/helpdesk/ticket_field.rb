@@ -976,6 +976,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
     field_options['fsm']
   end
 
+  def translation_record
+    @translation_record ||= Account.current.custom_translations_enabled? && Account.current.supported_languages.include?(language.code) ? safe_send("#{language.to_key}_translation") : nil
+  end
+
   protected
 
     def group_agents(ticket, internal_group = false)
@@ -1158,10 +1162,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
     def language
       Language.find_by_code(I18n.locale)
-    end
-
-    def translation_record
-      @translation_record ||= Account.current.custom_translations_enabled? && Account.current.supported_languages.include?(language.code) ? safe_send("#{language.to_key}_translation") : nil
     end
 
     def cleanup_secure_field_data
