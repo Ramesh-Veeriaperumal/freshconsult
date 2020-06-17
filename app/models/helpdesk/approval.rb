@@ -7,8 +7,6 @@ class Helpdesk::Approval < ActiveRecord::Base
   belongs_to :approvable, polymorphic: true
   belongs_to :requester, class_name: 'User', foreign_key: 'user_id'
 
-  # before_destroy callbacks should be placed before dependent: :destroy
-  before_destroy :approval_changes_on_destroy
   has_many :approver_mappings, class_name: 'Helpdesk::ApproverMapping', inverse_of: :approval, dependent: :destroy, autosave: true
 
   validates :account_id, presence: true
@@ -23,6 +21,7 @@ class Helpdesk::Approval < ActiveRecord::Base
 
   after_commit :approval_changes_on_create, on: :create
   after_commit :approval_changes_on_update, on: :update
+  after_commit :approval_changes_on_destroy, on: :destroy
   after_commit :publish_article_approver_changes
 
   after_commit :trigger_callback
@@ -76,12 +75,6 @@ class Helpdesk::Approval < ActiveRecord::Base
   def approval_changes_on_create
     # If the status is not in-review when 'Create', it is required to handle those cases
     model_changes[:approval_status] = [nil, approval_status]
-
-    # When approved article is edited and then cancel is clicked, approval values need to be retained
-    if approved?
-      model_changes[:approved_at] = [nil, approved_at]
-      model_changes[:approved_by] = [nil, approved_by]
-    end
   end
 
   def approval_changes_on_update
@@ -89,7 +82,7 @@ class Helpdesk::Approval < ActiveRecord::Base
     return unless approval_status != Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review]
 
     model_changes[:approval_status] = [Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review], approval_status]
-    if approved?
+    if approval_status == Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]
       model_changes[:approved_at] = [nil, approved_at]
       model_changes[:approved_by] = [nil, approved_by]
     end
@@ -97,10 +90,6 @@ class Helpdesk::Approval < ActiveRecord::Base
 
   def approval_changes_on_destroy
     model_changes[:approval_status] = [approval_status, nil]
-    if approved?
-      model_changes[:approved_at] = [approved_at, nil]
-      model_changes[:approved_by] = [approved_by, nil]
-    end
   end
 
   # Publish approver changes to central as a part of Article payload

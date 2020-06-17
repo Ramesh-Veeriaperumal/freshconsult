@@ -3,6 +3,11 @@ class Solution::Article < ActiveRecord::Base
 
   acts_as_api
 
+  PUBLISH_DETAILS_RENAMED_KEYS = {
+    modified_at: :published_at,
+    modified_by: :published_by
+  }.freeze
+
   api_accessible :central_publish do |a|
     a.add :id, as: :article_id
     a.add :parent_id, as: :id
@@ -84,8 +89,7 @@ class Solution::Article < ActiveRecord::Base
   end
 
   def model_changes_for_central
-    update_publish_details
-    update_unpublish_details
+    update_publish_details if published?
     column_attribute_mapping.each_pair do |key, val| 
       previous_changes[val] = previous_changes.delete(key) if previous_changes.key?(key)
     end
@@ -98,6 +102,14 @@ class Solution::Article < ActiveRecord::Base
   def misc_changes_for_central
     changes_array = [folder_update_details, author_update_details]
     changes_array.reduce(&:merge)
+  end
+
+  def update_publish_details
+    PUBLISH_DETAILS_RENAMED_KEYS.each do |old_key, new_key|
+      if self.previous_changes.key?(old_key)
+        self.previous_changes[new_key] = self.previous_changes.delete old_key
+      end
+    end
   end
 
   def relationship_with_account
