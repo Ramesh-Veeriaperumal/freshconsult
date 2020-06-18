@@ -12,10 +12,9 @@ class SilkroadBaseTest < ActionView::TestCase
     Silkroad::Export::Ticket.any_instance.stubs(:build_request_body).returns({})
     stub_request(:post, 'http://localhost:1728/api/v1/jobs/').to_return(status: 202, body: '{ "template": "csv", "status": "RECEIVED", "id": 271, "product_account_id": "1", "output_path": "null" }', headers: {})
     count_before_export = @account.data_exports.count
-    export_job_created = Silkroad::Export::Ticket.new.create_job({})
-    assert_equal true, export_job_created
+    export_job = Silkroad::Export::Ticket.new.create_job({})
     assert_equal count_before_export + 1, @account.data_exports.count
-    assert_equal '271', @account.data_exports.order('id asc').last.job_id
+    assert_equal '271', export_job.job_id
   ensure
     Silkroad::Export::Ticket.any_instance.unstub(:generate_headers)
     Silkroad::Export::Ticket.any_instance.unstub(:build_request_body)
@@ -26,8 +25,8 @@ class SilkroadBaseTest < ActionView::TestCase
     Silkroad::Export::Ticket.any_instance.stubs(:build_request_body).returns({})
     stub_request(:post, 'http://localhost:1728/api/v1/jobs/').to_return(status: 403, body: '{}', headers: {})
     count_before_export = @account.data_exports.count
-    export_job_created = Silkroad::Export::Ticket.new.create_job({})
-    assert_equal nil, export_job_created
+    export_job = Silkroad::Export::Ticket.new.create_job({})
+    assert_equal nil, export_job
     assert_equal count_before_export, @account.data_exports.count
   ensure
     Silkroad::Export::Ticket.any_instance.unstub(:generate_headers)
