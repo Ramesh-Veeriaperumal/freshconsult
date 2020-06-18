@@ -79,8 +79,7 @@ module Admin::ShiftHelper
   end
 
   def headers
-    { 'Authorization' => "Bearer #{jwt_token}", 'Content-Type' => 'application/json',
-      'X-Request-ID' => request.uuid || UUIDTools::UUID.timestamp_create.hexdigest }
+    { 'Authorization' => "Bearer #{jwt_token}", 'Content-Type' => 'application/json' }
   end
 
   def jwt_token
