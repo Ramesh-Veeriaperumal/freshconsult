@@ -76,6 +76,7 @@ HEREDOC
         opts.on('-l', '--layer=LAYER', 'Layer this app belongs to') { |v| @options[:layer] = v }
         opts.on('-n', '--stackname=STACKNAME', 'OpsWorks Stack name') { |v| @options[:stackname] = v }
         opts.on('-h', '--hostname=HOSTNAME', 'Host name of the app') { |v| @options[:hostname] = v }
+        opts.on('-v', '--revision=EMBER_REVISION', 'Host name of the app') { |v| @options[:revision] = v }
       end,
       'decrypt' => OptionParser.new do |opts|
         opts.banner = "Usage: decrypt [options]\n One of --kms or --private_key should be provided"
@@ -392,7 +393,7 @@ HEREDOC
       node = @settings
       use_tag = node[:falcon_ui][:sentry] && node[:falcon_ui][:sentry][:usetag] ? "#{node[:falcon_ui][:sentry][:usetag]}"  : ""
       if use_tag.eql? "true"
-        release_id = "#{node[:falcon_ui][:revision]}"
+        release_id = @options[:revision]
       else
         release_hash = `cd /data/helpkit-ember && git log -1 --format="%H"`.gsub(/\n/,"")
         release_id = 'FD_' + Time.now.strftime('%y.%m.%d') + "-#{release_hash}"

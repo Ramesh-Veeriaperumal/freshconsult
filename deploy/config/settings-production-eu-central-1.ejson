@@ -13,7 +13,7 @@
       },
       "asknicely_app": {
         "hash_token": "EJ[1:kX7DpQSm+yTzxUl4GE7Jmfx1uFL9a3zfIcduxB+XK0w=:KCQPNnVNS2T+VeWoEkjz13LXJqXeQMj1:KkSsM3p7oKsqaSf/XZcZV/wyBitRcteJ1Dz3csQd1eXqgAcKUE5srbAsLAMXPRLWvejsG2QAIFIkU5y195piq70fWk3GkFG9EQpS2PWsSleLy9mIybSjlTfg3L7QEixSQmwx3O4G6COgpYpqcgHLIBGsVaMyixglyPB5T4+q8c5Ehkmw5LxsH+QkXGQQZigD]",
-        "_domain_key": "freshworks",
+        "domain_key": "EJ[1:xXG7Ad1W1Cel3reAymOnSf/RAEp2GTEfOKAyuNbTEjs=:NxD1f/+JWQ77N/C5Tsa0qv4ejR6eiekk:C/rgTAi5dBNWqAIjek/pL8HFkdIR863Zf70=]",
         "_template_name": "Freshworks-NPS"
       },
       "rts": {
@@ -1642,16 +1642,16 @@
       "site_announcement": {
         "_message": "On 1 Sep 2019, between 1:30 am to 2:30 am UTC, live chat will be inaccessible for customers and agents, owing to yearly maintenance. No chats will be received. Sorry for the Inconvenience.",
         "_features": [
-          "chat"
         ],
         "_launched": [
-          "custom_product_notification"
+          "sprout_banner"
         ],
-        "_startTime": "2019-08-01T00:00:00Z",
-        "_endTime": "2019-09-01T00:00:00Z"
+        "_startTime": "2020-05-29T12:30:00Z",
+        "_endTime": "2020-06-29T12:30:00Z",
+        "_messageKey": "fd.site-announcement.sprout-banner"
       },
       "analyticsCollectorConfig": {
-        "_analyticsCollectorScript": "https://assets.freshdesk.com/analytics/analytics-v1.js",
+        "_analyticsCollectorScript": "https://assets.freshdesk.com/analytics/analytics-v2.js",
         "schedulerConfig": {
           "metricsAdapters": [
             {
@@ -1718,11 +1718,13 @@
       "_sentry_dsn": "https://932f384a375f45db84667227e44ccaf1@sentry.io/1189802",
       "_announcement_account_url": "productupdates.freshdesk.com",
       "_anonymous_signup_redirect_url": "https://freshdesk.com/trial/thank-you",
-      "_freshconnectAssets": {
+      "freshconnectAssets": {
         "_script_asset_url": "https://assets1.freshconnect.io/freshconnect-sidebar/freshconnect-sidebar.js",
         "_base_url": "https://api.freshconnect.io"
       },
-      "_vault_service_url": "https://vault-service-eu.freshworks.com/"
+      "_vault_service_url": "https://vault-service-eu.freshworks.com/",
+      "_freshdesk_help_widget_url": "https://widget.freshworks.com/widgets/50000000012.js",
+      "google_map_api_key": "EJ[1:xXG7Ad1W1Cel3reAymOnSf/RAEp2GTEfOKAyuNbTEjs=:y9Z8W/rvJqzJV6HaDjLkcfvK9DareTM/:Yd1bzwrBgqsbm12Krz74LMIE0idbbRY/xJUFFJ4VWsouwW4GWBTO6WcpzBntM2g01JPxkiA0rw==]"
     },
     "aws_config": {
     },

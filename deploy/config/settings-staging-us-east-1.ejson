@@ -7,7 +7,7 @@
     },
     "ymls": {
       "asknicely_app": {
-        "_domain_key": "freshworkstest",
+        "domain_key": "EJ[1:YSmhRDvnz3argCN60z5eUMgKj1kPDvFLULJGdgFFBBg=:1WRe15IDSIbW2lBreuEUD3FqUxeWK9Bp:1+U2EWKpRxjzVwCFDMXVcpYerhMEXA5p7xbGE/N4]",
         "_template_name": "inapp"
       },
       "datacenter_config": {
@@ -1844,7 +1844,7 @@
       "_data_center": "us-east",
       "_sentry_dsn": "https://1392f72b3f5748ecb7fe9ddf22bbfd75@sentry.io/1189798",
       "_announcement_account_url": "updateproduct.freshpo.com",
-      "_freshconnectAssets": {
+      "freshconnectAssets": {
         "_script_asset_url": "https://assets1.fconstage.io/freshconnect-sidebar/freshconnect-sidebar.js",
         "_base_url": "https://api.fconstage.io"
       },
