@@ -241,6 +241,25 @@ class ArticleTest < ActiveSupport::TestCase
     article.try(:destroy)
   end
 
+  def test_central_publish_article_payload_on_approved_article_deleted
+    Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+    article = create_article(article_params).primary_article
+    draft = article.build_draft_from_article
+    draft.save
+    approval = construct_approval_record(article, User.current)
+    construct_approver_mapping(approval, User.current)
+    approval.save
+    article.save
+    CentralPublishWorker::SolutionArticleWorker.jobs.clear
+    article.destroy
+    job = CentralPublishWorker::SolutionArticleWorker.jobs.first
+    assert_equal 'article_destroy', job['args'][0]
+    assert_equal({}, job['args'][1]['model_changes'])
+    job['args'][1]['model_properties'].must_match_json_expression(central_publish_article_destroy_pattern(article))
+  ensure
+    Account.any_instance.unstub(:article_approval_workflow_enabled?)
+  end
+
   def test_central_publish_article_payload_on_publishing
     article = create_article(article_params).primary_article
     prev_published_by = article.modified_by
