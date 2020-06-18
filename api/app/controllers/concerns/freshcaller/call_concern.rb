@@ -100,6 +100,10 @@ module Freshcaller::CallConcern
     @options[:subject] || generate_title
   end
 
+  def call_notes?
+    @options[:note].present?
+  end
+
   def generate_title
     call_date = DateTime.parse(@options[:call_created_at]).in_time_zone(current_account.time_zone)
     return I18n.t("call.ticket.callback_#{call_status_string}_title", customer: customer_title) if missed_callback?
@@ -142,7 +146,7 @@ module Freshcaller::CallConcern
   end
 
   def call_notes
-    I18n.t('call.note_html', call_note: @options[:note]) if @options[:note].present?
+    I18n.t('call.note_html', call_note: @options[:note]) if call_notes?
   end
 
   def duration
