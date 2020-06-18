@@ -556,7 +556,7 @@ dashboard_activities:
 article_performance:
   $ref: './response/dashboard/article_performance.yaml'
 translation_summary:
-    $ref: './response/dashboard/translation_summary.yaml'
+  $ref: './response/dashboard/translation_summary.yaml'
 
 #dashbord quests
 dashboard_quests:
@@ -947,3 +947,12 @@ agent_statuses_response:
 
 verify_agent_privilege_response:
   $ref: ./response/agents/verify_agent_privilege_response.yaml
+
+omni_channel_group:
+  $ref: ./resource/omni_channel_group.yaml
+agent_availability:
+  $ref: "./resource/agent_availability.yaml"
+agent_availability_count_response:
+  $ref: ./response/agents/availability_count.yaml
+agent_with_availability_response:
+  $ref: './response/agents/availability.yaml'

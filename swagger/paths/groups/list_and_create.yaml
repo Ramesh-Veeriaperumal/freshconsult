@@ -6,6 +6,21 @@ get:
       in: query
       type: string
       description: To load service groups and support agent groups separately
+    - name: include
+      in: query
+      type: string
+      description: To include groups from all channels
+      x-enum:
+        - omni_channel_groups
+      x-example: omni_channel_groups
+    - name: auto_assignment
+      in: query
+      type: boolean
+      description: Filter groups with auto_assignment (round robin) enabled
+      x-enum:
+        - true
+        - false
+      x-example: true
   responses:
     200:
       description: Success
@@ -16,6 +31,10 @@ get:
             type: array
             items:
               $ref: '#/definitions/group_response'
+          omni_channel_groups:
+            type: array
+            items:
+              $ref: '#/definitions/omni_channel_group'
           meta:
             $ref: '#/definitions/meta'
     400:
@@ -23,7 +42,7 @@ get:
       schema:
         $ref: '#/definitions/bad_request_error'
     403:
-        description: Access denied
+      description: Access denied
 
 post:
   tags: [group]
@@ -44,4 +63,4 @@ post:
       schema:
         $ref: '#/definitions/bad_request_error'
     403:
-        description: Access denied
+      description: Access denied

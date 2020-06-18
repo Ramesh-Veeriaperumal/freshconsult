@@ -15,7 +15,7 @@ get:
     200:
       description: Success
       schema:
-        $ref: '#/definitions/agent_availability_response'
+        $ref: '#/definitions/agent_availability'
     404:
       description: Resource not found
 
@@ -36,12 +36,12 @@ patch:
       in: body
       required: true
       schema:
-        $ref: '#/definitions/agent_availability_request'
+        $ref: '#/definitions/agent_availability'
   responses:
     200:
       description: Success
       schema:
-        $ref: '#/definitions/agent_availability_response'
+        $ref: '#/definitions/agent_availability'
     404:
       description: Resource not found
     400:

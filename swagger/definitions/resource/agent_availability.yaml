@@ -35,3 +35,40 @@ properties:
           type: boolean
           readOnly: true
           description: true indicates agent is avaialble logged in for the given channel, Applicable for freshdesk and freshchat.
+        assignment_limit:
+          type: integer
+          format: uint32
+          readOnly: true
+        availability_updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          x-nullable: true
+        on_call:
+          type: boolean
+          readOnly: true
+    example: [
+      {
+        channel: "freshdesk",
+        available: true,
+        assignment_limit: 10,
+        round_robin_enabled: true,
+        availability_updated_at: "2020-05-21T10:30:20.580Z"
+      },
+      {
+        channel: "freshchat",
+        available: true,
+        assignment_limit: 3,
+        round_robin_enabled: true,
+        availability_updated_at: "2020-05-21T10:30:20.580Z",
+        logged_in: true
+      },
+      {
+        channel: "freshcaller",
+        available: true,
+        assignment_limit: 1,
+        availability_updated_at: "2020-05-21T10:30:20.580Z",
+        logged_in: true,
+        on_call: true
+      }
+    ]

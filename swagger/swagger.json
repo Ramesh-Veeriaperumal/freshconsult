@@ -5059,7 +5059,8 @@
             "enum": [
               "available",
               "available_count",
-              "with_privilege"
+              "with_privilege",
+              "availability"
             ]
           },
           {
@@ -5107,6 +5108,39 @@
               "asc",
               "desc"
             ]
+          },
+          {
+            "name": "channel",
+            "in": "query",
+            "type": "string",
+            "description": "Required along with group_id for availability filtration",
+            "x-enum": [
+              "freshdesk",
+              "freshchat",
+              "freshcaller"
+            ],
+            "x-example": "freshchat"
+          },
+          {
+            "name": "search_term",
+            "in": "query",
+            "type": "string",
+            "description": "Filter agents by search term",
+            "x-example": "agent"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer",
+            "description": "Page number",
+            "x-example": 1
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "integer",
+            "description": "Per page limit",
+            "x-example": 20
           }
         ],
         "responses": {
@@ -5115,7 +5149,7 @@
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/agent"
+                "$ref": "#/definitions/agent_with_availability_response"
               }
             }
           },
@@ -5529,7 +5563,7 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/agent_availability_response"
+              "$ref": "#/definitions/agent_availability"
             }
           },
           "404": {
@@ -5561,7 +5595,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/agent_availability_request"
+              "$ref": "#/definitions/agent_availability"
             }
           }
         ],
@@ -5569,7 +5603,7 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/agent_availability_response"
+              "$ref": "#/definitions/agent_availability"
             }
           },
           "400": {
@@ -5580,6 +5614,95 @@
           },
           "404": {
             "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/agents/availability_count": {
+      "get": {
+        "tags": [
+          "agent"
+        ],
+        "summary": "Show agent availabilities count",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "freshdesk_group_ids",
+            "description": "Comma-seprated group ids of Freshdesk product",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "csv",
+            "minItems": 1,
+            "maxItems": 15,
+            "uniqueItems": true,
+            "x-example": [
+              "id1",
+              "id2",
+              "id3"
+            ]
+          },
+          {
+            "in": "query",
+            "name": "freshchat_group_ids",
+            "description": "Comma-seprated group ids of Freshchat product",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "csv",
+            "minItems": 1,
+            "maxItems": 15,
+            "uniqueItems": true,
+            "x-example": [
+              "id1",
+              "id2",
+              "id3"
+            ]
+          },
+          {
+            "in": "query",
+            "name": "freshcaller_group_ids",
+            "description": "Comma-seprated group ids of Freshcaller product",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "csv",
+            "minItems": 1,
+            "maxItems": 15,
+            "uniqueItems": true,
+            "x-example": [
+              "id1",
+              "id2",
+              "id3"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "availability_count": {
+                  "$ref": "#/definitions/agent_availability_count_response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/internal_server_error"
+            }
           }
         }
       }
@@ -10881,6 +11004,27 @@
             "in": "query",
             "type": "string",
             "description": "To load service groups and support agent groups separately"
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "type": "string",
+            "description": "To include groups from all channels",
+            "x-enum": [
+              "omni_channel_groups"
+            ],
+            "x-example": "omni_channel_groups"
+          },
+          {
+            "name": "auto_assignment",
+            "in": "query",
+            "type": "boolean",
+            "description": "Filter groups with auto_assignment (round robin) enabled",
+            "x-enum": [
+              true,
+              false
+            ],
+            "x-example": true
           }
         ],
         "responses": {
@@ -10893,6 +11037,12 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/definitions/group_response"
+                  }
+                },
+                "omni_channel_groups": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/omni_channel_group"
                   }
                 },
                 "meta": {
@@ -30810,6 +30960,40 @@
         }
       }
     },
+    "omni_channel_group": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Product Group ID"
+        },
+        "name": {
+          "type": "string"
+        },
+        "channel": {
+          "type": "string",
+          "x-enum": [
+            "freshchat",
+            "freshcaller"
+          ]
+        },
+        "round_robin_type": {
+          "type": "integer",
+          "format": "uint8",
+          "x-enum": [
+            0,
+            1,
+            2
+          ]
+        }
+      },
+      "example": {
+        "id": 64000101827,
+        "name": "Account managers",
+        "channel": "freshchat",
+        "round_robin_type": 0
+      }
+    },
     "agent_availability": {
       "type": "object",
       "properties": {
@@ -30857,25 +31041,98 @@
                 "type": "boolean",
                 "readOnly": true,
                 "description": "true indicates agent is avaialble logged in for the given channel, Applicable for freshdesk and freshchat."
+              },
+              "assignment_limit": {
+                "type": "integer",
+                "format": "uint32",
+                "readOnly": true
+              },
+              "availability_updated_at": {
+                "type": "string",
+                "format": "date-time",
+                "readOnly": true,
+                "x-nullable": true
+              },
+              "on_call": {
+                "type": "boolean",
+                "readOnly": true
               }
             }
-          }
+          },
+          "example": [
+            {
+              "channel": "freshdesk",
+              "available": true,
+              "assignment_limit": 10,
+              "round_robin_enabled": true,
+              "availability_updated_at": "2020-05-21T10:30:20.580Z"
+            },
+            {
+              "channel": "freshchat",
+              "available": true,
+              "assignment_limit": 3,
+              "round_robin_enabled": true,
+              "availability_updated_at": "2020-05-21T10:30:20.580Z",
+              "logged_in": true
+            },
+            {
+              "channel": "freshcaller",
+              "available": true,
+              "assignment_limit": 1,
+              "availability_updated_at": "2020-05-21T10:30:20.580Z",
+              "logged_in": true,
+              "on_call": true
+            }
+          ]
         }
       }
     },
-    "agent_availability_request": {
-      "type": "object",
-      "allOf": [
+    "agent_availability_count_response": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "channel": {
+            "type": "string",
+            "x-enum": [
+              "freshdesk",
+              "freshcaller",
+              "freshchat"
+            ]
+          },
+          "count": {
+            "type": "integer"
+          }
+        }
+      },
+      "example": [
         {
-          "$ref": "#/definitions/agent_availability"
+          "channel": "freshdesk",
+          "count": 10
+        },
+        {
+          "channel": "freshchat",
+          "count": 4
+        },
+        {
+          "channel": "freshcaller",
+          "count": 1
         }
       ]
     },
-    "agent_availability_response": {
+    "agent_with_availability_response": {
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/agent_availability"
+          "$ref": "#/definitions/agent"
+        },
+        {
+          "properties": {
+            "availability": {
+              "description": "Agent's availability data for each channel",
+              "$ref": "#/definitions/agent_availability"
+            }
+          }
         }
       ]
     }

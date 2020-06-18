@@ -1,3 +1,7 @@
 type: object
 allOf:
-  - $ref: '#/definitions/agent_availability'
+  - $ref: '#/definitions/agent'
+  - properties:
+      availability:
+        description: Agent's availability data for each channel
+        $ref: '#/definitions/agent_availability'
