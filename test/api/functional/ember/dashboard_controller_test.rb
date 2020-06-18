@@ -306,6 +306,7 @@ module Ember
       get :show, controller_params(version: 'private', id: 1)
       assert_response 200
       assert_equal get_widget_names, ApiDashboardConstants::OMNI_CHANNEL_DASHBOARD.dup.map(&:first)
+      match_json(omni_channel_pattern)
     ensure
       Account.any_instance.unstub(:solutions_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)

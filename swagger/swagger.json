@@ -25212,13 +25212,34 @@
                     "type": "string",
                     "description": "For omni channel dashboard, tooltip string for any widget"
                   },
-                  "detail_link": {
-                    "type": "string",
-                    "description": "For omni channel dashboard, link in the header which redirects to detail view"
+                  "link": {
+                    "type": "object",
+                    "properties": {
+                      "href": {
+                        "type": "string",
+                        "description": "For omni channel dashboard, link in the header which redirects to detail view"
+                      },
+                      "link_text": {
+                        "type": "string",
+                        "description": "For omni channel dashboard, title of link in the header which redirects to detail view"
+                      }
+                    }
                   },
-                  "detail_title": {
+                  "type": {
                     "type": "string",
-                    "description": "For omni channel dashboard, title of link in the header which redirects to detail view"
+                    "description": "type of the widget like scorecard, csat etc"
+                  },
+                  "refresh_interval": {
+                    "type": "integer",
+                    "description": "refresh interval of the widget"
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Title of the widget"
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "url to get widget data from service"
                   }
                 }
               }

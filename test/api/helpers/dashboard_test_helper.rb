@@ -84,6 +84,13 @@ module DashboardTestHelper
     @widget_count
   end
 
+  def omni_channel_pattern
+    {
+      widgets: omnichannel_widget_config,
+      id: '1'
+    }
+  end
+
   def moderation_count_pattern
     fetch_spam_counts
     @counts
