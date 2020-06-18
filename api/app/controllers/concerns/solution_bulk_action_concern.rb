@@ -128,8 +128,7 @@ module SolutionBulkActionConcern
       # We do article.save twice during bulk publish. Once during draft.publish! and another during article_meta.save (under def update_article_properties)
       # As a result, previous_changes are overwritten and lost
       # Appending status changes to article.model_changes so that appropriate payload is pushed to central
-      previous_status = article.status
-      article.merge_bulk_publish_payload(previous_status) if article.draft.publish!
+      article.merge_bulk_publish_payload if article.draft.publish!
     end
     true
   end
