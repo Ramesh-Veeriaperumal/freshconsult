@@ -9,6 +9,8 @@ module Freddy
     def perform(args)
       args = args.deep_symbolize_keys
       @ticket = account.tickets.where(id: args[:ticket_id]).first
+      return unless ticket_eligible_to_suggestion?
+
       ml_response = fetch_ml_response
       Rails.logger.debug ml_response.inspect.to_s
       if ml_response['data'].empty?
@@ -37,8 +39,17 @@ module Freddy
 
     private
 
+      def ticket_eligible_to_suggestion?
+        (@ticket.portal.freddy_bot.present? || @ticket.portal.bot.present?) &&
+          (ticket_source(:email) || ticket_source(:portal))
+      end
+
+      def ticket_source(source)
+        @ticket.source == account.helpdesk_sources.ticket_source_keys_by_token[source]
+      end
+
       def source_email?
-        @ticket.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:email] && (account.bot_email_channel_enabled? || account.email_articles_suggest_enabled?)
+        ticket_source(:email) && (account.bot_email_channel_enabled? || account.email_articles_suggest_enabled?)
       end
 
       def fetch_ml_response
