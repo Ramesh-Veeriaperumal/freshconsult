@@ -6,10 +6,11 @@ module Silkroad
 
       def create_job(export_params)
         request_body = build_request_body(export_params)
-        Rails.logger.debug " REQUEST BODY :: #{request_body.inspect}"
+        Rails.logger.debug "Silkroad Request Body :: #{request_body.inspect}"
         response = HTTParty.post(CREATE_JOB_URL, headers: generate_headers,
                                                  body: request_body,
                                                  timeout: request_timeout)
+        Rails.logger.info "Silkroad X-Request-ID - #{response.headers['x-request-id']}"
         response_body = JSON.parse(response.body)
         data_export = if response.code == 202
           Rails.logger.info "Export Job #{response_body['id']} Created"
@@ -24,6 +25,7 @@ module Silkroad
       def get_job_status(job_id)
         response = HTTParty.get(job_status_url(job_id), headers: generate_headers,
                                                         timeout: request_timeout)
+        Rails.logger.info "Silkroad X-Request-ID - #{response.headers['x-request-id']}"
         job_status = JSON.parse(response.body)
         if response.code == 200
           Rails.logger.info "Export Job #{job_status['id']} status - #{job_status['status']}"
@@ -64,7 +66,7 @@ module Silkroad
                                                  status: DataExport::EXPORT_STATUS[:started],
                                                  job_id: job_id,
                                                  export_params: export_params)
-          data_export.save
+          data_export if data_export.save
         end
 
         def export_limit

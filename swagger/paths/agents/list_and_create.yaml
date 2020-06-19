@@ -9,6 +9,7 @@ get:
         - available
         - available_count
         - with_privilege
+        - availability
     - name: include
       in: query
       type: string
@@ -40,13 +41,37 @@ get:
       enum:
         - asc
         - desc
+    - name: channel
+      in: query
+      type: string
+      description: Required along with group_id for availability filtration
+      x-enum:
+        - freshdesk
+        - freshchat
+        - freshcaller
+      x-example: freshchat
+    - name: search_term
+      in: query
+      type: string
+      description: Filter agents by search term
+      x-example: agent
+    - name: page
+      in: query
+      type: integer
+      description: Page number
+      x-example: 1
+    - name: per_page
+      in: query
+      type: integer
+      description: Per page limit
+      x-example: 20
   responses:
     200:
       description: Success
       schema:
         type: array
         items:
-          $ref: '#/definitions/agent'
+          $ref: '#/definitions/agent_with_availability_response'
     400:
       description: Bad Request Error
       schema:

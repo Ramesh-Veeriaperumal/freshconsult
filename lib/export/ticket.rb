@@ -33,7 +33,8 @@ class Export::Ticket < Struct.new(:export_params)
         if send_to_silkroad?(export_params)
           Rails.logger.info 'Silkroad Shadow Mode Started'
           silkroad_params = export_params.merge(helpkit_export_id: @data_export.id)
-          Silkroad::Export::Ticket.new.create_job(silkroad_params)
+          silkroad_data_export = Silkroad::Export::Ticket.new.create_job(silkroad_params)
+          custom_export_logger.info logging_format(silkroad_data_export) if silkroad_data_export && custom_export_logger.present?
         end
         DataExportMailer.send_email(:ticket_export, email_params[:user], email_params)
       end
@@ -69,6 +70,7 @@ class Export::Ticket < Struct.new(:export_params)
       export_params[:format] = FILE_FORMAT[0] unless FILE_FORMAT.include? export_params[:format]
       delete_invisible_fields
       format_contact_company_params
+      @export_stats = { number_of_records: 0 }
     end
 
     def validate_ticket_state_filter
@@ -149,6 +151,7 @@ class Export::Ticket < Struct.new(:export_params)
       @no_tickets = false
       @custom_field_names ||= Account.current.ticket_fields.custom_fields.pluck(:name)
       ActiveRecord::Associations::Preloader.new(items, preload_associations).run
+      @export_stats[:number_of_records] += items.count if account.launched?(:silkroad_shadow)
 
       items.each do |item|
         record = []
@@ -360,8 +363,19 @@ class Export::Ticket < Struct.new(:export_params)
     def build_attachment(file_path)
       file = File.open(file_path, 'r')
       file_name = file_path.split('/').last
-      attachment = @data_export.build_attachment(content_file_name: file_name, content_file_size: file.size.to_i)
+      file_size = file.size.to_i
+      @export_stats.merge!(size: file_size, md5: Digest::MD5.file(file).hexdigest) if account.launched?(:silkroad_shadow)
+      attachment = @data_export.build_attachment(content_file_name: file_name, content_file_size: file_size)
       attachment.upload_to_s3(file) if attachment.save!
       @data_export.file_uploaded!
+    end
+
+    def custom_export_logger
+      @custom_export_logger ||= CustomLogger.new(Rails.root.join('log', 'export.log'))
+    end
+
+    def logging_format(silkroad_data_export)
+      "a=#{Account.current.id}, id=#{silkroad_data_export.job_id}, t=#{Time.now.to_i - @data_export.created_at.to_i}, " \
+        "s=#{@export_stats[:size]}, n=#{@export_stats[:number_of_records]}, md5=#{@export_stats[:md5]}"
     end
 end

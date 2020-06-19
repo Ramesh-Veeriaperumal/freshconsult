@@ -35,7 +35,8 @@ class DraftObserver < ActiveRecord::Observer
     end
 
     def clear_approvals(item)
-      item.article.clear_approvals if Account.current.article_approval_workflow_enabled?
+      # on deleting approved article, the approval record will already be deleted because of dependent destroy
+      item.article.reload && item.article.clear_approvals if Account.current.article_approval_workflow_enabled?
     end
 
     def content_changed?(item)

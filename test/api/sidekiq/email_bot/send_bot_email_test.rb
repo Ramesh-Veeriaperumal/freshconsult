@@ -115,6 +115,26 @@ class SendBotEmailTest < ActionView::TestCase
     assert_equal @articles.first.id, Bot::Response.find_by_ticket_id(ticket.id).suggested_articles.keys.last
   end
 
+  def test_agent_assist_article_not_supported_ticket_source
+    ticket = create_ticket
+    ticket.source = 9
+    ticket.save!
+    fetch_bot_and_articles
+    stub_request(:post, %r{^#{FreddySkillsConfig[:agent_articles_suggest][:url]}.*?$}).to_return(body: stub_response(true).to_json, status: 200)
+    ::Freddy::AgentSuggestArticles.new.perform(ticket_id: ticket.id)
+    assert_equal [], Bot::Response.where(ticket_id: ticket.id)
+  end
+
+  def test_agent_assist_article_without_bot_onboarded
+    ticket = create_ticket
+    fetch_bot_and_articles
+    @account.main_portal.bot.destroy
+    @account.reload
+    stub_request(:post, %r{^#{FreddySkillsConfig[:agent_articles_suggest][:url]}.*?$}).to_return(body: stub_response(true).to_json, status: 200)
+    ::Freddy::AgentSuggestArticles.new.perform(ticket_id: ticket.id)
+    assert_equal [], Bot::Response.where(ticket_id: ticket.id)
+  end
+
   def test_notify_by_email
     ticket = create_ticket
     mail_message = Helpdesk::TicketNotifier.notify_by_email(EmailNotification::BOT_RESPONSE_TEMPLATE, ticket, nil, {freddy_suggestions: "test"})

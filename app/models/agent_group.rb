@@ -17,7 +17,7 @@ class AgentGroup < ActiveRecord::Base
   validates_presence_of :user
 
   attr_accessor :multiple_agents_added_to_group
-  attr_accessible :group_id, :user_id, :multiple_agents_added_to_group
+  attr_accessible :group_id, :user_id, :multiple_agents_added_to_group, :write_access
 
   after_commit :reset_internal_agent, on: :destroy
 

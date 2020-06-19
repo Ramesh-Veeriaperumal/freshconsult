@@ -8269,5 +8269,17 @@ en:
     success_subheading: 'You have successfully unsubscribed from our updates and notifications mailing lists.'
   omni_dashboard:
     freshchat_volume_tooltip: 'Conversation that have been unassigned or assigned & not replied for 15 mins'
-    omni_availability_detail_title: 'view details'
+    omni_availability_detail_title: 'View details'
+    freshdesk_volume_title: "TICKET TRENDS"
+    freshchat_volume_title: "CHAT TRENDS"
+    freshcaller_volume_title: "CALL TRENDS"
+    freshdesk_performance_title: "TICKET PERFORMANCE"
+    freshchat_performance_title: "CHAT PERFORMANCE"
+    freshcaller_performance_title: "CALL PERFORMANCE"
+    freshdesk_csat_title: "TICKET - CSAT SCORES"
+    freshchat_csat_title: "CHAT - CSAT SCORES"
+    freshcaller_sla_title: "CALL SERVICE LEVEL METRICS"
+    freshdesk_todo_title: "TO-DO"
+    omni_availability_title: "AVAILABLE AGENTS"
+    freshcaller_active_calls_title: "CALLS - ACTIVE"
 

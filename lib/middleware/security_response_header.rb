@@ -9,6 +9,7 @@ class Middleware::SecurityResponseHeader
   SUPPORT_PATH = 'support'.freeze
   SUPPORT_IMAGE_UPLOAD_PATHS = ['/tickets_uploaded_images','/tickets_uploaded_images/create_file','/forums_uploaded_images','/forums_uploaded_images/create_file'].freeze # Used in support portal
   SEC_MIDDLEWARE_IGNORED_DOMAINS_KEY = 'IGNORED_CLICKJACK_DOMAINS'.freeze
+  NEW_SIGNUP_FREE_PATH = ['/new_signup_free'].freeze
 
   def initialize(app)
     @app = app
@@ -57,6 +58,7 @@ class Middleware::SecurityResponseHeader
   def add_security_headers(headers)
     begin
       headers['X-XSS-Protection'] = '1; mode=block'
+      headers['X-Content-Type-Options'] = 'nosniff' unless NEW_SIGNUP_FREE_PATH.include?(@req_path)
 
       return headers if ignore_x_frame_options?(headers)
 

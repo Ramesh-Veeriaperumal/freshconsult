@@ -66,19 +66,20 @@ module ApiDashboardConstants
     [:todo,               'todo',                               2, 2]
   ].freeze
 
+  # [name, w, h, source, type, refresh_interval, tooltip_text, link_href, link_text ]
   OMNI_CHANNEL_DASHBOARD = [
-    ['freshdesk-volume', 2, 2, 'freshdesk', nil, nil, nil],
-    ['freshchat-volume', 2, 2, 'freshchat', 'omni_dashboard.freshchat_volume_tooltip', nil, nil],
-    ['freshcaller-volume', 2, 2, 'freshcaller', nil, nil, nil],
-    ['freshdesk-performance', 2, 2, 'freshdesk', nil, nil, nil],
-    ['freshchat-performance', 2, 2, 'freshchat', nil, nil, nil],
-    ['freshcaller-performance', 2, 2, 'freshcaller', nil, nil, nil]
-    # ['freshdesk-csat', 2, 2, 'freshdesk', nil, nil, nil],
-    # ['freshchat-csat', 2, 2, 'freshchat', nil, nil, nil],
-    # ['freshcaller-sla', 2, 2, 'freshcaller', nil, nil, nil],
-    # ['todowidget', 2, 2, 'freshdesk', nil, nil, nil],
-    # ['omni-availability', 2, 2, 'freshdesk', nil, '/a/dashboard/agent_status', 'omni_dashboard.omni_availability_detail_title'],
-    # ['freshcaller-active-calls', 2, 2, 'freshcaller', nil, nil, nil]
+    ['freshdesk-volume', 2, 2, 'freshdesk', 'scorecard', 30_000, nil, nil, nil],
+    ['freshchat-volume', 2, 2, 'freshchat', 'scorecard', 30_000, 'omni_dashboard.freshchat_volume_tooltip', nil, nil],
+    ['freshcaller-volume', 2, 2, 'freshcaller', 'scorecard', 30_000, nil, nil, nil],
+    ['freshdesk-performance', 2, 2, 'freshdesk', 'scorecard', 30_000, nil, nil, nil],
+    ['freshchat-performance', 2, 2, 'freshchat', 'scorecard', 30_000, nil, nil, nil],
+    ['freshcaller-performance', 2, 2, 'freshcaller', 'scorecard', 30_000, nil, nil, nil],
+    ['freshdesk-csat', 2, 2, 'freshdesk', 'survey', 30_000, nil, nil, nil],
+    ['freshchat-csat', 2, 2, 'freshchat', 'survey', 30_000, nil, nil, nil],
+    ['freshcaller-sla', 2, 2, 'freshcaller', 'gauge', 30_000, nil, nil, nil],
+    ['freshdesk-todo', 2, 2, 'freshdesk', 'todo'],
+    ['omni-availability', 2, 2, 'freshdesk', 'metric-list', 30_000, nil, '/a/dashboard/agent_status', 'omni_dashboard.omni_availability_detail_title'],
+    ['freshcaller-active-calls', 2, 2, 'freshcaller', 'metric-list', 30_000, nil, nil, nil]
   ].freeze
 
   PARAMS_FIELD_NAME_MAPPINGS = { group_ids: :group_id,

@@ -14,6 +14,7 @@ module GroupHelper
     group.toggle_availability = options[:toggle_availability] if options[:toggle_availability]
     group.capping_limit = options[:capping_limit] if options[:capping_limit]
     group.save!
+    Account.current.instance_variable_set('@cached_values', {}) if Account.current.present?
     group
   end
 

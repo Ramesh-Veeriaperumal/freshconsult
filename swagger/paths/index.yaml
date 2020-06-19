@@ -265,6 +265,8 @@
   $ref: ./agents/verify_agent_privilege.yaml
 /agents/{id}/availability:
   $ref: ./agents/availability.yaml
+/agents/availability_count:
+  $ref: ./agents/availability_count.yaml
 
 # Profiles
 /agents/me:

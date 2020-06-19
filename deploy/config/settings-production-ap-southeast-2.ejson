@@ -13,7 +13,7 @@
       },
       "asknicely_app": {
         "hash_token": "EJ[1:7jauTDx2+Gzp5QaCAke1sxrJlzFbIg1guIXPti/YHh8=:tYoLUitzbrpvTjOVwWqbsGlolQqMTvzc:mJlXTBxPjWFLJIluraOmvTZs6LFkZ9ZsGQLNhfSZeGQXeQ5Z5z3oyhh4EaXxOM+jQu/fe9JBRuqqNxEMnRO0eFbF83KcTveMgs0weuMKxMQuN+xd04ZIFpIky/tNaX17gwC5x646Aj0+SkzKaRuBYPq3kVVupfsjhip+3Mnnijssdlo5McMu8/A9beXllFhJ]",
-        "_domain_key": "freshworks",
+        "domain_key": "EJ[1:w+o8xH4d7eTC9Dq+1k9ob29EAd1uxltl4MCUw4wDoAQ=:MQzawNlMg1pGfe2/kK22DESIQixFQBLS:3i7VCCdJrREftBU2/woR7Nt20XmGDVGUOP8=]",
         "_template_name": "Freshworks-NPS"
       },
       "rts": {
@@ -1532,13 +1532,13 @@
       "site_announcement": {
         "_message": "On 1 Sep 2019, between 1:30 am to 2:30 am UTC, live chat will be inaccessible for customers and agents, owing to yearly maintenance. No chats will be received. Sorry for the Inconvenience.",
         "_features": [
-          "chat"
         ],
         "_launched": [
-          "custom_product_notification"
+          "sprout_banner"
         ],
-        "_startTime": "2019-08-01T00:00:00Z",
-        "_endTime": "2019-09-01T00:00:00Z"
+        "_startTime": "2020-05-29T12:30:00Z",
+        "_endTime": "2020-06-29T12:30:00Z",
+        "_messageKey": "fd.site-announcement.sprout-banner"
       },
       "s3": {
         "_bucket": "ap-falconassets-blue",
@@ -1576,11 +1576,16 @@
       "_sentry_dsn": "https://932f384a375f45db84667227e44ccaf1@sentry.io/1189802",
       "_announcement_account_url": "productupdates.freshdesk.com",
       "_anonymous_signup_redirect_url": "https://freshdesk.com/trial/thank-you",
-      "_freshconnectAssets": {
+      "freshconnectAssets": {
         "_script_asset_url": "https://assets1.freshconnect.io/freshconnect-sidebar/freshconnect-sidebar.js",
         "_base_url": "https://api.freshconnect.io"
       },
       "_vault_service_url": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/",
+      "_freshdesk_help_widget_url": "https://widget.freshworks.com/widgets/50000000012.js",
+      "google_map_api_key": "EJ[1:w+o8xH4d7eTC9Dq+1k9ob29EAd1uxltl4MCUw4wDoAQ=:hUekQVMrDxDBjBIIfaaeX4gddxpQN3H+:6rOnQtEao22yMIemUVea3OgBfT6Wm1ajtJEJxtEeNWRtdVojGRP90Xbw5JqK007fnnKeG2QquA==]",
+      "analyticsCollectorConfig": {
+        "_analyticsCollectorScript": "https://assets.freshdesk.com/analytics/analytics-v2.js"
+      },
       "blue": {
         "_bucket": "ap-falconassets-blue",
         "_fingerprint_prepend": "https://apfassetsblue.freshdesk.com/production/",

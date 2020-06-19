@@ -1,0 +1,62 @@
+get:
+  tags: [agent]
+  summary: Show agent availabilities count
+  parameters:
+    - in: query
+      name: freshdesk_group_ids
+      description: Comma-seprated group ids of Freshdesk product
+      type: array
+      items:
+        type: string
+      collectionFormat: csv
+      minItems: 1
+      maxItems: 15
+      uniqueItems: true
+      x-example:
+        - id1
+        - id2
+        - id3
+    - in: query
+      name: freshchat_group_ids
+      description: Comma-seprated group ids of Freshchat product
+      type: array
+      items:
+        type: string
+      collectionFormat: csv
+      minItems: 1
+      maxItems: 15
+      uniqueItems: true
+      x-example:
+        - id1
+        - id2
+        - id3
+    - in: query
+      name: freshcaller_group_ids
+      description: Comma-seprated group ids of Freshcaller product
+      type: array
+      items:
+        type: string
+      collectionFormat: csv
+      minItems: 1
+      maxItems: 15
+      uniqueItems: true
+      x-example:
+        - id1
+        - id2
+        - id3
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          availability_count:
+            $ref: '#/definitions/agent_availability_count_response'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    500:
+      description: Internal server error
+      schema:
+        $ref: '#/definitions/internal_server_error'

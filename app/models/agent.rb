@@ -344,6 +344,10 @@ class Agent < ActiveRecord::Base
     agent_group.map(&:group_id).sort
   end
 
+  def valid_groups_ids
+    @valid_groups_ids ||= Account.current.groups_from_cache.map(&:id).sort
+  end
+
   def build_agent_groups_attributes(group_ids, contribution_group_ids = nil)
     return if !group_ids.is_a?(Array) && !contribution_group_ids.is_a?(Array)
 
@@ -355,14 +359,12 @@ class Agent < ActiveRecord::Base
   end
 
   def update_agent_group_list(all_agent_groups, group_ids, write_access = true)
+    group_ids &= valid_groups_ids
     group_ids.each do |group_id|
       agent_group = all_agent_groups.bsearch { |ag| group_id <=> ag.group_id }
       if agent_group.blank?
-        self.all_agent_groups.new.tap do |ag|
-          ag.write_access = write_access
-          ag.group_id = group_id
-          ag.instance_variable_set(:@marked_for_destruction, false) # in case of scope get to all ticket permission
-        end
+        agent_group = self.all_agent_groups.build(group_id: group_id, write_access: write_access)
+        agent_group.instance_variable_set(:@marked_for_destruction, false) # in case of scope get to all ticket permission
       else
         agent_group.write_access = write_access
       end

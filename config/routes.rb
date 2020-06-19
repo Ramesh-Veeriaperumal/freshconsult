@@ -3311,5 +3311,6 @@ Helpkit::Application.routes.draw do
   post '/yearin_review/clear', to: 'year_in_review#clear'
   
   match '/mobile/welcome'  => 'mobile_app_download#index'
+  match '/email_service_spam' => 'email_service#create', via: :post
 
 end
