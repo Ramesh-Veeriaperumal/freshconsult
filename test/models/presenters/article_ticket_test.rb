@@ -20,6 +20,8 @@ class ArticleTicketTest < ActiveSupport::TestCase
     article_ticket = add_article_ticket(article, ticket)
     payload = article_ticket.central_publish_payload.to_json
     payload.must_match_json_expression(central_publish_article_ticket_pattern(article_ticket))
+    event_info = article_ticket.event_info(:create)
+    event_info.must_match_json_expression(central_publish_article_ticket_event_info)
   end
 
   def test_central_publish_payload_archive_article_ticket

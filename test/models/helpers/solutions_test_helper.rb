@@ -155,6 +155,14 @@ module ModelsSolutionsTestHelper
     }
   end
 
+  def central_publish_article_ticket_event_info
+    current_portal = Portal.current || Account.current.main_portal
+    {
+      source_type: 1,
+      source_id: current_portal.id
+    }
+  end
+
   def central_publish_article_interactions_pattern(article)
     parent = article.parent
     {
