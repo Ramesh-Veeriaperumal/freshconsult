@@ -6,6 +6,8 @@ class FreshidController < ApplicationController
   FLASH_INVALID_USER    = 'activerecord.errors.messages.contact_admin'
   FLASH_USER_NOT_EXIST  = 'flash.general.access_denied'
 
+  ONBOARDING_ROUTE = '/a/getstarted'.freeze
+
   skip_before_filter :check_privilege, :verify_authenticity_token, :check_suspended_account, :check_account_state
   skip_before_filter :set_current_account, :redactor_form_builder, :set_time_zone, :check_day_pass_usage,
                      :set_locale, :check_session_timeout, only: :event_callback
@@ -94,11 +96,13 @@ class FreshidController < ApplicationController
     end  
 
     def default_return_url
+      is_trial = current_account.subscription.trial?
+
       @default_return_url ||= begin
         from_cookie = cookies[:return_to] # The :return_url cookie will be used by Ember App
         cookies.delete(:return_url) if from_cookie.present?
         # TODO-EMBERAPI: Cookie deletion does not seem reflect properly on the client
-        from_cookie || '/'
+        is_trial && @current_user.privilege?(:admin_tasks) ? from_cookie || ONBOARDING_ROUTE : from_cookie || '/'
       end
     end
 
