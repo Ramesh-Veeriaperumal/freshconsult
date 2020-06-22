@@ -210,6 +210,20 @@ module Ember
         match_json([bad_request_error_pattern('description', :article_description_base64_error, code: :article_base64_content_error)])
       end
 
+      def test_autosave_with_base64_html_content_with_kb_allow_base64_images_enabled
+        Account.any_instance.stubs(:kb_allow_base64_images_enabled?).returns(true)
+        article_with_draft
+        params = autosave_params
+        params[:description] = "<img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P48w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==' alt='Red dot'/>"
+        put :autosave, construct_params({ version: 'private', article_id: @article.parent_id }, params)
+        assert_response 200
+        match_json(autosave_pattern(@draft.reload))
+        assert_equal @draft.title, @title
+        assert_equal @draft.description, "<img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P48w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==\" alt=\"Red dot\">"
+      ensure
+        Account.any_instance.unstub(:kb_allow_base64_images_enabled?)
+      end
+
       def test_autosave_with_article_approval
         Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
         add_privilege(User.current, :approve_article)
@@ -224,6 +238,18 @@ module Ember
         assert_in_review @article
       ensure
         Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_update_description_with_base64_plain_text_with_kb_allow_base64_images_enabled
+        Account.any_instance.stubs(:kb_allow_base64_images_enabled?).returns(true)
+        article_with_draft
+        params_hash = update_params
+        params_hash[:description] = "<img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P48w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==' alt='Red dot'/>"
+        put :update, construct_params({ version: 'private', article_id: @article.parent_id }, params_hash)
+        assert_response 200
+        match_json(private_api_solution_article_pattern(@article.reload))
+      ensure
+        Account.any_instance.unstub(:kb_allow_base64_images_enabled?)
       end
 
       def test_autosave_with_article_approval_different_user

@@ -403,6 +403,20 @@ module Ember
         match_json([bad_request_error_pattern('description', :article_description_base64_error, code: :article_base64_content_error)])
       end
 
+      def test_update_with_base64_description_with_kb_allow_base64_images_enabled
+        Account.any_instance.stubs(:kb_allow_base64_images_enabled?).returns(true)
+        sample_article = get_article_without_draft
+        base64_content = "<img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P48w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==' alt='Red dot'/>"
+        params_hash = {  title: 'new draft title', description: base64_content, agent_id: @agent.id }
+        put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+        assert_response 200
+        assert sample_article.reload.draft
+        assert sample_article.reload.draft.reload.title == 'new draft title'
+        match_json(private_api_solution_article_pattern(sample_article.reload))
+      ensure
+        Account.any_instance.unstub(:kb_allow_base64_images_enabled?)
+      end
+
       def test_create_and_publish_article
         folder_meta = get_folder_meta
         title = Faker::Name.name
