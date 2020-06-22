@@ -1651,7 +1651,7 @@
         "_messageKey": "fd.site-announcement.sprout-banner"
       },
       "analyticsCollectorConfig": {
-        "_analyticsCollectorScript": "https://assets.freshdesk.com/analytics/analytics-v2.js",
+        "_analyticsCollectorScript": "https://assets.freshdesk.com/analytics/analytics-v1.2.0.js",
         "schedulerConfig": {
           "metricsAdapters": [
             {
