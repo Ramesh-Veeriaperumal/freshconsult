@@ -29,7 +29,6 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         fsm_fields_to_be_created = fetch_fsm_fields_to_be_created
         reserve_fsm_custom_fields(fsm_fields_to_be_created)
         create_fsm_section
-        unarchive_ticket_fields if Account.current.archive_ticket_fields_enabled?
         create_fsm_dashboard
         generate_fsm_seed_data
         expire_cache
@@ -116,8 +115,10 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
       def create_fsm_field(field_details, account)
         field_name = field_details.delete(:name)
+        Rails.logger.info("Creating FSM field #{field_name} for Account - #{Account.current.id} ")
         field_options = { alias_present: true, signup_flow: @fsm_signup_flow }
         ff_def_entry = FlexifieldDefEntry.new ff_meta_data(field_details, account, field_options)
+        Rails.logger.info("Flexifield data for #{field_name} :: #{ff_def_entry}")
         field_details.merge!(flexifield_def_entry_details(ff_def_entry))
 
         ticket_field = ticket_fields.build(field_details)
@@ -125,6 +126,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         ticket_field.flexifield_def_entry = ff_def_entry
 
         ticket_field.save!
+        Rails.logger.info("FSM field #{field_name} created")
         ticket_field.insert_at(field_details[:position]) if field_details[:position].present?
       end
 
@@ -154,6 +156,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
       # create a dynamic section named "Service Task" and attach the reserved custom fields to them.
       def create_fsm_section
+        Rails.logger.info("Processing fsm section operations for Account - #{Account.current.id}")
         # TODO: check for section limit.
         ticket_type_field = Account.current.ticket_fields_with_nested_fields.find_by_field_type('default_ticket_type')
         unless ticket_type_field.field_options['section_present']
@@ -182,16 +185,21 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         fields_to_be_created = fsm_custom_field_to_reserve
         section_fields_ticket_field_ids = service_task_section.section_fields.map(&:ticket_field_id)
         fields_to_be_created.each_with_index do |custom_field, index|
-          field_data = Account.current.ticket_fields.find_by_name("#{custom_field[:name]}_#{Account.current.id}")
+          field_data = Account.current.ticket_fields_with_archived_fields_only.where(name: "#{custom_field[:name]}_#{Account.current.id}").first
           unless section_fields_ticket_field_ids.include?(field_data.id)
             section_field = { parent_ticket_field_id: parent_ticket_field_id, ticket_field_id: field_data.id, position: index + 1 }
             service_task_section.section_fields.build(section_field)
           end
-          next if field_data.field_options[:section] && field_data.field_options[:fsm]
+          is_archived_field = Account.current.archive_ticket_fields_enabled? && field_data.deleted
+          is_valid_fsm_field = field_data.field_options[:section] && field_data.field_options[:fsm]
+          next if is_valid_fsm_field && !is_archived_field
 
-          field_data.field_options = field_data.field_options.with_indifferent_access
-          field_data.field_options[:section] = true
-          field_data.field_options[:fsm] = true
+          unless is_valid_fsm_field
+            field_data.field_options = field_data.field_options.with_indifferent_access
+            field_data.field_options[:section] = true
+            field_data.field_options[:fsm] = true
+          end
+          field_data.deleted = false if is_archived_field
           field_data.save!
         end
         service_task_section.save!
@@ -376,17 +384,6 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
       def add_required_features_for_lower_plans
         Account.current.add_feature(:dynamic_sections) unless Account.current.has_feature?(:dynamic_sections)
-      end
-
-      def unarchive_ticket_fields
-        fsm_section = Account.current.sections.preload(:section_fields).find_by_label(SERVICE_TASK_SECTION)
-        if fsm_section.present?
-          archived_ticket_fields = fsm_section.section_fields.map(&:ticket_field).select { |tf| tf.deleted? && tf.fsm? }
-          archived_ticket_fields.each do |archived_tf|
-            archived_tf.deleted = false
-            archived_tf.save!
-          end
-        end
       end
   end
 end
