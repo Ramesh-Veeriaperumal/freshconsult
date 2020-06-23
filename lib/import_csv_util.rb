@@ -5,7 +5,7 @@ module ImportCsvUtil
   include Redis::RedisKeys
   include Redis::OthersRedis
 
-  ONE_MEGABYTE  = 1000000
+  FIVE_MEGABYTE = 5_000_000
   CUSTOMER_TYPE = ["contact", "company", "agent_skill"]
   IMPORT_DELIMITER = "||"
   VALID_CLIENT_MANAGER_VALUES = ["yes", "true"]

@@ -198,9 +198,19 @@ class Import::Customers::Base
       csv << @csv_headers.push("errors")
       @failed_items.map {|item| csv << item}
     end
+    csv_string = reduce_csv_string(csv_string) if csv_string.bytesize > FIVE_MEGABYTE
     write_file(csv_string)
     build_failed_attachment
   end
+
+    def reduce_csv_string(csv_string)
+      reduced_failed_items = @failed_items.slice(0, (@failed_items.length.to_f / (csv_string.bytesize.to_f / FIVE_MEGABYTE).ceil).floor)
+      reduced_csv_string = CSVBridge.generate do |csv|
+        csv << @csv_headers.push('errors')
+        reduced_failed_items.map { |item| csv << item }
+      end
+      reduced_csv_string
+    end
 
   def write_file file_string
     File.open(failed_file_path , "wb") do |f|
@@ -259,8 +269,8 @@ class Import::Customers::Base
     elsif @wrong_csv
       hash.merge!(:wrong_csv => @wrong_csv)
     else
-      # Attachment(csv file) will not be send, if the file is more than 1MB
-      hash.merge!(:file_path => failed_file_path, :file_name => failed_file_name) unless @failed_items.blank? || failed_file_size > ONE_MEGABYTE
+      # Sample attachment(csv file) will be send, if the file is more than 5MB
+      hash.merge!(file_path: failed_file_path, file_name: failed_file_name) unless @failed_items.blank? || failed_file_size > FIVE_MEGABYTE
       hash.merge!(:attachments => customer_import.attachments.all) unless @failed_items.blank?
       hash.merge!(:import_success => true) if @failed_items.blank? && !redis_key_exists?(stop_redis_key)
       hash.merge!(:import_stopped => true) if redis_key_exists?(stop_redis_key)
