@@ -6,10 +6,6 @@
       "enabled": false
     },
     "ymls": {
-      "asknicely_app": {
-        "domain_key": "EJ[1:YSmhRDvnz3argCN60z5eUMgKj1kPDvFLULJGdgFFBBg=:1WRe15IDSIbW2lBreuEUD3FqUxeWK9Bp:1+U2EWKpRxjzVwCFDMXVcpYerhMEXA5p7xbGE/N4]",
-        "_template_name": "inapp"
-      },
       "datacenter_config": {
       "freshcaller_signup_supported": true,
       "freshconnect_signup_supported": true,
@@ -20,7 +16,7 @@
       },
       "asknicely_app": {
         "hash_token": "EJ[1:i5f0QpyxZMd840WWwUiBnUSjyVluR+Mb3JvbcIc9/24=:sqbsBi3TsMvJJVizA3HU8kOFaFHu6Zm4:KwzYTVZjembNQmLT2DZcLlUP+7FrJIw8PdfdqbZa9wRGIUyaxrI05ylYLmSOMfNvZap0BBbfKaoPwRPzw6fwWAaA5ujMxspxAHdQ/tLL9pl9IkCVVLa3rpQTTNdFkfVVoTqFlZ03zXFO8akcbb5+1cvjL6QGspGyVdm9B+eMsIgd1FEFxkUOk+UKZ9wmgawr]",
-        "_domain_key": "freshworkstest",
+        "domain_key": "EJ[1:YSmhRDvnz3argCN60z5eUMgKj1kPDvFLULJGdgFFBBg=:1WRe15IDSIbW2lBreuEUD3FqUxeWK9Bp:1+U2EWKpRxjzVwCFDMXVcpYerhMEXA5p7xbGE/N4]",
         "_template_name": "inapp"
       },
       "rts": {
@@ -1788,15 +1784,14 @@
         }
       },
       "site_announcement": {
-        "_message": "On 1 Sep 2019, between 1:30 am to 2:30 am UTC, live chat will be inaccessible for customers and agents, owing to yearly maintenance. No chats will be received. Sorry for the inconvenience.",
+        "_messageKey": "fd.site-announcement.sprout-banner",
         "_features": [
-            "chat"
         ],
         "_launched": [
-            "custom_product_notification"
+            "sprout_banner"
         ],
-        "_startTime": "2019-07-30T01:00:00Z",
-        "_endTime": "2019-08-01T23:59:00Z"
+        "_startTime": "2020-05-29T12:30:00Z",
+        "_endTime": "2020-06-29T12:30:00Z"
       },
       "blue": {
         "_bucket": "falconstagingvpc",
@@ -1840,7 +1835,7 @@
       "_heap_project_id": "298895843",
       "_integrations_url": "https://login.freshpo.com",
       "_revision": "prestaging",
-      "_widget_domain": "https://freshwidget.freshpo.com",
+      "_widget_domain": "https://freshwidget.freshpo.com/widgets",
       "_data_center": "us-east",
       "_sentry_dsn": "https://1392f72b3f5748ecb7fe9ddf22bbfd75@sentry.io/1189798",
       "_announcement_account_url": "updateproduct.freshpo.com",
