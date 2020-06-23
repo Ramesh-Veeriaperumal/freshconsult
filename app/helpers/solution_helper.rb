@@ -566,6 +566,8 @@ module SolutionHelper
     end
 
     def base64_content?(content)
+      return false if Account.current.kb_allow_base64_images_enabled?
+
       content ? content.match(/src\s*=\s*("|')data:((image\/(png|gif|jpg|jpeg|svg\+xml){1})|(text\/(plain|html){1})){1};base64/i) : false
     end
 

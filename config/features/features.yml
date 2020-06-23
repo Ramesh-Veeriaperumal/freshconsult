@@ -398,6 +398,7 @@
       :advanced_ticket_scopes: 394
       :custom_objects: 395
       :quality_management_system: 396
+      :kb_allow_base64_images: 397
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -508,3 +509,4 @@
   :prevent_ticket_creation_for_others: true
   :field_service_geolocation: false
   :location_tagging: false
+  :kb_allow_base64_images: false

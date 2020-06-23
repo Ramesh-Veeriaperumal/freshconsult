@@ -1540,6 +1540,25 @@
         "_endTime": "2020-06-29T12:30:00Z",
         "_messageKey": "fd.site-announcement.sprout-banner"
       },
+      "analyticsCollectorConfig": {
+        "_analyticsCollectorScript": "https://assets.freshdesk.com/analytics/analytics-v1.2.0.js",
+        "schedulerConfig": {
+          "metricsAdapters": [
+            {
+              "_name": "newrelic",
+              "options": {
+                  "_applicationID": "71923091",
+                  "licenseKey": "EJ[1:NoZIO8nzNU20o/ZZl+X7T6/1s+K1zbgK68nVG52cMF4=:mvbBst/7RrwqHlda/tewXp6nFSfbTsQg:S+Pxf8ZKDTku6fYmpjunoYa5iiJSOGtXNyM=]",
+                  "_agent": "js-agent.newrelic.com/nr-spa-1016.min.js",
+                  "_beacon": "bam.nr-data.net",
+                  "_errorBeacon": "bam.nr-data.net",
+                  "_spaMonitoring": true,
+                  "_sa": 1
+              }
+            }
+          ]
+        }
+      },
       "s3": {
         "_bucket": "ap-falconassets-blue",
         "_region": "ap-southeast-2"

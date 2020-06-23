@@ -21,6 +21,10 @@ class ArticleTicket < ActiveRecord::Base
     a.add :ticketable_id
   end
 
+  def event_info(action)
+    { source_type: @interaction_source_type, source_id: @interaction_source_id } if action == :create
+  end
+
   def self.central_publish_enabled?
     Account.current.solutions_central_publish_enabled?
   end

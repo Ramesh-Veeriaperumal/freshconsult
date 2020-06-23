@@ -19,14 +19,6 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
     super
     clean_db
     Account.current.add_feature(:custom_ticket_fields)
-    if Account.current.ticket_source_from_cache.blank?
-      $redis_others.perform_redis_op('set', 'POPULATE_DEFAULT_SOURCES', true)
-      ENV['SEED'] = '034_default_sources'
-      ENV['FIXTURE_PATH'] = 'db/fixtures/foreground'
-      SeedFu::PopulateSeed.populate
-      ENV['SEED'] = nil
-      ENV['FIXTURE_PATH'] = nil
-    end
   end
 
   def teardown

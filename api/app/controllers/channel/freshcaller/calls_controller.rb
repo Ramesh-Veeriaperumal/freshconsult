@@ -57,6 +57,7 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
     def create_and_link_ticket
       create_ticket
       @item.notable = @ticket
+      create_and_link_note if call_notes?
     end
 
     def create_or_add_to_ticket

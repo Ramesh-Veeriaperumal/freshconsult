@@ -134,7 +134,7 @@ class Billing::BillingController < ApplicationController
       if subscription_hash.present?
         @account.subscription.renewal_period = @subscription_data[:renewal_period]
         @account.subscription.state = @subscription_data[:state]
-        Billing::Subscription.new.update_subscription(@account.subscription, false, @account.subscription.addons)
+        Billing::Subscription.new.update_subscription(@account.subscription, true, @account.subscription.addons)
         @subscription_data.merge!(subscription_hash)
       end
       @subscription_data.merge!(plan_info(plan)) if @subscription_data[:subscription_plan].blank?

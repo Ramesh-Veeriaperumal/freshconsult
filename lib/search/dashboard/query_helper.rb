@@ -118,11 +118,11 @@ module Search::Dashboard::QueryHelper
   end
 
   def transform_any_group_id(field_name, values)
-    "(#{transform_field('group_id', values)} OR #{transform_field('internal_group_id', values)})"
+    "(#{transform_field('group_id', values.dup)} OR #{transform_field('internal_group_id', values.dup)})"
   end
 
   def transform_any_agent_id(field_name, values)
-    "(#{transform_field('responder_id', values)} OR #{transform_field('internal_agent_id', values)})"
+    "(#{transform_field('responder_id', values.dup)} OR #{transform_field('internal_agent_id', values.dup)})"
   end
 
   #For handling status

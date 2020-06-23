@@ -428,6 +428,26 @@ module Ember
       @account.unstub(:count_es_enabled?)
     end
 
+    def test_meta_count_with_internal_agent_or_agent_filter
+      enable_feature(:shared_ownership) do
+        initialize_internal_agent_with_default_internal_group
+        query_hash_params = { '0' => query_hash_param('any_agent_id', 'is_in', [@agent.id.to_s, '-1']), '1' => query_hash_param('created_at', 'is_greater_than', 'last_month') }
+        @account.stubs(:count_es_enabled?).returns(false)
+        get :index, controller_params({ version: 'private', only: 'count', query_hash: query_hash_params }, false)
+        assert_response 200
+        assert_equal response.api_meta[:count], @account.tickets.where(['((responder_id = ? OR ISNULL(responder_id)) OR (internal_agent_id = ? OR ISNULL(internal_agent_id))) AND spam = false AND deleted = false AND created_at > ?', @agent.id, @internal_agent.id, 30.days.ago]).count
+      end
+    end
+
+    def query_hash_param(condition, operator, value, type = 'default')
+      {
+        'condition' => condition,
+        'operator' => operator,
+        'value' => value,
+        'type' => type
+      }
+    end
+
     def test_meta_data_with_next_page
       tickets = []
       31.times do

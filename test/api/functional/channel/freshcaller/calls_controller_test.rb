@@ -305,6 +305,17 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   end
 
+  def test_update_with_convert_inprogress_call_to_note_params
+    set_auth_header
+    call_id = get_call_id
+    create_call(fc_call_id: call_id)
+    put :update, construct_params(call_note_params(call_id, 'in-progress'))
+    call = ::Freshcaller::Call.last
+    match_json(ticket_with_note_pattern(call))
+    assert_equal Helpdesk::Ticket.default_cc_hash, call.notable.notable.cc_email
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+  end
+
   def test_update_with_invalid_params
     set_auth_header
     call_id = get_call_id

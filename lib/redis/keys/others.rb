@@ -286,9 +286,6 @@ module Redis::Keys::Others
 
   MARKETPLACE_NI_PAID_APP = 'MARKETPLACE_NI_PAID_APP:%{account_id}:%{app_name}'.freeze
 
-  # For sources fixture
-  POPULATE_DEFAULT_SOURCES = 'POPULATE_DEFAULT_SOURCES'.freeze
-
   AGENT_CHAT_MANAGEMENT = 'AGENT_CHAT_MANAGEMENT'.freeze
 
   EMBERIZE_AGENT_FORM = 'EMBERIZE_AGENT_FORM'.freeze

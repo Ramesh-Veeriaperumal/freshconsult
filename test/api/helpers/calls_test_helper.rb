@@ -55,6 +55,11 @@ module Freshcaller::CallsTestHelper
     params
   end
 
+  def call_note_params(call_id, status)
+    params = convert_call_params(call_id, status)
+    params.merge!(note: Faker::Lorem.sentence(3))
+  end
+
   def update_invalid_params(call_id)
     {
       version: 'channel',
