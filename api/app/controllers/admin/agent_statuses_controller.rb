@@ -13,12 +13,18 @@ class AgentStatusesController < ApiApplicationController
   def update; end
 
   def destroy
-    head perform_shift_request(params, cname_params)[:code]
+    delete_response = perform_shift_request(params, cname_params)
+    if success? delete_response[:code]
+      head delete_response[:code]
+    else
+      response.status = delete_response[:code]
+      @item = delete_response[:body]
+    end
   end
 
   private
 
-    def extended_url(action, id)
+    def extended_url(_action, _id)
       request_path = request.path.gsub!('agent_statuses', 'agent-statuses')
       (request_path.gsub!('_', 'v1') || request_path.gsub('v2', 'v1')).last(-1)
     end

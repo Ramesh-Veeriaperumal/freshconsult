@@ -17,12 +17,16 @@ module Admin::ShiftHelper
     elsif response_body['errors'].present?
       proxy_errors(response_body, proxy_response[:code])
     else
-      index_page? ? @items = [] : proxy_errors(response_body, proxy_response[:code])
+      proxy_errors(response_body, proxy_response[:code])
     end
   end
 
   def proxy_errors(error_body, status)
-    render json: @item = error_body
+    if index_page?
+      render json: @items = error_body
+    else
+      render json: @item = error_body
+    end
     response.status = status
   end
 

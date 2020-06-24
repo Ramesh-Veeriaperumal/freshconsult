@@ -9,24 +9,22 @@ class OutOfOfficesControllerTest < ActionController::TestCase
 
   def test_list_all_out_of_offices
     toggle_out_of_office_feature(true)
-    WebMock.allow_net_connect!
-    HTTParty.stubs(:get).returns(HTTParty, true)
-    HTTParty.stubs(:body).returns(status: 200, data: sample_index)
+    req_stub = stub_request(:get, 'http://localhost:8080/api/v1/out-of-offices').to_return(body: sample_index.to_json, status: 200)
     get :index, controller_params
     assert_response 200
   ensure
     toggle_out_of_office_feature(false)
+    remove_request_stub(req_stub)
   end
 
   def test_show_out_of_office
     toggle_out_of_office_feature(true)
-    WebMock.allow_net_connect!
-    HTTParty.stubs(:get).returns(HTTParty, true)
-    HTTParty.stubs(:body).returns(status: 200, data: sample_show)
-    get :index, controller_params
+    req_stub = stub_request(:get, %r{^http://localhost:8080/api/v1/out-of-offices/.*?$}).to_return(body: sample_show.to_json, status: 200)
+    get :show, controller_params(id: 1)
     assert_response 200
   ensure
     toggle_out_of_office_feature(false)
+    remove_request_stub(req_stub)
   end
 
   def toggle_out_of_office_feature(enable)
