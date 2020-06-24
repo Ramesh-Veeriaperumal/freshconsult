@@ -1,8 +1,8 @@
 <%= node[:opsworks][:environment] %>:
   ciphers:
-  	<% node[:ymls][:symmetric_encryption][:ciphers].each do |key, value| %>
+<% node[:ymls][:symmetric_encryption][:ciphers].each do |key, value| %>
     - key: <%= value[:key] %>
       iv: <%= value[:iv] %>
       cipher_name: <%= value[:cipher_name] %>
       version: <%= value[:version] %>
-  <% end %>
+<% end %>
