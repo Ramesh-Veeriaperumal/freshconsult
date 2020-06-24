@@ -694,7 +694,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
         @attachment_files.each do |a|
           attachments[a.content_file_name] = {
             encoding: 'base64',
-            content: Mail::Encodings::Base64.encode(Paperclip.io_adapters.for(a.content).read)
+            content: Mail::Encodings::Base64.encode(Paperclip.io_adapters.for(a.content).read),
+            mime_type: a.content_content_type
           }
         end
       else
