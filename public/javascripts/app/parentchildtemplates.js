@@ -672,6 +672,7 @@ window.App.Channel = window.App.Channel || new MessageChannel();
           access_type_val=$('input[name="helpdesk_ticket_template[accessible_attributes][access_type]"]:checked').val(),
           template_id=$element.data("template-id"),
           previousName=$element.data('template-name'),
+          parent_id=$element.data('parent-id'),
           nameValue=$('#helpdesk_ticket_template_name').val(),
           nameChanged= (!previousName || (nameValue != previousName)),
           accesstypeChanged= (state === 'edit' && prev_access_type === 1),
@@ -680,6 +681,7 @@ window.App.Channel = window.App.Channel || new MessageChannel();
           	name: nameValue,
           	state: state,
           	template_id: template_id,
+          	parent_id: parent_id,
           },self = this;
       if(access_type_val != 1 && (nameChanged || accesstypeChanged || state === 'clone')){ 
         $.ajax({
