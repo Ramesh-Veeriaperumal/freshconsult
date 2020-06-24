@@ -2,7 +2,7 @@
  * @author venom
  * Portal common page scripts
  */
-
+var image_width=[];
 !function( $ ) {
 
 	if (!!navigator.userAgent.match(/^(?=.*\bTrident\b)(?=.*\brv\b).*$/)){
@@ -24,28 +24,39 @@
 			// Check the current aspect ratio (outerWidth)
 			// If diff, set the height
 			if( portal['preferences']['nonResponsive'] != "true" ) {
-				$(window).on('resize', function () {
+				$(window).on('resize', function () {	
 					$("[rel='image-enlarge'] img").each(function (i) {
 						var img = $(this);
 						$("<img/>")
 					    .attr("src", img.attr("src"))
 					    .load(function() {
-					    	var originalWidth = this.width, 
-					    		originalHeight = this.height, 
-					    		outerWidth = img.outerWidth(),
-					    		outerHeight = img.outerHeight(),
-					    		originalAspectRatio = originalWidth / originalHeight,
-					    		aspectRatio = outerWidth / outerHeight;
+								
+								if( typeof image_width[i] == 'undefined' || image_width[i] < img.width() ) {
+									
+									image_width[i]=img.width();
+								}
+							  var originalWidth = this.width,
+					    		originalHeight = this.height,					    	
+									 image_container_div = $('.image-container').width(),
+									 width = img.width();
+									if (image_container_div > width)
+									 img.outerWidth(image_width[i]);
 
-							  if(aspectRatio !== originalAspectRatio) {
-							  	img.outerHeight(outerWidth/originalAspectRatio);
+									var outerWidth = img.outerWidth(),	
+											outerHeight = img.outerHeight(),
+											originalAspectRatio = originalWidth / originalHeight,	
+									    aspectRatio = outerWidth / outerHeight;
+
+								
+							  if(aspectRatio !== originalAspectRatio) {	
+								  img.outerHeight(outerWidth/originalAspectRatio);
 
 								if(!img.parent('a').get(0)) {
 									img.wrap(function(){
-										return "<a target='_blank' class='image-enlarge-link' href='" + this.src + "'/>";
+										return "<div class='image-container'><a target='_blank' class='image-enlarge-link' href='" + this.src + "'/></div>";
 									});
 								}
-							  }
+							}
 						    });
 					});
 				}).trigger('resize');
