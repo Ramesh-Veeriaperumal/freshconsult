@@ -855,7 +855,8 @@ HEREDOC
       :trial_customer_email_queue,
       :fd_scheduler_export_cleanup_queue,
       :fd_scheduler_downgrade_policy_reminder_queue,
-      :analytics_etl_queue
+      :analytics_etl_queue,
+      :email_rate_limiting_queue
     ]
 
     sqs_shoryken = {

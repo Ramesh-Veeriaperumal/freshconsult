@@ -148,6 +148,7 @@ class ShoryukenConfig
         settings[:queues]["default_email_queue_production"] = 1
         settings[:queues]["failed_emails_queue_production"] = 1
         settings[:queues]["custom_mailbox_notification"] = 1
+        settings[:queues]['email_rate_limiting_production'] = 1
         dedicated_execution = true
       end
 
@@ -234,7 +235,8 @@ class ShoryukenConfig
       :social_fb_feed,
       :trial_email,
       :fd_scheduler_export_cleanup_queue,
-      :analytics_etl_queue
+      :analytics_etl_queue,
+      :email_rate_limiting_queue
     ]
 
     queue_prefix = ENV["HELPKIT_TEST_SETUP_SQS_QUEUE_PREFIX"]
