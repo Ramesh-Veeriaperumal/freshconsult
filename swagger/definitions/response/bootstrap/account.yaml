@@ -184,3 +184,41 @@ properties:
             properties:
               client_id:
                 type: string
+          email:
+            type: object
+            properties:
+              custom_mailbox_error:
+                type: boolean
+              email_config_link:
+                type: string
+              rate_limited:
+                type: boolean
+          zendesk_app_id:
+            type: integer
+          warnings:
+            type: object
+            properties:
+              livechat_deprecation:
+                type: boolean
+              freshfone_deprecation:
+                type: boolean
+              downgrade_policy_reminder:
+                type: boolean
+              next_renewal_date:
+                type: string
+                format: date-time
+              card_expired:
+                type: boolean
+              invoice_overdue:
+                type: boolean
+          billing_info_update_enabled:
+            type: boolean
+          dkim_configuration:
+            type: object
+            properties:
+              dkim_configuration_required:
+                type: boolean
+              dkim_configuration_link:
+                type: string
+              dkim_support_link:
+                type: string

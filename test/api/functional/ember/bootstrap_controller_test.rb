@@ -659,4 +659,27 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     assert_equal AWOL_REGION, parsed_response['account']['marketplace_settings']['awol_region']
   end
 
+  def test_config_with_email_rate_limit_flag_set
+    key = format(EMAIL_RATE_LIMIT_BREACHED, account_id: Account.current.id)
+    set_others_redis_key_if_not_present(key, 1)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    parsed_response = parse_response response.body
+    assert_equal true, redis_key_exists?(key)
+    assert_equal redis_key_exists?(key), parsed_response['config']['email']['rate_limited']
+  ensure
+    remove_others_redis_key(key)
+  end
+
+  def test_config_with_email_rate_limit_flag_unset
+    key = format(EMAIL_RATE_LIMIT_BREACHED, account_id: Account.current.id)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    parsed_response = parse_response response.body
+    assert_equal false, redis_key_exists?(key)
+    assert_equal redis_key_exists?(key), parsed_response['config']['email']['rate_limited']
+  end
+
 end
