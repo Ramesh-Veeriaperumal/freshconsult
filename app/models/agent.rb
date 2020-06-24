@@ -396,7 +396,7 @@ class Agent < ActiveRecord::Base
   def field_agent?
     self.agent_type == AgentType.agent_type_id(Agent::FIELD_AGENT)
   end
-  
+
   def fetch_valid_groups
     agent_type_name = AgentType.agent_type_name(self.agent_type)
     group_type_name = Agent::AGENT_GROUP_TYPE_MAPPING[agent_type_name]
@@ -407,7 +407,7 @@ class Agent < ActiveRecord::Base
   def support_agent?
     agent_type == Admin::AdvancedTicketing::FieldServiceManagement::Constant::SUPPORT_AGENT_TYPE
   end
-  
+
   def agent_availability
     return old_agent_availability if return_old_agent_availability
 
@@ -421,8 +421,8 @@ class Agent < ActiveRecord::Base
 
     user.make_current
     ooo_response = perform_shift_request(nil, nil, 'active')
-    return if ooo_response[:body].empty? || ooo_response[:code] != 200
-    
+    return if ooo_response[:body].blank? || ooo_response[:code] != 200 || ooo_response[:body]['data'].blank?
+
     @out_of_office_days = (ooo_response[:body]['data'][0]['end_time'].to_datetime - ooo_response[:body]['data'][0]['start_time'].to_datetime).to_i
   ensure
     User.reset_current_user
