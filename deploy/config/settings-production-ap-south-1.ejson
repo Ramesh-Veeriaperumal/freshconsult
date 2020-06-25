@@ -1570,7 +1570,7 @@
               "_name": "newrelic",
               "options": {
                   "_applicationID": "71923091",
-                  "licenseKey": "EJ[1:NoZIO8nzNU20o/ZZl+X7T6/1s+K1zbgK68nVG52cMF4=:mvbBst/7RrwqHlda/tewXp6nFSfbTsQg:S+Pxf8ZKDTku6fYmpjunoYa5iiJSOGtXNyM=]",
+                  "licenseKey": "EJ[1:TFuyGVlh/e+81sqZzMNrU2dQ+cUFoCb2ce9fJzyjzDY=:bKEfuMtiyrvPjArHNxPxlRFGaiq7HwhT:RzZnP8Bhsb7Zhhy4HfSr8fE3b5JWnpjHat0=]",
                   "_agent": "js-agent.newrelic.com/nr-spa-1016.min.js",
                   "_beacon": "bam.nr-data.net",
                   "_errorBeacon": "bam.nr-data.net",

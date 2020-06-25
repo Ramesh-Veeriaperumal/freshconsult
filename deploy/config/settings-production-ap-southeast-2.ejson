@@ -1553,7 +1553,7 @@
               "_name": "newrelic",
               "options": {
                   "_applicationID": "71923091",
-                  "licenseKey": "EJ[1:NoZIO8nzNU20o/ZZl+X7T6/1s+K1zbgK68nVG52cMF4=:mvbBst/7RrwqHlda/tewXp6nFSfbTsQg:S+Pxf8ZKDTku6fYmpjunoYa5iiJSOGtXNyM=]",
+                  "licenseKey": "EJ[1:hbOqZxQs3rxlG+ZImbbkXPHfe7ABmRQ1wE+52bcwgm8=:KH8sIxuQ+jL48l6pzapFcc+QS+q3VHzg:Hiw6tKPmeWZzXxKge4z4d0vFdcgauKelQ40=]",
                   "_agent": "js-agent.newrelic.com/nr-spa-1016.min.js",
                   "_beacon": "bam.nr-data.net",
                   "_errorBeacon": "bam.nr-data.net",
