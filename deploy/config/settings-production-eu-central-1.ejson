@@ -720,6 +720,10 @@
           "custom_mailbox_status": {
             "_sqs_queue": "custom_mailbox_notification",
             "_priority": 1
+          },
+          "email_rate_limiting_queue": {
+            "_sqs_queue": "email_rate_limiting_production",
+            "_priority": 1
           }
         },
         "archive": {
@@ -976,7 +980,8 @@
         "_suspended_account_cleanup_queue": "suspended_account_cleanup_queue_production",
         "_search_etlqueue_maintenance": "search-etlqueue-production_maintenance",
         "_count_etl_queue_maintenance": "count_etl_queue_production_maintenance",
-        "_analytics_etl_queue_maintenance": "analytics_etl_queue_production_maintenance"
+        "_analytics_etl_queue_maintenance": "analytics_etl_queue_production_maintenance",
+        "_email_rate_limiting_queue": "email_rate_limiting_production"
       },
       "archive_sqs_queues": {
         "_search_etl_queue": "search-etlqueue-archive-production",
@@ -1478,7 +1483,7 @@
         "ciphers":{
           "set1": {
             "key": "EJ[1:Lk877pSs01dgi41N5PPWAslYKEeO2dxmqObnHpxjrAc=:1Usi2OEs6K/e99Fe94yBxZYrlUfPeWN7:0GmyPzgo9Q0SwBO26+eglbsDA+03IgBajPs0T6r4fM7hYkofTrsgexxsA4ETcScT]",
-            "iv": "EJ[1:Lk877pSs01dgi41N5PPWAslYKEeO2dxmqObnHpxjrAc=:5lna8dW0XEhZF4qVdQGjAc+dvSjbp30H:eZ7mwOMpMPyeaW6b/M0DwCl+g9ugop+BXhNK1g==]",
+            "iv": "EJ[1:lCWPJLQvG1A2qKwHR944eVSc4+KsEpE1ejPNxfHd7hE=:hRXkHv7jus96shRaGYhJBUh0wgCMsAdO:nEgj4cEZhDb/0p3cYFUEw/qfXdlghiXqQDkYX3Suyqk=]",
             "_cipher_name": "aes-128-cbc",
             "_version": 1
           }

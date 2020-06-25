@@ -4,18 +4,14 @@ module Freshchat::Util
   
   SYSTEM42_SERVICE = 'system42'.freeze
   def freshchat_signup
-    response = HTTParty.post("#{Freshchat::Account::CONFIG[:signup][:host]}signup", body: freshchat_signup_body.to_json)
-    Rails.logger.info "Response from freshchat_signup code - #{response.code} response - #{response}"
-    if response.code == 201
-      parsed_response = response.parsed_response
-      save_freshchat_account(parsed_response['app_id'], parsed_response['widget_token'])
-    end
-    response
+    freshchat_response = signup_via_aloha('freshchat')
+    save_freshchat_v2_account(freshchat_response['product_signup_response']) if freshchat_response.code == 200
+    freshchat_response
   end
 
   def sync_freshchat(app_id)
     query = { appAlias: app_id }
-    response = HTTParty.put("#{Freshchat::Account::CONFIG[:signup][:host]}enable", query: query, body: { account: current_account.full_domain }.to_json, headers: sync_freshchat_headers(app_id))
+    response = HTTParty.put("#{Freshchat::Account::CONFIG[:signup][:host]}enable", query: query, body: { account: current_account.full_domain }.to_json, headers: freshchat_headers(app_id))
     Rails.logger.info "Response from sync_freshchat #{response}"
     response
   end
@@ -72,32 +68,21 @@ module Freshchat::Util
       current_account.create_freshchat_account(app_id: freshchat_account['appId'], token: freshchat_account['webchatId'], domain: response['account']['domain'], portal_widget_enabled: true, enabled: true)
     end
 
-    def freshchat_signup_body
-      account_admin = current_account.roles.account_admin.first.users.first
-      {
-        emailId: account_admin.email,
-        appName: current_account.domain,
-        freshdeskIntegrationSettings: {
-          account: current_account.full_domain,
-        }
-      }
-    end
-
-    def sync_freshchat_headers(app_id)
-      jwt_token = sync_freshchat_jwt_token(app_id)
+    def freshchat_headers(app_id)
+      jwt_token = internal_freshchat_jwt_token(app_id)
       {
         'X-FC-System42-Token' => "Bearer #{jwt_token}",
         'Content-Type' => 'application/json'
       }
     end
 
-    def sync_freshchat_jwt_token(app_id)
-      JWT.encode sync_fresh_chat_payload(app_id), Freshchat::Account::CONFIG[:signup][:secret], 'HS256', { 'alg': 'HS256', 'typ': 'JWT' }
+    def internal_freshchat_jwt_token(app_id)
+      JWT.encode freshchat_payload(app_id), Freshchat::Account::CONFIG[:signup][:secret], 'HS256', 'alg': 'HS256', 'typ': 'JWT'
     end
 
-    def sync_fresh_chat_payload(app_id)
+    def freshchat_payload(app_id)
       {}.tap do |claims|
-        claims[:aud] = app_id.to_s
+        claims[:aud] = app_id.to_s if app_id
         claims[:exp] = Time.zone.now.to_i + 10.minutes
         claims[:iat] = Time.zone.now.to_i
         claims[:iss] = SYSTEM42_SERVICE

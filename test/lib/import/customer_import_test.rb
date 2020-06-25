@@ -59,6 +59,28 @@ class CustomerImportTest < ActionView::TestCase
     @import_entry.destroy
   end
 
+  def test_contact_import_failed_attachment_even_if_it_exceeds_five_mb
+    setup_stubs('contact', 'contacts_import_fail_cases.csv')
+    stub_const(ImportCsvUtil, 'FIVE_MEGABYTE', 500) do
+      contact_ids = Import::Customers::Contact.new(@args).import
+      assert_equal @account.attachments.where(attachable_type: 'Admin::DataImport').count, 1
+    end
+  ensure
+    @import_entry.attachments.destroy_all
+    @import_entry.destroy
+  end
+
+  def test_outreach_contact_import_failed_attachment_even_if_it_exceeds_five_mb
+    setup_stubs('outreach_contact', 'contacts_import_fail_cases.csv')
+    stub_const(ImportCsvUtil, 'FIVE_MEGABYTE', 500) do
+      contact_ids = Import::Customers::OutreachContact.new(@args).import
+      assert_equal @account.attachments.where(attachable_type: 'Admin::DataImport').count, 1
+    end
+  ensure
+    @import_entry.attachments.destroy_all
+    @import_entry.destroy
+  end
+
   def test_outreach_contact_import_failed_attachment
     setup_stubs 'outreach_contact'
     contact_ids = Import::Customers::OutreachContact.new(@args).import
@@ -85,7 +107,7 @@ class CustomerImportTest < ActionView::TestCase
     @import_entry.destroy
   end
 
-  def setup_stubs(type)
+  def setup_stubs(type, file_name = 'contacts2_import.csv')
     if type.eql? 'contact'
       Import::Customers::Contact.any_instance.stubs(:enable_user_activation).returns(nil)
       Import::Customers::Contact.any_instance.stubs(:notify_mailer).returns(nil)
@@ -93,8 +115,8 @@ class CustomerImportTest < ActionView::TestCase
       Import::Customers::OutreachContact.any_instance.stubs(:enable_user_activation).returns(nil)
       Import::Customers::OutreachContact.any_instance.stubs(:notify_mailer).returns(nil)
     end
-    AwsWrapper::S3Object.stubs(:find).returns(fixture_file_upload('files/contacts2_import.csv'))
-    AwsWrapper::S3Object.stubs(:delete).returns([])
+    AwsWrapper::S3.stubs(:find).returns(fixture_file_upload("files/#{file_name}"))
+    AwsWrapper::S3.stubs(:delete).returns([])
     @import_entry = @account.contact_imports.new(
       source: Admin::DataImport::IMPORT_TYPE[type.to_sym],
       status: Admin::DataImport::IMPORT_STATUS[:started]
@@ -105,8 +127,8 @@ class CustomerImportTest < ActionView::TestCase
       email: 'sample@freshdesk.com',
       type: 'contact',
       customers: {
-        file_name: 'contacts2_import.csv',
-        file_location: 'files/contacts2_import.csv',
+        file_name: file_name,
+        file_location: "files/#{file_name}",
         fields:  {
           name: '0',
           email: '2'

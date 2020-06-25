@@ -170,19 +170,23 @@ class Helpdesk::TicketTemplate < ActiveRecord::Base
 
   def build_child_assn_attributes child_ids
     add_child_assn = []
-    add_child_ids  = Account.current.child_templates.where(:id => child_ids).pluck(:id)
-    add_child_ids.each { |child_id|
-      add_child_assn << { :id => nil, :child_template_id => child_id, :_destroy => false }
-    }
-    if add_child_ids.present?
+    Account.current.child_templates.where(id: child_ids).find_each do |child|
+      new_child = create_new_child(child)
+      add_child_assn << { id: nil, child_template_id: new_child.id, _destroy: false } if new_child
+    end
+    if add_child_assn.present?
       self.association_type    = ASSOCIATION_TYPES_KEYS_BY_TOKEN[:parent]
       self.children_attributes = add_child_assn
     end
   end
 
-  def retrieve_duplication(t_name,t_id,new_record)
-    templ_ids = Account.current.ticket_templates.shared_templates(User.current).where(:name => t_name).pluck(:id)
-    templ_ids = templ_ids.select{|id| id != t_id} unless new_record
+  def retrieve_duplication(params, new_record)
+    templ_ids = if params[:parent_id]
+                  Account.current.ticket_templates.find(params[:parent_id]).child_templates.where(name: params[:name]).pluck(:id)
+                else
+                  Account.current.ticket_templates.shared_templates(User.current).where(name: params[:name]).pluck(:id)
+                end
+    templ_ids = templ_ids.select { |id| id != params[:id] } unless new_record
     templ_ids
   end
 
@@ -192,6 +196,17 @@ class Helpdesk::TicketTemplate < ActiveRecord::Base
 
   private
 
+    def create_new_child(child)
+      new_child = child.dup
+      new_child.accessible = Account.current.accesses.new(access_type: accessible.access_type)
+      new_child.accessible.groups = accessible.groups if accessible.access_type == Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:groups]
+      new_child.save!
+      new_child
+    rescue StandardError => e
+      Rails.logger.debug "Create New Child Error::::: #{e}"
+      false
+    end
+
   def set_default_type
     if self.association_type.nil? || !Account.current.parent_child_tickets_enabled?
       self.association_type = ASSOCIATION_TYPES_KEYS_BY_TOKEN[:general]
@@ -199,8 +214,9 @@ class Helpdesk::TicketTemplate < ActiveRecord::Base
   end
 
   def validate_name
-    if !self.accessible.user_access_type? && (self.name_changed? || access_type_changed?)
-      templ_ids = retrieve_duplication(name,id,new_record?)
+    if !child_template? && !accessible.user_access_type? && (name_changed? || access_type_changed?)
+      params = { name: name, id: id }
+      templ_ids = retrieve_duplication(params, new_record?)
       unless templ_ids.empty?
         self.errors.add(:base, I18n.t("ticket_templates.errors.duplicate_title"))
         return false

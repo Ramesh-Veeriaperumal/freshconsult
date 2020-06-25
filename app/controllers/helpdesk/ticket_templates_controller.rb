@@ -109,13 +109,11 @@ class Helpdesk::TicketTemplatesController < ApplicationController
   end
 
   def verify_template_name
-    templ_ids = @item.retrieve_duplication(params[:name],params[:template_id],params[:state]!="edit")
-    unless templ_ids.empty?
-      status = { :failure => true, :message => I18n.t("ticket_templates.errors.duplicate_title") }
-    else
-      status = { :failure => false }
-    end
-    render :json => status
+    status = { failure: false }
+    method_params = { name: params[:name], id: params[:template_id], parent_id: params[:parent_id] }
+    templ_ids = @item.retrieve_duplication(method_params, params[:state] != 'edit')
+    status = { failure: true, message: I18n.t('ticket_templates.errors.duplicate_title') } unless templ_ids.empty?
+    render json: status
   end
 
   protected

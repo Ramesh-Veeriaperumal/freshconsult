@@ -295,4 +295,7 @@ module Redis::Keys::Others
 
   PERISHABLE_TOKEN_EXPIRY = 'PERISHABLE_TOKEN_EXPIRY:%{account_id}:%{user_id}'.freeze
   AUTHORIZATION_CODE_EXPIRY = 'AUTHORIZATION_CODE_EXPIRY:%{account_id}'.freeze
+
+  EMAIL_RATE_LIMIT_COUNT = 'EMAIL_RATE_LIMIT_COUNT:%{account_id}:%{hour_quadrant}'.freeze
+  EMAIL_RATE_LIMIT_BREACHED = 'EMAIL_RATE_LIMIT_BREACHED:%{account_id}'.freeze
 end

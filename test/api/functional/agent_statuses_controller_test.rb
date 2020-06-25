@@ -9,23 +9,21 @@ class AgentStatusesControllerTest < ActionController::TestCase
 
   def test_list_all_agent_statuses
     toggle_agent_status_feature(true)
-    WebMock.allow_net_connect!
-    HTTParty.stubs(:get).returns(HTTParty, true)
-    HTTParty.stubs(:body).returns(status: 200, data: sample_index)
+    req_stub = stub_request(:get, 'http://localhost:8080/api/v1/agent-statuses').to_return(body: sample_show.to_json, status: 200)
     get :index, controller_params
     assert_response 200
   ensure
+    remove_request_stub(req_stub)
     toggle_agent_status_feature(false)
   end
 
   def test_get_agent_statuses
     toggle_agent_status_feature(true)
-    WebMock.allow_net_connect!
-    HTTParty.stubs(:get).returns(HTTParty, true)
-    HTTParty.stubs(:body).returns(status: 200, data: sample_show)
-    get :index, controller_params
+    req_stub = stub_request(:get, %r{^http://localhost:8080/api/v1/agent-statuses/.*?$}).to_return(body: sample_show.to_json, status: 200)
+    get :show, controller_params(id: 1)
     assert_response 200
   ensure
+    remove_request_stub(req_stub)
     toggle_agent_status_feature(false)
   end
 

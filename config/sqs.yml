@@ -50,6 +50,7 @@ development:
   count_etl_queue_maintenance: count_etl_queue_dev_maintenance
   analytics_etl_queue_maintenance: analytics_etl_queue_dev_maintenance
   suspended_account_cleanup_queue: suspended_account_cleanup_queue_dev
+  email_rate_limiting_queue: email_rate_limiting_dev
 staging:
   twitter_realtime_queue: social_gnip_2_0_tweet_staging
   facebook_realtime_queue: social_fb_feed_staging
@@ -94,6 +95,7 @@ staging:
   search_etlqueue_maintenance: search_etl_queue_staging_maintenance
   count_etl_queue_maintenance: count_etl_queue_staging_maintenance
   analytics_etl_queue_maintenance: analytics_etl_queue_staging_maintenance
+  email_rate_limiting_queue: email_rate_limiting_staging
 
 production:
   twitter_realtime_queue: social_gnip_tweet_production
@@ -138,6 +140,7 @@ production:
   search_etlqueue_maintenance: search_etl_queue_production_maintenance
   count_etl_queue_maintenance: count_etl_queue_production_maintenance
   analytics_etl_queue_maintenance: analytics_etl_queue_production_maintenance
+  email_rate_limiting_queue: email_rate_limiting_production
 
 test:
   twitter_realtime_queue: social_gnip_2_0_tweet_test
@@ -184,3 +187,4 @@ test:
   count_etl_queue_maintenance: count_etl_queue_test_maintenance
   analytics_etl_queue_maintenance: analytics_etl_queue_test_maintenance
   suspended_account_cleanup_queue: suspended_account_cleanup_queue_test
+  email_rate_limiting_queue: email_rate_limiting_test

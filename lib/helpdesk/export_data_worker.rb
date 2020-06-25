@@ -47,6 +47,7 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
       delete_zip_file zip_file_path  #cleaning up the directory
       @data_export.completed!
     rescue Exception => e
+      Rails.logger.info "Account export error params #{params.inspect} : data export #{@data_export.inspect} : error #{e.message}"
       @data_export.failure!(e.message + "\n" + e.backtrace.join("\n"))
       NewRelic::Agent.notice_error(e)
       DataExportFailureMailer.send_email(:data_backup_failure, params[:email],
@@ -80,7 +81,9 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
      forum_categories = @current_account.forum_categories.all
      xml_output = forum_categories.to_xml(:include => {:forums => {:include => {:topics => {:include => :posts} }  }})
      write_to_file("Forums.xml",xml_output)
-  end
+   rescue StandardError => e
+     log_export_errors('forums', forum_categories, 0, e)
+   end
   
   def export_solutions_data
      solution_categories = @current_account.solution_category_meta.preload(:primary_category, 
@@ -88,41 +91,63 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
      xml_output = solution_categories.as_json(:root => false, :to_xml => true,
             :include => {:folders => {:include => :articles}}).to_xml(:root => "solution_categories")
      write_to_file("Solutions.xml",xml_output)
+  rescue StandardError => e
+    log_export_errors('solutions', solution_categories, 0, e)
   end
   
   def export_users_data
      i = 0 
      @current_account.users.preload(:flexifield).find_in_batches(:batch_size => 300) do |users|
-        xml_output = users.to_xml(:except => [:crypted_password,:password_salt,:persistence_token,:single_access_token,:perishable_token]) 
+       begin
+        xml_output = users.to_xml(:except => [:crypted_password,:password_salt,:persistence_token,:single_access_token,:perishable_token])
         write_to_file("Users#{i}.xml",xml_output)
         i+=1
+       rescue StandardError => e
+         log_export_errors('users', users, i, e)
+         i += 1
+       end
      end
   end
   
   def export_companies_data
      i = 0 
      @current_account.companies.preload(:flexifield, :company_domains).find_in_batches(:batch_size => 300) do |companies|
+       begin
         xml_output = companies.to_xml
         write_to_file("Companies#{i}.xml",xml_output)
         i+=1
+       rescue StandardError => e
+         log_export_errors('companies', companies, i, e)
+         i += 1
+       end
      end
   end
   
   def export_tickets_data
     i = 0 
     @current_account.tickets.find_in_batches(:batch_size => 300, :include => [:notes,:attachments]) do |tkts|
+      begin
        xml_output = tkts.to_xml
        write_to_file("Tickets#{i}.xml",xml_output)
        i+=1
+      rescue StandardError => e
+        log_export_errors('tickets', tkts, i, e)
+        i += 1
+      end
     end
   end
 
   def export_archived_tickets_data
     i = 0 
     @current_account.archive_tickets.find_in_batches(:batch_size => 300, :include => [:notes,:attachments]) do |tkts|
+      begin
        xml_output = tkts.to_xml
        write_to_file("ArchivedTickets#{i}.xml",xml_output)
        i += 1
+      rescue StandardError => e
+        log_export_errors('archive_tickets', tkts, i, e)
+        i += 1
+      end
     end
   end
   
@@ -130,6 +155,8 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
     groups = @current_account.groups.all
     xml_output = groups.to_xml(:include => :agent_groups)
     write_to_file("Groups.xml",xml_output)
+  rescue StandardError => e
+    log_export_errors('groups', groups, 0, e)
   end
   
   def write_to_file(filename,res_data)
@@ -154,4 +181,12 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
     result = Benchmark.realtime{ yield }
     Rails.logger.info "#{@current_account.id} : account export : #{current_model} completed time_taken= #{result} : starting #{next_model}"
   end
+
+  private
+
+    def log_export_errors(resource_name, resources, batch_no, resource_exception)
+      error_ids = resources.present? ? resources.collect(&:id) : []
+      Rails.logger.debug "Skipping error in account export : #{resource_name} : batch #{batch_no} : ids from #{error_ids.first} to #{error_ids.last} : exception #{resource_exception.message}"
+      NewRelic::Agent.notice_error(resource_exception)
+    end
 end

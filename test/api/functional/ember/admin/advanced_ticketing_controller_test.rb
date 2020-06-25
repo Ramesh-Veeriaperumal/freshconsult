@@ -303,6 +303,36 @@ module Ember
         end
       end
 
+      def test_reenable_fsm_without_any_data_loss_when_fsm_fields_are_archived
+        enable_fsm do
+          begin
+            Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
+            Account.current.launch :archive_ticket_fields
+            Sidekiq::Testing.inline! do
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+              assert_response 204
+              assert Account.current.field_service_management_enabled?
+              delete :destroy, controller_params(version: 'private', id: 'field_service_management')
+              assert_equal false, Account.current.field_service_management_enabled?
+              fsm_fields = Account.current.ticket_fields_only.where(name: FSM_DEFAULT_TICKET_FIELDS.map { |tf| tf[:name] + "_#{Account.current.id}" })
+              fsm_fields.each do |field|
+                field.deleted = true
+                field.save!
+              end
+              assert_empty Account.current.ticket_fields_only.where(name: FSM_DEFAULT_TICKET_FIELDS.map { |tf| tf[:name] + "_#{Account.current.id}" })
+              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+              assert_response 204
+              assert Account.current.field_service_management_enabled?
+              fsm_fields = Account.current.ticket_fields_only.where(name: FSM_DEFAULT_TICKET_FIELDS.map { |tf| tf[:name] + "_#{Account.current.id}" })
+              assert_equal FSM_DEFAULT_TICKET_FIELDS.size, fsm_fields.size
+            end
+          ensure
+            Account.any_instance.unstub(:disable_old_ui_enabled?)
+            Account.current.rollback :archive_ticket_fields
+          end
+        end
+      end
+
       def test_reenable_fsm_without_any_data_loss_when_fsm_section_is_deleted
         enable_fsm do
           begin

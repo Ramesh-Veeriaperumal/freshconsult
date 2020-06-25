@@ -6,10 +6,6 @@
       "enabled": false
     },
     "ymls": {
-      "asknicely_app": {
-        "domain_key": "EJ[1:YSmhRDvnz3argCN60z5eUMgKj1kPDvFLULJGdgFFBBg=:1WRe15IDSIbW2lBreuEUD3FqUxeWK9Bp:1+U2EWKpRxjzVwCFDMXVcpYerhMEXA5p7xbGE/N4]",
-        "_template_name": "inapp"
-      },
       "datacenter_config": {
       "freshcaller_signup_supported": true,
       "freshconnect_signup_supported": true,
@@ -20,7 +16,7 @@
       },
       "asknicely_app": {
         "hash_token": "EJ[1:i5f0QpyxZMd840WWwUiBnUSjyVluR+Mb3JvbcIc9/24=:sqbsBi3TsMvJJVizA3HU8kOFaFHu6Zm4:KwzYTVZjembNQmLT2DZcLlUP+7FrJIw8PdfdqbZa9wRGIUyaxrI05ylYLmSOMfNvZap0BBbfKaoPwRPzw6fwWAaA5ujMxspxAHdQ/tLL9pl9IkCVVLa3rpQTTNdFkfVVoTqFlZ03zXFO8akcbb5+1cvjL6QGspGyVdm9B+eMsIgd1FEFxkUOk+UKZ9wmgawr]",
-        "_domain_key": "freshworkstest",
+        "domain_key": "EJ[1:YSmhRDvnz3argCN60z5eUMgKj1kPDvFLULJGdgFFBBg=:1WRe15IDSIbW2lBreuEUD3FqUxeWK9Bp:1+U2EWKpRxjzVwCFDMXVcpYerhMEXA5p7xbGE/N4]",
         "_template_name": "inapp"
       },
       "rts": {
@@ -1467,6 +1463,10 @@
           "trial_email": {
             "_priority": 1,
             "_sqs_queue": "main_staging_trial_email"
+          },
+          "email_rate_limiting_queue": {
+             "_priority": 1,
+             "_sqs_queue": "email_rate_limiting_staging"
           }
         },
         "queue_config": {
@@ -1569,7 +1569,8 @@
         "_suspended_account_cleanup_queue": "suspended_account_cleanup_queue_staging",
         "_search_etlqueue_maintenance": "search-etlqueue-stagingvpc-staging_new_maintenance",
         "_count_etl_queue_maintenance": "count_etl_queue-stagingvpc-staging_maintenance",
-        "_analytics_etl_queue_maintenance": "analytics_etl_queue-stagingvpc-staging_maintenance"
+        "_analytics_etl_queue_maintenance": "analytics_etl_queue-stagingvpc-staging_maintenance",
+        "_email_rate_limiting_queue": "email_rate_limiting_staging"
       },
       "archive_sqs_queues": {
         "_search_etl_queue": "search-etlqueue-archive-staging",
@@ -1609,6 +1610,12 @@
       "symmetric_encryption": {
         "ciphers":{
           "set1": {
+            "key": "EJ[1:kXST5DD3rgJf6MqBQG8rsa9lUhLq+4UMe9bQkW9hJgs=:sw59fdLyfxvqrhPAIh+36uOcwSFU6mAu:nuxNquCIiYdVJOms4ikMM9v7+7h3xdRAszpVjbZxeQTIvAQCp4rmgLld5E0lKoKt]",
+            "iv": "EJ[1:kXST5DD3rgJf6MqBQG8rsa9lUhLq+4UMe9bQkW9hJgs=:Immu7yfV7CcrBnJgYwgFI7i1OhNvfp3m:Iw74nF5/4HEhdEXqsXk23ksNFXaSXg+PsUraaRAqYDw=]",
+            "_cipher_name": "aes-128-cbc",
+            "_version": 2
+          },
+          "set2": {
             "key": "EJ[1:JeanNvjYKKo700+pcswgAnnBsNL+XwJTQLo9/MoppT4=:Mta3vS4nUE4tRODeNLAUXMcfgN6QmV7T:Qm0dfGGQSQVIx1gRGitulSWCyiN4AsrOsSp4DDHWslvWReRCuyC0AcuHAnwaNvk/]",
             "iv": "EJ[1:JeanNvjYKKo700+pcswgAnnBsNL+XwJTQLo9/MoppT4=:+Bjn0Tpi4tTH6L8zTKil5eK1DYpOJG+z:md+Lo4ccAlOBOtMxJPQeJTLWWQdTtXVW2nGyEIc9fBleSV5tM4ACRXBQdA==]",
             "_cipher_name": "aes-128-cbc",
@@ -1788,15 +1795,14 @@
         }
       },
       "site_announcement": {
-        "_message": "On 1 Sep 2019, between 1:30 am to 2:30 am UTC, live chat will be inaccessible for customers and agents, owing to yearly maintenance. No chats will be received. Sorry for the inconvenience.",
+        "_messageKey": "fd.site-announcement.sprout-banner",
         "_features": [
-            "chat"
         ],
         "_launched": [
-            "custom_product_notification"
+            "sprout_banner"
         ],
-        "_startTime": "2019-07-30T01:00:00Z",
-        "_endTime": "2019-08-01T23:59:00Z"
+        "_startTime": "2020-05-29T12:30:00Z",
+        "_endTime": "2020-06-29T12:30:00Z"
       },
       "blue": {
         "_bucket": "falconstagingvpc",
@@ -1840,7 +1846,7 @@
       "_heap_project_id": "298895843",
       "_integrations_url": "https://login.freshpo.com",
       "_revision": "prestaging",
-      "_widget_domain": "https://freshwidget.freshpo.com",
+      "_widget_domain": "https://freshwidget.freshpo.com/widgets",
       "_data_center": "us-east",
       "_sentry_dsn": "https://1392f72b3f5748ecb7fe9ddf22bbfd75@sentry.io/1189798",
       "_announcement_account_url": "updateproduct.freshpo.com",
@@ -1850,7 +1856,7 @@
       },
       "_vault_service_url": "https://vaultservice.freshpo.com/",
       "_freshdesk_help_widget_url": "https://widget.freshworks.com/widgets/60000003019.js",
-      "google_map_api_key": "EJ[1:XWtiWjCWn7+hf+0pxaoSfRg4QMCsj/uQpM0nfgMDGTE=:LyK1j+KZM4vXa+sm1NYDi6L9AtJNiWuB:b8ZCuo5Cy3lgwxuyOZ5SHsNRejemmEvjXpoKz5zJO8WjFv+iBWO79hZakAbY5fPtWhooawAn5g==]",
+      "google_map_api_key": "EJ[1:sEdsN1iBCdcNBjIjUt9PCgPY+DqVO62U0iaKiOApJ3k=:LqHSjcsPwLGGUC9eRfDdSnK319UvS5zi:Ej51uyWx1PX/5StaoRh6iovKD1sVhU3pWxZPQEEKag7bsDoW0cS35xx2THROBvO/UE50o4y+fA==]",
       "blue": {
         "_bucket": "falconstagingvpc",
         "_fingerprint_prepend": "https://d2641u002940uc.cloudfront.net/staging/",

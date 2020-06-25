@@ -52,10 +52,12 @@ module Helpdesk::Ticketfields::ControllerMethods
   end
 
   def available_columns(type)
+    used_columns = used_columns(type)
+    Rails.logger.info("used columns for type - #{type} :: #{used_columns}")
     if ticket_field_limit_increase_enabled?
-      (TICKET_FIELD_DATA_COLUMN_MAPPING[type.to_sym][1] - used_columns(type))
+      (TICKET_FIELD_DATA_COLUMN_MAPPING[type.to_sym][1] - used_columns)
     else
-      (FIELD_COLUMN_MAPPING[type.to_sym][1] - used_columns(type))
+      (FIELD_COLUMN_MAPPING[type.to_sym][1] - used_columns)
     end
   end
 
@@ -77,7 +79,9 @@ module Helpdesk::Ticketfields::ControllerMethods
       @signup_flow = options[:signup_flow].presence || false
       type = field_details.delete(:type)
       column_name = available_columns(type).first
+      Rails.logger.info("Flexifield column name :: #{column_name}")
       add_to_used_columns(type, column_name)
+      Rails.logger.info("Added to used columns :: #{@used_columns[type]}")
       label = options[:alias_present] ? field_details[:flexifield_alias] : field_details[:label]
       is_encrypted = (type.to_sym == Helpdesk::TicketField::CUSTOM_FIELD_PROPS[:encrypted_text][:dom_type] || type.to_sym == Helpdesk::TicketField::CUSTOM_FIELD_PROPS[:secure_text][:dom_type])
       {
@@ -111,6 +115,7 @@ module Helpdesk::Ticketfields::ControllerMethods
       @used_columns ||= {}
       @used_columns[type] ||= begin
         master_or_slave = @signup_flow ? :run_on_master : :run_on_slave
+        Rails.logger.info("Fetching used columns for #{type} on #{master_or_slave.inspect}")
         Sharding.safe_send(master_or_slave) do
           Account.current.ticket_field_def.flexifield_def_entries.select(:flexifield_name).where(flexifield_coltype: FIELD_COLUMN_MAPPING[type.to_sym][0]).map(&:flexifield_name)
         end

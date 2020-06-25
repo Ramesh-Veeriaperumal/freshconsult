@@ -224,7 +224,7 @@ gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem 'freshdesk_features', :git => 'git@github.com:freshdesk/freshdesk-features.git', :branch => "freshdesk", :require => true
 gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :tag => 'v0.2.1'
 gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'not_a_model_column'
-gem 'rule_engine', git: 'git@github.com:freshdesk/rule_engine.git', :tag => 'hv0.0.13.15'
+gem 'rule_engine', git: 'git@github.com:freshdesk/rule_engine.git', :tag => 'hv0.0.13.16'
 gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v4.0.13'
 gem "freshid-sdk", :git => 'git@github.com:freshdesk/platforms-sdk-ruby.git', tag: '1.1.3', glob: 'gems/freshid-sdk/freshid-sdk.gemspec'
 gem "fluffy", git: 'git@github.com:freshdesk/api-gateway.git', tag: 'v0.0.5', glob: 'clients/fluffy_ruby/src/fluffy.gemspec'

@@ -34,7 +34,7 @@
  	<ul class="template-details">
  		<li>
  			<%= f.label :name, t('title') , :class => "required" %>
-			<%= f.text_field :name , :class => "text required", :placeholder => t('ticket_templates.name') , :data => { :template_id => @tkt_template.id,:template_name => @tkt_template.name}%>
+			<%= f.text_field :name , :class => "text required", :placeholder => t('ticket_templates.name') , :data => { :template_id => @tkt_template.id,:template_name => @tkt_template.name, :parent_id => params[:p_id] }%>
  		</li>
 	</ul>
 	<%=	hidden_field_tag :'p_id' %>
