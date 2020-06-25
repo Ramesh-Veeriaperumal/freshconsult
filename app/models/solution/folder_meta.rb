@@ -41,6 +41,12 @@ class Solution::FolderMeta < ActiveRecord::Base
     autosave: true,
     dependent: :destroy
 
+  has_one :solution_platform_mapping,
+    as: :mappable,
+    class_name: 'SolutionPlatformMapping',
+    autosave: true,
+    dependent: :destroy
+
   has_many :contact_filters,
     class_name: 'ContactFilter',
     source: :mappable,
