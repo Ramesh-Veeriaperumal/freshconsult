@@ -66,7 +66,7 @@ class Import::Customers::Base
     CSVBridge.parse(content_of(csv_file)).each_slice(IMPORT_BATCH_SIZE).with_index do |rows, index|
       @failed_count = 0
       rows.each_with_index do |row, inner_index|
-        row = row.collect{|r| Helpdesk::HTMLSanitizer.clean(r.to_s)}
+        row = row.collect { |r| Helpdesk::HTMLSanitizer.clean(r.to_s).gsub(/&amp;/, AND_SYMBOL) }
         (@csv_headers = row) && next if index==0 && inner_index==0
         assign_field_values row
         next if is_user? && !@item.nil? && @item.helpdesk_agent?
@@ -112,7 +112,7 @@ class Import::Customers::Base
     item_params = {}
     custom_field_params = {}
     default_fields = @current_form.default_fields.map(&:name)
-    @customer_params[:fields].map { |field| default_fields.include?(field[0]) ? 
+    @customer_params[:fields].map { |field| default_fields.include?(field[0]) ?
         item_params.merge!(:"#{field[0]}" => row[field[1].to_i]) : custom_field_params.merge!(:"#{field[0]}" => row[field[1].to_i]) }
 
     @params_hash = { :"#{@type}" => item_params.merge(:custom_field => custom_field_params) }
