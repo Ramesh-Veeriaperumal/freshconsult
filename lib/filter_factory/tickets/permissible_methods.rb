@@ -13,7 +13,7 @@ module FilterFactory::Tickets
       end
 
       def group_scoped_conditions
-        group_ids = User.current.associated_group_ids
+        group_ids = User.current.access_all_agent_groups ? User.current.all_associated_group_ids : User.current.associated_group_ids
         conditions = [group_condition(group_ids), user_condition]
         conditions += [internal_group_condition(group_ids), internal_agent_condition] if Account.current.shared_ownership_enabled?
         { or_conditions: [conditions] } # To accomodate due_by

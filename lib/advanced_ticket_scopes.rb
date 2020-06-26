@@ -59,4 +59,8 @@ module AdvancedTicketScopes
     def collab_app_request?
       User.current.nil? && app_current?
     end
+
+    def set_all_agent_groups_permission
+      User.current.access_all_agent_groups = true if advanced_scope_enabled?
+    end
 end

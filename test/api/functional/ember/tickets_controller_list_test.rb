@@ -1295,5 +1295,81 @@ module Ember
       login_as(current_user)
       Account.any_instance.unstub(:shared_ownership)
     end
+
+    def test_tickets_internal_agent_group_with_read_scope
+      @account.add_feature :shared_ownership
+      initialize_internal_agent_with_default_internal_group(2)
+      agent_group = @internal_agent.all_agent_groups.where(group_id: @internal_group.id).first
+      ticket1 = create_ticket({}, nil, @internal_group)
+      ticket2 = create_ticket({}, nil, @internal_group)
+      agent_group.write_access = false
+      agent_group.save!
+      get :index, controller_params(version: 'private', filter: 'shared_by_me')
+      assert_response 200
+      match_json(private_api_ticket_index_default_filter_pattern('shared_by_me'))
+      match_default_filter_response_with_es_enabled('shared_by_me')
+      agent_group.write_access = true
+      agent_group.save!
+    ensure
+      @responding_agent.destroy if @responding_agent.present?
+      @internal_agent.destroy if @internal_agent.present?
+    end
+
+    def test_index_filter_factory_with_order_clauses_read_scope
+      order_params = { order_by: 'created_at', order_type: 'desc' }
+      all_tickets = false
+      enable_es_api_load(order_params) do
+        User.any_instance.stubs(:access_all_agent_groups).returns(true)
+        agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+        group = create_group_with_agents(@account, agent_list: [agent.id])
+        agent_group = agent.agent_groups.where(group_id: group.id).first
+        agent_group.write_access = false
+        agent_group.save!
+        agent.make_current
+        ticket1 = create_ticket({}, group)
+        login_as(agent)
+        response_stub = filter_factory_order_response_stub(order_params[:order_by], order_params[:order_type], all_tickets)
+        SearchService::Client.any_instance.stubs(:query).returns(SearchService::Response.new(response_stub))
+        SearchService::Response.any_instance.stubs(:records).returns(JSON.parse(response_stub))
+        get :index, controller_params({ version: 'private' }.merge(order_params))
+        assert_response 200
+        match_json(private_api_ticket_index_pattern(false, false, false, order_params[:order_by], order_params[:order_type], all_tickets))
+        agent_group.write_access = true
+        agent_group.save!
+        User.any_instance.unstub(:access_all_agent_groups)
+        ticket1.destroy if ticket1.present?
+        agent.destroy if agent.present?
+      end
+    end
+
+    def test_index_filter_factory_internal_agent_group_with_read_scope
+      order_params = { order_by: 'created_at', order_type: 'desc' }
+      all_tickets = false
+      enable_es_api_load(order_params) do
+        User.any_instance.stubs(:access_all_agent_groups).returns(true)
+        @account.add_feature :shared_ownership
+        initialize_internal_agent_with_default_internal_group(2)
+        agent_group = @internal_agent.all_agent_groups.where(group_id: @internal_group.id).first
+        ticket1 = create_ticket({ status: @status.status_id, internal_agent_id: @internal_agent.id, responder_id: @responding_agent.id }, nil, @internal_group)
+        ticket2 = create_ticket({ status: @status.status_id, internal_agent_id: @internal_agent.id, responder_id: @responding_agent.id }, nil, @internal_group)
+        agent_group.write_access = false
+        agent_group.save!
+        @internal_agent.make_current
+        login_as(@internal_agent)
+        response_stub = filter_factory_order_response_stub(order_params[:order_by], order_params[:order_type], all_tickets)
+        SearchService::Client.any_instance.stubs(:query).returns(SearchService::Response.new(response_stub))
+        SearchService::Response.any_instance.stubs(:records).returns(JSON.parse(response_stub))
+        get :index, controller_params({ version: 'private' }.merge(order_params))
+        assert_response 200
+        match_json(private_api_ticket_index_pattern(false, false, false, order_params[:order_by], order_params[:order_type], all_tickets))
+        agent_group.write_access = true
+        agent_group.save!
+        User.any_instance.unstub(:access_all_agent_groups)
+        ticket1.destroy if ticket1.present?
+        ticket2.destroy if ticket2.present?
+        @responding_agent.destroy if @responding_agent.present?
+        @internal_agent.destroy if @internal_agent.present?
+      end
+    end
   end
 end

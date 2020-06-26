@@ -10,6 +10,7 @@ module Ember
     include Helpdesk::Activities::ActivityMethods
     include ExportHelper
     include TicketUpdateHelper
+    include AdvancedTicketScopes
 
     decorate_views(decorate_object: [:update_properties, :execute_scenario], decorate_objects: [:index, :search])
 
@@ -292,6 +293,7 @@ module Ember
       end
 
       def load_ticket_items
+        set_all_agent_groups_permission
         if use_filter_factory?
           items = FilterFactory::TicketFilterer.filter(params, true).preload(conditional_preload_options)
           paginate_items(items, true)

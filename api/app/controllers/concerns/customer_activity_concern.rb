@@ -1,5 +1,6 @@
 module CustomerActivityConcern
   extend ActiveSupport::Concern
+  include AdvancedTicketScopes
 
   def activities
     @activities_count = CompanyConstants::MAX_ACTIVITIES_COUNT
@@ -42,6 +43,7 @@ module CustomerActivityConcern
     def ticket_activities
       @type ||= 'tickets'
       return if @type == 'archive_tickets' && !current_account.features_included?(:archive_tickets)
+      set_all_agent_groups_permission
       @total_tickets ||= begin
         tickets = current_account.safe_send(@type)
                                  .preload(ticket_preload_options)

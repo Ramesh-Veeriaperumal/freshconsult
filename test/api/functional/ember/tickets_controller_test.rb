@@ -6715,5 +6715,24 @@ module Ember
     ensure
       group.destroy if group.present?
     end
+
+    def test_index_ticket_with_scope_read
+      agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      group = create_group_with_agents(@account, agent_list: [agent.id])
+      agent_group = agent.agent_groups.where(group_id: group.id).first
+      agent_group.write_access = false
+      agent_group.save!
+      agent.make_current
+      get :index, controller_params(version: 'private', filter: 'all_tickets')
+      tickets_count1 = JSON.parse(@response.body).count
+      ticket = create_ticket({}, group)
+      login_as(agent)
+      get :index, controller_params(version: 'private', filter: 'all_tickets')
+      tickets_count2 = JSON.parse(@response.body).count
+      assert_equal tickets_count1, tickets_count2
+    ensure
+      group.destroy if group.present?
+      agent.destroy if agent.present?
+    end
   end
 end
