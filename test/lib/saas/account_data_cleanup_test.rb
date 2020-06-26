@@ -188,4 +188,16 @@ class AccountDataCleanupTest < ActionView::TestCase
   ensure
     Helpdesk::Approval.any_instance.unstub(:destroy)
   end
+
+  def test_handle_solutions_templates_drop_data
+    @account = create_new_account("#{Faker::Lorem.word}#{rand(10_000)}", Faker::Internet.email)
+    ::Solution::TemplatesMigrationWorker.expects(:perform_async).with('action': 'drop').once
+    SAAS::AccountDataCleanup.new(@account, ['solutions_templates'], 'drop').perform_cleanup
+  end
+
+  def test_handle_solutions_templates_add_data
+    @account = create_new_account("#{Faker::Lorem.word}#{rand(10_000)}", Faker::Internet.email)
+    ::Solution::TemplatesMigrationWorker.expects(:perform_async).with('action': 'add').once
+    SAAS::AccountDataCleanup.new(@account, ['solutions_templates'], 'add').perform_cleanup
+  end
 end

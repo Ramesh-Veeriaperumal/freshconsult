@@ -15,7 +15,7 @@ class Solution::Article < ActiveRecord::Base
     :source => :user,
     :order => "#{Vote.table_name}.id DESC",
     :uniq => true
-  
+
   has_many_attachments
 
   has_many_cloud_files

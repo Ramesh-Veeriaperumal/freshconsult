@@ -2853,7 +2853,8 @@ en:
         edit_secure_field: Add or edit secure data
         do_not_publish: Do not publish
         export_articles: Export articles
-        manage_custom_objects: Manage Custom Objects 
+        manage_custom_objects: Manage Custom Objects
+        manage_solution_templates: Manage article templates
     help_image_alt:
       helpdesk_arcarde: Helpdesk Arcade
     mobihelp:

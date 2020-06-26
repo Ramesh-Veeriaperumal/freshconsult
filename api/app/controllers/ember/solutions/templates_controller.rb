@@ -55,7 +55,7 @@ module Ember
         end
 
         def load_objects
-          super(scoper.latest.preload([:solution_template_mappings]))
+          super(scoper.order_by_default_latest.preload([:solution_template_mappings]), true)
         end
 
         def default_template

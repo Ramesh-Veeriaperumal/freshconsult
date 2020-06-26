@@ -399,7 +399,8 @@ defaults: &defaults
     - [twitter_survey]
     - [facebook_survey]
     - [bitmap_callbacks]
-    - [quality_management_system] 
+    - [quality_management_system]
+    - [solution_templates_migration_worker]
 
 development:
   <<: *defaults

@@ -52,6 +52,7 @@
     - freshchat_subscription_events_queue
     - twitter_survey
     - facebook_survey
+    - solution_templates_migration_worker
 
   :bulk_api:
     - bulk_api_jobs

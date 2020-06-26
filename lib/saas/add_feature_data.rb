@@ -13,6 +13,10 @@ module SAAS::AddFeatureData
     ::Solution::ArticleVersionsMigrationWorker.perform_async(action: 'add')
   end
 
+  def handle_solutions_templates_add_data
+    ::Solution::TemplatesMigrationWorker.perform_async(action: 'add')
+  end
+
   def handle_agent_assist_ultimate_add_data
     add_agent_assist_ultimate
   end

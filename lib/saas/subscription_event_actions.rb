@@ -16,13 +16,13 @@ class SAAS::SubscriptionEventActions
                            :helpdesk_restriction_toggle, :ticket_templates, :custom_source,
                            :round_robin_load_balancing, :multi_timezone, :custom_translations,
                            :sitemap, :article_versioning, :suggested_articles_count, :unlimited_multi_product, :article_approval_workflow,
-                           :fb_ad_posts, :segments, :agent_assist_ultimate, :agent_assist_lite].freeze
+                           :fb_ad_posts, :segments, :agent_assist_ultimate, :agent_assist_lite, :solutions_templates].freeze
 
 
   ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle, :multiple_companies_toggle,
                            :tam_default_fields, :smart_filter, :contact_company_notes, :unique_contact_identifier, :custom_dashboard,
                            :personal_canned_response, :round_robin, :field_service_management, :multi_language, :article_versioning,
-                           :agent_assist_ultimate].freeze
+                           :agent_assist_ultimate, :solutions_templates].freeze
 
   DROP  = "drop"
   ADD   = "add"

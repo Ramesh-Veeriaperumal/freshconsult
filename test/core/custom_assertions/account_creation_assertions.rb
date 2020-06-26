@@ -35,16 +35,18 @@ module AccountCreationAssertions
 
   def assert_fixtures_data
     @account = Account.current
-    counts = [3, 6, 4, 6, 6, 7, 2, 3, 4, 1, 1, 20, 13, 4]
+    counts = [3, 6, 4, 6, 6, 7, 2, 3, 4, 1, 1, 20, 13, 4, 3]
 
     [
       @account.groups, @account.account_va_rules, @account.ticket_filters,
       @account.scoreboard_levels, @account.scoreboard_ratings, @account.quests, 
       @account.solution_categories, @account.solution_folder_meta,
       @account.forums, @account.forum_categories, @account.forum_moderators,
-      @account.email_notifications, @account.contact_form.all_fields, @account.company_form.all_fields ].each_with_index do |objects, index|
-        assert_equal(objects.count, counts[index])
-      end
+      @account.email_notifications, @account.contact_form.all_fields, @account.company_form.all_fields,
+      @account.solution_templates
+    ].each_with_index do |objects, index|
+      assert_equal(objects.count, counts[index])
+    end
 
     compare_company_and_contact_fields_order
   end
