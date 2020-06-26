@@ -130,6 +130,7 @@ module AuditLog::AuditLogHelper
             event_performer: performer(activity)
           }
           custom_response[:name][:folder_id] = activity[:object][:folder_id] if event_type.join('_') == 'canned_response'
+          assign_solution_attributes(custom_response, activity) if solution_event?(event_type)
           custom_response.merge! event_type_and_description(activity, action, event_type)
           custom_response
         end
@@ -241,5 +242,26 @@ module AuditLog::AuditLogHelper
         description_arr.push("\t#{ch[:field]} #{ch[:value]}\n") if ch[:field] && !ch[:value].nil? && ch[:operator].nil?
       end
       description_arr
+    end
+
+    def solution_event?(event_type)
+      AuditLogConstants::SOLUTIONS_EVENT_ITEMS.include?(event_type.join('_'))
+    end
+
+    def reset_ratings_pattern?(activity)
+      activity[:action] == 'article_update' && (AuditLogConstants::RESET_RATING_FIELDS - activity[:changes].keys).blank?
+    end
+
+    def assign_item_attributes(object, response)
+      article = Account.current.solution_articles.find(object[:article_id])
+      response[:name] = article.title
+      response[:language_code] = Language.find(article.language_id).code
+    rescue ActiveRecord::RecordNotFound
+      response[:name] = I18n.t('admin.audit_log.solution_article.deleted')
+    end
+
+    def assign_solution_attributes(response, activity)
+      response[:name][:language_code] = activity[:object][:language_code]
+      assign_item_attributes(activity[:object], response[:name]) if reset_ratings_pattern?(activity)
     end
 end

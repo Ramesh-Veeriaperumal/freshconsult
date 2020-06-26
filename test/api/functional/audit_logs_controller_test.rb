@@ -1,8 +1,14 @@
 require_relative '../test_helper'
+require Rails.root.join('test', 'models', 'helpers', 'solutions_test_helper.rb')
+require Rails.root.join('test', 'api', 'helpers', 'solutions_articles_test_helper.rb')
+
 class AuditLogsControllerTest < ActionController::TestCase
   include UsersTestHelper
   include AttachmentsTestHelper
   include TestCaseMethods
+  include AuditLogSolutionsTestHelper
+  include ModelsSolutionsTestHelper
+  include SolutionsArticlesTestHelper
 
   def setup
     super
@@ -35,6 +41,58 @@ class AuditLogsControllerTest < ActionController::TestCase
     assert_response 200
     resp = @account.all_va_rules.map { |rule| { name: rule.name, id: rule.id } }
     match_json resp
+  end
+
+  def test_audit_log_for_solution_category
+    HyperTrail::AuditLog.any_instance.stubs(:fetch).returns(solution_category_sample_data)
+    post :filter, version: 'private', format: 'json'
+    assert_response 200
+    match_json solution_category_filter_response
+    assert_equal response.api_meta[:next], solution_category_next_url
+  ensure
+    HyperTrail::AuditLog.any_instance.unstub(:fetch)
+  end
+
+  def test_audit_log_for_solution_folder
+    HyperTrail::AuditLog.any_instance.stubs(:fetch).returns(solution_folder_sample_data)
+    post :filter, version: 'private', format: 'json'
+    assert_response 200
+    match_json solution_folder_filter_response
+    assert_equal response.api_meta[:next], solution_folder_next_url
+  ensure
+    HyperTrail::AuditLog.any_instance.unstub(:fetch)
+  end
+
+  def test_audit_log_for_solution_article
+    HyperTrail::AuditLog.any_instance.stubs(:fetch).returns(solution_article_sample_data)
+    post :filter, version: 'private', format: 'json'
+    assert_response 200
+    match_json solution_article_filter_response
+    assert_equal response.api_meta[:next], solution_article_next_url
+  ensure
+    HyperTrail::AuditLog.any_instance.unstub(:fetch)
+  end
+
+  def test_audit_log_for_solution_article_reset_ratings
+    setup_redis_for_articles
+    article = add_new_article
+    HyperTrail::AuditLog.any_instance.stubs(:fetch).returns(solution_article_reset_ratings_data(id: article.parent_id, article_id: article.id))
+    post :filter, version: 'private', format: 'json'
+    assert_response 200
+    match_json solution_article_reset_ratings_response(id: article.parent_id, article_id: article.id)
+    assert_equal response.api_meta[:next], solution_article_next_url
+  ensure
+    HyperTrail::AuditLog.any_instance.unstub(:fetch)
+  end
+
+  def test_audit_log_for_solution_article_approval_events
+    HyperTrail::AuditLog.any_instance.stubs(:fetch).returns(solution_article_apporval_data)
+    post :filter, version: 'private', format: 'json'
+    assert_response 200
+    match_json solution_article_approval_response
+    assert_equal response.api_meta[:next], solution_article_next_url
+  ensure
+    HyperTrail::AuditLog.any_instance.unstub(:fetch)
   end
 
   def test_audit_log_filtered_export
