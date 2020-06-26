@@ -49,10 +49,12 @@ module Email::EmailService::EmailCampaignDelivery
   end
 
   def email_data(params)
+    params[:subject] = params[:subject].gsub('{{', '${').gsub('}}', '}')
+    params[:description] = params[:description].gsub('{{', '${').gsub('}}', '}')
     {
-      'subject' => params[:subject].present? ? params[:subject].gsub('{{', '${').gsub('}}', '}') : "Notification from #{Account.current.helpdesk_name}",
-      'html' => params[:description].present? ? params[:description].gsub('{{', '${').gsub('}}', '}').concat("<p>Click to <a href = ${contact.unsubscribe_link}>unsubscribe</a> from these emails</p>") : '',
-      'tags' => tags(params[:user_ids]),
+      'subject' => params[:subject].presence || "Notification from #{Account.current.helpdesk_name}",
+      'html' => params[:description].present? ? params[:description].concat("<p>Click to <a href = ${contact.unsubscribe_link}>unsubscribe</a> from these emails</p>") : '',
+      'tags' => tags(params),
       'accountId' => params[:account_id].to_s,
       'headers' => {},
       'from' => from_email(params[:email_config_id]),
@@ -60,10 +62,11 @@ module Email::EmailService::EmailCampaignDelivery
     }.to_json
   end
 
-  def tags(user_ids)
+  def tags(params)
+    user_ids = params[:user_ids]
     Account.current.users.with_user_ids(user_ids).preload(:flexifield, :default_user_company, :companies).each_with_object([]) do |contact, tags|
       unless contact.simple_outreach_unsubscribe?
-        placeholder_tags = html_tags(contact)
+        placeholder_tags = html_tags(contact, params)
         tags << {
           'email' => contact.email,
           'name' => contact.name,
@@ -74,10 +77,15 @@ module Email::EmailService::EmailCampaignDelivery
     end
   end
 
-  def html_tags(contact)
+  def html_tags(contact, params)
     placeholder_values = {}
     placeholder_values.merge!(placeholder_substitues(contact))
-    placeholder_values.merge!(placeholder_substitues(contact.company)) if contact.company.present?
+    if contact.company.present?
+      placeholder_values.merge!(placeholder_substitues(contact.company))
+    else
+      placeholder_values.merge!(handle_nil_placeholders(params[:subject].scan(/\${company.*?}/)))
+      placeholder_values.merge!(handle_nil_placeholders(params[:description].scan(/\${company.*?}/)))
+    end
     placeholder_values
   end
 
@@ -106,5 +114,13 @@ module Email::EmailService::EmailCampaignDelivery
 
   def cc_emails(ccs)
     ccs.present? ? (ccs.inject([]) { |acc, email| acc << { 'email' => email } }) : []
+  end
+
+  def handle_nil_placeholders(place_holders)
+    empty_placeholders = {}
+    place_holders.each do |value|
+      empty_placeholders.merge!(value => '')
+    end
+    empty_placeholders
   end
 end
