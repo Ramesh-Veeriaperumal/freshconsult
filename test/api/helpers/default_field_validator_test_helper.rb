@@ -10,7 +10,7 @@ class DefaultFieldValidatorTestHelper
       {
         status: { custom_inclusion: { in: [2, 3, 4, 5], ignore_string: :allow_string_param } },
         priority: { custom_inclusion: { in: ApiTicketConstants::PRIORITIES, ignore_string: :allow_string_param } },
-        source: { custom_inclusion: { in: Helpdesk::Source.api_sources, ignore_string: :allow_string_param } },
+        source: { custom_inclusion: { in: [1, 2, 3, 5, 6, 7, 8, 9, 11], ignore_string: :allow_string_param } },
         type: { custom_inclusion: { in: %w(Lead Question Problem Maintenance Breakage) } },
         group_id: { custom_numericality: { ignore_string: :allow_string_param, only_integer: true, greater_than: 0 } },
         responder_id: { custom_numericality: { ignore_string: :allow_string_param, only_integer: true, greater_than: 0 } },

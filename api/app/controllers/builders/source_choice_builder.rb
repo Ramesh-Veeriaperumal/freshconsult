@@ -17,7 +17,8 @@ module SourceChoiceBuilder
     custom_choice = choice.to_h.symbolize_keys
     custom_choice.delete(:value)
     custom_choice[:default] = false
-    custom_choice[:meta] = { icon_id: custom_choice.delete(:icon_id) }.with_indifferent_access
+    custom_choice[:meta] = {}.with_indifferent_access
+    custom_choice[:meta].merge!(icon_id: custom_choice.delete(:icon_id)) if custom_choice[:icon_id]
     source_params = build_params(SOURCE_CHOICES_PARAMS, custom_choice)
     new_choice = Account.current.helpdesk_sources.build(source_params)
     unless new_choice.save

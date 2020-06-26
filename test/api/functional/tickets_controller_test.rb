@@ -3378,7 +3378,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = { source: 1 }
     put :update, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('source', :source_update_not_permitted, sources: Account.current.helpdesk_sources.api_unpermitted_sources_for_update.join(','))])
+    match_json([bad_request_error_pattern('source', :source_update_not_permitted, sources: Helpdesk::Source.api_unpermitted_sources_for_update.join(','))])
   end
 
   def test_update_source_of_facebook_ticket_fails
@@ -3386,7 +3386,121 @@ class TicketsControllerTest < ActionController::TestCase
     params = { source: 1 }
     put :update, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('source', :source_update_not_permitted, sources: Account.current.helpdesk_sources.api_unpermitted_sources_for_update.join(','))])
+    match_json([bad_request_error_pattern('source', :source_update_not_permitted, sources: Helpdesk::Source.api_unpermitted_sources_for_update.join(','))])
+  end
+
+  def test_create_ticket_with_custom_source
+    Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
+    custom_source = create_custom_source
+    params = {
+      requester_id: @agent.id,
+      status: 2,
+      priority: 2,
+      type: 'Feature Request',
+      source: custom_source.account_choice_id,
+      description: Faker::Lorem.characters(15),
+      subject: Faker::Lorem.characters(15)
+    }
+    post :create, construct_params({}, params)
+    assert_response 201
+    result = JSON.parse(response.body)
+    assert_equal custom_source.account_choice_id, result['source']
+  ensure
+    Account.current.unstub(:ticket_source_revamp_enabled?)
+    custom_source.try(:destroy)
+  end
+
+  def test_create_ticket_with_custom_source_without_lp
+    custom_source = create_custom_source
+    params = {
+      requester_id: @agent.id,
+      status: 2,
+      priority: 2,
+      type: 'Feature Request',
+      source: custom_source.account_choice_id,
+      description: Faker::Lorem.characters(15),
+      subject: Faker::Lorem.characters(15)
+    }
+    post :create, construct_params({}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('source', :not_included, list: api_ticket_sources.join(','))])
+  ensure
+    custom_source.try(:destroy)
+  end
+
+  def test_create_ticket_with_archived_custom_source
+    custom_source = create_custom_source(deleted: true)
+    assert custom_source.deleted
+    Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
+    params = {
+      requester_id: @agent.id,
+      status: 2,
+      priority: 2,
+      type: 'Feature Request',
+      source: custom_source.account_choice_id,
+      description: Faker::Lorem.characters(15),
+      subject: Faker::Lorem.characters(15)
+    }
+    post :create, construct_params({}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('source', :not_included, list: api_ticket_sources.join(','))])
+  ensure
+    Account.current.unstub(:ticket_source_revamp_enabled?)
+    custom_source.try(:destroy)
+  end
+
+  def test_update_ticket_with_custom_source
+    ticket = create_ticket(requester_id: @agent.id)
+    custom_source = create_custom_source
+    Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
+    params = { source: custom_source.account_choice_id }
+    put :update, construct_params({ id: ticket.display_id }, params)
+    assert_response 200
+    result = JSON.parse(response.body)
+    assert_equal custom_source.account_choice_id, result['source']
+  ensure
+    Account.current.unstub(:ticket_source_revamp_enabled?)
+    custom_source.try(:destroy)
+    ticket.try(:destroy)
+  end
+
+  def test_update_ticket_with_custom_source_without_lp
+    ticket = create_ticket(requester_id: @agent.id)
+    custom_source = create_custom_source
+    params = { source: custom_source.account_choice_id }
+    put :update, construct_params({ id: ticket.display_id }, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('source', :not_included, list: api_ticket_sources.join(','))])
+  ensure
+    custom_source.try(:destroy)
+    ticket.try(:destroy)
+  end
+
+  def test_update_ticket_with_archived_custom_source
+    custom_source = create_custom_source(deleted: true)
+    assert custom_source.deleted
+    ticket = create_ticket(requester_id: @agent.id)
+    Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
+    params = { source: custom_source.account_choice_id }
+    put :update, construct_params({ id: ticket.display_id }, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('source', :not_included, list: api_ticket_sources.join(','))])
+  ensure
+    Account.current.unstub(:ticket_source_revamp_enabled?)
+    custom_source.try(:destroy)
+    ticket.try(:destroy)
+  end
+
+  def test_update_source_of_facebook_ticket_fails_with_custom_source_lp
+    ticket = create_ticket_from_fb_post
+    Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
+    params = { source: 1 }
+    put :update, construct_params({ id: ticket.display_id }, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('source', :source_update_not_permitted, sources: Helpdesk::Source.api_unpermitted_sources_for_update.join(','))])
+  ensure
+    Account.current.unstub(:ticket_source_revamp_enabled?)
+    ticket.try(:destroy)
   end
 
   def test_destroy
