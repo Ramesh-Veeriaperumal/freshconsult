@@ -1055,6 +1055,10 @@ class Account < ActiveRecord::Base
     Account.current.launched?(:omni_bundle_2020) && omni_bundle_id.present?
   end
 
+  def show_omnichannel_banner?
+    User.current.privilege?(:manage_account) && launched?(:explore_omnichannel_feature) && freshid_org_v2_enabled? && !omni_bundle_account? && !subscription.subscription_plan.omni_plan? && !subscription.suspended?
+  end
+
   def freshcaller_billing_url
     ((Rails.env.staging? || Rails.env.production?) && !subscription.suspended?) ? "https://#{freshcaller_account.domain}/admin/billing?purchaseCreditModal=true" : "#"
   end

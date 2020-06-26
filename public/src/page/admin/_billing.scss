@@ -1472,6 +1472,7 @@ input[type=text].input-agent-count{
 }
 
 .fd-fd-bundle-logo {
+	padding-top: 12px;
 	height: 43px; 
 	width: 230px;
 	margin-bottom: 22px;
@@ -1585,6 +1586,66 @@ input[type=text].input-agent-count{
             margin-bottom: 6px;
         }
     }
+}
+
+.carousel-inner {
+	height: auto;
+}
+
+.carousel-control {
+	background-color: transparent;
+	border: 0;
+	color: #808080;
+}
+.carousel-control:hover {
+	color: #000000;	
+}
+
+.fc-omni-channel-experience-logo {
+	height: 102px;
+	padding-top: 16px;
+  padding-right: 16px;
+}
+
+.omni-channel-experience-logo {
+	height: 152px;
+}
+
+.omni-channel-experience-container {
+	padding: 10px 60px 0;
+}
+
+.omni-channel-experience-description {
+	width: 72%;
+	font-size: 16px;
+	padding: 32px 0 16px 8px;
+}
+
+.fc-omni-channel-experience-description {
+	width: 72%;
+	font-size: 14px;
+	padding: 20px 0 16px 8px;
+}
+
+.omni-channel-experience-table {
+	border: 1px #ebeef0 solid;;
+	width: 100%;
+}
+
+.omni-channel-td-data {
+	padding-left: 36px;
+}
+
+.fc-omni-channel-td-data {
+	padding-left: 20px;	
+}
+
+.explore-omnichannel-button {
+	margin-bottom: 20px;
+}
+
+.omni-channel-td-logo {
+	text-align: right;
 }
 
 // --------------------------------------------------------------------------------------------

@@ -590,4 +590,38 @@ class AccountTest < ActionView::TestCase
     installed_app.set_configs(domain: 'test.freshsales.io', auth_token: 'abcd1234')
     installed_app
   end
+
+  def test_should_not_show_omnichannel_banner_without_lp
+    Account.current.rollback(:explore_omnichannel_feature)
+    refute Account.current.show_omnichannel_banner?
+  end
+
+  def test_should_not_show_omnichannel_banner_for_non_freshid_org_v2_accounts
+    Account.current.rollback(:freshid_org_v2)
+    refute Account.current.show_omnichannel_banner?
+  end
+
+  def test_should_not_show_omnichannel_banner_with_lp_and_for_omni_bundle_account
+    Account.current.launch(:explore_omnichannel_feature)
+    Account.current.launch(:freshid_org_v2)
+    Account.current.launch(:omni_bundle_2020)
+    AccountAdditionalSettings.any_instance.stubs(:additional_settings).returns(bundle_id: 1)
+    refute Account.current.show_omnichannel_banner?
+  ensure
+    Account.current.rollback(:explore_omnichannel_feature)
+    Account.current.rollback(:freshid_org_v2)
+    Account.current.rollback(:omni_bundle_2020)
+    AccountAdditionalSettings.any_instance.unstub(:additional_settings)
+  end
+
+  def test_show_omnichannel_banner_with_lp_and_not_omni_bundle_account
+    Account.current.launch(:explore_omnichannel_feature)
+    Account.current.launch(:freshid_org_v2)
+    AccountAdditionalSettings.any_instance.stubs(:additional_settings).returns(bundle_id: nil)
+    assert Account.current.show_omnichannel_banner?
+  ensure
+    Account.current.rollback(:explore_omnichannel_feature)
+    Account.current.rollback(:freshid_org_v2)
+    AccountAdditionalSettings.any_instance.unstub(:additional_settings)
+  end
 end
