@@ -8,8 +8,6 @@
   response_hash[:stats] = stats_hash if stats_hash
   response_hash[:requester] = requester_info if requester_info
   response_hash[:company] = company_hash if company_hash.present?
-  response_hash[:tweet] = { tweet_type: item.tweet_type } if item.tweet_type
-  response_hash[:fb_post] = { msg_type: item.fb_msg_type } if item.fb_msg_type
   response_hash.merge!(description_hash) if description_hash
   response_hash
 end.to_json
