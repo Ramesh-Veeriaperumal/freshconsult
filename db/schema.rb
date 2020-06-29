@@ -3806,6 +3806,19 @@ ActiveRecord::Schema.define(version: 20200502053301) do
   add_index 'folder_visibility_mapping', ['folder_meta_id', 'mappable_id'], name: 'index_visibility_mapping_on_foldermeta_and_mappable_id'
   add_index 'folder_visibility_mapping', ['folder_meta_id', 'mappable_type'], name: 'index_visibility_mapping_on_foldermeta_and_mappable_type'
 
+  create_table 'solution_platform_mappings', force: true do |t|
+    t.integer  'account_id', limit: 8, null: false
+    t.integer  'mappable_id'
+    t.string   'mappable_type'
+    t.boolean  'web', null: false, default: false
+    t.boolean  'ios', null: false, default: false
+    t.boolean  'android', null: false, default: false
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+  end
+
+  add_index 'solution_platform_mappings', ['account_id', 'mappable_id', 'mappable_type'], name: 'index_solution_platform_mappings_on_acc_map_id_map_type'
+
   create_table 'solution_templates', :force => true do |t|
     t.integer  'account_id',  limit: 8, null: false
     t.string   'title', null:false

@@ -236,7 +236,7 @@ class Account < ActiveRecord::Base
     jira_onpremise_reporter: false, support_ticket_rate_limit: false, sidekiq_logs_to_central: false,
     portal_central_publish: false, encode_emoji_in_solutions: false, forums_agent_portal: false,
     mailbox_google_oauth: false, migrate_euc_pages_to_us: false, agent_collision_revamp: false,
-    topic_editor_with_html: false, mailbox_forward_setup: false, remove_image_attachment_meta_data: false,
+    topic_editor_with_html: false, remove_image_attachment_meta_data: false,
     ticket_field_revamp: true, new_timeline_view: false, email_mailbox: true, facebook_admin_ui_revamp: false,
     sla_policy_revamp: false, freshdesk_freshsales_bundle: false,
     fsm_for_garden_plan: true, fsm_for_blossom_plan: true, requester_widget_timeline: false,

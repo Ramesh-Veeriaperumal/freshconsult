@@ -220,6 +220,10 @@ module SAAS::DropFeatureData
     end
   end
 
+  def handle_solutions_templates_drop_data
+    ::Solution::TemplatesMigrationWorker.perform_async(action: 'drop')
+  end
+
   def handle_agent_assist_ultimate_drop_data
     drop_agent_assist_ultimate
   end

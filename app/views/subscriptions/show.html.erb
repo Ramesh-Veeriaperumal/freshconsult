@@ -1,8 +1,34 @@
 <%= javascript_include_tag :'cdn/plans_and_billing' %>
 
 <% fd_fs_banner = @subscription.account.fetch_fd_fs_banner_details %>
-<% if fd_fs_banner.present? && ['trial', 'integrate', 'new'].include?(fd_fs_banner[:state]) && @subscription.account.account_activated_within_last_week? %>
-  <%= render :partial => "/subscriptions/freshdesk_freshsales_bundle", :locals => { :account_state => fd_fs_banner[:state], :account_subscription_url => fd_fs_banner[:url] } %>
+<% show_fd_fs_banner = fd_fs_banner.present? && ['trial', 'integrate', 'new'].include?(fd_fs_banner[:state]) && @subscription.account.account_activated_within_last_week? %>
+<% show_omnichannel_banner = @subscription.account.show_omnichannel_banner? %>
+<% multiple_banner_present = show_fd_fs_banner && show_omnichannel_banner %>
+
+<% if show_fd_fs_banner || show_omnichannel_banner %>
+  <h3 class="lead"><%=t('notification.whats_new')%></h3>
+
+  <div id="plansAndBillingCarousel" class="carousel slide">
+
+    <div class="carousel-inner">
+      <% if show_fd_fs_banner %>
+        <div class="active item">
+          <%= render :partial => "/subscriptions/freshdesk_freshsales_bundle", :locals => { :account_state => fd_fs_banner[:state], :account_subscription_url => fd_fs_banner[:url] } %>
+        </div>
+      <% end %>
+      <% if show_omnichannel_banner %>
+        <div class="<%if !multiple_banner_present%> active <%end%> item">
+          <%= render :partial => '/subscriptions/omni_channel_experience', :locals => { :is_lone_banner => multiple_banner_present, :description => 'omni_channel_experience.omnichannel_description', :description_class => 'omni-channel-experience-description',:table_class => 'omni-channel-td-data', :button_class => 'btn btn-primary btn-small explore-omnichannel-button', :image_src => '/images/omni_channel_experience.svg', :image_class => 'omni-channel-experience-logo' } %>
+        </div>
+      <% end %>
+    </div>
+
+    <% if multiple_banner_present %>
+      <a class="carousel-control left" href="#plansAndBillingCarousel" data-slide="prev">&lsaquo;</a>
+      <a class="carousel-control right" href="#plansAndBillingCarousel" data-slide="next">&rsaquo;</a>
+    <% end %>
+
+  </div>
 <% end %>
 <h3 class="lead"><%= @page_title = t("admin.home.index.billing") %></h3>
 
@@ -11,7 +37,17 @@
 
 <script type="text/javascript">
 
-  Fjax.afterNextPage = function(){ App.SelectPlan.destroy()}
+  Fjax.afterNextPage = function(){ App.SelectPlan.destroy()};
+
+  <% if multiple_banner_present %>
+    (function($) {
+      $(document).ready(function(){
+        $("#plansAndBillingCarousel").carousel({
+          interval: false
+        });
+      });
+    })(jQuery);
+  <% end %>
 
 </script>
 

@@ -5091,6 +5091,19 @@ module Ember
       assert Helpdesk::Ticket.last.attachments.count == 2
     end
 
+    def test_compose_email_attachment_content_type
+      file = fixture_file_upload('/files/attachment.eml', 'message/rfc822')
+      params = ticket_params_hash.except(:source, :product_id, :responder_id).merge('attachments' => [file], email_config_id: "#{fetch_email_config.id}")
+      DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+      @request.env['CONTENT_TYPE'] = 'multipart/form-data'
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      DataTypeValidator.any_instance.unstub(:valid_type?)
+      assert_response 201
+      ticket = Account.current.tickets.last
+      attachment = ticket.all_attachments.first
+      assert_equal 'message/rfc822', attachment.content_content_type
+    end
+
     def test_compose_email_without_status
       email_config = fetch_email_config
       params = ticket_params_hash.except(:source, :status, :fr_due_by, :due_by, :responder_id).merge(custom_fields: {}, email_config_id: email_config.id)
@@ -6692,6 +6705,25 @@ module Ember
       assert_response 403
     ensure
       group.destroy if group.present?
+    end
+
+    def test_index_ticket_with_scope_read
+      agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      group = create_group_with_agents(@account, agent_list: [agent.id])
+      agent_group = agent.agent_groups.where(group_id: group.id).first
+      agent_group.write_access = false
+      agent_group.save!
+      agent.make_current
+      get :index, controller_params(version: 'private', filter: 'all_tickets')
+      tickets_count1 = JSON.parse(@response.body).count
+      ticket = create_ticket({}, group)
+      login_as(agent)
+      get :index, controller_params(version: 'private', filter: 'all_tickets')
+      tickets_count2 = JSON.parse(@response.body).count
+      assert_equal tickets_count1, tickets_count2
+    ensure
+      group.destroy if group.present?
+      agent.destroy if agent.present?
     end
   end
 end

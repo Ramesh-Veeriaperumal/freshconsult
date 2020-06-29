@@ -16,6 +16,7 @@ class Solution::Template < ActiveRecord::Base
   validates :title, presence: true
 
   scope :latest, -> { order('modified_at DESC') }
+  scope :order_by_default_latest, -> { order('is_default DESC, modified_at DESC') }
   scope :default, -> { where(is_default: true) }
 
   before_validation :populate_user_id, on: :create

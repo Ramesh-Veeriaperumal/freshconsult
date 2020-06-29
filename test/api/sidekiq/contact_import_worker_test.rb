@@ -12,9 +12,8 @@ class ContactImportWorkerTest < ActionView::TestCase
   include Redis::OthersRedis
 
   def setup
-    @account = create_test_account
-    Account.stubs(:current).returns(Account.first)
-    @account = Account.current
+    @account = Account.first || create_test_account
+    Account.stubs(:current).returns(@account)
     @import_entry = @account.contact_imports.new(
       source: Admin::DataImport::IMPORT_TYPE['contact'.to_sym],
       status: Admin::DataImport::IMPORT_STATUS[:started]
@@ -53,8 +52,16 @@ class ContactImportWorkerTest < ActionView::TestCase
     assert_equal @import_entry.import_status, Admin::DataImport::IMPORT_STATUS[:completed]
     assert_equal @import_entry.source, Admin::DataImport::IMPORT_TYPE[:contact]
     assert_equal @import_entry.last_error, nil
+  end
+
+  def test_contact_import_with_amp
+    AwsWrapper::S3Object.stubs(:find).returns(fixture_file_upload('files/contact_with_amp_characters.csv'))
+    AwsWrapper::S3Object.stubs(:delete).returns([])
+    Import::ContactWorker.new.perform(@args)
+    @user = @account.reload.users.where(email: 'bob@freshdesk.com').first
+    assert_equal @user.name, 'Bob1&'
+  ensure
     AwsWrapper::S3Object.unstub(:delete)
-    Account.current.tickets.unstub(:count)
     AwsWrapper::S3Object.unstub(:find)
   end
 

@@ -51,6 +51,12 @@ class Solution::ArticleMeta < ActiveRecord::Base
 		:class_name => 'Helpdesk::Tag',
 		:through => :tag_uses
 
+    has_one :solution_platform_mapping,
+      as: :mappable,
+      class_name: 'SolutionPlatformMapping',
+      autosave: true,
+      dependent: :destroy
+
 	COMMON_ATTRIBUTES = ["art_type", "position", "created_at"]
 
 	HITS_CACHE_THRESHOLD = 100

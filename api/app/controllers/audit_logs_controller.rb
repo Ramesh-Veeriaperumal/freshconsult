@@ -9,6 +9,9 @@ class AuditLogsController < ApiApplicationController
   include Admin::AutomationConstants
   include ContactsCompaniesConcern
   include AuditLog::AuditLogExportHelper
+  include AuditLog::SolutionCategoryHelper
+  include AuditLog::SolutionFolderHelper
+  include AuditLog::SolutionArticleHelper
 
   around_filter :run_on_slave
   before_filter :validate_filter_params, only: [:export, :filter]

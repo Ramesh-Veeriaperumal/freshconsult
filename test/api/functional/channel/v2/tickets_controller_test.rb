@@ -1369,5 +1369,64 @@ module Channel::V2
     ensure
       Account.any_instance.unstub(:shared_ownership_enabled?)
     end
+
+    def test_index_channel_api_with_read_scope
+      TicketDecorator.any_instance.stubs(:private_api?).returns(false)
+      CustomRequestStore.store[:channel_api_request] = true
+      Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+      @channel_v2_api = true
+      agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      group = create_group_with_agents(@account, agent_list: [agent.id])
+      agent_group = agent.agent_groups.where(group_id: group.id).first
+      agent_group.write_access = false
+      agent_group.save!
+      agent.make_current
+      ticket1 = create_ticket({}, group)
+      login_as(agent)
+      get :index, controller_params(version: 'channel')
+      assert_equal JSON.parse(@response.body)[0]['ticket_id'], ticket1.id
+      assert_response 200
+    ensure
+      @channel_v2_api = false
+      Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+      TicketDecorator.any_instance.unstub(:private_api?)
+      CustomRequestStore.store[:channel_api_request] = false
+      ticket1.destroy if ticket1.present?
+      agent.destroy if agent.present?
+    end
+
+    def test_index_channel_api_with_internal_group_read_scope
+      TicketDecorator.any_instance.stubs(:private_api?).returns(false)
+      CustomRequestStore.store[:channel_api_request] = true
+      Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+      @channel_v2_api = true
+      @account.add_feature :shared_ownership
+      initialize_internal_agent_with_default_internal_group(2)
+      agent_group = @internal_agent.all_agent_groups.where(group_id: @internal_group.id).first
+      ticket1 = create_ticket({ status: @status.status_id, internal_agent_id: @internal_agent.id,
+                                responder_id: @responding_agent.id }, nil, @internal_group)
+      ticket2 = create_ticket({ status: @status.status_id, internal_agent_id: @internal_agent.id,
+                                responder_id: @responding_agent.id }, nil, @internal_group)
+      agent_group.write_access = false
+      agent_group.save!
+      @internal_agent.make_current
+      login_as(@internal_agent)
+      get :index, controller_params(version: 'channel')
+      assert_response 200
+      response = parse_response @response.body
+      response_ticket_ids = response.map { |ticket| ticket['id'] }
+      assert_equal (response_ticket_ids.include? ticket1.display_id), true
+      agent_group.write_access = true
+      agent_group.save!
+    ensure
+      @channel_v2_api = false
+      Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+      TicketDecorator.any_instance.unstub(:private_api?)
+      CustomRequestStore.store[:channel_api_request] = false
+      ticket1.destroy if ticket1.present?
+      ticket2.destroy if ticket2.present?
+      @responding_agent.destroy if @responding_agent.present?
+      @internal_agent.destroy if @internal_agent.present?
+    end
   end
 end

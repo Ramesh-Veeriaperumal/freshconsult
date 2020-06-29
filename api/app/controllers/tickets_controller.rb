@@ -14,6 +14,7 @@ class TicketsController < ApiApplicationController
   include HelperConcern
   include Redis::TicketsRedis
   include AssociateTicketsHelper
+  include AdvancedTicketScopes
 
   decorate_views(decorate_objects: [:index, :search])
   DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
@@ -167,6 +168,7 @@ class TicketsController < ApiApplicationController
     end
 
     def load_objects
+      set_all_agent_groups_permission
       if use_public_api_filter_factory?
         items = FilterFactory::TicketFilterer.filter(updated_params, true).preload(conditional_preload_options)
         @items = paginate_items(items, true)

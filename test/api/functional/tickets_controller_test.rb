@@ -6936,6 +6936,50 @@ class TicketsControllerTest < ActionController::TestCase
     end
   end
 
+  def test_public_api_index_filter_factory_with_read_scope
+    order_params = { order_by: 'created_at', order_type: 'asc' }
+    enable_public_api_filter_factory([:public_api_filter_factory, :new_es_api, :count_service_es_reads]) do
+      User.any_instance.stubs(:access_all_agent_groups).returns(true)
+      agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      group = create_group_with_agents(@account, agent_list: [agent.id])
+      agent_group = agent.agent_groups.where(group_id: group.id).first
+      agent_group.write_access = false
+      agent_group.save!
+      agent.make_current
+      ticket1 = create_ticket({}, group)
+      login_as(agent)
+      response_stub = public_api_filter_factory_order_response_stub(order_params[:order_by], order_params[:order_type])
+      SearchService::Client.any_instance.stubs(:query).returns(SearchService::Response.new(response_stub))
+      SearchService::Response.any_instance.stubs(:records).returns(JSON.parse(response_stub))
+      get :index, controller_params(order_params)
+      assert_response 200
+      match_json(public_api_ticket_index_pattern(false, false, false, order_params[:order_by], order_params[:order_type]))
+      agent_group.write_access = true
+      agent_group.save!
+      User.any_instance.unstub(:access_all_agent_groups)
+      ticket1.destroy if ticket1.present?
+      agent.destroy if agent.present?
+    end
+  end
+
+  def test_public_api_index_with_read_scope
+    User.any_instance.stubs(:access_all_agent_groups).returns(true)
+    agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+    group = create_group_with_agents(@account, agent_list: [agent.id])
+    agent_group = agent.agent_groups.where(group_id: group.id).first
+    agent_group.write_access = false
+    agent_group.save!
+    agent.make_current
+    ticket1 = create_ticket({}, group)
+    login_as(agent)
+    get :index, controller_params({})
+    assert_response 200
+  ensure
+    User.any_instance.unstub(:access_all_agent_groups)
+    ticket1.destroy if ticket1.present?
+    agent.destroy if agent.present?
+  end
+
   def create_ticket_params
     {
       subject: Faker::Lorem.characters(10),

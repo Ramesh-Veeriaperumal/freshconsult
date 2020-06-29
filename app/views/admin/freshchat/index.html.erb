@@ -19,6 +19,10 @@
   <div id="message" class="alert notice hide"></div>
   <div class="chat-header clearfix">
     <h3 class="lead pull-left"> <%= t('chat') %></h3>
+    <% show_omnichannel_banner = current_account.show_omnichannel_banner? %>
+    <% if show_omnichannel_banner %>
+      <%= render :partial => '/subscriptions/omni_channel_experience', :locals => { :is_lone_banner => false, :description => 'omni_channel_experience.omnichannel_description', :description_class => 'fc-omni-channel-experience-description', :table_class => 'fc-omni-channel-td-data', :button_class => 'btn btn-secondary', :image_src => '/images/omnichannel-freshchat-nudge.svg', :image_class => 'fc-omni-channel-experience-logo' } %>
+    <% end %>
     <% if (current_account.omni_bundle_account? && @item.present?) %>
       <a class="pull-right pt8" href="<%=@domain%>/settings" target="_blank">
         <%= t('manage_settings') %>

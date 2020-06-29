@@ -8,6 +8,9 @@ class AuditLogExport < BaseWorker
   include AuditLog::CannedResponseFolderHelper
   include AuditLog::CannedResponseHelper
   include AuditLog::CompanyHelper
+  include AuditLog::SolutionCategoryHelper
+  include AuditLog::SolutionFolderHelper
+  include AuditLog::SolutionArticleHelper
   include Export::Util
   require 'json'
   require 'zip'
@@ -135,6 +138,7 @@ class AuditLogExport < BaseWorker
       name: event_name_route(activity[:object][event_name], event_type, activity[:object], true)
     }
     report_data[:name][:name] = 'Personal' if report_data[:name][:name] == "Personal_#{Account.current.id}"
+    assign_solution_attributes(report_data, activity) if solution_event?(event_type)
     report_data.merge! event_type_and_description(activity, action, event_type)
     report_data
   end

@@ -15,6 +15,7 @@ module ApiTicketsTestHelper
   include FreshfoneSpecHelper
   include FreshcallerSpecHelper
   include ForumHelper
+  include AdvancedTicketScopes
   include AttachmentsTestHelper
   include UsersTestHelper
   include Helpdesk::Email::Constants
@@ -310,7 +311,9 @@ module ApiTicketsTestHelper
       due_by: expected_output[:due_by].try(:to_time).try(:utc).try(:iso8601) || ticket.due_by.try(:utc).try(:iso8601),
       fr_due_by: expected_output[:fr_due_by].try(:to_time).try(:utc).try(:iso8601) || ticket.frDueBy.try(:utc).try(:iso8601)
     }
-    ticket_hash[:write_access] = true if Account.current.advanced_ticket_scopes_enabled?
+    if Account.current.advanced_ticket_scopes_enabled? 
+      ticket_hash[:write_access] = User.current.present? ? agent_has_write_access?(ticket, User.current.associated_group_ids) : true
+    end
     if @account.shared_ownership_enabled?
       ticket_hash.merge!( :internal_group_id => expected_output[:internal_group_id] || ticket.internal_group_id,
                           :internal_agent_id => expected_output[:internal_agent_id] || ticket.internal_agent_id)
@@ -623,11 +626,12 @@ module ApiTicketsTestHelper
       filter_clause << Time.zone.now.beginning_of_day.ago(1.month).utc
     end
     ticket_ids = Helpdesk::Ticket.where(*filter_clause)
+                                 .permissible(User.current)
                                  .order("#{order_by} #{order_type}")
                                  .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
                                  .map(&:id)
     {
-      total: 31,
+      total: [31, ticket_ids.count].min,
       results: ticket_ids.map { |id| { id: id, document: 'ticketanalytics' } }
     }.to_json
   end
@@ -639,7 +643,7 @@ module ApiTicketsTestHelper
       filter_clause << Time.zone.now.beginning_of_day.ago(1.month).utc
     end
     param_object = OpenStruct.new
-    ticket_ids = Helpdesk::Ticket.where(*filter_clause)
+    ticket_ids = Helpdesk::Ticket.where(*filter_clause).permissible(User.current)
                                  .order("#{order_by} #{order_type}")
                                  .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
                                  .map(&:id)
@@ -660,7 +664,7 @@ module ApiTicketsTestHelper
     preload_options = [:tags, :ticket_states, :ticket_old_body, :schema_less_ticket, :flexifield]
     preload_options << :requester if requester
     preload_options << :company if company
-    pattern_array = Helpdesk::Ticket.where(*filter_clause).order("#{order_by} #{order_type}").limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).preload(preload_options).map do |ticket|
+    pattern_array = Helpdesk::Ticket.where(*filter_clause).permissible(User.current).order("#{order_by} #{order_type}").limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).preload(preload_options).map do |ticket|
       param_object = OpenStruct.new(requester: requester, stats: true)
       pattern = index_ticket_pattern_with_associations(ticket, param_object, [:tags])
       pattern[:requester] = Hash if requester
@@ -684,7 +688,7 @@ module ApiTicketsTestHelper
     preload_options = [:tags, :ticket_states, :ticket_old_body, :schema_less_ticket, :flexifield]
     preload_options << :requester if requester
     preload_options << :company if company
-    pattern_array = Helpdesk::Ticket.where(*filter_clause).order("#{order_by} #{order_type}").limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).preload(preload_options).map do |ticket|
+    pattern_array = Helpdesk::Ticket.where(*filter_clause).permissible(User.current).order("#{order_by} #{order_type}").limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).preload(preload_options).map do |ticket|
       param_object = OpenStruct.new
       pattern = index_ticket_pattern_with_associations(ticket, param_object, [:tags])
       pattern[:requester] = Hash if requester

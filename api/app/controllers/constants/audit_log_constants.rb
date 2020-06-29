@@ -5,21 +5,27 @@ module AuditLogConstants
       'observer' => :observer_rules_from_cache,
       'canned_response_folder' => :canned_response_folders,
       'canned_response' => :canned_responses,
-      'company' => :companies
+      'company' => :companies,
+      'solution_categories' => :solution_categories,
+      'solution_folders' => :solution_folders,
+      'solution_articles' => :solution_articles
   }.freeze
   AUTOMATION_RULE_TYPES = [
       VAConfig::SUPERVISOR_RULE,
       VAConfig::BUSINESS_RULE,
       VAConfig::OBSERVER_RULE
   ]
-  
+
   EVENT_TYPES = (AUTOMATION_RULE_METHODS.keys + ['agent', 'subscription', 'canned_response', 'canned_response_folder']).freeze
   AUDIT_LOG_PARAMS = [:before, :since].freeze
   FEATURE_NAME = [:audit_logs_central_publish].freeze
 
   EXPORT_TYPE_CONST = {
     cannedResponse: 'Canned Response',
-    cannedResponseFolder: 'canned Response Folder'
+    cannedResponseFolder: 'canned Response Folder',
+    category: 'Knowledge Base - Category',
+    folder: 'Knowledge Base - Folder',
+    article: 'Knowledge Base - Article'
   }.freeze
 
   AUTOMATION_EXPORT_TYPE = {
@@ -29,7 +35,8 @@ module AuditLogConstants
   }.freeze
 
   EVENT_TYPES_NAME = {
-    'canned_response' => :title
+    'canned_response' => :title,
+    'article' => :title
   }.freeze
 
   MODEL_TRANSLATION_PATH = {
@@ -40,7 +47,9 @@ module AuditLogConstants
       event_type: 'admin.audit_log.event_type.',
       automation_rule: 'admin.audit_log.automation_rule.',
       canned_response_folder: 'admin.audit_log.canned_response_folder.',
-      canned_response: 'admin.audit_log.canned_response.'
+      canned_response: 'admin.audit_log.canned_response.',
+      folder: 'admin.audit_log.solution_folder.',
+      article: 'admin.audit_log.solution_article.'
   }.freeze
 
   TOGGLE_ACTIONS = {
@@ -49,7 +58,8 @@ module AuditLogConstants
   }.freeze
 
   FILTER_PARAMS = [:agent, :time, :type, :observer_id, :dispatcher_id,
-                   :agent_id, :supervisor_id, :next, :company_id, :canned_response_id, :canned_response_folder_id].freeze
+                   :agent_id, :supervisor_id, :next, :company_id, :canned_response_id, :canned_response_folder_id,
+                   :solution_categories_id, :solution_folders_id, :solution_articles_id].freeze
 
   EXPORT_FILTER_PARAMS = [:action, :performed_by].freeze
 
@@ -65,7 +75,11 @@ module AuditLogConstants
 
   AUTOMATION_TYPES = ['automation_1', 'automation_3', 'automation_4'].freeze
 
-  TYPES = ['agent', 'subscription', 'company', 'canned_response', 'canned_response_folder'].freeze
+  TYPES = ['agent', 'subscription', 'company', 'canned_response', 'canned_response_folder', 'solution_categories', 'solution_folders', 'solution_articles'].freeze
+
+  SOLUTIONS_EVENT_ITEMS = %w[category folder article].freeze
+
+  RESET_RATING_FIELDS = %i[thumbs_up thumbs_down article_thumbs_up article_thumbs_down].freeze
 
   ACTION_VALUES = ['create', 'delete', 'update'].freeze
 
@@ -96,4 +110,10 @@ module AuditLogConstants
   FORMAT = ['csv', 'xls'].freeze
 
   ARCHIVED = [true, false].freeze
+
+  VISIBILITY_ID_BY_NAMES = { all_users: 1, logged_in_users: 2, agents: 3, companies: 4, bot: 5, contact_segments: 6, company_segments: 7 }.freeze
+  VISIBILITY_NAMES_BY_ID = VISIBILITY_ID_BY_NAMES.invert
+
+  ORDERING_ID_BY_NAMES = { manual: 1, alphabetical: 2, created_desc: 3, created_asc: 4, updated_desc: 5 }.freeze
+  ORDERING_NAMES_BY_ID = ORDERING_ID_BY_NAMES.invert
 end.freeze

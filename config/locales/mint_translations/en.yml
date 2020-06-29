@@ -1387,6 +1387,48 @@ en:
       assigned_field_service_agent: "Assigned Field Technician"
       send_email_to_field_tech: 'Send Email to Field Technician'
       send_email_to_field_group: 'Send Email to Service Group'
+    audit_log:
+      event_type:
+        category: Knowledge Base - Category
+        folder: Knowledge Base - Folder
+        article: Knowledge Base - Article
+      solution_folder:
+        name: Name
+        description: Description
+        article_order: Ordering
+        visibility: Visibility
+        solution_category_name: Category changed
+        visible_to:
+          all_users: All Users
+          logged_in_users: Logged in users
+          agents: Agents
+          companies: Companies
+          bot: Bot
+          contact_segments: Contact Segments
+          company_segments: Company Segments
+        ordering:
+          manual: Manually
+          alphabetical: Alphabetically (A-Z)
+          created_desc: Creation date (Latest to Oldest)
+          created_asc: Creation date (Oldest to Latest)
+          updated_desc: Modified date (Latest to Oldest)
+      solution_article:
+        title: Title
+        description: Description
+        status: Status
+        tags: Tags
+        added_tags: Added
+        removed_tags: Removed
+        deleted: Deleted Article
+        agent_name: Author changed
+        solution_folder_name: Folder changed
+        approval_status: Status
+        draft: Draft
+        published: Published
+        unpublished: Unpublished
+        approved: Approved
+        in_review: In Review
+        reset_ratings: Reset Likes and Dislikes
     products:
       helpnote:
         heading3: Supporting Multiple Products
@@ -2853,7 +2895,8 @@ en:
         edit_secure_field: Add or edit secure data
         do_not_publish: Do not publish
         export_articles: Export articles
-        manage_custom_objects: Manage Custom Objects 
+        manage_custom_objects: Manage Custom Objects
+        manage_solution_templates: Manage article templates
     help_image_alt:
       helpdesk_arcarde: Helpdesk Arcade
     mobihelp:
@@ -8244,6 +8287,9 @@ en:
     try_freshsales: Try Freshsales CRM
     discount_text_2: Get 40% off on Freshsales CRM if you buy in the next 21 days
     integrate_freshsales: Integrate Freshsales
+  omni_channel_experience:
+    experience_omnichannel: Experience Omnichannel
+    omnichannel_description: Switch to our new Omnichannel plan to unify all conversations across email, chat, call, and other channels into one single solution.
   subscription_change_confirm_header: You're on the right path ;)
   focus_mode_toggle_tip: 'On closing a ticket, quickly move to the next available ticket in your queue'
   focus_mode_toggle: Focus Mode

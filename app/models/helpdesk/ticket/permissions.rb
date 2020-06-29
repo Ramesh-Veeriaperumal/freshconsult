@@ -32,7 +32,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def group_condition user
-      group_ids = user.associated_group_ids
+      group_ids = user.access_all_agent_groups ? user.all_associated_group_ids : user.associated_group_ids
       if Account.current.shared_ownership_enabled?
         ["(group_id IN (?) OR responder_id = ? OR internal_group_id IN (?) OR internal_agent_id = ?)", group_ids, user.id, group_ids, user.id]
       else
@@ -77,5 +77,4 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def restricted_agent_accessible?(user)
     user.assigned_ticket_permission && user.ticket_agent?(self)
   end
-
 end
