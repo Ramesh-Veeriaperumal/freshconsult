@@ -619,7 +619,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def fsm_downgrade?
-    present_subscription.field_agent_limit.present? && (field_agent_limit.blank? ||
+    present_subscription.field_agent_limit.to_i > 0 && (field_agent_limit.blank? ||
       present_subscription.field_agent_limit > field_agent_limit)
   end
 

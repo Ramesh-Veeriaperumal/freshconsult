@@ -458,7 +458,7 @@ window.App = window.App || {};
 
       var omni_no_change = this.omni_disabled === null || ((this.omni_disabled == true) === !(this.is_omni_plan));
 
-      var fsm_removed = (this.fsm_active && this.fsm_disabled);
+      var fsm_removed = (this.fsm_active && this.fsm_disabled && this.field_agents_count > 0);
 
       var fsm_no_change = this.initial_fsm_state === this.fsm_disabled;
 
