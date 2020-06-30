@@ -643,7 +643,8 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
         paying_account: subscription.paying_account?,
         update_payment_site: nil,
         features_gained: subscription.additional_info[:feature_gain],
-        discount: subscription.additional_info[:discount]
+        discount: subscription.additional_info[:discount],
+        offline: subscription.offline_subscription?
       }
     end
 
@@ -668,7 +669,8 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
         subscription_request: nil,
         paying_account: subscription.paying_account?,
         features_gained: subscription.account.account_additional_settings.additional_settings[:feature_gain],
-        discount: subscription.account.account_additional_settings.additional_settings[:discount]
+        discount: subscription.account.account_additional_settings.additional_settings[:discount],
+        offline: subscription.offline_subscription?
       }
       response_hash[:update_payment_site] = is_sideload_present ? subscription.fetch_update_payment_site : nil
       if subscription_request_params.present?

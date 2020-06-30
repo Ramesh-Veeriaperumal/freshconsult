@@ -141,6 +141,7 @@ class Billing::BillingController < ApplicationController
       @account.subscription.update_attributes(@subscription_data)
       update_features if update_features?
       @account.account_additional_settings.set_payment_preference(@billing_data.subscription.cf_reseller)
+      @account.subscription.mark_auto_collection(@billing_data.customer.auto_collection)
     end
 
     def subscription_activated(content)
@@ -208,8 +209,9 @@ class Billing::BillingController < ApplicationController
     end
 
     def customer_changed(content)
-      if content['customer'] and content['customer']['auto_collection'] and content['customer']['auto_collection'] == OFFLINE
-        auto_collection_off_trigger 
+      if content['customer'] && content['customer']['auto_collection']
+        @account.subscription.mark_auto_collection(content['customer']['auto_collection'])
+        auto_collection_off_trigger if content['customer']['auto_collection'] == OFFLINE
       end
     end
 

@@ -27193,6 +27193,9 @@
         },
         "discount": {
           "type": "integer"
+        },
+        "offline": {
+          "type": "boolean"
         }
       }
     },
