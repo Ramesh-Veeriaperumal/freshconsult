@@ -5166,7 +5166,7 @@ $.fn.insertExternal = function(html)
 	        // Check Chrome
 	        if (((_ref = this.currentevent.originalEvent) != null ? _ref.clipboardData : void 0) != null) {
 	            clipboardData = this.currentevent.originalEvent.clipboardData;
-
+                this.currentevent.preventDefault();
 	            if (clipboardData.items) {
 					var items = clipboardData.items;
 				    var blob = items[0].getAsFile();
