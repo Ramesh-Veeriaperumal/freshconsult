@@ -66,6 +66,7 @@ class Account < ActiveRecord::Base
   after_commit :update_help_widgets, on: :update, if: [:help_widget_enabled?, :branding_feature_toggled?]
   after_commit :create_rts_account, on: :create
 
+  after_commit :create_freshvisual_configs, on: :create
   after_commit :update_freshvisual_configs, on: :update, if: :call_freshvisuals_api?
   after_commit :update_account_domain_in_sandbox, if: -> { account_domain_changed? && sandbox_account_id.present? }
   after_commit :trigger_bitmap_feature_callback, if: :advanced_ticket_scopes_removed
@@ -700,9 +701,11 @@ class Account < ActiveRecord::Base
       previous_changes[:plan_features].present? && reports_features.any? { |f| safe_send("#{f}_feature_toggled?") }
     end
 
-    def update_freshvisual_configs
+    def enqueue_freshvisual_configs
       Reports::FreshvisualConfigs.perform_async
     end
+    alias create_freshvisual_configs enqueue_freshvisual_configs
+    alias update_freshvisual_configs enqueue_freshvisual_configs
 
     def domain_already_exists?
       domain_mapping = DomainMapping.find_by_domain(full_domain) if full_domain.present?
