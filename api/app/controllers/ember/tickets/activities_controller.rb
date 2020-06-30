@@ -4,10 +4,11 @@ module Ember
       include Helpdesk::Activities::ActivityMethods
       include TicketConcern
       include HelperConcern
+      include AdvancedTicketScopes
 
       decorate_views
 
-      before_filter :ticket_permission?, :load_ticket
+      before_filter :set_all_agent_groups_permission, :ticket_permission?, :load_ticket
 
       def index
         super
