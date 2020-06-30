@@ -165,7 +165,13 @@
         "_verify_domain_url": "api/v1/whitelabel/domains/verify",
         "_remove_domain_url": "api/v1/whitelabel/domains",
         "_lang_detect_path": "api/v1/detect/lang",
-        "_dkim_host": "https://mailservicesyd.freshdesk.com"
+        "_dkim_host": "https://mailservicesyd.freshdesk.com",
+        "envoy_egress": {
+          "_host_address": "http://127.0.0.1",
+          "_host_port": "8183",
+          "_lang_host_address": "http://127.0.0.1",
+          "_lang_host_port": "8184"
+        }
       },
       "product_feedback": {
         "api_key": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:ozXZlIiw5YrHDZ6aUPXmvFhMF2B0shv2:g0lCZ6B0t7o5gMGwVWbbyqufAmyP6AfeISHU+99khZnAPB2p]",
@@ -1014,6 +1020,10 @@
           "_freshcaller": "112441045622046735",
           "_freshsales": "112440691855310861",
           "_freshchat": "105250068925661185"
+        },
+        "envoy_egress": {
+          "_address": "http://127.0.0.1",
+          "_port": "8182"
         }
       },
       "database": {
@@ -1120,7 +1130,13 @@
           "service_auth_token": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:BdALj73x1pVWaYrCqY1IvWuVXOHzwUJo:h9KlLkALjY0ka7oh2zCR34hv4G1Em8z48tFHEcdpOv1b2ixp1DTySY7+jsVZC0o3]",
           "_host_name": "search.internal.podapsoutheast2.freshdesk.com",
           "_product_name": "freshdesk",
-          "_search_service": "internal-search-service-1234181765.ap-southeast-2.elb.amazonaws.com"
+          "_search_service": "internal-search-service-1234181765.ap-southeast-2.elb.amazonaws.com",
+          "envoy_egress": {
+            "_v2_host_address": "http://127.0.0.1",
+            "_v2_host_port": "8185",
+            "_search_service_address": "http://127.0.0.1",
+            "_search_service_port": "8186"
+          }
         },
         "_count": [
           {
@@ -1247,7 +1263,12 @@
             "_label": "account_additional_settings"
           }
         },
-        "_api_endpoint": "https://central-sydney.freshworksapi.com/collector"
+        "_api_endpoint": "https://central-sydney.freshworksapi.com/collector",
+        "envoy_egress": {
+          "_endpoint_address": "http://127.0.0.1",
+          "_endpoint_port": "8187",
+          "_endpoint_path": "/collector"
+        }
       },
       "channel_api_keys": {
         "zapier": {
@@ -1410,7 +1431,11 @@
         "signing_key": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:xMu4rNkEmTGmdzrqvfrR480pgPisx7nO:7c15BRAQUMKd9iTomz40RlTOxFmt6hdTYx8tl3w6z3DwU3R9RMTr2kvm1bwII0sG6LabkKP8ehXjC13bsAX2MgPHvNQ3AymJd9Cs+96NcTAO7SvUnEQd+mHZ1RuXv1AyBcLqgoU7tr8i47KBAbow5sTpnKgNyFhswS7ggYRYWEfXVMnUs5QAWZU+nmJynEVF]",
         "email_cipher_key": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:ZOnODZExx2FrbUd3yibjGix8WoDS4wPK:mmfH1Wr0VBvf687/cThiN6mSzn2eHXUFMjYGmto8usvbZRBjG2204iti9gc4Oo8kzZcWmwA=]",
         "_jwt_default_expiry": "30",
-        "_service_url": "proactiveservice.internal.podapsoutheast2.freshdesk.com"
+        "_service_url": "proactiveservice.internal.podapsoutheast2.freshdesk.com",
+        "envoy_egress": {
+          "_service_address": "http://127.0.0.1",
+          "_service_port": "8188"
+        }
       },
       "facebook_gateway": {
         "jwt_secret": "EJ[1:rakRMOKJDtwXLrulgvOdc0KOLbFUq0StgEwTIeZocFs=:FFPbEoayz4pGX9WcZeGt3f58WRkvUfSs:N9Kt45ylfxJ1zoPLampAewKuKaFYecnr3Vu+BM+0s3U=]",

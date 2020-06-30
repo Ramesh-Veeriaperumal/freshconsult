@@ -164,7 +164,13 @@
         "_verify_domain_url": "api/v1/whitelabel/domains/verify",
         "_remove_domain_url": "api/v1/whitelabel/domains",
         "_lang_detect_path": "api/v1/detect/lang",
-        "_dkim_host": "https://mailserviceeuc.freshdesk.com"
+        "_dkim_host": "https://mailserviceeuc.freshdesk.com",
+        "envoy_egress": {
+          "_host_address": "http://127.0.0.1",
+          "_host_port": "8183",
+          "_lang_host_address": "http://127.0.0.1",
+          "_lang_host_port": "8184"
+        }
       },
       "product_feedback": {
         "api_key": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:stgDrgIhK/bD0WRPFE6dYU5Yf59DT6or:o1arDB7Gw/uV7NNxXQ1qQEMgihV9DtzaP/v+RbM/OSyk7CZQ]",
@@ -1022,6 +1028,10 @@
           "_freshcaller": "78908095707496451",
           "_freshsales": "78786693666979841",
           "_freshchat": "105248685552238593"
+        },
+        "envoy_egress": {
+          "_address": "http://127.0.0.1",
+          "_port": "8182"
         }
       },
       "database": {
@@ -1228,7 +1238,13 @@
           "service_auth_token": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:L9gNtj4SaAZSUIkGjktzupHbpqNUg9DG:jVVLzr8KjcheAYxdbtx1irkSVQecLfxPRBkud8bKEApIKwOZoZY3x32PofnDQm/u]",
           "_host_name": "search.internal.podeucentral1.freshdesk.com",
           "_product_name": "freshdesk",
-          "_search_service": "search-service.internal.podeucentral1.freshdesk.com"
+          "_search_service": "search-service.internal.podeucentral1.freshdesk.com",
+          "envoy_egress": {
+            "_v2_host_address": "http://127.0.0.1",
+            "_v2_host_port": "8185",
+            "_search_service_address": "http://127.0.0.1",
+            "_search_service_port": "8186"
+          }
         },
         "_count": [
           {
@@ -1357,7 +1373,12 @@
             "_label": "account_additional_settings"
           }
         },
-        "_api_endpoint": "https://central-euc.freshworksapi.com/collector"
+        "_api_endpoint": "https://central-euc.freshworksapi.com/collector",
+        "envoy_egress": {
+          "_endpoint_address": "http://127.0.0.1",
+          "_endpoint_port": "8187",
+          "_endpoint_path": "/collector"
+        }
       },
       "channel_api_keys": {
         "zapier": {
@@ -1520,7 +1541,11 @@
         "signing_key": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:VeGlTbfBNWKW1kuuRZdHTxAPv9pjQjFm:vWbifJiHKmBNX+8oi+WlF+ABgSGoPY2t+UaR0YG63fgJ/zDoJW690PO7VzoUPPBO+S3903HRsN1sdLOyngk6w7amlexwYpul2Tcb+e1babbMmAbJJcqwjCVFpccLtEzYBtF5Yl00mF1esgtv+UoRaOW+7T4L3JHMRfZ2ea/xDwvg6IW6GM+COFP3xDpdSlq4]",
         "email_cipher_key": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:w006iN7e1sJtLMqby6dQuhFo8mMDIyEp:Q7/BV+6T/2CfFb+PE3/U6cnhlAXtOIQIWcmLpGl2IjCyXY7UUUmnpo3BWVZ1HSs0U/oSPhU=]",
         "_jwt_default_expiry": "30",
-        "_service_url": "proactiveservice.internal.podeucentral1.freshdesk.com"
+        "_service_url": "proactiveservice.internal.podeucentral1.freshdesk.com",
+        "envoy_egress": {
+          "_service_address": "http://127.0.0.1",
+          "_service_port": "8188"
+        }
       },
       "facebook_gateway": {
         "jwt_secret": "EJ[1:tb6KZduJPId4Wr5JVKz2hIzJl18/UtcvTVkP/30BtzY=:liqVtLn7NhA3PUkdzMJ48ipEeZgU2YJX:eP5YIXYboOCI01Ujc0/3Os4kNKejLHBdNZPTb8IokU8=]",
