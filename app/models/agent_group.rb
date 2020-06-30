@@ -83,6 +83,7 @@ class AgentGroup < ActiveRecord::Base
     MemcacheKeys.delete_from_cache(format(ACCOUNT_AGENT_GROUPS_OPTAR, account_id: Account.current.id))
     MemcacheKeys.delete_from_cache(format(ACCOUNT_AGENT_GROUPS_ONLY_IDS, account_id: Account.current.id))
     MemcacheKeys.delete_from_cache(format(ALL_AGENT_GROUPS_CACHE_FOR_AN_AGENT, account_id: Account.current.id, user_id: user_id)) if user_id.present?
+    MemcacheKeys.delete_from_cache(format(AGENT_CONTRIBUTION_ACCESS_GROUPS, account_id: Account.current.id, user_id: user_id)) if user_id.present?
   end
 
   def clear_agent_groups_hash_cache

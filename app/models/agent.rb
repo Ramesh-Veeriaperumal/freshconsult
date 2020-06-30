@@ -344,6 +344,13 @@ class Agent < ActiveRecord::Base
     agent_group.map(&:group_id).sort
   end
 
+  def agent_contribution_group_ids
+    agent_group = Account.current.contribution_agent_groups_from_cache(user_id)
+    group_ids = agent_group.map(&:group_id).sort
+    Rails.logger.info "AdvancedScope :: ContributionAgentGroups :: UserID::#{user_id} :: Groups :: #{group_ids}"
+    group_ids
+  end
+
   def valid_groups_ids
     @valid_groups_ids ||= Account.current.groups_from_cache.map(&:id).sort
   end

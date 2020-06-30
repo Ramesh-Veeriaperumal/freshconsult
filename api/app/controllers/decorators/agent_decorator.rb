@@ -36,7 +36,7 @@ class AgentDecorator < ApiDecorator
     if Account.current.freshcaller_enabled?
       agent_info[:freshcaller_agent] = record.freshcaller_agent.present? ? record.freshcaller_agent.try(:fc_enabled) : false
     end
-    agent_info[:contribution_group_ids] = record.contribution_group_ids if Account.current.advanced_ticket_scopes_enabled? && !record.field_agent_check_using_cache?
+    agent_info[:contribution_group_ids] = record.agent_contribution_group_ids if Account.current.advanced_ticket_scopes_enabled? && !record.field_agent_check_using_cache?
     agent_info[:freshchat_agent] = record.agent_freshchat_enabled? if Account.current.omni_chat_agent_enabled?
     agent_info.merge!(gamification_options)
     agent_info

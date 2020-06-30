@@ -1,10 +1,11 @@
 require_relative '../../test_helper'
-['agents_test_helper.rb', 'privileges_helper.rb', 'attachments_test_helper.rb'].each { |file| require Rails.root.join('test', 'api', 'helpers', file) }
+['advanced_scope_test_helper.rb', 'agents_test_helper.rb', 'privileges_helper.rb', 'attachments_test_helper.rb'].each { |file| require Rails.root.join('test', 'api', 'helpers', file) }
 class Ember::AgentsControllerTest < ActionController::TestCase
   include AgentsTestHelper
   include PrivilegesHelper
   include AttachmentsTestHelper
   include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
+  include AdvancedScopeTestHelper
 
   SEARCH_SETTINGS_PARAMS = {
     search_settings: {
@@ -861,5 +862,26 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     assert_equal json_response['read_only'], false
   ensure
     User.any_instance.unstub(:privilege?)
+  end
+
+  def test_agent_index_with_cache
+    Account.current.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+    3.times do
+      add_test_agent(@account, role: @account.roles.where(name: 'Agent').first.id)
+    end
+    user_one = @account.agents.first.user
+    user_two = @account.agents.second.user
+    memcache_key = MemcacheKeys::AGENT_CONTRIBUTION_ACCESS_GROUPS
+    create_agent_group_with_read_access(@account, @account.agents.first.user)
+    create_agent_group_with_read_access(@account, @account.agents.second.user)
+    assert_nothing_raised do
+      MemcacheKeys.stubs(:get_from_cache).at_least_once
+      MemcacheKeys.expects(:get_from_cache).with(format(memcache_key, account_id: @account.id, user_id: user_one.id)).at_least_once
+      MemcacheKeys.expects(:get_from_cache).with(format(memcache_key, account_id: @account.id, user_id: user_two.id)).at_least_once
+      get :index, controller_params(version: 'private')
+    end
+    assert_response 200
+  ensure
+    Account.current.unstub(:advanced_ticket_scopes_enabled?)
   end
 end

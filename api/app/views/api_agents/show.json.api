@@ -33,5 +33,5 @@ end
 response_hash[:freshchat_agent] = @item.agent_freshchat_enabled? if Account.current.omni_chat_agent_enabled?
 response_hash[:agent_level_id] = @item.scoreboard_level_id if Account.current.gamification_enabled? && Account.current.gamification_enable_enabled?
 response_hash[:contact][:avatar] = AttachmentDecorator.new(user.avatar).to_hash if user.avatar.present?
-response_hash[:contribution_group_ids] = @item.contribution_group_ids if Account.current.advanced_ticket_scopes_enabled? && !@item.field_agent_check_using_cache?
+response_hash[:contribution_group_ids] = @item.agent_contribution_group_ids if Account.current.advanced_ticket_scopes_enabled? && !@item.field_agent_check_using_cache?
 response_hash.to_json
