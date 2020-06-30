@@ -1,6 +1,7 @@
 class Import::Customers::Base
   include Helpdesk::ToggleEmailNotification
   include ImportCsvUtil
+  include CustomerImportConstants
   include Redis::RedisKeys
   include Redis::OthersRedis
 
@@ -64,6 +65,8 @@ class Import::Customers::Base
     completed_rows = 0
 
     CSVBridge.parse(content_of(csv_file)).each_slice(IMPORT_BATCH_SIZE).with_index do |rows, index|
+      raise CSVBridge::MalformedCSVError unless valid_csv_records? rows
+
       @failed_count = 0
       rows.each_with_index do |row, inner_index|
         row = row.collect { |r| Helpdesk::HTMLSanitizer.clean(r.to_s).gsub(/&amp;/, AND_SYMBOL) }
@@ -83,6 +86,14 @@ class Import::Customers::Base
     NewRelic::Agent.notice_error(e, {:description => 
       "The file format is not supported. Please check the CSV file format!"})
     raise e
+  end
+
+  def valid_csv_records?(rows)
+    records = Nokogiri::HTML(rows.join(','))
+    records.traverse do |node|
+      return false if INVALID_FILE_TAGS.include?(node.name)
+    end
+    true
   end
   
   def stop_redis_key

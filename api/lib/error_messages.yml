@@ -9,6 +9,7 @@ api_error_messages:
   invalid_format: "It should be in the '%{accepted}' format"
   invalid_date: "It should be a valid date in the '%{accepted}' format"
   array_invalid_format: "It should contain elements that are in the '%{accepted}' format"
+  invalid_content_format: "It should contain only valid '%{accepted}' contents"
   not_included: "It should be one of these values: '%{list}'"
   max_agents_reached: "You have reached the maximum number of agents %{max_count} your subscription allows. You need to delete an existing agent or contact your account administrator to purchase additional agents."
   max_field_agents_reached: "You have reached the maximum number of field technicians your subscription allows. Please delete an existing field technician or contact your account administrator to purchase additional seats."
