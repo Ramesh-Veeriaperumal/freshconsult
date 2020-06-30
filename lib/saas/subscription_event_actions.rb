@@ -282,6 +282,5 @@ class SAAS::SubscriptionEventActions
       if account.field_service_management_toggle_enabled? && account.field_service_management_enabled?
         account.add_feature(:dynamic_sections) unless account.has_feature?(:dynamic_sections)
       end
-      account.add_feature(:location_tagging) if account.launched?(:launch_location_tagging) && old_plan.subscription_plan.display_name.eql?('Sprout')
     end
 end
