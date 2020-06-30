@@ -27,6 +27,7 @@ class Portal < ActiveRecord::Base
 
   api_accessible :central_publish_destroy do |br|
     br.add :id
+    br.add :portal_url
     br.add :account_id
   end
 
