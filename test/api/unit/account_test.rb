@@ -624,4 +624,21 @@ class AccountTest < ActionView::TestCase
     Account.current.rollback(:freshid_org_v2)
     AccountAdditionalSettings.any_instance.unstub(:additional_settings)
   end
+
+  def test_should_not_show_omnichannel_banner_for_accounts_with_pending_cancellation_request
+    Account.current.launch(:explore_omnichannel_feature)
+    Account.current.launch(:freshid_org_v2)
+    AccountAdditionalSettings.any_instance.stubs(:additional_settings).returns({})
+    Account.any_instance.stubs(:account_cancellation_requested?).returns(true)
+    SubscriptionPlan.any_instance.stubs(:omni_plan?).returns(false)
+    Subscription.any_instance.stubs(:state).returns('active')
+    refute Account.current.show_omnichannel_banner?
+  ensure
+    Account.current.rollback(:explore_omnichannel_feature)
+    Account.current.rollback(:freshid_org_v2)
+    AccountAdditionalSettings.any_instance.unstub(:additional_settings)
+    Account.any_instance.unstub(:account_cancellation_requested?)
+    SubscriptionPlan.any_instance.unstub(:omni_plan?)
+    Subscription.any_instance.unstub(:state)
+  end
 end
