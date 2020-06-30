@@ -35,6 +35,7 @@ module Ember
     DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
     SINGULAR_RESPONSE_FOR = %w(show create update split_note update_properties execute_scenario).freeze
 
+    before_filter :set_all_agent_groups_permission, only: [:latest_note]
     before_filter :ticket_permission?, only: [:latest_note, :split_note, :vault_token]
     before_filter :load_note, only: [:split_note]
     before_filter :disable_notification, only: [:update, :update_properties], if: :notification_not_required?
