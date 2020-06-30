@@ -988,7 +988,7 @@ module ApiTicketsTestHelper
         source: item.source,
         company_id: item.company_id,
         status: item.status,
-        permission: User.current.has_ticket_permission?(item),
+        permission: User.current.has_read_ticket_permission?(item),
         stats: ticket_states_pattern(item.ticket_states, item.status),
         subject: item.subject,
         product_id: item.schema_less_ticket.try(:product_id),
@@ -1237,6 +1237,19 @@ module ApiTicketsTestHelper
   def create_linked_tickets
     ticket = create_ticket
     tracker_ticket = create_tracker_ticket
+    @ticket_id = ticket.display_id
+    @tracker_id = tracker_ticket.display_id
+    link_to_tracker(ticket, tracker_ticket)
+  end
+
+  def create_linked_tickets_with_group(ticket_group_id, tracker_group_id = nil)
+    ticket = create_ticket
+    ticket.group_id = ticket_group_id
+    tracker_ticket = create_tracker_ticket
+    if tracker_group_id
+      tracker_ticket.group_id = tracker_group_id
+      tracker_ticket.save!
+    end
     @ticket_id = ticket.display_id
     @tracker_id = tracker_ticket.display_id
     link_to_tracker(ticket, tracker_ticket)

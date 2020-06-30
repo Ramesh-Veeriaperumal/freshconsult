@@ -4,7 +4,9 @@ module Ember
       include TicketConcern
       include HelperConcern
       include AssociateTicketsHelper
+      include AdvancedTicketScopes
 
+      before_filter :set_all_agent_groups_permission, only: [:prime_association, :associated_tickets]
       before_filter :ticket_permission?
       before_filter :load_object
       before_filter :validate_filter_params, only: [:associated_tickets]

@@ -1,10 +1,13 @@
 require_relative '../../../test_helper'
+require Rails.root.join('test', 'api', 'helpers', 'advanced_scope_test_helper.rb')
+
 module Ember
   module Tickets
     class AssociatesControllerTest < ActionController::TestCase
       include ApiTicketsTestHelper
       include CannedResponsesTestHelper
       include AdvancedTicketingTestHelper
+      include AdvancedScopeTestHelper
 
       # Tests for prime association for related/child tickets
       # 1. valid related/child ticket id
@@ -446,6 +449,98 @@ module Ember
         end
       end
 
+      def test_view_assocations_advanced_ticket_scope_off
+        enable_adv_ticketing([:link_tickets]) do
+          begin
+            @account = Account.first
+            Account.any_instance.stubs(:current).returns(@account)
+            Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(false)
+            agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+            agent_group = create_agent_group_with_read_access(@account, agent)
+            User.any_instance.stubs(:current).returns(agent)
+            create_linked_tickets_with_group(agent_group.group_id)
+            broadcast_note = create_broadcast_note(@tracker_id)
+            create_broadcast_message(@tracker_id, broadcast_note.id)
+            login_as(agent)
+            get :prime_association, construct_params({ version: 'private', id: @ticket_id }, false)
+            assert_response 403
+          ensure
+            Account.any_instance.unstub(:current)
+            Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+            User.any_instance.unstub(:current)
+          end
+        end
+      end
+
+      def test_view_assocations_advanced_ticket_scope_on
+        enable_adv_ticketing([:link_tickets]) do
+          begin
+            @account = Account.first
+            Account.any_instance.stubs(:current).returns(@account)
+            Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+            agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+            agent_group = create_agent_group_with_read_access(@account, agent)
+            User.any_instance.stubs(:current).returns(agent)
+            create_linked_tickets_with_group(agent_group.group_id)
+            broadcast_note = create_broadcast_note(@tracker_id)
+            create_broadcast_message(@tracker_id, broadcast_note.id)
+            login_as(agent)
+            get :prime_association, construct_params({ version: 'private', id: @ticket_id }, false)
+            assert_response 200
+            related_ticket = Helpdesk::Ticket.where(display_id: @ticket_id).first
+            pattern = prime_association_pattern(related_ticket).merge(latest_broadcast_pattern(@tracker_id))
+            match_json(pattern)
+          ensure
+            Account.any_instance.unstub(:current)
+            Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+            User.any_instance.unstub(:current)
+          end
+        end
+      end
+
+      def test_link_tickets_associations_with_advanced_ticket_scope_off
+        enable_adv_ticketing([:link_tickets]) do
+          begin
+            @account = Account.first
+            Account.any_instance.stubs(:current).returns(@account)
+            Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(false)
+            agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+            agent_group = create_agent_group_with_read_access(@account, agent)
+            User.any_instance.stubs(:current).returns(agent)
+            create_linked_tickets_with_group(agent_group.group_id)
+            login_as(agent)
+            get :associated_tickets, construct_params({ version: 'private', id: @tracker_id }, false)
+            assert_response 403
+          ensure
+            Account.any_instance.unstub(:current)
+            Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+            User.any_instance.unstub(:current)
+          end
+        end
+      end
+
+      def test_link_tickets_associations_with_advanced_ticket_scope_on
+        enable_adv_ticketing([:link_tickets]) do
+          begin
+            @account = Account.first
+            Account.any_instance.stubs(:current).returns(@account)
+            Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+            agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+            agent_group = create_agent_group_with_read_access(@account, agent)
+            User.any_instance.stubs(:current).returns(agent)
+            create_linked_tickets_with_group(agent_group.group_id, agent_group.group_id)
+            login_as(agent)
+            get :associated_tickets, construct_params({ version: 'private', id: @tracker_id }, false)
+            assert_response 200
+            tracker_ticket = Helpdesk::Ticket.where(display_id: @tracker_id).first
+            match_json(associations_pattern(tracker_ticket))
+          ensure
+            Account.any_instance.unstub(:current)
+            Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+            User.any_instance.unstub(:current)
+          end
+        end
+      end
     end
   end
 end
