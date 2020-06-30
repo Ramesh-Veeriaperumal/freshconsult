@@ -203,28 +203,6 @@ module Ember
       Account.any_instance.unstub(:next_response_sla_enabled?)
     end
 
-    def test_index_with_fb_ticket
-      ticket = create_ticket_from_fb_post
-      get :index, controller_params(version: 'private', filter: 'all_tickets')
-      assert_response 200
-      response_body = JSON.parse(response.body)
-      fetched_ticket = response_body.first
-      assert_equal fetched_ticket['fb_post']['msg_type'], ticket.fb_post.msg_type
-    ensure
-      ticket.destroy
-    end
-
-    def test_index_with_twitter_ticket
-      ticket = create_twitter_ticket
-      get :index, controller_params(version: 'private', filter: 'all_tickets')
-      assert_response 200
-      response_body = JSON.parse(response.body)
-      fetched_ticket = response_body.first
-      assert_equal fetched_ticket['tweet']['tweet_type'], ticket.tweet.tweet_type.to_s
-    ensure
-      ticket.destroy
-    end
-
     def test_index_with_custom_file_field
       custom_field = create_custom_field_dn('test_signature_file', 'file')
       ticket = create_ticket

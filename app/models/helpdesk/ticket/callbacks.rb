@@ -858,10 +858,6 @@ private
     build_schema_less_ticket unless schema_less_ticket
     schema_less_ticket.account_id ||= account_id
     assign_sender_email
-
-    # Storing twitter/FB type for returning in ticket list api.
-    self.tweet_type = tweet.tweet_type if (Account.current.has_feature?(:advanced_twitter) || Account.current.basic_twitter_enabled?) && twitter?
-    self.fb_msg_type = fb_post.msg_type if (Account.current.has_feature?(:advanced_facebook) || Account.current.basic_facebook_enabled?) && facebook?
   end
 
   def assign_sender_email

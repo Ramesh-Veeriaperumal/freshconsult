@@ -42,7 +42,3 @@ allOf:
         type: array
         items:
           $ref: '#/definitions/extended_cloud_file'
-      tweet:
-        $ref: '#/definitions/tweet_post'
-      fb_post:
-        $ref: '#/definitions/fb_post'
