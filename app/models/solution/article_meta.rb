@@ -37,6 +37,12 @@ class Solution::ArticleMeta < ActiveRecord::Base
 		:through => :solution_folder_meta,
 		:class_name => "Solution::Folder"
 
+    has_one :solution_platform_mapping,
+        as: :mappable,
+        class_name: 'SolutionPlatformMapping',
+        autosave: true,
+        dependent: :destroy
+
 	acts_as_list :scope => :solution_folder_meta
 
 	has_one :current_article_body, :class_name => "Solution::ArticleBody", :foreign_key => :article_id, :primary_key => :current_child_id

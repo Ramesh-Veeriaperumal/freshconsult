@@ -10,6 +10,8 @@ module ApiSolutions
     include ContactSegmentsTestHelper
     include CompanySegmentsTestHelper
     include CoreSolutionsTestHelper
+    include SolutionsPlatformsTestHelper
+    include PrivilegesHelper
 
     def setup
       super
@@ -486,6 +488,169 @@ module ApiSolutions
       assert_equal "http://#{@request.host}/api/v2/solutions/folders/#{result['id']}", response.headers['Location']
       assert_equal UnicodeSanitizer.remove_4byte_chars('hey 😅 folder name'), result['name']
       assert_equal UnicodeSanitizer.remove_4byte_chars('hey 😅 folder description'), result['description']
+    end
+
+    def test_create_folder_with_visibility_anyone_and_platforms
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      Account.current.launch(:kbase_omni_bundle)
+      category_meta = get_category
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1, platforms: { ios: true, web: false, android: true } })
+      assert_response 201
+      result = parse_response(@response.body)
+      assert_equal "http://#{@request.host}/api/v2/solutions/folders/#{result['id']}", response.headers['Location']
+      match_json(solution_folder_pattern(Solution::Folder.where(parent_id: result['id']).first))
+    ensure
+      Account.any_instance.unstub(:omni_bundle_account?)
+      Account.current.rollback :kbase_omni_bundle
+    end
+
+    def test_create_folder_with_visibility_not_anyone_and_platforms
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      Account.current.launch(:kbase_omni_bundle)
+      category_meta = get_category
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 2, platforms: { ios: true, web: false, android: true } })
+      assert_response 400
+      result = parse_response(@response.body)
+      match_json([bad_request_error_pattern('platforms', :cant_set_platforms, code: :incompatible_field)])
+    ensure
+      Account.any_instance.unstub(:omni_bundle_account?)
+      Account.current.rollback :kbase_omni_bundle
+    end
+
+    def test_create_folder_with_platforms_and_omni_feature_disabled
+      category_meta = get_category
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1, platforms: { ios: true, web: false, android: true } })
+      assert_response 403
+      match_json(validation_error_pattern(bad_request_error_pattern('properties[:platforms]', :require_feature, feature: :omni_bundle_2020, code: :access_denied)))
+    end
+
+    def test_create_folder_with_visibility_anyone_with_platforms_and_tags
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      Account.current.launch(:kbase_omni_bundle)
+      category_meta = get_category
+      tag = Faker::Lorem.word
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1, platforms: { ios: true, web: false, android: true }, tags: [tag] })
+      assert_response 201
+      result = parse_response(@response.body)
+      assert_equal "http://#{@request.host}/api/v2/solutions/folders/#{result['id']}", response.headers['Location']
+      match_json(solution_folder_pattern(Solution::Folder.where(parent_id: result['id']).first))
+    ensure
+      Account.any_instance.unstub(:omni_bundle_account?)
+      Account.current.rollback :kbase_omni_bundle
+    end
+
+    def test_create_folder_with_platforms_and_tags_without_privilege
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      Account.current.launch(:kbase_omni_bundle)
+      remove_privilege(User.current, :create_tags)
+      category_meta = get_category
+      tags = Faker::Lorem.words(3).uniq
+      tags = tags.map do |tag|
+        tag = "#{tag}_solutions_#{Time.now.to_i}"
+        assert_equal @account.tags.map(&:name).include?(tag), false
+        tag
+      end
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1, platforms: { ios: true, web: false, android: true }, tags: tags })
+      assert_response 400
+      add_privilege(User.current, :create_tags)
+    ensure
+      Account.any_instance.unstub(:omni_bundle_account?)
+      Account.current.rollback :kbase_omni_bundle
+    end
+
+    def test_create_folder_with_visibility_not_anyone_with_platforms_and_tags
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      Account.current.launch(:kbase_omni_bundle)
+      category_meta = get_category
+      tag = Faker::Lorem.word
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 2, platforms: { ios: true, web: false, android: true }, tags: [tag] })
+      assert_response 400
+      result = parse_response(@response.body)
+      match_json([bad_request_error_pattern('platforms', :cant_set_platforms, code: :incompatible_field), bad_request_error_pattern('tags', :cant_set_tags, code: :incompatible_field)])
+    ensure
+      Account.any_instance.unstub(:omni_bundle_account?)
+      Account.current.rollback :kbase_omni_bundle
+    end
+
+    def test_update_folder_with_tags_and_platform_with_omni_disabled
+      sample_folder = get_folder
+      tag = Faker::Lorem.word
+      visibility = 1
+      params_hash = { visibility: visibility, platforms: { web: true }, tags: [tag] }
+      put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
+      assert_response 403
+    end
+
+    def test_update_folder_visibility_allusers_and_platform_tags
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      Account.current.launch(:kbase_omni_bundle)
+      visibility = 1
+      sample_folder = get_folder
+      tag = Faker::Lorem.word
+      params_hash = { visibility: visibility, platforms: { ios: true }, tags: [tag] }
+      put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
+      assert_response 200
+      match_json(solution_folder_pattern(sample_folder.reload))
+    ensure
+      Account.any_instance.unstub(:omni_bundle_account?)
+      Account.current.rollback :kbase_omni_bundle
+    end
+
+    def test_update_folder_platforms_and_tags
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      Account.current.launch(:kbase_omni_bundle)
+      sample_folder = get_folder_with_platform_mapping({ ios: false, android: true, web: true })
+      tag = Faker::Lorem.word
+      params_hash = { platforms: { ios: true }, tags: [tag] }
+      put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
+      assert_response 200
+      match_json(solution_folder_pattern(sample_folder.reload))
+    ensure
+      Account.any_instance.unstub(:omni_bundle_account?)
+      Account.current.rollback :kbase_omni_bundle
+    end
+
+    def test_update_folder_disabling_platforms
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      Account.current.launch(:kbase_omni_bundle)
+      sample_folder = get_folder_with_platform_mapping({ ios: false, android: true, web: true })
+      params_hash = { platforms: { android: false } }
+      put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
+      assert_response 200
+      match_json(solution_folder_pattern(sample_folder.reload))
+    ensure
+      Account.any_instance.unstub(:omni_bundle_account?)
+      Account.current.rollback :kbase_omni_bundle
+    end
+
+    def test_update_folder_tags
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      Account.current.launch(:kbase_omni_bundle)
+      tag1 = Faker::Lorem.word
+      sample_folder = get_folder_with_platform_mapping_and_tags({ ios: false, android: true, web: true }, [tag1])
+      tag2 = Faker::Lorem.word
+      folder_tag_count = sample_folder.parent.tags.size
+      params_hash = { tags: [tag2] }
+      put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
+      assert_response 200
+      match_json(solution_folder_pattern(sample_folder.reload))
+    ensure
+      Account.any_instance.unstub(:omni_bundle_account?)
+      Account.current.rollback :kbase_omni_bundle
+    end
+
+    def test_update_folder_disabling_all_platforms
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      Account.current.launch(:kbase_omni_bundle)
+      sample_folder = get_folder_with_platform_mapping({ ios: false, android: true, web: true })
+      params_hash = { platforms: { android: false, web: false } }
+      put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
+      assert_response 200
+      match_json(solution_folder_pattern(sample_folder.reload))
+      assert_equal sample_folder.parent.solution_platform_mapping, nil
+    ensure
+      Account.any_instance.unstub(:omni_bundle_account?)
+      Account.current.rollback :kbase_omni_bundle
     end
 
     # company filter visibility

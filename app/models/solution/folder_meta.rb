@@ -10,6 +10,8 @@ class Solution::FolderMeta < ActiveRecord::Base
 	include Solution::LanguageAssociations
 	include Solution::ApiDelegator
 	include Solution::MarshalDumpMethods
+    include Helpdesk::TagMethods
+    include SolutionHelper
 	
   attr_accessible :visibility, :position, :solution_category_meta_id
 
@@ -46,6 +48,15 @@ class Solution::FolderMeta < ActiveRecord::Base
     class_name: 'SolutionPlatformMapping',
     autosave: true,
     dependent: :destroy
+
+  has_many :tag_uses,
+    class_name: 'Helpdesk::TagUse',
+    as: :taggable,
+    dependent: :destroy
+
+  has_many :tags,
+    class_name: 'Helpdesk::Tag',
+    through: :tag_uses
 
   has_many :contact_filters,
     class_name: 'ContactFilter',
@@ -92,7 +103,7 @@ class Solution::FolderMeta < ActiveRecord::Base
 	PORTAL_CACHEABLE_ATTRIBUTES = ["id", "account_id", "current_child_id", "name", "description",
 	 "visibility", "solution_category_meta_id"]
 
-	before_update :clear_customer_folders, :backup_folder_changes, :clear_segment_folders
+    before_update :clear_customer_folders, :backup_folder_changes, :clear_segment_folders, :clear_platforms_and_tags
 	after_commit :update_search_index, on: :update, :if => :update_es?
   
   after_commit ->(obj) { obj.safe_send(:clear_cache) }, on: :create
@@ -103,6 +114,7 @@ class Solution::FolderMeta < ActiveRecord::Base
 	before_destroy :backup_category
 	after_destroy :delete_article_meta
 	validate :companies_limit_check
+    after_commit :update_article_platform_mapping, on: :update, if: :update_article_platform_mapping?
 
 	alias_method :children, :solution_folders
 
@@ -145,6 +157,43 @@ class Solution::FolderMeta < ActiveRecord::Base
     end
   end
 
+  def platforms=(platform_params)
+    return if platform_params.empty?
+
+    solution_platform_mapping.present? ? update_platform_mapping(platform_params) : create_platform_mapping(platform_params)
+  end
+
+  def update_platform_mapping(platform_params)
+    if any_platforms_enabled?(self, platform_params)
+      solution_platform_mapping.update_attributes(platform_params)
+      @disabled_platforms = platform_params.select { |platform, enabled| !enabled }
+      @platform_updated = true
+    else
+      solution_platform_mapping.destroy
+      tag_uses.destroy tag_uses
+      @platform_mapping_destroyed = true
+    end
+  end
+
+  def create_platform_mapping(platform_params)
+    build_solution_platform_mapping(platform_params) if SolutionPlatformMapping.any_platform_enabled?(platform_params)
+  end
+
+  def tag_attributes=(tag_array)
+    return if tag_array.nil?
+
+    if solution_platform_mapping.present? && !solution_platform_mapping.try(:destroyed?)
+      tag_objects = construct_tags(tag_array)
+      self.tags = tag_objects if array_of_tag_objects?(tag_objects)
+    end
+  end
+
+  def array_of_tag_objects?(tags)
+    return false unless tags && tags.is_a?(Array)
+
+    tags.all? { |tag| tag.is_a?(Helpdesk::Tag) }
+  end
+
 	def add_visibility(visibility, customer_ids, add_to_existing)
     ActiveRecord::Base.transaction do
       add_companies(customer_ids, add_to_existing) if visibility == Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:company_users]
@@ -179,6 +228,16 @@ class Solution::FolderMeta < ActiveRecord::Base
   def clear_segment_folders
     folder_visibility_mapping.where(mappable_type: 'ContactFilter').destroy_all if visibility_changed? && visibility_was == VISIBILITY_KEYS_BY_TOKEN[:contact_segment]
     folder_visibility_mapping.where(mappable_type: 'CompanyFilter').destroy_all if visibility_changed? && visibility_was == VISIBILITY_KEYS_BY_TOKEN[:company_segment]
+  end
+
+  def clear_platforms_and_tags
+    if visibility_changed? && visibility_was == VISIBILITY_KEYS_BY_TOKEN[:anyone]
+      if solution_platform_mapping.present?
+        solution_platform_mapping.destroy
+        @platform_mapping_destroyed = true
+      end
+      tag_uses.destroy tag_uses if tag_uses.present?
+    end
   end
   
 	def visible?(user)
@@ -249,6 +308,15 @@ class Solution::FolderMeta < ActiveRecord::Base
 	  	Rails.logger.debug "Adding delete article_meta job for folder_meta_id: #{id}"
 	  	DeleteSolutionMetaWorker.perform_async(parent_level_id: id, object_type: 'folder_meta')
 		end
+
+        def update_article_platform_mapping
+          Rails.logger.debug "Adding edit article_platform_mapping job for folder_meta_id: #{id}"
+          if @platform_mapping_destroyed
+            UpdateArticlePlatformMappingWorker.perform_async(parent_level_id: id, object_type: 'folder_meta')
+          elsif @disabled_platforms
+            UpdateArticlePlatformMappingWorker.perform_async(parent_level_id: id, object_type: 'folder_meta', disabled_folder_platforms: @disabled_platforms)
+          end
+        end
 
 	def clear_cache
 		Account.current.clear_solution_categories_from_cache
@@ -350,6 +418,10 @@ class Solution::FolderMeta < ActiveRecord::Base
 	def update_es?
 	  (@all_changes.keys & ['visibility', 'solution_category_meta_id']).present? || @companies_updated || @segments_updated
 	end
+
+    def update_article_platform_mapping?
+      @disabled_platforms.present? || @platform_mapping_destroyed
+    end
 
 	def backup_category
 		@category_obj = solution_category_meta

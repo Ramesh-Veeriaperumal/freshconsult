@@ -29,6 +29,22 @@ module SolutionsTestHelper
     result[:company_ids] = folder.solution_folder_meta.customer_ids if folder.parent.visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users]
     result[:contact_segment_ids] = folder.solution_folder_meta.contact_filter_ids if folder.parent.visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:contact_segment]
     result[:company_segment_ids] = folder.solution_folder_meta.company_filter_ids if folder.parent.visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_segment]
+    if Account.current.omni_bundle_account? && Account.current.launched?(:kbase_omni_bundle)
+      result[:platforms] = if expected_output[:platforms].present?
+                             expected_output[:platforms]
+                           elsif folder.parent.solution_platform_mapping.present?
+                             folder.parent.solution_platform_mapping.to_hash
+                           else
+                             SolutionPlatformMapping.default_platform_values_hash
+                           end
+      result[:tags] = if expected_output[:tags].present?
+                        expected_output[:tags]
+                      elsif folder.parent.tags.present?
+                        folder.parent.tags.pluck(:name)
+                      else
+                        []
+                      end
+    end
     result
   end
 

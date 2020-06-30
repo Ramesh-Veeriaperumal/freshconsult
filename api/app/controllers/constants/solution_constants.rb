@@ -3,7 +3,7 @@ module SolutionConstants
 
   CATEGORY_ATTRIBUTES_TO_BE_STRIPPED = %w[name].freeze
 
-  FOLDER_FIELDS = %w[description name visibility company_ids category_id contact_segment_ids company_segment_ids].freeze
+  FOLDER_FIELDS = %w[description name visibility company_ids category_id contact_segment_ids company_segment_ids platforms tags].freeze
 
   FOLDER_FIELDS_PRIVATE_API = FOLDER_FIELDS | %w[article_order]
 

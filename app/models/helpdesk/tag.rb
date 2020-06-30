@@ -60,6 +60,12 @@ class Helpdesk::Tag < ActiveRecord::Base
            :source_type => "Solution::Article",
            :through => :tag_uses
 
+  has_many :folder_meta,
+           class_name: 'Solution::FolderMeta',
+           source: :taggable,
+           source_type: 'Solution::FolderMeta',
+           through: :tag_uses
+
   scope :with_taggable_type, lambda { |taggable_type| {
             :include => :tag_uses,
             :conditions => ["helpdesk_tag_uses.taggable_type = ?", taggable_type] }

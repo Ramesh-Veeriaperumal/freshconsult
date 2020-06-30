@@ -1,6 +1,8 @@
 class Solutions::FolderDecorator < ApiDecorator
   delegate :name, :description, :language_code, :created_at, :updated_at, to: :record
-  delegate :id, :is_default, :position, :article_order, :solution_article_meta, :visibility, :customer_folders, :solution_category_meta_id, :folder_visibility_mapping, to: :parent
+  delegate :id, :is_default, :position, :article_order, :solution_article_meta, :visibility, :customer_folders, :solution_category_meta_id, :folder_visibility_mapping, :solution_platform_mapping, :tags, to: :parent
+
+  include SolutionHelper
 
   def initialize(record, options = {})
     super(record)
@@ -20,6 +22,10 @@ class Solutions::FolderDecorator < ApiDecorator
     response_hash[:company_ids] = company_ids if company_ids_visible?
     response_hash[:contact_segment_ids] = mappable_ids if contact_segment_ids_visible?
     response_hash[:company_segment_ids] = mappable_ids if company_segment_ids_visible?
+    if allow_chat_platform_attributes?
+      response_hash[:platforms] = solution_platform_mapping.present? && (!solution_platform_mapping.try(:destroyed?))? solution_platform_mapping.to_hash : SolutionPlatformMapping.default_platform_values_hash
+      response_hash[:tags] = !solution_platform_mapping.try(:destroyed?) ? tags.pluck(:name) : []
+    end
     if private_api?
       response_hash[:position] = position
       response_hash[:article_order] = article_order

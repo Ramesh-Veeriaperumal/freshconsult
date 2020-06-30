@@ -571,6 +571,15 @@ module SolutionHelper
       content ? content.match(/src\s*=\s*("|')data:((image\/(png|gif|jpg|jpeg|svg\+xml){1})|(text\/(plain|html){1})){1};base64/i) : false
     end
 
+    def allow_chat_platform_attributes?
+      Account.current.omni_bundle_account? && Account.current.launched?(:kbase_omni_bundle)
+    end
+
+    def any_platforms_enabled?(meta, platform_hash)
+      new_platform_values = meta.solution_platform_mapping.modified_new_platform_values(platform_hash)
+      SolutionPlatformMapping.any_platform_enabled?(new_platform_values)
+    end
+
     private
 
       def modify_articles_suggested_hash(articles_suggested)

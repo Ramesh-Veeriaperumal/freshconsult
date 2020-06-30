@@ -4,7 +4,7 @@ class Solution::Object
 	
 	META_ATTRIBUTES = {
 		:solution_category => [:is_default, :portal_ids, :portals, :portal_solution_categories_attributes],
-        :solution_folder => [:visibility, :is_default, :customer_folders_attributes, :article_order, :contact_folders_attributes, :company_folders_attributes],
+        solution_folder: [:visibility, :is_default, :customer_folders_attributes, :article_order, :contact_folders_attributes, :company_folders_attributes, :platforms, :tag_attributes],
 		:solution_article => [:art_type]
 	}
 
@@ -76,7 +76,7 @@ class Solution::Object
 
 	def assign_meta_attributes
 		META_ATTRIBUTES[@obj].each do |attribute|
-			@meta_obj.safe_send("#{attribute}=", @params.delete(attribute)) if @params[attribute].present?
+          @meta_obj.safe_send("#{attribute}=", @params.delete(attribute)) if @params[attribute].present? || (attribute == :tag_attributes)
 		end
 		@meta_obj.account_id = Account.current.id
 	end

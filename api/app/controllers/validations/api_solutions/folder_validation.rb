@@ -1,6 +1,6 @@
 class ApiSolutions::FolderValidation < ApiValidation
-  CHECK_PARAMS_SET_FIELDS = %w[company_ids visibility article_order contact_segment_ids company_segment_ids].freeze
-  attr_accessor :name, :description, :visibility, :company_ids, :article_order, :category_id, :contact_segment_ids, :company_segment_ids
+  CHECK_PARAMS_SET_FIELDS = %w[company_ids visibility article_order contact_segment_ids company_segment_ids platforms tags].freeze
+  attr_accessor :name, :description, :visibility, :company_ids, :article_order, :category_id, :contact_segment_ids, :company_segment_ids, :platforms, :tags
 
   validates :name, data_type: { rules: String, required: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :description, data_type: { rules: String, allow_nil: true  }
@@ -10,6 +10,8 @@ class ApiSolutions::FolderValidation < ApiValidation
   validates :visibility, custom_inclusion: { in: Solution::Constants::VISIBILITY_NAMES_BY_KEY.keys, detect_type: true }
 
   validate :validate_segment_visibility, if: -> { @company_segment_ids.present? || @contact_segment_ids.present? }
+
+  validate :validate_omni_channel_feature, if: -> { @platforms.present? || @tags.present? }
 
   validates :company_ids, custom_absence: { message: :cant_set_company_ids }, if: -> { (errors[:visibility].blank? && company_ids_not_allowed?) }
   validates :company_ids, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true } }, custom_length: { maximum: Solution::Constants::COMPANIES_LIMIT, minimum: 1, message_options: { element_type: :elements } }, unless: -> { errors[:visibility].present? || company_ids_not_allowed? }
@@ -25,10 +27,38 @@ class ApiSolutions::FolderValidation < ApiValidation
 
   validates :category_id, custom_numericality: { only_integer: true, greater_than: 0 }, if: -> { category_id }
 
+  validates :platforms, data_type: { rules: Hash }, hash: { validatable_fields_hash: proc { |x| x.platform_format } }, allow_nil: true
+  validates :platforms, custom_absence: { message: :cant_set_platforms }, if: -> { (errors[:visibility].blank? && platforms_not_allowed?) }
+
+  validates :tags, data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: String, allow_nil: true }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }
+  validates :tags, string_rejection: { excluded_chars: [','] }
+  validates :tags, custom_absence: { message: :cant_set_tags }, if: -> { (errors[:visibility].blank? && tags_not_allowed?) }
+  validates :tags, custom_absence: { message: :cant_set_tags }, if: -> { @platforms.blank? }, on: :create
+
   def initialize(request_params, item, lang_id)
     super(request_params, item)
     @lang_id = lang_id
     @visibility = item.parent.visibility if item.respond_to?(:visibility) && !request_params.key?(:visibility)
+  end
+
+  def platform_format
+    {
+      ios: {
+        data_type: {
+          rules: 'Boolean'
+        }
+      },
+      android: {
+        data_type: {
+          rules: 'Boolean'
+        }
+      },
+      web: {
+        data_type: {
+          rules: 'Boolean'
+        }
+      }
+    }
   end
 
   private
@@ -53,6 +83,14 @@ class ApiSolutions::FolderValidation < ApiValidation
       end
     end
 
+    def platforms_not_allowed?
+      @platforms.present? && (visibility != Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone])
+    end
+
+    def tags_not_allowed?
+      @tags.present? && (visibility != Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone])
+    end
+
     def attributes_to_be_stripped
       SolutionConstants::FOLDER_ATTRIBUTES_TO_BE_STRIPPED
     end
@@ -72,5 +110,18 @@ class ApiSolutions::FolderValidation < ApiValidation
     def segment_visibility_error(field)
       errors[:"properties[:#{field}]"] << :require_feature
       error_options[:"properties[:#{field}]"] = { feature: :segments, code: :access_denied }
+    end
+
+    def validate_omni_channel_feature
+      unless Account.current.omni_bundle_account? && Account.current.launched?(:kbase_omni_bundle)
+        omni_channel_error(:platforms) if @platforms.present?
+        omni_channel_error(:tags) if @tags.present?
+      end
+      errors.blank?
+    end
+
+    def omni_channel_error(field)
+      errors[:"properties[:#{field}]"] << :require_feature
+      error_options[:"properties[:#{field}]"] = { feature: :omni_bundle_2020, code: :access_denied }
     end
 end
