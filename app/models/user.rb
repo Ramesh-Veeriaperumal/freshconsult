@@ -946,6 +946,11 @@ class User < ActiveRecord::Base
     ticket_agent?(ticket) || can_view_all_tickets? || (group_ticket_permission && read_or_write_group_ticket?(ticket))
   end
 
+  def only_read_ticket_permission?(ticket)
+    # Shouldn't have write access privilege , but only read access
+    has_read_ticket_permission?(ticket) && !has_ticket_permission?(ticket)
+  end
+
   # For a customer we need to check if he is the requester of the ticket
   # Or if he is allowed to view tickets from his company
   def has_customer_ticket_permission?(ticket)
