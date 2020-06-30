@@ -1,5 +1,7 @@
 module ApiSearch
   class TicketsController < SearchController
+    include AdvancedTicketScopes
+
     decorate_views
     def index
       fq_builder = Freshquery::Builder.new.query do |builder|
@@ -29,11 +31,23 @@ module ApiSearch
         es_params = {}
         if current_user.restricted?
           es_params[:restricted_responder_id] = current_user.id.to_i
-          es_params[:restricted_group_id]     = current_user.agent_groups.map(&:group_id) if current_user.group_ticket_permission
+          if current_user.group_ticket_permission
+            if advanced_scope_enabled?
+              es_params[:restricted_group_id] = current_user.all_associated_group_ids
+            else
+              es_params[:restricted_group_id] = current_user.associated_group_ids
+            end
+          end
 
           if current_account.shared_ownership_enabled?
             es_params[:restricted_internal_agent_id] = current_user.id.to_i
-            es_params[:restricted_internal_group_id] = current_user.agent_groups.map(&:group_id) if current_user.group_ticket_permission
+            if current_user.group_ticket_permission
+              if advanced_scope_enabled?
+                es_params[:restricted_internal_group_id] = current_user.all_associated_group_ids
+              else
+                es_params[:restricted_internal_group_id] = current_user.associated_group_ids
+              end
+            end
           end
         end
         es_params

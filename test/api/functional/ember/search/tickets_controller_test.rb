@@ -282,5 +282,47 @@ module Ember::Search
       assert_equal response.api_meta[:count], 1
       match_json []
     end
+
+    def test_ember_results_with_restricted_agent_with_scope
+      user = User.current
+      permission = user.agent.ticket_permission
+      group = create_group_with_agents(Account.current, agent_list: [user.id])
+      user.agent.update_attributes(ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      Account.any_instance.stubs(:advanced_scope_enabled?).returns(true)
+      ticket = create_ticket({ priority: 1 }, group)
+      stub_private_search_response([ticket]) do
+        post :results, construct_params(version: 'private', context: 'merge', field: 'display_id')
+      end
+      response = parse_response @response.body
+      assert_response 200
+      assert_equal ticket.display_id, response[0]['id']
+      user.agent.update_attributes(ticket_permission: permission)
+      Account.any_instance.unstub(:advanced_scope_enabled?)
+    ensure
+      group.destroy if group.present?
+      ticket.destroy if ticket.present?
+    end
+
+    def test_ember_results_with_restricted_agent_and_shared_ownership_with_scope
+      user = User.current
+      permission = user.agent.ticket_permission
+      group = create_group_with_agents(Account.current, agent_list: [user.id])
+      user.agent.update_attributes(ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
+      Account.any_instance.stubs(:advanced_scope_enabled?).returns(true)
+      ticket = create_ticket({ status: 1 }, group)
+      stub_private_search_response([ticket]) do
+        post :results, construct_params(version: 'private', context: 'merge', field: 'display_id')
+      end
+      response = parse_response @response.body
+      assert_response 200
+      assert_equal ticket.display_id, response[0]['id']
+      user.agent.update_attributes(ticket_permission: permission)
+      Account.any_instance.unstub(:advanced_scope_enabled?)
+      Account.any_instance.unstub(:shared_ownership_enabled?)
+    ensure
+      group.destroy if group.present?
+      ticket.destroy if ticket.present?
+    end
   end
 end

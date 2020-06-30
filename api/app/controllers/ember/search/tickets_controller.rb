@@ -1,6 +1,8 @@
 module Ember
   module Search
     class TicketsController < SpotlightController
+      include AdvancedTicketScopes
+
       def results
         @tracker = params[:context] == 'tracker'
         @recent_tracker = params[:context] == 'recent_tracker'
@@ -90,11 +92,23 @@ module Ember
             unless @tracker || @recent_tracker || @skip_user_privilege
               if current_user.restricted?
                 es_params[:restricted_responder_id] = current_user.id.to_i
-                es_params[:restricted_group_id] = current_user.agent_groups.map(&:group_id) if current_user.group_ticket_permission
+                if current_user.group_ticket_permission
+                  if advanced_scope_enabled? && params[:context] != 'merge'
+                    es_params[:restricted_group_id] = current_user.all_associated_group_ids
+                  else
+                    es_params[:restricted_group_id] = current_user.associated_group_ids
+                  end
+                end
 
                 if current_account.shared_ownership_enabled?
                   es_params[:restricted_internal_agent_id] = current_user.id.to_i
-                  es_params[:restricted_internal_group_id] = current_user.agent_groups.map(&:group_id) if current_user.group_ticket_permission
+                  if current_user.group_ticket_permission
+                    if advanced_scope_enabled? && params[:context] != 'merge'
+                      es_params[:restricted_internal_group_id] = current_user.all_associated_group_ids
+                    else
+                      es_params[:restricted_internal_group_id] = current_user.associated_group_ids
+                    end
+                  end
                 end
               end
             end
