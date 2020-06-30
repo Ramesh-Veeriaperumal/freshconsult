@@ -4133,14 +4133,12 @@ module Ember
         session = 'lorem-ipsum'
         should_not_create_version(sample_article) do
           stub_version_session(session) do
-            stub_version_content do
-              params_hash = { status: 1, unlock: true, session: session }
-              put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
-              assert_response 200
-              latest_version = get_latest_version(sample_article)
-              assert_equal latest_version.id, draft_version.id
-              assert_version_draft(latest_version)
-            end
+            params_hash = { status: 1, unlock: true, session: session }
+            put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+            assert_response 200
+            latest_version = get_latest_version(sample_article)
+            assert_equal latest_version.id, draft_version.id
+            assert_version_draft(latest_version)
           end
         end
       end
@@ -4192,14 +4190,12 @@ module Ember
         session = 'lorem-ipsum'
         should_not_create_version(sample_article) do
           stub_version_session(session) do
-            stub_version_content do
-              params_hash = { status: 1, unlock: true, session: session }
-              put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
-              assert_response 200
-              latest_version = get_latest_version(sample_article)
-              assert_equal latest_version.id, draft_version.id
-              assert_version_draft(latest_version)
-            end
+            params_hash = { status: 1, unlock: true, session: session }
+            put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+            assert_response 200
+            latest_version = get_latest_version(sample_article)
+            assert_equal latest_version.id, draft_version.id
+            assert_version_draft(latest_version)
           end
         end
       end
@@ -4267,15 +4263,13 @@ module Ember
         session = 'lorem-ipsum'
         should_not_create_version(sample_article) do
           stub_version_session(session) do
-            stub_version_content do
-              params_hash = { status: 2, session: session }
-              put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
-              assert_response 200
-              latest_version = get_latest_version(sample_article)
-              assert_equal latest_version.id, draft_version.id
-              assert_version_published(latest_version)
-              assert_version_live(latest_version)
-            end
+            params_hash = { status: 2, session: session }
+            put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+            assert_response 200
+            latest_version = get_latest_version(sample_article)
+            assert_equal latest_version.id, draft_version.id
+            assert_version_published(latest_version)
+            assert_version_live(latest_version)
           end
         end
       end
@@ -4343,15 +4337,13 @@ module Ember
         session = 'lorem-ipsum'
         should_not_create_version(sample_article) do
           stub_version_session(session) do
-            stub_version_content do
-              params_hash = { status: 2, session: session }
-              put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
-              assert_response 200
-              latest_version = get_latest_version(sample_article)
-              assert_equal latest_version.id, draft_version.id
-              assert_version_published(latest_version)
-              assert_version_live(latest_version)
-            end
+            params_hash = { status: 2, session: session }
+            put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+            assert_response 200
+            latest_version = get_latest_version(sample_article)
+            assert_equal latest_version.id, draft_version.id
+            assert_version_published(latest_version)
+            assert_version_live(latest_version)
           end
         end
       end
@@ -4378,14 +4370,12 @@ module Ember
         session = 'lorem-ipsum'
         should_not_create_version(sample_article) do
           stub_version_session(session) do
-            stub_version_content do
-              params_hash = { status: 2, session: session }
-              put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
-              assert_response 200
-              latest_version = get_latest_version(sample_article)
-              assert_equal latest_version.id, draft_version.id
-              assert_version_published(latest_version)
-            end
+            params_hash = { status: 2, session: session }
+            put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+            assert_response 200
+            latest_version = get_latest_version(sample_article)
+            assert_equal latest_version.id, draft_version.id
+            assert_version_published(latest_version)
           end
         end
       end
@@ -4427,14 +4417,12 @@ module Ember
         session = 'lorem-ipsum'
         should_not_create_version(sample_article) do
           stub_version_session(session) do
-            stub_version_content do
-              params_hash = { status: 1, session: session }
-              put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
-              assert_response 200
-              latest_version = get_latest_version(sample_article)
-              assert_equal latest_version.id, draft_version.id
-              assert_version_draft(latest_version)
-            end
+            params_hash = { status: 1, session: session }
+            put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+            assert_response 200
+            latest_version = get_latest_version(sample_article)
+            assert_equal latest_version.id, draft_version.id
+            assert_version_draft(latest_version)
           end
         end
       end

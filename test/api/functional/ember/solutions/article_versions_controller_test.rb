@@ -288,18 +288,16 @@ module Ember
       def test_restore_without_multilingual
         session = Faker::Name.name
         stub_version_session(session) do
-          stub_version_content do
-            params_hash = { session: session }
-            supported_lang = Language.find_by_code(@account.supported_languages.last)
-            article_meta = get_article_with_versions.parent
-            article_version = article_meta.solution_article_versions.latest.first
-            article = article_meta.safe_send('primary_article')
-            should_not_create_version(article) do
-              Account.any_instance.stubs(:multilingual?).returns(false)
-              post :restore, controller_params(version: 'private', article_id: article_meta.id, id: article_version.version_no, language: supported_lang.code)
-              assert_response 404
-              match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
-            end
+          params_hash = { session: session }
+          supported_lang = Language.find_by_code(@account.supported_languages.last)
+          article_meta = get_article_with_versions.parent
+          article_version = article_meta.solution_article_versions.latest.first
+          article = article_meta.safe_send('primary_article')
+          should_not_create_version(article) do
+            Account.any_instance.stubs(:multilingual?).returns(false)
+            post :restore, controller_params(version: 'private', article_id: article_meta.id, id: article_version.version_no, language: supported_lang.code)
+            assert_response 404
+            match_json(request_error_pattern(:require_feature, feature: 'MultilingualFeature'))
           end
         end
       ensure
@@ -309,16 +307,14 @@ module Ember
       def test_restore_with_latest_current_version
         session = Faker::Name.name
         stub_version_session(session) do
-          stub_version_content do
-            params_hash = { session: session }
-            supported_lang = @account.all_language_objects.first
-            article_meta = get_article_with_versions.parent
-            article_version = article_meta.safe_send("#{supported_lang.to_key}_article").solution_article_versions.latest.first
-            article = article_meta.safe_send('primary_article')
-            should_not_create_version(article) do
-              post :restore, controller_params(version: 'private', article_id: article_meta.id, id: article_version.version_no, language: supported_lang.code)
-              assert_response 412
-            end
+          params_hash = { session: session }
+          supported_lang = @account.all_language_objects.first
+          article_meta = get_article_with_versions.parent
+          article_version = article_meta.safe_send("#{supported_lang.to_key}_article").solution_article_versions.latest.first
+          article = article_meta.safe_send('primary_article')
+          should_not_create_version(article) do
+            post :restore, controller_params(version: 'private', article_id: article_meta.id, id: article_version.version_no, language: supported_lang.code)
+            assert_response 412
           end
         end
       ensure
@@ -334,15 +330,13 @@ module Ember
           create_version_for_article(article)
         end
         stub_version_session(session) do
-          stub_version_content do
-            params_hash = { session: session }
-            article_version = article_meta.safe_send('primary_article').solution_article_versions.second
-            create_draft(article: article) unless article.draft
-            should_not_create_version(article) do
-              Solution::Draft.any_instance.stubs(:locked?).returns(true)
-              post :restore, controller_params(version: 'private', article_id: article_meta.id, id: article_version.version_no)
-              assert_response 400
-            end
+          params_hash = { session: session }
+          article_version = article_meta.safe_send('primary_article').solution_article_versions.second
+          create_draft(article: article) unless article.draft
+          should_not_create_version(article) do
+            Solution::Draft.any_instance.stubs(:locked?).returns(true)
+            post :restore, controller_params(version: 'private', article_id: article_meta.id, id: article_version.version_no)
+            assert_response 400
           end
         end
       end
@@ -540,14 +534,12 @@ module Ember
 
         session = Faker::Name.name
         stub_version_session(session) do
-          stub_version_content do
-            should_not_create_version(article) do
-              article_version = article_meta.safe_send('primary_article').solution_article_versions.latest.second
-              params_hash = { session: article_version.session }
-              post :restore, controller_params(version: 'private', article_id: article_meta.id, id: article_version.version_no)
-              assert_response 400
-              match_json(attachment_size_validation_error_pattern(file_size))
-            end
+          should_not_create_version(article) do
+            article_version = article_meta.safe_send('primary_article').solution_article_versions.latest.second
+            params_hash = { session: article_version.session }
+            post :restore, controller_params(version: 'private', article_id: article_meta.id, id: article_version.version_no)
+            assert_response 400
+            match_json(attachment_size_validation_error_pattern(file_size))
           end
         end
       ensure

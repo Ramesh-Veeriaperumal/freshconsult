@@ -9,7 +9,7 @@ class Solution::ArticleVersion < ActiveRecord::Base
 
   # we are excluding title, and description while feature migration, we will directly get title and description from record itself
   # to avoid sending huge payload to sidekiq servers during migration
-  attr_accessor :from_migration_worker, :triggered_from
+  attr_accessor :from_migration_worker, :triggered_from, :upsert_s3
 
   serialize :meta, Hash
 
@@ -34,7 +34,10 @@ class Solution::ArticleVersion < ActiveRecord::Base
 
   def content
     if @content.nil? # cache the content read from s3
-      @content = if new_record? # for a new record s3 record won't be there and we don't need read from s3
+      # for a new record s3 record won't be there and we don't need read from s3
+      # for autosave and update case we will be always sending title and description. thus we don't need to do read and update. we can do upsert in with s3.update call itself.
+      # if upsert_s3 is true, we expect all the attributes to be assigned that is present in content hash.
+      @content = if new_record? || upsert_s3
                    {}
                  else
                    JSON.parse(AwsWrapper::S3Object.read(Solution::ArticleVersion.content_path(article_id, id), Solution::ArticleVersion.s3_bucket)).with_indifferent_access
