@@ -5,7 +5,7 @@ class Solution::Object
 	META_ATTRIBUTES = {
 		:solution_category => [:is_default, :portal_ids, :portals, :portal_solution_categories_attributes],
         solution_folder: [:visibility, :is_default, :customer_folders_attributes, :article_order, :contact_folders_attributes, :company_folders_attributes, :platforms, :tag_attributes],
-		:solution_article => [:art_type]
+		solution_article: [:art_type, :platforms]
 	}
 
 	PARENT_OF = {

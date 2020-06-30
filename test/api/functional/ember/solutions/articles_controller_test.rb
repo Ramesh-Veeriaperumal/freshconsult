@@ -20,6 +20,7 @@ module Ember
       include SolutionsArticleVersionsTestHelper
       include SolutionsApprovalsTestHelper
       include SolutionsTemplatesTestHelper
+      include SolutionsPlatformsTestHelper
 
       def setup
         super
@@ -3830,6 +3831,192 @@ module Ember
         assert_equal Helpdesk::Activity.count, activities_count + 1
         assert_equal activity_record.activity_data[:title], title
         assert_equal action_name, 'delete_article'
+      end
+
+      # Omni related test cases
+
+      def test_create_with_chat_platform_enabled_omni
+        enable_omni_bundle do
+          folder_meta = get_folder_meta_with_platform_mapping
+          title = Faker::Name.name
+          paragraph = Faker::Lorem.paragraph
+
+          platform_obj = { platforms: chat_platform_params(web: true) }
+          params = { title: title, description: paragraph, status: 1 }
+          params.merge!(platform_obj)
+
+          post :create, construct_params({ version: 'private', id: folder_meta.id }, params)
+          assert_response 201
+          match_json(private_api_solution_article_pattern(Solution::Article.last, platform_obj))
+        end
+      end
+
+      def test_create_with_chat_platform_disabled_omni
+        Account.any_instance.stubs(:omni_bundle_account?).returns(false)
+
+        folder_meta = get_folder_meta_with_platform_mapping
+        title = Faker::Name.name
+        paragraph = Faker::Lorem.paragraph
+
+        params = { title: title, description: paragraph, status: 1 }
+        params.merge!(platforms: chat_platform_params(web: true))
+
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, params)
+        assert_response 403
+        match_json(validation_error_pattern(omni_bundle_required_error_for_platforms))
+      ensure
+        Account.any_instance.unstub(:omni_bundle_account?)
+      end
+
+      def test_create_for_folder_without_chat_platform
+        enable_omni_bundle do
+          folder_meta = get_folder_meta_without_platform_mapping
+          title = Faker::Name.name
+          paragraph = Faker::Lorem.paragraph
+
+          params = { title: title, description: paragraph, status: 1 }
+          params.merge!(platforms: chat_platform_params(web: true))
+
+          post :create, construct_params({ version: 'private', id: folder_meta.id }, params)
+          assert_response 201
+        end
+      end
+
+      def test_update_with_platform_values_with_omni_feature
+        enable_omni_bundle do
+          sample_article = get_article_with_platform_mapping(web: false)
+          platform_values = { platforms: chat_platform_params(web: true) }
+
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, platform_values)
+          assert_response 200
+          match_json(private_api_solution_article_pattern(sample_article, platform_values))
+        end
+      end
+
+      def test_update_with_platform_values_without_omni_feature
+        Account.any_instance.stubs(:omni_bundle_account?).returns(false)
+
+        sample_article = get_article_with_platform_mapping
+        platform_values = { platforms: chat_platform_params(web: false) }
+
+        put :update, construct_params({ version: 'private', id: sample_article.parent_id }, platform_values)
+        assert_response 403
+        match_json(validation_error_pattern(omni_bundle_required_error_for_platforms))
+      ensure
+        Account.any_instance.unstub(:omni_bundle_account?)
+      end
+
+      def test_update_platform_values_mismatch_folder_platforms
+        enable_omni_bundle do
+          sample_article = get_article_with_platform_mapping(web: false)
+          folder_meta = sample_article.parent.solution_folder_meta
+          update_platform_values(folder_meta, web: false)
+
+          platform_values = { platforms: { web: true } }
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, platform_values)
+          assert_response 200
+          sample_article.reload
+          assert_equal sample_article.parent.solution_platform_mapping.web, false
+        end
+      end
+
+      def test_update_folder_platform_mismatch_enabled_platforms
+        enable_omni_bundle do
+          sample_folder = get_folder_meta_with_platform_mapping(web: false)
+          params_hash = { folder_id: sample_folder.id }
+
+          sample_article = get_article_with_platform_mapping
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+          assert_response 200
+          sample_article.reload
+          assert_equal sample_article.parent.solution_folder_meta_id, sample_folder.id
+          assert_equal sample_article.parent.solution_platform_mapping.web, false
+        end
+      end
+
+      def test_update_folder_and_platform_values
+        enable_omni_bundle do
+          sample_folder = get_folder_meta_with_platform_mapping(web: true)
+          sample_article = get_article_with_platform_mapping(web: false)
+
+          params_hash = { folder_id: sample_folder.id }
+          platform_values = { platforms: chat_platform_params(web: true) }
+
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash.merge!(platform_values))
+          assert_response 200
+          match_json(private_api_solution_article_pattern(sample_article, params_hash))
+        end
+      end
+
+      def test_update_folder_and_platform_values_mismatch_enabled_platforms
+        enable_omni_bundle do
+          sample_folder = get_folder_meta_with_platform_mapping(web: false)
+          sample_article = get_article_with_platform_mapping(web: false)
+
+          params_hash = { folder_id: sample_folder.id }
+          platform_values = { platforms: { web: true } }
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash.merge!(platform_values))
+          assert_response 200
+          sample_article.reload
+          assert_equal sample_article.parent.solution_folder_meta_id, sample_folder.id
+          assert_equal sample_article.parent.solution_platform_mapping.web, false
+        end
+      end
+
+      def test_update_with_platform_values_with_publish_solution_privilege
+        enable_omni_bundle do
+          with_publish_solution_privilege do
+            sample_article = get_article_with_platform_mapping(web: false)
+            platform_values = { platforms: chat_platform_params(web: true) }
+
+            put :update, construct_params({ version: 'private', id: sample_article.parent_id }, platform_values)
+            assert_response 200
+            match_json(private_api_solution_article_pattern(sample_article, platform_values))
+          end
+        end
+      end
+
+      def test_update_with_platform_values_without_publish_solution_privilege
+        enable_omni_bundle do
+          without_publish_solution_privilege do
+            sample_article = get_article_with_platform_mapping(web: false)
+            platform_values = { platforms: chat_platform_params(web: true) }
+
+            put :update, construct_params({ version: 'private', id: sample_article.parent_id }, platform_values)
+            assert_response 403
+
+            error_info_hash = { details: 'dont have permission to perfom on published article' }
+            match_json(request_error_pattern_with_info(:published_article_privilege_error, error_info_hash, error_info_hash))
+          end
+        end
+      end
+
+      def test_update_with_platform_values_with_article_in_review
+        enable_omni_bundle do
+          Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
+          sample_article = get_article_with_platform_mapping(web: false)
+          platform_values = { platforms: chat_platform_params(web: true) }
+
+          put :update, construct_params({ version: 'private', id: sample_article.parent_id }, platform_values)
+          assert_response 200
+          match_json(private_api_solution_article_pattern(sample_article, platform_values))
+          assert_no_approval(sample_article)
+        end
+      ensure
+        Account.any_instance.unstub(:article_approval_workflow_enabled?)
+      end
+
+      def test_bulk_update_folder_with_platforms_enabled
+        enable_omni_bundle do
+          sample_folder = get_folder_meta_with_platform_mapping(web: false)
+          sample_article = get_article_with_platform_mapping
+
+          put :bulk_update, construct_params({ version: 'private' }, ids: [sample_article.parent.id], properties: { folder_id: sample_folder.id })
+          assert_response 204
+          sample_article.reload
+          assert_equal sample_article.parent.solution_folder_meta_id, sample_folder.id
+          assert_equal sample_article.parent.solution_platform_mapping.web, false
+        end
       end
 
       private

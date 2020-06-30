@@ -126,5 +126,4 @@ module SolutionsArticlesTestHelper
   def approval_record(article)
     @approval_record = article.helpdesk_approval
   end
-
 end

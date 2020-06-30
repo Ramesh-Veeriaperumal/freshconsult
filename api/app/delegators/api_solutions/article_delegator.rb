@@ -27,6 +27,7 @@ module ApiSolutions
     validate :validate_draft, on: :send_for_review, if: -> { errors.blank? }
     validate :validate_draft_locked?, on: :send_for_review, if: -> { errors.blank? }
     validate :validate_description, if: -> { @description || (@status && @status != Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]) }
+    validate :allow_chat_platform, if: -> { create_or_update? && @platforms.present? }
 
     FILTER_ACTIONS = %i[filter untranslated_articles].freeze
 
@@ -46,6 +47,7 @@ module ApiSolutions
       @approver_id = params[:approver_id]
       @description = params[:description]
       @status = params[:status]
+      @platforms = params[:platforms]
 
       super(params)
       check_params_set(params.slice(:folder_name, :category_name))
@@ -174,6 +176,13 @@ module ApiSolutions
       if base64_content?(description_content)
         errors[:description] << :article_description_base64_error
         (self.error_options ||= {}).merge!(description: { code: :article_base64_content_error })
+      end
+    end
+
+    def allow_chat_platform
+      unless allow_chat_platform_attributes?
+        errors[:platforms] << :require_feature
+        error_options[:platforms] = { feature: :omni_bundle_2020, code: :access_denied }
       end
     end
   end

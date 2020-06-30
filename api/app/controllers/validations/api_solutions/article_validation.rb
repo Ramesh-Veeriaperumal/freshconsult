@@ -3,7 +3,7 @@ class ApiSolutions::ArticleValidation < ApiValidation
   attr_accessor :title, :description, :agent_id, :status, :type, :tags,
                 :seo_data, :meta_title, :meta_keywords, :meta_description,
                 :folder_name, :category_name, :attachments, :attachments_list, :cloud_file_attachments, :folder_id,
-                :item, :attachable, :outdated, :prefer_published, :templates_used
+                :item, :attachable, :outdated, :prefer_published, :templates_used, :platforms
 
   validates :title, required: true, on: :create
   validates :title, data_type: { rules: String }, custom_length: { maximum: SolutionConstants::TITLE_MAX_LENGTH, minimum: SolutionConstants::TITLE_MIN_LENGTH, message: :too_long_too_short }
@@ -58,6 +58,7 @@ class ApiSolutions::ArticleValidation < ApiValidation
   validates :outdated,  data_type: { rules: 'Boolean' }
   validates :prefer_published, data_type: { rules: 'Boolean' }
   validates :templates_used, data_type: { rules: Array, allow_nil: false }, array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false } }
+  validates :platforms, data_type: { rules: Hash, allow_nil: false }, hash: { validatable_fields_hash: proc { |x| x.validate_platform_values } }, if: -> { create_or_update? }
 
   def initialize(request_params, article, attachable, lang_id, allow_string_param = false)
     super(request_params, article, allow_string_param)
@@ -74,6 +75,14 @@ class ApiSolutions::ArticleValidation < ApiValidation
       @meta_description = seo_data['meta_description']
       @meta_keywords = seo_data['meta_keywords']
     end
+  end
+
+  def validate_platform_values
+    {
+      web: { data_type: { rules: 'Boolean', allow_nil: false } },
+      ios: { data_type: { rules: 'Boolean', allow_nil: false } },
+      android: { data_type: { rules: 'Boolean', allow_nil: false } }
+    }
   end
 
   private

@@ -2,7 +2,38 @@ require_relative '../../core/helpers/solutions_test_helper.rb'
 
 module SolutionsPlatformsTestHelper
   include SolutionsArticlesTestHelper
+  include SolutionsApprovalsTestHelper
   include Helpdesk::TagMethods
+
+  def get_article_with_platform_mapping(platform_values = {})
+    article = get_article_without_platform_mapping
+    article.parent.create_solution_platform_mapping(chat_platform_params(platform_values, true))
+    article
+  end
+
+  def get_article_without_platform_mapping
+    article = get_article_with_platform_enabled_in_folder
+    article.parent.solution_platform_mapping.destroy if article.parent.solution_platform_mapping.present?
+    article.reload
+  end
+
+  def get_article_with_platform_enabled_in_folder
+    article = get_article
+    create_platform_mapping_for_associated_folder(article)
+    article
+  end
+
+  def get_in_review_article_with_platform_mapping
+    article = get_in_review_article
+    create_platform_mapping_for_associated_folder(article)
+    article
+  end
+
+  def get_folder_meta_with_platform_mapping(platform_values = {})
+    folder_meta = get_folder_meta_without_platform_mapping
+    folder_meta.create_solution_platform_mapping(chat_platform_params(platform_values, true))
+    folder_meta
+  end
 
   def get_folder_with_platform_mapping(platform_values = {})
     folder_meta = get_folder_meta_without_platform_mapping
@@ -29,6 +60,21 @@ module SolutionsPlatformsTestHelper
     folder_meta.reload
   end
 
+  def update_platform_values(meta_obj, values)
+    meta_obj.solution_platform_mapping.attributes = values
+    meta_obj.save
+    meta_obj
+  end
+
+  def enable_omni_bundle
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Account.current.launch(:kbase_omni_bundle)
+    yield
+  ensure
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback(:kbase_omni_bundle)
+  end
+
   def chat_platform_params(platform_values = {}, default = false)
     {
       web: platform_values.key?(:web) ? platform_values[:web] : default,
@@ -36,4 +82,15 @@ module SolutionsPlatformsTestHelper
       android: platform_values.key?(:android) ? platform_values[:android] : default
     }
   end
+
+  def omni_bundle_required_error_for_platforms
+    bad_request_error_pattern('platforms', :require_feature, feature: :omni_bundle_2020, code: :access_denied)
+  end
+
+  private
+
+    def create_platform_mapping_for_associated_folder(article)
+      folder_meta = article.solution_folder_meta
+      folder_meta.create_solution_platform_mapping(chat_platform_params({}, true)) if folder_meta.solution_platform_mapping.blank?
+    end
 end

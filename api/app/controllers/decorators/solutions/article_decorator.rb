@@ -66,6 +66,7 @@ class Solutions::ArticleDecorator < ApiDecorator
       ret_hash[:cloud_files] = cloud_files_hash
     end
     ret_hash.merge!(article_metrics)
+    ret_hash.merge!(platform_mapping) if allow_chat_platform_attributes?
     ret_hash[:language_id] = language_id if channel_v2_api?
     if private_api?
       ret_hash[:draft_present] = @draft.present?
@@ -343,6 +344,13 @@ class Solutions::ArticleDecorator < ApiDecorator
       # TODO : we need to optimize feedback count as count query, for now we are excluding it for list page
       metrics[:feedback_count] = feedback_count unless @is_list_page
       metrics
+    end
+
+    def platform_mapping
+      solution_platform_mapping = record.parent.solution_platform_mapping
+      platforms = solution_platform_mapping.present? ? solution_platform_mapping.to_hash : SolutionPlatformMapping.default_platform_values_hash
+
+      { platforms: platforms }
     end
 
     def vote_info(vote_type)
