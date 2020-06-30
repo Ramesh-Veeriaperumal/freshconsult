@@ -17,6 +17,7 @@ class Middleware::PodRedirect
       response.finish
     else
       if env['HTTP_X_REAL_IP'].present?
+        Rails.logger.info "X-Secret-Token-FD-Pod-Redirect -> #{env['HTTP_X_SECRET_TOKEN_FD_POD_REDIRECT']}"
         env['HTTP_X_FORWARDED_FOR'] = env['HTTP_X_REAL_IP']
         env['REMOTE_ADDR'] = env['HTTP_X_REAL_IP']
         env['CLIENT_IP'] = env['HTTP_X_REAL_IP']
