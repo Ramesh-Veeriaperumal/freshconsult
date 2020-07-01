@@ -207,6 +207,26 @@ module Ember
       match_json([bad_request_error_pattern('inline_attachment_ids', :invalid_inline_attachments_list, invalid_ids: invalid_ids.join(', '))])
     end
 
+    def test_tweet_email_reply
+      @account.launch(:twitter_public_api)
+      t = create_ticket(source: 5)
+      params_hash = reply_note_params_hash.merge(full_text: Faker::Lorem.paragraph(10))
+      post :reply, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 201
+    ensure
+      @account.rollback(:twitter_public_api)
+    end
+
+    def test_fb_email_reply
+      @account.launch(:facebook_public_api)
+      t = create_ticket(source: 6)
+      params_hash = reply_note_params_hash.merge(full_text: Faker::Lorem.paragraph(10))
+      post :reply, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 201
+    ensure
+      @account.rollback(:facebook_public_api)
+    end
+
     def test_create_with_attachment_and_attachment_ids
       attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       file1 = fixture_file_upload('files/attachment.txt', 'text/plain', :binary)
