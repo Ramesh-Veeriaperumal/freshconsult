@@ -2563,6 +2563,15 @@
         "_timeout_for_pricing_api": 10,
         "_early_expiration": 60
       },
+      "omni_freshvisuals": {
+        "secret_key": "EJ[1:vG9HW1yk8OL0J4kdYmO1EfdCl4WTLF6V1zupJyqQeUQ=:fGFpG1X7Mpe2rFaMin3MFjsdtJt1HMPq:ScppM+bKpd50RhYmbF5biQ==]",
+        "_end_point": "",
+        "_bu_name": "",
+        "_session_expiration": 36000,
+        "_session_expiration_for_pricing_api": 30,
+        "_timeout_for_pricing_api": 10,
+        "_early_expiration": 60
+      },
       "automation_rule_redis": {
         "_host": "redis-19329.internal.c1260.us-east-1-mz.ec2.cloud.rlrcp.com",
         "_keepalive": 10,
