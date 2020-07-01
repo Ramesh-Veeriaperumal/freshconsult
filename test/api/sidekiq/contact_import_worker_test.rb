@@ -107,6 +107,34 @@ class ContactImportWorkerTest < ActionView::TestCase
     AwsWrapper::S3Object.unstub(:find)
   end
 
+  def test_import_failue_with_invalid_csv_content
+    AwsWrapper::S3.stubs(:find).returns(fixture_file_upload('files/invalid_contacts_import.csv'))
+    AwsWrapper::S3.stubs(:delete).returns([])
+    Account.current.tickets.stubs(:count).returns(12)
+    args = {
+      account_id: @account.id,
+      email: 'sample@freshdesk.com',
+      type: 'contact',
+      customers: {
+        file_name: 'invalid_contacts_import.csv',
+        file_location: 'files/invalid_contacts_import.csv',
+        fields: {
+          name: '0',
+          email: '2'
+        }
+      },
+      data_import: @import_entry.id
+    }
+    Import::ContactWorker.new.perform(args)
+    @import_entry.reload
+    assert_equal @import_entry.import_status, Admin::DataImport::IMPORT_STATUS[:failed]
+    assert_equal @import_entry.source, Admin::DataImport::IMPORT_TYPE[:contact]
+    assert @import_entry.last_error.present?
+    AwsWrapper::S3.unstub(:delete)
+    Account.current.tickets.unstub(:count)
+    AwsWrapper::S3.unstub(:find)
+  end
+
   def test_contact_import_spam_account
     AwsWrapper::S3Object.stubs(:find).returns(fixture_file_upload('files/contacts_import.csv'))
     AwsWrapper::S3Object.stubs(:delete).returns([])

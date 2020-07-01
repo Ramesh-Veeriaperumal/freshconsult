@@ -6725,5 +6725,40 @@ module Ember
       group.destroy if group.present?
       agent.destroy if agent.present?
     end
+
+    def test_latest_note_ticket_with_public_note_with_read_scope
+      agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      group = create_group_with_agents(@account, agent_list: [agent.id])
+      agent_group = agent.agent_groups.where(group_id: group.id).first
+      ticket = create_ticket({}, group)
+      note = create_note(custom_note_params(ticket, Account.current.helpdesk_sources.note_source_keys_by_token[:note]))
+      agent_group.write_access = false
+      agent_group.save!
+      agent.make_current
+      get :latest_note, construct_params({ version: 'private', id: ticket.display_id }, false)
+      assert_response 200
+      match_json(latest_note_response_pattern(note))
+    ensure
+      group.destroy if group.present?
+      agent.destroy if agent.present?
+    end
+
+
+    def test_latest_note_ticket_with_private_note_with_read_scope
+      agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      group = create_group_with_agents(@account, agent_list: [agent.id])
+      agent_group = agent.agent_groups.where(group_id: group.id).first
+      ticket = create_ticket({}, group)
+      note = create_note(custom_note_params(ticket, Account.current.helpdesk_sources.note_source_keys_by_token[:note], true))
+      agent_group.write_access = false
+      agent_group.save!
+      agent.make_current
+      get :latest_note, construct_params({ version: 'private', id: ticket.display_id }, false)
+      assert_response 200
+      match_json(latest_note_response_pattern(note))
+    ensure
+      group.destroy if group.present?
+      agent.destroy if agent.present?
+    end
   end
 end

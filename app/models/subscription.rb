@@ -40,6 +40,11 @@ class Subscription < ActiveRecord::Base
 
   NO_PRORATION_PERIOD_CYCLES = [SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:monthly]].freeze
 
+  AUTO_COLLECTION = {
+    'on' => true,
+    'off' => false
+  }.freeze
+
   concerned_with :presenter, :callbacks
 
   publishable on: [:update]
@@ -65,7 +70,7 @@ class Subscription < ActiveRecord::Base
     :foreign_key => :subscription_currency_id
 
 
-  before_create :set_renewal_at
+  before_create :set_renewal_at, :enable_auto_collection
   before_save :update_amount, unless: :anonymous_account?
 
   before_update :cache_old_model, :cache_old_addons
@@ -329,7 +334,13 @@ class Subscription < ActiveRecord::Base
   end
 
   def offline_subscription?
-    Billing::Subscription.new.offline_subscription?(account_id)
+    additional_info.key?(:auto_collection) ? !additional_info[:auto_collection] : Billing::Subscription.new.offline_subscription?(account_id)
+  end
+
+  def mark_auto_collection(auto_collection)
+    additional_info = self.additional_info || {}
+    additional_info[:auto_collection] = AUTO_COLLECTION[auto_collection]
+    update(additional_info: additional_info)
   end
 
   def applicable_addons(addons, plan)
@@ -608,7 +619,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def fsm_downgrade?
-    present_subscription.field_agent_limit.present? && (field_agent_limit.blank? ||
+    present_subscription.field_agent_limit.to_i > 0 && (field_agent_limit.blank? ||
       present_subscription.field_agent_limit > field_agent_limit)
   end
 
@@ -757,6 +768,11 @@ class Subscription < ActiveRecord::Base
     end
 
   private
+
+    def enable_auto_collection
+      self.additional_info ||= {}
+      self.additional_info[:auto_collection] = true
+    end
 
     # Clear the feature so that loyalty upgrade is not shown to the customers.
     def clear_loyalty_upgrade_banner

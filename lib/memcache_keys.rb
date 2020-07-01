@@ -324,6 +324,8 @@ module MemcacheKeys
 
   ALL_AGENT_GROUPS_CACHE_FOR_AN_AGENT = 'v2/ALL_AGENT_GROUPS_CACHE_FOR_AN_AGENT:%{account_id}:%{user_id}'.freeze
 
+  AGENT_CONTRIBUTION_ACCESS_GROUPS = 'v1/AGENT_CONTRIBUTION_ACCESS_GROUPS:%{account_id}:%{user_id}'.freeze
+
   def fetch_from_cache(key, &block)
     @cached_values = {} unless @cached_values
     return @cached_values[key] if @cached_values.include? key

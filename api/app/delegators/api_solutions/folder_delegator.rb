@@ -1,11 +1,15 @@
 module ApiSolutions
   class FolderDelegator < BaseDelegator
-    attr_accessor :contact_folders_attributes, :company_folders_attributes, :customer_folders_attributes
+    include Helpdesk::TagMethods
+
+    attr_accessor :contact_folders_attributes, :company_folders_attributes, :customer_folders_attributes, :tag_attributes, :id, :platforms
 
     validate :validate_contact_segment_ids, if: -> { @contact_folders_attributes.present? }
     validate :validate_company_segment_ids, if: -> { @company_folders_attributes.present? }
     validate :validate_company_ids, if: -> { @customer_folders_attributes.present? }
     validate :validate_category_translation, on: :create, if: -> { @id && @language_code }
+    validate :create_tag_permission, if: -> { @tag_attributes.present? }
+    validate :validate_platform_present, on: :update, if: -> { @tag_attributes.present? && @platforms.blank? }
 
     def initialize(options)
       options.each do |key, value|
@@ -44,6 +48,20 @@ module ApiSolutions
     def validate_category_translation
       language = Language.find_by_code(@language_code)
       errors[:category_id] = :invalid_category_translation if Account.current.solution_folder_meta.find_by_id(@id).solution_category_meta.safe_send("#{language.to_key}_category").nil?
+    end
+
+    def create_tag_permission
+      @tags = construct_tags(@tag_attributes)
+      new_tag = @tags.find(&:new_record?)
+      if new_tag && !User.current.privilege?(:create_tags)
+        errors[:tags] << 'cannot_create_new_tag'
+        @error_options[:tags] = { tags: new_tag.name }
+      end
+    end
+
+    def validate_platform_present
+      folder_meta = Account.current.solution_folder_meta.where(id: @id).first
+      errors[:tags] << 'cannot_set_tag_without_platforms_enabled' if folder_meta.solution_platform_mapping.blank?
     end
   end
 end

@@ -36,7 +36,8 @@ class Admin::SubscriptionDecorator < ApiDecorator
       paying_account: record.paying_account?,
       update_payment_site: @update_payment_site,
       features_gained: record.additional_info[:feature_gain],
-      discount: record.additional_info[:discount]
+      discount: record.additional_info[:discount],
+      offline: record.offline_subscription?
     }
   end
 

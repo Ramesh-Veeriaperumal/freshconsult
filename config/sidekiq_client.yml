@@ -397,6 +397,7 @@ defaults: &defaults
     - [freshchat_subscription_events_queue]
     - [solution_article_central_publish]
     - [twitter_survey]
+    - [update_article_platform_mapping_worker]
     - [facebook_survey]
     - [bitmap_callbacks]
     - [quality_management_system]

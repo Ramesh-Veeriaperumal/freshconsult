@@ -765,6 +765,52 @@ module ApiSearch
       assert response['total'] == 0
     end
 
+    def test_results_with_restricted_agent_with_scope
+      user = User.current
+      permission = user.agent.ticket_permission
+      group = create_group_with_agents(Account.current, agent_list: [user.id])
+      user.agent.update_attributes(ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      Account.any_instance.stubs(:advanced_scope_enabled?).returns(true)
+      ticket = create_ticket({ priority: 1 }, group)
+      tickets = @account.tickets.permissible(User.current).select { |x| [1, 2].include? (x.priority) }
+      stub_public_search_response(tickets) do
+        get :index, controller_params(query: '"priority:1 OR priority:2"')
+      end
+      response = parse_response @response.body
+      response_ticket_ids = response['results'].map { |ticket| ticket['id'] }
+      assert_response 200
+      assert_equal (response_ticket_ids.include? ticket.display_id), true
+      user.agent.update_attributes(ticket_permission: permission)
+      Account.any_instance.unstub(:advanced_scope_enabled?)
+    ensure
+      group.destroy if group.present?
+      ticket.destroy if ticket.present?
+    end
+
+    def test_results_with_restricted_agent_and_shared_ownership_with_scope
+      user = User.current
+      permission = user.agent.ticket_permission
+      group = create_group_with_agents(Account.current, agent_list: [user.id])
+      user.agent.update_attributes(ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
+      Account.any_instance.stubs(:advanced_scope_enabled?).returns(true)
+      ticket = create_ticket({ status: 1 }, group)
+      tickets = @account.tickets.permissible(User.current).select { |x| [1, 2].include? (x.priority) }
+      stub_public_search_response(tickets) do
+        get :index, controller_params(query: '"status:2 OR status:3"')
+      end
+      response = parse_response @response.body
+      response_ticket_ids = response['results'].map { |ticket| ticket['id'] }
+      assert_response 200
+      assert_equal (response_ticket_ids.include? ticket.display_id), true
+      user.agent.update_attributes(ticket_permission: permission)
+      Account.any_instance.unstub(:advanced_scope_enabled?)
+      Account.any_instance.unstub(:shared_ownership_enabled?)
+    ensure
+      group.destroy if group.present?
+      ticket.destroy if ticket.present?
+    end
+
     # Space testing
     def test_tickets_field_name_begin_with_or
       get :index, controller_params(query: '"order_number:123"')

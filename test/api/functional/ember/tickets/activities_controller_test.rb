@@ -1,5 +1,7 @@
 require_relative '../../../test_helper'
 require Rails.root.join('test', 'api', 'helpers', 'archive_ticket_test_helper.rb')
+require Rails.root.join('test', 'api', 'helpers', 'advanced_scope_test_helper.rb')
+
 module Ember
   module Tickets
     class ActivitiesControllerTest < ActionController::TestCase
@@ -8,6 +10,7 @@ module Ember
       include PrivilegesHelper
       include UsersTestHelper
       include ArchiveTicketTestHelper
+      include AdvancedScopeTestHelper
 
       CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
 
@@ -583,6 +586,38 @@ module Ember
         assert_response 200
       ensure
         @controller.unstub(:fetch_activities)
+      end
+
+      def test_activity_without_advanced_scope
+        Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(false)
+        agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+        agent_group = create_agent_group_with_read_access(@account, agent)
+        ticket = create_ticket
+        ticket.group_id = agent_group.group_id
+        ticket.save!
+        login_as(agent)
+        get :index, controller_params(version: 'private', ticket_id: ticket.display_id)
+        assert_response 403
+      ensure
+        agent.destroy
+        Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+      end
+
+      def test_activity_with_advanced_scope
+        Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+        agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+        agent_group = create_agent_group_with_read_access(@account, agent)
+        ticket = create_ticket
+        ticket.group_id = agent_group.group_id
+        ticket.save!
+        login_as(agent)
+        stub_data = empty_user_activity
+        @controller.stubs(:fetch_activities).returns(stub_data)
+        get :index, controller_params(version: 'private', ticket_id: ticket.display_id)
+        assert_response 200
+      ensure
+        agent.destroy
+        Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
       end
     end
   end

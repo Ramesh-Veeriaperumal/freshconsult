@@ -45,6 +45,7 @@ module Solution::ArticleVersioning
     end
 
     def update_version
+      latest_version.upsert_s3 = true
       assign_version_attributes(latest_version)
       latest_version.update_attachments_info
       latest_version.save!

@@ -51,6 +51,7 @@
     - freshcaller_subscription_events_queue
     - freshchat_subscription_events_queue
     - twitter_survey
+    - update_article_platform_mapping_worker
     - facebook_survey
     - solution_templates_migration_worker
 

@@ -913,19 +913,17 @@ module Ember
         session = 'same-autosave-session'
 
         @draft = article.create_draft_from_article
-       should_not_create_version(article) do
+        should_not_create_version(article) do
          stub_version_session(session) do
-            stub_version_content do
-              put :autosave, construct_params({ version: 'private', article_id: article.parent_id, language: @account.language }, autosave_params.merge(session: session))
-              assert_response 200
-              article.reload
-              draft = article.draft
-              match_json(autosave_pattern(draft))
-              assert_equal draft.title, @title
-              assert_equal draft.description, @description
-              latest_version = get_latest_version(article)
-              assert_version_draft(latest_version)
-            end  
+            put :autosave, construct_params({ version: 'private', article_id: article.parent_id, language: @account.language }, autosave_params.merge(session: session))
+            assert_response 200
+            article.reload
+            draft = article.draft
+            match_json(autosave_pattern(draft))
+            assert_equal draft.title, @title
+            assert_equal draft.description, @description
+            latest_version = get_latest_version(article)
+            assert_version_draft(latest_version)
           end
         end
       end

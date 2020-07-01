@@ -101,6 +101,26 @@ module TicketFieldsTestHelper
     status_values
   end
 
+  def create_custom_source(options = {})
+    source_values = FactoryGirl.build(:helpdesk_source,
+                                      account_id: @account.id,
+                                      name: options[:name].presence || Faker::Lorem.characters(25),
+                                      position: options[:options].presence || 25,
+                                      default: options[:default].presence || false,
+                                      deleted: options[:deleted].presence || false,
+                                      meta: options[:meta].presence || {}.with_indifferent_access)
+    assert source_values.save
+    source_values
+  end
+
+  def api_ticket_sources
+    if Account.current.compose_email_enabled?
+      Account.current.helpdesk_sources.api_sources | [Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]]
+    else
+      Account.current.helpdesk_sources.api_sources
+    end
+  end
+
   def sample_status_ticket_fields(locale = 'en', val, cx_display_name, position)
     current_locale = I18n.locale
     I18n.locale = locale

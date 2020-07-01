@@ -197,6 +197,7 @@ module ApiSolutions
         parse_attachment_params(@article_params[language_scoper]) if private_api?
         article_builder_params = { solution_article_meta: @article_params, language_id: @lang_id, tags: @tags, session: @session }
         @meta = Solution::Builder.article(article_builder_params)
+        @meta.reload if @meta.solution_platform_mapping && @meta.solution_platform_mapping.destroyed?
         @item = @meta.safe_send(language_scoper)
         @item.create_draft_from_article if @status == STATUS_KEYS_BY_TOKEN[:draft] && create?
         !(@item.errors.any? || @item.parent.errors.any?)
@@ -211,7 +212,7 @@ module ApiSolutions
 
       def delegator_params
         delegator_params = { language_id: @lang_id, article_meta: @meta, tags: @tags }
-        delegator_params.merge!(params[cname].slice(:folder_name, :category_name, :user_id, :outdated, :description, :status))
+        delegator_params.merge!(params[cname].slice(:folder_name, :category_name, :user_id, :outdated, :description, :status, :platforms))
         delegator_params = add_attachment_params(delegator_params) if private_api?
         delegator_params.with_indifferent_access
       end

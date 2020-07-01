@@ -21,4 +21,9 @@ class Helpdesk::Source < Helpdesk::Choice
   MAXIMUM_NUMBER_OF_SOURCES = 1000
   ARCHIVE_NOTE_SOURCES = ['email', 'form', 'note', 'status', 'meta', 'twitter', 'feedback', 'facebook',   
                'forward_email', 'phone', 'mobihelp', 'mobihelp_app_review', 'summary', 'automation_rule_forward'].freeze
+
+  SOURCE_KEYS_BY_TOKEN = Hash[*TICKET_SOURCES.map { |i| [i[0], i[2]] }.flatten].freeze
+  SOURCE_TOKENS_BY_KEY = SOURCE_KEYS_BY_TOKEN.invert.freeze
+  API_CREATE_EXCLUDED_VALUES = [SOURCE_KEYS_BY_TOKEN[:forum], SOURCE_KEYS_BY_TOKEN[:outbound_email], SOURCE_KEYS_BY_TOKEN[:bot]].freeze
+  API_UPDATE_EXCLUDED_VALUES = [SOURCE_KEYS_BY_TOKEN[:twitter], SOURCE_KEYS_BY_TOKEN[:facebook]].freeze
 end

@@ -8,6 +8,8 @@ class CustomerImportValidation < ApiValidation
 
   validate :check_file, on: :create
 
+  validate :check_file_content, on: :create, if: -> { errors[:file].blank? }
+
   validate :check_field_names, if: -> { errors[:fields].blank? }
 
   validate :check_field_values, if: -> { errors[:fields].blank? }
@@ -39,4 +41,13 @@ class CustomerImportValidation < ApiValidation
     end
   end
 
+  def check_file_content
+    temp_file = File.open(file.tempfile, 'r')
+    Nokogiri::HTML(temp_file).traverse do |node|
+      if INVALID_FILE_TAGS.include?(node.name.downcase)
+        errors[:file] = ErrorConstants::ERROR_MESSAGES[:invalid_content_format] % ACCEPTED_FILE_TYPE
+        break
+      end
+    end
+  end
 end

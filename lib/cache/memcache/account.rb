@@ -227,6 +227,13 @@ module Cache::Memcache::Account
     delete_value_from_cache(format(ACCOUNT_GROUP_TYPES, account_id: self.id))
   end
 
+  def contribution_agent_groups_from_cache(user_id)
+    key = contribution_agent_groups_memcache_key(user_id)
+    fetch_from_cache(key) do
+      contribution_agent_groups.where(user_id: user_id).all
+    end
+  end
+
   def agent_groups_from_cache
     @agent_groups_from_cache ||= begin
       key = agent_groups_optar_key
@@ -932,6 +939,10 @@ module Cache::Memcache::Account
 
     def custom_nested_field_choices_hash_key(account_id)
       format(CUSTOM_NESTED_FIELD_CHOICES, account_id: account_id)
+    end
+
+    def contribution_agent_groups_memcache_key(user_id = nil)
+      format(AGENT_CONTRIBUTION_ACCESS_GROUPS, account_id: id, user_id: user_id)
     end
 
     def sources

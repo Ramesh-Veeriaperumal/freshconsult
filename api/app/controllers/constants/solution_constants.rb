@@ -3,7 +3,7 @@ module SolutionConstants
 
   CATEGORY_ATTRIBUTES_TO_BE_STRIPPED = %w[name].freeze
 
-  FOLDER_FIELDS = %w[description name visibility company_ids category_id contact_segment_ids company_segment_ids].freeze
+  FOLDER_FIELDS = %w[description name visibility company_ids category_id contact_segment_ids company_segment_ids platforms tags].freeze
 
   FOLDER_FIELDS_PRIVATE_API = FOLDER_FIELDS | %w[article_order]
 
@@ -15,7 +15,7 @@ module SolutionConstants
 
   ARTICLE_SEO_DATA_FIELDS = %w[meta_title meta_description meta_keywords].freeze
 
-  UPDATEABLE_ARTICLE_META_FIELDS = %w[folder_id art_type solution_folder_meta_id].freeze
+  UPDATEABLE_ARTICLE_META_FIELDS = %w[folder_id art_type solution_folder_meta_id platforms].freeze
   ARTICLE_META_FIELDS = (UPDATEABLE_ARTICLE_META_FIELDS | %w[id]).freeze
 
   UPDATEABLE_ARTICLE_LANGUAGE_FIELDS = ARTICLE_LANGUAGE_FIELDS = %w[title description status seo_data attachments attachments_list cloud_file_attachments tags outdated user_id templates_used].freeze
@@ -25,7 +25,7 @@ module SolutionConstants
   ARTICLE_ARRAY_FIELDS = %w[tags attachments attachments_list cloud_file_attachments].freeze
   # all fields possible in update or create API call
   ARTICLE_API_FIELDS = (%w[category_name folder_name description
-                           title status seo_data type folder_id session unlock templates_used] | ARTICLE_ARRAY_FIELDS |
+                           title status seo_data type folder_id session unlock templates_used platforms] | ARTICLE_ARRAY_FIELDS |
                    ['seo_data' => ARTICLE_SEO_DATA_FIELDS]).freeze
 
   CREATE_ARTICLE_FIELDS = { all: ARTICLE_API_FIELDS }.freeze

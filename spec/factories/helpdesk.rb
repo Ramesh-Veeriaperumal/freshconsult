@@ -74,6 +74,9 @@ if Rails.env.test?
     factory :ticket_status, :class => Helpdesk::TicketStatus do |f|
     end
 
+    factory :helpdesk_source, :class => Helpdesk::Source do |f|
+    end
+
     factory :section, :class => Helpdesk::Section do |s|
     end
 

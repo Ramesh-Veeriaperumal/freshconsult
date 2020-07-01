@@ -26,6 +26,7 @@ module PortalTestHelper
   def central_publish_portal_destroy_pattern(portal)
     {
       id: portal.id,
+      portal_url: portal.portal_url,
       account_id: portal.account_id
     }
   end

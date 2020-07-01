@@ -37,6 +37,12 @@ class Solution::ArticleMeta < ActiveRecord::Base
 		:through => :solution_folder_meta,
 		:class_name => "Solution::Folder"
 
+    has_one :solution_platform_mapping,
+        as: :mappable,
+        class_name: 'SolutionPlatformMapping',
+        autosave: true,
+        dependent: :destroy
+
 	acts_as_list :scope => :solution_folder_meta
 
 	has_one :current_article_body, :class_name => "Solution::ArticleBody", :foreign_key => :article_id, :primary_key => :current_child_id
@@ -67,6 +73,9 @@ class Solution::ArticleMeta < ActiveRecord::Base
 		"status", "modified_at", "created_at", "art_type", "current_child_thumbs_up", "current_child_thumbs_down"]
 
 	before_save :set_default_art_type
+    before_save :disable_platforms_not_enabled_in_folder, if: :need_platform_validation?, on: :create
+    before_save :disable_platforms_not_enabled_in_folder, if: :need_folder_platform_validation?, on: :update
+
 	after_commit ->(obj) { obj.safe_send(:clear_cache) }, on: :destroy
 	after_commit ->(obj) { obj.safe_send(:clear_cache) }, on: :create
 	after_commit ->(obj) { obj.safe_send(:clear_cache_after_update) }, on: :update
@@ -171,6 +180,12 @@ class Solution::ArticleMeta < ActiveRecord::Base
     [solution_folder_meta, solution_category_meta]
   end
 
+  def platforms=(platform_mapping)
+    return if platform_mapping.blank?
+
+    solution_platform_mapping.present? ? update_platform_values(platform_mapping) : create_platform_mapping(platform_mapping)
+  end
+
 	private
 
 	def clear_cache
@@ -192,4 +207,34 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	def custom_portal_cache_attributes
 		{}
 	end
+
+    def create_platform_mapping(platform_mapping)
+      build_solution_platform_mapping(platform_mapping) if SolutionPlatformMapping.any_platform_enabled?(platform_mapping)
+    end
+
+    def update_platform_values(platform_mapping)
+      new_platform_values = solution_platform_mapping.modified_new_platform_values(platform_mapping)
+
+      if SolutionPlatformMapping.any_platform_enabled?(new_platform_values)
+        solution_platform_mapping.attributes = platform_mapping
+      else
+        solution_platform_mapping.destroy
+      end
+    end
+
+    def need_platform_validation?
+      Account.current.omni_bundle_account? && Account.current.launched?(:kbase_omni_bundle) && solution_platform_mapping.present?
+    end
+
+    def need_folder_platform_validation?
+      need_platform_validation? && (solution_folder_meta_id_changed? || solution_platform_mapping.changed?)
+    end
+
+    def disable_platforms_not_enabled_in_folder
+      folder_meta = Account.current.solution_folder_meta.where(id: solution_folder_meta_id).first
+      folder_platform_values = folder_meta.solution_platform_mapping.present? ? folder_meta.solution_platform_mapping.to_hash : SolutionPlatformMapping.default_platform_values_hash
+
+      disabled_platforms = folder_platform_values.select { |platform, enabled| platform unless enabled }
+      update_platform_values(disabled_platforms)
+    end
 end

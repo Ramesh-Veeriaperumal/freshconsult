@@ -45,9 +45,6 @@ module ApiTicketConstants
                                         unique_external_id skill_id).freeze
 
   PRIORITIES = TicketConstants::PRIORITY_TOKEN_BY_KEY.keys.freeze
-  SOURCES = Helpdesk::Source.api_sources.freeze
-  # Source of tickets of these sources(UNPERMITTED_SOURCES_FOR_UPDATE) can not be updated (Eg: A twitter ticket can not be changed to email)
-  UNPERMITTED_SOURCES_FOR_UPDATE = Helpdesk::Source.api_unpermitted_sources_for_update.freeze
   PIPE_CREATE_FIELDS = CREATE_FIELDS | %w(pending_since created_at updated_at on_state_time closed_at)
   PIPE_UPDATE_FIELDS = UPDATE_FIELDS | %w(pending_since created_at updated_at closed_at)
 

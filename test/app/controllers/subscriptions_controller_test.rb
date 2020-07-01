@@ -302,6 +302,23 @@ class SubscriptionsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:field_agents_count)
   end
 
+  def test_subscription_change_with_fsm_enabled_to_fsm_disabled
+    params = { agent_limit: '10', addons: { field_service_management: { enabled: 'false' } } }
+    stub_chargebee_requests
+    current_subscription = @account.subscription
+    current_subscription.agent_limit = 6
+    current_subscription.additional_info[:field_agent_limit] = 0
+    current_subscription.save!
+    @account.launch(:downgrade_policy)
+    post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit)))
+    @account.reload
+    assert_equal @account.subscription.subscription_request.nil?, true
+    assert_response 302
+  ensure
+    unstub_chargebee_requests
+    @account.rollback(:downgrade_policy)
+  end
+
   def test_handle_field_agents_when_moving_from_active_without_dp_enabled
     params = { agent_limit: '1', addons: { field_service_management: { enabled: 'true', value: '1' } } }
     stub_chargebee_requests

@@ -22,6 +22,10 @@ module Tickets
         doer = account.users.find_by_id doer_id unless system_event
 
         Va::Logger::Automation.log("system_event=#{system_event}, user_nil=#{doer.nil?}", true) if system_event || doer.nil?
+        if account.advanced_ticket_scopes_enabled? && doer && doer.only_read_ticket_permission?(evaluate_on)
+          Va::Logger::Automation.log("skipping automation rule :: doer is a contribution agent user_id = #{doer.id}, ticket_id = #{ticket_id} ")
+          return
+        end
         if evaluate_on.present? and (doer.present? || system_event)
           start_time = Time.now.utc
           Thread.current[:observer_doer_id] = doer_id || SYSTEM_DOER_ID

@@ -47,6 +47,12 @@ class CustomerImportValidationTest < ActionView::TestCase
     assert customer_import_validation.errors.full_messages.include?("File It should be in the 'CSV' format")
   end
 
+  def test_uploading_valid_file_with_invalid_file_content
+    customer_import_validation = create_customer_import_validation(fields: { name: 2, email: 7 }, file: fixture_file_upload('files/invalid_contacts_import.csv', 'text/csv', :binary))
+    refute customer_import_validation.valid?(:create)
+    assert customer_import_validation.errors.full_messages.include?("File It should contain only valid 'CSV' contents")
+  end
+
   def test_mandatory_fields_for_create_company
     customer_import_validation = create_customer_import_validation({}, 'company')
     assert !customer_import_validation.valid?(:create)
@@ -81,6 +87,12 @@ class CustomerImportValidationTest < ActionView::TestCase
     customer_import_validation = create_customer_import_validation({ fields: { name: 0, note: 2 }, file: fixture_file_upload('files/attachment.txt', 'plain/text', :binary) }, 'company')
     assert !customer_import_validation.valid?(:create)
     assert customer_import_validation.errors.full_messages.include?("File It should be in the 'CSV' format")
+  end
+
+  def test_uploading_valid_file_with_invalid_file_content_company
+    customer_import_validation = create_customer_import_validation({ fields: { name: 0, note: 2 }, file: fixture_file_upload('files/invalid_companies_import.csv', 'text/csv', :binary) }, 'company')
+    refute customer_import_validation.valid?(:create)
+    assert customer_import_validation.errors.full_messages.include?("File It should contain only valid 'CSV' contents")
   end
 
   private

@@ -8,6 +8,7 @@ Sidekiq::Testing.fake!
 require Rails.root.join('test', 'core', 'helpers', 'tickets_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'users_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'automation_rules_test_helper.rb')
+require Rails.root.join('test', 'core', 'helpers', 'advanced_scope_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'shared_ownership_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'groups_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'controller_test_helper.rb')
@@ -23,6 +24,7 @@ module Admin
       include AutomationRulesTestHelper
       include SharedOwnershipTestHelper
       include TicketFieldsTestHelper
+      include AdvancedScopeTestHelper
       include UsersTestHelper
       include ControllerTestHelper
 
@@ -258,6 +260,60 @@ module Admin
         parent_ticket.destroy if parent_ticket.present?
         User.reset_current_user
         @agent = nil
+      end
+
+      def test_observer_exec_for_write_access_tickets
+        Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+        rule = Account.current.observer_rules.first
+        agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+        agent_group = create_agent_group_with_write_access(Account.current, agent)
+        agent.make_current
+        events = generate_event('update')
+        rule.condition_data = {
+          conditions: { all: [] },
+          events: events,
+          performer: generate_performer(1)
+        }
+        rule.action_data = ['add_note'].map { |action| generate_action_data(action, false) }
+        rule.save
+        ticket = create_ticket
+        ticket.group_id = agent_group.group_id
+        ticket.save!
+        trigger_event(ticket, 'update', events)
+        Sidekiq::Testing.inline! do
+          ticket.save
+        end
+        ticket = ticket.reload
+        assert_equal ticket.notes.last.body, rule.action_data.first[:note_body]
+      ensure
+        Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+      end
+
+      def test_observer_skip_for_read_only_tickets
+        Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+        rule = Account.current.observer_rules.first
+        agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+        agent_group = create_agent_group_with_read_access(Account.current, agent)
+        events = generate_event('update')
+        rule.condition_data = {
+          conditions: { all: [] },
+          events: events,
+          performer: generate_performer(1)
+        }
+        rule.action_data = ['add_note'].map { |action| generate_action_data(action, false) }
+        rule.save
+        ticket = create_ticket
+        ticket.group_id = agent_group.group_id
+        ticket.save!
+        agent.make_current
+        trigger_event(ticket, 'update', events)
+        Sidekiq::Testing.inline! do
+          ticket.save
+        end
+        ticket = ticket.reload
+        assert_not_equal ticket.notes.last.body, rule.action_data.first[:note_body]
+      ensure
+        Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
       end
 
       private

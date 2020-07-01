@@ -1049,6 +1049,7 @@ Helpkit::Application.routes.draw do
     end
     resources :companies, controller: 'channel/api_companies', only: [:create]
     resources :attachments, controller: 'channel/attachments', only: [:create]
+    resources :portals, controller: 'channel/portals', only: [:index]
     scope '/v2' do
       resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :index, :show]
       resources :attachments, controller: 'channel/attachments', only: [:create, :show]
