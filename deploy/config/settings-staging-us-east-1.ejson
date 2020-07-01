@@ -893,7 +893,8 @@
         },
         "freshchat_shared_key": "EJ[1:FOfxolkp4NlEykL7rb/4wRxJGZ6POjgCXUabLI99/E0=:Zakff26sQjBIAUWvyXIGFytLF0we/A14:m6myQaT8d2esHTkt30vTDS7R+dQaCbTK8NpHNeb0AU5LLKsRepT3HPNnH92cDvRc]",
         "_issuer": "FreshDesk",
-        "_freshchat_client": "OC_FD"
+        "_freshchat_client": "OC_FD",
+        "_freshchat_instance": "freshchatpink"
       },
       "freshconnect": {
         "app_integration": {

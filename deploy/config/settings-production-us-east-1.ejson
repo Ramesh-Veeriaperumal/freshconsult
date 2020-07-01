@@ -2458,7 +2458,8 @@
         },
         "freshchat_shared_key": "EJ[1:PRGIYFYh1NpR3e+PFsd6nA78SMe3ahC+rZrXVBTlYVc=:vsVVJ2yDyHZ/4uxG23JkB/sS1i20K0O3:xpLmeckrZTFpCORlnNJ/TDbQn0K3PEvduRAkfTwwd8fv98vruVCR71+lqQVx/80E]",
         "_issuer": "FreshDesk",
-        "_freshchat_client": "OC_FD"
+        "_freshchat_client": "OC_FD",
+        "_freshchat_instance": "freshchat"
       },
       "formserv": {
         "api_token": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:AYC9abdjdnpPKHEeDBtp8QeH+dJsSZXB:X8DBwFOco90A7u0qaeH65dw0PDtSrVMWX+1ozdhMVnDWc7ZVijntYDoUasHSRSt3]",

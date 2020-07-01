@@ -18,9 +18,9 @@ module Freshchat::Util
 
   def enable_freshchat_feature
     if current_account.freshid_org_v2_enabled?
-      freshchat_response = signup_via_aloha('freshchat')
+      freshchat_response = signup_via_aloha(Freshchat::Account::CONFIG[:freshchatInstance])
       save_freshchat_v2_account(freshchat_response['product_signup_response']) if freshchat_response.code == 200
-      freshchat_response
+      return freshchat_response
     end
     freshchat_response = signup_freshchat_account
     if freshchat_response.code == 200

@@ -1381,7 +1381,8 @@
         },
         "freshchat_shared_key": "EJ[1:maOsANl7WEiaczHSq/MCDcT29BxSH8yfP5yAQltq7gs=:3kwQzQr6FCg9S1rZSXkgjwxxUgrhDQCE:mtcORhqDmdUi010peLqTfjHwNQmx4vZzl1jIL2USd3eJkAFG0U1pyqU9IMjizTkI]",
         "_issuer": "FreshDesk",
-        "_freshchat_client": "OC_FD"
+        "_freshchat_client": "OC_FD",
+        "_freshchat_instance": "freshchat"
       },
       "formserv": {
         "api_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:LZmIYFSfpkl0WNH1R4RVHHVw5RXglkSg:5edFInq4GXq9Bcc5lQH/2UXvifD6AnNdVMK+8cH/ocFWfSxwkFvNlsM4p315vR6E]",
