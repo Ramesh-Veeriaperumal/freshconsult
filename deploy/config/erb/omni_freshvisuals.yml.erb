@@ -1,0 +1,8 @@
+<%= node[:opsworks][:environment] %>:
+  secret_key: <%= node[:ymls][:omni_freshvisuals][:secret_key] %>
+  end_point: <%= node[:ymls][:omni_freshvisuals][:end_point] %>
+  bu_name: <%= node[:ymls][:omni_freshvisuals][:bu_name] %>
+  early_expiration: <%= node[:ymls][:omni_freshvisuals][:early_expiration] %>
+  session_expiration: <%= node[:ymls][:omni_freshvisuals][:session_expiration] %>
+  session_expiration_for_pricing_api: <%= node[:ymls][:omni_freshvisuals][:session_expiration_for_pricing_api] %>
+  timeout_for_pricing_api: <%= node[:ymls][:omni_freshvisuals][:timeout_for_pricing_api] %>

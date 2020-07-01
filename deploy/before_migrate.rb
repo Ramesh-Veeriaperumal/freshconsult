@@ -115,6 +115,7 @@ run "ln -nfs #{shared_path}/config/authz_config.yml #{node[:rel_path]}/config/au
 run "ln -nfs #{shared_path}/config/aloha_config.yml #{node[:rel_path]}/config/aloha_config.yml"
 run "ln -nfs #{shared_path}/config/freshcaller_subscription_config.yml #{node[:rel_path]}/config/freshcaller_subscription_config.yml"
 run "ln -nfs #{shared_path}/config/freshchat_subscription_config.yml #{node[:rel_path]}/config/freshchat_subscription_config.yml"
+run "ln -nfs #{shared_path}/config/omni_freshvisuals.yml #{node[:rel_path]}/config/helpdesk_reports/omni_freshvisuals.yml"
 run "ln -nfs #{shared_path}/config/channel_v2_api.yml #{node[:rel_path]}/config/channel_v2_api.yml"
 run "ln -nfs #{shared_path}/config/silkroad_config.yml #{node[:rel_path]}/config/silkroad_config.yml"
 

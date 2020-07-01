@@ -1691,6 +1691,15 @@
         "_session_expiration_for_pricing_api": 30,
         "_timeout_for_pricing_api": 10
       },
+      "omni_freshvisuals": {
+        "secret_key": "EJ[1:xzLGAydwE54Iuc4Dmyu2iyHprLVOnNTnycrinkk8dXs=:1pkHIkOa10zsaUk1r00bW95SUv3OcPTr:cWR9U7aJM6Z/YbqP/rRPDqkas831fC1tOj+xhGUgDMrwIeo8OtVNvf/+s7hxJMO5]",
+        "_end_point": "https://fv-demo.freshreports.com/",
+        "_bu_name": "support360",
+        "_session_expiration": 36000,
+        "_session_expiration_for_pricing_api": 30,
+        "_timeout_for_pricing_api": 10,
+        "_early_expiration": 60
+      },
       "fluffy": {
         "_host": "vpce-0b247209ae0145d88-4fa54j71.vpce-svc-0874c1e9512bd57dc.us-east-1.vpce.amazonaws.com",
         "username": "EJ[1:KPLwfD8Y0BIZH6YQcEzQDNBn8/EQoDQ4PmS4r5J76zk=:qrgtap1okUwcx0qIs/bPJ5t1x/mkm0Oe:9NvC+DrZtADYb8l0Pe8j5orfiVJYIYAiNg==]",
