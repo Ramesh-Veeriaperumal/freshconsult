@@ -284,11 +284,20 @@ class TicketDelegator < BaseDelegator
       errors[:tracker_id] << :invalid_tracker
       return
     end
-    errors[:tracker_id] << :access_denied if @unlink && !User.current.has_ticket_permission?(@ticket) && !User.current.has_ticket_permission?(tracker_ticket)
+    check_ticket_permission = Account.current.advanced_ticket_scopes_enabled? ? user_ticket_permission_with_scope(tracker_ticket) : user_ticket_permission(tracker_ticket)
+    errors[:tracker_id] << :access_denied if @unlink && check_ticket_permission
     if @tracker_ticket_id && tracker_ticket.associates.count >= TicketConstants::MAX_RELATED_TICKETS
       errors[:tracker_id] << :exceeds_limit
       @error_options[:limit] = TicketConstants::MAX_RELATED_TICKETS
     end
+  end
+
+  def user_ticket_permission(tracker_ticket)
+    !User.current.has_ticket_permission?(@ticket) && !User.current.has_ticket_permission?(tracker_ticket)
+  end
+
+  def user_ticket_permission_with_scope(tracker_ticket)
+    !User.current.has_read_ticket_permission?(@ticket) && !User.current.has_read_ticket_permission?(tracker_ticket)
   end
 
   def validate_related_ticket

@@ -25,8 +25,10 @@ module AssociateTicketsHelper
   end
 
   def validate_associated_tickets
+    set_all_agent_groups_permission
     if cname_params[:assoc_parent_tkt_id].present?
-      render_request_error :access_denied, 403 if !parent_ticket || !current_user.has_ticket_permission?(parent_ticket)
+      check_ticket_permission = Account.current.advanced_ticket_scopes_enabled? ? !current_user.has_read_ticket_permission?(parent_ticket) : !current_user.has_ticket_permission?(parent_ticket)
+      render_request_error :access_denied, 403 if !parent_ticket || check_ticket_permission
     elsif cname_params[:related_ticket_ids].present?
       valid_related_tickets = valid_related_tickets(@item.related_ticket_ids)
       if valid_related_tickets.count.zero?

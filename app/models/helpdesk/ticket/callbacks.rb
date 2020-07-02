@@ -103,6 +103,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
+  include AdvancedTicketScopes
 
   def tag_update_central_publish
     tag_args = {}
@@ -528,6 +529,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   # Parent Child ticket validations...
   def validate_assoc_parent_ticket
+    set_all_agent_groups_permission
     return if self.associates_rdb.present?
     @assoc_parent_ticket = Account.current.tickets.permissible(User.current).readonly(false).find_by_display_id(assoc_parent_tkt_id)
     if !(@assoc_parent_ticket && @assoc_parent_ticket.can_be_associated?)

@@ -4,16 +4,17 @@ module AdvancedTicketScopes
 
   TICKET_ACTIONS = %i[update_properties spam unspam restore watch unwatch].freeze
 
-  NOTE_ACTIONS = %i[reply forward reply_to_forward facebook_reply reply_template tweet ecommerce_reply forward_template latest_note_forward_template execute_scenario broadcast].freeze
+  NOTE_ACTIONS = %i[reply forward reply_to_forward facebook_reply reply_template tweet ecommerce_reply forward_template latest_note_forward_template execute_scenario].freeze
 
-  COMMON_CONTROLLER_ACTIONS = %i[create update destroy].freeze
+  ALLOWED_CONTROLLER_ACTIONS = %i[create update destroy broadcast].freeze
 
   # This is to handle cases to disallow create,update and destory actions in todo, time_entries etc
-  ALLOWED_COMMON_ACTIONS_TO_CONTROLLER_MAPPING = {
-                                                   create: %w[tickets conversations],
-                                                   update: %w[conversations],
-                                                   destroy: %w[conversations]
-                                                 }.freeze
+  ALLOWED_ACTIONS_TO_CONTROLLER_MAPPING = { create: %w[tickets conversations],
+                                            update: %w[conversations],
+                                            destroy: %w[conversations],
+                                            broadcast: %w[conversations] }.freeze
+
+  ALLOWED_TRACKER_ACTION = { update: %w[tickets] }.freeze
 
   READ_PERMISSION_DISALLOWED_ACTIONS = TICKET_ACTIONS + NOTE_ACTIONS
 
@@ -41,11 +42,23 @@ module AdvancedTicketScopes
     def allowed_action_under_read_access?
       if READ_PERMISSION_DISALLOWED_ACTIONS.include?(action)
         return false
-      elsif COMMON_CONTROLLER_ACTIONS.include?(action)
-        return ALLOWED_COMMON_ACTIONS_TO_CONTROLLER_MAPPING[action].include?(controller_name) ? true : false
+      elsif ALLOWED_CONTROLLER_ACTIONS.include?(action)
+        return allowed_common_actions || allowed_tracker_action ? true : false
       end
 
       true
+    end
+
+    def allowed_common_actions
+      ALLOWED_ACTIONS_TO_CONTROLLER_MAPPING[action].try(:include?, controller_name)
+    end
+
+    def allowed_tracker_action
+      tracker_action? && ALLOWED_TRACKER_ACTION[action].try(:include?, controller_name)
+    end
+
+    def tracker_action?
+      cname_params.present? && cname_params.count == 1 && cname_params.key?(:tracker_id)
     end
 
     def advanced_scope_enabled?
