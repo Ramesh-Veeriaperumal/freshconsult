@@ -15,6 +15,7 @@ class Ember::ConfigsControllerTest < ActionController::TestCase
     @user = User.current || add_new_user(@account).make_current
     Account.any_instance.stubs(:freshreports_analytics_enabled?).returns(true)
     User.any_instance.stubs(:privilege?).with(:view_analytics).returns(true)
+    User.any_instance.stubs(:privilege?).with(:view_omni_analytics).returns(true)
   end
 
   def test_config_response
@@ -96,6 +97,7 @@ class Ember::ConfigsControllerTest < ActionController::TestCase
 
   def test_config_response_without_privilege
     User.any_instance.stubs(:privilege?).with(:view_analytics).returns(false)
+    User.any_instance.stubs(:privilege?).with(:view_omni_analytics).returns(false)
     get :show, controller_params(version: 'private', id: 'freshvisuals')
     assert_response 403
     match_json(request_error_pattern(:access_denied))

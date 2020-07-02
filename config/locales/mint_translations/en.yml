@@ -2898,6 +2898,9 @@ en:
         edit_secure_field: Add or edit secure data
         do_not_publish: Do not publish
         export_articles: Export articles
+        access_analytics: Access analytics
+        view_analytics: View analytics
+        view_omni_analytics: View Omnichannel analytics
         manage_custom_objects: Manage Custom Objects
         manage_solution_templates: Manage article templates
     help_image_alt:

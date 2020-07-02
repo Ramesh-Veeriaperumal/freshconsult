@@ -12,7 +12,8 @@ module Ember
     private
 
       def fetch_freshvisuals_config
-        return fetch_omnifreshvisuals_config if current_account.omni_bundle_account? && current_account.omni_reports_enabled?
+        can_view_omni_analytics = User.current.privilege?(:view_analytics) && User.current.privilege?(:view_omni_analytics)
+        return fetch_omnifreshvisuals_config if current_account.omni_bundle_account? && current_account.omni_reports_enabled? && can_view_omni_analytics
         payload = JWT.encode freshreports_payload, FreshVisualsConfig['secret_key'], 'HS256', { 'alg' => 'HS256', 'typ' => 'JWT' }
         FreshVisualsConfig['end_point'] + '?auth=' + payload + '&appName=' + FreshVisualsConfig['app_name']
       end

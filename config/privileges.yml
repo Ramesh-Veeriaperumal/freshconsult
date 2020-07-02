@@ -136,4 +136,6 @@
   :view_scores: 135
   :view_all_scores: 136
   :manage_teams: 137
-:max_value: 137
+  :view_omni_analytics: 138
+:max_value: 138
+
