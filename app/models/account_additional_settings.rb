@@ -215,6 +215,10 @@ class AccountAdditionalSettings < ActiveRecord::Base
     save
   end
 
+  def ocr_account_id
+    additional_settings.try(:[], :ocr_account_id)
+  end
+
   def reset_ocr_account_id
     additional_settings.delete(:ocr_account_id)
   end

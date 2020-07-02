@@ -114,6 +114,14 @@ class AgentDecorator < ApiDecorator
     record.preferences
   end
 
+  def self.availability_count(availability_count)
+    return unless availability_count.is_a? Hash
+
+    OmniChannelRouting::Constants::OMNI_CHANNELS.each_with_object([]) do |channel, array|
+      array << { channel: channel, count: availability_count[channel] || 0 }
+    end
+  end
+
   private
 
     def additional_agent_info

@@ -152,6 +152,7 @@ Helpkit::Application.routes.draw do
       collection do
         post :bulk, to: 'api_agents#create_multiple'
         put  :update_multiple
+        get :availability_count
       end
       member do
         match 'availability' => 'api_agents#fetch_availability', via: :get

@@ -2357,6 +2357,101 @@ class ApiAgentsControllerTest < ActionController::TestCase
     end
   end
 
+  def test_availability_count
+    feature_not_exist = Account.current.add_feature(:omni_channel_routing)
+    lp_feature_exist = Account.current.launched?(:omni_agent_availability_dashboard)
+    Account.current.launch(:omni_agent_availability_dashboard)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(true)
+    User.any_instance.stubs(:privilege?).with(:manage_availability).returns(true)
+    ApiAgentsController.any_instance.stubs(:request_ocr).returns(AVAILABILITY_COUNT_RESPONSE.to_json)
+    get :availability_count, controller_params
+    assert_response 200
+    match_json(availability_count_pattern)
+  ensure
+    ApiAgentsController.any_instance.unstub(:request_ocr)
+    User.any_instance.unstub(:privilege?)
+    Account.current.rollback(:omni_agent_availability_dashboard) if !lp_feature_exist
+    Account.current.revoke_feature(:omni_channel_routing) if feature_not_exist
+  end
+
+  def test_availability_count_with_valid_group_filter
+    feature_not_exist = Account.current.add_feature(:omni_channel_routing)
+    lp_feature_exist = Account.current.launched?(:omni_agent_availability_dashboard)
+    Account.current.launch(:omni_agent_availability_dashboard)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(true)
+    User.any_instance.stubs(:privilege?).with(:manage_availability).returns(true)
+    availability_count_response = AVAILABILITY_COUNT_RESPONSE.dup
+    availability_count_response[:agents_availability_count].slice!(:freshdesk)
+    ApiAgentsController.any_instance.stubs(:request_ocr).returns(availability_count_response.to_json)
+    get :availability_count, controller_params(freshdesk_group_ids: '1,2,3')
+    assert_response 200
+    match_json(availability_count_pattern(availability_count_response))
+  ensure
+    ApiAgentsController.any_instance.unstub(:request_ocr)
+    User.any_instance.unstub(:privilege?)
+    Account.current.rollback(:omni_agent_availability_dashboard) if !lp_feature_exist
+    Account.current.revoke_feature(:omni_channel_routing) if feature_not_exist
+  end
+
+  def test_availability_count_with_invalid_group_filter
+    feature_not_exist = Account.current.add_feature(:omni_channel_routing)
+    lp_feature_exist = Account.current.launched?(:omni_agent_availability_dashboard)
+    Account.current.launch(:omni_agent_availability_dashboard)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(true)
+    User.any_instance.stubs(:privilege?).with(:manage_availability).returns(true)
+    get :availability_count, controller_params(group_ids: '1,2,3')
+    assert_response 400
+    match_json([bad_request_error_pattern('group_ids', :invalid_field)])
+  ensure
+    User.any_instance.unstub(:privilege?)
+    Account.current.rollback(:omni_agent_availability_dashboard) if !lp_feature_exist
+    Account.current.revoke_feature(:omni_channel_routing) if feature_not_exist
+  end
+
+  def test_availability_count_without_ocr_feature
+    feature_exist = Account.current.revoke_feature(:omni_channel_routing)
+    lp_feature_exist = Account.current.launched?(:omni_agent_availability_dashboard)
+    Account.current.launch(:omni_agent_availability_dashboard)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(true)
+    User.any_instance.stubs(:privilege?).with(:manage_availability).returns(true)
+    get :availability_count, controller_params
+    assert_response 403
+    match_json(request_error_pattern(:require_feature, feature: 'omni_channel_routing'.titleize))
+  ensure
+    User.any_instance.unstub(:privilege?)
+    Account.current.rollback(:omni_agent_availability_dashboard) if !lp_feature_exist
+    Account.current.add_feature(:omni_channel_routing) if feature_exist
+  end
+
+  def test_availability_count_without_dashboard_feature
+    feature_not_exist = Account.current.add_feature(:omni_channel_routing)
+    lp_feature_exist = Account.current.launched?(:omni_agent_availability_dashboard)
+    Account.current.rollback(:omni_agent_availability_dashboard) if lp_feature_exist
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(true)
+    User.any_instance.stubs(:privilege?).with(:manage_availability).returns(true)
+    get :availability_count, controller_params
+    assert_response 403
+    match_json(request_error_pattern(:require_feature, feature: 'omni_agent_availability_dashboard'.titleize))
+  ensure
+    User.any_instance.unstub(:privilege?)
+    Account.current.launch(:omni_agent_availability_dashboard) if lp_feature_exist
+    Account.current.revoke_feature(:omni_channel_routing) if feature_not_exist
+  end
+
+  def test_availability_count_without_privilege
+    feature_not_exist = Account.current.add_feature(:omni_channel_routing)
+    lp_feature_exist = Account.current.launched?(:omni_agent_availability_dashboard)
+    Account.current.launch(:omni_agent_availability_dashboard)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_availability).returns(false)
+    get :availability_count, controller_params
+    assert_response 403
+    match_json(request_error_pattern(:access_denied))
+  ensure
+    User.any_instance.unstub(:privilege?)
+    Account.current.rollback(:omni_agent_availability_dashboard) if !lp_feature_exist
+    Account.current.revoke_feature(:omni_channel_routing) if feature_not_exist
+  end
   private
 
     def enable_advanced_ticket_scopes
