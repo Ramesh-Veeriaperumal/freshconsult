@@ -7,4 +7,3 @@ signup:
 freshchatSharedKey: dummy
 issuer: "FreshDesk"
 freshchatClient: "OC_FD"
-freshchatInstance: "freshchat"
