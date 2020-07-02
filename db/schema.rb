@@ -2131,8 +2131,6 @@ ActiveRecord::Schema.define(version: 20200502053301) do
   create_table "google_accounts", :force => true do |t|
     t.string   "name"
     t.string   "email"
-    t.string   "token"
-    t.string   "secret"
     t.integer  "account_id",              :limit => 8
     t.string   "sync_group_id"
     t.string   "sync_group_name",                      :default => "Freshdesk Contacts",  :null => false
