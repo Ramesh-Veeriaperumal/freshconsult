@@ -11,7 +11,7 @@ class ArchiveTicketTest < ActiveSupport::TestCase
   include ModelsCompaniesTestHelper
   include TicketFieldsTestHelper
 
-  def ticket_association_s3_stub(email, status_update_time)
+  def ticket_association_s3_stub(email, status_update_time, custom_hash = {})
     ticket_stub_hash = {
       'helpdesk_tickets' => {
         'cc_email' => [email]
@@ -28,7 +28,7 @@ class ArchiveTicketTest < ActiveSupport::TestCase
           'to_emails' => [Faker::Internet.email, Faker::Internet.email]
         }
       }
-    }
+    }.merge!(custom_hash)
     Helpdesk::ArchiveTicket.any_instance.stubs(:archive_ticket_association).returns(Helpdesk::ArchiveTicketAssociation.new(association_data: ticket_stub_hash))
   end
 
@@ -292,6 +292,201 @@ class ArchiveTicketTest < ActiveSupport::TestCase
         assert_empty archive_test_ticket.public_notes
       ensure
         archive_test_ticket.destroy if archive_test_ticket.present?
+      end
+    end
+  end
+
+  def test_archive_ticket_esv2_json_spam_with_integer_returns_boolean_value
+    enable_archive_tickets do
+      begin
+        create_archive_ticket_with_assoc
+        archive_test_ticket = @account.archive_tickets.last
+        email = Faker::Internet.email
+        status_update_time = Time.zone.now
+        custom_hash = {
+          'helpdesk_tickets' => {
+            'spam' => 0
+          }
+        }
+        ticket_association_s3_stub(email, status_update_time, custom_hash)
+        assert_equal JSON.parse(archive_test_ticket.to_esv2_json)['spam'], false
+      ensure
+        archive_test_ticket.destroy if archive_test_ticket.present?
+        Helpdesk::ArchiveTicket.any_instance.unstub(:archive_ticket_association)
+      end
+    end
+  end
+
+  def test_archive_ticket_esv2_json_spam_with_boolean_returns_original_value
+    enable_archive_tickets do
+      begin
+        create_archive_ticket_with_assoc
+        archive_test_ticket = @account.archive_tickets.last
+        email = Faker::Internet.email
+        status_update_time = Time.zone.now
+        custom_hash = {
+          'helpdesk_tickets' => {
+            'spam' => true
+          }
+        }
+        ticket_association_s3_stub(email, status_update_time, custom_hash)
+        assert_equal JSON.parse(archive_test_ticket.to_esv2_json)['spam'], true
+      ensure
+        archive_test_ticket.destroy if archive_test_ticket.present?
+        Helpdesk::ArchiveTicket.any_instance.unstub(:archive_ticket_association)
+      end
+    end
+  end
+
+  def test_archive_ticket_esv2_json_spam_with_nil_returns_original_value
+    enable_archive_tickets do
+      begin
+        create_archive_ticket_with_assoc
+        archive_test_ticket = @account.archive_tickets.last
+        email = Faker::Internet.email
+        status_update_time = Time.zone.now
+        custom_hash = {
+          'helpdesk_tickets' => {
+            'spam' => nil
+          }
+        }
+        ticket_association_s3_stub(email, status_update_time, custom_hash)
+        assert_equal JSON.parse(archive_test_ticket.to_esv2_json)['spam'], nil
+      ensure
+        archive_test_ticket.destroy if archive_test_ticket.present?
+        Helpdesk::ArchiveTicket.any_instance.unstub(:archive_ticket_association)
+      end
+    end
+  end
+
+  def test_archive_ticket_esv2_json_boolean_flexifields_with_boolean_returns_original_value
+    email = Faker::Internet.email
+    status_update_time = Time.zone.now
+    @account.rollback(:custom_fields_search)
+    enable_archive_tickets do
+      begin
+        create_archive_ticket_with_assoc
+        archive_test_ticket = @account.archive_tickets.last
+        custom_hash = {
+          'helpdesk_tickets_association' => {
+            'flexifield' => {
+              'ff_boolean01' => false
+            },
+            'ticket_states' => {
+              'status_updated_at' => status_update_time
+            },
+            'subscriptions' => {},
+            'schema_less_ticket' => {
+              'long_tc02' => Faker::Number.number(3),
+              'string_tc03' => email,
+              'to_emails' => [Faker::Internet.email, Faker::Internet.email]
+            }
+          }
+        }
+        ticket_association_s3_stub(email, status_update_time, custom_hash)
+        assert_equal JSON.parse(archive_test_ticket.to_esv2_json)['ff_boolean01'], false
+      ensure
+        archive_test_ticket.destroy if archive_test_ticket.present?
+        Helpdesk::ArchiveTicket.any_instance.unstub(:archive_ticket_association)
+      end
+    end
+  end
+
+  def test_archive_ticket_esv2_json_boolean_flexifields_with_integer_returns_boolean_value
+    @account.rollback(:custom_fields_search)
+    email = Faker::Internet.email
+    status_update_time = Time.zone.now
+    enable_archive_tickets do
+      begin
+        create_archive_ticket_with_assoc
+        archive_test_ticket = @account.archive_tickets.last
+        custom_hash = {
+          'helpdesk_tickets_association' => {
+            'flexifield' => {
+              'ff_boolean01' => 1
+            },
+            'ticket_states' => {
+              'status_updated_at' => status_update_time
+            },
+            'subscriptions' => {},
+            'schema_less_ticket' => {
+              'long_tc02' => Faker::Number.number(3),
+              'string_tc03' => email,
+              'to_emails' => [Faker::Internet.email, Faker::Internet.email]
+            }
+          }
+        }
+        ticket_association_s3_stub(email, status_update_time, custom_hash)
+        assert_equal JSON.parse(archive_test_ticket.to_esv2_json)['ff_boolean01'], true
+      ensure
+        archive_test_ticket.destroy if archive_test_ticket.present?
+        Helpdesk::ArchiveTicket.any_instance.unstub(:archive_ticket_association)
+      end
+    end
+  end
+
+  def test_archive_ticket_esv2_json_boolean_flexifields_with_nil_returns_original_value
+    @account.rollback(:custom_fields_search)
+    email = Faker::Internet.email
+    status_update_time = Time.zone.now
+    enable_archive_tickets do
+      begin
+        create_archive_ticket_with_assoc
+        archive_test_ticket = @account.archive_tickets.last
+        custom_hash = {
+          'helpdesk_tickets_association' => {
+            'flexifield' => {
+              'ff_boolean01' => nil
+            },
+            'ticket_states' => {
+              'status_updated_at' => status_update_time
+            },
+            'subscriptions' => {},
+            'schema_less_ticket' => {
+              'long_tc02' => Faker::Number.number(3),
+              'string_tc03' => email,
+              'to_emails' => [Faker::Internet.email, Faker::Internet.email]
+            }
+          }
+        }
+        ticket_association_s3_stub(email, status_update_time, custom_hash)
+        assert_equal JSON.parse(archive_test_ticket.to_esv2_json)['ff_boolean01'], nil
+      ensure
+        archive_test_ticket.destroy if archive_test_ticket.present?
+        Helpdesk::ArchiveTicket.any_instance.unstub(:archive_ticket_association)
+      end
+    end
+  end
+
+  def test_archive_ticket_esv2_json_non_boolean_flexifields_with_integer_returns_original_value
+    @account.rollback(:custom_fields_search)
+    email = Faker::Internet.email
+    status_update_time = Time.zone.now
+    enable_archive_tickets do
+      begin
+        create_archive_ticket_with_assoc
+        archive_test_ticket = @account.archive_tickets.last
+        custom_hash = {
+          'helpdesk_tickets_association' => {
+            'flexifield' => {
+              'ff_int01' => 1
+            },
+            'ticket_states' => {
+              'status_updated_at' => status_update_time
+            },
+            'subscriptions' => {},
+            'schema_less_ticket' => {
+              'long_tc02' => Faker::Number.number(3),
+              'string_tc03' => email,
+              'to_emails' => [Faker::Internet.email, Faker::Internet.email]
+            }
+          }
+        }
+        ticket_association_s3_stub(email, status_update_time, custom_hash)
+        assert_equal JSON.parse(archive_test_ticket.to_esv2_json)['ff_int01'], 1
+      ensure
+        archive_test_ticket.destroy if archive_test_ticket.present?
+        Helpdesk::ArchiveTicket.any_instance.unstub(:archive_ticket_association)
       end
     end
   end
