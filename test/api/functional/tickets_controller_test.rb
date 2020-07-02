@@ -2810,6 +2810,14 @@ class TicketsControllerTest < ActionController::TestCase
     assert t.reload.source == 2
   end
 
+  def test_update_with_source_as_bot
+    params_hash = { source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:bot] }
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    match_json(update_ticket_pattern({}, ticket.reload))
+    assert_response 200
+    assert ticket.reload.source == 12
+  end
+
   def test_update_with_tags
     tags = [Faker::Name.name, Faker::Name.name]
     params_hash = { tags: tags }
@@ -3048,7 +3056,7 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
                 bad_request_error_pattern('type', :not_included, list: ticket_type_list),
-                bad_request_error_pattern('source', :not_included, list: '1,2,3,5,6,7,8,9,11,10')])
+                bad_request_error_pattern('source', :not_included, list: '1,2,3,5,6,7,8,9,11,10,12')])
   end
 
   def test_update_length_invalid
@@ -3470,7 +3478,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = { source: custom_source.account_choice_id }
     put :update, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('source', :not_included, list: api_ticket_sources.join(','))])
+    match_json([bad_request_error_pattern('source', :not_included, list: api_update_ticket_sources.join(','))])
   ensure
     custom_source.try(:destroy)
     ticket.try(:destroy)
@@ -3484,7 +3492,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = { source: custom_source.account_choice_id }
     put :update, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('source', :not_included, list: api_ticket_sources.join(','))])
+    match_json([bad_request_error_pattern('source', :not_included, list: api_update_ticket_sources.join(','))])
   ensure
     Account.current.unstub(:ticket_source_revamp_enabled?)
     custom_source.try(:destroy)
@@ -4664,7 +4672,7 @@ class TicketsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
                 bad_request_error_pattern('type', :not_included, list: ticket_type_list),
-                bad_request_error_pattern('source', :not_included, list: '1,2,3,5,6,7,8,9,11,10')])
+                bad_request_error_pattern('source', :not_included, list: '1,2,3,5,6,7,8,9,11,10,12')])
     assert_response 400
   ensure
     default_non_required_fiels.map { |x| x.toggle!(:required) }
@@ -4964,7 +4972,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.except(:email).merge(source: 100)
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('source', :not_included, list: '1,2,3,5,6,7,8,9,11')])
+    match_json([bad_request_error_pattern('source', :not_included, list: '1,2,3,5,6,7,8,9,11,12')])
   ensure
     Account.any_instance.unstub(:compose_email_enabled?)
   end
