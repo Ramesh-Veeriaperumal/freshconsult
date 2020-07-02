@@ -89,6 +89,7 @@ module EmailNotificationConstants
   PHONE_TRIAL_EXPIRE = 109
   PHONE_TRIAL_NUMBER_DELETION_REMINDER = 110
   PHONE_TRIAL_NUMBER_DELETION_REMINDER_LAST_DAY = 111
+  EMAIL_RATE_LIMITED_EXCEEDED = 112
 
 
   NOTIFICATION_TYPES = {
@@ -178,7 +179,8 @@ module EmailNotificationConstants
     PHONE_TRIAL_ABOUT_TO_EXPIRE =>  "phone_trial_about_to_expire",
     PHONE_TRIAL_EXPIRE =>  "phone_trial_expire",
     PHONE_TRIAL_NUMBER_DELETION_REMINDER =>  "phone_trial_number_deletion_reminder",
-    PHONE_TRIAL_NUMBER_DELETION_REMINDER_LAST_DAY =>  "phone_trial_number_deletion_reminder_last_day" 
+    PHONE_TRIAL_NUMBER_DELETION_REMINDER_LAST_DAY =>  'phone_trial_number_deletion_reminder_last_day',
+    EMAIL_RATE_LIMITED_EXCEEDED => 'Email rate limit exceeded'
   }
 
   EMAIL_SETTING_CONFIGS = (YAML::load_file(File.join(Rails.root, 'config', 'mailgun_out_going_email_mappings.yml')))[Rails.env]

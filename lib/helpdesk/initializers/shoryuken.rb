@@ -20,8 +20,7 @@ if SH_ENABLED
         'Email::MailFetchWorker',
         'Email::EmailDeadLetterWorker',
         'Ryuken::ChannelMessagePoller',
-        'Bot::FeedbackPoller',
-        'Ryuken::EmailRateLimitingWorker'
+        'Bot::FeedbackPoller'
       ]
     end
     config.on :startup do

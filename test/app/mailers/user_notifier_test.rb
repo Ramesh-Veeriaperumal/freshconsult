@@ -4,6 +4,7 @@ require "#{Rails.root}/spec/support/agent_helper.rb"
 class UserNotifierTest < ActionView::TestCase
   include FacebookHelper
   include AgentHelper
+  include EmailHelper
 
   def setup
     super
@@ -173,5 +174,14 @@ class UserNotifierTest < ActionView::TestCase
     assert_equal "Skills Import for #{@account.full_domain}", mail_message.subject
   ensure
     I18n.locale = 'de'
+  end
+
+  def test_notify_email_rate_limit_exceeded
+    recipient1 = add_agent_to_account(@account, name: Faker::Name.name, active: 1, role: 1, language: 'de').user
+    recipient2 = add_agent_to_account(@account, name: Faker::Name.name, active: 1, role: 1).user
+    emails = [recipient1.email, recipient2.email]
+    mail_message = UserNotifier.send_email_to_group(:notify_email_rate_limit_exceeded, emails)
+    assert_equal mail_message['de'].first, recipient1.email
+    assert_equal mail_message['en'].first, recipient2.email
   end
 end

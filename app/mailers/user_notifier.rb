@@ -445,6 +445,25 @@ class UserNotifier < ActionMailer::Base
     remove_email_config
   end
 
+  def notify_email_rate_limit_exceeded(admin_emails)
+    headers = {
+      :subject => I18n.t('mailer_notifier_subject.email_rate_limit_exceeded', account_url: Account.current.full_domain),
+      :to => admin_emails[:group],
+      :from => AppConfig['from_email'],
+      :sent_on => Time.now.in_time_zone,
+      'Reply-to' => '',
+      'Auto-Submitted' => 'auto-generated',
+      'X-Auto-Response-Suppress' => 'DR, RN, OOF, AutoReply'
+    }
+
+    @other_emails = admin_emails[:other]
+
+    mail(headers) do |part|
+      part.text { render 'email_rate_limit_exceeded.text.plain' }
+      part.html { render 'email_rate_limit_exceeded.text.html' }
+    end.deliver
+  end
+
   private
 
     def send_the_mail(user_or_email, subject, email_body, reply_email =nil, type)
