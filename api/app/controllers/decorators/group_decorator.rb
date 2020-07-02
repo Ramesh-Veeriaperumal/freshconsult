@@ -33,7 +33,7 @@ class GroupDecorator < ApiDecorator
       group_type: @group_type_mapping[record.group_type],
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc)
-    }.merge(round_robin_enabled? ? { auto_ticket_assign: auto_ticket_assign } : {})
+    }.merge(fetch_additional_hash)
   end
 
   def to_restricted_hash
@@ -114,8 +114,8 @@ class GroupDecorator < ApiDecorator
      result_hash.merge!({business_hour: business_hour_hash})
     end
 
-    if Account.current.omni_channel_routing_enabled? && assignment_type == OMNI_CHANNEL_ROUTING_ASSIGNMENT
-      result_hash.merge!({allow_agents_to_change_availability: allow_agents_to_change_availability})
+    if Account.current.agent_statuses_enabled? || (Account.current.omni_channel_routing_enabled? && assignment_type == OMNI_CHANNEL_ROUTING_ASSIGNMENT)
+      result_hash.merge!(allow_agents_to_change_availability: allow_agents_to_change_availability)
     elsif round_robin_enabled? && assignment_type == ROUND_ROBIN_ASSIGNMENT
       result_hash.merge!(round_robin_hash)
     end
@@ -166,5 +166,15 @@ class GroupDecorator < ApiDecorator
     created_at: created_at.try(:utc),
     updated_at: updated_at.try(:utc)
   }
+  end
+
+  def fetch_additional_hash
+    if Account.current.agent_statuses_enabled? && round_robin_enabled?
+      { auto_ticket_assign: auto_ticket_assign, allow_agents_to_change_availability: allow_agents_to_change_availability }
+    elsif Account.current.agent_statuses_enabled?
+      { allow_agents_to_change_availability: allow_agents_to_change_availability }
+    else
+      round_robin_enabled? ? { auto_ticket_assign: auto_ticket_assign } : {}
+    end
   end
 end

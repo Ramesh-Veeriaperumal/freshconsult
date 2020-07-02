@@ -365,9 +365,9 @@ class Group < ActiveRecord::Base
     end
 
     def reset_toggle_availability
-      if self.ticket_assign_type == TICKET_ASSIGN_TYPE[:default]
-        self.toggle_availability = false
-        self.capping_limit = 0
+      if ticket_assign_type == TICKET_ASSIGN_TYPE[:default]
+        toggle_availability = false unless Account.current.agent_statuses_enabled?
+        capping_limit = 0
       end
       true
     end

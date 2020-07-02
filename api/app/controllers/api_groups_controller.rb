@@ -33,11 +33,6 @@ class ApiGroupsController < ApiApplicationController
     end
 
     def validate_params
-      group_params = if update?
-      current_account.features?(:round_robin) ? UPDATE_FIELDS : UPDATE_FIELDS_WITHOUT_TICKET_ASSIGN
-      else
-        current_account.features?(:round_robin) ? FIELDS : FIELDS_WITHOUT_TICKET_ASSIGN
-      end
       params[cname].permit(*group_params)
       group = ApiGroupValidation.new(params[cname], @item)
       if create?
@@ -71,7 +66,7 @@ class ApiGroupsController < ApiApplicationController
         params[cname][:group_type] = group_type_id
       end
       params[cname][:unassigned_for] = UNASSIGNED_FOR_MAP[params[cname][:unassigned_for]]
-      ParamsHelper.assign_and_clean_params({ unassigned_for: :assign_time, auto_ticket_assign: :ticket_assign_type },
+      ParamsHelper.assign_and_clean_params({ allow_agents_to_change_availability: :toggle_availability, unassigned_for: :assign_time, auto_ticket_assign: :ticket_assign_type },
       params[cname])
     end
 
@@ -104,8 +99,34 @@ class ApiGroupsController < ApiApplicationController
       end
       groups
     end
-  
+
     def render_success_response
       render_201_with_location(item_id: @item.id)
-    end 
+    end
+
+    def group_params
+      case true
+      when agent_status_enabled? && round_robin_feature_enabled? && !service_group?
+        update? ? UPDATE_FIELDS_WITH_STATUS_TOGGLE : FIELDS_WITH_STATUS_TOGGLE
+      when agent_status_enabled? && !round_robin_feature_enabled? && !service_group?
+        update? ? UPDATE_FIELDS_WITH_STATUS_TOGGLE_WITHOUT_TICKET_ASSIGN : FIELDS_WITH_STATUS_TOGGLE_WITHOUT_TICKET_ASSIGN
+      when round_robin_feature_enabled?
+        update? ? UPDATE_FIELDS : FIELDS
+      else
+        update? ? UPDATE_FIELDS_WITHOUT_TICKET_ASSIGN : FIELDS_WITHOUT_TICKET_ASSIGN
+      end
+    end
+
+    def agent_status_enabled?
+      current_account.agent_statuses_enabled?
+    end
+
+    def round_robin_feature_enabled?
+      current_account.features?(:round_robin)
+    end
+
+    def service_group?
+      (params[cname][:group_type].present? && params[cname][:group_type] == FIELD_GROUP_NAME) ||
+        (@item.present? && @item.group_type == GroupType.group_type_id(FIELD_GROUP_NAME))
+    end
 end

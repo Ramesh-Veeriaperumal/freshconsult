@@ -12,7 +12,7 @@ class PrivateApiGroupValidation < ApiGroupValidation
   validates :capping_limit, custom_absence: { message: :invalid_field }, if: -> { !is_assignment_type_round_robin? || !capping_limit_required? }  
   validates :allow_agents_to_change_availability, data_type: {rules: 'Boolean'}
   validates :allow_agents_to_change_availability, custom_absence: {message: :invalid_field}, if: -> {is_assignment_type_no_assignment?}
-   
+
   validate :round_robin_feature_check, if: -> { is_assignment_type_round_robin? }
   validate :lbrr_feature_check, if: -> { is_assignment_type_round_robin? && @request_params["round_robin_type"] == LOAD_BASED_ROUND_ROBIN }
   validate :sbrr_feature_check, if: -> { is_assignment_type_round_robin? && @request_params["round_robin_type"] == SKILL_BASED_ROUND_ROBIN }
@@ -75,6 +75,7 @@ class PrivateApiGroupValidation < ApiGroupValidation
     end
   end 
 
+
   def is_assignment_type_round_robin?
     if assignment_type.present? 
       assignment_type == ROUND_ROBIN_ASSIGNMENT 
@@ -87,9 +88,9 @@ class PrivateApiGroupValidation < ApiGroupValidation
 
   def is_assignment_type_no_assignment?
     if assignment_type.present?
-      assignment_type == NO_ASSIGNMENT
+      assignment_type == NO_ASSIGNMENT && !Account.current.agent_statuses_enabled?
     else
-      ( update? && @item["ticket_assign_type"]== 0 )  
+      (update? && (@item['ticket_assign_type']).zero?) && !Account.current.agent_statuses_enabled?
     end
   end
 
@@ -126,6 +127,4 @@ class PrivateApiGroupValidation < ApiGroupValidation
   def account_group_types
     Account.current.group_types_from_cache.map(&:name)
   end
-
 end
-  

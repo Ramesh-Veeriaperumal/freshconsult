@@ -19,6 +19,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   end
 
   def test_update_ticket_assign_type_for_field_group
+    @account.add_feature :round_robin
     Account.stubs(:current).returns(Account.first)
     enabling_fsm_feature
     create_field_group_type
@@ -33,6 +34,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     destroy_field_agent
     revoke_fsm_feature
     Account.unstub(:current)
+    @account.revoke_feature :round_robin
   end
 
   def test_create_field_group_with_ticket_assign_type
@@ -178,6 +180,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   end
 
   def test_index
+    @account.add_feature :round_robin
     Group.delete_all
     3.times do
       create_group(@account)
@@ -189,6 +192,8 @@ class ApiGroupsControllerTest < ActionController::TestCase
     end
     assert_response 200
     match_json(pattern.ordered!)
+  ensure
+    @account.revoke_feature :round_robin
   end
 
   def test_index_for_validate_filter_params_valid
@@ -253,22 +258,29 @@ class ApiGroupsControllerTest < ActionController::TestCase
   end
 
   def test_update_group
+    @account.add_feature :round_robin
     group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: group.id }, escalate_to: 1, unassigned_for: '30m',
                                                     auto_ticket_assign: true, agent_ids: [1])
     assert_response 200
     match_json(group_pattern({ escalate_to: 1, unassigned_for: '30m', auto_ticket_assign: 1,
                                agent_ids: [1] }, group.reload))
+  ensure
+    @account.revoke_feature :round_robin
   end
 
   def test_update_group_with_blank_name
+    @account.add_feature :round_robin
     group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: group.id }, name: '')
     assert_response 400
     match_json([bad_request_error_pattern('name', :blank)])
+  ensure
+    @account.revoke_feature :round_robin
   end
 
   def test_update_group_with_invalid_field_values
+    @account.add_feature :round_robin
     group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: group.id }, escalate_to: Faker::Lorem.characters(5),
                                                     unassigned_for: Faker::Lorem.characters(5),
@@ -279,6 +291,8 @@ class ApiGroupsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('unassigned_for', :not_included, list: '30m,1h,2h,4h,8h,12h,1d,2d,3d'),
                 bad_request_error_pattern('name', :'Has 300 characters, it can have maximum of 255 characters'),
                 bad_request_error_pattern('auto_ticket_assign', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
+  ensure
+    @account.revoke_feature :round_robin
   end
 
   def test_update_group_with_deleted_or_invalid_agent_id
@@ -451,5 +465,93 @@ class ApiGroupsControllerTest < ActionController::TestCase
     assert_response 200
     assert JSON.parse(response.body).count == 1
     assert_nil response.headers['Link']
+  end
+
+  def test_update_toggle_availability_without_ticket_assignment_without_agent_status_features
+    group = create_group(@account)
+    put :update, construct_params({ id: group.id }, allow_agents_to_change_availability: true)
+    assert_response 400
+    match_json([bad_request_error_pattern('allow_agents_to_change_availability', :invalid_field)])
+  end
+
+  def test_update_toggle_availability_with_ticket_assignment_without_agent_status_feature
+    Account.any_instance.stubs(:features?).with(:round_robin).returns(true)
+    group = create_group(@account)
+    put :update, construct_params({ id: group.id }, allow_agents_to_change_availability: true)
+    assert_response 400
+    match_json([bad_request_error_pattern('allow_agents_to_change_availability', :invalid_field)])
+  ensure
+    Account.any_instance.stubs(:features?).with(:round_robin).returns(false)
+  end
+
+  def test_update_toggle_availability_with_ticket_assignment_with_agent_status_feature
+    Account.any_instance.stubs(:features?).with(:round_robin).returns(true)
+    Account.current.launch :agent_statuses
+    group = create_group(@account, toggle_availability: false, ticket_assign_type: 1)
+    put :update, construct_params({ id: group.id }, allow_agents_to_change_availability: true)
+    group.reload
+    assert_equal true, group.toggle_availability
+    assert_response 200
+    match_json(group_pattern({ agent_ids: nil }, group.reload).merge(allow_agents_to_change_availability: true))
+  ensure
+    Account.any_instance.stubs(:features?).with(:round_robin).returns(false)
+    Account.current.rollback :agent_statuses
+  end
+
+  def test_update_toggle_availability_without_ticket_assignment_with_agent_status_feature
+    Account.any_instance.stubs(:features?).with(:round_robin).returns(false)
+    Account.current.launch :agent_statuses
+    group = create_group(@account, toggle_availability: false)
+    put :update, construct_params({ id: group.id }, allow_agents_to_change_availability: true)
+    group.reload
+    assert_equal true, group.toggle_availability
+    assert_response 200
+    match_json(group_pattern_without_assingn_type({ agent_ids: nil }, group.reload).merge(allow_agents_to_change_availability: true))
+  ensure
+    Account.current.rollback :agent_statuses
+  end
+
+  def test_toggle_availability_data_type
+    Account.current.launch :agent_statuses
+    post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, agent_ids: [1], allow_agents_to_change_availability: 'true')
+    assert_response 400
+    match_json([bad_request_error_pattern('allow_agents_to_change_availability', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
+  ensure
+    Account.current.rollback :agent_statuses
+  end
+
+  def test_update_toggle_availability_with_agent_statuses_with_field_group
+    Account.current.launch :agent_statuses
+    enabling_fsm_feature
+    create_field_group_type
+    group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph, group_type: GroupType.group_type_id(FIELD_GROUP_NAME))
+    put :update, construct_params({ id: group.id }, allow_agents_to_change_availability: true)
+    assert_response 400
+    match_json([bad_request_error_pattern('allow_agents_to_change_availability', :invalid_field)])
+  ensure
+    destroy_field_group
+    revoke_fsm_feature
+    @account.rollback :agent_statuses
+  end
+
+  def test_create_with_agent_availability_with_agent_statues_with_field_agent
+    @account.launch :agent_statuses
+    @account.revoke_feature :round_robin
+    @account.revoke_feature :omni_channel_routing
+    enabling_fsm_feature
+    create_field_group_type
+    post :create, construct_params(name: Faker::Lorem.characters(10),
+                                   description: Faker::Lorem.paragraph,
+                                   escalate_to: 1,
+                                   agent_ids: [1],
+                                   unassigned_for: '30m',
+                                   allow_agents_to_change_availability: true,
+                                   group_type: GroupConstants::FIELD_GROUP_NAME)
+    assert_response 400
+    match_json([bad_request_error_pattern('allow_agents_to_change_availability', :invalid_field)])
+  ensure
+    destroy_field_group
+    revoke_fsm_feature
+    @account.rollback :agent_statuses
   end
 end
