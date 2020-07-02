@@ -1011,6 +1011,7 @@ Helpkit::Application.routes.draw do
     post '/canned_responses', to: 'channel/v2/canned_responses#create'
     post 'tickets/bulk_archive', to: 'channel/v2/tickets/bulk_actions#bulk_archive'
     get '/account', to: 'channel/v2/accounts#show'
+    match '/account/update_freshchat_domain', to: 'channel/v2/accounts#update_freshchat_domain', via: [:post]
     match '/authenticate', to: 'channel/v2/iam/authentication#authenticate', via: [:get, :post, :put, :delete]
     resources :ticket_filters, controller: 'channel/v2/ticket_filters', only: [:index, :show]
     resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show, :index]
