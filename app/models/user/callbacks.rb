@@ -18,7 +18,6 @@ class User < ActiveRecord::Base
 
   before_update :create_freshid_user, if: :converted_to_agent?
   before_update :update_agent_default_preferences, if: -> { converted_to_agent? && !was_agent? }
-  before_update :destroy_freshid_user, if: :converted_to_contact?
   before_update :update_freshid_user, if: [:freshid_enabled_and_agent?, :email_id_changed?]
   before_update :set_gdpr_preference, :if => [:privileges_changed?, :agent_to_admin?]
   before_update :remove_gdpr_preference, :if => [:privileges_changed?, :admin_to_agent?]
@@ -41,6 +40,8 @@ class User < ActiveRecord::Base
   publishable on: [:create, :update, :destroy], if: -> { !helpdesk_agent? || helpdesk_agent_changed? }
 
   before_destroy :save_deleted_user_info
+
+  after_commit :destroy_freshid_user, on: :update, if: -> { converted_to_contact? }
 
   after_commit ->(obj) { obj.clear_agent_caches }, on: :create, if: :agent?
   after_commit ->(obj) { obj.clear_agent_caches }, on: :destroy, if: :agent?
