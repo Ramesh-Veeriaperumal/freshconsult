@@ -48,6 +48,8 @@ class AgentGroup < ActiveRecord::Base
     { :conditions => ["user_id = ? AND group_id in (?)", user_id, group_ids] }
   }
 
+  scope :write_access_only, -> { where('write_access = ?', true) }
+
   swindle :basic_info,
           attrs: %i[user_id group_id]
 

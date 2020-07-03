@@ -4,7 +4,7 @@ module Cache::Memcache::Admin::CustomData
   def agent_groups_ids_only_from_cache
     key = agent_groups_ids_only_memcache_key
     fetch_from_cache(key) do
-      agent_groups.pluck_all('user_id', 'group_id').each_with_object(agents: {}, groups: {}) do |ag, mapping|
+      agent_groups.write_access_only.pluck_all('user_id', 'group_id').each_with_object(agents: {}, groups: {}) do |ag, mapping|
         group_id = ag[AgentConstants::AGENT_GROUPS_ID_MAPPING[:group_id]]
         user_id = ag[AgentConstants::AGENT_GROUPS_ID_MAPPING[:user_id]]
         (mapping[:agents][user_id] ||= []).push(group_id)
