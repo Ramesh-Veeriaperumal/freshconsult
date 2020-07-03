@@ -26,6 +26,8 @@ class AgentTest < ActiveSupport::TestCase
   end
 
   def teardown
+    Account.current.technicians.where(email: 'john.wick@gmal.com').each(&:destroy)
+    Account.current.groups.where(name: %w[liverpool_fc_01 liverpool_fc_02]).each(&:destroy)
     super
     Account.unstub(:current)
   end
@@ -76,5 +78,66 @@ class AgentTest < ActiveSupport::TestCase
     payload.must_match_json_expression(central_publish_post_pattern(agent))
     # assert_equal 'agent_update', job['args'][0]
     # assert_equal({ 'groups' => { 'added' => [{'id' => group.id, 'name' => group.name}], 'removed' => [] } }, job['args'][1]['model_changes'])
+  end
+
+  def test_add_contribution_group_publish_to_central
+    group = create_group(@account, name: 'liverpool_fc_01')
+    agent = add_agent(@account, email: 'john.wick@gmal.com', role: Role.where(name: 'Agent').first.id, available: false, ticket_permission: 2).agent
+    agent.reload
+    ::CentralPublishWorker::UserWorker.jobs.clear
+    enable_advanced_ticket_scopes do
+      agent.build_agent_groups_attributes([], [group.id])
+      agent.save
+    end
+    ::CentralPublishWorker::UserWorker.jobs.last
+    payload = agent.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_post_pattern(agent))
+  end
+
+  def test_add_group_and_contribution_group_publish_to_central
+    group1 = create_group(@account, name: 'liverpool_fc_01')
+    group2 = create_group(@account, name: 'liverpool_fc_02')
+    agent = add_agent(@account, email: 'john.wick@gmal.com', role: Role.where(name: 'Agent').first.id, available: false, ticket_permission: 2).agent
+    agent.reload
+    ::CentralPublishWorker::UserWorker.jobs.clear
+    enable_advanced_ticket_scopes do
+      agent.build_agent_groups_attributes([group1.id], [group2.id])
+      agent.save
+    end
+    ::CentralPublishWorker::UserWorker.jobs.last
+    payload = agent.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_post_pattern(agent))
+  end
+
+  def test_update_group_and_contribution_group_publish_to_central
+    group1 = create_group(@account, name: 'liverpool_fc_01')
+    group2 = create_group(@account, name: 'liverpool_fc_02')
+    agent = add_agent(@account, email: 'john.wick@gmal.com', role: Role.where(name: 'Agent').first.id, available: false, ticket_permission: 2).agent
+    agent.reload
+    ::CentralPublishWorker::UserWorker.jobs.clear
+    enable_advanced_ticket_scopes do
+      agent.build_agent_groups_attributes([group1.id], [group2.id])
+      agent.save
+    end
+    ::CentralPublishWorker::UserWorker.jobs.last
+    payload = agent.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_post_pattern(agent))
+
+    agent = Account.current.technicians.where(id: agent.user.id).first.agent
+    ::CentralPublishWorker::UserWorker.jobs.clear
+    enable_advanced_ticket_scopes do
+      agent.build_agent_groups_attributes([group2.id], [group1.id])
+      agent.save
+    end
+    ::CentralPublishWorker::UserWorker.jobs.last
+    payload = agent.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_post_pattern(agent))
+  end
+
+  def enable_advanced_ticket_scopes
+    Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+    yield
+  ensure
+    Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
   end
 end

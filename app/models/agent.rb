@@ -30,6 +30,7 @@ class Agent < ActiveRecord::Base
   before_update :destroy_contribution_group_on_permission_change, if: :ticket_permission_changed?
 
   before_create :mark_unavailable
+  before_save :update_agent_group_change
   after_commit :enqueue_round_robin_process, on: :update
   after_commit :sync_skill_based_queues, on: :update
   after_commit :sync_agent_availability_to_ocr, on: :update, if: :allow_ocr_sync?
@@ -546,15 +547,39 @@ class Agent < ActiveRecord::Base
     {:id => id, :group_id => group_id, :_destroy => id.present?}
   end
 
+  def central_group_key_names(agent_group)
+    CENTRAL_GROUP_KEYS[agent_group.write_access.present? ? 0 : 1]
+  end
+
   def touch_agent_group_change(agent_group)
-    return unless agent_group.group_id.present?
+    return if agent_group.group_id.blank?
+
+    initialize_group_changes
     agent_info = { id: agent_group.group_id, name: agent_group.group.name }
-    if self.group_changes.present?
-      self.group_changes.push(agent_info)
-    else
-      self.group_changes = [agent_info]
-    end
+    deleted = agent_group.destroyed? || agent_group.marked_for_destruction? ? 1 : 0
+    group_changes[central_group_key_names(agent_group)][CENTRAL_ADD_REMOVE_KEY[deleted]] << agent_info
     clear_group_cache
+  end
+
+  def initialize_group_changes
+    self.group_changes ||= {}
+    CENTRAL_GROUP_KEYS.each do |key|
+      group_changes[key] ||= {}
+      group_changes[key][:added] ||= []
+      group_changes[key][:removed] ||= []
+    end
+  end
+
+  def update_agent_group_change
+    all_agent_groups.each do |agent_group|
+      next if agent_group.new_record? || agent_group.marked_for_destruction? || agent_group.group_id.blank? || !agent_group.write_access_changed?
+
+      agent_info = { id: agent_group.group_id, name: agent_group.group.name }
+      initialize_group_changes
+      key = central_group_key_names(agent_group)
+      group_changes[key][:added] << agent_info
+      group_changes[CENTRAL_GROUP_KEYS[key == :groups ? 1 : 0]][:removed] << agent_info
+    end
   end
 
   def set_default_type_if_needed

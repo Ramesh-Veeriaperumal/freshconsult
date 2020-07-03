@@ -26,13 +26,33 @@ class Agent < ActiveRecord::Base
     s.add :account_id
     s.add :available
     s.add :agent_type_hash, as: :agent_type
-    s.add proc { |x| x.groups.map { |ag| {name: ag.name, id: ag.id }}}, as: :groups
+    s.add proc { |agent| agent.read_and_write_access_groups[:groups] }, as: :groups
+    s.add proc { |agent| agent.read_and_write_access_groups[:contribution_groups] }, as: :contribution_groups
     USER_FIELDS.each do |key|
       s.add proc { |d| d.user.safe_send(key) }, as: key
     end
     DATETIME_FIELDS.each do |key|
       s.add proc { |d| d.utc_format(d.safe_send(key)) }, as: key
     end
+  end
+
+  def read_and_write_access_groups
+    @read_and_write_access_groups ||=
+      begin
+        group_data = all_agent_groups.preload(:group).each_with_object({}) do |agent_group, mapping|
+          mapping[CENTRAL_GROUP_KEYS[0]] ||= {}
+          mapping[CENTRAL_GROUP_KEYS[1]] ||= {}
+          group = agent_group.group
+          mapping[CENTRAL_GROUP_KEYS[agent_group.write_access.present? ? 0 : 1]][group.id] = group_response_hash(group)
+        end
+        CENTRAL_GROUP_KEYS.each_with_object({}) do |key, mapping|
+          mapping[key] = (group_data[key] || {}).values
+        end
+      end
+  end
+
+  def group_response_hash(group)
+    { id: group[:id], name: group[:name] }
   end
 
   def event_info action
@@ -44,22 +64,17 @@ class Agent < ActiveRecord::Base
 
   def model_changes_for_central
     return {} if login_logout_action?
-    changes = @model_changes.merge(self.user_changes || {})
-    changes.merge!({
-      "single_access_token" => ["*", "*"]
-    }) if @model_changes.key?("single_access_token")
-    if self.group_changes.present?
-      groups = agent_groups.pluck :group_id
-      groups_hash = {added: [], removed: []}
-      self.group_changes.uniq.each do |ag|
-        groups.include?(ag[:id]) ? groups_hash[:added].push(ag) : 
-                                   groups_hash[:removed].push(ag)
-      end
-      if groups_hash[:added].any? || groups_hash[:removed].any?
-        changes.merge!({"groups" => groups_hash})
-      end
-    end
+
+    changes = @model_changes.merge(user_changes || {})
+    changes.merge!(CENTRAL_SINGLE_ACCESS_TOKEN_KEY => %w[* *]) if @model_changes.key?(CENTRAL_SINGLE_ACCESS_TOKEN_KEY)
+    groups_and_contribution_group_changes(changes) if group_changes.present?
     changes
+  end
+
+  def groups_and_contribution_group_changes(changes)
+    CENTRAL_GROUP_KEYS.each do |key|
+      changes.merge!(key.to_s => group_changes[key]) if group_changes[key][:added].present? || group_changes[key][:removed].present?
+    end
   end
 
   def misc_changes_for_central

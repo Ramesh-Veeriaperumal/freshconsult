@@ -31,7 +31,8 @@ module AgentTestHelper
       active_since: agent.active_since.try(:utc).try(:iso8601),
       last_active_at: agent.last_active_at.try(:utc).try(:iso8601),
       agent_type: agent_type_hash(agent),
-      groups: agent.groups.map { |ag| {name: ag.name, id: ag.id }}
+      groups: agent.groups.reload.map { |ag| {name: ag.name, id: ag.id }},
+      contribution_groups: agent.all_agent_groups.reload.preload(:group).where(write_access: false).map { |ag| { name: ag.group.name, id: ag.group.id } }
     }.merge(user_fields_pattern(agent.user))
   end
 
