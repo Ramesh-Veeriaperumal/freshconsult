@@ -1,0 +1,6 @@
+<div>
+  <%= render layout: 'shared/email_header_footer.html.erb', locals: { user_name: 'Admin', sent_by: :freshdesk_team, other_recipients_note: true  } do %>
+    <%= t("mailer_notifier.user_notifications.incoming_email_rate_limit_exceeded") %>
+    <br/><br/>
+  <% end %>
+</div>

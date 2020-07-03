@@ -4,6 +4,7 @@ require 'sidekiq/testing'
 require 'webmock/minitest'
 require Rails.root.join('test', 'api', 'helpers', 'privileges_helper.rb')
 require Rails.root.join('test', 'api', 'helpers', 'tickets_test_helper.rb')
+require Rails.root.join('test', 'api', 'helpers', 'advanced_scope_test_helper.rb')
 ['social_tickets_creation_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 ['shared_ownership_test_helper'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 
@@ -23,6 +24,7 @@ class TicketsControllerTest < ActionController::TestCase
   include ::Admin::AdvancedTicketing::FieldServiceManagement::Constant
   include PrivilegesHelper
   include FieldServiceManagementTestHelper
+  include AdvancedScopeTestHelper
   CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
 
   VALIDATABLE_CUSTOM_FIELDS =  %w(number checkbox decimal text paragraph date)
@@ -2810,6 +2812,14 @@ class TicketsControllerTest < ActionController::TestCase
     assert t.reload.source == 2
   end
 
+  def test_update_with_source_as_bot
+    params_hash = { source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:bot] }
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    match_json(update_ticket_pattern({}, ticket.reload))
+    assert_response 200
+    assert ticket.reload.source == 12
+  end
+
   def test_update_with_tags
     tags = [Faker::Name.name, Faker::Name.name]
     params_hash = { tags: tags }
@@ -3048,7 +3058,7 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
                 bad_request_error_pattern('type', :not_included, list: ticket_type_list),
-                bad_request_error_pattern('source', :not_included, list: '1,2,3,5,6,7,8,9,11,10')])
+                bad_request_error_pattern('source', :not_included, list: '1,2,3,5,6,7,8,9,11,10,12')])
   end
 
   def test_update_length_invalid
@@ -3470,7 +3480,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = { source: custom_source.account_choice_id }
     put :update, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('source', :not_included, list: api_ticket_sources.join(','))])
+    match_json([bad_request_error_pattern('source', :not_included, list: api_update_ticket_sources.join(','))])
   ensure
     custom_source.try(:destroy)
     ticket.try(:destroy)
@@ -3484,7 +3494,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = { source: custom_source.account_choice_id }
     put :update, construct_params({ id: ticket.display_id }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('source', :not_included, list: api_ticket_sources.join(','))])
+    match_json([bad_request_error_pattern('source', :not_included, list: api_update_ticket_sources.join(','))])
   ensure
     Account.current.unstub(:ticket_source_revamp_enabled?)
     custom_source.try(:destroy)
@@ -4664,7 +4674,7 @@ class TicketsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
                 bad_request_error_pattern('type', :not_included, list: ticket_type_list),
-                bad_request_error_pattern('source', :not_included, list: '1,2,3,5,6,7,8,9,11,10')])
+                bad_request_error_pattern('source', :not_included, list: '1,2,3,5,6,7,8,9,11,10,12')])
     assert_response 400
   ensure
     default_non_required_fiels.map { |x| x.toggle!(:required) }
@@ -4964,7 +4974,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.except(:email).merge(source: 100)
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('source', :not_included, list: '1,2,3,5,6,7,8,9,11')])
+    match_json([bad_request_error_pattern('source', :not_included, list: '1,2,3,5,6,7,8,9,11,12')])
   ensure
     Account.any_instance.unstub(:compose_email_enabled?)
   end
@@ -6107,6 +6117,87 @@ class TicketsControllerTest < ActionController::TestCase
       tracker_id = create_tracker_ticket.display_id
       put :update, construct_params({ id: tracker_id + 100, tracker_id: tracker_id }, false)
       assert_response 404
+    end
+  end
+
+  def test_link_ticket_to_tracker_with_advanced_scope_turned_off
+    enable_adv_ticketing([:link_tickets]) do
+      Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(false)
+      read_access_agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      agent_group = create_agent_group_with_read_access(@account, read_access_agent)
+      ticket = create_ticket
+      ticket.group_id = agent_group.group_id
+      ticket.save!
+      login_as(read_access_agent)
+      tracker_id = create_tracker_ticket.display_id
+      put :update, construct_params({ id: ticket.display_id, tracker_id: tracker_id }, false)
+      log_out
+      assert_response 403
+      read_access_agent.destroy
+      Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+    end
+  end
+
+  def test_link_ticket_to_tracker_with_advanced_scope_turned_on
+    enable_adv_ticketing([:link_tickets]) do
+      Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+      read_access_agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      agent_group = create_agent_group_with_read_access(@account, read_access_agent)
+      ticket = create_ticket
+      ticket.group_id = agent_group.group_id
+      ticket.save!
+      login_as(read_access_agent)
+      tracker_id = create_tracker_ticket.display_id
+      put :update, construct_params({ id: ticket.display_id, tracker_id: tracker_id }, false)
+      assert_response 200
+      ticket = Helpdesk::Ticket.where(display_id: ticket.display_id).first
+      tracker_ticket = Helpdesk::Ticket.where(display_id: tracker_id).first
+      assert ticket.related_ticket?
+      assert_equal 1, tracker_ticket.subsidiary_tkts_count
+      log_out
+      read_access_agent.destroy
+      Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+    end
+  end
+
+  def test_create_tracker_ticket_with_advanced_scope_turned_off
+    enable_adv_ticketing([:link_tickets]) do
+      Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(false)
+      read_access_agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      agent_group = create_agent_group_with_read_access(@account, read_access_agent)
+      ticket = create_ticket
+      ticket.group_id = agent_group.group_id
+      ticket.save!
+      login_as(read_access_agent)
+      Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
+      params_hash = ticket_params_hash.merge(email: read_access_agent.email, related_ticket_ids: [ticket.display_id])
+      post :create, construct_params(params_hash)
+      assert_response 400
+      log_out
+      read_access_agent.destroy
+      Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+    end
+  end
+
+  def test_create_tracker_ticket_with_advanced_scope_turned_on
+    enable_adv_ticketing([:link_tickets]) do
+      Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+      read_access_agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      agent_group = create_agent_group_with_read_access(@account, read_access_agent)
+      ticket = create_ticket
+      ticket.group_id = agent_group.group_id
+      ticket.save!
+      login_as(read_access_agent)
+      tracker_id = create_tracker_ticket.display_id
+      put :update, construct_params({ id: ticket.display_id, tracker_id: tracker_id }, false)
+      assert_response 200
+      ticket = Helpdesk::Ticket.where(display_id: ticket.display_id).first
+      tracker_ticket = Helpdesk::Ticket.where(display_id: tracker_id).first
+      assert ticket.related_ticket?
+      assert_equal 1, tracker_ticket.subsidiary_tkts_count
+      log_out
+      read_access_agent.destroy
+      Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
     end
   end
 

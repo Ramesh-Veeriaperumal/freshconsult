@@ -2,9 +2,8 @@ module Ember
   class OcrProxyController < ApiApplicationController
 
     include Fdadmin::ApiCallConstants
+    include OmniChannelRouting::Constants
     skip_before_filter :load_object
-
-    ADMINSERVICE = 'admin'.freeze
 
     def execute
       begin
@@ -13,7 +12,7 @@ module Ember
         options[:body] = params.except(:version, :format, :controller, :action, :ocr_proxy).to_json
         options[:verify_blacklist] = true
         net_http_method = HTTP_METHOD_TO_CLASS_MAPPING[request_method.downcase.to_sym]
-        url = OCR_CONFIG[:api_endpoint] + request.url.split("ocr_proxy/").last
+        url = OCR_BASE_URL + request.url.split('ocr_proxy/').last
         proxy_request = HTTParty::Request.new(net_http_method, url, options)
         Rails.logger.debug "Sending request: #{proxy_request.inspect}"
         proxy_response = proxy_request.perform
@@ -36,19 +35,26 @@ module Ember
     private
 
       def headers
-        account_id = Account.current.account_additional_settings.additional_settings[:ocr_account_id].to_s
-        payload = { service: ADMINSERVICE, account_id: account_id, actor: User.current.try(:id).to_s }
-        jwt_token = construct_jwt_token(payload)
-
-        { 
-          'Authorization' => "Token #{jwt_token}",
+        {
+          'Authorization' => "Token #{construct_jwt_token}",
           'Content-Type'  => 'application/json',
           'X-Request-ID'  => "#{Thread.current[:message_uuid]}"
         }
       end
 
-      def construct_jwt_token(payload)
-        JWT.encode payload, OCR_CONFIG[:admin_jwt_secret], 'HS256', { "alg": "HS256", "typ": "JWT" }
+      def construct_jwt_token
+        client_service = :admin
+        jwt_payload = {
+          account_id: Account.current.ocr_account_id.to_s,
+          service: OCR_CLIENT_SERVICES[client_service],
+          actor: User.current.try(:id).to_s
+        }
+        JWT.encode(
+          jwt_payload,
+          OCR_CLIENT_SECRET_KEYS[client_service],
+          OCR_JWT_SIGNING_ALG,
+          OCR_JWT_HEADER
+        )
       end
 
       def request_method

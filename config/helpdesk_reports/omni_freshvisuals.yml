@@ -1,0 +1,14 @@
+defaults: &defaults
+  secret_key: dummy
+  bu_name: "support360"
+  end_point: dummy
+  early_expiration: 60
+  session_expiration: 36000
+  session_expiration_for_pricing_api: 30
+  timeout_for_pricing_api: 10
+development:
+  <<: *defaults
+staging:
+  <<: *defaults
+test:
+  <<: *defaults

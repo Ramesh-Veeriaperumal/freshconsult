@@ -540,13 +540,14 @@ Authority::Authorization::PrivilegeList.build do
 
     # Used by V2 API
     resource :"api_contact", :only => [:make_agent]
-    resource :"api_agent", :only => [:show, :index, :update, :destroy, :create, :export, :export_s3_url, :update_multiple, :create_multiple]
+    resource :"api_agent", :only => [:show, :index, :update, :destroy, :create, :export, :export_s3_url, :update_multiple, :create_multiple, :availability_count]
   end
 
   manage_availability do
     resource :group, :only => [:index, :show, :edit, :update, :toggle_roundrobin, :user_skill_exists]
     resource :"helpdesk/dashboard",:only => [:agent_status]
     resource :"admin/user_skill"
+    resource :api_agent, only: [:availability_count]
   end
 
   manage_canned_responses do

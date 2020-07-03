@@ -9,12 +9,13 @@ module Ember
     end
 
      private
-      def validate_params  
-        group_params = unless api_current_user.privilege?(:admin_tasks)
-          []
-        else
-          (update?) ? UPDATE_PRIVATE_API_FIELDS_WITHOUT_ASSIGNMENT_CONFIG : PRIVATE_API_FIELDS_WITHOUT_ASSIGNMENT_CONFIG
-        end
+      def validate_params
+        group_params = [] unless api_current_user.privilege?(:admin_tasks)
+        group_params = if current_account.agent_statuses_enabled? && !service_group?
+                         update? ? UPDATE_PRIVATE_API_FIELDS_WITH_STATUS_TOGGLE_WITHOUT_ASSIGNMENT_CONFIG : PRIVATE_API_FIELDS_WITH_STATUS_TOGGLE_WITHOUT_ASSIGNMENT_CONFIG
+                       else
+                         update? ? UPDATE_PRIVATE_API_FIELDS_WITHOUT_ASSIGNMENT_CONFIG : PRIVATE_API_FIELDS_WITHOUT_ASSIGNMENT_CONFIG
+                       end
         group_params=Account.current.features?(:round_robin) ? group_params | RR_FIELDS : group_params  
         group_params=Account.current.omni_channel_routing_enabled?  ? group_params | OCR_FIELDS : group_params            
         params[cname].permit(*group_params)        
@@ -81,5 +82,9 @@ module Ember
         render 'show', status: 201 
       end
 
+      def service_group?
+        (params[:group].present? && params[:group][:group_type] == FIELD_GROUP_NAME) ||
+          (@item.present? && @item.group_type == 2)
+      end
   end
 end

@@ -2,7 +2,7 @@ require_relative '../../test_helper'
 require 'webmock/minitest'
 ['canned_responses_helper.rb', 'social_tickets_creation_helper.rb', 'ticket_template_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 ['account_test_helper.rb', 'groups_test_helper.rb', 'shared_ownership_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
-['tickets_test_helper.rb', 'bot_response_test_helper.rb', 'ticket_properties_suggester_test_helper'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
+['advanced_scope_test_helper.rb', 'tickets_test_helper.rb', 'bot_response_test_helper.rb', 'ticket_properties_suggester_test_helper'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 
 module Ember
   class TicketsControllerTest < ActionController::TestCase
@@ -33,6 +33,7 @@ module Ember
     include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
     include ::Admin::AdvancedTicketing::FieldServiceManagement::Constant
     include FieldServiceManagementTestHelper
+    include AdvancedScopeTestHelper
     ARCHIVE_DAYS = 120
     TICKET_UPDATED_DATE = 150.days.ago
 
@@ -4003,6 +4004,7 @@ module Ember
 
     def test_create_child_to_inaccessible_parent
       enable_adv_ticketing([:parent_child_tickets]) do
+        Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(false)
         Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
         parent_ticket = create_parent_ticket
         User.any_instance.stubs(:has_ticket_permission?).returns(false)
@@ -4010,6 +4012,7 @@ module Ember
         post :create, construct_params({ version: 'private' }, params_hash)
         assert_response 403
         User.any_instance.unstub(:has_ticket_permission?)
+        Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
       end
     end
 
@@ -4656,6 +4659,53 @@ module Ember
       end
       assert_response 400
       match_json([bad_request_error_pattern('feature', :require_feature, feature: 'Parent Child Tickets')])
+    end
+
+    def test_create_child_with_template_read_access_agent
+      enable_adv_ticketing([:parent_child_tickets]) do
+        Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+        create_parent_child_template(2)
+        child_template_ids = @child_templates.map(&:id)
+        parent_ticket = create_ticket
+        read_access_agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+        agent_group = create_agent_group_with_read_access(@account, read_access_agent)
+        parent_ticket.group_id = agent_group.group_id
+        parent_ticket.save!
+        login_as(read_access_agent)
+        Sidekiq::Testing.inline! do
+          put :create_child_with_template, construct_params({ version: 'private', id: parent_ticket.display_id, parent_template_id: @parent_template.id, child_template_ids: child_template_ids }, false)
+        end
+        assert_response 204
+        child_ticket = Account.current.tickets.last
+        assert child_ticket.child_ticket?
+        assert parent_ticket.reload.assoc_parent_ticket?
+        assert_equal parent_ticket.child_tkts_count, 2
+        assert_equal child_ticket.associated_prime_ticket('child'), parent_ticket
+        log_out
+        read_access_agent.destroy
+        Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+      end
+    end
+
+    def test_create_child_with_template_read_access_agent_with_scope_off
+      enable_adv_ticketing([:parent_child_tickets]) do
+        Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(false)
+        create_parent_child_template(2)
+        child_template_ids = @child_templates.map(&:id)
+        parent_ticket = create_ticket
+        read_access_agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+        agent_group = create_agent_group_with_read_access(@account, read_access_agent)
+        parent_ticket.group_id = agent_group.group_id
+        parent_ticket.save!
+        login_as(read_access_agent)
+        Sidekiq::Testing.inline! do
+          put :create_child_with_template, construct_params({ version: 'private', id: parent_ticket.display_id, parent_template_id: @parent_template.id, child_template_ids: child_template_ids }, false)
+        end
+        assert_response 403
+        log_out
+        read_access_agent.destroy
+        Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+      end
     end
 
     def test_compose_email_for_free_account_with_limit

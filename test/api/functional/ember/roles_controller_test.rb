@@ -206,4 +206,21 @@ class RolesControllerTest < ActionController::TestCase
     assert !Account.current.roles.map(&:name).include?('Coach')
     match_json(pattern.ordered!)
   end
+
+  def test_update_omni_view_analytics_role
+    CustomRequestStore.store[:private_api_request] = true
+    create_role(name: 'test omni view analytics update', privilege_list: ['manage_tickets', 'edit_ticket_properties', 'view_forums', 'view_contacts',
+                                                           'view_reports', '', '0', '0', '0', '0'])
+    role = Role.where(name: 'test omni view analytics update').first
+
+    post :bulk_update, construct_params({ version: 'private' },
+      ids: [role.id], options: { privileges: { add: ['view_analytics', 'view_omni_analytics']}})
+
+    assert_response 204
+
+    updated_role = Role.where(name: 'test omni view analytics update').first
+    test_agent = add_test_agent(Account.current, role: updated_role.id)
+    assert_equal true, test_agent.privilege?(:view_omni_analytics)
+    assert_equal true, test_agent.privilege?(:view_analytics)
+  end
 end

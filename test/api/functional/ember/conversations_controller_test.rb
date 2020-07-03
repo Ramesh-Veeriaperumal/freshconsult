@@ -1,5 +1,7 @@
 require_relative '../../test_helper'
 require 'sidekiq/testing'
+require Rails.root.join('test', 'api', 'helpers', 'advanced_scope_test_helper.rb')
+
 Sidekiq::Testing.fake!
 ['canned_responses_helper.rb', 'group_helper.rb', 'social_tickets_creation_helper.rb', 'twitter_helper.rb', 'dynamo_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module Ember
@@ -21,6 +23,7 @@ module Ember
     include Redis::OthersRedis
     include Redis::TicketsRedis
     include PrivilegesHelper
+    include AdvancedScopeTestHelper
 
     BULK_ATTACHMENT_CREATE_COUNT = 2
     BULK_NOTE_CREATE_COUNT       = 2
@@ -205,6 +208,26 @@ module Ember
       post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('inline_attachment_ids', :invalid_inline_attachments_list, invalid_ids: invalid_ids.join(', '))])
+    end
+
+    def test_tweet_email_reply
+      @account.launch(:twitter_public_api)
+      t = create_ticket(source: 5)
+      params_hash = reply_note_params_hash.merge(full_text: Faker::Lorem.paragraph(10))
+      post :reply, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 201
+    ensure
+      @account.rollback(:twitter_public_api)
+    end
+
+    def test_fb_email_reply
+      @account.launch(:facebook_public_api)
+      t = create_ticket(source: 6)
+      params_hash = reply_note_params_hash.merge(full_text: Faker::Lorem.paragraph(10))
+      post :reply, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 201
+    ensure
+      @account.rollback(:facebook_public_api)
     end
 
     def test_create_with_attachment_and_attachment_ids
@@ -1994,6 +2017,27 @@ module Ember
         post :broadcast, construct_params({ version: 'private', id: tracker_id }, broadcast_note_params)
         assert_response 201
         match_json(private_note_pattern({}, Helpdesk::Note.last))
+      end
+    end
+
+    def test_add_broadcast_note_to_tracker_as_read_access_agent
+      enable_adv_ticketing([:link_tickets]) do
+        begin
+          Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+          read_access_agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+          agent_group = create_agent_group_with_read_access(@account, read_access_agent)
+          tracker_ticket = create_tracker_ticket
+          tracker_id = tracker_ticket.display_id
+          tracker_ticket.group_id = agent_group.group_id
+          tracker_ticket.save!
+          User.stubs(:current).returns(read_access_agent)
+          post :broadcast, construct_params({ version: 'private', id: tracker_id }, broadcast_note_params)
+          assert_response 201
+          match_json(private_note_pattern({}, Helpdesk::Note.last))
+        ensure
+          read_access_agent.destroy
+          Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+        end
       end
     end
 

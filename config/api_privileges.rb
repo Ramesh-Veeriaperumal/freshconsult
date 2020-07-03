@@ -319,6 +319,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/config", only: [:show]
   end
 
+  view_omni_analytics do
+    resource :"ember/config", only: [:show]
+  end
+
   manage_dispatch_rules do
     resource :"admin/automation", only: [:index, :create, :show, :update, :destroy]
     resource :"api_business_hour", :only => [:index, :show]

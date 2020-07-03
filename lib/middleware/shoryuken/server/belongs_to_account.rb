@@ -23,7 +23,8 @@ module Middleware
               yield
             else
               ::Account.reset_current_account
-              account_id = body['account_id']
+              # data['account_id'] is used for messages sent by central sqs adapter
+              account_id = body['account_id'] || (body['data'] && body['data'].is_a?(Hash) && body['data']['account_id'])
               Sharding.select_shard_of(account_id) do
                 account = ::Account.find(account_id)
                 account.make_current

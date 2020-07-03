@@ -15,6 +15,7 @@ class Ember::ConfigsControllerTest < ActionController::TestCase
     @user = User.current || add_new_user(@account).make_current
     Account.any_instance.stubs(:freshreports_analytics_enabled?).returns(true)
     User.any_instance.stubs(:privilege?).with(:view_analytics).returns(true)
+    User.any_instance.stubs(:privilege?).with(:view_omni_analytics).returns(true)
   end
 
   def test_config_response
@@ -36,6 +37,35 @@ class Ember::ConfigsControllerTest < ActionController::TestCase
   ensure
     User.any_instance.unstub(:time_zone)
     User.any_instance.unstub(:language)
+  end
+  
+  def test_omni_freshvisuals_config_response
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Account.any_instance.stubs(:omni_reports_enabled?).returns(true)
+    Account.any_instance.stubs(:omni_bundle_id).returns('178040553247198293')
+    Account.any_instance.stubs(:organisation).returns(Organisation.new)
+    Organisation.any_instance.stubs(:organisation_id).returns('178040553184283730')
+    freshid_user = Freshid::V2::Models::User.new(id: '178040553263975511', email: @user.email)
+    Freshid::V2::Models::User.stubs(:find_by_email).with(@user.email).returns(freshid_user)
+    get :show, controller_params(version: 'private', id: 'freshvisuals')
+    assert_response 200
+    end_point = JSON.parse(response.body)['url']
+    payload_segment = end_point.split('.')[1]
+    payload = JSON.parse(JWT.base64url_decode(payload_segment), symbolize_names: true)
+    assert_equal payload[:email], @user.email
+    assert_equal payload[:userId], @user.id
+    assert_equal payload[:uuid], '178040553263975511'
+    assert_equal payload[:orgId], '178040553184283730'
+    assert_equal payload[:bundleId], '178040553247198293'
+    assert_equal payload[:exp], payload[:iat] + OmniFreshVisualsConfig['early_expiration'].to_i
+    assert_equal payload[:sessionExpiration], Time.now.to_i + OmniFreshVisualsConfig['session_expiration'].to_i
+  ensure
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.any_instance.unstub(:omni_reports_enabled?)
+    Account.any_instance.unstub(:omni_bundle_id)
+    Account.any_instance.unstub(:organisation)
+    Organisation.any_instance.unstub(:organisation_id)
+    Freshid::V2::Models::User.unstub(:find_by_email)
   end
 
   def test_config_response_with_null_user_language
@@ -67,6 +97,7 @@ class Ember::ConfigsControllerTest < ActionController::TestCase
 
   def test_config_response_without_privilege
     User.any_instance.stubs(:privilege?).with(:view_analytics).returns(false)
+    User.any_instance.stubs(:privilege?).with(:view_omni_analytics).returns(false)
     get :show, controller_params(version: 'private', id: 'freshvisuals')
     assert_response 403
     match_json(request_error_pattern(:access_denied))

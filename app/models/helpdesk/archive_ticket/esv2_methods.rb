@@ -26,7 +26,17 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   # Flexifield denormalized
   #
   def esv2_custom_attributes
-    flexifield_data.symbolize_keys.select { |field_name, value| esv2_ff_columns.include?(field_name) }
+    flexifield_column_hash = Flexifield.columns_hash
+    # transform boolean fields
+    flexifield_data.symbolize_keys.each_with_object({}) do |(field_name, value), hash|
+      next unless esv2_ff_columns.include?(field_name)
+
+      hash[field_name] = if flexifield_column_hash[field_name.to_s] && flexifield_column_hash[field_name.to_s].type == :boolean && !value.nil?
+                           ([1, true].include? value) ? true : false
+                         else
+                           value
+                         end
+    end
   end
 
   # Flexifield columns supported in V2

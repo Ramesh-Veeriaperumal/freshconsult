@@ -214,11 +214,11 @@ class ConversationsController < ApiApplicationController
     end
 
     def fb_public_api?
-      Account.current.launched?(:facebook_public_api) && (@ticket[:source] == Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook]) && reply?
+      public_api? && Account.current.launched?(:facebook_public_api) && (@ticket[:source] == Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook]) && reply?
     end
 
     def twitter_public_api?
-      Account.current.launched?(:twitter_public_api) && (@ticket[:source] == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter]) && reply?
+      public_api? && Account.current.launched?(:twitter_public_api) && (@ticket[:source] == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter]) && reply?
     end
 
     def validate_params

@@ -426,7 +426,12 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
 
   ['due_by', 'frDueBy', 'fr_escalated', 'nr_due_by', 'nr_escalated', 'isescalated', 'spam'].each do |attribute|
     define_method "#{attribute}" do
-      archive_ticket_association.association_data["helpdesk_tickets"][attribute]
+      attr_value = archive_ticket_association.association_data['helpdesk_tickets'][attribute]
+      if Helpdesk::Ticket.columns_hash[attribute].type == :boolean && !attr_value.nil?
+        ([1, true].include? attr_value) ? true : false
+      else
+        attr_value
+      end
     end
   end
 

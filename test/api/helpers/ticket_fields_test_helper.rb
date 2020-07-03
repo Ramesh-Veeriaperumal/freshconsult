@@ -121,6 +121,10 @@ module TicketFieldsTestHelper
     end
   end
 
+  def api_update_ticket_sources
+    api_ticket_sources | [Account.current.helpdesk_sources.ticket_source_keys_by_token[:bot]]
+  end
+
   def sample_status_ticket_fields(locale = 'en', val, cx_display_name, position)
     current_locale = I18n.locale
     I18n.locale = locale

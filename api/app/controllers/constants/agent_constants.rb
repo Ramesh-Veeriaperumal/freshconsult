@@ -1,5 +1,5 @@
 module AgentConstants
-  LOAD_OBJECT_EXCEPT = %i[create_multiple complete_gdpr_acceptance enable_undo_send disable_undo_send update_multiple search_in_freshworks verify_agent_privilege].freeze
+  LOAD_OBJECT_EXCEPT = %i[create_multiple complete_gdpr_acceptance enable_undo_send disable_undo_send update_multiple search_in_freshworks verify_agent_privilege availability_count].freeze
   STATES = %w[occasional fulltime].freeze
   INDEX_FIELDS = %w[state email phone mobile only type privilege group_id include order_type order_by].freeze
   UPDATE_ARRAY_FIELDS = %w[group_ids role_ids contribution_group_ids].freeze
@@ -13,6 +13,7 @@ module AgentConstants
   FIELD_AGENT_SCOPES = Agent::PERMISSIONS_TOKEN_FOR_FIELD_AGENT.keys
   AGENT_TYPES = Agent::PERMISSION_KEYS_FOR_AGENT_TYPES.keys
   USER_FIELDS = %w[name email phone mobile time_zone job_title language role_ids skill_ids].freeze
+  AVAILABILITY_COUNT_FIELDS = %w[freshdesk_group_ids freshchat_group_ids freshcaller_group_ids].freeze
   VALIDATABLE_DELEGATOR_ATTRIBUTES = %w[agent_role_ids group_ids].freeze
   VALIDATION_CLASS = 'AgentValidation'.freeze
   DEFAULT_AGENT_TYPE_LIST = {

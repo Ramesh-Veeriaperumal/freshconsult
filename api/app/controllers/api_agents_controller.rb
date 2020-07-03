@@ -6,8 +6,11 @@ class ApiAgentsController < ApiApplicationController
   include Export::Util
   include BulkApiJobsHelper
   include Freshid::CallbackMethods
+  include OmniChannelRouting::Util
 
   skip_before_filter :check_privilege, only: :revert_identity
+  before_filter { |c| c.requires_feature(:omni_agent_availability_dashboard) if current_action?('availability_count') && !current_account.launched?(:omni_agent_availability_dashboard) }
+  before_filter :validate_filter_params, only: [:index, :availability_count]
   before_filter :check_gdpr_pending?, only: :complete_gdpr_acceptance
   before_filter :load_data_export, only: [:export_s3_url]
   before_filter :validate_params_for_export, only: [:export]
@@ -167,7 +170,28 @@ class ApiAgentsController < ApiApplicationController
     add_root_key_for_availability
   end
 
+  def availability_count
+    group_filter_hash = AgentConstants::AVAILABILITY_COUNT_FIELDS.each_with_object({}) do |filter_key, hash|
+      hash[filter_key.to_sym] = params[filter_key] if params[filter_key].present?
+    end
+    ocr_path = OCR_PATHS[:get_availability_count]
+    ocr_path = [ocr_path, group_filter_hash.to_query].join('?') if group_filter_hash.present?
+    begin
+      ocr_response = request_ocr(:admin, :get, ocr_path)
+      Rails.logger.debug "GET #{ocr_path}, response: #{ocr_response.inspect}"
+      @availability_count = JSON.parse(ocr_response).try(:[], 'agents_availability_count')
+    rescue Exception => e
+      Rails.logger.info "Exception while fetching availability count from OCR :: #{e.inspect}"
+      NewRelic::Agent.notice_error(e)
+    end
+    response.api_root_key = :availability_count
+  end
+
   private
+
+    def feature_name
+      :omni_channel_routing if current_action?('availability_count')
+    end
 
     def add_root_key_for_availability
       response.api_root_key = AVAILABILITY if private_api? && SUCCESS_CODES.include?(response.status)
@@ -244,7 +268,12 @@ class ApiAgentsController < ApiApplicationController
     end
 
     def validate_filter_params
-      params.permit(*AgentConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
+      allowed_fields = if index?
+        AgentConstants::INDEX_FIELDS
+      elsif current_action?('availability_count')
+        AgentConstants::AVAILABILITY_COUNT_FIELDS
+      end
+      params.permit(*allowed_fields, *ApiConstants::DEFAULT_INDEX_FIELDS)
       @agent_filter = AgentFilterValidation.new(params)
       render_errors(@agent_filter.errors, @agent_filter.error_options) unless @agent_filter.valid?
     end

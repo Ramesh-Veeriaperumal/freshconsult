@@ -7,6 +7,7 @@ class Export::Ticket < Struct.new(:export_params)
   include Helpdesk::TicketModelExtension
   include ArchiveTicketEs
   include Silkroad::Export::FeatureCheck
+  include AdvancedTicketScopes
   DATE_TIME_PARSE = [:created_at, :due_by, :resolved_at, :updated_at, :first_response_time, :closed_at].freeze
   ERB_PATH = Rails.root.join('app/views/support/tickets/export/%<file_name>s.xls.erb').to_path
   FILE_FORMAT = ['csv', 'xls'].freeze
@@ -25,6 +26,7 @@ class Export::Ticket < Struct.new(:export_params)
       create_export data_export_type
       @file_path = generate_file_path("#{@data_export.id}_#{data_export_type}", export_params[:format])
       add_url_to_export_fields if export_params[:add_url]
+      set_all_agent_groups_permission
       Sharding.run_on_slave { export_tickets }
       if @no_tickets
         send_no_ticket_email

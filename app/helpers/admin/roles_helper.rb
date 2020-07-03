@@ -8,6 +8,12 @@ module Admin::RolesHelper
   AUTOMATION_MANAGE_ROLE_MAP = { manage_dispatch_rules: 'manage_ticket_create_update_rules', manage_supervisor_rules: 'manage_time_tiggers_rules' }.freeze
   AUTOMATION_ROLES = AUTOMATION_MANAGE_ROLE_MAP.keys.freeze
 
+  VIEW_ANALYTICS = { dom_type: 'check_box', id: 'view_analytics' }.freeze
+  VIEW_OMNI_ANALYTICS = { dom_type: 'check_box', id: 'access_analytics', :privilege => 'view_analytics', class: 'nested',
+                          children:
+                            [{ dom_type: 'radio_button', id: 'view_analytics' },
+                             { dom_type: 'radio_button', id: 'view_omni_analytics', :class => "default" }] }.freeze
+
   def role_sections
       [
 
@@ -129,16 +135,18 @@ module Admin::RolesHelper
          # *************************** Reports **************************
 
          { dom_type: 'label', id: 'reports', children:
-
-             [{ dom_type: 'check_box', id: 'view_reports', class: 'nested', not_display: current_account.disable_old_reports_enabled?,
-                children:
-
-                [{ dom_type: 'check_box', id: 'export_reports' },
-                 { dom_type: 'check_box', id: 'manage_dashboard' }]
-             
-              },
-              { dom_type: 'check_box', id: 'view_analytics', not_display: !current_account.freshreports_analytics_enabled? }]
-          
+          [{ dom_type: 'check_box', id: 'view_reports', class: 'nested', not_display: current_account.disable_old_reports_enabled?,
+             children:
+             [{ dom_type: 'check_box', id: 'export_reports' },
+              { dom_type: 'check_box', id: 'manage_dashboard' }] }].tap do |arr|
+            if current_account.freshreports_analytics_enabled?
+              if current_account.omni_bundle_account? && current_account.omni_reports_enabled?
+                arr.push(VIEW_OMNI_ANALYTICS)
+              else
+                arr.push(VIEW_ANALYTICS)
+              end
+            end
+          end
          },
 
          # *************************** Admin **************************

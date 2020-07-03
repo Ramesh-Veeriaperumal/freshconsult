@@ -178,8 +178,13 @@ class Agent < ActiveRecord::Base
   end
 
   def toggle_availability?
-    return false unless account.features?(:round_robin)
-    allow_availability_toggle? ? true : false
+    return false unless account.features?(:round_robin) || account.agent_statuses_enabled?
+
+    if account.agent_statuses_enabled?
+      allow_status_toggle?
+    else
+      allow_availability_toggle?
+    end
   end
 
   def group_ticket_permission
@@ -592,5 +597,9 @@ class Agent < ActiveRecord::Base
 
   def agent_deleted_when_agent_count_key_exists?
     transaction_include_action?(:destroy) && redis_key_exists?(agents_count_key)
+  end
+
+  def allow_status_toggle?
+    groups.present? && groups.disallowing_toggle_availability.count.zero?
   end
 end

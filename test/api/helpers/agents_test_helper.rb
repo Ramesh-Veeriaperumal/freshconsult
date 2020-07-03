@@ -2,6 +2,13 @@
 module AgentsTestHelper
   include GroupHelper
   include Gamification::GamificationUtil
+  AVAILABILITY_COUNT_RESPONSE = {
+    'agents_availability_count': {
+      'freshdesk': 10,
+      'freshchat': 7,
+      'freshcaller': 5
+    }
+  }.freeze
   def agent_pattern(expected_output = {}, agent)
     user = {
       active: agent.user.active,
@@ -212,6 +219,12 @@ module AgentsTestHelper
     agent_hash[:freshchat_agent] = agent.additional_settings.try(:[], :freshchat).try(:[], :enabled) || false if Account.current.omni_chat_agent_enabled?
     agent_hash[:agent_level_id] = agent.scoreboard_level_id if Account.current.gamification_enabled? && Account.current.gamification_enable_enabled?
     agent_hash
+  end
+
+  def availability_count_pattern(availability_count_response = AVAILABILITY_COUNT_RESPONSE)
+    OmniChannelRouting::Constants::OMNI_CHANNELS.each_with_object([]) do |channel, array|
+      array << { channel: channel, count: availability_count_response[:agents_availability_count][channel.to_sym] || 0 }
+    end
   end
 
   def profile_agent_pattern_with_additional_details(agent_user, expected_output = {})

@@ -311,40 +311,51 @@ class Ember::GroupsControllerTest < ActionController::TestCase
   end
 
   def test_update_group_from_noass_to_lbrr
+    @account.add_feature :round_robin
     group = create_group_private_api(@account)
     put :update, construct_params({version:'private', id: group.id }, escalate_to: 1, unassigned_for: '30m', agent_ids:[1],
     assignment_type: 1, round_robin_type: 2, capping_limit: 23 )
     assert_response 200
     match_json(private_group_pattern_with_lbrr(Group.find_by_id(group.id)))
+  ensure
+    @account.revoke_feature :round_robin
   end
 
-  def test_update_group_from_lbrr_to_noass    
+  def test_update_group_from_lbrr_to_noass
+    @account.add_feature :round_robin
     group = create_group_private_api(@account, ticket_assign_type:1, capping_limit: 23)
     put :update, construct_params({version:'private', id: group.id }, escalate_to: 1, unassigned_for:'30m', agent_ids:[1],
     assignment_type: 0)
     assert_response 200
     match_json(private_group_pattern(Group.find_by_id(group.id)))
+  ensure
+    @account.revoke_feature :round_robin
   end
 
   def test_update_group_from_sbrr_to_normal_round_robin
+    Account.current.stubs(:features?).with(:round_robin).returns(true)
     group = create_group_private_api(@account, ticket_assign_type:2, capping_limit:23) 
     put :update, construct_params({version:'private', id: group.id }, escalate_to: 1, unassigned_for:'30m', agent_ids:[1],
     round_robin_type:1)
     assert_response 200
     match_json(private_group_pattern_with_normal_round_robin(Group.find_by_id(group.id)))
+    Account.current.stubs(:features?).with(:round_robin).returns(false)
   end
 
   def test_update_group_from_lbrr_to_normal_round_robin
+    Account.current.stubs(:features?).with(:round_robin).returns(true)
     group = create_group_private_api(@account, ticket_assign_type:1, capping_limit:23) 
     put :update, construct_params({version:'private', id: group.id }, escalate_to: 1, unassigned_for:'30m', agent_ids:[1],
     round_robin_type:1)
     assert_response 200
     match_json(private_group_pattern_with_normal_round_robin(Group.find_by_id(group.id)))
+    Account.current.stubs(:features?).with(:round_robin).returns(false)
   end
 
   def test_update_group_from_sbrr_to_lbrr_by_omniroute
+    @account.add_feature :round_robin
     @account.add_feature(:omni_channel_routing)
-    @account.add_feature(:lbrr_by_omniroute)
+    @account.add_feature(:lbrr_by_omniroute) 
     group = create_group_private_api(@account, ticket_assign_type:2, capping_limit:23) 
     put :update, construct_params({version:'private', id: group.id }, escalate_to: 1, unassigned_for:'30m', agent_ids:[1],
     round_robin_type: 12)
@@ -353,6 +364,7 @@ class Ember::GroupsControllerTest < ActionController::TestCase
   ensure
     @account.revoke_feature(:omni_channel_routing)
     @account.revoke_feature(:lbrr_by_omniroute)
+    @account.revoke_feature :round_robin
   end
 
   def test_update_group_from_lbrr_to_ocr
@@ -426,4 +438,75 @@ class Ember::GroupsControllerTest < ActionController::TestCase
     assert_response 400
   end
 
+  def test_group_with_agent_availability_with_agent_statuses_with_round_robin
+    @account.launch :agent_statuses
+    @account.add_feature :round_robin
+    post :create, construct_params(version: 'private', name: Faker::Lorem.characters(10),
+                                   description: Faker::Lorem.paragraph,
+                                   business_hour_id: 1,
+                                   escalate_to: 1,
+                                   agent_ids: [1],
+                                   unassigned_for: '30m',
+                                   allow_agents_to_change_availability: true,
+                                   assignment_type: 1)
+    assert_response 201
+    pattern = private_group_pattern(Group.last).merge(allow_agents_to_change_availability: true)
+    match_json(pattern)
+  ensure
+    @account.rollback :agent_statuses
+    @account.revoke_feature :round_robin
+  end
+
+  def test_group_with_agent_availability_with_agent_statuses_without_round_robin
+    @account.launch :agent_statuses
+    @account.revoke_feature :round_robin
+    post :create, construct_params(version: 'private', name: Faker::Lorem.characters(10),
+                                   description: Faker::Lorem.paragraph,
+                                   business_hour_id: 1,
+                                   escalate_to: 1,
+                                   agent_ids: [1],
+                                   unassigned_for: '30m',
+                                   allow_agents_to_change_availability: true)
+    assert_response 201
+    pattern = private_group_pattern(Group.last).merge(allow_agents_to_change_availability: true)
+    match_json(pattern)
+  ensure
+    @account.rollback :agent_statuses
+    @account.add_feature :round_robin
+  end
+
+  def test_group_with_agent_availability_without_agent_statuses
+    @account.rollback :agent_statuses
+    post :create, construct_params(version: 'private', name: Faker::Lorem.characters(10),
+                                   description: Faker::Lorem.paragraph,
+                                   business_hour_id: 1,
+                                   escalate_to: 1,
+                                   agent_ids: [1],
+                                   unassigned_for: '30m',
+                                   allow_agents_to_change_availability: true)
+    assert_response 400
+    match_json([bad_request_error_pattern('allow_agents_to_change_availability', :invalid_field)])
+  end
+
+  def test_group_with_agent_availability_with_agent_statues_with_field_agent
+    @account.launch :agent_statuses
+    @account.revoke_feature :round_robin
+    @account.revoke_feature :omni_channel_routing
+    enabling_fsm_feature
+    create_field_group_type
+    post :create, construct_params(version: 'private', name: Faker::Lorem.characters(10),
+                                   description: Faker::Lorem.paragraph,
+                                   business_hour_id: 1,
+                                   escalate_to: 1,
+                                   agent_ids: [1],
+                                   unassigned_for: '30m',
+                                   allow_agents_to_change_availability: true,
+                                   group_type: GroupConstants::FIELD_GROUP_NAME)
+    assert_response 400
+    match_json([bad_request_error_pattern('allow_agents_to_change_availability', :invalid_field)])
+  ensure
+    destroy_field_group
+    revoke_fsm_feature
+    @account.rollback :agent_statuses
+  end
 end

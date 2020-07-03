@@ -345,6 +345,9 @@ en:
         support@freshdesk.com to raise your API limits. To learn more about how
         we support webhooks and why we drop them, click here
         %{solution_article_link}.
+      incoming_email_rate_limit_exceeded: >-
+        There are too many incoming emails. Expect a delay in ticket creation.
+        Please mail us at support@freshdesk.com if the issue persists.
     scheduled_task_notifications:
       no_data: >-
         Seems like there is no data to display for scheduled report that you
@@ -2895,6 +2898,9 @@ en:
         edit_secure_field: Add or edit secure data
         do_not_publish: Do not publish
         export_articles: Export articles
+        access_analytics: Access analytics
+        view_analytics: View analytics
+        view_omni_analytics: View Omnichannel analytics
         manage_custom_objects: Manage Custom Objects
         manage_solution_templates: Manage article templates
     help_image_alt:
@@ -8146,6 +8152,7 @@ en:
     cloud_log_email_to_freshdesk: '%{app_name} to Freshdesk Log'
     cloud_log_email_to_app: 'Freshdesk to %{app_name} Log'
     monitor_email_subject: '[New Reply] in %{post_topic}'
+    email_rate_limit_exceeded: "Delay in email processing for %{account_url}"
   downgrade_policy_subject:
     downgrade_in_days: 'Your freshdesk subscription will be modified in %{days} days'
     downgrade_final_message: Your freshdesk subscription will be modified tomorrow
