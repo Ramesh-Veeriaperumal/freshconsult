@@ -89,6 +89,19 @@ class TicketModelTest < ActiveSupport::TestCase
     Account.current.unstub(:supported_languages)
   end
 
+  def test_create_or_update_with_group_id_zero
+    @account = Account.first.nil? ? create_test_account : Account.first.make_current
+    params = ticket_params_hash(group_id: 0)
+    t = create_ticket(params)
+    assert_nil t.group_id
+    t.group_id = 0
+    t.save!
+    t.reload
+    assert_nil t.group_id
+  ensure
+    t.destroy if t.present?
+  end
+
   private
 
     def custom_translation_stub(language, status_id)
