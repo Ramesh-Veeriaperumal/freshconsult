@@ -58,7 +58,7 @@ module Ember
 
       def decorator_options
         super({
-          agent_groups_ids: current_account.agent_groups_hash_from_cache,
+          agent_groups_ids: current_account.write_access_agent_groups_hash_from_cache,
           group_type_mapping: current_account.group_type_mapping
         })
       end

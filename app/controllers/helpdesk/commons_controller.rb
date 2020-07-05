@@ -23,7 +23,7 @@ class Helpdesk::CommonsController < ApplicationController
     respond_to do |format|
       format.html {
         @agents = if group_id.present?
-          current_account.agent_groups.where({:group_id => group_id, :users => {:account_id => current_account.id, :deleted => false} }).preload(:user).joins(:user).select(["users.id","users.name"]).order("users.name")
+          current_account.write_access_agent_groups.where({:group_id => group_id, :users => {:account_id => current_account.id, :deleted => false} }).preload(:user).joins(:user).select(["users.id","users.name"]).order("users.name")
         else
           current_account.users.technicians.visible.select("id, name")
         end

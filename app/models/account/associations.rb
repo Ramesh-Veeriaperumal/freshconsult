@@ -194,6 +194,7 @@ class Account < ActiveRecord::Base
   has_many :groups
   has_many :group_types, class_name: 'GroupType', dependent: :destroy
   has_many :agent_groups
+  has_many :write_access_agent_groups, class_name: 'AgentGroup', conditions: { write_access: true }
   has_many :contribution_agent_groups, class_name: 'AgentGroup', conditions: { write_access: false }
   has_many :forum_categories, :order => "position"
 

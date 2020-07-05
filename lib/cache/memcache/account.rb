@@ -257,6 +257,17 @@ module Cache::Memcache::Account
     end
   end
 
+  def write_access_agent_groups_hash_from_cache
+    key = write_access_agent_groups_hash_memcache_key
+    fetch_from_cache(key) do
+      Rails.logger.debug 'fetching write_access_agent_groups from db'
+      write_access_agent_groups.each_with_object({}) do |ag, agent_groups_ids|
+        agent_groups_ids[ag.group_id] ||= []
+        agent_groups_ids[ag.group_id].push(ag.user_id)
+      end
+    end
+  end
+
   def products_optar_cache
     key = format(ACCOUNT_PRODUCTS_OPTAR, account_id: id)
     MemcacheKeys.fetch(key) { products.basic_info }
@@ -883,6 +894,10 @@ module Cache::Memcache::Account
 
     def agent_groups_hash_memcache_key
       ACCOUNT_AGENT_GROUPS_HASH % { account_id: id }
+    end
+
+    def write_access_agent_groups_hash_memcache_key
+      format(ACCOUNT_WRITE_ACCESS_AGENT_GROUPS_HASH, account_id: id)
     end
 
     def tags_memcache_key

@@ -88,6 +88,8 @@ class ApiGroupsController < ApiApplicationController
         revised_agent_groups = agent_groups.select { |ag| @agent_ids.exclude?(ag.user_id) }.map(&:destroy)
         agent_groups -= revised_agent_groups
         @agent_ids -= agent_groups.map(&:user_id)
+        read_access_agent_groups = @item.all_agent_groups.select { |ag| ag.write_access.blank? }
+        read_access_agent_groups.select { |ag| @agent_ids.include?(ag.user_id) }.map(&:destroy)
         @item.agent_groups = agent_groups
       end
     end
