@@ -232,6 +232,9 @@ class Group < ActiveRecord::Base
         },
         'support_agent_group': {
           conditions: { group_type: group_filter.group_type }
+        },
+        'auto_assignment': {
+          conditions: { true: 'ticket_assign_type > 0' }
         }
       }
     end    

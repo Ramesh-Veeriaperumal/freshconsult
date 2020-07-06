@@ -177,4 +177,21 @@ class GroupDecorator < ApiDecorator
       round_robin_enabled? ? { auto_ticket_assign: auto_ticket_assign } : {}
     end
   end
+
+  def self.omni_channel_groups(omni_channel_groups)
+    omni_channel_groups.each_with_object([]) do |group, array|
+      channel = group['product']
+      next if channel.eql?('freshdesk')
+
+      channel_tat = OmniChannelRouting::Constants::OCR_TAT_MAPPING[channel.to_sym].key(group['round_robin'])
+      channel_tat = channel_tat ? "#{channel}_#{channel_tat}" : 'default'
+      channel_group = {
+        id: group['product_group_id'],
+        name: group['name'],
+        channel: channel
+      }
+      channel_group[:round_robin_type] = CHANNEL_TASK_ASSIGNMENT_TYPES[channel_tat.to_sym]
+      array << channel_group
+    end
+  end
 end

@@ -1,1 +1,3 @@
-@items.map(&:to_index_hash).to_json
+groups = @items.map(&:to_index_hash)
+groups += GroupDecorator.omni_channel_groups(@omni_channel_groups) if @omni_channel_groups
+groups.to_json

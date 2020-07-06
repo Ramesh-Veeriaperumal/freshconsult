@@ -11035,15 +11035,14 @@
               "properties": {
                 "groups": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/group_response"
-                  }
-                },
-                "omni_channel_groups": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/omni_channel_group"
-                  }
+                  "items": [
+                    {
+                      "$ref": "#/definitions/group_response"
+                    },
+                    {
+                      "$ref": "#/definitions/omni_channel_group"
+                    }
+                  ]
                 },
                 "meta": {
                   "$ref": "#/definitions/meta"
@@ -31062,10 +31061,12 @@
         "round_robin_type": {
           "type": "integer",
           "format": "uint8",
+          "description": "Round Robin Types:\n  * `0` - No auto assignment\n  * `21` - Freshchat Omniroute\n  * `22` - Freshchat Intelliassign\n  * `26` - Freshcaller Omniroute\n",
           "x-enum": [
             0,
-            1,
-            2
+            21,
+            22,
+            26
           ]
         }
       },

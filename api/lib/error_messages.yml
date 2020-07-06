@@ -308,6 +308,7 @@ api_error_messages:
   rule_type_not_allowed: "Rule type not allowed: %{rule_type}"
   exceeded_total_file_field_attachments_size: "Total file ticket field attachment(s) size exceeded maximum allowed limit."
   non_unique_file_field_attachment_ids: "Same attachment id(s) used with different file ticket fields."
+  require_omni_channel_groups: 'Filter is accessible only for Omni Channel Groups'
 
   unexpected_parameter_error: "Parameter '%{value}' is not allowed for '%{name}'"
   invalid_attribute_for_rules: "'%{name}' is only available for '%{value}'"

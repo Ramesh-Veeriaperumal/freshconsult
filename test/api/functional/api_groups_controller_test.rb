@@ -554,4 +554,50 @@ class ApiGroupsControllerTest < ActionController::TestCase
     revoke_fsm_feature
     @account.rollback :agent_statuses
   end
+
+  def test_index_with_omni_channel_groups
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:omni_channel_routing_enabled?).returns(true)
+    Account.any_instance.stubs(:features?).with(:round_robin).returns(true)
+    ApiGroupsController.any_instance.stubs(:request_ocr).returns(omni_channel_groups_response)
+    get :index, controller_params(include: 'omni_channel_groups', auto_assignment: true)
+    assert_response 200
+    pattern = []
+    Account.current.groups.round_robin_groups.order(:name).each do |group|
+      pattern << group_pattern_for_index(Group.find(group.id))
+    end
+    omni_channel_groups_response['ocr_groups'].each do |channel_group|
+      omni_channel_group = omni_channel_groups_pattern(channel_group)
+      pattern << omni_channel_group if omni_channel_group.present?
+    end
+    match_json(pattern)
+  ensure
+    ApiGroupsController.any_instance.unstub(:request_ocr)
+    Account.any_instance.stubs(:features?).with(:round_robin).returns(false)
+    Account.any_instance.unstub(:omni_channel_routing_enabled?)
+    Account.unstub(:current)
+  end
+
+  def test_index_with_all_omni_channel_groups
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:omni_channel_routing_enabled?).returns(true)
+    Account.any_instance.stubs(:features?).with(:round_robin).returns(true)
+    ApiGroupsController.any_instance.stubs(:request_ocr).returns(omni_channel_groups_response(false))
+    get :index, controller_params(include: 'omni_channel_groups')
+    assert_response 200
+    pattern = []
+    Account.current.groups.order(:name).all.each do |group|
+      pattern << group_pattern_for_index(Group.find(group.id))
+    end
+    omni_channel_groups_response['ocr_groups'].each do |channel_group|
+      omni_channel_group = omni_channel_groups_pattern(channel_group)
+      pattern << omni_channel_group(false) if omni_channel_group.present?
+    end
+    match_json(pattern)
+  ensure
+    ApiGroupsController.any_instance.unstub(:request_ocr)
+    Account.any_instance.stubs(:features?).with(:round_robin).returns(false)
+    Account.any_instance.unstub(:omni_channel_routing_enabled?)
+    Account.unstub(:current)
+  end
 end

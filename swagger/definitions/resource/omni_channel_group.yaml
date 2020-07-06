@@ -13,7 +13,13 @@ properties:
   round_robin_type:
     type: integer
     format: uint8
-    x-enum: [0, 1, 2]
+    description: >
+      Round Robin Types:
+        * `0` - No auto assignment
+        * `21` - Freshchat Omniroute
+        * `22` - Freshchat Intelliassign
+        * `26` - Freshcaller Omniroute
+    x-enum: [0, 21, 22, 26]
 example:
   id: 64000101827
   name: 'Account managers'

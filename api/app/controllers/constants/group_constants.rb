@@ -26,7 +26,11 @@ module GroupConstants
 
   SUPPORT_AGENT_ID = 1
 
-  INDEX_FIELDS = %w(group_type).freeze
+  OMNI_CHANNEL_FILTER_PARAMS = %w[include auto_assignment].freeze
+
+  INDEX_FIELDS = %w[group_type].freeze | OMNI_CHANNEL_FILTER_PARAMS
+
+  ALLOWED_INCLUDE_PARAMS = %w[omni_channel_groups].freeze
 
   ACCESSIBLE_FIELDS_FOR_SUPERVISOR= %w(auto_ticket_assign)  
 
@@ -70,4 +74,11 @@ module GroupConstants
   UPDATE_PRIVATE_API_FIELDS_WITH_STATUS_TOGGLE_WITHOUT_ASSIGNMENT_CONFIG = UPDATE_PRIVATE_API_FIELDS_WITHOUT_ASSIGNMENT_CONFIG | ALLOW_AGENTS_TO_CHANGE_AVAILABILITY
 
   PRIVATE_API_FIELDS_WITH_STATUS_TOGGLE_WITHOUT_ASSIGNMENT_CONFIG = PRIVATE_API_FIELDS_WITHOUT_ASSIGNMENT_CONFIG | ALLOW_AGENTS_TO_CHANGE_AVAILABILITY
+
+  CHANNEL_TASK_ASSIGNMENT_TYPES = {
+    default: 0,
+    freshchat_omniroute: 21,
+    freshchat_intelliassign: 22,
+    freshcaller_omniroute: 26
+  }.freeze
 end.freeze

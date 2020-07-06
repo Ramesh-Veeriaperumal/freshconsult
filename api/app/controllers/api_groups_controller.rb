@@ -1,7 +1,24 @@
 class ApiGroupsController < ApiApplicationController
   include GroupConstants
+  include OmniChannelRouting::Util
   decorate_views
   before_filter :prepare_agents, only: [:create, :update]
+
+  def index
+    if include_omni_channel_groups?
+      @omni_channel_groups = []
+      ocr_path = OCR_PATHS[:get_groups]
+      ocr_path = [ocr_path, { auto_assignment: params[:auto_assignment] }.to_query].join('?') if params[:auto_assignment]
+      begin
+        ocr_response = request_ocr(:admin, :get, ocr_path)
+        @omni_channel_groups = JSON.parse(ocr_response).try(:[], 'ocr_groups')
+      rescue Exception => e
+        Rails.logger.info "Exception while fetching groups from OCR :: #{e.inspect}"
+        NewRelic::Agent.notice_error(e)
+      end
+    end
+    super
+  end
 
   def create
     group_delegator = GroupDelegator.new(@item)
@@ -97,7 +114,10 @@ class ApiGroupsController < ApiApplicationController
     def groups_filter(groups)
       @group_filter.conditions.each do |key|
         clause = groups.api_filter(@group_filter)[key.to_sym] || {}
-        groups = groups.where("group_type" => GroupType.group_type_id(clause[:conditions][:group_type]))
+        next if clause.blank?
+
+        groups = groups.where('group_type' => GroupType.group_type_id(clause[:conditions][:group_type])) if clause[:conditions][:group_type].present?
+        groups = groups.where(clause[:conditions][@group_filter.safe_send(key).to_sym]) if @group_filter.respond_to?(key) && clause[:conditions][@group_filter.safe_send(key).to_sym].present?
       end
       groups
     end
@@ -130,5 +150,9 @@ class ApiGroupsController < ApiApplicationController
     def service_group?
       (params[cname][:group_type].present? && params[cname][:group_type] == FIELD_GROUP_NAME) ||
         (@item.present? && @item.group_type == GroupType.group_type_id(FIELD_GROUP_NAME))
+    end
+
+    def include_omni_channel_groups?
+      params[:include].split(',').include?('omni_channel_groups') if params[:include]
     end
 end
