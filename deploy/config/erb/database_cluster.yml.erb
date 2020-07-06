@@ -51,11 +51,11 @@
   shards:
     <% node[:ymls][:database][:shards].each do |shard_name, db_config| %>
     <%= shard_name %>:
-      <%if ENV['PROXYSQL_MASTER_SHELL_ENABLE'] == "1" && @is_fc_shoryuken_layer && node[:ymls][:database][:shards][shard_name][:proxy_master_enabled] == true%>
+      <%if ENV['PROXYSQL_MASTER_SHELL_ENABLE'] == "1" && node[:ymls][:database][:shards][shard_name][:proxy_master_enabled] == true%>
       username: <%= db_config[:master_proxy][:username] %>
       password: <%= db_config[:master_proxy][:password] %>
       database: <%= db_config[:database] %>
-      host: <%= ENV["HOST_PRIVATE_IP"] %>
+      host: <%= db_config[:master_proxy][:host] %>
       port: <%= db_config[:master_proxy][:port] %>
       <% else %>
       <% if db_user_group %>
@@ -98,7 +98,7 @@
       <% else %>
         <% if node[:opsworks][:environment] == "production" %>
         <% if ENV['PROXYSQL_SHELL_ENABLE'] == "1" && node[:ymls][:database][:shards][shard_name][:proxy_enabled] == true %>
-        host: <%= ENV["HOST_PRIVATE_IP"] %>
+        host: <%= db_config[:slave_proxy][:host] %>
         username: <%= db_config[:slave_proxy][:username] %>
         password: <%= db_config[:slave_proxy][:password] %>
         port: <%= db_config[:slave_proxy][:port] %>
@@ -107,7 +107,7 @@
         <% end %>
         <% else %>
         <% if ENV['PROXYSQL_SHELL_ENABLE'] == "1" && node[:ymls][:database][:shards][shard_name][:proxy_enabled] == true %>
-        host: <%= ENV["HOST_PRIVATE_IP"] %>
+        host: <%= db_config[:slave_proxy][:host] %>
         username: <%= db_config[:slave_proxy][:username] %>
         password: <%= db_config[:slave_proxy][:password] %>
         port: <%= db_config[:slave_proxy][:port] %>
