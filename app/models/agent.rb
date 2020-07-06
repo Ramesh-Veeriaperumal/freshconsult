@@ -373,14 +373,14 @@ class Agent < ActiveRecord::Base
 
   def update_agent_group_list(all_agent_groups, group_ids, write_access = true)
     group_ids &= valid_groups_ids
+    collect_new_ids = []
     group_ids.each do |group_id|
       agent_group = all_agent_groups.bsearch { |ag| group_id <=> ag.group_id }
-      if agent_group.blank?
-        agent_group = self.all_agent_groups.build(group_id: group_id, write_access: write_access)
-        agent_group.instance_variable_set(:@marked_for_destruction, false) # in case of scope get to all ticket permission
-      else
-        agent_group.write_access = write_access
-      end
+      agent_group.blank? ? (collect_new_ids << group_id) : (agent_group.write_access = write_access)
+    end
+    collect_new_ids.each do |group_id|
+      agent_group = self.all_agent_groups.build(group_id: group_id, write_access: write_access)
+      agent_group.instance_variable_set(:@marked_for_destruction, false) # in case of scope get to all ticket permission
     end
   end
 
