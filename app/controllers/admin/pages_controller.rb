@@ -78,7 +78,12 @@ class Admin::PagesController < Admin::AdminController
         unless cname.blank?
           if @portal_page_label == :ticket_view
             data = current_user.safe_send(cname).visible.first if !cname.blank? && current_user.respond_to?(cname)
-            id = data.display_id unless data.blank?
+            if data.blank?
+              flash[:error] = t('helpdesk.tickets.preview.no_tickets', new_ticket_url: new_support_ticket_url)
+              portal_redirect_url = support_home_url
+            else
+              id = data.display_id
+            end
           else
             Language.for_current_account.make_current # Setting this for published_articles association to work without including primary article
             data = current_account.safe_send(cname).first if !cname.blank? && current_account.respond_to?(cname)

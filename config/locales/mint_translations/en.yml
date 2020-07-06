@@ -3160,6 +3160,8 @@ en:
           hi: Hi
         me: Me
         add_agent: Enter agent's name
+      preview:
+        no_tickets: No tickets to preview. <a href='%{new_ticket_url}' target='_blank'>+ Create ticket</a>
     ticket_notifier:
       reply:
         neutral: Just Okay

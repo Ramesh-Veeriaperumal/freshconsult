@@ -8,6 +8,7 @@ class Support::PreviewController < SupportController
   include Portal::PreviewKeyTemplate
 
   def index
+    flash.keep(:error)
     toggle_preview
   end
  
