@@ -52,7 +52,8 @@ module CentralConstants
     'ConversionMetric' => '0.1',
     'Portal' => '0.2',
     'HelpWidget' => '0.1',
-    'Helpdesk::Filters::CustomTicketFilter' => '0.1'
+    'Helpdesk::Filters::CustomTicketFilter' => '0.1',
+    'Helpdesk::Source' => '0.1'
   }
 
   HYPERTRAIL_VERSION = '0.0.1'.freeze

@@ -955,6 +955,21 @@ module TicketFieldsTestHelper
     status_properties
   end
 
+  def central_publish_ticket_source_pattern(source)
+    {
+      id: source.id,
+      source_id: source.account_choice_id,
+      name: source.name,
+      deleted: source.deleted,
+      default: source.default,
+      account_id: source.account_id,
+      model_type: 'Helpdesk::Source',
+      position: source.position,
+      created_at: source.created_at.try(:utc).try(:iso8601),
+      updated_at: source.updated_at.try(:utc).try(:iso8601)
+    }
+  end
+
   def model_changes_ticket_status(old_name, new_name)
     {
       'name' => [old_name, new_name]
