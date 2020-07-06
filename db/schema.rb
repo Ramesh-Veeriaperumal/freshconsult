@@ -3806,7 +3806,7 @@ ActiveRecord::Schema.define(version: 20200502053301) do
 
   create_table 'solution_platform_mappings', force: true do |t|
     t.integer  'account_id', limit: 8, null: false
-    t.integer  'mappable_id'
+    t.integer  'mappable_id', limit: 8
     t.string   'mappable_type'
     t.boolean  'web', null: false, default: false
     t.boolean  'ios', null: false, default: false
