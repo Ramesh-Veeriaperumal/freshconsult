@@ -86,7 +86,7 @@ module Ember
 
       def service_group?
         (params[:group].present? && params[:group][:group_type] == FIELD_GROUP_NAME) ||
-          (@item.present? && @item.group_type == 2)
+          (@item.present? && @item.group_type == GroupType.group_type_id(FIELD_GROUP_NAME))
       end
   end
 end

@@ -132,7 +132,8 @@ Sidekiq.configure_client do |config|
       'AuditLogExport',
       "Solution::ApprovalNotificationWorker",
       'Freshcaller::UpdateAgentsWorker',
-      'QualityManagementSystem::PerformQmsOperationsWorker'
+      'QualityManagementSystem::PerformQmsOperationsWorker',
+      'UpdateAgentStatusAvailability'
     ]
   end
 end
@@ -264,7 +265,8 @@ Sidekiq.configure_server do |config|
       'AuditLogExport',
       'Solution::ApprovalNotificationWorker',
       'Freshcaller::UpdateAgentsWorker',
-      'QualityManagementSystem::PerformQmsOperationsWorker'
+      'QualityManagementSystem::PerformQmsOperationsWorker',
+      'UpdateAgentStatusAvailability'
     ]
     chain.add Server::SidekiqSober, :redis_connection => $redis_others, 
       :priority => ['account_id', 'shard_name'], 
@@ -368,7 +370,8 @@ Sidekiq.configure_server do |config|
       "Roles::UpdateAgentsRoles",
       'AuditLogExport',
       'Solution::ApprovalNotificationWorker',
-      'Freshcaller::UpdateAgentsWorker'
+      'Freshcaller::UpdateAgentsWorker',
+      'UpdateAgentStatusAvailability'
     ]
   end
 end

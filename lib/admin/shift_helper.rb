@@ -30,22 +30,24 @@ module Admin::ShiftHelper
     response.status = status
   end
 
-  def perform_shift_request(params = nil, cname_params = nil, model_query_params = false)
-    extnd_url = model_query_params ? (OUT_OF_OFFICE_INDEX + format(QUERY_PARAM, state_value: model_query_params)) : extended_url(action, params['id'])
+  def perform_shift_request(params = nil, cname_params = nil, custom_request = false, custom_request_options = {})
+    extnd_url = custom_request ? custom_request_options[:url] : extended_url(action, params['id'])
     url = base_url + extnd_url
-    options = { headers: headers }
+    x_request_id = (custom_request ? custom_request_options[:request_id] : request.uuid) || UUIDTools::UUID.timestamp_create.hexdigest
+    options = { headers: shift_headers(x_request_id) }
     options[:body] = cname_params.to_json if cname_params.present?
-    if model_query_params.blank?
+    options[:body] = custom_request_options[:body].to_json if custom_request_options[:body].present?
+    if custom_request.blank?
       page_params = index_page? ? append_page_params(params) : nil
     end
     options[:query] = page_params if page_params.present?
     options[:timeout] = TIMEOUT
-    execute_shift_request(url, options, model_query_params)
+    execute_shift_request(url, options, custom_request, custom_request_options)
   end
 
-  def execute_shift_request(url, options, model_query_params = false)
+  def execute_shift_request(url, options, custom_request = false, custom_request_options = {})
     options[:verify_blacklist] = true
-    action_method = model_query_params ? :index : action
+    action_method = custom_request ? custom_request_options[:action_method] : action
     proxy_response = HTTParty::Request.new(ACTION_METHOD_TO_CLASS_MAPPING[action_method], url, options).perform
     { code: proxy_response.code, body: proxy_response.parsed_response }
   rescue StandardError => e
@@ -82,8 +84,9 @@ module Admin::ShiftHelper
     ShiftConfig['shift_service_host']
   end
 
-  def headers
-    { 'Authorization' => "Bearer #{jwt_token}", 'Content-Type' => 'application/json' }
+  def shift_headers(x_request_id)
+    { 'Authorization' => "Bearer #{jwt_token}", 'Content-Type' => 'application/json',
+      'X-Request-ID' =>  x_request_id }
   end
 
   def jwt_token

@@ -33,7 +33,7 @@ class Agent < ActiveRecord::Base
   before_save :update_agent_group_change
   after_commit :enqueue_round_robin_process, on: :update
   after_commit :sync_skill_based_queues, on: :update
-  after_commit :sync_agent_availability_to_ocr, on: :update, if: :allow_ocr_sync?
+  after_commit :sync_agent_availability_to_ocr, on: :update, if: -> { allow_ocr_sync? && !skip_ocr_agent_sync }
 
   after_commit :nullify_tickets, :agent_destroy_cleanup, on: :destroy
   
@@ -58,7 +58,7 @@ class Agent < ActiveRecord::Base
                   :scoreboard_level_id, :user_attributes, :group_ids, :freshchat_token, :agent_type, :search_settings, :focus_mode, :show_onBoarding, :notification_timestamp, :show_loyalty_upgrade
   attr_accessor :agent_role_ids, :freshcaller_enabled, :user_changes, :group_changes,
                 :ocr_update, :misc_changes, :out_of_office_days, :old_agent_availability,
-                :return_old_agent_availability, :freshchat_enabled
+                :return_old_agent_availability, :freshchat_enabled, :skip_ocr_agent_sync
 
   scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
   scope :full_time_support_agents, :conditions => { :occasional => false, :agent_type => SUPPORT_AGENT_TYPE, 'users.deleted' => false}
@@ -181,11 +181,7 @@ class Agent < ActiveRecord::Base
   def toggle_availability?
     return false unless account.features?(:round_robin) || account.agent_statuses_enabled?
 
-    if account.agent_statuses_enabled?
-      allow_status_toggle?
-    else
-      allow_availability_toggle?
-    end
+    account.agent_statuses_enabled? ? allow_status_toggle? : allow_availability_toggle?
   end
 
   def group_ticket_permission
@@ -432,13 +428,18 @@ class Agent < ActiveRecord::Base
   def out_of_office
     return unless Account.current.out_of_office_enabled?
 
-    user.make_current
-    ooo_response = perform_shift_request(nil, nil, 'active')
-    return if ooo_response[:body].blank? || ooo_response[:code] != 200 || ooo_response[:body]['data'].blank?
+    begin
+      user.make_current
+      request_options = { url: OUT_OF_OFFICE_INDEX + format(QUERY_PARAM, state_value: 'active'), action_method: :index }
+      ooo_response = perform_shift_request(nil, nil, true, request_options)
+      return if ooo_response[:body].blank? || ooo_response[:code] != 200 || ooo_response[:body]['data'].blank?
 
-    @out_of_office_days = (ooo_response[:body]['data'][0]['end_time'].to_datetime - ooo_response[:body]['data'][0]['start_time'].to_datetime).to_i
-  ensure
-    User.reset_current_user
+      @out_of_office_days = (ooo_response[:body]['data'][0]['end_time'].to_datetime - ooo_response[:body]['data'][0]['start_time'].to_datetime).to_i
+    rescue StandardError => e
+      Rails.logger.debug "error while computing ooo: #{e.inspect}"
+    ensure
+      User.reset_current_user
+    end
   end
 
   def agent_freshcaller_enabled?
