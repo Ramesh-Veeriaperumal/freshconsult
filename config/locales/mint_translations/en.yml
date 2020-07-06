@@ -8284,6 +8284,10 @@ en:
     You have an existing request to cancel your account. Click on 'Proceed' to
     delete this request and alter your subscription.
   per_field_agent_per_month: /field technician/month
+  freshdesk_discount:
+    fdfsbundle:
+      discount_title_text: As a Freshsales customer, you're eligible for a 20% discount*. Claim within %{time} days.
+      discount_subtitle_text: '*Applicable on Garden, Estate, and Forest Annual plans'
   freshdesk_freshsales_bundle:
     invite_sales_team: Invite Sales Team
     buy_freshsales: Buy Freshsales CRM

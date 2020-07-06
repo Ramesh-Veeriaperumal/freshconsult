@@ -67,6 +67,8 @@
   overview_fsm_video: 57
   explore_fsm_features: 58
   update_account: 65
+  integrate_freshsales: 71
+  unify_beneficial_video: 72
 :onboarding_goals:
   organiseand_keep_track: 59
   unify_support_channels: 60
@@ -86,6 +88,8 @@
   - manage_field_workforce
 
 :setup_keys_display_order:
+  - unify_beneficial_video
+  - integrate_freshsales
   - new_account
   - account_admin_email
   - reply_to_ticket

@@ -15,7 +15,7 @@ class SubscriptionsController < ApplicationController
 
   before_filter :admin_selected_tab
   before_filter :load_objects, :load_subscription_plan, :cache_objects
-  before_filter :load_coupon, :only => [ :calculate_amount, :plan ]
+  before_filter :load_coupon, :only => [:calculate_amount, :plan, :billing]
   before_filter :modify_addons_temporarily, only: [:calculate_amount, :plan]
   before_filter :load_billing, :validate_subscription, :only => :billing
   before_filter :load_freshfone_credits, :only => [:show]
@@ -70,6 +70,7 @@ class SubscriptionsController < ApplicationController
   end
 
   def billing
+    scoper.total_amount(scoper.addons, @coupon)
     if request.post?
       if add_card_to_billing
         scoper.state = ACTIVE
@@ -197,7 +198,7 @@ class SubscriptionsController < ApplicationController
     end
 
     def load_coupon
-      @coupon = scoper.coupon
+      @coupon = scoper.fetch_fdfs_discount_coupon || scoper.coupon
     end
 
     def load_subscription_plan
@@ -323,9 +324,7 @@ class SubscriptionsController < ApplicationController
           Billing::FreshchatSubscriptionUpdate.perform_async(chargebee_params)
         end
         scoper.subscription_request.destroy if scoper.subscription_request.present?
-        unless result.subscription.coupon == coupon
-          billing_subscription.add_discount(scoper.account, coupon)
-        end
+        billing_subscription.add_discount(scoper.account, coupon) unless [result.subscription.coupon, SubscriptionConstants::FDFSBUNDLE].include?(coupon)
         scoper.set_next_renewal_at(result.subscription)
         scoper.addons = @addons
         scoper.save!
@@ -338,6 +337,7 @@ class SubscriptionsController < ApplicationController
     def activate_subscription
       begin
         billing_address = @customer_details.nil? ? {} : billing_address(@customer_details.card)
+        billing_subscription.add_discount(scoper.account, @coupon) if @coupon == SubscriptionConstants::FDFSBUNDLE
         result = billing_subscription.activate_subscription(scoper, billing_address)
         scoper.set_next_renewal_at(result.subscription)
         scoper.save!
