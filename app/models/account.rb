@@ -865,25 +865,6 @@ class Account < ActiveRecord::Base
     DomainMapping.where(account_id: sandbox_job.try(:sandbox_account_id)).first.try(:domain)
   end
 
-  # Temp method to directly create support agent type if it was not created as part of fixtures/migration.
-  def get_or_create_agent_types
-    agent_types = self.agent_types.all
-    if agent_types.length == 0
-      AgentType.create_support_agent_type(self)
-      return self.agent_types.all
-    end
-    agent_types
-  end
-
-  def get_or_create_group_types
-    group_types = self.group_types.all
-    if group_types.length == 0
-      GroupType.populate_default_group_types(self)
-      return self.group_types.all
-    end
-    group_types
-  end
-
   def group_type_mapping
     group_types_from_cache.each_with_object({}) do |group_type, mapping|
       mapping[group_type.group_type_id] = group_type.name

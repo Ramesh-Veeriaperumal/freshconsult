@@ -220,7 +220,7 @@ module Cache::Memcache::Account
 
   def group_types_from_cache
     key = group_types_memcache_key
-    fetch_from_cache(key) { self.get_or_create_group_types }
+    fetch_from_cache(key) { group_types.all }
   end
 
   def clear_group_types_cache
@@ -741,7 +741,7 @@ module Cache::Memcache::Account
 
   def agent_types_from_cache
     key = agent_type_memcache_key(self.id)
-    fetch_from_cache(key) { self.get_or_create_agent_types }
+    fetch_from_cache(key) { agent_types.all }
   end
 
   def clear_agent_types_cache
