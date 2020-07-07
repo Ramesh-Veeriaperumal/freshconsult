@@ -73,6 +73,9 @@
     - cre_central_publish
     - solution_article_central_publish
 
+  :central_resync:
+    - central_publish_resync
+
   :scheduled:
     - scheduled_reports
     - scheduled_reports_cleanup
@@ -452,6 +455,8 @@
     - freshchat_account_central_publish
     - cre_central_publish
     - solution_article_central_publish
+  :central_resync:
+    - central_publish_resync
   :long_running:
     - scheduled_ticket_export_config
     - scheduled_ticket_export

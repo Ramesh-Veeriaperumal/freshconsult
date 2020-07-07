@@ -403,6 +403,7 @@ defaults: &defaults
     - [quality_management_system]
     - [solution_templates_migration_worker]
     - [update_agent_status_availability]
+    - [central_publish_resync]
 
 development:
   <<: *defaults
