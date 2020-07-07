@@ -15,7 +15,7 @@ module CentralConstants
     'User' => '0.4',
     'Company' => '1.2',
     'Subscription' => '1.2',
-    'Agent' => '2.2',
+    'Agent' => '2.3',
     'VaRule' => '0.2',
     'Group' => '3.1',
     'Post' => '0.1',
@@ -52,7 +52,8 @@ module CentralConstants
     'ConversionMetric' => '0.1',
     'Portal' => '0.2',
     'HelpWidget' => '0.1',
-    'Helpdesk::Filters::CustomTicketFilter' => '0.1'
+    'Helpdesk::Filters::CustomTicketFilter' => '0.1',
+    'Helpdesk::Source' => '0.1'
   }
 
   HYPERTRAIL_VERSION = '0.0.1'.freeze

@@ -2357,6 +2357,17 @@ class ApiAgentsControllerTest < ActionController::TestCase
     end
   end
 
+  def test_update_agent_with_duplicate_group_issues
+    group_ids = [create_group(@account, name: 'liverpool_fc_01').id,
+                 create_group(@account, name: 'liverpool_fc_02').id].sort
+    dummy_user = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: 2)
+    dummy_user.agent.agent_groups.new.tap { |ag| ag.group_id = group_ids[1]; ag.write_access = true; ag.save! }
+    update_params = { "group_ids": group_ids }
+    put :update, construct_params({ id: dummy_user.id }, update_params)
+    assert_response 200
+    assert_equal 2, Account.current.agent_groups.where(user_id: dummy_user.id).count
+  end
+
   def test_availability_count
     feature_not_exist = Account.current.add_feature(:omni_channel_routing)
     lp_feature_exist = Account.current.launched?(:omni_agent_availability_dashboard)
@@ -2452,6 +2463,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     Account.current.rollback(:omni_agent_availability_dashboard) if !lp_feature_exist
     Account.current.revoke_feature(:omni_channel_routing) if feature_not_exist
   end
+
   private
 
     def enable_advanced_ticket_scopes

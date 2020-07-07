@@ -12,7 +12,8 @@ module OmniChannelRouting
     OCR_PATHS_ARRAY = [
       [:update_agent, 'ocr_agents/%{user_id}'],
       [:update_ticket, 'tasks/%{ticket_id}'],
-      [:get_availability_count, 'ocr_agents/availability_count']
+      [:get_availability_count, 'ocr_agents/availability_count'],
+      [:get_groups, 'ocr_groups']
     ].freeze
     OCR_PATHS = Hash[*OCR_PATHS_ARRAY.map { |i| [i[0], i[1]] }.flatten]
 
@@ -20,5 +21,16 @@ module OmniChannelRouting
     OCR_JWT_HEADER = { 'alg' => OCR_JWT_SIGNING_ALG, 'typ' => 'JWT' }.freeze
 
     OMNI_CHANNELS = %w[freshdesk freshchat freshcaller].freeze
+    OCR_TAT_MAPPING = {
+      freshchat: {
+        default: 0,
+        omniroute: 1,
+        intelliassign: 10
+      },
+      freshcaller: {
+        default: 0,
+        omniroute: 1
+      }
+    }.freeze
   end
 end

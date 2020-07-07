@@ -90,4 +90,8 @@ class Agent < ActiveRecord::Base
   OUT_OF_OFFICE = ['out_of_office', 'unavailable'].freeze
 
   AGENT_LIMIT_KEY_EXPIRY = 300
+
+  CENTRAL_ADD_REMOVE_KEY = %i[added removed].freeze
+  CENTRAL_GROUP_KEYS = %i[groups contribution_groups].freeze
+  CENTRAL_SINGLE_ACCESS_TOKEN_KEY = 'single_access_token'.freeze
 end

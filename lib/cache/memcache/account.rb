@@ -220,7 +220,7 @@ module Cache::Memcache::Account
 
   def group_types_from_cache
     key = group_types_memcache_key
-    fetch_from_cache(key) { self.get_or_create_group_types }
+    fetch_from_cache(key) { group_types.all }
   end
 
   def clear_group_types_cache
@@ -254,6 +254,17 @@ module Cache::Memcache::Account
         end
         agent_groups_ids
       }
+    end
+  end
+
+  def write_access_agent_groups_hash_from_cache
+    key = write_access_agent_groups_hash_memcache_key
+    fetch_from_cache(key) do
+      Rails.logger.debug 'fetching write_access_agent_groups from db'
+      write_access_agent_groups.each_with_object({}) do |ag, agent_groups_ids|
+        agent_groups_ids[ag.group_id] ||= []
+        agent_groups_ids[ag.group_id].push(ag.user_id)
+      end
     end
   end
 
@@ -730,7 +741,7 @@ module Cache::Memcache::Account
 
   def agent_types_from_cache
     key = agent_type_memcache_key(self.id)
-    fetch_from_cache(key) { self.get_or_create_agent_types }
+    fetch_from_cache(key) { agent_types.all }
   end
 
   def clear_agent_types_cache
@@ -883,6 +894,10 @@ module Cache::Memcache::Account
 
     def agent_groups_hash_memcache_key
       ACCOUNT_AGENT_GROUPS_HASH % { account_id: id }
+    end
+
+    def write_access_agent_groups_hash_memcache_key
+      format(ACCOUNT_WRITE_ACCESS_AGENT_GROUPS_HASH, account_id: id)
     end
 
     def tags_memcache_key

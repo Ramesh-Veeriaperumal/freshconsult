@@ -5,7 +5,7 @@ module Ember
 
     def index
       super
-      response.api_meta = { count: @items_count }
+      response.api_meta = { count: @omni_channel_groups.try(:count) || @items_count }
     end
 
      private
@@ -45,8 +45,10 @@ module Ember
       def scoper
         return current_account.groups if create?                  
         return accessible_groups if !api_current_user.privilege?(:admin_tasks)
-        return current_account.groups.support_agent_groups if params[:group_type].nil? || (params[:group_type].present? && params[:group_type] == GroupConstants::SUPPORT_GROUP_NAME)
-        return current_account.groups.field_agent_groups if params[:group_type].present? && params[:group_type] == GroupConstants::FIELD_GROUP_NAME
+        groups = current_account.groups
+        groups = groups.round_robin_groups if params[:auto_assignment] == 'true'
+        return groups.support_agent_groups if params[:group_type].nil? || (params[:group_type].present? && params[:group_type] == GroupConstants::SUPPORT_GROUP_NAME)
+        return groups.field_agent_groups if params[:group_type].present? && params[:group_type] == GroupConstants::FIELD_GROUP_NAME
       end
 
       def accessible_groups     
@@ -58,7 +60,7 @@ module Ember
 
       def decorator_options
         super({
-          agent_groups_ids: current_account.agent_groups_hash_from_cache,
+          agent_groups_ids: current_account.write_access_agent_groups_hash_from_cache,
           group_type_mapping: current_account.group_type_mapping
         })
       end
@@ -84,7 +86,7 @@ module Ember
 
       def service_group?
         (params[:group].present? && params[:group][:group_type] == FIELD_GROUP_NAME) ||
-          (@item.present? && @item.group_type == 2)
+          (@item.present? && @item.group_type == GroupType.group_type_id(FIELD_GROUP_NAME))
       end
   end
 end

@@ -477,10 +477,7 @@ class AccountTest < ActionView::TestCase
     Account.current.sandbox_domain
   end
 
-  def test_get_or_create_agent_types
-    Account.current.get_or_create_group_types
-    assert_equal response.status, 200
-    Account.current.group_type_mapping
+  def test_bot_email_response
     Account.current.bot_email_response
     assert_equal response.status, 200
     Account.current.falcon_and_encrypted_fields_enabled?

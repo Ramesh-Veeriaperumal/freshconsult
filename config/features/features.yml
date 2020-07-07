@@ -399,6 +399,7 @@
       :custom_objects: 395
       :quality_management_system: 396
       :kb_allow_base64_images: 397
+      :triage_ultimate: 398
 :selectable_features:
   :redis_display_id: true
   :branding: true

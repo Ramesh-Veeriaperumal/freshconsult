@@ -371,6 +371,13 @@ class Subscription < ActiveRecord::Base
     result.subscription.coupon
   end
 
+  def fetch_fdfs_discount_coupon
+    if trial? && account.account_additional_settings.additional_settings[:onboarding_version] == SubscriptionConstants::FDFSONBOARDING && \
+       created_at > DateTime.now.utc - 21.days
+      SubscriptionConstants::FDFSBUNDLE
+    end
+  end
+
   def retrieve_addon_price(addon)
     response = billing.retrieve_addon(addon_mapping[addon])
     (response.addon.price)/100.0
@@ -522,10 +529,6 @@ class Subscription < ActiveRecord::Base
    def field_agent_limit=(value)
     self.additional_info ||= {}
     self.additional_info[:field_agent_limit] = value
-  end
-
-  def amount_with_tax_safe_access
-    self.additional_info[:amount_with_tax].presence || self.amount
   end
 
   def reset_field_agent_limit

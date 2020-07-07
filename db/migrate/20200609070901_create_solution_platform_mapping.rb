@@ -8,7 +8,7 @@ class CreateSolutionPlatformMapping < ActiveRecord::Migration
   def up
     create_table :solution_platform_mappings do |t|
       t.integer 'account_id', limit: 8, null: false
-      t.references :mappable, polymorphic: true
+      t.references :mappable, polymorphic: true # check data type when creating polymorphic association through references
       t.boolean 'web', null: false, default: false
       t.boolean 'ios', null: false, default: false
       t.boolean 'android', null: false, default: false

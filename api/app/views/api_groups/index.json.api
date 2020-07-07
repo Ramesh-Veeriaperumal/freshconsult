@@ -3,7 +3,7 @@ group_type_name = {}
 group_types.each do |group_type|
   group_type_name[group_type.group_type_id] = group_type.name
 end
-@items.map do |group|
+groups = @items.map do |group|
   response_hash = {
     id: group.id,
     name: group.name,
@@ -17,4 +17,6 @@ end
   }
   response_hash[:auto_ticket_assign] = group.auto_ticket_assign if group.round_robin_enabled?
   response_hash
-end.to_json
+end
+groups += GroupDecorator.omni_channel_groups(@omni_channel_groups) if @omni_channel_groups
+groups.to_json

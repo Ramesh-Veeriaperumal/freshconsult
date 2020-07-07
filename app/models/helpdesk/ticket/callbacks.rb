@@ -55,6 +55,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save :check_parallel_transaction, if: :prevent_parallel_update_enabled?
 
+  before_save :nullify_group_id
   before_update :update_isescalated, :if => :check_due_by_change
   before_update :update_fr_escalated, :if => :check_frdue_by_change
   before_update :update_nr_escalated, if: -> { Account.current.next_response_sla_enabled? && check_nr_due_by_change } 
@@ -657,6 +658,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def trigger_detect_thank_you_note_feedback
     Rails.logger.info "Enqueueing DetectThankYouNoteFeedbackWorker T :: #{id}"
     ::Freddy::DetectThankYouNoteFeedbackWorker.perform_async(ticket_id: id)
+  end
+
+  def nullify_group_id
+    self.group_id = nil if self.group_id.present? && self.group_id < 1
   end
 
 private

@@ -4,6 +4,51 @@ module GroupsTestHelper
   include AgentHelper
   # Patterns
 
+  RR_OCR_GROUPS = [
+    {
+      'id': 100,
+      'product': 'freshdesk',
+      'product_group_id': '100',
+      'name': 'Freshdesk Group 1',
+      'round_robin': 1
+    },
+    {
+      'id': 101,
+      'product': 'freshchat',
+      'product_group_id': 'abcd',
+      'name': 'Freshchat Group 1',
+      'round_robin': 1
+    },
+    {
+      'id': 102,
+      'product': 'freshchat',
+      'product_group_id': 'efgh',
+      'name': 'Freshchat Group 2',
+      'round_robin': 10
+    },
+    {
+      'id': 104,
+      'product': 'freshcaller',
+      'product_group_id': '1001',
+      'name': 'Freshcaller Group 1',
+      'round_robin': 1
+    }
+  ].freeze
+  NO_RR_OCR_GROUPS = [
+    {
+      'id': 103,
+      'product': 'freshchat',
+      'product_group_id': 'ijkl',
+      'name': 'Freshchat Group 3'
+    },
+    {
+      'id': 105,
+      'product': 'freshcaller',
+      'product_group_id': '1002',
+      'name': 'Freshcaller Group 2'
+    }
+  ].freeze
+
   def private_group_pattern(expected_output={}, group)    
     group_json = group_json(expected_output, group)
     group_json.delete(:business_hour_id)    
@@ -116,6 +161,29 @@ module GroupsTestHelper
     value ? value.to_s.to_bool : value
   rescue ArgumentError => ex
     value
+  end
+
+  def omni_channel_groups_response(auto_assignment = true)
+    channel_groups = RR_OCR_GROUPS
+    channel_groups += NO_RR_OCR_GROUPS unless auto_assignment
+    { 'ocr_groups': channel_groups }
+  end
+
+  def omni_channel_groups_pattern(channel_group, auto_assignment = true)
+    channel = channel_group['product']
+    return if channel == 'freshdesk'
+
+    channel_tat = OmniChannelRouting::Constants::OCR_TAT_MAPPING[channel.to_sym].key(channel_group['round_robin'])
+    channel_tat = channel_tat ? "#{channel}_#{channel_tat}" : 'default'
+    return if auto_assignment && channel_tat == 'default'
+
+    hash = {
+      id: channel_group['product_group_id'],
+      name: channel_group['name'],
+      channel: channel
+    }
+    hash[:round_robin_type] = GroupConstants::CHANNEL_TASK_ASSIGNMENT_TYPES[channel_tat.to_sym]
+    hash
   end
 
   # Helpers

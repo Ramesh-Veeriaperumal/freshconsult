@@ -30,11 +30,8 @@ get:
           groups:
             type: array
             items:
-              $ref: '#/definitions/group_response'
-          omni_channel_groups:
-            type: array
-            items:
-              $ref: '#/definitions/omni_channel_group'
+              - $ref: '#/definitions/group_response'
+              - $ref: '#/definitions/omni_channel_group'
           meta:
             $ref: '#/definitions/meta'
     400:

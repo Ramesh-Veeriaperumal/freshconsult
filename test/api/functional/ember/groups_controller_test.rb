@@ -1,8 +1,10 @@
 require_relative '../../test_helper'
 class Ember::GroupsControllerTest < ActionController::TestCase
   include GroupsTestHelper
+  include AgentHelper
   include GroupConstants
   include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
+  include MemcacheKeys
 
   def wrap_cname(params)
     { group: params }
@@ -40,6 +42,16 @@ class Ember::GroupsControllerTest < ActionController::TestCase
     match_json(private_group_pattern(Group.find(group.id)))
   end
 
+  def test_show_group_with_contribution_agents
+    group = create_group_with_agents(@account)
+    agent = add_agent_to_account(@account, active: true)
+    agent.build_agent_groups_attributes([], [group.id])
+    agent.save
+    get :show, controller_params(version: 'private', id: group.id)
+    assert_response 200
+    match_json(private_group_pattern(Group.find(group.id)))
+  end
+
   def test_show_group_without_manage_availability_privilege
     User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
     User.any_instance.stubs(:privilege?).with(:manage_availability).returns(true)   
@@ -60,7 +72,6 @@ class Ember::GroupsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
     User.any_instance.stubs(:privilege?).with(:manage_availability).returns(false)
   end
-
   
   def test_create_group_with_existing_name
     existing_group = Group.first || create_group(@account)

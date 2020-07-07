@@ -30,9 +30,10 @@ class Agent < ActiveRecord::Base
   before_update :destroy_contribution_group_on_permission_change, if: :ticket_permission_changed?
 
   before_create :mark_unavailable
+  before_save :update_agent_group_change
   after_commit :enqueue_round_robin_process, on: :update
   after_commit :sync_skill_based_queues, on: :update
-  after_commit :sync_agent_availability_to_ocr, on: :update, if: :allow_ocr_sync?
+  after_commit :sync_agent_availability_to_ocr, on: :update, if: -> { allow_ocr_sync? && !skip_ocr_agent_sync }
 
   after_commit :nullify_tickets, :agent_destroy_cleanup, on: :destroy
   
@@ -57,7 +58,7 @@ class Agent < ActiveRecord::Base
                   :scoreboard_level_id, :user_attributes, :group_ids, :freshchat_token, :agent_type, :search_settings, :focus_mode, :show_onBoarding, :notification_timestamp, :show_loyalty_upgrade
   attr_accessor :agent_role_ids, :freshcaller_enabled, :user_changes, :group_changes,
                 :ocr_update, :misc_changes, :out_of_office_days, :old_agent_availability,
-                :return_old_agent_availability, :freshchat_enabled
+                :return_old_agent_availability, :freshchat_enabled, :skip_ocr_agent_sync
 
   scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
   scope :full_time_support_agents, :conditions => { :occasional => false, :agent_type => SUPPORT_AGENT_TYPE, 'users.deleted' => false}
@@ -180,11 +181,7 @@ class Agent < ActiveRecord::Base
   def toggle_availability?
     return false unless account.features?(:round_robin) || account.agent_statuses_enabled?
 
-    if account.agent_statuses_enabled?
-      allow_status_toggle?
-    else
-      allow_availability_toggle?
-    end
+    account.agent_statuses_enabled? ? allow_status_toggle? : allow_availability_toggle?
   end
 
   def group_ticket_permission
@@ -372,14 +369,14 @@ class Agent < ActiveRecord::Base
 
   def update_agent_group_list(all_agent_groups, group_ids, write_access = true)
     group_ids &= valid_groups_ids
+    collect_new_ids = []
     group_ids.each do |group_id|
       agent_group = all_agent_groups.bsearch { |ag| group_id <=> ag.group_id }
-      if agent_group.blank?
-        agent_group = self.all_agent_groups.build(group_id: group_id, write_access: write_access)
-        agent_group.instance_variable_set(:@marked_for_destruction, false) # in case of scope get to all ticket permission
-      else
-        agent_group.write_access = write_access
-      end
+      agent_group.blank? ? (collect_new_ids << group_id) : (agent_group.write_access = write_access)
+    end
+    collect_new_ids.each do |group_id|
+      agent_group = self.all_agent_groups.build(group_id: group_id, write_access: write_access)
+      agent_group.instance_variable_set(:@marked_for_destruction, false) # in case of scope get to all ticket permission
     end
   end
 
@@ -431,13 +428,18 @@ class Agent < ActiveRecord::Base
   def out_of_office
     return unless Account.current.out_of_office_enabled?
 
-    user.make_current
-    ooo_response = perform_shift_request(nil, nil, 'active')
-    return if ooo_response[:body].blank? || ooo_response[:code] != 200 || ooo_response[:body]['data'].blank?
+    begin
+      user.make_current
+      request_options = { url: OUT_OF_OFFICE_INDEX + format(QUERY_PARAM, state_value: 'active'), action_method: :index }
+      ooo_response = perform_shift_request(nil, nil, true, request_options)
+      return if ooo_response[:body].blank? || ooo_response[:code] != 200 || ooo_response[:body]['data'].blank?
 
-    @out_of_office_days = (ooo_response[:body]['data'][0]['end_time'].to_datetime - ooo_response[:body]['data'][0]['start_time'].to_datetime).to_i
-  ensure
-    User.reset_current_user
+      @out_of_office_days = (ooo_response[:body]['data'][0]['end_time'].to_datetime - ooo_response[:body]['data'][0]['start_time'].to_datetime).to_i
+    rescue StandardError => e
+      Rails.logger.debug "error while computing ooo: #{e.inspect}"
+    ensure
+      User.reset_current_user
+    end
   end
 
   def agent_freshcaller_enabled?
@@ -546,15 +548,39 @@ class Agent < ActiveRecord::Base
     {:id => id, :group_id => group_id, :_destroy => id.present?}
   end
 
+  def central_group_key_names(agent_group)
+    CENTRAL_GROUP_KEYS[agent_group.write_access.present? ? 0 : 1]
+  end
+
   def touch_agent_group_change(agent_group)
-    return unless agent_group.group_id.present?
+    return if agent_group.group_id.blank?
+
+    initialize_group_changes
     agent_info = { id: agent_group.group_id, name: agent_group.group.name }
-    if self.group_changes.present?
-      self.group_changes.push(agent_info)
-    else
-      self.group_changes = [agent_info]
-    end
+    deleted = agent_group.destroyed? || agent_group.marked_for_destruction? ? 1 : 0
+    group_changes[central_group_key_names(agent_group)][CENTRAL_ADD_REMOVE_KEY[deleted]] << agent_info
     clear_group_cache
+  end
+
+  def initialize_group_changes
+    self.group_changes ||= {}
+    CENTRAL_GROUP_KEYS.each do |key|
+      group_changes[key] ||= {}
+      group_changes[key][:added] ||= []
+      group_changes[key][:removed] ||= []
+    end
+  end
+
+  def update_agent_group_change
+    all_agent_groups.each do |agent_group|
+      next if agent_group.new_record? || agent_group.marked_for_destruction? || agent_group.group_id.blank? || !agent_group.write_access_changed?
+
+      agent_info = { id: agent_group.group_id, name: agent_group.group.name }
+      initialize_group_changes
+      key = central_group_key_names(agent_group)
+      group_changes[key][:added] << agent_info
+      group_changes[CENTRAL_GROUP_KEYS[key == :groups ? 1 : 0]][:removed] << agent_info
+    end
   end
 
   def set_default_type_if_needed

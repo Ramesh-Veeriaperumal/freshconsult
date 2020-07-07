@@ -143,6 +143,7 @@
     - ticket_field_job
     - bitmap_callbacks
     - quality_management_system
+    - update_agent_status_availability
 
   :maintainence:
     - select_all_tickets
@@ -436,6 +437,7 @@
     - freshchat_subscription_events_queue
     - twitter_survey
     - facebook_survey
+    - update_article_platform_mapping_worker
   :central_realtime:
     - central_publish
     - active_ticket_central_publish
@@ -751,3 +753,4 @@
     - freshcaller_update_agents
     - bitmap_callbacks
     - quality_management_system
+    - update_agent_status_availability

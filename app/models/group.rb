@@ -27,13 +27,22 @@ class Group < ActiveRecord::Base
   after_commit :nullify_tickets_and_widgets, :destroy_group_in_liveChat, on: :destroy
   after_commit :sync_sbrr_queues
 
-  after_commit :clean_all_agent_group_cache
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id, :case_sensitive => false
 
   has_many :agent_groups,
            class_name: 'AgentGroup',
            foreign_key: 'group_id',
+           after_add: :touch_agent_group_change,
+           after_remove: :touch_agent_group_change,
+           conditions: { write_access: true }
+
+  has_many :all_agent_groups,
+           class_name: 'AgentGroup',
+           foreign_key: :group_id,
+           inverse_of: :group,
+           autosave: true,
+           dependent: :destroy,
            after_add: :touch_agent_group_change,
            after_remove: :touch_agent_group_change
 
@@ -223,6 +232,9 @@ class Group < ActiveRecord::Base
         },
         'support_agent_group': {
           conditions: { group_type: group_filter.group_type }
+        },
+        'auto_assignment': {
+          conditions: { true: 'ticket_assign_type > 0' }
         }
       }
     end    
@@ -310,11 +322,5 @@ class Group < ActiveRecord::Base
         return false
       end
       true
-    end
-
-    def clean_all_agent_group_cache
-      agent_changes.each do |agent_info|
-        MemcacheKeys.delete_from_cache(format(ALL_AGENT_GROUPS_CACHE_FOR_AN_AGENT, account_id: Account.current.id, user_id: agent_info[:id]))
-      end
     end
   end

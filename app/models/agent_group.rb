@@ -48,6 +48,8 @@ class AgentGroup < ActiveRecord::Base
     { :conditions => ["user_id = ? AND group_id in (?)", user_id, group_ids] }
   }
 
+  scope :write_access_only, -> { where('write_access = ?', true) }
+
   swindle :basic_info,
           attrs: %i[user_id group_id]
 
@@ -89,6 +91,7 @@ class AgentGroup < ActiveRecord::Base
   def clear_agent_groups_hash_cache
     MemcacheKeys.delete_from_cache(format(ACCOUNT_AGENT_GROUPS_HASH, account_id: Account.current.id))
     MemcacheKeys.delete_from_cache(format(ACCOUNT_AGENT_GROUPS_ONLY_IDS, account_id: Account.current.id))
+    delete_value_from_cache(format(ACCOUNT_WRITE_ACCESS_AGENT_GROUPS_HASH, account_id: Account.current.id))
   end
 
   private

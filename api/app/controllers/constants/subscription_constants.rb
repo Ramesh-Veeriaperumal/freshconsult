@@ -20,4 +20,7 @@ module SubscriptionConstants
     Subscription::Addon::FSM_ADDON => 'field_service_management',
     Subscription::Addon::FSM_ADDON_2020 => 'field_service_management'
   }.freeze
+  FDFSONBOARDING = 'freshsales_freshdesk_onboarding'.freeze
+  FRESHSALES = 'freshsales'.freeze
+  FDFSBUNDLE = 'FDFSBUNDLE'.freeze
 end.freeze

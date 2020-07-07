@@ -342,6 +342,8 @@ class UserSessionsController < ApplicationController
   def logout_user(allow_sso_redirection = true)
     remove_old_filters if current_user && current_user.agent?
 
+    mark_agent_status_unavailable if can_mark_agent_status_unavailable?
+
     mark_agent_unavailable if can_turn_off_round_robin?
 
     session.delete :assumed_user if session.has_key?(:assumed_user)
@@ -604,5 +606,16 @@ class UserSessionsController < ApplicationController
       else
         sso_redirect_url
       end
+    end
+
+    def can_mark_agent_status_unavailable?
+      current_account.agent_statuses_enabled? &&
+        current_user && current_user.agent? &&
+        current_user.agent.toggle_availability?
+    end
+
+    def mark_agent_status_unavailable
+      current_user.agent.skip_ocr_agent_sync = true
+      UpdateAgentStatusAvailability.perform_async(request_id: request.uuid)
     end
 end

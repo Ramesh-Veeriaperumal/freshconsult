@@ -1096,6 +1096,37 @@ class UserSessionsControllerTest < ActionController::TestCase
     user.destroy
   end
 
+  def test_agent_status_change_call_to_mars
+    agent = create_user_for_session
+    current_account.launch :agent_statuses
+    Agent.any_instance.stubs(:toggle_availability?).returns(true)
+    Agent.any_instance.stubs(:available?).returns(true)
+    delete :destroy, construct_params(format: 'html')
+    assert_equal 1, UpdateAgentStatusAvailability.jobs.size
+  ensure
+    UpdateAgentStatusAvailability.jobs.clear
+    Agent.any_instance.unstub(:toggle_availability?)
+    Agent.any_instance.unstub(:available?)
+    current_account.rollback(:agent_statuses)
+  end
+
+  def test_agent_status_change_call_to_mars_without_feature
+    agent = create_user_for_session
+    Agent.any_instance.stubs(:toggle_availability?).returns(true)
+    Agent.any_instance.stubs(:available?).returns(true)
+    Agent.any_instance.stubs(:update_attribute).returns(true)
+    UpdateAgentStatusAvailability.jobs.clear
+    current_account.rollback :agent_statuses
+    Account.any_instance.stubs(:agent_statues_enabled?).returns(false)
+    delete :destroy, construct_params(format: 'html')
+    assert_equal 0, UpdateAgentStatusAvailability.jobs.size
+  ensure
+    Account.any_instance.unstub(:agent_statues_enabled?)
+    Agent.any_instance.unstub(:toggle_availability?)
+    Agent.any_instance.unstub(:available?)
+    Agent.any_instance.unstub(:update_attribute)
+  end
+
   private
 
     def reset_perishable_token_expiry(user = nil)

@@ -402,6 +402,7 @@ defaults: &defaults
     - [bitmap_callbacks]
     - [quality_management_system]
     - [solution_templates_migration_worker]
+    - [update_agent_status_availability]
 
 development:
   <<: *defaults

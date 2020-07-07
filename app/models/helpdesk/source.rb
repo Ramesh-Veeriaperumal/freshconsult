@@ -1,5 +1,7 @@
 class Helpdesk::Source < Helpdesk::Choice
-  concerned_with :associations, :constants, :validations, :callbacks
+  concerned_with :associations, :constants, :validations, :callbacks, :presenter
+
+  publishable on: [:create, :update]
 
   serialize :meta, HashWithIndifferentAccess
 
