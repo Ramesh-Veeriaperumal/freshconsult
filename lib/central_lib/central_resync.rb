@@ -40,7 +40,7 @@ module CentralLib
     # Usage:
     # - Account.current.tickets.entity_name will return 'Helpdesk::Ticket'
     def entity_name
-      klass.name
+      @entity_name ||= klass.name
     end
   end
 end
