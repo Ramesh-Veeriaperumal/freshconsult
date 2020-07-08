@@ -1,5 +1,5 @@
 class Import::FdSax
-   include ::SAXMachine
+   # include ::SAXMachine
     
     def to_hash
       {}.tap do |hash|

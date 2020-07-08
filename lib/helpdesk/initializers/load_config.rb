@@ -38,8 +38,6 @@ MobileConfig = YAML.load_file(File.join(Rails.root, 'config', 'mobile_config.yml
 
 AdminApiConfig = YAML.load_file(File.join(Rails.root,'config','fdadmin_api_config.yml'))
 
-PodConfig = YAML.load_file(File.join(Rails.root, 'config', 'pod_info.yml'))
-
 AutoIncrementId = YAML.load_file(File.join(Rails.root,'config','auto_increment_ids.yml'))[Rails.env][PodConfig["CURRENT_POD"]]
 
 HashedData = YAML.load_file(File.join(Rails.root,'config','hashed_data.yml'))[Rails.env]

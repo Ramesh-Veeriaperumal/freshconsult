@@ -143,7 +143,7 @@ module SeedFu
     protected
 
     def get
-      records = @model_class.find(:all, :conditions => condition_hash)
+      records = @model_class.where(condition_hash)
       raise "Given constraints yielded multiple records." unless records.size < 2
       if records.any?
         return records.first

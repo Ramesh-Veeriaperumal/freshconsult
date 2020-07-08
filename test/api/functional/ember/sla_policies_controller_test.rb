@@ -11,7 +11,7 @@ class Ember::SlaPoliciesControllerTest < ActionController::TestCase
   end
 
   after(:all) do
-    @sla_policy.destroy if @sla_policy.present?
+    @sla_policy.destroy if @sla_policy.present? && @account.sla_policies.where(id: @sla_policy.id).first # to handle sla_policy destroy test case
     Account.any_instance.unstub(:sla_policy_revamp_enabled?)
     Account.any_instance.unstub(:next_response_sla_enabled?)
   end

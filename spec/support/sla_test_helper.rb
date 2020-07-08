@@ -58,9 +58,13 @@ module SlaTestHelper
 
   def freeze_time_now(time)
     Time.zone = @account.time_zone
+    p "Time.zone :: #{Time.zone}"
+    p "Time :: #{time}"
     Timecop.freeze(time)
     yield
     Timecop.return
+    p "Time.zone :: #{Time.zone}"
+    p "Time :: #{time}"
     Time.zone = @account.time_zone
   end
 

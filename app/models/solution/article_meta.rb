@@ -87,38 +87,36 @@ class Solution::ArticleMeta < ActiveRecord::Base
 
 	alias_method :children, :solution_articles
 
-	scope :published, lambda {
-		{
-			:joins => :current_article,
-			:conditions => ["`solution_articles`.status = ?", STATUS_KEYS_BY_TOKEN[:published]]
-		}
-	}
+	scope :published, -> { 
+					joins(:current_article).
+					where(["`solution_articles`.status = ?", STATUS_KEYS_BY_TOKEN[:published]])
+				}
+				
+	scope :visible_to_all, ->{
+					joins(:solution_folder_meta).
+					where("`solution_folder_meta`.visibility = ? ", 
+						Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:anyone]).
+					published
+				}
 
-	scope :visible_to_all, lambda { joins(:solution_folder_meta).where(
-		"`solution_folder_meta`.visibility = ? ", Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:anyone]).published }
+	scope :newest, -> (num) { 
+					joins(:current_article).
+					order('`solution_articles`.modified_at DESC').
+					limit(num)
+				}
+	
+	scope :for_portal, -> (portal) {
+					where([' solution_folder_meta.solution_category_meta_id in (?) AND solution_folder_meta.visibility = ? ',
+										portal.portal_solution_categories.pluck(:solution_category_meta_id), 
+										Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:anyone] 
+							]).
+					joins(:solution_folder_meta)
+				}
 
-	scope :newest, lambda { |num|
-		{
-			:joins => :current_article,
-			:order => ["`solution_articles`.modified_at DESC"],
-			:limit => num
-		}
-	}
-
-	scope :for_portal, lambda { |portal|
-		{
-			:conditions => [' solution_folder_meta.solution_category_meta_id in (?) AND solution_folder_meta.visibility = ? ',
-	          portal.portal_solution_categories.pluck(:solution_category_meta_id), Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:anyone] ],
-	        :joins => :solution_folder_meta
-      	}
-	}
-
-  scope :for_help_widget, lambda { |help_widget, user|
-    {
-      conditions: [" solution_folder_meta.solution_category_meta_id in (?) AND #{Solution::FolderMeta.visibility_condition(user)}",
-                   help_widget.help_widget_solution_categories.pluck(:solution_category_meta_id)],
-      joins: :solution_folder_meta
-    }
+  scope :for_help_widget, ->(help_widget, user) {
+    where([" solution_folder_meta.solution_category_meta_id in (?) AND #{Solution::FolderMeta.visibility_condition(user)}",
+                   help_widget.help_widget_solution_categories.pluck(:solution_category_meta_id)])
+    .joins(:solution_folder_meta)
   }
 
 	delegate :visible_in?, :to => :solution_folder_meta
@@ -159,7 +157,11 @@ class Solution::ArticleMeta < ActiveRecord::Base
 		# through the parent object, it had the raw content(serialized string) from the table. Hence, we had
 		# to deserialize any such attributes.
 		self.attributes.slice(*Solution::Article.serialized_attributes.keys).each do |k, v|
-			self[k] = YAML.load(v)
+      begin
+        self[k] = YAML.load(v)
+      rescue Psych::SyntaxError
+        self[k] = Syck.load(v)
+      end
 		end
 	end
 	

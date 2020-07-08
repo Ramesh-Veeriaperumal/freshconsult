@@ -19,7 +19,7 @@ module Sync::Templatization::MetaInfo
   end
 
   def load_file(file)
-    YAML.load_file(file) if File.exist?(file)
+    Syck.load_file(file) if File.exist?(file)
   end
 
   def get_value(dir_path, column)

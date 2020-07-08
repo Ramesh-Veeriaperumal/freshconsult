@@ -49,7 +49,7 @@ module Ember
           conditions          = type.present? ? { display_id: @item.associates, ticket_type: type } : { display_id: @item.associates }
           per_page            = @item.assoc_parent_ticket? ? 10 : 30
           paginate_options    = { page: params[:page], per_page: per_page }
-          @associated_tickets = current_account.tickets.preload(preload_models).where(conditions).paginate(paginate_options)
+          @associated_tickets = current_account.tickets.preload(preload_models).where(conditions).paginate(paginate_options) # rubocop:disable Gem/WillPaginate
           @permissibles       = @associated_tickets.permissible(current_user)
         end
 

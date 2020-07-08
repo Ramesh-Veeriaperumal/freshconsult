@@ -58,7 +58,7 @@ class MixpanelObserver < ActiveRecord::Observer
 
     def fetch_data(model)
       if EVENTS[:count].include?(model.class.name)
-        { :count => model.class.count(:all, :conditions => {:account_id => model.account_id}) }
+        { :count => model.class.where(account_id: model.account_id).count }
       else
         { :enabled => true }
       end

@@ -14,9 +14,9 @@ class VaRule < ActiveRecord::Base
 
   xss_sanitize  :only => [:name, :description], :plain_sanitizer => [:name, :description]
 
-  serialize :filter_data
-  serialize :action_data
-  serialize :condition_data
+  serialize :filter_data, [Array, Hash]
+  serialize :action_data, Array
+  serialize :condition_data, [Array, Hash]
 
   concerned_with :presenter, :esv2_methods
 
@@ -51,9 +51,9 @@ class VaRule < ActiveRecord::Base
 
   has_one :app_business_rule, :class_name=>'Integrations::AppBusinessRule', :dependent => :destroy
   has_one :installed_application, :class_name => 'Integrations::InstalledApplication', through: :app_business_rule
-  scope :active, :conditions => { :active => true }
-  scope :inactive, :conditions => { :active => false }
-  scope :slack_destroy,:conditions => ["name in (?)",['slack_create', 'slack_update','slack_note']]
+  scope :active, -> { where(active: true) }
+  scope :inactive, -> { where(active: false) }
+  scope :slack_destroy, -> { where(["name in (?)",['slack_create', 'slack_update','slack_note']]) }
 
   acts_as_list :scope => 'account_id = #{account_id} AND #{connection.quote_column_name("rule_type")} = #{rule_type}'
 
@@ -696,7 +696,7 @@ class VaRule < ActiveRecord::Base
     # To allow not more than 63K character in action_data
     def has_valid_action_data?
       return true if self.action_data.nil?
-      if self.action_data.to_yaml.length >= MAX_ACTION_DATA_LIMIT
+      if YAML.dump(self.action_data).length >= MAX_ACTION_DATA_LIMIT
         errors.add(:base,I18n.t("admin.va_rules.webhook.action_data_limit_exceed"))
       end
     end

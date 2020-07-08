@@ -36,15 +36,6 @@ salesforce:
     access_token : <%= node[:ymls][:config][:salesforce_access_token] %>
     access_secret : <%= node[:ymls][:config][:salesforce_access_secret] %>
 
-marketo:
-  <%= node[:opsworks][:environment] %>:
-    access_key: <%= node[:ymls][:config][:marketo_access_key] %>
-    secret_key: <%= node[:ymls][:config][:marketo_secret_key] %>
-    api_subdomain: <%= node[:ymls][:config][:marketo_api_subdomain] %>
-    api_version: <%= node[:ymls][:config][:marketo_api_version] %>
-
-
-
 integrations_url:
   <%= node[:opsworks][:environment] %>: <%= node[:ymls][:config][:integrations_url] %>
 

@@ -17,7 +17,7 @@ class Helpdesk::SpamTicket < Helpdesk::Mysql::DynamicTable
   has_one :fb_post, :as => :postable, :class_name => 'Social::FbPost',  :dependent => :destroy
   has_one :freshfone_call, :class_name => 'Freshfone::Call', :as => 'notable'
 
-  serialize :associations_data
+  serialize :associations_data, Hash # PRE-RAILS: added data type as per lib/spam/core/base.rb, need tovalidate
   attr_protected :account_id
 
   def spam_notes

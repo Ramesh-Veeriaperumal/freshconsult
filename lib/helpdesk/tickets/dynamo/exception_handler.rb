@@ -28,10 +28,10 @@ module Helpdesk
               # An entry with the same primary key already exists
               Rails.logger.error("DynamoDB Exception - Condition Check Failed")
 
-            rescue AWS::DynamoDB::Errors::ValidationException => exception 
+            rescue Aws::DynamoDB::Errors::ValidationException => exception # PRE-RAILS: Dynamo Client doc mentioned this exception but not present Dynamo Errors doc
               Rails.logger.error("DynamoDB Exception - Validation exception")
               
-            rescue AWS::DynamoDB::Errors::ResourceNotFoundException => exception
+            rescue Aws::DynamoDB::Errors::ResourceNotFoundException => exception
               Rails.logger.error("DynamoDB Exception - Resource not found")
         
             rescue Aws::DynamoDB::Errors::ServiceError => exception

@@ -10,7 +10,7 @@ class ScheduledExport::Activity < ScheduledExport
 
   after_commit :clear_activity_export_cache
 
-  default_scope { where(schedule_type: SCHEDULE_TYPE[:ACTIVITY_EXPORT]) }
+  default_scope -> { where(schedule_type: SCHEDULE_TYPE[:ACTIVITY_EXPORT]) }
 
   def send_export_message
     if export_activated?

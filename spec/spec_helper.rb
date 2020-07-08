@@ -204,7 +204,6 @@ Spork.prefork do
     config.before(:suite) do
       ES_ENABLED = false
       GNIP_ENABLED = false
-      RIAK_ENABLED = false
 
       #Sharding.run_on_all_shards do
       DatabaseCleaner.clean_with(:truncation,

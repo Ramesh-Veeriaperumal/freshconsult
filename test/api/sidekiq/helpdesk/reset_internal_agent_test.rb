@@ -40,7 +40,7 @@ class ResetInternalAgentTest < ActionView::TestCase
     ticket_ids = []
     rand(1..10).times { ticket_ids << create_ticket(internal_group_id: internal_group.id, internal_agent_id: internal_agent.id).id }
     Helpdesk::ResetInternalAgent.new.perform(internal_group_id: internal_group.id, internal_agent_id: internal_agent.id)
-    @account.tickets.find_all_by_id(ticket_ids).each do |tkt|
+    @account.tickets.where(id: ticket_ids).each do |tkt|
       assert tkt.internal_agent_id.nil?
     end
   ensure

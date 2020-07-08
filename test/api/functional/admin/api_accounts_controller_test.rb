@@ -55,7 +55,7 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
   SECONDS_IN_A_DAY = 24 * 60 * 60
 
   def teardown
-    AwsWrapper::S3Object.unstub(:exists?)
+    AwsWrapper::S3.unstub(:exists?)
   end
 
   def get_valid_params_for_cancel
@@ -170,25 +170,15 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
   end
 
   def test_download_file_to_respond_302_for_beacon_report
-    AwsWrapper::S3Object.stubs(:exists?).with(
-      "#{Account.current.id}/beacon_report/beacon_report.pdf", S3_CONFIG[:bucket]
-    ).returns(true)
-    AwsWrapper::S3Object.stubs(:url_for).with(
-      "#{Account.current.id}/beacon_report/beacon_report.pdf", S3_CONFIG[:bucket],
-      {
-        expires: Account::FILE_DOWNLOAD_URL_EXPIRY_TIME,
-        secure: true
-      }
-    ).returns('https://dummy.s3.url')
+    AwsWrapper::S3.stubs(:exists?).with(S3_CONFIG[:bucket], "#{Account.current.id}/beacon_report/beacon_report.pdf").returns(true)
+    AwsWrapper::S3.stubs(:presigned_url).with(S3_CONFIG[:bucket], "#{Account.current.id}/beacon_report/beacon_report.pdf", expires_in: Account::FILE_DOWNLOAD_URL_EXPIRY_TIME.to_i, secure: true).returns('https://dummy.s3.url')
     get :download_file, controller_params(version: 'private', type: 'beacon')
     assert_response 302
     assert response.header['Location'], 'https://dummy.s3.url'
   end
 
   def test_download_file_to_respond_404_on_file_not_exists
-    AwsWrapper::S3Object.stubs(:exists?).with(
-      "#{Account.current.id}/beacon_report/beacon_report.pdf", S3_CONFIG[:bucket]).
-      returns(false)
+    AwsWrapper::S3.stubs(:exists?).with(S3_CONFIG[:bucket], "#{Account.current.id}/beacon_report/beacon_report.pdf").returns(false)
     get :download_file, controller_params(version: 'private', type: 'beacon')
     assert_response 404
   end

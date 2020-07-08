@@ -630,7 +630,7 @@ module Helpdesk::TicketsHelper
 
   def unique_ticket_recipients(ticket)
     ticket_from_email = get_email_array(ticket.from_email)
-    cc_email_hash = ticket.cc_email_hash.nil? ? Helpdesk::Ticket.default_cc_hash : ticket.cc_email_hash
+    cc_email_hash = ticket.cc_email_hash.blank? ? Helpdesk::Ticket.default_cc_hash : ticket.cc_email_hash
 
     bcc_emails = get_email_array(cc_email_hash[:bcc_emails])
     cc_emails = get_email_array(cc_email_hash[:cc_emails])

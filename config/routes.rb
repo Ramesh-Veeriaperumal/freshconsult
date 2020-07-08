@@ -1,62 +1,6 @@
 Helpkit::Application.routes.draw do
-  # The priority is based upon order of creation:
-  # first created -> highest priority.
 
-  # Sample of regular route:
-  #   match 'products/:id' => 'catalog#view'
-  # Keep in mind you can assign values other than :controller and :action
-
-  # Sample of named route:
-  #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
-  # This route can be invoked with purchase_url(:id => product.id)
-
-  # Sample resource route (maps HTTP verbs to controller actions automatically):
-  #   resources :products
-
-  # Sample resource route with options:
-  #   resources :products do
-  #     member do
-  #       get 'short'
-  #       post 'toggle'
-  #     end
-  #
-  #     collection do
-  #       get 'sold'
-  #     end
-  #   end
-
-  # Sample resource route with sub-resources:
-  #   resources :products do
-  #     resources :comments, :sales
-  #     resource :seller
-  #   end
-
-  # Sample resource route with more complex sub-resources
-  #   resources :products do
-  #     resources :comments
-  #     resources :sales do
-  #       get 'recent', :on => :collection
-  #     end
-  #   end
-
-  # Sample resource route within a namespace:
-  #   namespace :admin do
-  #     # Directs /admin/products/* to Admin::ProductsController
-  #     # (app/controllers/admin/products_controller.rb)
-  #     resources :products
-  #   end
-
-  # You can have the root of your site routed with "root"
-  # just remember to delete public/index.html.
-  # root :to => 'welcome#index'
-
-  # See how all your routes lay out with "rake routes"
-
-  # This is a legacy wild controller route that's not recommended for RESTful applications.
-  # Note: This route will make all actions in every controller accessible via GET requests.
-  # match ':controller(/:action(/:id))(.:format)'
-
-  match '/health_checkup' => 'health_checkup#app_health_check',via: :get
+  match '/health_checkup' => 'health_checkup#app_health_check', via: :get
 
   constraints(lambda {|req| req.subdomain == AppConfig['admin_subdomain'] }) do
 
@@ -89,18 +33,18 @@ Helpkit::Application.routes.draw do
         end
       end
 
-      match '/freshfone_admin' => 'freshfone_subscriptions#index', :as => :freshfone
+      match '/freshfone_admin' => 'freshfone_subscriptions#index', :as => :freshfone, via: :get
 
-      match '/freshfone_admin/stats' => 'freshfone_stats#index', :as => :freshfone_stats
+      match '/freshfone_admin/stats' => 'freshfone_stats#index', :as => :freshfone_stats, via: :get # Not able to find
 
       resources :spam_watch, :only => :index
-      match ':shard_name/spam_watch/:user_id/:type' => 'spam_watch#spam_details'
+      match ':shard_name/spam_watch/:user_id/:type' => 'spam_watch#spam_details', via: :get
 
-      match ':shard_name/spam_user/:user_id' => 'spam_watch#spam_user', :as => :spam_user
+      match ':shard_name/spam_user/:user_id' => 'spam_watch#spam_user', :as => :spam_user, via: :put
 
-      match ':shard_name/block_user/:user_id' => 'spam_watch#block_user'
-      match ':shard_name/hard_block/:user_id' => 'spam_watch#hard_block', :as => :hard_block_user
-      match ':shard_name/internal_whitelist/:user_id' => 'spam_watch#internal_whitelist', :as => :internal_whitelist
+      match ':shard_name/block_user/:user_id' => 'spam_watch#block_user', via: :put
+      match ':shard_name/hard_block/:user_id' => 'spam_watch#hard_block', :as => :hard_block_user, via: :put
+      match ':shard_name/internal_whitelist/:user_id' => 'spam_watch#internal_whitelist', :as => :internal_whitelist, via: :put # Not used
 
 
       resources :subscription_events, :as => 'events' do
@@ -119,9 +63,9 @@ Helpkit::Application.routes.draw do
 
       resources :admin_sessions, :only => [:create, :destroy]
 
-      match 'admin_sessions/logout' => 'admin_sessions#destroy', :as => :subscription_logout
+      match 'admin_sessions/logout' => 'admin_sessions#destroy', :as => :subscription_logout, via: :get # Not able to find
 
-      match 'admin_sessions/login' => 'admin_sessions#new', :as => :subscription_login
+      match 'admin_sessions/login' => 'admin_sessions#new', :as => :subscription_login, via: :get # Not able to find
 
       resources :subscription_users, :as => 'subscription_users' do
         member do
@@ -174,7 +118,7 @@ Helpkit::Application.routes.draw do
     match '/search/tickets/filter/:search_field',     to: 'search/v2/tickets#index',                via: :post
 
     # Linked ticket routes
-    match '/search/ticket_associations/filter/:search_field', to: 'search/v2/ticket_associations#index'
+    match '/search/ticket_associations/filter/:search_field', to: 'search/v2/ticket_associations#index', via: :post # Not used
     match '/search/ticket_associations/recent_trackers',      to: 'search/v2/ticket_associations#recent_trackers', via: :post
 
     match '/support/search',                   to: 'support/search_v2/spotlight#all',               via: :get
@@ -195,31 +139,33 @@ Helpkit::Application.routes.draw do
 
   get '/a/*others', to: 'home#index_html'
   get '/a/', to: 'home#index_html'
+
   match "/support/sitemap" => "support#sitemap", :format => "xml", :as => :sitemap, :via => :get
   match "/robots" => "support#robots", :format => "text", :as => :robots, :via => :get
 
   match '/visitor/load/:id.:format' => 'chats#load', :via => :get
   match '/images/helpdesk/attachments/:id(/:style(.:format))' => 'helpdesk/attachments#show', :via => :get
   match '/inline/attachment' => 'helpdesk/inline_attachments#one_hop_url', :via => :get
-  match '/javascripts/:action.:format' => 'javascripts#index'
-  match '/packages/:package.:extension' => 'jammit#package', :as => :jammit, :constraints => { :extension => /.+/ }
+  match '/javascripts/:action.:format' => 'javascripts#index', via: :get # Not able to find
+  match '/packages/:package.:extension' => 'jammit#package', :as => :jammit, :constraints => { :extension => /.+/ }, via: :get # Not able to find
   resources :authorizations
 
   Integrations::Constants::INTEGRATION_ROUTES.each do |provider|
-    match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider
+    match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider, via: :get
   end
 
-  match "/auth/gmail/callback" => 'omniauth_callbacks#complete', :provider => 'gmail'
-  match "/auth/gmail/failure" => 'omniauth_callbacks#failure', :as => :failure
+  match "/auth/gmail/callback" => 'omniauth_callbacks#complete', :provider => 'gmail', :via => :get
+  match "/auth/gmail/failure" => 'omniauth_callbacks#failure', :via => :get
 
   match '/shopify_integration_redirect' => 'shopify_listing#send_approval_request', :via => :get
   match '/shopify_landing' => 'shopify_listing#show', :via => :get
   match '/shopify_account_verification' => 'shopify_listing#verify_domain_shopify', :via => :post
-  match '/auth/:provider/callback' => 'authorizations#create', :as => :callback
-  match '/oauth2callback' => 'authorizations#create', :as => :calender, :provider => 'google_oauth2'
-  match '/auth/failure' => 'authorizations#failure', :as => :failure
-  match "/facebook/page/callback" => 'facebook_redirect_auth#complete'
-  match "/twitter/handle/callback" => 'twitter_redirect_auth#complete'
+  match '/auth/:provider/callback' => 'authorizations#create', :as => :callback, :via => :get
+
+  #Removal  match '/oauth2callback' => 'authorizations#create', :as => :calender, :provider => 'google_oauth2', :via => :get
+  match '/auth/failure' => 'authorizations#failure', :as => :failure, :via => :get
+  match "/facebook/page/callback" => 'facebook_redirect_auth#complete', :via => :get
+  match "/twitter/handle/callback" => 'twitter_redirect_auth#complete', :via => :get
   match '/simple_outreach_unsubscribe_status' => 'external_action#unsubscribe', :via => :get
   match '/simple_outreach_unsubscribe' => 'external_action#email_unsubscribe', :via => :post
 
@@ -268,8 +214,8 @@ Helpkit::Application.routes.draw do
       post :create
     end
   end
-  match '/imports/:type' => 'customers_import#csv'
-  match '/imports/:type/map_fields' => 'customers_import#map_fields'
+  match '/imports/:type' => 'customers_import#csv', via: :get
+  match '/imports/:type/map_fields' => 'customers_import#map_fields', via: :post
 
   namespace :health_check do
     get :verify_domain
@@ -307,8 +253,8 @@ Helpkit::Application.routes.draw do
     resources :time_sheets, :controller=>'helpdesk/time_sheets'
   end
 
-  match '/customers/filter/:state/*letter' => 'customers#index'
-  match '/companies/filter/:state/*letter', :controller => 'companies', :action => 'index'
+  match '/customers/filter/:state/*letter' => 'customers#index', via: :get
+  match '/companies/filter/:state/*letter', :controller => 'companies', :action => 'index', via: :get
   get '/contacts' => 'contacts#index'
 
   resources :contacts do
@@ -348,10 +294,10 @@ Helpkit::Application.routes.draw do
   end
 
   # segment/group controller will handle all different types in request params # content based routing
-  match '/integrations/segment' => 'segment/identify#create', :constraints => lambda{|req| req.request_parameters["type"] == "identify"}
-  match '/integrations/segment' => 'segment/group#create', :constraints => lambda{|req| req.request_parameters["type"] != "identify"}
+  match '/integrations/segment' => 'segment/identify#create', :constraints => lambda{|req| req.request_parameters["type"] == "identify"}, via: :post
+  match '/integrations/segment' => 'segment/group#create', :constraints => lambda{|req| req.request_parameters["type"] != "identify"}, via: :post
 
-  match '/contacts/filter/:state(/*letter)' => 'contacts#index', :format => false
+  match '/contacts/filter/:state(/*letter)' => 'contacts#index', :format => false, via: :get
   resources :groups do
     collection do
       get  :index
@@ -411,22 +357,23 @@ Helpkit::Application.routes.draw do
     resources :time_sheets
   end
 
-  match '/agents/filter/:state(/*letter)' => 'agents#index'
-  match '/groups/filter/:state' => 'groups#index'
-  match '/logout' => 'user_sessions#destroy', :as => :logout
-  match '/login' => 'user_sessions#new', :as => :login
-  match '/login/sso' => 'user_sessions#sso_login', :as => :sso_login
-  match '/mobile_freshid_logout' => 'user_sessions#mobile_freshid_logout', :as => :mobile_freshid_logout
-  match '/login/sso_v2' => 'user_sessions#jwt_sso_login', :as => :jwt_sso_login
-  match '/login/saml' => 'user_sessions#saml_login', :as => :saml_login
-  match '/login/normal' => 'user_sessions#new', :as => :login_normal
-  match 'agent/login' => 'user_sessions#agent_login', :as => :agent_login
-  match 'customer/login' => 'user_sessions#customer_login', :as => :customer_login
-  match '/signup_complete/:token' => 'user_sessions#signup_complete', :as => :signup_complete
+  match '/agents/filter/:state(/*letter)' => 'agents#index', via: :get
+  match '/groups/filter/:state' => 'groups#index', via: :get
+  match '/logout' => 'user_sessions#destroy', as: :logout, via: :get
+  match '/login' => 'user_sessions#new', as: :login, via: :get
+  match '/login/sso' => 'user_sessions#sso_login', as: :sso_login, via: :get
+  match '/login/sso_v2' => 'user_sessions#jwt_sso_login', as: :jwt_sso_login, via: :get
+  match '/login/saml' => 'user_sessions#saml_login', as: :saml_login, via: :post
+  match '/login/normal' => 'user_sessions#new', as: :login_normal, via: :get
+  match 'agent/login' => 'user_sessions#agent_login', as: :agent_login, via: :get
+  match 'customer/login' => 'user_sessions#customer_login', as: :customer_login, via: :get
+  match '/signup_complete/:token' => 'user_sessions#signup_complete', as: :signup_complete, via: :get
+  match '/twitter/authdone' => 'social/twitter_handles#authdone', as: :tauth, via: :get # Not used
+  match '/download_file/:source/:token' => 'admin/data_export#download', as: :download_file, via: :get
+  match '/mobile_freshid_logout' => 'user_sessions#mobile_freshid_logout', as: :mobile_freshid_logout, via: :get
   match '/mobile/token' => 'user_sessions#mobile_token', via: :post
-  match '/zendesk/import' => 'admin/zen_import#index', :as => :zendesk_import
-  match '/twitter/authdone' => 'social/twitter_handles#authdone', :as => :tauth
-  match '/download_file/:source/:token' => 'admin/data_export#download', :as => :download_file
+  match '/zendesk/import' => 'admin/zen_import#index', :as => :zendesk_import, via: :get
+
   namespace :freshfone do
     resources :ivrs do
       member do
@@ -680,8 +627,8 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  match '/freshfone/call_history/custom_search' => 'freshfone/call_history#custom_search'
-  match '/freshfone/call_history/children' => 'freshfone/call_history#children'
+  match '/freshfone/call_history/custom_search' => 'freshfone/call_history#custom_search', via: :get
+  match '/freshfone/call_history/children' => 'freshfone/call_history#children', via: :get
 
   namespace :freshfone, :path => "phone" do
     resources :dashboard do
@@ -732,10 +679,9 @@ Helpkit::Application.routes.draw do
   match '/set_notes_order' => 'users#set_conversation_preference', :as => :set_notes_order, via: :put
   match '/enable_skip_mandatory' => 'admin/account_additional_settings#enable_skip_mandatory', :as => :enable_skip_mandatory, via: :post
   match '/disable_skip_mandatory' => 'admin/account_additional_settings#disable_skip_mandatory', :as => :disable_skip_mandatory, via: :post
-  match '/register/:activation_code' => 'activations#new', :as => :register
-  match 'register_new_email/:activation_code' => 'activations#new_email', :as => :register_new_email
-  match '/activate/:perishable_token' => 'activations#create', :as => :activate
-  match '/set_notes_order' => 'users#set_conversation_preference', :as => :set_notes_order, via: :put
+  match '/register/:activation_code' => 'activations#new', :as => :register, via: :get
+  match 'register_new_email/:activation_code' => 'activations#new_email', :as => :register_new_email, via: :get # Not used
+  match '/activate/:perishable_token' => 'activations#create', :as => :activate, via: :put
 
   resources :activations do
     member do
@@ -865,9 +811,9 @@ Helpkit::Application.routes.draw do
       get :open_social_auth
     end
 
-    match '/jira_issue/unlink' => 'jira_issue#unlink'
-    match 'jira_issue/destroy' => 'jira_issue#destroy'
-    match 'jira_issue/update' => 'jira_issue#update'
+    match '/jira_issue/unlink' => 'jira_issue#unlink', via: :post
+    match 'jira_issue/destroy' => 'jira_issue#destroy', via: :post
+    match 'jira_issue/update' => 'jira_issue#update', via: :put
 
     resources :jira_issue do
       collection do
@@ -1095,7 +1041,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-	  namespace :onedrive do
+    namespace :onedrive do
       get :callback
       get :onedrive_render_application
       get :onedrive_view
@@ -1116,34 +1062,31 @@ Helpkit::Application.routes.draw do
       put :update
     end
 
-    resources :marketplace_apps, only: [:edit, :clear_cache] do
-      collection do
-        post :clear_cache
-      end
+    resources :marketplace_apps, :only => [:edit] do
       member do
         post :install
         delete :uninstall
       end
     end
 
-    match '/refresh_access_token/:app_name' => 'oauth_util#get_access_token', :as => :oauth_action
-    match '/applications/oauth_install/:id' => 'applications#oauth_install', :as => :app_oauth_install
-    match '/user_credentials/oauth_install/:id' => 'user_credentials#oauth_install', :as => :custom_install_user
-    match 'install/:app' => 'oauth#authenticate', :as => :oauth
+    match '/refresh_access_token/:app_name' => 'oauth_util#get_access_token', :as => :oauth_action, via: :get
+    match '/applications/oauth_install/:id' => 'applications#oauth_install', :as => :app_oauth_install, via: :get
+    match '/user_credentials/oauth_install/:id' => 'user_credentials#oauth_install', :as => :custom_install_user, via: :get
+    # match 'install/:app' => 'oauth#authenticate', :as => :oauth # Not able to find
   end
 
   match '/http_request_proxy/fetch',
-      :controller => 'http_request_proxy', :action => 'fetch', :as => :http_proxy
+      :controller => 'http_request_proxy', :action => 'fetch', :as => :http_proxy, via: :post
   match '/freshcaller_proxy',
        :controller => 'freshcaller_proxy', :action => 'fetch', :as => :freshcaller_proxy, :via => :post 
   match '/freshcaller_proxy/recording_url', 
-       :controller => 'freshcaller_proxy', :action => 'recording_url', :as => :freshcaller_proxy, :via => :get
-  match '/mkp/data-pipe.:format', :controller => 'integrations/data_pipe', :action => 'router', :method => :post, :as => :data_pipe
+       :controller => 'freshcaller_proxy', :action => 'recording_url', :via => :get
+  match '/mkp/data-pipe.:format', :controller => 'integrations/data_pipe', :action => 'router', :as => :data_pipe, via: :post
 
   constraints RouteConstraints::Freshcaller.new do
-    match '/admin/phone/redirect_to_freshcaller', controller: 'admin/freshcaller', action: 'redirect_to_freshcaller'
-    match '/admin/phone', controller: 'admin/freshcaller', action: 'index'
-    match '/admin/phone/*a', controller: 'admin/freshcaller', action: 'index'
+    match '/admin/phone/redirect_to_freshcaller', controller: 'admin/freshcaller', action: 'redirect_to_freshcaller', via: :get
+    match '/admin/phone', controller: 'admin/freshcaller', action: 'index', via: :get
+    match '/admin/phone/*a', controller: 'admin/freshcaller', action: 'index', via: :get
   end
 
   namespace :admin do
@@ -1272,13 +1215,13 @@ Helpkit::Application.routes.draw do
         put :test_email
       end
     end
-    match '/register_email/:activation_code' => 'email_configs#register_email', :as => :register_email
+    match '/register_email/:activation_code' => 'email_configs#register_email', :as => :register_email, via: :get
     resources :email_notifications do
       member do
         put :update_agents
       end
     end
-    match '/email_notifications/:type/:id/edit' => 'email_notifications#edit', :as => :edit_notification
+    match '/email_notifications/:type/:id/edit' => 'email_notifications#edit', :as => :edit_notification, via: :get
     resources :onboarding, only: [:index] do
       collection do
         post :update_channel_configs
@@ -1557,7 +1500,7 @@ Helpkit::Application.routes.draw do
 
   end
 
-  match '/ecommerce/ebay_notifications', :controller => 'admin/ecommerce/ebay_accounts', :action => 'notify', :method => :post
+  match '/ecommerce/ebay_notifications', :controller => 'admin/ecommerce/ebay_accounts', :action => 'notify', via: :post
 
   namespace :search do
 
@@ -1640,41 +1583,41 @@ Helpkit::Application.routes.draw do
     resources :solutions, :only => :index
     resources :forums, :only => :index
     resources :customers, :only => :index
-    match '/related_solutions/ticket/:ticket/' => 'solutions#related_solutions', :as => :ticket_related_solutions
-    match '/search_solutions/ticket/:ticket/' => 'solutions#search_solutions', :as => :ticket_search_solutions
+    match '/related_solutions/ticket/:ticket/' => 'solutions#related_solutions', :as => :ticket_related_solutions, via: :get
+    match '/search_solutions/ticket/:ticket/' => 'solutions#search_solutions', :as => :ticket_search_solutions, via: :get
   end
 
   match '/search/tickets' => 'search/tickets#index', via: [:get, :post]
-  match '/search/tickets/filter/:search_field' => 'search/tickets#index'
-  match '/search/ticket_associations/filter/:search_field' => 'search/ticket_associations#index'
+  match '/search/tickets/filter/:search_field' => 'search/tickets#index', via: :get
+  match '/search/ticket_associations/filter/:search_field' => 'search/ticket_associations#index', via: :get # Not used
   match '/search/ticket_associations/recent_trackers' => 'search/ticket_associations#index', via: :post
-  match '/search/all' => 'search/home#index'
-  match '/search/home' => 'search/home#index', :as => :search_home
-  match '/search/topics.:format' => 'search/forums#index'
-  match '/mobile/tickets/get_suggested_solutions/:ticket.:format' => 'search/solutions#related_solutions'
-  match '/search/merge_topic', :controller => 'search/merge_topic', :action => 'index'
-  match '/search/recent_searches_tickets' => 'search/home#recent_searches_tickets', :method => :get
-  match '/search/remove_recent_search' => 'search/home#remove_recent_search', :method => :post
+  match '/search/all' => 'search/home#index', via: :post
+  match '/search/home' => 'search/home#index', via: :get
+  match '/search/topics.:format' => 'search/forums#index', via: :get # Not used
+  match '/mobile/tickets/get_suggested_solutions/:ticket.:format' => 'search/solutions#related_solutions', via: :get # Not used
+  match '/search/merge_topic', :controller => 'search/merge_topic', :action => 'index', via: :post
+  match '/search/recent_searches_tickets' => 'search/home#recent_searches_tickets', via: :get
+  match '/search/remove_recent_search' => 'search/home#remove_recent_search', via: :post
   # routes for custom survey reports
-  match '/reports/custom_survey' => 'reports/custom_survey_reports#index', :as => :custom_survey_activity
-  match '/analytics/custom_survey' => 'reports/custom_survey_reports#index', :as => :custom_survey_analytics_activity
-  match '/reports/custom_survey/aggregate_report/:survey_id/:group_id/:agent_id/:date_range' => 'reports/custom_survey_reports#aggregate_report', :as => :custom_survey_aggregate_report
-  match '/reports/custom_survey/group_wise_report/:survey_id/:group_id/:agent_id/:survey_question_id/:date_range' => 'reports/custom_survey_reports#group_wise_report', :as => :custom_survey_group_wise_report
-  match '/reports/custom_survey/agent_wise_report/:survey_id/:group_id/:agent_id/:survey_question_id/:date_range' => 'reports/custom_survey_reports#agent_wise_report', :as => :custom_survey_agent_wise_report
-  match '/reports/custom_survey/responses/:survey_id/:group_id/:agent_id/:survey_question_id/:rating/:date_range' => 'reports/custom_survey_reports#remarks', :as => :custom_survey_remarks
-  match '/reports/custom_survey/save_reports_filter' =>  'reports/custom_survey_reports#save_reports_filter', :as => :custom_survey_save_reports_filter
-  match '/reports/custom_survey/update_reports_filter' =>  'reports/custom_survey_reports#update_reports_filter', :as => :custom_survey_update_reports_filter
-  match '/reports/custom_survey/delete_reports_filter' =>  'reports/custom_survey_reports#delete_reports_filter', :as => :custom_survey_delete_reports_filter
-  match '/reports/custom_survey/export_csv' => 'reports/custom_survey_reports#export_csv'
+  match '/reports/custom_survey' => 'reports/custom_survey_reports#index', :as => :custom_survey_activity, via: :get
+  match '/analytics/custom_survey' => 'reports/custom_survey_reports#index', :as => :custom_survey_analytics_activity, via: :get
+  match '/reports/custom_survey/aggregate_report/:survey_id/:group_id/:agent_id/:date_range' => 'reports/custom_survey_reports#aggregate_report', :as => :custom_survey_aggregate_report, via: [:get, :post]
+  match '/reports/custom_survey/group_wise_report/:survey_id/:group_id/:agent_id/:survey_question_id/:date_range' => 'reports/custom_survey_reports#group_wise_report', :as => :custom_survey_group_wise_report, via: :get
+  match '/reports/custom_survey/agent_wise_report/:survey_id/:group_id/:agent_id/:survey_question_id/:date_range' => 'reports/custom_survey_reports#agent_wise_report', :as => :custom_survey_agent_wise_report, via: :get
+  match '/reports/custom_survey/responses/:survey_id/:group_id/:agent_id/:survey_question_id/:rating/:date_range' => 'reports/custom_survey_reports#remarks', :as => :custom_survey_remarks, via: :post
+  match '/reports/custom_survey/save_reports_filter' =>  'reports/custom_survey_reports#save_reports_filter', :as => :custom_survey_save_reports_filter, via: :post
+  match '/reports/custom_survey/update_reports_filter' =>  'reports/custom_survey_reports#update_reports_filter', :as => :custom_survey_update_reports_filter, via: :post
+  match '/reports/custom_survey/delete_reports_filter' =>  'reports/custom_survey_reports#delete_reports_filter', :as => :custom_survey_delete_reports_filter, via: :post
+  match '/reports/custom_survey/export_csv' => 'reports/custom_survey_reports#export_csv', via: :post
 
-  match '/analytics/custom_survey/aggregate_report/:survey_id/:group_id/:agent_id/:date_range' => 'reports/custom_survey_reports#aggregate_report', :as => :custom_survey_analytics_aggregate_report
-  match '/analytics/custom_survey/group_wise_report/:survey_id/:group_id/:agent_id/:survey_question_id/:date_range' => 'reports/custom_survey_reports#group_wise_report', :as => :custom_survey_analytics_group_wise_report
-  match '/analytics/custom_survey/agent_wise_report/:survey_id/:group_id/:agent_id/:survey_question_id/:date_range' => 'reports/custom_survey_reports#agent_wise_report', :as => :custom_survey_analytics_agent_wise_report
-  match '/analytics/custom_survey/responses/:survey_id/:group_id/:agent_id/:survey_question_id/:rating/:date_range' => 'reports/custom_survey_reports#remarks', :as => :custom_survey_analytics_remarks
-  match '/analytics/custom_survey/save_reports_filter' =>  'reports/custom_survey_reports#save_reports_filter', :as => :custom_survey_save_analytics_reports_filter
-  match '/analytics/custom_survey/update_reports_filter' =>  'reports/custom_survey_reports#update_reports_filter', :as => :custom_survey_update_analytics_reports_filter
-  match '/analytics/custom_survey/delete_reports_filter' =>  'reports/custom_survey_reports#delete_reports_filter', :as => :custom_survey_delete_analytics_reports_filter
-  match '/analytics/custom_survey/export_csv' => 'reports/custom_survey_reports#export_csv'
+  match '/analytics/custom_survey/aggregate_report/:survey_id/:group_id/:agent_id/:date_range' => 'reports/custom_survey_reports#aggregate_report', :as => :custom_survey_analytics_aggregate_report, via: [:get, :post]
+  match '/analytics/custom_survey/group_wise_report/:survey_id/:group_id/:agent_id/:survey_question_id/:date_range' => 'reports/custom_survey_reports#group_wise_report', :as => :custom_survey_analytics_group_wise_report, via: :get
+  match '/analytics/custom_survey/agent_wise_report/:survey_id/:group_id/:agent_id/:survey_question_id/:date_range' => 'reports/custom_survey_reports#agent_wise_report', :as => :custom_survey_analytics_agent_wise_report, via: :get
+  match '/analytics/custom_survey/responses/:survey_id/:group_id/:agent_id/:survey_question_id/:rating/:date_range' => 'reports/custom_survey_reports#remarks', :as => :custom_survey_analytics_remarks, via: :post
+  match '/analytics/custom_survey/save_reports_filter' =>  'reports/custom_survey_reports#save_reports_filter', :as => :custom_survey_save_analytics_reports_filter, via: :post
+  match '/analytics/custom_survey/update_reports_filter' =>  'reports/custom_survey_reports#update_reports_filter', :as => :custom_survey_update_analytics_reports_filter, via: :post
+  match '/analytics/custom_survey/delete_reports_filter' =>  'reports/custom_survey_reports#delete_reports_filter', :as => :custom_survey_delete_analytics_reports_filter, via: :post
+  match '/analytics/custom_survey/export_csv' => 'reports/custom_survey_reports#export_csv', via: :post
 
   # Keep this below search to override contact_merge_search_path
   #
@@ -1690,12 +1633,12 @@ Helpkit::Application.routes.draw do
   #to support old path for timesheet_reports
   #old path : hostname/timesheet_reports
   #new path structure : hostname/reports/timesheet
-  match "/timesheet_reports", :controller => 'reports/timesheet_reports', :action => 'index', :method => :get
+  match "/timesheet_reports", :controller => 'reports/timesheet_reports', :action => 'index', via: :get
 
   #Routes related to Reports
   namespace :reports do
 
-    match '', action: :index, method: :get
+    match '', action: :index, via: :get
 
     # 'timesheet' resource must be placed before new reports path, else it matches to v2/reports_controller
     # timesheet report uses reports/timesheet_reports_controller
@@ -1728,8 +1671,8 @@ Helpkit::Application.routes.draw do
     end
     #routes for v1 agent and group performance reports
     # match '/:id' , action: :show, method: :get, constraints: { id: /[1-2]+/ }
-    match '/classic/:report_type', action: :show, method: :get
-    match '/classic/:report_type', action: :show, method: :get
+    match '/classic/:report_type', action: :show, via: :get
+    match '/classic/:report_type', action: :show, via: :get
 
     #must be placed after 'timesheet' resource, to avoid path mismatch for timesheet report
     #both timesheet and new reports share the same path structure
@@ -1784,20 +1727,20 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    match 'schedule/download_file.json', :controller => 'freshvisuals', action: :download_schedule_file, method: :get
+    match 'schedule/download_file.json', :controller => 'freshvisuals', action: :download_schedule_file, via: :get
   end
 
-  match '/gamification/reports' => 'reports/gamification_reports#index', :as => :scoreboard_activity
-  match '/survey/reports' => 'reports/survey_reports#index', :as => :survey_activity
-  match '/survey/analytics' => 'reports/survey_reports#index', :as => :survey_analytics_activity
-  match '/survey/reports/:category/:view' => 'reports/survey_reports#index', :as => :survey_back_to_list
-  match '/survey/reports_list' => 'reports/survey_reports#list', :as => :survey_list
-  match '/survey/report_details/:entity_id/:category' => 'reports/survey_reports#report_details', :as => :survey_detail_report
-  match '/survey/overall_report/:category' => 'reports/survey_reports#report_details', :as => :survey_overall_report
-  match '/reports/survey_reports/feedbacks' => 'reports/survey_reports#feedbacks', :as => :survey_feedbacks
-  match '/reports/survey_reports/refresh_details' => 'reports/survey_reports#refresh_details', :as => :survey_refresh_details
-  match '/survey/reports/:survey_id/:group_id/:agent_id/:date_range' => 'reports/survey_reports#reports', :as => :survey_reports
-  match '/survey/reports/remarks/:survey_id/:group_id/:agent_id/:rating/:date_range' => 'reports/survey_reports#remarks', :as => :survey_remarks
+  match '/gamification/reports' => 'reports/gamification_reports#index', :as => :scoreboard_activity, via: :get # Not used
+  match '/survey/reports' => 'reports/survey_reports#index', :as => :survey_activity, via: :get
+  match '/survey/analytics' => 'reports/survey_reports#index', :as => :survey_analytics_activity, via: :get
+  match '/survey/reports/:category/:view' => 'reports/survey_reports#index', :as => :survey_back_to_list, via: :get
+  match '/survey/reports_list' => 'reports/survey_reports#list', :as => :survey_list, via: :post
+  match '/survey/report_details/:entity_id/:category' => 'reports/survey_reports#report_details', :as => :survey_detail_report, via: :get
+  match '/survey/overall_report/:category' => 'reports/survey_reports#report_details', :as => :survey_overall_report, via: :get
+  match '/reports/survey_reports/feedbacks' => 'reports/survey_reports#feedbacks', :as => :survey_feedbacks, via: :get # Not used
+  match '/reports/survey_reports/refresh_details' => 'reports/survey_reports#refresh_details', :as => :survey_refresh_details, via: :get # Not used
+  match '/survey/reports/:survey_id/:group_id/:agent_id/:date_range' => 'reports/survey_reports#reports', :as => :survey_reports, via: :get # Not used
+  match '/survey/reports/remarks/:survey_id/:group_id/:agent_id/:rating/:date_range' => 'reports/survey_reports#remarks', :as => :survey_remarks, via: :get # Not used
 
   namespace :social do
 
@@ -1876,10 +1819,10 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  match '/signup' => 'accounts#plans', :as => :plans
-  match '/signup/d/:discount' => 'accounts#plans'
-  match '/signup/thanks' => 'accounts#thanks', :as => :thanks
-  match '/signup/create/:discount' => 'accounts#create', :as => :create, :discount => nil
+  # match '/signup' => 'accounts#plans', :as => :plans # Not used
+  # match '/signup/d/:discount' => 'accounts#plans' # Not used
+  match '/signup/thanks' => 'accounts#thanks', :as => :thanks, via: :get
+  # match '/signup/create/:discount' => 'accounts#create', :as => :create, :discount => nil # Not sure - path name is different
 
   resource :account do
     collection do
@@ -1896,7 +1839,7 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  match '/admin/manage_languages' => 'accounts#manage_languages', :as => :manage_languages
+  match '/admin/manage_languages' => 'accounts#manage_languages', :as => :manage_languages, via: :get
 
   resource :accounts do
     collection do
@@ -1912,7 +1855,7 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  match '/accounts/edit_domain/:perishable_token' => 'accounts#edit_domain', :as => :edit_account_domain
+  match '/accounts/edit_domain/:perishable_token' => 'accounts#edit_domain', :as => :edit_account_domain, via: :get
 
   resource :subscription do
     collection do
@@ -1934,16 +1877,16 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  match '/signup/:plan/:discount' => 'accounts#new', :as => :new_account, :plan => nil, :discount => nil
-  match '/account/forgot' => 'user_sessions#forgot', :as => :forgot_password
-  match '/account/reset/:token' => 'user_sessions#reset', :as => :reset_password
-  match '/search_user_domain' => 'domain_search#locate_domain', :as => :search_domain
-  match '/email/validate_domain' => 'email#validate_domain', :as => :validate_domain
-  match '/email/validate_account' => 'email#validate_account', :as => :validate_account
-  match '/email/account_details' => 'email#account_details', :as => :account_details
-  match '/email_service/spam_threshold_reached' => 'email_service#spam_threshold_reached', :as => :spam_threshold_reached
-  match '/helpdesk/tickets/execute_scenario(/:id)' => 'helpdesk/tickets#execute_scenario' # For mobile apps backward compatibility
-  match '/helpdesk/dashboard/:freshfone_group_id/agents' => 'helpdesk/dashboard#load_ffone_agents_by_group'
+  match '/signup/:plan/:discount' => 'accounts#new', :plan => nil, :discount => nil, via: :get
+  match '/account/forgot' => 'user_sessions#forgot', :as => :forgot_password, via: :get
+  match '/account/reset/:token' => 'user_sessions#reset', :as => :reset_password, via: :get # Not used
+  match '/search_user_domain' => 'domain_search#locate_domain', :as => :search_domain, via: :get
+  match '/email/validate_domain' => 'email#validate_domain', :as => :validate_domain, via: :post
+  match '/email/validate_account' => 'email#validate_account', :as => :validate_account, via: :get # Not used
+  match '/email/account_details' => 'email#account_details', :as => :account_details, via: :post
+  match '/email_service/spam_threshold_reached' => 'email_service#spam_threshold_reached', :as => :spam_threshold_reached, via: :post
+  match '/helpdesk/tickets/execute_scenario(/:id)' => 'helpdesk/tickets#execute_scenario', via: :post # For mobile apps backward compatibility
+  match '/helpdesk/dashboard/:freshfone_group_id/agents' => 'helpdesk/dashboard#load_ffone_agents_by_group', via: :get
 
   namespace :helpdesk do
     match '/tickets/archived/filter/customer/:customer_id' => 'tickets#index', :as => :customer_filter, via: :get
@@ -1952,13 +1895,13 @@ Helpkit::Application.routes.draw do
     match '/tickets/archived/:id' => 'archive_tickets#show', :as => :archive_ticket, via: :get
     match '/tickets/archived/:id/print' => 'archive_tickets#print_archive',via: :get
     match '/tickets/archived' => 'archive_tickets#index', :as => :archive_tickets, via: :get
-    match '/tickets/archived/filter/tags/:tag_id' => 'archive_tickets#index', :as => :tag_filter
+    match '/tickets/archived/filter/tags/:tag_id' => 'archive_tickets#index', :as => :tag_filter, via: :get
 
-    match '/tickets/collab/:id' => 'collab_tickets#show'
+    match '/tickets/collab/:id' => 'collab_tickets#show', via: :get # Not used
     match '/tickets/collab/:id/notify' => 'collab_tickets#notify', via: :post
-    match '/tickets/collab/:id/prevnext' => 'collab_tickets#prevnext'
-    match '/tickets/collab/:id/latest_note' => 'collab_tickets#latest_note'
-    match '/tickets/collab/:id/convo_token' => 'collab_tickets#convo_token'
+    match '/tickets/collab/:id/prevnext' => 'collab_tickets#prevnext', via: :get # Not used
+    match '/tickets/collab/:id/latest_note' => 'collab_tickets#latest_note', via: :get # Not used
+    match '/tickets/collab/:id/convo_token' => 'collab_tickets#convo_token', via: :get
 
     resources :archive_tickets, :only => [:index, :show] do
       collection do
@@ -2014,7 +1957,7 @@ Helpkit::Application.routes.draw do
         post :latest_ticket_count
         post :sentiment_feedback
         post :bulk_fetch_ticket_fields
-        match :add_requester
+        get :add_requester
         get :filter_options
         get :filter_conditions
         get :full_paginate
@@ -2024,7 +1967,7 @@ Helpkit::Application.routes.draw do
         get :update_all_tickets
         get :configure_export
         get :custom_view_save
-        match :assign_to_agent#TODO-RAILS3 new route
+        get :assign_to_agent#TODO-RAILS3 new route
         put :quick_assign #TODO-RAILS3 new route
         get :bulk_scenario
         put :execute_bulk_scenario
@@ -2144,7 +2087,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    match 'leaderboard/group_agents/:id', :controller => 'leaderboard', :action => 'group_agents', :as => 'leaderboard_group_users'
+    match 'leaderboard/group_agents/:id', :controller => 'leaderboard', :action => 'group_agents', :as => 'leaderboard_group_users', via: :get
 
     resources :leaderboard, :only => [:mini_list, :agents, :groups] do
       collection do
@@ -2215,9 +2158,9 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    match 'canned_responses/show/:id'  => 'canned_responses#show'
-    match 'canned_responses/index/:id' => 'canned_responses#index', :as => :canned_responses_index
-    match 'canned_responses/show'      => 'canned_responses#show'
+    match 'canned_responses/show/:id'  => 'canned_responses#show', via: :post
+    match 'canned_responses/index/:id' => 'canned_responses#index', :as => :canned_responses_index, via: :get
+    match 'canned_responses/show'      => 'canned_responses#show', via: :post
 
     resources :reminders do
       member do
@@ -2232,56 +2175,56 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    match '/tags/:id/*filters' => 'tags#show', :as => :filter_tag_tickets
-    match '/tickets/filter/tags' => 'tags#index', :as => :filter_tickets
-    match '/tickets/filter/:filter_name' => 'tickets#index', :as => :filter_view_default
-    match '/tickets/view/:filter_key' => 'tickets#index', :as => :filter_view_custom
-    match '/tickets/filter/requester/:requester_id' => 'tickets#index', :as => :requester_filter
-    match '/tickets/filter/customer/:customer_id' => 'tickets#index', :as => :customer_filter
-    match '/tickets/filter/company/:company_id' => 'tickets#index', :as => :company_filter
-    match '/tickets/get_solution_detail/:id' => 'tickets#get_solution_detail'
-    match '/tickets/get_solution_detail/:id/:language' => 'tickets#get_solution_detail'
-    match '/tickets/filter/tags/:tag_id' => 'tickets#index', :as => :tag_filter
-    match '/tickets/filter/reports/:report_type' => 'tickets#index', :as => :reports_filter
-    match '/tickets/dashboard/:filter_type/:filter_key' => 'tickets#index', :as => :dashboard_filter
+    match '/tags/:id/*filters' => 'tags#show', :as => :filter_tag_tickets, via: :get
+    match '/tickets/filter/tags' => 'tags#index', :as => :filter_tickets, via: :get # Not sure - path is different
+    match '/tickets/filter/:filter_name' => 'tickets#index', :as => :filter_view_default, via: :get
+    match '/tickets/view/:filter_key' => 'tickets#index', :as => :filter_view_custom, via: :get
+    match '/tickets/filter/requester/:requester_id' => 'tickets#index', :as => :requester_filter, via: :get
+    match '/tickets/filter/customer/:customer_id' => 'tickets#index', via: :get # Not used
+    match '/tickets/filter/company/:company_id' => 'tickets#index', :as => :company_filter, via: :get
+    match '/tickets/get_solution_detail/:id' => 'tickets#get_solution_detail', via: :post
+    match '/tickets/get_solution_detail/:id/:language' => 'tickets#get_solution_detail', via: :post
+    match '/tickets/filter/tags/:tag_id' => 'tickets#index', via: :get
+    match '/tickets/filter/reports/:report_type' => 'tickets#index', :as => :reports_filter, via: :get # Not used
+    match '/tickets/dashboard/:filter_type/:filter_key' => 'tickets#index', :as => :dashboard_filter, via: :get # Not used
 
-    match '/dashboard' => 'dashboard#index', :as => :formatted_dashboard
-    match '/dashboard/show/:resource_id' => 'dashboard#show'
-    match '/dashboard/activity_list' => 'dashboard#activity_list'
-    match '/dashboard/latest_activities' => 'dashboard#latest_activities'
-    match '/dashboard/latest_summary' => 'dashboard#latest_summary'
-    match '' => 'dashboard#index', :as => :dashboard
-    match '/sales_manager' => 'dashboard#sales_manager'
-    match '/dashboard/unresolved_tickets' => 'dashboard#unresolved_tickets'
-    match '/dashboard/unresolved_tickets_data' => 'dashboard#unresolved_tickets_data'
-    match '/tickets_summary' => 'dashboard#tickets_summary'
-    match '/dashboard/due_today' => 'dashboard#due_today'
-    match '/dashboard/overdue' => 'dashboard#overdue'
-    match '/dashboard/trend_count' => 'dashboard#trend_count'
-    match '/dashboard/unresolved_tickets_dashboard' => 'dashboard#unresolved_tickets_dashboard'
-    match '/dashboard/unresolved_tickets_workload' => 'dashboard#unresolved_tickets_workload'
-    match '/dashboard/my_performance'   => 'dashboard#my_performance'
-    match '/dashboard/my_performance_summary'   => 'dashboard#my_performance_summary'
-    match '/dashboard/agent_performance'  => 'dashboard#agent_performance'
-    match '/dashboard/agent_performance_summary'  => 'dashboard#agent_performance_summary'
-    match '/dashboard/group_performance'  => 'dashboard#group_performance'
-    match '/dashboard/group_performance_summary'  => 'dashboard#group_performance_summary'
-    match '/dashboard/channels_workload'  => 'dashboard#channels_workload'
-    match '/dashboard/admin_glance'  => 'dashboard#admin_glance'
-    match '/dashboard/top_customers_open_tickets'  => 'dashboard#top_customers_open_tickets'
-    match '/dashboard/top_agents_old_tickets'  => 'dashboard#top_agents_old_tickets'
-    match '/dashboard/available_agents' => 'dashboard#available_agents'
-    match '/dashboard/survey_info' => 'dashboard#survey_info'
-    match '/dashboard/achievements' => 'dashboard#achievements'
-    match '/dashboard/agent_status' => 'dashboard#agent_status'
+    match '/dashboard' => 'dashboard#index', :as => :formatted_dashboard, via: :get
+    match '/dashboard/show/:resource_id' => 'dashboard#show', via: :get # Not used
+    match '/dashboard/activity_list' => 'dashboard#activity_list', via: :get
+    match '/dashboard/latest_activities' => 'dashboard#latest_activities', via: :get
+    match '/dashboard/latest_summary' => 'dashboard#latest_summary', via: :get # Not used
+    match '' => 'dashboard#index', :as => :dashboard, via: :get
+    match '/sales_manager' => 'dashboard#sales_manager', via: :get
+    match '/dashboard/unresolved_tickets' => 'dashboard#unresolved_tickets', via: :get
+    match '/dashboard/unresolved_tickets_data' => 'dashboard#unresolved_tickets_data', via: :get
+    match '/tickets_summary' => 'dashboard#tickets_summary', via: :get
+    match '/dashboard/due_today' => 'dashboard#due_today', via: :post
+    match '/dashboard/overdue' => 'dashboard#overdue', via: :post
+    match '/dashboard/trend_count' => 'dashboard#trend_count', via: :get # Not used
+    match '/dashboard/unresolved_tickets_dashboard' => 'dashboard#unresolved_tickets_dashboard', via: :post
+    match '/dashboard/unresolved_tickets_workload' => 'dashboard#unresolved_tickets_workload', via: :post
+    match '/dashboard/my_performance'   => 'dashboard#my_performance', via: :post
+    match '/dashboard/my_performance_summary'   => 'dashboard#my_performance_summary', via: :post
+    match '/dashboard/agent_performance'  => 'dashboard#agent_performance', via: :post
+    match '/dashboard/agent_performance_summary'  => 'dashboard#agent_performance_summary', via: :post
+    match '/dashboard/group_performance'  => 'dashboard#group_performance', via: :post
+    match '/dashboard/group_performance_summary'  => 'dashboard#group_performance_summary', via: :get # Not used
+    match '/dashboard/channels_workload'  => 'dashboard#channels_workload', via: :get # Not used
+    match '/dashboard/admin_glance'  => 'dashboard#admin_glance', via: :post
+    match '/dashboard/top_customers_open_tickets'  => 'dashboard#top_customers_open_tickets', via: :post
+    match '/dashboard/top_agents_old_tickets'  => 'dashboard#top_agents_old_tickets', via: :post
+    match '/dashboard/available_agents' => 'dashboard#available_agents', via: :get # Not used
+    match '/dashboard/survey_info' => 'dashboard#survey_info', via: :post
+    match '/dashboard/achievements' => 'dashboard#achievements', via: :get
+    match '/dashboard/agent_status' => 'dashboard#agent_status', via: :get
 
     # For mobile apps backward compatibility.
-    match '/subscriptions' => 'subscriptions#index'
-    match '/tickets/delete_forever/:id' => 'tickets#delete_forever'
+    match '/subscriptions' => 'subscriptions#index', via: :get # Not sure - path is different
+    match '/tickets/delete_forever/:id' => 'tickets#delete_forever', via: :delete
     # Mobile apps routes end.
 
-    match '/sales_manager' => 'dashboard#sales_manager'
-    match '/agent-status' => 'dashboard#agent_status'
+    match '/sales_manager' => 'dashboard#sales_manager', via: :get
+    match '/agent-status' => 'dashboard#agent_status', via: :get
 
     resources :attachments do
       member do
@@ -2317,11 +2260,11 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    match 'commons/group_agents/(:id)'    => "commons#group_agents"
-    match 'commons/agents_for_groups/(:id)'    => "commons#agents_for_groups"
+    match 'commons/group_agents/(:id)'    => "commons#group_agents", via: :get
+    match 'commons/agents_for_groups/(:id)'    => "commons#agents_for_groups", via: :get # Not used
     match 'commons/user_companies'        => "commons#user_companies", via: :post
-    match "commons/fetch_company_by_name" => "commons#fetch_company_by_name"
-    match 'commons/status_groups'         => "commons#status_groups"
+    match "commons/fetch_company_by_name" => "commons#fetch_company_by_name", via: :get
+    match 'commons/status_groups'         => "commons#status_groups", via: :get
 
     resources :ticket_templates do
       member do
@@ -2337,9 +2280,9 @@ Helpkit::Application.routes.draw do
         delete :delete_multiple
       end
     end
-    match '/ticket_templates/tab/:current_tab'    => 'ticket_templates#index',     :as => :my_ticket_templates
-    match '/parent_template/:p_id/child/new'      => 'ticket_templates#new_child', :as => :new_child_template
-    match '/parent_template/:p_id/child/:id/edit' => 'ticket_templates#edit_child',:as => :edit_child_template
+    match '/ticket_templates/tab/:current_tab'    => 'ticket_templates#index',     :as => :my_ticket_templates, via: :get
+    match '/parent_template/:p_id/child/new'      => 'ticket_templates#new_child', :as => :new_child_template, via: :get
+    match '/parent_template/:p_id/child/:id/edit' => 'ticket_templates#edit_child',:as => :edit_child_template, via: :get
 
     resources :scenario_automations do
       member do
@@ -2351,10 +2294,9 @@ Helpkit::Application.routes.draw do
       end
     end
   end
-  match '/helpdesk/scenario_automations/tab/:current_tab', :controller => 'helpdesk/scenario_automations', :action => 'index'
+  match '/helpdesk/scenario_automations/tab/:current_tab', :controller => 'helpdesk/scenario_automations', :action => 'index', via: :get
 
-  match '/helpdesk/tickets/quick_assign/:id' => "Helpdesk::tickets#quick_assign", :as => :quick_assign_helpdesk_tickets,
-    :method => :put
+  match '/helpdesk/tickets/quick_assign/:id' => "helpdesk/tickets#quick_assign", via: :put
 
   resources :api_webhooks, :path => 'webhooks/subscription'
 
@@ -2469,8 +2411,8 @@ Helpkit::Application.routes.draw do
 
     end
 
-    match '/topics/:id/page/:page' => 'topics#show'
-    match '/topics/:id/component/:name' => 'topics#component', :as => :topic_component
+    match '/topics/:id/page/:page' => 'topics#show', via: :get
+    match '/topics/:id/component/:name' => 'topics#component', :as => :topic_component, via: :get
 
     resources :topics, :except => :index do
       collection do
@@ -2494,7 +2436,7 @@ Helpkit::Application.routes.draw do
         end
       end
 
-      match '/answer/:id' => 'posts#best_answer', :as => :best_answer
+      match '/answer/:id' => 'posts#best_answer', :as => :best_answer, via: :get
     end
 
     resources :moderation do
@@ -2528,8 +2470,8 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    match '/moderation/filter/:filter' => 'moderation#index', :as => :moderation_filter
-    match '/unpublished/filter/:filter' => 'unpublished#index', :as => :unpublished_filter
+    match '/moderation/filter/:filter' => 'moderation#index', :as => :moderation_filter, via: :get # Not used
+    match '/unpublished/filter/:filter' => 'unpublished#index', :as => :unpublished_filter, via: :get
     resources :merge_topic do
       collection do
         post :select
@@ -2601,17 +2543,17 @@ Helpkit::Application.routes.draw do
             put :toggle_answer
           end
         end
-        match '/answer/:id' => 'posts#best_answer', :as => :best_answer
+        match '/answer/:id' => 'posts#best_answer', :as => :best_answer, via: :get
       end
     end
   end
 
-  match '/helpdesk/tickets/:id/suggest/tickets' => 'helpdesk/tickets#suggest_tickets'
-  match '/helpdesk/tickets/:id/ticket_properties' => 'helpdesk/tickets#bulk_fetch_ticket_fields'
-  match '/support/theme.:format' => 'theme/support#index'
-  match '/support/theme_rtl.:format' => 'theme/support_rtl#index'
-  match '/helpdesk/theme.:format' => 'theme/helpdesk#index'
-  match "/facebook/theme.:format", :controller => 'theme/facebook', :action => :index
+  # match '/helpdesk/tickets/:id/suggest/tickets' => 'helpdesk/tickets#suggest_tickets' # Not used
+  # match '/helpdesk/tickets/:id/ticket_properties' => 'helpdesk/tickets#bulk_fetch_ticket_fields' # Not used
+  match '/support/theme.:format' => 'theme/support#index', via: :get
+  match '/support/theme_rtl.:format' => 'theme/support_rtl#index', via: :get
+  match '/helpdesk/theme.:format' => 'theme/helpdesk#index', via: :get
+  match "/facebook/theme.:format", :controller => 'theme/facebook', :action => :index, via: :get
 
   get 'discussions/:object/:id/subscriptions/is_following(.:format)',
     :controller => 'monitorships', :action => 'is_following',
@@ -2623,7 +2565,7 @@ Helpkit::Application.routes.draw do
 
   match 'discussions/:object/:id/subscriptions/:type(.:format)',
     :controller => 'monitorships', :action => 'toggle',
-    :as => :toggle_monitorship
+    :as => :toggle_monitorship, via: [:get, :post]
 
   filter :locale
 
@@ -2631,12 +2573,12 @@ Helpkit::Application.routes.draw do
   match '/announcements/account_login_url' => 'announcements#account_login_url',via: :get
 
   namespace :support do
-    match 'home' => 'home#index', :as => :home
-    match 'preview' => 'preview#index', :as => :preview
+    match 'home' => 'home#index', :as => :home, via: :get
+    match 'preview' => 'preview#index', :as => :preview, via: :get
     resource :login, :controller => "login", :only => [:new, :create]
-    match '/login' => 'login#new'
+    match '/login' => 'login#new', via: :get
     resource :signup, :only => [:new, :create]
-    match '/signup' => 'signups#new'
+    match '/signup' => 'signups#new', via: :get
 
     resource :profile, :only => [:edit, :update]
 
@@ -2666,7 +2608,7 @@ Helpkit::Application.routes.draw do
         get :tickets
         get :suggest_topic
       end
-      match '/topics/suggest', :action => 'suggest_topic'
+      match '/topics/suggest', :action => 'suggest_topic', via: :get # Not used
       match '/articles/:article_id/related_articles', :action => 'related_articles', via: :get
     end
 
@@ -2683,11 +2625,11 @@ Helpkit::Application.routes.draw do
         end
       end
 
-      match '/forums/:id/:filter_topics_by' => 'forums#show', :as => :filter_topics
-      match '/forums/:id/page/:page' => 'forums#show'
+      match '/forums/:id/:filter_topics_by' => 'forums#show', :as => :filter_topics, via: :get
+      match '/forums/:id/page/:page' => 'forums#show', via: :get
 
-      match '/topics/my_topics/page/:page' => 'topics#my_topics'
-      match '/topics/:id/page/:page' => 'topics#show'
+      match '/topics/my_topics/page/:page' => 'topics#my_topics', via: :get
+      match '/topics/:id/page/:page' => 'topics#show', via: :get
 
       resources :topics, :except => :index do
         collection do
@@ -2720,7 +2662,7 @@ Helpkit::Application.routes.draw do
           end
         end
 
-        match '/answer/:id' => 'posts#best_answer', :as => :best_answer
+        match '/answer/:id' => 'posts#best_answer', :as => :best_answer, via: :get
       end
     end
 
@@ -2728,9 +2670,9 @@ Helpkit::Application.routes.draw do
     resources :solutions, :only => [:index, :show]
 
     namespace :solutions do
-      match '/categories/:id', :action => 'show'
-      match '/folders/:id/page/:page' => 'folders#show'
-      match '/categories/:category_id/folders/:id' => 'folders#show'
+      match '/categories/:id', :action => 'show', via: :get
+      match '/folders/:id/page/:page' => 'folders#show', via: :get
+      match '/categories/:category_id/folders/:id' => 'folders#show', via: :get
       resources :folders, :only => :show
 
       resources :articles, :only => [:show, :destroy, :index] do
@@ -2743,17 +2685,17 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    match '/solutions/articles/:id/:status' => 'solutions/articles#show', :as => :draft_preview
+    match '/solutions/articles/:id/:status' => 'solutions/articles#show', :as => :draft_preview, via: :get # Not sure - path is different
 
-    match '/articles/:id/' => 'solutions/articles#show'
+    match '/articles/:id/' => 'solutions/articles#show', via: :get
 
     namespace :multilingual do
       resources :solutions, :only => [:index, :show]
 
       namespace :solutions do
-        match '/categories/:id', :action => 'show'
-        match '/folders/:id/page/:page' => 'folders#show'
-        match '/categories/:category_id/folders/:id' => 'folders#show'
+        match '/categories/:id', :action => 'show', via: :get
+        match '/folders/:id/page/:page' => 'folders#show', via: :get
+        match '/categories/:category_id/folders/:id' => 'folders#show', via: :get
         resources :folders, :only => :show
 
         resources :articles, :only => [:show, :destroy, :index] do
@@ -2766,9 +2708,9 @@ Helpkit::Application.routes.draw do
         end
       end
 
-      match '/solutions/articles/:id/:status' => 'solutions/articles#show', :as => :draft_preview
+      match '/solutions/articles/:id/:status' => 'solutions/articles#show', :as => :draft_preview, via: :get # Not sure - path is different
 
-      match '/articles/:id/' => 'solutions/articles#show'
+      match '/articles/:id/' => 'solutions/articles#show', via: :get
     end
 
     match '/tickets/archived/:id' => 'archive_tickets#show', :as => :archive_ticket, via: :get
@@ -2804,24 +2746,24 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    match '/surveys/:ticket_id' => 'surveys#create_for_portal', :as => :portal_survey
-    match '/surveys/:survey_code/:rating/new' => 'surveys#new', :as => :customer_survey
+    match '/surveys/:ticket_id' => 'surveys#create_for_portal', :as => :portal_survey, via: :get
+    match '/surveys/:survey_code/:rating/new' => 'surveys#new', :as => :customer_survey, via: :get
     match '/surveys/:survey_code/:rating' => 'surveys#create', :as => :survey_feedback, :via => :post
 
-    match '/custom_surveys/:id/preview' => 'custom_surveys#preview', :as => :custom_survey_preview
-    match '/custom_surveys/:id/preview/questions' => 'custom_surveys#preview_questions', :as => :custom_survey_preview_questions
+    match '/custom_surveys/:id/preview' => 'custom_surveys#preview', :as => :custom_survey_preview, :via => :get
+    match '/custom_surveys/:id/preview/questions' => 'custom_surveys#preview_questions', :as => :custom_survey_preview_questions, :via => :get
 
     match '/custom_surveys/:survey_result/:rating' => 'custom_surveys#create', :as => :custom_survey_feedback, :via => :post
-    match '/custom_surveys/:survey_code/:rating/new' => 'custom_surveys#new_via_handle' ,:as => :customer_custom_survey
-    match '/custom_surveys/:survey_code/:rating/hit' => 'custom_surveys#hit' ,:as => :customer_custom_survey_hit
-    match '/custom_surveys/:ticket_id/:rating'  => 'custom_surveys#new_via_portal', :as => :portal_custom_survey
+    match '/custom_surveys/:survey_code/:rating/new' => 'custom_surveys#new_via_handle' ,:as => :customer_custom_survey, via: :get
+    match '/custom_surveys/:survey_code/:rating/hit' => 'custom_surveys#hit' ,:as => :customer_custom_survey_hit, via: :get
+    match '/custom_surveys/:ticket_id/:rating'  => 'custom_surveys#new_via_portal', :as => :portal_custom_survey, via: :get
 
     match '/user_credentials/refresh_access_token/:app_name',
-      :controller => 'integrations/user_credentials', :action => 'refresh_access_token', :as => :refresh_token
+      :controller => 'integrations/user_credentials', :action => 'refresh_access_token', :as => :refresh_token, via: :get # Not used
     match '/integrations/user_credentials/oauth_install/:app_name',
-      :controller => 'integrations/user_credentials', :action => 'oauth_install', :as => :user_oauth_install
+      :controller => 'integrations/user_credentials', :action => 'oauth_install', :as => :user_oauth_install, via: :get
     match '/http_request_proxy/fetch',
-      :controller => 'integrations/http_request_proxy', :action => 'fetch', :as => :http_proxy
+      :controller => 'integrations/http_request_proxy', :action => 'fetch', :as => :http_proxy, via: :post
 
     namespace :canned_forms do
       get :agent_preview, action: 'preview'
@@ -2893,13 +2835,13 @@ Helpkit::Application.routes.draw do
   end
 
   resources :rabbit_mq, :only => [:index]
-  match '/openid/google', :controller => "integrations/marketplace/google", :action => "old_app_redirect"
-  match '/google/login', :controller => "sso", :action => "mobile_app_google_login"
-  match '/' => 'home#index'
+  match '/openid/google', :controller => "integrations/marketplace/google", :action => "old_app_redirect", via: :get
+  match '/google/login', :controller => "sso", :action => "mobile_app_google_login", via: :get
+  match '/' => 'home#index', via: :get
   # match '/:controller(/:action(/:id))'
-  match '/all_agents' => 'agents#list'
-  match '/download_file/:source/:token', :controller => 'admin/data_export', :action => 'download', :method => :get
-  match '/chat/agents', :controller => 'chats', :action => 'agents', :method => :get
+  match '/all_agents' => 'agents#list', via: :get # Not used
+  match '/download_file/:source/:token', :controller => 'admin/data_export', :action => 'download', via: :get
+  match '/chat/agents', :controller => 'chats', :action => 'agents', via: :get
 
 
   constraints(lambda {|req| PartnerSubdomains.include?(req.subdomain) })  do
@@ -3273,15 +3215,15 @@ Helpkit::Application.routes.draw do
       get  :export
     end
   end
-  match '/livechat/visitor/:type', :controller => 'chats', :action => 'visitor', :method => :get
-  match '/livechat/downloadexport/:token', :controller => 'chats', :action => 'download_export', :method => :get
+  match '/livechat/visitor/:type', :controller => 'chats', :action => 'visitor', via: :get
+  match '/livechat/downloadexport/:token', :controller => 'chats', :action => 'download_export', via: :get
 
 
-  post '/livechat/shortcodes', :controller => 'chats', :action => 'create_shortcode', :method => :post
-  delete '/livechat/shortcodes/:id', :controller => 'chats', :action => 'delete_shortcode', :method => :delete
-  put '/livechat/shortcodes/:id', :controller => 'chats', :action => 'update_shortcode', :method => :put
-  put '/livechat/agent/:id/update_availability', :controller => 'chats', :action => 'update_availability', :method => :put
-  match '/livechat/*letter', :controller => 'chats', :action => 'index', :method => :get
+  post '/livechat/shortcodes', :controller => 'chats', :action => 'create_shortcode', via: :post
+  delete '/livechat/shortcodes/:id', :controller => 'chats', :action => 'delete_shortcode', via: :delete
+  put '/livechat/shortcodes/:id', :controller => 'chats', :action => 'update_shortcode', via: :put
+  put '/livechat/agent/:id/update_availability', :controller => 'chats', :action => 'update_availability', via: :put
+  match '/livechat/*letter', :controller => 'chats', :action => 'index', via: :get
 
   use_doorkeeper do
     skip_controllers :oauth_applications, :authorized_applications
@@ -3296,21 +3238,20 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  match "/admin/bot", to: redirect('/helpdesk')
-  match "/admin/bot/*letter", to: redirect('/helpdesk')
-  match "/bot/*letter", to: redirect('/helpdesk')
+  match "/admin/bot", to: redirect('/helpdesk'), via: :get
+  match "/admin/bot/*letter", to: redirect('/helpdesk'), via: :get # Not used
+  match "/bot/*letter", to: redirect('/helpdesk'), via: :get # Not used
 
-  match "/admin/advanced-ticketing", to: redirect('/helpdesk')
+  match "/admin/advanced-ticketing", to: redirect('/helpdesk'), via: :get
 
-  match '/freshid/authorize_callback', :controller => 'freshid', :action => 'authorize_callback', :method => :get
-  match '/freshid/customer_authorize_callback', :controller => 'freshid', :action => 'customer_authorize_callback', :method => :get
-  match '/freshid/event_callback', :controller => 'freshid', :action => 'event_callback', :method => :post
-  match '/freshid/logout', :controller => 'user_sessions', :action => 'freshid_destroy', :method => :get
+  match '/freshid/authorize_callback', :controller => 'freshid', :action => 'authorize_callback', via: :get
+  match '/freshid/customer_authorize_callback', :controller => 'freshid', :action => 'customer_authorize_callback', via: :get
+  match '/freshid/event_callback', :controller => 'freshid', :action => 'event_callback', via: :post
+  match '/freshid/logout', :controller => 'user_sessions', :action => 'freshid_destroy', via: :get
 
   post '/yearin_review/share', to: 'year_in_review#share'
   post '/yearin_review/clear', to: 'year_in_review#clear'
   
-  match '/mobile/welcome'  => 'mobile_app_download#index'
+  match '/mobile/welcome'  => 'mobile_app_download#index', :via => :get
   match '/email_service_spam' => 'email_service#create', via: :post
-
 end

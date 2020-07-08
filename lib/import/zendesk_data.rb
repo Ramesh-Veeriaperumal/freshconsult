@@ -416,7 +416,7 @@ def handle_ticket_import base_dir
         @note = @request.notes.build({
         :incoming => incoming,
         :private => is_public,
-        :source => Account.current.helpdesk_sources.note_source_keys_by_token['note'],
+        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
         :user_id => note_created_by,
         :account_id =>@current_account && @current_account.id,
         :note_body_attributes => {:body =>note_body}        

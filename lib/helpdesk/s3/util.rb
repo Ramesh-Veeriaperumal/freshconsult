@@ -17,24 +17,24 @@ module Helpdesk::S3
     # here key is the full path after bucket_name
     # value is json string
     def create(key, value, bucket_name)
-      AWS::S3::Bucket.new(bucket_name).objects[key].write(value,:content_type => 'application/json',:server_side_encryption => :aes256)
+      AwsWrapper::S3.put(bucket_name, key, value, content_type: 'application/json', server_side_encryption: 'AES256')
     end
 
     # gets key and bucket_name as params
     # returns a json hash
     def read(key, bucket_name)
-      json_data = AWS::S3::Bucket.new(bucket_name).objects[key].read(:content_type => 'application/json')
+      json_data = AwsWrapper::S3.read(bucket_name, key, response_content_type: 'application/json') # PRE-RAILS: content_type option not provided in V2 presigned_url
       JSON.parse(json_data)
     end
 
     # gets key and bucket_name as input
     # deletes the file from s3
     def delete(key, bucket_name)
-      AWS::S3::Bucket.new(bucket_name).objects[key].delete
+      AwsWrapper::S3.delete(bucket_name, key)
     end
 
     def exists?(key, bucket_name)
-      AWS::S3::Bucket.new(bucket_name).objects[key].exists?
+      AwsWrapper::S3.exists?(bucket_name, key)
     end
 
     # genereates the key based on the partition

@@ -65,7 +65,7 @@ class Search::V2::Mobile::SuggestController < Search::V2::SpotlightController
       @@esv2_mobile_suggest ||= {
         'company'       => { model: 'Company',                  associations: [] }, 
         'topic'         => { model: 'Topic',                    associations: [ :forum ] }, 
-        'ticket'        => { model: 'Helpdesk::Ticket',         associations: [{ flexifield: :flexifield_def }, :ticket_states, :requester, :ticket_old_body, :ticket_status ] }, 
+        'ticket'        => { model: 'Helpdesk::Ticket',         associations: [{ flexifield: :flexifield_def }, :ticket_states, :requester, :ticket_body, :ticket_status ] }, 
         'article'       => { model: 'Solution::Article',        associations: [] }, 
         'user'          => { model: 'User',                     associations: [ :avatar, :default_user_company, :companies ] }
       }

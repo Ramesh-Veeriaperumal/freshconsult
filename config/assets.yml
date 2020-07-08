@@ -1,3 +1,4 @@
+# PRE-RAILS4: Need to clean up
 package_assets:         off          # (on, off, always)
 embed_assets:           off         # (on, off, datauri)
 compress_assets:        on          # (on, off)

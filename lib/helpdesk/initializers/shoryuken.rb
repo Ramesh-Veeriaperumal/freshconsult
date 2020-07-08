@@ -2,14 +2,18 @@ SH_ENABLED = !(Rails.env.development? or Rails.env.test?) #=> To prevent error w
 puts "Shoryuken is #{SH_ENABLED ? 'enabled' : 'not enabled'}" 
 
 if SH_ENABLED
-  config_options = YAML.load(ERB.new(IO.read(File.join(Rails.root, 'config/shoryuken.yml'))).result).deep_symbolize_keys
-  Shoryuken::EnvironmentLoader.load(config_options)
+  Shoryuken::EnvironmentLoader.setup_options(config_file: File.join(Rails.root, 'config/shoryuken.yml')) #PRE-RAILS: Shoryuken 4.x init config load is changed
 
   # Shoryuken.configure_client do |config|
   #   config.client_middleware do |chain|
   #     chain.add MyMiddleware
   #   end
   # end
+
+  # https://github.com/phstc/shoryuken/wiki/Configure-the-AWS-Client
+  sqs_config = SQS_SDK2_CREDS.slice(:access_key_id, :secret_access_key).merge(region: PodConfig['region'])
+  Shoryuken.sqs_client =  Aws::SQS::Client.new(SQS_SDK2_CREDS)
+
   require 'prometheus_exporter/instrumentation' if ENV['ENABLE_PROMETHEUS'] == '1'
   Shoryuken.configure_server do |config|
     config.server_middleware do |chain|

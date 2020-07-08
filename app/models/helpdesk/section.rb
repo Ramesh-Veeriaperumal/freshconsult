@@ -7,7 +7,7 @@ class Helpdesk::Section < ActiveRecord::Base
   self.primary_key = :id
   self.table_name = "helpdesk_sections"
 
-  serialize :options
+  serialize :options, Hash
 
   attr_protected :account_id
 

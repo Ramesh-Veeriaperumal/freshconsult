@@ -16,14 +16,14 @@ module RabbitMq::Subscribers::Tickets::Search
     RabbitMq::Subscribers::Search::SqsUtils.model_properties(self.ticket, 'update')
   end
 
-  def mq_search_ticket_old_body_properties(action)
+  def mq_search_ticket_body_properties(action)
     RabbitMq::Subscribers::Search::SqsUtils.model_properties(self.ticket, 'update')
   end
 
   private
 
     def valid_esv2_model?(model)
-      ['ticket', 'ticket_state', 'subscription', 'ticket_old_body'].include?(model)
+      ['ticket', 'ticket_state', 'subscription', 'ticket_body'].include?(model)
     end
 
 end

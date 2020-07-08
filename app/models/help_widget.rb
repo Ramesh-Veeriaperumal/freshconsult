@@ -17,9 +17,9 @@ class HelpWidget < ActiveRecord::Base
 
   before_destroy :save_deleted_help_widget_info
 
-  default_scope order: 'created_at DESC'
+  default_scope -> { order('created_at DESC') }
 
-  scope :active, conditions: { active: true }
+  scope :active, ->{ where(active: true) }
 
   publishable on: [:create, :destroy]
   publishable on: :update, if: -> { model_changes.present? }

@@ -1262,26 +1262,6 @@
       "note": ""
     },
     {
-      "warning_type": "Mass Assignment",
-      "warning_code": 17,
-      "fingerprint": "44ffb852a9711f455f246976823055b711bbd5d6e2cfeb0f20472baec8e19a2b",
-      "check_name": "MassAssignment",
-      "message": "Unprotected mass assignment",
-      "file": "app/models/helpdesk/note/riak.rb",
-      "line": 24,
-      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
-      "code": "Helpdesk::NoteBody.new(Helpdesk::Riak::Note::Body.get_from_riak(\"#{self.account_id}/#{self.id}\")[\"note_body\"])",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "Helpdesk::Note",
-        "method": "read_from_riak"
-      },
-      "user_input": null,
-      "confidence": "Weak",
-      "note": "Riak is no longer in use. Need not fix this."
-    },
-    {
       "warning_type": "Cross Site Scripting",
       "warning_code": 2,
       "fingerprint": "45a4253d99c7ff59f398edc154e9955ec6aaa0d3a05098493e4b731c6906a30f",
@@ -2161,26 +2141,6 @@
       "user_input": null,
       "confidence": "Weak",
       "note": ""
-    },
-    {
-      "warning_type": "Mass Assignment",
-      "warning_code": 17,
-      "fingerprint": "7409a53a16788299f5ee86d2fd52fec27144e34f69908b5ffa466ae5003a9acf",
-      "check_name": "MassAssignment",
-      "message": "Unprotected mass assignment",
-      "file": "app/models/helpdesk/ticket/riak.rb",
-      "line": 24,
-      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
-      "code": "Helpdesk::TicketBody.new(Helpdesk::Riak::Ticket::Body.get_from_riak(\"#{self.account_id}/#{self.id}\")[\"ticket_body\"])",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "Helpdesk::Ticket",
-        "method": "read_from_riak"
-      },
-      "user_input": null,
-      "confidence": "Weak",
-      "note": "Riak functionality is no longer in use. This need not be fixed."
     },
     {
       "warning_type": "SQL Injection",
@@ -3872,7 +3832,7 @@
       "file": "app/controllers/helpdesk/tickets_controller.rb",
       "line": 144,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "current_account.tickets.visible.preload(:requester, :ticket_status, :ticket_old_body).permissible(current_user).reorder(\"field(helpdesk_tickets.id,#{get_similar_tickets.join(\",\")})\")",
+      "code": "current_account.tickets.visible.preload(:requester, :ticket_status, :ticket_body).permissible(current_user).reorder(\"field(helpdesk_tickets.id,#{get_similar_tickets.join(\",\")})\")",
       "render_path": null,
       "location": {
         "type": "method",

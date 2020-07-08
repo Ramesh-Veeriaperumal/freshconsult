@@ -3,46 +3,46 @@ module Import::Zen::Forum
  URL_REGEX = /^http(?:s)?\:\/\//
 
  class CategoryProp < Import::FdSax 
-   element :name 
-   element :description
-   element :id , :as => :import_id
+   # element :name 
+   # element :description
+   # element :id , :as => :import_id
  end
  
  class ForumProp < Import::FdSax
-   element :name 
-   element :description
-   element "display-type-id" , :as => :forum_type
-   element "visibility-restriction-id" , :as => :forum_visibility
-   element "category-id" , :as => :category_id
-   element :id , :as => :import_id  
+   # element :name 
+   # element :description
+   # element "display-type-id" , :as => :forum_type
+   # element "visibility-restriction-id" , :as => :forum_visibility
+   # element "category-id" , :as => :category_id
+   # element :id , :as => :import_id  
  end
 
   class Attachment < Import::FdSax
-    element :url
+    # element :url
   end
   
  class Post < Import::FdSax 
-   element :body
-   element :id , :as => :import_id
-   element "user-id" , :as => :user_id
-   element "created-at" , :as => :created_at
-   element "updated-at" , :as => :updated_at
-   element "forum-id", :as => :forum_id
-   element "entry-id", :as => :entry_id
-   elements :attachment , :as => :attachments , :class => Attachment
+   # element :body
+   # element :id , :as => :import_id
+   # element "user-id" , :as => :user_id
+   # element "created-at" , :as => :created_at
+   # element "updated-at" , :as => :updated_at
+   # element "forum-id", :as => :forum_id
+   # element "entry-id", :as => :entry_id
+   # elements :attachment , :as => :attachments , :class => Attachment
  end
 
  class TopicProp < Import::FdSax 
-   element :title 
-   element :body
-   element :id , :as => :import_id
-   element "forum-id" , :as => :forum_id
-   element "submitter-id" , :as => :user_id
-   element "created-at" , :as => :created_at
-   element "updated-at" , :as => :updated_at
-   element "flag-type-id", :as => :stamp_type
-   elements :post , :as =>:posts , :class => Post
-   elements :attachment , :as => :attachments , :class => Attachment
+   # element :title 
+   # element :body
+   # element :id , :as => :import_id
+   # element "forum-id" , :as => :forum_id
+   # element "submitter-id" , :as => :user_id
+   # element "created-at" , :as => :created_at
+   # element "updated-at" , :as => :updated_at
+   # element "flag-type-id", :as => :stamp_type
+   # elements :post , :as =>:posts , :class => Post
+   # elements :attachment , :as => :attachments , :class => Attachment
  end
  
 

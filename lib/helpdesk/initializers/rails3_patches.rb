@@ -183,9 +183,9 @@ module ActiveRecord
         primary_key = self.class.primary_key
 
         if account_id_column_exists?
-          self.class.unscoped.update_all(changes, { primary_key => self[primary_key], "account_id" => self["account_id"] }) == 1
+          self.class.unscoped.where(primary_key => self[primary_key], 'account_id' => self['account_id']).update_all(changes) == 1
         else
-          self.class.unscoped.update_all(changes, { primary_key => self[primary_key] }) == 1
+          self.class.unscoped.where(primary_key => self[primary_key]).update_all(changes) == 1
         end
       end
     end
@@ -197,9 +197,9 @@ module ActiveRecord
 
       updated_count = nil
       if account_id_column_exists?
-        updated_count = self.class.unscoped.update_all({ name => value }, { self.class.primary_key => id, "account_id" => self["account_id"] })
+        updated_count = self.class.unscoped.where(self.class.primary_key => id, 'account_id' => self['account_id']).update_all(name => value)
       else
-        updated_count = self.class.unscoped.update_all({ name => value }, self.class.primary_key => id)
+        updated_count = self.class.unscoped.where(self.class.primary_key => id).update_all(name => value)
       end
 
       raw_write_attribute(name, value)

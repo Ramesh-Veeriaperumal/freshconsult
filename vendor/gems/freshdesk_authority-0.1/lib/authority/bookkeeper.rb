@@ -51,11 +51,11 @@ module Authority
         if Rails.env.test?
           File.open(file, File::RDWR) do |f|
             f.flock(File::LOCK_EX)
-            f.write(@data.to_yaml)
+            f.write(YAML.dump(@data))
           end
         else
           File.open(file, "w") do |f|
-            f.write(@data.to_yaml)
+            f.write(YAML.dump(@data))
           end
         end
       end

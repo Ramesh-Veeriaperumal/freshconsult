@@ -453,11 +453,18 @@ class ApiApplicationController < MetalApiController
     # will take items as one argument and is_array (whether scoper is a AR or array as another argument.)
     def paginate_items(items)
       is_array = !items.respond_to?(:scoped) # check if it is array or AR
-      paginated_items = items.paginate(paginate_options(is_array))
+      options = paginate_options(is_array).symbolize_keys!
+      offset = @per_page * (page - 1) unless is_array # assign offset unless scoper is array
+      paginated_items = if options.keys.any?{ |x| ApiConstants::PAGINATION_ATTRIBUTES.exclude?(x) }
+        # PRE-RAILS: Need to refactor the code, handle ar options in respective controllers if paginate_options is overridden
+        is_array ? paginate_scoper(items, options) : paginate_scoper(items, options).offset(offset)
+      else
+        is_array ? items.paginate(options) : items.paginate(options).offset(offset) # rubocop:disable Gem/WillPaginate
+      end
 
       # next page exists if scoper is array & next_page is not nil or
       # next page exists if scoper is AR & collection length > per_page
-      next_page_exists = paginated_items.length > @per_page || paginated_items.next_page && is_array
+      next_page_exists = paginated_items.length > @per_page || is_array && paginated_items.next_page
       if next_page_exists
         add_link_header(page: (page + 1))
         @more_items = true
@@ -743,9 +750,9 @@ class ApiApplicationController < MetalApiController
 
     def paginate_options(is_array = false)
       options = {}
+      # PRE-RAILS: will_paginate 3.1.7 won't support offset params
       @per_page = per_page # user given/defualt page number
       options[:per_page] = is_array ? @per_page : @per_page + 1 # + 1 to find next link unless scoper is array
-      options[:offset] = @per_page * (page - 1) unless is_array # assign offset unless scoper is array
       options[:page] = page
       options[:total_entries] = options[:page] * options[:per_page] unless is_array # To prevent paginate from firing count query unless scoper is array
       options

@@ -21,7 +21,7 @@ class ClearSiteMapTest < ActionView::TestCase
   def test_clear_site_map_worker
     assert_nothing_raised do
       MemcacheKeys.expects(:delete_from_cache).with(SITEMAP_KEY % { :account_id => @account.id, :portal_id => @account.main_portal.id }).once
-      AwsWrapper::S3Object.expects(:delete).with("sitemap/#{@account.id}/#{@account.main_portal.id}.xml", S3_CONFIG[:bucket]).once
+      AwsWrapper::S3.expects(:delete).with(S3_CONFIG[:bucket], "sitemap/#{@account.id}/#{@account.main_portal.id}.xml").once
       Community::ClearSitemap.new.perform(@account.id, @account.main_portal.id)
     end
   end

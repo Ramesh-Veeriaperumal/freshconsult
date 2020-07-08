@@ -1,15 +1,19 @@
 module HelpdeskAccessMethods
-	def accessible_elements(items,filter_query_hash)
+  def accessible_elements(items,filter_query_hash)
     Sharding.run_on_slave do
-			items.find(:all, filter_query_hash).uniq
-		end
-	end
+      items.where(filter_query_hash[:conditions])
+           .joins(filter_query_hash[:joins])
+           .select(filter_query_hash[:select])
+           .includes(filter_query_hash[:include])
+           .limit(filter_query_hash[:limit]).all.to_a.uniq
+    end
+  end
+
 
   def query_hash(model, table, conditions, includes = [], size = Helpdesk::Access::DEFAULT_ACCESS_LIMIT, access_type = nil)
     {
       select: ['*'],
-      joins: "INNER JOIN (#{access_type_scope(access_type, model)}) as visible_elements ON
-                  visible_elements.accessible_id = #{table}.id",
+      joins: "INNER JOIN (#{access_type_scope(access_type, model)}) as visible_elements ON visible_elements.accessible_id = #{table}.id",
       conditions: conditions, include: includes, limit: size
     }
   end

@@ -114,34 +114,33 @@ class SurveyResult < ActiveRecord::Base
 
   end
 
-  scope :agent , lambda { |conditional_params| { :joins => :agent,
-                                                     :select => "users.id as id,users.name as name,survey_results.rating as rating,users.job_title as title,count(*) as total",
-                                                     :group => "survey_results.agent_id,survey_results.rating", 
-                                                     :conditions => conditional_params,
-                                                     :order => :name
-                                                   }}
-  
-  scope :group_scope , lambda { |conditional_params| { :joins => :group,
-                                                     :select => "group_id as id,groups.name as name,survey_results.rating as rating,groups.description as title,count(*) as total",
-                                                     :group => "survey_results.group_id,survey_results.rating",
-                                                     :conditions => conditional_params,                                                     
-                                                     :order => :name
-                                                   }}
+  scope :agent, -> (conditional_params) { 
+    where(conditional_params).
+    select("users.id as id, users.name as name,survey_results.rating as rating,users.job_title as title,count(*) as total").
+    group("survey_results.agent_id, survey_results.rating").
+    order(:name)
+  }
 
-  scope :portal , lambda { |conditional_params| { :joins => :account,                    
-                                                      :select => "account_id as id,accounts.name as name,survey_results.rating as rating,accounts.full_domain as title,count(*) as total",                
-                                                      :group => "survey_results.account_id,survey_results.rating",
-                                                      :conditions => conditional_params,                                                     
-                                                      :order => :name
-                                                   }}
+  scope :group_scope, -> (conditional_params) { 
+    where(conditional_params).
+    select("group_id as id,groups.name as name,survey_results.rating as rating,groups.description as title,count(*) as total").
+    group("survey_results.group_id, survey_results.rating").
+    order(:name)
+  }
 
-  scope :remarks , lambda { |conditional_params| { 
-                                                      :include => :survey_remark,
-                                                      :conditions => conditional_params,
-                                                      :order => "survey_results.created_at DESC"
-                                                   }}                                                   
+  scope :portal, -> (conditional_params) { 
+    where(conditional_params).
+    select("account_id as id,accounts.name as name,survey_results.rating as rating,accounts.full_domain as title,count(*) as total").
+    group("survey_results.account_id, survey_results.rating").
+    joins(:account)
+    order(:name)
+  }
 
-                                                     
+  scope :remarks, -> (conditional_params) { 
+    where(conditional_params).
+    includes(:survey_remark).
+    order(survey_results.created_at DESC)
+  }             
                   
   def as_json(options={})
     options[:except] = [:account_id]

@@ -5,20 +5,20 @@ module Import::Zen::FlexiField
  include Redis::OthersRedis
  
   class FieldOption < Import::FdSax
-    element :name
-    element :value
+    # element :name
+    # element :value
   end
   
   class FieldProp < Import::FdSax   
-    element :type , :as => :field_type
-    element :id , :as => :import_id
-    element :title , :as => :label
-    element "is-required" , :as => :required
-    element "is-visible-in-portal" , :as => :visible_in_portal
-    element "is-editable-in-portal" , :as => :editable_in_portal
-    element "is-required-in-portal" , :as => :required_in_portal
-    element :description
-    elements "custom-field-option" , :as => :choices ,:class => FieldOption
+    # element :type , :as => :field_type
+    # element :id , :as => :import_id
+    # element :title , :as => :label
+    # element "is-required" , :as => :required
+    # element "is-visible-in-portal" , :as => :visible_in_portal
+    # element "is-editable-in-portal" , :as => :editable_in_portal
+    # element "is-required-in-portal" , :as => :required_in_portal
+    # element :description
+    # elements "custom-field-option" , :as => :choices ,:class => FieldOption
   end
 
 

@@ -37,19 +37,21 @@ class User < ActiveRecord::Base
   before_validation :trim_attributes
 
   xss_sanitize  :only => [:name,:email,:language, :job_title, :twitter_id, :address, :description, :fb_profile_id], :plain_sanitizer => [:name,:email,:language, :job_title, :twitter_id, :address, :description, :fb_profile_id]
-  scope :trimmed, :select => [:'users.id', :'users.name']
-  scope :contacts, :conditions => { :helpdesk_agent => false }
-  scope :technicians, :conditions => { :helpdesk_agent => true }
-  scope :visible, :conditions => { :deleted => false }
-  scope :active, lambda { |condition| { :conditions => { :active => condition }} }
-  scope :with_user_ids, lambda { |condition| { :conditions => { :id => condition }} }
-  scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
-  scope :with_contractors, lambda { |conditions| { :joins => %(INNER JOIN user_companies ON
-                                                               user_companies.account_id = users.account_id AND
-                                                               user_companies.user_id = users.id),
-                                                   :conditions => conditions } }
-  scope :company_users_via_customer_id, lambda { |cust_id| { :conditions => ["customer_id = ?", cust_id]} }
-
+  scope :trimmed, -> { select([:'users.id', :'users.name']) }
+  scope :contacts, -> { where(helpdesk_agent: false) }
+  scope :technicians, -> { where(helpdesk_agent: true) }
+  scope :visible, -> { where(deleted: false) }
+  scope :active, -> (condition) { where(active: condition) }
+  scope :with_user_ids, -> (condition) { where(id: condition) }
+  scope :with_conditions, -> (conditions) { where(conditions) }
+  scope :with_contractors, -> (conditions) { 
+            where(conditions).
+            join(%(INNER JOIN user_companies ON
+              user_companies.account_id = users.account_id AND
+              user_companies.user_id = users.id))
+          }
+  scope :company_users_via_customer_id, -> (cust_id) { where(customer_id: cust_id) }
+  
   swindle :technicians_basics,
           scope: :technicians,
           attrs: %i[id name email]
@@ -269,12 +271,7 @@ class User < ActiveRecord::Base
 
     def filter(letter, page, state = "verified", per_page = 50,order_by = 'name')
       begin
-        paginate(
-                :per_page => per_page,
-                :page => page,
-                :conditions => filter_condition(state, letter),
-                :order => order_by
-                ).preload(:flexifield)
+        where(filter_condition(state, letter)).order(order_by).preload(:flexifield).paginate(per_page: per_page, page: page)
       rescue Exception =>exp
         raise "Invalid fetch request for contacts"
       end
@@ -307,14 +304,14 @@ class User < ActiveRecord::Base
       else
         conditions[:name] = value
       end
-      user = self.find(:first, :conditions => conditions)
+      user = self.where(conditions).first
       user
     end
 
     def find_by_an_unique_id(options = {})
       options.delete_if { |key, value| value.blank? }
 
-      #return self.find(options[:id]) if options.key?(:id)
+      # return self.find(options[:id]) if options.key?(:id)
       return UserEmail.user_for_email(options[:email]) if options.key?(:email)
       return self.where(twitter_id: options[:twitter_id]).first if options.key?(:twitter_id)
       return self.where(fb_profile_id: options[:fb_profile_id]).first if options.key?(:fb_profile_id)
@@ -682,28 +679,19 @@ class User < ActiveRecord::Base
 
   #This scope is currently used only for failure searches through ES for contact_merge search
 
-  scope :matching_users_from, lambda { |search|
-    {
-      :select => %(users.id, name, users.account_id, users.string_uc04, users.email, GROUP_CONCAT(user_emails.email) as `additional_email`,
-        twitter_id, fb_profile_id, phone, mobile, job_title),
-      :joins => %(left join user_emails on user_emails.user_id=users.id and
-        user_emails.account_id = users.account_id) % { :str => "%#{search}%" },
-      :conditions => %((name like '%<str>s' or user_emails.email
-        like '%<str>s' and deleted = 0)) % {
-        :str => "%#{search}%"
-      },
+  scope :matching_users_from, -> (search) {
+          select(%(users.id, name, users.account_id, users.string_uc04, users.email, GROUP_CONCAT(user_emails.email) as `additional_email`,
+            twitter_id, fb_profile_id, phone, mobile, job_title)).
+          joins(%(left join user_emails on user_emails.user_id=users.id and
+            user_emails.account_id = users.account_id) % { :str => "%#{search}%" }).
+          where(%((name like '%<str>s' or user_emails.email
+            like '%<str>s' and deleted = 0)) % {
+            str: "%#{search}%"
+          }).
+          group('users.id')
+        }
 
-      :group => "users.id",
-    }
-  }
-
-  scope :without, lambda { |source|
-    {
-      :conditions => "users.id <> %<us_id>i" % {
-        :us_id => source.id
-      }
-    }
-  }
+  scope :without, -> (source) { where("users.id <> %<id>i" % { id: source.id}) }
 
   #Used for importing google contacts
   def signup(portal=nil)
@@ -799,9 +787,8 @@ class User < ActiveRecord::Base
   def can_assume?(user)
     # => Not himself
     # => User is not deleted
-    # => the user does not have any admin privileges (He is an agent)
-    # => the user does not have privilege to view secure information
-    !((user == self) || user.deleted? || user.privilege?(:view_admin) || user.privilege?(:view_secure_field))
+    # => And the user does not have any admin privileges (He is an agent)
+    !((user == self) or user.deleted? or user.privilege?(:view_admin) || user.privilege?(:view_secure_field))
   end
 
   def api_assumable?

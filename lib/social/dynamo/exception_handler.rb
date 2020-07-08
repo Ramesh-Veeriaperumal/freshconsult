@@ -25,6 +25,7 @@ module Social
               Timeout.timeout(SocialConfig::DYNAMO_TIMEOUT) do
                 return_value = yield
               end
+
             rescue Aws::DynamoDB::Errors::ConditionalCheckFailedException => e
               # An entry with the same primary key already exists, so update the entry instead of over-writing it
               # Temprorily avaoiding send of SNS for ConditionalCheckFailedException

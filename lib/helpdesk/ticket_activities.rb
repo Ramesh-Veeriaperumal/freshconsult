@@ -123,6 +123,7 @@ module Helpdesk::TicketActivities
       if page.blank? or page.to_i == 1
         return activities.newest_first.paginate(:page => 1, :per_page => first_page_count)
       else
+        # PRE-RAILS: Need to check this
         return activities.newest_first.paginate(:page => page.to_i - 1, :per_page => no_of_records, :extra_offset => first_page_count)
       end
     end

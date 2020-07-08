@@ -11,6 +11,7 @@ class Helpdesk::Note < ActiveRecord::Base
   before_save :update_response_violation, on: :create, if: :update_sla_violation?
   before_save :update_note_changes
   before_save :validate_schema_less_note
+  before_update :load_full_text
 
   before_destroy :save_deleted_note_info
 
@@ -51,21 +52,6 @@ class Helpdesk::Note < ActiveRecord::Base
   include Redis::RedisKeys
   include Redis::OthersRedis
 
-  def construct_note_old_body_hash
-    {
-      :body => self.note_body_content.body,
-      :body_html => self.note_body_content.body_html,
-      :full_text => self.note_body_content.full_text,
-      :full_text_html => self.note_body_content.full_text_html,
-      :raw_text => self.note_body_content.raw_text,
-      :raw_html => self.note_body_content.raw_html,
-      :meta_info => self.note_body_content.meta_info,
-      :version => self.note_body_content.version,
-      :account_id => self.account_id,
-      :note_id => self.id
-    }
-  end
-
   def load_full_text
     note_body.full_text ||= note_body.body if note_body.body.present?
     note_body.full_text_html ||= note_body.body_html if note_body.body_html.present?
@@ -73,7 +59,6 @@ class Helpdesk::Note < ActiveRecord::Base
       note_body.full_text = note_body.body if note_body.body.present?
       note_body.full_text_html = note_body.body_html if note_body.body_html.present?
     end
-    note_body.full_text_html_changed = true if note_body.changes.present? && note_body.changes.key?('full_text_html')
   end
 
   def remove_activity
@@ -366,7 +351,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def ticket_cc_email_backup
-      @prev_cc_email = notable.cc_email.dup unless notable.cc_email.nil?
+      @prev_cc_email = notable.cc_email.dup unless notable.cc_email.blank?
     end
 
     # VA - Observer Rule

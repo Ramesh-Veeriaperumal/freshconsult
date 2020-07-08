@@ -57,11 +57,9 @@ module Solution::LanguageAssociations
       self.name.chomp('Meta').constantize
     end
     
-    scope :current, lambda {
-      {
-        :joins => :"current_#{child_name}",
-        :select => [ select_string_for_query ]
-      }
+    scope :current, -> {
+      joins(:"current_#{child_name}").
+      select(select_string_for_query)
     }
 
     def self.unscoped_find(id)

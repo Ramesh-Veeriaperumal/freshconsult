@@ -14,8 +14,7 @@ module Fdadmin::SubscriptionControllerMethods
 
   def search(search)
     results = []
-    domain_mappings = DomainMapping.find(:all,
-                                         :conditions => ['domain LIKE ?', "%#{search}%"], :limit => 30, :select => [:account_id,:domain])
+    domain_mappings = DomainMapping.where(['domain LIKE ?', "%#{search}%"]).limit(30).select([:account_id,:domain])
     domain_mappings
   end
 

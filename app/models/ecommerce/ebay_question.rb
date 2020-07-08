@@ -10,8 +10,16 @@ class Ecommerce::EbayQuestion < ActiveRecord::Base
   validates :user_id, :questionable_id, :ebay_account_id, :presence => true
   validates :message_id, :uniqueness => { :scope => :account_id }, :allow_nil => true 
 
-  scope :fetch_with_item_id_user_id, lambda{ |item_id, user_id| where("item_id = ? and user_id = ? and questionable_type = ?", item_id, user_id, 'Helpdesk::Ticket') }
+  scope :fetch_with_user_id, -> (user_id) { 
+    where(
+      user_id: user_id,
+      questionable_type: 'Helpdesk::Ticket'
+    )
+  }
 
-  scope :fetch_with_user_id, lambda{|user_id| where("user_id = ? and questionable_type = ?", user_id, 'Helpdesk::Ticket' ) }
+  scope :fetch_with_item_id_user_id, -> (item_id, user_id) { 
+    fetch_with_user_id(user_id).
+    where(item_id: item_id)
+  }
 
 end
