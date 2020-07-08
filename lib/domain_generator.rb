@@ -5,7 +5,7 @@ class DomainGenerator
 	include ActiveModel::Validations
 
 	HELPDESK_BASE_DOMAIN = AppConfig['base_domain'][Rails.env]
-	DOMAIN_SUGGESTION_KEYWORDS = ["help", "assist", "service", "care", 
+	DOMAIN_SUGGESTION_KEYWORDS = ["help", "assist", "service", "care",
 		"aid", "relations", "desk", "team"]
 	DOMAIN_SUGGESTIONS = DOMAIN_SUGGESTION_KEYWORDS + DOMAIN_SUGGESTION_KEYWORDS.map{|sugg| "-#{sugg}"}
   ANONYMOUS_DOMAIN = 'demo'.freeze
@@ -29,6 +29,7 @@ class DomainGenerator
       @domain ||= generate_helpdesk_domain
       @domain = generate_random_domain_name while @domain.blank?
     end
+    @domain = ENV['SQUAD_ACCOUNT_SIGNUP_PREFIX']+@domain if !Rails.env.production? && ENV['SQUAD_ACCOUNT_SIGNUP_PREFIX'] != nil
     @domain
   end
 
@@ -53,7 +54,7 @@ class DomainGenerator
 	def valid_domain?(full_domain)
 		sample_account = Account.new
 		sample_account.full_domain = full_domain
-		!excluded_domains.include?(full_domain) && (DomainGenerator.domain_exists?(full_domain) && 
+		!excluded_domains.include?(full_domain) && (DomainGenerator.domain_exists?(full_domain) &&
 			sample_account.run_domain_validations)
 	end
 
@@ -64,7 +65,7 @@ class DomainGenerator
 	def self.sample(email, count=1)
 		sample_domains = []
 		excluded_domains = []
-		count.times do 
+		count.times do
 			current_sample_domain = new(email, excluded_domains)
 			sample_domains << current_sample_domain.subdomain
 			excluded_domains << current_sample_domain.domain
@@ -117,7 +118,7 @@ class DomainGenerator
 
 	def email_address
 		@email_address ||= email.address
-	end	
+	end
 
 	def generate_random_domain_name
 		suggestion_keyword = DOMAIN_SUGGESTIONS.sample
