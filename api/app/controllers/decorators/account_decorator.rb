@@ -4,6 +4,7 @@ class AccountDecorator < ApiDecorator
   include AgentsHelper
   include AccountConstants
   include MarketplaceConfig
+  include Redis::HashMethods
 
   def to_hash
     simple_hash.merge(agents_groups_hash)
@@ -61,6 +62,10 @@ class AccountDecorator < ApiDecorator
       field_agent: record.field_service_management_enabled? ? available_agents_count(:field_agent) : nil,
       day_passes_available: available_passes
     }
+  end
+
+  def account_preferences(preferences)
+    account_admin? ? preferences[:additional_settings].merge(preferences[:account_settings_redis_hash]) : restricted_preference_hash(preferences)
   end
 
   private
@@ -227,5 +232,18 @@ class AccountDecorator < ApiDecorator
         data_pipe_key: DATA_PIPE_KEY,
         awol_region: AWOL_REGION
       }
+    end
+
+    def restricted_preference_hash(preferences)
+      account_preference = preferences[:account_settings_redis_hash] || {}
+      if preferences[:additional_settings].present?
+        additional_settings = preferences[:additional_settings]
+        account_preference[:agent_availability_refresh_time] = additional_settings[:agent_availability_refresh_time] if manage_availability? && additional_settings[:agent_availability_refresh_time].present?
+      end
+      account_preference
+    end
+
+    def manage_availability?
+      User.current.privilege?(:manage_availability)
     end
 end

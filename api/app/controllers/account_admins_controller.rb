@@ -1,5 +1,6 @@
 class AccountAdminsController < ApiApplicationController
   include Redis::HashMethods
+  include AccountConstants
 
   before_filter :load_object
   before_filter :validate_params, only: [:update, :preferences=]
@@ -22,7 +23,11 @@ class AccountAdminsController < ApiApplicationController
   def preferences
     additional_settings = current_account.account_additional_settings.additional_settings
     account_setting_redis_key = format(ACCOUNT_SETTINGS_REDIS_HASH, account_id: current_account.id)
-    @preferences = multi_get_all_redis_hash(account_setting_redis_key).reverse_merge!(additional_settings)
+    additional_settings[:agent_availability_refresh_time] ||= DEFAULT_AGENT_AVAILABILITY_REFRESH_TIME if current_account.omni_agent_availability_dashboard_enabled?
+    @preferences = {
+      additional_settings: additional_settings,
+      account_settings_redis_hash: multi_get_all_redis_hash(account_setting_redis_key)
+    }
     response.api_root_key = :preferences
   end
 

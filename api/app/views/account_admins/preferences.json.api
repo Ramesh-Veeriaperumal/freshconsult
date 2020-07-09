@@ -1,1 +1,1 @@
-@preferences.to_json
+AccountDecorator.new(current_account).account_preferences(@preferences).to_json
