@@ -53,12 +53,8 @@ class Helpdesk::Note < ActiveRecord::Base
   include Redis::OthersRedis
 
   def load_full_text
-    note_body.full_text ||= note_body.body if note_body.body.present?
-    note_body.full_text_html ||= note_body.body_html if note_body.body_html.present?
-    if self.note && self.note.note? && !self.note.incoming  # for updating full_text content if body_html is edited
-      note_body.full_text = note_body.body if note_body.body.present?
-      note_body.full_text_html = note_body.body_html if note_body.body_html.present?
-    end
+    note_body.full_text = note_body.body if note_body.body.present?
+    note_body.full_text_html = note_body.body_html if note_body.body_html.present?
   end
 
   def remove_activity
