@@ -15,7 +15,7 @@ class ApiAgentsController < ApiApplicationController
   before_filter :load_data_export, only: [:export_s3_url]
   before_filter :validate_params_for_export, only: [:export]
   before_filter :check_bulk_params_limit, only: %i[create_multiple]
-  before_filter :validate_agent_status_feature, only: [:fetch_availability, :update_availability]
+  before_filter :validate_feature, only: [:fetch_availability, :update_availability]
   before_filter :shift_service_request, only: [:fetch_availability, :update_availability]
 
   SLAVE_ACTIONS = %w[index achievements].freeze
@@ -201,8 +201,8 @@ class ApiAgentsController < ApiApplicationController
       (request.path.gsub!('_', 'v1') || request.path.gsub('v2', 'v1')).last(-1)
     end
 
-    def validate_agent_status_feature
-      requires_feature FeatureConstants::AGENT_STATUSES
+    def validate_feature
+      requires_any_feature FeatureConstants::AGENT_STATUSES, FeatureConstants::OMNI_AGENT_AVAILABILITY_DASHBOARD
     end
 
     def constants_class

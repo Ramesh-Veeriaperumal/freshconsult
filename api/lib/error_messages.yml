@@ -31,6 +31,7 @@ api_error_messages:
   limit_invalid: "It should be a Positive Integer less than or equal to %{max_value}"
   method_not_allowed: "%{fired_method} method is not allowed. It should be one of these method(s): %{methods}"
   require_feature: "The %{feature} feature(s) is/are not supported in your plan. Please upgrade your account to use it."
+  require_any_feature : "Atleast one of the features required: %{feature}"
   require_fsm_feature: "The Field Service Management module is not enabled in your account. Please enable it to use."
   invalid_credentials: "You have to be logged in to perform this action."
   credentials_required: "Authentication header is needed to log in."

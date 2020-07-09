@@ -28,4 +28,5 @@ module FeatureConstants
   OUT_OF_OFFICE = :out_of_office
   AGENT_STATUSES = :agent_statuses
   SOLUTIONS_TEMPLATES = :solutions_templates
+  OMNI_AGENT_AVAILABILITY_DASHBOARD = :omni_agent_availability_dashboard
 end

@@ -194,6 +194,13 @@ class ApiApplicationController < MetalApiController
       render_request_error(:require_feature, 403, feature: f.join(',').titleize)
     end
 
+    def requires_any_feature(*features)
+      features_list = feature_name.present? ? Account.current.enabled_features_list : Account.current.all_launched_features
+      return if (features_list & features).present?
+
+      render_request_error(:require_any_feature, 403, feature: features.join(',').titleize)
+    end
+
     def render_partial_success(succeeded, failed, render_path=nil)
       @succeeded = succeeded
       @failed = failed
