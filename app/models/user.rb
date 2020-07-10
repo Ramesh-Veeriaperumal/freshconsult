@@ -892,6 +892,7 @@ class User < ActiveRecord::Base
 
   # group_ticket?  have only write access groups in its operations
   # read_or_write_group_ticket?? have both read and write access groups in its operations
+  # read_group_ticket? have only read access groups in its operations
   def read_or_write_group_ticket?(ticket)
     read_or_write_group_ticket_member?(ticket.group_id) ||
       (Account.current.shared_ownership_enabled? ? read_or_write_group_ticket_member?(ticket.internal_group_id) : false) # TODO: check whether shared_ownership check required?
@@ -899,6 +900,14 @@ class User < ActiveRecord::Base
 
   def read_or_write_group_ticket_member?(group_id)
     group_id && all_associated_group_ids.include?(group_id)
+  end
+
+  def read_group_ticket?(ticket)
+    read_group_ticket_member?(ticket.group_id)
+  end
+
+  def read_group_ticket_member?(group_id)
+    group_id && read_associated_group_ids.include?(group_id)
   end
 
   # associated_group_ids have only write access groups
@@ -909,6 +918,10 @@ class User < ActiveRecord::Base
 
   def associated_group_ids
     agent.all_agent_groups_from_cache.select{ |record| record.write_access.present? }.map(&:group_id)
+  end
+
+  def read_associated_group_ids
+    @read_associated_group_ids ||= agent.all_agent_groups_from_cache.select{ |record| record.write_access.blank? }.map(&:group_id)
   end
 
   def group_ticket?(ticket, agent_group_ids = nil)
@@ -926,7 +939,7 @@ class User < ActiveRecord::Base
   end
 
   def has_ticket_permission?(ticket, agent_group_ids = nil)
-    ticket_agent?(ticket) || can_view_all_tickets? || (group_ticket_permission && group_ticket?(ticket, agent_group_ids))
+    (ticket_agent?(ticket) && !read_group_ticket?(ticket)) || can_view_all_tickets? || (group_ticket_permission && group_ticket?(ticket, agent_group_ids))
   end
 
   def has_read_ticket_permission?(ticket)

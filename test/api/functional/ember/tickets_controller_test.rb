@@ -6737,6 +6737,22 @@ module Ember
       group.destroy if group.present?
     end
 
+    def test_update_properties_assigned_to_ticket_with_scope_read
+      agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      group = create_group_with_agents(@account, agent_list: [agent.id])
+      agent_group = agent.agent_groups.where(group_id: group.id).first
+      agent_group.write_access = false
+      agent_group.save!
+      agent.make_current
+      ticket = create_ticket({responder_id: agent.id}, group)
+      login_as(agent)
+      params_hash = { priority: 4 }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 403
+    ensure
+      group.destroy if group.present?
+    end
+
     def test_destroy_ticket_with_scope_read
       agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
       group = create_group_with_agents(@account, agent_list: [agent.id])
