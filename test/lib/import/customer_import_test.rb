@@ -23,8 +23,8 @@ class CustomerImportTest < ActionView::TestCase
     Import::Customers::Contact.any_instance.unstub(:notify_mailer)
     Import::Customers::OutreachContact.any_instance.unstub(:enable_user_activation)
     Import::Customers::OutreachContact.any_instance.unstub(:notify_mailer)
-    AwsWrapper::S3Object.unstub(:find)
-    AwsWrapper::S3Object.unstub(:delete)
+    AwsWrapper::S3.unstub(:fetch_obj)
+    AwsWrapper::S3.unstub(:delete)
     Account.unstub(:current)
   end
 
@@ -115,7 +115,7 @@ class CustomerImportTest < ActionView::TestCase
       Import::Customers::OutreachContact.any_instance.stubs(:enable_user_activation).returns(nil)
       Import::Customers::OutreachContact.any_instance.stubs(:notify_mailer).returns(nil)
     end
-    AwsWrapper::S3.stubs(:find).returns(fixture_file_upload("files/#{file_name}"))
+    AwsWrapper::S3.stubs(:fetch_obj).returns(fixture_file_upload("files/#{file_name}"))
     AwsWrapper::S3.stubs(:delete).returns([])
     @import_entry = @account.contact_imports.new(
       source: Admin::DataImport::IMPORT_TYPE[type.to_sym],

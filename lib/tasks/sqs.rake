@@ -6,13 +6,12 @@ namespace :sqs do
   }
 
   task :monitor => :environment do
-    raise "Must provide QUEUE= " unless ENV["QUEUE"]
-    queue_name = SQS[ENV["QUEUE"].to_sym]
-    sqs = AWS::SQS.new.queues.named(queue_name)
-    msgs_in_queue = sqs.approximate_number_of_messages if sqs
+    raise "Must provide QUEUE= " unless ENV['QUEUE'] # PRE-RAILS: Need to check this
+
+    msgs_in_queue = AwsWrapper::SqsV2.get_queue_attributes(SQS[ENV['QUEUE'].to_sym], ['ApproximateNumberOfMessages']) || {}
     params = {
-      :queue_name => queue_name,
-      :msgs_in_queue => msgs_in_queue 
+      queue_name: SQS[ENV['QUEUE'].to_sym],
+      msgs_in_queue: msgs_in_queue['ApproximateNumberOfMessages'] 
     }
 	 if msgs_in_queue > SQS_THRESHOLD[ENV["QUEUE"].to_sym]
       NewRelic::Agent.notice_error("SQS Threshold reached", :custom_params => params )

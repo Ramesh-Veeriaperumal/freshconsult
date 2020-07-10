@@ -204,7 +204,7 @@ module Automation::EventValidationTestHelper
     def write_to_file(data)
       # write_to_file(data) # only for testing purpose, check the request data
       file = File.open('newly.yml', 'w+')
-      file.write data.to_yaml
+      file.write YAML.dump(data)
       file.close
     end
 

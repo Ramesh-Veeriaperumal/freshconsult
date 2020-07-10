@@ -215,8 +215,7 @@ module ArchiveTicketTestHelper
           }
         },
         'description' => params[:description],
-        'description_html' => params[:description_html],
-        'ticket_type' => params[:type] || 'Incident'
+        'description_html' => params[:description_html]
       }
     }
   end
@@ -230,7 +229,7 @@ module ArchiveTicketTestHelper
         'helpdesk_notes_association' => {
           'schema_less_note' => {
             'from_email' => nil,
-            'to_emails' => nil,
+            'to_emails' => [],
             'bcc_emails' => [],
             'cc_emails' => {
               'cc_emails' => []

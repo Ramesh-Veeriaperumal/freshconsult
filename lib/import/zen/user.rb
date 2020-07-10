@@ -7,13 +7,13 @@ module Import::Zen::User
  }
  
  class UserProp < Import::FdSax   
-   element :id , :as => :import_id
-   element :name
-   element :email
-   element :phone
-   element :roles  , :as => :user_role
-   element "time-zone" , :as => :time_zone
-   element "organization-id", :as => :company_id
+   # element :id , :as => :import_id
+   # element :name
+   # element :email
+   # element :phone
+   # element :roles  , :as => :user_role
+   # element "time-zone" , :as => :time_zone
+   # element "organization-id", :as => :company_id
  end
  
  def save_user user_xml

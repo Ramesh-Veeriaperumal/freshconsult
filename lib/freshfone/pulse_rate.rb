@@ -1,8 +1,9 @@
 class Freshfone::PulseRate
 	include Freshfone::NumberValidator
 
-	FRESHFONE_CHARGES = YAML::load_file(File.join(Rails.root, 'config/freshfone',
-																									'freshfone_charges.yml'))
+	# PRE-RAILS: Psych parse error when loading YAML::load_file(File.join(Rails.root, 'config/freshfone', 'freshfone_charges.yml')) 
+	# as key is too lengthly, so we moved the yml to constant file for now.
+	FRESHFONE_CHARGES = Freshfone::YmlConstants::CHARGES
 	attr_accessor :call, :number, :country, :forwarded, :credit
 	
 	delegate :incoming?, :caller_country, :caller_number, :freshfone_number, :outgoing?,

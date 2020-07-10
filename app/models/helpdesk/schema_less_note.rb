@@ -21,10 +21,10 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 
   alias_attribute :sentiment, :int_nc04
   
-  serialize :to_emails
-  serialize :cc_emails
-  serialize :bcc_emails
-  serialize :header_info
+  serialize :to_emails, Array
+  serialize :cc_emails, [Array, Hash]
+  serialize :bcc_emails, Array
+  serialize :header_info, String
   serialize :text_nc02, Hash
 
   belongs_to_account  

@@ -4,7 +4,7 @@ class ContactForm < ActiveRecord::Base
   
   include Cache::Memcache::ContactField
   
-  serialize :form_options
+  serialize :form_options, Hash # PRE-RAILS: added data type temp, need tovalidate
   belongs_to_account
   attr_protected  :account_id
   acts_as_custom_form :custom_field_class => 'ContactField',

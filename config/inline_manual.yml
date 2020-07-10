@@ -1,15 +1,11 @@
---- 
-inline_manual:
-  common: &common
-  production:
-    <<: *common
+defaults: &defaults
+  inline_manual:
     access_key: "0194c5f73ce632c6cf883f38b6dcec9d"
-  staging: 
-    <<: *common
-    access_key: "0194c5f73ce632c6cf883f38b6dcec9d"
-  development: 
-    <<: *common
-    access_key: "0194c5f73ce632c6cf883f38b6dcec9d"
-  test: 
-    <<: *common
-    access_key: "0194c5f73ce632c6cf883f38b6dcec9d"
+development:
+  <<: *defaults
+staging: 
+  <<: *defaults
+test:
+  <<: *defaults
+production:
+  <<: *defaults

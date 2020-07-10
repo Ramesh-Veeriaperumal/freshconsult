@@ -84,7 +84,7 @@ class Ecommerce::Ebay::Api
     usr_external_id = ticket.requester.external_id.gsub("#{EBAY_PREFIX}-","")
 
     note.attachments.each do |attach|
-      attach_resp = upload_ebay_picture(attach.content_file_name, attach.authenticated_s3_get_url(:signature_version => :v3))
+      attach_resp = upload_ebay_picture(attach.content_file_name, attach.authenticated_s3_get_url) # PRE-RAILS: signature_version option not provided in V2 presigned_url
       if attach_resp[:ack] != EBAY_ERROR_MSG and attach_resp.present?
         ebay_attachment_urls.push({:name => attach.content_file_name, :url => attach_resp[:site_hosted_picture_details][:full_url]})
       else 

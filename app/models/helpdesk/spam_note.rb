@@ -20,6 +20,6 @@ class Helpdesk::SpamNote < Helpdesk::Mysql::DynamicTable
   has_many :attachments_sharable, :through => :shared_attachments, :source => :attachment, :conditions => ["helpdesk_attachments.account_id=helpdesk_shared_attachments.account_id"]
 
 
-  serialize :associations_data
+  serialize :associations_data, Hash # PRE-RAILS: added data type as per lib/spam/core/base.rb, need tovalidate
   attr_protected :account_id
 end

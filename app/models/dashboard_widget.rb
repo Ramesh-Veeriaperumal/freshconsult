@@ -24,31 +24,29 @@ class DashboardWidget < ActiveRecord::Base
 
   before_save :set_active, on: :update, if: :inactive_widget_updated?
 
-  scope :all_active, conditions: ['active=true']
+  scope :all_active, -> { where(active: true) }
+  scope :of_types, -> (types) { where(active: true, widget_type: types) }
 
-  scope :of_types, lambda { |types|
-    { conditions: ['widget_type in (?) and active=true', types] }
-  }
-  scope :scorecards, conditions: { widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:scorecard.to_s], active: true }
+  scope :scorecards, ->{ where(active: true, widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:scorecard.to_s]) }
 
-  scope :bar_charts, conditions: { widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:bar_chart.to_s], active: true }
+  scope :bar_charts, ->{ where(active: true, widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:bar_chart.to_s]) }
 
-  scope :csats, conditions: { widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:csat.to_s], active: true }
+  scope :csats, ->{ where(active: true, widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:csat.to_s]) }
 
-  scope :leaderboards, conditions: { widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:leaderboard.to_s], active: true }
+  scope :leaderboards, ->{ where(active: true, widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:leaderboard.to_s]) }
 
   # scope :forum_moderations, conditions: { widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:forum_moderation.to_s], active: true }
 
-  scope :ticket_trend_cards, conditions: { widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:ticket_trend_card.to_s], active: true }
+  scope :ticket_trend_cards, ->{ where(active: true, widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:ticket_trend_card.to_s]) }
 
-  scope :time_trend_cards, conditions: { widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:time_trend_card.to_s], active: true }
+  scope :time_trend_cards, ->{ where(active: true, widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:time_trend_card.to_s]) }
 
-  scope :sla_trend_cards, conditions: { widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:sla_trend_card.to_s], active: true }
+  scope :sla_trend_cards, ->{ where(active: true, widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:sla_trend_card.to_s]) }
 
-  scope :forum_moderations, conditions: { widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:forum_moderation.to_s], active: true }
+  scope :forum_moderations, ->{ where(active: true, widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:forum_moderation.to_s]) }
 
-  scope :trend_cards, conditions: { widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:trend_card.to_s], active: true }
-
+  scope :trend_cards, ->{ where(active: true, widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:trend_card.to_s]) }
+  
   def inactive_widget_updated?
     # Checking for changes not active because setting active to false cannot be should not be reverted.
     !changes.keys.include?("active") && active == false

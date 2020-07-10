@@ -39,34 +39,23 @@ class Solution::Draft < ActiveRecord::Base
   alias_attribute :body, :draft_body
   alias_attribute :name, :title
 
-  default_scope :order => "modified_at DESC"
+  default_scope -> { order("modified_at DESC") }
 
-  scope :as_list_view, :include => { 
-    :user => [], 
-    :article => {:solution_article_meta => {:solution_folder_meta => :primary_folder}},
-    :category_meta => []
+  scope :as_list_view, -> {
+    includes(
+      user: [], category_meta: [],
+      article: { solution_article_meta: { solution_folder_meta: :primary_folder} }
+    )
   }
-  scope :for_sidebar, :include => [:user]
+  scope :for_sidebar, -> { includes(:user) }
   
-  scope :by_user, lambda { |user|
-     { 
-       :conditions => ["solution_drafts.user_id = ?", user.id ]
-     }
-  }
+  scope :by_user, -> (user) { where(["solution_drafts.user_id = ?", user.id ]) }
 
-  scope :in_portal, lambda { |portal| 
-    {
-      :conditions => {
-        :category_meta_id => portal.portal_solution_categories.map(&:solution_category_meta_id)
-      }
-    }
-  }
+  scope :in_portal, -> (portal) { where(category_meta_id: portal.portal_solution_categories.map(&:solution_category_meta_id)) }
 
-  scope :in_applicable_languages, lambda {
-    {
-      :joins => [:article],
-      :conditions => ['solution_articles.language_id in (?)', Account.current.all_language_ids]
-    }
+  scope :in_applicable_languages, -> {
+    joins(:article).
+    where(['solution_articles.language_id in (?)', Account.current.all_language_ids])
   }
 
   STATUSES = [

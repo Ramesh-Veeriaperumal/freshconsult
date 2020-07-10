@@ -259,7 +259,7 @@ class Support::SearchV2::SpotlightController < SupportController
     #
     def esv2_portal_models
       @@esv2_portal_spotlight ||= {
-        'ticket'        => { model: 'Helpdesk::Ticket',         associations: [ :ticket_old_body, :group, :requester, :company ] },
+        'ticket'        => { model: 'Helpdesk::Ticket',         associations: [ :ticket_body, :group, :requester, :company ] },
         'archiveticket' => { model: 'Helpdesk::ArchiveTicket',  associations: [] },
         'topic'         => { model: 'Topic',                    associations: [ :forum ] },
         'article'       => { model: 'Solution::Article',        associations: [:article_body, { :solution_folder_meta => :solution_category_meta } ] }

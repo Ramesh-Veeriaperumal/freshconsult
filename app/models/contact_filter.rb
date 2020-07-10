@@ -2,7 +2,7 @@ class ContactFilter < ActiveRecord::Base
   include Segments::InstanceMethods
 
   self.primary_key = :id
-  serialize :data
+  serialize :data, Array
 
   belongs_to_account
 

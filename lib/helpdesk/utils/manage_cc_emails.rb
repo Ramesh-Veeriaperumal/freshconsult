@@ -5,7 +5,7 @@ module Helpdesk::Utils::ManageCcEmails
 
   def updated_ticket_cc_emails(new_cc_emails, ticket, note, in_reply_to, 
     to_email, to_emails)
-    ticket_cc_hash = ticket.cc_email_hash || Helpdesk::Ticket.default_cc_hash
+    ticket_cc_hash = ticket.cc_email_hash.presence || Helpdesk::Ticket.default_cc_hash
     support_emails = ticket.account.support_emails
     begin
       new_cc_emails.delete_if{ |email| (email == ticket.requester.email)}

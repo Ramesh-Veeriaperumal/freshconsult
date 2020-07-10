@@ -46,19 +46,9 @@ class Forum < ActiveRecord::Base
     end
   end
 
-  scope :visible, lambda {|user| {
-                    # :joins => "LEFT JOIN `customer_forums` ON customer_forums.forum_id = forums.id
-                    #             and customer_forums.account_id = forums.account_id ",
-                    :conditions => visiblity_condition(user) } }
-
-
-  scope :in_categories, lambda {|category_ids|
-    {
-      :conditions => {
-        :forum_category_id => category_ids
-      }
-    }
-  }
+  scope :visible, -> (user) { where(visiblity_condition(user))}
+  scope :in_categories, -> (category_ids) { where(forum_category_id: category_ids)}
+  
   def self.visiblity_condition(user)
     condition = "forums.forum_visibility IN (#{self.visibility_array(user).join(",")})"
     condition +=  " OR ( forum_visibility = #{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]}
@@ -85,12 +75,11 @@ class Forum < ActiveRecord::Base
   has_many :user_topics, :class_name => 'Topic'
   #has_many :feature_topics, :class_name => 'Topic',:order => 'votes_count desc', :dependent => :delete_all
 
-  has_one  :recent_topic, :class_name => 'Topic', :order => 'sticky desc, replied_at desc'
-
   # this is used to see if a forum is "fresh"... we can't use topics because it puts
   # stickies first even if they are not the most recently modified
+
   has_many :recent_topics, :class_name => 'Topic', :order => 'sticky desc, replied_at DESC'
-  has_one  :recent_topic,  :class_name => 'Topic', :order => 'replied_at DESC'
+  has_one  :recent_topic, :class_name => 'Topic', :order => 'sticky desc, replied_at desc'
   has_many :posts,     :order => "#{Post.table_name}.created_at DESC", :dependent => :delete_all
   has_one  :recent_post, :order => "#{Post.table_name}.created_at DESC", :class_name => 'Post'
   has_many :customer_forums , :class_name => 'CustomerForum' , :dependent => :destroy
@@ -204,7 +193,7 @@ class Forum < ActiveRecord::Base
   def self.find_ordered(account, options = {})
     return where(account_id: account).order('position').all.to_a if options.blank?
 
-    Rails.logger.info "forum :: find_ordered :: #{options.inspect}" # PRE-RAILS4: Need to update find(:all) once options passed is changeable.
+    Rails.logger.info "forum :: find_ordered :: #{options.inspect}" # PRE-RAILS: Need to update find(:all) once options passed is changeable.
     find :all, options.update(:conditions => {:account_id => account}, :order => 'position')
   end
 

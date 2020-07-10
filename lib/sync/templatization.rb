@@ -172,7 +172,7 @@ class Sync::Templatization
     def load_yaml_from_hash(hash_id)
       return unless hash_id
       content = repo_client.lookup(hash_id).content
-      YAML.load(content) if content
+      Syck.load(content) if content
     end
 
     def begin_rescue

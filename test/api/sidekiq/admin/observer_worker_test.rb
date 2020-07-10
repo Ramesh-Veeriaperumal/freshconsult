@@ -71,6 +71,7 @@ module Admin
 
                 not_operator = operator.include?('not')
                 rule_value = generate_value(operator_type, field_name, false, operator)
+                rule_value = rule_value.first if field_name.to_sym.eql?(:to_email) && ['is','is_not'].include?(operator.to_s) && rule_value.is_a?(Array)
                 rule = Account.current.observer_rules.first
                 condition_data = { all: [ 
                   { evaluate_on: "ticket", 
@@ -105,6 +106,7 @@ module Admin
 
                 ticket = create_ticket
                 ticket_value = generate_value(operator_type, field_name, false) if ["greater_than", "less_than"].include?(operator)
+                rule_value = rule_value.to_a if field_name.to_sym.eql?(:to_email) && ['is'].include?(operator.to_s) && !rule_value.is_a?(Array)
                 ticket_value = not_operator ? generate_value(operator_type, field_name, true) : rule_value unless ticket_value
                 ticket_value = ticket_value.first if ticket_value.is_a?(Array) && operator == 'is_any_of'
                 ticket_params = generate_ticket_params(field_name, ticket_value)

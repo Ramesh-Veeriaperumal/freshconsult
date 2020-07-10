@@ -23,7 +23,7 @@ class AttachmentTest < ActiveSupport::TestCase
     attachment = ticket.attachments.first
     payload = attachment.central_publish_payload
     payload.except(:attachment_url).to_json.must_match_json_expression(central_publish_attachment_pattern(attachment))
-    assert_includes payload[:attachment_url], "https://s3.amazonaws.com/fd-testbed/data/helpdesk/attachments/test/#{attachment.id}/original/#{attachment.content_file_name}"
+    assert_includes payload[:attachment_url], "/fd-testbed/data/helpdesk/attachments/test/#{attachment.id}/original/#{attachment.content_file_name}"
   end
 
 end

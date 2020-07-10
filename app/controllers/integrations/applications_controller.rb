@@ -28,7 +28,7 @@ class Integrations::ApplicationsController < Admin::AdminController
     app_config = kv_store.get_key
     if app_config.blank?
       Rails.logger.debug "Refresh Access token as this is Edit ::#{params['id']}"
-      @installed_app = Integrations::InstalledApplication.find(:first, :include=>:application, :conditions => ["#{Integrations::Application.table_name}.name = ? and  #{Integrations::InstalledApplication.table_name}.account_id = ?",params['id'],current_account])
+      @installed_app = Integrations::InstalledApplication.includes(:application).where(["#{Integrations::Application.table_name}.name = ? and  #{Integrations::InstalledApplication.table_name}.account_id = ?", params['id'], current_account]).first
        #added for edit option as there won't be any redis store while editing.
       access_token = get_oauth2_access_token(@installed_app.application.oauth_provider, @installed_app.configs[:inputs]['refresh_token'],params['id']) 
       oauth_token= access_token.token

@@ -1,11 +1,11 @@
 module Import::Zen::Organization
 
  class CompanyProp < Import::FdSax
-   element :name
-   element :id, :as => :import_id
-   element :notes, :as => :note
-   element :details, :as => :description
-   element :default, :as => :domains
+   # element :name
+   # element :id, :as => :import_id
+   # element :notes, :as => :note
+   # element :details, :as => :description
+   # element :default, :as => :domains
  end
 
  def save_organization company_xml

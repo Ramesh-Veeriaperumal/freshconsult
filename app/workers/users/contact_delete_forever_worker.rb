@@ -136,7 +136,7 @@ class Users::ContactDeleteForeverWorker < BaseWorker
       find_in_batches_and_destroy(
         @user.tickets.preload(:notes => [
           :attachments, :inline_attachments, :cloud_files, :shared_attachments, 
-          :note_old_body, :user
+          :note_body, :user
         ])) do |ticket|
           if ticket.parent_ticket?
             child_tickets = @account.tickets.where(display_id: ticket.associates)

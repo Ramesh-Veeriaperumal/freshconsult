@@ -1,13 +1,13 @@
 development:
   :esv2_host: 'localhost:9200'
-  :queue_key: %{cluster}-etlqueue-dev
+  :queue_key: "%{cluster}-etlqueue-dev"
   :esv2_service_host: 'localhost:8080'
   :product_name: 'freshdesk'
   :auth_token: '5D22173692589C423223F06307A0BDCB'
 
 test:
   :esv2_host: 'localhost:9200'
-  :queue_key: %{cluster}-etlqueue-test
+  :queue_key: "%{cluster}-etlqueue-test"
   :esv2_service_host: 'localhost:8080'
   :product_name: 'freshdesk'
   :auth_token: '5D22173692589C423223F06307A0BDCB'

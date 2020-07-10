@@ -54,25 +54,20 @@ class Account < ActiveRecord::Base
   include Account::Setup
   include Account::BackgroundFixtures
 
-  scope :active_accounts,
-              :conditions => [" subscriptions.state != 'suspended' "],
-              :joins => [:subscription]
+  STATE_SCOPES = {
+    active: " subscriptions.state != 'suspended' ",
+    trial: " subscriptions.state = 'trial' ",
+    free: " subscriptions.state IN ('free','active') and subscriptions.amount = 0 ",
+    paid: " subscriptions.state = 'active' and subscriptions.amount > 0 "
+  }
 
-  scope :trial_accounts,
-              :conditions => [" subscriptions.state = 'trial' "],
-              :joins => [:subscription]
+  STATE_SCOPES.each do |name, condition|
+    scope :"#{name}_accounts", -> { where(condition).joins(:subscription) }
+  end
 
-  scope :free_accounts,
-              :conditions => [" subscriptions.state IN ('free','active') and subscriptions.amount = 0 "],
-              :joins => [:subscription]
+  scope :premium_accounts, -> { where(premium: true) }
+  scope :non_premium_accounts, -> { where(premium: false) }
 
-  scope :paid_accounts,
-              :conditions => [" subscriptions.state = 'active' and subscriptions.amount > 0 "],
-              :joins => [:subscription]
-
-  scope :premium_accounts, {:conditions => {:premium => true}}
-
-  scope :non_premium_accounts, {:conditions => {:premium => false}}
   # Alias so that any dynamic reference to full_time_agents won't fail.
   alias :full_time_agents :full_time_support_agents
 
@@ -283,7 +278,7 @@ class Account < ActiveRecord::Base
 
     def fetch_all_active_accounts
       results = Sharding.run_on_all_shards do
-        Account.find(:all,:joins => :subscription, :conditions => "subscriptions.next_renewal_at > now()")
+        Account.joins(:subscription).where('subscriptions.next_renewal_at > now()')
       end
     end
 
@@ -972,7 +967,7 @@ class Account < ActiveRecord::Base
     key = format(SITEMAP_OUTDATED, account_id: id)
     remove_portal_redis_key(key)
     portals.map(&:clear_sitemap_cache)
-    AwsWrapper::S3Object.find_with_prefix(S3_CONFIG[:bucket], "sitemap/#{id}/").map(&:delete)
+    AwsWrapper::S3.find_with_prefix(S3_CONFIG[:bucket], "sitemap/#{id}/").map(&:delete)
     Rails.logger.info ":::::: Sitemap is deleted (redis, cache & S3) for account #{id} ::::::"
   end
 
@@ -1142,10 +1137,6 @@ class Account < ActiveRecord::Base
     end
 
     def generate_download_url(file_path)
-      if AwsWrapper::S3Object.exists?(file_path, S3_CONFIG[:bucket])
-        AwsWrapper::S3Object.url_for(file_path, S3_CONFIG[:bucket],
-                                      expires: FILE_DOWNLOAD_URL_EXPIRY_TIME,
-                                      secure: true)
-      end
+      AwsWrapper::S3.presigned_url(S3_CONFIG[:bucket], file_path, expires_in: FILE_DOWNLOAD_URL_EXPIRY_TIME.to_i, secure: true) if AwsWrapper::S3.exists?(S3_CONFIG[:bucket], file_path)
     end
 end

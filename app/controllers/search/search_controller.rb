@@ -11,10 +11,10 @@ class Search::SearchController < ApplicationController
 	before_filter :initialize_search_parameters
 
 	INCLUDE_ASSOCIATIONS_BY_CLASS = {
-				Helpdesk::Note => { :include => [ :note_old_body, {:notable => [:ticket_status, :ticket_states, 
+				Helpdesk::Note => { :include => [ :note_body, {:notable => [:ticket_status, :ticket_states, 
 															:responder, :group, {:requester => :avatar} ] } ] },
 				Helpdesk::Ticket => { :include => [{:flexifield => :flexifield_def}, {:requester => :avatar}, 
-												:ticket_states, :ticket_old_body, :ticket_status, :responder, :group]},
+												:ticket_states, :ticket_body, :ticket_status, :responder, :group]},
 				Topic => { :include => [ {:forum => :forum_category}, :user] },
 				Solution::Article => { :include => [ :user,  :recent_author, :solution_article_meta, {:solution_folder_meta => :solution_category_meta}, :article_body ] },
 				User => { :include => [:avatar, :companies]}, Customer => {}

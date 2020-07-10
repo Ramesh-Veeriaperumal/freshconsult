@@ -36,7 +36,7 @@ class ResetResponderTest < ActionView::TestCase
     ticket_ids = []
     rand(1..10).times { ticket_ids << create_ticket(requester_id: @user.id, responder_id: agent.id).id }
     Helpdesk::ResetResponder.new.perform(user_id: agent.id, reason: { delete_agent: agent.id })
-    @account.tickets.find_all_by_id(ticket_ids).each do |tkt|
+    @account.tickets.where(id: ticket_ids).each do |tkt|
       assert tkt.responder.nil?
     end
   end
@@ -62,7 +62,7 @@ class ResetResponderTest < ActionView::TestCase
     10.times { ticket_ids << create_ticket({ requester_id: @user.id, responder_id: agent.id }, group).id }
     ::OmniChannelRouting::TaskSync.jobs.clear
     Helpdesk::ResetResponder.new.perform(user_id: agent.id, reason: { delete_agent: agent.id })
-    @account.tickets.find_all_by_id(ticket_ids).each do |tkt|
+    @account.tickets.where(id: ticket_ids).each do |tkt|
       assert tkt.responder.nil?
     end
     assert_equal 0, ::OmniChannelRouting::TaskSync.jobs.size
@@ -78,7 +78,7 @@ class ResetResponderTest < ActionView::TestCase
     10.times { ticket_ids << create_ticket({ requester_id: @user.id, responder_id: agent.id }, group).id }
     ::OmniChannelRouting::TaskSync.jobs.clear
     Helpdesk::ResetResponder.new.perform(user_id: agent.id, reason: { delete_agent: agent.id })
-    @account.tickets.find_all_by_id(ticket_ids).each do |tkt|
+    @account.tickets.where(id: ticket_ids).each do |tkt|
       assert tkt.responder.nil?
     end
     assert_equal 10, ::OmniChannelRouting::TaskSync.jobs.size
@@ -93,7 +93,7 @@ class ResetResponderTest < ActionView::TestCase
     ticket_ids = []
     rand(1..10).times { ticket_ids << create_ticket(internal_agent_id: internal_agent.id).id }
     Helpdesk::ResetResponder.new.perform(user_id: internal_agent.id, reason: { delete_agent: internal_agent.id })
-    @account.tickets.find_all_by_id(ticket_ids).each do |tkt|
+    @account.tickets.where(id: ticket_ids).each do |tkt|
       assert tkt.internal_agent_id.nil?
     end
   ensure
@@ -107,7 +107,7 @@ class ResetResponderTest < ActionView::TestCase
     ticket_ids = []
     rand(1..10).times { ticket_ids << create_ticket({ requester_id: @user.id, responder_id: agent.id }, group).id }
     Helpdesk::ResetResponder.new.perform(user_id: agent.id, reason: { delete_agent: agent.id })
-    @account.tickets.find_all_by_id(ticket_ids).each do |tkt|
+    @account.tickets.where(id: ticket_ids).each do |tkt|
       assert tkt.responder.nil?
     end
   ensure
@@ -120,7 +120,7 @@ class ResetResponderTest < ActionView::TestCase
       ticket_ids = []
       rand(1..10).times { ticket_ids << create_ticket(requester_id: @user.id, responder_id: agent.id).id }
       Helpdesk::ResetResponder.new.perform(user_id: agent.id, reason: { delete_agent: agent.id })
-      @account.tickets.find_all_by_id(ticket_ids).each do |tkt|
+      @account.tickets.where(id: ticket_ids).each do |tkt|
         assert tkt.responder.nil?
       end
     end

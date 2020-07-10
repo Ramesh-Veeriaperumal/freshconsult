@@ -29,11 +29,7 @@ class HelpWidget::UploadConfig < BaseWorker
     end
 
     def upload_json
-      AwsWrapper::S3Object.store(
-          widget_path, 
-          widget_json, 
-          S3_CONFIG[:help_widget_bucket],
-          S3_UPLOAD_OPTIONS)
+      AwsWrapper::S3.put(S3_CONFIG[:help_widget_bucket], widget_path, widget_json, S3_UPLOAD_OPTIONS.merge(server_side_encryption: 'AES256'))
       create_zero_byte_file
     rescue => e
       log_error("Upload Error", e)
@@ -43,16 +39,12 @@ class HelpWidget::UploadConfig < BaseWorker
     def create_zero_byte_file
       upload_options = S3_UPLOAD_OPTIONS.clone
       upload_options.merge!({:website_redirect_location => HelpWidget::BOOTSTRAP_REDIRECTION_PATH})
-      AwsWrapper::S3Object.store(
-          zero_byte_file_path,
-          '',
-          S3_CONFIG[:help_widget_bucket],
-          upload_options)
+      AwsWrapper::S3.put(S3_CONFIG[:help_widget_bucket], zero_byte_file_path, '', upload_options.merge(server_side_encryption: 'AES256'))
     end
 
     def delete_json
-      AwsWrapper::S3Object.delete(widget_path, S3_CONFIG[:help_widget_bucket])
-      AwsWrapper::S3Object.delete(zero_byte_file_path, S3_CONFIG[:help_widget_bucket])
+      AwsWrapper::S3.delete(S3_CONFIG[:help_widget_bucket], widget_path)
+      AwsWrapper::S3.delete(S3_CONFIG[:help_widget_bucket], zero_byte_file_path)
     end
 
     def widget_json

@@ -10,7 +10,7 @@ class Ecommerce::Account < ActiveRecord::Base
   belongs_to :group
   after_commit :clear_cache
 
-  scope :reauth_required, -> { where(:reauth_required => true) }
+  scope :reauth_required, -> { where(reauth_required: true) }
 
   STATUS_TYPES = [
   	[:inactive, "inactive", 1],

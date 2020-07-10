@@ -10,7 +10,7 @@ class Admin::CustomTranslationsController < ApiApplicationController
   def upload
     translation_file = cname_params['translation_file']
     translation_file = translation_file.is_a?(StringIO) ? translation_file : translation_file.tempfile
-    tf_hash = YAML.safe_load(translation_file)
+    tf_hash = Psych.safe_load(translation_file)
 
     delegator_params = params_hash.merge(uploaded_hash: tf_hash)
     custom_translation_delegator = Admin::CustomTranslationDelegator.new(delegator_params)
@@ -168,7 +168,7 @@ class Admin::CustomTranslationsController < ApiApplicationController
 
     def respond_with_yaml(translation)
       response.headers['Content-Disposition'] = "attachment; filename=#{@language}.yml"
-      render text: translation.psych_to_yaml, content_type: 'text/yaml'
+      render text: YAML.dump(translation), content_type: 'text/yaml'
     end
 
     wrap_parameters(*WRAP_PARAMS)

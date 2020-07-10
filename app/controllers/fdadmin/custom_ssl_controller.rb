@@ -8,7 +8,7 @@ class Fdadmin::CustomSslController < Fdadmin::DevopsMainController
 
 	def index
 		portal_record = []
-		portals = Sharding.run_on_all_slaves { Portal.find(:all, :conditions => ["elb_dns_name is not null"]) }
+		portals = Sharding.run_on_all_slaves { Portal.where(["elb_dns_name is not null"]) }
 		portals.each do |port_record|
 			portal_record << {
 												:portal_name => port_record.name,

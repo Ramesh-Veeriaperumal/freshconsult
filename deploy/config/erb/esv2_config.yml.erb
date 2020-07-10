@@ -2,13 +2,13 @@
 <%= node[:opsworks][:environment] %>:
   <% queue_suffix = node[:ymls][:shoryuken][:falcon][:cluster_etlqueue][:sqs_queue].split("-") %>
   <% queue_suffix.any? {|q_n| q_n.gsub!(q_n,"%{cluster}") if q_n.include?("cluster")} %>
-  :queue_key: <%= "#{queue_suffix.join("-")}" %>
-  :product_name: <%= config[:product_name] %>
-  :auth_token: <%= config[:service_auth_token] %>
+  :queue_key: "<%= "#{queue_suffix.join("-")}" %>"
+  :product_name: "<%= config[:product_name] %>"
+  :auth_token: "<%= config[:service_auth_token] %>"
 <% if @envoy_egress_allowed && config[:envoy_egress] %>
-  :esv2_host: <%= config[:envoy_egress][:v2_host_address] %>:<%= config[:envoy_egress][:v2_host_port] %>
-  :esv2_service_host: <%= config[:envoy_egress][:search_service_address] %>:<%= config[:envoy_egress][:search_service_port] %>
+  :esv2_host: "<%= config[:envoy_egress][:v2_host_address] %>:<%= config[:envoy_egress][:v2_host_port] %>"
+  :esv2_service_host: "<%= config[:envoy_egress][:search_service_address] %>:<%= config[:envoy_egress][:search_service_port] %>"
 <% else %>
-  :esv2_host: <%= config[:host_name] %>
-  :esv2_service_host: <%= config[:search_service] %>
+  :esv2_host: "<%= config[:host_name] %>"
+  :esv2_service_host: "<%= config[:search_service] %>"
 <% end %>

@@ -30,7 +30,7 @@ class Wf::Filter < ActiveRecord::Base
   TEXT_DELIMITER = ','.freeze
 
   self.table_name =  :wf_filters
-  serialize   :data
+  serialize  :data, Hash
   after_find :set_error
   after_create :set_error
   before_save :set_data_and_type
@@ -836,7 +836,7 @@ class Wf::Filter < ActiveRecord::Base
   def results #overriden in the filters/custom_ticket_filter
     @results ||= begin
       handle_empty_filter! 
-      recs = model_class.paginate(:order => order_clause, :page => page, :per_page => per_page, :conditions => sql_conditions, :joins => joins)
+      recs = model_class.order(order_clause).where(sql_conditions).joins(joins).paginate(page: page, per_page: per_page)
       recs.wf_filter = self
       recs
     end
@@ -844,7 +844,7 @@ class Wf::Filter < ActiveRecord::Base
   
   # sums up the column for the given conditions
   def sum(column_name)
-    model_class.sum(column_name, :conditions => sql_conditions)
+    model_class.where(sql_conditions).sum(column_name)
   end
   
 end

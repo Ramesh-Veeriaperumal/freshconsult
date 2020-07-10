@@ -102,32 +102,31 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   NON_TEXT_FIELDS = ["custom_text", "custom_paragraph"]
 
 
-  scope :permissible , lambda { |user| { :conditions => permissible_condition(user)} unless user.customer? }
-  scope :requester_active, lambda { |user| { :conditions => [ "requester_id=? ",
-    user.id ], :order => 'created_at DESC' } }
-  scope :newest, lambda { |num| { :limit => num, :order => 'created_at DESC' } }
-  scope :all_company_tickets,lambda { |company_id| { 
-        :conditions => [" owner_id = ?",company_id]
-    } 
+  scope :permissible , ->(user) { where(permissible_condition(user)) unless user.customer? }
+  scope :requester_active, ->(user){ where("requester_id=?", user.id).order('created_at DESC') }
+
+  scope :newest, ->(num){ order('created_at DESC').limit(num) }
+
+  scope :all_company_tickets, ->(company_id){
+    where(owner_id: company_id)
   }
-  scope :all_user_tickets, lambda { |user_id| { 
-    :conditions => [ "requester_id=? ", user_id ]
-    }
-  }
-  scope :contractor_tickets, lambda { |user_id, company_ids, operator|
+  scope :all_user_tickets, ->(user_id) { where(requester_id: user_id) }
+
+  scope :contractor_tickets, ->(user_id, company_ids, operator){
     if user_id.present?
-      self.where("archive_tickets.requester_id = ? #{operator} archive_tickets.owner_id in (?)", 
+      where("archive_tickets.requester_id = ? #{operator} archive_tickets.owner_id in (?)", 
                   user_id, company_ids)
     else
-      self.where("archive_tickets.owner_id in (?)", company_ids)
+      where("archive_tickets.owner_id in (?)", company_ids)
     end
   }
-  scope :created_at_inside, lambda { |start, stop| { :conditions =>
-    [" archive_tickets.created_at >= ? and archive_tickets.created_at <= ?", start, stop] }
+
+  scope :created_at_inside, ->(start, stop) {
+    where("archive_tickets.created_at >= ? and archive_tickets.created_at <= ?", start, stop)
   }
   # do we need this
   # validates_uniqueness_of :display_id, :scope => :account_id
-  default_scope where(:progress => false)
+  default_scope ->{ where(progress: false) }
 
   def all_attachments
     @all_attachments ||= begin
@@ -223,7 +222,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
 
   def conversation(page = nil, no_of_records = 5, includes=[])
     includes = note_preload_options if includes.blank?
-    archive_notes.conversations.newest_first.paginate(:page => page, :per_page => no_of_records, :include => includes)
+    archive_notes.conversations.newest_first.preload(includes).paginate(page: page, per_page: no_of_records)
   end
 
   def conversation_since(since_id)
@@ -254,7 +253,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   alias :cc_email :cc_email_hash
   
   def ticket_cc
-    cc_email.nil? ? [] : (cc_email[:tkt_cc] || cc_email[:cc_emails])
+    cc_email.blank? ? [] : (cc_email[:tkt_cc] || cc_email[:cc_emails])
   end
 
   def helpdesk_tickets_association

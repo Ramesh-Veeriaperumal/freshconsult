@@ -991,7 +991,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
   def test_toggle_on_timer_with_other_timer_on
     timer_on = @account.time_sheets.where(timer_running: true).first
     timer_off = @account.time_sheets.where(timer_running: false).first
-    Helpdesk::TimeSheet.update_all("user_id = #{@agent.id}", id: [timer_on.id, timer_off.id])
+    Helpdesk::TimeSheet.where(id: [timer_on.id, timer_off.id]).update_all("user_id = #{@agent.id}")
     put :toggle_timer, construct_params({ id: timer_off.id }, {})
     assert_response 200
     refute timer_on.reload.timer_running
