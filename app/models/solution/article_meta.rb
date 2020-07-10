@@ -87,6 +87,7 @@ class Solution::ArticleMeta < ActiveRecord::Base
 
 	alias_method :children, :solution_articles
 
+
 	scope :published, -> { 
 					joins(:current_article).
 					where(["`solution_articles`.status = ?", STATUS_KEYS_BY_TOKEN[:published]])
@@ -112,7 +113,13 @@ class Solution::ArticleMeta < ActiveRecord::Base
 							]).
 					joins(:solution_folder_meta)
 				}
-
+  
+  scope :for_portal_user, ->(portal, user) {
+			where([" solution_folder_meta.solution_category_meta_id in (?) AND #{Solution::FolderMeta.visibility_condition(user)}", 
+								portal.portal_solution_categories.pluck(:solution_category_meta_id)])
+			.joins(:solution_folder_meta)
+	}
+  
   scope :for_help_widget, ->(help_widget, user) {
     where([" solution_folder_meta.solution_category_meta_id in (?) AND #{Solution::FolderMeta.visibility_condition(user)}",
                    help_widget.help_widget_solution_categories.pluck(:solution_category_meta_id)])

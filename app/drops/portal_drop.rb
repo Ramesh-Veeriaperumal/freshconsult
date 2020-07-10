@@ -251,7 +251,9 @@ class PortalDrop < BaseDrop
 	end
 
   def recent_articles
-    @recent_articles ||= source.account.solution_article_meta.for_portal(source).published.newest(10)
+    @recent_articles ||= portal_user ? 
+      source.account.solution_article_meta.for_portal_user(source, portal_user).published.newest(10) 
+      : source.account.solution_article_meta.for_portal(source).published.newest(10)
   end
 
   def url_options
