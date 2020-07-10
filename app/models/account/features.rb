@@ -44,7 +44,7 @@ class Account < ActiveRecord::Base
     :jira_onpremise_reporter, :support_ticket_rate_limit, :sidekiq_logs_to_central, :portal_central_publish, :encode_emoji_in_solutions,
     :forums_agent_portal, :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html,
     :remove_image_attachment_meta_data, :automated_private_notes_notification,
-    :sane_restricted_helpdesk, :hiding_confidential_logs, :ticket_list_performance, :sla_policy_revamp, :help_widget_log, :freshdesk_freshsales_bundle,
+    :sane_restricted_helpdesk, :hiding_confidential_logs, :sla_policy_revamp, :help_widget_log, :freshdesk_freshsales_bundle,
     :fsm_for_garden_plan, :fsm_for_blossom_plan, :requester_widget_timeline,
     :out_of_office, :enable_secure_login_check, :public_api_filter_factory, :marketplace_gallery, :solutions_quick_view,
     :translations_proxy, :translations_cdn, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :retry_emails, :disable_beamer, :fb_message_echo_support, :portal_prototype_update,
