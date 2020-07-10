@@ -1,6 +1,5 @@
 module CentralPublish
   class ResyncWorker < BaseWorker
-    include CentralReSyncConstants
     include CentralLib::CentralReSync
 
     sidekiq_options queue: :central_publish_resync, retry: 0, failures: :exhausted
