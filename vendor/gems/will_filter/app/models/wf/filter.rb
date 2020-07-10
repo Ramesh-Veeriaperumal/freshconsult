@@ -31,7 +31,7 @@ class Wf::Filter < ActiveRecord::Base
   before_save :set_data_and_type
   
   self.table_name =  :wf_filters
-  serialize :data
+  serialize :data, Hash
   
   #############################################################################
   # Basics 
@@ -647,7 +647,7 @@ class Wf::Filter < ActiveRecord::Base
         end
       end
 
-      user_filters = Wf::Filter.find(:all, :conditions => conditions)
+      user_filters = Wf::Filter.where(conditions).to_a
       
       if user_filters.size > 0
         filters << ["-- Select Saved Filter --", "-2"] if include_default
@@ -766,7 +766,7 @@ class Wf::Filter < ActiveRecord::Base
   def results
     @results ||= begin
       handle_empty_filter! 
-      recs = model_class.paginate(:order => order_clause, :page => page, :per_page => per_page, :conditions => sql_conditions, :joins => joins)
+      recs = model_class.where(sql_conditions).joins(joins).order(order_clause).paginate(:page => page, :per_page => per_page)
       recs.wf_filter = self
       recs
     end
@@ -774,7 +774,7 @@ class Wf::Filter < ActiveRecord::Base
   
   # sums up the column for the given conditions
   def sum(column_name)
-    model_class.sum(column_name, :conditions => sql_conditions)
+    model_class.where(sql_conditions).sum(column_name)
   end
   
 end

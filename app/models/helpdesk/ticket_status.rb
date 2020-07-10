@@ -43,7 +43,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
 
   publishable on: [:create, :update]
   
-  scope :visible, :conditions => {:deleted => false}
+  scope :visible, -> { where(deleted: false) }
 
   acts_as_list :scope => :account
   

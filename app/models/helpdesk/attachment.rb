@@ -62,13 +62,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
   # TODO - please remove this. Refer https://github.com/thoughtbot/paperclip#security-validations
   do_not_validate_attachment_file_type :content
 
-   scope :gallery_images,
-    {
-      :conditions => ['description = ? and attachable_type = ?',
-      'public', 'Image Upload'],
-      :order => "created_at DESC",
-      :limit => 20
-    }
+  scope :gallery_images, -> { where(description: 'public', attachable_type: 'Image Upload').order('created_at DESC').limit(20) }
+
 
     scope :permissible_drafts, lambda {|user|
       where("attachable_type = ? AND attachable_id = ? ", 'UserDraft', user.id)
@@ -78,7 +73,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     before_post_process :image?, :valid_image?
     before_create :set_content_type
     after_commit :clear_user_avatar_cache, if: :user_attachment?
-  after_commit :remove_image_meta_data, if: [:image?, :image_with_exif?, :remove_image_meta_data_feature_enabled?]
+    after_commit :remove_image_meta_data, if: [:image?, :image_with_exif?, :remove_image_meta_data_feature_enabled?]
     before_save :set_account_id
     validate :virus_in_attachment?, if: :attachment_virus_detection_enabled?
 
@@ -175,8 +170,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def authenticated_s3_get_url(options={})
-    options.reverse_merge! :expires => 5.minutes,:s3_host_alias => S3_CONFIG[:bucket], :secure => true
-    AwsWrapper::S3Object.url_for content.path, content.bucket_name , options
+    options.reverse_merge!(expires_in: 5.minutes.to_i, secure: true) # PRE-RAILS: s3_host_alias is provided in V1 url_for doc, need to check s3_host_alias: S3_CONFIG[:bucket]. Also when object is stored with server_side_encrypted, it will be automatically encyrypted for presigned_url.
+    AwsWrapper::S3.presigned_url(content.bucket_name, content.path, options)
   end
 
   def image?
@@ -229,8 +224,9 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def attachment_url_for_api(secure = true, type = :original, expires = 1.day)
-    expiry_secure_data = { expires: expires, secure: secure }
-    AwsWrapper::S3Object.url_for(content.path(valid_size_type(type)), content.bucket_name, expiry_secure_data)
+    expiry_secure_data = { secure: secure }
+    expiry_secure_data.merge!(expires_in: expires.to_i) if expires.present?
+    AwsWrapper::S3.presigned_url(content.bucket_name, content.path(valid_size_type(type)), expiry_secure_data)
   end
 
   def attachment_cdn_url_for_api(secure = true, type = :original, expires = 1.day)
@@ -238,8 +234,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
     AwsWrapper::CloudFront.url_for(content.path(valid_size_type(type)), options)
   end
 
-  def attachment_url_for_export(secure = true, type = :original, expires = 7.days.to_i)
-    attachment_url_for_api(secure, type, expires)
+  def attachment_url_for_export(secure = true, type = :original, expires = 7.days)
+    attachment_url_for_api(secure, type, expires.to_i)
   end
 
   def as_json(options = {})
@@ -262,9 +258,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def expiring_url(style = "original",expiry = 300)
-    AwsWrapper::S3Object.url_for(content.path(style.to_sym),content.bucket_name,
-                                          :expires => expiry.to_i.seconds,
-                                          :secure => true)
+    AwsWrapper::S3.presigned_url(content.bucket_name, content.path(style.to_sym), expires_in: expiry.to_i, secure: true)
   end
 
   def to_liquid

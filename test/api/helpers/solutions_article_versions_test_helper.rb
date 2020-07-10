@@ -216,10 +216,10 @@ module SolutionsArticleVersionsTestHelper
   end
 
   def stub_version_content(content = '{"title": "title", "description":"description"}')
-    AwsWrapper::S3Object.stubs(:read).returns(content)
+    AwsWrapper::S3.stubs(:read).returns(content)
     yield
   ensure
-    AwsWrapper::S3Object.unstub(:read)
+    AwsWrapper::S3.unstub(:read)
   end
 
   def attachment_size_validation_error_pattern(cumulative_size)

@@ -26,11 +26,11 @@ class AdminEmail::AssociatedAccounts < Dynamo
     rescue Exception => e
       fetch_from_db email
     else
-      return [] if response.count == 0
+      return [] if response.item.nil? # PRE-RAILS: V1 returns Hash, v2 return response Seahorse::Client::Response. Fails if there is no result.
 
       # As dynamodb query returns result in List format(AWS::Core::Data::List),
       # converting the response into array.
-      associated_accounts_dump = response.item["accounts"][:ss].to_a
+      associated_accounts_dump = response.item["accounts"].to_a
       associated_accounts_list = associated_accounts_dump.collect { | res_str | self.new(res_str) }
 
       return associated_accounts_list if raw
@@ -81,9 +81,7 @@ class AdminEmail::AssociatedAccounts < Dynamo
     CLIENT.update_item(query_hash(email).merge({
       attribute_updates: {
         "accounts" => {
-          value: {
-            "SS" => ["#{account_id},#{time_stamp}"]
-          },
+          value: Set.new(["#{account_id},#{time_stamp}"]),
           action: DYNAMO_ACTIONS[:add]
         }
       }
@@ -94,9 +92,7 @@ class AdminEmail::AssociatedAccounts < Dynamo
     CLIENT.update_item(query_hash(email).merge({
       attribute_updates: {
         "accounts" => {
-          value: {
-            "SS" => ["#{account_id},#{time_stamp}"]
-          },
+          value: Set.new(["#{account_id},#{time_stamp}"]),
           action: "DELETE"
         }
       }
@@ -108,9 +104,7 @@ class AdminEmail::AssociatedAccounts < Dynamo
       {
         table_name: table_name,
         key: {
-          "email" => {
-            "S" => email
-          }
+          "email" => Dynamo.convert(s: email.to_s)
         }
       }
     end

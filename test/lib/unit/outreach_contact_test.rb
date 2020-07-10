@@ -89,15 +89,15 @@ class OutreachContactTest < ActionView::TestCase
     end
 
     def setup_stubs
-      AwsWrapper::S3Object.stubs(:find).returns(fixture_file_upload('files/contacts_import.csv'))
-      AwsWrapper::S3Object.stubs(:delete).returns([])
+      AwsWrapper::S3.stubs(:read_io).returns(fixture_file_upload('files/contacts_import.csv'))
+      AwsWrapper::S3.stubs(:delete).returns([])
       Import::Customers::OutreachContact.any_instance.stubs(:notify_mailer).returns(nil)
       Import::Customers::OutreachContact.any_instance.stubs(:enable_user_activation).returns(nil)
     end
 
     def clear_stubs
-      AwsWrapper::S3Object.unstub(:delete)
-      AwsWrapper::S3Object.unstub(:find)
+      AwsWrapper::S3.unstub(:delete)
+      AwsWrapper::S3.unstub(:find)
     end
 
     def check_assert(ids_count, expected_count)

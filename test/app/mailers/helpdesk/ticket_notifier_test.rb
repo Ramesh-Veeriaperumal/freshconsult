@@ -68,14 +68,14 @@ class TicketNotifierTest < ActionMailer::TestCase
       include_surveymonkey_link: false
     }
     from_email = Faker::Internet.email
-    to_email = Faker::Internet.email
+    to_email = [Faker::Internet.email]
     note.schema_less_note.to_emails = to_email
     note.schema_less_note.from_email = from_email
     note.schema_less_note.save
     @account.add_feature(:private_inline)
     @account.stubs(:secure_attachments_enabled?).returns(true)
     mail_message = Helpdesk::TicketNotifier.reply(ticket, note, options)
-    assert_equal mail_message.to.first, to_email
+    assert_equal mail_message.to.first, to_email.first
     html_part = mail_message.html_part ? mail_message.html_part.body.decoded : nil
     if html_part.present?
       attachment_url = note.attachments.first.inline_url
@@ -140,14 +140,14 @@ class TicketNotifierTest < ActionMailer::TestCase
     num_of_files = 3
     note = create_note_with_multiple_attachments(num_of_files: num_of_files, ticket_id: ticket.id, user_id: agent.id)
     from_email = Faker::Internet.email
-    to_email = Faker::Internet.email
+    to_email = [Faker::Internet.email]
     note.schema_less_note.to_emails = to_email
     note.schema_less_note.from_email = from_email
     note.schema_less_note.save
     @account.add_feature(:private_inline)
     @account.stubs(:secure_attachments_enabled?).returns(true)
     mail_message = Helpdesk::TicketNotifier.deliver_reply_to_forward(ticket, note)
-    assert_equal mail_message.to.first, to_email
+    assert_equal mail_message.to.first, to_email.first
     html_part = mail_message.html_part ? mail_message.html_part.body.decoded : nil
     if html_part.present?
       attachment_url = note.attachments.first.inline_url
@@ -241,13 +241,13 @@ class TicketNotifierTest < ActionMailer::TestCase
       include_surveymonkey_link: false
     }
     from_email = Faker::Internet.email
-    to_email = Faker::Internet.email
+    to_email = [Faker::Internet.email]
     note.schema_less_note.to_emails = to_email
     note.schema_less_note.from_email = from_email
     note.schema_less_note.save
     Mail::Message.any_instance.expects(:deliver!).once
     mail_message = Helpdesk::TicketNotifier.reply(ticket, note, options)
-    assert_equal mail_message.to.first, to_email
+    assert_equal mail_message.to.first, to_email.first
   ensure
     Account.current.rollback(:retry_emails)
   end
@@ -281,13 +281,13 @@ class TicketNotifierTest < ActionMailer::TestCase
     ticket = create_ticket(responder_id: agent.id)
     note = create_note
     from_email = Faker::Internet.email
-    to_email = Faker::Internet.email
+    to_email = [Faker::Internet.email]
     note.schema_less_note.to_emails = to_email
     note.schema_less_note.from_email = from_email
     note.schema_less_note.save
     Mail::Message.any_instance.expects(:deliver!).once
     mail_message = Helpdesk::TicketNotifier.deliver_reply_to_forward(ticket, note)
-    assert_equal mail_message.to.first, to_email
+    assert_equal mail_message.to.first, to_email.first
   ensure
     Account.current.rollback(:retry_emails)
   end

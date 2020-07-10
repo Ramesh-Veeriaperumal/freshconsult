@@ -8,8 +8,8 @@ class Helpdesk::QnaInsight < ActiveRecord::Base
 
   attr_protected :account_id, :user_id
 
-  serialize :insights_config_data
-  serialize :recent_questions
+  serialize :insights_config_data, Hash
+  serialize :recent_questions, Hash
 
   # for exsting
   #   remove the older one if size is more

@@ -9,7 +9,7 @@
 "^/agents/.*": "/a/admin/"
 "^/support.*": "/a/"
 <% if node[:opsworks][:instance][:layers].any? && !node[:opsworks][:instance][:layers].include?("hk-app-freshfone-twilio") %>
-"^/contacts/\d+/.+": "/a/contacts/" 
-"^/companies/\d+/.+": "/a/companies/"
-"^/groups/\d+/.+": "/a/admin/"
+"^/contacts/[0-9]+/.+": "/a/contacts/" 
+"^/companies/[0-9]+/.+": "/a/companies/"
+"^/groups/[0-9]+/.+": "/a/admin/"
 <%end%>

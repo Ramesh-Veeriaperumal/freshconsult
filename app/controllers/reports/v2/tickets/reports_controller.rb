@@ -76,7 +76,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
 
     if generate_data_exports_id
       status_code = :ok
-      $sqs_reports_service_export.send_message(@export_query_params.to_json)
+      AwsWrapper::SqsV2.send_message(SQS[:reports_service_export_queue], @export_query_params.to_json)
     else
       status_code = :unprocessable_entity
     end
@@ -114,7 +114,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
 
   def download_file
     path = "data/helpdesk/#{params[:report_export]}/#{params[:type]}/#{Rails.env}/#{current_user.id}/#{params[:date]}/#{params[:file_name]}.#{params[:format]}"
-    redir_url = AwsWrapper::S3Object.url_for(path,S3_CONFIG[:bucket], :expires => 300.seconds, :secure => true)
+    redir_url = AwsWrapper::S3.presigned_url(S3_CONFIG[:bucket], path, expires_in: 5.minutes.to_i, secure: true)
     redirect_to redir_url
   end
   ############## QnA and Insights Metric Start ########################

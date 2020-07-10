@@ -6,6 +6,8 @@ module CronWebhooks
       facebook_realtime_queue: 50
     }.freeze
 
+    AVAILABLE_MESSAGE = 'ApproximateNumberOfMessages'.freeze
+
     def perform(args)
       perform_block(args) do
         queue_name = @args[:queue_name]
@@ -19,8 +21,9 @@ module CronWebhooks
         raise 'Queue name missing' unless queue_name
 
         queue_name_mapping = SQS[queue_name.to_sym]
-        sqs = AWS::SQS.new.queues.named(queue_name_mapping)
-        msgs_in_queue = sqs.approximate_number_of_messages if sqs
+
+        sqs = AwsWrapper::SqsV2.get_queue_attributes(queue_name_mapping, [AVAILABLE_MESSAGE])
+        msgs_in_queue = sqs.attributes[AVAILABLE_MESSAGE].to_i if sqs
         params = {
           queue_name: queue_name_mapping,
           msgs_in_queue: msgs_in_queue

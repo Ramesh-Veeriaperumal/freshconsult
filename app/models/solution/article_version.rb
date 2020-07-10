@@ -22,7 +22,7 @@ class Solution::ArticleVersion < ActiveRecord::Base
              class_name: 'Solution::Article',
              inverse_of: :solution_article_versions
 
-  scope :latest, order: 'created_at DESC, version_no DESC'
+  scope :latest, ->{ order('created_at DESC, version_no DESC') }
 
   COMMON_ATTRIBUTES = %w[title description].freeze
 
@@ -40,7 +40,7 @@ class Solution::ArticleVersion < ActiveRecord::Base
       @content = if new_record? || upsert_s3
                    {}
                  else
-                   JSON.parse(AwsWrapper::S3Object.read(Solution::ArticleVersion.content_path(article_id, id), Solution::ArticleVersion.s3_bucket)).with_indifferent_access
+                   JSON.parse(AwsWrapper::S3.read(Solution::ArticleVersion.s3_bucket, Solution::ArticleVersion.content_path(article_id, id))).with_indifferent_access
                  end
     end
     @content

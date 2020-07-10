@@ -1,7 +1,7 @@
 class HyperTrail::DataTransformer::SurveyResultDataTransformer < HyperTrail::DataTransformer::ActivityDataTransformer
   ACTIVITY_TYPE = 'survey'.freeze
   UNIQUE_ID = 'id'.freeze
-  PRELOAD_OPTIONS = [:surveyable, survey_remark: { feedback: { note_old_body: {} } }, survey: { survey_questions: :custom_field_choices }, survey_result_data: { custom_form: {} }].freeze
+  PRELOAD_OPTIONS = [:surveyable, survey_remark: { feedback: { note_body: {} } }, survey: { survey_questions: :custom_field_choices }, survey_result_data: { custom_form: {} }].freeze
 
   def activity_type
     ACTIVITY_TYPE

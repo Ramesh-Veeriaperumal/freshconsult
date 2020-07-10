@@ -18,13 +18,11 @@ class SQSPost < ActiveRecord::Base
 
 	belongs_to :account
 
-	SQS_CLIENT = $sqs_forum_moderation
-
 	def save(validate = true)
 		begin
 			if valid?
 				set_default_values
-				SQS_CLIENT.send_message(self.to_json)
+                AwsWrapper::SqsV2.send_message(SQS[:forums_moderation_queue], self.to_json)
 				return true
 			end
 		rescue Exception => e

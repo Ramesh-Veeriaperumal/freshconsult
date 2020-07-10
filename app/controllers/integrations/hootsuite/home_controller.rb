@@ -120,7 +120,7 @@ class Integrations::Hootsuite::HomeController < Integrations::Hootsuite::Hootsui
     else
       page_size = 30
       Search::EsIndexDefinition.es_cluster(current_account.id)
-      items = Tire.search Search::EsIndexDefinition.searchable_aliases([Helpdesk::Ticket], current_account.id),{:load => {Helpdesk::Ticket => { :include => [{:requester => :avatar}, :ticket_states, :ticket_old_body, :ticket_status, :responder, :group]}},
+      items = Tire.search Search::EsIndexDefinition.searchable_aliases([Helpdesk::Ticket], current_account.id),{:load => {Helpdesk::Ticket => { :include => [{:requester => :avatar}, :ticket_states, :ticket_body, :ticket_status, :responder, :group]}},
       :size => page_size,:without_archive => true} do |tire_search|
         tire_search.query do |q|
           q.filtered do |f|
@@ -157,7 +157,7 @@ class Integrations::Hootsuite::HomeController < Integrations::Hootsuite::Hootsui
 			account_id:   current_account.id,
 			context:      (params[:search_type].eql?('ticket') ? :hstickets_dispid : :hstickets_subject),
 			exact_match:  false,
-			es_models:    { 'ticket' => { model: 'Helpdesk::Ticket', associations: [{:requester => :avatar}, :ticket_states, :ticket_old_body, :ticket_status, :responder, :group]}},
+			es_models:    { 'ticket' => { model: 'Helpdesk::Ticket', associations: [{:requester => :avatar}, :ticket_states, :ticket_body, :ticket_status, :responder, :group]}},
 			current_page: params[:page].to_i,
 			offset:       page_offset,
 			types:        ['ticket'],

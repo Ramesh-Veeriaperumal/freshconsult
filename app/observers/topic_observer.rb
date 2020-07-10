@@ -36,7 +36,7 @@ class TopicObserver < ActiveRecord::Observer
   def after_update(topic)
     topic.account.clear_forum_categories_from_cache if topic.published_changed? || topic.forum_id_changed?
     return if !topic.stamp_type_changed? or topic.stamp_type.blank?
-    send_later(:send_stamp_change_notification, topic, topic.type_name, topic.stamp, User.current.id)
+    TopicMailer.send_later(:send_stamp_change_notification, topic, topic.type_name, topic.stamp, User.current.id)
     create_activity(topic, "topic_stamp_#{topic.stamp_type}", User.current)
   end
 
@@ -83,13 +83,6 @@ class TopicObserver < ActiveRecord::Observer
     end
   end
 
-  def send_stamp_change_notification(topic, forum_type, current_stamp, current_user_id)
-    topic.monitorships.active_monitors.all(:include => [:portal, :user]).each do |monitor|
-      next if monitor.user.email.blank? or (current_user_id == monitor.user_id)
-      TopicMailer.send_email(:stamp_change_email, monitor.user, monitor.user.email, topic, topic.user, current_stamp, forum_type, monitor.portal, *monitor.sender_and_host)
-    end
-  end
-  
   def before_destroy(topic)
     create_activity(topic, 'delete_topic', User.current) unless topic.trash
   end

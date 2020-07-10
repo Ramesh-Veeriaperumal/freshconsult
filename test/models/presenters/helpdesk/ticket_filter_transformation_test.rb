@@ -76,7 +76,7 @@ class TicketFilterTransformationTest < ActiveSupport::TestCase
         { field: 'tag_id', is_in: [@tag.id], type: 'number', default_field: true },
         { field: 'ticket_type', is_in: ['Question', 'Duplicate', 'None'], type: 'string', default_field: true },
         { field: "cf_custom_drop_down_#{Account.current.id}", is_in: ['First Choice', 'Second Choice'], type: 'string', default_field: false },
-        { field: 'created_at', gte: '2020-03-25T00:00:00Z', lt: '2020-04-22T23:59:59Z', type: 'date_time', default_field: true },
+        { field: 'created_at', gte: Time.zone.parse('2020-03-25').utc.iso8601, lt: Time.zone.parse('2020-04-22').end_of_day.utc.iso8601, type: 'date_time', default_field: true },
         { field: 'created_at', gte: 'now-15m', type: 'date_time', default_field: true },
         { field: 'created_at', gte: 'now-4h', type: 'date_time', default_field: true },
         { field: 'created_at', gte: 'now-1d/d', lt: 'now/d', type: 'date_time', default_field: true },

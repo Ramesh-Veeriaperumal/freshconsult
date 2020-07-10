@@ -1,7 +1,7 @@
 <%= node[:opsworks][:environment] %>:
   :count_host: 
   <% node[:ymls][:elastic_search][:count].each do |es_details| %>
-  - <%= es_details[:host] %>:<%= es_details[:port] %>
+  - "<%= es_details[:host] %>:<%= es_details[:port] %>"
   <% end %>
   :count_v2_host:
   <% @count_old_host = node[:ymls][:elastic_search][:count_old_cluster] %>
@@ -9,14 +9,14 @@
   - <%= @count_old_host[:envoy_egress][:endpoint_address] %>:<%= @count_old_host[:envoy_egress][:endpoint_port] %>
   <% else %>
   <% node[:ymls][:elastic_search][:count_v2].each do |es_details| %>
-  - <%= es_details[:host] %>:<%= es_details[:port] %>
+  - "<%= es_details[:host] %>:<%= es_details[:port] %>"
   <% end %>
   <% end %>
   :hosts: 
   <% node[:ymls][:elastic_search][:ey].each do |es_details| %>
-  - <%= es_details[:host] %>:<%= es_details[:port] %>
+  - "<%= es_details[:host] %>:<%= es_details[:port] %>"
   <% end %>
   :aws_hosts: 
   <% node[:ymls][:elastic_search][:aws].each do |es_details| %>
-  - <%= es_details[:host] %>:<%= es_details[:port] %>
+  - "<%= es_details[:host] %>:<%= es_details[:port] %>"
   <% end %>

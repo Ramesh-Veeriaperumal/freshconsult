@@ -1,5 +1,5 @@
-inline_manual:
-  common: &common
-  <%= node[:opsworks][:environment]%>:
-    <<: *common
+defaults: &defaults
+  inline_manual:
     access_key: <%= node[:ymls][:inline_manual][:access_key] %>
+<%= node[:opsworks][:environment]%>:
+  <<: *defaults

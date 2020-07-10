@@ -13,7 +13,7 @@ class ScheduledTicketExport < ScheduledExport
           :as => :schedulable,
           :dependent => :destroy
 
-  default_scope { where(schedule_type: SCHEDULE_TYPE[:SCHEDULED_TICKET_EXPORT]) }
+  default_scope -> { where(schedule_type: SCHEDULE_TYPE[:SCHEDULED_TICKET_EXPORT]) }
 
   attr_accessible :filter_data, :fields_data, :schedule_details
 
@@ -143,13 +143,13 @@ class ScheduledTicketExport < ScheduledExport
     return false if latest_file.blank?
     path = S3_TICKETS_PATH % { :schedule_id => id,
                                 :filename => filename || latest_file }
-    AwsWrapper::S3Object.find(path, S3_CONFIG[:bucket]).exists?
+    AwsWrapper::S3.exists?(S3_CONFIG[:bucket], path)
   end
 
   def export_path filename=nil
     path = S3_TICKETS_PATH % { :schedule_id => id,
                                 :filename => filename || latest_file }
-    AwsWrapper::S3Object.url_for(path, S3_CONFIG[:bucket], :secure => true)
+    AwsWrapper::S3.presigned_url(S3_CONFIG[:bucket], path, secure: true)
   end
 
   def sync_to_service update=nil

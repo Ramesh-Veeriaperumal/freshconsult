@@ -21,11 +21,7 @@ module Reports::FreshfoneReport
   end
 
   def filter(start_date, end_date)
-    scoper(start_date,end_date).find(:all,
-      :select =>"#{report_query}",
-      :conditions => select_conditions, 
-      :group => "freshfone_calls.user_id",
-      :order => "count desc")
+    scoper(start_date,end_date).select("#{report_query}").where(select_conditions).group('freshfone_calls.user_id').order('count desc')
   end
 
   def call_duration_in_mins(duration)

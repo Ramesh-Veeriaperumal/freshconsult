@@ -27,7 +27,7 @@ class Admin::CustomTranslations::DownloadController < ApiApplicationController
 
     respond_to do |format|
       response.headers['Content-Disposition'] = 'attachment; filename="primary.yml"'
-      format.json { render text: translation_file.psych_to_yaml, content_type: 'text/plain' }
+      format.json { render text: YAML.dump(translation_file), content_type: 'text/plain' }
     end
   end
 
@@ -50,7 +50,7 @@ class Admin::CustomTranslations::DownloadController < ApiApplicationController
 
     respond_to do |format|
       response.headers['Content-Disposition'] = "attachment; filename=#{secondary_lang}.yml"
-      format.json { render text: translation_file.psych_to_yaml, content_type: 'text/plain' }
+      format.json { render text: YAML.dump(translation_file), content_type: 'text/plain' }
     end
   end
 

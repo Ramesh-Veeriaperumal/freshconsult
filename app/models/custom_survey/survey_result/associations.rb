@@ -13,89 +13,78 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
 
   has_custom_fields :class_name => 'CustomSurvey::SurveyResultData', :discard_blank => true
 
-  scope :remarks , lambda { |condition|
-    preload([{:survey_remark => { :feedback => [:note_old_body]} }, :surveyable, :survey_result_data,
+  scope :remarks, -> (condition) {
+    preload([
+      {:survey_remark => { :feedback => [:note_body]} }, 
+      :surveyable, :survey_result_data,
       {:customer => :avatar}, :agent, :group]).
-          where("survey_results.survey_id= ? 
-            and survey_results.created_at between ? and ?", 
-            condition[:survey_id], condition[:start_date], condition[:end_date]).order("survey_results.created_at DESC")
+    where("survey_results.survey_id= ? 
+      and survey_results.created_at between ? and ?", 
+      condition[:survey_id], condition[:start_date], condition[:end_date]).order("survey_results.created_at DESC")
   }
 
-  scope :total_remarks , lambda { |condition| {
-    :select => "count(*) as total",
-    :conditions => ["survey_results.survey_id= ?  
-                      and survey_results.created_at between ? and ?", 
-                      condition[:survey_id], condition[:start_date], condition[:end_date]]
-  }}
+  scope :total_remarks, -> (condition) {
+    select('count(1) AS total').
+    where(["survey_results.survey_id= ?  
+      and survey_results.created_at between ? and ?", 
+      condition[:survey_id], condition[:start_date], condition[:end_date]])
+  }    
 
-  scope :rating_filter, lambda { |condition| 
-    query_condition = (condition[:value] == RATING_ALL_URL_REF) ? 
-                        ["survey_result_data.#{condition[:column_name]} is NOT NULL"] :
-                          ["survey_result_data.#{condition[:column_name]}=#{condition[:value]}"]
-    { :joins => "INNER JOIN `survey_result_data` ON 
-                  `survey_result_data`.`survey_result_id` = `survey_results`.`id` AND 
-                    `survey_result_data`.`account_id` = `survey_results`.`account_id`",
-      :conditions => query_condition }
+  scope :rating_filter, -> (condition) {
+    where((condition[:value] == RATING_ALL_URL_REF) ? 
+      ["survey_result_data.#{condition[:column_name]} is NOT NULL"] :
+      ["survey_result_data.#{condition[:column_name]}=#{condition[:value]}"]
+    ).
+    joins("INNER JOIN `survey_result_data` ON 
+        `survey_result_data`.`survey_result_id` = `survey_results`.`id` 
+        AND `survey_result_data`.`account_id` = `survey_results`.`account_id`")
   }
 
-  scope :agent_filter, lambda { |agent_id| { 
-      :conditions =>  {:agent_id => agent_id} } unless agent_id.blank?
+  scope :agent_filter, -> (agent_id) {
+    where(agent_id: agent_id) unless agent_id.blank?
   }
 
-  scope :group_filter, lambda { |group_id| { 
-      :conditions =>  {:group_id => group_id} } unless group_id.blank?
+  scope :group_filter, -> (group_id) {
+    where(group_id: group_id) unless group_id.blank?
   }
 
-  scope :aggregate, lambda { |condition| {
-      :select => "`survey_results`.id, `survey_results`.survey_id, 
-                    survey_result_data.#{condition[:column_name]} as rating, count(*) as total",
-      :joins => "INNER JOIN `survey_result_data` ON
-                  `survey_result_data`.`survey_result_id` = `survey_results`.`id` AND
-                    `survey_result_data`.`account_id` = `survey_results`.`account_id`",
-      :group => "survey_result_data.#{condition[:column_name]}",
-      :order => "survey_result_data.#{condition[:column_name]}",
-      :conditions => ["survey_results.survey_id = ? 
-                        and survey_results.created_at between ? and ?", 
-                        condition[:survey_id], condition[:start_date], condition[:end_date]]
-  }}
-
-  scope :group_wise, lambda { |condition| { 
-      :select => "group_id as id, survey_result_data.#{condition[:column_name]} as rating,
-                    count(*) as total",
-      :joins => "INNER JOIN `survey_result_data` ON
-                  `survey_result_data`.`survey_result_id` = `survey_results`.`id` AND
-                    `survey_result_data`.`account_id` = `survey_results`.`account_id`",
-      :group => "survey_results.group_id, survey_result_data.#{condition[:column_name]}",
-      :order => "survey_result_data.#{condition[:column_name]}",
-      :conditions => ["survey_results.survey_id = ? 
-                          and survey_results.created_at between ? and ?", 
-                          condition[:survey_id], condition[:start_date], condition[:end_date]]
-  }}
-
-  scope :agent_wise, lambda {|condition| { 
-      :select => "agent_id as id, survey_result_data.#{condition[:column_name]} as rating, 
-                    count(*) as total",
-      :joins => "INNER JOIN `survey_result_data` ON
-                  `survey_result_data`.`survey_result_id` = `survey_results`.`id` AND
-                    `survey_result_data`.`account_id` = `survey_results`.`account_id`",
-      :group => "survey_results.agent_id, survey_result_data.#{condition[:column_name]}",
-      :order => "survey_result_data.#{condition[:column_name]}",
-      :conditions => ["survey_results.survey_id = ? 
-                        and survey_results.created_at between ? and ?", 
-                        condition[:survey_id], condition[:start_date], condition[:end_date]]
-
-  }}
-
-  scope :permissible_survey, lambda { |user| {
-    conditions: permissible_condition(user)
-  }
+  scope :aggregate, -> (condition) {
+    select("`survey_results`.id, `survey_results`.survey_id, 
+      survey_result_data.#{condition[:column_name]} as rating, count(*) as total").
+    joins("INNER JOIN `survey_result_data` ON
+            `survey_result_data`.`survey_result_id` = `survey_results`.`id` AND
+            `survey_result_data`.`account_id` = `survey_results`.`account_id`").
+    group("survey_result_data.#{condition[:column_name]}").
+    order("survey_result_data.#{condition[:column_name]}").
+    where(["survey_results.survey_id = ? 
+            AND survey_results.created_at BETWEEN ? AND ?", 
+            condition[:survey_id], condition[:start_date], condition[:end_date]])
   }
 
-  scope :export_data, lambda {|condition| {
-    :conditions => ["`survey_results`.`survey_id` = ? and 
-                     `survey_results`.`created_at` between ? and ?",
-                     condition[:survey_id], condition[:start_date], condition[:end_date]]  
-  }}
+  [:agent, :group].each do |type|
+    scope :"#{type}_wise", -> (condition) {
+      select("group_id AS id, survey_result_data.#{condition[:column_name]} AS rating,
+                      COUNT(*) AS total").
+      joins("INNER JOIN `survey_result_data` ON
+            `survey_result_data`.`survey_result_id` = `survey_results`.`id` AND
+            `survey_result_data`.`account_id` = `survey_results`.`account_id`").
+      group("survey_results.#{type}_id, survey_result_data.#{condition[:column_name]}").
+      order("survey_result_data.#{condition[:column_name]}").
+      where(["survey_results.survey_id = ? 
+              AND survey_results.created_at BETWEEN ? AND ?", 
+              condition[:survey_id], condition[:start_date], condition[:end_date]])
+    }
+  end
+
+  scope :permissible_survey, -> (user) {
+    where(permissible_condition(user))
+  }
+
+  scope :export_data, -> (condition) {
+    where(["`survey_results`.`survey_id` = ? AND 
+              `survey_results`.`created_at` BETWEEN ? AND ?",
+              condition[:survey_id], condition[:start_date], condition[:end_date]])
+  }
 
   class << self
     def permissible_condition user

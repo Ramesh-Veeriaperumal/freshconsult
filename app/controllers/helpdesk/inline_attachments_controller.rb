@@ -21,7 +21,7 @@ class Helpdesk::InlineAttachmentsController < ApplicationController
     end
     attachment = current_account.attachments.where(:id => decoded_hash[:id]).first
     if attachment.present?
-      redirect_to attachment.authenticated_s3_get_url(expires: attachment.expiry)
+      redirect_to attachment.authenticated_s3_get_url(expires_in: attachment.expiry.try(:to_i))
     else
       render_404
     end

@@ -86,7 +86,7 @@ module Sync::Util
   end
 
   def load_mapping_table(path)
-    YAML.load(File.read("#{path}/#{MAPPING_TABLE_NAME}.txt"))
+    Syck.load(File.read("#{path}/#{MAPPING_TABLE_NAME}.txt"))
   end
 
   private

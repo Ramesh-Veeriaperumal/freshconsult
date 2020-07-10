@@ -36,7 +36,9 @@ class Admin::CustomTranslationsValidation < ApiValidation
   # Reject files with invalid yaml content
 
   def validate_translation_file
-    YAML.safe_load(File.open(@translation_file.tempfile))
+    Psych.safe_load(File.open(@translation_file.tempfile))
+  rescue Psych::SyntaxError => e
+    errors[:translation_file] << :"#{e.message}"
   rescue StandardError
     errors[:translation_file] << :invalid_yml_file
   end
@@ -53,7 +55,7 @@ class Admin::CustomTranslationsValidation < ApiValidation
   # Validates given language code with the language code given in the uploaded file.
 
   def validate_yaml_code
-    yaml_file = YAML.safe_load(File.open(@translation_file.tempfile))
+    yaml_file = Psych.safe_load(File.open(@translation_file.tempfile))
     errors[:translation_file] << :invalid_yml_file && return unless yaml_file.keys.first
     errors[:translation_file] << :mismatch_language && return if yaml_file.keys.first.to_s != @language_code
     errors[:translation_file] << :invalid_yml_file && return unless yaml_file[@language_code]['custom_translations']

@@ -3,11 +3,12 @@ class Admin::DataImport < ActiveRecord::Base
 
   include Import::Zen::Redis
 
-  before_destroy :clear_attachments, if: -> { !Account.current.secure_attachments_enabled? }
   after_destroy :clear_key, :if => :zendesk_import?
+  
+  before_destroy :clear_attachments, if: -> { !Account.current.secure_attachments_enabled? }
 
-  self.table_name =  "admin_data_imports"
-
+  self.table_name =  "admin_data_imports"    
+  
   belongs_to :account
 
   has_many :attachments,
@@ -25,11 +26,17 @@ class Admin::DataImport < ActiveRecord::Base
 
   IN_PROGRESS_STATUS = [:started, :file_created].freeze
 
-  scope :running_contact_imports, conditions: ['source = ? and import_status in (?)', IMPORT_TYPE[:contact],
-                                               [IMPORT_STATUS[:started], IMPORT_STATUS[:file_created]]]
+  scope :running_contact_imports, -> {
+    where(['source = ? and import_status in (?)', 
+              IMPORT_TYPE[:contact],
+              [IMPORT_STATUS[:started], IMPORT_STATUS[:file_created]]])
+  }
 
-  scope :running_company_imports, conditions: ['source = ? and import_status in (?)', IMPORT_TYPE[:company],
-                                               [IMPORT_STATUS[:started], IMPORT_STATUS[:file_created]]]
+  scope :running_company_imports, -> {
+    where(['source = ? and import_status in (?)', 
+            IMPORT_TYPE[:company],
+            [IMPORT_STATUS[:started], IMPORT_STATUS[:file_created]]])
+  }
 
   def completed!
     update_attributes(import_status: IMPORT_STATUS[:completed])
@@ -53,15 +60,15 @@ class Admin::DataImport < ActiveRecord::Base
 
   private
 
-  def clear_key
-    clear_redis_key
-  end
+    def clear_attachments
+      self.attachments.destroy_all
+    end
 
-  def zendesk_import?
-    source == IMPORT_TYPE[:zendesk]
-  end
+    def clear_key
+      clear_redis_key
+    end
 
-  def clear_attachments
-    self.attachments.destroy_all
-  end
+    def zendesk_import?
+      source == IMPORT_TYPE[:zendesk]
+    end
 end

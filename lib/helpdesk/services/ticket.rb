@@ -8,6 +8,7 @@ module Helpdesk
       def save_ticket
         process_save_ticket do
           build_ticket_and_sanitize
+          UnicodeSanitizer.encode_emoji(self.ticket_body, "description")
           self.save
         end
       end
@@ -15,6 +16,7 @@ module Helpdesk
       def save_ticket!
         process_save_ticket do
           build_ticket_and_sanitize
+          UnicodeSanitizer.encode_emoji(self.ticket_body, "description")
           self.save!
         end
       end

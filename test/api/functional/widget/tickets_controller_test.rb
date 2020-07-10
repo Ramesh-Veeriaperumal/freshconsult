@@ -389,7 +389,7 @@ module Widget
       ticket_id = JSON.parse(response.body)['id']
       match_json(id: ticket_id)
       t = Helpdesk::Ticket.where(display_id: ticket_id).first
-      meta_info = YAML.safe_load(t.notes.find_by_source(Helpdesk::Source.note_source_keys_by_token['meta']).body)
+      meta_info = Psych.safe_load(t.notes.find_by_source(Helpdesk::Source.note_source_keys_by_token['meta']).body)
       assert_equal meta_info['seen_articles'], seen_articles.map(&:to_s).to_json
     ensure
       article.destroy
@@ -409,7 +409,7 @@ module Widget
       ticket_id = JSON.parse(response.body)['id']
       match_json(id: ticket_id)
       t = Helpdesk::Ticket.where(display_id: ticket_id).first
-      meta_info = YAML.safe_load(t.notes.find_by_source(Helpdesk::Source.note_source_keys_by_token['meta']).body)
+      meta_info = Psych.safe_load(t.notes.find_by_source(Helpdesk::Source.note_source_keys_by_token['meta']).body)
       assert_equal meta_info['seen_articles'], seen_articles.map(&:to_s).to_json
     ensure
       article.destroy

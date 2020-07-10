@@ -20,7 +20,7 @@ class Facebook::Core::Splitter
 
         Rails.logger.info "Facebook message received for POD: #{pod_info}."
         # send message to the specific queue
-        AwsWrapper::SqsQueue.instance.send_message(pod_info + '_' + SQS[:facebook_realtime_queue], @intial_feed)
+        AwsWrapper::SqsV2.send_message(pod_info + '_' + SQS[:facebook_realtime_queue], @intial_feed)
       end
     end
   end

@@ -4,9 +4,9 @@
   <% agent_settings = false %> 
   <%unless @installed_app.blank? %>
     <% installed_opp_view = @installed_app.configs_opportunity_view %>
-    <% opportunity_view = installed_opp_view.to_bool if installed_opp_view.present? %>
+    <% opportunity_view = installed_opp_view.to_s.to_bool if installed_opp_view.present? %>
     <% installed_agent_settings = @installed_app.configs_agent_settings %>
-    <% agent_settings = installed_agent_settings.to_bool if installed_agent_settings.present? %>
+    <% agent_settings = installed_agent_settings.to_s.to_bool if installed_agent_settings.present? %>
   <%end%>
   <div id="opportunity-info" data-child="opportunity-settings">
     <%=content_tag(:h3, t("integrations.cloud_elements.form.opportunity"), :class => 'opportunity-header') %>
@@ -56,7 +56,7 @@
   <% agent_settings = false %> 
   <%unless @installed_app.blank? %>
     <% installed_contract_view = @installed_app.configs_contract_view %>
-    <% contract_view = installed_contract_view.to_bool if installed_contract_view.present? %>
+    <% contract_view = installed_contract_view.to_s.to_bool if installed_contract_view.present? %>
   <%end%>
   <div id="contract-info" data-child="contract-settings">
     <%=content_tag(:h3, t("integrations.cloud_elements.form.contract"), :class => 'contract-header') %>
@@ -100,7 +100,7 @@
   <% agent_settings = false %> 
   <%unless @installed_app.blank? %>
     <% installed_order_view = @installed_app.configs_order_view %>
-    <% order_view = installed_order_view.to_bool if installed_order_view.present? %>
+    <% order_view = installed_order_view.to_s.to_bool if installed_order_view.present? %>
   <%end%>
   <div id="order-info" data-child="order-settings">
     <%=content_tag(:h3, t("integrations.cloud_elements.form.order"), :class => 'order-header') %>

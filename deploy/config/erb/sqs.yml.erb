@@ -10,4 +10,4 @@
   end
 %>
 
-<%= { node[:opsworks][:environment] => sqs_queues }.to_yaml %>
+<%= YAML.dump(node[:opsworks][:environment] => sqs_queues) %>

@@ -26,10 +26,10 @@ class UnicodeSanitizerTest < ActionView::TestCase
 
   def test_encode_emoji_happy_path
     ticket = Helpdesk::Ticket.last
-    ticket_old_body = ticket.ticket_old_body || ticket.build_ticket_old_body 
-    ticket_old_body.attributes = { :description => "Some description goes here 😁"}
+    ticket_body = ticket.ticket_body || ticket.build_ticket_body 
+    ticket_body.attributes = { :description => "Some description goes here 😁"}
     assert_nothing_raised do
-      UnicodeSanitizer.encode_emoji(ticket_old_body, "description")
+      UnicodeSanitizer.encode_emoji(ticket_body, "description")
     end
   end
 

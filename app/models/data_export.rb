@@ -37,27 +37,36 @@ class DataExport < ActiveRecord::Base
 
   EXPORT_COMPLETED_STATUS = [4, 5, 6].freeze
 
-  scope :ticket_export, conditions: { source: EXPORT_TYPE[:ticket] }, order: 'id'
-  scope :ticket_shadow_export, conditions: { source: EXPORT_TYPE[:ticket_shadow] }, order: 'id'
-  scope :data_backup, conditions: { source: EXPORT_TYPE[:backup] }, limit: 1, order: 'id desc'
-  scope :contact_export, conditions: { source: EXPORT_TYPE[:contact] }, order: 'id'
-  scope :company_export, conditions: { source: EXPORT_TYPE[:company] }, order: 'id'
-  scope :call_history_export, conditions: { source: EXPORT_TYPE[:call_history] }
-  scope :agent_export, conditions: { source: EXPORT_TYPE[:agent] }, order: 'id'
-  scope :reports_export, conditions: { source: EXPORT_TYPE[:reports] }, order: 'id'
-  scope :audit_log_export, conditions: { source: EXPORT_TYPE[:audit_log] }, order: 'id'
-  scope :current_exports, conditions: ["status = #{EXPORT_STATUS[:started]} and last_error is null"]
-  scope :running_ticket_exports, conditions: ["source = #{EXPORT_TYPE[:ticket]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
-  scope :running_archive_ticket_exports, conditions: ["source = #{EXPORT_TYPE[:archive_ticket]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
-  scope :running_contact_exports, conditions: ["source = #{EXPORT_TYPE[:contact]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
-  scope :running_company_exports, conditions: ["source = #{EXPORT_TYPE[:company]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
-  scope :old_data_backup, lambda { |threshold = OLD_BACKUP_UPPER_THRESHOLD_DAYS.days.ago|
-                            {
-                              conditions: ["source = #{EXPORT_TYPE[:backup]} and created_at <= (?) and created_at >= (?)",
-                                           threshold, OLD_BACKUP_LOWER_THRESHOLD_DAYS.days.ago]
-                            }
-                          }
-  scope :running_article_exports, conditions: ["source = #{EXPORT_TYPE[:article]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
+  [:ticket, :contact, :company, :call_history, :agent, :reports, :audit_log, :ticket_shadow].each do |type|
+    scope :"#{type}_export", -> { where(source: EXPORT_TYPE[type]).order(:id) }
+  end
+
+  scope :data_backup, -> { 
+    where(source: EXPORT_TYPE[:backup]).
+    order('id desc').
+    limit(1) 
+  }
+
+  scope :current_exports, -> { 
+    where(
+      source: EXPORT_TYPE[:started],
+      last_error: nil
+    )
+  }
+
+  [:ticket, :contact, :company, :archive_ticket, :article].each do |type|
+    scope :"running_#{type}_exports", -> { 
+      where(["source = ? AND status NOT in (?)",
+              EXPORT_TYPE[type],  [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]
+            ]
+      )
+    }
+  end
+
+  scope :old_data_backup, -> (threshold  = OLD_BACKUP_UPPER_THRESHOLD_DAYS.days.ago) {
+    where(["source = ? and created_at <= (?) and created_at >= (?)", 
+            EXPORT_TYPE[:backup], threshold, OLD_BACKUP_LOWER_THRESHOLD_DAYS.days.ago])
+  }
 
   EXPORT_TYPE.each do |export_name, export_enum|
     define_method("#{export_name}_export?") do

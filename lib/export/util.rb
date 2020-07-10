@@ -115,7 +115,7 @@ module Export::Util
         scheduler_type: "#{type}_export_cleanup"
       },
       sqs: {
-        url: SQS_V2_QUEUE_URLS[SQS[:fd_scheduler_export_cleanup_queue]]
+        url: AwsWrapper::SqsV2.queue_url(SQS[:fd_scheduler_export_cleanup_queue])
       }
     }
     scheduler_client = SchedulerService::Client.new(job_id: job_id,

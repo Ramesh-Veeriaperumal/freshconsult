@@ -202,7 +202,7 @@ class TicketDecorator < ApiDecorator
 
   def conversations
     if @sideload_options.include?('conversations')
-      preload_options = [:schema_less_note, :note_old_body, :attachments]
+      preload_options = [:schema_less_note, :note_body, :attachments]
       preload_options = public_preload_options(preload_options) unless private_api?
 
       ticket_conversations = record.notes.
@@ -542,7 +542,7 @@ class TicketDecorator < ApiDecorator
 
   def handle_timestamps(meta_info)
     if meta_info.is_a?(Hash) && meta_info.keys.include?('time')
-      meta_info['time'] = Time.parse(meta_info['time']).utc.iso8601
+      meta_info['time'] = Time.parse(meta_info['time'].to_s).utc.iso8601 # PRE-RAILS: seen {"time"=>Tue, 14 Mar 2017 15:13:13 +0530} with sample in test case, 'psych' will not convert it into string where 'syck' do.
     end
     meta_info
   end

@@ -58,7 +58,7 @@ module Facebook
       
       
       def post_from_dynamo(fb_feed, type)   
-        post_data = JSON.parse(fb_feed["data"][:ss][0]).deep_symbolize_keys
+        post_data = JSON.parse(fb_feed["data"][0]).deep_symbolize_keys
         type = "photo" if post_data[:object_link]
         post = post_hash(post_data[:feed_id], type, post_data[:requester][:name], post_data[:requester][:id], post_data[:description],               post_data[:created_at])
          
@@ -70,7 +70,7 @@ module Facebook
       end
       
       def comment_from_dynamo(fb_feed, type, can_comment, parent = nil)   
-        comment_data = JSON.parse(fb_feed["data"][:ss][0]).deep_symbolize_keys
+        comment_data = JSON.parse(fb_feed["data"][0]).deep_symbolize_keys
         comment = comment_hash(comment_data[:feed_id], type, comment_data[:requester][:name], comment_data[:requester][:id],                      comment_data[:description], parent, comment_data[:created_at], can_comment) 
         
         comment.merge!({

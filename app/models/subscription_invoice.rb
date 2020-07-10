@@ -9,7 +9,7 @@ class SubscriptionInvoice < ActiveRecord::Base
   after_commit ->(obj) { obj.download_invoice }, on: :create
   after_commit ->(obj) { obj.download_invoice }, on: :update
 
-  serialize :details
+  serialize :details, Hash
 
   has_one :pdf,
     :as => :attachable,

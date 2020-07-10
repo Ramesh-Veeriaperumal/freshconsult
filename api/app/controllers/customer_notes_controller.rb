@@ -159,6 +159,10 @@ class CustomerNotesController < ApiApplicationController
       options
     end
 
+    def paginate_scoper(items, options)
+      items.order(options[:order]).paginate(options.except(:order)) # rubocop:disable Gem/WillPaginate
+    end
+
     def order_clause
       order_by = CustomerNoteConstants::DEFAULT_ORDER_BY
       "#{order_by} #{order_type} "

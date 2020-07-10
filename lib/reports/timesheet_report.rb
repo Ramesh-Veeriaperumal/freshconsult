@@ -177,7 +177,7 @@ module Reports::TimesheetReport
 
   def fetch_timesheet_entries(offset=0, row_limit=nil)
     row_limit ||= @pdf_export ? BATCH_LIMIT_FOR_EXPORT : TIMESHEET_ROWS_LIMIT
-    # PRE-RAILS4: select.size chaining ---> false positive
+    # PRE-RAILS: select.size chaining ---> false positive
     entries = scoper(@start_date, @end_date).where("helpdesk_time_sheets.id <= #{@latest_timesheet_id}").select("helpdesk_time_sheets.*, #{construct_custom_column_select_statement}  #{group_to_column_map(group_by_caluse, false)}").reorder("#{ALIAS_GROUP_NAME[group_by_caluse]}, id asc").limit(row_limit).offset(offset).where(select_conditions || {})
                                                                                                                                                                                                                                                                                                     .includes([:user, workable: [{:schema_less_ticket => :product}, :group, :ticket_status, :requester, :company]]).to_a
     if (archive_enabled? && entries.size < row_limit )

@@ -1,4 +1,5 @@
 module AccountAdminTestHelper
+  include Redis::HashMethods
   def account_admin_response(params)
     response = {
       first_name: params[:first_name],
@@ -27,5 +28,11 @@ module AccountAdminTestHelper
     response = {
       skip_mandatory_checks: params[:skip_mandatory_checks]
     }
+  end
+
+  def restricted_preferences_response(redis_hash, params)
+    preferences = redis_hash
+    preferences[:agent_availability_refresh_time] = params[:agent_availability_refresh_time] if params[:agent_availability_refresh_time].present?
+    preferences
   end
 end

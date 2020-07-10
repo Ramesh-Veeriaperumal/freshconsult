@@ -38,7 +38,7 @@ class FacebookDeltaTest < ActionView::TestCase
   def test_add_feeds_to_sqs_feeds_blank
     args = { 'page_id' => @fb_page.page_id, 'discard_feed' => true }
     @method_call_count = 0
-    sqs_instance = AWS::SQS::Queue.new("{}")
+    sqs_instance = AwsWrapper::SqsV2
     sqs_instance.stub :send_message, -> {@method_call_count += 1; true } do
       Social::DynamoHelper.stubs(:query).returns([])
       Social::FacebookDelta.new.perform(args)
@@ -51,7 +51,7 @@ class FacebookDeltaTest < ActionView::TestCase
 
   def test_add_feeds_to_sqs_with_fb_page_invalid
     @method_call_count = 0
-    sqs_instance = AWS::SQS::Queue.new("{}")
+    sqs_instance = AwsWrapper::SqsV2
     sqs_instance.stub :send_message, -> {@method_call_count += 1; true } do
       Social::FacebookPage.any_instance.stubs(:valid_page?).returns(false)
       args = { 'page_id' => @fb_page.page_id, 'discard_feed' => true }
@@ -72,7 +72,7 @@ class FacebookDeltaTest < ActionView::TestCase
     end
     args = { 'page_id' => @fb_page.page_id, 'discard_feed' => false }
     @method_call_count = 0
-    sqs_instance = AWS::SQS::Queue.new("{}")
+    sqs_instance = AwsWrapper::SqsV2
     sqs_instance.stub :send_message, -> { true } do
       @method_call_count += 1;
       Social::DynamoHelper.stub :query, -> { @feeds } do

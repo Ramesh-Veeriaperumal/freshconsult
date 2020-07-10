@@ -148,30 +148,30 @@ module Ember
       def test_show_with_valid_language
         supported_lang = @account.all_language_objects.first
         article_meta = get_article_with_versions.parent
-        AwsWrapper::S3Object.stubs(:read).returns('{"title": "title", "description":"description"}')
+        AwsWrapper::S3.stubs(:read).returns('{"title": "title", "description":"description"}')
         article_version = article_meta.safe_send("#{supported_lang.to_key}_article").solution_article_versions.latest.first
         get :show, controller_params(version: 'private', article_id: article_meta.id, id: article_version.version_no, language: supported_lang.code)
         assert_response 200
         match_json(article_verion_pattern(article_version))
       ensure
-        AwsWrapper::S3Object.unstub(:read)
+        AwsWrapper::S3.unstub(:read)
       end
 
       def test_show_without_language
         article_meta = get_article_with_versions.parent
-        AwsWrapper::S3Object.stubs(:read).returns('{"title": "title", "description":"description"}')
+        AwsWrapper::S3.stubs(:read).returns('{"title": "title", "description":"description"}')
         article_version = article_meta.safe_send('primary_article').solution_article_versions.latest.first
         get :show, controller_params(version: 'private', article_id: article_meta.id, id: article_version.version_no)
         assert_response 200
         match_json(article_verion_pattern(article_version))
       ensure
-        AwsWrapper::S3Object.unstub(:read)
+        AwsWrapper::S3.unstub(:read)
       end
 
       def test_show_without_multilingual
         supported_lang = Language.find_by_code(@account.supported_languages.last)
         article_meta = get_article_with_versions.parent
-        AwsWrapper::S3Object.stubs(:read).returns('{"title": "title", "description":"description"}')
+        AwsWrapper::S3.stubs(:read).returns('{"title": "title", "description":"description"}')
         article_version = article_meta.solution_article_versions.latest.first
         Account.any_instance.stubs(:multilingual?).returns(false)
         get :show, controller_params(version: 'private', article_id: article_meta.id, id: article_version.version_no, language: supported_lang.code)

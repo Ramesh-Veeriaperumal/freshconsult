@@ -1,6 +1,6 @@
 class DeletedCustomers < ActiveRecord::Base
   self.primary_key = :id
-	serialize   :account_info
+  serialize :account_info, Hash
 	validates_uniqueness_of :account_id
 
   def reactivate

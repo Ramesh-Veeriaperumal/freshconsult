@@ -42,7 +42,6 @@ module RuboCop
         #   Topic.paginate_by_forum_id(id, order: 'something desc', page: page)
         #   # good
         #   Topic.where(forum_id: id).order('something desc').paginate(page: page)
-        #
 
         MSG = 'Use `%{static_name}` instead of dynamic `%{method}`. Ref: <a href="https://github.com/freshdesk/helpkit/blob/107d8709231df7bc8bf107569628715ebfa57e9d/script/rubocop/cop/readme.md#railsfindermethod">New syntax</a>'.freeze
         FIND_METHOD_NAME = 'find'.freeze
@@ -51,7 +50,7 @@ module RuboCop
         FINDER_METHOD_PATTERN = /^((find|scoped|paginate)_((all|last|or_initialize|or_create)_)?by_)(.+?)(!)?$/.freeze
         FINDER_METHOD_ALTERNATE = {
           find: 'where(...) or where(...).first',
-          find_by_: 'where(...).first',
+          # find_by_: 'where(...).first', # will re-enable after fixing existing one.
           find_all_by_: 'where(...)',
           find_last_by_: 'where(...).last',
           scoped_by_: 'where(...)',

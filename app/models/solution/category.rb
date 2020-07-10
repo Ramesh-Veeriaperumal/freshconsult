@@ -1,8 +1,3 @@
-# require Rails.root+'/app/models/solution/folder.rb'
-#In the gamification environment, Solution::Folder::VISIBILITY_KEYS_BY_TOKEN was not
-#accessible. It may be due to some screw up with the order of class loading.
-#So, temporarily put the 'require' here. Shan
-
 class Solution::Category < ActiveRecord::Base
 
   self.primary_key = :id
@@ -42,7 +37,7 @@ class Solution::Category < ActiveRecord::Base
 
   attr_accessible :name, :description, :import_id
 
-  scope :customer_categories, {:conditions => {:is_default=>false}}
+  scope :customer_categories, -> { where(is_default: false) }
 
   alias_method :parent, :solution_category_meta
   

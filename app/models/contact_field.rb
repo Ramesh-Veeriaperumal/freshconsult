@@ -4,7 +4,7 @@ class ContactField < ActiveRecord::Base
   include DataVersioning::Model
   include ContactCompanyFields::PublisherMethods
 
-  serialize :field_options
+  serialize :field_options, Hash
 
   belongs_to_account
 
@@ -21,8 +21,8 @@ class ContactField < ActiveRecord::Base
 
   publishable
 
-  scope :customer_visible, :conditions => { :visible_in_portal => true }
-  scope :customer_editable, :conditions => { :editable_in_portal => true }
+  scope :customer_visible, -> { where(visible_in_portal: true) }
+  scope :customer_editable, -> { where(editable_in_portal: true) }
 
   DEFAULT_FIELD_PROPS = {
     :default_name                 => { :type => 1,  :dom_type => :text, :label => 'user.full_name' },
