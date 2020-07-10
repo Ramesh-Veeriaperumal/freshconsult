@@ -141,7 +141,8 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     when :assigned_tickets
       ["responder_id=?", user.id]
     when :group_tickets
-      ["group_id in (?) OR responder_id=?", user.associated_group_ids, user.id]
+      group_ids = user.access_all_agent_groups ? user.all_associated_group_ids : user.associated_group_ids
+      ["group_id in (?) OR responder_id=?", group_ids, user.id]
     when :all_tickets
       []
     end

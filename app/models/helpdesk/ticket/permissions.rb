@@ -80,7 +80,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def group_agent_accessible?(user)
-    user.group_ticket_permission && (user.ticket_agent?(self) || user.group_ticket?(self) )
+    user.group_ticket_permission && (user.ticket_agent?(self) || (user.access_all_agent_groups ? user.read_or_write_group_ticket?(self) : user.group_ticket?(self)))
   end
 
   def restricted_agent_accessible?(user)

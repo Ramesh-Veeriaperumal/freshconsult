@@ -31,6 +31,8 @@ class Helpdesk::TicketsController < ApplicationController
   include Redis::TicketsRedis
   include Helpdesk::SendAndSetHelper
   include CompaniesHelperMethods
+  include AdvancedTicketScopes
+
 
   ALLOWED_QUERY_PARAMS = ['collab', 'message', 'follow']
   SCENARIO_AUTOMATION_ACTIONS = [:execute_scenario, :execute_bulk_scenario]
@@ -78,7 +80,7 @@ class Helpdesk::TicketsController < ApplicationController
   alias :load_ticket :load_item
 
   before_filter :verify_ticket_permission_by_id, :only => [:component]
-
+  before_filter :set_all_agent_groups_permission, only: [:print]
   before_filter :load_ticket,
     :only => [:edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft,
               :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties,
@@ -1977,7 +1979,8 @@ class Helpdesk::TicketsController < ApplicationController
         @item ||= @items.first
       end
       verified = true
-      unless current_user && current_user.has_ticket_permission?(@item) && !@item.trashed
+      has_permission = (advanced_scope_enabled? && action == :print) ? current_user.has_read_ticket_permission?(@item) : current_user.has_ticket_permission?(@item) if current_user
+      unless current_user && has_permission && !@item.trashed
         verified = false
         flash[:notice] = t("flash.general.access_denied")
         if request.xhr? || is_native_mobile?

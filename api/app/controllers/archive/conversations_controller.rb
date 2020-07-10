@@ -1,6 +1,7 @@
 class Archive::ConversationsController < ::ConversationsController
   include HelperConcern
   include ConversationConcern
+  include AdvancedTicketScopes
 
   def ticket_conversations
     validate_filter_params
@@ -82,7 +83,8 @@ class Archive::ConversationsController < ::ConversationsController
     end
 
     def verify_ticket_permission(user = api_current_user, ticket = @item)
-      unless user.has_ticket_permission?(ticket) # Overriding to remove schema_less_check.
+      has_permission = advanced_scope_enabled? ? user.has_read_ticket_permission?(ticket) : user.has_ticket_permission?(ticket)
+      unless has_permission # Overriding to remove schema_less_check.
         Rails.logger.error "User: #{user.id}, #{user.email} doesn't have permission to ticket display_id: #{ticket.display_id}"
         render_request_error :access_denied, 403
         return false
