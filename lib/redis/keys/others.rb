@@ -299,4 +299,5 @@ module Redis::Keys::Others
   EMAIL_RATE_LIMIT_COUNT = 'EMAIL_RATE_LIMIT_COUNT:%{account_id}:%{hour_quadrant}'.freeze
   EMAIL_RATE_LIMIT_BREACHED = 'EMAIL_RATE_LIMIT_BREACHED:%{account_id}'.freeze
   EMAIL_RATE_LIMIT_ADMIN_NOTIFIED = 'EMAIL_RATE_LIMIT_ADMIN_NOTIFIED:%{account_id}'.freeze
+  EMAIL_RATE_LIMIT_DEDUP = 'EMAIL_RATE_LIMIT_DEDUP:%{account_id}:%{minute}'.freeze
 end
