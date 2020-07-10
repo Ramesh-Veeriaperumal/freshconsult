@@ -1,9 +1,10 @@
 class ErrorHelper
   class << self
     def format_error(errors, meta = {})
+      meta.symbolize_keys!
       formatted_errors = []
       errors.to_h.each do |att, val|
-        formatted_errors << bad_request_error(att, val.to_sym, meta)
+        formatted_errors << bad_request_error(att.to_sym, val.to_sym, meta)
       end
       formatted_errors
     end
