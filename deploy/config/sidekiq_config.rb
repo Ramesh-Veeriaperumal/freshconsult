@@ -771,8 +771,6 @@ all_sidekiq_jobs =  cron_jobs + [
       _MAILBOX_POOL
     when utility_name.include?(BULK_API_SIDEKIQ)
       _BULK_API_POOL
-    when utility_name.include?(CENTRAL_RESYNC_SIDEKIQ)
-      _CENTRAL_RESYNC_POOL
     when utility_name.include?(EXPORT_SIDEKIQ)
       _EXPORT_POOL
     when utility_name.include?(MISC_SIDEKIQ)
