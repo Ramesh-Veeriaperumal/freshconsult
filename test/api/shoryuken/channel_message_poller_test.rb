@@ -265,6 +265,20 @@ class ChannelMessagePollerTest < ActionView::TestCase
     Faraday::Connection.any_instance.unstub(:post)
   end
 
+  def test_facebook_receive_create_ticket_with_product_id
+    fb_page = create_facebook_page
+    Faraday::Connection.any_instance.stubs(:post).returns(Faraday::Response.new(status: 202))
+    sqs_body = get_fb_create_ticket_command(fb_page.page_id)
+    @account.reload
+    push_to_channel(sqs_body)
+    @account.reload
+    ticket = @account.tickets.last
+    assert_equal ticket.product_id, fb_page.product_id
+  ensure
+    ticket.destroy
+    Faraday::Connection.any_instance.unstub(:post)
+  end
+
   def test_facebook_receive_create_ticket_with_conflict
     fb_page = create_facebook_page
     Faraday::Connection.any_instance.stubs(:post).returns(Faraday::Response.new(status: 202))
