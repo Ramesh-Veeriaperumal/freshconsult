@@ -546,7 +546,7 @@ class Helpdesk::TicketsController < ApplicationController
       format.html  {
         @ticket_notes       = @ticket_notes.reverse
         @ticket_notes_total = run_on_slave { @ticket.conversation_count }
-        last_public_note    = run_on_slave { @ticket.notes.visible.last_traffic_cop_note.first }
+        last_public_note    = run_on_slave { @ticket.notes.conversations(nil, 'created_at DESC', 1).first }
         @last_note_id       = last_public_note.blank? ? -1 : last_public_note.id
         @last_broadcast_message = run_on_slave { @ticket.last_broadcast_message } if @ticket.related_ticket?
       }

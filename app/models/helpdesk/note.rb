@@ -44,12 +44,6 @@ class Helpdesk::Note < ActiveRecord::Base
   scope :visible, -> { where(deleted: false) }
   scope :public_notes, -> { where(private: false) }
   scope :private_notes, -> { where(private: true) }
-   
-  scope :last_traffic_cop_note, -> { 
-    where(["private = ? or incoming = ?",false,true]).
-    order('created_at DESC').
-    limit(1)
-  }
 
   scope :latest_twitter_comment, -> {
     where(" incoming = 1 AND social_tweets.tweetable_type = 'Helpdesk::Note'").
