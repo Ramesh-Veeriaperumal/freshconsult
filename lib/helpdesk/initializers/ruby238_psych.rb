@@ -51,6 +51,8 @@ module ActiveRecord
                 hash[key] = convert(value.to_hash.with_indifferent_access)
               elsif [Hash, ActiveSupport::HashWithIndifferentAccess].include?(value.class)
                 hash[key] = convert(value)
+              elsif value.class == ActiveSupport::SafeBuffer
+                hash[key] = String.new(value)
               else
                 hash[key] = value
               end
