@@ -126,6 +126,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
       additional_settings[:bundle_id] = bundle_id
       additional_settings[:bundle_name] = bundle_name
       account.launch :omni_bundle_2020 if account.freshid_org_v2_enabled?
+      launch_other_dependent_omni_features if account.omni_bundle_2020_enabled?
     end
   end
 
@@ -423,5 +424,9 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def backup_change
     @old_model = attributes.deep_dup
+  end
+
+  def launch_other_dependent_omni_features
+    account.launch :omni_agent_availability_dashboard if redis_key_exists?(OMNI_AGENT_AVAILABILITY_DASHBOARD)
   end
 end
