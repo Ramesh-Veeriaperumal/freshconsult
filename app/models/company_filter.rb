@@ -2,7 +2,7 @@ class CompanyFilter < ActiveRecord::Base
   include Segments::InstanceMethods
 
   self.primary_key = :id
-  serialize :data, Array
+  serialize :data
 
   belongs_to_account
 

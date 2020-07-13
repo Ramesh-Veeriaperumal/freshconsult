@@ -64,7 +64,7 @@ class Archive::TicketDecorator < TicketDecorator
       company_id: company_id,
       status: status,
       subject: subject,
-      to_emails: try(:to_emails) || [],
+      to_emails: try(:to_emails),
       product_id: try(:product_id),
       id: display_id,
       type: ticket_type,

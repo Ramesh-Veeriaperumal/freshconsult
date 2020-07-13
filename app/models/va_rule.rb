@@ -14,9 +14,9 @@ class VaRule < ActiveRecord::Base
 
   xss_sanitize  :only => [:name, :description], :plain_sanitizer => [:name, :description]
 
-  serialize :filter_data, [Array, Hash]
-  serialize :action_data, Array
-  serialize :condition_data, [Array, Hash]
+  serialize :filter_data
+  serialize :action_data
+  serialize :condition_data
 
   concerned_with :presenter, :esv2_methods
 

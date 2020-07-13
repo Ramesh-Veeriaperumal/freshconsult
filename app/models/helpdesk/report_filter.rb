@@ -10,7 +10,7 @@ class Helpdesk::ReportFilter < ActiveRecord::Base
 
   attr_protected :account_id, :user_id
 
-  serialize :data_hash, Hash
+  serialize :data_hash
 
   scope :by_report_type, ->(report_type){
     where({:report_type => report_type})

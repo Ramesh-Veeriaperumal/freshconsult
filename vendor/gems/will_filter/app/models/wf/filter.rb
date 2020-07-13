@@ -31,7 +31,7 @@ class Wf::Filter < ActiveRecord::Base
   before_save :set_data_and_type
   
   self.table_name =  :wf_filters
-  serialize :data, Hash
+  serialize :data
   
   #############################################################################
   # Basics 

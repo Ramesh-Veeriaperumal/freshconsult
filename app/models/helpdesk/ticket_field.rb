@@ -1,7 +1,7 @@
 class Helpdesk::TicketField < ActiveRecord::Base
 
   self.primary_key = :id
-  serialize :field_options, Hash
+  serialize :field_options
   attr_writer :choices
 
   include Cache::FragmentCache::Base

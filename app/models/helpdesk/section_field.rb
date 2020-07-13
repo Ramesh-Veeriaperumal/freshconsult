@@ -10,7 +10,7 @@ class Helpdesk::SectionField < ActiveRecord::Base
 
   COLUMN_NAMES_FOR_OPTAR = %i[id account_id section_id ticket_field_id parent_ticket_field_id position options created_at updated_at].freeze
 
-  serialize :options, Hash # PRE-RAILS: added data type temp, need tovalidate
+  serialize :options
   
   attr_protected :account_id
 

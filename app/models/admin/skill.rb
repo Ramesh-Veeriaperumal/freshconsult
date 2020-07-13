@@ -13,7 +13,7 @@ class Admin::Skill < ActiveRecord::Base
   NOT_OPERATORS = ['is_not', 'does_not_contain', 'not_selected', 'not_in']
   VERSION_MEMBER_KEY = 'TICKET_FIELD_LIST'.freeze
 
-  serialize :filter_data, Array
+  serialize :filter_data
   
   belongs_to_account
   has_many :user_skills, :order => :rank

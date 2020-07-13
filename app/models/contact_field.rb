@@ -4,7 +4,7 @@ class ContactField < ActiveRecord::Base
   include DataVersioning::Model
   include ContactCompanyFields::PublisherMethods
 
-  serialize :field_options, Hash
+  serialize :field_options
 
   belongs_to_account
 
