@@ -5,7 +5,7 @@ class Helpdesk::Activity < ActiveRecord::Base
   
   belongs_to_account
   
-  serialize :activity_data, Hash
+  serialize :activity_data
 
   #belongs_to :account
   belongs_to :user

@@ -51,7 +51,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   OBSERVER_ATTR = []
   self.table_name = "helpdesk_tickets"
 
-  serialize :cc_email, Hash
+  serialize :cc_email
 
   concerned_with :associations, :validations, :presenter, :callbacks,
                  :rabbitmq, :permissions, :esv2_methods, :count_es_methods,

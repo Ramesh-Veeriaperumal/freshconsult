@@ -229,7 +229,7 @@ module ArchiveTicketTestHelper
         'helpdesk_notes_association' => {
           'schema_less_note' => {
             'from_email' => nil,
-            'to_emails' => [],
+            'to_emails' => nil,
             'bcc_emails' => [],
             'cc_emails' => {
               'cc_emails' => []

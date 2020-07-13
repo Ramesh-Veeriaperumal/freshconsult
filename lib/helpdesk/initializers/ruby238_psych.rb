@@ -64,21 +64,4 @@ module ActiveRecord
     end
   end
   # :startdoc
-
-  class Base
-    def self.serialize(attr_name, class_name = Object)
-      # When ::JSON is used, force it to go through the Active Support JSON encoder
-      # to ensure special objects (e.g. Active Record models) are dumped correctly
-      # using the #as_json hook.
-      coder = if [:load, :dump].all? { |x| class_name.respond_to?(x) }
-        class_name
-      elsif class_name.is_a?(Array)
-        Coders::YAMLColumn.new(Object)
-      else
-        Coders::YAMLColumn.new(class_name)
-      end
-
-      self.serialized_attributes = serialized_attributes.merge(attr_name.to_s => coder)
-    end
-  end
 end

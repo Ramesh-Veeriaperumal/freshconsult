@@ -30,7 +30,7 @@ class Wf::Filter < ActiveRecord::Base
   TEXT_DELIMITER = ','.freeze
 
   self.table_name =  :wf_filters
-  serialize  :data, Hash
+  serialize  :data
   after_find :set_error
   after_create :set_error
   before_save :set_data_and_type

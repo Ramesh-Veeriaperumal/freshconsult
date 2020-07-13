@@ -15,8 +15,8 @@ class Quest < ActiveRecord::Base
   validates_presence_of :badge_id, :message => I18n.t('quests.badge_mand')
   validates_numericality_of :points
 
-  serialize :filter_data, Hash
-  serialize :quest_data, Array
+  serialize :filter_data
+  serialize :quest_data
 
   validate :has_quest_data_value?
 

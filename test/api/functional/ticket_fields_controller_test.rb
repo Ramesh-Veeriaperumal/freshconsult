@@ -211,7 +211,7 @@ class TicketFieldsControllerTest < ActionController::TestCase
                                                     :required_in_portal => false,
                                                     :choices => [],
                                                     :levels => nil,
-                                                    :field_options => {},
+                                                    :field_options => nil,
                                                     :type => "paragraph",
                                                     :action => "edit"}).to_json
     custom_field_new = @account.ticket_fields.find_by_label("Solution")
@@ -295,7 +295,7 @@ class TicketFieldsControllerTest < ActionController::TestCase
                                                                                   {"value" => "Cast Away", :id => picklist_vals_l1[2].id }
                                                                                   ],
                                                   :levels => nil,
-                                                  :field_options => {},
+                                                  :field_options => nil,
                                                   :type => "dropdown",
                                                   :action => "edit"}).to_json
 
@@ -395,7 +395,7 @@ class TicketFieldsControllerTest < ActionController::TestCase
                                                                  :id => nested_field.id, :position=>5, :type=>"dropdown",
                                                                  :action=>"edit"}
                                                                 ],
-                                                    :field_options => {},
+                                                    :field_options => nil,
                                                     :type => "dropdown",
                                                     :action => "edit"}).to_json
 
@@ -448,7 +448,7 @@ class TicketFieldsControllerTest < ActionController::TestCase
                                                     :required_in_portal => false,
                                                     :choices => [],
                                                     :levels => nil,
-                                                    :field_options => {},
+                                                    :field_options => nil,
                                                     :type => "paragraph",
                                                     :action => "delete"}).to_json
 
