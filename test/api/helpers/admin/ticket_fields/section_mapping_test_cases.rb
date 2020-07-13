@@ -12,8 +12,7 @@ module Admin::TicketFields::SectionMappingTestCases
         post :create, construct_params({}, params)
         assert_response 201
         ticket_field = @account.ticket_fields_with_nested_fields.find_by_field_type('custom_text')
-        ticket_field.reload
-        match_json(custom_field_response(ticket_field))
+        match_json(custom_field_response(ticket_field, updated_at: JSON.parse(response.body)['updated_at']))
       end
     end
   end
