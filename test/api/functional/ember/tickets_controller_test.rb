@@ -6787,6 +6787,25 @@ module Ember
       agent.destroy if agent.present?
     end
 
+    def test_index_with_only_count_for_read_access_agent
+      @account.stubs(:count_es_enabled?).returns(false)
+      agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      group = create_group_with_agents(@account, agent_list: [agent.id])
+      agent_group = agent.agent_groups.where(group_id: group.id).first
+      agent_group.write_access = false
+      agent_group.save!
+      agent.make_current
+      ticket = create_ticket({}, group)
+      login_as(agent)
+      get :index, controller_params(version: 'private', filter: 'all_tickets', only: 'count')
+      tickets_count1 = @response.api_meta[:count] 
+      assert_equal tickets_count1, 1
+    ensure
+      group.destroy if group.present?
+      agent.destroy if agent.present?
+      @account.unstub(:count_es_enabled?)
+    end
+    
     def test_latest_note_ticket_with_public_note_with_read_scope
       agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
       group = create_group_with_agents(@account, agent_list: [agent.id])
@@ -6803,7 +6822,6 @@ module Ember
       group.destroy if group.present?
       agent.destroy if agent.present?
     end
-
 
     def test_latest_note_ticket_with_private_note_with_read_scope
       agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
