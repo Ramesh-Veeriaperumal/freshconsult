@@ -516,8 +516,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   # Parent Child ticket validations...
   def validate_assoc_parent_ticket
-    set_all_agent_groups_permission
     return if self.associates_rdb.present?
+    set_all_agent_groups_permission if User.current
     @assoc_parent_ticket = Account.current.tickets.permissible(User.current).readonly(false).find_by_display_id(assoc_parent_tkt_id)
     if !(@assoc_parent_ticket && @assoc_parent_ticket.can_be_associated?)
       errors.add(:parent_id, t('ticket.parent_child.permission_denied'))
