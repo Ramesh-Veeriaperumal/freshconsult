@@ -498,7 +498,7 @@ class ApiAgentsController < ApiApplicationController
     end
 
     def check_privilege
-      super
-      render_request_error(:access_denied, 403) if !private_api? && index? && !(only_omni_channel_availability || current_user.privilege?(:manage_users))
+      success = super
+      render_request_error(:access_denied, 403) if success && !private_api? && index? && !(only_omni_channel_availability || current_user.privilege?(:manage_users))
     end
 end
