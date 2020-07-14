@@ -16,22 +16,21 @@ module SentientUser
         Thread.current[:user] = self
       end
 
-      # PRE-RAILS: Changed to reset_current_user
-      # def self.reset_current
-      #   Thread.current[:user] = nil
-      # end
+      def self.reset_current
+        Thread.current[:user] = nil
+      end
 
       def current?
         !Thread.current[:user].nil? && self.id == Thread.current[:user].id
       end
       
-      # def self.do_as(user, &block)
-      #   old_user = self.current
-      #   self.current = user
-      #   response = block.call unless block.nil?
-      #   self.current = old_user
-      #   response
-      # end
+      def self.do_as(user, &block)
+        old_user = self.current
+        self.current = user
+        response = block.call unless block.nil?
+        self.current = old_user
+        response
+      end
     }
   end
 end

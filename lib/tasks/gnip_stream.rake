@@ -5,8 +5,11 @@ namespace :gnip_stream do
     include Social::Util
     db_set = Set.new #to be optimized
     Sharding.execute_on_all_shards do
-      Social::TwitterStream.where(" subscriptions.state != 'suspended' ").joins(%(INNER JOIN `subscriptions` ON subscriptions.account_id = social_streams.account_id))
-        .find_in_batches(:batch_size => 500) do |stream_block|
+      Social::TwitterStream.find_in_batches(:batch_size => 500,
+        :joins => %(
+          INNER JOIN `subscriptions` ON subscriptions.account_id = social_streams.account_id),
+        :conditions => " subscriptions.state != 'suspended' "
+      ) do |stream_block|
         stream_block.each do |stream|
           account = stream.account
           unless account.twitter_feature_present?

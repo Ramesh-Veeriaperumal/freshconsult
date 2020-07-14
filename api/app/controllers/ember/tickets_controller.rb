@@ -28,7 +28,7 @@ module Ember
 
     INDEX_PRELOAD_OPTION_MAPPING = {
       custom_fields: { flexifield: [:denormalized_flexifield] },
-      description: :ticket_body,
+      description: :ticket_old_body,
       company: :company
     }.freeze
     
@@ -276,7 +276,7 @@ module Ember
       def assign_attributes_for_create
         # assign attribute so that it will not be queried again in model callbacks
         @item.attachments = @item.attachments
-        @item.ticket_body = @item.ticket_body # This will prevent ticket_body query during save
+        @item.ticket_old_body = @item.ticket_old_body # This will prevent ticket_old_body query during save
         @item.inline_attachments = @item.inline_attachments
         @item.schema_less_ticket.product ||= current_portal.product unless cname_params.key?(:product_id)
 

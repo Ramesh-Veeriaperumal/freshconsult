@@ -35,7 +35,7 @@ class BusinessCalendar < ActiveRecord::Base
 
   concerned_with :presenter
 
-  scope :default, -> { where(is_default: true) }
+  scope :default, :conditions => { :is_default => true }
 
   xss_sanitize :only => [:name, :description]
 
@@ -146,7 +146,7 @@ class BusinessCalendar < ActiveRecord::Base
   end
 
   def business_hour_data
-    business_time_data.presence || DEFAULT_SEED_DATA
+    business_time_data || DEFAULT_SEED_DATA
   end
 
   #migration code starts here..
@@ -218,7 +218,7 @@ class BusinessCalendar < ActiveRecord::Base
 
     def update_livechat calendar_data
       if account.features?(:chat)
-        widgets = account.chat_widgets.where(business_calendar_id: id)
+        widgets = account.chat_widgets.find(:all, :conditions => {:business_calendar_id => id})
         widgets.each do |widget|
           site_id = account.chat_setting.site_id
           LivechatWorker.perform_async(

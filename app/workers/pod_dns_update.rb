@@ -21,7 +21,15 @@ class PodDnsUpdate
   end
 
   def map_cname_to_domain(domain_config)
-    $route_53.change_resource_record_sets(hosted_zone_id: DNS_CONFIG['hosted_zone'], change_batch: { changes: handle_dns_action(domain_config) })
+  	route53 = AWS::Route53::Client.new(:access_key_id => PodConfig["access_key_id"],
+  		:secret_access_key => PodConfig["secret_access_key"],
+  		:region => PodConfig["region"])
+  	route53.change_resource_record_sets({
+	  :hosted_zone_id => DNS_CONFIG["hosted_zone"],
+	  :change_batch => {
+	    :changes => handle_dns_action(domain_config)
+	  }
+	  }) 
   end
 
   def cname_attributes(domain_config)

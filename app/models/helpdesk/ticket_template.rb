@@ -84,26 +84,33 @@ class Helpdesk::TicketTemplate < ActiveRecord::Base
   alias_attribute :helpdesk_accessible, :accessible
   delegate :visible_to_me?, :visible_to_only_me?, to: :accessible
 
-  scope :shared_templates, ->(user) {
-    where(%(acc.access_type!=%<users>s) % { :users => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]})
-    .joins(%(JOIN helpdesk_accesses acc ON
+  scope :shared_templates, lambda { |user|
+    {
+      :joins => %(JOIN helpdesk_accesses acc ON
                   acc.accessible_id = ticket_templates.id AND
                   acc.accessible_type = 'Helpdesk::TicketTemplate' AND
                   ticket_templates.account_id=%<account_id>i AND
-                  acc.account_id = ticket_templates.account_id) % { :account_id => user.account_id })
+                  acc.account_id = ticket_templates.account_id) % { :account_id => user.account_id },
+      :conditions => %(acc.access_type!=%<users>s) % {
+        :users => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]
+      }
+    }
   }
 
-  scope :only_me, ->(user){
-    where(%(acc.access_type=%<only_me>s and user_accesses.user_id=%<user_id>i ) % {
-        :only_me => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users],
-        :user_id => user.id})
-    .joins(%(JOIN helpdesk_accesses acc ON
+  scope :only_me, lambda { |user|
+    {
+      :joins => %(JOIN helpdesk_accesses acc ON
                   acc.accessible_id = ticket_templates.id AND
                   acc.accessible_type = 'Helpdesk::TicketTemplate' AND
                   ticket_templates.account_id=%<account_id>i AND
                   acc.account_id = ticket_templates.account_id
                   inner join user_accesses ON acc.id= user_accesses.access_id AND
-                  acc.account_id= user_accesses.account_id) % { :account_id => user.account_id })
+                  acc.account_id= user_accesses.account_id) % { :account_id => user.account_id },
+      :conditions => %(acc.access_type=%<only_me>s and user_accesses.user_id=%<user_id>i ) % {
+        :only_me => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users],
+        :user_id => user.id
+      }
+    }
   }
 
   INCLUDE_ASSOCIATIONS_BY_CLASS = {

@@ -11,7 +11,7 @@ namespace :reports do
 
   desc "Poll the sqs to get the params for reports export"
   task :poll_sqs => :environment do
-    AwsWrapper::SqsV2.poll(SQS[:helpdesk_reports_export_queue]) do |sqs_msg|
+    $sqs_reports_helpkit_export.poll(:initial_timeout => false, :batch_size => 10) do |sqs_msg|
       Account.reset_current_account
       puts "** Got ** #{sqs_msg.body} **"
       message    = JSON.parse(sqs_msg.body)

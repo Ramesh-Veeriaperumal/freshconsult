@@ -42,7 +42,7 @@ class Archive::ConversationsController < ::ConversationsController
       if(ArchiveNoteConfig[current_shard] && (@ticket.id <= ArchiveNoteConfig[current_shard].to_i))
         preload_options = [:attachments]
       else
-        preload_options = [:schema_less_note, :note_body, :attachments, :cloud_files, :attachments_sharable,
+        preload_options = [:schema_less_note, :note_old_body, :attachments, :cloud_files, :attachments_sharable,
                          custom_survey_remark: { survey_result: { survey: { survey_questions: {} }, survey_result_data: {} } }]
       end
       

@@ -18,6 +18,7 @@ defaults: &defaults
   fastest_hash: false
   compress: true
   socket_max_failures: 3
+  socket_timeout: 0.5
 
 development:
   <<: *defaults

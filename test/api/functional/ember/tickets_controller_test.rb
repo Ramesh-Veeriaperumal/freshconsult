@@ -2396,6 +2396,7 @@ module Ember
       put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 200
       ticket.reload
+      ticket.remove_instance_variable('@ticket_body_content')
       assert_equal subject, ticket.subject
       assert_equal description, ticket.description
       assert_equal attachment_ids, ticket.attachment_ids
@@ -2421,6 +2422,7 @@ module Ember
       put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 200
       ticket.reload
+      ticket.remove_instance_variable('@ticket_body_content')
       assert_equal subject, ticket.subject
       assert_equal description, ticket.description
       assert_equal requester_id, ticket.requester_id
@@ -2448,6 +2450,7 @@ module Ember
       put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 200
       ticket.reload
+      ticket.remove_instance_variable('@ticket_body_content')
       assert_equal subject, ticket.subject
       assert_equal description, ticket.description
       assert_equal requester_id, ticket.requester_id
@@ -2470,6 +2473,7 @@ module Ember
       put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 200
       ticket.reload
+      ticket.remove_instance_variable('@ticket_body_content')
       assert_equal subject, ticket.subject
       assert_equal description, ticket.description
       assert_equal requester_id, ticket.requester_id
@@ -2496,6 +2500,7 @@ module Ember
       put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 200
       ticket.reload
+      ticket.remove_instance_variable('@ticket_body_content')
       assert_equal subject, ticket.subject
       assert_equal description, ticket.description
       assert_equal requester_id, ticket.requester_id

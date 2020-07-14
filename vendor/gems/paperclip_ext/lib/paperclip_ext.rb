@@ -16,7 +16,7 @@ Paperclip::Storage::S3.module_eval do
         end
         write_options.merge!(@s3_headers)
         s3_object(style).write(file, write_options)
-      rescue Aws::S3::Errors::NoSuchBucket
+      rescue AWS::S3::Errors::NoSuchBucket => e
         create_bucket
         retry
       end

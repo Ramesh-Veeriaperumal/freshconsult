@@ -599,7 +599,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       
         
 
-      rescue Aws::S3::Errors::ServiceError => e # PRE-RAILS4 Changed S3 base error class as InvalidURI is not available in V2
+      rescue AWS::S3::Errors::InvalidURI => e
         # FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
         email_processing_log "Email Processing Failed: Couldn't store attachment in S3!", to_email[:email]
         raise e
@@ -1087,7 +1087,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
     def from_fwd_emails?(ticket,from_email)
       cc_email_hash_value = ticket.cc_email_hash
-      unless cc_email_hash_value.blank?
+      unless cc_email_hash_value.nil?
         cc_email_hash_value[:fwd_emails].any? {|email| email.include?(from_email[:email].downcase) }
       else
         false

@@ -13,12 +13,11 @@ describe CustomersImportController do
 
 	before(:each) do
 		login_admin
-		Aws::S3::Client.any_instance.stubs(:delete_object).returns(true)
+		AWS::S3::S3Object.any_instance.stubs(:delete).returns(true)
 	end
 
 	after(:all) do
 		destroy_custom_fields
-		Aws::S3::Client.any_instance.unstub(:delete_object)
 	end
 
 	it "should open import csv page" do

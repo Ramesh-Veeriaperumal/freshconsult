@@ -1,7 +1,7 @@
 import groovy.json.*;
 
 node_label = "spot_backend";
-backendImage = "792634465463.dkr.ecr.us-east-1.amazonaws.com/freshdesk/backend:ruby-2.3.8"
+backendImage = "792634465463.dkr.ecr.us-east-1.amazonaws.com/freshdesk/backend"
 prontoImage = "792634465463.dkr.ecr.us-east-1.amazonaws.com/fworks/pronto:rubcop-0.68.0" // Branch - https://github.com/freshdesk/pronto/tree/fd-branch
 
 isPR = (env.JOB_NAME.contains("pullrequest")) ? true : false
@@ -208,7 +208,6 @@ def copyConfigFilesFromS3() {
 
 def startServices() {
     sh """#!/bin/bash
-        sed -ie 's/\\[mysqld\\]/\\[mysqld\\]\\'\$'\\nsql-mode="NO_ENGINE_SUBSTITUTION"/' /etc/my.cnf
         sudo service mysqld start
         sudo service elasticsearch start
         redis-server --port 6379 --daemonize yes

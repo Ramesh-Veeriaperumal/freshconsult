@@ -20,7 +20,7 @@ module Freshfone
         self.status  = tracker_status
 
         #Initiating SQS Push
-        AwsWrapper::SqsV2.send_message(SQS[:freshfone_call_tracker], message.to_json)
+        $sqs_freshfone_tracker.send_message(message.to_json)
 
         Rails.logger.info "Tracker job Completion time :: #{Time.now.strftime('%H:%M:%S.%L')}"
       rescue Timeout::Error

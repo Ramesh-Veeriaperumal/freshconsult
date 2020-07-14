@@ -41,14 +41,14 @@ class SimpleOutreachUpdateTest < ActionView::TestCase
   end
 
   def test_simple_outreach_update_gets_called_from_contact_worker
-    AwsWrapper::S3.stubs(:read).returns(fixture_file_upload('files/contacts_import.csv'))
-    AwsWrapper::S3.stubs(:delete).returns([])
+    AwsWrapper::S3Object.stubs(:find).returns(fixture_file_upload('files/contacts_import.csv'))
+    AwsWrapper::S3Object.stubs(:delete).returns([])
     Account.current.tickets.stubs(:count).returns(12)
     Import::SimpleOutreachWorker.new.perform(@args)
     assert_equal 0, Import::SimpleOutreachWorker.jobs.size
     @import_entry.reload
-    AwsWrapper::S3.unstub(:delete)
+    AwsWrapper::S3Object.unstub(:delete)
     Account.current.tickets.unstub(:count)
-    AwsWrapper::S3.unstub(:read)
+    AwsWrapper::S3Object.unstub(:find)
   end
 end

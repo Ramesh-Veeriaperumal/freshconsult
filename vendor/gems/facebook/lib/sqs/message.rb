@@ -51,10 +51,10 @@ module Sqs
     def push(feeds, discard_feed)
       feeds.each do |data|
         unless discard_feed
-          if data["feed"] && data["feed"]
-            AwsWrapper::SqsV2.send_message(SQS[:facebook_realtime_queue], data["feed"])
-          elsif data["message"] && data["message"]
-            AwsWrapper::SqsV2.send_message(SQS[:fb_message_realtime_queue], data["message"])
+          if data["feed"] && data["feed"][:s]
+            $sqs_facebook.send_message(data["feed"][:s])
+          elsif data["message"] && data["message"][:s]
+            $sqs_facebook_messages.send_message(data["message"][:s])
           end
         end
         delete_facebook_feed(data)
@@ -70,9 +70,9 @@ module Sqs
         options[:delay_seconds] = msg["counter"] * FB_DELAY_SECONDS
       end
       if msg["entry"] && msg["entry"]["changes"].kind_of?(Array)
-        Rails.logger.debug AwsWrapper::SqsV2.send_message(SQS[:facebook_realtime_queue], msg.to_json, options[:delay_seconds])
+        Rails.logger.debug $sqs_facebook.send_message(msg.to_json, options)
       elsif msg["entry"] && msg["entry"]["messaging"].kind_of?(Array)
-        Rails.logger.debug AwsWrapper::SqsV2.send_message(SQS[:fb_message_realtime_queue], msg.to_json, options[:delay_seconds])
+        Rails.logger.debug $sqs_facebook_messages.send_message(msg.to_json, options)
       end
     end
     

@@ -24,7 +24,7 @@ class TicketFieldsControllerTest < ActionController::TestCase
 
   def before_all
     @account.sections.map(&:destroy)
-    @account.ticket_fields_with_nested_fields.custom_fields.where(level: nil).each {|custom_field| custom_field.destroy } # PRE-RAILS: removed child level fields for reset
+    @account.ticket_fields_only.custom_fields.each {|custom_field| custom_field.destroy }
     @default_fields = ticket_field_hash(@account.ticket_fields, @account)
     @default_fields.map{|f_d| f_d.delete(:level_three_present)}
     CentralPublishWorker::TicketFieldWorker.jobs.clear

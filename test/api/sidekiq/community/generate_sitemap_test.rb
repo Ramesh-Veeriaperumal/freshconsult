@@ -23,7 +23,7 @@ class GenerateSitemapTest < ActionView::TestCase
       outdated_sitemap_key = SITEMAP_OUTDATED % { :account_id => @account.id }
       Community::GenerateSitemap.any_instance.stubs(:portal_redis_key_exists?).with(outdated_sitemap_key).returns(true)
       Community::GenerateSitemap.any_instance.expects(:remove_portal_redis_key).with(outdated_sitemap_key).once
-      AwsWrapper::S3.expects(:put).times(@account.portals.count)
+      AwsWrapper::S3Object.expects(:store).times(@account.portals.count)
       Community::GenerateSitemap.new.perform(@account.id)
     end
   ensure

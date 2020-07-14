@@ -237,7 +237,7 @@ module Ember
         end
 
         def preload_options
-          [:schema_less_ticket, :flexifield, :ticket_states, :ticket_body]
+          [:schema_less_ticket, :flexifield, :ticket_states, :ticket_old_body]
         end
 
         def tickets_to_update

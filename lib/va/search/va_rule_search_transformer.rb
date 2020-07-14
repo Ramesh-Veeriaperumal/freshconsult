@@ -55,7 +55,7 @@ module VA::Search::VaRuleSearchTransformer
       return transformed_nested_field
     end
 
-    picklists = ticket_field.picklist_values.where(value: data[:value])
+    picklists = ticket_field.picklist_values.find_all_by_value(data[:value])
     picklists.each { |picklist| transformed_nested_field.push(default_hash.merge(value: picklist.try(:picklist_id))) }
 
     data[:nested_rules].each do |nested_rule|
@@ -118,7 +118,7 @@ module VA::Search::VaRuleSearchTransformer
   private
 
     def find_sub_picklist_by_value(picklist, value)
-      picklist.sub_picklist_values.where(value: value)
+      picklist.sub_picklist_values.find_all_by_value(value)
     end
 
     def handle_value(value, field_name = nil)

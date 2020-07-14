@@ -65,7 +65,7 @@ class Helpdesk::Access < ActiveRecord::Base
     if global_access_type?
       true
     elsif group_access_type?
-      agent_groups  = account.agent_groups.where(user_id: User.current.id).select('group_id').collect(&:group_id)
+      agent_groups  = account.agent_groups.find_all_by_user_id(User.current.id, :select => "group_id").collect(&:group_id)
       access_groups = group_accesses.collect(&:group_id)
       (agent_groups & access_groups).any?
     else
@@ -149,10 +149,12 @@ class Helpdesk::Access < ActiveRecord::Base
     end
   end
 
-  scope :user_accessible_items_via_group, ->(type, user) {
-    where("#{type_conditions(type)} AND (#{user_conditions(user)[:global]} OR #{user_conditions(user)[:users_via_group]})").
-    select('accessible_id, accessible_type, access_type').
-    joins("#{group_accesses_join(type, user)} #{agent_groups_join}")
+  scope :user_accessible_items_via_group, lambda { |type, user|
+    {
+      :joins      => "#{group_accesses_join(type, user)} #{agent_groups_join}" ,
+      :conditions => "#{type_conditions(type)} AND (#{user_conditions(user)[:global]} OR #{user_conditions(user)[:users_via_group]})",
+      :select     => "accessible_id, accessible_type, access_type"
+    }
   }
 
   scope :all_accessible, lambda { |type, user|

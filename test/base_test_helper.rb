@@ -17,7 +17,7 @@ class ActiveRecord::Base
 end
 
 class ActiveSupport::TestCase
-  db_config = Psych.safe_load(IO.read(File.join(::Rails.root, 'config/database.yml')), [], [], true)
+  db_config = YAML.safe_load(IO.read(File.join(::Rails.root, 'config/database.yml')))
   new_database = db_config['test_new']['database']
 
   conn_config = ActiveRecord::Base.connection_config # getting old configuration

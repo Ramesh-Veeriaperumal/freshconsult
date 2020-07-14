@@ -96,12 +96,14 @@ class Fdadmin::SpamWatchController < Fdadmin::DevopsMainController
     def load_recent_notes
       @spam_notes = []
       return if "tickets".eql? params["type"]
-
-      all_notes = Helpdesk::Note.where(account_id: @user.account_id, user_id: @user.id).order('id desc').limit(10)
+      all_notes = Helpdesk::Note.find(:all, :conditions => {
+                                            :account_id => @user.account_id,
+                                            :user_id => @user.id
+                                            }, :order => "id desc", :limit => 10)
       all_notes.each_with_index do |note,index|
         @spam_notes[index] = {
           "created_at" => note.created_at,
-          "new_body_html" => Helpdesk::NoteBody.where(account_id: @user.account_id, note_id: note.id).first.body_html
+          "new_body_html" => Helpdesk::NoteOldBody.find_by_account_id_and_note_id(@user.account_id,note.id).body_html
         }
       end
     end
@@ -109,14 +111,15 @@ class Fdadmin::SpamWatchController < Fdadmin::DevopsMainController
     def load_recent_tickets
       @spam_tickets = []
       return if "notes".eql?(params["type"])
-
-      all_tickets = Helpdesk::Ticket.where(account_id: @user.account_id, requester_id: @user.id)
-                                    .order('id desc').limit(10)
+      all_tickets = Helpdesk::Ticket.find(:all, :conditions => {
+                                                :account_id => @user.account_id, 
+                                                :requester_id => @user.id
+                                                }, :order => "id desc" ,:limit => 10)
       all_tickets.each_with_index do |ticket,index|
         @spam_tickets[index] = {
           "subject" => ticket.subject,
           "created_at" => ticket.created_at,
-          "new_description_html" => Helpdesk::TicketBody.where(account_id: @user.account_id, ticket_id: ticket.id).first.description_html
+          "new_description_html" => Helpdesk::TicketOldBody.find_by_account_id_and_ticket_id(@user.account_id,ticket.id).description_html
         }
       end
     end

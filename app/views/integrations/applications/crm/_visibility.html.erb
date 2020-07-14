@@ -7,7 +7,7 @@
         <% sync_checked = false%>
         <%unless @installed_app.blank? %>
           <% installed_sync_checked = @installed_app.configs_ticket_sync_option %>
-          <% sync_checked = installed_sync_checked.to_s.to_bool if installed_sync_checked.present? %>
+          <% sync_checked = installed_sync_checked.to_bool if installed_sync_checked.present? %>
         <%end%>
         <%= content_tag(:span, "Sync tickets to salesforce") %>
         <%= check_box(:ticket_sync_option, "value", :checked => sync_checked) %>

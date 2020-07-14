@@ -55,7 +55,7 @@ class Social::Dynamo::Feed::Facebook < Social::Dynamo::Feed::Base
         parent_feed_id = parent_attributes[:parent_feed_id]
         if feed_obj.instance_of?(Facebook::Core::Comment)
           in_conv        = (parent_attributes[:parent_conversation] == 0) ? 1 : 0
-          comment_count  = {"comments_count" => {:n => "1"}}
+          comment_count  = {"comments_count" => {:n => "1"}} 
           if in_conv == 1 or comment_count.present?
             item_hash = feeds_hash(hash, in_reply_to, "", 0, 1, "", parent_attributes[:source])
             item_hash.merge!(comment_count) if comment_count.present?

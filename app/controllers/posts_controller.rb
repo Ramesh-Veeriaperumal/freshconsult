@@ -26,14 +26,15 @@ class PostsController < ApplicationController
 #    render_posts_or_xml
   end
 
-  # PRE-RAILS: Not found in routes.rb, need to check
+
   def monitored
     @user = current_account.users.find params[:user_id]
     options = @@query_options.merge(:conditions => ["#{Monitorship.table_name}.user_id = ? and #{Post.table_name}.user_id != ? and #{Monitorship.table_name}.active = ?", params[:user_id], @user.id, true])
     options[:order]  = post_order
     options[:joins] += " inner join #{Monitorship.table_name} on #{Monitorship.table_name}.topic_id = #{Topic.table_name}.id"
+    options[:page]   = params[:page]
     options[:count]  = {:select => "#{Post.table_name}.id"}
-    @posts = Post.joins(options[:joins]).where(options[:conditions]).select(options[:select]).order(options[:order]).count(options[:count]).paginate(page: params[:page])
+    @posts = Post.paginate options
     render_posts_or_xml
   end
 

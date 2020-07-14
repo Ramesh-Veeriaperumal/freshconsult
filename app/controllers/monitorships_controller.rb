@@ -23,7 +23,7 @@ class MonitorshipsController < ApplicationController
 
   def is_following
     user_id = params[:user_id] || current_user.id
-    @monitorship = Monitorship.where(user_id: user_id, monitorable_id: params[:id], monitorable_type: params[:object].capitalize).first || []  
+    @monitorship = Monitorship.find(:first, :conditions => { :user_id => user_id,:monitorable_id => params[:id],:monitorable_type =>params[:object].capitalize}) || []  
     respond_to do |format|
       format.xml { render :xml => @monitorship.to_xml(:except=>:account_id) }
       format.json { render :json => @monitorship.as_json(:except=>:account_id) }

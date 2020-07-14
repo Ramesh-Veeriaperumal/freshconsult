@@ -7,7 +7,7 @@ class Admin::CannedForm < ActiveRecord::Base
 
   has_many :canned_form_handles, dependent: :destroy, class_name: 'Admin::CannedFormHandle'
 
-  scope :active_forms, -> { where(deleted: false)}
+  scope :active_forms, conditions: { :deleted => false }
 
   serialize :message, Hash
 

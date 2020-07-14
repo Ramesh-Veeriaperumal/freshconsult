@@ -42,3 +42,10 @@ $s3_client = Aws::S3::Client.new({
   secret_access_key: S3_CONFIG[:secret_access_key],
   signature_version: 'v4'
 }.merge(s3_dev_params))
+
+$sqs_euc = AWS::SQS.new(
+  access_key_id: S3_CONFIG[:access_key_id_euc],
+  secret_access_key: S3_CONFIG[:secret_access_key_euc],
+  region: S3_CONFIG[:region_euc],
+  s3_signature_version: :v4
+)

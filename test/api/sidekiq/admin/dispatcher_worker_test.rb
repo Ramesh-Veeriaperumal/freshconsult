@@ -54,9 +54,7 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
 
           not_operator = operator.include?('not')
           rule_value = generate_value(operator_type, field_name, false, operator)
-          rule_value = rule_value.first if field_name.to_sym.eql?(:to_email) && ['is','is_not'].include?(operator.to_s) && rule_value.is_a?(Array)
           rule = Account.current.va_rules.first
-          p "rule :: #{rule.inspect} :: rule_value :: #{rule_value}"
           condition_data = { all: [ 
             { evaluate_on: "ticket", 
               name: field_name, 
@@ -74,7 +72,6 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
             end
             condition_data[:all].first.merge!({ nested_rules: nested_rules })
           end
-          p "condition_data :: #{condition_data.inspect}"
           rule.condition_data = condition_data
           group = Account.current.groups.first || create_group(Account.current)
           rule.action_data = options[:actions].map do |action|
@@ -82,14 +79,11 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
           end
           rule.save
           ticket_value = generate_value(operator_type, field_name, false) if ["greater_than", "less_than"].include?(operator)
-          rule_value = rule_value.to_a if field_name.to_sym.eql?(:to_email) && ['is'].include?(operator.to_s) && !rule_value.is_a?(Array)
           ticket_value = not_operator ? generate_value(operator_type, field_name, true) : rule_value unless ticket_value
           ticket_value = ticket_value.first if ticket_value.is_a?(Array) && operator == 'is_any_of'
           ticket_params = generate_ticket_params(field_name, ticket_value)
-          p "ticket_params :: #{ticket_params.inspect}"
           ticket = Sidekiq::Testing.inline! { create_ticket(ticket_params.symbolize_keys) }
           ticket = ticket.reload
-          p "ticket :: #{ticket.inspect} :: ticket.to_emails :: #{ticket.try(:to_emails)}"
           rule.action_data.each do |action|
             verify_action_data(action, ticket, not_operator)
           end

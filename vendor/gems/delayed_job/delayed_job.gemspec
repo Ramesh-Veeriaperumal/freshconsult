@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
   # s.executables = ["delayed_job"]
   # s.default_executable = "delayed_job"
 
+  s.has_rdoc = false
   s.rdoc_options = ["--main", "README.textile"]
   s.extra_rdoc_files = ["README.textile"]
 

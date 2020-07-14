@@ -123,7 +123,7 @@ class Archive::TicketDecorator < TicketDecorator
   def conversations
     if @sideload_options.include?('conversations')
       preload_options = [:attachments]
-      preload_options << [:schema_less_note, :note_body] unless archive_old_conversations?
+      preload_options << [:schema_less_note, :note_old_body] unless archive_old_conversations?
 
       ticket_conversations = record.archive_notes.
                              conversations(preload_options, :created_at, ConversationConstants::MAX_INCLUDE)

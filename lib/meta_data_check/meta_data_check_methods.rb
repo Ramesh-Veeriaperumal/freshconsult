@@ -22,7 +22,13 @@ module MetaDataCheck::MetaDataCheckMethods
 
   def self.check_route53(account)
     begin
-      response = $route_53.list_resource_record_sets(hosted_zone_id: PodDnsUpdate::DNS_CONFIG['hosted_zone'], start_record_name: account['full_domain'], start_record_type: 'CNAME', max_items: 1)
+      route53_client = AWS::Route53::Client.new(:region => PodConfig["region"])
+      response = route53_client.list_resource_record_sets({
+        hosted_zone_id: PodDnsUpdate::DNS_CONFIG["hosted_zone"],
+        start_record_name: account['full_domain'],
+        start_record_type: "CNAME",
+        max_items: 1
+        })
       (response.resource_record_sets && response.resource_record_sets.first[:name] == account['full_domain']+".") ? nil : account
     rescue Exception => e
       return account

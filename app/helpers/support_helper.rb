@@ -307,7 +307,7 @@ module SupportHelper
                         onerror="default_image_error(this)" data-type="logo" />
                  </span>)
     _output << %(</a>)
-    _output.join.html_safe
+    _output.to_s.html_safe
   end
 
   def portal_fav_ico

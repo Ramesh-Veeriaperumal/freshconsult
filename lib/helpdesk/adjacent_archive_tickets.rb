@@ -38,9 +38,9 @@ module Helpdesk::AdjacentArchiveTickets
 		end
 
 		def find_in_all(direction)
-			next_ticket = current_account.archive_tickets
-				.where(["id #{SWITCHES[direction][:sql_operator]} ?", @item.id]) 
-				.order("id #{SWITCHES[direction][:order]}").first
+			next_ticket = current_account.archive_tickets.find(:first, 
+				:conditions => ["id #{SWITCHES[direction][:sql_operator]} ?", @item.id], 
+				:order => "id #{SWITCHES[direction][:order]}")
 
 			return next_ticket.nil? ? nil : next_ticket.display_id
 		end

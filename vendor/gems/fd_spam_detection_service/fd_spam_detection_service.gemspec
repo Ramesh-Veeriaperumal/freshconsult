@@ -14,6 +14,6 @@ Gem::Specification.new do |s|
   s.files = Dir["{lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]
 
-  s.add_dependency "httparty"
+  s.add_dependency "httparty", "0.10.0"
 
 end

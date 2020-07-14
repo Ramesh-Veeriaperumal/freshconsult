@@ -8,7 +8,7 @@ class PasswordPolicy < ActiveRecord::Base
 	include Redis::RedisKeys
 	include Redis::OthersRedis
 
-  serialize :configs, Hash
+	serialize :configs, Hash
 
 	validates_presence_of :policies
 	validate :validate_configs

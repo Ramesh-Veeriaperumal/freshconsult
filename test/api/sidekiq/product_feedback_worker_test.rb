@@ -11,7 +11,7 @@ class ProductFeedbackWorkerTest < ActionView::TestCase
 
   def setup
     Account.stubs(:current).returns(Account.first)
-    AwsWrapper::S3.stubs(:read).returns(nil)
+    AwsWrapper::S3Object.stubs(:read).returns(nil)
     @account = Account.first
     @user = @account.users.first
   end
@@ -19,9 +19,10 @@ class ProductFeedbackWorkerTest < ActionView::TestCase
   def teardown
     super
     destroy_attachments
-    Account.unstub(:current)    
+    Account.unstub(:current)
+    
     Net::HTTP.any_instance.unstub(:request)
-    AwsWrapper::S3.unstub(:read)
+    AwsWrapper::S3Object.unstub(:read)
   end
 
   def self.fixture_path

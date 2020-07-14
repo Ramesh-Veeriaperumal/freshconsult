@@ -1,21 +1,21 @@
 <%= node[:opsworks][:environment]%>:
   audit_log:
-    api_endpoint: "<%= node[:ymls][:hypertrail][:audit_log][:api_endpoint] %>"
-    username: "<%= node[:ymls][:hypertrail][:audit_log][:username] %>"
-    password: "<%= node[:ymls][:hypertrail][:audit_log][:password] %>"
+    api_endpoint: <%= node[:ymls][:hypertrail][:audit_log][:api_endpoint] %>
+    username: <%= node[:ymls][:hypertrail][:audit_log][:username] %>
+    password: <%= node[:ymls][:hypertrail][:audit_log][:password] %>
   audit_log_filtered_export:
-    api_endpoint: "<%= node[:ymls][:hypertrail][:audit_log_filtered_export][:api_endpoint] %>"
-    username: "<%= node[:ymls][:hypertrail][:audit_log_filtered_export][:username] %>"
-    password: "<%= node[:ymls][:hypertrail][:audit_log_filtered_export][:password] %>"
+    api_endpoint: <%= node[:ymls][:hypertrail][:audit_log_filtered_export][:api_endpoint] %>
+    username: <%= node[:ymls][:hypertrail][:audit_log_filtered_export][:username] %>
+    password: <%= node[:ymls][:hypertrail][:audit_log_filtered_export][:password] %>
   audit_log_archived_export:
-    api_endpoint: "<%= node[:ymls][:hypertrail][:audit_log_archived_export][:api_endpoint] %>"
-    username: "<%= node[:ymls][:hypertrail][:audit_log_archived_export][:username] %>"
-    password: "<%= node[:ymls][:hypertrail][:audit_log_archived_export][:password] %>"
+    api_endpoint: <%= node[:ymls][:hypertrail][:audit_log_archived_export][:api_endpoint] %>
+    username: <%= node[:ymls][:hypertrail][:audit_log_archived_export][:username] %>
+    password: <%= node[:ymls][:hypertrail][:audit_log_archived_export][:password] %>
   audit_log_file_export:
-    api_endpoint: "<%= node[:ymls][:hypertrail][:audit_log_file_export][:api_endpoint] %>"
-    username: "<%= node[:ymls][:hypertrail][:audit_log_file_export][:username] %>"
-    password: "<%= node[:ymls][:hypertrail][:audit_log_file_export][:password] %>"
+    api_endpoint: <%= node[:ymls][:hypertrail][:audit_log_file_export][:api_endpoint] %>
+    username: <%= node[:ymls][:hypertrail][:audit_log_file_export][:username] %>
+    password: <%= node[:ymls][:hypertrail][:audit_log_file_export][:password] %>
   timeline:
-    api_endpoint: "<%= node[:ymls][:hypertrail][:timeline][:api_endpoint] %>"
-    username: "<%= node[:ymls][:hypertrail][:timeline][:username] %>"
-    password: "<%= node[:ymls][:hypertrail][:timeline][:password] %>"
+    api_endpoint: <%= node[:ymls][:hypertrail][:timeline][:api_endpoint] %>
+    username: <%= node[:ymls][:hypertrail][:timeline][:username] %>
+    password: <%= node[:ymls][:hypertrail][:timeline][:password] %>

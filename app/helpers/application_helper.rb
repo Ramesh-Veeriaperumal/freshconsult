@@ -94,7 +94,7 @@ module ApplicationHelper
       %(
         <!--[if #{h[0]}]>#{h[2] ? '<!-->' : ''}<html class="no-js #{h[1]}" lang="#{
           language }" dir="#{current_direction?}" data-date-format="#{date_format}">#{h[2] ? '<!--' : ''}<![endif]-->)
-    }.join.html_safe
+    }.to_s.html_safe
   end
 
   def spacer_image_url
@@ -151,7 +151,8 @@ module ApplicationHelper
   def logo_url(portal = current_portal)
     MemcacheKeys.fetch(["v8","portal","logo",portal],7.days.to_i) do
         portal.logo.nil? ? "/assets/misc/logo.png?702017" :
-        AwsWrapper::S3.presigned_url(portal.logo.content.bucket_name, portal.logo.content.path(:logo), expires_in: 7.days.to_i, secure: true)
+        AwsWrapper::S3Object.public_url_for(portal.logo.content.path(:logo),portal.logo.content.bucket_name,
+                                          :expires => 7.days, :secure => true)
     end
   end
 
@@ -197,7 +198,7 @@ module ApplicationHelper
   end
 
   def show_flash
-    @show_flash = [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "alert #{type}") if flash[type] }.join.html_safe
+    @show_flash = [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "alert #{type}") if flash[type] }.to_s.html_safe
   end
 
   def ember_admin_flash
@@ -448,7 +449,7 @@ module ApplicationHelper
         s[1]
       ).html_safe
     end
-    navigation.join.html_safe
+    navigation.to_s.html_safe
   end
 
   def subscription_tabs
@@ -1027,7 +1028,7 @@ module ApplicationHelper
    if !item[:preferences].blank?
      color = item[:preferences].fetch(type, '')
    end
-   sanitize(color.to_s)
+   sanitize(color)
  end
 
  # def get_time_in_hours seconds

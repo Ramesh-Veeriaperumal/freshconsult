@@ -18,7 +18,7 @@ class Import::Customers::OutreachContact < Import::Customers::Contact
   end
 
   def parse_csv_file
-    csv_file = AwsWrapper::S3.read_io(S3_CONFIG[:bucket], @customer_params[:file_location])
+    csv_file = AwsWrapper::S3Object.find(@customer_params[:file_location], S3_CONFIG[:bucket])
     row_count = 0
     max_limit_exceeded = false
     CSVBridge.parse(content_of(csv_file)).each_slice(IMPORT_BATCH_SIZE).with_index do |rows, index|

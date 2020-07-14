@@ -24,7 +24,7 @@ module Cache::Memcache::Dashboard::CacheData
         return MemcacheKeys.unset_null(data)
       end
       data, expiry = safe_send(process)
-      cache_data = MemcacheKeys.convert_value(data)
+      cache_data = MemcacheKeys.set_null(data)
       MemcacheKeys.cache(key, cache_data, expiry) if expiry.present?
       increment_others_redis("#{redis_key}_SET")
       MemcacheKeys.unset_null(cache_data)
@@ -54,7 +54,7 @@ module Cache::Memcache::Dashboard::CacheData
         to_be_cached = aggregated_data
         #setting a key ttl as there is no way to get ttl of a key from memcache. This will be given back to UI to show as label "time since..."
         to_be_cached.merge!({:time_since => Time.zone.now.to_i})
-        cache_data = MemcacheKeys.convert_value(to_be_cached)
+        cache_data = MemcacheKeys.set_null(to_be_cached)
         MemcacheKeys.cache(key, cache_data, MemcacheKeys::DASHBOARD_TIMEOUT)
         increment_others_redis(widgets_redis_key(cache_type, "set"))
       end

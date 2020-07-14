@@ -32,6 +32,8 @@ class PodRedirectTest < ActionView::TestCase
   end
 
   def stub_shard_mapping(pod_info)
-    ShardMapping.stubs(:lookup_with_domain).returns(ShardMapping.new(pod_info: pod_info))
+    shard_mapping = mock('shard_mapping')
+    shard_mapping.stubs(:pod_info).returns(pod_info)
+    ShardMapping.stubs(:lookup_with_domain).returns(shard_mapping)
   end
 end

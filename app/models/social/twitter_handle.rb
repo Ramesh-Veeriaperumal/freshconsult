@@ -8,20 +8,18 @@ class Social::TwitterHandle < ActiveRecord::Base
 
   serialize  :search_keys, Array
 
-  [:active, :disabled, :reauth_required].each do |name|
-    scope name, -> { where(state: TWITTER_STATE_KEYS_BY_TOKEN[name]) }
-  end
-  scope :capture_mentions, -> { where(capture_mention_as_ticket: true) }
-
-  scope :paid_acc_handles, -> {
-    where(["subscriptions.state IN ('active', 'free')"]).
-    joins("INNER JOIN `subscriptions` ON subscriptions.account_id = social_twitter_handles.account_id")
-  }
-
-  scope :trail_acc_handles, -> {
-    where(["subscriptions.state = 'trial'"]).
-    joins("INNER JOIN `subscriptions` ON subscriptions.account_id = social_twitter_handles.account_id")
-  }
+  scope :active, :conditions => { :state => TWITTER_STATE_KEYS_BY_TOKEN[:active] }
+  scope :disabled, :conditions => {:state => TWITTER_STATE_KEYS_BY_TOKEN[:disabled] }
+  scope :reauth_required, :conditions => {:state => TWITTER_STATE_KEYS_BY_TOKEN[:reauth_required]}
+  scope :capture_mentions, :conditions => {:capture_mention_as_ticket => true}
+  
+  scope :paid_acc_handles, 
+              :conditions => ["subscriptions.state IN ('active', 'free')"],
+              :joins      =>  "INNER JOIN `subscriptions` ON subscriptions.account_id = social_twitter_handles.account_id"
+              
+  scope :trail_acc_handles, 
+              :conditions => ["subscriptions.state = 'trial'"],
+              :joins      => "INNER JOIN `subscriptions` ON subscriptions.account_id = social_twitter_handles.account_id"
 
   def search_keys_to_s
     search_keys.blank? ? "" : search_keys.join(",")

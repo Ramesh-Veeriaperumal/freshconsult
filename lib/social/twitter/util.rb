@@ -6,20 +6,23 @@ module Social::Twitter::Util
 
   def user_recent_tickets(screen_name)
     requester = Account.current.users.find_by_twitter_id(screen_name, :select => "id")
-    tickets = Account.current.tickets.requester_active(requester).visible.newest(3) if requester
+    tickets = Account.current.tickets.requester_active(requester).visible.newest(3).find(:all) if requester
   end
 
   def populate_fd_info_twitter(feeds, search_type)
     all_handle_screen_names = Account.current.twitter_handles_from_cache.collect(&:screen_name)
     screen_names = feeds.inject([]) { |arr, feed| arr << feed.user[:screen_name]; arr}
-    db_users     = Account.current.users.select("twitter_id").where({twitter_id: screen_names.uniq})
+    db_users     = Account.current.users.find(:all,
+                                              :select => "twitter_id",
+                                              :conditions => {:twitter_id => screen_names.uniq})
     screen_names_in_db = db_users.collect(&:twitter_id)
 
     if non_brand_streams?(search_type)
       tweet_ids  = feeds.collect(&:feed_id)
-      db_tweets = Account.current.tweets.select("tweet_id, tweetable_id, tweetable_type")
-                                        .where({ tweet_id: tweet_ids.uniq })
-                                        .includes(:tweetable)
+      db_tweets = Account.current.tweets.find(:all,
+                                              :select => "tweet_id, tweetable_id, tweetable_type",
+                                              :conditions => { :tweet_id => tweet_ids.uniq },
+                                              :include => :tweetable)
       tkt_hash = db_tweets.inject({}) {| hash, tweet|  hash.store(tweet.tweet_id, helpdesk_ticket_link(tweet.tweetable)); hash}
     end
 

@@ -64,11 +64,13 @@ class Fdadmin::SubscriptionsController < Fdadmin::DevopsMainController
 
   private
 	def fetch_signups_per_day
-    merge_array_of_hashes(Sharding.run_on_all_slaves { Account.where({:created_at => (30.days.ago..Time.now.end_of_day)}).order('created_at desc').group("DATE_FORMAT(created_at, '%d %M, %Y')").count })
+    merge_array_of_hashes(Sharding.run_on_all_slaves { Account.count(:group => "DATE_FORMAT(created_at, '%d %M, %Y')",
+      :conditions => {:created_at => (30.days.ago..Time.now.end_of_day)}, :order => "created_at desc")})
   end
 
   def fetch_signups_per_month
-     signups_by_month = merge_array_of_hashes(Sharding.run_on_all_slaves {  Subscription.where('created_at is not null').order('created_at desc').group("DATE_FORMAT(created_at, '%b, %Y')").count })
+     signups_by_month = merge_array_of_hashes(Sharding.run_on_all_slaves {  Subscription.count(:group => "DATE_FORMAT(created_at, '%b, %Y')", 
+                                       :order => "created_at desc", :conditions => "created_at is not null") })
      signups_by_month = signups_by_month.sort_by{|k,v| Time.parse(k)}.reverse.to_h
   end
 

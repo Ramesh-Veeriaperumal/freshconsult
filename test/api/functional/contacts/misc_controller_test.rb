@@ -175,14 +175,14 @@ class Contacts::MiscControllerTest < ActionController::TestCase
                                              token: Faker::Number.number(10))
     export_entry.save
     attachment = create_attachment(attachable_type: 'DataExport', attachable_id: export_entry.id)
-    AwsWrapper::S3.stubs(:presigned_url).returns('spec/fixtures/files/attachment.csv')
+    AwsWrapper::S3Object.stubs(:url_for).returns('spec/fixtures/files/attachment.csv')
     get :export_details, construct_params(id: export_entry.token)
     assert_response 200
     response_hash = { id: export_entry.token,
                       status: 'completed',
                       download_url: 'spec/fixtures/files/attachment.csv' }
     match_json(response_hash)
-    AwsWrapper::S3.unstub(:presigned_url)
+    AwsWrapper::S3Object.unstub(:url_for)
   end
 
   def test_export_csv_details_with_invalid_token

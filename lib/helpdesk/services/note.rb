@@ -33,13 +33,11 @@ module Helpdesk
 
       def save_note
         build_note_and_sanitize
-        UnicodeSanitizer.encode_emoji(self.note_body, 'body', 'full_text')
         self.save
       end
 
       def save_note!
         build_note_and_sanitize
-        UnicodeSanitizer.encode_emoji(self.note_body, 'body', 'full_text')
         self.save!
       end
 

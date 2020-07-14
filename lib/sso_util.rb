@@ -302,7 +302,7 @@ module SsoUtil
     to_be_added = user_companies - company_names
     to_be_added.each do |company_name|
       raise SsoFieldValidationError, "Invalid company name" if company_name.class != String
-      new_comp = account.companies.where(name: company_name).first_or_create
+      new_comp = account.companies.find_or_create_by_name(company_name)
       user.user_companies.build(company_id: new_comp.id,
                                 client_manager: false,
                                 default: false)

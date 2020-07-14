@@ -5,7 +5,7 @@ require 'spec_helper'
 describe Dynamo do 
 
 	before(:all) do
-		$dynamo = Aws::DynamoDB::Client.new
+		$dynamo = AWS::DynamoDB::ClientV2.new
 		Dynamo::CLIENT = $dynamo
 		
 		@table_config = HashWithIndifferentAccess.new({

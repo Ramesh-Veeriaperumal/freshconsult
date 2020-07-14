@@ -28,12 +28,10 @@ class OutgoingEmailDomainCategory < ActiveRecord::Base
     'delete' => 3
   }
 
-  scope :active, ->{ where("status != ?", STATUS['delete']) }
-
-  scope :dkim_configured_domains, ->{ where(["status in (?)", [STATUS['active'], STATUS['unverified']]]) }
-
-  scope :dkim_activated_domains, ->{ where(status: STATUS['active']) }
-  scope :verified_email_configs_domain, ->{ where(email_configs: { active: true}).joins(:email_configs).readonly(false) }
+  scope :active, :conditions => ["status != ?", STATUS['delete']]
+  scope :dkim_configured_domains, :conditions => ["status in (?)", [STATUS['active'], STATUS['unverified']]]
+  scope :dkim_activated_domains, :conditions => ["status = ?", STATUS['active']]
+  scope :verified_email_configs_domain, conditions: ['email_configs.active', true], joins: [:email_configs], readonly: false
 
   INVALID_DOMAINS = ["freshdesk.com", "freshdesk-dev.com", "freshpo.com"]
   MAX_DKIM_ALLOWED = 2

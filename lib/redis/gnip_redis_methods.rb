@@ -16,10 +16,9 @@ module Redis::GnipRedisMethods
   end
 
 	def update_reconnect_time_in_redis(reconnect_time)
-    queue_attributes = AwsWrapper::SqsV2.get_queue_attributes(SQS[:twitter_realtime_queue], ['ApproximateNumberOfMessages']) || {}
     params = {
       :reconnect_time => reconnect_time,
-      queue_size: queue_attributes['ApproximateNumberOfMessages']
+      :queue_size => $sqs_twitter.approximate_number_of_messages
     }
     sandbox(reconnect_time) do |last_entry, updated_time|
       unless last_entry[:parsed].nil?

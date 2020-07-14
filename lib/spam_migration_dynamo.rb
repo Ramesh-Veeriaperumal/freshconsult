@@ -49,7 +49,7 @@ module SpamMigrationDynamo
 			last_timestamp = 60.days.ago
 
 			while unpublished_topics_count(last_timestamp, account) > 0
-				account.topics.where(topic_condition(last_timestamp)).find_in_batches(:batch_size => 100) do |topics|
+				account.topics.find_in_batches(:conditions => topic_condition(last_timestamp), :batch_size => 100) do |topics|
 					topics.each do |topic|
 						last_timestamp = topic.created_at
 						create_dynamo_post(topic.posts.first)
@@ -65,7 +65,7 @@ module SpamMigrationDynamo
 			last_timestamp = 60.days.ago
 
 			while unpublished_posts_count(last_timestamp, account) > 0
-				account.posts.where(post_condition(last_timestamp)).joins(:topic).find_in_batches(:batch_size => 100) do |posts|
+				account.posts.find_in_batches(:conditions => post_condition(last_timestamp), :joins => :topic, :batch_size => 100) do |posts|
 					posts.each do |post|
 						last_timestamp = post.created_at
 						create_dynamo_post(post)
@@ -77,11 +77,11 @@ module SpamMigrationDynamo
 		end
 
 		def unpublished_topics_count(timestamp, account)
-			account.topics.where(topic_condition(timestamp)).count
+			account.topics.count(:conditions => topic_condition(timestamp))
 		end
 
 		def unpublished_posts_count(timestamp, account)
-			account.posts.where(post_condition(timestamp)).joins(:topic).count
+			account.posts.count(:conditions => post_condition(timestamp), :joins => :topic)
 		end
 
 		def create_feature_for_account(account)
@@ -92,7 +92,7 @@ module SpamMigrationDynamo
 
 		def create_default_forum_moderators(account)
 			admin_privilege = account.roles.find_by_name('Account Administrator').privileges
-			account_admins = account.users.where(privileges: admin_privilege)
+			account_admins = account.users.find_all_by_privileges(admin_privilege)
 			account_admins.each do |admin|
 				moderator = account.forum_moderators.new
 				moderator.user = admin

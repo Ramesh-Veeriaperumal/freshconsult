@@ -49,7 +49,7 @@ RSpec.describe Facebook::Core::Post do
       attributes_to_get = ["parent_feed_id", "in_conversation", "source", "fd_link", "fd_user", "comments_count"]
       dynamo_item = get_dynamo_feed("feeds", feed_id, attributes_to_get)
       
-      if dynamo_item.item.present?
+      if dynamo_item
         feed = dynamo_item[:item]
         feed["comments_count"].should be nil
         feed["fd_link"][:ss].should  eql(["#{ticket.display_id}"])

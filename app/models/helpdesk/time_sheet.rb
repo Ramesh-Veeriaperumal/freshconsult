@@ -8,7 +8,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
 
   concerned_with :presenter
 
-  default_scope ->{ order("executed_at DESC") }
+  default_scope :order => "executed_at DESC"
 
   belongs_to :workable, :polymorphic => true
   delegate :product_name, :group_name, :to => :workable
@@ -34,73 +34,81 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
 
   attr_accessor :archive_changes
 
-  scope :timer_active , ->{ where(timer_running: true) }
+  scope :timer_active , :conditions =>["timer_running=?" , true]
 
   ## ** Methods used by API V1 filters starts here.****
   ## If there are any conditions changed here in any one of scopes, relevant conditions should be changed in self.filter_conditions(filter_options=FILTER_OPTIONS) also.
 
-  scope :created_at_inside, ->(start, stop) {
-    where([" helpdesk_time_sheets.executed_at >= ? and helpdesk_time_sheets.executed_at <= ?", start, stop])
+  scope :created_at_inside, lambda { |start, stop|
+    { :conditions =>
+      [" helpdesk_time_sheets.executed_at >= ? and helpdesk_time_sheets.executed_at <= ?",
+        start, stop]
+    }
+  }
+  scope :hour_billable , lambda {|hr_billable| {:conditions =>{:billable => hr_billable} } }
+
+  scope :by_agent , lambda { |created_by|
+    { :conditions => {:user_id => created_by } } unless created_by.blank?
   }
 
-  scope :hour_billable , lambda {|hr_billable| where(billable: hr_billable) }
-
-  scope :by_agent, ->(created_by){
-    where({:user_id => created_by }) unless created_by.blank?
+  scope :by_group , lambda  { |group|
+      { :conditions => { :helpdesk_tickets => { :group_id => group } } } unless group.blank?
   }
 
-  scope :by_group, ->(group){
-    where({ :helpdesk_tickets => { :group_id => group } }) unless group.blank?
+  scope :for_companies, lambda{ |company_ids|
+    {
+      :conditions => {:helpdesk_tickets => {:owner_id => company_ids}}
+    } unless company_ids.blank?
   }
 
-  scope :for_companies, ->(company_ids){
-    where({:helpdesk_tickets => {:owner_id => company_ids}}) unless company_ids.blank?
+  scope :for_contacts, lambda{|contact_email|
+      {
+        :joins => [ "INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id"],
+        :conditions =>{:users => {:email => contact_email}},
+      } unless contact_email.blank?
   }
 
-  scope :for_contacts, ->(contact_email){
-    unless contact_email.blank?
-      where({:users => {:email => contact_email}})
-      .joins([ "INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id"])
-    end
+  scope :for_contacts_with_id, lambda{|id|
+      {
+        :joins => [ "INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id"],
+        :conditions =>{:users => {:id => id}},
+      } unless id.blank?
   }
 
-  scope :for_contacts_with_id, ->(id){
-    unless id.blank?
-      where({:users => {:id => id}})
-      .joins([ "INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id"])
-    end
-  }
-
-  scope :for_products, ->(products) {
-    unless products.blank?
-      where({:helpdesk_schema_less_tickets=>{:product_id=>products}})
-      .joins([ "INNER JOIN helpdesk_schema_less_tickets on helpdesk_schema_less_tickets.ticket_id = helpdesk_tickets.id and helpdesk_schema_less_tickets.account_id = helpdesk_tickets.account_id "])
-    end
+  scope :for_products, lambda { |products|
+    {
+      :joins => [ "INNER JOIN helpdesk_schema_less_tickets on helpdesk_schema_less_tickets.ticket_id = helpdesk_tickets.id and helpdesk_schema_less_tickets.account_id = helpdesk_tickets.account_id "],
+      :conditions => {:helpdesk_schema_less_tickets=>{:product_id=>products}}
+     } unless products.blank?
   }
 
   ## ** Methods used by API V1 filters ends here.****
 
   #************************** Archive scope start here *****************************#
-  scope :archive_by_group, ->(group) {
-    where({ :archive_tickets => { :group_id => group } }) unless group.blank?
+  scope :archive_by_group , lambda  { |group|
+      { :conditions => { :archive_tickets => { :group_id => group } } } unless group.blank?
   }
 
-  scope :archive_for_companies, ->(company_ids){
-    where({:archive_tickets => {:owner_id => company_ids}}) unless company_ids.blank?
+  scope :archive_for_companies, lambda{ |company_ids|
+    {
+      :conditions => {:archive_tickets => {:owner_id => company_ids}}
+    } unless company_ids.blank?
   }
 
-  scope :archive_for_contacts, ->(contact_email){
-    unless contact_email.blank?
-      where({:users => {:email => contact_email}})
-      .joins([ "INNER JOIN `users` ON `archive_tickets`.requester_id = `users`.id"])
-    end
+  scope :archive_for_contacts, lambda{|contact_email|
+      {
+        :joins => [ "INNER JOIN `users` ON `archive_tickets`.requester_id = `users`.id"],
+        :conditions =>{:users => {:email => contact_email}},
+      } unless contact_email.blank?
   }
 
-  scope :archive_for_products, ->(products){
-    where({ :archive_tickets => { :product_id => products } }) unless products.blank?
+  scope :archive_for_products, lambda { |products|
+    {
+      :conditions => { :archive_tickets => { :product_id => products } }
+    } unless products.blank?
   }
 
-  scope :created_in_last_twenty_days, -> { where("updated_at > ?", 20.days.ago) }
+  scope :created_in_last_twenty_days, conditions: [" updated_at > ? ", 20.days.ago]
 
   #************************** Archive scope ends here *****************************#
 

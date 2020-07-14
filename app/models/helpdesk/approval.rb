@@ -24,6 +24,7 @@ class Helpdesk::Approval < ActiveRecord::Base
   after_commit :approval_changes_on_create, on: :create
   after_commit :approval_changes_on_update, on: :update
   after_commit :publish_article_approver_changes
+
   after_commit :trigger_callback
 
   def in_review?

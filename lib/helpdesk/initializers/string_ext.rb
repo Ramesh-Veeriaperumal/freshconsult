@@ -28,7 +28,7 @@ class NullObject < Struct.new(nil)
   end
 end
 
-module StringExt
+# module StringExt
 #   def brackets_with_translation(*args)
 #     args = [underscore.tr(' ', '_').to_sym] if args.empty?
 #     return brackets_without_translation(*args) unless args.first.is_a? Symbol
@@ -43,20 +43,6 @@ module StringExt
 #       alias :[] :brackets
 #     end
 #   end
+# end
 
-  # PRE-RAILS: This method was overridden in gems/savon-0.9.2/lib/savon/core_ext/string.rb which is dependency for Marketo.
-  # Moved Marketo to Autopilot - https://github.com/freshdesk/helpkit/commit/b6bbc413fa9a91c7ac75b25af015e11a049d7c0d
-  # On Marketo Removal, there was dependecy on this method, so included here.
-  def snakecase
-    str = dup
-    str.gsub! /::/, '/'
-    str.gsub! /([A-Z]+)([A-Z][a-z])/, '\1_\2'
-    str.gsub! /([a-z\d])([A-Z])/, '\1_\2'
-    str.tr! ".", "_"
-    str.tr! "-", "_"
-    str.downcase!
-    str
-  end
-end
-
-String.send :include, StringExt
+# String.send :include, StringExt

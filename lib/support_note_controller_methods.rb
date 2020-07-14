@@ -7,7 +7,7 @@ module SupportNoteControllerMethods
   
   def update_cc_list
     cc_email_hash_value = @ticket.cc_email_hash
-    if cc_email_hash_value.blank?
+    if cc_email_hash_value.nil?
       cc_email_hash_value = Helpdesk::Ticket.default_cc_hash
     end
     cc_array = cc_email_hash_value[:cc_emails]

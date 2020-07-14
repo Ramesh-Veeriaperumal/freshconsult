@@ -36,6 +36,6 @@ class Community::GenerateSitemap < BaseWorker
 
   def write_to_s3(xml, portal)
     path = "sitemap/#{portal.account_id}/#{portal.id}.xml"
-    AwsWrapper::S3.put(S3_CONFIG[:bucket], path, xml, server_side_encryption: 'AES256')
+    AwsWrapper::S3Object.store(path, xml, S3_CONFIG[:bucket])
   end
 end

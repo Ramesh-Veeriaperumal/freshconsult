@@ -6,7 +6,7 @@ class Dynamo
 	include Dynamo::Validations
 	include Dynamo::FindMethods
 
-	CLIENT = $dynamo_v2_client
+	CLIENT = $dynamo
 	TYPES = [:s, :ss, :n, :ns, :b]
 
 	DATA_TYPE = { :s => "S", :ss => "SS", :n => "N", :ns => "NS", :b => "B"}
@@ -86,7 +86,7 @@ class Dynamo
 		@attributes.clear
 		@changes.clear
 		hash.each_pair do |k,v|
-			@attributes[k] = v
+			@attributes[k] = self.class.convert(v)
 		end
 		@dirty = false
 
@@ -163,13 +163,13 @@ class Dynamo
 	def incr!(*attributes)
 		return false unless valid? or attributes.blank?
 		response = CLIENT.update_item(incr_attributes(1, *attributes))
-		response.attributes.empty? ? self : self.set(response[:attributes]) # PRE-RAILS: V1 returns Hash, v2 return response Seahorse::Client::Response. Fails if there is no result.
+		response.empty? ? self : self.set(response[:attributes])
 	end
 
 	def decr!(*attributes)
 		return false unless valid? or attributes.blank?
 		response = CLIENT.update_item(incr_attributes(-1, *attributes))
-		response.attributes.empty? ? self : self.set(response[:attributes]) # PRE-RAILS: V1 returns Hash, v2 return response Seahorse::Client::Response. Fails if there is no result.
+		response.empty? ? self : self.set(response[:attributes])
 	end
 
 	def destroy
@@ -190,7 +190,7 @@ class Dynamo
 		begin
 			table_data = CLIENT.delete_table(:table_name => table_name)
 			wait_for_table_resource(table_name, "DELETING")
-		rescue Aws::DynamoDB::Errors::ResourceNotFoundException
+		rescue AWS::DynamoDB::Errors::ResourceNotFoundException => e
 			return true
 		rescue => e
 			return false
@@ -201,7 +201,7 @@ class Dynamo
 		begin
 			table_data = CLIENT.describe_table(:table_name => self.table_name)
 			return true
-		rescue Aws::DynamoDB::Errors::ResourceNotFoundException
+		rescue AWS::DynamoDB::Errors::ResourceNotFoundException => e
 			return false
 		end
 	end
@@ -227,7 +227,6 @@ class Dynamo
 	end
 
 	def self.convert(value_hash)
-		return value_hash if !value_hash.is_a? Hash
 		type, value = value_hash.keys.first, value_hash.values.flatten
 		value = numerify(*value) if TYPE_CLASS_MAPPING[type].include?(Numeric)
 		TYPE_CLASS_MAPPING[type][1].blank? ? value.first : value
@@ -239,7 +238,7 @@ class Dynamo
 
 	def self.attr_convert(value)
 		value_class = value.class
-		value_hash = case value_class.to_s
+		case value_class.to_s
 		when "String"
 			{ :s => value }
 		when "Fixnum"
@@ -251,7 +250,6 @@ class Dynamo
 				{ :ss => value }
 			end
 		end
-		convert(value_hash)
 	end
 
 	def self.assign_type(type)
@@ -299,7 +297,7 @@ class Dynamo
 				{
 					attr.to_s => {
 						:action => DYNAMO_ACTIONS[:add],
-						:value => Dynamo.convert(n: value.to_i)
+						:value => { :n => value.to_i.to_s }
 					}
 				}
 			end).inject {|res, hash| res.merge(hash) },
@@ -310,7 +308,9 @@ class Dynamo
 	def primary_key
 		([@hash, @range].map do |key|
 			{
-				key[:name].to_s => Dynamo.convert(key[:type] => @attributes[key[:name]])
+				key[:name].to_s => {
+					key[:type] => @attributes[key[:name]].to_s
+				}
 			}
 		end).inject { |res, hash| res.merge(hash) }
 	end
@@ -348,9 +348,9 @@ class Dynamo
 		data = {}
 		@attributes.each_pair do |key, value|
 			if self.class.indexed_column_names.include?(key)
-				data[key] = Dynamo.convert(self.class.indexes[key] => value)
+				data[key] = { self.class.indexes[key] => value.to_s}
 			else
-				data[key] = Dynamo.convert(self.class.dynamic_type(value) => value)
+				data[key] = { self.class.dynamic_type(value) => value.to_s }
 			end
 		end
 

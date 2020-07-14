@@ -27,33 +27,35 @@ class ScenarioAutomation < VaRule
   before_validation :validate_name, :validate_add_note_action
   before_save :set_active
 
-  scope :shared_scenarios, -> (user){
-    where(%(acc.access_type != %<users>s) % {
-      users: Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users],
-    }).
-    joins(%(JOIN helpdesk_accesses acc ON
-      acc.accessible_id = va_rules.id AND
-      acc.accessible_type = 'VARule' AND
-      va_rules.account_id=%<account_id>i AND
-      acc.account_id = va_rules.account_id) % { 
-        account_id: user.account_id 
-    }).
-    order(:name)
+  scope :shared_scenarios, lambda { |user|
+    {
+      :joins => %(JOIN helpdesk_accesses acc ON
+                  acc.accessible_id = va_rules.id AND
+                  acc.accessible_type = 'VARule' AND
+                  va_rules.account_id=%<account_id>i AND
+                  acc.account_id = va_rules.account_id) % { :account_id => user.account_id },
+      :conditions => %(acc.access_type != %<users>s) % {
+        :users => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users],
+      }, 
+      :order => "name"
+    }
   }
 
-  scope :only_me, ->(user) {
-    where(%(acc.access_type=%<only_me>s and user_accesses.user_id=%<user_id>i ) % {
-        :only_me => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users],
-        :user_id => user.id
-      })
-    .joins(%(JOIN helpdesk_accesses acc ON
+  scope :only_me, lambda { |user|
+    {
+      :joins => %(JOIN helpdesk_accesses acc ON
                   acc.accessible_id = va_rules.id AND
                   acc.accessible_type = 'VARule' AND
                   va_rules.account_id=%<account_id>i AND
                   acc.account_id = va_rules.account_id
                   inner join user_accesses ON acc.id= user_accesses.access_id AND
-                  acc.account_id= user_accesses.account_id) % { :account_id => user.account_id })
-    .order(:name)
+                  acc.account_id= user_accesses.account_id) % { :account_id => user.account_id },
+      :conditions => %(acc.access_type=%<only_me>s and user_accesses.user_id=%<user_id>i ) % {
+        :only_me => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users],
+        :user_id => user.id
+      }, 
+      :order => "name"
+    }
   }
 
   INCLUDE_ASSOCIATIONS_BY_CLASS = {

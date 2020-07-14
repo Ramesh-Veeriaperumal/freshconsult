@@ -105,11 +105,11 @@ def blacklist_hash(ip)
 end
 
 def get_from_s3
-  AwsWrapper::S3.read(S3_CONFIG[:bucket], S3_FILE_PATH).split(',')
+  AwsWrapper::S3Object.read(S3_FILE_PATH,S3_CONFIG[:bucket]).split(",")
 end
 
 def replace_file_in_s3(ips)
-  AwsWrapper::S3.put(S3_CONFIG[:bucket], S3_FILE_PATH, ips, server_side_encryption: 'AES256') # PRE-RAILS: Needs to be checked
+  AwsWrapper::S3Object.store(S3_FILE_PATH,ips,S3_CONFIG[:bucket])
 end
 
 def check_aws_ip(ip)

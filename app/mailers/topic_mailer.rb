@@ -45,13 +45,6 @@ class TopicMailer < ActionMailer::Base
     end
   end
 
-  def self.send_stamp_change_notification(topic, forum_type, current_stamp, current_user_id)
-    topic.monitorships.active_monitors.includes([:portal, :user]).each do |monitor|
-      next if monitor.user.email.blank? or (current_user_id == monitor.user_id)
-      TopicMailer.send_email(:stamp_change_email, monitor.user, monitor.user.email, topic, topic.user, current_stamp, forum_type, monitor.portal, *monitor.sender_and_host)
-    end
-  end
-
   def stamp_change_email(emailcoll, topic, user, current_stamp, forum_type, portal, sender, host)
     begin
       configure_mailbox(user, portal)

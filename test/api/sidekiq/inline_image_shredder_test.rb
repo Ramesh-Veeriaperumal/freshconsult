@@ -76,7 +76,7 @@ class InlineImageShredderTest < ActionView::TestCase
   end
   
   def test_inline_image_shredder_worker_errors_out_without_body_content
-    AwsWrapper::S3.stubs(:delete).raises(Aws::S3::Errors::NoSuchKey.new('test', 'test'))
+    AwsWrapper::S3Object.stubs(:delete).raises(AWS::S3::Errors::NoSuchKey.new('test', 'test'))
     DeletedBodyObserver.any_instance.stubs(:cleanup_file_path).returns('my_dummy_path')
     requester = @account.users.first
     ticket = create_ticket(requester_id: requester.id)
@@ -91,8 +91,8 @@ class InlineImageShredderTest < ActionView::TestCase
     attachment_id = create_attachment_for_account(requester)
     token = @account.attachments.find(attachment_id).encoded_token
     content = "<div>Hello</div><div><img src='https://localhost.freshdesk-dev.com/attachments?token=#{token}' alt='test'></div>"
-    AwsWrapper::S3.stubs(:exists?).returns(true)
-    AwsWrapper::S3.stubs(:read).returns(content)
+    AwsWrapper::S3Object.stubs(:exists?).returns(true)
+    AwsWrapper::S3Object.stubs(:read).returns(content)
     args = {
       model_name: 'Helpdesk::Note',
       model_id: @account.notes.last.id
@@ -103,8 +103,8 @@ class InlineImageShredderTest < ActionView::TestCase
 
   def test_inline_image_shredder_worker_with_inline_attachments_without_token
     content = "<div>Hello</div><div><img src='https://localhost.freshdesk-dev.com/attachments?test=1' alt='test'></div>"
-    AwsWrapper::S3.stubs(:exists?).returns(true)
-    AwsWrapper::S3.stubs(:read).returns(content)
+    AwsWrapper::S3Object.stubs(:exists?).returns(true)
+    AwsWrapper::S3Object.stubs(:read).returns(content)
     args = {
       model_name: 'Helpdesk::Note',
       model_id: @account.notes.last.id

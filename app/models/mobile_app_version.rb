@@ -1,7 +1,8 @@
 class MobileAppVersion < ActiveRecord::Base
-  not_sharded
-  scope :mobile_app, ->(app_version,mobile_type){
-    where(['app_version = ? AND mobile_type = ?',app_version,mobile_type])
-    .limit(1)
-  }
+ not_sharded
+ scope :mobile_app, lambda { |app_version,mobile_type| {
+          :conditions => ['app_version = ? AND mobile_type = ?',app_version,mobile_type],
+          :limit => 1
+        }
+    }
 end

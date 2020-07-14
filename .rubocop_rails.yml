@@ -51,7 +51,6 @@ Gem/AwsV1:
 Gem/AwsS3:
   Enabled: true
 
-# Should be removed after deployed in prod.
 Gem/AwsGlobalVar:
-  Enabled: false
+  Enabled: true
 

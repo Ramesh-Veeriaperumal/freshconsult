@@ -46,7 +46,7 @@ class Export::TicketDump < Export::TicketSchedule
 
     def upload_file
       file = File.open(@file_path)
-      AwsWrapper::S3.put(S3_CONFIG[:bucket], s3_file_path, file, server_side_encryption: 'AES256')
+      AwsWrapper::S3Object.store(s3_file_path, file, S3_CONFIG[:bucket])
     end
 
     def s3_file_path

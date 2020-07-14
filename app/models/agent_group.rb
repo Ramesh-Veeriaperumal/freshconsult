@@ -33,20 +33,19 @@ class AgentGroup < ActiveRecord::Base
 
   publishable
 
-  scope :available_agents, -> {
-    where(["agents.available = ?",true]).
-    joins(%(INNER JOIN agents ON 
-      agents.user_id = agent_groups.user_id AND
-      agents.account_id = agent_groups.account_id)).
-    select('agents.user_id')
+  scope :available_agents,
+        :joins => %(INNER JOIN agents on 
+          agents.user_id = agent_groups.user_id and
+          agents.account_id = agent_groups.account_id),
+        :select => "agents.user_id",
+        :conditions => ["agents.available = ?",true]
+
+  scope :with_groupids, lambda { |group_ids|
+    { :conditions => ["group_id in (?)", group_ids] }
   }
 
-  scope :with_groupids, -> (group_ids) { 
-    where (["group_id in (?)", group_ids])
-  }
-
-  scope :permissible_user,  -> (group_ids, user_id) {
-    where(["user_id = ? AND group_id in (?)", user_id, group_ids])
+  scope :permissible_user, lambda { |group_ids, user_id|
+    { :conditions => ["user_id = ? AND group_id in (?)", user_id, group_ids] }
   }
 
   scope :write_access_only, -> { where('write_access = ?', true) }

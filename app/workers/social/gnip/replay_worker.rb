@@ -9,7 +9,7 @@ class Social::Gnip::ReplayWorker < BaseWorker
   def perform(options)
     return unless Rails.env.production? #Dont let replay run for non-production environments
 
-    queue    = SQS[:twitter_realtime_queue]
+    queue    = $sqs_twitter
     source   = SOURCE[:twitter]
     client   = Gnip::ReplayClient.new(source, queue, options)
     response = client.start_replay

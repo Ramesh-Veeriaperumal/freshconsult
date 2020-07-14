@@ -12,10 +12,11 @@ class Helpdesk::ReportFilter < ActiveRecord::Base
 
   serialize :data_hash
 
-  scope :by_report_type, ->(report_type){
-    where({:report_type => report_type})
-    .select('id, filter_name, data_hash')
-    .order('updated_at DESC')
+  scope :by_report_type, lambda { |report_type|
+    { :select => "id, filter_name, data_hash",
+      :conditions => {:report_type => report_type},
+      :order => 'updated_at DESC'
+    }
   }
 
 end

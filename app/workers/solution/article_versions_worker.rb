@@ -43,11 +43,11 @@ class Solution::ArticleVersionsWorker < BaseWorker
 
     def store_version
       Rails.logger.info "AVW::storing version in s3 #{s3_path}"
-      AwsWrapper::S3.put(s3_bucket, s3_path, payload, server_side_encryption: 'AES256')
+      AwsWrapper::S3Object.store(s3_path, payload, s3_bucket)
     end
 
     def destroy_version
-      AwsWrapper::S3.delete(s3_bucket, s3_path)
+      AwsWrapper::S3Object.delete(s3_path, s3_bucket)
     end
 
     def s3_path

@@ -1,4 +1,3 @@
-# PRE-RAILS: Need to check and cleanup
 class CRM::Salesforce < Resque::Job
   
   include ErrorHandle 

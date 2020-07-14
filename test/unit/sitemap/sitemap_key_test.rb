@@ -12,7 +12,7 @@ class SitemapKeyTest < ActiveSupport::TestCase
     @account = Account.first.make_current
     @portal = @account.portals.first.make_current
     @portal.clear_sitemap_cache
-    AwsWrapper::S3.delete(S3_CONFIG[:bucket], "sitemap/#{@account.id}/#{@portal.id}.xml")
+    AwsWrapper::S3Object.delete("sitemap/#{@account.id}/#{@portal.id}.xml", S3_CONFIG[:bucket])
     @customer = create_dummy_customer
     @key = SITEMAP_OUTDATED % { :account_id => @account.id }
   end

@@ -219,8 +219,6 @@ class SubscriptionsController < ApplicationController
     end
 
     def load_billing
-      Rails.logger.info "active_merchant :: #{Account.current.id} :: params[:creditcard] ::  #{params[:creditcard].is_a?(Hash) ? params[:creditcard].keys.inpsect : params[:creditcard].present?}"
-      Rails.logger.info "active_merchant :: #{Account.current.id} :: params[:address] :: #{params[:address].is_a?(Hash) ? params[:address].keys.inpsect : params[:address].present?}"
       @creditcard = ActiveMerchant::Billing::CreditCard.new(params[:creditcard])
       @address = SubscriptionAddress.new(params[:address])
     end

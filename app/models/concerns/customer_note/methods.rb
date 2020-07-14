@@ -18,7 +18,7 @@ module Concerns::CustomerNote::Methods
 
     def s3_url
       path = Helpdesk::S3::CustomerNote::Body.generate_file_path(account_id, id)
-      AwsWrapper::S3.presigned_url(S3_CONFIG[s3_bucket], path, secure: true) # :response_content_type => "application/json"
+      AwsWrapper::S3Object.url_for(path, S3_CONFIG[s3_bucket], secure: true) # :response_content_type => "application/json"
     end
 
     def body_changed?

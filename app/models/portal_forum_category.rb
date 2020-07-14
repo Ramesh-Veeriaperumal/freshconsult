@@ -6,9 +6,8 @@ class PortalForumCategory < ActiveRecord::Base
 
   acts_as_list :scope => :portal
 
-  scope :main_portal_category, -> {
-    where('portals.main_portal = 1').
-    joins(:portal)
-  }
+  scope :main_portal_category,
+        :conditions => 'portals.main_portal = 1',
+        :joins => :portal
 
 end

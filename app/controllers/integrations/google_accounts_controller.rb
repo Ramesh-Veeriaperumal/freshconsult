@@ -24,7 +24,7 @@ class Integrations::GoogleAccountsController < Admin::AdminController
         
         redirect_to edit_integrations_installed_application_path(get_installed_app) and return
       else
-        @existing_google_accounts = Integrations::GoogleAccount.where(account_id: @current_account)
+        @existing_google_accounts = Integrations::GoogleAccount.find_all_by_account_id(@current_account)
         @google_account.account = @current_account #should it be account object or account.id ?
         @google_account.token = config_hash['oauth_token']
         @google_account.secret = config_hash['refresh_token']

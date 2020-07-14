@@ -235,7 +235,7 @@ module Ember
             put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
           end
           assert_response 400
-          tickets = Helpdesk::Ticket.where(display_id: ticket_ids)
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
           tickets.each do |ticket|
             assert !ticket.related_ticket?
           end
@@ -255,7 +255,7 @@ module Ember
           end
           assert_response 202
           assert !non_existant_ticket.related_ticket?
-          tickets = Helpdesk::Ticket.where(display_id: ticket_ids)
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
           valid_tickets = tickets - non_existant_tickets
           valid_tickets.each do |valid_ticket|
             assert valid_ticket.related_ticket?
@@ -268,7 +268,7 @@ module Ember
           tracker_id = create_tracker_ticket.display_id
           asso_tracker_id = create_tracker_ticket.display_id
           ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
-          associated_tickets = Helpdesk::Ticket.where(display_id: [ticket_ids[0], ticket_ids[1]])
+          associated_tickets = Helpdesk::Ticket.find_all_by_display_id([ticket_ids[0], ticket_ids[1]])
           associated_tickets.each do |associated_ticket|
             attributes = { association_type: 4, associates_rdb: asso_tracker_id }
             associated_ticket.update_attributes(attributes)
@@ -281,7 +281,7 @@ module Ember
             associated_ticket.reload
             assert associated_ticket.associates_rdb != tracker_id
           end
-          tickets = Helpdesk::Ticket.where(display_id: ticket_ids)
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
           valid_tickets = tickets - associated_tickets
           valid_tickets.each do |valid_ticket|
             assert valid_ticket.related_ticket?
@@ -293,7 +293,7 @@ module Ember
         enable_adv_ticketing([:link_tickets]) do
           tracker_id = create_tracker_ticket.display_id
           ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
-          spammed_tickets = Helpdesk::Ticket.where(display_id: [ticket_ids[0], ticket_ids[1]])
+          spammed_tickets = Helpdesk::Ticket.find_all_by_display_id([ticket_ids[0], ticket_ids[1]])
           spammed_tickets.each do |spammed_ticket|
             spammed_ticket.update_attributes(spam: true)
           end
@@ -305,7 +305,7 @@ module Ember
             spammed_ticket.reload
             assert !spammed_ticket.related_ticket?
           end
-          tickets = Helpdesk::Ticket.where(display_id: ticket_ids)
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
           valid_tickets = tickets - spammed_tickets
           valid_tickets.each do |valid_ticket|
             assert valid_ticket.related_ticket?
@@ -317,7 +317,7 @@ module Ember
         enable_adv_ticketing([:link_tickets]) do
           tracker_id = create_tracker_ticket.display_id
           ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
-          deleted_tickets = Helpdesk::Ticket.where(display_id: [ticket_ids[0], ticket_ids[1]])
+          deleted_tickets = Helpdesk::Ticket.find_all_by_display_id([ticket_ids[0], ticket_ids[1]])
           deleted_tickets.each do |deleted_ticket|
             deleted_ticket.update_attributes(deleted: true)
           end
@@ -329,7 +329,7 @@ module Ember
             deleted_ticket.reload
             assert !deleted_ticket.related_ticket?
           end
-          tickets = Helpdesk::Ticket.where(display_id: ticket_ids)
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
           valid_tickets = tickets - deleted_tickets
           valid_tickets.each do |valid_ticket|
             assert valid_ticket.related_ticket?
@@ -345,7 +345,7 @@ module Ember
             put :bulk_link, construct_params({ version: 'private', ids: ticket_ids }, false)
           end
           assert_response 400
-          tickets = Helpdesk::Ticket.where(display_id: ticket_ids)
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
           tickets.each do |ticket|
             assert !ticket.related_ticket?
           end
@@ -362,7 +362,7 @@ module Ember
             put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
           end
           assert_response 202
-          tickets = Helpdesk::Ticket.where(display_id: ticket_ids)
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
           tickets.each do |ticket|
             assert !ticket.related_ticket?
           end
@@ -380,7 +380,7 @@ module Ember
             put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
           end
           assert_response 400
-          tickets = Helpdesk::Ticket.where(display_id: ticket_ids)
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
           tickets.each do |ticket|
             assert !ticket.related_ticket?
           end
@@ -397,7 +397,7 @@ module Ember
             put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
           end
           assert_response 400
-          tickets = Helpdesk::Ticket.where(display_id: ticket_ids)
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
           tickets.each do |ticket|
             assert !ticket.related_ticket?
           end
@@ -412,7 +412,7 @@ module Ember
             put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
           end
           assert_response 400
-          tickets = Helpdesk::Ticket.where(display_id: ticket_ids)
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
           tickets.each do |ticket|
             assert !ticket.related_ticket?
           end
@@ -427,7 +427,7 @@ module Ember
             put :bulk_link, construct_params({ version: 'private', ids: ticket_ids, tracker_id: tracker_id }, false)
           end
           assert_response 204
-          tickets = Helpdesk::Ticket.where(display_id: ticket_ids)
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
           tickets.each do |ticket|
             assert ticket.related_ticket?
           end
@@ -1602,7 +1602,7 @@ module Ember
             put :bulk_unlink, construct_params({ version: 'private', ids: ticket_ids }, false)
           end
           assert_response 202
-          tickets = Helpdesk::Ticket.where(display_id: ticket_ids)
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
           assert tickets[0].parent_ticket?
           assert tickets[1].association_type.nil?
         end
@@ -1621,7 +1621,7 @@ module Ember
         enable_adv_ticketing([:link_tickets]) do
           asso_tracker_id = create_tracker_ticket.display_id
           ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
-          associated_tickets = Helpdesk::Ticket.where(display_id: [ticket_ids[0], ticket_ids[1]])
+          associated_tickets = Helpdesk::Ticket.find_all_by_display_id([ticket_ids[0], ticket_ids[1]])
           associated_tickets.each do |associated_ticket|
             attributes = { association_type: 4, associates_rdb: asso_tracker_id }
             associated_ticket.update_attributes(attributes)
@@ -1630,7 +1630,7 @@ module Ember
             put :bulk_unlink, construct_params({ version: 'private' }, false)
           end
           assert_response 400
-          tickets = Helpdesk::Ticket.where(display_id: ticket_ids)
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
           tickets.each do |ticket|
             assert ticket.related_ticket?
           end

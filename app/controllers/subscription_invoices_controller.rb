@@ -12,7 +12,7 @@ class SubscriptionInvoicesController < Admin::AdminController
     redirect_to :back, notice: t("subscription.error.invoice_delay") and return unless (invoice and invoice.pdf)
     redirect_to invoice.pdf.authenticated_s3_get_url
     # To download invoice, later purpose
-    # pdf_file =  AwsWrapper::S3.read(invoice.pdf.content.bucket_name, invoice.pdf.content.path(:original))
+    # pdf_file =  AwsWrapper::S3Object.read(invoice.pdf.content.path(:original), invoice.pdf.content.bucket_name)
     # send_data pdf_file, filename: "#{invoice.chargebee_invoice_id}.pdf", type: "application/pdf", disposition: 'attachment', stream: 'true', buffer_size: '4096'
   end
 

@@ -1,14 +1,6 @@
 # This uses aws sdk version 2
-# PRE-RAILS: Email SQS V2 wrapper lib/helpdesk/email_queue/sqs_queue.rb
 module AwsWrapper
   class SqsV2
-
-    def self.create_queue(queue_name, options = {})
-      $sqs_v2_client.create_queue(
-        queue_name: queue_name,
-        attributes: options
-      )
-    end
 
     # _Note_: Acceptable params for QueuePoller are:
     # client                  => Need to pass
@@ -28,7 +20,7 @@ module AwsWrapper
     #
     def self.long_poll(queue_name, options = {}, &block)
       poller = Aws::SQS::QueuePoller.new(SQS_V2_QUEUE_URLS[queue_name], client: $sqs_v2_client)
-      poll_options = queue_attributes(queue_name).merge(max_number_of_messages: 10).merge(options)
+      poll_options = queue_attributes(queue_name).merge(options).merge(max_number_of_messages: 10)
       poller.poll(poll_options) do |messages|
         messages.each do |msg|
           yield(msg) if block_given?
@@ -40,7 +32,7 @@ module AwsWrapper
     #
     def self.poll(queue_name, options={}, &block)
       poller = Aws::SQS::QueuePoller.new(SQS_V2_QUEUE_URLS[queue_name], client: $sqs_v2_client)
-      poll_options = queue_attributes(queue_name).merge(wait_time_seconds: nil, max_number_of_messages: 10).merge(options)
+      poll_options = queue_attributes(queue_name).merge(options).merge(wait_time_seconds: nil, max_number_of_messages: 10)
       poller.poll(poll_options) do |messages|
         messages.each do |msg|
           yield(msg) if block_given?
@@ -48,13 +40,7 @@ module AwsWrapper
       end
     end
 
-    def self.get_queue_attributes(queue_name, attributes)
-      $sqs_v2_client.get_queue_attributes(queue_url: SQS_V2_QUEUE_URLS[queue_name], attribute_names: attributes).attributes
-    end
-
-    def self.set_queue_attributes(queue_name, attributes)
-      $sqs_v2_client.set_queue_attributes(queue_url: SQS_V2_QUEUE_URLS[queue_name], attributes: attributes)
-    end
+    private
 
     def self.queue_url(queue_name)
       begin
@@ -69,7 +55,11 @@ module AwsWrapper
     end
 
     def self.queue_attributes(queue_name)
-      attributes = get_queue_attributes(queue_name, ['VisibilityTimeout', 'ReceiveMessageWaitTimeSeconds'])
+      attributes = $sqs_v2_client.get_queue_attributes(
+        queue_url: SQS_V2_QUEUE_URLS[queue_name],
+        attribute_names: ['VisibilityTimeout','ReceiveMessageWaitTimeSeconds']
+      ).attributes
+
       {
         visibility_timeout: attributes['VisibilityTimeout'],
         wait_time_seconds: attributes['ReceiveMessageWaitTimeSeconds']

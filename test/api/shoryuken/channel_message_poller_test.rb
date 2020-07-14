@@ -216,7 +216,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
     sqs_payload = Minitest::Mock.new
     sqs_payload.expect(:body, sqs_body.to_json)
     $redis_others.perform_redis_op('set', 'TWITTER_APP_BLOCKED', true)
-    Ryuken::ChannelMessagePoller.new.perform(sqs_payload, nil)
+    Ryuken::ChannelMessagePoller.new.perform(sqs_payload)
     redis_key_status = $redis_others.perform_redis_op('exists', 'TWITTER_APP_BLOCKED')
     assert redis_key_status.blank?
   end
@@ -522,7 +522,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
 
     def push_to_channel(command_payload)
       sqs_msg = Hashit.new(body: { data: command_payload }.to_json)
-      Ryuken::ChannelMessagePoller.new.perform(sqs_msg, nil)
+      Ryuken::ChannelMessagePoller.new.perform(sqs_msg)
     end
 
     def create_twitter_user

@@ -240,6 +240,7 @@ protected
 
   def load_parent_ticket_or_issue
     @parent = Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account) if params[:ticket_id]
+    @parent = Helpdesk::Issue.find_by_id(params[:issue_id]) if params[:issue_id]
     raise ActiveRecord::RecordNotFound unless @parent
   end
 
@@ -394,7 +395,8 @@ protected
 
   def helpdesk_restricted_access_redirection(ticket, msg, full_message = "")
     view_on_portal_msg = I18n.t('flash.agent_as_requester.view_ticket_on_portal', :support_ticket_link => ticket.support_ticket_path)
-    flash[:notice] = redirect_msg = full_message.presence || "#{I18n.t(:"#{msg}")} #{view_on_portal_msg}".html_safe
+    redirect_msg =  "#{I18n.t(:"#{msg}")} #{view_on_portal_msg}".html_safe
+    flash[:notice] = full_message.presence || redirect_msg
     redirect_params = {}
     respond_to do |format|
         format.html {

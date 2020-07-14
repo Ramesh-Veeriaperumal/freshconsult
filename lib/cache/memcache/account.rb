@@ -8,7 +8,7 @@ module Cache::Memcache::Account
     def fetch_by_full_domain(full_domain)
       return if full_domain.blank?
       key = ACCOUNT_BY_FULL_DOMAIN % { :full_domain => full_domain }
-      MemcacheKeys.fetch(key) { self.where(full_domain: full_domain).first }
+      MemcacheKeys.fetch(key) { self.find(:first, :conditions => { :full_domain => full_domain }) }
     end
   end
 
@@ -93,7 +93,7 @@ module Cache::Memcache::Account
   def ticket_status_values_from_cache
     @ticket_status_values_from_cache ||= begin
       key = ACCOUNT_STATUSES % { :account_id => self.id }
-      MemcacheKeys.fetch(key) { self.ticket_status_values.all }
+      MemcacheKeys.fetch(key) { self.ticket_status_values.find(:all) }
     end
   end
 
@@ -133,13 +133,13 @@ module Cache::Memcache::Account
 
   def agents_from_cache
     key = agents_memcache_key
-    fetch_from_cache(key) { self.agents.includes([:user, :agent_groups]).all }
+    fetch_from_cache(key) { self.agents.find(:all, include: [:user, :agent_groups]) }
   end
 
   def custom_date_fields_from_cache
     @custom_date_fields_from_cache ||= begin
       key = custom_date_fields_memcache_key
-      MemcacheKeys.fetch(key) { self.ticket_fields.where(field_type: 'custom_date').all }
+      MemcacheKeys.fetch(key) { self.ticket_fields.where(field_type: 'custom_date').find(:all) }
     end
   end
 
@@ -151,7 +151,7 @@ module Cache::Memcache::Account
   def custom_date_time_fields_from_cache
     @custom_date_time_fields_from_cache ||= begin
       key = custom_date_time_fields_memcache_key
-      MemcacheKeys.fetch(key) { self.ticket_fields.where(field_type: 'custom_date_time').all }
+      MemcacheKeys.fetch(key) { self.ticket_fields.where(field_type: 'custom_date_time').find(:all) }
     end
   end
 
@@ -162,7 +162,7 @@ module Cache::Memcache::Account
 
   def custom_file_field_names_cache
     fetch_from_cache(custom_file_field_names_memcache_key) do
-      ticket_fields.where(field_type: Helpdesk::TicketField::CUSTOM_FILE).pluck(:name)
+      ticket_fields.where(field_type: Helpdesk::TicketField::CUSTOM_FILE).find(:all).map(&:name)
     end
   end
 
@@ -186,7 +186,7 @@ module Cache::Memcache::Account
   def roles_from_cache
     @roles_from_cache ||= begin
       key = roles_cache_key
-      MemcacheKeys.fetch(key) { self.roles.all }
+      MemcacheKeys.fetch(key) { self.roles.find(:all) }
     end
   end
 
@@ -207,7 +207,7 @@ module Cache::Memcache::Account
   def groups_from_cache
     @groups_from_cache ||= begin
       key = groups_memcache_key
-      MemcacheKeys.fetch(key) { self.groups.order('name').all }
+      MemcacheKeys.fetch(key) { self.groups.find(:all, :order=>'name' ) }
     end
   end
 
@@ -356,7 +356,7 @@ module Cache::Memcache::Account
     @custom_dropdown_fields_from_cache ||= begin
       key = ACCOUNT_CUSTOM_DROPDOWN_FIELDS % { :account_id => self.id }
       MemcacheKeys.fetch(key) do
-        ticket_fields_without_choices.custom_dropdown_fields.includes([:flexifield_def_entry,:level1_picklist_values]).all
+        ticket_fields_without_choices.custom_dropdown_fields.find(:all, :include => [:flexifield_def_entry,:level1_picklist_values] )
       end
     end
   end
@@ -373,7 +373,7 @@ module Cache::Memcache::Account
   def event_flexifields_with_ticket_fields_from_cache
     key = format(ACCOUNT_EVENT_FIELDS, account_id: id)
     fetch_from_cache(key) do
-      ticket_field_def.flexifield_def_entries.event_fields.includes(:ticket_field).all
+      ticket_field_def.flexifield_def_entries.event_fields.find(:all, include: :ticket_field)
     end
   end
 
@@ -439,7 +439,7 @@ module Cache::Memcache::Account
     @skills_trimmed_version_from_cache ||= begin
       key = ACCOUNT_SKILLS_TRIMMED % { :account_id => self.id }
       MemcacheKeys.fetch(key) do
-        sorted_skills.trimmed.all
+        sorted_skills.trimmed.find(:all)
       end
     end
   end
@@ -448,7 +448,7 @@ module Cache::Memcache::Account
     @skills_from_cache ||= begin
       key = ACCOUNT_SKILLS % { :account_id => self.id }
       MemcacheKeys.fetch(key) do
-        skills.all
+        skills.find(:all)
       end
     end
   end
@@ -482,7 +482,7 @@ module Cache::Memcache::Account
   def observer_rules_from_cache
     key = ACCOUNT_OBSERVER_RULES % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
-      observer_rules.all
+      observer_rules.find(:all)
     end
   end
 
@@ -504,7 +504,7 @@ module Cache::Memcache::Account
   def agent_names_from_cache
     key = format(ACCOUNT_AGENT_NAMES, account_id: self.id)
     fetch_from_cache(key) do
-      users.where(helpdesk_agent: 1).pluck(:name)
+      users.find(:all, conditions: { helpdesk_agent: 1 }).map(&:name)
     end
   end
 
@@ -522,7 +522,7 @@ module Cache::Memcache::Account
 
   def forum_categories_from_cache
     key = FORUM_CATEGORIES % { :account_id => self.id }
-    MemcacheKeys.fetch(key) { self.forum_categories.includes([:forums]).all }
+    MemcacheKeys.fetch(key) { self.forum_categories.find(:all, :include => [ :forums ]) }
   end
 
   def clear_forum_categories_from_cache

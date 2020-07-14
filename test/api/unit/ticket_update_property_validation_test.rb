@@ -62,7 +62,7 @@ class TicketUpdatePropertyValidationTest < ActionView::TestCase
 
   def test_status_validation
     Account.stubs(:current).returns(Account.first)
-    status_field = Helpdesk::TicketField.new
+    status_field = mock('status')
     status_field.stubs(:required).returns(false)
     status_field.stubs(:required_for_closure).returns(false)
     status_field.stubs(:default).returns(true)
@@ -80,13 +80,13 @@ class TicketUpdatePropertyValidationTest < ActionView::TestCase
   def test_numericality
     Account.stubs(:current).returns(Account.first)
     item = Helpdesk::Ticket.new(requester_id: 1, status: 2, priority: 3, source: 10)
-    agent_field = Helpdesk::TicketField.new
+    agent_field = mock('agent')
     agent_field.stubs(:required).returns(false)
     agent_field.stubs(:required_for_closure).returns(false)
     agent_field.stubs(:default).returns(true)
     agent_field.stubs(:name).returns('agent')
     agent_field.stubs(:label).returns('Agent')
-    priority_field = Helpdesk::TicketField.new
+    priority_field = mock('priority')
     priority_field.stubs(:required).returns(false)
     priority_field.stubs(:required_for_closure).returns(false)
     priority_field.stubs(:default).returns(true)
@@ -99,7 +99,7 @@ class TicketUpdatePropertyValidationTest < ActionView::TestCase
     assert errors.include?('Agent datatype_mismatch')
     assert errors.include?('Priority not_included')
 
-    group_field = Helpdesk::TicketField.new
+    group_field = mock('group')
     group_field.stubs(:required).returns(false)
     group_field.stubs(:required_for_closure).returns(false)
     group_field.stubs(:default).returns(true)
@@ -163,7 +163,7 @@ class TicketUpdatePropertyValidationTest < ActionView::TestCase
 
   def test_default_fields_required_validation
     Account.stubs(:current).returns(Account.first)
-    agent_field = Helpdesk::TicketField.new
+    agent_field = mock('agent')
     agent_field.stubs(:required).returns(true)
     agent_field.stubs(:required_for_closure).returns(false)
     agent_field.stubs(:default).returns(true)
@@ -184,7 +184,7 @@ class TicketUpdatePropertyValidationTest < ActionView::TestCase
 
   def test_default_fields_required_for_closure_validation
     Account.stubs(:current).returns(Account.first)
-    agent_field = Helpdesk::TicketField.new
+    agent_field = mock('agent')
     agent_field.stubs(:required).returns(false)
     agent_field.stubs(:required_for_closure).returns(true)
     agent_field.stubs(:default).returns(true)
