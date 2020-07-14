@@ -262,4 +262,12 @@ module AccountTestHelper
       settings[:bundle_name] = account.omni_bundle_name
     end
   end
+
+  def freshid_organisation
+    { 'id': '186333307716534827', 'name': 'afterschool-org', 'title': '', 'domain': 'test.freshworks.com', 'address': '', 'phone': '', 'locale': '', 'create_time': '2020-05-29T04:22:02Z', 'update_time': '2020-05-29T04:22:02Z', 'alternate_domain': '', 'time_zone': '' }
+  end
+
+  def freshid_user
+    { 'first_name': 'Test', 'last_name': 'Test Last', 'email': 'test@gmail.com', 'phone': nil, 'job_title': '', 'company_name': '' }
+  end
 end

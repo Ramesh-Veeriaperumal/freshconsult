@@ -5,7 +5,8 @@ class Signup < ActivePresenter::Base
 
   presents :account, :user
   
-  attr_accessor :contact_first_name, :contact_last_name, :new_plan_test, :org_id, :join_token, :fresh_id_version, :org_domain, :bundle_id, :bundle_name, :aloha_signup, :organisation, :freshid_user
+  attr_accessor :contact_first_name, :contact_last_name, :new_plan_test, :org_id, :join_token, :fresh_id_version, :org_domain, :bundle_id, :bundle_name, :aloha_signup, :organisation, :freshid_user,
+                :referring_product
 
   before_validation :build_primary_email, :build_portal, :build_roles, :build_admin,
     :build_subscription, :build_account_configuration, :set_time_zone, :build_password_policy, :set_freshid_signup_version
@@ -60,6 +61,7 @@ class Signup < ActivePresenter::Base
   def aloha_signup_steps
     account.reload
     account.account_additional_settings.bundle_details_setter(bundle_id, bundle_name)
+    account.account_additional_settings.referring_product_setter(referring_product) if referring_product
     freshid_organisation = JSON.parse(organisation.to_json, object_class: OpenStruct)
     freshid_organisation.alternate_domain = nil
     account.organisation = Organisation.find_or_create_from_freshid_org(freshid_organisation)

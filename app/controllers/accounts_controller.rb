@@ -595,6 +595,7 @@ class AccountsController < ApplicationController
       
       params[:signup][:locale] = assign_language || http_accept_language.compatible_language_from(I18n.available_locales)
       params[:signup][:time_zone] = params[:utc_offset]
+      params[:signup][:referring_product] = params[:misc][:referring_product] if params[:misc].present?
     end
 
     def assign_freshid_attributes

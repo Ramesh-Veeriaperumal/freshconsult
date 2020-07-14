@@ -130,6 +130,10 @@ class AccountAdditionalSettings < ActiveRecord::Base
     end
   end
 
+  def referring_product_setter(referring_product)
+    additional_settings[:onboarding_version] = SubscriptionConstants::FDFSONBOARDING if referring_product.downcase == SubscriptionConstants::FRESHSALES
+  end
+
   def delete_spam_tickets_days
     additional_settings[:delete_spam_days] unless additional_settings.blank?
   end
