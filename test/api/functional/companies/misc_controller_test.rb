@@ -101,7 +101,7 @@ class Companies::MiscControllerTest < ActionController::TestCase
                                                status: DataExport::EXPORT_STATUS[:started])
       export_entry.save
     end
-    params_hash = { fields: { default_fields: default_fields.map(&:name) - ['tag_names'], custom_fields: custom_fields.map(&:name).collect { |x| x[3..-1] } } }
+    params_hash = { fields: { default_fields: default_fields.map(&:name), custom_fields: custom_fields.map(&:name).collect { |x| x[3..-1] } } }
     post :export, construct_params(params_hash)
     assert_response 429
   end
@@ -170,7 +170,7 @@ class Companies::MiscControllerTest < ActionController::TestCase
     create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'Area', editable_in_signup: 'true'))
     default_fields = @account.company_form.default_company_fields
     custom_fields = @account.company_form.custom_company_fields
-    params_hash = { fields: { default_fields: default_fields.map(&:name) - ['tag_names'], custom_fields: custom_fields.map(&:name).collect { |x| x[3..-1] } } }
+    params_hash = { fields: { default_fields: default_fields.map(&:name), custom_fields: custom_fields.map(&:name).collect { |x| x[3..-1] } } }
     post :export, construct_params(params_hash)
     assert_response 403
     User.any_instance.unstub(:privilege?)

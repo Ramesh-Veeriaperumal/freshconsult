@@ -87,7 +87,6 @@ module ExportCsvUtil
     custom_form = Account.current.safe_send("#{type}_form")
     custom_fields = type.eql?("contact") ? custom_form.safe_send("#{type}_fields", true, !Account.current.falcon_and_encrypted_fields_enabled?) 
     : custom_form.safe_send("#{type}_fields", !Account.current.falcon_and_encrypted_fields_enabled?)
-    custom_fields.reject!{ |x| ["tag_names"].include?(x.name) } if type.eql?("contact")
     custom_fields.collect { |cf|
             { :label => cf.label,
               :value => cf.name,

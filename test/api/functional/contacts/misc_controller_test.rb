@@ -105,7 +105,7 @@ class Contacts::MiscControllerTest < ActionController::TestCase
     params_hash = { fields: { default_fields: [Faker::Lorem.word], custom_fields: [Faker::Lorem.word] } }
     post :export, construct_params(params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern(:default_fields, :not_included, list: (contact_form.safe_send(:default_contact_fields, true).map(&:name) - ['tag_names']).join(',')),
+    match_json([bad_request_error_pattern(:default_fields, :not_included, list: contact_form.safe_send(:default_contact_fields, true).map(&:name).join(',')),
                 bad_request_error_pattern(:custom_fields, :not_included, list: (contact_form.safe_send(:custom_contact_fields).map(&:name).collect { |x| x[3..-1] }).uniq.join(','))])
   end
 
@@ -138,12 +138,12 @@ class Contacts::MiscControllerTest < ActionController::TestCase
     default_fields = @account.contact_form.default_contact_fields
     custom_fields = @account.contact_form.custom_contact_fields
     Export::ContactWorker.jobs.clear
-    params_hash = { fields: { default_fields: default_fields.map(&:name) - ['tag_names'], custom_fields: custom_fields.map(&:name).collect { |x| x[3..-1] } } }
+    params_hash = { fields: { default_fields: default_fields.map(&:name), custom_fields: custom_fields.map(&:name).collect { |x| x[3..-1] } } }
     post :export, construct_params(params_hash)
     assert_response 200
     sidekiq_jobs = Export::ContactWorker.jobs
     assert_equal 1, sidekiq_jobs.size
-    csv_hash = (default_fields | custom_fields).collect { |x| { x.label => x.name } }.inject(&:merge).except('Tags')
+    csv_hash = (default_fields | custom_fields).collect { |x| { x.label => x.name } }.inject(&:merge)
     assert_equal csv_hash, sidekiq_jobs.first['args'][0]['csv_hash']
     assert_equal User.current.id, sidekiq_jobs.first['args'][0]['user']
     Export::ContactWorker.jobs.clear
@@ -162,7 +162,7 @@ class Contacts::MiscControllerTest < ActionController::TestCase
                                                status: DataExport::EXPORT_STATUS[:started])
       export_entry.save
     end
-    params_hash = { fields: { default_fields: default_fields.map(&:name) - ['tag_names'], custom_fields: custom_fields.map(&:name).collect { |x| x[3..-1] } } }
+    params_hash = { fields: { default_fields: default_fields.map(&:name), custom_fields: custom_fields.map(&:name).collect { |x| x[3..-1] } } }
     post :export, construct_params(params_hash)
     assert_response 429
   end
@@ -227,7 +227,7 @@ class Contacts::MiscControllerTest < ActionController::TestCase
     create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'Area', editable_in_signup: 'true'))
     default_fields = @account.contact_form.default_contact_fields
     custom_fields = @account.contact_form.custom_contact_fields
-    params_hash = { fields: { default_fields: default_fields.map(&:name) - ['tag_names'], custom_fields: custom_fields.map(&:name).collect { |x| x[3..-1] } } }
+    params_hash = { fields: { default_fields: default_fields.map(&:name), custom_fields: custom_fields.map(&:name).collect { |x| x[3..-1] } } }
     post :export, construct_params(params_hash)
     assert_response 403
     User.any_instance.unstub(:privilege?)
