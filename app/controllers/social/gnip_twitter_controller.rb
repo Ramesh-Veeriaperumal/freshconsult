@@ -16,8 +16,7 @@ class Social::GnipTwitterController < ApplicationController
          :text => "Reconnect time successfully updated"
       }
     else
-      notify_social_dev("Reconnect time updation failed",
-                          					:custom_params => params.inspect)
+      notify_social_mailer(nil, params, 'Reconnect time updation failed')
       render :json => {
       	:success => false,
          :text => "Reconnect time updatiom failed :: custom_params => #{params.inspect}"

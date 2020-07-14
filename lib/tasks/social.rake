@@ -27,9 +27,9 @@ namespace :social do
       }
 
       unless Social::DynamoHelper.table_exists?(name)
-        notify_social_dev("DynamoDb table not created for next week", {:table_name => name})
+        notify_social_mailer(nil, { table_name: name }, 'DynamoDb table not created for next week')
       else
-        notify_social_dev("DynamoDb table created for next week", {:table_name => name})
+        notify_social_mailer(nil, { table_name: name }, 'DynamoDb table created for next week')
         AwsWrapper::CloudWatch.create(name, options)
       end
     end
@@ -49,9 +49,9 @@ namespace :social do
 
       #verify if the tables exists
       if Social::DynamoHelper.table_exists?(name)
-        notify_social_dev("DynamoDb table not deleted", {:table_name => name})
+        notify_social_mailer(nil, { table_name: name }, 'DynamoDb table not deleted')
       else
-        notify_social_dev("DynamoDb table deleted", {:table_name => name})
+        notify_social_mailer(nil, { table_name: name }, 'DynamoDb table deleted')
       end
     end
   end

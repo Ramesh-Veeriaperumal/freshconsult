@@ -251,7 +251,7 @@ module Facebook
       message = attachment_exceeded_message(HelpdeskAttachable::FACEBOOK_ATTACHMENTS_SIZE)
       add_notification_text model, message, html_content
       error = {:error => "Facebook HelpdeskExceptions::AttachmentLimitException", :exception => "Exception #{e} Item #{model.inspect}, attachments #{attachments.inspect}"}
-      raise_sns_notification(error[:error], error)
+      notify_fb_mailer(nil, error, error[:error])
     ensure
       return html_content
     end

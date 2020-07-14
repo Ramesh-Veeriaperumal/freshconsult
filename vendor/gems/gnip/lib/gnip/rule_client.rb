@@ -18,7 +18,6 @@ class Gnip::RuleClient
     @rule = rule
     @url = GnipConfig::RULE_CLIENTS[source][powertrack_env.to_sym]
     @replay = powertrack_env.eql?(STREAM[:replay])
-    @notification_topic = SNS["social_notification_topic"]
   end
 
   # Returns updated params if the operation is a success, nil otherwise
@@ -69,7 +68,8 @@ class Gnip::RuleClient
           :rule => @rule,          
           :replay => @replay
         }
-        DevNotification.publish(@notification_topic, "Deleting a rule not in gnip" , params.to_json)
+        Rails.logger.error "Deleting a rule not in gnip #{params}"
+        SocialErrorsMailer.deliver_twitter_exception(nil, params, 'Deleting a rule not in gnip')
         response = construct_response(RULE_ACTION[:delete], @rule[:value], @rule[:tag], true)
       end
       return response
@@ -84,14 +84,15 @@ class Gnip::RuleClient
     end
     unless ((gnip_set - db_set) + (db_set - gnip_set)).blank?
       error_params = {
-        :rules_in_gnip_and_not_in_db => (gnip_set - db_set).inspect,
-        :rules_in_db_and_not_in_gnip => (db_set - gnip_set).inspect
+        rules_in_gnip_and_not_in_db: (gnip_set - db_set).count,
+        rules_in_db_and_not_in_gnip: (db_set - gnip_set).count
       }
-      puts "Mismatch of rules in #{stream} :::: #{error_params}"
+      Rails.logger.error "Mismatch of rules in #{stream} :::: #{error_params.inspect}"
       error_params.merge!(:environment => Rails.env, :gnip_env => stream)
-      DevNotification.publish(SNS["social_notification_topic"], "Mismatch of rules in #{stream}", error_params.to_json)
+      SocialErrorsMailer.deliver_twitter_exception(nil, error_params, "Mismatch of rules in #{stream}")
     else
-      DevNotification.publish(SNS["social_notification_topic"], "No mismatch of rules in #{stream}", {:environment => Rails.env}.to_json)
+      Rails.logger.info "No mismatch of rules env :: #{Rails.env} in #{stream}"
+      SocialErrorsMailer.deliver_twitter_exception(nil, { environment: Rails.env }.to_json, "No mismatch of rules in #{stream}")
     end
   end
 
@@ -117,7 +118,8 @@ class Gnip::RuleClient
           :matching_rule => {:tag => matching_rule.tag, :value => matching_rule.value},          
           :replay => @replay 
         }
-        DevNotification.publish(@notification_topic, "Updating the rule already present in Gnip" , params.to_json)
+        Rails.logger.error "Updating the rule already present in Gnip #{params}"
+        SocialErrorsMailer.deliver_twitter_exception(nil, params.to_json, 'Updating the rule already present in Gnip')
         response = construct_response(RULE_ACTION[:add], matching_rule.value, matching_rule.tag, true)
       end
       return response
@@ -152,15 +154,13 @@ class Gnip::RuleClient
       begin
         yield
       rescue => e
-        puts "Exception in Rule Client #{e.inspect} #{e.backtrace.join("\n")}"
+        Rails.logger.error "Exception in Rule Client #{e.inspect} #{e.backtrace[0..20]}"
         error_params = {
-          :environment => Rails.env,
-          :description => "Exception in RuleClient in #{@source} - #{@environment} stream ",
-          :rule => @rule.inspect,
-          :exception => e.inspect,
-          :exception_backtrace => e.backtrace.join("\n")
+          environment: Rails.env,
+          description: "Exception in RuleClient in #{@source} - #{@environment} stream ",
+          rule: @rule.inspect
         }
-        DevNotification.publish(@notification_topic, "Exception in rule client", error_params.to_json)
+        SocialErrorsMailer.deliver_twitter_exception(e, error_params.to_json, 'Exception in rule client')
       end
     end
 
