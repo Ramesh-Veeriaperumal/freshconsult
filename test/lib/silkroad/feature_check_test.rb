@@ -15,6 +15,7 @@ class FeatureCheckTest < ActionView::TestCase
     @agent = add_agent_to_account(@account, name: Faker::Name.name, active: 1, role: 4)
     User.stubs(:current).returns(@agent.user)
     User.current.agent.stubs(:ticket_permission_token).returns(:all_tickets)
+    Account.current.account_additional_settings.stubs(:date_format).returns(1)
     set_others_redis_lpush(SILKROAD_TICKET_FIELDS, 'time_tracked_hours')
     set_others_redis_lpush(SILKROAD_FILTER_CONDITIONS, 'any_group_id')
     set_others_redis_lpush(SILKROAD_FILTER_CONDITIONS, 'cf_fsm_appointment_start_time')
@@ -25,11 +26,20 @@ class FeatureCheckTest < ActionView::TestCase
     remove_others_redis_key(SILKROAD_FILTER_CONDITIONS)
     User.current.agent.unstub(:ticket_permission_token)
     User.unstub(:current)
+    Account.current.account_additional_settings.unstub(:date_format)
     @account.rollback(:silkroad_export)
   end
 
   def test_agent_without_global_permission
     User.current.agent.stubs(:ticket_permission_token).returns(:group_tickets)
+    assert_equal true, send_to_silkroad?(get_active_export_params)
+  ensure
+    User.current.agent.unstub(:ticket_permission_token)
+  end
+
+  def test_agent_without_global_permission_but_check_default_time_format_false
+    User.current.agent.stubs(:ticket_permission_token).returns(:group_tickets)
+    Account.current.account_additional_settings.stubs(:date_format).returns(0)
     assert_equal false, send_to_silkroad?(get_active_export_params)
   ensure
     User.current.agent.unstub(:ticket_permission_token)
@@ -89,6 +99,15 @@ class FeatureCheckTest < ActionView::TestCase
     export_params = get_active_export_params
     export_params[:company_fields] = { name: 'Company name', cf_company_field: 'Custom Company Field' }.stringify_keys
     assert_equal false, send_to_silkroad?(export_params)
+  end
+
+  def test_send_to_silkroad_check_default_time_format_true
+    assert_equal true, check_default_time_format
+  end
+
+  def test_send_to_silkroad_check_default_time_format_false
+    Account.current.account_additional_settings.stubs(:date_format).returns(0)
+    assert_equal false, check_default_time_format
   end
 
   private

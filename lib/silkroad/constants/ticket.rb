@@ -39,12 +39,13 @@ module Silkroad
         updated_at: 'updated_at',
         first_response_time: 'first_response_time',
         time_tracked_hours: 'time_tracked_hours', # To be added
-        first_res_time_bhrs: 'first_resp_time_by_bhrs', # To be added
-        resolution_time_bhrs: 'resolution_time_by_bhrs', # To be added
+        first_res_time_bhrs: 'first_resp_time_by_bhrs',
+        resolution_time_bhrs: 'resolution_time_by_bhrs',
         outbound_count: 'outbound_count',
         inbound_count: 'inbound_count',
-        resolution_status: 'resolution_status', # To be added
-        first_response_status: 'first_response_status', # To be added
+        resolution_status: 'resolution_status',
+        first_response_status: 'first_response_status',
+        every_response_status: 'every_response_status',
         ticket_tags: 'tags',
         skill_name: 'sl_skill_id',
         association_type_name: 'association_type',
@@ -94,6 +95,44 @@ module Silkroad
         started: 2,
         completed: 3,
         failed: 4
+      }.freeze
+      UNRESOLVED_STATUS_OPERAND = [0, '0'].freeze
+      UNASSIGNED_OPERAND = [0, '0'].freeze
+      TICKET_COLUMNS = {
+        fr_due_by: 'frDueBy',
+        source: 'source',
+        status: 'status',
+        group_id: 'group_id',
+        responder_id: 'responder_id',
+        internal_group_id: 'internal_group_id',
+        internal_agent_id: 'internal_agent_id',
+        any_agent_id: 'any_agent_id',
+        any_group_id: 'any_group_id',
+        created_at: 'created_at',
+        resolved_at: 'resolved_at',
+        closed_at: 'closed_at'
+      }.freeze
+      AGENT_PERMISSIONS = {
+        all_tickets: 'all_tickets',
+        group_tickets: 'group_tickets',
+        assigned_tickets: 'assigned_tickets'
+      }.freeze
+      CREATED_AT_TYPES_BY_TOKEN = {
+        today: 'today',
+        yesterday: 'yesterday',
+        week: 'week',
+        last_week: 'last_week',
+        month: 'month',
+        last_month: 'last_month',
+        two_months: 'two_months',
+        six_months: 'six_months'
+      }.freeze
+      DATE_RANGE_SPECIFIER = ' - '.freeze
+      TEXT_MAPPING = {
+        sla_status: {
+          in_sla: { key: 'IN_SLA', text: 'export_data.in_sla' },
+          violated_sla: { key: 'VIOLATED_SLA', text: 'export_data.out_of_sla' }
+        }
       }.freeze
     end
   end

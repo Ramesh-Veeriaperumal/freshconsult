@@ -5,6 +5,7 @@ module AgentHelper
     account.subscription.state = 'trial'
     account.subscription.save
     available = options[:available] || 1
+    time_zone = options[:time_zone] || "Chennai"
     options[:email] = options[:email] || Faker::Internet.email
     new_agent = FactoryGirl.build(:agent, :signature => "Regards, #{options[:name]}", 
                                       :account_id => account.id, 
@@ -12,7 +13,7 @@ module AgentHelper
     new_user = FactoryGirl.build(:user, :account_id => account.id,
                                     :name => options[:name], 
                                     :email => options[:email],
-                                    :time_zone => "Chennai", 
+                                    :time_zone => time_zone, 
                                     :single_access_token => Faker::Lorem.characters(20), 
                                     :helpdesk_agent => true, 
                                     :active => options[:active], 

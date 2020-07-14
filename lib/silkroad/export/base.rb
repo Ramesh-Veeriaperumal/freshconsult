@@ -16,7 +16,7 @@ module Silkroad
           Rails.logger.info "Export Job #{response_body['id']} Created"
           create_data_exports_job(data_export_type, response_body['id'].to_s, export_params)
         else
-          Rails.logger.error "Error :: Job Not RECEIVED. Message :: #{response}"
+          Rails.logger.error "Error :: Job Not RECEIVED. Message :: #{response.inspect}"
           nil
         end
         data_export
@@ -30,12 +30,13 @@ module Silkroad
         if response.code == 200
           Rails.logger.info "Export Job #{job_status['id']} status - #{job_status['status']}"
         else
-          Rails.logger.error "Error :: Job status unavailable. Message :: #{response}"
+          Rails.logger.error "Error :: Job status unavailable. Message :: #{response.inspect}"
         end
         job_status
       end
 
       def build_request_body(export_params)
+        set_locale
         export_params = export_params.deep_symbolize_keys
         Time.use_zone(TimeZone.find_time_zone) do
           {
@@ -49,10 +50,12 @@ module Silkroad
             export_fields: build_export_fields(export_params),
             name: export_name,
             format: get_output_format(export_params),
-            callback_url: format(CALLBACK_URL, account_domain: account.full_domain),
+            callback_url: "https://#{account.full_domain}/api/channel/admin/data_export/update",
             additional_info: construct_additional_info(export_params)
           }.to_json
         end
+      ensure
+        unset_locale
       end
 
       private
@@ -78,13 +81,13 @@ module Silkroad
         end
 
         def request_timeout
-          SILKROAD_CONFIG['timeout']
+          SILKROAD_CONFIG[:timeout]
         end
 
         def generate_headers
           {
             'Authorization' => construct_jwt(user),
-            'Content-Type' => 'application/json',
+            'Content-Type' => CONTENT_TYPE,
             'X-Client-ID' => Thread.current[:message_uuid].last
           }
         end
@@ -124,6 +127,11 @@ module Silkroad
             condition[:operator] = operator
             condition[:nested_conditions] = nested_conditions
           end
+        end
+
+        def transform_datetime_value(value)
+          value = Time.zone.parse(value) if value.is_a?(String)
+          value.iso8601
         end
     end
   end
