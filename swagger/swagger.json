@@ -6977,6 +6977,23 @@
           "dashboard"
         ],
         "description": "customer satisfaction survey widget",
+        "parameters": [
+          {
+            "name": "group_ids",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "in": "query",
+            "description": "Selected group's id for filtering scorecard"
+          },
+          {
+            "name": "group_id",
+            "type": "string",
+            "in": "query",
+            "description": "Selected group id for filtering scorecard"
+          }
+        ],
         "responses": {
           "200": {
             "description": "success",

@@ -391,6 +391,22 @@ module Ember
       match_json(survey_info_pattern(group_id: group.id, is_agent: false))
     end
 
+    def test_satisfaction_survey_with_multi_group_filter
+      group1 = create_group(@account)
+      group2 = create_group(@account)
+      ticket1 = create_ticket(group: group1)
+      ticket2 = create_ticket(group: group2)
+      4.times do
+        create_survey_result(ticket1, 3)
+      end
+      2.times do
+        create_survey_result(ticket2, 3)
+      end
+      get :survey_info, controller_params(version: 'private', group_ids: [group1.id, group2.id])
+      assert_response 200
+      match_json(survey_multi_group_pattern(group_ids: [group1.id, group2.id], is_agent: false))
+    end
+
     def test_satisfaction_survey_without_access_to_dashboard
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false)
       get :survey_info, controller_params(version: 'private')
