@@ -45,8 +45,8 @@ module UsersTestHelper
                                get_other_companies(contact) if Account.current.multiple_user_companies_enabled?
 
     result[:unique_external_id] = expected_output[:unique_external_id] || contact.unique_external_id if Account.current.unique_contact_identifier_enabled?
-    result[:twitter_profile_status] = expected_output[:twitter_profile_status] || contact.twitter_profile_status
-    result[:twitter_followers_count] = expected_output[:twitter_followers_count] || contact.twitter_followers_count
+    result[:twitter_profile_status] = expected_output[:twitter_profile_status] || contact.twitter_profile_status unless Account.current.twitter_api_compliance_enabled?
+    result[:twitter_followers_count] = expected_output[:twitter_followers_count] || contact.twitter_followers_count unless Account.current.twitter_api_compliance_enabled?
     result[:deleted] = true if contact.deleted
     result
   end
