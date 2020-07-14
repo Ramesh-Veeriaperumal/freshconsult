@@ -68,7 +68,3 @@ if defined?(PhusionPassenger)
     end
   end
 end
-
-# Faker:1.4.3 sets this to true.
-# To ensure consistency in development, staging, production, and test environments, resetting `enforce_available_locales` variable to false
-I18n.enforce_available_locales = false
