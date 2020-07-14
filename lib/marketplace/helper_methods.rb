@@ -2,6 +2,7 @@ module Marketplace::HelperMethods
   include Redis::RedisKeys
   include Redis::OthersRedis
   include Marketplace::GalleryConstants
+  include MarketplaceAppHelper
 
   OAUTH_IPARAM_FEATURE = 'oauth_iparams'
 
@@ -79,7 +80,7 @@ module Marketplace::HelperMethods
   end
 
   def ni_paid_app_params
-    ni_addon_detail = marketplace_ni_addon_detail
+    ni_addon_detail = marketplace_ni_extension_details(Account.current.id, extension_name)
     billing = {}
     billing[:addon_id] = ni_addon_detail['addon_id']
     billing[:trial_period] = TRIAL_DURATION if ni_addon_detail['install_type'] == TRIAL_INSTALL
@@ -154,24 +155,6 @@ module Marketplace::HelperMethods
 
   def can_fetch_ni_addon_from_cache?
     Account.current.marketplace_gallery_enabled? && NATIVE_PAID_APPS.include?(extension_name)
-  end
-
-  def marketplace_cache_key
-    format(
-      MARKETPLACE_NI_PAID_APP,
-      account_id: Account.current.id,
-      app_name: extension_name
-    )
-  end
-
-  def marketplace_ni_addon_detail
-    marketplace_addon_detail = get_others_redis_hash(marketplace_cache_key)
-    remove_others_redis_key(marketplace_cache_key)
-    marketplace_addon_detail
-  rescue StandardError => e
-    Rails.logger.error("Error while fetching cached addon detail for account:: #{Account.current.id} \
-                        for app:: #{extension_name}, error:: #{e.inspect}")
-    {}
   end
 
   def extension_name

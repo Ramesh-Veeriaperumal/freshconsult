@@ -3,6 +3,8 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
   end
 
   include Integrations::CloudElements::Crm::CrmUtil
+  include Marketplace::GalleryConstants
+  include MarketplaceAppHelper
 
   before_filter :verify_authenticity
   before_filter :build_installed_app, :only => [:instances, :create]
@@ -64,6 +66,8 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     @installed_app.configs[:inputs].merge!(app_configs)
     raise InstalledAppNotSavedException unless @installed_app.save!
     flash[:notice] = t(:'flash.application.install.cloud_element_success')
+    return render_billing_loader if should_wait_for_billing?
+
     render_settings
   rescue => e
     Rails.logger.error "Error inside cloud_elements/crm_controller::instances Message: #{e}"
@@ -215,4 +219,16 @@ class Integrations::CloudElements::CrmController < Integrations::CloudElementsCo
     redirect_to integrations_applications_path and return 
   end
 
+  def render_billing_loader
+    template = 'integrations/applications/billing_loader'
+    settings_url = request.fullpath
+    ni_addon_detail = marketplace_ni_extension_details(Account.current.id, element)
+    render template: template, locals: { settings_url: settings_url, app_name: element, addon_id: ni_addon_detail['installed_extension_id'] }
+  end
+
+  def should_wait_for_billing?
+    return false unless Account.current.marketplace_gallery_enabled?
+
+    NATIVE_PAID_APPS.include?(params[:state]) && params[:method] == 'post' && params[:billing].blank?
+  end
 end

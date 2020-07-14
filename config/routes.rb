@@ -1069,6 +1069,7 @@ Helpkit::Application.routes.draw do
       member do
         post :install
         delete :uninstall
+        get '/:installed_extension_id/app_status', to: 'marketplace_apps#app_status'
       end
     end
 

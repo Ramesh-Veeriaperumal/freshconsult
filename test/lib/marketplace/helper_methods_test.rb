@@ -77,8 +77,8 @@ class HelperMethodsTest < ActionView::TestCase
 
   def test_paid_app_params_new_gallery_salesforce_error
     HelperMethodsTest.any_instance.stubs(:extension_name).returns('salesforce_v2')
-    HelperMethodsTest.any_instance.stubs(:get_others_redis_hash).raises(StandardError.new('error'))
-    HelperMethodsTest.any_instance.stubs(:remove_others_redis_key).raises(StandardError.new('error'))
+    HelperMethodsTest.any_instance.stubs(:get_others_redis_hash).returns({})
+    HelperMethodsTest.any_instance.stubs(:remove_others_redis_key).returns({})
     HelperMethodsTest.any_instance.stubs(:trial_subscription?).returns(false)
     Account.any_instance.stubs(:marketplace_gallery_enabled?).returns(true)
     params = paid_app_params

@@ -398,6 +398,7 @@ defaults: &defaults
     - [bitmap_callbacks]
     - [quality_management_system]
     - [solution_templates_migration_worker]
+    - [marketplace_app_billing]
     - [update_agent_status_availability]
 
 development:
