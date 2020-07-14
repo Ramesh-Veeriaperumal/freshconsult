@@ -1062,7 +1062,10 @@ Helpkit::Application.routes.draw do
       put :update
     end
 
-    resources :marketplace_apps, :only => [:edit] do
+    resources :marketplace_apps, only: [:edit, :clear_cache] do
+      collection do
+        post :clear_cache
+      end
       member do
         post :install
         delete :uninstall
