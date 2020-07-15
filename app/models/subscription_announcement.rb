@@ -19,17 +19,18 @@ class SubscriptionAnnouncement < ActiveRecord::Base
 	#latest product notification limit
 	NOTIFICATION_LIMIT = 3
 
-	scope :maintenance_notifications, -> { 
-		where(notification_type: NOTIFICATION_TYPE_BY_TOKEN[:maintenance]).
-		order('updated_at DESC')
-	}
-	
-	scope :product_notifications, -> { 
-		where(notification_type: NOTIFICATION_TYPE_BY_TOKEN[:product]).
-		order('updated_at DESC')
-	}
-	
- 	scope	:latest_product_notifications, -> { product_notifications.limit(NOTIFICATION_LIMIT) }
+	scope :maintenance_notifications, 
+		:conditions => { :notification_type => NOTIFICATION_TYPE_BY_TOKEN[:maintenance] }, 
+    	:order => 'updated_at DESC' 
+
+	scope :product_notifications, 
+		:conditions => { :notification_type => NOTIFICATION_TYPE_BY_TOKEN[:product] },
+    	:order => 'updated_at DESC'
+
+ 	scope	:latest_product_notifications, 
+ 		:conditions => { :notification_type => NOTIFICATION_TYPE_BY_TOKEN[:product] },
+    	:limit => NOTIFICATION_LIMIT, 
+    	:order => 'updated_at DESC'
 
   def self.current_announcements(hide_time)
   	return unless Account.current.launched?(:custom_product_notification)

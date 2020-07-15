@@ -68,7 +68,7 @@ module Ember
 
       def insights_from_s3
         Rails.logger.info("Retrieving insights from s3-baikal, Account::#{current_account.id}")
-        metrics_data = JSON.parse(AwsWrapper::S3.read(S3_CONFIG[:baikal_bucket], AdvancedTicketingConstants::S3_FILE_PATH))
+        metrics_data = JSON.parse(AwsWrapper::S3Object.read(AdvancedTicketingConstants::S3_FILE_PATH, S3_CONFIG[:baikal_bucket]))
         multi_set_redis_hash(ADVANCED_TICKETING_METRICS, metrics_data.to_a.flatten, AdvancedTicketingConstants::REDIS_EXPIRY)
         metrics_data
       rescue Exception => e

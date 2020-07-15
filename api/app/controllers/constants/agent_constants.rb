@@ -1,7 +1,8 @@
 module AgentConstants
   LOAD_OBJECT_EXCEPT = %i[create_multiple complete_gdpr_acceptance enable_undo_send disable_undo_send update_multiple search_in_freshworks verify_agent_privilege availability_count].freeze
   STATES = %w[occasional fulltime].freeze
-  INDEX_FIELDS = %w[state email phone mobile only type privilege group_id include order_type order_by].freeze
+  AVAILABILITY_PARAMS = %w[channel search_term].freeze
+  INDEX_FIELDS = %w[state email phone mobile only type privilege group_id include order_type order_by].freeze | AVAILABILITY_PARAMS
   UPDATE_ARRAY_FIELDS = %w[group_ids role_ids contribution_group_ids].freeze
   TICKET_SEARCH_SETTINGS = [:include_subject, :include_description, :include_other_properties, :include_notes, :include_attachment_names, :archive].freeze
   UPDATE_FIELDS = %w[name email phone mobile time_zone job_title language signature ticket_scope occasional shortcuts_enabled focus_mode agent_level_id freshcaller_agent avatar_id freshchat_agent].freeze | UPDATE_ARRAY_FIELDS | [ticket_assignment: [:available]].freeze | [search_settings: [tickets: TICKET_SEARCH_SETTINGS]].freeze
@@ -21,7 +22,7 @@ module AgentConstants
     field_agent: [:field_agent, 'field_agent']
   }.freeze
   AGENT_CHANNELS = { ticket_assignment: 'ticket_assignment', chat: 'live_chat', phone: 'freshfone' }.freeze
-  ALLOWED_ONLY_PARAMS = %w[available available_count with_privilege].freeze
+  ALLOWED_ONLY_PARAMS = %w[available available_count with_privilege availability].freeze
   ALLOWED_INCLUDE_PARAMS = %w[user_info].freeze
   FIELD_MAPPINGS = { :"user.primary_email.email" => :email, :"user.base" => :email }.freeze
   IGNORE_PARAMS = %w[shortcuts_enabled ticket_assignment].freeze
@@ -78,4 +79,14 @@ module AgentConstants
 
   AGENT_CREATE_DELEGATOR_KEY = %i[role_ids group_ids user_attributes agent_type occasional skill_ids agent_level_id contribution_group_ids].freeze
   AGENT_UPDATE_DELEGATOR_KEY = %i[role_ids group_ids available avatar_id user_attributes agent_level_id contribution_group_ids].freeze
+  OCR_KEYS_MAP = [
+    ['availability_updated_at', :availability_updated_at],
+    ['task_limit', :assignment_limit],
+    ['preference', :available],
+    ['availability', :available],
+    ['status', :logged_in],
+    ['round_robin', :round_robin_enabled]
+  ].freeze
+  FORMATTED_OCR_KEYS = Hash[*OCR_KEYS_MAP.map { |i| [i[0], i[1]] }.flatten]
+  CHANNELS_BOOLEAN_KEYS = [:available, :logged_in].freeze
 end.freeze

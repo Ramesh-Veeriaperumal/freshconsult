@@ -233,7 +233,7 @@ module IntegrationServices::Services
         con_name_for_sync = fd_user.name
         fd_contact.merge!(contact_name_split con_name_for_sync)
         fd_contact["AccountId"] = sf_account_id
-        sf_con_det = create_sf_contact fd_contact, fd_user
+        sf_con_det = create_sf_contact fd_contact
         sf_con_id = sf_con_det["Id"]
       end
       [sf_account_id, sf_con_id, acc_name_for_sync, con_name_for_sync]

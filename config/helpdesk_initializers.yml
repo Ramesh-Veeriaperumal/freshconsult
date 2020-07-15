@@ -3,7 +3,6 @@ helpdesk:
     - githooks
     - mri2.1_patches
     - rails3_patches
-    - ruby238_psych
     - core_ext/object
     - mail_message_patch
     - authlogic_patch
@@ -21,11 +20,14 @@ helpdesk:
     - aws_cloud_front
     - aws/aws_v2
     - aws/dynamo_sdk2
+    - aws/sqs_sdk2
+    - aws/dynamo
     - aws/lambda
     - aws/sns
-    - aws/sqs_sdk2
+    - aws/sqs
     - aws/swf
     - aws/cloud_watch
+    - aws_forums
     - belongs_to_account
     - chat_config
     - collab
@@ -52,6 +54,7 @@ helpdesk:
     - resource_rate_limit
     - redshift
     - resque
+    - riak
     - ruby193_monkey_patches
     - net_http_monkey_patch
     - core_ext/active_record/relation
@@ -64,6 +67,7 @@ helpdesk:
     - site_keys
     - spam_watcher
     - string_ext
+    - text_datastore
     - archive_datastore
     - time_formats
     - twitter_config

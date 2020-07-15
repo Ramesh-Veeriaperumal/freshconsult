@@ -146,4 +146,58 @@ class Integrations::MarketplaceAppsControllerTest < ActionController::TestCase
     DataVersioning::ExternalModel.unstub(:update_version_timestamp)
     MemcacheKeys.unstub(:delete_from_cache)
   end
+
+  def test_app_status_success
+    Account.stubs(:current).returns(@account)
+    Account.any_instance.stubs(:marketplace_gallery_enabled?).returns(true)
+    mock = OpenStruct.new(status: 200, body: { "status" => "SUCCESS" })
+    FreshRequest::Client.any_instance.stubs(:get).returns(mock)
+    get :app_status, controller_params(id: 'salesforce_v2', installed_extension_id: 165_123)
+    assert_response 200
+    assert_equal JSON.parse(response.body)['status'], 'SUCCESS'
+  ensure
+    Account.unstub(:current)
+    Account.any_instance.unstub(:marketplace_gallery_enabled?)
+    FreshRequest::Client.any_instance.unstub(:get)
+  end
+
+  def test_app_status_failed
+    Account.stubs(:current).returns(@account)
+    Account.any_instance.stubs(:marketplace_gallery_enabled?).returns(true)
+    mock = OpenStruct.new(status: 200, body: { 'status' => "FAILED" })
+    FreshRequest::Client.any_instance.stubs(:get).returns(mock)
+    get :app_status, controller_params(id: 'salesforce_v2', installed_extension_id: 165_123)
+    assert_response 200
+    assert_equal JSON.parse(response.body)['status'], 'FAILED'
+  ensure
+    Account.unstub(:current)
+    Account.any_instance.unstub(:marketplace_gallery_enabled?)
+    FreshRequest::Client.any_instance.unstub(:get)
+  end
+
+  def test_app_status_inprogress
+    Account.stubs(:current).returns(@account)
+    Account.any_instance.stubs(:marketplace_gallery_enabled?).returns(true)
+    mock = OpenStruct.new(status: 202, body: {})
+    FreshRequest::Client.any_instance.stubs(:get).returns(mock)
+    get :app_status, controller_params(id: 'salesforce_v2', installed_extension_id: 165_123)
+    assert_response 404
+  ensure
+    Account.unstub(:current)
+    Account.any_instance.unstub(:marketplace_gallery_enabled?)
+    FreshRequest::Client.any_instance.unstub(:get)
+  end
+
+  def test_app_status_inprogress_failed
+    Account.stubs(:current).returns(@account)
+    Account.any_instance.stubs(:marketplace_gallery_enabled?).returns(true)
+    mock = OpenStruct.new(status: 500, body: {})
+    FreshRequest::Client.any_instance.stubs(:get).returns(mock)
+    get :app_status, controller_params(id: 'salesforce_v2', installed_extension_id: 165_123)
+    assert_response 404
+  ensure
+    Account.unstub(:current)
+    Account.any_instance.unstub(:marketplace_gallery_enabled?)
+    FreshRequest::Client.any_instance.unstub(:get)
+  end
 end

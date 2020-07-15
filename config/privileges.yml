@@ -1,5 +1,5 @@
----
-:privileges:
+--- 
+:privileges: 
   :manage_canned_responses: 25
   :view_admin: 23
   :manage_tickets: 0

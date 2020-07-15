@@ -84,6 +84,18 @@ module DashboardTestHelper
     @widget_count
   end
 
+  def survey_multi_group_pattern(options = {})
+    options[:time_range] = INVERTED_TIME_PERIODS['day']
+    @widget_count = ::Dashboard::SurveyWidget.new.filtered_records(options)
+    csat_response = CSAT_FIELDS.deep_dup
+    @widget_count[:results].each do |key, val|
+      csat_response[key.downcase.to_sym][:value] = val
+    end
+    @widget_count[:results] = csat_response.values
+    @widget_count[:id] = 1
+    @widget_count
+  end
+
   def omni_channel_pattern
     {
       widgets: omnichannel_widget_config,

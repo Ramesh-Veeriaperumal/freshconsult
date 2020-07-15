@@ -34,8 +34,15 @@ class PostObserver < ActiveRecord::Observer
 #		create_activity(post, 'delete_post', User.current) unless post.trash#TODO-RAILS3 do it in before destroy
 	end
 
-  def monitor_reply(post)
-    PostMailer.send_later(:send_monitorship_emails, post)
+	def monitor_reply(post)
+    send_later(:send_monitorship_emails, post)
+  end
+
+  def send_monitorship_emails(post)
+    post.topic.monitorships.active_monitors.includes([:portal, :user]).each do |monitorship|
+    	next if monitorship.user.nil? or monitorship.user.email.blank? or (post.user_id == monitorship.user_id)
+    	PostMailer.send_email(:monitor_email, monitorship.user, monitorship.user.email, post, post.user, monitorship.portal, *monitorship.sender_and_host)
+    end
   end
 
 	def after_update(post)

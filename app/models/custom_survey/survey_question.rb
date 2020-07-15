@@ -35,8 +35,8 @@ class CustomSurvey::SurveyQuestion < ActiveRecord::Base
 
   attr_accessible :survey_id, :name, :label, :position, :field_type, :default, :custom_field_choices_attributes  
 
-  scope :default, -> { where(default: true) }
-  scope :feedback, -> { where(default: false) }
+  scope :default, :conditions => {:default  => true}
+  scope :feedback, :conditions => {:default => false}
 
   xss_sanitize :only => [:name, :label], :plain_sanitizer => [:label, :name]
 

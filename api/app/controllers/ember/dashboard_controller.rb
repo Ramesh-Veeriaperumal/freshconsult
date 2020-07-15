@@ -57,9 +57,15 @@ module Ember
       return unless validate_query_params
       assign_and_sanitize_params
       # ember needs an id to store it in model,so building the hash with id.
-      options = { group_id: params[:group_id] }
-      options[:is_agent] = dashboard_type.include?('agent')
-      @widget_count = ::Dashboard::SurveyWidget.new.fetch_records(options)
+      if params[:group_id].present? && params[:group_id].is_a?(Array) # in omni dashboard we send group ids params.
+        options = { group_ids: params[:group_id] }
+        options[:time_range] = INVERTED_TIME_PERIODS['day']
+        @widget_count = ::Dashboard::SurveyWidget.new.filtered_records(options)
+      else
+        options = { group_id: params[:group_id] }
+        options[:is_agent] = dashboard_type.include?('agent')
+        @widget_count = ::Dashboard::SurveyWidget.new.fetch_records(options)
+      end
       csat_response = CSAT_FIELDS.deep_dup
       @widget_count[:results].each do |key, val|
         csat_response[key.downcase.to_sym][:value] = val

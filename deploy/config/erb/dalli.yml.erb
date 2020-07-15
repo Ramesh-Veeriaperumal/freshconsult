@@ -16,6 +16,7 @@ defaults: &defaults
   namespace: "helpkit"
   compress: true
   socket_max_failures: 3
+  socket_timeout: 0.5
   servers:
     <% node[:ymls][:dalli][:hosts].each do |internal_dns| %>
     - <%= internal_dns %>:11211

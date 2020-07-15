@@ -6,8 +6,9 @@ class Helpdesk::AuthorizationsController < ApplicationController
   skip_after_filter :set_last_active_time
   
   def index
-    @items = Helpdesk::Authorization.order(Helpdesk::Ticket::SORT_SQL_BY_KEY[(params[:sort] || :created_asc).to_sym]).paginate(
-      :page => params[:page],
+    @items = Helpdesk::Authorization.paginate(
+      :page => params[:page], 
+      :order => Helpdesk::Ticket::SORT_SQL_BY_KEY[(params[:sort] || :created_asc).to_sym],
       :per_page => 20)
   end
   
@@ -20,13 +21,12 @@ class Helpdesk::AuthorizationsController < ApplicationController
   end
 
   def deliver_autocomplete auto_scoper
-    items = auto_scoper
-      .where(["(users.name like ? or user_emails.email like ?) and users.deleted = 0", "%#{params[:v]}%", "%#{params[:v]}%"])
-      .joins(["INNER JOIN user_emails ON user_emails.user_id = users.id AND user_emails.account_id = users.account_id"])
-      .select(["users.id as `id` , users.name as `name`, user_emails.email as `email_found`"])
-      .limit(1000)
-      .to_a
-
+    items = auto_scoper.find(
+    :all, 
+    :select => ["users.id as `id` , users.name as `name`, user_emails.email as `email_found`"],
+    :joins => ["INNER JOIN user_emails ON user_emails.user_id = users.id AND user_emails.account_id = users.account_id"],
+    :conditions => ["(users.name like ? or user_emails.email like ?) and users.deleted = 0", "%#{params[:v]}%", "%#{params[:v]}%"], 
+    :limit => 1000)
     r = {:results => items.map {|i| {:id => i.email_found, :value => i.name, :user_id => i.id }}}
     r[:results].push({:id => current_account.kbase_email, :value => ""}) if params[:v] =~ /(kb[ase]?.*)/
     

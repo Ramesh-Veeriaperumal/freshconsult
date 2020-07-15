@@ -15,7 +15,9 @@ development:
   <<: *common
   bucket: cdn.freshpo.com
   reports_bucket: reports_archive_data_dev
+  ticket_body: ticketbody-dev
   archive_ticket_body: archive-ticketbody-dev
+  note_body: notebody-dev
   archive_note_body: archive-notebody-dev
   contact_note_body: contact-notebody-dev
   company_note_body: company-notebody-dev
@@ -31,7 +33,9 @@ staging:
   <<: *common
   bucket: cdn.freshpo.com
   reports_bucket: reports_archive_data_staging
+  ticket_body: ticketbody-staging
   archive_ticket_body: archive-ticketbody-staging
+  note_body: notebody-staging
   archive_note_body: archive-notebody-staging
   contact_note_body: contact-notebody-staging
   company_note_body: company-notebody-staging
@@ -47,7 +51,9 @@ test:
   <<: *common
   bucket: fd-testbed
   reports_bucket: reports_archive_data_test
+  ticket_body: ticketbody-test
   archive_ticket_body: archive-ticketbody-test
+  note_body: notebody-test
   archive_note_body: archive-notebody-test
   contact_note_body: contact-notebody-test
   company_note_body: company-notebody-test
@@ -66,7 +72,9 @@ production:
   AWS_CALLING_FORMAT: SUBDOMAIN
   bucket: cdn.freshdesk.com
   reports_bucket: reports_archive_data_production
+  ticket_body: ticketbody-production
   archive_ticket_body: archive-ticketbody-production
+  note_body: notebody-production
   archive_note_body: archive-notebody-production
   contact_note_body: contact-notebody-production
   company_note_body: company-notebody-production

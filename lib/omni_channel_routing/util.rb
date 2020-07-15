@@ -24,7 +24,7 @@ module OmniChannelRouting
         'X-Request-ID'  => "#{Thread.current[:message_uuid].try(:first)}"
       }
     end
-    
+
     def ocr_jwt_token(client_service)
       JWT.encode(
         ocr_jwt_payload(client_service),

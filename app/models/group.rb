@@ -76,36 +76,40 @@ class Group < ActiveRecord::Base
 
   accepts_nested_attributes_for :agent_groups, :allow_destroy => true
 
-  scope :active_groups_in_account, ->(account_id) {
+  scope :active_groups_in_account, lambda { |account_id|
       sanitize_joins = sanitize_sql_array(["inner join agent_groups on agent_groups.account_id = :account_id and
                    agent_groups.group_id = groups.id and groups.account_id = :account_id
                    inner join users ON agent_groups.account_id = :account_id and
                    agent_groups.user_id = users.id and users.account_id = :account_id
                    and users.helpdesk_agent = 1 and users.deleted = 0", :account_id => account_id])
-    joins(sanitize_joins).
-    group('agent_groups.group_id')
-  }
+      { :joins => sanitize_joins,
+       :group => "agent_groups.group_id" }
+    }
   liquid_methods :name
 
-  scope :trimmed, -> { select([:'groups.id', :'groups.name']) }
-  scope :disallowing_toggle_availability, -> { where(toggle_availability: false) }
-  scope :round_robin_groups, -> { where('ticket_assign_type > 0').order(:name) }
-  scope :basic_round_robin_enabled, -> { where(ticket_assign_type: 1, capping_limit: 0).order(:name) }
-  scope :capping_enabled_groups, -> { where("ticket_assign_type = 1 and capping_limit > 0").order(:name) }
-  scope :skill_based_round_robin_enabled, -> { where(ticket_assign_type: Group::TICKET_ASSIGN_TYPE[:skill_based]).order(:name) }
-  scope :omniroute_powered_rr_groups, ->{ where(ticket_assign_type: OMNIROUTE_POWERED_RR_ASSIGNMENT_TYPES).order(:name) }
-  scope :ocr_enabled_groups, -> { where(ticket_assign_type: OMNI_CHANNEL_ASSIGNMENT_TYPES).order(:name) }
-  scope :support_agent_groups, -> { where(group_type: GROUP_TYPE[:support_agent_groups]).order(:name) }
-  scope :field_agent_groups, -> { where(group_type: GROUP_TYPE[:field_agent_groups]).order(:name) }
+  scope :trimmed, :select => [:'groups.id', :'groups.name']
+  scope :disallowing_toggle_availability, :conditions => { :toggle_availability => false }
+  scope :round_robin_groups, :conditions => 'ticket_assign_type > 0', :order => :name
+  scope :basic_round_robin_enabled, :conditions => ["ticket_assign_type = 1 and capping_limit = 0"], :order => :name
+  scope :capping_enabled_groups, :conditions => ["ticket_assign_type = 1 and capping_limit > 0"], :order => :name
+  scope :skill_based_round_robin_enabled, :order => :name,
+        :conditions => ["ticket_assign_type = #{Group::TICKET_ASSIGN_TYPE[:skill_based]}"]
+  scope :omniroute_powered_rr_groups, conditions: ['ticket_assign_type IN (?)', OMNIROUTE_POWERED_RR_ASSIGNMENT_TYPES], order: :name
+  scope :ocr_enabled_groups,
+        order: :name,
+        conditions: ["ticket_assign_type IN (?)", OMNI_CHANNEL_ASSIGNMENT_TYPES]
+  scope :support_agent_groups, :order => :name,
+        :conditions => ["group_type = ?", GROUP_TYPE[:support_agent_groups]]
+  scope :field_agent_groups, :order => :name,
+        :conditions => ["group_type = ?", GROUP_TYPE[:field_agent_groups]]
 
   def self.has_different_business_hours?
     joins(:business_calendar).where(NON_DEFAULT_BUSINESS_HOURS).exists?
   end
   
   def excluded_agents(account)      
-    return account.users.where(['helpdesk_agent = true and id not in (?)', agents.map(&:id)]) if agents.present?
-
-    return account.users.where(helpdesk_agent: true)
+   return account.users.find(:all , :conditions=>['helpdesk_agent = true and id not in (?)',agents.map(&:id)]) unless agents.blank? 
+   return account.users.find(:all , :conditions=> { :helpdesk_agent => true })  
   end
 
   def self.ticket_assign_options
@@ -176,7 +180,7 @@ class Group < ActiveRecord::Base
 
   def available_agents #fires 2 queries everytime
     user_ids = agent_groups.available_agents.map(&:user_id)
-    account.users.where(id: user_ids)
+    account.users.find_all_by_id(user_ids)
   end
 
   def has_agent? agent

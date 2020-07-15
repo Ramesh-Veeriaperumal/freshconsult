@@ -17,7 +17,7 @@ class FlexifieldDefEntriesController < ApplicationController
   # GET /flexifield_defs/:flexifield_def_id/flexifield_def_entries
   # GET /flexifield_defs/:flexifield_def_id/flexifield_def_entries.xml
   def index
-    @flexifield_def_entries = @flexifield_def.flexifield_def_entries.all
+    @flexifield_def_entries = @flexifield_def.flexifield_def_entries.find(:all)
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @flexifield_def_entries }

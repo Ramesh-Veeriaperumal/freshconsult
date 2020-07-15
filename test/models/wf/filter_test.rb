@@ -30,6 +30,7 @@ class FilterTest < ActiveSupport::TestCase
 
   def test_filter_params
     @wf_filter = @account.ticket_filters.first
+    @wf_filter.query_hash = [{ 'condition': 'status', 'operator': 'is_in', 'value': '2,3' }]
     assert_equal @wf_filter.key, ''
     assert_equal @wf_filter.format, :html
     assert_empty @wf_filter.fields

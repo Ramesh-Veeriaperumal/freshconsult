@@ -65,7 +65,7 @@ module Facebook
 
     LIMIT_PER_REQUEST           = 100
 
-    GRAPH_API_VERSION           = 'v2.11'.freeze
+    GRAPH_API_VERSION           = 'v3.2'.freeze
 
     FB_MESSAGE_PREFIX           = 'm_'.freeze
 

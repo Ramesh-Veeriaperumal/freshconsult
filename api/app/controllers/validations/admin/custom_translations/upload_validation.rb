@@ -3,20 +3,11 @@ class Admin::CustomTranslations::UploadValidation < ApiValidation
 
   validate :validate_empty_file, if: -> { translation_file.nil? || translation_file.class == String }
   validate :validate_file_extension, if: -> { !translation_file.nil? }
-  validate :validate_translation_file, if: -> { !translation_file.nil? }
-  validate :validate_language_code, if: -> { errors.blank?  && !translation_file.nil? }
+  validate :validate_language_code, if: -> { !translation_file.nil? }
 
   def validate_empty_file
     errors[:translation_file] << :no_file_uploaded
     @translation_file = nil
-  end
-
-  def validate_translation_file
-    Psych.safe_load(File.open(@translation_file.tempfile))
-  rescue Psych::SyntaxError => e
-    errors[:translation_file] << :"#{e.message}"
-  rescue StandardError
-    errors[:translation_file] << :invalid_yml_file
   end
 
   def validate_file_extension
@@ -33,7 +24,7 @@ class Admin::CustomTranslations::UploadValidation < ApiValidation
   def validate_language_code
     return if @invalid_extension
 
-    yaml_file = Psych.safe_load(File.foreach(@translation_file.tempfile).first(2).join)
+    yaml_file = YAML.load(File.foreach(@translation_file.tempfile).first(2).join, safe: true)
     yaml_language_code = yaml_file.respond_to?(:keys) ? yaml_file.keys.last : nil
     errors[:translation_file] << :invalid_yml_file && return if yaml_language_code.nil?
     errors[:translation_file] << :mismatch_language && return if yaml_language_code.to_s != @language_code

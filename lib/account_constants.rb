@@ -107,6 +107,8 @@ module AccountConstants
   MULTI_PRODUCT_LIMIT = 5
   IGNORE_SIGNUP_PARAMS = ['company_name'].freeze
 
+  DEFAULT_AGENT_AVAILABILITY_REFRESH_TIME = 60
+
   def attachment_limit
     @attachment_limit ||= Account.current.outgoing_attachment_limit_25_enabled? ? 25 : ATTACHMENT_LIMIT
   end

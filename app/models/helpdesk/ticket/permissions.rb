@@ -1,24 +1,15 @@
 class Helpdesk::Ticket < ActiveRecord::Base
 
-  scope :permissible, -> (user) { where(permissible_query_hash(user)) }
-
-  scope :assigned_tickets_permission, ->(user, ids) do
-    query_hash = assigned_tickets_query_hash(user, ids)
-    where(query_hash[:conditions])
-    .select(query_hash[:select])
-  end
-
-  scope :group_tickets_permission, ->(user, ids) do
-    query_hash = group_tickets_query_hash(user, ids)
-    where(query_hash[:conditions])
-    .select(query_hash[:select])
-  end
+  scope :permissible, lambda { |user| permissible_query_hash(user) }
+  scope :assigned_tickets_permission, lambda { |user, ids| assigned_tickets_query_hash(user, ids) }
+  scope :group_tickets_permission, lambda { |user, ids| group_tickets_query_hash(user, ids) }
 
   class << self
 
     def permissible_query_hash(user)
       if user.agent?
-        permissible_condition(user)
+        query_hash = {:conditions => permissible_condition(user)}
+        query_hash
       end
     end
 
@@ -80,7 +71,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def group_agent_accessible?(user)
-    user.group_ticket_permission && (user.ticket_agent?(self) || user.group_ticket?(self) )
+    user.group_ticket_permission && (user.ticket_agent?(self) || (user.access_all_agent_groups ? user.read_or_write_group_ticket?(self) : user.group_ticket?(self)))
   end
 
   def restricted_agent_accessible?(user)

@@ -94,8 +94,14 @@ module Admin::ShiftHelper
   end
 
   def payload
-    { account_id: current_account.id.to_s, product: PRODUCT, domain: current_account.full_domain,
-      user_id: User.current.id.to_s, org_id: current_account.organisation.try(:organisation_id).try(&:to_s) || '' }
+    {
+      account_id: current_account.id.to_s,
+      product: PRODUCT,
+      domain: current_account.full_domain,
+      user_id: User.current.id.to_s,
+      org_id: current_account.organisation.try(:organisation_id).try(&:to_s) || '',
+      agent_statuses_enabled: current_account.agent_statuses_enabled?
+    }
   end
 
   def current_account

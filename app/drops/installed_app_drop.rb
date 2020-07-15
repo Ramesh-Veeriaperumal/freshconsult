@@ -29,8 +29,9 @@ class InstalledAppDrop < BaseDrop
 
 	def events_list
         if(@source.application.name == 'google_calendar')
-          events_list = (Integrations::IntegratedResource.where(['installed_application_id=? AND local_integratable_id=?',
-          @source.id, @context['ticket'].id]).map { |i|
+          events_list = (Integrations::IntegratedResource.find(:all,
+	      :conditions => ["installed_application_id=? AND local_integratable_id=?", 
+          @source.id, @context['ticket'].id]).map { |i| 
           	"{'remote_integratable_id': '#{i.remote_integratable_id}', 'integrated_resource_id': #{i.id}}"
           }).join(", ")
         end

@@ -231,7 +231,7 @@ class Account < ActiveRecord::Base
     attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false,
     requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false,
     supervisor_custom_status: false, asset_management: false, sandbox_temporary_offset: false, downgrade_policy: true,
-    skip_posting_to_fb: true, launch_fsm_geolocation: false, launch_location_tagging: false, allow_update_agent: false,
+    skip_posting_to_fb: true, launch_fsm_geolocation: false, launch_location_tagging: false, geolocation_historic_popup: false, allow_update_agent: false,
     facebook_dm_outgoing_attachment: true, hide_mailbox_error_from_agents: false,
     jira_onpremise_reporter: false, support_ticket_rate_limit: false, sidekiq_logs_to_central: false,
     portal_central_publish: false, encode_emoji_in_solutions: false, forums_agent_portal: false,
@@ -248,7 +248,8 @@ class Account < ActiveRecord::Base
     salesforce_sync: false, salesforce_v2: false, dynamics_v2: false, marketplace_app: false, freshid_sso_sync: true,
     fw_sso_admin_security: false, shopify_api_revamp: false,
     omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false,
-    ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false
+    ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false,
+    twitter_api_compliance: false, omni_agent_availability_dashboard: false
   }.freeze
   
   BLOCK_GRACE_PERIOD = 90.days

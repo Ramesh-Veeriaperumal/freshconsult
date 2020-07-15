@@ -41,6 +41,7 @@ module AgentsTestHelper
     end
     agent_hash[:freshchat_agent] = agent.additional_settings.try(:[], :freshchat).try(:[], :enabled) || false if Account.current.omni_chat_agent_enabled?
     agent_hash[:agent_level_id] = agent.scoreboard_level_id if Account.current.gamification_enabled? && Account.current.gamification_enable_enabled?
+    agent_hash[:availability] = expected_output[:availability] if expected_output[:availability].present?
     agent_hash
   end
 
@@ -66,6 +67,11 @@ module AgentsTestHelper
       type: Account.current.agent_types_from_cache.find { |type| type.agent_type_id == agent.agent_type }.name,
       read_only: agent.user.privilege?(:manage_account)
     }
+  end
+
+  def private_api_omni_channel_availability_pattern(expected_output = {}, agent)
+    agent_hash = private_api_agent_pattern(agent)
+    agent_hash.merge!(availability: expected_output[:availability]) if expected_output[:availability].present?
   end
 
   def private_api_privilege_agent_pattern(user)
@@ -328,5 +334,47 @@ module AgentsTestHelper
     user_order.each_with_index do |element, index|
       assert element.name, current_response[index]['contact']['name']
     end
+  end
+
+  def ocr_agents_response(agent_data)
+    count = 0
+    ocr_agents = agent_data[:channel].each_with_object([]) do |(key, val), agents|
+      count += 1
+      each_agent = {
+        id: Faker::Number.number(7),
+        name: agent_data[:name],
+        on_call: val[:freshcaller][:on_call],
+        freshdesk_user_id: key,
+        freshdesk_availability: val[:freshdesk][:available],
+        freshdesk_task_limit: val[:freshdesk][:assignment_limit],
+        freshdesk_availability_updated_at: val[:freshdesk][:availability_updated_at],
+        freshchat_user_id: Faker::Lorem.characters(5),
+        freshchat_status: val[:freshchat][:logged_in],
+        freshchat_preference: val[:freshchat][:available],
+        freshchat_task_limit: val[:freshchat][:assignment_limit],
+        freshchat_availability_updated_at: val[:freshchat][:availability_updated_at],
+        freshcaller_user_id: Faker::Lorem.characters(5),
+        freshcaller_status: val[:freshcaller][:logged_in],
+        freshcaller_preference: val[:freshcaller][:available],
+        freshcaller_task_limit: val[:freshcaller][:assignment_limit],
+        freshcaller_availability_updated_at: val[:freshcaller][:availability_updated_at],
+        freshdesk_round_robin: val[:freshdesk][:round_robin_enabled],
+        freshchat_round_robin: val[:freshchat][:round_robin_enabled],
+        freshcaller_round_robin: val[:freshcaller][:round_robin_enabled],
+        status_id: agent_data[:status_id]
+      }
+      agents << each_agent
+    end
+    { meta: { count: count }, ocr_agents: ocr_agents }.to_json
+  end
+
+  def ocr_agent_availability_reformat(channels_data)
+    channels_data.each_with_object([]) do |(key, value), output|
+      output << value.merge!(channel: key)
+    end
+  end
+
+  def ocr_agents_availability_pattern(output)
+    [{ id: output[:id], contact: { name: output[:name] }, availability: { status: { id: output[:status_id] }, channel_availability: output[:availability] } }]
   end
 end

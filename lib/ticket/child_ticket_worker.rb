@@ -48,7 +48,7 @@ class Ticket::ChildTicketWorker < BaseWorker
   end
 
   def load_assoc_parent_tkt
-    @assoc_parent_ticket ||= execute_on_db { @account.tickets.preload(:ticket_body,:schema_less_ticket,
+    @assoc_parent_ticket ||= execute_on_db { @account.tickets.preload(:ticket_old_body,:schema_less_ticket,
       :attachments).find_by_param(@params[:assoc_parent_tkt_id], @account) }
   end
 

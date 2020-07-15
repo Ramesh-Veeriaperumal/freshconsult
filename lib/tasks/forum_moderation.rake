@@ -2,7 +2,7 @@ namespace :forum_moderation do
 
   desc "Polling the sqs to moderate the posts"
   task :scan => :environment do
-    AwsWrapper::SqsV2.poll(SQS[:forums_moderation_queue]) do |sqs_msg|
+    $sqs_forum_moderation.poll(:initial_timeout => false, :batch_size => 10) do |sqs_msg|
       begin
         Rails.logger.info("Forum Moderation: ** Got ** #{sqs_msg.body} **")
         msg_attributes = JSON.parse(sqs_msg.body)['sqs_post']

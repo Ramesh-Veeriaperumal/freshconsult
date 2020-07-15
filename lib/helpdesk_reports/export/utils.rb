@@ -38,7 +38,7 @@ module HelpdeskReports::Export::Utils
   end
 
   def batch_file_exists? export_id, file
-    AwsWrapper::S3.exists?(S3_CONFIG[:bucket], s3_export_path(export_id, file))
+    AwsWrapper::S3Object.find(s3_export_path(export_id, file), S3_CONFIG[:bucket]).exists?
   end
 
   def write_file file_string, file_path
@@ -57,11 +57,11 @@ module HelpdeskReports::Export::Utils
 
   def append_batch_content_to_csv csv, export_id, file_name
     s3_path = s3_export_path(export_id, file_name)
-    csv_file = AwsWrapper::S3.read_io(S3_CONFIG[:bucket], s3_path) # PRE-RAILS: Needs to be checked
+    csv_file = AwsWrapper::S3Object.find(s3_path, S3_CONFIG[:bucket])
     CSVBridge.parse(csv_file.read)[1..-1].each do |row|
       csv << row.collect{|con| con.nil? ? "" : (CGI.escapeHTML con)}
     end
-    AwsWrapper::S3.delete(S3_CONFIG[:bucket], s3_path)
+    AwsWrapper::S3Object.delete(s3_path, S3_CONFIG[:bucket])
   end
 
   def generate_file_path type, file_name
@@ -79,7 +79,7 @@ module HelpdeskReports::Export::Utils
     end
     file = File.open(file_path)
     write_options = { :content_type => MIME::Types.type_for(file_path).first.content_type,:acl => "public-read" }
-    AwsWrapper::S3.put(S3_CONFIG[:bucket], path, file, write_options.merge(server_side_encryption: 'AES256'))
+    AwsWrapper::S3Object.store(path, file, S3_CONFIG[:bucket], write_options)
   end
   
   def set_attachment_method file_path

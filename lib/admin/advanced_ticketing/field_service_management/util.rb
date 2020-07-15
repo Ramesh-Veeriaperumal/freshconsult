@@ -45,7 +45,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
           additional_info = subscription.additional_info
           additional_info[:field_agent_limit] = 0
           # rubocop:disable SkipsModelValidations
-          subscription.update_column(:additional_info, YAML.dump(additional_info))
+          subscription.update_column(:additional_info, additional_info.to_yaml)
           # rubocop:enable SkipsModelValidations
         end
       end

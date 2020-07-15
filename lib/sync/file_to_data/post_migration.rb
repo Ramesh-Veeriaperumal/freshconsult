@@ -94,7 +94,7 @@ class Sync::FileToData::PostMigration
       def delete?(_item, _table_name, object, object_path)
         model_name = object.class.name
         return unless @config.keys.include?(model_name)
-        value = Syck.load_file(File.join(object_path, @config[model_name][1] + FILE_EXTENSION))
+        value = YAML.load_file(File.join(object_path, @config[model_name][1] + FILE_EXTENSION))
         @deleted_associations[@config[model_name][0]].include?(value)
       end
     end

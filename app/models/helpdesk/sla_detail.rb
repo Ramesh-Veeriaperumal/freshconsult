@@ -118,7 +118,7 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
 
   SLA_TARGET_TIME_REGEX = /^P(?=.)(?<day>\d+D)?(T(?=\d+[HM])(?<hour>\d+H)?(?<minute>\d+M)?)?$/.freeze
 
-  default_scope ->{ order("priority DESC") }
+  default_scope :order => "priority DESC"
 
   def calculate_due_by(created_time, time_zone_now, total_time_worked, calendar)
     target_time = sla_policy_revamp_enabled? ? sla_target_time[:resolution_due_time] : resolution_time

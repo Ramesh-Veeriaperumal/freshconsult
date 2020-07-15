@@ -55,6 +55,15 @@ module Helpkit
     config.paths["app/controllers"] << "api/app/controllers"
     config.paths["lib"] << "api/lib"
 
+    # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
+    # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
+    # config.time_zone = 'Central Time (US & Canada)'
+    config.time_zone = 'Chennai'
+    # https://www.rubydoc.info/gems/safe_yaml
+    # Set default_mode to unsafe, which means YAML.load() will deserialize arbitrary objects. Explicitly specify as
+    # YAML.load('', safe: true) if you do not want to deserialize objects
+    SafeYAML::OPTIONS[:default_mode] = :unsafe
+    SafeYAML::OPTIONS[:deserialize_symbols] = true
     # config.exceptions_app = ->(env) { ExceptionsController.action(:show).call(env) }
 
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
@@ -156,13 +165,10 @@ module Helpkit
     # Run "rake -D time" for a list of tasks for finding time zone names. Comment line to use default local time.
     config.time_zone = 'Chennai'
     # https://www.rubydoc.info/gems/safe_yaml
-    # Set default_mode to safe, which means YAML.load() will not deserialize arbitrary objects.
-    # default_mode unsafe warning from gem loads yaml, SafeYaml may need to configure before bundler/setup. 
-    # PRE-RAILS: Need to check and whitelist objects https://github.com/dtao/safe_yaml#known-issues, so check AR serialize and deseialize column. 
-    # Need to add safe yaml default load before bundler so that gems yaml load will be safe. Ref: https://github.com/freshdesk/helpkit/commit/9286a16418ac
-    SafeYAML::OPTIONS[:default_mode] = :unsafe
+    # Set default_mode to unsafe, which means YAML.load() will deserialize arbitrary objects. Explicitly specify as
+    # YAML.load('', safe: true) if you do not want to deserialize objects
+    SafeYAML::OPTIONS[:default_mode] = :unsafe 
     SafeYAML::OPTIONS[:deserialize_symbols] = true
-
     # ActiveSupport::JSON.backend = "JSONGem"
     ActiveSupport::JSON.backend = :json_gem
     ActiveSupport::XmlMini.backend = 'Nokogiri'

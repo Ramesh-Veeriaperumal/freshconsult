@@ -14,7 +14,7 @@ class PodRedirectTest < ActionView::TestCase
 
   def test_forwared_request_at_actual_pod
     test_app = ->(env) { [200, env.merge('HTTP_HOST': 'testaccount.freshdesk.com'), ['OK']] }
-    call_mock = Rack::MockRequest.env_for('https://testaccount.freshdesk.com', 'HTTP_X_REAL_IP' => '123.4.534.54')
+    call_mock = Rack::MockRequest.env_for('https://testaccount.freshdesk.com', 'HTTP_X_REAL_IP' => '123.4.534.54', 'HTTP_X_SECRET_TOKEN_FD_POD_REDIRECT' => '002803199700') # adding a random value for 'HTTP_X_SECRET_TOKEN_FD_POD_REDIRECT' as we are only checking for presence
     result = Middleware::PodRedirect.new(test_app).call(call_mock)
     assert_equal result[1]['HTTP_X_FORWARDED_FOR'], '123.4.534.54'
     assert_equal result[1]['REMOTE_ADDR'], '123.4.534.54'
@@ -32,6 +32,8 @@ class PodRedirectTest < ActionView::TestCase
   end
 
   def stub_shard_mapping(pod_info)
-    ShardMapping.stubs(:lookup_with_domain).returns(ShardMapping.new(pod_info: pod_info))
+    shard_mapping = mock('shard_mapping')
+    shard_mapping.stubs(:pod_info).returns(pod_info)
+    ShardMapping.stubs(:lookup_with_domain).returns(shard_mapping)
   end
 end

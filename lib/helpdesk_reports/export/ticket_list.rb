@@ -67,7 +67,7 @@ module HelpdeskReports
 
       def ticket_ids_from_s3(s3_key)
         non_archive_ticket_ids, archive_ticket_ids, rows = [], [], []
-        rows = CSV.parse(AwsWrapper::S3.read_io(s3_bucket_name, s3_key), col_sep: '|')
+        rows = CSV.parse(AwsWrapper::S3.read(s3_bucket_name, s3_key),{ :col_sep => '|' })
         return {} if rows.blank?
         rows.shift # To remove the headers
         rows.each do |row|

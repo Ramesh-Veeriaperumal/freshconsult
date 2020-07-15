@@ -5,7 +5,7 @@ module SpamAttachmentMethods
 			resource = open(att.attachment_url_for_api)
 			original_filename = resource.base_uri.path.split('/').last.gsub("%20"," ")
 			filename = "#{i}_#{original_filename}"
-            AwsWrapper::S3.put(S3_CONFIG[:bucket], "#{cdn_folder_name}/#{filename}", resource, content_type: Helpdesk::Attachment::BINARY_TYPE, server_side_encryption: 'AES256')
+			AwsWrapper::S3Object.store("#{cdn_folder_name}/#{filename}", resource, S3_CONFIG[:bucket], :content_type => Helpdesk::Attachment::BINARY_TYPE)
 			filename
 		end
 	end
@@ -21,7 +21,7 @@ module SpamAttachmentMethods
 	def uploaded_attachments
 		params[:post][:attachments].each_with_index.map do |att, i|
 			filename = "#{i}_#{att[:resource].original_filename}"
-            AwsWrapper::S3.put(S3_CONFIG[:bucket], "#{cdn_folder_name}/#{filename}", att[:resource].tempfile, content_type: att[:resource].content_type, server_side_encryption: 'AES256')
+			AwsWrapper::S3Object.store("#{cdn_folder_name}/#{filename}", att[:resource].tempfile, S3_CONFIG[:bucket], :content_type => att[:resource].content_type)
 			filename
 		end
 	end
@@ -29,8 +29,8 @@ module SpamAttachmentMethods
 	def move_attachments(attachments, published_post)
 		folder = attachments['folder']
 		(attachments['file_names'] || []).map do |file_name|
-			s3_object = AwsWrapper::S3.read(S3_CONFIG[:bucket], "#{folder}/#{file_name}")
-			attachment = open(s3_object.presigned_url(:read, secure: true, expires_in: 1.hour.to_i))
+			s3_object = AwsWrapper::S3Object.find("#{folder}/#{file_name}", S3_CONFIG[:bucket])
+			attachment = open(s3_object.url_for(:read, { :secure => true, :expires => 1.hour }))
 			if attachment
 				def attachment.original_filename; base_uri.path.split('/').last.split('?').first.split('_')[1..-1].join.gsub("%20"," "); end
 			end

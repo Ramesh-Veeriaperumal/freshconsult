@@ -13,6 +13,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
   NOT_FOUND_RESPONSE = [404, { 'Content-Type' => 'application/json' }, [' ']].freeze
   LIMIT_EXCEEDED_MESSAGE = [{ message: 'You have exceeded the limit of requests per hour' }.to_json].freeze
   HTTP_X_FW_RATELIMITING_MANAGED = 'HTTP_X_FW_RATELIMITING_MANAGED'.freeze
+  HTTP_X_FWI_CLIENT_ID = 'HTTP_X_FWI_CLIENT_ID'.freeze
   API_THROTTLING_MANAGED = 'HTTP_OVERRIDE_THROTTLING'.freeze
   TRUE_STRING = 'true'.freeze
 
@@ -124,7 +125,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def throttle?
-      if is_fluffy_enabled?
+      if is_fluffy_enabled? || @request.env[HTTP_X_FWI_CLIENT_ID].present?
         false
       else
         !skipped_domain? && account_id

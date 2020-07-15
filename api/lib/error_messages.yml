@@ -31,6 +31,7 @@ api_error_messages:
   limit_invalid: "It should be a Positive Integer less than or equal to %{max_value}"
   method_not_allowed: "%{fired_method} method is not allowed. It should be one of these method(s): %{methods}"
   require_feature: "The %{feature} feature(s) is/are not supported in your plan. Please upgrade your account to use it."
+  require_any_feature : "Atleast one of the features required: %{feature}"
   require_fsm_feature: "The Field Service Management module is not enabled in your account. Please enable it to use."
   invalid_credentials: "You have to be logged in to perform this action."
   credentials_required: "Authentication header is needed to log in."
@@ -576,3 +577,7 @@ api_error_messages:
   uniq_group_and_contribution_error_message: "The same group cannot have both read and write access for an agent"
   group_ids_already_used: "These ids are already present in primary group - '%{list}'"
   contribution_group_ids_already_used: "These ids are already present in contribution group - '%{list}'"
+
+  require_group_id: "The group_id param is required along with the channel"
+  require_channel: "The channel param is required along with the group_id"
+  require_availability: "only=availability param is required for the given %{param} param"

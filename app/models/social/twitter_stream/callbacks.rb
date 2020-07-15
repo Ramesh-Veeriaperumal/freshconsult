@@ -136,7 +136,7 @@ class Social::TwitterStream < Social::Stream
           :account_id => self.account_id,
           :data       => self.data
         }
-        notify_social_dev("Invalid rule state for streams", params)
+        Rails.logger.error "Invalid rule state for streams #{params}"
       end
       streams
     end

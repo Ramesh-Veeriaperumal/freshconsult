@@ -558,6 +558,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_index_with_omni_channel_groups
     Account.stubs(:current).returns(Account.first)
     Account.any_instance.stubs(:omni_channel_routing_enabled?).returns(true)
+    Account.any_instance.stubs(:omni_agent_availability_dashboard_enabled?).returns(true)
     Account.any_instance.stubs(:features?).with(:round_robin).returns(true)
     ApiGroupsController.any_instance.stubs(:request_ocr).returns(omni_channel_groups_response)
     get :index, controller_params(include: 'omni_channel_groups', auto_assignment: true)
@@ -574,6 +575,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   ensure
     ApiGroupsController.any_instance.unstub(:request_ocr)
     Account.any_instance.stubs(:features?).with(:round_robin).returns(false)
+    Account.any_instance.unstub(:omni_agent_availability_dashboard_enabled?)
     Account.any_instance.unstub(:omni_channel_routing_enabled?)
     Account.unstub(:current)
   end
@@ -581,6 +583,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   def test_index_with_all_omni_channel_groups
     Account.stubs(:current).returns(Account.first)
     Account.any_instance.stubs(:omni_channel_routing_enabled?).returns(true)
+    Account.any_instance.stubs(:omni_agent_availability_dashboard_enabled?).returns(true)
     Account.any_instance.stubs(:features?).with(:round_robin).returns(true)
     ApiGroupsController.any_instance.stubs(:request_ocr).returns(omni_channel_groups_response(false))
     get :index, controller_params(include: 'omni_channel_groups')
@@ -597,6 +600,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   ensure
     ApiGroupsController.any_instance.unstub(:request_ocr)
     Account.any_instance.stubs(:features?).with(:round_robin).returns(false)
+    Account.any_instance.unstub(:omni_agent_availability_dashboard_enabled?)
     Account.any_instance.unstub(:omni_channel_routing_enabled?)
     Account.unstub(:current)
   end

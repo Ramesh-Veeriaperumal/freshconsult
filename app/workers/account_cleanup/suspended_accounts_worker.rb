@@ -53,7 +53,6 @@ module AccountCleanup
           portal_urls = account.portals.map { |p| p.portal_url if p.portal_url.present? }
           TABLES.each do |table|
             while(true)
-              # PRE-RAILS: select.size chaining ---> false positive
               query = ("select id from #{table} where account_id = #{account_id} limit 50")
               puts query
               ids = ActiveRecord::Base.connection.select_values(query)
@@ -105,13 +104,11 @@ module AccountCleanup
 
     def handle_unindexed_tables(account_id, shard_name)
       UNINDEXED_TABLES.each do |table_name, related_table_info|
-        # PRE-RAILS: select.size chaining ---> false positive
         query = "select id from #{table_name} where account_id = #{account_id}"
         ids = ActiveRecord::Base.connection.select_values(query)
         break if ids.size == 0
         delete_in_batches(account_id, ids, table_name)
         related_table, related_id = related_table_info
-        # PRE-RAILS: select.size chaining ---> false positive
         query = "select id from #{related_table} where #{related_id} in (#{ids.join(',')})"
         related_ids = ActiveRecord::Base.connection.select_values(query)
         delete_in_batches(account_id, related_ids, related_table) if related_ids.size > 0

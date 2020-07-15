@@ -64,9 +64,7 @@ module Admin::AutomationHelper
     end
 
     def set_automations_fields
-      # PRE-RAILS: Eariler it was nilclass for all rules, now serialized column datatype defined as Hash. So added dup for condition_data. 
-      # Added blank check to handle only supervisors rules
-      @condition_data = @item.condition_data.blank? ? {} : @item.condition_data.dup
+      @condition_data = @item.condition_data || {}
       @match_type = @item.supervisor_rule? ? ((@conditions.present? && @conditions.first['match_type']) ||
                                                @item.match_type || 
                                                DEFAULT_OPERATOR) : @item.match_type

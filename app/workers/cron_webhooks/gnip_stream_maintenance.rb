@@ -55,7 +55,7 @@ module CronWebhooks
           account_id: stream.account_id,
           data: stream.data
         }
-        notify_social_dev('Twitter Streams present for non social plans', error_params)
+        Rails.logger.error "Twitter Streams present for non social plans #{error_params}"
       end
 
       def notify_rule_nil(stream)
@@ -64,7 +64,7 @@ module CronWebhooks
           account_id: stream.account_id,
           rule_state: stream.data[:gnip_rule_state]
         }
-        notify_social_dev('Default Stream rule value is NIL', error_params)
+        Rails.logger.error "Default Stream rule value is NIL #{error_params}"
       end
   end
 end

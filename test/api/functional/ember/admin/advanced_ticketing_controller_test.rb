@@ -565,13 +565,13 @@ module Ember
       end
 
       def test_insights_from_s3
-        AwsWrapper::S3.stubs(:read).returns(metrics_hash.to_json)
+        AwsWrapper::S3Object.stubs(:read).returns(metrics_hash.to_json)
         get :insights, controller_params(version: 'private')
         assert_response 200
         match_json(metrics_pattern)
         assert_equal false, multi_get_all_redis_hash(ADVANCED_TICKETING_METRICS).empty?
       ensure
-        AwsWrapper::S3.unstub(:read)
+        AwsWrapper::S3Object.unstub(:read)
         remove_others_redis_key(ADVANCED_TICKETING_METRICS)
       end
 
@@ -595,11 +595,11 @@ module Ember
       end
 
       def test_insights_with_exception
-        AwsWrapper::S3.stubs(:read).raises(RuntimeError)
+        AwsWrapper::S3Object.stubs(:read).raises(RuntimeError)
         get :insights, controller_params(version: 'private')
         assert_response 500
       ensure
-        AwsWrapper::S3.unstub(:read)
+        AwsWrapper::S3Object.unstub(:read)
         remove_others_redis_key(ADVANCED_TICKETING_METRICS)
       end
 

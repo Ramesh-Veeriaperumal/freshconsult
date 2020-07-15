@@ -5,7 +5,7 @@ namespace :facebook do
     include Facebook::RedisMethods
     include Facebook::Exception::Notifier
 
-    AwsWrapper::SqsV2.poll(SQS[:facebook_realtime_queue]) do |sqs_msg|
+    $sqs_facebook.poll(:initial_timeout => false, :batch_size => 10) do |sqs_msg|
       begin
         #Check for app rate limit before processing feeds
         wait_on_poll if app_rate_limit_reached?
@@ -25,7 +25,7 @@ namespace :facebook do
     include Facebook::Exception::Notifier
     include Facebook::CentralMessageUtil
 
-    AwsWrapper::SqsV2.poll(SQS[:fb_message_realtime_queue]) do |sqs_msg|
+    $sqs_facebook_messages.poll(:initial_timeout => false, :batch_size => 10) do |sqs_msg|
       begin
         #Check for app rate limit before processing feeds
         wait_on_poll if app_rate_limit_reached?
@@ -57,20 +57,21 @@ namespace :facebook do
       process_likes_from_redis
       Rails.logger.info "END TIME :: #{Time.now.utc}"
     rescue => e
-      notify_social_dev("Error while processing likes", e.backtrace)
+      Rails.logger.error "Error while processing likes :: Exception: #{e.message} :: #{e.backtrace[0..20]}"
     end
   end
 
-  # PRE-RAILS: sqs_facebook_global is not present anywhere, need to check and remove it.
-  # task :global_realtime => :environment do
-  #   $sqs_facebook_global.poll("Facebook::Core::Splitter", "split", batch_size: 10, initial_timeout: false) 
-  # end
+  task :global_realtime => :environment do
+    $sqs_facebook_global.poll("Facebook::Core::Splitter","split",
+                       :batch_size => 10,
+                       :initial_timeout => false)
+  end
 
   def wait_on_poll
     subject = "APP RATE LIMIT - REACHED SKIPPING PROCESS"
     message = {:time_at => Time.now.utc, :sleep_for => APP_RATE_LIMIT_EXPIRY}
-    raise_sns_notification(subject, message)
     Rails.logger.error "Sleeping the process due to APP RATE LIMT"
+    notify_fb_mailer(nil, message, subject)
     sleep(APP_RATE_LIMIT_EXPIRY)
     wait_on_poll if app_rate_limit_reached?
   end

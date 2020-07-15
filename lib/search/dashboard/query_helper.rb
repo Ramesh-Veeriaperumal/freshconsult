@@ -1,5 +1,6 @@
 module Search::Dashboard::QueryHelper
   include Admin::AdvancedTicketing::FieldServiceManagement::Util
+  include AdvancedTicketScopes
   # For search service count cluster migration. This file is used for filter params to FQL Strings.
 
   # Field mapping used to transform to search service field
@@ -110,7 +111,11 @@ module Search::Dashboard::QueryHelper
     define_method method_name do |field_name, values|
       if values.include?('0')
         values.delete('0')
-        @current_agent_group ||= User.current.agent_groups.pluck(:group_id).map(&:to_s)
+        if advanced_scope_enabled?
+          @current_agent_group ||= User.current.all_agent_groups.pluck(:group_id).map(&:to_s)
+        else
+          @current_agent_group ||= User.current.agent_groups.pluck(:group_id).map(&:to_s)
+        end
         values.concat(@current_agent_group)
       end
       transform_filter(field_name, values)

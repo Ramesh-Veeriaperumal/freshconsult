@@ -63,54 +63,60 @@ class Topic < ActiveRecord::Base
   delegate :problems?, :questions?, :to => :forum, :allow_nil => true # delegation precedes validations, if allow_nil is removed and forum is nil this line throws error
   delegate :type_name, :to => :forum, :allow_nil => true # delegation precedes validations, if allow_nil is removed and forum is nil this line throws error
 
-  scope :newest, -> { order 'replied_at DESC' }
+  scope :newest, :order => 'replied_at DESC'
 
-  scope :visible, -> (user) { visiblity_options(user) }
+  scope :visible, lambda {|user| visiblity_options(user) }
 
-  scope :by_user, -> (user) { where ["user_id = ?", user.id ] }
+  scope :by_user, lambda { |user| { :conditions => ["user_id = ?", user.id ] } }
 
-  scope :published, -> { where(published: true) }
+  scope :published, :conditions => { :published => true }
 
-  scope :as_list_view, -> { 
-            where(published: true).
-            includes(last_post: [:user], forum: [], user: [])
-          }
+  scope :as_list_view,
+      :conditions => { :published => true },
+      :include => {:last_post => [:user], :forum => [], :user => []}
 
-  scope :as_activities, -> {
-          where(published: true).
-          includes(last_post: [:user], forum: []).
-          order("#{Topic.table_name}.replied_at DESC")
-        }
+  scope :as_activities,
+      :conditions => { :published => true },
+      :include => {:last_post => [:user], :forum => []},
+      :order => "#{Topic.table_name}.replied_at DESC"
 
+  scope :scope_by_forum_category_id, lambda { |forum_category_id|
+    { :joins => %(INNER JOIN forums ON forums.id = topics.forum_id AND
+        forums.account_id = topics.account_id),
+      :conditions => ["forums.forum_category_id = ?", forum_category_id],
+    }
+  }
 
-  scope :scope_by_forum_category_id, -> (forum_category_id) {
-          where(["forums.forum_category_id = ?", forum_category_id]).
-          joins(%(INNER JOIN forums ON forums.id = topics.forum_id AND
-                    forums.account_id = topics.account_id))
-        }
+  scope :followed_by, lambda { |user_id|
+    { :joins => %(INNER JOIN monitorships on topics.id = monitorships.monitorable_id 
+                  and monitorships.monitorable_type = 'Topic' 
+                  and topics.account_id = monitorships.account_id),
+      :conditions => ["monitorships.active=? and monitorships.user_id = ?",true, user_id],
+    }
+  } # Used by monitorship APIs
 
-  scope :followed_by, -> (user_id) {
-          where(["monitorships.active=? and monitorships.user_id = ?",true, user_id],).
-          joins(%(INNER JOIN monitorships on topics.id = monitorships.monitorable_id 
-            and monitorships.monitorable_type = 'Topic' 
-            and topics.account_id = monitorships.account_id))
-        } # Used by monitorship APIs
+  scope :participated_by, lambda { |user_id|
+    {
+      :conditions => ["topics.id IN (select topic_id from posts where posts.user_id = ? )", user_id]
+    }
+  }
 
-  scope :participated_by, -> (user_id) {
-          where(["topics.id IN (select topic_id from posts where posts.user_id = ? )", user_id])
-        }
+  scope :following, lambda { |ids|
+    {
+      :conditions => following_conditions(ids),
+      :order => "#{Topic.table_name}.replied_at DESC"
+    }
+  }
 
-  scope :following, -> (ids) {
-          where(following_conditions(ids)).
-          order("#{Topic.table_name}.replied_at DESC")
-        }
+  scope :published_and_unmerged, :conditions => { :published => true, :merged_topic_id => nil }
 
-  scope :published_and_unmerged, -> { where(published: true, merged_topic_id: nil) }
-
-  scope :topics_for_portal, -> (portal) { 
-          joins(%( INNER JOIN forums AS f ON f.id = topics.forum_id )).
-          where([' f.forum_category_id IN (?)', portal.portal_forum_categories.map(&:forum_category_id)])
-        }
+  scope :topics_for_portal, lambda { |portal|
+    {
+      :joins => %( INNER JOIN forums AS f ON f.id = topics.forum_id ),
+      :conditions => [' f.forum_category_id IN (?)',
+          portal.portal_forum_categories.map(&:forum_category_id)]
+    }
+  }
 
   # The below namescope might be used later. DO NOT DELETE. @Thanashyam
   # scope :followed_by, lambda { |user_id|
@@ -137,18 +143,21 @@ class Topic < ActiveRecord::Base
   # !FORUM ENHANCE Removing hits from orderby of popular as it will return all time
   # It would be better if it can be tracked month wise
   # Generally with days before DateTime.now - 30.days
-  scope :popular, -> (days_before) {
-            where(["replied_at >= ?", days_before],).
-            order("#{Topic.table_name}.user_votes DESC, hits DESC, replied_at DESC").
-            includes(:last_post)
-          }
+  scope :popular, lambda { |days_before|
+    { :conditions => ["replied_at >= ?", days_before],
+      :order => "#{Topic.table_name}.user_votes DESC, hits DESC, replied_at DESC",
+      :include => :last_post }
+  }
 
-  scope :sort_by_popular, -> { order("#{Topic.table_name}.user_votes DESC, hits DESC, replied_at DESC") }
-  
+  scope :sort_by_popular,
+      :order => "#{Topic.table_name}.user_votes DESC, hits DESC, replied_at DESC"
+
   # The below named scopes are used in fetching topics with a specific stamp used for portal topic list
-  scope :by_stamp, -> (stamp_type) { where(stamp_type: stamp_type) }
+  scope :by_stamp, lambda { |stamp_type|
+    { :conditions => ["stamp_type = ?", stamp_type] }
+  }
 
-  scope :unmerged, -> { where(merged_topic_id: nil) }
+  scope :unmerged, :conditions => { :merged_topic_id => nil }
 
   attr_accessor :trash, :publishing
 
@@ -178,13 +187,15 @@ class Topic < ActiveRecord::Base
     [sql.join(" OR ")] | ([ids[:topic], ids[:forum]] - [[]])
   end
 
-  scope :for_forum, ->(forum){
-    where(["forum_id = ? ", forum])
+  scope :for_forum, lambda { |forum|
+    { :conditions => ["forum_id = ? ", forum]
+    }
   }
-
-  scope :freshest, ->(account){
-    where(["account_id = ? ", account])
-    .order('topics.replied_at DESC')
+  # scope :limit, lambda { |num| { :limit => num } }
+  scope :freshest, lambda { |account|
+    { :conditions => ["account_id = ? ", account],
+      :order => "topics.replied_at DESC"
+    }
   }
 
   attr_protected :forum_id , :account_id, :published
@@ -359,8 +370,8 @@ class Topic < ActiveRecord::Base
     # remaining_post = post.frozen? ? recent_post : post
     # ASK WHY WE ARE CHECKING THIS
     if recent_post
-      self.class.where(['id = ?', id]).update_all(['replied_at = ?, replied_by = ?, last_post_id = ?, posts_count = ?',
-        recent_post.created_at, recent_post.user_id, recent_post.id, posts.published.count])
+      self.class.update_all(['replied_at = ?, replied_by = ?, last_post_id = ?, posts_count = ?',
+        recent_post.created_at, recent_post.user_id, recent_post.id, posts.published.count], ['id = ?', id])
     # else
       # self.destroy
     end

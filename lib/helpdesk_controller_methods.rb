@@ -240,6 +240,7 @@ protected
 
   def load_parent_ticket_or_issue
     @parent = Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account) if params[:ticket_id]
+    @parent = Helpdesk::Issue.find_by_id(params[:issue_id]) if params[:issue_id]
     raise ActiveRecord::RecordNotFound unless @parent
   end
 

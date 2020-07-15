@@ -37,7 +37,7 @@ class Gnip::ReplayClient
           if RUBY_VERSION >= '1.9'
             tweet_dup.force_encoding("UTF-8")
           end
-          AwsWrapper::SqsV2.send_message(@queue, tweet_dup)
+          @queue.send_message(tweet_dup)
         end
         tweet.size
       end

@@ -14,12 +14,12 @@ class CustomSurvey::Survey < ActiveRecord::Base
 
   accepts_nested_attributes_for :survey_questions
 
-  scope :with_questions_and_choices,  -> { includes(:survey_questions) }
-  scope :active, -> { where(active: true) }
-  scope :default, -> { where(default: true) }
-  scope :custom, -> { where(default: false) }
-  scope :deleted, -> { where(deleted: true) }
-  scope :undeleted, -> { where(deleted: false) }
+  scope :with_questions_and_choices, :include => :survey_questions
+  scope :active, :conditions => { :active => true }
+  scope :default, :conditions => { :default => true }
+  scope :custom,  :conditions => { :default => false }
+  scope :deleted, :conditions => { :deleted => true }
+  scope :undeleted, :conditions => { :deleted => false }
   
   validates :title_text, uniqueness: {scope: [:account_id, :deleted], message: I18n.t('admin.surveys.new_layout.title_error_text')}
 

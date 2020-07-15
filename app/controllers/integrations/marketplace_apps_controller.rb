@@ -5,6 +5,8 @@ class Integrations::MarketplaceAppsController < Admin::AdminController
   include Marketplace::Constants
   include MemcacheKeys
   include DataVersioning::ExternalModel
+  include Marketplace::ApiMethods
+  include MarketplaceAppHelper
 
   # Used when MarketplaceFeature is enabled
   before_filter { |c| c.requires_feature :marketplace }
@@ -113,6 +115,15 @@ class Integrations::MarketplaceAppsController < Admin::AdminController
     Rails.logger.error("Marketplace app installation for Account:: #{current_account.id} \
                         app name: #{params[:extention_name]} error:: #{e.inspect}")
     render json: { error: message }, status: :error
+  end
+
+  def app_status
+    response = fetch_app_status(params[:installed_extension_id])
+    if response && response.status == 200
+      render json: { status: response.body['status'] }, status: 200
+    else
+      render_404('Billing in progress')
+    end
   end
 
   private
@@ -230,18 +241,14 @@ class Integrations::MarketplaceAppsController < Admin::AdminController
       render json: { error: message }, status: :bad_request
     end
 
-    def marketplace_cache_key
-      format(
-        MARKETPLACE_NI_PAID_APP,
-        account_id: current_account.id,
-        app_name: @application.name
-      )
+    def render_404(message)
+      Rails.logger.error("#{message} for account: #{current_account.id} \n #{@application.inspect}")
+      head 404
     end
 
     def cache_ni_addon_key
       if NATIVE_PAID_APPS.include?(@application.name) && params[:addon_id]
-        set_others_redis_hash(marketplace_cache_key, addon_id: params[:addon_id], install_type: params[:install_type])
-        set_others_redis_expiry(marketplace_cache_key, MARETPLACE_PAID_NI_APPS_EXPIRY)
+        set_marketplace_ni_extension_details(Account.current.id, @application.name, params[:addon_id], params[:install_type])
       end
     end
 

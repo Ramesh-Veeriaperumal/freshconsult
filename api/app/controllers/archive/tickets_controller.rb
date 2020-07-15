@@ -2,6 +2,7 @@ class Archive::TicketsController < ::ApiApplicationController
   include Support::TicketsHelper
   include HelperConcern
   include ExportHelper
+  include AdvancedTicketScopes
   
   decorate_views(decorate_objects: [:index])
   PRELOAD_OPTIONS = [:company, { requester: [:avatar] }].freeze
@@ -105,7 +106,8 @@ class Archive::TicketsController < ::ApiApplicationController
     end
 
     def verify_ticket_permission(user = api_current_user, ticket = @item)
-      unless user.has_ticket_permission?(ticket) && destroy_privilege?(user)
+      has_permission = (advanced_scope_enabled? && params['action'] != 'destroy') ? user.has_read_ticket_permission?(ticket) : user.has_ticket_permission?(ticket)
+      unless has_permission && destroy_privilege?(user)
         Rails.logger.error "User: #{user.id}, #{user.email} doesn't have permission to ticket display_id: #{ticket.display_id}"
         render_request_error :access_denied, 403
         return false

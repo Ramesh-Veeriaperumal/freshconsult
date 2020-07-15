@@ -61,6 +61,7 @@ include Redis::RedisKeys
 
 ES_ENABLED = false
 GNIP_ENABLED = false
+RIAK_ENABLED = false
 $redis_others.flushall
 
 require "authlogic/test_case"

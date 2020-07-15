@@ -20,6 +20,19 @@ module Marginalia
       marginalia_job.symbolize_keys
     end
   end
+
+  class SidekiqInstrumentation
+    def call(worker, msg, queue)
+        Marginalia::Comment.update_job! msg
+        yield
+      ensure
+        Marginalia::Comment.clear_job!
+    end
+  end
 end
 
-Marginalia::SidekiqInstrumentation.enable!
+Sidekiq.configure_server do |config|
+  config.server_middleware do |chain|
+    chain.add Marginalia::SidekiqInstrumentation
+  end
+end

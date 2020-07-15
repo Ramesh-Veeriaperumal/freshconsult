@@ -547,7 +547,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :group, :only => [:index, :show, :edit, :update, :toggle_roundrobin, :user_skill_exists]
     resource :"helpdesk/dashboard",:only => [:agent_status]
     resource :"admin/user_skill"
-    resource :api_agent, only: [:availability_count]
+    resource :api_agent, only: [:availability_count, :index]
   end
 
   manage_canned_responses do

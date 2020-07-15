@@ -59,9 +59,6 @@ Helpkit::Application.configure do
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation can not be found)
   config.i18n.fallbacks = true
-  # PRE-RAILS: If you're using I18n (>= 1.1.0) and Rails (< 5.2.2), fallback should be changed as below
-  # ref - https://github.com/ruby-i18n/i18n/releases/tag/v1.1.0
-  # config.i18n.fallbacks = [I18n.default_locale]
 
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify

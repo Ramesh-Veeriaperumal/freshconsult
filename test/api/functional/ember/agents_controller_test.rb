@@ -138,7 +138,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     Ember::AgentsController.any_instance.stubs(:available_chat_agents).returns(0)
     json = get :index, controller_params(version: 'private', only: 'wrong_params')
     assert_response 400
-    match_json([bad_request_error_pattern('only', :not_included, list: 'available,available_count,with_privilege')])
+    match_json([bad_request_error_pattern('only', :not_included, list: 'available,available_count,with_privilege,availability')])
   ensure
     Ember::AgentsController.any_instance.unstub(:available_chat_agents)
   end
@@ -883,5 +883,39 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     assert_response 200
   ensure
     Account.current.unstub(:advanced_ticket_scopes_enabled?)
+  end
+
+  def test_private_ata_enabled_agents_across_channels
+    freshdesk_user = add_test_agent(@account, role: Role.where(name: 'Agent').first.id)
+    @account.stubs(:omni_channel_routing_enabled?).returns(true)
+    @account.stubs(:omni_agent_availability_dashboard_enabled?).returns(true)
+    channels_data = {
+      freshdesk: { available: false, assignment_limit: 10, availability_updated_at: Faker::Time.between(10.days.ago, 2.days.ago), round_robin_enabled: false },
+      freshcaller: { available: false, assignment_limit: 1, logged_in: false, on_call: false, availability_updated_at: Faker::Time.between(10.days.ago, 2.days.ago), round_robin_enabled: false },
+      freshchat: { available: false, assignment_limit: 3, logged_in: false, availability_updated_at: Faker::Time.between(10.days.ago, 2.days.ago), round_robin_enabled: false }
+    }
+    fd_name = Faker::Lorem.characters(5)
+    status_id = Faker::Number.number(3)
+    Ember::AgentsController.any_instance.stubs(:request_ocr).returns(ocr_agents_response(channel: { freshdesk_user.id.to_s => channels_data }, name: fd_name, status_id: status_id))
+    group = create_group_with_agents(@account, agent_list: [freshdesk_user.id])
+    get :index, controller_params(version: 'private', only: 'availability', channel: 'freshdesk', group_id: group.id, search_term: 'First')
+    assert_response 200
+    pattern = ocr_agents_availability_pattern(id: freshdesk_user.id.to_s, name: fd_name, status_id: status_id, availability: ocr_agent_availability_reformat(channels_data))
+    match_json(pattern)
+  ensure
+    @account.unstub(:omni_channel_routing_enabled?)
+    @account.unstub(:omni_agent_availability_dashboard_enabled?)
+  end
+
+  def test_private_no_ata_enabled_agents_across_channels
+    @account.stubs(:omni_channel_routing_enabled?).returns(true)
+    @account.stubs(:omni_agent_availability_dashboard_enabled?).returns(true)
+    Ember::AgentsController.any_instance.stubs(:request_ocr).returns(ocr_agents_response(channel: {}))
+    get :index, controller_params(version: 'private', only: 'availability')
+    assert_response 200
+    match_json([])
+  ensure
+    @account.unstub(:omni_channel_routing_enabled?)
+    @account.unstub(:omni_agent_availability_dashboard_enabled?)
   end
 end

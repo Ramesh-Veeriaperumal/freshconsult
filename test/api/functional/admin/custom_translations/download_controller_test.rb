@@ -587,7 +587,7 @@ class Admin::CustomTranslations::DownloadControllerTest < ActionController::Test
       db_field = Account.current.ticket_fields.find_by_name(field)
       get :primary, construct_params({})
       assert_response 200
-      response_field = Psych.safe_load(response.body)['en']['custom_translations']['ticket_fields'][field]
+      response_field = YAML.safe_load(response.body)['en']['custom_translations']['ticket_fields'][field]
       refute_empty response_field
       assert_nil response_field['label']
       assert_equal response_field['customer_label'], db_field.label_in_portal
@@ -599,7 +599,7 @@ class Admin::CustomTranslations::DownloadControllerTest < ActionController::Test
       stub_for_custom_translations
       get :secondary, construct_params('id' => 'fr')
       assert_response 200
-      response_field = Psych.safe_load(response.body)['fr']['custom_translations']['ticket_fields'][field]
+      response_field = YAML.safe_load(response.body)['fr']['custom_translations']['ticket_fields'][field]
       refute_empty response_field
       assert_nil response_field['label']
       assert_empty response_field['customer_label']
@@ -613,7 +613,7 @@ class Admin::CustomTranslations::DownloadControllerTest < ActionController::Test
       translations = create_custom_translations(db_field, 'fr')
       get :secondary, construct_params('id' => 'fr')
       assert_response 200
-      response_field = Psych.safe_load(response.body)['fr']['custom_translations']['ticket_fields'][field]
+      response_field = YAML.safe_load(response.body)['fr']['custom_translations']['ticket_fields'][field]
       refute_empty response_field
       assert_nil response_field['label']
       assert_equal response_field['customer_label'], translations.translations['customer_label']

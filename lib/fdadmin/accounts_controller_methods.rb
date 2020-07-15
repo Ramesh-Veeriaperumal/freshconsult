@@ -109,7 +109,7 @@ module Fdadmin::AccountsControllerMethods
 
 	def fetch_ticket_details(account)
 		ticket_array = []
-		account.tickets.order('created_at desc').limit(5).each do |tkt|
+		account.tickets.find(:all,:order => 'created_at desc',:limit => 5).each do |tkt|
 			ticket_array << tkt.subject
 		end
 		return { ticket_count: account.tickets.count,

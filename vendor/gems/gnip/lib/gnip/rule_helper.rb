@@ -34,9 +34,8 @@ module Gnip::RuleHelper
           :rule_value => rule.value,
           :error => error.inspect
         }
-        topic = SNS["social_notification_topic"]
-        DevNotification.publish(topic, "Exception in gnip rule send action", error_params.to_json)
-        puts error_params.inspect
+        Rails.logger.error "Exception in gnip rule send action #{error_params}"
+        SocialErrorsMailer.deliver_twitter_exception(nil, error_params, 'Exception in gnip rule send action')
         return false
       end
       return true

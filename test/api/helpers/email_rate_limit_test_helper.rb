@@ -1,5 +1,5 @@
 module EmailRateLimitTestHelper
-  def get_email_rate_limit_payload
+  def get_email_rate_limit_payload(time)
     {
       data: {
         account_id: @account.id,
@@ -13,6 +13,12 @@ module EmailRateLimitTestHelper
           rateLimitUsed: 2,
           retryAfter: 60,
           method: 'GET'
+        }
+      },
+      meta: {
+        central: {
+          request_id: '155412b8-00cc-4171-954c-2b34fe6e893b',
+          collected_at: time * 1000
         }
       }
     }

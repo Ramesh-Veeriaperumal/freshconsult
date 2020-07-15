@@ -26,7 +26,7 @@ class ConversationDelegator < ConversationBaseDelegator
   validate :validate_survey_monkey, unless: -> { include_surveymonkey_link.nil? }
 
   validate :validate_unseen_replies, on: :reply, if: :traffic_cop_required?
-  validate :validate_unseen_replies_for_public_notes, on: :create, if: -> { public_note? && traffic_cop_required? }
+  validate :validate_unseen_replies_for_notes, on: :create, if: :traffic_cop_required?
 
   validate :ticket_summary_presence
 
@@ -270,7 +270,7 @@ class ConversationDelegator < ConversationBaseDelegator
     errors[:id] << :"is invalid" if summary_note?
   end
 
-  alias validate_unseen_replies_for_public_notes validate_unseen_replies
+  alias validate_unseen_replies_for_notes validate_unseen_replies
   # We need an alias method here, because a custom validator method can be used only for one action
 
   private

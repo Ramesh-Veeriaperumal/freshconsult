@@ -44,16 +44,17 @@ class Solution::CategoryMeta < ActiveRecord::Base
     :after_add => :clear_cache,
     :after_remove => :clear_cache
 
-  has_many :solution_folder_meta, 
-    :class_name => "Solution::FolderMeta", 
-    :foreign_key => :solution_category_meta_id, 
-    :order => "`solution_folder_meta`.solution_category_meta_id, `solution_folder_meta`.position"
+	has_many :solution_folder_meta, 
+		:class_name => "Solution::FolderMeta", 
+		:foreign_key => :solution_category_meta_id, 
+		:order => "`solution_folder_meta`.solution_category_meta_id, `solution_folder_meta`.position"
 
-  has_many :public_folder_meta,
-    :conditions => ["`solution_folder_meta`.visibility = ? ",VISIBILITY_KEYS_BY_TOKEN[:anyone]],
-    :order => "`solution_folder_meta`.position",
-    :class_name =>'Solution::FolderMeta',
-    :foreign_key => :solution_category_meta_id
+	has_many :public_folder_meta,
+		:conditions => ["`solution_folder_meta`.visibility = ? ",VISIBILITY_KEYS_BY_TOKEN[:anyone]],
+		:order => "`solution_folder_meta`.position",
+		:class_name =>'Solution::FolderMeta',
+		:foreign_key => :solution_category_meta_id
+		
 
 	COMMON_ATTRIBUTES = ["position", "is_default", "created_at"]
 	CACHEABLE_ATTRIBUTES = ["id","name","account_id","position","is_default"]
@@ -68,7 +69,7 @@ class Solution::CategoryMeta < ActiveRecord::Base
 
 	alias_method :children, :solution_categories
 	
-	scope :customer_categories, -> { where(is_default: false) }
+	scope :customer_categories, {:conditions => {:is_default=>false}}
 
 	def as_cache
 	  (CACHEABLE_ATTRIBUTES.inject({}) do |res, attribute|

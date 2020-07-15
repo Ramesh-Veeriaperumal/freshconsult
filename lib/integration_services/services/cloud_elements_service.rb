@@ -157,7 +157,7 @@ module IntegrationServices::Services
         error_log = "Account: #{Account.current.full_domain}, Id: #{Account.current.id}, #{app_name}: Error on Formula Instances delete. FD Formula Template ID:#{formula_details[:freshdesk][:template_id]}, 
           FD Formula Instance Id: #{formula_details[:freshdesk][:id]}, Element Formula Template ID:#{formula_details[:hubs][:template_id]}, Element Formula Instance Id: #{formula_details[:hubs][:id]},
           #{app_name} Instance Id: #{installed_app.configs_element_instance_id}, Freshdesk Instance Id: #{installed_app.configs_fd_instance_id}. Delete them Manually."
-        NewRelic::Agent.notice_error(e,{:custom_params => {:description => error_log, :account_id => current_account.id}})
+        NewRelic::Agent.notice_error(e, { custom_params: { description: error_log, account_id: Account.current.id }})
         FreshdeskErrorsMailer.error_email(nil, nil, e, {
           :subject => error_log, :recipients => AppConfig['integrations_email']
         })

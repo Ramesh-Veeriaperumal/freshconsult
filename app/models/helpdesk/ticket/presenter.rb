@@ -409,7 +409,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def description_content_changed?
-    [*ticket_body.previous_changes.keys, *(@model_changes || {}).keys.map(&:to_s)].include?('description')
+    [*ticket_old_body.previous_changes.keys, *(@model_changes || {}).keys.map(&:to_s)].include?('description')
   end
 
   def custom_field_name_mapping

@@ -59,7 +59,7 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
   def write_yaml(payload)
     file_content = {}
     file_content[@language] = payload[@language]
-    File.open('test/api/fixtures/files/translation_file.yaml', 'w') { |f| f.write Psych.dump(file_content) }
+    File.open('test/api/fixtures/files/translation_file.yaml', 'w') { |f| f.write file_content.to_yaml }
   end
 
   def test_upload_file_validation_invalid_extension
@@ -70,14 +70,14 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     payload = generate_content(survey)
     write_yaml(payload)
     # file = Rack::Test::UploadedFile.new(Rails.root.join('test/api/fixtures/files/translation_file.yaml'), 'test/yaml')
-    File.open('test/api/fixtures/files/translation_file.test', 'w') { |f| f.write YAML.dump(payload) }
+    File.open('test/api/fixtures/files/translation_file.test', 'w') { |f| f.write payload.to_yaml }
     file = fixture_file_upload('files/translation_file.test', 'test/test', :binary)
     @request.env['CONTENT_TYPE'] = 'multipart/form-data'
-    Psych.stubs(:safe_load).returns(payload)
+    YAML.stubs(:safe_load).returns(payload)
     put :upload, construct_params({ object_type: 'surveys', object_id: survey.id }, translation_file: file, language_code: @language)
     assert_response 400
     assert_equal JSON.parse(response.body)['errors'].first['message'], 'This file type is not supported. Please upload a yml/yaml file.'
-    Psych.unstub(:safe_load)
+    YAML.unstub(:safe_load)
     unstub_for_custom_translations
   end
 
@@ -91,12 +91,12 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     # file = Rack::Test::UploadedFile.new(Rails.root.join('test/api/fixtures/files/translation_file.yaml'), 'test/yaml')
     file = fixture_file_upload('files/translation_file.yaml', 'test/yaml', :binary)
     @request.env['CONTENT_TYPE'] = 'multipart/form-data'
-    Psych.stubs(:safe_load).returns(payload)
+    YAML.stubs(:safe_load).returns(payload)
     lang = 'ab'
     put :upload, construct_params({ object_type: 'surveys', object_id: survey.id }, translation_file: file, language_code: 'ab')
     assert_response 400
     assert_equal JSON.parse(response.body)['errors'].first['message'], "File mismatch. This file contains another supported language."
-    Psych.unstub(:safe_load)
+    YAML.unstub(:safe_load)
     unstub_for_custom_translations
   end
 
@@ -110,11 +110,11 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     # file = Rack::Test::UploadedFile.new(Rails.root.join('test/api/fixtures/files/translation_file.yaml'), 'test/yaml')
     file = 'sample file'
     @request.env['CONTENT_TYPE'] = 'multipart/form-data'
-    Psych.stubs(:safe_load).returns(payload)
+    YAML.stubs(:safe_load).returns(payload)
     put :upload, construct_params({ object_type: 'surveys', object_id: survey.id }, translation_file: file, language_code: @language)
     assert_response 400
     assert_equal JSON.parse(response.body)['errors'].first['message'], 'No file uploaded!'
-    Psych.unstub(:safe_load)
+    YAML.unstub(:safe_load)
     unstub_for_custom_translations
   end
 
@@ -129,11 +129,11 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     file = fixture_file_upload('files/translation_file.yaml', 'test/yaml', :binary)
     @request.env['CONTENT_TYPE'] = 'multipart/form-data'
     payload = { ca: { custom_translations: { surveys: {} } } }
-    Psych.stubs(:safe_load).returns(payload)
+    YAML.stubs(:safe_load).returns(payload)
     put :upload, construct_params({ object_type: 'surveys', object_id: survey.id }, translation_file: file, language_code: @language)
     assert_response 400
     assert_equal JSON.parse(response.body)['errors'].first['message'], 'File mismatch. This file contains another supported language.'
-    Psych.unstub(:safe_load)
+    YAML.unstub(:safe_load)
     unstub_for_custom_translations
   end
 
@@ -147,12 +147,12 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     # file = Rack::Test::UploadedFile.new(Rails.root.join('test/api/fixtures/files/translation_file.yaml'), 'test/yaml')
     file = fixture_file_upload('files/translation_file.yaml', 'test/yaml', :binary)
     @request.env['CONTENT_TYPE'] = 'multipart/form-data'
-    Psych.stubs(:safe_load).returns(payload)
+    YAML.stubs(:safe_load).returns(payload)
     lang = Account.current.language
     put :upload, construct_params({ object_type: 'surveys', object_id: survey.id }, translation_file: file, language_code: lang)
     assert_response 400
     assert_equal JSON.parse(response.body)['errors'].first['message'], 'File mismatch. This file contains another supported language.'
-    Psych.unstub(:safe_load)
+    YAML.unstub(:safe_load)
     unstub_for_custom_translations
   end
 
@@ -166,13 +166,13 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     # file = Rack::Test::UploadedFile.new(Rails.root.join('test/api/fixtures/files/translation_file.yaml'), 'test/yaml')
     file = fixture_file_upload('files/translation_file.yaml', 'test/yaml', :binary)
     @request.env['CONTENT_TYPE'] = 'multipart/form-data'
-    Psych.stubs(:safe_load).returns(payload)
+    YAML.stubs(:safe_load).returns(payload)
     put :upload, construct_params({ object_type: 'surveys', object_id: survey.id }, translation_file: file, language_code: @language)
     assert_response 200
     custom_translations_record = survey.safe_send("#{@language}_translation")
     assert custom_translations_record.present?
     assert custom_translations_record.status == 1
-    Psych.unstub(:safe_load)
+    YAML.unstub(:safe_load)
     unstub_for_custom_translations
   end
 
@@ -186,7 +186,7 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     # file = Rack::Test::UploadedFile.new(Rails.root.join('test/api/fixtures/files/translation_file.yaml'), 'test/yaml')
     file = fixture_file_upload('files/translation_file.yaml', 'test/yaml', :binary)
     @request.env['CONTENT_TYPE'] = 'multipart/form-data'
-    Psych.stubs(:safe_load).returns(payload)
+    YAML.stubs(:safe_load).returns(payload)
     put :upload, construct_params({ object_type: 'surveys', object_id: survey.id }, translation_file: file, language_code: @language)
     assert_response 200
     custom_translations_record = survey.safe_send("#{@language}_translation")
@@ -196,13 +196,13 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     write_yaml(payload)
     ile = fixture_file_upload('files/translation_file.yaml', 'test/yaml', :binary)
     @request.env['CONTENT_TYPE'] = 'multipart/form-data'
-    Psych.stubs(:safe_load).returns(payload)
+    YAML.stubs(:safe_load).returns(payload)
     put :upload, construct_params({ object_type: 'surveys', object_id: survey.id }, translation_file: file, language_code: @language)
     assert_response 200
     custom_translations_record = survey.safe_send("#{@language}_translation")
     assert custom_translations_record.present?
     assert custom_translations_record.status == 1
-    Psych.unstub(:safe_load)
+    YAML.unstub(:safe_load)
     unstub_for_custom_translations
   end
 
@@ -217,13 +217,13 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     # file = Rack::Test::UploadedFile.new(Rails.root.join('test/api/fixtures/files/translation_file.yaml'), 'test/yaml')
     file = fixture_file_upload('files/translation_file.yaml', 'test/yaml', :binary)
     @request.env['CONTENT_TYPE'] = 'multipart/form-data'
-    Psych.stubs(:safe_load).returns(payload)
+    YAML.stubs(:safe_load).returns(payload)
     put :upload, construct_params({ object_type: 'surveys', object_id: survey.id }, translation_file: file, language_code: @language)
     assert_response 200
     custom_translations_record = survey.safe_send("#{@language}_translation")
     assert custom_translations_record.present?
     assert custom_translations_record.status == 3
-    Psych.unstub(:safe_load)
+    YAML.unstub(:safe_load)
     unstub_for_custom_translations
   end
 
@@ -238,7 +238,7 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     # file = Rack::Test::UploadedFile.new(Rails.root.join('test/api/fixtures/files/translation_file.yaml'), 'test/yaml')
     file = fixture_file_upload('files/translation_file.yaml', 'test/yaml', :binary)
     @request.env['CONTENT_TYPE'] = 'multipart/form-data'
-    Psych.stubs(:safe_load).returns(payload)
+    YAML.stubs(:safe_load).returns(payload)
     put :upload, construct_params({ object_type: 'surveys', object_id: survey.id }, translation_file: file, language_code: @language)
     assert_response 200
     custom_translations_record = survey.safe_send("#{@language}_translation")
@@ -249,12 +249,12 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     write_yaml(payload)
     ile = fixture_file_upload('files/translation_file.yaml', 'test/yaml', :binary)
     @request.env['CONTENT_TYPE'] = 'multipart/form-data'
-    Psych.stubs(:safe_load).returns(payload)
+    YAML.stubs(:safe_load).returns(payload)
     put :upload, construct_params({ object_type: 'surveys', object_id: survey.id }, translation_file: file, language_code: @language)
     assert_response 200
     custom_translations_record = survey.safe_send("#{@language}_translation")
     assert custom_translations_record.present?
-    Psych.unstub(:safe_load)
+    YAML.unstub(:safe_load)
     unstub_for_custom_translations
   end
 
@@ -305,7 +305,7 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     create_survey_questions(survey)
     language = Account.current.language
     get :download, controller_params('object_type' => 'surveys', 'object_id' => survey.id)
-    response_hash = Psych.safe_load(response.body)[language]['custom_translations']['surveys']["survey_#{survey.id}"]
+    response_hash = YAML.safe_load(response.body)[language]['custom_translations']['surveys']["survey_#{survey.id}"]
     assert_survey(survey, response_hash)
     survey.destroy
     unstub_for_custom_translations
@@ -321,7 +321,7 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     end
     language = Account.current.language
     get :download, controller_params('object_type' => 'surveys')
-    response_hash = Psych.safe_load(response.body)[language]['custom_translations']['surveys']
+    response_hash = YAML.safe_load(response.body)[language]['custom_translations']['surveys']
     assert_equal response_hash.keys.count, Account.current.custom_surveys.count
     Account.current.custom_surveys.each do |survey|
       assert_survey(survey, response_hash["survey_#{survey.id}"])
@@ -371,7 +371,7 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     language = Account.current.language
     survey = Account.current.custom_surveys.last
     get :download, controller_params('object_type' => 'surveys', 'object_id' => survey.id)
-    response_hash = Psych.safe_load(response.body)[language]['custom_translations']['surveys']["survey_#{survey.id}"]
+    response_hash = YAML.safe_load(response.body)[language]['custom_translations']['surveys']["survey_#{survey.id}"]
     assert !response_hash.key?('additional_questions')
     survey.destroy
     unstub_for_custom_translations
@@ -386,7 +386,7 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     translation = generate_content(survey)
     survey.safe_send("build_#{@language}_translation", translations: translation[@language]['custom_translations']['surveys']["survey_#{survey.id}"]).save!
     get :download, controller_params('object_type' => 'surveys', 'object_id' => survey.id, 'language_code' => @language)
-    response_hash = Psych.safe_load(response.body)[@language]['custom_translations']['surveys']["survey_#{survey.id}"]
+    response_hash = YAML.safe_load(response.body)[@language]['custom_translations']['surveys']["survey_#{survey.id}"]
     survey_translation = survey.safe_send("#{@language}_translation").try(:translations) || {}
     assert_response_secondary_download(survey_translation, response_hash)
     unstub_for_custom_translations
@@ -410,7 +410,7 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     language_code = Account.current.supported_languages.sample
     translation = generate_content(survey)
     get :download, controller_params('object_type' => 'surveys', 'object_id' => survey.id, 'language_code' => @language)
-    response_hash = Psych.safe_load(response.body)[@language]['custom_translations']['surveys']["survey_#{survey.id}"]
+    response_hash = YAML.safe_load(response.body)[@language]['custom_translations']['surveys']["survey_#{survey.id}"]
     survey_translation = survey.safe_send("#{@language.underscore}_translation").try(:translations) || {}
     assert_equal response_hash['title_text'], ''
     assert_equal response_hash['comments_text'], ''
@@ -430,7 +430,7 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
       s.safe_send("build_#{@language}_translation", translations: generate_content(s)[@language]['custom_translations']['surveys']["survey_#{s.id}"]).save!
     end
     get :download, controller_params('object_type' => 'surveys', 'language_code' => @language)
-    response_hash = Psych.safe_load(response.body)[@language]['custom_translations']['surveys']
+    response_hash = YAML.safe_load(response.body)[@language]['custom_translations']['surveys']
     assert_equal response_hash.keys.count, Account.current.custom_surveys.count
     surveys.each do |survey|
       survey_translation = survey.safe_send("#{@language.underscore}_translation").try(:translations) || {}
@@ -445,7 +445,7 @@ class Admin::CustomTranslationsControllerTest < ActionController::TestCase
     create_survey(1, true)
     survey = Account.current.custom_surveys.last
     get :download, controller_params('object_type' => 'surveys', 'language_code' => @language)
-    response_hash = Psych.safe_load(response.body)[@language]['custom_translations']['surveys']["survey_#{survey.id}"]
+    response_hash = YAML.safe_load(response.body)[@language]['custom_translations']['surveys']["survey_#{survey.id}"]
     assert !response_hash.key?('additional_questions')
     survey.destroy
     unstub_for_custom_translations

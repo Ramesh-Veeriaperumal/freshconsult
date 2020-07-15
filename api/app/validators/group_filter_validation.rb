@@ -16,19 +16,23 @@ class GroupFilterValidation < FilterValidation
   end
 
   def valid_omni_channel_params
-    unless Account.current.omni_channel_routing_enabled?
-      GroupConstants::OMNI_CHANNEL_FILTER_PARAMS.each do |param|
-        param_value = safe_send(param)
-        next unless param_value
+    omni_channel_routing_enabled = Account.current.omni_channel_routing_enabled?
+    omni_agent_availability_dashboard_enabled = Account.current.omni_agent_availability_dashboard_enabled?
+    GroupConstants::OMNI_CHANNEL_FILTER_PARAMS.each do |param|
+      param_value = safe_send(param)
+      next unless param_value
 
-        errors[param] = :require_feature_for_attribute
-        error_options[param.to_sym] = {
-          attribute: param.to_s,
-          feature: :omni_channel_routing
-        }
-      end
-      return
+      return require_feature_error(param, :omni_channel_routing) unless omni_channel_routing_enabled
+      return require_feature_error(param, :omni_agent_availability_dashboard) unless omni_agent_availability_dashboard_enabled
     end
     errors[:auto_assignment] = :require_omni_channel_groups if auto_assignment && !include
+  end
+
+  def require_feature_error(attribute, feature)
+    errors[attribute] = :require_feature_for_attribute
+    error_options[attribute.to_sym] = {
+      attribute: attribute.to_s,
+      feature: feature
+    }
   end
 end

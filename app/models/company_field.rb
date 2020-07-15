@@ -6,7 +6,7 @@ class CompanyField < ActiveRecord::Base
   include CompanyFieldsConstants
   include ContactCompanyFields::PublisherMethods
 
-serialize :field_options
+  serialize :field_options
 
   belongs_to_account
 

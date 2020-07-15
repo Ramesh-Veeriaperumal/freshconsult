@@ -13,7 +13,8 @@ module OmniChannelRouting
       [:update_agent, 'ocr_agents/%{user_id}'],
       [:update_ticket, 'tasks/%{ticket_id}'],
       [:get_availability_count, 'ocr_agents/availability_count'],
-      [:get_groups, 'ocr_groups']
+      [:get_groups, 'ocr_groups'],
+      [:get_agents, 'ocr_agents']
     ].freeze
     OCR_PATHS = Hash[*OCR_PATHS_ARRAY.map { |i| [i[0], i[1]] }.flatten]
 

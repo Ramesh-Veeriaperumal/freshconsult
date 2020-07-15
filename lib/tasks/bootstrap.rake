@@ -55,7 +55,7 @@ namespace :db do
   # to remove all metadata from DB and create one user (admin) for test environment
   task bootstrap_w_clean_setup: :environment do
     unless Rails.env.production?
-      db_config = Psych.safe_load(IO.read(File.join(::Rails.root, 'config/database.yml')), [], [], true)
+      db_config = YAML.safe_load(IO.read(File.join(::Rails.root, 'config/database.yml')))
       new_database = db_config['test_new']['database']
 
       conn_config = ActiveRecord::Base.connection_config # getting old configuration

@@ -9,5 +9,5 @@ class SmtpMailbox < ActiveRecord::Base
 
   attr_protected :account_id
 
-  scope :errors, -> { where('error_type > ?', 0) }
+  scope :errors, conditions: ['error_type > ?', 0]
 end

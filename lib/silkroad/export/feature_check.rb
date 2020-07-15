@@ -10,14 +10,14 @@ module Silkroad
         check_account_and_user_features &&
           check_ticket_fields(export_params[:ticket_fields]) &&
           check_filter_conditions(export_params[:data_hash]) &&
-          check_contacts_and_company_fields(export_params[:contact_fields], export_params[:company_fields])
+          check_contacts_and_company_fields(export_params[:contact_fields], export_params[:company_fields]) &&
+          check_default_time_format
       end
 
       def check_account_and_user_features
         silkroad_enabled = account.launched?(:silkroad_export) || account.launched?(:silkroad_shadow)
-        user_permission = user.agent.ticket_permission_token.to_s == 'all_tickets'
         ticket_field_limit_increased = account.launched?(:ticket_field_limit_increase)
-        silkroad_enabled && user_permission && !ticket_field_limit_increased
+        silkroad_enabled && !ticket_field_limit_increased
       end
 
       def check_ticket_fields(ticket_fields)
@@ -42,6 +42,10 @@ module Silkroad
         custom_contact_fields = (contact_fields.keys - CONTACT_FIELDS_COLUMN_NAME_MAPPING.keys)
         custom_company_fields = (company_fields.keys - COMPANY_FIELDS_COLUMN_NAME_MAPPING.keys)
         custom_contact_fields.blank? && custom_company_fields.blank?
+      end
+
+      def check_default_time_format
+        account.account_additional_settings.date_format == 1
       end
 
       def account

@@ -14,7 +14,7 @@ class Helpdesk::QuestsController < ApplicationController
 
   def active
     ##need to fetch only locked quests for the agent.
-    # @quests = unachieved_scoper.limit(2)
+    #@quests = unachieved_scoper.find(:all, :limit => 2)
     render :layout => false
   end
 

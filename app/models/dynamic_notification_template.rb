@@ -65,11 +65,13 @@ class DynamicNotificationTemplate < ActiveRecord::Base
 		value
 	end
 	
-	scope :agent_template, -> { where(category: CATEGORIES[:agent]) }
-	scope :requester_template, -> { where(category: CATEGORIES[:requester]) }
-	scope :for_language, -> (language) { where(language: LANGUAGE_MAP[language.to_sym]) }
-    scope :active, -> { where(active:true) }
-
+	scope :agent_template, :conditions => { :category => CATEGORIES[:agent] }
+	scope :requester_template, :conditions => { :category => CATEGORIES[:requester] }
+	scope :for_language, lambda { |language| {
+		:conditions => { :language => LANGUAGE_MAP[language.to_sym] } 
+		}
+	}
+	scope :active, :conditions => { :active => true }
 
 	def update_outdated_in_email_notifications
 		email_notification.outdate_email_notification!(category)

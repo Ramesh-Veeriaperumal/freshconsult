@@ -49,7 +49,7 @@ module Admin::TicketFieldHelper
     }
   end
 
-  def custom_field_response(tf)
+  def custom_field_response(tf, options = {})
     response_hash = {
       id: tf.id,
       name: TicketDecorator.display_name(tf.name),
@@ -64,7 +64,7 @@ module Admin::TicketFieldHelper
       required_for_customers: tf.required_in_portal,
       displayed_to_customers: tf.visible_in_portal,
       created_at: tf.created_at.utc.iso8601,
-      updated_at: tf.updated_at.utc.iso8601,
+      updated_at: options[:updated_at] || tf.updated_at.utc.iso8601,
       archived: tf.deleted
     }.merge(build_choices(tf))
                     .merge(section_mappings(tf))

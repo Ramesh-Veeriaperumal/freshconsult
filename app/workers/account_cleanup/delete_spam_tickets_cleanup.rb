@@ -72,7 +72,6 @@ module AccountCleanup
           delete_spam_days = account.account_additional_settings.delete_spam_tickets_days
           number_of_days = delete_spam_days ? delete_spam_days : NUMBER_OF_DAYS
           while true
-            # PRE-RAILS: select.size chaining ---> false positive
             @ticket_ids = select_values('helpdesk_tickets', "updated_at < '#{number_of_days.days.ago}' and account_id = #{@account_id} and (deleted = true or spam = true) LIMIT #{batch_size}")
             break if @ticket_ids.size.zero?
 

@@ -34,7 +34,7 @@ module CustomerActivityConcern
 
     def ticket_preload_options
       if @type == 'tickets'
-        [:tags, :ticket_states, :ticket_body]
+        [:tags, :ticket_states, :ticket_old_body]
       else
         [:responder]
       end

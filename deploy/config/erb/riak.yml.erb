@@ -1,0 +1,7 @@
+<%= node[:opsworks][:environment]%>:
+  <% node[:ymls][:riak].each do |node_endpoint, config| %>
+  <%= node_endpoint %>:
+    pb_port: 2000
+    http_port: 2001
+    host: <%= config[:host] %>
+  <% end %>

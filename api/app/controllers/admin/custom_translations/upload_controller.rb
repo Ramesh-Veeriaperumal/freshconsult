@@ -37,7 +37,10 @@ class Admin::CustomTranslations::UploadController < ApiApplicationController
 
       translation_file = translation_file.is_a?(StringIO) ? translation_file : translation_file.tempfile
       file_path = generate_file_path(id)
-      AwsWrapper::S3.put(S3_CONFIG[:bucket], file_path, translation_file, server_side_encryption: 'AES256', expires: (Time.now + 30.days))
+      AwsWrapper::S3Object.store(file_path,
+                                 translation_file,
+                                 S3_CONFIG[:bucket],
+                                 server_side_encryption: :aes256, expires: 30.days)
       file_path
     end
 

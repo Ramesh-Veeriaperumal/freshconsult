@@ -148,7 +148,8 @@ module Mobile::Actions::Ticket
 
   def recording_audio_url
     return if self.freshfone_call.recording_audio.nil?
-    AwsWrapper::S3.presigned_url(self.freshfone_call.recording_audio.content.bucket_name, self.freshfone_call.recording_audio.content.path('original'), expires: 3600.seconds, secure: true, response_content_type: self.freshfone_call.recording_audio.content_content_type)
+    AwsWrapper::S3Object.url_for(self.freshfone_call.recording_audio.content.path('original'), self.freshfone_call.recording_audio.content.bucket_name,
+                                :expires => 3600.seconds, :secure => true, :response_content_type => self.freshfone_call.recording_audio.content_content_type)
   end
 
   def public_url

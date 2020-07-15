@@ -155,6 +155,19 @@ class ExportCsvValidationTest < ActionView::TestCase
     CompanyForm.any_instance.unstub(:custom_fields)
   end
 
+  def test_validation_success_for_contact_export_with_tags
+    Account.stubs(:current).returns(Account.new)
+    Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
+    ContactForm.any_instance.stubs(:default_contact_fields).returns([contact_field('name'), contact_field('tag_names')])
+    controller_params = { fields: { default_fields: ['name', 'tag_names'], custom_fields: [], export_type: 'contact' } }
+    export_csv_valdiation = ExportCsvValidation.new(controller_params, nil)
+    assert export_csv_valdiation.valid?
+  ensure
+    Account.unstub(:current)
+    Account.any_instance.unstub(:contact_form)
+    ContactForm.any_instance.unstub(:default_fields)
+  end
+
   private
 
     def contact_field(name)

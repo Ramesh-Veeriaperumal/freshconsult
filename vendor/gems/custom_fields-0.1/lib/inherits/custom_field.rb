@@ -25,9 +25,9 @@ module Inherits
         # before_destroy.reject!{ |callback| callback.method == :remove_from_list } #coz we are doing hard delete only later
         skip_callback :destroy, :before, :remove_from_list
 
-        scope :custom_fields, -> { where("field_type > '#{MAX_DEFAULT_FIELDS}'")}
-        scope :deleted, -> {where(deleted: true)}
-        scope :custom_dropdown_fields, -> { where("field_type = #{CUSTOM_FIELD_PROPS[:custom_dropdown][:type]}")}
+        scope :custom_fields, :conditions => ["field_type > '#{MAX_DEFAULT_FIELDS}'"]
+        scope :deleted, :conditions => { :deleted => true }
+        scope :custom_dropdown_fields, :conditions => ["field_type = #{CUSTOM_FIELD_PROPS[:custom_dropdown][:type]}"]
 
         include InstanceMethods
         include ApiMethods

@@ -12,6 +12,23 @@ Helpkit::Application.configure do
   config.middleware.insert_before 'Middleware::TrustedIp', 'Middleware::FreshidCallbackApiAuthenticator'
   config.middleware.use Middleware::ApiResponseWrapper
 
+  # used by pipe requests
+  config.middleware.use BatchApi::RackMiddleware do |batch_config|
+    # you can set various configuration options:
+    batch_config.verb = :post # default :post
+    batch_config.endpoint = '/api/pipe/batch' # default /batch
+    batch_config.limit = 20 # how many operations max per request, default 50
+
+    # default middleware stack run for each batch request
+    batch_config.batch_middleware = proc { use Middleware::BatchApiRateLimiter }
+    # default middleware stack run for each individual operation
+    batch_config.operation_middleware = proc {
+      use BatchApi::InternalMiddleware::DecodeJsonBody
+      use BatchApi::InternalMiddleware::DependencyResolver
+      use Middleware::BatchApiRequestIdInjector
+    }
+  end
+
   # Deep_munge has to be patched as it converts empty array to nil
   # https://github.com/rails/rails/issues/13420
   module ActionDispatch

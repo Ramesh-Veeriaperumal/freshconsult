@@ -52,7 +52,7 @@ private
 
   def install_application(domain, account_id)
     app = Integrations::Application.find_by_name(params[:app])
-    ia = Integrations::InstalledApplication.where(application_id: app.id, account_id: account_id)
+    ia = Integrations::InstalledApplication.find(:all, :conditions => {:application_id => app.id, :account_id => account_id})
     if(ia.nil? || ia.empty?)
       new_app = Integrations::InstalledApplication.new
       new_app.application_id = app.id
@@ -78,7 +78,7 @@ private
 
   def uninstall_application(domain, account_id)
     app = Integrations::Application.find_by_name(params[:app])
-    installed_app = Integrations::InstalledApplication.where(application_id: app.id, account_id: account_id)[0]
+    installed_app = Integrations::InstalledApplication.find(:all, :conditions => {:application_id => app.id, :account_id => account_id})[0]
     if(installed_app.nil?)
       show_notice "Application is not installed in this Domain!"
     else

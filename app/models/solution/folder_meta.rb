@@ -350,16 +350,20 @@ class Solution::FolderMeta < ActiveRecord::Base
 		end
 	end
 
-  scope :visible, -> (user) {
-    where(visibility_condition(user)).
-    order("`solution_folder_meta`.position")
-  }
+	scope :visible, lambda {|user|
+		{
+			:order => "`solution_folder_meta`.position",
+			:conditions => visibility_condition(user)
+		}
+	}
 
-	scope :public_folders, -> (category_ids) {
-		where(
-			solution_category_meta_id: category_ids,
-			visibility: VISIBILITY_KEYS_BY_TOKEN[:anyone]
-		)	
+	scope :public_folders, lambda {|category_ids|
+	    {
+	      :conditions => {
+	        :solution_category_meta_id => category_ids,
+	        :visibility => VISIBILITY_KEYS_BY_TOKEN[:anyone]
+	      }
+	    }
 	}
 
 	def self.visibility_condition(user)

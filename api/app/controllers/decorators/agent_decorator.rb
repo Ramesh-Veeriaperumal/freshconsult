@@ -1,5 +1,6 @@
 class AgentDecorator < ApiDecorator
   include Gamification::GamificationUtil
+  include AgentConstants
 
   def initialize(record, options)
     super(record)
@@ -122,6 +123,23 @@ class AgentDecorator < ApiDecorator
     end
   end
 
+  def channel_agents_availability_data
+    channels_data = channel_availabilities.each_with_object([]) do |(channel, hash), array|
+      array << hash.merge!(channel: channel, availability_updated_at: hash[:availability_updated_at] ||= nil)
+    end
+    availability_ocr_response = {
+      id: record['freshdesk_user_id'],
+      contact: {
+        name: record['name']
+      },
+      availability: {
+        channel_availability: channels_data
+      }
+    }
+    availability_ocr_response[:availability][:status] = { id: record['status_id'] } if record['status_id'].present?
+    availability_ocr_response
+  end
+
   private
 
     def additional_agent_info
@@ -157,5 +175,20 @@ class AgentDecorator < ApiDecorator
       }.to_json
       encoded_data = Base64.encode64(aes.update(account_data) + aes.final)
       encoded_data
+    end
+
+    def channel_availabilities
+      record.each_with_object(Hash.new { |h, k| h[k] = {} }) do |(ocr_key, ocr_val), hash|
+        if ocr_key == 'on_call'
+          hash[:freshcaller][ocr_key.to_sym] = ocr_val
+          next
+        end
+        channel, key = ocr_key.split('_', 2)
+        next unless OmniChannelRouting::Constants::OMNI_CHANNELS.include?(channel)
+
+        formatted_key = FORMATTED_OCR_KEYS[key]
+        formatted_val = CHANNELS_BOOLEAN_KEYS.include?(formatted_key) ? ocr_val.to_s.to_bool : ocr_val
+        hash[channel.to_sym][formatted_key] = formatted_val if formatted_key.present?
+      end
     end
 end

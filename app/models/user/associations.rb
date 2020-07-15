@@ -44,13 +44,17 @@ class User < ActiveRecord::Base
   has_many :email_notification_agents,  :dependent => :destroy
   
   has_many :user_roles, :class_name => 'UserRole'
-  has_many :user_roles, class_name: 'UserRole'
-  has_many :roles,
-          through: :user_roles,
-          class_name: 'Role',
-          after_add: :touch_add_role_change,
-          after_remove: :touch_remove_role_change,
-          autosave: true
+  has_and_belongs_to_many :roles,
+    :join_table => "user_roles",
+    :insert_sql => proc { |record|
+      %{
+        INSERT INTO user_roles (account_id, user_id, role_id) VALUES
+        ("#{self.account_id}", "#{self.id}", "#{ActiveRecord::Base.sanitize(record.id)}")
+     }
+    },
+    :after_add => :touch_add_role_change,
+    :after_remove => :touch_remove_role_change,
+    :autosave => true
 
   has_many :tag_uses,
     :as => :taggable,

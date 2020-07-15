@@ -843,6 +843,44 @@ class AccountsControllerTest < ActionController::TestCase
     unstub_signup_calls
   end
 
+  def test_new_signup_with_freshsales_as_referrer
+    stub_signup_calls
+    Signup.any_instance.unstub(:save)
+    Signup.any_instance.stubs(:aloha_signup).returns(true)
+    Signup.any_instance.stubs(:freshid_v2_signup_allowed?).returns(true)
+    Signup.any_instance.stubs(:organisation).returns(freshid_organisation)
+    Signup.any_instance.stubs(:freshid_user).returns(freshid_user)
+    Account.any_instance.stubs(:sync_user_info_from_freshid_v2!).returns(true)
+    account_name = Faker::Lorem.word
+    domain_name = Faker::Lorem.word
+    user_email = 'nofsmonsignup@gleason.name'
+    landing_url = 'https://freshdesk.com/pricing'
+    user_name = Faker::Name.name
+    url = 'https://freshdesk.com/signup'
+    session = { current_session: { referrer: landing_url, url: url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
+                device: {}, location: { countryName: 'India', countryCode: 'IND', cityName: 'Chennai', ipAddress: '127.0.0.1' },
+                locale: { lang: 'en' }, browser: {}, time: {}, mSegment: 'good' }.to_json
+    account_info = { account_name: account_name, account_domain: domain_name, locale: I18n.default_locale, time_zone: 'Chennai',
+                     user_name: user_name, user_password: 'test1234', user_password_confirmation: 'test1234',
+                     user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }
+    user_info = { name: user_name, email: user_email, time_zone: 'Chennai', language: 'en' }
+    misc_info = { referring_product: 'freshsales' }
+    get :new_signup_free, callback: '', user: user_info, account: account_info, session_json: session, misc: misc_info, format: 'json'
+    resp = JSON.parse(response.body)
+    assert_response 200, resp
+    account = Account.find(resp['account_id'])
+    assert account.account_additional_settings.additional_settings[:onboarding_version]
+    assert_equal account.account_additional_settings.additional_settings[:onboarding_version], 'freshsales_freshdesk_onboarding'
+    assert_equal account.subscription.fetch_fdfs_discount_coupon, SubscriptionConstants::FDFSBUNDLE
+  ensure
+    unstub_signup_calls
+    Signup.any_instance.unstub(:aloha_signup)
+    Signup.any_instance.unstub(:freshid_v2_signup_allowed?)
+    Signup.any_instance.unstub(:organisation)
+    Signup.any_instance.unstub(:freshid_user)
+    Account.any_instance.unstub(:sync_user_info_from_freshid_v2!)
+  end
+
   def test_anonymous_signup_without_redis_enabled
     anonymous_signup_key = ANONYMOUS_ACCOUNT_SIGNUP_ENABLED
     remove_others_redis_key(anonymous_signup_key)
