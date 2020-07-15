@@ -1785,7 +1785,7 @@
     },
     "falcon_ui": {
       "analyticsCollectorConfig": {
-        "_analyticsCollectorScript": "https://assets.freshpo.com/analytics/analytics-v1.2.0.js",
+        "_analyticsCollectorScript": "https://assets.freshpo.com/analytics/analytics-v1.2.1.js",
         "schedulerConfig": {
           "metricsAdapters": [
             {
