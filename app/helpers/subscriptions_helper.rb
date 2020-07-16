@@ -222,21 +222,8 @@ module SubscriptionsHelper
   end
 
   def fsm_supported_plan?(plan)
-    # Adding temporarily and will be removed once FSM is supported in all Garden and Blossom plans
-    return false if fsm_supported_for_garden?(plan.name) || fsm_supported_for_blossom?(plan.name)
-
     features = PLANS_FEATURES["#{plan.name.downcase}"]
     Account.current.disable_old_ui_enabled? && (features || []).include?('fsm_option')
-  end
-
-  def fsm_supported_for_garden?(plan_name)
-    garden_plan = ['Garden', 'Garden Jan 17', 'Garden Jan 19', 'Garden Omni Jan 19', 'Garden Jan 20']
-    garden_plan.include?(plan_name) && !Account.current.fsm_for_garden_plan_enabled?
-  end
-
-  def fsm_supported_for_blossom?(plan_name)
-    blossom_plan = ['Blossom', 'Blossom Jan 17', 'Blossom Jan 19', 'Blossom Jan 20']
-    blossom_plan.include?(plan_name) && !Account.current.fsm_for_blossom_plan_enabled?
   end
 
   def previous_plan?(plan)
