@@ -1,6 +1,8 @@
 module Solution::ArticleFilters
   extend ActiveSupport::Concern
 
+  include SolutionHelper
+
   included do
     has_scope :by_status, type: :hash, using: [:status, :approver]
     has_scope :by_category, type: :array
@@ -10,6 +12,7 @@ module Solution::ArticleFilters
     has_scope :by_last_modified, type: :hash, using: [:start, :end, :only_draft]
     has_scope :by_tags, type: :array
     has_scope :by_outdated, type: :boolean, allow_blank: true
+    has_scope :by_platforms, type: :array, if: :allow_chat_platform_attributes?
 
     def apply_article_scopes(article_scoper)
       if is_draft? && !es_for_filter?

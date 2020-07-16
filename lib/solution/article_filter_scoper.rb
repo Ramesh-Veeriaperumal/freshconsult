@@ -101,5 +101,16 @@ module Solution::ArticleFilterScoper
         only_draft ? where(format(%(solution_drafts.user_id=%{user_id} OR solution_articles.user_id=%{user_id}), user_id: author)) : where(format(%(solution_articles.user_id=%{user_id} OR IFNULL(solution_drafts.user_id, solution_articles.modified_by)=%{user_id}), user_id: author))
       end
     }
+
+    scope :by_platforms, lambda { |platforms|
+      join_criteria = format(%(INNER JOIN solution_platform_mappings ON solution_platform_mappings.account_id = %{account_id} AND
+                solution_platform_mappings.mappable_id = solution_article_meta.id AND
+                solution_platform_mappings.mappable_type = 'Solution::ArticleMeta'), account_id: Account.current.id)
+
+      platform_criteria = platforms.map { |platform_type| format('solution_platform_mappings.%{platform_type} = true', platform_type: platform_type) }.join(' OR ')
+      condition = format('(%{platform_criteria})', platform_criteria: platform_criteria)
+
+      joins(join_criteria).where(condition)
+    }
   end
 end

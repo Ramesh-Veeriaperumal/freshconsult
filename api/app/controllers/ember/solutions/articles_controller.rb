@@ -334,7 +334,7 @@ module Ember
 
         def filter_delegator_validation
           @delegator_klass = 'ApiSolutions::ArticleDelegator'
-          return unless validate_delegator(nil, portal_id: params[:portal_id])
+          return unless validate_delegator(nil, portal_id: params[:portal_id], platforms: params[:platforms])
         end
 
         def paginate_filter_items

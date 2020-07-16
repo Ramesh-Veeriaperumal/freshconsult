@@ -4019,6 +4019,32 @@ module Ember
         end
       end
 
+      def test_article_filters_by_platforms_with_omni_bundle_enabled
+        enable_omni_bundle do
+          get_article_with_platform_mapping
+
+          platform_types = ['web', 'ios']
+          count = get_articles_enabled_in_platforms_count(platform_types)
+          get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, platforms: platform_types }, false)
+
+          assert_response 200
+          assert_equal count, (parse_response @response.body).size
+        end
+      end
+
+      def test_article_filters_by_platforms_without_omni_bundle
+        Account.any_instance.stubs(:omni_bundle_account?).returns(false)
+
+        get_article_with_platform_mapping
+        platform_types = ['web', 'ios']
+        get :filter, controller_params({ version: 'private', portal_id: @portal_id.to_s, platforms: platform_types }, false)
+
+        assert_response 403
+        match_json(validation_error_pattern(omni_bundle_required_error_for_platforms))
+      ensure
+        Account.any_instance.unstub(:omni_bundle_account?)
+      end
+
       private
 
         def version
