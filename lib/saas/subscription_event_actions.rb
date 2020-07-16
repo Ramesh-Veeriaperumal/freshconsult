@@ -97,6 +97,8 @@ class SAAS::SubscriptionEventActions
       handle_feature_add_data
       handle_fluffy_feature(to_be_added, to_be_removed)
       add_implicit_features_to_new_plan
+      # remove advanced ticket scopes in case of plan upgrade and signup key does not exist
+      account.revoke_feature(:advanced_ticket_scopes) unless redis_key_exists?(ADVANCED_TICKET_SCOPES_ON_SIGNUP)
     end
 
   end

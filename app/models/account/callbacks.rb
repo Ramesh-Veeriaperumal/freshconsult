@@ -16,6 +16,7 @@ class Account < ActiveRecord::Base
   before_destroy :backup_changes, :make_shard_mapping_inactive
 
   after_create :make_current, :populate_features, :change_shard_status
+  after_create :revert_advanced_ticket_scopes, unless: -> { redis_key_exists?(ADVANCED_TICKET_SCOPES_ON_SIGNUP) }
   after_update :change_dashboard_limit, :if => :field_service_management_enabled_changed?
   after_update :change_shard_mapping, :update_default_business_hours_time_zone,
                :update_google_domain, :update_route_info, :update_users_time_zone
@@ -93,6 +94,11 @@ class Account < ActiveRecord::Base
   include RabbitMq::Publisher
 
   after_launchparty_change :collect_launchparty_actions
+
+  def revert_advanced_ticket_scopes
+    Account.current.revoke_feature(:advanced_ticket_scopes)
+    Rails.logger.info "Advanced ticket scopes is #{Account.current.advanced_ticket_scopes_enabled? ? :enable : :disabled}"
+  end
 
   def downcase_full_domain
     self.full_domain.downcase!
