@@ -134,7 +134,7 @@
   :manage_scorecards: 133
   :manage_scores: 134
   :view_scores: 135
-  :view_all_scores: 136
+  :view_scorecards: 136
   :manage_teams: 137
   :view_omni_analytics: 138
 :max_value: 138

@@ -10,6 +10,9 @@ class PerformQmsOperationsWorkerTest < ActionView::TestCase
   include CoreUsersTestHelper
   include QmsTestHelper
 
+  QMS_ADMIN_PRIVILEGES = [:manage_scorecards, :manage_teams, :view_scores].freeze
+  QMS_AGENT_PRIVILEGES = [:view_scores, :view_scorecards].freeze
+
   def setup
     @account = Account.first.presence || create_test_account
     Account.stubs(:current).returns(@account)
@@ -18,6 +21,7 @@ class PerformQmsOperationsWorkerTest < ActionView::TestCase
     @account_admin_role = @account.roles.account_admin.first
     @admin_role = @account.roles.admin.first
     @agent_role = @account.roles.agent.first
+    @supervisor_role = @account.roles.supervisor.first
     @custom_admin_role = create_role(name: Faker::Name.name, privilege_list: ['manage_tickets', 'admin_tasks', '', '0', '0', '0', '0'])
   end
 
@@ -45,7 +49,6 @@ class PerformQmsOperationsWorkerTest < ActionView::TestCase
     enable_qms
     reload_objects
     assert check_privileges?
-    add_privileges_to_agent_role
     ::Roles::UpdateUserPrivileges.jobs.clear
     assert_equal 0, ::Roles::UpdateUserPrivileges.jobs.size
     disable_qms
@@ -75,29 +78,34 @@ class PerformQmsOperationsWorkerTest < ActionView::TestCase
 
     def cleanup_qms
       destroy_coach
-      disable_qms if @account.quality_management_system_enabled?      
+      disable_qms if @account.quality_management_system_enabled?
       ::Roles::UpdateUserPrivileges.jobs.clear
-    end   
+    end
 
     def destroy_coach
       role = Account.current.roles.coach.first
       role.try(:destroy)
     end
 
-    def account_admin_role_has_qms_privileges?
-      @account_admin_role.privilege?(:manage_scorecards) && @account_admin_role.privilege?(:manage_teams)
+    def admin_role_has_qms_privileges?(role)
+      result = true
+      QMS_ADMIN_PRIVILEGES.each do |privilege|
+        result &&= role.privilege?(privilege)
+      end
+      result
     end
 
-    def admin_role_has_qms_privileges?
-      @admin_role.privilege?(:manage_scorecards) && @admin_role.privilege?(:manage_teams)
-    end
-
-    def custom_admin_role_has_qms_privileges?
-      @custom_admin_role.privilege?(:manage_scorecards) && @custom_admin_role.privilege?(:manage_teams)
+    def agent_role_has_qms_privileges?(role)
+      result = true
+      QMS_AGENT_PRIVILEGES.each do |privilege|
+        result &&= role.privilege?(privilege)
+      end
+      result
     end
 
     def check_privileges?
-      account_admin_role_has_qms_privileges? && admin_role_has_qms_privileges? && custom_admin_role_has_qms_privileges?
+      admin_role_has_qms_privileges?(@account_admin_role) && admin_role_has_qms_privileges?(@admin_role) && admin_role_has_qms_privileges?(@custom_admin_role) &&
+        agent_role_has_qms_privileges?(@supervisor_role) && agent_role_has_qms_privileges?(@agent_role)
     end
 
     def reload_objects
@@ -106,16 +114,12 @@ class PerformQmsOperationsWorkerTest < ActionView::TestCase
       @admin_role.reload
       @custom_admin_role.reload
       @agent_role.reload
+      @supervisor_role.reload
     end
 
     def create_role(params = {})
       test_role = FactoryGirl.build(:roles, name: params[:name], description: Faker::Lorem.paragraph, privilege_list: params[:privilege_list])
       test_role.save(validate: false)
       test_role
-    end
-
-    def add_privileges_to_agent_role
-      @agent_role.privilege_list = (@agent_role.abilities + [:view_scores]).flatten
-      @agent_role.save
     end
 end

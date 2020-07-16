@@ -490,7 +490,7 @@ module Helpdesk
       agent_type: AgentType.agent_type_id(:field_agent)
     }.freeze
 
-    COACH = (SUPERVISOR + [:manage_scores]).freeze
+    COACH = (SUPERVISOR + [:manage_scores, :view_scorecards]).freeze
 
     COACH_ROLE = {
       name: 'Coach',
