@@ -396,6 +396,7 @@ defaults: &defaults
     - [freshcaller_subscription_events_queue]
     - [freshchat_subscription_events_queue]
     - [solution_article_central_publish]
+    - [search_analytics_article_reindex]
     - [twitter_survey]
     - [update_article_platform_mapping_worker]
     - [facebook_survey]
