@@ -12,7 +12,8 @@ module CentralLib
     # Important:: Make sure you add the Model class name to appropriate constants
     #             RESYNC_DATA_ENTITIES, RESYNC_CONFIG_ENTITIES
     def sync_entity(meta_info)
-      define_meta_info_for_payload(meta_info)
+      # define a custom method for model instance to return meta_info
+      klass.safe_send(:define_method, :meta_for_central_payload, -> { meta_info })
       if RESYNC_CONFIG_ENTITIES.include? entity_name
         trigger_sync(RESYNC_CONFIG_BATCH_SIZE)
       elsif RESYNC_DATA_ENTITIES.include? entity_name
@@ -30,14 +31,6 @@ module CentralLib
       find_in_batches(batch_size: batch_size) do |batch|
         batch.each(&:sync_model_to_central)
       end
-    end
-
-    # This method will define a custom method for model instance to return meta_info
-    # Usage:
-    #  - Define the meta_info: Account.current.tickets.define_meta_info_for_payload({ meta_id: 123 })
-    #  - Get meta_info for a model: Account.current.tickets.meta_for_central_payload (will return { meta_id: 123 })
-    def define_meta_info_for_payload(meta_info)
-      klass.safe_send(:define_method, :meta_for_central_payload, -> { meta_info })
     end
 
     # Method to fetch entity name for any association
