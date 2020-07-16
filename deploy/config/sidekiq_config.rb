@@ -216,6 +216,7 @@ class SidekiqConfigUsEast
     premium_dispatcher       = ["premium_dispatcher","active_dispatcher","dispatcher","trial_dispatcher","free_dispatcher"]
     service_task_dispatcher  = ["service_task_dispatcher"]
     quality_management_system = ['quality_management_system']
+    privilege_modification   = ['privilege_modification']
     api_webhook_rule         = ["api_webhook_rule"]
     plan_change              = ["plan_change","pod_route_update","helpdesk_ticket_body_queue","modify_ticket_status","plan_change_workerv2","activation_worker"]
     contact_import           = ["contact_import","company_import","helpdesk_note_body_queue","data_export","broadcast_note","link_tickets","reset_associations","modify_ticket_status"]
@@ -342,7 +343,7 @@ class SidekiqConfigUsEast
   "sandbox_cleanup", "thank_you_note", "update_sandbox_subscription", 'gateway_facebook_page', "archive_account_tickets_channel_queue", "archive_tickets_channel_queue", "ticket_properties_suggester", "update_agents_roles", "custom_translations_update_survey_status", 'kbase_article_versions_worker', 'kbase_article_versions_migration_worker',
   'kbase_article_versions_reset_rating', 'articles_export_queue', 'rts_account_create', 'image_meta_data_delete', 'kbase_approval_notification_worker', 'delete_solution_meta_worker', 'ticket_field_job', 'update_url_in_sandbox', 'fdadmin_freshid_migration', 'vault_account_update', 'vault_data_cleanup', 'update_user_privilege',
   'archive_account_tickets', 'freshcaller_subscription_events_queue', 'freshchat_subscription_events_queue', 'solution_article_central_publish', 'central_realtime', 'frequent', 'maintenance', 'twitter_survey', 'bitmap_callbacks', 'facebook_survey', 'quality_management_system', 'solution_templates_migration_worker', 'update_article_platform_mapping_worker', 'update_agent_status_availability',
-  'marketplace_app_billing'
+  'marketplace_app_billing', 'privilege_modification'
 ]
 
     # sidekiq queues in falcon alone
@@ -666,7 +667,7 @@ all_sidekiq_jobs =  cron_jobs + [
       "archive_account_tickets_channel_queue", "archive_tickets_channel_queue", "ticket_properties_suggester", "update_agents_roles", "custom_translations_update_survey_status", 'kbase_article_versions_worker', 'kbase_article_versions_migration_worker',
       'kbase_article_versions_reset_rating', 'articles_export_queue', 'rts_account_create', 'kbase_approval_notification_worker', 'delete_solution_meta_worker', 'ticket_field_job', 'update_url_in_sandbox', 'fdadmin_freshid_migration', 'vault_account_update', 'vault_data_cleanup', 'update_user_privilege',
       'archive_account_tickets', 'freshcaller_subscription_events_queue', 'freshchat_subscription_events_queue', 'solution_article_central_publish', 'central_realtime', 'frequent', 'maintenance', 'twitter_survey', 'bitmap_callbacks', 'facebook_survey', 'quality_management_system', 'solution_templates_migration_worker', 'update_article_platform_mapping_worker', 'update_agent_status_availability',
-      'marketplace_app_billing'
+      'marketplace_app_billing', 'privilege_modification'
     ]
 
     #falcon common sidekiq

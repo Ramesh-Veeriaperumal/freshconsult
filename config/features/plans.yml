@@ -570,6 +570,7 @@
       - :botflow
       - :agent_articles_suggest_eligible
       - :email_bot
+      - :custom_objects
     :inherits:
       - :estate_jan_20
     :exclude: []

@@ -404,6 +404,7 @@ defaults: &defaults
     - [solution_templates_migration_worker]
     - [marketplace_app_billing]
     - [update_agent_status_availability]
+    - [privilege_modification]
 
 development:
   <<: *defaults

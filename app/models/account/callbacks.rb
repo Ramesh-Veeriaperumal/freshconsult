@@ -74,6 +74,9 @@ class Account < ActiveRecord::Base
   after_commit ->(obj) { obj.perform_qms_operations }, on: :create, if: :quality_management_system_feature_toggled?
   after_commit ->(obj) { obj.perform_qms_operations }, on: :update, if: :quality_management_system_feature_toggled?
 
+  after_commit ->(obj) { obj.perform_custom_objects_operations }, on: :create, if: -> { symphony_enabled? && custom_objects_feature_toggled? }
+  after_commit ->(obj) { obj.perform_custom_objects_operations }, on: :update, if: -> { symphony_enabled? && custom_objects_feature_toggled? }
+
   after_rollback :destroy_freshid_account_on_rollback, on: :create, if: -> { freshid_integration_signup_allowed? && !domain_already_exists? }
   after_rollback :signup_completed, on: :create
 
@@ -342,6 +345,10 @@ class Account < ActiveRecord::Base
 
     def perform_qms_operations
       ::QualityManagementSystem::PerformQmsOperationsWorker.perform_async
+    end
+
+    def perform_custom_objects_operations
+      PrivilegesModificationWorker.perform_async(feature: 'custom_objects')
     end
 
   private
