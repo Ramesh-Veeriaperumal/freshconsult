@@ -1,8 +1,8 @@
 module Import::Zen::Group
 
  class GroupProp < Import::FdSax  
-   # element :name
-   # element :id , :as => :import_id
+   element :name
+   element :id , :as => :import_id
  end
 
  def save_group group_xml

@@ -3,6 +3,7 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   include Integrations::Jira::WebhookInstaller
   include Cache::FragmentCache::Base
   include CentralLib::Util
+  include ::Marketplace::GalleryConstants
   
   serialize :configs, Hash
   belongs_to :application, :class_name => 'Integrations::Application'
@@ -24,7 +25,7 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   before_save :before_save_customize
   before_create :before_create_customize, :unless => :skip_callbacks
   before_destroy :store_deleted_model
-  after_create :after_create_customize
+  after_create :after_create_customize, :verify_marketplace_billing
   after_save :after_save_customize
   after_save :store_model_changes
   before_update :store_old_configs
@@ -41,7 +42,7 @@ class Integrations::InstalledApplication < ActiveRecord::Base
 
   include ::Integrations::AppMarketPlaceExtension
 
-  attr_accessor :skip_callbacks
+  attr_accessor :skip_callbacks, :skip_makrketplace_syncup
 
   scope :with_name, lambda { |app_name| where("applications.name = ?", app_name ).joins(:application).select('installed_applications.*')}
   delegate :oauth_url, :to => :application 
@@ -237,5 +238,15 @@ class Integrations::InstalledApplication < ActiveRecord::Base
 
     def clear_application_hash_cache
       Account.current.clear_installed_application_hash_cache
+    end
+
+    def verify_marketplace_billing
+      return unless should_verify_billing?
+
+      Integrations::MarketplaceAppBillingWorker.perform_async(app_name: application.name)
+    end
+
+    def should_verify_billing?
+      Account.current.marketplace_gallery_enabled? && NATIVE_PAID_APPS.include?(application.name)
     end
 end

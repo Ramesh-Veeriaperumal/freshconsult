@@ -6,6 +6,7 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
   include Support::TicketsHelper
   include ExportCsvUtil
   include Helpdesk::NotePropertiesMethods
+  include AdvancedTicketScopes
   helper AutocompleteHelper
   helper Helpdesk::ArchiveNotesHelper
   helper Helpdesk::RequesterWidgetHelper
@@ -16,6 +17,7 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
   before_filter :get_tag_name, :only => :index
   before_filter :set_filter_options, :set_data_hash, :load_sort_order, :only => [ :index, :custom_search ]
   before_filter :load_ticket, :verify_permission, :load_reply_to_all_emails, :only => [:activities, :prevnext, :activitiesv2]
+  before_filter :set_all_agent_groups_permission, only: [:print_archive]
   before_filter :verify_format_and_tkt_id, :load_ticket_with_notes, :verify_permission, :load_reply_to_all_emails, :only => [:show,:print_archive]
   before_filter :set_date_filter, :only => [:export_csv]
   before_filter :csv_date_range_in_days , :only => [:export_csv]
@@ -209,7 +211,8 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
     end
 
     def verify_permission
-      unless current_user && current_user.has_ticket_permission?(@item)
+      has_permission = (advanced_scope_enabled? && action == :print_archive) ? current_user.has_read_ticket_permission?(@item) : current_user.has_ticket_permission?(@item) if current_user
+      unless current_user && has_permission
         flash[:notice] = t("flash.general.access_denied") 
         if params['format'] == "widget"
           return false

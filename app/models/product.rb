@@ -38,7 +38,7 @@ class Product < ActiveRecord::Base
   has_many   :help_widgets
   has_one    :bot                  , class_name: 'Bot', dependent: :destroy
 
-  scope :trimmed, -> { select([:'products.id', :'products.name']) }
+  scope :trimmed, :select => [:'products.id', :'products.name']
 
   swindle :basic_info,
           attrs: %i[name]

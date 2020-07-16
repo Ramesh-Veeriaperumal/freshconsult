@@ -12,7 +12,7 @@ class ContactDecorator < ApiDecorator
             :failed_login_count, :last_seen_at, :posts_count, :preferred_source, :last_csat_rating, to: :record
 
   delegate :company_id, :client_manager, to: :default_company, allow_nil: true
-  delegate :multiple_user_companies_enabled?, :unique_contact_identifier_enabled?, to: 'Account.current'
+  delegate :multiple_user_companies_enabled?, :unique_contact_identifier_enabled?, :twitter_api_compliance_enabled?, to: 'Account.current'
 
   FIELD_NAME_MAPPING = {
     'tag_names' => 'tags'

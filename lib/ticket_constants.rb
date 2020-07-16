@@ -480,6 +480,10 @@ module TicketConstants
     I18n.t(TICKET_ASSOCIATION_TOKEN_BY_KEY[association_type])
   end
 
+  def self.ticket_association_token_by_key_translated
+    Hash[*TICKET_ASSOCIATION.map { |i| [i[1], I18n.t(i[0])] }.flatten]
+  end
+
   def self.translate_ticket_types_from_cache
     @ticket_types ||= Hash[*TYPE.map {|i| [i[3], i[3]] }.flatten]
   end

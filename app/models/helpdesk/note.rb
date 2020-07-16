@@ -18,10 +18,10 @@ class Helpdesk::Note < ActiveRecord::Base
                             'response_violated'
                           ]
 
-  self.table_name = 'helpdesk_notes'
+  self.table_name =  "helpdesk_notes"
 
-  concerned_with :associations, :constants, :callbacks, :rabbitmq, :esv2_methods, :presenter
-
+  concerned_with :associations, :constants, :callbacks, :riak, :s3, :mysql, :attributes, :rabbitmq, :esv2_methods, :presenter
+  text_datastore_callbacks :class => "note"
   spam_watcher_callbacks :user_column => "user_id", :import_column => "import_id"
   #zero_downtime_migration_methods :methods => {:remove_columns => ["body", "body_html"] }
 
@@ -40,87 +40,94 @@ class Helpdesk::Note < ActiveRecord::Base
 
   delegate :to_emails, :cc_emails, :bcc_emails, :subject, :cc_emails_hash, :to => :schema_less_note
 
-  scope :newest_first, -> { order("created_at DESC,id DESC") }
-  scope :visible, -> { where(deleted: false) }
+  scope :newest_first, :order => "created_at DESC,id DESC"
+  scope :visible, :conditions => { :deleted => false }
+  scope :public, :conditions => { :private => false }
+  scope :private, :conditions => { :private => true }
+
   scope :public_notes, -> { where(private: false) }
   scope :private_notes, -> { where(private: true) }
-   
-  scope :last_traffic_cop_note, -> { 
-    where(["private = ? or incoming = ?",false,true]).
-    order('created_at DESC').
-    limit(1)
-  }
 
-  scope :latest_twitter_comment, -> {
-    where(" incoming = 1 AND social_tweets.tweetable_type = 'Helpdesk::Note'").
-    joins("INNER join social_tweets on helpdesk_notes.id = social_tweets.tweetable_id and helpdesk_notes.account_id = social_tweets.account_id").
-    order('created_at DESC')
-  }
+  scope :last_traffic_cop_note,
+    :conditions => ["private = ? or incoming = ?",false,true],
+    :order => "created_at DESC",
+    :limit => 1
 
-  scope :freshest, ->(account){
-    where(deleted: false, account_id: account.id).
-    order('helpdesk_notes.created_at DESC')
-  }
+  scope :latest_twitter_comment,
+              :conditions => [" incoming = 1 and social_tweets.tweetable_type =
+ 'Helpdesk::Note'"],
+              :joins => "INNER join social_tweets on helpdesk_notes.id = social_tweets.tweetable_id and helpdesk_notes.account_id = social_tweets.account_id",
+              :order => "created_at desc"
 
-  scope :since, ->(last_note_id){
-    where(['helpdesk_notes.id > ? ', last_note_id]).
-    order('helpdesk_notes.created_at DESC')
-  }
-
-  scope :created_since, -> (last_note_id, last_note_created_at) {
-    where(["helpdesk_notes.id != ? AND helpdesk_notes.created_at >= ?", 
-            last_note_id, last_note_created_at])
-  }
-
-  scope :conversations, -> (preload_options = nil, order_conditions = nil, limit = nil) {
-    where(["source NOT IN (?) and deleted = false", Account.current.helpdesk_sources.note_exclude_sources.map{|s| Account.current.helpdesk_sources.note_source_keys_by_token[s]}]).
-    order(order_conditions).
-    includes(preload_options).
-    limit(limit)
-  }
-
-  scope :before, -> (first_note_id) {
-    where(["helpdesk_notes.id < ? ", first_note_id]).
-    order('helpdesk_notes.created_at DESC')
-  }
-  
-  scope :for_quoted_text, -> (first_note_id) {
-    where(["source != ? AND helpdesk_notes.id < ? ", Account.current.helpdesk_sources.note_source_keys_by_token["forward_email"], first_note_id]).
-    order("helpdesk_notes.created_at DESC").
-    limit(4)
-  }
-  
-  scope :latest_facebook_message, -> {
-    where([" incoming = 1 and social_fb_posts.postable_type = 'Helpdesk::Note'"]).
-    joins("INNER join social_fb_posts on helpdesk_notes.id = social_fb_posts.postable_id and helpdesk_notes.account_id = social_fb_posts.account_id").
-    order("created_at desc")
-  }
-
-  CATEGORIES.keys.each do |c| 
-    scope c.to_s.pluralize, -> {
-      where(helpdesk_schema_less_notes: {
-        int_nc01: CATEGORIES[c]
-      }).
-      joins('INNER JOIN helpdesk_schema_less_notes on helpdesk_schema_less_notes.note_id ='\
-        ' helpdesk_notes.id and helpdesk_notes.account_id = helpdesk_schema_less_notes.account_id')
+  scope :freshest, lambda { |account|
+    { :conditions => ["deleted = ? and account_id = ? ", false, account],
+      :order => "helpdesk_notes.created_at DESC"
     }
-  end
-
-  scope :created_between, -> (start_time, end_time) {
-    where(['helpdesk_notes.created_at >= ? and helpdesk_notes.created_at <= ?', 
-              start_time, end_time])
   }
-  
-  scope :exclude_source, -> (s) { where(exclude_condition(s)[:conditions]) }
-  
-  scope :broadcast_notes, -> {
-    where(["notable_type = ? and deleted = 0 and "\
-              "helpdesk_schema_less_notes.#{Helpdesk::SchemaLessNote.category_column} = ?",
-              "Helpdesk::Ticket", Helpdesk::Note::CATEGORIES[:broadcast]]).
-    joins('INNER JOIN helpdesk_schema_less_notes on helpdesk_schema_less_notes.note_id ='\
-      ' helpdesk_notes.id and helpdesk_notes.account_id = helpdesk_schema_less_notes.account_id')
+  scope :since, lambda { |last_note_id|
+    { :conditions => ["helpdesk_notes.id > ? ", last_note_id],
+      :order => "helpdesk_notes.created_at DESC"
+    }
   }
 
+  scope :created_since, lambda { |last_note_id, last_note_created_at|
+    { :conditions => ["helpdesk_notes.id != ? AND helpdesk_notes.created_at >= ?", last_note_id, last_note_created_at] }
+  }
+
+  scope :before, lambda { |first_note_id|
+    { :conditions => ["helpdesk_notes.id < ? ", first_note_id],
+      :order => "helpdesk_notes.created_at DESC"
+    }
+  }
+
+  scope :for_quoted_text, lambda { |first_note_id|
+    { :conditions => ["source != ? AND helpdesk_notes.id < ? ", Account.current.helpdesk_sources.note_source_keys_by_token["forward_email"], first_note_id],
+      :order => "helpdesk_notes.created_at DESC",
+      :limit => 4
+    }
+  }
+
+  scope :conversations, lambda { |preload_options = nil, order_conditions = nil, limit = nil|
+    {
+      :conditions => ["source NOT IN (?) and deleted = false", Account.current.helpdesk_sources.note_exclude_sources.map{|s| Account.current.helpdesk_sources.note_source_keys_by_token[s]}],
+      :order => order_conditions,
+      :include => preload_options,
+      :limit => limit
+    }
+  }
+  scope :latest_facebook_message,
+              :conditions => [" incoming = 1 and social_fb_posts.postable_type = 'Helpdesk::Note'"],
+              :joins => "INNER join social_fb_posts on helpdesk_notes.id = social_fb_posts.postable_id and helpdesk_notes.account_id = social_fb_posts.account_id",
+              :order => "created_at desc"
+
+  CATEGORIES.keys.each { |c| scope c.to_s.pluralize,
+    :joins => 'INNER JOIN helpdesk_schema_less_notes on helpdesk_schema_less_notes.note_id ='\
+      ' helpdesk_notes.id and helpdesk_notes.account_id = helpdesk_schema_less_notes.account_id',
+    :conditions => { 'helpdesk_schema_less_notes' => { :int_nc01 => CATEGORIES[c]}}
+    }
+
+  scope :created_between, lambda { |start_time, end_time|
+    {:conditions => ['helpdesk_notes.created_at >= ? and helpdesk_notes.created_at <= ?',
+      start_time, end_time]}
+  }
+
+  scope :exclude_source, lambda { |s| exclude_condition(s) }
+
+  scope :broadcast_notes,
+    :joins => 'INNER JOIN helpdesk_schema_less_notes on helpdesk_schema_less_notes.note_id ='\
+      ' helpdesk_notes.id and helpdesk_notes.account_id = helpdesk_schema_less_notes.account_id',
+    :conditions => ["notable_type = ? and deleted = 0 and "\
+      "helpdesk_schema_less_notes.#{Helpdesk::SchemaLessNote.category_column} = ?",
+      "Helpdesk::Ticket", Helpdesk::Note::CATEGORIES[:broadcast]]
+
+  scope :conversations, lambda { |preload_options = nil, order_conditions = nil, limit = nil|
+      {
+        :conditions => ["source NOT IN (?) and deleted = false", Account.current.helpdesk_sources.note_exclude_sources.map{|s| Account.current.helpdesk_sources.note_source_keys_by_token[s]}],
+        :order => order_conditions,
+        :include => preload_options,
+        :limit => limit
+      }
+    }
 
 
   validates_presence_of  :source, :notable_id
@@ -455,22 +462,6 @@ class Helpdesk::Note < ActiveRecord::Base
       recently_created_note?
   end
 
-  def body
-    note_body && note_body.body
-  end
-
-  def body_html
-    note_body && note_body.body_html
-  end
-
-  def full_text
-    note_body && note_body.full_text
-  end
-
-  def full_text_html
-    note_body && note_body.full_text_html
-  end
-
   protected
 
     def send_reply_email
@@ -487,7 +478,7 @@ class Helpdesk::Note < ActiveRecord::Base
     def add_cc_email
       return if third_party_response?
 
-      cc_email_hash_value = notable.cc_email_hash.blank? ? Helpdesk::Ticket.default_cc_hash : notable.cc_email_hash # PRE-RAILS: Eariler cc_email was nilclass, now serialized column datatype defined as Hash
+      cc_email_hash_value = notable.cc_email_hash.nil? ? Helpdesk::Ticket.default_cc_hash : notable.cc_email_hash
       if fwd_email? || reply_to_forward?
         fwd_emails = self.to_emails | self.cc_emails | self.bcc_emails | cc_email_hash_value[:fwd_emails]
         fwd_emails.delete_if {|email| (notable.requester.email.present? && parse_email(email)[:email].downcase == notable.requester.email.downcase)}

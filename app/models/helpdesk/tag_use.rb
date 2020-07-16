@@ -26,12 +26,16 @@ class Helpdesk::TagUse < ActiveRecord::Base
   validates_uniqueness_of :tag_id, :scope => [:taggable_id, :taggable_type]
   validates_numericality_of :tag_id, :taggable_id
 
-  scope :tags_to_remove, ->(taggable_id,tag_id, taggable_type){
-    where({:taggable_id => taggable_id, :tag_id => tag_id, :taggable_type => taggable_type})
-  }
+  scope :tags_to_remove, lambda { |taggable_id,tag_id,taggable_type|
+          { 
+            :conditions => {:taggable_id => taggable_id, :tag_id => tag_id, :taggable_type => taggable_type}
+          }
+        }
 
-  scope :tags_count, ->(tag_id, taggable_type){
-    where({:tag_id => tag_id, :taggable_type => taggable_type})
+  scope :tags_count, lambda { |tag_id,taggable_type|
+    {
+        :conditions => {:tag_id => tag_id, :taggable_type => taggable_type}
+    }
   }
 
   private

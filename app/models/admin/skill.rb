@@ -13,14 +13,14 @@ class Admin::Skill < ActiveRecord::Base
   NOT_OPERATORS = ['is_not', 'does_not_contain', 'not_selected', 'not_in']
   VERSION_MEMBER_KEY = 'TICKET_FIELD_LIST'.freeze
 
-  serialize :filter_data, Array
+  serialize :filter_data
   
   belongs_to_account
   has_many :user_skills, :order => :rank
   has_many :users, :through => :user_skills, :source => :user, :order => 'user_skills.rank',
             :dependent => :destroy
 
-  scope :trimmed, -> { select([:'skills.id', :'skills.name']) }
+  scope :trimmed, -> { select('skills.id, skills.name') }
 
   before_validation :assign_last_position, :unless => :position?
   before_validation :remove_whitespaces

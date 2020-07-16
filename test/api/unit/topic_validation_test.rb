@@ -57,9 +57,9 @@ class TopicValidationsTest < ActionView::TestCase
 
   def test_presence_item_valid
     item = Topic.new(title: 'test')
-    post = Post.new
-    Post.any_instance.stubs(:body_html).returns('test')
-    item.stubs(:first_post).returns(Post.new)
+    post = mock('post')
+    post.stubs(:body_html).returns('test')
+    item.stubs(:first_post).returns(post)
     controller_params = {}
     topic = ApiDiscussions::TopicValidation.new(controller_params, item)
     topic.valid?
@@ -68,7 +68,6 @@ class TopicValidationsTest < ActionView::TestCase
     refute error.include?('Message blank')
     refute error.include?('Title missing')
     refute error.include?('Message missing')
-    Post.any_instance.unstub(:body_html)
   end
 
   def test_numericality_item_valid_only_update
@@ -104,10 +103,10 @@ class TopicValidationsTest < ActionView::TestCase
   def test_topic_validation_valid_item
     item = Topic.new(title: 'test', user_id: 1, locked: false, published: false, sticky: false)
     item.forum_id = 1
-    Post.any_instance.stubs(:body_html).returns('test')
-    item.stubs(:first_post).returns(Post.new)
+    post = mock('post')
+    post.stubs(:body_html).returns('test')
+    item.stubs(:first_post).returns(post)
     topic = ApiDiscussions::TopicValidation.new({}, item)
     assert topic.valid?
-    Post.any_instance.unstub(:body_html)
   end
 end

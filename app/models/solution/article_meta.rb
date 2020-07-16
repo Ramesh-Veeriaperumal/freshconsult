@@ -3,9 +3,9 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	self.primary_key = :id
 	belongs_to_account
 	self.table_name = "solution_article_meta"
-	
+
 	BINARIZE_COLUMNS = [:available, :outdated, :draft_present, :published]
-	
+
 	include Redis::RedisKeys
 	include Redis::OthersRedis
 	include Community::HitMethods
@@ -24,16 +24,16 @@ class Solution::ArticleMeta < ActiveRecord::Base
 		:autosave => true,
 		:dependent => :destroy
 
-	belongs_to :solution_folder_meta, 
-		:class_name => "Solution::FolderMeta", 
-		:foreign_key => :solution_folder_meta_id, 
+	belongs_to :solution_folder_meta,
+		:class_name => "Solution::FolderMeta",
+		:foreign_key => :solution_folder_meta_id,
 		:autosave => true
 
 	has_one :solution_category_meta,
 		:through => :solution_folder_meta,
 		:class_name => "Solution::CategoryMeta"
-			
-	has_one :solution_folder, 
+
+	has_one :solution_folder,
 		:through => :solution_folder_meta,
 		:class_name => "Solution::Folder"
 
@@ -49,11 +49,11 @@ class Solution::ArticleMeta < ActiveRecord::Base
 
 	has_many :tag_uses,
 		:class_name => 'Helpdesk::TagUse',
-		:foreign_key => :taggable_id, 
+		:foreign_key => :taggable_id,
 		:primary_key => :current_child_id,
 		:conditions => { :taggable_type => "Solution::Article" }
 
-	has_many :tags, 
+	has_many :tags,
 		:class_name => 'Helpdesk::Tag',
 		:through => :tag_uses
 
@@ -69,7 +69,7 @@ class Solution::ArticleMeta < ActiveRecord::Base
 
 	AGGREGATED_COLUMNS = [:hits, :thumbs_up, :thumbs_down]
 
-	PORTAL_CACHEABLE_ATTRIBUTES = ["id", "account_id", "current_child_id", "title", "solution_folder_meta_id", 
+	PORTAL_CACHEABLE_ATTRIBUTES = ["id", "account_id", "current_child_id", "title", "solution_folder_meta_id",
 		"status", "modified_at", "created_at", "art_type", "current_child_thumbs_up", "current_child_thumbs_down"]
 
 	before_save :set_default_art_type
@@ -82,36 +82,43 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	after_commit :update_search_index, on: :update
 	after_find :deserialize_attr
 
-	# Need to check this code miss, ember solution test cases get failed if validation is present 
+	# Need to check this code miss, ember solution test cases get failed if validation is present
 	# validates_inclusion_of :art_type, :in => TYPE_KEYS_BY_TOKEN.values.min..TYPE_KEYS_BY_TOKEN.values.max
 
 	alias_method :children, :solution_articles
 
-	scope :published, -> { 
+
+	scope :published, -> {
 					joins(:current_article).
 					where(["`solution_articles`.status = ?", STATUS_KEYS_BY_TOKEN[:published]])
 				}
-				
+
 	scope :visible_to_all, ->{
 					joins(:solution_folder_meta).
-					where("`solution_folder_meta`.visibility = ? ", 
+					where("`solution_folder_meta`.visibility = ? ",
 						Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:anyone]).
 					published
 				}
 
-	scope :newest, -> (num) { 
+	scope :newest, -> (num) {
 					joins(:current_article).
 					order('`solution_articles`.modified_at DESC').
 					limit(num)
 				}
-	
+
 	scope :for_portal, -> (portal) {
 					where([' solution_folder_meta.solution_category_meta_id in (?) AND solution_folder_meta.visibility = ? ',
-										portal.portal_solution_categories.pluck(:solution_category_meta_id), 
-										Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:anyone] 
+										portal.portal_solution_categories.pluck(:solution_category_meta_id),
+										Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:anyone]
 							]).
 					joins(:solution_folder_meta)
 				}
+
+  scope :for_portal_user, ->(portal, user) {
+			where([" solution_folder_meta.solution_category_meta_id in (?) AND #{Solution::FolderMeta.visibility_condition(user)}",
+								portal.portal_solution_categories.pluck(:solution_category_meta_id)])
+			.joins(:solution_folder_meta)
+	}
 
   scope :for_help_widget, ->(help_widget, user) {
     where([" solution_folder_meta.solution_category_meta_id in (?) AND #{Solution::FolderMeta.visibility_condition(user)}",
@@ -133,7 +140,7 @@ class Solution::ArticleMeta < ActiveRecord::Base
 			return self.safe_send(col) if Account.current.multilingual?
 			primary_article.safe_send(col)
 		end
-	end	
+	end
 
 	def hit_key
 		SOLUTION_META_HIT_TRACKER % {:account_id => account_id, :article_meta_id => id }
@@ -150,30 +157,26 @@ class Solution::ArticleMeta < ActiveRecord::Base
     end
     true
   end
-	
+
 	def deserialize_attr
 		# In the customer portal, we select attributes of the current language article from solution_articles table
-		# along with each article_meta object. So if we try to fetch a serialized attribute of the current child article 
+		# along with each article_meta object. So if we try to fetch a serialized attribute of the current child article
 		# through the parent object, it had the raw content(serialized string) from the table. Hence, we had
 		# to deserialize any such attributes.
 		self.attributes.slice(*Solution::Article.serialized_attributes.keys).each do |k, v|
-      begin
-        self[k] = YAML.load(v)
-      rescue Psych::SyntaxError
-        self[k] = Syck.load(v)
-      end
+			self[k] = YAML.load(v)
 		end
 	end
-	
+
 	def to_liquid
 		@solution_article_drop ||= (Solution::ArticleDrop.new self)
 	end
-	
+
 	def to_param
 		title_param = sterilize(self.title[0..100])
 		id ? "#{id}-#{title_param.downcase.gsub(/[<>#%{}|()*+_\\^~\[\]`\s,=&:?;'@$"!.\/(\-\-)]+/, '-')}" : nil
 	end
-	
+
 	def self.filter(_per_page = self.per_page, _page = 1)
 		paginate :per_page => _per_page, :page => _page
 	end

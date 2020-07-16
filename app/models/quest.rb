@@ -15,8 +15,8 @@ class Quest < ActiveRecord::Base
   validates_presence_of :badge_id, :message => I18n.t('quests.badge_mand')
   validates_numericality_of :points
 
-  serialize :filter_data, Hash
-  serialize :quest_data, Array
+  serialize :filter_data
+  serialize :quest_data
 
   validate :has_quest_data_value?
 
@@ -26,32 +26,34 @@ class Quest < ActiveRecord::Base
 
   after_commit :clear_quests_cache
 
-  scope :available, ->(user) {
-    where([%(quests.id not in (select quest_id from achieved_quests 
-      where user_id = ? and account_id = ?)), user.id, user.account_id])
+  scope :available, lambda{|user| {
+    :conditions => [%(quests.id not in (select quest_id from achieved_quests 
+      where user_id = ? and account_id = ?)), user.id, user.account_id]
+    }}
+
+  scope :disabled, :conditions => { :active => false }
+  scope :enabled, :conditions => { :active => true }
+
+  scope :ticket_quests, :conditions => {
+    :category => GAME_TYPE_KEYS_BY_TOKEN[:ticket],
   }
 
-  scope :disabled, ->{ where(active: false) }
-  scope :enabled, ->{ where(active:true) }
-
-  scope :ticket_quests, ->{
-    where(category: GAME_TYPE_KEYS_BY_TOKEN[:ticket])
+  scope :forum_quests, :conditions => {
+    :category => GAME_TYPE_KEYS_BY_TOKEN[:forum],
   }
 
-  scope :forum_quests, -> {
-    where(category: GAME_TYPE_KEYS_BY_TOKEN[:forum])
+  scope :solution_quests, :conditions => {
+    :category => GAME_TYPE_KEYS_BY_TOKEN[:solution],
   }
 
-  scope :solution_quests, -> {
-    where(category: GAME_TYPE_KEYS_BY_TOKEN[:solution])
+  scope :create_forum_quests, :conditions => {
+    :category => GAME_TYPE_KEYS_BY_TOKEN[:forum],
+    :sub_category => FORUM_QUEST_MODE_BY_TOKEN[:create]
   }
 
-  scope :create_forum_quests, -> {
-    where(category: GAME_TYPE_KEYS_BY_TOKEN[:forum], sub_category: FORUM_QUEST_MODE_BY_TOKEN[:create])
-  }
-
-  scope :answer_forum_quests, -> {
-    where(category: GAME_TYPE_KEYS_BY_TOKEN[:forum], sub_category: FORUM_QUEST_MODE_BY_TOKEN[:answer])
+  scope :answer_forum_quests, :conditions => {
+    :category => GAME_TYPE_KEYS_BY_TOKEN[:forum],
+    :sub_category => FORUM_QUEST_MODE_BY_TOKEN[:answer]
   }
   
   def achieved_by?(user)

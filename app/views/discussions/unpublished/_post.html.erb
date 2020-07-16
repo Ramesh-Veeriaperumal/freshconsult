@@ -1,9 +1,9 @@
-<%
+<% 
 new_topic = post.topic_id.nil?
 topic = new_topic ? { 'title' => post['title'] } :  @fetched_topics[post.topic_id]
-forum = new_topic || topic.nil? ? @fetched_forums[post['forum_id'].try(:to_i)] : topic.forum
+forum = new_topic || topic.nil? ? @fetched_forums[post['forum_id']] : topic.forum
 post_type = new_topic ? 'new_topic' : 'reply'
-user =  @fetched_users[post.user_id.try(:to_i)]
+user =  @fetched_users[post.user_id]
 %>
 <% if !user.nil? && !topic.nil? && !forum.nil? %>
 <div class="comm-item span12 row-fluid clear-left-margin comm-item-post" id="post_<%= post.timestamp.to_i %>" data-user="<%= user.id %>">
@@ -25,7 +25,7 @@ user =  @fetched_users[post.user_id.try(:to_i)]
 				<%= new_topic ? t('discussions.topics.post.created_topic') : t('discussions.topics.post.replied_to') %>
 				<% if new_topic %>
 					<strong><%=topic['title']%></strong>
-				<% else %>
+				<% else %> 
 				  <%= pjax_link_to(topic['title'], discussions_topic_path(topic)) %>
 				<% end %>
 			</div>

@@ -223,7 +223,7 @@ class Account < ActiveRecord::Base
     saml_ecrypted_assertion: false, quoted_text_parsing_feature: false, description_by_default: false,
     skip_invoice_due_warning: false, custom_fields_search: true, update_billing_info: false, allow_billing_info_update: false,
     tag_central_publish: false, archive_tickets_api: false, bot_agent_response: false,
-    fluffy: false, scheduling_fsm_dashboard: false, nested_field_revamp: true, service_worker: false,
+    fluffy: false, nested_field_revamp: true, service_worker: false,
     kbase_mint: true, freshid_org_v2: false, hide_agent_login: false, ticket_source_revamp: false,
     office365_adaptive_card: false, helpdesk_tickets_by_product: false, article_es_search_by_filter: false,
     text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
@@ -231,24 +231,24 @@ class Account < ActiveRecord::Base
     attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false,
     requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false,
     supervisor_custom_status: false, asset_management: false, sandbox_temporary_offset: false, downgrade_policy: true,
-    skip_posting_to_fb: true, launch_fsm_geolocation: false, launch_location_tagging: false, allow_update_agent: false,
+    skip_posting_to_fb: true, launch_fsm_geolocation: false, launch_location_tagging: false, geolocation_historic_popup: false, allow_update_agent: false,
     facebook_dm_outgoing_attachment: true, hide_mailbox_error_from_agents: false,
     jira_onpremise_reporter: false, support_ticket_rate_limit: false, sidekiq_logs_to_central: false,
     portal_central_publish: false, encode_emoji_in_solutions: false, forums_agent_portal: false,
     mailbox_google_oauth: false, migrate_euc_pages_to_us: false, agent_collision_revamp: false,
     topic_editor_with_html: false, remove_image_attachment_meta_data: false,
     ticket_field_revamp: true, new_timeline_view: false, email_mailbox: true, facebook_admin_ui_revamp: false,
-    sla_policy_revamp: false, freshdesk_freshsales_bundle: false,
-    fsm_for_garden_plan: true, fsm_for_blossom_plan: true, requester_widget_timeline: false,
+    sla_policy_revamp: false, freshdesk_freshsales_bundle: false, requester_widget_timeline: false,
     enable_secure_login_check: false,
     marketplace_gallery: false, facebook_public_api: false, twitter_public_api: false, retry_emails: false,
     fb_message_echo_support: false, portal_prototype_update: false, solutions_quick_view: false,
-    solutions_freshconnect: false, fsm_scheduler_month_view: false, solutions_dashboard: false,
+    solutions_freshconnect: false, solutions_dashboard: false,
     facebook_post_outgoing_attachment: true, article_versioning_redis_lock: false,
     salesforce_sync: false, salesforce_v2: false, dynamics_v2: false, marketplace_app: false, freshid_sso_sync: true,
     fw_sso_admin_security: false, shopify_api_revamp: false,
     omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false,
-    ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false
+    ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false,
+    twitter_api_compliance: false, omni_agent_availability_dashboard: false
   }.freeze
   
   BLOCK_GRACE_PERIOD = 90.days

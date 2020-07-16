@@ -81,15 +81,15 @@ class Integrations::GoogleContactsImporter
     unless sync_tag_id.blank?
       # If sync tag is not specified then users in db will not be pushed back to Google.
       # deletion handling is Disabled for now. Remove the deleted check in the query to enable it.
-      users = @google_account.account.all_users.where(["updated_at > ?  and active=?", last_sync_time, true])
+      users = @google_account.account.all_users.find(:all, :conditions => ["updated_at > ?  and active=?", last_sync_time, true])
     end
     Rails.logger.debug "#{users.length} users in db has been fetched. #{@google_account.email}"
     users.blank? ? [] : users
   end
 
   def find_non_google_contacts
-    google_user_ids=GoogleContact.select('user_id').map {|i| i.user_id }
-    users = User.where(['id NOT IN (?) AND active = ? AND deleted = ?',google_user_ids, true, false])
+    google_user_ids=GoogleContact.find(:all,:select=>'user_id').map {|i| i.user_id }
+    users = User.find(:all, :conditions=>['id NOT IN (?) AND active = ? AND deleted = ?',google_user_ids, true, false])
     users.blank? ? [] : users
   end
 
@@ -126,7 +126,7 @@ class Integrations::GoogleContactsImporter
                   next if user.agent? && user.deleted?
                   updated = user.save
                   updated ? (user.deleted ? stats[2] += 1 : stats[1] += 1) : (user.deleted ? err_stats[2] += 1 : err_stats[1] += 1) 
-                  GoogleContact.where(["user_id = ? AND google_account_id = ?",user.id,@google_account.id]).first.destroy if user.deleted
+                  GoogleContact.find(:first,:conditions => ["user_id = ? AND google_account_id = ?",user.id,@google_account.id]).destroy if user.deleted
                   Rails.logger.info "User #{user.email} update successful :: #{updated}, errors: #{user.errors.full_messages}"
                 end
               end

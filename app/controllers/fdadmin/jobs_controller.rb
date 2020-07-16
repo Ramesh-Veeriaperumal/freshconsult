@@ -19,7 +19,7 @@ class Fdadmin::JobsController < Fdadmin::DevopsMainController
 	def show
     offset = params[:page] ? params[:page].to_i * LIMIT : 0
     order = (params[:type] == JOB_TYPES[:failed]) ? "updated_at" : "run_at"
-    jobs = current_job_type.where(@condition).order(order).offset(offset).limit(LIMIT)
+    jobs = current_job_type.find(:all, :conditions => @condition, :order => order ,:offset => offset, :limit => LIMIT)
     render :json => jobs  
 	end 
 
@@ -73,7 +73,7 @@ class Fdadmin::JobsController < Fdadmin::DevopsMainController
 
 		def delayed_jobs_count
 			result = {}
-			result[:jobs_count] = current_job_type.where(@condition).count
+			result[:jobs_count] = current_job_type.find(:all, :conditions => @condition).count
       result[:total_count] = (params[:type] == JOB_TYPES[:failed]) ? current_job_type.count : nil
       result
 		end

@@ -199,7 +199,7 @@ module Search::TicketSearch
       if @current_options && @current_options.has_key?("owner_id")
         company_id = @current_options["owner_id"].split(',').map(&:to_i)
       end
-      @selected_companies = Account.current.companies.where(id: company_id) if company_id
+      @selected_companies = Account.current.companies.find_all_by_id(company_id) if company_id
       @selected_companies << NONE_VALUE if company_id and company_id.include?(NONE_VALUE)
       
       return @selected_companies || [[1,""]]
@@ -211,7 +211,7 @@ module Search::TicketSearch
       elsif @current_options && @current_options.has_key?("requester_id")
         requester_id = @current_options["requester_id"].split(',')
       end
-      @selected_requesters = Account.current.users.where(id: requester_id) if requester_id
+      @selected_requesters = Account.current.users.find_all_by_id(requester_id) if requester_id
       
       return @selected_requesters || [[1,""]]
     end

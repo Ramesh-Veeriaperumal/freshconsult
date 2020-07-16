@@ -64,15 +64,15 @@ module Facebook
       
       def fetch_post_from_dynamo(post_id, dynamo_helper)
         post_feeds    = dynamo_helper.fetch_feeds(post_id, @fan_page.default_stream.id)        
-        fb_post       = post_feeds.select{|feed| feed["type"][0] == POST_TYPE[:post] || feed["type"][0] == POST_TYPE[:status]}
-        fb_comments   = post_feeds.select{|feed| feed["type"][0] == POST_TYPE[:comment]}
-        fb_replies    = post_feeds.select{|feed| feed["type"][0] == POST_TYPE[:reply_to_comment]}
+        fb_post       = post_feeds.select{|feed| feed["type"][:ss][0] == POST_TYPE[:post] || feed["type"][:ss][0] == POST_TYPE[:status]}
+        fb_comments   = post_feeds.select{|feed| feed["type"][:ss][0] == POST_TYPE[:comment]}
+        fb_replies    = post_feeds.select{|feed| feed["type"][:ss][0] == POST_TYPE[:reply_to_comment]}
         
         post          = post_from_dynamo(fb_post[0], POST_TYPE[:comment])    
         
         fb_comments.each do |fb_comment|
           comment = comment_from_dynamo(fb_comment, POST_TYPE[:comment], true)    
-          replies = fb_replies.select{|feed| feed["parent_comment"][0] == fb_comment["feed_id"]}
+          replies = fb_replies.select{|feed| feed["parent_comment"][:ss][0] == fb_comment["feed_id"][:s]}
           replies.each do |reply|
             parent = {:id => comment[:id]}
             comment[:comments][:data] <<  reply_from_dynamo(reply, POST_TYPE[:reply_to_comment], false, parent)

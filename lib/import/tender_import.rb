@@ -108,7 +108,7 @@ end
 def get_folder article_file , import_id
   category =  @current_account.solution_categories.where(name: 'Default Category').first_or_create
   folder_name = File.split(File.dirname(article_file))[1]
-  folder = category.folders.where(name: folder_name, import_id: import_id).first
+  folder = category.folders.find(:first, :conditions =>['name=? or import_id=?',folder_name, import_id])
   unless folder
       folder_hash = {:name => folder_name , :import_id => import_id, :visibility => Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone] }
       folder = category.folders.create(folder_hash)

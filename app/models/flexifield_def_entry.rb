@@ -15,7 +15,7 @@ class FlexifieldDefEntry < ActiveRecord::Base
                                 conditions: proc { 'helpdesk_ticket_fields.account_id = flexifield_def_entries.account_id AND helpdesk_ticket_fields.deleted = 0' }
   validates_presence_of :flexifield_name, :flexifield_alias, :flexifield_order
 
-  scope :drop_down_fields, -> { where(flexifield_coltype: 'dropdown') }
+  scope :drop_down_fields, :conditions => {:flexifield_coltype => 'dropdown' }
 
   scope :event_fields, -> { joins(:active_ticket_field).where("flexifield_def_entries.flexifield_coltype = 'dropdown' or flexifield_def_entries.flexifield_coltype = 'checkbox'") }
   

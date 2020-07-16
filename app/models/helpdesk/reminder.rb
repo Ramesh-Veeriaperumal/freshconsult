@@ -10,22 +10,21 @@ class Helpdesk::Reminder < ActiveRecord::Base
   belongs_to :company, class_name: 'Company', foreign_key: 'company_id', 
     inverse_of: :reminders
 
-  scope :visible, ->{
-    where(deleted: false).order('updated_at ASC, created_at ASC')
+  scope :visible, :conditions => [ "deleted = ?", false ], 
+    :order => 'updated_at ASC, created_at ASC'
+  scope :logged, lambda { |time| 
+          { 
+            :conditions => ["deleted = ? AND updated_at > ?", true, time], 
+            :order => 'deleted ASC, updated_at DESC, created_at DESC'  
+          }
   }
-
-  scope :logged, ->(time){
-    where(["deleted = ? AND updated_at > ?", true, time]).
-    order('deleted ASC, updated_at DESC, created_at DESC')
-  }
-
   belongs_to :contact, class_name: 'User', foreign_key: 'contact_id',
     inverse_of: :contact_reminders
 
   scope :with_resources, lambda { |resources|
-                          self.preload(*resources).order("id DESC") if resources.present?
+                          self.preload(*resources).order("id DESC")
                         }
-  scope :scheduled, ->{ where('reminder_at is not null') }
+  scope :scheduled, conditions: ['reminder_at is not null']
   attr_accessible :body, :deleted, :user, :reminder_at
   
   validates_numericality_of :user_id
@@ -75,7 +74,7 @@ class Helpdesk::Reminder < ActiveRecord::Base
         scheduler_type: TodoConstants::SCHEDULER_TYPE
       },
       sqs: {
-        url: AwsWrapper::SqsV2.queue_url(SQS[:fd_scheduler_reminder_todo_queue])
+        url: SQS_V2_QUEUE_URLS[SQS[:fd_scheduler_reminder_todo_queue]]
       }
     }
     ::Scheduler::PostMessage.perform_async(payload: payload) if Account.current.todos_reminder_scheduler_enabled?

@@ -29,7 +29,7 @@ class TicketsDependencyTest < ActionView::TestCase
       :show_password_expiry_warning, :load_assoc_parent, :load_tracker_ticket, :set_adjacent_list, :fetch_item_attachments,
       :load_tkt_and_templates, :check_ml_feature, :load_parent_template, :load_associated_tickets, :outbound_email_allowed?,
       :requester_widget_filter_params, :check_custom_view_feature, :ensure_proper_sts_header, :remove_skill_param,
-      :export_limit_reached?, :record_query_comment, :log_csrf, :remove_session_data, :check_session_timeout
+      :export_limit_reached?, :record_query_comment, :log_csrf, :remove_session_data, :check_session_timeout, :set_all_agent_groups_permission
     ]
 
     actual_filters = Helpdesk::TicketsController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact

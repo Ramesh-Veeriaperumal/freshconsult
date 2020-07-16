@@ -127,6 +127,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
+  def construct_ticket_old_body_hash
+    {
+      :description => self.ticket_body_content.description,
+      :description_html => self.ticket_body_content.description_html,
+      :raw_text => self.ticket_body_content.raw_text,
+      :raw_html => self.ticket_body_content.raw_html,
+      :meta_info => self.ticket_body_content.meta_info,
+      :version => self.ticket_body_content.version,
+      :account_id => self.account_id,
+      :ticket_id => self.id
+    }
+  end
+
   def set_default_values
     self.source       = Account.current.helpdesk_sources.ticket_source_keys_by_token[:portal] if self.source == 0
     self.ticket_type  = nil if self.ticket_type.blank?
@@ -299,7 +312,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
           :source => Account.current.helpdesk_sources.note_source_keys_by_token['meta'],
           :account_id => self.account.id,
           :user_id => self.requester.id,
-          :disable_observer => true
+          :disable_observer => true,
+          :s3_create => false
         )
         meta_note.attachments = meta_note.inline_attachments = []
         meta_note.skip_central_publish = true
@@ -516,8 +530,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   # Parent Child ticket validations...
   def validate_assoc_parent_ticket
-    set_all_agent_groups_permission
     return if self.associates_rdb.present?
+    set_all_agent_groups_permission if User.current
     @assoc_parent_ticket = Account.current.tickets.permissible(User.current).readonly(false).find_by_display_id(assoc_parent_tkt_id)
     if !(@assoc_parent_ticket && @assoc_parent_ticket.can_be_associated?)
       errors.add(:parent_id, t('ticket.parent_child.permission_denied'))

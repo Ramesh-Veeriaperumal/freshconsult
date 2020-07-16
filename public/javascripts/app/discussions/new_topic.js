@@ -105,7 +105,7 @@ window.App.Discussions = window.App.Discussions || {};
     setTopicBody: function(content) {
       var forum_topic_description = $('#topic_forums_description');
       if(forum_topic_description.data('newEditor')) {
-        forum_topic_description.data('froala.editor').html.insert(content)
+        forum_topic_description.data('froala.editor').html.set(content)
       } else {
         forum_topic_description.setCode(content);
       }

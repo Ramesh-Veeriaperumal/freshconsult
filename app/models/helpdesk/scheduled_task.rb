@@ -19,7 +19,7 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
   
   after_commit :trigger, if: Proc.new { persisted? && available? } 
   
-  scope :by_schedulable_type, ->(schedulable_type){ where(schedulable_type: schedulable_type) }
+  scope :by_schedulable_type, lambda{ |schedulable_type| {:conditions => ['schedulable_type = ?', schedulable_type]}}
 
   scope :upcoming_tasks, lambda{ |from = Time.now.utc| 
     tasks_between(from, from.end_of_hour).where("status NOT IN (?)", INACTIVE_STATUS) }
@@ -28,15 +28,15 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
     tasks_between(from-(MAX_DANGLE_HOUR*CRON_FREQUENCY_IN_HOURS), from-(MIN_DANGLE_TIME_IN_MINUTES)).where(
       "status NOT IN (?)", INACTIVE_STATUS) }
 
-  scope :tasks_between, ->(from, till) {
-    where('next_run_at BETWEEN ? AND ?', from, till).
-    includes([:user, :account])
-  }
+  scope :tasks_between, lambda{ |from, till| {
+            :conditions => [ 'next_run_at BETWEEN ? AND ?', from, till ],
+            :include => [:user, :account] }}
 
-  scope :active_tasks, ->{ where('status NOT IN (?)', INACTIVE_STATUS) }
+  scope :active_tasks, lambda{ {:conditions => ['status NOT IN (?)', INACTIVE_STATUS] } }
 
-  scope :dead_tasks, ->(base_time = Time.now.utc) {
-    where(['next_run_at < (?) AND status NOT IN (?)',(base_time-(DEAD_TASK_LIMIT_TIME_IN_HOURS)), Helpdesk::ScheduledTask::INACTIVE_STATUS])
+  scope :dead_tasks, lambda{ |base_time = Time.now.utc| {
+    :conditions => ['next_run_at < (?) AND status NOT IN (?)',(base_time-(DEAD_TASK_LIMIT_TIME_IN_HOURS)), Helpdesk::ScheduledTask::INACTIVE_STATUS]
+    }
   }
 
   STATUS_NAME_TO_TOKEN.each_pair do |k, v|

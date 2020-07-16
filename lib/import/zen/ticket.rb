@@ -6,43 +6,43 @@ module Import::Zen::Ticket
   ARCHIVED_TICKET_STATUS = 5      
 
  class Attachment < Import::FdSax
-    # element :url
+    element :url
  end
   
  class CustomField < Import::FdSax
-    # element "ticket-field-id" , :as => :field_id
-    # element :value 
+    element "ticket-field-id" , :as => :field_id
+    element :value 
   end
   
   class Comment < Import::FdSax
-     # element "author-id" , :as => :user_id
-     # element "created-at" , :as => :created_at
-     # element "is-public" , :as => :public
-     # element  :value , :as => :body
-     # elements :attachment , :as => :attachments , :class => Attachment
+     element "author-id" , :as => :user_id
+     element "created-at" , :as => :created_at
+     element "is-public" , :as => :public
+     element  :value , :as => :body
+     elements :attachment , :as => :attachments , :class => Attachment
   end
   
  class TicketProp < Import::FdSax
-    # element "nice-id", :as => :display_id
-    # element :subject
-    # element :description
-    # element "status-id" , :as => :status 
-    # element "created-at", :as => :created_at
-    # element "assignee-id", :as => :responder_id
-    # element "assigned-at" , :as => :assigned_at
-    # element "initially-assigned-at" , :as => :first_assigned_at
-    # element "solved-at" , :as => :resolved_at
-    # element "status-updated-at" , :as => :status_upated_at    
-    # element "due-date", :as => :due_by
-    # element "resolution-time" , :as => :resolution_time
-    # element "requester-id", :as => :requester_id
-    # element "priority-id" , :as => :priority_id
-    # element "ticket-type-id", :as => :ticket_type
-    # element "group-id" , :as => :group_id
-    # element "updated-at" , :as => :updated_at
-    # elements :comment , :as => :comments , :class =>Comment
-    # elements "ticket-field-entry" , :as => :custom_fields , :class => CustomField
-    # elements :attachment , :as => :attachments , :class => Attachment
+    element "nice-id", :as => :display_id
+    element :subject
+    element :description
+    element "status-id" , :as => :status 
+    element "created-at", :as => :created_at
+    element "assignee-id", :as => :responder_id
+    element "assigned-at" , :as => :assigned_at
+    element "initially-assigned-at" , :as => :first_assigned_at
+    element "solved-at" , :as => :resolved_at
+    element "status-updated-at" , :as => :status_upated_at    
+    element "due-date", :as => :due_by
+    element "resolution-time" , :as => :resolution_time
+    element "requester-id", :as => :requester_id
+    element "priority-id" , :as => :priority_id
+    element "ticket-type-id", :as => :ticket_type
+    element "group-id" , :as => :group_id
+    element "updated-at" , :as => :updated_at
+    elements :comment , :as => :comments , :class =>Comment
+    elements "ticket-field-entry" , :as => :custom_fields , :class => CustomField
+    elements :attachment , :as => :attachments , :class => Attachment
 end
 
 def save_ticket ticket_xml
@@ -136,7 +136,7 @@ def ticket_post_process ticket_prop , ticket
     note_props = comment.to_hash.tap { |hs| hs.delete(:public) }.merge({:user_id =>user.id, :private => !(comment.public.to_bool) ,:incoming =>user.customer?,
                                                                         :account_id => @current_account.id , 
                                                                         :note_body_attributes => {:body =>comment.body} ,:deleted => false ,
-                                                                        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] , :created_at =>comment.created_at.to_datetime()})
+                                                                        :source => Account.current.helpdesk_sources.note_source_keys_by_token['note'] , :created_at =>comment.created_at.to_datetime()})
     note_props = note_props.to_hash.tap{|hs| hs.delete(:body)}
     @note = ticket.notes.build(note_props)
     # Injecting '@skip_resource_rate_limit' instance variable to skip resource rate limit

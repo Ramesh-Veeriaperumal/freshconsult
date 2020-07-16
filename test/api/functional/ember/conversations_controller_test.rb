@@ -2097,6 +2097,19 @@ module Ember
       @account.revoke_feature(:traffic_cop)
     end
 
+    def test_agent_private_note_with_traffic_cop_invalid
+      @account.add_feature(:traffic_cop)
+      Account.current.reload
+      ticket = create_ticket
+      reply = create_private_note(ticket)
+      last_note_id = reply.id
+      params_hash = reply_note_params_hash.merge(last_note_id: last_note_id - 1)
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern(:conversation, :traffic_cop_alert)])
+      @account.revoke_feature(:traffic_cop)
+    end
+
     def test_public_note_with_traffic_cop_invalid
       @account.add_feature(:traffic_cop)
       Account.current.reload
@@ -2185,6 +2198,21 @@ module Ember
       @account.revoke_feature(:traffic_cop)
     end
 
+    def test_agent_private_note_with_traffic_cop_valid
+      @account.add_feature(:traffic_cop)
+      Account.current.reload
+      ticket = create_ticket
+      note = create_private_note(ticket)
+      last_note_id = note.id
+      params_hash = create_note_params_hash.merge(last_note_id: last_note_id, private: false)
+      post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+      @account.revoke_feature(:traffic_cop)
+    end
+
     def test_public_note_with_traffic_cop_valid
       @account.add_feature(:traffic_cop)
       Account.current.reload
@@ -2208,6 +2236,21 @@ module Ember
       last_note_id = reply.id
       params_hash = reply_note_params_hash
       post :reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+      @account.revoke_feature(:traffic_cop)
+    end
+
+    def test_private_note_with_traffic_cop_without_last_note_id
+      @account.add_feature(:traffic_cop)
+      Account.current.reload
+      ticket = create_ticket
+      note = create_private_note(ticket)
+      last_note_id = note.id
+      params_hash = create_note_params_hash.merge(private: false)
+      post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params_hash, latest_note))
@@ -2271,18 +2314,28 @@ module Ember
       match_json(private_note_pattern({}, latest_note))
     end
 
-    def test_private_note_with_traffic_cop_with_last_note_id
-      @account.add_feature(:traffic_cop)
-      Account.current.reload
+    def test_agent_private_note_without_traffic_cop_with_last_note_id
+      @account.revoke_feature(:traffic_cop)
       ticket = create_ticket
-      note = create_public_note(ticket)
+      note = create_private_note(ticket)
       last_note_id = note.id
-      params_hash = create_note_params_hash.merge(private: true, last_note_id: last_note_id-1)
-      post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      params_hash = create_note_params_hash.merge(last_note_id: last_note_id - 1, private: false)
+      post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params_hash, latest_note))
       match_json(private_note_pattern({}, latest_note))
+    end
+
+    def test_private_note_with_traffic_cop_with_last_note_id
+      @account.add_feature(:traffic_cop)
+      Account.current.reload
+      ticket = create_ticket
+      note = create_private_note(ticket)
+      last_note_id = note.id
+      params_hash = create_note_params_hash.merge(private: true, last_note_id: last_note_id - 1)
+      post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 400
       @account.revoke_feature(:traffic_cop)
     end
 
@@ -2306,15 +2359,13 @@ module Ember
       Account.current.reload
       ticket = create_ticket
       note = create_private_note(ticket)
+      Timecop.travel(1.second)
       BULK_NOTE_CREATE_COUNT.times do
         create_private_note(ticket)
       end
       params_hash = create_note_params_hash.merge(last_note_id: note.id)
-      post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
-      assert_response 201
-      latest_note = Helpdesk::Note.last
-      match_json(private_note_pattern(params_hash, latest_note))
-      match_json(private_note_pattern({}, latest_note))
+      post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 400
       @account.revoke_feature(:traffic_cop)
     end
 
@@ -2333,6 +2384,21 @@ module Ember
         last_note_id: note.id,
         twitter_handle_id: get_twitter_handle.id
       })
+      assert_response 400
+      ticket.destroy
+      @account.revoke_feature(:traffic_cop)
+    end
+
+    def test_tweet_mention_with_traffic_cop_ignoring_private_note
+      @account.add_feature(:traffic_cop)
+      Account.current.reload
+      ticket = create_twitter_ticket
+      note = create_private_note(ticket)
+      Timecop.travel(1.second)
+      BULK_NOTE_CREATE_COUNT.times do
+        create_private_note(ticket)
+      end
+      post :tweet, construct_params({ version: 'private', id: ticket.display_id }, body: Faker::Lorem.sentence[0..130], tweet_type: 'mention', last_note_id: note.id, twitter_handle_id: get_twitter_handle.id)
       assert_response 400
       ticket.destroy
       @account.revoke_feature(:traffic_cop)
@@ -2422,6 +2488,44 @@ module Ember
       sample_reply_dm = { 'id' => Time.now.utc.to_i + 5 }
       BULK_NOTE_CREATE_COUNT.times do
         create_public_note(ticket)
+      end
+      Koala::Facebook::API.any_instance.stubs(:put_object).returns(sample_reply_dm)
+      params_hash = { body: Faker::Lorem.paragraph, last_note_id: note.id }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      Koala::Facebook::API.any_instance.unstub(:put_object)
+      assert_response 400
+      @account.revoke_feature(:traffic_cop)
+    end
+
+    def test_facebook_reply_to_fb_comment_with_traffic_cop_ignoring_private_note
+      @account.add_feature(:traffic_cop)
+      Account.current.reload
+      ticket = create_ticket_from_fb_post(true)
+      note = create_private_note(ticket)
+      sleep 1 # delay introduced so that notes are not created at the same time. Fractional seconds are ignored in tests.
+      BULK_NOTE_CREATE_COUNT.times do
+        create_private_note(ticket)
+      end
+      put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
+      sample_put_comment = { 'id' => put_comment_id }
+      fb_comment_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
+      Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
+      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id, last_note_id: note.id }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      Koala::Facebook::API.any_instance.unstub(:put_comment)
+      assert_response 400
+      @account.revoke_feature(:traffic_cop)
+    end
+
+    def test_facebook_reply_to_fb_direct_message_with_traffic_cop_ignoring_private_note
+      @account.add_feature(:traffic_cop)
+      Account.current.reload
+      ticket = create_ticket_from_fb_direct_message
+      note = create_private_note(ticket)
+      sleep 1 # delay introduced so that notes are not created at the same time. Fractional seconds are ignored in tests.
+      sample_reply_dm = { 'id' => Time.now.utc.to_i + 5 }
+      BULK_NOTE_CREATE_COUNT.times do
+        create_private_note(ticket)
       end
       Koala::Facebook::API.any_instance.stubs(:put_object).returns(sample_reply_dm)
       params_hash = { body: Faker::Lorem.paragraph, last_note_id: note.id }

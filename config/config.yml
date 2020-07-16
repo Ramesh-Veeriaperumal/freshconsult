@@ -126,6 +126,32 @@ freshchat:
     token: "b2bd4a97-1290-4dcb-966c-c27547ba9470"
     app_id: "6ba3ce2a-c09a-4247-9b28-83507210bf78"
 
+
+
+marketo:
+  development:
+    access_key: "freshdesk1_239416885003D634EEFB51"
+    secret_key: "987509605187632255000033DD663356EEFF59C93D90"
+    api_subdomain: "626-CPN-682"
+    api_version: "2_1"
+  test:
+    access_key: "freshdesk1_239416885003D634EEFB51"
+    secret_key: "987509605187632255000033DD663356EEFF59C93D90"
+    api_subdomain: "626-CPN-682"
+    api_version: "2_1"
+  production:
+    access_key: "freshdesk1_239416885003D634EEFB51"
+    secret_key: "987509605187632255000033DD663356EEFF59C93D90"
+    api_subdomain: "626-CPN-682"
+    api_version: "2_1"
+  staging:
+    access_key: "freshdesk1_239416885003D634EEFB51"
+    secret_key: "987509605187632255000033DD663356EEFF59C93D90"
+    api_subdomain: "626-CPN-682"
+    api_version: "2_1"
+
+
+
 integrations_url:
     development: "http://localhost:3000"
     test: "https://login.freshpo.com"

@@ -135,21 +135,10 @@ class EmailNotification < ActiveRecord::Base
 
   CUSTOM_CATEGORY_ID_ENABLED_NOTIFICATIONS = [NEW_TICKET, NEW_TICKET_CC, USER_ACTIVATION, EMAIL_TO_REQUESTOR]
 
-  scope :response_sla_reminder, -> { where(notification_type: RESPONSE_SLA_REMINDER) }
-  scope :resolution_sla_reminder, -> { where(notification_type: RESOLUTION_SLA_REMINDER) }
-  scope :next_response_sla_reminder, -> { where(notification_type: NEXT_RESPONSE_SLA_REMINDER) }
-  scope :non_sla_notifications, -> { 
-    where(["notification_type NOT IN (?)", [
-        TICKET_UNATTENDED_IN_GROUP,
-        FIRST_RESPONSE_SLA_VIOLATION,
-        RESOLUTION_TIME_SLA_VIOLATION,
-        RESPONSE_SLA_REMINDER,
-        RESOLUTION_SLA_REMINDER,
-        NEXT_RESPONSE_SLA_REMINDER,
-        NEXT_RESPONSE_SLA_VIOLATION
-      ]
-    ]) 
-  }
+  scope :response_sla_reminder, :conditions => { :notification_type => RESPONSE_SLA_REMINDER } 
+  scope :resolution_sla_reminder, :conditions => { :notification_type => RESOLUTION_SLA_REMINDER }
+  scope :next_response_sla_reminder, :conditions => { :notification_type => NEXT_RESPONSE_SLA_REMINDER }
+  scope :non_sla_notifications, :conditions => ["notification_type not in (?)", [TICKET_UNATTENDED_IN_GROUP,FIRST_RESPONSE_SLA_VIOLATION,RESOLUTION_TIME_SLA_VIOLATION,RESPONSE_SLA_REMINDER,RESOLUTION_SLA_REMINDER,NEXT_RESPONSE_SLA_REMINDER,NEXT_RESPONSE_SLA_VIOLATION]]
 
   def token
     TOKEN_BY_KEY[self.notification_type]

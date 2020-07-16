@@ -1,7 +1,6 @@
 class ExportCsvValidation < ApiValidation
   attr_accessor :default_fields, :custom_fields, :fields
 
-  CUSTOMER_EXPORT_EXCLUDE_FIELDS = %w(tag_names).freeze
   validates :fields, data_type: { rules: Hash, allow_nil: false }, required: true, if: -> { contact_or_company? }
   validates :default_fields,
     data_type: { rules: Array, allow_nil: false },
@@ -24,8 +23,8 @@ class ExportCsvValidation < ApiValidation
   end
 
   def default_field_names
-    Account.current.safe_send("#{@export_type}_form").
-        safe_send("default_#{@export_type}_fields").map(&:name) - CUSTOMER_EXPORT_EXCLUDE_FIELDS
+    Account.current.safe_send("#{@export_type}_form")
+           .safe_send("default_#{@export_type}_fields").map(&:name)
   end
 
   def custom_field_names
@@ -50,7 +49,7 @@ class ExportCsvValidation < ApiValidation
   end
 
   def default_contact_fields
-    Account.current.contact_form.default_contact_fields(true).map(&:name) - ['tag_names']
+    Account.current.contact_form.default_contact_fields(true).map(&:name)
   end
 
   def custom_contact_fields

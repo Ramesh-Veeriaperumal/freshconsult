@@ -21,14 +21,13 @@ class SubscriptionPlan < ActiveRecord::Base
   attr_accessor :discount
   OLD_PLANS = ["Sprout", "Blossom", "Garden", "Estate", "Forest"]
   
-  scope :current, -> { where(classic: false).order('amount asc') }
+  scope :current, :conditions => { :classic => false }, :order => 'amount asc'
 
   scope :get_details_by_name, ->(fields, names) { select(fields).where(name: names) }
 
   # TODO: Remove force_2020_plan?() after 2019 plan launched
   # START
-  scope :plans_2020, -> { where(name: ['Sprout Jan 20', 'Blossom Jan 20', 'Garden Jan 20', 'Estate Jan 20', 'Estate Omni Jan 20', 'Forest Jan 20', 'Forest Omni Jan 20']).
-                                         order('amount asc')}
+  scope :plans_2020, conditions: { name: ['Sprout Jan 20', 'Blossom Jan 20', 'Garden Jan 20', 'Estate Jan 20', 'Estate Omni Jan 20', 'Forest Jan 20', 'Forest Omni Jan 20'] }, order: 'amount asc'
   # END
 
   scope :omni_channel_plan, -> { where(name: ['Estate Omni Jan 20', 'Forest Omni Jan 20']).order('amount asc') }
@@ -167,7 +166,7 @@ class SubscriptionPlan < ActiveRecord::Base
   end
 
   def self.get_free_plan_id
-    where(name: SUBSCRIPTION_PLANS[:free]).select(:id)
+    find(:all, :select => :id , :conditions => {:name => SUBSCRIPTION_PLANS[:free]})
   end
   
   def self.previous_plans

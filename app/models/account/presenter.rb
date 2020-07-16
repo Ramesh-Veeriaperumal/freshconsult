@@ -3,6 +3,8 @@ class Account < ActiveRecord::Base
   include CentralLib::Util
 
   ACCOUNT_DESTROY = 'account_destroy'.freeze
+  ACCOUNT_CREATE = 'account_create'.freeze
+  ACCOUNT_UPDATE = 'account_update'.freeze
 
   acts_as_api
 
@@ -118,5 +120,15 @@ class Account < ActiveRecord::Base
       settings[:bundle_id] = omni_bundle_id
       settings[:bundle_name] = omni_bundle_name
     end
+  end
+
+  def bundle_info(payload_type)
+    return {} unless [ACCOUNT_CREATE, ACCOUNT_UPDATE].include?(payload_type)
+
+    {
+      bundle: {
+        type: omni_bundle_name
+      }
+    }
   end
 end

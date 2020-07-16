@@ -51,7 +51,7 @@ module CannedFormsTestHelper
   def form_payload(params={})
     {
       'name' => params[:name] || Faker::Name.name,
-      'version' => params[:version],
+      'version' => params[:version] || 1,
       'welcome_text' => params[:welcome_text] || Faker::Lorem.characters(100),
       'thankyou_text' => params[:thankyou_text] || Faker::Lorem.characters(100),
       'fields' => params[:fields] || fields_payload

@@ -12,7 +12,7 @@ module Helpdesk::QuestsHelper
 
 	private
 		def get_available_quests
-			current_account.quests.available(current_user).limit(2)
+			current_account.quests.available(current_user).find(:all, :limit => 2)
 		end
 
 end

@@ -31,6 +31,8 @@ class Helpdesk::TicketsController < ApplicationController
   include Redis::TicketsRedis
   include Helpdesk::SendAndSetHelper
   include CompaniesHelperMethods
+  include AdvancedTicketScopes
+
 
   ALLOWED_QUERY_PARAMS = ['collab', 'message', 'follow']
   SCENARIO_AUTOMATION_ACTIONS = [:execute_scenario, :execute_bulk_scenario]
@@ -78,7 +80,7 @@ class Helpdesk::TicketsController < ApplicationController
   alias :load_ticket :load_item
 
   before_filter :verify_ticket_permission_by_id, :only => [:component]
-
+  before_filter :set_all_agent_groups_permission, only: [:print]
   before_filter :load_ticket,
     :only => [:edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft,
               :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties,
@@ -143,7 +145,7 @@ class Helpdesk::TicketsController < ApplicationController
   def suggest_tickets
     tickets = []
     similar_tickets_list = get_similar_tickets
-    tickets = current_account.tickets.visible.preload(:requester, :ticket_status, :ticket_body).permissible(current_user).reorder("field(helpdesk_tickets.id, #{similar_tickets_list.join(',')})").where(id: similar_tickets_list) if similar_tickets_list.present?
+    tickets = current_account.tickets.visible.preload(:requester,:ticket_status,:ticket_old_body).permissible(current_user).reorder("field(helpdesk_tickets.id,#{similar_tickets_list.join(',')})").where(id:similar_tickets_list) if similar_tickets_list.present?
     tickets_list = []
     tickets.each do |ticket|
       similar_tickets = Hash.new
@@ -347,9 +349,9 @@ class Helpdesk::TicketsController < ApplicationController
           render :json => {:errors => @response_errors}.to_json
         else
           array = []
-          @items.preload(:ticket_body, :schema_less_ticket, flexifield: :flexifield_def).each do |tic|
+          @items.preload(:ticket_old_body,:schema_less_ticket,:flexifield => :flexifield_def).each { |tic|
             array << tic.as_json({}, false)['helpdesk_ticket']
-          end
+          }
           render :json => array
         end
       end
@@ -546,7 +548,7 @@ class Helpdesk::TicketsController < ApplicationController
       format.html  {
         @ticket_notes       = @ticket_notes.reverse
         @ticket_notes_total = run_on_slave { @ticket.conversation_count }
-        last_public_note    = run_on_slave { @ticket.notes.visible.last_traffic_cop_note.first }
+        last_public_note    = run_on_slave { @ticket.notes.conversations(nil, 'created_at DESC', 1).first }
         @last_note_id       = last_public_note.blank? ? -1 : last_public_note.id
         @last_broadcast_message = run_on_slave { @ticket.last_broadcast_message } if @ticket.related_ticket?
       }
@@ -1977,7 +1979,8 @@ class Helpdesk::TicketsController < ApplicationController
         @item ||= @items.first
       end
       verified = true
-      unless current_user && current_user.has_ticket_permission?(@item) && !@item.trashed
+      has_permission = (advanced_scope_enabled? && action == :print) ? current_user.has_read_ticket_permission?(@item) : current_user.has_ticket_permission?(@item) if current_user
+      unless current_user && has_permission && !@item.trashed
         verified = false
         flash[:notice] = t("flash.general.access_denied")
         if request.xhr? || is_native_mobile?
@@ -2105,7 +2108,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def preload_options
-    options = [:attachments, :note_body, :schema_less_note]
+    options = [:attachments, :note_old_body, :schema_less_note]
     include_options = {:notes => options}
     include_options
   end
@@ -2264,7 +2267,7 @@ class Helpdesk::TicketsController < ApplicationController
       conditions       = { display_id: @item.associates }
       per_page         = @item.assoc_parent_ticket? ? 10 : 30
       paginate_options = { :page => params[:page], :per_page => per_page }
-      @associated_tickets = current_account.tickets.preload(preload_models).where(conditions).paginate(paginate_options) # rubocop:disable Gem/WillPaginate
+      @associated_tickets = current_account.tickets.preload(preload_models).where(conditions).paginate(paginate_options)
     end
   end
 

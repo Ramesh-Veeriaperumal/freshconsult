@@ -1,28 +1,22 @@
 class Ryuken::EmailRateLimitingWorker
   include Shoryuken::Worker
   include EmailRateLimitHelper
-  include Redis::OthersRedis
 
   shoryuken_options queue: SQS[:email_rate_limiting_queue], auto_delete: true, body_parser: :json
 
   FRESHDESK_PRODUCT_FILTER = 'FRESHDESK_EMAIL'.freeze
 
   def perform(sqs_msg, _args)
-    data = JSON.parse(sqs_msg.body)['data']
-    data.deep_symbolize_keys!
+    msg = JSON.parse(sqs_msg.body)
+    data = msg['data'].deep_symbolize_keys
     return unless validate_params(data[:payload])
 
     begin
       account_id = data[:account_id]
-      time = Time.now.in_time_zone
-      hour = time.hour
-      min = time.min
-      sec = time.sec
-      # divide 1 hr in 4 quadrants of 15 min
-      quadrant = min / 15 + 1
-      # set expiry as 15 min plus remaining time in current quadrant from Time.now
-      expiry = 30.minutes - (min % 15).minutes - sec.seconds
-      process_email_rate_limiting(expiry, hour, quadrant, account_id)
+      meta = msg['meta'].deep_symbolize_keys
+      # remove milliseconds from timestamp since Time.at takes number of seconds since epoch
+      time = Time.at(meta[:central][:collected_at] / 1000).in_time_zone
+      process_email_rate_limiting(account_id, time)
     end
   rescue StandardError => e
     NewRelic::Agent.notice_error(e, description: "Error while processing Email Rate Limiting message #{e}")

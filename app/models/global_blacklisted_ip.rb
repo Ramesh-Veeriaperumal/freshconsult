@@ -5,7 +5,7 @@ class GlobalBlacklistedIp < ActiveRecord::Base
 
 	include Cache::Memcache::GlobalBlacklistIp
 
-  serialize :ip_list, Array
+	serialize :ip_list, Array
 	attr_accessible :ip_list
 	after_commit :clear_blacklisted_ip_cache	
 	validate :valid_ips?

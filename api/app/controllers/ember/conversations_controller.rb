@@ -280,7 +280,7 @@ module Ember
       end
 
       def conditional_preload_options
-        preload_options = [:schema_less_note, :note_body, :attachments, :cloud_files, :attachments_sharable,
+        preload_options = [:schema_less_note, :note_old_body, :attachments, :cloud_files, :attachments_sharable,
                            custom_survey_remark: { survey_result: { survey: { survey_questions: {} }, survey_result_data: {} } }]
         if @ticket.facebook?
           preload_options << :fb_post

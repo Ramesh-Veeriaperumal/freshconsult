@@ -11,12 +11,10 @@ class SupportControllerTest < ActionController::TestCase
   end
 
   def test_sitemap_without_generating
-    AwsWrapper::S3.stubs(:exists?).returns(false)
     get :sitemap, format: 'xml'
     assert_response 404
   ensure
-    AwsWrapper::S3.unstub(:read)
-    AwsWrapper::S3.unstub(:exists?)
+    AwsWrapper::S3Object.unstub(:reads)
   end
 
   def test_sitemap
@@ -25,7 +23,7 @@ class SupportControllerTest < ActionController::TestCase
       assert_response 200
     end
   ensure
-    AwsWrapper::S3.unstub(:read)
+    AwsWrapper::S3Object.unstub(:reads)
   end
 
   def test_robots_for_blocked_domain

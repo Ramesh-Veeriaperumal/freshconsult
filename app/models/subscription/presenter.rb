@@ -3,6 +3,7 @@ class Subscription < ActiveRecord::Base
 
   DATETIME_FIELDS = [:created_at, :updated_at, :next_renewal_at, :discount_expires_at]
   SUBSCRIPTION_UPDATE = 'subscription_update'.freeze
+  SUBSCRIPTION_CREATE = 'subscription_create'.freeze
 
   acts_as_api
 
@@ -50,5 +51,15 @@ class Subscription < ActiveRecord::Base
 
   def relationship_with_account
     "subscription"
+  end
+
+  def bundle_info(payload_type)
+    return {} unless [SUBSCRIPTION_CREATE, SUBSCRIPTION_UPDATE].include?(payload_type)
+
+    {
+      bundle: {
+        type: Account.current.omni_bundle_name
+      }
+    }
   end
 end

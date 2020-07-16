@@ -8,7 +8,7 @@ module Dynamo::FindMethods
 
 		def find(opts)
 			response = Dynamo::CLIENT.get_item(build_find_query_options(opts))
-			response.item.blank? ? nil : name.constantize.new.set(response[:item]) # PRE-RAILS: V1 returns Hash, v2 return response Seahorse::Client::Response. Fails if there is no result.
+			response.empty? ? nil : name.constantize.new().set(response[:item])
 		end
 
 		protected
@@ -24,7 +24,7 @@ module Dynamo::FindMethods
 
 			def key_value(opts, key)
 				{
-					key[:name].to_s => Dynamo.convert(key[:type] => opts[key[:name].to_sym].to_s)
+					key[:name].to_s => { key[:type] => opts[key[:name].to_sym].to_s }
 				}
 			end
 	end

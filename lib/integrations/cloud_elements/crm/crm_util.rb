@@ -5,7 +5,7 @@ module Integrations::CloudElements::Crm::CrmUtil
   def salesforce_v2_metadata_fields
     config_hash = set_config_hash
     config_hash['ticket_sync_option'] = params["ticket_sync_option"]["value"]
-    handle_salesforce_ticket_sync if ticket_sync_option? || @installed_app.configs_ticket_sync_option.to_s.to_bool
+    handle_salesforce_ticket_sync if ticket_sync_option? || @installed_app.configs_ticket_sync_option
     config_hash
   rescue => e
     Rails.logger.debug "Problem in salesforce_v2_metadata_fields Error - #{e.message}"

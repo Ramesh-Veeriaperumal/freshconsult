@@ -1,6 +1,8 @@
 module Integrations
   module AppMarketPlaceExtension
     extend ActiveSupport::Concern
+    include MarketplaceAppHelper
+    include Marketplace::GalleryConstants
 
     included do
 
@@ -40,6 +42,8 @@ module Integrations
     end
 
     def marketplace_app_delete
+      return if skip_makrketplace_syncup
+
       begin
         raise "Api Failed" unless app_updates('uninstall', application.name)
       rescue => e
@@ -49,7 +53,8 @@ module Integrations
     end
 
     def app_updates(method, app_name, configs = nil)
-      return true if Rails.env.development?
+      return true if Rails.env.development? || Rails.env.test?
+
       mkt_obj = ::Marketplace::MarketPlaceObject.new
       ni_latest_result = mkt_obj.safe_send(:ni_latest_details, app_name)
       return false if mkt_obj.safe_send(:error_status?, ni_latest_result)
@@ -70,6 +75,8 @@ module Integrations
       ext_result = mkt_obj.safe_send("#{method}_extension", params)
 
       return false if mkt_obj.safe_send(:error_status?, ext_result)
+
+      cache_paid_app_details(app_name, ext_result) if method == 'install' && should_verify_billing?
       true
     end
 
@@ -79,5 +86,13 @@ module Integrations
       Admin::MarketplaceAppsWorker.perform_async(params)
     end
 
+    def cache_paid_app_details(app_name, ext_result)
+      installed_extension_id = ext_result.body.try(:[], 'installed_extension_id')
+      set_or_add_marketplace_ni_extension_details(Account.current.id, app_name, installed_extension_id)
+    end
+
+    def should_verify_billing?
+      Account.current.marketplace_gallery_enabled? && NATIVE_PAID_APPS.include?(application.name)
+    end
   end
 end

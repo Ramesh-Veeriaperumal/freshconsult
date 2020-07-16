@@ -24,8 +24,8 @@ class CustomerImportTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.first)
     @account = Account.current
     @account.stubs(:secure_attachments_enabled?).returns(true)
-    AwsWrapper::S3.stubs(:fetch_obj).returns(fixture_file_upload('files/agent_skill_import.csv'))
-    AwsWrapper::S3.stubs(:delete).returns([])
+    AwsWrapper::S3Object.stubs(:find).returns(fixture_file_upload('files/agent_skill_import.csv'))
+    AwsWrapper::S3Object.stubs(:delete).returns([])
     @import_entry = @account.create_agent_skill_import(import_status: Admin::DataImport::IMPORT_STATUS[:started])
     @import_entry.save
     @args = {
@@ -47,8 +47,8 @@ class CustomerImportTest < ActionView::TestCase
 
   def teardown
     @account.unstub(:secure_attachments_enabled?)
-    AwsWrapper::S3.unstub(:fetch_obj)
-    AwsWrapper::S3.unstub(:delete)
+    AwsWrapper::S3Object.unstub(:find)
+    AwsWrapper::S3Object.unstub(:delete)
     Account.unstub(:current)
   end
 

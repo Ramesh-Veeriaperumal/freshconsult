@@ -70,7 +70,7 @@ class SubscriptionsController < ApplicationController
   end
 
   def billing
-    scoper.total_amount(scoper.addons, @coupon)
+    scoper.total_amount(scoper.addons, @coupon) if coupon_applicable?
     if request.post?
       if add_card_to_billing
         scoper.state = ACTIVE
@@ -219,8 +219,6 @@ class SubscriptionsController < ApplicationController
     end
 
     def load_billing
-      Rails.logger.info "active_merchant :: #{Account.current.id} :: params[:creditcard] ::  #{params[:creditcard].is_a?(Hash) ? params[:creditcard].keys.inpsect : params[:creditcard].present?}"
-      Rails.logger.info "active_merchant :: #{Account.current.id} :: params[:address] :: #{params[:address].is_a?(Hash) ? params[:address].keys.inpsect : params[:address].present?}"
       @creditcard = ActiveMerchant::Billing::CreditCard.new(params[:creditcard])
       @address = SubscriptionAddress.new(params[:address])
     end
@@ -339,7 +337,7 @@ class SubscriptionsController < ApplicationController
     def activate_subscription
       begin
         billing_address = @customer_details.nil? ? {} : billing_address(@customer_details.card)
-        billing_subscription.add_discount(scoper.account, @coupon) if @coupon == SubscriptionConstants::FDFSBUNDLE
+        billing_subscription.add_discount(scoper.account, @coupon) if coupon_applicable? && @coupon == SubscriptionConstants::FDFSBUNDLE
         result = billing_subscription.activate_subscription(scoper, billing_address)
         scoper.set_next_renewal_at(result.subscription)
         scoper.save!

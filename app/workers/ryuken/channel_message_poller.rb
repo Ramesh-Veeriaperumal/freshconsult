@@ -2,7 +2,7 @@ class Ryuken::ChannelMessagePoller
   include Shoryuken::Worker
   shoryuken_options queue: SQS[:channel_framework_services], auto_delete: true, body_parser: :json
 
-  def perform(sqs_msg, args)
+  def perform(sqs_msg)
     args = JSON.parse(sqs_msg.body)['data']
     payload_type = args['payload_type']
     worker_obj = create_worker_object(payload_type)

@@ -21,7 +21,7 @@ namespace :email_dynamo do
 	      }
 		  }
 
-	    $dynamo_v2_client.create_table(table_options)
+	    table = $dynamo.create_table(table_options)
     end
 	end
 	

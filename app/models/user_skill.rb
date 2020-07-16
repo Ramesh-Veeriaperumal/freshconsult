@@ -22,13 +22,13 @@ class UserSkill < ActiveRecord::Base
   before_destroy :decrement_rank_on_lower_items, :unless => :rank_handled_in_ui
   after_commit :sync_skill_based_user_queues
 
-  scope :account_user_scope, ->(account_id, user_id){
-    where(["account_id = ? AND user_id = ?", account_id, user_id])
-  }
+  scope :account_user_scope, lambda { |account_id, user_id| {
+    :conditions => ["account_id = ? AND user_id = ?", account_id, user_id]
+  }}
 
-  scope :greater_than_rank, ->(rank){
-    where(["rank > ?", rank])
-  }
+  scope :greater_than_rank, lambda { |rank| {
+    :conditions => ["rank > ?", rank]
+  }}
 
   def sync_skill_based_user_queues
     if account.skill_based_round_robin_enabled? && (user.agent.nil? || user.agent.available?)#user.agent.nil? - hack for agent destroy
@@ -38,7 +38,7 @@ class UserSkill < ActiveRecord::Base
   end
 
   def _action
-    [:create, :update, :destroy].find{ |action| transaction_include_action?(action) }
+    [:create, :update, :destroy].find{ |action| transaction_include_action? action }
   end
 
   private

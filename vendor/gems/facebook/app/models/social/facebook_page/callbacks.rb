@@ -49,7 +49,7 @@ class Social::FacebookPage < ActiveRecord::Base
         :account_id    => account_id,
         :stream        => def_stream.inspect
       }
-      notify_social_dev("Default Stream already present for the facebook page", error_params)
+      Rails.logger.error "Default Stream already present for the facebook page #{error_params}"
     end
   end
   

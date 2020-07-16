@@ -69,15 +69,8 @@ module MemcacheReadWriteMethods
     end
   end
 
-  def convert_value(value)
-    case value
-    when value.nil?
-      NullObject.instance
-    when value.is_a?(ActiveRecord::Relation)
-      value.all.to_a
-    else
-      value
-    end
+  def set_null(value)
+    value.nil? ? NullObject.instance : value
   end
 
   def unset_null(value)
@@ -89,7 +82,7 @@ module MemcacheReadWriteMethods
     cache_data = get_from_cache(key)
     if cache_data.nil?
       Rails.logger.debug "Cache hit missed :::::: #{key}"
-      cache(key, (cache_data = convert_value(block.call)), expiry)
+      cache(key, (cache_data = set_null(block.call)), expiry)
     else
       Rails.logger.debug "::::: #{after_cache_msg} :::::: #{key}" if after_cache_msg
     end
@@ -102,7 +95,7 @@ module MemcacheReadWriteMethods
     if cache_data.nil?
       Rails.logger.debug "Cache hit missed :::::: #{key}"
       cache_data = block.call
-      cache(key, convert_value(cache_data), expiry) unless cache_data.nil?
+      cache(key, set_null(cache_data), expiry) unless cache_data.nil?
     else
       Rails.logger.debug "::::: #{after_cache_msg} :::::: #{key}" if after_cache_msg
     end

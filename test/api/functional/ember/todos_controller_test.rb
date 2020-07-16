@@ -415,7 +415,6 @@ module Ember
 
     def test_index_with_type_and_rememberable_id
       ticket = get_ticket
-      ticket.reminders.destroy_all
       reminder = get_new_reminder('test delete', ticket.id)
       get :index, controller_params({ version: 'private', type: 'ticket', rememberable_id: ticket.display_id })
       assert_response 200
@@ -433,7 +432,6 @@ module Ember
 
     def test_index_without_type_and_reminder_id
       ticket = get_ticket
-      ticket.reminders.destroy_all
       reminder = get_new_reminder('test delete', ticket.id)
       get :index, controller_params({ version: 'private', rememberable_id: ticket.display_id})
       assert_response 200

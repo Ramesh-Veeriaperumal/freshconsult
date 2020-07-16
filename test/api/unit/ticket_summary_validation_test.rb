@@ -12,7 +12,6 @@ class TicketSummaryValidationTest < ActionView::TestCase
   def test_body
     controller_params = { 'user_id' => 1 }
     item = Helpdesk::Note.new
-    item.build_note_body
     item.note_body.body = ''
     item.note_body.body_html = 'test'
     ticket_summary = TicketSummaryValidation.new(controller_params, item)

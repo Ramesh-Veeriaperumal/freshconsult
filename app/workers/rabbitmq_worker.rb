@@ -178,7 +178,7 @@ class RabbitmqWorker
               exchange.starts_with?("topic") || exchange.starts_with?("post")) && key[2] == "1") ||
             ((exchange.starts_with?("forum_category") || exchange.starts_with?("forum") ||
               exchange.starts_with?("time_sheet") || exchange.starts_with?("subscription") ||
-              exchange.starts_with?("ticket_body")) && key[0] == "1")
+              exchange.starts_with?("ticket_old_body")) && key[0] == "1")
         )
       )
     end

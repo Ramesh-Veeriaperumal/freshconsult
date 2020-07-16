@@ -126,7 +126,8 @@ module Mobile::Actions::User
   #referred from CompaniesController 
   def user_recent_tickets
     self.account.tickets.permissible(self).
-        requester_active(self).visible.newest(10).select([:"helpdesk_tickets.id",:display_id,:subject,:status,:priority,:"helpdesk_tickets.created_at",:requester_id,:source,:spam,:deleted,:responder_id])
+        requester_active(self).visible.newest(10).find(:all, 
+          :select => [:"helpdesk_tickets.id",:display_id,:subject,:status,:priority,:"helpdesk_tickets.created_at",:requester_id,:source,:spam,:deleted,:responder_id])
   end
 
   def contact_fields

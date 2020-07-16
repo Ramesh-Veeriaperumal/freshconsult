@@ -34,7 +34,7 @@ module Cache::Memcache::Dashboard::Custom::CacheData
     # 0 - scorecard 1 - bar_chart
     MemcacheKeys.fetch(dashboard_filters_key(dashboard_id)) do
       filter_ids = dashboard.widgets.where('widget_type IN (?)', [0, 1]).pluck(:ticket_filter_id).compact.uniq
-      Account.current.ticket_filters.where(id: filter_ids)
+      Account.current.ticket_filters.where(id: filter_ids).to_a
     end
   end
 

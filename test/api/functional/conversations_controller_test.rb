@@ -1480,7 +1480,7 @@ class ConversationsControllerTest < ActionController::TestCase
     get :ticket_conversations, controller_params(id: parent_ticket.display_id)
     assert controller.instance_variable_get(:@items).all? { |x| x.association(:attachments).loaded? }
     assert controller.instance_variable_get(:@items).all? { |x| x.association(:schema_less_note).loaded? }
-    assert controller.instance_variable_get(:@items).all? { |x| x.association(:note_body).loaded? }
+    assert controller.instance_variable_get(:@items).all? { |x| x.association(:note_old_body).loaded? }
   ensure
     @controller.unstub(:decorate_objects)
     @controller.unstub(:render)

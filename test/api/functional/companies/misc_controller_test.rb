@@ -101,7 +101,7 @@ class Companies::MiscControllerTest < ActionController::TestCase
                                                status: DataExport::EXPORT_STATUS[:started])
       export_entry.save
     end
-    params_hash = { fields: { default_fields: default_fields.map(&:name) - ['tag_names'], custom_fields: custom_fields.map(&:name).collect { |x| x[3..-1] } } }
+    params_hash = { fields: { default_fields: default_fields.map(&:name), custom_fields: custom_fields.map(&:name).collect { |x| x[3..-1] } } }
     post :export, construct_params(params_hash)
     assert_response 429
   end
@@ -114,13 +114,13 @@ class Companies::MiscControllerTest < ActionController::TestCase
                                              token: Faker::Number.number(10))
     export_entry.save
     attachment = create_attachment(attachable_type: 'DataExport', attachable_id: export_entry.id)
-    AwsWrapper::S3.stubs(:presigned_url).returns('spec/fixtures/files/attachment.csv')
+    AwsWrapper::S3Object.stubs(:url_for).returns('spec/fixtures/files/attachment.csv')
     get :export_details, construct_params(id: export_entry.token)
     assert_response 200
     match_json(id: export_entry.token,
                status: 'completed',
                download_url: 'spec/fixtures/files/attachment.csv')
-    AwsWrapper::S3.unstub(:presigned_url)
+    AwsWrapper::S3Object.unstub(:url_for)
   end
 
   def test_export_csv_details_with_invalid_token
@@ -170,7 +170,7 @@ class Companies::MiscControllerTest < ActionController::TestCase
     create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'Area', editable_in_signup: 'true'))
     default_fields = @account.company_form.default_company_fields
     custom_fields = @account.company_form.custom_company_fields
-    params_hash = { fields: { default_fields: default_fields.map(&:name) - ['tag_names'], custom_fields: custom_fields.map(&:name).collect { |x| x[3..-1] } } }
+    params_hash = { fields: { default_fields: default_fields.map(&:name), custom_fields: custom_fields.map(&:name).collect { |x| x[3..-1] } } }
     post :export, construct_params(params_hash)
     assert_response 403
     User.any_instance.unstub(:privilege?)

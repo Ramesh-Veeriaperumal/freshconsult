@@ -338,7 +338,7 @@ module CronWebhooks::Constants
       'trail_sla_worker' => 25_000,
       'Salesforcequeue' => 1000
     },
-    except: %w[supervisor_worker gamification_ticket_quests gamification_ticket_score gamification_user_score livechat_queue]
+    except: %w[supervisor_worker gamification_ticket_quests gamification_ticket_score helpdesk_note_body_queue gamification_user_score livechat_queue]
   }.freeze
 
   PAGER_DUTY_FREQUENCY_SECS = Rails.env.production? ? 18_000 : 900 # 5 hours : # 15 mins

@@ -614,11 +614,13 @@ class AccountTest < ActionView::TestCase
   def test_show_omnichannel_banner_with_lp_and_not_omni_bundle_account
     Account.current.launch(:explore_omnichannel_feature)
     Account.current.launch(:freshid_org_v2)
+    Account.any_instance.stubs(:verified?).returns(true)
     AccountAdditionalSettings.any_instance.stubs(:additional_settings).returns(bundle_id: nil)
     assert Account.current.show_omnichannel_banner?
   ensure
     Account.current.rollback(:explore_omnichannel_feature)
     Account.current.rollback(:freshid_org_v2)
+    Account.any_instance.unstub(:verified?)
     AccountAdditionalSettings.any_instance.unstub(:additional_settings)
   end
 
@@ -637,5 +639,26 @@ class AccountTest < ActionView::TestCase
     Account.any_instance.unstub(:account_cancellation_requested?)
     SubscriptionPlan.any_instance.unstub(:omni_plan?)
     Subscription.any_instance.unstub(:state)
+  end
+
+  def test_should_not_show_omnichannel_banner_for_unverified_accounts
+    User.any_instance.stubs(:privilege?).returns(true)
+    Account.current.launch(:explore_omnichannel_feature)
+    Account.current.launch(:freshid_org_v2)
+    AccountAdditionalSettings.any_instance.stubs(:additional_settings).returns({})
+    Account.any_instance.stubs(:account_cancellation_requested?).returns(false)
+    SubscriptionPlan.any_instance.stubs(:omni_plan?).returns(false)
+    Subscription.any_instance.stubs(:state).returns('active')
+    Account.any_instance.stubs(:verified?).returns(false)
+    refute Account.current.show_omnichannel_banner?
+  ensure
+    User.any_instance.unstub(:privilege?)
+    Account.current.rollback(:explore_omnichannel_feature)
+    Account.current.rollback(:freshid_org_v2)
+    AccountAdditionalSettings.any_instance.unstub(:additional_settings)
+    Account.any_instance.unstub(:account_cancellation_requested?)
+    SubscriptionPlan.any_instance.unstub(:omni_plan?)
+    Subscription.any_instance.unstub(:state)
+    Account.any_instance.unstub(:verified?)
   end
 end

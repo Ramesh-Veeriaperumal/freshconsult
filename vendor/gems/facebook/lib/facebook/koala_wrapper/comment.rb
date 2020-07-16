@@ -59,8 +59,8 @@ module Facebook
     def fetch_comment_from_dynamo(comment_id)
       comment_feeds = dynamo_helper.fetch_feeds(comment_id, @fan_page.default_stream.id)  
       
-      fb_comments   = comment_feeds.select{|feed| feed["type"][0] == POST_TYPE[:comment]}
-      fb_replies    = comment_feeds.select{|feed| feed["type"][0] == POST_TYPE[:reply_to_comment]}
+      fb_comments   = comment_feeds.select{|feed| feed["type"][:ss][0] == POST_TYPE[:comment]}
+      fb_replies    = comment_feeds.select{|feed| feed["type"][:ss][0] == POST_TYPE[:reply_to_comment]}
       
       comment       = comment_from_dynamo(fb_comment, POST_TYPE[:comment], true)    
       

@@ -28,7 +28,7 @@ module Facebook
       end
       
       def notify_error(error)
-        raise_sns_notification(error[:error_msg][0..50], error)
+        notify_fb_mailer(nil, error, error[:error_msg][0..50])
         insert_facebook_feed(@fan_page.page_id, (Time.now.to_f*1000).to_i, @raw_obj) if @raw_obj
       end
       
@@ -46,15 +46,12 @@ module Facebook
       def page_info
         {:page_id => @fan_page.id, :account_id => @fan_page.account_id}
       end
-      
-      private      
-      def raise_sns_notification(subject, message)
-        message ||= {}
-        message.merge!(:environment => Rails.env)
-        topic = SNS["social_notification_topic"]
-        DevNotification.publish(topic, subject, message.to_json)
-      end
 
+      def notify_fb_mailer(error, params = nil, subject = nil)
+        return if Rails.env.development? || Rails.env.test?
+
+        SocialErrorsMailer.deliver_facebook_exception(error, params, subject)
+      end
     end
   end
 end

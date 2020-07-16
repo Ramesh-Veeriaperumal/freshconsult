@@ -12,7 +12,7 @@ module Social::Ext::UserMethods
   
     def accessible_social_streams
       accessible_stream_ids = Account.current.accesses.user_accessible_items_via_group('Social::Stream', self).map(&:accessible_id)
-      social_streams = Account.current.social_streams.where({ id: accessible_stream_ids })
+      social_streams = Account.current.social_streams.find(:all, :conditions => { :id => accessible_stream_ids })
     end 
     
     def accessible_twitter_streams

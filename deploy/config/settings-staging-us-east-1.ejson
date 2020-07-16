@@ -1692,8 +1692,8 @@
         "_timeout_for_pricing_api": 10
       },
       "omni_freshvisuals": {
-        "secret_key": "EJ[1:xzLGAydwE54Iuc4Dmyu2iyHprLVOnNTnycrinkk8dXs=:1pkHIkOa10zsaUk1r00bW95SUv3OcPTr:cWR9U7aJM6Z/YbqP/rRPDqkas831fC1tOj+xhGUgDMrwIeo8OtVNvf/+s7hxJMO5]",
-        "_end_point": "https://fv-demo.freshreports.com/",
+        "secret_key": "EJ[1:tzR1beNIuQuL2OZPDtIU9jJsqUAJ5N4OVHBBwTwK5HA=:7XpxGCkZIPmXwGIeCRi/W4RKf6bDG8OW:E4DH2ZB5R3V/OwLFlnw+LLWAH7v5CR+/0gYKwyVdmpBu4IZmJd9mUFVSCCGWHNoSCwCrqy5HasUZpykJ]",
+        "_end_point": "https://staging.freshreports.com/",
         "_bu_name": "support360",
         "_session_expiration": 36000,
         "_session_expiration_for_pricing_api": 30,
@@ -1785,7 +1785,7 @@
     },
     "falcon_ui": {
       "analyticsCollectorConfig": {
-        "_analyticsCollectorScript": "https://assets.freshpo.com/analytics/analytics-v1.2.0.js",
+        "_analyticsCollectorScript": "https://assets.freshpo.com/analytics/analytics-v1.2.1.js",
         "schedulerConfig": {
           "metricsAdapters": [
             {

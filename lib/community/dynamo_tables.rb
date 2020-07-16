@@ -131,14 +131,15 @@ module Community::DynamoTables
 
   def self.clear_attachments(args)
     begin
-      time = Time.new(args[:year], args[:month])
-      prefix = %(spam_attachments/month_#{time.strftime('%Y_%m')})
-      puts "** Got ** #{prefix} **"
-      AwsWrapper::S3.batch_delete_all(S3_CONFIG[:bucket], prefix)
-      puts "** Done ** #{prefix} **"
+      bucket = AWS::S3::Bucket.new(S3_CONFIG[:bucket])
+        time = Time.new(args[:year], args[:month])
+        prefix = %{spam_attachments/month_#{time.strftime('%Y_%m')}}
+        puts "** Got ** #{prefix} **" 
+        bucket.objects.with_prefix(prefix).delete_all
+        puts "** Done ** #{prefix} **" 
     rescue Exception => e
       puts e
-      puts "** Failed ** #{prefix} **"
+      puts "** Failed ** #{prefix} **" 
     end
   end
 end	

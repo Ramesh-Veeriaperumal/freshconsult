@@ -34,7 +34,6 @@ class ConversationValidationTest < ActionView::TestCase
 
     controller_params = { 'user_id' => 1 }
     item = Helpdesk::Note.new
-    item.build_note_body
     item.note_body.body = ''
     item.note_body.body_html = 'test'
     conversation = ConversationValidation.new(controller_params, item)

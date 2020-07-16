@@ -131,28 +131,20 @@ module AutomationRulesTestHelper
   def verify_action_data(action, ticket, not_operator)
     case true
     when ['priority', 'ticket_type', 'status', 'responder_id', 'product_id', 'group_id'].include?(action[:name])
-      p "action_data :: #{action} :: #{action[:name]} :: #{ticket.safe_send(action[:name])} :: #{action[:value]}"
       assert_equal ticket.safe_send(action[:name]), action[:value]
     when action == 'add_tag'
-      p "action_data :: #{action} :: #{ticket.tag_names.last} :: #{action[:value]}"
       assert_equal ticket.tag_names.last, action[:value]
     when action == 'add_a_cc'
-      p "action_data :: #{action} :: #{ticket.cc_email[:cc_emails].last} :: #{action[:value]}"
       assert_equal ticket.cc_email[:cc_emails].last, action[:value]
     when action == 'add_watcher'
-      p "action_data :: #{action} :: #{ticket.subscriptions.pluck(:user_id).last} :: #{action[:value][0]}"
       assert_equal ticket.subscriptions.pluck(:user_id).last, action[:value][0]
     when action == 'forward_ticket'
-      p "action_data :: #{action}:: #{ticket.notes.last.body} :: #{action[:fwd_note_body]}"
       assert_equal ticket.notes.last.body, action[:fwd_note_body]
     when action == 'delete_ticket'
-      p "action_data :: #{action} :: #{ticket.deleted} :: #{true}"
       assert_equal ticket.deleted, true
     when action == 'mark_as_spam'
-      p "action_data :: #{action} :: #{ticket.spam} :: #{true}"
       assert_equal ticket.spam, true
     when action == 'add_note'
-      p "action_data :: #{action} :: #{ticket.notes.last.body} :: #{action[:note_body]}"
       assert_equal ticket.notes.last.body, action[:note_body]
     end
   end
@@ -236,7 +228,7 @@ module AutomationRulesTestHelper
   def generate_value(operator_type, field_name, not_operator, operator=nil)
     case operator_type
     when :email
-      field_name.to_sym.eql?(:to_email) ? Faker::Internet.email.to_a : Faker::Internet.email
+      Faker::Internet.email
     when :text
       Faker::Lorem.characters(10)
     when :choicelist

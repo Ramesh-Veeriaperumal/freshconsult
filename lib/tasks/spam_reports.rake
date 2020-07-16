@@ -9,7 +9,8 @@ namespace :spam_reports do
 
     SPAM_REPORTS_LIMIT = { :trial => 5, :free => 5, :default => 5, :active => 10, :premium => 20 }
 
-    AwsWrapper::SqsV2.poll(SQS[:email_events_queue]) do |sqs_msg|
+		sqs_spam_reports = AWS::SQS.new.queues.named(SQS[:email_events_queue])
+		sqs_spam_reports.poll(:initial_timeout => false) do |sqs_msg|
       begin
       	args = JSON.parse(sqs_msg.body)
         learn_mail(args)

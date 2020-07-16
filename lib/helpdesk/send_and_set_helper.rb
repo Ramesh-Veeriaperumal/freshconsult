@@ -3,6 +3,7 @@ module Helpdesk::SendAndSetHelper
   #Any changes made in this file should be replicated in conversations_controller, tickets_controller and notes/callback if required
 
   include Redis::RedisKeys
+  include AdvancedTicketScopes
 
   def self.included(base)
     base.send :before_filter, :set_mobile, :set_native_mobile, :load_ticket_item, :handle_send_and_set, :verify_permission, :build_note_body_attributes, :build_conversation_for_ticket, :check_for_from_email, :kbase_email_included,
@@ -54,7 +55,8 @@ module Helpdesk::SendAndSetHelper
     return redirect_to support_ticket_url(@ticket) if @ticket and current_user.customer?
     if @ticket 
       return helpdesk_restricted_access_redirection(@ticket, 'flash.agent_as_requester.ticket_show') if @ticket.restricted_in_helpdesk?(current_user)
-      return helpdesk_restricted_access_redirection(@ticket, nil, t("flash.general.access_denied").html_safe) unless current_user && current_user.has_ticket_permission?(@ticket) && !@ticket.trashed
+      has_permission = (advanced_scope_enabled? && action == :print) ? current_user.has_read_ticket_permission?(@ticket) : current_user.has_ticket_permission?(@ticket) if current_user
+      return helpdesk_restricted_access_redirection(@ticket, nil, t("flash.general.access_denied").html_safe) unless current_user && has_permission && !@ticket.trashed
     end
     load_archive_ticket(load_notes) unless @ticket
   end
@@ -110,7 +112,7 @@ module Helpdesk::SendAndSetHelper
 
   def has_unseen_notes?
     return false if params["last_note_id"].nil?
-    last_public_note    = @ticket.notes.visible.last_traffic_cop_note.first
+    last_public_note    = @ticket.notes.conversations(nil, 'created_at DESC', 1).first
     late_public_note_id = last_public_note.blank? ? -1 : last_public_note.id
     return late_public_note_id > params["last_note_id"].to_i
   end

@@ -59,43 +59,45 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
   after_commit :clear_inline_images_cache, on: :update
   before_save :create_model_changes
 
-  scope :accessible_for, -> (user) {
-    joins(%(JOIN admin_user_accesses acc ON
-            admin_canned_responses.account_id=%<account_id>i AND
-            acc.accessible_id = admin_canned_responses.id AND
-            acc.accessible_type = 'Admin::CannedResponses::Response' AND
-            acc.account_id = admin_canned_responses.account_id
-            LEFT JOIN agent_groups ON
-            acc.group_id=agent_groups.group_id) % { 
-              account_id: user.account_id 
-            }).
-    where(%(acc.VISIBILITY=%<visible_to_all>s
-              OR agent_groups.user_id=%<user_id>i 
-              OR (acc.VISIBILITY=%<only_me>s and acc.user_id=%<user_id>i )) % 
-              {
-                visible_to_all: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
-                only_me: Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me],
-                user_id: user.id
-              })
+  scope :accessible_for, lambda { |user|
+    {
+      :joins => %(JOIN admin_user_accesses acc ON
+                  admin_canned_responses.account_id=%<account_id>i AND
+                  acc.accessible_id = admin_canned_responses.id AND
+                  acc.accessible_type = 'Admin::CannedResponses::Response' AND
+                  acc.account_id = admin_canned_responses.account_id
+                  LEFT JOIN agent_groups ON
+                  acc.group_id=agent_groups.group_id) % { :account_id => user.account_id },
+      :conditions => %(acc.VISIBILITY=%<visible_to_all>s
+                       OR agent_groups.user_id=%<user_id>i OR
+      (acc.VISIBILITY=%<only_me>s and acc.user_id=%<user_id>i )) % {
+        :visible_to_all => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+        :only_me => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me],
+        :user_id => user.id
+      }
+    }
   }
 
-  scope :only_me, -> (user) {
-    joins(%(JOIN helpdesk_accesses acc ON
-                acc.accessible_id = admin_canned_responses.id AND
-                acc.accessible_type = 'Admin::CannedResponses::Response' AND
-                admin_canned_responses.account_id=%<account_id>i AND
-                acc.account_id = admin_canned_responses.account_id
-                inner join user_accesses ON acc.id= user_accesses.access_id AND
-                acc.account_id= user_accesses.account_id) % { account_id: user.account_id }).
-    where(%(acc.access_type=%<only_me>s and user_accesses.user_id=%<user_id>i ) % {
-      only_me: Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users],
-      user_id: user.id
-    })
+  scope :only_me, lambda { |user|
+    {
+      :joins => %(JOIN helpdesk_accesses acc ON
+                  acc.accessible_id = admin_canned_responses.id AND
+                  acc.accessible_type = 'Admin::CannedResponses::Response' AND
+                  admin_canned_responses.account_id=%<account_id>i AND
+                  acc.account_id = admin_canned_responses.account_id
+                  inner join user_accesses ON acc.id= user_accesses.access_id AND
+                  acc.account_id= user_accesses.account_id) % { :account_id => user.account_id },
+      :conditions => %(acc.access_type=%<only_me>s and user_accesses.user_id=%<user_id>i ) % {
+        :only_me => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users],
+        :user_id => user.id
+      }
+    }
   }
 
-  scope :folder_responses_by_title, -> (response) {
-    where(["admin_canned_responses.title=? and admin_canned_responses.folder_id=?", 
-            response.title, response.folder_id])
+  scope :folder_responses_by_title, lambda { |response|
+    {
+      :conditions => ["admin_canned_responses.title=? and admin_canned_responses.folder_id=?", response.title, response.folder_id]
+    }
   }
 
   INCLUDE_ASSOCIATIONS_BY_CLASS = {

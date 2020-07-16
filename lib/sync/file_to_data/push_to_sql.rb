@@ -40,7 +40,7 @@ class Sync::FileToData::PushToSql
         file_path = File.join(path, file)
         column    = file.gsub(FILE_EXTENSION, '')
         next if File.directory?(file_path) || UPDATE_ASSOCIATIONS.include?(column)
-        data = Syck.load_file(file_path)
+        data = YAML.load_file(file_path)
         column_values[column] = data
       end
       if !ignore_soft_deleted_model?(table_name) && object.respond_to?('deleted') && action == :deleted
@@ -81,7 +81,7 @@ class Sync::FileToData::PushToSql
         end
         column_values[column] = transformed_column_value
       end
-      column_values[column] = Syck.dump(column_values[column]) if serialized_columns.include?(column)
+      column_values[column] = column_values[column].to_yaml if serialized_columns.include?(column)
       ret_val << [table[column.to_sym], column_values[column]]
     end
     ret_val

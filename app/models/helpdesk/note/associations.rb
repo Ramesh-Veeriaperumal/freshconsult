@@ -30,8 +30,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   has_one :custom_survey_remark, :foreign_key =>'note_id', :class_name => 'CustomSurvey::SurveyRemark', :dependent => :destroy
 
-  has_one :note_body, class_name: 'Helpdesk::NoteBody', dependent: :destroy
-  accepts_nested_attributes_for :note_body, update_only: true
+  has_one :note_old_body, :class_name => 'Helpdesk::NoteOldBody', :dependent => :destroy, :autosave => false
 
   has_one :schema_less_note, :class_name => 'Helpdesk::SchemaLessNote',
           :foreign_key => 'note_id', :autosave => true, :dependent => :destroy

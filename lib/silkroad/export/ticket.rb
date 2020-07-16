@@ -2,6 +2,7 @@ module Silkroad
   module Export
     class Ticket < Base
       include Silkroad::Constants::Ticket
+      include TicketConstants
 
       def build_filter_conditions(export_params)
         filter_conditions = export_params[:data_hash].map do |filter_param|
@@ -35,8 +36,9 @@ module Silkroad
 
         def construct_date_range_condition(export_params)
           {
-            from: Time.parse(export_params[:start_date]).iso8601,
-            to: Time.parse(export_params[:end_date]).iso8601,
+            # Appending +00:00 to consider the input time as is and convert to iso8601 format
+            from: transform_datetime_value("#{export_params[:start_date]}+00:00"),
+            to: transform_datetime_value("#{export_params[:end_date]}+00:00"),
             column_name: export_params[:ticket_state_filter]
           }
         end
@@ -52,112 +54,97 @@ module Silkroad
         end
 
         def transform_due_by_params(condition)
-          # This is for local testing purposes. Will comment out this method until we decide and implement in Silkroad
           minimum_required_condition = (condition[:operand].map!(&:to_i) - TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN.slice(:all_due, :due_today, :due_tomo).values).min
           operands = minimum_required_condition ? condition[:operand].select { |operand| operand <= minimum_required_condition } : condition[:operand]
           transformed_operands = operands.map do |operand|
             case operand
             when TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:all_due]
-              # condition[:operator] = OPERATORS[:between]
               [START_DATE..Time.zone.now]
             when TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_today]
-              # condition[:operator] = OPERATORS[:between]
               [Time.zone.now.beginning_of_day..Time.zone.now.end_of_day]
             when TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_tomo]
-              # condition[:operator] = OPERATORS[:between]
               [Time.zone.now.tomorrow.beginning_of_day..Time.zone.now.tomorrow.end_of_day]
             when TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_next_eight]
-              # condition[:operator] = OPERATORS[:between]
               [Time.zone.now..8.hours.from_now]
             when TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_next_four]
-              # condition[:operator] = OPERATORS[:between]
               [Time.zone.now..4.hours.from_now]
             when TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_next_two]
-              # condition[:operator] = OPERATORS[:between]
               [Time.zone.now..2.hours.from_now]
             when TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_next_hour]
-              # condition[:operator] = OPERATORS[:between]
               [Time.zone.now..1.hour.from_now]
             when TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_next_half_hour]
-              # condition[:operator] = OPERATORS[:between]
               [Time.zone.now..30.minutes.from_now]
             else
               []
             end
           end
           transformed_operands = transformed_operands.flatten.rangify
-          operand = transformed_operands.first
-          conditions_after_merge = if operand.begin == START_DATE
-            construct_filter_condition(condition[:column_name], OPERATORS[:less_than], [operand.end.iso8601])
-          else
-            if transformed_operands.length == 1
-              construct_filter_condition(condition[:column_name], OPERATORS[:between], [operand.begin.iso8601, operand.end.iso8601])
+          transformed_conditions = transformed_operands.map do |operand|
+            if operand.begin == START_DATE
+              construct_filter_condition(condition[:column_name], OPERATORS[:less_than_or_equal_to], [transform_datetime_value(operand.end)])
             else
-              nested_conditions = transformed_operands.map do |transformed_operand|
-                construct_filter_condition(condition[:column_name], OPERATORS[:between], [transformed_operand.begin.iso8601, transformed_operand.end.iso8601])
-              end
-              construct_nested_condition('nested_or', nested_conditions)
+              construct_filter_condition(condition[:column_name], OPERATORS[:between], [transform_datetime_value(operand.begin), transform_datetime_value(operand.end)])
             end
           end
-          conditions_after_merge
+          transformed_conditions.length == 1 ? transformed_conditions.first : construct_nested_condition(OPERATORS[:nested_or], transformed_conditions)
         end
         alias transform_frDueBy_params transform_due_by_params
         alias transform_nr_due_by_params transform_due_by_params
 
         def transform_created_at_params(condition)
           operand = condition[:operand].first
-          if operand.include?(' - ')
-            from, to = operand.split(' - ')
-            start_date = Time.zone.parse(from).utc.iso8601
-            end_date = Time.zone.parse(to).utc.iso8601
+          if operand.to_s.include?(DATE_RANGE_SPECIFIER)
+            from, to = operand.split(DATE_RANGE_SPECIFIER)
+            start_date = Time.zone.parse(from).beginning_of_day
+            end_date = Time.zone.parse(to).end_of_day
             condition[:operator] = OPERATORS[:between]
-            condition[:operand]  = [start_date, end_date]
+            condition[:operand]  = [transform_datetime_value(start_date), transform_datetime_value(end_date)]
           elsif operand.to_i != 0
             condition[:operator] = OPERATORS[:greater_than]
-            condition[:operand]  = [Time.zone.now.ago(operand.to_i.minutes).iso8601]
+            condition[:operand]  = [transform_datetime_value(Time.zone.now.ago(operand.to_i.minutes))]
           else
             case operand
-            when 'today'
+            when CREATED_AT_TYPES_BY_TOKEN[:today]
               condition[:operator] = OPERATORS[:greater_than]
-              condition[:operand]  = [Time.zone.now.beginning_of_day.iso8601]
-            when 'yesterday'
+              condition[:operand]  = [transform_datetime_value(Time.zone.now.beginning_of_day)]
+            when CREATED_AT_TYPES_BY_TOKEN[:yesterday]
               condition[:operator] = OPERATORS[:between]
-              condition[:operand]  = [Time.zone.now.yesterday.beginning_of_day.iso8601, Time.zone.now.beginning_of_day.iso8601]
-            when 'week'
+              condition[:operand]  = [transform_datetime_value(Time.zone.now.yesterday.beginning_of_day), transform_datetime_value(Time.zone.now.beginning_of_day)]
+            when CREATED_AT_TYPES_BY_TOKEN[:week]
               condition[:operator] = OPERATORS[:greater_than]
-              condition[:operand]  = [Time.zone.now.beginning_of_week.iso8601]
-            when 'last_week'
+              condition[:operand]  = [transform_datetime_value(Time.zone.now.beginning_of_week)]
+            when CREATED_AT_TYPES_BY_TOKEN[:last_week]
               condition[:operator] = OPERATORS[:greater_than]
-              condition[:operand]  = [Time.zone.now.beginning_of_day.ago(7.days).iso8601]
-            when 'month'
+              condition[:operand]  = [transform_datetime_value(Time.zone.now.beginning_of_day.ago(7.days))]
+            when CREATED_AT_TYPES_BY_TOKEN[:month]
               condition[:operator] = OPERATORS[:greater_than]
-              condition[:operand]  = [Time.zone.now.beginning_of_month.iso8601]
-            when 'last_month'
+              condition[:operand]  = [transform_datetime_value(Time.zone.now.beginning_of_month)]
+            when CREATED_AT_TYPES_BY_TOKEN[:last_month]
               condition[:operator] = OPERATORS[:greater_than]
-              condition[:operand]  = [Time.zone.now.beginning_of_day.ago(1.month).iso8601]
-            when 'two_months'
+              condition[:operand]  = [transform_datetime_value(Time.zone.now.beginning_of_day.ago(1.month))]
+            when CREATED_AT_TYPES_BY_TOKEN[:two_months]
               condition[:operator] = OPERATORS[:greater_than]
-              condition[:operand]  = [Time.zone.now.beginning_of_day.ago(2.months).iso8601]
-            when 'six_months'
+              condition[:operand]  = [transform_datetime_value(Time.zone.now.beginning_of_day.ago(2.months))]
+            when CREATED_AT_TYPES_BY_TOKEN[:six_months]
               condition[:operator] = OPERATORS[:greater_than]
-              condition[:operand]  = [Time.zone.now.beginning_of_day.ago(6.months).iso8601]
+              condition[:operand]  = [transform_datetime_value(Time.zone.now.beginning_of_day.ago(6.months))]
             end
           end
           condition
         end
 
         def transform_status_params(condition)
-          condition[:operand].map! { |operand| operand.in?(0, '0') ? Helpdesk::TicketStatus.unresolved_statuses(account) : operand.to_i }
+          condition[:operand].map! { |operand| operand.in?(UNRESOLVED_STATUS_OPERAND) ? Helpdesk::TicketStatus.unresolved_statuses(account) : operand.to_i }
           condition
         end
 
         def transform_agent_params(condition)
-          condition[:operand].map! { |operand| operand.nil? ? nil : operand.in?(0, '0') ? user.id : operand.to_i }
-          condition[:operand] = [user.id] if user_permission == 'assigned_tickets'
-          if condition[:column_name] == 'any_agent_id'
-            nested_conditions = [construct_filter_condition('responder_id', condition[:operator], condition[:operand]),
-                                 construct_filter_condition('internal_agent_id', condition[:operator], condition[:operand])]
-            condition = construct_nested_condition('nested_or', nested_conditions)
+          condition[:operand].map! { |operand| operand.nil? ? nil : operand.in?(UNASSIGNED_OPERAND) ? user.id : operand.to_i }
+          condition[:operand] = [user.id] if user_permission == AGENT_PERMISSIONS[:assigned_tickets]
+          if condition[:column_name] == TICKET_COLUMNS[:any_agent_id]
+            nested_conditions = [construct_filter_condition(TICKET_COLUMNS[:responder_id], condition[:operator], condition[:operand]),
+                                 construct_filter_condition(TICKET_COLUMNS[:internal_agent_id], condition[:operator], condition[:operand])]
+            condition = construct_nested_condition(OPERATORS[:nested_or], nested_conditions)
           end
           condition
         end
@@ -166,15 +153,15 @@ module Silkroad
         alias transform_responder_id_params transform_agent_params
 
         def transform_group_params(condition)
-          return nil if user_permission == 'assigned_tickets'
+          return nil if user_permission == AGENT_PERMISSIONS[:assigned_tickets]
 
-          condition[:operand].map! { |operand| operand.nil? ? nil : operand.in?(0, '0') ? user_groups : operand.to_i }
-          condition[:operand] = condition[:operand] & user_groups if user_permission == 'group_tickets'
+          condition[:operand].map! { |operand| operand.nil? ? nil : operand.in?(UNASSIGNED_OPERAND) ? user_groups : operand.to_i }
+          condition[:operand] = condition[:operand] & user_groups if user_permission == AGENT_PERMISSIONS[:group_tickets]
 
-          if condition[:column_name] == 'any_group_id'
-            nested_conditions = [construct_filter_condition('group_id', condition[:operator], condition[:operand]),
-                                 construct_filter_condition('internal_group_id', condition[:operator], condition[:operand])]
-            condition = construct_nested_condition('nested_or', nested_conditions)
+          if condition[:column_name] == TICKET_COLUMNS[:any_group_id]
+            nested_conditions = [construct_filter_condition(TICKET_COLUMNS[:group_id], condition[:operator], condition[:operand]),
+                                 construct_filter_condition(TICKET_COLUMNS[:internal_group_id], condition[:operator], condition[:operand])]
+            condition = construct_nested_condition(OPERATORS[:nested_or], nested_conditions)
           end
           condition
         end
@@ -184,28 +171,28 @@ module Silkroad
 
         def add_ticket_state_filter_related_conditions(filter_conditions, export_params)
           default_status_condition = case export_params[:ticket_state_filter]
-          when 'resolved_at'
-            [Helpdesk::Ticketfields::TicketStatus::RESOLVED, Helpdesk::Ticketfields::TicketStatus::CLOSED]
-          when 'closed_at'
-            [Helpdesk::Ticketfields::TicketStatus::CLOSED]
-          else
-            []
-          end
+                                     when TICKET_COLUMNS[:resolved_at]
+                                       [Helpdesk::Ticketfields::TicketStatus::RESOLVED, Helpdesk::Ticketfields::TicketStatus::CLOSED]
+                                     when TICKET_COLUMNS[:closed_at]
+                                       [Helpdesk::Ticketfields::TicketStatus::CLOSED]
+                                     else
+                                       []
+                                     end
           return if default_status_condition.blank?
 
-          if (index = filter_conditions.index { |condition| condition[:column_name] == 'status' })
+          if (index = filter_conditions.index { |condition| condition[:column_name] == TICKET_COLUMNS[:status] })
             filter_conditions[index][:operand] &= default_status_condition
           else
-            condition = construct_filter_condition('status', OPERATORS[:in], default_status_condition)
+            condition = construct_filter_condition(TICKET_COLUMNS[:status], OPERATORS[:in], default_status_condition)
             filter_conditions.push(condition)
           end
         end
 
         def add_frDueBy_related_conditions(filter_conditions)
-          if column_present_in_filter_conditions?(filter_conditions, ['frDueBy'])
+          if column_present_in_filter_conditions?(filter_conditions, [TICKET_COLUMNS[:fr_due_by]])
             filter_conditions.push(AGENT_RESPONDED_AT_NULL_CONDITION)
 
-            if (index = filter_conditions.index { |condition| condition[:column_name] == 'source' })
+            if (index = filter_conditions.index { |condition| condition[:column_name] == TICKET_COLUMNS[:source] })
               filter_conditions[index][:operand].push(TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]).uniq!
             else
               filter_conditions.push(SOURCE_NOT_OUTBOUND_EMAIL_CONDITION)
@@ -216,10 +203,10 @@ module Silkroad
         def add_dueby_related_conditions(filter_conditions)
           if column_present_in_filter_conditions?(filter_conditions, DUE_BY_CONDITIONS)
             sla_timer_on_statuses = Helpdesk::TicketStatus.donot_stop_sla_statuses(account)
-            if (index = filter_conditions.index { |condition| condition[:column_name] == 'status' })
+            if (index = filter_conditions.index { |condition| condition[:column_name] == TICKET_COLUMNS[:status] })
               filter_conditions[index][:operand] &= sla_timer_on_statuses
             else
-              condition = construct_filter_condition('status', OPERATORS[:in], sla_timer_on_statuses)
+              condition = construct_filter_condition(TICKET_COLUMNS[:status], OPERATORS[:in], sla_timer_on_statuses)
               filter_conditions.push(condition)
             end
           end
@@ -228,22 +215,22 @@ module Silkroad
         def allow_only_permissible_tickets(filter_conditions)
           case user_permission
 
-          when 'group_tickets'
+          when AGENT_PERMISSIONS[:group_tickets]
             unless column_present_in_filter_conditions?(filter_conditions, GROUP_COLUMNS)
-              nested_conditions = [construct_filter_condition('group_id', OPERATORS[:in], user_groups),
-                                   construct_filter_condition('responder_id', OPERATORS[:in], [user.id])]
+              nested_conditions = [construct_filter_condition(TICKET_COLUMNS[:group_id], OPERATORS[:in], user_groups),
+                                   construct_filter_condition(TICKET_COLUMNS[:responder_id], OPERATORS[:in], [user.id])]
               if account.shared_ownership_enabled?
-                nested_conditions << construct_filter_condition('internal_group_id', OPERATORS[:in], user_groups)
-                nested_conditions << construct_filter_condition('internal_agent_id', OPERATORS[:in], [user.id])
+                nested_conditions << construct_filter_condition(TICKET_COLUMNS[:internal_group_id], OPERATORS[:in], user_groups)
+                nested_conditions << construct_filter_condition(TICKET_COLUMNS[:internal_agent_id], OPERATORS[:in], [user.id])
               end
-              filter_conditions.push(construct_nested_condition('nested_or', nested_conditions))
+              filter_conditions.push(construct_nested_condition(OPERATORS[:nested_or], nested_conditions))
             end
 
-          when 'assigned_tickets'
+          when AGENT_PERMISSIONS[:assigned_tickets]
             unless column_present_in_filter_conditions?(filter_conditions, AGENT_COLUMNS)
-              nested_conditions = [construct_filter_condition('responder_id', OPERATORS[:in], [user.id])]
-              nested_conditions << construct_filter_condition('internal_agent_id', OPERATORS[:in], [user.id]) if account.shared_ownership_enabled?
-              filter_conditions.push(construct_nested_condition('nested_or', nested_conditions))
+              nested_conditions = [construct_filter_condition(TICKET_COLUMNS[:responder_id], OPERATORS[:in], [user.id])]
+              nested_conditions << construct_filter_condition(TICKET_COLUMNS[:internal_agent_id], OPERATORS[:in], [user.id]) if account.shared_ownership_enabled?
+              filter_conditions.push(construct_nested_condition(OPERATORS[:nested_or], nested_conditions))
             end
           end
           filter_conditions
@@ -258,7 +245,7 @@ module Silkroad
         end
 
         def handle_empty_conditions(filter_conditions)
-          # Ignore such requests directly from here?
+          # Ignore certail requests directly from here, like empty status?
           filter_conditions.each do |condition|
             condition[:operand] = [nil] if condition[:operand].blank? && !NESTED_OPERATORS.include?(condition[:operator])
           end
@@ -286,9 +273,9 @@ module Silkroad
           # exclude encrypted fields
           fields.delete_if { |key, value| key.to_s.match(/^cf_enc/) }
 
-          fields.to_h.each_with_object({}) do |(column, display_name), custom_fields_hash|
+          fields.to_h.each_with_object({}) do |(column, display_name), ticket_fields_hash|
             transformed_column_name = TICKET_FIELDS_COLUMN_NAME_MAPPING[column] || ticket_custom_fields_mapping(column) || column.to_s
-            custom_fields_hash[transformed_column_name] = display_name
+            ticket_fields_hash[transformed_column_name] = display_name
           end
         end
 
@@ -304,9 +291,9 @@ module Silkroad
         end
 
         def transform_contact_fields_hash(fields)
-          fields.to_h.each_with_object({}) do |(column, display_name), custom_fields_hash|
+          fields.to_h.each_with_object({}) do |(column, display_name), contact_fields_hash|
             transformed_column_name = CONTACT_FIELDS_COLUMN_NAME_MAPPING[column] || contact_custom_fields_mapping(column) || column.to_s
-            custom_fields_hash[transformed_column_name] = display_name
+            contact_fields_hash[transformed_column_name] = display_name
           end
         end
 
@@ -321,9 +308,9 @@ module Silkroad
         end
 
         def transform_company_fields_hash(fields)
-          fields.to_h.each_with_object({}) do |(column, display_name), custom_fields_hash|
+          fields.to_h.each_with_object({}) do |(column, display_name), company_fields_hash|
             transformed_column_name = COMPANY_FIELDS_COLUMN_NAME_MAPPING[column] || company_custom_fields_mapping(column) || column.to_s
-            custom_fields_hash[transformed_column_name] = display_name
+            company_fields_hash[transformed_column_name] = display_name
           end
         end
 
@@ -343,6 +330,19 @@ module Silkroad
           FORMAT_MAPPING[export_params[:format].to_sym]
         end
 
+        def set_locale
+          I18n.locale = (user.try(:language) || account.language || I18n.default_locale) if account.launched?(:silkroad_multilingual)
+        rescue StandardError => e
+          Rails.logger.debug "Exception on set locale :: #{e.message}"
+          I18n.locale = I18n.default_locale
+        end
+
+        def unset_locale
+          Thread.current[:language] = nil if account.launched?(:silkroad_multilingual)
+        rescue StandardError => e
+          Rails.logger.debug "Exception on unset locale :: #{e.message}"
+        end
+
         def construct_additional_info(_export_params)
           {
             timezone: Time.zone.tzinfo.name,
@@ -350,6 +350,22 @@ module Silkroad
               survey: SURVEY_FEATURE_MAPPING[account.new_survey_enabled?.to_s.to_sym]
             },
             text: {
+              resolution_status: {
+                TEXT_MAPPING[:sla_status][:in_sla][:key] => I18n.t(TEXT_MAPPING[:sla_status][:in_sla][:text]),
+                TEXT_MAPPING[:sla_status][:violated_sla][:key] => I18n.t(TEXT_MAPPING[:sla_status][:violated_sla][:text])
+              },
+              first_response_status: {
+                TEXT_MAPPING[:sla_status][:in_sla][:key] => I18n.t(TEXT_MAPPING[:sla_status][:in_sla][:text]),
+                TEXT_MAPPING[:sla_status][:violated_sla][:key] => I18n.t(TEXT_MAPPING[:sla_status][:violated_sla][:text])
+              },
+              every_response_status: {
+                TEXT_MAPPING[:sla_status][:in_sla][:key] => I18n.t(TEXT_MAPPING[:sla_status][:in_sla][:text]),
+                TEXT_MAPPING[:sla_status][:violated_sla][:key] => I18n.t(TEXT_MAPPING[:sla_status][:violated_sla][:text])
+              },
+              priority: TicketConstants.priority_list,
+              source: TicketConstants.source_list,
+              association_type: TicketConstants.ticket_association_token_by_key_translated,
+              status: Helpdesk::TicketStatus.status_names_by_key(account)
             }
           }
         end

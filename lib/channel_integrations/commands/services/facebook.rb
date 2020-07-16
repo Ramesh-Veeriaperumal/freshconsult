@@ -50,7 +50,6 @@ module ChannelIntegrations::Commands::Services
     rescue StandardError => e
       Rails.logger.error("Error creating #{context.inspect} ticket :: #{e.message}")
       return conflict_error(context) if e.message.include? Social::Constants::FACEBOOK_POST_ALREADY_EXISTS
-
       error_message("Error in creating ticket, account_id: #{current_account.id}, context: #{context.inspect}, error:
  #{e.message}")
     end
@@ -92,9 +91,13 @@ module ChannelIntegrations::Commands::Services
 
         user_id = is_ticket ? payload[:data][:requester_id] : payload[:data][:user_id]
         set_current_user(user_id)
-        page_id = fetch_page_id(payload[:context][:facebook_page_id])
+        facebook_page = fetch_fb_page(payload[:context][:facebook_page_id])
+        page_id = facebook_page.id
         payload[:data].merge!(get_source_hash(payload[:owner], is_ticket))
         payload[:data][:fb_post_attributes] = build_fb_post_attributes(payload, page_id, is_ticket)
+        if is_ticket
+          payload[:data][:product_id] = facebook_page.product_id
+        end
         payload
       end
 
@@ -141,11 +144,11 @@ module ChannelIntegrations::Commands::Services
         user.make_current
       end
 
-      def fetch_page_id(page_id)
-        facebook_page = current_account.facebook_pages.find_by_page_id(page_id)
+      def fetch_fb_page(id)
+        facebook_page = current_account.facebook_pages.where(page_id: id).first
         raise 'Facebook Page Not found' if facebook_page.nil?
 
-        facebook_page.id
+        facebook_page
       end
 
       def get_source_hash(owner, is_ticket)

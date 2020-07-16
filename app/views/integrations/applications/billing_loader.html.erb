@@ -1,0 +1,16 @@
+<%= javascript_tag do %>
+  (function($) {
+    $(document).ready(function() {
+      var appName = '<%= app_name %>';
+      var addonId = '<%= addon_id %>';
+      var settingsUrl = '<%= settings_url %>';
+      window.App = window.App || {};
+      window.App.Channel = window.App.Channel || new MessageChannel();
+      window.App.Channel.port1.postMessage({action: "marketplace-billing",
+                                            settingsUrl: settingsUrl,
+                                            addonId: addonId,
+                                            appName: appName
+                                          });
+    });
+  })(jQuery);
+<% end %>

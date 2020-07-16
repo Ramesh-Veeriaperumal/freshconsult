@@ -40,10 +40,10 @@ module Helpdesk::AdjacentTickets
 		def find_in_all(direction)
 			return nil if @item.deleted or @item.spam
 
-			next_ticket = current_account.tickets 
-				.where(["id #{SWITCHES[direction][:sql_operator]} ? 
-													AND deleted = 0 AND spam = 0 ", @item.id])
-				.order("id #{SWITCHES[direction][:order]}").first
+			next_ticket = current_account.tickets.find(:first, 
+				:conditions => ["id #{SWITCHES[direction][:sql_operator]} ? 
+													AND deleted = 0 AND spam = 0 ", @item.id], 
+				:order => "id #{SWITCHES[direction][:order]}")
 
 			return next_ticket.nil? ? nil : next_ticket.display_id
 		end

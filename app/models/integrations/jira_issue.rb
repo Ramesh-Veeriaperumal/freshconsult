@@ -127,7 +127,7 @@ class Integrations::JiraIssue
 
   def add_attachment(request_params, url, attachments)
     attachments.each do |attachment|
-      attachment_url = AwsWrapper::S3.presigned_url(attachment.content.bucket_name, attachment.content.path, expires_in: 5.minutes.to_i, secure: true, response_content_type: attachment.content_content_type)
+      attachment_url = AwsWrapper::S3Object.url_for(attachment.content.path,attachment.content.bucket_name,:expires => 300.seconds, :secure => true, :response_content_type => attachment.content_content_type)
       begin
       web_contents = open(attachment_url)
       rescue Timeout::Error

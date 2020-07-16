@@ -15,6 +15,6 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib','app']
   s.files = Dir["{app,lib}/**/*"]  
 
-  s.add_runtime_dependency 'rails'
-  s.add_runtime_dependency 'acts_as_list'
+  s.add_runtime_dependency 'rails', '~> 3.2.18'
+  s.add_runtime_dependency 'acts_as_list', '0.1.4'
 end

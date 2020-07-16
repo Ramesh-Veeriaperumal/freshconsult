@@ -37,7 +37,7 @@ module ImportCsvUtil
     output, status= Open3.capture2('wc','-l', file_field.path)
     row_count = output.strip.split(' ')[0].to_i
 
-    AwsWrapper::S3.put(S3_CONFIG[:bucket], file_path, file_field.tempfile, content_type: file_field.content_type, server_side_encryption: 'AES256')
+    AwsWrapper::S3Object.store(file_path, file_field.tempfile, S3_CONFIG[:bucket], :content_type => file_field.content_type)
     session[:map_fields] = {}
     session[:map_fields][:row_count] = row_count
     session[:map_fields][:file_name] = file_field.original_filename
@@ -60,7 +60,7 @@ module ImportCsvUtil
 
   def read_file file_location, header = false
     @rows = []
-    csv_file = AwsWrapper::S3.read_io(S3_CONFIG[:bucket], file_location) # PRE-RAILS: Need to check this
+    csv_file = AwsWrapper::S3Object.find(file_location, S3_CONFIG[:bucket])
     CSVBridge.parse(content_of(csv_file)) do |row|
       @rows << row.collect{|r| Helpdesk::HTMLSanitizer.clean(r.to_s)}
       break if header && @rows.size == 2
@@ -162,6 +162,6 @@ module ImportCsvUtil
   end
 
   def delete_import_file(file_location)
-    AwsWrapper::S3.delete(S3_CONFIG[:bucket], file_location)
+    AwsWrapper::S3Object.delete(file_location, S3_CONFIG[:bucket])
   end
 end 

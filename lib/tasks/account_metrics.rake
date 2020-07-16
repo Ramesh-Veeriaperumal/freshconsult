@@ -100,8 +100,9 @@ namespace :account_metrics do
   def activity_data(account, data)
     ACTIVITIES.each do |k, v|
       agent_ids = account.agents.collect{ |a| a.user_id }
-      activity = account.activities.order("id DESC").limit(1) 
-                                   .where(["notable_type IN (?) and user_id in (?) AND created_at > ?", v, agent_ids, 10.days.ago]).first
+      activity = account.activities.find(:all, :order => "id DESC", :limit => 1, 
+        :conditions => ["notable_type IN (?) and user_id in (?) AND created_at > ?", 
+          v, agent_ids, 10.days.ago]).first
       data << [account.id, k] if activity
     end
     data
@@ -115,7 +116,7 @@ namespace :account_metrics do
   def push_file_to_s3(file_name)
     file_path = File.join("#{Rails.root}", "tmp", file_name)
     aws_path = %(#{@date}/#{File.basename(file_path)})
-    AwsWrapper::S3.put(S3_BUCKET, aws_path, File.open(file_path), server_side_encryption: 'AES256')
+    AwsWrapper::S3Object.store(aws_path, File.open(file_path), S3_BUCKET)
   end 
 
   def delete_file(file_name)

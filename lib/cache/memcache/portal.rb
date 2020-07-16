@@ -47,7 +47,7 @@ module Cache::Memcache::Portal
     file = "sitemap/#{self.account_id}/#{self.id}.xml"
     self.clear_sitemap_cache if MemcacheKeys.get_from_cache(key).is_a?(NullObject)
     MemcacheKeys.fetch(key) { 
-      AwsWrapper::S3.read(S3_CONFIG[:bucket], file) if AwsWrapper::S3.exists?(S3_CONFIG[:bucket], file)
+      AwsWrapper::S3Object.read(file,S3_CONFIG[:bucket]) if AwsWrapper::S3Object.find(file,S3_CONFIG[:bucket]).exists?
     }
   end
 
@@ -63,7 +63,7 @@ module Cache::Memcache::Portal
   end
 
   def public_fav_icon_url
-    AwsWrapper::S3.public_url(fav_icon.content.bucket_name, fav_icon.content.path(:fav_icon), expires_in: 7.days.to_i, secure: true)
+    AwsWrapper::S3Object.public_url_for(fav_icon.content.path(:fav_icon), fav_icon.content.bucket_name, expires: 7.days, secure: true)
   end
 
   def solution_categories_from_cache

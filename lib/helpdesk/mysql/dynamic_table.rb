@@ -25,7 +25,7 @@ class Helpdesk::Mysql::DynamicTable < ActiveRecord::Base
 
   def self.find_all(options)
     determine_table_name
-    where(options[:conditions]).order(options[:order]).limit(options[:limit])
+    find(:all, :conditions => options[:conditions], :order => options[:order], :limit => options[:limit])
   end
 
   def self.destroy_all(options)

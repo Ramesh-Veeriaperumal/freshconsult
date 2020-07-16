@@ -54,20 +54,25 @@ class Account < ActiveRecord::Base
   include Account::Setup
   include Account::BackgroundFixtures
 
-  STATE_SCOPES = {
-    active: " subscriptions.state != 'suspended' ",
-    trial: " subscriptions.state = 'trial' ",
-    free: " subscriptions.state IN ('free','active') and subscriptions.amount = 0 ",
-    paid: " subscriptions.state = 'active' and subscriptions.amount > 0 "
-  }
+  scope :active_accounts,
+              :conditions => [" subscriptions.state != 'suspended' "],
+              :joins => [:subscription]
 
-  STATE_SCOPES.each do |name, condition|
-    scope :"#{name}_accounts", -> { where(condition).joins(:subscription) }
-  end
+  scope :trial_accounts,
+              :conditions => [" subscriptions.state = 'trial' "],
+              :joins => [:subscription]
 
-  scope :premium_accounts, -> { where(premium: true) }
-  scope :non_premium_accounts, -> { where(premium: false) }
+  scope :free_accounts,
+              :conditions => [" subscriptions.state IN ('free','active') and subscriptions.amount = 0 "],
+              :joins => [:subscription]
 
+  scope :paid_accounts,
+              :conditions => [" subscriptions.state = 'active' and subscriptions.amount > 0 "],
+              :joins => [:subscription]
+
+  scope :premium_accounts, {:conditions => {:premium => true}}
+
+  scope :non_premium_accounts, {:conditions => {:premium => false}}
   # Alias so that any dynamic reference to full_time_agents won't fail.
   alias :full_time_agents :full_time_support_agents
 
@@ -278,7 +283,7 @@ class Account < ActiveRecord::Base
 
     def fetch_all_active_accounts
       results = Sharding.run_on_all_shards do
-        Account.joins(:subscription).where('subscriptions.next_renewal_at > now()')
+        Account.find(:all,:joins => :subscription, :conditions => "subscriptions.next_renewal_at > now()")
       end
     end
 
@@ -967,7 +972,7 @@ class Account < ActiveRecord::Base
     key = format(SITEMAP_OUTDATED, account_id: id)
     remove_portal_redis_key(key)
     portals.map(&:clear_sitemap_cache)
-    AwsWrapper::S3.find_with_prefix(S3_CONFIG[:bucket], "sitemap/#{id}/").map(&:delete)
+    AwsWrapper::S3Object.find_with_prefix(S3_CONFIG[:bucket], "sitemap/#{id}/").map(&:delete)
     Rails.logger.info ":::::: Sitemap is deleted (redis, cache & S3) for account #{id} ::::::"
   end
 
@@ -1019,6 +1024,10 @@ class Account < ActiveRecord::Base
     redis_key_exists?(DISABLE_FRESHSALES_API_CALLS)
   end
 
+  def twitter_api_compliance_enabled?
+    redis_key_exists?(TWITTER_API_COMPLIANCE_ENABLED) && Account.current.launched?(:twitter_api_compliance)
+  end
+
   def omni_bundle_id
     account_additional_settings.try(:additional_settings).try(:[], :bundle_id)
   end
@@ -1032,7 +1041,7 @@ class Account < ActiveRecord::Base
   end
 
   def show_omnichannel_banner?
-    User.current.privilege?(:manage_account) && launched?(:explore_omnichannel_feature) && freshid_org_v2_enabled? && !(omni_bundle_account? || subscription.subscription_plan.omni_plan? || subscription.suspended? || account_cancellation_requested?)
+    User.current.privilege?(:manage_account) && launched?(:explore_omnichannel_feature) && freshid_org_v2_enabled? && verified? && !(omni_bundle_account? || subscription.subscription_plan.omni_plan? || subscription.suspended? || account_cancellation_requested?)
   end
 
   def freshcaller_billing_url
@@ -1137,6 +1146,10 @@ class Account < ActiveRecord::Base
     end
 
     def generate_download_url(file_path)
-      AwsWrapper::S3.presigned_url(S3_CONFIG[:bucket], file_path, expires_in: FILE_DOWNLOAD_URL_EXPIRY_TIME.to_i, secure: true) if AwsWrapper::S3.exists?(S3_CONFIG[:bucket], file_path)
+      if AwsWrapper::S3Object.exists?(file_path, S3_CONFIG[:bucket])
+        AwsWrapper::S3Object.url_for(file_path, S3_CONFIG[:bucket],
+                                      expires: FILE_DOWNLOAD_URL_EXPIRY_TIME,
+                                      secure: true)
+      end
     end
 end

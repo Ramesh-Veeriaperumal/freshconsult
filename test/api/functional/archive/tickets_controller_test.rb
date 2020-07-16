@@ -49,6 +49,32 @@ class Archive::TicketsControllerTest < ActionController::TestCase
     end
   end
 
+  def test_archive_ticket_show_with_read_scope
+    stub_archive_assoc_for_show(@archive_association) do
+      archive_ticket = @account.archive_tickets.where(ticket_id: @archive_ticket.id).first
+      return if archive_ticket.blank?
+
+      user = User.current
+      permission = user.agent.ticket_permission
+      group = create_group_with_agents(Account.current, agent_list: [user.id])
+      user.agent.update_attributes(ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+      archive_ticket_group_id = archive_ticket.group_id
+      archive_ticket.group_id = group.id
+      archive_ticket.save
+      get :show, controller_params(id: archive_ticket.display_id, include: 'stats')
+      assert_response 200
+      archive_ticket.group_id = archive_ticket_group_id
+      archive_ticket.save
+      ticket_pattern = ticket_pattern_for_show(archive_ticket)
+      response = JSON.parse(@response.body)
+      assert_equal response['id'], archive_ticket.display_id
+      user.agent.update_attributes(ticket_permission: permission)
+      group.destroy if group.present?
+      Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+    end
+  end
+
   def test_show_with_custom_file_field
     custom_field = create_custom_field_dn('test_signature_file', 'file')
     stub_archive_assoc_for_show(@archive_association) do

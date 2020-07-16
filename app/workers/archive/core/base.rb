@@ -6,11 +6,10 @@ module Archive
     class Base
       include Publisher
 
-      # Renaming ticket_old_body to ticket_body. Need to handle this while restoring ticket.
       ASSOCIATIONS_TO_SERIALIZE = {
-        helpdesk_tickets: [:flexifield, :ticket_body, :schema_less_ticket, :ticket_states, :reminders, :subscriptions,
+        helpdesk_tickets: [:flexifield, :ticket_old_body, :schema_less_ticket, :ticket_states, :reminders, :subscriptions,
                            :bot_ticket, :canned_form_handles],
-        # helpdesk_notes: [:survey_remark, :note_body, :schema_less_note, :external_note]
+        # helpdesk_notes: [:survey_remark, :note_old_body, :schema_less_note, :external_note]
       }.freeze
 
       # tag_uses: "taggable", :tags, :parent

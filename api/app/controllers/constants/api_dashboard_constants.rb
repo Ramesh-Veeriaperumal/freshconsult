@@ -68,18 +68,18 @@ module ApiDashboardConstants
 
   # [name, w, h, source, type, refresh_interval, tooltip_text, link_href, link_text ]
   OMNI_CHANNEL_DASHBOARD = [
-    ['freshdesk-volume', 2, 2, 'freshdesk', 'scorecard', 30_000, nil, nil, nil],
-    ['freshchat-volume', 2, 2, 'freshchat', 'scorecard', 30_000, 'omni_dashboard.freshchat_volume_tooltip', nil, nil],
-    ['freshcaller-volume', 2, 2, 'freshcaller', 'scorecard', 30_000, nil, nil, nil],
-    ['freshdesk-performance', 2, 2, 'freshdesk', 'scorecard', 30_000, nil, nil, nil],
-    ['freshchat-performance', 2, 2, 'freshchat', 'scorecard', 30_000, nil, nil, nil],
-    ['freshcaller-performance', 2, 2, 'freshcaller', 'scorecard', 30_000, nil, nil, nil],
-    ['freshdesk-csat', 2, 2, 'freshdesk', 'survey', 30_000, nil, nil, nil],
-    ['freshchat-csat', 2, 2, 'freshchat', 'survey', 30_000, nil, nil, nil],
-    ['freshcaller-sla', 2, 2, 'freshcaller', 'gauge', 30_000, nil, nil, nil],
-    ['freshdesk-todo', 2, 2, 'freshdesk', 'todo'],
-    ['omni-availability', 2, 2, 'freshdesk', 'metric-list', 30_000, nil, '/a/dashboard/agent_status', 'omni_dashboard.omni_availability_detail_title'],
-    ['freshcaller-active-calls', 2, 2, 'freshcaller', 'metric-list', 30_000, nil, nil, nil]
+    ['freshdesk-volume', 2, 2, 'freshdesk', 'scorecard', 300_000, nil, nil, nil],
+    ['freshchat-volume', 2, 2, 'freshchat', 'scorecard', 60_000, 'omni_dashboard.freshchat_volume_tooltip', nil, nil],
+    ['freshcaller-volume', 2, 2, 'freshcaller', 'scorecard', 60_000, nil, nil, nil],
+    ['freshdesk-performance', 2, 2, 'freshdesk', 'scorecard', 900_000, nil, nil, nil],
+    ['freshchat-performance', 2, 2, 'freshchat', 'scorecard', 900_000, nil, nil, nil],
+    ['freshcaller-performance', 2, 2, 'freshcaller', 'scorecard', 900_000, nil, nil, nil],
+    ['freshdesk-csat', 2, 2, 'freshdesk', 'survey', 900_000, nil, nil, nil],
+    ['freshchat-csat', 2, 2, 'freshchat', 'survey', 900_000, nil, nil, nil],
+    ['freshcaller-sla', 2, 2, 'freshcaller', 'gauge', 900_000, nil, nil, nil],
+    ['freshdesk-todo', 2, 2, 'freshdesk', 'todo', 900_000],
+    ['omni-availability', 2, 2, 'OCR', 'metric-list', 60_000, nil, '/a/dashboard/agent_status', 'omni_dashboard.omni_availability_detail_title'],
+    ['freshcaller-active-calls', 2, 2, 'freshcaller', 'metric-list', 60_000, nil, nil, nil]
   ].freeze
 
   PARAMS_FIELD_NAME_MAPPINGS = { group_ids: :group_id,
@@ -119,7 +119,7 @@ module ApiDashboardConstants
 
   SCORECARD_FIELDS = %w(group_ids product_ids).freeze
 
-  SURVEY_INFO_FIELDS = %w(group_id).freeze
+  SURVEY_INFO_FIELDS = %w[group_id group_ids].freeze
 
   UNRESOLVED_COLUMN_KEY_MAPPING = {:group_id => "group_id", :responder_id => "responder_id", :status => "status", 
       :internal_group_id => "internal_group_id", :internal_agent_id => "internal_agent_id", :group_ids => "group_id",
@@ -148,4 +148,6 @@ module ApiDashboardConstants
     'spam:false AND deleted:false AND agent_id:null AND status:2': 'unassigned',
     'spam:false AND deleted:false AND (status:3 OR status:6)': 'on_hold'
   }.freeze
+
+  INVERTED_TIME_PERIODS = Dashboard::SurveyWidget::TIME_PERIODS.invert.freeze
 end

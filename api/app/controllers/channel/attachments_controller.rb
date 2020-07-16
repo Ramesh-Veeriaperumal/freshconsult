@@ -11,9 +11,9 @@ module Channel
     end
 
     def show
-      options = { expires_in: 1.day.to_i, secure: true, response_content_type: @item.content_content_type, response_content_disposition: 'attachment' }
+      options = { expires: 1.days, secure: true, response_content_type: @item.content_content_type, response_content_disposition: 'attachment'}
       attachment_content = @item.content
-      redir_url = AwsWrapper::S3.presigned_url(attachment_content.bucket_name, attachment_content.path('original'.to_sym), options)
+      redir_url = AwsWrapper::S3Object.url_for(attachment_content.path("original".to_sym), attachment_content.bucket_name, options)
       respond_to do |format|
       	format.all do
         	redirect_to redir_url

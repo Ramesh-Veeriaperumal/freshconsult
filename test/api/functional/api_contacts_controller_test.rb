@@ -3312,4 +3312,56 @@ class ApiContactsControllerTest < ActionController::TestCase
     write_query_count = QueryCounter.queries.select{ |q| q.include?('UPDATE ') or q.include?('INSERT INTO') }.count
     assert write_query_count == 2
   end
+
+  def test_twitter_api_compliance_create_contact
+    set_others_redis_key(TWITTER_API_COMPLIANCE_ENABLED, true)
+    Account.current.launch(:twitter_api_compliance)
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: Faker::Internet.email)
+    assert_response 201
+    match_json(deleted_contact_pattern(User.last))
+  ensure
+    remove_others_redis_key TWITTER_API_COMPLIANCE_ENABLED
+    Account.current.rollback(:twitter_api_compliance)
+  end
+
+  def test_twitter_api_compliance_update_contact
+    set_others_redis_key(TWITTER_API_COMPLIANCE_ENABLED, true)
+    Account.current.launch(:twitter_api_compliance)
+    comp = get_company
+    sample_user = add_new_user(@account)
+    params_hash = { company_id: comp.id, view_all_tickets: true }
+    put :update, construct_params({ id: sample_user.id }, params_hash)
+    assert_response 200
+    match_json(deleted_contact_pattern(sample_user.reload))
+  ensure
+    remove_others_redis_key TWITTER_API_COMPLIANCE_ENABLED
+    Account.current.rollback(:twitter_api_compliance)
+  end
+
+  def test_contact_index_twitter_api_compliance
+    set_others_redis_key(TWITTER_API_COMPLIANCE_ENABLED, true)
+    Account.current.launch(:twitter_api_compliance)
+    get :index, controller_params()
+    assert_response 200
+    users = @account.all_contacts.order('users.name').select { |x| x.deleted == false && x.blocked == false }
+    pattern = users.map { |user| index_contact_pattern(user) }
+    match_json(pattern.ordered!)
+  ensure
+    remove_others_redis_key TWITTER_API_COMPLIANCE_ENABLED
+    Account.current.rollback(:twitter_api_compliance)
+  end
+
+  def test_twitter_api_compliance_show_contact
+    set_others_redis_key(TWITTER_API_COMPLIANCE_ENABLED, true)
+    Account.current.launch(:twitter_api_compliance)
+    sample_user = add_new_user(@account)
+    get :show, construct_params(id: sample_user.id)
+    ignore_keys = [:was_agent, :agent_deleted_forever, :marked_for_hard_delete]
+    match_json(contact_pattern(sample_user.reload).except(*ignore_keys))
+    assert_response 200
+  ensure
+    remove_others_redis_key TWITTER_API_COMPLIANCE_ENABLED
+    Account.current.rollback(:twitter_api_compliance)
+  end
 end

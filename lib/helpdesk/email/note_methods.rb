@@ -40,7 +40,7 @@ module Helpdesk::Email::NoteMethods
   def from_fwd_emails?
     @from_fwd_emails ||= begin
       cc_email_hash_value = ticket.cc_email_hash
-      unless cc_email_hash_value.blank?
+      unless cc_email_hash_value.nil?
         cc_email_hash_value[:fwd_emails].any? {|f_email| f_email.include?(email[:from][:email]) }
       else
         false

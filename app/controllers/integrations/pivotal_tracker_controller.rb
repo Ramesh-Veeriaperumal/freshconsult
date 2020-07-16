@@ -49,7 +49,7 @@ class Integrations::PivotalTrackerController < ApplicationController
           end
         when :story_move_into_project_activity
           pivotal_updates["primary_resources"].each do |resource|
-            integrated_resource = Integrations::IntegratedResource.where(['remote_integratable_id LIKE ?', "%/stories/#{resource['id']}"]).first if integrated_resource.nil?
+            integrated_resource = Integrations::IntegratedResource.find(:all, :conditions => ['remote_integratable_id LIKE ?',"%/stories/#{resource["id"]}"]).first if integrated_resource.nil?
             integrated_resource["remote_integratable_id"] = "#{project_id}/stories/#{resource["id"]}"
             integrated_resource.save!
           end
@@ -122,7 +122,7 @@ class Integrations::PivotalTrackerController < ApplicationController
     def add_note(project_id, story_id, msg, performer_id=nil, performer_name =nil, project_flag=nil)
       remote_integratable_id = "#{project_id}/stories/#{story_id}"
       integrated_resource = Integrations::IntegratedResource.find_by_remote_integratable_id(remote_integratable_id) if project_flag.nil?
-      integrated_resource = Integrations::IntegratedResource.where(['remote_integratable_id LIKE ?', "%/stories/#{story_id}"]).first if integrated_resource.nil?
+      integrated_resource = Integrations::IntegratedResource.find(:all, :conditions => ['remote_integratable_id LIKE ?',"%/stories/#{story_id}"]).first if integrated_resource.nil?
       if current_user
         user_id = current_user.id
       else

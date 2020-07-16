@@ -76,10 +76,10 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	# Attributes used in Freshservice
 	alias_attribute :department_id, :long_tc10
 
-  serialize :to_emails, Array
-  serialize :text_tc01, Hash
-  serialize :text_tc02, Hash
-  serialize :text_tc03, Hash
+	serialize :to_emails
+	serialize :text_tc01, Hash
+	serialize :text_tc02, Hash
+	serialize :text_tc03, Hash
   serialize :text_tc04, Hash
 
   after_initialize :backup_change

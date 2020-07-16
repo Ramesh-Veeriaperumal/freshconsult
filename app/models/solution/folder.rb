@@ -23,7 +23,7 @@ class Solution::Folder < ActiveRecord::Base
   
   alias_method :parent, :solution_folder_meta
   
-  scope :alphabetical, -> { order('name ASC') }
+  scope :alphabetical, :order => 'name ASC'
 
   attr_accessible :name, :description, :import_id
   attr_accessor :count_articles

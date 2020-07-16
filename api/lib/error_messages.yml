@@ -577,3 +577,7 @@ api_error_messages:
   uniq_group_and_contribution_error_message: "The same group cannot have both read and write access for an agent"
   group_ids_already_used: "These ids are already present in primary group - '%{list}'"
   contribution_group_ids_already_used: "These ids are already present in contribution group - '%{list}'"
+
+  require_group_id: "The group_id param is required along with the channel"
+  require_channel: "The channel param is required along with the group_id"
+  require_availability: "only=availability param is required for the given %{param} param"

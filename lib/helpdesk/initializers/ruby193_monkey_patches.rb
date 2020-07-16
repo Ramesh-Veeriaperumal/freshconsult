@@ -80,7 +80,7 @@ end
 
 # #To set yaml parser to syck bcz 1.9.3 the yaml parser is psyck. Untill we fully migrate to 1.9 some times we need to serialize
 # #object in one version need to deserialize in another version.(Ex: delayed_jobs and Ticket listview ..etc)
-# YAML::ENGINE.yamler = "syck" if defined?(YAML::ENGINE)
+YAML::ENGINE.yamler = "syck" if defined?(YAML::ENGINE)
 
 # In order to have consistent behavior between Ruby 1.8.7 and Ruby 1.9.3, we created a class called CSVBridge, and use that instead of CSV or FasterCSV:
 require 'csv'

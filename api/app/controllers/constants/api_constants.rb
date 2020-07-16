@@ -5,7 +5,6 @@ module ApiConstants
     max_per_page: 100,
     page: 1
   }.freeze
-  PAGINATION_ATTRIBUTES = [:per_page, :page, :total_entries]
   ORDER_TYPE = %w(asc desc).freeze
 
   EMAIL_CONFIG_PER_PAGE = 1000

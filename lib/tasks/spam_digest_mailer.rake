@@ -7,7 +7,8 @@ namespace :spam_digest_mailer do
 		time_zones = Timezone::Constants::UTC_MORNINGS[Time.zone.now.utc.hour]
 		Sharding.execute_on_all_shards do
 			Sharding.run_on_slave do
-				Account.current_pod.active_accounts.where({:time_zone => time_zones}).find_in_batches(:batch_size => 500) do |accounts|
+				Account.current_pod.active_accounts.find_in_batches(
+					:batch_size => 500, :conditions => {:time_zone => time_zones}) do |accounts|
 					accounts.each do |account|
 						account.make_current
 						forum_spam_digest_recipients = account.forum_moderators.map(&:email).compact

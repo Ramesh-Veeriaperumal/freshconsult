@@ -28,17 +28,19 @@ class Company < ActiveRecord::Base
     alias_attribute(TAM_DEFAULT_FIELD_MAPPINGS[key], key)
   end
   
-  scope :custom_search, -> (search_string) {
-    where(["name like ?" ,"%#{search_string}%"]).
-    select('name, id, account_id').
-    limit(1000)
-  }
+  scope :custom_search, lambda { |search_string| 
+    { :conditions => ["name like ?" ,"%#{search_string}%"],
+      :select => "name, id, account_id",
+      :limit => 1000  }
+  }  
 
   swindle :basic_info,
           attrs: %i[name]
 
   def self.filter(letter, page, per_page = 50)
-    where(['name like ?', "#{letter}%"]).order('name').paginate(per_page: per_page, page: page)
+    paginate :per_page => per_page, :page => page,
+             :conditions => ['name like ?', "#{letter}%"],
+             :order => 'name'
   end
 
   def to_s

@@ -70,7 +70,7 @@ module Dynamo::QueryMethods
 				value.delete(value[0]) if value.length > 1
 				{
 					:comparison_operator => comparator,
-					:attribute_value_list => value.map { |val| Dynamo.convert(key[:type] => val) }
+					:attribute_value_list => value.map { |val| { key[:type] => val.to_s} }
 				}
 			end
 	end

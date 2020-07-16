@@ -14,13 +14,13 @@
     this.filterUrl = '/support/bot_responses/filter';
     this.updateUrl = '/support/bot_responses/update_response';
     this.widgetHtml = "<div class='do-you-find-it-helpful'></div>";
-    this.ticketHelptextHtml = "<strong>Did you find this article helpful?</strong>";
+    this.ticketHelptextHtml = "<strong>Does this article answer your query?</strong>";
     this.ticketContentHtml = "<p>If yes, we'll close your ticket.</p>";
     this.botTicketHtmlContent = "<div class='bot-image'></div><div class='bot-ticket-content'></div>";
     this.botArticleHtmlContent = "<div class='bot-article-content'></div>"
     this.buttonHtml = "<button class='btn btn-primary email-bot-helpful'>Yes, close ticket</button><button class='btn email-bot-helpful'>No</button>";
     this.articleHelpTextHtml = "<div class='help'><strong>Uh-oh. Maybe these articles can help you.</strong></div>";
-    this.finalMessageUseful = "<div class='thanks-for-feedback'><div class='widget-vote up'></div><div><strong>We're glad this article was helpful.</strong></div></div>";
+    this.finalMessageUseful = "<div class='thanks-for-feedback'><div class='widget-vote up'></div><div><strong>We are glad this article was helpful in answering your query.</strong></div></div>";
     this.finalMessageNotUseful = "<div class='thanks-for-feedback'><div class='widget-vote down'></div><div><strong>We're sorry. Our team will reach out to you shortly.</strong></div></div>";
   }
 

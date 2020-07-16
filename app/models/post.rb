@@ -27,57 +27,32 @@ class Post < ActiveRecord::Base
   has_many :activities,
     :class_name => 'Helpdesk::Activity',
     :as => 'notable'
+
   has_many :inline_attachments, :class_name   => 'Helpdesk::Attachment',
                                 :conditions   => { :attachable_type => 'Post::Inline' },
                                 :foreign_key  => 'attachable_id',
                                 :dependent    => :destroy,
                                 :before_add   => :set_inline_attachable_type
-  scope :answered_posts, -> { where(answer: true) }
+
+  scope :answered_posts, :conditions => { :answer => true }
   has_many :support_scores, :as => :scorable, :dependent => :destroy
   
-  scope :published_and_mine, -> (user) { where(["(published=1 OR user_id =?) AND (published=1 OR spam != 1 OR spam IS NULL)", user.id]) }
-  scope :published, -> { where(published: true, trash: false) }
-  scope :trashed, -> { where(trash: true) }
+  scope :published_and_mine, lambda { |user| { :conditions => ["(published=1 OR user_id =?) AND (published=1 OR spam != 1 OR spam IS NULL)", user.id] } }
+  scope :published, :conditions => {:published => true, :trash => false }
+  scope :trashed, :conditions => {:trash => true }
 
-  scope :include_topics_and_forums, -> { includes(topic: :forum)}
-  scope :unpublished_spam, -> { 
-    where(
-      published: false,
-      spam: true,
-      trash: false
-    ).
-    order("posts.created_at DESC").
-    joins(:topic)
-  }
-  
-  scope :waiting_for_approval, -> { 
-    where(
-      published: false,
-      spam: false,
-      trash: false
-    ).
-    order("posts.created_at DESC").
-    joins(:topic)
-  }
-  
-  # TODO-Rails4 - Seems same as above
-  scope :unpublished, -> { 
-    where(
-      published: false,
-      spam: false,
-      trash: false
-    ).
-    order("posts.created_at DESC").
-    joins(:topic)
-  }
-  
-  scope :pick_published, -> (ids) { where(id: ids, published:true) }
+  scope :include_topics_and_forums, :include => { :topic => [ :forum ] }
+  scope :unpublished_spam,:conditions => {:published => false, :spam => true, :trash => false}, :order => "posts.created_at DESC", :joins => [ :topic ]
+  scope :waiting_for_approval,:conditions => {:published => false, :spam => false, :trash => false}, :order => "posts.created_at DESC", :joins => [ :topic ]
+  scope :unpublished,:conditions => {:published => false, :trash => false}, :order => "posts.created_at DESC", :joins => [ :topic ]
+  scope :pick_published, lambda { |ids| {:conditions => ['id in (?) and published is true', ids] } }
 
-  scope :by_user, -> (user) {
-    joins(:topic).
-    where(["posts.user_id = ?  and posts.user_id != topics.user_id", user.id ])
+
+  scope :by_user, lambda { |user|
+      { :joins => [:topic],
+        :conditions => ["posts.user_id = ?  and posts.user_id != topics.user_id", user.id ]
+      }
   }
-  
   before_update :unmark_another_answer, :if => :questions? && :topic_has_answer?
   after_update :toggle_answered_stamp, :if => :questions?
   after_destroy :mark_as_unanswered, :if => :answer

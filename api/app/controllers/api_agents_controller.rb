@@ -20,6 +20,26 @@ class ApiAgentsController < ApiApplicationController
 
   SLAVE_ACTIONS = %w[index achievements].freeze
 
+  def index
+    if only_omni_channel_availability
+      # Request OCR for the agents available for automatic ticket assignment
+      query_params = { auto_assignment: true }
+      (AgentConstants::AVAILABILITY_PARAMS | [:group_id, :page, :per_page, :order_type]).each do |param|
+        query_params[param.to_sym] = params[param.to_sym] if params[param.to_sym].present?
+      end
+      ocr_path = [OCR_PATHS[:get_agents], query_params.to_query].join('?')
+      Rails.logger.debug "GET #{ocr_path}"
+      begin
+        ocr_response = request_ocr(:admin, :get, ocr_path)
+        @parsed_ocr_response = JSON.parse(ocr_response)
+      rescue Exception => e
+        Rails.logger.info "Exception while fetching agents from OCR :: #{e.inspect}"
+        NewRelic::Agent.notice_error(e)
+      end
+    end
+    super
+  end
+
   def check_edit_privilege
     if current_account.freshid_integration_enabled? && !current_account.allow_update_agent_enabled?
       return true if @item.user_changes.key?('email') && freshid_user_details(@item.user.email).blank?
@@ -279,7 +299,9 @@ class ApiAgentsController < ApiApplicationController
     end
 
     def load_objects(scoper_options = nil)
+      return super(@parsed_ocr_response.try(:[], 'ocr_agents') || [], false) if only_omni_channel_availability
       return super(scoper_options) if scoper_options
+
       super(
         if User.current.privilege?(:manage_users)
           # Preloading user as 'includes' introduces an additional outer join to users table while inner join with user already exists
@@ -469,5 +491,14 @@ class ApiAgentsController < ApiApplicationController
       filter_array = filter_key == :order_by ? AgentConstants::AGENTS_ORDER_BY : AgentConstants::AGENTS_ORDER_TYPE
       filter_value = @agent_filter.safe_send(filter_key).to_s.downcase if @agent_filter.conditions.include?(filter_key.to_s)
       filter_array.include?(filter_value) ? filter_value : filter_array[0]
+    end
+
+    def only_omni_channel_availability
+      @only_omni_channel_availability ||= params[:only].eql?('availability')
+    end
+
+    def check_privilege
+      success = super
+      render_request_error(:access_denied, 403) if success && !private_api? && index? && !(only_omni_channel_availability || current_user.privilege?(:manage_users))
     end
 end

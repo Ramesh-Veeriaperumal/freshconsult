@@ -3,7 +3,7 @@ namespace :cti_call do
   desc "Polling the sqs to create tickets for unsuccessful screen pops"
   task :create_ticket => :environment do
     include Integrations::CtiHelper
-    AwsWrapper::SqsV2.poll(SQS[:cti_call_queue], wait_time_seconds: 15) do |sqs_msg|
+    $sqs_cti.poll(:initial_timeout => false, :batch_size => 10, :wait_time_seconds => 15) do |sqs_msg|
       msg = JSON.parse(sqs_msg.body)
       puts "** Got ** #{msg} **"
       begin

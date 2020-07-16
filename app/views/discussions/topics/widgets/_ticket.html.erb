@@ -27,7 +27,7 @@
 
 <% content_for :onload_script do %>
   <% if topic.ticket.nil? || topic.ticket.deleted %>
-    topicToTicket('#new-topic-ticket', { action: 'new_topic_ticket', topicId: <%= topic.id %> })
+    topicToTicket('#new-topic-ticket', { action: 'new_topic_ticket', topicId: <%= topic.id %>, contactId: <%= topic.user_id %>})
   <% else %>
     topicToTicket('#topic-ticket-link', { action: 'topic_ticket', ticketId: <%= topic.ticket.display_id %> })
   <% end %>

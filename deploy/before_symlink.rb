@@ -38,7 +38,7 @@ else
   asset_pipeline_host = node[:falcon][:asset_pipeline_host] if node[:falcon] && node[:falcon][:asset_pipeline_host]
   if node[:opsworks] && ::File.exists?("#{node[:rel_path]}/config/database.yml")
     if node[:opsworks][:instance][:hostname].include?('-app-')
-      aws_config = Aws::S3::Resource.new(awscreds).buckets[bucket_name.to_s].objects["compiledfiles/#{file_name}"]
+      aws_config = AWS::S3.new(awscreds).buckets[bucket_name.to_s].objects["compiledfiles/#{file_name}"]
       node.override[:bucket_exist] = aws_config.exists?
     end
     # Lint/UselessAssignment: Useless assignment to variable - master_node.

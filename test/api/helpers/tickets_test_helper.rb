@@ -661,7 +661,7 @@ module ApiTicketsTestHelper
       filter_clause << Time.zone.now.beginning_of_day.ago(1.month).utc
     end
 
-    preload_options = [:tags, :ticket_states, :ticket_body, :schema_less_ticket, :flexifield]
+    preload_options = [:tags, :ticket_states, :ticket_old_body, :schema_less_ticket, :flexifield]
     preload_options << :requester if requester
     preload_options << :company if company
     pattern_array = Helpdesk::Ticket.where(*filter_clause).permissible(User.current).order("#{order_by} #{order_type}").limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).preload(preload_options).map do |ticket|
@@ -685,7 +685,7 @@ module ApiTicketsTestHelper
       filter_clause << Time.zone.now.beginning_of_day.ago(1.month).utc
     end
 
-    preload_options = [:tags, :ticket_states, :ticket_body, :schema_less_ticket, :flexifield]
+    preload_options = [:tags, :ticket_states, :ticket_old_body, :schema_less_ticket, :flexifield]
     preload_options << :requester if requester
     preload_options << :company if company
     pattern_array = Helpdesk::Ticket.where(*filter_clause).permissible(User.current).order("#{order_by} #{order_type}").limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).preload(preload_options).map do |ticket|
@@ -1051,7 +1051,7 @@ module ApiTicketsTestHelper
 
   def handle_timestamps(meta_info)
     if meta_info.is_a?(Hash) && meta_info.keys.include?('time')
-      meta_info['time'] = Time.parse(meta_info['time'].to_s).utc.iso8601
+      meta_info['time'] = Time.parse(meta_info['time']).utc.iso8601
     end
     meta_info
   end

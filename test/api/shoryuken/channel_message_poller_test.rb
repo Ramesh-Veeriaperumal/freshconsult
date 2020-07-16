@@ -216,7 +216,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
     sqs_payload = Minitest::Mock.new
     sqs_payload.expect(:body, sqs_body.to_json)
     $redis_others.perform_redis_op('set', 'TWITTER_APP_BLOCKED', true)
-    Ryuken::ChannelMessagePoller.new.perform(sqs_payload, nil)
+    Ryuken::ChannelMessagePoller.new.perform(sqs_payload)
     redis_key_status = $redis_others.perform_redis_op('exists', 'TWITTER_APP_BLOCKED')
     assert redis_key_status.blank?
   end
@@ -260,6 +260,20 @@ class ChannelMessagePollerTest < ActionView::TestCase
     assert_equal ticket.id, last_fb_post.postable_id
     assert_equal 'ad_post', last_fb_post.msg_type
     assert_equal old_tickets_count + 1, new_tickets_count
+  ensure
+    ticket.destroy
+    Faraday::Connection.any_instance.unstub(:post)
+  end
+
+  def test_facebook_receive_create_ticket_with_product_id
+    fb_page = create_facebook_page
+    Faraday::Connection.any_instance.stubs(:post).returns(Faraday::Response.new(status: 202))
+    sqs_body = get_fb_create_ticket_command(fb_page.page_id)
+    @account.reload
+    push_to_channel(sqs_body)
+    @account.reload
+    ticket = @account.tickets.last
+    assert_equal ticket.product_id, fb_page.product_id
   ensure
     ticket.destroy
     Faraday::Connection.any_instance.unstub(:post)
@@ -508,7 +522,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
 
     def push_to_channel(command_payload)
       sqs_msg = Hashit.new(body: { data: command_payload }.to_json)
-      Ryuken::ChannelMessagePoller.new.perform(sqs_msg, nil)
+      Ryuken::ChannelMessagePoller.new.perform(sqs_msg)
     end
 
     def create_twitter_user
