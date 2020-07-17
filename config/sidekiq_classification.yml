@@ -223,6 +223,7 @@
     - search_analytics_tickets_cleanup
     - update_url_in_sandbox
     - vault_data_cleanup
+    - search_analytics_article_reindex
 
   :external:
     - thank_you_note
@@ -617,6 +618,7 @@
     - search_analytics_tickets_cleanup
     - update_url_in_sandbox
     - vault_data_cleanup
+    - search_analytics_article_reindex
   :frequent:
     - active_account_jobs
     - premium_account_jobs

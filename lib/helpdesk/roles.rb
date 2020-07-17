@@ -122,7 +122,7 @@ module Helpdesk
       :schedule_fsm_dashboard,
       :access_to_map_view,
       :untitled_core_admin_2019_3,
-      :manage_custom_objects,
+      :untitled_core_admin_2019_4,
       :untitled_core_admin_2019_5,
       :untitled_core_supervisor_2019_1,
       :untitled_core_supervisor_2019_2,
@@ -249,7 +249,7 @@ module Helpdesk
       :schedule_fsm_dashboard,
       :access_to_map_view,
       :untitled_core_admin_2019_3,
-      :manage_custom_objects,
+      :untitled_core_admin_2019_4,
       :untitled_core_admin_2019_5,
       :untitled_core_supervisor_2019_1,
       :untitled_core_supervisor_2019_2,
@@ -490,7 +490,7 @@ module Helpdesk
       agent_type: AgentType.agent_type_id(:field_agent)
     }.freeze
 
-    COACH = (SUPERVISOR + [:manage_scores]).freeze
+    COACH = (SUPERVISOR + [:manage_scores, :view_scorecards]).freeze
 
     COACH_ROLE = {
       name: 'Coach',

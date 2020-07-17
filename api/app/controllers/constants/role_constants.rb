@@ -29,6 +29,6 @@ module RoleConstants
   BULK_VALIDATION_CLASS = 'RoleBulkUpdateValidation'.freeze
   VIEW_ADMIN_PRIVILEGE = :view_admin.freeze
   RESTRICTED_PRIVILEGES = [:manage_account].freeze
-  QMS_ADMIN_PRIVILEGES = [:manage_scorecards, :manage_teams].freeze
-  QMS_AGENT_PRIVILEGES = [:view_scores].freeze
+  QMS_ADMIN_PRIVILEGES = [:manage_scorecards, :manage_teams, :view_scores].freeze
+  QMS_AGENT_PRIVILEGES = [:view_scores, :view_scorecards].freeze
 end.freeze

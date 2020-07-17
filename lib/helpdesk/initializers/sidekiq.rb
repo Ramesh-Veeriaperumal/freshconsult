@@ -133,7 +133,8 @@ Sidekiq.configure_client do |config|
       "Solution::ApprovalNotificationWorker",
       'Freshcaller::UpdateAgentsWorker',
       'QualityManagementSystem::PerformQmsOperationsWorker',
-      'UpdateAgentStatusAvailability'
+      'UpdateAgentStatusAvailability',
+      'PrivilegesModificationWorker'
     ]
   end
 end
@@ -266,7 +267,8 @@ Sidekiq.configure_server do |config|
       'Solution::ApprovalNotificationWorker',
       'Freshcaller::UpdateAgentsWorker',
       'QualityManagementSystem::PerformQmsOperationsWorker',
-      'UpdateAgentStatusAvailability'
+      'UpdateAgentStatusAvailability',
+      'PrivilegesModificationWorker'
     ]
     chain.add Server::SidekiqSober, :redis_connection => $redis_others, 
       :priority => ['account_id', 'shard_name'], 

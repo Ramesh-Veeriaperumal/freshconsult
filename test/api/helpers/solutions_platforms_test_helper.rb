@@ -29,6 +29,14 @@ module SolutionsPlatformsTestHelper
     article
   end
 
+  def get_articles_enabled_in_platforms_count(platforms)
+    conditions = ['solution_platform_mappings.mappable_type = \'Solution::ArticleMeta\'']
+    platform_condition = platforms.map { |platform_type| "solution_platform_mappings.#{platform_type} = true" }.join(' OR ')
+    conditions << format('(%{platform_criteria})', platform_criteria: platform_condition)
+
+    Account.current.solution_platform_mappings.where(conditions.join(' AND ')).size
+  end
+
   def get_folder_meta_with_platform_mapping(platform_values = {})
     folder_meta = get_folder_meta_without_platform_mapping
     folder_meta.create_solution_platform_mapping(chat_platform_params(platform_values, true))

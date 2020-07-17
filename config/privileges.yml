@@ -121,7 +121,7 @@
   :schedule_fsm_dashboard: 120
   :access_to_map_view: 121
   :manage_service_task_automation_rules: 122
-  :manage_custom_objects: 123
+  :untitled_core_admin_2019_4: 123
   :untitled_core_admin_2019_5: 124
   :untitled_core_supervisor_2019_1: 125
   :untitled_core_supervisor_2019_2: 126
@@ -134,8 +134,8 @@
   :manage_scorecards: 133
   :manage_scores: 134
   :view_scores: 135
-  :view_all_scores: 136
+  :view_scorecards: 136
   :manage_teams: 137
   :view_omni_analytics: 138
-:max_value: 138
-
+  :manage_custom_objects: 139
+:max_value: 139
