@@ -45,11 +45,11 @@ class Social::TwitterHandle < ActiveRecord::Base
       build_stream(screen_name, TWITTER_STREAM_TYPE[:dm], false, screen_name.dup)
     else
       error_params = {
-        twitter_handle_id: id,
-        account_id: account_id,
-        stream: def_stream.inspect
+        :twitter_handle_id => id,
+        :account_id        => account_id,
+        :stream            => def_stream.inspect
       }
-      Rails.logger.error "Default Stream already present for the handle #{error_params}"
+      notify_social_dev("Default Stream already present for the handle", error_params)
     end
   end
 

@@ -108,7 +108,7 @@ module Social::Twitter::ErrorHandler
                          :handle_id => @sandbox_handle.id,
                          :exception_type => error
                          }
-        notify_social_mailer(nil, error_params, subject)
+        notify_social_dev(subject, error_params)
       end
     end
 
