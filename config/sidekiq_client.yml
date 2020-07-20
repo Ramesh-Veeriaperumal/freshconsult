@@ -403,6 +403,7 @@ defaults: &defaults
     - [bitmap_callbacks]
     - [quality_management_system]
     - [solution_templates_migration_worker]
+    - [touchstone_account_update]
     - [marketplace_app_billing]
     - [update_agent_status_availability]
     - [privilege_modification]

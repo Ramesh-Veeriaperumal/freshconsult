@@ -22,6 +22,11 @@ class Freshcaller::Account < ActiveRecord::Base
     fc.add :account_id, as: :freshdesk_account_id
   end
 
+  api_accessible :touchstone do |fc|
+    fc.add :freshcaller_account_id
+    fc.add :domain, as: :freshcaller_domain
+  end
+
   def relationship_with_account
     :freshcaller_account
   end

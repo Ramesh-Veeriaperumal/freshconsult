@@ -19,6 +19,11 @@ class Freshchat::Account < ActiveRecord::Base
     fc.add :account_id, as: :freshdesk_account_id
   end
 
+  api_accessible :touchstone do |fc|
+    fc.add :app_id, as: :freshchat_app_id
+    fc.add :domain, as: :freshchat_domain
+  end
+
   def model_changes_for_central
     @model_changes[:freshchat_account_id] = @model_changes.delete(:app_id) if @model_changes.key?(:app_id)
     @model_changes

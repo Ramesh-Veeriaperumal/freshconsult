@@ -24,6 +24,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
   validate :validate_portal_languages, :if => :multilingual?
 
   after_commit :publish_account_central_payload, :backup_change
+  after_commit :invoke_touchstone_account_worker, if: -> { omni_bundle_plan_enabled? && bundle_id_changed? }
 
   def toggle_skip_mandatory_option(boolean_value)
     additional_settings[:skip_mandatory_checks] = boolean_value
@@ -388,6 +389,20 @@ class AccountAdditionalSettings < ActiveRecord::Base
     changes
   end
 
+  def omni_bundle_plan_enabled?
+    current_account = Account.current
+    current_account.try(:invoke_touchstone_enabled?) && current_account.try(:omni_bundle_2020_enabled?) && SubscriptionPlan.omni_channel_plan.map(&:id).include?(current_account.try(:subscription).try(:subscription_plan).try(:id))
+  end
+
+  def invoke_touchstone_account_worker
+    # if the bundle_id is set for first time, the action would be create else would be an update call.
+    if @bundle_id_was.nil?
+      OmniChannelDashboard::AccountWorker.perform_async(action: 'create')
+    else
+      OmniChannelDashboard::AccountWorker.perform_async(action: 'update')
+    end
+  end
+
   def clear_cache
     self.account.clear_account_additional_settings_from_cache
     self.account.clear_api_limit_cache
@@ -400,6 +415,11 @@ class AccountAdditionalSettings < ActiveRecord::Base
   def load_state
     @portal_languages_was = portal_languages
     @prev_supported_languages = supported_languages
+    @bundle_id_was = additional_settings.try(:[], :bundle_id)
+  end
+
+  def bundle_id_changed?
+    (additional_settings.try(:[], :bundle_id) != @bundle_id_was)
   end
 
   def validate_supported_languages

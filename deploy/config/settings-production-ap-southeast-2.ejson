@@ -28,6 +28,9 @@
       "secure_field": {
         "_domain": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/"
       },
+      "omni_channel_dashboard": {
+        "signing_key": "EJ[1:4yWHaUD5jf6ptsJnij1pgxBJ0wm5Q45tBUJ4Ui2WFyM=:eAbnuiWwOk/yBhusyC2Mm1cNQSDKYMPl:K+aoMvlXfxwnjPKS7BNfvqjod5RlIog23+MeaimExcOhY7uwFQJUmeVbsoxgzzOJ]"
+      },
       "announcements": {
         "shared_secret": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:UyCCRNJbNiP8GsbA2B7cjP01p3ek6t+4:WufSV9OQrraTUAmCFGOuUSuX66RF4OeVlbzcmEKg3r4AUI+mt/u5YvdiOgg/poBg]",
         "_account_url": "productupdates.freshdesk.com"

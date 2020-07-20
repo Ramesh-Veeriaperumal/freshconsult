@@ -270,6 +270,7 @@
     - fdadmin_freshid_migration
     - agent_assist_email
     - vault_account_update
+    - touchstone_account_update
   :free:
     - free_sla
     - free_supervisor
