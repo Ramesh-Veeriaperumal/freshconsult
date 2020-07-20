@@ -256,7 +256,7 @@ class Social::TwitterStream < Social::Stream
         :stream_id => self.id,
         :account_id => self.account_id
       }
-      notify_social_mailer(nil, error_params, "Feeds Threshold value reached for the stream - #{name} in gnip")
+      notify_social_dev("Feeds Threshold value reached for the stream - #{self.name} in gnip", error_params)
     end
     
     def stream_volume_redis_key

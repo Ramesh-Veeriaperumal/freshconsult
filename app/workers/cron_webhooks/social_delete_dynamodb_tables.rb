@@ -21,9 +21,9 @@ module CronWebhooks
 
           # verify if the tables exists
           if Social::DynamoHelper.table_exists?(name)
-            notify_social_mailer(nil, { table_name: name }, 'DynamoDb table not deleted')
+            notify_social_dev('DynamoDb table not deleted', table_name: name)
           else
-            notify_social_mailer(nil, { table_name: name }, 'DynamoDb table deleted')
+            notify_social_dev('DynamoDb table deleted', table_name: name)
           end
         end
       end

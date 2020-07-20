@@ -77,10 +77,11 @@ module Social::Util
     end
   end
 
-  def notify_social_mailer(error, params = nil, subject = nil)
-    return if Rails.env.development? || Rails.env.test?
-
-    SocialErrorsMailer.deliver_twitter_exception(error, params, subject)
+  def notify_social_dev(subject, message)
+    message = {} unless message
+    message.merge!(:environment => Rails.env)
+    topic = SNS["social_notification_topic"]
+    DevNotification.publish(topic, subject, message.to_json) unless (Rails.env.development? or Rails.env.test?)
   end
 
   def select_valid_date(time, table="feeds")

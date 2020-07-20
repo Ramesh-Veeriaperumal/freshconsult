@@ -44,7 +44,7 @@ module Facebook
                 update_error_and_notify(error_params)
               elsif permission_error?
                 IGNORED_ERRORS.include?(@exception.fb_error_code) ? 
-                    notify_fb_mailer(nil, error_params, error_params[:error_msg][0..50]) :
+                    raise_sns_notification(error_params[:error_msg][0..50], error_params) : 
                     update_error_and_notify(error_params)
               elsif facebook_user_blocked?
                 return [@exception.fb_error_message, :fb_user_blocked, @exception.fb_error_code]
@@ -56,7 +56,7 @@ module Facebook
                 update_error_and_notify(error_params)
               else
                 Sqs::Message.new("{}").requeue(JSON.parse(@raw_obj)) if (@raw_obj && @exception.response_body.downcase.include?(SERVICE_UNAVAILABLE))
-                notify_fb_mailer(nil, { error: 'Server Error', exception: @exception }, 'Server Error')
+                raise_sns_notification("Server Error", {:error => "Server Error", :exception => @exception})
               end
             else
                 raise_newrelic_error(error_params)

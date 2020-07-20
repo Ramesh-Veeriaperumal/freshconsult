@@ -20,17 +20,17 @@ module Redis::GnipRedisMethods
       :reconnect_time => reconnect_time,
       :queue_size => $sqs_twitter.approximate_number_of_messages
     }
-    sandbox(reconnect_time) do |last_entry, updated_time|
-      unless last_entry[:parsed].nil?
-        notify_social_mailer(nil, params, 'Frequent disconnects in Gnip Stream') if last_entry[:start_time] && last_entry[:end_time]
-        last_entry[:parsed] = [last_entry[:start_time], updated_time]
-        $redis_others.perform_redis_op("rpush", GNIP_DISCONNECT_LIST, last_entry[:parsed].to_json)
-        notify_social_mailer(nil, params, 'Gnip Stream Reconnected')
-      else
-        notify_social_mailer(nil, params, 'Gnip Reconnect list is nil')
-      end
-    end
-  end
+		sandbox(reconnect_time) do |last_entry, updated_time|
+  		unless last_entry[:parsed].nil?
+        notify_social_dev("Frequent disconnects in Gnip Stream", params) if last_entry[:start_time] && last_entry[:end_time]
+    		last_entry[:parsed] = [last_entry[:start_time], updated_time]
+    		$redis_others.perform_redis_op("rpush", GNIP_DISCONNECT_LIST, last_entry[:parsed].to_json)
+        notify_social_dev("Gnip Stream Reconnected", params)
+  		else
+        notify_social_dev("Gnip Reconnect list is nil", params)
+  		end
+  	end
+	end
 
 
 	def sandbox(time, &block) # time format "2012-03-19T22:10:56.000Z"

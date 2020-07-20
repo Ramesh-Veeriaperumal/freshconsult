@@ -57,7 +57,7 @@ namespace :facebook do
       process_likes_from_redis
       Rails.logger.info "END TIME :: #{Time.now.utc}"
     rescue => e
-      Rails.logger.error "Error while processing likes :: Exception: #{e.message} :: #{e.backtrace[0..20]}"
+      notify_social_dev("Error while processing likes", e.backtrace)
     end
   end
 
@@ -70,8 +70,8 @@ namespace :facebook do
   def wait_on_poll
     subject = "APP RATE LIMIT - REACHED SKIPPING PROCESS"
     message = {:time_at => Time.now.utc, :sleep_for => APP_RATE_LIMIT_EXPIRY}
+    raise_sns_notification(subject, message)
     Rails.logger.error "Sleeping the process due to APP RATE LIMT"
-    notify_fb_mailer(nil, message, subject)
     sleep(APP_RATE_LIMIT_EXPIRY)
     wait_on_poll if app_rate_limit_reached?
   end
