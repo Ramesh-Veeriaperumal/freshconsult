@@ -31,6 +31,7 @@ class UserSessionsController < ApplicationController
 
   ONBOARDING_ROUTE = '/a/getstarted'.freeze
   ROOT_PATH = '/'.freeze
+  USER_SESSION_CREATION_ERR_MSG = { message: 'Unable to create user session' }.freeze
 
   def new
     flash.keep
@@ -389,13 +390,21 @@ class UserSessionsController < ApplicationController
   end
 
   def mobile_token
-    current_user = current_account.users.find_by_perishable_token(params[:token])
-    if can_access_token?(current_user)
-      response = {
-        auth_token: current_user.mobile_auth_token
-      }
-      current_user.reset_perishable_token!
-      render(json: response, status: :ok)
+    @current_user = current_account.users.where(perishable_token: params[:token]).first
+    if can_access_token?(@current_user)
+      if !@current_user.active_freshid_agent? &&
+         freshid_integration_enabled?
+        new_freshid_signup = @current_user.active = true
+      end
+      @user_session = current_account.user_sessions.new(@current_user)
+      if @user_session.save
+        @current_user.primary_email.update_attributes(verified: false) if new_freshid_signup
+        @current_user.reset_perishable_token!
+        render(json: { auth_token: @current_user.mobile_auth_token }, status: :ok)
+      else
+        Rails.logger.error "User session save status #{@user_session.errors.inspect}"
+        render(json: USER_SESSION_CREATION_ERR_MSG, status: :bad_request)
+      end
     end
   end
 

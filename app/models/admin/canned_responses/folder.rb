@@ -18,7 +18,7 @@ class Admin::CannedResponses::Folder < ActiveRecord::Base
   attr_accessor :visible_responses_count
   attr_accessible :name
   validates_length_of :name, :in => 3..240
-  validates_uniqueness_of :name, :scope => :account_id, :case_sensitive => false
+  validates :name, uniqueness: { scope: [:account_id, :deleted], case_sensitive: false }, unless: :deleted?
 
   concerned_with :presenter
   publishable on: [:create, :destroy]

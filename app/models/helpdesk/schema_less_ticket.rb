@@ -334,6 +334,22 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     additional_info[:nr_violated] = value
   end
 
+  def tweet_type
+    additional_info[:tweet_type]
+  end
+
+  def tweet_type=(value)
+    additional_info[:tweet_type] = value
+  end
+
+  def fb_msg_type
+    additional_info[:fb_msg_type]
+  end
+
+  def fb_msg_type=(value)
+    additional_info[:fb_msg_type] = value
+  end
+
   def override_exchange_model(_action)
     changes = attribute_changes('text_tc02')
     ticket.model_changes = changes if changes.present?

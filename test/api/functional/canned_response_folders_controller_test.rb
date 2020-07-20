@@ -591,4 +591,29 @@ class CannedResponseFoldersControllerTest < ActionController::TestCase
       CentralPublisher::Worker.jobs.clear
     end
   end
+
+  def test_create_a_cr_folder_with_existing_name
+    ca_folder = create_cr_folder(name: 'refund_folder')
+    ca_folder.save
+    another_ca_folder = {
+      name: 'refund_folder'
+    }
+    post :create, construct_params(build_request_param(another_ca_folder))
+    assert_response 409
+    match_json([bad_request_error_pattern('name', :'has already been taken')])
+  ensure
+    ca_folder.destroy
+  end
+
+  def test_create_a_cr_folder_with_deleted_folder_name
+    name = SecureRandom.uuid
+    ca_folder = create_cr_folder(name: name)
+    ca_folder.deleted = true
+    ca_folder.save
+    post :create, construct_params(build_request_param(name: name))
+    assert_response 201
+    match_json(ca_folder_create_pattern(name, ActiveSupport::JSON.decode(response.body)['id']))
+  ensure
+    ca_folder.destroy
+  end
 end

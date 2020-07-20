@@ -158,6 +158,38 @@ module Ember
         assert_equal primary_ticket.cc_email[:reply_cc].include?(%(#{source_ticket.requester.name} <#{source_ticket.requester.email}>)),false
       end
 
+      def test_merge_success_forwarded_emails_with_single_source
+        primary_ticket = create_ticket
+        primary_ticket.cc_email = nil
+        primary_ticket.save
+        source_ticket = create_ticket
+        add_forwarded_emails([source_ticket])
+        request_params = sample_merge_request_params(primary_ticket.display_id, [source_ticket.display_id])
+        put :merge, construct_params({ version: 'private' }, request_params)
+        primary_ticket.reload
+        assert_response 204
+        assert_equal primary_ticket.cc_email[:fwd_emails].sort, source_ticket.cc_email[:fwd_emails].sort
+      end
+
+      def test_merge_sucess_forwarded_emails_with_multiple_source
+        primary_ticket = create_ticket
+        add_forwarded_emails([primary_ticket])
+        source_tickets = 3.times.inject([]) { |arr, i| arr << create_ticket }
+        add_forwarded_emails(source_tickets)
+        add_timesheets_to_ticket(source_tickets)
+        source_tickets.each do |ticket|
+          assert @account.time_sheets.where(workable_type: 'Helpdesk::Ticket', workable_id: ticket.id).present?
+        end
+        refute @account.time_sheets.where(workable_type: 'Helpdesk::Ticket', workable_id: primary_ticket.id).present?
+        request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id))
+        request_params[:convert_recepients_to_cc] = true
+        Sidekiq::Testing.inline! do
+          put :merge, construct_params({ version: 'private' }, request_params)
+          assert_response 204
+          validate_merge_action(primary_ticket, source_tickets)
+        end
+      end
+
       def test_merge_incompletion
         primary_ticket = create_ticket
         source_tickets_ids = create_n_tickets(BULK_TICKET_CREATE_COUNT)
