@@ -4,10 +4,12 @@
   company_hash = item.company_hash
   requester_info = item.requester
   description_hash = item.description_hash
+  social_additional_info_hash = item.social_additional_info_hash
   response_hash[:deleted] = item.deleted if item.deleted
   response_hash[:stats] = stats_hash if stats_hash
   response_hash[:requester] = requester_info if requester_info
   response_hash[:company] = company_hash if company_hash.present?
+  response_hash[:social_additional_info] = social_additional_info_hash if social_additional_info_hash.present?
   response_hash.merge!(description_hash) if description_hash
   response_hash
 end.to_json

@@ -19805,6 +19805,26 @@
           "items": {
             "type": "integer"
           }
+        },
+        "social_additional_info": {
+          "type": "object",
+          "properties": {
+            "tweet_type": {
+              "type": "string",
+              "enum": [
+                "dm",
+                "mention"
+              ]
+            },
+            "fb_msg_type": {
+              "type": "string",
+              "enum": [
+                "dm",
+                "post",
+                "ad_post"
+              ]
+            }
+          }
         }
       }
     },
@@ -21452,6 +21472,26 @@
                   "items": {
                     "$ref": "#/definitions/extended_cloud_file"
                   }
+                },
+                "social_additional_info": {
+                  "type": "object",
+                  "properties": {
+                    "tweet_type": {
+                      "type": "string",
+                      "enum": [
+                        "dm",
+                        "mention"
+                      ]
+                    },
+                    "fb_msg_type": {
+                      "type": "string",
+                      "enum": [
+                        "dm",
+                        "post",
+                        "ad_post"
+                      ]
+                    }
+                  }
                 }
               }
             }
@@ -21778,6 +21818,26 @@
                     "type": "array",
                     "items": {
                       "$ref": "#/definitions/extended_cloud_file"
+                    }
+                  },
+                  "social_additional_info": {
+                    "type": "object",
+                    "properties": {
+                      "tweet_type": {
+                        "type": "string",
+                        "enum": [
+                          "dm",
+                          "mention"
+                        ]
+                      },
+                      "fb_msg_type": {
+                        "type": "string",
+                        "enum": [
+                          "dm",
+                          "post",
+                          "ad_post"
+                        ]
+                      }
                     }
                   }
                 }
