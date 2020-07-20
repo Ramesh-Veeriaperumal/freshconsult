@@ -82,10 +82,10 @@ module Admin::DefaultFieldHelper
     def default_source_choices_validation(choices)
       source_choices = source_choices_by_id
       choices.each do |each_choice|
-        next unless each_choice[:value]
+        next unless each_choice[:id]
 
-        db_choice = source_choices[each_choice[:value]].first
-        default_field_error(:value, :choice) if db_choice.default
+        db_choice = source_choices[each_choice[:id]].first
+        default_field_error(:id, :choice) if db_choice.default
       end
     end
 
@@ -136,8 +136,7 @@ module Admin::DefaultFieldHelper
     def source_params_validation(choices)
       choices.each do |each_choice|
         break if errors.present?
-
-        missing_param_for_source_choices(each_choice) unless each_choice.key?(:value)
+        missing_param_for_source_choices(each_choice) unless each_choice.key?(:id)
         data_type_for_source_choice(each_choice) if errors.blank?
       end
     end
@@ -164,9 +163,9 @@ module Admin::DefaultFieldHelper
     def db_source_value_validation(choices)
       source_choices = source_choices_by_id
       choices.each do |each_choice|
-        next if !each_choice.key?(:value) || errors.present?
+        next if !each_choice.key?(:id) || errors.present?
 
-        absent_in_db_error(:choices, :source_choice, "value `#{each_choice[:value]}`") if source_choices[each_choice[:value]].blank?
+        absent_in_db_error(:choices, :source_choice, "id `#{each_choice[:id]}`") if source_choices[each_choice[:id]].blank?
       end
     end
 
@@ -196,12 +195,12 @@ module Admin::DefaultFieldHelper
     def validate_db_uniqueness_for_source_choices(source, choices)
       source_name_map = current_account.ticket_source_from_cache.map { |i| [i.name, i.account_choice_id].flatten }.to_h
       choices.each do |each_choice|
-        next if each_choice[:label].blank? || (each_choice[:value] && source_name_map[each_choice[:label]] == each_choice[:value])
+        next if each_choice[:label].blank? || (each_choice[:id] && source_name_map[each_choice[:label]] == each_choice[:id])
 
         if source_name_map[each_choice[:label]]
           duplication_choice_error(source, [each_choice[:label]], :choices, 'label')
         else
-          source_name_map[each_choice[:label]] = each_choice[:value].presence || 0
+          source_name_map[each_choice[:label]] = each_choice[:id].presence || 0
         end
       end
     end
