@@ -84,7 +84,8 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         Rails.logger.error "#{error_msg} backtrace: #{exception.backtrace.join("\n")}"
         NewRelic::Agent.notice_error(exception, description: error_msg)
         msg_param = { account_id: Account.current.id, request_id: Thread.current[:message_uuid], message: exception.message }
-        notify_fsm_dev(msg, msg_param)
+        sns_subject = "[#{operation}][FSM][exception][#{Rails.env}] #{exception.message}"
+        notify_fsm_dev(sns_subject, msg_param)
       end
 
       def create_service_task_field_type
