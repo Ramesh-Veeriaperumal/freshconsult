@@ -77,7 +77,7 @@ module ApiDashboardConstants
     ['freshdesk-csat', 2, 2, 'freshdesk', 'survey', 900_000, nil, nil, nil],
     ['freshchat-csat', 2, 2, 'freshchat', 'survey', 900_000, nil, nil, nil],
     ['freshcaller-sla', 2, 2, 'freshcaller', 'gauge', 900_000, nil, nil, nil],
-    ['freshdesk-todo', 2, 2, 'freshdesk', 'todo', 900_000],
+    ['freshdesk-todo', 2, 2, nil, 'todo', 900_000],
     ['omni-availability', 2, 2, 'OCR', 'metric-list', 60_000, nil, '/a/dashboard/agent_status', 'omni_dashboard.omni_availability_detail_title'],
     ['freshcaller-active-calls', 2, 2, 'freshcaller', 'metric-list', 60_000, nil, nil, nil]
   ].freeze

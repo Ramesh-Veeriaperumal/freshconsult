@@ -49,16 +49,16 @@ module Social
 
       def facebook_feed_hash(hash_key, range_key, feed)
         {
-          'page_id' => hash_key.to_s,
-          'timestamp' => range_key.to_s,
+          'page_id' => hash_key.to_i,
+          'timestamp' => range_key.to_i,
           'feed' => feed.to_s
         }
       end
 
       def facebook_message_hash(hash_key, range_key, message)
         {
-          'page_id' => hash_key.to_s,
-          'timestamp' => range_key.to_s,
+          'page_id' => hash_key.to_i,
+          'timestamp' => range_key.to_i,
           'message' => message.to_s
         }
       end

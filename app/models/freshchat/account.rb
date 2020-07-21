@@ -1,6 +1,7 @@
 class Freshchat::Account < ActiveRecord::Base
   
   include DataVersioning::Model
+  include OmniChannelDashboard::TouchstoneUtil
 
   CONFIG = YAML.load_file(File.join(Rails.root, 'config', 'freshchat.yml')).deep_symbolize_keys
 
@@ -17,6 +18,7 @@ class Freshchat::Account < ActiveRecord::Base
   before_save :construct_model_changes, on: :update
   before_destroy :save_deleted_freshchat_account_info
   validates :app_id, presence: true
+  after_commit :invoke_touchstone_account_worker, if: :omni_bundle_enabled?
 
   attr_accessor :model_changes, :deleted_model_info
 

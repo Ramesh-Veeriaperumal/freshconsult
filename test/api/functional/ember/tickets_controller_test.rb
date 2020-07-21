@@ -204,6 +204,28 @@ module Ember
       Account.any_instance.unstub(:next_response_sla_enabled?)
     end
 
+    def test_index_with_fb_ticket
+      ticket = create_ticket_from_fb_post
+      get :index, controller_params(version: 'private', filter: 'all_tickets')
+      assert_response 200
+      response_body = JSON.parse(response.body)
+      fetched_ticket = response_body.first
+      assert_equal fetched_ticket['social_additional_info']['fb_msg_type'], ticket.fb_post.msg_type
+    ensure
+      ticket.destroy
+    end
+
+    def test_index_with_twitter_ticket
+      ticket = create_twitter_ticket
+      get :index, controller_params(version: 'private', filter: 'all_tickets')
+      assert_response 200
+      response_body = JSON.parse(response.body)
+      fetched_ticket = response_body.first
+      assert_equal fetched_ticket['social_additional_info']['tweet_type'], ticket.tweet.tweet_type.to_s
+    ensure
+      ticket.destroy
+    end
+
     def test_index_with_custom_file_field
       custom_field = create_custom_field_dn('test_signature_file', 'file')
       ticket = create_ticket
@@ -1607,7 +1629,7 @@ module Ember
       get :ticket_field_suggestions, construct_params({ version: 'private', id: ticket.display_id }, false)
       assert_response 200
       response = ticket_field_suggestions(ticket)
-      
+
       assert_equal true, keys_present?(['priority', 'group', 'ticket_type'], response['ticket_field_suggestions'])
       WebMock.disable_net_connect!
     end
@@ -1673,16 +1695,16 @@ module Ember
       WebMock.disable_net_connect!
     end
 
-    def test_ticket_field_suggestions_with_all_set      
+    def test_ticket_field_suggestions_with_all_set
       WebMock.allow_net_connect!
       @account = Account.first.presence || create_test_account
       Account.stubs(:current).returns(@account)
       ticket = create_ticket_for_ticket_properties_suggester
-      ticket.priority = 2       
+      ticket.priority = 2
       group = @account.groups.new
       group.name = "test_group_for_ticket_properties_suggester_all_set"
       group.save!
-      ticket.group = group     
+      ticket.group = group
       ticket_type = @account.ticket_fields.find_by_name('ticket_type')
       ticket.ticket_type  = ticket_type.picklist_values.first.value
       ticket.save!
@@ -1692,7 +1714,7 @@ module Ember
       ::Freddy::TicketPropertiesSuggesterWorker.new.perform(args)
       ticket.reload
       get :ticket_field_suggestions, construct_params({ version: 'private', id: ticket.display_id }, false)
-      assert_response 200      
+      assert_response 200
       response = ticket_field_suggestions(ticket)
       assert_equal true, keys_absent?(['priority', 'group', 'ticket_type'], response['ticket_field_suggestions'])
       WebMock.disable_net_connect!

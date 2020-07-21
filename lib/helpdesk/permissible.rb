@@ -2,7 +2,8 @@ module Helpdesk::Permissible
 
   def verify_ticket_permission(ticket)    
     verified = true
-    unless ticket && current_user && current_user.has_ticket_permission?(ticket) && !ticket.trashed
+    has_permission = current_user.access_all_agent_groups ? current_user.has_read_ticket_permission?(ticket) : current_user.has_ticket_permission?(ticket) if current_user
+    unless ticket && current_user && has_permission && !ticket.trashed
       verified = false
       flash[:notice] = access_denied_message
       handle_responses(helpdesk_tickets_url)

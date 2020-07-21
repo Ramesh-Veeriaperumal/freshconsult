@@ -101,7 +101,6 @@ module Helpdesk::Email::Migrate
 
 
     def mailbox_log msg
-      puts "#{Time.now.utc} - #{Thread.current.object_id} - MigrateMailProcessor - #{msg} "
       Rails.logger.info "#{Time.now.utc} - #{Thread.current.object_id} - MigrateMailProcessor - #{msg} "
     end
   end

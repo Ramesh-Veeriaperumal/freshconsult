@@ -2,7 +2,9 @@ class Helpdesk::SubscriptionsController < ApplicationController
 
   include ActionView::Helpers::TextHelper
   include Helpdesk::Permissible
+  include AdvancedTicketScopes
 
+  before_filter :set_all_agent_groups_permission, only: [:unsubscribe]
   before_filter :load_parent_ticket, :verify_permission , :except => :unwatch_multiple
   before_filter :set_native_mobile, :only => [:create_watchers, :unwatch,:index]
 

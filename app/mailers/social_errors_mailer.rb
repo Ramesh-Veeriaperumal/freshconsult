@@ -2,7 +2,7 @@ class SocialErrorsMailer < ActionMailer::Base
 
   layout "email_font"
 
-  RECIPIENTS = ["fd-social-team@freshworks.com", "arvind@freshdesk.com", "sumankumar@freshdesk.com",  "krishnanand.balasubramanian@freshworks.com"]
+  RECIPIENTS = ['fd-social-team@freshworks.com'].freeze
 
 
   def threshold_reached(options={})
