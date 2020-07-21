@@ -28,6 +28,9 @@
       "secure_field": {
         "_domain": "https://vault-service-eu.freshworks.com/"
       },
+      "omni_channel_dashboard": {
+        "signing_key": "EJ[1:evHWHmfv6r6NEnpXJNUd4XBm7K4+DE5vIH67ivK9GTs=:kPg6UOMkDp1mV8T5+CSf0RnfC/JYomE5:91pMgCKqOXPz1C5ZwAiD5dBxjUY7JaF2McotDNGnncX8YIHkpCTUwMSPsrkjsLiA]"
+      },
       "announcements": {
         "shared_secret": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:zxh3vis1TaRL9u5GxaEYJIWxUZ/eupt+:08dRralGLBCCz/okTNaLtkSQA8s9YUBrGGTRWQzbbmXECiZqlfm3a94Ph/MZBhLy]",
         "_account_url": "productupdates.freshdesk.com"

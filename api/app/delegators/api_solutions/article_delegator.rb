@@ -27,7 +27,7 @@ module ApiSolutions
     validate :validate_draft, on: :send_for_review, if: -> { errors.blank? }
     validate :validate_draft_locked?, on: :send_for_review, if: -> { errors.blank? }
     validate :validate_description, if: -> { @description || (@status && @status != Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]) }
-    validate :allow_chat_platform, if: -> { create_or_update? && @platforms.present? }
+    validate :allow_chat_platform, if: -> { (create_or_update? || filters?) && @platforms.present? }
 
     FILTER_ACTIONS = %i[filter untranslated_articles].freeze
 

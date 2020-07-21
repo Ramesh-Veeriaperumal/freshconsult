@@ -40,6 +40,13 @@ class Account < ActiveRecord::Base
     t.add :conversion_metric, template: :central_publish
   end
 
+  api_accessible :touchstone do |t|
+    t.add :id, as: :freshdesk_account_id
+    t.add :full_domain, as: :freshdesk_domain
+    t.add :omni_bundle_id, as: :bundle_id
+    t.add proc { |x| x.organisation_account_mapping.organisation_id }, as: :organisation_id, if: proc { Account.current.organisation_account_mapping.present? }
+  end
+
   def model_changes_for_central(options = {})
     if @model_changes.present? && @model_changes.key?(:rts_account_secret)
       @model_changes[:rts_account_secret].map! { |x| EncryptorDecryptor.new(RTSConfig['db_cipher_key']).decrypt(x) if x.present? }

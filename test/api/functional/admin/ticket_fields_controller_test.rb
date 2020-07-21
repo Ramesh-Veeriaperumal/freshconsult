@@ -759,7 +759,7 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
       source = Helpdesk::Source.where(name: label).first
       assert_equal source.position, 15
       assert_equal source.meta[:icon_id], 20
-      put :update, construct_params({ id: field.id }, choices: [{ value: source.account_choice_id, icon_id: 15 }])
+      put :update, construct_params({ id: field.id }, choices: [{ id: source.account_choice_id, icon_id: 15 }])
       assert_response 200
       source.reload
       assert_equal source.meta[:icon_id], 15
@@ -772,9 +772,9 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
     launch_ticket_field_revamp do
       Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
       field = @account.ticket_fields.where(field_type: 'default_source').first
-      put :update, construct_params({ id: field.id }, choices: [{ value: 3, icon_id: 15 }])
+      put :update, construct_params({ id: field.id }, choices: [{ id: 3, icon_id: 15 }])
       assert_response 400
-      match_json([bad_request_error_pattern('value', :default_field_modified, field: :choice)])
+      match_json([bad_request_error_pattern('id', :default_field_modified, field: :choice)])
     end
   ensure
     Account.current.unstub(:ticket_source_revamp_enabled?)
@@ -878,7 +878,7 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
       source = Helpdesk::Source.where(name: label).first
       assert_equal source.position, 15
       assert_equal source.meta[:icon_id], 20
-      put :update, construct_params({ id: field.id }, choices: [{ value: source.account_choice_id, label: Faker::Lorem.characters }])
+      put :update, construct_params({ id: field.id }, choices: [{ id: source.account_choice_id, label: Faker::Lorem.characters }])
       assert_response 400
       match_json([bad_request_error_pattern(:label, 'is too long (maximum is 50 characters)')])
     end

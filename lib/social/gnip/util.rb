@@ -19,7 +19,7 @@ module Social::Gnip::Util
         #Possible dead code
         if @twitter_handle
           convert_hash = @twitter_handle.check_ticket_rules 
-          Rails.logger.error "Received a rule tag without tag prefix S #{args}"
+          notify_social_dev("Received a rule tag without tag prefix S", args )
         end
       end
     end

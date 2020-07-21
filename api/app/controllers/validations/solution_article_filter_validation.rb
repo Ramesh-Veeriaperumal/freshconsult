@@ -1,6 +1,6 @@
 class SolutionArticleFilterValidation < FilterValidation
   attr_accessor :user_id, :language, :portal_id, :author, :status, :approver, :created_at, :last_modified,
-                :category, :folder, :tags, :term, :outdated, :article_fields
+                :category, :folder, :tags, :term, :outdated, :article_fields, :platforms
 
   validates :user_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }
   validates :language, required: true, if: :insert_solution_actions?
@@ -24,6 +24,8 @@ class SolutionArticleFilterValidation < FilterValidation
                                                          custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } },
                    string_rejection: { excluded_chars: [','], allow_nil: true }, if: :filter_export_actions
   validates :article_fields, required: true, data_type: { rules: Array }, array: { data_type: { rules: Hash }, hash: { validatable_fields_hash: proc { |x| x.export_fields_validation } } }, on: :export
+  validates :platforms, data_type: { rules: Array }, array: { data_type: { rules: String, allow_nil: false },
+                                                              custom_inclusion: { in: SolutionConstants::PLATFORM_TYPES } }, if: :filter_actions
 
   FILTER_ACTIONS = %i[filter export untranslated_articles].freeze
   FILTER_EXPORT_ACTIONS = %i[filter export].freeze

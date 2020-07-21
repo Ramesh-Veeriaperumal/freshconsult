@@ -178,7 +178,6 @@ module Helpdesk::Email::Migrate
     end
 
     def mailbox_log msg
-      puts "#{Time.now.utc} - #{Thread.current.object_id} - ImapMigration - #{msg} "
       Rails.logger.info "#{Time.now.utc} - #{Thread.current.object_id} - ImapMigration - #{msg} "
     end
   end

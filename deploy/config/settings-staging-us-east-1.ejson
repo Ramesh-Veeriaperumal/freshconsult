@@ -31,6 +31,9 @@
       "secure_field": {
         "_domain": "https://vaultservice.freshpo.com/"
       },
+      "omni_channel_dashboard": {
+        "signing_key": "EJ[1:s5YWUiLUAYaTArjb802kvE4IK72Wuo9H7O3i3Qc0BAw=:tX0A8PHfqCrfH8iHuzEnQMfY9tQseClW:ZIGgK1NkwP6qGjN+oScLBRY6VgtWX5/V5XumVroj/IzLJHjMZDzzpU1C7YU0wKZf]"
+      },
       "cron_webhook": {
         "_domain": "helpkitworkflowauto170.freshpo.com",
         "_sub_domain": "helpkitworkflowauto170",

@@ -34,6 +34,15 @@ module QualityManagementSystem
         end
       end
 
+      def add_qms_privileges_to_agent_roles
+        @account.roles.each do |role|
+          next if role.privilege?(:admin_tasks)
+
+          role.privilege_list = (role.abilities + QMS_AGENT_PRIVILEGES).flatten
+          role.save
+        end
+      end
+
       def remove_qms_privileges_from_admin_roles
         @account.roles.each do |role|
           next unless role.privilege?(:admin_tasks)
@@ -55,6 +64,7 @@ module QualityManagementSystem
       def perform_operations_on_qms_enable
         create_coach_role
         add_qms_privileges_to_admin_roles
+        add_qms_privileges_to_agent_roles
       end
 
       def perform_operations_on_qms_disable

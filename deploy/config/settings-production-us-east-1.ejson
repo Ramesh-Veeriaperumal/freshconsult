@@ -28,6 +28,9 @@
       "secure_field": {
         "_domain": "https://vault-service.freshworks.com/"
       },
+      "omni_channel_dashboard": {
+        "signing_key": "EJ[1:1HlDXFMuQW2WxT7q5Rtv1E8dKOym4uQY4/Uuwnl0SBg=:Y02dHhKnANjbJw8ujk+l5X/g4U0wU/u5:nWyVV+uR678IUGELghe1ddMn44ww6VuSOlTh+KiYpsLdbPAIuOYugaK8zTJVpOLP]"
+      },
       "announcements": {
         "shared_secret": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:sceumkeAgL4yqlRpeySbS7TGxrVCXSs3:8HeEFgZtfWMiUWnOJsaOi57RBc1T2Gon5grelcS2i0PoEFylwUPbUa124g4f/yGV]",
         "_account_url": "productupdates.freshdesk.com"

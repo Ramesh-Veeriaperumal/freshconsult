@@ -224,6 +224,7 @@
     - search_analytics_tickets_cleanup
     - update_url_in_sandbox
     - vault_data_cleanup
+    - search_analytics_article_reindex
 
   :external:
     - thank_you_note
@@ -270,6 +271,7 @@
     - fdadmin_freshid_migration
     - agent_assist_email
     - vault_account_update
+    - touchstone_account_update
   :free:
     - free_sla
     - free_supervisor
@@ -618,6 +620,7 @@
     - search_analytics_tickets_cleanup
     - update_url_in_sandbox
     - vault_data_cleanup
+    - search_analytics_article_reindex
   :frequent:
     - active_account_jobs
     - premium_account_jobs

@@ -118,6 +118,7 @@ run "ln -nfs #{shared_path}/config/freshchat_subscription_config.yml #{node[:rel
 run "ln -nfs #{shared_path}/config/omni_freshvisuals.yml #{node[:rel_path]}/config/helpdesk_reports/omni_freshvisuals.yml"
 run "ln -nfs #{shared_path}/config/channel_v2_api.yml #{node[:rel_path]}/config/channel_v2_api.yml"
 run "ln -nfs #{shared_path}/config/silkroad_config.yml #{node[:rel_path]}/config/silkroad_config.yml"
+run "ln -nfs #{shared_path}/config/omni_channel_dashboard.yml #{node[:rel_path]}/config/omni_channel_dashboard.yml"
 
 # supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"

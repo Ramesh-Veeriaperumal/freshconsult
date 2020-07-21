@@ -4,13 +4,13 @@ class TicketDecorator < ApiDecorator
   include AdvancedTicketScopes
 
   delegate :ticket_body, :custom_field_via_mapping, :cc_email, :email_config_id,
-    :fr_escalated, :group_id, :priority, :requester_id, :responder, :responder_id,
-    :source, :spam, :status, :subject, :display_id, :ticket_type, :schema_less_ticket,
-    :deleted, :due_by, :frDueBy, :isescalated, :description, :internal_group_id,
-    :internal_agent_id, :association_type, :associates, :associated_ticket?,
-    :can_be_associated?, :description_html, :tag_names, :attachments,
-    :attachments_sharable, :company_id, :cloud_files, :ticket_states, :skill_id,
-    :subsidiary_tkts_count, :import_id, :id, :nr_escalated, :nr_due_by, to: :record
+           :fr_escalated, :group_id, :priority, :requester_id, :responder, :responder_id,
+           :source, :spam, :status, :subject, :display_id, :ticket_type, :schema_less_ticket,
+           :deleted, :due_by, :frDueBy, :isescalated, :description, :internal_group_id,
+           :internal_agent_id, :association_type, :associates, :associated_ticket?,
+           :can_be_associated?, :description_html, :tag_names, :attachments,
+           :attachments_sharable, :company_id, :cloud_files, :ticket_states, :skill_id,
+           :subsidiary_tkts_count, :import_id, :id, :nr_escalated, :nr_due_by, :tweet_type, :fb_msg_type, to: :record
 
   delegate :multiple_user_companies_enabled?, to: 'Account.current'
 
@@ -170,6 +170,13 @@ class TicketDecorator < ApiDecorator
       tweet_type: tweet.tweet_type,
       twitter_handle_id: tweet.twitter_handle_id
     }
+  end
+
+  def social_additional_info_hash
+    tweet_hash = { tweet_type: record.tweet_type } if record.tweet_type.present?
+    fb_hash = { fb_msg_type: record.fb_msg_type } if record.fb_msg_type.present?
+    social_additional_info_hash = tweet_hash || fb_hash
+    social_additional_info_hash
   end
 
   def ebay
@@ -388,6 +395,8 @@ class TicketDecorator < ApiDecorator
     # response_hash[:meta] = meta
     response_hash[:collaboration] = collaboration_hash if include_collab?
     response_hash[:meta][:secret_id] = generate_secret_id if Account.current.agent_collision_revamp_enabled?
+    response_hash[:social_additional_info] = { tweet_type: record.tweet_type } if source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter] && response_hash[:tweet].blank?
+    response_hash[:social_additional_info] = { fb_msg_type: record.fb_msg_type } if source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook] && response_hash[:fb_post].blank?
     response_hash
   end
 

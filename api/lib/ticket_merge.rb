@@ -21,6 +21,7 @@ class TicketMerge
     move_source_description_and_notes
     target.header_info = header unless header.blank?
     move_requesters if convert_to_cc
+    move_forwarded_emails
     target.save
     add_note_to_target
     true
@@ -84,15 +85,30 @@ class TicketMerge
       add_requesters_to_target(reply_cc_emails, cc_emails)
     end
 
+    def move_forwarded_emails
+      forwarded_emails = forwarded_emails_for_target
+      return unless forwarded_emails.any?
+
+      add_forwarded_emails_to_target(forwarded_emails)
+    end
+
+    def add_forwarded_emails_to_target(forwarded_emails)
+      if target.cc_email.present?
+        target.cc_email[:fwd_emails] = get_forwarded_emails(target).concat(forwarded_emails).uniq
+      else
+        target_cc_email_attribs([], [], forwarded_emails)
+      end
+    end
+
     def add_requesters_to_target(reply_cc_emails, cc_emails)
       emails_list = [reply_cc_emails, cc_emails]
       target.cc_email.blank? ? target_cc_email_attribs(*emails_list) : set_target_cc_emails(*emails_list)
     end
 
-    def target_cc_email_attribs(reply_cc_emails, cc_emails)
+    def target_cc_email_attribs(reply_cc_emails, cc_emails, fwd_emails = [])
       target.cc_email = {
         cc_emails: cc_emails,
-        fwd_emails: [],
+        fwd_emails: fwd_emails,
         reply_cc: reply_cc_emails,
         tkt_cc: []
       }
@@ -142,11 +158,24 @@ class TicketMerge
       emails_list.delete_if { |e| reject_email?(parse_email_text(e)[:email]) }
     end
 
+    def forwarded_emails_for_target
+      emails_list = remove_duplicates(forwarded_emails_from_sources)
+      emails_list.delete_if { |e| parse_email_text(e)[:email] == target.requester.email }
+    end
+
     def emails_from_sources
       emails_list = []
       source_tickets.each do |source|
         emails_list += get_reply_cc_email(source)
         emails_list << add_source_requester(source) if check_source_requester(source)
+      end
+      emails_list
+    end
+
+    def forwarded_emails_from_sources
+      emails_list = []
+      source_tickets.each do |source|
+        emails_list += get_forwarded_emails(source)
       end
       emails_list
     end
@@ -174,5 +203,9 @@ class TicketMerge
 
     def check_source_requester(ticket)
       ticket.requester_has_email? && !(ticket.requester_id == target.requester_id)
+    end
+
+    def get_forwarded_emails(ticket)
+      ticket.cc_email && ticket.cc_email[:fwd_emails] && get_email_array(ticket.cc_email[:fwd_emails]) || []
     end
 end

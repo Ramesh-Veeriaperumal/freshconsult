@@ -39,12 +39,13 @@ module Social::Stream::Interaction
       interactions =  process_results(interaction_results, nil,false)
       all_interactions = interactions.select{ |feed| feed.ticket_id.blank? }
     rescue Aws::DynamoDB::Errors::ValidationException => e
+      Rails.logger.error("Exception occurred while building social user interactions #{e.inspect}")
       error_params = {
         :account_id => Account.current.id,
         :stream_id => visible_stream_ids,
         :user_id => user_id
       }
-      Rails.logger.error "Exception occurred while building social user interactions #{error_params.inspect} #{e.message} :: #{e.backtrace[0..20]}"
+      notify_social_dev("Validation exception in building user interactions", error_params)
     end
     all_interactions
   end

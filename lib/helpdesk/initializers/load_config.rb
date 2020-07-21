@@ -108,3 +108,5 @@ FreshcallerSubscriptionConfig = YAML.load_file(Rails.root.join('config', 'freshc
 FreshchatSubscriptionConfig = YAML.load_file(Rails.root.join('config', 'freshchat_subscription_config.yml'))[Rails.env]
 
 OmniFreshVisualsConfig = YAML.load_file(File.join(Rails.root, 'config/helpdesk_reports', 'omni_freshvisuals.yml'))[Rails.env].with_indifferent_access
+
+OmniChannelDashboardConfig = YAML.load_file(Rails.root.join('config', 'omni_channel_dashboard.yml'))[Rails.env]

@@ -1,5 +1,7 @@
 class OrganisationAccountMapping < ActiveRecord::Base
   include Cache::Memcache::OrganisationAccountMapping
+  include OmniChannelDashboard::TouchstoneUtil
+
   self.primary_key = :id
 
   not_sharded
@@ -9,6 +11,7 @@ class OrganisationAccountMapping < ActiveRecord::Base
   after_commit :clear_cache_by_account_id, :clear_account_ids_cache
   after_commit :delete_orphan_organisation, on: :update, if: :organisation_id_changed?
   after_destroy :delete_orphan_organisation
+  after_commit :invoke_touchstone_account_worker, if: :omni_bundle_enabled?
 
   private
 

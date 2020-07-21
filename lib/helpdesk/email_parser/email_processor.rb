@@ -33,7 +33,7 @@ class Helpdesk::EmailParser::EmailProcessor
 	    ticket_params.merge!(attachment_params) if attachment_params.present?
 
 	    ticket_params = ticket_params.with_indifferent_access
-	    puts "Processed Params : #{ticket_params.inspect}"
+	    Rails.logger.info "Processed Params : #{ticket_params.inspect}"
 	    
 	    return ticket_params
   	rescue => e

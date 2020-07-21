@@ -12,7 +12,7 @@ module Admin::TicketFieldConstants
   ALLOWED_HASH_BASIC_CHOICE_FIELDS = %w[id value archived deleted position parent_choice_id choices].freeze
 
   ALLOWED_STATUS_CHOICES = %i[id label_for_customers value stop_sla_timer archived deleted group_ids position].freeze
-  ALLOWED_SOURCE_CHOICES = %i[label value position icon_id deleted].freeze
+  ALLOWED_SOURCE_CHOICES = %i[label position icon_id deleted id].freeze
 
   ALLOWED_HASH_CHOICES_LEVEL_2 = ALLOWED_HASH_BASIC_CHOICE_FIELDS - %w[choices] |
                                  [choices: ALLOWED_HASH_BASIC_CHOICE_FIELDS]
@@ -46,12 +46,12 @@ module Admin::TicketFieldConstants
   }.freeze
 
   SOURCE_CHOICES_EXPECTED_TYPE = {
-    value: Integer,
     label: String,
     deleted: 'bool',
     position: Integer,
     icon_id: Integer,
-    choices: [Array, Hash]
+    choices: [Array, Hash],
+    id: Integer
   }.freeze
 
   DATA_TYPE_MAPPING = {

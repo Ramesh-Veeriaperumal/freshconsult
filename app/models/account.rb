@@ -25,6 +25,7 @@ class Account < ActiveRecord::Base
   include Account::ProxyFeature
   include Cache::Memcache::Admin::CustomData
   include Account::SidekiqControl::RouteDrop
+  include OmniChannelDashboard::TouchstoneUtil
 
   has_many_attachments
 
@@ -50,6 +51,8 @@ class Account < ActiveRecord::Base
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate, :model_changes, :disable_old_ui_changed, :is_anonymous_account, :fresh_id_version, :fs_cookie_signup_param
 
   attr_writer :no_of_ticket_fields_built
+
+  after_commit :invoke_touchstone_account_worker, if: -> { omni_bundle_enabled? && Account.current.previous_changes[:full_domain].present? }
 
   include Account::Setup
   include Account::BackgroundFixtures

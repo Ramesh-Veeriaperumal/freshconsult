@@ -71,6 +71,14 @@ module TicketsMergeTestHelper
     end
   end
 
+  def add_forwarded_emails(tickets, range = 2..5)
+    tickets.each do |ticket|
+      fake_emails = rand(range).times.inject([]) { |arr, id| arr << Faker::Internet.email }
+      ticket.cc_email[:fwd_emails] = fake_emails
+      ticket.save
+    end
+  end
+
   def merge_reply_cc_error_pattern
     merge_error_pattern([{ field: 'convert_recepients_to_cc', message: 'Has exceeded maximum limit', code: "invalid_value" }])
   end
@@ -90,15 +98,21 @@ module TicketsMergeTestHelper
     target.reload
     # check status as closed for source tickets
     source_reply_ccs = []
+    source_forwarded_emails = []
     source_tickets.each do |ticket|
       ticket.reload
       assert ticket.parent_ticket == target.id
       assert ticket.status == Helpdesk::Ticketfields::TicketStatus::CLOSED
       source_reply_ccs << ticket.cc_email[:reply_cc]
+      source_forwarded_emails << ticket.cc_email[:fwd_emails]
     end
     # check for combined cc emails in target
     source_reply_ccs.flatten.each do |email|
       assert target.cc_email[:reply_cc].include?(email)
+    end
+
+    source_forwarded_emails.flatten.each do |email|
+      assert target.cc_email[:fwd_emails].include?(email)
     end
 
     # check for the added note target

@@ -34,14 +34,15 @@ module SolutionConstants
 
   SEND_FOR_REVIEW_FIELDS = %w[approver_id].freeze
 
-  FILTER_ATTRIBUTES = %w[author status approver outdated created_at last_modified tags category folder].freeze
+  FILTER_AND_EXPORT_ATTRIBUTES = %w[author status approver outdated created_at last_modified tags category folder].freeze
+  FILTER_ATTRIBUTES = (%w[platforms] | FILTER_AND_EXPORT_ATTRIBUTES).freeze
   FILTER_FIELDS = %w[portal_id language term page per_page].freeze | FILTER_ATTRIBUTES
   ADVANCED_FILTER_FIELDS = %w[created_at last_modified tags category folder].freeze
 
   ARTICLE_EXPORT_HEADER_MASTER_LIST = %w[id title live status author_name author_id created_at tags modified_at recent_author_name language_code url hits thumbs_up thumbs_down feedback_count seo_title seo_description folder_id folder_name category_id category_name].freeze
   EXPORT_HEADER_LIST_WITH_SUGGESTED_FEATURE = (%w[suggested] | ARTICLE_EXPORT_HEADER_MASTER_LIST).freeze
 
-  EXPORT_FIELDS = (%w[portal_id language article_fields] | FILTER_ATTRIBUTES).freeze
+  EXPORT_FIELDS = (%w[portal_id language article_fields] | FILTER_AND_EXPORT_ATTRIBUTES).freeze
 
   IGNORE_PARAMS = %w[folder_id attachments_list cloud_file_attachments unlock].freeze
 
@@ -96,4 +97,5 @@ module SolutionConstants
   STATUS_FILTER_BY_TOKEN = Hash[*STATUS_FILTER.map { |i| [i[0], i[2]] }.flatten]
   STATUS_VALUE_IN_TABLE_BY_KEY = Hash[*STATUS_FILTER.map { |i| [i[2], i[3]] }.flatten]
   STATUS_VALUE_IN_ES_BY_KEY = Hash[*STATUS_FILTER.map { |i| [i[2], i[4]] }.flatten]
+  PLATFORM_TYPES = ['web', 'ios', 'android'].freeze
 end

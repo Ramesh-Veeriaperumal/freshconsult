@@ -1,0 +1,13 @@
+defaults: &defaults
+  signing_key: '6f6ee3473ff2e8c099592a6b5c3bfe48'
+development:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+production:
+  <<: *defaults

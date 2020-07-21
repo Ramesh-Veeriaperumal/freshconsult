@@ -32,6 +32,9 @@
       "secure_field": {
         "_domain": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/"
       },
+      "omni_channel_dashboard": {
+        "signing_key": "EJ[1:rQ+0zrJwEqoPvOZNNCe2Ktt9NZBXCXzATIDQkWWJIHw=:QKg2sDChHH8TukHRW7NWbFZFmsZQHV/z:FOxDhfm9ka+mBpwkJqIhsFI3Z8FpvTVfLmv504Xk/bnkKgDpzXgCO7tPpq1yPc6A]"
+      },
       "bot": {
         "product_id": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:nQul5nx285K80oDF5U5DCI/eb4KEeLkS:F42iTJjS6G7XyDV6e7j/G7f4vLtMaHi2fyrcrk9nuUAFFlYo6u33SGwRoQ9uZPGwn6xvzvbobcA=]",
         "template_hash": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:NhTmA6WptmSrqeqpKR2+phZ7Qvu8lZZ/:nEYj29EqjOdtCL/QqVWlGeovOVf2Q6KZ6tAkMakFAUWz8FS2Z8MbLwZfppbCxg/OxPA0IGxuWto=]",
