@@ -22,7 +22,7 @@ module CentralPublish
       return unless Account.current.respond_to?(@relation_with_account)
 
       Account.current.safe_send(@relation_with_account).where(@conditions).sync_entity(@meta_info)
-    rescue Exception => e
+    rescue StandardError => e
       Rails.logger.info "Publishing Entity FAILED => #{e.inspect}"
       NewRelic::Agent.notice_error(e, description: "Error publishing entity for Account: #{Account.current.id}, Service: #{@source}")
     end

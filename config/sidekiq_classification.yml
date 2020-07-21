@@ -74,9 +74,6 @@
     - cre_central_publish
     - solution_article_central_publish
 
-  :central_resync:
-    - central_publish_resync
-
   :scheduled:
     - scheduled_reports
     - scheduled_reports_cleanup
@@ -148,6 +145,7 @@
     - bitmap_callbacks
     - quality_management_system
     - update_agent_status_availability
+    - central_publish_resync
 
   :maintainence:
     - select_all_tickets
@@ -457,8 +455,6 @@
     - freshchat_account_central_publish
     - cre_central_publish
     - solution_article_central_publish
-  :central_resync:
-    - central_publish_resync
   :long_running:
     - scheduled_ticket_export_config
     - scheduled_ticket_export
@@ -761,3 +757,4 @@
     - bitmap_callbacks
     - quality_management_system
     - update_agent_status_availability
+    - central_publish_resync
