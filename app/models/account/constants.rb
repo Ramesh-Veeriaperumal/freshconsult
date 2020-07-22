@@ -224,7 +224,7 @@ class Account < ActiveRecord::Base
     skip_invoice_due_warning: false, custom_fields_search: true, update_billing_info: false, allow_billing_info_update: false,
     tag_central_publish: false, archive_tickets_api: false, bot_agent_response: false,
     fluffy: false, nested_field_revamp: true, service_worker: false,
-    kbase_mint: true, freshid_org_v2: false, hide_agent_login: false, ticket_source_revamp: false,
+    freshid_org_v2: false, hide_agent_login: false, ticket_source_revamp: false,
     office365_adaptive_card: false, helpdesk_tickets_by_product: false, article_es_search_by_filter: false,
     text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
     recalculate_daypass: false, prevent_wc_ticket_create: true, allow_wildcard_ticket_create: false,
