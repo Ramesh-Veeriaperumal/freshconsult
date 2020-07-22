@@ -125,6 +125,7 @@
       - :next_response_sla
       - :twitter_field_automation
       - :solutions_templates
+      - :contact_custom_activity_api
     :inherits:
       - :garden_jan_17
     :exclude: []
@@ -281,6 +282,7 @@
   :estate_jan_19:
     :name: Estate
     :features:
+      - :contact_custom_activity_api
       - :custom_source
       - :custom_survey
       - :smart_filter
@@ -491,6 +493,7 @@
   :estate_jan_20:
     :name: Estate
     :features:
+      - :contact_custom_activity_api
       - :custom_source
       - :custom_survey
       - :parent_child_tickets_toggle
