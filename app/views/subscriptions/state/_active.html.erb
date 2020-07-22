@@ -8,6 +8,7 @@
     omni_account = current_account.omni_bundle_account?
     isSelected_plan_present = @selected_plan.present?
     isSelected_plan_nil = @selected_plan.nil?
+    hide_omnichannel_toggle = current_account.launched?(:hide_omnichannel_toggle)
   %>
 <% if has_feature_gain %>
   <%= render :partial => "loyalty_upgrade_info" %>
@@ -72,7 +73,7 @@
   <input type="hidden" data-omni-plan-id="<%= plan.name.parameterize.underscore %>" data-plan-id="<%= plan.id %>"/>
   <div class="calculate-container" id="<%= plan.name.parameterize.underscore %>">
     <div class="features-billing-edit hide">
-    <% if (plan.omni_plan? || plan.basic_variant?) && !omni_account %>
+    <% if !hide_omnichannel_toggle && (plan.omni_plan? || plan.basic_variant?) && !omni_account %>
       <p class="omni-billing-edit features-billing-edit__toggle">
         <span><%= t('omni_channel') %></span>
         <input rel="toggle" type="checkbox" data-plan="<%= plan_id %>"  id="exclude-omni" name="omni-edit-toggle" data-checked-label="<%= t('plain_yes') %>"
@@ -194,9 +195,13 @@
     <%= render :partial => "/subscriptions/features/omni_channel/features", :locals => { :current_account => current_account }%>
   <% else %>
     <div class="features">
-    <%= render :partial => "/subscriptions/features/toggle-box/ocr_toggle", :locals => { :plan => plan, :trial => false, :show_omni_toggle => false }%>
+      <% unless hide_omnichannel_toggle %>
+        <%= render :partial => "/subscriptions/features/toggle-box/ocr_toggle", :locals => { :plan => plan, :trial => false, :show_omni_toggle => false }%>
+      <% end %>
       <% if current_account.disable_old_ui_enabled? %>
-        <span class="vr-line"></span>
+        <% unless hide_omnichannel_toggle %>
+          <span class="vr-line"></span>
+        <% end %>
         <%= render :partial => "/subscriptions/features/toggle-box/fsm_toggle", :locals => { :current_account => current_account }%>
       <% end %>
     </div>
