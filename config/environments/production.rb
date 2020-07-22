@@ -82,6 +82,7 @@ Helpkit::Application.configure do
         $account_client = Freshworks::Account::V2::AccountService::Client.new
         $user_client = Freshworks::User::V2::UserService::Client.new
         $user_hash_client = Freshworks::User::V2::UserHashService::Client.new
+        $bundle_client = Freshworks::Bundle::V2::BundleService::Client.new
       end
     end
   end

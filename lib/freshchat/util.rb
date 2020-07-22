@@ -57,6 +57,17 @@ module Freshchat::Util
     freshchat_response
   end
 
+  def update_access_token(acc_domain, admin_access_token, freshchat_account, bearer_token)
+    response = HTTParty.put("https://#{freshchat_account.api_domain}/v2/omnichannel-integration/#{freshchat_account.app_id}",
+                            body: { account: acc_domain, token: admin_access_token }.to_json,
+                            headers: { 'Content-Type' => 'application/json',
+                                       'Accept' => 'application/json',
+                                       'x-fc-client-id' => Freshchat::Account::CONFIG[:freshchatClient],
+                                       'Authorization' => "Bearer #{bearer_token}" })
+    Rails.logger.info "Error in omni freshchat update access token Response :: #{response.code} :: #{response.body}" if response.code != 200
+    response
+  end
+
   private
 
     def save_freshchat_account(app_id, widget_token, portal_widget_enabled = false, enabled = true, domain = nil)

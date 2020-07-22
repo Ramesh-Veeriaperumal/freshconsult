@@ -4,8 +4,9 @@ class Aloha::SignupController < ApplicationController
   include Aloha::Util
   include Freshchat::AgentUtil
   include Freshcaller::AgentUtil
+  include Freshcaller::Util
+  include Freshchat::Util
   include Freshchat::JwtAuthentication
-  include Freshcaller::JwtAuthentication
 
   skip_before_filter :check_privilege, :verify_authenticity_token, only: [:callback]
   before_filter :validate_params, only: [:callback]
@@ -41,11 +42,13 @@ class Aloha::SignupController < ApplicationController
 
     def create_freshcaller_record
       freshcaller_params = params['account']
+      freshcaller_misc_params = params['misc'].is_a?(Hash) ? params['misc'] : JSON.parse(params['misc'])
       @current_account.add_feature(:freshcaller)
       @current_account.add_feature(:freshcaller_widget)
       Freshcaller::Account.create(account_id: @current_account.id, freshcaller_account_id: freshcaller_params['id'], domain: freshcaller_params['domain'])
-      enable_freshcaller_agent
-      send_access_token_to_caller
+      enable_freshcaller_agent(@current_account.account_managers.first, freshcaller_misc_params['user']['freshcaller_account_admin_id'])
+      link_params = freshcaller_bundle_linking_params(@current_account, @current_account.admin_email, admin_access_token, params)
+      send_access_token_to_caller(params['account']['domain'], link_params)
     end
 
     def select_account(&block)
@@ -75,18 +78,7 @@ class Aloha::SignupController < ApplicationController
       fc_acc = Account.current.freshchat_account
       return if fc_acc.nil?
     
-      response = HTTParty.put("https://#{fc_acc.api_domain}/v2/omnichannel-integration/#{fc_acc.app_id}",
-                              body: { account: @current_account.domain, token: admin_access_token }.to_json,
-                              headers: { 'Content-Type' => 'application/json',
-                                         'Accept' => 'application/json',
-                                         'x-fc-client-id' => Freshchat::Account::CONFIG[:freshchatClient],
-                                         'Authorization' => "Bearer #{freshchat_jwt_token}" })
-      Rails.logger.info "Omni freshchat Response :: #{response.code} :: #{response.headers.inspect}"
-    end
-
-    def send_access_token_to_caller
-      response = freshcaller_request(linking_params ,"https://#{params['account']['domain']}/link_account", :put)
-      Rails.logger.info "Omni freshcaller Response :: #{response.code} :: #{response.headers.inspect}"
+      update_access_token(@current_account.domain, admin_access_token, fc_acc, freshchat_jwt_token)
     end
 
     def enable_freshchat_agent
@@ -98,33 +90,6 @@ class Aloha::SignupController < ApplicationController
         agent.update_attribute(:additional_settings, additional_settings)
         Rails.logger.info "Enabled Freshchat from signup for Account #{@current_account.id} and for Agent #{agent.id}"
       end
-    end
-
-    def enable_freshcaller_agent
-      account_admin = @current_account.account_managers.first
-      unless account_admin.nil?
-        agent = account_admin.agent
-        agent.freshcaller_enabled = true
-        freshcaller_misc_params = params['misc'].is_a?(Hash) ? params['misc'] : JSON.parse(params['misc'])
-        agent.create_freshcaller_agent(agent: agent, fc_enabled: true, fc_user_id: freshcaller_misc_params['user']['freshcaller_account_admin_id'])
-        handle_fcaller_agent(agent) if Account.current.freshcaller_enabled? && valid_fcaller_agent_action?(agent)
-      end
-    end
-
-    def linking_params
-      { account_name: @current_account.name,
-        account_id: @current_account.id,
-        email: @current_account.admin_email,
-        url: params['account']['domain'],
-        activation_required: false,
-        app: 'Freshdesk',
-        bundle_id: params['bundle_id'],
-        freshdesk_calls_url: "https://#{@current_account.full_domain}/api/channel/freshcaller_calls",
-        domain_url: "https://#{@current_account.full_domain}",
-        access_token: admin_access_token,
-        account_region: ShardMapping.fetch_by_account_id(@current_account.id).region,
-        fresh_id_version: Freshid::V2::Constants::FRESHID_SIGNUP_VERSION_V2,
-        organisation_domain: @current_account.organisation_domain }
     end
 
     def admin_access_token

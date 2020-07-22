@@ -54,8 +54,24 @@ module Billing::OmniSubscriptionUpdateMethods
     }
   end
 
-  def construct_payload(chargebee_result)
+  def construct_payload_for_conversion(response, id, event_type)
+    response = response.deep_symbolize_keys
     {
+      id: id,
+      event_type: event_type,
+      occurred_at: Time.now.utc.to_i,
+      source: 'admin_action',
+      object: 'event',
+      api_version: 'v1',
+      content: {
+        subscription: response[:subscription].deep_symbolize_keys,
+        customer: response[:customer].deep_symbolize_keys
+      }
+    }
+  end
+
+  def construct_payload(chargebee_result)
+    subscription_payload = {
       organisation_id: Account.current.organisation.try(:organisation_id),
       type: chargebee_result[:event_type],
       account_id: Account.current.id,
@@ -71,13 +87,14 @@ module Billing::OmniSubscriptionUpdateMethods
           id: chargebee_result[:id],
           occurred_at: chargebee_result[:occurred_at],
           source: chargebee_result[:source],
-          user: chargebee_result[:content][:customer][:email],
           object: chargebee_result[:object],
           api_version: 'v2',
           event_type: chargebee_result[:event_type]
         }.merge!(content: construct_content_payload(chargebee_result[:content]))
       }
     }
+    subscription_payload[:payload][:event_payload][:user] = chargebee_result[:content][:customer][:email] if chargebee_result[:content][:customer].present?
+    subscription_payload
   end
 
   def construct_content_payload(result)
@@ -105,7 +122,7 @@ module Billing::OmniSubscriptionUpdateMethods
       # updated_at: '', #optional
       has_scheduled_changes: subscription[:has_scheduled_changes],
       # resource_version: '', #optional
-      deleted: subscription[:deleted],
+      deleted: subscription[:deleted] || false,
       object: 'subscription',
       currency_code: Account.current.subscription.currency.name,
       due_invoices_count: subscription[:due_invoices_count]

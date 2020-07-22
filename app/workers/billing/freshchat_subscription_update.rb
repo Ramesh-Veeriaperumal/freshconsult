@@ -7,7 +7,7 @@ class Billing::FreshchatSubscriptionUpdate < BaseWorker
 
   def perform(params)
     params.deep_symbolize_keys!
-    freshchat_subscription_request(construct_payload(params))
+    freshchat_subscription_request(construct_payload(params)) if params[:content][:subscription].present?
   rescue StandardError => e
     Rails.logger.error "Exception in updating freshchat subscription. Account ID: #{Account.current.id}, Error message: #{e.message}"
     raise e

@@ -1,4 +1,5 @@
 class Account < ActiveRecord::Base
+  include OmniChannel::Util
 
   def organisation_domain
     organisation_from_cache.try(:domain)
@@ -241,6 +242,25 @@ class Account < ActiveRecord::Base
 
   def freshid_custom_policy_enabled_for_account?
     account_additional_settings.additional_settings[:freshid_custom_policy_configs]
+  end
+
+  def create_organisation_bundle(bundle_type_identifier)
+    org_info = {
+      domain: organisation_domain
+    }
+    bundle_info = {
+      bundle_type_identifier: bundle_type_identifier.to_s
+    }
+    Freshid::V2::Models::Bundle.create(org_info, bundle_info)
+  end
+
+  def update_bundle_id(bundle_id, bundle_name)
+    response = update_bundle_details(full_domain, organisation_domain, bundle_id, true)
+    unless response.is_error
+      account_additional_settings.bundle_details_setter(bundle_id, bundle_name)
+      return account_additional_settings.save!
+    end
+    false
   end
 
   private

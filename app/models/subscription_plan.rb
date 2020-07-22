@@ -115,6 +115,8 @@ class SubscriptionPlan < ActiveRecord::Base
     ['Forest Omni Jan 20', 'Forest Jan 20']
   ].freeze
 
+  OMNI_BUNDLE_PLANS = ['Estate Omni Jan 20', 'Forest Omni Jan 20'].freeze
+
   OMNI_TO_BASIC_PLAN_MAP = OMNI_PLANS.each_with_object({}) do |plan, hash|
     hash[plan[0].to_sym] = plan[1]
   end.freeze
@@ -188,7 +190,11 @@ class SubscriptionPlan < ActiveRecord::Base
   def omni_plan?
     OMNI_TO_BASIC_PLAN_MAP.key? name.to_sym
   end
-  
+
+  def omni_bundle_plan?
+    OMNI_BUNDLE_PLANS.include? name
+  end
+
   def basic_variant_name
     OMNI_TO_BASIC_PLAN_MAP[name.to_sym]
   end
