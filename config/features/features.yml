@@ -506,7 +506,6 @@
   :fluffy_higher_plan4: false
   :assets: false
   :assets_toggle: false
-  :contact_custom_activity_api: false
   :prevent_ticket_creation_for_others: true
   :field_service_geolocation: false
   :location_tagging: false

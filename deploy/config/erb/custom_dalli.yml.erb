@@ -1,22 +1,10 @@
 defaults: &defaults
-  ttl: 86400
-  readonly: false
-  urlencode: false
-  c_threshold: 10000
-  compression: true
-  debug: false
-  sessions: false
-  session_servers: false
-  fragments: true
-  memory: 256
-  benchmarking: true
-  raise_errors: true
-  fast_hash: false
-  fastest_hash: false
   namespace: "helpkit"
   compress: true
-  socket_max_failures: 3
   socket_timeout: 0.5
+  socket_max_failures: 2
+  failover: false
+  down_retry_delay: 10
   servers:
     <% node[:ymls][:custom_dalli][:hosts].each do |internal_dns| %>
     - <%= internal_dns %>:11211
@@ -27,4 +15,3 @@ defaults: &defaults
 
 slave:
   <<: *defaults
-

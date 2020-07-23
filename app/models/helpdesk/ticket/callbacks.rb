@@ -121,9 +121,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def assign_outbound_agent
-    return if responder_id
-    if User.current.try(:id) and User.current.agent?
-      self.responder_id = User.current.id
+    user = User.where(id: responder_id).first || User.current
+    if user && user.agent?
+      restricted_group_permission = user.assigned_ticket_permission && user.group_member?(group_id)
+      self.responder_id = (user.group_ticket?(self) || restricted_group_permission || group_id.nil? ? user.id : nil)
     end
   end
 

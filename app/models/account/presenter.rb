@@ -44,7 +44,7 @@ class Account < ActiveRecord::Base
     t.add :id, as: :freshdesk_account_id
     t.add :full_domain, as: :freshdesk_domain
     t.add :omni_bundle_id, as: :bundle_id
-    t.add proc { |x| x.organisation_account_mapping.organisation_id }, as: :organisation_id, if: proc { Account.current.organisation_account_mapping.present? }
+    t.add proc { |x| x.organisation.try(:organisation_id) }, as: :organisation_id
   end
 
   def model_changes_for_central(options = {})

@@ -408,6 +408,8 @@ defaults: &defaults
     - [update_agent_status_availability]
     - [privilege_modification]
     - [central_publish_resync]
+    - [create_and_link_omni_account]
+    - [sync_omni_agents]
 
 development:
   <<: *defaults

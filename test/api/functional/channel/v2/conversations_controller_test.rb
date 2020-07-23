@@ -102,6 +102,14 @@ module Channel::V2
       match_json(v2_update_note_pattern({}, Helpdesk::Note.find(n.id)))
     end
 
+    def test_update_user_note
+      user = add_new_user(@account)
+      n = create_note(user_id: user.id, ticket_id: ticket.id, source: 2)
+      params = update_note_params_hash
+      put :update, construct_params({ id: n.id }, params)
+      assert_response 200
+    end
+
     def test_update_without_privilege
       User.any_instance.stubs(:privilege?).with(:edit_note).returns(false).at_most_once
       User.any_instance.stubs(:owns_object?).returns(false).at_most_once

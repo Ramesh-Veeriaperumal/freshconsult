@@ -32,7 +32,7 @@ module Freshcaller::JwtAuthentication
     jwt = JWT.encode(payload, FreshcallerConfig['signing_key'])
     JWE.encrypt(jwt, FreshcallerConfig['signing_key'], alg: 'dir')
   end
-  
+
   def freshcaller_request(params, path, request_type, payload = {})
     options = {
       :headers => {

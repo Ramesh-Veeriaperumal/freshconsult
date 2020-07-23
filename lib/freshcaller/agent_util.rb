@@ -33,6 +33,15 @@ module Freshcaller
       end
     end
 
+    def enable_freshcaller_agent(user, freshcaller_account_admin_id)
+      unless user.nil?
+        agent = user.agent
+        agent.freshcaller_enabled = true
+        agent.create_freshcaller_agent(agent: agent, fc_enabled: true, fc_user_id: freshcaller_account_admin_id)
+        handle_fcaller_agent(agent) if account.freshcaller_enabled? && valid_fcaller_agent_action?(agent)
+      end
+    end
+
     private
 
       def account

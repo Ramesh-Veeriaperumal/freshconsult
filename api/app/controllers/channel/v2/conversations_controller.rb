@@ -110,5 +110,9 @@ module Channel::V2
       def social_source?
         [current_account.helpdesk_sources.note_source_keys_by_token['twitter']].include?(params[cname][:source])
       end
+
+      def check_agent_note
+        # Channel api should allow updating notes made by customers too
+      end
   end
 end

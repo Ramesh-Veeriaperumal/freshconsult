@@ -7,7 +7,7 @@ module Solution::PathHelper
   end
 
   def agent_actions_path(solution_object = nil, options = {})
-    kbase_mint? ? mint_solutions_path(solution_object, options[:anchor] == 'edit') : old_solutions_path(solution_object, options)
+    current_account.falcon_ui_enabled?(current_user) ? mint_solutions_path(solution_object, options[:anchor] == 'edit') : old_solutions_path(solution_object, options)
   end
 
   def mint_solutions_path(solution_object, edit = false)
@@ -55,9 +55,5 @@ module Solution::PathHelper
 
   def append_portal
     "portalId=#{current_portal.id}"
-  end
-
-  def kbase_mint?
-    current_account.kbase_mint_enabled? && current_account.falcon_ui_enabled?(current_user)
   end
 end

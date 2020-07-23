@@ -52,6 +52,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
     tf.add :level
     tf.add :import_id
     tf.add :column_name
+    tf.add :deleted
     tf.add proc { |object| object.section_field? }, as: :belongs_to_section
     tf.add proc { |t| t.sections_hash }, as: :sections, if: proc { |t| t.has_sections? || t.section_field? }
     tf.add proc { |object| object.nested_ticket_fields.map(&:central_publish_payload) }, as: :nested_ticket_fields, if: proc { |obj| obj.nested_field? }
@@ -194,7 +195,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   end
 
   def relationship_with_account
-    "ticket_fields_with_nested_fields"
+    'all_ticket_fields_with_nested_fields'
   end
 
   def central_publish_worker_class

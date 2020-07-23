@@ -1,10 +1,27 @@
 module Freshcaller::Util
   include Freshcaller::Endpoints
   include Freshcaller::JwtAuthentication
+  include OmniChannel::Util
+
+  FRESHDESK = 'Freshdesk'.freeze
+  FRESHCALLER = 'freshcaller'.freeze
 
   def enable_freshcaller_feature
     freshcaller_response = freshcaller_request(signup_params, "#{FreshcallerConfig['signup_domain']}/accounts", :post)
     activate_freshcaller(freshcaller_response) if freshcaller_response.present? && freshcaller_response['freshcaller_account_id'].present?
+    freshcaller_response
+  end
+
+  def create_and_activate_bundle_freshcaller_account(account, freshid_user, bundle_id, trial_end)
+    signup_params = bundle_signup_params(account, freshid_user, bundle_id, trial_end)
+    signup_response = signup_omni_account(OmniChannelBundleConfig['freshcaller_signup_url'], signup_params, FRESHCALLER)
+    freshcaller_response = signup_response['product_signup_response']
+    raise 'Unsuccessful response on Freshcaller account signup' unless freshcaller_response.present? && freshcaller_response['account'].present?
+
+    freshcaller_params = freshcaller_response['account']
+    Freshcaller::Account.create(account_id: account.id, freshcaller_account_id: freshcaller_params['id'], domain: freshcaller_params['domain'])
+    enable_freshcaller
+    disable_freshfone if account.freshfone_enabled?
     freshcaller_response
   end
 
@@ -34,6 +51,28 @@ module Freshcaller::Util
       NewRelic::Agent.notice_error(freshcaller_response.message, description: "Unable to propagate domain url to freshcaller for Account #{current_account.id}")
     end
     freshcaller_response
+  end
+
+  def send_access_token_to_caller(domain, link_params)
+    freshcaller_request(link_params, "https://#{domain}/link_account", :put)
+  end
+
+  def freshcaller_bundle_linking_params(account, email, access_token, params)
+    {
+      account_name: account.name,
+      account_id: account.id,
+      email: email,
+      url: params['account']['domain'],
+      activation_required: false,
+      app: FRESHDESK,
+      bundle_id: params['bundle_id'],
+      freshdesk_calls_url: "https://#{account.full_domain}/api/channel/freshcaller_calls",
+      domain_url: "https://#{account.full_domain}",
+      access_token: access_token,
+      account_region: ShardMapping.fetch_by_account_id(account.id).region,
+      fresh_id_version: Freshid::V2::Constants::FRESHID_SIGNUP_VERSION_V2,
+      organisation_domain: account.organisation_domain
+    }
   end
 
   private
