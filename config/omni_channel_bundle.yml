@@ -1,0 +1,16 @@
+defaults: &defaults
+  bundle_type_identifier: dummy
+  freshchat_signup_url: "https://aloha.fid.freshworksapi.com/v2/signup/freshchatpink?source=omnibar"
+  freshcaller_signup_url: "https://aloha.fid.freshworksapi.com/v2/signup/freshcaller?source=omnibar"
+
+development:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults
+
+test:
+  <<: *defaults

@@ -75,9 +75,12 @@ class Subscription < ActiveRecord::Base
 
   before_update :cache_old_model, :cache_old_addons
   before_update :clear_loyalty_upgrade_banner, if: :plan_changed?
+  before_update :create_omni_bundle, if: :omni_plan_conversion?
+
   after_update :add_to_crm, unless: [:anonymous_account?, :disable_freshsales_api_integration?]
   after_update :update_reseller_subscription, unless: :anonymous_account?
   after_update :set_redis_for_first_time_account_activation, if: :freshdesk_freshsales_bundle_enabled?
+
   after_commit :update_crm, on: :update, unless: :anonymous_account?
   after_commit :update_fb_subscription, :add_free_freshfone_credit, :dkim_category_change, :update_ticket_activity_export, on: :update
   after_commit :clear_account_susbcription_cache
@@ -87,6 +90,7 @@ class Subscription < ActiveRecord::Base
   after_commit :update_sandbox_subscription, on: :update, if: :account_has_sandbox?
   after_commit :complete_onboarding, on: :update, if: :upgrade_from_trial?
   after_commit :launch_downgrade_policy, unless: :policy_applied_account?
+  after_commit :enqueue_omni_account_creation_workers, if: [:omni_plan_conversion?, :enqueue_omni_account_creation?]
 
   attr_accessor :creditcard, :address, :billing_cycle, :subscription_term_start
   attr_reader :response
@@ -827,10 +831,10 @@ class Subscription < ActiveRecord::Base
         response = billing.update_subscription(self, false, updated_addons, applicable_coupon, true)
         construct_subscription_request(updated_addons, response.subscription.current_term_end).save!
       else
-        response = billing.update_subscription(self, prorate?(applicable_coupon), updated_addons)
+        @chargebee_update_response = billing.update_subscription(self, prorate?(applicable_coupon), updated_addons)
         subscription_request.destroy if subscription_request.present?
-        billing.add_discount(account, applicable_coupon) if response.subscription.coupon != applicable_coupon
-        set_next_renewal_at(response.subscription)
+        billing.add_discount(account, applicable_coupon) if @chargebee_update_response.subscription.coupon != applicable_coupon
+        set_next_renewal_at(@chargebee_update_response.subscription)
         self.addons = updated_addons
         save
       end
@@ -979,6 +983,33 @@ class Subscription < ActiveRecord::Base
 
     def anonymous_account?
       account.anonymous_account?
+    end
+
+    def omni_plan_conversion?
+      account.launched?(:explore_omnichannel_feature) && !@old_subscription.subscription_plan.omni_plan? && subscription_plan.omni_bundle_plan?
+    end
+
+    def enqueue_omni_account_creation?
+      account.freshchat_account.blank? && account.freshcaller_account.blank?
+    end
+
+    def create_omni_bundle
+      bundle = account.create_organisation_bundle(OmniChannelBundleConfig['bundle_type_identifier'])
+      if bundle.present? && bundle[:bundle].present?
+        bundle_id = bundle[:bundle][:id]
+        bundle_name = bundle[:bundle][:name]
+        account.update_bundle_id(bundle_id, bundle_name)
+      end
+    end
+
+    def enqueue_omni_account_creation_workers
+      if account.omni_bundle_id.present? && @chargebee_update_response.present?
+        worker_args = {
+          chargebee_response: @chargebee_update_response
+        }
+        OmniChannelUpgrade::FreshcallerAccount.perform_async(worker_args)
+        OmniChannelUpgrade::FreshchatAccount.perform_async(worker_args)
+      end
     end
 
     def disable_freshsales_api_integration?

@@ -29,4 +29,13 @@ module OmniChannelsTestHelper
     @account.freshchat_account.destroy
     @account.freshcaller_account.destroy
   end
+
+  def org_admin_users_response
+    {
+      users: [{
+        id: Faker::Number.number(5),
+        email: Faker::Internet.email
+      }]
+    }
+  end
 end

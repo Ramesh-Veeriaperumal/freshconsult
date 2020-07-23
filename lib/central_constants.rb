@@ -27,7 +27,7 @@ module CentralConstants
     'Social::FacebookPage' => '0.4',
     'Social::FacebookStream' => '0.2',
     'Product' => '0.2',
-    'Helpdesk::TicketField' => '1.2',
+    'Helpdesk::TicketField' => '1.3',
     'AgentGroup' => '0.2',
     'Helpdesk::Tag' => '0.2',
     'Helpdesk::TagUse' => '0.2',

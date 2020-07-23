@@ -19,6 +19,11 @@
         "domain_key": "EJ[1:YSmhRDvnz3argCN60z5eUMgKj1kPDvFLULJGdgFFBBg=:1WRe15IDSIbW2lBreuEUD3FqUxeWK9Bp:1+U2EWKpRxjzVwCFDMXVcpYerhMEXA5p7xbGE/N4]",
         "_template_name": "inapp"
       },
+      "omni_channel_bundle": {
+        "_bundle_type_identifier": "142154910344316117",
+        "_freshchat_signup_url": "https://aloha.fid.freshworksapi.com/v2/signup/freshchatpink?source=omnibar",
+        "_freshcaller_signup_url": "https://aloha.fid.freshworksapi.com/v2/signup/freshcaller?source=omnibar"
+      },
       "rts": {
         "app_id": "EJ[1:d3nHRUgyTHtAsy4JSrdQWGE53NSCRb7T70nmsSHlUEU=:VZiuD4N8IzwmpN+jqmBiRzCm/AXgw+IJ:GB/DsLzP69O+xPutjwslmhlyP9fcMb9j]",
         "app_secret": "EJ[1:W2+DpaT8ChztnksVbTXAsWNFsiRnKBhKzq4yt8CAelA=:BZ/HS8wuA4Rk6Qz+s0qr/wkUeZvwH8Mg:R+9mtCTGqD/SKFXqk+OKPECGOkhZJzTVFypr1Y5wnadG/nf29RQN51IaAxN/m7SKn00ZYpm1g054Vu+V]",

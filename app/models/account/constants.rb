@@ -224,7 +224,7 @@ class Account < ActiveRecord::Base
     skip_invoice_due_warning: false, custom_fields_search: true, update_billing_info: false, allow_billing_info_update: false,
     tag_central_publish: false, archive_tickets_api: false, bot_agent_response: false,
     fluffy: false, nested_field_revamp: true, service_worker: false,
-    kbase_mint: true, freshid_org_v2: false, hide_agent_login: false, ticket_source_revamp: false,
+    freshid_org_v2: false, hide_agent_login: false, ticket_source_revamp: false,
     office365_adaptive_card: false, helpdesk_tickets_by_product: false, article_es_search_by_filter: false,
     text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
     recalculate_daypass: false, prevent_wc_ticket_create: true, allow_wildcard_ticket_create: false,
@@ -248,7 +248,7 @@ class Account < ActiveRecord::Base
     fw_sso_admin_security: false, shopify_api_revamp: false,
     omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false,
     ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false,
-    twitter_api_compliance: false, omni_agent_availability_dashboard: false
+    twitter_api_compliance: false, omni_agent_availability_dashboard: false, explore_omnichannel_feature: false, hide_omnichannel_toggle: false
   }.freeze
   
   BLOCK_GRACE_PERIOD = 90.days

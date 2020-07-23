@@ -1,9 +1,11 @@
 require_relative '../test_helper'
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
+require Rails.root.join('test', 'models', 'helpers', 'subscription_test_helper.rb')
 ['social_tickets_creation_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 class SubscriptionTest < ActiveSupport::TestCase
   include AccountTestHelper
   include SocialTicketsCreationHelper
+  include SubscriptionTestHelper
 
   def test_update_should_not_change_onboarding_state_for_active_accounts
     create_new_account('test1234', 'test1234@freshdesk.com')
@@ -101,6 +103,83 @@ class SubscriptionTest < ActiveSupport::TestCase
     subscription.save
   end
 
+  def test_account_converted_to_omnibundle_if_changed_to_omniplan
+    OmniChannelUpgrade::FreshcallerAccount.jobs.clear
+    OmniChannelUpgrade::FreshchatAccount.jobs.clear
+    create_new_account('test1234', 'test1234@freshdesk.com')
+    update_currency
+    result = ChargeBee::Result.new(stub_update_params(@account.id))
+    agent = @account.agents.first.user
+    subscription = @account.subscription
+    bundle_create_stub_parms = bundle_create_stub
+    User.stubs(:current).returns(agent)
+    Freshid::V2::Models::Bundle.stubs(:create).returns(bundle_create_stub_parms)
+    Freshid::V2::Models::Account.any_instance.stubs(:update).returns(Freshid::V2::ResponseHandler.new({}, 200, false))
+    subscription.instance_variable_set(:@chargebee_update_response, result)
+    Account.any_instance.stubs(:freshchat_account).returns(nil)
+    Account.any_instance.stubs(:freshcaller_account).returns(nil)
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(true)
+    Account.any_instance.stubs(:account_additional_settings).returns(AccountAdditionalSettings.new(account_id: @account.id, email_cmds_delimeter: '@Simonsays', ticket_id_delimiter: '#', api_limit: 1000))
+    subscription = @account.subscription
+    subscription.account.launch(:explore_omnichannel_feature)
+    subscription.plan = SubscriptionPlan.where(name: 'Forest Omni Jan 20').first
+    subscription.state = 'active'
+    subscription.save!
+    @account.reload
+    assert_equal @account.omni_bundle_id, bundle_create_stub_parms[:bundle][:id]
+    assert_equal @account.omni_bundle_name, bundle_create_stub_parms[:bundle][:name]
+    assert_equal OmniChannelUpgrade::FreshcallerAccount.jobs.size, 1
+    assert_equal OmniChannelUpgrade::FreshchatAccount.jobs.size, 1
+  ensure
+    Account.any_instance.unstub(:launched?)
+    User.unstub(:current)
+    Freshid::V2::Models::Bundle.unstub(:create)
+    Freshid::V2::Models::Account.any_instance.unstub(:update)
+    Account.any_instance.unstub(:freshchat_account)
+    Account.any_instance.unstub(:freshcaller_account)
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+    Account.any_instance.unstub(:account_additional_settings)
+    @account.destroy
+  end
+
+  def test_account_not_converted_to_omnibundle_if_bundle_updation_has_error
+    OmniChannelUpgrade::FreshcallerAccount.jobs.clear
+    OmniChannelUpgrade::FreshchatAccount.jobs.clear
+    @account = Account.first.make_current || create_test_account
+    is_launched = @account.launched?(:explore_omnichannel_feature)
+    @account.launch(:explore_omnichannel_feature) unless is_launched
+    result = ChargeBee::Result.new(stub_update_params(@account.id))
+    agent = @account.agents.first.user
+    subscription = @account.subscription
+    bundle_create_stub_parms = bundle_create_stub
+    User.stubs(:current).returns(agent)
+    Freshid::V2::Models::Bundle.stubs(:create).returns(bundle_create_stub_parms)
+    Freshid::V2::Models::Account.any_instance.stubs(:update).returns(Freshid::V2::ResponseHandler.new({}, 400, true))
+    subscription.instance_variable_set(:@chargebee_update_response, result)
+    Account.any_instance.stubs(:freshchat_account).returns(nil)
+    Account.any_instance.stubs(:freshcaller_account).returns(nil)
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(true)
+    Account.any_instance.stubs(:account_additional_settings).returns(AccountAdditionalSettings.new(account_id: @account.id, email_cmds_delimeter: '@Simonsays', ticket_id_delimiter: '#', api_limit: 1000))
+    subscription = @account.subscription
+    subscription.plan = SubscriptionPlan.where(name: 'Forest Omni Jan 20').first
+    subscription.state = 'active'
+    subscription.save
+    @account.reload
+    assert_nil @account.omni_bundle_id, bundle_create_stub_parms[:bundle][:id]
+    assert_nil @account.omni_bundle_name, bundle_create_stub_parms[:bundle][:name]
+    assert_equal OmniChannelUpgrade::FreshcallerAccount.jobs.size, 0
+    assert_equal OmniChannelUpgrade::FreshchatAccount.jobs.size, 0
+  ensure
+    User.unstub(:current)
+    Freshid::V2::Models::Bundle.unstub(:create)
+    Freshid::V2::Models::Account.any_instance.unstub(:update)
+    Account.any_instance.unstub(:freshchat_account)
+    Account.any_instance.unstub(:freshcaller_account)
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+    Account.any_instance.unstub(:account_additional_settings)
+    @account.rollback(:explore_omnichannel_feature) unless is_launched
+  end
+
   def create_social_streams
     twitter_handle = FactoryGirl.build(:seed_twitter_handle)
     twitter_handle.account_id = @account.id
@@ -127,4 +206,15 @@ class SubscriptionTest < ActiveSupport::TestCase
     Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
     Subscription.any_instance.unstub(:trial?)
   end
+
+  private
+
+    def bundle_create_stub
+      {
+        bundle: {
+          id: Faker::Number.number(5),
+          name: Faker::Lorem.word
+        }
+      }
+    end
 end

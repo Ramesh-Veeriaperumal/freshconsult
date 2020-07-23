@@ -1,6 +1,7 @@
 <%
   trial_days = current_account.subscription.trial_days
   omni_account = current_account.omni_bundle_account?
+  hide_omnichannel_toggle = current_account.launched?(:hide_omnichannel_toggle)
 %>
 <div class="well well-trial well-<%= trial_days > 10 ? 'info' : 'danger' %>">
   <h1 class="lead">
@@ -54,9 +55,13 @@
     <%= render :partial => "/subscriptions/features/omni_channel/features", :locals => { :current_account => current_account }%>
   <% else %>
     <div class="features">
-    <%= render :partial => "/subscriptions/features/toggle-box/ocr_toggle", :locals => { :plan => plan, :trial => true, :show_omni_toggle => show_omni_toggle }%>
+      <% unless hide_omnichannel_toggle %>
+        <%= render :partial => "/subscriptions/features/toggle-box/ocr_toggle", :locals => { :plan => plan, :trial => true, :show_omni_toggle => show_omni_toggle }%>
+      <% end %>
       <% if current_account.disable_old_ui_enabled? %>
-        <span class="vr-line"></span>
+        <% unless hide_omnichannel_toggle %>
+          <span class="vr-line"></span>
+        <% end %>
         <%= render :partial => "/subscriptions/features/toggle-box/fsm_toggle", :locals => { :current_account => current_account }%>
       <% end %>
     </div>

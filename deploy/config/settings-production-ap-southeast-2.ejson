@@ -16,6 +16,11 @@
         "domain_key": "EJ[1:w+o8xH4d7eTC9Dq+1k9ob29EAd1uxltl4MCUw4wDoAQ=:MQzawNlMg1pGfe2/kK22DESIQixFQBLS:3i7VCCdJrREftBU2/woR7Nt20XmGDVGUOP8=]",
         "_template_name": "Freshworks-NPS"
       },
+      "omni_channel_bundle": {
+        "_bundle_type_identifier": "178446441937240066",
+        "_freshchat_signup_url": "https://aloha-au.freshworks.com/v2/signup/freshchat?source=omnibar",
+        "_freshcaller_signup_url": "https://aloha-au.freshworks.com/v2/signup/freshcaller?source=omnibar"
+      },
       "rts": {
         "app_id": "EJ[1:1zOzrZtls6fbRAMGjYsYBnux5Un9yduX8HTheTLRnRQ=:rbjcR7M3eyYl5ZebvkFmoShYM+RhIXSB:j3zvTpwg5cGdWaZSjxamXwTWGm01axJ5]",
         "app_secret": "EJ[1:1zOzrZtls6fbRAMGjYsYBnux5Un9yduX8HTheTLRnRQ=:HCd2uVsy08rUVZWT7lLWh0MET3syBB1S:9gD2iVt6w2zR/tZ46hFSJQJHTDDSAFkLVCBqZ0BscpNW1W2Vu+HR8lgFoC4ah3UimINcpEvSjeWShOYZ]",

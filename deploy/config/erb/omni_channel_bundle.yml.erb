@@ -1,0 +1,6 @@
+<% if node[:ymls][:omni_channel_bundle].present? %>
+<%= node[:opsworks][:environment]%>:
+  bundle_type_identifier: <%= node[:ymls][:omni_channel_bundle][:bundle_type_identifier] %>
+  freshchat_signup_url: <%= node[:ymls][:omni_channel_bundle][:freshchat_signup_url] %>
+  freshcaller_signup_url: <%= node[:ymls][:omni_channel_bundle][:freshcaller_signup_url] %>
+<% end %>

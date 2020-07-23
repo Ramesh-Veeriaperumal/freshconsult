@@ -5135,6 +5135,42 @@ module Ember
       assert_response 201
     end
 
+    def test_compose_email_as_read_access_agent
+      Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+      email_config = fetch_email_config
+      read_access_agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      agent_group = create_agent_group_with_read_access(@account, read_access_agent)
+      params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(custom_fields: {}, group_id: agent_group.group_id, email_config_id: email_config.id)
+      login_as(read_access_agent)
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      t = Helpdesk::Ticket.last
+      match_json(ticket_show_pattern(t))
+      assert_equal t.group_id, agent_group.group_id
+      assert_equal nil, t.responder_id
+      assert t.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]
+      assert_response 201
+    ensure
+      Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+    end
+
+    def test_compose_email_as_write_access_agent
+      Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+      email_config = fetch_email_config
+      read_access_agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      agent_group = create_agent_group_with_write_access(@account, read_access_agent)
+      params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(custom_fields: {}, group_id: agent_group.group_id, email_config_id: email_config.id)
+      login_as(read_access_agent)
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      t = Helpdesk::Ticket.last
+      match_json(ticket_show_pattern(t))
+      assert_equal t.group_id, agent_group.group_id
+      assert_equal t.responder_id, agent_group.user_id
+      assert t.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]
+      assert_response 201
+    ensure
+      Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+    end
+
     def test_compose_with_all_default_fields_required_valid
       default_non_required_fiels = Helpdesk::TicketField.where(required: false, default: 1)
       default_non_required_fiels.map { |x| x.toggle!(:required) }

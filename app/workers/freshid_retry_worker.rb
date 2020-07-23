@@ -12,7 +12,7 @@ class FreshidRetryWorker < BaseWorker
       Rails.logger.info "FRESHID RETRY :: Args: #{args.inspect}"
       account = Account.find(account_id).make_current
       loop_counter = params[:loop_counter]
-      return unless FRESHID_V2_FALLBACK_SUPPORTED_ERROR_CODES.include?(args[:error_code]) && loop_counter <= RETRY_LIMIT
+      return unless (FRESHID_V2_FALLBACK_SUPPORTED_ERROR_CODES.include?(args[:error_code]) || params[:retry_now]) && loop_counter <= RETRY_LIMIT
 
       params[:loop_counter] = loop_counter + 1
       case args[:method]

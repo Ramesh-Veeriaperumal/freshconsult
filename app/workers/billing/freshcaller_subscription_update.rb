@@ -7,7 +7,7 @@ class Billing::FreshcallerSubscriptionUpdate < BaseWorker
 
   def perform(params)
     params.deep_symbolize_keys!
-    freshcaller_request(construct_payload(params), FreshcallerSubscriptionConfig['subscription_host'], :post)
+    freshcaller_request(construct_payload(params), FreshcallerSubscriptionConfig['subscription_host'], :post) if params[:content][:subscription].present?
   rescue StandardError => e
     Rails.logger.error "Exception in updating freshcaller subscription. Account ID: #{Account.current.id}, Error message: #{e.message}"
     raise e

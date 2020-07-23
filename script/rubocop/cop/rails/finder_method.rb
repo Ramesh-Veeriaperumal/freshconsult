@@ -60,12 +60,24 @@ module RuboCop
           paginate_by_: 'where(...).paginate(...)'
         }.freeze
 
-        def_node_matcher :ignore_node?, '(send $(const nil? :Language) {:find_by_code :find_by_codes :find_by_name :find_by_key :find} (...))'
+        def_node_matcher :ignore_language_node?, '(send $(const nil? :Language) {:find_by_code :find_by_codes :find_by_name :find_by_key :find} (...))'
+
+        def_node_matcher :ignore_fresh_id_user_node?, '(send $(const (const (const (const nil? :Freshid) :V2) :Models) :User) {:find_by_email} ...)'
+
+        def_node_matcher :ignore_fresh_id_account_node?, '(send $(const (const (const (const nil? :Freshid) :V2) :Models) :Account) {:find_by_domain} ...)'
 
         def on_send(node)
           method_name = static_name = nil
 
-          ignore_node?(node) do |second_arg|
+          ignore_language_node?(node) do |second_arg|
+            return nil
+          end
+
+          ignore_fresh_id_user_node?(node) do |second_arg|
+            return nil
+          end
+
+          ignore_fresh_id_account_node?(node) do |second_arg|
             return nil
           end
 
@@ -97,4 +109,3 @@ module RuboCop
     end
   end
 end
-

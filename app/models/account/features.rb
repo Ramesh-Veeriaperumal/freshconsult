@@ -27,7 +27,7 @@ class Account < ActiveRecord::Base
     :update_billing_info, :allow_billing_info_update, :tag_central_publish,
     :native_apps, :archive_tickets_api, :bot_agent_response,
     :fetch_ticket_from_ref_first, :query_from_singleton,
-    :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp, :service_worker, :kbase_mint,
+    :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp, :service_worker,
     :ticket_field_limit_increase, :join_ticket_field_data, :bypass_signup_captcha,
     :simple_outreach, :disable_simple_outreach, :supervisor_text_field, :disable_mint_analytics,
     :freshid_org_v2, :hide_agent_login, :office365_adaptive_card, :facebook_admin_ui_revamp,
@@ -52,7 +52,7 @@ class Account < ActiveRecord::Base
     :observer_race_condition_fix, :contact_graphical_avatar, :omni_bundle_2020, :article_versioning_redis_lock, :freshid_sso_sync, :fw_sso_admin_security, :cre_account, :cdn_attachments, :shopify_api_revamp,
     :omni_chat_agent, :portal_frameworks_update, :ticket_filters_central_publish, :new_email_regex, :auto_refresh_revamp, :agent_statuses, :omni_reports,
     :omni_plans_migration_banner, :parse_replied_email, :wf_comma_filter_fix, :composed_email_check, :omni_channel_dashboard, :csat_for_social_surveymonkey, :fresh_parent, :trim_special_characters, :kbase_omni_bundle,
-    :omni_agent_availability_dashboard, :twitter_api_compliance, :silkroad_export, :silkroad_shadow, :silkroad_multilingual, :group_management_v2, :symphony, :invoke_touchstone
+    :omni_agent_availability_dashboard, :twitter_api_compliance, :silkroad_export, :silkroad_shadow, :silkroad_multilingual, :group_management_v2, :symphony, :invoke_touchstone, :explore_omnichannel_feature, :hide_omnichannel_toggle
   ].freeze
 
   BITMAP_FEATURES = [

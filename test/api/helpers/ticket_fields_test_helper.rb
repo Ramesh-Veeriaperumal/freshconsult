@@ -697,6 +697,7 @@ module TicketFieldsTestHelper
       level: field.level,
       import_id: field.import_id,
       column_name: field.column_name,
+      deleted: field.deleted,
       belongs_to_section: field.section_field?,
       created_at: field.created_at.try(:utc).try(:iso8601),
       updated_at: field.updated_at.try(:utc).try(:iso8601)
@@ -905,7 +906,7 @@ module TicketFieldsTestHelper
     {
       model_id: field.id,
       model_changes: action == :update ? model_changes : {},
-      relationship_with_account: 'ticket_fields_with_nested_fields',
+      relationship_with_account: 'all_ticket_fields_with_nested_fields',
       event: action.to_s,
       current_user_id: User.current.id
     }

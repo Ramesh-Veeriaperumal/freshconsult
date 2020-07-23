@@ -20,6 +20,7 @@ module Ember
     end
 
     def test_fetch_rts_account_details_success
+      @user = User.current
       get :show, controller_params(version: 'private')
       match_json(rts_response_pattern)
       assert_response 200
@@ -47,7 +48,6 @@ module Ember
         @rts_details || {
           rts_account_id: 'EO2GQMVGO9',
           rts_secret: 'sBDW9l0iQNBAWpJqbUDMtoSejplfsJ3PYSIS9tgDP-Q=',
-          current_user_id: '1',
           url: 'https://rts-staging.freshworksapi.com'
         }
       end
@@ -67,7 +67,7 @@ module Ember
       def payload
         {
           accId: rts_details[:rts_account_id],
-          userId: rts_details[:current_user_id],
+          userId: @user.id.to_s,
           credentials: [{
             resource: '*',
             perms: ['*'],
