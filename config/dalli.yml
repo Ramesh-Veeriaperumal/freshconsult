@@ -1,24 +1,12 @@
 defaults: &defaults
   servers:
     - localhost:11211
-  ttl: 1800
-  readonly: false
-  urlencode: false
-  c_threshold: 10000
-  compression: true
-  debug: false
   namespace: helpkit
-  sessions: false
-  session_servers: false
-  fragments: true
-  memory: 64
-  benchmarking: true
-  raise_errors: true
-  fast_hash: false
-  fastest_hash: false
   compress: true
-  socket_max_failures: 3
   socket_timeout: 0.5
+  socket_max_failures: 2
+  failover: false
+  down_retry_delay: 10
 
 development:
   <<: *defaults
