@@ -446,6 +446,15 @@ class Account < ActiveRecord::Base
     (super + PRICING_PLAN_MIGRATION_FEATURES_2020.to_a).uniq
   end
 
+  def central_publish_account_features
+    features_list + launched_central_publish_features
+  end
+
+  def launched_central_publish_features
+    # intersection of launched features and central publish lp features
+    all_launched_features & CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES
+  end
+
   def has_features?(*features)
     unless launched?(:pricing_plan_change_2020)
       features.delete_if { |feature| PRICING_PLAN_MIGRATION_FEATURES_2020.include?(feature) }

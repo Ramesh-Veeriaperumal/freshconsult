@@ -367,9 +367,12 @@ class Account < ActiveRecord::Base
     end
 
     def collect_launchparty_actions(changes)
-      feature_name = changes[:launch] || changes[:rollback]
       @launch_party_features ||= []
-      @launch_party_features << changes if FeatureClassMapping.get_class(feature_name.to_s)
+      changes.each do |key, features|
+        features.each do |feature|
+          @launch_party_features << { "#{key}": [feature] } if FeatureClassMapping.get_class(feature.to_s) && [:launch, :rollback].include?(key)
+        end
+      end
       # self.new_record? is false in after create hook so using id_changed? method which will be true in all the hook except
       # after_commit for new record or modified record.
       admin_only_mint_on_launch(changes)

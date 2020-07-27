@@ -262,4 +262,5 @@ class Account < ActiveRecord::Base
   PARENT_CHILD_INFRA_FEATURES = [:parent_child_tickets, :field_service_management]
   CONTACT_DATA = [:first_name, :last_name, :email, :phone].freeze
   FILE_DOWNLOAD_URL_EXPIRY_TIME = 60.to_i.seconds
+  CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES = [:agent_statuses].freeze
 end
