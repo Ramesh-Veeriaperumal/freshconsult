@@ -10,7 +10,7 @@ class Account < ActiveRecord::Base
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :announcements_tab,
     :imap_error_status_check, :va_any_field_without_none, :api_es,
     :encode_emoji, :auto_complete_off, :sandbox_lp, :note_central_publish,
-    :dependent_field_validation, :post_central_publish, :encode_emoji_subject,
+    :dependent_field_validation, :encode_emoji_subject,
     :euc_migrated_twitter, :new_ticket_recieved_metric, :ner,
     :dashboard_announcement_central_publish, :disable_banners,
     :count_service_es_writes, :count_service_es_reads, :time_sheets_central_publish,

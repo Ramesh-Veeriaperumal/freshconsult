@@ -214,7 +214,7 @@ class Account < ActiveRecord::Base
     ticket_central_publish: false, solutions_central_publish: false, freshid: false, onboarding_inlinemanual: false,
     incoming_attachment_limit_25: false, fetch_ticket_from_ref_first: false, outgoing_attachment_limit_25: false,
     whitelist_sso_login: false, imap_error_status_check: false, va_any_field_without_none: false,
-    auto_complete_off: false, freshworks_omnibar: false, dependent_field_validation: false, post_central_publish: false,
+    auto_complete_off: false, freshworks_omnibar: false, dependent_field_validation: false,
     installed_app_publish: false, euc_migrated_twitter: false, new_ticket_recieved_metric: false, es_msearch: true,
     canned_forms: false, attachment_virus_detection: false, old_link_back_url_validation: false,
     stop_contacts_count_query: false, product_central_publish: false, help_widget: false, undo_send: false,
