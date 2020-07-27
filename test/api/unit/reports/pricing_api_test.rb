@@ -110,6 +110,21 @@ class Reports::PricingApiTest < ActiveSupport::TestCase
     @account.revoke_feature :analytics_report_save
   end
 
+  def test_csv_export_presence_when_upgraded_19
+    Account.stubs(:current).returns(@account)
+    @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.where(name:'Sprout Jan 19').first.id, state: 'active', account_id: @account.id))
+    old_subscription = @account.subscription.dup
+    s = @account.subscription
+    s.subscription_plan_id = SubscriptionPlan.where(name: 'Blossom Jan 19').first.id
+    s.save
+    SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
+    Account.current.stubs(:freshvisual_configs_enabled?).returns(true)
+    assert @account.has_feature? :analytics_widget_export
+  ensure
+  	Account.unstub(:current)
+    @account.unstub(:subscription)
+  end
+
   def test_worker_enqueue_on_kbanalytics_feature_addition
     @account.revoke_feature(:analytics_knowledge_base)
     @account.revoke_feature(:analytics_articles)
@@ -138,6 +153,21 @@ class Reports::PricingApiTest < ActiveSupport::TestCase
     @account.unstub(:subscription)
   end
 
+  def test_csv_export_absence_when_downgraded_19
+    Account.stubs(:current).returns(@account)
+    @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.where(name: 'Blossom Jan 19').first.id, state: 'active', account_id: @account.id))
+    old_subscription = @account.subscription.dup
+    s = @account.subscription
+    s.subscription_plan_id = SubscriptionPlan.where(name: 'Sprout Jan 19').first.id
+    s.save
+    SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
+    Account.current.stubs(:freshvisual_configs_enabled?).returns(true)
+    assert_equal(@account.has_feature?(:analytics_widget_export), false)
+  ensure
+    Account.unstub(:current)
+    @account.unstub(:subscription)
+  end
+
   def test_timesheets_tabular_absence_when_downgraded_19
     Account.stubs(:current).returns(@account)
     @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.where(name: 'Blossom Jan 19').first.id, state: 'active', account_id: @account.id))
@@ -150,6 +180,21 @@ class Reports::PricingApiTest < ActiveSupport::TestCase
     assert_equal(@account.has_feature?(:timesheets), false)
     assert_equal(@account.has_feature?(:analytics_widget_show_tabular_data), false)
     assert_equal(@account.has_feature?(:analytics_widget_edit_tabular_data), false)
+  ensure
+    Account.unstub(:current)
+    @account.unstub(:subscription)
+  end
+
+  def test_csv_export_presence_when_upgraded_20
+    Account.stubs(:current).returns(@account)
+    @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.where(name: 'Sprout Jan 20').first.id, state: 'active', account_id: @account.id))
+    old_subscription = @account.subscription.dup
+    s = @account.subscription
+    s.subscription_plan_id = SubscriptionPlan.where(name: 'Blossom Jan 20').first.id
+    s.save
+    SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
+    Account.current.stubs(:freshvisual_configs_enabled?).returns(true)
+    assert @account.has_feature? :analytics_widget_export
   ensure
     Account.unstub(:current)
     @account.unstub(:subscription)
@@ -172,6 +217,21 @@ class Reports::PricingApiTest < ActiveSupport::TestCase
     @account.unstub(:subscription)
   end
 
+  def test_csv_export_absence_when_downgraded_20
+    Account.stubs(:current).returns(@account)
+    @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.where(name: 'Blossom Jan 20').first.id, state: 'active', account_id: @account.id))
+    old_subscription = @account.subscription.dup
+    s = @account.subscription
+    s.subscription_plan_id = SubscriptionPlan.where(name: 'Sprout Jan 20').first.id
+    s.save
+    SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
+    Account.current.stubs(:freshvisual_configs_enabled?).returns(true)
+    assert_equal(@account.has_feature?(:analytics_widget_export), false)
+  ensure
+    Account.unstub(:current)
+    @account.unstub(:subscription)
+  end
+
   def test_timesheets_tabular_absence_when_downgraded_20
     Account.stubs(:current).returns(@account)
     @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.where(name: 'Blossom Jan 20').first.id, state: 'active', account_id: @account.id))
@@ -188,6 +248,7 @@ class Reports::PricingApiTest < ActiveSupport::TestCase
     Account.unstub(:current)
     @account.unstub(:subscription)
   end
+
   private
 
     def stub_faraday
