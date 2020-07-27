@@ -484,12 +484,6 @@
     :inherits:
       - :blossom_jan_20
     :exclude: []
-  :garden_omni_jan_20:
-    :name: Garden Omni Channel
-    :features: []
-    :inherits:
-      - :garden_jan_20
-    :exclude: []
   :estate_jan_20:
     :name: Estate
     :features:
