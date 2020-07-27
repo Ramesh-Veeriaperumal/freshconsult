@@ -72,10 +72,6 @@ class Solution::Article < ActiveRecord::Base
     'CentralPublishWorker::SolutionArticleWorker'
   end
 
-  def self.central_publish_enabled?
-    Account.current.solutions_central_publish_enabled?
-  end
-
   def column_attribute_mapping
     # Since name in payload is change, need to change in model changes also
     {

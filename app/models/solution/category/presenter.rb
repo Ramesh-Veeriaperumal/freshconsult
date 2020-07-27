@@ -23,10 +23,6 @@ class Solution::Category < ActiveRecord::Base
     c.add :name
   end
 
-  def self.central_publish_enabled?
-    Account.current.solutions_central_publish_enabled?
-  end
-
   def model_changes_for_central
     self.previous_changes.merge!(self.parent.instance_variable_get(:@model_changes) || {})
   end

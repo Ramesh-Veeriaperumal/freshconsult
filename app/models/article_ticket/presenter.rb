@@ -25,10 +25,6 @@ class ArticleTicket < ActiveRecord::Base
     { source_type: @interaction_source_type, source_id: @interaction_source_id } if action == :create
   end
 
-  def self.central_publish_enabled?
-    Account.current.solutions_central_publish_enabled?
-  end
-
   def model_changes_for_central
     changes_array = [previous_changes]
     changes_array << @archive_changes if defined?(@archive_changes)

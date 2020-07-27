@@ -17,7 +17,6 @@ class FolderTest < ActiveSupport::TestCase
   end
 
   def test_central_publish_destroy_payload
-    Account.any_instance.stubs(:solutions_central_publish_enabled?).returns(true)
     folder = create_folder.primary_folder
     CentralPublisher::Worker.jobs.clear
     folder.destroy
@@ -26,12 +25,9 @@ class FolderTest < ActiveSupport::TestCase
     assert_equal 'folder_destroy', job['args'][0]
     assert_equal({}, job['args'][1]['model_changes'])
     job['args'][1]['model_properties'].must_match_json_expression(central_publish_folder_destroy_pattern(folder))
-  ensure
-    Account.any_instance.unstub(:solutions_central_publish_enabled?)
   end
 
   def test_central_publish_payload_update_category
-    Account.any_instance.stubs(:solutions_central_publish_enabled?).returns(true)
     folder = create_folder.primary_folder
     old_category = @account.solution_categories.where(parent_id: folder.parent.solution_category_meta_id, language_id: folder.language_id).first
     new_category = create_category(category_params)
@@ -45,8 +41,6 @@ class FolderTest < ActiveSupport::TestCase
     assert_equal 'folder_update', job['args'][0]
     assert_equal CentralPublisher::Worker.jobs.size, 1
     assert_equal({ 'solution_category_name' => [old_category.name, new_category.name] }, job['args'][1]['misc_changes'].slice('solution_category_name'))
-  ensure
-    Account.any_instance.unstub(:solutions_central_publish_enabled?)
   end
 
   def category_params(options = {})

@@ -18,10 +18,6 @@ class PortalSolutionCategory < ActiveRecord::Base
     a.add :solution_category_meta_id
   end
 
-  def self.central_publish_enabled?
-    Account.current.solutions_central_publish_enabled?
-  end
-
   def model_changes_for_central
     changes_array = [previous_changes]
     changes_array.inject(&:merge)
