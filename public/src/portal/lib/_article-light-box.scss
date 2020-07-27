@@ -1,0 +1,95 @@
+//Styles for the article-Lightbox
+
+.article-lightbox.modal {
+
+    &.fade {
+     @include transition(#{opacity .1s});
+    }
+
+    &.fade.in { 
+      top:0;
+      @include left(0);
+      width:100%;
+      height:100%;
+      margin: 0;
+      background-color: #ffffff00;
+    }
+  
+    .modal-header {
+      position: absolute;
+      top:3%;
+      @include right(3%);
+      padding:0;
+      border-bottom: 0;
+      
+      .modal-action {
+        padding: 5px;
+        font-size: 14px;
+      }
+    }
+  
+    .modal-footer {
+      background-color: #f8f9fa00;
+      @include box-shadow(inset 0 0 0 $white);
+      position: absolute;
+      @include left(50%);
+      @include translate(-50%,0);
+      bottom: 20px;
+      padding: 0;
+      border-top: 0;
+      text-align: center;
+      line-height: 0;
+  
+      .modal-action {
+        padding: 6px;
+        font-size: 18px;
+      }
+      
+      #download {
+        @include margin-right(10px);
+      }
+    }
+  
+    .modal-body {
+      padding: 0;
+      min-height: 100%;
+
+      img {
+        max-height: 80%;
+        max-width: 80%;
+        position: absolute;
+        top: 50%;
+        @include left(50%);
+        @include translate(-50%,-50%);
+      }
+    }
+  
+    .modal-action {
+      height: 32px;
+      min-width: 32px;
+      border-radius: 4px;
+      border: 1px #cfd7df solid;
+      display: inline-block;
+      text-align: center;
+      color: #12344d;
+      cursor: pointer;
+      padding: 7px;
+      font-size: 14px;
+      background-image: linear-gradient(to bottom, #fff, #f3f5f7);
+    }
+  }
+  @media (max-width: 720px) {
+   .article-lightbox.modal {
+       position:fixed;
+   }
+  }
+   @media (max-height: 650px) {
+    .article-lightbox.modal {
+      .modal-body {
+        img {
+         top: 45%;
+         max-height: 60%;
+        } 
+      }
+    }
+  }

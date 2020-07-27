@@ -1,6 +1,8 @@
 // MODALS
 // ------
 
+@import "article-light-box";
+
 // Recalculate z-index where appropriate
 .modal-open {
   .dropdown-menu {  z-index: $zindexDropdown + $zindexModal; }
@@ -128,3 +130,4 @@
     height:11px;
   }
 }
+
