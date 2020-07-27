@@ -6,7 +6,7 @@ class Helpdesk::Source < Helpdesk::Choice
 
   before_validation :assign_account_choice_id, on: :create, unless: :default
 
-  after_commit :clear_ticket_source_from_cache
+  after_commit :clear_ticket_source_cache
 
   private
 
@@ -25,5 +25,9 @@ class Helpdesk::Source < Helpdesk::Choice
         Redis::DisplayIdLua.ticket_source_choice_id_lua_script_sha,
         [:keys], key.to_a
       )
+    end
+
+    def clear_ticket_source_cache
+      Account.current.clear_ticket_source_from_cache
     end
 end
