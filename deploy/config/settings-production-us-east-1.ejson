@@ -18,7 +18,7 @@
       },
       "omni_channel_bundle": {
         "_bundle_type_identifier": "178415970728760057",
-        "_freshchat_signup_url": "https://aloha.freshworks.com/v2/signup/freshchatpink?source=omnibar",
+        "_freshchat_signup_url": "https://aloha.freshworks.com/v2/signup/freshchat?source=omnibar",
         "_freshcaller_signup_url": "https://aloha.freshworks.com/v2/signup/freshcaller?source=omnibar"
       },
       "rts": {

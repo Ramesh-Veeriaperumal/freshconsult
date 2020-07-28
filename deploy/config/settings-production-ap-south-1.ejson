@@ -108,13 +108,13 @@
         "_host": "https://freshopsadmin.freshpo.com"
       },
       "freshcaller": {
-        "jwt_signing_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:5kSLujs29vuwP14y5ppPixI02TpSi/hs:/PRbdSWQoMKRn2rrAPGS79nr/rPq+Q==]",
+        "jwt_signing_key": "EJ[1:3ErsFzkpiFK7CB2/uPREogQoz6z6O5eqqKDP/nyn+TQ=:jZo0vcPr08FRzWnTI2WWIqYC91bz2/lg:DwW8E5VT3EUF5x0a89AfnombjP+CrTL3GmAF8w1NJD+Gk1vaJ01L8YlkWFTU3PjaFVvT+FFQcOh4vcX3]",
         "jwt_verification_keys": [
-          "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:ImtFFWcJ/Fjiw5NLQVnz/aaZt2K8dZwO:H4camtHMykWn4o8f0C1mcPpSNMkXEA==]"
+          "EJ[1:3ErsFzkpiFK7CB2/uPREogQoz6z6O5eqqKDP/nyn+TQ=:lAiA0QZfyBu5wFE4PCMFHfX+W5Jv8Ooy:73riO2LrRaYDlxj/k9rPHezHc0S3JTlK5+f1Ra43mm6GNALs4CcxzSURGu3FNaxw3b+28hTOmRccp/4c]"
         ],
         "jwt_token_expiry": 10,
-        "_signup_full_domain": "https://signup.freshcaller-test.com",
-        "_migration_s3_bucket_name": "ind-fd-fc-migration",
+        "_signup_full_domain": "https://signup-in.freshcaller.com",
+        "_migration_s3_bucket_name": "in-fd-fc-migration",
         "_domain_prefix": "",
         "_domain_suffix": ".freshcaller.com",
         "_region": "ap-south-1"
@@ -1632,8 +1632,8 @@
         "_application_id": ""
       },
       "freshcaller": {
-        "_sdk_url": "https://s3.amazonaws.com/ind-freshcaller-sdk/v1/freshcaller-sdk.js",
-        "_widget_loader_url": "https://s3.amazonaws.com/freshcaller-widget-loader/fc-widget.js"
+        "_sdk_url": "https://in-freshcaller-sdk.s3.ap-south-1.amazonaws.com/v1/freshcaller-sdk.js",
+        "_widget_loader_url": "https://in-freshcaller-widget-loader.s3.ap-south-1.amazonaws.com/fc-widget.js"
       },
       "inline_manual": {
         "token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:4nFJlOVuwo2iHAbIZlwea/uH9z79h5Id:Dozr2LVHgEAgLoDmD5GT7zRswrkxYr6hN502B+lrbKbm/1+gKLGWa71PEFvAXsfH]"

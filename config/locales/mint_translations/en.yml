@@ -8341,4 +8341,5 @@ en:
     freshdesk_todo_title: "TO-DO"
     omni_availability_title: "AVAILABLE AGENTS"
     freshcaller_active_calls_title: "CALLS - ACTIVE"
-
+  common_js_translations:
+    of: "of"

@@ -5,12 +5,12 @@ class Account < ActiveRecord::Base
     :customer_sentiment_ui, :dkim, :dkim_email_service, :scheduled_ticket_export,
     :ticket_contact_export, :email_failures, :disable_emails, :facebook_page_redirect,
     :falcon_portal_theme, :freshid, :freshchat_integration, :allow_huge_ccs,
-    :ticket_central_publish, :company_central_publish, :solutions_central_publish,
+    :ticket_central_publish, :company_central_publish,
     :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :announcements_tab,
     :imap_error_status_check, :va_any_field_without_none, :api_es,
     :encode_emoji, :auto_complete_off, :sandbox_lp, :note_central_publish,
-    :dependent_field_validation, :post_central_publish, :encode_emoji_subject,
+    :dependent_field_validation, :encode_emoji_subject,
     :euc_migrated_twitter, :new_ticket_recieved_metric, :ner,
     :dashboard_announcement_central_publish, :disable_banners,
     :count_service_es_writes, :count_service_es_reads, :time_sheets_central_publish,
@@ -444,6 +444,15 @@ class Account < ActiveRecord::Base
     return super if launched?(:pricing_plan_change_2020)
 
     (super + PRICING_PLAN_MIGRATION_FEATURES_2020.to_a).uniq
+  end
+
+  def central_publish_account_features
+    features_list + launched_central_publish_features
+  end
+
+  def launched_central_publish_features
+    # intersection of launched features and central publish lp features
+    all_launched_features & CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES
   end
 
   def has_features?(*features)

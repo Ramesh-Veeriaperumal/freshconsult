@@ -18,7 +18,6 @@ class CategoryTest < ActiveSupport::TestCase
   end
 
   def test_central_publish_destroy_payload
-    Account.any_instance.stubs(:solutions_central_publish_enabled?).returns(true)
     category = add_new_category
     CentralPublisher::Worker.jobs.clear
     category.destroy
@@ -27,7 +26,5 @@ class CategoryTest < ActiveSupport::TestCase
     assert_equal 'category_destroy', job['args'][0]
     assert_equal({}, job['args'][1]['model_changes'])
     job['args'][1]['model_properties'].must_match_json_expression(central_publish_category_destroy_pattern(category))
-  ensure
-    Account.any_instance.unstub(:solutions_central_publish_enabled?)
   end
 end

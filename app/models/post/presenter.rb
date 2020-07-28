@@ -26,8 +26,4 @@ class Post < ActiveRecord::Base
   api_accessible :central_publish_associations do |t|
     t.add :user, template: :central_publish
   end
-
-  def self.central_publish_enabled?
-    Account.current.post_central_publish_enabled?
-  end
 end
