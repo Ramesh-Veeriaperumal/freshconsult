@@ -195,8 +195,7 @@ module Facebook
       end
 
       def facebook_outgoing_attachment_enabled?
-        skip_posting_to_fb &&
-          (Account.current.launched?(:facebook_dm_outgoing_attachment) || Account.current.launched?(:facebook_post_outgoing_attachment))
+        skip_posting_to_fb && Account.current.launched?(:facebook_dm_outgoing_attachment)
       end
 
       def construct_post_hash(parent)
