@@ -1123,6 +1123,22 @@
             "_host": "sandbox.internal.podapsouth1.freshdesk.com",
             "_slave1_host": "sandbox.internal.podapsouth1.freshdesk.com",
             "_slave2_host": "sandbox.internal.podapsouth1.freshdesk.com"
+          },
+          "ind_shard_2": {
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:v8YjvEF5MNSA4klTDjR06uuhJlLALq7T:QrzpSlvzxoJZ4RG9HqwwIw3ScclIxEgmTSU=]",
+            "_database": "helpkit_shard_2",
+            "_username": "dbuser",
+            "_host": "shard2.internal.podapsouth1.freshdesk.com",
+            "_slave1_host": "shard2slave1.internal.podapsouth1.freshdesk.com",
+            "_slave2_host": "shard2slave2.internal.podapsouth1.freshdesk.com"
+          },
+          "ind_shard_source": {
+            "password": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:v8YjvEF5MNSA4klTDjR06uuhJlLALq7T:QrzpSlvzxoJZ4RG9HqwwIw3ScclIxEgmTSU=]",
+            "_database": "helpkit_truth",
+            "_username": "dbuser",
+            "_host": "shardsource.internal.podapsouth1.freshdesk.com",
+            "_slave1_host": "shardsource.internal.podapsouth1.freshdesk.com",
+            "_slave2_host": "shardsource.internal.podapsouth1.freshdesk.com"
           }
         },
         "semian": {
