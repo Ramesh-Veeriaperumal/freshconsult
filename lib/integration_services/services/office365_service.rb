@@ -53,13 +53,8 @@ module IntegrationServices::Services
       def generate_html_content
         message_card_content = JSON.pretty_generate(generate_message_card_payload).html_safe
         ticket_identifier = hidden_ticket_identifier(ticket)
-
-        if account.office365_adaptive_card_enabled?
-          adaptive_card_content = JSON.pretty_generate(generate_adaptive_card_payload).html_safe
-          format(EMAIL_HTML_ADAPTIVE, adaptive_card_content: adaptive_card_content, message_card_content: message_card_content, hidden_ticket_identifier: ticket_identifier)
-        else
-          format(EMAIL_HTML, message_card_content: message_card_content, hidden_ticket_identifier: ticket_identifier)
-        end
+        adaptive_card_content = JSON.pretty_generate(generate_adaptive_card_payload).html_safe
+        format(EMAIL_HTML_ADAPTIVE, adaptive_card_content: adaptive_card_content, message_card_content: message_card_content, hidden_ticket_identifier: ticket_identifier)
       end
 
       def generate_message_card_payload
@@ -72,7 +67,7 @@ module IntegrationServices::Services
           "text" => trim_message,
           "potentialAction" => generate_potential_action
         }
-        payload['originator'] = originator if account.office365_adaptive_card_enabled? && originator.present?
+        payload['originator'] = originator if originator.present?
         payload
       end
 
