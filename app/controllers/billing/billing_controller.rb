@@ -4,6 +4,7 @@ class Billing::BillingController < ApplicationController
   include Redis::RedisKeys
   include Billing::Constants
   include Billing::BillingHelper
+  include SubscriptionHelper
 
   skip_before_filter :check_privilege, :verify_authenticity_token,
                      :set_current_account, :set_time_zone, :set_locale,
@@ -106,7 +107,7 @@ class Billing::BillingController < ApplicationController
     end
 
     #Subscription info
-    def load_subscription_info      
+    def load_subscription_info
       @billing_data = Billing::Subscription.new.retrieve_subscription(@account.id)
       Rails.logger.debug @billing_data
       @subscription_data = subscription_info(@billing_data.subscription, @billing_data.customer)
@@ -119,15 +120,14 @@ class Billing::BillingController < ApplicationController
       @existing_addons = @account.addons.dup
       subscription_request = @account.subscription.subscription_request
       billing_subscription = @billing_data.subscription
+      product_loss = product_loss_in_new_plan?(@account, plan)
       subscription_hash = {}
       update_applicable_addons(@account.subscription, billing_subscription)
-      if has_pending_downgrade_request?(@account) && !has_scheduled_changes?(content)
-        if plan.name != @account.subscription.subscription_plan.name && subscription_request.product_loss?
-          subscription_hash.merge!(plan_info(@account.subscription.subscription_plan))
-        else
-          @account.subscription.subscription_plan = plan
-        end
-        subscription_request.destroy
+      subscription_request.destroy if has_pending_downgrade_request?(@account) && !has_scheduled_changes?(content)
+      if plan.name != @account.subscription.subscription_plan.name && product_loss
+        subscription_hash.merge!(plan_info(@account.subscription.subscription_plan))
+      else
+        @account.subscription.subscription_plan = plan
       end
       subscription_hash[:agent_limit] = @account.subscription.agent_limit = @account.full_time_support_agents.count if agent_quantity_exceeded?(billing_subscription)
       subscription_hash[:field_agent_limit] = @account.subscription.field_agent_limit if update_field_agent_limit(@account.subscription, billing_subscription)
