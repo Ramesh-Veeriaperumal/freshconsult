@@ -5,6 +5,8 @@ module TestClassMethods
   DEFERRED_GC_THRESHOLD = (ENV['DEFER_GC'] || 1.0).to_f
 
   def get_agent
+    # To Prevent agent central publish error
+    Agent.any_instance.stubs(:user_uuid).returns('123456789')
     create_test_account
     @account = Account.first
     @agent = get_admin

@@ -238,7 +238,6 @@ module Ember
         def train_bot
           bot_info = bot_info(@item)
           Rails.logger.info("Enqueueing for overall learning:: #{bot_info}")
-          current_account.launch(:solutions_central_publish) unless current_account.solutions_central_publish_enabled?
           Bot::MlSolutionsTraining.perform_async(bot_id: @item.id)
           Rails.logger.info("Enqueueing for training status check:: #{bot_info}")
           Bot::CheckTrainingStatus.perform_in(2.hours.from_now, bot_id: @item.id, external_id: @item.external_id, portal_id: @item.portal_id)

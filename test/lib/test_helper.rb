@@ -3,6 +3,8 @@ require_relative 'helpers/test_files.rb'
 class ActiveSupport::TestCase
   def setup
     $redis_others.set('NEW_SIGNUP_ENABLED', 1)
+    # To Prevent agent central publish error
+    Agent.any_instance.stubs(:user_uuid).returns('123456789')
     create_test_account
     @account = Account.first
     @account.reputation = 1

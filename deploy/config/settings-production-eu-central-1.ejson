@@ -18,7 +18,7 @@
       },
       "omni_channel_bundle": {
         "_bundle_type_identifier": "178444104089190451",
-        "_freshchat_signup_url": "https://aloha-eu.freshworks.com/v2/signup/freshchatpink?source=omnibar",
+        "_freshchat_signup_url": "https://aloha-eu.freshworks.com/v2/signup/freshchat?source=omnibar",
         "_freshcaller_signup_url": "https://aloha-eu.freshworks.com/v2/signup/freshcaller?source=omnibar"
       },
       "rts": {
@@ -1199,6 +1199,22 @@
               "_username": "dbuser"
             },
             "_slave2_host": "euc-shard4slave2.internal.podeucentral1.freshdesk.com",
+            "_username": "dbuser"
+          },
+          "euc_shard_5_1": {
+            "_database": "helpkit_euc_shard_5_1",
+            "_host": "euc-shard5.internal.podeucentral1.freshdesk.com",
+            "password": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:5CA33ARi/WEmyZaDwT2q6JOMxr0+x1YW:UonCrn7FGxDvnm1f/I75QcG6HRLGTwA6TzE=]",
+            "_slave1_host": "euc-shard5slave1.internal.podeucentral1.freshdesk.com",
+            "_slave2_host": "euc-shard5slave2.internal.podeucentral1.freshdesk.com",
+            "_username": "dbuser"
+          },
+          "euc_shard_5_2": {
+            "_database": "helpkit_euc_shard_5_2",
+            "_host": "euc-shard5.internal.podeucentral1.freshdesk.com",
+            "password": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:5CA33ARi/WEmyZaDwT2q6JOMxr0+x1YW:UonCrn7FGxDvnm1f/I75QcG6HRLGTwA6TzE=]",
+            "_slave1_host": "euc-shard5slave1.internal.podeucentral1.freshdesk.com",
+            "_slave2_host": "euc-shard5slave2.internal.podeucentral1.freshdesk.com",
             "_username": "dbuser"
           }
         },

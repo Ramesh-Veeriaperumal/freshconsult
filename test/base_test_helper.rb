@@ -14,6 +14,8 @@ class ActiveRecord::Base
     # forcing all threads to share the same connection
     @@shared_connection || retrieve_connection
   end
+  # To Prevent agent central publish error
+  Agent.any_instance.stubs(:user_uuid).returns('123456789')
 end
 
 class ActiveSupport::TestCase
@@ -27,4 +29,6 @@ class ActiveSupport::TestCase
   end
 
   ActiveRecord::Base.shared_connection = ActiveRecord::Base.connection
+  # To Prevent agent central publish error
+  Agent.any_instance.stubs(:user_uuid).returns('123456789')
 end

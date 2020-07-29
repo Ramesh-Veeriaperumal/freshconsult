@@ -450,6 +450,18 @@ module Ember
       User.any_instance.unstub(:language)
     end
 
+    def test_index_with_updated_source_response
+      Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      response = parse_response @response.body
+      source_field = response.find { |x| x['name'] == 'source' }['choices'].first
+      expected_source_fields = %w[id label value position icon_id default deleted]
+      assert_equal true, (expected_source_fields - source_field.keys).empty?
+    ensure
+      Account.current.unstub(:ticket_source_revamp_enabled?)
+    end
+
     private
 
       def ticket_field_cache_key(language)

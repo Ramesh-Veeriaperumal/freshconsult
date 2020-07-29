@@ -155,10 +155,6 @@ class Helpdesk::Note < ActiveRecord::Base
   # METHOS USED BY CENTRAL PUBLISHER GEM.
   # ************************************
 
-  def self.central_publish_enabled?
-    Account.current.note_central_publish_enabled?
-  end
-
   def central_publish_worker_class
     "CentralPublishWorker::#{Account.current.subscription.state.titleize}NoteWorker"
   end

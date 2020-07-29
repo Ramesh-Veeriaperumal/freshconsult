@@ -64,6 +64,8 @@ module RuboCop
 
         def_node_matcher :ignore_fresh_id_user_node?, '(send $(const (const (const (const nil? :Freshid) :V2) :Models) :User) {:find_by_email} ...)'
 
+        def_node_matcher :ignore_fresh_id_v1_user_node?, '(send $(const (const nil? :Freshid) :User) {:find_by_email} ...)'
+
         def_node_matcher :ignore_fresh_id_account_node?, '(send $(const (const (const (const nil? :Freshid) :V2) :Models) :Account) {:find_by_domain} ...)'
 
         def on_send(node)
@@ -74,6 +76,10 @@ module RuboCop
           end
 
           ignore_fresh_id_user_node?(node) do |second_arg|
+            return nil
+          end
+
+          ignore_fresh_id_v1_user_node?(node) do |second_arg|
             return nil
           end
 

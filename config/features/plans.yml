@@ -214,6 +214,7 @@
       - :analytics_widget_edit_tabular_data
       - :analytics_widget_change_chart
       - :analytics_widget_delete
+      - :analytics_widget_export
       - :analytics_helpdesk_in_depth_report
       - :reverse_notes
       - :article_filters
@@ -253,7 +254,6 @@
       - :link_tickets_toggle
       - :analytics_report_schedule
       - :analytics_widget_schedule
-      - :analytics_widget_export
       - :analytics_agent_performance
       - :analytics_group_performance
       - :analytics_time_sheet_summary_report
@@ -428,6 +428,7 @@
       - :analytics_widget_edit_tabular_data
       - :analytics_widget_change_chart
       - :analytics_widget_delete
+      - :analytics_widget_export
       - :analytics_helpdesk_in_depth_report
       - :reverse_notes
       - :article_filters
@@ -465,7 +466,6 @@
       - :link_tickets_toggle
       - :analytics_report_schedule
       - :analytics_widget_schedule
-      - :analytics_widget_export
       - :analytics_agent_performance
       - :analytics_group_performance
       - :analytics_time_sheet_summary_report
@@ -483,12 +483,6 @@
       - :suggested_articles_count
     :inherits:
       - :blossom_jan_20
-    :exclude: []
-  :garden_omni_jan_20:
-    :name: Garden Omni Channel
-    :features: []
-    :inherits:
-      - :garden_jan_20
     :exclude: []
   :estate_jan_20:
     :name: Estate

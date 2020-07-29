@@ -3,24 +3,6 @@ require_relative '../test_helper'
 class PortalSolutionCategoryTest < ActiveSupport::TestCase
   include ModelsSolutionsTestHelper
 
-  def setup
-    super
-    @account.launch(:solutions_central_publish)
-  end
-
-  def teardown
-    @account.rollback(:solutions_central_publish)
-  end
-
-  def test_portal_solution_category_central_publish_without_launch_party
-    @account.rollback(:solutions_central_publish)
-    CentralPublisher::Worker.jobs.clear
-    category_meta = create_category(portal_id: Account.current.main_portal.id)
-    assert_equal 0, CentralPublisher::Worker.jobs.size
-  ensure
-    @account.launch(:solutions_central_publish)
-  end
-
   def test_create_portal_solution_category_on_category_create
     portal1 = create_portal
     CentralPublisher::Worker.jobs.clear

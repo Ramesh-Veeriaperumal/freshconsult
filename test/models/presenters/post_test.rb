@@ -3,28 +3,6 @@ require_relative '../test_helper'
 class PostTest < ActiveSupport::TestCase
   include ModelsDiscussionsTestHelper
 
-  def setup
-    super
-    before_all
-  end
-
-  @@before_all_run = false
-
-  def before_all
-    return if @@before_all_run
-    @account.launch(:post_central_publish)
-    @@before_all_run = true
-  end
-
-  def test_central_publish_with_launch_party_disabled
-    @account.rollback(:post_central_publish)
-    CentralPublisher::Worker.jobs.clear
-    t = create_test_topic(Forum.first)
-    assert_equal 0, CentralPublisher::Worker.jobs.size
-  ensure
-    @account.launch(:post_central_publish)
-  end
-
   def test_central_publish_with_launch_party_enabled
     CentralPublisher::Worker.jobs.clear
     t = create_test_topic(Forum.first)

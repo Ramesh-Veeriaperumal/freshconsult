@@ -40,7 +40,6 @@ module Ember
       @twitter_handle = get_twitter_handle
       @default_stream = @twitter_handle.default_stream
       Account.current.launch(:facebook_dm_outgoing_attachment)
-      Account.current.launch(:facebook_post_outgoing_attachment)
       Account.current.launch(:skip_posting_to_fb)
       # Deleting ticket fields starting with number (which is not allowed in our product)
       Account.current.ticket_fields.custom_fields.each do |tf|
@@ -54,7 +53,6 @@ module Ember
       Social::CustomTwitterWorker.unstub(:perform_async)
       Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
       Account.current.rollback(:facebook_dm_outgoing_attachment)
-      Account.current.rollback(:facebook_post_outgoing_attachment)
       Account.current.rollback(:skip_posting_to_fb)
     end
 
@@ -1054,7 +1052,6 @@ module Ember
     # Can be removed once we do a launch all of the facebook outgoing attachments feature
     def test_facebook_reply_to_fb_comment_note_without_attachments
       Account.current.rollback(:facebook_dm_outgoing_attachment)
-      Account.current.rollback(:facebook_post_outgoing_attachment)
       Account.current.rollback(:skip_posting_to_fb)
       ticket = create_ticket_from_fb_post(true)
       put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"

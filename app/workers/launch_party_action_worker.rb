@@ -18,7 +18,11 @@ class LaunchPartyActionWorker < BaseWorker
         method_name = :"on_#{key}"
         logger.info "Launch party callback class name for account_id #{account_id} is #{class_name}"
         feature_class_instance = class_name.constantize.new rescue nil
-        feature_class_instance.send(method_name, account_id) if feature_class_instance && feature_class_instance.respond_to?(method_name.to_sym)
+        if feature_class_instance && feature_class_instance.respond_to?(method_name.to_sym)
+          feature_class_instance.safe_send('feature_name=', each_feature[key].first.to_sym)
+          feature_class_instance.safe_send(method_name, account_id)
+        end
+        Rails.logger.info "LaunchPartyActionWorker :: Processing Done :: #{account_id}"
       end
     rescue => e
       logger.info "Error when executing the launch party, args #{args.inspect}, error #{e.inspect}"

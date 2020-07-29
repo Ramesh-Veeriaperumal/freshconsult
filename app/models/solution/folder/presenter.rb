@@ -26,10 +26,6 @@ class Solution::Folder < ActiveRecord::Base
     f.add :name
   end
 
-  def self.central_publish_enabled?
-    Account.current.solutions_central_publish_enabled?
-  end
-
   def relationship_with_account
     :solution_folders
   end

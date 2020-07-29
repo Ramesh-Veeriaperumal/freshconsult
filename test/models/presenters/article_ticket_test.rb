@@ -8,7 +8,6 @@ class ArticleTicketTest < ActiveSupport::TestCase
 
   def setup
     super
-    @account.launch(:solutions_central_publish)
     $redis_others.perform_redis_op('set', 'ARTICLE_SPAM_REGEX', Faker::Lorem.word)
     $redis_others.perform_redis_op('set', 'PHONE_NUMBER_SPAM_REGEX', Faker::Lorem.word)
     $redis_others.perform_redis_op('set', 'CONTENT_SPAM_CHAR_REGEX', Faker::Lorem.word)

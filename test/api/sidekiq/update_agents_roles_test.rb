@@ -13,6 +13,8 @@ class UpdateAgentsRolesTest < ActionView::TestCase
     create_test_account if Account.first.nil?
     Account.stubs(:current).returns(Account.first)
     @account = Account.first
+    # To Prevent agent central publish error
+    Agent.any_instance.stubs(:user_uuid).returns('123456789')
   end
 
   def teardown

@@ -134,7 +134,6 @@ class Social::FacebookPage < ActiveRecord::Base
   def launch_attachment
     Account.current.launch(:skip_posting_to_fb)
     Account.current.launch(:facebook_dm_outgoing_attachment)
-    Account.current.launch(:facebook_post_outgoing_attachment)
     Rails.logger.info("Launched attachment for the non migrated euc account #{Account.current.id}")
   end
 

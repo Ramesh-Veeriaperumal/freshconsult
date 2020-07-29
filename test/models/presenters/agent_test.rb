@@ -23,6 +23,8 @@ class AgentTest < ActiveSupport::TestCase
   def setup
     @account = Account.first
     Account.stubs(:current).returns(Account.first)
+    # To Prevent agent central publish error
+    Agent.any_instance.stubs(:user_uuid).returns('123456789')
   end
 
   def teardown

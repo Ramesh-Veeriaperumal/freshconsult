@@ -11,7 +11,6 @@ class ArticleTest < ActiveSupport::TestCase
     super
     @account = Account.first
     Account.stubs(:current).returns(@account)
-    @account.launch(:solutions_central_publish)
     setup_multilingual
     $redis_others.perform_redis_op('set', 'ARTICLE_SPAM_REGEX', Faker::Lorem.word)
     $redis_others.perform_redis_op('set', 'PHONE_NUMBER_SPAM_REGEX', Faker::Lorem.word)
@@ -576,7 +575,6 @@ class ArticleTest < ActiveSupport::TestCase
   end
 
   def test_central_publish_destroy_payload
-    Account.any_instance.stubs(:solutions_central_publish_enabled?).returns(true)
     article = create_article(article_params).primary_article
     CentralPublishWorker::SolutionArticleWorker.jobs.clear
     article.destroy
@@ -585,12 +583,9 @@ class ArticleTest < ActiveSupport::TestCase
     assert_equal 'article_destroy', job['args'][0]
     assert_equal({}, job['args'][1]['model_changes'])
     job['args'][1]['model_properties'].must_match_json_expression(central_publish_article_destroy_pattern(article))
-  ensure
-    Account.any_instance.unstub(:solutions_central_publish_enabled?)
   end
 
   def test_central_publish_tags_payload
-    Account.any_instance.stubs(:solutions_central_publish_enabled?).returns(true)
     article = create_article(article_params).primary_article
     tag1 = create_tag(@account, name: "#{Faker::Lorem.characters(7)}#{rand(999_999)}")
     tag2 = create_tag(@account, name: "#{Faker::Lorem.characters(7)}#{rand(999_999)}")
@@ -606,8 +601,6 @@ class ArticleTest < ActiveSupport::TestCase
     assert_equal CentralPublishWorker::SolutionArticleWorker.jobs.size, 1
     assert_equal 'article_update', job['args'][0]
     job['args'][1]['model_changes']['tags'].must_match_json_expression(central_publish_article_tags_pattern(article))
-  ensure
-    Account.any_instance.unstub(:solutions_central_publish_enabled?)
   end
 
   def test_central_publish_payload_update_author

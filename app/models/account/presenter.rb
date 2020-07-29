@@ -22,7 +22,7 @@ class Account < ActiveRecord::Base
     s.add :premium
     s.add :set_portal_languages, as: :portal_languages
     s.add :set_all_languages, as: :all_languages
-    s.add proc { |x| x.features_list }, as: :features
+    s.add proc { |x| x.central_publish_account_features }, as: :features
     s.add proc { |x| x.utc_format(x.created_at) }, as: :created_at
     s.add proc { |x| x.utc_format(x.updated_at) }, as: :updated_at
     s.add :freshid_account_id

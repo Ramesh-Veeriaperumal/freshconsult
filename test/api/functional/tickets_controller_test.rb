@@ -5438,7 +5438,6 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_meta_note_publish
     CentralPublishWorker::ActiveNoteWorker.jobs.clear
     CentralPublishWorker::TrialNoteWorker.jobs.clear
-    Account.any_instance.stubs(:note_central_publish_enabled?).returns(true)
     sample_requester = get_user_with_default_company
     params = {
       requester_id: sample_requester.id,
@@ -5449,8 +5448,6 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 201
     assert_equal 0, CentralPublishWorker::ActiveNoteWorker.jobs.size
     assert_equal 0, CentralPublishWorker::TrialNoteWorker.jobs.size
-  ensure
-    Account.any_instance.unstub(:note_central_publish_enabled?)
   end
 
   def test_update_with_new_unique_external_id
