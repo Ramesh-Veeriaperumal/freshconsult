@@ -17,7 +17,8 @@ class GroupDecorator < ApiDecorator
   def to_ocr_hash
     {
       id: record.id,
-      name: record.name
+      name: record.name,
+      round_robin: assignment_type
     }
   end
 
