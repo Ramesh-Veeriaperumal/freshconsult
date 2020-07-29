@@ -2505,7 +2505,17 @@
       "iam": {
         "_expiry": 300,
         "password": "EJ[1:CfaiE80Ur6ikOJe2K44pNjkmkrnVegF23QXsD3yr2j8=:8CINh5rO/CbSRPcPqwunpzAA2lPIgTgc:ZCkE1E1488yPPOAf9OTzkADGAmU2ksUkyqk=]",
-        "kid": "EJ[1:Sn32j5d3uGw4jGfBeGwl2KsITxjYuzNlvLQn6h2LP0A=:M/8Mk4bWq1Eeu5YTDyIbfxVuJUv330vJ:oVlRwlxf3Qj6TZGe8Sm0ILrKHu60Fvc=]"
+        "kid": "EJ[1:Sn32j5d3uGw4jGfBeGwl2KsITxjYuzNlvLQn6h2LP0A=:M/8Mk4bWq1Eeu5YTDyIbfxVuJUv330vJ:oVlRwlxf3Qj6TZGe8Sm0ILrKHu60Fvc=]",
+        "client_secrets": {
+            "field_service": {
+                "client_id": "EJ[1:XAy2MKPiMWPpyB1i/TuUAz2GXnN3M5L7iOHrsvSTvkk=:SRkN6dbeWqhKMjsP/bil9akCu4CuNAkw:0lfXpwWR/i+TzaZpHRXewhgB5yZwBk1xyE7ZP98kVoYAIL5x+dDd8gq7EX4xt+i+H0YjYcZdsnHKxQNOeClM8D6I4LF7EIUHGxyG2KosLZA=]",
+                "client_secret": [
+                    "EJ[1:XAy2MKPiMWPpyB1i/TuUAz2GXnN3M5L7iOHrsvSTvkk=:XDw5hOd1wr2ZSApm+F7hANvb3h8EwEgf:xeh0ol3xqlXuZ2+4X/mWaGvnUIfug5B75nSZaMB89VevYSoRYDZTRZWTrsNQH1Yb8qTdf0jpfw3Xwn6xD8bDEmcOTgDl2tFT07xcPTbHZCM=]",
+                    "EJ[1:XAy2MKPiMWPpyB1i/TuUAz2GXnN3M5L7iOHrsvSTvkk=:nx7bHtMKluciVhPGd+FZq2pe7eLw3+Zy:6cGydGut1UpQtHWH1ECiZIMDEzxhSevUynzmAJpaIQRk8SRQhYF4MgTpVxQsgYM2M8wkyboHy6y7MPmiLtR1XaoyKsKiQmSNf7IbSBPSZU4=]"
+                ]
+            }
+        }
+
       },
       "symmetric_encryption": {
         "ciphers":{

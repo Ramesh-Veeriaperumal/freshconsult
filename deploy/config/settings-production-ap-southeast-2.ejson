@@ -1396,7 +1396,16 @@
       "iam": {
         "_expiry": 300,
         "password": "EJ[1:+uR4W2WA56xIbUyd3GMiDg8nK63zinyOI5vH7YZp5Vw=:r7oFwD/YHtwsoQKOgUtb2321mEkbRpz4:pt/kZcBBsyPcWl7puLnLWx+MHOLjjdPjxqQ=]",
-        "kid": "EJ[1:e1sALPEEctx83CLQmNVBVZI6UyA8q5vCWWhAQI6g03I=:e/BoOlRN3dmWajhpFXHSWwPQeV0iGOej:EHM9f+TN9pbDFlP5JmbYr2e1MOwpW90=]"
+        "kid": "EJ[1:e1sALPEEctx83CLQmNVBVZI6UyA8q5vCWWhAQI6g03I=:e/BoOlRN3dmWajhpFXHSWwPQeV0iGOej:EHM9f+TN9pbDFlP5JmbYr2e1MOwpW90=]",
+        "client_secrets": {
+            "field_service": {
+                "client_id": "EJ[1:siWNiMLtqkSxII9Xp3xgAD7gDvvMpwUOlQ59Pn1xg1s=:/yF+pywrCURE6Ls+UV1vsO800OoPIz1u:kkt5DsX0qT9IhmM+dXk03we6CQNgYN6qRjUiYA02hTXThlhzUnUk4VNInTRQfe/Sf2FPDlBlLMBoAsN4YrsUtYBdKMA66Xz6UlUl3BFYKJs=]",
+                "client_secret": [
+                    "EJ[1:siWNiMLtqkSxII9Xp3xgAD7gDvvMpwUOlQ59Pn1xg1s=:m54nwgVorE2nmN/EAALGWoO4UvmAiAMJ:wCdPypF8K+4rUJHH4eMWPLeCs+sg4t4LLKCqziw42T8A8Aad/hbSTKS882Z35CK7hXF5KoxjinUES8qCHuTuK07i8d675vRsmWtIa4z/UV0=]",
+                    "EJ[1:siWNiMLtqkSxII9Xp3xgAD7gDvvMpwUOlQ59Pn1xg1s=:S74wOEM/kS89x2YRyqJiuLfgYHssVT1S:NTzeBIre3gJwmKk0abpy5tZhXb6Cz9Zc3kfVVJkY0SkDTjjZECYeDS6EEoyBnXjINm5OEB23T8aWDVr+2RVgIPKumIJz+ASxvm0BpTcQIIA=]"
+                ]
+            }
+        }
       },
       "symmetric_encryption": {
         "ciphers":{

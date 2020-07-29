@@ -579,6 +579,8 @@ class ApiApplicationController < MetalApiController
         begin
           payload, _headers = JWT.decode auth_token, key, true, { algorithm: 'RS256' }
           @current_user = Account.current.users.find_by_id(payload['user_id'])
+        rescue JWT::ExpiredSignature
+          render_request_error :token_expired, 401
         rescue Exception => e
           render_request_error :invalid_credentials, Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized]
           Rails.logger.error "Exception while authenticating user using JWT token, message: #{e.message}"
@@ -836,6 +838,10 @@ class ApiApplicationController < MetalApiController
 
     def json_request?
       @json_request ||= request.content_mime_type.try(:ref) == :json
+    end
+
+    def url_encoded_form?
+      request.content_mime_type.try(:ref) == :url_encoded_form
     end
 
     def valid_content_type?

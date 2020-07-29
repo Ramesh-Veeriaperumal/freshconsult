@@ -289,4 +289,17 @@ class ApiApplicationControllerTest < ActionController::TestCase
     @controller.instance_variable_set(:@current_user, nil)
     user.destroy
   end
+
+  def test_jwt_authentication_for_expired_token
+    response = ActionDispatch::TestResponse.new
+    CustomRequestStore.store[:private_api_request] = true
+    private_key = OpenSSL::PKey::RSA.new(File.read('config/cert/iam.pem'), ::Iam::IAM_CONFIG['password'])
+    user = add_test_agent(@account)
+    token = generate_iam_jwt_token(user, private_key, 10.minutes.ago.to_i)
+    @controller.request.env['Authorization'] = "Bearer #{token}"
+    @controller.response = response
+    @controller.send(:jwt_auth_request)
+    assert_equal response.status, 401
+    assert_equal response.body, request_error_pattern(:token_expired).to_json
+  end
 end
