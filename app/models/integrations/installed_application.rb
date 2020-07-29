@@ -38,7 +38,7 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   after_commit :clear_fragment_caches, :if => :attachment_applications?
   after_commit :clear_application_hash_cache
 
-  publishable on: [:create, :update, :destroy], if: :publish_feature_launched?
+  publishable on: [:create, :update, :destroy]
 
   include ::Integrations::AppMarketPlaceExtension
 
@@ -61,10 +61,6 @@ class Integrations::InstalledApplication < ActiveRecord::Base
 
   def store_deleted_model
     @deleted_model_info = central_publish_payload
-  end
-
-  def publish_feature_launched?
-    Account.current.launched?(:installed_app_publish)
   end
 
   def store_old_configs

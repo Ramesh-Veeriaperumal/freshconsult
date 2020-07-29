@@ -10,10 +10,6 @@ class Helpdesk::Tag < ActiveRecord::Base
     g.add :tag_uses_count
   end
 
-  def self.central_publish_enabled?
-    Account.current.tag_central_publish_enabled?
-  end
-
   def event_info action
     { :ip_address => Thread.current[:current_ip]}
   end
