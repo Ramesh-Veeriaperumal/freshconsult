@@ -908,10 +908,10 @@
           "_region": "in"
         },
         "freshworksOmnibarV2": {
-          "environment": "EJ[1:DwsSiX3lVjF9cQXNjd8s3/Ze/WO+HhecnU6vZbI+3hU=:ITQlTMHmIc1RXRXW1SzhPf8xhnkaHesO:OcEaqzRyqHHYrlLMLSCwFg==]",
-          "product": "EJ[1:DwsSiX3lVjF9cQXNjd8s3/Ze/WO+HhecnU6vZbI+3hU=:7I/R2iAcEwXkn4427ByVPzeV8ztls9DF:1QPYcwBwscD5evMk5AjttQ==]",
-          "region": "EJ[1:DwsSiX3lVjF9cQXNjd8s3/Ze/WO+HhecnU6vZbI+3hU=:3W8+DEn4sgIyLKUbDnM+x08PkLiWosdX:+WuYkGg9aD2weTAnVajj3A==]",
-          "clientid": "EJ[1:DwsSiX3lVjF9cQXNjd8s3/Ze/WO+HhecnU6vZbI+3hU=:Eb/tml0O54KaxxLiW68GcZgWh349AE+N:Z413XiLvwLwBhsc3RCz4uA==]"
+          "_environment": "production",
+          "_product": "freshdesk",
+          "_region": "in",
+          "_clientid": "112141715909197826"
         },
         "freshworksOmnibarAssets": {
           "_script_asset_url": "https://accounts.freshworks.com/omnibar/omnibar-stable.js",
@@ -1692,10 +1692,7 @@
       },
       "_vault_service_url": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/",
       "_freshdesk_help_widget_url": "https://widget.freshworks.com/widgets/50000000012.js",
-      "google_map_api_key": "EJ[1:eRONgXHzKDNix7OIhf9Hk8jWCZAHqpBmhJqurOK6sV4=:cRn3yuH0PSYoTSjln0p/GkmPTLyuiH9a:kP7l2nt7iYDYFwViR/CRBgigHtqCdOF30ruqBasS2/w55VnytHSJmJybOjz1ZTomJqzXIx6CRA==]",
-      "analyticsCollectorConfig": {
-        "_analyticsCollectorScript": "https://assets.freshdesk.com/analytics/analytics-v2.js"
-      }
+      "google_map_api_key": "EJ[1:vmF7wEOOa/HSzkab6dd0yTVcKEDJ4UPx/xvyJKVrDnw=:mPa6OzpDWSgcGP0hIYF+6YgajIGmBuy/:Adm7PBHq/FZ1jDQGZTQBokjC6GEB/m9sC4QkGn1fceXz80/sEVN+TYJVqYpmrfuQcS8dXKM80g==]"
     },
     "aws_config": {
     },

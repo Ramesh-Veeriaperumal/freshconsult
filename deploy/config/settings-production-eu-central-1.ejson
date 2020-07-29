@@ -911,10 +911,10 @@
           "_region": "eu"
         },
         "freshworksOmnibarV2": {
-          "environment": "EJ[1:LAExQJ84gVXwB2pqslQT19+5RxXthRXM4CJEXQ15+yE=:yf4kBTtebN+TT0z0zRSNovSj8MSA58OW:XBsy3B8ylS/AEaZXwE9e8w==]",
-          "product": "EJ[1:LAExQJ84gVXwB2pqslQT19+5RxXthRXM4CJEXQ15+yE=:okjgS790P0+Kk9HDs6Br4rxuw8SaxGh9:iIly84NmxxISKTaPOhhpUg==]",
-          "region": "EJ[1:LAExQJ84gVXwB2pqslQT19+5RxXthRXM4CJEXQ15+yE=:zi0665Q4Ajhk89aNlahGPg4Rvvv92Bok:ifqsXCQzBn3nbeEjm30P3g==]",
-          "clientid": "EJ[1:LAExQJ84gVXwB2pqslQT19+5RxXthRXM4CJEXQ15+yE=:z8OsEaPAugVIfCrd+tndwI7gFBnPOMWv:NjYbBdq0tfxcqx/gMs36qA==]"
+          "_environment": "production",
+          "_product": "freshdesk",
+          "_region": "eu",
+          "_clientid": "78368727158800390"
         },
         "freshworksOmnibarAssets": {
           "_script_asset_url": "https://accounts.freshworks.com/omnibar/omnibar-stable.js",
@@ -1787,7 +1787,7 @@
       },
       "_vault_service_url": "https://vault-service-eu.freshworks.com/",
       "_freshdesk_help_widget_url": "https://widget.freshworks.com/widgets/50000000012.js",
-      "google_map_api_key": "EJ[1:xXG7Ad1W1Cel3reAymOnSf/RAEp2GTEfOKAyuNbTEjs=:y9Z8W/rvJqzJV6HaDjLkcfvK9DareTM/:Yd1bzwrBgqsbm12Krz74LMIE0idbbRY/xJUFFJ4VWsouwW4GWBTO6WcpzBntM2g01JPxkiA0rw==]"
+      "google_map_api_key": "EJ[1:rrLSeLBT91/rdZcJG7mVttTKEuqC4Hu4JqEzQNWBjlI=:xUpgpL0AZh+RnUxisN2JyJlZt3MilEfy:bJkPO3lcx/NpDlw2RnHAevyc0gTAATYs/mjpHAJ8ierBjE4ZUd370TyQHIT5nMD634bmEZLo1Q==]"
     },
     "aws_config": {
     },
