@@ -1,24 +1,25 @@
-development:
+defaults: &defaults
   expiry: 300
   password: dummy
   kid: dummy
+  client_secrets:
+    field_service:
+      client_id: field_service_dummy
+      client_secret:
+        - dummy
+        - dummy
+
+development:
+  <<: *defaults
 
 test:
-  expiry: 300
-  password: dummy
-  kid: dummy
+  <<: *defaults
 
 staging:
-  expiry: 300
-  password: dummy
-  kid: dummy
+  <<: *defaults
 
 production:
-  expiry: 300
-  password: dummy
-  kid: dummy
+  <<: *defaults
 
 slave:
-  expiry: 300
-  password: dummy
-  kid: dummy
+  <<: *defaults

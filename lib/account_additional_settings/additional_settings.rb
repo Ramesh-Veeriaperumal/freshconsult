@@ -35,11 +35,12 @@ module AccountAdditionalSettings::AdditionalSettings
     update_attributes(additional_settings: additional_settings)
   end
 
-  def mark_account_as_anonymous
+  def mark_account_as_anonymous(precreated = false)
     additional_settings = self.additional_settings || {}
     additional_settings[:anonymous_account] = true
+    additional_settings[:precreated_account] = precreated
     update(additional_settings: additional_settings)
-    AccountCleanup::AnonymousAccountCleanup.perform_in(2.days, account_id: account_id)
+    AccountCleanup::AnonymousAccountCleanup.perform_in(2.days, account_id: account_id) unless precreated
   end
 
   def set_onboarding_version

@@ -76,6 +76,10 @@ module Redis::OthersRedis
     newrelic_begin_rescue { $redis_others.perform_redis_op('lpush', key, value) }
   end
 
+  def get_others_redis_rpop(key)
+    newrelic_begin_rescue { $redis_others.perform_redis_op('rpop', key) }
+  end
+
   def get_others_redis_rpoplpush(source, destination)
     newrelic_begin_rescue { $redis_others.perform_redis_op('rpoplpush', source, destination) }
   end

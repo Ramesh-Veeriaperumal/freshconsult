@@ -1,18 +1,19 @@
-<div align="center">
-  <img class="fd-fd-bundle-logo" class="features__icon" src="/images/fd-fs-bundle.svg">
-  <p class="primary_bundle_text">
-    <%=t('freshdesk_freshsales_bundle.discount_text_1')%><br>
-  </p>
-  <p class="secondary_bundle_text">
-    <%=t('freshdesk_freshsales_bundle.discount_text_2')%><br>
-  </p>
-  <% if account_state == 'trial' %>
-    <a href=<%= account_subscription_url %> class="btn btn-primary" id="buy-freshsales" target="_blank"><%=t('freshdesk_freshsales_bundle.buy_freshsales')%></a>
-  <% elsif account_state == 'integrate' %>
-    <a class="btn btn-primary" id="integrate-freshsales" href="https://support.freshdesk.com/support/solutions/articles/219923-how-to-integrate-freshsales-with-freshdesk-" target="_blank"><%=t('freshdesk_freshsales_bundle.integrate_freshsales')%></a>
-  <% else %>
-    <a class="btn btn-primary" data-attr = false id="try-freshsales"><%=t('freshdesk_freshsales_bundle.try_freshsales')%></a>
-    <a class="btn btn-seconday" data-attr = true id="try-freshsales"><%=t('freshdesk_freshsales_bundle.invite_sales_team')%></a>
-  <% end %>
-  <hr>
+<div class="nudge-banner-content-container" align="center">
+  <div class="nudge-banner-table pb10">
+    <img class="fd-fd-bundle-logo" class="features__icon" src="/images/fd-fs-bundle.svg">
+    <p class="primary_bundle_text">
+      <%=t('freshdesk_freshsales_bundle.discount_text_1')%><br>
+    </p>
+    <p class="secondary_bundle_text">
+      <%=t('freshdesk_freshsales_bundle.discount_text_2')%><br>
+    </p>
+    <% if account_state == 'trial' %>
+      <a href=<%= account_subscription_url %> class="btn btn-primary" id="buy-freshsales" target="_blank"><%=t('freshdesk_freshsales_bundle.buy_freshsales')%></a>
+    <% elsif account_state == 'integrate' %>
+      <a class="btn btn-primary" id="integrate-freshsales" href="https://support.freshdesk.com/support/solutions/articles/219923-how-to-integrate-freshsales-with-freshdesk-" target="_blank"><%=t('freshdesk_freshsales_bundle.integrate_freshsales')%></a>
+    <% else %>
+      <a class="btn btn-primary" data-attr = false id="try-freshsales"><%=t('freshdesk_freshsales_bundle.try_freshsales')%></a>
+      <a class="btn btn-seconday" data-attr = true id="try-freshsales"><%=t('freshdesk_freshsales_bundle.invite_sales_team')%></a>
+    <% end %>
+  </div>
 </div>

@@ -2505,11 +2505,27 @@
       "iam": {
         "_expiry": 300,
         "password": "EJ[1:CfaiE80Ur6ikOJe2K44pNjkmkrnVegF23QXsD3yr2j8=:8CINh5rO/CbSRPcPqwunpzAA2lPIgTgc:ZCkE1E1488yPPOAf9OTzkADGAmU2ksUkyqk=]",
-        "kid": "EJ[1:Sn32j5d3uGw4jGfBeGwl2KsITxjYuzNlvLQn6h2LP0A=:M/8Mk4bWq1Eeu5YTDyIbfxVuJUv330vJ:oVlRwlxf3Qj6TZGe8Sm0ILrKHu60Fvc=]"
+        "kid": "EJ[1:Sn32j5d3uGw4jGfBeGwl2KsITxjYuzNlvLQn6h2LP0A=:M/8Mk4bWq1Eeu5YTDyIbfxVuJUv330vJ:oVlRwlxf3Qj6TZGe8Sm0ILrKHu60Fvc=]",
+        "client_secrets": {
+            "field_service": {
+                "client_id": "EJ[1:XAy2MKPiMWPpyB1i/TuUAz2GXnN3M5L7iOHrsvSTvkk=:SRkN6dbeWqhKMjsP/bil9akCu4CuNAkw:0lfXpwWR/i+TzaZpHRXewhgB5yZwBk1xyE7ZP98kVoYAIL5x+dDd8gq7EX4xt+i+H0YjYcZdsnHKxQNOeClM8D6I4LF7EIUHGxyG2KosLZA=]",
+                "client_secret": [
+                    "EJ[1:XAy2MKPiMWPpyB1i/TuUAz2GXnN3M5L7iOHrsvSTvkk=:XDw5hOd1wr2ZSApm+F7hANvb3h8EwEgf:xeh0ol3xqlXuZ2+4X/mWaGvnUIfug5B75nSZaMB89VevYSoRYDZTRZWTrsNQH1Yb8qTdf0jpfw3Xwn6xD8bDEmcOTgDl2tFT07xcPTbHZCM=]",
+                    "EJ[1:XAy2MKPiMWPpyB1i/TuUAz2GXnN3M5L7iOHrsvSTvkk=:nx7bHtMKluciVhPGd+FZq2pe7eLw3+Zy:6cGydGut1UpQtHWH1ECiZIMDEzxhSevUynzmAJpaIQRk8SRQhYF4MgTpVxQsgYM2M8wkyboHy6y7MPmiLtR1XaoyKsKiQmSNf7IbSBPSZU4=]"
+                ]
+            }
+        }
+
       },
       "symmetric_encryption": {
         "ciphers":{
           "set1": {
+            "key": "EJ[1:4gw6DAQE94DchKcnlZBrCH6q9bGJ6KsAzUvxuFDxTGY=:rJzI+gdgXCnW8nB60pC2OumnD1+iYFqf:eTIB95iA5Nb52eXvTHhIUxVqJL5v95b0rNjxIeOz40RLhoozkpRmh8gRZU8KdRN6]",
+            "iv": "EJ[1:4gw6DAQE94DchKcnlZBrCH6q9bGJ6KsAzUvxuFDxTGY=:OoEi9rmLGFR0xumlp+JddUain58xMbG0:tDuOBjhaE38TOXMkMTSLJhLZSdWdQXAO46WFDrWIUvM=]",
+            "_cipher_name": "aes-256-cbc",
+            "_version": 2
+          },
+          "set2": {
             "key": "EJ[1:2CiTdVu5p5btbtZvoY8HbxmDPUevtu5/5X2q2ZkQS34=:EykJ7dMqvTGtDF9FNtUCS/swDnW5IQJa:WS96uVtl0WUMsTiSnkJ3rT8QXdXjH4m2JZMi6r8TQTgU7r+45WSAJi5+td2Nr0yH]",
             "iv": "EJ[1:ecmVHAcQNSzudkGj7uDMPicr6jKt+qz4b5rt2hzACgk=:KCS6meFCD/VHFJ+Eu3KpWSIh2ArUlNSs:Sj7Ng89SSK3ElIqe0QfdpansnBGClyQe52QwqIULINY=]",
             "_cipher_name": "aes-128-cbc",
@@ -2805,7 +2821,7 @@
       },
       "_vault_service_url": "https://vault-service.freshworks.com/",
       "_freshdesk_help_widget_url": "https://widget.freshworks.com/widgets/50000000012.js",
-      "google_map_api_key": "EJ[1:giPUznfz2nAdvt1FxSe26t2SPqWCxjL92X6T/u2DbUc=:8h9rZtDa9hWvBJWlferEt7MluwbjYFQw:A7b3dUjiWwi6OAWRPL4siuSpPP9n9abhsre8OGNC+brlHi5n31L2/sEea1XpY1foMmYCg3n9OQ==]",
+      "google_map_api_key": "EJ[1:tJy5DG4i6AQNMxxQri73ZYdky3YoJpAd+ALaN3oPu38=:YJDnUUbKslY28lB2u/+fdTk9z0TZR7k1:y+rGzcIKkmdfESSTzQbS6Nw8YN6qHnZidMCEGFFGjPmD+6bXMRlgWTQbC0eI+WdHyj2SHXU1AQ==]",
       "_sentry_dsn": "https://932f384a375f45db84667227e44ccaf1@sentry.io/1189802",
       "_announcement_account_url": "productupdates.freshdesk.com",
       "_anonymous_signup_redirect_url": "https://freshdesk.com/trial/thank-you"

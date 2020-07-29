@@ -58,12 +58,18 @@ class AgentGroup < ActiveRecord::Base
         (user.agent.nil? || user.agent.available?)#user.agent.nil? - hack for agent destroy
       args = {:action => _action, :user_id => user_id, :group_id => group_id, :multiple_agents_added_to_group => multiple_agents_added_to_group}
       args[:skill_ids] = user.skills.pluck(:id) if _action == :destroy
+      args[:write_access_changes] = write_access_model_changes
+      args[:write_access_agent] = write_access?
       SBRR::Config::AgentGroup.perform_async args
     end
   end
 
   def _action
     [:create, :update, :destroy].find{ |action| transaction_include_action? action }
+  end
+
+  def write_access_model_changes
+    return @model_changes[:write_access] if @model_changes && @model_changes[:write_access]
   end
 
   def remove_from_chatgroup_channel

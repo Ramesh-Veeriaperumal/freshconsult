@@ -94,7 +94,8 @@ Sidekiq.configure_client do |config|
       'Admin::Sandbox::CleanupWorker',
       'Admin::Sandbox::UpdateSubscriptionWorker',
       'Search::Analytics::AccountCleanupWorker',
-      'Search::Analytics::TicketsCleanupWorker'
+      'Search::Analytics::TicketsCleanupWorker',
+      'AccountCreation::PrecreateAccounts'
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "AccountCreation::PopulateSeedData",
@@ -232,7 +233,8 @@ Sidekiq.configure_server do |config|
       'Admin::Sandbox::CleanupWorker',
       'Admin::Sandbox::UpdateSubscriptionWorker',
       'Search::Analytics::AccountCleanupWorker',
-      'Search::Analytics::TicketsCleanupWorker'
+      'Search::Analytics::TicketsCleanupWorker',
+      'AccountCreation::PrecreateAccounts'
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "AccountCreation::PopulateSeedData",
@@ -339,7 +341,8 @@ Sidekiq.configure_server do |config|
       'Admin::Sandbox::CleanupWorker',
       'Admin::Sandbox::UpdateSubscriptionWorker',
       'Search::Analytics::AccountCleanupWorker',
-      'Search::Analytics::TicketsCleanupWorker'
+      'Search::Analytics::TicketsCleanupWorker',
+      'AccountCreation::PrecreateAccounts'
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",

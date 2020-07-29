@@ -205,3 +205,9 @@ ul.disc{
   word-break: normal;
   word-wrap: break-word;
 }
+
+.display {
+  &--flex {
+    display: flex
+  }
+}

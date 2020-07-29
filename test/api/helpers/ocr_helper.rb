@@ -20,7 +20,8 @@ module OcrHelper
     expected_output[:ignore_updated_at] ||= true
     {
       id: Fixnum,
-      name: expected_output[:name] || group.name
+      name: (expected_output[:name] || group.name),
+      round_robin: GroupConstants::DB_ASSIGNMENT_TYPE_FOR_MAP[group.ticket_assign_type]
     }
   end
   

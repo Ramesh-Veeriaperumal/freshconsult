@@ -5,7 +5,8 @@ class User < ActiveRecord::Base
   end
 
   def create_freshid_user
-    return if freshid_disabled_or_customer? || (freshid_authorization.present? && authorizations.exists?(freshid_authorization.id))
+    return if account.suppress_freshid_calls || freshid_disabled_or_customer? || (freshid_authorization.present? && authorizations.exists?(freshid_authorization.id))
+
     self.name = name_from_email if !self.name.present?
     Rails.logger.info "FRESHID Creating user :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}"
     freshid_user = freshid_user_class.create(freshid_attributes)
@@ -48,8 +49,10 @@ class User < ActiveRecord::Base
   end
 
   def update_freshid_user
-    destroy_freshid_user # Delete old email user from freshID
-    create_freshid_user # Create new email user in freshID
+    unless account.suppress_freshid_calls
+      destroy_freshid_user # Delete old email user from freshID
+      create_freshid_user # Create new email user in freshID
+    end
   end
 
   def send_activation_mail_on_create

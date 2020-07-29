@@ -908,10 +908,10 @@
           "_region": "in"
         },
         "freshworksOmnibarV2": {
-          "environment": "EJ[1:DwsSiX3lVjF9cQXNjd8s3/Ze/WO+HhecnU6vZbI+3hU=:ITQlTMHmIc1RXRXW1SzhPf8xhnkaHesO:OcEaqzRyqHHYrlLMLSCwFg==]",
-          "product": "EJ[1:DwsSiX3lVjF9cQXNjd8s3/Ze/WO+HhecnU6vZbI+3hU=:7I/R2iAcEwXkn4427ByVPzeV8ztls9DF:1QPYcwBwscD5evMk5AjttQ==]",
-          "region": "EJ[1:DwsSiX3lVjF9cQXNjd8s3/Ze/WO+HhecnU6vZbI+3hU=:3W8+DEn4sgIyLKUbDnM+x08PkLiWosdX:+WuYkGg9aD2weTAnVajj3A==]",
-          "clientid": "EJ[1:DwsSiX3lVjF9cQXNjd8s3/Ze/WO+HhecnU6vZbI+3hU=:Eb/tml0O54KaxxLiW68GcZgWh349AE+N:Z413XiLvwLwBhsc3RCz4uA==]"
+          "_environment": "production",
+          "_product": "freshdesk",
+          "_region": "in",
+          "_clientid": "112141715909197826"
         },
         "freshworksOmnibarAssets": {
           "_script_asset_url": "https://accounts.freshworks.com/omnibar/omnibar-stable.js",
@@ -1428,16 +1428,31 @@
       "iam": {
         "_expiry": 300,
         "password": "EJ[1:48C8ugqvMlp9FL80EoMDeVsiL7UPG0D4GJRzgccv5Ec=:3Y/JAY+fRYC5sHsn1m58pbKjM5gL91n/:nVS8L/jIwVoluhAY2f62P435f+7r0DbtOZI=]",
-        "kid": "EJ[1:+cFGqgfOwzEXBq9XtXZkREg0XfxtWOGgi9xJcZrW/Uo=:uPpyIp2j/a7QDBjPv+XDE/wlmyZ5SbTk:kfCaoa+wTwN/2DQcoCBTlY6GOkECKk8=]"
+        "kid": "EJ[1:+cFGqgfOwzEXBq9XtXZkREg0XfxtWOGgi9xJcZrW/Uo=:uPpyIp2j/a7QDBjPv+XDE/wlmyZ5SbTk:kfCaoa+wTwN/2DQcoCBTlY6GOkECKk8=]",
+        "client_secret" : {
+            "field_service": {
+                "client_id": "EJ[1:KG25oVJ2bQ0M+vx+l+UVf+tkltoKVUJ/7I68p8ajVHk=:JIcNgaiMgs6Y0hzmNPjnXlAYLHfBQB02:A8boXg58hsJKS25024jcowvZC/rQ7VtBiRYqaR0ZJcla8G4/FEEmFm+V8DmUOlM2ZtcQVk54nw2OZXBSY8XrB2Zt3/Nrw9xb5swoQ/SrD0c=]",
+                "client_secret": [
+                    "EJ[1:KG25oVJ2bQ0M+vx+l+UVf+tkltoKVUJ/7I68p8ajVHk=:j10MdFki0yq/bXxQ00NLCbbBSSbYf87X:Obl3sJeZ+aJmdF1M34UIniZXkQ3TYaDhi7iycQlI8JnirVHfnOtBt0WHepgqqITwyZ4IYXrdaKYnpmiZyzsT+34CigfcFr3ZP1t11d5irxA=]",
+                    "EJ[1:KG25oVJ2bQ0M+vx+l+UVf+tkltoKVUJ/7I68p8ajVHk=:+Lznp8mdjaBhfM8vC2Ir6/FcqDGOpW8p:7zpkd9+nhsybQV17nrZnrQzGXSoREKKB82tXQSkLYbe49kQKstr3Wcgy2jp3Ay/WzXCd1AHNDOFOrzUSru9nk21ZvIl6AZbfUp2MmHRoBCQ=]"
+                ]
+            }
+        }
       },
       "symmetric_encryption": {
         "ciphers":{
           "set1": {
+            "key": "EJ[1:f7+HqLDmWvFkiyXc5Bwc7Y997Cc7anH6ouD+WfAtsjI=:sRkLxa28IOmqZvtXd+mSFgtWGK0dw4G8:YLxPxwNnKfGeFJUtt8b4kgEtb7eIrHSAhqGea1Rd+HjnO1PQCydx2rVOcwgDtQJ9]",
+            "iv": "EJ[1:f7+HqLDmWvFkiyXc5Bwc7Y997Cc7anH6ouD+WfAtsjI=:Ra36Uiw848xs5GqCa5Vlt6QRJpPCxTrH:IYPfHbboyWwqIXeW9y5xJAqXeGpEncEV7asID5j6LQo=]",
+            "_cipher_name": "aes-256-cbc",
+            "_version": 2
+          },
+          "set2": {
             "key": "EJ[1:LLyMq1JIj0wTsqSKW35ksUx0Ao2sb17SwzFLtbQWJ1A=:AwANzQpFzIdIjdk6XiS3oa22cALs4pe4:yhKKz/bCeV/9AluSY4QMCKU3HKgYXg0WIoIHb2kTjsJI7b2PV0aICWGGCFzecU0Q]",
             "iv": "EJ[1:gFQw9kPxxlyF70m/08IuJ3qo20rqp8zA8CK3Pu8Tnjc=:V6RCLuhvTQC2SyQ4lkzRQM3U8C7PuO3Z:G7ZTMaQeKwD/g0c4eWTLzYRbj7/8OX3Tg7vndyXgd9Y=]",
             "_cipher_name": "aes-128-cbc",
             "_version": 1
-            }
+          }
         }
       },
       "hypertrail": {
@@ -1692,10 +1707,7 @@
       },
       "_vault_service_url": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/",
       "_freshdesk_help_widget_url": "https://widget.freshworks.com/widgets/50000000012.js",
-      "google_map_api_key": "EJ[1:eRONgXHzKDNix7OIhf9Hk8jWCZAHqpBmhJqurOK6sV4=:cRn3yuH0PSYoTSjln0p/GkmPTLyuiH9a:kP7l2nt7iYDYFwViR/CRBgigHtqCdOF30ruqBasS2/w55VnytHSJmJybOjz1ZTomJqzXIx6CRA==]",
-      "analyticsCollectorConfig": {
-        "_analyticsCollectorScript": "https://assets.freshdesk.com/analytics/analytics-v2.js"
-      }
+      "google_map_api_key": "EJ[1:vmF7wEOOa/HSzkab6dd0yTVcKEDJ4UPx/xvyJKVrDnw=:mPa6OzpDWSgcGP0hIYF+6YgajIGmBuy/:Adm7PBHq/FZ1jDQGZTQBokjC6GEB/m9sC4QkGn1fceXz80/sEVN+TYJVqYpmrfuQcS8dXKM80g==]"
     },
     "aws_config": {
     },

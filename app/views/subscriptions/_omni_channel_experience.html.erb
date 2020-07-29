@@ -1,15 +1,11 @@
-<div class="<%if is_lone_banner%> omni-channel-experience-container <%end%>">
-  <table class="omni-channel-experience-table">
-    <tr>
-      <td class=<%= table_class %>>
-        <h4 class=<%= description_class %>>
-          <%=t(description)%><br>
-        </h4>
-        <button class="<%= button_class %>" onclick="window.parent.inline_manual_player.activateTopic(76297)" data-test-id="explore-omnichannel-button"><%=t('omni_channel_experience.experience_omnichannel')%></button>
-      </td>
-      <td class="omni-channel-td-logo">
-        <img class=<%= image_class %> src=<%= image_src %> alt="<%=t('omni_channel_experience.experience_omnichannel')%>">
-      </td>
-    </tr>
-  </table>
+<div class="nudge-banner-table display--flex <%if is_lone_banner%> nudge-banner-content-container <%end%>">
+  <div class=<%= table_class %>>
+    <h4 class=<%= description_class %>>
+      <%=t(description)%><br>
+    </h4>
+    <button class="<%= button_class %>" onclick="window.parent.inline_manual_player.activateTopic(76297)" data-test-id="explore-omnichannel-button"><%=t('omni_channel_experience.experience_omnichannel')%></button>
+  </div>
+  <div class="omni-channel-td-logo">
+    <img class=<%= image_class %> src=<%= image_src %> alt="<%=t('omni_channel_experience.experience_omnichannel')%>">
+  </div>
 </div>

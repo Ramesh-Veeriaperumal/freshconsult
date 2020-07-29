@@ -70,14 +70,14 @@ module JwtTestHelper
     JWT.encode payload, single_access_token, algorithm
   end
 
-  def generate_iam_jwt_token(user, private_key)
+  def generate_iam_jwt_token(user, private_key, exp = nil)
     payload = { user_id: user.id.to_s,
                 account_id: Account.current.id.to_s,
                 product: 'freshdesk',
                 account_domain: Account.current.full_domain,
                 privileges: user.privileges.to_s,
                 iat: Time.now.to_i,
-                exp: Time.now.to_i + ::Iam::IAM_CONFIG['expiry'].to_i }
+                exp: exp || Time.now.to_i + ::Iam::IAM_CONFIG['expiry'].to_i }
     payload[:type] = user.helpdesk_agent? ? 'agent' : 'contact'
     payload[:org_user_id] = user.freshid_authorization.uid if user.helpdesk_agent? && user.freshid_authorization.try(:provider) == 'freshid'
     payload[:org_id] = Account.current.organisation_account_mapping.organisation_id if Account.current.organisation_account_mapping.present?

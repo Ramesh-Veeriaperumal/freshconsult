@@ -48,7 +48,7 @@ class Account < ActiveRecord::Base
                   :language, :ssl_enabled, :whitelisted_ip_attributes, :account_additional_settings_attributes,
                   :primary_email_config_attributes, :main_portal_attributes, :account_type, :time_zone
 
-  attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate, :model_changes, :disable_old_ui_changed, :is_anonymous_account, :fresh_id_version, :fs_cookie_signup_param
+  attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate, :model_changes, :disable_old_ui_changed, :is_anonymous_account, :fresh_id_version, :fs_cookie_signup_param, :suppress_freshid_calls
 
   attr_writer :no_of_ticket_fields_built
 
@@ -1068,6 +1068,10 @@ class Account < ActiveRecord::Base
   def authorization_code_expired?
     value = get_others_redis_key(authorization_expiry_key)
     value.blank? || value != 'true'
+  end
+
+  def update_default_forum_category(new_account_name)
+    update_default_forum_category_name(new_account_name)
   end
 
   protected

@@ -191,7 +191,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                       "spam_deleted" =>  "spam:false AND deleted:false",
                       "pending" => "status:#{PENDING} AND spam:false AND deleted:false",
                       "open" => "status:#{OPEN} AND spam:false AND deleted:false",
-                      "new" => "spam:false AND deleted:false AND agent_id:null AND status:#{OPEN}",
+                      "new" => "spam:false AND deleted:false AND responder_id:null AND status:#{OPEN}"
                    }
 
   DYNAMIC_DEFAULT_FILTERS = (['on_hold', 'raised_by_me', 'ongoing_collab', 'shared_by_me', 'shared_with_me'] + Admin::AdvancedTicketing::FieldServiceManagement::Constant::FSM_TICKET_FILTERS).freeze
@@ -341,17 +341,21 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       elsif(["shared_by_me","shared_with_me"].include?(filter_name) and Account.current.shared_ownership_enabled?)
         safe_send("#{filter_name}_filter")
       elsif 'unassigned_service_tasks'.eql? filter_name
-        DEFAULT_FILTERS_FOR_SEARCH['spam_deleted'] + " AND responder_id:null AND ( status:2 OR status:3 ) AND type:'#{Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE}'"
+        DEFAULT_FILTERS_FOR_SEARCH['spam_deleted'] + " AND responder_id:null AND ( status:2 OR status:3 ) AND #{ticket_type_field_name}:'#{Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE}'"
       elsif 'overdue_service_tasks'.eql? filter_name
-        DEFAULT_FILTERS_FOR_SEARCH['spam_deleted'] + " AND fsm_appointment_end_time:<'#{Time.zone.now.ago(1.second).utc.iso8601}'  AND ( status:2 OR status:3 ) AND type:'#{Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE}'"
+        DEFAULT_FILTERS_FOR_SEARCH['spam_deleted'] + " AND fsm_appointment_end_time:<'#{Time.zone.now.ago(1.second).utc.iso8601}'  AND ( status:2 OR status:3 ) AND #{ticket_type_field_name}:'#{Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE}'"
       elsif 'service_tasks_due_today'.eql? filter_name
-        DEFAULT_FILTERS_FOR_SEARCH['spam_deleted'] + " AND fsm_appointment_end_time:>'#{Time.zone.now.beginning_of_day.utc.iso8601}' AND fsm_appointment_end_time:<'#{Time.zone.now.end_of_day.utc.iso8601}' AND ( status:2 OR status:3 ) AND type:'#{Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE}'"
+        DEFAULT_FILTERS_FOR_SEARCH['spam_deleted'] + " AND fsm_appointment_end_time:>'#{Time.zone.now.beginning_of_day.utc.iso8601}' AND fsm_appointment_end_time:<'#{Time.zone.now.end_of_day.utc.iso8601}' AND ( status:2 OR status:3 ) AND #{ticket_type_field_name}:'#{Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE}'"
       elsif 'service_tasks_starting_today'.eql? filter_name
-        DEFAULT_FILTERS_FOR_SEARCH['spam_deleted'] + " AND fsm_appointment_start_time:>'#{Time.zone.now.beginning_of_day.utc.iso8601}' AND fsm_appointment_start_time:<'#{Time.zone.now.end_of_day.utc.iso8601}' AND ( status:2 OR status:3 ) AND type:'#{Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE}'"
+        DEFAULT_FILTERS_FOR_SEARCH['spam_deleted'] + " AND fsm_appointment_start_time:>'#{Time.zone.now.beginning_of_day.utc.iso8601}' AND fsm_appointment_start_time:<'#{Time.zone.now.end_of_day.utc.iso8601}' AND ( status:2 OR status:3 ) AND #{ticket_type_field_name}:'#{Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE}'"
       else
         DEFAULT_FILTERS_FOR_SEARCH.fetch(filter_name, DEFAULT_FILTERS_FOR_SEARCH[default_value]).dclone
       end
     end
+  end
+
+  def ticket_type_field_name
+    Account.current.launched?(:dashboard_java_fql_performance_fix) ? 'ticket_type' : 'type'
   end
 
   def overdue_filter
@@ -372,7 +376,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def new_and_my_open_filter
-    "(agent_id:null or agent_id:#{User.current.id})"
+    "(responder_id:null or responder_id:#{User.current.id})"
   end
 
   def default_filter_query_hash filter_name
