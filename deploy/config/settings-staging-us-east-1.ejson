@@ -1627,16 +1627,16 @@
       "symmetric_encryption": {
         "ciphers":{
           "set1": {
+            "key": "EJ[1:rPOuABzROxsexk6khUXy4smQva5bMo7Z48o4K1+1xmU=:4OP4ewFuprGarO+Y0LfYJ/A5ovSh5nI8:mJBVaEzeKRLYZYczeghu/omx75O1AF6a6ptlalS1dTSJB82iNeKdKwEOJCmq+O5g]",
+            "iv": "EJ[1:rPOuABzROxsexk6khUXy4smQva5bMo7Z48o4K1+1xmU=:zYV4d7WEZdhVtBM8LAenEz/fiw4oQw2H:JBzVbbgs09/wVPNhAjTo9wOn7K/lgu74bYeZgYUgdrs=]",
+            "_cipher_name": "aes-256-cbc",
+            "_version": 3
+          },
+          "set2": {
             "key": "EJ[1:kXST5DD3rgJf6MqBQG8rsa9lUhLq+4UMe9bQkW9hJgs=:sw59fdLyfxvqrhPAIh+36uOcwSFU6mAu:nuxNquCIiYdVJOms4ikMM9v7+7h3xdRAszpVjbZxeQTIvAQCp4rmgLld5E0lKoKt]",
             "iv": "EJ[1:kXST5DD3rgJf6MqBQG8rsa9lUhLq+4UMe9bQkW9hJgs=:Immu7yfV7CcrBnJgYwgFI7i1OhNvfp3m:Iw74nF5/4HEhdEXqsXk23ksNFXaSXg+PsUraaRAqYDw=]",
             "_cipher_name": "aes-128-cbc",
             "_version": 2
-          },
-          "set2": {
-            "key": "EJ[1:JeanNvjYKKo700+pcswgAnnBsNL+XwJTQLo9/MoppT4=:Mta3vS4nUE4tRODeNLAUXMcfgN6QmV7T:Qm0dfGGQSQVIx1gRGitulSWCyiN4AsrOsSp4DDHWslvWReRCuyC0AcuHAnwaNvk/]",
-            "iv": "EJ[1:JeanNvjYKKo700+pcswgAnnBsNL+XwJTQLo9/MoppT4=:+Bjn0Tpi4tTH6L8zTKil5eK1DYpOJG+z:md+Lo4ccAlOBOtMxJPQeJTLWWQdTtXVW2nGyEIc9fBleSV5tM4ACRXBQdA==]",
-            "_cipher_name": "aes-128-cbc",
-            "_version": 1
           }
         }
       },

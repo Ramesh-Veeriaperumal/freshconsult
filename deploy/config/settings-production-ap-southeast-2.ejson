@@ -1410,6 +1410,12 @@
       "symmetric_encryption": {
         "ciphers":{
           "set1": {
+            "key": "EJ[1:LqE2V5BxRQLfCso3jEqQrIjQfnGxTQoEWkHBZqUcOTo=:NPhAkLc3+WxqQP3oXI6vlsR3H7TyxyT0:Ei0nC2Mz875pb8Xyax8hUO/EQR2epJLk+PE+F7Z3ilCbA4Itg0m6MGntE9r1WOg3]",
+            "iv": "EJ[1:LqE2V5BxRQLfCso3jEqQrIjQfnGxTQoEWkHBZqUcOTo=:NHIOoclDg5oEG+64I3vlwUAgUGq5FuRw:Upb1E8WKmOnEwyU5NuuoHSdbRG8rtcNbp9rg52GYkCU=]",
+            "_cipher_name": "aes-256-cbc",
+            "_version": 2
+          },
+          "set2": {
             "key": "EJ[1:2KYWEPYlZgiGIaSUHm9SHLbNpJXuDYxaazWASqNvISw=:2YW7STUfhSb37EsG1P1wYzqIU8xUN88W:RbGKtpxXMSKtcVbfKQ/IEveHlggTHu+mcgrBsNF3EZaYBJay3Xs1E2Gxe3T/Lauq]",
             "iv": "EJ[1:G2mbMUBXMiwvBKK5BtR3XvfwQGSuAmG6QR9fu6XD1VA=:fnZ6U8/Ilr1Aqa/6fWeo4A231h3sh7T+:afgXjA24OCTzJPq5sTyAYxaXcbUjnukm744OPdKK/54=]",
             "_cipher_name": "aes-128-cbc",
