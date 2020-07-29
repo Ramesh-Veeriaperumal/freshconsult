@@ -33,6 +33,7 @@ module Facebook
         if page
           @app_id     = Facebook::Tokens.new(app_id).tokens[:app_id]
           @page_token = page.page_token
+          @page_id = page.id
           @graph      = Koala::Facebook::API.new(@page_token) if @page_token
         end
       end
@@ -52,8 +53,13 @@ module Facebook
       #Subscribe for realtime updates from the app
 
       def subscribe_realtime
-        data = {"access_token" => @page_token}
+        data = {
+          'access_token' => @page_token,
+          'subscribed_fields' => FB_WEBHOOK_EVENTS
+        }
         RestClient.post "#{FACEBOOK_GRAPH_URL}/#{GRAPH_API_VERSION}/me/subscribed_apps", data.to_json, :content_type => :json, :accept => :json
+      rescue StandardError => e
+        Rails.logger.error "Exception occurred while subscribing to account #{Account.current.id} for page #{@page_id} Exception: #{e.inspect}"
       end
 
       #Remove realtime subscribe for realtime updates from the app

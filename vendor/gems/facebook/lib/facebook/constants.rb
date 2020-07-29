@@ -174,5 +174,7 @@ module Facebook
     FB_API_HTTP_COMPONENT = { http_component: 'body' }.freeze
 
     DEFAULT_PAGE_LIMIT = 9 # Restrict the next page fetch logic to maximum of 9 pages apart from the first page fetched. So for a facebook page, only 10 pages with the limit of 25 threads and messages on each call will be fetched.
+
+    FB_WEBHOOK_EVENTS = 'feed,messages,message_echoes'.freeze
   end
 end
