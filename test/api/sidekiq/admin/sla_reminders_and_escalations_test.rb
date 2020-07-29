@@ -19,6 +19,8 @@ class SlaReminderEscalationWorkerTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.first)
     @account = Account.current
     EmailNotification.any_instance.stubs(:agent_notification).returns(true)
+    # To Prevent agent central publish error
+    Agent.any_instance.stubs(:user_uuid).returns('123456789')
   end
 
   def teardown
