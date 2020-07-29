@@ -1589,7 +1589,7 @@ input[type=text].input-agent-count{
 }
 
 .carousel-inner {
-	height: auto;
+	height: 215px;
 }
 
 .carousel-control {
@@ -1611,8 +1611,8 @@ input[type=text].input-agent-count{
 	height: 152px;
 }
 
-.omni-channel-experience-container {
-	padding: 10px 60px 0;
+.nudge-banner-content-container {
+	margin: 10px 60px 0;
 }
 
 .omni-channel-experience-description {
@@ -1622,22 +1622,25 @@ input[type=text].input-agent-count{
 }
 
 .fc-omni-channel-experience-description {
-	width: 72%;
+	width: 90%;
 	font-size: 14px;
 	padding: 20px 0 16px 8px;
 }
 
-.omni-channel-experience-table {
-	border: 1px #ebeef0 solid;;
-	width: 100%;
+.nudge-banner-table {
+	border: 1px #ebeef0 solid;
+	box-shadow: 0px 2px 4px rgba(235, 239, 243, 0.32);
+	border-radius: 8px;
 }
 
 .omni-channel-td-data {
 	padding-left: 36px;
+	width: 90%;
 }
 
 .fc-omni-channel-td-data {
 	padding-left: 20px;	
+	width: 90%;
 }
 
 .explore-omnichannel-button {
