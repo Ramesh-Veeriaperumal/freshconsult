@@ -1474,6 +1474,83 @@ module Ember
       Account.current.rollback(:count_service_es_reads)
     end
 
+    def test_widget_data_preview_for_scorecard_with_custom_filter_with_special_chars_from_search_service_new_fql
+      choices = ['\'Chennai" \\IN', 'Bangalore']
+      @custom_field = create_custom_field_dropdown('test_custom_dropdown_scorecard_with_comma', choices)
+      ticket_filter = create_filter(@custom_field)
+      Account.current.launch(:count_service_es_reads)
+      Account.current.launch(:dashboard_java_fql_performance_fix)
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { ticket_filter.id.to_s => { 'total' => 87 } } }))
+      get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: ticket_filter.id)
+      assert_response 200
+      match_json('count' => 87)
+    ensure
+      @custom_field.destroy
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+      Account.current.rollback(:dashboard_java_fql_performance_fix)
+    end
+
+    def test_widgets_data_preview_for_scorecard_with_unassigned_service_tasks_filter_from_search_new_fql
+      Account.current.launch(:count_service_es_reads)
+      Account.current.launch(:dashboard_java_fql_performance_fix)
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { 'unassigned_service_tasks' => { 'total' => 87 } } }))
+      get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: 'unassigned_service_tasks')
+      assert_response 200
+      match_json('count' => 87)
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+      Account.current.rollback(:dashboard_java_fql_performance_fix)
+      Account.any_instance.unstub(:field_service_management_enabled?)
+    end
+
+    def test_widgets_data_preview_for_scorecard_with_overdue_service_tasks_filter_from_search_new_fql
+      Account.current.launch(:count_service_es_reads)
+      Account.current.launch(:dashboard_java_fql_performance_fix)
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { 'overdue_service_tasks' => { 'total' => 87 } } }))
+      get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: 'overdue_service_tasks')
+      assert_response 200
+      match_json('count' => 87)
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+      Account.current.rollback(:dashboard_java_fql_performance_fix)
+      Account.any_instance.unstub(:field_service_management_enabled?)
+    end
+
+    def test_widgets_data_preview_for_scorecard_with_service_tasks_due_today_filter_from_search_new_fql
+      Account.current.launch(:count_service_es_reads)
+      Account.current.launch(:dashboard_java_fql_performance_fix)
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { 'service_tasks_due_today' => { 'total' => 87 } } }))
+      get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: 'service_tasks_due_today')
+      assert_response 200
+      match_json('count' => 87)
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+      Account.current.rollback(:dashboard_java_fql_performance_fix)
+      Account.any_instance.unstub(:field_service_management_enabled?)
+    end
+
+    def test_widgets_data_preview_for_scorecard_with_service_tasks_starting_today_filter_from_search_new_fql
+      Account.current.launch(:count_service_es_reads)
+      Account.current.launch(:dashboard_java_fql_performance_fix)
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { 'service_tasks_starting_today' => { 'total' => 87 } } }))
+      get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: 'service_tasks_starting_today')
+      assert_response 200
+      match_json('count' => 87)
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+      Account.current.rollback(:dashboard_java_fql_performance_fix)
+      Account.any_instance.unstub(:field_service_management_enabled?)
+    end
+
     def test_widget_data_preview_for_bar_chart_with_custom_filter_from_search_service
       ticket_filter = create_filter
       field = Account.current.ticket_fields.find_by_field_type('default_status')

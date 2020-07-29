@@ -41,12 +41,19 @@ class Dashboard::SearchServiceTrendCount < Dashboards
   def multi_aggregation(queries)
     query_contexts = []
     Rails.logger.info "Queries input :: #{queries}"
-    mapping = Freshquery::Mappings.get('ticketanalytics')
-    visitor_mapping = Freshquery::Parser::TermVisitor.new(mapping)
-    queries.each_with_index do |query, index|
-      @response = get_es_query(query, visitor_mapping)
-      context = get_context(index) 
-      query_contexts << context
+    if Account.current.launched?(:dashboard_java_fql_performance_fix)
+      queries.each_with_index do |query, index|
+        context = get_context(index, query.blank?, 'freshquery' => query, 'params' => {})
+        query_contexts << context
+      end
+    else
+      mapping = Freshquery::Mappings.get('ticketanalytics')
+      visitor_mapping = Freshquery::Parser::TermVisitor.new(mapping)
+      queries.each_with_index do |query, index|
+        @response = get_es_query(query, visitor_mapping)
+        context = get_context(index, false, 'params' => { 'filter' => '' })
+        query_contexts << context
+      end
     end
     result = SearchService::Client.new(Account.current.id).multi_aggregate(JSON.dump('query_contexts' => query_contexts)).records
     return result unless @errors.present?
@@ -57,7 +64,7 @@ class Dashboard::SearchServiceTrendCount < Dashboards
   #For unresolved widget and ticket list page single queries similar to search in elasticsearch
   def aggregation(query)
     @response = get_es_query(query, false)
-    context = get_context("", query.blank?)
+    context = get_context('', query.blank?, Account.current.launched?(:dashboard_java_fql_performance_fix) ? { 'freshquery' => query, 'params' => {} } : { 'params' => { 'filter' => '' } })
     if @errors.present?
       log_error(query)
       return AGGREGATION_ERROR_RESPONSE
@@ -86,13 +93,15 @@ class Dashboard::SearchServiceTrendCount < Dashboards
     queries
   end
 
-  def get_context(tag = "", blank_query=false)
-    context = {"documents"=> COUNT_SEARCH_DOCUMENTS,"context" => COUNT_SEARCH_CONTEXT,"params"=>{"filter" =>""}}
+  def get_context(tag = '', blank_query = false, query = {})
+    context = { 'documents' => COUNT_SEARCH_DOCUMENTS, 'context' => COUNT_SEARCH_CONTEXT }.merge(query)
     context["tag"]= (@trends[tag] || tag).to_s if tag.present?
     if @agg_options.present?
       context["group_by"] = [group_by_field(@agg_options[tag.to_i]["group_by_field"][1], true, @limit) ]
       context["tag"] = tag.to_s
     end
+    return context if Account.current.launched?(:dashboard_java_fql_performance_fix)
+
     if @response.present? && @response.valid?
       context['params']['filter'] = decode_values(JSON.dump(@response.terms)) # Hack to handle special characters ' " \ in query
     elsif !blank_query # adding this condition for if query blank need to get full ticket count

@@ -802,6 +802,102 @@ module Ember
       @controller.unstub(:current_user)
     end
 
+    # search service with new fql format
+    def test_scorecard_without_filter_data_search_service_new_fql
+      Account.first.make_current
+      User.first.make_current
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
+      Account.current.launch(:count_service_es_reads)
+      Account.current.launch(:dashboard_java_fql_performance_fix)
+      stub_data = scorecard_stub_data
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
+      get :scorecard, controller_params(version: 'private')
+      assert_response 200
+      match_json(scorecard_pattern_search_service(stub_data))
+    ensure
+      User.any_instance.unstub(:privilege?)
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+      Account.current.rollback(:dashboard_java_fql_performance_fix)
+    end
+
+    def test_scorecard_with_product_id_search_service_new_fql
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      product = create_product
+      Account.current.launch(:count_service_es_reads)
+      Account.current.launch(:dashboard_java_fql_performance_fix)
+      stub_data = scorecard_stub_data
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
+      get :scorecard, controller_params(version: 'private', product_ids: [product.id])
+      assert_response 200
+      match_json(scorecard_pattern_search_service(stub_data))
+    ensure
+      User.any_instance.unstub(:privilege?)
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+      Account.current.rollback(:dashboard_java_fql_performance_fix)
+    end
+
+    def test_scorecard_with_group_id_that_agent_belong_search_service_new_fql
+      agent = add_test_agent(@account, role: Role.where(name: 'Account Administrator').first.id)
+      @controller.stubs(:current_user).returns(agent)
+      group = create_group_with_agents(@account, agent_list: [agent.id])
+      User.any_instance.stubs(:agent_groups).returns(group.agent_groups)
+      Account.current.launch(:count_service_es_reads)
+      Account.current.launch(:dashboard_java_fql_performance_fix)
+      stub_data = scorecard_stub_data
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
+      get :scorecard, controller_params(version: 'private', group_ids: [group.id])
+      assert_response 200
+      match_json(scorecard_pattern_search_service(stub_data))
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+      Account.current.rollback(:dashboard_java_fql_performance_fix)
+      User.any_instance.unstub(:agent_groups)
+      @controller.unstub(:current_user)
+    end
+
+    def test_scorecard_for_supervisor_with_global_access_and_no_associated_groups_search_service_new_fql
+      agent = add_test_agent(@account, role: Role.where(name: 'Supervisor').first.id)
+      group = create_group(@account)
+      @controller.stubs(:current_user).returns(agent)
+      Account.current.launch(:count_service_es_reads)
+      Account.current.launch(:dashboard_java_fql_performance_fix)
+      stub_data = scorecard_stub_data
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
+      get :scorecard, controller_params(version: 'private', group_ids: [group.id])
+      assert_response 200
+      match_json(scorecard_pattern_search_service(stub_data))
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+      Account.current.rollback(:dashboard_java_fql_performance_fix)
+      @controller.unstub(:current_user)
+    end
+
+    def test_scorecard_for_admin_search_service_new_fql
+      agent = add_test_agent(@account, role: Role.where(name: 'Administrator').first.id)
+      group = create_group(@account)
+      @controller.stubs(:current_user).returns(agent)
+      Account.current.launch(:count_service_es_reads)
+      Account.current.launch(:dashboard_java_fql_performance_fix)
+      stub_data = scorecard_stub_data
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
+      get :scorecard, controller_params(version: 'private', group_ids: [group.id])
+      assert_response 200
+      match_json(scorecard_pattern_search_service(stub_data))
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+      Account.current.rollback(:dashboard_java_fql_performance_fix)
+      @controller.unstub(:current_user)
+    end
+
     def test_unresolved_tickets_widget_with_group_filter_search_service
       group = create_group(@account)
       Account.current.launch(:count_service_es_reads)

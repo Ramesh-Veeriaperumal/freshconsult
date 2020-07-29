@@ -17,7 +17,12 @@ module Search::Dashboard::QueryHelper
       'frDueBy'                                   =>  'fr_due_by'
     }
 
-  STRING_FIELDS = ["type","tag"]
+  FRESHQUERY_TRANSFORMATION = {
+    'fr_due_by' => 'frDueBy',
+    'type' => 'ticket_type',
+    'tag' => 'tag_names'
+  }.freeze
+  STRING_FIELDS = ['type', 'tag', 'ticket_type', 'tag_names'].freeze
 
   NOT_ANALYZED_COLUMNS = { "type" => "ticket_type" }
 
@@ -25,7 +30,7 @@ module Search::Dashboard::QueryHelper
   DOUBLE_QUOTE = '#&$!DouQuo'.freeze
   BACK_SLASH = '#&$!BacSla'.freeze
 
-  DUE_BY_FIELDS = [:due_by, :fr_due_by, :nr_due_by].freeze
+  DUE_BY_FIELDS = [:due_by, :fr_due_by, :nr_due_by, :frDueBy].freeze
 
   # WF Filter conditions is convert into FQL Format for search service
   def transform_fields(wf_conditions)
@@ -34,19 +39,25 @@ module Search::Dashboard::QueryHelper
       cond_field = (COLUMN_MAPPING[field['condition']].presence || field['condition'].to_s)
       if Account.current.wf_comma_filter_fix_enabled?
         field_values = field['value'].is_a?(Array) ? field['value'].map(&:to_s) : field['value'].to_s.split(::FilterFactory::TicketFilterer::TEXT_DELIMITER)
-        field_values = field_values.map { |value| encode_value(value) } # Hack to handle special chars in query
       else
-        field_values = field['value'].to_s.split(',').map { |value| encode_value(value)}
+        field_values = field['value'].to_s.split(',')
       end
+      field_values = field_values.map { |value| Account.current.launched?(:dashboard_java_fql_performance_fix) ? encode_new_fql(value) : encode_value(value) } # Hack to handle special chars in query
       if cond_field.include?(QueryHash::FLEXIFIELDS) || cond_field.include?(QueryHash::TICKET_FIELD_DATA)
-        conditions << transform_flexifield_filter(field['ff_name'].gsub("_#{Account.current.id}", ''), field_values)
-
+        conditions << transform_flexifield_filter_new_fql(field, field_values)
       elsif cond_field.present?
       	conditions << transform_field(cond_field, field_values) 
       end
     end
     conditions << construct_query_for_restricted if @with_permissible and User.current.agent? and User.current.restricted?
     conditions.join(" AND ")
+  end
+
+  def transform_flexifield_filter_new_fql(field, field_values)
+    field_name = field['ff_name'].gsub("_#{Account.current.id}", '')
+    condition = transform_flexifield_filter(field_name, field_values)
+    condition = condition.gsub(field_name, field['condition'].split('.').last) if Account.current.launched?(:dashboard_java_fql_performance_fix)
+    condition
   end
 
   def construct_query_for_restricted
@@ -103,7 +114,7 @@ module Search::Dashboard::QueryHelper
       values.delete('0')
       values.push(User.current.id.to_s)
     end
-    transform_filter("agent_id", values)
+    transform_filter('responder_id', values)
   end
 
   # For handling group id
@@ -268,7 +279,13 @@ module Search::Dashboard::QueryHelper
 
   #for common transform fields
   def transform_field(field_name, values)
-    safe_send("transform_#{field_name}", field_name, values) rescue transform_filter(field_name, values)
+    field_name = (FRESHQUERY_TRANSFORMATION[field_name] || field_name) if Account.current.launched?(:dashboard_java_fql_performance_fix)
+    begin
+      condition = safe_send("transform_#{field_name}", field_name, values)
+    rescue StandardError
+      condition = transform_filter(field_name, values)
+    end
+    condition
   end
 
   # for FSM appointment start time and end time fields
@@ -310,6 +327,10 @@ module Search::Dashboard::QueryHelper
     else
       "#{field_name}:null"
     end
+  end
+
+  def encode_new_fql(value)
+    value.gsub(/[']/, '\'' => "\\'")
   end
 
   def encode_value(value)
