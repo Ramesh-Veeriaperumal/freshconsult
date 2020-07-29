@@ -53,7 +53,7 @@ class AccountsController < ApplicationController
   before_filter :build_signup_param, :build_signup_contact, only: [:new_signup_free, :email_signup, :anonymous_signup]
   before_filter :check_supported_languages, :only =>[:update], :if => :multi_language_available?
   before_filter :set_native_mobile, only: :new_signup_free
-  before_filter :set_additional_signup_params, only: [:email_signup, :new_signup_free, :anonymous_signup]
+  before_filter :set_additional_signup_params, only: [:email_signup, :anonymous_signup]
   before_filter :validate_feature_params, :only => [:update]
   before_filter :update_language_attributes, :only => [:update_languages]
   before_filter :validate_portal_language_inclusion, :only => [:update_languages]
@@ -185,11 +185,31 @@ class AccountsController < ApplicationController
     end
   end
 
+  def assign_precreated_account
+    input_params = params[:signup].except!(:direct_signup)
+    input_params.merge!(account: Account.current, user: User.current)
+    @signup = PrecreatedSignup.new(input_params)
+    @signup.account.fs_cookie_signup_param = params[:fs_cookie]
+    @signup.save!
+  rescue StandardError => e
+    Rails.logger.error "Error in mapping precreated account - error - #{e.message} backtrace - #{e.backtrace}"
+    NewRelic::Agent.notice_error(e, custom_params: { description: "Error occoured while mapping precreated account for Account #{Account.current.id}" })
+    Account.reset_current_account
+    User.reset_current_user
+  end
+
   def new_signup_free
-   @signup = Signup.new(params[:signup])
-   @signup.account.fs_cookie_signup_param = params[:fs_cookie]
-   if @signup.save
-     enable_field_service_management if fsm_signup_page?
+    account_id = fetch_precreated_account
+    account_created = assign_precreated_account if account_id.present?
+    unless account_created
+      set_additional_signup_params
+      @signup = Signup.new(params[:signup])
+      @signup.account.fs_cookie_signup_param = params[:fs_cookie]
+      account_created = @signup.save
+    end
+
+    if account_created
+      enable_field_service_management if fsm_signup_page?
       finish_signup
       mark_perishable_token_expiry(@signup.account, @signup.user)
       if is_aloha_signup?
@@ -572,6 +592,7 @@ class AccountsController < ApplicationController
       metrics_obj, account_obj = build_metrics
       params[:signup][:metrics] = metrics_obj
       params[:signup][:account_details] = account_obj
+      params[:signup][:direct_signup] = true
     end
 
     def assign_account_params

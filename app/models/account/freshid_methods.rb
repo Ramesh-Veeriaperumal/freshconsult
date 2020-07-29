@@ -195,7 +195,7 @@ class Account < ActiveRecord::Base
   alias_method :destroy_freshid_account_on_rollback, :destroy_freshid_account
 
   def update_freshid?
-    freshid_integration_enabled? && (account_domain_changed? || account_name_changed?)
+    freshid_integration_enabled? && (account_domain_changed? || account_name_changed?) && !suppress_freshid_calls
   end
 
   def sso_enabled_freshid_account?

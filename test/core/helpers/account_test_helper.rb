@@ -65,6 +65,14 @@ module AccountTestHelper
     update_currency
   end
 
+  def populate_plans
+    ENV['SEED'] = 'global/002_subscription_plans'
+    ENV['FIXTURE_PATH'] = 'db/fixtures/global'
+    SeedFu::PopulateSeed.populate
+    ENV['SEED'] = nil
+    ENV['FIXTURE_PATH'] = nil
+  end
+
   def disable_background_fixtures
     remove_others_redis_key(BACKGROUND_FIXTURES_ENABLED)
   end
