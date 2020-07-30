@@ -32,10 +32,6 @@ class Product < ActiveRecord::Base
     g.add proc { |x| x.portal.id unless x.portal.nil? }, as: :portal_id
   end
 
-  def self.central_publish_enabled?
-    Account.current.product_central_publish_enabled?
-  end
-
   def event_info action
     { :ip_address => Thread.current[:current_ip] }
   end

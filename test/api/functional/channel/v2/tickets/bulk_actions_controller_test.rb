@@ -73,11 +73,13 @@ class Channel::V2::Tickets::BulkActionsControllerTest < ActionController::TestCa
       params = { archive_days: 0, ids: [ticket.display_id] }
       freno_stub = stub_request(:get, 'http://freno.freshpo.com/check/ArchiveWorker/mysql/shard_1')
                    .to_return(status: 404, body: '', headers: {})
+      central_stub = stub_request(:post, 'https://central-staging.freshworksapi.com/collector').to_return(body: '', status: 202)
       ManualPublishWorker.stubs(:perform_async).returns('job_id')
       Sidekiq::Testing.inline! do
         post :bulk_archive, construct_params({}, params)
       end
       remove_request_stub(freno_stub)
+      remove_request_stub(central_stub)
       assert_response 204
       assert @account.archive_tickets.find_by_ticket_id(ticket.id).present?
     end
@@ -110,11 +112,13 @@ class Channel::V2::Tickets::BulkActionsControllerTest < ActionController::TestCa
       params = { archive_days: 0 }
       freno_stub = stub_request(:get, 'http://freno.freshpo.com/check/ArchiveWorker/mysql/shard_1')
                    .to_return(status: 404, body: '', headers: {})
+      central_stub = stub_request(:post, 'https://central-staging.freshworksapi.com/collector').to_return(body: '', status: 202)
       ManualPublishWorker.stubs(:perform_async).returns('job_id')
       Sidekiq::Testing.inline! do
         post :bulk_archive, construct_params({}, params)
       end
       remove_request_stub(freno_stub)
+      remove_request_stub(central_stub)
       assert_response 204
       assert @account.archive_tickets.find_by_ticket_id(ticket.id).present?
     end

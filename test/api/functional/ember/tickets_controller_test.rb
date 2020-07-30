@@ -903,7 +903,6 @@ module Ember
     def test_update_ticket_file_field_with_draft_attachment
       flexifield_def = FlexifieldDef.find_by_account_id_and_module(@account.id, 'Ticket')
       file_field1_col_name = flexifield_def.first_available_column('file')
-      Account.any_instance.stubs(:ticket_central_publish_enabled?).returns(true)
       custom_field1 = create_custom_field_dn('test_file_field1', 'file', false, false, flexifield_name: file_field1_col_name)
       Account.first.make_current
       file_field2_col_name = flexifield_def.first_available_column('file')
@@ -925,7 +924,6 @@ module Ember
       assert_equal attachment3.id, response_body['custom_fields']['test_file_field1']
       assert_equal attachment2.id, response_body['custom_fields']['test_file_field2']
     ensure
-      Account.any_instance.unstub(:ticket_central_publish_enabled?)
       custom_field2.destroy
       custom_field1.destroy
       ticket.reload.destroy
