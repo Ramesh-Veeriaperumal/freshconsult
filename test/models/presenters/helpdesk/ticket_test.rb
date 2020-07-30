@@ -31,7 +31,6 @@ class TicketTest < ActiveSupport::TestCase
     return if @@before_all_run
     @account.subscription.state = 'active'
     @account.subscription.save
-    @account.launch(:ticket_central_publish)
     @account.ticket_fields.custom_fields.each(&:destroy)
     @@ticket_fields = []
     @@custom_field_names = []
@@ -53,16 +52,7 @@ class TicketTest < ActiveSupport::TestCase
     @account.rollback :archive_ticket_fields
   end
 
-  def test_central_publish_with_launch_party_disabled
-    Account.current.rollback(:ticket_central_publish)
-    CentralPublishWorker::ActiveTicketWorker.jobs.clear
-    t = create_ticket(ticket_params_hash)
-    assert_equal 0, CentralPublishWorker::ActiveTicketWorker.jobs.size
-  ensure
-    Account.current.launch(:ticket_central_publish)
-  end
-
-  def test_central_publish_with_launch_party_enabled
+  def test_ticket_central_publish
     CentralPublishWorker::ActiveTicketWorker.jobs.clear
     t = create_ticket(ticket_params_hash)
     assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size

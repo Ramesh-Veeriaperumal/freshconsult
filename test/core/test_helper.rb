@@ -9,8 +9,6 @@ class ActionController::TestCase
 
   def setup
     activate_authlogic
-    # To Prevent agent central publish error
-    Agent.any_instance.stubs(:user_uuid).returns('123456789')
     create_test_account
     set_request_params
     SpamCounter.stubs(:count).returns(0)
@@ -22,8 +20,6 @@ end
 
 class ActiveSupport::TestCase
   def setup
-    # To Prevent agent central publish error
-    Agent.any_instance.stubs(:user_uuid).returns('123456789')
     create_test_account
   end
 

@@ -4,33 +4,13 @@ class TimeSheetTest < ActiveSupport::TestCase
   include TicketsTestHelper
   include TimeSheetsTestHelper
 
-  class << self
-    attr_accessor :before_all_run
-  end
-
-  def setup
-    super
-    before_all
-  end
-
-  @before_all_run = false
-
-  def before_all
-    return if self.class.before_all_run
-    Account.current.launch :time_sheets_central_publish
-    self.class.before_all_run = true
-  end
-
-  def test_central_publish_with_launch_party_disabled
-    Account.current.rollback :time_sheets_central_publish
+  def test_central_publish_time_sheets
     ticket = create_ticket(ticket_params_hash)
     ticket.reload
     CentralPublisher::Worker.jobs.clear
     time_sheet = ticket.time_sheets.new(time_sheet_params_hash)
     time_sheet.save
-    assert_not_equal 'time_sheet_create', CentralPublisher::Worker.jobs.last['args'][0]
-  ensure
-    Account.current.launch :time_sheets_central_publish
+    assert_equal 'time_sheet_create', CentralPublisher::Worker.jobs.last['args'][0]
   end
 
   def test_central_publish_time_sheet_create_and_user_association

@@ -35,7 +35,7 @@ class Helpdesk::Subscription < ActiveRecord::Base
   end
 
   def self.central_publish_enabled?
-    Helpdesk::Ticket.central_publish_enabled? && publish_event?
+    publish_event?
   end
 
   # When a system rule does add/remove watcher, the event will be published as a part of ticket update.

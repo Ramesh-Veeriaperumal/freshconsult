@@ -14,8 +14,6 @@ class UpdateUserPrivilegesTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.first)
     @account = Account.first
     User.stubs(:current).returns(@account.all_technicians.first)
-    # To Prevent agent central publish error
-    Agent.any_instance.stubs(:user_uuid).returns('123456789')
   end
 
   def teardown

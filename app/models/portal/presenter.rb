@@ -35,10 +35,6 @@ class Portal < ActiveRecord::Base
     :portals
   end
 
-  def self.central_publish_enabled?
-    Account.current.portal_central_publish_enabled?
-  end
-
    def model_changes_for_central
     @model_changes
   end

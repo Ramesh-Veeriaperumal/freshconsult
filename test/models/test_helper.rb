@@ -5,8 +5,6 @@ class ActiveSupport::TestCase
   include TestClassMethods
   def setup
     begin_gc_deferment
-    # To Prevent agent central publish error
-    Agent.any_instance.stubs(:user_uuid).returns('123456789')
     create_test_account unless @account
 
     @account ||= Account.first
