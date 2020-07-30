@@ -1,4 +1,11 @@
-<%= node[:opsworks][:environment]%>:
+defaults: &defaults
   expiry: <%= node[:ymls][:iam][:expiry] %>
   password: <%= node[:ymls][:iam][:password] %>
   kid: <%= node[:ymls][:iam][:kid] %>
+  client_secrets:
+    field_service:
+      client_id: <%= node[:ymls][:iam][:client_secrets][:field_service][:client_id] %>
+      client_secret: <%= node[:ymls][:iam][:client_secrets][:field_service][:client_secret] %>
+<%= node[:opsworks][:environment]%>:
+  <<: *defaults
+

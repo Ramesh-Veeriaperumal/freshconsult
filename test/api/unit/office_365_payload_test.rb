@@ -31,19 +31,10 @@ class Office365PayloadTest < ActionView::TestCase
     user.account
   end
 
-  def test_with_adaptive_card_launch_party_enabled
-    Account.any_instance.stubs(:office365_adaptive_card_enabled?).returns(true)
+  def test_with_adaptive_card
     html_content = @service_class.safe_send(:generate_html_content)
     assert html_content.include?('<script type="application/ld+json">')
     assert html_content.include?('<script type="application/adaptivecard+json">')
-    Account.any_instance.unstub(:office365_adaptive_card_enabled?)
   end
 
-  def test_with_adaptive_card_launch_party_disabled
-    Account.any_instance.stubs(:office365_adaptive_card_enabled?).returns(false)
-    html_content = @service_class.safe_send(:generate_html_content)
-    assert html_content.include?('<script type="application/ld+json">')
-    assert !(html_content.include?('<script type="application/adaptivecard+json">'))
-    Account.any_instance.unstub(:office365_adaptive_card_enabled?)
-  end
 end

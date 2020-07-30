@@ -69,4 +69,49 @@ module AccountsHelper
     query_param[:language_code] = language_code if language_code.present?
     "/api/_/admin/custom_translations?#{query_param.to_query}"
   end
+
+  def precreated_account_signup_params
+    signup_params = {}
+    signup_params[:user] = {
+      email: generate_demo_email,
+      first_name: 'New',
+      last_name: 'Account'
+    }
+    signup_params[:account] = { user: signup_params[:user] }
+    [:user, :account].each do |param|
+      signup_params[param].each do |key, value|
+        signup_params["#{param}_#{key}"] = value
+      end
+    end
+    domain_generator = DomainGenerator.new(signup_params[:user][:email], [], 'account_precreate')
+    email_name = domain_generator.email_name
+    signup_params[:locale] = 'en'
+    signup_params['time_zone'] = 'Eastern Time (US & Canada)'
+    signup_params[:direct_signup] = false
+    signup_params['account_name']        ||= domain_generator.domain_name
+    signup_params['account_domain']      ||= domain_generator.subdomain
+    signup_params['contact_first_name']  ||= email_name
+    signup_params['contact_last_name']   ||= email_name
+    signup_params
+  end
+
+  def generate_demo_email
+    current_time = (Time.now.utc.to_f * 1000).to_i
+    "#{AccountConstants::ANONYMOUS_EMAIL}#{current_time}@example.com"
+  end
+
+  def fetch_precreated_account
+    return unless redis_key_exists?(PRECREATE_ACCOUNT_ENABLED)
+
+    account_id = get_others_redis_rpop(format(PRECREATED_ACCOUNTS_SHARD, current_shard: ActiveRecord::Base.current_shard_selection.shard.to_s))
+    if account_id.present?
+      precreated_account = Account.find(account_id)
+      precreated_account.make_current
+      precreated_account.users.find(&:active).make_current
+    end
+    account_id
+  rescue StandardError => e
+    Rails.logger.error "Error in mapping precreated account - #{e.message}"
+    nil
+  end
 end

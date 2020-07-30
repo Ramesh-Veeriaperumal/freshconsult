@@ -68,7 +68,7 @@ class Middleware::ApiRequestInterceptor
   end
 
   def validate_content_type
-    unless  @content_type =~ /multipart\/form-data|application\/json/
+    unless @content_type =~ /multipart\/form-data|application\/json|application\/x-www-form-urlencoded/
       Rails.logger.error("API Un supported content_type error ::  Host: #{@host}, content_type:#{@content_type} is sent in the request")
       message = { code: INVALID_CONTENT_TYPE, message: ErrorConstants::ERROR_MESSAGES[:invalid_content_type] % {content_type: @content_type} }
       set_response(415, RESPONSE_HEADERS, message)

@@ -60,6 +60,7 @@ api_error_messages:
   cannot_delete_default_reply_email: "Cannot delete default reply email"
   invalid_encoding: "Url query string received is %{invalid_query_string}. It should be properly encoded."
   missing_field: "Mandatory attribute missing"
+  invalid_field_values: "Invalid value(s) for field: %{attribute}"
   access_denied: "You are not authorized to perform this action."
   password_expired: "Password expired. Please reset the password via portal and use the same in API"
   password_lockout: "Maximum failed login attempts %{max_count}, reached."
@@ -115,6 +116,7 @@ api_error_messages:
   only_ticket_type_allowed: "Cannot set reminder for Contact and Company todos"
   other_companies_limit_exceeded: "Has %{max_companies} elements, it can have maximum of %{max_other_companies} elements"
   not_a_number: "is not a number"
+  token_expired: "The access token provided is expired"
   # TODO-EMBER : Error text to be changed
   included_original_attachments: "Cannot be set. Original attachments included already"
   access_denied_list: "Permission denied for records with ids : '%{denied_ids}'."

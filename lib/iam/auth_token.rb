@@ -1,12 +1,13 @@
 module Iam::AuthToken
   PRIVATE_KEY = OpenSSL::PKey::RSA.new(File.read('config/cert/iam.pem'), ::Iam::IAM_CONFIG['password'])
-  def construct_jwt(user)
+
+  def construct_jwt(user, privilege_data = nil)
     payload = {
       user_id: user.id.to_s,
       account_id: Account.current.id.to_s,
       product: 'freshdesk',
       account_domain: Account.current.full_domain,
-      privileges: user.privileges.to_s,
+      privileges: privilege_data.present? ? construct_privilege(privilege_data) : user.privileges.to_s,
       iat: Time.now.to_i,
       exp: Time.now.to_i + ::Iam::IAM_CONFIG['expiry'].to_i,
       iss: 'fd-iam-service'
@@ -19,6 +20,10 @@ module Iam::AuthToken
       'typ' => 'JWT',
       'alg' => 'RS256'
     }
-    'Bearer ' + JWT.encode(payload, PRIVATE_KEY, 'RS256', headers)
+    JWT.encode(payload, PRIVATE_KEY, 'RS256', headers)
+  end
+
+  def construct_privilege(privilege_data)
+    (privilege_data & PRIVILEGES_BY_NAME).map { |r| 2**PRIVILEGES[r] }.sum
   end
 end

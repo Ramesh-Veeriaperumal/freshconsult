@@ -902,10 +902,10 @@
           "_region": "au"
         },
         "freshworksOmnibarV2": {
-          "environment": "EJ[1:7T1dT2q6CiWElBcu5uOZrOY+qA9EshlZDEGFoIfMH00=:Nlifecq7w59pFn1IcEPUhQkcQLiYoVBy:+A/DVu6+cVjcEgmGZjvDJQ==]",
-          "product": "EJ[1:7T1dT2q6CiWElBcu5uOZrOY+qA9EshlZDEGFoIfMH00=:qCuHBwom8kkEKjXlur7nDJUysdyhkMrG:d/Wf7GuNw1RzGyJRfBY6cw==]",
-          "region": "EJ[1:7T1dT2q6CiWElBcu5uOZrOY+qA9EshlZDEGFoIfMH00=:9eKR88JwVhd8PuQVgisbORCvZYovrstU:6YIfzXtULzeJRt2kXnG5yA==]",
-          "clientid": "EJ[1:7T1dT2q6CiWElBcu5uOZrOY+qA9EshlZDEGFoIfMH00=:BO6fWgx6H7ZvHxUwUN55DefimKJeBYL0:lqpsQAd2V28T/UKV42JGug==]"
+          "_environment": "production",
+          "_product": "freshdesk",
+          "_region": "au",
+          "_clientid": "112438631413579796"
         },
         "freshworksOmnibarAssets": {
           "_script_asset_url": "https://accounts.freshworks.com/omnibar/omnibar-stable.js",
@@ -1396,11 +1396,26 @@
       "iam": {
         "_expiry": 300,
         "password": "EJ[1:+uR4W2WA56xIbUyd3GMiDg8nK63zinyOI5vH7YZp5Vw=:r7oFwD/YHtwsoQKOgUtb2321mEkbRpz4:pt/kZcBBsyPcWl7puLnLWx+MHOLjjdPjxqQ=]",
-        "kid": "EJ[1:e1sALPEEctx83CLQmNVBVZI6UyA8q5vCWWhAQI6g03I=:e/BoOlRN3dmWajhpFXHSWwPQeV0iGOej:EHM9f+TN9pbDFlP5JmbYr2e1MOwpW90=]"
+        "kid": "EJ[1:e1sALPEEctx83CLQmNVBVZI6UyA8q5vCWWhAQI6g03I=:e/BoOlRN3dmWajhpFXHSWwPQeV0iGOej:EHM9f+TN9pbDFlP5JmbYr2e1MOwpW90=]",
+        "client_secrets": {
+            "field_service": {
+                "client_id": "EJ[1:siWNiMLtqkSxII9Xp3xgAD7gDvvMpwUOlQ59Pn1xg1s=:/yF+pywrCURE6Ls+UV1vsO800OoPIz1u:kkt5DsX0qT9IhmM+dXk03we6CQNgYN6qRjUiYA02hTXThlhzUnUk4VNInTRQfe/Sf2FPDlBlLMBoAsN4YrsUtYBdKMA66Xz6UlUl3BFYKJs=]",
+                "client_secret": [
+                    "EJ[1:siWNiMLtqkSxII9Xp3xgAD7gDvvMpwUOlQ59Pn1xg1s=:m54nwgVorE2nmN/EAALGWoO4UvmAiAMJ:wCdPypF8K+4rUJHH4eMWPLeCs+sg4t4LLKCqziw42T8A8Aad/hbSTKS882Z35CK7hXF5KoxjinUES8qCHuTuK07i8d675vRsmWtIa4z/UV0=]",
+                    "EJ[1:siWNiMLtqkSxII9Xp3xgAD7gDvvMpwUOlQ59Pn1xg1s=:S74wOEM/kS89x2YRyqJiuLfgYHssVT1S:NTzeBIre3gJwmKk0abpy5tZhXb6Cz9Zc3kfVVJkY0SkDTjjZECYeDS6EEoyBnXjINm5OEB23T8aWDVr+2RVgIPKumIJz+ASxvm0BpTcQIIA=]"
+                ]
+            }
+        }
       },
       "symmetric_encryption": {
         "ciphers":{
           "set1": {
+            "key": "EJ[1:LqE2V5BxRQLfCso3jEqQrIjQfnGxTQoEWkHBZqUcOTo=:NPhAkLc3+WxqQP3oXI6vlsR3H7TyxyT0:Ei0nC2Mz875pb8Xyax8hUO/EQR2epJLk+PE+F7Z3ilCbA4Itg0m6MGntE9r1WOg3]",
+            "iv": "EJ[1:LqE2V5BxRQLfCso3jEqQrIjQfnGxTQoEWkHBZqUcOTo=:NHIOoclDg5oEG+64I3vlwUAgUGq5FuRw:Upb1E8WKmOnEwyU5NuuoHSdbRG8rtcNbp9rg52GYkCU=]",
+            "_cipher_name": "aes-256-cbc",
+            "_version": 2
+          },
+          "set2": {
             "key": "EJ[1:2KYWEPYlZgiGIaSUHm9SHLbNpJXuDYxaazWASqNvISw=:2YW7STUfhSb37EsG1P1wYzqIU8xUN88W:RbGKtpxXMSKtcVbfKQ/IEveHlggTHu+mcgrBsNF3EZaYBJay3Xs1E2Gxe3T/Lauq]",
             "iv": "EJ[1:G2mbMUBXMiwvBKK5BtR3XvfwQGSuAmG6QR9fu6XD1VA=:fnZ6U8/Ilr1Aqa/6fWeo4A231h3sh7T+:afgXjA24OCTzJPq5sTyAYxaXcbUjnukm744OPdKK/54=]",
             "_cipher_name": "aes-128-cbc",
@@ -1615,7 +1630,7 @@
         "_application_id": ""
       },
       "freshcaller": {
-        "_sdk_url": "https://s3.amazonaws.com/freshcaller-sdk/v1/freshcaller-sdk.js",
+        "_sdk_url": "https://au-freshcaller-sdk.s3-ap-southeast-2.amazonaws.com/v1/freshcaller-sdk.js",
         "_widget_loader_url": "https://au-freshcaller-widget-loader.s3-ap-southeast-2.amazonaws.com/fc-widget.js"
       },
       "inline_manual": {
@@ -1648,10 +1663,7 @@
       },
       "_vault_service_url": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/",
       "_freshdesk_help_widget_url": "https://widget.freshworks.com/widgets/50000000012.js",
-      "google_map_api_key": "EJ[1:w+o8xH4d7eTC9Dq+1k9ob29EAd1uxltl4MCUw4wDoAQ=:hUekQVMrDxDBjBIIfaaeX4gddxpQN3H+:6rOnQtEao22yMIemUVea3OgBfT6Wm1ajtJEJxtEeNWRtdVojGRP90Xbw5JqK007fnnKeG2QquA==]",
-      "analyticsCollectorConfig": {
-        "_analyticsCollectorScript": "https://assets.freshdesk.com/analytics/analytics-v2.js"
-      },
+      "google_map_api_key": "EJ[1:RfeA6XQ8RpoQwKgf2qP5Ivp/M5SghI8fdxIGAgmKIxw=:JZ72foqAyPqpaDa/pExAoGDQb9tHj7/a:KbwlYiis/1ixuvaLtLiPZHy63mUrLenXLVMNu715qLaUg3Sa9e7rmD/JrfndlCCauwpsoYY9gA==]",
       "blue": {
         "_bucket": "ap-falconassets-blue",
         "_fingerprint_prepend": "https://apfassetsblue.freshdesk.com/production/",

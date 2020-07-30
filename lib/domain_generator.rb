@@ -9,7 +9,9 @@ class DomainGenerator
 		"aid", "relations", "desk", "team"]
 	DOMAIN_SUGGESTIONS = DOMAIN_SUGGESTION_KEYWORDS + DOMAIN_SUGGESTION_KEYWORDS.map{|sugg| "-#{sugg}"}
   ANONYMOUS_DOMAIN = 'demo'.freeze
+  PRECREATE_DOMAIN = 'newaccount'.freeze
   ANONYMOUS_SIGNUP = 'anonymous_signup'.freeze
+  PRECREATE_SIGNUP = 'account_precreate'.freeze
 
 	validates_presence_of :email
 	validate :email_validity
@@ -25,6 +27,8 @@ class DomainGenerator
   def domain
     if signup_mode == ANONYMOUS_SIGNUP
       @domain ||= generate_demo_domain while @domain.blank?
+    elsif signup_mode == PRECREATE_SIGNUP
+      @domain ||= generate_precreate_domain while @domain.blank?
     else
       @domain ||= generate_helpdesk_domain
       @domain = generate_random_domain_name while @domain.blank?
@@ -136,6 +140,12 @@ class DomainGenerator
       demo_domain
     end
 
+    def generate_precreate_domain
+      precreate_domain = generate_default_precreate_domain
+      precreate_domain = generate_random_precreate_domain while precreate_domain.blank?
+      precreate_domain
+    end
+
     def generate_default_demo_domain
       current_time = (Time.now.utc.to_f * 1000).to_i
       domain_suggestion = "#{ANONYMOUS_DOMAIN}#{current_time}.#{HELPDESK_BASE_DOMAIN}"
@@ -151,6 +161,20 @@ class DomainGenerator
       nil
     end
 
+    def generate_default_precreate_domain
+      current_time = (Time.now.utc.to_f * 1000).to_i
+      domain_suggestion = "#{PRECREATE_DOMAIN}#{current_time}.#{HELPDESK_BASE_DOMAIN}"
+      return domain_suggestion if valid_domain?(domain_suggestion)
+    end
+
+    def generate_random_precreate_domain
+      current_time = (Time.now.utc.to_f * 1000).to_i
+      DOMAIN_SUGGESTIONS.each do |suggestion|
+        current_domain_suggestion = "#{PRECREATE_DOMAIN}#{suggestion}#{current_time}.#{HELPDESK_BASE_DOMAIN}"
+        return current_domain_suggestion if valid_domain?(current_domain_suggestion)
+      end
+      nil
+    end
 	# validations
 	def email_validity
 		unless email_address.match(AccountConstants::EMAIL_VALIDATOR)

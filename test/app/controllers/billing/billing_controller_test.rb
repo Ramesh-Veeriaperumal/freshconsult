@@ -122,6 +122,48 @@ class Billing::BillingControllerTest < ActionController::TestCase
     @account.rollback(:downgrade_policy)
   end
 
+  def test_subscription_changed_event_with_subscribed_agent_count_less_than_agents_and_without_sub_request
+    stub_subscription_settings
+    old_subscription = @account.subscription
+    billing_data_subscription_plan = subscription_plan('forest_annual')
+    Subscription.any_instance.unstub(:update_attributes)
+    Subscription.any_instance.unstub(:save)
+    user = add_test_agent(@account)
+    @account.launch(:downgrade_policy)
+    post :trigger, event_type: 'subscription_changed', content: normal_event_content, format: 'json'
+    assert_response 200
+    assert_equal @account.reload.subscription.agent_limit, @account.full_time_support_agents.count
+    assert_equal @account.reload.subscription.subscription_plan, billing_data_subscription_plan
+  ensure
+    user.destroy
+    @account.subscription.agent_limit = old_subscription.agent_limit
+    @account.subscription.save
+    unstub_subscription_settings
+    @account.rollback(:downgrade_policy)
+  end
+
+  def test_subscription_changed_event_with_more_products_without_sub_request
+    stub_subscription_settings
+    old_subscription = @account.subscription
+    current_plan_id = @account.subscription.subscription_plan_id
+    Subscription.any_instance.unstub(:update_attributes)
+    Subscription.any_instance.unstub(:save)
+    @account.launch(:downgrade_policy)
+    @account.add_feature(:unlimited_multi_product)
+    6.times { @account.products.new(name: Faker::Lorem.characters(5)) }
+    @account.save!
+    SubscriptionPlan.any_instance.stubs(:unlimited_multi_product?).returns(false)
+    SubscriptionPlan.any_instance.stubs(:multi_product?).returns(true)
+    post :trigger, event_type: 'subscription_changed', content: normal_event_content, format: 'json'
+    assert_response 200
+    assert_equal @account.reload.subscription.subscription_plan_id, current_plan_id
+  ensure
+    unstub_subscription_settings
+    SubscriptionPlan.any_instance.unstub(:unlimited_multi_product?)
+    SubscriptionPlan.any_instance.unstub(:multi_product?)
+    @account.rollback(:downgrade_policy)
+  end
+
   def test_subscription_changed_event_with_more_products
     stub_subscription_settings
     old_subscription = @account.subscription

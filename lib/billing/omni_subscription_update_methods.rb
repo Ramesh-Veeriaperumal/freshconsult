@@ -97,9 +97,13 @@ module Billing::OmniSubscriptionUpdateMethods
     subscription_payload
   end
 
-  def construct_content_payload(result)
-    { subscription: construct_subscription_payload(result[:subscription], result[:customer]),
-      customer: construct_customer_payload(result[:customer]) }
+  def construct_content_payload(content)
+    result = {
+      subscription: construct_subscription_payload(content[:subscription], content[:customer]),
+      customer: construct_customer_payload(content[:customer])
+    }
+    result[:invoice] = construct_invoice_payload(content[:invoice]) if content[:invoice].present?
+    result
   end
 
   def construct_subscription_payload(subscription, customer)
@@ -153,5 +157,34 @@ module Billing::OmniSubscriptionUpdateMethods
     }
     result.merge!(billing_address: customer[:billing_address]) if customer[:billing_address].present?
     result
+  end
+
+  def construct_invoice_payload(invoice)
+    result = {
+      id: invoice[:id],
+      total: invoice[:amount],
+      amount_adjusted: invoice[:amount_adjusted],
+      amount_due: invoice[:amount_due],
+      amount_paid: invoice[:amount_paid],
+      currency_code: invoice[:currency_code],
+      customer_id: invoice[:customer_id],
+      date: invoice[:end_date],
+      object: invoice[:object],
+      price_type: invoice[:price_type],
+      recurring: invoice[:recurring],
+      status: invoice[:status],
+      sub_total: invoice[:sub_total],
+      subscription_id: invoice[:subscription_id],
+      tax: invoice[:tax]
+    }
+    result[:line_items] = construct_line_items_payload(invoice[:line_items]) if invoice[:line_items].present?
+    result
+  end
+
+  def construct_line_items_payload(line_items)
+    line_items.each do |line_item|
+      line_item[:tax_amount] = line_item.delete(:tax)
+    end
+    line_items
   end
 end

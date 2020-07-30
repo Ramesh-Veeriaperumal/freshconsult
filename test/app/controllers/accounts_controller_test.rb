@@ -48,6 +48,79 @@ class AccountsControllerTest < ActionController::TestCase
     Account.unstub(:current)
   end
 
+  def test_new_signup_with_precreated_account
+    populate_plans
+    AccountConfiguration.any_instance.stubs(:update_billing).returns(true)
+    Subscription.any_instance.stubs(:add_to_billing).returns(true)
+    PrecreatedSignup.any_instance.stubs(:aloha_signup).returns(true)
+    PrecreatedSignup.any_instance.stubs(:freshid_v2_signup_allowed?).returns(true)
+    PrecreatedSignup.any_instance.stubs(:organisation).returns(freshid_organisation)
+    PrecreatedSignup.any_instance.stubs(:freshid_user).returns(freshid_user)
+    Account.any_instance.stubs(:sync_user_info_from_freshid_v2!).returns(true)
+    User.any_instance.stubs(:sync_profile_from_freshid).returns(true)
+    AccountCreation::PrecreateAccounts.new.perform(precreate_account_count: 1, shard_name: 'shard_1')
+    @controller.stubs(:redis_key_exists?).with('PRECREATE_ACCOUNT_ENABLED').returns(true)
+    precreated_account_id = get_others_redis_list(format(PRECREATED_ACCOUNTS_SHARD, current_shard: 'shard_1'), 0, 0)
+    stub_signup_calls
+    user_email = 'fsmonsignup@gleason.com'
+    user_name = Faker::Name.name
+    session = { current_session: { referrer: Faker::Lorem.word, url: Faker::Internet.url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
+                device: {}, location: { countryName: 'India', countryCode: 'IND', cityName: 'Chennai', ipAddress: '127.0.0.1' },
+                locale: 'en', browser: {}, time: {} }.to_json
+    account_info = { account_name: Faker::Lorem.word, account_domain: Faker::Lorem.word, locale: I18n.default_locale, time_zone: 'Chennai',
+                     user_name: user_name, user_password: 'test1234', user_password_confirmation: 'test1234',
+                     user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }
+    user_info = { name: user_name, email: user_email, time_zone: 'Chennai', language: 'en' }
+    get :new_signup_free, callback: '', user: user_info, account: account_info, session_json: session, format: 'json'
+    resp = JSON.parse(response.body)
+    assert_response 200, resp
+    assert_equal resp['account_id'], precreated_account_id[0].to_i
+  ensure
+    unstub_signup_calls
+    @controller.unstub(:redis_key_exists?)
+    Account.unstub(:current)
+    AccountConfiguration.any_instance.unstub(:update_billing)
+    Subscription.any_instance.unstub(:add_to_billing)
+    PrecreatedSignup.any_instance.unstub(:aloha_signup)
+    PrecreatedSignup.any_instance.unstub(:freshid_v2_signup_allowed?)
+    PrecreatedSignup.any_instance.unstub(:organisation)
+    PrecreatedSignup.any_instance.unstub(:freshid_user)
+    Account.any_instance.unstub(:sync_user_info_from_freshid_v2!)
+    User.any_instance.unstub(:sync_profile_from_freshid)
+  end
+
+  def test_new_signup_with_exception_in_precreated_account
+    populate_plans
+    AccountConfiguration.any_instance.stubs(:update_billing).returns(true)
+    Subscription.any_instance.stubs(:add_to_billing).returns(true)
+    AccountCreation::PrecreateAccounts.new.perform(precreate_account_count: 1, shard_name: 'shard_1')
+    @controller.stubs(:redis_key_exists?).with('PRECREATE_ACCOUNT_ENABLED').returns(true)
+    precreated_account_id = get_others_redis_list(format(PRECREATED_ACCOUNTS_SHARD, current_shard: 'shard_1'), 0, 0)
+    PrecreatedSignup.any_instance.stubs(:save!).raises(StandardError)
+    stub_signup_calls
+    Signup.any_instance.unstub(:save)
+    user_email = 'fsmonsignup@gleason.com'
+    user_name = Faker::Name.name
+    session = { current_session: { referrer: Faker::Lorem.word, url: Faker::Internet.url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
+                device: {}, location: { countryName: 'India', countryCode: 'IND', cityName: 'Chennai', ipAddress: '127.0.0.1' },
+                locale: 'en', browser: {}, time: {} }.to_json
+    account_info = { account_name: Faker::Lorem.word, account_domain: Faker::Lorem.word, locale: I18n.default_locale, time_zone: 'Chennai',
+                     user_name: user_name, user_password: 'test1234', user_password_confirmation: 'test1234',
+                     user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }
+    user_info = { name: user_name, email: user_email, time_zone: 'Chennai', language: 'en' }
+    get :new_signup_free, callback: '', user: user_info, account: account_info, session_json: session, format: 'json'
+    resp = JSON.parse(response.body)
+    assert_response 200, resp
+    assert_not_equal resp['account_id'], precreated_account_id[0].to_i
+  ensure
+    unstub_signup_calls
+    @controller.unstub(:redis_key_exists?)
+    Account.unstub(:current)
+    AccountConfiguration.any_instance.unstub(:update_billing)
+    Subscription.any_instance.unstub(:add_to_billing)
+    PrecreatedSignup.any_instance.unstub(:save!)
+  end
+
   def test_twitter_requester_fields_creation_on_signup
     Freemail.stubs(:free?).returns(false)
     subdomain = Account::RESERVED_DOMAINS.first
@@ -92,7 +165,6 @@ class AccountsControllerTest < ActionController::TestCase
     service_ticket_count_after_fsm = account.tickets.where("ticket_type = 'Service Task'").count
     assert_equal 3, service_group_count_after_fsm
     assert_equal 3, service_ticket_count_after_fsm
-    assert account.plan_name, 'Estate Jan 19'
   ensure
     unstub_signup_calls
     Account.any_instance.unstub(:ticket_field_revamp_enabled?)

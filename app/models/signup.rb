@@ -4,9 +4,9 @@ class Signup < ActivePresenter::Base
   include Redis::OthersRedis
 
   presents :account, :user
-  
+
   attr_accessor :contact_first_name, :contact_last_name, :new_plan_test, :org_id, :join_token, :fresh_id_version, :org_domain, :bundle_id, :bundle_name, :aloha_signup, :organisation, :freshid_user,
-                :referring_product
+                :referring_product, :direct_signup
 
   before_validation :build_primary_email, :build_portal, :build_roles, :build_admin,
     :build_subscription, :build_account_configuration, :set_time_zone, :build_password_policy, :set_freshid_signup_version
@@ -16,7 +16,7 @@ class Signup < ActivePresenter::Base
   before_save :set_signup_initiated, :set_fs_cookie
   after_save :make_user_current, :set_i18n_locale, :populate_seed_data
   after_save :create_freshid_org_and_account, if: :freshid_signup_allowed?
-  after_save :create_freshid_v2_org_and_account, if: :freshid_v2_signup_allowed?
+  after_save :create_freshid_v2_org_and_account, if: [:freshid_v2_signup_allowed?, :direct_signup]
   after_save :enable_fluffy, if: :fluffy_signup_allowed?
   after_save :set_signup_completed
 

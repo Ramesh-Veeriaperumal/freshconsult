@@ -371,7 +371,9 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
   end
 
   def test_update_payment
+    Subscription.any_instance.stubs(:cost_per_agent).returns(65)
     chargebee_subscription = ChargeBee::Result.new(stub_update_params(@account.id))
+    Billing::Subscription.any_instance.stubs(:activate_subscription).returns(chargebee_subscription)
     Billing::Subscription.any_instance.stubs(:retrieve_subscription).returns(chargebee_subscription)
     Subscription.any_instance.stubs(:set_billing_info).returns(true)
     Subscription.any_instance.stubs(:save).returns(true)
@@ -380,8 +382,10 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     match_json(subscription_response(@account.subscription))
   ensure
     Billing::Subscription.any_instance.unstub(:retrieve_subscription)
+    Billing::Subscription.any_instance.unstub(:activate_subscription)
     Subscription.any_instance.unstub(:set_billing_info)
     Subscription.any_instance.unstub(:save)
+    Subscription.any_instance.unstub(:cost_per_agent)
   end
 
   def test_update_payment_error_out

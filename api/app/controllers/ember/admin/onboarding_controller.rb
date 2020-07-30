@@ -80,13 +80,15 @@ module Ember
       end
 
       def anonymous_to_trial
-        return unless validate_delegator(@item, email: params[cname]['admin_email'])
+        admin_email_param = params[cname]['admin_email']
+        return unless validate_delegator(@item, email: admin_email_param)
+
         ActiveRecord::Base.transaction do
           current_account.is_anonymous_account = false
-          update_admin_related_info
-          update_current_user_info
+          update_admin_related_info(admin_email_param)
+          update_current_user_info(admin_email_param)
           convert_to_trial
-          enable_external_services
+          enable_external_services(admin_email_param)
         end
         response.api_root_key = :account_configs
       rescue StandardError => e

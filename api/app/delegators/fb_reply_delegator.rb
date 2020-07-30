@@ -15,9 +15,8 @@ class FbReplyDelegator < ConversationBaseDelegator
   end
 
   def facebook_post_attachment_enabled?
-    msg_type == (Facebook::Constants::FB_MSG_TYPES[1] || Facebook::Constants::FB_MSG_TYPES[2]) &&
-      Account.current.launched?(:skip_posting_to_fb) &&
-        Account.current.launched?(:facebook_post_outgoing_attachment)
+    [Facebook::Constants::FB_MSG_TYPES[1], Facebook::Constants::FB_MSG_TYPES[2]].include?(msg_type) &&
+      Account.current.launched?(:skip_posting_to_fb)
   end
 
   def validate_note_id

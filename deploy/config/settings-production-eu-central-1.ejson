@@ -911,10 +911,10 @@
           "_region": "eu"
         },
         "freshworksOmnibarV2": {
-          "environment": "EJ[1:LAExQJ84gVXwB2pqslQT19+5RxXthRXM4CJEXQ15+yE=:yf4kBTtebN+TT0z0zRSNovSj8MSA58OW:XBsy3B8ylS/AEaZXwE9e8w==]",
-          "product": "EJ[1:LAExQJ84gVXwB2pqslQT19+5RxXthRXM4CJEXQ15+yE=:okjgS790P0+Kk9HDs6Br4rxuw8SaxGh9:iIly84NmxxISKTaPOhhpUg==]",
-          "region": "EJ[1:LAExQJ84gVXwB2pqslQT19+5RxXthRXM4CJEXQ15+yE=:zi0665Q4Ajhk89aNlahGPg4Rvvv92Bok:ifqsXCQzBn3nbeEjm30P3g==]",
-          "clientid": "EJ[1:LAExQJ84gVXwB2pqslQT19+5RxXthRXM4CJEXQ15+yE=:z8OsEaPAugVIfCrd+tndwI7gFBnPOMWv:NjYbBdq0tfxcqx/gMs36qA==]"
+          "_environment": "production",
+          "_product": "freshdesk",
+          "_region": "eu",
+          "_clientid": "78368727158800390"
         },
         "freshworksOmnibarAssets": {
           "_script_asset_url": "https://accounts.freshworks.com/omnibar/omnibar-stable.js",
@@ -1199,6 +1199,22 @@
               "_username": "dbuser"
             },
             "_slave2_host": "euc-shard4slave2.internal.podeucentral1.freshdesk.com",
+            "_username": "dbuser"
+          },
+          "euc_shard_5_1": {
+            "_database": "helpkit_euc_shard_5_1",
+            "_host": "euc-shard5.internal.podeucentral1.freshdesk.com",
+            "password": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:5CA33ARi/WEmyZaDwT2q6JOMxr0+x1YW:UonCrn7FGxDvnm1f/I75QcG6HRLGTwA6TzE=]",
+            "_slave1_host": "euc-shard5slave1.internal.podeucentral1.freshdesk.com",
+            "_slave2_host": "euc-shard5slave2.internal.podeucentral1.freshdesk.com",
+            "_username": "dbuser"
+          },
+          "euc_shard_5_2": {
+            "_database": "helpkit_euc_shard_5_2",
+            "_host": "euc-shard5.internal.podeucentral1.freshdesk.com",
+            "password": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:5CA33ARi/WEmyZaDwT2q6JOMxr0+x1YW:UonCrn7FGxDvnm1f/I75QcG6HRLGTwA6TzE=]",
+            "_slave1_host": "euc-shard5slave1.internal.podeucentral1.freshdesk.com",
+            "_slave2_host": "euc-shard5slave2.internal.podeucentral1.freshdesk.com",
             "_username": "dbuser"
           }
         },
@@ -1506,11 +1522,26 @@
       "iam": {
         "_expiry": 300,
         "password": "EJ[1:KVL1cNnTPBNTRnFFb83+ksbinnY4QOD+pNUsoGYPqnY=:haAlj4KmqqxEeWOJE5CnFYw1Ppm7Gnre:QoxDY5WaH3GkWcagO52dJudErvc9OQsrd7k=]",
-        "kid": "EJ[1:sIuhi1hNeseYNOnQ8fuvmMbVlTB/M2jIhM6qc1sWPTM=:OR+G2AdQbaHuvsTtflR/LtS5SHimjb3e:iKjnxKJeQxC8Ec1lRvX+P0jmGglVbB8=]"
+        "kid": "EJ[1:sIuhi1hNeseYNOnQ8fuvmMbVlTB/M2jIhM6qc1sWPTM=:OR+G2AdQbaHuvsTtflR/LtS5SHimjb3e:iKjnxKJeQxC8Ec1lRvX+P0jmGglVbB8=]",
+        "client_secrets": {
+            "field_service": {
+                "client_id": "EJ[1:5BGSWD1WvY4DpH+2FG6ZaQz3qTRhuLzHEhNxFNYEDks=:FjCZgIV0vWlFymNQGqIA2qcMBlEKBDrY:BviHEkMmjUm+Ad+Bv+0ZmtUbfBVpDK2NOCatfJRrQwoiP7dDlVwM3qNpb8ddgBl6x7DGJ4DHv/gf1tHesijN6FC/YadMLikA53WIGehhZv4=]",
+                "client_secret": [
+                    "EJ[1:5BGSWD1WvY4DpH+2FG6ZaQz3qTRhuLzHEhNxFNYEDks=:9VK+yp4T9TuCk0qOIn2xYLQWSobX3ucP:zd+ojLO5Z+4qcRgwJ7R6pYxT0dNxT2D7TIm0nxMBU3XMxbChk0Esl5ek2VVfXXxPMQ011owP1UemWwmg6FPX5J7cKyo40XmKNyXna/YfUBQ=]",
+                    "EJ[1:5BGSWD1WvY4DpH+2FG6ZaQz3qTRhuLzHEhNxFNYEDks=:u2eGVAwFQqttDx0Rbgtw96sMC8iHOLms:lqQdW431uledJLvbbbm1PL4tSnvO8uk3apHVXD+mby+UakZcdV3wvomzklvwYAZ0O99+DjTCsJKwN7717nJjGvvIkiDkV+vk/0JFyjPVtk0=]"
+                ]
+            }
+        }
       },
       "symmetric_encryption": {
         "ciphers":{
           "set1": {
+            "key": "EJ[1:CwKOd806se5M2a8pzHJB9k966DPqNHWIGaO00Dcvb0g=:+SyBS3nCxs35qFOSpcHoP4MZxT3hl8rp:rgAbhmq3sF9ZqVz8hMFLUmPevwqCJDtqaJ2tuqcjQoeUdJ6T8fJ1FOqmg35BtZY+]",
+            "iv": "EJ[1:CwKOd806se5M2a8pzHJB9k966DPqNHWIGaO00Dcvb0g=:CxI0P6UTBDOudGu24zp+oW7HhE57aI3t:Qr8LVMPLbQP1i+YvBjFQuxoy9/OiZBevF1BUc/yfkR0=]",
+            "_cipher_name": "aes-256-cbc",
+            "_version": 2
+          },
+          "set2": {
             "key": "EJ[1:Lk877pSs01dgi41N5PPWAslYKEeO2dxmqObnHpxjrAc=:1Usi2OEs6K/e99Fe94yBxZYrlUfPeWN7:0GmyPzgo9Q0SwBO26+eglbsDA+03IgBajPs0T6r4fM7hYkofTrsgexxsA4ETcScT]",
             "iv": "EJ[1:lCWPJLQvG1A2qKwHR944eVSc4+KsEpE1ejPNxfHd7hE=:hRXkHv7jus96shRaGYhJBUh0wgCMsAdO:nEgj4cEZhDb/0p3cYFUEw/qfXdlghiXqQDkYX3Suyqk=]",
             "_cipher_name": "aes-128-cbc",
@@ -1771,7 +1802,7 @@
       },
       "_vault_service_url": "https://vault-service-eu.freshworks.com/",
       "_freshdesk_help_widget_url": "https://widget.freshworks.com/widgets/50000000012.js",
-      "google_map_api_key": "EJ[1:xXG7Ad1W1Cel3reAymOnSf/RAEp2GTEfOKAyuNbTEjs=:y9Z8W/rvJqzJV6HaDjLkcfvK9DareTM/:Yd1bzwrBgqsbm12Krz74LMIE0idbbRY/xJUFFJ4VWsouwW4GWBTO6WcpzBntM2g01JPxkiA0rw==]"
+      "google_map_api_key": "EJ[1:rrLSeLBT91/rdZcJG7mVttTKEuqC4Hu4JqEzQNWBjlI=:xUpgpL0AZh+RnUxisN2JyJlZt3MilEfy:bJkPO3lcx/NpDlw2RnHAevyc0gTAATYs/mjpHAJ8ierBjE4ZUd370TyQHIT5nMD634bmEZLo1Q==]"
     },
     "aws_config": {
     },

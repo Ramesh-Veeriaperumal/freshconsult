@@ -1,8 +1,10 @@
 module TagTestHelper
 
   def create_tag(account, options= {})
-    tag = account.tags.first
-    return tag if tag
+    unless options[:build_new_tag]
+      tag = account.tags.first
+      return tag if tag
+    end
 
     test_tag = FactoryGirl.build(:tag,
       :name => options[:name] || Faker::Name.name,
