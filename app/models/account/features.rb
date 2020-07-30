@@ -12,7 +12,7 @@ class Account < ActiveRecord::Base
     :dependent_field_validation, :encode_emoji_subject,
     :euc_migrated_twitter, :new_ticket_recieved_metric, :ner,
     :dashboard_announcement_central_publish, :disable_banners,
-    :count_service_es_writes, :count_service_es_reads, :time_sheets_central_publish,
+    :count_service_es_writes, :count_service_es_reads,
     :sso_login_expiry_limitation, :undo_send, :old_link_back_url_validation, :stop_contacts_count_query,
     :denormalized_select_for_update, :es_tickets,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
