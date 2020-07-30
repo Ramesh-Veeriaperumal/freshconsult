@@ -62,13 +62,13 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   api_accessible :custom_translation do |tf|
     tf.add :label, unless: :only_customer_label_field?
-    tf.add :label_in_portal, as: :customer_label
+    tf.add :label_in_portal, as: :customer_label, unless: :only_agent_label_field?
     tf.add proc { |field| field.fetch_custom_field_choices }, as: :choices, if: :field_with_choice?
   end
 
   api_accessible :custom_translation_secondary do |t|
     t.add ->(model, options) { model.fetch_label(options[:lang]) }, as: :label, unless: :only_customer_label_field?
-    t.add ->(model, options) { model.fetch_customer_label(options[:lang]) }, as: :customer_label
+    t.add ->(model, options) { model.fetch_customer_label(options[:lang]) }, as: :customer_label, unless: :only_agent_label_field?
     t.add ->(model, options) { model.fetch_choices(options[:lang]) }, as: :choices, if: :field_with_choice?
   end
 
@@ -101,11 +101,31 @@ class Helpdesk::TicketField < ActiveRecord::Base
   end
 
   def field_with_choice?
-    TRANSLATION_CHOICE_FIELDS.include?(field_type)
+    translation_choice_fields.include?(field_type)
   end
 
   def only_customer_label_field?
-    default && LABEL_AND_CHOICES_TRANSLATION_AVAILABLE_DEFAULT_FIELDS.exclude?(field_type)
+    default && label_and_choices_translation_available_default_fields.exclude?(field_type)
+  end
+
+  def only_agent_label_field?
+    default && label_translations_available_only_for_agents.include?(field_type)
+  end
+
+  def source_translations_allowed?
+    Account.current.ticket_source_revamp_enabled?
+  end
+
+  def label_and_choices_translation_available_default_fields
+    source_translations_allowed? ? ['default_status', 'default_ticket_type', 'default_source'] : LABEL_AND_CHOICES_TRANSLATION_AVAILABLE_DEFAULT_FIELDS
+  end
+
+  def translation_choice_fields
+    source_translations_allowed? ? ['nested_field', 'custom_dropdown', 'default_status', 'default_ticket_type', 'default_source'] : TRANSLATION_CHOICE_FIELDS
+  end
+
+  def label_translations_available_only_for_agents
+    ['default_source']
   end
 
   # fetch the choices list for the given ticket field
@@ -119,6 +139,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
       Hash[Account.current.ticket_types_from_cache.map { |ch| ["choice_#{ch.picklist_id}", ch.value] }]
     when 'default_status' then
       Hash[Account.current.ticket_status_values_from_cache.select { |col| col.is_default == false }.map { |ch| ["choice_#{ch.status_id}", ch.name] }]
+    when 'default_source' then
+      source_translations_allowed? ? Hash[Account.current.ticket_source_from_cache.select { |col| col.default == false }.map { |ch| ["choice_#{ch.account_choice_id}", ch.name] }] : []
     else
       []
     end

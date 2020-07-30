@@ -81,11 +81,15 @@ class Admin::CustomTranslations::DownloadController < ApiApplicationController
       preload << "#{lang}_translation".to_sym << { nested_ticket_fields: { ticket_field: ["#{lang}_translation".to_sym] } }
     end
 
+    def invalid_ticket_fields
+      Account.current.ticket_source_revamp_enabled? ? ['default_internal_group', 'default_internal_agent'] : INVALID_TICKET_FIELDS
+    end
+
     def fetch_ticket_fields
       ticket_fields = {}
 
       Account.current.ticket_fields_with_nested_fields.preload(PRELOAD_ASSOC).each do |ticket_field|
-        ticket_fields = ticket_fields.merge(ticket_field.name => ticket_field.as_api_response(:custom_translation).stringify_keys) unless INVALID_TICKET_FIELDS.include?(ticket_field.field_type)
+        ticket_fields = ticket_fields.merge(ticket_field.name => ticket_field.as_api_response(:custom_translation).stringify_keys) unless invalid_ticket_fields.include?(ticket_field.field_type)
       end
 
       ticket_fields
@@ -96,7 +100,7 @@ class Admin::CustomTranslations::DownloadController < ApiApplicationController
       lang = Language.find_by_code(language_id).to_key
 
       Account.current.ticket_fields_with_nested_fields.preload(preload_assoc(lang)).each do |x|
-        ticket_fields = ticket_fields.merge(x.name => x.as_api_response(:custom_translation_secondary, lang: lang).stringify_keys) unless INVALID_TICKET_FIELDS.include?(x.field_type)
+        ticket_fields = ticket_fields.merge(x.name => x.as_api_response(:custom_translation_secondary, lang: lang).stringify_keys) unless invalid_ticket_fields.include?(x.field_type)
       end
 
       ticket_fields

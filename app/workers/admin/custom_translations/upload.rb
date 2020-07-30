@@ -102,7 +102,7 @@ class Admin::CustomTranslations::Upload < BaseWorker
     translations.slice!(*VALID_KEYS)
     current_account = Account.current
     choice_regex = /(choice_[0-9]+)/
-    translations.delete('choices') unless FIELDS_WITH_CHOICES.include?(field_object.field_type)
+    translations.delete('choices') unless fields_with_choices.include?(field_object.field_type)
     field_choices = field_object.safe_send(CHOICE_MAPPING[field_type]).map { |choice| Integer(choice[0].slice(/[0-9]+/)) }
     translations['choices'].each do |key, value|
       translations['choices'].delete(key) && next unless (key.is_a?(String) || key.nil?) && !choice_regex.match(key).nil?
@@ -125,7 +125,7 @@ class Admin::CustomTranslations::Upload < BaseWorker
     existing_translation = existing_translation.translations
     new_translation = existing_translation.merge(translations)
     new_translation.delete_if { |key, value| value.nil? || value == '' }
-    if FIELDS_WITH_CHOICES.include?(field_object.field_type) && !translations['choices'].nil?
+    if fields_with_choices.include?(field_object.field_type) && !translations['choices'].nil?
       choices_merge = (existing_translation['choices'].nil? ? {} : existing_translation['choices']).merge(translations['choices'])
       choices_merge.delete_if { |key, value| value.nil? || value == '' }
       new_translation['choices'] = choices_merge
@@ -140,5 +140,9 @@ class Admin::CustomTranslations::Upload < BaseWorker
   def preload_assoc
     preload = PRELOAD_ASSOC.dup
     preload << language_translation.to_sym << { nested_ticket_fields: { ticket_field: [language_translation.to_sym] } }
+  end
+
+  def fields_with_choices
+    Account.current.ticket_source_revamp_enabled? ? ['nested_field', 'custom_dropdown', 'default_ticket_type', 'default_status', 'default_source'] : FIELDS_WITH_CHOICES
   end
 end

@@ -1,9 +1,10 @@
+
 require_relative '../../../test_helper'
 class Admin::CustomTranslations::DownloadControllerTest < ActionController::TestCase
   include TicketFieldsTestHelper
   CHOICES = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'].freeze
   DEFAULT_FIELDS = ['requester', 'subject', 'priority', 'group', 'agent', 'product', 'description', 'company'].freeze
-  INVALID_TICKET_FIELDS = ['default_internal_group', 'default_internal_agent', 'default_source'].freeze
+  INVALID_TICKET_FIELDS = ['default_internal_group', 'default_internal_agent'].freeze
 
   def setup
     super
@@ -11,10 +12,12 @@ class Admin::CustomTranslations::DownloadControllerTest < ActionController::Test
   end
 
   def stub_for_custom_translations
+    Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
     Account.current.add_feature(:custom_translations)
   end
 
   def unstub_for_custom_translations
+    Account.current.unstub(:ticket_source_revamp_enabled?)
     Account.current.revoke_feature(:custom_translations)
   end
 
@@ -27,7 +30,7 @@ class Admin::CustomTranslations::DownloadControllerTest < ActionController::Test
   def create_custom_translations(field, lang)
     language_id = Language.find_by_code(lang).id
     label = field.as_api_response(:custom_translation)[:label] + '_' + Faker::Lorem.word unless DEFAULT_FIELDS.include?(field.name)
-    customer_label = field.as_api_response(:custom_translation)[:customer_label] + '_' + Faker::Lorem.word
+    customer_label = field.as_api_response(:custom_translation)[:customer_label] + '_' + Faker::Lorem.word if field.name != 'source'
 
     if field.field_type == 'nested_field' && field.parent_id.present?
       translated_data = { "label_#{field.level}" => label, "customer_label_#{field.level}" => customer_label }
@@ -35,6 +38,7 @@ class Admin::CustomTranslations::DownloadControllerTest < ActionController::Test
       translated_data = { 'label' => label, 'customer_label' => customer_label }
     end
 
+    translated_data.delete('customer_label') if field.name == 'source'
     if field.as_api_response(:custom_translation)[:choices].present?
       choices = Hash[field.as_api_response(:custom_translation)[:choices].map { |x, y| [x, y + '_' + Faker::Lorem.word] }]
       translated_data = translated_data.merge('choices' => choices)
@@ -87,6 +91,20 @@ class Admin::CustomTranslations::DownloadControllerTest < ActionController::Test
     primary_lang = Account.current.language
     ticket_fields = YAML.load(response.body)[primary_lang]['custom_translations']['ticket_fields']
     assert ticket_fields.include?('status')
+  ensure
+    unstub_for_custom_translations
+  end
+
+  def test_primary_ticket_field_source
+    stub_for_custom_translations
+    source = create_custom_source
+    get :primary, construct_params({})
+    assert_response 200
+    primary_lang = Account.current.language
+    ticket_fields = YAML.safe_load(response.body)[primary_lang]['custom_translations']['ticket_fields']
+    assert ticket_fields.include?('source')
+    source_choices = ticket_fields['source']['choices']
+    assert_equal source_choices["choice_#{source.account_choice_id}"], source.name
   ensure
     unstub_for_custom_translations
   end
@@ -575,6 +593,31 @@ class Admin::CustomTranslations::DownloadControllerTest < ActionController::Test
     assert response_field['label'].present?
     assert response_field['customer_label'].present?
     assert response_field['choices'].present?
+    ch = field.fetch_custom_field_choices
+    assert (response_field['choices'].all? { |x, y| y.include?(ch[x]) })
+  ensure
+    unstub_for_custom_translations
+  end
+
+  def test_secondary_custom_field_source
+    stub_for_custom_translations
+    field = Account.current.ticket_fields.where(name: 'source').first
+    get :secondary, construct_params('id' => 'fr')
+    assert_response 200
+    response_field = YAML.safe_load(response.body)['fr']['custom_translations']['ticket_fields']['source']
+    assert response_field.present?
+    assert response_field['label'].empty?
+    assert response_field['customer_label'].blank?
+    choices = response_field['choices'].map { |x, y| y }
+    assert choices.all?(&:blank?)
+    create_custom_translations(field, 'fr')
+    get :secondary, construct_params('id' => 'fr')
+    assert_response 200
+    response_field = YAML.safe_load(response.body)['fr']['custom_translations']['ticket_fields']['source']
+    assert_not_nil response_field
+    assert_not_nil response_field['label']
+    assert_nil response_field['customer_label']
+    assert_not_nil response_field['choices']
     ch = field.fetch_custom_field_choices
     assert (response_field['choices'].all? { |x, y| y.include?(ch[x]) })
   ensure
