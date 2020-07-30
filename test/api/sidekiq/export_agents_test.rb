@@ -12,8 +12,6 @@ class CompanyWorkerTest < ActionView::TestCase
   include AccountTestHelper
 
   def setup
-    # To Prevent agent central publish error
-    Agent.any_instance.stubs(:user_uuid).returns('123456789')
     create_test_account
     @agent = add_agent_to_account(@account, options = { role: 1, active: 1 })
   end

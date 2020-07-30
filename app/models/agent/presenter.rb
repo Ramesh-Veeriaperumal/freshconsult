@@ -26,7 +26,6 @@ class Agent < ActiveRecord::Base
     s.add :account_id
     s.add :available
     s.add :agent_type_hash, as: :agent_type
-    s.add :user_uuid, as: :freshid_uuid
     s.add proc { |agent| agent.read_and_write_access_groups[:groups] }, as: :groups
     s.add proc { |agent| agent.read_and_write_access_groups[:contribution_groups] }, as: :contribution_groups
     USER_FIELDS.each do |key|
@@ -92,10 +91,6 @@ class Agent < ActiveRecord::Base
 
   def central_publish_worker_class
     "CentralPublishWorker::UserWorker"
-  end
-
-  def user_uuid
-    Account.current.freshid_org_v2_enabled? ? Freshid::V2::Models::User.find_by_email(user.email).id : Freshid::User.find_by_email(user.email).uuid
   end
 
   def ticket_permission_hash
