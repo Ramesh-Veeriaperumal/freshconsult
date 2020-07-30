@@ -5,10 +5,10 @@ module CentralLib::CentralResyncRateLimiter
 
   def configure_redis_and_execute(source)
     key = resync_rate_limiter_key(source)
-    set_and_increment_redis_key_on_job_start(key)
+    increment_redis_key_on_job_start(key)
     yield
   ensure
-    decrement_and_delete_redis_key_on_job_end(key)
+    decrement_redis_key_on_job_end(key)
   end
 
   def resync_worker_limit_reached?(source)
@@ -17,7 +17,7 @@ module CentralLib::CentralResyncRateLimiter
 
   def resync_ratelimit_options(args)
     {
-      batch_size: get_max_allowed_records,
+      batch_size: max_allowed_records,
       run_after: RESYNC_RUN_AFTER,
       args: args,
       class_name: self.class.name
@@ -26,12 +26,12 @@ module CentralLib::CentralResyncRateLimiter
 
   private
 
-  def set_and_increment_redis_key_on_job_start(key)
+  def increment_redis_key_on_job_start(key)
     set_others_redis_key_if_not_present(key, 0)
     increment_others_redis(key)
   end
 
-  def decrement_and_delete_redis_key_on_job_end(key)
+  def decrement_redis_key_on_job_end(key)
     decrement_others_redis(key)
   end
 
@@ -45,7 +45,7 @@ module CentralLib::CentralResyncRateLimiter
     (current_running_workers && current_running_workers.to_i) || 0
   end
 
-  def get_max_allowed_records
+  def max_allowed_records
     max_allowed_records = get_others_redis_key(CENTRAL_RESYNC_MAX_ALLOWED_RECORDS)
     (max_allowed_records && max_allowed_records.to_i) || RESYNC_MAX_ALLOWED_RECORDS
   end

@@ -18,7 +18,7 @@ module CentralLib
       # define a custom method for model instance to return meta_info
       klass.safe_send(:define_method, :meta_for_central_payload, -> { args[:meta_info] })
       # Trigger sync with ratelimit options
-      trigger_sync(batch_size: get_entity_batch_size, conditions: args[:conditions], ratelimit: resync_ratelimit_options(args))
+      trigger_sync(batch_size: entity_batch_size, conditions: args[:conditions], ratelimit: resync_ratelimit_options(args))
     end
 
     # Method to trigger the Resync with betch_size, Scope: (any relation with Account)
@@ -35,7 +35,7 @@ module CentralLib
       end
     end
 
-    def get_entity_batch_size
+    def entity_batch_size
       if RESYNC_CONFIG_ENTITIES.include? entity_name
         RESYNC_CONFIG_BATCH_SIZE
       elsif RESYNC_DATA_ENTITIES.include? entity_name
