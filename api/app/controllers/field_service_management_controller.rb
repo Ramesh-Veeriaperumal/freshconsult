@@ -63,6 +63,6 @@ class FieldServiceManagementController < ApiApplicationController
   def supported_feature?(feature)
     toggle_feature = "#{FEATURE_MAPPING[feature]}_toggle".to_sym
     return false if Fdadmin::FeatureMethods::BITMAP_FEATURES.include?(toggle_feature) && !scoper.has_feature?(toggle_feature)
-    scoper.launched?(LAUNCH_PARTY_MAPPING[feature])
+    LAUNCH_PARTY_MAPPING[feature] ? scoper.launched?(LAUNCH_PARTY_MAPPING[feature]) : true
   end
 end
