@@ -1,0 +1,119 @@
+# frozen_string_literal: true
+
+module CronWebhooks
+  class SuspendAccountWebhookWorker < CronWebhooks::CronWebhookWorker
+    sidekiq_options queue: :cron_suspended_accounts, retry: 0, dead: true, backtrace: 10, failures: :exhausted
+
+    include CronWebhooks::Constants
+    include Redis::RedisKeys
+    include Redis::OthersRedis
+
+    SUSPENSION_BASE_DATE = "'2019-01-01'"
+    DEFAULT_BATCH_SIZE_TO_DELETE = 1000
+    ACCOUNT_MAX_DELETION_ATTEMPT_COUNT = 10
+    WORKER_STOP_KEY = 'SUSPENDED_ACCOUNT_CLEAN_UP_WORKER_STOP'
+    ACCOUNTS_SKIP_LIST_KEY = 'SUSPENDED_ACCOUNT_CLEAN_UP_SKIP_LIST'
+    BATCH_SIZE_TO_DELETE_KEY = 'SUSPENDED_ACCOUNT_CLEAN_UP_BATCH_SIZE'
+    ACCOUNTS_SUSPENDED_BASE_DATE_KEY = 'ACCOUNTS_SUSPENDED_FROM_DATE'
+
+    def perform(args)
+      perform_block(args) do
+        init
+        perform_deletion
+      end
+    end
+
+    private
+
+      def init
+        @start_time = Time.current
+        @deleted_accounts_count = 0
+        @shards = ActiveRecord::Base.shard_names
+        @processing_accounts = {}
+        @shards.each { |sh| @processing_accounts[sh] = { account_id: 0, attempt_count: 0 } }
+        @account_skip_list = get_all_members_in_a_redis_set(ACCOUNTS_SKIP_LIST_KEY)
+        @base_date = get_others_redis_key(ACCOUNTS_SUSPENDED_BASE_DATE_KEY) || SUSPENSION_BASE_DATE
+      end
+
+      def perform_deletion
+        Rails.logger.info('Suspended account deletion webhook worker started.')
+        return 0 if stop_execution?
+
+        while @shards.present?
+          @shards.each do |shard_name|
+            Sharding.run_on_shard(shard_name) do
+              begin
+                account = fetch_next_account_from_shard(shard_name)
+                next unless account
+
+                account.make_current
+                delete_account_on_shard(account, shard_name)
+
+                return 0 if stop_execution?
+              rescue StandardError => e
+                Rails.logger.info("Exception while processing account - #{account.id} --- #{e.inspect}")
+              ensure
+                Account.reset_current_account
+              end
+            end
+          end
+        end
+      rescue StandardError => e
+        Rails.logger.info "StandardError - #{e.inspect}"
+      ensure
+        time_taken = Time.at((@start_time - Time.current).to_i.abs).utc.strftime('%H:%M:%S')
+        Rails.logger.info("successfully enqueued #{@deleted_accounts_count} jobs for deletion in #{time_taken}")
+      end
+
+      def fetch_next_account_from_shard(shard_name)
+        processing_account_id = @processing_accounts[shard_name][:account_id]
+        account = Account.joins(:subscription).where("accounts.id >= #{processing_account_id} AND subscriptions.state = 'suspended' AND subscriptions.updated_at < #{@base_date}").order('accounts.id asc').limit(1).first
+        if account.nil?
+          delete_shard(shard_name)
+          Rails.logger.info("No suspended account present on shard #{shard_name}")
+        elsif @account_skip_list.include?(account.id.to_s)
+          Rails.logger.info "Skip list account found - #{account.id}"
+          @processing_accounts[shard_name] = { account_id: account.id + 1, attempt_count: 0 }
+          account = nil
+        elsif @processing_accounts[shard_name][:account_id] == account.id
+          if @processing_accounts[shard_name][:attempt_count] > ACCOUNT_MAX_DELETION_ATTEMPT_COUNT
+            Rails.logger.info "Already processing account exceeds max retry count - #{account.id}"
+            @processing_accounts[shard_name] = { account_id: account.id + 1, attempt_count: 0 }
+            account = nil
+          elsif (@processing_accounts[shard_name][:attempt_count]).zero?
+            @processing_accounts[shard_name][:attempt_count] = 1 + @processing_accounts[shard_name][:attempt_count]
+          else
+            Rails.logger.info "Already processing account found - #{account.id}"
+            @processing_accounts[shard_name][:attempt_count] = 1 + @processing_accounts[shard_name][:attempt_count]
+            account = nil
+          end
+        else
+          @processing_accounts[shard_name] = { account_id: account.id, attempt_count: 1 }
+        end
+        account
+      end
+
+      def delete_account_on_shard(account, shard_name)
+        subscription = account.subscription
+        job_id = AccountCleanup::OldSuspendedAccountsWorker.perform_async(account_id: account.id, shard_name: shard_name)
+        @deleted_accounts_count += 1
+        Rails.logger.info "Deleting suspended account - #{account.id} with subscription - #{subscription.inspect}. Total deleted #{@deleted_accounts_count}, job id #{job_id}."
+      end
+
+      def stop_execution?
+        if @deleted_accounts_count >= batch_size || redis_key_exists?(WORKER_STOP_KEY)
+          Rails.logger.info("Stopped execution after enqueuing  #{@deleted_accounts_count} accounts.")
+          return true
+        end
+        false
+      end
+
+      def delete_shard(shard_name)
+        @shards.delete(shard_name)
+      end
+
+      def batch_size
+        (get_others_redis_key(BATCH_SIZE_TO_DELETE_KEY) || DEFAULT_BATCH_SIZE_TO_DELETE).to_i
+      end
+  end
+end
