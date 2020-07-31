@@ -37,6 +37,8 @@ Helpkit::Application.routes.draw do
           post 'widget/regenerate', to: :regenerate_widget_key
         end
       end
+
+      resources :business_calendars, controller: 'api_business_calendars', only: [:index, :show]
       put '/custom_translations', to: 'custom_translations#upload'
       get '/custom_translations', to: 'custom_translations#download'
 
