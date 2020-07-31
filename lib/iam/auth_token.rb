@@ -1,4 +1,6 @@
 module Iam::AuthToken
+  include Channel::V2::Iam::AuthenticationConstants
+
   PRIVATE_KEY = OpenSSL::PKey::RSA.new(File.read('config/cert/iam.pem'), ::Iam::IAM_CONFIG['password'])
 
   def construct_jwt(user, privilege_data = nil)
@@ -21,6 +23,10 @@ module Iam::AuthToken
       'alg' => 'RS256'
     }
     JWT.encode(payload, PRIVATE_KEY, 'RS256', headers)
+  end
+
+  def construct_jwt_with_bearer(user)
+    "#{BEARER} #{construct_jwt(user)}"
   end
 
   def construct_privilege(privilege_data)
