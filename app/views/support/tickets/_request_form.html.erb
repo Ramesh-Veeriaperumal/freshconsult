@@ -271,7 +271,7 @@
 <% if  current_account.features_included?(:prevent_ticket_creation_for_others) && !current_account.has_feature?(:anonymous_tickets)  %>
   <script type="text/javascript">
   	var $helpdeskTicketEmail = document.getElementById("helpdesk_ticket_email");
-	  $helpdeskTicketEmail.disabled = true;
+	  $helpdeskTicketEmail.readOnly = true;
 	</script>
 <%else%>
 	<%= javascript_tag do %>
