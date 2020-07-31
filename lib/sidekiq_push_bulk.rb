@@ -24,11 +24,11 @@ module SidekiqPushBulk
 
   private
 
-  def build_args_and_push(items, &block)
-    sidekiq_bulk_args = {
-      class: self,
-      args: block.present? ? items.map(&block) : items
-    }.with_indifferent_access
-    Sidekiq::Client.push_bulk(sidekiq_bulk_args)
-  end
+    def build_args_and_push(items, &block)
+      sidekiq_bulk_args = {
+        class: self,
+        args: block.present? ? items.map(&block) : items
+      }.with_indifferent_access
+      Sidekiq::Client.push_bulk(sidekiq_bulk_args)
+    end
 end

@@ -1,28 +1,30 @@
 module CentralPublish
   class ResyncWorker < BaseWorker
-    include CentralLib::CentralResync
-    include CentralLib::CentralResyncRateLimiter
+    include CentralLib::CentralResyncHelper
 
-    sidekiq_options queue: :central_publish_resync, retry: 0, failures: :exhausted
+    sidekiq_options queue: :central_publish_resync, retry: 1, failures: :exhausted
 
-    attr_accessor :relation_with_account
-
+    # Required Arguments
+    # => model_name: Name of the model, (Eg: 'Helpdesk::Ticket', 'Helpdesk::TicketField', 'Agent')
+    # => source: The Source from which the request is received, (Eg: 'search', 'reports')
+    # => meta_info: Info given by the source, (Eg: { id: 121 })
+    # Optional Agruments for Config sync (Required for Data sync)
+    # => conditions: Where condition, (Eg: ['display_ids in (1, 2, 3, 4, 5) and deleted = false and spam = false'])
     def perform(args)
       @args = args.symbolize_keys!
-      @relation_with_account = @args[:relation_with_account].to_sym
 
       configure_redis_and_execute(@args[:source]) do
         publish_entity_to_central
       end
     end
 
-    def publish_entity_to_central
-      return unless Account.current.respond_to?(@relation_with_account)
+    private
 
-      Account.current.safe_send(@relation_with_account).sync_entity(@args)
-    rescue StandardError => e
-      Rails.logger.info "Publishing Entity FAILED => #{e.inspect}"
-      NewRelic::Agent.notice_error(e, description: "Error publishing entity for Account: #{Account.current.id}, Service: #{@args[:source]}")
-    end
+      def publish_entity_to_central
+        sync_entity(args)
+      rescue StandardError => e
+        Rails.logger.info "Publishing Entity FAILED => #{e.inspect}"
+        NewRelic::Agent.notice_error(e, description: "Error publishing entity for Account: #{Account.current.id}, Service: #{@args[:source]}")
+      end
   end
 end
