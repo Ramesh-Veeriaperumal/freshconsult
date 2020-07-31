@@ -6,14 +6,15 @@ module SidekiqPushBulk
   # NOTE: items: Should be Array of Arrays (or) you can pass a block, see the below examples
   #
   # Usage:
-  # => Archive::TicketWorker.push_bulk([[{ ticket_id: 1 }], [{ ticket_id: 2 }], [{ ticket_id: 3 }]], 300)
+  # => push_bulk_jobs('Archive::TicketWorker', [[{ ticket_id: 1 }], [{ ticket_id: 2 }], [{ ticket_id: 3 }]], 300)
   #                                    (OR)
-  # => Archive::TicketWorker.push_bulk( Account.current.tickets, 300 ) do |ticket|
+  # => push_bulk_jobs('Archive::TicketWorker', Account.current.tickets, 300 ) do |ticket|
   #      _ticket_id = ticket.display_id
   #      _archive_days = Account.current.account_additional_settings.archive_days
   #      [ { ticket_id: _ticket_id, archive_days: _archive_days } ]
   #    end
-  def push_bulk(items, limit: 1_000, &block)
+  def push_bulk_jobs(worker_class, items, limit: 1_000, &block)
+    @worker_klass = worker_class.constantize
     # Sidekiq recommends to have a limit of 1000 per batch eventhough the max limit is 10_000
     # https://github.com/mperham/sidekiq/blob/df2665b30a3139037f0a21ea7475ea1ef3d1fd03/lib/sidekiq/client.rb#L81
     job_ids = items.each_slice(limit).map do |group_of_items|
@@ -26,7 +27,7 @@ module SidekiqPushBulk
 
     def build_args_and_push(items, &block)
       sidekiq_bulk_args = {
-        class: self,
+        class: @worker_klass,
         args: block.present? ? items.map(&block) : items
       }.with_indifferent_access
       Sidekiq::Client.push_bulk(sidekiq_bulk_args)

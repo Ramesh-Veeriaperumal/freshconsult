@@ -11,10 +11,6 @@ module CentralLib
     #             RESYNC_DATA_ENTITIES, RESYNC_CONFIG_ENTITIES
     def sync_entity(args)
       @entity = args[:model_name].constantize
-      unless (RESYNC_CONFIG_ENTITIES + RESYNC_DATA_ENTITIES).include? @entity.name
-        Rails.logger.info("This entity -> (#{@entity.name}) is not ready")
-        return
-      end
       # define a custom method for model instance to return meta_info, This will be consumer on constructing central payload for this model
       @entity.safe_send(:define_method, :meta_for_central_payload, -> { args[:meta_info] })
       # Trigger sync with ratelimit options
@@ -29,7 +25,7 @@ module CentralLib
       #  - scoper.trigger_sync(batch_size: 300, conditions: ['parent_id is nil'], rate_limit: ratelimit_options) (Scoper can be any association)
       def trigger_sync(options)
         scoper.find_in_batches_with_rate_limit(options) do |batch|
-          CentralPublisher::CentralReSyncWorker.push_bulk(batch) do |each_record|
+          push_bulk_jobs('CentralPublisher::CentralReSyncWorker', batch) do |each_record|
             manual_publish_args = each_record.construct_manual_publish_args(:sync)
             manual_publish_args[:event_info].merge!(each_record.meta_for_central_payload)
             [each_record.construct_payload_type(:sync), manual_publish_args]

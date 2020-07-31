@@ -21,9 +21,9 @@ module CentralPublish
     private
 
       def publish_entity_to_central
-        sync_entity(args)
+        sync_entity(@args)
       rescue StandardError => e
-        Rails.logger.info "Publishing Entity FAILED => #{e.inspect}"
+        Rails.logger.error "Publishing Entity FAILED => #{e.inspect}"
         NewRelic::Agent.notice_error(e, description: "Error publishing entity for Account: #{Account.current.id}, Service: #{@args[:source]}")
       end
   end
