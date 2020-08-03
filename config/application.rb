@@ -143,7 +143,7 @@ module Helpkit
       r.define_rule(match: "^(/[a-z]{2}(-[A-Z]{2})?)?\/support\/tickets\/check_email", type: :fixed, metric: :rpm, limit: 10, per_ip: true, per_url: true, include_host: true)
       r.define_rule(match: "^(/[a-z]{2}(-[A-Z]{2})?)?\/password_resets", type: :fixed, metric: :rpm, limit: 10, per_ip: true, per_url: true, include_host: true)
       r.define_rule(match: "^/(([a-z]{2}(-[A-Z]{2})?\/)?support(?!\/(theme)))/.*", type: :fixed, metric: :rpm, limit: 200, per_ip: true, per_url: true, include_host: true)
-      r.define_rule( :match => "^/(accounts\/new_signup_free).*", :type => :fixed, :metric => :rpd, :limit => 5,:per_xff_ip => true)
+      r.define_rule(match: "^/(accounts\/new_signup_free).*", type: :fixed, metric: :rpd, limit: 5, per_ip: false, per_xff_ip: true)
       r.define_rule( :match => "^/(accounts\/email_signup).*", :type => :fixed, :metric => :rpd, :limit => 5,:per_ip => true)
       r.define_rule( :match => "^/(accounts\/anonymous_signup).*", :type => :fixed, :metric => :rpd, :limit => 5,:per_ip => true)
       r.define_rule( :match => "^/(public\/tickets)/.*", :type => :fixed, :metric => :rpm, :limit => 10,:per_ip => true)
