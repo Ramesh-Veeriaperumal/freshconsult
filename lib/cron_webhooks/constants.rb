@@ -231,6 +231,10 @@ module CronWebhooks::Constants
     archive_automation: {
       class_name: 'CronWebhooks::ArchiveAutomation',
       semaphore_expiry: 24.hours
+    },
+    suspended_account_deletion: {
+      class_name: 'CronWebhooks::SuspendAccountWebhookWorker',
+      semaphore_expiry: 1.hour
     }
   }.freeze
 

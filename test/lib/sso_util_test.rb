@@ -41,11 +41,14 @@ class SsoUtilTestControllerTest < ActionController::TestCase
   end
 
   def test_sso_login_page
+    Account.any_instance.stubs(:sso_options).returns(sso_options)
     response = ActionDispatch::TestResponse.new
     @controller.response = response
     @controller.stubs(:action_name).returns('sso_login_page')
     actual = @controller.send(:sso_login_page)
     assert_response 200
+  ensure
+    Account.any_instance.unstub(:sso_options)
   end
 
   def test_sso_login_with_saml
@@ -181,6 +184,12 @@ class SsoUtilTestControllerTest < ActionController::TestCase
         company: nil,
         title: nil,
         external_id: nil
+      }
+    end
+
+    def sso_options
+      {
+        login_url: 'test.freshdesk.com/sso'
       }
     end
 end

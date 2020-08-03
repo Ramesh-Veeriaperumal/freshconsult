@@ -272,10 +272,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # METHODS USED BY CENTRAL PUBLISHER GEM. NOT A PART OF PRESENTER
   # *****************************************************************
 
-  def self.central_publish_enabled?
-    Account.current.ticket_central_publish_enabled?
-  end
-
   def column_attribute_mapping
     Helpdesk::SchemaLessTicket::COLUMN_TO_ATTRIBUTE_MAPPING.merge({
       sl_skill_id: :skill_id,

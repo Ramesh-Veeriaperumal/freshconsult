@@ -177,11 +177,31 @@ class BusinessCalendar < ActiveRecord::Base
     @holiday_set ||= holidays.collect { |holiday| "#{holiday.day} #{holiday.mon}" }.to_set.freeze
   end
 
+  def channel_bussiness_hour_data
+    channel_business_hours = []
+    freshdesk_hash = {}
+    freshdesk_hash[:channel_name] = ApiBusinessCalendarConstants::FRESHDESK_CHANNEL
+    freshdesk_hash[:business_hours_type] = business_time_data[:fullweek] ? ApiBusinessCalendarConstants::ALL_TIME_AVAILABLE : ApiBusinessCalendarConstants::CUSTOM_AVAILABLE
+    freshdesk_hash[:business_hours] = business_time_data[:weekdays].each_with_object([]) do |day, array|
+      array << { day: BusinessCalenderConstants::WEEKDAY_HUMAN_LIST[day - 1], time_slots: time_slots(day) }
+    end
+    channel_business_hours << freshdesk_hash
+    channel_business_hours
+  end
+
+  def time_slots(day)
+    [{ start_time: time_in_24hr_format(business_time_data[:working_hours][day][:beginning_of_workday]), end_time: time_in_24hr_format(business_time_data[:working_hours][day][:end_of_workday]) }]
+  end
+
   private
 
     def formatted_date(day, time)
       format = "%B %d %Y #{time}"
       Time.zone ? Time.zone.parse(day.strftime(format)) : Time.parse(day.strftime(format))
+    end
+
+    def time_in_24hr_format(time)
+      DateTime.parse(time).utc.strftime('%H:%M:%S')
     end
 
     def valid_working_hours?

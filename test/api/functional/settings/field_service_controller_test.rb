@@ -169,7 +169,6 @@ module Settings::Helpdesk
     def test_enable_geo_tagging
       Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
       add_privilege(User.current, :admin_tasks) unless User.current.privilege?(:admin_tasks)
-      Account.current.launch(:launch_location_tagging)
       Account.current.account_additional_settings.save!
       assert_equal Account.current.has_feature?(:location_tagging), false
       params = { location_tagging_enabled: true }
@@ -178,32 +177,18 @@ module Settings::Helpdesk
       assert Account.current.has_feature?(:location_tagging)
     ensure
       Account.any_instance.unstub(:field_service_management_enabled?)
-      Account.current.rollback :launch_location_tagging
       Account.current.revoke_feature(:location_tagging)
     end
 
     def test_disable_geo_tagging
       Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
       add_privilege(User.current, :admin_tasks) unless User.current.privilege?(:admin_tasks)
-      Account.current.launch(:launch_location_tagging)
       Account.current.add_feature(:location_tagging)
       Account.current.account_additional_settings.save!
       params = { location_tagging_enabled: false }
       put :update_settings, construct_params({}, params)
       assert_response 200
       assert_equal Account.current.has_feature?(:location_tagging), false
-    ensure
-      Account.any_instance.unstub(:field_service_management_enabled?)
-      Account.current.rollback :launch_location_tagging
-    end
-
-    def test_geo_tagging_without_lp
-      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
-      add_privilege(User.current, :admin_tasks) unless User.current.privilege?(:admin_tasks)
-      Account.current.account_additional_settings.save!
-      params = { location_tagging_enabled: false }
-      put :update_settings, construct_params({}, params)
-      assert_response 403
     ensure
       Account.any_instance.unstub(:field_service_management_enabled?)
     end

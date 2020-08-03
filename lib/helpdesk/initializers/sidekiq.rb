@@ -93,6 +93,7 @@ Sidekiq.configure_client do |config|
       'FreshidRetryWorker',
       'Admin::Sandbox::CleanupWorker',
       'Admin::Sandbox::UpdateSubscriptionWorker',
+      'AccountCleanup::OldSuspendedAccountsWorker',
       'Search::Analytics::AccountCleanupWorker',
       'Search::Analytics::TicketsCleanupWorker',
       'AccountCreation::PrecreateAccounts'
@@ -232,6 +233,7 @@ Sidekiq.configure_server do |config|
       'FreshidRetryWorker',
       'Admin::Sandbox::CleanupWorker',
       'Admin::Sandbox::UpdateSubscriptionWorker',
+      'AccountCleanup::OldSuspendedAccountsWorker',
       'Search::Analytics::AccountCleanupWorker',
       'Search::Analytics::TicketsCleanupWorker',
       'AccountCreation::PrecreateAccounts'
@@ -340,6 +342,7 @@ Sidekiq.configure_server do |config|
       'FreshidRetryWorker',
       'Admin::Sandbox::CleanupWorker',
       'Admin::Sandbox::UpdateSubscriptionWorker',
+      'AccountCleanup::OldSuspendedAccountsWorker',
       'Search::Analytics::AccountCleanupWorker',
       'Search::Analytics::TicketsCleanupWorker',
       'AccountCreation::PrecreateAccounts'

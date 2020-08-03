@@ -35,10 +35,6 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     t.add proc { |x| x.utc_format(x.executed_at) }, as: :executed_at
   end
 
-  def self.central_publish_enabled?
-    Account.current.launched?(:time_sheets_central_publish)
-  end
-
   def ticket_id
     belongs_to_ticket? ? workable.display_id : Helpdesk::ArchiveTicket.unscoped { workable.display_id }
   end

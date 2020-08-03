@@ -13,7 +13,6 @@ class PortalTest < ActiveSupport::TestCase
 
   def before_all
     return if @@before_all_run
-    @account.launch(:portal_central_publish)
     @@before_all_run = true
   end
 
@@ -23,24 +22,14 @@ class PortalTest < ActiveSupport::TestCase
     CentralPublisher::Worker.jobs.select { |job| job['args'][1]['relationship_with_account'] == 'portals' }
   end
 
-  def test_central_publish_with_launch_party_disabled
-    @account.rollback(:portal_central_publish)
-    CentralPublisher::Worker.jobs.clear
-    create_portal
-    jobs = central_publish_jobs_for_portals
-    assert_equal 0, jobs.size
-  ensure
-    @account.launch(:portal_central_publish)
-  end
-
-  def test_central_publish_with_launch_party_enabled
+  def test_portal_create_central_publish
     CentralPublisher::Worker.jobs.clear
     create_portal
     jobs = central_publish_jobs_for_portals
     assert_equal 1, jobs.size
   end
 
-  def test_portal_create_with_central_publish
+  def test_portal_create_central_publish_payload
     test_portal = create_portal
     payload = test_portal.central_publish_payload.to_json
     payload.must_match_json_expression(central_publish_portal_pattern(test_portal))

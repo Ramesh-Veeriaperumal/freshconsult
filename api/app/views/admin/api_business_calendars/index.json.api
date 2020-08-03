@@ -1,0 +1,3 @@
+@items.map do |business_hour|
+  business_hour.to_hash(true)
+end.to_json

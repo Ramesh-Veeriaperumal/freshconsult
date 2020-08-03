@@ -16,9 +16,9 @@ class PortalSolutionCategoryTest < ActiveSupport::TestCase
   def test_create_portal_solution_category_on_portal_create
     CentralPublisher::Worker.jobs.clear
     portal1 = create_portal
-    job = CentralPublisher::Worker.jobs.last
-    assert_equal 1, CentralPublisher::Worker.jobs.size
-    assert_equal 'portal_solution_category_create', job['args'][0]
+    assert_equal 2, CentralPublisher::Worker.jobs.size
+    assert_equal 'portal_solution_category_create', CentralPublisher::Worker.jobs[1]['args'][0]
+    assert_equal 'portal_create', CentralPublisher::Worker.jobs[0]['args'][0]
     payload = portal1.portal_solution_categories.last.central_publish_payload.to_json
     payload.must_match_json_expression(central_publish_portal_solution_category_pattern(portal1.portal_solution_categories.last))
   end

@@ -1602,7 +1602,10 @@ class Helpdesk::TicketsController < ApplicationController
         not_html: !request.format.html?,
         path_info: request.path_info,
         is_ajax: request.xhr?,
-        env_path: env['PATH_INFO']
+        env_path: env['PATH_INFO'],
+        controller: self.class.name,
+        action: request.params[:action],
+        domain: request.domain
       }
       result = FalconRedirection.falcon_redirect(options)
       redirect_to (result[:path] + get_valid_query_string) if result[:redirect]

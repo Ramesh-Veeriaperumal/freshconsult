@@ -29,4 +29,5 @@ module FeatureConstants
   AGENT_STATUSES = :agent_statuses
   SOLUTIONS_TEMPLATES = :solutions_templates
   OMNI_AGENT_AVAILABILITY_DASHBOARD = :omni_agent_availability_dashboard
+  EMBERIZE_BUSINESS_HOURS = :emberize_business_hours
 end

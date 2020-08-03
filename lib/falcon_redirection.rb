@@ -40,6 +40,8 @@ class FalconRedirection
                                                           redirect: true,
                                                           path: falcon_redirection_path(map_url)
                                                         }
+      logger.debug "a=#{Account.current.id}, u=#{User.current.id} rfr=#{options[:request_referer]}, p=#{options[:path_info]}, h=#{!options[:not_html]}, aj=#{options[:is_ajax]}, uuid=#{Thread.current[:message_uuid]}, d=#{options[:domain]}, c=#{options[:controller]}, act=#{options[:action]}" if prevent_redirect
+
       return result
     end
 
@@ -133,7 +135,13 @@ class FalconRedirection
         query_string.blank? ? '/a' + curr_path : '/a' + curr_path + '?' + query_string
       end
     end
-
   end
 
+  def self.log_path
+    Rails.root.join('log', 'falcon_redirection.log').to_path
+  end
+
+  def self.logger
+    @logger ||= Logger.new(log_path)
+  end
 end

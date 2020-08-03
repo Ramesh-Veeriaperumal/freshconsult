@@ -5,7 +5,7 @@ Sidekiq::Testing.fake!
 class Admin::CustomTranslations::UploadControllerTest < ActionController::TestCase
   include TicketFieldsTestHelper
 
-  TICKET_FIELDS_WITH_CHOICES = ['nested_field', 'custom_dropdown', 'default_ticket_type', 'default_status'].freeze
+  TICKET_FIELDS_WITH_CHOICES = ['nested_field', 'custom_dropdown', 'default_ticket_type', 'default_status', 'default_source'].freeze
 
   FIELD_MAPPING = {
     'Helpdesk::TicketField' => 'ticket_fields_with_nested_fields'
@@ -30,6 +30,7 @@ class Admin::CustomTranslations::UploadControllerTest < ActionController::TestCa
     Account.current.add_feature(:custom_translations)
     Account.any_instance.stubs(:supported_languages).returns(supported_languages)
     Account.any_instance.stubs(:language).returns('en')
+    Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
     Sidekiq::Worker.clear_all
     setup_fields
     @language = supported_languages.sample
@@ -39,6 +40,7 @@ class Admin::CustomTranslations::UploadControllerTest < ActionController::TestCa
     Account.current.revoke_feature(:custom_translations)
     Account.any_instance.unstub(:supported_languages)
     Account.any_instance.unstub(:language)
+    Account.current.unstub(:ticket_source_revamp_enabled?)
     CustomTranslation.delete_all
     super
   end
@@ -67,6 +69,7 @@ class Admin::CustomTranslations::UploadControllerTest < ActionController::TestCa
         choices_keys.map { |choice| choices[choice[0]] = Faker::Lorem.word }
         field_translations['choices'] = choices
       end
+      field_translations.delete('customer_label') if field.name == 'source'
       field_translations.slice!('customer_label') if only_customer_label
       translation_field_type = CLASS_NAME_MAPPING[field.class.to_s]
       payload[@language]['custom_translations'][translation_field_type][field.name] = field_translations
@@ -360,6 +363,22 @@ class Admin::CustomTranslations::UploadControllerTest < ActionController::TestCa
     assert_response 202
     translations = get_field_translation(nested_field_parent)
     assert translations == payload[@language]['custom_translations']['ticket_fields'][nested_field_parent.name], 'Translations do not match!'
+  end
+
+  def test_ticket_field_upload_with_source
+    field = get_ticket_field('source')
+    payload = yaml_payload([field])
+    write_yaml(payload)
+    @request.env['CONTENT_TYPE'] = 'multipart/form-data'
+    file = fixture_file_upload('files/translation_file.yaml', 'test/yaml', :binary)
+    stub_params_for_translations(payload)
+    Sidekiq::Testing.inline! do
+      post :upload, construct_params({ id: @language }, translation_file: file)
+    end
+    unstub_params_for_translations
+    assert_response 202
+    translation = get_field_translation(field)
+    assert translation == payload[@language]['custom_translations']['ticket_fields'][field.name], 'Translations do not match!'
   end
 
   # test cases for validation

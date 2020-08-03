@@ -228,7 +228,10 @@ class UsersController < ApplicationController
       options = {
         prevent_redirect: false,
         request_referer: request.referer,
-        path_info: request.path_info
+        path_info: request.path_info,
+        controller: self.class.name,
+        action: request.params[:action],
+        domain: request.domain
       }
       redirect_to FalconRedirection.falcon_redirect(options)[:path]
     end
