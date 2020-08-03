@@ -373,7 +373,7 @@ ActiveRecord::Schema.define(version: 20200502053301) do
     t.boolean  "deleted",                         :default => false
     t.string   "access_token"
     t.boolean  "progress",                        :default => false
-    t.integer  "owner_id"
+    t.integer  'owner_id',           limit: 8
   end
 
   add_index "archive_tickets", ["account_id", "access_token"], :name => "index_archive_tickets_on_account_id_and_access_token", :length => {"account_id"=>nil, "access_token"=>10}
