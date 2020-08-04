@@ -48,7 +48,7 @@ class CentralResyncWorkerTest < ActionView::TestCase
       'Helpdesk::Note' => ["user_id = #{rand(1..5)}"]
     }
     model_with_conditions.each do |model, condition|
-      args = resync_args.merge({ conditions: condition })
+      args = resync_args.merge(conditions: condition)
       args[:model_name] = model
       sync_entity(args)
       relation_with_account = model.constantize.new.relationship_with_account.to_sym
@@ -63,7 +63,7 @@ class CentralResyncWorkerTest < ActionView::TestCase
     set_others_redis_key(CENTRAL_RESYNC_MAX_ALLOWED_WORKERS, 2)
     set_others_redis_key(key, 1)
 
-    assert !resync_worker_limit_reached?(source)
+    assert_not resync_worker_limit_reached?(source)
     set_others_redis_key(key, 3)
     assert resync_worker_limit_reached?(source)
   ensure
@@ -76,7 +76,7 @@ class CentralResyncWorkerTest < ActionView::TestCase
     remove_others_redis_key(CENTRAL_RESYNC_MAX_ALLOWED_WORKERS)
     set_others_redis_key(key, (RESYNC_WORKER_LIMIT - 1))
 
-    assert !resync_worker_limit_reached?(source)
+    assert_not resync_worker_limit_reached?(source)
     set_others_redis_key(key, (RESYNC_WORKER_LIMIT + 1))
     assert resync_worker_limit_reached?(source)
   ensure
@@ -88,7 +88,7 @@ class CentralResyncWorkerTest < ActionView::TestCase
     key = format(CENTRAL_RESYNC_RATE_LIMIT, source: source)
     remove_others_redis_key(key)
 
-    assert !resync_worker_limit_reached?(source)
+    assert_not resync_worker_limit_reached?(source)
     set_others_redis_key(CENTRAL_RESYNC_MAX_ALLOWED_WORKERS, 0)
     assert resync_worker_limit_reached?(source)
   ensure
