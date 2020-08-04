@@ -26,31 +26,30 @@ module CentralLib::CentralResyncRateLimiter
 
   private
 
-  def increment_redis_key_on_job_start(key)
-    set_others_redis_key_if_not_present(key, 0)
-    increment_others_redis(key)
-  end
+    def increment_redis_key_on_job_start(key)
+      set_others_redis_key_if_not_present(key, 0)
+      increment_others_redis(key)
+    end
 
-  def decrement_redis_key_on_job_end(key)
-    decrement_others_redis(key)
-  end
+    def decrement_redis_key_on_job_end(key)
+      decrement_others_redis(key)
+    end
 
-  def resync_worker_limit_per_consumer
-    resync_worker_limit = get_others_redis_key(CENTRAL_RESYNC_MAX_ALLOWED_WORKERS)
-    (resync_worker_limit && resync_worker_limit.to_i) || RESYNC_WORKER_LIMIT
-  end
+    def resync_worker_limit_per_consumer
+      resync_worker_limit = get_others_redis_key(CENTRAL_RESYNC_MAX_ALLOWED_WORKERS)
+      (resync_worker_limit && resync_worker_limit.to_i) || RESYNC_WORKER_LIMIT
+    end
 
-  def current_worker_count_for_consumer(source)
-    current_running_workers = get_others_redis_key(resync_rate_limiter_key(source))
-    (current_running_workers && current_running_workers.to_i) || 0
-  end
+    def current_worker_count_for_consumer(source)
+      get_others_redis_key(resync_rate_limiter_key(source)).presence.to_i
+    end
 
-  def max_allowed_records
-    max_allowed_records = get_others_redis_key(CENTRAL_RESYNC_MAX_ALLOWED_RECORDS)
-    (max_allowed_records && max_allowed_records.to_i) || RESYNC_MAX_ALLOWED_RECORDS
-  end
+    def max_allowed_records
+      max_allowed_records = get_others_redis_key(CENTRAL_RESYNC_MAX_ALLOWED_RECORDS)
+      (max_allowed_records && max_allowed_records.to_i) || RESYNC_MAX_ALLOWED_RECORDS
+    end
 
-  def resync_rate_limiter_key(source)
-    format(CENTRAL_RESYNC_RATE_LIMIT, source: source)
-  end
+    def resync_rate_limiter_key(source)
+      format(CENTRAL_RESYNC_RATE_LIMIT, source: source)
+    end
 end
