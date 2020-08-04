@@ -1381,6 +1381,38 @@ module Ember
       Account.unstub(:current)
     end
 
+    def test_ticket_conversation_with_unrestricted_tweet_content_private_api
+      Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+      @twitter_handle = get_twitter_handle
+      @default_stream = @twitter_handle.default_stream
+      ticket = create_twitter_ticket(tweet_type: 'mention')
+      with_twitter_update_stubbed do
+        create_twitter_note(ticket, 'mention')
+      end
+      get :ticket_conversations, controller_params(version: 'private', id: ticket.display_id)
+      assert_response 200
+      match_json(conversations_pattern(ticket))
+    ensure
+      ticket.destroy
+      Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+    end
+
+    def test_ticket_conversation_with_unrestricted_twitter_dm_content_private_api
+      Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+      @twitter_handle = get_twitter_handle
+      @default_stream = @twitter_handle.default_stream
+      ticket = create_twitter_ticket(tweet_type: 'dm')
+      with_twitter_update_stubbed do
+        create_twitter_note(ticket, 'dm')
+      end
+      get :ticket_conversations, controller_params(version: 'private', id: ticket.display_id)
+      assert_response 200
+      match_json(conversations_pattern(ticket))
+    ensure
+      ticket.destroy
+      Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+    end
+
     def test_ticket_conversation_with_ner_data
       dalli_client_unstub
       enable_cache do

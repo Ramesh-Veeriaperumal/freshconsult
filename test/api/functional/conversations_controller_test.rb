@@ -1172,6 +1172,30 @@ class ConversationsControllerTest < ActionController::TestCase
     remove_others_redis_key TWITTER_APP_BLOCKED
   end
 
+  def test_twitter_reply_to_tweet_ticket_with_restricted_requester_screen_name
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    ticket = create_twitter_ticket
+    @account.launch(:twitter_public_api)
+    params_hash = {
+      body: Faker::Lorem.sentence[0..130],
+      twitter: { tweet_type: 'dm', twitter_handle_id: @twitter_handle.twitter_user_id }
+    }
+    Sidekiq::Testing.inline! do
+      with_twitter_update_stubbed do
+        post :reply, construct_params({ id: ticket.display_id }, params_hash)
+        assert_response 201
+        latest_note = Helpdesk::Note.last
+        latest_note.user.twitter_id = 'support'
+        match_json(v2_reply_note_pattern(params_hash, latest_note))
+        match_json(v2_reply_note_pattern({}, latest_note))
+      end
+    end
+  ensure
+    ticket.destroy
+    @account.rollback(:twitter_public_api)
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+  end
+
   def test_update_with_ticket_trashed
     Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
     params = update_note_params_hash
@@ -1554,6 +1578,90 @@ class ConversationsControllerTest < ActionController::TestCase
     end
     assert_response 200
     match_json(result_pattern)
+  end
+
+  def test_ticket_conversation_with_restricted_tweet_content
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    CustomRequestStore.store[:private_api_request] = false
+    @twitter_handle = get_twitter_handle
+    @default_stream = @twitter_handle.default_stream
+    ticket = create_twitter_ticket
+    with_twitter_update_stubbed do
+      create_twitter_note(ticket)
+    end
+    get :ticket_conversations, controller_params(id: ticket.display_id)
+    result_pattern = []
+    ticket.notes.visible.exclude_source('meta').each do |n|
+      result_pattern << index_note_pattern(n)
+    end
+    assert_response 200
+    match_json(result_pattern)
+  ensure
+    ticket.destroy
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+    CustomRequestStore.store[:private_api_request] = true
+  end
+
+  def test_ticket_conversation_with_restricted_twitter_dm_content
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    CustomRequestStore.store[:private_api_request] = false
+    @twitter_handle = get_twitter_handle
+    @default_stream = @twitter_handle.default_stream
+    ticket = create_twitter_ticket(tweet_type: 'dm')
+    with_twitter_update_stubbed do
+      create_twitter_note(ticket, 'dm')
+    end
+    get :ticket_conversations, controller_params(id: ticket.display_id)
+    result_pattern = []
+    ticket.notes.visible.exclude_source('meta').each do |n|
+      result_pattern << index_note_pattern(n)
+    end
+    assert_response 200
+    match_json(result_pattern)
+  ensure
+    ticket.destroy
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+    CustomRequestStore.store[:private_api_request] = true
+  end
+
+  def test_ticket_conversation_with_unrestricted_tweet_content
+    CustomRequestStore.store[:private_api_request] = false
+    @twitter_handle = get_twitter_handle
+    @default_stream = @twitter_handle.default_stream
+    ticket = create_twitter_ticket
+    with_twitter_update_stubbed do
+      create_twitter_note(ticket)
+    end
+    get :ticket_conversations, controller_params(id: ticket.display_id)
+    result_pattern = []
+    ticket.notes.visible.exclude_source('meta').each do |n|
+      result_pattern << index_note_pattern(n)
+    end
+    assert_response 200
+    match_json(result_pattern)
+  ensure
+    ticket.destroy
+    CustomRequestStore.store[:private_api_request] = true
+  end
+
+  def test_ticket_conversation_with_unrestricted_twitter_dm_content
+    CustomRequestStore.store[:private_api_request] = false
+    @twitter_handle = get_twitter_handle
+    @default_stream = @twitter_handle.default_stream
+    ticket = create_twitter_ticket(tweet_type: 'dm')
+    with_twitter_update_stubbed do
+      create_twitter_note(ticket, 'dm')
+    end
+    get :ticket_conversations, controller_params(id: ticket.display_id)
+    result_pattern = []
+    ticket.notes.visible.exclude_source('meta').each do |n|
+      result_pattern << index_note_pattern(n)
+    end
+    assert_response 200
+    match_json(result_pattern)
+  ensure
+    ticket.destroy
+    CustomRequestStore.store[:private_api_request] = true
   end
 
   def test_reply_with_nil_array_fields
