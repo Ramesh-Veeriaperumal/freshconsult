@@ -14,13 +14,11 @@ class SubscriptionsControllerTest < ActionController::TestCase
 
   def setup
     Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(false)
-    Account.any_instance.stubs(:omni_accounts_present_in_org?).returns(false)
     super
   end
 
   def teardown
     Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
-    Account.any_instance.unstub(:omni_accounts_present_in_org?)
   end
 
   def wrap_cname(params)

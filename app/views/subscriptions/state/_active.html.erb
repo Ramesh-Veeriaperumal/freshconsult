@@ -8,7 +8,7 @@
     omni_account = current_account.omni_bundle_account?
     isSelected_plan_present = @selected_plan.present?
     isSelected_plan_nil = @selected_plan.nil?
-    hide_omnichannel_toggle = current_account.launched?(:hide_omnichannel_toggle) && !@not_eligible_for_omni_upgrade
+    hide_omnichannel_toggle = current_account.launched?(:hide_omnichannel_toggle)
   %>
 <% if has_feature_gain %>
   <%= render :partial => "loyalty_upgrade_info" %>
