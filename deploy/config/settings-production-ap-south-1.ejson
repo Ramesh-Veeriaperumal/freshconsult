@@ -1384,6 +1384,10 @@
         "silkroad": {
           "_auth_type": "jwt",
           "jwt_secret": ["EJ[1:BMbkU/WyoYswDlVVQpjJk8l9CIWB9lCnB60773xLXFk=:pUhIueXmCBzob3Jd30Xn2Sr2mpTRVtwH:Rs4PgGzKASftqsgMGAJzKN5dNd4mI1ibc2kyF03IBjLSNVtzHfKs6dyzqw7P98Mxs3CJfQ==]"]
+        },
+        "kbservice": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:Kb4cBUcINoB2EL/IUJbjNbWDwgqoDNcItH+pkAgMbkE=:sJY7vPbF4lbg8Gs2PMfakRRRNTAw84jF:uazf/Gi3cdxK621JDA8uFxq94h/0yj/HsdELbPFNAGuxGES3qfb2eIfMdBxUyQiL]"]
         }
       },
       "scheduler_client_keys": {
