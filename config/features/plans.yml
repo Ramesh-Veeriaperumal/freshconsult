@@ -569,6 +569,7 @@
       - :email_bot
       - :advanced_ticket_scopes
       - :custom_objects
+      - :triage
     :inherits:
       - :estate_jan_20
     :exclude: []
