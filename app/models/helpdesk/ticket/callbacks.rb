@@ -79,6 +79,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :update_capping_on_create, :update_count_for_skill, on: :create, if: -> { outbound_email? }
   after_commit :send_outbound_email, on: :create, if: -> { outbound_email? && import_ticket.blank? }
   after_commit :trigger_observer_events, on: :update, :if => :execute_observer?
+  after_commit :trigger_va_actions, on: :update, if: -> { self.enqueue_va_actions.present? }
   after_commit :trigger_post_observer_actions, on: :update, if: -> { perform_post_observer_actions.present? }
   after_commit :enqueue_sla_calculation, :if => :enqueue_sla_calculation?
   after_commit :notify_on_update, :update_activity, :stop_timesheet_timers, :fire_update_event, on: :update
@@ -105,6 +106,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
   include AdvancedTicketScopes
+
+  def trigger_va_actions
+    self.enqueue_va_actions.each do |action_params|
+      action = action_params[:action]
+      action.trigger(action_params[:ticket], action_params[:doer], action_params[:triggered_event], action_params[:only_reversible_actions], action_params[:evaluate_on])
+    end
+  end
 
   def tag_update_central_publish
     tag_args = {}
@@ -191,7 +199,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     update_ticket_lifecycle
     ticket_states.save if ticket_states.changed?
     Rails.logger.info "Helpdesk::Ticket::update_ticket_states::#{Time.zone.now.to_f} and schema_less_ticket_object :: #{schema_less_ticket.reports_hash.inspect}"
-    schema_less_ticket.save unless schema_less_ticket_changes
+    schema_less_ticket.save if Account.current.ticket_observer_race_condition_fix_enabled? || schema_less_ticket_changed?
   end
 
   def save_sentiment
@@ -1208,8 +1216,8 @@ private
     @model_changes[:status].last == OPEN
   end
 
-  def schema_less_ticket_changes
-    schema_less_ticket.schema_less_was == schema_less_ticket.attributes
+  def schema_less_ticket_changed?
+    schema_less_ticket.schema_less_was != schema_less_ticket.attributes
   end
 
   def fetch_and_validate_file_field_attachment_ids

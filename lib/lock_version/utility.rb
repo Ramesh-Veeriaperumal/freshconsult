@@ -1,11 +1,15 @@
 module LockVersion::Utility
   MAX_RETRY_COUNT = 5
+  class TicketParallelUpdateException < StandardError
+  end
 
   def optimistic_rails_lock(action)
     retry_count = 0
     begin
       yield
     rescue ActiveRecord::StaleObjectError => e
+      raise TicketParallelUpdateException, e.message if self.retrigger_observer == true && Account.current.ticket_observer_race_condition_fix_enabled?
+
       retry_count += 1
       Rails.logger.info "#{self.class.name} raised StaleObjectError::AccountId::#{account_id}::Ticket::#{ticket_id}::LockVersion::#{int_tc05}::RetryCount::#{retry_count}"
       if retry_count <= MAX_RETRY_COUNT
