@@ -8,6 +8,7 @@ module NoteHelper
                                          :account_id => @account.id,
                                          :notable_type => 'Helpdesk::Ticket')
     test_note.incoming = params[:incoming] if params.key?(:incoming)
+    test_note.category = params[:category] if params.key?(:category)
     test_note.private = params[:private] if params[:private]
     if params[:attachments]
       test_note.attachments.build(content: params[:attachments][:resource],
