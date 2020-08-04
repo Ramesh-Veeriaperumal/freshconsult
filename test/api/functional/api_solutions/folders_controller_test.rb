@@ -12,6 +12,7 @@ module ApiSolutions
     include CoreSolutionsTestHelper
     include SolutionsPlatformsTestHelper
     include PrivilegesHelper
+    include AttachmentsTestHelper
 
     def setup
       super
@@ -29,6 +30,7 @@ module ApiSolutions
       additional.save
       @account.add_feature(:multi_language)
       @account.reload
+      @agent = add_test_agent
       @@initial_setup_run = true
     end
 
@@ -567,6 +569,70 @@ module ApiSolutions
       assert_response 400
       result = parse_response(@response.body)
       match_json([bad_request_error_pattern('platforms', :cant_set_platforms, code: :incompatible_field), bad_request_error_pattern('tags', :cant_set_tags, code: :incompatible_field)])
+    ensure
+      Account.any_instance.unstub(:omni_bundle_account?)
+      Account.current.rollback :kbase_omni_bundle
+    end
+
+    def test_create_folder_with_folder_icon_with_omni_enabled
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      Account.current.launch(:kbase_omni_bundle)
+      file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
+      category_meta = get_category
+      icon = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: User.current.id).id
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1, icon: icon })
+      assert_response 201
+      result = parse_response(@response.body)
+      assert_equal "http://#{@request.host}/api/v2/solutions/folders/#{result['id']}", response.headers['Location']
+      match_json(solution_folder_pattern(Solution::Folder.where(parent_id: result['id']).first))
+    ensure
+      Account.any_instance.unstub(:omni_bundle_account?)
+      Account.current.rollback :kbase_omni_bundle
+    end
+
+    def test_create_folder_with_folder_icon_with_omni_disabled
+      file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
+      category_meta = get_category
+      icon = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: User.current.id).id
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1, icon: icon })
+      assert_response 403
+      match_json(validation_error_pattern(bad_request_error_pattern('properties[:icon]', :require_feature, feature: :omni_bundle_2020, code: :access_denied)))
+    end
+
+    def test_create_folder_with_invalid_folder_icon_type
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      Account.current.launch(:kbase_omni_bundle)
+      category_meta = get_category
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1, icon: '9999' })
+      assert_response 400
+      results = parse_response(@response.body)
+      assert_equal results, { 'description'=>'Validation failed', 'errors'=> [{ 'field' => 'icon', 'message' => 'Value set is of type String.It should be a/an Positive Integer', 'code' => 'datatype_mismatch' }] }
+    ensure
+      Account.any_instance.unstub(:omni_bundle_account?)
+      Account.current.rollback :kbase_omni_bundle
+    end
+
+    def test_create_folder_with_invalid_folder_icon_id
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      Account.current.launch(:kbase_omni_bundle)
+      category_meta = get_category
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1, icon: 9999 })
+      assert_response 400
+      match_json([bad_request_error_pattern(:icon, :invalid_icon_id, invalid_id: 9999)])
+    ensure
+      Account.any_instance.unstub(:omni_bundle_account?)
+      Account.current.rollback :kbase_omni_bundle
+    end
+
+    def test_create_folder_with_folder_icon_with_invalid_extension
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      Account.current.launch(:kbase_omni_bundle)
+      file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+      category_meta = get_category
+      icon = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: User.current.id)
+      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1, icon: icon.id })
+      assert_response 400
+      match_json([bad_request_error_pattern(:icon, :upload_jpg_or_png_file, current_extension: '.txt')])
     ensure
       Account.any_instance.unstub(:omni_bundle_account?)
       Account.current.rollback :kbase_omni_bundle

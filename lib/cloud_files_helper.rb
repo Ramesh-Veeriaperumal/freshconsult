@@ -60,6 +60,8 @@ module CloudFilesHelper
     if model.is_a?(Solution::Draft) || model.is_a?(Solution::Article)
       # size validations for solution_draft and solution-article is done in article_delegator. So it is not needed here
       model.attachments = model.attachments + attachments
+    elsif model.is_a?(Solution::FolderMeta)
+      model.icon = attachments.first
     else
       existing_size = model.attachments.collect(&:content_file_size).sum
       # attachments.each do |attachment|

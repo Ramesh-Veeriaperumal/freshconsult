@@ -1,6 +1,6 @@
 class Solutions::FolderDecorator < ApiDecorator
   delegate :name, :description, :language_code, :created_at, :updated_at, to: :record
-  delegate :id, :is_default, :position, :article_order, :solution_article_meta, :visibility, :customer_folders, :solution_category_meta_id, :folder_visibility_mapping, :solution_platform_mapping, :tags, to: :parent
+  delegate :id, :is_default, :position, :article_order, :solution_article_meta, :visibility, :customer_folders, :solution_category_meta_id, :folder_visibility_mapping, :solution_platform_mapping, :tags, :icon, to: :parent
 
   include SolutionHelper
 
@@ -25,6 +25,7 @@ class Solutions::FolderDecorator < ApiDecorator
     if allow_chat_platform_attributes?
       response_hash[:platforms] = solution_platform_mapping.present? && (!solution_platform_mapping.try(:destroyed?))? solution_platform_mapping.to_hash : SolutionPlatformMapping.default_platform_values_hash
       response_hash[:tags] = !solution_platform_mapping.try(:destroyed?) ? tags.pluck(:name) : []
+      response_hash[:icon] = icon.present? ? folder_icon_hash : {}
     end
     if private_api?
       response_hash[:position] = position
@@ -48,6 +49,10 @@ class Solutions::FolderDecorator < ApiDecorator
 
   def company_segment_ids_visible?
     visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_segment]
+  end
+
+  def folder_icon_hash
+    AttachmentDecorator.new(icon).to_hash
   end
 
   def parent
