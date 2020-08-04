@@ -75,15 +75,7 @@ module SolutionsTestHelper
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
 
-    if Account.current.omni_bundle_account? && Account.current.launched?(:kbase_omni_bundle)
-      resp[:platforms] = if expected_output[:platforms].present?
-                           expected_output[:platforms]
-                         elsif article.parent.solution_platform_mapping.present?
-                           article.parent.solution_platform_mapping.to_hash
-                         else
-                           SolutionPlatformMapping.default_platform_values_hash
-                         end
-    end
+    resp[:platforms] = expected_output[:platforms].presence || platform_response(true, article.parent.solution_platform_mapping) if omni_bundle_enabled?
 
     resp[:suggested] = (expected_output[:suggested] || article.suggested).to_i if Account.current.suggested_articles_count_enabled?
     resp[:tags] = (expected_tags || article.tags.map(&:name)) unless expected_output[:exclude_tags]
@@ -172,7 +164,21 @@ module SolutionsTestHelper
   end
 
   def channel_api_solution_article_pattern(article)
-    ret_hash = private_api_solution_article_pattern(article, expected_output = {}, ignore_extra_keys = true, user = nil, channel_api = true)
+    ret_hash = omni_bundle_enabled? ? private_api_solution_article_pattern(article, { exclude_description: true, exclude_attachments: true }, ignore_extra_keys = true, user = nil, channel_api = true) : private_api_solution_article_pattern(article, expected_output = {}, ignore_extra_keys = true, user = nil, channel_api = true)
+    ret_hash[:language_id] = article.language_id
+    if ret_hash[:status] == Solution::Constants::STATUS_KEYS_BY_TOKEN[:published]
+      ret_hash[:published_by] = article.recent_author && article.recent_author.helpdesk_agent ? article.recent_author.try(:name) : nil
+      ret_hash[:published_at] = article.modified_at.try(:utc)
+    end
+    if omni_bundle_enabled?
+      ret_hash[:folder_visibility] = article.parent.solution_folder_meta.visibility
+      ret_hash[:path] = article.to_param
+      ret_hash[:modified_at] = article.modified_at.try(:utc)
+      ret_hash[:modified_by] = article.modified_by
+    end
+    ret_hash[:platforms] = platform_response(false, article.parent.solution_platform_mapping) if omni_bundle_enabled?
+    return ret_hash unless @enrich_response
+
     article = article.reload
     ret_hash[:author_id] = article.user && article.user.helpdesk_agent ? article.user_id : nil
     ret_hash[:author_name] = article.user && article.user.helpdesk_agent ? article.user.try(:name) : nil
@@ -182,16 +188,10 @@ module SolutionsTestHelper
     category_hash = enriched_category_pattern(article.solution_folder_meta.solution_category_meta, article.language_key)
     ret_hash[:folder] = folder_hash if folder_hash
     ret_hash[:category] = category_hash if category_hash
-    ret_hash[:language_id] = article.language_id
 
     if Account.current.multilingual?
       ret_hash[:outdated] = article.outdated
       ret_hash[:language_name] = article.language.name
-    end
-
-    if ret_hash[:status] == Solution::Constants::STATUS_KEYS_BY_TOKEN[:published]
-      ret_hash[:published_by] = article.recent_author && article.recent_author.helpdesk_agent ? article.recent_author.try(:name) : nil
-      ret_hash[:published_at] = article.modified_at.try(:utc)
     end
 
     ret_hash
@@ -238,9 +238,9 @@ module SolutionsTestHelper
       ret_hash[:language_id] = article.language_id
       ret_hash[:visibility] = { user.id => article.parent.visible?(user) || false } if user
       ret_hash[:translation_summary] = translation_summary_pattern(article.parent) if @account.multilingual? && expected_output[:action] != :filter && !expected_output[:exclude_translation_summary]
+      ret_hash[:draft_present] = expected_output[:draft_present] || draft.present?
+      ret_hash[:outdated] = article.outdated if @account.multilingual?
     end
-    ret_hash[:draft_present] = expected_output[:draft_present] || draft.present?
-    ret_hash[:outdated] = article.outdated if @account.multilingual?
     ret_hash[:language] = article.language_code
     if expected_output[:action] == :filter
       ret_hash[:last_modifier] = ret_hash[:draft_modified_by] || ret_hash[:modified_by]
@@ -680,6 +680,18 @@ module SolutionsTestHelper
 
   def all_account_language_keys
     (@account || Account.current).supported_languages_objects.map(&:to_key) + ['primary']
+  end
+
+  def platform_response(is_private, solution_platform_mapping)
+    if is_private
+      solution_platform_mapping.present? ? solution_platform_mapping.to_hash : SolutionPlatformMapping.default_platform_values_hash
+    else
+      solution_platform_mapping.present? ? solution_platform_mapping.enabled_platforms : []
+    end
+  end
+
+  def omni_bundle_enabled?
+    Account.current.omni_bundle_account? && Account.current.launched?(:kbase_omni_bundle)
   end
 
   def base64_png_image
