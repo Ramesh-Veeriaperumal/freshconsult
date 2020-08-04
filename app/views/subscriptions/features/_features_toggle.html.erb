@@ -1,5 +1,5 @@
  <% omni_amount = plan.omni_channel_cost(@subscription.currency_name) 
- show_ocr_toggle = !current_account.launched?(:hide_omnichannel_toggle) && omni_amount != 0 && !plan.free_omni_channel_plan? 
+ show_ocr_toggle = (!current_account.launched?(:hide_omnichannel_toggle) || @not_eligible_for_omni_upgrade) && omni_amount != 0 && !plan.free_omni_channel_plan?
  omni_account = current_account.omni_bundle_account?
  %>
 

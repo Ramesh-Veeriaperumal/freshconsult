@@ -120,6 +120,7 @@ class SubscriptionTest < ActiveSupport::TestCase
     Account.any_instance.stubs(:freshcaller_account).returns(nil)
     Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(true)
     Account.any_instance.stubs(:account_additional_settings).returns(AccountAdditionalSettings.new(account_id: @account.id, email_cmds_delimeter: '@Simonsays', ticket_id_delimiter: '#', api_limit: 1000))
+    Account.any_instance.stubs(:not_eligible_for_omni_conversion?).returns(false)
     subscription = @account.subscription
     subscription.account.launch(:explore_omnichannel_feature)
     subscription.plan = SubscriptionPlan.where(name: 'Forest Omni Jan 20').first
@@ -139,6 +140,7 @@ class SubscriptionTest < ActiveSupport::TestCase
     Account.any_instance.unstub(:freshcaller_account)
     Account.any_instance.unstub(:freshid_org_v2_enabled?)
     Account.any_instance.unstub(:account_additional_settings)
+    Account.any_instance.unstub(:not_eligible_for_omni_conversion?)
     @account.destroy
   end
 
@@ -159,6 +161,7 @@ class SubscriptionTest < ActiveSupport::TestCase
     Account.any_instance.stubs(:freshchat_account).returns(nil)
     Account.any_instance.stubs(:freshcaller_account).returns(nil)
     Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(true)
+    Account.any_instance.stubs(:not_eligible_for_omni_conversion?).returns(false)
     Account.any_instance.stubs(:account_additional_settings).returns(AccountAdditionalSettings.new(account_id: @account.id, email_cmds_delimeter: '@Simonsays', ticket_id_delimiter: '#', api_limit: 1000))
     subscription = @account.subscription
     subscription.plan = SubscriptionPlan.where(name: 'Forest Omni Jan 20').first
@@ -177,6 +180,7 @@ class SubscriptionTest < ActiveSupport::TestCase
     Account.any_instance.unstub(:freshcaller_account)
     Account.any_instance.unstub(:freshid_org_v2_enabled?)
     Account.any_instance.unstub(:account_additional_settings)
+    Account.any_instance.unstub(:not_eligible_for_omni_conversion?)
     @account.rollback(:explore_omnichannel_feature) unless is_launched
   end
 

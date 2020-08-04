@@ -1,7 +1,7 @@
 <%
   trial_days = current_account.subscription.trial_days
   omni_account = current_account.omni_bundle_account?
-  hide_omnichannel_toggle = current_account.launched?(:hide_omnichannel_toggle)
+  hide_omnichannel_toggle = current_account.launched?(:hide_omnichannel_toggle) && !@not_eligible_for_omni_upgrade
 %>
 <div class="well well-trial well-<%= trial_days > 10 ? 'info' : 'danger' %>">
   <h1 class="lead">

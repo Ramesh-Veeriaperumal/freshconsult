@@ -171,6 +171,7 @@ class SubscriptionsController < ApplicationController
       @addons = scoper.addons.dup
       @plans = plans.uniq
       @currency = scoper.currency_name
+      @not_eligible_for_omni_upgrade = current_account.not_eligible_for_omni_conversion?
     end
 
     def modify_addons_temporarily

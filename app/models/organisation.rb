@@ -2,6 +2,8 @@ class Organisation < ActiveRecord::Base
   self.primary_key = :id
   include Cache::Memcache::Organisation
   FRESHSALES = 'freshsales'.freeze
+  FRESHCALLER = 'freshcaller'.freeze
+  FRESHCHAT = 'freshchat'.freeze
 
   not_sharded
   concerned_with :presenter
@@ -71,10 +73,31 @@ class Organisation < ActiveRecord::Base
     freshsales_url
   end
 
+  def omni_accounts_present?
+    organisation_domain = alternate_domain || domain
+    organisation_accounts = Account.current.organisation_accounts(organisation_domain)
+    products = product_details_from_cache(organisation_domain)
+    loop do
+      if products.present? && organisation_accounts.present?
+        freshcaller_product_object = fetch_product_object_by_name(products, FRESHCALLER)
+        freshchat_product_object = fetch_product_object_by_name(products, FRESHCHAT)
+        organisation_accounts[:accounts].map do |org_account|
+          return true if [freshcaller_product_object['id'], freshchat_product_object['id']].include?(org_account[:product_id])
+        end
+      end
+      break unless organisation_accounts[:has_more]
+    end
+    false
+  end
+
   private
 
     def domain_changed?
       previous_changes.key?(:domain)
+    end
+
+    def fetch_product_object_by_name(products, name)
+      products['productList'].find { |product| product['name'].downcase == name }
     end
 
     def send_activation_email
