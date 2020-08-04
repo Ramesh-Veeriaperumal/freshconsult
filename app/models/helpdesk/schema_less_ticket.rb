@@ -34,6 +34,8 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 
   SERIALIZED_DB_COLUMNS = ['text_tc01', 'text_tc02', 'text_tc03', 'text_tc04', 'text_tc05']
 
+  PRESENTER_FIELDS_MAPPING = { 'long_tc02' => 'parent_id' }.freeze
+
   COLUMN_TO_ATTRIBUTE_MAPPING.keys.each do |key|
     alias_attribute(COLUMN_TO_ATTRIBUTE_MAPPING[key], key)
   end
@@ -351,7 +353,12 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
   end
 
   def override_exchange_model(_action)
-    changes = attribute_changes('text_tc02')
+    report_hash_changes = attribute_changes('text_tc02')
+    changes = attribute_changes.slice(*PRESENTER_FIELDS_MAPPING.keys) || {}
+    changes.keys.each do |key|
+      changes[PRESENTER_FIELDS_MAPPING[key]] = changes.delete key if PRESENTER_FIELDS_MAPPING[key]
+    end
+    changes.merge!(report_hash_changes)
     ticket.model_changes = changes if changes.present?
   end
 
@@ -376,7 +383,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
   def attribute_changes(column_name = nil)
     attributes_was, attributes_is = column_name ? [schema_less_was["#{column_name}"], attributes["#{column_name}"]] : [schema_less_was, attributes]
     change_hash = {}
-    if attributes_was != attributes_is
+    if attributes_was.present? && attributes_is.present? && attributes_was != attributes_is
       new_hash = attributes_was.merge(attributes_is)
       new_hash.keys.each do |key|
         change_hash[key] = [attributes_was[key], attributes_is[key]] if attributes_was[key] != attributes_is[key]

@@ -202,7 +202,7 @@ module TicketsTestHelper
       internal_agent_first_assign_in_bhrs: ticket.reports_hash['internal_agent_first_assign_in_bhrs'],
       last_resolved_at: ticket.reports_hash['last_resolved_at'],
       updated_at: ticket.updated_at.try(:utc).try(:iso8601),
-      parent_id: ticket.parent_ticket_id,
+      parent_id: ticket.parent_ticket,
       outbound_email: ticket.outbound_email?,
       subject: ticket.subject,
       description_text: ticket.description,
