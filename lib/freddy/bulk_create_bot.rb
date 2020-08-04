@@ -74,7 +74,9 @@ module Freddy
             supported_languages: @current_account.portal_languages,
             primary_language: @current_account.language,
             user_id: User.current.id,
-            status: 'DISABLE'
+            status: 'DISABLE',
+            bundle_id: @current_account.omni_bundle_id,
+            bundle_name: @current_account.omni_bundle_name
           }
         end
       end
