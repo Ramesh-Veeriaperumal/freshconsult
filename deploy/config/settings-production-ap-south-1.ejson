@@ -1384,6 +1384,10 @@
         "silkroad": {
           "_auth_type": "jwt",
           "jwt_secret": ["EJ[1:BMbkU/WyoYswDlVVQpjJk8l9CIWB9lCnB60773xLXFk=:pUhIueXmCBzob3Jd30Xn2Sr2mpTRVtwH:Rs4PgGzKASftqsgMGAJzKN5dNd4mI1ibc2kyF03IBjLSNVtzHfKs6dyzqw7P98Mxs3CJfQ==]"]
+        },
+        "kbservice": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:Kb4cBUcINoB2EL/IUJbjNbWDwgqoDNcItH+pkAgMbkE=:sJY7vPbF4lbg8Gs2PMfakRRRNTAw84jF:uazf/Gi3cdxK621JDA8uFxq94h/0yj/HsdELbPFNAGuxGES3qfb2eIfMdBxUyQiL]"]
         }
       },
       "scheduler_client_keys": {
@@ -1429,7 +1433,7 @@
         "_expiry": 300,
         "password": "EJ[1:48C8ugqvMlp9FL80EoMDeVsiL7UPG0D4GJRzgccv5Ec=:3Y/JAY+fRYC5sHsn1m58pbKjM5gL91n/:nVS8L/jIwVoluhAY2f62P435f+7r0DbtOZI=]",
         "kid": "EJ[1:+cFGqgfOwzEXBq9XtXZkREg0XfxtWOGgi9xJcZrW/Uo=:uPpyIp2j/a7QDBjPv+XDE/wlmyZ5SbTk:kfCaoa+wTwN/2DQcoCBTlY6GOkECKk8=]",
-        "client_secret" : {
+        "client_secrets" : {
             "field_service": {
                 "client_id": "EJ[1:KG25oVJ2bQ0M+vx+l+UVf+tkltoKVUJ/7I68p8ajVHk=:JIcNgaiMgs6Y0hzmNPjnXlAYLHfBQB02:A8boXg58hsJKS25024jcowvZC/rQ7VtBiRYqaR0ZJcla8G4/FEEmFm+V8DmUOlM2ZtcQVk54nw2OZXBSY8XrB2Zt3/Nrw9xb5swoQ/SrD0c=]",
                 "client_secret": [

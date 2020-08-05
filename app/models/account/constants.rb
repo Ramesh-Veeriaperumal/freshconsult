@@ -183,7 +183,7 @@ class Account < ActiveRecord::Base
   LAUNCHPARTY_FEATURES = {
     hide_og_meta_tags: false, admin_dashboard: false, agent_conference: false, agent_dashboard: false,
     agent_new_ticket_cache: false, api_search_beta: false, autopilot_headsup: false, autoplay: false,
-    bi_reports: false, cache_new_tkt_comps_forms: false, delayed_dispatchr_feature: false,
+    bi_reports: false, cache_new_tkt_comps_forms: false,
     disable_old_sso: false, enable_old_sso: false, es_count_reads: false, es_count_writes: false,
     es_down: false, es_tickets: false, es_v1_enabled: false, es_v2_reads: false, fb_msg_realtime: false,
     force_index_tickets: false, freshfone_call_tracker: false, freshfone_caller_id_masking: false,
@@ -191,7 +191,7 @@ class Account < ActiveRecord::Base
     gamification_quest_perf: false, lambda_exchange: false, automation_revamp: false,
     list_page_new_cluster: false, meta_read: false, most_viewed_articles: false, multifile_attachments: true,
     new_footer_feedback_box: false, new_leaderboard: false, periodic_login_feature: false, restricted_helpdesk: false,
-    round_robin_capping: false, sidekiq_dispatchr_feature: false, supervisor_dashboard: false,
+    round_robin_capping: false, supervisor_dashboard: false,
     support_new_ticket_cache: false, synchronous_apps: false, ticket_list_page_filters_cache: false,
     skip_hidden_tkt_identifier: false, agent_collision_alb: false, auto_refresh_alb: false,
     countv2_template_read: false, customer_sentiment_ui: false, portal_solution_cache_fetch: false,
@@ -217,7 +217,7 @@ class Account < ActiveRecord::Base
     euc_migrated_twitter: false, new_ticket_recieved_metric: false, es_msearch: true,
     canned_forms: false, attachment_virus_detection: false, old_link_back_url_validation: false,
     stop_contacts_count_query: false, help_widget: false, undo_send: false,
-    bot_email_channel: false, bot_email_central_publish: false, archive_ticket_fields: true,
+    bot_email_channel: false, archive_ticket_fields: true,
     sso_login_expiry_limitation: false, csat_email_scan_compatibility: false, email_deprecated_style_parsing: false,
     saml_ecrypted_assertion: false, quoted_text_parsing_feature: false, description_by_default: false,
     skip_invoice_due_warning: false, custom_fields_search: true, update_billing_info: false, allow_billing_info_update: false,
@@ -229,8 +229,8 @@ class Account < ActiveRecord::Base
     attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false,
     requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false,
     supervisor_custom_status: false, asset_management: false, sandbox_temporary_offset: false, downgrade_policy: true,
-    skip_posting_to_fb: true, launch_fsm_geolocation: false, launch_location_tagging: false, geolocation_historic_popup: false, allow_update_agent: false,
-    facebook_dm_outgoing_attachment: true, hide_mailbox_error_from_agents: false,
+    skip_posting_to_fb: true, launch_fsm_geolocation: false, geolocation_historic_popup: false, allow_update_agent: false,
+    hide_mailbox_error_from_agents: false,
     jira_onpremise_reporter: false, support_ticket_rate_limit: false, sidekiq_logs_to_central: false,
     encode_emoji_in_solutions: false, forums_agent_portal: false,
     mailbox_google_oauth: false, migrate_euc_pages_to_us: false, agent_collision_revamp: false,
@@ -245,7 +245,8 @@ class Account < ActiveRecord::Base
     fw_sso_admin_security: false, shopify_api_revamp: false,
     omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false,
     ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false,
-    twitter_api_compliance: false, omni_agent_availability_dashboard: false, explore_omnichannel_feature: false, hide_omnichannel_toggle: false
+    twitter_api_compliance: false, omni_agent_availability_dashboard: false, explore_omnichannel_feature: false, hide_omnichannel_toggle: false,
+    chargebee_omni_upgrade: false
   }.freeze
   
   BLOCK_GRACE_PERIOD = 90.days

@@ -23,10 +23,6 @@ class DashboardAnnouncement < ActiveRecord::Base
     "dashboard_announcement_#{current_action}"
   end
 
-  def self.central_publish_enabled?
-    Account.current.dashboard_announcement_central_publish_enabled?
-  end
-
   def relationship_with_account
     'dashboard_announcements'
   end

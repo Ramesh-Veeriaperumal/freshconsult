@@ -72,6 +72,9 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:disable_org_v2_in_progress] = account.account_additional_settings.freshid_migration_running?(DISABLE_V2_MIGRATION_INPROGRESS)
     account_summary[:enable_freshid_v1_in_progress] = account.account_additional_settings.freshid_migration_running?(ENABLE_V1_MIGRATION_INPROGRESS)
     account_summary[:enable_org_v2_in_progress] = account.account_additional_settings.freshid_migration_running?(ENABLE_V2_MIGRATION_INPROGRESS)
+    account_summary[:bundle_account] = account.launched?(:omni_bundle_2020) && account.omni_bundle_id.present?
+    account_summary[:freshchat_url] = account.freshchat_account.try(:domain) if account.freshchat_account_present?
+    account_summary[:freshcaller_url] = account.freshcaller_account.try(:domain) if account.freshcaller_account_present?
     respond_to do |format|
       format.json do
         render :json => account_summary

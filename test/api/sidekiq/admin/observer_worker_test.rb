@@ -3,6 +3,7 @@ require_relative '../../unit_test_helper'
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper')
 require 'sidekiq/testing'
 require 'minitest'
+require 'webmock/minitest'
 Sidekiq::Testing.fake!
 
 require Rails.root.join('test', 'core', 'helpers', 'tickets_test_helper.rb')
@@ -156,6 +157,93 @@ module Admin
 
       def rule_object
         @account.observer_rules.first
+      end
+
+      def test_add_watcher_condition_with_launchparty
+        rule = add_watcher_rule
+        ticket = create_ticket
+        ticket.created_at = Time.zone.today + 23.hours
+        ticket.save
+        Account.any_instance.stubs(:ticket_observer_race_condition_fix_enabled?).returns(true)
+        ticket.due_by = Time.now.utc + 27.days
+        Sidekiq::Testing.inline! { ticket.save }
+        ticket = ticket.reload
+        assert_equal rule.action_data[0][:value][0], ticket.subscriptions.pluck(:user_id).last
+      ensure
+        Account.any_instance.unstub(:ticket_observer_race_condition_fix_enabled?)
+      end
+
+      def test_irreversible_va_actions_called_in_ticket_after_commit
+        add_watcher_rule
+        ticket = create_ticket
+        ticket.created_at = Time.zone.today + 23.hours # set properties to match conditions
+        ticket.save
+        Account.any_instance.stubs(:ticket_observer_race_condition_fix_enabled?).returns(true)
+        Helpdesk::Ticket.any_instance.stubs(:trigger_va_actions).returns(nil)
+        ticket.due_by = Time.now.utc + 27.days # set properties to trigger event
+        Sidekiq::Testing.inline! { ticket.save }
+        ticket = ticket.reload
+        assert_equal nil, ticket.subscriptions.pluck(:user_id).last
+      ensure
+        Account.any_instance.unstub(:ticket_observer_race_condition_fix_enabled?)
+      end
+
+      def test_retry_observer_worker_with_schema_less_locking_exception_with_launch_party
+        ticket = create_ticket
+        args = {
+          doer_id: ticket.id,
+          ticket_id: ticket.id,
+          current_events: {},
+          enqueued_class: 'Helpdesk::Ticket',
+          note_id: nil,
+          original_attributes: {}
+        }
+        Account.any_instance.stubs(:ticket_observer_race_condition_fix_enabled?).returns(true)
+        Tickets::ObserverWorker.new.perform(args)
+        Helpdesk::Ticket.stubs(:find_by_id).returns(ticket)
+        ::Tickets::RetryObserverWorker.jobs.clear
+        Tickets::ObserverWorker.new.perform(args)
+        assert_equal 1, ::Tickets::RetryObserverWorker.jobs.size
+      ensure
+        Account.any_instance.unstub(:ticket_observer_race_condition_fix_enabled?)
+      end
+
+      def test_retry_observer_worker
+        ticket = create_ticket
+        args = {
+          doer_id: ticket.id,
+          ticket_id: ticket.id,
+          current_events: {},
+          enqueued_class: 'Helpdesk::Ticket',
+          note_id: nil,
+          original_attributes: {}
+        }
+        mock = Minitest::Mock.new
+        mock.expect(:call, true, ["Retrying observer::TicketID::#{args[:ticket_id]}"])
+        Rails.logger.stub :info, mock do
+          ::Tickets::RetryObserverWorker.new.perform(args)
+        end
+        mock.verify
+      end
+
+      def test_retry_observer_worker_with_schema_less_locking_exception_without_launch_party
+        ticket = create_ticket
+        args = {
+          doer_id: ticket.id,
+          ticket_id: ticket.id,
+          current_events: {},
+          enqueued_class: 'Helpdesk::Ticket',
+          note_id: nil,
+          original_attributes: {}
+        }
+        Account.any_instance.stubs(:ticket_observer_race_condition_fix_enabled?).returns(false)
+        Tickets::ObserverWorker.new.perform(args)
+        Helpdesk::Ticket.stubs(:find_by_id).returns(ticket)
+        ::Tickets::RetryObserverWorker.jobs.clear
+        Tickets::ObserverWorker.new.perform(args)
+        assert_equal 0, ::Tickets::RetryObserverWorker.jobs.size
+      ensure
+        Account.any_instance.unstub(:ticket_observer_race_condition_fix_enabled?)
       end
 
       def test_resolution_due_condition_in_observer
@@ -358,6 +446,23 @@ module Admin
 
         def create_ticket_for_observer(ticket_params)
           create_ticket(ticket_params)
+        end
+
+        def add_watcher_rule
+          field_name = 'created_during'
+          operator = 'during'
+          rule_value = generate_value(:date_time, field_name, false, operator)
+          rule = Account.current.observer_rules.first
+          condition_data = { all: [{ evaluate_on: 'ticket', name: field_name, operator: operator, value: rule_value }] }
+          performer = generate_performer(1)
+          events = generate_event('change')
+          rule.condition_data = { conditions: condition_data, events: events, performer: performer }
+          Account.current.groups.first || create_group(Account.current)
+          rule.action_data = ['add_watcher'].map do |action|
+            generate_action_data(action, false)
+          end
+          rule.save
+          rule
         end
     end
   end

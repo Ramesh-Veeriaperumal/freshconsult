@@ -58,6 +58,7 @@
     - marketplace_app_billing
     - create_and_link_omni_account
     - sync_omni_agents
+    - retry_observer
 
   :bulk_api:
     - bulk_api_jobs
@@ -341,6 +342,7 @@
     - cron_forum_moderation_create_tables
     - cron_forum_moderation_drop_tables
     - cron_facebook_dm
+    - cron_suspended_accounts
     - cron_spam_digest_mailer
     - cron_twitter_custom_stream
     - cron_populate_spam_watcher_limits
@@ -448,6 +450,7 @@
     - sync_omni_agents
     - update_article_platform_mapping_worker
     - marketplace_app_billing
+    - retry_observer
   :central_realtime:
     - central_publish
     - active_ticket_central_publish
@@ -717,6 +720,7 @@
     - cron_forum_moderation_create_tables
     - cron_forum_moderation_drop_tables
     - cron_facebook_dm
+    - cron_suspended_accounts
     - cron_spam_digest_mailer
     - cron_twitter_custom_stream
     - cron_populate_spam_watcher_limits

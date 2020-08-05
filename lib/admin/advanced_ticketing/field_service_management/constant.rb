@@ -102,8 +102,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     }.freeze
 
     LAUNCH_PARTY_MAPPING = {
-      GEO_LOCATION_FEATURE_KEY => :launch_fsm_geolocation,
-      GEO_TAGGING_FEATURE_KEY => :launch_location_tagging
+      GEO_LOCATION_FEATURE_KEY => :launch_fsm_geolocation
     }.freeze
 
     FSM_TICKET_FILTERS = ['service_tasks_due_today', 'unassigned_service_tasks', 'overdue_service_tasks', 'unresolved_service_tasks', 'service_tasks_starting_today'].freeze

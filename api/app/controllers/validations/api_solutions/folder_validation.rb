@@ -1,6 +1,7 @@
 class ApiSolutions::FolderValidation < ApiValidation
-  CHECK_PARAMS_SET_FIELDS = %w[company_ids visibility article_order contact_segment_ids company_segment_ids platforms tags].freeze
-  attr_accessor :name, :description, :visibility, :company_ids, :article_order, :category_id, :contact_segment_ids, :company_segment_ids, :platforms, :tags
+  include SolutionHelper
+  CHECK_PARAMS_SET_FIELDS = %w[company_ids visibility article_order contact_segment_ids company_segment_ids platforms tags icon].freeze
+  attr_accessor :name, :description, :visibility, :company_ids, :article_order, :category_id, :contact_segment_ids, :company_segment_ids, :platforms, :tags, :icon
 
   validates :name, data_type: { rules: String, required: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :description, data_type: { rules: String, allow_nil: true  }
@@ -12,6 +13,9 @@ class ApiSolutions::FolderValidation < ApiValidation
   validate :validate_segment_visibility, if: -> { @company_segment_ids.present? || @contact_segment_ids.present? }
 
   validate :validate_omni_channel_feature, if: -> { @platforms.present? || @tags.present? }
+
+  validate :folder_icon_allowed?, if: -> { @icon.present? }
+  validates :icon, custom_numericality: { only_integer: true, greater_than: 0 }, if: -> { @icon.present? }
 
   validates :company_ids, custom_absence: { message: :cant_set_company_ids }, if: -> { (errors[:visibility].blank? && company_ids_not_allowed?) }
   validates :company_ids, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true } }, custom_length: { maximum: Solution::Constants::COMPANIES_LIMIT, minimum: 1, message_options: { element_type: :elements } }, unless: -> { errors[:visibility].present? || company_ids_not_allowed? }
@@ -93,6 +97,11 @@ class ApiSolutions::FolderValidation < ApiValidation
 
     def attributes_to_be_stripped
       SolutionConstants::FOLDER_ATTRIBUTES_TO_BE_STRIPPED
+    end
+
+    def folder_icon_allowed?
+      omni_channel_error(:icon) unless allow_chat_platform_attributes?
+      errors.blank?
     end
 
     def auto_article_order_enabled?

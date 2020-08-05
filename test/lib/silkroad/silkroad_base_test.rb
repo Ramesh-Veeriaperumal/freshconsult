@@ -5,6 +5,7 @@ class SilkroadBaseTest < ActionView::TestCase
   def setup
     super
     @account = Account.first.make_current
+    @account.technicians.first.make_current
   end
 
   def test_create_data_exports_job_sucess
@@ -108,5 +109,9 @@ class SilkroadBaseTest < ActionView::TestCase
     Export::Ticket.any_instance.unstub(:hash_url)
     Export::Ticket.any_instance.unstub(:schedule_export_cleanup)
     DataExportMailer.unstub(:send_email)
+  end
+
+  def test_auth_header_contains_bearer_token
+    assert Silkroad::Export::Base.new.construct_jwt_with_bearer(User.current).include?('Bearer ')
   end
 end

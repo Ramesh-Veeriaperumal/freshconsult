@@ -29,4 +29,28 @@ module BusinessHoursTestHelper
     result[:holiday_list] = business_hour.holiday_data unless index_request
     result
   end
+
+  def ember_business_hour_index_pattern(business_hour)
+    result = {
+      id: Integer,
+      name: business_hour.name,
+      description: business_hour.description,
+      time_zone: business_hour.time_zone,
+      default: business_hour.is_default,
+      group_ids: Account.current.groups_from_cache.select { |group| group.business_calendar_id == business_hour.id }.map(&:id)
+    }
+    result
+  end
+
+  def ember_business_hour_show_pattern(business_hour)
+    {
+      id: business_hour.id,
+      name: business_hour.name,
+      description: business_hour.description,
+      time_zone: business_hour.time_zone,
+      default: business_hour.is_default,
+      holidays: business_hour.holiday_data.map { |data| { name: data[1], date: data[0] } },
+      channel_business_hours: business_hour.channel_bussiness_hour_data
+    }
+  end
 end

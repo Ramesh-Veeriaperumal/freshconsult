@@ -440,7 +440,7 @@ class Helpdesk::Note < ActiveRecord::Base
       when CATEGORIES[:customer_response]
         "customer_reply"
       # Only agent added pvt notes, fwds and reply to fwd will be counted as pvt note
-      when CATEGORIES[:agent_private_response], CATEGORIES[:reply_to_forward], CATEGORIES[:broadcast]
+      when CATEGORIES[:agent_private_response], CATEGORIES[:third_party_response], CATEGORIES[:reply_to_forward], CATEGORIES[:broadcast]
         "private_note"
       when CATEGORIES[:agent_public_response]
         (note? ? "public_note" : "agent_reply")

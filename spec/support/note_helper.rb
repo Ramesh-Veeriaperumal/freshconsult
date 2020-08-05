@@ -8,6 +8,7 @@ module NoteHelper
                                          :account_id => @account.id,
                                          :notable_type => 'Helpdesk::Ticket')
     test_note.incoming = params[:incoming] if params.key?(:incoming)
+    test_note.category = params[:category] if params.key?(:category)
     test_note.private = params[:private] if params[:private]
     if params[:attachments]
       test_note.attachments.build(content: params[:attachments][:resource],
@@ -66,10 +67,14 @@ module NoteHelper
     note.reload
   end
 
-  def create_twitter_note(ticket)
+  def create_twitter_note(ticket, tweet_type = 'mention')
     note = create_note(source: 5, ticket_id: ticket.id, user_id: user.id, private: false, body: Faker::Lorem.paragraph)
-    note.build_tweet(tweet_id: 12345, tweet_type: 'mention', twitter_handle_id: get_twitter_handle.id)
+    note.build_tweet(tweet_id: random_tweet_id, tweet_type: tweet_type, twitter_handle_id: get_twitter_handle.id)
     note.save
     note.reload
+  end
+
+  def random_tweet_id
+    -"#{Time.now.utc.to_i}#{rand(100...999)}".to_i
   end
 end

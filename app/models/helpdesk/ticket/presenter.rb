@@ -280,7 +280,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       boolean_tc05: :resolution_reminded,
       nr_reminded: :next_response_reminded,
       isescalated: :is_escalated,
-      int_tc02: :resolution_escalation_level
+      int_tc02: :resolution_escalation_level,
+      long_tc02: :parent_id
     })
   end
 

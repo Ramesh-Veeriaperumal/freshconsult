@@ -2,7 +2,7 @@ module ApiSolutions
   class FoldersController < ApiApplicationController
     include SolutionConcern
     include Solution::LanguageControllerMethods
-    decorate_views(decorate_objects: [:category_folders])
+    decorate_views(decorate_objects: [:category_folders, :folder_filter])
     SLAVE_ACTIONS = %w[index category_folders].freeze
     before_filter :validate_filter_params, only: [:category_folders]
 
@@ -61,7 +61,7 @@ module ApiSolutions
       end
 
       def delegator_params
-        delegator_params = @folder_params.slice(:contact_folders_attributes, :company_folders_attributes, :customer_folders_attributes, :tag_attributes, :platforms)
+        delegator_params = @folder_params.slice(:contact_folders_attributes, :company_folders_attributes, :customer_folders_attributes, :tag_attributes, :platforms, :icon_attribute)
         delegator_params[:id] = params[:id] if params[:id].present?
         delegator_params[:language_code] = params[:language] if params[:language].present?
         delegator_params
@@ -115,7 +115,8 @@ module ApiSolutions
         language_params = params[cname].slice(:name, :description)
         params[cname][language_scoper] = language_params unless language_params.empty?
         params[cname][category] = params[:id]
-        ParamsHelper.assign_and_clean_params({ company_ids: :customer_folders_attributes, contact_segment_ids: :contact_folders_attributes, company_segment_ids: :company_folders_attributes, tags: :tag_attributes }, params[cname])
+        params[cname][:icon] = params[cname][:icon].to_s
+        ParamsHelper.assign_and_clean_params({ company_ids: :customer_folders_attributes, contact_segment_ids: :contact_folders_attributes, company_segment_ids: :company_folders_attributes, tags: :tag_attributes, icon: :icon_attribute }, params[cname])
         @folder_params = params[cname].except!(:name, :description)
       end
 

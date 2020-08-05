@@ -3,10 +3,11 @@ module SolutionConstants
 
   CATEGORY_ATTRIBUTES_TO_BE_STRIPPED = %w[name].freeze
 
-  FOLDER_FIELDS = %w[description name visibility company_ids category_id contact_segment_ids company_segment_ids platforms tags].freeze
+  FOLDER_FIELDS = %w[description name visibility company_ids category_id contact_segment_ids company_segment_ids platforms tags icon].freeze
 
   FOLDER_FIELDS_PRIVATE_API = FOLDER_FIELDS | %w[article_order]
 
+  FOLDER_FILTER_FIELDS = %w[portal_id language platforms tags per_page page].freeze
   FOLDER_ATTRIBUTES_TO_BE_STRIPPED = %w[name].freeze
 
   BULK_UPDATE_FIELDS = %w[properties].freeze
@@ -67,12 +68,14 @@ module SolutionConstants
 
   EXPORT_PRELOAD_OPTIONS = [{ solution_article_meta: [:solution_folder_meta, :solution_category_meta] }, { draft: [:draft_body, :user] }, :user, :tags].freeze
 
-  LOAD_OBJECT_EXCEPT = [:category_folders, :folder_articles, :article_content, :filter, :untranslated_articles, :suggested].freeze
+  LOAD_OBJECT_EXCEPT = [:category_folders, :folder_articles, :article_content, :filter, :untranslated_articles, :suggested, :folder_filter].freeze
 
   INDEX_FIELDS = %w[language prefer_published].freeze
 
+  FOLDER_ARTICLES_FIELDS = (%w[portal_id tags platforms page per_page] | INDEX_FIELDS).freeze
+
   RECENT_ARTICLES_FIELDS = %w[ids user_id language].freeze
-  ARTICLE_CONTENT_FIELDS = %w[language].freeze
+  ARTICLE_CONTENT_FIELDS = %w[language prefer_published].freeze
   REORDER_FIELDS = %w[position portal_id].freeze
   SUGGESTED_FIELDS = %w[articles_suggested].freeze
 
@@ -97,5 +100,6 @@ module SolutionConstants
   STATUS_FILTER_BY_TOKEN = Hash[*STATUS_FILTER.map { |i| [i[0], i[2]] }.flatten]
   STATUS_VALUE_IN_TABLE_BY_KEY = Hash[*STATUS_FILTER.map { |i| [i[2], i[3]] }.flatten]
   STATUS_VALUE_IN_ES_BY_KEY = Hash[*STATUS_FILTER.map { |i| [i[2], i[4]] }.flatten]
+  ICON_EXT = %w[.jpg .jpeg .jpe .png].freeze
   PLATFORM_TYPES = ['web', 'ios', 'android'].freeze
 end

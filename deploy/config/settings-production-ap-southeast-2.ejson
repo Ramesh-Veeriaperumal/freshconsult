@@ -1352,6 +1352,10 @@
         "silkroad": {
           "_auth_type": "jwt",
           "jwt_secret": ["EJ[1:lK89Q5d1JlnZEKXVhwhb+7vIj3qJzx/Qz3I92ujHc0k=:52ROvYZBvYqYcE/lzHSedHbVqn7/jLXu:SNuyUrLc7XjjODaLUM80yNWk3qWnsHK47Xd0isbwT4YBRCrKsGpvIeI9JSM+i0RW8DVUvw==]"]
+        },
+        "kbservice": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:Oa+pjMLmQ4Bg/NwxGeOxT0me0lSUYJxwwyN1dHIsEiw=:uuAmacIwHDgtIXBDorXykWJ99PM8l+6G:cSzMu/jFm3+V4ETOhgnMIQB52PsJ3J7fAlaTu4zQ9gbzfR1QTk4Wa9zzm0SuND7r]"]
         }
       },
       "scheduler_client_keys": {
@@ -1616,6 +1620,14 @@
                   "_errorBeacon": "bam.nr-data.net",
                   "_spaMonitoring": true,
                   "_sa": 1
+              }
+            },
+            {
+              "_name": "trigmetry", 
+              "options": {
+                "_endpoint": "https://rum-au.haystack.es/freshdesk/analytics",
+                "authToken": "EJ[1:6BB8dgvu2rIw+mZx8aJ6BQB5KpJi0kYoyEdeqAFu+h4=:QIobY3+VErJCUqscNh6eL5jkDlOYuDnx:uvUSNBDWaYhJqD7PLCFjD4kKzad6O5yOhswJ2oCRHoQlw0wGOhTc73Upin0M4gtQ]",
+                "_schedulable": true
               }
             }
           ]

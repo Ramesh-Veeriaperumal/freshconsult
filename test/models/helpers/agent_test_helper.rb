@@ -31,6 +31,7 @@ module AgentTestHelper
       active_since: agent.active_since.try(:utc).try(:iso8601),
       last_active_at: agent.last_active_at.try(:utc).try(:iso8601),
       agent_type: agent_type_hash(agent),
+      freshid_uuid: freshid_user_uuid,
       groups: agent.groups.reload.map { |ag| {name: ag.name, id: ag.id }},
       contribution_groups: agent.all_agent_groups.reload.preload(:group).where(write_access: false).map { |ag| { name: ag.group.name, id: ag.group.id } }
     }.merge(user_fields_pattern(agent.user))
@@ -55,6 +56,10 @@ module AgentTestHelper
       id: agent.agent_type,
       name: AgentType.agent_type_name(agent.agent_type)
     }
+  end
+
+  def freshid_user_uuid
+    (Account.current.freshid_integration_enabled? && agent.user.freshid_authorization.try(:uid)) || nil
   end
 
   def user_fields_pattern(user)

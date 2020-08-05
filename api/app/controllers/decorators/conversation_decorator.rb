@@ -30,8 +30,6 @@ class ConversationDecorator < ApiDecorator
 
   def conversation_json
     response_hash = {
-      body: body_html,
-      body_text: body,
       id: id,
       incoming: incoming,
       private: private,
@@ -45,14 +43,12 @@ class ConversationDecorator < ApiDecorator
     }
     src_info = source_additional_info
     response_hash[:source_additional_info] = src_info if src_info.present?
-    response_hash
+    construct_note_body_hash.merge(response_hash)
   end
 
   def construct_json
     schema_less_properties = schema_less_note.try(:note_properties) || {}
-    {
-      body: body_html,
-      body_text: body,
+    response_hash = {
       id: id,
       incoming: incoming,
       private: private,
@@ -71,6 +67,7 @@ class ConversationDecorator < ApiDecorator
       updated_at: updated_at.try(:utc),
       attachments: attachments.map { |att| AttachmentDecorator.new(att).to_hash(@cdn_url) }
     }
+    construct_note_body_hash.merge(response_hash)
   end
 
   def to_json
@@ -85,8 +82,38 @@ class ConversationDecorator < ApiDecorator
     )
   end
 
+  def default_body_hash
+    {
+      body: body_html,
+      body_text: body
+    }
+  end
+
   def to_hash
     [to_json, freshfone_call, freshcaller_call, tweet_hash, facebook_hash, feedback_hash, requester_hash].inject(&:merge)
+  end
+
+  def restrict_twitter_content?
+    Account.current.twitter_api_compliance_enabled? && !private_api? && !channel_v2_api? && incoming && record.tweet.present?
+  end
+
+  def twitter_public_api_body_hash(body)
+    {
+      body: body,
+      body_text: body
+    }
+  end
+
+  def construct_note_body_hash
+    return default_body_hash unless restrict_twitter_content?
+
+    if record.tweet.tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention]
+      tweet_body = "View the tweet at https://twitter.com/#{record.tweet.twitter_handle_id}/status/#{record.tweet.tweet_id}"
+      return twitter_public_api_body_hash(tweet_body)
+    else
+      dm_body = 'View the message at https://twitter.com/messages'
+      return twitter_public_api_body_hash(dm_body)
+    end
   end
 
   def source_additional_info
@@ -155,7 +182,7 @@ class ConversationDecorator < ApiDecorator
       type: record.tweet.tweet_type,
       support_handle_id: handle.twitter_user_id.to_s,
       support_screen_name: handle.screen_name,
-      requester_screen_name: record.user.twitter_id
+      requester_screen_name: Account.current.twitter_api_compliance_enabled? && !channel_v2_api? ? nil : record.user.twitter_id
     }
     tweet_hash[:stream_id] = record.tweet.stream_id if channel_v2_api?
     tweet_hash

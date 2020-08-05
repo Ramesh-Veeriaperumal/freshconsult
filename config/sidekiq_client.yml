@@ -343,6 +343,7 @@ defaults: &defaults
     - [cron_forum_moderation_create_tables]
     - [cron_forum_moderation_drop_tables]
     - [cron_facebook_dm]
+    - [cron_suspended_accounts]
     - [cron_spam_digest_mailer]
     - [cron_twitter_custom_stream]
     - [cron_populate_spam_watcher_limits]
@@ -411,6 +412,7 @@ defaults: &defaults
     - [central_publish_resync]
     - [create_and_link_omni_account]
     - [sync_omni_agents]
+    - [retry_observer]
 
 development:
   <<: *defaults

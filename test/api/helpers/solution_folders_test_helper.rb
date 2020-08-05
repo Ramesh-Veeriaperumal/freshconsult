@@ -57,4 +57,12 @@ module SolutionFoldersTestHelper
   def get_default_folder
     @account.solution_folder_meta.where(is_default: true).first.children.first
   end
+
+  def get_folders_by_portal_id(portal_id, language = Account.current.language_object)
+    @account.solution_folders.joins(solution_folder_meta: [solution_category_meta: :portal_solution_categories]).where("solution_folders.language_id = #{language.id} AND solution_category_meta.is_default = false AND  portal_solution_categories.portal_id = #{portal_id}")
+  end
+
+  def create_folder_translation(language)
+    meta_scoper.first.safe_send("create_#{language}_folder", name: 'Sample Folder') unless meta_scoper.first.safe_send("#{language}_folder")
+  end
 end

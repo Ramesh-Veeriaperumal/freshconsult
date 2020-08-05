@@ -1,8 +1,9 @@
 module ApiSolutions
   class FolderDelegator < BaseDelegator
     include Helpdesk::TagMethods
+    include SolutionConcern
 
-    attr_accessor :contact_folders_attributes, :company_folders_attributes, :customer_folders_attributes, :tag_attributes, :id, :platforms
+    attr_accessor :contact_folders_attributes, :company_folders_attributes, :customer_folders_attributes, :tag_attributes, :id, :platforms, :icon_attribute
 
     validate :validate_contact_segment_ids, if: -> { @contact_folders_attributes.present? }
     validate :validate_company_segment_ids, if: -> { @company_folders_attributes.present? }
@@ -10,12 +11,29 @@ module ApiSolutions
     validate :validate_category_translation, on: :create, if: -> { @id && @language_code }
     validate :create_tag_permission, if: -> { @tag_attributes.present? }
     validate :validate_platform_present, on: :update, if: -> { @tag_attributes.present? && @platforms.blank? }
+    validate :validate_portal_id, if: -> { @portal_id }
+    validate :icon_exists_and_valid_type?, if: -> { @icon_attribute.present? }
 
     def initialize(options)
       options.each do |key, value|
         instance_variable_set("@#{key}", value)
       end
       super(options)
+    end
+
+    def icon_exists_and_valid_type?
+      attachment = Account.current.attachments.where('id=? and attachable_id=? and attachable_type=?', icon_attribute, User.current.id, AttachmentConstants::ATTACHABLE_TYPES['user_draft'])
+      if attachment.empty?
+        errors[:icon] << :invalid_icon_id
+        (self.error_options ||= {}).merge!(icon: { invalid_id: @icon_attribute })
+      else
+        extension = File.extname(attachment.first.content_file_name)
+        valid_extension = SolutionConstants::ICON_EXT.include?(extension)
+        unless valid_extension
+          errors[:icon] << :upload_jpg_or_png_file
+          (self.error_options ||= {}).merge!(icon: { current_extension: extension })
+        end
+      end
     end
 
     def validate_contact_segment_ids

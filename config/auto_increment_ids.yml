@@ -65,6 +65,8 @@ defaults: &defaults
     euc_shard_2: 76000000000
     euc_shard_3: 77000000000
     euc_shard_4: 78000000000
+    euc_shard_5_1: 79000000000
+    euc_shard_5_2: 80000000000
     shard_source: 1
     sandbox_shard_euc: 50000000000000
   podapsoutheast2:
@@ -73,7 +75,9 @@ defaults: &defaults
     sandbox_shard_au: 13000000000000
   podapsouth1:
     ind_shard_1: 81000000000
+    ind_shard_2: 82000000000
     shard_27_1:  40000000000
+    ind_shard_source: 1
     sandbox_shard_ind: 14000000000000
 
 development:

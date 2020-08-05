@@ -72,6 +72,8 @@ class VaRule < ActiveRecord::Base
           "flexifields.account_id and flexifields.flexifield_set_type = 'Helpdesk::Ticket' "
   }
 
+  IRREVERSIBLE_AUTOMATION_ACTIONS = %w[add_tag add_a_cc add_watcher send_email_to_group send_email_to_agent send_email_to_requester trigger_webhook slack_trigger office365_trigger].freeze
+
   def filter_data
     (self[:filter_data].present? && (observer_rule? || api_webhook_rule?)) ? read_attribute(:filter_data).symbolize_keys : read_attribute(:filter_data)
   end
@@ -307,9 +309,15 @@ class VaRule < ActiveRecord::Base
     add_thank_you_note_to_system_changes(evaluate_on) if Thread.current[:thank_you_note].present?
     actions.each do |action|
       association_type = action.act_hash[:evaluate_on]
+      action_key = action.act_hash[:name]
       ticket = PRIME_TICKETS.include?(association_type) ? associated_ticket(evaluate_on, association_type) : evaluate_on
       if ticket.present?
-        action.trigger(ticket, doer, triggered_event, false, evaluate_on)
+        if IRREVERSIBLE_AUTOMATION_ACTIONS.include?(action_key) && Account.current.ticket_observer_race_condition_fix_enabled?
+          evaluate_on.enqueue_va_actions ||= []
+          evaluate_on.enqueue_va_actions.append(action: action, ticket: ticket, doer: doer, triggered_event: triggered_event, only_reversible_actions: false, evaluate_on: evaluate_on)
+        else
+          action.trigger(ticket, doer, triggered_event, false, evaluate_on)
+        end
       end
     end
     if @associated_ticket.present?

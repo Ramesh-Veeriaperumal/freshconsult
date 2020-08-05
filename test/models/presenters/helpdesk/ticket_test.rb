@@ -489,6 +489,21 @@ class TicketTest < ActiveSupport::TestCase
     assoc_payload.must_match_json_expression(cp_assoc_ticket_pattern(t))
   end
 
+  def test_central_publish_payload_update_parent_id
+    t = create_ticket
+    t.reload
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    parent_id = Random.rand(11)
+    t.parent_ticket = parent_id
+    t.save!
+    ticket_job = CentralPublishWorker::ActiveTicketWorker.jobs.first
+    schema_less_ticket_job = CentralPublishWorker::ActiveTicketWorker.jobs.last
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    assert_equal([nil, parent_id], ticket_job['args'][1]['model_changes']['parent_id'])
+    assert_equal([nil, parent_id], schema_less_ticket_job['args'][1]['model_changes']['parent_id'])
+  end
+
   def test_central_publish_payload_with_skill
     Account.any_instance.stubs(:skill_based_round_robin_enabled?).returns(true)
     create_skill_tickets
@@ -665,5 +680,26 @@ class TicketTest < ActiveSupport::TestCase
   ensure
     t.destroy
     @account.ticket_fields.find_by_name("custom_card_no_test_#{@account.id}").destroy
+  end
+
+  def test_central_publish_payload_with_private_notes
+    t = create_ticket(ticket_params_hash(responder_id: @agent.id))
+    third_party_user = add_new_user(@account)
+    create_note(source: 0, ticket_id: t.id, user_id: @agent.id, body: Faker::Lorem.paragraph, category: 2)
+    create_note(source: 0, ticket_id: t.id, user_id: third_party_user.id, body: Faker::Lorem.paragraph, category: 4)
+    create_note(source: 0, ticket_id: t.id, user_id: @agent.id, body: Faker::Lorem.paragraph, category: 6)
+    t.reload
+    assert_equal 3, t.schema_less_ticket.reports_hash['private_note_count']
+    assert_equal nil, t.schema_less_ticket.reports_hash['public_note_count']
+  end
+
+  def test_central_publish_payload_with_different_note_categories
+    t = create_ticket(ticket_params_hash(responder_id: @agent.id))
+    create_note(source: 0, ticket_id: t.id, user_id: t.requester_id, private: false, body: Faker::Lorem.paragraph, category: 1)
+    assert_equal 1, t.reload.schema_less_ticket.reports_hash['customer_reply_count']
+    create_note(source: 2, ticket_id: t.id, user_id: @agent.id, private: false, body: Faker::Lorem.paragraph, category: 3)
+    assert_equal 1, t.reload.schema_less_ticket.reports_hash['public_note_count']
+    create_note(source: 0, ticket_id: t.id, user_id: @agent.id, private: false, body: Faker::Lorem.paragraph, category: 3)
+    assert_equal 1, t.reload.schema_less_ticket.reports_hash['agent_reply_count']
   end
 end

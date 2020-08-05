@@ -16,6 +16,10 @@ module Tickets
         Va::Logger::Automation.set_thread_variables(account.id, ticket_id, doer_id)
 
         evaluate_on = account.tickets.find_by_id ticket_id
+        if evaluate_on.present? && Account.current.ticket_observer_race_condition_fix_enabled?
+          schema_less_ticket = evaluate_on.schema_less_ticket
+          schema_less_ticket.retrigger_observer = true
+        end
         evaluate_on.thank_you_note_id = args[:note_id]
         evaluate_on.current_note_id = args[:note_id] if account.next_response_sla_enabled? && evaluate_sla?
         evaluate_on.attributes = args[:attributes]
@@ -65,6 +69,7 @@ module Tickets
             evaluate_on.sla_calculation_time = sla_args[:sla_calculation_time]
           end
           evaluate_on.skip_ocr_sync = true
+          skip_ocr_sync_on_retry = false
           evaluate_on.save!
           evaluate_on.va_rules_after_save_actions.each do |action|
             klass = action[:klass].constantize
@@ -73,6 +78,10 @@ module Tickets
         else
           Va::Logger::Automation.log("Skipping observer worker, ticket present?=#{evaluate_on.present?}, user present?=#{(doer.present? || system_event)}", true)
         end
+      rescue LockVersion::Utility::TicketParallelUpdateException => e
+        Va::Logger::Automation.log(e.message, true)
+        skip_ocr_sync_on_retry = true
+        Tickets::RetryObserverWorker.perform_async(args) if Account.current.ticket_observer_race_condition_fix_enabled?
       rescue => e
         Va::Logger::Automation.log_error(OBSERVER_ERROR, err, args)
         NewRelic::Agent.notice_error(e, {:custom_params => {:args => args }})
@@ -98,7 +107,7 @@ module Tickets
         Thread.current[:observer_doer_id] = nil
 
         # Need to refactor this
-        if enable_ocr_sync? && Account.current.omni_channel_routing_enabled?
+        if enable_ocr_sync? && Account.current.omni_channel_routing_enabled? && !skip_ocr_sync_on_retry
           evaluate_on.skip_ocr_sync = false
           if evaluate_on.present? && args[:enqueued_class] == 'Helpdesk::Ticket'
             previous_changes = args[:model_changes]
