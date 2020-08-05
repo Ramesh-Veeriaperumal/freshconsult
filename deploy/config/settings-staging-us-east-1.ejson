@@ -205,10 +205,6 @@
         "silkroad": {
           "_auth_type": "jwt",
           "jwt_secret": ["EJ[1:EU6zcLO6p5JoZprRiGNbINV4uzapgx+kTX8gsQTuHjw=:EW0L5JDosLKuaN4jzHWzt5MckZDil/vt:AuIZ9Szz6O2CKivZHRJe8tYy6oKUkuDdaDGZp4mzXyUmESrsY+qMY1IDqRE0U854pg+an+lWjA==]", "EJ[1:EU6zcLO6p5JoZprRiGNbINV4uzapgx+kTX8gsQTuHjw=:dPY1u4Pz9BxauNHqebQ1ykc/1YW7qxKk:5mFP+DjHLQ8Fwfezc56LEdp8ESmfGCofBIyWaSyevqCZyqgFbeyA1UoICT/cJw+gdi2JhMdxlw==]"]
-        },
-        "kbservice": {
-          "_auth_type": "jwt",
-          "jwt_secret": ["EJ[1:tf2VCJ4eKbLaWZts+Q0w9QQa8uxEKv0J9FaZTYjTS1Q=:qXDO9TNhdX4kupTnsVoxI/J4rwu5RPwP:jhmjXDdQoo7Gq14/xwyzoEuoVyUnYu2bSrCX31nUb73MY5jLb+K390K+hWjRGMIm]"]
         }
       },
       "channel_v2_api": {

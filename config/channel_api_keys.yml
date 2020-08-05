@@ -53,9 +53,6 @@ defaults: &defaults
   silkroad:
     auth_type: "jwt"
     jwt_secret: ["9rQ7H5RVm35vSvNUDWFjZPz3YKsqxp8z"]
-  kbservice:
-    auth_type: "jwt"
-    jwt_secret: ["f94EEa09B3dde55964AB1793021154f0"]
 
 development:
   <<: *defaults
