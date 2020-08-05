@@ -376,7 +376,7 @@ api_error_messages:
 
   field_validation_for_email: "It should not be blank as this is a mandatory field for sending email"
   somebody_editing: "%{name} is currently editing this article."
-  comma_separated_values: "It should be a string. Syntax:  String 1,String 2"
+
   portal_language_not_supported: "Portal language is not a supported language"
   supported_language_primary: "supported language is already a primary language"
   invalid_language: "%{languages} is not a valid language"
