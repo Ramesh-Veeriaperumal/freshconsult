@@ -7,7 +7,6 @@ module SolutionConstants
 
   FOLDER_FIELDS_PRIVATE_API = FOLDER_FIELDS | %w[article_order]
 
-  FOLDER_FILTER_FIELDS = %w[portal_id language platforms tags per_page page].freeze
   FOLDER_ATTRIBUTES_TO_BE_STRIPPED = %w[name].freeze
 
   BULK_UPDATE_FIELDS = %w[properties].freeze
@@ -68,14 +67,14 @@ module SolutionConstants
 
   EXPORT_PRELOAD_OPTIONS = [{ solution_article_meta: [:solution_folder_meta, :solution_category_meta] }, { draft: [:draft_body, :user] }, :user, :tags].freeze
 
-  LOAD_OBJECT_EXCEPT = [:category_folders, :folder_articles, :article_content, :filter, :untranslated_articles, :suggested, :folder_filter].freeze
+  LOAD_OBJECT_EXCEPT = [:category_folders, :folder_articles, :article_content, :filter, :untranslated_articles, :suggested].freeze
 
   INDEX_FIELDS = %w[language prefer_published].freeze
 
   FOLDER_ARTICLES_FIELDS = (%w[portal_id tags platforms page per_page] | INDEX_FIELDS).freeze
 
   RECENT_ARTICLES_FIELDS = %w[ids user_id language].freeze
-  ARTICLE_CONTENT_FIELDS = %w[language prefer_published].freeze
+  ARTICLE_CONTENT_FIELDS = %w[language].freeze
   REORDER_FIELDS = %w[position portal_id].freeze
   SUGGESTED_FIELDS = %w[articles_suggested].freeze
 

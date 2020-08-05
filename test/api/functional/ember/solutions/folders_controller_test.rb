@@ -10,7 +10,6 @@ module Ember
       include SolutionsHelper
       include ContactSegmentsTestHelper
       include CompanySegmentsTestHelper
-      include SolutionsPlatformsTestHelper
 
       def setup
         super
@@ -641,16 +640,6 @@ module Ember
         post :create, construct_params({ version: 'private', id: folder_meta.id, language: language }, name: Faker::Name.name, description: Faker::Lorem.paragraph)
         assert_response 201
         match_json(solution_folder_pattern_private(folder_meta.safe_send("#{language}_folder")))
-      end
-
-      def test_create_folder_with_visibility_anyone_and_platforms
-        enable_omni_bundle do
-          category_meta = get_category
-          post :create, construct_params({ version: 'private', id: category_meta.id }, name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1, platforms: { ios: true, web: false, android: true })
-          assert_response 201
-          result = parse_response(@response.body)
-          match_json(solution_folder_pattern_private(Solution::Folder.where(parent_id: result['id']).first))
-        end
       end
 
       def test_destroy_with_incorrect_credentials
