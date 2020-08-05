@@ -71,8 +71,6 @@ module SolutionConstants
 
   INDEX_FIELDS = %w[language prefer_published].freeze
 
-  FOLDER_ARTICLES_FIELDS = (%w[portal_id tags platforms page per_page] | INDEX_FIELDS).freeze
-
   RECENT_ARTICLES_FIELDS = %w[ids user_id language].freeze
   ARTICLE_CONTENT_FIELDS = %w[language].freeze
   REORDER_FIELDS = %w[position portal_id].freeze
