@@ -411,6 +411,7 @@ defaults: &defaults
     - [privilege_modification]
     - [create_and_link_omni_account]
     - [sync_omni_agents]
+    - [retry_observer]
 
 development:
   <<: *defaults

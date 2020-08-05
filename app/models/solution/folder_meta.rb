@@ -12,6 +12,7 @@ class Solution::FolderMeta < ActiveRecord::Base
 	include Solution::MarshalDumpMethods
     include Helpdesk::TagMethods
     include SolutionHelper
+    include CloudFilesHelper
 	
   attr_accessible :visibility, :position, :solution_category_meta_id
 
@@ -41,6 +42,11 @@ class Solution::FolderMeta < ActiveRecord::Base
   has_many :folder_visibility_mapping,
     class_name: 'Solution::FolderVisibilityMapping',
     autosave: true,
+    dependent: :destroy
+
+  has_one :icon,
+    as: :attachable,
+    class_name: 'Helpdesk::Attachment',
     dependent: :destroy
 
   has_one :solution_platform_mapping,
@@ -155,6 +161,12 @@ class Solution::FolderMeta < ActiveRecord::Base
     company_ids.each do |company_filter_id|
       folder_visibility_mapping.build({ mappable_id: company_filter_id, mappable_type: 'CompanyFilter' })
     end
+  end
+
+  def icon_attribute=(folder_icon)
+    return if folder_icon.nil?
+
+    build_normal_attachments(self, nil, folder_icon)
   end
 
   def platforms=(platform_params)

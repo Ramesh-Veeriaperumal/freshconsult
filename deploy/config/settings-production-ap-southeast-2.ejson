@@ -1617,6 +1617,14 @@
                   "_spaMonitoring": true,
                   "_sa": 1
               }
+            },
+            {
+              "_name": "trigmetry", 
+              "options": {
+                "_endpoint": "https://rum-au.haystack.es/freshdesk/analytics",
+                "authToken": "EJ[1:6BB8dgvu2rIw+mZx8aJ6BQB5KpJi0kYoyEdeqAFu+h4=:QIobY3+VErJCUqscNh6eL5jkDlOYuDnx:uvUSNBDWaYhJqD7PLCFjD4kKzad6O5yOhswJ2oCRHoQlw0wGOhTc73Upin0M4gtQ]",
+                "_schedulable": true
+              }
             }
           ]
         }

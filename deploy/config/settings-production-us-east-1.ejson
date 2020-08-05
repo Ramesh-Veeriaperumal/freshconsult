@@ -1147,7 +1147,19 @@
             "_username": "dbuser",
             "_host": "shard1.internal.poduseast1.freshdesk.com",
             "_slave2_host": "shard1slave2.internal.poduseast1.freshdesk.com",
-            "_slave1_host": "shard1slave1.internal.poduseast1.freshdesk.com"
+            "_slave1_host": "shard1slave1.internal.poduseast1.freshdesk.com",
+             "slave_proxy": {
+                           "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:C2SdA7SjjZT8IMUWp/ItDpgpJuGb/GO5:OBvzxUhlhy5rQamfhwf+NhulKFyKVHQ7E+sv]",
+                           "_host": "127.0.0.1",
+                           "_port": "6033",
+                           "_username": "shard_1_proxy"
+                         },
+            "master_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:Qij7uPiuqAUfMyzSdACFs9iuvXVSTsiq:gt9+EabIshJ/XGhO3TteT5P1GEsgKsNddqtb]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_1_writer"
+              }
           },
           "shard_2": {
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:UBSRVbSoJ/g6Ai5zIiNNSO+bVtVLqP37:3x39qlpx1RQaQboaPS82XEqfPLMEKKlZqkk=]",
@@ -1155,7 +1167,19 @@
             "_username": "dbuser",
             "_host": "shard2.internal.poduseast1.freshdesk.com",
             "_slave2_host": "shard2slave2.internal.poduseast1.freshdesk.com",
-            "_slave1_host": "shard2slave1.internal.poduseast1.freshdesk.com"
+            "_slave1_host": "shard2slave1.internal.poduseast1.freshdesk.com",
+            "slave_proxy": {
+                           "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:mg7GFDfkH0KLMIs16a05RfV76HQ+rKRX:8HqfQlb89Hjc4K2IEHUBHPpeZY4xO0hgV9Nz]",
+                           "_host": "127.0.0.1",
+                           "_port": "6033",
+                           "_username": "shard_2_proxy"
+                         },
+            "master_proxy": {
+                           "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:oh4otGQSLKD52aaJdwBtvfyquYN86M6u:UCuZBMt4TjYWsdiuhH8mxWvLvH36BP2DU+aP]",
+                           "_host": "127.0.0.1",
+                           "_port": "6033",
+                           "_username": "shard_2_writer"
+                        }
           },
           "shard_3": {
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:lxJeNO+jjkIrk5/xElBAF7UtvPuN8D5S:8sWGjZPxWXZ0gMuRH2iB+73yS+BUuCSxfd8=]",
@@ -1163,7 +1187,19 @@
             "_username": "dbuser",
             "_host": "shard3.internal.poduseast1.freshdesk.com",
             "_slave2_host": "shard3slave2.internal.poduseast1.freshdesk.com",
-            "_slave1_host": "shard3slave1.internal.poduseast1.freshdesk.com"
+            "_slave1_host": "shard3slave1.internal.poduseast1.freshdesk.com",
+            "slave_proxy": {
+                           "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:mtUbz2QSn03AF+eo9ZZIYVOSSwZxlEJp:66IkNUa+9Qo41Jglmc3w3MbdAQICNZcv/sMR]",
+                           "_host": "127.0.0.1",
+                           "_port": "6033",
+                           "_username": "shard_3_proxy"
+                         },
+            "master_proxy": {
+                           "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:Ho5qqAf5ETfWzzYQFsfowQQJl8/CW91m:Xr3cOajZ0TIw9d5Y8YwZHxys6Lo11VXDV1WW]",
+                           "_host": "127.0.0.1",
+                           "_port": "6033",
+                           "_username": "shard_3_writer"
+                        }
           },
           "shard_4": {
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:dh+LSQqhsVOKjOGqPl4wLR+6eteeYH+Y:H7KR/K354Ga3rrWVsfQV8ymGFnN3tAKOrCY=]",
@@ -1171,7 +1207,19 @@
             "_username": "dbuser",
             "_host": "shard4.internal.poduseast1.freshdesk.com",
             "_slave2_host": "shard4slave2.internal.poduseast1.freshdesk.com",
-            "_slave1_host": "shard4slave1.internal.poduseast1.freshdesk.com"
+            "_slave1_host": "shard4slave1.internal.poduseast1.freshdesk.com",
+            "slave_proxy": {
+                           "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:T0rFGtjO/T9yS52BukCsgBlA8tfHR60h:8tb+u+j6gqWRfc9R+mIvfCuUMHSQwp3DoaAg]",
+                           "_host": "127.0.0.1",
+                           "_port": "6033",
+                           "_username": "shard_4_proxy"
+                         },
+            "master_proxy": {
+                            "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:OaN7IVL8zKK40HlrMzh6ImNSsQcbsrTT:wdEdUhU2P9GAlZbTqMqka/CZlW4DmJMhGmem]",
+                            "_host": "127.0.0.1",
+                            "_port": "6033",
+                            "_username": "shard_4_writer"
+                         }
           },
           "shard_5": {
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:YvXqnNWwc61ItLX+rNH5BJOpbKj5nwl/:rn4CEeH48a9zdtJOff/eh+12EuNeHhhcY/A=]",
@@ -1179,7 +1227,19 @@
             "_username": "dbuser",
             "_host": "shard5.internal.poduseast1.freshdesk.com",
             "_slave2_host": "shard5slave2.internal.poduseast1.freshdesk.com",
-            "_slave1_host": "shard5slave1.internal.poduseast1.freshdesk.com"
+            "_slave1_host": "shard5slave1.internal.poduseast1.freshdesk.com",
+            "slave_proxy": {
+                           "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:Ba3Y9A0UQvQDH/X8RQtSqA3w5P4csM3A:Oz7iYNktt+qfcdSDex1ZiAq32WJVZwOvNLAG]",
+                           "_host": "127.0.0.1",
+                           "_port": "6033",
+                           "_username": "shard_5_proxy"
+                         },
+            "master_proxy": {
+                            "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:bHs61uhFQNxnqLygaqaW+/lB0mFbzqDX:eSCrjR7WSXgr3jph53nBqPB3g4/N3pzKZBHl]",
+                            "_host": "127.0.0.1",
+                            "_port": "6033",
+                            "_username": "shard_5_writer"
+                         }
           },
           "shard_6": {
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:PRVk1T+UshUByBOAFDIkrGSPVtuX7OIB:lOf78nhoM/+pRVl8GtvvI7QKhlIczVst2v0=]",
@@ -1187,7 +1247,19 @@
             "_username": "dbuser",
             "_host": "shard6.internal.poduseast1.freshdesk.com",
             "_slave2_host": "shard6slave2.internal.poduseast1.freshdesk.com",
-            "_slave1_host": "shard6slave1.internal.poduseast1.freshdesk.com"
+            "_slave1_host": "shard6slave1.internal.poduseast1.freshdesk.com",
+            "slave_proxy": {
+                           "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:UaLASzKmgEKMGjZAPGkpixyWT2/wHYCY:1+TQvGgBiYh3iO0/42L6ViAdmNKVEccDj0Nz]",
+                           "_host": "127.0.0.1",
+                           "_port": "6033",
+                           "_username": "shard_6_proxy"
+                         },
+            "master_proxy": {
+                            "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:5x35dkjKPQt9ifYv/OX9EurbDc6HlZcV:YO64NcSPtI6WSoFffPQinew1NdAuUtZjE2Y0]",
+                            "_host": "127.0.0.1",
+                            "_port": "6033",
+                            "_username": "shard_6_writer"
+                         }
           },
           "shard_7": {
             "_proxy_enabled": true,
@@ -1202,7 +1274,13 @@
                           "_host": "127.0.0.1",
                           "_port": "6033",
                           "_username": "shard_7_proxy"
-                        }
+                        },
+            "master_proxy": {
+                            "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:p0LGTzDV8WNVMFidc1o8OLDPRJBOUn/M:QIbCgs4DOCr/oCS2HXwQRe4ObaDuYLs0SIcJ]",
+                            "_host": "127.0.0.1",
+                            "_port": "6033",
+                            "_username": "shard_7_writer"
+                         }
           },
           "shard_8": {
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:rr1peQaECEsZhZliAkbi/cuhupJLM+Wv:/Owx9VY5fa1FBjfl3MZ4JRUJTJZopacRUGQ=]",
@@ -1210,7 +1288,19 @@
             "_username": "dbuser",
             "_host": "shard8.internal.poduseast1.freshdesk.com",
             "_slave2_host": "shard8slave2.internal.poduseast1.freshdesk.com",
-            "_slave1_host": "shard8slave1.internal.poduseast1.freshdesk.com"
+            "_slave1_host": "shard8slave1.internal.poduseast1.freshdesk.com",
+            "slave_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:RmFg4WHMs8z1KrPNq5ZNCpG2pmUQLD3r:Vxx2M7DllVXCcf7mvlvz6oBdEfKP2GLeLLNM]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_8_proxy"
+                        },
+            "master_proxy": {
+                            "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:F0cwLsDZy+uq1PVee42tBzZi3eE2Kqnu:O1/xM288PxctWynRTBkrwtxdeG39+XiFZ25O]",
+                            "_host": "127.0.0.1",
+                            "_port": "6033",
+                            "_username": "shard_8_writer"
+                         }
           },
           "shard_9": {
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:KcND/vWprbuFRoh3b1nSW2SG8kA/MZl9:8QppqdsnAxWN5EW/ubBSSdvO5Re7TLbDHcU=]",
@@ -1218,7 +1308,19 @@
             "_username": "dbuser",
             "_host": "shard9.internal.poduseast1.freshdesk.com",
             "_slave2_host": "shard9slave2.internal.poduseast1.freshdesk.com",
-            "_slave1_host": "shard9slave1.internal.poduseast1.freshdesk.com"
+            "_slave1_host": "shard9slave1.internal.poduseast1.freshdesk.com",
+            "slave_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:EHZ+e6WbtoSCvZZPevZU6q3B9lsTB0sv:Y8ZWbjQxgMkUAQs8UJrk0pk1dO4vBvaJN3s/]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_9_proxy"
+                        },
+            "master_proxy": {
+                            "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:2lt5EW7Dp94IYIodj9cuNGbuht++KPEN:0wyfvE7cjblJwtT494xrTqs96EW6Wb5HUVNq]",
+                            "_host": "127.0.0.1",
+                            "_port": "6033",
+                            "_username": "shard_9_writer"
+                         }
           },
           "shard_10": {
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:iqdvvZLHgw523Ap2CNNOTHOAD8uw4WuQ:ENDvkdQj+b9D/OYD6nCsU2V6C7xJnEmCFwY=]",
@@ -1226,7 +1328,19 @@
             "_username": "dbuser",
             "_host": "shard10.internal.poduseast1.freshdesk.com",
             "_slave2_host": "shard10slave2.internal.poduseast1.freshdesk.com",
-            "_slave1_host": "shard10slave1.internal.poduseast1.freshdesk.com"
+            "_slave1_host": "shard10slave1.internal.poduseast1.freshdesk.com",
+            "slave_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:+TkrtsKap57/sizLQP4RHbkFZcS8Bjau:FbecjaPGpit3wl75z9Uvymzy0W0O6i02XLQ+]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_10_proxy"
+                        },
+            "master_proxy": {
+                            "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:/560SyNhSXXPGau/Jr79PtoJCRc4jAm3:vO6/STdKzh1XLqsvGfHPW6e4nC/xKhw1c13u]",
+                            "_host": "127.0.0.1",
+                            "_port": "6033",
+                            "_username": "shard_10_writer"
+                         }
           },
           "shard_11": {
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:NaX3YrdIENJVByRHntcGhzKeQ33rdk5K:7qau4XohcXCeXj6YgNShHKb8s28wILQY030=]",
@@ -1234,7 +1348,19 @@
             "_username": "dbuser",
             "_host": "shard11.internal.poduseast1.freshdesk.com",
             "_slave2_host": "shard11slave2.internal.poduseast1.freshdesk.com",
-            "_slave1_host": "shard11slave1.internal.poduseast1.freshdesk.com"
+            "_slave1_host": "shard11slave1.internal.poduseast1.freshdesk.com",
+            "slave_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:/c6a98Jl01cBSsyRinvZ+DoQlvaIzasO:FkAGneV11vRKD/aMrfcDjpenKA0iuDp+gz/+]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_11_proxy"
+                        },
+            "master_proxy": {
+                            "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:8j1SkIJi8UDDJJPPTZiwzKnZVezC/B5F:aCj4Tg8Lm+q6pu/9Snigo7i39KvZUJaMK9Nx]",
+                            "_host": "127.0.0.1",
+                            "_port": "6033",
+                            "_username": "shard_11_writer"
+                         }
           },
           "shard_12": {
             "_proxy_enabled": true,
@@ -1249,7 +1375,13 @@
                           "_host": "127.0.0.1",
                           "_port": "6033",
                           "_username": "shard_12_proxy"
-                        }
+                        },
+            "master_proxy": {
+                         "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:ATRmWz58Ofmi44m8vxAKlBhyB6Pu0GkI:iCqhbr7mkL3wzZUBicB0vxN3OYLO55NZMnR/]",
+                         "_host": "127.0.0.1",
+                         "_port": "6033",
+                         "_username": "shard_12_writer"
+                      }
           },
           "shard_13": {
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:WN3jMFqlteV4XLco9o4ZU6DncBXKL7+P:FApfeip2ZRqat6bqunID0ZKVuLDceJmNh80=]",
@@ -1257,7 +1389,19 @@
             "_username": "dbuser",
             "_host": "shard13.internal.poduseast1.freshdesk.com",
             "_slave2_host": "shard13slave2.internal.poduseast1.freshdesk.com",
-            "_slave1_host": "shard13slave1.internal.poduseast1.freshdesk.com"
+            "_slave1_host": "shard13slave1.internal.poduseast1.freshdesk.com",
+            "slave_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:gjs9WABw8uiH6kzxyuO/OonXmKshhNAJ:WTHI4RFQsetgGLbMw7wQ030CanmrjlGyurtC]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_13_proxy"
+                        },
+             "master_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:f4TiOjlnttWo+uN40XjZLAlKgeS01MXr:KICnrL8weuaiIYQj3p2Vlw/XvP0EplopTISF]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_13_writer"
+                       }
           },
           "shard_14": {
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:PJoWDqasjuDFr2629Tijy5INfqyVmAZV:gE4gqWIdpzgMqKNh3XFnNTfFpBxrV29oXas=]",
@@ -1265,7 +1409,19 @@
             "_username": "dbuser",
             "_host": "shard14.internal.poduseast1.freshdesk.com",
             "_slave2_host": "shard14slave2.internal.poduseast1.freshdesk.com",
-            "_slave1_host": "shard14slave1.internal.poduseast1.freshdesk.com"
+            "_slave1_host": "shard14slave1.internal.poduseast1.freshdesk.com",
+            "slave_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:LtXRuFQ9Aa9V7DwYtGa2aoqFu7/yzhlC:j4yGsXsmNzPSUs1KMfXsapd5IRl17hrfkp/G]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_14_proxy"
+                        },
+             "master_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:EAWqJZwzqb/oPa98cQZtATVj+VHWDrln:R1RwsveStLNtMoPlqERJIdFaj3Z9oypvyZ8J]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_13_writer"
+                       }
           },
           "shard_15": {
             "_proxy_enabled": true,
@@ -1280,7 +1436,13 @@
                           "_host": "127.0.0.1",
                           "_port": "6033",
                           "_username": "shard_15_proxy"
-                        }
+                        },
+             "master_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:owy45VpAMi2xP65eXuEc7njg6Y59SPVn:GgSbcelGFohZJyLlYsJxcJd+KUBw+SE+ALam]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_15_writer"
+                       }
           },
           "shard_16": {
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:5WRb1q/oK7G5Hi78dMtA/1OAYXKBNA0F:XIW3GdLq3foeVlPU6bH7OOmn98XfcwLY8i4=]",
@@ -1296,7 +1458,19 @@
             "_username": "dbuser",
             "_host": "shard17.internal.poduseast1.freshdesk.com",
             "_slave2_host": "shard17slave2.internal.poduseast1.freshdesk.com",
-            "_slave1_host": "shard17slave1.internal.poduseast1.freshdesk.com"
+            "_slave1_host": "shard17slave1.internal.poduseast1.freshdesk.com",
+            "slave_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:QtL/rInFRud3OA66K3I7Dk6aR/NHQ42T:pblco8T6sBv0GqhfDOsgcFnFA+yH4Th0KrzC]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_17_proxy"
+                        },
+             "master_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:Bf65FKModzxQ9drNpxFCrHYA+fXa6Ku5:f9hoy4GHtwhD0ZyiImdIIUOZ3GRDrSIPNaWv]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_17_writer"
+                       }
           },
           "shard_18": {
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:G0wyAackIEN4XwuiiCuaI1UofK/zohkX:7wineFJkSrJxv6q8ofr/0YEM2ISJRXqm294=]",
@@ -1304,7 +1478,19 @@
             "_username": "dbuser",
             "_host": "shard18.internal.poduseast1.freshdesk.com",
             "_slave2_host": "shard18slave2.internal.poduseast1.freshdesk.com",
-            "_slave1_host": "shard18slave1.internal.poduseast1.freshdesk.com"
+            "_slave1_host": "shard18slave1.internal.poduseast1.freshdesk.com",
+            "slave_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:BUMy8RNtSYsK/Xlxppd2WrpI1UzEWxZu:Wd55V6RXm0kh7FREK+xn1uh+WKlxOFYArGm3]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_18_proxy"
+                        },
+             "master_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:5ylpUvQNRx6pva0BcFjGXxvpDIE7wnYo:6aKoCxJ1AlsobIQHHL+oJCJNzEOsaNIR9WL3]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_18_writer"
+                       }
           },
           "shard_19": {
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:FV3oSv0kHUdFIhulwfuPCD1kFSDfqSC+:ObDfDAppEGYn2s9JNYpdCOziRP+ES54p57s=]",
@@ -1343,6 +1529,12 @@
                           "_host": "127.0.0.1",
                           "_port": "6033",
                           "_username": "shard_22_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:q2IZaqH+PWeFl557ugd/lVPi6TYZz6FQ:GT3jBpR8HXR1wsyVi/79zxbPcsxugMWJDP/igA==]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_22_writer"
                         }
           },
           "shard_23_1": {
@@ -1358,6 +1550,12 @@
                           "_host": "127.0.0.1",
                           "_port": "6033",
                           "_username": "shard_23_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:38MVp94dj4e56MN1skhTMBduqrdoGocr:9EE8pX7v6OTWofTOKeaYWONF9W0fVBgsVn9n]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_23_writer"
                         }
           },
           "shard_23_2": {
@@ -1373,6 +1571,12 @@
                           "_host": "127.0.0.1",
                           "_port": "6033",
                           "_username": "shard_23_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:rPHICy3LAyZ9oaj8G9OCgfxKw84nI1Hc:LJrYfGd60LRrFCSirrzYJbscwVgsUcvvbsue]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_23_writer"
                         }
           },
           "shard_23_3": {
@@ -1388,8 +1592,14 @@
                           "_host": "127.0.0.1",
                           "_port": "6033",
                           "_username": "shard_23_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:FLQEMshVEvt4XUkMohx+Zak6FicLNsjg:zDw0f09qP5KjCUcPfHwij7xtE69GtuwIzdOb]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_23_writer"
                         }
-          },
+            },
           "shard_23_4": {
             "_proxy_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:Y7XYE6kmYiH8Baqp+46bAvpP0UAot0IX:0YqrgVPO3N5j0mmFS6prfh32D1ySPNfMY+s=]",
@@ -1403,6 +1613,12 @@
                           "_host": "127.0.0.1",
                           "_port": "6033",
                           "_username": "shard_23_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:/psXz0Dmo1dATjHimpqtSOJgNnOpCgm6:aTXlXUDnlq+IQAZp40YmDo/tFGfkIKWDa3RS]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_23_writer"
                         }
           },
           "shard_24_1": {
@@ -1418,6 +1634,12 @@
                           "_host": "127.0.0.1",
                           "_port": "6033",
                           "_username": "shard_24_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:u0TwBVRgFSZXm3OVwlBBNSyMJCvg+4kt:2apBXAytoMkaNxdKcHcfHRa5iU78TWBe16FI]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_24_writer"
                         }
           },
           "shard_24_2": {
@@ -1433,6 +1655,12 @@
                           "_host": "127.0.0.1",
                           "_port": "6033",
                           "_username": "shard_24_proxy"
+                        },
+            "master_proxy": {
+                          "password":"EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:FXzGeLuDDCHr/c9A6cYUDoMdgpFWeUti:ZLVYWl9GmHJIicH4gC95ohmloY7+xHPTbmAF]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_24_writer"
                         }
           },
           "shard_24_3": {
@@ -1441,7 +1669,19 @@
             "_username": "dbuser",
             "_host": "shard24-3.internal.poduseast1.freshdesk.com",
             "_slave2_host": "shard24-3slave2.internal.poduseast1.freshdesk.com",
-            "_slave1_host": "shard24-3slave1.internal.poduseast1.freshdesk.com"
+            "_slave1_host": "shard24-3slave1.internal.poduseast1.freshdesk.com",
+            "slave_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:A2k/eNbmW2uop12iVJKCMUY9Zx26RKQ7:Ej3PfSE5r2TczsaXsU1+D4T9E3MZZdQl5vTH]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_24_3_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:+TfLzO8UOu8+W+FfmA5urVt4E0w3xx0u:o62KEdR3VDdyXCplPNh51gQ3qgQOQ0v8YEQn]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_24_3_writer"
+                        }
           },
           "shard_24_4": {
             "_proxy_enabled": true,
@@ -1456,6 +1696,12 @@
                           "_host": "127.0.0.1",
                           "_port": "6033",
                           "_username": "shard_24_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:f0cBORZIqJKnd96t/QYIm0vcvJMbAPQc1g1nOKJwc3g=:bJ9ip6pCPdfRQXp66Q+Z8o8aSvULs1hA:APCZ+phwY5QxpjMFnyMTy+YCtveAncIyb1lN]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_24_writer"
                         }
           },
           "shard_24_5": {
@@ -1464,7 +1710,19 @@
             "_username": "dbuser",
             "_host": "shard24-5.internal.poduseast1.freshdesk.com",
             "_slave2_host": "shard24-5slave2.internal.poduseast1.freshdesk.com",
-            "_slave1_host": "shard24-5slave1.internal.poduseast1.freshdesk.com"
+            "_slave1_host": "shard24-5slave1.internal.poduseast1.freshdesk.com",
+            "slave_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:QPXaOBSLTOz2k/bO7E6S97AktmEcodfL:Yq6iQbadfczLVtDcZEOKvJQ1z1tIWN0mh6N7]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_24_5_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:4RKiwolTmdLqWZZ9/LkbE3wVo5722koV:MLfv88/4cL4leeU4VGnR/z9jk0Kjy4xdG9oJ]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_24_5_writer"
+                        }
           },
           "shard_25_1": {
             "_proxy_enabled": true,
@@ -1479,6 +1737,12 @@
                           "_host": "127.0.0.1",
                           "_port": "6033",
                           "_username": "shard_25_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:f0cBORZIqJKnd96t/QYIm0vcvJMbAPQc1g1nOKJwc3g=:2y8DloLQAadcdU1MysbqZxucizDyT39n:/N+RNaISqF11iu/EoU1GZjNqlmwy6/wnbXRY]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_25_writer"
                         }
           },
           "shard_25_2": {
@@ -1494,6 +1758,12 @@
                           "_host": "127.0.0.1",
                           "_port": "6033",
                           "_username": "shard_25_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:f0cBORZIqJKnd96t/QYIm0vcvJMbAPQc1g1nOKJwc3g=:W0UKaW2D7pDA6H1Osbkozl4nB3kblT5T:Ij7gyrT4PCwcg71sPp/tr82j2aTyDxKQ+Ftu]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_25_writer"
                         }
           },
           "shard_25_3": {
@@ -1509,6 +1779,12 @@
                           "_host": "127.0.0.1",
                           "_port": "6033",
                           "_username": "shard_25_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:f0cBORZIqJKnd96t/QYIm0vcvJMbAPQc1g1nOKJwc3g=:idPwLzspkbYUy7O2TkuxDNJ54x8WMd2f:ZpTUDFClAsPkBu0J3eOTEdOCQd1yZ44itSuV]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_25_writer"
                         }
           },
           "shard_26_1": {
@@ -1517,7 +1793,19 @@
             "_username": "dbuser",
             "_host": "shard26.internal.poduseast1.freshdesk.com",
             "_slave2_host": "shard26slave2.internal.poduseast1.freshdesk.com",
-            "_slave1_host": "shard26slave1.internal.poduseast1.freshdesk.com"
+            "_slave1_host": "shard26slave1.internal.poduseast1.freshdesk.com",
+            "slave_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:xyVZZRXFkNujlz73OPG4X+7L0lhhAarV:rdXECPXeOo4O3tLr9UK8K3hfayGGqmtfS/vc]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_26_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:Znn2cEDm0S8+giZYRLp1r0+0pCjg5hJN:ZBaV5a7XDi+NkcrwJhK+zZTo8cQ+N+6G2WjA]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_26_writer"
+                        }
           },
           "shard_28": {
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:QdVOgcQpo/iszhzgi+l7a5nKbx46KHqG:t6VueCyLWke+mFF/rMXAaxO57IMoaq4ykZw=]",
@@ -1525,7 +1813,19 @@
             "_username": "dbuser",
             "_host": "shard28.internal.poduseast1.freshdesk.com",
             "_slave2_host": "shard28slave2.internal.poduseast1.freshdesk.com",
-            "_slave1_host": "shard28slave1.internal.poduseast1.freshdesk.com"
+            "_slave1_host": "shard28slave1.internal.poduseast1.freshdesk.com",
+            "slave_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:/4dGON4UPi+I0tD70G1/+Rdf8luf76to:8HtHJjPlizjWP09n0G1k4in3eNRVqc24YiYy]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_28_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:OaqEmxrZtKlQBvgjUqncIFh8KBfR5Yry:4BnH0ReKt/sJPuCGolI0pLVuRFe4twgd9fsY]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_28_writer"
+                        }
           },
           "shard_29_1": {
             "_proxy_enabled": true,
@@ -1540,6 +1840,12 @@
                           "_host": "127.0.0.1",
                           "_port": "6033",
                           "_username": "shard_29_1_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:f0cBORZIqJKnd96t/QYIm0vcvJMbAPQc1g1nOKJwc3g=:nrWe5w2sTzyTHVwdn/SHRAq58l69II3j:6jq5kXHFiRokz5KnWsMY+/Set7TbdIRmtDcj]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_29_1_writer"
                         }
           },
           "shard_29_2": {
@@ -1555,6 +1861,12 @@
                           "_host": "127.0.0.1",
                           "_port": "6033",
                           "_username": "shard_29_2_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:5tE+yNX1tNYZws0zRCFeZk7wLdLscs4dVceWCouNWgE=:9svqt4iGN19sfVpaGBteRRZZZTW7r99S:CHNi7LeURdZTDXMjftT4JHbWcJccsC5Mby8x]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_29_2_writer"
                         }
           },
           "shard_30": {
@@ -1570,6 +1882,12 @@
                           "_host": "127.0.0.1",
                           "_port": "6033",
                           "_username": "shard_30_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:LMXZbfktTHT2ZLQLXW2tzOnfaQGqI7VelORRUACz+XQ=:SWijgNjOIwuRgOETYedPzd0eBu2fuiqE:Ek8CvlGj2Hqwb86z+KzDd5ywQnVeT5ngmPka]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_30_writer"
                         }
           },
           "shard_30_2": {
@@ -1585,6 +1903,12 @@
                           "_host": "127.0.0.1",
                           "_port": "6033",
                           "_username": "shard_30_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:f0cBORZIqJKnd96t/QYIm0vcvJMbAPQc1g1nOKJwc3g=:rbJQPUlSBKCXdEarrqLFqGQQL2I6rb3m:j85OOe2NFl4FSNqKB0TZa+EK7wr2CTOUcC/f]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_30_writer"
                         }
           },
           "shard_31_1": {
@@ -1600,6 +1924,12 @@
                           "_host": "127.0.0.1",
                           "_port": "6033",
                           "_username": "shard_31_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:f0cBORZIqJKnd96t/QYIm0vcvJMbAPQc1g1nOKJwc3g=:W6N41XhrmAm/vQh5ioX+whvrxqB41B/2:rLbz7hlxqVZY5zVBlL5ZqDuBPUyI3Ueyn+oC]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_31_writer"
                         }
           },
           "sandbox_shard_us": {
@@ -1655,6 +1985,12 @@
                           "_host": "127.0.0.1",
                           "_port": "6033",
                           "_username": "shard_32_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:f0cBORZIqJKnd96t/QYIm0vcvJMbAPQc1g1nOKJwc3g=:MW45uoSSoY1mD8q+0HeAEF7kVUAym7GQ:8ftg2+yxMLJAxMe7+E0bogBwQhvVR5D3COQd]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_32_writer"
                         }
           },
           "shard_33_1": {
@@ -1682,6 +2018,12 @@
                           "_host": "127.0.0.1",
                           "_port": "6033",
                           "_username": "shard_33_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:f0cBORZIqJKnd96t/QYIm0vcvJMbAPQc1g1nOKJwc3g=:dlAuGKpJRsf/62Ey+O59+M+zRBxqAWbH:IW0ag5Cx/WpxNRmjPvLS2HaPlUBOhE6Idd20]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_33_writer"
                         }
           },
           "shard_34": {
@@ -1702,7 +2044,19 @@
             "_host": "shard34.internal.poduseast1.freshdesk.com",
             "_slave1_host": "shard34slave1.internal.poduseast1.freshdesk.com",
             "_slave2_host": "shard34slave2.internal.poduseast1.freshdesk.com",
-            "_username": "dbuser"
+            "_username": "dbuser",
+            "slave_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:oFcCWPEq7jvm0QNzQA58yTprE5bluyst:gdmXZ6+wkg3BuCVv9YjL0wMu96iUl9qoWOkS]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_34_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:ylEfXpQQgYk4r3X5x7ioOnYeR6OwXRmt:mFK7A6gXTjhWbCiwGdvF0yfeObGDGSOCHoYl]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_34_writer"
+                        }
           },
           "shard_35": {
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:B+Cg+HMTVBmA6Rbiu6CiK4H91gbd3vCT:FrhXLvEkShXuEnyNSElCQNC1Gs3R/xIdBw==]",
@@ -1722,7 +2076,19 @@
             "_host": "shard35.internal.poduseast1.freshdesk.com",
             "_slave1_host": "shard35slave1.internal.poduseast1.freshdesk.com",
             "_slave2_host": "shard35slave2.internal.poduseast1.freshdesk.com",
-            "_username": "dbuser"
+            "_username": "dbuser",
+            "slave_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:2oG8zQaX0VZxgUmvVzLD4Wzzxlx5xLaV:92zDRvkvMiavWc28vA35xSJN3ZOGnLfRP5fx]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_35_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:RLNY+JkX4ca13HXGDmZPL3B49ehyX1OV:qF/0Wi0zGvmjpAEIFE2Qp8bPqJyVHnk2liX1]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_35_writer"
+                        }
           },
           "shard_36_1": {
             "_proxy_enabled": true,
@@ -1749,6 +2115,12 @@
                           "_host": "127.0.0.1",
                           "_port": "6033",
                           "_username": "shard_36_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:f0cBORZIqJKnd96t/QYIm0vcvJMbAPQc1g1nOKJwc3g=:sNG0VOB2T+IOSe9W3mESnpT0JZQZJLfh:KwyJCJVZnEKlafJohcEXHSRaUjnGsJowUnhb]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_36_writer"
                         }
           },
           "shard_37": {
@@ -1769,7 +2141,19 @@
               "_username": "dbuser"
             },
             "_slave2_host": "shard37slave2.internal.poduseast1.freshdesk.com",
-            "_username": "dbuser"
+            "_username": "dbuser",
+            "slave_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:96jGwW71k0kcBc9MmkAqt8f5b97HgV5J:hYkFYeQlSpskPo878dw4Ig2mqU+cEPoJQkkh]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_37_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:9vilXUR4B6Dlab/tY+jZizNplRxQ3Ovs:vjQbI1zwAemxFvWZpRO/FtCB51SDBn3kjI4T]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_37_writer"
+                        }
           },
           "shard_37_2": {
             "_database": "helpkit_shard37_2",
@@ -1789,7 +2173,19 @@
               "_username": "dbuser"
             },
             "_slave2_host": "shard37slave2.internal.poduseast1.freshdesk.com",
-            "_username": "dbuser"
+            "_username": "dbuser",
+            "slave_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:OF+rzPNs2tRRbewwzGfaXheISk3jwJa3:7yhCtCKjwq5NzZDXV15CZQ3dCIrGJta23AlX]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_37_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:TS37bvB5PUdh6BTZuxKYAf/Mv22T6j9r:1BtvWjF97TZjeb7W3/6iZBq0GTqLsuu0zLEx]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_37_writer"
+                        }
           },
           "shard_38_1": {
             "_database": "helpkit_shard38_1",
@@ -1809,7 +2205,19 @@
               "_username": "dbuser"
             },
             "_slave2_host": "shard38slave2.internal.poduseast1.freshdesk.com",
-            "_username": "dbuser"
+            "_username": "dbuser",
+            "slave_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:q/S4VY3XKBlmkmjxmJMhPO4YfiZv4BDd:PZVsaKj6tvVLrvMhWIeTSRxe2eCC2/QrasYE]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_38_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:hOIKqpQma/tjR/AOsGMPJEah13Xxx+WJ:Y0aqEaWREnxFL3bq2TlD7Ta3POaB1s8JbNOR]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_38_writer"
+                        }
           },
           "shard_38_2": {
             "_database": "helpkit_shard38_2",
@@ -1829,7 +2237,19 @@
               "_username": "dbuser"
             },
             "_slave2_host": "shard38slave2.internal.poduseast1.freshdesk.com",
-            "_username": "dbuser"
+            "_username": "dbuser",
+            "slave_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:nNu6N6GbCS5vggstMCXaMuE3/3JbFs1Y:gXqXQ+rxdgqKy5m1jdhq+BUllyc3ixpFlSjD]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_38_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:N1KTnhzU6VbpiPUyfwJMDjvQ78N0lvEi:kZiLrqcug9p4IaFCTkQBUnmfhOOE/NHOCfiY]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_38_writer"
+                        }
           },
           "shard_38_3": {
             "_database": "helpkit_shard38_3",
@@ -1849,7 +2269,19 @@
               "_username": "dbuser"
             },
             "_slave2_host": "shard38slave2.internal.poduseast1.freshdesk.com",
-            "_username": "dbuser"
+            "_username": "dbuser",
+            "slave_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:wij6HEkyNnTfVYjRlg87x4m1VXLcEkF+:oSovNV98DY8I+QI7oqudRh/SsKE0n2AKnHYV]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_38_proxy"
+                        },
+            "master_proxy": {
+                          "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:2qBVXHY9IU1co0Gs9+mteeSJnZpAEoZM:/8M5kRaCN8upT55OAM7UkPrCCEYgOuf8RqRp]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "shard_38_writer"
+                        }
           },
           "shard_39_1": {
             "_database": "helpkit_shard39_1",

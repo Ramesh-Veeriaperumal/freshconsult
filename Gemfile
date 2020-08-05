@@ -27,7 +27,7 @@ gem "time_bandits", :git => 'git@github.com:freshdesk/fd_time_bandits', :tag => 
 gem "connection_pool"
 gem "clamav-client", "3.1.0", require: "clamav/client"
 gem "rest-client", "1.8.0"
-gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git", :tag => 'v1.2.2'
+gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git", :tag => 'v2.0'
 gem 'fd_rate_limiter', :git => 'git@github.com:freshdesk/fd_rate_limiter.git', :branch => 'dynamic_rules'
 gem "white_list", :git =>"git://github.com/neubloc/white_list.git"
 gem "will_paginate", "3.0.6"

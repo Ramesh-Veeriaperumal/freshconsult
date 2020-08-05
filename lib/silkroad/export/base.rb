@@ -86,7 +86,7 @@ module Silkroad
 
         def generate_headers
           {
-            'Authorization' => construct_jwt(user),
+            'Authorization' => construct_jwt_with_bearer(user),
             'Content-Type' => CONTENT_TYPE,
             'X-Client-ID' => Thread.current[:message_uuid].last
           }

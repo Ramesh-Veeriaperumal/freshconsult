@@ -5,11 +5,8 @@ module ConversationsTestHelper
   include EmailConfigsHelper
 
   def note_pattern(expected_output, note)
-    body_html = format_ticket_html(expected_output[:body]) if expected_output[:body]
     schema_less_properties = note.schema_less_note.try(:note_properties) || {}
-    {
-      body: body_html || note.body_html,
-      body_text: note.body,
+    response_hash = {
       id: Fixnum,
       incoming: (expected_output[:incoming] || note.incoming).to_s.to_bool,
       private: (expected_output[:private] || note.private).to_s.to_bool,
@@ -24,6 +21,7 @@ module ConversationsTestHelper
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
+    construct_note_body_hash(expected_output, note).merge(response_hash)
   end
 
   def archive_note_pattern(expected_output, archive_note)
@@ -291,7 +289,7 @@ module ConversationsTestHelper
       type: note.tweet.tweet_type,
       support_handle_id: handle.twitter_user_id.to_s,
       support_screen_name: handle.screen_name,
-      requester_screen_name: note.user.twitter_id
+      requester_screen_name: Account.current.twitter_api_compliance_enabled? && !CustomRequestStore.store[:channel_api_request] ? nil : note.user.twitter_id
     }
     tweet_hash[:stream_id] = note.tweet.stream_id if @channel_v2_api
     tweet_hash
@@ -315,6 +313,38 @@ module ConversationsTestHelper
     source_info[:twitter] = tweet if tweet.present?
     source_info[:facebook] = fb_post_hash if fb_post_hash.present?
     source_info.presence
+  end
+
+  def default_body_hash(expected_output, note)
+    body_html = format_ticket_html(expected_output[:body]) if expected_output[:body]
+    {
+      body: body_html || note.body_html,
+      body_text: note.body
+    }
+  end
+
+  def restrict_twitter_content?(note)
+    Account.current.twitter_api_compliance_enabled? && !CustomRequestStore.store[:private_api_request] && !CustomRequestStore.store[:channel_api_request] && note.incoming && note.tweet.present?
+  end
+
+  def twitter_public_api_body_hash(body)
+    {
+      body: body,
+      body_text: body
+    }
+  end
+
+  def construct_note_body_hash(expected_output, note)
+    tweet_record = note.tweet
+    return default_body_hash(expected_output, note) unless restrict_twitter_content?(note)
+
+    if tweet_record.tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention]
+      tweet_body = "View the tweet at https://twitter.com/#{tweet_record.twitter_handle_id}/status/#{tweet_record.tweet_id}"
+      return twitter_public_api_body_hash(tweet_body)
+    else
+      dm_body = 'View the message at https://twitter.com/messages'
+      return twitter_public_api_body_hash(dm_body)
+    end
   end
 
   def validation_error_pattern(value)

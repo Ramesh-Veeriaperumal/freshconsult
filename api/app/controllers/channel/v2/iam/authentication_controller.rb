@@ -1,7 +1,6 @@
 module Channel::V2::Iam
   class AuthenticationController < ApiApplicationController
     include Iam::AuthToken
-    include AuthenticationConstants
     include HelperConcern
 
     skip_before_filter :load_object, :check_privilege, :ensure_proper_protocol
@@ -12,7 +11,7 @@ module Channel::V2::Iam
       fetch_current_user
       return render_request_error(:invalid_credentials, 401) if @current_user.blank?
 
-      response.headers['Authorization'] = BEARER + ' ' + construct_jwt(@current_user)
+      response.headers['Authorization'] = construct_jwt_with_bearer(@current_user)
     end
 
     def iam_authenticate_token

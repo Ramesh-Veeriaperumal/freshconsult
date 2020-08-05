@@ -163,3 +163,9 @@ Autofaq Migration:
   - :autofaq
 Botflow Migration:
   - :botflow
+Emailbot Migration:
+  - :emailbot
+Custom Objects Migration:
+  - :custom_objects
+Agent Articles Suggest Migration:
+  - :agent_articles_suggest_eligible

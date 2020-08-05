@@ -154,7 +154,8 @@ module Social::DynamoHelper
       loop do
         response = DYNAMO_DB_CLIENT.query(query_options)
         response_arr << response[:items]
-        break unless response[:last_evaluated_key]
+        break if !response[:last_evaluated_key] ||
+                 query_options[:key_conditions]['feed_id'][:attribute_value_list].include?('0')
 
         query_options = query_options.merge({ :exclusive_start_key => response[:last_evaluated_key]})
       end

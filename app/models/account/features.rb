@@ -4,7 +4,7 @@ class Account < ActiveRecord::Base
     :select_all, :round_robin_capping, :suggest_tickets,
     :customer_sentiment_ui, :dkim, :dkim_email_service, :scheduled_ticket_export,
     :ticket_contact_export, :email_failures, :disable_emails,
-    :falcon_portal_theme, :freshid, :freshchat_integration, :allow_huge_ccs, :company_central_publish,
+    :falcon_portal_theme, :freshid, :freshchat_integration, :allow_huge_ccs,
     :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :announcements_tab,
     :imap_error_status_check, :va_any_field_without_none, :api_es,
@@ -16,8 +16,7 @@ class Account < ActiveRecord::Base
     :denormalized_select_for_update, :es_tickets,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
     :onboarding_inlinemanual, :skip_portal_cname_chk, :attachment_encoding, :ticket_source_revamp,
-    :bot_email_channel, :bot_email_central_publish, :description_by_default,
-    :bot_chat_history, :new_es_api, :filter_factory,
+    :bot_email_channel, :description_by_default, :bot_chat_history, :new_es_api, :filter_factory,
     :skip_invoice_due_warning, :automation_revamp, :archive_ticket_fields,
     :scheduled_export_fix, :compact_lang_detection,
     :custom_fields_search, :disable_rabbitmq_iris,
@@ -36,7 +35,7 @@ class Account < ActiveRecord::Base
     :csat_email_scan_compatibility, :mint_portal_applicable, :quoted_text_parsing_feature,
     :email_mailbox, :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
     :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :launch_fsm_geolocation, :geolocation_historic_popup,
-    :ticket_field_revamp, :facebook_dm_outgoing_attachment, :skip_posting_to_fb, :hide_mailbox_error_from_agents, :hide_og_meta_tags, :disable_occlusion_rendering,
+    :ticket_field_revamp, :skip_posting_to_fb, :hide_mailbox_error_from_agents, :hide_og_meta_tags, :disable_occlusion_rendering,
     :jira_onpremise_reporter, :support_ticket_rate_limit, :sidekiq_logs_to_central, :encode_emoji_in_solutions,
     :forums_agent_portal, :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html,
     :remove_image_attachment_meta_data, :automated_private_notes_notification,
@@ -49,7 +48,7 @@ class Account < ActiveRecord::Base
     :omni_chat_agent, :portal_frameworks_update, :ticket_filters_central_publish, :new_email_regex, :auto_refresh_revamp, :agent_statuses, :omni_reports,
     :omni_plans_migration_banner, :parse_replied_email, :wf_comma_filter_fix, :composed_email_check, :omni_channel_dashboard, :csat_for_social_surveymonkey, :fresh_parent, :trim_special_characters, :kbase_omni_bundle,
     :omni_agent_availability_dashboard, :twitter_api_compliance, :silkroad_export, :silkroad_shadow, :silkroad_multilingual, :group_management_v2, :symphony, :invoke_touchstone, :explore_omnichannel_feature, :hide_omnichannel_toggle,
-    :dashboard_java_fql_performance_fix, :emberize_business_hours, :trigger_domain_mapping_deletion
+    :dashboard_java_fql_performance_fix, :emberize_business_hours, :trigger_domain_mapping_deletion, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix
   ].freeze
 
   BITMAP_FEATURES = [

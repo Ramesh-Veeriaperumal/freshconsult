@@ -1,9 +1,10 @@
 require_relative '../../../test_helper'
-['social_tickets_creation_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['social_tickets_creation_helper.rb', 'twitter_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module Channel::V2
   class ConversationsControllerTest < ActionController::TestCase
     include ConversationsTestHelper
     include SocialTicketsCreationHelper
+    include TwitterHelper
     def wrap_cname(params)
       { conversation: params }
     end
@@ -265,6 +266,54 @@ module Channel::V2
       match_json(pattern)
     ensure
       CustomRequestStore.store[:channel_api_request] = false
+    end
+
+    def test_ticket_conversation_with_unrestricted_tweet_content_channel_api
+      Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+      CustomRequestStore.store[:channel_api_request] = true
+      @channel_v2_api = true
+      @twitter_handle = get_twitter_handle
+      @default_stream = @twitter_handle.default_stream
+      ticket = create_twitter_ticket(tweet_type: 'mention')
+      with_twitter_update_stubbed do
+        create_twitter_note(ticket, 'mention')
+      end
+      get :ticket_conversations, controller_params(id: ticket.display_id)
+      result_pattern = []
+      ticket.notes.visible.exclude_source('meta').each do |n|
+        result_pattern << index_note_pattern(n)
+      end
+      assert_response 200
+      match_json(result_pattern)
+    ensure
+      ticket.destroy
+      Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+      CustomRequestStore.store[:channel_api_request] = false
+      @channel_v2_api = false
+    end
+
+    def test_ticket_conversation_with_unrestricted_twitter_dm_content_channel_api
+      Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+      CustomRequestStore.store[:channel_api_request] = true
+      @channel_v2_api = true
+      @twitter_handle = get_twitter_handle
+      @default_stream = @twitter_handle.default_stream
+      ticket = create_twitter_ticket(tweet_type: 'dm')
+      with_twitter_update_stubbed do
+        create_twitter_note(ticket, 'dm')
+      end
+      get :ticket_conversations, controller_params(id: ticket.display_id)
+      result_pattern = []
+      ticket.notes.visible.exclude_source('meta').each do |n|
+        result_pattern << index_note_pattern(n)
+      end
+      assert_response 200
+      match_json(result_pattern)
+    ensure
+      ticket.destroy
+      Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+      CustomRequestStore.store[:channel_api_request] = false
+      @channel_v2_api = false
     end
   end
 end

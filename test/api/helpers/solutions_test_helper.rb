@@ -44,6 +44,7 @@ module SolutionsTestHelper
                       else
                         []
                       end
+      result[:icon] = folder.parent.icon.present? ? AttachmentDecorator.new(folder.parent.icon).to_hash : {}
     end
     result
   end

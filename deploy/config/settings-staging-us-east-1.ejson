@@ -312,6 +312,28 @@
           "password": "EJ[1:eBjPEPHdqNlQsn0wWkVmp8i8zp95dBuy4uddtW+v0nI=:nLXV5l/fxPBHX2r0uWoyrrrZfbQcHQDU:09zrl2654e0HgboLodv3Z66vx0xlD69g]"
         },
         "user_groups": {
+          "migration_app": {
+            "global": {
+              "_username": "migration",
+              "password": "EJ[1:sBo90CygGPqY1jaGk2AN3d1hR83HVv4iw4JI/2HNJjw=:pI0R/lD7jsGIZ3En2ZfmnMV1E2L4uE09:9FnEtlY5k4oujCAg0nz58cApRz0WiBD2Zg==]"
+            },
+            "default": {
+              "_username": "migration",
+              "password": "EJ[1:sBo90CygGPqY1jaGk2AN3d1hR83HVv4iw4JI/2HNJjw=:4KER4s955rddQOZ9/HsnKN4dKMVbSP42:f5SDut2wXZVQqAbzI6Kx+HyIlU6ogeIwqA==]"
+            },
+            "shards": {}
+          },
+          "migration_bg": {
+            "global": {
+              "_username": "migration",
+              "password": "EJ[1:sBo90CygGPqY1jaGk2AN3d1hR83HVv4iw4JI/2HNJjw=:tPqukNLZDLbMk9P39HhN7LBimMmcZf2c:hFR7D5ztZ/HiYNjuKCJl0Qh5wUYECaLMeA==]"
+            },
+            "default": {
+              "_username": "migration",
+              "password": "EJ[1:sBo90CygGPqY1jaGk2AN3d1hR83HVv4iw4JI/2HNJjw=:+jcrZppShw4VfLh1j3jaoidtCf/jnW2W:r+DnY7+0Lg5ps1Y1O0IWPREcWXeY14PdDQ==]"
+            },
+            "shards": {}
+          },
           "helpkit_app": {
               "global": {
                   "_username": "freshhelp",
