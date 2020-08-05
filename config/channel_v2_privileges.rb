@@ -9,7 +9,7 @@ Authority::Authorization::PrivilegeList.build do
   end
   view_solutions do
     resource :"channel/v2/api_solutions/category", only: [:index, :show]
-    resource :"channel/v2/api_solutions/folder", only: [:category_folders, :show, :index]
+    resource :"channel/v2/api_solutions/folder", only: [:category_folders, :show, :index, :folder_filter]
     resource :"channel/v2/api_solutions/article", only: [:folder_articles, :show, :index]
   end
 

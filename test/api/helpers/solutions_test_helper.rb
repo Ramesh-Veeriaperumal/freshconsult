@@ -29,14 +29,8 @@ module SolutionsTestHelper
     result[:company_ids] = folder.solution_folder_meta.customer_ids if folder.parent.visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users]
     result[:contact_segment_ids] = folder.solution_folder_meta.contact_filter_ids if folder.parent.visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:contact_segment]
     result[:company_segment_ids] = folder.solution_folder_meta.company_filter_ids if folder.parent.visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_segment]
-    if Account.current.omni_bundle_account? && Account.current.launched?(:kbase_omni_bundle)
-      result[:platforms] = if expected_output[:platforms].present?
-                             expected_output[:platforms]
-                           elsif folder.parent.solution_platform_mapping.present?
-                             folder.parent.solution_platform_mapping.to_hash
-                           else
-                             SolutionPlatformMapping.default_platform_values_hash
-                           end
+    if omni_bundle_enabled?
+      result[:platforms] = expected_output[:platforms].presence || platform_response(false, folder.parent.solution_platform_mapping)
       result[:tags] = if expected_output[:tags].present?
                         expected_output[:tags]
                       elsif folder.parent.tags.present?
@@ -49,6 +43,14 @@ module SolutionsTestHelper
     result
   end
 
+  def solution_folder_pattern_index_channel_api(folder, _expected_output = {}, _ignore_extra_keys = true)
+    result = solution_folder_pattern(expected_output = {}, ignore_extra_keys = true, folder)
+    result[:article_order] = folder.parent.article_order
+    result[:position] = folder.parent.position
+    result[:language] = folder.language_code
+    result
+  end
+
   def solution_folder_pattern_index(_expected_output = {}, _ignore_extra_keys = true, folder)
     solution_folder_pattern(expected_output = {}, ignore_extra_keys = true, folder).except(:category_id)
   end
@@ -58,6 +60,7 @@ module SolutionsTestHelper
     result[:article_order] = folder.parent.article_order
     result[:position] = folder.parent.position
     result[:language] = folder.language_code
+    result[:platforms] = _expected_output[:platforms].presence || platform_response(true, folder.parent.solution_platform_mapping) if omni_bundle_enabled?
     result
   end
 
@@ -532,7 +535,7 @@ module SolutionsTestHelper
   def validation_error_pattern(value)
     {
       description: 'Validation failed',
-      errors: [value]
+      errors: value.is_a?(Array) ? value : [value]
     }
   end
 
@@ -716,5 +719,13 @@ module SolutionsTestHelper
 
   def base64_plain_text
     '<iframe src="data:text/plain;base64,VGhpcyBpcyB0byB0ZXN0IGJhc2U2NA==">The “iframe” tag is not supported by your browser.</iframe>'
+  end
+
+  def setup_channel_api
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    yield
+  ensure
+    CustomRequestStore.unstub(:read)
   end
 end

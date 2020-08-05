@@ -23,11 +23,11 @@ class Solutions::FolderDecorator < ApiDecorator
     response_hash[:contact_segment_ids] = mappable_ids if contact_segment_ids_visible?
     response_hash[:company_segment_ids] = mappable_ids if company_segment_ids_visible?
     if allow_chat_platform_attributes?
-      response_hash[:platforms] = solution_platform_mapping.present? && (!solution_platform_mapping.try(:destroyed?))? solution_platform_mapping.to_hash : SolutionPlatformMapping.default_platform_values_hash
+      response_hash[:platforms] = platform_values
       response_hash[:tags] = !solution_platform_mapping.try(:destroyed?) ? tags.pluck(:name) : []
       response_hash[:icon] = icon.present? ? folder_icon_hash : {}
     end
-    if private_api?
+    if private_api? || channel_v2_api?
       response_hash[:position] = position
       response_hash[:article_order] = article_order
       response_hash[:language] = language_code
@@ -35,8 +35,17 @@ class Solutions::FolderDecorator < ApiDecorator
     response_hash
   end
 
+  def platform_values
+    platform_present = solution_platform_mapping.present? && !solution_platform_mapping.try(:destroyed?)
+    if private_api?
+      platform_present ? solution_platform_mapping.to_hash : SolutionPlatformMapping.default_platform_values_hash
+    else
+      platform_present ? solution_platform_mapping.enabled_platforms : []
+    end
+  end
+
   def index_hash
-    private_api? ? to_hash : to_hash.except(:category_id)
+    private_api? || channel_v2_api? ? to_hash : to_hash.except(:category_id)
   end
 
   def company_ids_visible?
