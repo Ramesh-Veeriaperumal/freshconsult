@@ -57,13 +57,20 @@ class CentralResyncWorkerTest < ActionView::TestCase
     end
   end
 
+  def test_execute_worker_and_observe_errors
+    Sidekiq::Testing.inline! do
+      CentralPublish::ResyncWorker.perform_async(resync_args)
+    end
+    assert_equal CentralPublish::ResyncWorker.jobs.size, 0
+  end
+
   def test_worker_limit_on_changing_redis_key
     source = Faker::Lorem.word
     key = format(CENTRAL_RESYNC_RATE_LIMIT, source: source)
     set_others_redis_key(CENTRAL_RESYNC_MAX_ALLOWED_WORKERS, 2)
     set_others_redis_key(key, 1)
 
-    assert_not resync_worker_limit_reached?(source)
+    assert_equal resync_worker_limit_reached?(source), false
     set_others_redis_key(key, 3)
     assert resync_worker_limit_reached?(source)
   ensure
@@ -76,7 +83,7 @@ class CentralResyncWorkerTest < ActionView::TestCase
     remove_others_redis_key(CENTRAL_RESYNC_MAX_ALLOWED_WORKERS)
     set_others_redis_key(key, (RESYNC_WORKER_LIMIT - 1))
 
-    assert_not resync_worker_limit_reached?(source)
+    assert_equal resync_worker_limit_reached?(source), false
     set_others_redis_key(key, (RESYNC_WORKER_LIMIT + 1))
     assert resync_worker_limit_reached?(source)
   ensure
@@ -88,7 +95,7 @@ class CentralResyncWorkerTest < ActionView::TestCase
     key = format(CENTRAL_RESYNC_RATE_LIMIT, source: source)
     remove_others_redis_key(key)
 
-    assert_not resync_worker_limit_reached?(source)
+    assert_equal resync_worker_limit_reached?(source), false
     set_others_redis_key(CENTRAL_RESYNC_MAX_ALLOWED_WORKERS, 0)
     assert resync_worker_limit_reached?(source)
   ensure
