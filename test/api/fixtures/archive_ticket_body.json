@@ -193,7 +193,7 @@
           "ff_decimal09":null,
           "ff_decimal10":null
         },
-        "ticket_old_body":{
+        "ticket_body":{
           "id":39601856,
           "ticket_id":41001919,
           "description":"Some - random - text",

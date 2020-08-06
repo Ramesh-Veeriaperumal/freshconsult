@@ -306,27 +306,26 @@ class Helpdesk::TicketField < ActiveRecord::Base
   before_create :populate_label
 
 
-  scope :custom_fields, :conditions => ["flexifield_def_entry_id is not null"]
-  scope :custom_dropdown_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'custom_dropdown'"]
-  scope :non_encrypted_ticket_fields, :conditions => ["field_type != 'encrypted_text' and field_type != 'secure_text'"]
-  scope :non_encrypted_custom_fields, conditions: ["flexifield_def_entry_id is not null and field_type != 'encrypted_text' and field_type != 'secure_text'"]
-  scope :customer_visible, :conditions => { :visible_in_portal => true }
-  scope :customer_editable, :conditions => { :editable_in_portal => true }
-  scope :agent_required_fields, :conditions => { :required => true }
-  scope :agent_required_fields_for_closure, :conditions => { :required_for_closure => true }
-  scope :type_field, :conditions => { :name => "ticket_type" }
-  scope :status_field, :conditions => { :name => "status" }
-  scope :default_company_field, :conditions => {:name => "company"}
-  scope :requester_field, :conditions => {:name => "requester"}
-  scope :nested_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'nested_field'"]
-  scope :nested_and_dropdown_fields, :conditions=>["flexifield_def_entry_id is not null and (field_type = 'nested_field' or field_type='custom_dropdown')"]
-  scope :event_fields, :conditions=>["flexifield_def_entry_id is not null and (field_type = 'nested_field' or field_type='custom_dropdown' or field_type='custom_checkbox')"]
+  scope :custom_fields, -> { where(["flexifield_def_entry_id is not null"]) }
+  scope :custom_dropdown_fields, -> { where("flexifield_def_entry_id is not null and field_type = 'custom_dropdown'") }
+  scope :non_encrypted_ticket_fields, -> { where("field_type != 'encrypted_text' and field_type != 'secure_text'") }
+  scope :non_encrypted_custom_fields, -> { where("flexifield_def_entry_id is not null and field_type != 'encrypted_text' and field_type != 'secure_text'") }
+  scope :customer_visible, -> { where(visible_in_portal: true) }
+  scope :customer_editable, -> { where(editable_in_portal: true) }
+  scope :agent_required_fields, -> { where(required: true) }
+  scope :agent_required_fields_for_closure, -> { where(required_for_closure: true) }
+  scope :type_field, -> { where(name: 'ticket_type') }
+  scope :status_field, -> { where(name: 'status') }
+  scope :default_company_field, -> { where(name: 'company') }
+  scope :requester_field, -> { where(name: 'requester') }
+  scope :nested_fields, -> { where("flexifield_def_entry_id is not null and field_type = 'nested_field'") }
+  scope :nested_and_dropdown_fields, -> { where("flexifield_def_entry_id is not null and (field_type = 'nested_field' or field_type='custom_dropdown')") }
+  scope :event_fields, -> { where("flexifield_def_entry_id is not null and (field_type = 'nested_field' or field_type='custom_dropdown' or field_type='custom_checkbox')") }
   scope :default_fields, -> { where(:default => true ) }
-  scope :custom_checkbox_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'custom_checkbox'"]
-  scope :encrypted_custom_fields, conditions: ["flexifield_def_entry_id is not null and field_type = 'encrypted_text'"]
+  scope :custom_checkbox_fields, -> { where("flexifield_def_entry_id is not null and field_type = 'custom_checkbox'") }
+  scope :encrypted_custom_fields, -> { where("flexifield_def_entry_id is not null and field_type = 'encrypted_text'") }
   scope :secure_fields, -> { where(field_type: SECURE_TEXT) }
   scope :non_secure_fields, -> { where("field_type != '#{SECURE_TEXT}'") }
-
 
   # Enumerator constant for mapping the CSS class name to the field type
   FIELD_CLASS = { default_subject: { type: :default, dom_type: 'text', form_field: 'subject', visible_in_view_form: false, i18n_label: 'subject' },

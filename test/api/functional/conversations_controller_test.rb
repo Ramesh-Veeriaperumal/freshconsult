@@ -1255,7 +1255,7 @@ class ConversationsControllerTest < ActionController::TestCase
     params = update_note_params_hash.merge('attachments' => [file, file2])
     n =  create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-    n.instance_variable_set("@note_body_content", nil)
+    n.instance_variable_set("@note_body", nil)
     put :update, construct_params({ id: n.id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 200
@@ -1504,7 +1504,7 @@ class ConversationsControllerTest < ActionController::TestCase
     get :ticket_conversations, controller_params(id: parent_ticket.display_id)
     assert controller.instance_variable_get(:@items).all? { |x| x.association(:attachments).loaded? }
     assert controller.instance_variable_get(:@items).all? { |x| x.association(:schema_less_note).loaded? }
-    assert controller.instance_variable_get(:@items).all? { |x| x.association(:note_old_body).loaded? }
+    assert controller.instance_variable_get(:@items).all? { |x| x.association(:note_body).loaded? }
   ensure
     @controller.unstub(:decorate_objects)
     @controller.unstub(:render)

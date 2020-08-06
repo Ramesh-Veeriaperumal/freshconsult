@@ -5,7 +5,7 @@ describe Discussions::UnpublishedController do
 	self.use_transactional_fixtures = false
 
 	before(:all) do
-		$dynamo = AWS::DynamoDB::ClientV2.new
+		$dynamo = Aws::DynamoDB::Client.new
 		Dynamo::CLIENT = $dynamo
 		@category = create_test_category
 		@forum = create_test_forum(@category)
@@ -195,7 +195,7 @@ describe Discussions::UnpublishedController do
 			folder_name = dynamo_post.attachments["folder"]
 			file_name = dynamo_post.attachments["file_names"][i].split('/').last.split('?').first.split('_')[1..-1].join.gsub("%20"," ")
 			attachment.content_file_name.should eql file_name
-			s3_bucket_objects = AWS::S3::Bucket.new(S3_CONFIG[:bucket]).objects.with_prefix("spam_attachments")
+			s3_bucket_objects = AwsWrapper::S3.find_with_prefix(S3_CONFIG[:bucket], "spam_attachments")
 			s3_bucket_objects.map(&:key).include?("#{folder_name}/#{dynamo_post.attachments["file_names"][i]}").should eql true
 		end
 	end

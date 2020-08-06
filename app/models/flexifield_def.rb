@@ -19,7 +19,7 @@ class FlexifieldDef < ActiveRecord::Base
 
   has_many :flexifield_picklist_vals, :class_name => 'FlexifieldPicklistVal',:through =>:flexifield_def_entries
 
-  scope :default_form, :conditions => ["product_id is NULL and module='Ticket'"]
+  scope :default_form, -> { where(product_id: nil, module: 'Ticket')}
 
   validates_presence_of :name
 

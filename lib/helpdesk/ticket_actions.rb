@@ -319,7 +319,7 @@ module Helpdesk::TicketActions
                 options[:distinct] = true 
                 options[:select] = :id
               end
-              total_entries = current_account.tickets.permissible(current_user).count(options)
+              total_entries = current_account.tickets.permissible(current_user).where(options[:conditions]).joins(options[:joins]).select(options[:select]).distinct.count
             end
           end
         end

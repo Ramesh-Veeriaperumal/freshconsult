@@ -96,8 +96,7 @@ module ForumSpamMethods
 
 	def destroy_attachments
 		#Destroy normal attachments
-		bucket = AWS::S3::Bucket.new(S3_CONFIG[:bucket])
-		bucket.objects.with_prefix(self.attachments['folder']).delete_all if self.attachments.present?
+        AwsWrapper::S3.batch_delete_all(S3_CONFIG[:bucket], self.attachments['folder']) if self.attachments.present?
 		#Destroy inline attachments without attachable_id
 		DeletedBodyObserver.write_to_s3(self.body_html, 'Post', self.timestamp)
 		InlineImageShredder.perform_async({model_name: 'Post', model_id: self.timestamp})

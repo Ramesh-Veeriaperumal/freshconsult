@@ -12,26 +12,23 @@ class ScoreboardLevel < ActiveRecord::Base
     [ I18n.t('gamification.levels.guru'),        100000 ] 
   ]
 
-  scope :level_for_score, lambda { | score | { 
-      :conditions => [ 'points <= ?', score ], 
-      :limit => 1, 
-      :order => 'points DESC' 
-    } 
+  scope :level_for_score, -> (score) {
+    where([ 'points <= ?', score ]).
+    order('points DESC').
+    limit(1)
   }
 
-  scope :next_level_for_points, lambda { |points| {
-      :conditions => [ 'points > ?', points ],
-      :limit => 1,
-      :order => 'points ASC'
-    }
+  scope :next_level_for_points, -> (points) {
+    where([ 'points > ?', points ]).
+    order('points ASC').
+    limit(1)
   }
 
-  scope :level_up_for, lambda { |level| {
-      :conditions => ['id = ? or points > ?', level, level.points ],
-      :order => 'points ASC'
-    } if level
+  scope :level_up_for, -> (level) {
+    where(['id = ? or points > ?', level, level.points ]).
+    order('points ASC') if level
   }
 
-  scope :least_points, lambda {{ :order => 'points ASC', :limit => 1 }}
+  scope :least_points, -> { order('points ASC').limit(1) }
 
 end

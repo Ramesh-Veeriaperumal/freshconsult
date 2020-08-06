@@ -8,8 +8,9 @@ class TrialSubscription < ActiveRecord::Base
   concerned_with :constants, :callbacks, :validations
 
   after_commit :clear_cache
-  scope :trials_by_status, ->(s) { where(status: TRIAL_STATUSES[s.to_sym]) }
-  scope :ending_trials, ->(date, status) { where('ends_at <= ?', date).trials_by_status(status) }
+
+  scope :trials_by_status, -> (s) { where(status: TRIAL_STATUSES[s.to_sym]) }
+  scope :ending_trials, -> (date, status) { where('ends_at <= ?', date).trials_by_status(status) }
   before_create :remove_scheduled_requests, if: -> { account.downgrade_policy_enabled? }
 
   def construct_and_save

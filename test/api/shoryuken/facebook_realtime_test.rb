@@ -41,7 +41,7 @@ class FacebookRealtimeTest < ActionView::TestCase
     sqs_msg = Hashit.new(body: realtime_feed.to_json)
     koala_post = sample_post_feed(@fb_page.page_id, user_id, post_id, time)
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_post[0])
-    Ryuken::FacebookRealtime.new.perform(sqs_msg)
+    Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
     Koala::Facebook::API.any_instance.unstub(:get_object)
     assert_nil @account.facebook_posts.find_by_post_id(post_id)
   end
@@ -55,7 +55,7 @@ class FacebookRealtimeTest < ActionView::TestCase
     sqs_msg = Hashit.new(body: realtime_feed.to_json)
     koala_post = sample_post_feed(@fb_page.page_id, user_id, post_id, time)
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_post[0])
-    Ryuken::FacebookRealtime.new.perform(sqs_msg)
+    Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
     Koala::Facebook::API.any_instance.unstub(:get_object)
     fb_post_id = "#{@fb_page.page_id}_#{post_id}"
     fb_user_id = koala_post[0]['from']['id']
@@ -84,7 +84,7 @@ class FacebookRealtimeTest < ActionView::TestCase
     sqs_msg = Hashit.new(body: realtime_feed.to_json)
     koala_post = sample_post_feed(@fb_page.page_id, user_id, post_id, time)
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_post[0])
-    Ryuken::FacebookRealtime.new.perform(sqs_msg)
+    Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
     Koala::Facebook::API.any_instance.unstub(:get_object)
 
     fb_post_id = "#{@fb_page.page_id}_#{post_id}"
@@ -102,7 +102,7 @@ class FacebookRealtimeTest < ActionView::TestCase
     sqs_msg = Hashit.new(body: feed.to_json)
     koala_post = sample_post_feed(@fb_page.page_id, user_id, post_id, time)
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_post[0])
-    Ryuken::FacebookRealtime.new.perform(sqs_msg)
+    Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
     Koala::Facebook::API.any_instance.unstub(:get_object)
     assert_nil @account.facebook_posts.find_by_post_id(post_id)
   end
@@ -121,7 +121,7 @@ class FacebookRealtimeTest < ActionView::TestCase
     sqs_msg = Hashit.new(body: comment_feed.to_json)
 
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_comment['data'][0], koala_post[0])
-    Ryuken::FacebookRealtime.new.perform(sqs_msg)
+    Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
     Koala::Facebook::API.any_instance.unstub(:get_object)
     fb_comment_id = koala_comment['data'][0]['id']
     comment_content = koala_comment['data'][0]['message']
@@ -166,7 +166,7 @@ class FacebookRealtimeTest < ActionView::TestCase
     sqs_msg = Hashit.new(body: comment_feed.to_json)
 
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_comment['data'][0], koala_post[0])
-    Ryuken::FacebookRealtime.new.perform(sqs_msg)
+    Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
     Koala::Facebook::API.any_instance.unstub(:get_object)
     fb_comment_id = koala_comment['data'][0]['id']
     comment_content = koala_comment['data'][0]['message']
@@ -188,7 +188,7 @@ class FacebookRealtimeTest < ActionView::TestCase
     sqs_msg = Hashit.new(body: feed.to_json)
     koala_post = sample_post_feed(@fb_page.page_id, user_id, post_id, time)
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_post[0])
-    Ryuken::FacebookRealtime.new.perform(sqs_msg)
+    Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
     Koala::Facebook::API.any_instance.unstub(:get_object)
     fb_post_id = "#{@fb_page.page_id}_#{post_id}"
     assert_equal @account.facebook_posts.find_by_post_id(fb_post_id).postable.is_a?(Helpdesk::Ticket), true
@@ -211,7 +211,7 @@ class FacebookRealtimeTest < ActionView::TestCase
     sqs_msg = Hashit.new(body: comment_feed.to_json)
 
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_comment['data'][0], koala_post[0])
-    Ryuken::FacebookRealtime.new.perform(sqs_msg)
+    Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
     Koala::Facebook::API.any_instance.unstub(:get_object)
     fb_post_id = koala_post[0]['id']
 
@@ -243,7 +243,7 @@ class FacebookRealtimeTest < ActionView::TestCase
     sqs_msg = Hashit.new(body: feed.to_json)
     koala_post = sample_post_feed(@fb_page.page_id, user_id, post_id, time)
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_post[0])
-    Ryuken::FacebookRealtime.new.perform(sqs_msg)
+    Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
     Koala::Facebook::API.any_instance.unstub(:get_object)
     assert_nil @account.facebook_posts.find_by_post_id(post_id)
   end
@@ -266,7 +266,7 @@ class FacebookRealtimeTest < ActionView::TestCase
     sqs_msg = Hashit.new(body: comment_feed.to_json)
 
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_comment['data'][0], koala_post[0])
-    Ryuken::FacebookRealtime.new.perform(sqs_msg)
+    Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
     Koala::Facebook::API.any_instance.unstub(:get_object)
     fb_post_id = koala_post[0]['id']
     fb_comment_id = koala_comment['data'][0]['id']
@@ -292,7 +292,7 @@ class FacebookRealtimeTest < ActionView::TestCase
     sqs_msg = Hashit.new(body: comment_feed.to_json)
 
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_comment['data'][0], koala_post[0])
-    Ryuken::FacebookRealtime.new.perform(sqs_msg)
+    Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
     Koala::Facebook::API.any_instance.unstub(:get_object)
     fb_comment_id = koala_comment['data'][0]['id']
     comment_content = koala_comment['data'][0]['message']
@@ -315,7 +315,7 @@ class FacebookRealtimeTest < ActionView::TestCase
     koala_post = sample_cover_photo_feed(@fb_page.page_id, post_user_id, cover_feed_id, time, message)
     sqs_msg = Hashit.new(body: comment_feed.to_json)
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_comment['data'][0], koala_post[0], koala_comment['data'][0])
-    Ryuken::FacebookRealtime.new.perform(sqs_msg)
+    Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
     Koala::Facebook::API.any_instance.unstub(:get_object)
     fb_comment_id = koala_comment['data'][0]['id']
     comment_content = koala_comment['data'][0]['message']

@@ -6,13 +6,12 @@ module ModelControllerMethods
   
   def index
     @users = self.instance_variable_set('@' + self.controller_name,
-      scoper.find(:all, :order => 'name'))      
+      scoper.order('name'))      
 
     respond_to do |format|
       format.html  do
-        @users = @users.paginate(
-          :page => params[:page], 
-          :order => 'name',
+        @users = @users.order('name').paginate(
+          :page => params[:page],
           :per_page => 10)
       end
       format.atom do

@@ -10,7 +10,7 @@ class ScheduledExport::Ticket::Config < BaseWorker
       return if schedule.nil?
       args.merge!(schedule.params_for_service)
     end
-    $sqs_scheduled_ticket_export.send_message(args.to_json)
+    AwsWrapper::SqsV2.send_message(SQS[:scheduled_ticket_export_config], args.to_json)
   rescue Exception => e
     Rails.logger.debug "Error in sending ticket schedule config data to SQS"
     Rails.logger.debug "#{args} #{e.class} #{e.message} #{e.backtrace}"

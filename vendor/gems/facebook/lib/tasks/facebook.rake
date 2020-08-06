@@ -5,7 +5,7 @@ namespace :facebook do
     include Facebook::RedisMethods
     include Facebook::Exception::Notifier
 
-    $sqs_facebook.poll(:initial_timeout => false, :batch_size => 10) do |sqs_msg|
+    AwsWrapper::SqsV2.poll(SQS[:facebook_realtime_queue]) do |sqs_msg|
       begin
         #Check for app rate limit before processing feeds
         wait_on_poll if app_rate_limit_reached?
@@ -25,7 +25,7 @@ namespace :facebook do
     include Facebook::Exception::Notifier
     include Facebook::CentralMessageUtil
 
-    $sqs_facebook_messages.poll(:initial_timeout => false, :batch_size => 10) do |sqs_msg|
+    AwsWrapper::SqsV2.poll(SQS[:fb_message_realtime_queue]) do |sqs_msg|
       begin
         #Check for app rate limit before processing feeds
         wait_on_poll if app_rate_limit_reached?
@@ -61,11 +61,10 @@ namespace :facebook do
     end
   end
 
-  task :global_realtime => :environment do
-    $sqs_facebook_global.poll("Facebook::Core::Splitter","split",
-                       :batch_size => 10,
-                       :initial_timeout => false)
-  end
+  # PRE-RAILS: sqs_facebook_global is not present anywhere, need to check and remove it.
+  # task :global_realtime => :environment do
+  #   $sqs_facebook_global.poll("Facebook::Core::Splitter", "split", batch_size: 10, initial_timeout: false) 
+  # end
 
   def wait_on_poll
     subject = "APP RATE LIMIT - REACHED SKIPPING PROCESS"

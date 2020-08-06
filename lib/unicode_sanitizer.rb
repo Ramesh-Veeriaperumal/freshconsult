@@ -16,6 +16,22 @@ module UnicodeSanitizer
     raise
   end
 
+  def self.encode_emoji_hash(attributes, key, *elements)
+    return attributes if attributes.blank? || !Account.current.launched?(:encode_emoji)
+    begin
+      Timeout.timeout(EMOJI_ENCODING_TIMEOUT) do
+        elements.each do |ele|
+          attributes[key][ele] = remove_4byte_chars(attributes[key][ele]) if attributes[key][ele]
+          attributes[key][ele + '_html'] = utf84b_html_c(attributes[key][ele + '_html']) if attributes[key][ele + '_html']
+        end if attributes[key]
+      end
+    rescue TimeoutError => e
+      NewRelic::Agent.notice_error(e, description: 'TimeoutError occured while encoding emoji')
+      raise
+    end
+    attributes
+  end
+
   def self.utf84b_html_c(content)
     if !content.nil?
       j = []

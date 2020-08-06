@@ -2,8 +2,8 @@ module Spam::Core
   class Base
 
     ASSOCIATIONS_TO_SERIALIZE = {
-      helpdesk_tickets: [:flexifield, :ticket_old_body, :schema_less_ticket, :ticket_states, :ticket_topic, :topic, :article_ticket, :article, :reminders, :subscriptions],
-      :helpdesk_notes => [:survey_remark, :note_old_body, :schema_less_note, :external_note]
+      helpdesk_tickets: [:flexifield, :ticket_body, :schema_less_ticket, :ticket_states, :ticket_topic, :topic, :article_ticket, :article, :reminders, :subscriptions],
+      :helpdesk_notes => [:survey_remark, :note_body, :schema_less_note, :external_note]
     }
     
     # :tag_uses => "taggable", :tags, :parent
@@ -53,12 +53,12 @@ module Spam::Core
         ["description","description_html"].each do |key|
           ticket_data.delete(key)
         end
-        ticket_data[:ticket_body_attributes] = model.associations_data[:helpdesk_tickets_association][:ticket_old_body]
+        ticket_data[:ticket_body_attributes] = model.associations_data[:helpdesk_tickets_association][:ticket_body]
         ticket = Helpdesk::Ticket.new(ticket_data)
         ticket.spam = false
         ticket_associations_data = model.associations_data[:helpdesk_tickets_association]
         ticket_associations_data.each do |key,value|
-          next if key == :ticket_old_body
+          next if key == :ticket_body
           if value.is_a?(Array)
             ticket.safe_send(key).build(value) unless value.blank?
           else
@@ -74,11 +74,11 @@ module Spam::Core
             ["body","body_html"].each do |key|
               note_data.delete(key)
             end
-            note_data[:note_body_attributes] = note.associations_data[:helpdesk_notes_association][:note_old_body]
+            note_data[:note_body_attributes] = note.associations_data[:helpdesk_notes_association][:note_body]
             restored_note = ticket.notes.build(note_data)            
             note_associations_data = note.associations_data[:helpdesk_notes_association]
             note_associations_data.each do |key,value|
-              next if key == :note_old_body
+              next if key == :note_body
               restored_note.safe_send("build_#{key}",value)
               if value.is_a?(Array)
                 restored_note.safe_send(key).build(value) unless value.blank?

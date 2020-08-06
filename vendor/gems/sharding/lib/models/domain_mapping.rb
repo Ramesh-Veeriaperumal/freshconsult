@@ -12,7 +12,8 @@ class DomainMapping < ActiveRecord::Base
 
   belongs_to :shard, :class_name => 'ShardMapping', :foreign_key => :account_id
 
-  scope :main_portal, :conditions => ['portal_id IS NULL']
+  scope :main_portal, -> { where(portal_id: nil) }
+
 
   def self.domain_names(account_ids)
     raise 'Too_Many_Accounts_In_Query_Limit' if account_ids.length > 15

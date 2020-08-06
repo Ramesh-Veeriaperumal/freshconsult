@@ -346,6 +346,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_nr_dueBy_off_sla_timer
     Account.current.stubs(:next_response_sla_enabled?).returns(true)
+    Account.any_instance.stubs(:time_zone).returns('Edinburgh')
     sla_policy
     @note = nil
     freeze_time_now(get_datetime('10:00', '5 Nov 2019')) do
@@ -391,8 +392,12 @@ class TicketsControllerTest < ActionController::TestCase
       }
       @note = create_note params_hash
       ticket.current_note_id = @note.id
+      p "ticket.nr_due_by :: #{ticket.nr_due_by.inspect}"
+      p "get_datetime('12:30', '5 Nov 2019') :: #{get_datetime('12:30', '5 Nov 2019').inspect}"
       @note.save_response_time
       ticket.update_dueby
+      p "ticket.nr_due_by :: #{ticket.nr_due_by.inspect}"
+      p "get_datetime('12:30', '5 Nov 2019') :: #{get_datetime('12:30', '5 Nov 2019').inspect}"
       assert_nil ticket.nr_due_by
       assert_nil ticket.last_customer_note_id
     end
@@ -404,8 +409,12 @@ class TicketsControllerTest < ActionController::TestCase
       }
       @note = create_note params_hash
       ticket.current_note_id = @note.id
+      p "ticket.nr_due_by :: #{ticket.nr_due_by.inspect}"
+      p "get_datetime('12:45', '5 Nov 2019') :: #{get_datetime('12:45', '5 Nov 2019').inspect}"
       @note.save_response_time
       ticket.update_dueby
+      p "ticket.nr_due_by :: #{ticket.nr_due_by.inspect}"
+      p "get_datetime('12:45', '5 Nov 2019') :: #{get_datetime('12:45', '5 Nov 2019').inspect}"
       assert_equal @note.id, ticket.last_customer_note_id
     end
     freeze_time_now(get_datetime('12:50', '5 Nov 2019')) do
@@ -415,20 +424,31 @@ class TicketsControllerTest < ActionController::TestCase
           created_at: Time.zone.now
       }
       @note = create_note params_hash
+      p "ticket.nr_due_by :: #{ticket.nr_due_by.inspect}"
+      p "get_datetime('12:50', '5 Nov 2019') :: #{get_datetime('12:50', '5 Nov 2019').inspect}"
       @note.save_response_time
       ticket.update_dueby
+      p "ticket.nr_due_by :: #{ticket.nr_due_by.inspect}"
+      p "get_datetime('12:50', '5 Nov 2019') :: #{get_datetime('12:50', '5 Nov 2019').inspect}"
       assert_not_nil ticket.last_customer_note_id
       assert_not_equal @note.id, ticket.last_customer_note_id
     end
     freeze_time_now(get_datetime('13:00', '5 Nov 2019')) do
       params_hash = { status: 2 }
+      p "ticket.nr_due_by :: #{ticket.nr_due_by.inspect}"
+      p "get_datetime('16:00', '5 Nov 2019') :: #{get_datetime('16:00', '5 Nov 2019').inspect}"
       put :update, construct_params({ id: ticket.display_id }, params_hash)
       ticket.update_dueby
       ticket.update_on_state_time
+      p "Time.zone :: #{Time.zone}"
+      p "@account.time_zone :: #{@account.time_zone}"
+      p "ticket.nr_due_by :: #{ticket.nr_due_by.inspect}"
+      p "get_datetime('16:00', '5 Nov 2019') :: #{get_datetime('16:00', '5 Nov 2019').inspect}"
       assert_equal ticket.nr_due_by, get_datetime('16:00', '5 Nov 2019')
     end
   ensure
     Account.current.unstub(:next_response_sla_enabled?)
+    Account.any_instance.unstub(:time_zone)
     ticket.destroy
   end
 end

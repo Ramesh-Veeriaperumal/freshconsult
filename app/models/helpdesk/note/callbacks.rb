@@ -5,16 +5,18 @@ class Helpdesk::Note < ActiveRecord::Base
   # Any changes related to note or reply made in this file should be replicated in
   # send_and_set_helper if required
   before_create :update_observer_events
+  before_create :update_content_ids
   before_create :create_broadcast_message, :if => :broadcast_note?
   before_save :update_parent_sender_email, :if => :email?
   before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
   before_save :update_response_violation, on: :create, if: :update_sla_violation?
   before_save :update_note_changes
   before_save :validate_schema_less_note
+  before_update :load_full_text
 
   before_destroy :save_deleted_note_info
 
-  after_create :update_content_ids, :update_parent, :add_activity
+  after_create :update_parent, :add_activity
 
   after_commit :fire_create_event, on: :create
   # Doing update note count before pushing to ticket_states queue
@@ -51,29 +53,9 @@ class Helpdesk::Note < ActiveRecord::Base
   include Redis::RedisKeys
   include Redis::OthersRedis
 
-  def construct_note_old_body_hash
-    {
-      :body => self.note_body_content.body,
-      :body_html => self.note_body_content.body_html,
-      :full_text => self.note_body_content.full_text,
-      :full_text_html => self.note_body_content.full_text_html,
-      :raw_text => self.note_body_content.raw_text,
-      :raw_html => self.note_body_content.raw_html,
-      :meta_info => self.note_body_content.meta_info,
-      :version => self.note_body_content.version,
-      :account_id => self.account_id,
-      :note_id => self.id
-    }
-  end
-
   def load_full_text
-    note_body.full_text ||= note_body.body if note_body.body.present?
-    note_body.full_text_html ||= note_body.body_html if note_body.body_html.present?
-    if self.note && self.note.note? && !self.note.incoming  # for updating full_text content if body_html is edited
-      note_body.full_text = note_body.body if note_body.body.present?
-      note_body.full_text_html = note_body.body_html if note_body.body_html.present?
-    end
-    note_body.full_text_html_changed = true if note_body.changes.present? && note_body.changes.key?('full_text_html')
+    note_body.full_text = note_body.body if (note_body.body.present? && !note_body.full_text_changed?)
+    note_body.full_text_html = note_body.body_html if (note_body.body_html.present? && !note_body.full_text_html_changed?)
   end
 
   def remove_activity
@@ -138,7 +120,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def update_content_ids
       header = self.header_info
-      return if inline_attachments.empty? or header.nil? or header[:content_ids].blank?
+      return if header.nil? or header[:content_ids].blank? or inline_attachments.empty?
 
       inline_attachments.each_with_index do |attach, index|
         content_id = header[:content_ids][attach.content_file_name+"#{index}"]

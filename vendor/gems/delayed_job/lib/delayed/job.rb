@@ -42,11 +42,12 @@ module Delayed
     self.max_priority = nil
     
     JobPodConfig = YAML.load_file(File.join('config', 'pod_info.yml'))
-    default_scope :conditions => ["pod_info = ?", "#{JobPodConfig['CURRENT_POD']}"]
+
+    default_scope ->{ where("pod_info = ?", "#{JobPodConfig['CURRENT_POD']}")}
 
     # When a worker is exiting, make sure we don't have any locked jobs.
     def self.clear_locks!
-      update_all("locked_by = null, locked_at = null", ["locked_by = ?", worker_name])
+      where(['locked_by = ?', worker_name]).update_all('locked_by = null, locked_at = null')
     end
 
     # When a worker is exiting, make sure we don't run the same job again
@@ -182,7 +183,7 @@ module Delayed
       end
 
       unless object.to_yaml.size < MAX_PAYLOAD_SIZE
-        Rails.logger.debug "DEBUG ::: MaxPayloadSizeExceedError :: Payload size: #{object.to_yaml.size}"
+        Rails.logger.debug "DEBUG ::: MaxPayloadSizeExceedError :: Payload size: #{YAML.dump(object).size}"
       end
     
       priority = args.first || 0
@@ -273,7 +274,7 @@ module Delayed
       conditions.unshift(sql)
 
       records = ActiveRecord::Base.silence do
-        find(:all, :conditions => conditions, :limit => limit)
+        where(conditions).limit(limit)
       end
 
       records.sort_by { rand() }
@@ -298,11 +299,11 @@ module Delayed
       now = self.class.db_time_now
       affected_rows = if locked_by != worker
         # We don't own this job so we will update the locked_by name and the locked_at
-        self.class.update_all(["locked_at = ?, locked_by = ?", now, worker], ["id = ? and (locked_at is null or locked_at < ?)", id, (now - max_run_time.to_i)])
+        self.class.where(['id = ? and (locked_at is null or locked_at < ?)', id, (now - max_run_time.to_i)]).update_all(['locked_at = ?, locked_by = ?', now, worker])
       else
         # We already own this job, this may happen if the job queue crashes.
         # Simply resume and update the locked_at
-        self.class.update_all(["locked_at = ?", now], ["id = ? and locked_by = ?", id, worker])
+        self.class.where(['id = ? and locked_by = ?', id, worker]).update_all(['locked_at = ?', now])
       end
       if affected_rows == 1
         self.locked_at    = now

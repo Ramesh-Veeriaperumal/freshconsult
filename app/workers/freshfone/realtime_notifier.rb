@@ -45,7 +45,7 @@ module Freshfone
         set_sid
         enqueue_notification_recovery
         logger.info "Socket Notification pushed to SQS for account :: #{current_account.id} , call_id :: #{current_call.id} at #{Time.now}"
-        $freshfone_call_notifier.send_message notification_params.to_json
+        AwsWrapper::SqsV2.send_message(SQS[:freshfone_call_notifier_queue], notification_params.to_json)
         freshfone_notify_incoming_call(notification_params)
 
       rescue Exception => e
@@ -105,7 +105,7 @@ module Freshfone
           account_id: current_account.id,
           enqueued_time: epoch_time
           }
-        $freshfone_call_notifier.send_message params.to_json
+        AwsWrapper::SqsV2.send_message(SQS[:freshfone_call_notifier_queue], params.to_json)
       end
 
       def complete_other_agents
@@ -118,7 +118,7 @@ module Freshfone
           account_id: current_account.id,
           enqueued_time: epoch_time
         }
-        $freshfone_call_notifier.send_message params.to_json
+        AwsWrapper::SqsV2.send_message(SQS[:freshfone_call_notifier_queue], params.to_json)
       end
 
       def pinged_agents

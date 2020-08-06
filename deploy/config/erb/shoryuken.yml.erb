@@ -1,13 +1,5 @@
 # Shoryuken settings
-# Ref: https://github.com/phstc/shoryuken#configuration
-aws:
-  access_key_id: <%= node[:opsworks_access_keys][:access_key_id] %>
-  secret_access_key: <%= node[:opsworks_access_keys][:secret_access_key] %>
-  region: <%= node[:opsworks_access_keys][:region] ? node[:opsworks_access_keys][:region] : 'us-east-1' %>
-  receive_message: # See http://docs.aws.amazon.com/sdkforruby/api/Aws/SQS/Client.html#receive_message-instance_method
-    attribute_names:
-      - ApproximateReceiveCount
-      - SentTimestamp
+# Ref: https://github.com/phstc/shoryuken/wiki/Shoryuken-options
 :concurrency: <%= @concurrency %>
 :logfile: <%= @logfile%>
 :pidfile: <%= @pidfile %>

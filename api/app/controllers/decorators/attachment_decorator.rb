@@ -3,9 +3,9 @@ class AttachmentDecorator < ApiDecorator
            :attachment_url_for_api, :attachment_cdn_url_for_api, :inline_url, :attachable_type, :inline_image?, to: :record
 
   def initialize(record, expiry = 1.day, thumb = true)
-    @record  = record
-    @expiry  = expiry
-    @thumb   = thumb
+    @record = record
+    @expiry = expiry if expiry.present? # PRE-RAILS: We set default {} to decorator options, it overrids expire and failed in S3 opertion due to invalid data type
+    @thumb  = thumb if thumb.present?
   end
 
   def to_hash(cdn_url = false)

@@ -13,7 +13,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_create :assign_display_id, :if => :set_display_id?
 
-  before_create :set_company_id
+  before_create :set_company_id, :update_content_ids
 
   before_create :set_boolean_custom_fields
 
@@ -62,7 +62,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_destroy :save_deleted_ticket_info
 
-  after_create :refresh_display_id, :create_meta_note, :update_content_ids, :add_preferred_source
+  after_create :refresh_display_id, :create_meta_note, :add_preferred_source
   after_create :tag_update_central_publish, :on => :create, :if => :tags_updated?
 
   after_save :set_parent_child_assn, :if => :child_ticket?
@@ -134,19 +134,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       restricted_group_permission = user.assigned_ticket_permission && user.group_member?(group_id)
       self.responder_id = (user.group_ticket?(self) || restricted_group_permission || group_id.nil? ? user.id : nil)
     end
-  end
-
-  def construct_ticket_old_body_hash
-    {
-      :description => self.ticket_body_content.description,
-      :description_html => self.ticket_body_content.description_html,
-      :raw_text => self.ticket_body_content.raw_text,
-      :raw_html => self.ticket_body_content.raw_html,
-      :meta_info => self.ticket_body_content.meta_info,
-      :version => self.ticket_body_content.version,
-      :account_id => self.account_id,
-      :ticket_id => self.id
-    }
   end
 
   def set_default_values
@@ -321,8 +308,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
           :source => Account.current.helpdesk_sources.note_source_keys_by_token['meta'],
           :account_id => self.account.id,
           :user_id => self.requester.id,
-          :disable_observer => true,
-          :s3_create => false
+          :disable_observer => true
         )
         meta_note.attachments = meta_note.inline_attachments = []
         meta_note.skip_central_publish = true
@@ -858,7 +844,7 @@ private
 
   def update_content_ids
     header = self.header_info
-    return if inline_attachments.empty? or header.nil? or header[:content_ids].blank?
+    return if header.nil? or header[:content_ids].blank? or inline_attachments.empty?
 
     description_updated = false
     inline_attachments.each_with_index do |attach, index|

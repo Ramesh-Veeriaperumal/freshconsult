@@ -178,6 +178,10 @@ class Email::MailboxesController < ApiApplicationController
       options
     end
 
+    def paginate_scoper(items, options)
+      items.order(options[:order]).paginate(options.except(:order)) # rubocop:disable Gem/WillPaginate
+    end
+
     def order_clause
       "#{params[:order_by].to_sym} #{order_type} "
     end

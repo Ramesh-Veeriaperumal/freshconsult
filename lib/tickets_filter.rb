@@ -278,7 +278,7 @@ module TicketsFilter
   end
 
   ### ES Count query related hacks : END ###
-
+  # TODO:: RAILS4-CHECK
   def self.default_scope
     eval "Helpdesk::Ticket"
   end
@@ -296,7 +296,7 @@ module TicketsFilter
                   (stop_sla_timer is false and account_id = #{user.account.id} and deleted is false)"
       onhold_statuses_query = "select status_id from helpdesk_ticket_statuses where 
       (stop_sla_timer is true and account_id = #{user.account.id} and deleted is false and status_id not in (#{RESOLVED},#{CLOSED}))"
-      group_ids = user.agent_groups.find(:all, :select => 'group_id').map(&:group_id) if filter.nil? || filter.eql?(:my_groups)
+      group_ids = user.agent_groups.select('group_id').map(&:group_id) if filter.nil? || filter.eql?(:my_groups)
       group_ids = [-1] if group_ids.nil? || group_ids.empty? #The whole group thing is a hack till new views come..
       
       {

@@ -107,7 +107,7 @@ class Admin::SandboxesController < ApiApplicationController
     def upload_diff_template(diff_data, meta)
       template_data = {diff: diff_data, meta: meta}
       path = "sandbox/#{current_account.id}/#{@item.sandbox_account_id}_diff_template.json"
-      AwsWrapper::S3Object.store(path,template_data.to_json,S3_CONFIG[:bucket])
+      AwsWrapper::S3.put(S3_CONFIG[:bucket], path, template_data.to_json, server_side_encryption: 'AES256') # PRE-RAILS: V1 wrapper had default encryption
     end
 
 end

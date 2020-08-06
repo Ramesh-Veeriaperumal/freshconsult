@@ -12,7 +12,6 @@ options = {
   namespace: config[:namespace],
   compress: config[:compress],
   socket_max_failures: config[:socket_max_failures],
-  socket_timeout: config[:socket_timeout],
   serializer: memcacheserializer,
   failover: config[:failover],
   down_retry_delay: config[:down_retry_delay]
@@ -27,7 +26,6 @@ custom_options = {
   namespace: custom_config[:namespace],
   compress: custom_config[:compress],
   socket_max_failures: custom_config[:socket_max_failures],
-  socket_timeout: custom_config[:socket_timeout],
   failover: custom_config[:failover],
   down_retry_delay: custom_config[:down_retry_delay]
 }

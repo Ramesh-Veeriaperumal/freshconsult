@@ -312,6 +312,7 @@ class Va::Action
     end
     note.schema_less_note.to_emails = agent_emails
     note.build_note_and_sanitize
+    UnicodeSanitizer.encode_emoji(note.note_body, 'body', 'full_text')
     account_name = {account_name: act_on.account.helpdesk_name}
     record_action(act_on,account_name)
   end
@@ -421,6 +422,7 @@ class Va::Action
 
     def sanitize_note note
       note.build_note_and_sanitize
+      UnicodeSanitizer.encode_emoji(note.note_body, 'body', 'full_text')
       note.build_note_schema_less_associated_attributes
     end
 end

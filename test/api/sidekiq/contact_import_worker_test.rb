@@ -12,8 +12,9 @@ class ContactImportWorkerTest < ActionView::TestCase
   include Redis::OthersRedis
 
   def setup
-    @account = Account.first || create_test_account
-    Account.stubs(:current).returns(@account)
+    @account = create_test_account
+    Account.stubs(:current).returns(Account.first)
+    @account = Account.current
     @import_entry = @account.contact_imports.new(
       source: Admin::DataImport::IMPORT_TYPE['contact'.to_sym],
       status: Admin::DataImport::IMPORT_STATUS[:started]
@@ -44,8 +45,8 @@ class ContactImportWorkerTest < ActionView::TestCase
   end
 
   def test_contact_import
-    AwsWrapper::S3Object.stubs(:find).returns(fixture_file_upload('files/contacts_import.csv'))
-    AwsWrapper::S3Object.stubs(:delete).returns([])
+    AwsWrapper::S3.stubs(:read_io).returns(fixture_file_upload('files/contacts_import.csv'))
+    AwsWrapper::S3.stubs(:delete).returns([])
     Account.current.tickets.stubs(:count).returns(12)
     Import::ContactWorker.new.perform(@args)
     @import_entry.reload
@@ -55,33 +56,34 @@ class ContactImportWorkerTest < ActionView::TestCase
   end
 
   def test_contact_import_with_amp
-    AwsWrapper::S3Object.stubs(:find).returns(fixture_file_upload('files/contact_with_amp_characters.csv'))
-    AwsWrapper::S3Object.stubs(:delete).returns([])
+    AwsWrapper::S3.stubs(:read_io).returns(fixture_file_upload('files/contact_with_amp_characters.csv'))
+    AwsWrapper::S3.stubs(:delete).returns([])
     Import::ContactWorker.new.perform(@args)
     @user = @account.reload.users.where(email: 'bob@freshdesk.com').first
     assert_equal @user.name, 'Bob1&'
   ensure
-    AwsWrapper::S3Object.unstub(:delete)
-    AwsWrapper::S3Object.unstub(:find)
+    AwsWrapper::S3.unstub(:delete)
+    Account.current.tickets.unstub(:count)
+    AwsWrapper::S3.unstub(:read)
   end
 
   def test_contact_import_with_multiple_company
-    AwsWrapper::S3Object.stubs(:find).returns(fixture_file_upload('files/contacts_import.csv'))
-    AwsWrapper::S3Object.stubs(:delete).returns([])
+    AwsWrapper::S3.stubs(:read_io).returns(fixture_file_upload('files/contacts_import.csv'))
+    AwsWrapper::S3.stubs(:delete).returns([])
     Account.current.tickets.stubs(:count).returns(12)
     Import::ContactWorker.new.perform(@args)
     @import_entry.reload
     assert_equal @import_entry.import_status, Admin::DataImport::IMPORT_STATUS[:completed]
     assert_equal @import_entry.source, Admin::DataImport::IMPORT_TYPE[:contact]
     assert_equal @import_entry.last_error, nil
-    AwsWrapper::S3Object.unstub(:delete)
+    AwsWrapper::S3.unstub(:delete)
     Account.current.tickets.unstub(:count)
-    AwsWrapper::S3Object.unstub(:find)
+    AwsWrapper::S3.unstub(:read)
   end
 
   def test_import_with_parse_csv_error
-    AwsWrapper::S3Object.stubs(:find).returns(fixture_file_upload('files/contacts_import.csv'))
-    AwsWrapper::S3Object.stubs(:delete).returns([])
+    AwsWrapper::S3.stubs(:read_io).returns(fixture_file_upload('files/contacts_import.csv'))
+    AwsWrapper::S3.stubs(:delete).returns([])
     Account.current.tickets.stubs(:count).returns(12)
     args = {
       account_id: @account.id,
@@ -102,13 +104,13 @@ class ContactImportWorkerTest < ActionView::TestCase
     @import_entry.reload
     assert_equal @import_entry.import_status, Admin::DataImport::IMPORT_STATUS[:completed]
     assert_equal @import_entry.source, Admin::DataImport::IMPORT_TYPE[:contact]
-    AwsWrapper::S3Object.unstub(:delete)
+    AwsWrapper::S3.unstub(:delete)
     Account.current.tickets.unstub(:count)
-    AwsWrapper::S3Object.unstub(:find)
+    AwsWrapper::S3.unstub(:read)
   end
 
   def test_import_failue_with_invalid_csv_content
-    AwsWrapper::S3.stubs(:find).returns(fixture_file_upload('files/invalid_contacts_import.csv'))
+    AwsWrapper::S3.stubs(:read_io).returns(fixture_file_upload('files/invalid_contacts_import.csv'))
     AwsWrapper::S3.stubs(:delete).returns([])
     Account.current.tickets.stubs(:count).returns(12)
     args = {
@@ -136,22 +138,22 @@ class ContactImportWorkerTest < ActionView::TestCase
   end
 
   def test_contact_import_spam_account
-    AwsWrapper::S3Object.stubs(:find).returns(fixture_file_upload('files/contacts_import.csv'))
-    AwsWrapper::S3Object.stubs(:delete).returns([])
+    AwsWrapper::S3.stubs(:read_io).returns(fixture_file_upload('files/contacts_import.csv'))
+    AwsWrapper::S3.stubs(:delete).returns([])
     Account.current.tickets.stubs(:count).returns(8)
     Import::ContactWorker.new.perform(@args)
   rescue Exception => e
     @import_entry.reload
     assert_equal @import_entry.import_status, Admin::DataImport::IMPORT_STATUS[:blocked]
     assert_equal @import_entry.source, Admin::DataImport::IMPORT_TYPE[:contact]
-    AwsWrapper::S3Object.unstub(:delete)
+    AwsWrapper::S3.unstub(:delete)
     Account.current.tickets.unstub(:count)
-    AwsWrapper::S3Object.unstub(:find)
+    AwsWrapper::S3.unstub(:read)
   end
 
   def test_contact_import_when_stop_redis_key_is_set
-    AwsWrapper::S3Object.stubs(:find).returns(fixture_file_upload('files/contacts_import.csv'))
-    AwsWrapper::S3Object.stubs(:delete).returns([])
+    AwsWrapper::S3.stubs(:read_io).returns(fixture_file_upload('files/contacts_import.csv'))
+    AwsWrapper::S3.stubs(:delete).returns([])
     Account.current.tickets.stubs(:count).returns(12)
     set_others_redis_key('STOP_CONTACT_IMPORT:1', 'true')
     Import::ContactWorker.new.perform(@args)
@@ -160,8 +162,8 @@ class ContactImportWorkerTest < ActionView::TestCase
     assert_equal @import_entry.source, Admin::DataImport::IMPORT_TYPE[:contact]
     assert_equal @import_entry.last_error, nil
     remove_others_redis_key('STOP_COMPANY_IMPORT:1')
-    AwsWrapper::S3Object.unstub(:delete)
+    AwsWrapper::S3.unstub(:delete)
     Account.current.tickets.unstub(:count)
-    AwsWrapper::S3Object.unstub(:find)
+    AwsWrapper::S3.unstub(:read)
   end
 end

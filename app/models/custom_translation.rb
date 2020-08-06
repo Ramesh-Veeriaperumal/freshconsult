@@ -8,7 +8,7 @@ class CustomTranslation < ActiveRecord::Base
   serialize :translations, Hash
   belongs_to :translatable, polymorphic: true
   belongs_to_account
-  scope :only_ticket_fields, { :conditions => ["translatable_type = ?", "Helpdesk::TicketField"] }
+  scope :only_ticket_fields, -> { where(translatable_type: 'Helpdesk::TicketField') }
   
   attr_accessible :language_id, :translations, :translatable_id, :translatable_type, :status
   clear_memcache [TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_FULL, CUSTOMER_EDITABLE_TICKET_FIELDS_WITHOUT_PRODUCT]

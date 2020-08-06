@@ -68,12 +68,11 @@ module DevNotification
       sqs_name = "#{sqs_prefix}_#{name}"
 
       #create a SQS queue to backup on notifications
-      $sqs_client.create_queue({:queue_name => sqs_name, :attributes => {"MessageRetentionPeriod" => "1209600"}})
-      queue = AWS::SQS.new.queues.named(sqs_name)
-
+      AwsWrapper::SqsV2.create_queue(sqs_name, {"MessageRetentionPeriod" => "1209600"})
+      queue_arn = AwsWrapper::SqsV2.get_queue_attributes(sqs_name, ['QueueArn'])
       #Add permissions to the SQS queue
-      policy = create_policy(name, queue.arn, topic[:topic_arn])
-      queue.policy = policy
+      policy = create_policy(name, queue_arn, topic[:topic_arn])
+      AwsWrapper::SqsV2.set_queue_attributes(sqs_name, Policy: policy) # PRE-RAILS: Need to be check policy set attribute
 
       #Subscibe to the SQS queue
       subscribe_params = {
