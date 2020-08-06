@@ -15,7 +15,6 @@ module ChannelAuthentication
     freddy: 'freddy'.freeze,
     field_service: 'field_service'.freeze,
     silkroad: 'silkroad'.freeze,
-    kbservice: 'kbservice'.freeze
   }.freeze
 
   def channel_client_authentication

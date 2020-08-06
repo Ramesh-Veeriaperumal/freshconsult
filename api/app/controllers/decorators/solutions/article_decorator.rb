@@ -43,7 +43,7 @@ class Solutions::ArticleDecorator < ApiDecorator
     }
     ret_hash.merge!(category_and_folder)
     ret_hash.merge!(draft_info(record_or_draft))
-    ret_hash.merge!(private_hash) if private_api? || @search_context || (channel_v2_api? && allow_chat_platform_attributes?)
+    ret_hash.merge!(private_hash) if private_api? || @search_context
     ret_hash
   end
 
@@ -80,7 +80,6 @@ class Solutions::ArticleDecorator < ApiDecorator
     if (private_api? || channel_v2_api?) && Account.current.article_approval_workflow_enabled?
       ret_hash[:approval_data] = approval_hash
     end
-    ret_hash.merge!(published_details_hash) if channel_v2_api? && allow_chat_platform_attributes?
     ret_hash
   end
 
@@ -308,7 +307,7 @@ class Solutions::ArticleDecorator < ApiDecorator
         language_id: language_id,
         language: language_code
       }
-      ret_hash.merge!(visibility_hash) unless channel_v2_api? && allow_chat_platform_attributes?
+      ret_hash.merge!(visibility_hash)
       ret_hash
     end
 
@@ -349,12 +348,8 @@ class Solutions::ArticleDecorator < ApiDecorator
 
     def platform_mapping
       solution_platform_mapping = record.parent.solution_platform_mapping
-      platform_mapping_present = solution_platform_mapping.present?
-      if private_api?
-        platforms = platform_mapping_present ? solution_platform_mapping.to_hash : SolutionPlatformMapping.default_platform_values_hash
-      else
-        platforms = platform_mapping_present ? solution_platform_mapping.enabled_platforms : []
-      end
+      platforms = solution_platform_mapping.present? ? solution_platform_mapping.to_hash : SolutionPlatformMapping.default_platform_values_hash
+
       { platforms: platforms }
     end
 

@@ -2,7 +2,7 @@ module ApiSolutions
   class FoldersController < ApiApplicationController
     include SolutionConcern
     include Solution::LanguageControllerMethods
-    decorate_views(decorate_objects: [:category_folders, :folder_filter])
+    decorate_views(decorate_objects: [:category_folders])
     SLAVE_ACTIONS = %w[index category_folders].freeze
     before_filter :validate_filter_params, only: [:category_folders]
 

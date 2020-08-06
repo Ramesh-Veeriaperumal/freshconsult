@@ -68,14 +68,6 @@ module SolutionsPlatformsTestHelper
     folder_meta.reload
   end
 
-  def filter_folders_by_platforms(platforms = ['web', 'ios', 'android'], language = Account.current.language_object, folders = @account.solution_folders)
-    folders.select { |folder| folder.language_id == language.id && folder.parent.solution_platform_mapping.present? && (folder.parent.solution_platform_mapping.enabled_platforms - platforms).present? }
-  end
-
-  def filter_folders_by_tags(tag_names, language = Account.current.language_object, folders = @account.solution_folders)
-    folders.select { |folder| folder.language_id == language.id && folder.parent.tags.where(name: tag_names).first }
-  end
-
   def update_platform_values(meta_obj, values)
     meta_obj.solution_platform_mapping.attributes = values
     meta_obj.save
