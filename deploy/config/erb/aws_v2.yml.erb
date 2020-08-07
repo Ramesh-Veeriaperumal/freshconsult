@@ -20,4 +20,6 @@ common: &common
     :ssl_ca_bundle: <%= @settings[:req_shadowing][:ssl_ca_path] %>
     <% end %>
     :region: <%= node[:opsworks_access_keys][:region] ? node[:opsworks_access_keys][:region] : 'us-east-1' %>
+
+:<%= node[:opsworks][:environment]%>:
   <<: *common
