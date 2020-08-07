@@ -137,7 +137,7 @@ class JiraIssueTest < ActionView::TestCase
   end
 
   def test_construct_attachment_params
-    AwsWrapper::S3Object.stubs(:url_for).returns('dummy_url')
+    AwsWrapper::S3.stubs(:presigned_url).returns('dummy_url')
     Integrations::JiraIssue.any_instance.stubs(:open).returns(true)
     UploadIO.stubs(:new).returns(nil)
     Net::HTTP.any_instance.stubs(:request).returns(true)
@@ -145,10 +145,11 @@ class JiraIssueTest < ActionView::TestCase
     Account.any_instance.stubs(:attachments).returns([Helpdesk::Attachment.new])
     att = @jira_app.construct_attachment_params(1, Account.first)
     assert_equal 1, att.count
+    AwsWrapper::S3.unstub(:presigned_url)
   end
 
   def test_construct_attachment_params_timeout_error
-    AwsWrapper::S3Object.stubs(:url_for).returns('dummy_url')
+    AwsWrapper::S3.stubs(:presigned_url).returns('dummy_url')
     Integrations::JiraIssue.any_instance.stubs(:open).raises(Timeout::Error.new('err'))
     Integrations::JiraIssue.any_instance.stubs(:params).returns(error: 'error')
     UploadIO.stubs(:new).returns(nil)
@@ -157,10 +158,11 @@ class JiraIssueTest < ActionView::TestCase
     Account.any_instance.stubs(:attachments).returns([Helpdesk::Attachment.new])
     att = @jira_app.construct_attachment_params(1, Account.first)
     assert_equal 1, att.count
+    AwsWrapper::S3.unstub(:presigned_url)
   end
 
   def test_construct_attachment_params_error
-    AwsWrapper::S3Object.stubs(:url_for).returns('dummy_url')
+    AwsWrapper::S3.stubs(:presigned_url).returns('dummy_url')
     Integrations::JiraIssue.any_instance.stubs(:open).raises(StandardError.new('err'))
     Integrations::JiraIssue.any_instance.stubs(:params).returns(error: 'error')
     UploadIO.stubs(:new).returns(nil)
@@ -169,10 +171,11 @@ class JiraIssueTest < ActionView::TestCase
     Account.any_instance.stubs(:attachments).returns([Helpdesk::Attachment.new])
     att = @jira_app.construct_attachment_params(1, Account.first)
     assert_equal 1, att.count
+    AwsWrapper::S3.unstub(:presigned_url)
   end
 
   def test_construct_attachment_params_request_timeout_error
-    AwsWrapper::S3Object.stubs(:url_for).returns('dummy_url')
+    AwsWrapper::S3.stubs(:presigned_url).returns('dummy_url')
     Integrations::JiraIssue.any_instance.stubs(:open).returns(true)
     Integrations::JiraIssue.any_instance.stubs(:params).returns(error: 'error')
     UploadIO.stubs(:new).returns(nil)
@@ -182,10 +185,11 @@ class JiraIssueTest < ActionView::TestCase
     att = @jira_app.construct_attachment_params(1, Account.first)
   rescue Exception => e
     assert_equal nil, att
+    AwsWrapper::S3.unstub(:presigned_url)
   end
 
   def test_construct_attachment_params_request_error
-    AwsWrapper::S3Object.stubs(:url_for).returns('dummy_url')
+    AwsWrapper::S3.stubs(:presigned_url).returns('dummy_url')
     Integrations::JiraIssue.any_instance.stubs(:open).returns(true)
     Integrations::JiraIssue.any_instance.stubs(:params).returns(error: 'error')
     UploadIO.stubs(:new).returns(nil)
@@ -195,6 +199,7 @@ class JiraIssueTest < ActionView::TestCase
     att = @jira_app.construct_attachment_params(1, Account.first)
   rescue Exception => e
     assert_equal nil, att
+    AwsWrapper::S3.unstub(:presigned_url)
   end
 
   def test_push_existing_notes_to_jira

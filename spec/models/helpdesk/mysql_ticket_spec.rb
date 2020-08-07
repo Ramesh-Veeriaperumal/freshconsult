@@ -6,9 +6,6 @@ describe Helpdesk::Ticket do
 
   before(:all) do
     @user = User.find_by_account_id(@account.id)
-    $primary_cluster = "mysql"
-    $secondary_cluster = "none"
-    $backup_cluster = "none"
   end
 
   describe "Ticket Creation" do
@@ -63,7 +60,6 @@ describe Helpdesk::Ticket do
         :description_html => "<div>description edit</div>"
       )
       ticket.save_ticket
-      ticket.ticket_body_content = nil
       ticket.update_ticket_attributes(
         :ticket_body_attributes => {
           :description_html => "<div>description edit updated</div>"
@@ -83,7 +79,6 @@ describe Helpdesk::Ticket do
         :description_html => "<div>description edit</div>"
       )
       ticket.save_ticket
-      ticket.ticket_body_content = nil
       Helpdesk::Ticket.any_instance.expects(:created_at_updated_at_on_update).never
       ticket.subject = "test ticket one"
       ticket.save_ticket
@@ -101,7 +96,7 @@ describe Helpdesk::Ticket do
         :description_html => "<div>description edit</div>"
       )
       ticket.save_ticket
-      ticket_id = ticket.ticket_old_body
+      ticket_id = ticket.ticket_body
       ticket.destroy
       expect { Helpdesk::Ticket.find("#{ticket_id}") }.to raise_error
     end
@@ -118,13 +113,12 @@ describe Helpdesk::Ticket do
           :description_html => "<div>description three</div>"
       })
       ticket.save_ticket
-      ticket.ticket_body_content = nil
       ticket_body = ticket.ticket_body
-      ticket_body.class.should eql Helpdesk::TicketOldBody
+      ticket_body.class.should eql Helpdesk::TicketBody
       ticket_body.description.should eql "description three"
       ticket_body.description_html.should eql "<div>description three</div>"
-      ticket.ticket_old_body.description.should eql "description three"
-      ticket.ticket_old_body.description_html.should eql "<div>description three</div>"
+      ticket.ticket_body.description.should eql "description three"
+      ticket.ticket_body.description_html.should eql "<div>description three</div>"
     end
 
     it "return Helpdesk::TicketBody object if not present in mysql" do

@@ -9,11 +9,13 @@ class CustomSurvey::SurveyHandle < ActiveRecord::Base
   belongs_to :customer, :class_name => 'User', :foreign_key => :customer_id
   has_many :survey_questions, :class_name => 'CustomSurvey::SurveyQuestion', :through => :survey
 
-  scope :unrated, lambda { |condition| { :conditions => ["rated=false and  
-                                          preview=false and created_at between ? and ?", 
-                                          condition[:start_date], condition[:end_date] ]}}
-  scope :agent_filter, lambda { |value| { :conditions => { :agent_id => value } } }
-  scope :group_filter, lambda { |value| { :conditions => { :group_id => value } } }
+  scope :unrated, -> (condition) {
+    where(["rated=false AND  
+      preview=false AND created_at BETWEEN ? AND ?", 
+      condition[:start_date], condition[:end_date] ])
+  }
+  scope :agent_filter, -> (value) { where(agent_id: value) }
+  scope :group_filter, -> (value) { where(group_id: value) }
   
   attr_protected :account_id, :survey_result_id, :surveyable_id, :surveyable_type, :rated
 

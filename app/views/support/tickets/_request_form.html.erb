@@ -1,5 +1,5 @@
 <% @ticket ||= current_account.tickets.new %>
-<% @ticket.build_ticket_body %>
+<% @ticket.build_ticket_body unless @ticket.ticket_body %>
 <% @ticket.email = current_user.email if current_user %>
 <% cache_options = {}%>
 <% skip_frag_cache = params && params['action']!= 'new' %>

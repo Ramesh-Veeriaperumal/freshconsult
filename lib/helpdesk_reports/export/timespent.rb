@@ -35,7 +35,7 @@ class HelpdeskReports::Export::Timespent < HelpdeskReports::Export::Report
     formatted_result = []
     l1_header = options[:details]['l1']
     l2_header = options[:details]['l2']
-    rows = CSV.parse(AwsWrapper::S3.read(args[:s3_bucket_name], args[:s3_key]),{ :col_sep => '|' })
+    rows = CSV.parse(AwsWrapper::S3.read(args[:s3_bucket_name], args[:s3_key]), col_sep: '|')
     return [] if rows.blank?
     rows.shift
     res_status = options[:res_values].map(&:to_i).sort.map(&:to_s)
@@ -63,7 +63,7 @@ class HelpdeskReports::Export::Timespent < HelpdeskReports::Export::Report
 
   def format_ticket_list_results
     formatted_result,res_val = [], []
-    rows = CSV.parse(AwsWrapper::S3.read(args[:s3_bucket_name], args[:s3_key]),{ :col_sep => '|' })
+    rows = CSV.parse(AwsWrapper::S3.read_io(args[:s3_bucket_name], args[:s3_key]), col_sep: '|')
     return [] if rows.blank?
     rows.shift
     res_val << "\\N" if options[:res_values].include?(nil)
@@ -89,7 +89,7 @@ class HelpdeskReports::Export::Timespent < HelpdeskReports::Export::Report
   def process_final_ticket_list
     formatted_result = []
     @result_headers = ['display_id', 'status']
-    rows = CSV.parse(AwsWrapper::S3.read(args[:s3_bucket_name], args[:s3_key]),{ :col_sep => '|' })
+    rows = CSV.parse(AwsWrapper::S3.read_io(args[:s3_bucket_name], args[:s3_key]),{ :col_sep => '|' })
     return [] if rows.blank?
     rows.shift
     rows.each{|row| formatted_result << {'display_id' => row[0], 'status' => convert_time_format(row[1])}}

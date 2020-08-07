@@ -60,7 +60,7 @@ class Import::Customers::Base
     end
 
   def parse_csv_file
-    csv_file = AwsWrapper::S3Object.find(@customer_params[:file_location], S3_CONFIG[:bucket])
+    csv_file = AwsWrapper::S3.read_io(S3_CONFIG[:bucket], @customer_params[:file_location])
     total_rows = total_rows_to_be_imported
     completed_rows = 0
 
@@ -290,7 +290,7 @@ class Import::Customers::Base
   end
 
   def cleanup_file
-    AwsWrapper::S3Object.delete(@customer_params[:file_location], S3_CONFIG[:bucket])
+    AwsWrapper::S3.delete(S3_CONFIG[:bucket], @customer_params[:file_location])
   rescue => e
     NewRelic::Agent.notice_error(e, {:description => "Error while removing file from s3 :: account_id :: #{current_account.id}"})
   end

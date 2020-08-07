@@ -19,7 +19,7 @@ class TicketFieldTest < ActiveSupport::TestCase
 
   def before_all
     @account.sections.map(&:destroy)
-    @account.ticket_fields_only.custom_fields.each {|custom_field| custom_field.destroy }
+    @account.ticket_fields_with_nested_fields.custom_fields.where(level: nil).each {|custom_field| custom_field.destroy }
     return if @@before_all_run
     @account = @account.make_current
     @account.ticket_fields.custom_fields.each(&:destroy)

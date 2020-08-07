@@ -84,8 +84,8 @@ module ContactsCompaniesConcern
     }
     if @data_export.status == DataExport::EXPORT_STATUS[:completed]
       attachment = @data_export.attachment
-      options = { expires: 5.minutes, secure: true, response_content_type: attachment.content_content_type, response_content_disposition: 'attachment' }
-      url = AwsWrapper::S3Object.url_for(attachment.content.path(:original), attachment.content.bucket_name, options)
+      options = { expires_in: 5.minutes.to_i, secure: true, response_content_type: attachment.content_content_type, response_content_disposition: 'attachment' }
+      url = AwsWrapper::S3.presigned_url(attachment.content.bucket_name, attachment.content.path(:original), options)
       @export_details.merge!(download_url: url)
     end
     @export_details

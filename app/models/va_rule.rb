@@ -51,9 +51,9 @@ class VaRule < ActiveRecord::Base
 
   has_one :app_business_rule, :class_name=>'Integrations::AppBusinessRule', :dependent => :destroy
   has_one :installed_application, :class_name => 'Integrations::InstalledApplication', through: :app_business_rule
-  scope :active, :conditions => { :active => true }
-  scope :inactive, :conditions => { :active => false }
-  scope :slack_destroy,:conditions => ["name in (?)",['slack_create', 'slack_update','slack_note']]
+  scope :active, -> { where(active: true) }
+  scope :inactive, -> { where(active: false) }
+  scope :slack_destroy, -> { where(["name in (?)",['slack_create', 'slack_update','slack_note']]) }
 
   acts_as_list :scope => 'account_id = #{account_id} AND #{connection.quote_column_name("rule_type")} = #{rule_type}'
 

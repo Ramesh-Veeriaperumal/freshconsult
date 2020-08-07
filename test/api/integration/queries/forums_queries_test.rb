@@ -72,7 +72,7 @@ class ForumsQueriesTest < ActionDispatch::IntegrationTest
       assert_response 200
     end
 
-    Monitorship.update_all({ active: false }, monitorable_type: 'Forum', monitorable_id: [id1, id2])
+    Monitorship.where(monitorable_type: 'Forum', monitorable_id: [id1, id2]).update_all(active: false)
 
     # follow
     v2[:follow], v2[:api_follow], v2[:follow_queries] = count_api_queries do

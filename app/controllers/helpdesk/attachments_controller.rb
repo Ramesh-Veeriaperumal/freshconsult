@@ -13,7 +13,8 @@ class Helpdesk::AttachmentsController < ApplicationController
   def show
     style = params[:style] || "original"
 
-    options = { expires: @attachment.expiry, secure: true, response_content_type: @attachment.content_content_type }
+    options = { secure: true, response_content_type: @attachment.content_content_type }
+    options.merge!(expires_in: @attachment.expiry.to_i) if @attachment.expiry.present?
     options.merge!({ response_content_disposition: 'attachment' }) if params[:download]
 
     attachment_content = @attachment.content
@@ -48,7 +49,7 @@ class Helpdesk::AttachmentsController < ApplicationController
 
   def text_content
     style = params[:style] || "original"
-    data = AwsWrapper::S3Object.read(@attachment.content.path(style.to_sym),@attachment.content.bucket_name)
+    data = AwsWrapper::S3.read(@attachment.content.bucket_name, @attachment.content.path(style.to_sym))
     render :text => data
   end
 
@@ -107,9 +108,10 @@ class Helpdesk::AttachmentsController < ApplicationController
 
     def fetch_redirect_url(path, bucket_name, options)
       if Account.current.cdn_attachments_enabled?
+        options[:expires] = options.delete(:expires_in) if options.key?(:expires_in)
         AwsWrapper::CloudFront.url_for(path, options)
       else
-        AwsWrapper::S3Object.url_for(path, bucket_name, options)
+        AwsWrapper::S3.presigned_url(bucket_name, path, options)
       end
     end
 

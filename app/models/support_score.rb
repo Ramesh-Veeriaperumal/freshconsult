@@ -18,9 +18,11 @@ class SupportScore < ActiveRecord::Base
 
   attr_protected  :account_id
 
-  scope :created_at_inside, lambda { |start, stop| where(" support_scores.created_at >= ? and support_scores.created_at <= ?", start, stop) }
+  scope :created_at_inside, ->(start, stop) { 
+    where(" support_scores.created_at >= ? and support_scores.created_at <= ?", start, stop)
+  }
 
- scope :fast, -> { where(:score_trigger => FAST_RESOLUTION)}
+  scope :fast, -> { where(:score_trigger => FAST_RESOLUTION)}
 
   scope :first_call, -> { where(:score_trigger => FIRST_CALL_RESOLUTION) }
 
@@ -37,14 +39,12 @@ class SupportScore < ActiveRecord::Base
       group("group_id").order("tot_score desc, recent_created_at")
   }
 
-  scope :user_score, lambda { |query|
-    {
-    :select => ["support_scores.*, SUM(support_scores.score) as tot_score, MAX(support_scores.created_at) as recent_created_at"],
-    :conditions => query[:conditions],
-    :include => { :user => [ :avatar ] },
-    :group => "user_id",
-    :order => "tot_score desc, recent_created_at"
-    }
+  scope :user_score, ->(query){
+    select(["support_scores.*, SUM(support_scores.score) as tot_score, MAX(support_scores.created_at) as recent_created_at"])
+    .where(query[:conditions])
+    .includes({ :user => [ :avatar ] })
+    .group(:user_id)
+    .order('tot_score desc, recent_created_at')
   }
 
   class << self
@@ -57,10 +57,6 @@ class SupportScore < ActiveRecord::Base
       from("#{self.table_name} FORCE INDEX(#{index})")
     end
   end
-
-
-  # RAILS3 by default has this feature
-  #scope :limit, lambda { |num| { :limit => num } }
 
   def self.add_happy_customer(scorable)
     add_support_score(scorable, HAPPY_CUSTOMER)

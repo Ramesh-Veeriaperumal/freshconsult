@@ -64,7 +64,7 @@ module ForumDynamoHelper
 	def uploaded_attachments
 		[{:resource => forum_attachment }].each_with_index.map do |att, i|
 			filename = "#{i}_#{att[:resource].original_filename}"
-			AwsWrapper::S3Object.store("#{attachment_folder_name}/#{filename}", att[:resource].tempfile, S3_CONFIG[:bucket])
+			AwsWrapper::S3.put(S3_CONFIG[:bucket], "#{attachment_folder_name}/#{filename}", att[:resource].tempfile)
 			filename
 		end
 	end
@@ -160,7 +160,7 @@ module ForumDynamoHelper
     begin
       table_data = $dynamo.describe_table(:table_name => name)
       return true
-    rescue AWS::DynamoDB::Errors::ResourceNotFoundException => e
+    rescue Aws::DynamoDB::Errors::ResourceNotFoundException => e
       return false
     end
   end
@@ -175,7 +175,7 @@ module ForumDynamoHelper
   def store_attachments(folder_name)
   	@attachment_arr.each do |att|
 			filename = att[:resource].original_filename
-			AwsWrapper::S3Object.store("#{folder_name}/#{filename}", att[:resource].tempfile, S3_CONFIG[:bucket])
+			AwsWrapper::S3.put(S3_CONFIG[:bucket], "#{folder_name}/#{filename}", att[:resource].tempfile)
 			filename
 		end
   end

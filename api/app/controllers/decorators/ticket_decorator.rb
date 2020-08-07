@@ -209,7 +209,7 @@ class TicketDecorator < ApiDecorator
 
   def conversations
     if @sideload_options.include?('conversations')
-      preload_options = [:schema_less_note, :note_old_body, :attachments]
+      preload_options = [:schema_less_note, :note_body, :attachments]
       preload_options = public_preload_options(preload_options) unless private_api?
 
       ticket_conversations = record.notes.

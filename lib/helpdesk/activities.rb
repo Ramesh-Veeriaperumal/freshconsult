@@ -169,7 +169,7 @@ private
 	end
 
   def prefetch_notes(ticket, note_ids)
-    options = [{:user => :avatar}, :notable, :schema_less_note, :note_old_body]
+    options = [{:user => :avatar}, :notable, :schema_less_note, :note_body]
     options << (Account.current.new_survey_enabled? ? {:custom_survey_remark =>
                   {:survey_result => [:survey_result_data, :agent, {:survey => :survey_questions}]}} : :survey_remark)
     options << :fb_post if ticket.facebook?

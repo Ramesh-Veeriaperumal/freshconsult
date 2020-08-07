@@ -14,6 +14,7 @@ module Helpdesk
       def save_note_later(publish_solution_later, post_to_forum_topic)
         ticket = notable
         build_note_and_sanitize
+        UnicodeSanitizer.encode_emoji(self.note_body, 'body', 'full_text')
         self.to_emails = [ticket.from_email]
         attachment_list = build_attachments || []
         inline_attachment_list = inline_attachment_ids || []
@@ -33,16 +34,19 @@ module Helpdesk
 
       def save_note
         build_note_and_sanitize
+        UnicodeSanitizer.encode_emoji(self.note_body, 'body', 'full_text')
         self.save
       end
 
       def save_note!
         build_note_and_sanitize
+        UnicodeSanitizer.encode_emoji(self.note_body, 'body', 'full_text')
         self.save!
       end
 
       def update_note_attributes(attributes)
         attributes = sanitize_body_hash(attributes, :note_body_attributes, 'body', 'full_text') if attributes
+        attributes = UnicodeSanitizer.encode_emoji_hash(attributes, 'note_body_attributes', 'body', 'full_text') if attributes.present?
         self.update_attributes(attributes)
       end
 

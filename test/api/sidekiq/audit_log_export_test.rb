@@ -21,7 +21,7 @@ class AuditLogExportTest < ActiveSupport::TestCase
     HTTParty.stubs(:get).returns(HTTParty, true)
     HTTParty.stubs(:body).returns({ status: 200, data: { export_url: 'dummy_url' }.stringify_keys! }.to_json)
     AuditLogExport.any_instance.stubs(:format_file_data).returns(true)
-    AwsWrapper::S3Object.stubs(:store).returns(true)
+    AwsWrapper::S3.stubs(:put).returns(true)
     DataExportMailer.stubs(:audit_log_export).returns(true)
     args = construct_args_with_logs_csv
     write_json_to_file(construct_args_with_logs_csv[:export_job_id])
@@ -34,7 +34,7 @@ class AuditLogExportTest < ActiveSupport::TestCase
     @account.data_exports.destroy_all
   ensure
     Export::Util.unstub(:build_attachment)
-    AwsWrapper::S3Object.unstub(:store)
+    AwsWrapper::S3.unstub(:put)
     Account.reset_current_account
     User.reset_current_user
     remove_file_path(construct_args_with_logs_csv[:export_job_id])
@@ -45,7 +45,7 @@ class AuditLogExportTest < ActiveSupport::TestCase
     HTTParty.stubs(:get).returns(HTTParty, true)
     HTTParty.stubs(:body).returns({ status: 200, data: { export_url: 'dummy_url' }.stringify_keys! }.to_json)
     AuditLogExport.any_instance.stubs(:format_file_data).returns(true)
-    AwsWrapper::S3Object.stubs(:store).returns(true)
+    AwsWrapper::S3.stubs(:put).returns(true)
     DataExportMailer.stubs(:audit_log_export).returns(true)
     args = construct_args_with_logs_xls
     write_json_to_file(construct_args_with_logs_xls[:export_job_id])
@@ -58,7 +58,7 @@ class AuditLogExportTest < ActiveSupport::TestCase
     @account.data_exports.destroy_all
   ensure
     Export::Util.unstub(:build_attachment)
-    AwsWrapper::S3Object.unstub(:store)
+    AwsWrapper::S3.unstub(:put)
     WebMock.disable_net_connect!
     Account.reset_current_account
     User.reset_current_user
@@ -70,7 +70,7 @@ class AuditLogExportTest < ActiveSupport::TestCase
     HTTParty.stubs(:get).returns(HTTParty, true)
     HTTParty.stubs(:body).returns({ status: 200, data: { export_url: 'dummy_url' }.stringify_keys! }.to_json)
     AuditLogExport.any_instance.stubs(:format_file_data).returns(true)
-    AwsWrapper::S3Object.stubs(:store).returns(true)
+    AwsWrapper::S3.stubs(:put).returns(true)
     DataExportMailer.stubs(:audit_log_export).returns(true)
     args = construct_args_without_logs
     write_empty_file(construct_args_without_logs[:export_job_id])
@@ -84,7 +84,7 @@ class AuditLogExportTest < ActiveSupport::TestCase
   ensure
     WebMock.disable_net_connect!
     Export::Util.unstub(:build_attachment)
-    AwsWrapper::S3Object.unstub(:store)
+    AwsWrapper::S3.unstub(:put)
     Account.reset_current_account
     User.reset_current_user
     remove_file_path(construct_args_without_logs[:export_job_id])
@@ -103,7 +103,7 @@ class AuditLogExportTest < ActiveSupport::TestCase
   ensure
     WebMock.disable_net_connect!
     Export::Util.unstub(:build_attachment)
-    AwsWrapper::S3Object.unstub(:store)
+    AwsWrapper::S3.unstub(:put)
     Account.reset_current_account
     User.reset_current_user
   end

@@ -11,7 +11,7 @@ class Integrations::Hootsuite::TicketsController < Integrations::Hootsuite::Hoot
   def show
     @ticket_notes_total = @ticket.conversation_count
     @ticket_note_all = @ticket.conversation(nil, @ticket_notes_total,
-      [:user, :attachments, :schema_less_note, :cloud_files,:note_old_body]).reverse if @ticket_notes_total > 0
+      [:user, :attachments, :schema_less_note, :cloud_files,:note_body]).reverse if @ticket_notes_total > 0
     if @ticket.twitter? or @ticket.facebook?
       @note = Helpdesk::Note.new(:private => false)
       @note_body = Helpdesk::NoteBody.new

@@ -2648,7 +2648,7 @@ class TicketsControllerTest < ActionController::TestCase
     user.update_attribute(:blocked, true)
     params = { requester_id: user.id, email_config_id: 8888, responder_id: 8888, group_id: 8888 }
     t = ticket
-    Helpdesk::Ticket.update_all(params, id: t.id)
+    Helpdesk::Ticket.where(id: t.id).update_all(params)
     t.schema_less_ticket.update_column(:product_id, 8888)
     t.schema_less_ticket.reload
     put :update, construct_params({ id: t.display_id }, params)

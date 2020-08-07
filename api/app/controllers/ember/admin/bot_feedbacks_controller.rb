@@ -129,7 +129,7 @@ module Ember
           state               = BotFeedbackConstants::FEEDBACK_STATE_KEYS_BY_TOKEN[:default]
           conditions          = { bot_id: params[:id], state: state, category: category, useful: useful, received_at: (params[:start_at])..(DateTime.parse(params[:end_at]).end_of_day) }
           paginate_options    = { page: params[:page], per_page: 30 }
-          @unanswered_list    = @items.where(conditions).order('received_at DESC').paginate(paginate_options)
+          @unanswered_list    = @items.where(conditions).order('received_at DESC').paginate(paginate_options) # rubocop:disable Gem/WillPaginate
         end
 
         def fetch_objects

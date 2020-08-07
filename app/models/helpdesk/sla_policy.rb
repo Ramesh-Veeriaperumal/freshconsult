@@ -28,11 +28,11 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
   
   accepts_nested_attributes_for :sla_details
 
-  scope :rule_based, :conditions => { :is_default => false }
-  scope :default, :conditions => { :is_default => true }
+  scope :rule_based, -> { where(is_default: false) }
+  scope :default, ->{ where(is_default: true) }
 
-  scope :active, :conditions => {:active => true }
-  scope :inactive, :conditions => {:active => false }
+  scope :active, ->{ where(active: true) }
+  scope :inactive, ->{ where(active: false) }
 
   attr_accessor :datatype
 

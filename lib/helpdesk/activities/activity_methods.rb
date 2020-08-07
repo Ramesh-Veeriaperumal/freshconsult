@@ -250,7 +250,7 @@ module Helpdesk::Activities
     end
 
     def prefetch_notes_for_v2(ticket, note_ids)
-      options = [:notable, :schema_less_note, :note_old_body]
+      options = [:notable, :schema_less_note, :note_body]
       options << (Account.current.new_survey_enabled? ? {:custom_survey_remark =>
                                                          {:survey_result => [:survey_result_data, :agent, {:survey => :survey_questions}]}} : :survey_remark)
       options << :fb_post if ticket.facebook?
@@ -269,7 +269,7 @@ module Helpdesk::Activities
         note_hash = Helpdesk::ArchiveNote.includes(options).where(:note_id => note_ids).collect{|note| [note.note_id, note]}.to_h
         build_notes_last_modified_user_hash(note_hash.values)
       else
-        options << :schema_less_note << :note_old_body << :attachments
+        options << :schema_less_note << :note_body << :attachments
         note_hash = Helpdesk::Note.includes(options).where(:id => note_ids).collect{|note| [note.id, note]}.to_h
         build_notes_last_modified_user_hash(note_hash.values)
       end

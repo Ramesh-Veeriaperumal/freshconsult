@@ -28,7 +28,7 @@ class HelpdeskReports::Export::Report < HelpdeskReports::Export::Base
       request_object.build_request
       params[:query_hash] = request_object.fetch_req_params
       params[:scheduled_task_id] = @scheduled_report.id
-      $sqs_reports_service_export.send_message(params.to_json)
+      AwsWrapper::SqsV2.send_message(SQS[:reports_service_export_queue], params.to_json)
     end
 
     def email_export file_path

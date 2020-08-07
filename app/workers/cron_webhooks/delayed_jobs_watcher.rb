@@ -35,9 +35,7 @@ module CronWebhooks
       def delayedjobs_watcher_failed
         DelayedJobsWatcherConfig::DELAYED_JOB_QUEUES.each do |queue, config|
           queue = queue.capitalize
-          failed_jobs_count = Object.const_get("#{queue}::Job").count(
-            conditions: ['last_error is not null and attempts > 1']
-          )
+          failed_jobs_count = Object.const_get("#{queue}::Job").where(['last_error is not null and attempts > 1']).count
 
           if failed_jobs_count >= config['failed']
             FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil,
@@ -58,9 +56,7 @@ module CronWebhooks
       def delayedjobs_watcher_total
         DelayedJobsWatcherConfig::DELAYED_JOB_QUEUES.each do |queue, config|
           queue = queue.capitalize
-          total_jobs_count = Object.const_get("#{queue}::Job").count(
-            conditions: ['created_at = run_at and attempts=0']
-          )
+          total_jobs_count = Object.const_get("#{queue}::Job").where(['created_at = run_at and attempts=0']).count
 
           if total_jobs_count >= config['total']
             FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil,
@@ -81,9 +77,7 @@ module CronWebhooks
       def delayedjobs_watcher_scheduled
         DelayedJobsWatcherConfig::DELAYED_JOB_QUEUES.each do |queue, config|
           queue = queue.capitalize
-          total_jobs_count = Object.const_get("#{queue}::Job").count(
-            conditions: ['created_at != run_at and attempts=0']
-          )
+          total_jobs_count = Object.const_get("#{queue}::Job").where(['created_at != run_at and attempts=0']).count
 
           if total_jobs_count >= config['total']
             FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil,

@@ -33,10 +33,10 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
   attr_protected :account_id
 
   concerned_with :attributes, :s3, :esv2_methods
-  
-  scope :exclude_source, lambda { |s| { :conditions => ['source <> ?', Account.current.helpdesk_sources.note_source_keys_by_token[s]] } }
-  scope :visible, :conditions => { :deleted => false }
-  
+
+  scope :exclude_source, ->(s){ where(['source <> ?', Account.current.helpdesk_sources.note_source_keys_by_token[s]]) }
+  scope :visible, ->{ where(deleted: false) }
+
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
@@ -88,57 +88,50 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
     :note_properties => "text_nc02"
   }
   
-  scope :newest_first, :order => "id DESC"
-  scope :public, :conditions => { :private => false } 
-  scope :private, :conditions => { :private => true } 
+  scope :newest_first, ->{ order("id DESC") }
+  scope :public_notes, ->{ where(private: false) }
+  scope :private_notes, ->{ where(private: true) }
 
-  scope :public_notes, -> { where(private: false) }
-  scope :private_notes, -> { where(private: true) }
+  scope :latest_twitter_comment, ->{
+    where([" incoming = 1 and social_tweets.tweetable_type = 'Helpdesk::Note'"]).
+    joins("INNER join social_tweets on archive_notes.id = social_tweets.tweetable_id and archive_notes.account_id = social_tweets.account_id").
+    order('id desc')
+  }
 
-  scope :latest_twitter_comment,
-              :conditions => [" incoming = 1 and social_tweets.tweetable_type =
- 'Helpdesk::Note'"],
-              :joins => "INNER join social_tweets on archive_notes.id = social_tweets.tweetable_id and archive_notes.account_id = social_tweets.account_id", 
-              :order => "id desc"
-  
-  scope :freshest, lambda { |account|
-    { :conditions => ["account_id = ? ", account], 
-      :order => "archive_notes.id DESC"
-    }
+  scope :freshest, ->(account){
+    where(account_id: account.id).
+    order('archive_notes.id DESC')
   }
-  scope :since, lambda { |last_note_id|
-    { :conditions => ["archive_notes.id > ? ", last_note_id], 
-      :order => "archive_notes.id DESC"
-    }
-  }
-  
-  scope :before, lambda { |first_note_id|
-    { :conditions => ["archive_notes.id < ? ", first_note_id], 
-      :order => "archive_notes.id DESC"
-    }
-  }
-  
-  scope :for_quoted_text, lambda { |first_note_id|
-    { :conditions => ["source != ? AND archive_notes.id < ? ", Account.current.helpdesk_sources.note_source_keys_by_token["forward_email"], first_note_id], 
-      :order => "archive_notes.id DESC",
-      :limit => 4
-    }
-  }
-  
-  scope :latest_facebook_message,
-              :conditions => [" incoming = 1 and social_fb_posts.postable_type = 'Helpdesk::Note'"], 
-              :joins => "INNER join social_fb_posts on archive_notes.id = social_fb_posts.postable_id and archive_notes.account_id = social_fb_posts.account_id", 
-              :order => "id desc"
 
-  scope :exclude_source, lambda { |s| { :conditions => ['source <> ?', Account.current.helpdesk_sources.note_source_keys_by_token[s]] } }
+  scope :since, ->(last_note_id) {
+    where(["archive_notes.id > ? ", last_note_id]).
+    order('archive_notes.id DESC')
+  }
 
-  scope :conversations, lambda { |preload_options = nil, order_conditions = nil, limit = nil|
-    {
-      :conditions => ["source NOT IN (?) and deleted = false", Account.current.helpdesk_sources.note_exclude_sources.map{|s| Account.current.helpdesk_sources.note_source_keys_by_token[s]}],
-      :order => order_conditions,
-      :include => preload_options,
-      :limit => limit
-    }
+  scope :before, ->(first_note_id) {
+    where(["archive_notes.id < ? ", first_note_id]).
+    order('archive_notes.id DESC')
+  }
+
+  scope :for_quoted_text, ->(first_note_id) {
+    where(["source != ? AND archive_notes.id < ? ", Account.current.helpdesk_sources.note_source_keys_by_token["forward_email"], first_note_id]).
+    order('archive_notes.id DESC').
+    limit(4)
+  }
+
+  scope :latest_facebook_message, ->{
+    where([" incoming = 1 and social_fb_posts.postable_type = 'Helpdesk::Note'"]).
+    joins("INNER join social_fb_posts on archive_notes.id = social_fb_posts.postable_id and archive_notes.account_id = social_fb_posts.account_id").
+    order('id desc')
+  }
+
+  scope :exclude_source, ->(s) { where(['source <> ?', Account.current.helpdesk_sources.note_source_keys_by_token[s]]) }
+
+  scope :conversations, -> (preload_options = nil, order_conditions = nil, limit = nil) {
+    where(["source NOT IN (?) and deleted = false", Account.current.helpdesk_sources.note_exclude_sources.map{|s| Account.current.helpdesk_sources.note_source_keys_by_token[s]}]).
+    order(order_conditions).
+    includes(preload_options).
+    limit(limit)
   }
 
   def status?
@@ -308,7 +301,7 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
   end
   
   def full_text_html
-    helpdesk_notes_association["note_old_body"]["full_text_html"]
+    helpdesk_notes_association["note_body"]["full_text_html"]
   end
 
   def notable

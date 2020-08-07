@@ -22,15 +22,15 @@ module AccountCleanup
           attachment_ids.each do |attachment_id|
             prefix = "data/helpdesk/attachments/#{Rails.env}/#{attachment_id}/"
             begin
-              attachment_objects = AwsWrapper::S3Object.find_with_prefix(bucket,prefix)
+              attachment_objects = AwsWrapper::S3.find_with_prefix(bucket, prefix)
               attachment_objects.each do |o| 
-                objects << o
+                objects << o.key  # PRE-RAILS: Needs to be tested
               end
             rescue Exception => e
-                puts e
+              Rails.logger.debug "S3 attachment fetch error :: #{account.id} :: #{e.message} :: #{e.backtrace}"
             end
           end
-          AWS::S3::Bucket.new(bucket).objects.delete(objects) # Batch deletion 
+          AwsWrapper::S3.batch_delete(bucket, objects) # PRE-RAILS: Needs to be tested
           delete_query = "delete from helpdesk_attachments where id in (#{attachment_ids.join(",")}) and account_id = #{account.id}"
           puts delete_query
           ActiveRecord::Base.connection.execute(delete_query)

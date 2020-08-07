@@ -4,26 +4,23 @@ class AffiliateDiscount < ActiveRecord::Base
 
 	has_many :affiliate_discount_mappings
 	has_many :affiliates,
-		:class_name => "SubscriptionAffiliate",
-		:through => :affiliate_discount_mappings,
-		:foreign_key => 'subscription_affiliate_id'
+		class_name: "SubscriptionAffiliate",
+		through: :affiliate_discount_mappings,
+		foreign_key: 'subscription_affiliate_id'
 
 	validates_uniqueness_of :code
 
 	COUPON_TYPES = {
-		:free_agent => 1,
-		:percentage => 2
+		free_agent: 1,
+		percentage: 2
 	}
-	
-	
-	scope :free_agent_coupons,
-		{ :conditions => { :discount_type => COUPON_TYPES[:free_agent] }}
-	scope :percentage_coupons,  
-		{ :conditions => { :discount_type => COUPON_TYPES[:percentage] }}
 
-	
+	COUPON_TYPES.each do |name, value|
+		scope :"#{name}_coupons", -> { where(discount_type: COUPON_TYPES[name]) }
+	end
+
 	def self.retrieve_discounts(discount_ids)
-		find_all_by_id(discount_ids)
+		where(id: discount_ids)
 	end
 
 	def self.retrieve_discount_with_type(affiliate, discount_type)

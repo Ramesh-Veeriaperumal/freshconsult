@@ -19,8 +19,10 @@ class Role < ActiveRecord::Base
   #moved to background processing.
   
   belongs_to_account
-  has_and_belongs_to_many :users, :join_table => "user_roles", :autosave => true
-  
+
+  has_many :user_roles, class_name: 'UserRole'
+  has_many :users, through: :user_roles, class_name: 'User', autosave: true
+
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
 

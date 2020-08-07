@@ -42,7 +42,7 @@ class ResetGroupTest < ActionView::TestCase
     ticket_ids = []
     rand(1..5).times { ticket_ids << create_ticket(group).id }
     Helpdesk::ResetGroup.new.perform(group_id: group.id, reason: { delete_group: group.id })
-    @account.tickets.find_all_by_id(ticket_ids).each do |tkt|
+     @account.tickets.where(id: ticket_ids).each do |tkt|
       assert tkt.group_id.nil?
     end
   end
@@ -53,7 +53,7 @@ class ResetGroupTest < ActionView::TestCase
     ticket_ids = []
     rand(1..5).times { ticket_ids << create_ticket(internal_group).id }
     Helpdesk::ResetGroup.new.perform(internal_group_id: internal_group.id, reason: { delete_internal_group: internal_group.id })
-    @account.tickets.find_all_by_id(ticket_ids).each do |tkt|
+    @account.tickets.where(id: ticket_ids).each do |tkt|
       assert tkt.internal_group_id.nil?
       assert tkt.internal_agent_id.nil?
     end
@@ -67,7 +67,7 @@ class ResetGroupTest < ActionView::TestCase
       ticket_ids = []
       rand(1..5).times { ticket_ids << create_ticket(group).id }
       Helpdesk::ResetGroup.new.perform(group_id: group.id, reason: { delete_group: group.id })
-      @account.tickets.find_all_by_id(ticket_ids).each do |tkt|
+      @account.tickets.where(id: ticket_ids).each do |tkt|
         assert tkt.group_id.nil?
       end
     end

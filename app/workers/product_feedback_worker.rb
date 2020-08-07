@@ -51,7 +51,7 @@ class ProductFeedbackWorker < BaseWorker
       files_to_upload = []
       @attachments.each do |attachment|
         file = UploadIO.new(create_new_file(attachment), attachment.content_content_type, attachment.content_file_name)
-        file.write(AwsWrapper::S3Object.read(attachment.content.path, attachment.content.bucket_name))
+        file.write(AwsWrapper::S3.read(attachment.content.bucket_name, attachment.content.path))
         file.flush.seek(0, IO::SEEK_SET) # flush data to file and set RW pointer to beginning
         files_to_upload.push(file)
       end

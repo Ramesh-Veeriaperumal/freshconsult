@@ -265,6 +265,10 @@ class TicketsController < ApiApplicationController
       options
     end
 
+    def paginate_scoper(items, options)
+      items.order(options[:order]).paginate(options.except(:order)) # rubocop:disable Gem/WillPaginate
+    end
+
     def order_clause
       order_by = params[:order_by] || ApiTicketConstants::DEFAULT_ORDER_BY
       order_type = params[:order_type] || ApiTicketConstants::DEFAULT_ORDER_TYPE
@@ -442,7 +446,7 @@ class TicketsController < ApiApplicationController
       if create? # assign attachments so that it will not be queried again in model callbacks
         @item.attachments = @item.attachments
         @item.cloud_files = @item.cloud_files if private_api?
-        @item.ticket_old_body = @item.ticket_old_body # This will prevent ticket_old_body query during save
+        @item.ticket_body = @item.ticket_body # This will prevent ticket_body query during save
         @item.inline_attachments = @item.inline_attachments
         @item.schema_less_ticket.product ||= current_portal.product unless params[cname].key?(:product_id)
       end

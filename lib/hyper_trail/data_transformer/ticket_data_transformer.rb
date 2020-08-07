@@ -1,7 +1,7 @@
 class HyperTrail::DataTransformer::TicketDataTransformer < HyperTrail::DataTransformer::ActivityDataTransformer
   ACTIVITY_TYPE = 'ticket'.freeze
   UNIQUE_ID = 'display_id'.freeze
-  TICKET_PRELOAD_OPTIONS = [:tags, :ticket_states, :ticket_old_body, :requester].freeze
+  TICKET_PRELOAD_OPTIONS = [:tags, :ticket_states, :ticket_body, :requester].freeze
 
   def activity_type
     ACTIVITY_TYPE

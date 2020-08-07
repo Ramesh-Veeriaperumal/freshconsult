@@ -1786,7 +1786,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
 
   def test_config_upload_failure_for_create
     Account.current.help_widgets.destroy_all
-    AwsWrapper::S3Object.stubs(:store).raises(RuntimeError)
+    AwsWrapper::S3.stubs(:store).raises(RuntimeError)
     request_params = {
       product_id: nil,
       name: 'Best_Widget',
@@ -1804,7 +1804,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     match_json(widget_show_pattern(Account.current.help_widgets.find_by_id(id)))
     file_path = format(HelpWidget::FILE_PATH, widget_id: id)
     bucket = S3_CONFIG[:bucket]
-    assert AwsWrapper::S3Object.exists?(file_path, bucket)
-    AwsWrapper::S3Object.unstub(:store)
+    assert AwsWrapper::S3.exists?(bucket, file_path)
+    AwsWrapper::S3.unstub(:store)
   end
 end

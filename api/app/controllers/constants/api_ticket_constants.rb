@@ -32,7 +32,7 @@ module ApiTicketConstants
   SIDE_LOADING = %w[requester stats company survey description].freeze
   INCLUDE_PRELOAD_MAPPING = { 
     stats: :ticket_states,
-    description: :ticket_old_body,
+    description: :ticket_body,
     requester: :requester
   }.freeze
   BULK_DELETE_PRELOAD_OPTIONS = [:tags, :schema_less_ticket].freeze

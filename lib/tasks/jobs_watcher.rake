@@ -21,7 +21,6 @@ QUEUE_WATCHER_RULE = {
     :except => ["supervisor_worker",
               "gamification_ticket_quests",
               "gamification_ticket_score",
-              "helpdesk_note_body_queue",
               "gamification_user_score",
               "livechat_queue"  
             ]

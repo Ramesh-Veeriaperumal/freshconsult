@@ -1,3 +1,4 @@
+# PRE-RAILS: Need to verify and clean up
 module Helpdesk
 	module Email
     class SchemaLessTicketDynamo < ::Dynamo

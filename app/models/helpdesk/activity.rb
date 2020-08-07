@@ -20,52 +20,49 @@ class Helpdesk::Activity < ActiveRecord::Base
   
   OLD_MIGRATION_KEYS = ["bi_reports", "bi_reports_1", "bi_reports_2"]
   MIGRATION_KEYS     = ["activities"]
-  
-  scope :freshest, lambda { |account|
-    { :conditions => ["helpdesk_activities.account_id = ? and notable_type != ?", account, "Helpdesk::ArchiveTicket"], 
-      :order => "helpdesk_activities.id DESC"
-    }
+
+  scope :freshest, ->(account){
+    where(["helpdesk_activities.account_id = ? and notable_type != ?", account, "Helpdesk::ArchiveTicket"]).
+    order('helpdesk_activities.id DESC')
   }
 
-  scope :activity_since, lambda { |id|
-    { :conditions => ["helpdesk_activities.id > ? and notable_type != ?", id,"Helpdesk::ArchiveTicket"],
-      :order => "helpdesk_activities.id DESC"
-    }
+  scope :activity_since, ->(id) {
+    where(["helpdesk_activities.id > ? and notable_type != ?", id,"Helpdesk::ArchiveTicket"]).
+    order('helpdesk_activities.id DESC')
   }
 
-  scope :archive_tickets_activity_before, lambda { | activity_id|
-    { :conditions => ["helpdesk_activities.id < ? and notable_type = ?", activity_id,"Helpdesk::ArchiveTicket"], 
-      :order => "helpdesk_activities.id DESC"
-    }
+  scope :archive_tickets_activity_before, ->(activity_id){
+    where(["helpdesk_activities.id < ? and notable_type = ?", activity_id,"Helpdesk::ArchiveTicket"]).
+    order('helpdesk_activities.id DESC')
   }
 
-  scope :archive_tickets_activity_since, lambda { |id|
-    { :conditions => ["helpdesk_activities.id > ? and notable_type = ?", id , "Helpdesk::ArchiveTicket"],
-      :order => "helpdesk_activities.id DESC"
-    }
+  scope :archive_tickets_activity_since, ->(id){
+    where(["helpdesk_activities.id > ? and notable_type = ?", id , "Helpdesk::ArchiveTicket"]).
+    order('helpdesk_activities.id DESC')
   }
 
-  scope :activity_before, lambda { | activity_id|
-    { :conditions => ["helpdesk_activities.id < ? and notable_type != ?", activity_id,"Helpdesk::ArchiveTicket"], 
-      :order => "helpdesk_activities.id DESC"
-    }
+  scope :activity_before, ->(activity_id){
+    where(["helpdesk_activities.id < ? and notable_type != ?", activity_id,"Helpdesk::ArchiveTicket"]).
+    order('helpdesk_activities.id DESC')
+  }
+
+  scope :only_tickets, ->{ where(["notable_type = ?", "Helpdesk::Ticket"]) }
+
+  scope :status, ->(name) {
+    where(["helpdesk_activities.activity_data like ?", "%status_name: #{name}%"]).
+    select('DISTINCT helpdesk_activities.user_id').
+    order('helpdesk_activities.id DESC').
+    limit(1)
   }
 
   scope :include_modules, ->(notable) { where(notable_type: notable) }
 
-  scope :limit, lambda { |num| { :limit => num } }
+  scope :newest_first, ->{ order("helpdesk_activities.id DESC") }
 
-  scope :status, lambda { |name| {
-    :conditions => ["helpdesk_activities.activity_data like ?", "%status_name: #{name}%"],
-    :select => "DISTINCT helpdesk_activities.user_id",
-    :order => "helpdesk_activities.id DESC",
-    :limit => 1
-    }
+  scope :permissible , ->(user) {
+    query = permissible_query_hash(user)
+    where(query[:conditions]).joins(query[:joins])
   }
-
-  scope :newest_first, :order => "helpdesk_activities.id DESC"
-
-  scope :permissible , lambda {|user| permissible_query_hash(user)}
 
   def self.permissible_query_hash user
     query_hash = {}
