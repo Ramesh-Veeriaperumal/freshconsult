@@ -13,6 +13,11 @@ common: &common
     :ssl_ca_bundle: <%= @settings[:req_shadowing][:ssl_ca_path] %>
     <% end %>
     :region: <%= node[:opsworks_access_keys][:region] ? node[:opsworks_access_keys][:region] : 'us-east-1' %>
-
-:<%= node[:opsworks][:environment]%>:
+  :route53: 
+    :access_key_id: <%= node[:opsworks_access_keys][:access_key_id]%>
+    :secret_access_key: <%= node[:opsworks_access_keys][:secret_access_key] %>
+    <% if @settings[:req_shadowing].present? && @settings[:req_shadowing][:ssl_ca_path].present? %>
+    :ssl_ca_bundle: <%= @settings[:req_shadowing][:ssl_ca_path] %>
+    <% end %>
+    :region: <%= node[:opsworks_access_keys][:region] ? node[:opsworks_access_keys][:region] : 'us-east-1' %>
   <<: *common

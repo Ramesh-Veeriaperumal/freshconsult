@@ -21,7 +21,7 @@ class PodDnsUpdate
   end
 
   def map_cname_to_domain(domain_config)
-    $route_53.change_resource_record_sets(hosted_zone_id: DNS_CONFIG['hosted_zone'], change_batch: { changes: handle_dns_action(domain_config) })
+    $route53_pod_info.change_resource_record_sets(hosted_zone_id: DNS_CONFIG['hosted_zone'], change_batch: { changes: handle_dns_action(domain_config) })
   end
 
   def cname_attributes(domain_config)

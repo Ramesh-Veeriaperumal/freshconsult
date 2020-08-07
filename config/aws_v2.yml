@@ -16,6 +16,12 @@
     :secret_access_key: dummy
     :ssl_verify_peer: false
     :region: 'us-east-1'
+  :route53:
+    :endpoint: https://localhost:4572
+    :access_key_id: dummy
+    :secret_access_key: dummy
+    :ssl_verify_peer: false
+    :region: 'us-east-1'
 :test:
   :dynamo: 
     :endpoint: https://localhost:4569
@@ -33,5 +39,11 @@
     :access_key_id: dummy
     :secret_access_key: dummy
     :ssl_verify_peer: false
-    :region: 'us-east-1'    
+    :region: 'us-east-1'
+  :route53:
+    :endpoint: https://localhost:4572
+    :access_key_id: dummy
+    :secret_access_key: dummy
+    :ssl_verify_peer: false
+    :region: 'us-east-1'  
 
