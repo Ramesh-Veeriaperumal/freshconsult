@@ -1,8 +1,8 @@
 module AccountMetricHelperMethods
   MODELS_TO_IGNORE = [Account, AdminUser, AffiliateDiscount, AffiliateDiscountMapping,
                       CustomFields::Migrations::CustomFieldData, Delayed::Job, DomainMapping,
-                      FlexifieldPicklistVal, GlobalBlacklistedIp, Helpdesk::Issue, Helpdesk::Mysql::DynamicTable,
-                      Helpdesk::NoteBody, Helpdesk::TicketBody, Helpdesk::TicketIssue, Integrations::AppBusinessRule,
+                      FlexifieldPicklistVal, GlobalBlacklistedIp, Helpdesk::Mysql::DynamicTable,
+                      Helpdesk::NoteBody, Helpdesk::TicketBody, Integrations::AppBusinessRule,
                       Integrations::Widget, Moderatorship, PasswordReset, PodShardCondition, ShardMapping, SQSPost,
                       Subscription::Addon, Subscription::Currency, Subscription::PlanAddon,
                       SubscriptionAffiliate, SubscriptionAnnouncement, SubscriptionPlan,

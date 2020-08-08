@@ -3,7 +3,6 @@ defaults: &defaults
     - localhost:11211
   namespace: helpkit
   compress: true
-  socket_timeout: 0.5
   socket_max_failures: 2
   failover: false
   down_retry_delay: 10

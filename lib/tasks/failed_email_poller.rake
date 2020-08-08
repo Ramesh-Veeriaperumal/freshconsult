@@ -6,7 +6,7 @@ namespace :failed_email_poller do
     include EmailParser
 
     begin
-      $sqs_email_failure_reference.poll(:initial_timeout => false, :batch_size => 10) do |sqs_msg|
+      AwsWrapper::SqsV2.poll(SQS[:fd_email_failure_reference]) do |sqs_msg|
         begin
           @args = JSON.parse(sqs_msg.body).deep_symbolize_keys
           Rails.logger.info "FailedEmailPoller: Processing message #{@args}"

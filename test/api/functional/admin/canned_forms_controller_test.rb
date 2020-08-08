@@ -26,7 +26,7 @@ class Admin::CannedFormsControllerTest < ActionController::TestCase
 
   def test_create_handle
     canned_form = create_canned_form
-    ticket = Helpdesk::Ticket.last || create_ticket
+    ticket = Account.current.tickets.last || create_ticket
     post :create_handle, construct_params({id: canned_form.id, version: 'private'}, ticket_id: ticket.display_id)
     assert_response 200
     match_json(canned_form_handle_pattern(Admin::CannedFormHandle.last))
@@ -35,7 +35,7 @@ class Admin::CannedFormsControllerTest < ActionController::TestCase
   def test_create_handle_without_admin_task_manage_ticket_privilege
     stub_privilege
     canned_form = create_canned_form
-    ticket = Helpdesk::Ticket.last || create_ticket
+    ticket = Account.current.tickets.last || create_ticket
     post :create_handle, construct_params({ id: canned_form.id, version: 'private' }, ticket_id: ticket.display_id)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
@@ -44,7 +44,7 @@ class Admin::CannedFormsControllerTest < ActionController::TestCase
 
   def test_create_handle_with_invalid_params
     canned_form = create_canned_form
-    ticket = Helpdesk::Ticket.last || create_ticket
+    ticket = Account.current.tickets.last || create_ticket
     post :create_handle, construct_params({id: canned_form.id, version: 'private'}, invalid_id: ticket.display_id)
     assert_response 400
     match_json([bad_request_error_pattern('invalid_id', :invalid_field)])
@@ -52,7 +52,7 @@ class Admin::CannedFormsControllerTest < ActionController::TestCase
 
   def test_create_handle_with_invalid_ticket
     canned_form = create_canned_form
-    ticket_id = Helpdesk::Ticket.last.id + 1
+    ticket_id = Account.current.tickets.last.id + 1
     post :create_handle, construct_params({id: canned_form.id, version: 'private'}, ticket_id: ticket_id )
     assert_response 400
     match_json(request_error_pattern(:absent_in_db,  { resource: :record, attribute: :id }))

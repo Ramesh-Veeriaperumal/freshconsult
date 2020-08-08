@@ -151,8 +151,7 @@ module ApplicationHelper
   def logo_url(portal = current_portal)
     MemcacheKeys.fetch(["v8","portal","logo",portal],7.days.to_i) do
         portal.logo.nil? ? "/assets/misc/logo.png?702017" :
-        AwsWrapper::S3Object.public_url_for(portal.logo.content.path(:logo),portal.logo.content.bucket_name,
-                                          :expires => 7.days, :secure => true)
+        AwsWrapper::S3.presigned_url(portal.logo.content.bucket_name, portal.logo.content.path(:logo), expires_in: 7.days.to_i, secure: true)
     end
   end
 

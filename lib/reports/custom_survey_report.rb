@@ -36,7 +36,7 @@ module Reports::CustomSurveyReport
 
     conditions = {:start_date => start_date, :end_date => end_date, :survey_id => survey_id}
 
-    include_array = [{:survey_remark => { :feedback => :note_old_body }}, 
+    include_array = [{:survey_remark => { :feedback => :note_body }}, 
                       :survey_result_data, :survey => [:survey_questions], 
                       :surveyable => [:requester, :company, :responder, :group ]]
 

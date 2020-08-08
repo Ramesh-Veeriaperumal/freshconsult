@@ -456,7 +456,7 @@ module SolutionsTestHelper
 
   def fetch_categories(portal_id, language_id)
     if portal_id.present?
-      @category_meta = Account.current.portals.find_by_id(portal_id).public_category_meta.order('portal_solution_categories.position').all
+      @category_meta = Account.current.portals.find_by_id(portal_id).public_category_meta.all
     else
       @category_meta = Account.current.public_category_meta
     end

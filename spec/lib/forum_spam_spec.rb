@@ -5,7 +5,7 @@ describe ForumSpam do
 	self.use_transactional_fixtures = false
 
 	before(:all) do
-		$dynamo = AWS::DynamoDB::ClientV2.new
+		$dynamo = Aws::DynamoDB::Client.new
 		Dynamo::CLIENT = $dynamo
 		@category = create_test_category
 		@forum = create_test_forum(@category)

@@ -62,25 +62,20 @@ class Solution::Article < ActiveRecord::Base
 
   alias_method :parent, :solution_article_meta
 
-  scope :visible, :conditions => ['status = ?',STATUS_KEYS_BY_TOKEN[:published]] 
-  scope :newest, lambda {|num| {:limit => num, :order => 'modified_at DESC'}}
- 
-  scope :by_user, lambda { |user|
-      { :conditions => ["user_id = ?", user.id ] }
-  }
+  scope :visible, -> { where(status: STATUS_KEYS_BY_TOKEN[:published]) }
+  scope :newest, -> (num) { order('modified_at DESC').limit(num) }
 
-  scope :articles_for_portal, lambda { |portal| articles_for_portal_conditions(portal) }
+  scope :by_user, -> (user) { where(user_id: user.id) }
 
+  scope :articles_for_portal, -> (portal) { articles_for_portal_conditions(portal) }
 
-  scope :most_viewed, lambda { |limit|
-    {
-      :conditions => {
-          :status => STATUS_KEYS_BY_TOKEN[:published],
-          :language_id => (Language.current? ? Language.current.id : Language.for_current_account.id)
-        },
-      :order => "hits DESC",
-      :limit => limit
-    }
+  scope :most_viewed, -> (count) {
+    where(
+      status:STATUS_KEYS_BY_TOKEN[:published],
+      language_id: (Language.current? ? Language.current.id : Language.for_current_account.id)
+    ).
+    order('hits DESC').
+    limit(count)
   }
 
   delegate :visible_in?, :to => :solution_folder_meta

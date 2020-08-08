@@ -147,7 +147,7 @@ class AuditLogsControllerTest < ActionController::TestCase
     attachment = @account.attachments.new(content_file_name: 'audit_log/1.zip', content_content_type: 'application/octet-stream',
                                           content_file_size: 40_994, attachable_id: @data_export.id, attachable_type: 'DataExport')
     attachment.save
-    AwsWrapper::S3Object.stubs(:url_for).returns(export_api_response_url)
+    AwsWrapper::S3.stubs(:presigned_url).returns(export_api_response_url)
     get :export_s3_url, construct_params(id: '0795f174-0bdc-466f-b78e-bc6613a39742')
     assert_response 200
     resp = { url: export_api_response_url }

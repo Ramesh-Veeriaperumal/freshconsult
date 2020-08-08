@@ -143,7 +143,7 @@ class Integrations::JiraIssueController < ApplicationController
   end
 
   def jira_object
-    @installed_app = Integrations::InstalledApplication.find(:first, :include=>:application,:conditions => {:applications => {:name => "jira"}, :account_id => current_account})
+    @installed_app = Integrations::InstalledApplication.includes(:application).where(applications: { name: 'jira' }, account_id: current_account).first
     @jira_obj = Integrations::JiraIssue.new(@installed_app)
   end
 

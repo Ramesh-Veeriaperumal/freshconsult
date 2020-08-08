@@ -145,7 +145,7 @@ class Helpdesk::TicketsController < ApplicationController
   def suggest_tickets
     tickets = []
     similar_tickets_list = get_similar_tickets
-    tickets = current_account.tickets.visible.preload(:requester,:ticket_status,:ticket_old_body).permissible(current_user).reorder("field(helpdesk_tickets.id,#{similar_tickets_list.join(',')})").where(id:similar_tickets_list) if similar_tickets_list.present?
+    tickets = current_account.tickets.visible.preload(:requester, :ticket_status, :ticket_body).permissible(current_user).reorder("field(helpdesk_tickets.id, #{similar_tickets_list.join(',')})").where(id: similar_tickets_list) if similar_tickets_list.present?
     tickets_list = []
     tickets.each do |ticket|
       similar_tickets = Hash.new
@@ -349,9 +349,9 @@ class Helpdesk::TicketsController < ApplicationController
           render :json => {:errors => @response_errors}.to_json
         else
           array = []
-          @items.preload(:ticket_old_body,:schema_less_ticket,:flexifield => :flexifield_def).each { |tic|
+          @items.preload(:ticket_body, :schema_less_ticket, flexifield: :flexifield_def).each do |tic|
             array << tic.as_json({}, false)['helpdesk_ticket']
-          }
+          end
           render :json => array
         end
       end
@@ -2111,7 +2111,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def preload_options
-    options = [:attachments, :note_old_body, :schema_less_note]
+    options = [:attachments, :note_body, :schema_less_note]
     include_options = {:notes => options}
     include_options
   end
@@ -2270,7 +2270,7 @@ class Helpdesk::TicketsController < ApplicationController
       conditions       = { display_id: @item.associates }
       per_page         = @item.assoc_parent_ticket? ? 10 : 30
       paginate_options = { :page => params[:page], :per_page => per_page }
-      @associated_tickets = current_account.tickets.preload(preload_models).where(conditions).paginate(paginate_options)
+      @associated_tickets = current_account.tickets.preload(preload_models).where(conditions).paginate(paginate_options) # rubocop:disable Gem/WillPaginate
     end
   end
 

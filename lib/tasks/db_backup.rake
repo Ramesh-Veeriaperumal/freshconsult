@@ -23,7 +23,7 @@ end
 
 def push_to_s3(dump_file)
    date=Time.now.to_s.split(" ")[0]
-   AwsWrapper::S3Object.store(File.basename(dump_file),open(dump_file),"global_db_backups")
+   AwsWrapper::S3.put("global_db_backups", File.basename(dump_file), open(dump_file), server_side_encryption: 'AES256')
    deliver_confirmation_mailer(date)
 end
 

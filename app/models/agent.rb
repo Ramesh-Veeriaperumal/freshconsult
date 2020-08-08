@@ -60,15 +60,26 @@ class Agent < ActiveRecord::Base
                 :ocr_update, :misc_changes, :out_of_office_days, :old_agent_availability,
                 :return_old_agent_availability, :freshchat_enabled, :skip_ocr_agent_sync
 
-  scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
-  scope :full_time_support_agents, :conditions => { :occasional => false, :agent_type => SUPPORT_AGENT_TYPE, 'users.deleted' => false}
-  scope :occasional_agents, :conditions => { :occasional => true, 'users.deleted' => false }
-  scope :list , lambda {{ :include => :user , :order => :name }}  
+  scope :with_conditions, -> (conditions) { where(conditions) } 
+  scope :full_time_support_agents, -> { 
+          where(
+            occasional: false,
+            agent_type: SUPPORT_AGENT_TYPE,
+            'users.deleted': false
+          )}
+  scope :occasional_agents, -> {
+    where(
+      occasional: true,
+      'users.deleted': false
+    )
+  }
+
+  scope :list, -> { includes(:user).order(:name) }
 
   xss_sanitize :only => [:signature_html],  :html_sanitize => [:signature_html]
-
+  
   def self.technician_list account_id  
-    agents = User.find(:all, :joins=>:agent, :conditions => {:account_id=>account_id, :deleted =>false} , :order => 'name')  
+    User.joins(:agent).where(account_id: account_id, deleted: false).order('name')
   end
 
   def all_ticket_permission
@@ -157,11 +168,7 @@ class Agent < ActiveRecord::Base
   def self.filter(type, state = "active", letter="", order = "name", order_type = "ASC", page = 1, per_page = 20)
     order = "name" unless order && AgentsHelper::AGENT_SORT_ORDER_COLUMN.include?(order.to_sym)
     order_type = "ASC" unless order_type && AgentsHelper::AGENT_SORT_ORDER_TYPE.include?(order_type.to_sym)
-    paginate :per_page => per_page,
-      :page => page,
-      :include => { :user => :avatar },
-      :conditions => filter_condition(state,letter,type),
-      :order => "#{order} #{order_type}"
+    where(filter_condition(state,letter,type)).includes(user: :avatar).order("#{order} #{order_type}").paginate(per_page: per_page, page: page)
   end
 
   def self.filter_condition(state, letter, type)
@@ -206,7 +213,7 @@ class Agent < ActiveRecord::Base
   end
 
   def remove_escalation
-    Group.update_all({:escalate_to => nil, :assign_time => nil},{:account_id => account_id, :escalate_to => user_id})
+    Group.where(account_id: account_id, escalate_to: user_id).update_all(escalate_to: nil, assign_time: nil)
     clear_group_cache
   end
 

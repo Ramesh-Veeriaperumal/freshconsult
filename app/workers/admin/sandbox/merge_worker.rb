@@ -31,7 +31,7 @@ class Admin::Sandbox::MergeWorker < BaseWorker
   private
 
     def send_notification(committer)
-      template_data = JSON.parse(AwsWrapper::S3Object.read("sandbox/#{@account.id}/#{@sandbox_account_id}_diff_template.json", S3_CONFIG[:bucket]))
+      template_data = JSON.parse(AwsWrapper::S3.read(S3_CONFIG[:bucket], "sandbox/#{@account.id}/#{@sandbox_account_id}_diff_template.json"))
       @account.account_managers.each_slice(20) do |admins|
         data = {
           notifier: 'merge_notifier',

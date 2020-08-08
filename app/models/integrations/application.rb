@@ -9,9 +9,11 @@ class Integrations::Application < ActiveRecord::Base
     :class_name => 'Integrations::Widget',
     :dependent => :destroy
   belongs_to :account
-  scope :available_apps, lambda {|account_id| { 
-    :conditions => ["account_id  in (?)", [account_id, SYSTEM_ACCOUNT_ID]], 
-    :order => :listing_order }}
+
+  scope :available_apps, ->(account_id){
+    where(["account_id  in (?)", [account_id, SYSTEM_ACCOUNT_ID]])
+    .order(:listing_order)
+  }
 
   scope :freshplugs, lambda {|account_id| 
     where(:account_id => account_id , 

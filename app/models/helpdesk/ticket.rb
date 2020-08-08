@@ -49,16 +49,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   TICKET_SLA_ATTRIBUTES = ['isescalated', 'fr_escalated', 'nr_escalated', 'escalation_level'].freeze
 
   OBSERVER_ATTR = []
-  self.table_name =  "helpdesk_tickets"
+  self.table_name = "helpdesk_tickets"
 
   serialize :cc_email
 
-  concerned_with :associations, :validations, :presenter, :callbacks, :riak, :s3, :mysql,
-                 :attributes, :rabbitmq, :permissions, :esv2_methods, :count_es_methods,
+  concerned_with :associations, :validations, :presenter, :callbacks,
+                 :rabbitmq, :permissions, :esv2_methods, :count_es_methods,
                  :round_robin_methods, :association_methods, :skill_based_round_robin,
                  :sla_calculation_methods, :kairos_methods, :presenter_helper
 
-  text_datastore_callbacks :class => "ticket"
   spam_watcher_callbacks :user_column => "requester_id", :import_column => "import_id"
   #zero_downtime_migration_methods :methods => {:remove_columns => [ "description", "description_html"] }
 
@@ -91,232 +90,235 @@ class Helpdesk::Ticket < ActiveRecord::Base
   alias_attribute :skill_id, :sl_skill_id
   alias_attribute :created_during, :created_at # to support the created_at for dispatcher rule
 
-  scope :created_at_inside, lambda { |start, stop|
-          { :conditions => [" helpdesk_tickets.created_at >= ? and helpdesk_tickets.created_at <= ?", start, stop] }
-        }
-  scope :resolved_at_inside, lambda { |start, stop|
-          {
-            :joins => [:ticket_states,:requester],
-            :conditions => [%( helpdesk_ticket_states.resolved_at >= ? and
-              helpdesk_ticket_states.resolved_at <= ?), start, stop] }
-        }
-
-  scope :resolved_and_closed_tickets, :conditions => {:status => [RESOLVED,CLOSED]}
-  scope :user_open_tickets, lambda { |user|
-    { :conditions => { :status => [OPEN], :requester_id => user.id } }
+  scope :created_at_inside, -> (start, stop) {
+    where([" helpdesk_tickets.created_at >= ? and helpdesk_tickets.created_at <= ?", start, stop])
+  }
+  
+  scope :resolved_at_inside, -> (start, stop) {
+    where([" helpdesk_tickets.resolved_at >= ? and helpdesk_tickets.resolved_at <= ?", start, stop]).
+    joins([:ticket_states,:requester])
   }
 
-  scope :all_company_tickets,lambda { |company_id| {
-        :conditions => ["owner_id = ?",company_id]
-  }
+  scope :resolved_and_closed_tickets, -> { where(status: [RESOLVED,CLOSED]) }
+
+  scope :user_open_tickets, -> (user) {
+    where(
+      status: OPEN,
+      requester_id: user.id
+    )
   }
 
-  scope :all_user_tickets, lambda { |user_id| {
-    :conditions => [ "requester_id=? ", user_id ]
-    }
+  scope :all_company_tickets, -> (company_id) {
+    where(owner_id: company_id)
   }
 
-  scope :contractor_tickets, lambda { |user_id, company_ids, operator|
+  scope :all_user_tickets, -> (user_id) { where(requester_id: user_id) }
+
+  scope :contractor_tickets, -> (user_id, company_ids, operator) {
     if user_id.present?
-      self.where("helpdesk_tickets.requester_id = ? #{operator} helpdesk_tickets.owner_id in (?)",
+      where("helpdesk_tickets.requester_id = ? #{operator} helpdesk_tickets.owner_id in (?)",
                   user_id, company_ids)
     else
-      self.where("helpdesk_tickets.owner_id in (?)", company_ids)
+      where("helpdesk_tickets.owner_id in (?)", company_ids)
     end
   }
 
-  scope :company_tickets_resolved_on_time,lambda { |company_id| {
-        :joins => %(INNER JOIN helpdesk_ticket_states on
-          helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and
-          helpdesk_tickets.account_id = helpdesk_ticket_states.account_id),
-        :conditions => ["helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at AND helpdesk_tickets.owner_id = ?",company_id]
-  }
-  }
+  TICKET_STATES_JOIN_SQL = %(INNER JOIN helpdesk_ticket_states ON
+    helpdesk_tickets.id = helpdesk_ticket_states.ticket_id AND
+    helpdesk_tickets.account_id = helpdesk_ticket_states.account_id).freeze
 
-   scope :resolved_on_time,
-        :joins => %(INNER JOIN helpdesk_ticket_states on
-          helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and
-          helpdesk_tickets.account_id = helpdesk_ticket_states.account_id),
-        :conditions => ["helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at"]
-
-  scope :first_call_resolution,
-           :joins  => %(INNER JOIN helpdesk_ticket_states on
-            helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and
-            helpdesk_tickets.account_id = helpdesk_ticket_states.account_id),
-           :conditions => ["(helpdesk_ticket_states.resolved_at is not null)  and  helpdesk_ticket_states.inbound_count = 1"]
-
-  scope :company_first_call_resolution,lambda { |company_id| {
-        :joins => %(INNER JOIN helpdesk_ticket_states on
-          helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and
-          helpdesk_tickets.account_id = helpdesk_ticket_states.account_id),
-        :conditions => [%(helpdesk_ticket_states.resolved_at is not null  and
-          helpdesk_ticket_states.inbound_count = 1 AND helpdesk_tickets.owner_id = ?),company_id]
-  }
+  scope :company_tickets_resolved_on_time, -> (company_id) {
+    joins(TICKET_STATES_JOIN_SQL).
+    where(["helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at AND helpdesk_tickets.owner_id = ?",company_id])
   }
 
-  scope :newest, lambda { |num| { :limit => num, :order => 'helpdesk_tickets.created_at DESC' } }
-  scope :updated_in, lambda { |duration| { :conditions => [
-    "helpdesk_tickets.updated_at > ?", duration ] } }
-
-  scope :created_in, lambda { |duration| { :conditions => [
-    "helpdesk_tickets.created_at > ?", duration ] } }
-
-  scope :visible, :conditions => ["spam=? AND helpdesk_tickets.deleted=? AND status > 0", false, false]
-  scope :unresolved, :conditions => ["helpdesk_tickets.status not in (#{RESOLVED}, #{CLOSED})"]
-  scope :assigned_to, lambda { |agent| { :conditions => ["responder_id=?", agent.id] } }
-  scope :requester_active, lambda { |user| { :conditions =>
-    [ "requester_id=? ",
-      user.id ], :order => 'helpdesk_tickets.created_at DESC' } }
-
-  scope :requester_latest_tickets, lambda { |user, duration| { :conditions =>
-     [ "requester_id=? and helpdesk_tickets.created_at > ?",
-       user.id, duration ], :order => 'helpdesk_tickets.created_at DESC' } }
-
-  scope :forward_setup_latest_tickets, lambda { |requester, email, duration|
-    {
-      conditions: ['requester_id=? and to_email=? and helpdesk_tickets.created_at > ?', requester.id, email, duration],
-      order: 'helpdesk_tickets.created_at DESC'
-    }
+  scope :resolved_on_time, -> {
+    joins(TICKET_STATES_JOIN_SQL).
+    where("helpdesk_tickets.due_by >  helpdesk_ticket_states.resolved_at")
   }
 
-  scope :requester_completed, lambda { |user| { :conditions =>
-    [ "requester_id=? and status in (#{RESOLVED}, #{CLOSED})",
-      user.id ] } }
-
-  scope :latest_tickets, lambda {|updated_at| {:conditions => ["helpdesk_tickets.updated_at > ?", updated_at]}}
-
-  scope :with_tag_names, lambda { |tag_names| {
-            :joins => :tags,
-            :select => "helpdesk_tickets.id",
-            :conditions => ["helpdesk_tags.name in (?)",tag_names] }
+  scope :first_call_resolution, -> {
+    joins(TICKET_STATES_JOIN_SQL).
+    where('(helpdesk_ticket_states.resolved_at IS NOT NULL) 
+            AND helpdesk_ticket_states.inbound_count = 1')
   }
 
-
-  scope :twitter_dm_tickets, lambda{ |twitter_handle_id| {
-    :joins => "INNER JOIN social_tweets on helpdesk_tickets.id = social_tweets.tweetable_id and
-                  helpdesk_tickets.account_id = social_tweets.account_id",
-              :conditions => ["social_tweets.tweetable_type = ? and social_tweets.tweet_type = ? and social_tweets.twitter_handle_id =?",
-                      'Helpdesk::Ticket','dm', twitter_handle_id] }
+  scope :company_first_call_resolution, -> (company_id) {
+    joins(TICKET_STATES_JOIN_SQL).
+    where([%(helpdesk_ticket_states.resolved_at IS NOT NULL
+              AND helpdesk_ticket_states.inbound_count = 1 
+              AND helpdesk_tickets.owner_id = ?),company_id])
   }
 
-  scope :spam_created_in, lambda { |user| { :conditions => [
-    "helpdesk_tickets.created_at > ? and helpdesk_tickets.spam = true and requester_id = ?", user.deleted_at, user.id ] } }
+  scope :newest, -> (num) { limit(num).order('helpdesk_tickets.created_at DESC') }
+  scope :updated_in, -> (duration) { where(["helpdesk_tickets.updated_at > ?", duration]) }
+  scope :created_in, -> (duration) { where(["helpdesk_tickets.created_at > ?", duration]) }
 
-  scope :with_requester, lambda { |search_string| {
-    :joins => %(INNER JOIN users ON users.id = helpdesk_tickets.requester_id and
-      users.account_id = helpdesk_tickets.account_id and users.deleted = false),
-    :conditions => ["users.name like ? and helpdesk_tickets.deleted is false","%#{search_string}%" ],
-    :select => "helpdesk_tickets.*, users.name as requester_name",
-    :order => "helpdesk_tickets.status, helpdesk_tickets.created_at DESC",
-    :limit => 1000
-    }
+  scope :visible, -> { where(["spam=? AND helpdesk_tickets.deleted=? AND status > 0", false, false]) }
+  scope :unresolved, -> { where(["helpdesk_tickets.status not in (#{RESOLVED}, #{CLOSED})"]) }
+  scope :assigned_to, -> (agent) { where(responder_id: agent.id) }
+  scope :requester_active, -> (user) {
+    where(requester_id: user.id).
+    order('helpdesk_tickets.created_at DESC')
   }
-  scope :all_article_tickets,
-          :joins => %(INNER JOIN article_tickets ON article_tickets.ticketable_id = helpdesk_tickets.id and
+  
+  scope :requester_latest_tickets, -> (user, duration) {
+    where([ "requester_id=? and helpdesk_tickets.created_at > ?",
+      user.id, duration ]).
+    order('helpdesk_tickets.created_at DESC')
+  }
+
+  scope :forward_setup_latest_tickets, -> (requester, email, duration) {
+    where(['requester_id=? and to_email=? and helpdesk_tickets.created_at > ?', requester.id, email, duration]).
+    order('helpdesk_tickets.created_at DESC')
+  }
+
+  scope :requester_completed, -> (user) {
+    where([ "requester_id=? and status in (#{RESOLVED}, #{CLOSED})",
+      user.id ])
+  }
+
+  scope :latest_tickets, -> (updated_at) { where(["helpdesk_tickets.updated_at > ?", updated_at]) }
+
+  scope :with_tag_names, -> (tag_names) {
+    joins(:tags).
+    select('helpdesk_tickets.id').
+    where(["helpdesk_tags.name in (?)",tag_names])
+  }
+
+  scope :twitter_dm_tickets, -> (twitter_handle_id) {
+    joins("INNER JOIN social_tweets on helpdesk_tickets.id = social_tweets.tweetable_id and
+      helpdesk_tickets.account_id = social_tweets.account_id").
+    where(["social_tweets.tweetable_type = ? and social_tweets.tweet_type = ? and social_tweets.twitter_handle_id =?",
+      'Helpdesk::Ticket','dm', twitter_handle_id])
+  }
+
+  scope :spam_created_in, -> (user) {
+    where(["helpdesk_tickets.created_at > ? and helpdesk_tickets.spam = true and requester_id = ?", 
+      user.deleted_at, user.id]) 
+  }
+
+  scope :with_requester, -> (search_string) {
+    joins(%(INNER JOIN users ON users.id = helpdesk_tickets.requester_id and
+      users.account_id = helpdesk_tickets.account_id and users.deleted = false)).
+    where(["users.name like ? and helpdesk_tickets.deleted is false","%#{search_string}%" ]).
+    select("helpdesk_tickets.*, users.name as requester_name").
+    order("helpdesk_tickets.status, helpdesk_tickets.created_at DESC").
+    limit(1000)
+  }
+
+  scope :all_article_tickets, -> {
+    joins(%(INNER JOIN article_tickets ON article_tickets.ticketable_id = helpdesk_tickets.id and
                     article_tickets.ticketable_type = 'Helpdesk::Ticket' and
-                    article_tickets.account_id = helpdesk_tickets.account_id),
-          :order => "`article_tickets`.`id` DESC"
+                    article_tickets.account_id = helpdesk_tickets.account_id)).
+    order("`article_tickets`.`id` DESC")
+  }
 
   # The below scope "for_user_articles" HAS to be used along with "all_article_tickets"
   # Otherwise, the condition and hence the query would fail.
-
-  scope :for_user_articles, lambda { |article_ids| {
-          :conditions => ["`article_tickets`.`article_id` IN (?)", article_ids]
-        }
+  scope :for_user_articles, -> (article_ids) {
+    where(["`article_tickets`.`article_id` IN (?)", article_ids])
   }
 
-  scope :mobile_filtered_tickets , lambda{ |display_id, limit, order_param| {
-    :conditions => ["display_id > (?)",display_id],
-    :limit => limit,
-    :order => order_param
-    }
+  scope :mobile_filtered_tickets, -> (display_id, limit, order_param) {
+    where(["display_id > (?)",display_id]).
+    limit(limit).
+    order(order_param)
   }
 
-  scope :group_escalate_sla, lambda { |due_by| {
-          :select => "helpdesk_tickets.*",
-          :joins =>  "inner join helpdesk_ticket_states
-                      on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id
-                      and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id
-                      inner join groups on groups.id = helpdesk_tickets.group_id and
-                      groups.account_id =  helpdesk_tickets.account_id",
-          :conditions => ['DATE_ADD(helpdesk_tickets.created_at,INTERVAL groups.assign_time SECOND) <=?
-                            AND group_escalated=? AND status=? AND helpdesk_ticket_states.first_assigned_at IS ?',
-                            due_by,false,Helpdesk::Ticketfields::TicketStatus::OPEN,nil]
-  }}
+  scope :group_escalate_sla, -> (due_by) {
+    select("helpdesk_tickets.*").
+    joins("INNER JOIN helpdesk_ticket_states
+      ON helpdesk_tickets.id = helpdesk_ticket_states.ticket_id
+      AND helpdesk_tickets.account_id = helpdesk_ticket_states.account_id
+      INNER JOIN groups ON groups.id = helpdesk_tickets.group_id AND
+      groups.account_id =  helpdesk_tickets.account_id").
+    where(['DATE_ADD(helpdesk_tickets.created_at,INTERVAL groups.assign_time SECOND) <=?
+      AND group_escalated=? AND status=? AND helpdesk_ticket_states.first_assigned_at IS ?',
+      due_by,false,Helpdesk::Ticketfields::TicketStatus::OPEN,nil])
+  }
 
-  scope :response_sla, lambda { |account,due_by| {
-          :select => "helpdesk_tickets.*",
-          :joins =>  "inner join helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id
-                      and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id",
-          :conditions => ["frDueBy <=? AND fr_escalated=? AND status IN (?) AND
-                            helpdesk_ticket_states.first_response_time IS ? AND source != ?",
-                            due_by,false,Helpdesk::TicketStatus::donot_stop_sla_statuses(account),nil,
-                            Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]]
-  }}
+  scope :response_sla, -> (account,due_by) {
+    select("helpdesk_tickets.*").
+    joins(TICKET_STATES_JOIN_SQL).
+    where(["frDueBy <=? AND fr_escalated=? AND status IN (?) AND
+      helpdesk_ticket_states.first_response_time IS ? AND source != ?",
+      due_by,false,Helpdesk::TicketStatus::donot_stop_sla_statuses(account),nil,
+      Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]])
+  }
 
-  scope :response_reminder,lambda { |sla_rule_ids| {
-          :select => "helpdesk_tickets.*",
-          :joins => "inner join helpdesk_schema_less_tickets on helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id  AND
-                            helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id",
-          :conditions => ["helpdesk_schema_less_tickets.boolean_tc04=? AND helpdesk_schema_less_tickets.long_tc01 in (?) ",
-                            false,sla_rule_ids]
-  }}
+  scope :response_reminder, -> (sla_rule_ids) {
+    select("helpdesk_tickets.*").
+    joins("INNER JOIN helpdesk_schema_less_tickets 
+            ON helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id  
+              AND helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id").
+    where(["helpdesk_schema_less_tickets.boolean_tc04=? AND helpdesk_schema_less_tickets.long_tc01 in (?) ",
+            false,sla_rule_ids])
+  }
 
-  scope :resolution_sla, lambda { |account,due_by| {
-          :select => "helpdesk_tickets.*",
-          :conditions => ['due_by <=? AND isescalated=? AND status IN (?) AND source != ?',
-                            due_by,false, Helpdesk::TicketStatus::donot_stop_sla_statuses(account),
-                            Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]]
-  }}
+  scope :resolution_sla, -> (account, due_by) {
+    select("helpdesk_tickets.*").
+    where(['due_by <=? AND isescalated=? AND status IN (?) AND source != ?',
+                due_by,false, 
+                Helpdesk::TicketStatus::donot_stop_sla_statuses(account),
+                Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]])
+  }
 
-  scope :resolution_reminder, lambda {|sla_rule_ids|{
-          :select => "helpdesk_tickets.*",
-          :joins => "inner join helpdesk_schema_less_tickets on helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id  AND
-                            helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id",
-          :conditions => ['helpdesk_schema_less_tickets.boolean_tc05=? AND helpdesk_schema_less_tickets.long_tc01 in (?)',
-                            false, sla_rule_ids]
-  }}
+  scope :resolution_reminder, -> (sla_rule_ids) {
+    select("helpdesk_tickets.*").
+    joins("INNER JOIN helpdesk_schema_less_tickets 
+            ON helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id  
+              AND helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id").
+    where(["helpdesk_schema_less_tickets.boolean_tc05=? AND helpdesk_schema_less_tickets.long_tc01 in (?) ",
+            false,sla_rule_ids])
+  }
 
-  scope :next_response_sla, lambda { |account,due_by| {
-          :select => "helpdesk_tickets.*",
-          :conditions => ["nr_due_by <=? AND nr_escalated=? AND status IN (?) AND source != ?",
+  scope :next_response_sla, ->(account, due_by) {
+    select('helpdesk_tickets.*').
+    where(["nr_due_by <=? AND nr_escalated=? AND status IN (?) AND source != ?",
                             due_by,false,Helpdesk::TicketStatus::donot_stop_sla_statuses(account),
-                            Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]]
-  }}
-
-  scope :next_response_reminder, lambda {|sla_rule_ids|{
-          :select => "helpdesk_tickets.*",
-          :joins => "inner join helpdesk_schema_less_tickets on helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id  AND
-                            helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id",
-          :conditions => ['nr_reminded=? AND helpdesk_schema_less_tickets.long_tc01 in (?)',
-                            false, sla_rule_ids]
-  }}
-
-  scope :not_associated, :conditions => {:association_type => nil}
-
-  scope :associated_tickets, lambda {|association_type| {
-          :conditions => ["association_type = ?", TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[association_type]]
-  }}
-
-  scope :unassigned, :conditions => ["helpdesk_tickets.responder_id is NULL"]
-  scope :sla_on_tickets, lambda { |status_ids|
-    { :conditions => ["status IN (?)", status_ids] }
-  }
-  scope :agent_tickets, lambda { |status_ids, user_id|
-    { :conditions => ["status IN (?) and responder_id = ?", status_ids, user_id] }
+                            Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]])
   }
 
-  scope :associated_with_skill, lambda {|skill_id| {
-    :conditions => ["sl_skill_id in (?)", skill_id],
-  }}
-
-  scope :next_autoplay_ticket, lambda {|account,responder_id| {
-    :select => "helpdesk_tickets.display_id",
-    :conditions => ["status IN (?) and responder_id = ?", Helpdesk::TicketStatus::donot_stop_sla_statuses(account),responder_id],
-    :limit => 1,
-    :order => "helpdesk_tickets.due_by ASC",
+  scope :next_response_reminder, ->(sla_rule_ids) {
+    select('helpdesk_tickets.*').
+    joins('inner join helpdesk_schema_less_tickets on helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id  AND
+                            helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id').
+    where('nr_reminded=? AND helpdesk_schema_less_tickets.long_tc01 in (?)', false, sla_rule_ids)
   }
-}
+
+  scope :not_associated, -> { where(association_type: nil) }
+
+  scope :associated_tickets, -> (association_type) {
+    where(association_type: TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[association_type])
+  }
+
+  scope :unassigned, -> { where("helpdesk_tickets.responder_id is NULL") }
+
+  scope :sla_on_tickets, -> (status_ids) {
+    where(status: status_ids)
+  }
+
+  scope :agent_tickets, -> (status_ids, user_id) {
+    where(
+      status: status_ids,
+      responder_id: user_id
+    )
+  }
+
+  scope :associated_with_skill, -> (skill_id) {
+    where(sl_skill_id: skill_id)
+  }
+
+  scope :next_autoplay_ticket, -> (account,responder_id) {
+    select("helpdesk_tickets.display_id").
+    where(
+      status: Helpdesk::TicketStatus::donot_stop_sla_statuses(account),
+      responder_id: responder_id
+    ).
+    limit(1).
+    order("helpdesk_tickets.due_by ASC")
+  }
 
   SCHEMA_LESS_ATTRIBUTES.each do |attribute|
     define_method("#{attribute}") do
@@ -537,7 +539,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     dup_ticket.flexifield.denormalized_flexifield = self.flexifield.denormalized_flexifield.dup
     dup_ticket.schema_less_ticket = self.schema_less_ticket.dup
     dup_ticket.ticket_states = self.ticket_states.dup
-    dup_ticket.ticket_old_body = self.ticket_old_body
+    dup_ticket.ticket_body = self.ticket_body
     original_attributes.each do |field, value|
       case field
       when :last_interaction
@@ -668,9 +670,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     "[#{ticket_id_delimiter}#{display_id}]"
   end
 
-  def conversation(page = nil, no_of_records = 5, includes=[])
-    includes = note_preload_options if includes.blank?
-    notes.conversations.newest_first.paginate(:page => page, :per_page => no_of_records, :include => includes)
+  def conversation(page = nil, no_of_records = 5, includes_associations=[])
+    includes_associations = note_preload_options if includes_associations.blank?
+    notes.conversations.newest_first.includes(includes_associations).paginate(page: page, per_page: no_of_records)
   end
 
   def conversation_since(since_id)
@@ -879,6 +881,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def description_html=(value)
     warn "[DEPRECATION] This method will be removed soon, please use ticket_body.description_html."
     write_attribute(:description_html,value)
+  end
+
+  def description
+    ticket_body && ticket_body.description
+  end
+
+  def description_html
+    ticket_body && ticket_body.description_html
   end
 
   def description_with_attachments
@@ -1568,7 +1578,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def note_preload_options
-      options = [:attachments, :note_old_body, :schema_less_note, :notable, :attachments_sharable, {:user => :avatar}, :cloud_files]
+      options = [:attachments, :note_body, :schema_less_note, :notable, :attachments_sharable, {:user => :avatar}, :cloud_files]
       options << :freshfone_call if Account.current.features?(:freshfone)
       options << :freshcaller_call if Account.current.has_feature?(:freshcaller)
       options << (Account.current.new_survey_enabled? ? {:custom_survey_remark =>

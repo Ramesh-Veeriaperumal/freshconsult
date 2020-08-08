@@ -9,8 +9,8 @@ class Monitorship < ActiveRecord::Base
   validates_uniqueness_of :user_id, :scope => [:monitorable_id, :monitorable_type, :account_id]
   validate :user_has_email
 
-  scope :active_monitors, :conditions => { :active => true }
-  scope :by_user, lambda { |user| { :conditions => ["user_id = ?", user.id ] } }
+  scope :active_monitors, -> { where(active: true) }
+  scope :by_user, ->(user) { where(user_id: user.id) }
 
   ALLOWED_TYPES = {forum: "Forum", topic: "Topic"}
   ACTIONS = [:follow, :unfollow, :is_following, :followers]

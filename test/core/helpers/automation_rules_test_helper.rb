@@ -228,7 +228,7 @@ module AutomationRulesTestHelper
   def generate_value(operator_type, field_name, not_operator, operator=nil)
     case operator_type
     when :email
-      Faker::Internet.email
+      field_name.to_sym.eql?(:to_email) ? Faker::Internet.email.to_a : Faker::Internet.email
     when :text
       Faker::Lorem.characters(10)
     when :choicelist

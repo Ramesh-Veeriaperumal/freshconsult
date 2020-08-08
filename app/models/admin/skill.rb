@@ -20,7 +20,7 @@ class Admin::Skill < ActiveRecord::Base
   has_many :users, :through => :user_skills, :source => :user, :order => 'user_skills.rank',
             :dependent => :destroy
 
-  scope :trimmed, -> { select('skills.id, skills.name') }
+  scope :trimmed, -> { select([:'skills.id', :'skills.name']) }
 
   before_validation :assign_last_position, :unless => :position?
   before_validation :remove_whitespaces

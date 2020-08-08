@@ -271,7 +271,7 @@ class TicketValidationTest < ActionView::TestCase
 
   def test_description
     Account.stubs(:current).returns(Account.first)
-    desc_field = mock('desc_field')
+    desc_field = Helpdesk::TicketField.new
     desc_field.stubs(:required).returns(true)
     desc_field.stubs(:default).returns(true)
     desc_field.stubs(:name).returns('description')
@@ -291,6 +291,7 @@ class TicketValidationTest < ActionView::TestCase
 
     controller_params = { 'requester_id' => 1, ticket_fields: [desc_field], statuses: statuses }
     item = Helpdesk::Ticket.new
+    item.build_ticket_body
     item.ticket_body.description = ''
     item.ticket_body.description_html = 'test'
     ticket = TicketValidation.new(controller_params, item)

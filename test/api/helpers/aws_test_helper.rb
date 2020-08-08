@@ -8,8 +8,8 @@ module AwsTestHelper
   end
 
   def stub_s3_writes
-    AWS::S3::S3Object.any_instance.stubs(:write).returns(true)
-    AWS::S3::S3Object.any_instance.stubs(:delete).returns(true)
+    Aws::S3::Object.any_instance.stubs(:put).returns(true)
+    Aws::S3::Object.any_instance.stubs(:delete).returns(true)
   end
 
   def stub_sqs_client
@@ -17,8 +17,8 @@ module AwsTestHelper
   end
 
   def unstub_s3_writes
-    AWS::S3::S3Object.any_instance.unstub(:write)
-    AWS::S3::S3Object.any_instance.unstub(:delete)
+    Aws::S3::Object.any_instance.unstub(:put)
+    Aws::S3::Object.any_instance.unstub(:delete)
   end
 
   def stub_attachment_to_io

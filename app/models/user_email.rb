@@ -45,7 +45,7 @@ class UserEmail < ActiveRecord::Base
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher 
 
-  scope :primary, :conditions => {:primary_role => true}, :limit => 1
+  scope :primary, -> { where(primary_role: true).limit(1) }
 
   publishable on: [:create, :update, :destroy], if: -> { !self.primary_role }, exchange_model: :user, exchange_action: :update
 
@@ -59,7 +59,7 @@ class UserEmail < ActiveRecord::Base
       conditions_sql += " and updated_at > ?"
       conditions_subs << age.seconds.ago
     end
-    find(:first, :conditions => [conditions_sql, *conditions_subs])
+    where([conditions_sql, *conditions_subs]).first
   end
 
   def self.user_for_email(email, account = Account.current)

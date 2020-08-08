@@ -70,7 +70,7 @@ module Sync::Constants
          # p "source Attachment Path : #{source_attachment_path}\n"
          # p "dest : #{destination_attachment_path}"
         begin
-          AwsWrapper::S3Object.copy_file(source_attachment_path, destination_attachment_path, S3_CONFIG[:bucket])
+          AwsWrapper::S3.copy(source_attachment_path, S3_CONFIG[:bucket], destination_attachment_path) # PRE-RAILS: Needs to be checked
           attachment.content.reprocess!
         rescue => e
           puts "Error while moving attachment for #{attachment.inspect} . Source Attachment ID: #{mapping_data[attachment.id]} Destination Attachment ID : #{attachment.id}"

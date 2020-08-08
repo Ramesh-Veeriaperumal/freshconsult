@@ -96,24 +96,25 @@ class Subscription < ActiveRecord::Base
   attr_reader :response
   serialize :additional_info, Hash
 
-  scope :paying_subscriptions, {
-    :conditions => ["state = '#{ACTIVE}' AND amount > 0.00"],
-    :include => "currency" }
+  scope :paying_subscriptions, -> {
+    where(["state = '#{ACTIVE}' AND amount > 0.00"]).
+    includes(:currency)
+  }
 
-  scope :free_subscriptions, {
-    :conditions => ["state IN ('#{ACTIVE}', '#{FREE}') AND amount = 0.00"] }
+  scope :free_subscriptions, -> {
+    where(["state IN ('#{ACTIVE}', '#{FREE}') AND amount = 0.00"])
+  }
 
-  scope :filter_with_currency, lambda { |currency| {
-    :conditions => { :subscription_currency_id => currency.id }
-  }}
-
-  scope :filter_with_state, lambda { |state| {
-    :conditions => { :state => state }
-  }}
-
+  scope :filter_with_currency, -> (currency) {
+    where(subscription_currency_id: currency.id)
+  }
+  
+  scope :filter_with_state, -> (state) {
+    where(state: state)
+  }
 
   delegate :contact_info, :admin_first_name, :admin_last_name, :admin_email, :admin_phone,
-            :invoice_emails, :to => "account.account_configuration"
+           :invoice_emails, :to => "account.account_configuration"
   delegate :name, :full_domain, :to => "account", :prefix => true
 
   delegate :name, :billing_site, :billing_api_key, :exchange_rate, :to => :currency, :prefix => true
@@ -140,23 +141,23 @@ class Subscription < ActiveRecord::Base
   ].freeze
 
   def self.customer_count
-   count(:conditions => [ " state IN ('active','free') "])
+   where(state: [ACTIVE, FREE]).count
   end
 
   def self.free_customers
-   count(:conditions => {:state => ['active','free'],:amount => 0.00})
+   where(state: [ACTIVE, FREE], amount: 0.00).count
   end
 
   def self.customers_agent_count
-    sum(:agent_limit, :conditions => { :state => 'active'})
+    where(state: ACTIVE).sum(:agent_limit)
   end
 
   def self.customers_free_agent_count
-    sum(:free_agents, :conditions => { :state => ['active']})
+    where(state: ACTIVE).sum(:free_agents)
   end
 
   def self.paid_agent_count
-    sum('agent_limit - free_agents', :conditions => [ " state = 'active' and amount > 0.00"]).to_i
+    where(['state = ? and amount > 0.00', ACTIVE]).sum('agent_limit - free_agents').to_i
   end
 
   #Total monthly revenue in USD
@@ -171,7 +172,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def self.free_agent_count
-    sum('free_agents', :conditions => [ "state in ('#{ACTIVE}', '#{FREE}')"]).to_i
+    where(state: [ACTIVE, FREE]).sum('free_agents').to_i
   end
 
   def self.fetch_by_account_id(account_id)

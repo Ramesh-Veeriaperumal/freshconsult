@@ -9,7 +9,7 @@ class Dynamo::Collection
 		@last_evaluated_key = response[:last_evaluated_key]
 
 		@records = []
-		response[:member].each do |rec|
+		response[:items].each do |rec| # PRE-RAILS: NEED TO BE VERIFIED, change in aws-sdk v2 reponse
 			@records << @type.constantize.new().set(rec)
 		end
 	end

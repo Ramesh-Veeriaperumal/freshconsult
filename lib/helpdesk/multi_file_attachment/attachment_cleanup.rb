@@ -29,7 +29,7 @@ class Helpdesk::MultiFileAttachment::AttachmentCleanup
     def destroy_attachments account_id, attachment_list
       Sharding.admin_select_shard_of account_id do
         account = Account.find_by_id(account_id).make_current
-        account.attachments.find_each(:conditions => {:id => attachment_list}) do |attach|
+        account.attachments.where({:id => attachment_list}).find_each do |attach|
           attachment_list.delete(attach.id)
           destroy_attachment(attach, account_id)
         end
