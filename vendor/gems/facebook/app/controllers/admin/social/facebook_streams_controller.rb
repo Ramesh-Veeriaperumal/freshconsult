@@ -112,7 +112,12 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
       elsif rule[:rule_type] == RULE_TYPE[:strict].to_s
         @facebook_page.ad_post_stream.delete_rules
       end
-      
+
+      if rule[:rule_type] == RULE_TYPE[:optimal].to_s
+        filter_data.merge!(filter_mentions:  params[:new_ticket_filter_mentions].to_s.to_bool)
+      elsif rule[:rule_type] == RULE_TYPE[:broad].to_s
+        filter_data.merge!(filter_mentions: params[:same_ticket_filter_mentions].to_s.to_bool)
+      end
       rule_params = {
         :filter_data => filter_data,
         :action_data => {
@@ -153,7 +158,7 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   end
 
   def update_ad_ticket_rules(ad_post_args, ad_stream)
-    ad_stream.facebook_ticket_rules.first.attributes = { action_data: {
+    ad_stream.facebook_ticket_rules.first.attributes = { filter_data: { rule_type: RULE_TYPE[:ad_post], filter_mentions: params[:ad_posts_filter_mentions].to_s.to_bool }, action_data: {
       group_id:   (ad_post_args[:group_id].to_i if ad_post_args[:group_id].present?),
       product_id: (params[:social_facebook_page][:product_id].to_i if params[:social_facebook_page][:product_id].present?)
     } }
@@ -161,7 +166,7 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   end
 
   def build_ad_ticket_rule(ad_post_args, ad_stream)
-    ad_stream.facebook_ticket_rules.build(filter_data: { rule_type: RULE_TYPE[:ad_post] },
+    ad_stream.facebook_ticket_rules.build(filter_data: { rule_type: RULE_TYPE[:ad_post], filter_mentions: params[:ad_posts_filter_mentions].to_s.to_bool },
                                           action_data: {
                                             group_id:   (ad_post_args[:group_id].to_i if ad_post_args[:group_id].present?),
                                             product_id: (params[:social_facebook_page][:product_id].to_i if params[:social_facebook_page][:product_id].present?)

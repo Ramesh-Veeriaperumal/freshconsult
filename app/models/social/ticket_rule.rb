@@ -74,6 +74,10 @@ class Social::TicketRule < ActiveRecord::Base
     optimal? && filter_data[:import_company_comments]
   end
 
+  def filter_mentions?
+    filter_data[:filter_mentions]
+  end
+
   def type
     stream.data.try(:[], :kind)
   end

@@ -57,6 +57,8 @@ window.App.Admin = window.App.Admin || {};
               .select2('val', '')
               .hide();
           }
+          $('#same_ticket_filter_mentions_container').hide();
+          $('#new_ticket_filter_mentions_container').show();
           break;
 
         case _this.BROAD_RULE_TYPE:
@@ -75,6 +77,8 @@ window.App.Admin = window.App.Admin || {};
             .select2('val', '')
             .hide();
           $('.keyword_container').hide();
+          $('#same_ticket_filter_mentions_container').show();
+          $('#new_ticket_filter_mentions_container').hide();
           break;
       }
 
@@ -144,6 +148,8 @@ window.App.Admin = window.App.Admin || {};
           case 'same_ticket_threading':
             $import_visitor_post_checkbox.prop('checked', true).prop('disabled', true);
             $('#import_visitor_posts_text').addClass('muted');
+            $('#new_ticket_filter_mentions_container').hide()
+            $('#same_ticket_filter_mentions_container').show()
             $ticket_rule_type.val(_this.BROAD_RULE_TYPE);
             $('#toggle_keywords').prop('checked', false);
             $('.optimal-rules-container #s2id_social_ticket_rule__includes').select2('val', '').hide();
@@ -153,6 +159,8 @@ window.App.Admin = window.App.Admin || {};
           case 'new_ticket_threading':
             $import_visitor_post_checkbox.prop('disabled', false);
             $('#import_visitor_posts_text').removeClass('muted');
+            $('#same_ticket_filter_mentions_container').hide();
+            $('#new_ticket_filter_mentions_container').show();
             $ticket_rule_type.val(_this.OPTIMAL_RULE_TYPE);
             $select2_container.fadeIn('slow', 'linear').css('display', 'block');
             break;

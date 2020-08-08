@@ -16,7 +16,7 @@
   <%= render :partial => 'page_form', :locals => { :facebook_page => @facebook_page } %>
   <% primary_toggle_state = @ticket_rules.first.filter_data[:rule_type] != 1 %>
   <div class="adm-social sts">
-   <h4 class="adm-title"><%= t('admin.social.ticket_rules.title') %></h3>
+   <h4 class="adm-title"><%= t('admin.social.ticket_rules.title') %></h4>
     <div class="rules-wrapper">
       <div class="head">
         <% tkt_rule_des = t('.tke_rule_breif_desc') %>

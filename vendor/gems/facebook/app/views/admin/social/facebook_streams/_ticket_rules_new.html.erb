@@ -26,11 +26,14 @@
                   <input type="radio" id="same_ticket_threading" name="threading" class="threading">
                   &nbsp;<%= t(".fb_thread_same_ticket") %>
                 </label>
+                <div class="pl20" id = "same_ticket_filter_mentions_container">
+                  <label><%= check_box_tag 'same_ticket_filter_mentions', true, ticket_rule.filter_mentions? %>&nbsp;<%= t(".filter_mentions") %></label>
+                </div>
                 <label id="new_ticket_threading_container">
                   <input type="radio" id="new_ticket_threading" name="threading" class="threading">
                   &nbsp;<%= t(".fb_thread_new_ticket") %>
                 </label>
-                <div class="keyword_container">
+                <div class="keyword_container pl20">
                   <label>
                     <!-- dummy checkbox for UX revamp -->
                     <input type="checkbox" id="toggle_keywords">
@@ -38,9 +41,13 @@
                   </label>
                   <%= text_field_tag "social_ticket_rule[][includes]",
                     ticket_rule.include_keys,
-                    :class => 'text social_ticket_rule_includes form-control span12' %>
+                    :class => 'text social_ticket_rule_includes form-control span12 pl20' %>
+                </div>
+                <div class="pl20" id = "new_ticket_filter_mentions_container">
+                  <label><%= check_box_tag 'new_ticket_filter_mentions', true, ticket_rule.filter_mentions? %>&nbsp;<%= t(".filter_mentions") %></label>
                 </div>
               </div>
+
               <div class="control-group mt10">
                 <label class="mt10 pl5">
                   <%= t('.assign_to_gp')%>
@@ -52,7 +59,9 @@
           <% if Account.current.fb_ad_posts_enabled? %>
           <% is_ad_post_enabled = facebook_page.ad_post_stream.rules.present? ? true : false %>
           <% ad_post_group_id = facebook_page.ad_post_stream.rules.present? ? facebook_page.ad_post_stream.rules.first[:action][:group_id] : 0 %>
+          <% ad_post_ticket_rule = facebook_page.ad_post_stream.ticket_rules.first if is_ad_post_enabled%>
 
+          <% ad_posts_filter_mentions = ad_post_ticket_rule.present? ? ad_post_ticket_rule.filter_data[:filter_mentions] : false %>
             <div class="mb15 bold-text"><%= t(".ad_posts_label") %></div>
             <label>
               <%= hidden_field_tag 'ad_posts[import_ad_posts]]', "false" %>
@@ -66,13 +75,16 @@
               <%= t(".convert_ad_post_helptext") %>
             </label>
 
+          <div class="pl20">
+            <label><%= check_box_tag 'ad_posts_filter_mentions', true, ad_posts_filter_mentions %>&nbsp;<%= t(".filter_mentions") %></label>
+          </div>
+
             <div class="control-group mt10">
               <label class="mt10 pl5">
                 <%= t('.assign_to_gp')%>
                 <%= select_tag "ad_posts[group_id]", options_for_select(current_account.support_agent_groups_from_cache.collect{ |c| [c.name, c.id]}.insert(0, '...'), ad_post_group_id), {:class => "select2-container span4 ml10"} %>
               </label>
             </div>
-
           <% end %>
         </div>
       </div>
