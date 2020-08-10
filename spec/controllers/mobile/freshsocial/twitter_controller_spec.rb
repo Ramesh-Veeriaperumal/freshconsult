@@ -40,7 +40,7 @@ describe Social::TwitterController do
       
       #Push a tweet into dynamo that is to be converted to ticket  
       unless GNIP_ENABLED 
-        AWS::DynamoDB::ClientV2.any_instance.stubs(:query).returns(sample_dynamo_query_params)
+        Aws::DynamoDB::Client.any_instance.stubs(:query).returns(sample_dynamo_query_params)
         Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
         Social::DynamoHelper.stubs(:batch_get).returns(sample_interactions_batch_get(tweet_id))
       end
@@ -135,7 +135,7 @@ describe Social::TwitterController do
       
       #Push a tweet into dynamo that is to be converted to ticket  
       unless GNIP_ENABLED 
-        AWS::DynamoDB::ClientV2.any_instance.stubs(:query).returns(sample_dynamo_query_params)
+        Aws::DynamoDB::Client.any_instance.stubs(:query).returns(sample_dynamo_query_params)
         Social::DynamoHelper.stubs(:update).returns(dynamo_update_attributes(tweet_id))
         Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
         Social::DynamoHelper.stubs(:batch_get).returns(sample_interactions_batch_get(tweet_id))
@@ -163,7 +163,7 @@ describe Social::TwitterController do
       
       #Push a tweet into dynamo that is to be converted to ticket  
       unless GNIP_ENABLED 
-        AWS::DynamoDB::ClientV2.any_instance.stubs(:query).returns(sample_dynamo_query_params)
+        Aws::DynamoDB::Client.any_instance.stubs(:query).returns(sample_dynamo_query_params)
         Social::DynamoHelper.stubs(:update).returns(dynamo_update_attributes(tweet_id))
         Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
         Social::DynamoHelper.stubs(:batch_get).returns(sample_interactions_batch_get(tweet_id))
@@ -296,7 +296,7 @@ describe Social::TwitterController do
       
     #Push a tweet into dynamo that is to be converted to ticket  
     unless GNIP_ENABLED 
-      AWS::DynamoDB::ClientV2.any_instance.stubs(:query).returns(sample_dynamo_query_params)
+      Aws::DynamoDB::Client.any_instance.stubs(:query).returns(sample_dynamo_query_params)
       Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
       Social::DynamoHelper.stubs(:batch_get).returns(sample_interactions_batch_get(tweet_id))
     end
@@ -339,7 +339,7 @@ describe Social::TwitterController do
       
     #Push a tweet into dynamo that is to be converted to ticket  
     unless GNIP_ENABLED 
-      AWS::DynamoDB::ClientV2.any_instance.stubs(:query).returns(sample_dynamo_query_params)
+      Aws::DynamoDB::Client.any_instance.stubs(:query).returns(sample_dynamo_query_params)
       Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
       Social::DynamoHelper.stubs(:batch_get).returns(sample_interactions_batch_get(tweet_id))
     end

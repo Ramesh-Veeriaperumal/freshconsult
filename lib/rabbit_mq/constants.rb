@@ -21,7 +21,7 @@ module RabbitMq::Constants
   
   MODELS = [
     [  'ticket',              CRUD_KEYS_BY_TOKEN[:all],                 'ticket'          ],
-    [  'ticket_old_body',     CRUD_KEYS_BY_TOKEN[:update],              'ticket'          ],
+    [  'ticket_body',         CRUD_KEYS_BY_TOKEN[:update],              'ticket'          ],
     [  'subscription',        CRUD_KEYS_BY_TOKEN[:create_and_destroy],  'ticket'          ],
     [  'ticket_state',        CRUD_KEYS_BY_TOKEN[:update],              'ticket'          ],
     [  'note',                CRUD_KEYS_BY_TOKEN[:all],                 'note'            ],

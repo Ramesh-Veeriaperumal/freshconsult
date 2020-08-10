@@ -169,7 +169,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def content_changed?(field)
-    @note_central_changes ||= [*note_old_body.previous_changes.keys, *(@model_changes || {}).keys.map(&:to_s)]
+    @note_central_changes ||= [*note_body.previous_changes.keys, *(@model_changes || {}).keys.map(&:to_s)]
     @note_central_changes.include?(field)
   end
 

@@ -23,7 +23,7 @@ class Solution::Folder < ActiveRecord::Base
   
   alias_method :parent, :solution_folder_meta
   
-  scope :alphabetical, :order => 'name ASC'
+  scope :alphabetical, -> { order('name ASC') }
 
   attr_accessible :name, :description, :import_id
   attr_accessor :count_articles
@@ -54,23 +54,6 @@ class Solution::Folder < ActiveRecord::Base
 
   def self.find_all_folders(account)
     self.where({ :account_id => account })
-  end
-
-  def self.account_folders(language_ids)
-    joins(solution_folder_meta: :solution_category_meta).where('solution_category_meta.is_default = false AND solution_category_meta.account_id = ? AND solution_folders.language_id IN (?)', Account.current.id, language_ids)
-  end
-
-  def self.portal_folders(portal_id, language_ids)
-    joins(solution_folder_meta: [solution_category_meta: :portal_solution_categories]).where('solution_category_meta.is_default = false AND solution_category_meta.account_id = ? AND portal_solution_categories.portal_id = ? AND solution_folders.language_id IN (?)', Account.current.id, portal_id, language_ids)
-  end
-
-  def self.folders_with_tags(tag_names)
-    joins(solution_folder_meta: [tag_uses: :tags]).where('helpdesk_tags.account_id = ? AND helpdesk_tags.name in (?)', Account.current.id, tag_names)
-  end
-
-  def self.folders_with_platforms(platforms)
-    platform_criteria = platforms.map { |platform_type| format('solution_platform_mappings.%{platform_type} = true', platform_type: platform_type) }.join(' OR ')
-    joins(solution_folder_meta: :solution_platform_mapping).where(format('((%{platform_criteria}) AND solution_platform_mappings.account_id = %{account_id})', platform_criteria: platform_criteria, account_id: Account.current.id))
   end
   
   def to_xml(options = {})

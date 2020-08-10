@@ -2,9 +2,9 @@ module RabbitMq::Subscribers::Tickets::Activities
 
   include RabbitMq::Constants
   include ActivityConstants
-  include RabbitMq::Subscribers::TicketOldBodies::Activities
+  include RabbitMq::Subscribers::TicketBodies::Activities
   include RabbitMq::Subscribers::Subscriptions::Activities
-  VALID_MODELS = ["ticket", "ticket_old_body", "subscription"]
+  VALID_MODELS = ["ticket", "ticket_body", "subscription"]
 
   PROPERTIES_TO_CONSIDER      = [:requester_id, :responder_id, :group_id, :priority, :ticket_type, :subject,
                                  :source, :status, :product_id, :spam, :deleted, :parent_ticket, :due_by,
@@ -22,8 +22,8 @@ module RabbitMq::Subscribers::Tickets::Activities
   def mq_activities_subscriber_properties(action)
     if self.is_a?(Helpdesk::Ticket)
       ticket_subscriber_properties(action)
-    elsif self.is_a?(Helpdesk::TicketOldBody)
-      ticket_old_body_subscriber_properties(action)      
+    elsif self.is_a?(Helpdesk::TicketBody)
+      ticket_body_subscriber_properties(action)
     elsif self.is_a?(Helpdesk::Subscription)
       subscription_subscriber_properties(action)
     end    

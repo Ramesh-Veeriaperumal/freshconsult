@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Community::DynamoTables do
 
 	before(:all) do
-		$dynamo = AWS::DynamoDB::ClientV2.new
+		$dynamo = Aws::DynamoDB::Client.new
 		Dynamo::CLIENT = $dynamo
 		@read = 10
 		@write = 10
@@ -109,7 +109,7 @@ describe Community::DynamoTables do
 		folder_name = "spam_attachments/month_#{time.strftime('%Y_%m')}/dynamo_tables_spec/#{Time.now.utc.to_f * (10**7)}"
 		store_attachments(folder_name)
 		Community::DynamoTables.clear_attachments({:year => time.strftime('%Y'), :month => time.strftime('%m')})
-		s3_bucket_objects = AWS::S3::Bucket.new(S3_CONFIG[:bucket]).objects.with_prefix("spam_attachments/month_#{time.strftime('%Y_%m')}")
+		s3_bucket_objects = AwsWrapper::S3.find_with_prefix(S3_CONFIG[:bucket], "spam_attachments/month_#{time.strftime('%Y_%m')}")
 		s3_bucket_objects.collect(&:key).blank?.should eql true
 	end
 end

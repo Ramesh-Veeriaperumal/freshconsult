@@ -183,7 +183,7 @@ class AuditLogExport < BaseWorker
                       { content_type: 'application/octet-stream' }
                     end
     file = @export_file_path.present? ? File.open(@export_file_path) : File.open(write_to_zip_file(attachment_file_path), 'r')
-    AwsWrapper::S3Object.store(attachment_file_path, file, S3_CONFIG[:bucket], write_options)
+    AwsWrapper::S3.put(S3_CONFIG[:bucket], attachment_file_path, file, write_options.merge(server_side_encryption: 'AES256'))
     @args[:archived] == AuditLogConstants::ARCHIVED[1] ? upload_file(@export_file_path) : upload_file(attachment_file_path)
     hash_file_name = @args[:export_job_id]
     @data_export.save_hash!(hash_file_name)

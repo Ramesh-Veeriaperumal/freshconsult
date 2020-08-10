@@ -4,11 +4,9 @@ class Freshfone::Filters::CallFilter < Wf::Filter
   def results
     @results ||= begin
       handle_empty_filter! 
-      recs = model_class.paginate(
-        :order => order_clause,
-        :page => page, :per_page => per_page,
-        :conditions => sql_conditions,
-        :include => [:ticket, :note, :recording_audio, :caller, :meta, :freshfone_number, :agent => [:avatar], :customer => [:avatar]] )
+      recs = model_class.order(order_clause).where(sql_conditions).preload(
+        [:ticket, :note, :recording_audio, :caller, :meta, :freshfone_number, agent: [:avatar], :customer => [:avatar]]
+        ).paginate(page: page, per_page: per_page)
       recs.wf_filter = self
       recs
     end

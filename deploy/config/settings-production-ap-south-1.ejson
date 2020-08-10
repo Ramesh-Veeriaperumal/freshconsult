@@ -1384,10 +1384,6 @@
         "silkroad": {
           "_auth_type": "jwt",
           "jwt_secret": ["EJ[1:BMbkU/WyoYswDlVVQpjJk8l9CIWB9lCnB60773xLXFk=:pUhIueXmCBzob3Jd30Xn2Sr2mpTRVtwH:Rs4PgGzKASftqsgMGAJzKN5dNd4mI1ibc2kyF03IBjLSNVtzHfKs6dyzqw7P98Mxs3CJfQ==]"]
-        },
-        "kbservice": {
-          "_auth_type": "jwt",
-          "jwt_secret": ["EJ[1:Kb4cBUcINoB2EL/IUJbjNbWDwgqoDNcItH+pkAgMbkE=:sJY7vPbF4lbg8Gs2PMfakRRRNTAw84jF:uazf/Gi3cdxK621JDA8uFxq94h/0yj/HsdELbPFNAGuxGES3qfb2eIfMdBxUyQiL]"]
         }
       },
       "scheduler_client_keys": {
@@ -1696,7 +1692,7 @@
       },
       "_revision": "FD19.02.7_falcon",
       "_fullstory_org_id": "16is",
-      "_heap_project_id": "",
+      "_heap_project_id": "2826793817",
       "_fingerprint_prepend": "https://indfassetsblue.freshdesk.com/production/",
       "_integrations_url": "https://podapsouth1login.freshdesk.com",
       "_widget_domain": "https://ind-widget.freshworks.com/widgets",

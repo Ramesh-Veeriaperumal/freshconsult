@@ -8,6 +8,7 @@ module Helpdesk
       def save_ticket
         process_save_ticket do
           build_ticket_and_sanitize
+          UnicodeSanitizer.encode_emoji(self.ticket_body, "description")
           self.save
         end
       end
@@ -15,6 +16,7 @@ module Helpdesk
       def save_ticket!
         process_save_ticket do
           build_ticket_and_sanitize
+          UnicodeSanitizer.encode_emoji(self.ticket_body, "description")
           self.save!
         end
       end
@@ -47,11 +49,13 @@ module Helpdesk
 
       def update_ticket_attributes(attributes)
         attributes = sanitize_body_hash(attributes,:ticket_body_attributes,"description") if(attributes)
+        attributes = UnicodeSanitizer.encode_emoji_hash(attributes, 'ticket_body_attributes', 'description') if attributes.present?
         self.update_attributes(attributes)
       end
 
       def assign_ticket_attributes(attributes)
         attributes = sanitize_body_hash(attributes,:ticket_body_attributes,"description") if(attributes)
+        attributes = UnicodeSanitizer.encode_emoji_hash(attributes, 'ticket_body_attributes', 'description') if attributes.present?
         self.assign_attributes(attributes)
       end
 

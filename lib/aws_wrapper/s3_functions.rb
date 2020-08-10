@@ -18,7 +18,7 @@ module AwsWrapper
         def download_from_s3(s3_path, s3_bucket, temp_file_prefix)
           file = Tempfile.new(temp_file_prefix)
           file.binmode
-          file.write(AwsWrapper::S3Object.read(s3_path, s3_bucket))
+          file.write(AwsWrapper::S3.read(s3_bucket, s3_path))
           file.flush.seek(0, IO::SEEK_SET) # flush data to file and set RW pointer to beginning
           file
         end

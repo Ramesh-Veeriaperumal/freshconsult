@@ -281,7 +281,7 @@ class Support::TicketsController < SupportController
     end
 
     def preload_options
-      [:ticket_old_body, :ticket_status, :requester, :responder]
+      [:ticket_body, :ticket_status, :requester, :responder]
     end
 
     def separate_new_emails_from_reply_cc cc_emails

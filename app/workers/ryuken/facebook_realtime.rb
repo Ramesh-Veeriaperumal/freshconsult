@@ -7,7 +7,7 @@ class Ryuken::FacebookRealtime
 
   shoryuken_options queue: SQS[:facebook_realtime_queue], auto_delete: true, body_parser: :json,  batch: false
 
-  def perform(sqs_msg)
+  def perform(sqs_msg, args)
     begin
       #Check for app rate limit before processing feeds
       wait_on_poll if app_rate_limit_reached?

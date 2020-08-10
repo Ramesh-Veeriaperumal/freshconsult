@@ -11,7 +11,6 @@ atom_feed do |feed|
         entry.title(h "Message received from #{note.notable.name}") 
       elsif note.private
         entry.title(h "Note on Ticket: #{note.notable.name}") if note.notable.is_a? Helpdesk::Ticket
-        entry.title(h "Note on Issue: #{note.notable.title}") if note.notable.is_a? Helpdesk::Issue
       else
         entry.title(h "Message sent by #{note.user ? note.user.name : 'staff'}")
       end

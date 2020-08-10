@@ -30,10 +30,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   has_many :attachments_sharable, :through => :shared_attachments, :source => :attachment
 
-  has_one :ticket_old_body, :class_name => 'Helpdesk::TicketOldBody', 
-                            :dependent => :destroy, :autosave => false
-                            
-	has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
+  has_one :ticket_body, class_name: 'Helpdesk::TicketBody', dependent: :destroy
+  accepts_nested_attributes_for :ticket_body, update_only: true
+
+  has_one :schema_less_ticket, class_name: 'Helpdesk::SchemaLessTicket', dependent: :destroy
   delegate :scheduler_trace_id, :update_scheduler_trace_id, :reset_scheduler_trace_id, to: :schema_less_ticket
 
   belongs_to :email_config
@@ -76,10 +76,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_many :tags, :class_name => 'Helpdesk::Tag', :through => :tag_uses, 
     :after_remove => :remove_tag_activity , :after_add => :add_tag_activity, :dependent => :destroy
 
-  has_many :ticket_issues, :class_name => 'Helpdesk::TicketIssue', :dependent => :destroy
-
-  has_many :issues, :class_name => 'Helpdesk::Issue', :through => :ticket_issues
-    
   has_one :tweet, :as => :tweetable, :class_name => 'Social::Tweet', :dependent => :destroy
   
   has_one :fb_post, :as => :postable, :class_name => 'Social::FbPost',  :dependent => :destroy

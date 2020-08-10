@@ -23,7 +23,7 @@ Resque::Server.use Rack::Auth::Basic do |username, password|
   password == 'USD40$'
 end
 
-Resque::Plugins::Status::Hash.expire_in = (7 * 24 * 60 * 60) # 1 week in seconds
+# Resque::Plugins::Status::Hash.expire_in = (7 * 24 * 60 * 60) # 1 week in seconds
 
 # Exclude sending actual emails in these environments
 #Resque::Mailer.excluded_environments = [:test, :cucumber, :development]

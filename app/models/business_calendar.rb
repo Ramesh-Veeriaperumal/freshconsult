@@ -35,7 +35,7 @@ class BusinessCalendar < ActiveRecord::Base
 
   concerned_with :presenter
 
-  scope :default, :conditions => { :is_default => true }
+  scope :default, -> { where(is_default: true) }
 
   xss_sanitize :only => [:name, :description]
 
@@ -238,7 +238,7 @@ class BusinessCalendar < ActiveRecord::Base
 
     def update_livechat calendar_data
       if account.features?(:chat)
-        widgets = account.chat_widgets.find(:all, :conditions => {:business_calendar_id => id})
+        widgets = account.chat_widgets.where(business_calendar_id: id)
         widgets.each do |widget|
           site_id = account.chat_setting.site_id
           LivechatWorker.perform_async(

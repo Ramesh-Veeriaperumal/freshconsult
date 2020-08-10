@@ -19,7 +19,7 @@ class DeletedBodyObserver < ActiveRecord::Observer
   private
     def self.write_to_s3(content, model_name, model_id)
       path = cleanup_file_path(Account.current.id, model_name, model_id)
-      AwsWrapper::S3Object.store(path, content, S3_CONFIG[:bucket])
+      AwsWrapper::S3.put(S3_CONFIG[:bucket], path, content, server_side_encryption: 'AES256')
     end
 
     def self.cleanup_file_path(account_id, model_name, model_id)

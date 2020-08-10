@@ -130,7 +130,7 @@ class Helpdesk::NotesController < ApplicationController
   end
 
   def public_conversation
-    @notes = @parent.conversation(nil, 5, [:note_old_body]).public
+    @notes = @parent.conversation(nil, 5, [:note_body]).public_notes
     respond_to do |format|
       format.html { render :layout => false }
     end

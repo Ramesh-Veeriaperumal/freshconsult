@@ -27,7 +27,7 @@ module Admin::EmailNotificationsHelper
 
 	def agent_options
 		user_ids = current_account.agents.pluck(:user_id)
-		current_account.users.select("id, name").find_all_by_id(user_ids).collect { |au| [au.id, au.name] }
+		current_account.users.select('id, name').where(id: user_ids).collect { |au| [au.id, au.name] }
 	end
 
 	private

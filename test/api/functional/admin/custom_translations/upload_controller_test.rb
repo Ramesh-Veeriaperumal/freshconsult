@@ -80,7 +80,7 @@ class Admin::CustomTranslations::UploadControllerTest < ActionController::TestCa
   def write_yaml(payload)
     file_content = {}
     file_content[@language] = payload[@language]
-    File.open('test/api/fixtures/files/translation_file.yaml', 'w') { |f| f.write file_content.to_yaml }
+    File.open('test/api/fixtures/files/translation_file.yaml', 'w') { |f| f.write YAML.dump(file_content) }
   end
 
   def get_field_translation(ticket_field)
@@ -463,11 +463,11 @@ class Admin::CustomTranslations::UploadControllerTest < ActionController::TestCa
 
   def stub_params_for_translations(payload)
     Account.any_instance.stubs(:custom_translations_enabled?).returns(true)
-    AwsWrapper::S3Object.stubs(:read).returns(payload.to_yaml)
+    AwsWrapper::S3.stubs(:read).returns(YAML.dump(payload))
   end
 
   def unstub_params_for_translations
-    AwsWrapper::S3Object.unstub(:read)
+    AwsWrapper::S3.unstub(:read)
     Account.any_instance.unstub(:custom_translations_enabled?)
   end
 end

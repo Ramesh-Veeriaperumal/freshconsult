@@ -19,16 +19,17 @@ class Social::FbPost < ActiveRecord::Base
   validates_uniqueness_of :post_id, scope: :account_id, message: Social::Constants::FACEBOOK_POST_ALREADY_EXISTS
   
   serialize :post_attributes, Hash
-
-  scope :latest_thread, lambda {|thread_key , num, page_id| {:conditions => ["social_fb_posts.thread_key=? and postable_type=? and facebook_page_id=?", thread_key, 'Helpdesk::Ticket', page_id],
-                                                   :order => 'created_at DESC',
-                                                   :limit => num}}
   
-  scope :fetch_postable, lambda { |p_id, p_type = 'Helpdesk::Note'| {
-      conditions: ['social_fb_posts.postable_id=? and social_fb_posts.postable_type=?', p_id, p_type],
-      limit: 1
+  scope :fetch_postable, -> (p_id, p_type = 'Helpdesk::Note') {
+      where(['social_fb_posts.postable_id=? and social_fb_posts.postable_type=?', p_id, p_type]).
+      limit(1)
     }
-  }
+
+  scope :latest_thread, -> (thread_key , num, page_id) {
+          where(["social_fb_posts.thread_key=? and postable_type=? and facebook_page_id=?", thread_key, 'Helpdesk::Ticket', page_id]).
+          order('created_at DESC').
+          limit(num)
+        }
 
   def post?
     msg_type == 'post' || msg_type == 'ad_post'

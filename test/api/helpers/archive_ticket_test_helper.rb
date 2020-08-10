@@ -215,8 +215,7 @@ module ArchiveTicketTestHelper
           }
         },
         'description' => params[:description],
-        'description_html' => params[:description_html],
-        'ticket_type' => params[:type] || 'Incident'
+        'description_html' => params[:description_html]
       }
     }
   end

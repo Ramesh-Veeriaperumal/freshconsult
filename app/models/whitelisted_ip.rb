@@ -5,7 +5,7 @@ class WhitelistedIp < ActiveRecord::Base
 
   concerned_with :presenter
 	belongs_to_account
-	serialize :ip_ranges, Array
+  serialize :ip_ranges, Array
 
 	after_commit :clear_whitelisted_ip_cache
   after_commit :send_data_to_vault_service, if: -> { Account.current.pci_compliance_field_enabled? }

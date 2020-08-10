@@ -6,14 +6,14 @@ class Integrations::JiraUtil
   include Integrations::Jira::Constant
   
   def install_jira_biz_rules(installed_app)
-    jira_app_biz_rules = VaRule.find_all_by_rule_type_and_account_id(VAConfig::APP_BUSINESS_RULE, SYSTEM_ACCOUNT_ID, 
-                                        :joins=>"INNER JOIN app_business_rules ON app_business_rules.va_rule_id=va_rules.id", 
-                                        :conditions=>["app_business_rules.application_id=?", installed_app.application_id], :readonly => false) if jira_app_biz_rules.blank? # for create
+    jira_app_biz_rules = VaRule.where(rule_type: VAConfig::APP_BUSINESS_RULE, account_id: SYSTEM_ACCOUNT_ID)
+                               .joins('INNER JOIN app_business_rules ON app_business_rules.va_rule_id=va_rules.id')
+                               .where(['app_business_rules.application_id=?',installed_app.application_id]).readonly(false) if jira_app_biz_rules.blank? # for create
     jira_app_biz_rules.each { |jira_app_biz_rule|
       Rails.logger.debug "Before jira_app_biz_rule #{jira_app_biz_rule.inspect}"
-      installed_biz_rule = VaRule.find_by_name_and_rule_type_and_account_id(jira_app_biz_rule.name, VAConfig::INSTALLED_APP_BUSINESS_RULE, installed_app.account.id, 
-                                        :joins=>"INNER JOIN app_business_rules ON app_business_rules.va_rule_id=va_rules.id", :select=>"va_rules.*", # explicit select needed to avoid read_only because of joins
-                                        :conditions=>["app_business_rules.application_id=?", installed_app.application_id]) # for update
+      installed_biz_rule = VaRule.where(name: jira_app_biz_rule.name, rule_type: VAConfig::INSTALLED_APP_BUSINESS_RULE, account_id: installed_app.account.id)
+                                 .joins('INNER JOIN app_business_rules ON app_business_rules.va_rule_id=va_rules.id').select('va_rules.*') # explicit select needed to avoid read_only because of joins
+                                 .where(['app_business_rules.application_id=?', installed_app.application_id]) # for update
       if installed_biz_rule.blank?
         jira_app_biz_rule = jira_app_biz_rule.dup
         jira_app_biz_rule.rule_type = VAConfig::INSTALLED_APP_BUSINESS_RULE
@@ -35,9 +35,9 @@ class Integrations::JiraUtil
   end 
 
   def uninstall_jira_biz_rules(installed_app)
-    installed_jira_biz_rules = Integrations::AppBusinessRule.find_all_by_application_id(installed_app.application_id, 
-                                        :joins=>"INNER JOIN va_rules ON app_business_rules.va_rule_id=va_rules.id",
-                                        :conditions=>["va_rules.rule_type=? and va_rules.account_id=?", VAConfig::INSTALLED_APP_BUSINESS_RULE, installed_app.account.id])
+    installed_jira_biz_rules = Integrations::AppBusinessRule.where(application_id: installed_app.application_id)
+                                                            .joins('INNER JOIN va_rules ON app_business_rules.va_rule_id=va_rules.id')
+                                                            .where(['va_rules.rule_type=? and va_rules.account_id=?', VAConfig::INSTALLED_APP_BUSINESS_RULE, installed_app.account.id])
     installed_jira_biz_rules.each{ |installed_jira_biz_rule| installed_jira_biz_rule.destroy }
   end
 
