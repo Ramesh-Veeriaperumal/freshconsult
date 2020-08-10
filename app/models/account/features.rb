@@ -35,7 +35,7 @@ class Account < ActiveRecord::Base
     :csat_email_scan_compatibility, :mint_portal_applicable, :quoted_text_parsing_feature,
     :email_mailbox, :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
     :fluffy_min_level, :allow_update_agent, :help_widget_solution_categories, :launch_fsm_geolocation, :geolocation_historic_popup,
-    :ticket_field_revamp, :skip_posting_to_fb, :hide_mailbox_error_from_agents, :hide_og_meta_tags, :disable_occlusion_rendering,
+    :ticket_field_revamp, :hide_mailbox_error_from_agents, :hide_og_meta_tags, :disable_occlusion_rendering,
     :jira_onpremise_reporter, :support_ticket_rate_limit, :sidekiq_logs_to_central, :encode_emoji_in_solutions,
     :forums_agent_portal, :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html,
     :remove_image_attachment_meta_data, :automated_private_notes_notification,

@@ -229,7 +229,7 @@ class Account < ActiveRecord::Base
     attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false,
     requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false,
     supervisor_custom_status: false, asset_management: false, sandbox_temporary_offset: false, downgrade_policy: true,
-    skip_posting_to_fb: true, launch_fsm_geolocation: false, geolocation_historic_popup: false, allow_update_agent: false,
+    launch_fsm_geolocation: false, geolocation_historic_popup: false, allow_update_agent: false,
     hide_mailbox_error_from_agents: false,
     jira_onpremise_reporter: false, support_ticket_rate_limit: false, sidekiq_logs_to_central: false,
     encode_emoji_in_solutions: false, forums_agent_portal: false,

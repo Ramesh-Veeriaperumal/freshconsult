@@ -101,14 +101,9 @@ module Ember
       assign_note_attributes
       @delegator_klass = 'FbReplyDelegator'
       fb_page = @ticket.fb_post.facebook_page
+      return unless validate_delegator(@item, note_id: @note_id, fb_page: fb_page, attachment_ids: @attachment_ids, msg_type: @msg_type)
 
-      if facebook_outgoing_attachment_enabled?
-        return unless validate_delegator(@item, note_id: @note_id, fb_page: fb_page, attachment_ids: @attachment_ids, msg_type: @msg_type)
-
-        add_facebook_attachments
-      else
-        return unless validate_delegator(@item, note_id: @note_id, fb_page: fb_page)
-      end
+      add_facebook_attachments
       reply_sent = reply_to_fb_ticket(@delegator.note)
       include_survey = @item.include_surveymonkey_link.present? && @item.include_surveymonkey_link == 1 && @ticket.is_fb_message? && Account.current.csat_for_social_surveymonkey_enabled?
       if include_survey
@@ -366,33 +361,13 @@ module Ember
       def reply_to_fb_ticket(note)
         fb_page     = @ticket.fb_post.facebook_page
         parent_post = note || @ticket
-        if skip_posting_to_fb
-          build_fb_association(parent_post) 
-          return @item.save_note
-        end
-
-        return unless @item.save_note
-
-        reply_sent = send_reply_to_fb(fb_page, parent_post)
-        if reply_sent == :fb_user_blocked
-          @item.errors[:body] << :facebook_user_blocked
-        else
-          @item.errors[:body] << :unable_to_perform
-        end
-        reply_sent
+        build_fb_association(parent_post)
+        @item.save_note
       end
 
       def build_fb_association(parent_post)
         association_hash = @ticket.is_fb_message? ? construct_dm_hash(@ticket) : construct_post_hash(parent_post)
         @item.build_fb_post(association_hash)
-      end
-
-      def send_reply_to_fb(fb_page, parent_post)
-        if @ticket.is_fb_message?
-          return send_reply(fb_page, @ticket, @item, POST_TYPE[:message])
-        else
-          return send_reply(fb_page, parent_post, @item, POST_TYPE[:comment])
-        end
       end
 
       def assign_note_attributes
