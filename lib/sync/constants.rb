@@ -26,6 +26,7 @@ module Sync::Constants
     ["agents",                       [:agent_groups, {:user => [:user_emails, :user_roles, :avatar, :user_skills, :forum_moderator]}]],
     ['group_types',                  []],
     ["groups",                       []],
+    ['helpdesk_sources',             []],
     ["roles",                        []],
     ["tags",                         []],
     ["business_calendar",            []],
@@ -130,6 +131,7 @@ module Sync::Constants
     'Helpdesk::SlaDetail' => ['sla_target_time'],
     'Helpdesk::SlaPolicy' => ['conditions', 'escalations'],
     'Helpdesk::Section' => ['options'],
+    'Helpdesk::Choice' => ['meta'],
     'Agent' => ['additional_settings']
   }.freeze
 
@@ -161,6 +163,6 @@ module Sync::Constants
 
   FORM_BASED_MODELS = ['contact_form', 'company_form'].freeze
 
-  IGNORE_SOFT_DELETE_TABLES = %w(helpdesk_ticket_fields helpdesk_picklist_values flexifield_def_entries).freeze
+  IGNORE_SOFT_DELETE_TABLES = %w[helpdesk_ticket_fields helpdesk_picklist_values flexifield_def_entries helpdesk_choices].freeze
 
 end
