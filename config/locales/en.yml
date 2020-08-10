@@ -1197,7 +1197,6 @@ en:
           convert_visitor_post_to_ticket: "Convert posts added by visitors into tickets"
           convert_page_post_to_ticket: "Convert posts added by the page into tickets"
           convert_comment_toggle_helptext: "Only convert comments which have the following keywords"
-          filter_mentions: "Filter @mentions"
           fb_thread_same_ticket: "Thread comments on each post to a single ticket"
           fb_thread_new_ticket: "Create a new ticket for every comment on the post"
           visitor_posts_helptext: "This option cannot be turned off when comments on each page post are threaded to the same ticket"
