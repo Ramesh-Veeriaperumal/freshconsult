@@ -1,10 +1,6 @@
 <div class="head">
-  <% if Account.current.facebook_admin_ui_revamp_enabled? %>
-    <%= check_box "social_facebook_page", :import_dms, { rel: 'toggle', :checked => facebook_page.import_dms } %>
-  <% else %>
-    <%= check_box "social_facebook_page", :import_dms, { :checked => facebook_page.import_dms } %>
-  <% end %>
-    <label class="inline adm-radio" id="capture-dm">&nbsp;<%= t('.header')%></label>
+  <%= check_box "social_facebook_page", :import_dms, { rel: 'toggle', :checked => facebook_page.import_dms } %>
+  <label class="inline adm-radio" id="capture-dm">&nbsp;<%= t('.header')%></label>
 </div>
 <div class='adm-social sts adm-bg c-tkt dm-options <%= "hide" if !facebook_page.import_dms %>'>     
   <div id="dm-option" class="clearfix pl10">
@@ -29,7 +25,6 @@
   </div>
 </div>     
 
-<% if Account.current.facebook_admin_ui_revamp_enabled? %>
 <script type="text/javascript">
   (function ($) {
     $('#social_facebook_page_import_dms').on('change', function () {
@@ -41,4 +36,3 @@
     });
   })(jQuery)
 </script>
-<% end %>
