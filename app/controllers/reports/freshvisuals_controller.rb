@@ -1,7 +1,6 @@
 class Reports::FreshvisualsController < ApplicationController
   include Reports::Freshvisuals
-  
-  skip_before_filter :check_privilege
+
   before_filter :access_denied, :unless => :check_feature
 
   SUCCESS_CODES = [200].freeze
