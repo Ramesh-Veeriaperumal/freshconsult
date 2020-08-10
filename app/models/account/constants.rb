@@ -240,7 +240,7 @@ class Account < ActiveRecord::Base
     enable_secure_login_check: false,
     marketplace_gallery: false, facebook_public_api: false, twitter_public_api: false, retry_emails: false,
     fb_message_echo_support: false, portal_prototype_update: false, solutions_quick_view: false,
-    solutions_freshconnect: false, solutions_dashboard: false, article_versioning_redis_lock: false,
+    solutions_dashboard: false, article_versioning_redis_lock: false,
     salesforce_sync: false, salesforce_v2: false, dynamics_v2: false, marketplace_app: false, freshid_sso_sync: true,
     fw_sso_admin_security: false, shopify_api_revamp: false,
     omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false,

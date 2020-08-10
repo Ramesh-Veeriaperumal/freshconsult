@@ -337,7 +337,6 @@ module Ember
 
       def test_show_published_article_with_freshconnect_enabled
         Account.any_instance.stubs(:collaboration_enabled?).returns(true)
-        Account.current.launch(:solutions_freshconnect)
         sample_article = get_article_without_draft
         sample_article.reload
         time_now = Time.zone.now
@@ -354,12 +353,10 @@ module Ember
         assert_response 200
       ensure
         Account.any_instance.unstub(:collaboration_enabled?)
-        Account.current.rollback(:solutions_freshconnect)
       end
 
       def test_show_draft_article_with_freshconnect_enabled
         Account.any_instance.stubs(:collaboration_enabled?).returns(true)
-        Account.current.launch(:solutions_freshconnect)
         sample_article = get_article_with_draft
         time_now = Time.zone.now
         Timecop.freeze(time_now) do
@@ -375,7 +372,6 @@ module Ember
         assert_response 200
       ensure
         Account.any_instance.unstub(:collaboration_enabled?)
-        Account.current.rollback(:solutions_freshconnect)
       end
 
       def test_show_unavailalbe_article
