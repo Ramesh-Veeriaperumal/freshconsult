@@ -144,6 +144,10 @@ class Helpdesk::Source < Helpdesk::Choice
     def revamp_enabled?
       Account.current.ticket_source_revamp_enabled?
     end
+
+    def visible_custom_sources
+      Account.current.ticket_source_from_cache.where(default: 0, deleted: 0)
+    end
   end
 
   def new_response_hash

@@ -1366,6 +1366,9 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
                                             field_value,
                                             in_portal,
                                             required)
+    when 'template_source_dropdown' then
+      allowed_choices = [TicketConstants.source_names[2]] + Helpdesk::Source.visible_custom_sources.map { |ch| [ch.name, ch.account_choice_id] }
+      element = label + select(object_name, field_name, allowed_choices, { selected: field_value }, class: element_class + ' select2', 'data-domhelper-name': 'ticket-properties-' + field_name)
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
