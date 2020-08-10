@@ -244,7 +244,9 @@ class TicketFieldDecorator < ApiDecorator
 
     def default_source_choices
       if Account.current.ticket_source_revamp_enabled?
-        Account.current.ticket_source_from_cache.map(&:new_response_hash)
+        Account.current.ticket_source_from_cache.collect do |source|
+          source.new_translated_response_hash(translation_record)
+        end
       else
         TicketConstants.source_names.map { |k, v| { label: k, value: v } }
       end

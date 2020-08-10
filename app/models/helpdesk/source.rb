@@ -152,13 +152,44 @@ class Helpdesk::Source < Helpdesk::Choice
 
   def new_response_hash
     {
-      label: name,
-      value: account_choice_id,
-      id: account_choice_id,
-      position: position,
-      icon_id: meta[:icon_id],
-      default: default,
-      deleted: deleted
-    }
+      label: name
+    }.merge(response_hash)
   end
+
+  def new_translated_response_hash(translation_record)
+    {
+      label: translated_source_name(translation_record)
+    }.merge(response_hash)
+  end
+
+  def translated_source_name(translation_record)
+    return translate_default_source_name if default
+
+    translate_custom_source_name(translation_record)
+  end
+
+  private
+
+    def response_hash
+      {
+        value: account_choice_id,
+        id: account_choice_id,
+        position: position,
+        icon_id: meta[:icon_id],
+        default: default,
+        deleted: deleted
+      }
+    end
+
+    def translate_custom_source_name(translation_record)
+      return name if translation_record.blank? || translation_record.translations.blank? || translation_record.translations['choices'].blank?
+
+      choice = translation_record.translations['choices'].select { |ch| ch["choice_#{account_choice_id}"] }
+      choice.present? && choice["choice_#{account_choice_id}"].present? ? choice["choice_#{account_choice_id}"] : name
+    end
+
+    def translate_default_source_name
+      key = Helpdesk::Source.default_ticket_sources.select { |i| i[2] == account_choice_id }.first[1]
+      I18n.t(key)
+    end
 end
