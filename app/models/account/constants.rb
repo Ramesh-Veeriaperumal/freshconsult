@@ -239,7 +239,7 @@ class Account < ActiveRecord::Base
     sla_policy_revamp: false, freshdesk_freshsales_bundle: false, requester_widget_timeline: false,
     enable_secure_login_check: false,
     marketplace_gallery: false, facebook_public_api: false, twitter_public_api: false, retry_emails: false,
-    fb_message_echo_support: false, portal_prototype_update: false, solutions_quick_view: false,
+    fb_message_echo_support: false, portal_prototype_update: false,
     solutions_dashboard: false, article_versioning_redis_lock: false,
     salesforce_sync: false, salesforce_v2: false, dynamics_v2: false, marketplace_app: false, freshid_sso_sync: true,
     fw_sso_admin_security: false, shopify_api_revamp: false,

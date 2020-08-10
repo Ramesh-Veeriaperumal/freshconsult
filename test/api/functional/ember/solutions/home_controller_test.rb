@@ -136,15 +136,6 @@ module Ember
         match_json(quick_views_pattern)
       end
 
-      def test_quick_views_without_portal_id_with_launch_party
-        Account.current.launch(:solutions_quick_view)
-        get :quick_views, controller_params(version: 'private')
-        assert_response 200
-        match_json(quick_views_pattern)
-      ensure
-        Account.current.rollback(:solutions_quick_view)
-      end
-
       def test_quick_views_with_invalid_portal_id
         portal_id = Account.current.portals.last.id
         get :quick_views, controller_params(version: 'private', portal_id: portal_id + 1)
@@ -161,18 +152,6 @@ module Ember
         assert_response 200
       end
 
-      def test_quick_views_portal_with_no_categories_with_launch_party
-        Account.current.launch(:solutions_quick_view)
-        portal = create_portal
-        category_meta = portal.solution_category_meta.where(is_default: false)
-        Portal.any_instance.stubs(:solution_category_meta).returns(category_meta)
-        get :quick_views, controller_params(version: 'private', portal_id: portal.id)
-        Portal.any_instance.unstub(:solution_category_meta)
-        assert_response 200
-      ensure
-        Account.current.rollback(:solutions_quick_view)
-      end
-
       def test_quick_views_with_user_not_having_view_solutions_privilege
         portal = Account.current.main_portal
         User.any_instance.stubs(:privilege?).with(:view_solutions).returns(false)
@@ -181,18 +160,6 @@ module Ember
         match_json(request_error_pattern(:access_denied))
       ensure
         User.any_instance.unstub(:privilege?)
-      end
-
-      def test_quick_views_with_user_not_having_view_solutions_privilege_with_launch_party
-        Account.current.launch(:solutions_quick_view)
-        portal = Account.current.main_portal
-        User.any_instance.stubs(:privilege?).with(:view_solutions).returns(false)
-        get :quick_views, controller_params(version: 'private', portal_id: portal.id)
-        assert_response 403
-        match_json(request_error_pattern(:access_denied))
-      ensure
-        User.any_instance.unstub(:privilege?)
-        Account.current.rollback(:solutions_quick_view)
       end
 
       def test_quick_views_with_valid_params
@@ -204,20 +171,6 @@ module Ember
         get :quick_views, controller_params(version: 'private', portal_id: portal.id)
         assert_response 200
         match_json(quick_views_pattern(portal.id))
-      end
-
-      def test_quick_views_with_valid_params_with_launch_party
-        Account.current.launch(:solutions_quick_view)
-        solution_test_setup
-        category = create_category
-        @account.portal_solution_categories.where(solution_category_meta_id: category.id).last.destroy
-        create_article(article_params)
-        portal = Account.current.main_portal
-        get :quick_views, controller_params(version: 'private', portal_id: portal.id)
-        assert_response 200
-        match_json(quick_views_pattern(portal.id))
-      ensure
-        Account.current.rollback(:solutions_quick_view)
       end
 
       def test_quick_views_with_archive_tickets
@@ -236,25 +189,6 @@ module Ember
         end
       end
 
-      def test_quick_views_with_archive_tickets_with_launch_party
-        Account.current.launch(:solutions_quick_view)
-        # article tickets that are archived should not be present in feedback count
-        stub_archive_assoc_for_show(@archive_association) do
-          portal = Account.current.main_portal
-          article_meta = create_article(article_params)
-          archive_ticket = @account.archive_tickets.find_by_ticket_id(@archive_ticket.id)
-          article_ticket = @archive_ticket.build_article_ticket(article_id: article_meta.primary_article.id)
-          article_ticket.ticketable_type = 'Helpdesk::ArticleTicket'
-          article_ticket.save!
-          article_ticket.reload
-          get :quick_views, controller_params(version: 'private', portal_id: portal.id)
-          assert_response 200
-          match_json(quick_views_pattern(portal.id))
-        end
-      ensure
-        Account.current.rollback(:solutions_quick_view)
-      end
-
       def test_quick_views_with_primary_language
         solution_test_setup
         create_article(article_params)
@@ -262,18 +196,6 @@ module Ember
         get :quick_views, controller_params(version: 'private', portal_id: portal.id, language: @account.language)
         assert_response 200
         match_json(quick_views_pattern(portal.id, Language.find_by_code(@account.language).id))
-      end
-
-      def test_quick_views_with_primary_language_with_launch_party
-        Account.current.launch(:solutions_quick_view)
-        solution_test_setup
-        create_article(article_params)
-        portal = Account.current.main_portal
-        get :quick_views, controller_params(version: 'private', portal_id: portal.id, language: @account.language)
-        assert_response 200
-        match_json(quick_views_pattern(portal.id, Language.find_by_code(@account.language).id))
-      ensure
-        Account.current.rollback(:solutions_quick_view)
       end
 
       def test_quick_views_with_secondary_language
@@ -286,19 +208,6 @@ module Ember
         match_json(quick_views_pattern(portal.id, language.id))
       end
 
-      def test_quick_views_with_secondary_language_with_launch_party
-        Account.current.launch(:solutions_quick_view)
-        solution_test_setup
-        language = Language.find_by_code(:es)
-        create_article(article_params)
-        portal = Account.current.main_portal
-        get :quick_views, controller_params(version: 'private', portal_id: portal.id, language: language.code)
-        assert_response 200
-        match_json(quick_views_pattern(portal.id, language.id))
-      ensure
-        Account.current.rollback(:solutions_quick_view)
-      end
-
       def test_quick_views_with_article_approval_workflow_enabled
         Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
         solution_test_setup
@@ -309,20 +218,6 @@ module Ember
         match_json(quick_views_pattern(portal.id, Language.find_by_code(@account.language).id))
       ensure
         Account.any_instance.unstub(:article_approval_workflow_enabled?)
-      end
-
-      def test_quick_views_with_article_approval_workflow_enabled_with_launch_party
-        Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
-        Account.current.launch(:solutions_quick_view)
-        solution_test_setup
-        create_article(article_params)
-        portal = Account.current.main_portal
-        get :quick_views, controller_params(version: 'private', portal_id: portal.id, language: @account.language)
-        assert_response 200
-        match_json(quick_views_pattern(portal.id, Language.find_by_code(@account.language).id))
-      ensure
-        Account.any_instance.unstub(:article_approval_workflow_enabled?)
-        Account.current.rollback(:solutions_quick_view)
       end
 
       def test_quick_views_with_templates_with_feature
