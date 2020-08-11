@@ -7,7 +7,7 @@ class Account < ActiveRecord::Base
     :falcon_portal_theme, :freshid, :freshchat_integration, :allow_huge_ccs,
     :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :announcements_tab,
-    :imap_error_status_check, :va_any_field_without_none, :api_es,
+    :va_any_field_without_none, :api_es,
     :encode_emoji, :auto_complete_off, :sandbox_lp,
     :dependent_field_validation, :encode_emoji_subject,
     :euc_migrated_twitter, :new_ticket_recieved_metric, :ner, :disable_banners,
