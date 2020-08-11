@@ -162,7 +162,7 @@ class Helpdesk::Source < Helpdesk::Choice
     }.merge(response_hash)
   end
 
-  def translated_source_name(translation_record)
+  def translated_source_name(translation_record = nil)
     return translate_default_source_name if default
 
     translate_custom_source_name(translation_record)
