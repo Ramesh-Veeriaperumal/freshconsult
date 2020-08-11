@@ -13,7 +13,7 @@ class Integrations::JiraUtil
       Rails.logger.debug "Before jira_app_biz_rule #{jira_app_biz_rule.inspect}"
       installed_biz_rule = VaRule.where(name: jira_app_biz_rule.name, rule_type: VAConfig::INSTALLED_APP_BUSINESS_RULE, account_id: installed_app.account.id)
                                  .joins('INNER JOIN app_business_rules ON app_business_rules.va_rule_id=va_rules.id').select('va_rules.*') # explicit select needed to avoid read_only because of joins
-                                 .where(['app_business_rules.application_id=?', installed_app.application_id]) # for update
+                                 .where(['app_business_rules.application_id=?', installed_app.application_id]).first # for update
       if installed_biz_rule.blank?
         jira_app_biz_rule = jira_app_biz_rule.dup
         jira_app_biz_rule.rule_type = VAConfig::INSTALLED_APP_BUSINESS_RULE
