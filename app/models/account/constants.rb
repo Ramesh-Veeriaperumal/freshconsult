@@ -198,7 +198,7 @@ class Account < ActiveRecord::Base
     activity_ui: false, customer_sentiment: false, logout_logs: false,
     es_v2_splqueries: false, suggest_tickets: false, "Freshfone New Notifications": false,
     feedback_widget_captcha: false, es_multilang_solutions: false, requester_widget: false,
-    spam_blacklist_feature: false, custom_timesheet: false, antivirus_service: false, hide_api_key: false,
+    spam_blacklist_feature: false, antivirus_service: false, hide_api_key: false,
     skip_ticket_threading: false, dashboard_new_alias: false, attachments_scope: false,
     kbase_spam_whitelist: false, forum_post_spam_whitelist: false, enable_qna: false, enable_insights: false,
     whitelist_supervisor_sla_limitation: false, escape_liquid_attributes: true, escape_liquid_for_reply: true,
