@@ -65,7 +65,7 @@ module Ember
         end
 
         def forwarded_activation_requester
-          @forwarded_activation_requester ||= current_account.users.find_by_email(GMAIL_DEFAULT_REQUESTER)
+          @forwarded_activation_requester ||= current_account.all_users.where(email: GMAIL_DEFAULT_REQUESTER).first
         end
 
         def forwarded_activation_ticket
@@ -86,9 +86,9 @@ module Ember
         end
 
         def forward_test_ticket_requester
-          @forward_test_ticket_requester ||= current_account.users.find_by_email(
-            Helpdesk::EMAIL[:default_requester_email]
-          )
+          @forward_test_ticket_requester ||= current_account.all_users.where(
+            email: Helpdesk::EMAIL[:default_requester_email]
+          ).first
         end
 
         def forwarding_latest_tickets
