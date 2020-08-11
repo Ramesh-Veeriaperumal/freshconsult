@@ -813,7 +813,7 @@ Helpkit::Application.routes.draw do
 
     match '/jira_issue/unlink' => 'jira_issue#unlink', via: :post
     match 'jira_issue/destroy' => 'jira_issue#destroy', via: :post
-    match 'jira_issue/update' => 'jira_issue#update', via: :put
+    match 'jira_issue/update' => 'jira_issue#update', via: [:post, :put]
 
     resources :jira_issue do
       collection do
