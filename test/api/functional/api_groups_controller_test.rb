@@ -76,7 +76,9 @@ class ApiGroupsControllerTest < ActionController::TestCase
     existing_group = Group.first || create_group(@account)
     post :create, construct_params({}, name: existing_group.name, description: Faker::Lorem.paragraph)
     assert_response 409
-    match_json([bad_request_error_pattern('name', :'has already been taken')])
+    additional_info = parse_response(@response.body)['errors'][0]['additional_info']
+    assert_equal additional_info['group_id'], existing_group.id
+    match_json([bad_request_error_pattern_with_additional_info('name', additional_info, :'has already been taken')])
   end
 
   def test_create_group_with_all_fields
@@ -448,7 +450,9 @@ class ApiGroupsControllerTest < ActionController::TestCase
     group2 = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: group2.id }, name: group1.name)
     assert_response 409
-    match_json([bad_request_error_pattern('name', :'has already been taken')])
+    additional_info = parse_response(@response.body)['errors'][0]['additional_info']
+    assert_equal additional_info['group_id'], group1.id
+    match_json([bad_request_error_pattern_with_additional_info('name', additional_info, :'has already been taken')])
   end
 
   def test_index_with_link_header

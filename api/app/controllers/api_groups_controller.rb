@@ -3,6 +3,7 @@ class ApiGroupsController < ApiApplicationController
   include OmniChannelRouting::Util
   decorate_views
   before_filter :prepare_agents, only: [:create, :update]
+  before_filter :check_if_group_exists, only: [:create, :update]
 
   def index
     if include_omni_channel_groups?
@@ -21,6 +22,7 @@ class ApiGroupsController < ApiApplicationController
   end
 
   def create
+    assign_uniqueness_validated
     group_delegator = GroupDelegator.new(@item)
     if !group_delegator.valid?
       render_errors(group_delegator.errors, group_delegator.error_options)
@@ -33,6 +35,7 @@ class ApiGroupsController < ApiApplicationController
 
   def update
     @item.assign_attributes(params[cname])
+    assign_uniqueness_validated
     group_delegator = GroupDelegator.new(@item)
     if !group_delegator.valid?
       render_errors(group_delegator.errors, group_delegator.error_options)
@@ -42,6 +45,19 @@ class ApiGroupsController < ApiApplicationController
   end
 
   private
+
+    def check_if_group_exists
+      group = Account.current.groups.where(name: cname_params['name']).first
+      if group && group.id.to_s != params[:id]
+        @item.errors[:name] << :"has already been taken"
+        @additional_info = { group_id: group.id }
+        render_custom_errors
+      end
+    end
+
+    def assign_uniqueness_validated
+      @item.uniqueness_validated = true
+    end
 
     def validate_filter_params
       params.permit(*INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
