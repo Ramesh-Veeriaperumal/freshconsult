@@ -194,10 +194,6 @@ module Facebook
         end
       end
 
-      def facebook_outgoing_attachment_enabled?
-        skip_posting_to_fb
-      end
-
       def construct_post_hash(parent)
         post_type = parent.fb_post.comment? ? POST_TYPE_CODE[:reply_to_comment] : POST_TYPE_CODE[:comment]
         {
@@ -250,10 +246,6 @@ module Facebook
 
         def is_a_page?(profile, fan_page_id)
           profile[:id] == fan_page_id.to_s
-        end
-
-        def skip_posting_to_fb
-          Account.current.launched?(:skip_posting_to_fb)
         end
 
         def random_fb_post_id

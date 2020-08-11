@@ -121,7 +121,7 @@ class User < ActiveRecord::Base
 
   def email_validity
     self.errors.add(:base, I18n.t("activerecord.errors.messages.email_invalid")) unless self[:account_id].blank? or self[:email] =~ EMAIL_VALIDATOR
-    self.errors.add(:base, I18n.t("activerecord.errors.messages.email_not_unique")) if self[:email] and self[:account_id].present? and User.exists?(["email = ? and id != '#{self.id}'", self[:email]])
+    self.errors.add(:base, I18n.t("activerecord.errors.messages.email_not_unique")) if self[:email] and self[:account_id].present? and !uniqueness_validated and User.exists?(["email = ? and id != '#{self.id}'", self[:email]])
   end
 
   def unique_external_id_feature
@@ -160,7 +160,7 @@ class User < ActiveRecord::Base
   attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, :sbrr_fresh_user,
                 :primary_email_attributes, :tags_updated, :keep_user_active, :escape_liquid_attributes, 
                 :role_ids_changed, :detect_language, :tag_use_updated, :user_companies_updated, 
-                :perishable_token_reset, :prev_tags, :latest_tags, :model_changes, :custom_fields_hash, :user_emails_updated, :access_all_agent_groups
+                :perishable_token_reset, :prev_tags, :latest_tags, :model_changes, :custom_fields_hash, :user_emails_updated, :access_all_agent_groups, :uniqueness_validated
   # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
   # As role_ids are not part of user_model(it is an association_reader), 
   # agent.update_attributes won't trigger user callbacks since user doesn't have any change.

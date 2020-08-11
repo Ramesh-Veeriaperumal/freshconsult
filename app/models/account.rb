@@ -956,6 +956,12 @@ class Account < ActiveRecord::Base
     set_display_id_redis_key(key, computed_id)
   end
 
+  def reset_ticket_source_id
+    key = format(TICKET_SOURCE_ID, account_id: id)
+    computed_id = [helpdesk_sources.maximum('account_choice_id').to_i, Helpdesk::Source::CUSTOM_SOURCE_BASE_SOURCE_ID].max
+    set_display_id_redis_key(key, computed_id)
+  end
+
   def update_attributes(params)
     update_features params.delete(:features)
     super(params)

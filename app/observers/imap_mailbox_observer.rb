@@ -58,7 +58,8 @@ class ImapMailboxObserver < ActiveRecord::Observer
   end
 
   def check_error_and_send_mail mailbox
-    return unless Account.current.imap_error_status_check_enabled? && mailbox.error_type.to_i > Admin::EmailConfig::Imap::SUSPENDED
+    return unless mailbox.error_type.to_i > Admin::EmailConfig::Imap::SUSPENDED
+    
     send_error_email(mailbox)
     rescue => e
       Rails.logger.error "Error in sending Custom Mailbox error notification, Error: #{e}, Mailbox: #{mailbox.inspect}"

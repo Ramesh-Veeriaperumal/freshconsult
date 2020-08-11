@@ -18,7 +18,7 @@ class UserEmail < ActiveRecord::Base
 
   validates_presence_of :email
   validates_format_of :email, :with => EMAIL_VALIDATOR
-  validates_uniqueness_of :email, :scope => [:account_id]
+  validates_uniqueness_of :email, :scope => [:account_id], unless: :skip_uniqueness_validation?
 
   before_validation :downcase_email
   
@@ -144,6 +144,10 @@ class UserEmail < ActiveRecord::Base
 
     def send_activation
       deliver_contact_activation_email if self.user.active? and !primary_role
+    end
+
+    def skip_uniqueness_validation?
+      user && user.uniqueness_validated && primary_role
     end
 
     alias :send_activation_on_create :send_activation

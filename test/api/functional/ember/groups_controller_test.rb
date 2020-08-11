@@ -77,7 +77,9 @@ class Ember::GroupsControllerTest < ActionController::TestCase
     existing_group = Group.first || create_group(@account)
     post :create, construct_params({version: 'private'}, name: existing_group.name, description: Faker::Lorem.paragraph,assignment_type: 0)
     assert_response 409
-    match_json([bad_request_error_pattern('name', :'has already been taken')])
+    additional_info = parse_response(@response.body)['errors'][0]['additional_info']
+    assert_equal additional_info['group_id'], existing_group.id
+    match_json([bad_request_error_pattern_with_additional_info('name', additional_info, :'has already been taken')])
   end
 
   def test_create_group_with_no_assignment    

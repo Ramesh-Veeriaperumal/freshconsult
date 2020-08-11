@@ -26,4 +26,5 @@ class Helpdesk::Source < Helpdesk::Choice
   SOURCE_TOKENS_BY_KEY = SOURCE_KEYS_BY_TOKEN.invert.freeze
   API_CREATE_EXCLUDED_VALUES = [SOURCE_KEYS_BY_TOKEN[:forum], SOURCE_KEYS_BY_TOKEN[:outbound_email], SOURCE_KEYS_BY_TOKEN[:bot]].freeze
   API_UPDATE_EXCLUDED_VALUES = [SOURCE_KEYS_BY_TOKEN[:twitter], SOURCE_KEYS_BY_TOKEN[:facebook]].freeze
+  CUSTOM_SOURCE_BASE_SOURCE_ID = 100
 end

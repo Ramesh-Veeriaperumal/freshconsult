@@ -2,6 +2,7 @@ require Rails.root.join('test', 'api', 'helpers', 'solutions_approvals_test_help
 
 module SolutionsTestHelper
   include SolutionsApprovalsTestHelper
+  include SolutionConcern
 
   def solution_category_pattern(expected_output = {}, _ignore_extra_keys = true, category)
     result = {
@@ -417,116 +418,46 @@ module SolutionsTestHelper
   end
 
   def quick_views_pattern(portal_id = nil, language_id = Account.current.language_object.id)
-    @categories = fetch_categories(portal_id, language_id)
-    @articles = fetch_articles(language_id)
-    @drafts = fetch_drafts
-    @folders = fetch_folders(language_id)
-    @approvals = fetch_approvals
-    @my_drafts = @drafts.empty? ? [] : @drafts.where(user_id: User.current.id)
-    @my_drafts = fetch_my_drafts if Account.current.article_approval_workflow_enabled?
-    @published_articles = fetch_published_articles
-    @all_feedback = Account.current.article_tickets.select(:id).where(article_id: get_article_ids(@articles), ticketable_type: 'Helpdesk::Ticket').reject { |article_ticket| article_ticket.ticketable.spam_or_deleted? }
-    @my_feedback = Account.current.article_tickets.select(:id).where(article_id: get_article_ids(@articles.select { |article| article.user_id == User.current.id }), ticketable_type: 'Helpdesk::Ticket').reject { |article_ticket| article_ticket.ticketable.spam_or_deleted? }
-    @orphan_categories = fetch_unassociated_categories.map { |category| unassociated_category_pattern(category) }
+    pl_filter = Solution::PortalLanguageFilter.new(portal_id, language_id)
+    @categories_cnt = pl_filter.categories.count
+    @articles_cnt = @categories_cnt > 0 ? pl_filter.articles.count : 0
+    all_drafts_cnt = @articles_cnt > 0 ? pl_filter.drafts.count : 0
+    all_approvals_cnt = all_drafts_cnt > 0 ? pl_filter.approvals.count : 0
+    @drafts_cnt = all_drafts_cnt - all_approvals_cnt
+    @folders_cnt = @categories_cnt > 0 ? pl_filter.folders.count : 0
+    @my_drafts_cnt = @drafts_cnt > 0 ? pl_filter.my_drafts.count : 0
+    @published_articles_cnt = @articles_cnt > 0 ? pl_filter.published_articles.count : 0
+    @all_feedback_cnt = pl_filter.all_feedback.count
+    @my_feedback_cnt = pl_filter.my_feedback.count
+    @orphan_categories = fetch_unassociated_categories(language_id)
     response.api_root_key = :quick_views
     result = {
-      all_categories: @categories.count,
-      all_folders: @folders.count,
-      all_articles: @articles.count,
-      all_drafts: @drafts.count - @approvals.count,
-      my_drafts: @my_drafts.count,
-      published: @published_articles.count,
-      all_feedback: @all_feedback.count,
-      my_feedback: @my_feedback.count,
-      unassociated_categories: @orphan_categories,
+      all_categories: @categories_cnt,
+      all_folders: @folders_cnt,
+      all_articles: @articles_cnt,
+      all_drafts: @drafts_cnt,
+      my_drafts: @my_drafts_cnt,
+      published: @published_articles_cnt,
+      all_feedback: @all_feedback_cnt,
+      my_feedback: @my_feedback_cnt,
+      unassociated_categories: @orphan_categories.map do |category|
+        {
+          category: Solutions::CategoryDecorator.new(category).unassociated_category_hash
+        }
+      end,
       unassociated_categories_count: @orphan_categories.count
     }
 
     if language_id != Language.for_current_account.id
-      result[:outdated] = @articles.select { |article| article.outdated == true }.size
-      result[:not_translated] = @article_meta.size - @articles.size
+      result[:outdated] = @articles_cnt > 0 ? pl_filter.outdated_articles.count : 0
+      result[:not_translated] = pl_filter.article_meta.count - @articles_cnt
     end
     if Account.current.article_approval_workflow_enabled?
-      result[:in_review] = Account.current.helpdesk_approvals.where(approvable_id: get_article_ids(@articles), approvable_type: 'Solution::Article', approval_status: Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review]).count
-      result[:approved] = Account.current.helpdesk_approvals.where(approvable_id: get_article_ids(@articles), approvable_type: 'Solution::Article', approval_status: Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]).count
+      result[:in_review] = pl_filter.articles_count_by_approval_status[Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review]] || 0
+      result[:approved] = pl_filter.articles_count_by_approval_status[Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:approved]] || 0
     end
-    result[:templates] = Account.current.solution_templates.where(is_active: true).count if Account.current.solutions_templates_enabled?
+    result[:templates] = pl_filter.active_templates.count if Account.current.solutions_templates_enabled?
     result
-  end
-
-  def fetch_categories(portal_id, language_id)
-    if portal_id.present?
-      @category_meta = Account.current.portals.find_by_id(portal_id).public_category_meta.all
-    else
-      @category_meta = Account.current.public_category_meta
-    end
-    portal_categories = Account.current.solution_categories.where(parent_id: @category_meta.map(&:id), language_id: language_id)
-    @category_meta += [Account.current.solution_category_meta.where(is_default: true).first]
-    portal_categories
-  end
-
-  def fetch_folders(language_id)
-    folders_meta = []
-    return [] if @category_meta.empty?
-
-    @category_meta.each do |categ_meta|
-      folders_meta << categ_meta.solution_folder_meta unless categ_meta.is_default
-    end
-    folders_meta.flatten!
-    Account.current.solution_folders.where(parent_id: folders_meta.map(&:id), language_id: language_id)
-  end
-
-  def fetch_articles(language_id)
-    @article_meta = []
-    return [] if @category_meta.empty?
-    @category_meta.each do |categ_meta|
-      @article_meta << categ_meta.solution_article_meta.preload(&:current_article)
-    end
-    @article_meta.flatten!
-    Account.current.solution_articles.select([:id, :user_id, :status, :outdated]).where(parent_id: @article_meta.map(&:id), language_id: language_id)
-  end
-
-  def fetch_drafts
-    return [] if @articles.empty?
-    article_ids = get_article_ids(@articles)
-    Account.current.solution_drafts.select([:id, :user_id]).where(article_id: article_ids)
-  end
-
-  def fetch_approvals
-    return [] if @articles.empty?
-
-    article_ids = get_article_ids(@articles)
-    Account.current.helpdesk_approvals.select([:id, :user_id]).where(approvable_id: article_ids)
-  end
-
-  def fetch_my_drafts
-    return [] if @my_drafts.empty?
-
-    @my_drafts.joins('LEFT JOIN helpdesk_approvals ON solution_drafts.article_id = helpdesk_approvals.approvable_id').where('helpdesk_approvals.id is NULL')
-  end
-
-  def get_article_ids(articles)
-    articles.map(&:id)
-  end
-
-  def fetch_published_articles
-    return [] if @articles.empty?
-    @articles.where(status: Solution::Constants::STATUS_KEYS_BY_TOKEN[:published])
-  end
-
-  def fetch_unassociated_categories
-    associated_category_ids = Account.current.portal_solution_categories.map(&:solution_category_meta_id).uniq
-    @account.solution_categories.where('parent_id NOT IN (?) AND language_id = ?', associated_category_ids, @account.language_object.id)
-  end
-
-  def unassociated_category_pattern(category)
-    {
-      category: {
-        id: category.parent_id,
-        name: category.name,
-        description: category.description
-      }
-    }
   end
 
   def validation_error_pattern(value)

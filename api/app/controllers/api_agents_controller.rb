@@ -16,6 +16,7 @@ class ApiAgentsController < ApiApplicationController
   before_filter :validate_params_for_export, only: [:export]
   before_filter :check_bulk_params_limit, only: %i[create_multiple]
   before_filter :validate_feature, only: [:fetch_availability, :update_availability]
+  before_filter :check_if_agent_exists, only: [:create, :update]
   before_filter :shift_service_request, only: [:fetch_availability, :update_availability]
 
   SLAVE_ACTIONS = %w[index achievements].freeze
@@ -88,6 +89,7 @@ class ApiAgentsController < ApiApplicationController
     params[cname][:user_attributes].each do |k, v|
       @item.user.safe_send("#{k}=", v)
     end
+    @item.user.uniqueness_validated = true
     @item.user_changes = @item.user.agent.user_changes || {}
     @item.user_changes.merge!(@item.user.changes)
     return render_custom_errors(@item) unless check_edit_privilege
@@ -229,6 +231,16 @@ class ApiAgentsController < ApiApplicationController
       :AgentConstants.to_s.freeze
     end
 
+    def check_if_agent_exists
+      return unless cname_params['user_attributes']['email']
+      user = Account.current.all_users.where(email: cname_params['user_attributes']['email']).first
+      if user && user.id.to_s != params[:id]
+        @item.errors[:email] << :"has already been taken"
+        @additional_info = user.agent ? { agent_id: user.id } : { user_id: user.id }
+        render_custom_errors
+      end
+    end
+
     def agent_delegator_params
       agent_params = {}
       agent_params[:attachment_ids] = Array.wrap(params[cname][:avatar_id].to_i) if params[cname][:avatar_id].present?
@@ -330,6 +342,7 @@ class ApiAgentsController < ApiApplicationController
       params[:user][:agent_type] = params[:user][:agent_type].presence || AgentConstants::AGENT_TYPES[0]
       params[:user][:time_zone] = params[:time_zone].presence || Account.current.time_zone
       params[:user][:language] = params[:language].presence || Account.current.language
+      @user.uniqueness_validated = true
     end
 
     def assign_agent_attributes

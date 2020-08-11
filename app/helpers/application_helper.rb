@@ -1366,6 +1366,9 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
                                             field_value,
                                             in_portal,
                                             required)
+    when 'template_source_dropdown' then
+      allowed_choices = [TicketConstants.source_names[2]] + Helpdesk::Source.visible_custom_sources.map { |ch| [ch.name, ch.account_choice_id] }
+      element = label + select(object_name, field_name, allowed_choices, { selected: field_value }, class: element_class + ' select2', 'data-domhelper-name': 'ticket-properties-' + field_name)
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
@@ -1760,7 +1763,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
 
 
   def check_custom_mailbox_status
-    if feature?(:mailbox) && current_account.imap_error_status_check_enabled?
+    if feature?(:mailbox)
       custom_mail_box_faliure = current_account.custom_mailbox_errors_present
       if custom_mail_box_faliure
         return content_tag('div', "<a href='javascript:void(0)'></a> #{t('custom_mailbox_error')} <a href='/admin/email_configs' target='_blank'> #{t('imap_mailbox_error')} </a>".html_safe, :class =>

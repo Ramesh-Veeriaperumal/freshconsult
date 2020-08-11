@@ -813,7 +813,7 @@ Helpkit::Application.routes.draw do
 
     match '/jira_issue/unlink' => 'jira_issue#unlink', via: :post
     match 'jira_issue/destroy' => 'jira_issue#destroy', via: :post
-    match 'jira_issue/update' => 'jira_issue#update', via: :put
+    match 'jira_issue/update' => 'jira_issue#update', via: [:post, :put]
 
     resources :jira_issue do
       collection do
@@ -1731,7 +1731,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    match 'schedule/download_file.json', :controller => 'freshvisuals', action: :download_schedule_file, via: :get
+    match 'schedule/download_file', format: 'json', controller: 'freshvisuals', action: :download_schedule_file, via: :get
   end
 
   match '/gamification/reports' => 'reports/gamification_reports#index', :as => :scoreboard_activity, via: :get # Not used
