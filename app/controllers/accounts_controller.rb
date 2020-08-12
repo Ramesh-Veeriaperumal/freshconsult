@@ -635,6 +635,7 @@ class AccountsController < ApplicationController
         params[:signup][:bundle_id] = params[:misc][:bundle_id]
         params[:signup][:bundle_name] = params[:misc][:bundle_name]
       end
+      Rails.logger.info "Aloha signup :: #{params[:signup][:aloha_signup]}. Bundle signup :: #{params[:signup][:bundle_id].present?}"
     end
 
     def is_aloha_signup?
