@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 class AutomationEssentialsControllerTest < ActionController::TestCase
 
-  VALID_LP_FEATURES = [:onboarding_inlinemanual, :skip_portal_cname_chk, :ner]
+  VALID_LP_FEATURES = [:skip_portal_cname_chk, :ner].freeze
   VALID_BITMAP_FEATURES = [:split_tickets, :add_watcher, :multi_product, :multiple_user_companies]
   INVALID_FEATURES = [:invalid_feature, :dummy_feature, :test_feature]
 

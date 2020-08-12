@@ -210,7 +210,7 @@ class Account < ActiveRecord::Base
     "Freshfone Call Tracker": false, ticket_contact_export: false, custom_apps: false, timesheet: false,
     api_jwt_auth: false, disable_emails: false, skip_portal_cname_chk: false, falcon_signup: false,
     falcon_portal_theme: false, image_annotation: false, email_actions: false, ner: false, disable_freshchat: false,
-    froala_editor_forums: false, freshid: false, onboarding_inlinemanual: false,
+    froala_editor_forums: false, freshid: false,
     incoming_attachment_limit_25: false, fetch_ticket_from_ref_first: false, outgoing_attachment_limit_25: false,
     whitelist_sso_login: false, va_any_field_without_none: false,
     auto_complete_off: false, freshworks_omnibar: false,

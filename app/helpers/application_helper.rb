@@ -1747,9 +1747,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     end
 
     def inm_tour_button(text,topic_id)
-      if current_account.launched?(:onboarding_inlinemanual)
-        link_to(text, '#', :rel => 'guided-inlinemanual', "data-topic-id" => topic_id, :class=> 'inm_tour_button')
-      end
+      link_to(text, '#', rel: 'guided-inlinemanual', 'data-topic-id': topic_id, class: 'inm_tour_button')
     end
 
   def check_fb_reauth_required
