@@ -24,6 +24,11 @@ module CentralLib::CentralResyncRateLimiter
     }.tap { |hash_body| hash_body[:start] = args[:primary_key_offset] if args[:primary_key_offset].present? }
   end
 
+  def max_allowed_records
+    max_allowed_records = get_others_redis_key(CENTRAL_RESYNC_MAX_ALLOWED_RECORDS)
+    max_allowed_records&.to_i || RESYNC_MAX_ALLOWED_RECORDS
+  end
+
   private
 
     def increment_redis_key_on_job_start(key)
@@ -42,11 +47,6 @@ module CentralLib::CentralResyncRateLimiter
 
     def current_worker_count_for_consumer(source)
       get_others_redis_key(resync_rate_limiter_key(source)).presence.to_i
-    end
-
-    def max_allowed_records
-      max_allowed_records = get_others_redis_key(CENTRAL_RESYNC_MAX_ALLOWED_RECORDS)
-      max_allowed_records&.to_i || RESYNC_MAX_ALLOWED_RECORDS
     end
 
     def resync_rate_limiter_key(source)

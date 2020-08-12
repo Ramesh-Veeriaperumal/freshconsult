@@ -9,9 +9,11 @@ module CentralPublish
     # Required Arguments
     # => model_name: Name of the model, (Eg: 'Helpdesk::Ticket', 'Helpdesk::TicketField', 'Agent')
     # => source: The Source from which the request is received, (Eg: 'search', 'reports')
+    # => job_id: Unique id of the jobs, Mostly request.uuid, (eg: 43083fa8dc7211ea9375acde48001122)
     # => meta_info: Info given by the source, (Eg: { id: 121 })
     # Optional Agruments for Config sync (Required for Data sync)
     # => conditions: Where condition, (Eg: ['display_ids in (1, 2, 3, 4, 5) and deleted = false and spam = false'])
+    # => primary_key_offset: ID of the record from which the publish should start, (Eg: 76344628)
     def perform(args)
       @args = args.symbolize_keys!
 

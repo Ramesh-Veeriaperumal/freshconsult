@@ -10,6 +10,7 @@ module CentralLib
     # Arguments:
     # => model_name: Name of the model, (Eg: 'Helpdesk::Ticket', 'Helpdesk::TicketField', 'Agent')
     # => source: The source from which the request is received, (Eg: 'search', 'reports')
+    # => job_id: Unique id of the jobs, Mostly request.uuid, (eg: 43083fa8dc7211ea9375acde48001122)
     # => meta_info: Info given by the source, (Eg: { id: 121 })
     # => primary_key_offset: (optional) Start the publish from the given model id, (Eg: 1232442)
     # => conditions: (optional for config publish, required for data publish) query .where condition to filter the records
@@ -35,16 +36,16 @@ module CentralLib
       def trigger_sync(options)
         records_processed = 0
         scoper.find_in_batches(options) do |batch|
-          # Stop the query once the max publishable records limit is reached
-          return if records_processed > RESYNC_MAX_ALLOWED_RECORDS
+          # calc the number of records processed based on the options, This will be useful on throttling the records
+          records_processed += batch.size
 
           push_bulk_jobs('CentralPublisher::CentralReSyncWorker', batch) do |each_record|
             manual_publish_args = each_record.construct_manual_publish_args(:sync)
             manual_publish_args[:event_info].merge!(each_record.meta_for_central_payload)
             [each_record.construct_payload_type(:sync), manual_publish_args]
           end
-          # calc the number of records processed based on the options, This will be useful on throttling the records
-          records_processed += batch.size
+          # Stop the query once the max publishable records limit is reached
+          break if records_processed > max_allowed_records
         end
       end
 

@@ -106,10 +106,8 @@ class CentralResyncWorkerTest < ActionView::TestCase
 
   def test_max_allowed_records_on_setting_redis_key
     set_others_redis_key(CENTRAL_RESYNC_MAX_ALLOWED_RECORDS, 1_000)
-    ratelimit_options = resync_ratelimit_options(resync_args)
 
-    assert_equal ratelimit_options[:batch_size], 1_000
-    assert_equal ratelimit_options[:class_name], self.class.name
+    assert_equal max_allowed_records, 1_000
   ensure
     remove_others_redis_key(CENTRAL_RESYNC_MAX_ALLOWED_RECORDS)
   end
@@ -118,8 +116,7 @@ class CentralResyncWorkerTest < ActionView::TestCase
     remove_others_redis_key(CENTRAL_RESYNC_MAX_ALLOWED_RECORDS)
     ratelimit_options = resync_ratelimit_options(resync_args)
 
-    assert_equal ratelimit_options[:batch_size], RESYNC_MAX_ALLOWED_RECORDS
-    assert_equal ratelimit_options[:run_after], RESYNC_RUN_AFTER
+    assert_equal max_allowed_records, RESYNC_MAX_ALLOWED_RECORDS
   end
 
   def test_configure_redis_and_execute
