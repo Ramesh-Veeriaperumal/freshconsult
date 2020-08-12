@@ -28,4 +28,8 @@ class SolutionPlatformMapping < ActiveRecord::Base
   def self.default_platform_values_hash
     PLATFORM_DEFAULT_VALUES
   end
+
+  def enabled_platforms
+    to_hash.select { |platform, value| value }.keys
+  end
 end
