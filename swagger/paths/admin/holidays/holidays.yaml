@@ -1,0 +1,23 @@
+get:
+  tags: [Holidays of Calendar]
+  summary: Holidays of Calendar
+  parameters:
+    - $ref: '#/parameters/id'
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          holidays:
+            type: array
+            items:
+              $ref: '#/definitions/holidays'
+    403:
+      description: Access denied
+    404:
+      description: Holidays not found
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

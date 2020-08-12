@@ -15789,6 +15789,52 @@
         }
       }
     },
+    "/admin/holidays/{id}": {
+      "get": {
+        "tags": [
+          "Holidays"
+        ],
+        "summary": "Holidays of Business Calendar",
+        "description": "Holidays of Business Calendar",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "description": "Holidays code",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "holidays": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/holidays"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Holidays not found"
+            },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/agent_statuses": {
       "get": {
         "tags": [
@@ -30990,6 +31036,19 @@
         },
         "points": {
           "type": "integer"
+        }
+      }
+    },
+    "holidays": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "date": {
+          "type": "string",
+          "readOnly": true
         }
       }
     },

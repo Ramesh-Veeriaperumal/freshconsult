@@ -41,6 +41,7 @@ Helpkit::Application.routes.draw do
       resources :business_calendars, controller: 'api_business_calendars', only: [:index, :show]
       put '/custom_translations', to: 'custom_translations#upload'
       get '/custom_translations', to: 'custom_translations#download'
+      get 'holidays/:id', to: 'holidays#show'
 
       resource :freshcaller_account, controller: 'freshcaller_account', only: [:show, :create, :update, :destroy] do
         collection do
