@@ -24,7 +24,7 @@
       <% end %>
       <% if show_omnichannel_banner %>
         <div class="<%if !multiple_banner_present%> active <%end%> item">
-          <%= render :partial => '/subscriptions/omni_channel_experience', :locals => { :is_lone_banner => multiple_banner_present, :description => 'omni_channel_experience.omnichannel_description', :description_class => 'omni-channel-experience-description',:table_class => 'omni-channel-td-data', :button_class => 'btn btn-primary btn-small explore-omnichannel-button', :image_src => '/images/omni_channel_experience.svg', :image_class => 'omni-channel-experience-logo' } %>
+          <%= render :partial => '/subscriptions/omni_channel_experience', :locals => { :is_lone_banner => multiple_banner_present, :title_class => 'omni-channel-experience-title', :title => 'omni_channel_experience.omnichannel_title',  :description_class => 'omni-channel-experience-description', :description => 'omni_channel_experience.omnichannel_description',:table_class => 'omni-channel-td-data', :button_class => 'btn btn-primary btn-small explore-omnichannel-button', :image_src => '/images/omni_channel_experience.svg', :image_class => 'omni-channel-experience-logo' } %>
         </div>
       <% end %>
     </div>

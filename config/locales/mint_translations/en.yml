@@ -8301,8 +8301,9 @@ en:
     discount_text_2: Get 40% off on Freshsales CRM if you buy in the next 21 days
     integrate_freshsales: Integrate Freshsales
   omni_channel_experience:
-    experience_omnichannel: Experience Omnichannel
-    omnichannel_description: Switch to our new Omnichannel plan to unify all conversations across email, chat, call, and other channels into one single solution.
+    experience_omnichannel: Experience Freshdesk Omnichannel
+    omnichannel_title: Manage omnichannel support effortlessly
+    omnichannel_description: From agent onboarding to reporting, orchestrating workflows across channels is centralized on the new Omnichannel platform.
   subscription_change_confirm_header: You're on the right path ;)
   focus_mode_toggle_tip: 'On closing a ticket, quickly move to the next available ticket in your queue'
   focus_mode_toggle: Focus Mode
