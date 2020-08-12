@@ -8,13 +8,11 @@ class ImapMailboxObserver < ActiveRecord::Observer
     set_account mailbox
     set_imap_timeout mailbox
     encrypt_password mailbox
-    encrypt_refresh_token mailbox
   end
 
   def before_update mailbox
     set_imap_timeout mailbox
     encrypt_password mailbox
-    encrypt_refresh_token mailbox
     clear_error_field(mailbox)
   end
   

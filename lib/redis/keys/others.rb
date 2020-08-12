@@ -250,8 +250,8 @@ module Redis::Keys::Others
 
   SUPPORT_TICKET_LIMIT = "SUPPORT_TICKET_LIMIT:%{account_id}%{user_id}".freeze
 
-  MAILBOX_GMAIL_OAUTH = 'GMAIL_OAUTH:%{account_id}:%{user_id}:%{random_number}'.freeze
-  GMAIL_ACCESS_TOKEN_VALIDITY = 'GMAIL_ACCESS_TOKEN:%{account_id}:%{smtp_mailbox_id}'.freeze
+  MAILBOX_OAUTH = 'OAUTH:%{provider}:%{account_id}:%{user_id}:%{random_number}'.freeze
+  OAUTH_ACCESS_TOKEN_VALIDITY = 'OAUTH_ACCESS_TOKEN:%{provider}:%{account_id}:%{smtp_mailbox_id}'.freeze
 
   #Increasing Domains for accounts as per request by the account holder
   INCREASE_DOMAIN_FOR_EMAILS = 'INCREASE_DOMAIN_FOR_EMAILS'.freeze

@@ -19,12 +19,14 @@ class Email::Mailbox::HelperMethodsTest < ActiveSupport::TestCase
     mailbox = create_email_config(
       support_email: 'test@test1.com',
       imap_mailbox_attributes: {
-        imap_authentication: 'xoauth2',
-        with_refresh_token: true
+        imap_authentication: 'plain',
+        with_refresh_token: false,
+        with_access_token: false
       },
       smtp_mailbox_attributes: {
-        smtp_authentication: 'xoauth2',
-        with_refresh_token: true
+        smtp_authentication: 'plain',
+        with_refresh_token: false,
+        with_access_token: false
       }
     )
     mailbox.active = true
@@ -35,36 +37,18 @@ class Email::Mailbox::HelperMethodsTest < ActiveSupport::TestCase
     mailbox.destroy
   end
 
-  def test_decrypt_refresh_token
-    mailbox = create_email_config(
-      support_email: 'test@test2.com',
-      imap_mailbox_attributes: {
-        imap_authentication: 'xoauth2',
-        with_refresh_token: true
-      },
-      smtp_mailbox_attributes: {
-        smtp_authentication: 'xoauth2',
-        with_refresh_token: true
-      }
-    )
-    mailbox.active = true
-    mailbox.save!
-    decrtpted_refresh_token = decrypt_refresh_token(mailbox.smtp_mailbox.refresh_token)
-    assert_equal decrtpted_refresh_token, 'refreshtoken'
-  ensure
-    mailbox.destroy
-  end
-
   def test_set_account
     mailbox = create_email_config(
       support_email: 'test@test3.com',
       imap_mailbox_attributes: {
         imap_authentication: 'xoauth2',
-        with_refresh_token: true
+        with_refresh_token: true,
+        with_access_token: true
       },
       smtp_mailbox_attributes: {
         smtp_authentication: 'xoauth2',
-        with_refresh_token: true
+        with_refresh_token: true,
+        with_access_token: true
       }
     )
     mailbox.active = true
@@ -75,36 +59,18 @@ class Email::Mailbox::HelperMethodsTest < ActiveSupport::TestCase
     mailbox.destroy
   end
 
-  def test_encrypt_refresh_token
-    mailbox = create_email_config(
-      support_email: 'test@test4.com',
-      imap_mailbox_attributes: {
-        imap_authentication: 'xoauth2',
-        with_refresh_token: true
-      },
-      smtp_mailbox_attributes: {
-        smtp_authentication: 'xoauth2',
-        with_refresh_token: true
-      }
-    )
-    mailbox.active = true
-    mailbox.save!
-    encrypt_refresh_token(mailbox.smtp_mailbox)
-    assert_not_equal mailbox.smtp_mailbox.refresh_token, 'refreshtoken'
-  ensure
-    mailbox.destroy
-  end
-
   def test_encrypt_password
     mailbox = create_email_config(
       support_email: 'test@test5.com',
       imap_mailbox_attributes: {
-        imap_authentication: 'xoauth2',
-        with_refresh_token: true
+        imap_authentication: 'plain',
+        with_refresh_token: false,
+        with_access_token: false
       },
       smtp_mailbox_attributes: {
-        smtp_authentication: 'xoauth2',
-        with_refresh_token: true
+        smtp_authentication: 'plain',
+        with_refresh_token: false,
+        with_access_token: false
       }
     )
     mailbox.active = true
@@ -120,17 +86,18 @@ class Email::Mailbox::HelperMethodsTest < ActiveSupport::TestCase
       support_email: 'test@test6.com',
       imap_mailbox_attributes: {
         imap_authentication: 'xoauth2',
-        with_refresh_token: true
+        with_refresh_token: true,
+        with_access_token: true
       },
       smtp_mailbox_attributes: {
         smtp_authentication: 'xoauth2',
-        with_refresh_token: true
+        with_refresh_token: true,
+        with_access_token: true
       }
     )
     mailbox.active = true
     mailbox.smtp_mailbox.error_type = 401
-    mailbox.smtp_mailbox.password = '123'
-    mailbox.smtp_mailbox.refresh_token = '456'
+    mailbox.smtp_mailbox.access_token = '123'
     mailbox.save!
     nullify_error_type_on_reauth(mailbox.smtp_mailbox)
     assert_not_equal mailbox.smtp_mailbox.error_type, 401
@@ -143,15 +110,17 @@ class Email::Mailbox::HelperMethodsTest < ActiveSupport::TestCase
       support_email: 'test@test7.com',
       imap_mailbox_attributes: {
         imap_authentication: 'xoauth2',
-        with_refresh_token: true
+        with_refresh_token: true,
+        with_access_token: true
       },
       smtp_mailbox_attributes: {
         smtp_authentication: 'xoauth2',
-        with_refresh_token: true
+        with_refresh_token: true,
+        with_access_token: true
       }
     )
     mailbox.active = true
-    mailbox.smtp_mailbox.password = '123'
+    mailbox.smtp_mailbox.access_token = '123'
     mailbox.save!
     credentials_changed = changed_credentials?(mailbox.smtp_mailbox)
     assert_equal credentials_changed, true

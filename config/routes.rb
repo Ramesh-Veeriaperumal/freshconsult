@@ -157,6 +157,9 @@ Helpkit::Application.routes.draw do
   match "/auth/gmail/callback" => 'omniauth_callbacks#complete', :provider => 'gmail', :via => :get
   match "/auth/gmail/failure" => 'omniauth_callbacks#failure', :via => :get
 
+  match '/auth/outlook/callback' => 'omniauth_callbacks#complete', :provider => 'outlook'
+  match '/auth/failure' => 'omniauth_callbacks#failure', :as => :failure, :constraints => ->(request) { request.params[:provider] == 'outlook' }
+
   match '/shopify_integration_redirect' => 'shopify_listing#send_approval_request', :via => :get
   match '/shopify_landing' => 'shopify_listing#show', :via => :get
   match '/shopify_account_verification' => 'shopify_listing#verify_domain_shopify', :via => :post
@@ -1203,6 +1206,7 @@ Helpkit::Application.routes.draw do
       collection do
         get :google_signin
         get :existing_email
+        get :microsoft_signin
         post :personalized_email_enable
         post :personalized_email_disable
         post :toggle_agent_forward_feature

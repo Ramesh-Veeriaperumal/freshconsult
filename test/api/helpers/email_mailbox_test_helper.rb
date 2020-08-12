@@ -127,6 +127,7 @@ module EmailMailboxTestHelper
       password: options[:imap_password] || 'password'
     }
     incoming_hash[:refresh_token] = options[:imap_refresh_token] || 'refreshtoken' if options[:imap_authentication] == OAUTH && options[:with_refresh_token]
+    incoming_hash[:access_token] = options[:imap_access_token] || 'accesstoken' if options[:imap_authentication] == OAUTH && options[:with_access_token]
     incoming_hash
   end
   
@@ -140,6 +141,7 @@ module EmailMailboxTestHelper
       password: options[:smtp_password] || 'password'
     }
     outgoing_hash[:refresh_token] = options[:smtp_refresh_token] || 'refreshtoken' if options[:smtp_authentication] == OAUTH && options[:with_refresh_token]
+    outgoing_hash[:access_token] = options[:smtp_access_token] || 'accesstoken' if options[:smtp_authentication] == OAUTH && options[:with_access_token]
     outgoing_hash
   end
 

@@ -45,7 +45,7 @@ class OmniauthCallbacksController < ApplicationController
   end
 
   def failure
-    if params[:provider] == 'gmail'
+    if params[:provider] == 'gmail' || 'outlook'
       authenticator_class = Auth::Authenticator.get_auth_class(params[:provider])
 
       authenticator = authenticator_class.new(

@@ -6,23 +6,10 @@ module Mailbox::HelperMethods
     decrypt_field(mailbox_password)
   end
 
-  def decrypt_refresh_token(mailbox_refresh_token)
-    decrypt_field(mailbox_refresh_token)
-  end
-
   private
 
     def set_account mailbox
       mailbox.account = mailbox.email_config.account
-    end
-
-    def encrypt_refresh_token(mailbox)
-      if mailbox.changed.include?('refresh_token') && mailbox.refresh_token.present?
-        mailbox.refresh_token = encrypt_field(mailbox.refresh_token)
-      end
-    rescue Exception => e
-      NewRelic::Agent.notice_error(e)
-      Rails.logger.error("Error encrypting refresh token for mailbox : #{mailbox.inspect} , #{e.message}")
     end
 
     def encrypt_password(mailbox)
@@ -46,12 +33,10 @@ module Mailbox::HelperMethods
     end
 
     def nullify_error_type_on_reauth(mailbox)
-      if mailbox.changed.include?('password') && mailbox.error_type.present?
-        mailbox.error_type = nil
-      end
+      mailbox.error_type = nil if mailbox.changed.include?('encrypted_access_token') && mailbox.error_type.present?
     end
 
     def changed_credentials?(mailbox)
-      mailbox.previous_changes.key?(:password)
+      mailbox.previous_changes.key?(:encrypted_access_token)
     end
 end

@@ -1,31 +1,29 @@
 class Auth::GmailAuthenticator < Auth::Authenticator
   include Email::Mailbox::Utils
   include Email::Mailbox::Errors
-  include Email::Mailbox::Constants
-  GMAIL_OAUTH_KEYS = %w[refresh_token oauth_token]
-  LANDING_PATH = '/a/admin/email/mailboxes'.freeze
+  include Email::Mailbox::OauthAuthenticatorHelper
 
-  def after_authenticate(params)
+  def after_authenticate(_params)
     if @failed
       @result.failed = @failed
       @result.failed_reason = @failed_reason
-      raise Email::Mailbox::Errors::GoogleAuthenticateFailure.new("#{@result.failed_reason} failure in Google Authentication.")
+      raise Email::Mailbox::Errors::AuthenticateFailure, "#{@result.failed_reason} failure in Google Authentication."
     elsif @options[:r_key].present?
       gmail_redis_params = process_gmail_oauth(build_config_params)
-      @result.redirect_url = get_redirect_url(build_url(gmail_redis_params, OAUTH_SUCCESS) + "&oauth_status=#{OAUTH_SUCCESS}", gmail_redis_params)
+      @result.redirect_url = get_redirect_url(build_url(gmail_redis_params, OAUTH_SUCCESS, @options[:r_key]) + "&oauth_status=#{OAUTH_SUCCESS}", gmail_redis_params, @origin_account)
     else
-      raise Email::Mailbox::Errors::MissingRedis.new('missing redis key in google callback')
+      raise Email::Mailbox::Errors::MissingRedis, 'missing redis key in google callback'
     end
     @result
   rescue Email::Mailbox::Errors::MissingRedis => e
     Rails.logger.error "GmailAuthenticator - #{e.message}"
-    @result.redirect_url = get_redirect_url(e.url_params_string + "&oauth_status=#{OAUTH_FAILED}", gmail_oauth_redis_obj(@options[:r_key]).fetch_hash)
+    @result.redirect_url = get_redirect_url(e.url_params_string + "&oauth_status=#{OAUTH_FAILED}", gmail_oauth_redis_obj(@options[:r_key]).fetch_hash, @origin_account)
     @result
-  rescue Email::Mailbox::Errors::GoogleAuthenticateFailure => e
+  rescue Email::Mailbox::Errors::AuthenticateFailure => e
     Rails.logger.info "GmailAuthenticator - #{e.message}"
     gmail_redis_params = gmail_oauth_redis_obj(@options[:r_key]).fetch_hash
-    url_string = build_url(gmail_redis_params, OAUTH_FAILED) + "&#{e.url_params_string}&oauth_status=#{OAUTH_FAILED}"
-    @result.redirect_url = get_redirect_url(url_string, gmail_redis_params)
+    url_string = build_url(gmail_redis_params, OAUTH_FAILED, @options[:r_key]) + "&#{e.url_params_string}&oauth_status=#{OAUTH_FAILED}"
+    @result.redirect_url = get_redirect_url(url_string, gmail_redis_params, @origin_account)
     @result
   end
 
@@ -43,18 +41,6 @@ class Auth::GmailAuthenticator < Auth::Authenticator
 
   private
 
-    # this is the final redirection to ember.
-    def get_redirect_url(url_params_string, gmail_redis_params)
-      protocol = Rails.env.development? ? 'http' : 'https'
-      port = Rails.env.development? ? ':4200' : ''
-      if gmail_redis_params['type'] == 'new'
-        landing_path = LANDING_PATH + '/new'
-      else
-        landing_path = LANDING_PATH + "/#{gmail_redis_params['id']}/edit"
-      end
-      redirect_domain = "#{protocol}://#{@origin_account.full_domain}#{port}#{landing_path}?#{url_params_string}"
-    end
-    
     def build_config_params
       {
         'refresh_token' => "#{@omniauth.credentials.refresh_token}",
@@ -62,7 +48,7 @@ class Auth::GmailAuthenticator < Auth::Authenticator
         'oauth_email'   => "#{@omniauth['info']['email']}"
       }
     end
-    
+
     def process_gmail_oauth(config_params)
       set_redis_keys(@options[:r_key], config_params)
       gmail_redis_params = gmail_oauth_redis_obj(@options[:r_key]).fetch_hash
@@ -75,19 +61,13 @@ class Auth::GmailAuthenticator < Auth::Authenticator
     end
 
     def gmail_oauth_redis_obj(oauth_redis_key)
-      @gmail_oauth_redis_obj ||= Email::Mailbox::GmailOauthRedis.new({redis_key: oauth_redis_key})
+      @gmail_oauth_redis_obj ||= Email::Mailbox::OauthRedis.new(redis_key: oauth_redis_key)
     end
 
     # Warning:: Deprecated method, should be cleaned up when we launch gmail OAuth for all account.
     def build_URL(params)
       Rails.logger.info("In building gmail oauth url params for account:: #{Account.current.id}, params:: #{params.inspect}")
       url_params_arr = ["reference_key=#{@options[:r_key]}"]
-      params.except(*GMAIL_OAUTH_KEYS).each_pair { |name, val| url_params_arr << "#{name}=#{CGI.escape(val)}" }
-      url_params_arr.join('&')
-    end
-
-    def build_url(params, status)
-      url_params_arr = status == OAUTH_FAILED && params['type'] != 'new' ? [] : ["reference_key=#{@options[:r_key]}"]
       params.except(*GMAIL_OAUTH_KEYS).each_pair { |name, val| url_params_arr << "#{name}=#{CGI.escape(val)}" }
       url_params_arr.join('&')
     end

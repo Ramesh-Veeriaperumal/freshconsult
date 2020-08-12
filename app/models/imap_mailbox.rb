@@ -17,6 +17,11 @@ class ImapMailbox < ActiveRecord::Base
 
   scope :errors, -> { where("error_type > ?", 0)  }
 
+  attr_encrypted :access_token, random_iv: true, compress: true
+  attr_encrypted :refresh_token, random_iv: true, compress: true
+  validates :encrypted_access_token, symmetric_encryption: true, if: -> { authentication == Email::Mailbox::Constants::OAUTH }
+  validates :encrypted_refresh_token, symmetric_encryption: true, if: -> { authentication == Email::Mailbox::Constants::OAUTH }
+
   def selected_server_profile
     selected_profile = MailboxConstants::MAILBOX_SERVER_PROFILES.select {|server| server_name && server_name.casecmp("imap.#{server[4]}") == 0}
     selected_profile.first.nil? ?  "other" : selected_profile.first[0].to_s

@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require_relative '../test_helper'
 require 'minitest/spec'
 
-class GmailAuthenticatorTest < ActiveSupport::TestCase
+class OutlookAuthenticatorTest < ActiveSupport::TestCase
   def test_after_authenticate_edit_failed_oauth
     options = {
-      app: 'gmail',
+      app: 'outlook',
       user_id: 1,
       r_key: 'test@1234',
       failed: true,
@@ -20,8 +22,8 @@ class GmailAuthenticatorTest < ActiveSupport::TestCase
     }
 
     Email::Mailbox::OauthRedis.any_instance.stubs(:fetch_hash).returns(cached_obj)
-    gmail_authenticator = Auth::GmailAuthenticator.new(options)
-    obj = gmail_authenticator.after_authenticate(params)
+    outlook_authenticator = Auth::OutlookAuthenticator.new(options)
+    obj = outlook_authenticator.after_authenticate(params)
     assert_includes(obj.redirect_url, 'edit')
     refute_includes(obj.redirect_url, 'reference_key')
   ensure
@@ -30,7 +32,7 @@ class GmailAuthenticatorTest < ActiveSupport::TestCase
 
   def test_after_authenticate_new_failed_oauth
     options = {
-      app: 'gmail',
+      app: 'outlook',
       user_id: 1,
       r_key: 'test@1234',
       failed: true,
@@ -46,8 +48,8 @@ class GmailAuthenticatorTest < ActiveSupport::TestCase
     }
 
     Email::Mailbox::OauthRedis.any_instance.stubs(:fetch_hash).returns(cached_obj)
-    gmail_authenticator = Auth::GmailAuthenticator.new(options)
-    obj = gmail_authenticator.after_authenticate(params)
+    outlook_authenticator = Auth::OutlookAuthenticator.new(options)
+    obj = outlook_authenticator.after_authenticate(params)
     assert_includes(obj.redirect_url, 'new')
     assert_includes(obj.redirect_url, 'reference_key=test@1234')
   ensure
@@ -56,7 +58,7 @@ class GmailAuthenticatorTest < ActiveSupport::TestCase
 
   def test_after_authenticate_edit_success_oauth
     options = {
-      app: 'gmail',
+      app: 'outlook',
       user_id: 1,
       r_key: 'test@1234',
       failed: false,
@@ -68,8 +70,10 @@ class GmailAuthenticatorTest < ActiveSupport::TestCase
         refresh_token: 'testrefreshtoken',
         token: 'testtoken'
       ),
-      'info' => {
-        'email' => 'testemail'
+      'extra' => {
+        'raw_info' => {
+          'mail' => 'testemail'
+        }
       }
     }
 
@@ -84,8 +88,8 @@ class GmailAuthenticatorTest < ActiveSupport::TestCase
     }
 
     Email::Mailbox::OauthRedis.any_instance.stubs(:fetch_hash).returns(cached_obj)
-    gmail_authenticator = Auth::GmailAuthenticator.new(options)
-    obj = gmail_authenticator.after_authenticate(params)
+    outlook_authenticator = Auth::OutlookAuthenticator.new(options)
+    obj = outlook_authenticator.after_authenticate(params)
     assert_includes(obj.redirect_url, 'edit')
     assert_includes(obj.redirect_url, 'reference_key=test@1234')
   ensure
@@ -94,7 +98,7 @@ class GmailAuthenticatorTest < ActiveSupport::TestCase
 
   def test_after_authenticate_edit_no_redis
     options = {
-      app: 'gmail',
+      app: 'outlook',
       user_id: 1,
       failed: false,
       origin_account: Account.current
@@ -102,8 +106,8 @@ class GmailAuthenticatorTest < ActiveSupport::TestCase
     params = {
       type: 'edit'
     }
-    gmail_authenticator = Auth::GmailAuthenticator.new(options)
-    obj = gmail_authenticator.after_authenticate(params)
+    outlook_authenticator = Auth::OutlookAuthenticator.new(options)
+    obj = outlook_authenticator.after_authenticate(params)
     assert_includes(obj.redirect_url, 'edit')
     refute_includes(obj.redirect_url, 'reference_key')
   end
