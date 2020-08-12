@@ -1045,7 +1045,19 @@ class Account < ActiveRecord::Base
   end
 
   def show_omnichannel_banner?
-    User.current.privilege?(:manage_account) && launched?(:explore_omnichannel_feature) && freshid_org_v2_enabled? && verified? && !(omni_bundle_account? || subscription.subscription_plan.omni_plan? || subscription.suspended? || account_cancellation_requested?)
+    User.current.privilege?(:manage_account) && launched?(:explore_omnichannel_feature) && freshid_org_v2_enabled? && verified? && !not_eligible_for_omni_conversion?
+  end
+
+  def omni_accounts_present_in_org?
+    organisation && organisation.omni_accounts_present?
+  end
+
+  def integrated_account?
+    freshcaller_account_present? || freshchat_account_present?
+  end
+
+  def not_eligible_for_omni_conversion?
+    omni_bundle_account? || subscription.subscription_plan.omni_plan? || subscription.suspended? || account_cancellation_requested? || integrated_account? || omni_accounts_present_in_org? || reseller_paid_account? || subscription.offline_subscription?
   end
 
   def freshcaller_billing_url

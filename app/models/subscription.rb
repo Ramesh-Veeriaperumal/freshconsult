@@ -987,7 +987,7 @@ class Subscription < ActiveRecord::Base
     end
 
     def omni_plan_conversion?
-      account.launched?(:explore_omnichannel_feature) && !@old_subscription.subscription_plan.omni_plan? && subscription_plan.omni_bundle_plan?
+      account.launched?(:explore_omnichannel_feature) && !@old_subscription.subscription_plan.omni_plan? && subscription_plan.omni_bundle_plan? && !account.not_eligible_for_omni_conversion?
     end
 
     def enqueue_omni_account_creation?

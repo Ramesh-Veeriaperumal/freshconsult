@@ -2,6 +2,9 @@ class Organisation < ActiveRecord::Base
   self.primary_key = :id
   include Cache::Memcache::Organisation
   FRESHSALES = 'freshsales'.freeze
+  FRESHCALLER = 'freshcaller'.freeze
+  FRESHCHAT = 'freshchat'.freeze
+  PAGE_BREAK_COUNT = 10
 
   not_sharded
   concerned_with :presenter
@@ -71,10 +74,38 @@ class Organisation < ActiveRecord::Base
     freshsales_url
   end
 
+  def omni_accounts_present?
+    organisation_domain = alternate_domain || domain
+    products = product_details_from_cache(organisation_domain)
+    page_counter = 1
+    loop do
+      organisation_accounts = Account.current.organisation_accounts(organisation_domain, page_counter)
+      if products.present? && organisation_accounts.present?
+        freshcaller_product_object = fetch_product_object_by_name(products, FRESHCALLER)
+        freshchat_product_object = fetch_product_object_by_name(products, FRESHCHAT)
+        organisation_accounts[:accounts].map do |org_account|
+          return true if [freshcaller_product_object['id'], freshchat_product_object['id']].include?(org_account[:product_id])
+        end
+      end
+      if page_counter == PAGE_BREAK_COUNT
+        Rails.logger.info "Organisation accounts fetch page limit reached for account :: #{Account.current.id} "
+        break
+      end
+      break unless organisation_accounts[:has_more]
+
+      page_counter += 1
+    end
+    false
+  end
+
   private
 
     def domain_changed?
       previous_changes.key?(:domain)
+    end
+
+    def fetch_product_object_by_name(products, name)
+      products['productList'].find { |product| product['name'].downcase == name }
     end
 
     def send_activation_email

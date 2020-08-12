@@ -57,6 +57,38 @@ class AccountTest < ActionView::TestCase
     1
   end
 
+  def dummy_freshid_org_accounts_response_with_freshcaller_freshchat
+    {
+      'accounts': [
+        {
+          'id': '1',
+          'organisation_id': 'test001',
+          'product_id': '105244803164542146',
+          'domain': 'test.freshchat.com'
+        },
+        {
+          'id': '2',
+          'organisation_id': 'test001',
+          'product_id': '60735412357513604',
+          'domain': 'test.freshcaller.com'
+        }
+      ],
+      'total_size': '2',
+      'page_number': 0,
+      'page_size': 0,
+      'has_more': false
+    }
+  end
+
+  def freshworks_product_list
+    {
+      "productList": [
+        { 'id' => '105244803164542146', 'name': 'freshchat' },
+        { 'id'=> '60735412357513604', 'name': 'freshcaller' }
+      ]
+    }.to_json
+  end
+
   def test_domain_valid
     account = Account.new(domain: "test-1234", name: "Test Account")
     account.time_zone = "Chennai"
@@ -618,6 +650,7 @@ class AccountTest < ActionView::TestCase
     Account.current.launch(:explore_omnichannel_feature)
     Account.current.launch(:freshid_org_v2)
     Account.any_instance.stubs(:verified?).returns(true)
+    Account.any_instance.stubs(:omni_accounts_present_in_org?).returns(false)
     AccountAdditionalSettings.any_instance.stubs(:additional_settings).returns(bundle_id: nil)
     assert Account.current.show_omnichannel_banner?
   ensure
@@ -625,6 +658,32 @@ class AccountTest < ActionView::TestCase
     Account.current.rollback(:freshid_org_v2)
     Account.any_instance.unstub(:verified?)
     AccountAdditionalSettings.any_instance.unstub(:additional_settings)
+    Account.any_instance.unstub(:omni_accounts_present_in_org?)
+  end
+
+  def test_show_omnichannel_banner_for_integrated_accounts_not_present_in_org
+    User.any_instance.stubs(:privilege?).returns(true)
+    Account.current.launch(:explore_omnichannel_feature)
+    Account.current.launch(:freshid_org_v2)
+    SubscriptionPlan.any_instance.stubs(:omni_plan?).returns(false)
+    Account.any_instance.stubs(:verified?).returns(true)
+    Account.any_instance.stubs(:organisation).returns(Organisation.new)
+    Account.any_instance.stubs(:organisation_accounts).returns('accounts': [], 'total_size': '0', 'page_number': 0, 'page_size': 0, 'has_more': false)
+    dummy_org_domain = 'sample.freshworks.com'
+    Organisation.any_instance.stubs(:domain).returns(dummy_org_domain)
+    RestClient::Request.any_instance.stubs(:execute).returns(freshworks_product_list)
+    assert Account.current.show_omnichannel_banner?
+  ensure
+    User.any_instance.unstub(:privilege?)
+    Account.current.rollback(:explore_omnichannel_feature)
+    Account.current.rollback(:freshid_org_v2)
+    Account.any_instance.unstub(:account_cancellation_requested?)
+    SubscriptionPlan.any_instance.unstub(:omni_plan?)
+    Account.any_instance.unstub(:verified?)
+    Account.any_instance.unstub(:organisation)
+    Account.any_instance.unstub(:organisation_accounts)
+    Organisation.any_instance.unstub(:domain)
+    RestClient::Request.unstub(:execute)
   end
 
   def test_should_not_show_omnichannel_banner_for_accounts_with_pending_cancellation_request
@@ -663,5 +722,105 @@ class AccountTest < ActionView::TestCase
     SubscriptionPlan.any_instance.unstub(:omni_plan?)
     Subscription.any_instance.unstub(:state)
     Account.any_instance.unstub(:verified?)
+  end
+
+  def test_should_not_show_omnichannel_banner_for_integrated_accounts
+    User.any_instance.stubs(:privilege?).returns(true)
+    Account.current.launch(:explore_omnichannel_feature)
+    Account.current.launch(:freshid_org_v2)
+    SubscriptionPlan.any_instance.stubs(:omni_plan?).returns(false)
+    Account.any_instance.stubs(:verified?).returns(true)
+    Account.any_instance.stubs(:integrated_account?).returns(true)
+    refute Account.current.show_omnichannel_banner?
+  ensure
+    User.any_instance.unstub(:privilege?)
+    Account.current.rollback(:explore_omnichannel_feature)
+    Account.current.rollback(:freshid_org_v2)
+    SubscriptionPlan.any_instance.unstub(:omni_plan?)
+    Account.any_instance.unstub(:verified?)
+    Account.any_instance.unstub(:integrated_account?)
+  end
+
+  def test_should_not_show_omnichannel_banner_for_integrated_accounts_present_in_org
+    User.any_instance.stubs(:privilege?).returns(true)
+    Account.current.launch(:explore_omnichannel_feature)
+    Account.current.launch(:freshid_org_v2)
+    SubscriptionPlan.any_instance.stubs(:omni_plan?).returns(false)
+    Account.any_instance.stubs(:verified?).returns(true)
+    Account.any_instance.stubs(:organisation).returns(Organisation.new)
+    Account.any_instance.stubs(:organisation_accounts).returns(dummy_freshid_org_accounts_response_with_freshcaller_freshchat)
+    dummy_org_domain = 'sample.freshworks.com'
+    Organisation.any_instance.stubs(:domain).returns(dummy_org_domain)
+    RestClient::Request.any_instance.stubs(:execute).returns(freshworks_product_list)
+    refute Account.current.show_omnichannel_banner?
+  ensure
+    User.any_instance.unstub(:privilege?)
+    Account.current.rollback(:explore_omnichannel_feature)
+    Account.current.rollback(:freshid_org_v2)
+    Account.any_instance.unstub(:account_cancellation_requested?)
+    SubscriptionPlan.any_instance.unstub(:omni_plan?)
+    Account.any_instance.unstub(:verified?)
+    Account.any_instance.unstub(:organisation)
+    Account.any_instance.unstub(:organisation_accounts)
+    Organisation.any_instance.unstub(:domain)
+    RestClient::Request.unstub(:execute)
+  end
+
+  def test_should_not_show_omnichannel_banner_for_offline_accounts
+    User.any_instance.stubs(:privilege?).returns(true)
+    Account.current.launch(:explore_omnichannel_feature)
+    Account.current.launch(:freshid_org_v2)
+    SubscriptionPlan.any_instance.stubs(:omni_plan?).returns(false)
+    Subscription.any_instance.stubs(:state).returns('active')
+    Account.any_instance.stubs(:verified?).returns(true)
+    Account.any_instance.stubs(:omni_accounts_present_in_org?).returns(false)
+    Subscription.any_instance.stubs(:offline_subscription?).returns(true)
+    refute Account.current.show_omnichannel_banner?
+  ensure
+    User.any_instance.unstub(:privilege?)
+    Account.current.rollback(:explore_omnichannel_feature)
+    Account.current.rollback(:freshid_org_v2)
+    SubscriptionPlan.any_instance.unstub(:omni_plan?)
+    Account.any_instance.unstub(:verified?)
+    Account.any_instance.unstub(:omni_accounts_present_in_org?)
+    Subscription.any_instance.unstub(:offline_subscription?)
+  end
+
+  def test_should_not_show_omnichannel_banner_for_reseller_accounts
+    User.any_instance.stubs(:privilege?).returns(true)
+    Account.current.launch(:explore_omnichannel_feature)
+    Account.current.launch(:freshid_org_v2)
+    AccountAdditionalSettings.any_instance.stubs(:additional_settings).returns({})
+    SubscriptionPlan.any_instance.stubs(:omni_plan?).returns(false)
+    Account.any_instance.stubs(:verified?).returns(true)
+    Account.any_instance.stubs(:omni_accounts_present_in_org?).returns(false)
+    Account.any_instance.stubs(:reseller_paid_account?).returns(true)
+    refute Account.current.show_omnichannel_banner?
+  ensure
+    User.any_instance.unstub(:privilege?)
+    Account.current.rollback(:explore_omnichannel_feature)
+    Account.current.rollback(:freshid_org_v2)
+    SubscriptionPlan.any_instance.unstub(:omni_plan?)
+    Account.any_instance.unstub(:verified?)
+    Account.any_instance.unstub(:omni_accounts_present_in_org?)
+    Account.any_instance.unstub(:reseller_paid_account?)
+  end
+
+  def test_should_not_show_omnichannel_banner_for_non_eligible_accounts
+    User.any_instance.stubs(:privilege?).returns(true)
+    Account.current.launch(:explore_omnichannel_feature)
+    Account.current.launch(:freshid_org_v2)
+    AccountAdditionalSettings.any_instance.stubs(:additional_settings).returns({})
+    SubscriptionPlan.any_instance.stubs(:omni_plan?).returns(false)
+    Account.any_instance.stubs(:verified?).returns(true)
+    Account.any_instance.stubs(:not_eligible_for_omni_conversion?).returns(true)
+    refute Account.current.show_omnichannel_banner?
+  ensure
+    User.any_instance.unstub(:privilege?)
+    Account.current.rollback(:explore_omnichannel_feature)
+    Account.current.rollback(:freshid_org_v2)
+    SubscriptionPlan.any_instance.unstub(:omni_plan?)
+    Account.any_instance.unstub(:verified?)
+    Account.any_instance.unstub(:not_eligible_for_omni_conversion?)
   end
 end
