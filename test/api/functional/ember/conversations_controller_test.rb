@@ -815,7 +815,6 @@ module Ember
     end
 
     def test_facebook_reply_with_survey_to_fb_direct_message_ticket
-      Account.any_instance.stubs(:csat_for_social_surveymonkey_enabled?).returns(true)
       Social::FacebookSurveyWorker.jobs.clear
       ticket = create_ticket_from_fb_direct_message
       sample_reply_dm = { 'id' => Time.now.utc.to_i + 5 }
@@ -837,7 +836,6 @@ module Ember
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params_hash, latest_note))
     ensure
-      Account.any_instance.unstub(:csat_for_social_surveymonkey_enabled)
       Integrations::SurveyMonkey.unstub(:sm_installed_app)
       Koala::Facebook::API.any_instance.unstub(:put_object)
     end
@@ -1003,7 +1001,6 @@ module Ember
       dm_text = Faker::Lorem.paragraphs(5).join[0..500]
       @account = Account.current
       Social::TwitterSurveyWorker.jobs.clear
-      Account.any_instance.stubs(:csat_for_social_surveymonkey_enabled?).returns(true)
       reply_id = get_social_id
       params_hash = twitter_dm_reply_params_hash.merge(include_surveymonkey_link: 1)
       app_config = { inputs: { 'survey_link' => 'https://www.surveymonkey.com/r/NMWK2SF', 'survey_text' => 'Please fill the survey' } }
@@ -1029,7 +1026,6 @@ module Ember
       match_json(private_note_pattern(params_hash, latest_note))
       ticket.destroy
     ensure
-      Account.unstub(:csat_for_social_surveymonkey_enabled?)
       Integrations::SurveyMonkey.unstub(:sm_installed_app)
     end
 

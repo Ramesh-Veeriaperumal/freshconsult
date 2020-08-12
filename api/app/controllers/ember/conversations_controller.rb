@@ -105,7 +105,7 @@ module Ember
 
       add_facebook_attachments
       reply_sent = reply_to_fb_ticket(@delegator.note)
-      include_survey = @item.include_surveymonkey_link.present? && @item.include_surveymonkey_link == 1 && @ticket.is_fb_message? && Account.current.csat_for_social_surveymonkey_enabled?
+      include_survey = @item.include_surveymonkey_link.present? && @item.include_surveymonkey_link == 1 && @ticket.is_fb_message?
       if include_survey
         survey = Integrations::SurveyMonkey.survey_for_social(@ticket, @item.user)
         if survey
@@ -567,7 +567,7 @@ module Ember
           end
 
           include_survey_link = @item.include_surveymonkey_link.present? && @item.include_surveymonkey_link == 1
-          if include_survey_link && dm_note?(@tweet_type) && Account.current.csat_for_social_surveymonkey_enabled?
+          if include_survey_link && dm_note?(@tweet_type)
             survey = Integrations::SurveyMonkey.survey_for_social(@ticket, @item.user)
             if survey
               Social::TwitterSurveyWorker.perform_in(10.seconds.from_now, note_id: @item.id,
