@@ -120,6 +120,8 @@ module Billing::OmniSubscriptionUpdateMethods
       status: subscription[:status],
       trial_start: subscription[:trial_start],
       trial_end: subscription[:trial_end],
+      current_term_start: subscription[:current_term_start],
+      current_term_end: subscription[:current_term_end],
       next_billing_at: Account.current.subscription.next_renewal_at.to_i,
       created_at: subscription[:created_at],
       started_at: subscription[:started_at],
