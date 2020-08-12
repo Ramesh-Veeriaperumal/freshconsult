@@ -340,7 +340,7 @@ module ApiTicketsTestHelper
     if @private_api
       ticket_hash
     else
-      ticket_hash.except(:associated_tickets_count, :association_type, :can_be_associated, :email_failure_count)
+      ticket_hash.except(:skill_id, :associated_tickets_count, :association_type, :can_be_associated, :email_failure_count)
     end
   end
 

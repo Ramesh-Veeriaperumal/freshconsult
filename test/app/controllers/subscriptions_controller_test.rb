@@ -60,6 +60,13 @@ class SubscriptionsControllerTest < ActionController::TestCase
     @account.destroy
   end
 
+  def test_subscription_forest20_trial
+    create_new_account('test1', 'test1@freshdesk.com')
+    assert_equal @account.subscription.subscription_plan.name, 'Forest Jan 20'
+  ensure
+    @account.destroy
+  end
+
 =begin
   def test_bitmap_twitter_automation_feature_present_for_estate_and_above
     plan_ids = SubscriptionPlan.current.map(&:id)

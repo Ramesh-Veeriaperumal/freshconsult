@@ -565,17 +565,20 @@ class AccountTest < ActionView::TestCase
   end
 
   def test_rolling_back_of_advanced_ticket_scope_feature
+    account = Account.current
     Sidekiq::Testing.inline! do
-      Account.current.add_feature(:advanced_ticket_scopes)
-      dummy_user = Account.current.technicians.first
-      group_id = Account.current.groups.first.id
+      account.add_feature(:advanced_ticket_scopes)
+      dummy_user = account.technicians.first
+      group_id = account.groups.first.id
       dummy_user.agent.agent_groups.new.tap { |ag| ag.group_id = group_id; ag.write_access = false; ag.save! }
-      assert_equal 1, Account.current.agent_groups.where('user_id = ? and write_access = ?', dummy_user.id, 0).count
-      Account.current.revoke_feature(:advanced_ticket_scopes)
+      assert_equal 1, account.agent_groups.where('user_id = ? and write_access = ?', dummy_user.id, 0).count
       @account = create_test_account
       @account.make_current
-      assert Account.current.agent_groups.where('user_id = ? and write_access = ?', dummy_user.id, 0).count.zero?
+      @account.revoke_feature(:advanced_ticket_scopes)
+      assert @account.agent_groups.where('user_id = ? and write_access = ?', dummy_user.id, 0).count.zero?
     end
+  ensure
+    account.make_current
   end
 
   def stub_freshsales_response

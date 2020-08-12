@@ -249,7 +249,7 @@ module SolutionsTestHelper
     end
 
     if Account.current.article_approval_workflow_enabled?
-      ret_hash[:approval_data] = { approval_status: approval_record(article.parent).try(:approval_status), approver_id: approver_record(article.parent).try(:approver_id), user_id: approval_record(article.parent).try(:user_id) }
+      ret_hash[:approval_data] = { approval_status: approval_record(article).try(:approval_status), approver_id: approver_record(article).try(:approver_id), user_id: approval_record(article).try(:user_id) }
     end
 
     ret_hash
