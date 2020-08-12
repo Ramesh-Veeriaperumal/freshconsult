@@ -22,7 +22,7 @@ class Account < ActiveRecord::Base
     :custom_fields_search, :disable_rabbitmq_iris,
     :update_billing_info, :allow_billing_info_update,
     :native_apps, :archive_tickets_api, :bot_agent_response,
-    :fetch_ticket_from_ref_first, :query_from_singleton,
+    :fetch_ticket_from_ref_first,
     :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp, :service_worker,
     :ticket_field_limit_increase, :join_ticket_field_data, :bypass_signup_captcha,
     :simple_outreach, :disable_simple_outreach, :supervisor_text_field, :disable_mint_analytics,
