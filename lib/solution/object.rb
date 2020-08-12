@@ -23,6 +23,8 @@ class Solution::Object
 
 	ASSOCIATIONS = [:attachments, :cloud_file_attachments]
 
+    ALLOWED_EMPTY_ATTRIBUTES = [:tag_attributes, :icon_attribute]
+
 	attr_accessor :args, :obj, :params, :meta_obj, :child, :objects
 
 	def initialize(args, obj, child = nil)
@@ -76,7 +78,7 @@ class Solution::Object
 
 	def assign_meta_attributes
 		META_ATTRIBUTES[@obj].each do |attribute|
-          @meta_obj.safe_send("#{attribute}=", @params.delete(attribute)) if @params[attribute].present? || (attribute == :tag_attributes)
+          @meta_obj.safe_send("#{attribute}=", @params.delete(attribute)) if @params[attribute].present? || (ALLOWED_EMPTY_ATTRIBUTES.include?(attribute) && @params.key?(attribute))
 		end
 		@meta_obj.account_id = Account.current.id
 	end

@@ -4,6 +4,7 @@ module SolutionsPlatformsTestHelper
   include SolutionsArticlesTestHelper
   include SolutionsApprovalsTestHelper
   include Helpdesk::TagMethods
+  include AttachmentsTestHelper
 
   def get_article_with_platform_mapping(platform_values = {})
     article = get_article_without_platform_mapping
@@ -50,6 +51,16 @@ module SolutionsPlatformsTestHelper
     folder_meta.save!
     folder_meta.reload
     folder_meta.children.first
+  end
+
+  def get_folder_with_icon
+    folder_meta = get_folder_meta_without_platform_mapping
+    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
+    icon = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: User.current.id)
+    folder_meta.icon = icon
+    folder_meta.save!
+    folder_meta.reload
+    folder_meta
   end
 
   def get_folder_with_platform_mapping_and_tags(platform_values = {}, tag_array = [])

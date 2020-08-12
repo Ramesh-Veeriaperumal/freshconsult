@@ -25,7 +25,7 @@ class Solutions::FolderDecorator < ApiDecorator
     if allow_chat_platform_attributes?
       response_hash[:platforms] = platform_values
       response_hash[:tags] = !solution_platform_mapping.try(:destroyed?) ? tags.pluck(:name) : []
-      response_hash[:icon] = icon.present? ? folder_icon_hash : {}
+      response_hash[:icon] = icon.present? && !icon.try(:destroyed?) ? folder_icon_hash : {}
     end
     if private_api? || channel_v2_api?
       response_hash[:position] = position
