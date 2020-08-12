@@ -4,7 +4,7 @@ class Account < ActiveRecord::Base
     :select_all, :round_robin_capping, :suggest_tickets,
     :customer_sentiment_ui, :dkim, :dkim_email_service, :scheduled_ticket_export,
     :ticket_contact_export, :email_failures, :disable_emails,
-    :falcon_portal_theme, :freshid, :freshchat_integration, :allow_huge_ccs,
+    :falcon_portal_theme, :freshid, :allow_huge_ccs,
     :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :announcements_tab,
     :va_any_field_without_none, :api_es,
