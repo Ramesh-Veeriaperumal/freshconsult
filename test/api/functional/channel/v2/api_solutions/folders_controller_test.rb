@@ -3,6 +3,9 @@ module Channel::V2::ApiSolutions
   class FoldersControllerTest < ActionController::TestCase
     include JweTestHelper
     include SolutionsTestHelper
+    include SolutionFoldersTestHelper
+    include SolutionsPlatformsTestHelper
+
     SUPPORT_BOT = 'frankbot'.freeze
 
     def setup
@@ -76,6 +79,116 @@ module Channel::V2::ApiSolutions
       set_jwe_auth_header(SUPPORT_BOT)
       get :show, controller_params(id: 99999)
       assert_response :missing
+    end
+
+    def test_folder_filter_with_portal_id
+      setup_channel_api do
+        set_jwe_auth_header(SUPPORT_BOT)
+        portal_id = @account.portals.first.id
+        folders = get_folders_by_portal_id(portal_id)
+
+        get :folder_filter, controller_params(version: 'channel', portal_id: portal_id)
+        assert_response 200
+        expected_response = folders.map { |folder_obj| solution_folder_pattern_index_channel_api(folder_obj) }
+        match_json(expected_response)
+      end
+    end
+
+    def test_folder_filter_with_invalid_portal_id
+      setup_channel_api do
+        set_jwe_auth_header(SUPPORT_BOT)
+
+        get :folder_filter, controller_params(version: 'channel', portal_id: 9999)
+        assert_response 400
+        match_json(validation_error_pattern(bad_request_error_pattern('portal_id', :invalid_portal_id, code: :invalid_value)))
+      end
+    end
+
+    def test_folder_filter_with_language
+      setup_channel_api do
+        set_jwe_auth_header(SUPPORT_BOT)
+        portal_id = @account.portals.first.id
+        language = 'ru-RU'
+        language_object = Language.find_by_code(language)
+
+        create_folder_translation(language_object.to_key)
+        folders = @account.solution_folders.where(language_id: language_object.id)
+
+        get :folder_filter, controller_params(version: 'channel', language: language)
+        assert_response 200
+        expected_response = folders.map { |folder_obj| solution_folder_pattern_index_channel_api(folder_obj) }
+        match_json(expected_response)
+      end
+    end
+
+    def test_folder_filter_with_invalid_platform
+      enable_omni_bundle do
+        setup_channel_api do
+          set_jwe_auth_header(SUPPORT_BOT)
+          get :folder_filter, controller_params(version: 'channel', platforms: Faker::Lorem.word)
+
+          assert_response 400
+          match_json(validation_error_pattern(bad_request_error_pattern('platforms', :not_included, list: SolutionConstants::PLATFORM_TYPES.join(','), code: :invalid_value)))
+        end
+      end
+    end
+
+    def test_folder_filter_with_null_platform
+      enable_omni_bundle do
+        setup_channel_api do
+          set_jwe_auth_header(SUPPORT_BOT)
+          get :folder_filter, controller_params(version: 'channel', platforms: '')
+
+          assert_response 400
+          match_json(validation_error_pattern(bad_request_error_pattern('platforms', :comma_separated_values, prepend_msg: :input_received, given_data_type: DataTypeValidator::DATA_TYPE_MAPPING[NilClass], code: :invalid_value)))
+        end
+      end
+    end
+
+    def test_folder_filter_with_null_tags
+      enable_omni_bundle do
+        setup_channel_api do
+          set_jwe_auth_header(SUPPORT_BOT)
+          get :folder_filter, controller_params(version: 'channel', tags: '')
+
+          assert_response 400
+          match_json(validation_error_pattern(bad_request_error_pattern('tags', :comma_separated_values, prepend_msg: :input_received, given_data_type: DataTypeValidator::DATA_TYPE_MAPPING[NilClass], code: :invalid_value)))
+        end
+      end
+    end
+
+    def test_folder_filter_with_portal_id_and_platform_and_tags_without_omni_feature
+      setup_channel_api do
+        set_jwe_auth_header(SUPPORT_BOT)
+        get :folder_filter, controller_params(version: 'channel', portal_id: 1, platforms: 'web', tags: Faker::Lorem.word)
+        assert_response 403
+
+        errors = [
+          bad_request_error_pattern('platforms', :require_feature, feature: :omni_bundle_2020, code: :access_denied),
+          bad_request_error_pattern('tags', :require_feature, feature: :omni_bundle_2020, code: :access_denied)
+        ]
+
+        match_json(validation_error_pattern(errors))
+      end
+    end
+
+    def test_folder_filter_with_platform_and_tags_with_omni_feature
+      enable_omni_bundle do
+        setup_channel_api do
+          set_jwe_auth_header(SUPPORT_BOT)
+          platform = 'web'
+          tag_name = Faker::Lorem.word
+
+          get_folder_with_platform_mapping_and_tags({}, [tag_name])
+          folders = filter_folders_by_platforms([platform])
+          folders = filter_folders_by_tags([tag_name])
+
+          get :folder_filter, controller_params(version: 'channel', platforms: platform, tags: tag_name)
+          assert_response 200
+          expected_response = folders.map { |folder_obj| solution_folder_pattern_index_channel_api(folder_obj) }
+          match_json(expected_response)
+        end
+      end
     end
   end
 end
