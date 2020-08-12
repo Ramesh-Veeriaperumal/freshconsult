@@ -380,13 +380,13 @@ class AccountsController < ApplicationController
         locale: nil,
         timezone: nil,
         alternate_url: '',
-        description: '',
-        token: perishable_token
+        description: ''
       },
       misc: {
         bundle_name: bundle_name,
         bundle_id: bundle_id,
-        account_domain: @signup.account.full_domain
+        account_domain: @signup.account.full_domain,
+        token: perishable_token
       }
     }
   end
