@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module CentralPublish
   class ResyncWorker < BaseWorker
     include CentralLib::CentralResyncHelper

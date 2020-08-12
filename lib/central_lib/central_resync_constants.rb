@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module CentralLib
   module CentralResyncConstants
     RESYNC_DATA_ENTITIES = ['Helpdesk::Ticket', 'Helpdesk::Note'].freeze

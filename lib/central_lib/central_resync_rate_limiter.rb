@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module CentralLib::CentralResyncRateLimiter
   include Redis::RedisKeys
   include Redis::OthersRedis
@@ -16,11 +18,10 @@ module CentralLib::CentralResyncRateLimiter
   end
 
   def resync_ratelimit_options(args)
-    Hash.new.tap do |hash_body|
-      hash_body[:batch_size] = RESYNC_ENTITY_BATCH_SIZE,
-      hash_body[:conditions] = args[:conditions],
-      hash_body[:start] = args[:primary_key_offset] if args[:primary_key_offset].present?
-    end
+    {
+      batch_size: RESYNC_ENTITY_BATCH_SIZE,
+      conditions: args[:conditions]
+    }.tap { |hash_body| hash_body[:start] = args[:primary_key_offset] if args[:primary_key_offset].present? }
   end
 
   private
@@ -36,7 +37,7 @@ module CentralLib::CentralResyncRateLimiter
 
     def resync_worker_limit_per_consumer
       resync_worker_limit = get_others_redis_key(CENTRAL_RESYNC_MAX_ALLOWED_WORKERS)
-      (resync_worker_limit && resync_worker_limit.to_i) || RESYNC_WORKER_LIMIT
+      resync_worker_limit&.to_i || RESYNC_WORKER_LIMIT
     end
 
     def current_worker_count_for_consumer(source)
@@ -45,7 +46,7 @@ module CentralLib::CentralResyncRateLimiter
 
     def max_allowed_records
       max_allowed_records = get_others_redis_key(CENTRAL_RESYNC_MAX_ALLOWED_RECORDS)
-      (max_allowed_records && max_allowed_records.to_i) || RESYNC_MAX_ALLOWED_RECORDS
+      max_allowed_records&.to_i || RESYNC_MAX_ALLOWED_RECORDS
     end
 
     def resync_rate_limiter_key(source)

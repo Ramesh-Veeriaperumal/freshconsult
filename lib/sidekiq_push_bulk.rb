@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SidekiqPushBulk
   JOBS_LIMIT = 1_000
   # This method can be used to push bulk jobs to sidekiq, This will save some redis round trip time

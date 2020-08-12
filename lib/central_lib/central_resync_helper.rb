@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module CentralLib
   module CentralResyncHelper
     include SidekiqPushBulk
@@ -33,16 +35,16 @@ module CentralLib
       def trigger_sync(options)
         records_processed = 0
         scoper.find_in_batches(options) do |batch|
-          # calc the number of records processed based on the options, This will be useful on throttling the records
-          records_processed += batch.size
+          # Stop the query once the max publishable records limit is reached
+          return if records_processed > RESYNC_MAX_ALLOWED_RECORDS
 
           push_bulk_jobs('CentralPublisher::CentralReSyncWorker', batch) do |each_record|
             manual_publish_args = each_record.construct_manual_publish_args(:sync)
             manual_publish_args[:event_info].merge!(each_record.meta_for_central_payload)
             [each_record.construct_payload_type(:sync), manual_publish_args]
           end
-          # Stop the query once the max publishable records limit is reached
-          return if records_processed > RESYNC_MAX_ALLOWED_RECORDS
+          # calc the number of records processed based on the options, This will be useful on throttling the records
+          records_processed += batch.size
         end
       end
 
