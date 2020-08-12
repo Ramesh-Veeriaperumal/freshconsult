@@ -43,7 +43,7 @@ class NestedFieldCorrectionTest < ActionView::TestCase
       flexifield.safe_send("#{ff_entries[1]}=", choices[choices.keys[0]].keys[0])
       flexifield.safe_send("#{ff_entries[2]}=", choices[choices.keys[0]].values[0][0])
     end
-    flexifield.save!
+    flexifield.save(validate: false)
   end
 
   def picklist_value_transformer

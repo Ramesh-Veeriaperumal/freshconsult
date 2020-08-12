@@ -172,7 +172,6 @@ class Search::Filters::Docs
 
     #_Note_: Include type if not doing only for ticket
     def alias_name
-      return "es_count_#{Account.current.id}" unless Account.current.dashboard_new_alias?
       if Rails.env.production?
         "es_filters_count_#{es_shard_name}_alias"
       else
