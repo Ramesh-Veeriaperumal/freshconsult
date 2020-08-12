@@ -240,6 +240,10 @@ module ApiSolutions
         end
       end
 
+      def validate_url_params
+        params.permit(*SolutionConstants::SHOW_FIELDS, *ApiConstants::DEFAULT_PARAMS)
+      end
+
       def validate_params
         return false unless validate_create_params
         validate_request_keys

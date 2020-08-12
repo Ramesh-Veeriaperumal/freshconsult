@@ -2968,6 +2968,10 @@
         "silkroad": {
           "_auth_type": "jwt",
           "jwt_secret": ["EJ[1:5aqAmXevr3vhzp14n0UfovducF5CHNZ5nLcPZPN50jw=:GnpobHeg/WWgm0xRIrvk+aoGXW9cwZHq:qEFS98NV+HQfcHq5YLak5J5Wf4sHIxy/60XLUBATD3JukJujJEl5OiXE4+yVPj84ouoKXg==]"]
+        },
+        "kbservice": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:r56PBvuwhj1bvSek37wwPbH2uVqJ1KnZeQYnjqw5CEU=:JoAh/sXvy24fyyRzZuf8LXHoUXdjmV2z:QrVPniT/VPE7bp5qvjmsJZVIXa4RAj1HAA9vL6+IkzCBGBcf819D69a9ackb5KNV]"]
         }
       },
       "scheduler_client_keys": {

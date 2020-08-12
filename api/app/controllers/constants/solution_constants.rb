@@ -71,6 +71,7 @@ module SolutionConstants
   LOAD_OBJECT_EXCEPT = [:category_folders, :folder_articles, :article_content, :filter, :untranslated_articles, :suggested, :folder_filter].freeze
 
   INDEX_FIELDS = %w[language prefer_published].freeze
+  SHOW_FIELDS = %w[language prefer_published status].freeze
 
   FOLDER_ARTICLES_FIELDS = (%w[portal_id tags platforms page per_page] | INDEX_FIELDS).freeze
 
