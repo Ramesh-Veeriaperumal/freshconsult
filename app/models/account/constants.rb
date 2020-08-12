@@ -231,7 +231,7 @@ class Account < ActiveRecord::Base
     supervisor_custom_status: false, asset_management: false, sandbox_temporary_offset: false, downgrade_policy: true,
     launch_fsm_geolocation: false, geolocation_historic_popup: false, allow_update_agent: false,
     hide_mailbox_error_from_agents: false,
-    jira_onpremise_reporter: false, support_ticket_rate_limit: false, sidekiq_logs_to_central: false,
+    jira_onpremise_reporter: false, sidekiq_logs_to_central: false,
     encode_emoji_in_solutions: false, forums_agent_portal: false,
     mailbox_google_oauth: false, migrate_euc_pages_to_us: false, agent_collision_revamp: false,
     topic_editor_with_html: false, remove_image_attachment_meta_data: false,
