@@ -191,10 +191,6 @@ class Freshfone::Account < ActiveRecord::Base
 		account.features.freshfone_custom_forwarding.create
 	end
 
-  def enable_new_notifications
-    account.launch(:freshfone_new_notifications)
-  end
-
 	def disable_conference
 		account.features.freshfone_conference.destroy if account.features?(:freshfone_conference)
 		update_conference_status_url
