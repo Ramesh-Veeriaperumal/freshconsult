@@ -44,7 +44,7 @@ module Integrations::Constants
     :salesforce_v2 => "salesforce_v2",
     :dynamics_v2 => "dynamics_v2",
     :office365 => "office365",
-    :outlook => 'outlook',
+    outlook: 'outlook',
     :parent_child_tickets => "parent_child_tickets",
     :link_tickets => "link_tickets",
     :shared_ownership => "shared_ownership",

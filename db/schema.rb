@@ -2890,8 +2890,8 @@ ActiveRecord::Schema.define(version: 20200502053301) do
     t.integer  "timeout"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "encrypted_refresh_token"
-    t.text     "encrypted_access_token"
+    t.text     'encrypted_refresh_token'
+    t.text     'encrypted_access_token'
     t.column 'error_type', 'smallint'
   end
 
@@ -3464,8 +3464,8 @@ ActiveRecord::Schema.define(version: 20200502053301) do
     t.string   "domain"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "encrypted_refresh_token"
-    t.text     "encrypted_access_token"
+    t.text     'encrypted_refresh_token'
+    t.text     'encrypted_access_token'
     t.column   'error_type', 'smallint'
   end
 

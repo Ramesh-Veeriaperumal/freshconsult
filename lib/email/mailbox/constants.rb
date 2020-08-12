@@ -45,14 +45,14 @@ module Email::Mailbox::Constants
 
   EMAIL_SERVICE_PROVIDER_OTHER = 'other'.freeze
   EMAIL_SERVICE_PROVIDER_GMAIL = 'google'.freeze
-  EMAIL_SERVICE_PROVIDER_OUTLOOK = 'outlook'
+  EMAIL_SERVICE_PROVIDER_OUTLOOK = 'outlook'.freeze
 
-  GMAIL = 'gmail'
-  OFFICE365 = 'office365'
+  GMAIL = 'gmail'.freeze
+  OFFICE365 = 'office365'.freeze
   SMTP_AUTH_ERROR_CODE = '535'.freeze
   SMTP_TOO_MANY_LOGIN_ATTEMPTS = '454'.freeze
 
-  OUTLOOK_OAUTH_URL = '/auth/outlook?origin=id%3D{{account_id}}%26r_key%3D{{r_key}}'
+  OUTLOOK_OAUTH_URL = '/auth/outlook?origin=id%3D{{account_id}}%26r_key%3D{{r_key}}'.freeze
 
   EMAIL_SERVER = [
     ['gmail', 'google_oauth2', 'google_oauth2'],

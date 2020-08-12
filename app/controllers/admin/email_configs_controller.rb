@@ -26,12 +26,12 @@ class Admin::EmailConfigsController < Admin::AdminController
   
   def google_signin
     redis_key = populate_redis_oauth(params.except(:action, :controller), 'gmail')
-    redirect_to gmail_oauth_url('account_id' => current_account.id, 'r_key' => redis_key) && return
+    redirect_to(gmail_oauth_url('account_id' => current_account.id, 'r_key' => redis_key)) && return
   end
 
   def microsoft_signin
     redis_key = populate_redis_oauth(params.except(:action, :controller), 'outlook')
-    redirect_to outlook_oauth_url('account_id' => current_account.id, 'r_key' => redis_key) && return
+    redirect_to(outlook_oauth_url('account_id' => current_account.id, 'r_key' => redis_key))  and return
   end
 
   def existing_email

@@ -21,7 +21,7 @@ module Email::Mailbox::Oauth2Helper
     delete_valid_access_token_key(mailbox)
   end
 
-  def set_valid_access_token_key(mailbox)
+  def add_valid_access_token_key(mailbox)
     set_others_redis_with_expiry(
       format(
         OAUTH_ACCESS_TOKEN_VALIDITY,

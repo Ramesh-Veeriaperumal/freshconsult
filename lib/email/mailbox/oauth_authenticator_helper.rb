@@ -20,6 +20,6 @@ module Email::Mailbox::OauthAuthenticatorHelper
                    else
                      LANDING_PATH + "/#{redis_params['id']}/edit"
                    end
-    redirect_domain = "#{protocol}://#{origin_account.full_domain}#{port}#{landing_path}?#{url_params_string}"
+    "#{protocol}://#{origin_account.full_domain}#{port}#{landing_path}?#{url_params_string}"
   end
 end
