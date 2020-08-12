@@ -16375,6 +16375,9 @@
                     },
                     "rate_limited": {
                       "type": "boolean"
+                    },
+                    "ms_mailbox_oauth_required": {
+                      "type": "boolean"
                     }
                   }
                 },
