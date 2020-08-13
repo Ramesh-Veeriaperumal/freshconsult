@@ -139,8 +139,8 @@ defaults: &defaults
    consumer_token: 339129576090-t5laj8ambvi4266e0h3u5rfjc65hr67t.apps.googleusercontent.com
    consumer_secret: Cmc8UF5d4uZO5a3bX1-uwC-9
  outlook:
-   consumer_token: 804d4bb3-4c0e-4ec0-b8e4-7aec359044d1
-   consumer_secret: .eA6k.e2B.eO9RVf6yGN0IZ94y_u.33Se3
+   consumer_token: 297394a7-fbe3-43fd-8b54-8c8ba7eb00b2
+   consumer_secret: QWo9SZb9ng~Mpc64.8M2B.Pd11kD~wyg4A
 
 test:
  <<: *defaults
@@ -213,8 +213,8 @@ staging:
    consumer_token:  3MVG9y6x0357HledW5ceTn9ZT1.KSsISjCgRJHBn4GG_r_Meq9Zzoc7Xvo_j3UfYqWRenDdf9Tg==
    consumer_secret: 5689067073667055939
  outlook:
-   consumer_token: 804d4bb3-4c0e-4ec0-b8e4-7aec359044d1
-   consumer_secret: .eA6k.e2B.eO9RVf6yGN0IZ94y_u.33Se3
+   consumer_token: 297394a7-fbe3-43fd-8b54-8c8ba7eb00b2
+   consumer_secret: QWo9SZb9ng~Mpc64.8M2B.Pd11kD~wyg4A
 
 production:
  salesforce:
