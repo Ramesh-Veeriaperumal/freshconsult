@@ -17,8 +17,8 @@ module IntegrationServices::Services
             temp_response = parse(response.body)
             yield temp_response if temp_response["ok"]
         elsif response.status.between?(400, 499)
-          error = parse(response.body)
-          raise RemoteError, "Error message: #{error.first['message']}", response.status.to_s
+          error_response = parse(response.body)
+          raise RemoteError, "Error message: #{error_response['error']}", response.status.to_s
         end
         raise RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
       end
