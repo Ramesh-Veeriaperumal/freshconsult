@@ -1379,6 +1379,14 @@ class User < ActiveRecord::Base
     value.blank? || value != 'true'
   end
 
+  def full_name
+    username = name.split(' ', 2)
+    {
+      first_name: username[0],
+      last_name:  username[1]
+    }
+  end
+
   private
 
     def perishable_token_expiry_key

@@ -146,10 +146,10 @@ module Freshchat
           },
           phone: @user.phone,
           biography: @user.description,
-          first_name: @user.first_name,
-          last_name: @user.last_name,
+          first_name: @user.full_name[:first_name],
           role_id: freshchat_role(@user.role_ids.min)
         }
+        request_body[:last_name] = @user.full_name[:last_name] if @user.full_name[:last_name]
         request_body
       end
 
