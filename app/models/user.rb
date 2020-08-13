@@ -31,9 +31,9 @@ class User < ActiveRecord::Base
 
   include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams # Placed here to handle deprecated Customer class. Has to be after associations
 
-  validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
+  validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true, unless: :uniqueness_validated
   validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
-  validates_uniqueness_of :unique_external_id, :scope => :account_id, :allow_nil => true, :case_sensitive => false
+  validates_uniqueness_of :unique_external_id, :scope => :account_id, :allow_nil => true, :case_sensitive => false, unless: :uniqueness_validated
   before_validation :trim_attributes
 
   xss_sanitize  :only => [:name,:email,:language, :job_title, :twitter_id, :address, :description, :fb_profile_id], :plain_sanitizer => [:name,:email,:language, :job_title, :twitter_id, :address, :description, :fb_profile_id]

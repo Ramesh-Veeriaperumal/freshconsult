@@ -18,11 +18,12 @@ module Channel
       }
       delegator_params.merge!(twitter_requester_fields_hash)
       contact_delegator = ContactDelegator.new(@item, delegator_params)
-      if !contact_delegator.valid?(:channel_contact_create)
+      if !contact_delegator.valid?(delegation_context)
         render_custom_errors(contact_delegator, true)
       else
         build_user_emails_attributes if @email_objects.any?
         build_other_companies if @all_companies
+        assign_uniqueness_validated
         if @item.create_contact!(params["active"])
           render_201_with_location(item_id: @item.id)
         else
@@ -43,17 +44,20 @@ module Channel
 
     private
 
+      def delegation_context
+        :channel_contact
+      end
+
       def validate_params
         @contact_fields = current_account.contact_form.custom_contact_fields
         @name_mapping = CustomFieldDecorator.name_mapping(@contact_fields)
         custom_fields = @name_mapping.empty? ? [nil] : @name_mapping.values
-
-        field = Channel::V2::ContactConstants::CHANNEL_CREATE_FIELDS | ['custom_fields' => custom_fields]
+        field = "Channel::V2::ContactConstants::CHANNEL_#{action.to_s.upcase}_FIELDS".constantize | ['custom_fields' => custom_fields]
         params[cname].permit(*field)
         ParamsHelper.modify_custom_fields(params[cname][:custom_fields], @name_mapping.invert)
         contact = Channel::V2::ContactValidation.new(params[cname], @item,
                                                      string_request_params?)
-        render_custom_errors(contact, true) unless contact.valid?(:channel_contact_create)
+        render_custom_errors(contact, true) unless contact.valid?(delegation_context)
       end
 
       def validate_filter_params
