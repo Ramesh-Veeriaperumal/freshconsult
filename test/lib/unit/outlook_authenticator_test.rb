@@ -2,15 +2,35 @@
 
 require_relative '../test_helper'
 require 'minitest/spec'
+['user_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['account_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 
 class OutlookAuthenticatorTest < ActiveSupport::TestCase
+  include UsersHelper
+  include AccountTestHelper
+
+  def setup
+    super
+    before_all
+  end
+
+  def before_all
+    @account = Account.current
+    @user = @account.nil? ? create_test_account : add_new_user(@account)
+    @user.make_current
+  end
+
+  def teardown
+    super
+  end
+
   def test_after_authenticate_edit_failed_oauth
     options = {
       app: 'outlook',
       user_id: 1,
       r_key: 'test@1234',
       failed: true,
-      origin_account: Account.current
+      origin_account: @account
     }
     params = {
       type: 'edit'
@@ -36,7 +56,7 @@ class OutlookAuthenticatorTest < ActiveSupport::TestCase
       user_id: 1,
       r_key: 'test@1234',
       failed: true,
-      origin_account: Account.current
+      origin_account: @account
     }
     params = {
       type: 'new'
@@ -62,7 +82,7 @@ class OutlookAuthenticatorTest < ActiveSupport::TestCase
       user_id: 1,
       r_key: 'test@1234',
       failed: false,
-      origin_account: Account.current
+      origin_account: @account
     }
 
     omniauth = {
@@ -101,7 +121,7 @@ class OutlookAuthenticatorTest < ActiveSupport::TestCase
       app: 'outlook',
       user_id: 1,
       failed: false,
-      origin_account: Account.current
+      origin_account: @account
     }
     params = {
       type: 'edit'

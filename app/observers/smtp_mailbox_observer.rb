@@ -17,9 +17,9 @@ class SmtpMailboxObserver < ActiveRecord::Observer
 
   def after_commit mailbox
     if mailbox.safe_send(:transaction_include_action?, :create)
-      set_valid_access_token_key(mailbox) if mailbox.authentication == OAUTH
+      add_valid_access_token_key(mailbox) if mailbox.authentication == OAUTH
     elsif mailbox.safe_send(:transaction_include_action?, :update)
-      set_valid_access_token_key(mailbox) if changed_credentials?(mailbox) && mailbox.authentication == OAUTH
+      add_valid_access_token_key(mailbox) if changed_credentials?(mailbox) && mailbox.authentication == OAUTH
       clear_cache(mailbox)
     elsif mailbox.safe_send(:transaction_include_action?, :destroy)
       delete_valid_access_token_key(mailbox)

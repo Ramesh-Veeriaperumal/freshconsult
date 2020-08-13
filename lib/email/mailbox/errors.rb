@@ -7,7 +7,7 @@ module Email::Mailbox::Errors
     end
   end
   
-  class GoogleAuthenticateFailure < Exception
+  class AuthenticateFailure < Exception
     attr_reader :url_params_string
     def initialize(msg = 'Authenticate failure')
       @url_params_string = 'error=401'
