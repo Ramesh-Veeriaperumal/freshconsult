@@ -1023,6 +1023,7 @@ Helpkit::Application.routes.draw do
         post :update_post_id
       end
     end
+    resources :central_resync, controller: 'channel/v2/central_resync', only: [:show]
 
     get '/solutions/categories', to: 'channel/v2/api_solutions/categories#index'
     get '/solutions/categories/:id', to: 'channel/v2/api_solutions/categories#show'

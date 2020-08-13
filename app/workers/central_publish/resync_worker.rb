@@ -19,6 +19,7 @@ module CentralPublish
 
       configure_redis_and_execute(@args[:source]) do
         publish_entity_to_central
+        update_resync_job_information(@args[:source], @args[:job_id], status: RESYNC_JOB_STATUSES[:completed])
       end
     end
 
@@ -27,8 +28,9 @@ module CentralPublish
       def publish_entity_to_central
         sync_entity(@args)
       rescue StandardError => e
+        update_resync_job_information(@args[:source], @args[:job_id], status: RESYNC_JOB_STATUSES[:failed])
         Rails.logger.error "Publishing Entity FAILED => #{e.inspect}"
-        NewRelic::Agent.notice_error(e, description: "Error publishing entity for Account: #{Account.current.id}, Service: #{@args[:source]}")
+        NewRelic::Agent.notice_error(e, description: "Error publishing entity #{@args[:model_name]} for Account: #{Account.current.id}, Service: #{@args[:source]}")
       end
   end
 end
