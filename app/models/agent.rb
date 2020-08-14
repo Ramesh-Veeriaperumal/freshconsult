@@ -457,6 +457,11 @@ class Agent < ActiveRecord::Base
     self.additional_settings.try(:[], :freshchat).try(:[], :enabled) || false
   end
 
+  def publish_update_central_payload(model_changes)
+    @model_changes = model_changes
+    self.manual_publish_to_central(nil, :update, nil, false)
+  end
+
   protected
     # adding the agent role ids through virtual attr agent_role_ids.
     # reason is this callback is getting executed before user roles update.
