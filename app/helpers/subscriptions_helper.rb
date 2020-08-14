@@ -192,6 +192,12 @@ module SubscriptionsHelper
     current_account.currency_name.eql?(DEFAULT_CURRENCY)
   end
 
+  def fetch_savings_on_annual_plan(subscription, currency)
+    cost_per_month = subscription.cost_per_agent(SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:monthly])
+    cost_per_month_discounted = subscription.cost_per_agent(SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual])
+    format_amount((cost_per_month - cost_per_month_discounted) * Subscription::ANNUAL_PERIOD * subscription.agent_limit, currency)
+  end
+
   def plan_button(plan, button_label, button_classes, free_plan_flag, add_freshdialog,
     title = "", data_submit_label = "", data_close_label = "", data_classes = "",
     data_submit_loading = t('please_wait'), billing_cycle = SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual])
