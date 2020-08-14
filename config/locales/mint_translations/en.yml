@@ -8300,6 +8300,9 @@ en:
     try_freshsales: Try Freshsales CRM
     discount_text_2: Get 40% off on Freshsales CRM if you buy in the next 21 days
     integrate_freshsales: Integrate Freshsales
+  annual_save:
+    primary_text: Save %{amount}/year on your subscription.
+    primary_link: Switch to annual billing.
   omni_channel_experience:
     experience_omnichannel: Experience Freshdesk Omnichannel
     omnichannel_title: Manage omnichannel support effortlessly
@@ -8344,3 +8347,4 @@ en:
     freshcaller_active_calls_title: "CALLS - ACTIVE"
   common_js_translations:
     of: "of"
+  whatsapp: "Whatsapp"

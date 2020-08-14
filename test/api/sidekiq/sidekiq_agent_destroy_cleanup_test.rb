@@ -17,11 +17,13 @@ class SidekiqAgentDestroyCleanupTest < ActionView::TestCase
 
   def teardown
     Account.unstub(:current)
+    Subscription.any_instance.unstub(:switch_annual_notification_eligible?)
     super
   end
 
   def setup
     Account.stubs(:current).returns(Account.first)
+    Subscription.any_instance.stubs(:switch_annual_notification_eligible?).returns(false)
     @account = Account.current
     @agent = add_test_agent(@account)
     @canned_response = create_response(

@@ -5,29 +5,47 @@ class Helpdesk::Source < Helpdesk::Choice
 
   serialize :meta, HashWithIndifferentAccess
 
+  SOURCE_FORMATTER = {
+    ticket_source_keys_by_token: proc { |choice| [choice.translated_source_name(translation_record_from_ticket_fields), choice.account_choice_id] }
+  }.freeze
+
+  private_constant :SOURCE_FORMATTER
+
   class << self
     def ticket_sources
-      TICKET_SOURCES
+      if Account.current && Account.current.launched?(:whatsapp_ticket_source)
+        TICKET_SOURCES
+      else
+        TICKET_SOURCES.reject { |i| i[0] == :whatsapp }
+      end
     end
 
     def ticket_source_options
-      TICKET_SOURCES.map { |i| [i[1], i[2]] }
+      ticket_sources.map { |i| [i[1], i[2]] }
     end
 
     def ticket_source_names_by_key
-      Hash[*TICKET_SOURCES.map { |i| [i[2], i[1]] }.flatten]
+      Hash[*ticket_sources.map { |i| [i[2], i[1]] }.flatten]
     end
 
     def ticket_source_keys_by_token
-      SOURCE_KEYS_BY_TOKEN
+      if Account.current && Account.current.launched?(:whatsapp_ticket_source)
+        SOURCE_KEYS_BY_TOKEN
+      else
+        SOURCE_KEYS_BY_TOKEN.except(:whatsapp)
+      end
     end
 
     def ticket_source_keys_by_name
-      Hash[*TICKET_SOURCES.map { |i| [i[1], i[2]] }.flatten]
+      Hash[*ticket_sources.map { |i| [i[1], i[2]] }.flatten]
     end
 
     def ticket_source_token_by_key
-      SOURCE_TOKENS_BY_KEY
+      if Account.current && Account.current.launched?(:whatsapp_ticket_source)
+        SOURCE_TOKENS_BY_KEY
+      else
+        SOURCE_TOKENS_BY_KEY.except(13)
+      end
     end
 
     def ticket_sources_for_language_detection
@@ -79,7 +97,7 @@ class Helpdesk::Source < Helpdesk::Choice
       if revamp_enabled?
         visible_sources.map(&:account_choice_id) - API_CREATE_EXCLUDED_VALUES
       else
-        SOURCE_KEYS_BY_TOKEN.slice(:email, :portal, :phone, :twitter, :facebook, :chat, :mobihelp, :feedback_widget, :ecommerce).values
+        ticket_source_keys_by_token.slice(:email, :portal, :phone, :twitter, :facebook, :chat, :mobihelp, :feedback_widget, :ecommerce).values
       end
     end
 
@@ -130,11 +148,11 @@ class Helpdesk::Source < Helpdesk::Choice
     end
 
     def default_ticket_sources
-      TICKET_SOURCES
+      ticket_sources
     end
 
     def default_ticket_source_names_by_key
-      Hash[*TICKET_SOURCES.map { |i| [i[2], i[1]] }.flatten]
+      Hash[*ticket_sources.map { |i| [i[2], i[1]] }.flatten]
     end
 
     def visible_sources
@@ -145,6 +163,23 @@ class Helpdesk::Source < Helpdesk::Choice
       Account.current.ticket_source_revamp_enabled?
     end
 
+    def source_choices(type)
+      Account.current.ticket_source_from_cache.map(&SOURCE_FORMATTER[type])
+    end
+
+    private
+
+      def current_supported_language
+        User.current.try(:supported_language) || Language.current.try(:to_key)
+      end
+
+      def ticket_fields
+        @ticket_fields ||= Account.current.ticket_fields_only.where(field_type: 'default_source').first
+      end
+
+      def translation_record_from_ticket_fields
+        @translation_record_from_ticket_fields ||= ticket_fields.safe_send("#{current_supported_language}_translation")
+      end
     def visible_custom_sources
       Account.current.ticket_source_from_cache.where(default: 0, deleted: 0)
     end
@@ -189,7 +224,6 @@ class Helpdesk::Source < Helpdesk::Choice
     end
 
     def translate_default_source_name
-      key = Helpdesk::Source.default_ticket_sources.select { |i| i[2] == account_choice_id }.first[1]
-      I18n.t(key)
+      I18n.t(Helpdesk::Source.default_ticket_source_names_by_key[account_choice_id])
     end
 end

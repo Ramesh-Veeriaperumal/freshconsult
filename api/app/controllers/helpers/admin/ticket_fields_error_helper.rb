@@ -72,8 +72,8 @@ module Admin::TicketFieldsErrorHelper
     error_options.merge! validation.error_options
   end
 
-  def source_icon_id_error(name, to, from = 1)
-    errors[name] << :invalid_value_for_icon_id
+  def source_icon_id_error(name, to, from = 1, message = :invalid_value_for_icon_id)
+    errors[name] << message
     range = to.nil? ? from : "#{from} to #{to}"
     error_message = {}
     error_message[name] = { range: range }

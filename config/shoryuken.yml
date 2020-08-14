@@ -31,4 +31,5 @@
   - <%= SQS[:analytics_etl_queue_maintenance] %>
   - <%= SQS[:suspended_account_cleanup_queue] %>
   - <%= SQS[:email_rate_limiting_queue] %>
+  - <%= SQS[:switch_to_annual_notification_queue] %>
 

@@ -642,6 +642,10 @@ class AccountsController < ApplicationController
       params[:signup][:aloha_signup]
     end
 
+    def omni_signup?
+      params[:signup][:bundle_id].present? && params[:signup][:bundle_name].present?
+    end
+
     def assign_language
       params[:account][:lang] if params.try(:[], :account).try(:[], :lang) && Language.find_by_code(params[:account][:lang]).present?
     end

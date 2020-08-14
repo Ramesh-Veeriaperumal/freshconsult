@@ -177,6 +177,7 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 'contact_update', job['args'][0]
     assert_includes job['args'][0], job['args'][1]['event']
     assert_equal [nil, company.id], job['args'][1]['model_changes']['company_id']
+    assert_equal true, job['args'][1]['event_info']['app_update']
 
     # add other user_companies
     company = create_company
@@ -226,7 +227,7 @@ class UserTest < ActiveSupport::TestCase
     user.save
     user.update_attributes(custom_field: { custom_field.name => choices.sample })
     event_info = user.event_info(:update)
-    event_info.must_match_json_expression(cp_user_event_info_pattern(marketplace_event: true))
+    event_info.must_match_json_expression(cp_user_event_info_pattern(app_update: true))
   end
 
   def test_central_publish_payload_event_info_marketplace_attribute_for_user_emails_updated
@@ -234,7 +235,7 @@ class UserTest < ActiveSupport::TestCase
     user.user_emails.build(email: Faker::Internet.email, primary_role: false)
     user.save
     event_info = user.event_info(:update)
-    event_info.must_match_json_expression(cp_user_event_info_pattern(marketplace_event: true))
+    event_info.must_match_json_expression(cp_user_event_info_pattern(app_update: true))
   end
 
   def test_central_publish_payload_event_info_marketplace_attribute_for_tags_updated
@@ -243,14 +244,14 @@ class UserTest < ActiveSupport::TestCase
     user.save
     user.save_tags
     event_info = user.event_info(:update)
-    event_info.must_match_json_expression(cp_user_event_info_pattern(marketplace_event: true))
+    event_info.must_match_json_expression(cp_user_event_info_pattern(app_update: true))
   end
 
   def test_central_publish_payload_event_info_marketplace_attribute_with_invalid_attribute_updated
     user = add_new_user(@account)
     user.update_attributes(login_count: 2)
     event_info = user.event_info(:update)
-    event_info.must_match_json_expression(cp_user_event_info_pattern(marketplace_event: false))
+    event_info.must_match_json_expression(cp_user_event_info_pattern(app_update: false))
   end
 
   def test_central_publish_payload_event_info_marketplace_attribute_with_valid_marketplace_attribute
@@ -258,6 +259,6 @@ class UserTest < ActiveSupport::TestCase
     user.save
     user.update_attributes(description: Faker::Lorem.characters(10))
     event_info = user.event_info(:update)
-    event_info.must_match_json_expression(cp_user_event_info_pattern(marketplace_event: true))
+    event_info.must_match_json_expression(cp_user_event_info_pattern(app_update: true))
   end
 end

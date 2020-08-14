@@ -182,7 +182,7 @@ class Account < ActiveRecord::Base
 
   LAUNCHPARTY_FEATURES = {
     hide_og_meta_tags: false, admin_dashboard: false, agent_conference: false, agent_dashboard: false,
-    agent_new_ticket_cache: false, api_search_beta: false, autopilot_headsup: false, autoplay: false,
+    agent_new_ticket_cache: false, api_search_beta: false, autoplay: false,
     bi_reports: false, cache_new_tkt_comps_forms: false,
     disable_old_sso: false, enable_old_sso: false, es_count_reads: false, es_count_writes: false,
     es_down: false, es_tickets: false, es_v1_enabled: false, es_v2_reads: false, fb_msg_realtime: false,
@@ -191,8 +191,7 @@ class Account < ActiveRecord::Base
     gamification_quest_perf: false, lambda_exchange: false, automation_revamp: false,
     list_page_new_cluster: false, meta_read: false, most_viewed_articles: false, multifile_attachments: true,
     new_footer_feedback_box: false, new_leaderboard: false, periodic_login_feature: false, restricted_helpdesk: false,
-    round_robin_capping: false, supervisor_dashboard: false,
-    support_new_ticket_cache: false, synchronous_apps: false, ticket_list_page_filters_cache: false,
+    supervisor_dashboard: false, support_new_ticket_cache: false, synchronous_apps: false, ticket_list_page_filters_cache: false,
     skip_hidden_tkt_identifier: false, agent_collision_alb: false, auto_refresh_alb: false,
     countv2_template_read: false, customer_sentiment_ui: false, portal_solution_cache_fetch: false,
     activity_ui: false, customer_sentiment: false, logout_logs: false,
@@ -221,7 +220,7 @@ class Account < ActiveRecord::Base
     sso_login_expiry_limitation: false, csat_email_scan_compatibility: false, email_deprecated_style_parsing: false,
     saml_ecrypted_assertion: false, quoted_text_parsing_feature: false, description_by_default: false,
     skip_invoice_due_warning: false, custom_fields_search: true, update_billing_info: false, allow_billing_info_update: false,
-    archive_tickets_api: false, bot_agent_response: false, fluffy: false, nested_field_revamp: true, service_worker: false,
+    archive_tickets_api: false, bot_agent_response: false, fluffy: false, nested_field_revamp: true,
     freshid_org_v2: false, hide_agent_login: false, ticket_source_revamp: false,
     helpdesk_tickets_by_product: false, article_es_search_by_filter: false,
     text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
@@ -235,7 +234,7 @@ class Account < ActiveRecord::Base
     encode_emoji_in_solutions: false, forums_agent_portal: false,
     mailbox_google_oauth: false, migrate_euc_pages_to_us: false, agent_collision_revamp: false,
     topic_editor_with_html: false, remove_image_attachment_meta_data: false,
-    ticket_field_revamp: true, new_timeline_view: false, email_mailbox: true,
+    ticket_field_revamp: true, new_timeline_view: false,
     sla_policy_revamp: false, freshdesk_freshsales_bundle: false, requester_widget_timeline: false,
     enable_secure_login_check: false,
     marketplace_gallery: false, facebook_public_api: false, twitter_public_api: false, retry_emails: false,
@@ -246,7 +245,7 @@ class Account < ActiveRecord::Base
     omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false,
     ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false,
     twitter_api_compliance: false, omni_agent_availability_dashboard: false, explore_omnichannel_feature: false, hide_omnichannel_toggle: false,
-    chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false
+    chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false
   }.freeze
   
   BLOCK_GRACE_PERIOD = 90.days

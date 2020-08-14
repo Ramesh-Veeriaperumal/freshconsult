@@ -575,7 +575,8 @@
     :exclude: []
   :forest_omni_jan_20:
     :name: Forest Omni Channel
-    :features: []
+    :features:
+      - :autofaq_eligible
     :inherits:
       - :forest_jan_20
     :exclude: []

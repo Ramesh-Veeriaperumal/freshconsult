@@ -39,7 +39,7 @@ class ContactValidation < ApiValidation
                                 field_validations: DEFAULT_FIELD_VALIDATIONS
                               }
 
-  validates :name, data_type: { rules: String, allow_nil: true }, unless: -> { validation_context == :channel_contact_create }
+  validates :name, data_type: { rules: String, allow_nil: true }, unless: -> { validation_context == :channel_contact }
   validates :name, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :view_all_tickets, data_type: { rules: 'Boolean',  ignore_string: :allow_string_param, allow_nil: true }
   validates :tags, data_type: { rules: Array, allow_nil: false }, array: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }, string_rejection: { excluded_chars: [','], allow_nil: true }
@@ -115,13 +115,13 @@ class ContactValidation < ApiValidation
     validatable_custom_fields: proc { |x| x.valid_custom_fields },
     required_attribute: :required_for_agent,
     ignore_string: :allow_string_param
-  } }, unless: -> { [:quick_create, :update_password, :channel_contact_create].include?(validation_context) }
+  } }, unless: -> { [:quick_create, :update_password, :channel_contact].include?(validation_context) }
       
   validates :custom_fields, allow_nil: true, custom_field: { custom_fields: {
       validatable_custom_fields: proc { Account.current.contact_form.custom_non_dropdown_fields },
       ignore_string: :allow_string_param
     }
-  }, if: -> { validation_context == :channel_contact_create }
+  }, if: -> { validation_context == :channel_contact }
 
   validates :avatar, data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true }, file_size: {
     max: ContactConstants::ALLOWED_AVATAR_SIZE
@@ -165,7 +165,7 @@ class ContactValidation < ApiValidation
       []
     when :quick_create
       []
-    when :channel_contact_create
+    when :channel_contact
       []
     when :requester_update
       contact_form.default_widget_fields.select(&:required_for_agent)

@@ -11,6 +11,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     @group = nil
     @account.stubs(:segments_enabled?).returns(true)
     @account.stubs(:sla_management_enabled?).returns(true)
+    Language.stubs(:current).returns(Language.find_by_code('en'))
   end
 
   after(:all) do
@@ -23,6 +24,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     @group.delete if !@group.nil?
     @account.unstub(:segments_enabled?)
     @account.unstub(:sla_management_enabled?)
+    Language.unstub(:current)
   end
 
   def wrap_cname(params)
@@ -2740,5 +2742,29 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     post :create, construct_params(params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('name', :duplicate_name_in_sla_policy, code: :invalid_value, policy_name: @sla_policy.name)])
+  end
+
+  def test_create_sla_with_valid_custom_source
+    Account.any_instance.stubs(:ticket_source_revamp?).returns(true)
+    source_choice = create_custom_source_helper
+    # Need to find a better way to test source_choices method
+    account_choice_id = Helpdesk::Source.source_choices(:ticket_source_keys_by_token).select { |ch| ch.reverse![0] == source_choice.account_choice_id }.flatten[0]
+    params_hash = { name: Faker::Lorem.word, applicable_to: { sources: [account_choice_id] }, sla_target: create_sla_target }
+    post :create, construct_params(params_hash)
+    assert_response 201
+    response = parse_response @response.body
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
+  ensure
+    Account.any_instance.unstub(:ticket_source_revamp?)
+    source_choice.delete
+    Helpdesk::SlaPolicy.last.delete
+  end
+
+  def test_create_sla_with_invalid_custom_source
+    params_hash = { name: Faker::Lorem.word, applicable_to: { sources: [125] }, sla_target: create_sla_target }
+    post :create, construct_params(params_hash)
+    assert_response 400
+    response = parse_response @response.body
+    match_json([bad_request_error_pattern('sources', :invalid_list, list: '125')])
   end
 end

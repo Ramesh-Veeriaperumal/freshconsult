@@ -1,5 +1,15 @@
 class ConversationBaseDelegator < BaseDelegator
   include Redis::UndoSendRedis
+
+  def initialize(record, options = {})
+    options[:attachment_ids] = skip_existing_attachments(options) if options[:attachment_ids]
+    super(record, options)
+  end
+
+  def skip_existing_attachments(options)
+    options[:attachment_ids] - (options[:parent_attachments] || []).map(&:id) - (options[:shared_attachments] || []).map(&:id)
+  end
+
   def validate_unseen_replies
     traffic_cop_note_id = notable.notes.conversations(nil, 'created_at DESC', 1).pluck(:id).try(:first)
     unseen_notes_exists = (traffic_cop_note_id || 0) > last_note_id

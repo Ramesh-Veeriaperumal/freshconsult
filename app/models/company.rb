@@ -10,11 +10,11 @@ class Company < ActiveRecord::Base
   include InstalledAppBusinessRules::Methods
 
   validates_presence_of :name,:account
-  validates_uniqueness_of :name, :scope => :account_id , :case_sensitive => false
+  validates_uniqueness_of :name, :scope => :account_id , :case_sensitive => false, unless: :uniqueness_validated
   attr_accessible :name,:description,:note,:domains ,:sla_policy_id, :import_id,
                   :domain_name, :health_score, :account_tier, :renewal_date, :industry
   attr_accessor :highlight_name, :escape_liquid_attributes, :validatable_default_fields,
-                :avatar_changes, :custom_fields_hash
+                :avatar_changes, :custom_fields_hash, :uniqueness_validated
 
   xss_sanitize  :only => [:name], :plain_sanitizer => [:name]
   alias_attribute :domain_name, :domains

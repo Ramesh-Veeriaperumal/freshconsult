@@ -59,6 +59,18 @@ class SchedulerCancelMessageTest < ActionView::TestCase
     RestClient::Request.any_instance.unstub(:execute)
   end
 
+  def test_cancel_message_monthly_annual_notification
+    WebMock.allow_net_connect!
+    Account.stubs(:current).returns(Account.first)
+    @account = Account.current
+    responses = ::Scheduler::CancelMessage.new.perform(job_ids: Array("#{@account.id}_monthly_to_annual_4"), group_name: ::SchedulerClientKeys['monthly_to_annual_group_name'])
+    responses.each do |response|
+      assert_includes SUCCESS, response.to_i, "Expected one of #{SUCCESS}, got #{response}"
+    end
+  ensure
+    WebMock.disable_net_connect!
+  end
+
   private
 
     def job_id

@@ -584,3 +584,11 @@ api_error_messages:
   require_group_id: "The group_id param is required along with the channel"
   require_channel: "The channel param is required along with the group_id"
   require_availability: "only=availability param is required for the given %{param} param"
+
+  invalid_date_for_holidays: "Day should be from %{range} inclusive in {D, DD} format"
+  invalid_start_end_business_time: "HH should be between 0 and 23 inclusive and MM should one of the '00, 30, 59'"
+  invalid_minute_on_24_hours: "MM as 59 should be only present if the HH is 23, otherwise please use MM as 00 or 30"
+  invalid_time_slot: "Please enter a valid time slot"
+  time_slot_count_for_channel_error: "Too many time slots for '%{value}' channel in '%{name}'"
+  duplicate_holiday_date: "Duplicate holiday date is present"
+  duplicate_business_day: "Duplicate business day is present"
