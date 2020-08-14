@@ -32,7 +32,7 @@ class Account < ActiveRecord::Base
     :prevent_wc_ticket_create, :allow_wildcard_ticket_create, :requester_privilege,
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr, :asset_management,
     :csat_email_scan_compatibility, :mint_portal_applicable, :quoted_text_parsing_feature,
-    :email_mailbox, :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
+    :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
     :fluffy_min_level, :allow_update_agent, :launch_fsm_geolocation, :geolocation_historic_popup,
     :ticket_field_revamp, :hide_mailbox_error_from_agents, :hide_og_meta_tags, :disable_occlusion_rendering,
     :jira_onpremise_reporter, :sidekiq_logs_to_central, :encode_emoji_in_solutions,
