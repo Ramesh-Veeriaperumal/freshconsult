@@ -422,7 +422,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       action_in_bhrs: action_in_bhrs?,
       pod: ChannelFrameworkConfig['pod'],
       hypertrail_version: CentralConstants::HYPERTRAIL_VERSION,
-      marketplace_event: valid_marketplace_event?(event_name)
+      app_update: valid_app_event?(event_name)
     }.merge(lifecycle_hash).merge(activity_hash)
   end
 
