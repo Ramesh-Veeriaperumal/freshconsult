@@ -141,14 +141,12 @@ module Freshchat
       def agent_post_request_body
         request_body = {
           email: @user.email,
-          avatar: {
-            url: @user.avatar_url
-          },
           phone: @user.phone,
           biography: @user.description,
           first_name: @user.full_name[:first_name],
           role_id: freshchat_role(@user.role_ids.min)
         }
+        request_body[:avatar] = { url: @user.avatar_url } if @user.avatar.present?
         request_body[:last_name] = @user.full_name[:last_name] if @user.full_name[:last_name]
         request_body
       end
