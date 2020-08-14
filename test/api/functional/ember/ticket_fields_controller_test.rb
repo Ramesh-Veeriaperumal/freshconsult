@@ -190,8 +190,7 @@ module Ember
     def test_index_with_custom_translations_for_source_with_same_user_language
       source_field = Account.current.ticket_fields.where(field_type: 'default_source').first
       stub_params_for_custom_translations('fr')
-      create_custom_source
-      custom_source = Account.current.helpdesk_sources.last
+      custom_source = @account.helpdesk_sources.visible.custom.last || create_custom_source
       ct = create_custom_translation(source_field.id, 'fr', source_field.name, source_field.label_in_portal, [[custom_source.account_choice_id, custom_source.name]]).translations
       get :index, controller_params(version: 'private')
       assert_response 200
