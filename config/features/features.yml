@@ -400,6 +400,7 @@
       :quality_management_system: 396
       :kb_allow_base64_images: 397
       :triage_ultimate: 398
+      :autofaq_eligible: 399
 :selectable_features:
   :redis_display_id: true
   :branding: true
