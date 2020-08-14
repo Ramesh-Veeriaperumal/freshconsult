@@ -22,7 +22,7 @@ class Account < ActiveRecord::Base
     :update_billing_info, :allow_billing_info_update,
     :native_apps, :archive_tickets_api, :bot_agent_response,
     :fetch_ticket_from_ref_first,
-    :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp, :service_worker,
+    :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp,
     :ticket_field_limit_increase, :join_ticket_field_data, :bypass_signup_captcha,
     :simple_outreach, :disable_simple_outreach, :supervisor_text_field, :disable_mint_analytics,
     :freshid_org_v2, :hide_agent_login,

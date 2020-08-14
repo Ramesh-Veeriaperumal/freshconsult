@@ -1034,11 +1034,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def set_service_worker
-      if current_account.service_worker_enabled?
-        cookies[:service_worker] = true
-      else
-        cookies.delete 'service_worker'
-      end
+      cookies[:service_worker] = true
     end
 
     def supress_logs(temporary_level = Logger::ERROR)
