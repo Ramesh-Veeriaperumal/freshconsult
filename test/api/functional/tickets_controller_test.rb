@@ -7347,6 +7347,17 @@ class TicketsControllerTest < ActionController::TestCase
     agent.destroy if agent.present?
   end
 
+  def test_ticket_create_with_whatsapp_source_and_feature_enabled
+    Account.current.launch(:whatsapp_ticket_source)
+    type_field_names = @account.ticket_fields.where(field_type: 'default_ticket_type').all.first.picklist_values.map(&:value).join(',')
+    params = ticket_params_hash.merge(requester_id: requester.id, priority: 2, status: 3, source: 13)
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('source', :not_included, list: api_ticket_sources.join(','))])
+    assert_response 400
+  ensure
+    Account.current.rollback(:whatsapp_ticket_source)
+  end
+
   def create_ticket_params
     {
       subject: Faker::Lorem.characters(10),

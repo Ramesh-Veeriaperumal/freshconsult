@@ -83,7 +83,8 @@ module TicketConstants
     [ :feedback_widget,  'feedback_widget',  9 ],
     [ :outbound_email,   'outbound_email',   10],
     [:ecommerce,        'ecommerce',        11],
-    [:bot,              'bot',              12]
+    [:bot,              'bot',              12],
+    [:whatsapp,         'whatsapp',         13]
   ]
 
   SOURCE_OPTIONS_1 = SOURCES_1.map { |i| [i[1], i[2]] }
