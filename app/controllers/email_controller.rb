@@ -52,6 +52,8 @@ class EmailController < ApplicationController
       render :json => {:domain_status => 404, :user_status => :not_found, :created_at => nil, :account_type => nil, :account_id => nil}
     else
       shard = ShardMapping.lookup_with_domain(domain)
+      pod_info = shard.present? ? shard.pod_info : nil
+      redirect_email(pod_info) if pod_info.present? && PodConfig['CURRENT_POD'] != pod_info
       shard_status = shard.status
       if shard.ok?
         Sharding.select_shard_of(domain) do
