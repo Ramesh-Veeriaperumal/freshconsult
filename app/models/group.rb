@@ -28,7 +28,7 @@ class Group < ActiveRecord::Base
   after_commit :sync_sbrr_queues
 
   validates_presence_of :name
-  validates_uniqueness_of :name, :scope => :account_id, :case_sensitive => false
+  validates_uniqueness_of :name, :scope => :account_id, :case_sensitive => false, unless: :uniqueness_validated
 
   has_many :agent_groups,
            class_name: 'AgentGroup',
@@ -72,7 +72,7 @@ class Group < ActiveRecord::Base
   :ticket_assign_type, :toggle_availability, :business_calendar_id, :agent_groups_attributes,
   :capping_limit, :group_type
 
-  attr_accessor :capping_enabled, :agent_changes
+  attr_accessor :capping_enabled, :agent_changes, :uniqueness_validated
 
   accepts_nested_attributes_for :agent_groups, :allow_destroy => true
 

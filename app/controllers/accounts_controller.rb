@@ -380,13 +380,13 @@ class AccountsController < ApplicationController
         locale: nil,
         timezone: nil,
         alternate_url: '',
-        description: '',
-        token: perishable_token
+        description: ''
       },
       misc: {
         bundle_name: bundle_name,
         bundle_id: bundle_id,
-        account_domain: @signup.account.full_domain
+        account_domain: @signup.account.full_domain,
+        token: perishable_token
       }
     }
   end
@@ -635,6 +635,7 @@ class AccountsController < ApplicationController
         params[:signup][:bundle_id] = params[:misc][:bundle_id]
         params[:signup][:bundle_name] = params[:misc][:bundle_name]
       end
+      Rails.logger.info "Aloha signup :: #{params[:signup][:aloha_signup]}. Bundle signup :: #{params[:signup][:bundle_id].present?}"
     end
 
     def is_aloha_signup?

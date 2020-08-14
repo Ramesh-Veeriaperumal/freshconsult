@@ -614,8 +614,10 @@ class ApiAgentsControllerTest < ActionController::TestCase
     agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
     params = { email: @agent.email }
     put :update, construct_params({ id: agent.id }, params)
-    match_json([bad_request_error_pattern(:email, :'Email has already been taken')])
     assert_response 409
+    additional_info = parse_response(@response.body)['errors'][0]['additional_info']
+    assert_equal additional_info['agent_id'], @agent.id
+    match_json([bad_request_error_pattern_with_additional_info('email', additional_info, :'has already been taken')])
   end
 
   def test_update_agent_without_any_groups
@@ -1431,6 +1433,17 @@ class ApiAgentsControllerTest < ActionController::TestCase
     assert_equal response['agent_level_id'], 2
   ensure
     Account.unstub(:current)
+  end
+
+  def test_create_agent_with_existing_agent
+    email = Faker::Internet.email
+    agent = add_agent(@account, email: email)
+    params_hash = { email: email, ticket_scope: 1, name: Faker::Name.name }
+    post :create, construct_params(params_hash)
+    assert_response 409
+    additional_info = parse_response(@response.body)['errors'][0]['additional_info']
+    assert_equal additional_info['agent_id'], agent.id
+    match_json([bad_request_error_pattern_with_additional_info('email', additional_info, :'has already been taken')])
   end
 
   def test_create_agent_with_agent_level_id_gamification_disabled

@@ -98,7 +98,7 @@ class Helpdesk::BulkReplyTickets
       # Injecting '@skip_resource_rate_limit' instance variable to skip spam watcher
       note.instance_variable_set(:@skip_resource_rate_limit, true)
       build_attachments note
-      if skip_posting_to_fb && note.fb_note?
+      if note.fb_note?
         association_hash = ticket.is_fb_message? ? construct_dm_hash(ticket) : construct_post_hash(ticket)
         note.build_fb_post(association_hash)
         return note.save_note

@@ -22,6 +22,7 @@ class TicketTest < ActiveSupport::TestCase
 
   def setup
     super
+    @account = Account.current
     before_all
   end
 
@@ -701,5 +702,111 @@ class TicketTest < ActiveSupport::TestCase
     assert_equal 1, t.reload.schema_less_ticket.reports_hash['public_note_count']
     create_note(source: 0, ticket_id: t.id, user_id: @agent.id, private: false, body: Faker::Lorem.paragraph, category: 3)
     assert_equal 1, t.reload.schema_less_ticket.reports_hash['agent_reply_count']
+  end
+
+  def test_central_publish_payload_agent_assigned_flag_is_set_and_group_assigned_flag_is_set
+    group = create_group(@account)
+    t = create_ticket({ responder_id: @agent.id, group_id: group.id }, group)
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    assert_equal true, t.reports_hash['agent_assigned_flag']
+    assert_nil t.reports_hash['agent_reassigned_flag']
+    assert_equal true, t.reports_hash['group_assigned_flag']
+    assert_nil t.reports_hash['group_reassigned_flag']
+  ensure
+    t.destroy
+  end
+
+  def test_central_publish_payload_agent_reassigned_flag_is_set_and_group_reassigned_flag_is_set
+    assigned_group = create_group(@account)
+    reassigned_group = create_group(@account)
+    reassigned_agent = add_test_agent(@account)
+    t = create_ticket({ responder_id: @agent.id, group_id: assigned_group.id }, assigned_group)
+    assert_equal true, t.reports_hash['agent_assigned_flag']
+    assert_nil t.reports_hash['agent_reassigned_flag']
+    assert_equal true, t.reports_hash['group_assigned_flag']
+    assert_nil t.reports_hash['group_reassigned_flag']
+    t.attributes = { responder_id: reassigned_agent.id, group_id: reassigned_group.id, group: reassigned_group }
+    t.save
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    assert_equal true, t.reports_hash['agent_assigned_flag']
+    assert_equal true, t.reports_hash['agent_reassigned_flag']
+    assert_equal true, t.reports_hash['group_assigned_flag']
+    assert_equal true, t.reports_hash['group_reassigned_flag']
+  ensure
+    t.destroy
+  end
+
+  def test_central_publish_payload_agent_assigned_flag_is_unset_and_group_assigned_flag_is_unset
+    group = create_group(@account)
+    t = create_ticket({ responder_id: @agent.id, group_id: group.id }, group)
+    assert_equal true, t.reports_hash['agent_assigned_flag']
+    assert_nil t.reports_hash['agent_reassigned_flag']
+    assert_equal true, t.reports_hash['group_assigned_flag']
+    assert_nil t.reports_hash['group_reassigned_flag']
+    t.attributes = { responder_id: nil, group_id: nil, group: nil }
+    t.save
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    assert_nil t.reports_hash['agent_assigned_flag']
+    assert_nil t.reports_hash['group_assigned_flag']
+  ensure
+    t.destroy
+  end
+
+  def test_central_publish_payload_internal_agent_assigned_flag_is_set_and_internal_group_assigned_flag_is_set
+    Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
+    initialize_internal_agent_with_default_internal_group(permission = 3)
+    t = create_ticket({ status: @status.status_id, responder_id: nil, internal_agent_id: @internal_agent.id }, nil, @internal_group)
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    assert_equal true, t.reports_hash['internal_agent_assigned_flag']
+    assert_nil t.reports_hash['internal_agent_reassigned_flag']
+    assert_equal true, t.reports_hash['internal_group_assigned_flag']
+    assert_nil t.reports_hash['internal_group_reassigned_flag']
+  ensure
+    t.destroy
+    Account.any_instance.unstub(:shared_ownership_enabled?)
+  end
+
+  def test_central_publish_payload_internal_agent_reassigned_flag_is_set_and_internal_group_reassigned_flag_is_set
+    Account.current.add_feature(:shared_ownership)
+    initialize_internal_agent_with_default_internal_group(permission = 3)
+    t = create_ticket({ status: @status.status_id, responder_id: nil, internal_agent_id: @internal_agent.id }, nil, @internal_group)
+    assert_equal true, t.reports_hash['internal_agent_assigned_flag']
+    assert_equal nil, t.reports_hash['internal_agent_reassigned_flag']
+    assert_equal true, t.reports_hash['internal_group_assigned_flag']
+    assert_equal nil, t.reports_hash['internal_group_reassigned_flag']
+    add_another_group_to_status
+    t.attributes = { internal_group_id: @another_internal_group.id, internal_group: @another_internal_group }
+    t.save
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    assert_nil t.reports_hash['internal_agent_assigned_flag']
+    assert_equal true, t.reports_hash['internal_group_assigned_flag']
+    assert_equal true, t.reports_hash['internal_group_reassigned_flag']
+  ensure
+    t.destroy
+    Account.current.remove_feature(:shared_ownership)
+  end
+
+  def test_central_publish_payload_internal_agent_assigned_flag_is_unset_and_internal_group_assigned_flag_is_unset
+    Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
+    initialize_internal_agent_with_default_internal_group(permission = 3)
+    t = create_ticket({ status: @status.status_id, responder_id: nil, internal_agent_id: @internal_agent.id }, nil, @internal_group)
+    assert_equal true, t.reports_hash['internal_agent_assigned_flag']
+    assert_nil t.reports_hash['internal_agent_reassigned_flag']
+    assert_equal true, t.reports_hash['internal_group_assigned_flag']
+    assert_nil t.reports_hash['internal_group_reassigned_flag']
+    t.attributes = { internal_agent_id: nil, internal_group_id: nil, internal_group: nil }
+    t.save
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    assert_nil t.reports_hash['internal_agent_assigned_flag']
+    assert_nil t.reports_hash['internal_group_assigned_flag']
+  ensure
+    t.destroy
+    Account.any_instance.unstub(:shared_ownership_enabled?)
   end
 end

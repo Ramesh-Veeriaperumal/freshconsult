@@ -84,7 +84,7 @@
 	freshfone.isCallQualityMetricsEnabled = <%= current_account.features?(:call_quality_metrics)%>;
 	freshfone.agent_count = "<%= t('freshfone.widget.agents_count.one') %>";
 	freshfone.agents_count = "<%= t('freshfone.widget.agents_count.other') %>";
-	freshfone.newNotifications = <%=current_account.launched?(:freshfone_new_notifications) %>;
+	freshfone.newNotifications = true;
 	
   freshfone.ringingTime = <%= freshfone_numbers.present? ?  freshfone_numbers.first.ringing_time : 30 %>;
   freshfone.isAdmin = <%= current_user.privilege?(:admin_tasks) %>

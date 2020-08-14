@@ -272,10 +272,6 @@ module Freshfone::FreshfoneUtil
       current_call.user_id.to_s == (params[:agent_id] || params[:agent])
   end
 
-  def new_notifications?
-    ::Account.current.launched?(:freshfone_new_notifications)
-  end
-
   def warm_transfer_enabled?
     current_account.features?(:freshfone_warm_transfer)
   end

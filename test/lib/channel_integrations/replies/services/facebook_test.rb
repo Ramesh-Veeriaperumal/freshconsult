@@ -13,13 +13,11 @@ module ChannelIntegrations::Replies::Services
       @account = Account.first || create_test_account
       @user = @account.users.first
       Account.stubs(:current).returns(@account)
-      Account.current.launch(:csat_for_social_surveymonkey)
     end
 
     def teardown
       super
       Account.unstub(:current)
-      Account.current.rollback(:csat_for_social_surveymonkey)
     end
 
     def test_receive_sm_facebook_update_schemaless_notes

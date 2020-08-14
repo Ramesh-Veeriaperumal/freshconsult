@@ -41,6 +41,7 @@ Helpkit::Application.routes.draw do
       resources :business_calendars, controller: 'api_business_calendars', only: [:index, :show]
       put '/custom_translations', to: 'custom_translations#upload'
       get '/custom_translations', to: 'custom_translations#download'
+      get 'holidays/:id', to: 'holidays#show'
 
       resource :freshcaller_account, controller: 'freshcaller_account', only: [:show, :create, :update, :destroy] do
         collection do
@@ -1028,6 +1029,7 @@ Helpkit::Application.routes.draw do
     get '/solutions/categories/:id', to: 'channel/v2/api_solutions/categories#show'
     get '/solutions/categories/:id/folders', to: 'channel/v2/api_solutions/folders#category_folders'
     get '/solutions/folders/:id', to: 'channel/v2/api_solutions/folders#show'
+    get '/solutions/folders', to: 'channel/v2/api_solutions/folders#folder_filter'
     get '/solutions/articles/:id', to: 'channel/v2/api_solutions/articles#show'
     get '/solutions/folders/:id/articles', to: 'channel/v2/api_solutions/articles#folder_articles'
   end

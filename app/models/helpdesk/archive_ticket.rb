@@ -163,7 +163,9 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def source_name
-    TicketConstants.translate_source_name(source)
+    return TicketConstants.translate_source_name(source) unless Account.current.ticket_source_revamp_enabled?
+
+    ticket_source.translated_source_name
   end
 
   def priority_name

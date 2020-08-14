@@ -39,7 +39,6 @@ module Ember
       Social::CustomTwitterWorker.stubs(:perform_async).returns(true)
       @twitter_handle = get_twitter_handle
       @default_stream = @twitter_handle.default_stream
-      Account.current.launch(:skip_posting_to_fb)
       # Deleting ticket fields starting with number (which is not allowed in our product)
       Account.current.ticket_fields.custom_fields.each do |tf|
         tf.destroy if (tf.name =~ /^[0-9]/).try(:zero?)
@@ -51,7 +50,6 @@ module Ember
       MixpanelWrapper.unstub(:send_to_mixpanel)
       Social::CustomTwitterWorker.unstub(:perform_async)
       Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
-      Account.current.rollback(:skip_posting_to_fb)
     end
 
     def wrap_cname(params)
@@ -816,78 +814,10 @@ module Ember
       match_json([bad_request_error_pattern('note_id', :absent_in_db, resource: :note, attribute: :note_id)])
     end
 
-    def test_facebook_reply_failure
-      Account.current.rollback(:skip_posting_to_fb)
-      ticket = create_ticket_from_fb_post
-      @controller.stubs(:send_reply_to_fb).returns(:failure)
-      params_hash = { body: Faker::Lorem.paragraph, msg_type: 'post' }
-      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
-      assert_response 400
-      match_json([bad_request_error_pattern('body', :unable_to_perform)])
-      @controller.unstub(:send_reply_to_fb)    
-    end
-
-   def test_facebook_reply_to_fb_dm_ticket_when_user_blocked
-      Account.current.rollback(:skip_posting_to_fb)
-      ticket = create_ticket_from_fb_direct_message
-      @controller.stubs(:send_reply_to_fb).returns(:fb_user_blocked)
-      params_hash = { body: Faker::Lorem.paragraph, msg_type: 'dm' }
-      res = post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
-      assert_response 400
-      match_json([bad_request_error_pattern('body', :facebook_user_blocked)])
-      @controller.unstub(:send_reply_to_fb)
-    end
-
-    def test_facebook_reply_to_fb_post_ticket
-      Account.current.rollback(:skip_posting_to_fb)
-      ticket = create_ticket_from_fb_post
-      put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
-      sample_put_comment = { 'id' => put_comment_id }
-      Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
-      params_hash = { body: Faker::Lorem.paragraph, msg_type: 'post' }
-      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
-      Koala::Facebook::API.any_instance.unstub(:put_comment)
-      assert_response 201
-      latest_note = Helpdesk::Note.last
-      match_json(private_note_pattern(params_hash, latest_note))
-    end
-
-    def test_facebook_reply_to_fb_comment_note
-      Account.current.rollback(:skip_posting_to_fb)
-      ticket = create_ticket_from_fb_post(true)
-      put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
-      sample_put_comment = { 'id' => put_comment_id }
-      fb_comment_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
-      Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
-      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id, msg_type: 'post' }
-      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
-      Koala::Facebook::API.any_instance.unstub(:put_comment)
-      assert_response 201
-      latest_note = Helpdesk::Note.last
-      match_json(private_note_pattern(params_hash, latest_note))
-    end
-
-    def test_facebook_reply_to_fb_direct_message_ticket
-      Account.current.rollback(:skip_posting_to_fb)
-      ticket = create_ticket_from_fb_direct_message
-      sample_reply_dm = { 'id' => Time.now.utc.to_i + 5 }
-      Koala::Facebook::API.any_instance.stubs(:put_object).returns(sample_reply_dm)
-      params_hash = { body: Faker::Lorem.paragraph, msg_type: 'dm' }
-      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
-      Koala::Facebook::API.any_instance.unstub(:put_object)
-      assert_response 201
-      latest_note = Helpdesk::Note.last
-      match_json(private_note_pattern(params_hash, latest_note))
-    end
-
     def test_facebook_reply_with_survey_to_fb_direct_message_ticket
-      skip_posting_to_fb_launched = Account.current.launched?(:skip_posting_to_fb)
-      Account.current.rollback(:skip_posting_to_fb)
-      Account.any_instance.stubs(:csat_for_social_surveymonkey_enabled?).returns(true)
       Social::FacebookSurveyWorker.jobs.clear
       ticket = create_ticket_from_fb_direct_message
       sample_reply_dm = { 'id' => Time.now.utc.to_i + 5 }
-      Koala::Facebook::API.any_instance.stubs(:put_object).returns(sample_reply_dm)
       params_hash = { body: Faker::Lorem.paragraph, msg_type: 'dm', include_surveymonkey_link: 1 }
       app_config = { inputs: { 'survey_link' => 'https://www.surveymonkey.com/r/NMWK2SF', 'survey_text' => 'Please fill the survey' } }
       app = { id: 1, application_id: 1 }
@@ -906,8 +836,6 @@ module Ember
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params_hash, latest_note))
     ensure
-      Account.current.launch(:skip_posting_to_fb) if skip_posting_to_fb_launched
-      Account.any_instance.unstub(:csat_for_social_surveymonkey_enabled)
       Integrations::SurveyMonkey.unstub(:sm_installed_app)
       Koala::Facebook::API.any_instance.unstub(:put_object)
     end
@@ -939,21 +867,6 @@ module Ember
       match_json([bad_request_error_pattern('agent_id', :absent_in_db, resource: :agent, attribute: :agent_id)])
     end
 
-    def test_facebook_reply_with_valid_agent_id
-      Account.current.rollback(:skip_posting_to_fb)
-      user = add_test_agent(account, role: account.roles.find_by_name('Agent').id)
-      ticket = create_ticket_from_fb_direct_message
-      sample_reply_dm = { 'id' => Time.now.utc.to_i + 5 }
-      Koala::Facebook::API.any_instance.stubs(:put_object).returns(sample_reply_dm)
-      params_hash = { body: Faker::Lorem.paragraph, agent_id: user.id, msg_type: 'post' }
-      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
-      Koala::Facebook::API.any_instance.unstub(:put_object)
-      assert_response 201
-      latest_note = Helpdesk::Note.last
-      match_json(private_note_pattern(params_hash, latest_note))
-      match_json(private_note_pattern({}, latest_note))
-    end
-
     def test_facebook_reply_to_spammed_ticket
       ticket = create_ticket_from_fb_direct_message
       ticket.update_attributes(spam: true)
@@ -962,26 +875,6 @@ module Ember
       assert_response 404
     ensure
       ticket.update_attributes(spam: false)
-    end
-
-    def test_facebook_reauth_required_error
-      Account.current.rollback(:skip_posting_to_fb)
-      ticket = create_ticket_from_fb_post(true)
-      fb_page = ticket.fb_post.facebook_page
-      fb_page.reauth_required = true
-      fb_page.save
-      fb_comment_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
-      put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
-      sample_put_comment = { 'id' => put_comment_id }
-      Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
-      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id, msg_type: 'post' }
-      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
-      Koala::Facebook::API.any_instance.unstub(:put_comment)
-      assert_response 400
-      match_json([bad_request_error_pattern('fb_page_id', :reauthorization_required, app_name: 'Facebook')])
-    ensure
-      fb_page.reauth_required = false
-      fb_page.save
     end
 
     def test_facebook_reply_without_facebook_page
@@ -1047,22 +940,6 @@ module Ember
       match_json([bad_request_error_pattern('attachment_ids', :can_have_only_one_field, list: 'body, attachment_ids')])
     end
 
-    # Can be removed once we do a launch all of the facebook outgoing attachments feature
-    def test_facebook_reply_to_fb_comment_note_without_attachments
-      Account.current.rollback(:skip_posting_to_fb)
-      ticket = create_ticket_from_fb_post(true)
-      put_comment_id = "#{(Time.now.ago(2.minutes).utc.to_f * 100_000).to_i}_#{(Time.now.ago(6.minutes).utc.to_f * 100_000).to_i}"
-      sample_put_comment = { 'id' => put_comment_id }
-      fb_comment_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
-      Koala::Facebook::API.any_instance.stubs(:put_comment).returns(sample_put_comment)
-      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id, msg_type: 'post' }
-      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
-      Koala::Facebook::API.any_instance.unstub(:put_comment)
-      assert_response 201
-      latest_note = Helpdesk::Note.last
-      match_json(private_note_pattern(params_hash, latest_note))
-    end
-
     def test_facebook_reply_to_fb_comment_with_attachments
       attachment_ids = []
       file = fixture_file_upload('files/image4kb.png', 'image/png')
@@ -1124,7 +1001,6 @@ module Ember
       dm_text = Faker::Lorem.paragraphs(5).join[0..500]
       @account = Account.current
       Social::TwitterSurveyWorker.jobs.clear
-      Account.any_instance.stubs(:csat_for_social_surveymonkey_enabled?).returns(true)
       reply_id = get_social_id
       params_hash = twitter_dm_reply_params_hash.merge(include_surveymonkey_link: 1)
       app_config = { inputs: { 'survey_link' => 'https://www.surveymonkey.com/r/NMWK2SF', 'survey_text' => 'Please fill the survey' } }
@@ -1150,7 +1026,6 @@ module Ember
       match_json(private_note_pattern(params_hash, latest_note))
       ticket.destroy
     ensure
-      Account.unstub(:csat_for_social_surveymonkey_enabled?)
       Integrations::SurveyMonkey.unstub(:sm_installed_app)
     end
 

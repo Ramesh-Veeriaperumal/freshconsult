@@ -1142,6 +1142,8 @@
         },
         "shards": {
           "shard_1": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:II2ztYdlYnTwGsrLWqB+WNaSf0gb2hXk:x/h9bmR6YG6jH7nw/vUCS6y9GET+5tspc3k=]",
             "_database": "helpkit",
             "_username": "dbuser",
@@ -1162,6 +1164,8 @@
               }
           },
           "shard_2": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:UBSRVbSoJ/g6Ai5zIiNNSO+bVtVLqP37:3x39qlpx1RQaQboaPS82XEqfPLMEKKlZqkk=]",
             "_database": "helpkit",
             "_username": "dbuser",
@@ -1182,6 +1186,8 @@
                         }
           },
           "shard_3": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:lxJeNO+jjkIrk5/xElBAF7UtvPuN8D5S:8sWGjZPxWXZ0gMuRH2iB+73yS+BUuCSxfd8=]",
             "_database": "helpkit",
             "_username": "dbuser",
@@ -1202,6 +1208,8 @@
                         }
           },
           "shard_4": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:dh+LSQqhsVOKjOGqPl4wLR+6eteeYH+Y:H7KR/K354Ga3rrWVsfQV8ymGFnN3tAKOrCY=]",
             "_database": "helpkit",
             "_username": "dbuser",
@@ -1222,6 +1230,8 @@
                          }
           },
           "shard_5": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:YvXqnNWwc61ItLX+rNH5BJOpbKj5nwl/:rn4CEeH48a9zdtJOff/eh+12EuNeHhhcY/A=]",
             "_database": "helpkit",
             "_username": "dbuser",
@@ -1242,6 +1252,8 @@
                          }
           },
           "shard_6": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:PRVk1T+UshUByBOAFDIkrGSPVtuX7OIB:lOf78nhoM/+pRVl8GtvvI7QKhlIczVst2v0=]",
             "_database": "helpkit",
             "_username": "dbuser",
@@ -1263,6 +1275,8 @@
           },
           "shard_7": {
             "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
+            "_proxy_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:pEERhib/4goWRwbcqT7NAMCeNdT3FtZJ:0brRueaR4y6SIwjvol0NDs+Ct8CsgmfrHpc=]",
             "_database": "helpkit",
             "_username": "dbuser",
@@ -1283,6 +1297,8 @@
                          }
           },
           "shard_8": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:rr1peQaECEsZhZliAkbi/cuhupJLM+Wv:/Owx9VY5fa1FBjfl3MZ4JRUJTJZopacRUGQ=]",
             "_database": "helpkit",
             "_username": "dbuser",
@@ -1303,6 +1319,8 @@
                          }
           },
           "shard_9": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:KcND/vWprbuFRoh3b1nSW2SG8kA/MZl9:8QppqdsnAxWN5EW/ubBSSdvO5Re7TLbDHcU=]",
             "_database": "helpkit",
             "_username": "dbuser",
@@ -1323,6 +1341,8 @@
                          }
           },
           "shard_10": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:iqdvvZLHgw523Ap2CNNOTHOAD8uw4WuQ:ENDvkdQj+b9D/OYD6nCsU2V6C7xJnEmCFwY=]",
             "_database": "helpkit",
             "_username": "dbuser",
@@ -1343,6 +1363,8 @@
                          }
           },
           "shard_11": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:NaX3YrdIENJVByRHntcGhzKeQ33rdk5K:7qau4XohcXCeXj6YgNShHKb8s28wILQY030=]",
             "_database": "helpkit",
             "_username": "dbuser",
@@ -1364,6 +1386,8 @@
           },
           "shard_12": {
             "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
+            "_proxy_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:Lp0MraBBoYWFMDgSkCUI51RUXYO5NSO1:kzfzrxZ1TP89DT31YzDrsyhWEs3aCi5bmkE=]",
             "_database": "helpkit",
             "_username": "dbuser",
@@ -1384,6 +1408,8 @@
                       }
           },
           "shard_13": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:WN3jMFqlteV4XLco9o4ZU6DncBXKL7+P:FApfeip2ZRqat6bqunID0ZKVuLDceJmNh80=]",
             "_database": "helpkit",
             "_username": "dbuser",
@@ -1404,6 +1430,8 @@
                        }
           },
           "shard_14": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:PJoWDqasjuDFr2629Tijy5INfqyVmAZV:gE4gqWIdpzgMqKNh3XFnNTfFpBxrV29oXas=]",
             "_database": "helpkit",
             "_username": "dbuser",
@@ -1420,10 +1448,12 @@
                           "password": "EJ[1:zzarN1gahUibzZVeZYuPe/6X97lICgJZE970hizw8VE=:EAWqJZwzqb/oPa98cQZtATVj+VHWDrln:R1RwsveStLNtMoPlqERJIdFaj3Z9oypvyZ8J]",
                           "_host": "127.0.0.1",
                           "_port": "6033",
-                          "_username": "shard_13_writer"
+                          "_username": "shard_14_writer"
                        }
           },
           "shard_15": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "_proxy_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:nwPDUlT590P1XDOFxzPQ7l9C/aDxTiAy:5+nEzEaeONiNKI+Z9S/O5dCODuo1DGKpOm0=]",
             "_database": "helpkit",
@@ -1453,6 +1483,8 @@
             "_slave1_host": "shard16slave1.internal.poduseast1.freshdesk.com"
           },
           "shard_17": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:Yqf3vN02FcQXbpjQsZGVZ5mg/ANsHO8A:6CKNdkRzTtamKKdLCcG8azFbGhrIo3GMk7A=]",
             "_database": "helpkit",
             "_username": "dbuser",
@@ -1473,6 +1505,8 @@
                        }
           },
           "shard_18": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:G0wyAackIEN4XwuiiCuaI1UofK/zohkX:7wineFJkSrJxv6q8ofr/0YEM2ISJRXqm294=]",
             "_database": "helpkit",
             "_username": "dbuser",
@@ -1518,6 +1552,7 @@
           },
           "shard_22": {
             "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:1/hOlpGdUu/Yw8opxMSuyqYgMAjlN538:8VzIowKL0ywaViirIiorSjLozSqDW7DohQ4=]",
             "_database": "helpkit",
             "_username": "dbuser",
@@ -1539,6 +1574,7 @@
           },
           "shard_23_1": {
             "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:ZlgftdIRmeIopobqcsI+7EwlcEen7US6:Zbw0CeoqAqsP1lZh4ivDd785UNvFYtZOuZQ=]",
             "_database": "helpkit_shard23_1",
             "_username": "dbuser",
@@ -1560,6 +1596,7 @@
           },
           "shard_23_2": {
             "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:JTk45hBc4qZmNMqmNZl1ybqqvb1SvU9c:dfobMOYT9O+2DGa3fAatR4UI28DY/8h+hEQ=]",
             "_database": "helpkit_shard23_2",
             "_username": "dbuser",
@@ -1581,6 +1618,7 @@
           },
           "shard_23_3": {
             "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:umrTJ5f7jLJc+AGOMPFe74cdA9pXByLw:Dm9T7rj4OaUcuBamD7qD85cgzYbNRuB7D4U=]",
             "_database": "helpkit_shard23_3",
             "_username": "dbuser",
@@ -1602,6 +1640,7 @@
             },
           "shard_23_4": {
             "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:Y7XYE6kmYiH8Baqp+46bAvpP0UAot0IX:0YqrgVPO3N5j0mmFS6prfh32D1ySPNfMY+s=]",
             "_database": "helpkit_shard23_4",
             "_username": "dbuser",
@@ -1623,6 +1662,7 @@
           },
           "shard_24_1": {
             "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:lG+ux6+yYeohRJUsnbqdYuW+V7THxOD/:NPFNz+UN1NGAXg/+dM4lqz9zNwz2VTpqqbA=]",
             "_database": "helpkit_shard24_1",
             "_username": "dbuser",
@@ -1644,6 +1684,7 @@
           },
           "shard_24_2": {
             "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:tC8i1Ib67n+U37c2oZe9r3SVi7al2tNh:jfOSq7LRjndKwU1WNLOyyYdYSxkOpoJTJMM=]",
             "_database": "helpkit_shard24_2",
             "_username": "dbuser",
@@ -1664,6 +1705,8 @@
                         }
           },
           "shard_24_3": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:m2YaShQ/npq8S8WfbRZ9fe3N5sSWGzuJ:AH2NKvVASvb7Vn3dDA/+yfIZi6IaG3DjZHo=]",
             "_database": "helpkit_shard24_3",
             "_username": "dbuser",
@@ -1685,6 +1728,7 @@
           },
           "shard_24_4": {
             "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:7+Q0TT8NOoDfLeD7QqGPHugPP7artoF1:12PE14P5rzaVRxa8sacZlQ+MEA1SxgshlVk=]",
             "_database": "helpkit_shard24_4",
             "_username": "dbuser",
@@ -1705,6 +1749,8 @@
                         }
           },
           "shard_24_5": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:5mIjsbIKgmhJiYNV3YfRwIlCUcUtODsM:4/NsUYaxE93ZX2EfTnGSlz+C6FtVsJY0T3o=]",
             "_database": "helpkit_shard24_5",
             "_username": "dbuser",
@@ -1726,6 +1772,7 @@
           },
           "shard_25_1": {
             "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:6i6x/DwmrbqYkYvyW+8A97tsBysD1dcO:+s1VazBRALHXPgk5SGwtLLb7btxRSKpFd7s=]",
             "_database": "helpkit_shard20",
             "_username": "dbuser",
@@ -1747,6 +1794,7 @@
           },
           "shard_25_2": {
             "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:lDl79flU6tNBg5nuLYlTj6JxoXKSOicF:p5pm3FXpWkgGvf9Jj9KN/1RgjcBYSlVLZP0=]",
             "_database": "helpkit_shard25_2",
             "_username": "dbuser",
@@ -1768,6 +1816,7 @@
           },
           "shard_25_3": {
             "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:BeeuOkfCEN0s5DDIDZkwQUrQGz57v1OU:ULmD2RDRMDsmWGJTq11gt7y8bIDZ/04NEsY=]",
             "_database": "helpkit_shard25_3",
             "_username": "dbuser",
@@ -1788,6 +1837,8 @@
                         }
           },
           "shard_26_1": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:cYEfIc4pXv3SlWLVvZq0Vglizu3NmBUv:6iF8uIJVtFQd3zXBCsDF5D2uEIhnolIagyI=]",
             "_database": "helpkit",
             "_username": "dbuser",
@@ -1808,6 +1859,8 @@
                         }
           },
           "shard_28": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:QdVOgcQpo/iszhzgi+l7a5nKbx46KHqG:t6VueCyLWke+mFF/rMXAaxO57IMoaq4ykZw=]",
             "_database": "helpkit",
             "_username": "dbuser",
@@ -1829,6 +1882,7 @@
           },
           "shard_29_1": {
             "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:EzZW2Z3ZVEFypBTyEtT4xktjCl+uYKH2:h32c743ozg7wUgjJWvcetSVkTBnDeWfo9zA=]",
             "_database": "helpkit_shard29_1",
             "_username": "dbuser",
@@ -1850,6 +1904,7 @@
           },
           "shard_29_2": {
             "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:kot5ojs/N6yuQ2LpOrRGATT6Ra3DjMev:tAJZ50wmUHMAOmhEPCPqfp4YGZdLRVW86HM=]",
             "_database": "helpkit_shard29_2",
             "_username": "dbuser",
@@ -1871,6 +1926,7 @@
           },
           "shard_30": {
             "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:ykQVnJfxi7OJTfsb1eoQ1Q5jhu4vAcap:6r1bGcNSdbj2rx3ID8uzIOl2+0pwvPYQrmM=]",
             "_database": "helpkit_shard29_1",
             "_username": "dbuser",
@@ -1892,6 +1948,7 @@
           },
           "shard_30_2": {
             "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:7n0RCO23zDu5APGlqnxKKjJw6KNC+jM1:M5OSVLark2mY71NaITflXjhph2f/i/jp0Bs=]",
             "_database": "helpkit_shard30_2",
             "_username": "dbuser",
@@ -1913,6 +1970,7 @@
           },
           "shard_31_1": {
             "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:ynPtXBwlkK5v8+coy5RLKXOciTslwPPt:14UpUYJwj4io0TbWxyQYz+bdn81unAXazH0=]",
             "_database": "helpkit_shard31_1",
             "_username": "dbuser",
@@ -1962,6 +2020,7 @@
           },
           "shard_32_1": {
             "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:0acACj7KwhWEKJyGAyW/NtSiI9dZdFJ7:bMuzUrmZDCEA3Nuo7qwfoHYGD5LqcIZGXzQ=]",
             "slave1": {
               "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:14KyPvCnlcbKjmdj9JOY8ms/EvsR8TT2:slB1YjAUa7TCL7yy8ATHfHaEQy6M+rGG/hw=]",
@@ -1995,6 +2054,7 @@
           },
           "shard_33_1": {
             "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:B+Cg+HMTVBmA6Rbiu6CiK4H91gbd3vCT:FrhXLvEkShXuEnyNSElCQNC1Gs3R/xIdBw==]",
             "slave1": {
               "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:5j/xdFC+fUezAFTlvbC+kbZdDMsz53ME:baoYPRbp3dlkFgUc3M4zMle1o2ixBqvIAA==]",
@@ -2027,6 +2087,8 @@
                         }
           },
           "shard_34": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:B+Cg+HMTVBmA6Rbiu6CiK4H91gbd3vCT:FrhXLvEkShXuEnyNSElCQNC1Gs3R/xIdBw==]",
             "slave1": {
               "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:5j/xdFC+fUezAFTlvbC+kbZdDMsz53ME:baoYPRbp3dlkFgUc3M4zMle1o2ixBqvIAA==]",
@@ -2059,6 +2121,8 @@
                         }
           },
           "shard_35": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:B+Cg+HMTVBmA6Rbiu6CiK4H91gbd3vCT:FrhXLvEkShXuEnyNSElCQNC1Gs3R/xIdBw==]",
             "slave1": {
               "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:5j/xdFC+fUezAFTlvbC+kbZdDMsz53ME:baoYPRbp3dlkFgUc3M4zMle1o2ixBqvIAA==]",
@@ -2092,6 +2156,7 @@
           },
           "shard_36_1": {
             "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:ynPtXBwlkK5v8+coy5RLKXOciTslwPPt:14UpUYJwj4io0TbWxyQYz+bdn81unAXazH0=]",
             "slave1": {
               "password": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:ynPtXBwlkK5v8+coy5RLKXOciTslwPPt:14UpUYJwj4io0TbWxyQYz+bdn81unAXazH0=]",
@@ -2124,6 +2189,8 @@
                         }
           },
           "shard_37": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "_database": "helpkit_shard37_1",
             "_host": "shard37.internal.poduseast1.freshdesk.com",
             "password": "EJ[1:ByWKFZCqMExeawDRUmyb+dlUALyLWxv2Zaw0UfcAogA=:ElhP88cf3byWNielOFoBl6p6Lk2JXfMf:/Wm+jtfGX/ZkkZFSTcwoQvapLbAUse5mRlA=]",
@@ -2156,6 +2223,8 @@
                         }
           },
           "shard_37_2": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "_database": "helpkit_shard37_2",
             "_host": "shard37.internal.poduseast1.freshdesk.com",
             "password": "EJ[1:ByWKFZCqMExeawDRUmyb+dlUALyLWxv2Zaw0UfcAogA=:ElhP88cf3byWNielOFoBl6p6Lk2JXfMf:/Wm+jtfGX/ZkkZFSTcwoQvapLbAUse5mRlA=]",
@@ -2188,6 +2257,8 @@
                         }
           },
           "shard_38_1": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "_database": "helpkit_shard38_1",
             "_host": "shard38.internal.poduseast1.freshdesk.com",
             "password": "EJ[1:OVnfsv+AA+xrg7NYWnjm5lXkIibpgs/9sfl4vd+ErHY=:tyb9YEZep/kymZnUo7QMpLVzwlfWphnH:CSkBGPYnQpajmmX3v63RHkKYUmqtgTNgsTY=]",
@@ -2220,6 +2291,8 @@
                         }
           },
           "shard_38_2": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "_database": "helpkit_shard38_2",
             "_host": "shard38.internal.poduseast1.freshdesk.com",
             "password": "EJ[1:sXdhl4wTy3DcJEgjLcVLqsJmaQKQ7CEXvRL+G1cjIFg=:o5uCExqCRWuCBnd59mIDreo1CiHh7LT7:GvC4AZcCIdVH4W8ScmFX9tuW8AL76k/Nl18=]",
@@ -2252,6 +2325,8 @@
                         }
           },
           "shard_38_3": {
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
             "_database": "helpkit_shard38_3",
             "_host": "shard38.internal.poduseast1.freshdesk.com",
             "password": "EJ[1:jx8zAIGILIDQoiQwLaNYE7o+Mj1voPjXfcUX8iq6GS0=:/0hay1VzxMOGNs9Xlg8vYZC/oDf7WK5r:na593n1PjUaBxueYSpGJx5hiJ/pyasYftMA=]",
@@ -2893,6 +2968,10 @@
         "silkroad": {
           "_auth_type": "jwt",
           "jwt_secret": ["EJ[1:5aqAmXevr3vhzp14n0UfovducF5CHNZ5nLcPZPN50jw=:GnpobHeg/WWgm0xRIrvk+aoGXW9cwZHq:qEFS98NV+HQfcHq5YLak5J5Wf4sHIxy/60XLUBATD3JukJujJEl5OiXE4+yVPj84ouoKXg==]"]
+        },
+        "kbservice": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:r56PBvuwhj1bvSek37wwPbH2uVqJ1KnZeQYnjqw5CEU=:JoAh/sXvy24fyyRzZuf8LXHoUXdjmV2z:QrVPniT/VPE7bp5qvjmsJZVIXa4RAj1HAA9vL6+IkzCBGBcf819D69a9ackb5KNV]"]
         }
       },
       "scheduler_client_keys": {

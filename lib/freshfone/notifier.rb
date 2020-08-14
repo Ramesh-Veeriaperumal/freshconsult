@@ -31,7 +31,7 @@ class Freshfone::Notifier
     if round_robin?(current_call)
       initiate_round_robin(current_call, pinged_agents)
     else
-      new_notifications? ? new_notify_browser_agents(current_call) : notify_browser_agents 
+      new_notify_browser_agents(current_call)
       notify_mobile_agents
     end
   end
@@ -67,7 +67,6 @@ class Freshfone::Notifier
     if freshfone_user.present?
       return notify_mobile_transfer(current_call, target_agent_id, source_agent_id) if freshfone_user.available_on_phone?
       Rails.logger.info "Notify Transfer :: #{params.inspect}, #{target_agent_id}"
-      return Freshfone::NotificationWorker.perform_async(params, target_agent_id, "browser_transfer") unless new_notifications?
       jid = Freshfone::RealtimeNotifier.perform_async(params.merge(enqueued_at: Time.now), current_call.descendants.last.id, [target_agent_id] , "browser_transfer") if current_call.descendants.present?
       Rails.logger.info "Account ID : #{current_account.id} - Call ID : #{current_call.id} - notify_transfer : Sidekiq Job ID #{jid}"
     end
@@ -79,7 +78,6 @@ class Freshfone::Notifier
     if freshfone_user.present?
       return notify_mobile_warm_transfer(current_call, target_agent_id, source_agent_id, warm_transfer_call) if freshfone_user.available_on_phone?
       Rails.logger.info "Notify Warm Transfer :: #{params.inspect}, #{target_agent_id}, source agent : #{source_agent_id}"
-      return Freshfone::NotificationWorker.perform_async(params, target_agent_id, 'browser_warm_transfer') unless new_notifications?
        jid = Freshfone::RealtimeNotifier.perform_async(params.merge(enqueued_at: Time.now),
                current_call.id, [target_agent_id], 'browser_warm_transfer')
       Rails.logger.info "Account ID : #{current_account.id} - Call ID : Source agent - #{source_agent_id} : target agent - #{target_agent_id} - #{current_call.id} - notify_warm_transfer : Sidekiq Job ID #{jid}"
@@ -151,7 +149,8 @@ class Freshfone::Notifier
     params.merge!({:call_id => current_call.id})
     store_agents_in_redis(current_call, available_agents)
     if agent.present? # need to handle exception case
-      return Freshfone::NotificationWorker.perform_async(params, agent, "round_robin") if !new_notifications? || mobile_agent?(agent)
+      return Freshfone::NotificationWorker.perform_async(params, agent, 'round_robin') if mobile_agent?(agent)
+
       jid = Freshfone::RealtimeNotifier.perform_async(params.merge(enqueued_at: Time.now), current_call.id, [agent[:id]], "round_robin")
       Rails.logger.info "Account ID : #{current_account.id} - Call ID : #{current_call.id} - initiate_round_robin : Sidekiq Job ID #{jid}"
       current_call.meta.reload.update_pinged_agent_ringing_at agent[:id]
@@ -167,8 +166,7 @@ class Freshfone::Notifier
     Rails.logger.info "cancel_other_agents => #{current_call.meta.pinged_agents.to_json}" if current_call.meta.present?
     params.merge!({ :call_id => current_call.id })
     Freshfone::NotificationWorker.perform_async(params, nil, "cancel_other_agents")
-    return unless new_notifications?
-    jid = Freshfone::RealtimeNotifier.perform_async(params.merge(enqueued_at: Time.now), current_call.id, nil, "cancel_other_agents") 
+    jid = Freshfone::RealtimeNotifier.perform_async(params.merge(enqueued_at: Time.now), current_call.id, nil, 'cancel_other_agents')
     Rails.logger.info "Account ID : #{current_account.id} - Call ID : #{current_call.id} - cancel_other_agents : Sidekiq Job ID #{jid}"
   end
 
@@ -185,10 +183,9 @@ class Freshfone::Notifier
 
   def cancel_warm_transfer(warm_transfer_call, call)
     Rails.logger.info "cancel_warm_transfer => #{warm_transfer_call.id}"
-    return new_notifications_cancel_warm_transfer(warm_transfer_call, call) if 
-                                      new_notifications? && !warm_transfer_call.supervisor.available_on_phone?
-    params.merge!({ warm_transfer_call_sid: warm_transfer_call.sid,
-                    call_id: call.id})
+    return new_notifications_cancel_warm_transfer(warm_transfer_call, call) unless warm_transfer_call.supervisor.available_on_phone?
+
+    params.merge!(warm_transfer_call_sid: warm_transfer_call.sid, call_id: call.id)
     Freshfone::NotificationWorker.perform_async(params, nil, 'cancel_warm_transfer')
   end
 

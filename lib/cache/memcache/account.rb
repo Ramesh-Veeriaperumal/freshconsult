@@ -336,7 +336,7 @@ module Cache::Memcache::Account
   end
 
   def check_custom_mailbox_status
-    if features_included?('mailbox') && imap_error_status_check_enabled?
+    if features_included?('mailbox')
       key = format(CUSTOM_MAILBOX_STATUS_CHECK, account_id: id)
       MemcacheKeys.fetch(key) { imap_mailboxes.errors.present? || smtp_mailboxes.errors.present? }
     end

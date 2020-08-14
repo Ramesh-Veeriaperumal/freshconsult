@@ -28,7 +28,6 @@ module Search
       end
 
       def alias_name
-        return "es_count_#{account_id}" unless Account.current.dashboard_new_alias?
         if Rails.env.production?
           "es_filters_count_#{es_shard_name}_alias"
         else

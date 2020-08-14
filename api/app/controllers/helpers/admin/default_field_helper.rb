@@ -17,8 +17,7 @@ module Admin::DefaultFieldHelper
   # if value field not present, it is considered as a create request and ensures presence of position and label.
   # if value present, it is considered as a update request and ensures there is a db entry with the value.
   # ensures the data type of all request parameters as expected.
-  # default sources are not there in the request
-  # Since default fields not allowed to modify, position should be higher than of default sources.
+  # Allow only update of position incase of default source
   # ensure uniqueness of source labels(including the soft deleted ones).
   #
   def validate_source_choices(source_field, choices)
@@ -27,7 +26,6 @@ module Admin::DefaultFieldHelper
     icon_validation(choices) if errors.blank?
     db_source_value_validation(choices) if errors.blank?
     default_source_choices_validation(choices) if errors.blank?
-    position_validation_for_source_choice(source_field, choices) if errors.blank?
     validate_db_uniqueness_for_source_choices(source_field, choices) if errors.blank?
   end
 
@@ -85,8 +83,13 @@ module Admin::DefaultFieldHelper
         next unless each_choice[:id]
 
         db_choice = source_choices[each_choice[:id]].first
-        default_field_error(:id, :choice) if db_choice.default
+        check_update_params_for_default_sources(each_choice) if db_choice.default
       end
+    end
+
+    def check_update_params_for_default_sources(choices)
+      invalid_field = choices.keys.map(&:to_sym) - ALLOWED_FIELDS_FOR_DEFAULT_SOURCE_UPDATE
+      default_field_error(:id, :choice) if invalid_field.present?
     end
 
     def data_type_for_status_choice(choice)
@@ -211,14 +214,6 @@ module Admin::DefaultFieldHelper
       choices.each do |each_choice|
         pos = each_choice[:position] || 1
         choice_position_error(record, :choices, max_allowed_position) if pos < 1 || pos > max_allowed_position
-      end
-    end
-
-    def position_validation_for_source_choice(record, choices)
-      default_source_count = current_account.ticket_source_from_cache.select(&:default).size
-      choices.each do |each_choice|
-        invalid_position = each_choice[:position] && each_choice[:position] <= default_source_count
-        choice_position_error(record, :choices, nil, default_source_count + 1) if invalid_position
       end
     end
 

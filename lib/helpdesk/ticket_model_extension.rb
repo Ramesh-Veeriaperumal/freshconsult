@@ -7,7 +7,7 @@ module Helpdesk::TicketModelExtension
     [ "export_data.fields.subject",               "subject",                 true ,  nil              , 2     , nil],
     [ "export_data.fields.status",                "status_name",             true ,  :ticket_status   , 4     , nil],
     [ "export_data.fields.priority",              "priority_name",           false,  nil              , 5     , nil],
-    [ "export_data.fields.source",                "source_name",             false,  nil              , 6     , nil], 
+    [ "export_data.fields.source",                "source_name",             false,  :ticket_source   , 6     , nil],
     [ "export_data.fields.type",                  "ticket_type",             false,  nil              , 7     , nil],
     [ "export_data.fields.company",               "company_name",            false,  :company         , 8     , nil],
     [ "export_data.fields.requester_name",        "requester_name",          false,  :requester       , 9     , nil],

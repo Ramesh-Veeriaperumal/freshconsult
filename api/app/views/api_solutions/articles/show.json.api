@@ -3,6 +3,6 @@ if @enrich_response
   response_hash = resp.enriched_hash
 else
   response_hash = resp.to_hash
-  response_hash[:collaboration] = @item.collaboration_hash if Account.current.launched?(:solutions_freshconnect) && (Account.current.collaboration_enabled? || (Account.current.freshconnect_enabled? && Account.current.freshid_integration_enabled? && (@item.app_current? || User.current.freshid_authorization)))
+  response_hash[:collaboration] = @item.collaboration_hash if Account.current.collaboration_enabled? || (Account.current.freshconnect_enabled? && Account.current.freshid_integration_enabled? && (@item.app_current? || User.current.freshid_authorization))
 end
 response_hash.to_json

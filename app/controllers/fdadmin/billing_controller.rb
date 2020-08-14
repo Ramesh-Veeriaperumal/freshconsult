@@ -129,11 +129,12 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
       subscription_hash[:field_agent_limit] = @account.subscription.field_agent_limit if update_field_agent_limit(@account.subscription, billing_subscription)
       if subscription_hash.present?
         @account.subscription.renewal_period = @subscription_data[:renewal_period]
-        @account.subscription.state = @subscription_data[:state]
+        @account.subscription.state = @subscription_data[:state] if @subscription_data[:state].present?
         Billing::Subscription.new.update_subscription(@account.subscription, true, @account.subscription.addons)
         @subscription_data.merge!(subscription_hash)
       end
       @subscription_data.merge!(plan_info(plan)) if @subscription_data[:subscription_plan].blank?
+      @subscription_data.delete(:state) if @subscription_data[:state].blank?
       @account.subscription.update_attributes(@subscription_data)
       update_features if update_features?
       @account.account_additional_settings.set_payment_preference(@billing_data.subscription.cf_reseller)

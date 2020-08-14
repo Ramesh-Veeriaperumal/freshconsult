@@ -5390,7 +5390,6 @@ module Ember
     def test_index_with_spam_count_es_enabled
       Account.any_instance.stubs(:count_es_enabled?).returns(true)
       Account.any_instance.stubs(:es_tickets_enabled?).returns(true)
-      Account.any_instance.stubs(:dashboard_new_alias?).returns(true)
       t = create_ticket(spam: true)
       stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
       get :index, controller_params(filter: 'spam')
@@ -5401,14 +5400,12 @@ module Ember
       match_json(pattern)
     ensure
       Account.any_instance.unstub(:count_es_enabled?)
-      Account.any_instance.unstub(:dashboard_new_alias?)
       Account.any_instance.unstub(:es_tickets_enabled?)
     end
 
     def test_index_with_new_and_my_open_count_es_enabled
       Account.any_instance.stubs(:count_es_enabled?).returns(:true)
       Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
-      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
       t = create_ticket(status: 2)
       stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
       get :index, controller_params(filter: 'new_and_my_open')
@@ -5420,13 +5417,11 @@ module Ember
     ensure
       Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
-      Account.any_instance.unstub(:dashboard_new_alias?)
     end
 
     def test_index_with_stats_with_count_es_enabled
       Account.any_instance.stubs(:count_es_enabled?).returns(:true)
       Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
-      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
       t = create_ticket
       stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
       get :index, controller_params(include: 'stats')
@@ -5438,13 +5433,11 @@ module Ember
     ensure
       Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
-      Account.any_instance.unstub(:dashboard_new_alias?)
     end
 
     def test_index_with_description_with_count_es_enabled
       Account.any_instance.stubs(:count_es_enabled?).returns(true)
       Account.any_instance.stubs(:es_tickets_enabled?).returns(true)
-      Account.any_instance.stubs(:dashboard_new_alias?).returns(true)
       t = create_ticket
       stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
       get :index, controller_params(include: 'description')
@@ -5457,13 +5450,11 @@ module Ember
       t.try(:destroy)
       Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
-      Account.any_instance.unstub(:dashboard_new_alias?)
     end
 
     def test_index_with_requester_with_count_es_enabled
       Account.any_instance.stubs(:count_es_enabled?).returns(:true)
       Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
-      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
       user = add_new_user(@account)
       t = create_ticket(requester_id: user.id)
       stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
@@ -5476,13 +5467,11 @@ module Ember
     ensure
       Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
-      Account.any_instance.unstub(:dashboard_new_alias?)
     end
 
     def test_index_with_filter_order_by_with_count_es_enabled
       Account.any_instance.stubs(:count_es_enabled?).returns(:true)
       Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
-      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
       t_1 = create_ticket(status: 2, created_at: 10.days.ago)
       t_2 = create_ticket(status: 3, created_at: 11.days.ago)
       stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t_1.id, t_2.id).to_json, status: 200)
@@ -5496,13 +5485,11 @@ module Ember
     ensure
       Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
-      Account.any_instance.unstub(:dashboard_new_alias?)
     end
 
     def test_index_with_default_filter_order_type_count_es_enabled
       Account.any_instance.stubs(:count_es_enabled?).returns(:true)
       Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
-      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
       t_1 = create_ticket(created_at: 10.days.ago)
       t_2 = create_ticket(created_at: 11.days.ago)
       stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t_2.id, t_1.id).to_json, status: 200)
@@ -5516,13 +5503,11 @@ module Ember
     ensure
       Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
-      Account.any_instance.unstub(:dashboard_new_alias?)
     end
 
     def test_index_updated_since_count_es_enabled
       Account.any_instance.stubs(:count_es_enabled?).returns(:true)
       Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
-      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
       t = create_ticket(updated_at: 2.days.from_now)
       stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
       get :index, controller_params(updated_since: Time.zone.now.iso8601)
@@ -5534,13 +5519,11 @@ module Ember
     ensure
       Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
-      Account.any_instance.unstub(:dashboard_new_alias?)
     end
 
     def test_index_with_company_count_es_enabled
       Account.any_instance.stubs(:count_es_enabled?).returns(:true)
       Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
-      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
       company = create_company
       user = add_new_user(@account)
       sidekiq_inline {
@@ -5558,7 +5541,6 @@ module Ember
     ensure
       Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
-      Account.any_instance.unstub(:dashboard_new_alias?)
     end
 
     def test_update_compose_email_with_subject_and_description

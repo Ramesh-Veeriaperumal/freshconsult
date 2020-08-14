@@ -43,6 +43,14 @@ module Ember
       Account.unstub(:current)
     end
 
+    def create_user(name, user_email)
+      Account.current.users.create(name: name, email: user_email, time_zone: 'Chennai', company_id: nil, language: 'en')
+    end
+
+    def get_or_create_user(name, user_email)
+      @account.all_users.where(email: user_email).first.presence || create_user(name, user_email)
+    end
+
     def test_send_test_email_for_inactive_mailbox
       mailbox = create_email_config(
         support_email: 'support5@localhost.freshpo.com',
@@ -120,6 +128,28 @@ module Ember
       assert_response 200
     end
 
+    def test_verify_forward_email_success_for_deleted_contact
+      contact = get_or_create_user('Rachel', Helpdesk::EMAIL[:default_requester_email])
+      contact.deleted = true
+      contact.save!
+      domain = @account.primary_email_config.to_email.split('@')[1]
+      mailbox = create_email_config(
+        support_email: "test11@#{domain}",
+        forward_email: "test11@#{domain}",
+        name: 'testname'
+      )
+      mailbox.active = false
+      mailbox.save!
+      create_forwarding_test_ticket(mailbox, contact.email)
+      id = mailbox.id
+      params = { version: 'private', id: id }
+      get :verify_forward_email, construct_params(params)
+      assert_response 200
+    ensure
+      contact.deleted = false
+      contact.save!
+    end
+
     def test_active_config_email_provider
       mailbox = create_email_config(
         support_email: 'support251@localhost.freshpo.com',
@@ -145,6 +175,28 @@ module Ember
       params = { version: 'private', id: id }
       get :email_forward_verification_code, construct_params(params)
       assert_response 200
+    end
+
+    def test_verify_confirmation_code_success_for_deleted_contact
+      contact = get_or_create_user('Gmail Team', 'forwarding-noreply@google.com')
+      contact.deleted = true
+      contact.save!
+      domain = @account.primary_email_config.to_email.split('@')[1]
+      mailbox = create_email_config(
+        support_email: "test123@#{domain}",
+        forward_email: "test123@#{domain}",
+        name: 'testname'
+      )
+      mailbox.active = false
+      mailbox.save!
+      create_forwarding_test_ticket(mailbox, contact.email)
+      id = mailbox.id
+      params = { version: 'private', id: id }
+      get :email_forward_verification_code, construct_params(params)
+      assert_response 200
+    ensure
+      contact.deleted = false
+      contact.save!
     end
 
     def test_verify_confirmation_code_failure

@@ -52,6 +52,8 @@ class Sync::FileToData::ModelDirectories
     end
 
     def model_name(object)
-      object.class.superclass.to_s != 'ActiveRecord::Base' ? object.class.superclass.to_s : object.class.name
+      model = object.class.superclass.to_s != 'ActiveRecord::Base' ? object.class.superclass.to_s : object.class.name
+      model = 'Helpdesk::Source' if model == 'Helpdesk::Choice'
+      model
     end
 end

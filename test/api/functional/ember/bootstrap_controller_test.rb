@@ -568,7 +568,6 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
 
   def test_account_with_custom_outgoing_mailbox_error
     Account.any_instance.stubs(:features_included?).with('mailbox').returns(true)
-    Account.current.stubs(:imap_error_status_check_enabled?).returns(true)
     Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
     Email::MailboxDelegator.any_instance.stubs(:verify_smtp_mailbox).returns(success: true, msg: '')
     email_config = create_email_config(smtp_mailbox_attributes: { smtp_server_name: 'imap.gmail.com' })
@@ -578,7 +577,6 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     assert_response 200
     match_json(account_pattern(Account.current, Account.current.main_portal))
   ensure
-    Account.current.unstub(:imap_error_status_check_enabled?)
     Account.any_instance.unstub(:features_included?)
     Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
     Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
@@ -587,7 +585,6 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
 
   def test_account_with_custom_outgoing_mailbox_error_on_updation_of_mailbox
     Account.any_instance.stubs(:features_included?).with('mailbox').returns(true)
-    Account.current.stubs(:imap_error_status_check_enabled?).returns(true)
     Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
     Email::MailboxDelegator.any_instance.stubs(:verify_smtp_mailbox).returns(success: true, msg: '')
     email_config = create_email_config(smtp_mailbox_attributes: { smtp_server_name: 'imap.gmail.com' })
@@ -602,7 +599,6 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     assert_response 200
     match_json(account_pattern(Account.current, Account.current.main_portal))
   ensure
-    Account.current.unstub(:imap_error_status_check_enabled?)
     Account.any_instance.unstub(:features_included?)
     Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
     Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
@@ -611,7 +607,6 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
 
   def test_account_with_custom_outgoing_mailbox_error_on_deletion_of_mailbox
     Account.any_instance.stubs(:features_included?).with('mailbox').returns(true)
-    Account.current.stubs(:imap_error_status_check_enabled?).returns(true)
     Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
     Email::MailboxDelegator.any_instance.stubs(:verify_smtp_mailbox).returns(success: true, msg: '')
     email_config = create_email_config(smtp_mailbox_attributes: { smtp_server_name: 'imap.gmail.com' })
@@ -625,7 +620,6 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     assert_response 200
     match_json(account_pattern(Account.current, Account.current.main_portal))
   ensure
-    Account.current.unstub(:imap_error_status_check_enabled?)
     Account.any_instance.unstub(:features_included?)
     Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
     Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
@@ -682,4 +676,26 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     assert_equal redis_key_exists?(key), parsed_response['config']['email']['rate_limited']
   end
 
+  def test_config_with_mailbox_oauth_required_key_set
+    key = format(EMAIL_MAILBOX_OAUTH_REQUIRED, account_id: Account.current.id)
+    set_others_redis_key_if_not_present(key, 1)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    parsed_response = parse_response response.body
+    assert_equal true, redis_key_exists?(key)
+    assert_equal redis_key_exists?(key), parsed_response['config']['email']['ms_mailbox_oauth_required']
+  ensure
+    remove_others_redis_key(key)
+  end
+
+  def test_config_with_mailbox_oauth_required_key_unset
+    key = format(EMAIL_MAILBOX_OAUTH_REQUIRED, account_id: Account.current.id)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    parsed_response = parse_response response.body
+    assert_equal false, redis_key_exists?(key)
+    assert_equal redis_key_exists?(key), parsed_response['config']['email']['ms_mailbox_oauth_required']
+  end
 end

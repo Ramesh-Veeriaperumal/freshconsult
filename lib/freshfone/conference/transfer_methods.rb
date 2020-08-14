@@ -70,15 +70,13 @@ module Freshfone::Conference::TransferMethods
 
     def cancel_child_call
       current_call.children.last.canceled!
-      return no_action if new_notifications?
-      empty_twiml
+      no_action
     end
 
     def transfer_answered
       # @transfer_leg_call.meta.update_pinged_agents_with_response(get_agent_id, 'canceled') if @transfer_leg_call.meta.present?
       set_agent_response(current_account.id, @transfer_leg_call.id, get_agent_id, 'canceled')
-      return transfer_answered_twiml if new_notifications?
-      render xml: transfer_answered_twiml
+      transfer_answered_twiml
     end
 
     def intended_agent_for_transfer?
@@ -92,7 +90,7 @@ module Freshfone::Conference::TransferMethods
     end
 
     def get_agent
-      agent_id = new_notifications? ? split_client_id(params[:From]) : split_client_id(params[:To])
+      split_client_id(params[:From])
     end
 
     def call_in_progress?

@@ -14,11 +14,13 @@ class SubscriptionsControllerTest < ActionController::TestCase
 
   def setup
     Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(false)
+    Account.any_instance.stubs(:omni_accounts_present_in_org?).returns(false)
     super
   end
 
   def teardown
     Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
+    Account.any_instance.unstub(:omni_accounts_present_in_org?)
   end
 
   def wrap_cname(params)
@@ -56,6 +58,13 @@ class SubscriptionsControllerTest < ActionController::TestCase
     update_currency
     Account.stubs(:current).returns(@account)
     assert_equal @account.has_feature?(:sla_reminder_automation), true
+  ensure
+    @account.destroy
+  end
+
+  def test_subscription_forest20_trial
+    create_new_account('test1', 'test1@freshdesk.com')
+    assert_equal @account.subscription.subscription_plan.name, 'Forest Jan 20'
   ensure
     @account.destroy
   end

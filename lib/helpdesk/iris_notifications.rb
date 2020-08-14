@@ -1,8 +1,16 @@
 module Helpdesk::IrisNotifications
+  include KafkaCollector::CollectorRestClient
+  include CentralPublish::CRECentralUtil
+
   ERROR_CODES = [500, 401, 404, 400].freeze
   IRIS_TIMEOUT = 10
 
-  def push_data_to_service(url, data)
+  def push_data_to_service(_url, data)
+    msg_id = generate_msg_id(data)
+    post_to_collector(data.to_json, msg_id, true, IRIS_TIMEOUT)
+  end
+
+  def post_to_iris(url, data)
     host = [IrisNotificationsConfig['collector_host'], url].join('')
     options = {
       body: data.to_json,

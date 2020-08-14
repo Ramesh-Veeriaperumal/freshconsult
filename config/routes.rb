@@ -1785,7 +1785,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    match 'schedule/download_file.json', :controller => 'freshvisuals', action: :download_schedule_file, method: :get
+    match 'schedule/download_file', format: 'json', controller: 'freshvisuals', action: :download_schedule_file, via: :get
   end
 
   match '/gamification/reports' => 'reports/gamification_reports#index', :as => :scoreboard_activity

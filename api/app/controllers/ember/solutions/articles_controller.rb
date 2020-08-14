@@ -1,10 +1,8 @@
 module Ember
   module Solutions
     class ArticlesController < ApiSolutions::ArticlesController
-      include ::Search::V2::AbstractController
       include HelperConcern
       include SolutionConcern
-      include Solution::ArticleFilters
       include BulkActionConcern
       include SolutionBulkActionConcern
       include SolutionReorderConcern

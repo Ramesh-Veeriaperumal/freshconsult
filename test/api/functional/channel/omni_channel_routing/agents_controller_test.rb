@@ -86,7 +86,7 @@ class Channel::OmniChannelRouting::AgentsControllerTest < ActionController::Test
 
   def test_update_agent_availability
     @account.add_feature(:omni_channel_routing)
-    @agent = add_agent_to_account(@account, active: 1, role: 4, available: false)
+    @agent = add_agent_to_account(@account, active: 1, role: 4, available: false, email: Faker::Internet.email)
     OmniChannelRouting::AgentSync.jobs.clear
     append_header(@agent.user_id)
     @account.agent_groups.create(user_id: @agent.user_id, group_id: @account.groups.first.id)

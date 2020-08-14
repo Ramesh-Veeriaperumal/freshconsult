@@ -996,7 +996,6 @@ module Widget
       end
 
       def test_thumbs_down_article_multilingual_enabled
-        @account.launch(:help_widget_solution_categories)
         old_count = @article.thumbs_down
         put :thumbs_down, controller_params(id: @article.parent_id)
         assert_response 204

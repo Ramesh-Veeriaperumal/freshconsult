@@ -53,7 +53,7 @@ class Admin::EmailConfigsController < Admin::AdminController
   end
 
   def update
-    @email_config.imap_mailbox.error_type = 0 if @email_config.imap_mailbox && current_account.imap_error_status_check_enabled?
+    @email_config.imap_mailbox.error_type = 0 if @email_config.imap_mailbox
     if @email_config.update_attributes(params[:email_config])
       respond_to do |format|
         format.html  do
@@ -202,9 +202,9 @@ class Admin::EmailConfigsController < Admin::AdminController
     end
 
     def load_imap_error_mapping
-     if @email_config.imap_mailbox.present? && current_account.imap_error_status_check_enabled?
-       error_type = @email_config.imap_mailbox.error_type.to_i
-       @error_type = Admin::EmailConfig::Imap::ErrorMapper.new(error_type: error_type).fetch_error_mapping if error_type > 0
-     end
+      if @email_config.imap_mailbox.present?
+        error_type = @email_config.imap_mailbox.error_type.to_i
+        @error_type = Admin::EmailConfig::Imap::ErrorMapper.new(error_type: error_type).fetch_error_mapping if error_type > 0
+      end
     end
 end

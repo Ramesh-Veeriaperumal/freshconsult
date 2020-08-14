@@ -55,7 +55,7 @@ module SolutionConcern
 
   def fetch_unassociated_categories(language_id)
     category_meta_ids = unassociated_categories_from_cache
-    current_account.solution_categories.where(parent_id: category_meta_ids, language_id: language_id)
+    Account.current.solution_categories.where(parent_id: category_meta_ids, language_id: language_id)
   end
 
   def insert_solution_action?

@@ -32,7 +32,7 @@ module Migration
                 pipe: 'rts',
                 enabled: false
               }
-              push_data_to_service(USER_PREFERENCE_URL, payload)
+              post_to_iris(USER_PREFERENCE_URL, payload)
             end
             @success_count += 1
           rescue Exception => e

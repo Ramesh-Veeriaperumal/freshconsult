@@ -1618,13 +1618,27 @@ input[type=text].input-agent-count{
 .omni-channel-experience-description {
 	width: 72%;
 	font-size: 16px;
-	padding: 32px 0 16px 8px;
+	padding: 8px 0 16px 8px;
+}
+
+.omni-channel-experience-title {
+	width: 72%;
+	font-size: 18px;
+	font-weight: bold;
+	padding: 28px 0 0 8px;
 }
 
 .fc-omni-channel-experience-description {
 	width: 90%;
 	font-size: 14px;
-	padding: 20px 0 16px 8px;
+	padding: 8px 0 16px 8px;
+}
+
+.fc-omni-channel-experience-title {
+	width: 90%;
+	font-size: 18px;
+	font-weight: bold;
+	padding: 28px 0 0 8px;
 }
 
 .nudge-banner-table {
@@ -1644,7 +1658,7 @@ input[type=text].input-agent-count{
 }
 
 .explore-omnichannel-button {
-	margin-bottom: 20px;
+	margin-bottom: 28px;
 }
 
 .omni-channel-td-logo {

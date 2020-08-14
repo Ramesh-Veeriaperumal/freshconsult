@@ -1,5 +1,5 @@
 <% current_portal.ticket_fields_including_nested_fields.each do |field|
-    next if field.section_field? || field.shared_ownership_field? || field.field_name.eql?("source") || (field.field_name.eql?("email") && !@parent_id)
+    next if field.section_field? || field.shared_ownership_field? || (field.field_name.eql?("source") && !current_account.ticket_source_revamp_enabled?) || (field.field_name.eql?("email") && !@parent_id)
     @ticket ||= current_account.tickets.new
     if is_edit
       field_value = field.field_type == "nested_field" ? nested_ticket_field_value(@tkt_template, field) : @tkt_template.template_data[field.field_name]
@@ -7,11 +7,12 @@
       field_value = @ticket[field.field_name]
     end
     field_label = ( field.is_default_field? ) ? I18n.t("ticket_fields.fields.#{(field.name)}").html_safe : (field.label).html_safe
+    dom_type    = (field.field_type == "default_source") ? "template_source_dropdown" : field.dom_type
   %>
   <%= construct_new_ticket_element f, :template_data,
                                   field,
                                   field_label,
-                                  field.dom_type,
+                                  dom_type,
                                   field.required,
                                   field_value,
                                   "",
