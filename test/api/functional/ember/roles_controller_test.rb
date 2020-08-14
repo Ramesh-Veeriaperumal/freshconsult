@@ -5,6 +5,16 @@ class RolesControllerTest < ActionController::TestCase
   include RolesTestHelper
   include QmsTestHelper
 
+  def setup
+    super
+    Subscription.any_instance.stubs(:switch_annual_notification_eligible?).returns(false)
+  end
+
+  def teardown
+    super
+    Subscription.any_instance.unstub(:switch_annual_notification_eligible?)
+  end
+
   def wrap_cname(params)
     { api_role: params }
   end

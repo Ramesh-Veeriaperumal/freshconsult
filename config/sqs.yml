@@ -51,6 +51,7 @@ development:
   analytics_etl_queue_maintenance: analytics_etl_queue_dev_maintenance
   suspended_account_cleanup_queue: suspended_account_cleanup_queue_dev
   email_rate_limiting_queue: email_rate_limiting_dev
+  switch_to_annual_notification_queue: switch_to_annual_notification_queue_dev
 staging:
   twitter_realtime_queue: social_gnip_2_0_tweet_staging
   facebook_realtime_queue: social_fb_feed_staging
@@ -188,3 +189,4 @@ test:
   analytics_etl_queue_maintenance: analytics_etl_queue_test_maintenance
   suspended_account_cleanup_queue: suspended_account_cleanup_queue_test
   email_rate_limiting_queue: email_rate_limiting_test
+  switch_to_annual_notification_queue: switch_to_annual_notification_queue_test

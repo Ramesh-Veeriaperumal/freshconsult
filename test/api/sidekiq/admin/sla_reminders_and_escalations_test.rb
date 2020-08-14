@@ -19,10 +19,12 @@ class SlaReminderEscalationWorkerTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.first)
     @account = Account.current
     EmailNotification.any_instance.stubs(:agent_notification).returns(true)
+    Subscription.any_instance.stubs(:switch_annual_notification_eligible?).returns(false)
   end
 
   def teardown
     EmailNotification.any_instance.unstub(:agent_notification)
+    Subscription.any_instance.unstub(:switch_annual_notification_eligible?)
     Account.unstub(:current)
     super
   end
@@ -151,10 +153,10 @@ class SlaReminderEscalationWorkerTest < ActionView::TestCase
     check_response(EmailNotification::NEXT_RESPONSE_SLA_VIOLATION, nr_escalation, ticket, user, 'nr_escalated')
   ensure
     @account.revoke_feature(:next_response_sla)
-    ticket.destroy
-    sla_policy.destroy
-    group.destroy
-    user.destroy
+    ticket&.destroy
+    sla_policy&.destroy
+    group&.destroy
+    user&.destroy
     remove_others_redis_key SLA_TICKETS_LIMIT
   end
 

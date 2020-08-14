@@ -856,7 +856,8 @@ HEREDOC
       :fd_scheduler_export_cleanup_queue,
       :fd_scheduler_downgrade_policy_reminder_queue,
       :analytics_etl_queue,
-      :email_rate_limiting_queue
+      :email_rate_limiting_queue,
+      :switch_to_annual_notification_queue
     ]
 
     sqs_shoryken = {
@@ -872,7 +873,8 @@ HEREDOC
       "search_etl_queue": "search_etlqueue",
       "trial_customer_email_queue": "trial_email",
       'fd_scheduler_downgrade_policy_reminder_queue': 'downgrade_policy_reminder',
-      'suspended_account_cleanup_queue': 'suspended_account_cleanup'
+      'suspended_account_cleanup_queue': 'suspended_account_cleanup',
+      'switch_to_annual_notification_queue': 'switch_to_annual_notification'
     }
 
     queue_prefix = ENV["HELPKIT_TEST_SETUP_SQS_QUEUE_PREFIX"]
