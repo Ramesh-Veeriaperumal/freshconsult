@@ -53,6 +53,12 @@ Helpkit::Application.routes.draw do
           put :disable
         end
       end
+
+      resources :security, controller: 'api_security', only: [:show] do
+        collection do
+          get :show
+        end
+      end
     end
 
     resources :accounts, path: 'admin/accounts' do
