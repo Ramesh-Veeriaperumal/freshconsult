@@ -550,6 +550,28 @@ class Subscription < ActiveRecord::Base
     save
   end
 
+  def freddy_sessions=(value)
+    self.additional_info ||= {}
+    self.additional_info[:freddy_sessions] = value
+  end
+
+  def freddy_sessions
+    self.additional_info.try(:[], :freddy_sessions).to_i
+  end
+
+  def freddy_session_packs
+    self.additional_info.try(:[], :freddy_session_packs).to_i
+  end
+
+  def freddy_session_packs=(session_packs)
+    self.additional_info ||= {}
+    self.additional_info[:freddy_session_packs] = session_packs
+  end
+
+  def freddy_billing_model
+    self.additional_info.try(:[], :freddy_billing_model)
+  end
+
   def remove_addon(addon_name)
     attempt = 0
     no_of_retries = 3
