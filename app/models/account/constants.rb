@@ -193,7 +193,7 @@ class Account < ActiveRecord::Base
     new_footer_feedback_box: false, new_leaderboard: false, periodic_login_feature: false, restricted_helpdesk: false,
     supervisor_dashboard: false, support_new_ticket_cache: false, synchronous_apps: false, ticket_list_page_filters_cache: false,
     skip_hidden_tkt_identifier: false, agent_collision_alb: false, auto_refresh_alb: false,
-    countv2_template_read: false, customer_sentiment_ui: false, portal_solution_cache_fetch: false,
+    customer_sentiment_ui: false, portal_solution_cache_fetch: false,
     activity_ui: false, customer_sentiment: false, logout_logs: false,
     es_v2_splqueries: false, suggest_tickets: false, "Freshfone New Notifications": false,
     feedback_widget_captcha: false, es_multilang_solutions: false, requester_widget: false,
