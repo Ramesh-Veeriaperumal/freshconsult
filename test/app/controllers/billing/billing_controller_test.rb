@@ -34,6 +34,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
     update_params = stub_update_params(@account.id)
     update_params[:subscription].merge!(options[:addons]) if options[:addons]
     update_params[:subscription][:plan_id] = options[:plan_id] if options[:plan_id]
+    update_params[:subscription][:status] = options[:status] if options[:status]
     chargebee_update = ChargeBee::Result.new(update_params)
     ChargeBee::Subscription.stubs(:retrieve).returns(chargebee_update)
     Digest::MD5.stubs(:hexdigest).returns('5c8231431eca2c61377371de706a52cc')
@@ -73,6 +74,27 @@ class Billing::BillingControllerTest < ActionController::TestCase
     Subscription::Addon.unstub(:fetch_addon)
     ChargeBee::Customer.any_instance.unstub(:auto_collection)
     ChargeBee::Subscription.any_instance.unstub(:status)
+  end
+
+  def test_subscription_changed_event_with_state_as_non_renewing
+    stub_subscription_settings(status: 'non_renewing')
+    old_subscription = @account.subscription
+    Subscription.any_instance.unstub(:update_attributes)
+    Subscription.any_instance.unstub(:save)
+    user = add_test_agent(@account)
+    @account.launch(:downgrade_policy)
+    chargebee_payload = normal_event_content
+    chargebee_payload[:subscription][:status] = 'non_renewing'
+    post :trigger, event_type: 'subscription_changed', content: chargebee_payload, format: 'json'
+    assert_response 200
+    assert_equal @account.reload.subscription.agent_limit, @account.full_time_support_agents.count
+    assert_not_equal @account.reload.subscription.state, nil
+  ensure
+    user.destroy
+    @account.subscription.agent_limit = old_subscription.agent_limit
+    @account.subscription.save
+    unstub_subscription_settings
+    @account.rollback(:downgrade_policy)
   end
 
   def test_subscription_changed_event_with_new_plan

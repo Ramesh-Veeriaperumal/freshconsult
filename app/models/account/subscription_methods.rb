@@ -148,6 +148,14 @@ class Account < ActiveRecord::Base
     to_email
   end
 
+  def fetch_all_account_admin_email
+    to_email = []
+    technicians.each do |agent|
+      to_email << agent.email if agent.privilege?(:manage_account)
+    end
+    to_email
+  end
+
   def trigger_suspended_account_cleanup
     payload =
       {

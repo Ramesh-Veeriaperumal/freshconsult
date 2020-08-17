@@ -20,13 +20,10 @@
     <div class="rules-wrapper">
       <div class="head">
         <% tkt_rule_des = t('.tke_rule_breif_desc') %>
-        <% if Account.current.facebook_admin_ui_revamp_enabled? %>
-          <%= check_box "primary_toggle","switch", { rel: 'toggle', :checked => primary_toggle_state } %>
-        <% end %>
-
+        <%= check_box "primary_toggle","switch", { rel: 'toggle', :checked => primary_toggle_state } %>
         <label class="label-bold">&nbsp;<%= tkt_rule_des %></label>
       </div>
-      <div id = "ticket_rules" class="<%= 'hide' if !primary_toggle_state && Account.current.facebook_admin_ui_revamp_enabled? %> adm-social sts adm-bg-color">
+      <div id = "ticket_rules" class="<%= 'hide' if !primary_toggle_state %> adm-social sts adm-bg-color">
         <%= render :partial => 'ticket_rules_new', :locals => { :ticket_rule => @ticket_rules.first, :facebook_page => @facebook_page } %>
       </div>
       

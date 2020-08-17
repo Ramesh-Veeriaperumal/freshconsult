@@ -279,4 +279,6 @@ module Admin::TicketFieldConstants
   SKIP_FSM_FIELD_TYPES = %w[custom_file, custom_date_time].freeze
 
   SERVICE_TASK_SECTION = 'Service task section'.freeze
+
+  ALLOWED_FIELDS_FOR_DEFAULT_SOURCE_UPDATE = %i[id position].freeze
 end

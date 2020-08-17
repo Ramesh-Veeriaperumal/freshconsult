@@ -189,19 +189,18 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     self.save
   end
 
-	["agent", "group", "internal_agent", "internal_group"].each do |type|
-		define_method("set_#{type}_assigned_flag") do
-			return if reports_hash.has_key?("#{type}_reassigned_flag")
-			if reports_hash.has_key?("#{type}_assigned_flag")
-				self.reports_hash.delete("#{type}_assigned_flag")
-				flag_name = "#{type}_reassigned_flag"
-			else
-				flag_name = "#{type}_assigned_flag"
-			end
-		  self.reports_hash.merge!(flag_name => true)
-		end
-	end
-	
+  ['agent', 'group', 'internal_agent', 'internal_group'].each do |type|
+    define_method("set_#{type}_assigned_flag") do
+      reports_hash["#{type}_reassigned_flag"] = true if reports_hash["#{type}_assigned_flag"]
+
+      reports_hash["#{type}_assigned_flag"] = true
+    end
+
+    define_method("unset_#{type}_assigned_flag") do
+      reports_hash["#{type}_assigned_flag"] = nil
+    end
+  end
+
 	COUNT_COLUMNS_FOR_REPORTS.each do |count_type|
 		define_method("update_#{count_type}_count") do |action|
 			previous_count = self.reports_hash["#{count_type}_count"]

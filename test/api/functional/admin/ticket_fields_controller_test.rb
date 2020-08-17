@@ -805,9 +805,9 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
         { id: field.id },
         choices: [{ label: label, position: 2, icon_id: 25 }]
       )
-      assert_response 400
-      count = Account.current.ticket_source_from_cache.select(&:default).count + 1
-      match_json([bad_request_error_pattern('Source[choices]', :invalid_position_for_choices, range: count)])
+      assert_response 200
+      source = Helpdesk::Source.where(name: label).first
+      assert_equal 2, source.position
     end
   ensure
     Account.current.unstub(:ticket_source_revamp_enabled?)
@@ -886,4 +886,17 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
     Account.current.unstub(:ticket_source_revamp_enabled?)
   end
 
+  def test_updating_default_source_position
+    launch_ticket_field_revamp do
+      Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
+      field = @account.ticket_fields.where(field_type: 'default_source').first
+      source = Account.current.helpdesk_sources.where(account_choice_id: 3).first
+      put :update, construct_params({ id: field.id }, choices: [{ id: 3, position: 15 }])
+      assert_response 200
+      source.reload
+      assert_equal 15, source.position
+    end
+  ensure
+    Account.current.unstub(:ticket_source_revamp_enabled?)
+  end
 end

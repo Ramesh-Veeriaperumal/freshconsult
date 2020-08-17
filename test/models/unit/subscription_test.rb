@@ -14,6 +14,7 @@ class SubscriptionTest < ActiveSupport::TestCase
     User.stubs(:current).returns(agent)
     Subscription.any_instance.stubs(:state).returns('active')
     Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(false)
+    Subscription.any_instance.stubs(:reseller_paid_account?).returns(false)
     subscription = @account.subscription
     @account.set_account_onboarding_pending
     assert_equal @account.onboarding_pending?, true
@@ -24,6 +25,7 @@ class SubscriptionTest < ActiveSupport::TestCase
     Subscription.any_instance.unstub(:state)
     User.unstub(:current)
     Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
+    Subscription.any_instance.unstub(:reseller_paid_account?)
     @account.destroy
   end
 
@@ -33,6 +35,7 @@ class SubscriptionTest < ActiveSupport::TestCase
     agent = @account.agents.first.user
     User.stubs(:current).returns(agent)
     Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(false)
+    Subscription.any_instance.stubs(:reseller_paid_account?).returns(false)
     subscription = @account.subscription
     @account.set_account_onboarding_pending
     assert_equal @account.onboarding_pending?, true
@@ -43,6 +46,7 @@ class SubscriptionTest < ActiveSupport::TestCase
   ensure
     User.unstub(:current)
     Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
+    Subscription.any_instance.unstub(:reseller_paid_account?)
     @account.destroy
   end
 
@@ -52,6 +56,7 @@ class SubscriptionTest < ActiveSupport::TestCase
     agent = @account.agents.first.user
     User.stubs(:current).returns(agent)
     Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(false)
+    Subscription.any_instance.stubs(:reseller_paid_account?).returns(false)
     ProductFeedbackWorker.expects(:perform_async).once
     subscription = @account.subscription
     subscription.plan = SubscriptionPlan.current.find_by_name 'Garden Omni Jan 19'
@@ -60,6 +65,7 @@ class SubscriptionTest < ActiveSupport::TestCase
   ensure
     User.unstub(:current)
     Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
+    Subscription.any_instance.unstub(:reseller_paid_account?)
     @account.destroy
   end
 
@@ -69,6 +75,7 @@ class SubscriptionTest < ActiveSupport::TestCase
     agent = @account.agents.first.user
     User.stubs(:current).returns(agent)
     Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(false)
+    Subscription.any_instance.stubs(:reseller_paid_account?).returns(false)
     ProductFeedbackWorker.expects(:perform_async).never
     subscription = @account.subscription
     subscription.plan = SubscriptionPlan.current.find_by_name 'Garden Jan 19'
@@ -77,6 +84,7 @@ class SubscriptionTest < ActiveSupport::TestCase
   ensure
     User.unstub(:current)
     Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
+    Subscription.any_instance.unstub(:reseller_paid_account?)
     @account.destroy
   end
 
@@ -120,6 +128,7 @@ class SubscriptionTest < ActiveSupport::TestCase
     Account.any_instance.stubs(:freshcaller_account).returns(nil)
     Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(true)
     Account.any_instance.stubs(:account_additional_settings).returns(AccountAdditionalSettings.new(account_id: @account.id, email_cmds_delimeter: '@Simonsays', ticket_id_delimiter: '#', api_limit: 1000))
+    Account.any_instance.stubs(:not_eligible_for_omni_conversion?).returns(false)
     subscription = @account.subscription
     subscription.account.launch(:explore_omnichannel_feature)
     subscription.plan = SubscriptionPlan.where(name: 'Forest Omni Jan 20').first
@@ -139,6 +148,7 @@ class SubscriptionTest < ActiveSupport::TestCase
     Account.any_instance.unstub(:freshcaller_account)
     Account.any_instance.unstub(:freshid_org_v2_enabled?)
     Account.any_instance.unstub(:account_additional_settings)
+    Account.any_instance.unstub(:not_eligible_for_omni_conversion?)
     @account.destroy
   end
 
@@ -159,6 +169,7 @@ class SubscriptionTest < ActiveSupport::TestCase
     Account.any_instance.stubs(:freshchat_account).returns(nil)
     Account.any_instance.stubs(:freshcaller_account).returns(nil)
     Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(true)
+    Account.any_instance.stubs(:not_eligible_for_omni_conversion?).returns(false)
     Account.any_instance.stubs(:account_additional_settings).returns(AccountAdditionalSettings.new(account_id: @account.id, email_cmds_delimeter: '@Simonsays', ticket_id_delimiter: '#', api_limit: 1000))
     subscription = @account.subscription
     subscription.plan = SubscriptionPlan.where(name: 'Forest Omni Jan 20').first
@@ -177,6 +188,7 @@ class SubscriptionTest < ActiveSupport::TestCase
     Account.any_instance.unstub(:freshcaller_account)
     Account.any_instance.unstub(:freshid_org_v2_enabled?)
     Account.any_instance.unstub(:account_additional_settings)
+    Account.any_instance.unstub(:not_eligible_for_omni_conversion?)
     @account.rollback(:explore_omnichannel_feature) unless is_launched
   end
 
@@ -205,6 +217,200 @@ class SubscriptionTest < ActiveSupport::TestCase
     subscription.save
     Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
     Subscription.any_instance.unstub(:trial?)
+  end
+
+  def test_switch_to_annual_notification_reminder
+    ::Scheduler::PostMessage.jobs.clear
+    ::Scheduler::CancelMessage.jobs.clear
+    Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(false)
+    Subscription.any_instance.stubs(:reseller_paid_account?).returns(false)
+    Subscription.any_instance.stubs(:offline_subscription?).returns(false)
+    Subscription.any_instance.stubs(:amount).returns(50)
+    subscription = @account.subscription
+    subscription.additional_info[:annual_notification_triggered] = false
+    subscription.save
+    previous_state = subscription.state
+    previous_renewal_period = subscription.renewal_period
+    subscription.state = 'active'
+    subscription.renewal_period = 1
+    subscription.save
+    assert_equal 3, ::Scheduler::PostMessage.jobs.size
+    assert_equal 0, ::Scheduler::CancelMessage.jobs.size
+  ensure
+    subscription.additional_info[:annual_notification_triggered] = false
+    subscription.state = previous_state
+    subscription.renewal_period = previous_renewal_period
+    subscription.save
+    Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
+    Subscription.any_instance.unstub(:reseller_paid_account?)
+    Subscription.any_instance.unstub(:offline_subscription?)
+    Subscription.any_instance.unstub(:amount)
+    ::Scheduler::PostMessage.jobs.clear
+    ::Scheduler::CancelMessage.jobs.clear
+  end
+
+  def test_switch_to_annual_notification_reminder_annual_subscription
+    ::Scheduler::PostMessage.jobs.clear
+    ::Scheduler::CancelMessage.jobs.clear
+    Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(false)
+    Subscription.any_instance.stubs(:reseller_paid_account?).returns(false)
+    Subscription.any_instance.stubs(:offline_subscription?).returns(false)
+    Subscription.any_instance.stubs(:amount).returns(50)
+    subscription = @account.subscription
+    previous_state = subscription.state
+    previous_renewal_period = subscription.renewal_period
+    subscription.state = 'active'
+    subscription.renewal_period = 12
+    subscription.save
+    assert_equal 0, ::Scheduler::PostMessage.jobs.size
+    assert_equal 0, ::Scheduler::CancelMessage.jobs.size
+  ensure
+    subscription.state = previous_state
+    subscription.renewal_period = previous_renewal_period
+    subscription.save
+    Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
+    Subscription.any_instance.unstub(:reseller_paid_account?)
+    Subscription.any_instance.unstub(:offline_subscription?)
+    Subscription.any_instance.unstub(:amount)
+    ::Scheduler::PostMessage.jobs.clear
+    ::Scheduler::CancelMessage.jobs.clear
+  end
+
+  def test_switch_to_annual_notification_reminder_trial_state
+    ::Scheduler::PostMessage.jobs.clear
+    ::Scheduler::CancelMessage.jobs.clear
+    Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(false)
+    Subscription.any_instance.stubs(:reseller_paid_account?).returns(false)
+    Subscription.any_instance.stubs(:offline_subscription?).returns(false)
+    Subscription.any_instance.stubs(:amount).returns(50)
+    subscription = @account.subscription
+    previous_state = subscription.state
+    previous_renewal_period = subscription.renewal_period
+    subscription.state = 'trial'
+    subscription.renewal_period = 1
+    subscription.save
+    assert_equal 0, ::Scheduler::PostMessage.jobs.size
+    assert_equal 0, ::Scheduler::CancelMessage.jobs.size
+  ensure
+    subscription.state = previous_state
+    subscription.renewal_period = previous_renewal_period
+    subscription.save
+    Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
+    Subscription.any_instance.unstub(:reseller_paid_account?)
+    Subscription.any_instance.unstub(:offline_subscription?)
+    Subscription.any_instance.unstub(:amount)
+    ::Scheduler::PostMessage.jobs.clear
+    ::Scheduler::CancelMessage.jobs.clear
+  end
+
+  def test_switch_to_annual_notification_reminder_for_reseller
+    ::Scheduler::PostMessage.jobs.clear
+    ::Scheduler::CancelMessage.jobs.clear
+    Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(false)
+    Subscription.any_instance.stubs(:reseller_paid_account?).returns(true)
+    Subscription.any_instance.stubs(:offline_subscription?).returns(false)
+    Subscription.any_instance.stubs(:amount).returns(50)
+    subscription = @account.subscription
+    previous_state = subscription.state
+    previous_renewal_period = subscription.renewal_period
+    subscription.state = 'active'
+    subscription.renewal_period = 1
+    subscription.save
+    assert_equal 0, ::Scheduler::PostMessage.jobs.size
+    assert_equal 0, ::Scheduler::CancelMessage.jobs.size
+  ensure
+    subscription.state = previous_state
+    subscription.renewal_period = previous_renewal_period
+    subscription.save
+    Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
+    Subscription.any_instance.unstub(:reseller_paid_account?)
+    Subscription.any_instance.unstub(:offline_subscription?)
+    Subscription.any_instance.unstub(:amount)
+    ::Scheduler::PostMessage.jobs.clear
+    ::Scheduler::CancelMessage.jobs.clear
+  end
+
+  def test_switch_to_annual_notification_reminder_offline_subscription
+    ::Scheduler::PostMessage.jobs.clear
+    ::Scheduler::CancelMessage.jobs.clear
+    Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(false)
+    Subscription.any_instance.stubs(:reseller_paid_account?).returns(false)
+    Subscription.any_instance.stubs(:offline_subscription?).returns(true)
+    Subscription.any_instance.stubs(:amount).returns(50)
+    subscription = @account.subscription
+    previous_state = subscription.state
+    previous_renewal_period = subscription.renewal_period
+    subscription.state = 'active'
+    subscription.renewal_period = 1
+    subscription.save
+    assert_equal 0, ::Scheduler::PostMessage.jobs.size
+    assert_equal 0, ::Scheduler::CancelMessage.jobs.size
+  ensure
+    subscription.state = previous_state
+    subscription.renewal_period = previous_renewal_period
+    subscription.save
+    Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
+    Subscription.any_instance.unstub(:reseller_paid_account?)
+    Subscription.any_instance.unstub(:offline_subscription?)
+    Subscription.any_instance.unstub(:amount)
+    ::Scheduler::PostMessage.jobs.clear
+    ::Scheduler::CancelMessage.jobs.clear
+  end
+
+  def test_switch_to_annual_notification_reminder_sprout_plan
+    ::Scheduler::PostMessage.jobs.clear
+    ::Scheduler::CancelMessage.jobs.clear
+    Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(false)
+    Subscription.any_instance.stubs(:amount).returns(0)
+    Subscription.any_instance.stubs(:reseller_paid_account?).returns(false)
+    Subscription.any_instance.stubs(:offline_subscription?).returns(false)
+    subscription = @account.subscription
+    previous_state = subscription.state
+    previous_renewal_period = subscription.renewal_period
+    subscription.state = 'active'
+    subscription.renewal_period = 1
+    subscription.save
+    assert_equal 0, ::Scheduler::PostMessage.jobs.size
+    assert_equal 0, ::Scheduler::CancelMessage.jobs.size
+  ensure
+    subscription.state = previous_state
+    subscription.renewal_period = previous_renewal_period
+    subscription.save
+    Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
+    Subscription.any_instance.unstub(:reseller_paid_account?)
+    Subscription.any_instance.unstub(:offline_subscription?)
+    Subscription.any_instance.unstub(:amount)
+    ::Scheduler::PostMessage.jobs.clear
+    ::Scheduler::CancelMessage.jobs.clear
+  end
+
+  def test_switch_to_annual_notification_reminder_with_payments
+    ::Scheduler::PostMessage.jobs.clear
+    ::Scheduler::CancelMessage.jobs.clear
+    Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(false)
+    Subscription.any_instance.stubs(:subscription_payments).returns(Array(SubscriptionPayment.new(meta_info: { renewal_period: 1 })))
+    Subscription.any_instance.stubs(:amount).returns(50)
+    Subscription.any_instance.stubs(:reseller_paid_account?).returns(false)
+    Subscription.any_instance.stubs(:offline_subscription?).returns(false)
+    subscription = @account.subscription
+    previous_state = subscription.state
+    previous_renewal_period = subscription.renewal_period
+    subscription.state = 'active'
+    subscription.renewal_period = 1
+    subscription.save
+    assert_equal 0, ::Scheduler::PostMessage.jobs.size
+    assert_equal 0, ::Scheduler::CancelMessage.jobs.size
+  ensure
+    subscription.state = previous_state
+    subscription.renewal_period = previous_renewal_period
+    subscription.save
+    Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
+    Subscription.any_instance.unstub(:reseller_paid_account?)
+    Subscription.any_instance.unstub(:offline_subscription?)
+    Subscription.any_instance.unstub(:amount)
+    Subscription.any_instance.unstub(:subscription_payments)
+    ::Scheduler::PostMessage.jobs.clear
+    ::Scheduler::CancelMessage.jobs.clear
   end
 
   private

@@ -249,6 +249,7 @@ class Account < ActiveRecord::Base
       domain: organisation_domain
     }
     bundle_info = {
+      name: SUPPORT_360_BUNDLE,
       bundle_type_identifier: bundle_type_identifier.to_s
     }
     Freshid::V2::Models::Bundle.create(org_info, bundle_info)

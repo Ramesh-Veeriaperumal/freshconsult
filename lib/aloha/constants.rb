@@ -8,4 +8,12 @@ module Aloha::Constants
   BUNDLE_DATA_MISMATCH = 'Bundle id/name mismatch'.freeze
   INVALID_SEEDER_PRODUCT = 'Invalid seeder product name'.freeze
   ORG_ID_MISMATCH = 'organisation id mismatch'.freeze
+  ORG_ACC_MAP_MISSING_CODE = '101'.freeze
+  UPDATE_FRESHCHAT_ACCESS_TOKEN_CODE = '102'.freeze
+  ENABLE_FRESHCHAT_AGENT_CODE = '103'.freeze
+  BUNDLE_DATA_MISMATCH_CODE = '104'.freeze
+  INVALID_SEEDER_PRODUCT_CODE = '105'.freeze
+  ENTRY_ALREADY_EXISTS_CODE = '106'.freeze
+  ACCOUNT_DETAILS_MISSING_CODE = '107'.freeze
+  ACCOUNT_DOMAIN_MISSING_CODE = '108'.freeze
 end

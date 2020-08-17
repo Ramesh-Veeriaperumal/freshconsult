@@ -5,7 +5,7 @@ class FbReplyDelegator < ConversationBaseDelegator
   validate :validate_agent_id, if: -> { user_id.present? }
   validate :validate_unseen_replies, on: :facebook_reply, if: :traffic_cop_required?
   validate :validate_page_state, on: :facebook_reply
-  validate :validate_attachments, if: -> { @attachment_ids.present? && facebook_post_attachment_enabled? }
+  validate :validate_attachments, if: -> { @attachment_ids.present? && facebook_post_or_ad_post? }
 
   def initialize(record, options = {})
     super(record, options)
@@ -14,9 +14,8 @@ class FbReplyDelegator < ConversationBaseDelegator
     @msg_type = options[:msg_type]
   end
 
-  def facebook_post_attachment_enabled?
-    [Facebook::Constants::FB_MSG_TYPES[1], Facebook::Constants::FB_MSG_TYPES[2]].include?(msg_type) &&
-      Account.current.launched?(:skip_posting_to_fb)
+  def facebook_post_or_ad_post?
+    [Facebook::Constants::FB_MSG_TYPES[1], Facebook::Constants::FB_MSG_TYPES[2]].include?(msg_type)
   end
 
   def validate_note_id

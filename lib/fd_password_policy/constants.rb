@@ -22,4 +22,8 @@ module FDPasswordPolicy::Constants
 
   GRACE_PERIOD = 8.hours
 
+  POLICY_TYPE = {
+    advanced: 2,
+    default: 1
+  }.freeze
 end

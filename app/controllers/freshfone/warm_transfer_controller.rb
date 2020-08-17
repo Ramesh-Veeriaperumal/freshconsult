@@ -155,7 +155,6 @@ module Freshfone
     end
 
     def update_canceled_warm_transfer(call)
-      return unless new_notifications?
       current_call.inprogress!
       create_child_call.update_call(DialCallStatus: 'canceled')
       call.update_details(

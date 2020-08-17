@@ -53,6 +53,7 @@ class Admin::Sandbox::MergeWorker < BaseWorker
       account_activities
       update_last_sync_details
       @account.reset_picklist_id
+      @account.reset_ticket_source_id
     end
 
     def delete_sandbox

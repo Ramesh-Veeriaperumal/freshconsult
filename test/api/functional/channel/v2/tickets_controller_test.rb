@@ -1093,7 +1093,6 @@ module Channel::V2
       @channel_v2_api = true
       Account.any_instance.stubs(:count_es_enabled?).returns(true)
       Account.any_instance.stubs(:api_es_enabled?).returns(true)
-      Account.any_instance.stubs(:dashboard_new_alias?).returns(true)
       t = create_ticket
       @request_stub = stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
       get :index, controller_params(include: 'stats')
@@ -1107,7 +1106,6 @@ module Channel::V2
       TicketDecorator.any_instance.unstub(:private_api?)
       Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:api_es_enabled?)
-      Account.any_instance.unstub(:dashboard_new_alias?)
       remove_request_stub(@request_stub)
       @channel_v2_api = false
       CustomRequestStore.store[:channel_api_request] = false
@@ -1427,6 +1425,54 @@ module Channel::V2
       ticket2.destroy if ticket2.present?
       @responding_agent.destroy if @responding_agent.present?
       @internal_agent.destroy if @internal_agent.present?
+    end
+
+    def test_ticket_create_with_whatsapp_source_and_feature_enabled
+      Account.current.launch(:whatsapp_ticket_source)
+      CustomRequestStore.store[:channel_api_request] = true
+      @channel_v2_api = true
+      params = {
+        name: Faker::Name.name,
+        phone: Faker::PhoneNumber.phone_number,
+        subject: Faker::Lorem.words(10).join(' '),
+        description: Faker::Lorem.paragraph,
+        priority: 1,
+        status: 2,
+        source: 13
+      }
+      Account.any_instance.stubs(:shared_ownership_enabled?).returns(false)
+      post :create, construct_params({ version: 'private' }, params)
+      assert_response 201
+      response = JSON.parse @response.body
+      t = Account.current.tickets.where(display_id: response['id']).first
+      match_json(ticket_pattern(params, t))
+    ensure
+      Account.current.rollback(:whatsapp_ticket_source)
+      Account.any_instance.unstub(:shared_ownership_enabled?)
+      CustomRequestStore.store[:channel_api_request] = false
+      @channel_v2_api = false
+    end
+
+    def test_ticket_create_with_whatsapp_source_and_feature_disabled
+      CustomRequestStore.store[:channel_api_request] = true
+      @channel_v2_api = true
+      params = {
+        name: Faker::Name.name,
+        phone: Faker::PhoneNumber.phone_number,
+        subject: Faker::Lorem.words(10).join(' '),
+        description: Faker::Lorem.paragraph,
+        priority: 1,
+        status: 2,
+        source: 13
+      }
+      Account.any_instance.stubs(:shared_ownership_enabled?).returns(false)
+      post :create, construct_params({ version: 'private' }, params)
+      assert_response 400
+      pattern = validation_error_pattern(bad_request_error_pattern('source', :not_included, list: api_ticket_sources.join(',')))
+      match_json(pattern)
+    ensure
+      CustomRequestStore.store[:channel_api_request] = false
+      @channel_v2_api = false
     end
   end
 end

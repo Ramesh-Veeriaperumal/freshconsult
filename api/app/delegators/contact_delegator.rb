@@ -5,13 +5,13 @@ class ContactDelegator < BaseDelegator
     validatable_custom_fields:  proc { |x| x.valid_custom_fields },
     drop_down_choices: proc { |x| x.valid_custom_field_choices },
     required_attribute: :required_for_agent }
-  }, unless: -> { [:quick_create, :update_password, :send_invite,:channel_contact_create].include?(validation_context) } 
+  }, unless: -> { [:quick_create, :update_password, :send_invite, :channel_contact].include?(validation_context) }
 
   validates :custom_field, custom_field: { custom_field: {
     validatable_custom_fields: proc { Account.current.contact_form.custom_drop_down_fields },
     drop_down_choices: proc { Account.current.contact_form.custom_dropdown_field_choices }
   }
-  }, if: -> { validation_context == :channel_contact_create }
+  }, if: -> { validation_context == :channel_contact }
 
 
   validate :user_emails_validation, if: -> { @other_emails }

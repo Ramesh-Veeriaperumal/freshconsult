@@ -83,7 +83,7 @@ class SchedulerPostMessageTest < ActionView::TestCase
     Account.current.launch(:downgrade_policy)
     current_subscription = @account.subscription
     new_reminder = get_new_subscription_request(@account, current_subscription.subscription_plan_id - 1, current_subscription.renewal_period)
-    params = downgrade_policy_job_params
+    params = scheduler_payload("#{@account.id}_activate_downgrade_1", 'helpkit_downgrade_policy_reminder', 1.day.from_now.iso8601, 'https://sqs.us-east-1.amazonaws.com/213293927234/fd_scheduler_downgrade_policy_reminder_queue_dev')
     res = ::Scheduler::PostMessage.new.perform(payload: params)
     refute response.blank?
     assert_includes SUCCESS, res.to_i, "Expected one of #{SUCCESS}, got #{res}"
@@ -97,9 +97,30 @@ class SchedulerPostMessageTest < ActionView::TestCase
       current_subscription = @account.subscription
       @account.launch(:downgrade_policy)
       new_reminder = get_new_subscription_request(@account, current_subscription.subscription_plan_id - 1, current_subscription.renewal_period)
-      params = downgrade_policy_job_params
+      params = scheduler_payload("#{@account.id}_activate_downgrade_1", 'helpkit_downgrade_policy_reminder', 1.day.from_now.iso8601, 'https://sqs.us-east-1.amazonaws.com/213293927234/fd_scheduler_downgrade_policy_reminder_queue_dev')
       params.delete(:scheduled_time)
       ::Scheduler::PostMessage.new.perform(payload: params)
+    end
+  end
+
+  def test_post_message_monthly_annual_notification
+    WebMock.allow_net_connect!
+    Account.stubs(:current).returns(Account.first)
+    @account = Account.current
+    params = scheduler_payload("#{@account.id}_monthly_to_annual_4", 'monthly_to_annual_notification', 4.months.from_now.iso8601, 'https://sqs.us-east-1.amazonaws.com/213293927234/switch_to_annual_notification_queue_dev')
+    res = ::Scheduler::PostMessage.new.perform(payload: params)
+    refute response.blank?
+    assert_includes SUCCESS, res.to_i, "Expected one of #{SUCCESS}, got #{res}"
+  end
+
+  def test_post_message_monthly_annual_notification_with_invalid_params
+    WebMock.allow_net_connect!
+    assert_raises(SchedulerService::Errors::BadRequestException) do
+      Account.stubs(:current).returns(Account.first)
+      @account = Account.current
+      params = scheduler_payload("#{@account.id}_monthly_to_annual_4", 'monthly_to_annual_notification', 4.months.from_now.iso8601, 'https://sqs.us-east-1.amazonaws.com/213293927234/switch_to_annual_notification_queue_dev')
+      params.delete(:scheduled_time)
+      Scheduler::PostMessage.new.perform(payload: params)
     end
   end
 
@@ -127,17 +148,17 @@ class SchedulerPostMessageTest < ActionView::TestCase
       [Account.current.id, 'ticket', ticket.id].join('_')
     end
 
-    def downgrade_policy_job_params
+    def scheduler_payload(job_id, group_name, scheduled_time, sqs_queue)
       {
-        job_id: "#{@account.id}_activate_downgrade_1",
-        group: 'helpkit_downgrade_policy_reminder',
-        scheduled_time: 1.day.from_now.iso8601,
+        job_id: job_id,
+        group: group_name,
+        scheduled_time: scheduled_time,
         data: {
           account_id: @account.id,
           enqueued_at: Time.now.to_i
         },
         sqs: {
-          url: 'https://sqs.us-east-1.amazonaws.com/213293927234/fd_scheduler_downgrade_policy_reminder_queue_dev'
+          url: sqs_queue
         }
       }
     end

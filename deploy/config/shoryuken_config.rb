@@ -236,7 +236,10 @@ class ShoryukenConfig
       :trial_email,
       :fd_scheduler_export_cleanup_queue,
       :analytics_etl_queue,
-      :email_rate_limiting_queue
+      :freddy_consumed_session_reminder_queue,
+      :email_rate_limiting_queue,
+      :switch_to_annual_notification,
+      :downgrade_policy_reminder
     ]
 
     queue_prefix = ENV["HELPKIT_TEST_SETUP_SQS_QUEUE_PREFIX"]

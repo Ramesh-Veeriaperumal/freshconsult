@@ -18,7 +18,7 @@ class ApiCompaniesDependencyTest < ActionView::TestCase
 
   def test_validations_company
     actual = Company.validators.map { |x| [x.class, x.attributes, x.options] }
-    expected = [[ActiveModel::Validations::PresenceValidator, [:name, :account], {}], [ActiveRecord::Validations::UniquenessValidator, [:name], { case_sensitive: false, scope: :account_id }]]
+    expected = [[ActiveModel::Validations::PresenceValidator, [:name, :account], {}], [ActiveRecord::Validations::UniquenessValidator, [:name], { case_sensitive: false, scope: :account_id, unless: :uniqueness_validated }]]
     assert_equal expected, actual
   end
 end

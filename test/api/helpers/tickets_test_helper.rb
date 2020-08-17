@@ -281,8 +281,8 @@ module ApiTicketsTestHelper
       fwd_emails: expected_output[:fwd_emails] || ticket.cc_email && ticket.cc_email[:fwd_emails],
       reply_cc_emails:  expected_output[:reply_cc_emails] || ticket.cc_email && ticket.cc_email[:reply_cc],
       ticket_cc_emails:  expected_output[:ticket_cc_emails] || ticket.cc_email && ticket.cc_email[:tkt_cc],
-      description:  description_html || ticket.description_html,
-      description_text:  ticket.description,
+      description: description_html || description_info(ticket)[:description],
+      description_text: description_info(ticket)[:description_text],
       id: expected_output[:display_id] || ticket.display_id,
       fr_escalated:  (expected_output[:fr_escalated] || ticket.fr_escalated).to_s.to_bool,
       is_escalated:  (expected_output[:is_escalated] || ticket.isescalated).to_s.to_bool,
@@ -297,7 +297,7 @@ module ApiTicketsTestHelper
       responder_id:  expected_output[:responder_id] || ticket.responder_id,
       source: expected_output[:source] || ticket.source,
       status: expected_output[:status] || ticket.status,
-      subject:  expected_output[:subject] || ticket.subject,
+      subject: expected_output[:subject] || subject_info(ticket),
       company_id: expected_output[:company_id] || ticket.company_id,
       type:  expected_output[:ticket_type] || ticket.ticket_type,
       to_emails: expected_output[:to_emails] || ticket.to_emails,
@@ -340,15 +340,51 @@ module ApiTicketsTestHelper
     if @private_api
       ticket_hash
     else
-      ticket_hash.except(:associated_tickets_count, :association_type, :can_be_associated, :email_failure_count)
+      ticket_hash.except(:skill_id, :associated_tickets_count, :association_type, :can_be_associated, :email_failure_count)
+    end
+  end
+
+  def description_info(ticket)
+    return default_description_info(ticket) unless restrict_twitter_ticket_content?(ticket)
+
+    {
+      description: restricted_twitter_ticket_content(ticket),
+      description_text: restricted_twitter_ticket_content(ticket)
+    }
+  end
+
+  def default_description_info(ticket)
+    {
+      description: ticket.description_html,
+      description_text: ticket.description
+    }
+  end
+
+  def subject_info(ticket)
+    restrict_twitter_ticket_content?(ticket) ? restricted_twitter_ticket_content(ticket) : ticket.subject
+  end
+
+  def twitter_ticket?(ticket)
+    (Account.current.has_feature?(:advanced_twitter) || Account.current.basic_twitter_enabled?) && ticket.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter] && ticket.tweet
+  end
+
+  def restrict_twitter_ticket_content?(ticket)
+    Account.current.twitter_api_compliance_enabled? && twitter_ticket?(ticket) && !@private_api && !@channel_v2_api
+  end
+
+  def restricted_twitter_ticket_content(ticket)
+    if ticket.tweet.tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention]
+      "View the tweet at https://twitter.com/#{ticket.tweet.twitter_handle_id}/status/#{ticket.tweet.tweet_id}"
+    else
+      'View the message at https://twitter.com/messages'
     end
   end
 
   def latest_note_as_ticket_pattern(expected_output = {}, ticket)
     description_html = format_ticket_html(expected_output[:description]) if expected_output[:description]
     ret_hash = {
-      description:  description_html || ticket.description_html,
-      description_text:  ticket.description,
+      description: description_html || description_info(ticket)[:description],
+      description_text: description_info(ticket)[:description_text],
       id: expected_output[:display_id] || ticket.display_id,
     }
   end
@@ -362,7 +398,7 @@ module ApiTicketsTestHelper
   end
 
   def update_ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
-    description = expected_output[:description] || ticket.description_html
+    description = expected_output[:description] || description_info(ticket)[:description]
     update_ticket_pattern = ticket_pattern(expected_output, ignore_extra_keys, ticket).merge(description: description)
     update_ticket_pattern.merge!(ticket_association_pattern(ticket)) if ticket.associated_ticket?
     update_ticket_pattern
@@ -1358,14 +1394,12 @@ module ApiTicketsTestHelper
     TicketDecorator.any_instance.stubs(:private_api?).returns(true)
     Account.any_instance.stubs(:count_es_enabled?).returns(true)
     Account.any_instance.stubs(:api_es_enabled?).returns(true)
-    Account.any_instance.stubs(:dashboard_new_alias?).returns(true)
   end
 
   def unstub_requirements_for_stats
     TicketDecorator.any_instance.unstub(:private_api?)
     Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
-    Account.any_instance.unstub(:dashboard_new_alias?)
     @channel_v2_api = false
     CustomRequestStore.store[:channel_api_request] = false
   end
@@ -1386,7 +1420,7 @@ module ApiTicketsTestHelper
       type: ticket.tweet.tweet_type,
       support_handle_id: handle.twitter_user_id.to_s,
       support_screen_name: handle.screen_name,
-      requester_screen_name: ticket.requester.twitter_id
+      requester_screen_name: Account.current.twitter_api_compliance_enabled? && !@channel_v2_api ? nil : ticket.requester.twitter_id
     }
     if @channel_v2_api
       tweet_hash.merge!(stream_id: ticket.tweet.stream_id)

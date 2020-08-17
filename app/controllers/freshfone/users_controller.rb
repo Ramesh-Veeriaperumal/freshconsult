@@ -125,23 +125,15 @@ class Freshfone::UsersController < ApplicationController
 		end
 
 		def set_meta_info
-			warm_transfer_call = select_warm_transfer_call
+			warm_transfer_call = warm_transfer_call_leg
 			return if warm_transfer_call.blank?
 			set_key(user_agent_key(warm_transfer_call), request.env['HTTP_USER_AGENT'], 14400)
 		end
 
-		def select_warm_transfer_call
-			return warm_transfer_call_leg if new_notifications?
-			return if current_call.blank?
-			current_call.supervisor_controls.warm_transfer_calls.supervisor_progress_call(split_client_id(params[:To])).first
-		end
-	
 		def current_incoming_call
-			return (current_user.freshfone_calls.recent_in_progress_call || 
-				current_user.freshfone_calls.call_in_progress || {}) if new_notifications?
-			(current_account.freshfone_calls.filter_by_call_sid(get_browser_sid).first || {})
+			(current_user.freshfone_calls.recent_in_progress_call || current_user.freshfone_calls.call_in_progress || {})
 		end
-		
+
 		def outgoing?
 			params[:outgoing].to_bool
 		end

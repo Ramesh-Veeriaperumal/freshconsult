@@ -235,37 +235,6 @@
       <div class="insights-content" rel="customize-insights-content">
       </div>
 </div>
-
-<% if !current_account.launched?(:onboarding_inlinemanual) %>
-  <div id="report-demo" class="hide row-fluid">
-    <iframe id="video_iframe" width="650" height="366" frameborder="0" allowfullscreen></iframe>
-  </div>
-  <script>
-    jQuery(document).ready(function() {
-      var video_url = "//fast.wistia.net/embed/iframe/i0f0lofova?videoFoam=true&autoPlay=true";
-      jQuery(document).on('click',"#report-demo [data-dismiss='modal']",function(){
-          resetVideo();
-      });
-      jQuery(document).keyup(function(e) {
-          if (e.keyCode == 27) {
-            resetVideo();
-          }
-      });
-      function resetVideo(){
-          var iframe = jQuery("#video_iframe")[0];
-          if(iframe != undefined) {
-              var url = iframe.src;
-              iframe.src = '';
-          }
-      }
-      jQuery("#demo_link").on('click',function(){
-          var iframe = jQuery("#video_iframe")[0];
-          var url = iframe.src;
-          iframe.src = video_url;
-      });
-    });
-  </script>
-<% end %>
 <script>
   jQuery('body').one('assetLoaded.fjax', function() {
     window.HelpdeskReports = window.HelpdeskReports || {};

@@ -101,16 +101,11 @@ module Ember
       assign_note_attributes
       @delegator_klass = 'FbReplyDelegator'
       fb_page = @ticket.fb_post.facebook_page
+      return unless validate_delegator(@item, note_id: @note_id, fb_page: fb_page, attachment_ids: @attachment_ids, msg_type: @msg_type, shared_attachments: shared_attachments)
 
-      if facebook_outgoing_attachment_enabled?
-        return unless validate_delegator(@item, note_id: @note_id, fb_page: fb_page, attachment_ids: @attachment_ids, msg_type: @msg_type)
-
-        add_facebook_attachments
-      else
-        return unless validate_delegator(@item, note_id: @note_id, fb_page: fb_page)
-      end
+      add_facebook_attachments
       reply_sent = reply_to_fb_ticket(@delegator.note)
-      include_survey = @item.include_surveymonkey_link.present? && @item.include_surveymonkey_link == 1 && @ticket.is_fb_message? && Account.current.csat_for_social_surveymonkey_enabled?
+      include_survey = @item.include_surveymonkey_link.present? && @item.include_surveymonkey_link == 1 && @ticket.is_fb_message?
       if include_survey
         survey = Integrations::SurveyMonkey.survey_for_social(@ticket, @item.user)
         if survey
@@ -135,7 +130,7 @@ module Ember
       assign_note_attributes
 
       @delegator_klass = 'TwitterReplyDelegator'
-      return unless validate_delegator(@item, twitter_handle_id: @twitter_handle_id, attachment_ids: @attachment_ids)
+      return unless validate_delegator(@item, twitter_handle_id: @twitter_handle_id, attachment_ids: @attachment_ids, shared_attachments: shared_attachments)
 
       draft_attachments = @delegator.draft_attachments
       @item.attachments = @item.attachments + draft_attachments if draft_attachments
@@ -366,33 +361,13 @@ module Ember
       def reply_to_fb_ticket(note)
         fb_page     = @ticket.fb_post.facebook_page
         parent_post = note || @ticket
-        if skip_posting_to_fb
-          build_fb_association(parent_post) 
-          return @item.save_note
-        end
-
-        return unless @item.save_note
-
-        reply_sent = send_reply_to_fb(fb_page, parent_post)
-        if reply_sent == :fb_user_blocked
-          @item.errors[:body] << :facebook_user_blocked
-        else
-          @item.errors[:body] << :unable_to_perform
-        end
-        reply_sent
+        build_fb_association(parent_post)
+        @item.save_note
       end
 
       def build_fb_association(parent_post)
         association_hash = @ticket.is_fb_message? ? construct_dm_hash(@ticket) : construct_post_hash(parent_post)
         @item.build_fb_post(association_hash)
-      end
-
-      def send_reply_to_fb(fb_page, parent_post)
-        if @ticket.is_fb_message?
-          return send_reply(fb_page, @ticket, @item, POST_TYPE[:message])
-        else
-          return send_reply(fb_page, parent_post, @item, POST_TYPE[:comment])
-        end
       end
 
       def assign_note_attributes
@@ -592,7 +567,7 @@ module Ember
           end
 
           include_survey_link = @item.include_surveymonkey_link.present? && @item.include_surveymonkey_link == 1
-          if include_survey_link && dm_note?(@tweet_type) && Account.current.csat_for_social_surveymonkey_enabled?
+          if include_survey_link && dm_note?(@tweet_type)
             survey = Integrations::SurveyMonkey.survey_for_social(@ticket, @item.user)
             if survey
               Social::TwitterSurveyWorker.perform_in(10.seconds.from_now, note_id: @item.id,

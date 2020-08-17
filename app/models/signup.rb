@@ -121,10 +121,8 @@ class Signup < ActivePresenter::Base
     def build_subscription
       plan_name = if aloha_signup && bundle_id && bundle_name
                     SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_omni_jan_20]
-                  elsif redis_key_exists?(NEW_2020_PRICING_ENABLED) || ismember?(NEW_2020_PRICING_TEST_USERS, user_email)
-                    SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_20]
                   else
-                    SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_19]
+                    SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_20]
                   end
       account.plan = SubscriptionPlan.find_by_name(plan_name)
     end

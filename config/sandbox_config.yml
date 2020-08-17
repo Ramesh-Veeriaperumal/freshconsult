@@ -33,6 +33,7 @@ MODEL_DEPENDENCIES:
   Helpdesk::Tag: []
   Product: []
   VaRule: []
+  Helpdesk::Source: []
   Helpdesk::TicketTemplate: []
   Social::TwitterHandle : []
   Social::Stream:

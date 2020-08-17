@@ -38,14 +38,13 @@ module Freshfone
       end
 
       def agents_unavailable?
-        new_notifications? && available_agents.one? &&
+        available_agents.one? &&
           available_agents.first.user_id == params[:agent].to_i &&
           !params[:notification_type]
       end
 
       def any_busy_agents?
-        return agents_unavailable? if new_notifications?
-        busy_agents.any?
+        agents_unavailable?
       end
   end
 end

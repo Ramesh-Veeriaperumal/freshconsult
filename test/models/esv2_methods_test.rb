@@ -36,8 +36,11 @@ class Esv2MethodTest < ActiveSupport::TestCase
   end
 
   def test_approver_ids_not_pushed_to_search_if_approval_workflow_not_enabled
+    Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(false)
     article = get_in_review_article
     payload = JSON.parse(article.to_esv2_json)
     refute_includes payload, 'approvers'
+  ensure
+    Account.any_instance.unstub(:article_approval_workflow_enabled?)
   end
 end

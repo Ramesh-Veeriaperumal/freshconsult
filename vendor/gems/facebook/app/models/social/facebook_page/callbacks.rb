@@ -127,13 +127,7 @@ class Social::FacebookPage < ActiveRecord::Base
     if remove_member_from_redis_set(key, page_id)
       remaining_pages = get_all_members_in_a_redis_set(key)
       Rails.logger.info("Found EUC Page #{page_id} and remaining pages are #{remaining_pages.inspect}")
-      launch_attachment if remaining_pages.blank?
     end
-  end
-
-  def launch_attachment
-    Account.current.launch(:skip_posting_to_fb)
-    Rails.logger.info("Launched attachment for the non migrated euc account #{Account.current.id}")
   end
 
   def send_mixpanel_event

@@ -11,7 +11,8 @@ DEFAULT_TICKET_SOURCES = [
   ['Feedback Widget', 8, 9, { icon_id: 9 }],
   ['Outbound Email', 9, 10, { icon_id: 10 }],
   ['Ecommerce', 10, 11, { icon_id: 11 }],
-  ['Bot', 11, 12, { icon_id: 12 }]
+  ['Bot', 11, 12, { icon_id: 12 }],
+  ['Whatsapp', 12, 13, { icon_id: 13 }]
 ].freeze
 CHOICE_TYPE = 'Helpdesk::Source'.freeze
 Helpdesk::Source.seed_many(:account_id, :account_choice_id,

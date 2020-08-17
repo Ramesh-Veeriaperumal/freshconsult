@@ -7,7 +7,15 @@ module Ember
     include SolutionsHelper
     def setup
       super
+      Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
+      Account.current.launch(:whatsapp_ticket_source)
       before_all
+    end
+
+    def teardown
+      super
+      Account.current.unstub(:ticket_source_revamp_enabled?)
+      Account.current.rollback(:whatsapp_ticket_source)
     end
 
     @@before_all_run = false
@@ -175,6 +183,36 @@ module Ember
       choice = status_field['choices'].find { |choices| choices['choice_id'] == status.status_id }
       assert_equal choice['label'], ct['choices']["choice_#{status.status_id}"]
       assert_equal choice['customer_display_name'], ct['customer_choices']["choice_#{status.status_id}"]
+    ensure
+      unstub_params_for_custom_translations
+    end
+
+    def test_index_with_custom_translations_for_source_with_same_user_language
+      source_field = Account.current.ticket_fields.where(field_type: 'default_source').first
+      stub_params_for_custom_translations('fr')
+      custom_source = @account.helpdesk_sources.visible.custom.last || create_custom_source
+      ct = create_custom_translation(source_field.id, 'fr', source_field.name, source_field.label_in_portal, [[custom_source.account_choice_id, custom_source.name]]).translations
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      response = parse_response @response.body
+      source_field = response.find { |field| field['type'] == 'default_source' }
+      assert_equal source_field['label'], ct['label']
+      choice = source_field['choices'].find { |choices| choices['id'] == custom_source.account_choice_id }
+      assert_equal choice['label'], ct['choices']["choice_#{custom_source.account_choice_id}"]
+    ensure
+      unstub_params_for_custom_translations
+    end
+
+    def test_index_translations_for_default_source_with_same_user_language
+      source_field = Account.current.ticket_fields.where(field_type: 'default_source').first
+      stub_params_for_custom_translations('fr')
+      default_source = Account.current.helpdesk_sources.select(&:default).first
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      response = parse_response @response.body
+      source_field = response.find { |field| field['type'] == 'default_source' }
+      choice = source_field['choices'].find { |choices| choices['id'] == default_source.account_choice_id }
+      assert_equal choice['label'], I18n.t(Helpdesk::Source.default_ticket_sources.select { |i| i[2] == default_source.account_choice_id }.first[1])
     ensure
       unstub_params_for_custom_translations
     end
@@ -451,15 +489,12 @@ module Ember
     end
 
     def test_index_with_updated_source_response
-      Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
       get :index, controller_params(version: 'private')
       assert_response 200
       response = parse_response @response.body
       source_field = response.find { |x| x['name'] == 'source' }['choices'].first
       expected_source_fields = %w[id label value position icon_id default deleted]
       assert_equal true, (expected_source_fields - source_field.keys).empty?
-    ensure
-      Account.current.unstub(:ticket_source_revamp_enabled?)
     end
 
     private

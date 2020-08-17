@@ -23,4 +23,5 @@ module SubscriptionConstants
   FDFSONBOARDING = 'freshsales_freshdesk_onboarding'.freeze
   FRESHSALES = 'freshsales'.freeze
   FDFSBUNDLE = 'FDFSBUNDLE'.freeze
+  POSTPONE_NOTIFICATION_OFFSET = -3
 end.freeze

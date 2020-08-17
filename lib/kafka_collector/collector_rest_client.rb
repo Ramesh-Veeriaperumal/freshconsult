@@ -1,7 +1,7 @@
 module KafkaCollector
   module CollectorRestClient
     POST_TO_COLLECTOR_TIMEOUT = 2
-    def post_to_collector(data, msg_id=nil, is_channel_token=true)
+    def post_to_collector(data, msg_id=nil, is_channel_token=true, timeout = POST_TO_COLLECTOR_TIMEOUT)
       token = is_channel_token ? KafkaCollectorConfig['service'] : CentralConfig['service_token']
 
       con = Faraday.new(KafkaCollectorConfig['kafka_collector_endpoint']) do |faraday|
@@ -17,7 +17,7 @@ module KafkaCollector
         req.headers['service'] = token
         req.headers['x-request-id'] = msg_id if msg_id
         req.body = data
-        req.options.timeout = POST_TO_COLLECTOR_TIMEOUT
+        req.options.timeout = timeout
       end
       response.status
     rescue Exception => e

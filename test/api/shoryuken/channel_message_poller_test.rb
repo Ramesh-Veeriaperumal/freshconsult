@@ -19,7 +19,6 @@ class ChannelMessagePollerTest < ActionView::TestCase
 
   def teardown
     cleanup_twitter_handles(@account)
-    Account.current.rollback(:skip_posting_to_fb)
   end
 
   def setup
@@ -30,7 +29,6 @@ class ChannelMessagePollerTest < ActionView::TestCase
     @stream = @handle.default_stream
     @fb_ticket = create_ticket_from_fb_post
     @fb_page = @fb_ticket.fb_post.facebook_page
-    Account.current.launch(:skip_posting_to_fb)
   end
 
   def test_twitter_dm_convert_as_ticket

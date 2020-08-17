@@ -6,6 +6,6 @@ module Channel::V2::ContactConstants
                         failed_login_count privileges extn history_column
                         last_seen_at delta].freeze
 
-  CHANNEL_CREATE_FIELDS = (ContactConstants::CONTACT_FIELDS + PROTECTED_FIELDS +
+  CHANNEL_CREATE_FIELDS = CHANNEL_UPDATE_FIELDS = (ContactConstants::CONTACT_FIELDS + PROTECTED_FIELDS +
                             %w[deleted import_id facebook_id preferences parent_id twitter_profile_status twitter_followers_count]).freeze
 end

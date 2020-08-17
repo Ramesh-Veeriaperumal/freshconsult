@@ -337,7 +337,6 @@ module Ember
 
       def test_show_published_article_with_freshconnect_enabled
         Account.any_instance.stubs(:collaboration_enabled?).returns(true)
-        Account.current.launch(:solutions_freshconnect)
         sample_article = get_article_without_draft
         sample_article.reload
         time_now = Time.zone.now
@@ -354,12 +353,10 @@ module Ember
         assert_response 200
       ensure
         Account.any_instance.unstub(:collaboration_enabled?)
-        Account.current.rollback(:solutions_freshconnect)
       end
 
       def test_show_draft_article_with_freshconnect_enabled
         Account.any_instance.stubs(:collaboration_enabled?).returns(true)
-        Account.current.launch(:solutions_freshconnect)
         sample_article = get_article_with_draft
         time_now = Time.zone.now
         Timecop.freeze(time_now) do
@@ -375,7 +372,6 @@ module Ember
         assert_response 200
       ensure
         Account.any_instance.unstub(:collaboration_enabled?)
-        Account.current.rollback(:solutions_freshconnect)
       end
 
       def test_show_unavailalbe_article
@@ -861,6 +857,7 @@ module Ember
           assert_equal @account.tags.map(&:name).include?(tag), false
           tag
         end
+        User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(true)
         User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
         User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
@@ -1020,6 +1017,7 @@ module Ember
 
       def test_update_draft_state_article_without_publish_solution_privilege
         without_publish_solution_privilege do
+          User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(true)
           default_category = @account.solution_category_meta.where(is_default: true).first
           default_folder = default_category.solution_folder_meta.first
           article_meta = create_article(folder_meta_id: default_folder.id, status: '1')
@@ -1033,10 +1031,13 @@ module Ember
           match_json(private_api_solution_article_pattern(article))
           assert_equal Solution::Article::STATUS_KEYS_BY_TOKEN[:draft], article.status
         end
+      ensure
+        User.any_instance.unstub(:privilege?)
       end
 
       def test_update_without_publish_solution_privilege
         without_publish_solution_privilege do
+          User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(true)
           sample_article = get_article_without_draft
           paragraph = Faker::Lorem.paragraph
           params_hash = { title: 'new draft title', description: paragraph, status: 2, agent_id: @agent.id }
@@ -1045,6 +1046,8 @@ module Ember
           error_info_hash = { details: 'dont have permission to perfom on published article' }
           match_json(request_error_pattern_with_info(:published_article_privilege_error, error_info_hash, error_info_hash))
         end
+      ensure
+        User.any_instance.unstub(:privilege?)
       end
 
       def test_show_without_view_solution_privilege
@@ -2452,7 +2455,7 @@ module Ember
         export_params = { portal_id: @portal_id.to_s, status: 'invalid', article_fields: [{ field_name: 'title', column_name: 'Title' }] }
         post :export, construct_params({ version: 'private' }, export_params)
         assert_response 400
-        expected = { description: 'Validation failed', errors: [{ field: 'status', message: "It should be one of these values: '1,2,3'", code: 'invalid_value' }] }
+        expected = { description: 'Validation failed', errors: [{ field: 'status', message: "It should be one of these values: '1,2,3,4,5'", code: 'invalid_value' }] }
         assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
       end
 
@@ -2791,6 +2794,7 @@ module Ember
       end
 
       def test_bulk_update_publish
+        User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(true)
         User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
         draft = @account.solution_drafts.last
@@ -2802,6 +2806,7 @@ module Ember
       end
 
       def test_bulk_update_publish_without_publish_privilege
+        User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(false)
         User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
         draft = @account.solution_drafts.last
@@ -2815,6 +2820,7 @@ module Ember
         Account.any_instance.stubs(:multilingual?).returns(false)
         User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(true)
         article_title1 = Faker::Lorem.characters(10)
         article_meta1 = create_article(article_params(title: article_title1, status: 1))
         sample_article1 = article_meta1.safe_send('primary_article')
@@ -2838,6 +2844,7 @@ module Ember
         Account.any_instance.stubs(:multilingual?).returns(true)
         User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(true)
         languages = @account.supported_languages + ['primary']
         language  = @account.supported_languages.first
         article_title = Faker::Lorem.characters(10)
@@ -2903,8 +2910,6 @@ module Ember
         Solution::Draft.any_instance.stubs(:locked?).returns(true)
         put :bulk_update, construct_params({ version: 'private' }, ids: [sample_article.parent_id], properties: { status: 2 })
         assert_response 202
-        sample_article.destroy
-        draft.destroy
         article_meta.destroy
       ensure
         User.any_instance.unstub(:privilege?)
@@ -3482,6 +3487,7 @@ module Ember
       # agent without publish solution privileges tests
       def test_update_draft_article_folder_without_publish_solution_privilege
         without_publish_solution_privilege do
+          User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(true)
           sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 1)).primary_article
           lang_hash = { lang_codes: all_account_languages }
           category = create_category({ portal_id: Account.current.main_portal.id }.merge(lang_hash))
@@ -3492,10 +3498,13 @@ module Ember
           sample_article.reload
           match_json(private_api_solution_article_pattern(sample_article))
         end
+      ensure
+        User.any_instance.unstub(:privilege?)
       end
 
       def test_update_published_article_folder_without_publish_solution_privilege
         without_publish_solution_privilege do
+          User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(true)
           sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
           lang_hash = { lang_codes: all_account_languages }
           category = create_category({ portal_id: Account.current.main_portal.id }.merge(lang_hash))
@@ -3506,10 +3515,13 @@ module Ember
           error_info_hash = { details: 'dont have permission to perfom on published article' }
           match_json(request_error_pattern_with_info(:published_article_privilege_error, error_info_hash, error_info_hash))
         end
+      ensure
+        User.any_instance.unstub(:privilege?)
       end
 
       def test_update_draft_article_tags_without_publish_solution_privilege
         without_publish_solution_privilege do
+          User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(true)
           User.any_instance.stubs(:privilege?).with(:create_tags).returns(true)
           sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 1)).primary_article
           params_hash = { status: 1, tags: ['sample tag1', 'sample tag2'] }
@@ -3518,11 +3530,14 @@ module Ember
           sample_article.reload
           match_json(private_api_solution_article_pattern(sample_article))
         end
+      ensure
+        User.any_instance.unstub(:privilege?)
       end
 
       def test_update_published_article_tags_without_publish_solution_privilege
         without_publish_solution_privilege do
           User.any_instance.stubs(:privilege?).with(:create_tags).returns(true)
+          User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(true)
           sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
           params_hash = { status: 1, tags: ['sample tag1', 'sample tag2'] }
           put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
@@ -3530,10 +3545,13 @@ module Ember
           error_info_hash = { details: 'dont have permission to perfom on published article' }
           match_json(request_error_pattern_with_info(:published_article_privilege_error, error_info_hash, error_info_hash))
         end
+      ensure
+        User.any_instance.unstub(:privilege?)
       end
 
       def test_unpublish_a_published_article_without_publish_solution_privilege
         without_publish_solution_privilege do
+          User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(true)
           sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
           params_hash = { status: 1 }
           put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
@@ -3541,6 +3559,8 @@ module Ember
           error_info_hash = { details: 'dont have permission to perfom on published article' }
           match_json(request_error_pattern_with_info(:published_article_privilege_error, error_info_hash, error_info_hash))
         end
+      ensure
+        User.any_instance.unstub(:privilege?)
       end
 
       def test_create_and_publish_article_without_publish_solution_privilege
@@ -3569,6 +3589,7 @@ module Ember
 
       def test_update_draft_article_author_without_publish_solution_privilege
         without_publish_solution_privilege do
+          User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(true)
           sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 1)).primary_article
           params_hash = { title: 'publish without draft title', status: 1, agent_id: @agent.id }
           put :update, construct_params({ version: 'private', id: sample_article.parent_id, agent_id: @agent.id }, params_hash)
@@ -3576,10 +3597,13 @@ module Ember
           sample_article.reload
           match_json(private_api_solution_article_pattern(sample_article))
         end
+      ensure
+        User.any_instance.unstub(:privilege?)
       end
 
       def test_update_published_article_author_without_publish_solution_privilege
         without_publish_solution_privilege do
+          User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(true)
           sample_article = get_article_with_draft
           params_hash = { title: 'publish without draft title', status: 2, agent_id: @agent.id }
           put :update, construct_params({ version: 'private', id: sample_article.parent_id, agent_id: @agent.id }, params_hash)
@@ -3587,6 +3611,8 @@ module Ember
           error_info_hash = { details: 'dont have permission to perfom on published article' }
           match_json(request_error_pattern_with_info(:published_article_privilege_error, error_info_hash, error_info_hash))
         end
+      ensure
+        User.any_instance.unstub(:privilege?)
       end
 
       def test_save_on_draft_without_dirty_changes_should_unlock_draft
@@ -3979,6 +4005,7 @@ module Ember
       def test_update_with_platform_values_without_publish_solution_privilege
         enable_omni_bundle do
           without_publish_solution_privilege do
+            User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(true)
             sample_article = get_article_with_platform_mapping(web: false)
             platform_values = { platforms: chat_platform_params(web: true) }
 
@@ -3989,6 +4016,8 @@ module Ember
             match_json(request_error_pattern_with_info(:published_article_privilege_error, error_info_hash, error_info_hash))
           end
         end
+      ensure
+        User.any_instance.unstub(:privilege?)
       end
 
       def test_update_with_platform_values_with_article_in_review
@@ -4627,6 +4656,7 @@ module Ember
         Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(true)
         User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(true)
         sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 1)).primary_article
         should_create_version(sample_article) do
           put :bulk_update, construct_params({ version: 'private' }, ids: [sample_article.parent_id], properties: { status: 2 })
@@ -4643,6 +4673,7 @@ module Ember
         Account.any_instance.stubs(:adv_article_bulk_actions_enabled?).returns(true)
         User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+        User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(true)
         languages = @account.supported_languages + ['primary']
         language  = @account.supported_languages.first
         article_meta = create_article(article_params(lang_codes: languages).merge(status: 1))

@@ -639,6 +639,10 @@
 /admin/accounts/agents_limit:
   $ref: ./admin/accounts/agents_limit.yaml
 
+# Holidays
+/admin/holidays/{id}:
+  $ref: ./admin/holidays/holidays.yaml
+
 #Admin Security
 /admin/security_keys/widget/regenerate:
   $ref: ./admin/security_keys/widget/regenerate.yaml

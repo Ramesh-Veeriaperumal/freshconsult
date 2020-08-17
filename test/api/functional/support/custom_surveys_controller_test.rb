@@ -8,6 +8,7 @@ class Support::CustomSurveysControllerTest < ActionController::TestCase
   def setup
     super
     Account.stubs(:current).returns(Account.first)
+    Language.stubs(:current).returns(Language.find_by_code('en'))
     @survey = Account.current.surveys.first
     @survey_handle = Account.current.tickets.first.survey_handles.build
     @survey_handle.survey = @survey
@@ -17,7 +18,9 @@ class Support::CustomSurveysControllerTest < ActionController::TestCase
   end
 
   def teardown
+    Language.unstub(:current)
     Account.unstub(:current)
+    super
   end
 
   def test_when_agent_logged_in_for_csat_redirect

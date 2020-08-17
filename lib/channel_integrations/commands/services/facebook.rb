@@ -10,8 +10,6 @@ module ChannelIntegrations::Commands::Services
     include ChannelIntegrations::CommonActions::Note
 
     def receive_update_facebook_reply_state(payload)
-      return unless Account.current.launched?(:skip_posting_to_fb)
-
       context = payload[:context]
       data = payload[:data]
 

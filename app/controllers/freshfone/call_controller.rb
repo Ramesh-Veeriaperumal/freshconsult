@@ -233,8 +233,7 @@ class Freshfone::CallController < FreshfoneBaseController
  def warm_transfer_call(call = nil)
     return @warm_transfer_call ||= call.supervisor_controls.warm_transfer_initiated_calls
                                        .where(supervisor_id: agent.id).last if call.present?
-    @warm_transfer_call ||= new_notifications? ? new_notifications_warm_transfer_call :
-                                      conference_call_by_sid(params[:call_sid])
+    @warm_transfer_call ||= new_notifications_warm_transfer_call
  end
 
  def conference_call_by_sid(sid)
