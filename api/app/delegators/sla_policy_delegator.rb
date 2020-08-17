@@ -32,8 +32,6 @@ class SlaPolicyDelegator < BaseDelegator
         else
           list_values = Account.current.companies.where('id IN (?)', val).pluck('id')
         end
-      elsif field.singularize.to_sym.eql?(:source)
-        list_values = Account.current.ticket_source_from_cache.map(&:account_choice_id)
       else
         condition_hash = SlaPolicyConstants::SLA_CONDITION[field.singularize.to_sym]
         list_values = Account.current.safe_send(condition_hash[:method])

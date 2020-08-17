@@ -397,9 +397,7 @@ module Admin::Automation::AutomationSummary
     end
 
     def source
-      @source ||= record.account.ticket_source_from_cache.inject({}) do |hash, key|
-        hash.merge!(key[:account_choice_id].to_s => key[:name].to_s)
-      end
+      SOURCE
     end
 
     def language
