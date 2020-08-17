@@ -1503,6 +1503,10 @@
             "_priority": 1,
             "_sqs_queue": "main_staging_trial_email"
           },
+          "freddy_consumed_session_reminder_queue": {
+            "_sqs_queue": "freddy_consumed_session_reminder_queue",
+            "_priority": 1
+          },
           "email_rate_limiting_queue": {
              "_priority": 1,
              "_sqs_queue": "email_rate_limiting_staging"
@@ -1610,6 +1614,7 @@
         "_search_etlqueue_maintenance": "search-etlqueue-stagingvpc-staging_new_maintenance",
         "_count_etl_queue_maintenance": "count_etl_queue-stagingvpc-staging_maintenance",
         "_analytics_etl_queue_maintenance": "analytics_etl_queue-stagingvpc-staging_maintenance",
+        "_freddy_consumed_session_reminder_queue": "freddy_consumed_session_reminder_queue",
         "_email_rate_limiting_queue": "email_rate_limiting_staging"
       },
       "archive_sqs_queues": {

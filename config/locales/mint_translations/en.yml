@@ -8348,3 +8348,10 @@ en:
   common_js_translations:
     of: "of"
   whatsapp: "Whatsapp"
+  freddy_consumed_session_mailer:
+    consumed_sessions_subject: "Your Freddy session consumption has exceeded %{sessions_consumed}% for the billing cycle"
+    consumed_sessions_body: "We’d like to let you know that your account has already consumed %{session_count} sessions which is more than %{sessions_consumed}% of allotted sessions for this billing cycle."
+    buy_more_sessions_body: >-
+      To continue deflecting incoming requests, you can buy more sessions for your account by visiting your account’s <a
+      href="%{billing_url}">Plans & Billing</a> page.
+    additional_sessions_note_body: "Please note that additional freddy sessions bought are valid for the current billing cycle."

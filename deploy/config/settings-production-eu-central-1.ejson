@@ -739,6 +739,10 @@
             "_sqs_queue": "custom_mailbox_notification",
             "_priority": 1
           },
+          "freddy_consumed_session_reminder_queue": {
+            "_sqs_queue": "freddy_consumed_session_reminder_production",
+            "_priority": 1
+          },
           "email_rate_limiting_queue": {
             "_sqs_queue": "email_rate_limiting_production",
             "_priority": 1
@@ -1000,6 +1004,7 @@
         "_search_etlqueue_maintenance": "search-etlqueue-production_maintenance",
         "_count_etl_queue_maintenance": "count_etl_queue_production_maintenance",
         "_analytics_etl_queue_maintenance": "analytics_etl_queue_production_maintenance",
+        "_freddy_consumed_session_reminder_queue": "freddy_consumed_session_reminder_production",
         "_email_rate_limiting_queue": "email_rate_limiting_production"
       },
       "archive_sqs_queues": {

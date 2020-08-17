@@ -857,6 +857,7 @@ HEREDOC
       :fd_scheduler_downgrade_policy_reminder_queue,
       :analytics_etl_queue,
       :email_rate_limiting_queue,
+      :freddy_consumed_session_reminder_queue,
       :switch_to_annual_notification_queue
     ]
 
