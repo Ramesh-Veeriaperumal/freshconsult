@@ -665,6 +665,19 @@ class TicketTest < ActiveSupport::TestCase
     Account.any_instance.unstub(:next_response_sla_enabled?)
   end
 
+  def test_central_publish_with_stop_sla_timer
+    t = create_ticket(ticket_params_hash.merge(responder_id: @agent.id))
+    t.reload
+    t.status = Account.current.ticket_statuses.where(stop_sla_timer:true).first.status_id
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    t.save
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    job = CentralPublishWorker::ActiveTicketWorker.jobs.last
+    assert_equal 'ticket_update', job['args'][0]
+    assert_equal true, JSON.parse(payload)["status_stop_sla_timer"]
+  end
+
   def test_central_publish_payload_with_secure_field
     @account = Account.first.nil? ? create_test_account : Account.first.make_current
     create_custom_field_dn('custom_card_no_test', 'secure_text')
