@@ -444,25 +444,9 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     Email::MailboxValidation.any_instance.stubs(:private_api?).returns(true)
     Email::MailboxesController.any_instance.stubs(:private_api?).returns(true)
     redis_key = 'GMAIL::test:xyz'
-    value = {
-      oauth_token: 'ya29.Il-vB0K5x3',
-      support_email: 'testactivefilter@fd.com',
-      refresh_token: 'xugvqw377',
-      type: 'new',
-      oauth_email: 'test@gmail.com'
-    }
+    value = redis_hash
     $redis_others.perform_redis_op('mapped_hmset', redis_key, value)
-    options = {
-      support_email: 'testactivefilter@fd.com',
-      imap_authentication: 'xoauth2',
-      smtp_authentication: 'xoauth2',
-      imap_user_name: 'test@gmail.com',
-      smtp_user_name: 'test@gmail.com',
-      imap_password: '',
-      smtp_password: '',
-      reference_key: redis_key,
-      access_type: 'both'
-    }
+    options = xoauth_both_options_hash(redis_key: redis_key)
     params_hash = create_mailbox_params_hash.merge(create_custom_mailbox_hash(options)).merge(mailbox_type: CUSTOM_MAILBOX)
     post :update, construct_params({ id: email_config.id }, params_hash)
     assert_response 200
@@ -494,25 +478,9 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     Email::MailboxValidation.any_instance.stubs(:private_api?).returns(true)
     Email::MailboxesController.any_instance.stubs(:private_api?).returns(true)
     redis_key = 'GMAIL::test:xyz'
-    value = {
-      oauth_token: 'ya29.Il-vB0K5x3',
-      support_email: 'testactivefilter@fd.com',
-      refresh_token: 'xugvqw377',
-      type: 'new',
-      oauth_email: 'test@gmail.com'
-    }
+    value = redis_hash
     $redis_others.perform_redis_op('mapped_hmset', redis_key, value)
-    options = {
-      support_email: 'testactivefilter@fd.com',
-      imap_authentication: 'xoauth2',
-      smtp_authentication: 'xoauth2',
-      imap_user_name: 'test@gmail.com',
-      smtp_user_name: 'test@gmail.com',
-      imap_password: '',
-      smtp_password: '',
-      reference_key: redis_key,
-      access_type: 'both'
-    }
+    options = xoauth_both_options_hash(redis_key: redis_key)
     params_hash = create_mailbox_params_hash.merge(create_custom_mailbox_hash(options)).merge(mailbox_type: CUSTOM_MAILBOX)
     post :update, construct_params({ id: email_config.id }, params_hash)
     assert_response 200
@@ -532,6 +500,109 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     Email::MailboxesController.any_instance.unstub(:private_api?)
     $redis_others.perform_redis_op('del', redis_key)
     $redis_others.perform_redis_op('del', access_token_key)
+  end
+
+  def test_update_oauth_mailbox_from_incoming_to_both
+    Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
+    Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
+    email_config = create_email_config(
+      support_email: 'test@test3.com',
+      imap_mailbox_attributes: {
+        imap_authentication: 'xoauth2',
+        with_refresh_token: true,
+        with_access_token: true
+      }
+    )
+    Email::MailboxValidation.any_instance.stubs(:private_api?).returns(true)
+    Email::MailboxesController.any_instance.stubs(:private_api?).returns(true)
+    options = xoauth_both_options_hash
+    params_hash = create_mailbox_params_hash.merge(create_custom_mailbox_hash(options)).merge(mailbox_type: CUSTOM_MAILBOX)
+    post :update, construct_params({ id: email_config.id }, params_hash)
+    assert_response 200
+    match_json(mailbox_pattern({}, EmailConfig.find_by_id(email_config.id)))
+    assert_equal email_config.reload.smtp_mailbox.access_token, 'accesstoken'
+    assert_equal email_config.reload.smtp_mailbox.refresh_token, 'refreshtoken'
+    assert_equal email_config.reload.imap_mailbox.access_token, 'accesstoken'
+    assert_equal email_config.reload.imap_mailbox.refresh_token, 'refreshtoken'
+    access_token_key = format(
+      OAUTH_ACCESS_TOKEN_VALIDITY,
+      provider: 'google_oauth2',
+      account_id: Account.current.id,
+      smtp_mailbox_id: email_config.smtp_mailbox.id
+    )
+    assert_equal $redis_others.perform_redis_op('exists', access_token_key), true
+  ensure
+    Account.any_instance.unstub(:has_features?)
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+    Email::MailboxValidation.any_instance.unstub(:private_api?)
+    Email::MailboxesController.any_instance.unstub(:private_api?)
+    $redis_others.perform_redis_op('del', access_token_key)
+  end
+
+  def test_update_oauth_mailbox_from_incoming_to_outgoing
+    Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
+    Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
+    email_config = create_email_config(
+      support_email: 'test@test3.com',
+      imap_mailbox_attributes: {
+        imap_authentication: 'xoauth2',
+        with_refresh_token: true,
+        with_access_token: true
+      }
+    )
+    Email::MailboxValidation.any_instance.stubs(:private_api?).returns(true)
+    Email::MailboxesController.any_instance.stubs(:private_api?).returns(true)
+    options = xoauth_outgoing_options_hash
+    params_hash = create_mailbox_params_hash.merge(create_custom_mailbox_hash(options)).merge(mailbox_type: CUSTOM_MAILBOX)
+    post :update, construct_params({ id: email_config.id }, params_hash)
+    assert_response 200
+    match_json(mailbox_pattern({}, EmailConfig.find_by_id(email_config.id)))
+    assert_equal email_config.reload.smtp_mailbox.access_token, 'accesstoken'
+    assert_equal email_config.reload.smtp_mailbox.refresh_token, 'refreshtoken'
+    assert_nil email_config.reload.imap_mailbox
+    assert_nil email_config.reload.imap_mailbox
+    access_token_key = format(
+      OAUTH_ACCESS_TOKEN_VALIDITY,
+      provider: 'google_oauth2',
+      account_id: Account.current.id,
+      smtp_mailbox_id: email_config.smtp_mailbox.id
+    )
+    assert_equal $redis_others.perform_redis_op('exists', access_token_key), true
+  ensure
+    Account.any_instance.unstub(:has_features?)
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+    Email::MailboxValidation.any_instance.unstub(:private_api?)
+    Email::MailboxesController.any_instance.unstub(:private_api?)
+    $redis_others.perform_redis_op('del', access_token_key)
+  end
+
+  def test_update_oauth_mailbox_from_outgoing_to_incoming
+    Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
+    Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
+    email_config = create_email_config(
+      support_email: 'test@test3.com',
+      smtp_mailbox_attributes: {
+        smtp_authentication: 'xoauth2',
+        with_refresh_token: true,
+        with_access_token: true
+      }
+    )
+    Email::MailboxValidation.any_instance.stubs(:private_api?).returns(true)
+    Email::MailboxesController.any_instance.stubs(:private_api?).returns(true)
+    options = xoauth_incoming_options_hash
+    params_hash = create_mailbox_params_hash.merge(create_custom_mailbox_hash(options)).merge(mailbox_type: CUSTOM_MAILBOX)
+    post :update, construct_params({ id: email_config.id }, params_hash)
+    assert_response 200
+    match_json(mailbox_pattern({}, EmailConfig.find_by_id(email_config.id)))
+    assert_equal email_config.reload.imap_mailbox.access_token, 'accesstoken'
+    assert_equal email_config.reload.imap_mailbox.refresh_token, 'refreshtoken'
+    assert_nil email_config.reload.smtp_mailbox
+    assert_nil email_config.reload.smtp_mailbox
+  ensure
+    Account.any_instance.unstub(:has_features?)
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+    Email::MailboxValidation.any_instance.unstub(:private_api?)
+    Email::MailboxesController.any_instance.unstub(:private_api?)
   end
 
   # test_send_verification_success
@@ -807,25 +878,9 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     Email::MailboxValidation.any_instance.stubs(:private_api?).returns(true)
     Email::MailboxesController.any_instance.stubs(:private_api?).returns(true)
     redis_key = 'GMAIL::test:xyz'
-    value = {
-      oauth_token: 'ya29.Il-vB0K5x3',
-      support_email: 'testactivefilter@fd.com',
-      refresh_token: 'xugvqw377',
-      type: 'new',
-      oauth_email: 'test@gmail.com'
-    }
+    value = redis_hash
     $redis_others.perform_redis_op('mapped_hmset', redis_key, value)
-    options = {
-      support_email: 'testactivefilter@fd.com',
-      imap_authentication: 'xoauth2',
-      smtp_authentication: 'xoauth2',
-      imap_user_name: 'test@gmail.com',
-      smtp_user_name: 'test@gmail.com',
-      imap_password: '',
-      smtp_password: '',
-      reference_key: redis_key,
-      access_type: 'both'
-    }
+    options = xoauth_both_options_hash(redis_key: redis_key)
     params_hash = create_mailbox_params_hash.merge(create_custom_mailbox_hash(options)).merge(mailbox_type: CUSTOM_MAILBOX)
     post :create, construct_params({}, params_hash)
     assert_response 201
@@ -849,22 +904,9 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     Email::MailboxValidation.any_instance.stubs(:private_api?).returns(true)
     Email::MailboxesController.any_instance.stubs(:private_api?).returns(true)
     redis_key = 'GMAIL::test:xyz'
-    value = {
-      oauth_token: 'ya29.Il-vB0K5x3',
-      support_email: 'testactivefilter@fd.com',
-      refresh_token: 'xugvqw377',
-      type: 'new',
-      oauth_email: 'test@gmail.com'
-    }
+    value = redis_hash
     $redis_others.perform_redis_op('mapped_hmset', redis_key, value)
-    options = {
-      support_email: 'testactivefilter@fd.com',
-      imap_authentication: 'xoauth2',
-      imap_user_name: 'test@gmail.com',
-      imap_password: '',
-      reference_key: redis_key,
-      access_type: 'incoming'
-    }
+    options = xoauth_incoming_options_hash(redis_key: redis_key)
     params_hash = create_mailbox_params_hash.merge(create_custom_mailbox_hash(options)).merge(mailbox_type: CUSTOM_MAILBOX)
     post :create, construct_params({}, params_hash)
     assert_response 201
@@ -880,22 +922,9 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     Email::MailboxValidation.any_instance.stubs(:private_api?).returns(true)
     Email::MailboxesController.any_instance.stubs(:private_api?).returns(true)
     redis_key = 'GMAIL::test:xyz'
-    value = {
-      oauth_token: 'ya29.Il-vB0K5x3',
-      support_email: 'testactivefilter@fd.com',
-      refresh_token: 'xugvqw377',
-      type: 'new',
-      oauth_email: 'test@gmail.com'
-    }
+    value = redis_hash
     $redis_others.perform_redis_op('mapped_hmset', redis_key, value)
-    options = {
-      support_email: 'testactivefilter@fd.com',
-      smtp_authentication: 'xoauth2',
-      smtp_user_name: 'test@gmail.com',
-      smtp_password: '',
-      reference_key: redis_key,
-      access_type: 'outgoing'
-    }
+    options = xoauth_outgoing_options_hash(redis_key: redis_key)
     params_hash = create_mailbox_params_hash.merge(create_custom_mailbox_hash(options)).merge(mailbox_type: CUSTOM_MAILBOX)
     post :create, construct_params({}, params_hash)
     assert_response 201
@@ -911,25 +940,9 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     Email::MailboxValidation.any_instance.stubs(:private_api?).returns(true)
     Email::MailboxesController.any_instance.stubs(:private_api?).returns(true)
     redis_key = 'GMAIL::test:xyz'
-    value = {
-      oauth_token: 'ya29.Il-vB0K5x3',
-      support_email: 'testactivefilter@fd.com',
-      refresh_token: 'xugvqw377',
-      type: 'new',
-      oauth_email: 'test@gmail.com'
-    }
+    value = redis_hash
     $redis_others.perform_redis_op('mapped_hmset', redis_key, value)
-    options = {
-      support_email: 'testactivefilter@fd.com',
-      imap_authentication: 'xoauth2',
-      smtp_authentication: 'xoauth2',
-      imap_user_name: 'test@gmail.com',
-      smtp_user_name: 'test@gmail.com',
-      imap_password: '',
-      smtp_password: '',
-      reference_key: 'GMAIL::invalid::key',
-      access_type: 'both'
-    }
+    options = xoauth_both_options_hash(redis_key: 'GMAIL::invalid::key')
     params_hash = create_mailbox_params_hash.merge(create_custom_mailbox_hash(options)).merge(mailbox_type: CUSTOM_MAILBOX)
     post :create, construct_params({}, params_hash)
     assert_response 400
@@ -950,24 +963,9 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     Email::MailboxValidation.any_instance.stubs(:private_api?).returns(true)
     Email::MailboxesController.any_instance.stubs(:private_api?).returns(true)
     redis_key = 'GMAIL::test:xyz'
-    value = {
-      oauth_token: 'ya29.Il-vB0K5x3',
-      support_email: 'testactivefilter@fd.com',
-      refresh_token: 'xugvqw377',
-      type: 'new',
-      oauth_email: 'test@gmail.com'
-    }
+    value = redis_hash
     $redis_others.perform_redis_op('mapped_hmset', redis_key, value)
-    options = {
-      support_email: 'testactivefilter@fd.com',
-      imap_authentication: 'xoauth2',
-      smtp_authentication: 'xoauth2',
-      imap_user_name: 'invalidemail@gmail.com',
-      smtp_user_name: 'invalidemail@gmail.com',
-      imap_password: '',
-      smtp_password: '',
-      access_type: 'both'
-    }
+    options = xoauth_both_options_hash
     params_hash = create_mailbox_params_hash.merge(create_custom_mailbox_hash(options)).merge(mailbox_type: CUSTOM_MAILBOX)
     post :create, construct_params({}, params_hash)
     assert_response 400
@@ -988,25 +986,9 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     Email::MailboxValidation.any_instance.stubs(:private_api?).returns(true)
     Email::MailboxesController.any_instance.stubs(:private_api?).returns(true)
     redis_key = 'GMAIL::test:xyz'
-    value = {
-      oauth_token: 'ya29.Il-vB0K5x3',
-      support_email: 'testactivefilter@fd.com',
-      refresh_token: 'xugvqw377',
-      type: 'new',
-      oauth_email: 'test@gmail.com'
-    }
+    value = redis_hash
     $redis_others.perform_redis_op('mapped_hmset', redis_key, value)
-    options = {
-      support_email: 'testactivefilter@fd.com',
-      imap_authentication: 'xoauth2',
-      smtp_authentication: 'xoauth2',
-      imap_user_name: 'invalidemail@gmail.com',
-      smtp_user_name: 'invalidemail@gmail.com',
-      imap_password: '',
-      smtp_password: '',
-      reference_key: redis_key,
-      access_type: 'both'
-    }
+    options = xoauth_both_options_hash(redis_key: redis_key, imap_user_name: 'invalidemail@gmail.com', smtp_user_name: 'invalidemail@gmail.com')
     params_hash = create_mailbox_params_hash.merge(create_custom_mailbox_hash(options)).merge(mailbox_type: CUSTOM_MAILBOX)
     post :create, construct_params({}, params_hash)
     assert_response 400

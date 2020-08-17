@@ -2,12 +2,14 @@
 
 require_relative '../test_helper'
 require 'minitest/spec'
-['user_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
-['account_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
+require Rails.root.join('spec', 'support', 'user_helper.rb')
+require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
+require Rails.root.join('test', 'lib', 'helpers', 'oauth_authenticator_test_helper.rb')
 
 class OutlookAuthenticatorTest < ActiveSupport::TestCase
   include UsersHelper
   include AccountTestHelper
+  include OauthAuthenticatorTestHelper
 
   def setup
     super
@@ -25,25 +27,9 @@ class OutlookAuthenticatorTest < ActiveSupport::TestCase
   end
 
   def test_after_authenticate_edit_failed_oauth
-    options = {
-      app: 'outlook',
-      user_id: 1,
-      r_key: 'test@1234',
-      failed: true,
-      origin_account: @account
-    }
-    params = {
-      type: 'edit'
-    }
-
-    cached_obj = {
-      'type' => 'edit',
-      'r_key' => 'test@1234'
-    }
-
-    Email::Mailbox::OauthRedis.any_instance.stubs(:fetch_hash).returns(cached_obj)
-    outlook_authenticator = Auth::OutlookAuthenticator.new(options)
-    obj = outlook_authenticator.after_authenticate(params)
+    Email::Mailbox::OauthRedis.any_instance.stubs(:fetch_hash).returns(cached_obj('edit'))
+    outlook_authenticator = Auth::OutlookAuthenticator.new(options('outlook', true, 'test@1234'))
+    obj = outlook_authenticator.after_authenticate(params('edit'))
     assert_includes(obj.redirect_url, 'edit')
     refute_includes(obj.redirect_url, 'reference_key')
   ensure
@@ -51,25 +37,9 @@ class OutlookAuthenticatorTest < ActiveSupport::TestCase
   end
 
   def test_after_authenticate_new_failed_oauth
-    options = {
-      app: 'outlook',
-      user_id: 1,
-      r_key: 'test@1234',
-      failed: true,
-      origin_account: @account
-    }
-    params = {
-      type: 'new'
-    }
-
-    cached_obj = {
-      'type' => 'new',
-      'r_key' => 'test@1234'
-    }
-
-    Email::Mailbox::OauthRedis.any_instance.stubs(:fetch_hash).returns(cached_obj)
-    outlook_authenticator = Auth::OutlookAuthenticator.new(options)
-    obj = outlook_authenticator.after_authenticate(params)
+    Email::Mailbox::OauthRedis.any_instance.stubs(:fetch_hash).returns(cached_obj('new'))
+    outlook_authenticator = Auth::OutlookAuthenticator.new(options('outlook', true, 'test@1234'))
+    obj = outlook_authenticator.after_authenticate(params('new'))
     assert_includes(obj.redirect_url, 'new')
     assert_includes(obj.redirect_url, 'reference_key=test@1234')
   ensure
@@ -77,39 +47,12 @@ class OutlookAuthenticatorTest < ActiveSupport::TestCase
   end
 
   def test_after_authenticate_edit_success_oauth
-    options = {
-      app: 'outlook',
-      user_id: 1,
-      r_key: 'test@1234',
-      failed: false,
-      origin_account: @account
-    }
-
-    omniauth = {
-      credentials: OpenStruct.new(
-        refresh_token: 'testrefreshtoken',
-        token: 'testtoken'
-      ),
-      'extra' => {
-        'raw_info' => {
-          'mail' => 'testemail'
-        }
-      }
-    }
-
+    options = options('outlook', false, 'test@1234')
+    omniauth = omniauth_for_outlook
     options[:omniauth] = OpenStruct.new(omniauth)
-    params = {
-      type: 'edit'
-    }
-
-    cached_obj = {
-      'type' => 'edit',
-      'r_key' => 'test@1234'
-    }
-
-    Email::Mailbox::OauthRedis.any_instance.stubs(:fetch_hash).returns(cached_obj)
+    Email::Mailbox::OauthRedis.any_instance.stubs(:fetch_hash).returns(cached_obj('edit'))
     outlook_authenticator = Auth::OutlookAuthenticator.new(options)
-    obj = outlook_authenticator.after_authenticate(params)
+    obj = outlook_authenticator.after_authenticate(params('edit'))
     assert_includes(obj.redirect_url, 'edit')
     assert_includes(obj.redirect_url, 'reference_key=test@1234')
   ensure
@@ -117,17 +60,8 @@ class OutlookAuthenticatorTest < ActiveSupport::TestCase
   end
 
   def test_after_authenticate_edit_no_redis
-    options = {
-      app: 'outlook',
-      user_id: 1,
-      failed: false,
-      origin_account: @account
-    }
-    params = {
-      type: 'edit'
-    }
-    outlook_authenticator = Auth::OutlookAuthenticator.new(options)
-    obj = outlook_authenticator.after_authenticate(params)
+    outlook_authenticator = Auth::OutlookAuthenticator.new(options('outlook', false))
+    obj = outlook_authenticator.after_authenticate(params('edit'))
     assert_includes(obj.redirect_url, 'edit')
     refute_includes(obj.redirect_url, 'reference_key')
   end

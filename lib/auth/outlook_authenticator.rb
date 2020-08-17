@@ -10,7 +10,7 @@ class Auth::OutlookAuthenticator < Auth::Authenticator
     if @failed
       @result.failed = @failed
       @result.failed_reason = @failed_reason
-      raise Email::Mailbox::Errors::AuthenticateFailure, "#{@result.failed_reason} failure in Microsoft Authentication."
+      raise Email::Mailbox::Errors::Oauth2AuthenticateFailure, "#{@result.failed_reason} failure in Microsoft Authentication."
     elsif @options[:r_key].present?
       redis_params = process_oauth(build_config_params)
       @result.redirect_url = get_redirect_url(build_url(redis_params, OAUTH_SUCCESS, @options[:r_key]) + "&oauth_status=#{OAUTH_SUCCESS}", redis_params, @origin_account)
@@ -22,7 +22,7 @@ class Auth::OutlookAuthenticator < Auth::Authenticator
     Rails.logger.error "OutlookAuthenticator - #{e.message}"
     @result.redirect_url = get_redirect_url(e.url_params_string + "&oauth_status=#{OAUTH_FAILED}", oauth_redis_obj(@options[:r_key]).fetch_hash, @origin_account)
     @result
-  rescue Email::Mailbox::Errors::AuthenticateFailure => e
+  rescue Email::Mailbox::Errors::Oauth2AuthenticateFailure => e
     Rails.logger.info "OutlookAuthenticator - #{e.message}"
     redis_params = oauth_redis_obj(@options[:r_key]).fetch_hash
     url_string = build_url(redis_params, OAUTH_FAILED, @options[:r_key]) + "&#{e.url_params_string}&oauth_status=#{OAUTH_FAILED}"
@@ -32,7 +32,7 @@ class Auth::OutlookAuthenticator < Auth::Authenticator
 
   def register_middleware(omniauth)
     omniauth.provider(
-      :microsoft_graph,
+      :outlook,
       Integrations::OAUTH_CONFIG_HASH['outlook']['consumer_token'],
       Integrations::OAUTH_CONFIG_HASH['outlook']['consumer_secret'],
       scope: 'openid email profile offline_access https://graph.microsoft.com/IMAP.AccessAsUser.All https://graph.microsoft.com/SMTP.Send',
@@ -47,7 +47,7 @@ class Auth::OutlookAuthenticator < Auth::Authenticator
       {
         'refresh_token' => @omniauth.credentials.refresh_token.to_s,
         'oauth_token' => @omniauth.credentials.token.to_s,
-        'oauth_email' => (@omniauth['extra']['raw_info']['mail']).to_s
+        'oauth_email' => (@omniauth['extra']['raw_info']['userPrincipalName']).to_s
       }
     end
 

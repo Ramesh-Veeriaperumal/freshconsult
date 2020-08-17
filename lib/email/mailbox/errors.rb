@@ -1,5 +1,5 @@
 module Email::Mailbox::Errors
-  class MissingRedis < RuntimeError
+  class MissingRedis < StandardError
     attr_reader :url_params_string
     def initialize(msg = 'Missing redis key in callback')
       @url_params_string = 'error=500'
@@ -7,7 +7,7 @@ module Email::Mailbox::Errors
     end
   end
   
-  class AuthenticateFailure < RuntimeError
+  class Oauth2AuthenticateFailure < StandardError
     attr_reader :url_params_string
     def initialize(msg = 'Authenticate failure')
       @url_params_string = 'error=401'

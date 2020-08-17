@@ -13,6 +13,10 @@ class SmtpMailbox < ActiveRecord::Base
 
   attr_encrypted :access_token, random_iv: true, compress: true
   attr_encrypted :refresh_token, random_iv: true, compress: true
-  validates :encrypted_access_token, symmetric_encryption: true, if: -> { authentication == Email::Mailbox::Constants::OAUTH }
-  validates :encrypted_refresh_token, symmetric_encryption: true, if: -> { authentication == Email::Mailbox::Constants::OAUTH }
+  validates :encrypted_access_token, symmetric_encryption: true, if: :oauth_mailbox?
+  validates :encrypted_refresh_token, symmetric_encryption: true, if: :oauth_mailbox?
+
+  def oauth_mailbox?
+    authentication == Email::Mailbox::Constants::OAUTH
+  end
 end

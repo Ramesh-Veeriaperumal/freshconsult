@@ -32,7 +32,8 @@ class Email::Mailbox::OauthRedis
     # generate a 5 digit random number for the key.
     format(
       MAILBOX_OAUTH,
-      provider: provider, account_id: Account.current.id,
+      provider: provider,
+      account_id: Account.current.id,
       user_id: User.current.id,
       random_number: rand(10**4...10**5)
     )

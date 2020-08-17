@@ -7,7 +7,7 @@ class Auth::GmailAuthenticator < Auth::Authenticator
     if @failed
       @result.failed = @failed
       @result.failed_reason = @failed_reason
-      raise Email::Mailbox::Errors::AuthenticateFailure, "#{@result.failed_reason} failure in Google Authentication."
+      raise Email::Mailbox::Errors::Oauth2AuthenticateFailure, "#{@result.failed_reason} failure in Google Authentication."
     elsif @options[:r_key].present?
       gmail_redis_params = process_gmail_oauth(build_config_params)
       @result.redirect_url = get_redirect_url(build_url(gmail_redis_params, OAUTH_SUCCESS, @options[:r_key]) + "&oauth_status=#{OAUTH_SUCCESS}", gmail_redis_params, @origin_account)
@@ -19,7 +19,7 @@ class Auth::GmailAuthenticator < Auth::Authenticator
     Rails.logger.error "GmailAuthenticator - #{e.message}"
     @result.redirect_url = get_redirect_url(e.url_params_string + "&oauth_status=#{OAUTH_FAILED}", gmail_oauth_redis_obj(@options[:r_key]).fetch_hash, @origin_account)
     @result
-  rescue Email::Mailbox::Errors::AuthenticateFailure => e
+  rescue Email::Mailbox::Errors::Oauth2AuthenticateFailure => e
     Rails.logger.info "GmailAuthenticator - #{e.message}"
     gmail_redis_params = gmail_oauth_redis_obj(@options[:r_key]).fetch_hash
     url_string = build_url(gmail_redis_params, OAUTH_FAILED, @options[:r_key]) + "&#{e.url_params_string}&oauth_status=#{OAUTH_FAILED}"

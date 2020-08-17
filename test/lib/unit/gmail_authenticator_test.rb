@@ -1,11 +1,13 @@
 require_relative '../test_helper'
 require 'minitest/spec'
-['user_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
-['account_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
+require Rails.root.join('spec', 'support', 'user_helper.rb')
+require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
+require Rails.root.join('test', 'lib', 'helpers', 'oauth_authenticator_test_helper.rb')
 
 class GmailAuthenticatorTest < ActiveSupport::TestCase
   include UsersHelper
   include AccountTestHelper
+  include OauthAuthenticatorTestHelper
 
   def setup
     super
@@ -23,25 +25,9 @@ class GmailAuthenticatorTest < ActiveSupport::TestCase
   end
 
   def test_after_authenticate_edit_failed_oauth
-    options = {
-      app: 'gmail',
-      user_id: 1,
-      r_key: 'test@1234',
-      failed: true,
-      origin_account: @account
-    }
-    params = {
-      type: 'edit'
-    }
-
-    cached_obj = {
-      'type' => 'edit',
-      'r_key' => 'test@1234'
-    }
-
-    Email::Mailbox::OauthRedis.any_instance.stubs(:fetch_hash).returns(cached_obj)
-    gmail_authenticator = Auth::GmailAuthenticator.new(options)
-    obj = gmail_authenticator.after_authenticate(params)
+    Email::Mailbox::OauthRedis.any_instance.stubs(:fetch_hash).returns(cached_obj('edit'))
+    gmail_authenticator = Auth::GmailAuthenticator.new(options('gmail', true, 'test@1234'))
+    obj = gmail_authenticator.after_authenticate(params('edit'))
     assert_includes(obj.redirect_url, 'edit')
     refute_includes(obj.redirect_url, 'reference_key')
   ensure
@@ -49,25 +35,9 @@ class GmailAuthenticatorTest < ActiveSupport::TestCase
   end
 
   def test_after_authenticate_new_failed_oauth
-    options = {
-      app: 'gmail',
-      user_id: 1,
-      r_key: 'test@1234',
-      failed: true,
-      origin_account: @account
-    }
-    params = {
-      type: 'new'
-    }
-
-    cached_obj = {
-      'type' => 'new',
-      'r_key' => 'test@1234'
-    }
-
-    Email::Mailbox::OauthRedis.any_instance.stubs(:fetch_hash).returns(cached_obj)
-    gmail_authenticator = Auth::GmailAuthenticator.new(options)
-    obj = gmail_authenticator.after_authenticate(params)
+    Email::Mailbox::OauthRedis.any_instance.stubs(:fetch_hash).returns(cached_obj('new'))
+    gmail_authenticator = Auth::GmailAuthenticator.new(options('gmail', true, 'test@1234'))
+    obj = gmail_authenticator.after_authenticate(params('new'))
     assert_includes(obj.redirect_url, 'new')
     assert_includes(obj.redirect_url, 'reference_key=test@1234')
   ensure
@@ -75,37 +45,11 @@ class GmailAuthenticatorTest < ActiveSupport::TestCase
   end
 
   def test_after_authenticate_edit_success_oauth
-    options = {
-      app: 'gmail',
-      user_id: 1,
-      r_key: 'test@1234',
-      failed: false,
-      origin_account: @account
-    }
-
-    omniauth = {
-      credentials: OpenStruct.new(
-        refresh_token: 'testrefreshtoken',
-        token: 'testtoken'
-      ),
-      'info' => {
-        'email' => 'testemail'
-      }
-    }
-
-    options[:omniauth] = OpenStruct.new(omniauth)
-    params = {
-      type: 'edit'
-    }
-
-    cached_obj = {
-      'type' => 'edit',
-      'r_key' => 'test@1234'
-    }
-
-    Email::Mailbox::OauthRedis.any_instance.stubs(:fetch_hash).returns(cached_obj)
+    options = options('gmail', false, 'test@1234')
+    options[:omniauth] = OpenStruct.new(omniauth_for_gmail)
+    Email::Mailbox::OauthRedis.any_instance.stubs(:fetch_hash).returns(cached_obj('edit'))
     gmail_authenticator = Auth::GmailAuthenticator.new(options)
-    obj = gmail_authenticator.after_authenticate(params)
+    obj = gmail_authenticator.after_authenticate(params('edit'))
     assert_includes(obj.redirect_url, 'edit')
     assert_includes(obj.redirect_url, 'reference_key=test@1234')
   ensure
@@ -113,17 +57,8 @@ class GmailAuthenticatorTest < ActiveSupport::TestCase
   end
 
   def test_after_authenticate_edit_no_redis
-    options = {
-      app: 'gmail',
-      user_id: 1,
-      failed: false,
-      origin_account: @account
-    }
-    params = {
-      type: 'edit'
-    }
-    gmail_authenticator = Auth::GmailAuthenticator.new(options)
-    obj = gmail_authenticator.after_authenticate(params)
+    gmail_authenticator = Auth::GmailAuthenticator.new(options('gmail', false))
+    obj = gmail_authenticator.after_authenticate(params('edit'))
     assert_includes(obj.redirect_url, 'edit')
     refute_includes(obj.redirect_url, 'reference_key')
   end

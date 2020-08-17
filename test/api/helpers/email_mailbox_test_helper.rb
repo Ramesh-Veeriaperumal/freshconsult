@@ -150,4 +150,50 @@ module EmailMailboxTestHelper
       'confirmation_code' => nil
     }
   end
+
+  def redis_hash(options = {})
+    {
+      oauth_token: 'ya29.Il-vB0K5x3',
+      support_email: 'testactivefilter@fd.com',
+      refresh_token: 'xugvqw377',
+      type: options[:type] || 'new',
+      oauth_email: options[:oauth_email] || 'test@gmail.com'
+    }
+  end
+
+  def xoauth_incoming_options_hash(options = {})
+    {
+      support_email: 'testactivefilter@fd.com',
+      imap_authentication: 'xoauth2',
+      imap_user_name: options[:imap_user_name] || 'test@gmail.com',
+      imap_password: '',
+      reference_key: options[:redis_key],
+      access_type: 'incoming'
+    }
+  end
+
+  def xoauth_outgoing_options_hash(options = {})
+    {
+      support_email: 'testactivefilter@fd.com',
+      smtp_authentication: 'xoauth2',
+      smtp_user_name: options[:smtp_user_name] || 'test@gmail.com',
+      smtp_password: '',
+      reference_key: options[:redis_key],
+      access_type: 'outgoing'
+    }
+  end
+
+  def xoauth_both_options_hash(options = {})
+    {
+      support_email: 'testactivefilter@fd.com',
+      imap_authentication: 'xoauth2',
+      smtp_authentication: 'xoauth2',
+      imap_user_name: options[:imap_user_name] || 'test@gmail.com',
+      smtp_user_name: options[:smtp_user_name] || 'test@gmail.com',
+      imap_password: '',
+      smtp_password: '',
+      reference_key: options[:redis_key],
+      access_type: 'both'
+    }
+  end
 end

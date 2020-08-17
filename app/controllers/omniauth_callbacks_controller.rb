@@ -17,6 +17,8 @@ class OmniauthCallbacksController < ApplicationController
     facebook: :facebook_signin
   }.freeze
 
+  ALLOWED_PROVIDERS = ['gmail', 'outlook'].freeze
+
   VALID_TIME_DIFF = 5 * 60 * 1000 # 5 minutes in millies
 
   def complete
@@ -45,7 +47,7 @@ class OmniauthCallbacksController < ApplicationController
   end
 
   def failure
-    if params[:provider] == 'gmail' || params[:provider] == 'outlook'
+    if ALLOWED_PROVIDERS.include? params[:provider]
       authenticator_class = Auth::Authenticator.get_auth_class(params[:provider])
 
       authenticator = authenticator_class.new(
