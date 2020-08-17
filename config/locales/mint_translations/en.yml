@@ -7488,6 +7488,27 @@ en:
         in the settings page and the search function is based on the email
         address mapping.
       desc: You can view contact information from Freshsales in Freshdesk.
+    freshworkscrm:
+      form:
+        auth_token: Authentication Token
+        deal: Deal Fields
+        error: Please verify your settings and try again
+        deal_settings: Agents can create/link or unlink deals from the ticket
+        freshsales_settings: Freshworks CRM Settings
+        auth_token_info: Enter your authentication token
+        select: Select an option
+        domain: Account Domain
+        account: Account Fields
+        contact: Contact Fields
+        domain_info: 'Enter your Freshworks CRM domain without https. Ex: example.freshworks.com'
+      helptext: >-
+        <h4>Freshworks CRM Integration Help</h4><p><br/> Once you enable this
+        integration, your agents can access Freshworks CRM contact information right
+        inside the Freshdesk ticket & contact pages. <br /><br /> Please note
+        that your agents can only view those fields that are configured by you
+        in the settings page and the search function is based on the email
+        address mapping.
+      desc: You can view contact information from Freshworks CRM in Freshdesk.
     slack_v2:
       helptext: >-
         <h4>Slack Integration</h4><br><p>Select the list of Public Channels and

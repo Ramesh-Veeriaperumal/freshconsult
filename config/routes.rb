@@ -1062,6 +1062,14 @@ Helpkit::Application.routes.draw do
       put :update
     end
 
+    namespace :freshworkscrm do
+      get :new
+      post :settings_update
+      post :install
+      get :edit
+      put :update
+    end
+
     resources :marketplace_apps, only: [:edit, :clear_cache] do
       collection do
         post :clear_cache
