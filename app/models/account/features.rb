@@ -9,7 +9,7 @@ class Account < ActiveRecord::Base
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :announcements_tab,
     :va_any_field_without_none, :api_es,
     :encode_emoji, :auto_complete_off, :sandbox_lp, :encode_emoji_subject,
-    :euc_migrated_twitter, :new_ticket_recieved_metric, :ner, :disable_banners,
+    :euc_migrated_twitter, :new_ticket_recieved_metric, :ner,
     :count_service_es_writes, :count_service_es_reads,
     :sso_login_expiry_limitation, :undo_send, :old_link_back_url_validation, :stop_contacts_count_query,
     :denormalized_select_for_update, :es_tickets,
