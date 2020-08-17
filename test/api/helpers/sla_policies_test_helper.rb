@@ -128,12 +128,6 @@ module SlaPoliciesTestHelper
     company_filter
   end
 
-  def create_custom_source_helper
-    source_choice = Helpdesk::Source.new(name: Faker::Name.name, account_id: @account.id, default: 0, deleted: 0)
-    source_choice.save!
-    source_choice
-  end
-
   # Helpers
   def v2_sla_policy_payload
     sla_policy_params.to_json
