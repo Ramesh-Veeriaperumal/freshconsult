@@ -55,7 +55,10 @@ module Channel::V2
     end
 
     def sources
-      super | [Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook], Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter]]
+      ticket_source_keys_by_token = Account.current.helpdesk_sources.ticket_source_keys_by_token
+      ticket_sources = super | [ticket_source_keys_by_token[:facebook], ticket_source_keys_by_token[:twitter]]
+      ticket_sources << ticket_source_keys_by_token[:whatsapp] if Account.current.launched?(:whatsapp_ticket_source)
+      ticket_sources
     end
 
     def facebook_ticket?

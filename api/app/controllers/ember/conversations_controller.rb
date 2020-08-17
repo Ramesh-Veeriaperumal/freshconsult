@@ -101,7 +101,7 @@ module Ember
       assign_note_attributes
       @delegator_klass = 'FbReplyDelegator'
       fb_page = @ticket.fb_post.facebook_page
-      return unless validate_delegator(@item, note_id: @note_id, fb_page: fb_page, attachment_ids: @attachment_ids, msg_type: @msg_type)
+      return unless validate_delegator(@item, note_id: @note_id, fb_page: fb_page, attachment_ids: @attachment_ids, msg_type: @msg_type, shared_attachments: shared_attachments)
 
       add_facebook_attachments
       reply_sent = reply_to_fb_ticket(@delegator.note)
@@ -130,7 +130,7 @@ module Ember
       assign_note_attributes
 
       @delegator_klass = 'TwitterReplyDelegator'
-      return unless validate_delegator(@item, twitter_handle_id: @twitter_handle_id, attachment_ids: @attachment_ids)
+      return unless validate_delegator(@item, twitter_handle_id: @twitter_handle_id, attachment_ids: @attachment_ids, shared_attachments: shared_attachments)
 
       draft_attachments = @delegator.draft_attachments
       @item.attachments = @item.attachments + draft_attachments if draft_attachments

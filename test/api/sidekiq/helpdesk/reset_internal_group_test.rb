@@ -15,6 +15,7 @@ class ResetInternalGroupTest < ActionView::TestCase
   include CoreUsersTestHelper
 
   def setup
+    Subscription.any_instance.stubs(:switch_annual_notification_eligible?).returns(false)
     super
     before_all
   end
@@ -29,6 +30,7 @@ class ResetInternalGroupTest < ActionView::TestCase
   end
 
   def teardown
+    Subscription.any_instance.unstub(:switch_annual_notification_eligible?)
     super
   end
 

@@ -1,4 +1,5 @@
 require_relative '../../test_helper'
+['social_tickets_creation_helper'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 require 'sidekiq/testing'
 Sidekiq::Testing.fake!
 
@@ -7,6 +8,7 @@ class Archive::TicketsControllerTest < ActionController::TestCase
   include ApiTicketsTestHelper
   include TicketHelper
   include ContactFieldsHelper
+  include SocialTicketsCreationHelper
   include Crypto::TokenHashing
 
   ARCHIVE_DAYS = 120
@@ -19,13 +21,8 @@ class Archive::TicketsControllerTest < ActionController::TestCase
     @account.make_current
     @account.enable_ticket_archiving(ARCHIVE_DAYS)
     Sidekiq::Worker.clear_all
-    @account.features.send(:archive_tickets).create
     Account.any_instance.stubs(:agent_collision_revamp_enabled?).returns(true)
-    create_archive_ticket_with_assoc(
-      created_at: TICKET_UPDATED_DATE,
-      updated_at: TICKET_UPDATED_DATE,
-      create_association: true
-    )
+    create_archive_ticket
   end
 
   def teardown
@@ -144,6 +141,78 @@ class Archive::TicketsControllerTest < ActionController::TestCase
       get :show, controller_params(id: archive_ticket.display_id, include: 'invalid')
       assert_response 400
     end
+  end
+
+  def test_archive_twitter_ticket_show_with_restricted_tweet_content
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    CustomRequestStore.store[:private_api_request] = false
+    create_archive_ticket(twitter_ticket: true, tweet_type: 'mention')
+    stub_archive_assoc_for_show(@archive_association) do
+      archive_ticket = @account.archive_tickets.find_by_ticket_id(@archive_ticket.id)
+      return if archive_ticket.blank?
+
+      get :show, controller_params(id: archive_ticket.display_id, include: 'stats')
+      assert_response 200
+
+      ticket_pattern = ticket_pattern_for_show(archive_ticket)
+      match_json(ticket_pattern)
+    end
+  ensure
+    CustomRequestStore.store[:private_api_request] = true
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+  end
+
+  def test_archive_twitter_ticket_show_with_unrestricted_tweet_content
+    CustomRequestStore.store[:private_api_request] = false
+    create_archive_ticket(twitter_ticket: true, tweet_type: 'mention')
+    stub_archive_assoc_for_show(@archive_association) do
+      archive_ticket = @account.archive_tickets.find_by_ticket_id(@archive_ticket.id)
+      return if archive_ticket.blank?
+
+      get :show, controller_params(id: archive_ticket.display_id, include: 'stats')
+      assert_response 200
+
+      ticket_pattern = ticket_pattern_for_show(archive_ticket)
+      match_json(ticket_pattern)
+    end
+  ensure
+    CustomRequestStore.store[:private_api_request] = true
+  end
+
+  def test_archive_twitter_ticket_show_with_restricted_dm_content
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    CustomRequestStore.store[:private_api_request] = false
+    create_archive_ticket(twitter_ticket: true, tweet_type: 'dm')
+    stub_archive_assoc_for_show(@archive_association) do
+      archive_ticket = @account.archive_tickets.find_by_ticket_id(@archive_ticket.id)
+      return if archive_ticket.blank?
+
+      get :show, controller_params(id: archive_ticket.display_id, include: 'stats')
+      assert_response 200
+
+      ticket_pattern = ticket_pattern_for_show(archive_ticket)
+      match_json(ticket_pattern)
+    end
+  ensure
+    CustomRequestStore.store[:private_api_request] = true
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+  end
+
+  def test_archive_twitter_ticket_show_with_unrestricted_dm_content
+    CustomRequestStore.store[:private_api_request] = false
+    create_archive_ticket(twitter_ticket: true, tweet_type: 'dm')
+    stub_archive_assoc_for_show(@archive_association) do
+      archive_ticket = @account.archive_tickets.find_by_ticket_id(@archive_ticket.id)
+      return if archive_ticket.blank?
+
+      get :show, controller_params(id: archive_ticket.display_id, include: 'stats')
+      assert_response 200
+
+      ticket_pattern = ticket_pattern_for_show(archive_ticket)
+      match_json(ticket_pattern)
+    end
+  ensure
+    CustomRequestStore.store[:private_api_request] = true
   end
 
   def test_without_archive_feature
@@ -322,6 +391,18 @@ class Archive::TicketsControllerTest < ActionController::TestCase
 
   private
 
+    def create_archive_ticket(options = {})
+      @account.features.send(:archive_tickets).create
+      create_archive_ticket_with_assoc(
+        created_at: TICKET_UPDATED_DATE,
+        updated_at: TICKET_UPDATED_DATE,
+        create_association: true,
+        create_twitter_ticket: options[:twitter_ticket] || false,
+        tweet_type: options[:twitter_ticket] ? options[:tweet_type] : nil
+      )
+      @account.archive_tickets.last
+    end
+
     def update_ticket_attributes(pattern, changes = {})
       changes.each do |k, v|
         pattern[k] = v
@@ -339,8 +420,8 @@ class Archive::TicketsControllerTest < ActionController::TestCase
     def ticket_pattern_for_show(archive_ticket, include_params = nil)
       ticket_pattern = show_ticket_pattern({
                                              cc_emails: archive_ticket.cc_email['cc_emails'],
-                                             description: archive_ticket.description_html,
-                                             description_text: archive_ticket.description,
+                                             description: archive_ticket.twitter? ? nil : description_info(archive_ticket)[:description],
+                                             description_text: description_info(archive_ticket)[:description_text],
                                              custom_fields: custom_fields(archive_ticket)
                                            }, @archive_ticket)
       ticket_pattern.delete(:source_additional_info)

@@ -247,7 +247,6 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_search_with_feature_enabled_and_invalid_params
     @account.launch :es_count_writes
-    @account.launch :list_page_new_cluster
     params = ticket_params_hash.except(:description).merge(custom_field: {})
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_field]["test_custom_#{custom_field}_#{@account.id}"] = CUSTOM_FIELDS_VALUES[custom_field]
@@ -260,7 +259,6 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_search_with_feature_enabled_and_invalid_value
     @account.launch :es_count_writes
-    @account.launch :list_page_new_cluster
     params = ticket_params_hash.except(:description).merge(custom_field: {})
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_field]["test_custom_#{custom_field}_#{@account.id}"] = CUSTOM_FIELDS_VALUES[custom_field]
@@ -1068,6 +1066,65 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
   end
 
+  def test_update_twitter_ticket_with_restricted_tweet_content
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    ticket = create_twitter_ticket(tweet_type: 'mention')
+    update_params = { priority: 2, status: 3 }
+    put :update, construct_params({ id: ticket.display_id }, update_params)
+    ticket.reload
+    match_json(update_ticket_pattern(update_params, ticket))
+    match_json(update_ticket_pattern({}, ticket))
+    assert_response 200
+    assert_equal ticket.priority, 2
+    assert_equal ticket.status, 3
+  ensure
+    ticket.destroy
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+  end
+
+  def test_update_twitter_ticket_with_unrestricted_tweet_content
+    ticket = create_twitter_ticket(tweet_type: 'mention')
+    update_params = { priority: 2, status: 3 }
+    put :update, construct_params({ id: ticket.display_id }, update_params)
+    ticket.reload
+    match_json(update_ticket_pattern(update_params, ticket))
+    match_json(update_ticket_pattern({}, ticket))
+    assert_response 200
+    assert_equal ticket.priority, 2
+    assert_equal ticket.status, 3
+  ensure
+    ticket.destroy
+  end
+
+  def test_update_twitter_ticket_with_restricted_dm_content
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    ticket = create_twitter_ticket(tweet_type: 'dm')
+    update_params = { priority: 2, status: 3 }
+    put :update, construct_params({ id: ticket.display_id }, update_params)
+    ticket.reload
+    match_json(update_ticket_pattern(update_params, ticket))
+    match_json(update_ticket_pattern({}, ticket))
+    assert_response 200
+    assert_equal ticket.priority, 2
+    assert_equal ticket.status, 3
+  ensure
+    ticket.destroy
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+  end
+
+  def test_update_twitter_ticket_with_unrestricted_dm_content
+    ticket = create_twitter_ticket(tweet_type: 'dm')
+    update_params = { priority: 2, status: 3 }
+    put :update, construct_params({ id: ticket.display_id }, update_params)
+    ticket.reload
+    match_json(update_ticket_pattern(update_params, ticket))
+    match_json(update_ticket_pattern({}, ticket))
+    assert_response 200
+    assert_equal ticket.priority, 2
+    assert_equal ticket.status, 3
+  ensure
+    ticket.destroy
+  end
    # test update ticket without mandatory default fields that are required for closure with skip_mandatory_checks enabled for current user having :admin_tasks privilege thorough public API only
 
   def test_reslove_ticket_without_type_with_required_for_closure_default_fields_withotut_skip_mandatory_skips_enabled
@@ -3806,6 +3863,46 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(show_ticket_pattern({}, ticket))
   end
 
+  def test_show_twitter_ticket_with_restricted_tweet_content
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    ticket = create_twitter_ticket(tweet_type: 'mention')
+    get :show, controller_params(id: ticket.display_id)
+    assert_response 200
+    match_json(show_ticket_pattern({}, ticket))
+  ensure
+    ticket.destroy
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+  end
+
+  def test_show_twitter_ticket_with_unrestricted_tweet_content
+    ticket = create_twitter_ticket(tweet_type: 'mention')
+    get :show, controller_params(id: ticket.display_id)
+    assert_response 200
+    match_json(show_ticket_pattern({}, ticket))
+  ensure
+    ticket.destroy
+  end
+
+  def test_show_twitter_ticket_with_restricted_dm_content
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    ticket = create_twitter_ticket(tweet_type: 'dm')
+    get :show, controller_params(id: ticket.display_id)
+    assert_response 200
+    match_json(show_ticket_pattern({}, ticket))
+  ensure
+    ticket.destroy
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+  end
+
+  def test_show_twitter_ticket_with_unrestricted_dm_content
+    ticket = create_twitter_ticket(tweet_type: 'dm')
+    get :show, controller_params(id: ticket.display_id)
+    assert_response 200
+    match_json(show_ticket_pattern({}, ticket))
+  ensure
+    ticket.destroy
+  end
+
   def test_show_with_facebook_ticket
     ticket = create_ticket_from_fb_post
     get :show, controller_params(id: ticket.display_id)
@@ -4080,6 +4177,88 @@ class TicketsControllerTest < ActionController::TestCase
     tkts = Helpdesk::Ticket.where(owner_id: company.id)
     pattern = tkts.map { |tkt| index_ticket_pattern(tkt) }
     match_json(pattern)
+  end
+
+  def test_index_twitter_tickets_with_restricted_twitter_content
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    twitter_user = add_new_user_with_twitter_id(@account)
+    tweet_ticket = create_twitter_ticket(requester: twitter_user, tweet_type: 'mention')
+    dm_ticket = create_twitter_ticket(requester: twitter_user, tweet_type: 'dm')
+    get :index, controller_params(requester_id: twitter_user.id.to_s)
+    assert_response 200
+    response = parse_response @response.body
+
+    tkts = Helpdesk::Ticket.where(requester_id: twitter_user.id)
+    assert_equal tkts.count, response.size
+    pattern = tkts.map { |tkt| index_ticket_pattern(tkt) }
+    match_json(pattern)
+  ensure
+    twitter_user.destroy
+    tweet_ticket.destroy
+    dm_ticket.destroy
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+  end
+
+  def test_index_twitter_tickets_with_unrestricted_twitter_content
+    twitter_user = add_new_user_with_twitter_id(@account)
+    tweet_ticket = create_twitter_ticket(requester: twitter_user, tweet_type: 'mention')
+    dm_ticket = create_twitter_ticket(requester: twitter_user, tweet_type: 'dm')
+    get :index, controller_params(requester_id: twitter_user.id.to_s)
+    assert_response 200
+    response = parse_response @response.body
+
+    tkts = Helpdesk::Ticket.where(requester_id: twitter_user.id)
+    assert_equal tkts.count, response.size
+    pattern = tkts.map { |tkt| index_ticket_pattern(tkt) }
+    match_json(pattern)
+  ensure
+    twitter_user.destroy
+    tweet_ticket.destroy
+    dm_ticket.destroy
+  end
+
+  def test_index_twitter_tickets_with_restricted_twitter_content_including_description
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    twitter_user = add_new_user_with_twitter_id(@account)
+    tweet_ticket = create_twitter_ticket(requester: twitter_user, tweet_type: 'mention')
+    dm_ticket = create_twitter_ticket(requester: twitter_user, tweet_type: 'dm')
+    get :index, controller_params(include: 'description', requester_id: twitter_user.id.to_s)
+    assert_response 200
+    response = parse_response @response.body
+
+    tkts = Helpdesk::Ticket.where(requester_id: twitter_user.id)
+    assert_equal tkts.count, response.size
+    param_object = OpenStruct.new
+    pattern = tkts.map do |tkt|
+      index_ticket_pattern_with_associations(tkt, param_object, %i[description description_text])
+    end
+    match_json(pattern)
+  ensure
+    twitter_user.destroy
+    tweet_ticket.destroy
+    dm_ticket.destroy
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+  end
+
+  def test_index_twitter_tickets_with_unrestricted_twitter_content_including_description
+    twitter_user = add_new_user_with_twitter_id(@account)
+    tweet_ticket = create_twitter_ticket(requester: twitter_user, tweet_type: 'mention')
+    dm_ticket = create_twitter_ticket(requester: twitter_user, tweet_type: 'dm')
+    get :index, controller_params(include: 'description', requester_id: twitter_user.id.to_s)
+    assert_response 200
+    response = parse_response @response.body
+
+    tkts = Helpdesk::Ticket.where(requester_id: twitter_user.id)
+    assert_equal tkts.count, response.size
+    param_object = OpenStruct.new
+    pattern = tkts.map do |tkt|
+      index_ticket_pattern_with_associations(tkt, param_object, %i[description description_text])
+    end
+    match_json(pattern)
+  ensure
+    twitter_user.destroy
+    tweet_ticket.destroy
+    dm_ticket.destroy
   end
 
   def test_index_with_filter_and_requester
@@ -7164,6 +7343,17 @@ class TicketsControllerTest < ActionController::TestCase
     User.any_instance.unstub(:access_all_agent_groups)
     ticket1.destroy if ticket1.present?
     agent.destroy if agent.present?
+  end
+
+  def test_ticket_create_with_whatsapp_source_and_feature_enabled
+    Account.current.launch(:whatsapp_ticket_source)
+    type_field_names = @account.ticket_fields.where(field_type: 'default_ticket_type').all.first.picklist_values.map(&:value).join(',')
+    params = ticket_params_hash.merge(requester_id: requester.id, priority: 2, status: 3, source: 13)
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('source', :not_included, list: api_ticket_sources.join(','))])
+    assert_response 400
+  ensure
+    Account.current.rollback(:whatsapp_ticket_source)
   end
 
   def create_ticket_params

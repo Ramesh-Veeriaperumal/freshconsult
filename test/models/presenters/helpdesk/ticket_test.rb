@@ -119,7 +119,7 @@ class TicketTest < ActiveSupport::TestCase
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
     event_info = t.event_info(:create)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: true))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, app_update: true))
   end
 
   def test_central_publish_payload_event_info_check_hypertrail_version
@@ -129,7 +129,7 @@ class TicketTest < ActiveSupport::TestCase
     payload.must_match_json_expression(cp_ticket_pattern(t))
     create_event_info = t.event_info(:create)
     assert_equal CentralConstants::HYPERTRAIL_VERSION, create_event_info[:hypertrail_version]
-    create_event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: true))
+    create_event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, app_update: true))
   ensure
     t.destroy
   end
@@ -141,7 +141,7 @@ class TicketTest < ActiveSupport::TestCase
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
     event_info = t.event_info(:create)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: true))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, app_update: true))
   end
 
   def test_central_publish_payload_event_info_on_merge_ticket
@@ -151,7 +151,7 @@ class TicketTest < ActiveSupport::TestCase
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
     event_info = t.event_info(:update)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: true))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, app_update: true))
   end
 
   def test_central_publish_payload_event_info_marketplace_attribute_with_valid_marketplace_attribute
@@ -162,7 +162,7 @@ class TicketTest < ActiveSupport::TestCase
     t.save
     t.update_attributes(requester_id: @account.contacts.first.try(:id) || 1)
     event_info = t.event_info(:update)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: true))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, app_update: true))
   end
 
   def test_central_publish_payload_event_info_marketplace_attribute_with_invalid_marketplace_attribute
@@ -173,7 +173,7 @@ class TicketTest < ActiveSupport::TestCase
     t.save
     t.update_attributes(description: Faker::Lorem.paragraph)
     event_info = t.event_info(:update)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: false))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, app_update: false))
   end
 
   def test_central_publish_payload_event_info_marketplace_attribute_for_archive_destory
@@ -183,7 +183,7 @@ class TicketTest < ActiveSupport::TestCase
     payload.must_match_json_expression(cp_ticket_pattern(t))
     t.stubs(:archive).returns(true)
     event_info = t.event_info(:destroy)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: false))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, app_update: false))
   end
 
   def test_central_publish_payload_event_info_marketplace_attribute_for_non_archive_destory
@@ -193,7 +193,7 @@ class TicketTest < ActiveSupport::TestCase
     payload.must_match_json_expression(cp_ticket_pattern(t))
     t.save
     event_info = t.event_info(:destroy)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: true))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, app_update: true))
   end
 
   def test_central_publish_payload_event_info_marketplace_attribute_for_custom_field_update
@@ -205,7 +205,7 @@ class TicketTest < ActiveSupport::TestCase
     t.save
     t.update_attributes(custom_field: { "test_custom_dropdown_#{@account.id}" => DROPDOWN_CHOICES.sample })
     event_info = t.event_info(:update)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: false))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, app_update: false))
   end
 
   def test_central_publish_payload_event_info_on_ticket_from_social_tab
@@ -215,7 +215,7 @@ class TicketTest < ActiveSupport::TestCase
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
     event_info = t.event_info(:create)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: true))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, app_update: true))
   end
 
   def test_central_publish_payload_without_custom_fields
@@ -523,7 +523,7 @@ class TicketTest < ActiveSupport::TestCase
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
     event_info = t.event_info(:create)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: true))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, app_update: true))
   end
 
   def test_central_publish_internal_agent_associations
@@ -663,6 +663,19 @@ class TicketTest < ActiveSupport::TestCase
     assert_equal({'next_response' => [@agent.id]}, job['args'][1]['misc_changes']['notify_agents'])
   ensure
     Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_central_publish_with_stop_sla_timer
+    t = create_ticket(ticket_params_hash.merge(responder_id: @agent.id))
+    t.reload
+    t.status = Account.current.ticket_statuses.where(stop_sla_timer:true).first.status_id
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    t.save
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    job = CentralPublishWorker::ActiveTicketWorker.jobs.last
+    assert_equal 'ticket_update', job['args'][0]
+    assert_equal true, JSON.parse(payload)["status_stop_sla_timer"]
   end
 
   def test_central_publish_payload_with_secure_field

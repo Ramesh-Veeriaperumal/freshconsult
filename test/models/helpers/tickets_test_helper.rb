@@ -237,7 +237,9 @@ module TicketsTestHelper
       on_state_time: ticket.on_state_time,
       associates: render_assoc_hash(ticket.association_type),
       associates_rdb: ticket.associates_rdb,
-      source_additional_info: source_additional_info_hash(ticket)
+      source_additional_info: source_additional_info_hash(ticket),
+      status_stop_sla_timer: ticket.status_stop_sla_timer,
+      status_deleted: ticket.status_deleted
     }
     ret_hash[:skill_id] = ticket.sl_skill_id if Account.current.skill_based_round_robin_enabled?
     if Account.current.next_response_sla_enabled?

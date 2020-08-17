@@ -8300,6 +8300,9 @@ en:
     try_freshsales: Try Freshsales CRM
     discount_text_2: Get 40% off on Freshsales CRM if you buy in the next 21 days
     integrate_freshsales: Integrate Freshsales
+  annual_save:
+    primary_text: Save %{amount}/year on your subscription.
+    primary_link: Switch to annual billing.
   omni_channel_experience:
     experience_omnichannel: Experience Freshdesk Omnichannel
     omnichannel_title: Manage omnichannel support effortlessly
@@ -8344,3 +8347,11 @@ en:
     freshcaller_active_calls_title: "CALLS - ACTIVE"
   common_js_translations:
     of: "of"
+  whatsapp: "Whatsapp"
+  freddy_consumed_session_mailer:
+    consumed_sessions_subject: "Your Freddy session consumption has exceeded %{sessions_consumed}% for the billing cycle"
+    consumed_sessions_body: "We’d like to let you know that your account has already consumed %{session_count} sessions which is more than %{sessions_consumed}% of allotted sessions for this billing cycle."
+    buy_more_sessions_body: >-
+      To continue deflecting incoming requests, you can buy more sessions for your account by visiting your account’s <a
+      href="%{billing_url}">Plans & Billing</a> page.
+    additional_sessions_note_body: "Please note that additional freddy sessions bought are valid for the current billing cycle."

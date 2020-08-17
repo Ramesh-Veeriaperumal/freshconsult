@@ -15,7 +15,7 @@ shared_ownership_enabled = Account.current.shared_ownership_enabled?
     source: item.source,
     company_id: item.company_id,
     status: item.status,
-    subject: item.subject,
+    subject: item.subject_info,
     association_type: item.association_type,
     to_emails: item.schema_less_ticket_association.try(:to_emails),
     product_id: item.schema_less_ticket_association.try(:product_id),

@@ -92,11 +92,44 @@ class TicketDecorator < ApiDecorator
   def description_hash
     return false unless description_allowed?
 
-    ticket_body = record.ticket_body
+    description_info
+  end
+
+  def description_info
+    return default_description_info unless restrict_twitter_ticket_content?
+
+    {
+      description: restricted_twitter_ticket_content,
+      description_text: restricted_twitter_ticket_content
+    }
+  end
+
+  def default_description_info
+    ticket_body = record.archive? ? record : record.ticket_body
     {
       description: ticket_body.description_html,
       description_text: ticket_body.description
     }
+  end
+
+  def subject_info
+    restrict_twitter_ticket_content? ? restricted_twitter_ticket_content : record.subject
+  end
+
+  def twitter_ticket?
+    (Account.current.has_feature?(:advanced_twitter) || Account.current.basic_twitter_enabled?) && record.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter] && record.tweet
+  end
+
+  def restrict_twitter_ticket_content?
+    Account.current.twitter_api_compliance_enabled? && twitter_ticket? && !private_api? && !channel_v2_api?
+  end
+
+  def restricted_twitter_ticket_content
+    if record.tweet.tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention]
+      "View the tweet at https://twitter.com/#{record.tweet.twitter_handle_id}/status/#{record.tweet.tweet_id}"
+    else
+      'View the message at https://twitter.com/messages'
+    end
   end
 
   def description_allowed?
@@ -201,7 +234,7 @@ class TicketDecorator < ApiDecorator
       type: tweet.tweet_type,
       support_handle_id: handle.twitter_user_id.to_s,
       support_screen_name: handle.screen_name,
-      requester_screen_name: record.requester.twitter_id
+      requester_screen_name: Account.current.twitter_api_compliance_enabled? && !channel_v2_api? ? nil : record.requester.twitter_id
     }
     tweet_hash[:stream_id] = tweet.stream_id if channel_v2_api?
     tweet_hash

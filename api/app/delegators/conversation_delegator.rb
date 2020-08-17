@@ -40,7 +40,6 @@ class ConversationDelegator < ConversationBaseDelegator
   validate :valid_body_length_twitter, :validate_twitter_handle, :check_twitter_app_state, :validate_twitter_attachments, if: -> { twitter_ticket? }, on: :reply
 
   def initialize(record, options = {})
-    options[:attachment_ids] = skip_existing_attachments(options) if options[:attachment_ids]
     super(record, options)
     @cloud_file_ids = options[:cloud_file_ids]
     @inline_attachment_ids = options[:inline_attachment_ids]
@@ -283,11 +282,6 @@ class ConversationDelegator < ConversationBaseDelegator
     def can_send_survey_monkey?(survey_monkey)
       send_while = survey_monkey.configs[:inputs]['send_while']
       @conversation.user.agent? && [Survey::PLACE_HOLDER, Survey::SPECIFIC_EMAIL_RESPONSE].include?(send_while.to_i)
-    end
-
-    # skip parent and shared attachments
-    def skip_existing_attachments(options)
-      options[:attachment_ids] - (options[:parent_attachments] || []).map(&:id) - (options[:shared_attachments] || []).map(&:id)
     end
 
     def retrieve_cloud_files

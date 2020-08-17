@@ -408,6 +408,7 @@ defaults: &defaults
     - [create_and_link_omni_account]
     - [sync_omni_agents]
     - [retry_observer]
+    - [freddy_consumed_session_queue]
 
 development:
   <<: *defaults

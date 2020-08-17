@@ -95,4 +95,70 @@ class NewPlanChangeWorkerTest < ActionView::TestCase
   ensure
     @account.ticket_fields_with_archived_fields.custom_fields.each(&:destroy)
   end
+
+  def test_custom_source_soft_delete_drop_data
+    create_test_account
+    custom_source = @account.helpdesk_sources.visible.custom.last || create_custom_source
+    SAAS::AccountDataCleanup.new(@account, ['custom_source'], 'drop').perform_cleanup
+    custom_source.reload
+    assert custom_source.deleted
+  end
+
+  def test_custom_source_reset_ticket_templates_data
+    create_test_account
+    custom_source = @account.helpdesk_sources.visible.custom.last || create_custom_source
+    ticket_template = fetch_or_create_ticket_templates
+    ticket_template.template_data['source'] = custom_source.account_choice_id.to_s
+    ticket_template.save!
+    SAAS::AccountDataCleanup.new(@account, ['custom_source'], 'drop').perform_cleanup
+    custom_source.reload
+    ticket_template.reload
+    assert custom_source.deleted
+    assert_equal ticket_template.template_data['source'], Helpdesk::Source.ticket_source_keys_by_token[:phone].to_s
+  end
+
+  def test_custom_source_fails_reset_ticket_templates_data
+    create_test_account
+    custom_source = @account.helpdesk_sources.visible.custom.last || create_custom_source
+    ticket_template = fetch_or_create_ticket_templates
+    ticket_template.template_data['source'] = custom_source.account_choice_id.to_s
+    ticket_template.save!
+    source_id = ticket_template.template_data['source']
+    Helpdesk::TicketTemplate.any_instance.stubs(:template_data).raises(StandardError)
+    SAAS::AccountDataCleanup.new(@account, ['custom_source'], 'drop').perform_cleanup
+    custom_source.reload
+    ticket_template.reload
+    assert custom_source.deleted
+    assert_not_equal source_id, Helpdesk::Source.ticket_source_keys_by_token[:phone].to_s
+  end
+
+  private
+
+    def fetch_or_create_ticket_templates
+      ticket_template = @account.ticket_templates.last || create_new_ticket_template
+      ticket_template
+    end
+
+    def create_new_ticket_template
+      ticket_template = FactoryGirl.build(:ticket_templates, template_params)
+      ticket_template.save!
+      ticket_template
+    end
+
+    def template_params
+      {
+        name: Faker::Name.name,
+        description: Faker::Lorem.sentence(2),
+        template_data: {
+          subject: Faker::Lorem.sentence(2),
+          status: '2',
+          priority: '1'
+        }.stringify_keys,
+        account_id: @account.id,
+        association_type: Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:general],
+        accessible_attributes: {
+          access_type: Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
+        }
+      }
+    end
 end

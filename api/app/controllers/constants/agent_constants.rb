@@ -63,6 +63,7 @@ module AgentConstants
     :undo_send,
     :focus_mode,
     :show_loyalty_upgrade,
+    :show_monthly_to_annual_notification,
     { field_service: [:dismissed_sample_scheduling_dashboard] },
     { search_settings:
       { tickets: [

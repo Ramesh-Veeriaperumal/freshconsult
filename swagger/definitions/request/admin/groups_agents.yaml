@@ -1,0 +1,18 @@
+type: object
+properties:
+  agents:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: number
+        write_access:
+          type: boolean
+        delete:
+          type: boolean
+          default: false
+          description: if true, the agent will dissociated from the group
+      required:
+        - id
+

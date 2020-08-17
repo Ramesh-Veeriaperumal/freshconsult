@@ -38,7 +38,7 @@ Helpkit::Application.routes.draw do
         end
       end
 
-      resources :business_calendars, controller: 'api_business_calendars', only: [:index, :show]
+      resources :business_calendars, controller: 'api_business_calendars', only: [:index, :show, :create]
       put '/custom_translations', to: 'custom_translations#upload'
       get '/custom_translations', to: 'custom_translations#download'
       get 'holidays/:id', to: 'holidays#show'
@@ -51,6 +51,12 @@ Helpkit::Application.routes.draw do
         member do
           put :enable
           put :disable
+        end
+      end
+
+      resources :security, controller: 'api_security', only: [:show] do
+        collection do
+          get :show
         end
       end
     end
@@ -1018,7 +1024,7 @@ Helpkit::Application.routes.draw do
     match '/authenticate', to: 'channel/v2/iam/authentication#authenticate', via: [:get, :post, :put, :delete]
     post '/iam/token', to: 'channel/v2/iam/authentication#iam_authenticate_token'
     resources :ticket_filters, controller: 'channel/v2/ticket_filters', only: [:index, :show]
-    resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show, :index]
+    resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show, :index, :update]
     resources :fbms, controller: 'channel/v2/fbms' do
       collection do
         post :update_post_id

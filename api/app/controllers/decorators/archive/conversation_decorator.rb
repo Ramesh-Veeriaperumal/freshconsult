@@ -1,9 +1,7 @@
 module Archive
   class ConversationDecorator < ::ConversationDecorator
     def construct_json
-      {
-        body: body_html,
-        body_text: body,
+      response_hash = {
         id: id,
         incoming: incoming,
         private: private,
@@ -16,6 +14,7 @@ module Archive
         attachments: attachments.map { |att| AttachmentDecorator.new(att).to_hash },
         cloud_files: cloud_files_hash
       }
+      construct_note_body_hash.merge(response_hash)
     end
 
     def freshfone_call_proxy

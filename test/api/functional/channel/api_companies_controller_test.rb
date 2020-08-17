@@ -45,7 +45,9 @@ module Channel
       post :create, construct_params({version: 'channel'}, name: name, description: Faker::Lorem.paragraph,
                                          domains: domain_array, note: Faker::Lorem.characters(10))
       assert_response 409
-      match_json([bad_request_error_pattern('name', :'has already been taken')])
+      additional_info = parse_response(@response.body)['errors'][0]['additional_info']
+      assert_equal additional_info['company_id'], company.id
+      match_json([bad_request_error_pattern_with_additional_info('name', additional_info, :'has already been taken')])
     end
 
     def test_create_company_with_duplicate_domain

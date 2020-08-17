@@ -77,7 +77,7 @@ module ArchiveTicketTestHelper
 
   def create_archive_ticket_with_assoc(params = {})
     params_hash = archive_ticket_params_hash(params)
-    ticket = create_ticket(params_hash)
+    ticket = params[:create_twitter_ticket] ? create_twitter_ticket(params_hash) : create_ticket(params_hash)
     build_conversations(ticket, params) if params[:create_conversations]
     new_ticket_from_freshcaller_call(ticket) if params[:create_freshcaller_call]
     new_ticket_from_call(ticket) if params[:create_freshfone_call]
@@ -96,6 +96,8 @@ module ArchiveTicketTestHelper
   end
 
   def build_conversations(ticket, params = {})
+    return build_twitter_conversations(ticket) if params[:create_twitter_ticket]
+
     file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
     4.times do
       params = {
@@ -108,6 +110,10 @@ module ArchiveTicketTestHelper
       }      
       create_note(params)
     end
+  end
+
+  def build_twitter_conversations(ticket)
+    %w[mention dm].map { |tweet_type| create_twitter_note(ticket, tweet_type) }
   end
 
   def cleanup_archive_ticket ticket, options={}
@@ -134,6 +140,7 @@ module ArchiveTicketTestHelper
                     group_id: @create_group.id, created_at: params[:created_at] || 120.days.ago, account_id: @account.id }
     params_hash[:company_id] = params[:company_id] if params[:company_id]
     params_hash[:requester_id] = params[:requester_id] if params[:requester_id]
+    params_hash[:tweet_type] = params[:tweet_type] if params[:tweet_type]
     params_hash
   end
 

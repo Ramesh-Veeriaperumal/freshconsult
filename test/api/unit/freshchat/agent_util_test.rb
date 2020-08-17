@@ -104,6 +104,112 @@ class Freshchat::AgentUtilTest < ActiveSupport::TestCase
     unstub(:freshchat_domain)
   end
 
+  def test_create_user_with_single_name_in_freshchat
+    stubs(:freshchat_domain).returns('test-freshchat.freshpo.com')
+    user = add_test_agent(@account, role: Role.where(name: 'Agent').first.try(:id))
+    agent = Account.current.agents.where(user_id: user.id).first
+    user_first_name = 'Sample'
+    user.name = user_first_name
+    user.save!
+    stub_request(:post, 'https://test-freshchat.freshpo.com/v2/agents?skip_email_activation=true').to_return(status: 200)
+    safe_send(:handle_fchat_agent, agent)
+    assert_requested(:post, 'https://test-freshchat.freshpo.com/v2/agents?skip_email_activation=true', times: 1) do |req|
+      request = JSON.parse(req.body)
+      !request.key?('last_name') && request['first_name'] == user_first_name
+    end
+  ensure
+    unstub(:freshchat_domain)
+  end
+
+  def test_create_user_with_same_first_name_and_last_name_in_freshchat
+    stubs(:freshchat_domain).returns('test-freshchat.freshpo.com')
+    user = add_test_agent(@account, role: Role.where(name: 'Agent').first.try(:id))
+    agent = Account.current.agents.where(user_id: user.id).first
+    user_first_name = 'Sample'
+    user.name = "#{user_first_name} #{user_first_name}"
+    user.save!
+    stub_request(:post, 'https://test-freshchat.freshpo.com/v2/agents?skip_email_activation=true').to_return(status: 200)
+    safe_send(:handle_fchat_agent, agent)
+    assert_requested(:post, 'https://test-freshchat.freshpo.com/v2/agents?skip_email_activation=true', times: 1) do |req|
+      request = JSON.parse(req.body)
+      request['last_name'] == user_first_name && request['first_name'] == user_first_name
+    end
+  ensure
+    unstub(:freshchat_domain)
+  end
+
+  def test_create_user_with_first_name_and_last_name_in_freshchat
+    stubs(:freshchat_domain).returns('test-freshchat.freshpo.com')
+    user = add_test_agent(@account, role: Role.where(name: 'Agent').first.try(:id))
+    agent = Account.current.agents.where(user_id: user.id).first
+    user_first_name = 'Sample'
+    user_last_name = 'One'
+    user.name = "#{user_first_name} #{user_last_name}"
+    user.save!
+    stub_request(:post, 'https://test-freshchat.freshpo.com/v2/agents?skip_email_activation=true').to_return(status: 200)
+    safe_send(:handle_fchat_agent, agent)
+    assert_requested(:post, 'https://test-freshchat.freshpo.com/v2/agents?skip_email_activation=true', times: 1) do |req|
+      request = JSON.parse(req.body)
+      request['last_name'] == user_last_name && request['first_name'] == user_first_name
+    end
+  ensure
+    unstub(:freshchat_domain)
+  end
+
+  def test_create_user_with_numerical_first_name_and_last_name_in_freshchat
+    stubs(:freshchat_domain).returns('test-freshchat.freshpo.com')
+    user = add_test_agent(@account, role: Role.where(name: 'Agent').first.try(:id))
+    agent = Account.current.agents.where(user_id: user.id).first
+    user_first_name = '313'
+    user_last_name = 'One'
+    user.name = "#{user_first_name} #{user_last_name}"
+    user.save!
+    stub_request(:post, 'https://test-freshchat.freshpo.com/v2/agents?skip_email_activation=true').to_return(status: 200)
+    safe_send(:handle_fchat_agent, agent)
+    assert_requested(:post, 'https://test-freshchat.freshpo.com/v2/agents?skip_email_activation=true', times: 1) do |req|
+      response = JSON.parse(req.body)
+      response['last_name'] == user_last_name && response['first_name'] == user_first_name
+    end
+  ensure
+    unstub(:freshchat_domain)
+  end
+
+  def test_create_user_with_numerical_first_name_and_numerical_last_name_in_freshchat
+    stubs(:freshchat_domain).returns('test-freshchat.freshpo.com')
+    user = add_test_agent(@account, role: Role.where(name: 'Agent').first.try(:id))
+    agent = Account.current.agents.where(user_id: user.id).first
+    user_first_name = '313'
+    user_last_name = '007'
+    user.name = "#{user_first_name} #{user_last_name}"
+    user.save!
+    stub_request(:post, 'https://test-freshchat.freshpo.com/v2/agents?skip_email_activation=true').to_return(status: 200)
+    safe_send(:handle_fchat_agent, agent)
+    assert_requested(:post, 'https://test-freshchat.freshpo.com/v2/agents?skip_email_activation=true', times: 1) do |req|
+      response = JSON.parse(req.body)
+      response['last_name'] == user_last_name && response['first_name'] == user_first_name
+    end
+  ensure
+    unstub(:freshchat_domain)
+  end
+
+  def test_create_user_with_numerical_first_name_and_last_name_middle_name_in_freshchat
+    stubs(:freshchat_domain).returns('test-freshchat.freshpo.com')
+    user = add_test_agent(@account, role: Role.where(name: 'Agent').first.try(:id))
+    agent = Account.current.agents.where(user_id: user.id).first
+    user_first_name = '313'
+    user_last_name = '717 Sample'
+    user.name = "#{user_first_name} #{user_last_name}"
+    user.save!
+    stub_request(:post, 'https://test-freshchat.freshpo.com/v2/agents?skip_email_activation=true').to_return(status: 200)
+    safe_send(:handle_fchat_agent, agent)
+    assert_requested(:post, 'https://test-freshchat.freshpo.com/v2/agents?skip_email_activation=true', times: 1) do |req|
+      response = JSON.parse(req.body)
+      response['last_name'] == user_last_name && response['first_name'] == user_first_name
+    end
+  ensure
+    unstub(:freshchat_domain)
+  end
+
   private
 
     def enable_freshchat(agent)

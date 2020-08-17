@@ -15,12 +15,15 @@ class SubscriptionsControllerTest < ActionController::TestCase
   def setup
     Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(false)
     Account.any_instance.stubs(:omni_accounts_present_in_org?).returns(false)
+    Subscription.any_instance.stubs(:reseller_paid_account?).returns(false)
     super
   end
 
   def teardown
     Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
     Account.any_instance.unstub(:omni_accounts_present_in_org?)
+    Subscription.any_instance.unstub(:reseller_paid_account?)
+    super
   end
 
   def wrap_cname(params)
@@ -1244,7 +1247,6 @@ class SubscriptionsControllerTest < ActionController::TestCase
       update_currency
       Account.stubs(:current).returns(@account)
       @account.launch :downgrade_policy
-      @account.launch(:addon_based_billing)
       chargebee_update = ChargeBee::Result.new(stub_update_params(@account.id))
       ChargeBee::Subscription.stubs(:update).returns(chargebee_update)
       chargebee_estimate = ChargeBee::Result.new(stub_estimate_params)
