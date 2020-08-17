@@ -1,0 +1,4 @@
+type: object
+allOf:
+  - $ref: '#/definitions/admin_groups'
+  - $ref: '#/definitions/extension_generic'
