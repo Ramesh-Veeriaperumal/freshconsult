@@ -189,7 +189,7 @@ class Account < ActiveRecord::Base
     force_index_tickets: false, freshfone_caller_id_masking: false,
     freshfone_onboarding: false, gamification_perf: false,
     gamification_quest_perf: false, lambda_exchange: false, automation_revamp: false,
-    list_page_new_cluster: false, meta_read: false, most_viewed_articles: false, multifile_attachments: true,
+    meta_read: false, most_viewed_articles: false, multifile_attachments: true,
     new_footer_feedback_box: false, new_leaderboard: false, periodic_login_feature: false, restricted_helpdesk: false,
     supervisor_dashboard: false, support_new_ticket_cache: false, synchronous_apps: false, ticket_list_page_filters_cache: false,
     skip_hidden_tkt_identifier: false, agent_collision_alb: false, auto_refresh_alb: false,
