@@ -9,7 +9,7 @@ module OmniAuth
     class Outlook < OmniAuth::Strategies::OAuth2
       option :name, :outlook
 
-      DEFAULT_SCOPE = 'https://graph.microsoft.com/User.Read'
+      DEFAULT_SCOPE = 'User.Read'
 
       # Configure the Microsoft identity platform endpoints
       option :client_options,

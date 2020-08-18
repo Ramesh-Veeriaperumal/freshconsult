@@ -35,7 +35,7 @@ class Auth::OutlookAuthenticator < Auth::Authenticator
       :outlook,
       Integrations::OAUTH_CONFIG_HASH['outlook']['consumer_token'],
       Integrations::OAUTH_CONFIG_HASH['outlook']['consumer_secret'],
-      scope: 'openid email profile offline_access https://graph.microsoft.com/IMAP.AccessAsUser.All https://graph.microsoft.com/SMTP.Send',
+      scope: 'openid email profile offline_access https://graph.microsoft.com/IMAP.AccessAsUser.All https://graph.microsoft.com/SMTP.Send https://graph.microsoft.com/User.ReadBasic.All',
       redirect_uri: "#{AppConfig['integrations_url'][Rails.env]}/auth/outlook/callback",
       name: 'outlook'
     )
