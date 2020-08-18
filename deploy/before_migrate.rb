@@ -135,6 +135,7 @@ run "ln -nfs #{shared_path}/config/cert/saml.pem #{node[:rel_path]}/config/cert/
 run "ln -nfs #{shared_path}/config/cert/iam.pem #{node[:rel_path]}/config/cert/iam.pem"
 run "ln -nfs #{shared_path}/config/cert/iam_public.pem #{node[:rel_path]}/config/cert/iam_public.pem"
 run "ln -nfs #{shared_path}/config/cert/jwe_encryption_key.pem #{node[:rel_path]}/config/cert/jwe_encryption_key.pem"
+run "ln -nfs #{shared_path}/config/cert/freddy_sessions.pem #{node[:rel_path]}/config/cert/freddy_sessions.pem"
 
 # Xero Cert files start
 run "ln -nfs #{shared_path}/config/cert/integrations/xero/entrust-cert.pem #{node[:rel_path]}/config/cert/integrations/xero/entrust-cert.pem"

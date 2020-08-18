@@ -3209,6 +3209,11 @@
           "_demo_email": "support@freshdesk.com",
           "_timeout": 5,
           "_onboard_timeout": 5
+        },
+        "freddy_consumed_session": {
+          "_url": "http://us-fbots-freddy-acct-usage-elb-209493542.us-east-1.elb.amazonaws.com/api/v1/accounts",
+          "_app_name": "freshdesk",
+          "_timeout": 3
         }
       },
       "shift_config": {
@@ -3394,6 +3399,7 @@
         "saml.pem",
         "iam.pem",
         "iam_public.pem",
+        "freddy_sessions.pem",
         "jwe_encryption_key.pem"
       ],
       "_bucket": "freshops-admin",
