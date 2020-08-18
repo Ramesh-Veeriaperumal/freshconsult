@@ -4,6 +4,11 @@ module Channel::V2
   class AgentsControllerTest < ActionController::TestCase
     include UsersTestHelper
     include JwtTestHelper
+    include CentralLib::CentralResyncHelper
+    include CentralLib::CentralResyncConstants
+    include Redis::OthersRedis
+
+    SOURCE = 'silkroad'.freeze
 
     def setup
       super
@@ -24,5 +29,43 @@ module Channel::V2
       match_json(pattern)
       assert_response 200
     end
+
+    def test_agents_resync_with_invalid_meta_info
+      set_jwt_auth_header(SOURCE)
+      remove_others_redis_key(resync_rate_limiter_key(SOURCE))
+      args = { meta_info: nil }
+      post :sync, construct_params({ version: 'channel' }, args)
+      response_body = parse_response @response.body
+      assert_equal error_response('meta_info is required'), response_body
+      assert_response 400
+    end
+
+    def test_agents_resync_success
+      set_jwt_auth_header(SOURCE)
+      job_id = SecureRandom.hex
+      request.stubs(:uuid).returns(job_id)
+      remove_others_redis_key(resync_rate_limiter_key(SOURCE))
+      expected_body = { 'job_id' => job_id }
+      args = { meta_info: { meta_id: 'abc' } }
+      post :sync, construct_params({ version: 'channel' }, args)
+      response_body = parse_response @response.body
+      assert_response 202
+      assert_equal expected_body, response_body
+    ensure
+      request.unstub(:uuid)
+    end
+
+    def test_agents_resync_with_auth_failure
+      remove_others_redis_key(resync_rate_limiter_key(SOURCE))
+      args = { meta_info: { meta_id: 'abc' } }
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_response 401
+    end
+
+    private
+
+      def error_response(error)
+        { 'errors' => [error] }
+      end
   end
 end
