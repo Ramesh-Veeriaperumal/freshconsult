@@ -234,6 +234,65 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
     assert_not_equal '<b>draft body</b>', JSON.parse(response.body)[:description]
   end
 
+  def test_return_not_found_for_draft_article_with_status_published
+    @enrich_response = false
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Account.current.launch(:kbase_omni_bundle)
+    set_jwe_auth_header(SUPPORT_BOT)
+    article_meta = create_article(status: '1')
+    article = article_meta.solution_articles.first
+    create_draft(article: article)
+    get :show, controller_params(id: article.parent_id, prefer_published: true, status: 2)
+    assert_response 404
+  ensure
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+    CustomRequestStore.unstub(:read)
+  end
+
+  def test_only_published_articles_returned_with_status
+    @enrich_response = false
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Account.current.launch(:kbase_omni_bundle)
+    set_jwe_auth_header(SUPPORT_BOT)
+    category_meta = create_category
+    folder_meta = create_folder(visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category_meta.id)
+    article_meta = create_article(folder_meta_id: folder_meta.id, status: '1')
+    article = article_meta.solution_articles.first
+    create_draft(article: article)
+    get :folder_articles, controller_params(id: folder_meta.id, prefer_published: true, status: 2)
+    assert_response 200
+    assert_equal '[]', response.body
+  ensure
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+    CustomRequestStore.unstub(:read)
+  end
+
+  def test_channeel_folder_articles_with_invalid_status
+    @enrich_response = false
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Account.current.launch(:kbase_omni_bundle)
+    Account.current.launch(:kbase_omni_bundle)
+    set_jwe_auth_header(SUPPORT_BOT)
+    category_meta = create_category
+    folder_meta = create_folder(visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category_meta.id)
+    get :folder_articles, controller_params(id: folder_meta.id, prefer_published: true, status: '3')
+    assert_response 400
+    expected = { description: 'Validation failed', errors: [{ field: 'status', message: "It should be one of these values: '1,2'", code: 'invalid_value' }] }
+    assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+  ensure
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+    CustomRequestStore.unstub(:read)
+  end
+
   def test_folder_articles_with_language_param
     @enrich_response = false
     CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
