@@ -1801,6 +1801,11 @@
           "_demo_email": "support@freshdesk.com",
           "_timeout": 5,
           "_onboard_timeout": 5
+        },
+        "freddy_consumed_session": {
+          "_url": "http://freddyacctusage.stagfreshbots.com/api/v1/accounts",
+          "_app_name": "freshdesk",
+          "_timeout": 3
         }
       },
       "shift_config": {
@@ -1980,6 +1985,7 @@
         "saml.pem",
         "iam.pem",
         "jwe_encryption_key.pem",
+        "freddy_sessions.pem",
         "iam_public.pem"
       ],
       "_path": "certificates/common",

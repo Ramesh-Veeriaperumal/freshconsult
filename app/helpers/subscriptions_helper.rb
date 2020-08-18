@@ -6,6 +6,10 @@ module SubscriptionsHelper
   AGENTS = :agents
   FIELD_TECHNICIANS = :'field technicians'
   PRODUCTS = :products
+  FREDDY_SESSIONS_TOKEN_EXPIRY = 15.minutes
+  FREDDY_TOKEN_ALGORITHM = 'RS256'.freeze
+  JWT_KEYWORD = 'JWT'.freeze
+  FREDDY_SESSIONS_CONTENT_TYPE = 'application/json'.freeze
 
   OMNI_FEATURES = {
     "sproutomni_channel_option" => ["sprout_omni"],
@@ -269,5 +273,66 @@ module SubscriptionsHelper
 
   def get_omni_features(plan_name)
     IMPORTANT_OMNI_FEATURES["#{plan_name}"] || []
+  end
+
+  def fetch_consumed_freddy_sessions
+    fetch_freddy_account_usage[:sessionsConsumed] if Account.current.subscription.freddy_sessions > 0
+  end
+
+  def fetch_freddy_account_usage
+    account_usage = {}
+    url = FreddySkillsConfig[:freddy_consumed_session][:url]
+    time_taken = Benchmark.realtime { account_usage = HTTParty.get(url, freddy_sessions_options) }
+    Rails.logger.info "Time Taken to fetch freddy account usage - #{Account.current.id} time - #{time_taken}"
+    account_usage.success? ? JSON.parse(account_usage.response.body)['data'].symbolize_keys : {}
+  rescue StandardError => e
+    Rails.logger.error "Error while fetching freddy account usage #{e.message}"
+    {}
+  end
+
+  def freddy_omni_account_query_param
+    {
+      'bundleType' => Account.current.omni_bundle_name,
+      'bundleId' => Account.current.omni_bundle_id
+    }
+  end
+
+  def freddy_non_omni_account_query_param
+    {
+      'product' => FreddySkillsConfig[:freddy_consumed_session][:app_name],
+      'productAccountId' => Account.current.id
+    }
+  end
+
+  def freddy_sessions_options
+    query_param = Account.current.omni_bundle_account? ? freddy_omni_account_query_param : freddy_non_omni_account_query_param
+    {
+      headers: freddy_sessions_consumed_headers,
+      query: query_param,
+      timeout: FreddySkillsConfig[:freddy_consumed_session][:timeout]
+    }
+  end
+
+  def freddy_sessions_consumed_headers
+    {
+      'authToken' => freddy_sessions_jwt_token,
+      'Content-Type' => FREDDY_SESSIONS_CONTENT_TYPE
+    }
+  end
+
+  def freddy_sessions_private_key
+    OpenSSL::PKey::RSA.new(File.read('config/cert/freddy_sessions.pem'))
+  end
+
+  def freddy_sessions_jwt_token
+    JWT.encode freddy_sessions_payload, freddy_sessions_private_key, FREDDY_TOKEN_ALGORITHM, 'alg': FREDDY_TOKEN_ALGORITHM, 'typ': JWT_KEYWORD
+  end
+
+  def freddy_sessions_payload
+    {
+      iss: FreddySkillsConfig[:freddy_consumed_session][:app_name],
+      iat: Time.zone.now.to_i,
+      exp: Time.zone.now.to_i + FREDDY_SESSIONS_TOKEN_EXPIRY
+    }
   end
 end

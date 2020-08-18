@@ -23,6 +23,7 @@ module Admin
                          if: -> { create_or_update? && instance_variable_defined?(:@holidays) }
     validate :validate_holidays_data, if: -> { create_or_update? && instance_variable_defined?(:@holidays) && errors.blank? }
     validate :validate_channel_business_hours, if: -> { create_or_update? && instance_variable_defined?(:@channel_business_hours)  && errors.blank? }
+    validate :check_default_business_calendar, if: -> { validation_context == :destroy }
 
     def initialize(request_params, item, options)
       self.request_params = request_params
@@ -31,6 +32,10 @@ module Admin
         safe_send("#{param}=", request_params[param]) if request_params.key?(param)
       end
       super(request_params, nil, options) # sending model attribute as nil to avoid request param definition
+    end
+
+    def check_default_business_calendar
+      errors[:id] = :default_business_hour_destroy_not_allowed if business_calendar.is_default
     end
   end
 end

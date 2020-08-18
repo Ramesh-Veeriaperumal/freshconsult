@@ -234,6 +234,65 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
     assert_not_equal '<b>draft body</b>', JSON.parse(response.body)[:description]
   end
 
+  def test_return_not_found_for_draft_article_with_status_published
+    @enrich_response = false
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Account.current.launch(:kbase_omni_bundle)
+    set_jwe_auth_header(SUPPORT_BOT)
+    article_meta = create_article(status: '1')
+    article = article_meta.solution_articles.first
+    create_draft(article: article)
+    get :show, controller_params(id: article.parent_id, prefer_published: true, status: 2)
+    assert_response 404
+  ensure
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+    CustomRequestStore.unstub(:read)
+  end
+
+  def test_only_published_articles_returned_with_status
+    @enrich_response = false
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Account.current.launch(:kbase_omni_bundle)
+    set_jwe_auth_header(SUPPORT_BOT)
+    category_meta = create_category
+    folder_meta = create_folder(visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category_meta.id)
+    article_meta = create_article(folder_meta_id: folder_meta.id, status: '1')
+    article = article_meta.solution_articles.first
+    create_draft(article: article)
+    get :folder_articles, controller_params(id: folder_meta.id, prefer_published: true, status: 2)
+    assert_response 200
+    assert_equal '[]', response.body
+  ensure
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+    CustomRequestStore.unstub(:read)
+  end
+
+  def test_channeel_folder_articles_with_invalid_status
+    @enrich_response = false
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Account.current.launch(:kbase_omni_bundle)
+    Account.current.launch(:kbase_omni_bundle)
+    set_jwe_auth_header(SUPPORT_BOT)
+    category_meta = create_category
+    folder_meta = create_folder(visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category_meta.id)
+    get :folder_articles, controller_params(id: folder_meta.id, prefer_published: true, status: '3')
+    assert_response 400
+    expected = { description: 'Validation failed', errors: [{ field: 'status', message: "It should be one of these values: '1,2'", code: 'invalid_value' }] }
+    assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+  ensure
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+    CustomRequestStore.unstub(:read)
+  end
+
   def test_folder_articles_with_language_param
     @enrich_response = false
     CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
@@ -291,6 +350,24 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
     articles_with_platforms = articles.select { |article| article.parent.solution_platform_mapping.present? && article.parent.solution_platform_mapping.enabled_platforms.include?('ios') }
     pattern = articles_with_platforms.map { |art| channel_api_solution_article_pattern(art) }
     match_json(pattern.ordered!)
+  ensure
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+    CustomRequestStore.unstub(:read)
+  end
+
+  def test_folder_articles_with_allow_language_fallback_param
+    @enrich_response = false
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Account.current.launch(:kbase_omni_bundle)
+    set_jwt_auth_header(FRESHCONNECT_SRC)
+    article_new = get_article_with_platform_mapping(ios: true, web: true, android: false)
+    folder_meta = article_new.solution_folder_meta
+    sample_folder = folder_meta.solution_folders.where(language_id: article_new.language.id).first
+    get :folder_articles, controller_params(id: sample_folder.id, allow_language_fallback: 'true')
+    assert_response 200
   ensure
     Account.any_instance.unstub(:omni_bundle_account?)
     Account.current.rollback :kbase_omni_bundle
@@ -376,6 +453,21 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
     match_json(validation_error_pattern(bad_request_error_pattern('platforms', :require_feature, feature: :omni_bundle_2020, code: :access_denied)))
   ensure
     CustomRequestStore.unstub(:read)
+  end
+
+  def test_invalid_allow_language_fallback_params
+    @enrich_response = false
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Account.current.launch(:kbase_omni_bundle)
+    set_jwt_auth_header(FRESHCONNECT_SRC)
+    translated_article = get_article(language = Language.find_by_code('ru-RU'))
+    folder = translated_article.solution_folder_meta.solution_folders.where(language_id: Language.find_by_code('ru-RU').id).first
+    get :folder_articles, controller_params(version: 'channel', id: folder.id, language: 'ru-RU', allow_language_fallback: 'invalid')
+    assert_response 400
+    expected = { description: 'Validation failed', errors: [{ field: 'allow_language_fallback', message: "It should be one of these values: 'true,false'", code: 'invalid_value' }] }
+    assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
   end
 
   def get_articles_by_portal_id(portal_id, language = Account.current.language_object)

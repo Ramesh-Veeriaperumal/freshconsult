@@ -100,6 +100,7 @@ module CoreTicketsTestHelper
     end
     test_ticket.group_id = group ? group.id : nil
     test_ticket.save_ticket
+    test_ticket.reload if test_ticket.id
     test_ticket
   end
 

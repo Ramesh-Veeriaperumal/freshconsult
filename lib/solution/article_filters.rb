@@ -95,6 +95,7 @@ module Solution::ArticleFilters
         conditions.push(format("((modified_at:>'%{start}' AND modified_at:<'%{end}') OR (draft_modified_at:>'%{start}' AND draft_modified_at:<'%{end}'))", start: es_iso_format(params_hash[:last_modified][:start]), end: es_iso_format(params_hash[:last_modified][:end]))) if params[:last_modified]
         conditions.push(format('(outdated:true)')) if params[:outdated]
         conditions.push(format('approvers:%{approver}', params_hash)) if params[:approver]
+        conditions.push(format('(%s)', params[:platforms].collect { |x| format('platforms:%s', x) }.join(' OR '))) if params[:platforms].present?
         conditions.push(format('(%s)', params[:folder].collect { |x| format('folder_id:%s', x) }.join(' OR '))) if params[:folder].present?
         conditions.join(' AND ')
       end

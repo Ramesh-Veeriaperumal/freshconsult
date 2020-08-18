@@ -565,7 +565,7 @@ module ApiSolutions
       enable_omni_bundle do
         file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
         category_meta = get_category
-        icon = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: User.current.id).id
+        icon = create_attachment(content: file, attachable_type: 'Image Upload').id
         post :create, construct_params(id: category_meta.id, name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1, icon: icon)
         assert_response 201
         result = parse_response(@response.body)
@@ -577,7 +577,7 @@ module ApiSolutions
     def test_create_folder_with_folder_icon_with_omni_disabled
       file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
       category_meta = get_category
-      icon = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: User.current.id).id
+      icon = create_attachment(content: file, attachable_type: 'Image Upload', attachable_id: User.current.id).id
       post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1, icon: icon })
       assert_response 403
       match_json(validation_error_pattern(bad_request_error_pattern('properties[:icon]', :require_feature, feature: :omni_bundle_2020, code: :access_denied)))
@@ -606,8 +606,8 @@ module ApiSolutions
       enable_omni_bundle do
         file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
         category_meta = get_category
-        icon = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: User.current.id)
-        post :create, construct_params(id: category_meta.id, name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1, icon: icon.id)
+        icon = create_attachment(content: file, attachable_type: 'Image Upload')
+        post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1, icon: icon.id })
         assert_response 400
         match_json([bad_request_error_pattern(:icon, :upload_jpg_or_png_file, current_extension: '.txt')])
       end
