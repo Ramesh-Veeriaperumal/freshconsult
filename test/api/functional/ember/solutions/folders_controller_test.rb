@@ -10,6 +10,7 @@ module Ember
       include SolutionsHelper
       include ContactSegmentsTestHelper
       include CompanySegmentsTestHelper
+      include AttachmentsTestHelper
       include SolutionsPlatformsTestHelper
 
       def setup
@@ -660,6 +661,19 @@ module Ember
         assert_equal request_error_pattern(:credentials_required).to_json, response.body
       ensure
         @controller.unstub(:api_current_user)
+      end
+
+      def test_create_folder_with_folder_icon_with_omni_enabled
+        enable_omni_bundle do
+          file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
+          category_meta = get_category
+          icon = create_attachment(content: file, attachable_type: 'Image Upload').id
+          post :create, construct_params(version: 'private', id: category_meta.id, name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1, icon: icon)
+          assert_response 201
+          result = parse_response(@response.body)
+          assert_equal "http://#{@request.host}/api/v2/solutions/folders/#{result['id']}", response.headers['Location']
+          match_json(solution_folder_pattern_private(Solution::Folder.where(parent_id: result['id']).first))
+        end
       end
 
       def test_destroy_without_manage_solutions_privilege

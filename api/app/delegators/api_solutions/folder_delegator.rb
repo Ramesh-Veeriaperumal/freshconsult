@@ -22,7 +22,7 @@ module ApiSolutions
     end
 
     def icon_exists_and_valid_type?
-      attachment = Account.current.attachments.where('id=? and attachable_id=? and attachable_type=?', icon_attribute, User.current.id, AttachmentConstants::ATTACHABLE_TYPES['user_draft'])
+      attachment = Account.current.attachments.where('id=? and attachable_type=?', icon_attribute, "#{AttachmentConstants::INLINE_ATTACHABLE_NAMES_BY_TOKEN[:solution]} Upload")
       if attachment.empty?
         errors[:icon] << :invalid_icon_id
         (self.error_options ||= {}).merge!(icon: { invalid_id: @icon_attribute })
