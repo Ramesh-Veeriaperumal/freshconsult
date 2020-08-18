@@ -530,7 +530,7 @@ class Email::MailboxesControllerTest < ActionController::TestCase
       account_id: Account.current.id,
       smtp_mailbox_id: email_config.smtp_mailbox.id
     )
-    assert_equal $redis_others.perform_redis_op('exists', access_token_key), false
+    assert_equal $redis_others.perform_redis_op('exists', access_token_key), true
   ensure
     Account.any_instance.unstub(:has_features?)
     Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
@@ -594,8 +594,8 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     post :update, construct_params({ id: email_config.id }, params_hash)
     assert_response 200
     match_json(mailbox_pattern({}, EmailConfig.find_by_id(email_config.id)))
-    assert_equal email_config.reload.imap_mailbox.access_token, 'refreshtoken'
-    assert_equal email_config.reload.imap_mailbox.refresh_token, 'accesstoken'
+    assert_equal email_config.reload.imap_mailbox.access_token, 'accesstoken'
+    assert_equal email_config.reload.imap_mailbox.refresh_token, 'refreshtoken'
     assert_nil email_config.reload.smtp_mailbox
     assert_nil email_config.reload.smtp_mailbox
   ensure
