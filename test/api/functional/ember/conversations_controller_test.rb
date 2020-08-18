@@ -691,6 +691,54 @@ module Ember
       assert latest_note.attachments.count == 1
     end
 
+    def test_facebook_reply_with_shared_attachments
+      canned_response = create_response(
+        title: Faker::Lorem.sentence,
+        content_html: Faker::Lorem.paragraph,
+        visibility: ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+        attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) }
+      )
+      ticket = create_ticket_from_fb_direct_message
+      sample_reply_dm = { 'id' => Time.now.utc.to_i + 5 }
+      Koala::Facebook::API.any_instance.stubs(:put_object).returns(sample_reply_dm)
+      canned_response_attachments = canned_response.shared_attachments.map(&:attachment_id)
+      params_hash = { msg_type: 'dm', attachment_ids: canned_response_attachments }
+      stub_attachment_to_io do
+        post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      end
+    ensure
+      Koala::Facebook::API.any_instance.unstub(:put_object)
+      assert_response 201
+      latest_note = Account.current.notes.last
+      assert latest_note.attachments.size == canned_response_attachments.size
+    end
+
+    def test_tweet_reply_with_shared_attachments
+      canned_response = create_response(
+        title: Faker::Lorem.sentence,
+        content_html: Faker::Lorem.paragraph,
+        visibility: ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+        attachments: { resource: fixture_file_upload('files/image4kb.png', 'image/png') }
+      )
+      canned_response_attachments = canned_response.shared_attachments.map(&:attachment_id)
+      ticket = create_twitter_ticket
+      dm_text = Faker::Lorem.paragraphs(5).join[0..500]
+      @account = Account.current
+      reply_id = get_social_id
+      dm_reply_params = { id: reply_id, id_str: reply_id.to_s, recipient_id_str: rand.to_s[2..11], text: dm_text, created_at: Time.zone.now.to_s }
+      with_twitter_dm_stubbed(Twitter::DirectMessage.new(dm_reply_params)) do
+        params_hash = twitter_dm_reply_params_hash.merge(attachment_ids: canned_response_attachments)
+        stub_attachment_to_io do
+          post :tweet, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+        end
+        assert_response 201
+        latest_note = Helpdesk::Note.last
+        match_json(private_note_pattern(params_hash, latest_note))
+        assert latest_note.attachments.size == canned_response_attachments.size
+      end
+      ticket.destroy
+    end
+
     def test_reply_with_inapplicable_survey_option
       survey = Account.current.survey
       survey.send_while = rand(1..3)

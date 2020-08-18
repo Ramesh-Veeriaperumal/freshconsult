@@ -1,7 +1,9 @@
 require_relative '../../test_helper'
+['social_tickets_creation_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module ApiSearch
   class TicketsControllerTest < ActionController::TestCase
     include SearchTestHelper
+    include SocialTicketsCreationHelper
 
     CUSTOM_FIELDS = %w(number checkbox decimal text paragraph date).freeze
     CHOICES = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'].freeze
@@ -566,6 +568,40 @@ module ApiSearch
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket, [:description, :description_text]) }
       match_json(results: pattern, total: tickets.size)
+    end
+
+    def test_filter_twitter_tickets_with_restricted_twitter_content
+      Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+      CustomRequestStore.store[:private_api_request] = false
+      create_twitter_ticket(group_id: '12345', tweet_type: 'mention')
+      create_twitter_ticket(group_id: '12345', tweet_type: 'dm')
+      tickets = @account.tickets.select { |x| x.group_id == 12_345 }
+      stub_public_search_response(tickets) do
+        get :index, controller_params(query: '"group_id: 12345"')
+      end
+      assert_response 200
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket, %i[description description_text]) }
+      match_json(results: pattern, total: tickets.size)
+    ensure
+      tickets.each(&:destroy)
+      CustomRequestStore.store[:private_api_request] = true
+      Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+    end
+
+    def test_filter_twitter_tickets_with_unrestricted_twitter_content
+      CustomRequestStore.store[:private_api_request] = false
+      create_twitter_ticket(group_id: '12345', tweet_type: 'mention')
+      create_twitter_ticket(group_id: '12345', tweet_type: 'dm')
+      tickets = @account.tickets.select { |x| x.group_id == 12_345 }
+      stub_public_search_response(tickets) do
+        get :index, controller_params(query: '"group_id: 12345"')
+      end
+      assert_response 200
+      pattern = tickets.map { |ticket| index_ticket_pattern(ticket, %i[description description_text]) }
+      match_json(results: pattern, total: tickets.size)
+    ensure
+      tickets.each(&:destroy)
+      CustomRequestStore.store[:private_api_request] = true
     end
 
     # def test_agent_id_null

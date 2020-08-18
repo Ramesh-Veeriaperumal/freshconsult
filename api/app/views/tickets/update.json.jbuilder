@@ -2,9 +2,11 @@ json.set! :cc_emails, @item.cc_email.try(:[], :cc_emails)
 json.set! :fwd_emails, @item.cc_email.try(:[], :fwd_emails)
 json.set! :reply_cc_emails, @item.cc_email.try(:[], :reply_cc)
 json.set! :ticket_cc_emails, @item.cc_email.try(:[], :tkt_cc)
-json.extract! @item, :spam, :email_config_id, :fr_escalated, :group_id, :priority, :requester_id, :responder_id, :source, :status, :subject, :company_id, :custom_fields
-json.set! :description, @item.description_html
-json.set! :description_text, @item.description
+json.extract! @item, :spam, :email_config_id, :fr_escalated, :group_id, :priority, :requester_id, :responder_id, :source, :status
+json.set! :subject, @item.subject_info
+json.extract! @item, :company_id, :custom_fields
+json.set! :description, @item.description_info[:description]
+json.set! :description_text, @item.description_info[:description_text]
 json.set! :id, @item.display_id
 json.set! :type, @item.ticket_type
 json.set! :to_emails, @item.schema_less_ticket.to_emails

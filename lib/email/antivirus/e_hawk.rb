@@ -4,8 +4,7 @@ module Email::Antivirus::EHawk
     include Redis::OthersRedis
     include Redis::PortalRedis
 
-    def increase_ehawk_spam_score_for_account(spam_score, account, subject, additional_info)
-      mail_recipients = ["mail-alerts@freshdesk.com", "noc@freshdesk.com", "helpdesk@noc-alerts.freshservice.com"]
+    def increase_ehawk_spam_score_for_account(spam_score, account, subject, additional_info, mail_recipients = ['mail-alerts@freshdesk.com', 'noc@freshdesk.com', 'helpdesk@noc-alerts.freshservice.com'])
       FreshdeskErrorsMailer.error_email(nil, {:domain_name => Account.current.full_domain}, nil, {
                 :subject => subject,
                 :recipients => mail_recipients,

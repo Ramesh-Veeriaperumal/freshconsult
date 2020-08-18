@@ -359,5 +359,46 @@ module Channel
       get :fetch_contact_by_email, controller_params(version: 'channel', email: 'emily@freshdesk.com')
       assert_response 403
     end
+
+    def test_update_contact
+      set_jwt_auth_header('freshmover')
+      user = add_new_user(@account)
+      name = Faker::Lorem.characters(15)
+      put :update, construct_params({ version: 'channel', id: user.id }, name: name, import_id: user.id)
+      assert_response 200
+      user = user.reload
+      assert_equal user.name, name
+      assert_equal user.import_id, user.id
+    end
+
+    def test_update_contact_without_auth
+      user = add_new_user(@account)
+      name = Faker::Lorem.characters(15)
+      put :update, construct_params({ version: 'channel', id: user.id }, name: name)
+      assert_response 401
+    end
+
+    def test_update_contact_validation_failure
+      set_jwt_auth_header('freshmover')
+      user = add_new_user(@account)
+      current_time = '2020-05-10 08:08:08'
+      put :update, construct_params({ version: 'channel', id: user.id }, created_at: current_time, updated_at: current_time)
+      assert_response 400
+      match_json([
+                   bad_request_error_pattern('created_at', :invalid_date, accepted: 'combined date and time ISO8601'),
+                   bad_request_error_pattern('updated_at', :invalid_date, accepted: 'combined date and time ISO8601')
+                 ])
+    end
+
+    def test_update_contact_with_timestamps
+      set_jwt_auth_header('freshmover')
+      user = add_new_user(@account)
+      created_at = updated_at = Time.current - 10.days
+      put :update, construct_params({ version: 'channel', id: user.id }, created_at: created_at, updated_at: updated_at)
+      assert_response 200
+      user = user.reload
+      assert (user.created_at - created_at).to_i.zero?
+      assert (user.updated_at - updated_at).to_i.zero?
+    end
   end
 end

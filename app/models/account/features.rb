@@ -1,7 +1,7 @@
 class Account < ActiveRecord::Base
 
   LP_FEATURES = [
-    :select_all, :round_robin_capping, :suggest_tickets,
+    :select_all, :suggest_tickets,
     :customer_sentiment_ui, :dkim, :dkim_email_service, :scheduled_ticket_export,
     :ticket_contact_export, :email_failures, :disable_emails,
     :falcon_portal_theme, :freshid, :allow_huge_ccs,
@@ -22,7 +22,7 @@ class Account < ActiveRecord::Base
     :update_billing_info, :allow_billing_info_update,
     :native_apps, :archive_tickets_api, :bot_agent_response,
     :fetch_ticket_from_ref_first,
-    :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp, :service_worker,
+    :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp,
     :ticket_field_limit_increase, :join_ticket_field_data, :bypass_signup_captcha,
     :simple_outreach, :disable_simple_outreach, :supervisor_text_field, :disable_mint_analytics,
     :freshid_org_v2, :hide_agent_login,
@@ -32,7 +32,7 @@ class Account < ActiveRecord::Base
     :prevent_wc_ticket_create, :allow_wildcard_ticket_create, :requester_privilege,
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr, :asset_management,
     :csat_email_scan_compatibility, :mint_portal_applicable, :quoted_text_parsing_feature,
-    :email_mailbox, :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
+    :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
     :fluffy_min_level, :allow_update_agent, :launch_fsm_geolocation, :geolocation_historic_popup,
     :ticket_field_revamp, :hide_mailbox_error_from_agents, :hide_og_meta_tags, :disable_occlusion_rendering,
     :jira_onpremise_reporter, :sidekiq_logs_to_central, :encode_emoji_in_solutions,
@@ -47,7 +47,7 @@ class Account < ActiveRecord::Base
     :omni_chat_agent, :portal_frameworks_update, :ticket_filters_central_publish, :new_email_regex, :auto_refresh_revamp, :agent_statuses, :omni_reports,
     :omni_plans_migration_banner, :parse_replied_email, :wf_comma_filter_fix, :composed_email_check, :omni_channel_dashboard, :csat_for_social_surveymonkey, :fresh_parent, :trim_special_characters, :kbase_omni_bundle,
     :omni_agent_availability_dashboard, :twitter_api_compliance, :silkroad_export, :silkroad_shadow, :silkroad_multilingual, :group_management_v2, :symphony, :invoke_touchstone, :explore_omnichannel_feature, :hide_omnichannel_toggle,
-    :dashboard_java_fql_performance_fix, :emberize_business_hours, :trigger_domain_mapping_deletion, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges
+    :dashboard_java_fql_performance_fix, :emberize_business_hours, :trigger_domain_mapping_deletion, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp
   ].freeze
 
   BITMAP_FEATURES = [
@@ -83,7 +83,7 @@ class Account < ActiveRecord::Base
     :fb_ad_posts, :suggested_articles_count, :unlimited_multi_product,
     :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
-    :custom_objects, :quality_management_system, :kb_allow_base64_images, :triage_ultimate
+    :custom_objects, :quality_management_system, :kb_allow_base64_images, :triage_ultimate, :autofaq_eligible, :whitelisted_ips
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 

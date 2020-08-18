@@ -58,6 +58,14 @@ module Agents
       update_preferences(show_loyalty_upgrade: enabled)
     end
 
+    def show_monthly_to_annual_notification
+      preferences[:show_monthly_to_annual_notification]
+    end
+
+    def show_monthly_to_annual_notification=(enabled)
+      update_preferences(show_monthly_to_annual_notification: enabled)
+    end
+
     # Helpers for getting and setting Freshchat token
     def freshchat_token
       preferences[:freshchat_token]

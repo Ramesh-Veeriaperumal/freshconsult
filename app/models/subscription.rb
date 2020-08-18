@@ -76,6 +76,7 @@ class Subscription < ActiveRecord::Base
   before_update :cache_old_model, :cache_old_addons
   before_update :clear_loyalty_upgrade_banner, if: :plan_changed?
   before_update :create_omni_bundle, if: :omni_plan_conversion?
+  before_update :mark_switch_annual_notification, if: :switch_annual_notification_eligible?
 
   after_update :add_to_crm, unless: [:anonymous_account?, :disable_freshsales_api_integration?]
   after_update :update_reseller_subscription, unless: :anonymous_account?
@@ -90,6 +91,7 @@ class Subscription < ActiveRecord::Base
   after_commit :update_sandbox_subscription, on: :update, if: :account_has_sandbox?
   after_commit :complete_onboarding, on: :update, if: :upgrade_from_trial?
   after_commit :launch_downgrade_policy, unless: :policy_applied_account?
+  after_commit :trigger_switch_to_annual_notification_scheduler, on: :update, if: :trigger_switch_annual_notification?
   after_commit :enqueue_omni_account_creation_workers, if: [:omni_plan_conversion?, :enqueue_omni_account_creation?]
 
   attr_accessor :creditcard, :address, :billing_cycle, :subscription_term_start
@@ -348,6 +350,11 @@ class Subscription < ActiveRecord::Base
     update(additional_info: additional_info)
   end
 
+  def mark_switch_annual_notification
+    additional_info = self.additional_info || {}
+    additional_info[:annual_notification_triggered] = true
+  end
+
   def applicable_addons(addons, plan)
     addons.to_a.collect{ |addon| addon if addon.allowed_in_plan?(plan) }.compact
   end
@@ -541,6 +548,28 @@ class Subscription < ActiveRecord::Base
     self.additional_info = self.additional_info.except(:field_agent_limit)
     Rails.logger.info "Resetting field agent limit:: Account:: #{self.account_id}"
     save
+  end
+
+  def freddy_sessions=(value)
+    self.additional_info ||= {}
+    self.additional_info[:freddy_sessions] = value
+  end
+
+  def freddy_sessions
+    self.additional_info.try(:[], :freddy_sessions).to_i
+  end
+
+  def freddy_session_packs
+    self.additional_info.try(:[], :freddy_session_packs).to_i
+  end
+
+  def freddy_session_packs=(session_packs)
+    self.additional_info ||= {}
+    self.additional_info[:freddy_session_packs] = session_packs
+  end
+
+  def freddy_billing_model
+    self.additional_info.try(:[], :freddy_billing_model)
   end
 
   def remove_addon(addon_name)
@@ -1023,6 +1052,19 @@ class Subscription < ActiveRecord::Base
 
     def plan_changed?
       @old_subscription.subscription_plan_id != subscription_plan_id
+    end
+
+    def switch_annual_notification_eligible?
+      !@old_subscription.additional_info[:annual_notification_triggered] && renewal_period != SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual] && \
+        amount > 0 && first_time_paid_non_annual_plan? && !offline_subscription? && !reseller_paid_account?
+    end
+
+    def first_time_paid_non_annual_plan?
+      active? && subscription_payments.reject { |payment| payment.meta_info[:renewal_period] == SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual] }.count.zero?
+    end
+
+    def trigger_switch_annual_notification?
+      !@old_subscription.additional_info[:annual_notification_triggered] && additional_info[:annual_notification_triggered]
     end
 
     def update_features

@@ -198,12 +198,38 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_create_contact_with_existing_email
     email = Faker::Internet.email
-    add_new_user(@account, name: Faker::Lorem.characters(15), email: email)
+    user = add_new_user(@account, name: Faker::Lorem.characters(15), email: email)
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
                                         email: email)
     additional_info = parse_response(@response.body)['errors'][0]['additional_info']
-    match_json([bad_request_error_pattern_with_additional_info('email', additional_info, :'Email has already been taken')])
+    assert_equal additional_info['user_id'], user.id
+    match_json([bad_request_error_pattern_with_additional_info('email', additional_info, :'has already been taken')])
     assert_response 409
+  end
+
+  def test_create_contact_with_existing_twitter_id
+    twitter_id = Faker::Lorem.characters(10)
+    user = add_new_user_with_twitter_id(@account, name: Faker::Lorem.characters(15), twitter_id: twitter_id)
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        twitter_id: twitter_id)
+    additional_info = parse_response(@response.body)['errors'][0]['additional_info']
+    assert_equal additional_info['user_id'], user.id
+    match_json([bad_request_error_pattern_with_additional_info('twitter_id', additional_info, :'has already been taken')])
+    assert_response 409
+  end
+
+  def test_create_contact_with_existing_unique_external_id
+    @account.add_feature(:unique_contact_identifier)
+    unique_external_id = Faker::Lorem.characters(10)
+    user = add_new_user(@account, name: Faker::Lorem.characters(15), unique_external_id: unique_external_id)
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        unique_external_id: unique_external_id)
+    additional_info = parse_response(@response.body)['errors'][0]['additional_info']
+    assert_equal additional_info['user_id'], user.id
+    match_json([bad_request_error_pattern_with_additional_info('unique_external_id', additional_info, :'has already been taken')])
+    assert_response 409
+  ensure
+    @account.revoke_feature(:unique_contact_identifier)
   end
 
   def test_create_contact_with_prohibited_email
@@ -699,6 +725,31 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user.update_attribute(:email, email)
   end
 
+  def test_update_contact_with_existing_twitter_id
+    twitter_id = Faker::Lorem.characters(10)
+    user1 = add_new_user_with_twitter_id(@account, twitter_id: twitter_id)
+    user2 = add_new_user_without_email(@account)
+    put :update, construct_params({ id: user2.id }, twitter_id: twitter_id)
+    additional_info = parse_response(@response.body)['errors'][0]['additional_info']
+    assert_response 409
+    assert_equal additional_info['user_id'], user1.id
+    match_json([bad_request_error_pattern_with_additional_info('twitter_id', additional_info, :'has already been taken')])
+  end
+
+  def test_update_contact_with_existing_unique_external_id
+    @account.add_feature(:unique_contact_identifier)
+    unique_external_id = Faker::Lorem.characters(10)
+    user1 = add_new_user(@account, unique_external_id: unique_external_id)
+    user2 = add_new_user_without_email(@account)
+    put :update, construct_params({ id: user2.id }, unique_external_id: unique_external_id)
+    additional_info = parse_response(@response.body)['errors'][0]['additional_info']
+    assert_response 409
+    assert_equal additional_info['user_id'], user1.id
+    match_json([bad_request_error_pattern_with_additional_info('unique_external_id', additional_info, :'has already been taken')])
+  ensure
+    @account.revoke_feature(:unique_contact_identifier)
+  end
+
   def test_update_the_email_of_a_contact_with_user_email
     user1 = add_new_user(@account)
     user2 = add_new_user_without_email(@account)
@@ -706,7 +757,8 @@ class ApiContactsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: user2.id }, email: email)
     additional_info = parse_response(@response.body)['errors'][0]['additional_info']
     assert_response 409
-    match_json([bad_request_error_pattern_with_additional_info('email', additional_info, :'Email has already been taken')])
+    assert_equal additional_info['user_id'], user1.id
+    match_json([bad_request_error_pattern_with_additional_info('email', additional_info, :'has already been taken')])
   end
 
   def test_update_length_invalid

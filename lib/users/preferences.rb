@@ -8,6 +8,7 @@ module Users
         :notification_timestamp => nil,
         :show_onBoarding => true, 
         :show_loyalty_upgrade => false,
+        :show_monthly_to_annual_notification => false,
         :falcon_ui => false,
         freshchat_token: nil,
         undo_send: false,

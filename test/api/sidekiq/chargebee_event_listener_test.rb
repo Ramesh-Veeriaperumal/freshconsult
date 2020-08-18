@@ -30,6 +30,8 @@ class ChargebeeEventListenerTest < ActionView::TestCase
   end
 
   def test_subscription_renewed_event_to_raise_exception_on_addon_changes
+    Subscription.any_instance.stubs(:offline_subscription?).returns(false)
+    Subscription.any_instance.stubs(:reseller_paid_account?).returns(false)
     assert_raise RuntimeError do
       @account.subscription.update_attributes(additional_info: { field_agent_limit: 10 })
       addons = Subscription::Addon.where(name: Subscription::Addon::FSM_ADDON)
@@ -46,6 +48,9 @@ class ChargebeeEventListenerTest < ActionView::TestCase
       event_data = subscription_renewed_event_data(args)
       Billing::ChargebeeEventListener.new.perform(event_data)
     end
+  ensure
+    Subscription.any_instance.unstub(:offline_subscription?)
+    Subscription.any_instance.unstub(:reseller_paid_account?)
   end
 
   def test_subscription_renewed_event_to_raise_exception_on_plan_change

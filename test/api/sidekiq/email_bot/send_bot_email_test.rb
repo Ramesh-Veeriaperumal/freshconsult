@@ -18,11 +18,13 @@ class SendBotEmailTest < ActionView::TestCase
 
   def setup
     Account.stubs(:current).returns(Account.first)
+    Subscription.any_instance.stubs(:switch_annual_notification_eligible?).returns(false)
     @account = Account.current
   end
 
   def teardown
     Account.unstub(:current)
+    Subscription.any_instance.unstub(:switch_annual_notification_eligible?)
     super
   end
 

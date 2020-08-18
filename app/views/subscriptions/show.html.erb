@@ -6,6 +6,10 @@
 <% show_fd_fs_discountbanner = fd_fs_discount_coupon.present? %>
 <% show_omnichannel_banner = @subscription.account.show_omnichannel_banner? %>
 <% multiple_banner_present = (show_fd_fs_banner || show_fd_fs_discountbanner) && show_omnichannel_banner %>
+<%
+  show_annual_savings_banner = @subscription.active? && @subscription.renewal_period != Subscription::ANNUAL_PERIOD && !@subscription.account.omni_bundle_account?
+  savings_amount = fetch_savings_on_annual_plan(@subscription, @subscription.currency_name) if show_annual_savings_banner
+%>
 
 <% if show_fd_fs_banner || show_fd_fs_discountbanner || show_omnichannel_banner %>
   <h3 class="lead"><%=t('notification.whats_new')%></h3>
@@ -37,6 +41,10 @@
   </div>
 <% end %>
 <h3 class="lead"><%= @page_title = t("admin.home.index.billing") %></h3>
+
+<% if show_annual_savings_banner %>
+  <%= render :partial => '/subscriptions/annual_savings_banner', :locals => { :savings_amount => savings_amount }%>
+<% end %>
 
 <%= render :partial => "/subscriptions/state/#{@subscription.state}", 
 		   :locals => { :subscription => @subscription, :plans => @plans } %>

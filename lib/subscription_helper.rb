@@ -13,6 +13,7 @@ module SubscriptionHelper
   }.freeze
 
   EMAIL_REMINDER_DAYS = [7, 3, 1].freeze
+  SWITCH_TO_ANNUAL_NOTIFICATION_MONTHS = [4, 8, 12].freeze
 
   def omni_channel_ticket_params(account, old_subscription, user)
     description = format(TICKET_DESCRIPTION_TEMPLATE,
@@ -36,22 +37,37 @@ module SubscriptionHelper
     remaining_days = (next_renewal_at_date.utc.to_date - DateTime.now.utc.to_date).to_i
     EMAIL_REMINDER_DAYS.each do |reminder|
       if remaining_days - reminder >= 0
-        payload =
-          {
-            job_id: "#{Account.current.id}_activate_downgrade_#{reminder}",
-            group: ::SchedulerClientKeys['downgrade_policy_group_name'],
-            scheduled_time: (next_renewal_at_date - reminder.days).utc,
-            data: {
-              account_id: Account.current.id,
-              enqueued_at: Time.now.to_i
-            },
-            sqs: {
-              url: SQS_V2_QUEUE_URLS[SQS[:fd_scheduler_downgrade_policy_reminder_queue]]
-            }
-          }
-        ::Scheduler::PostMessage.perform_async(payload: payload)
+        post_message_to_scheduler("#{Account.current.id}_activate_downgrade_#{reminder}", 'downgrade_policy_group_name', (next_renewal_at_date - reminder.days).utc, :fd_scheduler_downgrade_policy_reminder_queue)
       end
     end
+  end
+
+  def trigger_switch_to_annual_notification_scheduler(notification_offset = 0)
+    cancel_existing_switch_to_annual_notification_scheduler if notification_offset != 0
+    SWITCH_TO_ANNUAL_NOTIFICATION_MONTHS.each do |notification_month|
+      post_message_to_scheduler("#{Account.current.id}_switch_to_annual_#{notification_month}", 'monthly_to_annual_group_name', DateTime.now.utc + (notification_month + notification_offset).months, :switch_to_annual_notification_queue)
+    end
+  end
+
+  def cancel_existing_switch_to_annual_notification_scheduler
+    job_ids = SWITCH_TO_ANNUAL_NOTIFICATION_MONTHS.map { |month| "#{Account.current.id}_switch_to_annual_#{month}" }
+    Scheduler::CancelMessage.perform_async(job_ids: job_ids, group_name: SchedulerClientKeys['monthly_to_annual_group_name'])
+  end
+
+  def post_message_to_scheduler(job_id, scheduler_group_name, scheduled_time, sqs_queue_name)
+    payload = {
+      job_id: job_id,
+      group: ::SchedulerClientKeys[scheduler_group_name],
+      scheduled_time: scheduled_time,
+      data: {
+        account_id: Account.current.id,
+        enqueued_at: Time.now.to_i
+      },
+      sqs: {
+        url: SQS_V2_QUEUE_URLS[SQS[sqs_queue_name]]
+      }
+    }
+    Scheduler::PostMessage.perform_async(payload: payload)
   end
 
   def product_loss_in_new_plan?(account, plan)

@@ -690,6 +690,10 @@
             "_sqs_queue": "fd_scheduler_downgrade_policy_reminder_queue_production",
             "_priority": 1
           },
+          "switch_to_annual_notification": {
+            "_sqs_queue": "switch_to_annual_notification_queue_production",
+            "_priority": 1
+          },
           "suspended_account_cleanup": {
             "_sqs_queue": "suspended_account_cleanup_queue_production",
             "_priority": 1
@@ -784,6 +788,10 @@
           },
           "custom_mailbox_status": {
             "_sqs_queue": "custom_mailbox_notification",
+            "_priority": 1
+          },
+          "freddy_consumed_session_reminder_queue": {
+            "_sqs_queue": "freddy_consumed_session_reminder_production",
             "_priority": 1
           },
           "email_rate_limiting_queue": {
@@ -1052,10 +1060,12 @@
         "_spam_trash_delete_free_acc_queue": "spam_trash_delete_free_acc_queue_production",
         "_spam_trash_delete_paid_acc_queue": "spam_trash_delete_paid_acc_queue_production",
         "_fd_scheduler_downgrade_policy_reminder_queue": "fd_scheduler_downgrade_policy_reminder_queue_production",
+        "_switch_to_annual_notification_queue": "switch_to_annual_notification_queue_production",
         "_suspended_account_cleanup_queue": "suspended_account_cleanup_queue_production",
         "_search_etlqueue_maintenance": "search-etlqueue-production_maintenance",
         "_count_etl_queue_maintenance": "count_etl_queue_production_maintenance",
         "_analytics_etl_queue_maintenance": "analytics_etl_queue_production_maintenance",
+        "_freddy_consumed_session_reminder_queue": "freddy_consumed_session_reminder_production",
         "_email_rate_limiting_queue": "email_rate_limiting_production"
       },
       "archive_sqs_queues": {
@@ -2979,6 +2989,7 @@
         "_end_point": "http://scheduler.freshworksapi.com/schedules",
         "_todo_group_name": "helpkit_todo_reminder",
         "_downgrade_policy_group_name": "helpkit_downgrade_policy_reminder",
+        "_monthly_to_annual_group_name": "monthly_to_annual_notification",
         "_account_cleanup_group_name": "helpkit_suspended_account_cleanup",
         "_export_group_name": "helpkit_export_cleanup",
         "_ticket_delete_group_name": "helpkit_ticket_delete"

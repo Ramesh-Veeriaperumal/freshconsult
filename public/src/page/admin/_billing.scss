@@ -1471,6 +1471,27 @@ input[type=text].input-agent-count{
     margin-bottom: 12px;
 }
 
+.nudge-banner-container {
+	border: 1px solid #CFD7DF;
+	border-radius: 4px;
+	margin-bottom: 55px;
+}
+.annual-savings {
+	&__icon {
+		width: 40px;
+		height: 37.48px;
+		margin: 13px 13px 13px 19px;
+		vertical-align: middle;
+	}
+	&__text {
+		font-style: normal;
+		font-weight: 600;
+		font-size: 14px;
+		line-height: 24px;
+		vertical-align: middle;
+	}
+}
+
 .fd-fd-bundle-logo {
 	padding-top: 12px;
 	height: 43px; 

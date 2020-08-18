@@ -2,7 +2,7 @@ class ApiContactsController < ApiApplicationController
   include Helpdesk::TagMethods
   decorate_views
 
-  before_filter :check_if_email_already_exist, only: [:create, :update]
+  before_filter :check_if_contact_exists, only: [:create, :update]
 
   def create
     assign_protected
@@ -20,6 +20,7 @@ class ApiContactsController < ApiApplicationController
     else
       build_user_emails_attributes if @email_objects.any?
       build_other_companies if @all_companies
+      assign_uniqueness_validated
       if @item.create_contact!(params['active'])
         render_201_with_location(item_id: @item.id)
       else
@@ -42,12 +43,13 @@ class ApiContactsController < ApiApplicationController
       enforce_mandatory: params[:enforce_mandatory]
     }
     contact_delegator = ContactDelegator.new(@item, delegator_params)
-    unless contact_delegator.valid?
+    unless contact_delegator.valid?(delegation_context)
       render_custom_errors(contact_delegator, true)
       return
     end
     build_user_emails_attributes if @email_objects.any?
     build_other_companies if @all_companies
+    assign_uniqueness_validated
     if @item.update_attributes(params[cname])
       @item.reload
     else
@@ -102,16 +104,38 @@ class ApiContactsController < ApiApplicationController
 
   private
 
-    def check_if_email_already_exist
-      primary_email = params[cname][:email] || @email_objects[:primary_email]
-      return if primary_email.blank?
-      
-      user = Account.current.all_users.find_by_email(primary_email)
-      if user && user.id.to_s != params[:id]
-        @item.errors[:email] << :"Email has already been taken"
-        @additional_info = { user_id: user.id }
+    def check_if_contact_exists
+      existing_user, channel = find_unique_user
+      if existing_user && existing_user.id.to_s != params[:id]
+        @item.errors[channel.to_sym] << :"has already been taken"
+        @additional_info = { user_id: existing_user.id }
         render_custom_errors
       end
+    end
+
+    def assign_uniqueness_validated
+      @item.uniqueness_validated = true
+    end
+
+    def find_unique_user
+      email = params[cname][:email] || @email_objects[:primary_email]
+      if email
+        existing_user = Account.current.all_users.where(email: email).first
+        channel = 'email' if existing_user
+      end
+      if (!existing_user || existing_user.id.to_s == params[:id]) && params[cname][:twitter_id]
+        existing_user = Account.current.all_users.where(twitter_id: params[cname][:twitter_id]).first
+        channel = 'twitter_id' if existing_user
+      end
+      if (!existing_user || existing_user.id.to_s == params[:id]) && params[cname][:unique_external_id]
+        existing_user = Account.current.all_users.where(unique_external_id: params[cname][:unique_external_id]).first
+        channel = 'unique_external_id' if existing_user
+      end
+      [existing_user, channel]
+    end
+
+    def delegation_context
+      action_name.to_sym
     end
 
     # Same as http://apidock.com/rails/Hash/extract! without the shortcomings in http://apidock.com/rails/Hash/extract%21#1530-Non-existent-key-semantics-changed-
