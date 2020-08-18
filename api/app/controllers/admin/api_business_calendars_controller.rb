@@ -8,6 +8,7 @@ class Admin::ApiBusinessCalendarsController < ApiBusinessHoursController
 
   def index
     super
+    response.api_meta = { count: @items_count }
   end
 
   def show
@@ -26,6 +27,11 @@ class Admin::ApiBusinessCalendarsController < ApiBusinessHoursController
     end
   end
 
+  def destroy
+    @item.destroy
+    head 204
+  end
+
   private
 
     def validate_params
@@ -42,7 +48,7 @@ class Admin::ApiBusinessCalendarsController < ApiBusinessHoursController
     end
 
     def business_calendar_validation
-      validator_klass = validation_class.new(params[cname], @item, {})
+      validator_klass = validation_class.new((params[cname] || {}), @item, {})
       errors = nil
       error_options = {}
       if validator_klass.invalid?(params[:action].to_sym)
