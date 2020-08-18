@@ -14,7 +14,7 @@ module Channel::V2
     end
 
     def load_object
+      # We dont want to load based on id, so overriding this method
     end
-
   end
 end
