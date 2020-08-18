@@ -272,6 +272,7 @@
     - agent_assist_email
     - vault_account_update
     - touchstone_account_update
+    - freddy_consumed_session_queue
   :free:
     - free_sla
     - free_supervisor
@@ -526,6 +527,7 @@
     - forum_content_spam_checker
     - learn_spam_message
     - sendgrid_domain_updates
+    - freddy_consumed_session_queue
   :archive:
     - archive_ticket
     - archive_account_tickets

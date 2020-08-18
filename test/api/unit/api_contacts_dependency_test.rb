@@ -22,9 +22,9 @@ class ApiContactsDependencyTest < ActionView::TestCase
   def test_validations_contact
     actual = User.validators.map { |x| [x.class, x.attributes, x.options] }
     expected = [
-      [ActiveRecord::Validations::UniquenessValidator, [:twitter_id], { case_sensitive: true, scope: :account_id, allow_nil: true, allow_blank: true }],
+      [ActiveRecord::Validations::UniquenessValidator, [:twitter_id], { case_sensitive: true, scope: :account_id, allow_nil: true, allow_blank: true, unless: :uniqueness_validated }],
       [ActiveRecord::Validations::UniquenessValidator, [:external_id], { case_sensitive: true, scope: :account_id, allow_nil: true, allow_blank: true }],
-      [ActiveRecord::Validations::UniquenessValidator, [:unique_external_id], { case_sensitive: false, scope: :account_id, allow_nil: true }],
+      [ActiveRecord::Validations::UniquenessValidator, [:unique_external_id], { case_sensitive: false, scope: :account_id, allow_nil: true, unless: :uniqueness_validated }],
       [ActiveModel::Validations::NumericalityValidator, [:login_count], { only_integer: true, greater_than_or_equal_to: 0, allow_nil: true }],
       [ActiveModel::Validations::NumericalityValidator, [:failed_login_count], { only_integer: true, greater_than_or_equal_to: 0, allow_nil: true }],
       [ActiveModel::Validations::LengthValidator, [:password], { on: :update, minimum: 4, if: :has_no_credentials? }],

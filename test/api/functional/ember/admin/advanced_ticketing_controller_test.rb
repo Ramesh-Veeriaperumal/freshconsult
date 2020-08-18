@@ -121,6 +121,7 @@ module Ember
             end
             assert_response 204
             assert Account.current.field_service_management_enabled?
+            assert Account.current.roles.map(&:name).include?(Helpdesk::Roles::FIELD_TECHNICIAN_ROLE[:name])
             dashboard = Account.current.dashboards.where(name: I18n.t('fsm_dashboard.name'))
             fields_count_after_installation = Account.current.ticket_fields.size
             assert fields_count_after_installation == (total_fsm_fields_count + fields_count_before_installation)
@@ -143,21 +144,6 @@ module Ember
             destroy_fsm_fields_and_section
             Account.any_instance.unstub(:disable_old_ui_enabled?)
             destroy_fsm_dashboard_and_filters
-          end
-        end
-      end
-
-      def test_create_fsm_with_field_tech_role
-        enable_fsm do
-          begin
-            Sidekiq::Testing.inline! do
-              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
-            end
-            assert_response 204
-            assert Account.current.field_service_management_enabled?
-            assert Account.current.roles.map(&:name).include?(Helpdesk::Roles::FIELD_TECHNICIAN_ROLE[:name])
-          ensure
-            Account.current.rollback(:field_tech_role)
           end
         end
       end

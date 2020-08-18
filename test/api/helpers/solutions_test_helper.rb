@@ -30,14 +30,8 @@ module SolutionsTestHelper
     result[:company_ids] = folder.solution_folder_meta.customer_ids if folder.parent.visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users]
     result[:contact_segment_ids] = folder.solution_folder_meta.contact_filter_ids if folder.parent.visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:contact_segment]
     result[:company_segment_ids] = folder.solution_folder_meta.company_filter_ids if folder.parent.visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_segment]
-    if Account.current.omni_bundle_account? && Account.current.launched?(:kbase_omni_bundle)
-      result[:platforms] = if expected_output[:platforms].present?
-                             expected_output[:platforms]
-                           elsif folder.parent.solution_platform_mapping.present?
-                             folder.parent.solution_platform_mapping.to_hash
-                           else
-                             SolutionPlatformMapping.default_platform_values_hash
-                           end
+    if omni_bundle_enabled?
+      result[:platforms] = expected_output[:platforms].presence || platform_response(false, folder.parent.solution_platform_mapping)
       result[:tags] = if expected_output[:tags].present?
                         expected_output[:tags]
                       elsif folder.parent.tags.present?
@@ -45,8 +39,16 @@ module SolutionsTestHelper
                       else
                         []
                       end
-      result[:icon] = folder.parent.icon.present? ? AttachmentDecorator.new(folder.parent.icon).to_hash : {}
+      result[:icon_url] = folder.parent.icon.present? ? folder.parent.icon.attachment_public_url : nil
     end
+    result
+  end
+
+  def solution_folder_pattern_index_channel_api(folder, _expected_output = {}, _ignore_extra_keys = true)
+    result = solution_folder_pattern(expected_output = {}, ignore_extra_keys = true, folder)
+    result[:article_order] = folder.parent.article_order
+    result[:position] = folder.parent.position
+    result[:language] = folder.language_code
     result
   end
 
@@ -55,10 +57,12 @@ module SolutionsTestHelper
   end
 
   def solution_folder_pattern_private(_expected_output = {}, _ignore_extra_keys = true, folder)
-    result = solution_folder_pattern({}, true, folder)
+    result = solution_folder_pattern({}, true, folder).except(:icon_url)
     result[:article_order] = folder.parent.article_order
     result[:position] = folder.parent.position
     result[:language] = folder.language_code
+    result[:icon] = folder.parent.icon.present? ? AttachmentDecorator.new(folder.parent.icon).to_hash : {} if Account.current.omni_bundle_account? && Account.current.launched?(:kbase_omni_bundle)
+    result[:platforms] = _expected_output[:platforms].presence || platform_response(true, folder.parent.solution_platform_mapping) if omni_bundle_enabled?
     result
   end
 
@@ -76,15 +80,7 @@ module SolutionsTestHelper
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
 
-    if Account.current.omni_bundle_account? && Account.current.launched?(:kbase_omni_bundle)
-      resp[:platforms] = if expected_output[:platforms].present?
-                           expected_output[:platforms]
-                         elsif article.parent.solution_platform_mapping.present?
-                           article.parent.solution_platform_mapping.to_hash
-                         else
-                           SolutionPlatformMapping.default_platform_values_hash
-                         end
-    end
+    resp[:platforms] = expected_output[:platforms].presence || platform_response(true, article.parent.solution_platform_mapping) if omni_bundle_enabled?
 
     resp[:suggested] = (expected_output[:suggested] || article.suggested).to_i if Account.current.suggested_articles_count_enabled?
     resp[:tags] = (expected_tags || article.tags.map(&:name)) unless expected_output[:exclude_tags]
@@ -173,7 +169,21 @@ module SolutionsTestHelper
   end
 
   def channel_api_solution_article_pattern(article)
-    ret_hash = private_api_solution_article_pattern(article, expected_output = {}, ignore_extra_keys = true, user = nil, channel_api = true)
+    ret_hash = omni_bundle_enabled? ? private_api_solution_article_pattern(article, { exclude_description: true, exclude_attachments: true }, ignore_extra_keys = true, user = nil, channel_api = true) : private_api_solution_article_pattern(article, expected_output = {}, ignore_extra_keys = true, user = nil, channel_api = true)
+    ret_hash[:language_id] = article.language_id
+    if ret_hash[:status] == Solution::Constants::STATUS_KEYS_BY_TOKEN[:published]
+      ret_hash[:published_by] = article.recent_author && article.recent_author.helpdesk_agent ? article.recent_author.try(:name) : nil
+      ret_hash[:published_at] = article.modified_at.try(:utc)
+    end
+    if omni_bundle_enabled?
+      ret_hash[:folder_visibility] = article.parent.solution_folder_meta.visibility
+      ret_hash[:path] = article.to_param
+      ret_hash[:modified_at] = article.modified_at.try(:utc)
+      ret_hash[:modified_by] = article.modified_by
+    end
+    ret_hash[:platforms] = platform_response(false, article.parent.solution_platform_mapping) if omni_bundle_enabled?
+    return ret_hash unless @enrich_response
+
     article = article.reload
     ret_hash[:author_id] = article.user && article.user.helpdesk_agent ? article.user_id : nil
     ret_hash[:author_name] = article.user && article.user.helpdesk_agent ? article.user.try(:name) : nil
@@ -183,16 +193,10 @@ module SolutionsTestHelper
     category_hash = enriched_category_pattern(article.solution_folder_meta.solution_category_meta, article.language_key)
     ret_hash[:folder] = folder_hash if folder_hash
     ret_hash[:category] = category_hash if category_hash
-    ret_hash[:language_id] = article.language_id
 
     if Account.current.multilingual?
       ret_hash[:outdated] = article.outdated
       ret_hash[:language_name] = article.language.name
-    end
-
-    if ret_hash[:status] == Solution::Constants::STATUS_KEYS_BY_TOKEN[:published]
-      ret_hash[:published_by] = article.recent_author && article.recent_author.helpdesk_agent ? article.recent_author.try(:name) : nil
-      ret_hash[:published_at] = article.modified_at.try(:utc)
     end
 
     ret_hash
@@ -239,9 +243,9 @@ module SolutionsTestHelper
       ret_hash[:language_id] = article.language_id
       ret_hash[:visibility] = { user.id => article.parent.visible?(user) || false } if user
       ret_hash[:translation_summary] = translation_summary_pattern(article.parent) if @account.multilingual? && expected_output[:action] != :filter && !expected_output[:exclude_translation_summary]
+      ret_hash[:draft_present] = expected_output[:draft_present] || draft.present?
+      ret_hash[:outdated] = article.outdated if @account.multilingual?
     end
-    ret_hash[:draft_present] = expected_output[:draft_present] || draft.present?
-    ret_hash[:outdated] = article.outdated if @account.multilingual?
     ret_hash[:language] = article.language_code
     if expected_output[:action] == :filter
       ret_hash[:last_modifier] = ret_hash[:draft_modified_by] || ret_hash[:modified_by]
@@ -249,7 +253,7 @@ module SolutionsTestHelper
     end
 
     if Account.current.article_approval_workflow_enabled?
-      ret_hash[:approval_data] = { approval_status: approval_record(article.parent).try(:approval_status), approver_id: approver_record(article.parent).try(:approver_id), user_id: approval_record(article.parent).try(:user_id) }
+      ret_hash[:approval_data] = { approval_status: approval_record(article).try(:approval_status), approver_id: approver_record(article).try(:approver_id), user_id: approval_record(article).try(:user_id) }
     end
 
     ret_hash
@@ -463,7 +467,7 @@ module SolutionsTestHelper
   def validation_error_pattern(value)
     {
       description: 'Validation failed',
-      errors: [value]
+      errors: value.is_a?(Array) ? value : [value]
     }
   end
 
@@ -613,6 +617,18 @@ module SolutionsTestHelper
     (@account || Account.current).supported_languages_objects.map(&:to_key) + ['primary']
   end
 
+  def platform_response(is_private, solution_platform_mapping)
+    if is_private
+      solution_platform_mapping.present? ? solution_platform_mapping.to_hash : SolutionPlatformMapping.default_platform_values_hash
+    else
+      solution_platform_mapping.present? ? solution_platform_mapping.enabled_platforms : []
+    end
+  end
+
+  def omni_bundle_enabled?
+    Account.current.omni_bundle_account? && Account.current.launched?(:kbase_omni_bundle)
+  end
+
   def base64_png_image
     "<img src= 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==' alt='Red dot' />"
   end
@@ -635,5 +651,13 @@ module SolutionsTestHelper
 
   def base64_plain_text
     '<iframe src="data:text/plain;base64,VGhpcyBpcyB0byB0ZXN0IGJhc2U2NA==">The “iframe” tag is not supported by your browser.</iframe>'
+  end
+
+  def setup_channel_api
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    yield
+  ensure
+    CustomRequestStore.unstub(:read)
   end
 end

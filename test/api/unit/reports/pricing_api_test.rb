@@ -118,7 +118,6 @@ class Reports::PricingApiTest < ActiveSupport::TestCase
     s.subscription_plan_id = SubscriptionPlan.where(name: 'Blossom Jan 19').first.id
     s.save
     SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
-    Account.current.stubs(:freshvisual_configs_enabled?).returns(true)
     assert @account.has_feature? :analytics_widget_export
   ensure
   	Account.unstub(:current)
@@ -144,7 +143,6 @@ class Reports::PricingApiTest < ActiveSupport::TestCase
     s.subscription_plan_id = SubscriptionPlan.where(name: 'Blossom Jan 19').first.id
     s.save
     SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
-    Account.current.stubs(:freshvisual_configs_enabled?).returns(true)
     assert @account.has_feature? :timesheets
     assert @account.has_feature? :analytics_widget_show_tabular_data
     assert @account.has_feature? :analytics_widget_edit_tabular_data
@@ -161,7 +159,6 @@ class Reports::PricingApiTest < ActiveSupport::TestCase
     s.subscription_plan_id = SubscriptionPlan.where(name: 'Sprout Jan 19').first.id
     s.save
     SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
-    Account.current.stubs(:freshvisual_configs_enabled?).returns(true)
     assert_equal(@account.has_feature?(:analytics_widget_export), false)
   ensure
     Account.unstub(:current)
@@ -176,7 +173,6 @@ class Reports::PricingApiTest < ActiveSupport::TestCase
     s.subscription_plan_id = SubscriptionPlan.where(name: 'Sprout Jan 19').first.id
     s.save
     SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
-    Account.current.stubs(:freshvisual_configs_enabled?).returns(true)
     assert_equal(@account.has_feature?(:timesheets), false)
     assert_equal(@account.has_feature?(:analytics_widget_show_tabular_data), false)
     assert_equal(@account.has_feature?(:analytics_widget_edit_tabular_data), false)
@@ -193,7 +189,6 @@ class Reports::PricingApiTest < ActiveSupport::TestCase
     s.subscription_plan_id = SubscriptionPlan.where(name: 'Blossom Jan 20').first.id
     s.save
     SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
-    Account.current.stubs(:freshvisual_configs_enabled?).returns(true)
     assert @account.has_feature? :analytics_widget_export
   ensure
     Account.unstub(:current)
@@ -208,7 +203,6 @@ class Reports::PricingApiTest < ActiveSupport::TestCase
     s.subscription_plan_id = SubscriptionPlan.where(name: 'Blossom Jan 20').first.id
     s.save
     SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
-    Account.current.stubs(:freshvisual_configs_enabled?).returns(true)
     assert @account.has_feature? :timesheets
     assert @account.has_feature? :analytics_widget_show_tabular_data
     assert @account.has_feature? :analytics_widget_edit_tabular_data
@@ -225,7 +219,6 @@ class Reports::PricingApiTest < ActiveSupport::TestCase
     s.subscription_plan_id = SubscriptionPlan.where(name: 'Sprout Jan 20').first.id
     s.save
     SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
-    Account.current.stubs(:freshvisual_configs_enabled?).returns(true)
     assert_equal(@account.has_feature?(:analytics_widget_export), false)
   ensure
     Account.unstub(:current)
@@ -240,7 +233,6 @@ class Reports::PricingApiTest < ActiveSupport::TestCase
     s.subscription_plan_id = SubscriptionPlan.where(name: 'Sprout Jan 20').first.id
     s.save
     SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
-    Account.current.stubs(:freshvisual_configs_enabled?).returns(true)
     assert_equal(@account.has_feature?(:timesheets), false)
     assert_equal(@account.has_feature?(:analytics_widget_show_tabular_data), false)
     assert_equal(@account.has_feature?(:analytics_widget_edit_tabular_data), false)

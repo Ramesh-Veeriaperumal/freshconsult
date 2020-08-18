@@ -1,6 +1,7 @@
 module ApiSolutions
   class FolderDelegator < BaseDelegator
     include Helpdesk::TagMethods
+    include SolutionConcern
 
     attr_accessor :contact_folders_attributes, :company_folders_attributes, :customer_folders_attributes, :tag_attributes, :id, :platforms, :icon_attribute
 
@@ -10,6 +11,7 @@ module ApiSolutions
     validate :validate_category_translation, on: :create, if: -> { @id && @language_code }
     validate :create_tag_permission, if: -> { @tag_attributes.present? }
     validate :validate_platform_present, on: :update, if: -> { @tag_attributes.present? && @platforms.blank? }
+    validate :validate_portal_id, if: -> { @portal_id }
     validate :icon_exists_and_valid_type?, if: -> { @icon_attribute.present? }
 
     def initialize(options)
@@ -20,7 +22,7 @@ module ApiSolutions
     end
 
     def icon_exists_and_valid_type?
-      attachment = Account.current.attachments.where('id=? and attachable_id=? and attachable_type=?', icon_attribute, User.current.id, AttachmentConstants::ATTACHABLE_TYPES['user_draft'])
+      attachment = Account.current.attachments.where('id=? and attachable_type=?', icon_attribute, "#{AttachmentConstants::INLINE_ATTACHABLE_NAMES_BY_TOKEN[:solution]} Upload")
       if attachment.empty?
         errors[:icon] << :invalid_icon_id
         (self.error_options ||= {}).merge!(icon: { invalid_id: @icon_attribute })

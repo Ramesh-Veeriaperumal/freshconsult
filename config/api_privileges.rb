@@ -171,6 +171,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :'admin/canned_form'
     resource :"ember/portal", only: [:show, :update]
     resource :audit_log, only: [:filter, :export, :event_name, :export_s3_url]
+    resource :"admin/holiday", only: [:show]
     resource :'ember/omni_channel', only: [:index]
     resource :"admin/subscription", only: [:show, :plans, :update, :estimate, :update_payment, :estimate_feature_loss]
     resource :"ember/ocr_proxy"
@@ -192,13 +193,15 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/ticket_field", only: [:create, :update, :destroy, :show, :index]
     resource :"admin/section", only: [:create, :update, :destroy, :show, :index]
     resource :"admin/security_key", only: [:regenerate_widget_key]
+    resource :"admin/api_security", only: [:show]
     resource :"admin/freshcaller_account", only: [:show, :create, :link, :update, :enable, :disable, :destroy, :credit_info]
     resource :"admin/api_skill", only: [:index, :create, :show, :update, :destroy]
     resource :"admin/shift", only: [:index, :show, :create, :update, :destroy]
     resource :field_service_management, only: [:update_settings, :show_settings]
     resource :"settings/helpdesk/field_service", only: [:update_settings, :show_settings]
     resource :"ember/sla_policy", only: [:index, :show, :create, :update, :destroy]
-    resource :"admin/api_business_calendar", only: [:index, :show]
+    resource :"admin/api_business_calendar", only: [:index, :show, :create, :destroy]
+    resource :"admin/api_business_calendar", only: [:index, :show, :create]
     resource :agent_status, only: [:show, :create, :update, :destroy]
   end
 

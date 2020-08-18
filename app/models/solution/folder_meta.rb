@@ -164,9 +164,13 @@ class Solution::FolderMeta < ActiveRecord::Base
   end
 
   def icon_attribute=(folder_icon)
-    return if folder_icon.nil?
+    if folder_icon.blank?
+      return if icon.blank?
 
-    build_normal_attachments(self, nil, folder_icon)
+      icon.destroy
+    else
+      build_normal_attachments(self, nil, folder_icon)
+    end
   end
 
   def platforms=(platform_params)

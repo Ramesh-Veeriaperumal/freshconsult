@@ -143,6 +143,21 @@ class PasswordPolicy < ActiveRecord::Base
 		end
 	end
 
+  def policy_config_mapping
+    POLICIES_BY_NAME.each_with_object({}) do |policy, conditions|
+      conditions[policy] = is_policy?(policy) ? fetch_password_condition(policy) : nil
+    end
+  end
+
+  def fetch_password_condition(policy)
+    config = configs.fetch(policy.to_s, true)
+    config.is_a?(String) ? config.to_i : config
+  end
+
+  def password_policy_type
+    advanced_policy? ? POLICY_TYPE[:advanced] : POLICY_TYPE[:default]
+  end
+
 	private
 		def validate_configs
 			input_policies = self.policies.map(&:to_sym)

@@ -57,9 +57,5 @@
 </script>
 
 <%= javascript_tag do %>
-    var closeValidationLaunched = <%= current_account.launched?(:close_validation) %>;
-    var failedTicketData = {};
-    if(closeValidationLaunched){
-      failedTicketData = <%= @failed_tickets_data.to_json.html_safe %>;
-    }
+    var failedTicketData = <%= @failed_tickets_data.to_json.html_safe %>;
 <% end %>

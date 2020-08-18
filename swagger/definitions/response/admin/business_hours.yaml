@@ -1,0 +1,4 @@
+type: object
+allOf:
+  - $ref: '#/definitions/admin_business_hours'
+  - $ref: '#/definitions/extension_generic'

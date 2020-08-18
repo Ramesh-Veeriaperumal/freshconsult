@@ -16,6 +16,13 @@ class OmniSubscriptionUpdateMethodsTest < ActionView::TestCase
     super
   end
 
+  def test_subscription_details_included_term_start_and_end_dates
+    chargebee_event = construct_test_subscription_params_with_invoice
+    payload = construct_payload(chargebee_event)
+    assert payload[:payload][:event_payload][:content][:subscription][:current_term_start].present?
+    assert payload[:payload][:event_payload][:content][:subscription][:current_term_end].present?
+  end
+
   def test_invoice_details_included_when_event_has_invoice_payload
     chargebee_event = construct_test_subscription_params_with_invoice
     

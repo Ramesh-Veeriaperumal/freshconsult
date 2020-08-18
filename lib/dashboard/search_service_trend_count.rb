@@ -113,7 +113,7 @@ class Dashboard::SearchServiceTrendCount < Dashboards
 
   def get_es_query(query, visitor_mapping)
     symbolised_query = query.to_sym
-    if Account.current.query_from_singleton_enabled? && DEFAULT_QUERIES.key?(symbolised_query)
+    if DEFAULT_QUERIES.key?(symbolised_query)
       default_query = Freshquery::DefaultQueries.instance_variable_get(:"@#{DEFAULT_QUERIES[symbolised_query]}")
       return default_query unless default_query.nil?
 

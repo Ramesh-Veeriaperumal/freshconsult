@@ -5,7 +5,7 @@ module CentralPublish::CRECentralUtil
 
   def construct_webhook_error_payload(args)
     executing_rule = VaRule.find_by_id(args[:rule_id])
-    payload = default_schema(CRE_PAYLOAD_TYPES[:webhook_error], args[:account_id])
+    payload = default_schema_cre(CRE_PAYLOAD_TYPES[:webhook_error], args[:account_id])
     payload[:payload][:data] = {
       error_type: args[:error_type],
       rule_type: executing_rule.present? ? executing_rule.rule_type_desc.to_s : nil,
@@ -18,7 +18,7 @@ module CentralPublish::CRECentralUtil
     payload
   end
 
-  def default_schema(payload_type, account_id)
+  def default_schema_cre(payload_type, account_id)
     {
       payload_type: payload_type,
       account_id: account_id.to_s,

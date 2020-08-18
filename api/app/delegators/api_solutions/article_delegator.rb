@@ -21,7 +21,7 @@ module ApiSolutions
     validate :validate_provider, if: -> { !filters? && @cloud_files.present? }
     validate :valid_folder?, if: -> { @folder_id }
     validate :validate_ratings, on: :reset_ratings
-    validate :validate_portal_id, if: :filters?
+    validate :validate_portal_id, if: :portal_id_dependant_actions?
     validate :validate_create_and_edit_permission, on: :send_for_review
     validate :validate_approval_permission, on: :send_for_review, if: -> { errors.blank? }
     validate :validate_draft, on: :send_for_review, if: -> { errors.blank? }
@@ -30,6 +30,7 @@ module ApiSolutions
     validate :allow_chat_platform, if: -> { (create_or_update? || filters?) && @platforms.present? }
 
     FILTER_ACTIONS = %i[filter untranslated_articles].freeze
+    PORTAL_ID_DEPENDENT_ACTIONS = FILTER_ACTIONS | %i[folder_articles].freeze
 
     def initialize(record, params = {})
       @item = record
@@ -73,6 +74,10 @@ module ApiSolutions
 
     def folder_exists?
       @folder_exists ||= @article_meta.solution_folder_meta.solution_folders.where('language_id = ?', @language_id).first
+    end
+
+    def portal_id_dependant_actions?
+      PORTAL_ID_DEPENDENT_ACTIONS.include?(validation_context)
     end
 
     def category_exists?

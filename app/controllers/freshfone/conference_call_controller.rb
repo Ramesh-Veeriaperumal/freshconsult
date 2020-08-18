@@ -25,7 +25,6 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
   before_filter :reset_outgoing_count, :only => [:status]
   before_filter :set_abandon_state, :only => [:status]
   before_filter :call_quality_monitoring_enabled?, :only => [:save_call_quality_metrics]
-  before_filter :handle_simultaneous_answer, only: :wrap_call, if: :acw_without_new_notifications?
   before_filter :handle_invalid_details_save, only: :save_notable, unless: :valid_call_and_ticket?
   before_filter :validate_call_details_request, only: :load_notable
 
@@ -268,8 +267,7 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
     end
 
     def agent_leg?
-      new_notifications? &&
-        params[:From].present? && split_client_id(params[:From]).present? &&
+      params[:From].present? && split_client_id(params[:From]).present? &&
         current_call.present? && (outgoing_child_leg? || warm_transfer_call_leg.present?)
     end
 
@@ -285,10 +283,6 @@ class Freshfone::ConferenceCallController < FreshfoneBaseController
       return if current_call.blank?
       set_agent
       render xml: agent_call_leg.initiate_disconnect
-    end
-
-    def acw_without_new_notifications?
-      phone_acw_enabled? && !new_notifications?
     end
 
     def handle_simultaneous_answer

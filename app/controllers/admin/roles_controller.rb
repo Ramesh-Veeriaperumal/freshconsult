@@ -1,7 +1,10 @@
 class Admin::RolesController < Admin::AdminController
   
+  REQUIRED_PRIVILEGE = {
+    manage_account: [:admin_task, :manage_account]
+  }.freeze
+
   before_filter { |c| c.requires_feature :custom_roles }
-  
   before_filter :load_object, :only => [ :show, :edit, :update, :destroy, :update_agents ]
   before_filter :check_default, :only => [ :update, :destroy ]
   before_filter :check_users, :only => :destroy
@@ -60,6 +63,7 @@ class Admin::RolesController < Admin::AdminController
   end
 
   def role_privilege
+    check_user_privilege
     params.symbolize_keys
     acc_admin_privilege = @role ? @role.privilege?(:manage_account) : params[:role]["privilege_list"].include?("manage_account")
     acc_admin_privilege ? current_user.privilege?(:manage_account) : true 
@@ -140,4 +144,12 @@ class Admin::RolesController < Admin::AdminController
       end
     end
 
+    def check_user_privilege
+      if params && params['role'] && (new_privilege_list = params['role']['privilege_list'])
+        REQUIRED_PRIVILEGE.each do |key, value|
+          new_privilege_list.delete(key.to_s) if new_privilege_list.include?(key.to_s) && (current_user.abilities & value).empty?
+        end
+        params['role']['privilege_list'] = new_privilege_list
+      end
+    end
 end

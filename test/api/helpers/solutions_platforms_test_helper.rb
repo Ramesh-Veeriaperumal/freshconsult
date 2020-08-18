@@ -4,6 +4,7 @@ module SolutionsPlatformsTestHelper
   include SolutionsArticlesTestHelper
   include SolutionsApprovalsTestHelper
   include Helpdesk::TagMethods
+  include AttachmentsTestHelper
 
   def get_article_with_platform_mapping(platform_values = {})
     article = get_article_without_platform_mapping
@@ -52,6 +53,16 @@ module SolutionsPlatformsTestHelper
     folder_meta.children.first
   end
 
+  def get_folder_with_icon
+    folder_meta = get_folder_meta_without_platform_mapping
+    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
+    icon = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: User.current.id)
+    folder_meta.icon = icon
+    folder_meta.save!
+    folder_meta.reload
+    folder_meta
+  end
+
   def get_folder_with_platform_mapping_and_tags(platform_values = {}, tag_array = [])
     folder_meta = get_folder_meta_without_platform_mapping
     folder_meta.create_solution_platform_mapping(chat_platform_params(platform_values, true))
@@ -66,6 +77,14 @@ module SolutionsPlatformsTestHelper
     folder_meta = @account.solution_folder_meta.where(is_default: false).first
     folder_meta.solution_platform_mapping.destroy if folder_meta.solution_platform_mapping.present?
     folder_meta.reload
+  end
+
+  def filter_folders_by_platforms(platforms = ['web', 'ios', 'android'], language = Account.current.language_object, folders = @account.solution_folders)
+    folders.select { |folder| folder.language_id == language.id && folder.parent.solution_platform_mapping.present? && (folder.parent.solution_platform_mapping.enabled_platforms - platforms).present? }
+  end
+
+  def filter_folders_by_tags(tag_names, language = Account.current.language_object, folders = @account.solution_folders)
+    folders.select { |folder| folder.language_id == language.id && folder.parent.tags.where(name: tag_names).first }
   end
 
   def update_platform_values(meta_obj, values)

@@ -23,7 +23,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
     def update_multiple_methods
       filter_params_ids
       validate_params
-      validate_ticket_close if close_validation_enabled?
+      validate_ticket_close
       update_multiple_background
       load_items if items_empty? 
     end

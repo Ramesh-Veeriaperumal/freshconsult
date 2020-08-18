@@ -13,7 +13,6 @@ class Freshfone::AccountObserver < ActiveRecord::Observer
 
 	def after_create(freshfone_account)
 		freshfone_account.enable_conference
-		freshfone_account.enable_new_notifications
 		freshfone_account.enable_custom_forwarding
 	end
 

@@ -1,0 +1,28 @@
+type: object
+properties:
+  id:
+    type: integer
+  ticket_scope:
+    type: integer
+    x-enum: [1, 2, 3]
+  role_ids:
+    type: array
+    items:
+      type: integer
+  freshcaller_agent:
+    type: boolean
+  freshchat_agent:
+    type: boolean
+  contact:
+    type: object
+    properties:
+      name:
+        type: string
+      avatar:
+        $ref: '#/definitions/avatar'
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: string
+    format: date-time

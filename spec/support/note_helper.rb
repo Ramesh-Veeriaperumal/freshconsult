@@ -68,6 +68,7 @@ module NoteHelper
   end
 
   def create_twitter_note(ticket, tweet_type = 'mention')
+    user = other_user unless user
     note = create_note(source: 5, ticket_id: ticket.id, user_id: user.id, private: false, body: Faker::Lorem.paragraph)
     note.build_tweet(tweet_id: random_tweet_id, tweet_type: tweet_type, twitter_handle_id: get_twitter_handle.id)
     note.save

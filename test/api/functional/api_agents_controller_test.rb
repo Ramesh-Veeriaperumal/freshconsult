@@ -1156,6 +1156,20 @@ class ApiAgentsControllerTest < ActionController::TestCase
     Account.unstub(:current)
   end
 
+  def test_create_agent_with_agent_save_failure
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
+    Agent.any_instance.stubs(:save).returns(false)
+    old_count = Account.current.users.count
+    params_hash = { email: Faker::Internet.email, ticket_scope: 2, role_ids: [Account.current.roles.where(name: 'Agent').first.id], name: Faker::Name.name }
+    post :create, construct_params(params_hash)
+    assert_equal old_count, Account.current.users.count # The new user created should have been deleted
+  ensure
+    Agent.any_instance.unstub(:save)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    Account.unstub(:current)
+  end
+
   def test_create_agent_invalid_datatypes
     Account.stubs(:current).returns(Account.first)
     params = { name: nil, phone: 3_534_653, mobile: 6_756_868, email: Faker::Name.name, time_zone: 'Cntral Time (US & Canada)', language: 'huty', occasional: 'yes', signature: 123, ticket_scope: 212,

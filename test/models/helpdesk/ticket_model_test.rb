@@ -102,6 +102,24 @@ class TicketModelTest < ActiveSupport::TestCase
     t.destroy if t.present?
   end
 
+  def test_update_ticket_states_when_deadlock_occurs
+    @account = Account.first.nil? ? create_test_account : Account.first
+    @account.make_current
+    ticket = create_ticket(ticket_params_hash)
+    assert_nil ticket.ticket_states.resolved_at
+    assert_nil ticket.ticket_states.closed_at
+    Helpdesk::Ticket.any_instance.stubs(:schema_less_ticket_changed?).returns(true, false)
+    Helpdesk::SchemaLessTicket.any_instance.stubs(:save).raises(ActiveRecord::StatementInvalid, 'Deadlock found when trying to get lock')
+    ticket.status = 5
+    ticket.save
+    ticket.reload
+    assert_equal true, ticket.ticket_states.resolved_at.is_a?(ActiveSupport::TimeWithZone)
+    assert_equal true, ticket.ticket_states.closed_at.is_a?(ActiveSupport::TimeWithZone)
+  ensure
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:save)
+    Helpdesk::Ticket.any_instance.unstub(:schema_less_ticket_changed?)
+  end
+
   private
 
     def custom_translation_stub(language, status_id)

@@ -5,18 +5,25 @@ module ApiSolutions
     include Solution::LanguageControllerMethods
     include Helpdesk::TagMethods
     include CloudFilesHelper
+    include ::Search::V2::AbstractController
+    include Solution::ArticleFilters
 
     SLAVE_ACTIONS = %w[index folder_articles].freeze
     STATUS_KEYS_BY_TOKEN = Solution::Article::STATUS_KEYS_BY_TOKEN
 
     decorate_views(decorate_objects: [:folder_articles])
-    before_filter :validate_query_parameters, only: [:folder_articles]
+    before_filter :validate_query_parameters, only: [:folder_articles], unless: :channel_v2?
     before_filter :validate_draft_state, only: [:update, :destroy]
     before_filter :language_metric_presence
     before_filter :validate_publish_solution_privilege, only: [:update, :create]
+    before_filter :sanitize_chat_params, only: [:folder_articles], if: :channel_v2?
+    before_filter :sanitize_prefer_published, only: [:folder_articles]
+    before_filter :reconstruct_params, only: [:folder_articles], if: :filters_present? && :channel_v2?
+    before_filter :validate_omni_filter_params, only: [:folder_articles], if: :channel_v2?
+    before_filter :portal_delegator_validation, only: [:folder_articles], if: :channel_v2?
 
     def show
-      @prefer_published = params[:prefer_published].to_bool unless params[:prefer_published].nil?
+      @prefer_published = params[:prefer_published] unless params[:prefer_published].nil?
       @meta = @item.solution_article_meta
     end
 
@@ -71,13 +78,15 @@ module ApiSolutions
     def folder_articles
       if validate_language
         if load_folder
-          @prefer_published = params[:prefer_published].to_bool unless params[:prefer_published].nil?
+          @prefer_published = params[:prefer_published] unless params[:prefer_published].nil?
           load_folder_articles
           if private_api?
             # removing description, attachments, tags for article list api in two pane to improve performance
             @exclude = [:description, :attachments, :tags, :translation_summary]
             response.api_root_key = :articles
             response.api_meta = { count: @items_count, next_page: @more_items }
+          elsif channel_v2? && allow_chat_platform_attributes?
+            @exclude = [:description, :attachments]
           end
           render '/api_solutions/articles/index'
         end
@@ -157,7 +166,8 @@ module ApiSolutions
       end
 
       def load_folder_articles
-        items = @folder.solution_articles.where(language_id: @lang_id).reorder(Solution::Constants::ARTICLE_ORDER_COLUMN_BY_TYPE[@folder.article_order]).preload(
+        items = params[:portal_id].present? ? @folder.solution_articles.portal_articles(params[:portal_id], [@lang_id]) : @folder.solution_articles.where(language_id: @lang_id)
+        items = items.reorder(Solution::Constants::ARTICLE_ORDER_COLUMN_BY_TYPE[@folder.article_order]).preload(
           {
             solution_article_meta: [
               :solution_folder_meta,
@@ -167,7 +177,7 @@ module ApiSolutions
           :article_body, :tags, :attachments, { cloud_files: :application }, :draft, draft: [:draft_body, :attachments, :cloud_files]
         )
         @items_count = items.count if private_api?
-        @items = paginate_items(items)
+        @items = filters_present? ? paginate_items(apply_article_scopes(items).uniq) : paginate_items(items)
       end
 
       def publishable_article_properties?
@@ -218,17 +228,27 @@ module ApiSolutions
       end
 
       def before_load_object
+        sanitize_prefer_published
+        if channel_v2?
+          sanitize_chat_params
+          return unless validate_omni_filter_params
+        end
         validate_language
       end
 
       def load_object(items = scoper)
         @meta = load_meta(params[:id])
-        @item = items.where(parent_id: params[:id], language_id: @lang_id).preload(cloud_files: :application).first
-        if @item
+        @item = params[:status].present? && channel_v2? ? items.where(parent_id: params[:id], language_id: @lang_id, status: params[:status]) : items.where(parent_id: params[:id], language_id: @lang_id)
+        if @item.present?
+          @item = @item.preload(cloud_files: :application).first
           @draft = @item.draft
         else
           log_and_render_404
         end
+      end
+
+      def validate_url_params
+        params.permit(*SolutionConstants::SHOW_FIELDS, *ApiConstants::DEFAULT_PARAMS)
       end
 
       def validate_params
@@ -253,6 +273,13 @@ module ApiSolutions
           render_errors article.errors,
                         article.error_options
         end
+      end
+
+      def validate_omni_filter_params
+        @constants_klass  = 'SolutionConstants'.freeze
+        @validation_klass = 'SolutionOmniFilterValidation'.freeze
+        return unless validate_query_params
+        true
       end
 
       def validate_create_params
@@ -295,6 +322,19 @@ module ApiSolutions
         
         # remove the params that will be updated to draft and common to article model.
         @article_params[language_scoper] = params[cname].slice(*(SolutionConstants::ARTICLE_LANGUAGE_FIELDS.map(&:to_sym) - (@draft_params.empty? ? [] : @draft_params.keys.map(&:to_sym) + [:status])))
+      end
+
+      def sanitize_chat_params
+        params[:platforms] = params[:platforms].split(',').uniq if params[:platforms].present?
+        params[:tags] = params[:tags].split(',').uniq if params[:tags].present?
+      end
+
+      def sanitize_prefer_published
+        params[:prefer_published] = params[:prefer_published].to_bool if params[:prefer_published].present? && (params[:prefer_published] == "true" || params[:prefer_published] == "false")
+      end
+
+      def filters_present?
+        (params[:platforms].present? || params[:tags].present? || params[:status].present?)
       end
 
       def sanitize_seo_params
@@ -367,6 +407,10 @@ module ApiSolutions
         validate_filter_params(SolutionConstants::INDEX_FIELDS)
       end
 
+      def validate_chat_query_parameters
+        validate_filter_params(SolutionConstants::FOLDER_ARTICLES_FIELDS)
+      end
+
       def load_meta(id)
         meta = meta_scoper.find_by_id(id)
         log_and_render_404 unless meta
@@ -377,6 +421,17 @@ module ApiSolutions
         return true if super
         allowed_content_types = SolutionConstants::ARTICLE_ALLOWED_CONTENT_TYPE_FOR_ACTION[action_name.to_sym] || [:json]
         allowed_content_types.include?(request.content_mime_type.ref)
+      end
+
+      def channel_v2?
+        self.class == Channel::V2::ApiSolutions::ArticlesController
+      end
+
+      def portal_delegator_validation
+        if params[:portal_id].present?
+          @delegator_klass = 'ApiSolutions::ArticleDelegator'
+          return unless validate_delegator(nil, portal_id: params[:portal_id])
+        end
       end
 
       # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.

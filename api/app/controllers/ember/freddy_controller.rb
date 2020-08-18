@@ -24,9 +24,9 @@ module Ember
       end
 
       def change_plan_to_omnichannel
-        if current_account.subscription.trial? && current_account.subscription.plan_name == SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_19]
-          plan = SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_omni_jan_19])
-          current_account.subscription.update_attributes(subscription_plan: plan)
+        if current_account.subscription.plan_name != SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_omni_jan_20]
+          plan = SubscriptionPlan.where(name: SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_omni_jan_20]).first
+          current_account.subscription.update_subscription(plan_id: plan.id)
         end
       end
   end

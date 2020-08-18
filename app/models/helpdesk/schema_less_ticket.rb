@@ -146,7 +146,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
       fetch_first_response_agent_id(note_id)
       self.reports_hash.merge!('first_response_group_id' => self.ticket.group_id)
       Rails.logger.info "Helpdesk::SchemaLessTicket::set_first_response_id::#{Time.zone.now.to_f} and schema_less_ticket_object :: #{reports_hash.inspect}"
-      self.save
+      save unless Account.current.response_time_null_fix_enabled?
 		end
 	end
 
@@ -157,7 +157,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
   def update_first_response_agent_id
     first_response_agent_id = fetch_first_response_agent_id(reports_hash['first_response_id'])
     Rails.logger.info "Helpdesk::SchemaLessTicket::update_first_response_agent_id::#{Time.zone.now.to_f} and schema_less_ticket_object :: #{reports_hash.inspect}"
-    self.save
+    save unless Account.current.response_time_null_fix_enabled?
     first_response_agent_id
   end
 
@@ -189,19 +189,18 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     self.save
   end
 
-	["agent", "group", "internal_agent", "internal_group"].each do |type|
-		define_method("set_#{type}_assigned_flag") do
-			return if reports_hash.has_key?("#{type}_reassigned_flag")
-			if reports_hash.has_key?("#{type}_assigned_flag")
-				self.reports_hash.delete("#{type}_assigned_flag")
-				flag_name = "#{type}_reassigned_flag"
-			else
-				flag_name = "#{type}_assigned_flag"
-			end
-		  self.reports_hash.merge!(flag_name => true)
-		end
-	end
-	
+  ['agent', 'group', 'internal_agent', 'internal_group'].each do |type|
+    define_method("set_#{type}_assigned_flag") do
+      reports_hash["#{type}_reassigned_flag"] = true if reports_hash["#{type}_assigned_flag"]
+
+      reports_hash["#{type}_assigned_flag"] = true
+    end
+
+    define_method("unset_#{type}_assigned_flag") do
+      reports_hash["#{type}_assigned_flag"] = nil
+    end
+  end
+
 	COUNT_COLUMNS_FOR_REPORTS.each do |count_type|
 		define_method("update_#{count_type}_count") do |action|
 			previous_count = self.reports_hash["#{count_type}_count"]

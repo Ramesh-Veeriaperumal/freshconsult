@@ -1,0 +1,52 @@
+get:
+  tags: ['admin business calendars']
+  summary: Show business hours
+  parameters:
+    - $ref: '#/parameters/id'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/business_hours_response'
+    404:
+      description: business hours not found
+    403:
+      description: Access denied
+
+delete:
+  tags: ['admin business calendars']
+  summary: Delete business hours
+  description: Destroys the business hours, will not be able to restore
+  parameters:
+    - $ref: '#/parameters/id'
+  responses:
+    204:
+      description: Success
+    404:
+      description: business hours not found
+    403:
+      description: Access denied
+
+put:
+  tags: ['admin business calendars']
+  summary: Update business hours
+  parameters:
+    - $ref: '#/parameters/id'
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/business_hours_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/business_hours_response'
+    404:
+      description: business hours not found
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

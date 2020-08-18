@@ -184,6 +184,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     process_agent_and_group_changes
     process_status_changes
     update_ticket_lifecycle
+    assign_uncommited_ticket_states
     ticket_states.save if ticket_states.changed?
     Rails.logger.info "Helpdesk::Ticket::update_ticket_states::#{Time.zone.now.to_f} and schema_less_ticket_object :: #{schema_less_ticket.reports_hash.inspect}"
     schema_less_ticket.save if Account.current.ticket_observer_race_condition_fix_enabled? || schema_less_ticket_changed?
@@ -204,7 +205,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def process_agent_and_group_changes
-    if (@model_changes.key?(:responder_id) && responder)
+    handle_agent_change if @model_changes.key?(:responder_id)
+    handle_group_change if @model_changes.key?(:group_id)
+    handle_internal_agent_change if @model_changes.key?(:internal_agent_id)
+    handle_internal_group_change if @model_changes.key?(:internal_group_id)
+  end
+
+  def handle_agent_change
+    if responder
       if @model_changes[:responder_id][0].nil?
         unless ticket_states.first_assigned_at
           ticket_states.first_assigned_at = time_zone_now
@@ -216,22 +224,40 @@ class Helpdesk::Ticket < ActiveRecord::Base
       end
       schema_less_ticket.set_agent_assigned_flag
       ticket_states.assigned_at=time_zone_now
+    else
+      schema_less_ticket.unset_agent_assigned_flag
     end
+  end
 
-    if (@model_changes.key?(:group_id) && group)
+  def handle_group_change
+    if group
       if @model_changes[:group_id][0]
         schema_less_ticket.update_group_reassigned_count("create")
       elsif schema_less_ticket.reports_hash['group_reassigned_count'].to_i.zero?
         schema_less_ticket.set_first_assign_group_id(self.group_id)
       end
       schema_less_ticket.set_group_assigned_flag
+    else
+      schema_less_ticket.unset_group_assigned_flag
     end
+  end
+
+  def handle_internal_group_change
+    if @model_changes[:internal_group_id][1].nil?
+      schema_less_ticket.unset_internal_group_assigned_flag
+    else
+      schema_less_ticket.set_internal_group_assigned_flag
+    end
+  end
+
+  def handle_internal_agent_change
     #for internal_agent_id
-    if @model_changes.key?(:internal_agent_id)
+    if @model_changes[:internal_agent_id][1].nil?
+      schema_less_ticket.unset_internal_agent_assigned_flag
+    else
       schema_less_ticket.set_internal_agent_assigned_flag
-      schema_less_ticket.set_internal_agent_first_assign_bhrs(self.created_at, time_zone_now, self.group) if (self.reports_hash["internal_agent_assigned_flag"]==true )
+      schema_less_ticket.set_internal_agent_first_assign_bhrs(created_at, time_zone_now, group) if reports_hash['internal_agent_assigned_flag']
     end
-    schema_less_ticket.set_internal_group_assigned_flag if @model_changes.key?(:internal_group_id)
   end
 
   def process_status_changes
@@ -266,6 +292,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     tkt_group ||= model_changes.has_key?(:group_id) ? Group.find_by_id(model_changes[:group_id][0]) : self.group
 
     @ticket_lifecycle = schema_less_ticket.update_lifecycle_changes(time_zone_now, tkt_group, [RESOLVED,CLOSED].include?(status))
+  end
+
+  def assign_uncommited_ticket_states
+    if ticket_states.previous_changes.present?
+      prev_changes = ticket_states.previous_changes.each_with_object({}) { |(k, v), change| change[k] = v.last }
+      curr_changes = ticket_states.changes.each_with_object({}) { |(k, v), change| change[k] = v.last }
+      Rails.logger.info "Helpdesk:ticket_states:previous_changes:: #{prev_changes.inspect}, Helpdesk:ticket_states:changes:: #{curr_changes.inspect}"
+      ticket_states.reload
+      ticket_states.assign_attributes(prev_changes)
+    end
   end
 
   #Shared onwership Validations
@@ -969,6 +1005,11 @@ private
     if group_id
       schema_less_ticket.set_group_assigned_flag
       schema_less_ticket.set_first_assign_group_id(group_id)
+    end
+    schema_less_ticket.set_internal_group_assigned_flag if internal_group_id
+    if internal_agent_id
+      schema_less_ticket.set_internal_agent_assigned_flag
+      schema_less_ticket.set_internal_agent_first_assign_bhrs(created_at, time_zone_now, group) if reports_hash['internal_agent_assigned_flag']
     end
     schema_less_ticket.reports_hash ||= {}
     schema_less_ticket.reports_hash['lifecycle_last_updated_at'] = current_action_time

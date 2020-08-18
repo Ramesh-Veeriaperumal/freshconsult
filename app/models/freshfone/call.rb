@@ -521,7 +521,7 @@ class Freshfone::Call < ActiveRecord::Base
       if has_children?
         child = children.last
         if child.present?
-          handle_new_notifications(child) if new_notifications?
+          handle_new_notifications(child)
           Freshfone::NotificationWorker.perform_async({ :call_id => child.id }, nil,'complete_other_agents')
         end
         # return

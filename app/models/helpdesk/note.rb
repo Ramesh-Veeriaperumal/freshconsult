@@ -344,7 +344,7 @@ class Helpdesk::Note < ActiveRecord::Base
           ticket_state.set_first_response_time(created_at)
         end
       end
-      ticket_state.save
+      Account.current.response_time_null_fix_enabled? ? notable.save : ticket_state.save
     end
   end
 

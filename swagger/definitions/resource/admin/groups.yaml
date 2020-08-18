@@ -1,0 +1,91 @@
+type: object
+properties:
+  name:
+    type: string
+    description: group name
+  description:
+    type: string
+    description: group description
+  type:
+    type: string
+    enum:
+      - support_agent_group
+      - field_agent_group
+    default: support_agent_group
+  escalate_to:
+    type: number
+    description: agent id to whom the ticket has to be assigned on escalation
+  unassigned_for:
+    type: string
+    description: time period till which the ticket can remain unassigned.
+    enum:
+      - 30m
+      - 1h
+      - 2h
+      - 4h
+      - 8h
+      - 12h
+      - 1d
+      - 2d
+      - 3d
+      - nil
+  agent_ids:
+    type: array
+    items:
+      type: number
+  contribution_agent_ids:
+    type: array
+    items:
+      type: number
+    description: agents to be provided with read access
+  business_calendar_id:
+    type: number
+  automatic_agent_assignment:
+    type: object
+    properties:
+      enabled:
+        type: boolean
+      type:
+        type: string
+        enum:
+          - omni_channel
+          - channel_specific
+      settings:
+        type: array
+        items:
+          type: object
+          properties:
+            channel:
+              type: string
+              enum:
+                - ticket
+                - chat
+            assignment_type:
+              type: string
+              description: channel specific assignment type. intelli_assign is the only option available for chat
+              enum:
+                - round_robin
+                - load_based_round_robin
+                - skill_based_round_robin
+                - lbrr_by_omni_route
+                - intelli_assign
+            assignment_type_settings:
+              type: object
+              description: settings relevant to the selected assignment_type
+              properties:
+                capping_limit:
+                  type: number
+                  description: only for load_based_round_robin/skill_based_round_robin
+                reassign_conversation_of_inactive_agent:
+                  type: boolean
+                  description: only applicable for freschat channel.
+          required:
+            - channel
+            - assignment_type
+    required:
+      - enabled
+      - type
+  allow_agents_to_change_availability:
+    type: boolean
+required:
+  - name

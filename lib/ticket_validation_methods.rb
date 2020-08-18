@@ -22,10 +22,6 @@ module TicketValidationMethods
     [CLOSED, RESOLVED].include? status.to_i
   end
 
-  def close_validation_enabled?
-    current_account.launched?(:close_validation)
-  end
-
   def valid_ticket? ticket
     ticket.required_fields_on_closure = true
     valid = ticket.valid?
