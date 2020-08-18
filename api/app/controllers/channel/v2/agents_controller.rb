@@ -3,8 +3,8 @@ module Channel::V2
     include ChannelAuthentication
     include CentralLib::CentralResyncHelper
 
-    skip_before_filter :check_privilege, :load_object
-    before_filter :channel_client_authentication, :validate_sync_params
+    skip_before_filter :check_privilege, :load_object, only: :sync
+    before_filter :channel_client_authentication, :validate_sync_params, only: :sync
 
     def verify_agent_privilege
       @items = { admin: User.current.privilege?(:admin_tasks),
@@ -21,7 +21,7 @@ module Channel::V2
     def validate_sync_params
       @args = params.symbolize_keys
       @errors = []
-      @errors.push('meta_info is required') if @args[:meta_info].nil? || @args[:meta_info][:meta_id].nil?
+      @errors.push('meta_info is required') if @args[:meta_info].nil?
       @response = { errors: @errors }
       render status: 400 if @errors.present?
     end
