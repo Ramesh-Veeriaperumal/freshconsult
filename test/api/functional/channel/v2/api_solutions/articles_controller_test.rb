@@ -356,6 +356,24 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
     CustomRequestStore.unstub(:read)
   end
 
+  def test_folder_articles_with_allow_language_fallback_param
+    @enrich_response = false
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Account.current.launch(:kbase_omni_bundle)
+    set_jwt_auth_header(FRESHCONNECT_SRC)
+    article_new = get_article_with_platform_mapping(ios: true, web: true, android: false)
+    folder_meta = article_new.solution_folder_meta
+    sample_folder = folder_meta.solution_folders.where(language_id: article_new.language.id).first
+    get :folder_articles, controller_params(id: sample_folder.id, allow_language_fallback: 'true')
+    assert_response 200
+  ensure
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+    CustomRequestStore.unstub(:read)
+  end
+
   def test_folder_articles_with_tags_param
     @enrich_response = false
     CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
@@ -435,6 +453,21 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
     match_json(validation_error_pattern(bad_request_error_pattern('platforms', :require_feature, feature: :omni_bundle_2020, code: :access_denied)))
   ensure
     CustomRequestStore.unstub(:read)
+  end
+
+  def test_invalid_allow_language_fallback_params
+    @enrich_response = false
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Account.current.launch(:kbase_omni_bundle)
+    set_jwt_auth_header(FRESHCONNECT_SRC)
+    translated_article = get_article(language = Language.find_by_code('ru-RU'))
+    folder = translated_article.solution_folder_meta.solution_folders.where(language_id: Language.find_by_code('ru-RU').id).first
+    get :folder_articles, controller_params(version: 'channel', id: folder.id, language: 'ru-RU', allow_language_fallback: 'invalid')
+    assert_response 400
+    expected = { description: 'Validation failed', errors: [{ field: 'allow_language_fallback', message: "It should be one of these values: 'true,false'", code: 'invalid_value' }] }
+    assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
   end
 
   def get_articles_by_portal_id(portal_id, language = Account.current.language_object)
