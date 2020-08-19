@@ -44,7 +44,7 @@ defaults: &defaults
   freshbots:
     auth_type: jwt
     jwt_secret: ["0bc477b3c1df7c17be0999c247907b12"]
-  twilight:
+  multiplexer:
     auth_type: jwt
     jwt_secret: 34f6b896d197c09b0a2d90431da8257c
   field_service:

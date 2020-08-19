@@ -95,7 +95,7 @@ module Channel
       end
 
       def skip_privilege_check?
-        channel_source?(:twitter) || channel_source?(:proactive) || channel_source?(:facebook) || channel_source?(:twilight)
+        channel_source?(:twitter) || channel_source?(:proactive) || channel_source?(:facebook) || channel_source?(:multiplexer)
       end
 
       def twitter_requester_fields_hash

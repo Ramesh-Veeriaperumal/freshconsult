@@ -7,6 +7,6 @@ class Channel::Search::CustomersController < ::Ember::Search::CustomersControlle
   private
 
     def skip_privilege_check?
-      channel_source?(:twilight)
+      channel_source?(:multiplexer)
     end
 end

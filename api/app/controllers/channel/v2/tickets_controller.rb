@@ -2,6 +2,7 @@ module Channel::V2
   class TicketsController < ::TicketsController
 
     CHANNEL_V2_TICKETS_CONSTANTS_CLASS = 'Channel::V2::TicketConstants'.freeze
+    JWT_AUTH_SOURCES = [:freddy, :multiplexer].freeze
 
     include ChannelAuthentication
 
@@ -205,7 +206,8 @@ module Channel::V2
     end
 
     def jwt_eligible?
-      request.headers['X-Channel-Auth'].present? && channel_source?(:freddy)
+      request.headers['X-Channel-Auth'].present? &&
+        JWT_AUTH_SOURCES.include?(source(request.headers['X-Channel-Auth']))
     end
   end
 end

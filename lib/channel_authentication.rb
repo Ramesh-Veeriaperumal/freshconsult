@@ -11,7 +11,7 @@ module ChannelAuthentication
     freshchat: 'freshchat'.freeze,
     facebook: 'facebook'.freeze,
     freshbots: 'freshbots'.freeze,
-    twilight: 'twilight'.freeze,
+    multiplexer: 'multiplexer'.freeze,
     freddy: 'freddy'.freeze,
     field_service: 'field_service'.freeze,
     silkroad: 'silkroad'.freeze,

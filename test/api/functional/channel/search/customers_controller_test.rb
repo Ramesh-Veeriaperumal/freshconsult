@@ -9,7 +9,7 @@ class Channel::Search::CustomersControllerTest < ActionController::TestCase
   end
 
   def test_search_contacts
-    set_jwt_auth_header(TWILIGHT)
+    set_jwt_auth_header(MULTIPLEXER)
     Channel::Search::CustomersController.any_instance.stubs(:esv2_query_results).returns(::Search::V2::PaginationWrapper.new([]))
     post :results, controller_params(version: 'channel', context: 'filteredContactSearch', term: 'bob.Tree@freshdesk.com')
     assert_response 200
