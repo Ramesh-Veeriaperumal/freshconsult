@@ -1,6 +1,6 @@
 <% if @note.user_id == @ticket.requester_id %>
 	<% @responder = t('helpdesk.tickets.add_watcher.mail.customer') %>
-<% elsif @note.source == Account.current.helpdesk_sources.note_source_keys_by_token || @note.source == Account.current.helpdesk_sources.note_source_keys_by_token %>
+<% elsif @note.source ==  Account.current.helpdesk_sources.note_source_keys_by_token['automation_rule'] || @note.source == Account.current.helpdesk_sources.note_source_keys_by_token["automation_rule_forward"] %>
   <% @responder = @account.helpdesk_name %>
 <% else %>
 	<% @responder = @note.user.name %>
