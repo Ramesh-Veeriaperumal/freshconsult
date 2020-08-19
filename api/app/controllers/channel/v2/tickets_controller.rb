@@ -207,7 +207,7 @@ module Channel::V2
 
     def jwt_eligible?
       request.headers['X-Channel-Auth'].present? &&
-        JWT_AUTH_SOURCES.include?(source(request.headers['X-Channel-Auth']))
+        JWT_AUTH_SOURCES.include?(source(request.headers['X-Channel-Auth']).to_sym)
     end
   end
 end
