@@ -33,10 +33,10 @@ module Channel::V2
     def test_agents_resync_with_invalid_meta_info
       set_jwt_auth_header(SOURCE)
       remove_others_redis_key(resync_rate_limiter_key(SOURCE))
-      args = { meta_info: nil }
+      args = { meta: nil }
       post :sync, construct_params({ version: 'channel' }, args)
       response_body = parse_response @response.body
-      assert_equal error_response('meta_info is required'), response_body
+      assert_equal error_response('meta information is required'), response_body
       assert_response 400
     end
 
@@ -46,7 +46,7 @@ module Channel::V2
       request.stubs(:uuid).returns(job_id)
       remove_others_redis_key(resync_rate_limiter_key(SOURCE))
       expected_body = { 'job_id' => job_id }
-      args = { meta_info: { meta_id: 'abc' } }
+      args = { meta: { meta_id: 'abc' } }
       post :sync, construct_params({ version: 'channel' }, args)
       response_body = parse_response @response.body
       assert_response 202
@@ -57,7 +57,7 @@ module Channel::V2
 
     def test_agents_resync_with_auth_failure
       remove_others_redis_key(resync_rate_limiter_key(SOURCE))
-      args = { meta_info: { meta_id: 'abc' } }
+      args = { meta: { meta_id: 'abc' } }
       post :sync, construct_params({ version: 'channel' }, args)
       assert_response 401
     end
