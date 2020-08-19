@@ -13,9 +13,13 @@ module Channel::V2
     end
 
     def sync
-      persist_job_info_and_start_entity_publish(@source, request.uuid, 'Agent', @args[:meta], nil, @args[:primary_key_offset])
-      @response = { job_id: request.uuid }
-      render status: 202
+      if resync_worker_limit_reached?(@source)
+        head 429
+      else
+        persist_job_info_and_start_entity_publish(@source, request.uuid, 'Agent', @args[:meta], nil, @args[:primary_key_offset])
+        @response = { job_id: request.uuid }
+        render status: 202
+      end
     end
 
     def validate_sync_params
