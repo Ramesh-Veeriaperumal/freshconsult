@@ -158,7 +158,6 @@ class Account < ActiveRecord::Base
     # Temp for falcon signup
     # Enable customer portal by default
     if falcon_ui_applicable?
-      self.launch(:falcon_signup)           # To track falcon signup accounts
       self.launch(:falcon_portal_theme)  unless redis_key_exists?(DISABLE_PORTAL_NEW_THEME)   # Falcon customer portal
     end
     if freshid_integration_signup_allowed?

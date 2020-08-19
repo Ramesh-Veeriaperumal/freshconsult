@@ -206,7 +206,7 @@ class Account < ActiveRecord::Base
     freshplug_enabled: false, dkim: false, dkim_email_service: false, sha1_enabled: false, disable_archive: false,
     sha256_enabled: false, auto_ticket_export: false, select_all: false, facebook_realtime: false,
     "Freshfone Call Tracker": false, ticket_contact_export: false, custom_apps: false, timesheet: false,
-    api_jwt_auth: false, disable_emails: false, skip_portal_cname_chk: false, falcon_signup: false,
+    api_jwt_auth: false, disable_emails: false, skip_portal_cname_chk: false,
     falcon_portal_theme: false, image_annotation: false, email_actions: false, ner: false, disable_freshchat: false,
     freshid: false,
     incoming_attachment_limit_25: false, fetch_ticket_from_ref_first: false, outgoing_attachment_limit_25: false,
