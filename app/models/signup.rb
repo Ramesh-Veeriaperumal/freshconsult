@@ -18,6 +18,7 @@ class Signup < ActivePresenter::Base
   after_save :create_freshid_org_and_account, if: :freshid_signup_allowed?
   after_save :create_freshid_v2_org_and_account, if: [:freshid_v2_signup_allowed?, :direct_signup]
   after_save :enable_fluffy, if: :fluffy_signup_allowed?
+  after_save :enable_fluffy_email, if: :fluffy_email_signup_allowed?
   after_save :set_signup_completed
 
   MAX_ACCOUNTS_COUNT = 10
@@ -72,6 +73,10 @@ class Signup < ActivePresenter::Base
 
   def enable_fluffy
     redis_key_exists?(FLUFFY_HOUR_SIGNUP_ENABLED) ? account.enable_fluffy : account.enable_fluffy_min_level
+  end
+
+  def enable_fluffy_email
+    account.enable_fluffy_for_email
   end
 
   private
@@ -193,6 +198,10 @@ class Signup < ActivePresenter::Base
 
     def fluffy_signup_allowed?
       redis_key_exists?(FLUFFY_HOUR_SIGNUP_ENABLED) || redis_key_exists?(FLUFFY_MINUTE_SIGNUP_ENABLED)
+    end
+
+    def fluffy_email_signup_allowed?
+      account.fluffy_email_signup_enabled? || user.email.include?(Fluffy::Constants::FLUFFY_EMAIL_TEST_ACCOUNT_EMAIL)
     end
 
     # * * * POD Operation Methods Begin * * *
