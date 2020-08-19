@@ -85,6 +85,8 @@ class SubscriptionEventActionsTest < ActionView::TestCase
     @account.add_feature(:omni_channel_routing)
     @account.add_feature(:lbrr_by_omniroute)
     @account.add_feature(:round_robin_load_balancing)
+    @account.stubs(:fluffy_email_enabled?).returns(true)
+    @account.expects(:change_fluffy_email_limit).once
     @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.find_by_name('Estate Jan 19').id, state: 'active', account_id: @account.id))
     old_subscription = @account.subscription.dup
     s = @account.subscription
@@ -95,5 +97,6 @@ class SubscriptionEventActionsTest < ActionView::TestCase
     assert @account.lbrr_by_omniroute_enabled?
   ensure
     Account.unstub(:current)
+    @account.unstub(:fluffy_email_enabled?)
   end
 end

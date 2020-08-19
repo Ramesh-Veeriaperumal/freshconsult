@@ -2,6 +2,8 @@ defaults: &defaults
   host: "localhost"
   username: "dummy"
   password: "dummy"
+  fd_email_username: "dummy"
+  fd_email_password: "dummy"
 
 development:
   <<: *defaults

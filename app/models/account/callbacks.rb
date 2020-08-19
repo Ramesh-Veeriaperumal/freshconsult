@@ -53,6 +53,7 @@ class Account < ActiveRecord::Base
 
   after_commit :update_crm_and_map, :send_domain_change_email, :update_account_domain_in_chargebee, on: :update, if: :account_domain_changed?
   after_commit :change_fluffy_account_domain, on: :update, if: [:account_domain_changed?, :fluffy_integration_enabled?]
+  after_commit :change_fluffy_email_account_domain, on: :update, if: [:account_domain_changed?, :fluffy_email_enabled?]
   after_commit :update_bot, on: :update, if: :update_bot?
 
   after_commit :update_account_details_in_freshid, on: :update, :if => :update_freshid?
@@ -243,8 +244,21 @@ class Account < ActiveRecord::Base
     fluffy_account = current_fluffy_limit(@all_changes[:full_domain].first)
     if fluffy_account.present?
       fluffy_account.name = full_domain
-      Fluffy::ApiWrapper.fluffy_add_account(account: fluffy_account)
+      Fluffy::FRESHDESK.fluffy_add_account(account: fluffy_account)
       destroy_fluffy_account(@all_changes[:full_domain].first)
+    else
+      create_fluffy_account
+    end
+  end
+
+  def change_fluffy_email_account_domain
+    fluffy_account = current_fluffy_email_limit(@all_changes[:full_domain].first)
+    if fluffy_account.present?
+      fluffy_account.name = full_domain
+      Fluffy::FRESHDESK_EMAIL.fluffy_add_account(account_v2: fluffy_account)
+      destroy_fluffy_email_account(@all_changes[:full_domain].first)
+    else
+      create_fluffy_email_account
     end
   end
 
