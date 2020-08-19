@@ -28,15 +28,11 @@ module SlaPoliciesHelper
       "next_response" => { "1" => { :time =>"1800", :agents_id => ["#{@agent.id}"] } } 
     }) if @account.next_response_sla_enabled?
     sla_policy.save(validate: false)
-
-    sla_target_hash = {}
-    if @account.sla_policy_revamp_enabled?
-      sla_target_time = ActiveSupport::HashWithIndifferentAccess.new({ first_response_time: "PT15M", resolution_due_time: "PT15M" })
-      sla_target_time[:every_response_time] = "PT15M" if @account.next_response_sla_enabled?
-      sla_target_hash = { sla_target_time: sla_target_time }
+    sla_target_hash = ActiveSupport::HashWithIndifferentAccess.new({ sla_target_time: { first_response_time: "PT15M", resolution_due_time: "PT15M"}, response_time: '900', resolution_time: '900' })
+    if @account.next_response_sla_enabled?
+      sla_target_hash[:sla_target_time][:every_response_time] = "PT15M"
+      sla_target_hash[:next_response_time] = '900'
     end
-    sla_target_hash.merge!({ response_time: "900", resolution_time: "900" })
-    sla_target_hash[:next_response_time] = "900" if @account.next_response_sla_enabled?
 
     SLA_DETAILS.each_pair do |k,v|
       sla_details = FactoryGirl.build(:sla_details, {

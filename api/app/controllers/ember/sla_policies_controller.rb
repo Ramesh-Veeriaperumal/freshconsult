@@ -6,8 +6,7 @@ module Ember
     private
 
       def scoper
-        return current_account.sla_policies_reorder if Account.current.sla_policy_revamp_enabled?
-        super
+        current_account.sla_policies_reorder
       end
 
       def after_load_object
@@ -15,7 +14,7 @@ module Ember
       end
 
       def constants_class
-        Account.current.sla_policy_revamp_enabled? ? 'Ember::SlaPolicyConstants'.freeze : super
+        'Ember::SlaPolicyConstants'.freeze
       end
 
       def allowed_param_fields

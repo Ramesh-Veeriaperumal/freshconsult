@@ -4,12 +4,10 @@ class PrivateApiSlaDetailsValidationTest < ActionView::TestCase
   def setup
     super
     Account.stubs(:current).returns(Account.first)
-    Account.any_instance.stubs(:sla_policy_revamp_enabled?).returns(true)
     Account.any_instance.stubs(:next_response_sla_enabled?).returns(false)
   end
 
   def teardown
-    Account.any_instance.unstub(:sla_policy_revamp_enabled?)
     Account.any_instance.unstub(:next_response_sla_enabled?)
     Account.unstub(:current)
   end

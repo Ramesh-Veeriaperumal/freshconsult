@@ -10,7 +10,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :account_id
   
   before_save :standardize_and_validate
-  after_update :reorder_policies, if: -> { account.sla_policy_revamp_enabled? && position_changed? }
+  after_update :reorder_policies, if: :position_changed?
 
   def standardize_and_validate
     standardize_escalations(self.escalations) if escalations_changed?
