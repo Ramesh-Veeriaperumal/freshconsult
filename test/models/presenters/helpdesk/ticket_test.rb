@@ -32,6 +32,7 @@ class TicketTest < ActiveSupport::TestCase
     return if @@before_all_run
     @account.subscription.state = 'active'
     @account.subscription.save
+    @account.rollback(:response_time_null_fix)
     @account.ticket_fields.custom_fields.each(&:destroy)
     @@ticket_fields = []
     @@custom_field_names = []
@@ -454,7 +455,48 @@ class TicketTest < ActiveSupport::TestCase
     assert_equal({ 'agent_reply_count' => [nil, 1] }, job['args'][1]['model_changes'])
   end
 
-  def test_ticket_state_worker_central_publish
+  def test_ticket_state_worker_with_response_time_null_fix_disabled
+    group = create_group_with_agents(@account, agent_list: [@agent.id])
+    ticket = create_ticket(ticket_params_hash(responder_id: @agent.id, group_id: group.id))
+    note = create_note(source: 0, ticket_id: ticket.id, user_id: @agent.id, created_at: Time.zone.now.round, private: false, body: Faker::Lorem.paragraph)
+    input = {
+      id: note.id,
+      model_changes: nil,
+      freshdesk_webhook: false,
+      current_user_id: @agent.id
+    }
+    Tickets::UpdateTicketStatesWorker.new.perform(input)
+    ticket = ticket.reload
+    ticket_state = ticket.ticket_states
+    schema_less_ticket = ticket.schema_less_ticket
+    assert_equal @agent.id, schema_less_ticket.reports_hash['first_response_agent_id']
+    assert_equal note.id, schema_less_ticket.reports_hash['first_response_id']
+    assert_equal note.created_at, ticket_state.first_response_time
+  end
+
+  def test_ticket_state_worker_with_response_time_null_fix_enabled
+    Account.current.launch(:response_time_null_fix)
+    group = create_group_with_agents(@account, agent_list: [@agent.id])
+    ticket = create_ticket(ticket_params_hash(responder_id: @agent.id, group_id: group.id))
+    note = create_note(source: 0, ticket_id: ticket.id, user_id: @agent.id, created_at: Time.zone.now.round, private: false, body: Faker::Lorem.paragraph)
+    input = {
+      id: note.id,
+      model_changes: nil,
+      freshdesk_webhook: false,
+      current_user_id: @agent.id
+    }
+    Tickets::UpdateTicketStatesWorker.new.perform(input)
+    ticket = ticket.reload
+    ticket_state = ticket.ticket_states
+    schema_less_ticket = ticket.schema_less_ticket
+    assert_equal @agent.id, schema_less_ticket.reports_hash['first_response_agent_id']
+    assert_equal note.id, schema_less_ticket.reports_hash['first_response_id']
+    assert_equal note.created_at, ticket_state.first_response_time
+  ensure
+    Account.current.rollback(:response_time_null_fix)
+  end
+
+  def test_ticket_state_worker_central_publish_with_response_time_null_fix_disabled
     group = create_group_with_agents(@account, agent_list: [@agent.id])
     ticket = create_ticket(ticket_params_hash(responder_id: @agent.id, group_id: group.id))
     note = create_note(source: 0, ticket_id: ticket.id, user_id: @agent.id, private: false, body: Faker::Lorem.paragraph)
@@ -477,6 +519,37 @@ class TicketTest < ActiveSupport::TestCase
                    'first_response_by_bhrs' => [nil, ticket_state.first_resp_time_by_bhrs] }, ticket_state_job['args'][1]['model_changes'])
     assert_equal({ 'first_response_id' => [nil, schema_less_ticket.reports_hash['first_response_id']],
                    'first_response_agent_id' => [nil, schema_less_ticket.reports_hash['first_response_agent_id']] }, schema_less_ticket_job['args'][1]['model_changes'])
+  end
+
+  def test_ticket_state_worker_central_publish_with_response_time_null_fix_enabled
+    Account.current.launch(:response_time_null_fix)
+    group = create_group_with_agents(@account, agent_list: [@agent.id])
+    ticket = create_ticket(ticket_params_hash(responder_id: @agent.id, group_id: group.id))
+    note = create_note(source: 0, ticket_id: ticket.id, user_id: @agent.id, private: false, body: Faker::Lorem.paragraph)
+    input = {
+      id: note.id,
+      model_changes: nil,
+      freshdesk_webhook: false,
+      current_user_id: @agent.id
+    }
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    Tickets::UpdateTicketStatesWorker.new.perform(input)
+    assert_equal 2, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    ticket_state_job = CentralPublishWorker::ActiveTicketWorker.jobs.first
+    schema_less_ticket_job = CentralPublishWorker::ActiveTicketWorker.jobs.last
+    ticket = ticket.reload
+    payload = ticket.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(ticket))
+    ticket_state = ticket.ticket_states
+    schema_less_ticket = ticket.schema_less_ticket
+    assert_equal 'ticket_update', ticket_state_job['args'][0]
+    assert_equal 'ticket_update', schema_less_ticket_job['args'][0]
+    assert_equal({ 'first_response_time' => [nil, ticket_state.first_response_time],
+                   'first_response_by_bhrs' => [nil, ticket_state.first_resp_time_by_bhrs] }, ticket_state_job['args'][1]['model_changes'])
+    assert_equal({ 'first_response_id' => [nil, schema_less_ticket.reports_hash['first_response_id']],
+                   'first_response_agent_id' => [nil, schema_less_ticket.reports_hash['first_response_agent_id']] }, schema_less_ticket_job['args'][1]['model_changes'])
+  ensure
+    Account.current.rollback(:response_time_null_fix)
   end
 
   def test_central_publish_payload_product_update_with_value
@@ -663,6 +736,19 @@ class TicketTest < ActiveSupport::TestCase
     assert_equal({'next_response' => [@agent.id]}, job['args'][1]['misc_changes']['notify_agents'])
   ensure
     Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_central_publish_with_stop_sla_timer
+    t = create_ticket(ticket_params_hash.merge(responder_id: @agent.id))
+    t.reload
+    t.status = Account.current.ticket_statuses.where(stop_sla_timer:true).first.status_id
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    t.save
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    job = CentralPublishWorker::ActiveTicketWorker.jobs.last
+    assert_equal 'ticket_update', job['args'][0]
+    assert_equal true, JSON.parse(payload)["status_stop_sla_timer"]
   end
 
   def test_central_publish_payload_with_secure_field

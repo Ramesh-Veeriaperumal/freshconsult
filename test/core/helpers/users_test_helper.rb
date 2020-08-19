@@ -90,7 +90,7 @@ module CoreUsersTestHelper
                                   deleted: options[:deleted] || 0,
                                   blocked: options[:blocked] || 0,
                                   company_id: options[:customer_id] || nil,
-                                  language: 'en',
+                                  language: options[:language] || 'en',
                                   active: options[:active] || false,
                                   tag_names: options[:tag_names] || "")
     if options[:unique_external_id]

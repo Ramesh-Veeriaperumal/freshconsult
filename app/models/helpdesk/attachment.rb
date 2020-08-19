@@ -223,10 +223,18 @@ class Helpdesk::Attachment < ActiveRecord::Base
     [:account_id, :description, :content_updated_at, :attachable_id, :attachable_type]
   end
 
+  def attachment_public_url(type = :original, options = {})
+    AwsWrapper::S3.public_url(content.bucket_name, content.path(valid_size_type(type)), options)
+  end
+
   def attachment_url_for_api(secure = true, type = :original, expires = 1.day)
-    expiry_secure_data = { secure: secure }
-    expiry_secure_data.merge!(expires_in: expires.to_i) if expires.present?
-    AwsWrapper::S3.presigned_url(content.bucket_name, content.path(valid_size_type(type)), expiry_secure_data)
+    if public_image?
+      attachment_public_url(type)
+    else
+      expiry_secure_data = { secure: secure }
+      expiry_secure_data.merge!(expires_in: expires.to_i) if expires.present?
+      AwsWrapper::S3.presigned_url(content.bucket_name, content.path(valid_size_type(type)), expiry_secure_data)
+    end
   end
 
   def attachment_cdn_url_for_api(secure = true, type = :original, expires = 1.day)
@@ -362,7 +370,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def public_image?
-    self.attachable_type == "Image Upload" || self.attachable_type == "Forums Image Upload"
+    attachable_type == 'Image Upload' || attachable_type == 'Forums Image Upload' || attachable_type == 'Solution::FolderMeta'
   end
 
   def user_avatar?

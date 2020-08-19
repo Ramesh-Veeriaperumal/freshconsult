@@ -304,6 +304,66 @@ module SolutionsArticlesCommonTests
     assert article.status == 1
   end
 
+  def test_create_article_translation_with_allow_language_fallback
+    sample_article = get_article_without_translation
+    title = 'translated title'
+    description = 'translated description'
+    status = 1
+    category_name = 'translated category_name'
+    folder_name = 'translated folder_name'
+    post :create, construct_params({ version: version, id: sample_article.parent_id, language: 'en-us', allow_language_fallback: 'true' }, title: title, description: description, status: status, category_name: category_name, folder_name: folder_name)
+    assert_response 404
+    match_json(request_error_pattern(:language_not_allowed, code: 'en-us', list: @account.supported_languages.sort.join(', ')))
+  end
+
+  def test_language_fallback_without_fallback_params
+    languages = @account.supported_languages + ['primary']
+    language = @account.supported_languages.first
+    article_meta = create_article(article_params(lang_codes: languages))
+    translated_article = article_meta.safe_send("#{language}_article")
+    get :show, controller_params(version: version, id: translated_article.parent_id, language: language + '-us')
+    assert_response 404
+    match_json(request_error_pattern(:language_not_allowed, code: language + '-us', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
+  end
+
+  def test_language_fallback_with_fallback_params_true
+    languages = @account.supported_languages + ['primary']
+    language = @account.supported_languages.first
+    article_meta = create_article(article_params(lang_codes: languages))
+    translated_article = article_meta.safe_send("#{language}_article")
+    get :show, controller_params(version: version, id: translated_article.parent_id, language: language + '-us', allow_language_fallback: 'true')
+    assert_response 200
+  end
+
+  def test_language_fallback_with_fallback_params_false
+    languages = @account.supported_languages + ['primary']
+    language = @account.supported_languages.first
+    article_meta = create_article(article_params(lang_codes: languages))
+    translated_article = article_meta.safe_send("#{language}_article")
+    get :show, controller_params(version: version, id: translated_article.parent_id, language: language + '-us', allow_language_fallback: 'false')
+    assert_response 404
+    match_json(request_error_pattern(:language_not_allowed, code: language + '-us', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
+  end
+
+  def test_language_fallback_with_params_true_and_incorrect_language_params
+    languages = @account.supported_languages + ['primary']
+    language = @account.supported_languages.first
+    article_meta = create_article(article_params(lang_codes: languages))
+    translated_article = article_meta.safe_send("#{language}_article")
+    get :show, controller_params(version: version, id: translated_article.parent_id, language: 'incorrect', allow_language_fallback: 'true')
+    assert_response 200
+  end
+
+  def test_language_fallback_with_non_multi_lingual_account
+    Account.any_instance.stubs(:multilingual?).returns(false)
+    non_supported_language = get_valid_not_supported_language
+    sample_article = get_article
+    get :show, controller_params(version: version, id: sample_article.parent_id, language: non_supported_language, allow_language_fallback: 'true')
+    assert_response 200
+  ensure
+    Account.any_instance.unstub(:multilingual?)
+  end
+
   def test_create_article_translation_without_manage_solution_privilege
     User.any_instance.stubs(:privilege?).with(:manage_solutions).returns(false)
     User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)

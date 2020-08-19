@@ -81,6 +81,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     t.add :group_users
     t.add :import_id
     t.add :on_state_time
+    t.add :status_stop_sla_timer
+    t.add :status_deleted
     t.add proc { |x| x.attachments.map(&:id) }, as: :attachment_ids
     t.add proc { |x| x.tags.collect { |tag| { id: tag.id, name: tag.name } } }, as: :tags
     REPORT_FIELDS.each do |key|

@@ -94,6 +94,31 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
     end
   end
 
+  def test_destroy_ember_business_hour
+    enable_emberize_business_hours do
+      business_calendar = create_business_calendar
+      delete :destroy, controller_params(id: business_calendar.id)
+      assert_response 204
+    end
+  end
+
+  def test_destroy_business_hour_without_enabling_feature
+    business_calendar = create_business_calendar
+    delete :destroy, controller_params(id: business_calendar.id)
+    assert_response 403
+    business_calendar.destroy
+  end
+
+  def test_destroy_default_ember_business_hour
+    enable_emberize_business_hours do
+      business_calendar = Account.current.business_calendar.where(is_default: true).first
+      skip unless business_calendar
+      delete :destroy, controller_params(id: business_calendar.id)
+      assert_response 400
+      match_json([bad_request_error_pattern(:id, :default_business_hour_destroy_not_allowed, code: :invalid_value)])
+    end
+  end
+
   def test_create_business_calendar
     enable_emberize_business_hours do
       params = dummy_business_calendar_default_params.merge('channel_business_hours' => dummy_channel_business_hours).merge(dummy_holiday_data)

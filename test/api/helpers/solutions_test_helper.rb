@@ -39,7 +39,7 @@ module SolutionsTestHelper
                       else
                         []
                       end
-      result[:icon] = folder.parent.icon.present? ? AttachmentDecorator.new(folder.parent.icon).to_hash : {}
+      result[:icon_url] = folder.parent.icon.present? ? folder.parent.icon.attachment_public_url : nil
     end
     result
   end
@@ -57,10 +57,11 @@ module SolutionsTestHelper
   end
 
   def solution_folder_pattern_private(_expected_output = {}, _ignore_extra_keys = true, folder)
-    result = solution_folder_pattern({}, true, folder)
+    result = solution_folder_pattern({}, true, folder).except(:icon_url)
     result[:article_order] = folder.parent.article_order
     result[:position] = folder.parent.position
     result[:language] = folder.language_code
+    result[:icon] = folder.parent.icon.present? ? AttachmentDecorator.new(folder.parent.icon).to_hash : {} if Account.current.omni_bundle_account? && Account.current.launched?(:kbase_omni_bundle)
     result[:platforms] = _expected_output[:platforms].presence || platform_response(true, folder.parent.solution_platform_mapping) if omni_bundle_enabled?
     result
   end

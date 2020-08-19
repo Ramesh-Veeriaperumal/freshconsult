@@ -9,7 +9,7 @@ class Account < ActiveRecord::Base
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :announcements_tab,
     :va_any_field_without_none, :api_es,
     :encode_emoji, :auto_complete_off, :sandbox_lp, :encode_emoji_subject,
-    :euc_migrated_twitter, :new_ticket_recieved_metric, :ner, :disable_banners,
+    :euc_migrated_twitter, :new_ticket_recieved_metric, :ner,
     :count_service_es_writes, :count_service_es_reads,
     :sso_login_expiry_limitation, :undo_send, :old_link_back_url_validation, :stop_contacts_count_query,
     :denormalized_select_for_update, :es_tickets,
@@ -47,7 +47,7 @@ class Account < ActiveRecord::Base
     :omni_chat_agent, :portal_frameworks_update, :ticket_filters_central_publish, :new_email_regex, :auto_refresh_revamp, :agent_statuses, :omni_reports,
     :omni_plans_migration_banner, :parse_replied_email, :wf_comma_filter_fix, :composed_email_check, :omni_channel_dashboard, :csat_for_social_surveymonkey, :fresh_parent, :trim_special_characters, :kbase_omni_bundle,
     :omni_agent_availability_dashboard, :twitter_api_compliance, :silkroad_export, :silkroad_shadow, :silkroad_multilingual, :group_management_v2, :symphony, :invoke_touchstone, :explore_omnichannel_feature, :hide_omnichannel_toggle,
-    :dashboard_java_fql_performance_fix, :emberize_business_hours, :trigger_domain_mapping_deletion, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp
+    :dashboard_java_fql_performance_fix, :emberize_business_hours, :trigger_domain_mapping_deletion, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp, :response_time_null_fix, :cx_feedback
   ].freeze
 
   BITMAP_FEATURES = [
@@ -216,8 +216,7 @@ class Account < ActiveRecord::Base
 
   def count_es_enabled?
     launched?(:count_service_es_reads) ||
-      ((launched?(:es_count_reads) || launched?(:list_page_new_cluster)) &&
-        features?(:countv2_reads))
+      (launched?(:es_count_reads) && features?(:countv2_reads))
   end
 
   def count_es_api_enabled?

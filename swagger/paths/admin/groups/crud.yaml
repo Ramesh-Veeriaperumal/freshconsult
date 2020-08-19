@@ -1,0 +1,52 @@
+get:
+  tags: ['admin groups']
+  summary: Show group
+  parameters:
+    - $ref: '#/parameters/id'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/admin_groups_response'
+    404:
+      description: groups not found
+    403:
+      description: Access denied
+
+delete:
+  tags: ['admin groups']
+  summary: Delete group
+  description: Destroys the groups, will not be able to restore
+  parameters:
+    - $ref: '#/parameters/id'
+  responses:
+    204:
+      description: Success
+    404:
+      description: groups not found
+    403:
+      description: Access denied
+
+put:
+  tags: ['admin groups']
+  summary: Update group
+  parameters:
+    - $ref: '#/parameters/id'
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/admin_groups_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/admin_groups_response'
+    404:
+      description: groups not found
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

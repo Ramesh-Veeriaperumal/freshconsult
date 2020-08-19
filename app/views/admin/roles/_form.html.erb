@@ -113,7 +113,9 @@
               $('input.' + this.id).toggleDisabled(status);
             }
           }
-
+          if($(this).hasClass('option_permanent_disabled')){
+            this.disabled = true
+          }
         });
     };
 

@@ -1,4 +1,5 @@
 require_relative '../test_helper'
+require 'webmock/minitest'
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 require Rails.root.join('test', 'models', 'helpers', 'subscription_test_helper.rb')
 ['social_tickets_creation_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
@@ -6,6 +7,8 @@ class SubscriptionTest < ActiveSupport::TestCase
   include AccountTestHelper
   include SocialTicketsCreationHelper
   include SubscriptionTestHelper
+
+  PVT_KEY = OpenSSL::PKey::RSA.new(File.read('config/cert/iam.pem'), ::Iam::IAM_CONFIG['password'])
 
   def test_update_should_not_change_onboarding_state_for_active_accounts
     create_new_account('test1234', 'test1234@freshdesk.com')
@@ -217,6 +220,77 @@ class SubscriptionTest < ActiveSupport::TestCase
     subscription.save
     Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
     Subscription.any_instance.unstub(:trial?)
+  end
+
+  def test_fetch_consumed_freddy_sessions_when_token_is_invalid
+    account = Account.first
+    subscription = account.subscription
+    Account.any_instance.stubs(:omni_bundle_account?).returns(false)
+    Account.stubs(:current).returns(account)
+    Subscription.any_instance.stubs(:freddy_sessions).returns(1000)
+    OpenSSL::PKey::RSA.stubs(:new).returns(PVT_KEY)
+    response_hash = { 'timestamp' => 1_594_907_449_302, 'status' => 500, 'error' => 'Internal Server Error', 'message' => 'Invalid token', 'path' => '/api/v1/accounts' }
+    stub_request(:get, FreddySkillsConfig[:freddy_consumed_session][:url]).with(query: { 'product' => 'freshdesk', 'productAccountId' => account.id }).to_return(status: 500, body: response_hash.to_json)
+    sessions = subscription.fetch_consumed_freddy_sessions
+    assert sessions.to_i.zero?
+  ensure
+    Account.unstub(:current)
+    Subscription.any_instance.unstub(:freddy_sessions)
+    Account.any_instance.unstub(:omni_bundle_account?)
+    OpenSSL::PKey::RSA.unstub(:new)
+  end
+
+  def test_fetch_consumed_freddy_sessions_when_account_is_not_found
+    account = Account.first
+    subscription = account.subscription
+    Account.stubs(:current).returns(account)
+    Subscription.any_instance.stubs(:freddy_sessions).returns(1000)
+    Account.any_instance.stubs(:omni_bundle_account?).returns(false)
+    OpenSSL::PKey::RSA.stubs(:new).returns(PVT_KEY)
+    response_hash = { 'timestamp' => 1_594_907_449_302, 'status' => 404, 'error' => 'Not Found', 'message' => 'Account details not found', 'path' => '/api/v1/accounts' }
+    stub_request(:get, FreddySkillsConfig[:freddy_consumed_session][:url]).with(query: { 'product' => 'freshdesk', 'productAccountId' => account.id }).to_return(status: 404, body: response_hash.to_json)
+    sessions = subscription.fetch_consumed_freddy_sessions
+    assert sessions.to_i.zero?
+  ensure
+    Account.unstub(:current)
+    Subscription.any_instance.unstub(:freddy_sessions)
+    Account.any_instance.unstub(:omni_bundle_account?)
+    OpenSSL::PKey::RSA.unstub(:new)
+  end
+
+  def test_fetch_consumed_freddy_sessions
+    account = Account.first
+    subscription = account.subscription
+    Account.stubs(:current).returns(account)
+    Subscription.any_instance.stubs(:freddy_sessions).returns(1000)
+    Account.any_instance.stubs(:omni_bundle_account?).returns(false)
+    OpenSSL::PKey::RSA.stubs(:new).returns(PVT_KEY)
+    response_hash = { 'data' => { 'accountStatus' => 'FREDDY_USAGE_OK', 'orgId' => '38562334847549459', 'sessionsAllowed' => 6000, 'productPlan' => 'FOREST', 'freddyPlan' => 'FREDDY_ULTIMATE', 'addPacksBought' => 1, 'postpaidBilling' => false, 'billingCycleStartDate' => '2020-07-13T07:39:21Z', 'createDate' => '2020-07-13T07:39:21Z', 'updateDate' => '2020-07-16T18:12:10Z', 'productAccountId' => '11010058023', 'product' => 'FRESHDESK', 'sessionsConsumed' => 5000 } }
+    resp_body = {}
+    response_stub = {}
+    resp_body.stubs(:body).returns(response_hash.to_json)
+    response_stub.stubs(:response).returns(resp_body)
+    response_stub.stubs(:success?).returns(true)
+    HTTParty.stubs(:get).returns(response_stub)
+    sessions = subscription.fetch_consumed_freddy_sessions
+    assert_equal 5000, sessions.to_i
+  ensure
+    Account.unstub(:current)
+    Subscription.any_instance.unstub(:freddy_sessions)
+    Account.any_instance.unstub(:omni_bundle_account?)
+    OpenSSL::PKey::RSA.unstub(:new)
+    HTTParty.unstub(:get)
+  end
+
+  def test_fetch_consumed_freddy_sessions_when_no_sessions_is_present
+    account = Account.first
+    subscription = account.subscription
+    Subscription.any_instance.stubs(:current_account).returns(account)
+    Subscription.any_instance.stubs(:freddy_sessions).returns(0)
+    assert_nil subscription.fetch_consumed_freddy_sessions
+  ensure
+    Subscription.any_instance.unstub(:current_account)
+    Subscription.any_instance.unstub(:freddy_sessions)
   end
 
   def test_switch_to_annual_notification_reminder

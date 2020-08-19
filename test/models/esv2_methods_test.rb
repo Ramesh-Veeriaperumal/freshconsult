@@ -7,6 +7,7 @@ class Esv2MethodTest < ActiveSupport::TestCase
   include AccountTestHelper
   include CoreSolutionsTestHelper
   include SolutionsArticlesTestHelper
+  include SolutionsPlatformsTestHelper
 
   def setup
     create_test_account if @account.nil?
@@ -42,5 +43,22 @@ class Esv2MethodTest < ActiveSupport::TestCase
     refute_includes payload, 'approvers'
   ensure
     Account.any_instance.unstub(:article_approval_workflow_enabled?)
+  end
+
+  def test_platforms_pushed_to_search_if_omni_enabled
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Account.current.launch(:kbase_omni_bundle)
+    article = get_article_with_platform_mapping
+    payload = JSON.parse(article.to_esv2_json)
+    assert_equal payload['platforms'], article.parent.solution_platform_mapping.enabled_platforms
+  ensure
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+  end
+
+  def test_platforms_not_pushed_to_search_if_omni_disabled
+    article = get_article_with_platform_mapping
+    payload = JSON.parse(article.to_esv2_json)
+    refute_includes payload, 'platforms'
   end
 end

@@ -426,6 +426,95 @@ module Ember
       @account.revoke_feature(:undo_send)
     end
 
+    def test_reply_template_quoted_text_with_language_and_time_zone
+      customer = add_new_user(@account, time_zone: 'Tokyo', language: 'ja-JP')
+      test_ticket = create_ticket(requester_id: customer.id, responder_id: @agent.id)
+      notification_template = '<div>{{test_ticket.id}}</div>'
+      EmailNotification.any_instance.stubs(:get_reply_template).returns(notification_template)
+      get :reply_template, construct_params({ version: 'private', id: test_ticket.display_id }, false)
+      quoted_text = JSON.parse(response.body)['quoted_text']
+      time_format = "%a, %-d %b #{I18n.t('at', locale: :'ja-JP')} %l:%M %p"
+      assert_equal true, quoted_text.include?(I18n.l(test_ticket.created_at.in_time_zone('Tokyo'), format: time_format, locale: :'ja-JP'))
+      assert_response 200
+    ensure
+      EmailNotification.any_instance.unstub(:get_reply_template)
+      test_ticket.destroy
+      customer.destroy
+    end
+
+    def test_reply_template_quoted_text_with_language_when_null
+      customer = add_new_user(@account, time_zone: 'Tokyo', language: 'ja-JP')
+      customer.language = nil
+      customer.save
+      customer.reload
+      test_ticket = create_ticket(requester_id: customer.id, responder_id: @agent.id)
+      notification_template = '<div>{{test_ticket.id}}</div>'
+      EmailNotification.any_instance.stubs(:get_reply_template).returns(notification_template)
+      get :reply_template, construct_params({ version: 'private', id: test_ticket.display_id }, false)
+      quoted_text = JSON.parse(response.body)['quoted_text']
+      time_format = "%a, %-d %b #{I18n.t('at', locale: Account.current.language)} %l:%M %p"
+      assert_equal true, quoted_text.include?(I18n.l(test_ticket.created_at.in_time_zone('Tokyo'), format: time_format, locale: Account.current.language))
+      assert_response 200
+    ensure
+      EmailNotification.any_instance.unstub(:get_reply_template)
+      test_ticket.destroy
+      customer.destroy
+    end
+
+    def test_latest_note_forward_template_quoted_text_with_language_and_time_zone
+      customer = add_new_user(@account, time_zone: 'Tokyo', language: 'ja-JP')
+      test_ticket = create_ticket(requester_id: customer.id, responder_id: @agent.id)
+      note = create_note(user_id: @agent.id, ticket_id: test_ticket.id, source: 2)
+      Helpdesk::Ticket.any_instance.stubs(:current_cc_emails).returns([Faker::Internet.email])
+      Helpdesk::Ticket.any_instance.stubs(:reply_to_all_emails).returns([Faker::Internet.email])
+      notification_template = '<div>{{test_ticket.id}}</div>'
+      EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
+      get :latest_note_forward_template, controller_params(version: 'private', id: test_ticket.display_id)
+      assert_response 200
+      quoted_text = JSON.parse(response.body)['quoted_text']
+      time_format = "%a, %-d %b #{I18n.t('at', locale: :'ja-JP')} %l:%M %p"
+      assert_equal true, quoted_text.include?(I18n.l(test_ticket.created_at.in_time_zone('Tokyo'), format: time_format, locale: :'ja-JP'))
+    ensure
+      EmailNotification.any_instance.unstub(:get_forward_template)
+      Helpdesk::Ticket.any_instance.unstub(:current_cc_emails)
+      Helpdesk::Ticket.any_instance.unstub(:reply_to_all_emails)
+      test_ticket.destroy
+      customer.destroy
+    end
+
+    def test_note_forward_template_with_language_and_time_zone
+      customer = add_new_user(@account, time_zone: 'Tokyo', language: 'ja-JP')
+      test_ticket = create_ticket(requester_id: customer.id, responder_id: @agent.id)
+      note = create_note(user_id: @agent.id, ticket_id: test_ticket.id, source: 2)
+      notification_template = '<div>{{test_ticket.id}}</div>'
+      EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
+      get :note_forward_template, controller_params(version: 'private', id: note.id)
+      assert_response 200
+      quoted_text = JSON.parse(response.body)['quoted_text']
+      time_format = "%a, %-d %b #{I18n.t('at', locale: :'ja-JP')} %l:%M %p"
+      assert_equal true, quoted_text.include?(I18n.l(test_ticket.created_at.in_time_zone('Tokyo'), format: time_format, locale: :'ja-JP'))
+    ensure
+      EmailNotification.any_instance.unstub(:get_forward_template)
+      test_ticket.destroy
+      customer.destroy
+    end
+
+    def test_forward_template_with_language_and_time_zone
+      customer = add_new_user(@account, time_zone: 'Tokyo', language: 'ja-JP')
+      test_ticket = create_ticket(requester_id: customer.id, responder_id: @agent.id)
+      notification_template = '<div>{{test_ticket.id}}</div>'
+      EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
+      get :forward_template, construct_params({ version: 'private', id: test_ticket.display_id }, false)
+      assert_response 200
+      quoted_text = JSON.parse(response.body)['quoted_text']
+      time_format = "%a, %-d %b #{I18n.t('at', locale: :'ja-JP')} %l:%M %p"
+      assert_equal true, quoted_text.include?(I18n.l(test_ticket.created_at.in_time_zone('Tokyo'), format: time_format, locale: :'ja-JP'))
+    ensure
+      EmailNotification.any_instance.unstub(:get_forward_template)
+      test_ticket.destroy
+      customer.destroy
+    end
+
     def test_reply_template_after_undo_no_quoted_text
       @account.add_feature(:undo_send)
       remove_wrap_params
