@@ -81,7 +81,31 @@ class Email::Mailbox::HelperMethodsTest < ActiveSupport::TestCase
     mailbox.destroy
   end
 
-  def test_nullify_error_type_on_reauth
+  def test_nullify_error_type_on_reauth_for_plain_mailbox
+    mailbox = create_email_config(
+      support_email: 'test@test5.com',
+      imap_mailbox_attributes: {
+        imap_authentication: 'plain',
+        with_refresh_token: false,
+        with_access_token: false
+      },
+      smtp_mailbox_attributes: {
+        smtp_authentication: 'plain',
+        with_refresh_token: false,
+        with_access_token: false
+      }
+    )
+    mailbox.active = true
+    mailbox.smtp_mailbox.error_type = 401
+    mailbox.smtp_mailbox.password = '123'
+    mailbox.save!
+    nullify_error_type_on_reauth(mailbox.smtp_mailbox)
+    assert_not_equal mailbox.smtp_mailbox.error_type, 401
+  ensure
+    mailbox.destroy
+  end
+
+  def test_nullify_error_type_on_reauth_for_oauth_mailbox
     mailbox = create_email_config(
       support_email: 'test@test6.com',
       imap_mailbox_attributes: {

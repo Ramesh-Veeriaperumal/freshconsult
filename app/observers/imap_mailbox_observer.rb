@@ -79,6 +79,6 @@ class ImapMailboxObserver < ActiveRecord::Observer
     end
 
     def can_clear_error_field?(mailbox)
-      mailbox.changed.include?('password') && mailbox.password.present?
+      (mailbox.password.present? && mailbox.changed.include?('password')) || (mailbox.encrypted_access_token.present? && mailbox.changed.include?('encrypted_access_token'))
     end
 end

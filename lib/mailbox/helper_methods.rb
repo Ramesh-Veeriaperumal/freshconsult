@@ -33,7 +33,7 @@ module Mailbox::HelperMethods
     end
 
     def nullify_error_type_on_reauth(mailbox)
-      mailbox.error_type = nil if mailbox.changed.include?('encrypted_access_token') && mailbox.error_type.present?
+      mailbox.error_type = nil if mailbox.error_type.present? && (mailbox.changed.include?('encrypted_access_token') || mailbox.changed.include?('password'))
     end
 
     def changed_credentials?(mailbox)
