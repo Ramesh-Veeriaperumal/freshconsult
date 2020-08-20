@@ -58,6 +58,10 @@ module Concerns::ApplicationViewConcern
     Account.current.check_custom_mailbox_status
   end
 
+  def mailbox_oauth_reauthorization_required?
+    Account.current.check_mailbox_oauth_status || false
+  end
+
   def freshfone_deprecation?
     Account.current.freshfone_enabled? && !Account.current.freshcaller_enabled?
   end

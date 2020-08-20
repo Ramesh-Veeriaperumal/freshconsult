@@ -195,6 +195,8 @@ properties:
                 type: boolean
               ms_mailbox_oauth_required:
                 type: boolean
+              mailbox_oauth_reauth_required:
+                type: boolean
           zendesk_app_id:
             type: integer
           warnings:
