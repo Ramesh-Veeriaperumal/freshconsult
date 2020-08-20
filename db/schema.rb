@@ -12,7 +12,7 @@
 # It's strongly recommended to check this file into your version control system.
 
 
-ActiveRecord::Schema.define(version: 20200502053301) do
+ActiveRecord::Schema.define(version: 20200703050026) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -4394,6 +4394,7 @@ ActiveRecord::Schema.define(version: 20200502053301) do
     t.datetime 'created_at',                  :null => false
     t.datetime 'updated_at',                  :null => false
     t.boolean  "feature_loss",      :default => false
+    t.text     'additional_info'
   end
 
   add_index 'subscription_requests', ['account_id', 'subscription_id'], :name => 'index_subscription_requests_on_account_id_subscription_id'

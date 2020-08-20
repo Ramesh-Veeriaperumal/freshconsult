@@ -1,8 +1,10 @@
 class SubscriptionRequest < ActiveRecord::Base
   include SubscriptionHelper
   include Redis::OthersRedis
-  attr_accessible :account_id, :agent_limit, :fsm_field_agents, :plan_id, :renewal_period, :subscription_id, :feature_loss
+  attr_accessible :account_id, :agent_limit, :fsm_field_agents, :plan_id, :renewal_period, :subscription_id, :feature_loss, :additional_info
   attr_accessor :next_renewal_at, :from_plan, :fsm_downgrade
+
+  serialize :additional_info, Hash
 
   self.primary_key = :id
   belongs_to_account
@@ -32,6 +34,22 @@ class SubscriptionRequest < ActiveRecord::Base
   def product_loss?
     account.has_feature?(:unlimited_multi_product) && !subscription_plan.unlimited_multi_product? &&
       subscription_plan.multi_product? && account.products.count > AccountConstants::MULTI_PRODUCT_LIMIT
+  end
+
+  def freddy_session_packs
+    additional_info.try(:[], :freddy_session_packs).to_i
+  end
+
+  def freddy_downgrade
+    additional_info.try(:[], :freddy_downgrade)
+  end
+
+  def freddy_self_service_requested
+    additional_info.try(:[], :freddy_self_service_requested)
+  end
+
+  def freddy_ultimate_requested
+    additional_info.try(:[], :freddy_ultimate_requested)
   end
 
   private
