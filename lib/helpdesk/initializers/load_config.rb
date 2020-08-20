@@ -110,5 +110,3 @@ OmniFreshVisualsConfig = YAML.load_file(File.join(Rails.root, 'config/helpdesk_r
 OmniChannelDashboardConfig = YAML.load_file(Rails.root.join('config', 'omni_channel_dashboard.yml'))[Rails.env]
 
 OmniChannelBundleConfig = YAML.load_file(Rails.root.join('config', 'omni_channel_bundle.yml'))[Rails.env]
-
-TracingConfig = YAML.load_file(Rails.root.join('config', 'tracing.yml'))[Rails.env]

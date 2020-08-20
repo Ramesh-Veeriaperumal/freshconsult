@@ -40,7 +40,6 @@ helpdesk:
     - klout_config
     - liquid
     - load_config
-    - tracing
     - memcached
     - mime_types
     - new_rails_defaults
