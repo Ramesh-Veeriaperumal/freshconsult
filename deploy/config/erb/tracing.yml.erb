@@ -1,0 +1,15 @@
+<% config = node[:ymls][:tracing] %>
+<%= node[:opsworks][:environment]%>:
+<% if @tracing_allowed %>
+  enabled: true
+<% else %>
+  enabled: false
+<% end %>
+<% if config.present? %>
+  service_name: <%= config[:service_name] %>
+  tracing_host: <%= ENV['HOST_PRIVATE_IP'] %>
+  tracing_host_port: <%= config[:tracing_host_port] %>
+  span_batch_size: <%= config[:span_batch_size] %>
+  sampler_probability: <%= config[:sampler_probability] %>
+  host_name: <%= ENV['HOSTNAME'] %>
+<% end %>

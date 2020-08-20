@@ -1630,6 +1630,12 @@
         "_activities_host": "activities-elb.internal-freshpo.com",
         "_port": "80"
       },
+      "tracing": {
+        "_service_name": "freshdesk_helpkit",
+        "_tracing_host_port": 6831,
+        "_span_batch_size": 20,
+        "_sampler_probability": 0.1
+      },
       "twitter": {
         "consumer_secret": "EJ[1:8exvi2D7SfEJxmn+Br7CeoKsCDfXy1gOfUh5hGbLsSw=:1GEjNUdnyGNCmC2AHo5M3oZ15HG5ej8o:HgTyKLuiPrWqhpbgJ5kwCJBPcItExu8LwguJQrvkQ7s+S6VP9XVzLR3/l/lDJ+Ih5UO4eCZ+XuBuO5IrGBHlYu5u]",
         "consumer_secret_fallback": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:iWqLWcg+o+Ywv4iensDeFYqQbrxL4YJQ:H+NE5RZGypO2UBTq5nZHeESXceKv]",
