@@ -29,6 +29,7 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
 
   def clean_db
     @account.ticket_fields_with_archived_fields.where(default: 0).destroy_all
+    @account.helpdesk_sources.custom.destroy_all
     type_field = @account.ticket_fields.find_by_field_type('default_ticket_type')
     type_field.sections.destroy_all
     type_field.field_options = type_field.field_options.with_indifferent_access
@@ -756,7 +757,7 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
         choices: [{ label: label, position: 15, icon_id: 20 }]
       )
       assert_response 200
-      source = Helpdesk::Source.where(name: label).first
+      source = @account.helpdesk_sources.where(name: label).first
       assert_equal source.position, 15
       assert_equal source.meta[:icon_id], 20
       put :update, construct_params({ id: field.id }, choices: [{ id: source.account_choice_id, icon_id: 15 }])
@@ -806,7 +807,7 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
         choices: [{ label: label, position: 2, icon_id: 25 }]
       )
       assert_response 200
-      source = Helpdesk::Source.where(name: label).first
+      source = @account.helpdesk_sources.where(name: label).first
       assert_equal 2, source.position
     end
   ensure
@@ -838,8 +839,8 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
       field = @account.ticket_fields.where(field_type: 'default_source').first
       label = 'source test 6'
       put :update, construct_params(
-          { id: field.id },
-          choices: [{ label: label, position: 22, icon_id: 2 }]
+        { id: field.id },
+        choices: [{ label: label, position: 22, icon_id: 2 }]
       )
       assert_response 400
       count = Account.current.ticket_source_from_cache.select(&:default).max_by { |x| x.meta[:icon_id] }.meta[:icon_id]
@@ -855,8 +856,8 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
       field = @account.ticket_fields.where(field_type: 'default_source').first
       label = Faker::Lorem.characters
       put :update, construct_params(
-          { id: field.id },
-          choices: [{ label: label, position: 22, icon_id: 25 }]
+        { id: field.id },
+        choices: [{ label: label, position: 22, icon_id: 25 }]
       )
       assert_response 400
       match_json([bad_request_error_pattern(:label, 'is too long (maximum is 50 characters)')])
@@ -871,16 +872,153 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
       field = @account.ticket_fields.where(field_type: 'default_source').first
       label = 'source test 7'
       put :update, construct_params(
-          { id: field.id },
-          choices: [{ label: label, position: 15, icon_id: 20 }]
+        { id: field.id },
+        choices: [{ label: label, position: 15, icon_id: 20 }]
       )
       assert_response 200
-      source = Helpdesk::Source.where(name: label).first
+      source = @account.helpdesk_sources.where(name: label).first
       assert_equal source.position, 15
       assert_equal source.meta[:icon_id], 20
       put :update, construct_params({ id: field.id }, choices: [{ id: source.account_choice_id, label: Faker::Lorem.characters }])
       assert_response 400
       match_json([bad_request_error_pattern(:label, 'is too long (maximum is 50 characters)')])
+    end
+  ensure
+    Account.current.unstub(:ticket_source_revamp_enabled?)
+  end
+
+  def test_source_create_with_max_limit
+    launch_ticket_field_revamp do
+      Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
+      create_n_custom_sources(Helpdesk::Source::CUSTOM_SOURCE_MAX_ACTIVE_COUNT - 1)
+      field = @account.ticket_fields.where(field_type: 'default_source').first
+      label = 'source test 8'
+      put :update, construct_params(
+        { id: field.id },
+        choices: [{ label: label, position: 25, icon_id: 30 }]
+      )
+      assert_response 200
+      source = @account.helpdesk_sources.where(name: label).first
+      assert_not_nil source
+      assert_equal source.position, 25
+      assert_equal source.meta[:icon_id], 30
+      label = 'source test 9'
+      put :update, construct_params(
+        { id: field.id },
+        choices: [{ label: label, position: 31, icon_id: 31 }]
+      )
+      assert_response 400
+      match_json([bad_request_error_pattern(field.label, :ticket_choices_exceeded_limit, limit: Helpdesk::Source::CUSTOM_SOURCE_MAX_ACTIVE_COUNT, field_type: field.label, code: :exceeded_limit)])
+    end
+  ensure
+    Account.current.unstub(:ticket_source_revamp_enabled?)
+  end
+
+  def test_source_update_with_max_limit
+    launch_ticket_field_revamp do
+      Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
+      create_n_custom_sources(Helpdesk::Source::CUSTOM_SOURCE_MAX_ACTIVE_COUNT - 1)
+      deleted_source1 = create_custom_source(deleted: true)
+      assert_not_nil deleted_source1
+      assert deleted_source1.deleted
+      deleted_source2 = create_custom_source(deleted: true)
+      assert_not_nil deleted_source2
+      assert deleted_source2.deleted
+      field = @account.ticket_fields.where(field_type: 'default_source').first
+      put :update, construct_params(
+        { id: field.id },
+        choices: [{ id: deleted_source1.account_choice_id, deleted: false }]
+      )
+      assert_response 200
+      source = @account.helpdesk_sources.where(account_choice_id: deleted_source1.account_choice_id).first
+      assert_not_nil source
+      refute source.deleted
+      put :update, construct_params(
+        { id: field.id },
+        choices: [{ id: deleted_source2.account_choice_id, deleted: false }]
+      )
+      assert_response 400
+      match_json([bad_request_error_pattern(field.label, :ticket_choices_exceeded_limit, limit: Helpdesk::Source::CUSTOM_SOURCE_MAX_ACTIVE_COUNT, field_type: field.label, code: :exceeded_limit)])
+    end
+  ensure
+    Account.current.unstub(:ticket_source_revamp_enabled?)
+  end
+
+  def test_source_choice_delete_then_create_after_max_limit_reached
+    launch_ticket_field_revamp do
+      Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
+      create_n_custom_sources(Helpdesk::Source::CUSTOM_SOURCE_MAX_ACTIVE_COUNT)
+      field = @account.ticket_fields.where(field_type: 'default_source').first
+      label = 'source test 10'
+      put :update, construct_params(
+        { id: field.id },
+        choices: [{ id: @account.helpdesk_sources.last.account_choice_id, deleted: true }]
+      )
+      assert_response 200
+      assert @account.helpdesk_sources.last.deleted
+      put :update, construct_params(
+        { id: field.id },
+        choices: [{ label: label, position: 26, icon_id: 31 }]
+      )
+      assert_response 200
+      source = @account.helpdesk_sources.where(name: label).first
+      assert_not_nil source
+      assert_equal source.position, 26
+      assert_equal source.meta[:icon_id], 31
+    end
+  ensure
+    Account.current.unstub(:ticket_source_revamp_enabled?)
+  end
+
+  def test_source_choice_max_limit_with_delete_and_create
+    launch_ticket_field_revamp do
+      Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
+      create_n_custom_sources(Helpdesk::Source::CUSTOM_SOURCE_MAX_ACTIVE_COUNT)
+      field = @account.ticket_fields.where(field_type: 'default_source').first
+      label = 'source test 11'
+      deleted_source_id = @account.helpdesk_sources.last.account_choice_id
+      put :update, construct_params(
+        { id: field.id },
+        choices: [{ label: label, position: 37, icon_id: 37 }, { id: deleted_source_id, deleted: true }]
+      )
+      assert_response 200
+      source = @account.helpdesk_sources.where(name: label).first
+      assert_not_nil source
+      assert_equal source.position, 37
+      assert_equal source.meta[:icon_id], 37
+      deleted_source = @account.helpdesk_sources.where(account_choice_id: deleted_source_id).first
+      assert_not_nil deleted_source
+      assert deleted_source.deleted
+    end
+  ensure
+    Account.current.unstub(:ticket_source_revamp_enabled?)
+  end
+
+  def test_source_choice_max_limit_with_multiple_combinations
+    launch_ticket_field_revamp do
+      Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
+      create_n_custom_sources(Helpdesk::Source::CUSTOM_SOURCE_MAX_ACTIVE_COUNT)
+      deleted_source = create_custom_source(deleted: true)
+      assert_not_nil deleted_source
+      field = @account.ticket_fields.where(field_type: 'default_source').first
+      label = 'source test 12'
+      custom_sources = @account.helpdesk_sources.visible.custom
+      source_to_del1 = custom_sources.first
+      source_to_del2 = custom_sources.second
+      put :update, construct_params(
+        { id: field.id },
+        choices: [{ label: label, position: 40, icon_id: 40 }, { id: source_to_del1.account_choice_id, deleted: true },
+                  { id: source_to_del2.account_choice_id, deleted: true }, { id: deleted_source.account_choice_id, deleted: false }]
+      )
+      assert_response 200
+      source = @account.helpdesk_sources.where(name: label).first
+      assert_not_nil source
+      source = @account.helpdesk_sources.where(account_choice_id: source_to_del1.account_choice_id).first
+      assert source.deleted
+      source = @account.helpdesk_sources.where(account_choice_id: source_to_del2.account_choice_id).first
+      assert source.deleted
+      source = @account.helpdesk_sources.where(account_choice_id: deleted_source.account_choice_id).first
+      refute source.deleted
     end
   ensure
     Account.current.unstub(:ticket_source_revamp_enabled?)

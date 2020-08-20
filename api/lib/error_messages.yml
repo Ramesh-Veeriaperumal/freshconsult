@@ -513,6 +513,7 @@ api_error_messages:
   redundant_parameter: "Redundant parameter in %{section_id} is not allowed"
   duplicate_label_ticket_field: "Ticket field with label %{label} already exist"
   ticket_field_exceeded_limit: "You can create %{limit} fields of type %{field_type} and you've reached its limit."
+  ticket_choices_exceeded_limit: "You can create %{limit} active choices of type %{field_type} and you've reached its limit."
   ticket_field_choice_condition: "Choices is only available for dropdown or nested field only."
   invalid_value_for_icon_id: "Icon id should be from %{range} inclusive"
   invalid_position_for_choices: "Position should be from %{range} inclusive"
