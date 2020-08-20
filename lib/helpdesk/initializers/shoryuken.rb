@@ -1,5 +1,5 @@
 SH_ENABLED = !(Rails.env.development? or Rails.env.test?) #=> To prevent error without setup
-puts "Shoryuken is #{SH_ENABLED ? 'enabled' : 'not enabled'}" 
+puts "Shoryuken is #{SH_ENABLED ? 'enabled' : 'not enabled'}"
 
 if SH_ENABLED
   Shoryuken::EnvironmentLoader.setup_options(config_file: File.join(Rails.root, 'config/shoryuken.yml')) #PRE-RAILS: Shoryuken 4.x init config load is changed
@@ -17,6 +17,7 @@ if SH_ENABLED
   Shoryuken.configure_server do |config|
     config.server_middleware do |chain|
       chain.add PrometheusExporter::Instrumentation::Shoryuken if ENV['ENABLE_PROMETHEUS'] == '1'
+      chain.add Middleware::Shoryuken::Server::ResetThread
       chain.add Middleware::Shoryuken::Server::SupressSqlLogs
       chain.add Middleware::Shoryuken::Server::BelongsToAccount, :ignore => [
         'Ryuken::FacebookRealtime',

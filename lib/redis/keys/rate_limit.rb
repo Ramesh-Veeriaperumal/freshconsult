@@ -20,4 +20,6 @@ module Redis::Keys::RateLimit
   WIDGET_API_THROTTLER          = "WIDGET_API_THROTTLER:%{account_id}".freeze
   ACCOUNT_WIDGET_API_LIMIT      = "ACCOUNT_WIDGET_API_LIMIT:%{account_id}".freeze
   DEFAULT_WIDGET_API_LIMIT      = "DEFAULT_WIDGET_API_LIMIT".freeze
+  PLAN_EMAIL_LIMIT              = 'PLAN_EMAIL_LIMIT:%{plan_id}'.freeze
+  PLAN_EMAIL_PATHS_LIMIT        = 'PLAN_EMAIL_MIN_PATHS_LIMIT:%{plan_id}'.freeze
 end

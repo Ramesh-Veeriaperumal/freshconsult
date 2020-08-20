@@ -375,101 +375,106 @@ var image_width=[];
 	})
 
 	//Scripts to open a image in modal
-	$(function()  {
-	    $(document).ready(function(){	
-		$(".article-body img").each(function (i) {
-		        var img = $(this);
-			$("<img/>")
-			.attr("src", img.attr("src"))
-			.load(function() {
-			img.attr("data-index",i);
-			});
-		});
-            })		
-	    var modal = document.createElement('div');
+	$(function () {
+		var modal = document.createElement('div');
 		modal.setAttribute("id", "image-modal");
 		modal.setAttribute("tabindex", -1);
-                modal.setAttribute("class", "article-lightbox modal fade");
-            //Modal template  
-            var domString = '<div class="modal-header"><span class="modal-action" data-dismiss="modal"><i class="ficon-close-qna fsize-18"></i></span></div>' +
-			            '<div class="modal-body"><img id="preview" src=""></div>' +
-			            '<div class="modal-footer">' +                                                      
-		                           '<p id="image-caption"></p>' +
-		                           '<a class="modal-action" href="" id="download" download><i class="ficon-download fsize-18"></i></a>' +
-		                           '<span class="prev modal-action"><i class="ficon-arrow-left fsize-18"></i></span>' +
-			                   '<span class="next modal-action"><i class="ficon-arrow-right fsize-18"></i></span>' +
-			            '</div>' ;
-            modal.innerHTML =  domString;
-	    $(".fc-article-show").append(modal);  
-		
-            //Fetching all the images in the article
-            var gallery = $('.article-body img'); 
-	    var currentIndex = 0;
-	    
-	    //Opening modal on clicking the inage
-	    $(".article-body img").on("click", function(ev) {  
-		var index = ev.currentTarget.dataset.index;                           
-		ev.preventDefault();
-		articleLightboxSrc(parseInt(index));
-	    });  
-	   
-	    //Getting previous image
-	    $(".article-lightbox .prev").on("click", function() {                                             
-		previousImage();
-	    });        
-	   
-	    //Getting next image
-	    $(".article-lightbox .next").on("click", function() {                                             
-		 nextImage();
-	     });
-	      
-	     //closing the modal on clicking outside the image
-	     $(".article-lightbox .modal-body").on("click", function() {
-		 $("#image-modal").modal('hide')                
-	     });
-	   
-	     //Prevent closing the modal on clicking the image
-	     $(".article-lightbox .modal-body img").on("click", function(ev) {
-		  ev.stopImmediatePropagation();                  
-	     });   
-	      
-	     //Keyboardevents
-	     $('#image-modal').on("keydown", function (e) {  
-		      var leftArrowKey  = 37;
-		      var rightArrowKey = 39;
-    
-		      if (e.which === leftArrowKey) { 
-			      previousImage();
-		      }
-    
-		      if (e.which === rightArrowKey) { 
-			      nextImage();
-		      }
-	      });
-    
-	      //PreviousImage
-	      function previousImage() {
-		      index = currentIndex-1;          
-		      articleLightboxSrc(index);
-	       }
-    
-	      //NextImage
-	      function nextImage() {
-		      index = currentIndex+1;          
-		      articleLightboxSrc(index);
-	       }
-    
-	      //Providing the src for the modal
-	      function articleLightboxSrc(index) {
-		      $('#image-modal').modal('show')
-		      var totalImage = gallery.length;
-		      var currentImage = index + 1;
-		      var id = gallery[index].dataset.id || gallery[index].dataset.attachment_id;
-		      $('#preview').attr('src',gallery[index].src); 
-		      $('#image-caption').text(currentImage +" "+ I18n.t("common_js_translations.of") +" "+ totalImage);  
-		      $('#download').attr('href',"/helpdesk/attachments/"+id+"?download=true");
-		      currentIndex=index;
-		      return currentIndex; 
-	       }
-        })
+		modal.setAttribute("class", "article-lightbox modal fade");
+		//Modal template  
+		var domString = '<div class="modal-header"><span class="modal-action" data-dismiss="modal"><i class="ficon-close-qna fsize-18"></i></span></div>' +
+			'<div class="modal-body"><img id="preview" src=""></div>' +
+			'<div class="modal-footer">' +
+			'<p id="image-caption"></p>' +
+			'<a class="modal-action" href="" id="download" download><i class="ficon-download fsize-18"></i></a>' +
+			'<span class="prev modal-action"><i class="ficon-arrow-left fsize-18"></i></span>' +
+			'<span class="next modal-action"><i class="ficon-arrow-right fsize-18"></i></span>' +
+			'</div>';
+		modal.innerHTML = domString;
+		$(".fc-article-show").append(modal);
+
+		$(document).ready(function () {
+			var index = 0;
+			$(".article-body img").each(function (i) {
+				var img = this;
+				var parent = this.parentElement;
+
+				//Checking the availability of lightbox to image
+				if (parent.nodeName !== "A" || parent.classList.contains("image-enlarge-link")) {
+					img.dataset.index = index;
+					img.classList.add("lightbox-image");
+					index++;
+				}
+			});
+			
+			//Fetching all the images in the article
+			var gallery = $('.article-body img.lightbox-image');
+			var currentIndex = 0;
+
+			//Opening modal on clicking the inage
+			$(".article-body img.lightbox-image").on("click", function (ev) {
+				var index = ev.currentTarget.dataset.index;
+				ev.preventDefault();
+				articleLightboxSrc(parseInt(index));
+			});
+
+			//Getting previous image
+			$(".article-lightbox .prev").on("click", function () {
+				previousImage();
+			});
+
+			//Getting next image
+			$(".article-lightbox .next").on("click", function () {
+				nextImage();
+			});
+
+			//closing the modal on clicking outside the image
+			$(".article-lightbox .modal-body").on("click", function () {
+				$("#image-modal").modal('hide')
+			});
+
+			//Prevent closing the modal on clicking the image
+			$(".article-lightbox .modal-body img").on("click", function (ev) {
+				ev.stopImmediatePropagation();
+			});
+
+			//Keyboardevents
+			$('#image-modal').on("keydown", function (e) {
+				var leftArrowKey = 37;
+				var rightArrowKey = 39;
+
+				if (e.which === leftArrowKey) {
+					previousImage(gallery);
+				}
+
+				if (e.which === rightArrowKey) {
+					nextImage(gallery);
+				}
+			});
+
+			//PreviousImage
+			function previousImage() {
+				index = currentIndex - 1;
+				articleLightboxSrc(index);
+			}
+
+			//NextImage
+			function nextImage() {
+				index = currentIndex + 1;
+				articleLightboxSrc(index);
+			}
+
+			//Providing the src for the modal
+			function articleLightboxSrc(index) {
+				$('#image-modal').modal('show')
+				var totalImage = gallery.length;
+				var currentImage = index + 1;
+				var id = gallery[index].dataset.id || gallery[index].dataset.attachment_id;
+				$('#preview').attr('src', gallery[index].src);
+				$('#image-caption').text(currentImage + " " + I18n.t("common_js_translations.of") + " " + totalImage);
+				$('#download').attr('href', "/helpdesk/attachments/" + id + "?download=true");
+				currentIndex = index;
+				return currentIndex;
+			}
+		})
+	})
 }(window.jQuery);

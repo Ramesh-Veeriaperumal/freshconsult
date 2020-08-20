@@ -15,7 +15,7 @@ class Account < ActiveRecord::Base
                           elb elb1 elb2 elb3 elb4 elb5 elb6 elb7 elb8 elb9 elb10 agent-hermes
                           attachment euattachment eucattachment ausattachment indattachment cobrowsing migrations
                           migrations-eu migrations-au migrations-ind authz authz-euc authz-ind authz-au ipaas-tool
-                          ipaas-app ipaas-ui) + FreshopsSubdomains + PartnerSubdomains
+                          ipaas-app ipaas-ui analytics-export) + FreshopsSubdomains + PartnerSubdomains
 
   PLANS_AND_FEATURES = {
     :basic => { :features => [ :twitter, :custom_domain, :multiple_emails, :marketplace ] },
@@ -189,33 +189,32 @@ class Account < ActiveRecord::Base
     force_index_tickets: false, freshfone_caller_id_masking: false,
     freshfone_onboarding: false, gamification_perf: false,
     gamification_quest_perf: false, lambda_exchange: false, automation_revamp: false,
-    list_page_new_cluster: false, meta_read: false, most_viewed_articles: false, multifile_attachments: true,
+    meta_read: false, most_viewed_articles: false, multifile_attachments: true,
     new_footer_feedback_box: false, new_leaderboard: false, periodic_login_feature: false, restricted_helpdesk: false,
     supervisor_dashboard: false, support_new_ticket_cache: false, synchronous_apps: false, ticket_list_page_filters_cache: false,
     skip_hidden_tkt_identifier: false, agent_collision_alb: false, auto_refresh_alb: false,
-    countv2_template_read: false, customer_sentiment_ui: false, portal_solution_cache_fetch: false,
+    customer_sentiment_ui: false, portal_solution_cache_fetch: false,
     activity_ui: false, customer_sentiment: false, logout_logs: false,
     es_v2_splqueries: false, suggest_tickets: false, "Freshfone New Notifications": false,
     feedback_widget_captcha: false, es_multilang_solutions: false, requester_widget: false,
     spam_blacklist_feature: false, antivirus_service: false, hide_api_key: false,
     skip_ticket_threading: false, attachments_scope: false,
-    kbase_spam_whitelist: false, forum_post_spam_whitelist: false, enable_qna: false, enable_insights: false,
+    kbase_spam_whitelist: false, enable_qna: false, enable_insights: false,
     whitelist_supervisor_sla_limitation: false, escape_liquid_attributes: true, escape_liquid_for_reply: true,
-    escape_liquid_for_portal: true, pjax_reload: false, one_hop: false,
-    service_writes: false, service_reads: false, disable_banners: false,
+    service_writes: false, service_reads: false,
     admin_only_mint: false, send_emails_via_fd_email_service_feature: false, user_notifications: false,
     freshplug_enabled: false, dkim: false, dkim_email_service: false, sha1_enabled: false, disable_archive: false,
     sha256_enabled: false, auto_ticket_export: false, select_all: false, facebook_realtime: false,
     "Freshfone Call Tracker": false, ticket_contact_export: false, custom_apps: false, timesheet: false,
-    api_jwt_auth: false, disable_emails: false, skip_portal_cname_chk: false, falcon_signup: false,
+    api_jwt_auth: false, disable_emails: false, skip_portal_cname_chk: false,
     falcon_portal_theme: false, image_annotation: false, email_actions: false, ner: false, disable_freshchat: false,
-    froala_editor_forums: false, freshid: false,
+    freshid: false,
     incoming_attachment_limit_25: false, fetch_ticket_from_ref_first: false, outgoing_attachment_limit_25: false,
     whitelist_sso_login: false, va_any_field_without_none: false,
     auto_complete_off: false, freshworks_omnibar: false,
     euc_migrated_twitter: false, new_ticket_recieved_metric: false, es_msearch: true,
     canned_forms: false, attachment_virus_detection: false, old_link_back_url_validation: false,
-    stop_contacts_count_query: false, help_widget: false, undo_send: false,
+    stop_contacts_count_query: false, undo_send: false,
     bot_email_channel: false, archive_ticket_fields: true,
     sso_login_expiry_limitation: false, csat_email_scan_compatibility: false, email_deprecated_style_parsing: false,
     saml_ecrypted_assertion: false, quoted_text_parsing_feature: false, description_by_default: false,
@@ -235,7 +234,7 @@ class Account < ActiveRecord::Base
     mailbox_google_oauth: false, migrate_euc_pages_to_us: false, agent_collision_revamp: false,
     topic_editor_with_html: false, remove_image_attachment_meta_data: false,
     ticket_field_revamp: true, new_timeline_view: false,
-    sla_policy_revamp: false, freshdesk_freshsales_bundle: false, requester_widget_timeline: false,
+    freshdesk_freshsales_bundle: false, requester_widget_timeline: false,
     enable_secure_login_check: false,
     marketplace_gallery: false, facebook_public_api: false, twitter_public_api: false, retry_emails: false,
     fb_message_echo_support: false, portal_prototype_update: false,
@@ -245,7 +244,7 @@ class Account < ActiveRecord::Base
     omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false,
     ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false,
     twitter_api_compliance: false, omni_agent_availability_dashboard: false, explore_omnichannel_feature: false, hide_omnichannel_toggle: false,
-    chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false
+    chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false
   }.freeze
   
   BLOCK_GRACE_PERIOD = 90.days

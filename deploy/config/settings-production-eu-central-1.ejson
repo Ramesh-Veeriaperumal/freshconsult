@@ -1651,7 +1651,9 @@
       "fluffy": {
         "_host": "fluffy-euc.internal.podeucentral1.freshdesk.com",
         "username": "EJ[1:XtNjD7f+/Eaks0L0dhqM4fajqte5a1OBfP78KuLnfFM=:92mwKHf3rlR5lgiEiuApzHaC8qbtzRhg:/dbTSk1mrTuBeWRmfNnQ0X7/CCuoMGSBjQ==]",
-        "password": "EJ[1:XtNjD7f+/Eaks0L0dhqM4fajqte5a1OBfP78KuLnfFM=:RLZeIAtHsssUHc1SMSsqekQB8Dueg6+f:+L/rknIB1QnapHZZosB0y3m9mAsgeihghCjSsPOpkUFvirHbFefdmoPMjfsyUvQYRsq2qg==]"
+        "password": "EJ[1:XtNjD7f+/Eaks0L0dhqM4fajqte5a1OBfP78KuLnfFM=:RLZeIAtHsssUHc1SMSsqekQB8Dueg6+f:+L/rknIB1QnapHZZosB0y3m9mAsgeihghCjSsPOpkUFvirHbFefdmoPMjfsyUvQYRsq2qg==]",
+        "fd_email_username": "EJ[1:sDhur+4iFL8/iiQdXxz9szpJsehfN+W7opfgvXMSCgQ=:M/W5btY2msIQb1WEQdjphQ/VW6Z9uUrg:xwucWNEHkhpCv7HI+7nKrV8FfeU/M/DWv2V6rv6Tbw==]",
+        "fd_email_password": "EJ[1:sDhur+4iFL8/iiQdXxz9szpJsehfN+W7opfgvXMSCgQ=:E4v8ToI9wwRG23tgIq6FFVz2Tway16nM:UXfLVPvkQWMd+pTmFqVHQGD6ZdExXcBgg2+tX94G2nTwBE61BZLWP48/EDjalKtVT8O0Rg==]"
       },
       "freddy_skills_config": {
         "detect_thank_you_note": {
@@ -1693,6 +1695,11 @@
           "_demo_email": "support@frsshdesk.com",
           "_timeout": 5,
           "_onboard_timeout": 5        
+        },
+        "freddy_consumed_session": {
+          "_url": "http://euc-fbots-freddy-acct-usage-elb-1927138953.eu-central-1.elb.amazonaws.com/api/v1/accounts",
+          "_app_name": "freshdesk",
+          "_timeout": 3
         }
       },
       "shift_config": {
@@ -1863,6 +1870,7 @@
         "saml.pem",
         "iam.pem",
         "iam_public.pem",
+        "freddy_sessions.pem",
         "jwe_encryption_key.pem"
       ],
       "_bucket": "freshops-admin",

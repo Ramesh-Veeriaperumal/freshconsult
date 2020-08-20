@@ -1770,22 +1770,6 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
       return
     end
   end
-        
-  def old_ui_deprecation
-    content_tag('div', "<a href='javascript:void(0)'></a> #{t('old_ui_deprecation')} <a href='/enable_falcon' data-method='post' > #{t('old_ui_migraton')} </a>".html_safe, class: "alert-message block-message warning full-width") if !current_account.disable_banners_enabled? && current_account.falcon_enabled?
-  end
-
-    def live_chat_phone_deprecation
-      unless current_account.disable_banners_enabled?
-        if current_account.freshfone_enabled? && current_account.livechat_enabled? && !(current_account.freshcaller_enabled? || freshchat_enabled?)
-          content_tag('div', "<a href='javascript:void(0)'></a> #{t('live_chat_phone_deprecation')} <a href='https://support.freshdesk.com/support/solutions/folders/274807' target='_blank'> #{t('live_chat_phone_migration')} </a>".html_safe, class: "alert-message block-message warning full-width")
-        elsif current_account.livechat_enabled? && !freshchat_enabled?
-          content_tag('div', "<a href='javascript:void(0)'></a> #{t('live_chat_deprecation')} <a href='https://support.freshdesk.com/support/solutions/articles/236834' target='_blank'> #{t('live_chat_migration')} </a>".html_safe, class: "alert-message block-message warning full-width")
-        elsif current_account.freshfone_enabled? && !current_account.freshcaller_enabled?
-          content_tag('div', "<a href='javascript:void(0)'></a> #{t('freshfone_deprecation')} <a href='https://support.freshdesk.com/support/solutions/articles/236833' target='_blank'> #{t('freshfone_migration')} </a>".html_safe, class: "alert-message block-message warning full-width")
-        end
-      end
-    end
 
   #Checks if Email was disabled by Freshpipe for running migrations
   def check_email_disabled_by_pipe

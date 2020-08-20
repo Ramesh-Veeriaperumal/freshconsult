@@ -24,6 +24,7 @@ module Concerns::ApplicationViewConcern
     unless options[:include_weekday]
       time_format = time_format.gsub(/\A(%a|A),\s/, "")
     end
+    time_format = time_format.sub('at', I18n.t('at'))
     final_date = options[:translate] ? (I18n.l date_time , :format => time_format) : (date_time.strftime(time_format))
   end
 

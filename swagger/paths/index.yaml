@@ -792,3 +792,15 @@
   $ref: ./agent_statuses/list_and_create.yaml
 /agent_statuses/{id}:
   $ref: ./agent_statuses/read_update_delete.yaml
+
+/admin/business_calendars:
+  $ref: ./admin/business_hours/list_and_create.yaml
+/admin/business_calendars/{id}:
+  $ref: ./admin/business_hours/crud.yaml
+
+/admin/groups:
+  $ref: ./admin/groups/list_and_create.yaml
+/admin/groups/{id}:
+  $ref: ./admin/groups/crud.yaml
+/admin/groups/{id}/agents:
+  $ref: ./admin/groups/group_agents.yaml

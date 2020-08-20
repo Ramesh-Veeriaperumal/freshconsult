@@ -25,7 +25,7 @@ class Solutions::FolderDecorator < ApiDecorator
     if allow_chat_platform_attributes?
       response_hash[:platforms] = platform_values
       response_hash[:tags] = !solution_platform_mapping.try(:destroyed?) ? tags.pluck(:name) : []
-      response_hash[:icon] = icon.present? && !icon.try(:destroyed?) ? folder_icon_hash : {}
+      response_hash.merge!(folder_icon_hash)
     end
     if private_api? || channel_v2_api?
       response_hash[:position] = position
@@ -61,7 +61,15 @@ class Solutions::FolderDecorator < ApiDecorator
   end
 
   def folder_icon_hash
-    AttachmentDecorator.new(icon).to_hash
+    icon_hash = {}
+    valid_icon = icon.present? && !icon.try(:destroyed?)
+    if private_api?
+      icon_hash[:icon] = valid_icon ? AttachmentDecorator.new(icon).to_hash : {}
+    else
+      icon_hash[:icon_url] = valid_icon ? icon.attachment_public_url : nil
+    end
+
+    icon_hash
   end
 
   def parent

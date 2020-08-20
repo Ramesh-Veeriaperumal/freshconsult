@@ -7,7 +7,8 @@ module SolutionConstants
 
   FOLDER_FIELDS_PRIVATE_API = FOLDER_FIELDS | %w[article_order]
 
-  FOLDER_FILTER_FIELDS = %w[portal_id language platforms tags per_page page].freeze
+  FOLDER_FILTER_FIELDS = %w[portal_id language platforms tags per_page page allow_language_fallback].freeze
+
   FOLDER_ATTRIBUTES_TO_BE_STRIPPED = %w[name].freeze
 
   BULK_UPDATE_FIELDS = %w[properties].freeze
@@ -71,9 +72,10 @@ module SolutionConstants
   LOAD_OBJECT_EXCEPT = [:category_folders, :folder_articles, :article_content, :filter, :untranslated_articles, :suggested, :folder_filter].freeze
 
   INDEX_FIELDS = %w[language prefer_published].freeze
-  SHOW_FIELDS = %w[language prefer_published status].freeze
 
-  FOLDER_ARTICLES_FIELDS = (%w[portal_id tags platforms page per_page] | INDEX_FIELDS).freeze
+  SHOW_FIELDS = %w[language prefer_published status allow_language_fallback].freeze
+
+  FOLDER_ARTICLES_FIELDS = (%w[portal_id tags platforms page per_page status allow_language_fallback] | INDEX_FIELDS).freeze
 
   RECENT_ARTICLES_FIELDS = %w[ids user_id language].freeze
   ARTICLE_CONTENT_FIELDS = %w[language prefer_published].freeze

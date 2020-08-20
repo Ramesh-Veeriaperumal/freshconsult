@@ -69,9 +69,13 @@ class Helpdesk::ArchiveTicketDrop < BaseDrop
 		TicketConstants.priority_list[@source.priority]
 	end
 
-	def source
-		TicketConstants.source_list[@source.source]
-	end
+  def source
+    if @source.account.ticket_source_revamp_enabled?
+      @source.source_name
+    else
+      TicketConstants.source_list[@source.source]
+    end
+  end
 
 	def source_name
 		@source.source_name

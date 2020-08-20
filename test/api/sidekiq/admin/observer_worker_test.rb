@@ -192,8 +192,9 @@ module Admin
 
       def test_retry_observer_worker_with_schema_less_locking_exception_with_launch_party
         ticket = create_ticket
+        schema_less_ticket = ticket.schema_less_ticket
         args = {
-          doer_id: ticket.id,
+          doer_id: Account.current.agents.last.id,
           ticket_id: ticket.id,
           current_events: {},
           enqueued_class: 'Helpdesk::Ticket',
@@ -202,7 +203,7 @@ module Admin
         }
         Account.any_instance.stubs(:ticket_observer_race_condition_fix_enabled?).returns(true)
         Tickets::ObserverWorker.new.perform(args)
-        Helpdesk::Ticket.stubs(:find_by_id).returns(ticket)
+        Helpdesk::Ticket.any_instance.stubs(:schema_less_ticket).returns(schema_less_ticket)
         ::Tickets::RetryObserverWorker.jobs.clear
         Tickets::ObserverWorker.new.perform(args)
         assert_equal 1, ::Tickets::RetryObserverWorker.jobs.size
@@ -213,7 +214,7 @@ module Admin
       def test_retry_observer_worker
         ticket = create_ticket
         args = {
-          doer_id: ticket.id,
+          doer_id: Account.current.agents.last.id,
           ticket_id: ticket.id,
           current_events: {},
           enqueued_class: 'Helpdesk::Ticket',
@@ -231,7 +232,7 @@ module Admin
       def test_retry_observer_worker_with_schema_less_locking_exception_without_launch_party
         ticket = create_ticket
         args = {
-          doer_id: ticket.id,
+          doer_id: Account.current.agents.last.id,
           ticket_id: ticket.id,
           current_events: {},
           enqueued_class: 'Helpdesk::Ticket',

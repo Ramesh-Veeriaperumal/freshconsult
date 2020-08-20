@@ -190,5 +190,32 @@ module Channel::V2::ApiSolutions
         end
       end
     end
+
+    def test_folder_filter_with_language_allow_language_fallback_params
+      setup_channel_api do
+        set_jwe_auth_header(SUPPORT_BOT)
+        portal_id = @account.portals.first.id
+        language = 'ru-RU'
+        language_object = Language.find_by_code(language)
+
+        create_folder_translation(language_object.to_key)
+        get :folder_filter, controller_params(version: 'channel', language: language, allow_language_fallback: 'true')
+        assert_response 200
+      end
+    end
+
+    def test_folder_filter_with_invalid_language_allow_language_fallback_params
+      setup_channel_api do
+        set_jwe_auth_header(SUPPORT_BOT)
+        portal_id = @account.portals.first.id
+        language = 'ru-RU'
+        language_object = Language.find_by_code(language)
+        create_folder_translation(language_object.to_key)
+        get :folder_filter, controller_params(version: 'channel', language: language, allow_language_fallback: 'incorrect')
+        assert_response 400
+        expected = { description: 'Validation failed', errors: [{ field: 'allow_language_fallback', message: "It should be one of these values: 'true,false'", code: 'invalid_value' }] }
+        assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+      end
+    end
   end
 end

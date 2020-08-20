@@ -1247,7 +1247,6 @@ class SubscriptionsControllerTest < ActionController::TestCase
       update_currency
       Account.stubs(:current).returns(@account)
       @account.launch :downgrade_policy
-      @account.launch(:addon_based_billing)
       chargebee_update = ChargeBee::Result.new(stub_update_params(@account.id))
       ChargeBee::Subscription.stubs(:update).returns(chargebee_update)
       chargebee_estimate = ChargeBee::Result.new(stub_estimate_params)

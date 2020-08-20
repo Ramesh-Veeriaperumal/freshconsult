@@ -5,12 +5,6 @@ class Helpdesk::Source < Helpdesk::Choice
 
   serialize :meta, HashWithIndifferentAccess
 
-  SOURCE_FORMATTER = {
-    ticket_source_keys_by_token: proc { |choice| [choice.translated_source_name(translation_record_from_ticket_fields), choice.account_choice_id] }
-  }.freeze
-
-  private_constant :SOURCE_FORMATTER
-
   class << self
     def ticket_sources
       if Account.current && Account.current.launched?(:whatsapp_ticket_source)
@@ -163,23 +157,6 @@ class Helpdesk::Source < Helpdesk::Choice
       Account.current.ticket_source_revamp_enabled?
     end
 
-    def source_choices(type)
-      Account.current.ticket_source_from_cache.map(&SOURCE_FORMATTER[type])
-    end
-
-    private
-
-      def current_supported_language
-        User.current.try(:supported_language) || Language.current.try(:to_key)
-      end
-
-      def ticket_fields
-        @ticket_fields ||= Account.current.ticket_fields_only.where(field_type: 'default_source').first
-      end
-
-      def translation_record_from_ticket_fields
-        @translation_record_from_ticket_fields ||= ticket_fields.safe_send("#{current_supported_language}_translation")
-      end
     def visible_custom_sources
       Account.current.ticket_source_from_cache.where(default: 0, deleted: 0)
     end
@@ -224,6 +201,7 @@ class Helpdesk::Source < Helpdesk::Choice
     end
 
     def translate_default_source_name
-      I18n.t(Helpdesk::Source.default_ticket_source_names_by_key[account_choice_id])
+      key = Helpdesk::Source.default_ticket_sources.select { |i| i[2] == account_choice_id }.first[1]
+      I18n.t(key)
     end
 end

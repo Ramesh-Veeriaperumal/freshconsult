@@ -9,7 +9,7 @@ class Account < ActiveRecord::Base
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :announcements_tab,
     :va_any_field_without_none, :api_es,
     :encode_emoji, :auto_complete_off, :sandbox_lp, :encode_emoji_subject,
-    :euc_migrated_twitter, :new_ticket_recieved_metric, :ner, :disable_banners,
+    :euc_migrated_twitter, :new_ticket_recieved_metric, :ner,
     :count_service_es_writes, :count_service_es_reads,
     :sso_login_expiry_limitation, :undo_send, :old_link_back_url_validation, :stop_contacts_count_query,
     :denormalized_select_for_update, :es_tickets,
@@ -22,7 +22,7 @@ class Account < ActiveRecord::Base
     :update_billing_info, :allow_billing_info_update,
     :native_apps, :archive_tickets_api, :bot_agent_response,
     :fetch_ticket_from_ref_first,
-    :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp,
+    :id_for_choices_write, :fluffy, :fluffy_email, :fluffy_email_signup, :session_logs, :nested_field_revamp,
     :ticket_field_limit_increase, :join_ticket_field_data, :bypass_signup_captcha,
     :simple_outreach, :disable_simple_outreach, :supervisor_text_field, :disable_mint_analytics,
     :freshid_org_v2, :hide_agent_login,
@@ -38,7 +38,7 @@ class Account < ActiveRecord::Base
     :jira_onpremise_reporter, :sidekiq_logs_to_central, :encode_emoji_in_solutions,
     :forums_agent_portal, :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html,
     :remove_image_attachment_meta_data, :automated_private_notes_notification,
-    :sane_restricted_helpdesk, :hiding_confidential_logs, :sla_policy_revamp, :help_widget_log, :freshdesk_freshsales_bundle,
+    :sane_restricted_helpdesk, :hiding_confidential_logs, :help_widget_log, :freshdesk_freshsales_bundle,
     :requester_widget_timeline,
     :out_of_office, :enable_secure_login_check, :public_api_filter_factory, :marketplace_gallery,
     :translations_proxy, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :retry_emails, :disable_beamer, :fb_message_echo_support, :portal_prototype_update,
@@ -47,7 +47,7 @@ class Account < ActiveRecord::Base
     :omni_chat_agent, :portal_frameworks_update, :ticket_filters_central_publish, :new_email_regex, :auto_refresh_revamp, :agent_statuses, :omni_reports,
     :omni_plans_migration_banner, :parse_replied_email, :wf_comma_filter_fix, :composed_email_check, :omni_channel_dashboard, :csat_for_social_surveymonkey, :fresh_parent, :trim_special_characters, :kbase_omni_bundle,
     :omni_agent_availability_dashboard, :twitter_api_compliance, :silkroad_export, :silkroad_shadow, :silkroad_multilingual, :group_management_v2, :symphony, :invoke_touchstone, :explore_omnichannel_feature, :hide_omnichannel_toggle,
-    :dashboard_java_fql_performance_fix, :emberize_business_hours, :trigger_domain_mapping_deletion, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp
+    :dashboard_java_fql_performance_fix, :emberize_business_hours, :trigger_domain_mapping_deletion, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp, :response_time_null_fix, :cx_feedback
   ].freeze
 
   BITMAP_FEATURES = [
@@ -216,8 +216,7 @@ class Account < ActiveRecord::Base
 
   def count_es_enabled?
     launched?(:count_service_es_reads) ||
-      ((launched?(:es_count_reads) || launched?(:list_page_new_cluster)) &&
-        features?(:countv2_reads))
+      (launched?(:es_count_reads) && features?(:countv2_reads))
   end
 
   def count_es_api_enabled?

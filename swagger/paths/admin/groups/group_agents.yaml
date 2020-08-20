@@ -1,0 +1,60 @@
+get:
+  tags: ['admin groups']
+  summary: List all group agents
+  parameters:
+    - $ref: '#/parameters/id'
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          groups:
+            type: array
+            items:
+              $ref: '#/definitions/admin_groups_agents_list_response'
+          meta:
+            $ref: '#/definitions/meta'
+    404:
+      description: group not found
+    403:
+      description: Access denied
+
+patch:
+  tags: ['admin groups']
+  summary: Update group agents
+  parameters:
+    - $ref: '#/parameters/id'
+    - name: data
+      in: body
+      required: true
+      schema:
+        type: object
+        properties:
+          agents:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                write_access:
+                  type: boolean
+                delete:
+                  type: boolean
+                  default: false
+              required:
+                - id
+        required:
+          - agents
+  responses:
+    200:
+      description: Success
+    404:
+      description: group not found
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

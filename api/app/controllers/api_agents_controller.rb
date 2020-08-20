@@ -70,6 +70,7 @@ class ApiAgentsController < ApiApplicationController
       if @item.save
         render_201_with_location(location_url: 'agents_url', item_id: @item.id)
       else
+        Account.current.users.where(id: @user.id).first.try(:destroy)
         render_errors(@item.errors)
       end
     else

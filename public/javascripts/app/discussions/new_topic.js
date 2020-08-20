@@ -12,14 +12,8 @@ window.App.Discussions = window.App.Discussions || {};
       if (App.namespace === "discussions/topics/new" || App.namespace === "discussions/topics/edit") {
         $('#sticky_redactor_toolbar').removeClass('hide');
         var $forumTopicDescription = $('#topic_forums_description');
-        
-        if($forumTopicDescription.data('newEditor')) {
-          var editorType = $forumTopicDescription.attr('editor-type') || 'forum';
-          invokeEditor('topic_forums_description', editorType);
-        }
-        else {
-          invokeRedactor('topic_forums_description', 'forum');
-        }
+        var editorType = $forumTopicDescription.attr('editor-type') || 'forum';
+        invokeEditor('topic_forums_description', editorType);
       }
       else {
         this.confirmBeforeLeavingUnsavedContent();
@@ -104,11 +98,7 @@ window.App.Discussions = window.App.Discussions || {};
 
     setTopicBody: function(content) {
       var forum_topic_description = $('#topic_forums_description');
-      if(forum_topic_description.data('newEditor')) {
-        forum_topic_description.data('froala.editor').html.set(content)
-      } else {
-        forum_topic_description.setCode(content);
-      }
+      forum_topic_description.data('froala.editor').html.set(content)
     },
 
     removeAttachment: function() {
