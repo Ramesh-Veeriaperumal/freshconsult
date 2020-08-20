@@ -13,7 +13,6 @@ class PrecreatedSignup < ActivePresenter::Base
   before_validation :set_time_zone, :set_fs_cookie, :set_i18n_locale, :set_freshid_signup_version, :update_current_user_info, :update_current_account_info
 
   before_save :assign_freshid_v2_org_and_account, if: proc { freshid_v2_signup_allowed? && aloha_signup }
-  after_save :publish_manual_agent_update
   after_save :create_new_precreated_account, :update_account_domain, :update_main_portal_info, :update_subscription, :update_email_config_name
   after_save :create_freshid_v2_org_and_account, if: proc { freshid_v2_signup_allowed? && !aloha_signup }
   after_save :complete_signup_process
@@ -21,6 +20,7 @@ class PrecreatedSignup < ActivePresenter::Base
   def complete_signup_process
     account.suppress_freshid_calls = false
     account.is_anonymous_account = false
+    publish_manual_agent_update
     update_admin_account_config(user.email, user.phone)
     account.update_default_forum_category(account_name)
     convert_to_trial(true, referring_product)
