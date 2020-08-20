@@ -1734,4 +1734,109 @@ class ConversationsControllerTest < ActionController::TestCase
     notification_count_after_note_creation = Delayed::Job.where(SEND_CC_EMAIL_JOB_STRING).all.count
     assert_equal notification_count_after_note_creation, notification_count_before_note_creation + 1
   end
+
+  def test_reply_to_ticket_sender_email_undo_send_enabled
+    @account.add_feature(:undo_send)
+    create_new_user_and_ticket(TicketConstants::SOURCE_KEYS_BY_TOKEN_1[:email])
+    @user.preferences[:agent_preferences][:undo_send] = true
+    old_primary_email = @user.user_emails.where(primary_role: true).first.email
+    assert_equal old_primary_email, @ticket.sender_email
+    new_primary_email = update_email_and_save
+    Sidekiq::Testing.inline! do
+      post :reply, construct_params({ version: 'private', id: @ticket.display_id }, reply_note_params_hash)
+    end
+    assert_response 201
+    assert_include JSON.parse(@response.body)['to_emails'], new_primary_email
+    @ticket.reload
+    assert_not_equal old_primary_email, @ticket.sender_email
+    assert_equal new_primary_email, @ticket.sender_email
+  ensure
+    @user.preferences[:agent_preferences][:undo_send] = false
+    @account.revoke_feature(:undo_send)
+    @ticket.destroy
+    @user.destroy
+  end
+
+  def test_check_sender_email_update_with_primary_email_in_email_ticket
+    create_new_user_and_ticket(TicketConstants::SOURCE_KEYS_BY_TOKEN_1[:email])
+    old_primary_email = @user.user_emails.where(primary_role: true).first.email
+    assert_equal old_primary_email, @ticket.sender_email
+    new_primary_email = update_email_and_save
+    post :reply, construct_params({ version: 'private', id: @ticket.display_id }, reply_note_params_hash)
+    assert_response 201
+    assert_include JSON.parse(@response.body)['to_emails'], new_primary_email
+    @ticket.reload
+    assert_not_equal old_primary_email, @ticket.sender_email
+    assert_equal new_primary_email, @ticket.sender_email
+  ensure
+    @ticket.destroy
+    @user.destroy
+  end
+
+  def test_check_sender_email_update_with_primary_email_in_phone_ticket
+    create_new_user_and_ticket(TicketConstants::SOURCE_KEYS_BY_TOKEN_1[:phone])
+    old_primary_email = @user.user_emails.where(primary_role: true).first.email
+    assert_equal old_primary_email, @ticket.sender_email
+    new_primary_email = update_email_and_save
+    post :reply, construct_params({ version: 'private', id: @ticket.display_id }, reply_note_params_hash)
+    assert_response 201
+    assert_include JSON.parse(@response.body)['to_emails'], new_primary_email
+    @ticket.reload
+    assert_not_equal old_primary_email, @ticket.sender_email
+    assert_equal new_primary_email, @ticket.sender_email
+  ensure
+    @ticket.destroy
+    @user.destroy
+  end
+
+  def test_check_sender_email_update_with_primary_email_after_contact_email_removal
+    create_new_user_and_ticket(TicketConstants::SOURCE_KEYS_BY_TOKEN_1[:email])
+    old_primary_email = @user.user_emails.where(primary_role: true).first.email
+    assert_equal old_primary_email, @ticket.sender_email
+    @user.user_emails.first.email = nil
+    @user.mobile = Faker::PhoneNumber.phone_number
+    @user.save!
+    post :reply, construct_params({ version: 'private', id: @ticket.display_id }, reply_note_params_hash)
+    assert_response 201
+    @ticket.reload
+    primary_email = @user.user_emails.where(primary_role: true).first.email
+    assert_include JSON.parse(@response.body)['to_emails'], primary_email
+    assert_equal primary_email, @ticket.sender_email
+  ensure
+    @ticket.destroy
+    @user.destroy
+  end
+
+  def test_check_sender_email_update_in_email_ticket_with_secondary_email
+    secondary_mail_contact = create_ticket_with_secondary_contact
+    assert_equal secondary_mail_contact.email, @ticket.sender_email
+    new_secondary_email = Faker::Internet.email
+    update_email_and_save(secondary_mail_contact, new_secondary_email)
+    post :reply, construct_params({ version: 'private', id: @ticket.display_id }, reply_note_params_hash)
+    assert_response 201
+    @ticket.reload
+    primary_email = @user.user_emails.where(primary_role: true).first.email
+    assert_include JSON.parse(@response.body)['to_emails'], primary_email
+    assert_not_equal secondary_mail_contact.email, @ticket.sender_email
+    assert_equal primary_email, @ticket.sender_email
+  ensure
+    @ticket.destroy
+    @user.destroy
+  end
+
+  def test_check_sender_email_update_after_deletion_of_secondary_email
+    secondary_mail_contact = create_ticket_with_secondary_contact
+    assert_equal secondary_mail_contact.email, @ticket.sender_email
+    secondary_mail_contact.delete
+    post :reply, construct_params({ version: 'private', id: @ticket.display_id }, reply_note_params_hash)
+    assert_response 201
+    @ticket.reload
+    primary_email = @user.user_emails.where(primary_role: true).first.email
+    assert_include JSON.parse(@response.body)['to_emails'], primary_email
+    assert_not_equal secondary_mail_contact.email, @ticket.sender_email
+    assert_equal primary_email, @ticket.sender_email
+  ensure
+    @ticket.destroy
+    @user.destroy
+  end
 end
