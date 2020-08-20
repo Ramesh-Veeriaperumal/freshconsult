@@ -102,6 +102,30 @@ class Account < ActiveRecord::Base
     :unlimited_multi_product, :sla_reminder_automation
   ].to_set.freeze
 
+  LAUNCH_PARTY_FEATURES_TO_LOG = [
+    :admin_only_mint
+  ].freeze
+
+  BITMAP_FEATURES_TO_LOG = [].freeze
+
+  def launched?(*feature_name)
+    features_list = feature_name & LAUNCH_PARTY_FEATURES_TO_LOG
+
+    if features_list.present?
+      features_list.each do |feature|
+        log_feature_usage(feature)
+        feature_name.delete(feature)
+      end
+    end
+
+    super
+  end
+
+  def log_feature_usage(feature_name)
+    Rails.logger.warn "FEATURE CHECK USAGE :: #{feature_name} :: #{caller[0..5]}"
+    true
+  end
+
   LP_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
       launched?(item)
@@ -332,12 +356,7 @@ class Account < ActiveRecord::Base
 
   def falcon_ui_enabled?(current_user = :no_user)
     valid_user = (current_user == :no_user ? true : (current_user && current_user.is_falcon_pref?))
-    valid_user && (falcon_enabled? || check_admin_mint? || disable_old_ui_enabled?)
-  end
-
-  def check_admin_mint?
-    return false if User.current.nil?
-    admin_only_mint_enabled? && User.current.privilege?(:admin_tasks)
+    valid_user && (falcon_enabled? || disable_old_ui_enabled?)
   end
 
   def falcon_support_portal_theme_enabled?
@@ -424,6 +443,8 @@ class Account < ActiveRecord::Base
   # TODO : Cleanup up after 2020 pricing changes
   # START
   def has_feature?(feature)
+    return log_feature_usage(feature) if feature.to_sym.in?(BITMAP_FEATURES_TO_LOG)
+
     return super if launched?(:pricing_plan_change_2020)
 
     PRICING_PLAN_MIGRATION_FEATURES_2020.include?(feature) ? true : super
@@ -448,7 +469,7 @@ class Account < ActiveRecord::Base
     unless launched?(:pricing_plan_change_2020)
       features.delete_if { |feature| PRICING_PLAN_MIGRATION_FEATURES_2020.include?(feature) }
     end
-    super
+    features.all? { |f| has_feature?(f) }
   end
   # STOP
 

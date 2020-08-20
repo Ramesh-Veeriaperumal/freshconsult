@@ -1,13 +1,14 @@
+<!-- TO BE REMOVED : OLD UI DEPRECATION -->
 <div id="falcon-invite-modal"  class="clearfix in" role="dialog" tabindex="-1" >
   <div id="falcon-invite-image" class="horizontal-split clearfix">
   </div>
   <div id="falcon-invite-message" class="horizontal-split clearfix">
     <h3><%= t('.greetings') %></h3>
     <p>
-      <%= t(admin_only_falcon_enabled? ? '.admin_only_invite_msg' : '.invite_msg').html_safe %>
+      <%= t('.invite_msg').html_safe %>
     </p>
 
-    <p class="muted"><%= t( admin_only_falcon_enabled? ? '.admin_only_post_script' : '.post_script').html_safe %></p>
+    <p class="muted"><%= t('.post_script').html_safe %></p>
 
     <%= link_to t('.try_new_look'), enable_falcon_path,
             :id=>"falcon_toggle", :method => :post %>

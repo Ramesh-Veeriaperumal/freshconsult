@@ -384,7 +384,6 @@ class Account < ActiveRecord::Base
       end
       # self.new_record? is false in after create hook so using id_changed? method which will be true in all the hook except
       # after_commit for new record or modified record.
-      admin_only_mint_on_launch(changes)
       versionize_timestamp unless id_changed?
       trigger_launchparty_feature_callbacks unless self.id_changed?
     end
@@ -409,12 +408,6 @@ class Account < ActiveRecord::Base
     def sync_name_helpdesk_name
       self.name = self.helpdesk_name if helpdesk_name_changed?
       self.helpdesk_name = self.name if name_changed?
-    end
-
-    def admin_only_mint_on_launch(feature_changes)
-      if feature_changes[:launch] && feature_changes[:launch].include?(:admin_only_mint)
-        self.set_falcon_redis_keys
-      end
     end
 
     def add_to_billing
