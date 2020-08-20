@@ -1757,7 +1757,9 @@
       "fluffy": {
         "_host": "vpce-0b247209ae0145d88-4fa54j71.vpce-svc-0874c1e9512bd57dc.us-east-1.vpce.amazonaws.com",
         "username": "EJ[1:KPLwfD8Y0BIZH6YQcEzQDNBn8/EQoDQ4PmS4r5J76zk=:qrgtap1okUwcx0qIs/bPJ5t1x/mkm0Oe:9NvC+DrZtADYb8l0Pe8j5orfiVJYIYAiNg==]",
-        "password": "EJ[1:KPLwfD8Y0BIZH6YQcEzQDNBn8/EQoDQ4PmS4r5J76zk=:G0hLjfcT/xDslPM+IvgoZHOPC4qbuw9S:32COF4bZOIdTS+LeAL3pj0TROw/wYUK1qQ==]"
+        "password": "EJ[1:KPLwfD8Y0BIZH6YQcEzQDNBn8/EQoDQ4PmS4r5J76zk=:G0hLjfcT/xDslPM+IvgoZHOPC4qbuw9S:32COF4bZOIdTS+LeAL3pj0TROw/wYUK1qQ==]",
+        "fd_email_username": "EJ[1:q5V06hqsIrKN2tulzpbNviFzUMwxFL16TX4OLJ+znCo=:DixTfL/y7bLwvGPLFexZcnEvY4jBehFZ:O6sWK5pkFPdX049IoNrjPE3CrPUVHT9PekGqU/vglg==]",
+        "fd_email_password": "EJ[1:q5V06hqsIrKN2tulzpbNviFzUMwxFL16TX4OLJ+znCo=:FMuEil75mWEGLUSXE+pfS5LV5KMvwrzm:aM414Jlzdh3OCic1BndsdHEPdF+JGzscDrL5Z2Xmvw==]"
       },
       "freddy_skills_config": {
         "detect_thank_you_note": {

@@ -80,7 +80,7 @@
 
 <%= render :partial => "/helpdesk/tickets/canned_loading" %>
 <script>
- var isMultifileEnabled = <%= current_account.launched?(:multifile_attachments) && current_account.launched?(:pjax_reload)%>
+ var isMultifileEnabled = <%= current_account.launched?(:multifile_attachments)%>
 </script>
 
 <% if Account.current.launched?(:agent_new_ticket_cache) %>

@@ -110,7 +110,11 @@ class Helpdesk::TicketDrop < BaseDrop
   end
 
   def source
-    TicketConstants.source_list[@source.source]
+    if @source.account.ticket_source_revamp_enabled?
+      @source.source_name
+    else
+      TicketConstants.source_list[@source.source]
+    end
   end
 
   def source_id
