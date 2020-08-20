@@ -160,8 +160,7 @@ def self.plan_price
 				:SELF_SERVICE => { EUR: 500.0, INR: 36000.0, USD: 500.0, ZAR: 7500.0, GBP: 375.0, AUD: 725.0, BRL: 2600.0 },
 				:ULTIMATE => { EUR: 75.0, INR: 5400.0, USD: 75.0, ZAR: 1100.0, GBP: 55.0, AUD: 110.0, BRL: 390.0 },
 				:ADDITIONAL_PACKS => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
-				ULTIMATE_SESSION: { EUR: 500.0, INR: 36000.0, USD: 500.0, ZAR: 7500.0, GBP: 375.0, AUD: 725.0, BRL: 2600.0 },
-		}
+			}
         },
         sprout_jan_19: {
           'EUR' => 0.0,

@@ -487,18 +487,6 @@ class SubscriptionTest < ActiveSupport::TestCase
     ::Scheduler::CancelMessage.jobs.clear
   end
 
-  def test_subscription_plan_costs
-    subscription = @account.subscription
-    subscription.plan = SubscriptionPlan.where(name: 'Forest Jan 17').first
-    subscription.state = 'active'
-    subscription.save
-    assert_equal 4, subscription.subscription_plan.freddy_addon_count
-    assert_equal 500.0, subscription.subscription_plan.freddy_self_service_cost('USD')
-    assert_equal 500.0, subscription.subscription_plan.freddy_ultimate_session_cost('USD')
-    assert_equal 75.0, subscription.subscription_plan.freddy_ultimate_cost('USD')
-    assert_equal 100.0, subscription.subscription_plan.freddy_additional_pack_cost('USD')
-  end
-
   private
 
     def bundle_create_stub

@@ -176,23 +176,16 @@ class SubscriptionsController < ApplicationController
 
     def modify_addons_temporarily
       @addon_params = params['addons'] || {}
-      enabled_addon_names_from_params = SubscriptionConstants::ADDON_PARAMS_NAMES_MAP.map do |addon_name, addon_id|
-        if addon_enabled?(addon_id)
-          addon_id != 'freddy_session_packs' ? addon_name : construct_session_packs_addon_name(billing_period)
-        end
+      enabled_addon_names_from_params = SubscriptionConstants::FSM_ADDON_PARAMS_NAMES_MAP.map do |addon_name, addon_type|
+        addon_name if addon_enabled?(addon_type)
       end.compact
-      all_addons_hash = SubscriptionConstants::ADDON_PARAMS_NAMES_MAP.keys + SubscriptionConstants::FREDDY_SESSION_PACK_ADDONS
-      disabled_addon_names_from_params = all_addons_hash - enabled_addon_names_from_params
+      disabled_addon_names_from_params = SubscriptionConstants::FSM_ADDON_PARAMS_NAMES_MAP.keys - enabled_addon_names_from_params
       create_new_addons_list(enabled_addon_names_from_params, disabled_addon_names_from_params)
     end
 
     # Not allowing add-ons if it's value is not greater than 0. Chargebee allows addons with more than 0 quantity.
-    def addon_enabled?(addon_id)
-      if SubscriptionConstants::ON_OFF_ADDONS.include?(addon_id.to_sym)
-        addon_params[addon_id].present? && addon_params[addon_id]['enabled'] == 'true'
-      else
-        addon_params[addon_id].present? && addon_params[addon_id]['enabled'] == 'true' && addon_params[addon_id]['value'].to_i > 0
-      end
+    def addon_enabled?(addon_type)
+      addon_params[addon_type].present? && addon_params[addon_type]['enabled'] == 'true' && addon_params[addon_type]['value'].to_i > 0
     end
 
     def create_new_addons_list(enabled_addon_names, disabled_addon_names)
@@ -244,20 +237,15 @@ class SubscriptionsController < ApplicationController
 
     #building objects
     def build_subscription
-      scoper.billing_cycle = billing_period
+      scoper.billing_cycle = params[:billing_cycle].present? ? params[:billing_cycle].to_i : SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]
       scoper.plan = @subscription_plan
       scoper.agent_limit = params[:agent_limit]
-      @addons = scoper.applicable_addons(@addons, @subscription_plan)
       populate_addon_based_limits
       scoper.free_agents = @subscription_plan.free_agents
-    end
-
-    def billing_period
-      params[:billing_cycle].present? ? params[:billing_cycle].to_i : SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]
+      @addons = scoper.applicable_addons(@addons, @subscription_plan)
     end
 
     def construct_subscription_request(next_renewal_at)
-      is_freddy_downgrade = scoper.freddy_downgrade?
       downgrade_request = scoper.subscription_request.nil? ? scoper.build_subscription_request : scoper.subscription_request
       downgrade_request.plan_id = scoper.plan_id
       downgrade_request.renewal_period = scoper.renewal_period
@@ -266,30 +254,17 @@ class SubscriptionsController < ApplicationController
       downgrade_request.next_renewal_at = Time.at(next_renewal_at).to_datetime.utc
       downgrade_request.from_plan = scoper.present_subscription.subscription_plan_from_cache
       downgrade_request.fsm_downgrade = scoper.present_subscription.field_agent_limit.present? && scoper.field_agent_limit.blank?
-      downgrade_request.additional_info = downgrade_request.additional_info || {}
-      downgrade_request.additional_info[:freddy_downgrade] = is_freddy_downgrade
-      downgrade_request.additional_info[:freddy_session_packs] = scoper.freddy_session_packs
-      downgrade_request.additional_info[:freddy_self_service_requested] = is_addon_enabled(@addons, Subscription::Addon::FREDDY_SELF_SERVICE_ADDON) && !is_addon_enabled(@addons, Subscription::Addon::FREDDY_ULTIMATE_ADDON)
-      downgrade_request.additional_info[:freddy_ultimate_requested] = is_addon_enabled(@addons, Subscription::Addon::FREDDY_ULTIMATE_ADDON)
       downgrade_request
     end
 
     def populate_addon_based_limits
       field_service_addon = addon_params['field_service_management']
-      freddy_session_packs_addon = addon_params['freddy_session_packs']
 
       if field_service_addon.present? && field_service_addon['enabled'] == 'true'
         scoper.field_agent_limit = field_service_addon['value'].to_i
       else
         scoper.additional_info = scoper.additional_info.except(:field_agent_limit)
       end
-
-      if freddy_session_packs_addon.present? && freddy_session_packs_addon['enabled'] == 'true'
-        scoper.freddy_session_packs = freddy_session_packs_addon['value'].to_i
-      else
-        scoper.additional_info = scoper.additional_info.except(:freddy_session_packs)
-      end
-      scoper.freddy_sessions = calculate_freddy_session(@addons, scoper, @subscription_plan.name.parameterize.underscore.to_sym, params[:billing_cycle]) if current_account.launched?(:freddy_subscription)
     end
 
     def load_freshfone_credits
@@ -455,7 +430,7 @@ class SubscriptionsController < ApplicationController
 
     def update_features
       perform_ui_based_addon_operations
-      return unless plan_changed? || addons_changed?
+      return unless plan_changed?
 
       Rails.logger.info "Calling change_plan for Account :: #{scoper.account.inspect} ;
             new_plan : #{scoper.account.subscription} ; old_plan : #{@cached_subscription.inspect}"
@@ -476,12 +451,11 @@ class SubscriptionsController < ApplicationController
     end
 
     def perform_ui_based_addon_operations
-      modified_addon_params = addon_params.except('freddy_session_packs')
       [SAAS::SubscriptionEventActions::ADD, SAAS::SubscriptionEventActions::DROP].each do |action|
         feature_list = if action == SAAS::SubscriptionEventActions::ADD
-                         modified_addon_params.map { |feature, value| feature.to_sym if !scoper.account.has_feature?(feature.to_sym) && value['enabled'] == 'true' }.compact
+                         addon_params.map { |feature, value| feature.to_sym if !scoper.account.has_feature?(feature.to_sym) && value['enabled'] == 'true' }.compact
                        else
-                         modified_addon_params.map { |feature, value| feature.to_sym if scoper.account.has_feature?(feature.to_sym) && value['enabled'] == 'false' }.compact
+                         addon_params.map { |feature, value| feature.to_sym if scoper.account.has_feature?(feature.to_sym) && value['enabled'] == 'false' }.compact
                        end
 
         next if feature_list.blank?
@@ -496,11 +470,6 @@ class SubscriptionsController < ApplicationController
 
     def plan_changed?
       scoper.subscription_plan_id != @cached_subscription.subscription_plan_id
-    end
-
-    def addons_changed?
-      !(@cached_addons & @addons == @cached_addons and
-        @addons & @cached_addons == @addons)
     end
 
     #Events
