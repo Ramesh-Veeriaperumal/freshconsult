@@ -10,10 +10,10 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
   skip_before_filter :set_time_zone
 
   # Authentication, SSL and Events to be tracked or not. This must be the last prepend_before_filter
-  # for this controller
+  # for this controller 
   prepend_before_filter :event_monitored
 
-  before_filter :ensure_right_parameters, :retrieve_account,
+  before_filter :ensure_right_parameters, :retrieve_account, 
                 :load_subscription_info
 
   def trigger
@@ -42,8 +42,8 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
   end
 
   def select_shard(&block)
-    Sharding.admin_select_shard_of(customer_id_param) do
-      yield
+    Sharding.admin_select_shard_of(customer_id_param) do 
+      yield 
     end
   end
 
@@ -53,7 +53,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
     def login_from_basic_auth
       authenticate_or_request_with_http_basic do |username, password|
         password_hash = Digest::MD5.hexdigest(password)
-        username == 'freshdesk' && password_hash == "5c8231431eca2c61377371de706a52cc"
+        username == 'freshdesk' && password_hash == "5c8231431eca2c61377371de706a52cc" 
       end
     end
 
@@ -77,7 +77,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
 
     def sync_for_all_sources?
       SYNC_EVENTS_ALL_SOURCE.include?(params[:event_type])
-    end
+    end   
 
     def ensure_right_parameters
       if ((params[:event_type].blank?) or (params[:content].blank?) or customer_id_param.blank?)
@@ -96,13 +96,13 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
             format.json  { head 200 }
           end
         else
-          return render :json => ActiveRecord::RecordNotFound, :status => 404
+          return render :json => ActiveRecord::RecordNotFound, :status => 404 
         end
       end
     end
 
     #Subscription info
-    def load_subscription_info
+    def load_subscription_info      
       @billing_data = Billing::Subscription.new.retrieve_subscription(@account.id)
       Rails.logger.debug @billing_data
       @subscription_data = subscription_info(@billing_data.subscription, @billing_data.customer)
@@ -154,7 +154,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
                                         content[:subscription][:addons], @account)
         Rails.logger.info "Throttling subscription_renewed event for the account #{@account.id}"
         return Billing::ChargebeeEventListener.perform_at(2.minutes.from_now, params.merge(account_id: @account.id))
-
+        
       end
       @account.launch(:downgrade_policy)
       @account.subscription.update_attributes(@subscription_data)
@@ -196,7 +196,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
 
     def card_deleted(_content)
       return if @billing_data && @billing_data.card.present?
-
+      
       @account.subscription.clear_billing_info
       @account.subscription.save
       auto_collection_off_trigger
@@ -218,7 +218,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
 
     def payment_succeeded(content)
       payment = @account.subscription.subscription_payments.create(payment_info(content))
-        Subscription::UpdatePartnersSubscription.perform_async({ :account_id => @account.id,
+        Subscription::UpdatePartnersSubscription.perform_async({ :account_id => @account.id, 
           :event_type => :payment_added, :invoice_id => content[:invoice][:id] })
       store_invoice(content) if @account.subscription.affiliate.nil?
     end
@@ -228,7 +228,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
               :account => @account, :amount => -(content[:transaction][:amount]/100))
       invoice_hash = Billing::WebhookParser.new(content).invoice_hash
       invoice =  @account.subscription.subscription_invoices.find_by_chargebee_invoice_id(invoice_hash[:chargebee_invoice_id])
-
+      
       invoice.update_attributes(invoice_hash) if invoice.present?
     end
 
@@ -246,10 +246,10 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
     end
 
     def update_applicable_addons(subscription, billing_subscription)
-      addons = billing_subscription.addons.to_a.collect{ |addon|
+      addons = billing_subscription.addons.to_a.collect{ |addon| 
         Subscription::Addon.fetch_addon(addon.id) unless ADDONS_TO_IGNORE.include?(addon.id)
       }.compact
-
+      
       plan = subscription_plan(billing_subscription.plan_id)
       subscription.addons = subscription.applicable_addons(addons, plan)
     end
@@ -270,7 +270,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
     end
 
     def addons_changed?
-      !(@existing_addons & @account.addons == @existing_addons and
+      !(@existing_addons & @account.addons == @existing_addons and 
             @account.addons & @existing_addons == @account.addons)
     end
 
@@ -279,7 +279,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
       {
         :account => @account,
         :amount => (content[:transaction][:amount].to_f/100 * @account.subscription.currency_exchange_rate.to_f),
-        :transaction_id => content[:transaction][:id_at_gateway],
+        :transaction_id => content[:transaction][:id_at_gateway], 
         :misc => recurring_invoice?(content[:invoice]),
         :meta_info => build_meta_info(content[:invoice])
       }
@@ -302,7 +302,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
     end
 
     def auto_collection_off_trigger
-      Subscription::UpdatePartnersSubscription.perform_async({ :account_id => @account.id,
+      Subscription::UpdatePartnersSubscription.perform_async({ :account_id => @account.id, 
           :event_type => :auto_collection_off })
     end
 

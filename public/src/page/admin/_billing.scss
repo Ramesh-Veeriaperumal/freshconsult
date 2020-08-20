@@ -233,8 +233,6 @@
 	@include pie-clearfix;
 	background: #fefef0;
 	border-radius: 5px;
-	display: flex;
-	align-items: center;
 	@include padding(25px 20px);
 	.plan-title{
 		background: rgba(0, 0, 0, 0.5);
@@ -246,16 +244,11 @@
 		padding: 8px 20px;
 		border-radius: 20px;
 	}
-	.current-plan-info, .subscription-info-divider, .billing-info-divider{
+	.current-plan, .current-plan-info, .subscription-info-divider, .billing-info-divider{
 		width: 55%;
 		text-align: center;
 		display: inline-block;
 		vertical-align: middle;
-	}
-
-	.current-plan {
-		width: 55%;
-		align-self: center;
 	}
 
 	.current-plan, .subscription-info-divider {
@@ -452,10 +445,6 @@ dt.vertical-top {
 			width: 38%;
 			font-weight: bold;
 			vertical-align: middle;
-
-			&.align-top {
-				vertical-align: top;
-			}
 		}
 		.agents-split{
 			border-top:1px dashed #afafaf;
@@ -466,16 +455,6 @@ dt.vertical-top {
 				font-weight: bold;
 				color: #666;
 	 		}
-		}
-		.freddy-pack {
-			font-weight: normal;
-		}
-		.session-pack {
-			color: #00A886;
-
-			&-cycle {
-				text-transform: lowercase;
-			}
 		}
 		.tr-total{
 			input[type=submit]{
@@ -507,40 +486,11 @@ dt.vertical-top {
 }
 
 .features-billing-edit {
-	margin:0 10px;
 
   &__toggle {
-		padding: 14px 16px;
-    background: #F0F0F0;
-    border: 1px solid #EBEFF3;
-		border-radius: 6px;
-
-		span {
-			font-weight: bold;
-			font-size: 14px;
-		}
-
-		.toggle-button {
-			float: right;
-		}
-	}
-
-	.freddy-cx-options {
-		clear: both;
-		padding: 8px 16px;
-		background: #F0F0F0;
-		border: 1px solid #EBEFF3;
-		border-bottom-left-radius: 6px;
-		border-bottom-right-radius: 6px;
-	}
-
-	.freddy-billing-exists {
-		border-bottom: 1px solid #DEDEDE;
-		margin-bottom: 0;
-		border-bottom-left-radius: 0;
-		border-bottom-right-radius: 0;
-	}
-
+	display: inline-block;
+	padding: 0 15px 0 10px;
+  }
 }
 
 .billing-divider{
@@ -1020,9 +970,6 @@ input[type=text].input-agent-count{
 						font-weight: bold;
 						color: #415D71;
 					}
-					&.plan-addon {
-						width: 34%;
-					}
 				}
 	}
 	.cancel-request {
@@ -1034,7 +981,6 @@ input[type=text].input-agent-count{
 	.second-downgrade-modal-wrapper {
 		width: 65%;
 		left:42%;
-		top: 42%;
 		.modal-header{
 			border:0 none;
 		}
@@ -1215,11 +1161,7 @@ input[type=text].input-agent-count{
 		}
 	}
 	.edit-plan{
-		font-size: 14px;
-    color: #12344D;
-    font-weight: 600;
-    background: linear-gradient(180deg, #FFFFFF 2.56%, #F3F5F7 95.75%);
-    border: 1px solid #CFD7DF;
+		background-color: #fff;
 		@include margin(10px 0 0 -20px);
 	}
 	.subscription-info-divider{
@@ -1552,7 +1494,7 @@ input[type=text].input-agent-count{
 
 .fd-fd-bundle-logo {
 	padding-top: 12px;
-	height: 43px;
+	height: 43px; 
 	width: 230px;
 	margin-bottom: 22px;
 }
@@ -1677,7 +1619,7 @@ input[type=text].input-agent-count{
 	color: #808080;
 }
 .carousel-control:hover {
-	color: #000000;
+	color: #000000;	
 }
 
 .fc-omni-channel-experience-logo {
@@ -1732,7 +1674,7 @@ input[type=text].input-agent-count{
 }
 
 .fc-omni-channel-td-data {
-	padding-left: 20px;
+	padding-left: 20px;	
 	width: 90%;
 }
 
