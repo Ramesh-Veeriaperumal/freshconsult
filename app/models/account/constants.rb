@@ -194,7 +194,7 @@ class Account < ActiveRecord::Base
     skip_hidden_tkt_identifier: false, agent_collision_alb: false, auto_refresh_alb: false,
     customer_sentiment_ui: false, portal_solution_cache_fetch: false,
     customer_sentiment: false, logout_logs: false,
-    es_v2_splqueries: false, suggest_tickets: false, "Freshfone New Notifications": false,
+    es_v2_splqueries: false, suggest_tickets: false,
     feedback_widget_captcha: false, es_multilang_solutions: false, requester_widget: false,
     spam_blacklist_feature: false, antivirus_service: false, hide_api_key: false,
     skip_ticket_threading: false, attachments_scope: false,
