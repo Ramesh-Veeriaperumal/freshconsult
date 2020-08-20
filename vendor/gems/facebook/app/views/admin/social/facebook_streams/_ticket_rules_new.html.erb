@@ -26,8 +26,10 @@
                   <input type="radio" id="same_ticket_threading" name="threading" class="threading">
                   &nbsp;<%= t(".fb_thread_same_ticket") %>
                 </label>
-                <div class="pl20" id = "same_ticket_filter_mentions_container">
-                  <label><%= check_box_tag 'same_ticket_filter_mentions', true, ticket_rule.filter_mentions? %>&nbsp;<%= t("admin.social.ticket_rules.filter_mentions") %></label>
+                <div class="threading_container pl20">
+                  <div class="pl20" id = "same_ticket_filter_mentions_container">
+                    <label><%= check_box_tag 'same_ticket_filter_mentions', true, ticket_rule.broad? && ticket_rule.filter_mentions? %>&nbsp;<%= t("admin.social.ticket_rules.filter_mentions") %></label>
+                  </div>
                 </div>
                 <label id="new_ticket_threading_container">
                   <input type="radio" id="new_ticket_threading" name="threading" class="threading">
@@ -42,9 +44,9 @@
                   <%= text_field_tag "social_ticket_rule[][includes]",
                     ticket_rule.include_keys,
                     :class => 'text social_ticket_rule_includes form-control span12 pl20' %>
-                </div>
-                <div class="pl20" id = "new_ticket_filter_mentions_container">
-                  <label><%= check_box_tag 'new_ticket_filter_mentions', true, ticket_rule.filter_mentions? %>&nbsp;<%= t("admin.social.ticket_rules.filter_mentions") %></label>
+                  <div class="pl20" id = "new_ticket_filter_mentions_container">
+                    <label><%= check_box_tag 'new_ticket_filter_mentions', true, ticket_rule.optimal? && ticket_rule.filter_mentions? %>&nbsp;<%= t("admin.social.ticket_rules.filter_mentions") %></label>
+                  </div>
                 </div>
               </div>
 
@@ -75,9 +77,9 @@
               <%= t(".convert_ad_post_helptext") %>
             </label>
 
-          <div class="pl20">
-            <label><%= check_box_tag 'ad_posts_filter_mentions', true, ad_posts_filter_mentions %>&nbsp;<%= t("admin.social.ticket_rules.filter_mentions") %></label>
-          </div>
+            <div class="pl20">
+              <label><%= check_box_tag 'ad_posts_filter_mentions', true, ad_posts_filter_mentions %>&nbsp;<%= t("admin.social.ticket_rules.filter_mentions") %></label>
+            </div>
 
             <div class="control-group mt10">
               <label class="mt10 pl5">

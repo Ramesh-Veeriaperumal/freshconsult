@@ -57,8 +57,10 @@ window.App.Admin = window.App.Admin || {};
               .select2('val', '')
               .hide();
           }
-          $('#same_ticket_filter_mentions_container').hide();
-          $('#new_ticket_filter_mentions_container').show();
+          $('.keyword_container').show();
+          $('.threading_container').hide();
+          // $('#same_ticket_filter_mentions_container').hide();
+          // $('#new_ticket_filter_mentions_container').show();
           break;
 
         case _this.BROAD_RULE_TYPE:
@@ -77,8 +79,9 @@ window.App.Admin = window.App.Admin || {};
             .select2('val', '')
             .hide();
           $('.keyword_container').hide();
-          $('#same_ticket_filter_mentions_container').show();
-          $('#new_ticket_filter_mentions_container').hide();
+          $('.threading_container').show();
+          // $('#same_ticket_filter_mentions_container').show();
+          // $('#new_ticket_filter_mentions_container').hide();
           break;
       }
 
@@ -143,25 +146,28 @@ window.App.Admin = window.App.Admin || {};
 
       $('.threading').on('change', function () {
         var $select2_container = $('.keyword_container');
+        var $threading_container = $('.threading_container');
 
         switch (this.id) {
           case 'same_ticket_threading':
             $import_visitor_post_checkbox.prop('checked', true).prop('disabled', true);
             $('#import_visitor_posts_text').addClass('muted');
-            $('#new_ticket_filter_mentions_container').hide()
-            $('#same_ticket_filter_mentions_container').show()
+            // $('#new_ticket_filter_mentions_container').hide()
+            // $('#same_ticket_filter_mentions_container').show()
             $ticket_rule_type.val(_this.BROAD_RULE_TYPE);
             $('#toggle_keywords').prop('checked', false);
             $('.optimal-rules-container #s2id_social_ticket_rule__includes').select2('val', '').hide();
+            $threading_container.show();
             $select2_container.fadeOut('slow', 'linear').css('display', 'block');
             break;
 
           case 'new_ticket_threading':
             $import_visitor_post_checkbox.prop('disabled', false);
             $('#import_visitor_posts_text').removeClass('muted');
-            $('#same_ticket_filter_mentions_container').hide();
-            $('#new_ticket_filter_mentions_container').show();
+            // $('#same_ticket_filter_mentions_container').hide();
+            // $('#new_ticket_filter_mentions_container').show();
             $ticket_rule_type.val(_this.OPTIMAL_RULE_TYPE);
+            $threading_container.hide();
             $select2_container.fadeIn('slow', 'linear').css('display', 'block');
             break;
         }
