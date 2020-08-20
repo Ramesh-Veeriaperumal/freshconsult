@@ -69,7 +69,7 @@ module CentralLib
       #  - trigger_sync(rate_limit: {batch_size: 300, conditions: ['parent_id is nil'], start: 121232}, source: 'search', job_id: 12132)
       def trigger_sync(options)
         records_processed = 0
-        scoper.find_in_batches(options[:rate_limit]) do |batch|
+        scoper_with_relation.find_in_batches(options[:rate_limit]) do |batch|
           # calc the number of records processed based on the rate_limit options, This will be useful on throttling the records
           records_processed += batch.size
 
@@ -94,7 +94,7 @@ module CentralLib
         @entity.new.relationship_with_account.to_sym
       end
 
-      def scoper
+      def scoper_with_relation
         Account.current.safe_send(relation_with_account)
       end
 

@@ -128,13 +128,14 @@ class CentralResyncWorkerTest < ActionView::TestCase
     key = resync_rate_limiter_key(source)
     key_count = get_others_redis_key(key).to_i
     assert_equal key_count, 0
-
-    configure_redis_and_execute(source) do
-      CentralPublish::ResyncWorker.perform_async(resync_args.merge(source: source))
+    assert_equal false, resync_worker_limit_reached?(source)
+    Sidekiq::Testing.inline! do
       key_count = get_others_redis_key(key).to_i
+      CentralPublish::ResyncWorker.perform_async(resync_args.merge(source: source))
     end
 
     assert_equal key_count, 1
+    assert_equal get_others_redis_key(key).to_i, 0
   ensure
     CentralPublish::ResyncWorker.clear
     remove_others_redis_key(key)
@@ -145,7 +146,8 @@ class CentralResyncWorkerTest < ActionView::TestCase
     key = resync_rate_limiter_key(source)
     key_count = get_others_redis_key(key).to_i
 
-    configure_redis_and_execute(source) do
+    assert_equal false, resync_worker_limit_reached?(source)
+    Sidekiq::Testing.inline! do
       CentralPublish::ResyncWorker.perform_async(resync_args)
     end
 
@@ -196,6 +198,7 @@ class CentralResyncWorkerTest < ActionView::TestCase
     args = resync_args
     key = resync_rate_limiter_key(args[:source])
     key_count = get_others_redis_key(key).to_i
+    resync_worker_limit_reached?(args[:source])
     push_resync_job_information(args[:source], args[:job_id], args[:model_name])
     Sidekiq::Testing.inline! do
       CentralPublish::ResyncWorker.perform_async(job_id: args[:job_id], source: args[:source], meta_info: args[:meta_info])

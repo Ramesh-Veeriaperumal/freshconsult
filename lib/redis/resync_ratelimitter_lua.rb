@@ -8,12 +8,16 @@ module Redis::ResyncRatelimitterLua
       Rails.logger.info 'Redis resync_ratelimitter_lua_script has been loaded'
       @resync_ratelimitter_lua_script ||= begin
         <<-LUA
-        if ARGV[1] == 'INCR' then
-          return redis.call('INCR', KEYS[1])
-          elseif ARGV[1] == 'DECR' then
-          return redis.call('DECR', KEYS[1])
+        if redis.call('EXISTS', KEYS[1]) == 1 then
+          if redis.call('GET', KEYS[1]) >= ARGV[1] then
+            return 'true'
+          else
+            redis.call('INCR', KEYS[1])
+            return 'false'
+          end
         else
-          return redis.call('GET', KEYS[1])
+          redis.call('SET', KEYS[1], '1')
+          return 'false'
         end
         LUA
       end
