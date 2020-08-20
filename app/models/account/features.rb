@@ -12,7 +12,7 @@ class Account < ActiveRecord::Base
     :euc_migrated_twitter, :new_ticket_recieved_metric, :ner,
     :count_service_es_writes, :count_service_es_reads,
     :sso_login_expiry_limitation, :undo_send, :old_link_back_url_validation, :stop_contacts_count_query,
-    :denormalized_select_for_update, :es_tickets,
+    :es_tickets,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
     :skip_portal_cname_chk, :ticket_source_revamp,
     :bot_email_channel, :description_by_default, :bot_chat_history, :new_es_api, :filter_factory,
