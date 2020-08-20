@@ -9,7 +9,7 @@ module Admin
     def cancel
       feedback = { title: params[cname][:cancellation_feedback], additional_info: params[cname][:additional_cancellation_feedback] }
       if current_account.free_or_active_account?
-        current_account.schedule_account_cancellation_request(feedback)
+        current_account.schedule_account_cancellation_request(feedback, current_user)
       else
         current_account.perform_account_cancellation(feedback)
       end

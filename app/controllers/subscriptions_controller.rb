@@ -513,6 +513,7 @@ class SubscriptionsController < ApplicationController
     def add_event
       args = { account_id: @subscription.account_id, subscription_id: @subscription.id,
                subscription_hash: subscription_info(@cached_subscription) }
+      args.merge!(current_user_id: current_user.id) if current_user.present?
       if current_account.launched?(:downgrade_policy)
         args[:requested_subscription_hash] = subscription_info(@subscription)
         args[:requested_subscription_hash][:is_downgrade] = scoper.downgrade?
