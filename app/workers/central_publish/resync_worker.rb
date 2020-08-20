@@ -19,7 +19,6 @@ module CentralPublish
 
       configure_redis_and_execute(@args[:source]) do
         publish_entity_to_central
-        update_resync_job_information(@args[:source], @args[:job_id], status: RESYNC_JOB_STATUSES[:completed])
       end
     end
 
@@ -27,6 +26,7 @@ module CentralPublish
 
       def publish_entity_to_central
         sync_entity(@args)
+        update_resync_job_information(@args[:source], @args[:job_id], status: RESYNC_JOB_STATUSES[:completed])
       rescue StandardError => e
         update_resync_job_information(@args[:source], @args[:job_id], status: RESYNC_JOB_STATUSES[:failed])
         Rails.logger.error "Publishing Entity FAILED => #{e.inspect}"

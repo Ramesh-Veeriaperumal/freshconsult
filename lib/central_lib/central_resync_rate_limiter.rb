@@ -31,13 +31,22 @@ module CentralLib::CentralResyncRateLimiter
 
   private
 
+    def execute_ratelimit_lua_script(key, action)
+      Redis::LuaStore.evaluate(
+        $redis_others,
+        Redis::ResyncRatelimitterLua.resync_ratelimitter_lua_script,
+        Redis::ResyncRatelimitterLua.resync_ratelimiter_lua,
+        [key], [action]
+      )
+    end
+
     def increment_redis_key_on_job_start(key)
       set_others_redis_key_if_not_present(key, 0)
-      increment_others_redis(key)
+      execute_ratelimit_lua_script(key, 'INCR')
     end
 
     def decrement_redis_key_on_job_end(key)
-      decrement_others_redis(key)
+      execute_ratelimit_lua_script(key, 'DECR')
     end
 
     def resync_worker_limit_per_consumer
@@ -46,7 +55,7 @@ module CentralLib::CentralResyncRateLimiter
     end
 
     def current_worker_count_for_consumer(source)
-      get_others_redis_key(resync_rate_limiter_key(source)).presence.to_i
+      execute_ratelimit_lua_script(resync_rate_limiter_key(source), 'GET').presence.to_i
     end
 
     def resync_rate_limiter_key(source)

@@ -170,16 +170,26 @@ class CentralResyncWorkerTest < ActionView::TestCase
 
   def test_check_status_is_complated_on_executed_state
     args = resync_args
-    key = resync_rate_limiter_key(args[:source])
-    push_resync_job_information(args[:source], args[:job_id], args[:model_name])
     Account.first.make_current
-    sync_entity(model_name: args[:model_name], job_id: args[:job_id], source: args[:source], meta_info: args[:meta_info])
+    Sidekiq::Testing.inline! do
+      persist_job_info_and_start_entity_publish(args[:source], args[:job_id], args[:model_name], args[:meta_info])
+    end
     job_info = fetch_resync_job_information(args[:source], args[:job_id])
 
     assert_equal job_info[:status], RESYNC_JOB_STATUSES[:completed]
   ensure
     CentralPublish::ResyncWorker.clear
-    remove_others_redis_key(key)
+    remove_others_redis_key(resync_rate_limiter_key(args[:source]))
+  end
+
+  def test_check_status_is_in_progress_on_running_state
+    args = resync_args
+    sync_entity(model_name: args[:model_name], job_id: args[:job_id], source: args[:source], meta_info: args[:meta_info])
+    job_info = fetch_resync_job_information(args[:source], args[:job_id])
+
+    assert_equal job_info[:status], RESYNC_JOB_STATUSES[:in_progress]
+  ensure
+    remove_others_redis_key(resync_rate_limiter_key(args[:source]))
   end
 
   def test_check_status_is_failed_on_excaption_state
