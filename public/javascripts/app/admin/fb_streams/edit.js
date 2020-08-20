@@ -23,6 +23,7 @@ window.App.Admin = window.App.Admin || {};
         $import_page_post_checkbox = $doc.find('#social_ticket_rule__import_company_comments'),
         $enable_threading_radio = $doc.find('#same_ticket_threading'),
         $disable_threading_radio = $doc.find('#new_ticket_threading');
+
       const CURRENT_RULE = $doc.find('#social_ticket_rule__rule_type').val();
 
       $('.social_ticket_rule_includes').select2({
@@ -99,7 +100,9 @@ window.App.Admin = window.App.Admin || {};
         $rule_settings_container = $doc.find('#ticket_rules'),
         $select2_container = $doc.find('.optimal-rules-container #s2id_social_ticket_rule__includes'),
         $ticket_rule_type = $doc.find('#social_ticket_rule__rule_type'),
-        $disable_threading_radio = $doc.find('#new_ticket_threading');
+        $disable_threading_radio = $doc.find('#new_ticket_threading'),
+        $same_ticket_filter_mentions = $doc.find('#same_ticket_filter_mentions'),
+        $new_ticket_filter_mentions = $doc.find('#new_ticket_filter_mentions');
 
       $doc.on('change.fbAdminEvents', '#primary_toggle_switch', function () {
         if (this.checked) {
@@ -157,7 +160,7 @@ window.App.Admin = window.App.Admin || {};
             $ticket_rule_type.val(_this.BROAD_RULE_TYPE);
             $('#toggle_keywords').prop('checked', false);
             $('.optimal-rules-container #s2id_social_ticket_rule__includes').select2('val', '').hide();
-            $threading_container.show();
+            $threading_container.fadeIn('slow', 'linear').css('display', 'block');
             $select2_container.fadeOut('slow', 'linear').css('display', 'block');
             break;
 
@@ -167,9 +170,21 @@ window.App.Admin = window.App.Admin || {};
             // $('#same_ticket_filter_mentions_container').hide();
             // $('#new_ticket_filter_mentions_container').show();
             $ticket_rule_type.val(_this.OPTIMAL_RULE_TYPE);
-            $threading_container.hide();
             $select2_container.fadeIn('slow', 'linear').css('display', 'block');
+            $threading_container.fadeOut('slow', 'linear').css('display', 'block');
             break;
+        }
+      });
+
+      $doc.on('change.fbAdminEvents', '#same_ticket_filter_mentions', function () {
+        if (this.checked) {
+          $new_ticket_filter_mentions.prop('checked', false);
+        }
+      });
+
+      $doc.on('change.fbAdminEvents', '#new_ticket_filter_mentions', function () {
+        if (this.checked) {
+          $same_ticket_filter_mentions.prop('checked', false);
         }
       });
 
