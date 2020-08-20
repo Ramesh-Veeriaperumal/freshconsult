@@ -182,7 +182,7 @@ class Account < ActiveRecord::Base
 
   LAUNCHPARTY_FEATURES = {
     hide_og_meta_tags: false, admin_dashboard: false, agent_conference: false, agent_dashboard: false,
-    agent_new_ticket_cache: false, api_search_beta: false, autoplay: false, bi_reports: false,
+    api_search_beta: false, autoplay: false, bi_reports: false,
     disable_old_sso: false, enable_old_sso: false, es_count_writes: false,
     es_down: false, es_tickets: false, es_v1_enabled: false, es_v2_reads: false, fb_msg_realtime: false,
     force_index_tickets: false, freshfone_caller_id_masking: false,
@@ -190,7 +190,7 @@ class Account < ActiveRecord::Base
     gamification_quest_perf: false, lambda_exchange: false, automation_revamp: false,
     meta_read: false, most_viewed_articles: false, multifile_attachments: true,
     new_footer_feedback_box: false, new_leaderboard: false, periodic_login_feature: false, restricted_helpdesk: false,
-    supervisor_dashboard: false, support_new_ticket_cache: false, synchronous_apps: false, ticket_list_page_filters_cache: false,
+    supervisor_dashboard: false, support_new_ticket_cache: false, synchronous_apps: false,
     skip_hidden_tkt_identifier: false, agent_collision_alb: false, auto_refresh_alb: false,
     customer_sentiment_ui: false, portal_solution_cache_fetch: false,
     customer_sentiment: false, logout_logs: false,
