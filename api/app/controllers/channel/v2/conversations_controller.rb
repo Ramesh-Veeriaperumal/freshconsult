@@ -3,7 +3,7 @@ module Channel::V2
     include ChannelAuthentication
     include Conversations::Twitter
 
-    before_filter :channel_client_authentication, if: :channel_jwt_auth?
+    before_filter :channel_client_authentication, :load_ticket, if: :channel_jwt_auth?
     skip_before_filter :check_privilege, if: :channel_jwt_auth?
     skip_before_filter :can_send_user?    
 
@@ -21,6 +21,10 @@ module Channel::V2
     end
     
     private
+
+      def load_ticket
+        false if ticket_required? && !load_parent_ticket
+      end
 
       def channel_jwt_auth?
         permitted_jwt_source?(PERMITTED_JWT_SOURCES)
