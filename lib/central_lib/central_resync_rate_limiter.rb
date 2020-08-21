@@ -25,8 +25,7 @@ module CentralLib::CentralResyncRateLimiter
   end
 
   def max_allowed_records
-    max_allowed_records = get_others_redis_key(CENTRAL_RESYNC_MAX_ALLOWED_RECORDS)
-    max_allowed_records&.to_i || RESYNC_MAX_ALLOWED_RECORDS
+    @max_allowed_records ||= (get_others_redis_key(CENTRAL_RESYNC_MAX_ALLOWED_RECORDS)&.to_i || RESYNC_MAX_ALLOWED_RECORDS)
   end
 
   def decrement_redis_key_on_job_end(source)

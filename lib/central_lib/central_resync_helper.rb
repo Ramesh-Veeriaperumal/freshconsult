@@ -85,8 +85,9 @@ module CentralLib
             last_model_id: batch.last.id,
             records_processed: records_processed
           )
-          # Stop the query once the max publishable records limit is reached
-          break if records_processed > max_allowed_records
+          # Stop the query once the max publishable records limit is reached for other consumers
+          # If we are internally consuming this API then we can skip the throttling.
+          break if (records_processed > max_allowed_records and args[:source] != SOURCE_TO_SKIP_RECORDS_THROTTLE)
         end
       end
 

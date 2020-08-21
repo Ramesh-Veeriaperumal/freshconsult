@@ -17,7 +17,7 @@ module CentralPublish
     def perform(args)
       args.symbolize_keys!
 
-      sync_entity(args)
+      Sharding.run_on_slave { sync_entity(args) }
       update_resync_job_information(args[:source], args[:job_id], status: RESYNC_JOB_STATUSES[:completed])
     rescue StandardError => e
       update_resync_job_information(args[:source], args[:job_id], status: RESYNC_JOB_STATUSES[:failed])
