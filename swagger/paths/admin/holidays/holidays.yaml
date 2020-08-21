@@ -2,7 +2,11 @@ get:
   tags: [Holidays of Calendar]
   summary: Holidays of Calendar
   parameters:
-    - $ref: '#/parameters/id'
+    - name: id
+      in: path
+      type: string
+      required: true
+      description: 'It should be calendar code'
   responses:
     200:
       description: Success
@@ -12,7 +16,7 @@ get:
           holidays:
             type: array
             items:
-              $ref: '#/definitions/holiday_list'
+              $ref: '#/definitions/holidays'
     403:
       description: Access denied
     404:

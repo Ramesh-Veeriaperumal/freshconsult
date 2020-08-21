@@ -928,6 +928,8 @@ out_of_office_response:
 
 scoreboard_level:
   $ref: './resource/admin/scoreboard_level.yaml'
+holidays:
+  $ref: './resource/admin/holidays.yaml'
 
 search_in_freshworks:
   $ref: './response/agents/search_in_freshworks.yaml'
