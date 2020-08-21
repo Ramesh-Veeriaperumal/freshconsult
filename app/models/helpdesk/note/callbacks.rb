@@ -135,10 +135,10 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def update_parent_sender_email
       return if incoming
-      requester_emails = notable.requester.emails
-      if requester_emails.length == 1 && !requester_emails.include?(notable.sender_email)
-        notable.sender_email = notable.requester.email
-      end
+
+      # Ticket's sender_email is updated to requester's primary_email if current sender_email is not present in user_emails list.
+      # It's not updated if there is no email for that requester.
+      notable.sender_email = notable.requester.email unless notable.requester_sender_email_valid?
     end
 
 

@@ -12,7 +12,7 @@ class Account < ActiveRecord::Base
     :euc_migrated_twitter, :new_ticket_recieved_metric, :ner,
     :count_service_es_writes, :count_service_es_reads,
     :sso_login_expiry_limitation, :undo_send, :old_link_back_url_validation, :stop_contacts_count_query,
-    :denormalized_select_for_update, :es_tickets,
+    :es_tickets,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
     :skip_portal_cname_chk, :ticket_source_revamp,
     :bot_email_channel, :description_by_default, :bot_chat_history, :new_es_api, :filter_factory,
@@ -22,9 +22,9 @@ class Account < ActiveRecord::Base
     :update_billing_info, :allow_billing_info_update,
     :native_apps, :archive_tickets_api, :bot_agent_response,
     :fetch_ticket_from_ref_first,
-    :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp,
+    :id_for_choices_write, :fluffy, :fluffy_email, :fluffy_email_signup, :session_logs, :nested_field_revamp,
     :ticket_field_limit_increase, :join_ticket_field_data, :bypass_signup_captcha,
-    :simple_outreach, :disable_simple_outreach, :supervisor_text_field, :disable_mint_analytics,
+    :disable_simple_outreach, :supervisor_text_field, :disable_mint_analytics,
     :freshid_org_v2, :hide_agent_login,
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
     :recalculate_daypass, :fb_page_api_improvement, :attachment_redirect_expiry, :contact_company_split,
@@ -38,7 +38,7 @@ class Account < ActiveRecord::Base
     :jira_onpremise_reporter, :sidekiq_logs_to_central, :encode_emoji_in_solutions,
     :forums_agent_portal, :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html,
     :remove_image_attachment_meta_data, :automated_private_notes_notification,
-    :sane_restricted_helpdesk, :hiding_confidential_logs, :sla_policy_revamp, :help_widget_log, :freshdesk_freshsales_bundle,
+    :sane_restricted_helpdesk, :hiding_confidential_logs, :help_widget_log, :freshdesk_freshsales_bundle,
     :requester_widget_timeline,
     :out_of_office, :enable_secure_login_check, :public_api_filter_factory, :marketplace_gallery,
     :translations_proxy, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :retry_emails, :disable_beamer, :fb_message_echo_support, :portal_prototype_update,
@@ -101,6 +101,30 @@ class Account < ActiveRecord::Base
   PRICING_PLAN_MIGRATION_FEATURES_2020 = [
     :unlimited_multi_product, :sla_reminder_automation
   ].to_set.freeze
+
+  LAUNCH_PARTY_FEATURES_TO_LOG = [
+    :admin_only_mint
+  ].freeze
+
+  BITMAP_FEATURES_TO_LOG = [].freeze
+
+  def launched?(*feature_name)
+    features_list = feature_name & LAUNCH_PARTY_FEATURES_TO_LOG
+
+    if features_list.present?
+      features_list.each do |feature|
+        log_feature_usage(feature)
+        feature_name.delete(feature)
+      end
+    end
+
+    super
+  end
+
+  def log_feature_usage(feature_name)
+    Rails.logger.warn "FEATURE CHECK USAGE :: #{feature_name} :: #{caller[0..5]}"
+    true
+  end
 
   LP_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
@@ -215,8 +239,7 @@ class Account < ActiveRecord::Base
   end
 
   def count_es_enabled?
-    launched?(:count_service_es_reads) ||
-      (launched?(:es_count_reads) && features?(:countv2_reads))
+    launched?(:count_service_es_reads) || features?(:countv2_reads)
   end
 
   def count_es_api_enabled?
@@ -333,12 +356,7 @@ class Account < ActiveRecord::Base
 
   def falcon_ui_enabled?(current_user = :no_user)
     valid_user = (current_user == :no_user ? true : (current_user && current_user.is_falcon_pref?))
-    valid_user && (falcon_enabled? || check_admin_mint? || disable_old_ui_enabled?)
-  end
-
-  def check_admin_mint?
-    return false if User.current.nil?
-    admin_only_mint_enabled? && User.current.privilege?(:admin_tasks)
+    valid_user && (falcon_enabled? || disable_old_ui_enabled?)
   end
 
   def falcon_support_portal_theme_enabled?
@@ -425,6 +443,8 @@ class Account < ActiveRecord::Base
   # TODO : Cleanup up after 2020 pricing changes
   # START
   def has_feature?(feature)
+    return log_feature_usage(feature) if feature.to_sym.in?(BITMAP_FEATURES_TO_LOG)
+
     return super if launched?(:pricing_plan_change_2020)
 
     PRICING_PLAN_MIGRATION_FEATURES_2020.include?(feature) ? true : super
@@ -449,7 +469,7 @@ class Account < ActiveRecord::Base
     unless launched?(:pricing_plan_change_2020)
       features.delete_if { |feature| PRICING_PLAN_MIGRATION_FEATURES_2020.include?(feature) }
     end
-    super
+    features.all? { |f| has_feature?(f) }
   end
   # STOP
 

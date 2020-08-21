@@ -12,10 +12,8 @@ class DenormalizedFlexifield < ActiveRecord::Base
   belongs_to :flexifield
 
   attr_protected :account_id, :flexifield_id
-  # attr_accessor :previous_attribute_changes
 
   after_initialize :set_default_values, :set_state_variables
-  # before_validation :run_through_validations
   after_commit :set_state_variables, :set_changes_variables
 
   SERIALIZED_DB_COLUMNS.each do |db_column|
@@ -144,22 +142,18 @@ class DenormalizedFlexifield < ActiveRecord::Base
         retry_count += 1
         if retry_count <= MAX_RETRY
           @non_serialized_changes = changes
-          if account.denormalized_select_for_update_enabled?
-            ### Fires select ... for update query
-            ### Doesn't prevent other mysql clients from reading the record
-            ### Any updates or other select ... for update to this record will wait till the end of this transaction
-            ### calling reload doesn't fetch the latest values from DB, because of either of 
-            ###    - Activerecord querycache (Activerecord returns the loaded values when a query is hit again) - This has been fixed in latest AR versions. We haven't enabled it though. Use `self.class.connection.clear_query_cache` to fix this
-            ###    - Mysql query cache (We haven't enabled it)
-            ###    - Mysql transaction isolation level set to `REPEATABLE-READ `(default value set by mysql) which loads the same values previously loaded inside a transaction (the issue we are addressing here, this will also solve for the above two as it is a different query - including ... for update. This also loads the latest values despite transaction isolation levels)
-            ### Throws `ActiveRecord::StatementInvalid: Mysql2::Error: Lock wait timeout exceeded; try restarting transaction` when another transaction holds this record beyond timeout. `deadlock_retry` gem handles retrying and this error is thrown after retrying 3 times(defined inside gem - MAXIMUM_RETRIES_ON_DEADLOCK). *** Should we rescue this? ***
-            ### Using select ... for update outside the transaction will not have any effect
-            ### Tried nested transactions. Mysql doesn't natively support this as it does `Implicit Commit`, but can be done as a workaround by checking out a different connection from AR connection pool, initiate a new transaction, use that to fire select ... for update query and checkin the connection back to connection pool. AR doesn't return a different connection while checkout, have to reset the current connection, fetch one and set the old connection back. Unsure how thread safe it is & how exceptions will be propagated. Sample code commented below #new_connection method
-            ### Possible other way to fix this - move to json columns, AR doesn't support key wise updating of json
-            lock!
-          else
-            reload
-          end
+          ### Fires select ... for update query
+          ### Doesn't prevent other mysql clients from reading the record
+          ### Any updates or other select ... for update to this record will wait till the end of this transaction
+          ### calling reload doesn't fetch the latest values from DB, because of either of 
+          ###    - Activerecord querycache (Activerecord returns the loaded values when a query is hit again) - This has been fixed in latest AR versions. We haven't enabled it though. Use `self.class.connection.clear_query_cache` to fix this
+          ###    - Mysql query cache (We haven't enabled it)
+          ###    - Mysql transaction isolation level set to `REPEATABLE-READ `(default value set by mysql) which loads the same values previously loaded inside a transaction (the issue we are addressing here, this will also solve for the above two as it is a different query - including ... for update. This also loads the latest values despite transaction isolation levels)
+          ### Throws `ActiveRecord::StatementInvalid: Mysql2::Error: Lock wait timeout exceeded; try restarting transaction` when another transaction holds this record beyond timeout. `deadlock_retry` gem handles retrying and this error is thrown after retrying 3 times(defined inside gem - MAXIMUM_RETRIES_ON_DEADLOCK). *** Should we rescue this? ***
+          ### Using select ... for update outside the transaction will not have any effect
+          ### Tried nested transactions. Mysql doesn't natively support this as it does `Implicit Commit`, but can be done as a workaround by checking out a different connection from AR connection pool, initiate a new transaction, use that to fire select ... for update query and checkin the connection back to connection pool. AR doesn't return a different connection while checkout, have to reset the current connection, fetch one and set the old connection back. Unsure how thread safe it is & how exceptions will be propagated. Sample code commented below #new_connection method
+          ### Possible other way to fix this - move to json columns, AR doesn't support key wise updating of json
+          lock!
           reapply_values
           retry
         else
@@ -188,59 +182,4 @@ class DenormalizedFlexifield < ActiveRecord::Base
     def serialized_changes
       @serialized_changes ||= {}
     end
-
-    # def new_connection
-    #   pool = ActiveRecord::Base.connection_pool
-    #   current_connection = nil
-    #   conn_id = pool.safe_send("current_connection_id")
-    #   @new_connection ||= begin
-    #     synchronize do
-    #       reserved_connections = pool.instance_variable_get("@reserved_connections")
-    #       current_connection = reserved_connections[conn_id]
-    #       conn = pool.checkout
-    #       reserved_connections[conn_id] = conn
-    #       pool.instance_variable_set("@reserved_connections", reserved_connections)
-    #       conn
-    #     end
-    #   end
-    #   #connection_id = ActiveRecord::Base.connection_pool.safe_send(:current_connection_id)
-    #   yield @new_connection
-    # rescue Exception => e
-    #   p e.message
-    # ensure
-    #   synchronize do
-    #     ActiveRecord::Base.connection_pool.checkin(@new_connection)
-    #     reserved_connections[conn_id] = current_connection
-    #     pool.instance_variable_set("@reserved_connections", reserved_connections)
-    #   end
-    # end
-
-  # def run_through_validations
-  #   attribute_changes.each do |attribute, new_value|
-  #     db_column = SERIALIZED_COLUMN_MAPPING_BY_ATTRIBUTES[attribute]
-  #     SERIALIZED_COLUMN_VALIDATION_BY_DB_COLUMN[db_column].each do |method|
-  #       safe_send(method, attribute, value)
-  #     end
-  #   end
-  # end
-
-  # def add_attribute_error attribute, error_label, error_message
-  #   self.errors.add(attribute.safe_send(error_label), error_message)
-  # end
-
-  # def convert_to_integer value
-  #   value.to_i
-  # end
-
-  # def convert_to_decimal value
-  #   value.to_f
-  # end
-
-  # def update(*)
-  #   if changes_of_serialized_attributes.present?
-  #     # | (attributes.keys & self.class.serialized_attributes.keys - SERIALIZED_DB_COLUMNS.map(&:to_s))
-  #     super(changed)
-  #     @previous_state = cloned_attributes
-  #   end
-  # end
 end

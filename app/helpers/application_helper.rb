@@ -2144,7 +2144,8 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def admin_only_falcon_enabled?
-    !current_account.disable_old_ui_enabled? && !current_account.falcon_enabled? && current_account.check_admin_mint?
+    Rails.logger.warn "FALCON HELPER METHOD :: admin_only_falcon_enabled? :: #{caller[0..2]}"
+    false
   end
 
   def year_in_review_enabled?

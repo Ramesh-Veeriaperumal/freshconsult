@@ -1,6 +1,6 @@
 require_relative '../test_helper'
 ['canned_responses_helper.rb', 'group_helper.rb', 'agent_helper.rb', 'ticket_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
-['canned_responses_test_helper.rb', 'canned_response_folders_test_helper.rb', 'attachments_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
+['canned_responses_test_helper.rb', 'canned_response_folders_test_helper.rb', 'attachments_test_helper.rb', 'ticket_fields_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 require_relative "#{Rails.root}/lib/helpdesk_access_methods.rb"
 
 class CannedResponsesControllerTest < ActionController::TestCase
@@ -13,16 +13,19 @@ class CannedResponsesControllerTest < ActionController::TestCase
   include TicketHelper
   include AttachmentsTestHelper
   include AwsTestHelper
+  include TicketFieldsTestHelper
 
   def setup
     CannedResponsesController.any_instance.stubs(:accessible_from_esv2).returns(nil)
     super
     before_all
+    Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
   end
 
   def teardown
     super
     CannedResponsesController.unstub(:accessible_from_esv2)
+    Account.current.unstub(:ticket_source_revamp_enabled?)
   end
 
   @@sample_ticket  = nil
@@ -185,6 +188,27 @@ class CannedResponsesControllerTest < ActionController::TestCase
     json_response = JSON.parse(response.body)
     evaluated_response = json_response["evaluated_response"]
     assert_equal evaluated_response, "<div>#{h(helpdesk_name)}</div>"
+  end
+
+  def test_placeholder_source_name
+    Account.current.launch(:escape_liquid_for_reply)
+    ticket = create_ticket(subject: 'test ticket')
+    custom_source = Account.current.helpdesk_sources.visible.custom.last || create_custom_source
+    ticket.source = custom_source.account_choice_id
+    ticket.save!
+    ticket.reload
+    source_name = ticket.source_name
+    ca_response = create_response(
+      title: Faker::Lorem.sentence,
+      content_html: '<div>{{ticket.source_name}}</div>',
+      visibility: ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]
+    )
+    login_as(@agent)
+    get :show, controller_params(version: 'v2', id: ca_response.id, ticket_id: ticket.display_id, include: 'evaluated_response')
+    assert_response 200
+    json_response = JSON.parse(response.body)
+    evaluated_response = json_response['evaluated_response']
+    assert_equal "<div>#{h(source_name)}</div>", evaluated_response
   end
 
   def test_placeholder_portal_name
