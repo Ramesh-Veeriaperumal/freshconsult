@@ -30,7 +30,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include MemcacheKeys
   include TicketConstants
 
-  SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
+  SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification", "channel_id", "channel_profile_id",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed",
                             "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email",
                             "parent_ticket", "reports_hash","sla_response_reminded","sla_resolution_reminded", "dirty_attributes",

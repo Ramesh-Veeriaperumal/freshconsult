@@ -31,6 +31,20 @@ module ChannelAuthentication
     end
   end
 
+  def permitted_jwt_source?(sources = [])
+    return @permitted_jwt_source if defined?(@permitted_jwt_source)
+
+    channel_auth = request.headers['X-Channel-Auth']
+    @permitted_jwt_source = if channel_auth.present?
+                              channel_source = source(channel_auth)
+                              sources.any?{ |source| channel_source == CHANNELS[source] }
+                            else
+                              false
+                            end
+  rescue StandardError
+    invalid_credentials_error
+  end
+
   private
 
     def verify_token(auth_token,config)

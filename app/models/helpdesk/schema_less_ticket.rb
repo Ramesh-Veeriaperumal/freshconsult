@@ -353,6 +353,22 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     additional_info[:fb_msg_type] = value
   end
 
+  def channel_id
+    additional_info[:channel_id]
+  end
+
+  def channel_id=(value)
+    additional_info[:channel_id] = value
+  end
+
+  def channel_profile_id
+    additional_info[:channel_profile_id]
+  end
+
+  def channel_profile_id=(value)
+    additional_info[:channel_profile_id] = value
+  end
+
   def override_exchange_model(_action)
     report_hash_changes = attribute_changes('text_tc02')
     changes = attribute_changes.slice(*PRESENTER_FIELDS_MAPPING.keys) || {}

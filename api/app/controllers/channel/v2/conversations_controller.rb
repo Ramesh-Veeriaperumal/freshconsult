@@ -1,10 +1,14 @@
 module Channel::V2
   class ConversationsController < ::ConversationsController
-
+    include ChannelAuthentication
     include Conversations::Twitter
-    skip_before_filter :can_send_user?
+
+    before_filter :channel_client_authentication, if: :channel_jwt_auth?
+    skip_before_filter :check_privilege, if: :channel_jwt_auth?
+    skip_before_filter :can_send_user?    
 
     CHANNEL_V2_CONVERSATIONS_CONSTANTS_CLASS = 'Channel::V2::ConversationConstants'.freeze
+    PERMITTED_JWT_SOURCES = [:multiplexer].freeze
 
     def create
       conversation_delegator = invoke_delegator
@@ -17,6 +21,10 @@ module Channel::V2
     end
     
     private
+
+      def channel_jwt_auth?
+        permitted_jwt_source?(PERMITTED_JWT_SOURCES)
+      end
 
       def invoke_delegator
         delegator_class.new(@item, delegator_params)
