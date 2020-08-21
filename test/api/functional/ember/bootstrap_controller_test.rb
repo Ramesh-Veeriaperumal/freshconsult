@@ -698,4 +698,80 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     assert_equal false, redis_key_exists?(key)
     assert_equal redis_key_exists?(key), parsed_response['config']['email']['ms_mailbox_oauth_required']
   end
+
+  def test_account_with_mailbox_oauth_error_outgoing
+    Account.any_instance.stubs(:features_included?).with('mailbox').returns(true)
+    Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
+    Email::MailboxDelegator.any_instance.stubs(:verify_smtp_mailbox).returns(success: true, msg: '')
+    email_config = create_email_config(smtp_mailbox_attributes: { smtp_server_name: 'imap.gmail.com' })
+    email_config.smtp_mailbox.error_type = 401
+    email_config.save!
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    parsed_response = parse_response response.body
+    assert_equal true, parsed_response['config']['email']['mailbox_oauth_reauth_required']
+  ensure
+    Account.any_instance.unstub(:features_included?)
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+    Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
+    Account.current.email_configs.destroy(email_config)
+  end
+
+  def test_account_with_mailbox_oauth_error_incoming
+    Account.any_instance.stubs(:features_included?).with('mailbox').returns(true)
+    Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
+    Email::MailboxDelegator.any_instance.stubs(:verify_smtp_mailbox).returns(success: true, msg: '')
+    email_config = create_email_config(imap_mailbox_attributes: { imap_server_name: 'smtp.gmail.com' })
+    email_config.imap_mailbox.error_type = 401
+    email_config.save!
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    parsed_response = parse_response response.body
+    assert_equal true, parsed_response['config']['email']['mailbox_oauth_reauth_required']
+  ensure
+    Account.any_instance.unstub(:features_included?)
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+    Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
+    Account.current.email_configs.destroy(email_config)
+  end
+
+  def test_account_with_mailbox_custom_error_incoming_no_oauth
+    Account.any_instance.stubs(:features_included?).with('mailbox').returns(true)
+    Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
+    Email::MailboxDelegator.any_instance.stubs(:verify_smtp_mailbox).returns(success: true, msg: '')
+    email_config = create_email_config(imap_mailbox_attributes: { imap_server_name: 'smtp.gmail.com' })
+    email_config.imap_mailbox.error_type = 587
+    email_config.save!
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    parsed_response = parse_response response.body
+    assert_equal false, parsed_response['config']['email']['mailbox_oauth_reauth_required']
+  ensure
+    Account.any_instance.unstub(:features_included?)
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+    Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
+    Account.current.email_configs.destroy(email_config)
+  end
+
+  def test_account_with_mailbox_oauth_error_outgoing_no_oauth
+    Account.any_instance.stubs(:features_included?).with('mailbox').returns(true)
+    Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
+    Email::MailboxDelegator.any_instance.stubs(:verify_smtp_mailbox).returns(success: true, msg: '')
+    email_config = create_email_config(smtp_mailbox_attributes: { smtp_server_name: 'imap.gmail.com' })
+    email_config.smtp_mailbox.error_type = 587
+    email_config.save!
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    parsed_response = parse_response response.body
+    assert_equal false, parsed_response['config']['email']['mailbox_oauth_reauth_required']
+  ensure
+    Account.any_instance.unstub(:features_included?)
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+    Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
+    Account.current.email_configs.destroy(email_config)
+  end
 end

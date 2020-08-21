@@ -3,15 +3,6 @@ require_relative '../test_helper'
 class VaRuleTest < ActiveSupport::TestCase
   include VaRuleTestHelper
 
-  #def test_va_rule_update_without_feature
-  #  @account.rollback(:audit_logs_central_publish)
-  #  CentralPublisher::Worker.jobs.clear
-  #  update_va_rule
-  #  assert_equal 0, CentralPublisher::Worker.jobs.size
-  #ensure
-  #  @account.launch(:audit_logs_central_publish)
-  #end
-
   def test_va_rule_update_with_feature
     CentralPublisher::Worker.jobs.clear
     update_va_rule

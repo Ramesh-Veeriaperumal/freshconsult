@@ -75,7 +75,6 @@ module Fdadmin::FeatureMethods
       elsif feature_name.to_sym == :disable_old_ui
         if @account.falcon_enabled?
           @account.add_feature(feature_name)
-          @account.rollback(:admin_only_mint) if current_account.admin_only_mint_enabled?
         else
           raise "Not applicable"
         end

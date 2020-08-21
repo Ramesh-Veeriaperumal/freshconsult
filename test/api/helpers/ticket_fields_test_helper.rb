@@ -113,6 +113,11 @@ module TicketFieldsTestHelper
     source_values
   end
 
+  def create_n_custom_sources(count = 1)
+    visible_sources = @account.helpdesk_sources.visible.custom.count
+    (count - visible_sources).times { create_custom_source }
+  end
+
   def api_ticket_sources
     if Account.current.compose_email_enabled?
       Account.current.helpdesk_sources.api_sources | [Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]]

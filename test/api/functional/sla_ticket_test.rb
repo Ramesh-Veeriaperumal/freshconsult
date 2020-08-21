@@ -451,4 +451,57 @@ class TicketsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:time_zone)
     ticket.destroy
   end
+
+  def test_nr_due_by_sla_timer_off
+    Account.current.stubs(:next_response_sla_enabled?).returns(true)
+    sla_policy
+    @note = nil
+    freeze_time_now(get_datetime('8:00', '5 Nov 2019')) do
+      params = ticket_params_hash_sla
+      post :create, construct_params({}, params)
+    end
+    ticket = @account.tickets.last
+    agent = add_agent(@account)
+    freeze_time_now(get_datetime('8:30', '5 Nov 2019')) do
+      params_hash = {
+        ticket_id: ticket.id,
+        user_id: agent.id,
+        created_at: Time.zone.now
+      }
+      @note = create_note params_hash
+      ticket.current_note_id = @note.id
+      @note.save_response_time
+      ticket.update_dueby
+    end
+    freeze_time_now(get_datetime('9:00', '5 Nov 2019')) do
+      params_hash = {
+        ticket_id: ticket.id,
+        user_id: ticket.requester_id,
+        created_at: Time.zone.now
+      }
+      @note = create_note params_hash
+      ticket.current_note_id = @note.id
+      @note.save_response_time
+      ticket.update_dueby
+      assert_equal ticket.nr_due_by, get_datetime('13:00', '5 Nov 2019')
+    end
+    freeze_time_now(get_datetime('10:00', '5 Nov 2019')) do
+      params_hash = { status: 3 }
+      put :update, construct_params({ id: ticket.display_id }, params_hash)
+      ticket.update_dueby
+      ticket.update_on_state_time
+    end
+    freeze_time_now(get_datetime('15:00', '5 Nov 2019')) do
+      params_hash = {
+        ticket_id: ticket.id,
+        user_id: agent.id,
+        created_at: Time.zone.now
+      }
+      note = create_note params_hash
+      ticket.current_note_id = note.id
+      note.save_response_time
+      ticket.update_dueby
+      assert_nil note.nr_violated
+    end
+  end
 end

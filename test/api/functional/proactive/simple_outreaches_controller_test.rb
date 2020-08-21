@@ -45,15 +45,7 @@ module Proactive
       }
     end
 
-    def test_create_without_simple_outreach
-      Account.current.rollback(:simple_outreach)
-      Account.current.rollback(:disable_simple_outreach)
-      post :create, construct_params({ version: 'private' }, outreach_params)
-      assert_response 403
-    end
-
     def test_create_after_blacklist
-      Account.current.launch(:simple_outreach)
       Account.current.launch(:disable_simple_outreach)
       post :create, construct_params({ version: 'private' }, outreach_params)
       assert_response 403

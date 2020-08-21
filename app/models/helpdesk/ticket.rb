@@ -404,6 +404,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
    end
   end
 
+  def requester_sender_email_valid?
+    requester_emails = requester.emails
+    requester_emails.present? && requester_emails.include?(sender_email)
+  end
+
   def properties_updated?
     changed? || schema_less_ticket_updated? || custom_fields_updated? || tags_updated
   end

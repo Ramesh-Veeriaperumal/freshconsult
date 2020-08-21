@@ -95,11 +95,6 @@
 		<span class="<%= inline_manual_classes_for_multilingual %>" id="multilingual-meta-info"></span>
 	</div>
 
-<% if current_user.falcon_invite_eligible? %>
-	<%= javascript_include_tag :'cdn/falcon_invite' %>
-	<%= render partial: "admin_onboarding/falcon_invite" %>
-<% end %>
-
 <script >
 	//TODO: Migrate to i18n Js
 	window.feedback_subject_required_error = "<%= t('footer.errors.feedback_subject_required') %>"
@@ -139,7 +134,7 @@
       });
       heap.identify("<%= current_user.id %>");
       heap.addUserProperties({
-      	'account_id' : "<%= current_account.id %>"
+      	'account_id' : "<%= current_account.id %>",
         'account_name': "<%= current_account.name %>",
         'agent_name': "<%= current_user.name %>",
 		<% subscription = current_account.subscription %>

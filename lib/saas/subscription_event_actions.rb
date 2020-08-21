@@ -58,6 +58,7 @@ class SAAS::SubscriptionEventActions
       disable_chat_routing unless account.has_feature?(:chat_routing)
       handle_daypass if recalculate_daypass_enabled?
       change_api_limit if ( account.fluffy_integration_enabled? && !account.fluffy_addons_enabled? )
+      account.change_fluffy_email_limit if account.fluffy_email_enabled? && !account.fluffy_addons_enabled?
     end
 
     if add_ons_changed?

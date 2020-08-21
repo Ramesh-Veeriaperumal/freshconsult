@@ -31,7 +31,10 @@ module Ember
         return unless validate_delegator(@item, delegator_hash)
         construct_attributes
         # Creating bot at Joehukum side
-        create_bot if save_bot
+        if save_bot
+          Ml::Bot.onboard_system42(@item)
+          create_bot
+        end
       end
 
       def show
@@ -57,6 +60,7 @@ module Ember
           @item.last_updated_by = current_user.id
           ml_response = Ml::Bot.update_ml(@item)
           if ml_response == true
+            @item.training_completed!
             @item.save!
             Rails.logger.info("Map categories action:: #{bot_info(@item)}")
             train_bot if @item.training_status.to_i == BotConstants::BOT_STATUS[:training_not_started]

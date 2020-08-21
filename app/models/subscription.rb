@@ -1076,6 +1076,7 @@ class Subscription < ActiveRecord::Base
       args = { account_id: account_id,
                subscription_id: id,
                subscription_hash: subscription_info(@old_subscription) }
+      args.merge!(current_user_id: User.current.id) if User.current.present?
       if account.launched?(:downgrade_policy)
         args[:requested_subscription_hash] = subscription_info(self)
         args[:requested_subscription_hash][:is_downgrade] = downgrade?

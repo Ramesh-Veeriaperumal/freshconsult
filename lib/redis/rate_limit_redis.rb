@@ -38,6 +38,25 @@ module Redis::RateLimitRedis
     (api_limits[0] || api_limits[1] || api_limits[2] || Middleware::FdApiThrottler::API_LIMIT).to_i
   end
 
+  def get_email_limit_from_redis(plan_id)
+    overall_limit = get_others_redis_key(format(PLAN_EMAIL_LIMIT, plan_id: plan_id))
+    unless overall_limit.nil? || overall_limit.to_i.zero?
+      {
+        "limit": overall_limit,
+        "granularity": MINUTE_GRANULARITY,
+        "account_paths": [
+          JSON.parse(get_others_redis_hash_value(format(PLAN_EMAIL_PATHS_LIMIT, plan_id: plan_id), 'EMAIL_SERVICE') || '{}'),
+          JSON.parse(get_others_redis_hash_value(format(PLAN_EMAIL_PATHS_LIMIT, plan_id: plan_id), 'EMAIL_SERVICE_SPAM') || '{}')
+          ]
+      }
+    else
+      {
+        "limit": overall_limit || 400,
+        "granularity": MINUTE_GRANULARITY
+      }
+    end
+  end
+
   def get_api_min_limit_from_redis(plan_id)
     overall_limit = get_others_redis_key(format(PLAN_API_MIN_LIMIT, plan_id: plan_id))
     unless overall_limit.nil? || overall_limit.to_i == 0

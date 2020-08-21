@@ -95,7 +95,7 @@ class Helpdesk::Note < ActiveRecord::Base
   protected
 
     def update_response_violation
-      schema_less_note.response_violated = (notable.nr_due_by < (created_at || Time.zone.now))
+      schema_less_note.response_violated = notable.nr_due_by < (notable.sla_timer_stopped_at.presence || created_at || Time.zone.now)
       notable.nr_violated = schema_less_note.response_violated unless notable.nr_violated?
       schema_less_note
     end
@@ -135,10 +135,10 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def update_parent_sender_email
       return if incoming
-      requester_emails = notable.requester.emails
-      if requester_emails.length == 1 && !requester_emails.include?(notable.sender_email)
-        notable.sender_email = notable.requester.email
-      end
+
+      # Ticket's sender_email is updated to requester's primary_email if current sender_email is not present in user_emails list.
+      # It's not updated if there is no email for that requester.
+      notable.sender_email = notable.requester.email unless notable.requester_sender_email_valid?
     end
 
 

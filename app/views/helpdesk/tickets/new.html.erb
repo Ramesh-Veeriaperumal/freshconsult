@@ -53,20 +53,8 @@
 
 <%= render :partial => "/helpdesk/tickets/canned_loading"  %>
 <script>
-    var isMultifileEnabled = <%= current_account.launched?(:multifile_attachments) && current_account.launched?(:pjax_reload) %>
+    var isMultifileEnabled = <%= current_account.launched?(:multifile_attachments) %>
 </script>
-<% if Account.current.launched?(:agent_new_ticket_cache) %>
-  <script>
-  // To load data from store to populate group/agent/product for the first time.
-    jQuery(document).ready(function(){
-      if(<%= skip_frag_cache == false %>){
-        PopulateData.fromStore("#helpdesk_ticket_group_id", 'group');
-        PopulateData.fromStore("#helpdesk_ticket_responder_id", 'agent');
-        //PopulateData.fromStore("#helpdesk_ticket_product_id", 'product');
-      }
-    });
-  </script>
-<% end %>
 
 <%
 attachment_dom = ""

@@ -14,8 +14,8 @@ module Helpdesk
       def save_note_later(publish_solution_later, post_to_forum_topic)
         ticket = notable
         build_note_and_sanitize
+        self.to_emails = ticket.requester_sender_email_valid? ? [ticket.sender_email] : [ticket.requester.email]
         UnicodeSanitizer.encode_emoji(self.note_body, 'body', 'full_text')
-        self.to_emails = [ticket.from_email]
         attachment_list = build_attachments || []
         inline_attachment_list = inline_attachment_ids || []
         note_schema_less_associated_attributes = build_note_schema_less_associated_attributes

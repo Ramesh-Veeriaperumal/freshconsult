@@ -73,7 +73,7 @@ module ChannelIntegrations::Commands::Services
     end
 
     def invalid_account?
-      current_account.subscription.suspended? || current_account.disable_simple_outreach_enabled? || !current_account.simple_outreach_enabled?
+      current_account.subscription.suspended? || current_account.disable_simple_outreach_enabled?
     end
   end
 end

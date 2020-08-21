@@ -1,3 +1,4 @@
+// TO BE REMOVED : OLD UI DEPRECATION
 window.App = window.App || {};
 
 (function ($) {

@@ -512,7 +512,8 @@ class User < ActiveRecord::Base
   end
 
   def falcon_invite_eligible?
-    (account.falcon_ui_enabled? && !account.disable_old_ui_enabled? && self.preferences_without_defaults.try(:[], :agent_preferences).try(:[],:falcon_ui).nil?)
+    Rails.logger.warn "FALCON HELPER METHOD :: falcon_invite_eligible? :: #{caller[0..2]}"
+    false
   end
 
   def enabled_undo_send?

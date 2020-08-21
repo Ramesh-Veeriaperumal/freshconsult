@@ -80,18 +80,8 @@
 
 <%= render :partial => "/helpdesk/tickets/canned_loading" %>
 <script>
- var isMultifileEnabled = <%= current_account.launched?(:multifile_attachments) && current_account.launched?(:pjax_reload)%>
+ var isMultifileEnabled = <%= current_account.launched?(:multifile_attachments)%>
 </script>
-
-<% if Account.current.launched?(:agent_new_ticket_cache) %>
-  <script>
-    // To load data from store to populate group for the first time.
-    jQuery(document).ready(function(){
-      // Load data into group, agent and product from data store if the page is cached
-      PopulateData.fromStore("#helpdesk_ticket_group_id", 'group');
-    })
-  </script>
-<% end %>
 
 <script type="text/javascript">
   var dom_helper_data = {};

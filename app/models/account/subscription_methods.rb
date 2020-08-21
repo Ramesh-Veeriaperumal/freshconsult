@@ -84,8 +84,8 @@ class Account < ActiveRecord::Base
     clear_account_data
   end
 
-  def schedule_account_cancellation_request(feedback)
-    SubscriptionNotifier.send_later(:deliver_account_cancellation_requested, feedback) if Rails.env.production?
+  def schedule_account_cancellation_request(feedback, current_user)
+    SubscriptionNotifier.send_later(:deliver_account_cancellation_requested, feedback, current_user) if Rails.env.production?
     unless account_cancellation_requested?
       if launched?(:downgrade_policy)
         result = Billing::Subscription.new.cancel_subscription(self, end_of_term: true)

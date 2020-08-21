@@ -1,5 +1,6 @@
 class SmtpMailbox < ActiveRecord::Base
   include Mailbox::HelperMethods
+  include Email::Mailbox::Constants
 
   self.primary_key = :id
 
@@ -9,7 +10,8 @@ class SmtpMailbox < ActiveRecord::Base
 
   attr_protected :account_id
 
-  scope :errors, -> { where('error_type > ?', 0) }
+  scope :errors, -> { where('error_type > ? and error_type <> ?', 0, AUTH_ERROR) }
+  scope :oauth_errors, -> { where('error_type = ?', AUTH_ERROR) }
 
   attr_encrypted :access_token, random_iv: true, compress: true
   attr_encrypted :refresh_token, random_iv: true, compress: true
