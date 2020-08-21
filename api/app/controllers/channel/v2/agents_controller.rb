@@ -3,7 +3,7 @@ module Channel::V2
     include ChannelAuthentication
     include CentralLib::CentralResyncHelper
 
-    skip_before_filter :check_privilege, :load_object, only: :sync
+    skip_before_filter :check_privilege, only: :sync
     before_filter :channel_client_authentication, :validate_sync_params, only: :sync
 
     def verify_agent_privilege
@@ -16,18 +16,10 @@ module Channel::V2
       if resync_worker_limit_reached?(@source)
         head 429
       else
-        persist_job_info_and_start_entity_publish(@source, request.uuid, 'Agent', @args[:meta], nil, @args[:primary_key_offset])
+        persist_job_info_and_start_entity_publish(@source, request.uuid, CentralLib::CentralResyncConstants::RESYNC_ENTITIES[:agent], @args[:sync_meta], nil, @args[:primary_key_offset])
         @response = { job_id: request.uuid }
         render status: 202
       end
-    end
-
-    def validate_sync_params
-      @args = params.symbolize_keys
-      @errors = []
-      @errors.push('meta information is required') if @args[:meta].nil?
-      @response = { errors: @errors }
-      render status: 400 if @errors.present?
     end
   end
 end
