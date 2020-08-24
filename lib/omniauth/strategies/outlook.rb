@@ -32,7 +32,7 @@ module OmniAuth
 
       def raw_info
         # Get user profile information from the /me endpoint
-        @raw_info ||= access_token.get("https://outlook.office.com/api/v2.0/me/").parsed
+        @raw_info ||= access_token.get('https://outlook.office.com/api/v2.0/me/').parsed
       end
 
       def authorize_params
