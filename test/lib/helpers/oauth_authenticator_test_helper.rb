@@ -32,7 +32,7 @@ module OauthAuthenticatorTestHelper
       ),
       'extra' => {
         'raw_info' => {
-          'userPrincipalName' => 'testemail'
+          'EmailAddress' => 'testemail'
         }
       }
     }
