@@ -764,6 +764,10 @@ class User < ActiveRecord::Base
   end
   alias :is_agent :agent?
 
+  def account_admin?
+    privilege?(:manage_account)
+  end
+
   def customer?
     !agent?
   end
@@ -1429,6 +1433,10 @@ class User < ActiveRecord::Base
 
     def helpdesk_agent_updated?
       @all_changes.has_key?(:helpdesk_agent)
+    end
+
+    def admin_api_key_updated?
+      Account.current.omni_bundle_account? and @all_changes.key?(:single_access_token) and account_admin?
     end
 
     def converted_to_agent?
