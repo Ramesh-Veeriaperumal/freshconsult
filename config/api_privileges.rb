@@ -200,8 +200,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :field_service_management, only: [:update_settings, :show_settings]
     resource :"settings/helpdesk/field_service", only: [:update_settings, :show_settings]
     resource :"ember/sla_policy", only: [:index, :show, :create, :update, :destroy]
-    resource :"admin/api_business_calendar", only: [:index, :show, :create, :destroy]
-    resource :"admin/api_business_calendar", only: [:index, :show, :create]
+    resource :"admin/api_business_calendar", only: [:index, :show, :create, :update, :destroy]
     resource :agent_status, only: [:show, :create, :update, :destroy]
   end
 
