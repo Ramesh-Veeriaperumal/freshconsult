@@ -217,17 +217,15 @@ module DashboardConcern
   end
 
   def check_widgets_with_feature(non_sprout_plan)
-    # Marking freshfone and chat as false because the widgets arent ready. When it is ready, it can be uncommented and deployed
     {
       csat: current_account.any_survey_feature_enabled_and_active?,
       gamification: gamification_feature?(current_account),
-      freshfone: false, # non_sprout_plan && current_account.freshfone_active?,
       moderation: non_sprout_plan && current_account.features?(:forums) && privilege?(:delete_topic)
     }
   end
 
   def check_chat_related_widgets(non_sprout_plan)
-    # Marking freshfone and chat as false because the widgets arent ready. When it is ready, it can be uncommented and deployed
+    # Marking chat as false because the widget is not ready. When it is ready, it can be uncommented and deployed
     chat_feature = current_account.chat_activated? && current_account.chat_setting.active
     {
       chat: false, # non_sprout_plan && chat_feature
