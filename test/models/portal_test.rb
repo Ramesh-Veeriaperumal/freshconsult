@@ -9,8 +9,7 @@ class PortalTest < ActiveSupport::TestCase
     @account.launch(:skip_portal_cname_chk)
   end
 
-  def test_domain_mapping_trigger_with_lp
-    @account.launch(:trigger_domain_mapping_deletion)
+  def test_domain_mapping_trigger
     main_portal = @account.main_portal
     main_portal.portal_url = "demo.lorem#{Time.now.to_i}ipsum.com"
     main_portal.save!
@@ -19,22 +18,6 @@ class PortalTest < ActiveSupport::TestCase
     main_portal.reload
     main_portal.portal_url = nil
     PortalObserver.any_instance.expects(:remove_custom_domain_from_global).once
-    main_portal.save!
-  ensure
-    Fdadmin::APICalls.unstub(:non_global_pods?)
-    Fdadmin::APICalls.unstub(:connect_main_pod)
-  end
-
-  def test_domain_mapping_trigger_without_lp
-    @account.rollback(:trigger_domain_mapping_deletion)
-    main_portal = @account.main_portal
-    main_portal.portal_url = "demo.lorem#{Time.now.to_i}ipsum.com"
-    main_portal.save!
-    Fdadmin::APICalls.stubs(:non_global_pods?).returns(true)
-    Fdadmin::APICalls.stubs(:connect_main_pod).returns(true)
-    main_portal.reload
-    main_portal.portal_url = nil
-    PortalObserver.any_instance.expects(:remove_custom_domain_from_global).times(0)
     main_portal.save!
   ensure
     Fdadmin::APICalls.unstub(:non_global_pods?)
