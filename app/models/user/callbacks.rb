@@ -76,6 +76,11 @@ class User < ActiveRecord::Base
     CentralPublish::UpdateTag.perform_async(tag_update_model_changes)
   end
 
+  def publish_agent_update_central_payload
+    changes = model_changes.slice(:name, :email, :phone)
+    agent.publish_update_central_payload(changes)
+  end
+
   def tag_update_model_changes
     @latest_tags = self.tags.pluck(:name)
     tag_args = {}

@@ -191,6 +191,8 @@ class AccountsController < ApplicationController
     @signup = PrecreatedSignup.new(input_params)
     @signup.account.fs_cookie_signup_param = params[:fs_cookie]
     @signup.save!
+    @signup.user.publish_agent_update_central_payload
+    true
   rescue StandardError => e
     Rails.logger.error "Error in mapping precreated account - error - #{e.message} backtrace - #{e.backtrace}"
     NewRelic::Agent.notice_error(e, custom_params: { description: "Error occoured while mapping precreated account for Account #{Account.current.id}" })
