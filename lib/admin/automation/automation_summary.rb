@@ -397,7 +397,7 @@ module Admin::Automation::AutomationSummary
     end
 
     def source
-      SOURCE
+      @source ||= Helpdesk::Source.source_choices(:token_by_keys).inject({}) { |hash, key| hash.merge!(key.first.to_s => key.second.to_s) }
     end
 
     def language

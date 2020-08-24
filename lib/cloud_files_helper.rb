@@ -53,10 +53,8 @@ module CloudFilesHelper
   def build_draft_attachments model, attachment_list
     attachments = if model.is_a?(Solution::FolderMeta)
                     Account.current.attachments.where(id: attachment_list.first, attachable_type: 'Image Upload')
-                  elsif Account.current.launched?(:attachments_scope)
-                    Account.current.attachments.permissible_drafts(User.current).where(id: attachment_list).limit(50)
                   else
-                    Account.current.attachments.where(id: attachment_list, attachable_type: 'UserDraft').limit(50)
+                    Account.current.attachments.permissible_drafts(User.current).where(id: attachment_list).limit(50)
                   end
 
     if model.is_a?(Solution::Draft) || model.is_a?(Solution::Article)

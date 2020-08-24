@@ -6,6 +6,7 @@ module Admin
     attr_accessor(*PERMITTED_PARAMS)
     attr_accessor :request_params, :business_calendar
     validates :name, :time_zone, :channel_business_hours, presence: true, on: :create
+    validates :channel_business_hours, presence: true, if: -> { instance_variable_defined?(:@channel_business_hours) }, on: :update
     validates :name, data_type: { rules: String, required: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING },
                      if: -> { create_or_update? && instance_variable_defined?(:@name) }
     validates :description, data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING },

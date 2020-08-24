@@ -418,7 +418,7 @@ protected
   end
 
   def attachment_permissions(attach)
-    current_account.launched?(:attachments_scope) ? attach.visible_to_me? : true
+    attach.visible_to_me?
   end
 
 end

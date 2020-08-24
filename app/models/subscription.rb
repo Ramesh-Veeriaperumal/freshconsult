@@ -1060,7 +1060,7 @@ class Subscription < ActiveRecord::Base
     end
 
     def first_time_paid_non_annual_plan?
-      active? && subscription_payments.reject { |payment| payment.meta_info[:renewal_period] == SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual] }.count.zero?
+      active? && subscription_payments.reject { |payment| payment.meta_info.present? && payment.meta_info[:renewal_period] == SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual] }.count.zero?
     end
 
     def trigger_switch_annual_notification?

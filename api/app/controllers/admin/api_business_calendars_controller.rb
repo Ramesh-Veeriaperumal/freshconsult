@@ -27,6 +27,15 @@ class Admin::ApiBusinessCalendarsController < ApiBusinessHoursController
     end
   end
 
+  def update
+    construct_default_params
+    construct_business_hours_time_data
+    construct_holiday_data
+    unless @item.save!
+      render_custom_errors
+    end
+  end
+
   def destroy
     @item.destroy
     head 204
