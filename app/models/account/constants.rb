@@ -225,7 +225,7 @@ class Account < ActiveRecord::Base
     recalculate_daypass: false, prevent_wc_ticket_create: true, allow_wildcard_ticket_create: false,
     attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false,
     requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false,
-    supervisor_custom_status: false, asset_management: false, sandbox_temporary_offset: false, downgrade_policy: true,
+    asset_management: false, sandbox_temporary_offset: false, downgrade_policy: true,
     launch_fsm_geolocation: false, geolocation_historic_popup: false, allow_update_agent: false,
     hide_mailbox_error_from_agents: false,
     jira_onpremise_reporter: false, sidekiq_logs_to_central: false,

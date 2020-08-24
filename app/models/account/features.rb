@@ -208,10 +208,6 @@ class Account < ActiveRecord::Base
     survey_enabled? || default_survey_enabled? || custom_survey_enabled?
   end
 
-  def supervisor_custom_status_enabled?
-    launched?(:supervisor_custom_status) || has_feature?(:supervisor_custom_status)
-  end
-
   def any_survey_feature_enabled_and_active?
     new_survey_enabled? ? active_custom_survey_from_cache.present? :
       features?(:surveys, :survey_links)
