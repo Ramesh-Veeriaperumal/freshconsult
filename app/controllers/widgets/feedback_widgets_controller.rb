@@ -3,7 +3,7 @@ class Widgets::FeedbackWidgetsController < SupportController
   skip_before_filter :check_privilege
   skip_before_filter :verify_authenticity_token
 
-  skip_before_filter :set_language, :redirect_to_locale
+  skip_before_filter :set_language, :redirect_to_locale, :deny_iframe
   #Because multilingual is NOT applicable to widgets at the moment
   before_filter :validate_params, only: [:create]
   before_filter :build_item, :only => :new
