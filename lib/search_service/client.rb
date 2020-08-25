@@ -2,6 +2,7 @@ module SearchService
   class Client
     MULTI_QUERY_TIMEOUT = 10
     attr_accessor :account_id
+    ACCOUNT_SIGNUP_SUPPORTED_LANG = ['ja-JP'].freeze
 
     def initialize(account_id)
       @account_id = account_id
@@ -70,7 +71,9 @@ module SearchService
 
     def tenant_bootstrap
       uuid = fetch_uuid
-      tenant_request = SearchService::Request.new(tenants_path, :post, uuid, { id: @account_id }.to_json, request_headers({ 'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}" }.merge!(sandbox_header)), @account_id)
+      body = { id: @account_id }
+      body[:language] = Account.current.language if ACCOUNT_SIGNUP_SUPPORTED_LANG.include? Account.current.language
+      tenant_request = SearchService::Request.new(tenants_path, :post, uuid, body.to_json, request_headers({ 'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}" }.merge!(sandbox_header)), @account_id)
       tenant_request.response
     end
 
