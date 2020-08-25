@@ -4885,8 +4885,7 @@ class TicketsControllerTest < ActionController::TestCase
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('source',  :invalid_field),
-                bad_request_error_pattern('product_id',  :invalid_field),
+    match_json([bad_request_error_pattern('product_id', :invalid_field),
                 bad_request_error_pattern('responder_id',  :invalid_field),
                 bad_request_error_pattern('requester_id',  :invalid_field),
                 bad_request_error_pattern('twitter_id',  :invalid_field),
