@@ -42,9 +42,7 @@ module Tickets
               Va::Logger::Automation.set_rule_id(vr.id, account.id, ticket_id, doer_id)
               ticket = nil
               time = Benchmark.realtime {
-                ticket = account.automation_revamp_enabled? ?
-                          vr.check_rule_events(doer, evaluate_on, current_events, original_ticket) :
-                          vr.check_events(doer, evaluate_on, current_events)
+                ticket = vr.check_rule_events(doer, evaluate_on, current_events, original_ticket)
               }
               original_ticket = update_original_ticket_with_changes evaluate_on, original_ticket
               rule_ids_with_exec_count[vr.id] = 1 if ticket.present?

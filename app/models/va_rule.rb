@@ -24,12 +24,11 @@ class VaRule < ActiveRecord::Base
 
   validates_presence_of :name, :rule_type
   validates_uniqueness_of :name, :scope => [:account_id, :rule_type] , :unless => :automation_rule?
-  validate :has_events?, :has_conditions?, :has_actions?, :has_safe_conditions?, :has_valid_action_data?
+  validate :has_events?, :has_conditions?, :has_actions?, :has_valid_action_data?
   validate :any_restricted_actions?
   validate :valid_position?, if: :position_changed?
 
   before_save :set_encrypted_password
-  before_save :migrate_filter_data, :if => :conditions_changed?
   before_destroy :save_deleted_rule_info
   after_commit :clear_observer_rules_cache, :clear_observer_condition_field_names_cache, if: :ticket_observer_rule?
   after_commit :clear_service_task_observer_rules_cache, if: :service_task_observer_rule?
@@ -443,25 +442,6 @@ class VaRule < ActiveRecord::Base
     end
   end
 
-  def conditions_changed?
-    return if account.automation_revamp_enabled?
-    self.changes.key?(:match_type) ||
-      (self.changes.key?(:filter_data) &&
-       self.changes[:filter_data][0] != self.changes[:filter_data][1])
-  end
-
-  def migrate_filter_data
-    if dispatchr_rule?
-      self.condition_data = { self.match_type.to_sym => self.filter_data }
-    elsif observer_rule?
-      self.condition_data = {
-        performer: self.filter_data[:performer],
-        events: self.filter_data[:events],
-        conditions: { self.match_type.to_sym => self.filter_data[:conditions] }
-      }
-    end
-  end
-
   def save_deleted_rule_info
     @deleted_model_info = central_publish_payload
   end
@@ -532,24 +512,12 @@ class VaRule < ActiveRecord::Base
 
   def rule_path
     if ticket_observer_rule?
-      if account.automation_revamp_enabled?
-        "#{Account.current.url_protocol}://#{Account.current.host}/a/admin/automations/ticket_updates/#{id}/edit"
-      else
-        Rails.application.routes.url_helpers.edit_admin_observer_rule_url(self.id,
-                                                        host: Account.current.host,
-                                                        protocol: Account.current.url_protocol)
-      end
+      "#{Account.current.url_protocol}://#{Account.current.host}/a/admin/automations/ticket_updates/#{id}/edit"
     elsif ticket_dispatcher_rule?
-      if account.automation_revamp_enabled?
-        "#{Account.current.url_protocol}://#{Account.current.host}/a/admin/automations/ticket_creation/#{id}/edit"
-      else
-        Rails.application.routes.url_helpers.edit_admin_va_rule_url(self.id,
-                                                        host: Account.current.host,
-                                                        protocol: Account.current.url_protocol)
-      end
-    elsif service_task_observer_rule? && account.automation_revamp_enabled?
+      "#{Account.current.url_protocol}://#{Account.current.host}/a/admin/automations/ticket_creation/#{id}/edit"
+    elsif service_task_observer_rule?
       "#{Account.current.url_protocol}://#{Account.current.host}/a/field-service/admin/automations/service-task-updates/#{id}/edit"
-    elsif service_task_dispatcher_rule? && account.automation_revamp_enabled?
+    elsif service_task_dispatcher_rule?
       "#{Account.current.url_protocol}://#{Account.current.host}/a/field-service/admin/automations/service-task-creation/#{id}/edit"
     else
       I18n.t('not_available')
@@ -628,17 +596,12 @@ class VaRule < ActiveRecord::Base
 
     def has_events?
       return unless observer_rule? || api_webhook_rule?
-      unless account.automation_revamp_enabled?
-        errors.add(:base,I18n.t("errors.events_empty")) if filter_data[:events].blank?
-      end
     end
 
     def has_conditions?
       return if !automated_rule? || account_id.zero?
 
-      errors.add(:base,I18n.t("errors.conditions_empty")) if
-        ((!account.automation_revamp_enabled? && filter_data.blank?) ||
-          (account.automation_revamp_enabled? && condition_data.blank?))
+      errors.add(:base,I18n.t("errors.conditions_empty")) if condition_data.blank?
     end
 
     def has_actions?
@@ -688,17 +651,6 @@ class VaRule < ActiveRecord::Base
         next if k == 'updated_at' || v.first == v.last
         Va::Logger::Automation.log("attr=#{k}, old=#{v.first.inspect}, new=#{v.last.inspect}")
       }
-    end
-
-    # To make sure that condition operators are not being tampered.
-    def has_safe_conditions?
-      unless account.automation_revamp_enabled?
-        return true if filter_array.nil?
-        filter_array.each do |filter|
-          filter.symbolize_keys!
-          errors.add(:base,"Enter a valid condition") if filter[:operator].present? && va_operator_list[filter[:operator].to_sym].nil?
-        end
-      end
     end
 
     # To allow not more than 63K character in action_data

@@ -17,7 +17,6 @@ module FeatureConstants
   SANDBOX = :sandbox
   BOT_EMAIL_CHANNEL = :bot_email_channel.freeze
   BOT_CHAT_HISTORY = :bot_chat_history.freeze
-  AUTOMATION_REVAMP = :automation_revamp.freeze
   ARCHIVE_API = :archive_tickets_api
   AUTOFAQ = :autofaq
   BOTFLOW = :botflow

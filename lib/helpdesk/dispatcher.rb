@@ -164,9 +164,7 @@
           Va::Logger::Automation.set_rule_id(vr.id)
           evaluate_on = nil
           time = Benchmark.realtime {
-            evaluate_on = @account.automation_revamp_enabled? ? 
-                            vr.check_rule_conditions(@ticket, nil, @user) : 
-                            vr.pass_through(@ticket, nil, @user)
+            evaluate_on = vr.check_rule_conditions(@ticket, nil, @user)
           }
           rule_ids_with_exec_count[vr.id] = 1 if evaluate_on.present?
           Va::Logger::Automation.log_execution_and_time(time, (evaluate_on.present? ? 1 : 0), rule_type)

@@ -163,9 +163,7 @@ class Account < ActiveRecord::Base
     if freshid_integration_signup_allowed?
       freshid_v2_signup? ? launch_freshid_with_omnibar(true) : launch_freshid_with_omnibar
     end
-    if redis_key_exists?(ENABLE_AUTOMATION_REVAMP)
-      launch(:automation_revamp)
-    end
+
     if redis_key_exists?(EMBERIZE_AGENT_FORM)
       [:emberize_agent_form, :emberize_agent_list].each do |feature|
         self.launch(feature)
