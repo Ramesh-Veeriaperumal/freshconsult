@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Channel::V2::TicketFieldsController < ApiApplicationController
   include ChannelAuthentication
   include CentralLib::CentralResyncConstants
@@ -24,9 +26,10 @@ class Channel::V2::TicketFieldsController < ApiApplicationController
   end
 
   private
+
     def skip_privilege_check?
       TICKET_FIELDS_ALLOWED_SOURCE.each do |source|
-        return true if channel_source?(source.to_sym) 
+        return true if channel_source?(source.to_sym)
       end
       false
     end
@@ -38,9 +41,8 @@ class Channel::V2::TicketFieldsController < ApiApplicationController
     def validate_params
       @args = params.symbolize_keys
       ticket_fields_validation = validation_class.new(@args)
-      if !ticket_fields_validation.valid?(action_name.to_sym)
+      unless ticket_fields_validation.valid?(action_name.to_sym)
         render_custom_errors(ticket_fields_validation, true)
       end
     end
-
 end
