@@ -1398,6 +1398,18 @@
         "kbservice": {
           "_auth_type": "jwt",
           "jwt_secret": ["EJ[1:Kb4cBUcINoB2EL/IUJbjNbWDwgqoDNcItH+pkAgMbkE=:sJY7vPbF4lbg8Gs2PMfakRRRNTAw84jF:uazf/Gi3cdxK621JDA8uFxq94h/0yj/HsdELbPFNAGuxGES3qfb2eIfMdBxUyQiL]"]
+        },
+        "analytics": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:AiT97wChGfFMLI/gvor2QWAPo45MAfN3lRz7ywBz0Ck=:rAgLiThxs2XHLjUcvTgb/M0x/r5Nrd7f:AAYPiRE8b1ncHk1CefeHkGlU4nYH7tAu2CounezhnU6u+bNQD9OA7lYsY4Vk1rXR]"]
+        },
+        "freshdesk": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:dfLo7d7jS+R4mYnKHzMea4ZTefsr+sYpjti6TQtzGX8=:w/ddXAuAizsR4Dwf1oOxaQDibqCg6zQv:ddS8oQSI7YJH34NnofvZz74sUVmstU6FOdJUh3U2LAHEn/wecK8oWdiOC3+hNudR]"]
+        },
+        "search": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:g/KUvbVy5rDXxp/GBJ9vuBIXrchdiQ6X9Od4p7ubHxc=:b6oWTT5GWa8bAu2r+BYOHEvMjR7L5qF9:rfug+fM5iMGshRUqdhTfcN1jEoeBEvo7mTg58d+VRA3ju7by/7ysltCTsyhHXsFH]"]
         }
       },
       "scheduler_client_keys": {

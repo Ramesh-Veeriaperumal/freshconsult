@@ -56,6 +56,15 @@ defaults: &defaults
   kbservice:
     auth_type: "jwt"
     jwt_secret: ["f94EEa09B3dde55964AB1793021154f0"]
+  analytics:
+    auth_type: "jwt"
+    jwt_secret: ["9rQ7H5RVm35vSvNUDWFjZPz3YKsqxp1z"]
+  freshdesk:
+    auth_type: "jwt"
+    jwt_secret: ["9rQ7H5RVm35vSvNUDWFjZPz3YKsqxp2z"]
+  search:
+    auth_type: "jwt"
+    jwt_secret: ["9rQ7H5RVm35vSvNUDWFjZPz3YKsqxp3z"]
 
 development:
   <<: *defaults
