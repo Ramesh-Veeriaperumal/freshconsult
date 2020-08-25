@@ -9,6 +9,7 @@ module InstalledApplicationConstants
     salesforce: "salesforce",
     salesforce_v2: "cloud_elements",
     freshsales: "freshsales",
+    freshworkscrm: "freshworkscrm",
     shopify: "shopify"
   }.freeze
   MARKETPLACE = :marketplace
@@ -24,4 +25,5 @@ module InstalledApplicationConstants
   INSTALLATION_DOMAIN = 'https://%{domain_url}'.freeze
   FRESHSALES_ONLY_EVENTS = ['fetch_form_fields', 'create_contact', 'fetch_dropdown_choices',
                             'fetch_autocomplete_results', 'create_lead'].freeze
+  FRESHWORKSCRM_ONLY_EVENTS = ['fetch_form_fields', 'create_contact', 'fetch_dropdown_choices', 'fetch_autocomplete_results'].freeze
 end.freeze

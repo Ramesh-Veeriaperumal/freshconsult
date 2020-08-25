@@ -1,51 +1,49 @@
+# frozen_string_literal: true
+
 module IntegrationServices::Services
   module Freshworkscrm
     class FreshworkscrmContactResource < FreshworkscrmResource
+      RELATIONAL_FIELDS = { 'owner_id': ['owner', 'users'],'campaign_id': ['campaign', 'campaigns'],
+                            'sales_account_id': ['sales_account', 'sales_accounts'],
+                            'contact_status_id': ['contact_status', 'contact_status'],
+                            'creater_id': ['creater', 'users'], 'updater_id': ['updater', 'users'] }.freeze
 
-      RELATIONAL_FIELDS = { 
-                            "owner_id" => ["owner", "users"], 
-                            "campaign_id" => ["campaign", "campaigns"],
-                            "sales_account_id" => ["sales_account","sales_accounts"],
-                            "contact_status_id" => ["contact_status","contact_status"],
-                            "creater_id" => ["creater", "users"],
-                            "updater_id" => ["updater", "users"]
-                          }
-      
       def get_fields
         request_url = "#{server_url}/settings/contacts/fields.json"
         response = http_get request_url
-        opt_fields = { "display_name" => "Full name" }
+        opt_fields = { 'display_name': 'Full name' }
         process_response(response, 200, &format_fields_block(opt_fields))
       end
 
-      def get_selected_fields fields, value
-        return { "contacts" => [], "type" => "contact" } if value[:email].blank?
+      def get_selected_fields(fields, value)
+        return { 'contacts': [], 'type': 'contact' } if value[:email].blank?
+
         contact_response = filter_by_email value[:email]
-        if contact_response["contacts"].blank?
-          contact_response["type"] = "contact"
-          return contact_response 
+        if contact_response['contacts'].blank?
+          contact_response['type'] = 'contact'
+          return contact_response
         end
-        fields = fields.split(",")
-        contact_id = contact_response["contacts"].first["id"]
+        fields = fields.split(',')
+        contact_id = contact_response['contacts'].first['id']
         url = "#{server_url}/contacts/#{contact_id}.json"
         relational_fields = fields & RELATIONAL_FIELDS.keys
         request_url = if relational_fields.present?
-          include_resources = relational_fields.map do |relational_field|
-            RELATIONAL_FIELDS[relational_field].first
-          end
-          encode_path_with_params url, :include => include_resources.join(",")
-        else
-          url
-        end
+                        include_resources = relational_fields.map do |relational_field|
+                          RELATIONAL_FIELDS[relational_field].first
+                        end
+                        encode_path_with_params url, include: include_resources.join(',')
+                      else
+                        url
+                      end
         response = http_get request_url
         process_response(response, 200) do |contact|
-          return process_result(contact, fields, relational_fields, "contact")
+          return process_result(contact, fields, relational_fields, 'contact')
         end
       end
 
-      def filter_by_email email
+      def filter_by_email(email)
         request_url = "#{server_url}/filtered_search/contact"
-        filters = [ construct_filter("contact_email.email","is_in",email) ]
+        filters = [construct_filter('contact_email.email', 'is_in', email)]
         request_body = filter_request_body filters
         response = http_post request_url, request_body.to_json
         process_response(response, 200) do |contact|
@@ -74,11 +72,11 @@ module IntegrationServices::Services
         elsif response.status == 500
           error = parse(response.body)['errors']
           web_meta[:status] = 500
-          { :errors => error['message'] }
+          { errors: error['message'] }
         else
           raise RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
         end
       end
     end
   end
-end 
+end

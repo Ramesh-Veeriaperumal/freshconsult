@@ -17,6 +17,7 @@ class InstalledApplicationValidation < FilterValidation
   validates :configs, required: true, data_type: { rules: Hash, allow_nil: false }, on: :create
   validate :validate_configs, on: :create
   validate :validate_freshsales_only_events, if: -> { FRESHSALES_ONLY_EVENTS.include?(event) }
+  validate :validate_freshworkscrm_only_events, if: -> { FRESHWORKSCRM_ONLY_EVENTS.include?(event) }
 
   def initialize(request_params, item, allow_string_param = false)
     super(request_params, item, allow_string_param)
@@ -42,6 +43,12 @@ class InstalledApplicationValidation < FilterValidation
 
   def validate_freshsales_only_events
     unless @item.application.name == 'freshsales'
+      errors[:event] << :"is invalid"
+    end
+  end
+
+  def validate_freshsales_only_events
+    unless @item.application.name == 'freshworkscrm'
       errors[:event] << :"is invalid"
     end
   end

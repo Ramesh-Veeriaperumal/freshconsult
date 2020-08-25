@@ -11,14 +11,14 @@
     <ul class="ui-form">
       <li class="inline-field">
         <label class="caption">
-          <div class="logo application-logo-freshsales"></div>
+          <div class="logo application-logo-freshworkscrm"></div>
           <div class="logo info-data">
             <%=t('integrations.freshworkscrm.desc')%>
           </div>
         </label>
         <div class="salesforce-wrapper salesforce-new-block">
           <div class="row-fluid">
-            <div class="sf-contact-fields sf-settings-widget"> 
+            <div class="sf-contact-fields sf-settings-widget">
               <h3 class="leftselect2"><%=t("integrations.salesforce.form.contact")%></h3>
               <div id='sfcontacts'>
                 <span>
@@ -38,48 +38,18 @@
                   <% contact_fields = @freshworkscrm_config['contact_fields'] %>
                   <% # order the fields in such a way so that default fields come at the top
                     contact_fields_list = []
-                    contact_default_fields.each { |field| contact_fields_list.push([contact_fields[field],field]) } 
+                    contact_default_fields.each { |field| contact_fields_list.push([contact_fields[field],field]) }
                     @freshworkscrm_config['contact_fields'].keys.collect{|field|
-                      contact_fields_list.push([contact_fields[field],field]) if not contact_default_fields.include?(field); 
+                      contact_fields_list.push([contact_fields[field],field]) if not contact_default_fields.include?(field)
                     }
                   %>
                   <%=hidden_field_tag :contact_labels %>
-                  <%= select_tag :contacts, 
+                  <%= select_tag :contacts,
                           options_for_select(contact_fields_list,data.split(",")), { :multiple => true, :class => "select2-fields salesforce-int-select","data-placeholder" => " "} %> <!-- space in placeholder to add an empty option -->
                 </span>
               </div>
             </div>
-            <div class="sf-lead-fields sf-settings-widget">
-              <h3><%=t("integrations.salesforce.form.lead")%></h3>   
-              <div id="sfleads">
-                <span>
-                  <div id="leadslist">
-                    <ul>
-                      <%lead_default_fields = ["display_name"]%>
-                      <%selected_lead_fields = lead_default_fields.collect{|x| x} # use a copy to not change default fields %>
-                      <%unless @installed_app.blank? %>
-                        <%selected_lead_fields.push(@installed_app.configs_lead_fields.split(",").collect!{ |x| next if lead_default_fields.include?(x);
-                         x
-                         })%>
-                      <%end%>
-                    </ul>
-                  </div>
-                  <%data =selected_lead_fields.join(",").html_safe%>
-                  <% lead_fields = @freshworkscrm_config['lead_fields'] %>
-                  <% # order the fields in such a way so that default fields come at the top
-                    lead_fields_list = []
-                    lead_default_fields.each { |field| lead_fields_list.push([lead_fields[field],field]) } 
-                    @freshworkscrm_config['lead_fields'].keys.collect{|field|
-                      lead_fields_list.push([lead_fields[field],field]) if not lead_default_fields.include?(field); 
-                    }
-                    %>
-                  <%=hidden_field_tag :lead_labels %>
-                  <%= select_tag :leads, 
-                            options_for_select(lead_fields_list,data.split(",")),{:multiple=>true, :class=>"select2-fields salesforce-int-select","data-placeholder" => " "} %><!-- space in placeholder to add an empty option -->
-                </span>
-              </div>
-            </div>
-            <div class="sf-account-fields sf-settings-widget"> 
+            <div class="sf-account-fields sf-settings-widget">
               <h3 class="leftselect2"><%=t("integrations.salesforce.form.account")%></h3>
               <div id='sfaccounts'>
                 <span>
@@ -87,7 +57,7 @@
                     <ul>
                       <%account_default_fields = ["name"]%>
                       <%selected_fields = account_default_fields.collect{|x| x} %>
-                      <%unless @installed_app.blank? %> 
+                      <%unless @installed_app.blank? %>
                         <%config_account_fields = @installed_app.configs[:inputs]['account_fields'] ? @installed_app.configs[:inputs]['account_fields'] : ""%>
                         <%selected_fields.push(config_account_fields.split(",").collect!{ |x| next if  account_default_fields.include?(x);
                            x
@@ -100,20 +70,20 @@
                   <% account_fields = @freshworkscrm_config['account_fields'] %>
                   <% # order the fields in such a way so that default fields come at the top
                     account_fields_list = []
-                    account_default_fields.each { |field| account_fields_list.push([account_fields[field],field]) } 
+                    account_default_fields.each { |field| account_fields_list.push([account_fields[field],field]) }
                     @freshworkscrm_config['account_fields'].keys.collect{|field|
-                      account_fields_list.push([account_fields[field],field]) if not account_default_fields.include?(field); 
+                      account_fields_list.push([account_fields[field],field]) if not account_default_fields.include?(field);
                     }
                   %>
                   <%=hidden_field_tag :account_labels %>
-                  <%= select_tag :accounts, 
+                  <%= select_tag :accounts,
                           options_for_select(account_fields_list,data.split(",")), { :multiple => true, :class => "select2-fields salesforce-int-select","data-placeholder" => " "} %> <!-- space in placeholder to add an empty option -->
                 </span>
               </div>
             </div>
             <div class="sf-opportunity-fields sf-settings-widget">
               <% deal_view = false %>
-              <% agent_settings = false %> 
+              <% agent_settings = false %>
               <%unless @installed_app.blank? %>
                 <% installed_deal_view = @installed_app.configs_deal_view %>
                 <% deal_view = installed_deal_view.to_bool if installed_deal_view.present? %>
@@ -144,13 +114,13 @@
                   <% deal_fields = @freshworkscrm_config['deal_fields'] %>
                   <% # order the fields in such a way so that default fields come at the top
                     deal_fields_list = []
-                    deal_default_fields.each { |field| deal_fields_list.push([deal_fields[field],field]) } 
+                    deal_default_fields.each { |field| deal_fields_list.push([deal_fields[field],field]) }
                     @freshworkscrm_config['deal_fields'].keys.collect{|field|
-                      deal_fields_list.push([deal_fields[field],field]) if not deal_default_fields.include?(field); 
+                      deal_fields_list.push([deal_fields[field],field]) if not deal_default_fields.include?(field);
                     }
                   %>
                   <%=hidden_field_tag :deal_labels %>
-                  <%= select_tag :deals, 
+                  <%= select_tag :deals,
                           options_for_select(deal_fields_list,data.split(",")), { :multiple => true, :class => "select2-fields salesforce-int-select","data-placeholder" => " "} %> <!-- space in placeholder to add an empty option -->
                 </span>
               </div>
@@ -175,26 +145,26 @@
 <script type="text/javascript">
 
 function fillLabels(){
-   var selectedValues = []; 
-   var leadValues =[];   
-   var accountValues =[]; 
-   var opportunityValues = [];  
+   var selectedValues = [];
+   var leadValues =[];
+   var accountValues =[];
+   var opportunityValues = [];
     jQuery("#contacts :selected").each(function(){
-        selectedValues.push(jQuery(this).text()); 
+        selectedValues.push(jQuery(this).text());
     });
     jQuery('#contact_labels').val(selectedValues);
 
     jQuery("#leads :selected").each(function(){
-        leadValues.push(jQuery(this).text()); 
+        leadValues.push(jQuery(this).text());
     });
     jQuery('#lead_labels').val(leadValues);
 
     jQuery("#accounts :selected").each(function(){
-        accountValues.push(jQuery(this).text()); 
+        accountValues.push(jQuery(this).text());
     });
     jQuery('#account_labels').val(accountValues);
     jQuery("#deals :selected").each(function(){
-        opportunityValues.push(jQuery(this).text()); 
+        opportunityValues.push(jQuery(this).text());
     });
     jQuery('#deal_labels').val(opportunityValues);
     return true;

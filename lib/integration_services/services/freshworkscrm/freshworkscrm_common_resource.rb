@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module IntegrationServices::Services
   module Freshworkscrm
     class FreshworkscrmCommonResource < FreshworkscrmResource
@@ -5,7 +7,7 @@ module IntegrationServices::Services
 
       def faraday_builder(b)
         super
-        b.headers['User-Agent'] = "Freshsales_Native_Mobile"
+        b.headers['User-Agent'] = 'Freshsales_Native_Mobile'
       end
 
       def fetch_form_fields
@@ -35,9 +37,7 @@ module IntegrationServices::Services
       def process_result(resource)
         result = {}
         resource.each do |res|
-          if REQUIRED_FORM_FIELDS.include?(res['field_class'])
-            result[res['field_class']] = filter_system_information res
-          end
+          result[res['field_class']] = filter_system_information(res) if REQUIRED_FORM_FIELDS.include?(res['field_class'])
         end
         result
       end

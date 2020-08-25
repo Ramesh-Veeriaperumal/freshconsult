@@ -7494,7 +7494,7 @@ en:
         deal: Deal Fields
         error: Please verify your settings and try again
         deal_settings: Agents can create/link or unlink deals from the ticket
-        freshsales_settings: Freshworks CRM Settings
+        freshworkscrm_settings: Freshworks CRM Settings
         auth_token_info: Enter your authentication token
         select: Select an option
         domain: Account Domain

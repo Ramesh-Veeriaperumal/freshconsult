@@ -20,20 +20,20 @@
 
       <li class="inline-field">
         <label class="caption">
-          <div class="logo application-logo-freshsales"></div>
+          <div class="logo application-logo-freshworkscrm"></div>
           <div class="logo info-data">
             <%=t('integrations.freshworkscrm.desc')%>
           </div>
         </label>
 
         <div class="fields">
-          <%= construct_ui_element :configs, "domain", {:type => :text, :required => true, :label => "integrations.freshworkscrm.form.domain", :rel => "ghostwriter", :validator_type => "domain_validator"}, domain.to_s %> 
+          <%= construct_ui_element :configs, "domain", {:type => :text, :required => true, :label => "integrations.freshworkscrm.form.domain", :rel => "ghostwriter", :validator_type => "domain_validator"}, domain.to_s %>
           <div class="info-data"> <%=t('integrations.freshworkscrm.form.domain_info')%> </div>
             <span class="seperator"></span>
         </div>
 
         <div class="fields">
-          <%= construct_ui_element :configs, "auth_token", {:type => :text, :required => true, :label => "integrations.freshworkscrm.form.auth_token"}, auth_token.to_s %>
+          <%= construct_ui_element :configs, "auth_token", {:type => :text, :required => true, :label => "integrations.freshworkscrm.form.auth_token"},auth_token.to_s %>
           <div class="info-data"> <%=t('integrations.freshworkscrm.form.auth_token_info')%> </div>
         </div>
       </li>

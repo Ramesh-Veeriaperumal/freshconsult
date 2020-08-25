@@ -1,15 +1,15 @@
+# frozen_string_literal: true
+
 module IntegrationServices::Services
   class FreshworkscrmService < IntegrationServices::Service
     include InstalledApplicationConstants
-    
-    INSTALL_DEFAULT_FIELD_HASH =  { 
-                                    'contact_fields' => 'display_name', 'account_fields' => 'name',
-                                    'contact_labels' => 'Full name', 'account_labels' => 'Name', 'deal_view' => '0'
-                                  }
+
+    INSTALL_DEFAULT_FIELD_HASH = { 'contact_fields': 'display_name', 'account_fields': 'name',
+                                   'contact_labels': 'Full name', 'account_labels': 'Name', 'deal_view': '0' }.freeze
 
     def instance_url
       self.configs['domain']
-    end 
+    end
 
     def receive_contact_fields
       contact_resource.get_fields
@@ -20,7 +20,7 @@ module IntegrationServices::Services
     end
 
     def self.construct_default_integration_params(params)
-      INSTALL_DEFAULT_FIELD_HASH.merge!({ 'domain' => INSTALLATION_DOMAIN % { domain_url: params['domain'] }, 'auth_token' => params['auth_token'], 'ghostvalue' => params['ghostvalue'] })
+      INSTALL_DEFAULT_FIELD_HASH.merge!('domain': INSTALLATION_DOMAIN % { domain_url: params['domain'] }, 'auth_token': params['auth_token'], 'ghostvalue': params['ghostvalue'])
     end
 
     def receive_deal_fields
@@ -64,59 +64,54 @@ module IntegrationServices::Services
     end
 
     def receive_create_deal
-      begin
-        integrated_local_resource = receive_integrated_resource
-        return { :error => "Link failed.This ticket is already linked to a deal", :remote_id => integrated_local_resource["remote_integratable_id"] } unless integrated_local_resource.blank?
-        @payload.delete(:ticket_id)
-        deal_resource.create @payload
-      rescue RemoteError => e
-        return error(e.to_s, { :exception => e.status_code })
-      end
+      integrated_local_resource = receive_integrated_resource
+      return { error: 'Link failed.This ticket is already linked to a deal', remote_id: integrated_local_resource['remote_integratable_id'] } if integrated_local_resource.present?
+
+      @payload.delete(:ticket_id)
+      deal_resource.create @payload
+    rescue RemoteError => e
+      error(e.to_s, exception: e.status_code)
     end
 
     def receive_link_deal
-      begin
-        integrated_local_resource = receive_integrated_resource
-        return { :error => "Link failed.This ticket is already linked to a deal", :remote_id => integrated_local_resource["remote_integratable_id"] } unless integrated_local_resource.blank?
-        @installed_app.integrated_resources.create(
-          :remote_integratable_id => @payload[:remote_id],
-          :remote_integratable_type => "deal",
-          :local_integratable_id => @payload[:ticket_id],
-          :local_integratable_type => "Helpdesk::Ticket",
-          :account_id => @installed_app.account_id
-        )
-      rescue Exception => e
-        return error("Error in linking the ticket with the Freshworkscrm deal", { :exception => e })
-      end
+      integrated_local_resource = receive_integrated_resource
+      return { error: 'Link failed.This ticket is already linked to a deal', remote_id: integrated_local_resource['remote_integratable_id'] } if integrated_local_resource.present?
+
+      @installed_app.integrated_resources.create(
+        remote_integratable_id: @payload[:remote_id],
+        remote_integratable_type: 'deal',
+        local_integratable_id: @payload[:ticket_id],
+        local_integratable_type: 'Helpdesk::Ticket',
+        account_id: @installed_app.account_id
+      )
+    rescue StandardError => e
+      error('Error in linking the ticket with the Freshworkscrm deal', exception: e)
     end
 
     def receive_unlink_deal
-      begin
-        integrated_resource = @installed_app.integrated_resources.where(
-          :local_integratable_id => @payload[:ticket_id],
-          :remote_integratable_id => @payload[:remote_id], 
-          :remote_integratable_type => "deal"
-        ).first
-        return { :error => "The deal is already unlinked from the ticket", :remote_id => "" } if integrated_resource.blank?
-        integrated_resource.destroy
-      rescue Exception => e
-        return error("Error in unlinking the ticket with the Freshworkscrm deal", { :exception => e })
-      end
+      integrated_resource = @installed_app.integrated_resources.where(
+        local_integratable_id: @payload[:ticket_id],
+        remote_integratable_id: @payload[:remote_id],
+        remote_integratable_type: 'deal'
+      ).first
+      return { error: 'The deal is already unlinked from the ticket', remote_id: '' } if integrated_resource.blank?
+
+      integrated_resource.destroy
+    rescue StandardError => e
+      error('Error in unlinking the ticket with the Freshworkscrm deal', exception: e)
     end
 
     def error(msg, error_params = {})
       exception = error_params[:exception]
       web_meta[:status] = error_params[:status] || :not_found
-      if exception.present?
-        NewRelic::Agent.notice_error(exception,{:custom_params => {:description => "Problem in Freshworkscrm service : #{exception.message}"}})
-      end
-      return { :message => msg }
+      NewRelic::Agent.notice_error(exception, custom_params: { description: "Problem in Freshworkscrm service : #{exception.message}" }) if exception.present?
+      { message: msg }
     end
 
-    def flush_integrated_resources integrated_resource
-      deal = deal_resource.find integrated_resource["remote_integratable_id"]
-      if deal["errors"].present? && deal["errors"]["code"] == 404
-        @payload[:remote_id] = integrated_resource["remote_integratable_id"]
+    def flush_integrated_resources(integrated_resource)
+      deal = deal_resource.find integrated_resource['remote_integratable_id']
+      if deal['errors'].present? && deal['errors']['code'] == 404
+        @payload[:remote_id] = integrated_resource['remote_integratable_id']
         receive_unlink_deal
         return {}
       end
@@ -125,10 +120,9 @@ module IntegrationServices::Services
 
     def receive_integrated_resource
       return {} if @payload[:ticket_id].blank?
+
       integrated_resource = super
-      if integrated_resource.present?
-        integrated_resource = flush_integrated_resources integrated_resource
-      end
+      integrated_resource = flush_integrated_resources(integrated_resource) if integrated_resource.present?
       integrated_resource
     end
   end
