@@ -88,11 +88,8 @@ module RabbitMq::Utils
     MANUAL_PUBLISH_SUBCRIBERS.each { |f|
       begin
         next if f == "activities" && model == "archive_ticket"
-        if Account.current.count_es_writes_enabled?
-          next if f == "count" && model != "ticket"
-        else
-          next if f == "count"
-        end
+        next if f == 'count' && model != 'ticket'
+
         message["#{model}_properties"].deep_merge!(safe_send("mq_#{f}_#{model}_properties", action))
         message["subscriber_properties"].merge!({ f => safe_send("mq_#{f}_subscriber_properties", action)})
       rescue => e
