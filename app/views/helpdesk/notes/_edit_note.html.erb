@@ -17,11 +17,7 @@
 			<% end %>
 		</li>
 		<li class="attachment-options-reply" id="attachment-options-note" data-note-id="<%=@item.id%>" >
-          <% if current_account.launched?(:multifile_attachments) %>
 			<%= render :partial => "/helpdesk/tickets/show/multi_attachment_form", :locals => { :attach_id => "edit-note-#{@item.id}" ,:note=>true, :nsc_param => "helpdesk_note" } %>
-		<% else %>
-		<%= render :partial => "/helpdesk/tickets/show/single_attachment_form", :locals => { :attach_id => "edit-note-#{@item.id}" ,:note=>true, :nsc_param => "helpdesk_note" } %>
-		<% end %>
 		</li>
 		<li class="button-container hide">
 			<%= submit_tag(t("update"), :class => "uiButton special") %>

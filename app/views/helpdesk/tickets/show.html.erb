@@ -1,15 +1,11 @@
 
 <%= stylesheet_link_tag_with_rtl :'cdn/tkt_details_print', :media => "print"  %>
 <%= render :partial => "helpdesk/tickets/show/scriptvars" %>
-<!-- if multi file enabled -->
-<% if current_account.launched?(:multifile_attachments) %>
- <%= render :partial => "helpdesk/shared/multi_attachment_template" %>
-<% else %>
-<!-- else  -->
- <%= render :partial => "helpdesk/shared/single_attachment_template" %>
-<% end %>
+
+<%= render :partial => "helpdesk/shared/multi_attachment_template" %>
+
 <%= load_sticky %>
-<div class="tkt-wrapper ticket_show" data-showing='notes' data-multifile="<%= current_account.launched?(:multifile_attachments) %>">
+<div class="tkt-wrapper ticket_show" data-showing='notes' data-multifile="true">
 	<div class="tkt-wrapper-inner clearfix">
 
 		<%# render :partial => "helpdesk/tickets/show/info" %>
@@ -137,11 +133,9 @@ jQuery('body').one('assetLoaded.fjax', function() {
 		<% end %>
 	<% end %>
 });
-<% if current_account.launched?(:multifile_attachments) %>
-	<% add_to_reply = !(@ticket.facebook? || @ticket.twitter? || @ticket.freshfone_call.present?) %>
-	<% if add_to_reply %>
-		 Helpdesk.MultipleFileUpload.addToRply.init();
-    <% end %>
+<% add_to_reply = !(@ticket.facebook? || @ticket.twitter? || @ticket.freshfone_call.present?) %>
+<% if add_to_reply %>
+  Helpdesk.MultipleFileUpload.addToRply.init();
 <% end %>
 </script>
 <% content_for :layoutType do -%>ticket_details<%- end %>

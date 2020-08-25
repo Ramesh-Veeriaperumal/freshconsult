@@ -1,10 +1,6 @@
 <% content_for :sidebar do -%>&nbsp;<%- end %>
-<%# multifile attachments templates %>
-<% if  current_account.launched?(:multifile_attachments)  %>
   <%= render "helpdesk/tickets/ticket_widget/multifile_template_generator" %>
-<% else %>
-  <%= render "helpdesk/shared/single_attachment_template" %>
-<% end %>
+
 <div id="ticket-fields-wrapper">
 <%= form_for @item, :html => {:multipart => true, :id => "NewTicket", :rel=>"validate" } do |f| %>
  <%= render :partial => "helpdesk/tickets/ticket_widget/edit_ticket_title",  :locals => {:f => f } %>
