@@ -126,6 +126,8 @@
       - :twitter_field_automation
       - :solutions_templates
       - :contact_custom_activity_api
+      - :analytics_articles
+      - :analytics_knowledge_base
     :inherits:
       - :garden_jan_17
     :exclude: []
@@ -335,6 +337,8 @@
       - :next_response_sla
       - :twitter_field_automation
       - :solutions_templates
+      - :analytics_articles
+      - :analytics_knowledge_base
     :inherits:
       - :garden_jan_19
     :exclude: []
@@ -540,6 +544,8 @@
       - :twitter_field_automation
       - :fb_ad_posts
       - :solutions_templates
+      - :analytics_articles
+      - :analytics_knowledge_base
     :inherits:
       - :garden_jan_20
     :exclude: []

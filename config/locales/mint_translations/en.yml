@@ -1747,6 +1747,8 @@ en:
             Learn more about authentication in the widget <a
             href='https://support.freshdesk.com/support/solutions/articles/50000000978'
             target='_blank'>here</a>.
+        deny_iframe_enabled: Allow Portals to be embedded as iframes
+        deny_iframe_enabled_info: Authorize access for third-party sites to embed portal pages as iframes.
       password_security:
         passwords: passwords
         session_expiry: User session expires in

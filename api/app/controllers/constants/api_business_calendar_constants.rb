@@ -4,6 +4,7 @@ module ApiBusinessCalendarConstants
   TICKET_CHANNEL = 'ticket'.freeze
   PERMITTED_PARAMS = %i[id name description time_zone channel_business_hours holidays].freeze
   CREATE_FIELDS = (PERMITTED_PARAMS - %i[id]).freeze
+  UPDATE_FIELDS = CREATE_FIELDS
   HOLIDAYS_PERMITTED_PARAMS = %w[date name].freeze
   VALID_CHANNEL_PARAMS = %w[ticket].freeze
   TIME_SLOTS_PARAMS = %w[start_time end_time].freeze
@@ -20,7 +21,6 @@ module ApiBusinessCalendarConstants
     time_zone: :time_zone,
     description: :description
   }.freeze
-
   VALID_MONTH_NAME_DAY_LIST = {
     Jan: 31, Feb: 29, Mar: 31, Apr: 30, May: 31, Jun: 30, Jul: 31, Aug: 31, Sep: 30, Oct: 31, Nov: 30, Dec: 31
   }.freeze

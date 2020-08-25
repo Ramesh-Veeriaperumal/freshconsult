@@ -28,6 +28,7 @@ class ApplicationController < ActionController::Base
   before_filter :remove_pjax_param
   before_filter :set_pjax_url
   after_filter :set_last_active_time, :reset_language
+  after_filter :log_old_ui_path
   before_filter :check_session_timeout, if: :session_timeout_allowed?
 
 
@@ -62,6 +63,8 @@ class ApplicationController < ActionController::Base
 
   # Will set the request url for pjax to change the state
   after_filter :remove_session_data
+
+  OLD_UI_PATHS_TO_IGNORE = %w[/support /admin].freeze
   
   def set_pjax_url
     if is_ajax?
@@ -309,6 +312,7 @@ class ApplicationController < ActionController::Base
     end
 
     def set_ui_preference
+      @falcon_redirection_check = true
       if current_account.falcon_ui_enabled?(current_user)
         cookies[:falcon_enabled] = true
         handle_falcon_redirection
@@ -317,8 +321,14 @@ class ApplicationController < ActionController::Base
       end
     end
 
-    def handle_falcon_redirection
-      options = {
+    def log_old_ui_path
+      unless @falcon_redirection_check.present? || OLD_UI_PATHS_TO_IGNORE.any? { |path| request.path.include?(path) }
+        FalconRedirection.log_referer(falcon_redirection_options)
+      end
+    end
+
+    def falcon_redirection_options
+      {
         request_referer: request.referer,
         not_html: !request.format.html?,
         path_info: request.path_info,
@@ -328,6 +338,10 @@ class ApplicationController < ActionController::Base
         action: request.params[:action],
         domain: request.domain
       }
+    end
+
+    def handle_falcon_redirection
+      options = falcon_redirection_options
       result = FalconRedirection.falcon_redirect(options)
       redirect_to result[:path] if result[:redirect]
     end

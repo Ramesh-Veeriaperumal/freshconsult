@@ -1356,6 +1356,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Time.zone = old_zone
   end
 
+  def self.ignore_primary_key
+    if Account.current.launched?(:export_ignore_primary_key)
+      self.from('helpdesk_tickets ignore key (primary)')
+    else
+      self.from('helpdesk_tickets')
+    end
+  end
+
   # Used update_column instead of touch because touch fires after commit callbacks from RAILS 4 onwards.
   def update_timestamp
     unless @touched || new_record?

@@ -5,7 +5,7 @@ class Admin::HolidaysController < ApiApplicationController
     google_service_obj = IntegrationServices::Services::GoogleService.new(nil, { 'calendar_id' => @calendar_id }, user_agent: request.user_agent)
     service_response = google_service_obj.receive('list_holidays')
     if service_response[:error].blank?
-      @items = service_response[:holidays]
+      @items = service_response[:holidays].to_h.to_a
     else
       Rails.logger.info "Unable to fetch holidays for #{@calendar_id}, Trace: #{service_response[:error_message]}"
       @items = []

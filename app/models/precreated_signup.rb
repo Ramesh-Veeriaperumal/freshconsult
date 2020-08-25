@@ -20,16 +20,10 @@ class PrecreatedSignup < ActivePresenter::Base
   def complete_signup_process
     account.suppress_freshid_calls = false
     account.is_anonymous_account = false
-    publish_manual_agent_update
     update_admin_account_config(user.email, user.phone)
     account.update_default_forum_category(account_name)
     convert_to_trial(true, referring_product)
     enable_external_services(user.email, true)
-  end
-
-  def publish_manual_agent_update
-    changes = user.model_changes.slice(:name, :email, :phone)
-    user.agent.publish_update_central_payload(changes)
   end
 
   def update_main_portal_info

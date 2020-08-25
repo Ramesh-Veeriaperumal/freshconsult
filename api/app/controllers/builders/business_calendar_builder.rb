@@ -2,6 +2,8 @@ module BusinessCalendarBuilder
   include ApiBusinessCalendarConstants
 
   def construct_business_hours_time_data
+    return if action == :update && params[cname]['channel_business_hours'].nil?
+
     current_time_data = find_freshdesk_business_hours
     @item.business_time_data = {}.with_indifferent_access
     @item.business_time_data[:fullweek] = find_freshdesk_business_type == ALL_TIME_AVAILABLE

@@ -1,8 +1,10 @@
 require_relative '../../test_helper.rb'
+%w[business_calendars_helper.rb].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 require Rails.root.join('test', 'api', 'helpers', 'admin', 'api_business_calendar_helper.rb')
 class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
   include BusinessHoursTestHelper
   include Admin::ApiBusinessCalendarHelper
+  include BusinessCalendarsTestHelper
 
   def setup
     super
@@ -16,6 +18,10 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
     Account.unstub(:current)
     User.unstub(:current)
     Account.any_instance.unstub(:multiple_business_hours_enabled?)
+  end
+
+  def wrap_cname(params)
+    { api_business_calendar: params }
   end
 
   def test_index_business_hour
@@ -94,6 +100,156 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
     end
   end
 
+  def test_update_name_in_ember_business_calendar
+    enable_emberize_business_hours do
+      business_calendar = create_business_calendar
+      update_params = { name: 'indian calendar' }
+      put :update, construct_params({ id: business_calendar.id }, update_params)
+      response = JSON.parse(@response.body)
+      assert_response 200
+      business_calendar = business_calendar.reload
+      match_json(ember_business_hour_show_pattern(business_calendar))
+      business_calendar.destroy
+    end
+  end
+
+  def test_update_timezone_with_business_calendar
+    enable_emberize_business_hours do
+      business_calendar = create_business_calendar
+      update_params = { time_zone: 'hawaii' }
+      put :update, construct_params({ id: business_calendar.id }, update_params)
+      assert_response 200
+      business_calendar = business_calendar.reload
+      match_json(ember_business_hour_show_pattern(business_calendar))
+      business_calendar.destroy
+    end
+  end
+
+  def test_update_description_with_business_calendar
+    enable_emberize_business_hours do
+      business_calendar = create_business_calendar
+      update_params = { description: 'Its indian calendar' }
+      put :update, construct_params({ id: business_calendar.id }, update_params)
+      assert_response 200
+      business_calendar = business_calendar.reload
+      match_json(ember_business_hour_show_pattern(business_calendar))
+      business_calendar.destroy
+    end
+  end
+
+  def test_update_holidays_in_business_calendar
+    enable_emberize_business_hours do
+      business_calendar = create_business_calendar
+      update_params = { holidays: [{ name: 'Test day1', date: 'Jan 1' }, { name: 'Test day2', date: 'Jan 3' }] }
+      put :update, construct_params({ id: business_calendar.id }, update_params)
+      assert_response 200
+      business_calendar = business_calendar.reload
+      match_json(ember_business_hour_show_pattern(business_calendar))
+      business_calendar.destroy
+    end
+  end
+
+  def test_update_24_by_7_channel_business_hours
+    enable_emberize_business_hours do
+      business_calendar = create_business_calendar
+      update_params = { channel_business_hours: [{ channel: 'ticket', business_hours_type: '24_7_availability' }] }
+      put :update, construct_params({ id: business_calendar.id }, update_params)
+      assert_response 200
+      business_calendar = business_calendar.reload
+      match_json(ember_business_hour_show_pattern(business_calendar))
+      business_calendar.destroy
+    end
+  end
+
+  def test_update_custom_channel_business_hours
+    enable_emberize_business_hours do
+      business_calendar = create_business_calendar
+      update_params = { channel_business_hours: [{ channel: 'ticket', business_hours_type: 'custom', business_hours: [{ day: 'monday', time_slots: [{ start_time: '08:00', end_time: '17:00' }] }] }] }
+      put :update, construct_params({ id: business_calendar.id }, update_params)
+      assert_response 200
+      business_calendar = business_calendar.reload
+      match_json(ember_business_hour_show_pattern(business_calendar))
+      business_calendar.destroy
+    end
+  end
+
+  def test_update_with_blank_channel_business_hours
+    enable_emberize_business_hours do
+      business_calendar = create_business_calendar
+      update_params = { channel_business_hours: [] }
+      put :update, construct_params({ id: business_calendar.id }, update_params)
+      assert_response 400
+      match_json([bad_request_error_pattern('channel_business_hours', "can't be blank", code: :invalid_value)])
+      business_calendar.destroy
+    end
+  end
+
+  def test_update_custom_channel_business_hours_without_channel_name
+    enable_emberize_business_hours do
+      business_calendar = create_business_calendar
+      update_params = { channel_business_hours: [{ business_hours_type: 'custom', business_hours: [{ day: 'monday', time_slots: [{ start_time: '08:00', end_time: '17:00' }] }] }] }
+      put :update, construct_params({ id: business_calendar.id }, update_params)
+      assert_response 400
+      match_json([bad_request_error_pattern_with_nested_field('channel_business_hours', 'channel', 'It should be a/an String', code: :missing_field)])
+      business_calendar.destroy
+    end
+  end
+
+  def test_update_custom_channel_business_hours_without_business_hours_type
+    enable_emberize_business_hours do
+      business_calendar = create_business_calendar
+      update_params = { channel_business_hours: [{ channel: 'ticket', business_hours: [{ day: 'monday', time_slots: [{ start_time: '08:00', end_time: '17:00' }] }] }] }
+      put :update, construct_params({ id: business_calendar.id }, update_params)
+      assert_response 400
+      match_json([bad_request_error_pattern_with_nested_field('channel_business_hours', 'business_hours_type', 'It should be a/an String', code: :missing_field)])
+      business_calendar.destroy
+    end
+  end
+
+  def test_update_without_start_date_in_time_slots
+    enable_emberize_business_hours do
+      business_calendar = create_business_calendar
+      update_params = { channel_business_hours: [{ channel: 'ticket', business_hours_type: 'custom', business_hours: [{ day: 'monday', time_slots: [{ end_time: '17:00' }] }] }] }
+      put :update, construct_params({ id: business_calendar.id }, update_params)
+      assert_response 400
+      match_json([bad_request_error_pattern('channel_business_hours[:business_hours][:time_slots]', "It should be one of these values: 'start_time, end_time'", code: :invalid_value)])
+      business_calendar.destroy
+    end
+  end
+
+  def test_update_without_day_in_time_slots
+    enable_emberize_business_hours do
+      business_calendar = create_business_calendar
+      update_params = { channel_business_hours: [{ channel: 'ticket', business_hours_type: 'custom', business_hours: [{ time_slots: [{ end_time: '17:00' }] }] }] }
+      put :update, construct_params({ id: business_calendar.id }, update_params)
+      assert_response 400
+      match_json([bad_request_error_pattern('channel_business_hour[:business_hours]', "It should be one of these values: 'day, time_slots'", code: :invalid_value)])
+      business_calendar.destroy
+    end
+  end
+
+  def test_update_channel_business_hours_with_wrong_time
+    enable_emberize_business_hours do
+      business_calendar = create_business_calendar
+      update_params = { channel_business_hours: [{ channel: 'ticket', business_hours_type: 'custom', business_hours: [{ day: 'monday', time_slots: [{ start_time: '25:00', end_time: '17:00' }] }] }] }
+      put :update, construct_params({ id: business_calendar.id }, update_params)
+      assert_response 400
+      match_json([bad_request_error_pattern('channel_business_hours[:business_hours][:time_slots][:start_time/end_time]', 'Please enter a valid time slot', code: :invalid_value)])
+      business_calendar.destroy
+    end
+  end
+
+  def test_update_holidays_in_business_calendar_with_invalid_format
+    enable_emberize_business_hours do
+      business_calendar = create_business_calendar
+      update_params = { holidays: [{ name: 'Test day1', date: 'Jan 1' }, { date: 'Jan 3' }] }
+      put :update, construct_params({ id: business_calendar.id }, update_params)
+      assert_response 400
+      match_json([bad_request_error_pattern_with_nested_field('holidays', 'name', 'It should be a/an String', code: :missing_field)])
+      business_calendar.destroy
+    end
+  end
+  
   def test_destroy_ember_business_hour
     enable_emberize_business_hours do
       business_calendar = create_business_calendar

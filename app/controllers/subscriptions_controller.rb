@@ -398,7 +398,7 @@ class SubscriptionsController < ApplicationController
     end
 
     def handle_error(error, custom_error_msg)
-      Rails.logger.debug "Subscription Error::::: #{error}"
+      Rails.logger.info "Subscription Error::::: #{error} :: #{error.backtrace[0..20]}"
 
       if (error_msg = error.json_obj[:error_msg].split(/error_msg/).last.sub(/http.*/,""))
         flash[:notice] = error_msg #chargebee_error_message

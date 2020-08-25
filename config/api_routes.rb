@@ -38,7 +38,7 @@ Helpkit::Application.routes.draw do
         end
       end
 
-      resources :business_calendars, controller: 'api_business_calendars', only: [:index, :show, :create, :destroy]
+      resources :business_calendars, controller: 'api_business_calendars', only: [:index, :show, :create, :update, :destroy]
       put '/custom_translations', to: 'custom_translations#upload'
       get '/custom_translations', to: 'custom_translations#download'
       get 'holidays/:id', to: 'holidays#show'

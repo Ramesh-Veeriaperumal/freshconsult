@@ -21,6 +21,8 @@ module Account::Setup
 
   ONBOARDING_V2_GOALS = ACCOUNT_SETUP_FEATURES_LIST[:onboarding_v2_goals]
 
+  FRESHMARKETER_EVENTS = ACCOUNT_SETUP_FEATURES_LIST[:freshmarketer_events].keys
+
   SETUP_EXPIRY = 60.days
 
   CONTROLLER_SETUP_KEYS = {
@@ -32,7 +34,7 @@ module Account::Setup
 
   included do |base|
     base.include Binarize
-    base.binarize :setup, flags: SETUP_KEYS + ONBOARDING_V2_GOALS, not_a_model_column: true
+    base.binarize :setup, flags: SETUP_KEYS + ONBOARDING_V2_GOALS + FRESHMARKETER_EVENTS, not_a_model_column: true
   end
 
   def setup_key
@@ -133,4 +135,20 @@ module Account::Setup
       save_setup
     end
   end
+
+  FRESHMARKETER_EVENTS.each do |event_name|
+    define_method "mark_#{event_name}_setup_and_save" do
+      self.safe_send("mark_#{event_name}_setup")
+      AddEventToFreshmarketer.perform_async(event: ThirdCRM::FRESHMARKETER_EVENTS[:fdesk_event], event_name: event_name.titleize)
+      save_setup
+    end
+  end
+
+  FRESHMARKETER_EVENTS.each do |setup_key|
+    define_method "unmark_#{setup_key}_setup_and_save" do
+      self.safe_send("unmark_#{setup_key}_setup")
+      save_setup
+    end
+  end
+
 end

@@ -12,6 +12,10 @@ module AccountAdditionalSettings::AdditionalSettings
         self.additional_settings[:email_template] : DEFAULTS_FONT_SETTINGS[:email_template]
   end
 
+  def security
+    (additional_settings || {})[:security] || {}
+  end
+
   def font_settings=(settings = {})
     additional_settings = self.additional_settings
     email_template = (self.email_template_settings || {}).merge(settings)
