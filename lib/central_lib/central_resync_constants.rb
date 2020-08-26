@@ -22,9 +22,9 @@ module CentralLib
     RESYNC_JOB_EXPIRY_TIME = 86_400 * 30 # Expire the job information in 30 days
     RESYNC_JOB_INFO_ALLOWED_PARAMS = [:entity_name, :status, :records_processed, :last_model_id].freeze
     ANALYTICS = 'analytics'
-    SEARCH ='search'
+    SEARCH = 'search'
     FRESHDESK = 'freshdesk'
-    TICKET_FIELDS_ALLOWED_SOURCE = [ANALYTICS, SEARCH, FRESHDESK].freeze
+    RESYNC_ALLOWED_SOURCE = [ANALYTICS, SEARCH, FRESHDESK].freeze
     SOURCE_TO_SKIP_RECORDS_THROTTLE = 'freshdesk'
   end
 end
