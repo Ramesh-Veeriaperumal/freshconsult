@@ -19,6 +19,8 @@ module CentralPublish
 
       Sharding.run_on_slave { sync_entity(args) }
       update_resync_job_information(args[:source], args[:job_id], status: RESYNC_JOB_STATUSES[:completed])
+      # Once the job is completed set the job information expiry as 3 days
+      set_others_redis_expiry(resync_job_status_key(args[:source], args[:job_id]), RESYNC_COMPLETED_JOB_EXPIRY)
     rescue StandardError => e
       update_resync_job_information(args[:source], args[:job_id], status: RESYNC_JOB_STATUSES[:failed])
       Rails.logger.error "Publishing Entity FAILED => #{e.inspect}"

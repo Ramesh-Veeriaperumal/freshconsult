@@ -1022,7 +1022,6 @@ Helpkit::Application.routes.draw do
     get '/account', to: 'channel/v2/accounts#show'
     match '/account/update_freshchat_domain', to: 'channel/v2/accounts#update_freshchat_domain', via: [:post]
     match '/authenticate', to: 'channel/v2/iam/authentication#authenticate', via: [:get, :post, :put, :delete]
-    match '/ticket_fields/sync', to: 'channel/v2/ticket_fields#sync', via: [:post]
     post '/iam/token', to: 'channel/v2/iam/authentication#iam_authenticate_token'
     resources :ticket_filters, controller: 'channel/v2/ticket_filters', only: [:index, :show]
     resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show, :index, :update]
@@ -1032,6 +1031,11 @@ Helpkit::Application.routes.draw do
       end
     end
     resources :central_resync, controller: 'channel/v2/central_resync', only: [:show]
+    resources :ticket_fields, controller: 'channel/v2/ticket_fields' do
+      collection do
+        post 'sync', to: 'channel/v2/ticket_fields#sync'
+      end
+    end
 
     get '/solutions/categories', to: 'channel/v2/api_solutions/categories#index'
     get '/solutions/categories/:id', to: 'channel/v2/api_solutions/categories#show'
