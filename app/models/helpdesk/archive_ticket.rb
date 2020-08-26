@@ -6,6 +6,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   include Helpdesk::TicketCustomFields
   include Search::ElasticSearchIndex
   include ArchiveTicketExportParams
+  include Helpdesk::TicketActivities
 
   HELPDESK_TICKET_ATTRIBUTES = ['due_by', 'frDueBy', 'email_config_id', 'fr_escalated', 'nr_due_by', 'nr_escalated', 'nr_reminded', 'isescalated', 'spam', 'associates_rdb', 'urgent', 'trained', 'import_id', 'sl_skill_id', 'association_type'].freeze
 
