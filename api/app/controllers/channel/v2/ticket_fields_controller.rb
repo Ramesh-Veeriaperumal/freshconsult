@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 class Channel::V2::TicketFieldsController < Channel::V2::CentralResyncController
-  include ChannelAuthentication
-  include CentralLib::CentralResyncConstants
-  include CentralLib::CentralResyncRateLimiter
-  include CentralLib::CentralResyncHelper
 
   before_filter :validate_params, only: [:sync]
 
