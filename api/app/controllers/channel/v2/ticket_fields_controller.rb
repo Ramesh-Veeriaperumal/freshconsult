@@ -1,14 +1,11 @@
 # frozen_string_literal: true
 
-class Channel::V2::TicketFieldsController < ApiApplicationController
+class Channel::V2::TicketFieldsController < Channel::V2::CentralResyncController
   include ChannelAuthentication
   include CentralLib::CentralResyncConstants
   include CentralLib::CentralResyncRateLimiter
   include CentralLib::CentralResyncHelper
 
-  skip_before_filter :check_privilege, if: :skip_privilege_check?
-  skip_before_filter :load_object
-  before_filter :channel_client_authentication
   before_filter :validate_params, only: [:sync]
 
   def sync
@@ -27,13 +24,6 @@ class Channel::V2::TicketFieldsController < ApiApplicationController
 
   private
 
-    def skip_privilege_check?
-      TICKET_FIELDS_ALLOWED_SOURCE.each do |source|
-        return true if channel_source?(source.to_sym)
-      end
-      false
-    end
-
     def validation_class
       Channel::V2::TicketFieldsValidation
     end
@@ -41,8 +31,6 @@ class Channel::V2::TicketFieldsController < ApiApplicationController
     def validate_params
       @args = params.symbolize_keys
       ticket_fields_validation = validation_class.new(@args)
-      unless ticket_fields_validation.valid?(action_name.to_sym)
-        render_custom_errors(ticket_fields_validation, true)
-      end
+      render_custom_errors(ticket_fields_validation, true) unless ticket_fields_validation.valid?(action_name.to_sym)
     end
 end
