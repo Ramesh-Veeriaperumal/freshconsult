@@ -159,12 +159,11 @@ class SubscriptionsController < ApplicationController
 
     def load_objects
       Rails.logger.debug "FSM already enabled for account #{current_account.id} :: #{current_account.field_service_management_enabled?}"
-      # TODO: Remove force_2020_plan?() after 2020 plan launched
       @omni_account = current_account.omni_bundle_account?
       if @omni_account
         plans = SubscriptionPlan.omni_channel_plan
       else
-        plans = (current_account.force_2020_plan? ? SubscriptionPlan.plans_2020 : SubscriptionPlan.current)
+        plans = SubscriptionPlan.current
         plans << scoper.subscription_plan if scoper.subscription_plan.classic?
       end
       @subscription = scoper
@@ -204,16 +203,11 @@ class SubscriptionsController < ApplicationController
 
     def load_subscription_plan
       if params[:plan_id].present?
-        # TODO: Remove force_2020_plan?() after 2020 plan launched
-        if current_account.force_2020_plan?
-          @subscription_plan = SubscriptionPlan.plans_2020.find_by_id(params[:plan_id])
-        else
-          @subscription_plan = SubscriptionPlan.current.find_by_id(params[:plan_id])
-          # Allow subscription to be updated to existing plan omni variant. eg. Estate Jan 19 to Estate Omni Jan 19
-          current_plan_omni_variant = scoper.subscription_plan.omni_plan_variant if @subscription_plan.nil?
-          if scoper.subscription_plan.classic && current_plan_omni_variant && current_plan_omni_variant.id.to_s == params[:plan_id]
-            @subscription_plan = current_plan_omni_variant
-          end
+        @subscription_plan = SubscriptionPlan.current.where(id: params[:plan_id]).first
+        # Allow subscription to be updated to existing plan omni variant. eg. Estate Jan 19 to Estate Omni Jan 19
+        current_plan_omni_variant = scoper.subscription_plan.omni_plan_variant if @subscription_plan.nil?
+        if scoper.subscription_plan.classic && current_plan_omni_variant && current_plan_omni_variant.id.to_s == params[:plan_id]
+          @subscription_plan = current_plan_omni_variant
         end
       end
       @subscription_plan ||= scoper.subscription_plan

@@ -302,8 +302,6 @@ class Subscription < ActiveRecord::Base
   end
 
   def classic?
-    return SubscriptionPlan::JAN_2020_PLAN_NAMES.exclude?(subscription_plan.name) if account.force_2020_plan?
-
     subscription_plan.classic
   end
 

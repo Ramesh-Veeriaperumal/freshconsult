@@ -96,10 +96,6 @@ class Account < ActiveRecord::Base
 
   PODS_FOR_BOT = ['poduseast1'].freeze
 
-  PRICING_PLAN_MIGRATION_FEATURES_2020 = [
-    :unlimited_multi_product, :sla_reminder_automation
-  ].to_set.freeze
-
   LAUNCH_PARTY_FEATURES_TO_LOG = [
     :admin_only_mint
   ].freeze
@@ -430,21 +426,6 @@ class Account < ActiveRecord::Base
   def launched_db_feature
     DB_TO_LP_FEATURES.select { |f| launched?(f) }
   end
-  # TODO : Cleanup up after 2020 pricing changes
-  # START
-  def has_feature?(feature)
-    return log_feature_usage(feature) if feature.to_sym.in?(BITMAP_FEATURES_TO_LOG)
-
-    return super if launched?(:pricing_plan_change_2020)
-
-    PRICING_PLAN_MIGRATION_FEATURES_2020.include?(feature) ? true : super
-  end
-
-  def features_list
-    return super if launched?(:pricing_plan_change_2020)
-
-    (super + PRICING_PLAN_MIGRATION_FEATURES_2020.to_a).uniq
-  end
 
   def central_publish_account_features
     features_list + launched_central_publish_features
@@ -454,14 +435,6 @@ class Account < ActiveRecord::Base
     # intersection of launched features and central publish lp features
     all_launched_features & CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES
   end
-
-  def has_features?(*features)
-    unless launched?(:pricing_plan_change_2020)
-      features.delete_if { |feature| PRICING_PLAN_MIGRATION_FEATURES_2020.include?(feature) }
-    end
-    features.all? { |f| has_feature?(f) }
-  end
-  # STOP
 
   def ticket_properties_suggester_enabled?
     ticket_properties_suggester_eligible_enabled? && has_feature?(:ticket_properties_suggester)

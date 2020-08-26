@@ -25,12 +25,6 @@ class SubscriptionPlan < ActiveRecord::Base
 
   scope :get_details_by_name, ->(fields, names) { select(fields).where(name: names) }
 
-  # TODO: Remove force_2020_plan?() after 2019 plan launched
-  # START
-  scope :plans_2020, -> { where(name: ['Sprout Jan 20', 'Blossom Jan 20', 'Garden Jan 20', 'Estate Jan 20', 'Estate Omni Jan 20', 'Forest Jan 20', 'Forest Omni Jan 20']).
-                                         order('amount asc')}
-  # END
-
   scope :omni_channel_plan, -> { where(name: ['Estate Omni Jan 20', 'Forest Omni Jan 20']).order('amount asc') }
 
   after_commit :clear_cache
