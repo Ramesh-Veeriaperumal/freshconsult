@@ -577,6 +577,7 @@
     :inherits:
       - :estate_jan_20
     :exclude: []
+    :freddy_sessions: 5000
   :forest_omni_jan_20:
     :name: Forest Omni Channel
     :features:
@@ -586,3 +587,4 @@
     :inherits:
       - :forest_jan_20
     :exclude: []
+    :freddy_sessions: 5000

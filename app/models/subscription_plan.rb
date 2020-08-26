@@ -233,4 +233,28 @@ class SubscriptionPlan < ActiveRecord::Base
   def multi_product?
     PLANS[:subscription_plans][canon_name][:features].include?(:multi_product) if PLANS[:subscription_plans][canon_name]
   end
+
+  def freddy_self_service_cost(currency)
+    costs = price[:FREDDY][:SELF_SERVICE]
+    costs.nil? ? 0 : costs[currency.to_sym]
+  end
+
+  def freddy_ultimate_cost(currency)
+    costs = price[:FREDDY][:ULTIMATE]
+    costs.nil? ? 0 : costs[currency.to_sym]
+  end
+
+  def freddy_ultimate_session_cost(currency)
+    costs = price[:FREDDY][:ULTIMATE_SESSION]
+    costs.nil? ? 0 : costs[currency.to_sym]
+  end
+
+  def freddy_additional_pack_cost(currency)
+    costs = price[:FREDDY][:ADDITIONAL_PACKS]
+    costs.nil? ? 0 : costs[currency.to_sym]
+  end
+
+  def freddy_addon_count
+    price[:FREDDY].count if price[:FREDDY].present?
+  end
 end

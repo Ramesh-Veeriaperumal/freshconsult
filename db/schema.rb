@@ -4396,6 +4396,7 @@ ActiveRecord::Schema.define(version: 20200817171910) do
     t.datetime 'created_at',                  :null => false
     t.datetime 'updated_at',                  :null => false
     t.boolean  "feature_loss",      :default => false
+    t.text     'additional_info'
   end
 
   add_index 'subscription_requests', ['account_id', 'subscription_id'], :name => 'index_subscription_requests_on_account_id_subscription_id'
