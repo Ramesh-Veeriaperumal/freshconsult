@@ -243,7 +243,7 @@ class Account < ActiveRecord::Base
     omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false,
     ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false,
     twitter_api_compliance: false, omni_agent_availability_dashboard: false, explore_omnichannel_feature: false, hide_omnichannel_toggle: false,
-    chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false, export_ignore_primary_key: false
+    chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false, export_ignore_primary_key: false, archive_ticket_central_publish: false
   }.freeze
   
   BLOCK_GRACE_PERIOD = 90.days
