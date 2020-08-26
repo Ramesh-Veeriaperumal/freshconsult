@@ -1,7 +1,6 @@
 require_relative '../../unit_test_helper'
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 require Rails.root.join('test', 'models', 'helpers', 'freshchat_account_test_helper.rb')
-require Rails.root.join('test', 'api', 'helpers', 'attachments_test_helper.rb')
 require Rails.root.join('spec', 'support', 'user_helper.rb')
 require 'webmock/minitest'
 WebMock.allow_net_connect!
@@ -12,11 +11,6 @@ class Freshchat::AgentUtilTest < ActiveSupport::TestCase
   include FreshchatAccountTestHelper
   include Freshchat::AgentUtil
   include UsersHelper
-  include AttachmentsTestHelper
-  include ActionDispatch::TestProcess
-  class FixtureFile
-    include ActionDispatch::TestProcess
-  end
 
   def setup
     if @account.blank?
@@ -173,8 +167,8 @@ class Freshchat::AgentUtilTest < ActiveSupport::TestCase
     stub_request(:post, 'https://test-freshchat.freshpo.com/v2/agents?skip_email_activation=true').to_return(status: 200)
     safe_send(:handle_fchat_agent, agent)
     assert_requested(:post, 'https://test-freshchat.freshpo.com/v2/agents?skip_email_activation=true', times: 1) do |req|
-      request = JSON.parse(req.body)
-      request['last_name'] == user_last_name && request['first_name'] == user_first_name
+      response = JSON.parse(req.body)
+      response['last_name'] == user_last_name && response['first_name'] == user_first_name
     end
   ensure
     unstub(:freshchat_domain)
@@ -191,8 +185,8 @@ class Freshchat::AgentUtilTest < ActiveSupport::TestCase
     stub_request(:post, 'https://test-freshchat.freshpo.com/v2/agents?skip_email_activation=true').to_return(status: 200)
     safe_send(:handle_fchat_agent, agent)
     assert_requested(:post, 'https://test-freshchat.freshpo.com/v2/agents?skip_email_activation=true', times: 1) do |req|
-      request = JSON.parse(req.body)
-      request['last_name'] == user_last_name && request['first_name'] == user_first_name
+      response = JSON.parse(req.body)
+      response['last_name'] == user_last_name && response['first_name'] == user_first_name
     end
   ensure
     unstub(:freshchat_domain)
@@ -209,72 +203,11 @@ class Freshchat::AgentUtilTest < ActiveSupport::TestCase
     stub_request(:post, 'https://test-freshchat.freshpo.com/v2/agents?skip_email_activation=true').to_return(status: 200)
     safe_send(:handle_fchat_agent, agent)
     assert_requested(:post, 'https://test-freshchat.freshpo.com/v2/agents?skip_email_activation=true', times: 1) do |req|
-      request = JSON.parse(req.body)
-      request['last_name'] == user_last_name && request['first_name'] == user_first_name
+      response = JSON.parse(req.body)
+      response['last_name'] == user_last_name && response['first_name'] == user_first_name
     end
   ensure
     unstub(:freshchat_domain)
-  end
-
-  def test_update_agent_avatar
-    user_avatar_url = 'https://cdn.avatar.freshdesk.com/avatar.jpg'
-    freshchat_user_url = "https://test-freshchat.freshpo.com/v2/agents/#{SecureRandom.uuid}"
-
-    user = add_test_agent(@account, role: Role.where(name: 'Agent').first.try(:id))
-    file = FixtureFile.new.fixture_file_upload('test/api/fixtures/files/image33kb.jpg', 'image/jpg')
-    sample_attachmemt = create_attachment(content: file, attachable_type: 'User', attachable_id: user.id)
-
-    stubs(:freshchat_domain).returns('test-freshchat.freshpo.com')
-    stubs(:freshchat_agent_url).returns(freshchat_user_url)
-    stubs(:fetch_http_action).returns('put')
-    User.any_instance.stubs(:avatar).returns(sample_attachmemt)
-    User.any_instance.stubs(:avatar_url).returns(user_avatar_url)
-
-    agent = Account.current.agents.where(user_id: user.id).first
-    agent.user_changes = {}
-    agent.user_changes[:avatar_changes] = :upsert
-    agent.save!
-
-    stub_request(:put, freshchat_user_url).to_return(headers: { 'Content-Type' => 'application/json' }, status: 200)
-    safe_send(:handle_fchat_agent, agent)
-    assert_requested(:put, freshchat_user_url, times: 1) do |req|
-      request = JSON.parse(req.body)
-      request['avatar']['url'] == user_avatar_url
-    end
-  ensure
-    unstub(:freshchat_domain)
-    unstub(:freshchat_agent_url)
-    unstub(:fetch_http_action)
-    User.any_instance.unstub(:avatar)
-    User.any_instance.unstub(:avatar_url)
-  end
-
-  def test_remove_agent_avatar
-    freshchat_user_url = "https://test-freshchat.freshpo.com/v2/agents/#{SecureRandom.uuid}"
-
-    stubs(:freshchat_domain).returns('test-freshchat.freshpo.com')
-    stubs(:freshchat_agent_url).returns(freshchat_user_url)
-    stubs(:fetch_http_action).returns('put')
-    User.any_instance.stubs(:avatar).returns(nil)
-
-    user = add_test_agent(@account, role: Role.where(name: 'Agent').first.try(:id))
-
-    agent = Account.current.agents.where(user_id: user.id).first
-    agent.user_changes = {}
-    agent.user_changes[:avatar_changes] = :destroy
-    agent.save!
-
-    stub_request(:put, freshchat_user_url).to_return(headers: { 'Content-Type' => 'application/json' }, status: 200)
-    safe_send(:handle_fchat_agent, agent)
-    assert_requested(:put, freshchat_user_url, times: 1) do |req|
-      request = JSON.parse(req.body)
-      request['avatar']['url'] == ''
-    end
-  ensure
-    unstub(:freshchat_domain)
-    unstub(:freshchat_agent_url)
-    unstub(:fetch_http_action)
-    User.any_instance.unstub(:avatar)
   end
 
   private

@@ -116,15 +116,4 @@ class ProfilesControllerTest < ActionController::TestCase
     assert_response 200
     assert_equal user.agent.onboarding_completed?, false
   end
-
-  def test_avatar_changes
-    @controller.stubs(:params).returns(user: { avatar_attributes: { _destroy: '1' } })
-    assert_equal @controller.safe_send('avatar_changes'), :destroy
-    @controller.stubs(:params).returns(user: { avatar_attributes: { _destroy: '0' } })
-    assert_equal @controller.safe_send('avatar_changes'), :upsert
-    @controller.stubs(:params).returns({})
-    assert_nil @controller.safe_send('avatar_changes')
-  ensure
-    @controller.unstub(:params)
-  end
 end

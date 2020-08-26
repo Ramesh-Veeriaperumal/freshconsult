@@ -766,45 +766,6 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     DataTypeValidator.any_instance.unstub(:valid_type?)
   end
 
-  def test_user_changes_update_with_avatar_id
-    AgentValidation.any_instance.stubs(:private_api?).returns(true)
-    user = get_or_create_agent
-    file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
-    attachment_id = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
-    params_hash = { avatar_id: attachment_id }
-    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-    mock = MiniTest::Mock.new
-    mock.expect(:call, nil, [nil])
-    mock.expect(:call, nil, [:upsert])
-    @controller.stub(:user_avatar_changes, mock) do
-      put :update, construct_params({ version: 'private', id: user.id }, params_hash)
-    end
-    assert_response 200
-    assert_equal user.avatar.content_file_name, 'image33kb.jpg'
-    mock.verify
-  ensure
-    @controller.unstub(:user_avatar_changes)
-    DataTypeValidator.any_instance.unstub(:valid_type?)
-    AgentValidation.any_instance.unstub(:private_api?)
-  end
-
-  def test_user_changes_update_with_avatar_id_null_removes_avatar_correctly
-    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-    user = get_or_create_agent
-    params_hash = { avatar_id: nil }
-    mock = MiniTest::Mock.new
-    mock.expect(:call, nil, [:destroy])
-    @controller.stub(:user_avatar_changes, mock) do
-      put :update, construct_params({ version: 'private', id: user.id }, params_hash)
-    end
-    assert_nil user.avatar
-    assert_response 200
-    mock.verify
-  ensure
-    @controller.unstub(:user_avatar_changes)
-    DataTypeValidator.any_instance.unstub(:valid_type?)
-  end
-
   def test_update_with_invalid_avatar_id
     AgentValidation.any_instance.stubs(:private_api?).returns(true)
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)

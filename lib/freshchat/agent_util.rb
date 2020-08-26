@@ -45,7 +45,7 @@ module Freshchat
       def fchat_agent_update?(agent)
         if agent.safe_send(:transaction_include_action?, :update)
           if agent.freshchat_enabled.nil? || agent.freshchat_enabled == agent.agent_freshchat_enabled?
-            freshchat_agent_properties_changed?(agent)
+            roles_changed?(agent)
           else
             account.omni_bundle_id ? true : standalone_account(agent)
           end
@@ -56,12 +56,8 @@ module Freshchat
         agent.safe_send(:transaction_include_action?, :destroy) && account.omni_bundle_id && agent.additional_settings[:freshchat].present?
       end
 
-      def freshchat_agent_properties_changed?(agent)
-        ((agent.user.previous_changes.keys & ['privileges']).present? || agent.user_changes.try(:include?, :avatar_changes)) && agent.agent_freshchat_enabled?
-      end
-
-      def roles_changed?
-        (@agent.user.previous_changes.keys & ['privileges']).present?
+      def roles_changed?(agent)
+        (agent.user.previous_changes.keys & ['privileges']).present? && agent.agent_freshchat_enabled?
       end
 
       def standalone_account(agent)
@@ -135,10 +131,10 @@ module Freshchat
       end
 
       def agent_put_request_body
-        request_body = {}
-        request_body[:role_id] = freshchat_role(@user.role_ids.min) if roles_changed?
+        request_body = {
+          role_id: freshchat_role(@user.role_ids.min)
+        }
         request_body[:is_deactivated] = !@agent.freshchat_enabled unless @agent.freshchat_enabled.nil?
-        request_body[:avatar] = user_avatar if @agent.user_changes && @agent.user_changes[:avatar_changes]
         request_body
       end
 
@@ -180,10 +176,6 @@ module Freshchat
           additional_settings[:freshchat][:enabled] = !response.body['is_deactivated']
           @agent.update_attribute(:additional_settings, additional_settings)
         end
-      end
-
-      def user_avatar
-        { url: @user.avatar.present? && @agent.user_changes[:avatar_changes] == :upsert ? @user.avatar_url : '' }
       end
   end
 end
