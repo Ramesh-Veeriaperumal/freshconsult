@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Channel::V2::TicketFieldsController < Channel::V2::CentralResyncController
-
   before_filter :validate_params, only: [:sync]
 
   def sync
