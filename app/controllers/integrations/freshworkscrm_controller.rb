@@ -54,9 +54,10 @@ class Integrations::FreshworkscrmController < Admin::AdminController
       begin
         @freshworkscrm_config['contact_fields'] = service_obj.receive(:contact_fields)
         install_or_update default_configs.merge(get_api_params)
-      rescue IntegrationServices::Errors::RemoteError => e
-        flash.now[:error] = "#{t(:'integrations.freshworkscrm.form.error')}"
+      rescue IntegrationServices::Errors::RemoteError
+        flash.now[:error] = t(:'integrations.freshworkscrm.form.error').to_s
         render_settings
+        return false
       rescue StandardError => e
         NewRelic::Agent.notice_error(e, custom_params: { description: "Problem in installing freshworkscrm application : #{e.message}" })
         flash[:error] = t(:'flash.application.install.error')
@@ -70,7 +71,7 @@ class Integrations::FreshworkscrmController < Admin::AdminController
     end
 
     def get_api_params
-      { 'domain' => "https://#{params["configs"]["domain"]}", 'auth_token' => params["configs"]["auth_token"], 'ghostvalue' => params['configs']['ghostvalue'] }
+      { 'domain' => "https://#{params['configs']['domain']}", 'auth_token' => params['configs']['auth_token'], 'ghostvalue' => params['configs']['ghostvalue'] }
     end
 
     def render_settings
@@ -98,7 +99,7 @@ class Integrations::FreshworkscrmController < Admin::AdminController
     def get_deal_params(config_hash)
       config_hash['deal_view'] = params['deal_view']['value']
       if config_hash['deal_view'].to_bool
-        config_hash['deal_fields'] = params[:deals].join(",") unless params[:deals].nil?
+        config_hash['deal_fields'] = params[:deals].join(',') unless params[:deals].nil?
         config_hash['deal_labels'] = params['deal_labels']
         config_hash['agent_settings'] = params['agent_settings'] ? params['agent_settings']['value'] : 'false'
 

@@ -1,11 +1,9 @@
-# frozen_string_literal: true
-
 module IntegrationServices::Services
   class FreshworkscrmService < IntegrationServices::Service
     include InstalledApplicationConstants
 
-    INSTALL_DEFAULT_FIELD_HASH = { 'contact_fields': 'display_name', 'account_fields': 'name',
-                                   'contact_labels': 'Full name', 'account_labels': 'Name', 'deal_view': '0' }.freeze
+    INSTALL_DEFAULT_FIELD_HASH = { 'contact_fields' => 'display_name', 'account_fields' => 'name',
+                                   'contact_labels' => 'Full name', 'account_labels' => 'Name', 'deal_view' => '0' }.freeze
 
     def instance_url
       self.configs['domain']
@@ -20,7 +18,7 @@ module IntegrationServices::Services
     end
 
     def self.construct_default_integration_params(params)
-      INSTALL_DEFAULT_FIELD_HASH.merge!('domain': INSTALLATION_DOMAIN % { domain_url: params['domain'] }, 'auth_token': params['auth_token'], 'ghostvalue': params['ghostvalue'])
+      INSTALL_DEFAULT_FIELD_HASH.merge!('domain' => INSTALLATION_DOMAIN % { domain_url: params['domain'] }, 'auth_token' => params['auth_token'], 'ghostvalue' => params['ghostvalue'])
     end
 
     def receive_deal_fields

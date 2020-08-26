@@ -9,7 +9,7 @@ module InstalledApplicationConstants
     salesforce: "salesforce",
     salesforce_v2: "cloud_elements",
     freshsales: "freshsales",
-    freshworkscrm: "freshworkscrm",
+    freshworkscrm: 'freshworkscrm',
     shopify: "shopify"
   }.freeze
   MARKETPLACE = :marketplace

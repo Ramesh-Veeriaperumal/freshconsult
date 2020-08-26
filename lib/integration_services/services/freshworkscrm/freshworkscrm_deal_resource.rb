@@ -1,13 +1,11 @@
-# frozen_string_literal: true
-
 module IntegrationServices::Services
   module Freshworkscrm
     class FreshworkscrmDealResource < FreshworkscrmResource
-      RELATIONAL_FIELDS = { 'deal_stage_id': 'deal_stages', 'deal_reason_id': 'deal_reasons',
-                            'deal_type_id': 'deal_types', 'owner_id': 'users',
-                            'campaign_id': 'campaigns', 'deal_pipeline_id': 'deal_pipelines',
-                            'deal_product_id': 'deal_products', 'deal_payment_status_id': 'deal_payment_statuses',
-                            'sales_account_id': 'sales_accounts', 'territory_id': 'territories' }.freeze
+      RELATIONAL_FIELDS = { 'deal_stage_id' => 'deal_stages', 'deal_reason_id' => 'deal_reasons',
+                            'deal_type_id' => 'deal_types', 'owner_id' => 'users',
+                            'campaign_id' => 'campaigns', 'deal_pipeline_id' => 'deal_pipelines',
+                            'deal_product_id' => 'deal_products', 'deal_payment_status_id' => 'deal_payment_statuses',
+                            'sales_account_id' => 'sales_accounts', 'territory_id' => 'territories' }.freeze
 
       def get_fields
         request_url = "#{server_url}/settings/deals/fields.json"
@@ -16,13 +14,13 @@ module IntegrationServices::Services
       end
 
       def get_selected_fields(fields, value)
-        return { 'deals': [], 'type': 'deal' } if value[:account_id].blank?
+        return { 'deals' => [], 'type' => 'deal' } if value[:account_id].blank?
 
         deal_response = fetch_by_account_id value[:account_id]
-        return { 'deals': [], 'type': 'deal' } if deal_response['deals'].blank?
+        return { 'deals' => [], 'type' => 'deal' } if deal_response['deals'].blank?
 
         deal_response = integrated_remote_resource(value[:account_id], deal_response)
-        return { 'deals': [], 'type': 'deal' } if deal_response['deals'].blank?
+        return { 'deals' => [], 'type' => 'deal' } if deal_response['deals'].blank?
 
         deal_response = filter_deals_by_status(deal_response)
         fields = fields.split(',')
@@ -34,8 +32,8 @@ module IntegrationServices::Services
             end
           end
         end
-        result = get_custom_fields('deals', fields, 'deals': deal_response['deals'])
-        result = { 'deals': result['deals'], 'type': 'deal' }
+        result = get_custom_fields('deals', fields, 'deals' => deal_response['deals'])
+        result = { 'deals' => result['deals'], 'type' => 'deal' }
       end
 
       def sort_by_close_date(deals, field1, field2, limit)

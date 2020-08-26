@@ -1,13 +1,11 @@
-# frozen_string_literal: true
-
 module IntegrationServices::Services
   module Freshworkscrm
     class FreshworkscrmAccountResource < FreshworkscrmResource
-      RELATIONAL_FIELDS = { 'industry_type_id': ['industry_type', 'industry_types'],
-                            'business_type_id': ['business_type', 'business_types'],
-                            'owner_id': ['owner', 'users'], 'territory_id': ['territory', 'territories'],
-                            'parent_sales_account_id': ['parent_sales_account', 'parent_sales_accounts'],
-                            'creater_id': ['creater', 'users'], 'updater_id': ['updater', 'users'] }.freeze
+      RELATIONAL_FIELDS = { 'industry_type_id' => ['industry_type', 'industry_types'],
+                            'business_type_id' => ['business_type', 'business_types'],
+                            'owner_id' => ['owner', 'users'], 'territory_id' => ['territory', 'territories'],
+                            'parent_sales_account_id' => ['parent_sales_account', 'parent_sales_accounts'],
+                            'creater_id' => ['creater', 'users'], 'updater_id' => ['updater', 'users'] }.freeze
 
       def get_fields
         request_url = "#{server_url}/settings/sales_accounts/fields.json"
@@ -16,7 +14,7 @@ module IntegrationServices::Services
       end
 
       def get_selected_fields(fields, value)
-        return { 'sales_accounts': [], 'type': 'sales_account' } if value[:company].blank? && value[:email].blank?
+        return { 'sales_accounts' => [], 'type' => 'sales_account' } if value[:company].blank? && value[:email].blank?
 
         account_response = nil
         if value[:company].present?
@@ -24,7 +22,7 @@ module IntegrationServices::Services
         elsif value[:email].present?
           account_response = filter_by_email value[:email]
         end
-        return { 'sales_accounts': [], 'type': 'sales_account' } if account_response.blank? || account_response['sales_accounts'].blank?
+        return { 'sales_accounts' => [], 'type' => 'sales_account' } if account_response.blank? || account_response['sales_accounts'].blank?
 
         account_id = account_response['sales_accounts'].first['id']
         url = "#{server_url}/sales_accounts/#{account_id}.json"
@@ -60,7 +58,7 @@ module IntegrationServices::Services
         request_body = filter_request_body filters, 'sales_account'
         response = http_post request_url, request_body.to_json
         process_response(response, 200) do |account|
-          return { 'sales_accounts': Array.wrap(account['sales_accounts']) }
+          return { 'sales_accounts' => Array.wrap(account['sales_accounts']) }
         end
       end
 

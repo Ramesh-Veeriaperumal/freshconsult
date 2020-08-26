@@ -1,22 +1,20 @@
-# frozen_string_literal: true
-
 module IntegrationServices::Services
   module Freshworkscrm
     class FreshworkscrmContactResource < FreshworkscrmResource
-      RELATIONAL_FIELDS = { 'owner_id': ['owner', 'users'],'campaign_id': ['campaign', 'campaigns'],
-                            'sales_account_id': ['sales_account', 'sales_accounts'],
-                            'contact_status_id': ['contact_status', 'contact_status'],
-                            'creater_id': ['creater', 'users'], 'updater_id': ['updater', 'users'] }.freeze
+      RELATIONAL_FIELDS = { 'owner_id' => ['owner', 'users'], 'campaign_id' => ['campaign', 'campaigns'],
+                            'sales_account_id' => ['sales_account', 'sales_accounts'],
+                            'contact_status_id' => ['contact_status', 'contact_status'],
+                            'creater_id' => ['creater', 'users'], 'updater_id' => ['updater', 'users'] }.freeze
 
       def get_fields
         request_url = "#{server_url}/settings/contacts/fields.json"
         response = http_get request_url
-        opt_fields = { 'display_name': 'Full name' }
+        opt_fields = { 'display_name' => 'Full name' }
         process_response(response, 200, &format_fields_block(opt_fields))
       end
 
       def get_selected_fields(fields, value)
-        return { 'contacts': [], 'type': 'contact' } if value[:email].blank?
+        return { 'contacts' => [], 'type' => 'contact' } if value[:email].blank?
 
         contact_response = filter_by_email value[:email]
         if contact_response['contacts'].blank?

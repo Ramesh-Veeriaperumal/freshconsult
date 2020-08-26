@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module IntegrationServices::Services
   module Freshworkscrm
     class FreshworkscrmCommonResource < FreshworkscrmResource
