@@ -60,7 +60,7 @@ class ApiAgentsController < ApiApplicationController
     return unless validate_delegator(nil, params[cname].slice(*AgentConstants::AGENT_CREATE_DELEGATOR_KEY).merge(agent_delegator_params))
 
     @user = current_account.users.new
-    assign_avatar if params[cname][:avatar_id].present? && @delegator.draft_attachments.present?
+    assign_avatar(@user) if params[cname][:avatar_id].present? && @delegator.draft_attachments.present?
     params[:user] = params[cname][:user_attributes]
     check_and_assign_field_agent_roles if Account.current.field_service_management_enabled?
     check_and_assign_skills_for_create if Account.current.skill_based_round_robin_enabled?
@@ -93,6 +93,8 @@ class ApiAgentsController < ApiApplicationController
     @item.user.uniqueness_validated = true
     @item.user_changes = @item.user.agent.user_changes || {}
     @item.user_changes.merge!(@item.user.changes)
+    user_avatar_changes(@avatar_changes)
+    assign_avatar(@item.user) if private_api? && params[cname][:avatar_id].present? && @delegator.draft_attachments.present?
     return render_custom_errors(@item) unless check_edit_privilege
 
     assign_group_with_contribution_group
@@ -366,8 +368,14 @@ class ApiAgentsController < ApiApplicationController
       @item.build_agent_groups_attributes(group_ids, contribution_group_ids)
     end
 
-    def assign_avatar
-      @user.avatar = @delegator.draft_attachments.first
+    def assign_avatar(user)
+      user.avatar = @delegator.draft_attachments.first
+      user_avatar_changes(:upsert) if user.avatar.try(:id)
+    end
+
+    def user_avatar_changes(changes)
+      @item.user_changes ||= {}
+      @item.user_changes[:avatar_changes] = changes
     end
 
     def check_and_assign_field_agent_roles

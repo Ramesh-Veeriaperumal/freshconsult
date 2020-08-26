@@ -115,7 +115,8 @@ private
       params[:user].each do |k, v|
         @profile.user.safe_send("#{k}=", v)
       end
-      @profile.user_changes = @profile.user.changes
+      @profile.user_changes = @profile.user.changes || {}
+      @profile.user_changes[:avatar_changes] = avatar_changes if avatar_changes
       if @profile.update_attributes(params[:agent])
         format.html { 
           flash[:notice] = 'Your profile has been updated successfully.'
@@ -231,5 +232,9 @@ protected
     else
       params[:user].permit(*USER_UPDATABLE_ATTRIBUTES)
     end
+  end
+
+  def avatar_changes
+    (params[:user][:avatar_attributes][:_destroy] == '1' ? :destroy : :upsert) if params[:user] && params[:user][:avatar_attributes]
   end
 end
