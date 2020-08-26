@@ -8220,8 +8220,8 @@ en:
     current_fsm_limit: '%{current_fsm_limit} field technicians'
     current_plan_name: '%{current_plan_name} plan'
     agents_and_product: >-
-        As per request, please maintain %{requested_agents_and_product_count} 
-        by %{next_renewal_at} or you will be charged as 
+        As per request, please maintain %{requested_agents_and_product_count}
+        by %{next_renewal_at} or you will be charged as
         for %{current_agents_and_plan}, as usual.
     current_plan: 'Plan: %{plan}'
     agents: 'Agents: %{agents}'
@@ -8249,6 +8249,9 @@ en:
     omnichannel: Omnichannel
     to: to
     fsm: FSM
+    freddy_self_service: Freddy self service
+    freddy_ultimate: Freddy ultimate
+    freddy_additional_packs: Freddy additional session packs
     billing_next_renewal: Effective from next renewal on
     billing_request_on: Subscription change requested on
     billing_cycle: Billing Cycle
@@ -8335,6 +8338,18 @@ en:
     landing_subheading: 'We’re sorry to see you go! If you unsubscribe now, we will no longer be able to send you any more updates. You can click on ‘unsubscribe’ button below to confirm your unsubscription.'
     success_heading: 'Successfully unsubscribed.'
     success_subheading: 'You have successfully unsubscribed from our updates and notifications mailing lists.'
+  freddy:
+    title: Freddy CX
+    self_service: Self service
+    ultimate: Ultimate
+    f_cx_self_service: Freddy CX - Self service
+    additional_session_packs: "Additional Freddy session packs <p class='freddy-pack'>(1000 sessions/pack)</p>"
+    warning_title: Are you sure you want to disable Freddy CX ?
+    warning_content_from_self_service: You will lose self service AI features - chatbot builder on disabling this add on.
+    warning_content_from_ultimate: You will lose self service AI and Agent AI features on disabling this add on.
+    session_packs: <p class="size-12">You’ll get <span class='session-pack'>%{freddy_sessions}</span> sessions <span class="session-pack-cycle">%{cycle}</span></p>
+  freddy_self_service_enabled: "Freddy self service - included"
+  freddy_ultimate_enabled: "Freddy ultimate - included"
   omni_dashboard:
     freshchat_volume_tooltip: 'Conversation that have been unassigned or assigned & not replied for 15 mins'
     omni_availability_detail_title: 'View details'
