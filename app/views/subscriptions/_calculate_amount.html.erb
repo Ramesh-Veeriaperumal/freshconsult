@@ -12,7 +12,7 @@
 	is_plan_downgrade = @subscription.state == 'active' &&
 						((@subscription.subscription_plan_id != current_subscription.subscription_plan_id && @subscription.cost_per_agent < current_subscription.cost_per_agent)|| ((current_subscription_plan.omni_plan? || current_subscription_plan.free_omni_channel_plan?) &&
 						@subscription.subscription_plan.basic_variant?))
-
+	is_prepaid = @subscription.freddy_billing_model.nil?
 %>
 
 <div class="billing-cost">
@@ -74,14 +74,14 @@
 	<% if current_account.freddy_subscription_enabled? && freddy_addon_count != 0 && @subscription.state != 'trial' %>
 
 		<dl id="freddy_self_service" class="<%= freddy_self_sevice_enabled ? '' : 'hide' %>">
-			<dt><%= t('freddy_self_service') %></dt>
+			<dt><%= t('downgrade.freddy_self_service') %></dt>
 			<dd>
 				<b><%= format_amount(@subscription.subscription_plan.freddy_self_service_cost(@subscription.currency_name), @subscription.currency_name) %></b>
 				x <b id="number-of-months"> <%= billing_cycle %> </b></dd>
 		</dl>
 
 		<dl id="freddy_ultimate" class="<%= freddy_ultimate_enabled ? '' : 'hide' %>">
-			<dt class="align-top"><%= t('freddy_ultimate') %></dt>
+			<dt class="align-top"><%= t('downgrade.freddy_ultimate') %></dt>
 			<dd>
 				<p>
 					<b><%= agent_limit || current_account.full_time_support_agents.count %></b>
@@ -97,8 +97,9 @@
 			</dd>
 		</dl>
 
-		<dl id="freddy_additional_session">
-		 	<% freddy_session_packs = @subscription.freddy_session_packs || 0 %>
+		<% showAdditionalsessions = @subscription.freddy_sessions > 0 && is_prepaid %>
+		<dl id="freddy_additional_session" class="<%= showAdditionalsessions ? '' : 'hide' %>">
+			<% freddy_session_packs = @subscription.freddy_session_packs || 0 %>
 			<dt class="align-top"><%= t('freddy.additional_session_packs').html_safe %></dt>
 			<dd>
 				<input type="text" size="4" value="<%= freddy_session_packs %>"
@@ -107,8 +108,9 @@
 				<b><%= format_amount(@subscription.subscription_plan.freddy_additional_pack_cost(@subscription.currency_name), @subscription.currency_name) %></b>
 			</dd>
 		</dl>
-
 	<% end %>
+
+	<hr class="billing-cost-divider" />
 
 		<dl class="tr-total" id="total-cost">
 			<% if discount %>
@@ -162,12 +164,12 @@
 			</div>
 		<% end %>
 
-		<% if current_account.freddy_subscription_enabled? && freddy_addon_count != 0 %>
+		<% if current_account.freddy_subscription_enabled? && freddy_addon_count != 0 && is_prepaid %>
 			<%
 			freddy_sessions = @subscription.freddy_sessions || 0
 			%>
 			<%if freddy_sessions != 0 %>
-				<%= t('freddy.session_packs', :freddy_sessions => freddy_sessions, :cycle => SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[@subscription.renewal_period]).html_safe %>
+				<%= t('freddy.session_packs', :freddy_sessions => freddy_sessions, :cycle => @subscription.renewal_period != 12 ? SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[@subscription.renewal_period] : 'annually').html_safe %>
 			<% end %>
 		<% end %>
 

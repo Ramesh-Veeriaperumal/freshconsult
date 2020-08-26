@@ -40,6 +40,7 @@ window.App = window.App || {};
     fsm_addon_key: 'field_service_management',
     subscription_cancel: 'subscription-cancellation',
     suspended_key: 'suspended',
+    freddy_addon_count: 0,
     freddy_active: false,
     freddy_disabled: false,
     freddy_option: '',
@@ -61,6 +62,7 @@ window.App = window.App || {};
       this.fsm_active = planInfo.fsm_enabled;
       this.fsm_disabled = !(planInfo.fsm_enabled);
       this.initial_fsm_state = !(planInfo.fsm_enabled);
+      this.freddy_addon_count = planInfo.freddy_addon_count;
       this.freddy_active = planInfo.freddy_enabled;
       this.initial_freddy_state = !planInfo.freddy_enabled;
       this.freddy_disabled = !planInfo.freddy_enabled;
@@ -96,6 +98,7 @@ window.App = window.App || {};
       $(document).on('click'+$this.namespace(),  '.fsm-toggle-holder .toggle-button', function(ev, triggerType){ $this.toggleFSMAddon(this, false, triggerType) })
       $(document).on('click'+$this.namespace(),  '.fsm-billing-edit .toggle-button', function(ev, triggerType){ $this.toggleFSMAddon(this, true, triggerType) })
       $(document).on('change'+$this.namespace(), '#field-agents-text-box', function(){ $this.fieldAgentChange(this) })
+      $(document).on('click'+$this.namespace(),  '#buy-more-sesion', function(){ $('.edit-plan').trigger("click") })
       $(document).on('click'+$this.namespace(),  '.freddy-billing-edit .toggle-button', function(ev, triggerType){ $this.toggleFreddyAddon(this, true, triggerType, false) })
       $(document).on('click'+$this.namespace(),  '.freddy-cx-self-billing-edit .toggle-button', function(ev, triggerType){ $this.toggleFreddyAddon(this, true, triggerType, true) })
       $(document).on('click'+$this.namespace(),  'input[name="freddy_options"]', function(){ $this.toggleFreddyCXPlanOptions(this) })
@@ -118,6 +121,7 @@ window.App = window.App || {};
     },
     editingSubscription: function() {
       this.editBilling = true;
+      $('#buy-more-sesion').get(0) ? $('#buy-more-sesion').hide() : '';
     },
     tryFreshsalesEvent: function(isInvite) {
       var openOmnibarEvent = new CustomEvent('showPromotionForProduct', {
@@ -207,6 +211,7 @@ window.App = window.App || {};
       ev.preventDefault();
       $("#billing-template").detach().appendTo('#Pagearea').hide();
       $(".features-billing-edit").addClass('hide');
+      $('#buy-more-sesion').show();
       var data_content = this.original_data;
       $(".subscribed-plan-details").html(data_content);
     },
@@ -469,7 +474,7 @@ window.App = window.App || {};
         $(".billing-submit").attr("disabled", "true");
         this.disableFreddyValues();
         this.removeFreddyAddon();
-        this.includeFreddySessionPacks($("#freddy-session-pack").val());
+        this.includeFreddySessionPacks(this.freddy_addon_count > 2 ? Number($("#freddy-session-pack").val()) : 0);
         this.selected_plan_id ? this.calculateCost(this.selected_plan_id) : this.calculateCost();
       } else if(action === 'cancel') {
         if (editBilling) {
@@ -589,7 +594,7 @@ window.App = window.App || {};
           } else {
             this.removeFreddyAddon();
           }
-          this.includeFreddySessionPacks((this.initial_freddy_option || parent.includes('forest')) ? this.freddy_session_pack : 0);
+          this.includeFreddySessionPacks((this.initial_freddy_option === this.freddy_self_service_addon_key || parent.includes('forest')) ? this.freddy_session_pack : 0);
         }
         billing_template.addClass("sloading inner-form-hide");
       }

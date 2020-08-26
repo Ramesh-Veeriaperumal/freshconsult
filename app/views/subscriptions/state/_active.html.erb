@@ -14,6 +14,20 @@
     isSelected_plan_present = @selected_plan.present?
     isSelected_plan_nil = @selected_plan.nil?
     hide_omnichannel_toggle = current_account.launched?(:hide_omnichannel_toggle) && !@not_eligible_for_omni_upgrade
+    is_prepaid = @subscription.freddy_billing_model.nil?
+    consumed_freddy_sessions = fetch_consumed_freddy_sessions.to_i
+    show_session_metering_info = current_account.freddy_subscription_enabled? && freddy_addon_count != 0 && (freddy_addon_count > 2 || freddy_enabled) && (is_prepaid ? @subscription.freddy_sessions > 0 : true )
+    if is_prepaid
+      percentage_session_consumed = is_prepaid ? (consumed_freddy_sessions*100) / (@subscription.freddy_sessions.nonzero? || 1) : 0
+      session_color = ''
+      if is_prepaid && percentage_session_consumed < 50
+        session_color = 'green-bar'
+      elsif is_prepaid && percentage_session_consumed < 80
+        session_color = 'orange-bar'
+      elsif is_prepaid && percentage_session_consumed >= 80
+        session_color = 'red-bar'
+      end
+    end
   %>
 <% if has_feature_gain %>
   <%= render :partial => "loyalty_upgrade_info" %>
@@ -59,13 +73,13 @@
       <% unless omni_account %>
         <p class="omni-enabled">
           <img alt="<%= t('fd_omni_channel_experience') %>" class="omni-close" src="/assets/tick.svg" width="11" />
-          <%= t('omni_enabled') %>
+          <%= t('omni_enabled').html_safe %>
         </p>
       <% end %>
     <% elsif plan.basic_variant? %>
       <p class="omni-disabled">
         <img alt="<%= t('fd_omni_channel_experience') %>" class="omni-close" src="/assets/close.svg" width="11" />
-        <%= t('omni_disabled') %>
+        <%= t('omni_disabled').html_safe %>
       </p>
     <% end %>
 
@@ -73,10 +87,10 @@
       <p class="omni-enabled">
         <% if freddy_self_sevice_enabled %>
           <img alt="<%= t('freddy_self_service_enabled') %>" class="omni-close" src="/assets/tick.svg" width="11" />
-          <%= t('freddy_self_service_enabled') %>
+          <%= t('freddy_self_service_enabled').html_safe %>
         <% else %>
           <img alt="<%= t('freddy_ultimate_enabled') %>" class="omni-close" src="/assets/tick.svg" width="11" />
-          <%= t('freddy_ultimate_enabled') %>
+          <%= t('freddy_ultimate_enabled').html_safe %>
         <% end %>
       </p>
     <% end %>
@@ -84,6 +98,26 @@
     <% if @freshcaller_credit_info.present? %>
       <%= render :partial => "freshcaller_credits", :locals => {
         :wrapper_class => 'active-phone-credits' } %>
+    <% end %>
+
+    <% if show_session_metering_info %>
+      <div class="session-metering">
+        <h4 class="session-metering-meter">
+          <% if is_prepaid %>
+            <%= t('freddy.total_session_consumption', :consumed => consumed_freddy_sessions, :total => @subscription.freddy_sessions) %>
+          <% else %>
+            <%= consumed_freddy_sessions %>
+          <% end %>
+        </h4>
+        <div class="session-metering-title"><%= t('freddy.sessions_consumed') %></div>
+        <% if is_prepaid %>
+          <div class="session-metering-progress">
+            <div class="session-metering-progress-bar <%= session_color %>" style="width:<%=percentage_session_consumed%>%"></div>
+          </div>
+          <p class="session-metering-consumed"><%= t('freddy.percentage_session_consumed', :percentage => percentage_session_consumed) %></p>
+          <button class="btn btn-secondary buy-session" id="buy-more-sesion"> <%=t('buy_more_sessions')%></button>
+        <% end %>
+      </div>
     <% end %>
   </div>
 
