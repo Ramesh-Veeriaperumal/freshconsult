@@ -199,7 +199,7 @@ class Account < ActiveRecord::Base
     spam_blacklist_feature: false, antivirus_service: false, hide_api_key: false,
     skip_ticket_threading: false,
     kbase_spam_whitelist: false, enable_qna: false, enable_insights: false,
-    whitelist_supervisor_sla_limitation: false, escape_liquid_attributes: true, escape_liquid_for_reply: true,
+    whitelist_supervisor_sla_limitation: false,
     service_writes: false, service_reads: false,
     admin_only_mint: false, send_emails_via_fd_email_service_feature: false, user_notifications: false,
     freshplug_enabled: false, dkim: false, dkim_email_service: false, sha1_enabled: false, disable_archive: false,
