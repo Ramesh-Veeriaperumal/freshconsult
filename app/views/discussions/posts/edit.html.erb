@@ -21,15 +21,12 @@
       		} 
     		%>
     	</div>
-		<% if current_account.launched?(:multifile_attachments) %>
+
 			<%= render :partial=> "discussions/topics/multi_attachment_form", :locals => {
 									:attachments => {
 										:regular => @post.attachments,
 										:cloud_files => @post.cloud_files},
 									}%>
-		<% else %>
-			<%= render :partial=> "discussions/topics/single_attachment_form" %>
-		<% end %>
 	</div>
 
 

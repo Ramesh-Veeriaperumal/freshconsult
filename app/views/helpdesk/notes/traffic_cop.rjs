@@ -13,18 +13,14 @@ end
 # Assigning the last public note id when added
 page << "jQuery('.last_note_id').val(#{@public_notes.last.id})" unless @public_notes.empty?
 page << "}"
-# removing block ui if multifile attachments in background
-if current_account.launched?(:multifile_attachments) 
- 	page <<"jQuery('.attach-block-ui').remove()"
- 	page << 'var form_btn = jQuery("form[data-cnt-id]:visible").find(".submit_btn")'
- 	page << "form_btn.text(form_btn.data('prevText'))"
- 	@errorId = "'#traffic-cop-attachment-error'";
-	# displaying traffic cop error on top of page if background process exists
-    page << "if(TICKET_DETAILS_DATA.displayId !== '#{@parent.display_id}') {"
-    @ticket_url = "/helpdesk/tickets/"+ @parent.display_id.to_s + "";
- 	@template = '<div class="conversation_thread" id="traffic-cop-attachment-error"><div id="response_added_alert" class="alert-container"><label><i class="ficon-warning fsize-15 mr5"></i> '+ t("multifile_attachments.traffic_cop",:ticket_url => @ticket_url) + ' <span class="ficon-cross" style="font-size: 1.8em;position: relative;top: 5px; padding: 10px; cursor:pointer;" onClick="jQuery(this).parent().parent().parent().remove();"></span></label></div></div>';
-    page << "jQuery('body').append('#{@template}');"
-    page << "setTimeout(function() { jQuery('#traffic-cop-attachment-error').fadeOut('10000',function() { jQuery('#traffic-cop-attachment-error').remove(); }); },15000)";
-	page << "}"
-
-end
+page <<"jQuery('.attach-block-ui').remove()"
+page << 'var form_btn = jQuery("form[data-cnt-id]:visible").find(".submit_btn")'
+page << "form_btn.text(form_btn.data('prevText'))"
+@errorId = "'#traffic-cop-attachment-error'";
+# displaying traffic cop error on top of page if background process exists
+  page << "if(TICKET_DETAILS_DATA.displayId !== '#{@parent.display_id}') {"
+  @ticket_url = "/helpdesk/tickets/"+ @parent.display_id.to_s + "";
+@template = '<div class="conversation_thread" id="traffic-cop-attachment-error"><div id="response_added_alert" class="alert-container"><label><i class="ficon-warning fsize-15 mr5"></i> '+ t("multifile_attachments.traffic_cop",:ticket_url => @ticket_url) + ' <span class="ficon-cross" style="font-size: 1.8em;position: relative;top: 5px; padding: 10px; cursor:pointer;" onClick="jQuery(this).parent().parent().parent().remove();"></span></label></div></div>';
+  page << "jQuery('body').append('#{@template}');"
+  page << "setTimeout(function() { jQuery('#traffic-cop-attachment-error').fadeOut('10000',function() { jQuery('#traffic-cop-attachment-error').remove(); }); },15000)";
+page << "}"

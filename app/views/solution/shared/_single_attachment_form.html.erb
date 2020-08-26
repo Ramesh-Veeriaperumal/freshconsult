@@ -4,7 +4,7 @@
   nsc_param = nsc_param || "solution_article"
 %>
 <div class="single_file <% if cloud_files_installed?  %> cloud <% end %>">
-<div class="attachments-wrap" id="attachment-type" data-multifile-enable="<%= current_account.launched?(:multifile_attachments) %>">
+<div class="attachments-wrap" id="attachment-type" data-multifile-enable="true">
   <div id="<%=attach_id%>-container" class="attachments-container" >
 
     <% if cloud_files_installed?  %>
@@ -24,7 +24,7 @@
                     fileContainer="<%=attach_id%>-container"
                     fileList="<%=attach_id%>-attachments"
                     sendFocusTo="<%=attach_id%>-body"
-                    <%= current_account.launched?(:multifile_attachments) ? "multiple" : ""%>
+                    multiple>
                     />
                 </div>
             </a>
@@ -37,13 +37,13 @@
       </div>
     <% else %>
       <div class="hidden_upload">
-        <div class="add_attachment"><span>+</span> <%= current_account.launched?(:multifile_attachments) ? t('attach_files') : t('attach_file') %> </div>
+        <div class="add_attachment"><span>+</span> <%t('attach_files')%> </div>
         <input type="file" id="<%=attach_id%>_file" name="emptyfile"
                 nameWhenFilled="<%=nsc_param%>[attachments][][resource]"
                 fileContainer="<%=attach_id%>-container"
                 fileList="<%=attach_id%>-attachments"
                 sendFocusTo="<%=attach_id%>-body"
-                <%= current_account.launched?(:multifile_attachments) ? "multiple" : ""%>
+                multiple>
                 />
       </div>
       <span class="info-data"> ( <%=t('total')%> <%=t('attachment_help_info', :attachment_size => attachment_size )%> ) </span>

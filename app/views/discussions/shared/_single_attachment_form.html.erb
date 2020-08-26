@@ -4,7 +4,7 @@
   nsc_param = nsc_param || "solution_article"
 %>
 <div class="single_file <% if cloud_files_installed?  %> cloud <% end %>">
-<div class="attachments-wrap" id="attachment-type" data-multifile-enable="<%= current_account.launched?(:multifile_attachments) %>">
+<div class="attachments-wrap" id="attachment-type" data-multifile-enable="true">
   <div id="<%=attach_id%>-container" class="attachments-container" >
 
     <% if cloud_files_installed?  %>

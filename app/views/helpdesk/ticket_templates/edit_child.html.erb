@@ -8,11 +8,9 @@
 <% content_for :pagefixed do %>
 	<%= render :partial => "shared/placeholder_help" , :locals => {:placeholders => ticket_placeholders} %>
 <% end %>
-<% if  current_account.launched?(:multifile_attachments)  %>
+
   <%= render "helpdesk/tickets/ticket_widget/multifile_template_generator" %>
- <% else %>
-  <%= render "helpdesk/shared/single_attachment_template" %>
-<% end %>
+
 <%= form_for @tkt_template, :url => helpdesk_ticket_template_path, :html => { :method => :put, :multipart => true, :rel => "validate", :class => 'child-form  ticket_template_form edit_child_form template_form', :id => "ticket_template"}  do |f| %>
 	<div class='page-header-sticky parent-header-sticky' rel='sticky'>
 		<div class='sticky-header-wrapper'>
