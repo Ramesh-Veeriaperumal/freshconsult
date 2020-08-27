@@ -6,8 +6,7 @@ module Channel::V2
     include CentralLib::CentralResyncConstants
     include CentralLib::CentralResyncHelper
 
-    skip_before_filter :check_privilege, if: :skip_privilege_check?
-    skip_before_filter :load_object
+    skip_before_filter :check_privilege, :load_object, if: :skip_privilege_check?
     before_filter :channel_client_authentication
 
     def show
