@@ -16,7 +16,7 @@ Helpkit::Application.configure do
   config.action_controller.perform_caching = false
 
   # Only reloading classes if dependencies files changed
-  config.reload_classes_only_on_change = true
+  config.reload_classes_only_on_change = false
 
   # Don't care if the mailer can't send
   config.action_mailer.raise_delivery_errors = true

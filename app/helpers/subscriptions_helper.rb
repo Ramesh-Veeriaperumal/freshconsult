@@ -119,45 +119,6 @@ module SubscriptionsHelper
     }.to_s.html_safe
   end
 
-  def current_freshfone_balance(freshfone_credit)
-    balance = (freshfone_credit) ? freshfone_credit.available_credit : 0
-    number_to_currency(balance) 
-  end
-
-  def recharge_options
-    cost_options = []
-    credit_price = current_account.subscription.retrieve_addon_price(:freshfone)
-    (Freshfone::Credit::RECHARGE_OPTIONS).each{ |credit|
-      cost_options << [ format_amount((credit * credit_price), current_account.currency_name), credit ]
-    }
-    cost_options
-  end
-
-  def default_freshfone_credit(freshfone_credit)
-    return Freshfone::Credit::DEFAULT if freshfone_credit.new_record?
-    current_credit = freshfone_credit.credit
-    return current_credit.to_i if Freshfone::Credit::RECHARGE_OPTIONS.include?(current_credit)
-    Freshfone::Credit::DEFAULT
-  end
-
-  def default_freshfone_auto_recharge(freshfone_credit)
-    return Freshfone::Credit::DEFAULT if freshfone_credit.new_record?
-    recharge_quantity = freshfone_credit.recharge_quantity
-    return recharge_quantity if Freshfone::Credit::RECHARGE_OPTIONS.include?(recharge_quantity)
-    Freshfone::Credit::DEFAULT
-  end
-
-  def multicurrency_followup_amount
-    (@freshfone_credit && @freshfone_credit.last_purchased_credit.nonzero?) ? 
-      @freshfone_credit.last_purchased_credit : Freshfone::Credit::DEFAULT
-  end
-
-  def fetch_recharge_amount
-    credit_price = current_account.subscription.retrieve_addon_price(:freshfone)
-    recharge_price = current_account.freshfone_credit.recharge_quantity * credit_price
-    format_amount(recharge_price, current_account.currency_name)
-  end
-
   def fetch_plan_amount(plan)
     currency = current_account.currency_name
     amount = current_account.omni_bundle_account? ? plan.omni_pricing(currency) : plan.pricing(currency)
@@ -225,10 +186,6 @@ module SubscriptionsHelper
     end
     output << %( > #{button_label} </button>)
     output.join("").html_safe
-  end
-
-  def freshfone_allowed?
-    feature?(:freshfone) && !freshfone_trial_states?
   end
 
   def fsm_supported_plan?(plan)

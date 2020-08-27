@@ -17,15 +17,6 @@
 					</li>
 					<% end %>
 
-					<% if current_account.freshfone_active? %>
-					<li class="<%= 'disabled' unless freshfone_active? %>" id="agent_status_phone">
-						<a href="/helpdesk/dashboard/agent_status#phone">
-							<h4 class="live-available-agents">0</h4>
-							<p class="muted"><%= t("helpdesk.dashboard.freshfone.phone") %></p>
-						</a>
-					</li>
-					<% end %>
-
 					<% if (chat_activated? && current_account.chat_setting.active) %>
 					<li class="<%= 'disabled' unless chat_active? %>" id="agent_status_chat">
 						<a href="/helpdesk/dashboard/agent_status#lc-availability">

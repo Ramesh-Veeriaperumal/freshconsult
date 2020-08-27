@@ -603,7 +603,6 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
 
     def note_preload_options
       options = [:attachments, :attachments_sharable, :cloud_files, {:user => :avatar}]
-      options << :freshfone_call if Account.current.features?(:freshfone)
       options << :fb_post if facebook?
       options << :tweet if twitter?
       options

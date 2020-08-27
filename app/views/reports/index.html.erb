@@ -65,14 +65,6 @@
                            </a>
                         </li>
                     <% end %>
-                    <% if freshfone_reports? %>
-                      <li>
-                        <a href="<%= reports_freshfone_summary_reports_url %>">
-                              <div class="img-outer"><i class="fsize-36 ficon-phone_summary"></i></div>
-                              <div class="report-icon-text"><%= t('helpdesk_reports.phone_summary.title') %></div>
-                         </a>
-                      </li>
-                    <%end%>
                     <% if chat_activated? %>
                       <li>
                         <a href="<%= reports_freshchat_summary_reports_url %>">

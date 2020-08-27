@@ -15,12 +15,6 @@
                         </li>
                   <% end %>
                   <% unless current_account.launched?(:falcon) && current_user && current_user.is_falcon_pref? %>
-                    <% if freshfone_active? %>
-                          <li class="tab-phone" >
-                              <a class= "phone-tab" id="phone-tab" href="#phone" ><%= t('helpdesk.dashboard.freshfone.phone') %></a>
-                          </li>
-                    <% end %>
-
                     <% if chat_active? %>
                        <li class="tab-chat">
                            <a class="lc-availability-tab" id="lc-availability-tab" href="#lc-availability" ><%= t('helpdesk.dashboard.livechat.chat') %></a>
@@ -35,9 +29,6 @@
                   <% end %>
 
                   <% unless current_account.launched?(:falcon) && current_user && current_user.is_falcon_pref? %>
-                    <% if freshfone_active? %>
-                       <%= render :partial => "freshfone" %>
-                    <% end %>
 
                     <% if chat_active? %>
                       <div class="tab-pane" id="lc-availability">
@@ -102,7 +93,7 @@
     jQuery(active_tab+'-tab').tab('show');
   }
   else{
-    active_tab_order={"tickets-tab": <%= round_robin? %>,"phone-tab": <%= freshfone_active? %>, "lc-availability-tab": <%= chat_active? %> }
+    active_tab_order={"tickets-tab": <%= round_robin? %>, "lc-availability-tab": <%= chat_active? %> }
     jQuery.each(active_tab_order,jQuery.proxy(function(index,value)  {
           if(value){
             jQuery('.'+index).tab('show');

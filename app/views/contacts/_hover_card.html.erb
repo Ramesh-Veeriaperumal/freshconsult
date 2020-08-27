@@ -35,7 +35,7 @@
       <% unless user.available_number.blank? %>
         <div class="contact-append">
           <span class="add-on"><i class="ficon-phone fsize-16"></i></span>
-           <%= strange_number.present? ? strange_number_strikethrough(user.available_number, "hover-contact-box") : can_make_calls(user.available_number, user, "hover-contact-box",nil,true)%>
+           <%= strange_number.present? ? strange_number_strikethrough(user.available_number, "hover-contact-box") : user.available_number %>
         </div>
       <% end %>
 

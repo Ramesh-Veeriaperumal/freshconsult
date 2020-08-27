@@ -124,16 +124,9 @@ class Integrations::CtiAdminController < Admin::AdminController
   end
 
   def check_other_cti_app
-    if @application.cti?
-      if current_account.cti_installed_app_from_cache && @installed_app.nil?
-        flash[:notice] = t(:'flash.application.install.cti_error')
-        redirect_to integrations_applications_path and return
-      end
-      if current_account.freshfone_active?
-        flash[:notice] = t(:'flash.application.install.freshfone_alert')
-        redirect_to :controller=> 'applications', :action => 'index'
-        return
-      end
+    if @application.cti? && current_account.cti_installed_app_from_cache && @installed_app.nil?
+      flash[:notice] = t(:'flash.application.install.cti_error')
+      redirect_to integrations_applications_path and return
     end
   end
 end

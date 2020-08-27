@@ -5,20 +5,6 @@
             <div class = "errored-email">
                 <%= item["email"] %>
                 <div class="action-items">
-                    <% if current_account.freshfone_active? && !item['user'].blank? %>
-                       <% 
-                           if(!item['user'].mobile.blank?)
-                               phone = item['user'].mobile
-                           elsif !item['user'].phone.blank?
-                               phone = item['user'].phone
-                           else
-                               phone = ""
-                           end
-                       %>
-                       <% if !phone.blank? %>
-                           <%= strange_number?(phone) ? "" : can_make_calls(phone, item['user'], "ficon-phone",nil,false)%>
-                       <% end %>
-                   <% end %>
                     <% if current_user.privilege?(:admin_tasks) %>
                         <% if item["type"].include? "dropped" %>
                             <span class="ficon-mail-source drop-from-suppression tooltip" data-url="/helpdesk/tickets/<%= ticket_display_id %>/suppression_list_alert" data-user-mail="<%= item['email'] %>" data-original-title= "<%= t('email_failure.note_display.contact_support') %>"> </span>

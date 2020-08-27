@@ -58,7 +58,6 @@
 			<div class="p-content" rel="image-enlarge">
 				<div class="p-desc">
 					{{ ticket.description_html }}
-					{{ ticket | freshfone_audio_dom }}
 				</div>
 
 				{{ ticket | ticket_attachemnts }}

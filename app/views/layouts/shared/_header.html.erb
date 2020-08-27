@@ -43,18 +43,6 @@
 
 			<% if current_user then %>
 			  	<div class="header-link-wrapper">
-			  		<% if current_account.freshfone_active? %>
-							<a href="#" id="freshfone-presence-toggle" class="tooltip 
-								<%= phone_disabled? %>"
-								data-placement="below"  
-								rel = "ff-hover-popover"
-								data-html="true">
-							 	<span class='freshfone-preference-tooltip tooltip' title="<%= t('freshfone.widget.unavailable') %>"
-							 	 data-placement='left'>
-							 		<i class='header-icon-freshfone <%= freshfone_presence_status_class %>'></i>
-							 	</span>
-			  			</a>
-			  		<% end %>
 			  		<% if current_user.toggle_availability? %>
 			  		<%
 			  			availabilty_tooltip = ""
@@ -72,7 +60,7 @@
 				  			<img alt="" height="35px" src="<%= spacer_image_url %>" 
                   class="header-icons-agent-roundrobin-<%= current_user.available? ? "on" : "off" %>" 
                   id="available_icon" 
-                  data-remote-url = "<%= toggle_availability_agent_path(current_user.id) %>">
+                    data-remote-url = "<%= toggle_availability_agent_path(current_user.id) %>">
 				  		</a>
 				  	<% end %>
 					<a href="#" class="nav-trigger" menuid="#LoggedOptions" id="header-profile-avatar">
