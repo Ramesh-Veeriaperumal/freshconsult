@@ -34,6 +34,7 @@ class Subscription::Addon < ActiveRecord::Base
   FSM_ADDON_2020 = 'Field Service Management 20'.freeze
 
   FREDDY_SELF_SERVICE_ADDON = 'Freddy Self Service'.freeze
+  FREDDY_ULTIMATE_SESSION_ADDON = 'Freddy Ultimate Session'.freeze
   FREDDY_ULTIMATE_ADDON = 'Freddy Ultimate'.freeze
   FREDDY_SESSION_PACKS_ADDON = 'Freddy Session Packs'.freeze
 

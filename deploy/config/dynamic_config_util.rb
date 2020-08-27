@@ -496,6 +496,7 @@ HEREDOC
     @pool_size = opsworks.get_pool_size()
 
     @envoy_egress_allowed = envoy_egress_allowed?
+    @tracing_allowed = open_telemetry_allowed?
 
     if ENV["HELPKIT_TEST_SETUP_ENABLE"] == "1"
       rename_sqs_queues_for_test_setup(node)
@@ -747,6 +748,11 @@ HEREDOC
   def self.envoy_egress_allowed?
     STDERR.puts("Checking envoy egress is allowed and the passed value is ENV['ENVOY_EGRESS'] => #{ENV['ENVOY_EGRESS']}")
     ENV['ENVOY_EGRESS'] == "true"
+  end
+
+  def self.open_telemetry_allowed?
+    STDERR.puts("Checking opentelemetry ruby is allowed and the passed value is ENV['OPENTELEMETRY_RUBY_ENABLE'] => #{ENV['OPENTELEMETRY_RUBY_ENABLE']}")
+    ENV['OPENTELEMETRY_RUBY_ENABLE'] == 'true'
   end
 
   def self.generate_newrelic_config(node, opsworks)

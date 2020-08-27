@@ -7,12 +7,8 @@
   <%= render :partial => "helpdesk/tickets/ticket_widget/sidebar",:locals =>{:from_page =>'new_outbound_email_page_side_bar'}%>
 <%- end %>
 
-<%# multifile attachments templates %>
-<% if  current_account.launched?(:multifile_attachments)  %>
-  <%= render "helpdesk/tickets/ticket_widget/multifile_template_generator" %>
-<% else %>
-  <%= render "helpdesk/shared/single_attachment_template" %>
-<% end %>
+<%= render "helpdesk/tickets/ticket_widget/multifile_template_generator" %>
+
 <div class="templates-header-wrapper">
 
     <%= render :partial => "helpdesk/tickets/ticket_widget/new_email_title" %>
@@ -79,19 +75,6 @@
   <input type="hidden" id="tags-value" value="<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>" />
 
 <%= render :partial => "/helpdesk/tickets/canned_loading" %>
-<script>
- var isMultifileEnabled = <%= current_account.launched?(:multifile_attachments)%>
-</script>
-
-<% if Account.current.launched?(:agent_new_ticket_cache) %>
-  <script>
-    // To load data from store to populate group for the first time.
-    jQuery(document).ready(function(){
-      // Load data into group, agent and product from data store if the page is cached
-      PopulateData.fromStore("#helpdesk_ticket_group_id", 'group');
-    })
-  </script>
-<% end %>
 
 <script type="text/javascript">
   var dom_helper_data = {};

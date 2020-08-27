@@ -112,7 +112,7 @@ class Admin::VaRulesController < Admin::AdminController
     end
 
     def edit_data
-      filter_data = supervisor_multi_select_disabled? ? @va_rule.filter_data : change_to_in_operator(@va_rule.filter_data)
+      filter_data = change_to_in_operator(@va_rule.filter_data)
       @filter_input = ActiveSupport::JSON.encode filter_data
       super
     end
@@ -175,10 +175,6 @@ class Admin::VaRulesController < Admin::AdminController
       operator_types = OPERATOR_TYPES.clone
       
       if supervisor_rules_controller?
-        unless current_account.launched?(:supervisor_multi_select)
-          operator_types[:choicelist] = ["is", "is_not"]
-          operator_types[:object_id] = ["is", "is_not"]
-        end
         operator_types[:number] = ["is", "is_not"]
         operator_types[:decimal] = ["is", "is_not"]
       end
@@ -449,11 +445,7 @@ class Admin::VaRulesController < Admin::AdminController
     end
 
     def dropdown_domtype
-      supervisor_multi_select_disabled? ? 'dropdown' : 'multiple_select'
-    end
-
-    def supervisor_multi_select_disabled?
-      supervisor_rules_controller? && !current_account.launched?(:supervisor_multi_select)
+      'multiple_select'
     end
 
     def source_choices

@@ -11,7 +11,7 @@ module Subscription::Events::AssignEventCode
 		ZERO_AMOUNT = 0.0
 
 		#Code assignment
-		def assign_code(subscription, old_subscription, requested_subscription)
+		def assign_code(subscription, old_subscription, requested_subscription, from_email)
 			case 
 				when free?(subscription, old_subscription)
 					CODES[:free]
@@ -32,7 +32,7 @@ module Subscription::Events::AssignEventCode
 					CODES[:upgrades] + additive(subscription, old_subscription, requested_subscription)
 
 				when downgrade?(subscription, old_subscription, requested_subscription)
-					notify_via_email(subscription, old_subscription, requested_subscription)
+					notify_via_email(subscription, old_subscription, requested_subscription, from_email)
 					CODES[:downgrades] + additive(subscription, old_subscription, requested_subscription)
 
 				else
@@ -112,8 +112,8 @@ module Subscription::Events::AssignEventCode
 			renewal_period.eql?(old_subscription[:renewal_period]) ? ADDITIVE_VALUES[:no_change] : ADDITIVE_VALUES[:period_change]									
 		end
 
-		def notify_via_email(subscription, old_subscription, requested_subscription)
-		 	SubscriptionNotifier.subscription_downgraded(subscription, old_subscription, requested_subscription) if Rails.env.production?
+		def notify_via_email(subscription, old_subscription, requested_subscription, from_email)
+		 	SubscriptionNotifier.subscription_downgraded(subscription, old_subscription, requested_subscription, from_email) if Rails.env.production?
 		end
 	end
 end

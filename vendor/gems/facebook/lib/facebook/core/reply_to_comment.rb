@@ -17,9 +17,9 @@ module Facebook
           #Parent comment is an fd_item
           if fb_comment
             #Parent Comment is a ticket
-            self.fd_item = add_as_note(fb_comment.postable, self.koala_comment) if fb_comment.is_ticket?
+            self.fd_item = add_as_note(fb_comment.postable, koala_comment) if fb_comment.is_ticket? && check_filter_mention_tags?(self)
             #Parent Comment is a note
-            self.fd_item = add_as_note(fb_post.postable, self.koala_comment) if fb_comment.is_note?
+            self.fd_item = add_as_note(fb_post.postable, koala_comment) if (fb_comment.is_note? && check_filter_mention_tags?(self))
             
           #Parent Post is converted to a ticket, but the parent comment is not added as a note (edge case)
           elsif fb_post

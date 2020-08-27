@@ -40,18 +40,34 @@ window.App = window.App || {};
     fsm_addon_key: 'field_service_management',
     subscription_cancel: 'subscription-cancellation',
     suspended_key: 'suspended',
+    freddy_addon_count: 0,
+    freddy_active: false,
+    freddy_disabled: false,
+    freddy_option: '',
+    freddy_self_service_addon_key: 'freddy_self_service',
+    freddy_ultimate_addon_key: 'freddy_ultimate',
+    freddy_sessions_addon_key: 'freddy_session_packs',
+    freddy_session_pack_reduced: false,
+    freddy_session_pack_changed: false,
     initialize: function (planInfo) {
       this.currency = ''+planInfo.currency_name;
       this.billing_cycle = planInfo.renewal_period;
       this.initial_billing_cycle = planInfo.renewal_period;
       this.subscribed_plan_id = planInfo.subscribed_plan_id;
       this.current_agent_limit = parseInt(planInfo.agent_limit);
+      this.freddy_session_pack = parseInt(planInfo.freddy_session_pack);
       this.downgrade_launched = planInfo.downgrade_policy_launched;
       this.field_agents_count = parseInt(planInfo.fsm_agent_limit);
       this.current_plan_name = planInfo.subscribed_plan_name;
       this.fsm_active = planInfo.fsm_enabled;
       this.fsm_disabled = !(planInfo.fsm_enabled);
       this.initial_fsm_state = !(planInfo.fsm_enabled);
+      this.freddy_addon_count = planInfo.freddy_addon_count;
+      this.freddy_active = planInfo.freddy_enabled;
+      this.initial_freddy_state = !planInfo.freddy_enabled;
+      this.freddy_disabled = !planInfo.freddy_enabled;
+      this.initial_freddy_option = planInfo.freddy_option;
+      this.freddy_option = planInfo.freddy_option;
       this.subscription_state = planInfo.subscription_state;
       this.pending_cancellation_request = planInfo.has_account_cancellation_request;
       this.free_agent_count = parseInt(planInfo.free_agents_count);
@@ -82,6 +98,13 @@ window.App = window.App || {};
       $(document).on('click'+$this.namespace(),  '.fsm-toggle-holder .toggle-button', function(ev, triggerType){ $this.toggleFSMAddon(this, false, triggerType) })
       $(document).on('click'+$this.namespace(),  '.fsm-billing-edit .toggle-button', function(ev, triggerType){ $this.toggleFSMAddon(this, true, triggerType) })
       $(document).on('change'+$this.namespace(), '#field-agents-text-box', function(){ $this.fieldAgentChange(this) })
+      $(document).on('click'+$this.namespace(),  '#buy-more-sesion', function(){ $('.edit-plan').trigger("click") })
+      $(document).on('click'+$this.namespace(),  '.freddy-billing-edit .toggle-button', function(ev, triggerType){ $this.toggleFreddyAddon(this, true, triggerType, false) })
+      $(document).on('click'+$this.namespace(),  '.freddy-cx-self-billing-edit .toggle-button', function(ev, triggerType){ $this.toggleFreddyAddon(this, true, triggerType, true) })
+      $(document).on('click'+$this.namespace(),  'input[name="freddy_options"]', function(){ $this.toggleFreddyCXPlanOptions(this) })
+      $(document).on('change'+$this.namespace(), '#freddy-session-pack', function(){ $this.freddySessionPackChange(this) })
+      $(document).on('click'+$this.namespace(),  '#warning-freddy-billing-edit-submit', function(){ $this.checkAndRemoveFreddyCX('submit') })
+      $(document).on('click'+$this.namespace(),  '#warning-freddy-billing-edit-cancel, #warning-freddy-billing-edit .modal-header .close', function(){ $this.checkAndRemoveFreddyCX('cancel', true) })
       $(document).on('click'+$this.namespace(),  '#warning-fsm-billing-change-submit', function(){ $this.checkAndRemoveFSM('submit') })
       $(document).on('click'+$this.namespace(),  '#warning-fsm-billing-change-cancel', function(){ $this.checkAndRemoveFSM('cancel', false) })
       $(document).on('click'+$this.namespace(),  '#warning-fsm-billing-change .modal-header .close', function(){ $this.checkAndRemoveFSM('cancel', false) })
@@ -98,6 +121,7 @@ window.App = window.App || {};
     },
     editingSubscription: function() {
       this.editBilling = true;
+      $('#buy-more-sesion').get(0) ? $('#buy-more-sesion').hide() : '';
     },
     tryFreshsalesEvent: function(isInvite) {
       var openOmnibarEvent = new CustomEvent('showPromotionForProduct', {
@@ -111,7 +135,7 @@ window.App = window.App || {};
     triggerOmnibarEvent: function(event) {
       var eventTarget = window.parent.document.querySelector('[data-omnibar-event-target]');
       eventTarget.dispatchEvent(event);
-    },    
+    },
     performCancelRequest: function(ev, tag) {
       $('#cancellation-wrapper').addClass('sloading inner-form-hide');
       $('#pending-cancellation-request-modal').modal("hide");
@@ -187,6 +211,7 @@ window.App = window.App || {};
       ev.preventDefault();
       $("#billing-template").detach().appendTo('#Pagearea').hide();
       $(".features-billing-edit").addClass('hide');
+      $('#buy-more-sesion').show();
       var data_content = this.original_data;
       $(".subscribed-plan-details").html(data_content);
     },
@@ -225,6 +250,9 @@ window.App = window.App || {};
       if(this.IsNumeric(agent.value) && agent.value != 0){
         this.agents = Math.abs(agent.value);
         $(".billing-submit").attr("disabled", "true");
+        if (this.freddy_option === this.freddy_ultimate_addon_key) {
+          this.addons[this.freddy_option]['value'] = this.agents;
+        }
         this.callCalculateCost(non_omni_plan_id, parent_plan_element);
       }
       else{
@@ -243,6 +271,20 @@ window.App = window.App || {};
         this.callCalculateCost(non_omni_plan_id, parent_plan_element);
       } else {
         agent.value = this.field_agents_count;
+      }
+    },
+    freddySessionPackChange: function(sessionPack) {
+      this.freddy_session_pack_reduced = this.downgrade_launched ? parseInt(this.freddy_session_pack) > sessionPack.value : false;
+      this.freddy_session_pack_changed = parseInt(this.freddy_session_pack) != sessionPack.value;
+      var non_omni_plan_id = this.nonOmniId(sessionPack);
+      if(this.IsNumeric(sessionPack.value)){
+        var freddy_session_pack = Math.abs(sessionPack.value);
+        $(".billing-submit").attr("disabled", "true");
+        this.includeFreddySessionPacks(freddy_session_pack);
+        this.calculateCost(non_omni_plan_id);
+      } else {
+        sessionPack.value = this.freddy_session_pack || 0;
+        this.removeAddon(this.freddy_sessions_addon_key)
       }
     },
     callCalculateCost: function(planId, parentPlanElement){
@@ -300,7 +342,7 @@ window.App = window.App || {};
 
     toggleOmniPlans: function(button) {
       if(jQuery(button).parent().hasClass("omni-billing-edit") && !jQuery(button).hasClass("active")) {
-        this.omni_disabled = true; 
+        this.omni_disabled = true;
       } else if(jQuery(button).hasClass("active")) {
         this.omni_disabled = false;
       }
@@ -337,13 +379,13 @@ window.App = window.App || {};
           this.fsm_disabled = true;
           var fsmWarning = editBilling ? $("#warning-btn-fsm-billing-edit") : $("#warning-btn-fsm-billing-change");
           var isEditBilling = jQuery(parent_plan_element).hasClass('calculate-container');
-          fsmWarning.length ? this.triggerFsmWarning(fsmWarning, non_omni_plan_id) : this.checkAndRemoveFSM('submit', isEditBilling);
+          fsmWarning.length ? this.triggerWarningModal(fsmWarning, non_omni_plan_id) : this.checkAndRemoveFSM('submit', isEditBilling);
         }
       }
     },
-    triggerFsmWarning: function(fsmWarning, non_omni_plan_id) {
+    triggerWarningModal: function(WarningElement, non_omni_plan_id) {
       this.selected_plan_id = non_omni_plan_id || null;
-      fsmWarning.trigger("click")
+      WarningElement.trigger("click")
     },
     checkAndRemoveFSM: function(action, editBilling) {
       if(action === 'submit') {
@@ -367,6 +409,114 @@ window.App = window.App || {};
       billing_template.find("#field_agents").addClass('hide');
       billing_template.find("input[name='addons[field_service_management][enabled]']").val('false');
       billing_template.find("input[name='addons[field_service_management][value]']").val('');
+    },
+    enableFreddy: function(option) {
+      var is_freddy_ultimate = option === this.freddy_ultimate_addon_key;
+      is_freddy_ultimate ? this.showFreddyUltimateHTML() : this.showFreddySelfServiceHTML();
+      var billing_template = $("#billing-template");
+      billing_template.find("input[name='addons[freddy_self_service][enabled]']").val(!is_freddy_ultimate);
+      billing_template.find("input[name='addons[freddy_ultimate][enabled]']").val(is_freddy_ultimate);
+      billing_template.find("input[name='addons[freddy_ultimate][value]']").val(is_freddy_ultimate ? $("#agents-text-box").val(): '');
+      this.setFreddySessionPack(billing_template);
+    },
+    disableFreddy: function() {
+      var billing_template = $("#billing-template");
+      $("#freddy_self_service, #freddy_ultimate").addClass('hide');
+      billing_template.find("input[name='addons[freddy_self_service][enabled]']").val('false');
+      billing_template.find("input[name='addons[freddy_ultimate][enabled]']").val('false');
+      billing_template.find("input[name='addons[freddy_ultimate][value]']").val('');
+      this.setFreddySessionPack(billing_template);
+    },
+    toggleFreddyAddon: function(toggler, editBilling, triggerType, isFreddyCXSelfService) {
+      var parent_plan = this.selected_plan;
+      var non_omni_plan_id = this.nonOmniId(toggler);
+      var parent_plan_element = this.parentPlanItem(toggler);
+      if(editBilling || (parent_plan.hasClass('active') && !parent_plan.hasClass('hide'))) {
+        if($(toggler).hasClass("active")) {
+          this.freddy_disabled = false;
+          this.freddy_option = this.initial_freddy_option || this.freddy_self_service_addon_key;
+          if(triggerType != 'reset') {
+            $(".billing-submit").attr("disabled", "true");
+            if (!isFreddyCXSelfService) {
+              $(".freddy-billing-edit").addClass('freddy-billing-exists');
+              $(".freddy-cx-options").show();
+            }
+          }
+          if (!isFreddyCXSelfService) {
+            this.freddy_option === this.freddy_self_service_addon_key ? this.addFreddySelfServiceAddon() : this.addFreddyUltimateAddon($("#agents-text-box").val());
+            $("input[name='freddy_options']").val([this.freddy_option]);
+          } else {
+            this.addFreddySelfServiceAddon();
+          }
+          this.calculateCost(non_omni_plan_id, parent_plan_element);
+        } else {
+          var freddyWarning = editBilling ? $("#warning-btn-freddy-billing-edit") : $("#warning-btn-freddy-billing-change");
+          var isEditBilling = jQuery(parent_plan_element).hasClass('calculate-container');
+          if (freddyWarning.length) {
+            this.triggerWarningModal(freddyWarning, non_omni_plan_id);
+            this.disableFreddyValues();
+          } else {
+            this.checkAndRemoveFreddyCX('submit', isEditBilling);
+          }
+        }
+      }
+    },
+    toggleFreddyCXPlanOptions: function(toggler) {
+      var checkedValue = $(toggler).val();
+      this.freddy_option = checkedValue;
+      checkedValue === this.freddy_self_service_addon_key ? this.addFreddySelfServiceAddon() : this.addFreddyUltimateAddon($("#agents-text-box").val());
+      this.calculateCost(this.current_plan_id);
+    },
+    checkAndRemoveFreddyCX: function(action, editBilling) {
+      if(action === 'submit') {
+        $('.freddy-cx-options').hide();
+        $(".freddy-billing-edit").removeClass('freddy-billing-exists');
+        $(".billing-submit").attr("disabled", "true");
+        this.disableFreddyValues();
+        this.removeFreddyAddon();
+        this.includeFreddySessionPacks(this.freddy_addon_count > 2 ? Number($("#freddy-session-pack").val()) : 0);
+        this.selected_plan_id ? this.calculateCost(this.selected_plan_id) : this.calculateCost();
+      } else if(action === 'cancel') {
+        if (editBilling) {
+          if ($(".freddy-cx-self-billing-edit").length) {
+            $(".freddy-cx-self-billing-edit .toggle-button").trigger("click", "reset");
+          } else {
+            $(".freddy-billing-edit .toggle-button").trigger("click", "reset");
+          }
+        }
+      }
+    },
+    disableFreddyValues: function() {
+      this.freddy_disabled = true;
+      this.freddy_option = '';
+    },
+    addFreddySelfServiceAddon: function() {
+      this.addons[this.freddy_self_service_addon_key] = { enabled: true };
+      this.addons[this.freddy_ultimate_addon_key] = { enabled: false };
+    },
+    addFreddyUltimateAddon: function(agentValue) {
+      this.addAddon(this.freddy_ultimate_addon_key, agentValue);
+      this.addons[this.freddy_self_service_addon_key] = { enabled: false };
+    },
+    removeFreddyAddon: function() {
+      this.addons[this.freddy_self_service_addon_key] = { enabled: false };
+      this.addons[this.freddy_ultimate_addon_key] = { enabled: false };
+    },
+    includeFreddySessionPacks: function(sessionPackValue) {
+      sessionPackValue != 0 && sessionPackValue != undefined ? this.addAddon(this.freddy_sessions_addon_key, sessionPackValue) : this.addons[this.freddy_sessions_addon_key] = { enabled: false };
+    },
+    setFreddySessionPack: function(billing_template) {
+      var freddy_session_pack = Number($("#freddy-session-pack").val());
+      billing_template.find("input[name='addons[freddy_session_packs][enabled]']").val(Boolean(freddy_session_pack));
+      billing_template.find("input[name='addons[freddy_session_packs][value]']").val(freddy_session_pack);
+    },
+    showFreddySelfServiceHTML: function()  {
+      $("#freddy_self_service").removeClass('hide');
+      $("#freddy_ultimate").addClass('hide');
+    },
+    showFreddyUltimateHTML: function()  {
+      $("#freddy_ultimate").removeClass('hide');
+      $("#freddy_self_service").addClass('hide');
     },
     addAddon: function(key, value) {
       this.addons[key] = { enabled: true, value: value };
@@ -413,9 +563,21 @@ window.App = window.App || {};
           $('.active').addClass("free-plan-options");
       }else{
         var fsm_addon_value = $("#field-agents-text-box").val();
+        var freddy_session_pack = $("#freddy-session-pack").val();
         if(button.classList != undefined && button.classList.contains("edit-plan")) {
           $(".toggle-omni-billing:visible").hide();
           $('#edit-billing-fsm-toggle').is(':checked') ? this.addAddon(this.fsm_addon_key, fsm_addon_value) : this.removeAddon(this.fsm_addon_key);
+          if(document.contains($("#edit-billing-freddy-ss-toggle")[0])) {
+            $('#edit-billing-freddy-ss-toggle').is(':checked') ? this.addons[this.freddy_self_service_addon_key] = { enabled: true } : this.addons[this.freddy_self_service_addon_key] = { enabled: false };
+            this.includeFreddySessionPacks(freddy_session_pack);
+          } else {
+            if ($('#edit-billing-freddy-toggle').is(':checked')) {
+              this.freddy_option === this.freddy_self_service_addon_key ? this.addFreddySelfServiceAddon() : this.addFreddyUltimateAddon(this.agents);
+            } else {
+              this.removeFreddyAddon();
+            }
+            this.includeFreddySessionPacks(freddy_session_pack);
+          }
         } else {
           var parent = jQuery(this.selected_plan)? "#"+jQuery(this.selected_plan).attr("id") : "#plan-"+button.id.replace("_button", "");
           $(parent).find(".toggle-omni-billing").show();
@@ -426,11 +588,17 @@ window.App = window.App || {};
           } else {
             this.removeAddon(this.fsm_addon_key);
           }
+          if (this.freddy_active) {
+            this.initial_freddy_option === this.freddy_self_service_addon_key ?
+              this.addFreddySelfServiceAddon() : parent.includes('forest') ? this.addFreddyUltimateAddon($("#agents-text-box").val()) : this.removeFreddyAddon();
+          } else {
+            this.removeFreddyAddon();
+          }
+          this.includeFreddySessionPacks((this.initial_freddy_option === this.freddy_self_service_addon_key || parent.includes('forest')) ? this.freddy_session_pack : 0);
         }
         billing_template.addClass("sloading inner-form-hide");
       }
       if(this.current_active_plan_flag){
-
         this.original_data = $(".subscribed-plan-details").html();
         $(".subscribed-plan-details").html($("#billing-template").show());
         billing_template.find(".billing-cancel").show();
@@ -462,11 +630,16 @@ window.App = window.App || {};
 
       var fsm_no_change = this.initial_fsm_state === this.fsm_disabled;
 
-      var request_change = ((this.subscription_state === 'active') && (this.current_agent_limit > this.free_agent_count) && (this.current_plan_name.indexOf('sprout') <= 0)) ? (this.downgrade_launched ? (omni_downgraded || this.agent_reduced || this.field_agent_reduced || fsm_removed || this.billing_cycle_downgraded) : false) : false;
+      var freddy_removed = this.freddy_active && this.freddy_disabled;
+      var freddy_downgraded = freddy_removed || (this.initial_freddy_option === this.freddy_ultimate_addon_key && this.freddy_option === this.freddy_self_service_addon_key);
+
+      var freddy_no_change = (this.initial_freddy_state === this.freddy_disabled) && (this.initial_freddy_option === this.freddy_option);
+
+      var request_change = ((this.subscription_state === 'active') && (this.current_agent_limit > this.free_agent_count) && (this.current_plan_name.indexOf('sprout') <= 0)) ? (this.downgrade_launched ? (omni_downgraded || this.agent_reduced || this.field_agent_reduced || fsm_removed || this.billing_cycle_downgraded || freddy_downgraded || this.freddy_session_pack_reduced) : false) : false;
 
       var plan_changed = this.currentPlanId() ? this.currentPlanId() != $this.subscribed_plan_id : false;
 
-      var should_disabled_update = (omni_no_change && fsm_no_change && !(this.plan_changed) && !(this.agent_changed) && !(this.billing_cycle_changed)) && (!this.fsm_disabled ? !(this.field_agent_changed) : true);
+      var should_disabled_update = (omni_no_change && fsm_no_change && freddy_no_change && !this.freddy_session_pack_changed  && !(this.plan_changed) && !(this.agent_changed) && !(this.billing_cycle_changed)) && (!this.fsm_disabled ? !(this.field_agent_changed) : true);
 
       this.calculate_request = $.post( "/subscription/calculate_amount",
         { "billing_cycle": this.billing_cycle,
@@ -510,6 +683,11 @@ window.App = window.App || {};
               $this.omni_disabled = null;
               this.omni_disabled = null;
             }
+            if(document.contains($("#edit-billing-freddy-ss-toggle")[0])) {
+              $('#edit-billing-freddy-ss-toggle').is(':checked') ? $this.enableFreddy($this.freddy_self_service_addon_key) : $this.disableFreddy();
+            } else {
+              $('#edit-billing-freddy-toggle').is(':checked') ? $this.enableFreddy($this.freddy_option) : $this.disableFreddy();
+            }
             $('#edit-billing-fsm-toggle').is(':checked') ? $this.enableFSMandShowFieldAgents() : $this.disableFSMandHideFieldAgents();
           }
           else {
@@ -528,6 +706,15 @@ window.App = window.App || {};
               $(fsm_toggle + ':visible').length && $(fsm_toggle + ' .toggle-button').hasClass('active') ?
                 $this.enableFSMandShowFieldAgents()
                 : $this.disableFSMandHideFieldAgents();
+
+              if ($this.freddy_active) {
+                $this.initial_freddy_option === $this.freddy_self_service_addon_key ?
+                  $this.enableFreddy($this.freddy_self_service_addon_key) :
+                  curren_plan_id.includes('forest') ?
+                    $this.enableFreddy($this.freddy_ultimate_addon_key) : $this.disableFreddy();
+              } else {
+                $this.disableFreddy();
+              }
             }
           }
           $this.perMonthCost();

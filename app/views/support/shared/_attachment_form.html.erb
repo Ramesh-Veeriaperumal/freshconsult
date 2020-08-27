@@ -7,7 +7,7 @@
   max_size ||= attachment_size
 %>
 <div class="single_file">
-<div class="attach-wrapper row-fluid new-attach" id="attachment-type" data-multifile-enable="<%= current_account.launched?(:multifile_attachments) %>" data-location="portal">
+<div class="attach-wrapper row-fluid new-attach" id="attachment-type" data-multifile-enable="true" data-location="portal">
   <div class="<%= @widget_form ? 'span7 widget-multiple-list ' : '' %>attachments-list-wrap">
     <div class="attachments-list-form" id="<%= attach_id %>-container">
       <% total_attachments = original_attachments[:regular].size + original_attachments[:cloud_files].size if original_attachments.present? %>

@@ -27,14 +27,3 @@
 </div>
 
 <div>The reason for them leaving is: <b><%=%(#{@reason[:title]})%></b><%=%(They also said: '#{@reason[:additional_info]}') unless @reason[:additional_info].nil?%></div><br/>
-
-<% if @account.launched?(:downgrade_policy) %>
-  <div>Please check freshops for latest cancellation request. If none is present then the customer must have deleted the cancellation request.</div>
-  <div>Reach out to them before we process the request. Go team!</div><br/>
-<% else %>
-  <div>You have <b>six hours</b> to reach out to them before we process the request. Go team!</div><br/>
-<% end %>
-<div>
-   <div>Thanks,</div>
-   Freshdesk Product Team
-</div>

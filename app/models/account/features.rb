@@ -6,13 +6,11 @@ class Account < ActiveRecord::Base
     :ticket_contact_export, :email_failures, :disable_emails,
     :falcon_portal_theme, :freshid, :allow_huge_ccs,
     :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
-    :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :announcements_tab,
-    :va_any_field_without_none, :api_es,
-    :encode_emoji, :auto_complete_off, :sandbox_lp, :encode_emoji_subject,
-    :euc_migrated_twitter, :new_ticket_recieved_metric, :ner,
-    :count_service_es_writes, :count_service_es_reads,
+    :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :va_any_field_without_none, :api_es,
+    :encode_emoji, :auto_complete_off, :sandbox_lp,
+    :euc_migrated_twitter, :new_ticket_recieved_metric, :ner, :count_service_es_reads,
     :sso_login_expiry_limitation, :undo_send, :old_link_back_url_validation, :stop_contacts_count_query,
-    :denormalized_select_for_update, :es_tickets,
+    :es_tickets,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
     :skip_portal_cname_chk, :ticket_source_revamp,
     :bot_email_channel, :description_by_default, :bot_chat_history, :new_es_api, :filter_factory,
@@ -24,7 +22,7 @@ class Account < ActiveRecord::Base
     :fetch_ticket_from_ref_first,
     :id_for_choices_write, :fluffy, :fluffy_email, :fluffy_email_signup, :session_logs, :nested_field_revamp,
     :ticket_field_limit_increase, :join_ticket_field_data, :bypass_signup_captcha,
-    :simple_outreach, :disable_simple_outreach, :supervisor_text_field, :disable_mint_analytics,
+    :disable_simple_outreach, :supervisor_text_field, :disable_mint_analytics,
     :freshid_org_v2, :hide_agent_login,
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
     :recalculate_daypass, :fb_page_api_improvement, :attachment_redirect_expiry, :contact_company_split,
@@ -44,10 +42,10 @@ class Account < ActiveRecord::Base
     :translations_proxy, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :retry_emails, :disable_beamer, :fb_message_echo_support, :portal_prototype_update,
     :bot_banner, :idle_session_timeout, :solutions_dashboard,
     :observer_race_condition_fix, :contact_graphical_avatar, :omni_bundle_2020, :article_versioning_redis_lock, :freshid_sso_sync, :fw_sso_admin_security, :cre_account, :cdn_attachments, :shopify_api_revamp,
-    :omni_chat_agent, :portal_frameworks_update, :ticket_filters_central_publish, :new_email_regex, :auto_refresh_revamp, :agent_statuses, :omni_reports,
+    :omni_chat_agent, :portal_frameworks_update, :ticket_filters_central_publish, :new_email_regex, :auto_refresh_revamp, :agent_statuses, :omni_reports, :freddy_subscription,
     :omni_plans_migration_banner, :parse_replied_email, :wf_comma_filter_fix, :composed_email_check, :omni_channel_dashboard, :csat_for_social_surveymonkey, :fresh_parent, :trim_special_characters, :kbase_omni_bundle,
     :omni_agent_availability_dashboard, :twitter_api_compliance, :silkroad_export, :silkroad_shadow, :silkroad_multilingual, :group_management_v2, :symphony, :invoke_touchstone, :explore_omnichannel_feature, :hide_omnichannel_toggle,
-    :dashboard_java_fql_performance_fix, :emberize_business_hours, :trigger_domain_mapping_deletion, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp, :response_time_null_fix, :cx_feedback
+    :dashboard_java_fql_performance_fix, :emberize_business_hours, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp, :response_time_null_fix, :cx_feedback, :export_ignore_primary_key, :archive_ticket_central_publish
   ].freeze
 
   BITMAP_FEATURES = [
@@ -80,7 +78,7 @@ class Account < ActiveRecord::Base
     :hide_first_response_due, :agent_articles_suggest, :agent_articles_suggest_eligible, :email_articles_suggest, :customer_journey, :botflow,
     :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters, :supervisor_custom_status, :lbrr_by_omniroute,
     :secure_attachments, :article_versioning, :article_export, :article_approval_workflow, :next_response_sla, :advanced_automations,
-    :fb_ad_posts, :suggested_articles_count, :unlimited_multi_product,
+    :fb_ad_posts, :suggested_articles_count, :unlimited_multi_product, :freddy_self_service, :freddy_ultimate,
     :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
     :custom_objects, :quality_management_system, :kb_allow_base64_images, :triage_ultimate, :autofaq_eligible, :whitelisted_ips
@@ -98,9 +96,31 @@ class Account < ActiveRecord::Base
 
   PODS_FOR_BOT = ['poduseast1'].freeze
 
-  PRICING_PLAN_MIGRATION_FEATURES_2020 = [
-    :unlimited_multi_product, :sla_reminder_automation
-  ].to_set.freeze
+  LAUNCH_PARTY_FEATURES_TO_LOG = [
+    :admin_only_mint, :falcon
+  ].freeze
+
+  BITMAP_FEATURES_TO_LOG = [
+    :falcon
+  ].freeze
+
+  def launched?(*feature_name)
+    features_list = feature_name & LAUNCH_PARTY_FEATURES_TO_LOG
+
+    if features_list.present?
+      features_list.each do |feature|
+        log_feature_usage(feature)
+        feature_name.delete(feature)
+      end
+    end
+
+    super
+  end
+
+  def log_feature_usage(feature_name)
+    Rails.logger.warn "FEATURE CHECK USAGE :: #{feature_name} :: #{caller[0..5]}"
+    true
+  end
 
   LP_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
@@ -185,10 +205,6 @@ class Account < ActiveRecord::Base
     survey_enabled? || default_survey_enabled? || custom_survey_enabled?
   end
 
-  def supervisor_custom_status_enabled?
-    launched?(:supervisor_custom_status) || has_feature?(:supervisor_custom_status)
-  end
-
   def any_survey_feature_enabled_and_active?
     new_survey_enabled? ? active_custom_survey_from_cache.present? :
       features?(:surveys, :survey_links)
@@ -215,8 +231,7 @@ class Account < ActiveRecord::Base
   end
 
   def count_es_enabled?
-    launched?(:count_service_es_reads) ||
-      (launched?(:es_count_reads) && features?(:countv2_reads))
+    launched?(:count_service_es_reads) || features?(:countv2_reads)
   end
 
   def count_es_api_enabled?
@@ -225,10 +240,6 @@ class Account < ActiveRecord::Base
 
   def count_es_tickets_enabled?
     count_es_enabled? && es_tickets_enabled?
-  end
-
-  def count_es_writes_enabled?
-    features?(:countv2_writes) || launched?(:count_service_es_writes)
   end
 
   def customer_sentiment_enabled?
@@ -333,12 +344,7 @@ class Account < ActiveRecord::Base
 
   def falcon_ui_enabled?(current_user = :no_user)
     valid_user = (current_user == :no_user ? true : (current_user && current_user.is_falcon_pref?))
-    valid_user && (falcon_enabled? || check_admin_mint? || disable_old_ui_enabled?)
-  end
-
-  def check_admin_mint?
-    return false if User.current.nil?
-    admin_only_mint_enabled? && User.current.privilege?(:admin_tasks)
+    valid_user && disable_old_ui_enabled?
   end
 
   def falcon_support_portal_theme_enabled?
@@ -422,19 +428,6 @@ class Account < ActiveRecord::Base
   def launched_db_feature
     DB_TO_LP_FEATURES.select { |f| launched?(f) }
   end
-  # TODO : Cleanup up after 2020 pricing changes
-  # START
-  def has_feature?(feature)
-    return super if launched?(:pricing_plan_change_2020)
-
-    PRICING_PLAN_MIGRATION_FEATURES_2020.include?(feature) ? true : super
-  end
-
-  def features_list
-    return super if launched?(:pricing_plan_change_2020)
-
-    (super + PRICING_PLAN_MIGRATION_FEATURES_2020.to_a).uniq
-  end
 
   def central_publish_account_features
     features_list + launched_central_publish_features
@@ -444,14 +437,6 @@ class Account < ActiveRecord::Base
     # intersection of launched features and central publish lp features
     all_launched_features & CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES
   end
-
-  def has_features?(*features)
-    unless launched?(:pricing_plan_change_2020)
-      features.delete_if { |feature| PRICING_PLAN_MIGRATION_FEATURES_2020.include?(feature) }
-    end
-    super
-  end
-  # STOP
 
   def ticket_properties_suggester_enabled?
     ticket_properties_suggester_eligible_enabled? && has_feature?(:ticket_properties_suggester)
@@ -467,5 +452,17 @@ class Account < ActiveRecord::Base
 
   def features
     Account::ProxyFeature::ProxyFeatureAssociation.new(self)
+  end
+
+  # CAUTION:: Temporary implementation to unblock UI development for settings. This will be changed soon!
+  def enable_setting(setting)
+    launch(setting) if LP_FEATURES.include?(setting)
+    add_feature(setting) if BITMAP_FEATURES.include?(setting)
+  end
+
+  # CAUTION:: Temporary implementation to unblock UI development for settings. This will be changed soon!
+  def disable_setting(setting)
+    rollback(setting) if LP_FEATURES.include?(setting)
+    revoke_feature(setting) if BITMAP_FEATURES.include?(setting)
   end
 end

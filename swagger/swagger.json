@@ -12748,7 +12748,11 @@
         "summary": "Holidays of Calendar",
         "parameters": [
           {
-            "$ref": "#/parameters/id"
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "It should be calendar code"
           }
         ],
         "responses": {
@@ -12760,7 +12764,7 @@
                 "holidays": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/definitions/holiday_list"
+                    "$ref": "#/definitions/holidays"
                   }
                 }
               }
@@ -31886,17 +31890,6 @@
           "type": "string",
           "description": "business hour name"
         },
-        "points": {
-          "type": "integer"
-        }
-      }
-    },
-    "search_in_freshworks": {
-      "title": "data",
-      "type": "object",
-      "description": "Search In Freshworks Response",
-      "properties": {
-        "freshid_user_info": {
         "description": {
           "type": "string",
           "description": "business hour description"

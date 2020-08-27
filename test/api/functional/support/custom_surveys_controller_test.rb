@@ -1,13 +1,17 @@
 require_relative '../../test_helper'
 require_relative '../../../core/helpers/users_test_helper'
+require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
+
 class Support::CustomSurveysControllerTest < ActionController::TestCase
   include SurveysTestHelper
   include CoreUsersTestHelper
   include ControllerTestHelper
+  include AccountTestHelper
 
   def setup
     super
-    Account.stubs(:current).returns(Account.first)
+    Account.stubs(:current).returns(Account.first || create_test_account)
+    Language.stubs(:current).returns(Language.find_by_code('en'))
     @survey = Account.current.surveys.first
     @survey_handle = Account.current.tickets.first.survey_handles.build
     @survey_handle.survey = @survey
@@ -17,7 +21,9 @@ class Support::CustomSurveysControllerTest < ActionController::TestCase
   end
 
   def teardown
+    Language.unstub(:current)
     Account.unstub(:current)
+    super
   end
 
   def test_when_agent_logged_in_for_csat_redirect

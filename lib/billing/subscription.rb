@@ -260,13 +260,13 @@ class Billing::Subscription < Billing::ChargebeeWrapper
 
     def addon_billing_params(subscription, addon)
       data = { :id => addon.billing_addon_id }
-      data.merge!(:quantity => addon.billing_quantity(subscription))
+      data.merge!(:quantity => addon.billing_quantity(subscription)) unless addon.addon_type == Subscription::Addon::ADDON_TYPES[:on_off]
       data
     end
 
     def merge_addon_data(data, subscription, addons)
       addon_list = addons.inject([]) do |result, addon|
-        result << addon_billing_params(subscription, addon) if addon.billing_quantity(subscription).to_i > 0
+        result << addon_billing_params(subscription, addon) if addon.billing_quantity(subscription).to_i > 0 || addon.addon_type == Subscription::Addon::ADDON_TYPES[:on_off]
         result
       end
       addon_list = addon_list + marketplace_addons(subscription)

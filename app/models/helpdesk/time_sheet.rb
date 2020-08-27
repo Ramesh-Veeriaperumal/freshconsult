@@ -20,7 +20,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   before_validation :set_default_values
 
   after_create :create_new_activity
-  after_update :update_timer_activity , :if => :timer_running_changed?
+  after_update :update_timer_activity, if: :invoke_update_timer_activity?
   before_save :update_observer_events
   before_destroy :save_deleted_time_sheet_info
   after_commit :filter_observer_events, :if => :user_present?
@@ -112,6 +112,8 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
 
   TIME_FORMAT_HOUR = :h
   TIME_FORMAT_HOURMINUTES = :hm
+
+  ARCHIVE_TICKET = 'Helpdesk::ArchiveTicket'.freeze
 
   def self.billable_options
     { I18n.t('helpdesk.time_sheets.billable') => true,
@@ -304,6 +306,10 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   end
 
   private
+
+    def invoke_update_timer_activity?
+      timer_running_changed? && workable_type != ARCHIVE_TICKET
+    end
 
   def update_timer_activity
       if timer_running

@@ -40,9 +40,13 @@ class FalconRedirection
                                                           redirect: true,
                                                           path: falcon_redirection_path(map_url)
                                                         }
-      logger.debug "a=#{Account.current.id}, u=#{User.current.id} rfr=#{options[:request_referer]}, p=#{options[:path_info]}, h=#{!options[:not_html]}, aj=#{options[:is_ajax]}, uuid=#{Thread.current[:message_uuid]}, d=#{options[:domain]}, c=#{options[:controller]}, act=#{options[:action]}" if prevent_redirect
+      log_referer(options) if prevent_redirect
 
       return result
+    end
+
+    def log_referer(options)
+      logger.debug "a=#{Account.current.try(:id)}, u=#{User.current.try(:id)} rfr=#{options[:request_referer]}, p=#{options[:path_info]}, h=#{!options[:not_html]}, aj=#{options[:is_ajax]}, uuid=#{Thread.current[:message_uuid]}, d=#{options[:domain]}, c=#{options[:controller]}, act=#{options[:action]}"
     end
 
     def prevent_redirection

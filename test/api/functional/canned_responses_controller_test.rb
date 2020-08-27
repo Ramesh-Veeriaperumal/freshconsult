@@ -158,7 +158,6 @@ class CannedResponsesControllerTest < ActionController::TestCase
   end
 
   def test_show_with_xss_payload
-    Account.current.launch(:escape_liquid_for_reply)
     ticket = create_ticket(:subject => '<img src=x onerror=prompt("Subject");>')
     ca_response = create_response(
       title: Faker::Lorem.sentence,
@@ -174,7 +173,6 @@ class CannedResponsesControllerTest < ActionController::TestCase
   end
 
   def test_placeholder_helpdesk_name
-    Account.current.launch(:escape_liquid_for_reply)
     ticket = create_ticket(:subject => 'test ticket')
     helpdesk_name = Account.current.helpdesk_name
     ca_response = create_response(
@@ -191,7 +189,6 @@ class CannedResponsesControllerTest < ActionController::TestCase
   end
 
   def test_placeholder_source_name
-    Account.current.launch(:escape_liquid_for_reply)
     ticket = create_ticket(subject: 'test ticket')
     custom_source = Account.current.helpdesk_sources.visible.custom.last || create_custom_source
     ticket.source = custom_source.account_choice_id
@@ -212,7 +209,6 @@ class CannedResponsesControllerTest < ActionController::TestCase
   end
 
   def test_placeholder_portal_name
-    Account.current.launch(:escape_liquid_for_reply)
     ticket = create_ticket(:subject => 'test ticket')
     portal_name = Account.current.portal_name
     ca_response = create_response(

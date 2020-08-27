@@ -5,6 +5,8 @@ module Channel::V2::Iam
 
     skip_before_filter :load_object, :check_privilege, :ensure_proper_protocol
 
+    skip_before_filter :ensure_proper_fd_domain, only: [:authenticate]
+
     before_filter :sanitize_params, :validate_body_params, :validate_user, only: [:iam_authenticate_token]
 
     def authenticate

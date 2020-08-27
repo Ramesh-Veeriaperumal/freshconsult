@@ -176,7 +176,7 @@ class Mobile::TicketsController < ApplicationController
   end
 
   def filter_count(selector, agent_filter=false)
-    if current_account.launched?(:es_count_reads)
+    if current_account.count_es_enabled?
       TicketsFilter.es_filter_count(selector, true, agent_filter)
     else
       Sharding.run_on_slave do

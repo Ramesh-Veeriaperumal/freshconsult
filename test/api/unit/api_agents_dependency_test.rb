@@ -12,7 +12,7 @@ class ApiAgentsDependencyTest < ActionView::TestCase
                         :ssl_check, :can_assume_identity, :load_roles, :load_groups, :check_demo_site, :restrict_current_user,
                         :check_current_user, :check_agent_limit, :check_agent_limit_on_update, :validate_params,
                         :can_edit_roles_and_permissions, :set_selected_tab, :set_native_mobile, :filter_params,
-                        :check_occasional_agent_params, :unset_thread_variables,
+                        :check_occasional_agent_params, :unset_thread_variables, :log_old_ui_path,
                         :set_skill_data, :set_filter_data, :ensure_proper_sts_header, :access_denied, :record_query_comment, :sanitize_params,
                         :log_csrf, :remove_session_data, :check_field_agent_limit, :check_role_permission, :check_session_timeout]
     actual_filters = AgentsController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact

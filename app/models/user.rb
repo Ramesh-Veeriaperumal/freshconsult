@@ -512,7 +512,8 @@ class User < ActiveRecord::Base
   end
 
   def falcon_invite_eligible?
-    (account.falcon_ui_enabled? && !account.disable_old_ui_enabled? && self.preferences_without_defaults.try(:[], :agent_preferences).try(:[],:falcon_ui).nil?)
+    Rails.logger.warn "FALCON HELPER METHOD :: falcon_invite_eligible? :: #{caller[0..2]}"
+    false
   end
 
   def enabled_undo_send?
@@ -762,6 +763,10 @@ class User < ActiveRecord::Base
     helpdesk_agent
   end
   alias :is_agent :agent?
+
+  def account_admin?
+    privilege?(:manage_account)
+  end
 
   def customer?
     !agent?
@@ -1428,6 +1433,10 @@ class User < ActiveRecord::Base
 
     def helpdesk_agent_updated?
       @all_changes.has_key?(:helpdesk_agent)
+    end
+
+    def admin_api_key_updated?
+      Account.current.omni_bundle_account? and @all_changes.key?(:single_access_token) and account_admin?
     end
 
     def converted_to_agent?

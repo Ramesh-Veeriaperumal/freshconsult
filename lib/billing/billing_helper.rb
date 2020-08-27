@@ -1,4 +1,5 @@
 module Billing::BillingHelper
+  include SubscriptionsHelper
   include Billing::Constants
   private
 
@@ -7,7 +8,7 @@ module Billing::BillingHelper
         Billing::Subscription.helpkit_plan[plan_id].to_sym != account.plan_name ||
         new_addons.present? && account.subscription.addons.any? do |addon|
           matched_new_addon = new_addons.find { |new_addon| new_addon[:id].to_sym == addon.billing_addon_id }
-          matched_new_addon.present? && matched_new_addon[:quantity] != addon.billing_quantity(account.subscription)
+          matched_new_addon.present? && addon.addon_type != Subscription::Addon::ADDON_TYPES[:on_off] && matched_new_addon[:quantity] != addon.billing_quantity(account.subscription)
         end
     end
 
@@ -79,6 +80,32 @@ module Billing::BillingHelper
         subscription.reset_field_agent_limit
       end
       result
+    end
+
+    def update_freddy_details(account, subscription_hash, billing_subscription)
+      subscription_hash[:freddy_session_packs] = account.subscription.freddy_session_packs if update_freddy_session_packs(account.subscription, billing_subscription)
+      subscription_hash[:freddy_sessions] = account.subscription.freddy_sessions if account.launched?(:freddy_subscription) && update_freddy_sessions(account.subscription, billing_subscription)
+      subscription_hash
+    end
+
+    def update_freddy_session_packs(subscription, billing_subscription)
+      result = false
+      session_pack_addon = subscription.addons.find { |addon| SubscriptionConstants::FREDDY_SESSION_PACK_ADDONS.include?(addon.name) }
+      if session_pack_addon
+        session_packs = billing_subscription.addons.find { |addon| addon.id == session_pack_addon.billing_addon_id.to_s }.quantity
+        subscription.freddy_session_packs = session_packs
+        result = true
+      else
+        subscription.additional_info = subscription.additional_info.except(:freddy_session_packs)
+      end
+      result
+    end
+
+    def update_freddy_sessions(subscription, billing_subscription)
+      chargebee_plan_id = billing_subscription.plan_id
+      sub_plan_name = Billing::Subscription.helpkit_plan[chargebee_plan_id].to_sym
+      sub_renewal_period = billing_period(chargebee_plan_id)
+      subscription.freddy_sessions = calculate_freddy_session(subscription.addons, subscription, sub_plan_name, sub_renewal_period)
     end
 
     def agent_quantity_exceeded?(billing_subscription)

@@ -12,7 +12,6 @@ module Ember
     end
 
     def bulk_create_bot
-      change_plan_to_omnichannel
       bulk_create_bot_perform(action: :autofaq)
       render status: @proxy_response.code, json: @proxy_response.parsed_response.to_json
     end
@@ -21,13 +20,6 @@ module Ember
 
       def feature_name
         FeatureConstants::AUTOFAQ
-      end
-
-      def change_plan_to_omnichannel
-        if current_account.subscription.plan_name != SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_omni_jan_20]
-          plan = SubscriptionPlan.where(name: SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_omni_jan_20]).first
-          current_account.subscription.update_subscription(plan_id: plan.id)
-        end
       end
   end
 end

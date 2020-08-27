@@ -197,6 +197,57 @@ module FacebookTestHelper
     }
   end
 
+  def sample_comment_feed_with_mentions(post_id, user_id, comment_id, time)
+    comments = {
+      'data' => [
+        'id'   => "#{post_id}_#{comment_id}",
+        'from' => {
+          'name' => Faker::Lorem.words(1).to_s,
+          'id'   => user_id.to_s
+        },
+        'can_comment'  => true,
+        'created_time' => time.to_s,
+        'message'      => 'tags',
+        'message_tags' => [{ 'name' => 'tags' }]
+      ]
+    }
+  end
+
+  def sample_comment_feed_with_mentions_and_emojis(post_id, user_id, comment_id, time)
+    comments = {
+      'data' => [
+        'id'   => "#{post_id}_#{comment_id}",
+        'from' => {
+          'name' => Faker::Lorem.words(1).to_s,
+          'id'   => user_id.to_s
+        },
+        'can_comment'  => true,
+        'created_time' => time.to_s,
+        'message'      => 'emojis😁😃',
+        'message_tags' => [{ 'name' => 'emojis' }]
+      ]
+    }
+  end
+
+  def sample_comment_feed_with_multiple_mentions(post_id, user_id, comment_id, time)
+    comments = {
+      'data' => [
+        'id'   => "#{post_id}_#{comment_id}",
+        'from' => {
+          'name' => Faker::Lorem.words(1).to_s,
+          'id'   => user_id.to_s
+        },
+        'can_comment'  => true,
+        'created_time' => time.to_s,
+        'message'      => 'tags messages',
+        'message_tags' => [
+          { 'name' => 'tags' },
+          { 'name' => 'messages' }
+        ]
+      ]
+    }
+  end
+
   def sample_realtime_post(page_id, post_id, user_id, time)
     wrap_central_payload({
       'entry' =>

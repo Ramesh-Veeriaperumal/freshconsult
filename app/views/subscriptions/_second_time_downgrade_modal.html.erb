@@ -1,5 +1,5 @@
 <%
-	current_subscription = Subscription.find(current_account.subscription.id) 
+	current_subscription = Subscription.find(current_account.subscription.id)
 	plan = @subscription.subscription_plan
 	current_plan =current_subscription.subscription_plan
 	is_new_sprout = new_sprout?(plan.name)
@@ -11,15 +11,15 @@
 	requested_plan = @subscription.subscription_request.subscription_plan
 	is_sprout  = new_sprout?(requested_plan.name)
 	fsm_field_agents = @subscription.subscription_request.fsm_field_agents?
-	sub_plan_name = current_subscription.subscription_plan.name  
+	sub_plan_name = current_subscription.subscription_plan.name
 	sub_plan_display_name = current_subscription.subscription_plan.display_name
 %>
 <div class="modal-body">
-						<div class="existing-request pb15"><span class="content-text"><%=t("downgrade.existing_request")%></span> <%= formated_date(@subscription.subscription_request.updated_at, {:format => :short_day_with_week, :include_weekday => false,:include_time => false, :include_year => true}) %></div>
+						<div class="existing-request pb15"><span class="content-text"><%=t("downgrade.existing_request")%> </span> - <%= formated_date(@subscription.subscription_request.updated_at, {:format => :short_day_with_week, :include_weekday => false,:include_time => false, :include_year => true}) %></div>
 						<%= render :partial => "downgrade_first_time" ,locals: { :requested_plan => requested_plan, :is_sprout => is_sprout, :fsm_field_agents => fsm_field_agents,:current_subscription => current_subscription,:current_plan =>current_plan,:show_field_agent_current_plan => show_field_agent_current_plan,:show_field_agent_info => show_field_agent_info,:plan => plan,:sub_plan_name => sub_plan_name, :sub_plan_display_name => sub_plan_display_name } %>
 
-	                    <div class="latest-request pb15 pt20 mt5"><span class="content-text"><%=t("downgrade.latest_request")%></span>* <span class="" id="current-date"></span>
-	                    </div>  
+	                    <div class="latest-request pb15 pt20 mt5"><span class="content-text"><%=t("downgrade.latest_request")%></span>* - <span class="" id="current-date"></span>
+	                    </div>
 	                    <% sprout_check = new_sprout?(@subscription.subscription_plan.name) %>
 	               		<div class="downgrade-non-sprout">
 	                  		 <%= render :partial => "downgrade_second_time" ,locals: { :requested_plan => requested_plan, :is_sprout => sprout_check, :fsm_field_agents => fsm_field_agents ,:current_subscription => current_subscription,:current_plan =>current_plan,:show_field_agent_current_plan => show_field_agent_current_plan,:show_field_agent_info => show_field_agent_info,:plan => plan,:sub_plan_name => sub_plan_name, :sub_plan_display_name => sub_plan_display_name } %>
@@ -34,18 +34,18 @@
 								      	<%if @subscription.classic? %>
                   				<%= content_tag(:span, t('classic_label')) %>
                 				<%end%>
-								      	</span> <% if current_plan.omni_plan? || current_plan.free_omni_channel_plan? || show_field_agent_current_plan 
+								      	</span> <% if current_plan.omni_plan? || current_plan.free_omni_channel_plan? || show_field_agent_current_plan
 								          @omni_fsm_toggle_current_plan = []
 								          if current_plan.omni_plan? || current_plan.free_omni_channel_plan?
 								            @omni_fsm_toggle_current_plan << t("downgrade.omnichannel")
-								          end 
+								          end
 								          if show_field_agent_current_plan
 								            @omni_fsm_toggle_current_plan << t("downgrade.fsm")
 								          end
 								        %>
 								          <% if @omni_fsm_toggle_current_plan.length > 0 %>
-								           <%= '('+ @omni_fsm_toggle_current_plan.join(' + ') + ')' %>   
-								          <% end %>    
+								           <%= '('+ @omni_fsm_toggle_current_plan.join(' + ') + ')' %>
+								          <% end %>
 								       <% end %>
 								       		<span><%=t("downgrade.to")%></span>
 								          <span class="plan-to test">
@@ -58,4 +58,4 @@
 								</div>
 		               		</div>
 	               		<% end %>
-	        		</div> 
+	        		</div>

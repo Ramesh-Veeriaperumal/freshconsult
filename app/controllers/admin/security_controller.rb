@@ -19,6 +19,8 @@ class Admin::SecurityController <  Admin::AdminController
     new_account_configuration = @account.account_configuration.contact_info.dup
     new_account_configuration[:notification_emails] = params[:account][:account_configuration_attributes]
     @account.account_configuration.contact_info = new_account_configuration
+    account_additional_settings = @account.account_additional_settings
+    deny_iframe_enabled = !params[:account][:deny_iframe][:enabled].to_bool
 
     if current_account.features_included?(:whitelisted_ips)
       if params[:account][:whitelisted_ip_attributes][:enabled].to_bool
@@ -56,6 +58,7 @@ class Admin::SecurityController <  Admin::AdminController
       end
     end
 
+    account_additional_settings.additional_settings[:security] = { deny_iframe_embedding: deny_iframe_enabled }
     set_password_policies if @account.custom_password_policy_enabled? && !@account.sso_enabled?
     if @account.save && @account.account_configuration.save
       flash[:notice] = t(:'flash.sso.update.success')

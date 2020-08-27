@@ -126,6 +126,8 @@
       - :twitter_field_automation
       - :solutions_templates
       - :contact_custom_activity_api
+      - :analytics_articles
+      - :analytics_knowledge_base
     :inherits:
       - :garden_jan_17
     :exclude: []
@@ -335,6 +337,8 @@
       - :next_response_sla
       - :twitter_field_automation
       - :solutions_templates
+      - :analytics_articles
+      - :analytics_knowledge_base
     :inherits:
       - :garden_jan_19
     :exclude: []
@@ -540,6 +544,8 @@
       - :twitter_field_automation
       - :fb_ad_posts
       - :solutions_templates
+      - :analytics_articles
+      - :analytics_knowledge_base
     :inherits:
       - :garden_jan_20
     :exclude: []
@@ -563,8 +569,6 @@
       - :detect_thank_you_note_eligible
       - :smart_filter
       - :agent_assist_lite
-      - :autofaq
-      - :botflow
       - :agent_articles_suggest_eligible
       - :email_bot
       - :advanced_ticket_scopes
@@ -573,10 +577,14 @@
     :inherits:
       - :estate_jan_20
     :exclude: []
+    :freddy_sessions: 5000
   :forest_omni_jan_20:
     :name: Forest Omni Channel
     :features:
       - :autofaq_eligible
+      - :autofaq
+      - :botflow
     :inherits:
       - :forest_jan_20
     :exclude: []
+    :freddy_sessions: 5000

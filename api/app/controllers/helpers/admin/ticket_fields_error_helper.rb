@@ -54,7 +54,7 @@ module Admin::TicketFieldsErrorHelper
   def limit_exceeded_error(type, limit, message = :ticket_field_exceeded_limit)
     errors[type] << message
     error_message = {}
-    error_message[type] = { field_type: type, limit: limit }
+    error_message[type] = { field_type: type, limit: limit, code: :exceeded_limit }
     error_options.merge!(error_message)
   end
 
