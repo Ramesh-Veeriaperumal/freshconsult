@@ -361,12 +361,12 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     additional_info[:channel_id] = value
   end
 
-  def channel_profile_id
-    additional_info[:channel_profile_id]
+  def channel_profile_unique_id
+    additional_info[:channel_profile_unique_id]
   end
 
-  def channel_profile_id=(value)
-    additional_info[:channel_profile_id] = value
+  def channel_profile_unique_id=(value)
+    additional_info[:channel_profile_unique_id] = value
   end
 
   def channel_message_id
