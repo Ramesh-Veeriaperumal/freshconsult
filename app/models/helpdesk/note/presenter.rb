@@ -49,7 +49,6 @@ class Helpdesk::Note < ActiveRecord::Base
     # (ASSOCIATION_REFS_BASED_ON_TYPE).each do |key|
     #   t.add proc { |x| x.safe_send(key).id }, as: "#{key}_id".to_sym, :if => proc { |x| x.safe_send(key) }
     # end
-    # t.add proc { |x| x.freshfone_call.id }, as: :freshfone_call_id, :if => proc { |x| x.freshfone_call.present?}
     # t.add proc { |x| x.freshcaller_call.id }, as: :freshcaller_call_id, :if => proc { |x| x.freshcaller_call.present?}
     t.add :kind
   end

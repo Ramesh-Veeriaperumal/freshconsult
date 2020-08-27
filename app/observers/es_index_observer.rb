@@ -1,6 +1,6 @@
 class EsIndexObserver < ActiveRecord::Observer
 
-  observe Helpdesk::Ticket, User, UserEmail, Customer, Solution::Article, Topic, Post, Helpdesk::Tag, Freshfone::Caller
+  observe Helpdesk::Ticket, User, UserEmail, Customer, Solution::Article, Topic, Post, Helpdesk::Tag
   
   MODELS = [:"Helpdesk::Ticket",:Company,:"Solution::Article",:Topic, :"Helpdesk::Tag", :"Freshfone::Caller"]
 

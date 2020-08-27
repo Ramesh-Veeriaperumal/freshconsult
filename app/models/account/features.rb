@@ -277,10 +277,6 @@ class Account < ActiveRecord::Base
     livechat_enabled? and features?(:chat_routing)
   end
 
-  def supervisor_feature_launched?
-    features?(:freshfone_call_monitoring) || features?(:agent_conference)
-  end
-
   def compose_email_enabled?
     !features?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
   end

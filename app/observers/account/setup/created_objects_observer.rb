@@ -3,7 +3,7 @@ class Account::Setup::CreatedObjectsObserver < ActiveRecord::Observer
 	include Account::Setup::ObserverUtils
 
 	observe Agent, EmailConfig, VaRule, Admin::DataImport, Integrations::InstalledApplication,
-		Social::TwitterHandle, Freshfone::Number, Freshcaller::Account
+		Social::TwitterHandle, Freshcaller::Account
 
 
 	def after_commit(object)

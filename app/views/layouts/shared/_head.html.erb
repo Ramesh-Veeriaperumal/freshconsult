@@ -76,8 +76,7 @@
 	<!-- The following is the remote CDN file managed by Freshapps Team. It is to exec freshapps one by one -->
 	<%= javascript_include_tag :"#{MarketplaceConfig::FRESHAPPS_JS_URL}/js/common-0.6.0.min.js" %>
 
-	<% if current_account.features?(:freshfone) ||
-	  (current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?)) %>
+	<% if current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?) %>
 		<%= javascript_include_tag :'cdn/soundmanager' %>
 	<% end %>
 	<% if chat_activated? && !current_account.features_included?(:collision_socket) %>

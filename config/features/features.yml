@@ -137,7 +137,7 @@
       :custom_dashboard: 133
       :open_forums: 134
       :reply_to_based_tickets: 135
-      :freshfone: 136
+      :reports_44: 136
       :disable_agent_forward: 137
       :resource_rate_limit: 138
       :domain_restricted_access: 139
@@ -423,7 +423,6 @@
   :tags_filter_reporting: false
   :personalized_email_replies: false
   :reply_to_based_tickets: true
-  :freshfone: false
   :disable_agent_forward: false
   :compose_email: false
   :enable_multilingual: false
