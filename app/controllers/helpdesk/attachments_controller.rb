@@ -160,9 +160,6 @@ class Helpdesk::AttachmentsController < ApplicationController
         return @attachment.attachable && @attachment.attachable.forum.visible?(current_user)
       elsif ['Account', 'Portal'].include? @attachment.attachable_type
         return  true
-      elsif ['Freshfone::Call'].include? @attachment.attachable_type
-        return true if(current_user && current_user.agent?)
-        return ticket_access? call_record_ticket
       elsif ['DataExport'].include? @attachment.attachable_type
         return privilege?(:manage_account) || @attachment.attachable.owner?(current_user)
       elsif ['UserDraft'].include? @attachment.attachable_type

@@ -1,7 +1,6 @@
 class Helpdesk::DashboardController < ApplicationController
   helper  Helpdesk::TicketsHelper #by Shan temp
 
-  include Freshfone::FreshfoneUtil
   include Reports::GamificationReport
   include Cache::Memcache::Account
   include Redis::RedisKeys
