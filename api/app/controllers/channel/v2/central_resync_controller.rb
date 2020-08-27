@@ -18,10 +18,7 @@ module Channel::V2
     private
 
       def skip_privilege_check?
-        RESYNC_ALLOWED_SOURCE.each do |source|
-          return true if channel_source?(source.to_sym)
-        end
-        false
+        RESYNC_ALLOWED_SOURCES.any? { |source| channel_source?(source.to_sym) }
       end
   end
 end

@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-class Channel::V2::TicketFieldsController < Channel::V2::CentralResyncController
-  before_filter :validate_params, only: [:sync]
+class Channel::V2::TicketFieldsController < ApiApplicationController
+  skip_before_filter :check_privilege, :load_object, if: :skip_privilege_check?
+  before_filter :channel_client_authentication, :validate_params, only: [:sync]
 
   def sync
     channel_source = @source
@@ -13,11 +14,15 @@ class Channel::V2::TicketFieldsController < Channel::V2::CentralResyncController
       @response = {
         job_id: job_id
       }
-      render status: 202
+      render status: :accepted
     end
   end
 
   private
+
+    def skip_privilege_check?
+      RESYNC_ALLOWED_SOURCES.any? { |source| channel_source?(source.to_sym) }
+    end
 
     def validation_class
       Channel::V2::TicketFieldsValidation
