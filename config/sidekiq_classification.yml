@@ -77,6 +77,7 @@
     - freshchat_account_central_publish
     - cre_central_publish
     - solution_article_central_publish
+    - archive_ticket_central_publish
 
   :scheduled:
     - scheduled_reports
@@ -461,6 +462,7 @@
     - freshchat_account_central_publish
     - cre_central_publish
     - solution_article_central_publish
+    - archive_ticket_central_publish
   :long_running:
     - scheduled_ticket_export_config
     - scheduled_ticket_export

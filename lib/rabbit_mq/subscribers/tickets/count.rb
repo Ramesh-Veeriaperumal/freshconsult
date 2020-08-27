@@ -4,7 +4,6 @@ module RabbitMq::Subscribers::Tickets::Count
   VALID_MODELS = ["ticket", "ticket_state", "subscription"]
 
   def mq_count_ticket_valid(action, model)
-    Account.current.count_es_writes_enabled? &&
    ((update_action?(action) && self.respond_to?(:count_fields_updated?)) ? self.count_fields_updated? : true)
   end
 

@@ -33,7 +33,7 @@ module Helpdesk::SlaPoliciesHelper
 	alias_method :product_id_list, :products
 	
 	def sources
-		TicketConstants.source_names
+	  Helpdesk::Source.source_choices(:keys_by_token)
 	end
 	alias_method :source_list, :sources
 

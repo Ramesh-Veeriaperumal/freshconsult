@@ -30,7 +30,7 @@ module Facebook
         #Comment is not converted to a fd_item as yet
         if self.fd_item.nil?
           #Comment can be added as a note
-          if add_as_note?(force_convert)
+          if add_as_note?(force_convert) && check_filter_mention_tags?(self)
             self.fd_item = add_as_note(parent_post.postable, self.koala_comment) 
             process_reply_to_comments(self.fd_item) if self.fd_item   
           #Case to convert a post to a ticket via a comment happens only when it's a visitor comment  
@@ -61,7 +61,7 @@ module Facebook
           self.koala_post.fetch(post_id) 
         end
       end
-    
+
       private             
       
       def add_as_note?(convert_comment)
@@ -73,7 +73,7 @@ module Facebook
         
         ("facebook/core/#{post_type}").camelize.constantize.new(self.fan_page, post_id, self.koala_post).process(true)
       end
-      
+
       def process_reply_to_comments(convert)
         self.koala_comment.comments.each do |c|
           reply_to_comment = Facebook::Core::ReplyToComment.new(self.fan_page, nil, get_koala_comment(c))
@@ -88,7 +88,6 @@ module Facebook
       def post_id
         self.koala_comment.parent_post_id
       end
-      
     end    
   end  
 end

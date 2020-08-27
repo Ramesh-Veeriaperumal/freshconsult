@@ -545,4 +545,63 @@ class Billing::BillingControllerTest < ActionController::TestCase
     ShardMapping.any_instance.unstub(:pod_info)
     ActionController::TestRequest.any_instance.unstub(:request_uri)
   end
+
+  def test_subscription_changed_event_with_freddy_self_service_addon
+    addon_params = { addons: [{ id: 'freddy_self_service', quantity: 1, object: 'addon' }] }
+    stub_subscription_settings(addons: addon_params, plan_id: 'estate_jan_19_annual')
+    old_subscription = @account.subscription
+    @account.launch(:freddy_subscription)
+    Rails.env.stubs(:test?).returns(false)
+    Subscription.any_instance.unstub(:update_attributes)
+    Subscription.any_instance.unstub(:save)
+    ChargeBee::Subscription.any_instance.unstub(:plan_id)
+    post :trigger, event_type: 'subscription_changed', content: normal_event_content, format: 'json'
+    @account.reload
+    assert_response 200
+    assert_equal @account.subscription.reload.freddy_sessions, 12_000
+    assert @account.freddy_self_service_enabled?
+  ensure
+    @account.subscription.agent_limit = old_subscription.agent_limit
+    @account.subscription.save
+    @account.rollback(:freddy_subscription)
+    unstub_subscription_settings
+  end
+
+  def test_subscription_changed_event_with_freddy_addons
+    addon_params = { addons: [{ id: 'freddy_session_packs_monthly', quantity: 10, object: 'addon' }] }
+    stub_subscription_settings(addons: addon_params, plan_id: 'forest_jan_19_annual')
+    old_subscription = @account.subscription
+    Rails.env.stubs(:test?).returns(false)
+    Subscription.any_instance.unstub(:update_attributes)
+    Subscription.any_instance.unstub(:save)
+    ChargeBee::Subscription.any_instance.unstub(:plan_id)
+    post :trigger, event_type: 'subscription_changed', content: normal_event_content, format: 'json'
+    @account.reload
+    assert_response 200
+    assert_equal @account.subscription.reload.freddy_session_packs, 10
+  ensure
+    @account.subscription.agent_limit = old_subscription.agent_limit
+    @account.subscription.save
+    @account.rollback(:freddy_subscription)
+    unstub_subscription_settings
+  end
+
+  def test_subscription_changed_event_with_freddy_addons_withot_lp
+    addon_params = { addons: [{ id: 'freddy_session_packs_monthly', quantity: 10, object: 'addon' }] }
+    stub_subscription_settings(addons: addon_params, plan_id: 'forest_jan_19_annual')
+    old_subscription = @account.subscription
+    Rails.env.stubs(:test?).returns(false)
+    Subscription.any_instance.unstub(:update_attributes)
+    Subscription.any_instance.unstub(:save)
+    ChargeBee::Subscription.any_instance.unstub(:plan_id)
+    post :trigger, event_type: 'subscription_changed', content: normal_event_content, format: 'json'
+    @account.reload
+    assert_response 200
+    assert_equal @account.subscription.reload.freddy_sessions, 0, 'Session should not be calculated if lp is not launched'
+  ensure
+    @account.subscription.agent_limit = old_subscription.agent_limit
+    @account.subscription.save
+    @account.rollback(:freddy_subscription)
+    unstub_subscription_settings
+  end  
 end

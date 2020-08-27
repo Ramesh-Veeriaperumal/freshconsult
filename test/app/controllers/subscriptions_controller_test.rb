@@ -1143,6 +1143,77 @@ class SubscriptionsControllerTest < ActionController::TestCase
     unstub_chargebee_requests
   end
 
+  def test_subscription_change_when_adding_freddy_addons
+    forest_plan_id = SubscriptionPlan.select(:id).where(name: 'Forest Jan 20').map(&:id).last
+    params = { plan_id: forest_plan_id, agent_limit: '10', addons: { freddy_self_service: { enabled: 'true' }, freddy_session_packs: { enabled: 'true', value: '1' } } }
+    stub_chargebee_requests
+    current_subscription = @account.subscription
+    current_subscription.agent_limit = 6
+    current_subscription.renewal_period = 1
+    current_subscription.additional_info[:freddy_sessions] = 0
+    current_subscription.save!
+    @account.launch(:downgrade_policy)
+    @account.launch(:freddy_subscription)
+    post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit)))
+    @account.reload
+    assert_response 302
+    assert @account.subscription.addons.where(name: Subscription::Addon::FREDDY_SELF_SERVICE_ADDON).present?
+    assert @account.subscription.addons.where(name: Subscription::Addon::FREDDY_MONTHLY_SESSION_PACKS_ADDON).present?
+    assert_equal @account.subscription.freddy_sessions, 7000
+  ensure
+    @account.rollback(:downgrade_policy)
+    @account.rollback(:freddy_subscription)
+    unstub_chargebee_requests
+  end
+
+  def test_subscription_change_when_removing_freddy_addons
+    forest_plan_id = SubscriptionPlan.select(:id).where(name: 'Forest Jan 20').map(&:id).last
+    params = { plan_id: forest_plan_id, agent_limit: '10', addons: { freddy_self_service: { enabled: 'false' }, freddy_session_packs: { enabled: 'false', value: '0' } } }
+    stub_chargebee_requests
+    current_subscription = @account.subscription
+    current_subscription.agent_limit = 6
+    current_subscription.renewal_period = 1
+    current_subscription.addons = Subscription::Addon.where(name: [Subscription::Addon::FREDDY_SELF_SERVICE_ADDON, Subscription::Addon::FREDDY_MONTHLY_SESSION_PACKS_ADDON])
+    current_subscription.freddy_sessions = 7000
+    current_subscription.freddy_session_packs = 5
+    current_subscription.save!
+    @account.launch(:downgrade_policy)
+    @account.launch(:freddy_subscription)
+    post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit)))
+    current_subscription_request = @account.reload.subscription.subscription_request
+    assert_response 302
+    refute current_subscription_request.nil?
+    refute current_subscription_request.freddy_self_service_requested
+    refute current_subscription_request.freddy_ultimate_requested
+    assert current_subscription_request.freddy_downgrade
+    assert_equal current_subscription_request.freddy_session_packs, 0
+  ensure
+    @account.rollback(:downgrade_policy)
+    @account.rollback(:freddy_subscription)
+    unstub_chargebee_requests
+  end
+
+  def test_subscription_change_when_adding_freddy_addons_without_lp
+    forest_plan_id = SubscriptionPlan.select(:id).where(name: 'Forest Jan 20').map(&:id).last
+    params = { plan_id: forest_plan_id, agent_limit: '10', addons: { freddy_ultimate: { enabled: 'true' }, freddy_session_packs: { enabled: 'true', value: '1' } } }
+    stub_chargebee_requests
+    current_subscription = @account.subscription
+    current_subscription.agent_limit = 6
+    current_subscription.renewal_period = 1
+    current_subscription.additional_info[:freddy_sessions] = 0
+    current_subscription.save!
+    @account.launch(:downgrade_policy)
+    @account.rollback(:freddy_subscription)
+    post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit)))
+    @account.reload
+    assert_response 302
+    assert_equal @account.subscription.freddy_sessions, 0
+  ensure
+    @account.rollback(:downgrade_policy)
+    @account.rollback(:freddy_subscription)
+    unstub_chargebee_requests
+  end
+
 =begin
   def test_disable_fsm_when_downgrade_from_estate_to_sprout_with_fsm_enabled
     stub_chargebee_requests

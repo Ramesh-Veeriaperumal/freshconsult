@@ -3,7 +3,7 @@
 <div class="canned_response_attachment">
 <% attach_id = attach_id || "admin_canned_responses_response" %>
 <label><%=t('attach_files')%></label>
-<div id="attachment-type" data-multifile-enable="<%= current_account.launched?(:multifile_attachments) %>">
+<div id="attachment-type" data-multifile-enable="true">
 <input type="file" id="<%=attach_id%>_file" name="emptyfile" nameWhenFilled="admin_canned_responses_response[attachments][][resource]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
 <div class="info-data">
   <%= t('total') %> <%=t('attachment_help_info', :attachment_size => attachment_size)%>

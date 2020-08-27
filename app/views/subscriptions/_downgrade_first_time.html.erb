@@ -1,7 +1,15 @@
+<%
+	freddy_ultimate_enabled = current_account.freddy_ultimate_enabled?
+	freddy_self_sevice_enabled = current_account.freddy_self_service_enabled? && !current_account.freddy_ultimate_enabled?
+	freddy_enabled = freddy_self_sevice_enabled || freddy_ultimate_enabled
+	freddy_self_service_requested = @subscription.subscription_request.freddy_self_service_requested
+	freddy_ultimate_requested = @subscription.subscription_request.freddy_ultimate_requested
+	freddy_session_packs_requested = @subscription.subscription_request.freddy_session_packs
+%>
 <div class="request-change-container">
 	<div class="request-change-items plan-name">
 	  <div class="pb10"><%=t("downgrade.plan")%></div>
-	  <% 
+	  <%
 	    requested_plan_name = requested_plan.name
 	    requested_plan_display_name = requested_plan.display_name
 	  %>
@@ -9,41 +17,54 @@
 	  	<%= sub_plan_display_name %>
 			<%if current_subscription.classic? %>
 				<%= content_tag(:span, t('classic_label')) %>
-			<%end%>	
-	  	</span> <% if current_plan.omni_plan? || current_plan.free_omni_channel_plan? || show_field_agent_current_plan 
-	      @omni_fsm_toggle_current_plan = []
+			<%end%>
+	  	</span> <% if current_plan.omni_plan? || current_plan.free_omni_channel_plan? || show_field_agent_current_plan || freddy_enabled
+	      @plan_addons = []
 	      if current_plan.omni_plan? || current_plan.free_omni_channel_plan?
-	        @omni_fsm_toggle_current_plan << t("downgrade.omnichannel")
-	      end 
+	        @plan_addons << t("downgrade.omnichannel")
+	      end
 	      if show_field_agent_current_plan
-	        @omni_fsm_toggle_current_plan << t("downgrade.fsm")
+	        @plan_addons << t("downgrade.fsm")
+				end
+				if freddy_self_sevice_enabled
+	        @plan_addons << t("downgrade.freddy_self_service")
+				end
+				if freddy_ultimate_enabled
+	        @plan_addons << t("downgrade.freddy_ultimate")
 	      end
 	    %>
-	    <% if @omni_fsm_toggle_current_plan.length > 0 %>
-           <%= '('+ @omni_fsm_toggle_current_plan.join(' + ') + ')' %>    
-         <% end %> 
+	    <% if @plan_addons.length > 0 %>
+           <%= '('+ @plan_addons.join(' + ') + ')' %>
+         <% end %>
 	   <% end %>
 	    <% if @subscription.subscription_request.plan_id? && (sub_plan_name != requested_plan_name) ||
-	      ((current_plan.omni_plan? || current_plan.free_omni_channel_plan?) != (requested_plan.omni_plan? || requested_plan.free_omni_channel_plan?) || (show_field_agent_current_plan != fsm_field_agents) )
+				((current_plan.omni_plan? || current_plan.free_omni_channel_plan?) != (requested_plan.omni_plan? || requested_plan.free_omni_channel_plan?) || (show_field_agent_current_plan != fsm_field_agents) ||
+				((freddy_self_sevice_enabled != freddy_self_service_requested) || (freddy_ultimate_enabled != freddy_ultimate_requested)) )
 	     %>
 	     <span><%=t("downgrade.to")%></span>
-	      <span class="plan-to">  
+	      <span class="plan-to">
 	      <%= requested_plan_display_name %>
 	        <%if requested_plan.classic? %>
             <%= content_tag(:span, t('classic_label')) %>
           <%end%>
 	      </span>
-	      <% if requested_plan.omni_plan? || requested_plan.free_omni_channel_plan? || fsm_field_agents
-	            @omni_fsm_toggle = []
+	      <% if requested_plan.omni_plan? || requested_plan.free_omni_channel_plan? || fsm_field_agents || freddy_self_service_requested || freddy_ultimate_requested
+	            @plan_addons = []
 	           if requested_plan.omni_plan? || requested_plan.free_omni_channel_plan?
-	                @omni_fsm_toggle << t("downgrade.omnichannel")
-	            end 
+	                @plan_addons << t("downgrade.omnichannel")
+	            end
 	           if fsm_field_agents
-	               @omni_fsm_toggle << t("downgrade.fsm")
-	           end
+	               @plan_addons << t("downgrade.fsm")
+						 end
+						 if freddy_self_service_requested
+								 @plan_addons << t("downgrade.freddy_self_service")
+						 end
+						 if freddy_ultimate_requested
+								 @plan_addons << t("downgrade.freddy_ultimate")
+						 end
 	      %>
-	      <% if @omni_fsm_toggle.length > 0 %>
-               <%= '('+ @omni_fsm_toggle.join(' + ') + ')' %>
+	      <% if @plan_addons.length > 0 %>
+               <%= '('+ @plan_addons.join(' + ') + ')' %>
           <% end %>
 	     <% end %>
 	    <% end %>
@@ -53,10 +74,10 @@
 	  <div class="request-change-items agents-count">
 	    <div class="pb10"><%=t("downgrade.agents")%></div>
 	    <div class="agents-count-text"> <%= current_subscription.agent_limit %>
-	         <% if @subscription.subscription_request.agent_limit? && current_subscription.agent_limit !=@subscription.subscription_request.agent_limit %> 
+	         <% if @subscription.subscription_request.agent_limit? && current_subscription.agent_limit !=@subscription.subscription_request.agent_limit %>
 	          <span class="item-to"><%=t("downgrade.to")%></span>
 	          <%= @subscription.subscription_request.agent_limit %>
-	         <% end %> 
+	         <% end %>
 	    </div>
 	  </div>
 	<% end %>
@@ -76,11 +97,22 @@
 	          <% else %>
 	          	<span class="item-to"><%=t("downgrade.to")%></span>
 	            <%= @subscription.subscription_request.fsm_field_agents %>
-	          <% end %> 
+	          <% end %>
 	      <% end %>
 	    </div>
 	    <% end %>
-	  </div>
+		</div>
+		<% if !is_sprout && (freddy_session_packs_requested > 0 || current_subscription.freddy_session_packs > 0) %>
+			<div class="request-change-items fsm-count">
+				<div class="pb10"><%=t("downgrade.freddy_additional_packs")%></div>
+				<div class="agents-count-text"> <%= current_subscription.freddy_session_packs %>
+						<% if freddy_session_packs_requested.present? && (current_subscription.freddy_session_packs != freddy_session_packs_requested) %>
+							<span class="item-to"><%=t("downgrade.to")%></span>
+							<%= freddy_session_packs_requested %>
+						<% end %>
+				</div>
+			</div>
+		<% end %>
 	<% if !is_sprout %>
 	    <%
 	      subscription_plan = SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[current_subscription.renewal_period]

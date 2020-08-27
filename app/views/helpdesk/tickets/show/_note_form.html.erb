@@ -63,11 +63,7 @@
 
       <li class="attachment-options-reply" id="attachment-options-note">
           <% unless local_assigns[:no_attachments] %>
-         <% if current_account.launched?(:multifile_attachments) %>
             <%= render :partial => "/helpdesk/tickets/show/multi_attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
-          <% else %>
-            <%= render :partial => "/helpdesk/tickets/show/single_attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
-          <% end %>
           <% end %>
       </li>
     </ul> 
