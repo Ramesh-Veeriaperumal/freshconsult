@@ -240,11 +240,10 @@ class UsersController < ApplicationController
     end
 
     def has_access_to_enable_falcon?
-      return head(403) if current_account.falcon_enabled?
+      head(403)
     end
 
     def has_access_to_disable_old_ui?
-      return head(401) unless current_account.falcon_enabled?
       return head(403) if current_account.disable_old_ui_enabled?
     end
 

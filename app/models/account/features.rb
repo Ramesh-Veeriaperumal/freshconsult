@@ -97,10 +97,12 @@ class Account < ActiveRecord::Base
   PODS_FOR_BOT = ['poduseast1'].freeze
 
   LAUNCH_PARTY_FEATURES_TO_LOG = [
-    :admin_only_mint
+    :admin_only_mint, :falcon
   ].freeze
 
-  BITMAP_FEATURES_TO_LOG = [].freeze
+  BITMAP_FEATURES_TO_LOG = [
+    :falcon
+  ].freeze
 
   def launched?(*feature_name)
     features_list = feature_name & LAUNCH_PARTY_FEATURES_TO_LOG
@@ -342,7 +344,7 @@ class Account < ActiveRecord::Base
 
   def falcon_ui_enabled?(current_user = :no_user)
     valid_user = (current_user == :no_user ? true : (current_user && current_user.is_falcon_pref?))
-    valid_user && (falcon_enabled? || disable_old_ui_enabled?)
+    valid_user && disable_old_ui_enabled?
   end
 
   def falcon_support_portal_theme_enabled?

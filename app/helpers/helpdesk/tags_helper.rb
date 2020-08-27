@@ -65,11 +65,7 @@ module Helpdesk::TagsHelper
   end
 
   def ticket_tags_filter_link(tag)
-    if falcon_enabled?
-      link = %{/a/tickets/filters/search?q[]=tags:["#{safe_filter_tag(tag.name)}"]}
-    else
-      link = "/helpdesk/tickets/filter/tags/#{tag.id}"
-    end
+    %{/a/tickets/filters/search?q[]=tags:["#{safe_filter_tag(tag.name)}"]}
   end
 
   def tagged_module tag, dom_type, mod_count

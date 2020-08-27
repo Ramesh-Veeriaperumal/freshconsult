@@ -72,12 +72,6 @@ module Fdadmin::FeatureMethods
       #hack. but couldnt find a better way at the last moment. will remove the check later.
       if feature_name.to_sym == :falcon
         @account.enable_falcon_ui
-      elsif feature_name.to_sym == :disable_old_ui
-        if @account.falcon_enabled?
-          @account.add_feature(feature_name)
-        else
-          raise "Not applicable"
-        end
       elsif feature_name.to_sym.in?(BITMAP_FEATURES_TO_IGNORE)
         raise 'Not applicable'
       else
