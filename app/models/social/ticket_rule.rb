@@ -66,6 +66,18 @@ class Social::TicketRule < ActiveRecord::Base
     return is_a_post || (parent_is_a_status && is_a_visitor_comment) if broad?
   end
 
+  def filter_mentions?
+    filter_data[:filter_mentions]
+  end
+
+  def convert_fb_comment_to_ticket?(parent_is_a_status = false, is_a_visitor_comment = false, cover_photo_comment = false)
+    return false if strict?
+
+    return (parent_is_a_status && is_a_visitor_comment) if broad?
+
+    return import_company_comments? && is_a_visitor_comment && (parent_is_a_status || cover_photo_comment) if optimal?
+  end
+
   def import_visitor_posts?
     optimal? && filter_data[:import_visitor_posts]
   end

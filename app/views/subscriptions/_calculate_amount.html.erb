@@ -3,13 +3,16 @@
 	billing_cycle = params[:billing_cycle].present? ? params[:billing_cycle].to_i : @subscription.renewal_period
 	addons = params[:addons]
 	field_agent_limit = addons.try(:[], :field_service_management).try(:[], :value) || @subscription.field_agents_display_count
-	current_subscription = Subscription.find(current_account.subscription.id) 
+	current_subscription = Subscription.find(current_account.subscription.id)
 	current_subscription_plan = current_subscription.subscription_plan
-	
+	freddy_addon_count = @subscription.subscription_plan.freddy_addon_count || 0
+	freddy_self_sevice_enabled = current_account.freddy_self_service_enabled? && !current_account.freddy_ultimate_enabled?
+	freddy_ultimate_enabled = current_account.freddy_ultimate_enabled?
+
 	is_plan_downgrade = @subscription.state == 'active' &&
 						((@subscription.subscription_plan_id != current_subscription.subscription_plan_id && @subscription.cost_per_agent < current_subscription.cost_per_agent)|| ((current_subscription_plan.omni_plan? || current_subscription_plan.free_omni_channel_plan?) &&
 						@subscription.subscription_plan.basic_variant?))
-	
+	is_prepaid = @subscription.freddy_billing_model.nil?
 %>
 
 <div class="billing-cost">
@@ -17,9 +20,7 @@
 	<dl>
   	<dt class="vertical-top"><%=t('subscription.billing')%></dt>
 		<dd class="vertical-top">
-			<%= select_tag :billing_cycle, 
-						options_for_select(SubscriptionPlan::BILLING_CYCLE_OPTIONS.dup.sort{ |x, y| y[1] <=> x[1] }, 
-															billing_cycle), 
+			<%= select_tag :billing_cycle, options_for_select(SubscriptionPlan::BILLING_CYCLE_OPTIONS.dup.sort{ |x, y| y[1] <=> x[1] }, billing_cycle),
 						:class => "select2" %>
 			<p class="save-info <%= billing_cycle == SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]? 'hide' : '' %>">
 				<%= t('choose_annual')%> <span class="money"><%= t('save_20_percent')%></span>
@@ -47,7 +48,7 @@
 		  		</dl>
 		  		<dl>
 		  			<dt><%=t('subscription.paid')%> : </dt>
-		  			<dd> 
+		  			<dd>
 		  				<%= @subscription.non_free_agents %> x
 		  				<span id="cost-per-agent">
 		  					<%= cost_per_agent(@subscription_plan.name, billing_cycle, @subscription.currency_name) %> x <b id="number-of-months"> <%= billing_cycle %> </b>
@@ -63,12 +64,54 @@
 	<dl id="field_agents" class="hide">
 		<dt> <%= t('agent.field_agents') %> </dt>
 		<dd>
-			<input type="text" size="4" value="<%= field_agent_limit %>" 
+			<input type="text" size="4" value="<%= field_agent_limit %>"
 		  			 name="field_agent_limit" id="field-agents-text-box" class="text input-agent-count" autocomplete="off" />
 		 </dd>
 		  	x <b id="cost-per-field-agent"><%= cost_per_field_agent(@subscription.currency_name) %></b> x <b id="number-of-months"> <%= billing_cycle %> </b>
 	</dl>
-  	<% end %>
+	<% end %>
+
+	<% if current_account.freddy_subscription_enabled? && freddy_addon_count != 0 && @subscription.state != 'trial' %>
+
+		<dl id="freddy_self_service" class="<%= freddy_self_sevice_enabled ? '' : 'hide' %>">
+			<dt><%= t('downgrade.freddy_self_service') %></dt>
+			<dd>
+				<b><%= format_amount(@subscription.subscription_plan.freddy_self_service_cost(@subscription.currency_name), @subscription.currency_name) %></b>
+				x <b id="number-of-months"> <%= billing_cycle %> </b></dd>
+		</dl>
+
+		<dl id="freddy_ultimate" class="<%= freddy_ultimate_enabled ? '' : 'hide' %>">
+			<dt class="align-top"><%= t('downgrade.freddy_ultimate') %></dt>
+			<dd>
+				<p>
+					<b><%= agent_limit || current_account.full_time_support_agents.count %></b>
+					x
+					<b><%= format_amount(@subscription.subscription_plan.freddy_ultimate_cost(@subscription.currency_name), @subscription.currency_name) %></b>
+					x
+					<b id="number-of-months"> <%= billing_cycle %> </b></p>
+				<p> + <p>
+				<p>
+				<b><%= format_amount(@subscription.subscription_plan.freddy_ultimate_session_cost(@subscription.currency_name), @subscription.currency_name) %></b>
+				x
+				<b id="number-of-months"> <%= billing_cycle %> </b></p>
+			</dd>
+		</dl>
+
+		<% showAdditionalsessions = @subscription.freddy_sessions > 0 && is_prepaid %>
+		<dl id="freddy_additional_session" class="<%= showAdditionalsessions ? '' : 'hide' %>">
+			<% freddy_session_packs = @subscription.freddy_session_packs || 0 %>
+			<dt class="align-top"><%= t('freddy.additional_session_packs').html_safe %></dt>
+			<dd>
+				<input type="text" size="4" value="<%= freddy_session_packs %>"
+				name="freddy_session_packs" id="freddy-session-pack" class="text input-agent-count" autocomplete="off" />
+				x
+				<b><%= format_amount(@subscription.subscription_plan.freddy_additional_pack_cost(@subscription.currency_name), @subscription.currency_name) %></b>
+			</dd>
+		</dl>
+	<% end %>
+
+	<hr class="billing-cost-divider" />
+
 		<dl class="tr-total" id="total-cost">
 			<% if discount %>
 		  	<dt>
@@ -99,7 +142,7 @@
   					(<span class="symbol"></span><span class="amount"></span>/<%= t('date.month')%>)
   				</p>
   			</h2>
-			</dd>	
+			</dd>
 	  </dl>
 	  <dl id="total-cost" class="tr-total <%= billing_cycle == SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]? '' : 'hide' %>">
 	  	<dt>
@@ -120,14 +163,29 @@
 				<%= t('subscription.currency-note') %> <%= @subscription.currency_name %>
 			</div>
 		<% end %>
-  
-	
+
+		<% if current_account.freddy_subscription_enabled? && freddy_addon_count != 0 && is_prepaid %>
+			<%
+			freddy_sessions = @subscription.freddy_sessions || 0
+			%>
+			<%if freddy_sessions != 0 %>
+				<%= t('freddy.session_packs', :freddy_sessions => freddy_sessions, :cycle => @subscription.renewal_period != 12 ? SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[@subscription.renewal_period] : 'annually').html_safe %>
+			<% end %>
+		<% end %>
+
 	<div class="billing-actions">
 		<input type="hidden" id="plan_id" name="plan_id" value="" />
 		<input type="hidden" id="currency" name="currency" value="<%= @subscription.currency_name %>" />
 		<% if fsm_supported_plan?(@subscription_plan) %>
 			<input type="hidden" name="addons[field_service_management][enabled]" value="false" />
 			<input type="hidden" name="addons[field_service_management][value]" value="<%= field_agent_limit %>" />
+		<% end %>
+		<% if current_account.freddy_subscription_enabled? && freddy_addon_count != 0 %>
+			<input type="hidden" name="addons[freddy_self_service][enabled]" value="false" />
+			<input type="hidden" name="addons[freddy_ultimate][enabled]" value="false" />
+			<input type="hidden" name="addons[freddy_ultimate][value]" value="<%= agent_limit || current_account.full_time_support_agents.count %>" />
+			<input type="hidden" name="addons[freddy_session_packs][enabled]" value="false" />
+			<input type="hidden" name="addons[freddy_session_packs][value]" value="<%= freddy_session_packs %>" />
 		<% end %>
 		<% downgrade_confirm = ( (@subscription.subscription_plan_id < current_subscription.subscription_plan_id) or (current_subscription.classic? and @subscription.sprout?) ) ? true : false %>
 		<% submit_text = @subscription.state == 'trial' ? t('enter_payment') : @subscription.non_free_agents <= @subscription.free_agents ? t('activate_free_plan') : t('make_payment') %>
@@ -136,20 +194,20 @@
 		<% end %>
 		<input type="submit" class="btn btn-flat billing-cancel" value="<%= t('cancel') %>" data-heap-id="billing-cancel"  />
 			<% subscription_plan_id = @subscription.subscription_plan_id %>
-			
+
 			<% if current_account.launched?(:downgrade_policy) && @subscription.subscription_request.present? %>
-				<button id="commit" class="btn billing-submit second-downgrade-modal" data-id = "#downgrade-info<%= subscription_plan_id %>" ><%= submit_text %></button> 
+				<button id="commit" class="btn billing-submit second-downgrade-modal" data-id = "#downgrade-info<%= subscription_plan_id %>" ><%= submit_text %></button>
 				<div class="downgrade-info<%= subscription_plan_id %>-submit downgrade-submit-btn">
 
-					<%= submit_tag(submit_text, type:"hidden" , :class => "btn billing-submit submit-disable", 
+					<%= submit_tag(submit_text, type:"hidden" , :class => "btn billing-submit submit-disable",
 					:id => "commit", :name => "commit", "data-loading-text" => t('please_wait')) %>
-				</div>	
+				</div>
 			<% else %>
-		 		<%= submit_tag(submit_text, type:"submit" , :class => "btn billing-submit submit-disable", 
+		 		<%= submit_tag(submit_text, type:"submit" , :class => "btn billing-submit submit-disable",
 				:id => "commit", :name => "commit", "data-loading-text" => t('please_wait'), "data-heap-id" => "billing-submit") %>
 			 <% end %>
 			<% if current_account.launched?(:downgrade_policy) && @subscription.subscription_request.present? %>
-				<div id="downgrade-info<%= subscription_plan_id %>" class="modal hide second-downgrade-modal-wrapper"  aria-hidden="true" role="dialog"> 
+				<div id="downgrade-info<%= subscription_plan_id %>" class="modal hide second-downgrade-modal-wrapper"  aria-hidden="true" role="dialog">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
 						<% if !is_plan_downgrade %>
@@ -161,21 +219,21 @@
 						<% else %>
 							<h3 class="downgrade-header mt14"><%= t("downgrade.header_txt") %></h3>
 						<% end %>
-						
+
 					</div>
 
-					<%= render :partial => "second_time_downgrade_modal",:locals => { :new_sprout => false } %> 
+					<%= render :partial => "second_time_downgrade_modal",:locals => { :new_sprout => false } %>
 	        		<div class="modal-footer mt12">
 						 <button class="downgrade-btn btn-secondary" data-dismiss="modal" aria-hidden="true"><%= t("account.cancel") %></button>
 						 <button id="downgrade-info<%= subscription_plan_id %>-submit" class="downgrade-btn btn-primary" data-dismiss="modal" aria-hidden="true"><%= t("downgrade.confirm_btn") %></button>
-					</div> 
+					</div>
 	            </div>
             <% end %>
-						
+
 	</div>
 </div>
 
-<% end %>	
+<% end %>
 
 <script type="text/javascript">
 	jQuery('body').on('click', '.submit-disable', function(){

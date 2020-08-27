@@ -33,7 +33,7 @@
       unless widget.blank?
       dip = widget.display_in_pages_option
       if !dip.blank? && dip.include?('contacts_show_page_side_bar')
-        user.escape_liquid_attributes = (app.freshplug? && Account.current.launched?(:escape_liquid_attributes))
+        user.escape_liquid_attributes = app.freshplug?
         liquid_objects = {"requester" => user, "widget_type" => "_contacts"}
         widget_code = widget_script(installed_app, widget, liquid_objects) %>
         <% if app.freshplug? %> 

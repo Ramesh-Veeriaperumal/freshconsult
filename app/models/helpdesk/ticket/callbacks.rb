@@ -749,7 +749,7 @@ private
   end
 
   def should_sanitise_subject?
-    model_changes[:subject] && Account.current.encode_emoji_subject_enabled?
+    model_changes[:subject]
   end
 
   #RAILS3 Hack. TODO - @model_changes is a HashWithIndifferentAccess so we dont need symbolize_keys!,
