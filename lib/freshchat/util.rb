@@ -2,7 +2,18 @@ module Freshchat::Util
   include IntegrationProduct::Signup
   include Freshchat::JwtAuthentication
   
+  APPLICATION_JSON = 'application/json'.freeze
   SYSTEM42_SERVICE = 'system42'.freeze
+
+  def request_headers(token = freshchat_jwt_token)
+    {
+      'Content-Type' => APPLICATION_JSON,
+      'Accept' => APPLICATION_JSON,
+      'x-fc-client-id' => Freshchat::Account::CONFIG[:freshchatClient],
+      'Authorization' => "Bearer #{token}"
+    }
+  end
+
   def freshchat_signup
     freshchat_response = signup_via_aloha('freshchat')
     save_freshchat_v2_account(freshchat_response['product_signup_response']) if freshchat_response.code == 200
@@ -41,13 +52,8 @@ module Freshchat::Util
 
   def freshchat_subscription_request(payload)
     options = {
-      :headers => {
-        'Accept' => 'application/json',
-        'Content-Type' => 'application/json',
-        'Authorization' => "Bearer #{freshchat_jwt_token}",
-        'x-fc-client-id' => 'OC_FD'
-      },
-      :body => payload.to_json
+      headers: request_headers,
+      body: payload.to_json
     }
     path = FreshchatSubscriptionConfig['subscription_host']
     Rails.logger.info "Freshchat Request Params :: #{URI.encode(path)} #{options.inspect}"
@@ -60,11 +66,20 @@ module Freshchat::Util
   def update_access_token(acc_domain, admin_access_token, freshchat_account, bearer_token)
     response = HTTParty.put("https://#{freshchat_account.api_domain}/v2/omnichannel-integration/#{freshchat_account.app_id}",
                             body: { account: acc_domain, token: admin_access_token }.to_json,
-                            headers: { 'Content-Type' => 'application/json',
-                                       'Accept' => 'application/json',
-                                       'x-fc-client-id' => Freshchat::Account::CONFIG[:freshchatClient],
-                                       'Authorization' => "Bearer #{bearer_token}" })
+                            headers: request_headers(bearer_token))
     Rails.logger.info "Error in omni freshchat update access token Response :: #{response.code} :: #{response.body}" if response.code != 200
+    response
+  end
+
+  def freshchat_request(url)
+    con = Faraday.new(url: url) do |faraday|
+      faraday.request :json
+      faraday.response :json
+      faraday.adapter Faraday.default_adapter
+    end
+    response = con.get do |req|
+      req.headers.merge!(request_headers)
+    end
     response
   end
 
@@ -83,7 +98,7 @@ module Freshchat::Util
       jwt_token = internal_freshchat_jwt_token(app_id)
       {
         'X-FC-System42-Token' => "Bearer #{jwt_token}",
-        'Content-Type' => 'application/json'
+        'Content-Type' => APPLICATION_JSON
       }
     end
 
