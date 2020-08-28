@@ -1037,7 +1037,7 @@ class Subscription < ActiveRecord::Base
     end
 
     def omni_plan_conversion?
-      account.launched?(:explore_omnichannel_feature) && !@old_subscription.subscription_plan.omni_plan? && subscription_plan.omni_bundle_plan? && !account.not_eligible_for_omni_conversion?
+      account.launched?(:explore_omnichannel_feature) && @chargebee_update_response.present? && !@old_subscription.subscription_plan.omni_plan? && subscription_plan.omni_bundle_plan? && !account.not_eligible_for_omni_conversion?
     end
 
     def enqueue_omni_account_creation?
@@ -1054,7 +1054,7 @@ class Subscription < ActiveRecord::Base
     end
 
     def enqueue_omni_account_creation_workers
-      if account.omni_bundle_id.present? && @chargebee_update_response.present?
+      if account.omni_bundle_id.present?
         worker_args = {
           chargebee_response: @chargebee_update_response
         }
