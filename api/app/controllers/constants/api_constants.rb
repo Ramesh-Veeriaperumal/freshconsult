@@ -63,7 +63,8 @@ module ApiConstants
                        AuditLogConstants::LOAD_OBJECT_EXCEPT +
                        Solutions::HomeConstants::LOAD_OBJECT_EXCEPT +
                        Testing::FreshidApiConstants::LOAD_OBJECT_EXCEPT +
-                       Admin::CustomTranslationsConstants::LOAD_OBJECT_EXCEPT
+                       Admin::CustomTranslationsConstants::LOAD_OBJECT_EXCEPT +
+                       Channel::V2::ConversationConstants::LOAD_OBJECT_EXCEPT
 
   NO_CONTENT_TYPE_REQUIRED = ApiTicketConstants::NO_CONTENT_TYPE_REQUIRED +
                              ContactConstants::NO_CONTENT_TYPE_REQUIRED +

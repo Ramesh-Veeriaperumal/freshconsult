@@ -1017,6 +1017,7 @@ Helpkit::Application.routes.draw do
         get :verify_agent_privilege
       end
     end
+    match '/notes/sync', to: 'channel/v2/conversations#sync', via: [:post]
     post '/canned_responses', to: 'channel/v2/canned_responses#create'
     post 'tickets/bulk_archive', to: 'channel/v2/tickets/bulk_actions#bulk_archive'
     get '/account', to: 'channel/v2/accounts#show'
