@@ -212,15 +212,15 @@
         },
         "analytics": {
           "_auth_type": "jwt",
-          "jwt_secret": ["EJ[1:3p2INxzh9tBUx2MV81xDLPrCvSE3Z/cSNNvg5VOIFSk=:xmBYmvbo042W6frWilt34kVR4xYtWOGn:5ruwMSK5jLCYZrx+ay1Kg6xTDOFZZ+4U27ocK9FDdyuYhl4Yr6DpJ6SaJwZtZrEiuMafkAe5qHA=]"]
+          "jwt_secret": ["EJ[1:8vwdYL+QxUXS6FYVjjHYuRl3Lz2owrsUTVbNmeRxfDA=:dycQLFMnyWhp88ReQmBX99/ZC8bn2uEa:m21LcRPKH42bTOhRGcLEppxIkCAdL+HqdKAZLrK8isCm5rTgd1hrHdGVC4wGt04HLVT3PRK5tZ4=]"]
         },
         "freshdesk": {
           "_auth_type": "jwt",
-          "jwt_secret": ["EJ[1:3p2INxzh9tBUx2MV81xDLPrCvSE3Z/cSNNvg5VOIFSk=:H8AQTyhPIXnonoNDrM8sCtYNXPKOTMdR:vibHjS9rI4mFlmfshVdn88VZ0dWSTMbc8VXPDyv2RQVqazOZcAQ9jA/xQEooKXwEt5EquPftAfY=]"]
+          "jwt_secret": ["EJ[1:8vwdYL+QxUXS6FYVjjHYuRl3Lz2owrsUTVbNmeRxfDA=:y9x2LoWxcaI7r82RF25FnEz1DyfFHy6O:DKl+HN5tjdvA60U+bpvT6MUBfrrqB3XeFCeS71hx4LRl7yilyJSoGdM/OeN/uk2mpVXdzLxjMcE=]"]
         },
         "search": {
           "_auth_type": "jwt",
-          "jwt_secret": ["EJ[1:3p2INxzh9tBUx2MV81xDLPrCvSE3Z/cSNNvg5VOIFSk=:zu7ApaGiio3TI84UG12fNNBLRZli2f9I:yzuY4H1PDOBrE9w3qmZCBLjiA6o9AR/1UUGrnuWtiM9rHKxQt3VpmsheRhGCdljn70z3cHVUCPE=]"]
+          "jwt_secret": ["EJ[1:8vwdYL+QxUXS6FYVjjHYuRl3Lz2owrsUTVbNmeRxfDA=:F4VfYkA9vBg9cIisSce/kirpgr0n4BJB:Ok+Tw/Ec5177PWhXzqaVgooVzMbxOq31/JlYyoIkV4xIOEcsVlq+I5CQ0/2ACm6NEWtOticfVsY=]"]
         }
       },
       "channel_v2_api": {
