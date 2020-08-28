@@ -202,7 +202,7 @@ class SubscriptionNotifier < ActionMailer::Base
     end
 
     def downgrade_notification_fields(subscription)
-      subscription[:plan_name] = subscription_plans_from_cache.find { |plan| plan.id == subscription[:subscription_plan_id] }.name
+      subscription[:plan_name] = SubscriptionPlan.subscription_plans_from_cache.find { |plan| plan.id == subscription[:subscription_plan_id] }.name
       subscription
     end
   

@@ -933,6 +933,7 @@ Helpkit::Application.routes.draw do
     resource :rts, controller: 'ember/rts', only: [:show]
 
     get '/plans', to: 'admin/subscriptions#plans'
+    get '/plans/:id', to: 'admin/subscriptions#fetch_plan'
 
     get '/yearin_review', to: 'ember/year_in_review#index'
     post '/yearin_review/share', to: 'ember/year_in_review#share'

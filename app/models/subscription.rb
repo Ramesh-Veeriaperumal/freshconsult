@@ -300,7 +300,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def subscription_plan_from_cache
-    subscription_plans_from_cache.select {|s_plan| s_plan.id == self.plan_id}.first
+    SubscriptionPlan.subscription_plans_from_cache.select { |s_plan| s_plan.id == self.plan_id }.first
   end
 
   def classic?
@@ -726,7 +726,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def losing_features(to_plan)
-    new_plan = subscription_plans_from_cache.find { |plan| plan.id == to_plan }
+    new_plan = SubscriptionPlan.subscription_plans_from_cache.find { |plan| plan.id == to_plan }
     features_lost = account.features_list - PLANS[:subscription_plans][new_plan.canon_name][:features]
     features_lost
   end
