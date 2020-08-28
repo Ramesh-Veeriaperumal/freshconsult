@@ -1067,8 +1067,6 @@ ar:
         only_agents: الوكلاء
         remote_login_url_info: >-
           هذا هو عنوان URL الذي ستتم إعادة توجيه المستخدمين إليه للمصادقة عند محاولة الوصول إلى Freshdesk.
-        customer_portal_ssl_warning: >-
-          بما أنه قد تمت تهيئة عنوان URL مخصص لمكتب الدعم لديك، فستتم إعادة توجيهك إلى 
         saml_cert_fingerprint: بصمة شهادة الأمان
         success_message: >-
           تم إرسال طلب شهادة SSL مخصصة وستتم معالجة الطلب قريبًا. ستتلقى رسالة إلكترونية للتأكيد من المزود التابع لنا قبل الموافقة. يرجى التحقق من صندوق الوارد لديك بحثًا عن تحديثات.
@@ -2146,6 +2144,7 @@ ar:
         all_tickets: كافة البطاقات
         due_today: التذاكر المستحقة اليوم
         resolved: بطاقات تم حلها
+        visible_and_resolved: التذاكر المحلولة
       friendly_status:
         customer_responded: قام العميل بالرد
         elapsed: مستحقة الاستجابة
@@ -3790,6 +3789,9 @@ ar:
       created_at: تم الإنشاء
       skill: المهارة
       description: الوصف
+    field_service_fields:
+      cf_fsm_contact_name: جهة اتصال
+      cf_fsm_phone_number: رقم الهاتف
     formfield_props:
       behavior: السلوك
       customer_edit: يمكن للعميل تحريره
@@ -5769,6 +5771,7 @@ ar:
       sign_up_text: 'ابدأ المحادثة مع العملاء على موقع الويب أو البوابة الإلكترونية أو تطبيق الهاتف المحمول.'
       enable_chat_in_portal_info: >-
         سهل على عملائك عملية التحدث معك عندما يدخلون إلى بوابة الدعم الخاصة بك.
+      topics_title: الموضوعات
       app_id_placeholder: 'مثال: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         لتحويل محادثات Freshchat إلى تذاكر، انتقل رجاءً إلى هذه <a href='%{url}' target='_blank'>الصفحة</a>، وانسخ وألصق التفاصيل المدرجة أدناه. إذا كنت بحاجة إلى مزيد من المساعدة، فيرجى إلقاء نظرة على <a href='%{article_url}' target='_blank'> هذه المقالة </a>.

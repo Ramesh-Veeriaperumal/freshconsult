@@ -1296,8 +1296,6 @@ pt-BR:
         only_agents: Analistas
         remote_login_url_info: >-
           Esta é a URL para a qual o Freshdesk redirecionará os usuários para autenticação quando eles tentarem acessar o Freshdesk.
-        customer_portal_ssl_warning: >-
-          Como um URL do helpdesk personalizado está configurado em sua conta, você será redirecionado para 
         saml_cert_fingerprint: Impressão digital do certificado de segurança
         success_message: >-
           Sua solicitação de um certificado SSL personalizado foi iniciada e será processada em breve. Você receberá um e-mail de confirmação do nosso fornecedor antes da aprovação. Verifique sua caixa de e-mail para atualizações.
@@ -2415,6 +2413,7 @@ pt-BR:
         unassigned_service_tasks: Tarefas de serviço não atribuídas
         service_tasks_starting_today: Tarefas de serviço que começam hoje
         unresolved_service_tasks: Tarefas de serviço não resolvidas
+        visible_and_resolved: Tickets resolvidos
       friendly_status:
         customer_responded: O cliente respondeu
         elapsed: Resposta atrasada
@@ -4032,6 +4031,9 @@ pt-BR:
       description: Descrição
       fsm_fields_edit: Este campo padrão não pode ser excluído
       fsm_fields_moved_out: Os campos padrão nesta seção não podem ser movidos para fora da seção.
+    field_service_fields:
+      cf_fsm_contact_name: Contato
+      cf_fsm_phone_number: Telefone
     formfield_props:
       behavior: Comportamento
       customer_edit: O cliente pode editar
@@ -6127,6 +6129,7 @@ pt-BR:
       sign_up_text: 'Comece a conversar com os clientes no seu site, portal ou aplicativo para dispositivos móveis.'
       enable_chat_in_portal_info: >-
         Facilite a conversa dos seus clientes com você, quando eles visitarem seu portal de suporte.
+      topics_title: Tópicos
       app_id_placeholder: 'Por exemplo: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         Para converter conversas do Freshchat em tickets, acesse esta <a href='%{url}' target='_blank'>página</a>, copie e cole os detalhes listados abaixo. Se você precisar de mais ajuda, por favor, dê uma olhada <a href='%{article_url}' target='_blank'>este artigo</a>.
@@ -6278,12 +6281,6 @@ pt-BR:
     cancel_final_message: >-
       Faltando menos de 24 horas, queríamos entrar em contato com você uma última vez para saber se gostaria de aproveitar esta oportunidade para manter sua conta Freshdesk. Depois que sua solicitação de cancelamento for processada, todos os dados do helpdesk, incluindo todos os dados e conversas do cliente, serão excluídos irrevogavelmente. Se você deseja manter sua conta, envie-nos uma resposta e excluiremos sua solicitação de cancelamento.
     current_subscription: 'Sua assinatura atual: '
-    agent_reduction: >-
-      Conforme solicitado, mantenha %{requested_agents} em tempo integral ou menos em %{next_renewal_at} ou você será cobrado por %{current_agents} agentes, como de costume.
-    agent_field_reduction: >-
-      Conforme solicitado, mantenha %{requested_field_agents} técnicos de campo ou menos em %{next_renewal_at} ou você será cobrado por %{current_field_agents} técnicos de campo, como de costume.
-    agent_and_agent_field_reduction: >-
-      Conforme solicitado, mantenha %{requested_agents} agentes em tempo integral ou menos e %{requested_field_agents} técnicos de campo ou menos em %{next_renewal_at} ou você será cobrado por %{current_agents} agentes e %{current_field_agents} técnicos de campo, como de costume.
     current_plan: 'Plano: %{plan}'
     agents: 'Agentes: %{agents}'
     billing_cycle: 'Ciclo de cobrança: %{billing_cycle}'
@@ -6332,8 +6329,6 @@ pt-BR:
       info: >-
         Importe os IDs exclusivos de seus clientes e identifique facilmente suas conversas no Freshdesk. <br> <a href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id" target="_blank"> Ajude-me a configurar um ID externo</a>
   fsm_warning_title: Tem certeza de que deseja desativar o gerenciamento de serviços de campo?
-  fsm_content: >-
-    Conecte-se e colabore com sua força de trabalho de campo para fornecer um atendimento ao cliente produtivo e excepcional no local. Disponível a partir de
   fsm_title: Gerenciamento de serviços de campo
   subscription_change_confirm_body: >-
     Você tem uma solicitação existente para cancelar sua conta. Clique em 'Continuar' para excluir esta solicitação e alterar sua assinatura.

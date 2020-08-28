@@ -1067,8 +1067,6 @@ sr:
         only_agents: Агенти
         remote_login_url_info: >-
           Ово је URL на који ће Freshdesk преусмерити кориснике на аутентификацију када покушају да приступе Freshdesk-у.
-        customer_portal_ssl_warning: >-
-          Пошто је прилагођени URL техничке подршке конфигурисан за ваш налог, бићете преусмерени на 
         saml_cert_fingerprint: Безбедносни сертификат отиска
         success_message: >-
           Ваш захтев за Прилагођени ССЛ сертификат је покренут и биће ускоро обрађен. Пре одобрења, од нашег провајдера ћете добити имејл за потврђивање. Проверите своје долазно сандуче за ажурирања.
@@ -2146,6 +2144,7 @@ sr:
         all_tickets: Сви тикети
         due_today: тикети Дуе Тодаи
         resolved: Решени тикети
+        visible_and_resolved: Решени тикети
       friendly_status:
         customer_responded: Клијент је одговорио
         elapsed: Истек одговора
@@ -3760,6 +3759,9 @@ sr:
       created_at: Креирана
       skill: Вештина
       description: Опис
+    field_service_fields:
+      cf_fsm_contact_name: Контакт
+      cf_fsm_phone_number: Број телефона
     formfield_props:
       behavior: Понашање
       customer_edit: Корисник може изменити
@@ -5739,6 +5741,7 @@ sr:
       sign_up_text: 'Почните да четујете са клијентима на својој веб страници, порталу или мобилној апликацији.'
       enable_chat_in_portal_info: >-
         Олакшајте својим клијентима да разговарају са вама када дођу на ваш портал за подршку.
+      topics_title: Теме
       app_id_placeholder: 'Нпр: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         Да бисте претворили Freshchat разговор у тикет, идите на ову <a href='%{url}' target='_blank'>страницу</a>, копирајте и залепите детаље наведене у наставку. Ако вам је потребна додатна помоћ, молимо погледајте <a href='%{article_url}' target='_blank'>овај чланак</a>.

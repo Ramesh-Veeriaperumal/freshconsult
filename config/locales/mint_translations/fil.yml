@@ -1067,8 +1067,6 @@ fil:
         only_agents: Mga ahente
         remote_login_url_info: >-
           Ito ang URL kung saan ang Freshdesk ay magre-redirect ng mga gumagamit para sa pagpapatunay kapag tinangka nilang ma-access ang Freshdesk.
-        customer_portal_ssl_warning: >-
-          Dahil na-configure ang pasadyang helpdesk URL para sa iyong account ay mai-redirect ka 
         saml_cert_fingerprint: Security Fingerprint ng Seguridad
         success_message: >-
           Ang iyong kahilingan para sa isang pasadyang SSL sertipiko ay sinimulan at maproseso sa ilang sandali. Makakatanggap ka ng isang email sa kumpirmasyon mula sa aming provider bago aprubahan. Mangyaring suriin ang iyong inbox para sa mga update.
@@ -2146,6 +2144,7 @@ fil:
         all_tickets: Lahat ng mga Tiket
         due_today: Mga Tiket Dahil Ngayon
         resolved: Mga Natukoy na Tiket
+        visible_and_resolved: Mga Natukoy na Tiket
       friendly_status:
         customer_responded: Tumugon ang Customer
         elapsed: Dahil sa Tugon
@@ -3750,6 +3749,9 @@ fil:
       created_at: Nilikha
       skill: Kasanayan
       description: Paglalarawan
+    field_service_fields:
+      cf_fsm_contact_name: Makipag-ugnay
+      cf_fsm_phone_number: Numero ng telepono
     formfield_props:
       behavior: Pag-uugali
       customer_edit: Maaaring i-edit ang customer
@@ -5729,6 +5731,7 @@ fil:
       sign_up_text: 'Simulan ang pakikipag-chat sa mga customer sa iyong website, portal o mobile app.'
       enable_chat_in_portal_info: >-
         Gawing madali para sa iyong mga customer na makipag-chat sa iyo, kapag nakarating sila sa iyong portal ng suporta.
+      topics_title: Mga Paksa
       app_id_placeholder: 'Hal: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         Upang mai-convert ang mga pag-uusap ng Freshchat sa mga tiket, mangyaring pumunta sa <a href='%{url}' target='_blank'>pahina</a>, kopyahin at i-paste ang mga detalye na nakalista sa ibaba. Kung kailangan mo ng karagdagang tulong, mangyaring tingnan ang <a href='%{article_url}' target='_blank'>sa artikulong</a>.
