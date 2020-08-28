@@ -1596,7 +1596,7 @@ input[type=text].input-agent-count{
 .nudge-banner-container {
 	border: 1px solid #CFD7DF;
 	border-radius: 4px;
-	margin-bottom: 55px;
+	margin-bottom: 30px;
 }
 .annual-savings {
 	&__icon {
@@ -1611,6 +1611,7 @@ input[type=text].input-agent-count{
 		font-size: 14px;
 		line-height: 24px;
 		vertical-align: middle;
+		color: #12344D;
 	}
 }
 
