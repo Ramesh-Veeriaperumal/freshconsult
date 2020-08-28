@@ -149,9 +149,10 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
       @existing_addons = @account.addons.dup
       subscription_request = @account.subscription.subscription_request
       billing_subscription = @billing_data.subscription
-      product_loss = product_loss_in_new_plan?(@account, plan)
       subscription_hash = {}
       update_applicable_addons(@account.subscription, billing_subscription)
+      account_addons_features = @account.addons.collect(&:features).flatten.uniq
+      product_loss = product_loss_in_new_plan?(@account, plan, account_addons_features)
       subscription_request.destroy if has_pending_downgrade_request?(@account) && !has_scheduled_changes?(content)
       if plan.name != @account.subscription.subscription_plan.name && product_loss
         subscription_hash.merge!(plan_info(@account.subscription.subscription_plan))

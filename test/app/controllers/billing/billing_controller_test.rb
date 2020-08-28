@@ -420,6 +420,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
     assert_equal @account.reload.subscription.subscription_plan_id, current_plan_id
   ensure
     unstub_subscription_settings
+    @account.products.delete_all
     SubscriptionPlan.any_instance.unstub(:unlimited_multi_product?)
     SubscriptionPlan.any_instance.unstub(:multi_product?)
     @account.rollback(:downgrade_policy)
@@ -443,8 +444,35 @@ class Billing::BillingControllerTest < ActionController::TestCase
     assert_equal @account.reload.subscription.subscription_plan_id, current_plan_id
   ensure
     unstub_subscription_settings
+    @account.products.delete_all
     SubscriptionPlan.any_instance.unstub(:unlimited_multi_product?)
     SubscriptionPlan.any_instance.unstub(:multi_product?)
+    @account.rollback(:downgrade_policy)
+  end
+
+  def test_subscription_changed_event_with_more_products_with_auditlog_unlimited_addon
+    addon_params = { addons: [{ id: 'audit_log_ui_and_multi_product_migration', quantity: 1, object: 'addon' }] }
+    stub_subscription_settings(addons: addon_params, plan_id: 'estate_jan_20_annual')
+    ChargeBee::Subscription.any_instance.unstub(:plan_id)
+    Subscription.any_instance.unstub(:update_attributes)
+    Subscription.any_instance.unstub(:save)
+    @account.launch(:downgrade_policy)
+    @account.add_feature(:unlimited_multi_product)
+    6.times { @account.products.new(name: Faker::Lorem.characters(5)) }
+    @account.save!
+    assert_equal @account.reload.products.count, 6
+    billing_data_subscription_plan = subscription_plan('estate_jan_20_annual')
+    post :trigger, event_type: 'subscription_changed', content: normal_event_content, format: 'json'
+    assert_response 200
+    @account.reload
+    assert_equal @account.subscription.subscription_plan, billing_data_subscription_plan
+    assert_equal @account.has_feature?(:unlimited_multi_product), true
+    assert_equal @account.products.count, 6
+  ensure
+    @account.subscription.addons.delete_all
+    @account.products.delete_all
+    unstub_subscription_settings
+    @account.revoke_feature(:unlimited_multi_product)
     @account.rollback(:downgrade_policy)
   end
 
