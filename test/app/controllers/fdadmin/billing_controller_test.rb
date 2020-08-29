@@ -78,7 +78,10 @@ class Fdadmin::BillingControllerTest < ActionController::TestCase
 
   def test_subscription_changed_event_chargebee_omni_upgrade_without_launchparty
     create_new_account('test1', 'test1@freshdesk.com')
+    Account.stubs(:current).returns(@account.reload)
     stub_subscription_settings(plan_id: 'estate_omni_jan_20_monthly')
+    Subscription.any_instance.unstub(:update_attributes)
+    Subscription.any_instance.unstub(:save)
     @account.rollback(:chargebee_omni_upgrade)
     ChargeBee::Subscription.any_instance.unstub(:plan_id)
     ChargeBee::Subscription.any_instance.stubs(:status).returns('active')
@@ -88,6 +91,7 @@ class Fdadmin::BillingControllerTest < ActionController::TestCase
     assert_equal @account.reload.plan_name.to_s, 'estate_omni_jan_20'
   ensure
     @account.destroy
+    Account.unstub(:current)
     unstub_subscription_settings
     ChargeBee::Subscription.any_instance.unstub(:status)
     Subscription.any_instance.unstub(:first_time_paid_non_annual_plan?)
@@ -273,7 +277,10 @@ class Fdadmin::BillingControllerTest < ActionController::TestCase
 
   def test_subscription_changed_event_chargebee_omni_upgrade_both_freshchat_and_freshcaller_integrated_in_same_org_with_freshdesk_agents_are_superset_of_freshcaller_and_freshchat_agents
     create_new_account('test2', 'test2@freshdesk.com')
+    Account.stubs(:current).returns(@account.reload)
     stub_subscription_settings(plan_id: 'estate_omni_jan_20_monthly')
+    Subscription.any_instance.unstub(:update_attributes)
+    Subscription.any_instance.unstub(:save)
     @account.launch(:chargebee_omni_upgrade)
     fch_agent = add_test_agent(@account)
     fch_agent_emails = [fch_agent.email]
@@ -304,6 +311,7 @@ class Fdadmin::BillingControllerTest < ActionController::TestCase
     @account.rollback(:chargebee_omni_upgrade)
     chargebee_omni_pre_requisites_teardown
     @account.destroy
+    Account.unstub(:current)
     unstub_subscription_settings
     Freshid::V2::Models::Account.unstub(:organisation_accounts)
     Faraday::Connection.any_instance.unstub(:get)
