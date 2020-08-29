@@ -282,12 +282,14 @@ module ConversationsTestHelper
     return {} unless note.tweet? && note.tweet && note.tweet.twitter_handle
 
     handle = note.tweet.twitter_handle
+    twitter_user = note.user
+    twitter_requester_handle_id = twitter_user.twitter_requester_handle_id if note.incoming
     tweet_hash = {
       id: note.tweet.tweet_id.to_i > 0 ? note.tweet.tweet_id.to_s : nil,
       type: note.tweet.tweet_type,
       support_handle_id: handle.twitter_user_id.to_s,
       support_screen_name: handle.screen_name,
-      requester_screen_name: Account.current.twitter_api_compliance_enabled? && !CustomRequestStore.store[:channel_api_request] ? nil : note.user.twitter_id
+      requester_screen_name: Account.current.twitter_api_compliance_enabled? && !CustomRequestStore.store[:channel_api_request] ? twitter_requester_handle_id : twitter_user.twitter_id
     }
     tweet_hash[:stream_id] = note.tweet.stream_id if @channel_v2_api
     tweet_hash
@@ -337,12 +339,21 @@ module ConversationsTestHelper
     tweet_record = note.tweet
     return default_body_hash(expected_output, note) unless restrict_twitter_content?(note)
 
+    handle = tweet_record.twitter_handle
+    twitter_user = note.user
+    twitter_requester_handle_id = twitter_user.twitter_requester_handle_id || tweet_record.twitter_handle_id
     if tweet_record.tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention]
-      tweet_body = "View the tweet at https://twitter.com/#{tweet_record.twitter_handle_id}/status/#{tweet_record.tweet_id}"
+      tweet_body = "View the tweet at https://twitter.com/#{twitter_requester_handle_id}/status/#{tweet_record.tweet_id}"
       return twitter_public_api_body_hash(tweet_body)
     else
-      dm_body = 'View the message at https://twitter.com/messages'
-      return twitter_public_api_body_hash(dm_body)
+      dm_body_prefix = 'View the message at https://twitter.com/messages'
+      if handle && twitter_user.twitter_requester_handle_id
+        handle_ids = [handle.twitter_user_id.to_i, twitter_requester_handle_id.to_i]
+        dm_body = "#{dm_body_prefix}/#{handle_ids.min}-#{handle_ids.max}"
+      else
+        dm_body = dm_body_prefix
+      end
+      twitter_public_api_body_hash(dm_body)
     end
   end
 
