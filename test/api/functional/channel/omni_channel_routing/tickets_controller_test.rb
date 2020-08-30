@@ -26,4 +26,14 @@ class Channel::OmniChannelRouting::TicketsControllerTest < ActionController::Tes
     sample_ticket.save
     assert_response 400
   end
+
+  def test_tickets_assign_not_found
+    append_header
+    sample_ticket = Helpdesk::Ticket.first
+    group_id = sample_ticket.group_id
+    ticket_id = sample_ticket.display_id
+    ActionController::Parameters.any_instance.stubs(:permit).returns(true)
+    put :assign, construct_params(version: 'channel/ocr', id: 0, agent_id: 1, current_state: { group_id: group_id })
+    assert_response 404
+  end
 end

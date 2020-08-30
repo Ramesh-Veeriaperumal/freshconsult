@@ -77,6 +77,15 @@
   track_agents_performance: 63
   integrate_with_apps: 64
   manage_field_workforce: 70
+:freshmarketer_events:
+  fdesk_tickets_view: 71
+  fdesk_sla: 72
+  fdesk_automation: 73
+  fdesk_self_service: 74
+  fdesk_ticket_assignment: 75
+  fdesk_analytics: 76
+  fdesk_apps: 77
+  fdesk_add_agents: 78
 
 :onboarding_v2_goals:
   - organiseand_keep_track

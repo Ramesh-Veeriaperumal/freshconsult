@@ -138,6 +138,7 @@ class AccountConfiguration < ActiveRecord::Base
           account.model_changes.merge!(account_configuration_changes(previous_changes))
         end         
         account.manual_publish_to_central(nil, :update, nil, false)
+        account.model_changes.delete(:account_configuration)
       end
     end
 

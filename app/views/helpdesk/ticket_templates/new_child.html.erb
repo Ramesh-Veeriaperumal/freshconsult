@@ -6,11 +6,9 @@
 <% content_for :pagefixed do %>
 	<%= render :partial => "shared/placeholder_help" , :locals => {:placeholders => ticket_placeholders} %>
 <% end %>
-<% if  current_account.launched?(:multifile_attachments)  %>
-	<%= render "helpdesk/tickets/ticket_widget/multifile_template_generator" %>
- <% else %>
-  <%= render "helpdesk/shared/single_attachment_template" %>
-<% end %>
+
+<%= render "helpdesk/tickets/ticket_widget/multifile_template_generator" %>
+
 <div class='page-header-sticky parent-header-sticky template-sticky' rel='sticky'>
 	<div class='sticky-header-wrapper'>
 		<h3 class='lead pull-left'> 

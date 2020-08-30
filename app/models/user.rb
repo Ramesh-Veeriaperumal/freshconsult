@@ -171,9 +171,10 @@ class User < ActiveRecord::Base
                   :description, :time_zone, :customer_id, :avatar_attributes, :company_id,
                   :company_name, :tag_names, :import_id, :deleted, :fb_profile_id, :language,
                   :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id, :string_uc04,
-                  :contractor, :skill_ids, :user_skills_attributes, :unique_external_id, :twitter_profile_status, :twitter_followers_count
+                  :contractor, :skill_ids, :user_skills_attributes, :unique_external_id, :twitter_profile_status, :twitter_followers_count, :twitter_requester_handle_id
 
   TWITTER_REQUESTER_FIELDS_MAPPING = {
+    string_uc07: :twitter_requester_handle_id,
     boolean_uc01: :twitter_profile_status,
     long_uc01: :twitter_followers_count
   }.freeze
@@ -512,7 +513,8 @@ class User < ActiveRecord::Base
   end
 
   def falcon_invite_eligible?
-    (account.falcon_ui_enabled? && !account.disable_old_ui_enabled? && self.preferences_without_defaults.try(:[], :agent_preferences).try(:[],:falcon_ui).nil?)
+    Rails.logger.warn "FALCON HELPER METHOD :: falcon_invite_eligible? :: #{caller[0..2]}"
+    false
   end
 
   def enabled_undo_send?
@@ -762,6 +764,10 @@ class User < ActiveRecord::Base
     helpdesk_agent
   end
   alias :is_agent :agent?
+
+  def account_admin?
+    privilege?(:manage_account)
+  end
 
   def customer?
     !agent?
@@ -1428,6 +1434,10 @@ class User < ActiveRecord::Base
 
     def helpdesk_agent_updated?
       @all_changes.has_key?(:helpdesk_agent)
+    end
+
+    def admin_api_key_updated?
+      Account.current.omni_bundle_account? and @all_changes.key?(:single_access_token) and account_admin?
     end
 
     def converted_to_agent?

@@ -15,7 +15,9 @@ class ImapMailbox < ActiveRecord::Base
 
   self.primary_key = :id
 
-  scope :errors, -> { where("error_type > ?", 0)  }
+  scope :errors, -> { where('error_type > ? and error_type <> ?', 0, AUTH_ERROR)  }
+  scope :oauth_errors, -> { where('error_type = ?', AUTH_ERROR)  }
+
 
   def selected_server_profile
     selected_profile = MailboxConstants::MAILBOX_SERVER_PROFILES.select {|server| server_name && server_name.casecmp("imap.#{server[4]}") == 0}

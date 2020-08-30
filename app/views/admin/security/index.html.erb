@@ -238,7 +238,15 @@
         <% end %>
       <% end %>
     </span>
-
+    <li class="inline-field">
+      <%= check_box('account[deny_iframe]', 'enabled', 
+      options = {:checked => (current_account.account_additional_settings.security.present?) ? !current_account.account_additional_settings.additional_settings[:security][:deny_iframe_embedding] : true}, 
+      checked_value = "1", unchecked_value = "0" )%>
+      <span class="enable_heading">
+        <%=t(".deny_iframe_enabled")%>
+      </span>
+      <%= content_tag( :div, t(".deny_iframe_enabled_info"), :class => "info-data extra_tabbed" ) %>
+    </li>
     <% if current_account.features_included?(:whitelisted_ips) %>
     <li class="inline-field">
       <%= check_box('account[whitelisted_ip_attributes]', 'enabled', options = { :checked => @whitelisted_ips.enabled}, checked_value = "1", unchecked_value = "0") %>
@@ -396,7 +404,7 @@
    $sso_disable_confirmation = true;
     $('.custom_ssl_form, input').keypress(function(event) { return event.keyCode != 13; });
 
-    $("#account_sso_enabled, #account_ssl_enabled, #account_whitelisted_ip_attributes_enabled").itoggle({
+    $("#account_sso_enabled, #account_ssl_enabled, #account_whitelisted_ip_attributes_enabled, #account_deny_iframe_enabled").itoggle({
           checkedLabel: "<%= t('plain_on') %>",
           uncheckedLabel: "<%= t('plain_off') %>"
       });

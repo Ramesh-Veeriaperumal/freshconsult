@@ -2,6 +2,7 @@ require_relative '../test_helper'
 
 class TimeEntriesControllerTest < ActionController::TestCase
   include TimeEntriesTestHelper
+  include ArchiveTicketTestHelper
 
   def setup
     super
@@ -607,6 +608,31 @@ class TimeEntriesControllerTest < ActionController::TestCase
       match_json time_entry_pattern({ time_spent: '03:00', start_time: utc_time(start_time.to_time),
                                       timer_running: false, executed_at: utc_time(executed_at.to_time),
                                       note: 'test note', billable: true }, ts)
+    end
+  end
+
+  def test_update_check_activity_created_with_an_archive_ticket
+    start_time = (Time.zone.now - 10.minutes).iso8601
+    executed_at = (Time.zone.now - 20.minutes).iso8601
+    ticket = create_ticket
+    archive_ticket_timesheet = create_time_entry(timer_running: true, ticket_id: ticket.id, user_id: @agent.id)
+    ticket.updated_at = 150.days.ago
+    ticket.status = 5
+    ticket.save!
+    archive_ticket_timesheet.reload
+    archive_ticket_timesheet.timer_running = true unless archive_ticket_timesheet.timer_running
+    archive_ticket_timesheet.save!
+    convert_ticket_to_archive(ticket)
+    archive_ticket_timesheet.reload
+    assert_equal ARCHIVE_TICKET, archive_ticket_timesheet.workable_type
+    assert @account.archive_time_sheets.find_by_id(archive_ticket_timesheet.id).timer_running
+    ticket_timesheet = create_time_entry(timer_running: false, user_id: @agent.id)
+    freeze_time do
+      put :update, construct_params({ id: ticket_timesheet.id }, time_spent: '03:00', start_time: start_time, timer_running: true, executed_at: executed_at, note: 'test note', billable: true, agent_id: @agent.id)
+      archive_ticket_timesheet.reload
+      assert_response 200
+      refute @account.archive_time_sheets.find_by_id(archive_ticket_timesheet.id).timer_running
+      refute archive_ticket_timesheet.timer_running
     end
   end
 

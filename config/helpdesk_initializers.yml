@@ -132,3 +132,5 @@ helpdesk:
     - extend_for_shard_mapping
     - coverband
     - silkroad_config
+    - tracing
+

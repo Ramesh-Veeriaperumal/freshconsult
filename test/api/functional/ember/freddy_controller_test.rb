@@ -63,7 +63,6 @@ module Ember
       Freshid::V2::Models::Organisation.stubs(:join_token).returns(Faker::Lorem.word)
       post :bulk_create_bot, controller_params
       assert_response 200
-      assert_equal @account.subscription.plan_name, SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_omni_jan_20]
     ensure
       Freshid::V2::Models::Organisation.unstub(:find_by_domain)
       Freshid::V2::Models::User.unstub(:account_users)

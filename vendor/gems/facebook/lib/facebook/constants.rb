@@ -42,7 +42,8 @@ module Facebook
 
     FETCH_FIELDS = {
       post: ['id', 'type', 'from', 'message', 'description', 'created_time', 'link', 'picture', 'name', 'object_id', 'story', 'likes'],
-      comments: ['id', 'from', 'can_comment', 'created_time', 'message', 'parent', 'attachment', 'object'],
+      comments: ['id', 'from', 'can_comment', 'created_time', 'message', 'parent', 'attachment', 'object', 'message_tags'],
+
       message: ['id', 'from', 'to', 'message', 'created_time', 'attachments.fields(id,image_data,mime_type,name,size,video_data,file_url.fields(mime_type,name,id,size))', 'shares.fields(description,id,link,name)'],
       profile_name: ['first_name', 'last_name']
     }.freeze
@@ -176,5 +177,7 @@ module Facebook
     DEFAULT_PAGE_LIMIT = 9 # Restrict the next page fetch logic to maximum of 9 pages apart from the first page fetched. So for a facebook page, only 10 pages with the limit of 25 threads and messages on each call will be fetched.
 
     FB_WEBHOOK_EVENTS = 'feed,messages,message_echoes'.freeze
+
+    VALID_ATTACHMENTS_WHEN_FILTER_MENTIONS_ENABLED = ['photo', 'video_inline'].freeze
   end
 end

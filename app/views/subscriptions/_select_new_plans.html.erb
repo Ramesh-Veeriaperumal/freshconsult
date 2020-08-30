@@ -7,6 +7,13 @@
   field_agent_limit = @subscription.field_agents_display_count
   fluffyMinLevelEnabled = current_account.fluffy_min_level_enabled?
   omni_account = current_account.omni_bundle_account?
+  freddy_enabled = current_account.freddy_self_service_enabled? || current_account.freddy_ultimate_enabled?
+  freddy_option = ''
+  if freddy_enabled && !current_account.freddy_ultimate_enabled?
+    freddy_option = 'freddy_self_service'
+  elsif freddy_enabled && current_account.freddy_ultimate_enabled?
+    freddy_option = 'freddy_ultimate'
+  end
 %>
 <div id="ChangePlan">
   <div class="plans <%='omni_change_plan' if omni_account%>">
@@ -88,12 +95,12 @@
                             <%= render :partial => "/subscriptions/features/info-box/fsm_info", :locals => { :plan => plan,
                               :feature_name => feature_name }%>
                           <% else %>
-              
+
                                  <% if feature_name.include? "api_rate_limit_"%>
                                   <% if fluffyMinLevelEnabled %>
                                      <span><%= t("features.#{feature_name}").html_safe %></span>
-                                  <% end %>  
-                                <% else %> 
+                                  <% end %>
+                                <% else %>
                                   <span><%= t("features.#{feature_name}").html_safe %></span>
                                <% end %>
 
@@ -332,6 +339,10 @@
       downgrade_policy_launched: <%= current_account.launched?(:downgrade_policy) %>,
       subscribed_plan_name: '<%= current_account.plan_name %>',
       fsm_enabled: <%= current_account.field_service_management_enabled? %>,
+      freddy_addon_count: <%= @subscription.subscription_plan.freddy_addon_count || 0 %>,
+      freddy_enabled: <%= freddy_enabled %>,
+      freddy_option: '<%= freddy_option %>',
+      freddy_session_pack: <%= @subscription.freddy_session_packs || 0 %>,
       subscription_state: '<%= @subscription.state %>',
       has_account_cancellation_request: <%= current_account.account_cancellation_requested? %>,
       free_agents_count: <%= @subscription.free_agents %>,

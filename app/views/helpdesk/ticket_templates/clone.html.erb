@@ -13,11 +13,9 @@ end %>
     <%= render :partial => partial %>
   <% end %>
 <% end %>
-<% if  current_account.launched?(:multifile_attachments)  %>
-  <%= render "helpdesk/tickets/ticket_widget/multifile_template_generator" %>
- <% else %>
-  <%= render "helpdesk/shared/single_attachment_template" %>
-<% end %>
+
+<%= render "helpdesk/tickets/ticket_widget/multifile_template_generator" %>
+
 <%= form_for @tkt_template, :url => { :controller => "ticket_templates", :action => "create" }, :html => { :multipart => true, :"data-parent-template" => @tkt_template.parent_template? , :rel => "validate", :class => "template_form #{'clone_parent_form' if @tkt_template.parent_template?}", :id => "ticket_template"}  do |f| %>
 	<div class='page-header-sticky' rel='sticky'>
 		<div class='sticky-header-wrapper'>
@@ -49,28 +47,7 @@ end %>
 
 <!-- Canned response dialog -->
 <%= render :partial => "/helpdesk/ticket_templates/canned"  %>
-<%
-attachment_dom = ""
-  if current_account.launched?(:multifile_attachments)
-    attachment_dom = ""
-  else
-    if @all_attachments.present?
-      @all_attachments.each do |att|
-        if att.attachable_type != "Account"
-          attachment_dom << safe_send(:description_attachment, {:filename=>"#{escape_javascript(att.content_file_name)}",:value => "#{att.id}", :name => "template_data[attachments][][resource]"})
-        else
-          attachment_dom << safe_send(:description_attachment, {:filename=>"#{escape_javascript(att.content_file_name)}", :value => "#{att.id}", :name => "shared_attachments[]"})
-        end
-      end
-    end
-
-    if @cloud_files.present?
-      @cloud_files.each do |att|
-        attachment_dom << safe_send(:description_attachment, {:filename=>"#{escape_javascript(att.filename)}", :value => "#{att.serialize}", :name => "[cloud_file_attachments][]"})
-      end
-    end
-  end
-%>
+<% attachment_dom = "" %>
 
 <% content_for :onload_script do  %>
 function unescapeHtml(text) {
@@ -80,14 +57,6 @@ function unescapeHtml(text) {
     temp.removeChild(temp.firstChild);
     return result;
 }
-<% if @all_attachments.present? or @cloud_files.present? %>
-  <% if !current_account.launched?(:multifile_attachments) %>
-    var x = '<%= escape_javascript(attachment_dom) %>';
-    jQuery('#ticket-attachments').html(unescapeHtml(x));
-    jQuery("#prev-attachments").html("");
-  <% end %>
-<% end %>
-
 <% end %>
 
 <%= javascript_tag do %>

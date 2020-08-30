@@ -173,7 +173,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :audit_log, only: [:filter, :export, :event_name, :export_s3_url]
     resource :"admin/holiday", only: [:show]
     resource :'ember/omni_channel', only: [:index]
-    resource :"admin/subscription", only: [:show, :plans, :update, :estimate, :update_payment, :estimate_feature_loss]
+    resource :"admin/subscription", only: [:show, :plans, :fetch_plan, :update, :estimate, :update_payment, :estimate_feature_loss]
     resource :"ember/ocr_proxy"
     resource :"ember/freddy"
     resource :"ember/flow"
@@ -200,8 +200,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :field_service_management, only: [:update_settings, :show_settings]
     resource :"settings/helpdesk/field_service", only: [:update_settings, :show_settings]
     resource :"ember/sla_policy", only: [:index, :show, :create, :update, :destroy]
-    resource :"admin/api_business_calendar", only: [:index, :show, :create, :destroy]
-    resource :"admin/api_business_calendar", only: [:index, :show, :create]
+    resource :"admin/api_business_calendar", only: [:index, :show, :create, :update, :destroy]
     resource :agent_status, only: [:show, :create, :update, :destroy]
   end
 

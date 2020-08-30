@@ -41,6 +41,7 @@ module TicketHelper
       end
     end
     test_ticket.cloud_files = params[:cloud_files] if params[:cloud_files]
+    test_ticket.sender_email = params[:sender_email] if params[:sender_email].present?
 
 
     if @account.link_tickets_enabled? && params[:display_ids].present?

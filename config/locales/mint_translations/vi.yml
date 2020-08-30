@@ -1067,8 +1067,6 @@ vi:
         only_agents: các chuyên viên
         remote_login_url_info: >-
           Đây là địa chỉ mà Freshdesk sẽ chuyển hướng người dùng để xác thực khi họ cố gắng truy cập Freshdesk.
-        customer_portal_ssl_warning: >-
-          Từ URL tùy chỉnh trợ giúp được cấu hình cho tài khoản của bạn, bạn sẽ được chuyển đến
         saml_cert_fingerprint: Bảo mật bằng vân tay
         success_message: >-
           Yêu cầu về chứng chỉ SSL tùy chỉnh của bạn đã được bắt đầu và sẽ sớm được xử lý. Bạn sẽ nhận được email xác nhận từ nhà cung cấp của chúng tôi trước khi chấp thuận. Vui lòng kiểm tra hộp thư đến để biết các cập nhật.
@@ -2147,6 +2145,7 @@ vi:
         all_tickets: Tất cả tickets
         due_today: Tickets phải hoàn tât hôm nay
         resolved: các ticket được giải quyết
+        visible_and_resolved: các ticket được giải quyết
       friendly_status:
         customer_responded: Đã trả lời khách hàng
         elapsed: phản hồi
@@ -3741,6 +3740,9 @@ vi:
       created_at: Đã tạo
       skill: Kỹ năng
       description: Mô tả
+    field_service_fields:
+      cf_fsm_contact_name: Liên hệ
+      cf_fsm_phone_number: Số điện thoại
     formfield_props:
       behavior: Hành vi
       customer_edit: Khách hàng có thể chỉnh
@@ -5743,6 +5745,7 @@ vi:
       sign_up_text: 'Bắt đầu trò chuyện với khách hàng trên trang web, cổng thông tin hoặc ứng dụng di động của bạn.'
       enable_chat_in_portal_info: >-
         Giúp khách hàng dễ dàng trò chuyện với bạn khi họ vào cổng thông tin hỗ trợ của bạn.
+      topics_title: Chủ đề
       app_id_placeholder: 'Ví dụ: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         Để chuyển đổi các cuộc hội thoại của Freshchat thành vé, vui lòng truy cập trang <a href='%{url}' target='_blank'></a> này, sao chép và dán các chi tiết được liệt kê bên dưới. Nếu bạn cần thêm trợ giúp, vui lòng xem<a href='%{article_url}' target='_blank'>bài viết này</a>.

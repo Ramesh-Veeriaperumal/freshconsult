@@ -17,6 +17,15 @@ freshmarketer:
       Linkedin: "linkedin"
       _NewEmail: "new_email"
       GoalName: "goal-name"
+      Fdesk Tickets View: 'Fdesk Tickets View'
+      Fdesk Sla: 'Fdesk Sla'
+      Fdesk Automation: 'Fdesk Automation'
+      Fdesk Self Service: 'Fdesk Self Service'
+      Fdesk Ticket Assignment: 'Fdesk Ticket Assignment'
+      Fdesk Analytics: 'Fdesk Analytics'
+      Fdesk Apps: 'Fdesk Apps'
+      Fdesk Add Agents: 'Fdesk Add Agents'
+      Trial Day: 'Trial Day'
     custom_fields_mapping:
       Title: "cf_title"
       Industry: "cf_industry"

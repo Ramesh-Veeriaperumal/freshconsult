@@ -49,11 +49,9 @@ class HelpdeskSystemController < ApplicationController
 
   def check_destroy_with_note_and_att_scope
     @account = Account.first
-    @account.launch(:attachments_scope)
     @current_user = User.last
     @items = [create_attachment(content: FixtureFile.new.fixture_file_upload('test/api/fixtures/files/attachment.txt', 'plain/text', :binary), attachable_type: 'Helpdesk::Note', attachable_id: '1')]
     check_destroy_permission
-    @account.rollback(:attachments_scope)
     head 200
   end
 
@@ -310,7 +308,7 @@ class HelpdeskSystemControllerTest < ActionController::TestCase
     @controller.stubs(:action_name).returns('check_destroy_with_post')
     HelpdeskSystemController.any_instance.stubs(:controller_name).returns('attachments')
     Helpdesk::Attachment.any_instance.stubs(:attachable).returns(User.first)
-    User.any_instance.stubs(:user_id).returns(1)
+    User.any_instance.stubs(:user_id).returns(User.current.id)
     actual = @controller.send(:check_destroy_with_post)
     assert_response 200
   end
