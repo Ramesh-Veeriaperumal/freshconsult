@@ -11,7 +11,7 @@ tr:
       note: Bu bağlantı 15 gün içinde sona erecek.
     no_fields_selected: Devam etmek için lütfen aşağıdaki alanlardan en az bir tanesini işaretleyin.
     no_tickets_mail:
-      body: Görünüşe göre belirtilen tarih aralığında bir bildirim yok.
+      body: Görünüşe göre belirtilen tarih aralığında bir destek talebi yok.
     export: Dışa aktar
     csv: CSV
     xls: Excel
@@ -82,7 +82,7 @@ tr:
     convert_to_ticket_info: >-
       Bu forumda oluşturulan tüm yeni konular otomatik olarak dönüştürülecek ve bir destek talebi olarak oluşturulacaktır.
   your_feedback: Geri Bildiriminiz
-  agent_working_on_this_ticket: Temsilci bu bildirim üstünde çalışıyor.
+  agent_working_on_this_ticket: Temsilci bu destek talebi üstünde çalışıyor.
   zendesk_import_status:
     extracting: >-
       <b>Adım (1/2) Zendesk yedekleme dosyanız indiriliyor.</b><br/> Verilerinizin büyüklüğüne bağlı olarak bu işlem bir kaç dakika sürebilir. Lütfen bekleyin.
@@ -185,13 +185,13 @@ tr:
     agent_restored: Temsilci Yenilendi
     member: 'Şunun üyesi:'
     search_placeholder: Tüm temsilcileri ara
-    ticket_scope: Bildirim kapsamı
+    ticket_scope: Destek Talebi Kapsamı
     assign: Ata
     info3: Silmek istediğinizden emin misiniz ?
     ago: '%{time} önce.'
     day_pass_used: 'Şu tarihe kadar %{count} günlük giriş izni kullanıldı'
     last_logged: En son giriş
-    group_info: Gruplardaki bildirimleri ve gruba atanmış olan bildirimleri görüntüler
+    group_info: Gruplardaki destek taleplerini ve gruba atanmış olan destek taleplerini görüntüler
     full_time_agent: Tam zamanlı Temsilci
     remove_role: Rolü kaldır
     add_signature: İmza Ekle
@@ -222,7 +222,7 @@ tr:
     invalid_export_params: Temsilci verileri dışa aktarılırken bir hata oluştu. Lütfen tekrar deneyin.
     never_logged_in: Hiç giriş yapılmadı
     invalid_placeholder: Geçersiz yer tutucular yerleştirildi
-    individual_info: Atanan bildirimleri görüntüler
+    individual_info: Atanan destek taleplerini görüntüler
     reset_score_alert_them: >-
       %{name} rozetlerini kaybedecek ve puanları %{points} olarak sıfırlanacak. Devam etmek istediğinizden emin misiniz?
     full_time: Tam zamanlı
@@ -272,7 +272,7 @@ tr:
     manage_skills: Yetenekleri Yönet
     delete_agent: Temsilciyi Sil
     make_admin: Temsilciyi bir yönetici yap
-    global_info: Yardımmasasındaki bütün bildirimler görüntülenebilir
+    global_info: Yardım masasındaki bütün destek taleplerini görüntüleyebilir
     skill: Beceriler
     info2: E-Mail Alındı
     assign_role: İşlevleri ilişkilendir.
@@ -303,7 +303,7 @@ tr:
   dispatch:
     reorder: Yeniden şipariş ver
     match_any: Aşağıdakilerden <b>HERHANGİ BİRİNİ</b> eşleştirin
-    info3: Bir bildirim beklentileri karşıladığı zaman
+    info3: Bir destek talebi bu şartları karşıladığı zaman
     rule_name: Kural Adı
     new_rule: Yeni Kural
     new: Gönderen - Yeni Kural
@@ -569,7 +569,7 @@ tr:
     info8: >-
       Yeni: Denetçilerinize, parçası oldukları gruplar için otomatik destek talebi atama ve temsilci müsaitliği ayarlarını yönetme izni verin -
     sbrr_plan_text: </span><b> Forest planında </b> <span class="muted"> mevcuttur
-    toggle_availability_for_rr: Temsilcilerin otomatik bildirim ataması için uygunluklarını değiştirmelerine izin ver
+    toggle_availability_for_rr: Temsilcilerin otomatik destek talebi ataması için uygunluklarını değiştirmelerine izin ver
     info1: Temsilci
     new: Yeni Grup
     maximum: Maksimum
@@ -583,7 +583,7 @@ tr:
     info5: >-
       Bu grubu silmek istediğinizden emin misiniz ?.Grubu silmek içindeki temsilcileri silmeye yol açmaz
     info4: 'eğer bir destek talebi şu kadar günden fazla atanmamışsa:'
-    automatic_assignment_header: Otomatik Bildirim Atama
+    automatic_assignment_header: Otomatik Destek Talebi Atama
     edit: Grubu Düzenle
     confirm: Onayla
     alert_content: >-
@@ -605,7 +605,7 @@ tr:
       You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that the same agent can be a member of multiple groups as well
     round_robin_capping: Destek talebi atamasını dengeli olarak yükleyin
     no_group_info: Hiç bir bir grup oluşturmadınız.
-    ticket_assignment: Otomatik Bildirim Atama
+    ticket_assignment: Otomatik Destek Talebi Atama
     round_robin_skill_based_info: Destek taleplerini, onları en iyi şekilde ele alacak olan temsilcilere ata
     select_an_agent: Temsilci Seçiniz.
     round_robin_default_info: Temsilcilere destek taleplerini dairesel bir düzende atayın
@@ -623,13 +623,13 @@ tr:
       info4_v3: >-
         Eğer Estate veya daha üstü bir üyelik planındaysanız, açılır menü alanındaki seçiminize göre farklı dinamik alanların göründüğü bölümler olacaktır. Her bir bölüme destek talebi alanları ekleyebilir ve bir bölümü açılır menü alanındaki seçeneklerle ilişkilendirebilirsiniz. Örneğin, bir e-ticaret mağazası işletiyorsanız, müşteri "Yenisiyle Değiştirme" seçeneğini seçtiğinde, "Neden" adlı bir alana sahip bir bölüm açılabilir. Bu şekilde, müşterinin neden yenisiyle değiştirme talebinde bulunduğunu daha iyi anlayabilirsiniz. En fazla iki dinamik bölüm oluşturabilir ve bunları iki özel açılır menüde kullanabilirsiniz. Eğer bir bölümü zaten 'tür' alanı ile ilişkilendirdiyseniz, destek talep formuna sadece bir bölüm daha ekleyebilirsiniz.
       title2: Bağlı Alanlar
-      tour: Bildirim alanını anlamam için bana yardımcı ol.
+      tour: Destek talebi alanlarını anlamam için bana yardımcı ol.
       info_1: >-
         Destek talep formu, ihtiyaç duyulan bilginin destek talebi gönderirken müşteriden alınmasına yardımcı olur. Destek Talep Formunu işletmeniz için doğru destek talep alanlarını içerecek şekilde özelleştirebilir ve müşterilerinizin ve temsilcilerinizin ihtiyaç duyduğunuz bilgiyi istediğiniz biçimde girmelerini sağlayabilirsiniz. Örneğin, bir e-ticaret şirketinde, bir müşterinin sipariş numarasını destek talep formunda almak, destek talebini çözümleyecek olan temsilci için oldukça faydalı olacaktır.
       title3: Dinamik Alanlar
       info2: >-
         Bağımlı Alanlar, daha ayrıntılı problem kategorileri oluşturmak ve destek hizmetinizin tıkanmasına neden olan en büyük sorunları belirlemek için kolay bir yöntem sunar. Bağımlı alanlarla destek taleplerini kategoriler, alt kategoriler ve etkilenen nesne şeklinde hiyerarşik olarak düzenleyebilirsiniz.
-      title1: Bildirim alanları
+      title1: Destek talebi alanları
       info4_v2: >-
         Eğer Estate veya daha yüksek bir üyelik planındaysanız, tür alanındaki seçiminize göre görünecek olan dinamik alanlara sahip olabilirsiniz. Tür alanındaki her bir seçenek için farklı bir bölüm oluşturabilirsiniz. Daha sonra her bir bölüme daha fazla destek talebi alanı ekleyebilirsiniz. Örneğin, bir e-ticaret şirketi senaryosunda, tür "Yenisiyle Değiştirme" olarak seçildiğinde, müşterinin ürünü neden yenisiyle değiştirmek istediği hakkında bilgi almaya yardımcı olacak "Neden" adlı bir alana sahip bir bölüm açılabilir.
   activations:
@@ -711,10 +711,10 @@ tr:
     summary:
       fcr: İlk Cevapta Çözüm
       title: Destek Talepleri özeti
-      received_tickets: Alınan Bildirimler
+      received_tickets: Alınan Destek Talepleri
       resolved_tickets: Çözülen Bildiriler
       sla_compliance: SLA Uyumluluğu
-    timeline_chart_title: Alınan vs Çözülen Bildirimler
+    timeline_chart_title: Alınan vs Çözülen Destek Talepleri
     discard_changes: Değişiklikleri iptal et
     helpdesk_title: Yardımmasası Aktivite Raporu
     date_ranges:
@@ -752,7 +752,7 @@ tr:
         select_priority: Önceliği Seç
         select_type: Tipi Seç
         filter_report: Filtreyi Editle
-        ticket_type: Bildirim Tipi
+        ticket_type: Destek Talebi Tipi
         select_billable: Faturulandırılabilir/Faturulandırılamazları seç
     freshfone:
       time_period: Zaman Aralığı
@@ -789,7 +789,7 @@ tr:
       back_to_reports: Raporlara geri dön
       fcr_percent: İlk Çağrı Çözümü %'si
       fcr_count: İlk İletişim <br> Çözümü
-      tickets_resolved: <br>Bildirimler Çözüldü
+      tickets_resolved: Çözülen <br> Destek Talepleri
       show_report: Raporları göster.
       helptext: >-
         Raporda hesaplanan istatistikler, çözümlenen destek talebi sayısı ile ilgilidir. <br /> SLA'lar dahilinde çözülen destek talepleri &quot;Zamanında Çözüm&quot; olarak özetlenir. <br /> &quot;İlk İletişim Çözümü&quot; sütununda ilk yanıtta çözülmüş olan destek talepleri gösterilmektedir.<br />&quot;Ortalama İlk Yanıt Süresi&quot; destek taleplerinin oluşturulduğu zaman ile temsilcinin ilk cevap verdiği zaman arasında geçen süreyi gösterir.
@@ -1065,8 +1065,6 @@ tr:
         only_agents: Temsilci
         remote_login_url_info: >-
           Bu URL, kullanıcılar freshdesk'e giriş yapmak istediklerinde Freshdesk'in kullanıcıları doğrulama için yönlendirdiği bağlantıdır.
-        customer_portal_ssl_warning: >-
-          Varsayılan yardım URLsi hesabınıza atandığı için yönlendirileceksiniz 
         saml_cert_fingerprint: Parmakizi Güvenlik Sertifikası
         success_message: >-
           Özel SSL sertifikası için göndermiş olduğunuz istek kabul edilmiştir ve kısa bir süre içerisinde işleme koyulacaktır. Onay e-postası alacaksınız lütfen güncellemek için gelen kutunuzu kontrol ediniz.
@@ -1242,7 +1240,7 @@ tr:
         feedbackwidget_form_height_message: 'Araçta indirme çubuğu var ise, araç yüksekliğini arayabilirsiniz.'
     gamification:
       gamification_settings:
-        title_ticket_points: Bildirim Puanları
+        title_ticket_points: Destek Talebi Puanları
         award_points: Ödül Puanları
         title_levels: Temsilci Seviyesi
         bonus_points_for: 'Bonus Puanlar: '
@@ -1253,7 +1251,7 @@ tr:
         happy_customer: Mutlu Kullanıcı
         info_levels: Temsilcilerin belirli bir seviyeye ulaşması için bir puanlama belirle
         late_resolution: Geç <span>(Zaman Aşıldı)</span>
-        agent_resolves_ticket: 'Temsilci <br /> bir bildirim çözümlediği zaman:'
+        agent_resolves_ticket: 'Temsilci <br /> bir destek talebini çözümlediği zaman:'
         unhappy_customer: Mutsuz Kullanıcı
         bonus_points: Bonus Puan
         title_trophies: Kupalar
@@ -1275,15 +1273,15 @@ tr:
           Görevler temsilciler için performans amaçlarını temsil etmektedir, o amaçlar tamamlandıkça onur nişanları kazanacaklar.
         why_game: Puanlar ve Seviyeler
         why_game_info1: >-
-          Puanlar temsilcilerin kendisine atanan bildirimleri ne kadar hızlı yanıtladığına bağlıdır. Müşteri memnuniyeti ve ilk cevap'a göre ek puan kazanmakta mümkündür. Temsilciler geç verilen cevap ve memnun olmayan müşteriler için puan kaybeder.
+          Puanlar temsilcilerin kendisine atanan destek taleplerini ne kadar hızlı yanıtladığına bağlıdır. Müşteri memnuniyeti ve ilk yanıta göre ek puan kazanmakta mümkündür. Temsilciler geç verilen cevap ve memnun olmayan müşteriler için puan kaybeder.
         quest_form_info4: Ayarlarınızı kaydetmek için 'Görevi kaydet' tıklayın
         quest_form_info1: >-
-          Temsilciler için görev türünü seçiniz. Şu üçünden biri olabilir <br /> a) Bildirim Çözümü, <br /> b) Çözüm Üretme ve <br /> c) foruma katkıda bulunma.
+          Temsilciler için görev türünü seçiniz. Şu üçünden biri olabilir <br /> a) Destek Talebi Çözümü, <br /> b) Çözüm Üretme ve <br /> c) foruma katkıda bulunma.
       quests: Görevler
       index:
         learn_arcade: Arcade hakkında daha fazla bilgi edin.
         info1: >-
-          Her destek bildirimi temsilci için kazanılabilecek potansiyel bir puandır. Daha da güzeli- sizin için önemli olan şeyleri bonus puan olarak belirleyebilirsiniz. Hızlı cevap verme, işk seferde çözüm önermek ve kulalnıcılardan muhteşem dereceler kazanmak gibi.
+          Her destek talebi temsilci için kazanılabilecek potansiyel bir puandır. Daha da güzeli- sizin için önemli olan şeyleri bonus puan olarak belirleyebilirsiniz. Hızlı cevap verme, ilk seferde çözüm önermek ve kullanıcılardan muhteşem puanlar kazanmak gibi.
         enable_arcade: Freshdesk Arcade'i Başlat
         video: Videoyu kontrol et
         info2: >-
@@ -1351,21 +1349,21 @@ tr:
           Temsilcinin sağladığı çözüm için genel memnuniyetinizi nasıl değerlendirirsiniz?
         send_while_option4: Temsilcilerin belirli maillere memnuniyet forum linki eklemesine izin ver
         enable_label_v2: Müşteri memnuniyeti anketi
-        send_while_option2: Bildirim ''Çözüldükten'' sonra mail gönder
+        send_while_option2: Destek talebi ''Çözüldükten'' sonra e-posta gönder.
         link_text_label: Memnuniyet anketi metin bağlantıları
         send_while_title: Memnuniyet anketi bağlantısı olan e-postaları seç.
         send_while_option1: Bütün cevaplar müşteriye iletildi.
-        send_while_option3: Bildirim ''Kapatıldıktan'' sonra mail gönder
+        send_while_option3: Destek talebi ''Kapatıldıktan'' sonra e-posta gönder.
         enable_label: Müşteri Memnuniyeti Anketi
       new_questions_layout:
         questions: Sorular
         title_text_v2: İlave sorular
         add_question: Soru ekle
       helptext_v2: >-
-        <p><b>Neden memnuniyet formu etkinleştirilsin?</b> <br> Memnuniyet Formları yanıt e-postalarınıza bağlantı ekleyerek kullanıcılarınızdan doğrudan geri bildirim almanızı sağlar. <br><br><b>Kendi memnuniyet formunuzu oluşturmak:</b><br> Aşağıdaki adımlar yanıt e-postalarınızdaki bir bağlantı sayesinde müşterilerinizden geri bildirim toplamanıza olanak sağalar:<br> 1. Müşteri Memnuniyeti Formunu aktif hale getirin<br> 2. Anket Sorusunu belirleyin. Varsayılan metin şu şekildedir: &ldquo;Temsilci tarafından sağlanan çözüm ile ilgili genel memnuniyetinizi nasıl değerlendirirsiniz?&rdquo;<br><br><b> Memnuniyet anket linklerini hangi e-postaların içereceğini seçin:</b><br> Memnuniyet anket linklerini müşterilere her e-postada mı yoksa sadece çözümü içeren son mailde mi gönderileceğini seçebilirsiniz. Müşterilerin cevabı <b>Raporlar > Müşteri Memnuniyet Raporu</b>kısmında görülebilir <br><br> Memnuniyet anketleri hakkında daha fazla bilgiyi <a target= ‘_blank’ href='https://support.freshdesk.com/solution/articles/215322'>bu çözüm makalesinden</a> öğrenebilirsiniz. </p>
+        <p><b>Memnuniyet formu neden etkinleştirilmeli?</b> <br> Memnuniyet Formları yanıt e-postalarınıza bağlantı ekleyerek kullanıcılarınızdan doğrudan geri bildirim almanızı sağlar. <br><br><b>Kendi memnuniyet formunuzu oluşturmak:</b><br> Aşağıdaki adımlar yanıt e-postalarınızdaki bir bağlantı sayesinde müşterilerinizden geri bildirim toplamanıza olanak sağalar:<br> 1. Müşteri Memnuniyeti Formunu aktif hale getirin<br> 2. Anket Sorusunu belirleyin. Varsayılan metin şu şekildedir: &ldquo;Temsilci tarafından sağlanan çözüm ile ilgili genel memnuniyetinizi nasıl değerlendirirsiniz?&rdquo;<br><br><b> Memnuniyet anket linklerini hangi e-postaların içereceğini seçin:</b><br> Memnuniyet anket linklerini müşterilere her e-postada mı yoksa sadece çözümü içeren son e-posta mesajında mı gönderileceğini seçebilirsiniz. Müşterilerin cevabı <b>Raporlar > Müşteri Memnuniyet Raporu</b>kısmında görülebilir <br><br> Memnuniyet anketleri hakkında daha fazla bilgiyi <a target= ‘_blank’ href='https://support.freshdesk.com/solution/articles/215322'>bu çözüm makalesinden</a> öğrenebilirsiniz. </p>
       helptext: >-
-        <p><b>Neden memnuniyet formunu aktif edelim?</b> <br>
-        Memnuniyet Formları cevap maillerinize link ekleyerek kullancılarınızdan direk olarak geri bildirim almanızı sağlar. <br><br><b> Kendi Memnuniyet Formunuzu oluşturmak:</b><br>Aşağıdaki adımlar mailinize ekleyeceğiniz link sayesinde kullanıcılarınızdan geri bildirim toplamanıza olanak sağalayacak.:<br> 1. Müşteri Memnuniyeti Formunu aktif ediniz<br>2. Memnuniyet linkini belirtin. Varsayılan metin &ldquo; Destek hattı tecrübeniz hakkında neler düşündüğünüzü bizimle paylaşınız.&rdquo;<br><br><b>Hangi maillerin memnuniyet form linki içereeğini seçiniz:</b><br> Her mailde mi yoksa sadece çözümü içeren son mailde mi memnuniyet form linki olacağını seçebilirsiniz. <br><br> Çözümler sayfamızda memnuniyet formları hakkında daha fazla bilgi edinebilirsiniz. </p>
+        <p><b>Memnuniyet formu neden etkinleştirilmelidir?</b> <br>
+        Memnuniyet Formları yanıt mesajlarınıza link ekleyerek kullancılarınızdan direk olarak geri bildirim almanızı sağlar. <br><br><b> Kendi Memnuniyet Formunuzu oluşturmak:</b><br>Aşağıdaki adımlar mailinize ekleyeceğiniz link sayesinde kullanıcılarınızdan geri bildirim toplamanıza olanak sağalayacak.:<br> 1. Müşteri Memnuniyeti Formunu aktif ediniz<br>2. Memnuniyet linkini belirtin. Varsayılan metin &ldquo; Destek hattı tecrübeniz hakkında neler düşündüğünüzü bizimle paylaşınız.&rdquo;<br><br><b>Hangi mesajların memnuniyet form linki içereceğini seçiniz:</b><br> Her mesajda mı yoksa sadece çözümü içeren son mesajda mı memnuniyet form linki olacağını seçebilirsiniz. <br><br> Çözümler sayfamızda memnuniyet formları hakkında daha fazla bilgi edinebilirsiniz. </p>
       new_rating:
         survey_question: Anket sorusu
         scale_text: 'Şunu seçtiniz:'
@@ -1413,7 +1411,7 @@ tr:
         api_key?: API Key var
         params: İçerik
         simple_webhook_tip: >-
-          İstekle beraber gönderilecek bildirim özelliklerini yukarıdaki listeden seçiniz. Kendi API isteklerinizi yazmak isterseniz, Gelişmiş Seçenekleri kullanınız.
+          İstekle beraber gönderilecek destek talebi özelliklerini yukarıdaki listeden seçiniz. Kendi API isteklerinizi yazmak isterseniz, Gelişmiş Seçenekleri kullanınız.
         username: Kullanıcı adı
         unchecked: Kontrol edilmedi
         webhook_usecase_tooltip: Observer ile webhooks'un nasıl kullanılacağını öğrenmek için bir kaç örneğe göz at.
@@ -1422,7 +1420,7 @@ tr:
         subject: Konu
         webhook_usecase: Webhook Kullanım Alanları
         advanced_webhook_tip: >-
-          Bu bölümde özel API isteklerini yazabilirsiniz. Yerimi yerleştir seçeneği ile bildirimlere İsim, Öncelik, Bildirim Durumu gibi özellikler ekleyebilirsiniz.
+          Bu bölümde özel API isteklerini yazabilirsiniz. Yer Tutucu Yerleştir seçeneği ile destek taleplerine Ad, Öncelik, Destek Talebi Durumu gibi özellikler ekleyebilirsiniz.
         not_selected: Seçilmedi
         password: Şifre
         advanced_layout: Gelişmiş
@@ -1476,7 +1474,7 @@ tr:
         save: Görevi kaydet
         no_condition: Mevcut bir koşul yok
         quest_objectives: Görev Amaçları
-        ticket: Çözülen <br /> <strong> Bildirim </strong>
+        ticket: <strong> Destek Taleplerini </strong> <br /> Çözmek
         brief: Görev hakkında bilgiler ver
         edit: Görevi Düzenle
         bonus_points: Bonus Puan
@@ -1497,20 +1495,20 @@ tr:
       helpnote:
         help_info_2d: Burada kuralın ne yapmasını istediğini belirtiyorsunuz
         help_info_3: >-
-          Alanları düzenlemek, durum değiştirmek veya bildirim göndermek için Gözlemciyi kullanabilirsiniz.
+          Alanları düzenlemek, durum değiştirmek veya bildirim göndermek için Observer'ı kullanabilirsiniz.
         tour_v2: Bir observer kuralı oluşturmama yardım et
         help_title: Gözlemci
         help_title_2d: İşlemler
-        help_info_2c: Filtreyi düzenleyerek sadece belirli bildirimlere uygulanmasını sağlayabilirsiniz.
+        help_info_2c: Filtreyi düzenleyerek sadece belirli destek taleplerine uygulanmasını sağlayabilirsiniz.
         help_info_2a: >-
           Aksiyon oyuncu tarafından yapılan daha önceden belirlenmiş bir kuralı tetikeleyen durumdur.
         help_title_2a: Etkinlikler
         help_info_1: >-
-          Destek bölümünde herhangi bir işlem yapıldığında Gözlemci belirli aksiyonları tetikler. Örneğin, kullanıcı herhangi bir bildirime kötü bir derece verdiğinde patronunuza bildirim gitmesini sağlayabilirsiniz.
+          Destek bölümünde herhangi bir işlem yapıldığında Observer belirli aksiyonları tetikler. Örneğin, kullanıcı herhangi bir destek talebine kötü bir puan verdiğinde patronunuza bildirim gitmesini sağlayabilirsiniz.
         help_title_2b: Etkinlik Katılımcıları
         new_help_info_2b: >-
           Hangi kullanıcının değişikliklerinin kuralı tetiklemesi gerektiğini belirtir. Temsilci, talep eden, temsilci veya talep eden ile sistem arasında seçim yapabilirsiniz. Talepte bulunan kişi destek talep döngüsünde bulunan destek ekibinizin dışındaki birini de dahil eder.
-        help_title_2c: Bildirim Durumları
+        help_title_2c: Destek talebi koşulları
         help_info_4: Gözlemciyi nasıl kullanacağınızı öğrenin
       agent: Temsilci
       index:
@@ -1538,7 +1536,7 @@ tr:
       system: Sistem
       customer: İstek talebi gönderen.
       default_rule_name: Bir müşteri mutsuz olduğunda takım liderini bilgilendir
-      conditions: Bu özelliği olan bildirimlerde
+      conditions: bu özelliğe sahip destek taleplerinde
       actions: Bu eylemleri gerçekleştir.
       filter_jsinit:
         internal_group_actions: >-
@@ -1572,10 +1570,10 @@ tr:
       helpnote:
         help_title: Gözlemci
         help_info_2: >-
-          Süpervizör her saatbaşı aktif olacak ve son 30 gün içindeki güncellenmiş bildirimleri kontrol edecek. Süpervizör kuralları sırası ile işlenir, yani kuralların sırası önemlidir. Bir kural belli aksiyonları tetikleyebilir böylece başka kurallar devreye girer.
+          Supervisor her saat başı aktif olacak ve son 30 gün içindeki güncellenmiş destek taleplerini işleme alacaktır. Supervisor kuralları sırası ile işlenir, yani kuralların sırası önemlidir. Bir kural belli aksiyonları tetikleyebilir böylece başka kurallar devreye girer.
         tour_v2: Denetmen kuralı oluşturmama yardım et
         help_info_1: >-
-          Süpervizörler zaman ve olaya göre bildirimler üzerinde aksiyon alırlar. Son bildirimleri kontrol etmek ve bekleyen bildirimler için kullanıcıya hatırlatma gönderme veya süresi geçmiş bildirimleri uygun kişiye atamak gibi aksiyonlar almak için Süpervizörü kullanabilirsiniz.
+          Supervisor zaman ve olaya göre destek talepleri üzerinde işlem yaparlar. Son destek taleplerini kontrol etmek ve bekleyen destek talepleri için kullanıcıya hatırlatma gönderme veya süresi geçmiş destek taleplerini uygun kişiye atamak gibi eylemlerde bulunmak için Supervisor'ı kullanabilirsiniz.
       clone_rule:
         title: Gözetmen - Klon Kuralı
       new_info_help: >-
@@ -1735,7 +1733,7 @@ tr:
         rebrand_header_invalid: Başlık renk kodu geçersiz.
         adding_agents: Temsilci<br> Ekle
         support_email_submsg: >-
-          Freshdesk üzerinden bildirimlere <br> yanıt verdiğinizde 'Cevapla' adresiniz bu olacak
+          Freshdesk üzerinden sorgulara <br> yanıt verdiğinizde 'Cevapla' adresiniz bu olacak.
         skip_text: 'Hayır teşekkürler, yardım bölümüne yönlendir.'
         agents_subtitle: Takımını bu eğlenceye davet et !
         send_test_mail_info2: >-
@@ -1778,7 +1776,7 @@ tr:
       send_mail_content:
         send_test_mail_yes_response: >-
           İyi iş ! Destek E-posta adresinizi destek sistemimiz ile çalışması için başarılı bir şekilde kurdunuz.
-        send_test_mail_confirm_no: 'Hayır, hiç bildirim göremiyorum.'
+        send_test_mail_confirm_no: 'Hayır, hiç destek talebi göremiyorum.'
         button_title: Test e-posta gönder
         send_test_mail_confirm_yes: 'Evet, anladım.'
         button_sending: Gönderiliyor
@@ -1805,7 +1803,7 @@ tr:
           Burası örnek açılır menü ''Önzilemesi'', serbest metin alanında ''Görünüm Düzenle'' yardımıyla düzenleyebilirsiniz.
         dropdown_items_preview: Açılır öğeler - önizleme
         dropdown_choices: Açılır Menü öğeleri
-        agent_mandatory_closure: Bildirimi kapatırken gereklidir.
+        agent_mandatory_closure: Destek talebi kapatılırken gereklidir
         level3: Seviye 3
         display_cc_field: CC alanı göster
         customer_edit_signup: Oyuncular giriş yaparak görebilir.
@@ -1852,7 +1850,7 @@ tr:
         convert_with_filters: Filtreleri kullanarak tweetleri destek taleplerine dönüştürün
         convert_dm: Doğrudan mesajları destek taleplerine dönüştürmeye başlayın
       ticket_rules:
-        includes: Akışta belirlenen anahtar kelimeler kullanıldığında bildirime dönüştür
+        includes: Akışta belirlenen anahtar kelimeler kullanıldığında destek talebine dönüştür
         dm_tickets: Direkt mesajların tümünü bilete dönüştür.
         brief_desc: >-
           Tweetler ilk eşleşme kuralına bağlı olarak otomatik bir şekilde dönüştürülecektir.
@@ -1860,25 +1858,25 @@ tr:
         header_ext: ürün ata
         dm_info: >-
           Bu süre zarfında aynı kişiyle birden çok mesaj tek bir destek talebinde birleştirilecek
-        add: Yeni bildirim kuralı ekle
+        add: Yeni anahtar kelime filtresi ekle
         assign_to_gp: Gruba Ata
-        dm_threading_interval: Bildirim Zaman Aralığı belirle
-        header: Akıştaki mevcut tweetleri bildirime dönüştür
+        dm_threading_interval: Destek Talep Zaman Aralığı Belirle
+        header: Akıştaki mevcut tweetleri destek talebine dönüştür
       helpcard:
-        handle_title2: Belirli tweetleri otomatik olarak bildirime dönüştürme.
+        handle_title2: Belirli tweetleri otomatik olarak destek talebine dönüştürme
         handle_info2: >-
           Destek Talebi Kurallarını kullanarak belirli anahtar kelimelere sahip tweet'leri otomatik olarak destek taleplerine dönüştürebilirsiniz. Örneğin, twitter işlecinizden “çalışmıyor” veya “yazılım hatası” kelimelerini içeren her tweet, destek talebine dönüştürülebilir ve “Yazılım hata raporu” grubuna atanabilir. Ve "sistem arızalı" kelimelerini içeren tweetler için başka bir kural oluşturabilir ve bunları "Dev ops" grubunuza atayabilirsiniz. İlk sağlanan kural yerine getirilir. Bu destek taleplerini ayrıca belirli ürünlere de bağlayabilirsiniz.
         handle_smart_filter_title: Belirli tweetleri otomatik olarak destek taleplerine dönüştürme
         handle_smart_filter_info: >-
           Sosyal Sinyaller, bir yapay öğrenme algoritması (zaman içinde geri bildirim ile öğrenme ve iyileştirme yeteneğine sahip bir sistem) tarafından desteklenmektedir. Bu özellik, yalnızca dikkatinizi gerektiren ilgili tweetleri destek taleplerine otomatik olarak dönüştürmeye başlayacaktır. <br>Sisteme işinize adapte olacak şekilde geri bildirim sağlayabilirsiniz.<br><br>1. Bir tweet'in destek talebine dönüştürülmesi durumunda; Sisteme benzer tweet'leri destek talebine dönüştürmemeyi öğretmek için destek talebini istenmeyen mesaj olarak işaretlemek.<br><br>2. Bir tweet'in bilete dönüştürülmemesi durumunda; Sosyal sekmesinde, Bir destek talebine dönüştür'e tıklamak, sisteme benzer tweet'leri destek taleplerine dönüştürmeyi öğretir.<br><br>Yalnızca sosyal sinyalleri veya belirli işletme anahtar kelimeleriniz varsa, anahtar kelime tabanlı filtreler ile sosyal sinyallerin bir kombinasyonunu kullanmayı tercih edebilirsiniz. <br>Anahtar kelime tabanlı filtrelerin ve sosyal sinyallerin bir kombinasyonunu kullanırken, anahtar kelime tabanlı filtrelere sosyal sinyallere göre öncelik verilir. Sosyal sinyallerin şimdilik sadece İngilizce dilini desteklediğini lütfen unutmayın.
         info1: >-
-          Yardım masanıza twitter hesaplarınızı ekleyip destek bildirimlerinizi kontrol edebilirsiniz. Ayrıca size gelen tweetleri twitter yolu ile direkt olarak cevaplayabilirsiniz.
+          Yardım masanıza twitter hesaplarınızı ekleyip destek taleplerinizi kontrol edebilirsiniz. Ayrıca size gelen tweetleri twitter yolu ile direkt olarak cevaplayabilirsiniz.
         handle_info1: >-
-          Birden fazla ürün desteği sağlıyorsanız, her ürün için farklı sosyal hesap bağlayabilirsiniz. her hesabın görünürlüğünü düzenleyebilirsiniz. Örneğin, @kaos_destek twitlerini sadece destek ekibinize görünür yapabilirsiniz. Bu hesaba ait akışlar tüm @kaos twitlerini içerecek. DM bildirimlere dönüşecek ve belirli gruplara atayabileceksiniz. Bildirim zaman aralığı oluşturularak aynı kişi tarafından gönderilen DM'ler tek bir ildirim altında toplanabilir.
+          Birden fazla ürün desteği sağlıyorsanız, her ürün için farklı sosyal hesap bağlayabilirsiniz. her hesabın görünürlüğünü düzenleyebilirsiniz. Örneğin, @kaos_destek twitlerini sadece destek ekibinize görünür yapabilirsiniz. Bu hesaba ait akışlar tüm @kaos twitlerini içerecek. DM destek taleplerine dönüşecek ve belirli gruplara atayabileceksiniz. Bildirim zaman aralığı oluşturularak aynı kişi tarafından gönderilen DM'ler tek bir destek talebi altında toplanabilir.
         handle_title1: Twitter hesabı ekleme.
         stream_info1: >-
           Twitter'da farklı anahtar kelime gruplarını aramak için birden fazla akış oluşturabilirsiniz. İşletmenize dayalı olarak aramak istediğiniz ana anahtar kelimeleri girin ve hatta aramanızı daraltmak için belirli anahtar kelimeleri, hashtag'leri ve kullanıcı adlarını dahil etmeyin. Örneğin, markanız ve marka kısaltmalarınızdan gelen destek sorgularını izlemek için oluşturduğunuz özel akışta pazarlamacılarınızın veya yöneticilerinizin tweet'lerini görmek istemeyebilirsiniz. Ayrıca her akış için varsayılan yanıtlama kullanıcı adını da seçebilirsiniz.
-        stream_title2: Belirli tweetleri otomatik olarak bildirime dönüştürme.
+        stream_title2: Belirli tweetleri otomatik olarak destek talebine dönüştürme
         title2: Sosyal ağları kullanarak destek verme
         title1: Sosyal Ağ Hesapları Ekleme
         stream_info2: >-
@@ -1906,7 +1904,7 @@ tr:
       jira_hook_description: >-
         Freshdesk'e bir bildirim geldiğinde hata bildirimlerini otomatik olarak JIRA hersabına aktarmak için webhook'u kullanabilirsiniz.
       hipchat_hook_description: >-
-        Talep gönderen kişi Freshdesk'e bir bildirim gönderdiği zaman HipChat'e mesaj atabilirsiniz.
+        Bir talep sahibi Freshdesk'te bir destek talebine yanıt gönderdiği zaman HipChat'e mesaj atabilirsiniz.
       jira_hook_alt: JIRA Sorun Oluşturma Gönderi Talebi
       hipchat_hook_alt: Hipchat Pinging GET Talebi
       jira_hook_title: JIRA Oluşturmada Hata
@@ -1978,11 +1976,11 @@ tr:
         helpnote:
           content1:
             info3: >-
-              Cepyardım istediğiniz gibi ayarlanabilir. Herşeyi seçebilirsiniz- geribildirim formundan uygulama içinde nasıl gözükeceğine dair. Aygıt adı, işletim sistemi ve uygulama versiyonu gibi bilgiler kolayca toplanabiliyor. Ayrıca özel alanlar ekleyerek hata raporları gibi bilgileride toplayabilirsiniz.
+              Cepyardım istediğiniz gibi ayarlanabilir. Her şeyi seçebilirsiniz- geri bildirim formundan uygulama içinde nasıl gözükeceğine dair. Aygıt adı, işletim sistemi ve uygulama versiyonu gibi bilgiler kolayca toplanabiliyor. Ayrıca özel alanlar ekleyerek hata raporları gibi bilgileri de toplayabilirsiniz.
             info1: >-
               Cepyardım Freshdesk'in uygulam içi sunduğu mobil bir uygulamadır.
             info2: >-
-              Cepyardımı entegre ettiğinide, kullanıcılarınız uygulama içinde destek bölümünü görebilecekler. Burada bilgi havuzu ve ayrıca bir bildirim formu buluncak böylece istedikleri zaman sizinle iletişime geçebilecekler
+              Cepyardımı entegre ettiğinide, kullanıcılarınız uygulama içinde destek bölümünü görebilecekler. Burada bilgi havuzu ve ayrıca bir destek talep formu buluncak böylece istedikleri zaman sizinle iletişime geçebilecekler.
           heading1: MobiHelp nedir?
         edit:
           title: Cepyardım uygulamasını düzenle.
@@ -2091,7 +2089,7 @@ tr:
       archive_tickets_column_error: Arşiv destek talepleri dahil edilmeyecek
       group: Grup
       product: Ürün
-      ticket_priority: Bildirim Önceliği
+      ticket_priority: Destek Talebi Önceliği
       max_columns: 10 sütundan daha fazla ekleyemezsiniz
       customer: Oyuncu
       report:
@@ -2103,29 +2101,29 @@ tr:
     tickets:
       views:
         my_closed: Kapanan Bildirilerim
-        monitored_by: Takip ettiğim bildirimler.
+        monitored_by: Takip Ettiğim Destek Talepleri
         unresolved: Tüm Çözülmemiş Destek Talepleri
-        my_due_today: Bugünkü Bekleyen Bildirimlerim
-        shared_by_me: Paylaştığım bildirimler
-        shared_with_me: Benimle paylaşılan bildirimler
+        my_due_today: Bugüne Tarihli Destek Talepleri
+        shared_by_me: Paylaştığım Destek Talepleri
+        shared_with_me: Benimle paylaşılan destek talepleri
         invalid_requester: Geçersiz talep sahibi
         my_open: Açık Bildirilerim
         archive_view: Arşiv görüntüsü
         article_feedback: Makale Geri Bildirimi
         tags: Destek Talebine göre Etiketler
-        my_overdue: Süresi dolan bildirimlerim
-        new: Yeni bildirimler
+        my_overdue: Süresi dolan destek taleplerim
+        new: Yeni Destek Talepleri
         this_view: bu görüntü
         my_resolved: Çözülen Bildirilerim
         closed: Kapatılan Bildiriler
         archived: Arşiv
         select: Görüntü Seç...
         new_and_my_open: Yeni ve Açık Bildiriler
-        my_on_hold: Bildirimlerim beklemede
-        tickets_twitter: Twitter yoluyla gelen bildirimler
+        my_on_hold: Beklemedeki Destek Taleplerim
+        tickets_twitter: Twitter yoluyla gelen destek talepleri
         tickets_by: Bildiler
         ongoing_collab: Aktif Toplantılarım
-        on_hold: Bildirim beklemede.
+        on_hold: Beklemedeki Destek Talepleri
         resolved_or_closed: Çözülmüş ve Kapatılmış
         deleted: Çöp
         open_or_pending: Açık veya Bekletilen
@@ -2133,13 +2131,14 @@ tr:
         my_article_feedback: Makale Geri Bildirimlerim
         spam: İstenmeyen Öge
         all: Tüm Bildiriler
-        my_all: Bütün bildirimlerim
+        my_all: Bütün Destek Taleplerim
         overdue: Zaman Aşımı olan Bildiriler
         no_tickets: Görünürde hiçbir bildirin yer almıyor.
         open: Açık bildiriler
         all_tickets: Tüm Bildiriler
-        due_today: Bugünkü Bekleyen Bildirimler
+        due_today: Bugüne Tarihli Destek Talepleri
         resolved: Çözülen Bildiriler
+        visible_and_resolved: Çözülen Bildiriler
       friendly_status:
         customer_responded: Oyuncu Cevapladı
         elapsed: Cevap Verilmesi Gereken Tarih
@@ -2186,7 +2185,7 @@ tr:
   email_command_delimeter_label: E-Posta Yönetme Sınırlayıcısı
   being_processed: İşlem Sürecinde
   awaiting_your_reply: Cevabınız bekleniyor.
-  this_ticket_has_been_resolved: Bu bildirim çözüldü
+  this_ticket_has_been_resolved: Bu destek talebi çözüldü
   this_ticket_has_been_closed: Bu bildiri kapatılmıştır
   helpcard:
     title: Benzersiz Harici Kimlik
@@ -2253,13 +2252,13 @@ tr:
   name: Adı
   email_notifications:
     insert_placeholder: Yer tutucu ekle
-    disabled_toggle: Bu bildirimi kapatamazsın.
+    disabled_toggle: Bu bildirimi kapatamazsınız.
     no_agents: Temsilcileri ekle
     last_saved: Son kaydedilen
     translation_uptodate: Bu çeviri güncel.
     take_back: Beni geçmişe geri götür
     notify_agents: Temsilcilere Bildir
-    requestor_notifications: İstemci Bildirimleri
+    requestor_notifications: Talep Sahibi Bildirimleri
     reset_confirm: Sıfırladığınızda tüm değişiklikler kaybolacak. Hala devam etmek istiyor musunuz?
     translation_outdated: Bu çeviri güncel değil.
     agent_select: >-
@@ -2331,7 +2330,7 @@ tr:
         info1: >-
           Bir müşteri daha önce oluşturduğu destek talebine yanıt verdiğinde, destek talebi ile ilgilenen temsilci bu e-posta bildirimini alacaktır. Bu e-posta, temsilcinin destek talebini kontrol etmesini kolaylaştıracak destek talebi URL'sini içerebilir. <br/><br/>Yardım masanızda birden çok desteklenen dil ayarladıysanız, bu bildirimi her dile özgü oluşturabilirsiniz. <i class="common-icon-outdated"></i> simgesi, diğer dillerdeki bildirim çevirilerinin güncel olamayabileceğini gösterir.
       requester_template_1:
-        topic: Yeni Bildirim Oluşturuldu
+        topic: Yeni Destek Talebi Oluşturuldu
         info1: >-
           A New Ticket Created email is sent to the requestor after they create a ticket in your helpdesk. This email should ideally contain the ticket id and a public URL link to the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class="common-icon-outdated"></i> icon indicates that the notification translations in other languages may be outdated.
       requester_template_4:
@@ -2359,7 +2358,7 @@ tr:
           Temsilcileriniz yardım masanızda yeni bir şifre istediklerinde, kendilerine Şifre Sıfırlama E-postası gönderilecektir. E-postada dinamik olarak oluşturulan şifre sıfırlama bağlantısını sağlamak için {{password_reset_url}} yer tutucusu gereklidir.<br/><br/>Yardım masanızda birden çok desteklenen dil ayarladıysanız, bu bildirimi her dile özgü oluşturabilirsiniz. <i class="common-icon-outdated"></i> simgesi, diğer dillerdeki bildirim çevirilerinin güncel olamayabileceğini gösterir.
         topic: Şifre Sıfırlama Epostası
       agent_template_1:
-        topic: Yeni Bildirim Oluşturuldu
+        topic: Yeni Destek Talebi Oluşturuldu
         info1: >-
           Yeni Destek Talebi Oluşturuldu e-postası, yardım masanızda yeni bir destek talebi oluşturulduğunda temsilcilerinize gönderilir. Bu bildirimi hangi temsilcinin alması gerektiğini seçebilirsiniz. Bu e-posta, temsilcinin destek talebini kontrol etmesini kolaylaştıracak destek talebi URL'sini içerebilir.<br/><br/>Yardım masanızda birden çok desteklenen dil ayarladıysanız, bu bildirimi her dile özgü oluşturabilirsiniz. <i class="common-icon-outdated"></i> simgesi, diğer dillerdeki bildirim çevirilerinin güncel olamayabileceğini gösterir.
       cc_notification_19:
@@ -2380,7 +2379,7 @@ tr:
         info1: >-
           Password Reset Email will be sent out to your requestors when they request a new password at your helpdesk. The {{password_reset_url}} placeholder is required to provide the dynamically generated password reset link in the email.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class="common-icon-outdated"></i> icon indicates that the notification translations in other languages may be outdated.
         topic: Şifre Sıfırlama Epostası
-    requestor_notification: İstemci Bildirimi
+    requestor_notification: Talep Sahibi Bildirimi
     subject: Konu
     account_not_activated: >-
       Hesabınız henüz doğrulanmamış gibi görünüyor. Lütfen e-posta bildirimlerini etkinleştirmek için hesabınızı etkinleştirin.
@@ -2414,7 +2413,7 @@ tr:
     ticket_mand: Lütfen çözülmüş bildirileri getir
     badge_mand: Rozet seçin
     js_ticket_txt: >-
-      $$qustvalue$$ adet bildirimi $$questtime$$ süresinde çözüme kavuşturup istenilen koşulları sağlayınız
+      $$questvalue$$ adet destek talebini $$questtime$$ süresinde çözüme kavuşturup istenilen koşulları sağlayınız.
     js_solution_txt: >-
       $$questtime$$ süresinde $$questvalue$$ bilgi havuzu oluşturun ve istenilen koşulları sağlayınız.
     js_quest_txt: >-
@@ -2464,7 +2463,7 @@ tr:
     best_answer:
       answer_confirm: >-
         Konuya cevap yazılmış olarak görülmektedir. Devam etmeden önce lütfen onaylayınız.
-  send_feedback: Geribildirim yolla
+  send_feedback: Gönder
   support:
     tickets:
       ticket_survey:
@@ -2506,8 +2505,8 @@ tr:
         thanks: Değerdirdiğiniz için teşekkür ederiz.
         happy_info: >-
           Size hizmet bir zevkti. Hizmetlerimizden memnun kaldığınız için teşekkür ederiz.
-        send: Geribildirim yolla
-        feedback_optional: Geribildirim Opsiyoneldir.
+        send: Gönder
+        feedback_optional: Geribildirim isteğe bağlıdır
         additional_info: 'Ek olarak, bizimle çalışırken yaşadıklarınızı bizimle paylaşabilirsiniz.'
         submit: Gönder
         thanks_info: Destek hizmetlerimizi değerlendirdiğiniz için teşekkür ederiz.
@@ -2737,7 +2736,7 @@ tr:
         processing: Freshcaller hesabınız oluşturuluyor
       freshcaller_subtext: 'Numara satın alın, çağrı kuyrukları oluşturun, sesli yanıt sistemi kurun, vb'
   activate_free_plan: Serbest Planı Etkinleştir
-  agent_assigned_info: Bu temsilci için açık veya bekleyen bir bildirim bulunmamaktadır
+  agent_assigned_info: Bu temsilci için açık veya bekleyen bir destek talebi bulunmamaktadır
   suspended_account_info: >-
     Hesabınız askıya alındı ve müşteri portalına erişim olmayacak.
   status: Durum
@@ -2851,7 +2850,7 @@ tr:
           Ayrıldığınızı görmekten gerçekten nefret ediyoruz. Nedeni özellikler miydi? Fiyat mı? Yoksa size sürekli spam gönderen şu kötü pazarlama elemanı mı? İyi, ancak başkası için zaten kararınızı verdiyseniz sadece yakında geri dönmenizi umabiliriz.
         moving: Bir başka ürüne geçiş yapıyoruz
         support_extra: >-
-          Bize biraz ayrıntı verin ve biz de doğru destek temsilcisinin ilgilendiğinden emin olalım. Bir bildirim kimliği? Ya da Sorunun ne olduğu?
+          Bize biraz ayrıntı verin ve biz de doğru destek temsilcisinin ilgilendiğinden emin olalım. Bir destek talep ID'si? Ya da sorun hakkında ayrıntılı bilgi?
         budget: Artık bütçem yok
         budget_followup: >-
           Mevcut destek taleplerinizi etkilemeden Freshdesk'te daha düşük bir plana geçebilirsiniz. Aslında, bütçe gerçekten çok az ise, ömür boyu 3 ücretsiz temsilciyle Sprout planına geçebilirsiniz. <a href="http://www.freshdesk.com/free-support-software">Ücretsiz plan hakkında daha fazla bilgi edinin</a>
@@ -3027,7 +3026,7 @@ tr:
     name: Hesap Adı
     info5: Renkleri sıfırla
     info4: >-
-      Sıradaki bildirim numarası bu sayı ile başlayacaktır. ( En son oluşturulan numaradan büyük olmalı ) Önceden oluşturulan bildirimleri etkiler.
+      Sıradaki destek talep ID'si bu sayı ile başlayacaktır. ( En son oluşturulan numaradan büyük olmalı ) Önceden oluşturulan destek taleplerini etkiler.
     portal_languages: 'Portlalda Görünen Dil Sayısı (%{count})'
     time_zone: Zaman Dilimi
     use_default: Varsayılanı kullan
@@ -3084,7 +3083,7 @@ tr:
       profile_edit: Kullanıcı Profil
       forgot_password: Şifreyi Unut
       user_login: Giriş sayfası
-      ticket_list: Bildirim Listesi
+      ticket_list: Destek talebi listesi
       discussions_home: Forum Ana Sayfa
       new_topic: Yeni Konu
       my_topics: Konularım
@@ -3248,7 +3247,7 @@ tr:
         archive_ticket_list: >-
           Not: Arşivlenmiş destek taleplerine erişmek ve görüntülemek için, {% snippet archive_ticket_filters%} gibi 'arşiv' yer tutucularını kullanın.
         ticket_view: >-
-          Not : Ön izleme gösterilebilmesi için , lütfen en az bir bildiriminiz olduğuna emin olun.
+          Not: Ön izleme gösterilebilmesi için lütfen en az bir destek talebinizin olduğuna emin olun.
         topic_list: >-
           Not : Ön izleme gösterilebilmesi için , lütfen en azından bir forum başlığınız olduğuna emin olun.
         article_list: >-
@@ -3342,7 +3341,7 @@ tr:
       submit_export: Dışa aktar
       export_ticket_data: Harice aktar
       details: Bildiri Detayları
-      merged_topic_note: Taşınmış konu herhangi bir bildirime dönüştürülemez.
+      merged_topic_note: Taşınmış konu herhangi bir destek talebine dönüştürülemez.
       export: Harice aktar
       export_to_csv: CSV olarak kaydet
       ticket_list: Bildiri Listesi
@@ -3410,7 +3409,7 @@ tr:
       preview_message: >-
         <b>Önizleme modu</b> - Geri dönmek için <a href='javascript:window.close()'>buraya tıklayın</a>.
     new_support_ticket: Yeni talep ilet
-    submit_new_ticket: ... yada yeni bir bildirim gönderin.
+    submit_new_ticket: ... yada yeni bir destek talebi gönderin
     login: Giriş
     login_portal: Destek Portalına Giriş
     login_details: Aşağıdaki ayrıntıları girin
@@ -3424,8 +3423,8 @@ tr:
     account: hesap
     login_or_signup: 'Bir hesap için %{login} yada %{signup}'
     to_post_comment: ' yorum yazmak için'
-    to_submit_ticket: 'bildirim yapmak için'
-    login_to_submit_ticket: 'Bildirim göndermek için <a href=%{login_url}>Giriş yapın.</a>'
+    to_submit_ticket: ' bir destek talebi göndermek için'
+    login_to_submit_ticket: 'Destek talebi göndermek için <a href=%{login_url}>giriş yapın.</a>'
     login_signup_to_submit_ticket: >-
       Yeni bir destek talebi göndermek için <a href=%{login_url}>Giriş yapın</a> veya <a href=%{signup_url}>Kaydolun</a>
     login_to_post_topic: Bir konu yayınlamak için <a href='' class='solution_c'>Giriş yapın</a>
@@ -3691,7 +3690,7 @@ tr:
   segment_notice: 'Müşterileri öncelik, abonelik ve diğer özelliklere göre bölümlere ayırmak,'
   ticket_fields:
     index:
-      title: Bildirim alanları
+      title: Destek talebi alanları
       save_ticket_fields: Kaydet
     untitled: Başlıksız
     customer_label_missing: Müşteri etiketi boş olamaz
@@ -3743,6 +3742,9 @@ tr:
       created_at: Oluşturulma arihi
       skill: Beceri
       description: Açıklama
+    field_service_fields:
+      cf_fsm_contact_name: Kişi
+      cf_fsm_phone_number: Telefon
     formfield_props:
       behavior: Davranış
       customer_edit: Oyuncu düzenleyebilir.
@@ -3771,7 +3773,7 @@ tr:
         Burası örnek açılır menü ''Önzilemesi'', serbest metin alanında ''Görünüm Düzenle'' yardımıyla düzenleyebilirsiniz.
       dropdown_items_preview: Açılır öğeler - önizleme
       dropdown_choices: Açılır Menü Seçenekleri
-      agent_mandatory_closure: Bildirimi kapatırken gereklidir.
+      agent_mandatory_closure: Destek talebi kapatılırken gereklidir
       level3: Seviye 3
       display_cc_field: CC alanı göster
       field_has_section: Alanın bölümü var
@@ -3952,7 +3954,7 @@ tr:
           api_info2: >-
             Seçilen destek talebi, kişi ve şirket alanlarını içeren dışa aktarım periyodik olarak gerçekleştirilecektir.
         fields_to_export: Dışa Aktarılacak Alanları Seçin
-        ticket_fields_title: Bildirim alanları
+        ticket_fields_title: Destek talebi alanları
         delivery: 'Şunun aracılığı ile al:'
         max_field: (150 alana kadar)
         email: E-posta
@@ -3998,7 +4000,7 @@ tr:
       average_resolved_tickets: Ortalama Çözülmüş Destek Talepleri
       resolved_tickets: Çözülen Bildiriler
       busiest_hour_received_tickets: 'Çoğu destek talebi şu civarda alındı:'
-      received_tickets: Alınan Bildirimler
+      received_tickets: Alınan Destek Talepleri
       total_resolved_tickets: Çözülen toplam destek talebi
       time_trends:
         year: Yıl
@@ -4142,13 +4144,13 @@ tr:
       off_helptext_html: 'AÇMAK için <br /> twitter kullanıcı adınızı yönetimden ekleyin'
     twitter_handles:
       index:
-        go_to_ticket: Bildirime Git
+        go_to_ticket: Destek Talebine Git
         reauth_required: Yeniden doğrulama gerekli.
         reply: Cevapla
         note_title: 'Not:'
         show_more_results: Daha fazla sonuç göster
         note: >-
-          Vermiş olduğunuz cevap Freshdesk'te bildirim ya da konuşma olarak kaydedişmeyecektir.
+          Vermiş olduğunuz cevap Freshdesk'te destek talebi ya da konuşma olarak kaydedilmeyecektir.
         search_twitter: Twitter'ı ara
         convert_to_ticket: Bilete Dönüştür.
         no_tweet_results: 'Sorgunuz için Tweet sonucu bulunamadı '
@@ -4164,9 +4166,9 @@ tr:
         dm_time_info: Aynı kullanıcıdan gelen doğrudan iletilerin zincir olarak dikkate alınması için maksimum süre.
         dm_time_msg: Direkt Mesaj Konu Zamanı
         capture_dm_info: >-
-          Freshdesk herhangi bir direkt mesajları otomatik olarak bildirime dönüştürecektir.
+          Freshdesk herhangi bir direkt mesajı otomatik olarak destek talebine dönüştürecektir.
         capture_mentions_info: >-
-          Freshdesk herhangi bir @mention şeklindeki tweetleri otomatik olarak bildirime dönüştürecektir.
+          Freshdesk herhangi bir @mention şeklindeki tweetleri otomatik olarak destek talebine dönüştürecektir.
         product: Ürün
         search_keywords: Anahtar kelime ara
         capture_dm_msg: <strong>"Doğrudan mesajları"</strong> destek talebi olarak aktar
@@ -4180,7 +4182,7 @@ tr:
       edit:
         twitter_settings_for_msg: ... için Twitter ayarları
     streams:
-      no_results: Yayında herhangi bir yeni bildirim yok.
+      no_results: Yayında herhangi bir yeni gönderi yok.
       index:
         click_activity: Etkinliği görmek için bir akışa tıklayın
         no_activity_available: Mevcut etkinlik yok
@@ -4289,7 +4291,7 @@ tr:
   attachment_delete: Kalıcı olarak bu eki silmektesiniz. Devam etmek istiyormusunuz?
   clear: Temizle
   email_command_preview_subject_value: Destek Bildirisi
-  connect_ticket: Bildirim Linki
+  connect_ticket: Destek Talebi Linki
   company_field:
     helpcard:
       info2: >-
@@ -4334,9 +4336,9 @@ tr:
     app_gallery: Piyasaya erişim sağlayın
     custom_survey_desc: Müşteri memnuniyeti anketleri
     forums_desc: Topluluk forum tartışmaları
-    parent_child: Üst-alt bildirimler
+    parent_child: Üst-alt destek talebi
     adv_social_desc: Gelişmiş sosyal özellikler
-    auto_ticket_assignment: Otomatik Bildirim Atama
+    auto_ticket_assignment: Otomatik Destek Talebi Atama
     custom_dashboard: Ekip gösterge panolarını yönetin
     custom_mailbox_desc: Özel e-posta sunucuları
     shared_ticket_views_desc: Özel ve paylaşılan destek talepleri görünümleri
@@ -4385,14 +4387,14 @@ tr:
     integrations: Yerleşik entegrasyonlar
     custom_roles_desc: Özelleştirilmiş temsilci rolleri
     multiple_timezones: Birden çok saat dilimleri
-    ticket_templates: Bildirim şablonları
+    ticket_templates: Destek talebi şablonları
     everything_in_blossom: Blossom'daki her şey
     freshchat: Freshchat entegrasyonu
     enterprise_reports_desc: Kurumsal raporlar
     css_customization: CSS Customization
     app_gallery_desc: Mağaza
     custom_domain_desc: Özel Alan
-    ticket_templates_desc: Bildirim şablonları
+    ticket_templates_desc: Destek talebi şablonları
     agent_collision_desc: Agent Collision
   admin_onboarding:
     modal:
@@ -4461,14 +4463,14 @@ tr:
     select_option_msg: Lütfen bir özellik seçin
     load:
       resp_accuracy: Cevap Doğruluğu
-      num_of_operations: Bildirim İşlemleri Sayısı
-      num_of_tickets: Bildirimlerin Sayısı
+      num_of_operations: Destek Talebi İşlem Sayısı
+      num_of_tickets: Destek Talebi Sayısı
       time_in_hrs: Süre (Saat)
-      recived_resolved_backlog: Alınan , Çözülen , Biriken Bildirimlerin Karşılaştırılması
+      recived_resolved_backlog: Alınan, Çözülen, Biriken Destek Taleplerinin Karşılaştırılması
       avg_num_of_interactions: Ortalama Etkileşim Sayısı
       resp_time: Cevap Süresi
       time_of_arrival: Erişim Süresi
-      tkt_assignment: Bildirim Atamaları
+      tkt_assignment: Destek Talebi Ataması
     reports: Raporlar
     jump_to_saved: Kaydedilmiş bir rapora atla
     at_a_glance: Bir Bakışta
@@ -4494,7 +4496,7 @@ tr:
       avg_resolution_time_in_hrs: Ortalama Çözüm Süresi (Saat)
       avg_resp_time_in_hrs: Ortalama Cevap Süresi (Saat)
       avg_cust_intr: Ortalama Oyuncu Etkileşimleri
-      backlog_tickets: Biriken Bildirimler
+      backlog_tickets: Biriken Destek Talepleri
       no_groups_msg: Herhangi bir grubunuz yok.
       all_reports: Tüm Raporlar
       avg_agent_intr: Ortalama Temsilci Etkileşimleri
@@ -4508,94 +4510,94 @@ tr:
     helptext:
       glance:
         group_recieved_tickets: >-
-          Grup tarafından alınan seçilin dönem içinde ki toplam Bildirim sayısı
-        group_avg_resp_time: Bildirime bu grup tarafından yanıt vermesi için geçen ortalama süre
-        group_avg_resol_time: Bildirimi bu grup tarafından çözülmesi için geçen ortalama süre
-        agent_avg_resp_time: Bildirime bu temsilci tarafından yanıt vermesi için geçen ortalama süre
-        agent_avg_resol_time: Bildirimi bu temsilci tarafından çözülmesi için geçen ortalama süre
+          Seçilen zaman diliminde grup tarafından alınan toplam destek talebi sayısı
+        group_avg_resp_time: Destek talebine bu grup tarafından yanıt vermesi için geçen ortalama süre
+        group_avg_resol_time: Destek talebinin bu grup tarafından çözülmesi için geçen ortalama süre
+        agent_avg_resp_time: Destek talebine bu temsilci tarafından yanıt vermesi için geçen ortalama süre
+        agent_avg_resol_time: Destek talebinin bu temsilci tarafından çözülmesi için geçen ortalama süre
         customer_avg_first_resp_time: >-
-          Oyuncudan gelen bildirime ilk yanıtı verene kadar geçen ortalama süre
-        helpdesk_avg_resp_time: Bir bildirime yanıt vermek için yardım masasından bu yana geçen ortalama süre
+          Müşteriden gelen destek talebine ilk yanıtı verene kadar geçen ortalama süre
+        helpdesk_avg_resp_time: Bir destek talebine yanıt vermek için yardım masasından bu yana geçen ortalama süre
         group_resolved_tickets: >-
-          Seçili dönem içinde Grup tarafından çözülen toplam Bildirim sayısı
+          Seçili dönem içinde grup tarafından çözülen toplam destek talebi sayısı
         agent_fcr: >-
-          Bu temsilciye atanmış , ilk cevap ile çözülen bildirimlerin yüzdesi
+          Bu temsilciye atanmış, ilk cevap ile çözülen destek taleplerinin yüzdesi
         helpdesk_avg_first_resp_time: >-
-          Yardım masasından tüm bildirimler için ilk yanıt ıverene kadar geçen ortalama süre
+          Yardım masasından tüm destek talepleri için ilk yanıtı verene kadar geçen ortalama süre
         customer_backlog_tickets: >-
-          Oyuncu tarafından gelen ve her gün sonunda ki seçili dönem içinde çözülmeyen toplam Bildirim sayısı
+          Müşteri tarafından gelen ve her gün sonunda ki seçili dönem içinde çözülmeyen toplam destek talebi sayısı
         customer_avg_agent_inter: >-
-          Gün sonunda oyuncudan gelen bildirimlere cevap veren temsilcilerin ortalama sayısı
+          Gün sonunda müşteriden gelen destek taleplerine cevap veren temsilcilerin ortalama sayısı
         agent_backlog_tickets: >-
-          Temsilciye atanan her gün sonunda ki seçili dönem içinde çözülmeyen toplam Bildirim sayısı
+          Temsilciye atanan her gün sonunda ki seçili dönem içinde çözülmeyen toplam destek talebi sayısı
         group_backlog_tickets: >-
-          Gruba atanan her gün sonunda ki seçili dönem içinde çözülmeyen toplam Bildirim sayısı
+          Gruba atanan her gün sonundaki seçili dönem içinde çözülmeyen toplam destek talebi sayısı
         helpdesk_resolved_tickets: >-
-          Yardım Masasında seçili dönem içinde çözülen toplam Bildirim sayısı
+          Yardım Masasında seçili dönem içinde çözülen toplam destek talebi sayısı
         helpdesk_avg_agent_inter: >-
-          Gün sonunda yardım masası üzerinden bildirimlere cevap veren temsilcilerin ortalama sayısı
+          Gün sonunda yardım masası üzerinden destek taleplerine cevap veren temsilcilerin ortalama sayısı
         customer_recieved_tickets: >-
-          Oyuncudan seçili dönem içinde alınan toplam Bildirim sayısı
+          Müşteriden seçili dönem içinde alınan toplam destek talebi sayısı
         agent_avg_first_resp_time: >-
-          Bildirime bu temsilci tarafından yanıt vermesi için geçen ortalama süre
+          Destek talebine bu temsilci tarafından yanıt vermesi için geçen ortalama süre
         group_reopens: >-
-          Bu gruba atanmış çözülmüş veya kapanmış bildirimlerin tekrar açılma sayısı
+          Bu gruba atanmış çözülmüş veya kapanmış destek taleplerinin tekrar açılma sayısı
         agent_avg_agent_inter: >-
-          Gün sonunda bu temsilciye atanmış bildirimlere cevap veren temsilcilerin ortalama sayısı
-        customer_avg_resp_time: Bu oyuncudan gelen bir bildirime yanıt vermek için geçen ortalama süre
+          Gün sonunda bu temsilciye atanmış destek taleplerine cevap veren temsilcilerin ortalama sayısı
+        customer_avg_resp_time: Bu müşteriden gelen bir destek talebine yanıt vermek için geçen ortalama süre
         helpdesk_backlog_tickets: >-
-          Yardım masasında her günün sonunda ki seçili dönem içinde çözülmeyen toplam Bildirim sayısı
+          Yardım masasında her günün sonunda ki seçili dönem içinde çözülmeyen toplam destek talebi sayısı
         helpdesk_reassigns: >-
-          Yardım masasına atanmış ve oradan yeniden başka bir temsilciye atanan bildirim sayısı
+          Yardım masasına atanmış ve oradan yeniden başka bir temsilciye atanan destek talebi sayısı
         customer_resolved_tickets: >-
-          Seçili dönem içinde çözülen , Oyuncudan gelen toplam Bildirim sayısı
+          Seçili dönem içinde çözülen müşteriden gelen toplam destek talebi sayısı
         agent_avg_cust_inter: >-
-          Bu temsilciye atanan oyunculardan gelmiş gün sonuna kadar cevaplanan bildirimlerin ortalama sayısı
-        customer_avg_resol_time: Oyuncudan gelen bildirimin çözülmesi için geçen ortalama süre
+          Bu temsilciye atanan oyunculardan gelmiş gün sonuna kadar cevaplanan destek talebi ortalama sayısı
+        customer_avg_resol_time: Müşteriden gelen destek talebinin çözülmesi için geçen ortalama süre
         group_fcr: >-
-          Bu gruba atanmış , ilk cevap ile çözülen bildirimlerin yüzdesi
+          Bu gruba atanmış, ilk cevap ile çözülen destek taleplerinin yüzdesi
         agent_sla: >-
           Bu temsilciye atanmış , belirlenen SLA ile çözülmüş destek taleplerinin yüzdesi
         group_avg_agent_inter: >-
-          Gün sonunda bu gruba atanmış bildirimlere cevap veren temsilcilerin ortalama sayısı
+          Gün sonunda bu gruba atanmış destek taleplerine cevap veren temsilcilerin ortalama sayısı
         group_sla: >-
-          Bu gruba atanmış , belirlenen SLA ile çözülmüş destek taleplerinin yüzdesi
+          Bu gruba atanmış, belirlenen SLA ile çözülmüş destek taleplerinin yüzdesi
         helpdesk_avg_cust_inter: >-
           Gün sonuna kadar yardım masası üzerinden cevaplayan oyuncuların ortalama sayısı
         helpdesk_reopens: >-
-          Yardım Masası içinde çözülmüş veya kapanmış bildirimlerin tekrar açılma sayısı
+          Yardım Masası içinde çözülmüş veya kapanmış destek taleplerinin tekrar açılma sayısı
         helpdesk_fcr: >-
-          Yardım masasında ilk cevap ile çözülen bildirimlerin yüzdesi
+          Yardım masasında ilk cevap ile çözülen destek taleplerinin yüzdesi
         customer_avg_cust_inter: >-
-          Gün sonuna kadar cevaplanan oyuncudan gelen bildirimlerin ortalama sayısı
+          Gün sonuna kadar cevaplanan müşteriden gelen destek taleplerinin ortalama sayısı
         customer_sla: >-
           Bu oyuncu tarafından oluşturulmuş , belirlenen SLA ile çözülmüş destek taleplerinin yüzdesi
         group_avg_first_resp_time: >-
-          Bildirime bu grup tarafından yanıt vermesi için geçen ortalama süre
+          Destek talebine bu grup tarafından yanıt vermesi için geçen ortalama süre
         helpdesk_recieved_tickets: >-
-          Destek portalında seçili dönem içinde alınan toplam Bildirim sayısı
+          Destek portalında seçili dönem içinde alınan toplam destek talebi sayısı
         group_avg_cust_inter: >-
-          Bu gruba atanan oyunculardan gelmiş gün sonuna kadar cevaplanan bildirimlerin ortalama sayısı
-        helpdesk_avg_resol_time: Yardım masasında bildirimin çözülmesi için geçen ortalama süre
+          Bu gruba atanan müşterilerden gelmiş gün sonuna kadar cevaplanan destek taleplerinin ortalama sayısı
+        helpdesk_avg_resol_time: Yardım masasında destek taleplerinin çözülmesi için geçen ortalama süre
         how_to_read: Bu rapor nasıl okunur
         agent_recieved_tickets: >-
-          Temsilci tarafından alınan seçili dönem içinde ki toplam Bildirim sayısı
+          Temsilci tarafından alınan seçili dönem içinde ki toplam destek talebi sayısı
         agent_reassigns: >-
-          Kaç kez bu temsilciye atanmış bildirimler başka birine atandı
+          Bu temsilciye atanmış destek taleplerinin başka birine atanma sayısı
         agent_resolved_tickets: >-
-          Seçili dönem içinde Temsilci tarafından çözülen toplam Bildirim sayısı
+          Seçili dönem içinde temsilci tarafından çözülen toplam destek talebi sayısı
         group_reassigns: >-
-          Kaç kez bu grupta ki temsilciye atanan bildirim başka bir temsilciye atandı
+          Bu gruptaki bir temsilciye atanan destek talebinin başka bir temsilciye atanma sayısı
         customer_reopens: >-
-          Bu oyuncu tarafından çözülmüş veya kapanmış bildirimlerin tekrar açılma sayısı
+          Çözülmüş veya kapanmış destek taleplerinin bu müşteri tarafından tekrar açılma sayısı
         customer_reassigns: >-
-          Bu oyuncu tarafından oluşturulan ve yeniden atanmış temsilciye atanan bildirim sayısı
+          Bu müşteri tarafından oluşturulan ve yeniden atanmış temsilciye atanan destek talebi sayısı
         agent_reopens: >-
-          Bu temsilciye atanmış çözülmüş veya kapanmış bildirimlerin tekrar açılma sayısı
+          Bu temsilciye atanmış çözülmüş veya kapanmış destek taleplerinin tekrar açılma sayısı
         helpdesk_sla: >-
           Yardım masasındaki belirlenen SLA ile çözümlenen destek taleplerinin yüzdesi
         customer_fcr: >-
-          Bu oyuncunun oluşturduğu , ilk cevap ile çözülen bildirimlerin yüzdesi
+          Bu müşterinin oluşturduğu ilk cevap ile çözülen destek talebi yüzdesi
     report: ' Rapor '
     delete_filter_title: Bu raporu sil
     comparison_reports:
@@ -4785,7 +4787,7 @@ tr:
     google_calendar:
       form:
         google_calendar_settings: Google Takvim Ayarları
-      desc: Google Tavim ile her bir bildirimdeki etkinlikleri yönetebilirsin.
+      desc: Google Tavim ile her bir destek talebindeki etkinlikleri yönetebilirsin.
       helptext: >-
         Google Takvim etkinlikleri izlemenizde yardımcı olur.Temsilciler etkinleri Google Takvim ile yönetmek için Google Hesaplarına giriş yapmalılardır.
     shared_ownership:
@@ -4815,13 +4817,13 @@ tr:
       update_jira_status: JIRA durumunu güncelle
       add_private_note_in_fd: Freshdesk'e bir not ekle ve temsilciye bildir.
       info1: >-
-        Freshdesk bildirimi bir JIRA problemi ile ilişkilendirildiğinde aşağıdaki eylemleri gerçekleştir.
+        Freshdesk destek talebi bir JIRA problemi ile ilişkilendirildiğinde aşağıdaki eylemleri gerçekleştir.
       info5: JIRA'ya bir yorum eklendiğinde
       info4: JIRA'da bir problemdem durumu güncellendiğinde
       update_status_in_fd: Freshdesk durumunuzu güncelleyin.
       add_comment_in_jira: JIRA'ya bir yorum ekle
       add_attachments_in_jira: Senkronize ederken destek talebi eklerini dahil etmeyin
-      info2: 'Bildirim durumu Freshdesk''te güncellendiğinde.'
+      info2: 'Freshdesk''te destek talebi durumu güncellendiğinde '
       send_reply_in_fd: Oyuncuya e-posta yoluyla bildiri gödner
       add_public_note_in_fd: Freshdesk'e bir genel not ekle
     applications:
@@ -4931,7 +4933,7 @@ tr:
         add_note_text: Çağrı Notları
         agent_phone_updated: Temsilci telefon bilgileri Güncellendi
         subject: Konu
-        recent_tickets: En Yeni Bildirimler
+        recent_tickets: En Son Destek Talepleri
         create: Oluştur
         ticket_reference_id: Çağrı referans kimliği
     dropbox:
@@ -4961,7 +4963,7 @@ tr:
     hootsuite:
       no_ticket_msg: Bu filtre seçimi için hiç destek talebiniz yok
       reply_btn: Cevapla
-      send: Geribildirim yolla
+      send: Gönder
       signup_message: Henüz bir Freshdesk müşteri değil misiniz? Kaydolun
       reset: Sıfırla
       domain:
@@ -4989,7 +4991,7 @@ tr:
         email: E-posta
       cc_bcc: Bilgi/Gizli bilgi
       search:
-        ticket_id: Bildirim Numarası
+        ticket_id: Destek talebi ID
         placeholder_keyword: Destek taleplerini Anahtar Kelimeye göre ara
         keyword: Anahtar kelime
         placeholder_ticket_id: Destek taleplerini destek talebi kimliğine göre ara
@@ -5537,7 +5539,7 @@ tr:
     assumed_text: görüntülenen kullanıcı
     help_center: Bugün sana nasıl yardımcı olabiliriz?
     new_support_ticket: Yeni talep Ilet
-    check_ticket_status: Bildirim Durumlarını Göster
+    check_ticket_status: Destek talebi durumlarını göster
     goto_customer_portal: Müşteri Portalına Git
     goto_agent_portal: Temsilci Portalı
     tabs:
@@ -5724,6 +5726,7 @@ tr:
       sign_up_text: 'Müşterilerle web sitenizden, portaldan veya mobil uygulamanızdan sohbet etmeye başlayın.'
       enable_chat_in_portal_info: >-
         Müşterilerinizin destek portalınıza girdiklerinde sizinle sohbet etmelerini kolaylaştırın.
+      topics_title: Konular
       app_id_placeholder: 'Örn: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         Freshchat sohbetlerini destek taleplerine dönüştürmek için lütfen bu <a href='%{url}' target='_blank'>sayfasına</a> gidin, aşağıda listelenen ayrıntıları kopyalayıp yapıştırın. Daha fazla yardıma ihtiyacınız olursa, lütfen <a href='%{article_url}' target='_blank'>bu makaleye </a>bakın.
@@ -5806,7 +5809,7 @@ tr:
     name: '%{name} Destek''e Hoş geldiniz'
     message: Destek'e Hoşgeldiniz
     form_title: Bizimle İletişime Geçin
-    form_button_text: Geribildirim yolla
+    form_button_text: Gönder
     form_submit_message: Geri bildiriminiz için teşekkür ederiz.
     button_text: Yardım.
     untitled_widget: '%{count} adsız widget'

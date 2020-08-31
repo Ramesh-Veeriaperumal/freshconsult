@@ -25,8 +25,31 @@ module Iam::AuthToken
     JWT.encode(payload, PRIVATE_KEY, 'RS256', headers)
   end
 
+  def construct_client_jwt(source, privilege_data = nil)
+    payload = {
+      sub: source.presence,
+      product: 'freshdesk',
+      privileges: privilege_data.present? ? construct_privilege(privilege_data) : '0',
+      iat: Time.now.to_i,
+      exp: Time.now.to_i + ::Iam::IAM_CONFIG['expiry'].to_i,
+      iss: 'fd-iam-service',
+      type: 'client'
+    }
+    payload[:org_id] = Account.current.organisation_account_mapping.organisation_id.to_s if Account.current.organisation_account_mapping.present?
+    headers = {
+      'kid' => ::Iam::IAM_CONFIG['kid'],
+      'typ' => 'JWT',
+      'alg' => 'RS256'
+    }
+    JWT.encode(payload, PRIVATE_KEY, 'RS256', headers)
+  end
+
   def construct_jwt_with_bearer(user)
     "#{BEARER} #{construct_jwt(user)}"
+  end
+
+  def construct_channel_jwt_with_bearer(source)
+    "#{BEARER} #{construct_client_jwt(source)}"
   end
 
   def construct_privilege(privilege_data)

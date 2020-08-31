@@ -2140,8 +2140,8 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def falcon_enabled?
-    current_account && current_account.falcon_ui_enabled? &&
-      current_user && current_user.is_falcon_pref?
+    Rails.logger.warn "FALCON HELPER METHOD :: falcon_enabled? :: #{caller[0..2]}"
+    true
   end
 
   def admin_only_falcon_enabled?
@@ -2158,14 +2158,8 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def freshcaller_enabled_agent?
-    return if current_user.blank? || !current_user.agent?
-    agent = current_user.agent
-    freshcaller_agent = agent.freshcaller_agent if agent.present?
-
-    !falcon_enabled? &&
-      current_account.freshcaller_enabled? &&
-      current_account.has_feature?(:freshcaller_widget) &&
-      agent.present? && freshcaller_agent.present? && freshcaller_agent.fc_enabled?
+    # this method mainly for old ui. Need to revisit while removing code files for OLD UI deprecation.
+    false
   end
 
   def sandbox_production_notification

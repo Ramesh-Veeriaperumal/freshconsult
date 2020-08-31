@@ -1,13 +1,26 @@
 require_relative '../../../api/test_helper'
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
+require Rails.root.join('test', 'core', 'helpers', 'billing_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'users_test_helper.rb')
 require Rails.root.join('test', 'models', 'helpers', 'subscription_test_helper.rb')
 
 class Billing::BillingControllerTest < ActionController::TestCase
   include Billing::BillingHelper
   include AccountTestHelper
+  include BillingTestHelper
   include SubscriptionTestHelper
   include CoreUsersTestHelper
+
+  def setup
+    super
+    before_all
+  end
+
+  def before_all
+    @account.freshcaller_account&.destroy
+    @account.freshchat_account&.destroy
+    @account.reload
+  end
 
   def normal_event_content
     {
@@ -97,6 +110,232 @@ class Billing::BillingControllerTest < ActionController::TestCase
     @account.rollback(:downgrade_policy)
   end
 
+  def test_subscription_changed_event_chargebee_omni_upgrade_without_launchparty
+    create_new_account('test1', 'test1@freshdesk.com')
+    stub_subscription_settings(plan_id: 'estate_omni_jan_20_monthly')
+    ChargeBee::Subscription.any_instance.unstub(:plan_id)
+    ChargeBee::Subscription.any_instance.stubs(:status).returns('active')
+    Subscription.any_instance.stubs(:first_time_paid_non_annual_plan?).returns(false)
+    post :trigger, event_type: 'subscription_changed', content: omni_upgrade_event_content, format: 'json'
+    assert_response 200
+    assert_equal @account.reload.plan_name.to_s, 'estate_omni_jan_20'
+  ensure
+    @account.destroy
+    unstub_subscription_settings
+    ChargeBee::Subscription.any_instance.unstub(:status)
+    Subscription.any_instance.unstub(:first_time_paid_non_annual_plan?)
+  end
+
+  def test_subscription_changed_event_chargebee_omni_upgrade_with_launchparty
+    old_plan_name = @account.plan_name.to_s
+    stub_subscription_settings(plan_id: 'estate_omni_jan_20_monthly')
+    @account.launch(:chargebee_omni_upgrade)
+    ChargeBee::Subscription.any_instance.unstub(:plan_id)
+    ChargeBee::Subscription.any_instance.stubs(:status).returns('active')
+    post :trigger, event_type: 'subscription_changed', content: omni_upgrade_event_content, format: 'json'
+    assert_response 200
+    assert_equal @account.reload.plan_name.to_s, old_plan_name
+  ensure
+    unstub_subscription_settings
+    @account.rollback(:chargebee_omni_upgrade)
+    ChargeBee::Customer.any_instance.unstub(:auto_collection)
+    ChargeBee::Subscription.any_instance.unstub(:status)
+  end
+
+  def test_subscription_changed_event_chargebee_omni_upgrade_with_launchparty_only_freshchat_integrated
+    old_plan_name = @account.plan_name.to_s
+    stub_subscription_settings(plan_id: 'estate_omni_jan_20_monthly')
+    @account.launch(:chargebee_omni_upgrade)
+    chargebee_omni_pre_requisites_setup(true, false)
+    ChargeBee::Subscription.any_instance.unstub(:plan_id)
+    ChargeBee::Subscription.any_instance.stubs(:status).returns('active')
+    post :trigger, event_type: 'subscription_changed', content: omni_upgrade_event_content, format: 'json'
+    assert_response 200
+    assert_equal @account.reload.plan_name.to_s, old_plan_name
+  ensure
+    unstub_subscription_settings
+    @account.rollback(:chargebee_omni_upgrade)
+    chargebee_omni_pre_requisites_teardown
+    ChargeBee::Subscription.any_instance.unstub(:status)
+  end
+
+  def test_subscription_changed_event_chargebee_omni_upgrade_with_launchparty_only_freshcaller_integrated
+    old_plan_name = @account.plan_name.to_s
+    stub_subscription_settings(plan_id: 'estate_omni_jan_20_monthly')
+    @account.launch(:chargebee_omni_upgrade)
+    chargebee_omni_pre_requisites_setup(false, true)
+    ChargeBee::Subscription.any_instance.unstub(:plan_id)
+    ChargeBee::Subscription.any_instance.stubs(:status).returns('active')
+    post :trigger, event_type: 'subscription_changed', content: omni_upgrade_event_content, format: 'json'
+    assert_response 200
+    assert_equal @account.reload.plan_name.to_s, old_plan_name
+  ensure
+    unstub_subscription_settings
+    @account.rollback(:chargebee_omni_upgrade)
+    chargebee_omni_pre_requisites_teardown
+    ChargeBee::Subscription.any_instance.unstub(:status)
+  end
+
+  def test_subscription_changed_event_chargebee_omni_upgrade_both_freshchat_and_freshcaller_integrated_but_freshchat_not_in_same_org
+    old_plan_name = @account.plan_name.to_s
+    stub_subscription_settings(plan_id: 'estate_omni_jan_20_monthly')
+    @account.launch(:chargebee_omni_upgrade)
+    chargebee_omni_pre_requisites_setup(true, true)
+    org = create_organisation(12_345, @account.full_domain)
+    create_organisation_account_mapping(org.id)
+    metadata = { page_number: 1, page_size: 2, has_more: false }
+    fcl_domain = @account.freshcaller_account.domain
+    freshid_response = org_freshid_response(create_sample_account_details('localhost.freshpori.net', fcl_domain), metadata)
+    Freshid::V2::Models::Account.stubs(:organisation_accounts).returns(freshid_response)
+    ChargeBee::Subscription.any_instance.unstub(:plan_id)
+    ChargeBee::Subscription.any_instance.stubs(:status).returns('active')
+    post :trigger, event_type: 'subscription_changed', content: omni_upgrade_event_content, format: 'json'
+    assert_response 200
+    assert_equal @account.reload.plan_name.to_s, old_plan_name
+  ensure
+    unstub_subscription_settings
+    delete_organisation(org.id) if org
+    @account.rollback(:chargebee_omni_upgrade)
+    chargebee_omni_pre_requisites_teardown
+    Freshid::V2::Models::Account.unstub(:organisation_accounts)
+    ChargeBee::Subscription.any_instance.unstub(:status)
+  end
+
+  def test_subscription_changed_event_chargebee_omni_upgrade_both_freshchat_and_freshcaller_integrated_but_freshcaller_not_in_same_org
+    old_plan_name = @account.plan_name.to_s
+    stub_subscription_settings(plan_id: 'estate_omni_jan_20_monthly')
+    @account.launch(:chargebee_omni_upgrade)
+    chargebee_omni_pre_requisites_setup(true, true)
+    org = create_organisation(12_345, @account.full_domain)
+    create_organisation_account_mapping(org.id)
+    metadata = { page_number: 1, page_size: 2, has_more: false }
+    fch_domain = @account.freshchat_account.domain
+    freshid_response = org_freshid_response(create_sample_account_details(fch_domain, 'localhost.freshcaller.net'), metadata)
+    Freshid::V2::Models::Account.stubs(:organisation_accounts).returns(freshid_response)
+    ChargeBee::Subscription.any_instance.unstub(:plan_id)
+    ChargeBee::Subscription.any_instance.stubs(:status).returns('active')
+    post :trigger, event_type: 'subscription_changed', content: omni_upgrade_event_content, format: 'json'
+    assert_response 200
+    assert_equal @account.reload.plan_name.to_s, old_plan_name
+  ensure
+    unstub_subscription_settings
+    delete_organisation(org.id) if org
+    @account.rollback(:chargebee_omni_upgrade)
+    chargebee_omni_pre_requisites_teardown
+    Freshid::V2::Models::Account.unstub(:organisation_accounts)
+    ChargeBee::Subscription.any_instance.unstub(:status)
+  end
+
+  def test_subscription_changed_event_chargebee_omni_upgrade_both_freshchat_and_freshcaller_integrated_in_same_org_but_freshdesk_agents_are_not_superset_of_freshchat_agents
+    old_plan_name = @account.plan_name.to_s
+    stub_subscription_settings(plan_id: 'estate_omni_jan_20_monthly')
+    @account.launch(:chargebee_omni_upgrade)
+    fch_agent_emails = ['sample@freshchat.com']
+    chargebee_omni_pre_requisites_setup(true, true)
+    org = create_organisation(12_345, @account.full_domain)
+    create_organisation_account_mapping(org.id)
+    metadata = { page_number: 1, page_size: 2, has_more: false }
+    fch_domain = @account.freshchat_account.domain
+    fcl_domain = @account.freshcaller_account.domain
+    freshid_response = org_freshid_response(create_sample_account_details(fch_domain, fcl_domain), metadata)
+    Freshid::V2::Models::Account.stubs(:organisation_accounts).returns(freshid_response)
+    Faraday::Connection.any_instance.stubs(:get).returns(Faraday::Response.new(status: 200, body: sample_freshchat_agents_response(fch_agent_emails)))
+    ChargeBee::Subscription.any_instance.unstub(:plan_id)
+    ChargeBee::Subscription.any_instance.stubs(:status).returns('active')
+    post :trigger, event_type: 'subscription_changed', content: omni_upgrade_event_content, format: 'json'
+    assert_response 200
+    assert_equal @account.reload.plan_name.to_s, old_plan_name
+  ensure
+    unstub_subscription_settings
+    delete_organisation(org.id) if org
+    @account.rollback(:chargebee_omni_upgrade)
+    chargebee_omni_pre_requisites_teardown
+    Freshid::V2::Models::Account.unstub(:organisation_accounts)
+    Faraday::Connection.any_instance.unstub(:get)
+    ChargeBee::Subscription.any_instance.unstub(:status)
+  end
+
+  def test_subscription_changed_event_chargebee_omni_upgrade_both_freshchat_and_freshcaller_integrated_in_same_org_but_freshdesk_agents_are_not_superset_of_freshcaller_agents
+    old_plan_name = @account.plan_name.to_s
+    stub_subscription_settings(plan_id: 'estate_omni_jan_20_monthly')
+    @account.launch(:chargebee_omni_upgrade)
+    fch_agent = add_test_agent(@account)
+    fch_agent_emails = [fch_agent.email]
+    fcl_agent_emails = ['sample@freshcaller.com']
+    chargebee_omni_pre_requisites_setup(true, true)
+    org = create_organisation(12_345, @account.full_domain)
+    create_organisation_account_mapping(org.id)
+    metadata = { page_number: 1, page_size: 2, has_more: false }
+    fch_domain = @account.freshchat_account.domain
+    fcl_domain = @account.freshcaller_account.domain
+    freshid_response = org_freshid_response(create_sample_account_details(fch_domain, fcl_domain), metadata)
+    Freshid::V2::Models::Account.stubs(:organisation_accounts).returns(freshid_response)
+    Faraday::Connection.any_instance.stubs(:get).returns(Faraday::Response.new(status: 200, body: sample_freshchat_agents_response(fch_agent_emails)))
+    HTTParty::Request.any_instance.stubs(:perform).returns(sample_freshcaller_agents_response(fcl_agent_emails))
+    ChargeBee::Subscription.any_instance.unstub(:plan_id)
+    ChargeBee::Subscription.any_instance.stubs(:status).returns('active')
+    post :trigger, event_type: 'subscription_changed', content: omni_upgrade_event_content, format: 'json'
+    assert_response 200
+    assert_equal @account.reload.plan_name.to_s, old_plan_name
+  ensure
+    fch_agent&.destroy
+    unstub_subscription_settings
+    delete_organisation(org.id) if org
+    @account.rollback(:chargebee_omni_upgrade)
+    chargebee_omni_pre_requisites_teardown
+    Freshid::V2::Models::Account.unstub(:organisation_accounts)
+    Faraday::Connection.any_instance.unstub(:get)
+    HTTParty::Request.any_instance.unstub(:perform)
+    ChargeBee::Subscription.any_instance.unstub(:status)
+  end
+
+  def test_subscription_changed_event_chargebee_omni_upgrade_both_freshchat_and_freshcaller_integrated_in_same_org_with_freshdesk_agents_are_superset_of_freshcaller_and_freshchat_agents
+    create_new_account('test2', 'test2@freshdesk.com')
+    stub_subscription_settings(plan_id: 'estate_omni_jan_20_monthly')
+    @account.launch(:chargebee_omni_upgrade)
+    fch_agent = add_test_agent(@account)
+    fch_agent_emails = [fch_agent.email]
+    fcl_agent1 = add_test_agent(@account)
+    fcl_agent2 = add_test_agent(@account)
+    fcl_agent_emails = [fcl_agent1.email, fcl_agent2.email]
+    chargebee_omni_pre_requisites_setup(true, true)
+    org = create_organisation(12_345, @account.full_domain)
+    create_organisation_account_mapping(org.id)
+    metadata = { page_number: 1, page_size: 2, has_more: false }
+    fch_domain = @account.freshchat_account.domain
+    fcl_domain = @account.freshcaller_account.domain
+    freshid_response = org_freshid_response(create_sample_account_details(fch_domain, fcl_domain), metadata)
+    Freshid::V2::Models::Account.stubs(:organisation_accounts).returns(freshid_response)
+    Faraday::Connection.any_instance.stubs(:get).returns(Faraday::Response.new(status: 200, body: sample_freshchat_agents_response(fch_agent_emails)))
+    HTTParty::Request.any_instance.stubs(:perform).returns(sample_freshcaller_agents_response(fcl_agent_emails))
+    ChargeBee::Subscription.any_instance.unstub(:plan_id)
+    ChargeBee::Subscription.any_instance.stubs(:status).returns('active')
+    Subscription.any_instance.stubs(:first_time_paid_non_annual_plan?).returns(false)
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Billing::FreshcallerSubscriptionUpdate.stubs(:perform_async).returns(true)
+    Billing::FreshchatSubscriptionUpdate.stubs(:perform_async).returns(true)
+    post :trigger, event_type: 'subscription_changed', content: omni_upgrade_event_content, format: 'json'
+    assert_response 200
+    assert_equal @account.reload.plan_name.to_s, 'estate_omni_jan_20'
+  ensure
+    fch_agent&.destroy
+    fcl_agent1&.destroy
+    fcl_agent2&.destroy
+    delete_organisation(org.id) if org
+    @account.rollback(:chargebee_omni_upgrade)
+    chargebee_omni_pre_requisites_teardown
+    @account.destroy
+    unstub_subscription_settings
+    Freshid::V2::Models::Account.unstub(:organisation_accounts)
+    Faraday::Connection.any_instance.unstub(:get)
+    HTTParty::Request.any_instance.unstub(:perform)
+    ChargeBee::Subscription.any_instance.unstub(:status)
+    Subscription.any_instance.unstub(:first_time_paid_non_annual_plan?)
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Billing::FreshcallerSubscriptionUpdate.unstub(:perform_async)
+    Billing::FreshchatSubscriptionUpdate.unstub(:perform_async)
+  end
+
   def test_subscription_changed_event_with_new_plan
     stub_subscription_settings
     user = add_new_user(@account)
@@ -181,6 +420,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
     assert_equal @account.reload.subscription.subscription_plan_id, current_plan_id
   ensure
     unstub_subscription_settings
+    @account.products.delete_all
     SubscriptionPlan.any_instance.unstub(:unlimited_multi_product?)
     SubscriptionPlan.any_instance.unstub(:multi_product?)
     @account.rollback(:downgrade_policy)
@@ -204,8 +444,35 @@ class Billing::BillingControllerTest < ActionController::TestCase
     assert_equal @account.reload.subscription.subscription_plan_id, current_plan_id
   ensure
     unstub_subscription_settings
+    @account.products.delete_all
     SubscriptionPlan.any_instance.unstub(:unlimited_multi_product?)
     SubscriptionPlan.any_instance.unstub(:multi_product?)
+    @account.rollback(:downgrade_policy)
+  end
+
+  def test_subscription_changed_event_with_more_products_with_auditlog_unlimited_addon
+    addon_params = { addons: [{ id: 'audit_log_ui_and_multi_product_migration', quantity: 1, object: 'addon' }] }
+    stub_subscription_settings(addons: addon_params, plan_id: 'estate_jan_20_annual')
+    ChargeBee::Subscription.any_instance.unstub(:plan_id)
+    Subscription.any_instance.unstub(:update_attributes)
+    Subscription.any_instance.unstub(:save)
+    @account.launch(:downgrade_policy)
+    @account.add_feature(:unlimited_multi_product)
+    6.times { @account.products.new(name: Faker::Lorem.characters(5)) }
+    @account.save!
+    assert_equal @account.reload.products.count, 6
+    billing_data_subscription_plan = subscription_plan('estate_jan_20_annual')
+    post :trigger, event_type: 'subscription_changed', content: normal_event_content, format: 'json'
+    assert_response 200
+    @account.reload
+    assert_equal @account.subscription.subscription_plan, billing_data_subscription_plan
+    assert_equal @account.has_feature?(:unlimited_multi_product), true
+    assert_equal @account.products.count, 6
+  ensure
+    @account.subscription.addons.delete_all
+    @account.products.delete_all
+    unstub_subscription_settings
+    @account.revoke_feature(:unlimited_multi_product)
     @account.rollback(:downgrade_policy)
   end
 

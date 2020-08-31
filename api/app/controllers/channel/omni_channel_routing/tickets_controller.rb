@@ -24,6 +24,7 @@ module Channel::OmniChannelRouting
 
       def load_object
         @item = current_account.tickets.find_by_display_id(params[:id])
+        log_and_render_404 unless @item
       end
 
       def verify_current_state?

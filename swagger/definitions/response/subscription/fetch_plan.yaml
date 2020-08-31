@@ -1,0 +1,20 @@
+type: object
+properties:
+  data:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      currency:
+        type: string
+      pricings:
+        type: array
+        items:
+            type: object
+            properties:
+              billing_cycle:
+                type: string
+              cost_per_agent:
+                type: string

@@ -4,6 +4,7 @@ require 'webmock/minitest'
 module ArchiveTicketTestHelper
   include GroupHelper
   ARCHIVE_BODY = JSON.parse(File.read("#{Rails.root}/test/api/fixtures/archive_ticket_body.json"))['archive_ticket_association']
+  ARCHIVE_TICKET = 'Helpdesk::ArchiveTicket'.freeze
 
   def enable_archive_tickets
     @account.enable_ticket_archiving(0)
@@ -56,10 +57,10 @@ module ArchiveTicketTestHelper
     Helpdesk::ArchiveTicket.any_instance.unstub(:read_from_s3)
   end
 
-  def convert_ticket_to_archive(ticket)
+  def convert_ticket_to_archive(ticket, archive_days = 0)
     freno_stub = stub_request(:get, 'http://freno.freshpo.com/check/ArchiveWorker/mysql/shard_1')
                  .to_return(status: 404, body: '', headers: {})
-    Archive::TicketWorker.new.perform(account_id: @account.id, ticket_id: ticket.id)
+    Archive::TicketWorker.new.perform(account_id: @account.id, ticket_id: ticket.id, archive_days: archive_days)
     remove_request_stub(freno_stub)
   end
 

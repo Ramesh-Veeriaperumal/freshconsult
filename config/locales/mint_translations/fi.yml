@@ -1067,8 +1067,6 @@ fi:
         only_agents: Tukihenkilöt
         remote_login_url_info: >-
           Freshdesk ohjaa käyttäjät tähän URL-osoitteeseen tunnistautumista varten heidän tullessaan Freshdeskiin.
-        customer_portal_ssl_warning: >-
-          Koska tilillesi on määritetty mukautettu tuen URL-osoite, sinut ohjataan osoitteeseen 
         saml_cert_fingerprint: Sormenjäljen tietoturvavarmenne
         success_message: >-
           Pyyntösi mukautetulle SSL-varmenteelle on luotu ja se käsitellään pian. Saat vahvistussähköpostin palveluntarjoajaltasi ennen hyväksyntää. Tarkista postilaatikkosi päivityksien varalta.
@@ -2145,6 +2143,7 @@ fi:
         all_tickets: Kaikki tukipyynnöt
         due_today: Tänään erääntyvät tukipyynnöt
         resolved: Ratkaistut tukipyynnöt
+        visible_and_resolved: Ratkaistut tukipyynnöt
       friendly_status:
         customer_responded: Asiakas vastannut
         elapsed: Vastausaika
@@ -3748,6 +3747,9 @@ fi:
       created_at: Luotu
       skill: Taito
       description: Kuvaus
+    field_service_fields:
+      cf_fsm_contact_name: Kontakti
+      cf_fsm_phone_number: Puhelinnumero
     formfield_props:
       behavior: Käyttäytyminen
       customer_edit: Asiakas voi muokata
@@ -5726,6 +5728,7 @@ fi:
       sign_up_text: 'Aloita keskusteluja asiakkaiden kanssa verkkosivulla, portaalissa tai mobiilisovelluksessa.'
       enable_chat_in_portal_info: >-
         Tee keskustelusta kanssasi asiakkaille helppoa heidän saapuessaan tukiportaaliin.
+      topics_title: Aiheet
       app_id_placeholder: 'Esim. 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         Muuntaaksesi Freshchat-keskusteluita tukipyynnöiksi mene tälle <a href='%{url}' target='_blank'>sivulle</a>, kopioi ja liitä tiedot alta. Jos tarvitset lisäapua, tutustu <a href='%{article_url}' target='_blank'>tähän artikkeliin</a>.

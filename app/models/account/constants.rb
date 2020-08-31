@@ -233,7 +233,7 @@ class Account < ActiveRecord::Base
     mailbox_google_oauth: false, migrate_euc_pages_to_us: false, agent_collision_revamp: false,
     topic_editor_with_html: false, remove_image_attachment_meta_data: false,
     ticket_field_revamp: true, new_timeline_view: false,
-    freshdesk_freshsales_bundle: false, requester_widget_timeline: false,
+    requester_widget_timeline: false,
     enable_secure_login_check: false,
     marketplace_gallery: false, facebook_public_api: false, twitter_public_api: false, retry_emails: false,
     fb_message_echo_support: false, portal_prototype_update: false,

@@ -1067,8 +1067,6 @@ uk:
         only_agents: Оператори
         remote_login_url_info: >-
           За цією URL-адресою Freshdesk буде спрямовувати користувачів для автентифікації під час спроби отримати доступ до Freshdesk.
-        customer_portal_ssl_warning: >-
-          Оскільки URL-адреса служби підтримки налаштована для вашого облікового запису, вас буде переспрямовано на 
         saml_cert_fingerprint: Відбиток сертифікату безпеки
         success_message: >-
           Ваш запит щодо користувацького сертифікату SSL отримано і буде скоро оброблено. Перед затвердженням ви отримаєте ел. листа з підтвердженням від нашого постачальника даних. Перевірте, чи отримали ви ел. лист.
@@ -2145,6 +2143,7 @@ uk:
         all_tickets: Всі заявки
         due_today: Заявки з реченцем на сьогодні
         resolved: Вирішені заявки
+        visible_and_resolved: Вирішені заявки
       friendly_status:
         customer_responded: Клієнт відповів
         elapsed: Реченець відповіді
@@ -3769,6 +3768,9 @@ uk:
       created_at: Створено
       skill: Уміння
       description: Опис
+    field_service_fields:
+      cf_fsm_contact_name: Контакт
+      cf_fsm_phone_number: Номер телефону
     formfield_props:
       behavior: Поведінка
       customer_edit: Клієнт може редагувати
@@ -5748,6 +5750,7 @@ uk:
       sign_up_text: 'Почніть розмову з клієнтами на сайті, порталі або в мобільному застосунку.'
       enable_chat_in_portal_info: >-
         Спростіть для клієнтів чат з вами на порталі підтримки.
+      topics_title: Теми
       app_id_placeholder: 'Наприклад: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         Для перетворення розмов Freshchat у заявки, відкрийте <a href='%{url}' target='_blank'>цю сторінку</a>, скопіюйте і вставте дані нижче. Якщо вам потрібна допомога, перегляньте <a href='%{article_url}' target='_blank'>цю статтю</a>.
