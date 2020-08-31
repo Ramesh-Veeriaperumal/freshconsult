@@ -476,6 +476,13 @@ class Account < ActiveRecord::Base
 
         plan_features_list.each do |key, value|
           bitmap_value = self.set_feature(key)
+          
+          #Adding the settings that are under the feature
+          if self.launched?(:feature_based_settings)
+            AccountSettings::FeatureToSettingsMapping[key].each do |setting|
+              bitmap_value = self.set_feature(setting) if AccountSettings::SettingsConfig[setting][:default]
+            end
+          end
         end
         self.selectable_features_list.each do |feature_name, enable_on_signup|
           bitmap_value = enable_on_signup ? self.set_feature(feature_name) : bitmap_value

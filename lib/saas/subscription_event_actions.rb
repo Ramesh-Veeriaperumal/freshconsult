@@ -75,7 +75,8 @@ class SAAS::SubscriptionEventActions
 
         begin
           Rails.logger.debug "ADDON::REMOVED with feature, #{addon}"
-          account.revoke_feature(addon)
+          account.reset_feature(addon)
+          reset_settings_dependent_on_feature(addon) if account.launched?(:feature_based_settings)
         rescue StandardError => e
           Rails.logger.error("Exception while revoking addon feature addon: \
             #{addon}, error: #{e.backtrace}")
@@ -85,12 +86,14 @@ class SAAS::SubscriptionEventActions
       to_be_added.each do |addon|
         begin
           Rails.logger.debug "ADDON::ADDED with feature, #{addon}"
-          account.add_feature(addon)
+          account.set_feature(addon)
+          add_settings_dependent_on_feature(feature) if account.launched?(:feature_based_settings)
         rescue StandardError => e
           Rails.logger.error "Exception while revoking addon feature acc_id: \
             #{account.id} addon: #{addon}, error: #{e.backtrace}"
         end
       end
+      account.save
     end
     
     if plan_changed? || add_ons_changed?
@@ -125,10 +128,11 @@ class SAAS::SubscriptionEventActions
       Rails.logger.debug "List of features to reset for account #{account.id} :: #{features_list.inspect}"
       Rails.logger.debug "account add ons :: #{account_add_ons}"
       features_list.each do |feature|
-        account.reset_feature(feature) unless(plan_features.include?(feature) || 
-          account_add_ons.include?(feature) || 
-          account.selectable_features_list.include?(feature) ||
-          skipped_features.include?(feature))
+        unless(plan_features.include?(feature) || account_add_ons.include?(feature) || account.selectable_features_list.include?(feature) || skipped_features.include?(feature))
+          
+          account.reset_feature(feature)
+          reset_settings_dependent_on_feature(feature) if account.launched?(:feature_based_settings)
+        end
       end
       account.save
     end
@@ -138,7 +142,10 @@ class SAAS::SubscriptionEventActions
       plan_features.delete(:support_bot) if account.revoke_support_bot?
       plan_features.delete(:lbrr_by_omniroute) if account.round_robin_capping_enabled? && !account.lbrr_by_omniroute_enabled?
       plan_features.each do |feature|
-        account.set_feature(feature) unless skipped_features.include?(feature)
+        unless skipped_features.include?(feature)
+          account.set_feature(feature)
+          add_settings_dependent_on_feature(feature) if account.launched?(:feature_based_settings)
+        end
       end
       account.save
     end
@@ -147,6 +154,18 @@ class SAAS::SubscriptionEventActions
       @plan_features ||= begin
         ((::PLANS[:subscription_plans][new_plan.subscription_plan.canon_name.to_sym] &&
           ::PLANS[:subscription_plans][new_plan.subscription_plan.canon_name.to_sym][:features].dup) || []) - (UnsupportedFeaturesList || [])
+      end
+    end
+
+    def add_settings_dependent_on_feature(feature)
+      AccountSettings::FeatureToSettingsMapping[key].each do |setting|
+        account.set_feature(setting) if AccountSettings::SettingsConfig[setting][:default]
+      end
+    end
+
+    def reset_settings_dependent_on_feature(feature)
+      AccountSettings::FeatureToSettingsMapping[feature].each do |setting|
+        account.reset_feature(setting)
       end
     end
 

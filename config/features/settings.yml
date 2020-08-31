@@ -1,0 +1,17 @@
+settings:
+  untitled_setting_1:
+    default: false
+    internal: false
+    feature_dependency: :untitled_feature_1_dependency_toggle # from blossom plan.Rename to actual feature
+  untitled_setting_2:
+    default: true
+    internal: true
+    feature_dependency: :untitled_feature_1_dependency_toggle
+  untitled_setting_3:
+    default: true
+    internal: false
+    feature_dependency: :untitled_feature_2_dependency_toggle # from estate plan.Rename to actual feature
+  untitled_setting_4:
+    default: true
+    internal: false
+    feature_dependency: :untitled_sprout_feature_dependency_toggle
