@@ -62,11 +62,6 @@
         <td><%= @account.day_pass_config.available_passes %></td>
       </tr>
       <tr>
-        <th>Freshfone Credits</th>
-        <% credit = @account.freshfone_credit %>
-        <td><%= number_to_currency(credit ? credit.available_credit : 0) %></td>
-      </tr>
-      <tr>
         <th>Agents</th>
         <td>Subscribed - <%=@account.subscription.agent_limit%>  Free - <%= @account.subscription.free_agents %>  Full time - <%= @account.full_time_support_agents.count %> Total - <%= @account.agents.count %> Ocassional - <%=@account.agents.count - (@account.full_time_support_agents.count ||= 0)%></td>
       </tr>

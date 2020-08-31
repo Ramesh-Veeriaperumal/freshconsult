@@ -82,7 +82,6 @@
 						<div class="p-desc">
 							{{ comment | custom_survey_data}}
 							{{ comment.description }}
-							{{ comment | freshfone_audio_dom }}
 						</div>
 
 						{{ comment | comment_attachments }}

@@ -177,8 +177,6 @@
 <%= render :partial => "/subscriptions/payment_info" if @subscription.card_number.present? && !@reseller_paid_account %>
 </div>
 
-<%= render :partial => "/subscriptions/freshfone_subscription" %>
-
 <% unless @offline_subscription || @reseller_paid_account %>
 <div class="plan-section-title">
 <% if omni_account %>

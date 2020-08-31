@@ -236,7 +236,6 @@
     HelpdeskReports.locals.products = <%= @account_products.to_json.html_safe %>;
     HelpdeskReports.features = {
       'timesheet' : false,//<%= feature?(:timesheets) && privilege?(:view_time_entries) %>,
-      'freshfone' : false,
       'freshchat' : false,//<%= chat_activated? %>,
       'show_agent_metrics_feature': !<%= @hide_agent_metrics_feature %>
     }

@@ -30,9 +30,6 @@ class SearchSidekiq::CreateAlias
       account.tags.find_in_batches(:batch_size => 300) do |tags|
         tags.each { |tag| tag.update_es_index }
       end
-      account.freshfone_callers.find_in_batches(:batch_size => 300) do |callers|
-        callers.each { |caller| caller.update_es_index }
-      end
       account.scn_automations.find_in_batches(:batch_size => 300) do |callers|
         callers.each { |caller| caller.update_es_index }
       end

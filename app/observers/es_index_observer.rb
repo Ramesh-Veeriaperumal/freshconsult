@@ -2,7 +2,7 @@ class EsIndexObserver < ActiveRecord::Observer
 
   observe Helpdesk::Ticket, User, UserEmail, Customer, Solution::Article, Topic, Post, Helpdesk::Tag
   
-  MODELS = [:"Helpdesk::Ticket",:Company,:"Solution::Article",:Topic, :"Helpdesk::Tag", :"Freshfone::Caller"]
+  MODELS = [:"Helpdesk::Ticket",:Company,:"Solution::Article",:Topic, :"Helpdesk::Tag"]
 
   def after_commit(model)
     return unless model.account.esv1_enabled?

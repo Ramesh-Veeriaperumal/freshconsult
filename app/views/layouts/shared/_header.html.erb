@@ -128,23 +128,6 @@
 								<%= render :partial => "/notification/user_notification" %>
 						</div>
 					<% end %>
-
-			    <% unless freshfone_trial? || freshfone_trial_expired? %>
-				    <div class="ff_presence_options hide" id="FreshfonePresenceOptions">
-				    	<div class="ff_available"> 
-				    		<div class="online_availability_text hide"><%=t('freshfone.online_availability_text')%> </div>
-				    		<div class="acw_availability_text hide"><%=t('freshfone.acw_availability_text')%> </div> 
-				    	</div>
-	  					<div class="availabilityOnPhone" data-to_phone='false' id="availableOnBrowser">
-	  						<i class="ficon-ff-on-browser fsize-20 <%= 'active' unless current_user.available_on_phone? %>"></i>
-	  					 <span class="ff-dropdown-text ellipsis"><%=t('freshfone.via_browser')%></span>
-	  					</div>
-	  					<div class="availabilityOnPhone" data-to_phone='true' id="availableOnPhone">
-	  						<i class="ficon-ff-on-mobile fsize-20  <%= 'active' if current_user.available_on_phone? %>"></i>
-	  					 <span class="ff-dropdown-text ellipsis"><%=t('freshfone.via_phone')%></span>
-	  					</div>
-	  				</div>
-  				<%end%>
   			<%end%>	
 			<% end %>
 		</div>

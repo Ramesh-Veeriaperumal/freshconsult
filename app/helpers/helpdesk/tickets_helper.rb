@@ -492,23 +492,6 @@ module Helpdesk::TicketsHelper
     end
   end
 
-  def freshcaller_audio_dom(notable = nil)
-    notable ||= @ticket
-    call = notable.freshcaller_call
-    dom = ''
-    if call.present? && %w[inprogress completed].any? { |status| call.send("recording_#{status}?") }
-      dom << tag(:br)
-      if call.recording_completed?
-        dom << content_tag(:div, content_tag(:div, link_to(I18n.t('freshcaller.ticket.recording.play'), "#{'http://localhost:3004' if Rails.env.development?}/freshcaller_proxy/recording_url?call_id=#{call.fc_call_id}", :type => 'audio/mp3',
-         :class => 'call_duration freshcaller', :'data-time' => 0), class: 'ui360'), class: 'freshfoneAudio')
-        dom.html_safe
-      else
-        dom << tag(:br) << content_tag(:div, raw(I18n.t('freshfone.recording_on_process')), class: 'freshfoneAudio_text')
-      end
-    end
-    raw(dom)
-  end
-
   def ticket_body_form form_builder, widget=false, to=false
     contents = []
     email_content = []

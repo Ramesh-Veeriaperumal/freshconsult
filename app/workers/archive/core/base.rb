@@ -18,9 +18,9 @@ module Archive
       ASSOCIATIONS_TO_MODIFY = {
         helpdesk_tickets: ['helpdesk_attachments' => 'attachable', 'helpdesk_dropboxes' => 'droppable', 'helpdesk_activities' => 'notable', 'survey_results' => 'surveyable',
                            'support_scores' => 'scorable', 'helpdesk_time_sheets' => 'workable', 'social_tweets' => 'tweetable',
-                           'ticket_topics' => 'ticketable', 'social_fb_posts' => 'postable', 'freshfone_calls' => 'notable', 'helpdesk_tag_uses' => 'taggable', 'article_tickets' => 'ticketable', 'integrated_resources' => 'local_integratable',
+                           'ticket_topics' => 'ticketable', 'social_fb_posts' => 'postable', 'helpdesk_tag_uses' => 'taggable', 'article_tickets' => 'ticketable', 'integrated_resources' => 'local_integratable',
                            'inline_attachments' => 'attachable', 'helpdesk_notes' => 'notable', :cti_calls => 'recordable']
-        # :helpdesk_notes => ["social_tweets" => "tweetable", "social_fb_posts" => "postable", "freshfone_calls" => "notable", "helpdesk_attachments" => "attachable", "helpdesk_dropboxes" => "droppable", "helpdesk_shared_attachments" => "shared_attachable" ,"inline_attachments" => "attachable", :cti_calls => "recordable"]
+        # :helpdesk_notes => ["social_tweets" => "tweetable", "social_fb_posts" => "postable", "helpdesk_attachments" => "attachable", "helpdesk_dropboxes" => "droppable", "helpdesk_shared_attachments" => "shared_attachable" ,"inline_attachments" => "attachable", :cti_calls => "recordable"]
       }.freeze
 
       MODIFY_ASSOCIATIONS_TO_CENTRAL = {

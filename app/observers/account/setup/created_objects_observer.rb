@@ -25,7 +25,6 @@ class Account::Setup::CreatedObjectsObserver < ActiveRecord::Observer
 			"Admin::DataImport" 	=> "data_import",
 			"Integrations::InstalledApplication" => "custom_app",
 			"Social::TwitterHandle" => "twitter",
-			"Freshfone::Number" 	=> "freshfone_number",
 			"Freshcaller::Account"	=> "freshfone_number"
 		}
 	end

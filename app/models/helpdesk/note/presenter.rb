@@ -92,7 +92,6 @@ class Helpdesk::Note < ActiveRecord::Base
     t.add :user, template: :central_publish
     t.add :attachments, template: :central_publish
     t.add :feedback_hash, as: :feedback, if: proc{ |x| x.feedback? }
-    # t.add :freshfone_call, template: :central_publish, if: proc { |x| x.freshfone_call.present? }
     # t.add :freshcaller_call, template: :central_publish, if: proc { |x| x.freshcaller_call.present? }
     # t.add :tweet_hash, as: :tweet, if: proc { |x| x.tweet.present? }
     # t.add :fb_post_hash, as: :fb_post, if: proc{ |x| x.fb_post.present? }
