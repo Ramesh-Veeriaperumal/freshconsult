@@ -211,7 +211,7 @@ class Account < ActiveRecord::Base
     incoming_attachment_limit_25: false, fetch_ticket_from_ref_first: false, outgoing_attachment_limit_25: false,
     whitelist_sso_login: false, va_any_field_without_none: false,
     auto_complete_off: false, freshworks_omnibar: false,
-    euc_migrated_twitter: false, new_ticket_recieved_metric: false, es_msearch: true,
+    new_ticket_recieved_metric: false, es_msearch: true,
     canned_forms: false, attachment_virus_detection: false, old_link_back_url_validation: false,
     stop_contacts_count_query: false, undo_send: false,
     bot_email_channel: false, archive_ticket_fields: true,
