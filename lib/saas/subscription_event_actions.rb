@@ -130,8 +130,8 @@ class SAAS::SubscriptionEventActions
       features_list.each do |feature|
         unless (plan_features.include?(feature) || account_add_ons.include?(feature) || account.selectable_features_list.include?(feature) || skipped_features.include?(feature))
 
+          next if AccountSettings::SettingsConfig[feature] && plan_features.include?(AccountSettings::SettingsConfig[feature][:feature_dependency])
           account.reset_feature(feature)
-          reset_settings_dependent_on_feature(feature) if account.launched?(:feature_based_settings)
         end
       end
       account.save
