@@ -57,7 +57,7 @@ module MailboxValidator
       rescue SocketError => e
         msg = :imap_connection_error
         Rails.logger.debug "error while verifying the imap details : #{e}"
-      rescue Exception => e
+      rescue StandardError => e
         msg = :imap_error
         Rails.logger.debug "error while verifying the imap details : #{e}"
       end
@@ -95,7 +95,7 @@ module MailboxValidator
       rescue Net::SMTPAuthenticationError => e
         msg = :smtp_invalid_credentials
         Rails.logger.debug "error while verifying the smtp details : #{e}"
-      rescue Exception => e
+      rescue StandardError => e
         msg = :smtp_error
         options = { error: e.message }
         Rails.logger.debug "error while verifying the smtp details : #{e}"
