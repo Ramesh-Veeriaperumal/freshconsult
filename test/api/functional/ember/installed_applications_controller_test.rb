@@ -376,7 +376,7 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     assert_response 200
     assert response_mock.verify
     data = form_fields_result
-    match_json data
+    match_json data.delete('Lead')
   ensure
     IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource.any_instance.unstub(:http_get)
   end
@@ -394,7 +394,7 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     assert_response 200
     assert response_mock.verify
     data = nested_emails_form_fields_result
-    match_json data
+    match_json data.delete('Lead')
   ensure
     IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource.any_instance.unstub(:http_get)
   end

@@ -163,6 +163,23 @@ module InstalledApplicationsTestHelper
     }
   end
 
+  def freshworkscrm_config
+    { inputs:
+      {
+        "contact_fields"=> "display_name,mobile_number,contact_status_id,has_authority,do_not_disturb,time_zone,address,city,state,zipcode",
+        "account_fields"=> "name,parent_sales_account_id,owner_id,number_of_employees,annual_revenue,website,phone,industry_type_id,business_type_id,territory_id",
+        "contact_labels" => "Full name,Mobile,Status,Has authority,Do not disturb,Time zone,Address,City,State,Zipcode",
+        "account_labels"=> "Name,Parent account,Owner,Number of employees,Annual revenue,Website,Phone,Industry type,Business type,Territory",
+        "deal_view" => "1",
+        "domain" => "https://sample.freshsales.io",
+        "auth_token" => "dTetw4iu9JbVBsBfxeJ6xQ",
+        "deal_fields" => "name,amount,deal_stage_id,owner_id,deal_pipeline_id,deal_reason_id,sales_account_id,contacts,deal_product_id,deal_payment_status_id",
+        "deal_labels" => "Name,Deal value,Deal stage,Owner,Deal pipeline,Lost reason,Account name,Related contacts,Product,Payment status",
+        "agent_settings" => "0"
+      }
+    }
+  end
+
   def create_integ_user_credentials(options = {})
     app = Integrations::Application.find_by_name(options[:app_name])
     installed_app = @account.installed_applications.find_by_application_id(app.id)
