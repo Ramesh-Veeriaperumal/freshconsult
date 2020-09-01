@@ -49,7 +49,8 @@ module Integrations::Constants
     :shared_ownership => "shared_ownership",
     :microsoft_teams => "microsoft_teams",
     :google_hangout_chat => "google_hangout_chat",
-    :ticket_summary => "ticket_summary"
+    :ticket_summary => "ticket_summary",
+    :freshworkscrm => "freshworkscrm"
   }
 
   DISPLAY_IN_PAGES = { 'ticket_show' => 2, 'contact_show' => 1, 'company_show' => 0, 'time_sheet_show' => 3, 'editor_show' => 4 }.freeze
@@ -141,7 +142,8 @@ module Integrations::Constants
     APP_NAMES[:google_calendar] => 4,
     APP_NAMES[:shopify] => 6,
     APP_NAMES[:salesforce] => 6,
-    APP_NAMES[:freshsales] => 6
+    APP_NAMES[:freshsales] => 6,
+    APP_NAMES[:freshworkscrm] => 6
   }.freeze
 
   ATTACHMENT_APPS = [APP_NAMES[:dropbox],APP_NAMES[:box],APP_NAMES[:onedrive]].freeze
