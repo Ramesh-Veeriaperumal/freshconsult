@@ -1075,7 +1075,7 @@ function uniqueCodeGenerator(name){
 }
 
 function pjax_form_submit (element, ev) {
-  if (isMultifileEnabled && !jQBrowser.msie && !jQBrowser.msedge) {
+  if (!jQBrowser.msie && !jQBrowser.msedge) {
     var _form = jQuery(element);
 
     if(_form.valid()) {

@@ -173,7 +173,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :audit_log, only: [:filter, :export, :event_name, :export_s3_url]
     resource :"admin/holiday", only: [:show]
     resource :'ember/omni_channel', only: [:index]
-    resource :"admin/subscription", only: [:show, :plans, :update, :estimate, :update_payment, :estimate_feature_loss]
+    resource :"admin/subscription", only: [:show, :plans, :fetch_plan, :update, :estimate, :update_payment, :estimate_feature_loss]
     resource :"ember/ocr_proxy"
     resource :"ember/freddy"
     resource :"ember/flow"

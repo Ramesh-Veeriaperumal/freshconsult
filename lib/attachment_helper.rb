@@ -18,7 +18,7 @@
   end
 
   def attachment_list(attached, show_delete, page, item_id, custom_delete_link = nil, add_to_reply = false, index = nil)
-    multifile_enabled = current_account.launched?(:multifile_attachments)
+    multifile_enabled = true
     add_to_reply = add_to_reply && multifile_enabled
     unless attached.new_record?
       output = ""

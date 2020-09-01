@@ -11,6 +11,7 @@ class Support::SignupsController < SupportController
   before_filter :authenticate_with_freshid, only: :new, if: :freshid_integration_enabled_and_not_logged_in?
   before_filter :set_validatable_custom_fields, :remove_noneditable_fields_in_params, :set_user_language,
                 :set_required_fields, :remove_agent_params, :only => [:create]
+  before_filter :set_i18n_locale
   
   def new
     respond_to do |format|
@@ -67,6 +68,13 @@ class Support::SignupsController < SupportController
 
     def set_locale
       http_accept_language.compatible_language_from I18n.available_locales
+    end
+
+    def set_i18n_locale
+      return if params[:url_locale].present?
+
+      language = set_locale
+      I18n.locale = language || current_portal.language
     end
 
     def set_validatable_custom_fields

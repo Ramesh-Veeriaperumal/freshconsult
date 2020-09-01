@@ -926,17 +926,6 @@ class Account < ActiveRecord::Base
     Community::SolutionBinarizeSync.perform_async
   end
 
-  # TODO: Remove force_2020_plan?() after 2020 plan launched
-  # START
-  def force_2020_plan?
-    !redis_key_exists?(NEW_2020_PRICING_ENABLED) && ismember?(NEW_2020_PRICING_TEST_USERS, admin_email)
-  end
-
-  def new_2020_pricing_enabled?
-    redis_key_exists?(NEW_2020_PRICING_ENABLED) || ismember?(NEW_2020_PRICING_TEST_USERS, admin_email)
-  end
-  # END
-
   def field_agents_count
     return @field_agents_count if @field_agents_count.present?
     return @field_agents_count = 0 if AgentType.agent_type_id(Agent::FIELD_AGENT).blank?

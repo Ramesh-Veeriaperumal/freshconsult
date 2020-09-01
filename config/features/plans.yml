@@ -569,8 +569,6 @@
       - :detect_thank_you_note_eligible
       - :smart_filter
       - :agent_assist_lite
-      - :autofaq
-      - :botflow
       - :agent_articles_suggest_eligible
       - :email_bot
       - :advanced_ticket_scopes
@@ -579,10 +577,14 @@
     :inherits:
       - :estate_jan_20
     :exclude: []
+    :freddy_sessions: 5000
   :forest_omni_jan_20:
     :name: Forest Omni Channel
     :features:
       - :autofaq_eligible
+      - :autofaq
+      - :botflow
     :inherits:
       - :forest_jan_20
     :exclude: []
+    :freddy_sessions: 5000

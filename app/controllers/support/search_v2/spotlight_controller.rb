@@ -7,7 +7,7 @@ class Support::SearchV2::SpotlightController < SupportController
   before_filter :force_exact_match
   before_filter :set_es_locale
 
-  NON_UNICODE_LANGUAGES = %w[th ja-JP].freeze
+  NON_UNICODE_LANGUAGES = %w[th].freeze
 
   # Unscoped customer-side spotlight search
   #

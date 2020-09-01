@@ -58,7 +58,7 @@ class Agent < ActiveRecord::Base
                   :scoreboard_level_id, :user_attributes, :group_ids, :freshchat_token, :agent_type, :search_settings, :focus_mode, :show_onBoarding, :notification_timestamp, :show_loyalty_upgrade, :show_monthly_to_annual_notification
   attr_accessor :agent_role_ids, :freshcaller_enabled, :user_changes, :group_changes,
                 :ocr_update, :misc_changes, :out_of_office_days, :old_agent_availability,
-                :return_old_agent_availability, :freshchat_enabled, :skip_ocr_agent_sync
+                :return_old_agent_availability, :freshchat_enabled, :skip_ocr_agent_sync, :user_avatar_changes
 
   scope :with_conditions, -> (conditions) { where(conditions) } 
   scope :full_time_support_agents, -> { 

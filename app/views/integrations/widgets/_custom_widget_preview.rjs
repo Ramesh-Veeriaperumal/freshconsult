@@ -1,6 +1,6 @@
 ticket=current_account.tickets.last
-ticket.escape_liquid_attributes = Account.current.launched?(:escape_liquid_attributes)
-ticket.requester.escape_liquid_attributes = Account.current.launched?(:escape_liquid_attributes)
+ticket.escape_liquid_attributes = true
+ticket.requester.escape_liquid_attributes = true
 liquid_objects = {"ticket" => ticket, "requester" => ticket.requester}
 
 widget = Integrations::Widget.new(:script=>params["application_script"])

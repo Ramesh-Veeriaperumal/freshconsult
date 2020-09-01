@@ -169,5 +169,5 @@ class User < ActiveRecord::Base
 
   has_many :announcements, class_name: 'DashboardAnnouncement', dependent: :destroy
 
-  delegate :long_uc01, :booleanuc01, to: :contact_field_data
+  delegate :long_uc01, :boolean_uc01, :string_uc07, to: :contact_field_data
 end

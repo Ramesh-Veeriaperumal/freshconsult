@@ -1,6 +1,6 @@
 <% list_empty = false %>
 
-<% if current_user.privilege?(:view_reports) || !current_account.launched?(:new_leaderboard) %>
+<% if current_user.privilege?(:view_reports) %>
 	<ul class="leaderboard-innerbox">
 		<% @mini_list_leaderboard.each do |category, user| %>
 				<li class="pull-left">
@@ -18,65 +18,6 @@
 			<% list_empty = true %>
 		<% end %>
 	</ul>
-
-<% else %>
-
-	<ul class="leaderboard-innerbox new-leaderboard">
-		<div class="tabs-left">
-			<ul data-tabs="tabs" class="tabs nav-tabs">
-				<% @mini_list_leaderboard.each do |category, data| %>
-					<% if category == :mvp %>
-						<li class="active first">
-					<% else %>
-						<li>
-					<% end %>
-						<a id="<%= category %>-tab" href="#<%= category %>" title="<%= t("gamification.leaderboard.#{category}_trophie_label") %>" class="leaderboard-tabs"><span class="trophy trophy-<%= category %>-mini"></span></a>
-					</li>
-				<% end %>
-			</ul>
-			<div class="tab-content">
-				<% @mini_list_leaderboard.each do |category, data| %>
-					<% if category == :mvp %>
-						<div id="<%= category %>" class="tab-pane active">
-					<% else %>
-						<div id="<%= category %>" class="tab-pane">
-					<% end %>
-						<% unless data.nil? %>
-							<% if data[:leader].id == current_user.id %>
-								<div class="category-leader" title="<%= t("gamification.leaderboard.you") %>(<%= data[:leader][:score].to_i %>)">
-									<%= user_avatar_with_expiry(data[:leader],3605) %>
-									<div><b><%= t("gamification.leaderboard.#{category}_trophie_label") %></b></div>
-									<div class="rank-user-name"><%= t("gamification.leaderboard.congrats", :name => data[:leader]) %></div>
-								</div>
-							<% else %>
-								<div class="category-leader" title="<%= data[:leader] %> (<%= data[:leader][:score].to_i %>)">
-									<%= user_avatar_with_expiry(data[:leader],3605) %>
-									<div><b><%= t("gamification.leaderboard.#{category}_trophie_label") %></b></div>
-									<div class="rank-user-name"><%= data[:leader] %></div>
-								</div>
-							<% end %>
-							<div class="category-ranks">
-								<% data[:others].each do |people| %>
-									<% if people.id == current_user.id %>
-										<div class="leaderboard-others self" title="<%= t("gamification.leaderboard.you") %>(<%= people[:score].to_i %>)">
-									<% else %>
-										<div class="leaderboard-others" title="<%= people %> (<%= people[:score].to_i %>)">
-									<% end %>
-										<%= user_avatar_with_expiry(people,3605) %>
-										<p class="other-rank"><%= people[:rank]%></p>
-									</div>	
-								<% end %>
-							</div>
-						<% else %>
-							<div class="empty-category"><%= t("gamification.leaderboard.not_enough_points") %></div>
-						<% end %>
-					</div>
-					<% list_empty = true %>
-				<% end %>
-			</div>
-		</div>
-	</ul>
-
 <% end %>
 
 <%= link_to t("helpdesk_quests.view_all"), agents_helpdesk_leaderboard_index_path(), :class => "widget-more-link" %>

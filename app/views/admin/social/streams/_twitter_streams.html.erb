@@ -15,7 +15,7 @@
           </td>
           <td class="text-left">
             <%= link_to stream.name, edit_admin_social_twitter_stream_url(stream) %>
-            <%if stream.default_stream? and (stream.twitter_handle.reauth_required? || euc_migrated_handle?(stream.twitter_handle)) %>
+            <%if stream.default_stream? and stream.twitter_handle.reauth_required? %>
                 <a onclick="<%= set_twitter_url_in_redis(@auth_redirect_url, @account_url, @state) %>" class="label label-important align-fix <%= @auth_redirect_url ? '': 'disabled' %>"><%= t('.reauthorize')%></a>
             <%end%>
             <%if stream.default_stream? and (stream.twitter_handle.activation_required?) %>

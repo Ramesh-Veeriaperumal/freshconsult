@@ -1067,8 +1067,6 @@ et:
         only_agents: Lahendajad
         remote_login_url_info: >-
           See on URL, millele Freshdesk kasutajad autentimiseks suunab, kui nad üritavad Freshdeski siseneda.
-        customer_portal_ssl_warning: >-
-          Kuna sinu kontole on seadistatud kohandatud kasutajatoe URL, suunatakse sind ümber aadressile 
         saml_cert_fingerprint: Turvasertifikaadi sõrmejälg
         success_message: >-
           Sinu kohandatud SSL-sertifikaadi nõue on töösse võetud ja seda hakatakse peagi töötlema. Sa saad enne heakskiitu meie teenusepakkujalt vastava kinnituskirja. Palun vaata aeg-ajalt oma postkasti.
@@ -2146,6 +2144,7 @@ et:
         all_tickets: Kõik taotlused
         due_today: Tänase tähtajaga taotlused
         resolved: Lahendatud taotlused
+        visible_and_resolved: Lahendatud taotlused
       friendly_status:
         customer_responded: Klient vastas
         elapsed: Vastuse tähtaeg
@@ -3749,6 +3748,9 @@ et:
       created_at: Loodud
       skill: Oskus
       description: Kirjeldus
+    field_service_fields:
+      cf_fsm_contact_name: Kontakt
+      cf_fsm_phone_number: Telefoninumber
     formfield_props:
       behavior: Käitumine
       customer_edit: Klient saab redigeerida
@@ -5728,6 +5730,7 @@ et:
       sign_up_text: 'Hakka oma veebilehel, portaalis või mobiilirakenduses klientidega vestlema.'
       enable_chat_in_portal_info: >-
         Muuda klientide jaoks endaga vestlemine lihtsaks, kui nad sinu kasutajatoe portaali tulevad.
+      topics_title: Teemad
       app_id_placeholder: 'Nt: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         Freshchati vestluste tugiteenusepiletiteks muutmiseks mine sellele <a href='%{url}' target='_blank'>lehele</a> ning kopeeri ja kleebi allpool toodud andmed. Kui vajad abi, vaata <a href='%{article_url}' target='_blank'>seda artiklit</a>.

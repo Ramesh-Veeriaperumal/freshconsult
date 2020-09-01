@@ -272,6 +272,50 @@ module Channel
       CustomRequestStore.store[:channel_api_request] = false
     end
 
+    def test_create_a_twitter_contact_with_valid_requester_handle_id
+      Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+      CustomRequestStore.store[:channel_api_request] = true
+      set_jwt_auth_header('twitter')
+      post :create, construct_params({ version: 'channel' }, name: Faker::Lorem.characters(10),
+                                                             twitter_id: Faker::Internet.email,
+                                                             twitter_requester_handle_id: '1234567890')
+      assert_response 201
+      assert User.last.twitter_requester_handle_id?
+      assert_equal '1234567890', User.last.twitter_requester_handle_id
+      match_json(deleted_contact_pattern(User.last))
+    ensure
+      CustomRequestStore.store[:channel_api_request] = false
+      Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+    end
+
+    def test_create_a_twitter_contact_with_invalid_requester_handle_id
+      Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+      CustomRequestStore.store[:channel_api_request] = true
+      set_jwt_auth_header('twitter')
+      post :create, construct_params({ version: 'channel' }, name: Faker::Lorem.characters(10),
+                                                             twitter_id: Faker::Internet.email,
+                                                             twitter_requester_handle_id: 1_234_567_890)
+      assert_response 400
+      match_json([bad_request_error_pattern('twitter_requester_handle_id', :datatype_mismatch,
+                                            expected_data_type: 'String', prepend_msg: :input_received, given_data_type: Integer)])
+    ensure
+      CustomRequestStore.store[:channel_api_request] = false
+      Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+    end
+
+    def test_create_a_twitter_contact_with_valid_requester_handle_id_without_feature
+      CustomRequestStore.store[:channel_api_request] = true
+      set_jwt_auth_header('twitter')
+      post :create, construct_params({ version: 'channel' }, name: Faker::Lorem.characters(10),
+                                                             twitter_id: Faker::Internet.email,
+                                                             twitter_requester_handle_id: '1234567890')
+      assert_response 400
+      match_json([bad_request_error_pattern('twitter_requester_handle_id', :require_feature_for_attribute, code: :inaccessible_field,
+                                                                                                           attribute: 'twitter_requester_handle_id', feature: :twitter_api_compliance)])
+    ensure
+      CustomRequestStore.store[:channel_api_request] = false
+    end
+
     def test_create_contact_without_twitter_id
       set_jwt_auth_header('twitter')
       post :create, construct_params({ version: 'channel' }, name: Faker::Lorem.characters(10))

@@ -36,7 +36,7 @@ describe Fdadmin::AccountsController do
 		FEATURE_NAMES_BY_TYPE = {
 			:bitmap => [:gamification, :requester_widget, :split_tickets, :shared_ownership],
 			:db => [:gamification],
-			:launchparty => [:requester_widget, :activity_ui_disable]
+			:launchparty => [:requester_widget]
 		}
 
 		before(:all) do 

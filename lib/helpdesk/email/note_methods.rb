@@ -56,10 +56,10 @@ module Helpdesk::Email::NoteMethods
     # html = show_quoted_text(email[:description_html], false) || {}
     
     {
-      :body => tokenize_emojis(email[:stripped_text]),
-      :body_html => sanitize_note_message(email[:stripped_html]),
-      :full_text => tokenize_emojis(email[:text]),
-      :full_text_html => sanitize_note_message(email[:description_html])
+      body:           email[:stripped_text],
+      body_html:      sanitize_note_message(email[:stripped_html]),
+      full_text:      email[:text],
+      full_text_html: sanitize_note_message(email[:description_html])
     }
   end
 

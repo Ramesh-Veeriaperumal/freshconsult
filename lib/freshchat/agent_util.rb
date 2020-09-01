@@ -1,6 +1,7 @@
 module Freshchat
   module AgentUtil
     include Freshchat::JwtAuthentication
+    include Freshchat::Util
 
     SUCCESS_CODES = (200..204).freeze
     ACTION_MAPPINGS = {
@@ -32,6 +33,27 @@ module Freshchat
       end
     end
 
+    def fetch_freshchat_agent_emails
+      agent_emails = []
+      agents = fetch_freshchat_agents
+      agents.deep_symbolize_keys!
+      loop do
+        agent_emails += agents[:agents].map { |agent_data| agent_data[:email] }
+        break if agents[:links][:next_page].nil?
+
+        agents = fetch_freshchat_agents(agents[:links][:next_page][:href])
+        agents.deep_symbolize_keys!
+      end
+
+      agent_emails
+    end
+
+    def fetch_freshchat_agents(url = nil)
+      fch_url = url.nil? ? "#{agent_host_url}?sort_by=email&items_per_page=30&sort_order=asc&page=1" : "https://#{freshchat_domain}#{url}"
+      response = freshchat_request(fch_url)
+      response.body
+    end
+
     private
 
       def account
@@ -45,7 +67,7 @@ module Freshchat
       def fchat_agent_update?(agent)
         if agent.safe_send(:transaction_include_action?, :update)
           if agent.freshchat_enabled.nil? || agent.freshchat_enabled == agent.agent_freshchat_enabled?
-            roles_changed?(agent)
+            freshchat_agent_properties_changed?(agent)
           else
             account.omni_bundle_id ? true : standalone_account(agent)
           end
@@ -56,8 +78,12 @@ module Freshchat
         agent.safe_send(:transaction_include_action?, :destroy) && account.omni_bundle_id && agent.additional_settings[:freshchat].present?
       end
 
-      def roles_changed?(agent)
-        (agent.user.previous_changes.keys & ['privileges']).present? && agent.agent_freshchat_enabled?
+      def freshchat_agent_properties_changed?(agent)
+        ((agent.user.previous_changes.keys & ['privileges']).present? || agent.user_avatar_changes) && agent.agent_freshchat_enabled?
+      end
+
+      def roles_changed?
+        (@agent.user.previous_changes.keys & ['privileges']).present?
       end
 
       def standalone_account(agent)
@@ -131,10 +157,10 @@ module Freshchat
       end
 
       def agent_put_request_body
-        request_body = {
-          role_id: freshchat_role(@user.role_ids.min)
-        }
+        request_body = {}
+        request_body[:role_id] = freshchat_role(@user.role_ids.min) if roles_changed?
         request_body[:is_deactivated] = !@agent.freshchat_enabled unless @agent.freshchat_enabled.nil?
+        request_body[:avatar] = user_avatar if @agent.user_changes && @agent.user_avatar_changes
         request_body
       end
 
@@ -176,6 +202,10 @@ module Freshchat
           additional_settings[:freshchat][:enabled] = !response.body['is_deactivated']
           @agent.update_attribute(:additional_settings, additional_settings)
         end
+      end
+
+      def user_avatar
+        { url: @user.avatar.present? && @agent.user_avatar_changes == :upsert ? @user.avatar_url : '' }
       end
   end
 end

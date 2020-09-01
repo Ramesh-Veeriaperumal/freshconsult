@@ -51,7 +51,7 @@ module AccountAdditionalSettings::AdditionalSettings
     metric = Account.current.conversion_metric
     member = metric.msegments if metric.present?
     self.additional_settings ||= {}
-    if Account.current.launched?(:goal_based_onboarding) && member.present? && metric.language == 'en' && ((metric.current_session_url == GrowthHackConfig[:freshdesk_signup] &&
+    if member.present? && metric.language == 'en' && ((metric.current_session_url == GrowthHackConfig[:freshdesk_signup] &&
        metrics_has_any_personalised_onboarding_keys?(metric.referrer)) ||
        metrics_has_any_personalised_onboarding_keys?(metric.current_session_url))
       self.additional_settings[:onboarding_ab_testing] = true
